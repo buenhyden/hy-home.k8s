@@ -1,0 +1,9 @@
+.history/
+.vscode/
+k8s/.env
+Docker/Projects/**/.ssh
+hosts.txt
+Setting_Database.txt
+Certs/
+.env
+
