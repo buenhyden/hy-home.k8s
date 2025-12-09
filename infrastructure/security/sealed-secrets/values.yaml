@@ -1,0 +1,9 @@
+fullnameOverride: sealed-secrets-controller
+
+# 키 자동 갱신 주기 (기본값 30일)
+keyRenewPeriod: 720h
+
+resources:
+  requests:
+    cpu: 20m
+    memory: 40Mi

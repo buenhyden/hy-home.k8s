@@ -1,0 +1,24 @@
+admissionController:
+  replicas: 2 # Kind 노드가 4개이므로 분산 배치 가능
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+backgroundController:
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+
+reportsController:
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi

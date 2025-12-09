@@ -1,0 +1,40 @@
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: kafka-external-se
+  namespace: default
+spec:
+  hosts:
+    - kafka-external.default.svc.cluster.local
+    - schema-registry-external.default.svc.cluster.local
+  location: MESH_EXTERNAL
+  resolution: STATIC
+  endpoints:
+    # Kafka Brokers
+    - address: 172.19.0.20
+      ports:
+        tcp-broker: 9092
+    - address: 172.19.0.21
+      ports:
+        tcp-broker: 9094
+    - address: 172.19.0.22
+      ports:
+        tcp-broker: 9096
+    # Schema Registry
+    - address: 172.19.0.23
+      ports:
+        http-registry: 8081
+
+  ports:
+    - number: 9092
+      name: tcp-broker-0
+      protocol: TCP
+    - number: 9094
+      name: tcp-broker-1
+      protocol: TCP
+    - number: 9096
+      name: tcp-broker-2
+      protocol: TCP
+    - number: 8081
+      name: http-registry
+      protocol: TCP

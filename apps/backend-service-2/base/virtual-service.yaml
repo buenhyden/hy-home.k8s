@@ -1,0 +1,22 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: backend-service-2-vs
+spec:
+  hosts:
+    - "api.service2.127.0.0.1.nip.io" # Backend 2 전용 도메인
+  gateways:
+    - istio-system/istio-ingressgateway
+  http:
+    - name: primary
+      route:
+        - destination:
+            host: backend-service-2
+            port:
+              number: 80
+          weight: 100
+        - destination:
+            host: backend-service-2-canary
+            port:
+              number: 80
+          weight: 0

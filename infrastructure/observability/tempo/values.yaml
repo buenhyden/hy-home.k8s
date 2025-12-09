@@ -1,0 +1,25 @@
+tempo:
+  repository: grafana/tempo
+  tag: 2.6.1
+  storage:
+    trace:
+      backend: local # 로컬 PV 사용
+      local:
+        path: /var/tempo/traces
+      wal:
+        path: /var/tempo/wal
+
+persistence:
+  enabled: true
+  storageClassName: standard
+  size: 10Gi
+
+# OTLP 수신 포트 활성화 (Alloy가 보냄)
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318

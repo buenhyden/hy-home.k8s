@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-external
+  namespace: default
+spec:
+  clusterIP: None # Headless Service
+  ports:
+    - name: redis-0
+      port: 6379
+      targetPort: 6379
+      protocol: TCP
+    - name: redis-1
+      port: 6380
+      targetPort: 6380
+      protocol: TCP
+    - name: redis-2
+      port: 6381
+      targetPort: 6381
+      protocol: TCP
+    - name: redis-3
+      port: 6382
+      targetPort: 6382
+      protocol: TCP
+    - name: redis-4
+      port: 6383
+      targetPort: 6383
+      protocol: TCP
+    - name: redis-5
+      port: 6384
+      targetPort: 6384
+      protocol: TCP
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: redis-external
+  namespace: default
+subsets:
+  # Node 0
+  - addresses:
+      - ip: 172.19.0.60
+    ports:
+      - name: redis-0
+        port: 6379
+  # Node 1
+  - addresses:
+      - ip: 172.19.0.61
+    ports:
+      - name: redis-1
+        port: 6380
+  # Node 2
+  - addresses:
+      - ip: 172.19.0.62
+    ports:
+      - name: redis-2
+        port: 6381
+  # Node 3
+  - addresses:
+      - ip: 172.19.0.63
+    ports:
+      - name: redis-3
+        port: 6382
+  # Node 4
+  - addresses:
+      - ip: 172.19.0.64
+    ports:
+      - name: redis-4
+        port: 6383
+  # Node 5
+  - addresses:
+      - ip: 172.19.0.65
+    ports:
+      - name: redis-5
+        port: 6384

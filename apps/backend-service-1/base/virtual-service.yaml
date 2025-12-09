@@ -1,0 +1,22 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: backend-service-1-vs
+spec:
+  hosts:
+    - "api.backend1.127.0.0.1.nip.io" # 로컬 테스트용 도메인
+  gateways:
+    - istio-system/istio-ingressgateway # 이전에 설치한 Gateway 참조
+  http:
+    - name: primary # Rollout이 이 라우트의 weight를 조절함
+      route:
+        - destination:
+            host: backend-service-1
+            port:
+              number: 80
+          weight: 100
+        - destination:
+            host: backend-service-1-canary # Rollout이 자동 생성하는 서비스
+            port:
+              number: 80
+          weight: 0
