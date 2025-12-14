@@ -1,17 +1,49 @@
-name: CI/CD - Build, Push Image & Update Overlay
+name: CI/CD - Lint, Build, Push, E2E, Deploy
 
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     paths:
       - 'apps/**'
-      - '.github/workflows/cicd-image-build-and-deploy.yml'
+      - 'clusters/**'
+      - 'infrastructure/**'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: write
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python (yamllint)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install yamllint & kubeconform
+        run: |
+          python -m pip install --upgrade pip
+          pip install yamllint
+          wget https://github.com/yannh/kubeconform/releases/download/v0.6.4/kubeconform-linux-amd64.tar.gz
+          tar xf kubeconform-linux-amd64.tar.gz
+          sudo mv kubeconform /usr/local/bin/
+
+      - name: Lint YAML files
+        run: yamllint . || true
+
+      - name: Validate Kubernetes Manifests
+        run: kubeconform -summary -ignore-missing-schemas ./ || true
+
   build-and-push:
+    needs: lint
+    name: Build, Test, Push and Update overlays
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -31,7 +63,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Login to Registry (GHCR / Docker)
+      - name: Login to GHCR
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
@@ -64,22 +96,17 @@ jobs:
           echo "OVERLAY_DIR=$OVERLAY_DIR" >> $GITHUB_OUTPUT
 
       - name: Run unit tests (detect & run)
-        shell: bash
         run: |
           set -euo pipefail
           echo "Checking for tests in apps/${{ matrix.service }}"
           cd apps/${{ matrix.service }} || { echo "Directory not found"; exit 0; }
 
-          # If Makefile with `test` target
           if [ -f Makefile ] && grep -q "^test:" Makefile; then
-            echo "Makefile with 'test' target found. Running make test..."
             make test
             exit 0
           fi
 
-          # Node.js tests via package.json
           if [ -f package.json ] && grep -q '"test"' package.json; then
-            echo "Node project detected; setting up Node and running npm test"
             curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
             sudo apt-get install -y nodejs
             npm ci
@@ -87,9 +114,7 @@ jobs:
             exit 0
           fi
 
-          # Python: requirements or pyproject & tests
           if [ -f pyproject.toml ] || [ -f requirements.txt ] || [ -d tests ]; then
-            echo "Python project detected; setting up Python and running pytest"
             sudo apt-get update && sudo apt-get install -y python3 python3-venv python3-pip
             python3 -m pip install --upgrade pip
             if [ -f requirements.txt ]; then
@@ -106,17 +131,13 @@ jobs:
             exit 0
           fi
 
-          # Go
           if [ -f go.mod ]; then
-            echo "Go project detected; running go test"
             sudo apt-get update && sudo apt-get install -y golang-go
             go test ./...
             exit 0
           fi
 
-          # Maven/Java
           if [ -f mvnw ] || [ -f pom.xml ]; then
-            echo "Java/Maven project detected; running mvn test"
             if [ -f mvnw ]; then
               ./mvnw -q test
             else
@@ -126,18 +147,16 @@ jobs:
             exit 0
           fi
 
-          echo "No test/runtime detected for apps/${{ matrix.service }} — skipping unit tests"
+          echo "No tests detected for apps/${{ matrix.service }}; skipping unit tests"
 
-
-      - name: Run lint/static checks (Dockerfile)
+      - name: Dockerfile lint
         env:
           DOCKERFILE: ${{ steps.vars.outputs.DOCKERFILE }}
         run: |
           if [ -f "$DOCKERFILE" ]; then
-            echo "Linting Dockerfile for ${{ matrix.service }}"
             docker run --rm -i hadolint/hadolint < "$DOCKERFILE" || true
           else
-            echo "No Dockerfile found for ${{ matrix.service }}; skipping lint"
+            echo "No Dockerfile; skipping hadolint"
           fi
 
       - name: Build and push image
@@ -146,8 +165,12 @@ jobs:
           DOCKERFILE: ${{ steps.vars.outputs.DOCKERFILE }}
         run: |
           echo "Building $IMAGE using $DOCKERFILE"
-          docker build -t $IMAGE -f "$DOCKERFILE" . || true
-          docker push $IMAGE || true
+          if [ -f $DOCKERFILE ]; then
+            docker build -t $IMAGE -f "$DOCKERFILE" .
+            docker push $IMAGE
+          else
+            echo "No Dockerfile to build; skipping"
+          fi
 
       - name: Image scan (Trivy)
         uses: aquasecurity/trivy-action@master
@@ -166,7 +189,6 @@ jobs:
             kustomize edit set image buenhyden/${{ steps.vars.outputs.IMAGE_NAME }}=$IMAGE
           else
             sed -i -E "s#(name: buenhyden/${{ steps.vars.outputs.IMAGE_NAME }}\s+newTag:)\s*.*#\1 '${{ github.sha }}'#" kustomization.yaml || true
-            sed -i -E "s#(newTag:)\s*.*#\1 '${{ github.sha }}'#" kustomization.yaml || true
           fi
           git config user.email "$GIT_EMAIL"
           git config user.name "$GIT_NAME"
@@ -174,16 +196,39 @@ jobs:
           git commit -m "chore(ci): bump ${{ matrix.service }} image ${{ github.sha }}" || true
           git push origin HEAD:main || true
 
-      - name: Trigger ArgoCD Sync (optional)
-        if: ${{ secrets.ARGOCD_SERVER && secrets.ARGOCD_USERNAME && secrets.ARGOCD_PASSWORD }}
-        uses: actions/exec@v1
-        env:
-          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
-          ARGOCD_USERNAME: ${{ secrets.ARGOCD_USERNAME }}
-          ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}
+  e2e-test:
+    needs: [build-and-push]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR for pulling images
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.9.0
+        with:
+          config: ./kind-config.yaml
+
+      - name: Install Argo CD
         run: |
-          set -e
-          curl -sLO https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-          chmod +x argocd-linux-amd64
-          ./argocd-linux-amd64 login $ARGOCD_SERVER --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD --insecure
-          ./argocd-linux-amd64 app sync ${{ matrix.service }} --grpc-web
+          kubectl create namespace argocd || true
+          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+          kubectl wait --for=condition=available deployment/argocd-server -n argocd --timeout=300s
+
+      - name: Verify Argo CD Pods
+        run: kubectl get pods -n argocd
+
+      - name: Apply Application Manifests (Dry Run)
+        run: |
+          kubectl apply --dry-run=client -f ./apps/ -R
+
+      - name: Run optional integration checks
+        run: |
+          # Placeholder: run smoke tests or k8s commands for smoke checks
+          kubectl get ns

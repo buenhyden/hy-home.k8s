@@ -44,7 +44,7 @@
 - Kustomize overlay: [apps/backend-service-1/overlays/dev/kustomization.yaml](apps/backend-service-1/overlays/dev/kustomization.yaml)
 - Kyverno 정책: [infrastructure/security/kyverno/policies.yaml](infrastructure/security/kyverno/policies.yaml)
 - 추가 예시 및 스크립트: [.github/copilot-additional.md](.github/copilot-additional.md)
-- CI/CD workflow example: [.github/workflows/cicd-image-build-and-deploy.yml](.github/workflows/cicd-image-build-and-deploy.yml)
+- CI/CD workflow example: [.github/workflows/ci-cd-unified.yml](.github/workflows/ci-cd-unified.yml)
 - Kind template: [kind-config.yaml](kind-config.yaml)
 - Credentials guide: [docs/credentials.md](docs/credentials.md)
 
