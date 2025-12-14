@@ -215,6 +215,19 @@ jobs:
         with:
           config: ./kind-config.yaml
 
+      - name: Create GHCR pull secret in Kind cluster
+        run: |
+          # Create regcred secret for GHCR access in default namespace
+          kubectl create secret docker-registry regcred \
+            --docker-server=ghcr.io \
+            --docker-username=${{ github.actor }} \
+            --docker-password=${{ secrets.GHCR_TOKEN }} \
+            --namespace=default || true
+          
+          # Patch default service account to use pull secret
+          kubectl patch serviceaccount default -n default \
+            -p '{"imagePullSecrets": [{"name": "regcred"}]}' || true
+
       - name: Install Argo CD
         run: |
           kubectl create namespace argocd || true
