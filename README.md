@@ -364,10 +364,21 @@ docker exec -it desktop-worker3 ip route add 172.19.0.0/16 via 172.18.0.1
 ### 1. Kind 클러스터 생성
 
 ```bash
-# Kind 설정 파일로 클러스터 생성 (kind-config.yaml 필요)
+# Quick setup script example: create Kind cluster with kind-config.yaml
+cat > kind-config.yaml <<'EOF'
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+  - role: worker
+  - role: worker
+  - role: worker
+EOF
+
+# Create cluster
 kind create cluster --config kind-config.yaml --name desktop
 
-# 클러스터 확인
+# Cluster verification
 kubectl cluster-info --context kind-desktop
 kubectl get nodes
 ```
@@ -398,6 +409,33 @@ chmod +x argocd
 sudo mv argocd /usr/local/bin/argocd
 ```
 
+### 4. Quick setup script (example)
+
+다음은 `kind` 생성, 하이브리드 라우팅, ArgoCD 설치 및 root Application 배포를 한 번에 실행하는 간단한 스크립트 예시입니다. 로컬 환경에 맞게 네트워크 게이트웨이와 노드명을 조정하세요.
+
+```bash
+# Create cluster
+kind create cluster --config kind-config.yaml --name desktop
+
+# Set routing (adjust GATEWAY if different)
+GATEWAY=$(docker network inspect infra_net --format "{{(index .IPAM.Config 0).Gateway}}")
+
+docker exec -it desktop-control-plane ip route add 172.19.0.0/16 via $GATEWAY
+docker exec -it desktop-worker ip route add 172.19.0.0/16 via $GATEWAY
+docker exec -it desktop-worker2 ip route add 172.19.0.0/16 via $GATEWAY
+docker exec -it desktop-worker3 ip route add 172.19.0.0/16 via $GATEWAY
+
+# ArgoCD install
+kubectl create namespace argocd || true
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+# Root application
+kubectl apply -f clusters/docker-desktop/apps.yaml
+
+# Show initial admin password
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
+
 ### 4. ArgoCD 접속
 
 ```bash
@@ -420,6 +458,10 @@ kubectl apply -f clusters/docker-desktop/apps.yaml
 
 # 배포 상태 확인
 kubectl get applications -n argocd
+
+# (참고) Argo Application 실예 및 CI/CD 스크립트: [.github/copilot-additional.md](.github/copilot-additional.md)
+
+# 자격증명 가이드: [docs/credentials.md](docs/credentials.md)
 
 # ArgoCD UI에서 동기화 상태 모니터링
 ```

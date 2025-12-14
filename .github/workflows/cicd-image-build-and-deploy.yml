@@ -1,0 +1,189 @@
+name: CI/CD - Build, Push Image & Update Overlay
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'apps/**'
+      - '.github/workflows/cicd-image-build-and-deploy.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [backend-service-1, backend-service-2, frontend]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Registry (GHCR / Docker)
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Determine service variables
+        id: vars
+        run: |
+          case "${{ matrix.service }}" in
+            backend-service-1)
+              IMAGE_NAME=service-1
+              DOCKERFILE=apps/backend-service-1/Dockerfile
+              OVERLAY_DIR=apps/backend-service-1/overlays/dev
+              ;;
+            backend-service-2)
+              IMAGE_NAME=service-2
+              DOCKERFILE=apps/backend-service-2/Dockerfile
+              OVERLAY_DIR=apps/backend-service-2/overlays/dev
+              ;;
+            frontend)
+              IMAGE_NAME=frontend
+              DOCKERFILE=apps/frontend/Dockerfile
+              OVERLAY_DIR=apps/frontend/overlays/dev
+              ;;
+            *) echo "Unknown service"; exit 1;;
+          esac
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_OUTPUT
+          echo "DOCKERFILE=$DOCKERFILE" >> $GITHUB_OUTPUT
+          echo "OVERLAY_DIR=$OVERLAY_DIR" >> $GITHUB_OUTPUT
+
+      - name: Run unit tests (detect & run)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Checking for tests in apps/${{ matrix.service }}"
+          cd apps/${{ matrix.service }} || { echo "Directory not found"; exit 0; }
+
+          # If Makefile with `test` target
+          if [ -f Makefile ] && grep -q "^test:" Makefile; then
+            echo "Makefile with 'test' target found. Running make test..."
+            make test
+            exit 0
+          fi
+
+          # Node.js tests via package.json
+          if [ -f package.json ] && grep -q '"test"' package.json; then
+            echo "Node project detected; setting up Node and running npm test"
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+            npm ci
+            npm test
+            exit 0
+          fi
+
+          # Python: requirements or pyproject & tests
+          if [ -f pyproject.toml ] || [ -f requirements.txt ] || [ -d tests ]; then
+            echo "Python project detected; setting up Python and running pytest"
+            sudo apt-get update && sudo apt-get install -y python3 python3-venv python3-pip
+            python3 -m pip install --upgrade pip
+            if [ -f requirements.txt ]; then
+              python3 -m pip install -r requirements.txt
+            fi
+            if [ -f pyproject.toml ] && [ -d tests ]; then
+              python3 -m pip install poetry
+              poetry install
+              poetry run pytest
+            elif [ -d tests ]; then
+              python3 -m pip install pytest
+              pytest
+            fi
+            exit 0
+          fi
+
+          # Go
+          if [ -f go.mod ]; then
+            echo "Go project detected; running go test"
+            sudo apt-get update && sudo apt-get install -y golang-go
+            go test ./...
+            exit 0
+          fi
+
+          # Maven/Java
+          if [ -f mvnw ] || [ -f pom.xml ]; then
+            echo "Java/Maven project detected; running mvn test"
+            if [ -f mvnw ]; then
+              ./mvnw -q test
+            else
+              sudo apt-get update && sudo apt-get install -y maven
+              mvn -q test
+            fi
+            exit 0
+          fi
+
+          echo "No test/runtime detected for apps/${{ matrix.service }} — skipping unit tests"
+
+
+      - name: Run lint/static checks (Dockerfile)
+        env:
+          DOCKERFILE: ${{ steps.vars.outputs.DOCKERFILE }}
+        run: |
+          if [ -f "$DOCKERFILE" ]; then
+            echo "Linting Dockerfile for ${{ matrix.service }}"
+            docker run --rm -i hadolint/hadolint < "$DOCKERFILE" || true
+          else
+            echo "No Dockerfile found for ${{ matrix.service }}; skipping lint"
+          fi
+
+      - name: Build and push image
+        env:
+          IMAGE: ghcr.io/${{ github.repository_owner }}/${{ steps.vars.outputs.IMAGE_NAME }}:${{ github.sha }}
+          DOCKERFILE: ${{ steps.vars.outputs.DOCKERFILE }}
+        run: |
+          echo "Building $IMAGE using $DOCKERFILE"
+          docker build -t $IMAGE -f "$DOCKERFILE" . || true
+          docker push $IMAGE || true
+
+      - name: Image scan (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/${{ github.repository_owner }}/${{ steps.vars.outputs.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Update kustomize overlay (dynamic)
+        env:
+          IMAGE: ghcr.io/${{ github.repository_owner }}/${{ steps.vars.outputs.IMAGE_NAME }}:${{ github.sha }}
+          GIT_EMAIL: actions@github.com
+          GIT_NAME: github-actions
+        run: |
+          OVERLAY_DIR=${{ steps.vars.outputs.OVERLAY_DIR }}
+          cd $OVERLAY_DIR
+          if command -v kustomize >/dev/null 2>&1; then
+            kustomize edit set image buenhyden/${{ steps.vars.outputs.IMAGE_NAME }}=$IMAGE
+          else
+            sed -i -E "s#(name: buenhyden/${{ steps.vars.outputs.IMAGE_NAME }}\s+newTag:)\s*.*#\1 '${{ github.sha }}'#" kustomization.yaml || true
+            sed -i -E "s#(newTag:)\s*.*#\1 '${{ github.sha }}'#" kustomization.yaml || true
+          fi
+          git config user.email "$GIT_EMAIL"
+          git config user.name "$GIT_NAME"
+          git add kustomization.yaml || true
+          git commit -m "chore(ci): bump ${{ matrix.service }} image ${{ github.sha }}" || true
+          git push origin HEAD:main || true
+
+      - name: Trigger ArgoCD Sync (optional)
+        if: ${{ secrets.ARGOCD_SERVER && secrets.ARGOCD_USERNAME && secrets.ARGOCD_PASSWORD }}
+        uses: actions/exec@v1
+        env:
+          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
+          ARGOCD_USERNAME: ${{ secrets.ARGOCD_USERNAME }}
+          ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}
+        run: |
+          set -e
+          curl -sLO https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          chmod +x argocd-linux-amd64
+          ./argocd-linux-amd64 login $ARGOCD_SERVER --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD --insecure
+          ./argocd-linux-amd64 app sync ${{ matrix.service }} --grpc-web

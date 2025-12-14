@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: argocd-git-ssh
+  namespace: argocd
+  labels:
+    app.kubernetes.io/managed-by: argocd
+type: Opaque
+data:
+  sshPrivateKey: ENC[AES256_GCM,data:PLACEHOLDER_FOR_SOPS_ENCRYPTED_DATA]
+# Example usage (SOPS must be configured with an appropriate KMS/PGP key in your environment):
+# 1. Create a plain secret locally:
+#    kubectl -n argocd create secret generic argocd-git-ssh --from-file=sshPrivateKey=./id_rsa --dry-run=client -o yaml > argocd-git-ssh-secret.yaml
+# 2. Encrypt with sops:
+#    sops --encrypt --in-place argocd-git-ssh-secret.yaml
+# 3. Commit the encrypted secret to Git. SOPS header will contain the key references.
+# 4. ArgoCD will decrypt when the repository is synced if the cluster has access to the decryption keys.
