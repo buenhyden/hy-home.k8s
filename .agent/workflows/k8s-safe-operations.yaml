@@ -1,0 +1,61 @@
+name: Safe Kubernetes Operations
+description: >
+  Perform routine Kubernetes operations such as scaling, restarting, or rolling
+  back workloads in a controlled, auditable way.
+
+triggers:
+  - user_request: "scale deployment"
+  - user_request: "restart pods safely"
+  - user_request: "rollback last deployment"
+
+assumptions:
+  - The user is operating on a non-production or production namespace with
+    appropriate permissions.
+  - Manifests or charts exist and can be updated in version control.
+
+steps:
+  - name: Select context, namespace, and workload
+    action: choose_context
+    description: >
+      Ask the user to select context, namespace, and the specific workload
+      (Deployment, StatefulSet, etc.) to operate on. [web:94]
+
+  - name: Show current state
+    action: shell_command
+    command_template: >
+      kubectl --context {{ context }} --namespace {{ namespace }} get {{
+      resource_type }} {{ resource_name }} -o yaml
+    notes: >
+      Present key fields such as replicas, image tags, and resource requests and
+      limits. [web:78][web:77]
+
+  - name: Plan operation
+    action: decide_strategy
+    description: >
+      Determine whether the requested action is:
+        - Scaling replicas up or down.
+        - Restarting pods via rollout restart.
+        - Rolling back to a previous ReplicaSet or revision.
+
+  - name: Update configuration in code
+    action: modify_manifests
+    description: >
+      Update the appropriate manifest, Helm values file, or overlay so that the
+      change is captured in version control instead of only applying imperative
+      commands.
+
+  - name: Apply change
+    action: shell_command
+    command_template: >
+      kubectl --context {{ context }} --namespace {{ namespace }} apply -f {{
+      manifest_path }}
+    notes: >
+      For rollbacks, consider `kubectl rollout undo` where appropriate and
+      document the revision.
+
+  - name: Verify and document
+    action: summarize
+    description: >
+      Verify the effect of the change using rollout status and current resource
+      state, and summarize what changed, how to revert it, and where it is
+      defined in the repository.

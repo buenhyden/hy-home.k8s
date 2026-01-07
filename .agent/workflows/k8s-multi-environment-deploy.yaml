@@ -1,0 +1,65 @@
+name: Multi-environment Kubernetes Deployment
+description: >
+  Use a single source of manifests or charts with per-environment configuration
+  (values or overlays) to deploy consistently to dev, staging, and production.
+
+triggers:
+  - user_request: "setup multi-environment k8s"
+  - user_request: "deploy to dev/staging/prod"
+  - user_request: "promote from staging to prod"
+
+assumptions:
+  - The repository uses Helm values files or Kustomize overlays per environment.
+    [web:82][web:85]
+  - The same image builds can be reused across environments. [web:88]
+
+steps:
+  - name: Detect environment structure
+    action: analyze_repository
+    description: >
+      Look for environment-specific files such as `values-dev.yaml`,
+      `values-staging.yaml`, `values-prod.yaml`, or Kustomize overlays like
+      `overlays/dev`, `overlays/staging`, `overlays/prod`.
+
+  - name: Choose source environment
+    action: choose_environment
+    description: >
+      Ask the user which environment to deploy to (for example, dev, staging,
+      prod) and map that to the appropriate values file or overlay.
+
+  - name: Select context and namespace
+    action: choose_context
+    description: >
+      Map each environment to the correct Kubernetes context and namespace,
+      prompting the user to confirm the mapping. [web:94][web:85]
+
+  - name: Render environment-specific manifests
+    action: render_config
+    description: >
+      Render manifests using Helm or Kustomize for the selected environment so
+      that they can be diffed against the current cluster state if desired.
+
+  - name: Apply configuration
+    action: shell_command
+    command_template: >
+      kubectl --context {{ context }} --namespace {{ namespace }} apply -f {{
+      rendered_path }}
+    notes: >
+      For Helm, use `helm upgrade --install {{ release }} {{ chart_dir }} -f {{
+      values_file }}`.
+
+  - name: Validate environment
+    action: shell_command
+    command_template: >
+      kubectl --context {{ context }} --namespace {{ namespace }} get
+      pods,deploy,svc
+    notes: >
+      Optionally perform smoke tests or health checks exposed via HTTP
+      endpoints.
+
+  - name: Document promotion path
+    action: summarize
+    description: >
+      Explain how to promote changes from one environment to another by reusing
+      the same chart or manifests with different values or overlays, following
+      the "build once, deploy many" approach. [web:88]

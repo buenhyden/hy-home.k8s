@@ -1,0 +1,58 @@
+name: Troubleshoot Kubernetes Workload
+description: >
+  Investigate issues with a Kubernetes deployment, statefulset, or pod by
+  gathering logs, events, and resource status without assuming fixed paths.
+
+triggers:
+  - user_request: "debug k8s deployment"
+  - user_request: "troubleshoot pods"
+  - user_request: "why is my service not working"
+
+assumptions:
+  - The user has access to the relevant kubeconfig context and namespace. [web:95]
+
+steps:
+  - name: Select context and namespace
+    action: choose_context
+    description: >
+      Ask the user for the target context and namespace, or present available
+      options for selection.
+
+  - name: Identify target workload
+    action: discover_resources
+    description: >
+      List Deployments, StatefulSets, DaemonSets, and Pods in the namespace and
+      ask which resource is failing or misbehaving.
+
+  - name: Inspect resource status
+    action: shell_command
+    command_template: >
+      kubectl --context {{ context }} --namespace {{ namespace }} describe {{ resource_type }}/{{ resource_name }}
+    notes: >
+      Focus on recent events, conditions, and status fields to identify issues.
+
+  - name: Collect pod logs
+    action: shell_command
+    command_template: >
+      kubectl --context {{ context }} --namespace {{ namespace }} logs {{ pod_name }} --all-containers=true --tail=200
+    notes: >
+      Capture logs from all containers and highlight common error patterns.
+
+  - name: Check readiness and liveness
+    action: analyze_probes
+    description: >
+      Review pod probe configurations and determine whether misconfigured
+      readiness or liveness checks are causing restarts or failed rollouts. [web:77][web:76]
+
+  - name: Analyze configuration
+    action: analyze_manifests
+    description: >
+      Locate the manifests or chart templates that define the target resource
+      in the repository, and compare them to the live configuration.
+
+  - name: Provide remediation plan
+    action: summarize
+    description: >
+      Offer a step-by-step remediation plan, including any manifest changes,
+      suggested resource adjustments, and commands for re-deploying and
+      verifying the fix.
