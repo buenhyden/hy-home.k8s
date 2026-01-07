@@ -18,7 +18,7 @@ steps:
     action: choose_context
     description: >
       Ask the user to select context, namespace, and the specific workload
-      (Deployment, StatefulSet, etc.) to operate on. [web:94]
+      (Deployment, StatefulSet, etc.) to operate on. 
 
   - name: Show current state
     action: shell_command
@@ -27,7 +27,7 @@ steps:
       resource_type }} {{ resource_name }} -o yaml
     notes: >
       Present key fields such as replicas, image tags, and resource requests and
-      limits. [web:78][web:77]
+      limits.
 
   - name: Plan operation
     action: decide_strategy

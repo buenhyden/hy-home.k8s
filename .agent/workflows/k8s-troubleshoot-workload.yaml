@@ -9,7 +9,7 @@ triggers:
   - user_request: "why is my service not working"
 
 assumptions:
-  - The user has access to the relevant kubeconfig context and namespace. [web:95]
+  - The user has access to the relevant kubeconfig context and namespace. 
 
 steps:
   - name: Select context and namespace
@@ -42,7 +42,7 @@ steps:
     action: analyze_probes
     description: >
       Review pod probe configurations and determine whether misconfigured
-      readiness or liveness checks are causing restarts or failed rollouts. [web:77][web:76]
+      readiness or liveness checks are causing restarts or failed rollouts. 
 
   - name: Analyze configuration
     action: analyze_manifests

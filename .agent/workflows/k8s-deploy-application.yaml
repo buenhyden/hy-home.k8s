@@ -10,7 +10,7 @@ triggers:
   - user_request: "roll out to dev/staging/prod"
 
 assumptions:
-  - The user has at least one kubeconfig context configured. [web:94]
+  - The user has at least one kubeconfig context configured. 
   - The repository contains or will contain Kubernetes manifests or Helm/Kustomize configuration.
 
 steps:
@@ -26,13 +26,13 @@ steps:
     description: >
       Prompt the user to select an environment (for example, dev, staging, prod)
       and namespace. Suggest sensible defaults like `dev` for non-critical
-      deployments. [web:85][web:91]
+      deployments. 
 
   - name: Select kubeconfig context
     action: choose_context
     description: >
       List available kubeconfig contexts and ask the user to choose the target
-      context for deployment. Do not rely on implicit current context. [web:94]
+      context for deployment. Do not rely on implicit current context. 
 
   - name: Plan deployment method
     action: decide_strategy

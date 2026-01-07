@@ -9,9 +9,8 @@ triggers:
   - user_request: "promote from staging to prod"
 
 assumptions:
-  - The repository uses Helm values files or Kustomize overlays per environment.
-    [web:82][web:85]
-  - The same image builds can be reused across environments. [web:88]
+  - The repository uses Helm values files or Kustomize overlays per environment.    
+  - The same image builds can be reused across environments. 
 
 steps:
   - name: Detect environment structure
@@ -31,7 +30,7 @@ steps:
     action: choose_context
     description: >
       Map each environment to the correct Kubernetes context and namespace,
-      prompting the user to confirm the mapping. [web:94][web:85]
+      prompting the user to confirm the mapping. 
 
   - name: Render environment-specific manifests
     action: render_config
@@ -62,4 +61,4 @@ steps:
     description: >
       Explain how to promote changes from one environment to another by reusing
       the same chart or manifests with different values or overlays, following
-      the "build once, deploy many" approach. [web:88]
+      the "build once, deploy many" approach. 
