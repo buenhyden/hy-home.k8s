@@ -10,7 +10,7 @@ resources:
 helmCharts:
   - name: airflow
     repo: https://airflow.apache.org
-    version: 1.15.0 # 2025-11-10 기준 최신 차트 가정
+    version: 1.18.0 # 2025-11-10 기준 최신 차트 가정
     releaseName: airflow
     namespace: airflow
     valuesFile: values.yaml
