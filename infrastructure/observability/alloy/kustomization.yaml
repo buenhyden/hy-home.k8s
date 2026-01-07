@@ -6,7 +6,7 @@ namespace: observability
 helmCharts:
   - name: alloy
     repo: https://grafana.github.io/helm-charts
-    version: 0.9.0 # 2025-11-10 기준 최신 버전 가정
+    version: 0.12.6 # 2025-11-10 기준 최신 버전 가정
     releaseName: alloy
     namespace: observability
     valuesFile: values.yaml
