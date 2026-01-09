@@ -6,4 +6,5 @@ hosts.txt
 Setting_Database.txt
 Certs/
 .env
-
+.mypy_cache/
+__pycache__
