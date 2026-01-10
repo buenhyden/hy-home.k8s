@@ -6,7 +6,7 @@ namespace: istio-system
 helmCharts:
   - name: gateway
     repo: https://istio-release.storage.googleapis.com/charts
-    version: 1.24.0
+    version: 1.28.2
     releaseName: istio-ingressgateway
     namespace: istio-system
     valuesFile: values.yaml

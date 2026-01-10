@@ -9,7 +9,7 @@ resources:
 helmCharts:
   - name: base
     repo: https://istio-release.storage.googleapis.com/charts
-    version: 1.24.0 # 2025-11-10 기준 LTS 가정
+    version: 1.28.2 # 2025-11-10 기준 LTS 가정
     releaseName: istio-base
     namespace: istio-system
     includeCRDs: true
