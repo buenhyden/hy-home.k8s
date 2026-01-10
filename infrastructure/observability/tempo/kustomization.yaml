@@ -6,7 +6,7 @@ namespace: observability
 helmCharts:
   - name: tempo
     repo: https://grafana.github.io/helm-charts
-    version: 1.12.0
+    version: 1.24.1
     releaseName: tempo
     namespace: observability
     valuesFile: values.yaml
