@@ -4,7 +4,7 @@ k8s/.env
 Docker/Projects/**/.ssh
 hosts.txt
 Setting_Database.txt
-Certs/
+certs/
 .env
 .mypy_cache/
 __pycache__

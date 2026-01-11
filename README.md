@@ -193,7 +193,7 @@ hy-home.k8s/
 │   └── workflow/                   # 워크플로우
 │       └── airflow/                # Apache Airflow
 │
-├── Certs/                          # TLS 인증서
+├── certs/                          # TLS 인증서
 ├── .env                            # 환경 변수
 └── README.md                       # 이 문서
 ```
