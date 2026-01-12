@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespaces.yaml
+  - controllers-app.yaml
+  - observability-app.yaml
+  - security-app.yaml
+  - external-services-app.yaml
+  - workflow-app.yaml

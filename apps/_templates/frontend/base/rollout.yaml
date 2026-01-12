@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: APP_NAME
+spec:
+  replicas: REPLICA_COUNT
+  selector:
+    matchLabels:
+      app: APP_NAME
+  strategy:
+    canary:
+      trafficRouting:
+        istio:
+          virtualService:
+            name: APP_NAME-vs
+            routes:
+              - primary
+      steps:
+        - setWeight: 25
+        - pause: { duration: 30s }
+        - setWeight: 50
+        - pause: { duration: 30s }
+  template:
+    metadata:
+      labels:
+        app: APP_NAME
+      annotations:
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+        - name: app
+          image: REGISTRY/IMAGE_NAME:TAG
+          ports:
+            - containerPort: APP_PORT
+              name: http
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+              readOnly: true
+          resources:
+            requests:
+              cpu: CPU_REQUEST
+              memory: MEMORY_REQUEST
+            limits:
+              cpu: CPU_LIMIT
+              memory: MEMORY_LIMIT
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf

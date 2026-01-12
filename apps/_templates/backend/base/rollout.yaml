@@ -1,0 +1,74 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: APP_NAME
+spec:
+  replicas: REPLICA_COUNT
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: APP_NAME
+  strategy:
+    canary:
+      # Istio integration for precise traffic control
+      trafficRouting:
+        istio:
+          virtualService:
+            name: APP_NAME-vs
+            routes:
+              - primary # Route name in VirtualService
+      steps:
+        - setWeight: 20
+        - pause: { duration: 30s } # Validate with 20% traffic for 30s
+        - setWeight: 50
+        - pause: { duration: 30s }
+  template:
+    metadata:
+      labels:
+        app: APP_NAME
+      annotations:
+        sidecar.istio.io/inject: "true" # Istio Proxy injection
+    spec:
+      serviceAccountName: default
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+        - name: app
+          image: REGISTRY/IMAGE_NAME:TAG # Managed by Argo CD Image Updater
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: APP_PORT
+              name: http
+          env:
+            - name: DB_HOST
+              value: "postgres-external" # Headless Service connection
+            - name: DB_PORT
+              value: "15432"
+          envFrom:
+            - secretRef:
+                name: APP_NAME-secrets # Create this secret for your app
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 2
+          resources:
+            requests:
+              cpu: CPU_REQUEST
+              memory: MEMORY_REQUEST
+            limits:
+              cpu: CPU_LIMIT
+              memory: MEMORY_LIMIT

@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: external-services
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/buenhyden/hy-home.k8s.git
+    targetRevision: main
+    path: infrastructure/external-services
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
