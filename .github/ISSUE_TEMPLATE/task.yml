@@ -5,14 +5,14 @@ description:
 title: "[Task]: "
 labels: ["task", "triage"]
 body:
-  # [설명/Description] : Markdown 인사말
+  # Markdown 인사말
   - type: markdown
     attributes:
       value: |
         작업을 생성해주셔서 감사합니다! (Thank you for creating a task!)
         작업의 목표와 범위를 명확히 해주세요. (Clarify the goal and scope of the task.)
 
-  # [설명/Description] : 작업 내용
+  # 작업 내용
   - type: textarea
     id: description
     attributes:
@@ -26,7 +26,7 @@ body:
     validations:
       required: true
 
-  # [설명/Description] : 할 일 목록
+  # 할 일 목록
   - type: textarea
     id: todos
     attributes:
@@ -40,7 +40,7 @@ body:
     validations:
       required: true
 
-  # [설명/Description] : 추가 정보
+  # 추가 정보
   - type: textarea
     id: context
     attributes:

@@ -1,4 +1,8 @@
 {
   "default": true,
-  "ignores": [".agent/workflows/**", ".agent/rules/**", ".history/**", "docs/_sidebar.md", "CHANGELOG.md"]
+  "ignores": [".agent/workflows/**", ".agent/rules/**", ".history/**", "docs/_sidebar.md", "CHANGELOG.md"],
+  "MD013": false,
+  "MD024": {
+    "siblings_only": true
+  }
 }

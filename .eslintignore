@@ -8,3 +8,8 @@ certs/
 *.env
 *.key
 *.pem
+.idea/
+.vscode/
+.DS_Store
+coverage/
+.codebase/

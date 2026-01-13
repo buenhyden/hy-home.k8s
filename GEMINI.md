@@ -10,6 +10,13 @@ Guidelines for interacting with Gemini in the context of `hy-home.k8s`.
 
 ## Instructions for Gemini
 
+### Workflow Usage
+
+- **Standard Procedures**: Before starting a task, check `.agent/workflows/` for relevant workflows (e.g., `/workflow-git-commit`, `/workflow-k8s-deployment`).
+- **Task Tracking**: Use `task_boundary` and maintain `task.md` to keep track of complex multi-step objectives.
+
+### Core Guidelines
+
 - **Code Reasoning**: Leverage Gemini's reasoning capabilities for complex infrastructure logic and networking configurations.
 - **Multimodal Context**: Use Gemini to analyze architecture diagrams (Mermaid) and provide feedback.
 - **Documentation Quality**: Ensure that generated documentation is as detailed and accurate as the existing READMEs in the project.

@@ -2,14 +2,11 @@
 
 ## 🔍 개요 (Overview)
 <!--
-[설명/Description]
 이 변경사항의 목적과 배경을 설명해주세요. (Please explain the purpose and context of this change.)
-[가이드/Guide]
 - 문제 해결: 어떤 문제를 해결했나요? (Problem Solving: What problem did you solve?)
 - 기능 추가: 어떤 기능이 추가되었나요? (Feature Addition: What feature was added?)
 - 관련 이슈: 관련된 이슈 번호를 링크해주세요. (Related Issues: Link related issue numbers.)
 -->
-<!-- [예시/Example] : Fixes #123. 사용자가 로그인할 수 없는 문제를 해결합니다. -->
 
 ## 🛠️ 변경사항 (Changes)
 <!--

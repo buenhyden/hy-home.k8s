@@ -5,14 +5,14 @@ description:
 title: "[Bug]: "
 labels: ["bug", "triage"]
 body:
-  # [설명/Description] : Markdown 블록을 사용하여 사용자에게 인사말이나 안내를 표시합니다.
+  # Markdown 블록을 사용하여 사용자에게 인사말이나 안내를 표시합니다.
   - type: markdown
     attributes:
       value: |
         이슈를 작성해주셔서 감사합니다! (Thank you for creating an issue!)
         가능한 상세하게 정보를 제공해주시면 빠른 해결에 도움이 됩니다. (Providing as much detail as possible helps in quick resolution.)
 
-  # [설명/Description] : 버그의 핵심 내용을 입력받는 텍스트 영역입니다.
+  # 버그의 핵심 내용을 입력받는 텍스트 영역입니다.
   - type: textarea
     id: description
     attributes:
@@ -20,14 +20,13 @@ body:
       description:
         버그가 무엇이고 어떻게 발생하는지 명확하고 간결하게 설명해주세요. (Clear
         and concise description of what the bug is.)
-      # [예시/Example] : "로그인 버튼 클릭 시 반응 없음."
       placeholder:
         로그인 화면에서 '확인' 버튼을 클릭했을 때 반응이 없습니다. (No response
         when clicking 'OK' on login screen.)
     validations:
       required: true
 
-  # [설명/Description] : 재현 단계를 상세히 적도록 유도합니다.
+  # 재현 단계를 상세히 적도록 유도합니다.
   - type: textarea
     id: repro
     attributes:
@@ -35,7 +34,7 @@ body:
       description:
         버그를 재현하기 위한 단계를 순서대로 작성해주세요. (Steps to reproduce
         the behavior.)
-      # [예시/Example] : 번호를 매겨 순서대로 작성
+      # 번호를 매겨 순서대로 작성
       placeholder: |
         1. '...' 페이지로 이동 (Go to '...')
         2. '...' 클릭 (Click '...')
@@ -57,7 +56,7 @@ body:
     validations:
       required: true
 
-  # [설명/Description] : 환경 정보는 디버깅에 필수적입니다.
+  # 환경 정보는 디버깅에 필수적입니다.
   - type: textarea
     id: environment
     attributes:
@@ -65,7 +64,6 @@ body:
       description:
         버그가 발생한 환경 정보를 입력해주세요. (Enter the environment info
         where the bug occurred.)
-      # [옵션/Option] : 프로젝트 성격에 따라 필요한 환경 정보를 수정하세요.
       value: |
         - Kubernetes Version: [e.g. v1.31.2]
         - Kind Version: [e.g. v0.25.0]

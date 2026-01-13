@@ -1,7 +1,6 @@
 # 행동 강령 (Code of Conduct)
 
 <!--
-[설명/Description]
 커뮤니티 내에서 허용되는 행동과 허용되지 않는 행동을 정의하여 건강한 커뮤니티를 유지합니다.
 (Defines acceptable and unacceptable behaviors to maintain a healthy community.)
 -->

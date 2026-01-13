@@ -14,6 +14,7 @@ This project leverages AI agents to assist in development and maintenance.
 
 - **Role**: Specialized assistants for code review, logic optimization, and documentation.
 - **Instruction Files**: See `CLAUDE.md` and `GEMINI.md` for specific instructions.
+- **Workflows**: Familiarize yourself with the workflows in `.agent/workflows/` to execute standard tasks reliably.
 
 ## Agent Guidelines
 

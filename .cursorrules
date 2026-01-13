@@ -3,6 +3,7 @@
 This project is a GitOps-based Kubernetes infrastructure platform.
 
 ## Preferred Tech Stack
+
 - Kubernetes (Kind for local development)
 - GitOps: ArgoCD, Helm
 - Service Mesh: Istio
@@ -12,6 +13,7 @@ This project is a GitOps-based Kubernetes infrastructure platform.
 - Languages: YAML, Python, Markdown
 
 ## Architecture Principles
+
 1. **Everything as Code**: All infrastructure and applications must be defined in manifest files or Helm charts.
 2. **GitOps Workflow**: Changes are applied via Git commits to the `main` branch, synchronized by ArgoCD.
 3. **Local First**: Ensure the platform can be initialized locally using Kind scripts in `bootstrap/`.
@@ -19,10 +21,14 @@ This project is a GitOps-based Kubernetes infrastructure platform.
 5. **Security by Default**: Use Sealed Secrets for sensitive data and Kyverno for policy enforcement.
 
 ## Coding Standards
+
 - **YAML**: Follow standard indentation (2 spaces). Use clear and descriptive names for resources.
 - **Python**: Use type hints. Follow PEP 8.
 - **Documentation**: README files should be present in every major directory, following the project template.
 
 ## Agent Specifics
+
+- **Guidance**: Refer to `AGENTS.md` for role definitions and best practices.
+- **Workflows**: Use the workflows defined in `.agent/workflows/` for common tasks (e.g., `git-commit`, `pr-review`).
 - Use the provided issue and pull request templates for tracking changes.
 - Disclose AI tool usage in pull requests.

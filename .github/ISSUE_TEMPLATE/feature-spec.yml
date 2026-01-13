@@ -5,14 +5,14 @@ description:
 title: "[Feat]: "
 labels: ["enhancement", "triage"]
 body:
-  # [설명/Description] : Markdown 인사말
+  # Markdown 인사말
   - type: markdown
     attributes:
       value: |
         새로운 아이디어를 제안해주셔서 감사합니다! (Thank you for suggesting a new idea!)
         이 제안이 어떻게 프로젝트에 도움이 될지 자세히 설명해주세요. (Please explain in detail how this proposal will help the project.)
 
-  # [설명/Description] : 기능의 목적
+  # 기능의 목적
   - type: textarea
     id: problem
     attributes:
@@ -21,14 +21,13 @@ body:
       description:
         이 기능이 필요한 이유나 배경을 설명해주세요. (Explain the reason or
         context for this feature.)
-      # [예시/Example] : "현재 ... 기능이 없어서 불편합니다."
       placeholder:
         현재 클러스터 오토스케일링 설정이 없어서 부하 대응이 어렵습니다.
         (Currently difficult to handle load without cluster autoscaling.)
     validations:
       required: true
 
-  # [설명/Description] : 제안하는 해결책
+  # 제안하는 해결책
   - type: textarea
     id: solution
     attributes:
@@ -43,7 +42,7 @@ body:
     validations:
       required: true
 
-  # [설명/Description] : 대안
+  # 대안
   - type: textarea
     id: alternatives
     attributes:
@@ -54,7 +53,7 @@ body:
     validations:
       required: false
 
-  # [설명/Description] : 추가 정보
+  # 추가 정보
   - type: textarea
     id: context
     attributes:

@@ -1,12 +1,10 @@
 # hy-home.k8s - GitOps Infrastructure Platform
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
-[![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=flat&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
-[![ArgoCD](https://img.shields.io/badge/argo-%23E76722.svg?style=flat&logo=argo&logoColor=white)](https://argoproj.github.io/argo-cd/)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=flat&logo=kubernetes&logoColor=white)
+![ArgoCD](https://img.shields.io/badge/argocd-%23eb5b3e.svg?style=flat&logo=argo&logoColor=white)
 
-**GitOps-based Kubernetes infrastructure** using ArgoCD for declarative deployment
-of applications and platform services on Kind (Kubernetes in Docker).
+**GitOps-based Kubernetes infrastructure** using ArgoCD for declarative deployment of applications and platform services on Kind (Kubernetes in Docker).
 
 ## 🚀 Quick Start (15 Minutes)
 
@@ -34,6 +32,7 @@ cd bootstrap && chmod +x *.sh && ./cluster-setup.sh
 - [Architecture](#architecture)
 - [Directory Structure](#directory-structure)
 - [Key Components](#key-components)
+- [🤖 AI & Automation](#-ai--automation)
 - [Prerequisites](#prerequisites)
 - [Documentation](#documentation)
 
@@ -68,7 +67,7 @@ cd bootstrap && chmod +x *.sh && ./cluster-setup.sh
 
 ## Architecture
 
-```text
+```
 ┌─────────────────────────────────────────────────────────────┐
 │  Git Repository (Source of Truth)                          │
 │  github.com/buenhyden/hy-home.k8s                          │
@@ -96,10 +95,8 @@ cd bootstrap && chmod +x *.sh && ./cluster-setup.sh
 
 ## Directory Structure
 
-```text
+```
 hy-home.k8s/
-├── .cursorrules           # AI coding rules
-├── AGENTS.md              # AI interaction guidelines
 ├── apps/                   # Application workloads
 │   ├── _templates/        # Templates for new apps (✅ Use these)
 │   │   ├── backend/
@@ -168,6 +165,14 @@ hy-home.k8s/
 
 **Full List**: [docs/reference/infrastructure-tools.md](docs/reference/infrastructure-tools.md)
 
+## 🤖 AI & Automation
+
+This project is built with an "AI-First" mindset, leveraging multiple agents for development, documentation, and maintenance.
+
+- **Agents**: See [AGENTS.md](AGENTS.md) for available agents and their roles.
+- **Workflows**: Standard operational procedures are defined in `.agent/workflows/` and can be executed by agents.
+- **Context**: Agents use `task.md` and `implementation_plan.md` to maintain context across sessions.
+
 ## Prerequisites
 
 - **Docker Desktop** (Windows/Mac) or Docker Engine (Linux)
@@ -182,18 +187,18 @@ hy-home.k8s/
 ### 📘 Essential Guides
 
 | Guide | Description |
-| ------- | ------------- |
-| [Getting Started](docs/guides/getting-started.md) | Complete 15-minute setup walkthrough |
-| [Adding Applications](docs/guides/adding-applications.md) | Deploy your first app with GitOps |
-| [Troubleshooting](docs/guides/troubleshooting.md) | Common issues and solutions |
-| [Credentials](docs/guides/credentials.md) | Managing secrets and credentials |
+|-------|-------------|
+| [Getting Started](docs/guides/getting-started.md)     | Complete 15-minute setup walkthrough |
+| [Adding Applications](docs/guides/adding-applications.md) | Deploy your first app with GitOps    |
+| [Troubleshooting](docs/guides/troubleshooting.md)     | Common issues and solutions          |
+| [Credentials](docs/guides/credentials.md)         | Managing secrets and credentials    |
 
 ### 📚 Reference Documentation
 
 | Doc | Description |
-| --- | ------------- |
-| [Architecture Overview](docs/architecture/overview.md) | System design, components, workflows |
-| [Directory Structure](docs/reference/directory-structure.md) | Complete folder layout explained |
+|-----|-------------|
+| [Architecture Overview](docs/architecture/overview.md)    | System design, components, workflows    |
+| [Directory Structure](docs/reference/directory-structure.md) | Complete folder layout explained     |
 | [Infrastructure Tools](docs/reference/infrastructure-tools.md) | Component versions and configurations |
 
 ### 📖 Full Documentation
@@ -255,8 +260,7 @@ kubectl get pods -A
 - **Container Orchestration**: Kubernetes via Kind
 - **GitOps**: ArgoCD, Argo Rollouts, Argo Image Updater
 - **Service Mesh**: Istio v1.24.0
-- **Observability**: Prometheus Stack v66.7.1, Loki v6.18.0, Tempo v1.12.0, Grafana,
-  Alloy v0.9.0
+- **Observability**: Prometheus Stack v66.7.1, Loki v6.18.0, Tempo v1.12.0, Grafana, Alloy v0.9.0
 - **Security**: Kyverno v3.2.0, Cert-Manager v1.16.0, Sealed Secrets
 - **Networking**: MetalLB
 - **Workflow**: Apache Airflow v1.15.0
@@ -278,17 +282,10 @@ This repository follows GitOps best practices:
 - **Documentation**: [docs/](docs/)
 - **Getting Help**: See [Troubleshooting Guide](docs/guides/troubleshooting.md)
 
-## 🤖 AI Agents Policy
-
-This project utilizes AI agents (Antigravity, Claude, Gemini) to assist with
-development and documentation.
-Please refer to [AGENTS.md](AGENTS.md) to understand their roles and guidelines.
-
 ## License
 
-Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-**Next Steps**: Start with [docs/guides/getting-started.md](docs/guides/getting-started.md)
-for complete setup instructions.
+**Next Steps**: Start with [docs/guides/getting-started.md](docs/guides/getting-started.md) for complete setup instructions.
