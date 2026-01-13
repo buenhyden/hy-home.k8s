@@ -17,11 +17,11 @@
 
 ### 2. 가이드 및 정책 (Guides & Policies)
 
-- **CONTRIBUTING.md**: 프로젝트 기여 가이드라인. Tech Stack 선택 및 AI 도구 사용 정책 포함. (Contribution guidelines including Tech Stack selection & AI policy.)
+- **CONTRIBUTING.md**: 프로젝트 기여 가이드라인. 인프라 도구 선택 및 AI 도구 사용 정책 포함. (Contribution guidelines including Infra tools selection & AI policy.)
 - **CODEOWNERS**: 코드 소유권 및 리뷰어 자동 할당 설정. (Code ownership & auto-assignment of reviewers.)
 - **SECURITY.md**: 보안 정책 및 취약점 신고 방법. (Security policy & vulnerability reporting.)
 - **SUPPORT.md**: 지원 및 문의 채널 안내. (Support channels.)
-- **dependabot.yml**: 의존성 자동 업데이트 설정. (Dependency auto-update config.)
+- **dependabot.yml**: 의존성 자동 업데이트 설정 (GitHub Actions, pip 등). (Dependency auto-update config for Actions, pip, etc.)
 
 ### 3. 워크플로우 (Workflows) - `workflows/`
 
@@ -41,4 +41,4 @@
    - 프로젝트 언어/프레임워크에 맞는 Job의 주석을 해제하세요.
 
 4. **dependabot.yml** 확인:
-   - 사용하는 패키지 매니저(npm, pip, cargo 등)가 올바르게 설정되었는지 확인하세요.
+   - 사용하는 패키지 매니저(github-actions, pip 등)가 올바르게 설정되었는지 확인하세요.

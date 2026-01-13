@@ -1,3 +1,5 @@
+# Pull Request
+
 ## 🔍 개요 (Overview)
 <!--
 [설명/Description]
@@ -32,12 +34,10 @@ UI 변경이 있다면 스크린샷이나 GIF를 첨부해주세요. (Please att
 [설명/Description]
 PR 제출 전 확인해야 할 필수 항목들입니다. (Essential items to check before submitting PR.)
 -->
-- [ ] 코드가 프로젝트의 코딩 스타일을 준수함 (Adheres to project coding style)
+- [ ] 코드가 프로젝트의 GitOps 표준을 준수함 (Adheres to project GitOps standards)
 - [ ] 스스로 코드를 검토함 (Self-reviewed the code)
-- [ ] 주석을 추가하거나 업데이트함 (Added or updated comments)
-- [ ] 변경사항에 대한 테스트를 작성함 (Added tests for changes)
-- [ ] 모든 테스트가 통과함 (All tests passed)
-- [ ] 문서(README 등)를 업데이트함 (Updated documentation)
+- [ ] 문서(README, Docs)를 업데이트함 (Updated documentation)
+- [ ] 변경된 매니페스트에 대한 검증을 수행함 (Validated modified manifests)
 
 ## 🤖 AI 도구 사용 (AI Tools Usage - 2025 Q4)
 <!--
@@ -48,10 +48,8 @@ AI 도구 사용 여부를 투명하게 공개해주세요. (Please transparentl
 -->
 - [ ] AI 도구를 사용하지 않음 (Did not use AI tools)
 - [ ] AI 도구 사용함 (Used AI tools):
-  - [ ] Antigravity (Recommended)
-  - [ ] Cursor
+  - [x] Antigravity (Recommended)
   - [ ] GitHub Copilot
-  - [ ] OpenCode
   - [ ] 기타 (Other): __________________
 
 **참고 (Note):** AI 생성 코드는 반드시 검증되어야 합니다. (AI-generated code must be verified.)

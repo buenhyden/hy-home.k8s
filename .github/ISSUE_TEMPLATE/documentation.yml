@@ -22,11 +22,11 @@ body:
       # [옵션/Options]: 프로젝트에 맞게 옵션을 수정하세요.
       options:
         - README.md
-        - API 문서 (API Documentation)
-        - 가이드/튜토리얼 (Guide/Tutorial)
+        - Getting Started Guide
+        - Architecture Documentation
+        - Infrastructure Tools (Helm Charts/Manifests)
         - CONTRIBUTING.md
-        - 기술 사양서 (Technical Specification)
-        - 주석/인라인 문서 (Comments/Inline Docs)
+        - API/Service Mesh Docs
         - 기타 (Other)
     validations:
       required: true

@@ -26,11 +26,10 @@ updates:
   #   open-pull-requests-limit: 10
   #   reviewers:
   #     - "buenhyden"
-
   # pip (Python)
-  # - package-ecosystem: "pip"
-  #   directory: "/"
-  #   schedule:
-  #     interval: "weekly"
-  #   reviewers:
-  #     - "buenhyden"
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # reviewers:
+    #   - "buenhyden"

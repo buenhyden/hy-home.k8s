@@ -21,8 +21,8 @@ body:
         수행해야 할 작업의 내용을 간략하게 설명해주세요. (Briefly describe the
         task to be performed.)
       placeholder:
-        데이터베이스 스키마 마이그레이션 스크립트를 작성해야 합니다. (Need to
-        write DB schema migration scripts.)
+        ArgoCD ApplicationSet 리소스를 업데이트해야 합니다. (Need to update
+        ArgoCD ApplicationSet resources.)
     validations:
       required: true
 
@@ -35,8 +35,8 @@ body:
         구체적인 작업 항목을 체크리스트로 작성해주세요. (Write specific items as
         a checklist.)
       placeholder: |
-        - [ ] 사용자 테이블 스키마 변경 (User table schema change)
-        - [ ] 데이터 마이그레이션 테스트 (Data migration test)
+        - [ ] ApplicationSet 매니페스트 수정 (Modify ApplicationSet manifest)
+        - [ ] 변경된 설정 테스트 (Test modified configuration)
     validations:
       required: true
 

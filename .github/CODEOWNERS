@@ -3,11 +3,19 @@
 
 # Global Owner
 # 모든 파일에 대한 기본 소유자 (Default owner for all files)
-*       @buenhyden
+*               @buenhyden
 
-# Backend
-/agent/rules/200-Backend/    @buenhyden
-/infra/                      @buenhyden
+# Applications
+/apps/          @buenhyden
 
-# Frontend
-/agent/rules/100-Frontend/   @buenhyden
+# Infrastructure
+/infrastructure/ @buenhyden
+/clusters/      @buenhyden
+/bootstrap/     @buenhyden
+
+# Documentation
+/docs/          @buenhyden
+/README.md      @buenhyden
+
+# GitHub Settings
+/.github/       @buenhyden

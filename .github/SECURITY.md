@@ -14,7 +14,7 @@
 보안 취약점을 발견하셨다면 **이슈(Issue)를 생성하지 마시고**, 아래 이메일로 직접 보내주세요.
 (If you discover a security vulnerability, please **DO NOT create an issue**, but send it directly to the email below.)
 
-- **Email**: <chochyjj@gmail.com> (@buenhyden)
+- **Email**: [chochyjj@gmail.com](mailto:chochyjj@gmail.com) (@buenhyden)
 
 저희는 신고 내용을 검토하고 48시간 이내에 답변을 드릴 수 있도록 노력하겠습니다.
 (We will review your report and try to respond within 48 hours.)

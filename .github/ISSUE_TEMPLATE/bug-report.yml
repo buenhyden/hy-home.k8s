@@ -67,9 +67,11 @@ body:
         where the bug occurred.)
       # [옵션/Option] : 프로젝트 성격에 따라 필요한 환경 정보를 수정하세요.
       value: |
+        - Kubernetes Version: [e.g. v1.31.2]
+        - Kind Version: [e.g. v0.25.0]
+        - ArgoCD Version: [e.g. v2.13.2]
+        - Istio Version: [e.g. v1.24.0]
         - OS: [e.g. Windows 11]
-        - Browser: [e.g. Chrome 120.0]
-        - Version: [e.g. 1.0.0]
     validations:
       required: false
 
