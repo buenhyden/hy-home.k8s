@@ -1,2 +1,10 @@
 .agent/workflows/
 .agent/rules/
+.history/
+.mypy_cache/
+node_modules/
+dist/
+certs/
+*.env
+*.key
+*.pem
