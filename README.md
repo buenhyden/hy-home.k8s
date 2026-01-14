@@ -7,6 +7,8 @@
 
 **GitOps-based Kubernetes Infrastructure Platform** designed for local development and high-fidelity testing. This project leverages **ArgoCD** for declarative deployment of platform services and applications on **Kind** (Kubernetes in Docker).
 
+> 📚 **Documentation**: For full guides and references, please visit the [docs/](docs/) directory.
+
 ---
 
 ## 🏗️ Architecture Overview
@@ -123,21 +125,32 @@ Bridge the gap between K8s and Docker with our pre-configured network bridge:
 
 ## 📂 Project Structure
 
-- **`apps/`**: Application templates and high-level service definitions.
-- **`bootstrap/`**: Scripts and manifests for cluster initialization.
-- **`clusters/`**: Cluster-specific configurations (e.g., `docker-desktop`).
-- **`infrastructure/`**: Core platform services (Controllers, Security, Observability).
-- **`.agent/`**: AI agent instructions and automated workflows.
+A detailed break-down of the top-level directories:
+
+- **`apps/`**: ArgoCD Application manifests and user workloads.
+  - `_templates/`: Helm starter templates.
+  - `_examples/`: Reference implementations.
+- **`infrastructure/`**: Core platform services managed by Helm.
+  - `observability/`: LGTM stack (Loki, Grafana, Tempo, Mimir).
+  - `security/`: Kyverno, Sealed Secrets, Cert-Manager.
+  - `controllers/`: Ingress, Gateway API, various operators.
+- **`bootstrap/`**: Scripts for initial cluster setup (`cluster-setup.sh`).
+- **`clusters/`**: Environment overlays (e.g., `primary-cluster` configuration).
+- **`docs/`**: Project documentation, architecture guides, and reference material.
+- **`.agent/workflows/`**: Operational workflows for AI agents.
 
 ---
 
 ## 🤖 AI & Automation
 
-This project is built with an **"AI-Native"** mindset. We utilize specialized agents for development and maintenance.
+This project is built with an **"AI-Native"** mindset, utilizing specialized agents for development and maintenance.
 
-- **Workflows**: Standard procedures are defined in `.agent/workflows/`.
-- **Context**: Agents use `task.md` for persistent session management.
-- **Guides**: See [AGENTS.md](AGENTS.md) for detailed AI integration documentation.
+- **Agent Rules**:
+  - [AGENTS.md](AGENTS.md): General agent roles and responsibilities.
+  - [CLAUDE.md](CLAUDE.md): Specific instructions for Claude.
+  - [GEMINI.md](GEMINI.md): Specific instructions for Gemini (Antigravity).
+  - [.cursorrules](.cursorrules): Context rules for Cursor AI.
+- **Workflows**: Standard procedures are defined in `.agent/workflows/` and should be prioritized for complex tasks.
 
 ---
 

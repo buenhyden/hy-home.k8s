@@ -1,34 +1,30 @@
-# Project Rules
+# Project Context: hy-home.k8s
 
-This project is a GitOps-based Kubernetes infrastructure platform.
+A GitOps-based Kubernetes infrastructure platform managed via ArgoCD and Kind.
 
-## Preferred Tech Stack
+## Directory Structure Policy
 
-- Kubernetes (Kind for local development)
-- GitOps: ArgoCD, Helm
-- Service Mesh: Istio
-- Observability: Prometheus Stack, Loki, Tempo, Alloy, Grafana
-- Database: PostgreSQL (Patroni), Redis Cluster
-- Security: Kyverno, Cert-Manager, Sealed Secrets
-- Languages: YAML, Python, Markdown
+- `apps/`: User-facing applications (ArgoCD Application manifests).
+- `infrastructure/`: Core platform services (Helm charts, raw manifests).
+- `bootstrap/`: Cluster bootstrapping scripts (Kind initialization).
+- `clusters/`: Environment-specific overlays (e.g., `primary-cluster`).
+- `.agent/workflows/`: Standard operating procedures for AI agents.
 
-## Architecture Principles
+## Technical Standards
 
-1. **Everything as Code**: All infrastructure and applications must be defined in manifest files or Helm charts.
-2. **GitOps Workflow**: Changes are applied via Git commits to the `main` branch, synchronized by ArgoCD.
-3. **Local First**: Ensure the platform can be initialized locally using Kind scripts in `bootstrap/`.
-4. **Modularity**: Infrastructure components are organized in `infrastructure/`, and applications in `apps/`.
-5. **Security by Default**: Use Sealed Secrets for sensitive data and Kyverno for policy enforcement.
+### Core Stack
+- **Orchestration**: Kubernetes, ArgoCD
+- **Networking**: Istio (Service Mesh), MetalLB
+- **Observability**: Prometheus, Grafana, Loki, Tempo, Alloy
+- **Security**: Kyverno (Policies), Sealed Secrets (Encryption)
 
-## Coding Standards
+### GitOps Rules
+1. **Declarative**: All changes must be committed as code.
+2. **Secrets**: NEVER commit plain-text secrets. Use `kubeseal`.
+3. **Validation**: All manifests must pass linting before commit.
 
-- **YAML**: Follow standard indentation (2 spaces). Use clear and descriptive names for resources.
-- **Python**: Use type hints. Follow PEP 8.
-- **Documentation**: README files should be present in every major directory, following the project template.
+## Agent Instructions
 
-## Agent Specifics
-
-- **Guidance**: Refer to `AGENTS.md` for role definitions and best practices.
-- **Workflows**: Use the workflows defined in `.agent/workflows/` for common tasks (e.g., `git-commit`, `pr-review`).
-- Use the provided issue and pull request templates for tracking changes.
-- Disclose AI tool usage in pull requests.
+- **Context**: Always check `AGENTS.md` for high-level agent roles.
+- **Workflows**: Prioritize using workflows in `.agent/workflows/` for complex tasks.
+- **Style**: Use conventional commits and descriptive PR titles.

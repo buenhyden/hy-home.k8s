@@ -2,23 +2,28 @@
 
 This project leverages AI agents to assist in development and maintenance.
 
-## Recommended Agents
+## Agent Roles
 
-### Antigravity
+### Antigravity (Gemini)
 
-- **Role**: Primary coding and infrastructure assistant.
-- **Strengths**: Understanding the entire workspace context, creating detailed implementation plans, executing multi-step tasks, and following GitOps workflows.
-- **Usage**: Use Antigravity for large refactors, new feature implementations, and documentation updates.
+- **Primary Role**: Project Lead / Senior Engineer.
+- **Responsibilities**: Large refactors, complex infrastructure planning, deep debugging, documentation overhauls.
+- **Mode**: Automated, agentic execution.
 
-### Claude / Gemini
+### Claude
 
-- **Role**: Specialized assistants for code review, logic optimization, and documentation.
-- **Instruction Files**: See `CLAUDE.md` and `GEMINI.md` for specific instructions.
-- **Workflows**: Familiarize yourself with the workflows in `.agent/workflows/` to execute standard tasks reliably.
+- **Primary Role**: Reviewer / Specialist.
+- **Responsibilities**: Code review, specific manifest generation, logic optimization, quick questions.
+- **Mode**: Interactive, chat-based.
 
-## Agent Guidelines
+### Cursor (Copilot)
 
-1. **Context Awareness**: Always provide agents with the relevant workspace context.
-2. **Review Plans**: Carefully review the `implementation_plan.md` created by agents before execution.
-3. **Verify Changes**: Agents must verify their changes (e.g., linting, manifest validation) before creating a walkthrough.
-4. **AI Disclosure**: Mark the use of AI tools in pull request descriptions.
+- **Primary Role**: Coding Assistant.
+- **Responsibilities**: In-line code completion, quick file edits, context-aware suggestions.
+
+## Shared Guidelines
+
+1. **Context is King**: Always respect the folder structure (`apps` vs `infrastructure`).
+2. **GitOps Principle**: The git repo is the source of truth.
+3. **Safety**: Never commit secrets. Always validate manifests.
+4. **Communication**: Use clear, concise markdown.

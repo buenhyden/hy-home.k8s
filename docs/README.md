@@ -24,6 +24,7 @@ Technical reference documentation.
 
 - [Directory Structure](reference/directory-structure.md): Complete folder layout
 - [Infrastructure Tools](reference/infrastructure-tools.md): Tool versions and configurations
+- [Application Templates](reference/application-templates.md): Available Helm starters
 
 ### [Architecture](architecture/)
 
