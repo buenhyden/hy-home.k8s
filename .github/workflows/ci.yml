@@ -21,7 +21,7 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - name: Lint GitHub Actions
-              uses: rhysd/actionlint@v1
+              uses: ravsamhq/actionlint@v1
 
     validate-k8s:
         runs-on: ubuntu-latest
