@@ -11,7 +11,7 @@ Complete observability stack for metrics, logs, and distributed tracing.
 
 ## Architecture
 
-```
+```text
 Applications → Alloy → Prometheus (metrics)
                    → Loki (logs)
                    → Tempo (traces)
@@ -157,7 +157,7 @@ loki:
 3. Select Loki data source
 4. Use LogQL queries:
 
-   ```
+   ```logql
    {namespace="default", app="my-app"}
    {namespace="default"} |= "error"
    ```

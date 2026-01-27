@@ -8,7 +8,7 @@ The `docker-desktop` cluster is a local Kubernetes environment managed using the
 
 ## Directory Structure
 
-```
+```text
 clusters/docker-desktop/
 ├── apps.yaml                      # Apps root application
 ├── infrastructure.yaml            # Infrastructure root application

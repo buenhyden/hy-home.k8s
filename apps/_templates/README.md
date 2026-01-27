@@ -24,7 +24,7 @@ cp -r apps/_templates/frontend apps/my-web-app
 Replace placeholders in all YAML files:
 
 | Placeholder | Example |
-|-------------|---------|
+| ------------- | --------- |
 | `APP_NAME` | `user-service` |
 | `REGISTRY/IMAGE_NAME:TAG` | `ghcr.io/yourorg/user-service:v1.0.0` |
 | `APP_PORT` | `8000` |
@@ -66,7 +66,7 @@ spec:
 
 ## Template Structure
 
-```
+```text
 template/
 ├── base/                    # Base Kubernetes manifests
 │   ├── rollout.yaml         # Argo Rollout with Canary strategy

@@ -11,7 +11,7 @@ This directory contains generic application templates for deploying services to 
 
 Each template follows the Kustomize pattern:
 
-```
+```text
 app-template/
 ├── base/                    # Base Kubernetes manifests
 │   ├── rollout.yaml         # Argo Rollout (Canary deployment)
@@ -44,7 +44,7 @@ cp -r _templates/frontend apps/my-frontend
 Replace the following placeholders in all YAML files:
 
 | Placeholder | Description | Example |
-|-------------|-------------|---------|
+| ------------- | ------------- | --------- |
 | `APP_NAME` | Application name | `user-service` |
 | `REGISTRY` | Container registry | `ghcr.io/yourorg` |
 | `IMAGE_NAME` | Image name | `user-service` |

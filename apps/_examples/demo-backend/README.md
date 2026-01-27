@@ -14,7 +14,7 @@ FastAPI backend application demonstrating GitOps deployment with Argo Rollouts, 
 
 ## Directory Structure
 
-```
+```text
 demo-backend/
 ├── README.md (this file)
 ├── app/                          # Application code
@@ -266,7 +266,7 @@ rate(http_requests_total{app="demo-backend",status=~"5.."}[5m])
 
 View logs in Grafana Loki:
 
-```
+```logql
 {app="demo-backend", namespace="default"}
 {app="demo-backend"} |= "error"
 ```

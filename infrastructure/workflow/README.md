@@ -25,7 +25,7 @@ Apache Airflow deployed on Kubernetes for scheduling and monitoring data workflo
 
 ## Architecture
 
-```
+```text
 User → Webserver (UI) → Scheduler → Worker → Task Execution
                               ↓
                          PostgreSQL (Metadata)

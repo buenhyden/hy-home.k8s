@@ -16,15 +16,6 @@ updates:
     reviewers:
       - "buenhyden"
 
-  # 2. Kubernetes & Helm (Kustomize)
-  # Updates Helm charts referenced in infrastructure/ kustomization.yaml files
-  - package-ecosystem: "kubernetes"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    reviewers:
-      - "buenhyden"
-
   # 3. Docker
   # Updates base images in apps/ and infrastructure/
   - package-ecosystem: "docker"
