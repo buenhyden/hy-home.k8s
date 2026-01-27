@@ -1,0 +1,38 @@
+name: 🚀 Feature Request
+description: Suggest an idea or enhancement for this project.
+title: "[FEAT]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 1. Problem Statement
+      description:
+        Is your feature request related to a problem? Please describe.
+      placeholder: I'm always frustrated when...
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: 2. Proposed Solution
+      description: Describe the solution you'd like.
+      placeholder: I think we should add...
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 3. Alternatives Considered
+      description: Describe alternatives you've considered.
+  - type: checkboxes
+    id: checklists
+    attributes:
+      label: 4. Checklists
+      options:
+        - label: I have reviewed the [Architecture](../../ARCHITECTURE.md).
+          required: true
+        - label:
+            This feature aligns with the [GitOps
+            Standard](../../docs/standards/gitops-standard.md).
+          required: true

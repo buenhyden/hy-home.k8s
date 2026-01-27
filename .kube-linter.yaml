@@ -1,0 +1,8 @@
+checks:
+  doNotAutoaddChecks: false
+  exclude:
+    - "no-read-only-root-fs" # Home labs often need write access
+    - "no-anti-affinity" # Many home lab apps don't have enough nodes for anti-affinity
+    - "unset-cpu-requirements" # Allow development without strict CPU requests
+    - "unset-memory-requirements" # Allow development without strict memory requests
+customChecks: []

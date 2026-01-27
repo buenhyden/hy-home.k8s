@@ -1,0 +1,23 @@
+area/infrastructure:
+  - changed-files:
+      - any-glob-to-any-file: "infrastructure/**"
+
+area/apps:
+  - changed-files:
+      - any-glob-to-any-file: "apps/**"
+
+area/cluster:
+  - changed-files:
+      - any-glob-to-any-file: "clusters/**"
+
+area/documentation:
+  - changed-files:
+      - any-glob-to-any-file: ["docs/**", "README.md", "ARCHITECTURE.md"]
+
+area/agent:
+  - changed-files:
+      - any-glob-to-any-file: ".agent/**"
+
+area/github:
+  - changed-files:
+      - any-glob-to-any-file: ".github/**"

@@ -1,0 +1,14 @@
+# Global owners
+* @buenhyden
+
+# Infrastructure
+/infrastructure/ @buenhyden
+
+# Applications
+/apps/ @buenhyden
+
+# Agent Rules
+/.agent/ @buenhyden
+
+# Security
+/.github/SECURITY.md @buenhyden

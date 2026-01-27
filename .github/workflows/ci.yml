@@ -1,0 +1,35 @@
+name: CI
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+jobs:
+    lint-markdown:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Lint Markdown
+              uses: DavidAnson/markdownlint-cli2-action@v16
+              with:
+                  globs: "**/*.md"
+
+    lint-actions:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Lint GitHub Actions
+              uses: actionlint/actionlint-action@v1
+
+    validate-k8s:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Validate Kubernetes Manifests
+              uses: stackrox/kube-linter-action@v1
+              with:
+                  directory: .
+                  config: .kube-linter.yaml # We'll create a default one or it will use defaults
+              continue-on-error: true # Manifests might be templates, so avoid hard failure initially
