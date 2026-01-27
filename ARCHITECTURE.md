@@ -29,7 +29,7 @@ C4Context
 
 ## 3. Structural Standards
 
-All components MUST adhere to the [Architecture Standard (0130)](file:///d:/hy-home.SourceCode/Init-Project-Template/agent_settings/rules/0100-Standards/0130-architecture-standard.md):
+All components MUST adhere to the [Architecture Standard (0130)](file:///d:/hy-home.SourceCode/Init-Project-Template/.agent/rules/0100-Standards/0130-architecture-standard.md):
 
 - **Directional Dependency**: Presentation -> Domain -> Data.
 - **Zero Circularity**: Circular dependencies are prohibited.
