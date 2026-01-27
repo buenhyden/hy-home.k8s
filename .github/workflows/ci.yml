@@ -21,7 +21,13 @@ jobs:
         steps:
             - uses: actions/checkout@v6
             - name: Lint GitHub Actions
-              uses: rhysd/actionlint@v1
+              uses: reviewdog/action-actionlint@v1
+            - name: Check workflow files
+              run: |
+                  echo "::add-matcher::.github/actionlint-matcher.json"
+                  bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+                  ./actionlint -color
+              shell: bash
 
     validate-k8s:
         runs-on: ubuntu-latest
