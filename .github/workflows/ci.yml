@@ -10,7 +10,7 @@ jobs:
     lint-markdown:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
             - name: Lint Markdown
               uses: DavidAnson/markdownlint-cli2-action@v22
               with:
@@ -19,14 +19,14 @@ jobs:
     lint-actions:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
             - name: Lint GitHub Actions
               uses: ravsamhq/actionlint@v1
 
     validate-k8s:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
             - name: Validate Kubernetes Manifests
               uses: stackrox/kube-linter-action@v1
               with:
