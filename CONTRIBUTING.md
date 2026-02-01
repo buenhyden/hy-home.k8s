@@ -27,6 +27,14 @@ Before you begin, please read our **[Development Workflow](docs/guides/developme
 - **Kustomize**: We use Kustomize for resource management. Avoid raw edits to `manifest.yaml` if a `kustomization.yaml` exists.
 - **Secrets**: **NEVER** commit plain text secrets. Use Sealed Secrets. See **[Secret Management](docs/guides/secret-management.md)**.
 
+## Local Git Hooks
+
+To enable commit-time checks (lint/format), set the repo hooks path:
+
+```bash
+git config core.hooksPath .githooks
+```
+
 ## Documentation
 
 Documentation is a first-class citizen. If you add a feature, you must add documentation in `docs/`.

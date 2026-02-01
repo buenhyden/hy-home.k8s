@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+set -u
+set -o pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+fail=0
+
+run() {
+  local name="$1"
+  shift
+  echo "==> ${name}"
+  if "$@"; then
+    echo "==> ${name} ok"
+  else
+    echo "==> ${name} failed"
+    fail=1
+  fi
+}
+
+run_in() {
+  local name="$1"
+  local dir="$2"
+  shift 2
+  echo "==> ${name}"
+  if (cd "$dir" && "$@"); then
+    echo "==> ${name} ok"
+  else
+    echo "==> ${name} failed"
+    fail=1
+  fi
+}
+
+skip() {
+  local name="$1"
+  local reason="$2"
+  echo "==> ${name} skipped (${reason})"
+}
+
+has() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+# Markdown lint
+if has markdownlint-cli2; then
+  run "markdownlint" markdownlint-cli2 "**/*.md"
+else
+  skip "markdownlint" "markdownlint-cli2 not installed"
+fi
+
+# GitHub Actions lint
+if has actionlint; then
+  run "actionlint" actionlint -color
+else
+  skip "actionlint" "actionlint not installed"
+fi
+
+# Kubernetes manifest lint
+if has kube-linter; then
+  run "kube-linter" kube-linter lint . --config .kube-linter.yaml
+else
+  skip "kube-linter" "kube-linter not installed"
+fi
+
+# Python lint (demo backend)
+PY_DIR="apps/_examples/demo-backend/app"
+if [ -d "$PY_DIR" ]; then
+  if has ruff; then
+    run_in "ruff" "$PY_DIR" ruff check .
+  else
+    skip "ruff" "ruff not installed"
+  fi
+
+  if has mypy; then
+    run_in "mypy" "$PY_DIR" mypy .
+  else
+    skip "mypy" "mypy not installed"
+  fi
+else
+  skip "python lint" "directory not found: $PY_DIR"
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo "Commit blocked due to failed checks."
+  exit 1
+fi
