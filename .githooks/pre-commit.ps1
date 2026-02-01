@@ -39,7 +39,13 @@ function Has($cmd) {
 }
 
 if (Has "markdownlint-cli2") {
-  Run "markdownlint" { markdownlint-cli2 "**/*.md" }
+  $mdFiles = @(git diff --name-only --cached --diff-filter=ACMR -- "*.md")
+  $mdFiles = $mdFiles | Where-Object { $_ -notmatch '(^|/)\.history/' }
+  if ($mdFiles.Count -eq 0) {
+    Skip "markdownlint" "no markdown files staged"
+  } else {
+    Run "markdownlint" { markdownlint-cli2 @mdFiles }
+  }
 } else {
   Skip "markdownlint" "markdownlint-cli2 not installed"
 }
@@ -51,7 +57,22 @@ if (Has "actionlint") {
 }
 
 if (Has "kube-linter") {
-  Run "kube-linter" { kube-linter lint . --config .kube-linter.yaml }
+  $yamlFiles = @(git diff --name-only --cached --diff-filter=ACMR -- "*.yml" "*.yaml")
+  $yamlFiles = $yamlFiles | Where-Object { $_ -notmatch '(^|/)\.history/' }
+  $chartDirs = $yamlFiles |
+    Where-Object { $_ -match '(^|/)Chart\.yaml$' } |
+    ForEach-Object { Split-Path $_ -Parent } |
+    Where-Object { $_ -and $_ -ne "." }
+  $rootCharts = $yamlFiles | Where-Object { $_ -match '^(\\./)?Chart\.yaml$' }
+  $manifestFiles = $yamlFiles | Where-Object { $_ -notmatch '(^|/)Chart\.yaml$' }
+  $targets = @($manifestFiles + $chartDirs + $rootCharts | Sort-Object -Unique)
+  if ($targets.Count -eq 0) {
+    Skip "kube-linter" "no yaml files staged"
+  } else {
+    foreach ($target in $targets) {
+      Run "kube-linter ($target)" { kube-linter lint $target --config .kube-linter.yaml }
+    }
+  }
 } else {
   Skip "kube-linter" "kube-linter not installed"
 }

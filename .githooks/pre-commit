@@ -44,7 +44,21 @@ has() {
 
 # Markdown lint
 if has markdownlint-cli2; then
-  run "markdownlint" markdownlint-cli2 "**/*.md"
+  md_files=()
+  while IFS= read -r f; do
+    case "$f" in
+      .history/*|*/.history/*)
+        continue
+        ;;
+    esac
+    md_files+=("$f")
+  done < <(git diff --name-only --cached --diff-filter=ACMR -- "*.md")
+
+  if [ "${#md_files[@]}" -eq 0 ]; then
+    skip "markdownlint" "no markdown files staged"
+  else
+    run "markdownlint" markdownlint-cli2 "${md_files[@]}"
+  fi
 else
   skip "markdownlint" "markdownlint-cli2 not installed"
 fi
@@ -58,7 +72,40 @@ fi
 
 # Kubernetes manifest lint
 if has kube-linter; then
-  run "kube-linter" kube-linter lint . --config .kube-linter.yaml
+  yaml_files=()
+  while IFS= read -r f; do
+    yaml_files+=("$f")
+  done < <(git diff --name-only --cached --diff-filter=ACMR -- "*.yml" "*.yaml")
+  chart_dirs=()
+  manifest_files=()
+  root_charts=()
+  for f in "${yaml_files[@]}"; do
+    case "$f" in
+      .history/*|*/.history/*)
+        continue
+        ;;
+    esac
+    case "$f" in
+      Chart.yaml)
+        root_charts+=("$f")
+        ;;
+      */Chart.yaml)
+        chart_dirs+=("$(dirname "$f")")
+        ;;
+      *)
+        manifest_files+=("$f")
+        ;;
+    esac
+  done
+
+  targets="$(printf "%s\n" "${manifest_files[@]}" "${chart_dirs[@]}" "${root_charts[@]}" | awk 'NF' | sort -u)"
+  if [ -z "$targets" ]; then
+    skip "kube-linter" "no yaml files staged"
+  else
+    while IFS= read -r target; do
+      run "kube-linter (${target})" kube-linter lint "$target" --config .kube-linter.yaml
+    done <<< "$targets"
+  fi
 else
   skip "kube-linter" "kube-linter not installed"
 fi

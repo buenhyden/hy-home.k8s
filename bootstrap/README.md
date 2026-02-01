@@ -48,6 +48,32 @@ Deploys the root App-of-Apps applications:
 - Applications root app
 - Infrastructure root app
 
+### 4. dev-tools.sh / dev-tools.ps1
+
+Installs local developer tools used by commit-time hooks:
+
+- markdownlint-cli2
+- actionlint
+- kube-linter
+- ruff
+- mypy
+
+```bash
+./dev-tools.sh
+```
+
+```bash
+./dev-tools.sh --skip-python
+```
+
+```powershell
+.\dev-tools.ps1
+```
+
+```powershell
+.\dev-tools.ps1 -SkipPython
+```
+
 ## Manual Steps
 
 ### Get ArgoCD Admin Password

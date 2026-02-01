@@ -1,6 +1,7 @@
 # Development Workflow
 
-This guide outlines the process for setting up your local development environment and contributing to the `hy-home.k8s` project.
+This guide outlines the process for setting up your local development environment and
+contributing to the `hy-home.k8s` project.
 
 ## Prerequisites
 
@@ -96,6 +97,41 @@ This repository ships local Git hooks to run lint checks before commits.
 ```bash
 git config core.hooksPath .githooks
 ```
+
+### Install Commit-Time Tools
+
+Use the bootstrap script to install the optional lint tools used by the pre-commit hook.
+
+Windows (PowerShell):
+
+```powershell
+.\bootstrap\dev-tools.ps1
+```
+
+macOS/Linux (bash or WSL):
+
+```bash
+./bootstrap/dev-tools.sh
+```
+
+If it does not run on macOS/Linux, make it executable:
+
+```bash
+chmod +x bootstrap/dev-tools.sh
+```
+
+Skip Python tools if you do not work on the demo app:
+
+```powershell
+.\bootstrap\dev-tools.ps1 -SkipPython
+```
+
+```bash
+./bootstrap/dev-tools.sh --skip-python
+```
+
+The script installs `markdownlint-cli2`, `actionlint`, `kube-linter`, `ruff`, and `mypy`.
+It uses `npm`, `go`, and `pipx` (or `pip`) if they are available.
 
 ### What Runs
 
