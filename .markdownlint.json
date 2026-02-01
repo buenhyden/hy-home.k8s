@@ -1,7 +1,11 @@
 {
   "default": true,
   "ignores": [".agent/workflows/**", ".agent/rules/**", ".history/**", "docs/_sidebar.md", "CHANGELOG.md"],
-  "MD013": false,
+  "MD013": {
+    "line_length": 120,
+    "tables": false,
+    "code_blocks": false
+  },
   "MD024": {
     "siblings_only": true
   }

@@ -32,6 +32,22 @@ jobs:
               run: ${{ steps.get_actionlint.outputs.executable }} -color
               shell: bash
 
+    lint-python:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: "3.13"
+            - name: Install linters
+              run: python -m pip install ruff mypy
+            - name: Ruff
+              working-directory: apps/_examples/demo-backend/app
+              run: ruff check .
+            - name: Mypy
+              working-directory: apps/_examples/demo-backend/app
+              run: mypy .
+
     validate-k8s:
         runs-on: ubuntu-latest
         steps:
@@ -41,4 +57,3 @@ jobs:
               with:
                   directory: .
                   config: .kube-linter.yaml # We'll create a default one or it will use defaults
-              continue-on-error: true # Manifests might be templates, so avoid hard failure initially
