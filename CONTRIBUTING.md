@@ -35,6 +35,16 @@ To enable commit-time checks (lint/format), set the repo hooks path:
 git config core.hooksPath .githooks
 ```
 
+To install the optional tools used by the pre-commit hook:
+
+```powershell
+.\bootstrap\dev-tools.ps1
+```
+
+```bash
+./bootstrap/dev-tools.sh
+```
+
 ## Documentation
 
 Documentation is a first-class citizen. If you add a feature, you must add documentation in `docs/`.

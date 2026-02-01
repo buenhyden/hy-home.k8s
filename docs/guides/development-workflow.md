@@ -142,6 +142,9 @@ The pre-commit hook runs the following checks when the tools are available:
 - `kube-linter` for Kubernetes manifests
 - `ruff` and `mypy` for the demo Python app
 
+Checks only run against files staged for commit. This avoids linting
+untracked or historical files such as `.history/`.
+
 Missing tools are skipped with a message. Failed checks block the commit.
 
 ### Platform Notes
