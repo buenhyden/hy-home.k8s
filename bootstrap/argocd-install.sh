@@ -4,9 +4,9 @@ set -euo pipefail
 echo "=== Installing ArgoCD ==="
 
 # Check kubectl
-if ! command -v kubectl &> /dev/null; then
-    echo "Error: kubectl is not installed"
-    exit 1
+if ! command -v kubectl &>/dev/null; then
+  echo "Error: kubectl is not installed"
+  exit 1
 fi
 
 # Create namespace

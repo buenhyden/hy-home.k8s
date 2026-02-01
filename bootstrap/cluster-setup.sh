@@ -4,10 +4,10 @@ set -euo pipefail
 echo "=== Creating Kind Cluster ==="
 
 # Check if kind is installed
-if ! command -v kind &> /dev/null; then
-    echo "Error: kind is not installed"
-    echo "Install from: https://kind.sigs.k8s.io/docs/user/quick-start/#installation"
-    exit 1
+if ! command -v kind &>/dev/null; then
+  echo "Error: kind is not installed"
+  echo "Install from: https://kind.sigs.k8s.io/docs/user/quick-start/#installation"
+  exit 1
 fi
 
 # Cluster name
@@ -15,15 +15,15 @@ CLUSTER_NAME="docker-desktop"
 
 # Check if cluster exists
 if kind get clusters 2>&1 | grep -q "^${CLUSTER_NAME}$"; then
-    echo "Cluster '${CLUSTER_NAME}' already exists"
-    read -p "Delete and recreate? (y/N): " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        kind delete cluster --name "${CLUSTER_NAME}"
-    else
-        echo "Using existing cluster"
-        exit 0
-    fi
+  echo "Cluster '${CLUSTER_NAME}' already exists"
+  read -p "Delete and recreate? (y/N): " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    kind delete cluster --name "${CLUSTER_NAME}"
+  else
+    echo "Using existing cluster"
+    exit 0
+  fi
 fi
 
 # Create kind config
