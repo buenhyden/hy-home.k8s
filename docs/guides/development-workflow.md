@@ -86,3 +86,45 @@ Example:
 ```bash
 git commit -m "feat(infra): add redis operator to external services"
 ```
+
+## 4. Commit-Time Checks (Pre-Commit Hooks)
+
+This repository ships local Git hooks to run lint checks before commits.
+
+### Enable Hooks
+
+```bash
+git config core.hooksPath .githooks
+```
+
+### What Runs
+
+The pre-commit hook runs the following checks when the tools are available:
+
+- `markdownlint-cli2` for Markdown
+- `actionlint` for GitHub Actions
+- `kube-linter` for Kubernetes manifests
+- `ruff` and `mypy` for the demo Python app
+
+Missing tools are skipped with a message. Failed checks block the commit.
+
+### Platform Notes
+
+- **Windows**: Git executes `.githooks/pre-commit.cmd`, which delegates to
+  `.githooks/pre-commit.ps1`.
+- **macOS/Linux**: Git executes `.githooks/pre-commit` (bash). If it does not
+  run, ensure the file is executable:
+
+```bash
+git add --chmod=+x .githooks/pre-commit
+```
+
+### Manual Run
+
+```bash
+cmd /c .githooks\pre-commit.cmd
+```
+
+```bash
+bash .githooks/pre-commit
+```
