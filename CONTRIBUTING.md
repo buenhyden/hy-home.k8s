@@ -29,20 +29,30 @@ Before you begin, please read our **[Development Workflow](docs/guides/developme
 
 ## Local Git Hooks
 
-To enable commit-time checks (lint/format), set the repo hooks path:
+We use **[pre-commit](https://pre-commit.com/)** to ensure code quality and consistency.
+
+### Setup
+
+1. Install `pre-commit` (requires Python/pip):
+
+   ```bash
+   pip install pre-commit
+   ```
+
+2. Install the git hooks:
+
+   ```bash
+   pre-commit install
+   ```
+
+Now, linting and formatting checks will run automatically on every commit.
+
+### Manual Run
+
+To run checks on all files manually:
 
 ```bash
-git config core.hooksPath .githooks
-```
-
-To install the optional tools used by the pre-commit hook:
-
-```powershell
-.\bootstrap\dev-tools.ps1
-```
-
-```bash
-./bootstrap/dev-tools.sh
+pre-commit run --all-files
 ```
 
 ## Documentation

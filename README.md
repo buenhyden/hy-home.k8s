@@ -50,6 +50,7 @@ This project adheres to a strict logical layering and directional dependency mod
 
 - A running Kubernetes cluster (e.g., Docker Desktop K8s, Kind, or K3s).
 - `kubectl`, `helm`, and `kustomize` installed locally.
+- `pre-commit` installed (via `pip` or `brew`).
 - [ArgoCD CLI](https://argoproj.github.io/argo-cd/getting_started/#2-download-argocd-cli) (optional but recommended).
 
 ### 2. Cluster Bootstrap

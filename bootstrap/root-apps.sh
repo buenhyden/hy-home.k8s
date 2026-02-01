@@ -7,7 +7,7 @@ echo "=== Deploying Root Applications ==="
 echo "Deploying Apps root application..."
 kubectl apply -f ../clusters/docker-desktop/apps.yaml
 
-# Deploy Infrastructure root application  
+# Deploy Infrastructure root application
 echo "Deploying Infrastructure root application..."
 kubectl apply -f ../clusters/docker-desktop/infrastructure.yaml
 

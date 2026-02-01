@@ -90,80 +90,42 @@ git commit -m "feat(infra): add redis operator to external services"
 
 ## 4. Commit-Time Checks (Pre-Commit Hooks)
 
-This repository ships local Git hooks to run lint checks before commits.
+We use **pre-commit** to automatically identify issues before submission.
 
-### Enable Hooks
+### Setup
 
-```bash
-git config core.hooksPath .githooks
-```
-
-### Install Commit-Time Tools
-
-Use the bootstrap script to install the optional lint tools used by the pre-commit hook.
-
-Windows (PowerShell):
-
-```powershell
-.\bootstrap\dev-tools.ps1
-```
-
-macOS/Linux (bash or WSL):
+Install `pre-commit` via pip (or `brew` on macOS):
 
 ```bash
-./bootstrap/dev-tools.sh
+pip install pre-commit
+pre-commit install
 ```
-
-If it does not run on macOS/Linux, make it executable:
-
-```bash
-chmod +x bootstrap/dev-tools.sh
-```
-
-Skip Python tools if you do not work on the demo app:
-
-```powershell
-.\bootstrap\dev-tools.ps1 -SkipPython
-```
-
-```bash
-./bootstrap/dev-tools.sh --skip-python
-```
-
-The script installs `markdownlint-cli2`, `actionlint`, `kube-linter`, `ruff`, and `mypy`.
-It uses `npm`, `go`, and `pipx` (or `pip`) if they are available.
 
 ### What Runs
 
-The pre-commit hook runs the following checks when the tools are available:
+The configuration is defined in `.pre-commit-config.yaml` and includes:
 
-- `markdownlint-cli2` for Markdown
-- `actionlint` for GitHub Actions
-- `kube-linter` for Kubernetes manifests
-- `ruff` and `mypy` for the demo Python app
+- **Code Style**: `trailing-whitespace`, `end-of-file-fixer`
+- **Markdown**: `markdownlint-cli2`
+- **Shell**: `shellcheck`, `shfmt`
+- **Docker**: `hadolint`
+- **Kubernetes**: `kube-linter`
+- **GitHub Actions**: `actionlint`
+- **Python**: `ruff`
+- **Security**: `detect-secrets`
 
-Checks only run against files staged for commit. This avoids linting
-untracked or historical files such as `.history/`.
+### Manual Usage
 
-Missing tools are skipped with a message. Failed checks block the commit.
-
-### Platform Notes
-
-- **Windows**: Git executes `.githooks/pre-commit.cmd`, which delegates to
-  `.githooks/pre-commit.ps1`.
-- **macOS/Linux**: Git executes `.githooks/pre-commit` (bash). If it does not
-  run, ensure the file is executable:
+Run against all files:
 
 ```bash
-git add --chmod=+x .githooks/pre-commit
+pre-commit run --all-files
 ```
 
-### Manual Run
-
-```bash
-cmd /c .githooks\pre-commit.cmd
-```
+Run against specific files:
 
 ```bash
-bash .githooks/pre-commit
+pre-commit run --files path/to/file
 ```
+
+If a hook changes a file (e.g., formatting), the commit will fail. You simply need to stage the changes (`git add`) and commit again.

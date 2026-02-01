@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: kafka-external
   namespace: default
+  annotations:
+    ignore-check.kube-linter.io/dangling-service: "External service"
 spec:
   clusterIP: None
   ports:
@@ -50,6 +52,8 @@ kind: Service
 metadata:
   name: schema-registry-external
   namespace: default
+  annotations:
+    ignore-check.kube-linter.io/dangling-service: "External service"
 spec:
   ports:
     - name: http

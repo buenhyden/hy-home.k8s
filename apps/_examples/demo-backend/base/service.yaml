@@ -5,6 +5,8 @@ metadata:
   namespace: default
   labels:
     app: demo-backend
+  annotations:
+    ignore-check.kube-linter.io/dangling-service: "Verified rollout matches"
 spec:
   ports:
     - name: http

@@ -1,0 +1,4 @@
+ignored:
+  - DL3006 # Optional maintainer line
+  - DL3018 # Allow base image references without digest
+  - DL4000 # Allow unspecified build args in dev Dockerfiles

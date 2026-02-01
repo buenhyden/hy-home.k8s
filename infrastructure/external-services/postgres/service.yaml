@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: postgres-external
   namespace: default # 앱이 배포될 네임스페이스
+  annotations:
+    ignore-check.kube-linter.io/dangling-service: "External service"
 spec:
   ports:
     - name: write

@@ -7,13 +7,13 @@ data:
     server {
         listen 80;
         server_name _;
-        
+
         location / {
             root /usr/share/nginx/html;
             index index.html index.htm;
             try_files $uri $uri/ /index.html;
         }
-        
+
         # API proxy (if needed)
         location /api {
             proxy_pass http://BACKEND_SERVICE_NAME:BACKEND_PORT;

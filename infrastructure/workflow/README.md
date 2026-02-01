@@ -139,7 +139,7 @@ with DAG(
     catchup=False,
     tags=['example'],
 ) as dag:
-    
+
     task1 = PythonOperator(
         task_id='hello_task',
         python_callable=hello_world,
@@ -394,7 +394,7 @@ with DAG('etl_pipeline', ...) as dag:
     extract_task = PythonOperator(task_id='extract', python_callable=extract)
     transform_task = PythonOperator(task_id='transform', python_callable=transform)
     load_task = PythonOperator(task_id='load', python_callable=load)
-    
+
     extract_task >> transform_task >> load_task
 ```
 
@@ -411,7 +411,7 @@ with DAG('daily_report', schedule_interval='0 8 * * *', ...) as dag:
         subject='Daily Report',
         html_content='<p>Report attached</p>',
     )
-    
+
     generate_report >> send_email
 ```
 
