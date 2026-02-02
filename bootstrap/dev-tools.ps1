@@ -1,3 +1,4 @@
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '')]
 $ErrorActionPreference = "Stop"
 
 $root = Resolve-Path (Join-Path $PSScriptRoot "..")
@@ -38,7 +39,9 @@ if (Has "pre-commit") {
         $scripts = Join-Path $base "Scripts"
         $env:PATH += ";$scripts"
     }
-  } catch {}
+  } catch {
+    Write-Verbose "Failed to determine Python user base: $_"
+  }
 
   if (Has "pre-commit") {
     Write-Host "==> Installing git hooks..."
