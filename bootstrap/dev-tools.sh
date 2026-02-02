@@ -26,8 +26,8 @@ else
     base="$(python3 -m site --user-base 2>/dev/null || true)"
     if [ -n "$base" ]; then
       case ":$PATH:" in
-        *":$base/bin:"*) ;;
-        *) echo "==> NOTE: add $base/bin to PATH to use pre-commit." ;;
+      *":$base/bin:"*) ;;
+      *) echo "==> NOTE: add $base/bin to PATH to use pre-commit." ;;
       esac
     fi
   elif has pip; then

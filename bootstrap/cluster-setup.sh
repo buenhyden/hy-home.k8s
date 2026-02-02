@@ -27,7 +27,7 @@ if kind get clusters 2>&1 | grep -q "^${CLUSTER_NAME}$"; then
 fi
 
 # Create kind config
-cat > /tmp/kind-config.yaml <<EOF
+cat >/tmp/kind-config.yaml <<EOF
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:

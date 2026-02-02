@@ -52,12 +52,12 @@ fi
 if [ "$CREATE_SEALED_SECRET" = "true" ]; then
   TMP_SECRET_FILE="/tmp/argocd-git-ssh-secret.yaml"
   echo "Generating dry-run secret YAML for sealing: $TMP_SECRET_FILE"
-  kubectl -n argocd create secret generic argocd-git-ssh --from-file=sshPrivateKey="$KEY_FILE" --dry-run=client -o yaml > "$TMP_SECRET_FILE"
+  kubectl -n argocd create secret generic argocd-git-ssh --from-file=sshPrivateKey="$KEY_FILE" --dry-run=client -o yaml >"$TMP_SECRET_FILE"
 
   if command -v kubeseal >/dev/null 2>&1; then
     echo "kubeseal found — creating SealedSecret ($SEALED_SECRET_FILE) using controller $KUBESEAL_CONTROLLER_NAME in namespace $KUBESEAL_CONTROLLER_NAMESPACE"
     set +e
-    kubeseal --controller-name="$KUBESEAL_CONTROLLER_NAME" --controller-namespace="$KUBESEAL_CONTROLLER_NAMESPACE" --format=yaml < "$TMP_SECRET_FILE" > "$SEALED_SECRET_FILE"
+    kubeseal --controller-name="$KUBESEAL_CONTROLLER_NAME" --controller-namespace="$KUBESEAL_CONTROLLER_NAMESPACE" --format=yaml <"$TMP_SECRET_FILE" >"$SEALED_SECRET_FILE"
     KUBESEAL_EXIT=$?
     set -e
     if [ $KUBESEAL_EXIT -ne 0 ]; then
