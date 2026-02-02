@@ -66,7 +66,7 @@ jobs:
         run: |
           mapfile -t ps_files < <(git ls-files '*.ps1')
           if [ ${#ps_files[@]} -gt 0 ]; then
-            pwsh -NoProfile -File scripts/psscriptanalyzer.ps1 -- "${ps_files[@]}"
+            pwsh -NoProfile -File scripts/psscriptanalyzer.ps1 "${ps_files[@]}"
           else
             echo "No PowerShell files detected."
           fi
