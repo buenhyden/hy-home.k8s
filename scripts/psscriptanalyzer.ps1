@@ -13,7 +13,10 @@ if (-not (Get-Module -ListAvailable -Name PSScriptAnalyzer)) {
 
 Write-Host "Running PSScriptAnalyzer on $($Path.Count) files..."
 
-$results = Invoke-ScriptAnalyzer -Path $Path
+$results = @()
+foreach ($file in $Path) {
+    $results += Invoke-ScriptAnalyzer -Path $file
+}
 
 if ($results) {
     $results | Format-Table
