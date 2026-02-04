@@ -10,16 +10,16 @@ jobs:
   lint-markdown:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Lint Markdown
-        uses: DavidAnson/markdownlint-cli2-action@v16
+        uses: DavidAnson/markdownlint-cli2-action@v22
         with:
           globs: "**/*.md"
 
   lint-actions:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Run actionlint
         uses: reviewdog/action-actionlint@v1
       - name: Download actionlint
@@ -34,8 +34,8 @@ jobs:
   lint-shell:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
       - name: Install shell tooling
         run: |
           sudo apt-get update
@@ -74,8 +74,8 @@ jobs:
   lint-python:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
       - name: Install linters
@@ -90,7 +90,7 @@ jobs:
   validate-k8s:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Validate Kubernetes Manifests
         uses: stackrox/kube-linter-action@v1
         with:
