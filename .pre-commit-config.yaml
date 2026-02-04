@@ -1,43 +1,71 @@
 repos:
+  # --- 1. 파일 시스템 및 기본 형식 검사 ---
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v6.0.0
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-yaml
-        args: [--allow-multiple-documents]
-      - id: check-json
       - id: check-added-large-files
+        args: [--maxkb=500]
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-yaml
+        exclude: '^(clusters/|infrastructure/).*\.ya?ml$'
+      - id: check-toml
+      - id: check-json
+      - id: check-docstring-first
+      - id: debug-statements
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+      - id: name-tests-test
+        args: ["--pytest-test-first"]
 
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.47.0
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
     hooks:
-      - id: markdownlint
-        args:
-          [
-            "--fix",
-            "--config",
-            ".markdownlint.json",
-            "--ignore",
-            ".markdownlintignore",
-          ]
+      - id: prettier
+        types_or: [javascript, jsx, ts, tsx, json, css, scss, less, yaml]
+
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.20.0 # 또는 최신 릴리스
+    hooks:
+      - id: markdownlint-cli2
+        require_serial: true
+        # 필요시 파일 확장자/경로를 args로 조정 가능
+        # args: ["**/*.md"]
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.36.1
+    hooks:
+      - id: check-dependabot
+      - id: check-github-workflows
+      - id: check-readthedocs
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.9.0.6
+    rev: v0.11.0.1
     hooks:
       - id: shellcheck
 
   - repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.7.0-4
+    rev: v3.12.0-2
     hooks:
       - id: shfmt
         args: [-i, "2"] # Indent 2 spaces
 
-  # - repo: https://github.com/hadolint/hadolint
-  #   rev: v2.12.0
-  #   hooks:
-  #     - id: hadolint
-  #       args: [--config, .hadolint.yaml]
+  # --- 5. 인프라 및 도커 검사 (Infrastructure) ---
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.22.0
+    hooks:
+      - id: zizmor
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.14.0
+    hooks:
+      - id: hadolint-docker
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.10
+    hooks:
+      - id: actionlint # GitHub Actions 워크플로우 검사
 
   - repo: local
     hooks:
@@ -47,14 +75,3 @@ repos:
         language: system
         files: \.(yaml|yml)$
         args: [--config, .kube-linter.yaml]
-
-  - repo: https://github.com/rhysd/actionlint
-    rev: v1.6.26
-    hooks:
-      - id: actionlint
-
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.14
-    hooks:
-      - id: ruff
-        args: [--fix, --exit-non-zero-on-fix]

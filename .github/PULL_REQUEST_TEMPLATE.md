@@ -16,7 +16,14 @@ Fixes # (link to issue if applicable)
 - [ ] `docs`: Documentation updates
 - [ ] `infra`: Changes to kubernetes manifests
 
-## 4. How Has This Been Tested?
+## 4. Breaking Changes
+
+- [ ] Yes
+- [ ] No
+
+If yes, please describe the impact and migration path.
+
+## 5. How Has This Been Tested?
 
 Describe the manual verification or automated tests conducted.
 
@@ -24,7 +31,7 @@ Describe the manual verification or automated tests conducted.
 - [ ] `kustomize build` successful
 - [ ] ArgoCD sync status verified (if applicable)
 
-## 5. Checklist
+## 6. Checklist
 
 - [ ] My code follows the [Naming Conventions](../../docs/standards/naming-conventions.md).
 - [ ] I have updated the documentation accordingly.

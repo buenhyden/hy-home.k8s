@@ -52,7 +52,13 @@
     "#     본문에 여러줄의 메시지(목록)를 작성할 땐 \"-\"로 구분",
     "# ------------------"
   ],
-  "dynamicTemplate": ["{type}{scope}: {subject}", "", "{body}", "", "{breaking_change}{footer}"],
+  "dynamicTemplate": [
+    "{type}{scope}: {subject}",
+    "",
+    "{body}",
+    "",
+    "{breaking_change}{footer}"
+  ],
   "tokens": [
     {
       "label": "Type",

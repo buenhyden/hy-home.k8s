@@ -8,6 +8,7 @@ certs/
 .env
 .mypy_cache/
 __pycache__
+node_modules/
 
 # Antigravity Rules
 .agent/rules/**/*

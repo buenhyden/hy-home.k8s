@@ -13,8 +13,15 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    reviewers:
-      - "buenhyden"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    groups:
+      actions:
+        patterns:
+          - "*"
+    cooldown:
+      default-days: 7
 
   # 3. Docker
   # Updates base images in apps/ and infrastructure/
@@ -22,8 +29,15 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    reviewers:
-      - "buenhyden"
+    labels:
+      - "dependencies"
+      - "docker"
+    groups:
+      actions:
+        patterns:
+          - "*"
+    cooldown:
+      default-days: 7
 
   # 4. Pip (Python)
   # Updates dependencies for the demo-backend
@@ -31,8 +45,16 @@ updates:
     directory: "/apps/_examples/demo-backend/app"
     schedule:
       interval: "weekly"
-    reviewers:
-      - "buenhyden"
+    labels:
+      - "dependencies"
+      - "python"
+    open-pull-requests-limit: 10
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+    cooldown:
+      default-days: 7
 
   # 5. NPM (Frontend - future use)
   # Placeholder for when a frontend demo is added
