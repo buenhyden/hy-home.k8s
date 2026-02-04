@@ -1,0 +1,10 @@
+.agent/
+agent_settings/
+.git/
+.history/
+.mypy_cache/
+.vscode/
+node_modules/
+dist/
+coverage/
+storybook-static/
