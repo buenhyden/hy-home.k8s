@@ -1,5 +1,6 @@
 .history/
 .vscode/
+
 k8s/.env
 Docker/Projects/**/.ssh
 hosts.txt
@@ -7,18 +8,9 @@ Setting_Database.txt
 certs/
 .env
 .mypy_cache/
+.ruff_cache/
 __pycache__
 node_modules/
-
-# Antigravity Rules
-.agent/rules/**/*
-!.agent/rules/.gitkeep
-# Antigravity Skills
-.agent/skills/*
-!.agent/skills/.gitkeep
-# Antigravity Workflows
-.agent/workflows/*
-!.agent/workflows/.gitkeep
 
 # opencode Skills
 .opencode/skill/

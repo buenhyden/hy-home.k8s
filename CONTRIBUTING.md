@@ -1,65 +1,46 @@
-# Contributing to hy-home.k8s
+# Contributing Guidelines
 
-Thank you for your interest in contributing to the `hy-home.k8s` project! We welcome contributions from everyone.
+## Necessity & Required Content
 
-## Getting Started
+This file is necessary to define the exact, mechanical steps a human must take to successfully merge code into this repository. While `COLLABORATING.md` outlines the high-level human-AI relationship, this file outlines the raw pre-requisites for Pull Requests.
+**What Must Be Written Here**:
 
-Before you begin, please read our **[Development Workflow](docs/guides/development-workflow.md)**. This guide covers:
+- Hard Code Quality Gates (Coverage, Linting).
+- Branch naming and Conventional Commit rules.
+- Spec-Driven PR referencing requirements.
 
-- Setting up your local Kind cluster.
-- Installing necessary tools (`kubectl`, `argocd`, etc.).
-- The "Zero-to-Hero" bootstrap process.
+## 1. Spec-Driven Core Rule
 
-## How to Contribute
+All new features **must** begin with a specification in the `specs/` folder. Pull Requests that add code without an approved, corresponding specification will be immediately rejected without review.
 
-1. **Fork and Clone**: Fork the repository and clone it locally.
-2. **Create a Branch**: Create a feature branch (e.g., `feat/new-app` or `fix/typo`).
-3. **Make Changes**:
-    - Follow the **[Application Standards](docs/applications/standards.md)** for new apps.
-    - Adhere to the **[Naming Conventions](docs/standards/naming-conventions.md)**.
-    - Test your manifests against your local cluster.
-4. **Commit**: Use the [Conventional Commits](https://www.conventionalcommits.org/) format.
-5. **Push and PR**: Push your branch and open a Pull Request.
+## 2. Template Enforcement
 
-## Coding Standards
+If your contribution involves documentation (ADR, PRD, Runbook, etc.), you **MUST** use the predefined templates located in the `templates/` directory.
 
-- **YAML First**: All configuration should be declarative YAML.
-- **Kustomize**: We use Kustomize for resource management. Avoid raw edits to `manifest.yaml` if a `kustomization.yaml` exists.
-- **Secrets**: **NEVER** commit plain text secrets. Use Sealed Secrets. See **[Secret Management](docs/guides/secret-management.md)**.
+- Do not invent your own format for Architecture Decision Records. Use `templates/architecture/adr-template.md`.
+- Ensure all sections are filled out before submitting.
 
-## Local Git Hooks
+## 3. Local QA & Test Coverage (Pre-PR Gate)
 
-We use **[pre-commit](https://pre-commit.com/)** to ensure code quality and consistency.
+We enforce strict Quality Assurance metrics. Before you pull request, you must successfully pass local checks:
 
-### Setup
+1. **Coverages**: The PR must meet or maintain the project coverage baseline (**> 80%**).
+2. **Test Layers**: Are Unit and Integration tests functioning as defined by the Spec and `.agent/rules/0700-testing-and-qa-standard.md`?
+3. **Linting**: No static typing or linting errors allowed.
+4. **Agent Rule Compliance**: All code MUST comply with the organizational standards in `.agent/rules/` (primarily `0140-engineering-excellence.md` and `2220-secure-coding.md`). The Reviewer Agent strictly evaluates PRs against these rules.
 
-1. Install `pre-commit` (requires Python/pip):
+## 4. Pull Request Process
 
-   ```bash
-   pip install pre-commit
-   ```
+1. **Branch Naming**: Ensure your branch name follows the convention: `feature/XXX`, `fix/XXX`, or `docs/XXX`.
+2. **Commit Messages**: Use Conventional Commits.
+3. **Traceability**: Your PR description **must** reference the specific file in `specs/` it addresses.
 
-2. Install the git hooks:
+## 5. Multi Sub-Agent Interaction
 
-   ```bash
-   pre-commit install
-   ```
+As part of the PR process, an AI Reviewer Agent may automatically review your PR. You must address their automated feedback before a human maintainer reviews the code. Do not dismiss AI-generated comments unless they hallucinate a requirement not in the original Spec.
 
-Now, linting and formatting checks will run automatically on every commit.
+## 6. Required References
 
-### Manual Run
-
-To run checks on all files manually:
-
-```bash
-pre-commit run --all-files
-```
-
-## Documentation
-
-Documentation is a first-class citizen. If you add a feature, you must add documentation in `docs/`.
-
-- **Guides**: For how-to procedures.
-- **ADR**: For architectural decisions.
-
-We look forward to your contributions!
+- AI System roles: `AGENTS.md`
+- Collaboration Hand-offs: `COLLABORATING.md`
+- Code of Conduct: `CODE_OF_CONDUCT.md`

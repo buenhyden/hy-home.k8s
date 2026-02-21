@@ -13,3 +13,7 @@ certs/
 .DS_Store
 coverage/
 .codebase/
+
+# opencode Skills
+.opencode/skills/
+!.opencode/skills/.gitkeep
