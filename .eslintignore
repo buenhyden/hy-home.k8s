@@ -1,19 +1,17 @@
+# Dependencies
+node_modules/
+.venv/
+vendor/
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+
+# Project specific
 .agent/workflows/
 .agent/rules/
 .history/
-.mypy_cache/
-node_modules/
-dist/
-certs/
-*.env
-*.key
-*.pem
-.idea/
-.vscode/
-.DS_Store
 coverage/
-.codebase/
-
-# opencode Skills
-.opencode/skills/
-!.opencode/skills/.gitkeep
+tmp/
