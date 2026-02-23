@@ -10,7 +10,7 @@ agents: 3
 
 ports:
   # ✅ Kubernetes API Server (kubectl 접속용)
-  - port: 16443:6443
+  - port: 6443:6443
     nodeFilters:
       - server:0
   # Ingress / Service 접근용
@@ -22,18 +22,18 @@ ports:
       - loadbalancer
 
 options:
-  k3s:
-    extraArgs:
-      - arg: '--disable=traefik'
-        nodeFilters:
-          - server:*
-      - arg: '--disable=servicelb'
-        nodeFilters:
-          - server:*
-      - arg: '--kubelet-arg=cgroup-driver=systemd'
-        nodeFilters:
-          - server:*
-          - agent:*
+  # k3s:
+  #   extraArgs:
+  #     - arg: "--disable=traefik"
+  #       nodeFilters:
+  #         - server:*
+  #     - arg: "--disable=servicelb"
+  #       nodeFilters:
+  #         - server:*
+  #     - arg: "--kubelet-arg=cgroup-driver=systemd"
+  #       nodeFilters:
+  #         - server:*
+  #         - agent:*
   k3d:
     wait: true
     timeout: '180s'
@@ -42,7 +42,3 @@ options:
   kubeconfig:
     updateDefaultKubeconfig: true
     switchCurrentContext: true
-
-  runtime:
-    # 🔥 GPU 핵심 설정
-    gpuRequest: all
