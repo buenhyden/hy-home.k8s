@@ -8,11 +8,11 @@ image: rancher/k3s:v1.31.0-k3s1
 servers: 1
 agents: 3
 
+kubeAPI:
+  hostIP: "0.0.0.0"
+  hostPort: "6443"
+
 ports:
-  # ✅ Kubernetes API Server (kubectl 접속용)
-  - port: 16443:6443
-    nodeFilters:
-      - server:0
   # Ingress / Service 접근용
   - port: 18080:80
     nodeFilters:
@@ -24,19 +24,17 @@ ports:
 options:
   k3s:
     extraArgs:
-      - arg: '--disable=traefik'
+      - arg: "--tls-san=127.0.0.1" # 인증서에 로컬 호스트 주소 포함
+        nodeFilters: [server:0]
+      - arg: "--disable=traefik"
         nodeFilters:
           - server:*
-      - arg: '--disable=servicelb'
-        nodeFilters:
-          - server:*
-      - arg: '--kubelet-arg=cgroup-driver=systemd'
-        nodeFilters:
-          - server:*
-          - agent:*
+      - arg: "--disable=servicelb" # 내장 LB 비활성화
+        nodeFilters: [server:*]
+
   k3d:
     wait: true
-    timeout: '180s'
+    timeout: "180s"
     disableLoadbalancer: false
 
   kubeconfig:
