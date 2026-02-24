@@ -90,6 +90,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove explicit control-plane node image version from Kind configuration.
 - **release:** Update CHANGELOG.md [skip ci]
 - Update changelog from Unreleased to 0.0.1.
+- **release:** Update CHANGELOG.md [skip ci]
 
 ### Refactor
 
@@ -98,5 +99,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Ci
 
 - Add GitHub Actions workflow for markdown linting, actionlint, and Kubernetes manifest validation.
+- Optimize workflows by offloading tasks to pre-commit action
 
 
