@@ -40,11 +40,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Introduce minimal k3d cluster configuration, standardize k3d port mappings, and remove API reference from README.
 - Add MetalLB configuration, update k3d cluster API exposure, and implement automated changelog generation using git-cliff.
 - Add gitleaks and detect-secrets pre-commit hooks.
+- Add GitHub Actions workflow to greet first-time contributors on new issues and pull requests.
 
 ### Changed
 
 - Consolidate AI agent rules, introduce new project documentation, and update core repository files.
 - Migrate local Kubernetes environment to k3d by removing previous infrastructure and application manifests and adding k3d cluster configuration.
+- Move Zizmor configuration to the repository root and update rule definitions from disabled to file-specific ignores.
 
 ### Documentation
 
@@ -96,6 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove redundant Python hooks and overlapping check-github-workflows from pre-commit
 - **release:** Update CHANGELOG.md [skip ci]
 - Release version 0.0.1 by updating the changelog.
+- **release:** Update CHANGELOG.md [skip ci]
 
 ### Refactor
 
