@@ -17,7 +17,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.24.0
+    rev: v8.30.0
     hooks:
       - id: gitleaks
 
@@ -35,7 +35,7 @@ repos:
         types_or: [javascript, jsx, ts, tsx, json, css, scss, less, yaml]
 
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.20.0 # 또는 최신 릴리스
+    rev: v0.21.0 # 또는 최신 릴리스
     hooks:
       - id: markdownlint-cli2
         require_serial: true
@@ -43,7 +43,7 @@ repos:
         # args: ["**/*.md"]
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.36.1
+    rev: 0.36.2
     hooks:
       - id: check-dependabot
       - id: check-readthedocs
@@ -71,12 +71,12 @@ repos:
         args: ['--config', '.hadolint.yaml']
 
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.10
+    rev: v1.7.11
     hooks:
       - id: actionlint # GitHub Actions 워크플로우 검사
 
   - repo: https://github.com/stackrox/kube-linter
-    rev: v0.8.1
+    rev: v0.8.2
     hooks:
       - id: kube-linter
         args: [--config, .kube-linter.yaml]
