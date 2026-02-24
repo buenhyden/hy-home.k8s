@@ -4,7 +4,6 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
 ## [Unreleased]
 
 ### Added
@@ -92,6 +91,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **release:** Update CHANGELOG.md [skip ci]
 - Update changelog from Unreleased to 0.0.1.
 - **release:** Update CHANGELOG.md [skip ci]
+- **release:** Update CHANGELOG.md [skip ci]
+- Remove redundant Python hooks and overlapping check-github-workflows from pre-commit
 
 ### Refactor
 
@@ -101,3 +102,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add GitHub Actions workflow for markdown linting, actionlint, and Kubernetes manifest validation.
 - Optimize workflows by offloading tasks to pre-commit action
+
+
