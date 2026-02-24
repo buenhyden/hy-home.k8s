@@ -4,8 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [0.0.1]
+## [Unreleased]
 
 ### Added
 
@@ -40,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Introduce comprehensive project templates, documentation, and operational runbooks, while updating GitHub issue templates and configuration files.
 - Introduce minimal k3d cluster configuration, standardize k3d port mappings, and remove API reference from README.
 - Add MetalLB configuration, update k3d cluster API exposure, and implement automated changelog generation using git-cliff.
+- Add gitleaks and detect-secrets pre-commit hooks.
 
 ### Changed
 
@@ -94,6 +94,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **release:** Update CHANGELOG.md [skip ci]
 - **release:** Update CHANGELOG.md [skip ci]
 - Remove redundant Python hooks and overlapping check-github-workflows from pre-commit
+- **release:** Update CHANGELOG.md [skip ci]
+- Release version 0.0.1 by updating the changelog.
 
 ### Refactor
 
@@ -103,3 +105,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add GitHub Actions workflow for markdown linting, actionlint, and Kubernetes manifest validation.
 - Optimize workflows by offloading tasks to pre-commit action
+
+
