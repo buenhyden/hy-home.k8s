@@ -61,17 +61,15 @@ repos:
     rev: v2.14.0
     hooks:
       - id: hadolint-docker
+        args: ['--config', '.hadolint.yaml']
 
   - repo: https://github.com/rhysd/actionlint
     rev: v1.7.10
     hooks:
       - id: actionlint # GitHub Actions 워크플로우 검사
 
-  - repo: local
+  - repo: https://github.com/stackrox/kube-linter
+    rev: v0.8.1
     hooks:
       - id: kube-linter
-        name: kube-linter
-        entry: /home/hy/go/bin/kube-linter lint
-        language: system
-        files: \.(yaml|yml)$
         args: [--config, .kube-linter.yaml]

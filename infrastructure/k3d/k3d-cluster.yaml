@@ -9,8 +9,8 @@ servers: 1
 agents: 3
 
 kubeAPI:
-  hostIP: "0.0.0.0"
-  hostPort: "6443"
+  hostIP: '0.0.0.0'
+  hostPort: '6443'
 
 ports:
   # Ingress / Service 접근용
@@ -24,17 +24,17 @@ ports:
 options:
   k3s:
     extraArgs:
-      - arg: "--tls-san=127.0.0.1" # 인증서에 로컬 호스트 주소 포함
+      - arg: '--tls-san=127.0.0.1' # 인증서에 로컬 호스트 주소 포함
         nodeFilters: [server:0]
-      - arg: "--disable=traefik"
+      - arg: '--disable=traefik'
         nodeFilters:
           - server:*
-      - arg: "--disable=servicelb" # 내장 LB 비활성화
+      - arg: '--disable=servicelb' # 내장 LB 비활성화
         nodeFilters: [server:*]
 
   k3d:
     wait: true
-    timeout: "180s"
+    timeout: '180s'
     disableLoadbalancer: false
 
   kubeconfig:

@@ -9,50 +9,50 @@ version: 2
 updates:
   # 1. GitHub Actions
   # Updates workflows in .github/workflows/
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     labels:
-      - "dependencies"
-      - "github-actions"
+      - 'dependencies'
+      - 'github-actions'
     groups:
       actions:
         patterns:
-          - "*"
+          - '*'
     cooldown:
       default-days: 7
 
   # 3. Docker
   # Updates base images in apps/ and infrastructure/
-  - package-ecosystem: "docker"
-    directory: "/"
+  - package-ecosystem: 'docker'
+    directory: '/'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     labels:
-      - "dependencies"
-      - "docker"
+      - 'dependencies'
+      - 'docker'
     groups:
       actions:
         patterns:
-          - "*"
+          - '*'
     cooldown:
       default-days: 7
 
   # 4. Pip (Python)
   # Updates dependencies for the demo-backend
-  - package-ecosystem: "pip"
-    directory: "/apps/_examples/demo-backend/app"
+  - package-ecosystem: 'pip'
+    directory: '/apps/_examples/demo-backend/app'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     labels:
-      - "dependencies"
-      - "python"
+      - 'dependencies'
+      - 'python'
     open-pull-requests-limit: 10
     groups:
       python-dependencies:
         patterns:
-          - "*"
+          - '*'
     cooldown:
       default-days: 7
 

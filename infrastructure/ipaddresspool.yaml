@@ -5,7 +5,7 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-  - 172.18.0.100-172.18.0.150 # Docker 네트워크 대역 내 가용 IP
+    - 172.18.0.100-172.18.0.150 # Docker 네트워크 대역 내 가용 IP
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
