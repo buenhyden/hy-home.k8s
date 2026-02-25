@@ -101,6 +101,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **release:** Update CHANGELOG.md [skip ci]
 - Update pre-commit hook versions for gitleaks, markdownlint-cli2, check-jsonschema, actionlint, and kube-linter.
 - **release:** Update CHANGELOG.md [skip ci]
+- **release:** Update CHANGELOG.md [skip ci]
+- **deps:** Bump the actions group across 1 directory with 2 updates
 
 ### Refactor
 
