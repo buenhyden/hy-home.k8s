@@ -126,7 +126,7 @@ Baseline hardening targets (future work unless already implemented):
 
 - **Deployment Hub**: Local Host (Commodity Hardware).
 - **Orchestration**: k3d (primary local cluster mode).
-- **CI/CD Pipeline**: Out of scope for base cluster bootstrap; GitOps (ArgoCD/Flux) planned in later milestones.
+- **CI/CD Pipeline**: Out of scope for base cluster bootstrap (v1). GitOps is implemented as a separate feature using ArgoCD + Sealed Secrets; see [GitOps ARD](../../../docs/ard/gitops/argocd-gitops-architecture.md).
 
 Repository layout:
 

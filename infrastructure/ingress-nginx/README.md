@@ -24,4 +24,3 @@ The additional NodePort service pins deterministic ports for k3d host mapping:
 ## Lifecycle Note
 
 As of 2026-02-27, ingress-nginx has a publicly stated retirement timeline (planned around 2026-03). For v1, we accept ingress-nginx; plan a follow-up ADR to migrate to an alternative controller (e.g., Traefik or Gateway API) if long-term patch availability becomes a concern.
-

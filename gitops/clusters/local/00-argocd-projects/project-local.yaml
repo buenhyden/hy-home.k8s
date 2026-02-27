@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: local
+  namespace: argocd
+spec:
+  description: Local k3d cluster GitOps project (infra + apps).
+  sourceRepos:
+    - ssh://git@github.com/buenhyden/hy-home.k8s.git
+  destinations:
+    - namespace: '*'
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'

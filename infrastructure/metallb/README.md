@@ -20,4 +20,3 @@ After installation, apply the local address pool and L2 advertisement:
 ```bash
 kubectl apply -f infrastructure/ipaddresspool.yaml
 ```
-

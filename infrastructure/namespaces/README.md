@@ -17,4 +17,3 @@ These labels MUST NOT be applied to system namespaces (`kube-system`, `metallb-s
 ```bash
 kubectl apply -f infrastructure/namespaces/
 ```
-

@@ -14,4 +14,3 @@ kubectl apply -f infrastructure/networkpolicies/apps-default-deny.yaml
 kubectl apply -f infrastructure/networkpolicies/apps-allow-dns-egress.yaml
 kubectl apply -f infrastructure/networkpolicies/apps-allow-ingress-from-ingress-nginx.yaml
 ```
-

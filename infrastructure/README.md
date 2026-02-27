@@ -8,6 +8,8 @@ This directory contains the core infrastructure configurations for the `hy-home`
   - `k3d-cluster.yaml`: Main configuration for the 4-node cluster (1 server, 3 agents).
   - `k3d-cluster.gpu.yaml`: GPU-enabled variant (optional; requires host GPU runtime support).
   - `k3d-min.yaml`: Minimal configuration for low-resource testing.
+- `argocd/`: Vendored ArgoCD install manifest (pinned) for local GitOps bootstrap.
+- `sealed-secrets/`: Vendored Sealed Secrets controller manifest (pinned) for sealed secret workflows.
 - `metallb/`: Vendored MetalLB native manifests (pinned).
 - `ingress-nginx/`: Vendored ingress-nginx manifests (pinned) + deterministic NodePort service for localhost access.
 - `namespaces/`: Workload namespaces with Pod Security Admission labels.
@@ -23,6 +25,7 @@ This directory contains the core infrastructure configurations for the `hy-home`
 - **NVIDIA Container Toolkit**: Required only for GPU pass-through functionality.
 
 > Notes:
+>
 > - For the v1 standard, `systemd=true` is required to run Docker Engine as a service inside WSL2. See the runbook in `runbooks/services/` for the exact setup steps.
 
 ## Usage
@@ -73,9 +76,28 @@ kubectl apply -f infrastructure/namespaces/
 
 NetworkPolicy templates are provided in `infrastructure/networkpolicies/` (apply selectively per namespace/workload).
 
+## GitOps (ArgoCD) (Optional)
+
+v1 supports GitOps using ArgoCD + Sealed Secrets. The bootstrap sequence is intentionally short and deterministic:
+
+```bash
+kubectl apply -f infrastructure/sealed-secrets/sealed-secrets.yaml
+kubectl apply -f infrastructure/argocd/argocd-install.yaml
+```
+
+Then apply your **sealed** ArgoCD repository credential and the root Application:
+
+```bash
+kubectl apply -f gitops/clusters/local/root-application.yaml
+```
+
+See the runbooks under `runbooks/services/` for the full workflow (including `kubeseal` usage).
+
 ## Related Documentation
 
 - **PRD**: [docs/prd/infra/home-cluster-infra-prd.md](../docs/prd/infra/home-cluster-infra-prd.md)
 - **ADR**: [docs/adr/infra/0001-k3d-local-cluster.md](../docs/adr/infra/0001-k3d-local-cluster.md)
 - **ARD**: [docs/ard/infra/k3d-cluster-requirements.md](../docs/ard/infra/k3d-cluster-requirements.md)
 - **Spec**: [specs/infra/spec.md](../specs/infra/spec.md)
+- **GitOps PRD**: [docs/prd/gitops/argocd-gitops-prd.md](../docs/prd/gitops/argocd-gitops-prd.md)
+- **GitOps Spec**: [specs/gitops/spec.md](../specs/gitops/spec.md)

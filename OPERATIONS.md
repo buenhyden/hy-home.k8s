@@ -14,6 +14,9 @@ All operational procedures must use `templates/operations/runbook-template.md`. 
 | Incident Response | Active | `runbooks/incident-response-runbook.md`  | SEV-1/SEV-2 incident mitigation      |
 | Monitoring        | Active | `runbooks/monitoring-runbook.md`         | Threshold checks and alerting config |
 | Local k3d (WSL2)  | Active | `runbooks/services/local-k3d-wsl2.md`    | Local cluster setup and troubleshooting |
+| Sealed Secrets (Local) | Active | `runbooks/services/sealed-secrets-local.md` | Sealed secret workflows for GitOps |
+| ArgoCD (Local)    | Active | `runbooks/services/argocd-local.md`      | Local ArgoCD access and troubleshooting |
+| Local GitOps (ArgoCD) | Active | `runbooks/services/local-gitops-argocd.md` | Deterministic GitOps bootstrap and rollback |
 
 > **Note:** If a specific operational procedure (e.g. database migration, failover) is missing from this index, the DevOps Agent should proactively create a new runbook based on `templates/operations/runbook-template.md` and link it here.
 

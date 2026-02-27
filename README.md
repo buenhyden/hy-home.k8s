@@ -24,6 +24,7 @@ This project provides a robust, scalable, and automated Kubernetes environment f
 | GPU (Optional) | NVIDIA Container Toolkit / runtime |
 | Networking | MetalLB (L2 Mode) |
 | Ingress | ingress-nginx (baseline) |
+| GitOps (Optional) | ArgoCD + Sealed Secrets |
 
 ## Prerequisites
 
@@ -67,6 +68,19 @@ kubectl apply -f infrastructure/ipaddresspool.yaml
 
 kubectl apply -f infrastructure/ingress-nginx/ingress-nginx.yaml
 kubectl apply -f infrastructure/ingress-nginx/nodeport-service.yaml
+```
+
+### 4b. (Optional) Bootstrap GitOps (ArgoCD + Sealed Secrets)
+
+```bash
+kubectl apply -f infrastructure/sealed-secrets/sealed-secrets.yaml
+kubectl apply -f infrastructure/argocd/argocd-install.yaml
+```
+
+Then follow the GitOps runbooks to create/apply the sealed ArgoCD repo credential and apply:
+
+```bash
+kubectl apply -f gitops/clusters/local/root-application.yaml
 ```
 
 ### 5. Verify Health
