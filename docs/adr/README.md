@@ -100,6 +100,6 @@ When working with ADRs:
 
 | Number | Title | Status | Date |
 | --- | --- | --- | --- |
-| - | *No ADRs yet* | - | - |
+| 0001 | [k3d-local-cluster](./core-infra/0001-k3d-local-cluster.md) | Accepted | 2026-02-27 |
 
 > Add entries to this index as ADRs are created.

@@ -99,6 +99,6 @@ When working with ARDs:
 
 | Document | System | Last Updated |
 | --- | --- | --- |
-| - | *No ARDs yet* | - |
+| [k3d-cluster-requirements](./core-infra/k3d-cluster-requirements.md) | core-infra | 2026-02-27 |
 
 > Add entries to this index as ARDs are created.
