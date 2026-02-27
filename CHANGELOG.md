@@ -41,6 +41,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add MetalLB configuration, update k3d cluster API exposure, and implement automated changelog generation using git-cliff.
 - Add gitleaks and detect-secrets pre-commit hooks.
 - Add GitHub Actions workflow to greet first-time contributors on new issues and pull requests.
+- Define initial core infrastructure for the home cluster with k3d, including ADR, PRD, ARD, and implementation plans.
+- Introduce comprehensive WSL2 integration and documentation for the k3d local cluster.
+- Implement auto-scrolling to the bottom of the chat container when new messages are added.
+- Integrate MetalLB for external IP pool management and update related infrastructure specifications and documentation.
+- Enhance k3d local cluster setup documentation with detailed MetalLB configuration and WSL2 GPU prerequisites.
 
 ### Changed
 
@@ -60,6 +65,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `CHANGELOG.md` and clear `CONTRIBUTING.md` content.
 - Update AGENTS.md to use relative paths for all rule links.
 - Add a comprehensive development workflow guide and instructions for installing pre-commit hook tools.
+- Standardize `core-infra` references to `infra` and enhance PRD, spec, and operations guide with new checklists and notes.
+- Enhance infrastructure specification with detailed personas, new operational and testing sections, and introduce an infrastructure README.
+- Formalize the infrastructure implementation plan with detailed sections and update the README with WSL2 specifics and enhanced setup instructions.
 
 ### Fixed
 
@@ -103,6 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **release:** Update CHANGELOG.md [skip ci]
 - **release:** Update CHANGELOG.md [skip ci]
 - **deps:** Bump the actions group across 1 directory with 2 updates
+- **release:** Update CHANGELOG.md [skip ci]
 
 ### Refactor
 
