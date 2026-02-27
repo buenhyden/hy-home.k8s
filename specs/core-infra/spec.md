@@ -24,7 +24,7 @@ tags: ["spec", "implementation", "infrastructure", "k3d"]
 This specification details the automation and configuration of the `hy-k3d` Kubernetes cluster. The cluster uses k3s (Lightweight Kubernetes) running within Docker containers, managed via the `k3d` CLI.
 
 - **Component Boundary**: Cluster Lifecycle Management (Create, Update, Delete).
-- **Key Dependencies**: Docker, k3d, NVIDIA Container Toolkit (optional but recommended for GPU).
+- **Key Dependencies**: Docker (with WSL2 integration), k3d, NVIDIA Container Toolkit.
 - **Tech Stack**: k3d v5.x, Kubernetes v1.31.0.
 
 ## 2. Coded Requirements (Traceability)
@@ -34,6 +34,7 @@ This specification details the automation and configuration of the `hy-k3d` Kube
 | **[REQ-SPC-001]** | Multi-node setup (1-server, 3-agents) | High     | REQ-PRD-FUN-01 |
 | **[REQ-SPC-002]** | Host port mapping (18080/18443) | High     | REQ-PRD-FUN-02 |
 | **[REQ-SPC-003]** | GPU Pass-through enabling | High     | REQ-PRD-FUN-03 |
+| **[REQ-SPC-004]** | WSL2 Port Forwarding Integration | High     | STORY-04       |
 | **[SEC-SPC-001]** | TLS-SAN for localhost access | Critical | N/A            |
 
 ## 3. Data Modeling & Storage Strategy

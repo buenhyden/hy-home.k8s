@@ -24,9 +24,19 @@ This project provides a robust, scalable, and automated Kubernetes environment f
 
 ## Prerequisites
 
-- Docker >= 24.x
-- k3d CLI >= 5.x
-- NVIDIA Container Toolkit (Optional)
+- Windows 10/11 with **WSL2** installed.
+- Docker Desktop >= 24.x (with WSL2 integration) or Native Docker in WSL.
+- k3d CLI >= 5.x.
+- NVIDIA Container Toolkit (Optional, for GPU support).
+
+### WSL2 Configuration
+
+Ensure systemd is enabled in `/etc/wsl.conf`:
+
+```ini
+[boot]
+systemd=true
+```
 
 ## Project Structure
 

@@ -47,12 +47,14 @@ The cluster follows a standard multi-node setup using Docker containers as nodes
 
 - **Orchestration**: Kubernetes v1.31.0 (k3s distribution).
 - **Engine**: k3d (k3s in Docker).
+- **Host Platform**: Windows Subsystem for Linux (WSL2).
 - **Runtime**: NVIDIA Container Runtime (for GPU support).
 - **Ingress Layer**: Custom (Traefik disabled in base config).
 
 ## 5. Data Architecture
 
 - **Storage Strategy**: Local volume mounts for persistent data.
+- **WSL Path Mapping**: Ensure data mounts stay within the WSL filesystem (`/home/...`) rather than Windows paths (`/mnt/c/...`) for optimal performance.
 - **Persistence**: Managed through PVCs targeting local-path provisioner.
 
 ## 6. Security & Compliance
@@ -72,11 +74,14 @@ The cluster follows a standard multi-node setup using Docker containers as nodes
 - **Availability**: 99% (local hardware dependent).
 - **Performance (Latency)**: Latency to kube-api < 5ms (local).
 - **Throughput**: Capable of handling 50+ concurrent microservices.
+- **Resource Constraints**: Subject to `.wslconfig` limits (suggested 8GB RAM minimum).
 - **GPU Request**: `all` (GPU capabilities exposed to all containers).
 
 ## 9. Architectural Principles, Constraints & Trade-offs
 
 - **What NOT to do**: Manual configuration via `kubectl edit` is discouraged; use manifests.
-- **Constraints**: Limited by host RAM and GPU VRAM.
+- **Constraints**:
+  - Limited by host RAM and GPU VRAM.
+  - WSL2 requires `systemd=true` in `/etc/wsl.conf` for service consistency.
 - **Considered Alternatives**: Kind, Minikube.
 - **Chosen Path Rationale**: k3d offers superior performance and easy GPU integration.

@@ -28,6 +28,7 @@ tags: ["prd", "requirements", "product", "infrastructure", "core-infra"]
 
 - **Persona 1 (Home User)**: Wants high availability for critical home services (e.g., automation, file sharing).
 - **Persona 2 (Developer)**: Needs a local Kubernetes cluster for testing k8s-native applications with GPU support for AI experiments.
+- **Persona 3 (Windows Developer)**: Uses WSL2 and needs a cluster that integrates seamlessly with Windows networking.
 
 ## 3. Success Metrics (Quantitative)
 
@@ -44,6 +45,7 @@ tags: ["prd", "requirements", "product", "infrastructure", "core-infra"]
 | **STORY-01** | **As a** Developer,<br>**I want** to spin up a k8s cluster locally,<br>**So that** I can test deployments without cloud costs. | **Given** k3d is installed,<br>**When** I run the cluster creation command,<br>**Then** a 1-server 3-agent cluster is initialized. |
 | **STORY-02** | **As a** Home User,<br>**I want** to access services via port 18080/18443,<br>**So that** I can use my services through the host IP. | **Given** the cluster is running,<br>**When** I access 127.0.0.1:18080,<br>**Then** traffic is routed to the k3s loadbalancer. |
 | **STORY-03** | **As an** AI Researcher,<br>**I want** GPU resources shared across the cluster,<br>**So that** I can run CUDA-enabled pods. | **Given** NVIDIA runtime is configured,<br>**When** I request `gpuRequest: all`,<br>**Then** all agents expose GPU capabilities to pods. |
+| **STORY-04** | **As a** Windows Developer,<br>**I want** cluster IP routes available from Windows shell,<br>**So that** I can use `kubectl` from outside WSL. | **Given** k3d cluster initialization,<br>**When** kubeconfig is updated via `--kubeconfig-switch-context`,<br>**Then** host `kubectl` can communicate with cluster. |
 
 ## 5. Scope & Functional Requirements
 

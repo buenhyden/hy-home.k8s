@@ -22,7 +22,7 @@ The home automation and development environment requires a Kubernetes cluster th
 
 ## 3. Decision Outcome
 
-**Chosen option: "k3d (k3s in Docker)"**, because it provides the best balance between speed, resource usage, and features. Running k3s within Docker containers allows for rapid experimentation and multi-node simulations on a single host.
+**Chosen option: "k3d (k3s in Docker)"**, because it provides the best balance between speed, resource usage, and features for local development, especially on **WSL2**. Running k3s within Docker containers abstracts away the complexities of running system services directly in WSL, leveraging the high-performance Docker-WSL2 integration.
 
 ### 3.1 Core Engineering Pillars Alignment
 
