@@ -6,7 +6,7 @@ last_updated: "2026-02-27"
 owner: "hy"
 status: "Planned"
 tags: ["implementation", "planning", "infrastructure", "k3d"]
-stack: "kubernetes"
+stack: "node"
 ---
 
 # Core Infrastructure Implementation Plan
@@ -24,7 +24,7 @@ The `hy-home` project requires a centralized orchestration layer for home automa
   - Enable GPU pass-through for AI workloads.
   - Implement local LoadBalancer support via MetalLB.
 - **In-Scope:**
-  - WSL2 environment preparation (systemd, NVIDIA Toolkit).
+  - WSL2 environment preparation (Docker Desktop integration; optional systemd + GPU runtime).
   - k3d cluster creation using YAML manifests.
   - MetalLB native installation and configuration.
 
@@ -40,8 +40,11 @@ The `hy-home` project requires a centralized orchestration layer for home automa
 
 - **Requirements:**
   - `[REQ-INF-001]`: 4-node cluster (1 server, 3 agents).
-  - `[REQ-INF-002]`: Host ports 18080/18443 mapped to LB.
-  - `[REQ-INF-003]`: GPU accessibility in all agent nodes.
+  - `[REQ-INF-002]`: Host ports 18080/18443 mapped to cluster LoadBalancer.
+  - `[REQ-INF-003]`: GPU pass-through enabled for all nodes (when host supports it).
+  - `[REQ-INF-004]`: Kubernetes API reachable from Windows host tooling (`kubectl`) via localhost-forwarded endpoint.
+  - `[REQ-INF-005]`: Local LoadBalancer IP allocation via MetalLB IPAddressPool + L2Advertisement.
+  - `[SEC-INF-001]`: TLS SAN includes `127.0.0.1` for local API access.
 - **Constraints:**
   - Limited to WSL2 version 0.67.6+.
   - Host RAM must be 8GB+.
@@ -50,18 +53,19 @@ The `hy-home` project requires a centralized orchestration layer for home automa
 
 | Task | Description | Files Affected | Target REQ | Validation Criteria |
 | ---- | ----------- | -------------- | ---------- | ------------------- |
-| TASK-INF-001 | Prepare WSL2 config (`systemd=true`) | `/etc/wsl.conf` | `[REQ-INF-001]` | `systemctl is-system-running` |
-| TASK-INF-002 | Initialize k3d cluster | `infrastructure/k3d/k3d-cluster.yaml` | `[REQ-INF-001]` | 4 nodes in `Ready` state |
-| TASK-INF-003 | Install MetalLB Native | N/A | `[REQ-INF-005]` | MetalLB pods running |
-| TASK-INF-004 | Configure IP Address Pool | `infrastructure/ipaddresspool.yaml` | `[REQ-INF-005]` | IP pool status is `Ready` |
+| TASK-INF-001 | Validate WSL2 + Docker Desktop prerequisites | N/A | `[REQ-INF-001]` | `docker info` succeeds in WSL2 |
+| TASK-INF-002 | Initialize k3d cluster from config | `infrastructure/k3d/k3d-cluster.yaml` | `[REQ-INF-001]` | 4 nodes in `Ready` state |
+| TASK-INF-003 | Verify Windows-host `kubectl` can reach kube-apiserver | `infrastructure/k3d/k3d-cluster.yaml` | `[REQ-INF-004]` | `kubectl version --short` succeeds from Windows |
+| TASK-INF-004 | Install MetalLB (native manifests) | N/A | `[REQ-INF-005]` | `kubectl -n metallb-system get pods` all `Running` |
+| TASK-INF-005 | Configure MetalLB IPAddressPool + L2Advertisement | `infrastructure/ipaddresspool.yaml` | `[REQ-INF-005]` | `kubectl -n metallb-system get ipaddresspools` shows `first-pool` |
 
 ## 6. Verification Plan
 
 | ID | Level | Description | Command / How to Run | Pass Criteria |
 | -- | ----- | ----------- | -------------------- | ------------- |
 | VAL-PLN-001 | Node | Check cluster node count | `kubectl get nodes --no-headers \| wc -l` | 4 |
-| VAL-PLN-002 | GPU | Verify NVIDIA devices in pod | `kubectl run -it test --image=nvidia/cuda -- nvidia-smi` | GPU detected |
-| VAL-PLN-003 | Net | Test local port mapping | `curl -k https://127.0.0.1:18443` | 404 (Traefik) or 200 |
+| VAL-PLN-002 | GPU | Verify GPU availability (if enabled) | `kubectl get nodes -o yaml \| grep -i nvidia` | Output contains `nvidia` |
+| VAL-PLN-003 | Net | Test local port mapping | `code=$(curl -sS -o /dev/null -w \"%{http_code}\" http://127.0.0.1:18080/); test \"$code\" -ge 200 -a \"$code\" -lt 500` | Exit code 0 |
 
 ## 7. Risks & Mitigations
 

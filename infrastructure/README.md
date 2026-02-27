@@ -1,6 +1,6 @@
 # Home Cluster Infrastructure
 
-This directory contains the core infrastructure configurations for the `hy-home` Kubernetes cluster, implemented using **k3d** (k3s in Docker) on **WSL2**.
+This directory contains the core infrastructure configurations for the `hy-home` Kubernetes cluster, implemented using **k3d** (**k3s in Docker**) on **WSL2**.
 
 ## Directory Structure
 
@@ -11,17 +11,20 @@ This directory contains the core infrastructure configurations for the `hy-home`
 
 ## Prerequisites
 
-- **WSL2**: Version 0.67.6+ with `systemd=true` enabled in `/etc/wsl.conf`.
+- **WSL2**: Version 0.67.6+.
 - **Docker Desktop**: Integrated with WSL2.
 - **k3d CLI**: Version 5.x+.
 - **NVIDIA Container Toolkit**: Required only for GPU pass-through functionality.
+
+> Notes:
+> - `systemd=true` in `/etc/wsl.conf` is recommended when you need Linux services managed inside WSL2 (e.g., a direct `k3s` install). For the default **k3d-only** workflow, it is typically not required.
 
 ## Usage
 
 ### Create Cluster
 
 ```bash
-k3d cluster create --config k3d/k3d-cluster.yaml
+k3d cluster create --config infrastructure/k3d/k3d-cluster.yaml
 ```
 
 ### Configure LoadBalancer (MetalLB)
@@ -29,7 +32,7 @@ k3d cluster create --config k3d/k3d-cluster.yaml
 Ensure MetalLB native manifests are applied, then:
 
 ```bash
-kubectl apply -f ipaddresspool.yaml
+kubectl apply -f infrastructure/ipaddresspool.yaml
 ```
 
 ## Related Documentation

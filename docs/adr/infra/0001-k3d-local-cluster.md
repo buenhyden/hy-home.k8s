@@ -62,6 +62,13 @@ Traditional local k8s tool.
 - **Good**, because mature and feature-rich.
 - **Bad**, because heavier resource footprint and often requires a dedicated VM or complex Docker integration.
 
+### k3s (Direct install on WSL2)
+
+Run k3s as a system service directly inside WSL2 (no Docker-based nodes).
+
+- **Good**, because it avoids Docker-in-Docker concerns and reduces dependence on Docker Desktop.
+- **Bad**, because it increases WSL2-specific complexity (service management, cgroups/systemd, networking), and makes multi-node simulation harder than k3d.
+
 ## 5. Confidence Level & Technical Requirements
 
 - **Confidence Rating**: High

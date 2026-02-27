@@ -79,6 +79,7 @@ tags: ["prd", "requirements", "product", "infrastructure", "infra"]
 - **[REQ-PRD-FUN-04]**: Disable default Traefik and ServiceLB to allow custom ingress setup.
 - **[REQ-PRD-FUN-05]**: Support for external LoadBalancer IP pools (via MetalLB).
 - **[REQ-PRD-FUN-06]**: Use of native MetalLB manifests (v0.14.8+) for deterministic deployment across environments.
+- **[REQ-PRD-FUN-07]**: Windows host access to kube-apiserver via a localhost-forwarded endpoint (kubeconfig/TLS SAN alignment).
 
 ## 6. Out of Scope
 
@@ -87,9 +88,10 @@ tags: ["prd", "requirements", "product", "infrastructure", "infra"]
 
 ## 7. Milestones & Roadmap
 
-- **PoC**: Local k3d setup with manual scripts. (Done)
-- **MVP**: Automated k3d manifest-based setup with GPU support. (Current)
-- **v1.0**: Full observability stack integration.
+- **PoC**: 2026-02-27 - Local k3d setup with manual commands. (Done)
+- **MVP**: 2026-02-27 - YAML-based k3d setup with GPU support and port mappings. (Current)
+- **Beta**: TBD - Add GitOps deployment flow and baseline security policies.
+- **v1.0**: TBD - Full observability stack integration.
 
 ## 8. Risks, Security & Compliance
 
@@ -101,6 +103,12 @@ tags: ["prd", "requirements", "product", "infrastructure", "infra"]
 
 - **Assumptions**: Host system has Docker and k3d installed.
 - **External Dependencies**: NVIDIA Container Toolkit for GPU support.
+
+## 10. Q&A / Open Issues
+
+- **[ISSUE-01]**: Do we require `systemd=true` for k3d-only workflows on WSL2? - **Update**: TBD (document and minimize hard requirements).
+- **[ISSUE-02]**: Is the primary Docker runtime Docker Desktop (Windows) or Docker Engine inside WSL? - **Update**: TBD (affects GPU and networking steps).
+- **[ISSUE-03]**: Do we support a direct `k3s` install in WSL2 (no Docker) as an alternative local cluster mode? - **Update**: Out of scope for v1.0.0 (tracked for future evaluation).
 
 ## 11. Related Documents (Reference / Traceability)
 

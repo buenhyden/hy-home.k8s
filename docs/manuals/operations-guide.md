@@ -34,6 +34,6 @@ Please fill out the following operational agreements before initiating deploymen
 ## 4. Custom Operations Rules
 
 - **WSL2 Resource limits**: Ensure `.wslconfig` in the Windows host user directory limits RAM/CPU to prevent host starvation.
-- **Systemd Dependency**: This project targets WSL2 with `systemd=true` enabled in `/etc/wsl.conf`.
+- **Systemd**: `systemd=true` in `/etc/wsl.conf` is optional for the default k3d-only workflow; require it only if you run Linux-managed services directly inside WSL2 (e.g., a direct `k3s` install).
 - **IP Variability**: Note that WSL2 IP changes on reboot; use `localhost` port forwarding provided by k3d for stable connectivity.
 - **Filesystem performance**: Keep all project files, cluster data, and Docker volumes on the Linux filesystem (`/home/hy/...`) for 10x better performance than `/mnt/c/`.

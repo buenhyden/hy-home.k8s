@@ -3,7 +3,7 @@ title: "Core Infrastructure Implementation Spec"
 status: "Validated"
 version: "1.0"
 owner: "hy"
-prd_reference: "../docs/prd/infra/home-cluster-infra-prd.md"
+prd_reference: "../../docs/prd/infra/home-cluster-infra-prd.md"
 api_reference: "N/A"
 arch_reference: "../../ARCHITECTURE.md"
 tags: ["spec", "implementation", "infrastructure", "k3d"]
@@ -30,14 +30,19 @@ tags: ["spec", "implementation", "infrastructure", "k3d"]
 | Service Boundaries | Are module boundaries documented (diagram/text)?      | Must     | k3d cluster boundary | Section 1         |
 | Domain Model       | Are core domain entities and relationships defined?   | Must     | N/A (Infrastructure) | Section 3         |
 | Backend Stack      | Are language/framework/libs (web, ORM, auth) decided? | Must     | k3s, k3d, Docker     | Section 1         |
+| Frontend Stack     | Are framework/state/build tools decided?              | Must     | N/A (Infrastructure) | Section 1         |
 
 ### 0.2 Quality / Testing / Security
 
-| Item            | Check Question                                 | Required | Alignment Notes          | Where to document |
-| --------------- | ---------------------------------------------- | -------- | ------------------------ | ----------------- |
-| Test Strategy   | Levels (Unit/Integration/E2E/Load) defined?    | Must     | Node readiness check     | Section 7         |
-| AuthN/AuthZ     | Is auth approach designed (token/OAuth/RBAC)?  | Must     | kubeconfig / RBAC        | Section 4         |
-| Data Protection | Encryption/access policies for sensitive data?     | Must     | TLS-SAN for localhost    | Section 9         |
+| Item            | Check Question                                 | Required | Alignment Notes       | Where to document |
+| --------------- | ---------------------------------------------- | -------- | --------------------- | ----------------- |
+| Test Strategy   | Levels (Unit/Integration/E2E/Load) defined?    | Must     | Infra verification cmds | Section 7       |
+| Test Tooling    | Agreed framework/runner and mock strategy?     | Must     | N/A (Infra-only)      | Section 7         |
+| Coverage Policy | Are goals defined as numbers (e.g. 100%)?      | Must     | N/A (Infra-only)      | Section 7         |
+| AuthN/AuthZ     | Is auth approach designed (token/OAuth/RBAC)?  | Must     | kubeconfig / RBAC     | Section 4         |
+| Data Protection | Encryption/access policies for sensitive data? | Must     | TLS-SAN for localhost | Section 9         |
+| Performance     | Are Core Web Vitals/Latency metrics targeted?  | Must     | kube-apiserver p95    | Section 8         |
+| Accessibility   | Is WCAG compliance integrated (contrast/ARIA)? | Must     | N/A (Infra-only)      | Section 8         |
 
 ### 0.3 Operations / Deployment / Monitoring
 
@@ -45,6 +50,9 @@ tags: ["spec", "implementation", "infrastructure", "k3d"]
 | -------------- | -------------------------------------------------------- | -------- | --------------- | ----------------- |
 | Environments   | Are tiers (dev/staging/prod) clarified for this feature? | Must     | Local Dev / Home Prod | Section 1         |
 | Logging        | Required structured logs defined (fields, IDs)?          | Must     | K8s System Logs | Section 9         |
+| Monitoring     | Metrics and dashboards defined (RED/USE)?                | Must     | Planned later   | Section 9         |
+| Alerts         | Are alert thresholds and routing defined?                | Must     | Planned later   | Section 9         |
+| Backups        | Are backup policies defined for added data?              | Must     | N/A (Infra-only) | Section 9        |
 
 ---
 
@@ -63,7 +71,7 @@ This specification details the automation and configuration of the `hy-k3d` Kube
 | **[REQ-INF-001]** | Multi-node setup (1-server, 3-agents) | High     | REQ-PRD-FUN-01 |
 | **[REQ-INF-002]** | Host port mapping (18080/18443) | High     | REQ-PRD-FUN-02 |
 | **[REQ-INF-003]** | GPU Pass-through enabling | High     | REQ-PRD-FUN-03 |
-| **[REQ-INF-004]** | WSL2 Port Forwarding Integration | High     | STORY-04       |
+| **[REQ-INF-004]** | Windows host access to kube-apiserver (localhost-forwarded) | High     | REQ-PRD-FUN-07 |
 | **[REQ-INF-005]** | External IP Pool Mapping (MetalLB) | High     | REQ-PRD-FUN-05 |
 | **[SEC-INF-001]** | TLS-SAN for localhost access | Critical | N/A            |
 
@@ -71,6 +79,38 @@ This specification details the automation and configuration of the `hy-k3d` Kube
 
 - **Storage Class**: Standard `local-path` provisioner.
 - **WSL Mapping**: Volumes must target paths within `/home/$USER` in WSL to avoid Windows file system overhead.
+
+## 4. Interfaces & Data Structures
+
+This specification is infrastructure-focused; the “interfaces” are primarily **cluster bootstrap contracts** (configuration files, ports, and expected endpoints).
+
+### 4.1. Core Interfaces
+
+- **k3d Cluster Config**: `infrastructure/k3d/k3d-cluster.yaml`
+  - **Cluster Name**: `hy-k3d`
+  - **k3s Image**: `rancher/k3s:v1.31.0-k3s1`
+  - **Topology**: 1 server + 3 agents
+  - **Host Port Mappings**:
+    - `18080 -> 80` (load balancer)
+    - `18443 -> 443` (load balancer)
+  - **Kubernetes API Exposure**:
+    - Host port `6443` exposed for `kubectl` access (WSL + Windows host)
+  - **k3s Flags**:
+    - `--tls-san=127.0.0.1`
+    - `--disable=traefik`
+    - `--disable=servicelb`
+  - **GPU**: `options.runtime.gpuRequest: all` (requires host GPU runtime support)
+
+- **MetalLB Address Pool**: `infrastructure/ipaddresspool.yaml`
+  - **Namespace**: `metallb-system`
+  - **Mode**: L2 (`L2Advertisement`)
+  - **Pool Range (Current)**: `172.18.0.100-172.18.0.150` (must match the Docker network used by k3d)
+
+### 4.2. AuthN / AuthZ (Required if protected data/actions)
+
+- **Authentication**: kubeconfig client credentials (generated by k3d and written to the default kubeconfig).
+- **Authorization**: Kubernetes RBAC (default model).
+- **Sensitive Actions**: Cluster-admin operations (e.g., installing controllers, MetalLB) must be done from a controlled admin context.
 
 ## 5. Component Breakdown
 
@@ -80,14 +120,14 @@ This specification details the automation and configuration of the `hy-k3d` Kube
 
 ## 6. Edge Cases & Error Handling
 
-- **GPU Missing**: [Condition] -> NVIDIA drivers missing on host -> k3d warns but proceeds with CPU only.
-- **Network Conflict**: [Condition] -> Port 18080/18443 in use -> k3d fail to start LB container.
+- **GPU Missing / Not Configured**: If the host GPU runtime is not available, the cluster still starts, but GPU workloads cannot schedule. Treat this as a non-fatal configuration gap unless GPU workloads are in-scope for the current deployment.
+- **Network / Port Conflicts**: If host ports `18080`, `18443`, or `6443` are already in use, cluster creation fails or exposes inconsistent endpoints. Resolve by freeing ports or updating the k3d config.
 
 ## 7. Verification Plan (Testing & QA)
 
-- **[VAL-INF-001] Node Check**: Verify nodes are `Ready` using `kubectl get nodes`.
-- **[VAL-INF-002] GPU Visibility**: Verify GPU visibility in pod using `kubectl exec -it <test-pod> -- nvidia-smi`.
-- **[VAL-INF-003] Port Access**: Verify 127.0.0.1:18080 accessibility from Windows host.
+- **[VAL-INF-001] Node Check**: `kubectl get nodes` shows 4 nodes and all are `Ready`.
+- **[VAL-INF-002] GPU Visibility (Optional)**: `kubectl get nodes -o custom-columns=NAME:.metadata.name,GPUS:.status.allocatable.nvidia\\.com/gpu` shows a GPU value where expected.
+- **[VAL-INF-003] Port Access**: Windows host can reach `http://127.0.0.1:18080` and receives an HTTP response (any 2xx–4xx).
 
 ## 8. Non-Functional Requirements (NFR) & Scalability
 

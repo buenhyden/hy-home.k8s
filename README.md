@@ -27,7 +27,7 @@ This project provides a robust, scalable, and automated Kubernetes environment f
 
 List all required tools and versions:
 
-- **WSL2** >= 0.67.6 (with `systemd=true` enabled)
+- **WSL2** >= 0.67.6 ( `systemd=true` optional; required only for direct `k3s` installs / Linux-managed services )
 - **Docker Desktop** >= 24.x (Integrated with WSL2)
 - **k3d CLI** >= 5.x
 - **kubectl** (matched to k8s version v1.31.0)
@@ -37,7 +37,7 @@ List all required tools and versions:
 
 ### 1. Environment Setup
 
-Ensure systemd is active in WSL:
+Optional: If you plan to run Linux-managed services directly inside WSL2 (for example, a direct `k3s` install outside of Docker), enable systemd in WSL:
 
 ```bash
 # In WSL2
