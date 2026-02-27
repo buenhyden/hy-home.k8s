@@ -45,11 +45,11 @@ C4Context
 | **Architecture Style** | Is the architectural style decided? | **Mandatory** | Infrastructure platform: Kubernetes-based local cluster (k3s distribution). |
 | **Service Boundaries** | Are boundaries/responsibilities expressed? | **Mandatory** | Boundary: cluster lifecycle + base networking (k3d, MetalLB). Workloads are out of scope. |
 | **Domain Model** | Are core entities and relations defined? | **Mandatory** | N/A (Infrastructure-only scope). |
-| **Tech Stack (Backend)** | Backend language/framework/libs decided? | **Mandatory** | k3s + k3d + Docker Desktop (WSL2 integration). |
+| **Tech Stack (Backend)** | Backend language/framework/libs decided? | **Mandatory** | k3s + k3d + Docker Engine (WSL2-managed). |
 | **Tech Stack (Frontend)** | Frontend framework/state/build decided? | **Mandatory** | N/A (No UI in this repo scope). |
 | **Database** | Primary DB and schema strategy decided? | **Mandatory** | N/A (Cluster provides storage via local-path; app DBs are workload concerns). |
 | **Messaging / Async** | Broker or async method defined? | *Optional* | N/A (Workload-specific). |
-| **Infrastructure** | Deployment target decided? | **Mandatory** | WSL2 (Windows host) + Docker Desktop + k3d cluster. |
+| **Infrastructure** | Deployment target decided? | **Mandatory** | WSL2 (Windows host) + WSL-managed Docker Engine + k3d cluster. |
 | **Non-Functional Req** | NFRs defined quantitatively? | **Mandatory** | Defined in Section 8 (latency, availability, resource minimums). |
 | **Scalability Strategy** | Scale-up/out strategy drafted? | *Optional* | Multi-node simulation (1 server + 3 agents); HPA/VPA are workload-level. |
 | **Arch. Principles** | Principles incl. “what NOT to do”? | *Optional* | See Section 9 (no imperative edits; declarative manifests). |
@@ -70,15 +70,17 @@ C4Container
     Person(user, "Home User / Developer")
 
     Container(wsl, "WSL2 Linux Environment", "WSL2 (Linux)", "Runs k3d CLI, kubectl, and local tooling")
-    Container(docker, "Docker Engine", "Docker Desktop (WSL2 integration)", "Hosts k3d nodes as containers")
+    Container(docker, "Docker Engine", "Docker Engine (WSL2)", "Hosts k3d nodes as containers")
     Container(cluster, "hy-k3d Cluster", "k3s v1.31.0 via k3d", "1 server + 3 agents + load balancer")
     Container(metallb, "MetalLB", "MetalLB (L2)", "Provides LoadBalancer IPs within Docker network")
+    Container(ingress, "Ingress Controller", "ingress-nginx", "Provides HTTP/HTTPS ingress baseline for local routing verification")
     System_Ext(registry, "Container Registry", "OCI Registry", "Stores/publishes container images")
 
     Rel(user, wsl, "Uses", "bash / kubectl / k3d")
     Rel(wsl, docker, "Creates/manages", "k3d API")
     Rel(docker, cluster, "Hosts", "containers + network")
     Rel(cluster, metallb, "Applies config", "CRDs")
+    Rel(cluster, ingress, "Routes traffic via", "Ingress")
     Rel(cluster, registry, "Pulls images", "HTTPS")
 ```
 
@@ -93,10 +95,11 @@ Additional platform components:
 - **Orchestration**: Kubernetes v1.31.0 (k3s distribution).
 - **Engine**: k3d (k3s in Docker).
 - **Host Platform**: Windows Subsystem for Linux (WSL2).
-- **Container Runtime**: Docker Desktop (WSL2 integration).
+- **Container Runtime**: Docker Engine inside WSL2 (WSL-managed service).
+- **Container Network**: Dedicated Docker network with fixed CIDR (to stabilize MetalLB IP allocation).
 - **GPU Runtime**: NVIDIA Container Toolkit (optional; required for GPU workloads).
 - **Load Balancer**: MetalLB (L2 Mode).
-- **Ingress Layer**: Custom (Traefik disabled in base config).
+- **Ingress Layer**: ingress-nginx baseline (Traefik disabled in base config).
 
 ## 5. Data Architecture
 

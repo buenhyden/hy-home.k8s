@@ -67,7 +67,7 @@ tags: ["prd", "requirements", "product", "infrastructure", "infra"]
 | ID           | User Story (INVEST)                                                                      | Acceptance Criteria (Given-When-Then)                                                                                                |
 | ------------ | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | **STORY-01** | **As a** Developer,<br>**I want** to spin up a k8s cluster locally,<br>**So that** I can test deployments without cloud costs. | **Given** k3d is installed,<br>**When** I run the cluster creation command,<br>**Then** a 1-server 3-agent cluster is initialized. |
-| **STORY-02** | **As a** Home User,<br>**I want** to access services via port 18080/18443,<br>**So that** I can use my services through the host IP. | **Given** the cluster is running,<br>**When** I access 127.0.0.1:18080,<br>**Then** traffic is routed to the k3s loadbalancer. |
+| **STORY-02** | **As a** Home User,<br>**I want** to access services via port 18080/18443,<br>**So that** I can use my services through the host IP. | **Given** the cluster is running and an ingress controller is installed,<br>**When** I access 127.0.0.1:18080,<br>**Then** I receive an HTTP response without a connection failure. |
 | **STORY-03** | **As an** AI Researcher,<br>**I want** GPU resources shared across the cluster,<br>**So that** I can run CUDA-enabled pods. | **Given** NVIDIA runtime is configured,<br>**When** I request `gpuRequest: all`,<br>**Then** all agents expose GPU capabilities to pods. |
 | **STORY-04** | **As a** Windows Developer,<br>**I want** cluster IP routes available from Windows shell,<br>**So that** I can use `kubectl` from outside WSL. | **Given** k3d cluster initialization,<br>**When** kubeconfig is updated via `--kubeconfig-switch-context`,<br>**Then** host `kubectl` can communicate with cluster. |
 
@@ -75,11 +75,13 @@ tags: ["prd", "requirements", "product", "infrastructure", "infra"]
 
 - **[REQ-PRD-FUN-01]**: Kubernetes cluster setup using k3d with 1 server and 3 agents.
 - **[REQ-PRD-FUN-02]**: External access via host ports 18080 (HTTP) and 18443 (HTTPS).
-- **[REQ-PRD-FUN-03]**: GPU resource pass-through support.
+- **[REQ-PRD-FUN-03]**: GPU resource pass-through support (optional; cluster must run without GPU).
 - **[REQ-PRD-FUN-04]**: Disable default Traefik and ServiceLB to allow custom ingress setup.
 - **[REQ-PRD-FUN-05]**: Support for external LoadBalancer IP pools (via MetalLB).
 - **[REQ-PRD-FUN-06]**: Use of native MetalLB manifests (v0.14.8+) for deterministic deployment across environments.
 - **[REQ-PRD-FUN-07]**: Windows host access to kube-apiserver via a localhost-forwarded endpoint (kubeconfig/TLS SAN alignment).
+- **[REQ-PRD-FUN-08]**: Use a dedicated Docker network with a fixed CIDR to stabilize MetalLB behavior.
+- **[REQ-PRD-FUN-09]**: Provide an ingress controller baseline (ingress-nginx) for HTTP/HTTPS routing verification.
 
 ## 6. Out of Scope
 
@@ -96,6 +98,7 @@ tags: ["prd", "requirements", "product", "infrastructure", "infra"]
 ## 8. Risks, Security & Compliance
 
 - **Risks & Mitigation**: Local storage limitations. Mitigation: External CSI integration planned.
+- **Risks & Mitigation**: ingress-nginx upstream retirement (planned around 2026-03) may reduce long-term patch availability. Mitigation: Track and migrate to an alternative controller (Traefik/Gateway API) in a follow-up ADR.
 - **Compliance & Privacy**: Local only environment ensures data privacy.
 - **Security Protocols**: TLS-SAN for local host access.
 
@@ -106,8 +109,8 @@ tags: ["prd", "requirements", "product", "infrastructure", "infra"]
 
 ## 10. Q&A / Open Issues
 
-- **[ISSUE-01]**: Do we require `systemd=true` for k3d-only workflows on WSL2? - **Update**: TBD (document and minimize hard requirements).
-- **[ISSUE-02]**: Is the primary Docker runtime Docker Desktop (Windows) or Docker Engine inside WSL? - **Update**: TBD (affects GPU and networking steps).
+- **[ISSUE-01]**: Do we require `systemd=true` for k3d-only workflows on WSL2? - **Update**: Yes for the default v1 workflow (WSL-managed Docker Engine). Alternative non-systemd setups are out of scope for v1.
+- **[ISSUE-02]**: Is the primary Docker runtime Docker Desktop (Windows) or Docker Engine inside WSL? - **Update**: Docker Engine inside WSL2 is the v1 standard.
 - **[ISSUE-03]**: Do we support a direct `k3s` install in WSL2 (no Docker) as an alternative local cluster mode? - **Update**: Out of scope for v1.0.0 (tracked for future evaluation).
 
 ## 11. Related Documents (Reference / Traceability)

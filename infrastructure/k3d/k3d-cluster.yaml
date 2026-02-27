@@ -8,16 +8,19 @@ image: rancher/k3s:v1.31.0-k3s1
 servers: 1
 agents: 3
 
+# Dedicated Docker network (must exist before cluster create)
+network: k3d-hy-k3d
+
 kubeAPI:
   hostIP: '0.0.0.0'
   hostPort: '6443'
 
 ports:
   # Ingress / Service 접근용
-  - port: 18080:80
+  - port: 18080:30080
     nodeFilters:
       - loadbalancer
-  - port: 18443:443
+  - port: 18443:30443
     nodeFilters:
       - loadbalancer
 
@@ -40,7 +43,3 @@ options:
   kubeconfig:
     updateDefaultKubeconfig: true
     switchCurrentContext: true
-
-  runtime:
-    # 🔥 GPU 핵심 설정
-    gpuRequest: all

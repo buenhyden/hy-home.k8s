@@ -1,12 +1,12 @@
 apiVersion: k3d.io/v1alpha5
 kind: Simple
 metadata:
-  name: hy-k3d-min
+  name: hy-k3d
 
 image: rancher/k3s:v1.31.0-k3s1
 
 servers: 1
-agents: 1
+agents: 3
 
 # Dedicated Docker network (must exist before cluster create)
 network: k3d-hy-k3d
@@ -16,7 +16,7 @@ kubeAPI:
   hostPort: '6443'
 
 ports:
-  # Ingress / Service 접근용 (ingress-nginx NodePort)
+  # Ingress / Service 접근용
   - port: 18080:30080
     nodeFilters:
       - loadbalancer
@@ -27,12 +27,12 @@ ports:
 options:
   k3s:
     extraArgs:
-      - arg: '--tls-san=127.0.0.1'
+      - arg: '--tls-san=127.0.0.1' # 인증서에 로컬 호스트 주소 포함
         nodeFilters: [server:0]
       - arg: '--disable=traefik'
         nodeFilters:
           - server:*
-      - arg: '--disable=servicelb'
+      - arg: '--disable=servicelb' # 내장 LB 비활성화
         nodeFilters: [server:*]
 
   k3d:
@@ -44,3 +44,5 @@ options:
     updateDefaultKubeconfig: true
     switchCurrentContext: true
 
+  runtime:
+    gpuRequest: all

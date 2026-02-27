@@ -5,21 +5,35 @@ This directory contains the core infrastructure configurations for the `hy-home`
 ## Directory Structure
 
 - `k3d/`: Contains k3d cluster configuration manifests.
-  - `k3d-cluster.yaml`: Main configuration for the 4-node cluster (1 server, 3 agents) with GPU support.
+  - `k3d-cluster.yaml`: Main configuration for the 4-node cluster (1 server, 3 agents).
+  - `k3d-cluster.gpu.yaml`: GPU-enabled variant (optional; requires host GPU runtime support).
   - `k3d-min.yaml`: Minimal configuration for low-resource testing.
-- `ipaddresspool.yaml`: MetalLB IPAddressPool and L2Advertisement configuration for local LoadBalancer support.
+- `metallb/`: Vendored MetalLB native manifests (pinned).
+- `ingress-nginx/`: Vendored ingress-nginx manifests (pinned) + deterministic NodePort service for localhost access.
+- `namespaces/`: Workload namespaces with Pod Security Admission labels.
+- `networkpolicies/`: Baseline NetworkPolicy templates (default-deny + required allows).
+- `ipaddresspool.yaml`: MetalLB IPAddressPool and L2Advertisement configuration for local LoadBalancer support (dedicated Docker network).
 
 ## Prerequisites
 
 - **WSL2**: Version 0.67.6+.
-- **Docker Desktop**: Integrated with WSL2.
+- **Docker Engine (WSL-managed)**: Docker daemon runs inside WSL2 (systemd-managed for the default v1 workflow).
 - **k3d CLI**: Version 5.x+.
+- **kubectl**: Matched to Kubernetes v1.31.0 (or newer client compatible with v1.31).
 - **NVIDIA Container Toolkit**: Required only for GPU pass-through functionality.
 
 > Notes:
-> - `systemd=true` in `/etc/wsl.conf` is recommended when you need Linux services managed inside WSL2 (e.g., a direct `k3s` install). For the default **k3d-only** workflow, it is typically not required.
+> - For the v1 standard, `systemd=true` is required to run Docker Engine as a service inside WSL2. See the runbook in `runbooks/services/` for the exact setup steps.
 
 ## Usage
+
+### Create Dedicated Docker Network (Fixed CIDR)
+
+MetalLB stability depends on a fixed Docker network CIDR. Create the network **before** creating the cluster:
+
+```bash
+docker network create --driver bridge --subnet 172.20.0.0/16 k3d-hy-k3d
+```
 
 ### Create Cluster
 
@@ -27,13 +41,37 @@ This directory contains the core infrastructure configurations for the `hy-home`
 k3d cluster create --config infrastructure/k3d/k3d-cluster.yaml
 ```
 
-### Configure LoadBalancer (MetalLB)
-
-Ensure MetalLB native manifests are applied, then:
+Optional (GPU-enabled):
 
 ```bash
+k3d cluster create --config infrastructure/k3d/k3d-cluster.gpu.yaml
+```
+
+### Configure LoadBalancer (MetalLB)
+
+Install MetalLB from vendored manifests, then apply the local IP pool:
+
+```bash
+kubectl apply -f infrastructure/metallb/metallb-native.yaml
 kubectl apply -f infrastructure/ipaddresspool.yaml
 ```
+
+### Install Ingress (ingress-nginx)
+
+```bash
+kubectl apply -f infrastructure/ingress-nginx/ingress-nginx.yaml
+kubectl apply -f infrastructure/ingress-nginx/nodeport-service.yaml
+```
+
+### Baseline Security (Minimum)
+
+Apply workload namespaces with Pod Security Admission labels:
+
+```bash
+kubectl apply -f infrastructure/namespaces/
+```
+
+NetworkPolicy templates are provided in `infrastructure/networkpolicies/` (apply selectively per namespace/workload).
 
 ## Related Documentation
 

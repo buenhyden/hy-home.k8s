@@ -11,6 +11,6 @@ This directory contains implementation specifications and execution plans for th
 
 ## Purpose
 
-These files define the exact k3d (**k3s-in-Docker**) and MetalLB configurations required to achieve a stable WSL2-based Kubernetes environment. Where this repository mentions “k3s”, it refers to the Kubernetes distribution used by k3d, not a separate direct-install path unless explicitly stated.
+These files define the exact k3d (**k3s-in-Docker**) configuration, dedicated Docker networking baseline, MetalLB configuration, and ingress-nginx baseline required to achieve a stable WSL2-based Kubernetes environment. Where this repository mentions “k3s”, it refers to the Kubernetes distribution used by k3d, not a separate direct-install path unless explicitly stated.
 
 They translate [Architecture Requirements](../../docs/ard/infra/k3d-cluster-requirements.md) into concrete execution steps.

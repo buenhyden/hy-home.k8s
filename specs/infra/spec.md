@@ -70,9 +70,11 @@ This specification details the automation and configuration of the `hy-k3d` Kube
 | ----------------- | ----------------------- | -------- | -------------- |
 | **[REQ-INF-001]** | Multi-node setup (1-server, 3-agents) | High     | REQ-PRD-FUN-01 |
 | **[REQ-INF-002]** | Host port mapping (18080/18443) | High     | REQ-PRD-FUN-02 |
-| **[REQ-INF-003]** | GPU Pass-through enabling | High     | REQ-PRD-FUN-03 |
+| **[REQ-INF-003]** | GPU Pass-through enabling (optional) | High     | REQ-PRD-FUN-03 |
 | **[REQ-INF-004]** | Windows host access to kube-apiserver (localhost-forwarded) | High     | REQ-PRD-FUN-07 |
 | **[REQ-INF-005]** | External IP Pool Mapping (MetalLB) | High     | REQ-PRD-FUN-05 |
+| **[REQ-INF-006]** | Dedicated Docker network with fixed CIDR | High     | REQ-PRD-FUN-08 |
+| **[REQ-INF-007]** | Ingress controller baseline (ingress-nginx) | High     | REQ-PRD-FUN-09 |
 | **[SEC-INF-001]** | TLS-SAN for localhost access | Critical | N/A            |
 
 ## 3. Data Modeling & Storage Strategy
@@ -90,21 +92,42 @@ This specification is infrastructure-focused; the “interfaces” are primarily
   - **Cluster Name**: `hy-k3d`
   - **k3s Image**: `rancher/k3s:v1.31.0-k3s1`
   - **Topology**: 1 server + 3 agents
+  - **Docker Network**: `k3d-hy-k3d` (dedicated network; fixed CIDR)
   - **Host Port Mappings**:
-    - `18080 -> 80` (load balancer)
-    - `18443 -> 443` (load balancer)
+    - `18080 -> 30080` (ingress-nginx NodePort via k3d load balancer)
+    - `18443 -> 30443` (ingress-nginx NodePort via k3d load balancer)
   - **Kubernetes API Exposure**:
     - Host port `6443` exposed for `kubectl` access (WSL + Windows host)
   - **k3s Flags**:
     - `--tls-san=127.0.0.1`
     - `--disable=traefik`
     - `--disable=servicelb`
-  - **GPU**: `options.runtime.gpuRequest: all` (requires host GPU runtime support)
+  - **GPU**: Optional (see GPU variant config below)
+
+- **k3d Cluster Config (GPU Variant)**: `infrastructure/k3d/k3d-cluster.gpu.yaml`
+  - **Purpose**: Enables `gpuRequest: all` when the host supports GPU pass-through.
+  - **Behavior**: This file MUST NOT be required for a baseline (non-GPU) cluster.
+
+- **MetalLB Installation Manifests (Vendored)**: `infrastructure/metallb/metallb-native.yaml`
+  - **Version**: Pinned to a stable release (see `infrastructure/metallb/README.md`)
 
 - **MetalLB Address Pool**: `infrastructure/ipaddresspool.yaml`
   - **Namespace**: `metallb-system`
   - **Mode**: L2 (`L2Advertisement`)
-  - **Pool Range (Current)**: `172.18.0.100-172.18.0.150` (must match the Docker network used by k3d)
+  - **Pool Range (Default)**: `172.20.0.100-172.20.0.150` (must match the dedicated Docker network CIDR)
+
+- **Ingress Controller Manifests (Vendored)**: `infrastructure/ingress-nginx/ingress-nginx.yaml`
+  - **Controller**: ingress-nginx
+  - **Service**: LoadBalancer (MetalLB assigns an External IP on the dedicated Docker network)
+
+- **Ingress Controller Host Access (NodePort)**: `infrastructure/ingress-nginx/nodeport-service.yaml`
+  - **Purpose**: Deterministic localhost access for `curl http://127.0.0.1:18080` without relying on Docker network routing from Windows.
+  - **NodePorts**: `30080` (HTTP), `30443` (HTTPS)
+
+- **MetalLB Address Pool**: `infrastructure/ipaddresspool.yaml`
+  - **Namespace**: `metallb-system`
+  - **Mode**: L2 (`L2Advertisement`)
+  - **Pool Range (Default)**: `172.20.0.100-172.20.0.150` (must match the Docker network used by k3d)
 
 ### 4.2. AuthN / AuthZ (Required if protected data/actions)
 
@@ -115,19 +138,28 @@ This specification is infrastructure-focused; the “interfaces” are primarily
 ## 5. Component Breakdown
 
 - **`infrastructure/k3d/k3d-cluster.yaml`**: Main configuration file for the cluster.
+- **`infrastructure/k3d/k3d-cluster.gpu.yaml`**: GPU-enabled variant configuration (optional).
 - **`infrastructure/k3d/k3d-min.yaml`**: Minimal configuration for low-resource environments.
+- **`infrastructure/metallb/metallb-native.yaml`**: Vendored MetalLB native install manifest.
 - **`infrastructure/ipaddresspool.yaml`**: MetalLB layer-2 IP range definition.
+- **`infrastructure/ingress-nginx/ingress-nginx.yaml`**: Vendored ingress-nginx install manifest.
+- **`infrastructure/ingress-nginx/nodeport-service.yaml`**: Host-access NodePort service for ingress-nginx.
+- **`infrastructure/namespaces/`**: Workload namespaces (Pod Security Admission labels).
+- **`infrastructure/networkpolicies/`**: Baseline NetworkPolicy templates (default-deny + allows).
 
 ## 6. Edge Cases & Error Handling
 
 - **GPU Missing / Not Configured**: If the host GPU runtime is not available, the cluster still starts, but GPU workloads cannot schedule. Treat this as a non-fatal configuration gap unless GPU workloads are in-scope for the current deployment.
 - **Network / Port Conflicts**: If host ports `18080`, `18443`, or `6443` are already in use, cluster creation fails or exposes inconsistent endpoints. Resolve by freeing ports or updating the k3d config.
+- **Ingress Controller Lifecycle Risk**: ingress-nginx upstream retirement (planned around 2026-03) may reduce patch availability. For v1, ingress-nginx is accepted; follow-up work should migrate to an alternative controller if needed.
 
 ## 7. Verification Plan (Testing & QA)
 
 - **[VAL-INF-001] Node Check**: `kubectl get nodes` shows 4 nodes and all are `Ready`.
 - **[VAL-INF-002] GPU Visibility (Optional)**: `kubectl get nodes -o custom-columns=NAME:.metadata.name,GPUS:.status.allocatable.nvidia\\.com/gpu` shows a GPU value where expected.
 - **[VAL-INF-003] Port Access**: Windows host can reach `http://127.0.0.1:18080` and receives an HTTP response (any 2xx–4xx).
+- **[VAL-INF-004] MetalLB Health**: `kubectl -n metallb-system get pods` shows all pods running.
+- **[VAL-INF-005] Ingress Health**: `kubectl -n ingress-nginx get pods` shows the controller pod(s) ready.
 
 ## 8. Non-Functional Requirements (NFR) & Scalability
 

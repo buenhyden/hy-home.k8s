@@ -20,15 +20,17 @@ This project provides a robust, scalable, and automated Kubernetes environment f
 | Orchestration | Kubernetes (k3s distribution) |
 | Engine | k3d (k3s in Docker) |
 | Host Platform | Windows Subsystem for Linux (WSL2) |
-| Runtime | NVIDIA Container Runtime |
+| Runtime | Docker Engine (WSL-managed) |
+| GPU (Optional) | NVIDIA Container Toolkit / runtime |
 | Networking | MetalLB (L2 Mode) |
+| Ingress | ingress-nginx (baseline) |
 
 ## Prerequisites
 
 List all required tools and versions:
 
-- **WSL2** >= 0.67.6 ( `systemd=true` optional; required only for direct `k3s` installs / Linux-managed services )
-- **Docker Desktop** >= 24.x (Integrated with WSL2)
+- **WSL2** >= 0.67.6 ( `systemd=true` required for the default v1 workflow )
+- **Docker Engine (WSL-managed)** (systemd-managed for the default v1 workflow)
 - **k3d CLI** >= 5.x
 - **kubectl** (matched to k8s version v1.31.0)
 - **NVIDIA Container Toolkit** (Optional, for GPU support)
@@ -37,7 +39,7 @@ List all required tools and versions:
 
 ### 1. Environment Setup
 
-Optional: If you plan to run Linux-managed services directly inside WSL2 (for example, a direct `k3s` install outside of Docker), enable systemd in WSL:
+Enable systemd in WSL (required for the default v1 workflow using a WSL-managed Docker Engine):
 
 ```bash
 # In WSL2
@@ -45,16 +47,36 @@ cat /etc/wsl.conf
 # Expected output: [boot] systemd=true
 ```
 
-### 2. Create Cluster
+### 2. Create Dedicated Docker Network (Fixed CIDR)
+
+```bash
+docker network create --driver bridge --subnet 172.20.0.0/16 k3d-hy-k3d
+```
+
+### 3. Create Cluster
 
 ```bash
 k3d cluster create --config infrastructure/k3d/k3d-cluster.yaml
 ```
 
-### 3. Verify Health
+### 4. Install MetalLB + Ingress
+
+```bash
+kubectl apply -f infrastructure/metallb/metallb-native.yaml
+kubectl apply -f infrastructure/ipaddresspool.yaml
+
+kubectl apply -f infrastructure/ingress-nginx/ingress-nginx.yaml
+kubectl apply -f infrastructure/ingress-nginx/nodeport-service.yaml
+```
+
+### 5. Verify Health
 
 ```bash
 kubectl get nodes
+```
+
+```bash
+curl -I http://127.0.0.1:18080/
 ```
 
 ## Project Structure
