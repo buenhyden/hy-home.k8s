@@ -3,7 +3,7 @@ title: "Core Infrastructure Implementation Spec"
 status: "Validated"
 version: "1.0.0"
 owner: "hy"
-prd_reference: "../docs/prd/core-infra/home-cluster-infra-prd.md"
+prd_reference: "../docs/prd/infra/home-cluster-infra-prd.md"
 api_reference: "N/A"
 arch_reference: "../../ARCHITECTURE.md"
 tags: ["spec", "implementation", "infrastructure", "k3d"]
@@ -12,10 +12,32 @@ tags: ["spec", "implementation", "infrastructure", "k3d"]
 # Implementation Specification: Core Infrastructure
 
 > **Status**: Validated
-> **Related PRD**: [Link to PRD](../../docs/prd/core-infra/home-cluster-infra-prd.md)
+> **Related PRD**: [Link to PRD](../../docs/prd/infra/home-cluster-infra-prd.md)
 > **Related Architecture**: [Link to ARCHITECTURE.md](../../ARCHITECTURE.md)
 
-*Target Directory: `specs/core-infra/spec.md`*
+*Target Directory: `specs/infra/spec.md`*
+*Note: This document is the absolute Source of Truth for Coder Agents.*
+
+---
+
+## 0. Pre-Implementation Checklist (Governance)
+
+### 0.1 Architecture / Tech Stack
+
+| Item               | Check Question                                        | Required | Alignment Notes | Where to document |
+| ------------------ | ----------------------------------------------------- | -------- | --------------- | ----------------- |
+| Architecture Style | Is the style Monolith/Modular Monolith/Microservices? | Must     | k3s in Docker   | Section 1         |
+| Service Boundaries | Are module boundaries documented (diagram/text)?      | Must     | k3d cluster     | Section 1         |
+| Domain Model       | Are core domain entities and relationships defined?   | Must     | N/A (Infra)     | Section 3         |
+| Backend Stack      | Are language/framework/libs (web, ORM, auth) decided? | Must     | k3s, k3d        | Section 1         |
+
+### 0.2 Quality / Testing / Security
+
+| Item            | Check Question                                 | Required | Alignment Notes      | Where to document |
+| --------------- | ---------------------------------------------- | -------- | -------------------- | ----------------- |
+| Test Strategy   | Levels (Unit/Integration/E2E/Load) defined?    | Must     | Node readiness       | Section 7         |
+| AuthN/AuthZ     | Is auth approach designed (token/OAuth/RBAC)?  | Must     | certificates/kubeconfig | Section 4         |
+| Performance     | Are Core Web Vitals/Latency metrics targeted?  | Must     | API response         | Section 8         |
 
 ---
 

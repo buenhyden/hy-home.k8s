@@ -4,7 +4,7 @@ status: "Approved"
 version: "v1.0.0"
 owner: "hy"
 stakeholders: ["hy"]
-tags: ["prd", "requirements", "product", "infrastructure", "core-infra"]
+tags: ["prd", "requirements", "product", "infrastructure", "infra"]
 ---
 
 # Product Requirements Document (PRD)
@@ -14,7 +14,23 @@ tags: ["prd", "requirements", "product", "infrastructure", "core-infra"]
 > **Owner**: hy
 > **Stakeholders**: hy
 
-*Target Directory: `docs/prd/core-infra/home-cluster-infra-prd.md`*
+*Target Directory: `docs/prd/infra/home-cluster-infra-prd.md`*
+*Note: This document defines the What and Why for the Core Infrastructure.*
+
+---
+
+## 0. Pre-Review Checklist (Business & Product)
+
+| Item                  | Check Question                                                         | Required | Alignment Notes (Agreement) | PRD Section |
+| --------------------- | ---------------------------------------------------------------------- | -------- | --------------------------- | ----------- |
+| Vision & Goal         | Is the problem + business goal defined in one paragraph?               | Must     | Defined                     | Section 1   |
+| Success Metrics       | Are the key success/failure metrics defined with quantitative targets? | Must     | Defined                     | Section 3   |
+| Target Users          | Are specific primary personas and their pain points defined?           | Must     | Home User & AI Dev          | Section 2   |
+| Use Case (GWT)        | Are acceptance criteria written in Given-When-Then format?             | Must     | Yes                         | Section 4   |
+| Scope (In)            | Is the feature list included in this release clearly defined?          | Must     | k3d lifecycle               | Section 5   |
+| Not in Scope          | Is what we will NOT build in this release explicitly listed?           | Must     | Public Cloud                | Section 6   |
+| Timeline & Milestones | Are PoC / MVP / Beta / v1.0 milestones dated?                          | Must     | TBD                         | Section 7   |
+| Risks & Compliance    | Are major risks, privacy, or regulatory constraints documented?        | Must     | Hardware dep noted          | Section 8   |
 
 ---
 
@@ -78,5 +94,5 @@ tags: ["prd", "requirements", "product", "infrastructure", "core-infra"]
 
 ## 11. Related Documents (Reference / Traceability)
 
-- **Technical Specification**: [Link to Spec](../../../specs/core-infra/spec.md)
+- **Technical Specification**: [Link to Spec](../../../specs/infra/spec.md)
 - **Architecture Decisions (ADRs)**: [Link to ADRs](../../../docs/adr/README.md)

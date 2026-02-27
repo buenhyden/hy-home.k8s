@@ -1,11 +1,11 @@
 # Home Cluster Architecture Reference Document (ARD)
 
-*Target Directory: `docs/ard/core-infra/k3d-cluster-requirements.md`*
+*Target Directory: `docs/ard/infra/k3d-cluster-requirements.md`*
 
 - **Status**: Approved
 - **Owner**: hy
-- **PRD Reference**: [Link to PRD](../../../docs/prd/core-infra/home-cluster-infra-prd.md)
-- **ADR References**: [Link to ADRs](../../../docs/adr/core-infra/0001-k3d-local-cluster.md)
+- **PRD Reference**: [Link to PRD](../../../docs/prd/infra/home-cluster-infra-prd.md)
+- **ADR References**: [Link to ADRs](../../../docs/adr/infra/0001-k3d-local-cluster.md)
 
 ---
 

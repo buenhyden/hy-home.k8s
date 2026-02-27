@@ -1,6 +1,6 @@
 # Architecture Decision Record (ADR)
 
-*Target Directory: `docs/adr/core-infra/0001-k3d-local-cluster.md`*
+*Target Directory: `docs/adr/infra/0001-k3d-local-cluster.md`*
 
 ## Title: 0001-k3d-local-cluster
 
@@ -67,5 +67,5 @@ Traditional local k8s tool.
 
 ## 6. Related Documents (Traceability)
 
-- **Feature PRD**: [Link to PRD](../../../docs/prd/core-infra/home-cluster-infra-prd.md)
-- **Feature Spec**: [Link to Feature Spec](../../../specs/core-infra/spec.md)
+- **Feature PRD**: [Link to PRD](../../../docs/prd/infra/home-cluster-infra-prd.md)
+- **Feature Spec**: [Link to Feature Spec](../../../specs/infra/spec.md)

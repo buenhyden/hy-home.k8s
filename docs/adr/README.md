@@ -38,8 +38,8 @@ Create an ADR when making decisions that:
 
 ```bash
 # Example workflow
-mkdir -p docs/adr/core-infra
-cp templates/architecture/adr-template.md docs/adr/core-infra/0001-use-postgresql.md
+mkdir -p docs/adr/infra
+cp templates/architecture/adr-template.md docs/adr/infra/0001-use-postgresql.md
 # Edit the file with your decision details
 ```
 
@@ -60,7 +60,7 @@ All ADRs MUST use `templates/architecture/adr-template.md`. The template include
 
 ```text
 docs/adr/
-├── core-infra/
+├── infra/
 │   ├── 0001-use-postgresql.md
 │   └── 0002-api-gateway-pattern.md
 ├── identity/
@@ -100,6 +100,6 @@ When working with ADRs:
 
 | Number | Title | Status | Date |
 | --- | --- | --- | --- |
-| 0001 | [k3d-local-cluster](./core-infra/0001-k3d-local-cluster.md) | Accepted | 2026-02-27 |
+| 0001 | [k3d-local-cluster](./infra/0001-k3d-local-cluster.md) | Accepted | 2026-02-27 |
 
 > Add entries to this index as ADRs are created.

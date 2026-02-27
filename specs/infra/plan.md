@@ -1,6 +1,6 @@
 # Implementation Plan: Core Infrastructure Deployment
 
-*Target Directory: `specs/core-infra/plan.md`*
+*Target Directory: `specs/infra/plan.md`*
 
 ## 1. Prerequisites
 

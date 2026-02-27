@@ -122,6 +122,6 @@ When working with PRDs:
 
 | Document | Feature | Status | Last Updated |
 | --- | --- | --- | --- |
-| [home-cluster-infra-prd](./core-infra/home-cluster-infra-prd.md) | core-infra | Approved | 2026-02-27 |
+| [home-cluster-infra-prd](./infra/home-cluster-infra-prd.md) | infra | Approved | 2026-02-27 |
 
 > Add entries to this index as PRDs are created.
