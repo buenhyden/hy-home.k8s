@@ -86,3 +86,14 @@ The cluster follows a standard multi-node setup using Docker containers as nodes
   - WSL2 requires `systemd=true` in `/etc/wsl.conf` for service consistency.
 - **Considered Alternatives**: Kind, Minikube.
 - **Chosen Path Rationale**: k3d offers superior performance and easy GPU integration.
+
+## 10. Operational Constraints & Verification
+
+### 10.1 Networking range
+
+- The cluster typically utilizes the `172.18.0.0/16` Docker bridge network. MetalLB must be configured to use a sub-range that does not conflict with node IPs (e.g., `172.18.0.100-150`).
+
+### 10.2 WSL2 Prerequisites
+
+- **Systemd**: Must be enabled in `/etc/wsl.conf` to support k3s service management.
+- **NVIDIA Runtime**: Host must have NVIDIA drivers 515+ and WSL must have NVIDIA Container Toolkit installed.

@@ -89,3 +89,10 @@ This specification details the automation and configuration of the `hy-k3d` Kube
 - **When** I execute `k3d cluster create --config infrastructure/k3d/k3d-cluster.yaml`
 - **Then** 4 containers (1 server, 3 agents, 1 LB) are created
 - **And** `kubectl get nodes` returns all 4 nodes in `Ready` status
+
+**[REQ-CLU-002] MetalLB Configuration**
+
+- **Given** specialized MetalLB native manifests for v0.14.8
+- **When** I apply `infrastructure/ipaddresspool.yaml`
+- **Then** an `IPAddressPool` named `first-pool` is created in `metallb-system` namespace
+- **And** the pool contains the range `172.18.0.100-172.18.0.150`

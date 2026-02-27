@@ -12,35 +12,32 @@
 
 ### Phase 0: WSL Environment Preparation
 
-- [ ] Verify WSL2 version: `wsl --version` (should be 0.67.6+).
-- [ ] Enable systemd: `echo -e "[boot]\nsystemd=true" | sudo tee -a /etc/wsl.conf`.
-- [ ] Restart WSL: `wsl --shutdown` (from Windows PowerShell).
-- [ ] Configure Docker integration in Docker Desktop or install native Docker in WSL.
+- [ ] **WSL2 System Check**: Verify version 0.67.6+ using `wsl --version`.
+- [ ] **Systemd Enablement**: Ensure `[boot] systemd=true` exists in `/etc/wsl.conf`.
+- [ ] **NVIDIA Toolkit**: Verify GPU visibility via `nvidia-smi` inside a test Docker container.
+- [ ] **Restart**: Run `wsl --shutdown` and restart terminal to apply systemd changes.
 
 ### Phase 1: Preparation
 
 - [ ] Review `infrastructure/k3d/k3d-cluster.yaml`.
-- [ ] Verify Docker network availability.
+- [ ] Verify `docker` and `k3d` CLI readiness.
 
 ### Phase 2: Cluster Setup
 
-- [ ] Create cluster: `k3d cluster create --config infrastructure/k3d/k3d-cluster.yaml`.
-- [ ] Verify nodes: `kubectl get nodes`.
+- [ ] **Cluster Creation**: `k3d cluster create --config infrastructure/k3d/k3d-cluster.yaml`.
+- [ ] **Kubeconfig Audit**: Ensure context is set to `k3d-hy-k3d`.
 
-### Phase 3: Post-Setup
+### Phase 3: Post-Setup & Networking
 
-- [ ] **MetalLB Installation**:
-  - [ ] Apply namespace: `kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-native.yaml`.
-  - [ ] Wait for pods: `kubectl wait --namespace metallb-system --for=condition=ready pod --selector=app=metallb --timeout=90s`.
-- [ ] **MetalLB Configuration**:
-  - [ ] Apply Pool & Advertisement: `kubectl apply -f infrastructure/ipaddresspool.yaml`.
-- [ ] **Ingress Controller**:
-  - [ ] Install Ingress-Nginx - *Coming in further specs*.
-- [ ] **Windows Host Integration** (Optional):
-  - [ ] Merge kubeconfig to Windows host for external access.
+- [ ] **MetalLB Native Installation**:
+  - [ ] Apply manifest: `kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-native.yaml`.
+  - [ ] Verification: `kubectl wait --namespace metallb-system --for=condition=ready pod --selector=app=metallb --timeout=120s`.
+- [ ] **IP Pool Configuration**:
+  - [ ] Apply config: `kubectl apply -f infrastructure/ipaddresspool.yaml`.
 
 ## 3. Verification
 
-- [ ] `kubectl cluster-info`.
-- [ ] Verify GPU visibility: `kubectl describe node | grep -i nvidia`.
-- [ ] Verify MetalLB pool allocation: `kubectl get ipaddresspool -n metallb-system`.
+- [ ] **Node Count**: `kubectl get nodes` (Expected: 1 server + 3 agents + 1 LB container).
+- [ ] **GPU Capacity**: `kubectl describe node | grep -i nvidia.com/gpu:`.
+- [ ] **LoadBalancer Pool**: `kubectl get ipaddresspool -n metallb-system`.
+- [ ] **External Connectivity**: Test access to `127.0.0.1:18080`.

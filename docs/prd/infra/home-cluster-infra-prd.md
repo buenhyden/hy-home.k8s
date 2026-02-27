@@ -70,6 +70,7 @@ tags: ["prd", "requirements", "product", "infrastructure", "infra"]
 - **[REQ-PRD-FUN-03]**: GPU resource pass-through support.
 - **[REQ-PRD-FUN-04]**: Disable default Traefik and ServiceLB to allow custom ingress setup.
 - **[REQ-PRD-FUN-05]**: Support for external LoadBalancer IP pools (via MetalLB).
+- **[REQ-PRD-FUN-06]**: Use of native MetalLB manifests (v0.14.8+) for deterministic deployment across environments.
 
 ## 6. Out of Scope
 

@@ -20,25 +20,25 @@ The home automation and development environment requires a Kubernetes cluster th
 - **GPU Support**: Essential for AI workloads.
 - **Flexibility**: Ability to easily expose ports to the host.
 
-## 3. Decision Outcome
+### 3. Decision Outcome
 
-**Chosen option: "k3d (k3s in Docker)"**, because it provides the best balance between speed, resource usage, and features for local development, especially on **WSL2**. Running k3s within Docker containers abstracts away the complexities of running system services directly in WSL, leveraging the high-performance Docker-WSL2 integration.
+**Chosen option: "k3d (k3s in Docker)"**, because it provides the best balance between speed, resource usage, and features for local development, especially on **WSL2**. Running **k3s v1.31.0** within Docker containers abstracts away the complexities of running system services directly in WSL, leveraging the high-performance Docker-WSL2 integration.
 
-### 3.1 Core Engineering Pillars Alignment
+#### 3.1 Core Engineering Pillars Alignment
 
 - **Security**: Allows testing k8s security policies locally.
 - **Observability**: Supports standard Helm-based observability stacks (Prometheus/Loki).
 - **Performance**: High performance due to native Docker execution.
 - **Documentation**: Well-established engine with extensive community documentation.
 
-### 3.2 Positive Consequences
+#### 3.2 Positive Consequences
 
 - Sub-60 second cluster startup.
 - Easy port mapping to the local host.
 - Native integration with Docker-based workflows.
 - Simple multi-node simulation (1 server, 3 agents).
 
-### 3.3 Negative Consequences
+#### 3.3 Negative Consequences
 
 - Potential resource contention with other Docker containers.
 - Some limitations in simulating certain storage backends.
@@ -63,7 +63,7 @@ Traditional local k8s tool.
 
 - **Confidence Rating**: High
 - **Notes**: k3d is the industry standard for lightweight local k8s testing.
-- **Technical Requirements Addressed**: REQ-PRD-FUN-01
+- **Technical Requirements Addressed**: REQ-PRD-FUN-01, REQ-PRD-FUN-04
 
 ## 6. Related Documents (Traceability)
 
