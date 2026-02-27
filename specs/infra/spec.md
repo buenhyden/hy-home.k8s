@@ -57,6 +57,7 @@ This specification details the automation and configuration of the `hy-k3d` Kube
 | **[REQ-SPC-002]** | Host port mapping (18080/18443) | High     | REQ-PRD-FUN-02 |
 | **[REQ-SPC-003]** | GPU Pass-through enabling | High     | REQ-PRD-FUN-03 |
 | **[REQ-SPC-004]** | WSL2 Port Forwarding Integration | High     | STORY-04       |
+| **[REQ-SPC-005]** | External IP Pool Mapping (MetalLB) | High     | REQ-PRD-FUN-05 |
 | **[SEC-SPC-001]** | TLS-SAN for localhost access | Critical | N/A            |
 
 ## 3. Data Modeling & Storage Strategy
@@ -68,6 +69,7 @@ This specification details the automation and configuration of the `hy-k3d` Kube
 
 - **`infrastructure/k3d/k3d-cluster.yaml`**: Main configuration file for the cluster.
 - **`infrastructure/k3d/k3d-min.yaml`**: Minimal configuration for low-resource environments.
+- **`infrastructure/ipaddresspool.yaml`**: MetalLB layer-2 IP range definition (`172.18.0.100-150`).
 
 ## 8. Non-Functional Requirements (NFR) & Scalability
 

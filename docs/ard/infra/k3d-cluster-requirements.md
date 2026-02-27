@@ -49,6 +49,7 @@ The cluster follows a standard multi-node setup using Docker containers as nodes
 - **Engine**: k3d (k3s in Docker).
 - **Host Platform**: Windows Subsystem for Linux (WSL2).
 - **Runtime**: NVIDIA Container Runtime (for GPU support).
+- **Load Balancer**: MetalLB (L2 Mode).
 - **Ingress Layer**: Custom (Traefik disabled in base config).
 
 ## 5. Data Architecture

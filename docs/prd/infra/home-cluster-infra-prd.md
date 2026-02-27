@@ -69,6 +69,7 @@ tags: ["prd", "requirements", "product", "infrastructure", "infra"]
 - **[REQ-PRD-FUN-02]**: External access via host ports 18080 (HTTP) and 18443 (HTTPS).
 - **[REQ-PRD-FUN-03]**: GPU resource pass-through support.
 - **[REQ-PRD-FUN-04]**: Disable default Traefik and ServiceLB to allow custom ingress setup.
+- **[REQ-PRD-FUN-05]**: Support for external LoadBalancer IP pools (via MetalLB).
 
 ## 6. Out of Scope
 

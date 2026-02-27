@@ -29,10 +29,18 @@
 
 ### Phase 3: Post-Setup
 
-- [ ] Install essential tools (Metallb, Ingress-Nginx) - *Coming in further specs*.
-- [ ] (Optional) Merge kubeconfig to Windows host for external access.
+- [ ] **MetalLB Installation**:
+  - [ ] Apply namespace: `kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-native.yaml`.
+  - [ ] Wait for pods: `kubectl wait --namespace metallb-system --for=condition=ready pod --selector=app=metallb --timeout=90s`.
+- [ ] **MetalLB Configuration**:
+  - [ ] Apply Pool & Advertisement: `kubectl apply -f infrastructure/ipaddresspool.yaml`.
+- [ ] **Ingress Controller**:
+  - [ ] Install Ingress-Nginx - *Coming in further specs*.
+- [ ] **Windows Host Integration** (Optional):
+  - [ ] Merge kubeconfig to Windows host for external access.
 
 ## 3. Verification
 
 - [ ] `kubectl cluster-info`.
-- [ ] Verify GPU visibility in k3s containers (if applicable).
+- [ ] Verify GPU visibility: `kubectl describe node | grep -i nvidia`.
+- [ ] Verify MetalLB pool allocation: `kubectl get ipaddresspool -n metallb-system`.

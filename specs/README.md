@@ -33,3 +33,11 @@ Coder Agents (Backend/Frontend) are governed by `.agent/workflows/` to explicitl
 - `docs/prd/`: The **What** (Human-readable Features, Success Metrics). Do not place implementation rules there.
 - `docs/ard/`: The **How** globally (System Architecture). Do not place function-level logic there.
 - `specs/`: The **Exact Instructions** (File paths, function signatures, QA layer test requirements). Do not place broad product visions here.
+
+## 5. Index of Specifications
+
+| Feature | Specification | Plan | Status |
+|---------|---------------|------|--------|
+| **Infra** | [Technical Spec](./infra/spec.md) | [Execution Plan](./infra/plan.md) | Validated |
+
+> Add entries to this index as specifications are created.
