@@ -78,22 +78,17 @@ The cluster follows a standard multi-node setup using Docker containers as nodes
 - **Resource Constraints**: Subject to `.wslconfig` limits (suggested 8GB RAM minimum).
 - **GPU Request**: `all` (GPU capabilities exposed to all containers).
 
-## 9. Architectural Principles, Constraints & Trade-offs
+## 10. Architectural Principles, Constraints & Trade-offs
 
 - **What NOT to do**: Manual configuration via `kubectl edit` is discouraged; use manifests.
 - **Constraints**:
   - Limited by host RAM and GPU VRAM.
   - WSL2 requires `systemd=true` in `/etc/wsl.conf` for service consistency.
-- **Considered Alternatives**: Kind, Minikube.
+- **Considered Alternatives**: Kind, Minikube (documented in ADR-0001).
 - **Chosen Path Rationale**: k3d offers superior performance and easy GPU integration.
+- **Known Limitations**: Resource sharing with other Dockerized apps.
 
-## 10. Operational Constraints & Verification
+---
 
-### 10.1 Networking range
-
-- The cluster typically utilizes the `172.18.0.0/16` Docker bridge network. MetalLB must be configured to use a sub-range that does not conflict with node IPs (e.g., `172.18.0.100-150`).
-
-### 10.2 WSL2 Prerequisites
-
-- **Systemd**: Must be enabled in `/etc/wsl.conf` to support k3s service management.
-- **NVIDIA Runtime**: Host must have NVIDIA drivers 515+ and WSL must have NVIDIA Container Toolkit installed.
+> [!TIP]
+> This ARD avoids code-level details. For specific implementation logic, use the **Technical Specification** located in `specs/infra/spec.md`.

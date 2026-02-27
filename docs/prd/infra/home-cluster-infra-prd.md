@@ -42,9 +42,17 @@ tags: ["prd", "requirements", "product", "infrastructure", "infra"]
 
 ## 2. Target Personas
 
-- **Persona 1 (Home User)**: Wants high availability for critical home services (e.g., automation, file sharing).
-- **Persona 2 (Developer)**: Needs a local Kubernetes cluster for testing k8s-native applications with GPU support for AI experiments.
-- **Persona 3 (Windows Developer)**: Uses WSL2 and needs a cluster that integrates seamlessly with Windows networking.
+> **Important**: Link every core requirement to a specific persona defined here.
+
+- **Persona 1 (Home User)**:
+  - **Pain Point**: Difficulty managing multiple disconnected home automation services.
+  - **Goal**: High availability and centralized management for home services.
+- **Persona 2 (Developer)**:
+  - **Pain Point**: High cloud costs for testing Kubernetes-native applications.
+  - **Goal**: Local k8s cluster for rapid iteration with GPU support for AI.
+- **Persona 3 (Windows Developer)**:
+  - **Pain Point**: Networking friction between WSL2 and Windows host.
+  - **Goal**: Seamless cluster integration with Windows development workflow.
 
 ## 3. Success Metrics (Quantitative)
 
@@ -97,4 +105,5 @@ tags: ["prd", "requirements", "product", "infrastructure", "infra"]
 ## 11. Related Documents (Reference / Traceability)
 
 - **Technical Specification**: [Link to Spec](../../../specs/infra/spec.md)
+- **API Specification**: N/A
 - **Architecture Decisions (ADRs)**: [Link to ADRs](../../../docs/adr/README.md)
