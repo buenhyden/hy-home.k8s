@@ -9,6 +9,7 @@ description: Add dark mode support using next-themes
 
 2. **Add Provider**:
    - Wrap your app in `app/layout.tsx`.
+
    ```tsx
    import { ThemeProvider } from 'next-themes';
 
@@ -27,6 +28,7 @@ description: Add dark mode support using next-themes
 
 3. **Configure Tailwind**:
    - Ensure `darkMode: 'class'` is in `tailwind.config.ts`.
+
    ```ts
    export default {
      darkMode: 'class',
@@ -36,6 +38,7 @@ description: Add dark mode support using next-themes
 
 4. **Create Toggle Button**:
    - Build a theme switcher component.
+
    ```tsx
    'use client'
    import { useTheme } from 'next-themes';

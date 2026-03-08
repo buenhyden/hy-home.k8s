@@ -6,6 +6,7 @@ description: Implement Redis caching (Upstash or self-hosted)
    - Best for Vercel/Edge environments.
    // turbo
    - Run `npm install @upstash/redis`
+
    ```ts
    import { Redis } from '@upstash/redis';
 
@@ -23,12 +24,14 @@ description: Implement Redis caching (Upstash or self-hosted)
    - Best for long-running servers (VPS/Docker).
    // turbo
    - Run `npm install ioredis`
+
    ```ts
    import Redis from 'ioredis';
    const redis = new Redis(process.env.REDIS_URL);
    ```
 
 3. **Cache Pattern**:
+
    ```ts
    export async function getCachedUser(id: string) {
      const cacheKey = `user:${id}`;

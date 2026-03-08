@@ -5,6 +5,7 @@ description: Audit and fix LCP, CLS, and INP issues for better ranking
 1. **Fix LCP (Large Contentful Paint)**:
    - The largest element (usually the hero image) must load fast.
    - **Fix:** Add `priority` to your Hero image.
+
    ```tsx
    <Image src="/hero.png" alt="Hero" width={800} height={600} priority />
    ```
@@ -17,6 +18,7 @@ description: Audit and fix LCP, CLS, and INP issues for better ranking
 3. **Optimize Fonts**:
    - Fonts loading late cause layout shifts (FOUT/FOIT).
    - **Fix:** Use `next/font` which automatically optimizes and hosts fonts.
+
    ```tsx
    import { Inter } from 'next/font/google';
    const inter = Inter({ subsets: ['latin'] });

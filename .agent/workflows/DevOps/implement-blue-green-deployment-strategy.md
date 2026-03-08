@@ -7,6 +7,7 @@ description: Zero-downtime deploys
    - Green: New (v1.1)
 
 2. **Route Traffic Gradually**:
+
    ```ts
    const rolloutPercent = await get('green_rollout') || 0;
    if (Math.random() * 100 < rolloutPercent) {
@@ -15,6 +16,7 @@ description: Zero-downtime deploys
    ```
 
 3. **Monitor Metrics**:
+
    ```ts
    Sentry.setTag('environment', isGreen ? 'green' : 'blue');
    ```

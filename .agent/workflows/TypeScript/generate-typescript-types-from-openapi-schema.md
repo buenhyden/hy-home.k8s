@@ -18,6 +18,7 @@ description: Auto-generate type-safe API client from OpenAPI/Swagger spec
 
 4. **Use Generated Types**:
    - Import and use in your API calls.
+
    ```tsx
    import type { paths } from './types/api';
 
@@ -31,6 +32,7 @@ description: Auto-generate type-safe API client from OpenAPI/Swagger spec
 
 5. **Auto-Regenerate on Change**:
    - Add script to package.json.
+
    ```json
    {
      "scripts": {

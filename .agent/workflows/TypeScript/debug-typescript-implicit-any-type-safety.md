@@ -4,6 +4,7 @@ description: Find and eliminate implicit 'any' types for better type safety
 
 1. **Enable Strict Mode**:
    - Update `tsconfig.json` to catch implicit any.
+
    ```json
    {
      "compilerOptions": {
@@ -16,6 +17,7 @@ description: Find and eliminate implicit 'any' types for better type safety
 
 2. **Find All 'any' Usages**:
    - Use ESLint rule.
+
    ```json
    // .eslintrc.json
    {
@@ -27,13 +29,16 @@ description: Find and eliminate implicit 'any' types for better type safety
 
 3. **Common Fixes**:
    - **Event Handlers**:
+
      ```tsx
      // ❌ Bad
      const handleClick = (e: any) => {};
      // ✅ Good
      const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {};
      ```
+
    - **API Responses**:
+
      ```tsx
      // ❌ Bad
      const data: any = await fetch('/api/user').then(r => r.json());
@@ -41,7 +46,9 @@ description: Find and eliminate implicit 'any' types for better type safety
      interface User { id: string; name: string; }
      const data: User = await fetch('/api/user').then(r => r.json());
      ```
+
    - **Third-Party Libraries**:
+
      ```tsx
      // ❌ Bad
      import someLib from 'some-lib'; // Module has no types
@@ -51,6 +58,7 @@ description: Find and eliminate implicit 'any' types for better type safety
 
 4. **Use 'unknown' Instead of 'any'**:
    - Forces type checking before use.
+
    ```tsx
    function handleData(data: unknown) {
      if (typeof data === 'string') {

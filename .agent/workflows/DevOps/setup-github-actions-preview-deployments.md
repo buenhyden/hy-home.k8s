@@ -3,6 +3,7 @@ description: Auto-deploy PRs
 ---
 
 1. **Create GitHub Action**:
+
    ```yaml
    name: Preview
    on:

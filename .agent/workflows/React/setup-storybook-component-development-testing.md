@@ -9,6 +9,7 @@ description: Build and test components in isolation with Storybook
 
 2. **Create Your First Story**:
    - Create a story file next to your component.
+
    ```tsx
    // components/Button.stories.tsx
    import type { Meta, StoryObj } from '@storybook/react';
@@ -45,6 +46,7 @@ description: Build and test components in isolation with Storybook
 
 4. **Add Interactions**:
    - Test component behavior.
+
    ```tsx
    import { userEvent, within } from '@storybook/testing-library';
    import { expect } from '@storybook/jest';

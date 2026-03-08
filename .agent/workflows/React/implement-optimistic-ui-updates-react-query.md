@@ -7,6 +7,7 @@ description: Update UI before server confirms
    - Run `npm install @tanstack/react-query`
 
 2. **Setup Optimistic Mutation**:
+
    ```tsx
    const addTodo = useMutation({
      mutationFn: (text) => fetch('/api/todos', { method: 'POST', body: JSON.stringify({ text }) }),

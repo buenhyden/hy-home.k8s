@@ -9,6 +9,7 @@ description: Quick setup for a local Postgres database using Docker
 
 2. **Create `docker-compose.yml`**:
    - Create a `docker-compose.yml` file in your project root.
+
    ```yaml
    version: '3.8'
    services:

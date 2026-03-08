@@ -7,6 +7,7 @@ description: Protect APIs with rate limits
    - Run `npm install @upstash/ratelimit @upstash/redis`
 
 2. **Setup**:
+
    ```ts
    import { Ratelimit } from '@upstash/ratelimit';
 
@@ -17,6 +18,7 @@ description: Protect APIs with rate limits
    ```
 
 3. **Apply to Routes**:
+
    ```ts
    const { success } = await ratelimit.limit(ip);
    if (!success) return Response.json({ error: 'Too many requests' }, { status: 429 });

@@ -11,6 +11,7 @@ description: Systematically debug and fix 'Text content does not match server-re
 2. **Handle Random Values (Dates, Math.random)**:
    - If you render data that changes between server and client (like `new Date()` or `Math.random()`), it will cause a mismatch.
    - **Fix:** Use a `useEffect` to set the value only on the client.
+
    ```tsx
    const [mounted, setMounted] = useState(false);
    useEffect(() => setMounted(true), []);
@@ -23,6 +24,7 @@ description: Systematically debug and fix 'Text content does not match server-re
 
 4. **Suppress Warning (Last Resort)**:
    - If you absolutely cannot fix the mismatch (e.g., a timestamp that *must* be dynamic), you can suppress the warning on a specific element.
+
    ```tsx
    <div suppressHydrationWarning>
      {new Date().toLocaleTimeString()}

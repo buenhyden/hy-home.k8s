@@ -4,6 +4,7 @@ description: Compress and serve images in modern formats for faster loading
 
 1. **Use Next.js Image Component**:
    - Automatic optimization and lazy loading.
+
    ```tsx
    import Image from 'next/image';
 
@@ -19,6 +20,7 @@ description: Compress and serve images in modern formats for faster loading
 
 2. **Configure Remote Patterns (Next.js 14+)**:
    - `domains` is deprecated. Use `remotePatterns` for better security.
+
    ```js
    module.exports = {
      images: {

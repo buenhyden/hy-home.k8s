@@ -1,12 +1,12 @@
 ---
-title: "[API Name / Feature] API Specification"
-status: "Draft | Proposed | Approved | Deprecated"
-version: "v1.x.x"
-base_url: "https://api.example.com/v1"
-prd_reference: "[Link to PRD]"
-spec_reference: "[Link to Tech Spec]"
-adr_reference: "[Link to ADR]"
-tags: ["api", "contract", "specification"]
+title: '[API Name / Feature] API Specification'
+status: 'Draft | Proposed | Approved | Deprecated'
+version: 'v1.x.x'
+base_url: 'https://api.example.com/v1'
+prd_reference: '[Link to PRD]'
+spec_reference: '[Link to Tech Spec]'
+adr_reference: '[Link to ADR]'
+tags: ['api', 'contract', 'specification']
 ---
 
 # API Specification Template ([API Name / Feature])
@@ -24,16 +24,15 @@ tags: ["api", "contract", "specification"]
 
 ## 0. Canonical Location & Artifacts
 
-This API contract MUST be stored under `specs/<feature>/api/` (contract-first). Generated outputs MAY live under `specs/<feature>/api/generated/`, but the source contract MUST be human-reviewed.
+This API contract MUST be stored under `docs/api/<feature>/` (contract-first). 
 
 ### 0.1 Recommended Structure
 
 ```text
-specs/<feature>/api/
-  <feature>-api.md        # The main specification document (this template)
+docs/api/<feature>/
+  README.md        # The main specification document (this template)
   openapi.yaml            # OR schema.proto OR schema.graphql
   changelog.md            # Keep a Changelog format
-  generated/              # Optional, generated outputs only
 ```
 
 ### 0.2 Allowed Contract Formats
@@ -49,7 +48,7 @@ specs/<feature>/api/
 
 ### 0.4 Changelog
 
-Each API contract MUST include `specs/<feature>/api/changelog.md` using Keep a Changelog sections:
+Each API contract MUST include `docs/api/<feature>/changelog.md` using Keep a Changelog sections:
 
 - Added
 - Changed
@@ -95,7 +94,7 @@ Each API contract MUST include `specs/<feature>/api/changelog.md` using Keep a C
 
 **Resource Models**: Define the core domain entities used in this API using JSON schema or simple tables.
 
-*Example: Widget Resource*
+_Example: Widget Resource_
 
 ```json
 {

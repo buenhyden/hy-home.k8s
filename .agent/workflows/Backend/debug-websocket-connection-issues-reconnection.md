@@ -3,6 +3,7 @@ description: Fix WebSocket connections
 ---
 
 1. **Setup with Reconnection**:
+
    ```tsx
    'use client'
    export function useWebSocket(url: string) {

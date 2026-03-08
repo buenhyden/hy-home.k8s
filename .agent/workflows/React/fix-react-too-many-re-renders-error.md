@@ -7,6 +7,7 @@ description: Fix infinite render loops
    - ✅ Use `useEffect`
 
 2. **Fix Dependencies**:
+
    ```tsx
    const fetchData = useCallback(() => {
      return { data: 'value' };

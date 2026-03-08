@@ -9,6 +9,7 @@ description: Automate version bumps and changelog generation
 
 2. **Configure Commit Convention**:
    - Use Conventional Commits.
+
    ```bash
    # Format: <type>(<scope>): <description>
    feat: add dark mode support
@@ -19,6 +20,7 @@ description: Automate version bumps and changelog generation
 
 3. **Create Release Config**:
    - Create `.releaserc.json`.
+
    ```json
    {
      "branches": ["main"],
@@ -38,6 +40,7 @@ description: Automate version bumps and changelog generation
 
 4. **Setup GitHub Actions**:
    - Automate releases on merge to main.
+
    ```yaml
    # .github/workflows/release.yml
    name: Release
@@ -58,6 +61,7 @@ description: Automate version bumps and changelog generation
 
 5. **Commit with Convention**:
    - Follow the format.
+
    ```bash
    git commit -m "feat: add user authentication"
    # Will bump MINOR version (0.1.0 -> 0.2.0)

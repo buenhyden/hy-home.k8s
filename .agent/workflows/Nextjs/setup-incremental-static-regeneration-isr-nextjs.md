@@ -3,6 +3,7 @@ description: Serve static pages with auto-updates
 ---
 
 1. **Enable ISR**:
+
    ```tsx
    export const revalidate = 60; // seconds
 
@@ -13,6 +14,7 @@ description: Serve static pages with auto-updates
    ```
 
 2. **On-Demand Revalidation**:
+
    ```ts
    import { revalidatePath } from 'next/cache';
 

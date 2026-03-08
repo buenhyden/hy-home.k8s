@@ -13,6 +13,7 @@ description: Analyze and reduce JS bundle
    - lodash → Native JS
 
 3. **Use Dynamic Imports**:
+
    ```tsx
    const Chart = dynamic(() => import('@/components/Chart'), {
      ssr: false

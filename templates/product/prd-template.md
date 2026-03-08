@@ -1,11 +1,11 @@
 ---
-title: "[Feature Name] Product Requirements Document"
-status: "Draft | Review | Approved | Deprecated"
-version: "v1.x.x"
-owner: "[Name]"
-stakeholders: "[Project Manager, Lead Engineer, Designer, etc.]"
-parent_epic: "[Link to Epic PRD]"
-tags: ["prd", "requirements", "product"]
+title: '[Feature Name] Product Requirements Document'
+status: 'Draft | Review | Approved | Deprecated'
+version: 'v1.x.x'
+owner: '[Name]'
+stakeholders: '[Project Manager, Lead Engineer, Designer, etc.]'
+parent_epic: '[Link to Epic PRD]'
+tags: ['prd', 'requirements', 'product']
 ---
 
 # Product Requirements Document (PRD)
@@ -16,8 +16,8 @@ tags: ["prd", "requirements", "product"]
 > **Stakeholders**: [Project Manager, Lead Engineer, Designer, etc.]
 > **Parent Epic**: [Link to Epic PRD] (Optional)
 
-*Target Directory: `docs/prd/<feature>-prd.md`*
-*Note: This document defines the What and Why. It must be approved before Spec generation.*
+_Target Directory: `docs/prd/<feature>-prd.md`_
+_Note: This document defines the What and Why. It must be approved before Spec generation._
 
 ---
 
@@ -107,6 +107,6 @@ tags: ["prd", "requirements", "product"]
 
 ## 11. Related Documents (Reference / Traceability)
 
-- **Technical Specification**: [Link to Spec](../../specs/<feature>/spec.md)
-- **API Specification**: [Link to API Spec](../../specs/<feature>/api/<feature>-api.md)
-- **Architecture Decisions (ADRs)**: [Link to ADRs](../../docs/adr/README.md)
+- **Technical Specification**: [Link to Spec](docs/specs/YYYY-MM-DD-<feature-name>.md)
+- **API Specification**: [Link to API Spec](docs/api/<feature>/README.md)
+- **Architecture Decisions (ADRs)**: [Link to ADRs](docs/adr/README.md)

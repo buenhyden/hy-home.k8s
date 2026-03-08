@@ -4,6 +4,7 @@ description: Fix TypeScript module resolution issues
 
 1. **Check tsconfig.json Paths**:
    - Verify path mappings are correct.
+
    ```json
    {
      "compilerOptions": {
@@ -21,6 +22,7 @@ description: Fix TypeScript module resolution issues
 
 3. **Check Module Resolution**:
    - Verify import paths match file structure.
+
    ```tsx
    // ❌ Wrong
    import { Button } from '@/Components/Button';
@@ -36,6 +38,7 @@ description: Fix TypeScript module resolution issues
 5. **Fix Declaration File Conflicts**:
    - Check for duplicate .d.ts files.
    - Exclude node_modules in tsconfig:
+
    ```json
    {
      "exclude": ["node_modules", "**/*.spec.ts"]

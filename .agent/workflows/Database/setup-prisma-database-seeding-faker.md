@@ -9,6 +9,7 @@ description: Populate your database with realistic test data
 
 2. **Create Seed Script**:
    - Create `prisma/seed.ts`.
+
    ```ts
    import { PrismaClient } from '@prisma/client';
    import { faker } from '@faker-js/faker';
@@ -56,6 +57,7 @@ description: Populate your database with realistic test data
 
 3. **Configure package.json**:
    - Add seed command.
+
    ```json
    {
      "prisma": {

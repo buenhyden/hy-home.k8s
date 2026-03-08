@@ -4,6 +4,7 @@ description: Profile and optimize slow API endpoints
 
 1. **Add Timing Logs**:
    - Measure execution time.
+
    ```ts
    export async function GET() {
      console.time('API /users');

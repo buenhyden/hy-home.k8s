@@ -4,6 +4,7 @@ description: Prevent white screens of death with a fallback UI
 
 1. **Create Component**:
    - Create `src/components/ErrorBoundary.tsx`.
+
    ```tsx
    'use client';
    import React, { Component, ReactNode } from 'react';
@@ -51,6 +52,7 @@ description: Prevent white screens of death with a fallback UI
 
 2. **Wrap App**:
    - Use it in `layout.tsx` or specific page components.
+
    ```tsx
    <ErrorBoundary>
      {children}

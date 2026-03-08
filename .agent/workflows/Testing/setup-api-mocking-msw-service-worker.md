@@ -14,6 +14,7 @@ description: Mock API requests for testing and development
 
 3. **Create Handlers**:
    - Define mock API responses.
+
    ```ts
    // mocks/handlers.ts
    import { http, HttpResponse } from 'msw';
@@ -41,6 +42,7 @@ description: Mock API requests for testing and development
 
 4. **Setup Browser Worker**:
    - Enable mocking in browser.
+
    ```ts
    // mocks/browser.ts
    import { setupWorker } from 'msw/browser';
@@ -51,6 +53,7 @@ description: Mock API requests for testing and development
 
 5. **Start MSW in Development**:
    - Create a provider to conditionally start MSW.
+
    ```tsx
    // app/msw-provider.tsx
    'use client'
@@ -79,7 +82,9 @@ description: Mock API requests for testing and development
      return <>{children}</>;
    }
    ```
+
    - Add to layout:
+
    ```tsx
    // app/layout.tsx
    import { MSWProvider } from './msw-provider';
@@ -97,6 +102,7 @@ description: Mock API requests for testing and development
 
 6. **Use in Tests**:
    - Setup for Vitest/Jest.
+
    ```ts
    // vitest.setup.ts
    import { afterAll, afterEach, beforeAll } from 'vitest';

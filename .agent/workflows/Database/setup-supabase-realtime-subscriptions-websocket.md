@@ -6,6 +6,7 @@ description: Real-time data sync
    - Go to Database → Replication in Supabase.
 
 2. **Subscribe to Changes**:
+
    ```tsx
    const channel = supabase
      .channel('messages')
@@ -18,6 +19,7 @@ description: Real-time data sync
    ```
 
 3. **Implement Presence**:
+
    ```tsx
    await channel.track({ user: 'John', online_at: new Date() });
    ```

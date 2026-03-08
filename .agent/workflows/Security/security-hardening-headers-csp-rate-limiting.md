@@ -4,6 +4,7 @@ description: Essential security headers, CSP, and rate limiting
 
 1. **Security Headers (`next.config.js`)**:
    - Add these headers to prevent common attacks.
+
    ```js
    module.exports = {
      async headers() {
@@ -25,6 +26,7 @@ description: Essential security headers, CSP, and rate limiting
 
 2. **Content Security Policy (CSP)**:
    - Create `src/middleware.ts`.
+
    ```ts
    import { NextResponse } from 'next/server';
    import type { NextRequest } from 'next/server';
@@ -60,6 +62,7 @@ description: Essential security headers, CSP, and rate limiting
 
 3. **Rate Limiting (API Routes)**:
    - Prevent abuse with simple in-memory rate limiting.
+
    ```ts
    // lib/rate-limit.ts
    const rateLimit = new Map();

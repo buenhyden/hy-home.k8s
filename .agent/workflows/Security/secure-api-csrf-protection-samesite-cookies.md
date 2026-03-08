@@ -3,11 +3,13 @@ description: Prevent CSRF attacks
 ---
 
 1. **Use SameSite Cookies**:
+
    ```ts
    response.headers.set('Set-Cookie', 'token=abc; SameSite=Strict; HttpOnly');
    ```
 
 2. **Implement CSRF Tokens**:
+
    ```ts
    import { randomBytes } from 'crypto';
    export function generateCSRFToken() {
@@ -16,6 +18,7 @@ description: Prevent CSRF attacks
    ```
 
 3. **Validate Origin**:
+
    ```ts
    const origin = request.headers.get('origin');
    if (!allowedOrigins.includes(origin)) {

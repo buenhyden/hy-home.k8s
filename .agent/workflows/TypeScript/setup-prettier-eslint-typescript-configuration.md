@@ -9,6 +9,7 @@ description: Configure linting and formatting (ESLint 9 Flat Config)
 
 2. **Create `eslint.config.js` (Flat Config)**:
    - The new standard for ESLint 9.
+
    ```js
    import js from '@eslint/js';
    import globals from 'globals';
@@ -41,6 +42,7 @@ description: Configure linting and formatting (ESLint 9 Flat Config)
    ```
 
 3. **Create `.prettierrc`**:
+
    ```json
    {
      "semi": true,
@@ -53,6 +55,7 @@ description: Configure linting and formatting (ESLint 9 Flat Config)
    ```
 
 4. **Add Scripts**:
+
    ```json
    {
      "scripts": {
