@@ -4,7 +4,6 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
 ## [Unreleased]
 
 ### Added
@@ -47,12 +46,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implement auto-scrolling to the bottom of the chat container when new messages are added.
 - Integrate MetalLB for external IP pool management and update related infrastructure specifications and documentation.
 - Enhance k3d local cluster setup documentation with detailed MetalLB configuration and WSL2 GPU prerequisites.
+- Enhance k3d cluster architecture documentation with C4 diagram and checklist, update infrastructure roadmap, and add AI agent guidelines.
+- Enhance k3d cluster setup documentation with WSL2 systemd clarifications and Windows host access requirements.
+- Implement core Kubernetes infrastructure including ingress-nginx, MetalLB, network policies, and namespace definitions.
+- Implement GitOps for local cluster using ArgoCD, including infrastructure and application manifests.
 
 ### Changed
 
 - Consolidate AI agent rules, introduce new project documentation, and update core repository files.
 - Migrate local Kubernetes environment to k3d by removing previous infrastructure and application manifests and adding k3d cluster configuration.
 - Move Zizmor configuration to the repository root and update rule definitions from disabled to file-specific ignores.
+- Standardize documentation and specification paths to `docs/`, update agent rules and workflows, and refine LLM configuration.
 
 ### Documentation
 
@@ -113,6 +117,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **release:** Update CHANGELOG.md [skip ci]
 - **deps:** Bump the actions group across 1 directory with 2 updates
 - **release:** Update CHANGELOG.md [skip ci]
+- **release:** Update CHANGELOG.md [skip ci]
 
 ### Refactor
 
@@ -122,3 +127,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add GitHub Actions workflow for markdown linting, actionlint, and Kubernetes manifest validation.
 - Optimize workflows by offloading tasks to pre-commit action
+
+
