@@ -55,3 +55,6 @@ examples/.generated/
 # opencode Skills
 .opencode/skills/
 !.opencode/skills/.gitkeep
+
+.claude/settings.local.json
+.agent/
