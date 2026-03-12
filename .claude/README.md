@@ -1,17 +1,21 @@
-# AI Agent Manuals
+# .claude Architecture
 
-This directory is the shared detailed guidance layer for agent-facing documentation in this repository.
+This directory is the shared detailed instruction layer for agent-facing work in this repository.
 
-It exists to keep `AGENTS.md`, `GEMINI.md`, and `CLAUDE.md` short while still giving agents a durable place for shared operating detail.
+## Runtime Entry Points
 
-## Contents
+- [CLAUDE.md](CLAUDE.md): Claude-native shared memory entrypoint
+- [GEMINI.md](GEMINI.md): Gemini-native shared context entrypoint
+- [rules/](rules/): modular runtime rules imported by the tool-specific entrypoints
 
-- [governance.md](governance.md): policy scope, precedence, canonical paths, and documentation rules
-- [lifecycle.md](lifecycle.md): phase goals, personas, inputs, outputs, and handoff rules
-- [repo-navigation.md](repo-navigation.md): concrete repo discovery paths and safe inspection commands
+## Human Companion Docs
+
+- [governance.md](governance.md): policy scope, precedence, and canonical paths
+- [lifecycle.md](lifecycle.md): phase guidance and handoff expectations
+- [repo-navigation.md](repo-navigation.md): repo map and confirmed inspection commands
 
 ## Usage
 
-- Start with [AGENTS.md](../AGENTS.md) for root authority and quick navigation.
-- Use [GEMINI.md](../GEMINI.md) and [CLAUDE.md](../CLAUDE.md) only for model-specific behavior.
-- Keep new agent-facing detail here instead of expanding the root files into long policy documents.
+- Root files stay thin and delegate here.
+- Runtime-critical instructions live in `CLAUDE.md`, `GEMINI.md`, and `rules/`.
+- Human-readable explanations stay in the companion docs.

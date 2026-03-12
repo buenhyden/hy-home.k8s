@@ -1,34 +1,7 @@
-# Gemini Execution Profile
+# Gemini Loader
 
-This file defines Gemini-specific behavior for this repository. Shared policy lives in [AGENTS.md](AGENTS.md) and the manuals under [.claude/](.claude/).
+Thin Gemini CLI shim for this repository.
 
-## Use Gemini For
+@./.claude/GEMINI.md
 
-- long-context planning and synthesis
-- dependency mapping across large documentation sets
-- evidence-backed reasoning before implementation
-
-## Gemini-Specific Guidance
-
-- Plan first for complex or multi-file tasks.
-- Summarize reasoning, decisions, and milestones without exposing private chain-of-thought.
-- Use the long context window deliberately: compress prior findings before moving deeper into implementation.
-- Search first when a path, workflow, or technology detail is uncertain.
-- Treat missing repo paths as missing until inspection proves otherwise.
-
-## Working Style
-
-- Use [.claude/lifecycle.md](.claude/lifecycle.md) to stay aligned with the active delivery phase.
-- Use [.claude/repo-navigation.md](.claude/repo-navigation.md) before broad repo exploration.
-- Prefer short checkpoint summaries over long narrative explanations once the approach is locked.
-
-## Navigation
-
-- Root policy: [AGENTS.md](AGENTS.md)
-- Shared governance: [.claude/governance.md](.claude/governance.md)
-- Lifecycle guidance: [.claude/lifecycle.md](.claude/lifecycle.md)
-- Repo discovery: [.claude/repo-navigation.md](.claude/repo-navigation.md)
-- Repo workflows: [.agent/workflows/](.agent/workflows/)
-
----
-Target models: Gemini 2.x to 3.x, March 2026
+Nearest scoped `GEMINI.md` files under `docs/` provide local document context.

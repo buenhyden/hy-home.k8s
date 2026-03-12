@@ -1,48 +1,37 @@
 # Agent Governance
 
-This manual defines shared policy for agent-facing documentation in this repository. It extends [AGENTS.md](../AGENTS.md) and should be preferred over generic external defaults when it is more specific.
+Human-readable governance companion for the runtime rules under [rules/](rules/).
 
 ## Scope and Precedence
 
-- `AGENTS.md` is the root constitution and index.
-- `.claude/` is the primary shared detail layer for agent-facing documentation in this repo.
-- This manual holds shared detailed governance that does not belong in model-specific files.
-- [GEMINI.md](../GEMINI.md) and [CLAUDE.md](../CLAUDE.md) should only add model-specific execution behavior.
-- Project manuals and guides under [docs/manuals/](../docs/manuals/) and [docs/guides/](../docs/guides/) override generic guidance when they are more specific.
+- `AGENTS.md` is the cross-agent root contract.
+- `.claude/` is the primary shared detail layer for agent-facing documentation.
+- Nearest scoped files under `docs/` provide subtree-specific local guidance.
+- Project manuals under [docs/manuals/](../docs/manuals/) remain the human-facing process layer.
 
 ## Canonical Paths
-
-Use these paths consistently in touched documentation:
 
 - Specs: [docs/specs/](../docs/specs/)
 - PRDs: [docs/prd/](../docs/prd/)
 - ADRs: [docs/adr/](../docs/adr/)
 - ARDs: [docs/ard/](../docs/ard/)
+- Plans: [docs/plans/](../docs/plans/)
+- Incidents: [docs/incidents/](../docs/incidents/)
 - Runbooks: [docs/runbooks/](../docs/runbooks/)
+- Operations: [docs/operations/](../docs/operations/)
 - Templates: [templates/](../templates/)
-
-## Resolved Contradictions
-
-- Legacy bare spec-directory references are stale for this repo. Use `docs/specs/` instead.
-- Legacy nested template paths are stale for this repo. Use the flattened files in `templates/*.md`.
-- Skill discovery must be conditional. Use runtime-provided skills when available, and only inspect `.agent/skills/` if that directory actually exists in the repository.
 
 ## Documentation Rules
 
-- Use repo-relative Markdown links. Do not use absolute file URI links.
-- Do not invent build, test, or package-manager commands that are not grounded in the current repo.
-- Document only commands and paths confirmed by inspection.
-- Keep root files short and index-like; move shared detail into linked manuals.
-- Keep agent-specific shared guidance in `.claude/`, not in `docs/manuals/`.
-- Prefer repo facts and current directory structure over inherited template wording.
+- Use repo-relative Markdown links.
+- Do not use absolute file URI links.
+- Do not invent build, test, or package-manager commands.
+- Treat `.agent/skills/` as optional and runtime-dependent.
+- Keep shared runtime rules in `.claude/rules/`, not in long root files.
 
-## Current Repo Facts That Matter
+## Current Repo Facts
 
-- The repo contains `.agent/rules/` and `.agent/workflows/`.
-- The repo does not currently contain `.agent/skills/`.
-- The repo did not expose a root `package.json` during inspection.
-- The repo already uses `docs/manuals/` as a project-specific governance override layer.
-
-## Out of Scope
-
-This refactor does not fix stale references elsewhere in the repo, including `ARCHITECTURE.md`, `OPERATIONS.md`, and older docs under `docs/specs/` and `docs/guides/`.
+- `.agent/rules/` and `.agent/workflows/` exist.
+- `.agent/skills/` is not present locally.
+- No root `package.json` was found during inspection.
+- The retired guides layer should not be reintroduced through new references.
