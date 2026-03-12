@@ -60,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Standardize documentation and specification paths to `docs/`, update agent rules and workflows, and refine LLM configuration.
 - Consolidate templates
 - Consolidate agent-specific guidance
+- Agent instruction root files
 
 ### Documentation
 
@@ -77,6 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhance infrastructure specification with detailed personas, new operational and testing sections, and introduce an infrastructure README.
 - Formalize the infrastructure implementation plan with detailed sections and update the README with WSL2 specifics and enhanced setup instructions.
 - Improve project documentation
+- Refactor and update documentation
 
 ### Fixed
 
@@ -126,6 +128,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **release:** Update CHANGELOG.md [skip ci]
 - **release:** Update CHANGELOG.md [skip ci]
 - **deps:** Bump actions/first-interaction in the actions group
+- **release:** Update CHANGELOG.md [skip ci]
 - **release:** Update CHANGELOG.md [skip ci]
 - **release:** Update CHANGELOG.md [skip ci]
 - **release:** Update CHANGELOG.md [skip ci]
