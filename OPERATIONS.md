@@ -10,13 +10,12 @@ All operational procedures must use `templates/operations/runbook-template.md`. 
 
 | Runbook           | Status | Location                                 | Purpose                              |
 |-------------------|--------|------------------------------------------|--------------------------------------|
-| Deployment        | Active | `runbooks/deployment-runbook.md`         | Staging/Production release steps     |
-| Incident Response | Active | `runbooks/incident-response-runbook.md`  | SEV-1/SEV-2 incident mitigation      |
-| Monitoring        | Active | `runbooks/monitoring-runbook.md`         | Threshold checks and alerting config |
-| Local k3d (WSL2)  | Active | `runbooks/services/local-k3d-wsl2.md`    | Local cluster setup and troubleshooting |
-| Sealed Secrets (Local) | Active | `runbooks/services/sealed-secrets-local.md` | Sealed secret workflows for GitOps |
-| ArgoCD (Local)    | Active | `runbooks/services/argocd-local.md`      | Local ArgoCD access and troubleshooting |
-| Local GitOps (ArgoCD) | Active | `runbooks/services/local-gitops-argocd.md` | Deterministic GitOps bootstrap and rollback |
+| Deployment        | Active | `docs/runbooks/deployment-runbook.md`    | Staging/Production release steps     |
+| Incident Response | Active | `docs/runbooks/incident-response-runbook.md` | SEV-1/SEV-2 incident mitigation      |
+| Monitoring        | Active | `docs/runbooks/monitoring-runbook.md`    | Threshold checks and alerting config |
+| Local k3d (WSL2)  | Active | `docs/runbooks/infra/local-k3d-wsl2.md`  | Local cluster setup and troubleshooting |
+| GitOps Bootstrap  | Active | `docs/runbooks/infra/bootstrap-gitops.md`| Deterministic ArgoCD repo key setup  |
+| Sealed Secrets    | Active | `docs/runbooks/infra/sealed-secrets.md`  | Secret encryption and sealing workflow|
 
 > **Note:** If a specific operational procedure (e.g. database migration, failover) is missing from this index, the DevOps Agent should proactively create a new runbook based on `templates/operations/runbook-template.md` and link it here.
 

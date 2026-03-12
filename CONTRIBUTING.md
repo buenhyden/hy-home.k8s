@@ -11,7 +11,10 @@ This file is necessary to define the exact, mechanical steps a human must take t
 
 ## 1. Spec-Driven Core Rule
 
-All new features **must** begin with a specification in the `specs/` folder. Pull Requests that add code without an approved, corresponding specification will be immediately rejected without review.
+All development—infrastructure OR application—**MUST** begin with a specification in `docs/specs/`.
+
+> [!CAUTION]
+> Pull Requests containing code without an approved, corresponding specification will be **automatically rejected** by the Reviewer Agent without human review.
 
 ## 2. Template Enforcement
 

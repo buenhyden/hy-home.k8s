@@ -10,9 +10,9 @@ This template provides a standardized foundation for building software projects.
 
 **What Must Be Written Here**:
 
-- The overarching architecture style (Microservices vs Monolith).
-- The list of acceptable core tech stacks.
-- The Architectural Checklist that every new feature MUST pass before entering the `specs/` phase.
+- The overarching architecture is **GitOps-driven Infrastructure as Code**.
+- The core tech stack revolves around **Kubernetes (k3s)**, **k3d**, and **WSL2**.
+- The Architectural Checklist ensures alignment with the **Spec-Driven Development (SDD)** lifecycle.
 
 ### Core Architecture Pillars
 
@@ -60,12 +60,14 @@ When starting a project or writing an Architecture Reference Document (ARD), the
 
 Customize the following for your specific project upon cloning.
 
-| Layer        | Recommended Technology         | Purpose                              |
-| ------------ | ------------------------------ | ------------------------------------ |
-| **Frontend** | React / Next.js / TailwindCSS  | Client-side interactions             |
-| **Backend**  | Node.js / Python / Go / Rust   | Server-side APIs and logic           |
-| **Database** | PostgreSQL / MongoDB           | Data persistence                     |
-| **DevOps**   | Docker / GitHub Actions        | CI/CD and Containerization           |
+| Layer        | Selected Technology           | Purpose                              |
+| ------------ | ----------------------------- | ------------------------------------ |
+| **Engine**   | k3d (k3s)                     | Local cluster node management        |
+| **Host**     | WSL2 (Ubuntu)                 | Development and runtime foundation   |
+| **Networking**| MetalLB                       | L2 LoadBalancer (Deterministic IPs) |
+| **Ingress**  | Ingress-Nginx                 | Layer 7 traffic and SSL              |
+| **GitOps**   | ArgoCD                        | Declarative state reconciliation     |
+| **Secrets**  | Sealed Secrets                | Encrypted Git-safe K8s secrets       |
 
 ## 4. Integration & Separation Points
 

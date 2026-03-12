@@ -5,6 +5,8 @@ Cross-agent root contract for this repository's documentation, planning, and ope
 ## Project Overview
 
 - This repo is documentation-heavy and governance-heavy.
+- **Spec-Driven Development (SDD)**: `docs/specs/` uniquely drives all implementation.
+- **6 Core Pillars**: Security (`2200`), Performance (`2300`), Observability (`2600`), Compliance (`2400`), Documentation (`2100`), Localization (`2500`).
 - Canonical work domains live under `docs/`: `adr`, `ard`, `prd`, `plans`, `specs`, `incidents`, `runbooks`, `operations`, `manuals`.
 - Canonical templates are flat files under `templates/`.
 - `.claude/` is the shared detailed instruction layer for agent-facing docs.
