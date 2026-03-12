@@ -2,6 +2,8 @@
 
 This directory is the shared detailed guidance layer for agent-facing documentation in this repository.
 
+It exists to keep `AGENTS.md`, `GEMINI.md`, and `CLAUDE.md` short while still giving agents a durable place for shared operating detail.
+
 ## Contents
 
 - [governance.md](governance.md): policy scope, precedence, canonical paths, and documentation rules

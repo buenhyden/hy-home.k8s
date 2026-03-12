@@ -11,6 +11,17 @@ This file defines Claude and CLI-specific behavior for this repository. Shared p
 - Preserve findings during long investigations so context survives tool transitions.
 - Verify recovery paths before any destructive action.
 
+## Quick Commands
+
+Use these when orienting inside this repo:
+
+```bash
+git status --short
+find .agent/workflows -maxdepth 2 -type f | sort
+find templates -maxdepth 2 -type f | sort
+rg --files docs
+```
+
 ## Repo Navigation
 
 - Root policy: [AGENTS.md](AGENTS.md)

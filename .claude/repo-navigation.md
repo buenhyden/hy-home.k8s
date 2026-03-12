@@ -24,6 +24,7 @@ rg --files docs
 ## Discovery Notes
 
 - Inspect `docs/` before repeating inherited template language in generated documentation.
+- Inspect `.claude/` before expanding root agent files with shared policy.
 - Use `templates/` as the source of template truth; do not assume nested template folders still exist.
 - Treat `.agent/skills/` as optional. If runtime exposes skills, use that source first. Only inspect `.agent/skills/` when it exists locally.
 - Do not document root build or test commands unless they are confirmed from repo manifests; no root package manifest was found during inspection.

@@ -7,11 +7,12 @@ This file is the root constitution for AI agents working in this repository.
 When instructions conflict, apply them in this order:
 
 1. The current user task and explicit local context
-2. Project-specific manuals in [docs/manuals/](docs/manuals/)
-3. Lifecycle guides in [docs/guides/](docs/guides/)
-4. This root guide
-5. Model-specific adapters in [GEMINI.md](GEMINI.md) and [CLAUDE.md](CLAUDE.md)
-6. Shared automation rules and workflows in [.agent/rules/](.agent/rules/) and [.agent/workflows/](.agent/workflows/)
+2. Shared agent manuals in [.claude/](.claude/)
+3. Project-specific manuals in [docs/manuals/](docs/manuals/)
+4. Lifecycle guides in [docs/guides/](docs/guides/)
+5. This root guide
+6. Model-specific adapters in [GEMINI.md](GEMINI.md) and [CLAUDE.md](CLAUDE.md)
+7. Shared automation rules and workflows in [.agent/rules/](.agent/rules/) and [.agent/workflows/](.agent/workflows/)
 
 ## Core Invariants
 
@@ -33,6 +34,7 @@ When instructions conflict, apply them in this order:
 ## Known Repo Facts
 
 - This repository is documentation-heavy and governance-heavy.
+- `.claude/` is the shared detailed instruction layer for agent-facing docs.
 - No root `package.json` was found during inspection.
 - Repo automation rules live under [.agent/rules/](.agent/rules/).
 - Repo workflows live under [.agent/workflows/](.agent/workflows/).

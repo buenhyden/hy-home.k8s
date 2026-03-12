@@ -16,6 +16,12 @@ This file defines Gemini-specific behavior for this repository. Shared policy li
 - Search first when a path, workflow, or technology detail is uncertain.
 - Treat missing repo paths as missing until inspection proves otherwise.
 
+## Working Style
+
+- Use [.claude/lifecycle.md](.claude/lifecycle.md) to stay aligned with the active delivery phase.
+- Use [.claude/repo-navigation.md](.claude/repo-navigation.md) before broad repo exploration.
+- Prefer short checkpoint summaries over long narrative explanations once the approach is locked.
+
 ## Navigation
 
 - Root policy: [AGENTS.md](AGENTS.md)

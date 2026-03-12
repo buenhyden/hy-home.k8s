@@ -5,6 +5,7 @@ This manual defines shared policy for agent-facing documentation in this reposit
 ## Scope and Precedence
 
 - `AGENTS.md` is the root constitution and index.
+- `.claude/` is the primary shared detail layer for agent-facing documentation in this repo.
 - This manual holds shared detailed governance that does not belong in model-specific files.
 - [GEMINI.md](../GEMINI.md) and [CLAUDE.md](../CLAUDE.md) should only add model-specific execution behavior.
 - Project manuals and guides under [docs/manuals/](../docs/manuals/) and [docs/guides/](../docs/guides/) override generic guidance when they are more specific.
@@ -32,6 +33,7 @@ Use these paths consistently in touched documentation:
 - Do not invent build, test, or package-manager commands that are not grounded in the current repo.
 - Document only commands and paths confirmed by inspection.
 - Keep root files short and index-like; move shared detail into linked manuals.
+- Keep agent-specific shared guidance in `.claude/`, not in `docs/manuals/`.
 - Prefer repo facts and current directory structure over inherited template wording.
 
 ## Current Repo Facts That Matter
