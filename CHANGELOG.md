@@ -50,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhance k3d cluster setup documentation with WSL2 systemd clarifications and Windows host access requirements.
 - Implement core Kubernetes infrastructure including ingress-nginx, MetalLB, network policies, and namespace definitions.
 - Implement GitOps for local cluster using ArgoCD, including infrastructure and application manifests.
+- Establish structured documentation
 
 ### Changed
 
@@ -125,6 +126,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **release:** Update CHANGELOG.md [skip ci]
 - **release:** Update CHANGELOG.md [skip ci]
 - **deps:** Bump actions/first-interaction in the actions group
+- **release:** Update CHANGELOG.md [skip ci]
 - **release:** Update CHANGELOG.md [skip ci]
 - **release:** Update CHANGELOG.md [skip ci]
 - **release:** Update CHANGELOG.md [skip ci]
