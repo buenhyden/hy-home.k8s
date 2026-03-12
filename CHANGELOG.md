@@ -57,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Migrate local Kubernetes environment to k3d by removing previous infrastructure and application manifests and adding k3d cluster configuration.
 - Move Zizmor configuration to the repository root and update rule definitions from disabled to file-specific ignores.
 - Standardize documentation and specification paths to `docs/`, update agent rules and workflows, and refine LLM configuration.
+- Consolidate templates
 
 ### Documentation
 
@@ -122,6 +123,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **release:** Update CHANGELOG.md [skip ci]
 - **release:** Update CHANGELOG.md [skip ci]
 - **deps:** Bump actions/first-interaction in the actions group
+- **release:** Update CHANGELOG.md [skip ci]
 - **release:** Update CHANGELOG.md [skip ci]
 
 ### Refactor
