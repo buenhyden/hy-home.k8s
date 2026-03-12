@@ -18,23 +18,22 @@ Each sub-directory serves a distinct, non-overlapping purpose. Agents MUST query
 
 ### Lifecycle & Operations
 
-- `plans/` — **Execution Plans**: Phase-based implementation strategies for major features.
-- `specs/` — **Technical Specifications**: Low-level implementation details and data models.
+- `specs/` — **Technical Specifications**: Low-level implementation details and data models. Every feature begins here.
+- `runbooks/` — **Operational Procedures**: Step-by-step guides for deployment, maintenance, and recovery.
 - `incidents/` — **Incident Logs**: Post-mortems and technical debt resulting from outages.
-- `runbooks/` — **Operational Procedures**: Step-by-step guides for deployment and recovery.
+- `plans/` — **Execution Plans**: Phase-based implementation strategies for major features.
 
 ### Standards & Manuals
 
-- `guides/` — **Agentic & Human Lifecycle Procedures**: Checklists for Pre, During, and Post-Development.
 - `manuals/` — **Process Manuals**: Collaboration agreements, SLA definitions, and QA standards.
+- `operations/` — **Operational Infrastructure**: Definitions for environment hierarchy and baseline readiness.
 
 ## 3. Explicit Boundaries & Anti-Patterns
 
-1. **NO EXECUTABLE CODE**: Do NOT place scripts or source code here. Those belong in `/scripts/` or root directories.
-2. **NO LOCAL AI WORKFLOWS**: High-level AI behavioral guidelines go in root `.agent/workflows/`. Docs here are project-specific.
-3. **TEMPLATE MANDATORY**: Any new document MUST be generated from its respective template in the `templates/` directory.
-4. **DOCUMENTATION PILLAR**: All content is subject to [.agent/rules/2100-documentation-pillar.md](file:///home/hy/projects/hy-home.k8s/.agent/rules/2100-documentation-pillar.md).
-5. **OVERRIDE PRIORITIZATION**: AI Agents prioritize instructions in `guides/` and `manuals/` over generic behavioral rules.
+1. **NO EXECUTABLE CODE**: Do NOT place scripts or source code here. Those belong in root `/scripts/` or implementation directories.
+2. **TEMPLATE MANDATORY**: Any new document MUST be generated from its respective template in the root `templates/` directory.
+3. **DOCUMENTATION PILLAR**: All content is subject to [.agent/rules/2100-documentation-pillar.md](../.agent/rules/2100-documentation-pillar.md).
+4. **LINK TO ROOT**: For host setup and prerequisites, always refer to the root [README.md](../README.md).
 
 ---
 *Last Updated: March 2026*

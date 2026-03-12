@@ -98,6 +98,6 @@ See the runbooks under `runbooks/services/` for the full workflow (including `ku
 - **PRD**: [docs/prd/infra/home-cluster-infra-prd.md](../docs/prd/infra/home-cluster-infra-prd.md)
 - **ADR**: [docs/adr/infra/0001-k3d-local-cluster.md](../docs/adr/infra/0001-k3d-local-cluster.md)
 - **ARD**: [docs/ard/infra/k3d-cluster-requirements.md](../docs/ard/infra/k3d-cluster-requirements.md)
-- **Spec**: [specs/infra/spec.md](../specs/infra/spec.md)
+- **Spec**: [docs/specs/infra/spec.md](../docs/specs/infra/spec.md)
 - **GitOps PRD**: [docs/prd/gitops/argocd-gitops-prd.md](../docs/prd/gitops/argocd-gitops-prd.md)
-- **GitOps Spec**: [specs/gitops/spec.md](../specs/gitops/spec.md)
+- **GitOps Spec**: [docs/specs/gitops/spec.md](../docs/specs/gitops/spec.md)
