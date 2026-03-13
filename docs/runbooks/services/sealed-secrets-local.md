@@ -52,7 +52,7 @@
 
 ## 5. Safe Rollback Procedure
 
-- [ ] Remove affected sealed secret: `kubectl delete sealedsecret -n <ns> <name>`
+- [ ] Remove affected sealed secret: `kubectl delete sealedsecret -n <ns> <name>` # pragma: allowlist secret
 - [ ] (Optional) Remove controller: `kubectl delete -f infrastructure/sealed-secrets/sealed-secrets.yaml`
 
 ## 6. Data Safety Notes (If Stateful)

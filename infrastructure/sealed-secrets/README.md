@@ -4,7 +4,7 @@ This directory vendors the Bitnami Sealed Secrets controller manifest to ensure 
 
 ## Version Pin
 
-- Sealed Secrets: `v0.33.1`
+- Sealed Secrets: `v0.33.1` # pragma: allowlist secret
 - Source manifest: `controller.yaml` (GitHub release asset)
 - Vendored file: `infrastructure/sealed-secrets/sealed-secrets.yaml`
 - SHA256 (vendored): `9ff0eac43ceff60b1fa9ca369e65e3d0fbee19d4c2ca5b9aa51c4dab0cbbf7a4`

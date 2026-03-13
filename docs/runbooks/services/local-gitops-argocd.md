@@ -42,7 +42,7 @@
   2. Ensure repo credential sealed secret has been applied to `argocd` namespace.
   3. Ensure `gitops/clusters/local/root-application.yaml` has correct `repoURL` and `targetRevision`.
 - **Remediation Action**:
-  - [ ] Install SealedSecrets: `kubectl apply -f infrastructure/sealed-secrets/sealed-secrets.yaml`
+  - [ ] Install SealedSecrets: `kubectl apply -f infrastructure/sealed-secrets/sealed-secrets.yaml` # pragma: allowlist secret
   - [ ] Install ArgoCD: `kubectl apply -f infrastructure/argocd/argocd-install.yaml`
   - [ ] Apply your sealed repo credential (generated via `kubeseal`)
   - [ ] Apply root app: `kubectl apply -f gitops/clusters/local/root-application.yaml`
