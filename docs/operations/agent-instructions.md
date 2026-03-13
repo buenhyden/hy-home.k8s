@@ -1,4 +1,10 @@
-# Operations Scope
+# Operations Agent Instructions
+
+**Bias**: Strategic operational policy, readiness, and service-level thinking.
+
+@../../.claude/agent-instructions.md
+
+## Scope
 
 - **Purpose**: Strategic operations agreements and blueprints.
 - **Persona**: DevOps / SRE

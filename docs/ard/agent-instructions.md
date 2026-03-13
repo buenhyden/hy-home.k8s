@@ -1,4 +1,10 @@
-# ARD Scope
+# ARD Agent Instructions
+
+**Bias**: Structural architecture reference work. Keep references grounded in repo evidence.
+
+@../../.claude/agent-instructions.md
+
+## Scope
 
 - **Purpose**: Architecture reference structure, boundaries, and diagrams.
 - **Persona**: System Architect

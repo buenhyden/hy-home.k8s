@@ -1,4 +1,10 @@
-# Plans Scope
+# Plans Agent Instructions
+
+**Bias**: Ordered execution, dependencies, and explicit validation checkpoints.
+
+@../../.claude/agent-instructions.md
+
+## Scope
 
 - **Purpose**: Execution roadmaps derived from approved specs.
 - **Persona**: Planner + Strong Reasoner

@@ -1,4 +1,10 @@
-# PRD Scope
+# PRD Agent Instructions
+
+**Bias**: User intent, measurable outcomes, and explicit scope boundaries.
+
+@../../.claude/agent-instructions.md
+
+## Scope
 
 - **Purpose**: Product requirements, personas, metrics, scope, and acceptance framing.
 - **Persona**: Product Manager + Requirements Analyst

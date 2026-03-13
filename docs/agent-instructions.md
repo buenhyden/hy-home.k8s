@@ -1,11 +1,26 @@
 # Agent Instructions Hub
 
-Lazy-loading reference for all documentation scopes in this repository.
-Navigate to the relevant section and follow the link to load its full scope context.
+**Bias**: Use this subtree for durable project knowledge. Keep local path placement and document type correct.
+
+@../.claude/agent-instructions.md
 
 **Skills**: Any runtime-provided skill may be used. Do not restrict skill selection.
 **Rules source**: `.agent/rules/` — categorized standards for each persona.
 **Workflows source**: `.agent/workflows/` — repeatable delivery and troubleshooting patterns.
+
+## Docs Scope
+
+- **Purpose**: Durable project knowledge, not executable runtime logic.
+- **Persona**: Documentation Specialist + Strong Reasoner
+- **Templates**: Choose from [../templates/](../templates/) by document type.
+- **Rules**: `2100-documentation-pillar.md` · `2110-doc-core-std.md` · `0160-documentation-standards.md`
+- **Forbid**: Scripts, runtime code, or operational procedures disguised as reference docs.
+- **Verify**: Links resolve and the file is stored in the correct `docs/` subtree.
+
+---
+
+Lazy-loading reference for all documentation scopes in this repository.
+Navigate to the relevant section and follow the link to load its full scope context.
 
 ---
 

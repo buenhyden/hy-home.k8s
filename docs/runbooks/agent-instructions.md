@@ -1,4 +1,10 @@
-# Runbooks Scope
+# Runbooks Agent Instructions
+
+**Bias**: Operational correctness, rollback clarity, and step ordering.
+
+@../../.claude/agent-instructions.md
+
+## Scope
 
 - **Purpose**: Operator procedures, rollback, and recovery steps.
 - **Persona**: DevOps / SRE

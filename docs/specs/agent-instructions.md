@@ -1,4 +1,10 @@
-# Specs Scope
+# Specs Agent Instructions
+
+**Bias**: Exact paths, interfaces, verification logic, and implementation-ready detail.
+
+@../../.claude/agent-instructions.md
+
+## Scope
 
 - **Purpose**: Exact implementation instructions, interfaces, file paths, and verification.
 - **Persona**: Strong Reasoner + Architect + Requirements Analyst

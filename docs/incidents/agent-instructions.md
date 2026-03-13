@@ -1,4 +1,10 @@
-# Incidents Scope
+# Incidents Agent Instructions
+
+**Bias**: Blameless timelines, causal analysis, and concrete action items.
+
+@../../.claude/agent-instructions.md
+
+## Scope
 
 - **Purpose**: Incident records, timelines, and follow-up actions.
 - **Persona**: Incident Responder + SRE

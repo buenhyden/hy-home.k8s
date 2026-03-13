@@ -1,4 +1,10 @@
-# ADR Scope
+# ADR Agent Instructions
+
+**Bias**: Architecture decisions, rationale, explicit trade-offs, and consequences.
+
+@../../.claude/agent-instructions.md
+
+## Scope
 
 - **Purpose**: Architecture decisions and consequences.
 - **Persona**: System Architect
