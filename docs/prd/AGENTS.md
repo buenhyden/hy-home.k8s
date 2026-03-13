@@ -1,8 +1,10 @@
 # PRD Scope
 
-- Purpose: product requirements, personas, metrics, scope, and acceptance framing.
-- Personas: Product Manager + Requirements Analyst.
-- Template: [../../templates/prd-template.md](../../templates/prd-template.md)
-- Forbid: technical implementation prescription.
-- Verify: metrics are measurable and scope is explicit.
-- Root context: [../../AGENTS.md](../../AGENTS.md)
+- **Purpose**: Product requirements, personas, metrics, scope, and acceptance framing.
+- **Persona**: Product Manager + Requirements Analyst
+- **Template**: [../../templates/prd-template.md](../../templates/prd-template.md)
+- **Rules**: `0120-requirements-and-specifications-standard.md` · `0201-project-management-standard.md`
+- **Skills**: Any runtime-provided skill may be used.
+- **Forbid**: Technical implementation prescription.
+- **Verify**: Metrics are measurable and scope is explicit.
+- **Root context**: [../../AGENTS.md](../../AGENTS.md) · [../agent-instructions.md](../agent-instructions.md)
