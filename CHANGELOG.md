@@ -4,7 +4,6 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
 ## [Unreleased]
 
 ### Added
@@ -62,6 +61,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Consolidate templates
 - Consolidate agent-specific guidance
 - Agent instruction root files
+- Agent instruction files with progressive disclosure and lazy-loading hub
+- Consolidate agent instructions into single agent-instructions.md per directory
 
 ### Documentation
 
@@ -134,6 +135,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **release:** Update CHANGELOG.md [skip ci]
 - **release:** Update CHANGELOG.md [skip ci]
 - **release:** Update CHANGELOG.md [skip ci]
+- **release:** Update CHANGELOG.md [skip ci]
 
 ### Refactor
 
@@ -143,3 +145,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add GitHub Actions workflow for markdown linting, actionlint, and Kubernetes manifest validation.
 - Optimize workflows by offloading tasks to pre-commit action
+
+
