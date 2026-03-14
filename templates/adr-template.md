@@ -17,7 +17,7 @@
 > Shape guidance:
 >
 > - Use the extended shape for `content/` and `vault/` domain decisions or any decision that needs alternatives, trade-offs, and traceability detail.
-> - Use the compact shape for lightweight governance or documentation-boundary ADRs such as the `docs/web` V2 active chain.
+> - Use the compact shape for lightweight governance or documentation-boundary ADRs such as the `docs/` V2 active chain.
 
 ## Optional Frontmatter
 

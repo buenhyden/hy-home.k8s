@@ -16,8 +16,7 @@
 >
 > Shape guidance:
 >
-> - Use the extended task-and-verification form for `content/` and `vault/`.
-> - Use the compact implementation form when the plan is mainly a phased task ledger, as in the active `docs/web` V2 chain.
+> - Use the compact implementation form when the plan is mainly a phased task ledger, as in the active `docs/` V2 chain.
 
 ## Optional Frontmatter
 
