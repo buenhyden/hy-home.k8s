@@ -204,10 +204,7 @@ hy-home.k8s/
 │   ├── plans/              # Execution plans
 │   ├── prd/                # Product Requirements Documents (Flattened)
 │   ├── runbooks/           # Executable operational procedures (Flattened)
-│   ├── specs/              # Technical specs and implementation plans (Flattened)
-│   ├── collaboration-guide.md
-│   ├── operations-guide.md
-│   └── qa-security-guide.md
+│   └── specs/              # Technical specs and implementation plans (Flattened)
 ├── examples/               # Example materials and reference content
 ├── gitops/                 # ArgoCD applications and cluster reconciliation entrypoints
 ├── infrastructure/         # Vendored platform manifests and k3d cluster definitions
