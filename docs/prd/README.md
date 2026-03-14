@@ -24,11 +24,12 @@ Create a PRD when:
 
 ## How to Create a PRD
 
-1. **Determine Domain/Feature**: PRDs MUST be placed inside a specific business domain folder (e.g., `docs/prd/auth/`, `docs/prd/payments/`). Do NOT place PRDs directly in the root of `docs/prd/`.
-2. **Use the Template**: Copy `templates/product/prd-template.md` to this directory
-3. **Name Convention**: `[feature]-prd.md` (e.g., `user-authentication-prd.md`)
-4. **Fill All Sections**: Overview, audience, metrics, user stories, scope
-5. **Get Approval**: PRD must be approved before specs are created
+1. **File Placement**: All PRDs MUST be placed directly in `docs/prd/`. Do NOT create subdirectories.
+2. **Metadata**: Include `layer:` metadata in the frontmatter (e.g., `layer: "auth"`, `layer: "infra"`).
+3. **Use the Template**: Copy `templates/product/prd-template.md` to this directory
+4. **Name Convention**: `[feature]-prd.md` (e.g., `user-authentication-prd.md`)
+5. **Fill All Sections**: Overview, audience, metrics, user stories, scope
+6. **Get Approval**: PRD must be approved before specs are created
 
 ```bash
 # Example workflow
@@ -120,8 +121,9 @@ When working with PRDs:
 
 ## Index of PRDs
 
-| Document | Feature | Status | Last Updated |
+| Document | Layer | Status | Last Updated |
 | --- | --- | --- | --- |
-| [home-cluster-infra-prd](./infra/home-cluster-infra-prd.md) | infra | Approved | 2026-02-27 |
+| [home-cluster-infra-prd](./home-cluster-infra-prd.md) | infra | Approved | 2026-02-27 |
+| [argocd-gitops-prd](./argocd-gitops-prd.md) | gitops | Draft | 2026-03-07 |
 
 > Add entries to this index as PRDs are created.

@@ -1,6 +1,5 @@
 # Development Process & Collaboration Guide
 
-*Target Directory: `docs/manuals/collaboration-guide.md`*
 *Description: This document defines the team's working agreements, development processes, and collaboration SLAs.*
 
 ## 1. Development Process & Collaboration Checklist

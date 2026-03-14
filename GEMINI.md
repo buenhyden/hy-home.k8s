@@ -5,7 +5,7 @@ Thin Gemini CLI shim for this Kubernetes home-lab infrastructure repository.
 Shared cross-agent contract: [AGENTS.md](AGENTS.md)
 Detailed agent instructions: [docs/agent-instructions.md](docs/agent-instructions.md)
 
-@./.claude/GEMINI.md
+@docs/agentic/GEMINI.md
 
 Nearest scoped `GEMINI.md` files under `docs/` provide local document context.
 

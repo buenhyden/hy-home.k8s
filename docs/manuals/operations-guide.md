@@ -1,6 +1,5 @@
 # Operations & Deployment Guide
 
-*Target Directory: `docs/manuals/operations-guide.md`*
 *Description: This document defines the team's operational readiness, including deployment strategies, observability baselines, and reliability goals.*
 
 ## 1. Deployment & Environments

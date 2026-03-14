@@ -1,6 +1,5 @@
 # QA & Security Guide
 
-*Target Directory: `docs/manuals/qa-security-guide.md`*
 *Description: This document defines the team's quantitative and qualitative standards for testing, code quality, and application security.*
 
 ## 1. Quality & Test Checklist

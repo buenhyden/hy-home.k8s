@@ -31,15 +31,16 @@ Create an ADR when making decisions that:
 
 ## How to Create an ADR
 
-1. **Determine Domain/Feature**: ADRs MUST be placed inside a specific business domain folder (e.g., `docs/adr/auth/`, `docs/adr/payments/`). Do NOT place them directly in the root of `docs/adr/` unless they are truly global.
-2. **Name Convention**: `NNNN-title-with-dashes.md` (e.g., `0001-database-selection.md`)
-3. **Fill All Sections**: Context, Decision, Consequences, Alternatives
-4. **Set Status**: Proposed → Accepted (or Rejected)
+1. **File Placement**: All ADRs MUST be placed directly in `docs/adr/`. Do NOT create subdirectories.
+2. **Metadata**: Include `layer:` metadata in the frontmatter.
+3. **Name Convention**: `NNNN-title-with-dashes.md` (e.g., `0001-database-selection.md`)
+4. **Fill All Sections**: Context, Decision, Consequences, Alternatives
+5. **Set Status**: Proposed → Accepted (or Rejected)
 
 ```bash
 # Example workflow
 mkdir -p docs/adr/infra
-cp templates/architecture/adr-template.md docs/adr/infra/0001-use-postgresql.md
+cp templates/architecture/adr-template.md docs/adr/0001-use-postgresql.md
 # Edit the file with your decision details
 ```
 
@@ -60,11 +61,8 @@ All ADRs MUST use `templates/architecture/adr-template.md`. The template include
 
 ```text
 docs/adr/
-├── infra/
-│   ├── 0001-use-postgresql.md
-│   └── 0002-api-gateway-pattern.md
-├── identity/
-│   └── 0003-microservices-communication.md
+├── 0001-k3d-local-cluster.md (layer: infra)
+├── 0001-argocd-gitops.md (layer: gitops)
 └── ...
 ```
 
@@ -98,8 +96,9 @@ When working with ADRs:
 
 ## Index of ADRs
 
-| Number | Title | Status | Date |
-| --- | --- | --- | --- |
-| 0001 | [k3d-local-cluster](./infra/0001-k3d-local-cluster.md) | Accepted | 2026-02-27 |
+| Number | Title | Layer | Status | Date |
+| --- | --- | --- | --- | --- |
+| 0001 | [k3d-local-cluster](./0001-k3d-local-cluster.md) | infra | Accepted | 2026-02-27 |
+| 0001 | [argocd-gitops](./0001-argocd-gitops.md) | gitops | Accepted | 2026-02-27 |
 
 > Add entries to this index as ADRs are created.

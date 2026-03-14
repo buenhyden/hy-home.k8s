@@ -1,6 +1,5 @@
 # Implementation Specification: User Authentication Feature
 
-*Target Directory: `specs/`*
 *Note: This document MUST be completed and reviewed before any code is generated.*
 
 > **This is an EXAMPLE specification** demonstrating the expected format and level of detail.

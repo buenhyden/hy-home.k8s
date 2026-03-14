@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Shared cross-agent contract: [AGENTS.md](AGENTS.md)
 Detailed agent instructions: [docs/agent-instructions.md](docs/agent-instructions.md)
 
-@./.claude/CLAUDE.md
+@./docs/agentic/CLAUDE.md
 
 Nearest scoped `CLAUDE.md` files under `docs/` take precedence for local document work.
 

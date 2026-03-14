@@ -24,10 +24,11 @@ Create an ARD when:
 
 ## How to Create an ARD
 
-1. **Determine Domain/Feature**: ARDs MUST be placed inside a specific business domain folder (e.g., `docs/ard/auth/`, `docs/ard/payments/`).
-2. **Use the Template**: Copy `templates/architecture/ard-template.md` to this directory
-3. **Name Convention**: `[system]-requirements.md` (e.g., `payment-service-requirements.md`)
-4. **Fill All Sections**: Business goals, scope, functional/non-functional requirements, constraints
+1. **File Placement**: All ARDs MUST be placed directly in `docs/ard/`. Do NOT create subdirectories.
+2. **Metadata**: Include `layer:` metadata in the frontmatter.
+3. **Use the Template**: Copy `templates/architecture/ard-template.md` to this directory
+4. **Name Convention**: `[system]-requirements.md` (e.g., `payment-service-requirements.md`)
+5. **Fill All Sections**: Business goals, scope, functional/non-functional requirements, constraints
 
 ```bash
 # Example workflow
@@ -97,8 +98,9 @@ When working with ARDs:
 
 ## Index of ARDs
 
-| Document | System | Last Updated |
+| Document | Layer | Last Updated |
 | --- | --- | --- |
-| [k3d-cluster-requirements](./infra/k3d-cluster-requirements.md) | infra | 2026-02-27 |
+| [k3d-cluster-requirements](./k3d-cluster-requirements.md) | infra | 2026-02-27 |
+| [argocd-gitops-architecture](./argocd-gitops-architecture.md) | gitops | 2026-03-07 |
 
 > Add entries to this index as ARDs are created.

@@ -15,10 +15,9 @@ This directory is necessary because it forms the rigid, non-negotiable bridge be
 Every specification created in this folder MUST be instantiated from the predefined templates located in `templates/engineering/`.
 
 - **Owner**: The **Planner Agent** creates these files. The **Coder Agent** reads and executes them.
-- **Required Files per Feature**:
-  - `specs/<feature>/spec.md` — The technical specification detailing exact required code changes, logic flows, and testing constraints. **(Template: `templates/engineering/spec-template.md`)**
-  - `specs/<feature>/plan.md` — The step-by-step execution roadmap for the Coder agent.
-  - `specs/<feature>/api/` — OpenAPI or GraphQL schemas documenting interface contracts. **(Template: `templates/engineering/api-spec-template.md`)**
+- **Required Files per Layer**:
+  - `specs/[layer]-spec.md` — The technical specification detailing exact required code changes, logic flows, and testing constraints. **(Template: `templates/engineering/spec-template.md`)**
+  - `specs/[layer]-plan.md` — The step-by-step execution roadmap for the Coder agent.
 
 ## 3. Golden Rules for AI Agents
 
@@ -36,9 +35,9 @@ Coder Agents (Backend/Frontend) are governed by `.agent/workflows/` to explicitl
 
 ## 5. Index of Specifications
 
-| Feature | Specification | Plan | Status |
+| Layer | Specification | Plan | Status |
 |---------|---------------|------|--------|
-| **Infra** | [Technical Spec](./infra/spec.md) | [Execution Plan](./infra/plan.md) | Validated |
-| **GitOps** | [Technical Spec](./gitops/spec.md) | [Execution Plan](./gitops/plan.md) | Draft |
+| **Infra** | [Technical Spec](./infra-spec.md) | [Execution Plan](./infra-plan.md) | Validated |
+| **GitOps** | [Technical Spec](./gitops-spec.md) | [Execution Plan](./gitops-plan.md) | Draft |
 
 > Add entries to this index as specifications are created.

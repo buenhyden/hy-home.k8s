@@ -1,15 +1,7 @@
-# Manuals
+## Guidelines
 
-This folder stores process-oriented manuals for contributors and operators.
+- **Manuals**: [collaboration-guide.md](collaboration-guide.md), [operations-guide.md](operations-guide.md), and [qa-security-guide.md](qa-security-guide.md) reside here in the root.
+- **Agent Instructions**: Managed centrally in [docs/agentic/](agentic/agent-instructions.md).
+- **Proactive Skills**: AI agents MUST proactively use any appropriate runtime-provided skill without restriction.
 
-## Typical Documents
-
-- Collaboration playbooks (e.g., `collaboration-guide.md`)
-- Onboarding guides
-- Project operating procedures
-
-Keep manuals concise, role-specific, and linked from root policy files.
-
-## Project Governance & Rule Overrides
-
-While generic organizational standards reside in `.agent/rules/`, the manuals in this folder establish the living working agreements for this specific team/project. For example, SLAs and DoDs defined in `collaboration-guide.md` actively override generic agent behaviors. AI Agents must prioritize these local governance manuals during execution.
+Refer to [AGENTS.md](../AGENTS.md) for the root contract governing AI agent behavior in this repository.

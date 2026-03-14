@@ -197,14 +197,17 @@ hy-home.k8s/
 ├── .claude/                # Shared instruction layer for agent-facing documentation
 ├── .github/                # CI workflow, issue templates, PR template, security policy
 ├── docs/
-│   ├── adr/                # Architecture Decision Records
-│   ├── ard/                # Architecture Reference Documents
-│   ├── manuals/            # Process and collaboration manuals
-│   ├── operations/         # Operational definitions and readiness docs
+│   ├── adr/                # Architecture Decision Records (Flattened)
+│   ├── ard/                # Architecture Reference Documents (Flattened)
+│   ├── incidents/          # Incident reports and postmortems
+│   ├── operations/         # Strategic operations blueprints
 │   ├── plans/              # Execution plans
-│   ├── prd/                # Product Requirements Documents
-│   ├── runbooks/           # Executable operational procedures
-│   └── specs/              # Technical specs and implementation plans
+│   ├── prd/                # Product Requirements Documents (Flattened)
+│   ├── runbooks/           # Executable operational procedures (Flattened)
+│   ├── specs/              # Technical specs and implementation plans (Flattened)
+│   ├── collaboration-guide.md
+│   ├── operations-guide.md
+│   └── qa-security-guide.md
 ├── examples/               # Example materials and reference content
 ├── gitops/                 # ArgoCD applications and cluster reconciliation entrypoints
 ├── infrastructure/         # Vendored platform manifests and k3d cluster definitions
