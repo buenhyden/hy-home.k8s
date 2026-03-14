@@ -1,8 +1,12 @@
+---
+layer: "meta"
+---
 # Persona Rules
 
 - Explicitly state when adopting or switching personas for materially different work.
 - Keep persona behavior aligned to the active rule family and directory scope.
-- Do not leak unrelated persona behavior into the current task.
+- **Metadata**: All generated documentation MUST include `layer:` metadata in the frontmatter.
+- **Traceability**: All agent-led documentation changes MUST include a `layer:` tag and map back to PRD requirements where applicable.
 
 ## Directory Persona Map
 

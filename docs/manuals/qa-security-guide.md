@@ -1,3 +1,6 @@
+---
+layer: "manual"
+---
 # QA & Security Guide
 
 *Description: This document defines the team's quantitative and qualitative standards for testing, code quality, and application security.*

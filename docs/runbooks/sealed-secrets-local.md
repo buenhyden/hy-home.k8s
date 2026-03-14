@@ -1,3 +1,6 @@
+---
+layer: "infra"
+---
 # Service Runbook: Sealed Secrets (Local)
 
 *Note: This is strictly for operational context. It MUST follow the deterministic rules in `0381-runbooks-oncall.md`.*

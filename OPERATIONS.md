@@ -1,3 +1,6 @@
+---
+layer: "meta"
+---
 # Operations Index
 
 This document is the central index for operational readiness in repositories created from this template. It provides policy-level guidance and points to executable runbooks managed by the **DevOps Agent**.
@@ -13,37 +16,22 @@ All operational procedures must use `templates/runbook-template.md`. Below is th
 | Deployment        | Active | `docs/runbooks/deployment-runbook.md`    | Staging/Production release steps     |
 | Incident Response | Active | `docs/runbooks/incident-response-runbook.md` | SEV-1/SEV-2 incident mitigation      |
 | Monitoring        | Active | `docs/runbooks/monitoring-runbook.md`    | Threshold checks and alerting config |
-| Local k3d (WSL2)  | Active | `docs/runbooks/infra/local-k3d-wsl2.md`  | Local cluster setup and troubleshooting |
-| GitOps Bootstrap  | Active | `docs/runbooks/infra/bootstrap-gitops.md`| Deterministic ArgoCD repo key setup  |
-| Sealed Secrets    | Active | `docs/runbooks/infra/sealed-secrets.md`  | Secret encryption and sealing workflow|
+| Local k3d (WSL2)  | Active | `docs/runbooks/local-k3d-wsl2.md`        | Local cluster setup and troubleshooting |
+| GitOps Bootstrap  | Active | `docs/runbooks/local-gitops-argocd.md`   | Deterministic ArgoCD repo key setup  |
+| Sealed Secrets    | Active | `docs/runbooks/sealed-secrets-local.md`  | Secret encryption and sealing workflow|
 
 > **Note:** If a specific operational procedure (e.g. database migration, failover) is missing from this index, the DevOps Agent should proactively create a new runbook based on `templates/runbook-template.md` and link it here.
 
-## 2. Environment & Deployment Strategy
+## 2. Operational Strategies
 
-### Environment Hierarchy
+Detailed strategies for deployment and observability are managed as independent operational assets:
 
-- **Development (Dev)**: Used for intra-team testing. Automatically deployed upon PR merge to `main`.
-- **Staging**: Used for pre-production validation (QA, Load testing, User Acceptance). Matches production infrastructure parity exactly.
-- **Production**: Live environment for end-users.
+- **[Deployment Strategy](docs/operations/deployment-strategy.md)**: Environment hierarchy and Blue-Green automation policies.
+- **[Observability Baseline](docs/operations/observability-standard.md)**: OTel metrics, JSON logging, and error budget alerting standards.
 
-### Deployment Strategy
+## 3. Continuity & Disaster Recovery
 
-- **Default Strategy**: Blue-Green Deployment (or Rolling Update for stateless worker tiers). Zero-downtime required.
-- **Infrastructure Mutability**: Manual "ClickOps" in production is strictly **FORBIDDEN**. All changes must execute via Infrastructure-as-Code (Terraform/ArgoCD).
-
-## 3. Observability Baseline
-
-- **Metrics**: Essential RED metrics MUST be collected utilizing OTel collectors, adhering to `.agent/rules/2610-observability-strategy.md`.
-- **Logging**: All logs MUST use structured JSON format with correlation IDs per `.agent/rules/2620-logging-std.md`.
-- **Tracing**: Critical inter-service pipelines MUST propagate HTTP `trace_id` headers per `.agent/rules/2610-observability-strategy.md`.
-- **Alerts**: Alerts trigger based on SLO Error Budget burns affecting users, adhering to `.agent/rules/2630-alerting-std.md`.
-
-## 4. Continuity & Disaster Recovery
-
-- **Data Backups**: All stateful data stores MUST have automated, encrypted daily backups at a minimum, verified monthly, adhering to `.agent/rules/0342-backup-restore.md`.
-- **Recovery Time Objective (RTO)**: Target < 4 hours for Tier-1 services.
-- **Recovery Point Objective (RPO)**: Target < 1 hour of potential data loss via WAL (Write-Ahead Logging) or continuous replication.
+Disaster recovery policies and RTO/RPO targets are defined in the **[Observability Baseline](docs/operations/observability-standard.md)**.
 
 ## 5. Operational Rules
 

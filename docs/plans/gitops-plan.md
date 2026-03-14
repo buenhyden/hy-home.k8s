@@ -1,5 +1,7 @@
 ---
 goal: "Bootstrap ArgoCD GitOps for the local k3d cluster (infra + apps) with sealed secrets for private repo access."
+layer: "gitops"
+layer: "gitops"
 version: "1.0"
 date_created: "2026-02-27"
 last_updated: "2026-02-27"

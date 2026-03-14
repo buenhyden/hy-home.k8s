@@ -1,3 +1,6 @@
+---
+layer: "ops"
+---
 # Operational Runbooks (`runbooks/`)
 
 This directory is the **exclusive home** for all executable operational procedures, incident response playbooks, and deployment guides.

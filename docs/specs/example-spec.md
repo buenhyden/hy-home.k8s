@@ -1,3 +1,6 @@
+---
+layer: "app"
+---
 # Implementation Specification: User Authentication Feature
 
 *Note: This document MUST be completed and reviewed before any code is generated.*

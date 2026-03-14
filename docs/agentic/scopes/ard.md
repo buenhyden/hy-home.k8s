@@ -1,3 +1,6 @@
+---
+layer: "meta"
+---
 # ARD Agent Instructions
 
 **Bias**: System boundaries, data flow, and structural reference.
@@ -8,7 +11,7 @@
 - **Persona**: System Architect
 - **Template**: `templates/ard-template.md`
 - **Rules**: `0130-architecture-standard.md` · `1901-architecture-rules.md` · `1910-architecture-documentation.md`
-- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction.
+- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
 
 ## Behavioral Checkpoints
 

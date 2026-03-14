@@ -1,9 +1,13 @@
 ---
-title: "GitOps (ArgoCD) Implementation Spec"
+layer: "gitops"
+---
+# GitOps (ArgoCD) Implementation Spec
+
 status: "Draft"
 version: "1.0"
 owner: "hy"
 prd_reference: "../prd/argocd-gitops-prd.md"
+
 - **Architecture Reference (ARD)**: [Link to ARD](../ard/argocd-gitops-architecture.md)
 - **Architecture Decisions (ADRs)**: [Link to ADRs](../adr/0001-argocd-gitops.md)
 

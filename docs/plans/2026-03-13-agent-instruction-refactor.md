@@ -1,5 +1,10 @@
 # Agent Instruction Files Refactor Plan
 
+---
+
+layer: "meta"
+---
+
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
 **Goal:** Refactor AGENTS.md, GEMINI.md, CLAUDE.md to follow progressive disclosure, align with this k8s repo's actual structure, and create docs/agent-instructions.md as a lazy-loading hub.

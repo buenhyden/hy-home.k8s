@@ -1,5 +1,6 @@
 ---
 title: "Core Infrastructure Implementation Spec"
+layer: "infra"
 status: "Validated"
 version: "1.0"
 owner: "hy"

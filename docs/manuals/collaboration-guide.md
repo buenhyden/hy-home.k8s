@@ -1,3 +1,6 @@
+---
+layer: "manual"
+---
 # Development Process & Collaboration Guide
 
 *Description: This document defines the team's working agreements, development processes, and collaboration SLAs.*

@@ -1,3 +1,6 @@
+---
+layer: "ops"
+---
 # Operations Agent Instructions
 
 **Bias**: Strategy, resource management, security posture, and lifecycle.
@@ -8,7 +11,7 @@
 - **Persona**: DevOps / SRE / Platform Lead
 - **Templates**: `templates/operations-template.md`
 - **Rules**: `0301-operations-blueprint-standard.md` · `2600-observability-pillar.md` · `2200-security-pillar.md`
-- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction.
+- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
 
 ## Behavioral Checkpoints
 

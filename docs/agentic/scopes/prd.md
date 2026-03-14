@@ -8,7 +8,7 @@
 - **Persona**: Product Manager + Requirements Analyst
 - **Template**: `templates/prd-template.md`
 - **Rules**: `0120-requirements-and-specifications-standard.md` · `0201-project-management-standard.md`
-- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction.
+- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
 
 ## Behavioral Checkpoints
 

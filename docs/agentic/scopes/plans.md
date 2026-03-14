@@ -1,3 +1,6 @@
+---
+layer: "meta"
+---
 # Plans Agent Instructions
 
 **Bias**: Granularity, dependencies, and estimation accuracy.
@@ -8,7 +11,7 @@
 - **Persona**: Planner + Strong Reasoner
 - **Templates**: `templates/plan-template.md` · `templates/implementation-plan.md`
 - **Rules**: `0102-implementation-plan-standard.md` · `0114-impl-estimation.md` · `0115-impl-templates.md`
-- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction.
+- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
 
 ## Behavioral Checkpoints
 

@@ -8,7 +8,7 @@
 - **Persona**: DevOps / SRE
 - **Template**: `templates/runbook-template.md`
 - **Rules**: `0381-runbooks-oncall.md` · `0300-devops-pillar-standard.md`
-- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction.
+- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
 
 ## Behavioral Checkpoints
 

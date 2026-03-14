@@ -1,3 +1,6 @@
+---
+layer: "meta"
+---
 # Core Rules
 
 - `docs/specs/` is the implementation source of truth for planned work.

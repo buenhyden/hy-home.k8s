@@ -1,3 +1,6 @@
+---
+layer: "infra"
+---
 # Architecture Decision Record (ADR)
 
 ---

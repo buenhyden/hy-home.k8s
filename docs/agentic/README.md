@@ -1,3 +1,6 @@
+---
+layer: "meta"
+---
 # agentic Architecture
 
 This directory is the shared detailed instruction layer for agent-facing work in this repository.

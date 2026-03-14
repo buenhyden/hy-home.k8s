@@ -1,3 +1,6 @@
+---
+layer: "ops"
+---
 ## Guidelines
 
 - **Manuals**: [collaboration-guide.md](collaboration-guide.md), [operations-guide.md](operations-guide.md), and [qa-security-guide.md](qa-security-guide.md) reside here in the root.

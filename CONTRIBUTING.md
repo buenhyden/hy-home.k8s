@@ -1,3 +1,6 @@
+---
+layer: "meta"
+---
 # Contributing Guidelines
 
 ## Necessity & Required Content
@@ -8,6 +11,7 @@ This file is necessary to define the exact, mechanical steps a human must take t
 - Hard Code Quality Gates (Coverage, Linting).
 - Branch naming and Conventional Commit rules.
 - Spec-Driven PR referencing requirements.
+- Mandatory `layer:` metadata in all documentation.
 
 ## 1. Spec-Driven Core Rule
 
@@ -36,7 +40,7 @@ We enforce strict Quality Assurance metrics. Before you pull request, you must s
 
 1. **Branch Naming**: Ensure your branch name follows the convention: `feature/XXX`, `fix/XXX`, or `docs/XXX`.
 2. **Commit Messages**: Use Conventional Commits.
-3. **Traceability**: Your PR description **must** reference the specific file in `specs/` it addresses.
+3. **Traceability**: Your PR description **must** reference the specific file in `docs/specs/` it addresses.
 
 ## 5. Multi Sub-Agent Interaction
 

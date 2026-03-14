@@ -1,3 +1,6 @@
+---
+layer: "meta"
+---
 # Repo Navigation
 
 Human-readable repo map that matches the runtime navigation rules.

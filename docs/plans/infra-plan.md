@@ -1,5 +1,7 @@
 ---
 goal: "Establish a robust, reproducible k3d-based Kubernetes environment on WSL2."
+layer: "infra"
+layer: "infra"
 version: "1.0"
 date_created: "2026-02-27"
 last_updated: "2026-02-27"

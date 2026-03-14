@@ -1,3 +1,6 @@
+---
+layer: "meta"
+---
 # Incidents Agent Instructions
 
 **Bias**: Root cause analysis (RCA), timelines, and actionable prevention.
@@ -8,7 +11,7 @@
 - **Persona**: Incident Responder + SRE
 - **Template**: `templates/incident-template.md`
 - **Rules**: `0380-incident-response.md` · `2600-observability-pillar.md`
-- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction.
+- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
 
 ## Behavioral Checkpoints
 

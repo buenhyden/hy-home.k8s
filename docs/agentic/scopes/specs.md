@@ -1,3 +1,6 @@
+---
+layer: "app"
+---
 # Specs Agent Instructions
 
 **Bias**: Exact paths, interfaces, verification logic, and implementation-ready detail.
@@ -8,7 +11,7 @@
 - **Persona**: Strong Reasoner + Architect + Requirements Analyst
 - **Templates**: `templates/spec-template.md` · `templates/plan-template.md` · `templates/api-spec-template.md`
 - **Rules**: `0102-implementation-plan-standard.md` · `0111-impl-task-spec.md` · `0112-impl-workflow.md` · `0113-impl-traceability.md` · `0120-requirements-and-specifications-standard.md`
-- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction.
+- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
 
 ## Behavioral Checkpoints
 

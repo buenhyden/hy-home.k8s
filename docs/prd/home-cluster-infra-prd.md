@@ -8,6 +8,11 @@ stakeholders: ["hy"]
 tags: ["prd", "requirements", "product", "infrastructure", "infra"]
 ---
 
+---
+
+layer: "infra"
+---
+
 # Product Requirements Document (PRD)
 
 > **Status**: Approved

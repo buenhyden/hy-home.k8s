@@ -1,3 +1,6 @@
+---
+layer: "manual"
+---
 # Operations & Deployment Guide
 
 *Description: This document defines the team's operational readiness, including deployment strategies, observability baselines, and reliability goals.*

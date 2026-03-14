@@ -1,3 +1,6 @@
+---
+layer: "app"
+---
 # Technical Specifications Hub (`specs/`)
 
 This directory is the absolute **Source of Truth** for the During-Development phase. It exists explicitly and exclusively for **Spec-Driven Development**.
