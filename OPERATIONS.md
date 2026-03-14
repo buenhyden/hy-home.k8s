@@ -2,11 +2,11 @@
 
 This document is the central index for operational readiness in repositories created from this template. It provides policy-level guidance and points to executable runbooks managed by the **DevOps Agent**.
 
-> **IMPORTANT:** Detailed operational procedures, deployment scripts, and incident guides are located exclusively in the `runbooks/` directory. **Never create `docs/runbook` or use an `operations/` folder.**
+> **IMPORTANT:** Detailed operational procedures, deployment scripts, and incident guides are located exclusively in the `docs/runbooks/` directory. **Never create `docs/runbook` or use an `docs/operations/` folder.**
 
 ## 1. Runbook Catalog
 
-All operational procedures must use `templates/operations/runbook-template.md`. Below is the index of standard runbooks included in the `runbooks/` directory.
+All operational procedures must use `templates/runbook-template.md`. Below is the index of standard runbooks included in the `docs/runbooks/` directory.
 
 | Runbook           | Status | Location                                 | Purpose                              |
 |-------------------|--------|------------------------------------------|--------------------------------------|
@@ -17,7 +17,7 @@ All operational procedures must use `templates/operations/runbook-template.md`. 
 | GitOps Bootstrap  | Active | `docs/runbooks/infra/bootstrap-gitops.md`| Deterministic ArgoCD repo key setup  |
 | Sealed Secrets    | Active | `docs/runbooks/infra/sealed-secrets.md`  | Secret encryption and sealing workflow|
 
-> **Note:** If a specific operational procedure (e.g. database migration, failover) is missing from this index, the DevOps Agent should proactively create a new runbook based on `templates/operations/runbook-template.md` and link it here.
+> **Note:** If a specific operational procedure (e.g. database migration, failover) is missing from this index, the DevOps Agent should proactively create a new runbook based on `templates/runbook-template.md` and link it here.
 
 ## 2. Environment & Deployment Strategy
 
@@ -51,7 +51,7 @@ All operational procedures must use `templates/operations/runbook-template.md`. 
 
 Code must not be deployed unless:
 
-1. Specs in `specs/` exist and are implemented.
+1. Specs in `docs/specs/` exist and are implemented.
 2. Reviewer Agent approves the PR.
 3. Tests across all tiers pass (unit tests colocated, E2E in global `tests/`) via `.github/workflows/`.
 4. A rollback procedure is documented in the corresponding deployment runbook.
@@ -69,4 +69,4 @@ Code must not be deployed unless:
 
 ---
 
-> **Note to AI Agents (DevOps Role):** Do not write operation steps directly in this index. For any operational change, modify or create a specific runbook inside `runbooks/` using the approved template.
+> **Note to AI Agents (DevOps Role):** Do not write operation steps directly in this index. For any operational change, modify or create a specific runbook inside `docs/runbooks/` using the approved template.

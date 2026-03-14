@@ -20,7 +20,7 @@ All development—infrastructure OR application—**MUST** begin with a specific
 
 If your contribution involves documentation (ADR, PRD, Runbook, etc.), you **MUST** use the predefined templates located in the `templates/` directory.
 
-- Do not invent your own format for Architecture Decision Records. Use `templates/architecture/adr-template.md`.
+- Do not invent your own format for Architecture Decision Records. Use `templates/adr-template.md`.
 - Ensure all sections are filled out before submitting.
 
 ## 3. Local QA & Test Coverage (Pre-PR Gate)

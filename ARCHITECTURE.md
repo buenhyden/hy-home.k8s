@@ -16,10 +16,10 @@ This template provides a standardized foundation for building software projects.
 
 ### Core Architecture Pillars
 
-- **Spec-Driven Development**: `specs/` uniquely drives all implementation.
+- **Spec-Driven Development**: `docs/specs/` uniquely drives all implementation.
 - **AI-Assisted Development**: Multi Sub-Agent AI system phases (`AGENTS.md`).
 - **Template-Based Documentation**: Consistent output enforced via `templates/`.
-- **Strict Boundary Segregation**: Clear division of Knowledge (`docs/`), Implementation (`specs/`, `web/`, `app/`, `server/`), and Operations (`runbooks/`).
+- **Strict Boundary Segregation**: Clear division of Knowledge (`docs/`), Implementation (`docs/specs/`, `web/`, `app/`, `server/`), and Operations (`docs/runbooks/`).
 
 ## 2. Core Constraints & Decisions
 
@@ -74,13 +74,13 @@ Customize the following for your specific project upon cloning.
 ### Document vs Code vs Operations
 
 - **`docs/`**: Holds "Why" and "What" (PRD, ADR, ARD).
-- **`specs/`**: Holds "Exactly How" prior to coding.
-- **`runbooks/`**: Holds executable scripts and "What to do when X fails."
+- **`docs/specs/`**: Holds "Exactly How" prior to coding.
+- **`docs/runbooks/`**: Holds executable scripts and "What to do when X fails."
 
 ### Extending the Architecture
 
-1. **Design Changes**: Create an ADR in `docs/adr/` using `templates/architecture/adr-template.md`.
-2. **Data Structure Changes**: Document via ARD in `docs/ard/` using `templates/architecture/ard-template.md`.
+1. **Design Changes**: Create an ADR in `docs/adr/` using `templates/adr-template.md`.
+2. **Data Structure Changes**: Document via ARD in `docs/ard/` using `templates/ard-template.md`.
 3. **Execution Rules**: Modify `.agent/rules/` to enforce new architectural linters globally.
 
 ---
