@@ -5,56 +5,52 @@ layer: "meta"
 
 ## Necessity & Required Content
 
-This file is absolutely necessary to establish the operational handoffs between Human Developers and the Multi Sub-Agent System. While `AGENTS.md` defines what the AI does, this file defines how the *Human* manages the AI.
-**What Must Be Written Here**:
+This document defines the operational handoff between Human Developers and the Multi-Agent System. While `AGENTS.md` defines agent roles, this file defines how humans manage and collaborate with those agents.
 
-- Workflow handoff rules across Pre-Dev, During-Dev, and Post-Dev phases.
-- Conflict resolution tactics for AI Hallucinations.
-- Pointers to mandatory collaborative processes.
+**Handoff Protocols**:
+
+- **Intent-First**: Humans define the "What" and "Why" in PRDs.
+- **Spec-Driven**: Agents define the "How" in Specs.
+- **Validation-Locked**: No code is generated without human approval of the Implementation Spec.
 
 ## 0. Mandatory Project Kickoff
 
-Before any major development begins, the team MUST establish working agreements.
+Before major development starts, the team (Human + Planner Agent) MUST establish working agreements.
 
 - **Action**: Use `templates/collaboration-guide-template.md` to create `docs/guides/collaboration-guide.md`.
-- **Requirement**: Answer all 11 items in the **Development Process & Collaboration Checklist** (e.g., Branching Strategy, SLA, DoD, Code Review rules).
-- **Enforcement**: AI Agents will verify the existence and completeness of this guide during project initialization.
+- **Enforcement**: AI Agents will verify the existence of this guide during initialization.
 
 ## 1. Requesting Work (Pre-Development)
 
-When requesting new features, humans should primarily interact with the **Planner Agent**.
+Humans primarily interact with the **Planner Agent**.
 
-- **Human**: Defines the high-level business need in an Issue or a prompt.
-- **AI (Planner)**: Utilizes `templates/prd-template.md` to generate a PRD (`docs/prd/`).
-- **AI (Planner)**: Once the PRD is approved, it writes an Implementation Spec in `docs/specs/` using `templates/spec-template.md`.
-- **Human**: MUST approve the final spec before any code is generated.
+- **Human**: Defines business needs in an Issue or prompt.
+- **AI (Planner)**: Generates a PRD in `docs/prd/`.
+- **AI (Planner)**: Once approved, generates an Implementation Spec in `docs/specs/`.
+- **Human**: MUST approve the final spec before execution.
 
-## 2. Code Implementation Workflow (During-Development)
+## 2. Implementation Workflow (During-Development)
 
-Humans generally **do not write boilerplate**.
+- **AI (Coder Agents)**: Implement code and tests EXACTLY as specified in `docs/specs/`.
+- **Rule of Thumb**: Agents should never invent undocumented edge cases; if missing, they must STOP and ASK.
+- **Human**: Periodically review progress and provide domain context only.
 
-- **AI (Backend/Frontend Coder)**: Implements code and inline tests EXACTLY as specified in `docs/specs/`.
-- **Rule of Thumb**: The AI should never invent undocumented edge cases. If missing, it must stop and ask.
-- **Human**: Provide domain-specific guidance only when the AI encounters genuine architectural friction not covered by `ARCHITECTURE.md`.
+## 3. Review & Deployment (Post-Development)
 
-## 3. Code Review & Deployment (Post-Development)
+- **AI (Reviewer)**: Performs automated linting, security checks, and spec-compliance verification.
+- **Human**: Final merge approval, focusing on logic and business value.
+- **AI (DevOps)**: Generates or updates runbooks in `docs/runbooks/` for deployment.
 
-- **AI (Reviewer)**: Performs initial linting, security checks, and spec-compliance verification on the PR.
-- **Human**: Final merge approval, focusing on business value and preventing regressions.
-- **AI (DevOps)**: Instructed to generate/update the deployment guide in `docs/runbooks/` using `templates/runbook-template.md`.
+## 4. Conflict Resolution (AI Hallucinations)
 
-## 4. Resolving Conflicts (AI Hallucinations)
+If an agent hallucinates or loops:
 
-If an AI Agent hallucinates or gets stuck in a loop:
+1. **Stop**: Terminate the agent session.
+2. **Adjust**: Manually correct the specification in `docs/specs/`.
+3. **Resume**: Re-prompt the agent, pointing to the exact line in the spec it disregarded.
 
-1. Explicitly stop the agent.
-2. Manually adjust the specification in `docs/specs/` or add rigid constraints to `docs/operations/`.
-3. Re-prompt the agent, pointing them firmly to the specific markdown line they disregarded.
+## 5. Evolving the Rules
 
-## 5. Evolving the Rules (Collaborating on Standards)
-
-Standard Agent Rules live in `.agent/rules/`. Project-specific context lives in `docs/guides/`.
-
-1. **Project-Specific Overrides**: Humans can define overrides to global `.agent/rules/` within specific `docs/operations/`.
-2. **Global Rule Updates**: If a global standard needs to evolve, humans must update the corresponding markdown file in `.agent/rules/` to ensure all future Agents act upon the new intent.
-3. **Contradictions**: If human instructions contradict an established `.agent/rule/`, the Agent will flag the violation based on `.agent/rules/` and request explicit confirmation to bypass or update the rule.
+- **Project Scoped**: Define overrides in project-specific files.
+- **Global Rules**: Update files in `docs/agentic/` (e.g., `docs/agentic/rules/core.md`) to evolve the standard.
+- **Flagging**: Agents will flag human instructions that contradict established rules.

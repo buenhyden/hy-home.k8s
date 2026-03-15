@@ -1,28 +1,35 @@
-# Agent Instructions
+# Agent Framework Contract
 
-Shared cross-agent contract for the `hy-home.k8s` repository.
+Shared cross-agent contract for the `hy-home.k8s` repository. This file serves as the **Explicit Trigger** for all AI Agent rules.
 
-## Rule-Based Entrypoint
+## 1. Rule-Based Entrypoint
 
-This repository uses a **Lazy Loading Protocol** for instructions. Agents MUST NOT load all instructions into memory at once. Instead, identify the relevant **Rule** based on the current task scope and import the corresponding **Scope** file.
+This repository uses a **Lazy Loading Protocol**. Agents MUST NOT load all instructions into memory. Instead, identify the relevant **Rule** or **Scope** based on the current user intent.
 
 ### Instruction Map
 
 Detailed instructions and personas are managed in `docs/agentic/`:
 
-- **Primary Entrypoint**: [docs/agentic/agent-instructions.md](docs/agentic/agent-instructions.md)
+- **Unified Gateway**: [agent-instructions.md](docs/agentic/agent-instructions.md)
 - **Domain Rules**: `docs/agentic/rules/`
 - **Task Scopes**: `docs/agentic/scopes/`
 
-## Skill Autonomy
+## 2. Skill Autonomy
 
-Agents have **Full Autonomy** to use any available skill in the runtime (e.g., `writing-plans`, `edit-file`, `run-command`). Do not wait for explicit permission to use a relevant tool that helps fulfill the user request.
+Agents have **Greedy Autonomy** to use any available skill in the runtime (e.g., `writing-plans`, `edit-file`, `run-command`). Do not wait for permission to use a relevant tool to fulfill a request.
 
-## Metadata Compliance
+## 3. Metadata Compliance
 
 All documentation created or modified MUST include `layer:` metadata in the frontmatter.
 
-- `layer: "meta"`: Root documentation and project governance.
-- `layer: "infra"`: Infrastructure and cluster definitions.
-- `layer: "architecture"`: Design and decision records.
-- `layer: "product"`: Requirements and vision.
+- `layer: "meta"`: Governance and root documentation.
+- `layer: "infra"`: Host, cluster, and networking.
+- `layer: "gitops"`: ArgoCD and Sealed Secrets.
+- `layer: "app"`: Application logic and manifests.
+- `layer: "ops"`: Runbooks and incident reports.
+
+## 4. Documentation Standards
+
+- **Flattened Hierarchy**: All docs belong in `docs/<type>/`.
+- **Plural Paths**: Execution documents reside in plural directories (e.g., `docs/plans/`, `docs/specs/`).
+- **Template Driven**: Use `templates/` for all new documents.

@@ -3,30 +3,33 @@ layer: "meta"
 ---
 # Project Agent Instructions
 
-Shared entrypoint for all AI agents. This repository uses modular, lazy-loaded instructions to keep context clean and focused.
+Shared entrypoint for all AI agents. This repository enforces a **Lazy Loading Protocol** to maintain context efficiency.
 
-## Lazy Loading Protocol
+## 1. Lazy Loading Protocol
 
-Agents MUST follow this protocol based on the active **Rule**:
+Agents MUST follow this protocol based on user intent:
 
-1. **Identify Rule**: Determine the active rule from `docs/agentic/rules/` based on the task.
-2. **Load Scope**: Import the corresponding scope file from `docs/agentic/scopes/` as mapped below.
-3. **Skill Freedom**: Proactively use ANY available skill in the runtime.
+1. **Identify Intent**: Determine the task type (e.g., Spec work, Incident response).
+2. **Trigger Rule**: Identify the governing rule in `docs/agentic/rules/`.
+3. **Load Scope**: Import the corresponding scope file from `docs/agentic/scopes/`.
+4. **Execute**: Leverage **Greedy Autonomy** to use any relevant skill.
 
-## Rule-to-Scope Mapping
+## 2. Intent-to-Scope Mapping
 
-| Rule (Entrypoint) | Scope (Load on Demand) | Task Type |
-| --- | --- | --- |
-| `@rules/core.md` | `@scopes/specs.md` | General implementation, Spec-driven work |
-| `@rules/personas.md` | `@scopes/prd.md` | Requirements gathering, PRD drafting |
-| `@rules/docs-map.md` | `@scopes/adr.md` | Architectural decisions, ADR/ARD work |
-| `@rules/repo-navigation.md` | `@scopes/plans.md` | Work planning, sequence definitions |
-| `@rules/core.md` | `@scopes/runbooks.md` | Operational procedures, deployment |
-| `@rules/personas.md` | `@scopes/incidents.md` | Failure analysis, Incident response |
-| `@rules/docs-map.md` | `@scopes/operations.md` | Strategic blueprints |
+| Intent / Task Type | Governing Rule | Load Scope | Target Path |
+| --- | --- | --- | --- |
+| General Implementation | `@rules/core.md` | `@scopes/specs.md` | `docs/specs/` |
+| Execution Planning | `@rules/repo-navigation.md`| `@scopes/plans.md` | `docs/plans/` |
+| Requirements Gathering | `@rules/personas.md` | `@scopes/prd.md` | `docs/prd/` |
+| Architecture Decisions | `@rules/docs-map.md` | `@scopes/adr.md` | `docs/adr/` |
+| System Reference | `@rules/docs-map.md` | `@scopes/ard.md` | `docs/ard/` |
+| Operations / Deployment | `@rules/core.md` | `@scopes/runbooks.md` | `docs/runbooks/` |
+| Incident Response | `@rules/personas.md` | `@scopes/incidents.md`| `docs/operations/incidents/` |
+| Performance / Strategic | `@rules/docs-map.md` | `@scopes/operations.md`| `docs/operations/` |
 
-## General Guidelines
+## 3. Core Directives
 
-- **Skill Usage**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Do not wait for explicit user guidance to use a relevant tool.
-- **Modularity**: Prefer modular imports over long root-memory dumps.
-- **Traceability**: Ensure `layer:` metadata is present in all documentation files.
+- **Non-Technical PRDs**: PRDs define *What* and *Why*; Specs define *How*.
+- **Plural Persistence**: Always use `docs/plans/` and `docs/specs/`.
+- **Greedy Skills**: Do not ask for tool permission if it helps the goal.
+- **Layered Truth**: Every document MUST include `layer:` metadata.

@@ -5,49 +5,52 @@ layer: "meta"
 
 ## Necessity & Required Content
 
-This file is necessary to define the exact, mechanical steps a human must take to successfully merge code into this repository. While `COLLABORATING.md` outlines the high-level human-AI relationship, this file outlines the raw pre-requisites for Pull Requests.
-**What Must Be Written Here**:
+This document defines the mechanical steps required to successfully merge code into this repository. It enforces the spec-driven contribution model.
 
-- Hard Code Quality Gates (Coverage, Linting).
-- Branch naming and Conventional Commit rules.
-- Spec-Driven PR referencing requirements.
-- Mandatory `layer:` metadata in all documentation.
+**What is Required**:
+
+- **Layer Metadata**: All documentation MUST include `layer:` metadata.
+- **Spec-First**: Code without an approved Spec in `docs/specs/` is prohibited.
+- **Templates**: All project documents MUST use `templates/`.
 
 ## 1. Spec-Driven Core Rule
 
 All development—infrastructure OR application—**MUST** begin with a specification in `docs/specs/`.
 
 > [!CAUTION]
-> Pull Requests containing code without an approved, corresponding specification will be **automatically rejected** by the Reviewer Agent without human review.
+> Pull Requests containing code without an approved, corresponding implementation plan or specification will be **automatically rejected** by the Reviewer Agent.
 
 ## 2. Template Enforcement
 
-If your contribution involves documentation (ADR, PRD, Runbook, etc.), you **MUST** use the predefined templates located in the `templates/` directory.
+You **MUST** use the canonical templates in `templates/` for all project documentation.
 
-- Do not invent your own format for Architecture Decision Records. Use `templates/adr-template.md`.
-- Ensure all sections are filled out before submitting.
+- **ADR**: Use `templates/adr-template.md`.
+- **Runbook**: Use `templates/runbook-template.md`.
+- **PRD**: Use `templates/prd-template.md`.
+- **Spec**: Use `templates/spec-template.md`.
 
-## 3. Local QA & Test Coverage (Pre-PR Gate)
+## 3. Quality Gates (Pre-PR Check)
 
-We enforce strict Quality Assurance metrics. Before you pull request, you must successfully pass local checks:
+Before submitting a Pull Request, Ensure:
 
-1. **Coverages**: The PR must meet or maintain the project coverage baseline (**> 80%**).
-2. **Test Layers**: Are Unit and Integration tests functioning as defined by the Spec and `.agent/rules/0700-testing-and-qa-standard.md`?
-3. **Linting**: No static typing or linting errors allowed.
-4. **Agent Rule Compliance**: All code MUST comply with the organizational standards in `.agent/rules/` (primarily `0140-engineering-excellence.md` and `2220-secure-coding.md`). The Reviewer Agent strictly evaluates PRs against these rules.
+1. **Tests**: Unit and Integration tests pass (colocated in source or in `tests/`).
+2. **Linting**: Run `pre-commit run --all-files`.
+3. **Coverage**: Maintain the baseline project coverage (**> 80%**).
+4. **Security**: Adhere to `docs/agentic/rules/core.md` regarding secure coding.
 
 ## 4. Pull Request Process
 
-1. **Branch Naming**: Ensure your branch name follows the convention: `feature/XXX`, `fix/XXX`, or `docs/XXX`.
-2. **Commit Messages**: Use Conventional Commits.
-3. **Traceability**: Your PR description **must** reference the specific file in `docs/specs/` it addresses.
+1. **Branching**: Use `feature/XXX`, `fix/XXX`, or `docs/XXX`.
+2. **Commits**: Follow Conventional Commits via `.gitmessage`.
+3. **Traceability**: Every PR MUST reference its approved Spec file in `docs/specs/`.
 
-## 5. Multi Sub-Agent Interaction
+## 5. AI Reviewer Interaction
 
-As part of the PR process, an AI Reviewer Agent may automatically review your PR. You must address their automated feedback before a human maintainer reviews the code. Do not dismiss AI-generated comments unless they hallucinate a requirement not in the original Spec.
+Address all comments from the AI Reviewer Agent. If a comment is incorrect due to a spec discrepancy, correct the spec first.
 
-## 6. Required References
+## 6. Essential References
 
-- AI System roles: `AGENTS.md`
-- Collaboration Hand-offs: `COLLABORATING.md`
-- Code of Conduct: `CODE_OF_CONDUCT.md`
+- **Roles**: `AGENTS.md`
+- **Handoffs**: `COLLABORATING.md`
+- **Architecture**: `ARCHITECTURE.md`
+- **Conduct**: `CODE_OF_CONDUCT.md`

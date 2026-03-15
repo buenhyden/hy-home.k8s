@@ -1,26 +1,47 @@
-# PRD: Documentation and Agent Structure Refactor
+---
+title: 'Documentation and Agent Framework Refactor PRD'
+status: 'Approved'
+version: 'v1.0.0'
+owner: 'buenhyden'
+stakeholders: ['buenhyden']
+scope: 'master'
+parent_epic: 'N/A'
+tags: ['prd', 'requirements']
+layer: 'meta'
+---
 
-- **Status**: Active
-- **layer**: meta
+# Documentation and Agent Framework Refactor Product Requirements Document (PRD)
 
-**Overview (KR):** 리포지토리의 문서 구조와 AI 에이전트 지침을 2026년 3월 표준에 맞게 재구축하여 문서 가독성과 에이전트 효율성을 높이는 프로젝트입니다.
+> **Status**: Approved
+> **Target Version**: v1.0.0
+> **Owner**: buenhyden
+> **Stakeholders**: buenhyden
+> **Scope**: master
+> **layer:** meta
+
+**Overview (KR):** 2026년 3월 기준의 최신 기술 표준을 반영하여 저장소의 문서 구조를 정비하고, AI Agent의 실행 규칙(Rule)과 지침(Instruction)을 지연 로딩(Lazy Loading) 방식으로 최적화합니다.
 
 ## Vision
 
-Standardize the repository's documentation and agent entrypoints to ensure metadata compliance, path alignment, and efficient lazy-loading of instructions.
+Establish a robust, scalable, and AI-optimized documentation framework that enforces spec-driven development and context efficiency.
 
 ## Requirements
 
-- [REQ-DOC-01] All documentation must include `layer:` metadata in frontmatter.
-- [REQ-DOC-02] Path Alignment: Move `docs/incidents/` to `docs/operations/incidents/`.
-- [REQ-DOC-03] Root documentation (`README`, `OPERATIONS`, `ARCHITECTURE`) must match actual directory structure.
-- [REQ-AGENT-01] `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` must be lightweight shims delegating to `docs/agentic/`.
-- [REQ-AGENT-02] Implement lazy-loading of instructions based on task scope.
-- [REQ-AGENT-03] Ensure agents have full skill autonomy.
+- **[REQ-PRD-01]** Align root documentation with March 2026 flattened hierarchy.
+- **[REQ-PRD-02]** Refactor `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` as lightweight rule triggers.
+- **[REQ-PRD-03]** Enforce `layer:` metadata in all documentation.
+- **[REQ-PRD-04]** Implement Lazy Loading Protocol for agent instructions.
+- **[REQ-PRD-05]** Consolidate instructions in `docs/agentic/`.
 
 ## Success Criteria
 
-- [x] All root markdown files include `layer: "meta"`.
-- [x] `docs/incidents/` is moved and link integrity is maintained.
-- [x] AGENTS.md, CLAUDE.md, GEMINI.md are under 50 lines and use modular imports.
-- [x] Pre-commit hooks pass without errors.
+- All modified files contain `layer:` metadata.
+- Root files point to instructions in `docs/agentic/`.
+- Plural paths (e.g., `docs/plans/`, `docs/specs/`) are used consistently.
+
+## Related
+
+- `[../ard/documentation-architecture-ard.md]`
+- `[../specs/2026-03-15-documentation-refactor-spec.md]`
+- `[../plans/2026-03-15-documentation-refactor-plan.md]`
+- `[../adr/0001-documentation-refactor-decision.md]`

@@ -3,51 +3,34 @@ layer: "meta"
 ---
 # System Architecture
 
-This document defines the high-level architecture of projects created from this template. It serves as a blueprint that should be customized for each new project.
+This document defines the high-level architecture of `hy-home.k8s`. It serves as the global architectural law of the repository.
 
 ## 1. System Context & Necessity
 
-This template provides a standardized foundation for building software projects.
+This repository provides a standardized foundation for building and managing a local Kubernetes platform.
 
-**Necessity**: This specific `ARCHITECTURE.md` file is absolutely essential as the global, unchanging architectural law of the repository. While `docs/adr/` handles specific component decisions over time and `docs/ard/` holds deep architectural diagrams, this root file holds the *highest-level constraints and checklists* that must NEVER be violated by any human or AI agent without a formal override.
+**Necessity**: This `ARCHITECTURE.md` file is essential as the root architectural law. While `docs/adr/` handles specific component decisions and `docs/ard/` holds deep architectural reference documents, this root file holds the *highest-level constraints* that MUST NEVER be violated.
 
-**What Must Be Written Here**:
+**Key Principles**:
 
-- The overarching architecture is **GitOps-driven Infrastructure as Code**.
-- The core tech stack revolves around **Kubernetes (k3s)**, **k3d**, and **WSL2**.
-- The Architectural Checklist ensures alignment with the **Spec-Driven Development (SDD)** lifecycle.
-
-### Core Architecture Pillars
-
-- **Spec-Driven Development**: `docs/specs/` uniquely drives all implementation.
-- **AI-Assisted Development**: Multi Sub-Agent AI system phases (`AGENTS.md`).
-- **Template-Based Documentation**: Consistent output enforced via `templates/`.
+- **GitOps-driven Infrastructure as Code**: Declarative state management via ArgoCD.
+- **Local-First Cluster**: Optimized for k3d, k3s, and WSL2.
+- **Spec-Driven Development (SDD)**: All implementation MUST trace back to `docs/specs/`.
 
 ## 2. Core Constraints & Decisions
 
-### Core Constraints & Decisions
-
 | Decision                | Rationale                                                                           |
 |-------------------------|-------------------------------------------------------------------------------------|
-| **Spec-Driven Code**    | Eliminates AI hallucination by giving Coder Agents a hard, human-approved target.   |
-| **Templates Mandatory** | Ensures parsing consistency for future AI tasks (PRDs, Specs, Runbooks).            |
-| **Dedicated Runbooks**  | Prevents ops scripts from getting lost in `docs/` hierarchies.                      |
-
-> See `docs/adr/` for detailed Architecture Decision Records that shaped this specific system logic.
+| **Spec-Driven Code**    | Eliminates AI hallucination by providing a hard, human-approved target in `docs/specs/`.|
+| **Templates Mandatory** | Ensures structural consistency for PRDs, ADRs, Specs, and Runbooks using `templates/`.|
+| **Flattened Hierarchy** | Documentation is organized in a flat, type-first hierarchy under `docs/`.           |
+| **Plural Paths**        | Execution documents reside in plural directories (e.g., `docs/plans/`, `docs/specs/`).|
 
 ## 3. Architecture & Tech Stack Checklist
 
-When starting a project or writing an Architecture Reference Document (ARD), the following checklist MUST be addressed and agreed upon by the Human and Planner Agent.
+Development work MUST align with the **[Architecture & Tech Stack Checklist](docs/ard/architecture-checklist.md)**. All Architecture Reference Documents (ARD) in `docs/ard/` must explicitly address this checklist.
 
-> [!IMPORTANT]
-> The full checklist and process enforcement rules are now located in:
-> **[Architecture & Tech Stack Checklist](docs/ard/architecture-checklist.md)**
-
-All ARDs created in `docs/ard/` MUST explicitly answer the items in that checklist, adhering to `.agent/rules/1910-architecture-documentation.md` and `.agent/rules/1901-architecture-rules.md`.
-
-## 4. Reference Technology Stack (Template)
-
-Customize the following for your specific project upon cloning.
+## 4. Reference Technology Stack
 
 | Layer        | Selected Technology           | Purpose                              |
 | ------------ | ----------------------------- | ------------------------------------ |
@@ -58,19 +41,21 @@ Customize the following for your specific project upon cloning.
 | **GitOps**   | ArgoCD                        | Declarative state reconciliation     |
 | **Secrets**  | Sealed Secrets                | Encrypted Git-safe K8s secrets       |
 
-## 4. Integration & Separation Points
+## 5. Operations & Separation Points
 
-### Document vs Code vs Operations
+- **`docs/prd/`**: Holds product requirements and vision.
+- **`docs/adr/`**: Records architectural decisions and consequences.
+- **`docs/ard/`**: Contains deep architectural diagrams and reference structures.
+- **`docs/specs/`**: Holds exact implementation specifications.
+- **`docs/plans/`**: Holds execution roadmaps and sequences.
+- **`docs/runbooks/`**: Holds executable operational procedures.
+- **`docs/operations/`**: Holds strategic operational blueprints and tracking (incidents, postmortems).
 
-- **`docs/`**: Holds "Why" and "What" (PRD, ADR, ARD).
-- **`docs/specs/`**: Holds "Exactly How" prior to coding.
-- **`docs/runbooks/`**: Holds executable scripts and "What to do when X fails."
+## 6. Extending the Architecture
 
-### Extending the Architecture
-
-1. **Design Changes**: Create an ADR in `docs/adr/` using `templates/adr-template.md`.
-2. **Data Structure Changes**: Document via ARD in `docs/ard/` using `templates/ard-template.md`.
-3. **Execution Rules**: Modify `.agent/rules/` to enforce new architectural linters globally.
+1. **Design Decisions**: Create an ADR in `docs/adr/` using `templates/adr-template.md`.
+2. **System Structure**: Document via ARD in `docs/ard/` using `templates/ard-template.md`.
+3. **Instruction Refinement**: Update AI Agent rules in `docs/agentic/` to enforce new architectural standards.
 
 ---
-> **Note**: This architecture document must be kept strictly to high-level system design. For operational procedures, alerting logic, or CI orchestration, consult `OPERATIONS.md`.
+> **Note**: This document focuses on high-level system design. For operational procedures or incident response, consult `OPERATIONS.md` and `docs/runbooks/`.

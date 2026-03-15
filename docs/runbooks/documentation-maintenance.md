@@ -1,37 +1,48 @@
 ---
-layer: "meta"
+title: 'Documentation Maintenance Runbook'
+status: 'Active'
+version: '1.0.0'
+owner: 'buenhyden'
+layer: 'meta'
 ---
-# Runbook: Documentation Maintenance
 
-## 1. Purpose
+# Documentation Maintenance Runbook
 
-Ensure the repository's documentation remains compliant with the flattened taxonomy and layer-aware metadata standards.
+> **Status**: Active
+> **Owner**: buenhyden
+> **layer:** meta
 
-## 2. Procedures
+**Overview (KR):** 프로젝트 문서의 일관성을 유지하고, March 2026 표준을 지속적으로 준수하기 위한 운영 절차서입니다.
 
-### 2.1 Adding a New Document
+## 1. Metadata Compliance Check
 
-1. Identify the correct category (PRD, ADR, Spec, etc.).
-2. Select the corresponding template from `templates/`.
-3. Create the file in the appropriate `docs/` subdirectory.
-4. **MANDATORY**: Set the `layer:` metadata in the frontmatter.
-   - `infra`: Base cluster, OS, hardware.
-   - `gitops`: ArgoCD, reconciliation, track-revision.
-   - `app`: User-facing services or application logic.
-   - `meta`: Documentation system, agent rules, governance.
+All new markdown files MUST include `layer:` metadata.
 
-### 2.2 Auditing Documentation
+```bash
+# Verify missing layers
+grep -L "layer:" docs/**/*.md root/*.md
+```
 
-1. Run the metadata check:
+## 2. Plural Path Enforcement
 
-   ```bash
-   find docs/ -name "*.md" -exec grep -l "layer:" {} +
-   ```
+Ensure execution documents reside in the correct plural directories.
 
-2. Verify all files are in the correct flattened directory.
-3. Check for broken cross-links using `markdown-link-check` or similar tools.
+- **Check plans**: `ls docs/plans/` (MUST NOT be `docs/plan/`)
+- **Check specs**: `ls docs/specs/` (MUST NOT be `docs/spec/`)
 
-### 2.3 Updating Agent Instructions
+## 3. Agent Rule Updates
 
-1. When a new documentation category is added, update `docs/agentic/agent-instructions.md` and `AGENTS.md`.
-2. Create a new scope file in `docs/agentic/scopes/` if necessary.
+When a new architectural standard is established:
+
+1. Create an ADR in `docs/adr/`.
+2. Update `docs/agentic/agent-instructions.md` if mapping changes.
+3. Update model-specific rules in `docs/agentic/rules/`.
+
+## 4. Periodic Audits
+
+Run the following command quarterly to ensure link integrity:
+
+```bash
+# Using a link checker or grep for relative links
+grep -r "\[.*\](.*\.md)" docs/
+```
