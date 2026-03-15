@@ -7,7 +7,6 @@ owner: "hy"
 
 # Home Cluster Architecture Reference Document (ARD)
 
-
 - **Status**: Approved
 - **Owner**: hy
 - **PRD Reference**: [Link to PRD](../prd/home-cluster-infra-prd.md)

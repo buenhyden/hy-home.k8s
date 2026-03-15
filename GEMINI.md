@@ -1,15 +1,17 @@
-# Gemini Loader
+---
+layer: "meta"
+---
+# GEMINI.md
 
-Thin Gemini CLI shim for this Kubernetes home-lab infrastructure repository.
+Gemini-specific entrypoint for `hy-home.k8s`.
 
-Shared cross-agent contract: [AGENTS.md](AGENTS.md)
-Detailed agent instructions: [docs/agent-instructions.md](docs/agent-instructions.md)
+## 1. Instruction Routing
 
-@docs/agentic/GEMINI.md
+- **Shared Contract**: [AGENTS.md](AGENTS.md)
+- **Central Gateway**: [docs/agentic/agent-instructions.md](docs/agentic/agent-instructions.md)
 
-Nearest scoped `GEMINI.md` files under `docs/` provide local document context.
+## 2. Core Constraints
 
-- Use hierarchical context files, concise checkpoints, and modular imports.
-- Avoid hidden chain-of-thought wording.
-- Any runtime-provided skill may be used — do not restrict skill selection.
-- When working under `docs/`, let the nearest scoped `GEMINI.md` supply subtree-specific context.
+- Maintain k3d/WSL2 context awareness.
+- Strictly follow `layer:` metadata requirements.
+- Proactively use appropriate skills without restriction.

@@ -5,7 +5,7 @@ layer: "meta"
 
 This document is the central index for operational readiness in repositories created from this template. It provides policy-level guidance and points to executable runbooks managed by the **DevOps Agent**.
 
-> **IMPORTANT:** Detailed operational procedures, deployment scripts, and incident guides are located exclusively in the `docs/runbooks/` directory. **Never create `docs/runbook` or use an `docs/operations/` folder.**
+> **IMPORTANT:** Detailed operational procedures, deployment scripts, and incident guides are located in the `docs/runbooks/` and `docs/operations/` directories.
 
 ## 1. Runbook Catalog
 
@@ -47,7 +47,7 @@ Code must not be deployed unless:
 ### Incident Priorities
 
 - **SEV-1 (Critical)**: Production offline. Immediate action via `runbooks/incident-response-runbook.md` and `.agent/rules/0380-incident-response.md`.
-- **SEV-2 (Major)**: Critical flow degraded.
+- **SEV-2 (Major)**: Critical flow degraded. Reference `docs/operations/incidents/` for active tracking.
 - **SEV-3 (Minor)**: Non-critical bugs.
 
 ## 6. Security Baseline

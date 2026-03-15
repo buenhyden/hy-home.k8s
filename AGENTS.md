@@ -1,44 +1,28 @@
 # Agent Instructions
 
-Cross-agent contract for this Kubernetes home-lab infrastructure repository.
+Shared cross-agent contract for the `hy-home.k8s` repository.
 
-## Repo Facts
+## Rule-Based Entrypoint
 
-- **Stack**: k3d (local k8s cluster), ArgoCD GitOps, MetalLB, ingress-nginx, Sealed Secrets
-- **Source of truth**: `docs/specs/` for planned work; `docs/adr/` for architecture decisions
-- **Templates**: flat files under `templates/` — one template per document type
-- **Rules**: `.agent/rules/` (standards) · `.agent/workflows/` (repeatable delivery patterns)
-- **Linting**: `pre-commit run --all-files` (no root package manager)
-- **Skills**: any runtime-provided skill may be used — agents MUST proactively use appropriate skills without restriction
-- **Metadata**: All documentation MUST include `layer:` metadata in the frontmatter.
+This repository uses a **Lazy Loading Protocol** for instructions. Agents MUST NOT load all instructions into memory at once. Instead, identify the relevant **Rule** based on the current task scope and import the corresponding **Scope** file.
 
-## Documentation Scope Map & Lazy Loading
+### Instruction Map
 
-Agents SHOULD only load detailed instructions for the active scope. Identify current scope by the working directory or relevant `docs/` subtree.
+Detailed instructions and personas are managed in `docs/agentic/`:
 
-| Subtree | Persona | consolidated Instructions (Lazy Load) |
-|---------|---------|---------------------------|
-| `docs/adr/` | System Architect | `docs/agentic/scopes/adr.md` |
-| `docs/ard/` | System Architect | `docs/agentic/scopes/ard.md` |
-| `docs/prd/` | Product Manager | `docs/agentic/scopes/prd.md` |
-| `docs/specs/` | Architect | `docs/agentic/scopes/specs.md` |
-| `docs/plans/` | Planner | `docs/agentic/scopes/plans.md` |
-| `docs/runbooks/` | DevOps / SRE | `docs/agentic/scopes/runbooks.md` |
-| `docs/incidents/` | Incident Responder | `docs/agentic/scopes/incidents.md` |
-| `docs/operations/` | DevOps / SRE | `docs/agentic/scopes/operations.md` |
+- **Primary Entrypoint**: [docs/agentic/agent-instructions.md](docs/agentic/agent-instructions.md)
+- **Domain Rules**: `docs/agentic/rules/`
+- **Task Scopes**: `docs/agentic/scopes/`
 
-→ Full persona and rule details: [docs/agent-instructions.md](docs/agentic/agent-instructions.md)
+## Skill Autonomy
 
-## Precedence
+Agents have **Full Autonomy** to use any available skill in the runtime (e.g., `writing-plans`, `edit-file`, `run-command`). Do not wait for explicit permission to use a relevant tool that helps fulfill the user request.
 
-1. Current user task and explicit local context
-2. Scope-specific instructions (see Map above)
-3. `.claude/` shared details
-4. This root file
+## Metadata Compliance
 
-## Universal Rules
+All documentation created or modified MUST include `layer:` metadata in the frontmatter.
 
-- Use repo-relative Markdown links and inspected repo facts only
-- Do not fabricate commands, paths, or nonexistent repo structure
-- Spec-first: all changes start with a spec in `docs/specs/`
-- Performance: agents MUST proactively use any appropriate skill without restriction.
+- `layer: "meta"`: Root documentation and project governance.
+- `layer: "infra"`: Infrastructure and cluster definitions.
+- `layer: "architecture"`: Design and decision records.
+- `layer: "product"`: Requirements and vision.

@@ -7,7 +7,6 @@ owner: "hy"
 
 # ArgoCD GitOps Architecture Reference Document (ARD)
 
-
 - **Status**: Approved
 - **Owner**: hy
 - **PRD Reference**: [Link to PRD](../prd/argocd-gitops-prd.md)

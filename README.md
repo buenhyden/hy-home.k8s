@@ -1,3 +1,6 @@
+---
+layer: "meta"
+---
 # hy-home.k8s
 
 ![Kubernetes](https://img.shields.io/badge/kubernetes-v1.31.0-blue.svg)
@@ -199,8 +202,10 @@ hy-home.k8s/
 ├── docs/
 │   ├── adr/                # Architecture Decision Records (Flattened)
 │   ├── ard/                # Architecture Reference Documents (Flattened)
-│   ├── incidents/          # Incident reports and postmortems
-│   ├── operations/         # Strategic operations blueprints
+│   ├── ard/                # Architecture Reference Documents (Flattened)
+│   ├── operations/         # Strategic operations blueprints, incidents, and postmortems
+│   │   ├── incidents/      # Incident reports
+│   │   └── postmortems/    # Incident postmortems
 │   ├── plans/              # Execution plans
 │   ├── prd/                # Product Requirements Documents (Flattened)
 │   ├── runbooks/           # Executable operational procedures (Flattened)

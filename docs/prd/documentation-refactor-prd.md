@@ -1,33 +1,26 @@
----
-layer: "meta"
----
-# PRD: Documentation Taxonomy and Agent Instruction Refactor
+# PRD: Documentation and Agent Structure Refactor
 
-## 1. Product Overview
+- **Status**: Active
+- **layer**: meta
 
-Refactor the project's documentation structure to ensure scalability, ease of navigation, and deterministic AI agent behaviors. This includes flattening the taxonomy and implementing a lazy-loading instruction system.
+**Overview (KR):** 리포지토리의 문서 구조와 AI 에이전트 지침을 2026년 3월 표준에 맞게 재구축하여 문서 가독성과 에이전트 효율성을 높이는 프로젝트입니다.
 
-## 2. Success Metrics
+## Vision
 
-- 100% of documents in `docs/` have `layer` metadata.
-- Zero "retired" guides remain in `docs/guides/` (moved to `docs/manuals/`).
-- AI Agent instruction loading follows explicit trigger rules.
+Standardize the repository's documentation and agent entrypoints to ensure metadata compliance, path alignment, and efficient lazy-loading of instructions.
 
-## 3. User Stories
+## Requirements
 
-- **As an operator**, I want a clear documentation structure so that I can easily find the information I need.
-- **As an AI Agent**, I want modular instructions so that I can stay focused on the task without being overwhelmed by irrelevant context.
+- [REQ-DOC-01] All documentation must include `layer:` metadata in frontmatter.
+- [REQ-DOC-02] Path Alignment: Move `docs/incidents/` to `docs/operations/incidents/`.
+- [REQ-DOC-03] Root documentation (`README`, `OPERATIONS`, `ARCHITECTURE`) must match actual directory structure.
+- [REQ-AGENT-01] `AGENTS.md`, `CLAUDE.md`, `GEMINI.md` must be lightweight shims delegating to `docs/agentic/`.
+- [REQ-AGENT-02] Implement lazy-loading of instructions based on task scope.
+- [REQ-AGENT-03] Ensure agents have full skill autonomy.
 
-## 4. Features & Requirements
+## Success Criteria
 
-- **Flat Taxonomy**: Use `docs/prd`, `docs/specs`, etc. as flat directories.
-- **Metadata Enforcement**: Mandatory `layer` key in all files.
-- **Lazy Loading**: Instructions in `docs/agentic/` are loaded based on rules defined in a root dispatcher.
-- **Retired Content Migration**: Move checklists from `docs/guides/` to `docs/manuals/`.
-
-## 5. Scope
-
-- Root documentation files (`README.md`, `ARCHITECTURE.md`, etc.)
-- All subdirectories under `docs/`.
-- Instruction layer in `docs/agentic/`.
-- Root agent contract `AGENTS.md`.
+- [x] All root markdown files include `layer: "meta"`.
+- [x] `docs/incidents/` is moved and link integrity is maintained.
+- [x] AGENTS.md, CLAUDE.md, GEMINI.md are under 50 lines and use modular imports.
+- [x] Pre-commit hooks pass without errors.
