@@ -1,23 +1,11 @@
----
-title: 'Documentation and Agent Instruction Refactor PRD'
-status: 'Approved'
-version: 'v1.0.0'
-owner: 'buenhyden'
-stakeholders: ['buenhyden']
-scope: 'master'
-parent_epic: 'N/A'
-tags: ['prd', 'requirements', 'agentic', 'docs']
-layer: 'architecture'
----
-
 # Documentation and Agent Instruction Refactor PRD
 
-> **Status**: Approved
-> **Target Version**: v1.0.0
-> **Owner**: buenhyden
-> **Stakeholders**: buenhyden
-> **Scope**: master
-> **layer:** architecture
+- **Status**: Approved
+- **Target Version**: v1.0.0
+- **Owner**: buenhyden
+- **Stakeholders**: buenhyden
+- **Scope**: master
+- **layer:** architecture
 
 **Overview (KR):** 이 문서는 저장소의 문서 구조를 표준화하고, AI Agent의 지침(Instructions)을 최적화하여 컨텍스트 사용량을 줄이며 'Lazy Loading Protocol'을 구현하기 위한 요구사항을 정의합니다.
 

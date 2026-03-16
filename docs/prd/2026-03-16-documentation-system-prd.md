@@ -1,7 +1,10 @@
-# PRD: Documentation and Agent Instruction System
+# Product Requirements Document (PRD): Documentation and Agent Instruction System
 
 - **Status**: Approved
-- **Status**: Approved
+- **Target Version**: v1.0.0
+- **Owner**: buenhyden
+- **Stakeholders**: buenhyden
+- **Scope**: master
 - **layer:** meta
 
 **Overview (KR):** AI 에이전트와 인간 운영자 간의 원활한 협업을 위한 저장소 문서 체계 및 자동화 지침 시스템의 요구사항을 정의합니다.

@@ -106,7 +106,7 @@ When working with ADRs:
 
 ## Related Documents
 
-- [docs/ard/index.md](../ard/index.md)
-- [docs/prd/index.md](../prd/index.md)
+- [docs/ard/README.md](../ard/README.md)
+- [docs/prd/README.md](../prd/README.md)
 
 > Add entries to this index as ADRs are created.

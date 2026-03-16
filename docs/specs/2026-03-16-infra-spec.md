@@ -4,7 +4,7 @@ layer: "infra"
 status: "Validated"
 version: "1.0"
 owner: "hy"
-prd_reference: "../prd/home-cluster-infra-prd.md"
+prd_reference: "../prd/2026-02-27-home-cluster-infra-prd.md"
 api_reference: "N/A"
 arch_reference: "../../ARCHITECTURE.md"
 tags: ["spec", "implementation", "infrastructure", "k3d"]
@@ -113,7 +113,7 @@ This specification is infrastructure-focused; the “interfaces” are primarily
   - **Behavior**: This file MUST NOT be required for a baseline (non-GPU) cluster.
 
 - **MetalLB Installation Manifests (Vendored)**: `infrastructure/metallb/metallb-native.yaml`
-  - **Version**: Pinned to a stable release (see `infrastructure/metallb/index.md`)
+  - **Version**: Pinned to a stable release (see `infrastructure/metallb/README.md`)
 
 - **MetalLB Address Pool**: `infrastructure/ipaddresspool.yaml`
   - **Namespace**: `metallb-system`

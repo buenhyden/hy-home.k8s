@@ -3,7 +3,7 @@
 - **Status**: Approved
 - **Owner**: hy
 - **layer:** gitops
-- **PRD Reference**: [Link to PRD](../prd/argocd-gitops-prd.md)
+- **PRD Reference**: [Link to PRD](../prd/2026-03-07-argocd-gitops-prd.md)
 - **ADR References**: [Link to ADRs](../adr/0002-argocd-gitops.md)
 
 **Overview (KR):** 로컬 k3d 클러스터의 선언적 관리(GitOps)를 위한 ArgoCD 및 Sealed Secrets 아키텍처를 정의합니다.
@@ -107,5 +107,5 @@ C4Container
 
 ## Related Documents
 
-- [docs/prd/argocd-gitops-prd.md](../prd/argocd-gitops-prd.md)
-- [docs/specs/gitops-spec.md](../specs/gitops-spec.md)
+- [docs/prd/2026-03-07-argocd-gitops-prd.md](../prd/2026-03-07-argocd-gitops-prd.md)
+- [docs/specs/2026-03-16-gitops-spec.md](../specs/2026-03-16-gitops-spec.md)

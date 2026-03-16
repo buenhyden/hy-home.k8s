@@ -72,5 +72,5 @@ We need a GitOps controller that:
 
 ## Related Documents
 
-- **Feature PRD**: [docs/prd/argocd-gitops-prd.md](../prd/argocd-gitops-prd.md)
-- **Feature Spec**: [Link to Feature Spec](../specs/gitops-spec.md)
+- **Feature PRD**: [docs/prd/2026-03-07-argocd-gitops-prd.md](../prd/2026-03-07-argocd-gitops-prd.md)
+- **Feature Spec**: [Link to Feature Spec](../specs/2026-03-16-gitops-spec.md)

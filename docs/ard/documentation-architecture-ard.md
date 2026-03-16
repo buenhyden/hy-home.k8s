@@ -3,7 +3,7 @@ title: 'Documentation Architecture ARD'
 status: 'Approved'
 owner: 'buenhyden'
 scope: 'master'
-prd_reference: '../prd/documentation-refactor-prd.md'
+prd_reference: '../prd/2026-03-15-documentation-refactor-prd.md'
 tags: ['ard', 'architecture']
 layer: 'meta'
 ---
@@ -14,7 +14,7 @@ layer: 'meta'
 - **Owner**: buenhyden
 - **Scope**: master
 - **layer:** meta
-- **PRD Reference**: `[../prd/documentation-refactor-prd.md]`
+- **PRD Reference**: `[../prd/2026-03-15-documentation-refactor-prd.md]`
 - **ADR References**: `[../adr/0004-documentation-refactor-decision.md]`
 
 **Overview (KR):** 저장소의 지식 관리 및 AI 협업 체계를 위한 문서 아키텍처를 정의합니다. 모든 문서는 계층화된 메타데이터를 포함하며 평탄화된 디렉토리 구조를 따릅니다.
@@ -65,5 +65,5 @@ C4Context
 
 ## Related Documents
 
-- [docs/prd/documentation-refactor-prd.md](../prd/documentation-refactor-prd.md)
+- [docs/prd/2026-03-15-documentation-refactor-prd.md](../prd/2026-03-15-documentation-refactor-prd.md)
 - [docs/specs/2026-03-16-doc-and-agent-refactor-spec.md](../specs/2026-03-16-doc-and-agent-refactor-spec.md)

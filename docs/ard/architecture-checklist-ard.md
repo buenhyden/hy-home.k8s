@@ -26,5 +26,5 @@ When starting a project or writing an Architecture Reference Document (ARD), the
 
 ## Related Documents
 
-- [docs/ard/index.md](./index.md)
+- [docs/ard/README.md](./README.md)
 - [docs/adr/0001-k3d-local-cluster.md](../adr/0001-k3d-local-cluster.md)

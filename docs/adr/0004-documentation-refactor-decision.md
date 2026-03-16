@@ -35,4 +35,4 @@ The repository documentation has become fragmented and sometimes deeply nested. 
 ## Related Documents
 
 - `[../specs/2026-03-16-doc-and-agent-refactor-spec.md]`
-- `[../prd/documentation-refactor-prd.md]`
+- `[../prd/2026-03-15-documentation-refactor-prd.md]`

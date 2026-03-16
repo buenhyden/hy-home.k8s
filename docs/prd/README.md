@@ -129,7 +129,7 @@ When working with PRDs:
 
 | Document | Layer | Status | Last Updated |
 | --- | --- | --- | --- |
-| [home-cluster-infra-prd](./home-cluster-infra-prd.md) | infra | Approved | 2026-02-27 |
-| [argocd-gitops-prd](./argocd-gitops-prd.md) | gitops | Draft | 2026-03-07 |
+| [home-cluster-infra-prd](./2026-02-27-home-cluster-infra-prd.md) | infra | Approved | 2026-02-27 |
+| [argocd-gitops-prd](./2026-03-07-argocd-gitops-prd.md) | gitops | Draft | 2026-03-07 |
 
 > Add entries to this index as PRDs are created.

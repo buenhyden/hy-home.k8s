@@ -4,7 +4,7 @@ status: 'Canonical'
 version: '1.0'
 owner: 'buenhyden'
 scope: 'master'
-prd_reference: '../prd/documentation-refactor-prd.md'
+prd_reference: '../prd/2026-03-15-documentation-refactor-prd.md'
 arch_reference: '../ard/documentation-architecture-ard.md'
 decision_reference: '../adr/0004-documentation-refactor-decision.md'
 tags: ['spec','implementation']
@@ -16,7 +16,7 @@ layer: 'meta'
 > **Status**: Canonical
 > **Scope**: master
 > **layer:** meta
-> **Related PRD**: `[../prd/documentation-refactor-prd.md]`
+> **Related PRD**: `[../prd/2026-03-15-documentation-refactor-prd.md]`
 > **Related Architecture**: `[../ard/documentation-architecture-ard.md]`
 > **Decision Record**: `[../adr/0004-documentation-refactor-decision.md]`
 
@@ -34,7 +34,7 @@ The baseline consists of several root markdown files (`ARCHITECTURE.md`, `index.
 ## Related Documents
 
 - [docs/plans/2026-03-16-doc-and-agent-refactor-plan.md](../plans/2026-03-16-doc-and-agent-refactor-plan.md)
-- [docs/prd/documentation-refactor-prd.md](../prd/documentation-refactor-prd.md)
+- [docs/prd/2026-03-15-documentation-refactor-prd.md](../prd/2026-03-15-documentation-refactor-prd.md)
 
 ## Verification
 

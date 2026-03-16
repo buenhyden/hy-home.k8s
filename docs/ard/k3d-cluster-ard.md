@@ -3,7 +3,7 @@
 - **Status**: Approved
 - **Owner**: hy
 - **layer:** infra
-- **PRD Reference**: [Link to PRD](../prd/home-cluster-infra-prd.md)
+- **PRD Reference**: [Link to PRD](../prd/2026-02-27-home-cluster-infra-prd.md)
 - **ADR References**: [Link to ADRs](../adr/0001-k3d-local-cluster.md)
 
 **Overview (KR):** WSL2 환경에서 k3d를 이용한 로컬 Kubernetes 클러스터 하드웨어 및 소프트웨어 요구사항을 정의합니다.
@@ -123,7 +123,7 @@ Baseline hardening targets (future work unless already implemented):
 
 ## Related Documents
 
-- [docs/prd/home-cluster-infra-prd.md](../prd/home-cluster-infra-prd.md)
+- [docs/prd/2026-02-27-home-cluster-infra-prd.md](../prd/2026-02-27-home-cluster-infra-prd.md)
 - [docs/specs/2026-03-16-infra-spec.md](../specs/2026-03-16-infra-spec.md)
 
 ## 7. Infrastructure & Deployment
@@ -158,5 +158,5 @@ Repository layout:
 
 ## Related Documents
 
-- [docs/prd/home-cluster-infra-prd.md](../prd/home-cluster-infra-prd.md)
+- [docs/prd/2026-02-27-home-cluster-infra-prd.md](../prd/2026-02-27-home-cluster-infra-prd.md)
 - [docs/specs/2026-03-16-infra-spec.md](../specs/2026-03-16-infra-spec.md)

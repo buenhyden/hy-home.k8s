@@ -75,5 +75,5 @@ Run k3s as a system service directly inside WSL2 (no Docker-based nodes).
 
 - **Supersedes**: N/A
 - **Superseded by**: N/A
-- **Feature PRD**: [Link to PRD](../prd/home-cluster-infra-prd.md)
+- **Feature PRD**: [Link to PRD](../prd/2026-02-27-home-cluster-infra-prd.md)
 - **Feature Spec**: [Link to Feature Spec](../specs/2026-03-16-infra-spec.md)

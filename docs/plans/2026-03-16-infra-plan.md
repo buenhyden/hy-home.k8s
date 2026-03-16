@@ -92,6 +92,6 @@ The `hy-home` project requires a centralized orchestration layer for home automa
 
 ## Related Documents
 
-- **PRD**: [docs/prd/home-cluster-infra-prd.md](../prd/home-cluster-infra-prd.md)
+- **PRD**: [docs/prd/2026-02-27-home-cluster-infra-prd.md](../prd/2026-02-27-home-cluster-infra-prd.md)
 - **Spec**: `specs/infra/spec.md`
 - **ADRs**: [docs/adr/0001-k3d-local-cluster.md](../adr/0001-k3d-local-cluster.md)

@@ -95,7 +95,7 @@ specs/ (Implementation Specifications)
 
 ## Related Documents
 
-- [docs/prd/home-cluster-infra-prd.md](../prd/home-cluster-infra-prd.md)
+- [docs/prd/2026-02-27-home-cluster-infra-prd.md](../prd/2026-02-27-home-cluster-infra-prd.md)
 - [docs/specs/2026-03-16-infra-spec.md](../specs/2026-03-16-infra-spec.md)
 
 ## AI Agent Guidelines

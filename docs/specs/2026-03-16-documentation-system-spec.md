@@ -47,7 +47,7 @@ This spec defines the mechanical changes required to implement the flattened doc
 
 ## Related Documents
 
-- [docs/prd/documentation-system-prd.md](../prd/documentation-system-prd.md)
+- [docs/prd/2026-03-16-documentation-system-prd.md](../prd/2026-03-16-documentation-system-prd.md)
 - [docs/ard/documentation-system-ard.md](../ard/documentation-system-ard.md)
 
 ### 2.4 Governance Files
@@ -57,10 +57,10 @@ This spec defines the mechanical changes required to implement the flattened doc
 
 ## Related Documents
 
-- [docs/prd/documentation-system-prd.md](../prd/documentation-system-prd.md)
+- [docs/prd/2026-03-16-documentation-system-prd.md](../prd/2026-03-16-documentation-system-prd.md)
 - [docs/ard/documentation-system-ard.md](../ard/documentation-system-ard.md)
 
 ## Related Documents
 
-- [docs/prd/documentation-system-prd.md](../prd/documentation-system-prd.md)
+- [docs/prd/2026-03-16-documentation-system-prd.md](../prd/2026-03-16-documentation-system-prd.md)
 - [docs/ard/documentation-system-ard.md](../ard/documentation-system-ard.md)

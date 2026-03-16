@@ -2,6 +2,9 @@
 
 - **Status**: Approved
 - **Target Version**: v1.0.0
+- **Owner**: buenhyden
+- **Stakeholders**: buenhyden
+- **Scope**: master
 - **layer:** infra
 
 **Overview (KR):** 안정적이고 재현 가능한 로컬 Kubernetes 환경(k3d) 구축을 위한 핵심 인프라 요구사항을 정의합니다.
@@ -108,4 +111,4 @@
 
 - **Technical Specification**: [Link to Spec](../specs/2026-03-16-infra-spec.md)
 - **API Specification**: N/A
-- **Architecture Decisions (ADRs)**: [Link to ADRs](../adr/index.md)
+- **Architecture Decisions (ADRs)**: [Link to ADRs](../adr/README.md)

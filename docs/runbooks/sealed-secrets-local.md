@@ -11,7 +11,7 @@
 
 ## Canonical References
 
-- [docs/specs/gitops-spec.md](../specs/gitops-spec.md)
+- [docs/specs/2026-03-16-gitops-spec.md](../specs/2026-03-16-gitops-spec.md)
 - [docs/runbooks/local-gitops-argocd.md](./local-gitops-argocd.md)
 
 ## 1. Service Overview & Ownership

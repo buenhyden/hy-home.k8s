@@ -47,4 +47,4 @@ grep -r "\[.*\](.*\.md)" docs/
 ## Canonical References
 
 - [docs/ard/documentation-system-ard.md](../ard/documentation-system-ard.md)
-- [docs/prd/documentation-system-prd.md](../prd/documentation-system-prd.md)
+- [docs/prd/2026-03-16-documentation-system-prd.md](../prd/2026-03-16-documentation-system-prd.md)

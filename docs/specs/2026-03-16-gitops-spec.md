@@ -3,7 +3,7 @@
 - **Status**: Draft
 - **Version**: 1.0
 - **layer:** gitops
-- **PRD Reference**: [../prd/argocd-gitops-prd.md](../prd/argocd-gitops-prd.md)
+- **PRD Reference**: [../prd/2026-03-07-argocd-gitops-prd.md](../prd/2026-03-07-argocd-gitops-prd.md)
 - **Architecture- **ARD Reference**: [Link to ARD](../ard/argocd-gitops-ard.md)
 - **Architecture Decisions (ADRs)**: [Link to ADRs](../adr/0002-argocd-gitops.md)
 
@@ -38,7 +38,7 @@
 ## Related Documents
 
 - [docs/ard/argocd-gitops-ard.md](../ard/argocd-gitops-ard.md)
-- [docs/prd/argocd-gitops-prd.md](../prd/argocd-gitops-prd.md)
+- [docs/prd/2026-03-07-argocd-gitops-prd.md](../prd/2026-03-07-argocd-gitops-prd.md)
 | Performance     | Are Core Web Vitals/Latency metrics targeted?  | Must     | Convergence goal | Section 8        |
 | Accessibility   | Is WCAG compliance integrated (contrast/ARIA)? | Must     | N/A             | Section 8         |
 

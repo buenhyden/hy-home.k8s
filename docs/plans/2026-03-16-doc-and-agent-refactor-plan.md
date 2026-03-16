@@ -46,6 +46,6 @@ layer: 'meta'
 
 ## References
 
-- `[../prd/documentation-refactor-prd.md]`
+- `[../prd/2026-03-15-documentation-refactor-prd.md]`
 - `[../adr/0004-documentation-refactor-decision.md]`
 - `[../specs/2026-03-16-doc-and-agent-refactor-spec.md]`

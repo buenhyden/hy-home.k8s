@@ -55,7 +55,7 @@ This plan implements GitOps for the local WSL2 + k3d cluster using ArgoCD and Se
 | TASK-002 | Vendor Sealed Secrets manifest | `infrastructure/sealed-secrets/sealed-secrets.yaml` | [REQ-PLN-GITOPS-002] | File exists; pinned version recorded |
 | TASK-003 | Add App-of-Apps structure | `gitops/clusters/local/*` | [REQ-PLN-GITOPS-003] | Root app creates child Applications |
 | TASK-004 | Add runbooks for bootstrap + sealing | `runbooks/services/*` | [REQ-PLN-GITOPS-005] | Operators can follow without guessing |
-| TASK-005 | Update documentation links/traceability | `index.md`, `infrastructure/index.md`, `OPERATIONS.md` | [REQ-PLN-GITOPS-003] | Links correct; no drift |
+| TASK-005 | Update documentation links/traceability | `index.md`, `infrastructure/README.md`, `OPERATIONS.md` | [REQ-PLN-GITOPS-003] | Links correct; no drift |
 
 ## 6. Verification Plan
 
@@ -83,6 +83,6 @@ This plan implements GitOps for the local WSL2 + k3d cluster using ArgoCD and Se
 
 ## Related Documents
 
-- **PRD**: [docs/prd/argocd-gitops-prd.md](../prd/argocd-gitops-prd.md)
+- **PRD**: [docs/prd/2026-03-07-argocd-gitops-prd.md](../prd/2026-03-07-argocd-gitops-prd.md)
 - **Spec**: `specs/gitops/spec.md`
 - **ADR**: [docs/adr/0002-argocd-gitops.md](../adr/0002-argocd-gitops.md)

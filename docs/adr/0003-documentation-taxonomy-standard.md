@@ -8,7 +8,7 @@
 
 ## Related Documents
 
-- **PRD Reference**: `[../prd/doc-and-agent-refactor-prd.md]`
+- **PRD Reference**: `[../prd/2026-03-15-doc-and-agent-refactor-prd.md]`
 
 ## Context
 

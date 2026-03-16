@@ -1,12 +1,12 @@
 # Product Requirements Document (PRD): ArgoCD GitOps
 
-- **Status**: Draft
+- **Status**: Approved
 - **Target Version**: v1.0.0
 - **Owner**: buenhyden
 - **Stakeholders**: buenhyden
 - **Scope**: master
 - **layer:** gitops
-- **Parent Epic**: [Home Cluster Infra PRD](./home-cluster-infra-prd.md)
+- **Parent Epic**: [Home Cluster Infra PRD](./2026-02-27-home-cluster-infra-prd.md)
 
 **Overview (KR):** 로컬 k3d 클러스터의 원활한 운영을 위해 ArgoCD를 도입하고, Git 기반의 선언적 배포 워크플로우를 구축하기 위한 요구사항을 정의합니다.
 
@@ -110,8 +110,8 @@
 
 ## Related Documents
 
-- **Infra PRD**: [docs/prd/home-cluster-infra-prd.md](./home-cluster-infra-prd.md)
+- **Infra PRD**: [docs/prd/2026-02-27-home-cluster-infra-prd.md](./2026-02-27-home-cluster-infra-prd.md)
 - **Architecture Reference**: `[../ard/argocd-gitops-ard.md]`
-- **Technical Specification**: [specs/gitops-spec.md](../specs/gitops-spec.md)
+- **Technical Specification**: [specs/2026-03-16-gitops-spec.md](../specs/2026-03-16-gitops-spec.md)
 - **Implementation Plan**: `[../plans/2026-03-16-gitops-plan.md]`
 - **Decision Record**: [docs/adr/0002-argocd-gitops.md](../adr/0002-argocd-gitops.md)
