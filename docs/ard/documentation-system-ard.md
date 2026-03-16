@@ -28,4 +28,4 @@ Every markdown file MUST include YAML frontmatter with a `layer` key identifying
 ## Related Documents
 
 - [docs/prd/documentation-system-prd.md](../prd/documentation-system-prd.md)
-- [docs/specs/documentation-system-spec.md](../specs/documentation-system-spec.md)
+- [docs/specs/2026-03-16-documentation-system-spec.md](../specs/2026-03-16-documentation-system-spec.md)

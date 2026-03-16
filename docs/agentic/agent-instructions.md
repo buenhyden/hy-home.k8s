@@ -16,16 +16,16 @@ Agents MUST follow this protocol based on user intent:
 
 ## 2. Intent-to-Scope Mapping
 
-| Intent / Task Type | Governing Rule | Load Scope | Target Path |
-| --- | --- | --- | --- |
-| General Implementation | `@rules/core.md` | `@scopes/specs.md` | `docs/specs/` |
-| Execution Planning | `@rules/repo-navigation.md`| `@scopes/plans.md` | `docs/plans/` |
-| Requirements Gathering | `@rules/personas.md` | `@scopes/prd.md` | `docs/prd/` |
-| Architecture Decisions | `@rules/docs-map.md` | `@scopes/adr.md` | `docs/adr/` |
+| Task Type | Trigger Rule | Load Scope | Target Directory |
+| :--- | :--- | :--- | :--- |
+| Requirements | `@rules/personas.md` | `@scopes/prd.md` | `docs/prd/` |
+| Technical Spec | `@rules/core.md` | `@scopes/specs.md` | `docs/specs/` |
+| Implementation Plan | `@rules/repo-navigation.md` | `@scopes/plans.md` | `docs/plans/` |
+| Architecture Decision | `@rules/docs-map.md` | `@scopes/adr.md` | `docs/adr/` |
 | System Reference | `@rules/docs-map.md` | `@scopes/ard.md` | `docs/ard/` |
-| Operations / Deployment | `@rules/core.md` | `@scopes/runbooks.md` | `docs/runbooks/` |
-| Incident Response | `@rules/personas.md` | `@scopes/incidents.md`| `docs/operations/incidents/` |
-| Performance / Strategic | `@rules/docs-map.md` | `@scopes/operations.md`| `docs/operations/` |
+| Deployment/Operations | `@rules/core.md` | `@scopes/runbooks.md` | `docs/runbooks/` |
+| Incident Handling | `@rules/personas.md` | `@scopes/incidents.md` | `docs/operations/incidents/` |
+| Performance/Strategic | `@rules/docs-map.md` | `@scopes/operations.md` | `docs/operations/` |
 
 ## 3. Core Directives
 

@@ -43,7 +43,7 @@ Coder Agents (Backend/Frontend) are governed by `.agent/workflows/` to explicitl
 
 | Layer | Specification | Plan | Status |
 |---------|---------------|------|--------|
-| **Infra** | [Technical Spec](./infra-spec.md) | [Execution Plan](../plans/infra-plan.md) | Validated |
-| **GitOps** | [Technical Spec](./gitops-spec.md) | [Execution Plan](../plans/gitops-plan.md) | Draft |
+| **Infra** | [Technical Spec](./2026-03-16-infra-spec.md) | [Execution Plan](../plans/2026-03-16-infra-plan.md) | Validated |
+| **GitOps** | [Technical Spec](./gitops-spec.md) | [Execution Plan](../plans/2026-03-16-gitops-plan.md) | Draft |
 
 > Add entries to this index as specifications are created.

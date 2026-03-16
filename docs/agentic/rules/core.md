@@ -40,9 +40,8 @@ curl -I http://127.0.0.1:18080/
 
 ## Guidelines
 
-- `docs/specs/` is the implementation source of truth for planned work.
-- Use the flat templates in `templates/`.
-- Do not fabricate commands, paths, or missing repo structure.
-- Do not reference the retired guides layer; it is not part of the current repo state.
-- Keep project-shared guidance in repo files and personal preferences in user-level files.
-- Validate links, imports, and directory placement after editing instruction files.
+- `docs/specs/` is the implementation source of truth.
+- Use canonical templates in `templates/`.
+- Do not fabricate commands, paths, or repo structure.
+- Adhere strictly to the **Lazy Loading Protocol**.
+- Every doc MUST include `layer:` metadata.

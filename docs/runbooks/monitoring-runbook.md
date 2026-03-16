@@ -56,5 +56,5 @@ Procedure for monitoring service health and responding to alert signals.
 
 ## Canonical References
 
-- [docs/plans/infra-plan.md](../plans/infra-plan.md)
-- [docs/specs/infra-spec.md](../specs/infra-spec.md)
+- [docs/plans/2026-03-16-infra-plan.md](../plans/2026-03-16-infra-plan.md)
+- [docs/specs/2026-03-16-infra-spec.md](../specs/2026-03-16-infra-spec.md)

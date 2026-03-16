@@ -45,7 +45,7 @@ git add AGENTS.md
 ## Related Documents
 
 - [docs/prd/documentation-system-prd.md](../prd/documentation-system-prd.md)
-- [docs/specs/documentation-system-spec.md](../specs/documentation-system-spec.md)
+- [docs/specs/2026-03-16-documentation-system-spec.md](../specs/2026-03-16-documentation-system-spec.md)
 
 **Step 1:** Keep cluster bootstrap commands. Add link to `docs/agent-instructions.md`. Keep `@./.claude/CLAUDE.md` import. No skill restrictions.
 

@@ -2,6 +2,9 @@
 
 - **Status**: Draft
 - **Target Version**: v1.0.0
+- **Owner**: buenhyden
+- **Stakeholders**: buenhyden
+- **Scope**: master
 - **layer:** gitops
 - **Parent Epic**: [Home Cluster Infra PRD](./home-cluster-infra-prd.md)
 
@@ -108,5 +111,7 @@
 ## Related Documents
 
 - **Infra PRD**: [docs/prd/home-cluster-infra-prd.md](./home-cluster-infra-prd.md)
+- **Architecture Reference**: `[../ard/argocd-gitops-ard.md]`
 - **Technical Specification**: [specs/gitops-spec.md](../specs/gitops-spec.md)
-- **Architecture Decisions (ADRs)**: [docs/adr/0002-argocd-gitops.md](../adr/0002-argocd-gitops.md)
+- **Implementation Plan**: `[../plans/2026-03-16-gitops-plan.md]`
+- **Decision Record**: [docs/adr/0002-argocd-gitops.md](../adr/0002-argocd-gitops.md)

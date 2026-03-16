@@ -6,13 +6,12 @@ Shared cross-agent contract for the `hy-home.k8s` repository. This file serves a
 
 This repository uses a **Lazy Loading Protocol**. Agents MUST NOT load all instructions into memory. Instead, identify the relevant **Rule** or **Scope** based on the current user intent.
 
-### Instruction Map
+### Instruction Protocol
 
-Detailed instructions and personas are managed in `docs/agentic/`:
+Detailed instructions are strictly managed via the **Gateway**:
 
 - **Unified Gateway**: [agent-instructions.md](docs/agentic/agent-instructions.md)
-- **Domain Rules**: `docs/agentic/rules/`
-- **Task Scopes**: `docs/agentic/scopes/`
+- **Rules & Scopes**: Dispatched from the Gateway above.
 
 ## 2. Skill Autonomy
 

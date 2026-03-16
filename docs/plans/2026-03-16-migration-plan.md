@@ -20,7 +20,7 @@ layer: "meta"
 
 ## Phase 3: Root File Updates
 
-- [ ] Update `README.md`.
+- [ ] Update `index.md`.
 - [ ] Update `OPERATIONS.md`.
 - [ ] Update `ARCHITECTURE.md`.
 - [ ] Update `CODE_OF_CONDUCT.md`.
@@ -36,4 +36,4 @@ layer: "meta"
 ## Related Documents
 
 - [docs/adr/0005-documentation-normalization.md](../adr/0005-documentation-normalization.md)
-- [docs/specs/path-alignment-spec.md](../specs/path-alignment-spec.md)
+- [docs/specs/2026-03-16-path-alignment-spec.md](../specs/2026-03-16-path-alignment-spec.md)

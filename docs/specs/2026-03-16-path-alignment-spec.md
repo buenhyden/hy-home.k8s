@@ -17,7 +17,7 @@ layer: "meta"
 
 ## 2. Root Documentation Meta
 
-- Update `README.md`, `ARCHITECTURE.md`, `CODE_OF_CONDUCT.md`, `COLLABORATING.md`, `CONTRIBUTING.md`, `OPERATIONS.md` with:
+- Update `index.md`, `ARCHITECTURE.md`, `CODE_OF_CONDUCT.md`, `COLLABORATING.md`, `CONTRIBUTING.md`, `OPERATIONS.md` with:
 
   ```yaml
   ---
@@ -25,7 +25,7 @@ layer: "meta"
   ---
   ```
 
-- Ensure `README.md` correctly links to `docs/plans/` and `docs/operations/`.
+- Ensure `index.md` correctly links to `docs/plans/` and `docs/operations/`.
 
 ## 3. Agent Entrypoints Shimming
 
@@ -36,4 +36,4 @@ layer: "meta"
 ## Related Documents
 
 - [docs/adr/0005-documentation-normalization.md](../adr/0005-documentation-normalization.md)
-- [docs/plans/migration-plan.md](../plans/migration-plan.md)
+- [docs/plans/2026-03-16-migration-plan.md](../plans/2026-03-16-migration-plan.md)

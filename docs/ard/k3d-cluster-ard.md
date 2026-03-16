@@ -124,7 +124,7 @@ Baseline hardening targets (future work unless already implemented):
 ## Related Documents
 
 - [docs/prd/home-cluster-infra-prd.md](../prd/home-cluster-infra-prd.md)
-- [docs/specs/infra-spec.md](../specs/infra-spec.md)
+- [docs/specs/2026-03-16-infra-spec.md](../specs/2026-03-16-infra-spec.md)
 
 ## 7. Infrastructure & Deployment
 
@@ -159,4 +159,4 @@ Repository layout:
 ## Related Documents
 
 - [docs/prd/home-cluster-infra-prd.md](../prd/home-cluster-infra-prd.md)
-- [docs/specs/infra-spec.md](../specs/infra-spec.md)
+- [docs/specs/2026-03-16-infra-spec.md](../specs/2026-03-16-infra-spec.md)

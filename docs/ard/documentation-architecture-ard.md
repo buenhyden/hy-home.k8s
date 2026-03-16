@@ -66,4 +66,4 @@ C4Context
 ## Related Documents
 
 - [docs/prd/documentation-refactor-prd.md](../prd/documentation-refactor-prd.md)
-- [docs/specs/2026-03-15-documentation-refactor-spec.md](../specs/2026-03-15-documentation-refactor-spec.md)
+- [docs/specs/2026-03-16-doc-and-agent-refactor-spec.md](../specs/2026-03-16-doc-and-agent-refactor-spec.md)

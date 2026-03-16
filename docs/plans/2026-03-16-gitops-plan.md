@@ -37,13 +37,13 @@ This plan implements GitOps for the local WSL2 + k3d cluster using ArgoCD and Se
 ## 4. Requirements & Constraints
 
 - **Requirements:**
-  - `[REQ-GITOPS-001]`: ArgoCD install manifest is vendored and pinned (v3.3.0).
-  - `[REQ-GITOPS-002]`: Sealed Secrets controller manifest is vendored and pinned (v0.33.1).
-  - `[REQ-GITOPS-003]`: App-of-Apps root Application exists and manages child Applications.
-  - `[REQ-GITOPS-004]`: Child Applications use `automated` sync with `prune=true` and `selfHeal=true`.
-  - `[REQ-GITOPS-005]`: Private repo access uses SSH deploy key stored as SealedSecret (no plaintext Secret committed).
-  - `[SEC-GITOPS-001]`: No plaintext Kubernetes Secrets are committed under `gitops/`.
-  - `[REQ-GITOPS-006]`: `targetRevision` is pinned to a specific tag/SHA.
+  - `[REQ-PLN-GITOPS-001]`: ArgoCD install manifest is vendored and pinned (v3.3.0).
+  - `[REQ-PLN-GITOPS-002]`: Sealed Secrets controller manifest is vendored and pinned (v0.33.1).
+  - `[REQ-PLN-GITOPS-003]`: App-of-Apps root Application exists and manages child Applications.
+  - `[REQ-PLN-GITOPS-004]`: Child Applications use `automated` sync with `prune=true` and `selfHeal=true`.
+  - `[REQ-PLN-GITOPS-005]`: Private repo access uses SSH deploy key stored as SealedSecret (no plaintext Secret committed).
+  - `[SEC-PLN-GITOPS-001]`: No plaintext Kubernetes Secrets are committed under `gitops/`.
+  - `[REQ-PLN-GITOPS-006]`: `targetRevision` is pinned to a specific tag/SHA.
 - **Constraints:**
   - Bootstrap has an unavoidable manual sequence (ArgoCD cannot read a private repo without credentials).
 
@@ -51,11 +51,11 @@ This plan implements GitOps for the local WSL2 + k3d cluster using ArgoCD and Se
 
 | Task | Description | Files Affected | Target REQ | Validation Criteria |
 | ---- | ----------- | -------------- | ---------- | ------------------- |
-| TASK-001 | Vendor ArgoCD install manifest | `infrastructure/argocd/argocd-install.yaml` | [REQ-GITOPS-001] | File exists; pinned version recorded |
-| TASK-002 | Vendor Sealed Secrets manifest | `infrastructure/sealed-secrets/sealed-secrets.yaml` | [REQ-GITOPS-002] | File exists; pinned version recorded |
-| TASK-003 | Add App-of-Apps structure | `gitops/clusters/local/*` | [REQ-GITOPS-003] | Root app creates child Applications |
-| TASK-004 | Add runbooks for bootstrap + sealing | `runbooks/services/*` | [REQ-GITOPS-005] | Operators can follow without guessing |
-| TASK-005 | Update documentation links/traceability | `README.md`, `infrastructure/README.md`, `OPERATIONS.md` | [REQ-GITOPS-003] | Links correct; no drift |
+| TASK-001 | Vendor ArgoCD install manifest | `infrastructure/argocd/argocd-install.yaml` | [REQ-PLN-GITOPS-001] | File exists; pinned version recorded |
+| TASK-002 | Vendor Sealed Secrets manifest | `infrastructure/sealed-secrets/sealed-secrets.yaml` | [REQ-PLN-GITOPS-002] | File exists; pinned version recorded |
+| TASK-003 | Add App-of-Apps structure | `gitops/clusters/local/*` | [REQ-PLN-GITOPS-003] | Root app creates child Applications |
+| TASK-004 | Add runbooks for bootstrap + sealing | `runbooks/services/*` | [REQ-PLN-GITOPS-005] | Operators can follow without guessing |
+| TASK-005 | Update documentation links/traceability | `index.md`, `infrastructure/index.md`, `OPERATIONS.md` | [REQ-PLN-GITOPS-003] | Links correct; no drift |
 
 ## 6. Verification Plan
 

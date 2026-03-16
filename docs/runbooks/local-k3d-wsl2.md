@@ -30,7 +30,7 @@
 ## Canonical References
 
 - [docs/ard/k3d-cluster-ard.md](../ard/k3d-cluster-ard.md)
-- [docs/specs/infra-spec.md](../specs/infra-spec.md)
+- [docs/specs/2026-03-16-infra-spec.md](../specs/2026-03-16-infra-spec.md)
 
 ## 3. Observability & Dashboards
 

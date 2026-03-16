@@ -8,6 +8,8 @@
 
 ## Related Documents
 
+- **PRD Reference**: `[../prd/doc-and-agent-refactor-prd.md]`
+
 ## Context
 
 The project documentation structure grew organically. To ensure clarity for both humans and AI agents, a stricter, flattened taxonomy is required alongside mandatory metadata for classification.

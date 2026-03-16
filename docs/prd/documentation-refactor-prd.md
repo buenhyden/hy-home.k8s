@@ -42,6 +42,6 @@ Establish a robust, scalable, and AI-optimized documentation framework that enfo
 ## Related Documents
 
 - `[../ard/documentation-architecture-ard.md]`
-- `[../specs/2026-03-15-documentation-refactor-spec.md]`
-- `[../plans/2026-03-15-documentation-refactor-plan.md]`
+- `[../specs/2026-03-16-doc-and-agent-refactor-spec.md]`
+- `[../plans/2026-03-16-doc-and-agent-refactor-plan.md]`
 - `[../adr/0004-documentation-refactor-decision.md]`

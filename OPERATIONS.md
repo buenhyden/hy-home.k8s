@@ -52,4 +52,4 @@ Critical failure tracking is managed in `docs/operations/`:
 ## 5. Security & Compliance
 
 - CI/CD enforces SAST and secret scanning via `.github/workflows/`.
-- All operational docs MUST include `layer: "meta" | "infra" | "gitops"`.
+- All operational docs MUST include `layer: "meta" | "infra" | "gitops" | "ops"`.

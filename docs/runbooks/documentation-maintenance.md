@@ -40,7 +40,7 @@ When a new architectural standard is established:
 Run the following command quarterly to ensure link integrity:
 
 ```bash
-# Using a link checker or grep for relative links
+# Using grep to audit markdown links
 grep -r "\[.*\](.*\.md)" docs/
 ```
 

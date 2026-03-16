@@ -28,7 +28,7 @@ layer: 'meta'
 
 ### Phase 2: Root Refactor [x]
 
-1. Update `ARCHITECTURE.md`, `README.md`, `OPERATIONS.md`, etc. [x]
+1. Update `ARCHITECTURE.md`, `index.md`, `OPERATIONS.md`, etc. [x]
 2. Update `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`. [x]
 
 ### Phase 3: Project Documentation Generation [/]
@@ -48,4 +48,4 @@ layer: 'meta'
 
 - `[../prd/documentation-refactor-prd.md]`
 - `[../adr/0004-documentation-refactor-decision.md]`
-- `[../specs/2026-03-15-documentation-refactor-spec.md]`
+- `[../specs/2026-03-16-doc-and-agent-refactor-spec.md]`

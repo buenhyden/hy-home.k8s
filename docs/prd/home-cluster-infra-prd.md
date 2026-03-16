@@ -106,6 +106,6 @@
 
 ## Related Documents
 
-- **Technical Specification**: [Link to Spec](../specs/infra-spec.md)
+- **Technical Specification**: [Link to Spec](../specs/2026-03-16-infra-spec.md)
 - **API Specification**: N/A
-- **Architecture Decisions (ADRs)**: [Link to ADRs](../adr/README.md)
+- **Architecture Decisions (ADRs)**: [Link to ADRs](../adr/index.md)

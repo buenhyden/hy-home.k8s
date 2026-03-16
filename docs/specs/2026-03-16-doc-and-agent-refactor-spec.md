@@ -24,7 +24,7 @@ layer: 'meta'
 
 ## Technical Baseline
 
-The baseline consists of several root markdown files (`ARCHITECTURE.md`, `README.md`, etc.) and a nascent instruction set in `docs/agentic/`.
+The baseline consists of several root markdown files (`ARCHITECTURE.md`, `index.md`, etc.) and a nascent instruction set in `docs/agentic/`.
 
 ## Contracts
 
@@ -33,7 +33,7 @@ The baseline consists of several root markdown files (`ARCHITECTURE.md`, `README
 
 ## Related Documents
 
-- [docs/plans/2026-03-15-documentation-refactor-plan.md](../plans/2026-03-15-documentation-refactor-plan.md)
+- [docs/plans/2026-03-16-doc-and-agent-refactor-plan.md](../plans/2026-03-16-doc-and-agent-refactor-plan.md)
 - [docs/prd/documentation-refactor-prd.md](../prd/documentation-refactor-prd.md)
 
 ## Verification

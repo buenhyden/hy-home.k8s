@@ -15,11 +15,11 @@ layer: "app"
 
 ## Behavioral Checkpoints
 
-1. **Flattened Path**: All implementation specs MUST reside in `docs/specs/` with descriptive filenames (e.g., `infra-spec.md`).
-2. **Deterministic Language**: Utilize SHALL, MUST, and PROHIBITED. Mark optionality explicitly with SHOULD or MAY.
-3. **Traceability**: Map implementation details back to PRD Requirement IDs (`REQ-NNN`).
-4. **Verification First**: Document exactly how the change will be verified (test commands, logs, state checks).
-5. **File/Path Precision**: Always specify absolute or repo-relative paths for all proposed changes.
+1. **Flattened Path**: Specs MUST reside in `docs/specs/`.
+2. **Language**: Use SHALL, MUST, and PROHIBITED.
+3. **Traceability**: Map details back to PRD Requirement IDs.
+4. **Verification**: Document exact verification steps (test commands, logs).
+5. **Precision**: Always use absolute or repo-relative paths.
 
 ## Forbid
 
