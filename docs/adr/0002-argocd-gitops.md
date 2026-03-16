@@ -57,7 +57,7 @@ We need a GitOps controller that:
 ### ArgoCD without Sealed Secrets (manual non-Git secret)
 
 - **Good**, because simpler bootstrap.
-- **Bad**, because it violates `[BAN-GPT-01]` intent and makes reproducibility dependent on non-versioned steps.
+- **Bad**, because it violates `BAN-GPT-01` intent and makes reproducibility dependent on non-versioned steps.
 
 ### Expose ArgoCD via Ingress/NodePort
 

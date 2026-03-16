@@ -24,5 +24,5 @@ Establish a high-trust, low-overhead documentation and automation framework that
 
 ## Related Documents
 
-- [docs/ard/documentation-system-ard.md](../ard/documentation-system-ard.md)
+- [docs/ard/2026-03-16-documentation-system-ard.md](../ard/2026-03-16-documentation-system-ard.md)
 - [docs/specs/2026-03-16-documentation-system-spec.md](../specs/2026-03-16-documentation-system-spec.md)

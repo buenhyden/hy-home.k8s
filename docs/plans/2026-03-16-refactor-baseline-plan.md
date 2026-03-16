@@ -1,8 +1,8 @@
 ---
 title: 'Documentation and Agent Instruction Refactor Execution Plan'
-status: 'Proposed'
+status: 'Completed'
 version: 'v1.0.0'
-layer: 'common'
+layer: 'meta'
 ---
 
 # Documentation and Agent Instruction Refactor Execution Plan

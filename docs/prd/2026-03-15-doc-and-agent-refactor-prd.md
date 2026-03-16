@@ -31,6 +31,6 @@ Maximize AI Agent efficiency and repository clarity by enforcing a spec-driven d
 ## Related
 
 - `[../adr/0000-lazy-loading-implementation.md]`
-- `[../ard/agent-instruction-system-ard.md]`
+- `[../ard/2026-03-16-agent-instruction-system-ard.md]`
 - `[../specs/2026-03-16-refactor-baseline-spec.md]`
 - `[../plans/2026-03-16-refactor-baseline-plan.md]`

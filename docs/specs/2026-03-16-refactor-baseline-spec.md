@@ -1,8 +1,8 @@
 ---
 title: 'Documentation and Agent Instruction Refactor Spec'
-status: 'Proposed'
+status: 'Validated'
 version: 'v1.0.0'
-layer: 'common'
+layer: 'meta'
 ---
 
 # Documentation and Agent Instruction Refactor Spec

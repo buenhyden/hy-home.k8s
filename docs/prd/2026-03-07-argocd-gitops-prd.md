@@ -111,7 +111,7 @@
 ## Related Documents
 
 - **Infra PRD**: [docs/prd/2026-02-27-home-cluster-infra-prd.md](./2026-02-27-home-cluster-infra-prd.md)
-- **Architecture Reference**: `[../ard/argocd-gitops-ard.md]`
+- **Architecture Reference**: `[../ard/2026-03-07-argocd-gitops-ard.md]`
 - **Technical Specification**: [specs/2026-03-16-gitops-spec.md](../specs/2026-03-16-gitops-spec.md)
 - **Implementation Plan**: `[../plans/2026-03-16-gitops-plan.md]`
 - **Decision Record**: [docs/adr/0002-argocd-gitops.md](../adr/0002-argocd-gitops.md)

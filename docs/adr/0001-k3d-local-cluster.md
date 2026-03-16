@@ -23,8 +23,8 @@ The home automation and development environment requires a Kubernetes cluster th
 
 ### 3.1 Core Engineering Pillars Alignment
 
-- **Security**: Allows testing k8s security policies locally. Aligns with `[REQ-SEC-01]`.
-- **Observability**: Supports standard Helm-based observability stacks (Prometheus/Loki). Aligns with `[REQ-OBS-01]`.
+- **Security**: Allows testing k8s security policies locally. Aligns with `REQ-SEC-01`.
+- **Observability**: Supports standard Helm-based observability stacks (Prometheus/Loki). Aligns with `REQ-OBS-01`.
 - **Compliance**: Local environment ensures zero data leakage to public cloud.
 - **Performance**: High performance due to native Docker execution on WSL2.
 - **Documentation**: Minimal learning curve due to k3s/k3d popularity.

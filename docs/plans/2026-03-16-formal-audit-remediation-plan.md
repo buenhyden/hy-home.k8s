@@ -37,16 +37,16 @@ This plan addresses the final "long-tail" issues identified during the formal do
 
 | Task | Description | Files Affected | Target REQ | Validation Criteria |
 | ---- | ----------- | -------------- | ---------- | ------------------- |
-| TASK-001 | Standardize ADR back-references | `docs/adr/*.md` | [REQ-REM-001] | Grep confirms PRD references |
-| TASK-002 | Align Operations with templates | `docs/operations/*.md` | [REQ-REM-002] | Headers match templates |
-| TASK-003 | Merge redundant ARD components | `docs/ard/*.md` | [Common] | No duplicated sections |
+| TASK-REM-001 | Standardize ADR back-references | `docs/adr/*.md` | [REQ-REM-001] | Grep confirms PRD references |
+| TASK-REM-002 | Align Operations with templates | `docs/operations/*.md` | [REQ-REM-002] | Headers match templates |
+| TASK-REM-003 | Merge redundant ARD components | `docs/ard/*.md` | [Common] | No duplicated sections |
 
 ## 6. Verification Plan
 
 | ID | Level | Description | Command / How to Run | Pass Criteria |
 | -- | ----- | ----------- | -------------------- | ------------- |
-| VAL-PLN-001 | Structural | Template Header Verification | `grep -r "Owner:" docs/operations` | Header exists in all |
-| VAL-PLN-002 | Relational | ADR Traceability Check | `grep -r "prd/" docs/adr/` | All ADRs have PRD links |
+| VAL-PLN-REM-001 | Structural | Template Header Verification | `grep -r "Owner:" docs/operations` | Header exists in all |
+| VAL-PLN-REM-002 | Relational | ADR Traceability Check | `grep -r "prd/" docs/adr/` | All ADRs have PRD links |
 
 ## 7. Completion Criteria
 

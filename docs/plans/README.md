@@ -11,8 +11,8 @@ This directory contains implementation plans and roadmaps for various features a
 
 | Document | Scope | Status | Date |
 | --- | --- | --- | --- |
-| [2026-03-12-agent-instruction-root-refactor](./2026-03-12-agent-instruction-root-refactor.md) | domain | Completed | 2026-03-12 |
-| [2026-03-13-agent-instruction-refactor](./2026-03-13-agent-instruction-refactor.md) | domain | Completed | 2026-03-13 |
+| [2026-03-12-agent-instruction-root-refactor](./2026-03-12-agent-instruction-root-refactor-plan.md) | domain | Completed | 2026-03-12 |
+| [2026-03-13-agent-instruction-refactor](./2026-03-13-agent-instruction-refactor-plan.md) | domain | Completed | 2026-03-13 |
 | [2026-03-16-infra-plan](./2026-03-16-infra-plan.md) | domain | Validated | 2026-03-16 |
 | [2026-03-16-gitops-plan](./2026-03-16-gitops-plan.md) | domain | Draft | 2026-03-16 |
 | [2026-03-16-migration-plan](./2026-03-16-migration-plan.md) | domain | Draft | 2026-03-16 |

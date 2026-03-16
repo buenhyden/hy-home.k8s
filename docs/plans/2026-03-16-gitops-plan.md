@@ -51,11 +51,11 @@ This plan implements GitOps for the local WSL2 + k3d cluster using ArgoCD and Se
 
 | Task | Description | Files Affected | Target REQ | Validation Criteria |
 | ---- | ----------- | -------------- | ---------- | ------------------- |
-| TASK-001 | Vendor ArgoCD install manifest | `infrastructure/argocd/argocd-install.yaml` | [REQ-PLN-GITOPS-001] | File exists; pinned version recorded |
-| TASK-002 | Vendor Sealed Secrets manifest | `infrastructure/sealed-secrets/sealed-secrets.yaml` | [REQ-PLN-GITOPS-002] | File exists; pinned version recorded |
-| TASK-003 | Add App-of-Apps structure | `gitops/clusters/local/*` | [REQ-PLN-GITOPS-003] | Root app creates child Applications |
-| TASK-004 | Add runbooks for bootstrap + sealing | `runbooks/services/*` | [REQ-PLN-GITOPS-005] | Operators can follow without guessing |
-| TASK-005 | Update documentation links/traceability | `index.md`, `infrastructure/README.md`, `OPERATIONS.md` | [REQ-PLN-GITOPS-003] | Links correct; no drift |
+| TASK-GTO-001 | Vendor ArgoCD install manifest | `infrastructure/argocd/argocd-install.yaml` | [REQ-PLN-GITOPS-001] | File exists; pinned version recorded |
+| TASK-GTO-002 | Vendor Sealed Secrets manifest | `infrastructure/sealed-secrets/sealed-secrets.yaml` | [REQ-PLN-GITOPS-002] | File exists; pinned version recorded |
+| TASK-GTO-003 | Add App-of-Apps structure | `gitops/clusters/local/*` | [REQ-PLN-GITOPS-003] | Root app creates child Applications |
+| TASK-GTO-004 | Add runbooks for bootstrap + sealing | `runbooks/services/*` | [REQ-PLN-GITOPS-005] | Operators can follow without guessing |
+| TASK-GTO-005 | Update documentation links/traceability | `index.md`, `infrastructure/README.md`, `OPERATIONS.md` | [REQ-PLN-GITOPS-003] | Links correct; no drift |
 
 ## 6. Verification Plan
 

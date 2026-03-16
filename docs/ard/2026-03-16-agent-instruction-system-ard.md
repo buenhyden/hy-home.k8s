@@ -2,7 +2,7 @@
 - **Owner**: buenhyden
 - **Scope**: master
 - **layer:** architecture
-- **Parent Master ARD**: `[../ard/documentation-architecture-ard.md]`
+- **Parent Master ARD**: `[../ard/2026-03-15-documentation-architecture-ard.md]`
 - **PRD Reference**: `[../prd/2026-03-16-documentation-system-prd.md]`
 
 **Overview (KR):** AI 에이전트의 효율적인 협업을 위해 지침 문서를 체계적으로 관리하고 로딩 성능을 최적화하는 에이전트 지침 시스템의 아키텍처를 정의합니다.

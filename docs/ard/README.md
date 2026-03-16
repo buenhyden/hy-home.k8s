@@ -116,7 +116,7 @@ When working with ARDs:
 
 | Document | Layer | Last Updated |
 | --- | --- | --- |
-| [k3d-cluster-ard](./k3d-cluster-ard.md) | Central ARD | 2026-02-27 |
-| [architecture-checklist-ard](./architecture-checklist-ard.md) | meta | 2026-03-01 |
+| [k3d-cluster-ard](./2026-02-27-k3d-cluster-ard.md) | Central ARD | 2026-02-27 |
+| [architecture-checklist-ard](./2026-03-16-architecture-checklist-ard.md) | meta | 2026-03-01 |
 
 > Add entries to this index as ARDs are created.

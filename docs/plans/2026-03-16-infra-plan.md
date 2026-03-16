@@ -68,11 +68,11 @@ The `hy-home` project requires a centralized orchestration layer for home automa
 
 | ID | Level | Description | Command / How to Run | Pass Criteria |
 | -- | ----- | ----------- | -------------------- | ------------- |
-| VAL-PLN-001 | Node | Check cluster node count | `kubectl get nodes --no-headers \| wc -l` | 4 |
-| VAL-PLN-002 | Windows | Verify Windows `kubectl` connectivity | `kubectl version -o yaml` (from Windows) | Exit code 0 |
-| VAL-PLN-003 | MetalLB | Check MetalLB pod health | `kubectl -n metallb-system get pods` | All `Running` |
-| VAL-PLN-004 | Ingress | Check ingress-nginx pod health | `kubectl -n ingress-nginx get pods` | Controller `Ready` |
-| VAL-PLN-005 | Net | Test local port mapping (HTTP) | `code=$(curl -sS -o /dev/null -w \"%{http_code}\" http://127.0.0.1:18080/); test \"$code\" -ge 200 -a \"$code\" -lt 500` | Exit code 0 |
+| VAL-PLN-INF-001 | Node | Check cluster node count | `kubectl get nodes --no-headers \| wc -l` | 4 |
+| VAL-PLN-INF-002 | Windows | Verify Windows `kubectl` connectivity | `kubectl version -o yaml` (from Windows) | Exit code 0 |
+| VAL-PLN-INF-003 | MetalLB | Check MetalLB pod health | `kubectl -n metallb-system get pods` | All `Running` |
+| VAL-PLN-INF-004 | Ingress | Check ingress-nginx pod health | `kubectl -n ingress-nginx get pods` | Controller `Ready` |
+| VAL-PLN-INF-005 | Net | Test local port mapping (HTTP) | `code=$(curl -sS -o /dev/null -w \"%{http_code}\" http://127.0.0.1:18080/); test \"$code\" -ge 200 -a \"$code\" -lt 500` | Exit code 0 |
 | VAL-PLN-006 | GPU | Verify GPU availability (optional) | `kubectl get nodes -o custom-columns=NAME:.metadata.name,GPUS:.status.allocatable.nvidia\\.com/gpu` | Non-empty GPU where expected |
 
 ## 7. Risks & Mitigations

@@ -38,7 +38,7 @@
 
 ## Canonical References
 
-- [docs/ard/argocd-gitops-ard.md](../ard/argocd-gitops-ard.md)
+- [docs/ard/2026-03-07-argocd-gitops-ard.md](../ard/2026-03-07-argocd-gitops-ard.md)
 - [docs/plans/2026-03-16-gitops-plan.md](../plans/2026-03-16-gitops-plan.md)
 
 ## 4. Alerts & Common Failures

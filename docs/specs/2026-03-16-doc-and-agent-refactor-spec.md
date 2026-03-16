@@ -5,7 +5,7 @@ version: '1.0'
 owner: 'buenhyden'
 scope: 'master'
 prd_reference: '../prd/2026-03-15-documentation-refactor-prd.md'
-arch_reference: '../ard/documentation-architecture-ard.md'
+arch_reference: '../ard/2026-03-15-documentation-architecture-ard.md'
 decision_reference: '../adr/0004-documentation-refactor-decision.md'
 tags: ['spec','implementation']
 layer: 'meta'
@@ -17,7 +17,7 @@ layer: 'meta'
 > **Scope**: master
 > **layer:** meta
 > **Related PRD**: `[../prd/2026-03-15-documentation-refactor-prd.md]`
-> **Related Architecture**: `[../ard/documentation-architecture-ard.md]`
+> **Related Architecture**: `[../ard/2026-03-15-documentation-architecture-ard.md]`
 > **Decision Record**: `[../adr/0004-documentation-refactor-decision.md]`
 
 **Overview (KR):** 기존 루트 문서와 AI Agent 설정 파일들을 March 2026 기준의 통합 지침으로 개편하는 기술 명세서입니다.
