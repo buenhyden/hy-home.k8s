@@ -7,6 +7,8 @@ layer: 'common'
 
 # Documentation and Agent Instruction Refactor Spec
 
+**Overview (KR):** 리포지토리의 기본 구조와 AI 에이전트가 준수해야 할 기술적 파운데이션에 대한 명세를 정의합니다.
+
 ## 1. Goal
 
 Technically implement the refactoring of root documentation and the transition to a low-token Lazy Loading instruction system.

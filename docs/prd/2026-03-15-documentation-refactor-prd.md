@@ -15,11 +15,11 @@ Establish a robust, scalable, and AI-optimized documentation framework that enfo
 
 ## Requirements
 
-- **[REQ-PRD-01]** Align root documentation with March 2026 flattened hierarchy.
-- **[REQ-PRD-02]** Refactor `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` as lightweight rule triggers.
-- **[REQ-PRD-03]** Enforce `layer:` metadata in all documentation.
-- **[REQ-PRD-04]** Implement Lazy Loading Protocol for agent instructions.
-- **[REQ-PRD-05]** Consolidate instructions in `docs/agentic/`.
+- **[REQ-PRD-DOC-01]** Align root documentation with March 2026 flattened hierarchy.
+- **[REQ-PRD-DOC-02]** Refactor `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` as lightweight rule triggers.
+- **[REQ-PRD-DOC-03]** Enforce `layer:` metadata in all documentation.
+- **[REQ-PRD-DOC-04]** Implement Lazy Loading Protocol for agent instructions.
+- **[REQ-PRD-DOC-05]** Consolidate instructions in `docs/agentic/`.
 
 ## Success Criteria
 

@@ -1,9 +1,8 @@
 # Documentation Maintenance Runbook
 
 - **Status**: Active
-- **layer:** meta
-
-# Documentation Maintenance Runbook
+- **Owner**: buenhyden
+- **layer**: meta
 
 > **Status**: Active
 > **Owner**: buenhyden

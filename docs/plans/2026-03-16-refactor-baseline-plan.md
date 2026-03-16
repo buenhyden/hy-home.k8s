@@ -7,6 +7,8 @@ layer: 'common'
 
 # Documentation and Agent Instruction Refactor Execution Plan
 
+**Overview (KR):** 저장소의 기초가 되는 핵심 문서 구조와 에이전트 지침의 기준점을 재정립하기 위한 실행 단계들을 정의합니다.
+
 ## 1. Overview
 
 This document defines the atomic steps required to execute the documentation refactor and instruction optimization.
