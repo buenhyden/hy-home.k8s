@@ -4,7 +4,7 @@
 - **Version**: 1.0
 - **layer:** gitops
 - **PRD Reference**: [../prd/argocd-gitops-prd.md](../prd/argocd-gitops-prd.md)
-- **Architecture Reference (ARD)**: [Link to ARD](../ard/argocd-gitops-architecture.md)
+- **Architecture- **ARD Reference**: [Link to ARD](../ard/argocd-gitops-ard.md)
 - **Architecture Decisions (ADRs)**: [Link to ADRs](../adr/0002-argocd-gitops.md)
 
 **Overview (KR):** ArgoCD와 Sealed Secrets를 이용한 선언적 인프라 배포 시스템의 기술 규격 및 구현 상세를 설명합니다.

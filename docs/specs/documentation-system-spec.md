@@ -1,6 +1,7 @@
 # Spec: Documentation System Implementation
 
 - **Status**: Approved
+- **Status**: Approved
 - **layer:** meta
 
 **Overview (KR):** 리포지토리의 문서 디렉토리 구조 최적화 및 메타데이터 강제 적용을 위한 기술적 구현 세부사항을 정의합니다.
@@ -43,6 +44,21 @@ This spec defines the mechanical changes required to implement the flattened doc
 
 - `grep -r "layer:" docs/` must return a match for every markdown file.
 - `ls docs/guides/` must fail.
+
+## Related Documents
+
+- [docs/prd/documentation-system-prd.md](../prd/documentation-system-prd.md)
+- [docs/ard/documentation-system-ard.md](../ard/documentation-system-ard.md)
+
+### 2.4 Governance Files
+
+- **CONTRIBUTING.md**: Add a check for `layer:` metadata in the PR requirements.
+- **ARCHITECTURE.md**: Update links to point to flattened `docs/` paths.
+
+## Related Documents
+
+- [docs/prd/documentation-system-prd.md](../prd/documentation-system-prd.md)
+- [docs/ard/documentation-system-ard.md](../ard/documentation-system-ard.md)
 
 ## Related Documents
 

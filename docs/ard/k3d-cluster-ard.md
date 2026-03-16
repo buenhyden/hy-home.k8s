@@ -121,11 +121,16 @@ Baseline hardening targets (future work unless already implemented):
 - Use Pod Security Admission labels (`restricted`) for application namespaces by default.
 - Apply default-deny NetworkPolicies for sensitive namespaces and explicitly allow required traffic.
 
+## Related Documents
+
+- [docs/prd/home-cluster-infra-prd.md](../prd/home-cluster-infra-prd.md)
+- [docs/specs/infra-spec.md](../specs/infra-spec.md)
+
 ## 7. Infrastructure & Deployment
 
 - **Deployment Hub**: Local Host (Commodity Hardware).
 - **Orchestration**: k3d (primary local cluster mode).
-- **CI/CD Pipeline**: Out of scope for base cluster bootstrap (v1). GitOps is implemented as a separate feature using ArgoCD + Sealed Secrets; see [GitOps ARD](../ard/argocd-gitops-architecture.md).
+- **CI/CD Pipeline**: Out of scope for base cluster bootstrap (v1). GitOps is implemented as a separate feature using ArgoCD + Sealed Secrets; see [Central ARD](./argocd-gitops-ard.md).
 
 Repository layout:
 

@@ -1,5 +1,6 @@
 # Incident Management Standard
 
+- **Status**: Approved
 - **layer:** ops
 
 **Overview (KR):** 인프라 및 서비스 장애의 심각도를 정의하고, 발생부터 복구까지의 전체 장애 대응 라이프사이클을 관리하는 표준 가이드입니다.
@@ -16,4 +17,8 @@
 2. **Mitigation**: Execute relevant service-specific runbook in `docs/runbooks/`.
 3. **Communication**: Update stakeholders (Human).
 4. **Resolution**: Root cause identified and hotfix applied.
-5. **Postmortem**: Mandatory for SEV-1/2 within 24 hours.
+
+## Related Documents
+
+- [docs/runbooks/incident-response-runbook.md](../runbooks/incident-response-runbook.md)
+- [docs/operations/postmortem-standard.md](./postmortem-standard.md)

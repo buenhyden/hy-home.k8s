@@ -31,6 +31,11 @@ The baseline consists of several root markdown files (`ARCHITECTURE.md`, `README
 - **Metadata Contract**: Every markdown file MUST contain `layer: "meta" | "infra" | "gitops" | "app" | "ops"`.
 - **Path Contract**: Execution plans MUST live in `docs/plans/`; Specs in `docs/specs/`.
 
+## Related Documents
+
+- [docs/plans/2026-03-15-documentation-refactor-plan.md](../plans/2026-03-15-documentation-refactor-plan.md)
+- [docs/prd/documentation-refactor-prd.md](../prd/documentation-refactor-prd.md)
+
 ## Verification
 
 ```bash

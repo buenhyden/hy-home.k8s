@@ -29,7 +29,7 @@
 
 ## Related Documents
 
-- [docs/ard/k3d-cluster-requirements.md](../ard/k3d-cluster-requirements.md)
+- [docs/ard/k3d-cluster-ard.md](../ard/k3d-cluster-ard.md)
 - [docs/specs/infra-spec.md](../specs/infra-spec.md)
 
 ## 3. Observability & Dashboards

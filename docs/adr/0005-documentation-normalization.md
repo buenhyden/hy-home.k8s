@@ -34,5 +34,5 @@ The repository had fragmented documentation paths and bloated agent entrypoints 
 
 ## Related Documents
 
-- [ADR 0003](./0003-documentation-taxonomy-standard.md)
-- [ADR 0004](./0004-documentation-refactor-decision.md)
+- [ADR 0001: k3d Local Cluster](./0001-k3d-local-cluster.md)
+- [ADR 0002: ArgoCD GitOps](./0002-argocd-gitops.md)

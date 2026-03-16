@@ -1,4 +1,5 @@
-# Architecture Requirements Documents (ARD)
+- **Status**: Approved
+- **layer:** meta
 
 - **Status**: Approved
 - **layer:** meta
@@ -105,13 +106,17 @@ When working with ARDs:
 2. **Use template**: Always use `templates/architecture/ard-template.md`
 3. **Be specific**: Quantify NFRs (e.g., "99.9% uptime" not "high availability")
 4. **Link to ADRs**: Reference relevant ADRs in constraints section
-5. **Pillar Validation**: Validate that ARDs align with `.agent/rules/1910-architecture-documentation.md` and account for the 6 Core Engineering Pillars (Security, Observability, Performance, Compliance, Documentation, Localization).
+5. **Read before designing**: Check existing ARDs in the relevant domain folders for requirements
+6. **Use template**: Always use `templates/architecture/ard-template.md`
+7. **Be specific**: Quantify NFRs (e.g., "99.9% uptime" not "high availability")
+8. **Link to ADRs**: Reference relevant ADRs in constraints section
+9. **Pillar Validation**: Validate that ARDs align with `.agent/rules/1910-architecture-documentation.md` and account for the 6 Core Engineering Pillars (Security, Observability, Performance, Compliance, Documentation, Localization).
 
 ## Index of ARDs
 
 | Document | Layer | Last Updated |
 | --- | --- | --- |
-| [k3d-cluster-requirements](./k3d-cluster-requirements.md) | infra | 2026-02-27 |
-| [argocd-gitops-architecture](./argocd-gitops-architecture.md) | gitops | 2026-03-07 |
+| [k3d-cluster-ard](./k3d-cluster-ard.md) | Central ARD | 2026-02-27 |
+| [argocd-gitops-ard.md](./argocd-gitops-ard.md) | gitops | 2026-03-07 |
 
 > Add entries to this index as ARDs are created.

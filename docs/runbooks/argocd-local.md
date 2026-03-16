@@ -11,7 +11,7 @@
 
 ## Related Documents
 
-- [docs/ard/argocd-gitops-architecture.md](../ard/argocd-gitops-architecture.md)
+- [docs/ard/argocd-gitops-ard.md](../ard/argocd-gitops-ard.md)
 - [docs/plans/gitops-plan.md](../plans/gitops-plan.md)
 
 ---
