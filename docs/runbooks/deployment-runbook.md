@@ -51,7 +51,7 @@ Deterministic procedure for deploying a service change to a target environment.
 
 ## 6. Escalation Contacts
 
-## Related Documents
+## Canonical References
 
 - [docs/specs/infra-spec.md](../specs/infra-spec.md)
 - [docs/plans/infra-plan.md](../plans/infra-plan.md)

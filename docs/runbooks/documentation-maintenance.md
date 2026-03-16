@@ -44,7 +44,7 @@ Run the following command quarterly to ensure link integrity:
 grep -r "\[.*\](.*\.md)" docs/
 ```
 
-## Related Documents
+## Canonical References
 
 - [docs/ard/documentation-system-ard.md](../ard/documentation-system-ard.md)
 - [docs/prd/documentation-system-prd.md](../prd/documentation-system-prd.md)

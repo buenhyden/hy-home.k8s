@@ -27,7 +27,7 @@
 | ingress-nginx | In-cluster | No ingress routing baseline | N/A |
 | NVIDIA Container Toolkit (optional) | Runtime | GPU workloads cannot run | N/A |
 
-## Related Documents
+## Canonical References
 
 - [docs/ard/k3d-cluster-ard.md](../ard/k3d-cluster-ard.md)
 - [docs/specs/infra-spec.md](../specs/infra-spec.md)

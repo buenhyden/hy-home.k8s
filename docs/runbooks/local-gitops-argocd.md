@@ -36,7 +36,7 @@
   - `kubectl -n metallb-system get pods`
   - `kubectl -n ingress-nginx get pods`
 
-## Related Documents
+## Canonical References
 
 - [docs/ard/argocd-gitops-ard.md](../ard/argocd-gitops-ard.md)
 - [docs/plans/gitops-plan.md](../plans/gitops-plan.md)

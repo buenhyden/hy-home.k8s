@@ -54,7 +54,7 @@ Procedure for monitoring service health and responding to alert signals.
 - Primary Contact: On-call rotation
 - Secondary Contact: Platform/SRE team
 
-## Related Documents
+## Canonical References
 
 - [docs/plans/infra-plan.md](../plans/infra-plan.md)
 - [docs/specs/infra-spec.md](../specs/infra-spec.md)

@@ -1,5 +1,6 @@
 # Incident Response Runbook
 
+- **Status**: Active
 - **layer:** ops
 
 **Overview (KR):** 장애 발생 시 신속한 탐지, 전파, 복구 및 사후 분석을 수행하기 위한 표준 대응 프로세스입니다.
@@ -68,3 +69,8 @@ Standard response process for production incidents with clear roles and cadence.
 
 - Primary Contact: Incident Commander / On-call
 - Secondary Contact: Engineering leadership
+
+## Canonical References
+
+- [docs/operations/incident-management.md](../operations/incident-management.md)
+- [docs/operations/postmortem-standard.md](../operations/postmortem-standard.md)

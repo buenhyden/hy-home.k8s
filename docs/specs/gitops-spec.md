@@ -34,6 +34,11 @@
 | Coverage Policy | Are goals defined as numbers (e.g. 100%)?      | Must     | N/A (infra)     | Section 7         |
 | AuthN/AuthZ     | Is auth approach designed (token/OAuth/RBAC)?  | Must     | ArgoCD admin v1 | Section 4         |
 | Data Protection | Encryption/access policies for sensitive data? | Must     | SealedSecrets   | Section 9         |
+
+## Related Documents
+
+- [docs/ard/argocd-gitops-ard.md](../ard/argocd-gitops-ard.md)
+- [docs/prd/argocd-gitops-prd.md](../prd/argocd-gitops-prd.md)
 | Performance     | Are Core Web Vitals/Latency metrics targeted?  | Must     | Convergence goal | Section 8        |
 | Accessibility   | Is WCAG compliance integrated (contrast/ARIA)? | Must     | N/A             | Section 8         |
 

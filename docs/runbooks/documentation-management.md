@@ -9,7 +9,7 @@
 
 The **Planner Agent** and **DevOps Agent** are responsible for maintaining the documentation taxonomy.
 
-## Related Documents
+## Canonical References
 
 - [docs/ard/documentation-system-ard.md](../ard/documentation-system-ard.md)
 - [docs/specs/documentation-system-spec.md](../specs/documentation-system-spec.md)

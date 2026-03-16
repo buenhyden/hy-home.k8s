@@ -117,6 +117,6 @@ When working with ARDs:
 | Document | Layer | Last Updated |
 | --- | --- | --- |
 | [k3d-cluster-ard](./k3d-cluster-ard.md) | Central ARD | 2026-02-27 |
-| [argocd-gitops-ard.md](./argocd-gitops-ard.md) | gitops | 2026-03-07 |
+| [architecture-checklist-ard](./architecture-checklist-ard.md) | meta | 2026-03-01 |
 
 > Add entries to this index as ARDs are created.

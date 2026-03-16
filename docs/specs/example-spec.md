@@ -13,6 +13,11 @@
 - **PRD:** `docs/prd/user-authentication.md` (User Authentication Feature Request)
 - **ADR:** `docs/adr/0001-jwt-authentication.md` (JWT Token Strategy Decision)
 
+## Related Documents
+
+- [docs/prd/documentation-system-prd.md](../prd/documentation-system-prd.md)
+- [docs/specs/documentation-system-spec.md](./documentation-system-spec.md)
+
 ## 2. Technical Overview
 
 Implement a secure user authentication system using JWT (JSON Web Tokens). The system will support user registration, login, token refresh, and logout functionality. Authentication state will be managed on the client side using secure HTTP-only cookies.
