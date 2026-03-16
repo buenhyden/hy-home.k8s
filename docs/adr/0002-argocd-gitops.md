@@ -1,8 +1,20 @@
+---
+title: 'ADR 0002: GitOps Controller Selection (ArgoCD)'
+status: 'Accepted'
+date: '2026-02-27'
+authors: ['buenhyden']
+deciders: ['buenhyden']
+tags: ['adr', 'gitops']
+layer: 'gitops'
+---
+
 # ADR 0002: GitOps Controller Selection (ArgoCD)
 
 - **Status**: Accepted
 - **Date**: 2026-02-27
 - **layer:** gitops
+- **Authors:** buenhyden
+- **Deciders:** buenhyden
 
 **Overview (KR):** ArgoCD를 활용한 GitOps 컨트롤러 선택 및 Sealed Secrets를 통한 보안 강화 결정.
 

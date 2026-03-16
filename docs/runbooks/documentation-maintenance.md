@@ -1,12 +1,10 @@
+---
+status: Active
+owner: buenhyden
+layer: meta
+---
+
 # Documentation Maintenance Runbook
-
-- **Status**: Active
-- **Owner**: buenhyden
-- **layer**: meta
-
-> **Status**: Active
-> **Owner**: buenhyden
-> **layer:** meta
 
 **Overview (KR):** 프로젝트 문서의 일관성을 유지하고, March 2026 표준을 지속적으로 준수하기 위한 운영 절차서입니다.
 

@@ -1,3 +1,12 @@
+---
+status: Approved
+version: v1.0.0
+owner: buenhyden
+stakeholders: ['buenhyden']
+scope: master
+layer: gitops
+---
+
 # Product Requirements Document (PRD): ArgoCD GitOps
 
 - **Status**: Approved
@@ -50,17 +59,17 @@
 
 | ID                 | Metric Name                     | Baseline (Current) | Target (Success) | Measurement Period |
 | ------------------ | ------------------------------- | ------------------ | ---------------- | ------------------ |
-| **REQ-PRD-MET-01** | GitOps convergence time         | Manual / unknown   | < 5 minutes      | Per sync           |
-| **REQ-PRD-MET-02** | Drift correction (selfHeal)     | Manual             | Automatic        | Always             |
-| **REQ-PRD-MET-03** | Plaintext secret commits        | Risk exists        | 0                | Continuous         |
+| **REQ-PRD-MET-GTO-01** | GitOps convergence time         | Manual / unknown   | < 5 minutes      | Per sync           |
+| **REQ-PRD-MET-GTO-02** | Drift correction (selfHeal)     | Manual             | Automatic        | Always             |
+| **REQ-PRD-MET-GTO-03** | Plaintext secret commits        | Risk exists        | 0                | Continuous         |
 
 ## 4. Key Use Cases & Acceptance Criteria (GWT)
 
 | ID           | User Story (INVEST) | Acceptance Criteria (Given-When-Then) |
 | ------------ | ------------------- | ------------------------------------- |
-| **STORY-01** | **As a** Local Platform Operator,<br>**I want** to bootstrap ArgoCD and a root application,<br>**So that** infra/apps reconcile from Git. | **Given** ArgoCD and Sealed Secrets are installed,<br>**When** I apply the root Application manifest,<br>**Then** ArgoCD creates child Applications and they converge to `Synced/Healthy`. |
-| **STORY-02** | **As a** Developer,<br>**I want** ArgoCD to detect drift and reconcile it,<br>**So that** the cluster matches Git. | **Given** `selfHeal=true`,<br>**When** a managed resource is changed out-of-band,<br>**Then** ArgoCD returns it to the Git-defined state. |
-| **STORY-03** | **As a** Local Platform Operator,<br>**I want** private repo access via SSH deploy key without committing plaintext secrets,<br>**So that** GitOps remains secure. | **Given** a sealed repository credential is applied,<br>**When** ArgoCD attempts to fetch the repo,<br>**Then** repo connection is `OK` and no plaintext Secret is stored in Git. |
+| **STORY-GTO-01** | **As a** Local Platform Operator,<br>**I want** to bootstrap ArgoCD and a root application,<br>**So that** infra/apps reconcile from Git. | **Given** ArgoCD and Sealed Secrets are installed,<br>**When** I apply the root Application manifest,<br>**Then** ArgoCD creates child Applications and they converge to `Synced/Healthy`. |
+| **STORY-GTO-02** | **As a** Developer,<br>**I want** ArgoCD to detect drift and reconcile it,<br>**So that** the cluster matches Git. | **Given** `selfHeal=true`,<br>**When** a managed resource is changed out-of-band,<br>**Then** ArgoCD returns it to the Git-defined state. |
+| **STORY-GTO-03** | **As a** Local Platform Operator,<br>**I want** private repo access via SSH deploy key without committing plaintext secrets,<br>**So that** GitOps remains secure. | **Given** a sealed repository credential is applied,<br>**When** ArgoCD attempts to fetch the repo,<br>**Then** repo connection is `OK` and no plaintext Secret is stored in Git. |
 
 ## 5. Scope & Functional Requirements
 

@@ -1,3 +1,12 @@
+---
+title: 'Home Cluster Architecture Reference Document'
+status: 'Approved'
+owner: 'hy'
+scope: 'master'
+tags: ['ard', 'infra']
+layer: 'infra'
+---
+
 # Home Cluster Architecture Reference Document (ARD)
 
 - **Status**: Approved

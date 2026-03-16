@@ -1,3 +1,12 @@
+---
+status: Approved
+version: v1.0.0
+owner: buenhyden
+stakeholders: ['buenhyden']
+scope: master
+layer: infra
+---
+
 # Product Requirements Document (PRD): Home Cluster Infrastructure
 
 - **Status**: Approved
@@ -52,18 +61,18 @@
 
 | ID                 | Metric Name        | Baseline (Current) | Target (Success) | Measurement Period  |
 | ------------------ | ------------------ | ------------------ | ---------------- | ------------------- |
-| **REQ-PRD-MET-01** | Integration Speed | ~2 hours manual   | < 10 mins automated | Per cluster rebuild |
-| **REQ-PRD-MET-02** | Service Uptime    | N/A (Manual)       | > 99.9%          | Monthly             |
-| **REQ-PRD-MET-03** | GPU Availability  | Workstation-only  | All agents accessible | Always              |
+| **REQ-PRD-MET-INF-01** | Integration Speed | ~2 hours manual   | < 10 mins automated | Per cluster rebuild |
+| **REQ-PRD-MET-INF-02** | Service Uptime    | N/A (Manual)       | > 99.9%          | Monthly             |
+| **REQ-PRD-MET-INF-03** | GPU Availability  | Workstation-only  | All agents accessible | Always              |
 
 ## 4. Key Use Cases & Acceptance Criteria (GWT)
 
 | ID           | User Story (INVEST)                                                                      | Acceptance Criteria (Given-When-Then)                                                                                                |
 | ------------ | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| **STORY-01** | **As a** Developer,<br>**I want** to spin up a k8s cluster locally,<br>**So that** I can test deployments without cloud costs. | **Given** k3d is installed,<br>**When** I run the cluster creation command,<br>**Then** a 1-server 3-agent cluster is initialized. |
-| **STORY-02** | **As a** Home User,<br>**I want** to access services via port 18080/18443,<br>**So that** I can use my services through the host IP. | **Given** the cluster is running and an ingress controller is installed,<br>**When** I access 127.0.0.1:18080,<br>**Then** I receive an HTTP response without a connection failure. |
-| **STORY-03** | **As an** AI Researcher,<br>**I want** GPU resources shared across the cluster,<br>**So that** I can run CUDA-enabled pods. | **Given** NVIDIA runtime is configured,<br>**When** I request `gpuRequest: all`,<br>**Then** all agents expose GPU capabilities to pods. |
-| **STORY-04** | **As a** Windows Developer,<br>**I want** cluster IP routes available from Windows shell,<br>**So that** I can use `kubectl` from outside WSL. | **Given** k3d cluster initialization,<br>**When** kubeconfig is updated via `--kubeconfig-switch-context`,<br>**Then** host `kubectl` can communicate with cluster. |
+| **STORY-INF-01** | **As a** Developer,<br>**I want** to spin up a k8s cluster locally,<br>**So that** I can test deployments without cloud costs. | **Given** k3d is installed,<br>**When** I run the cluster creation command,<br>**Then** a 1-server 3-agent cluster is initialized. |
+| **STORY-INF-02** | **As a** Home User,<br>**I want** to access services via port 18080/18443,<br>**So that** I can use my services through the host IP. | **Given** the cluster is running and an ingress controller is installed,<br>**When** I access 127.0.0.1:18080,<br>**Then** I receive an HTTP response without a connection failure. |
+| **STORY-INF-03** | **As an** AI Researcher,<br>**I want** GPU resources shared across the cluster,<br>**So that** I can run CUDA-enabled pods. | **Given** NVIDIA runtime is configured,<br>**When** I request `gpuRequest: all`,<br>**Then** all agents expose GPU capabilities to pods. |
+| **STORY-INF-04** | **As a** Windows Developer,<br>**I want** cluster IP routes available from Windows shell,<br>**So that** I can use `kubectl` from outside WSL. | **Given** k3d cluster initialization,<br>**When** kubeconfig is updated via `--kubeconfig-switch-context`,<br>**Then** host `kubectl` can communicate with cluster. |
 
 ## 5. Scope & Functional Requirements
 
