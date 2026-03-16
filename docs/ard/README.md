@@ -1,5 +1,11 @@
 # Architecture Requirements Documents (ARD)
 
+- **Status**: Approved
+- **layer:** meta
+
+**Overview (KR):** 아키텍처 참조 문서(ARD) 목록 및 인덱스.
+요구사항과 제약 조건을 정의하는 문서들의 모음입니다.
+
 This directory contains Architecture Requirements Documents that define the technical requirements and constraints for system architecture.
 
 ## What is an ARD?
@@ -85,6 +91,11 @@ docs/adr/ (Why - Architecture Decisions)
       ↓
 specs/ (Implementation Specifications)
 ```
+
+## Related Documents
+
+- [docs/prd/home-cluster-infra-prd.md](../prd/home-cluster-infra-prd.md)
+- [docs/specs/infra-spec.md](../specs/infra-spec.md)
 
 ## AI Agent Guidelines
 

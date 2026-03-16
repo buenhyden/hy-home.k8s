@@ -1,7 +1,9 @@
----
-layer: "ops"
----
 # Monitoring Runbook
+
+- **Status**: Active
+- **layer:** ops
+
+**Overview (KR):** 서비스 상태를 지속적으로 모니터링하고 알람 발생 시 비정상 징후를 추적하기 위한 운영 절차입니다.
 
 ## 1. Document Purpose
 
@@ -51,3 +53,8 @@ Procedure for monitoring service health and responding to alert signals.
 
 - Primary Contact: On-call rotation
 - Secondary Contact: Platform/SRE team
+
+## Related Documents
+
+- [docs/plans/infra-plan.md](../plans/infra-plan.md)
+- [docs/specs/infra-spec.md](../specs/infra-spec.md)

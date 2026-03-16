@@ -12,7 +12,13 @@ tags: ["spec", "implementation", "infrastructure", "k3d"]
 
 ---
 
-# Infrastructure Specification (`specs/infra-spec.md`)
+# Infrastructure Specification
+
+- **Status**: Validated
+- **Version**: 1.0
+- **layer:** infra
+
+**Overview (KR):** WSL2 환경에서 k3d 클러스터를 구축하고 MetalLB 및 ingress-nginx를 설정하기 위한 기술 규격서입니다.
 
 *Note: This document is the absolute Source of Truth for Coder Agents. NO CODE can be generated without it.*
 
@@ -66,13 +72,13 @@ This specification details the automation and configuration of the `hy-k3d` Kube
 
 | ID                | Requirement Description | Priority | Parent PRD REQ |
 | ----------------- | ----------------------- | -------- | -------------- |
-| **[REQ-INF-001]** | Multi-node setup (1-server, 3-agents) | High     | REQ-PRD-FUN-01 |
-| **[REQ-INF-002]** | Host port mapping (18080/18443) | High     | REQ-PRD-FUN-02 |
-| **[REQ-INF-003]** | GPU Pass-through enabling (optional) | High     | REQ-PRD-FUN-03 |
-| **[REQ-INF-004]** | Windows host access to kube-apiserver (localhost-forwarded) | High     | REQ-PRD-FUN-07 |
-| **[REQ-INF-005]** | External IP Pool Mapping (MetalLB) | High     | REQ-PRD-FUN-05 |
-| **[REQ-INF-006]** | Dedicated Docker network with fixed CIDR | High     | REQ-PRD-FUN-08 |
-| **[REQ-INF-007]** | Ingress controller baseline (ingress-nginx) | High     | REQ-PRD-FUN-09 |
+| **[REQ-INF-001]** | Multi-node setup (1-server, 3-agents) | High     | REQ-PRD-INF-01 |
+| **[REQ-INF-002]** | Host port mapping (18080/18443) | High     | REQ-PRD-INF-02 |
+| **[REQ-INF-003]** | GPU Pass-through enabling (optional) | High     | REQ-PRD-INF-03 |
+| **[REQ-INF-004]** | Windows host access to kube-apiserver (localhost-forwarded) | High     | REQ-PRD-INF-07 |
+| **[REQ-INF-005]** | External IP Pool Mapping (MetalLB) | High     | REQ-PRD-INF-05 |
+| **[REQ-INF-006]** | Dedicated Docker network with fixed CIDR | High     | REQ-PRD-INF-08 |
+| **[REQ-INF-007]** | Ingress controller baseline (ingress-nginx) | High     | REQ-PRD-INF-09 |
 | **[SEC-INF-001]** | TLS-SAN for localhost access | Critical | N/A            |
 
 ## 3. Data Modeling & Storage Strategy
@@ -80,7 +86,7 @@ This specification details the automation and configuration of the `hy-k3d` Kube
 - **Storage Class**: Standard `local-path` provisioner.
 - **WSL Mapping**: Volumes must target paths within `/home/$USER` in WSL to avoid Windows file system overhead.
 
-## 4. Interfaces & Data Structures
+## Related Documents & Data Structures
 
 This specification is infrastructure-focused; the “interfaces” are primarily **cluster bootstrap contracts** (configuration files, ports, and expected endpoints).
 

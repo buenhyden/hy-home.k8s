@@ -39,9 +39,9 @@ Establish a robust, scalable, and AI-optimized documentation framework that enfo
 - Root files point to instructions in `docs/agentic/`.
 - Plural paths (e.g., `docs/plans/`, `docs/specs/`) are used consistently.
 
-## Related
+## Related Documents
 
 - `[../ard/documentation-architecture-ard.md]`
 - `[../specs/2026-03-15-documentation-refactor-spec.md]`
 - `[../plans/2026-03-15-documentation-refactor-plan.md]`
-- `[../adr/0001-documentation-refactor-decision.md]`
+- `[../adr/0004-documentation-refactor-decision.md]`

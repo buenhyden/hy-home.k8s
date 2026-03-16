@@ -1,7 +1,10 @@
----
-layer: "app"
----
 # Technical Specifications Hub (`specs/`)
+
+- **Status**: Approved
+- **layer:** meta
+
+**Overview (KR):** 본 문서는 프로젝트의 기술 사양서(Technical Specification) 목록 및 상태를 관리하는 중앙 인덱스입니다.
+규격과 실행 지침을 관리하는 명세서 허브입니다.
 
 This directory is the absolute **Source of Truth** for the During-Development phase. It exists explicitly and exclusively for **Spec-Driven Development**.
 
@@ -40,7 +43,7 @@ Coder Agents (Backend/Frontend) are governed by `.agent/workflows/` to explicitl
 
 | Layer | Specification | Plan | Status |
 |---------|---------------|------|--------|
-| **Infra** | [Technical Spec](./infra-spec.md) | [Execution Plan](./infra-plan.md) | Validated |
-| **GitOps** | [Technical Spec](./gitops-spec.md) | [Execution Plan](./gitops-plan.md) | Draft |
+| **Infra** | [Technical Spec](./infra-spec.md) | [Execution Plan](../plans/infra-plan.md) | Validated |
+| **GitOps** | [Technical Spec](./gitops-spec.md) | [Execution Plan](../plans/gitops-plan.md) | Draft |
 
 > Add entries to this index as specifications are created.

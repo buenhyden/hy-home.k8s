@@ -1,7 +1,9 @@
----
-layer: "meta"
----
 # PRD: Documentation and Agent Instruction System
+
+- **Status**: Approved
+- **layer:** meta
+
+**Overview (KR):** AI 에이전트와 인간 운영자 간의 원활한 협업을 위한 저장소 문서 체계 및 자동화 지침 시스템의 요구사항을 정의합니다.
 
 ## 1. Goal
 
@@ -16,9 +18,7 @@ Establish a high-trust, low-overhead documentation and automation framework that
 - **REQ-005: Taxonomy Alignment**: Documentation MUST be organized into exactly `adr, ard, prd, specs, plans, runbooks, operations` directories under `docs/`.
 - **REQ-006: Layer Metadata**: Every markdown file MUST include `layer:` in its YAML frontmatter.
 
-## 3. Success Criteria
+## Related Documents
 
-- [ ] No files in retired directories (e.g., `docs/guides/`).
-- [ ] All `docs/**/*.md` files contain `layer:` metadata.
-- [ ] `AGENTS.md` correctly maps all `docs/` subtrees to their respective instruction scopes.
-- [ ] `pre-commit` hooks verify documentation compliance.
+- [docs/ard/documentation-system-ard.md](../ard/documentation-system-ard.md)
+- [docs/specs/documentation-system-spec.md](../specs/documentation-system-spec.md)

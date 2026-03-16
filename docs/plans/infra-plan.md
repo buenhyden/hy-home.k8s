@@ -1,15 +1,9 @@
----
-goal: "Establish a robust, reproducible k3d-based Kubernetes environment on WSL2."
-layer: "infra"
-layer: "infra"
-version: "1.0"
-date_created: "2026-02-27"
-last_updated: "2026-02-27"
-owner: "hy"
-status: "Planned"
----
+# Infrastructure Plan
 
-# Infrastructure Plan (`specs/infra-plan.md`)
+- **Status**: Planned
+- **layer:** infra
+
+**Overview (KR):** WSL2 환경에서 k3d 기반의 안정적이고 재현 가능한 Kubernetes 클러스터를 구축하기 위한 실행 계획입니다.
 
 ## 1. Context & Introduction
 
@@ -96,7 +90,7 @@ The `hy-home` project requires a centralized orchestration layer for home automa
 - [ ] `curl http://127.0.0.1:18080` returns an HTTP response (2xx–4xx).
 - [ ] GPU-enabled pods can access host hardware (optional).
 
-## 9. References
+## Related Documents
 
 - **PRD**: [docs/prd/home-cluster-infra-prd.md](../prd/home-cluster-infra-prd.md)
 - **Spec**: `specs/infra/spec.md`

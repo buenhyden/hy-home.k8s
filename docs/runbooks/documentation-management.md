@@ -1,11 +1,18 @@
----
-layer: "meta"
----
 # Runbook: Documentation Management
+
+- **Status**: Active
+- **layer:** meta
+
+**Overview (KR):** 리포지토리의 문서 분류 체계(Taxonomy)를 유지관리하고 일원화된 구조를 점검하기 위한 지침입니다.
 
 ## 1. Responsibility
 
 The **Planner Agent** and **DevOps Agent** are responsible for maintaining the documentation taxonomy.
+
+## Related Documents
+
+- [docs/ard/documentation-system-ard.md](../ard/documentation-system-ard.md)
+- [docs/specs/documentation-system-spec.md](../specs/documentation-system-spec.md)
 
 ## 2. Integrity Checks
 

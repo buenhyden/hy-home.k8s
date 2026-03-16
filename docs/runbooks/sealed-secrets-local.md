@@ -1,7 +1,8 @@
----
-layer: "infra"
----
 # Service Runbook: Sealed Secrets (Local)
+
+- **layer:** infra
+
+**Overview (KR):** 로컬 클러스터에서 민감한 정보를 안전하게 관리하기 위한 Sealed Secrets의 운영 및 복구 가이드입니다.
 
 *Note: This is strictly for operational context. It MUST follow the deterministic rules in `0381-runbooks-oncall.md`.*
 

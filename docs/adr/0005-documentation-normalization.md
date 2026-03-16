@@ -1,16 +1,8 @@
----
-title: 'ADR 0005: Normalized Documentation and Agent Entrypoints'
-status: 'Accepted'
-date: '2026-03-15'
-owner: 'Platform Team'
-layer: 'architecture'
----
 # ADR 0005: Normalized Documentation and Agent Entrypoints
 
 - **Status**: Accepted
-- **Owner**: Platform Team
-- **Decided**: 2026-03-15
-- **layer**: architecture
+- **Date**: 2026-03-15
+- **layer:** architecture
 
 **Overview (KR):** 리포지토리의 문서 경로를 표준화하고 AI 에이전트의 진입점을 경량화하여 지시사항의 모듈화와 관리 효율성을 극대화하기로 결정함.
 
@@ -39,4 +31,8 @@ The repository had fragmented documentation paths and bloated agent entrypoints 
 ## Consequences
 
 - Agents must now identify their task scope to load the correct instructions.
-- All new documentation must include the required frontmatter.
+
+## Related Documents
+
+- [ADR 0003](./0003-documentation-taxonomy-standard.md)
+- [ADR 0004](./0004-documentation-refactor-decision.md)

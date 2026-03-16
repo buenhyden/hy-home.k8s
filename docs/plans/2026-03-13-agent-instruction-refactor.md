@@ -1,13 +1,9 @@
 # Agent Instruction Files Refactor Plan
 
----
+- **Status**: Completed
+- **layer:** meta
 
-layer: "meta"
----
-
-> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
-
-**Goal:** Refactor AGENTS.md, GEMINI.md, CLAUDE.md to follow progressive disclosure, align with this k8s repo's actual structure, and create docs/agent-instructions.md as a lazy-loading hub.
+**Overview (KR):** AGENTS.md, GEMINI.md, CLAUDE.md 파일을 점진적 공개(Progressive Disclosure) 원칙에 따라 리팩토링하고, 지연 로딩을 위한 허브 문서를 구축합니다.
 
 **Architecture:** Root files stay < 50 lines (essentials only). All detailed persona/rule mappings delegate to `docs/agent-instructions.md`. Scoped `docs/*/AGENTS.md`, `CLAUDE.md`, `GEMINI.md` files receive updated persona and rule references from `.agent/rules/` categories.
 
@@ -45,6 +41,11 @@ git add AGENTS.md
 **Files:**
 
 - Modify: `CLAUDE.md`
+
+## Related Documents
+
+- [docs/prd/documentation-system-prd.md](../prd/documentation-system-prd.md)
+- [docs/specs/documentation-system-spec.md](../specs/documentation-system-spec.md)
 
 **Step 1:** Keep cluster bootstrap commands. Add link to `docs/agent-instructions.md`. Keep `@./.claude/CLAUDE.md` import. No skill restrictions.
 

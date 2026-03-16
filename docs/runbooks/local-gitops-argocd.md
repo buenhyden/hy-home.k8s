@@ -1,7 +1,9 @@
----
-layer: "gitops"
----
 # Service Runbook: Local GitOps (ArgoCD App-of-Apps)
+
+- **Status**: Active
+- **layer:** gitops
+
+**Overview (KR):** 로컬 클러스터에서 ArgoCD App-of-Apps 패턴을 이용한 선언적 운영 및 트러블슈팅 절차를 설명합니다.
 
 *Note: This is strictly for operational context. It MUST follow the deterministic rules in `0381-runbooks-oncall.md`.*
 
@@ -33,6 +35,11 @@ layer: "gitops"
   - `kubectl -n argocd describe application local-root`
   - `kubectl -n metallb-system get pods`
   - `kubectl -n ingress-nginx get pods`
+
+## Related Documents
+
+- [docs/ard/argocd-gitops-architecture.md](../ard/argocd-gitops-architecture.md)
+- [docs/plans/gitops-plan.md](../plans/gitops-plan.md)
 
 ## 4. Alerts & Common Failures
 

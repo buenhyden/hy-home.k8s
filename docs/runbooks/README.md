@@ -1,7 +1,7 @@
----
-layer: "ops"
----
-# Operational Runbooks (`runbooks/`)
+- **Status**: Approved
+- **layer:** meta
+
+**Overview (KR):** 인프라 작업, 장애 대응 및 배포 프로세스를 실행하기 위한 구체적인 운영 절차서 모음입니다.
 
 This directory is the **exclusive home** for all executable operational procedures, incident response playbooks, and deployment guides.
 

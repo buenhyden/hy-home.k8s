@@ -1,7 +1,9 @@
----
-layer: "infra"
----
 # Architecture & Tech Stack Checklist
+
+- **Status**: Approved
+- **layer:** infra
+
+**Overview (KR):** 새 프로젝트나 아키텍처 문서를 작성할 때 반드시 검토해야 할 기술 스택 및 구조적 체크리스트를 정의합니다.
 
 When starting a project or writing an Architecture Reference Document (ARD), the following checklist MUST be addressed and agreed upon by the Human and Planner Agent:
 
@@ -22,4 +24,7 @@ When starting a project or writing an Architecture Reference Document (ARD), the
 | **Pillar Alignment** | Does the architecture align with the 6 Core Pillars (Security `2200`, Performance `2300`, Observability `2600`, Compliance `2400`, Documentation `2100`, Localization `2500`)? | **Mandatory** | See `.agent/rules/`. |
 | **Agent Rule Compliance** | Does the tech stack selection comply with language/framework specific laws (e.g., `1200-Nextjs.md`) defined in `.agent/rules/`? | **Mandatory** | |
 
-> **Process Enforcement**: The Planner Agent MUST explicitly answer all items of this checklist when creating an ARD, adhering to `.agent/rules/1910-architecture-documentation.md` and `.agent/rules/1901-architecture-rules.md`. The Reviewer Agent MUST verify that any code changes (e.g., in a PR) do not violate these agreed-upon decisions (such as unauthorized Tech Stack or DB changes) before merging.
+## Related Documents
+
+- [docs/ard/README.md](./README.md)
+- [docs/adr/0001-k3d-local-cluster.md](../adr/0001-k3d-local-cluster.md)

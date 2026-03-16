@@ -1,10 +1,7 @@
----
-title: 'Documentation Maintenance Runbook'
-status: 'Active'
-version: '1.0.0'
-owner: 'buenhyden'
-layer: 'meta'
----
+# Documentation Maintenance Runbook
+
+- **Status**: Active
+- **layer:** meta
 
 # Documentation Maintenance Runbook
 
@@ -46,3 +43,8 @@ Run the following command quarterly to ensure link integrity:
 # Using a link checker or grep for relative links
 grep -r "\[.*\](.*\.md)" docs/
 ```
+
+## Related Documents
+
+- [docs/ard/documentation-system-ard.md](../ard/documentation-system-ard.md)
+- [docs/prd/documentation-system-prd.md](../prd/documentation-system-prd.md)

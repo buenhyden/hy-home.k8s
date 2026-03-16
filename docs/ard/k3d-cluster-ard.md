@@ -1,18 +1,12 @@
----
-title: "Home Cluster Architecture Reference Document (ARD)"
-layer: "infra"
-status: "Approved"
-owner: "hy"
----
-
 # Home Cluster Architecture Reference Document (ARD)
 
 - **Status**: Approved
 - **Owner**: hy
+- **layer:** infra
 - **PRD Reference**: [Link to PRD](../prd/home-cluster-infra-prd.md)
 - **ADR References**: [Link to ADRs](../adr/0001-k3d-local-cluster.md)
 
----
+**Overview (KR):** WSL2 환경에서 k3d를 이용한 로컬 Kubernetes 클러스터 하드웨어 및 소프트웨어 요구사항을 정의합니다.
 
 ## 1. Executive Summary
 
@@ -157,5 +151,7 @@ Repository layout:
 
 ---
 
-> [!TIP]
-> This ARD avoids code-level details. For specific implementation logic, use the **Technical Specification** located in `specs/infra/spec.md`.
+## Related Documents
+
+- [docs/prd/home-cluster-infra-prd.md](../prd/home-cluster-infra-prd.md)
+- [docs/specs/infra-spec.md](../specs/infra-spec.md)

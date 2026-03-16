@@ -1,16 +1,10 @@
-# Architecture Decision Record (ADR)
+# ADR 0002: GitOps Controller Selection (ArgoCD)
 
----
+- **Status**: Accepted
+- **Date**: 2026-02-27
+- **layer:** gitops
 
-title: "ADR 0001: GitOps Controller Selection (ArgoCD)"
-layer: "gitops"
-status: "Accepted"
-date: "2026-02-27"
----
-
-- **Authors:** hy
-- **Deciders:** hy
-- **Reviewers:** N/A (Self-reviewed)
+**Overview (KR):** ArgoCD를 활용한 GitOps 컨트롤러 선택 및 Sealed Secrets를 통한 보안 강화 결정.
 
 ## 1. Context and Problem Statement
 
@@ -74,9 +68,9 @@ We need a GitOps controller that:
 
 - **Confidence Rating**: Medium
 - **Notes**: ArgoCD/SealedSecrets are standard tools, but bootstrap UX depends on clear runbooks and operator discipline.
-- **Technical Requirements Addressed**: REQ-PRD-FUN-01, REQ-PRD-FUN-02, REQ-PRD-FUN-03, REQ-PRD-FUN-05
+- **Technical Requirements Addressed**: REQ-PRD-GTO-01, REQ-PRD-GTO-02, REQ-PRD-GTO-03, REQ-PRD-GTO-05
 
-## 6. Related Documents (Traceability)
+## Related Documents
 
 - **Feature PRD**: [docs/prd/argocd-gitops-prd.md](../prd/argocd-gitops-prd.md)
 - **Feature Spec**: [Link to Feature Spec](../specs/gitops-spec.md)

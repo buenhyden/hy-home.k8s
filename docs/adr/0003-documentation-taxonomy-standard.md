@@ -1,11 +1,12 @@
----
-layer: "meta"
----
-# ADR 003: Documentation Taxonomy and Metadata Standard
+# ADR 0003: Documentation Taxonomy and Metadata Standard
 
-## Status
+- **Status**: Proposed
+- **Date**: 2026-03-15
+- **layer:** meta
 
-Proposed
+**Overview (KR):** 리포지토리의 문서 체계를 flattened taxonomy로 전환하고, 모든 문서에 layer 메타데이터를 필수적으로 포함하도록 강제함.
+
+## Related Documents
 
 ## Context
 

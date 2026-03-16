@@ -1,7 +1,9 @@
----
-layer: "ops"
----
 # Deployment Runbook
+
+- **Status**: Active
+- **layer:** ops
+
+**Overview (KR):** 인프라 또는 서비스 변경 사항을 대상 환경에 안전하게 배포하기 위한 표준 절차서입니다.
 
 ## 1. Document Purpose
 
@@ -49,5 +51,7 @@ Deterministic procedure for deploying a service change to a target environment.
 
 ## 6. Escalation Contacts
 
-- Primary Contact: DevOps / On-call engineer
-- Secondary Contact: Service owner team
+## Related Documents
+
+- [docs/specs/infra-spec.md](../specs/infra-spec.md)
+- [docs/plans/infra-plan.md](../plans/infra-plan.md)

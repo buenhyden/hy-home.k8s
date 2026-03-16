@@ -1,7 +1,7 @@
----
-layer: "app"
----
-# Implementation Specification: User Authentication Feature
+- **Status**: Approved
+- **layer:** app
+
+**Overview (KR):** 프로젝트의 기능 명세서 작성을 위한 가이드 역할을 하는 예시 문서입니다.
 
 *Note: This document MUST be completed and reviewed before any code is generated.*
 

@@ -1,15 +1,13 @@
----
-layer: "gitops"
----
 # GitOps (ArgoCD) Implementation Spec
 
-status: "Draft"
-version: "1.0"
-owner: "hy"
-prd_reference: "../prd/argocd-gitops-prd.md"
-
+- **Status**: Draft
+- **Version**: 1.0
+- **layer:** gitops
+- **PRD Reference**: [../prd/argocd-gitops-prd.md](../prd/argocd-gitops-prd.md)
 - **Architecture Reference (ARD)**: [Link to ARD](../ard/argocd-gitops-architecture.md)
-- **Architecture Decisions (ADRs)**: [Link to ADRs](../adr/0001-argocd-gitops.md)
+- **Architecture Decisions (ADRs)**: [Link to ADRs](../adr/0002-argocd-gitops.md)
+
+**Overview (KR):** ArgoCD와 Sealed Secrets를 이용한 선언적 인프라 배포 시스템의 기술 규격 및 구현 상세를 설명합니다.
 
 *Note: This document is the absolute Source of Truth for Coder Agents. NO CODE can be generated without it.*
 
@@ -71,12 +69,12 @@ This feature implements **GitOps for a single local cluster** using ArgoCD with 
 
 | ID                | Requirement Description | Priority | Parent PRD REQ |
 | ----------------- | ----------------------- | -------- | -------------- |
-| **REQ-SPC-001** | Vendored ArgoCD install manifest pinned to v3.3.0 | High | REQ-PRD-FUN-01 |
-| **REQ-SPC-002** | Vendored Sealed Secrets manifest pinned to v0.33.1 | High | REQ-PRD-FUN-02 |
-| **REQ-SPC-003** | App-of-Apps structure exists under `gitops/clusters/local/` | High | REQ-PRD-FUN-03 |
-| **SEC-SPC-001** | No plaintext Secret committed; sealed secret workflow required | Critical | REQ-PRD-FUN-05 |
-| **REQ-SPC-004** | ArgoCD access via port-forward only | Medium | REQ-PRD-FUN-06 |
-| **REQ-SPC-005** | ArgoCD Applications pin `targetRevision` to a SHA | High | REQ-PRD-FUN-03 |
+| **REQ-SPC-001** | Vendored ArgoCD install manifest pinned to v3.3.0 | High | REQ-PRD-GTO-01 |
+| **REQ-SPC-002** | Vendored Sealed Secrets manifest pinned to v0.33.1 | High | REQ-PRD-GTO-02 |
+| **REQ-SPC-003** | App-of-Apps structure exists under `gitops/clusters/local/` | High | REQ-PRD-GTO-03 |
+| **SEC-SPC-001** | No plaintext Secret committed; sealed secret workflow required | Critical | REQ-PRD-GTO-05 |
+| **REQ-SPC-004** | ArgoCD access via port-forward only | Medium | REQ-PRD-GTO-06 |
+| **REQ-SPC-005** | ArgoCD Applications pin `targetRevision` to a SHA | High | REQ-PRD-GTO-03 |
 
 ## 3. Data Modeling & Storage Strategy
 

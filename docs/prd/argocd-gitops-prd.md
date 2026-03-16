@@ -1,21 +1,11 @@
----
-title: "ArgoCD GitOps PRD (Local k3d)"
-layer: "gitops"
-status: "Draft"
-version: "v1.0.0"
-owner: "hy"
-stakeholders: ["hy"]
-parent_epic: "./home-cluster-infra-prd.md"
-tags: ["prd", "requirements", "product", "gitops", "argocd", "sealed-secrets"]
----
+# Product Requirements Document (PRD): ArgoCD GitOps
 
-# Product Requirements Document (PRD)
+- **Status**: Draft
+- **Target Version**: v1.0.0
+- **layer:** gitops
+- **Parent Epic**: [Home Cluster Infra PRD](./home-cluster-infra-prd.md)
 
-> **Status**: Draft
-> **Target Version**: v1.0.0
-> **Owner**: hy
-> **Stakeholders**: hy
-> **Parent Epic**: [Home Cluster Infra PRD](./home-cluster-infra-prd.md)
+**Overview (KR):** 로컬 k3d 클러스터의 원활한 운영을 위해 ArgoCD를 도입하고, Git 기반의 선언적 배포 워크플로우를 구축하기 위한 요구사항을 정의합니다.
 
 *Note: This document defines the What and Why. It must be approved before Spec generation.*
 
@@ -71,12 +61,12 @@ tags: ["prd", "requirements", "product", "gitops", "argocd", "sealed-secrets"]
 
 ## 5. Scope & Functional Requirements
 
-- **[REQ-PRD-FUN-01]** Install ArgoCD (pinned version) for local cluster GitOps.
-- **[REQ-PRD-FUN-02]** Install Sealed Secrets (pinned version) for sealed secret workflow.
-- **[REQ-PRD-FUN-03]** Implement App-of-Apps GitOps structure for local cluster (infra + apps).
-- **[REQ-PRD-FUN-04]** Configure ArgoCD applications with `automated` sync, `prune=true`, `selfHeal=true`.
-- **[REQ-PRD-FUN-05]** Enforce “no plaintext secrets in Git” via SealedSecrets usage.
-- **[REQ-PRD-FUN-06]** Standardize ArgoCD access via `kubectl port-forward` (v1 baseline).
+- **[REQ-PRD-GTO-01]** Install ArgoCD (pinned version) for local cluster GitOps.
+- **[REQ-PRD-GTO-02]** Install Sealed Secrets (pinned version) for sealed secret workflow.
+- **[REQ-PRD-GTO-03]** Implement App-of-Apps GitOps structure for local cluster (infra + apps).
+- **[REQ-PRD-GTO-04]** Configure ArgoCD applications with `automated` sync, `prune=true`, `selfHeal=true`.
+- **[REQ-PRD-GTO-05]** Enforce “no plaintext secrets in Git” via SealedSecrets usage.
+- **[REQ-PRD-GTO-06]** Standardize ArgoCD access via `kubectl port-forward` (v1 baseline).
 
 ## 6. Out of Scope
 
@@ -115,8 +105,8 @@ tags: ["prd", "requirements", "product", "gitops", "argocd", "sealed-secrets"]
 
 - **[ISSUE-01]** targetRevision pinning vs developer convenience - **Update**: Use pinning; document update workflow.
 
-## 11. Related Documents (Reference / Traceability)
+## Related Documents
 
 - **Infra PRD**: [docs/prd/home-cluster-infra-prd.md](./home-cluster-infra-prd.md)
 - **Technical Specification**: [specs/gitops-spec.md](../specs/gitops-spec.md)
-- **Architecture Decisions (ADRs)**: [docs/adr/0001-argocd-gitops.md](../adr/0001-argocd-gitops.md)
+- **Architecture Decisions (ADRs)**: [docs/adr/0002-argocd-gitops.md](../adr/0002-argocd-gitops.md)

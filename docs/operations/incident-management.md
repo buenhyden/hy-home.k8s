@@ -1,7 +1,8 @@
----
-layer: "ops"
----
 # Incident Management Standard
+
+- **layer:** ops
+
+**Overview (KR):** 인프라 및 서비스 장애의 심각도를 정의하고, 발생부터 복구까지의 전체 장애 대응 라이프사이클을 관리하는 표준 가이드입니다.
 
 ## 1. Definition of SEV
 

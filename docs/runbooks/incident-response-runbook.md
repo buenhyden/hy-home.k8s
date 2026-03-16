@@ -1,7 +1,8 @@
----
-layer: "ops"
----
 # Incident Response Runbook
+
+- **layer:** ops
+
+**Overview (KR):** 장애 발생 시 신속한 탐지, 전파, 복구 및 사후 분석을 수행하기 위한 표준 대응 프로세스입니다.
 
 ## 1. Document Purpose
 

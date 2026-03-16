@@ -1,6 +1,6 @@
 # Architecture Decision Records (ADR)
 
-This directory contains Architecture Decision Records for the project. ADRs document significant architectural decisions along with their context and consequences.
+This directory contains Architecture Decision Records for the project. ADRs document significant architectural decisions along with their context and consequences.**Overview (KR):** 본 문서는 프로젝트의 아키텍처 결정 레코드(ADR) 목록과 상태를 관리하는 중앙 인덱스입니다.
 
 ## What is an ADR?
 
@@ -99,6 +99,14 @@ When working with ADRs:
 | Number | Title | Layer | Status | Date |
 | --- | --- | --- | --- | --- |
 | 0001 | [k3d-local-cluster](./0001-k3d-local-cluster.md) | infra | Accepted | 2026-02-27 |
-| 0001 | [argocd-gitops](./0001-argocd-gitops.md) | gitops | Accepted | 2026-02-27 |
+| 0002 | [argocd-gitops](./0002-argocd-gitops.md) | gitops | Accepted | 2026-02-27 |
+| 0003 | [documentation-taxonomy-standard](./0003-documentation-taxonomy-standard.md) | meta | Proposed | 2026-03-15 |
+| 0004 | [documentation-refactor-decision](./0004-documentation-refactor-decision.md) | meta | Accepted | 2026-03-15 |
+| 0005 | [documentation-normalization](./0005-documentation-normalization.md) | architecture | Accepted | 2026-03-15 |
+
+## Related Documents
+
+- [docs/ard/README.md](../ard/README.md)
+- [docs/prd/README.md](../prd/README.md)
 
 > Add entries to this index as ADRs are created.

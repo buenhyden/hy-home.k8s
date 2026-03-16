@@ -33,7 +33,7 @@ layer: "meta"
 - `CLAUDE.md`: Lightweight entrypoint, delegating rules.
 - `GEMINI.md`: Lightweight entrypoint, delegating rules.
 
-## 4. Verification
+## Related Documents
 
-- `pre-commit run --all-files`
-- Check broken links using `markdown-link-check` or equivalent if available (manual check otherwise).
+- [docs/adr/0005-documentation-normalization.md](../adr/0005-documentation-normalization.md)
+- [docs/plans/migration-plan.md](../plans/migration-plan.md)

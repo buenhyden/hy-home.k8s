@@ -1,24 +1,10 @@
----
-title: "Home Cluster Infrastructure PRD"
-layer: "infra"
-status: "Approved"
-version: "v1.0.0"
-owner: "hy"
-stakeholders: ["hy"]
-tags: ["prd", "requirements", "product", "infrastructure", "infra"]
----
+# Product Requirements Document (PRD): Home Cluster Infrastructure
 
----
+- **Status**: Approved
+- **Target Version**: v1.0.0
+- **layer:** infra
 
-layer: "infra"
----
-
-# Product Requirements Document (PRD)
-
-> **Status**: Approved
-> **Target Version**: v1.0.0
-> **Owner**: hy
-> **Stakeholders**: hy
+**Overview (KR):** 안정적이고 재현 가능한 로컬 Kubernetes 환경(k3d) 구축을 위한 핵심 인프라 요구사항을 정의합니다.
 
 *Note: This document defines the What and Why for the Core Infrastructure.*
 
@@ -78,15 +64,15 @@ layer: "infra"
 
 ## 5. Scope & Functional Requirements
 
-- **[REQ-PRD-FUN-01]**: Kubernetes cluster setup using k3d with 1 server and 3 agents.
-- **[REQ-PRD-FUN-02]**: External access via host ports 18080 (HTTP) and 18443 (HTTPS).
-- **[REQ-PRD-FUN-03]**: GPU resource pass-through support (optional; cluster must run without GPU).
-- **[REQ-PRD-FUN-04]**: Disable default Traefik and ServiceLB to allow custom ingress setup.
-- **[REQ-PRD-FUN-05]**: Support for external LoadBalancer IP pools (via MetalLB).
-- **[REQ-PRD-FUN-06]**: Use of native MetalLB manifests (v0.14.8+) for deterministic deployment across environments.
-- **[REQ-PRD-FUN-07]**: Windows host access to kube-apiserver via a localhost-forwarded endpoint (kubeconfig/TLS SAN alignment).
-- **[REQ-PRD-FUN-08]**: Use a dedicated Docker network with a fixed CIDR to stabilize MetalLB behavior.
-- **[REQ-PRD-FUN-09]**: Provide an ingress controller baseline (ingress-nginx) for HTTP/HTTPS routing verification.
+- **[REQ-PRD-INF-01]**: Kubernetes cluster setup using k3d with 1 server and 3 agents.
+- **[REQ-PRD-INF-02]**: External access via host ports 18080 (HTTP) and 18443 (HTTPS).
+- **[REQ-PRD-INF-03]**: GPU resource pass-through support (optional; cluster must run without GPU).
+- **[REQ-PRD-INF-04]**: Disable default Traefik and ServiceLB to allow custom ingress setup.
+- **[REQ-PRD-INF-05]**: Support for external LoadBalancer IP pools (via MetalLB).
+- **[REQ-PRD-INF-06]**: Use of native MetalLB manifests (v0.14.8+) for deterministic deployment across environments.
+- **[REQ-PRD-INF-07]**: Windows host access to kube-apiserver via a localhost-forwarded endpoint (kubeconfig/TLS SAN alignment).
+- **[REQ-PRD-INF-08]**: Use a dedicated Docker network with a fixed CIDR to stabilize MetalLB behavior.
+- **[REQ-PRD-INF-09]**: Provide an ingress controller baseline (ingress-nginx) for HTTP/HTTPS routing verification.
 
 ## 6. Out of Scope
 
@@ -118,8 +104,8 @@ layer: "infra"
 - **[ISSUE-02]**: Is the primary Docker runtime Docker Desktop (Windows) or Docker Engine inside WSL? - **Update**: Docker Engine inside WSL2 is the v1 standard.
 - **[ISSUE-03]**: Do we support a direct `k3s` install in WSL2 (no Docker) as an alternative local cluster mode? - **Update**: Out of scope for v1.0.0 (tracked for future evaluation).
 
-## 11. Related Documents (Reference / Traceability)
+## Related Documents
 
 - **Technical Specification**: [Link to Spec](../specs/infra-spec.md)
 - **API Specification**: N/A
-- **Architecture Decisions (ADRs)**: [Link to ADRs](../../../docs/adr/README.md)
+- **Architecture Decisions (ADRs)**: [Link to ADRs](../adr/README.md)

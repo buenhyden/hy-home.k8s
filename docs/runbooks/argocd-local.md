@@ -1,9 +1,18 @@
----
-layer: "gitops"
----
 # Service Runbook: ArgoCD (Local)
 
+- **Status**: Active
+- **layer:** gitops
+
+**Overview (KR):** 로컬 환경의 ArgoCD 서비스 상태 확인 및 문제 해결을 위한 운영 가이드입니다.
+
 *Note: This is strictly for operational context. It MUST follow the deterministic rules in `0381-runbooks-oncall.md`.*
+
+---
+
+## Related Documents
+
+- [docs/ard/argocd-gitops-architecture.md](../ard/argocd-gitops-architecture.md)
+- [docs/plans/gitops-plan.md](../plans/gitops-plan.md)
 
 ---
 

@@ -1,7 +1,9 @@
----
-layer: "infra"
----
 # Service Runbook: Local k3d Cluster (WSL2)
+
+- **Status**: Active
+- **layer:** infra
+
+**Overview (KR):** WSL2 환경에서 k3d를 이용한 로컬 Kubernetes 클러스터의 설치, 운영 및 네트워크 문제 해결 가이드입니다.
 
 *Note: This is strictly for operational context. It MUST follow the deterministic rules in `0381-runbooks-oncall.md`.*
 
@@ -24,6 +26,11 @@ layer: "infra"
 | MetalLB | In-cluster | LoadBalancer external IPs not assigned | N/A |
 | ingress-nginx | In-cluster | No ingress routing baseline | N/A |
 | NVIDIA Container Toolkit (optional) | Runtime | GPU workloads cannot run | N/A |
+
+## Related Documents
+
+- [docs/ard/k3d-cluster-requirements.md](../ard/k3d-cluster-requirements.md)
+- [docs/specs/infra-spec.md](../specs/infra-spec.md)
 
 ## 3. Observability & Dashboards
 

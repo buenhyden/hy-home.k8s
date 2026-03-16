@@ -1,15 +1,9 @@
----
-goal: "Bootstrap ArgoCD GitOps for the local k3d cluster (infra + apps) with sealed secrets for private repo access."
-layer: "gitops"
-layer: "gitops"
-version: "1.0"
-date_created: "2026-02-27"
-last_updated: "2026-02-27"
-owner: "hy"
-status: "Planned"
----
+# ArgoCD GitOps Deployment Plan
 
-# ArgoCD GitOps Deployment Plan (`specs/gitops-plan.md`)
+- **Status**: Planned
+- **layer:** gitops
+
+**Overview (KR):** ArgoCD와 Sealed Secrets를 이용해 로컬 k3d 클러스터(인프라 및 앱)의 선언적 배포 및 관리를 구현하는 단계별 계획입니다.
 
 ## 1. Context & Introduction
 
@@ -87,8 +81,8 @@ This plan implements GitOps for the local WSL2 + k3d cluster using ArgoCD and Se
 - [ ] Verification checks passed
 - [ ] Documentation updated
 
-## 9. References
+## Related Documents
 
 - **PRD**: [docs/prd/argocd-gitops-prd.md](../prd/argocd-gitops-prd.md)
 - **Spec**: `specs/gitops/spec.md`
-- **ADR**: [docs/adr/0001-argocd-gitops.md](../adr/0001-argocd-gitops.md)
+- **ADR**: [docs/adr/0002-argocd-gitops.md](../adr/0002-argocd-gitops.md)

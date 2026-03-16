@@ -33,7 +33,7 @@ layer: "meta"
 - [ ] Update `CLAUDE.md`.
 - [ ] Update `GEMINI.md`.
 
-## Phase 5: Verification
+## Related Documents
 
-- [ ] Run linting.
-- [ ] Verify agent trigger behavior.
+- [docs/adr/0005-documentation-normalization.md](../adr/0005-documentation-normalization.md)
+- [docs/specs/path-alignment-spec.md](../specs/path-alignment-spec.md)

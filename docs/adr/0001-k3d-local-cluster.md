@@ -1,19 +1,10 @@
----
-layer: "infra"
----
-# Architecture Decision Record (ADR)
+# ADR 0001: Local Development Cluster selection (k3d)
 
----
+- **Status**: Accepted
+- **Date**: 2026-02-27
+- **layer:** infra
 
-title: "ADR 0001: Local Development Cluster selection (k3d)"
-layer: "infra"
-status: "Accepted"
-date: "2026-02-27"
----
-
-- **Authors:** hy
-- **Deciders:** hy
-- **Reviewers:** N/A (Self-reviewed)
+**Overview (KR):** k3d를 사용한 로컬 개발용 Kubernetes 클러스터 구축 결정.
 
 ## 1. Context and Problem Statement
 
@@ -78,9 +69,9 @@ Run k3s as a system service directly inside WSL2 (no Docker-based nodes).
 
 - **Confidence Rating**: High
 - **Notes**: k3d is the industry standard for lightweight local k8s testing.
-- **Technical Requirements Addressed**: REQ-PRD-FUN-01, REQ-PRD-FUN-04
+- **Technical Requirements Addressed**: REQ-PRD-INF-01, REQ-PRD-INF-04
 
-## 6. Related Documents (Traceability)
+## Related Documents
 
 - **Supersedes**: N/A
 - **Superseded by**: N/A

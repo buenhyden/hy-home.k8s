@@ -1,7 +1,8 @@
----
-layer: "ops"
----
 # Postmortem Standard
+
+- **layer:** ops
+
+**Overview (KR):** 장애 복구 후 재발 방지와 지식 공유를 위해 작성하는 포스트모텀(사후 분석 리포트)의 작성 기준 및 결과 검토 프로세스를 정의합니다.
 
 ## 1. Purpose
 

@@ -1,5 +1,10 @@
 # Product Requirements Documents (PRD)
 
+- **Status**: Approved
+- **layer:** meta
+
+**Overview (KR):** 프로젝트의 제품 요구사항 문서(PRD) 목록 및 상황을 관리하는 중앙 인덱스입니다.
+
 This directory contains Product Requirements Documents that define the "what" of product features - the business requirements, user stories, and success metrics.
 
 ## What is a PRD?
