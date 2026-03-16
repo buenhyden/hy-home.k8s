@@ -33,20 +33,20 @@ Create an ARD when:
 
 1. **File Placement**: All ARDs MUST be placed directly in `docs/ard/`. Do NOT create subdirectories.
 2. **Metadata**: Include `layer:` metadata in the frontmatter.
-3. **Use the Template**: Copy `templates/architecture/ard-template.md` to this directory
+3. **Use the Template**: Copy `templates/ard-template.md` to this directory
 4. **Name Convention**: `[system]-requirements.md` (e.g., `payment-service-requirements.md`)
 5. **Fill All Sections**: Business goals, scope, functional/non-functional requirements, constraints
 
 ```bash
 # Example workflow
 mkdir -p docs/ard/users
-cp templates/architecture/ard-template.md docs/ard/users/user-service-requirements.md
+cp templates/ard-template.md docs/ard/users/user-service-requirements.md
 # Edit the file with your requirements
 ```
 
 ## ARD Template
 
-All ARDs MUST use `templates/architecture/ard-template.md`. The template includes:
+All ARDs MUST use `templates/ard-template.md`. The template includes:
 
 | Section | Purpose |
 | --- | --- |
@@ -103,11 +103,11 @@ specs/ (Implementation Specifications)
 When working with ARDs:
 
 1. **Read before designing**: Check existing ARDs in the relevant domain folders for requirements
-2. **Use template**: Always use `templates/architecture/ard-template.md`
+2. **Use template**: Always use `templates/ard-template.md`
 3. **Be specific**: Quantify NFRs (e.g., "99.9% uptime" not "high availability")
 4. **Link to ADRs**: Reference relevant ADRs in constraints section
 5. **Read before designing**: Check existing ARDs in the relevant domain folders for requirements
-6. **Use template**: Always use `templates/architecture/ard-template.md`
+6. **Use template**: Always use `templates/ard-template.md`
 7. **Be specific**: Quantify NFRs (e.g., "99.9% uptime" not "high availability")
 8. **Link to ADRs**: Reference relevant ADRs in constraints section
 9. **Pillar Validation**: Validate that ARDs align with `.agent/rules/1910-architecture-documentation.md` and account for the 6 Core Engineering Pillars (Security, Observability, Performance, Compliance, Documentation, Localization).
