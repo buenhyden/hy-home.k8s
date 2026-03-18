@@ -18,9 +18,10 @@ Human-readable lifecycle companion for document work in this repository.
 ## Post-Development
 
 - Goal: verify correctness, operational impact, and handoff readiness.
-- **Collaborative Writing**: [docs/operations/collaboration-guide.md](../operations/collaboration-guide.md).
-- **Quality Assurance**: [docs/specs/](../specs/), [docs/plans/](../plans/), [qa-security-guide.md](../operations/2026-03-15-documentation-validation.md).
-- **Operations & Incidents**: [docs/runbooks/](../runbooks/), [docs/operations/](../operations/), [Incident Management](../operations/2026-03-19-incident-management.md).
+- **Collaborative Writing**: [collaboration-guide.md](../operations/collaboration-guide.md).
+- **Quality Assurance**: [docs/specs/](../specs/), [docs/plans/](../plans/), [qa-security.md](../specs/qa-security.md).
+- **Documentation Validation**: [2026-03-15-documentation-validation.md](../operations/2026-03-15-documentation-validation.md).
+- **Incident Management**: [2026-03-19-incident-management.md](../operations/2026-03-19-incident-management.md).
 
 ## Handoff Rules
 

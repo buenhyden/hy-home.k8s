@@ -20,6 +20,11 @@ Human-readable governance companion for the runtime rules under [rules/](rules/)
 - Runbooks: [docs/runbooks/](../runbooks/) (Flattened with `layer:` metadata)
 - Operations: [docs/operations/](../operations/)
 - Templates: [templates/](../templates/)
+- **Collaborative Writing**: [collaboration-guide.md](../operations/collaboration-guide.md).
+- **Quality Assurance**: [qa-security.md](../specs/qa-security.md).
+- **Documentation Validation**: [2026-03-15-documentation-validation.md](../operations/2026-03-15-documentation-validation.md).
+- **Incident Management**: [2026-03-19-incident-management.md](../operations/2026-03-19-incident-management.md).
+- **Workflows**: [workflows/](../../.agent/workflows/).
 
 ## Skill Selection
 

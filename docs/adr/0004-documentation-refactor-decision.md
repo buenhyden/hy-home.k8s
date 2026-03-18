@@ -8,12 +8,11 @@ tags: ['adr', 'documentation']
 layer: 'meta'
 ---
 
-# ADR 0004: Documentation Refactor and Lazy Loading
+# ADR 0004: Documentation Refactor and Hub Consolidation
 
 - **Status**: Decided
 - **Owner**: buenhyden
 - **Last Reviewed**: 2026-03-15
-- **layer:** meta
 
 **Overview (KR):** 프로젝트 문서 구조의 복잡성을 해결하고 유지보수 효율성을 높이기 위해 대규모 리팩토링 및 표준화를 결정한 배경과 세부 전략을 기록합니다.
 지연 로딩(Lazy Loading) 방식으로 변경하고, 문서 구조를 평탄화합니다.

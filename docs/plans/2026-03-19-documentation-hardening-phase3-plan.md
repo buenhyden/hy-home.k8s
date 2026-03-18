@@ -1,67 +1,71 @@
-# Phase 3 Documentation Hardening Implementation Plan
+# Documentation Hardening Phase 3 Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Achieve 100% link integrity, frontmatter consistency, and template compliance across all 160+ documentation files.
+**Goal:** Achieve 100% documentation integrity across all core folders by fixing links, normalizing metadata, and ensuring template compliance.
 
-**Architecture:** Systematic remediation using batch processing. We will prioritize structural link fixes first, followed by frontmatter normalization, and final template alignment.
+**Architecture:** Systematic batch remediation using `sed` and `multi_replace_file_content` to apply surgical fixes. Verified by a Python-based link integrity scanner.
 
-**Tech Stack:** Shell (grep/sed), Markdown, YAML.
-
----
-
-### Task 1: Fix Reference & Link Integrity
-
-**Files:**
-- Modify: ~25 files identified in audit (e.g., `docs/runbooks/2026-03-07-sealed-secrets-local.md`, `docs/agentic/lifecycle.md`, etc.)
-
-**Step 1: Bulk update "MOVED" links**
-Update relative paths where files have been renamed (e.g., `../specs/2026-03-16-gitops-spec.md` -> `../specs/2026-03-16-gitops-spec.md` - check relative depth).
-
-**Step 2: Fix legitimate BROKEN links in runbooks**
-- Update `docs/runbooks/2026-03-07-sealed-secrets-local.md` to point to `./2026-03-07-local-gitops-argocd.md`.
-- Update `docs/runbooks/2026-03-19-incident-response-runbook.md` to point to `../operations/2026-03-19-incident-management.md`.
-
-**Step 3: Commit**
-```bash
-git add .
-git commit -m "docs: fix broken and moved links across documentation"
-```
+**Tech Stack:** Markdown, Shell (sed), Python (verification script)
 
 ---
 
-### Task 2: Frontmatter & Metadata Normalization
+### Task 1: Fix Persistent Broken Links
 
 **Files:**
-- Modify: All files in `docs/adr`, `docs/runbooks`, and `docs/operations`.
+- Modify: `docs/agentic/lifecycle.md`
+- Modify: `docs/manuals/README.md`
+- Modify: `docs/runbooks/2026-03-15-documentation-maintenance.md`
 
-**Step 1: Normalize YAML vs Markdown metadata**
-Ensure ADRs use the `title:`, `status:`, `date:`, `authors:`, `deciders:`, `tags:`, `layer:` YAML block AND the H1/Metadata block strictly as per `templates/adr-template.md`.
+**Step 1: Fix lifecycle.md malformed links**
+Replace corrupted bracket/parentheses links with clean targets.
 
-**Step 2: Sync Layer Metadata Formatting**
-Standardize `layer: 'infra'` (quoted/unquoted) and remove any duplicate `- layer:` items.
+**Step 2: Fix manuals/README.md root reference**
+Correct `../AGENTS.md` to `../../AGENTS.md`.
 
-**Step 3: Commit**
-```bash
-git add .
-git commit -m "docs: normalize frontmatter and metadata formatting"
-```
+**Step 3: Fix documentation-maintenance.md regex string**
+Remove `.*.md` and link to `2026-03-15-documentation-validation.md`.
+
+**Step 4: Verify links**
+Run: `python3 -c "import os; print(os.path.exists(\"docs/operations/2026-03-19-incident-management.md\"))"`
+Expected: True
+
+**Step 5: Commit**
+`git commit -m "docs: fix persistent broken links in lifecycle and manuals"`
 
 ---
 
-### Task 3: Template Alignment (Specs & Runbooks)
+### Task 2: ADR Metadata Normalization (Redundancy Cleanup)
 
 **Files:**
-- Modify: `docs/specs/*.md`, `docs/runbooks/*.md`.
+- Modify: `docs/adr/0000-lazy-loading-implementation.md`
+- Modify: `docs/adr/0001-k3d-local-cluster.md`
+- Modify: `docs/adr/0002-argocd-gitops.md`
+- Modify: `docs/adr/0003-documentation-taxonomy-standard.md`
+- Modify: `docs/adr/0004-documentation-refactor-decision.md`
+- Modify: `docs/adr/0005-documentation-normalization.md`
 
-**Step 1: Align Specs with `spec-template.md`**
-Ensure all specs have a "Verification" section and "Related Documents" list.
+**Step 1: Remove redundant layer tags**
+Ensure only one `layer:` tag exists in the YAML frontmatter and the H1 block follows the `Owner`/`Last Reviewed` standard.
 
-**Step 2: Align Runbooks with `runbook-template.md`**
-Ensure all runbooks have "Purpose", "Canonical References", and "Escalation Path" sections.
+**Step 2: Consolidate Authors/Deciders**
+Move individual author/decider fields to a single `Owner` field in the Markdown block to match the project standard.
 
 **Step 3: Commit**
-```bash
-git add .
-git commit -m "docs: align specs and runbooks with official templates"
-```
+`git commit -m "docs: normalize ADR metadata and remove redundant tags"`
+
+---
+
+### Task 3: Template Compliance (Missing Sections)
+
+**Files:**
+- Modify: `docs/ard/2026-03-16-agent-instruction-system-ard.md`
+
+**Step 1: Add Overview (KR)**
+Inject the missing Korean overview section after the metadata block.
+
+**Step 2: Final Verification Scan**
+Run the full Python link audit script.
+
+**Step 3: Commit**
+`git commit -m "docs: add missing Korean overview and finalize template compliance"`

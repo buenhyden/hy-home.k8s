@@ -13,7 +13,10 @@ layer: 'architecture'
 - **Scope**: master
 - **layer:** architecture
 
-**Overview (KR):** AI 에이전트가 리포지토리를 자율적으로 탐색하고 지침을 단계적으로 로드하기 위한 명세 및 아키텍처 구조를 정의합니다.
+**Overview (KR):** AI 에이전트가 리포지토리를 자율적으로 탐색하고 지침을 단계적으로 로드하기 위한 명세 및 아키텍처 구조를 정의합니다. 이를 통해 에이전트의 컨텍스트 관리를 최적화하고 일관된 동작을 보장합니다.
+
+## 1. Problem Statement
+@[/doc-coauthoring] (KR): AI 에이전트가 리포지토리를 자율적으로 탐색하고 지침을 단계적으로 로드하기 위한 명세 및 아키텍처 구조를 정의합니다.
 
 ## Summary
 

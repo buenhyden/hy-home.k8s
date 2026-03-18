@@ -11,11 +11,8 @@ layer: 'meta'
 # ADR 0003: Documentation Taxonomy and Metadata Standard
 
 - **Status**: Accepted
-- **Date**: 2026-03-15
-- **Scope**: master
-- **layer:** meta
-- **Authors**: buenhyden
-- **Deciders**: buenhyden
+- **Owner**: buenhyden
+- **Last Reviewed**: 2026-03-15
 
 **Overview (KR):** 리포지토리의 문서 체계를 flattened taxonomy로 전환하고, 모든 문서에 layer 메타데이터를 필수적으로 포함하도록 강제함.
 

@@ -53,5 +53,7 @@ grep -r "\[.*\](.*\.md)" docs/
 
 ## Canonical References
 
-- [do../ard/2026-03-16-documentation-system-ard.md](../ard/2026-03-16-documentation-system-ard.md)
+- Run the validation runbook: [2026-03-15-documentation-validation.md](./2026-03-15-documentation-validation.md)
+](./2026-03-15-documentation-validation.md)
 - [do../prd/2026-03-16-documentation-system-prd.md](../prd/2026-03-16-documentation-system-prd.md)
+```

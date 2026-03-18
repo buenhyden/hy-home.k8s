@@ -2,8 +2,6 @@
 title: 'ADR 0001: Local Development Cluster selection (k3d)'
 status: 'Accepted'
 date: '2026-02-27'
-authors: ['buenhyden']
-deciders: ['buenhyden']
 tags: ['adr', 'infra']
 layer: 'infra'
 ---
@@ -11,10 +9,8 @@ layer: 'infra'
 # ADR 0001: Local Development Cluster selection (k3d)
 
 - **Status**: Accepted
-- **Date**: 2026-02-27
-- **layer:** infra
-- **Authors:** buenhyden
-- **Deciders:** buenhyden
+- **Owner**: buenhyden
+- **Last Reviewed**: 2026-02-27
 
 **Overview (KR):** k3d를 사용한 로컬 개발용 Kubernetes 클러스터 구축 결정.
 
