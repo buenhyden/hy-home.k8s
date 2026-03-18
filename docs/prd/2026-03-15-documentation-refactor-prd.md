@@ -1,4 +1,15 @@
-# Documentation and Agent Framework Refactor Product Requirements Document (PRD)
+```
+---
+title: 'Documentation and Agent Framework Refactor PRD'
+status: 'Approved'
+target_version: 'v1.0.0'
+owner: 'buenhyden'
+stakeholders: ['buenhyden']
+tags: ['prd', 'meta']
+layer: 'meta'
+---
+
+# Documentation and Agent Framework Refactor PRD
 
 - **Status**: Approved
 - **Target Version**: v1.0.0

@@ -114,9 +114,13 @@ When working with ARDs:
 
 ## Index of ARDs
 
-| Document | Layer | Last Updated |
-| --- | --- | --- |
-| [k3d-cluster-ard](./2026-02-27-k3d-cluster-ard.md) | Central ARD | 2026-02-27 |
-| [architecture-checklist-ard](./2026-03-16-architecture-checklist-ard.md) | meta | 2026-03-01 |
+| Last Updated | Document | Description | Status |
+| --- | --- | --- | --- |
+| 2026-02-27 | [k3d-cluster-ard](./2026-02-27-k3d-cluster-ard.md) | Standard for local k3s/k3d cluster layout on WSL2. | Approved |
+| 2026-03-07 | [argocd-gitops-ard](./2026-03-07-argocd-gitops-ard.md) | GitOps and Sealed Secrets architecture. | Approved |
+| 2026-03-15 | [documentation-architecture-ard](./2026-03-15-documentation-architecture-ard.md) | Taxonomy and metadata standards for the repo. | Approved |
+| 2026-03-16 | [agent-instruction-system-ard](./2026-03-16-agent-instruction-system-ard.md) | AI agent collaboration and lazy-loading architecture. | Approved |
+| 2026-03-16 | [architecture-checklist-ard](./2026-03-16-architecture-checklist-ard.md) | Mandatory tech stack and structure checklist. | Approved |
+| 2026-03-16 | [documentation-system-ard](./2026-03-16-documentation-system-ard.md) | Flattened taxonomy and metadata requirements. | Approved |
 
 > Add entries to this index as ARDs are created.

@@ -1,6 +1,15 @@
+---
+title: 'Architecture & Tech Stack Checklist'
+status: 'Approved'
+owner: 'buenhyden'
+tags: ['ard', 'infra']
+layer: 'infra'
+---
+
 # Architecture & Tech Stack Checklist
 
 - **Status**: Approved
+- **Owner**: buenhyden
 - **layer:** infra
 
 **Overview (KR):** 새 프로젝트나 아키텍처 문서를 작성할 때 반드시 검토해야 할 기술 스택 및 구조적 체크리스트를 정의합니다.

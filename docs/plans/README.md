@@ -9,15 +9,15 @@ This directory contains implementation plans and roadmaps for various features a
 
 ## Index of Plans
 
-| Document | Scope | Status | Date |
+| Date | Plan | Scope | Status |
 | --- | --- | --- | --- |
-| [2026-03-12-agent-instruction-root-refactor](./2026-03-12-agent-instruction-root-refactor-plan.md) | domain | Completed | 2026-03-12 |
-| [2026-03-13-agent-instruction-refactor](./2026-03-13-agent-instruction-refactor-plan.md) | domain | Completed | 2026-03-13 |
-| [2026-03-16-infra-plan](./2026-03-16-infra-plan.md) | domain | Validated | 2026-03-16 |
-| [2026-03-16-gitops-plan](./2026-03-16-gitops-plan.md) | domain | Draft | 2026-03-16 |
-| [2026-03-16-migration-plan](./2026-03-16-migration-plan.md) | domain | Draft | 2026-03-16 |
-| [2026-03-16-refactor-baseline-plan](./2026-03-16-refactor-baseline-plan.md) | domain | Completed | 2026-03-16 |
-| [2026-03-16-doc-and-agent-refactor-plan](./2026-03-16-doc-and-agent-refactor-plan.md) | domain | Completed | 2026-03-16 |
-| [2026-03-16-formal-audit-remediation-plan](./2026-03-16-formal-audit-remediation-plan.md) | domain | In Progress | 2026-03-16 |
+| 2026-03-12 | [instruction-root-refactor](./2026-03-12-agent-instruction-root-refactor-plan.md) | domain | Completed |
+| 2026-03-13 | [instruction-refactor](./2026-03-13-agent-instruction-refactor-plan.md) | domain | Completed |
+| 2026-03-16 | [infra-plan](./2026-03-16-infra-plan.md) | domain | Validated |
+| 2026-03-16 | [gitops-plan](./2026-03-16-gitops-plan.md) | domain | Draft |
+| 2026-03-16 | [migration-plan](./2026-03-16-migration-plan.md) | domain | Draft |
+| 2026-03-16 | [refactor-baseline-plan](./2026-03-16-refactor-baseline-plan.md) | domain | Completed |
+| 2026-03-16 | [doc-and-agent-refactor-plan](./2026-03-16-doc-and-agent-refactor-plan.md) | domain | Completed |
+| 2026-03-16 | [formal-audit-remediation-plan](./2026-03-16-formal-audit-remediation-plan.md) | domain | In Progress |
 
 > Add entries to this index as plans are created.

@@ -127,9 +127,12 @@ When working with PRDs:
 
 ## Index of PRDs
 
-| Document | Layer | Status | Last Updated |
+| Date | PRD | Description | Status |
 | --- | --- | --- | --- |
-| [home-cluster-infra-prd](./2026-02-27-home-cluster-infra-prd.md) | infra | Approved | 2026-02-27 |
-| [argocd-gitops-prd](./2026-03-07-argocd-gitops-prd.md) | gitops | Draft | 2026-03-07 |
+| 2026-02-27 | [home-cluster-infra-prd](./2026-02-27-home-cluster-infra-prd.md) | Vision and core requirements for the k3d cluster. | Approved |
+| 2026-03-07 | [argocd-gitops-prd](./2026-03-07-argocd-gitops-prd.md) | Requirement for declarative GitOps with ArgoCD. | Approved |
+| 2026-03-15 | [documentation-refactor-prd](./2026-03-15-documentation-refactor-prd.md) | Requirements for the flat taxonomy and lazy loading. | Approved |
+| 2026-03-15 | [doc-and-agent-refactor-prd](./2026-03-15-doc-and-agent-refactor-prd.md) | Specifics for agent performance and instruction optimization. | Approved |
+| 2026-03-16 | [documentation-system-prd](./2026-03-16-documentation-system-prd.md) | Standardized metadata and taxonomy requirements. | Approved |
 
 > Add entries to this index as PRDs are created.

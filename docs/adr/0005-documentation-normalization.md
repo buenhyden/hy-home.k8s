@@ -1,3 +1,13 @@
+---
+title: 'ADR 0005: Normalized Documentation and Agent Entrypoints'
+status: 'Accepted'
+date: '2026-03-15'
+authors: ['buenhyden']
+deciders: ['buenhyden']
+tags: ['adr', 'architecture']
+layer: 'architecture'
+---
+
 # ADR 0005: Normalized Documentation and Agent Entrypoints
 
 - **Status**: Accepted

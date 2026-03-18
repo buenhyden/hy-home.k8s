@@ -1,9 +1,21 @@
+---
+title: 'ADR 0000: Lazy Loading Implementation for Agent Instructions'
+status: 'Accepted'
+date: '2026-03-16'
+authors: ['buenhyden']
+deciders: ['buenhyden']
+tags: ['adr', 'architecture']
+layer: 'architecture'
+---
+
 # ADR 0000: Lazy Loading Implementation for Agent Instructions
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-03-16
 - **Scope:** master
 - **layer:** architecture
+- **Authors:** buenhyden
+- **Deciders:** buenhyden
 
 **Overview (KR):** 에이전트 지침의 토큰 사용량을 최적화하기 위해 필요한 지침부만 선택적으로 로드하는 게이트웨이 방식의 Lazy Loading 메커니즘을 정의합니다.
 

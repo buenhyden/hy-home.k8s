@@ -98,6 +98,7 @@ When working with ADRs:
 
 | Number | Title | Layer | Status | Date |
 | --- | --- | --- | --- | --- |
+| 0000 | [lazy-loading-implementation](./0000-lazy-loading-implementation.md) | architecture | Accepted | 2026-03-15 |
 | 0001 | [k3d-local-cluster](./0001-k3d-local-cluster.md) | infra | Accepted | 2026-02-27 |
 | 0002 | [argocd-gitops](./0002-argocd-gitops.md) | gitops | Accepted | 2026-02-27 |
 | 0003 | [documentation-taxonomy-standard](./0003-documentation-taxonomy-standard.md) | meta | Proposed | 2026-03-15 |

@@ -1,7 +1,15 @@
+---
+title: 'ArgoCD GitOps Architecture Reference Document (ARD)'
+status: 'Approved'
+owner: 'buenhyden'
+tags: ['ard', 'gitops']
+layer: 'gitops'
+---
+
 # ArgoCD GitOps Architecture Reference Document (ARD)
 
 - **Status**: Approved
-- **Owner**: hy
+- **Owner**: buenhyden
 - **layer:** gitops
 - **PRD Reference**: [Link to PRD](../prd/2026-03-07-argocd-gitops-prd.md)
 - **ADR References**: [Link to ADRs](../adr/0002-argocd-gitops.md)

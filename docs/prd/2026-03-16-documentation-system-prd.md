@@ -1,3 +1,13 @@
+---
+title: 'Product Requirements Document (PRD): Documentation and Agent Instruction System'
+status: 'Approved'
+target_version: 'v1.0.0'
+owner: 'buenhyden'
+stakeholders: ['buenhyden']
+tags: ['prd', 'meta']
+layer: 'meta'
+---
+
 # Product Requirements Document (PRD): Documentation and Agent Instruction System
 
 - **Status**: Approved
