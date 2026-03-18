@@ -1,6 +1,19 @@
-# Service Runbook: Sealed Secrets (Local)
+---
+title: 'Runbook: Sealed Secrets (Local)'
+status: 'Active'
+date: '2026-03-07'
+owner: 'buenhyden'
+tags:
+  - runbook
+  - gitops
+layer: 'gitops'
+---
+
+# Runbook: Sealed Secrets (Local)
 
 - **Status**: Active
+- **Owner**: buenhyden
+- **Last Reviewed**: 2026-03-07
 - **layer:** gitops
 
 **Overview (KR):** 로컬 클러스터에서 민감한 정보를 안전하게 관리하기 위한 Sealed Secrets의 운영 및 복구 가이드입니다.
@@ -11,8 +24,8 @@
 
 ## Canonical References
 
-- [docs/specs/2026-03-16-gitops-spec.md](../specs/2026-03-16-gitops-spec.md)
-- [docs/runbooks/local-gitops-argocd.md](./local-gitops-argocd.md)
+- [do../specs/2026-03-16-gitops-spec.md](../specs/2026-03-16-gitops-spec.md)
+- [docs/runbook./2026-03-07-local-gitops-argocd.md](./2026-03-07-local-gitops-argocd.md)
 
 ## 1. Service Overview & Ownership
 

@@ -1,10 +1,20 @@
 ---
-status: Active
-owner: buenhyden
-layer: meta
+title: 'Runbook: Documentation Maintenance'
+status: 'Active'
+date: '2026-03-15'
+owner: 'buenhyden'
+tags:
+  - runbook
+  - operation
+layer: 'meta'
 ---
 
-# Documentation Maintenance Runbook
+# Runbook: Documentation Maintenance
+
+- **Status**: Active
+- **Owner**: buenhyden
+- **Last Reviewed**: 2026-03-15
+- **layer:** meta
 
 **Overview (KR):** 프로젝트 문서의 일관성을 유지하고, March 2026 표준을 지속적으로 준수하기 위한 운영 절차서입니다.
 
@@ -43,5 +53,5 @@ grep -r "\[.*\](.*\.md)" docs/
 
 ## Canonical References
 
-- [docs/ard/2026-03-16-documentation-system-ard.md](../ard/2026-03-16-documentation-system-ard.md)
-- [docs/prd/2026-03-16-documentation-system-prd.md](../prd/2026-03-16-documentation-system-prd.md)
+- [do../ard/2026-03-16-documentation-system-ard.md](../ard/2026-03-16-documentation-system-ard.md)
+- [do../prd/2026-03-16-documentation-system-prd.md](../prd/2026-03-16-documentation-system-prd.md)

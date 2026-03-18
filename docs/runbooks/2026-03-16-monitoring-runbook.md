@@ -1,6 +1,19 @@
-# Monitoring Runbook
+---
+title: 'Runbook: Monitoring'
+status: 'Active'
+date: '2026-03-16'
+owner: 'buenhyden'
+tags:
+  - runbook
+  - operation
+layer: 'ops'
+---
+
+# Runbook: Monitoring
 
 - **Status**: Active
+- **Owner**: buenhyden
+- **Last Reviewed**: 2026-03-16
 - **layer:** ops
 
 **Overview (KR):** 서비스 상태를 지속적으로 모니터링하고 알람 발생 시 비정상 징후를 추적하기 위한 운영 절차입니다.

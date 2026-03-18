@@ -1,6 +1,19 @@
-# Service Runbook: ArgoCD (Local)
+---
+title: 'Runbook: ArgoCD (Local)'
+status: 'Active'
+date: '2026-03-07'
+owner: 'buenhyden'
+tags:
+  - runbook
+  - gitops
+layer: 'gitops'
+---
+
+# Runbook: ArgoCD (Local)
 
 - **Status**: Active
+- **Owner**: buenhyden
+- **Last Reviewed**: 2026-03-07
 - **layer:** gitops
 
 **Overview (KR):** 로컬 환경의 ArgoCD 서비스 상태 확인 및 문제 해결을 위한 운영 가이드입니다.

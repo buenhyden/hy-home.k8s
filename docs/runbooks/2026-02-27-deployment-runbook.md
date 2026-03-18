@@ -1,6 +1,19 @@
-# Deployment Runbook
+---
+title: 'Runbook: Deployment'
+status: 'Active'
+date: '2026-02-27'
+owner: 'buenhyden'
+tags:
+  - runbook
+  - operation
+layer: 'ops'
+---
+
+# Runbook: Deployment
 
 - **Status**: Active
+- **Owner**: buenhyden
+- **Last Reviewed**: 2026-02-27
 - **layer:** ops
 
 **Overview (KR):** 인프라 또는 서비스 변경 사항을 대상 환경에 안전하게 배포하기 위한 표준 절차서입니다.

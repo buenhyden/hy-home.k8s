@@ -1,6 +1,19 @@
+---
+title: 'Runbook: Documentation Management'
+status: 'Active'
+date: '2026-03-15'
+owner: 'buenhyden'
+tags:
+  - runbook
+  - operation
+layer: 'meta'
+---
+
 # Runbook: Documentation Management
 
 - **Status**: Active
+- **Owner**: buenhyden
+- **Last Reviewed**: 2026-03-15
 - **layer:** meta
 
 **Overview (KR):** 리포지토리의 문서 분류 체계(Taxonomy)를 유지관리하고 일원화된 구조를 점검하기 위한 지침입니다.
@@ -11,8 +24,8 @@ The **Planner Agent** and **DevOps Agent** are responsible for maintaining the d
 
 ## Canonical References
 
-- [docs/ard/2026-03-16-documentation-system-ard.md](../ard/2026-03-16-documentation-system-ard.md)
-- [docs/specs/2026-03-16-documentation-system-spec.md](../specs/2026-03-16-documentation-system-spec.md)
+- [do../ard/2026-03-16-documentation-system-ard.md](../ard/2026-03-16-documentation-system-ard.md)
+- [do../specs/2026-03-16-documentation-system-spec.md](../specs/2026-03-16-documentation-system-spec.md)
 
 ## 2. Integrity Checks
 

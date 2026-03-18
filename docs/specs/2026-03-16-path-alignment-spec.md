@@ -33,6 +33,12 @@ layer: "meta"
 - `CLAUDE.md`: Lightweight entrypoint, delegating rules.
 - `GEMINI.md`: Lightweight entrypoint, delegating rules.
 
+## 3. Verification
+
+- [ ] Run `grep -r "layer:" docs/` to verify metadata coverage.
+- [ ] Run `ls docs/operations/` to verify date-prefix enforcement.
+- [ ] Check `docs/operations/README.md` for broken relative links.
+
 ## Related Documents
 
 - [docs/adr/0005-documentation-normalization.md](../adr/0005-documentation-normalization.md)

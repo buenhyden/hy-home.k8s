@@ -1,6 +1,19 @@
-# Service Runbook: Local GitOps (ArgoCD App-of-Apps)
+---
+title: 'Runbook: Local GitOps (ArgoCD App-of-Apps)'
+status: 'Active'
+date: '2026-03-07'
+owner: 'buenhyden'
+tags:
+  - runbook
+  - gitops
+layer: 'gitops'
+---
+
+# Runbook: Local GitOps (ArgoCD App-of-Apps)
 
 - **Status**: Active
+- **Owner**: buenhyden
+- **Last Reviewed**: 2026-03-07
 - **layer:** gitops
 
 **Overview (KR):** 로컬 클러스터에서 ArgoCD App-of-Apps 패턴을 이용한 선언적 운영 및 트러블슈팅 절차를 설명합니다.

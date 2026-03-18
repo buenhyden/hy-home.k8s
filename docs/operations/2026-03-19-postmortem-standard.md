@@ -4,15 +4,17 @@ status: 'Approved'
 owner: 'buenhyden'
 tags: ['standard', 'operation']
 layer: 'ops'
+lastReviewed: '2026-03-19'
 ---
 
 # Postmortem Standard
 
-- **Status**: Approved
+- **Status**: Active
 - **Owner**: buenhyden
+- **Last Reviewed**: 2026-03-19
 - **layer:** ops
 
-**Overview (KR):** 장애 복구 후 재발 방지와 지식 공유를 위해 작성하는 포스트모텀(사후 분석 리포트)의 작성 기준 및 결과 검토 프로세스를 정의합니다.
+**Overview (KR):** 장애 사후 분석을 위한 표준 절차와 템플릿 사용법을 정의합니다.
 
 ## 1. Purpose
 
@@ -33,5 +35,5 @@ All postmortems MUST use `templates/postmortem-template.md` and be stored in `do
 
 ## Related Documents
 
-- [docs/operations/incident-management.md](./incident-management.md)
-- [docs/runbooks/deployment-runbook.md](../runbooks/deployment-runbook.md)
+- [Incident Management](./2026-03-19-incident-management.md)
+- [Deployment Runbook](../runbooks/2026-02-27-deployment-runbook.md)

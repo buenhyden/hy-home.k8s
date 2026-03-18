@@ -11,8 +11,8 @@ This directory contains long-term strategic operations documentation and histori
 
 | Document | Description | Status |
 | --- | --- | --- |
-| [Incident Management](./incident-management.md) | Standard for SEV definitions and lifecycle. | Approved |
-| [Postmortem Standard](./postmortem-standard.md) | Standard for root cause analysis and resolution. | Approved |
+| [Incident Management](./2026-03-19-incident-management.md) | Standard for SEV definitions and lifecycle. | Approved |
+| [Postmortem Standard](./2026-03-19-postmortem-standard.md) | Standard for root cause analysis and resolution. | Approved |
 
 ## Historical Records
 

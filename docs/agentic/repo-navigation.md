@@ -7,14 +7,13 @@ Human-readable repo map that matches the runtime navigation rules.
 
 ## Key Locations
 
-- Root contract: [AGENTS.md](../AGENTS.md)
+- Root contract: [AGENTS.md](../../AGENTS.md)
 - Claude runtime entrypoint: [CLAUDE.md](CLAUDE.md)
 - Gemini runtime entrypoint: [GEMINI.md](GEMINI.md)
-- Runtime rules: [rules/](rules/)
-- Repo docs: [docs/](../docs/)
-- Templates: [templates/](../templates/)
-- Rules: [../.agent/rules/](../.agent/rules/)
-- Workflows: [../.agent/workflows/](../.agent/workflows/)
+- Runtime rules: [rules/](./rules/)
+- Runtime scopes: [scopes/](./scopes/)
+- Repo docs: [docs/](../)
+- Templates: [templates/](../../templates/)
 
 ## Confirmed Safe Commands
 

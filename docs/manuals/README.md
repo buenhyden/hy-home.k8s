@@ -17,4 +17,4 @@ This directory contains deep-dive manuals and standards for specific domains.
 
 ## Governance
 
-Refer to [AGENTS.md](../AGENTS.md) for the root contract governing AI agent behavior.
+Refer to [AGENTS.md](../../AGENTS.md) for the root contract governing AI agent behavior.

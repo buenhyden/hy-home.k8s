@@ -13,6 +13,8 @@ layer: 'architecture'
 - **Scope**: master
 - **layer:** architecture
 
+**Overview (KR):** AI 에이전트가 리포지토리를 자율적으로 탐색하고 지침을 단계적으로 로드하기 위한 명세 및 아키텍처 구조를 정의합니다.
+
 ## Summary
 
 The Agent Instruction System is the primary governance layer for Human-AI collaboration in the `hy-home.k8s` repository. It is designed to be high-performance (low token overhead) and strictly spec-compliant.

@@ -10,11 +10,12 @@ layer: 'architecture'
 
 # ADR 0005: Normalized Documentation and Agent Entrypoints
 
-- **Status**: Accepted
-- **Date**: 2026-03-15
-- **layer:** architecture
+- **Status**: Active
+- **Owner**: buenhyden
+- **Last Reviewed**: 2026-03-16
+- **layer:** meta
 
-**Overview (KR):** 리포지토리의 문서 경로를 표준화하고 AI 에이전트의 진입점을 경량화하여 지시사항의 모듈화와 관리 효율성을 극대화하기로 결정함.
+**Overview (KR):** 파편화된 문서들을 하나의 표준(Flat hierarchy, Metadata compliance, Naming convention)으로 통합하고 검증하는 최종 프로세스를 정의합니다.
 
 ## Context
 
