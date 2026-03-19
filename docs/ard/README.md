@@ -1,8 +1,8 @@
 ---
 layer: "meta"
 ---
-- **Status**: Approved
-- **layer:** meta
+
+# ARD
 
 - **Status**: Approved
 - **layer:** meta

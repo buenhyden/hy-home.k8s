@@ -13,9 +13,10 @@ layer: "meta"
 
 ---
 
-### Task 1: Reference & Link Integrity (All Folders)
+## Task 1: Reference & Link Integrity (All Folders)
 
 **Files:**
+
 - Modify: `docs/**/README.md`
 - Modify: `docs/**/*.md` (Specific files with broken links)
 
@@ -30,14 +31,16 @@ Target: `docs/adr/README.md`, `docs/ard/README.md`.
 Target: `docs/specs/README.md`.
 
 **Step 4: Commit**
+
 ```bash
 git add docs/
 git commit -m "docs: fix broken relative links and index indices"
 ```
 
-### Task 2: ID Uniqueness & Metadata Normalization
+## Task 2: ID Uniqueness & Metadata Normalization
 
 **Files:**
+
 - Modify: All files in `docs/{adr,ard,prd,specs,plans,runbooks,operations}`
 
 **Step 1: Scan for duplicate IDs in frontmatter**
@@ -50,14 +53,16 @@ Update frontmatter for colliding files.
 Run: `grep -L "layer:" docs/**/*.md`
 
 **Step 4: Commit**
+
 ```bash
 git add docs/
 git commit -m "docs: normalize document IDs and enforce layer metadata"
 ```
 
-### Task 3: Naming Convention & Template Compliance
+## Task 3: Naming Convention & Template Compliance
 
 **Files:**
+
 - Rename: Files in `docs/` not matching `YYYY-MM-DD-title.md` (except ADRs)
 - Modify: Files in `docs/operations/` and `docs/runbooks/` to match templates.
 
@@ -71,6 +76,7 @@ Ensure `Overview (KR)`, `Prerequisites`, and `Verification` sections exist.
 Ensure `Timeline`, `RCA`, and `Action Items` exist for postmortems.
 
 **Step 4: Commit**
+
 ```bash
 git add docs/
 git commit -m "docs: enforce naming conventions and template structures"

@@ -1,10 +1,7 @@
 ---
 layer: "meta"
 ---
----
 
-layer: "meta"
----
 
 # Claude Context
 

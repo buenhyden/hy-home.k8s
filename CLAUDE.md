@@ -35,7 +35,7 @@ Claude-specific entrypoint for `hy-home.k8s`. Primary rules are lazily loaded fr
 
 All documentation follows a **type-first, flattened hierarchy**:
 
-```
+```text
 docs/
 ├── agentic/          # AI governance, rules, scopes (gateway: agent-instructions.md)
 ├── adr/              # Architectural Decision Records
@@ -48,6 +48,7 @@ docs/
 ```
 
 **Key Rules**:
+
 - Execution documents use **plural paths** (`specs/`, `plans/`, `runbooks/`).
 - Every document must include `layer:` metadata (meta, infra, gitops, app, ops).
 - All documents must use templates in `templates/`.

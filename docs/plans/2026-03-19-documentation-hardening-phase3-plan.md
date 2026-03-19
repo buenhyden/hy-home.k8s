@@ -13,9 +13,10 @@ layer: "meta"
 
 ---
 
-### Task 1: Fix Persistent Broken Links
+## Task 1: Fix Persistent Broken Links
 
 **Files:**
+
 - Modify: `docs/agentic/lifecycle.md`
 - Modify: `docs/manuals/README.md`
 - Modify: `docs/runbooks/2026-03-15-documentation-maintenance.md`
@@ -38,9 +39,10 @@ Expected: True
 
 ---
 
-### Task 2: ADR Metadata Normalization (Redundancy Cleanup)
+## Task 2: ADR Metadata Normalization (Redundancy Cleanup)
 
 **Files:**
+
 - Modify: `docs/adr/0000-lazy-loading-implementation.md`
 - Modify: `docs/adr/0001-k3d-local-cluster.md`
 - Modify: `docs/adr/0002-argocd-gitops.md`
@@ -59,9 +61,10 @@ Move individual author/decider fields to a single `Owner` field in the Markdown 
 
 ---
 
-### Task 3: Template Compliance (Missing Sections)
+## Task 3: Template Compliance (Missing Sections)
 
 **Files:**
+
 - Modify: `docs/ard/2026-03-16-agent-instruction-system-ard.md`
 
 **Step 1: Add Overview (KR)**

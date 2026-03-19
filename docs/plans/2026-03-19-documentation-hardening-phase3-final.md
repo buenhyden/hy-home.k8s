@@ -13,15 +13,17 @@ layer: "meta"
 
 ---
 
-### Task 1: Fix Persistent Broken Links
+## Task 1: Fix Persistent Broken Links
 
 **Files:**
+
 - Modify: `docs/agentic/lifecycle.md:90-95`
 - Modify: `docs/manuals/README.md:18-22`
 - Modify: `docs/runbooks/2026-03-15-documentation-maintenance.md:23-26`
 
 **Step 1: Repair lifecycle.md links**
 Fix malformed bracket/parentheses syntax.
+
 - Target: `Documentation Validation` -> `../operations/2026-03-15-documentation-validation.md`
 - Target: `Incident Management` -> `../operations/2026-03-19-incident-management.md`
 
@@ -40,9 +42,10 @@ Expected: PASS
 
 ---
 
-### Task 2: Metadata & ID Normalization
+## Task 2: Metadata & ID Normalization
 
 **Files:**
+
 - Modify: `docs/adr/0000-lazy-loading-implementation.md`
 - Modify: `docs/adr/0001-k3d-local-cluster.md`
 - Modify: `docs/adr/0002-argocd-gitops.md`
@@ -64,9 +67,10 @@ Ensure only one `layer:` tag exists in the file (keep the one in YAML frontmatte
 
 ---
 
-### Task 3: Template Compliance & Korean Overview
+## Task 3: Template Compliance & Korean Overview
 
 **Files:**
+
 - Modify: `docs/ard/2026-03-16-agent-instruction-system-ard.md`
 
 **Step 1: Add missing Overview (KR)**

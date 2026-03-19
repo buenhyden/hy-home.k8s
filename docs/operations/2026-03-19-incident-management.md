@@ -13,7 +13,6 @@ layer: 'ops'
 - **Last Reviewed**: 2026-03-19
 - **layer:** ops
 
-
 ## 1. Definition of SEV
 
 - **SEV-1**: Production baseline down. Permanent resource loss.

@@ -1,8 +1,4 @@
 ---
-layer: "meta"
----
-```
----
 title: 'Documentation and Agent Framework Refactor PRD'
 status: 'Approved'
 target_version: 'v1.0.0'

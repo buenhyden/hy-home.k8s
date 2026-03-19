@@ -1,10 +1,7 @@
 ---
 layer: "meta"
 ---
----
 
-layer: "meta"
----
 
 # Contributor Covenant Code of Conduct
 
