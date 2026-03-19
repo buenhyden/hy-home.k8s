@@ -1,3 +1,6 @@
+---
+layer: "ops"
+---
 # Runbooks Agent Instructions
 
 **Bias**: Executable steps, precise commands, and deterministic outcomes.

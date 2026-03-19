@@ -1,3 +1,6 @@
+---
+layer: "app"
+---
 # Technical Specifications Hub (`specs/`)
 
 - **Status**: Approved

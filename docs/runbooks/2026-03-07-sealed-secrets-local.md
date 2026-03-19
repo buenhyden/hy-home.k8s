@@ -24,7 +24,7 @@ layer: 'gitops'
 
 ## Canonical References
 
-- [do../specs/2026-03-16-gitops-spec.md](../specs/2026-03-16-gitops-spec.md)
+- [../specs/2026-03-16-gitops-spec.md](../specs/2026-03-16-gitops-spec.md)
 - [docs/runbook./2026-03-07-local-gitops-argocd.md](./2026-03-07-local-gitops-argocd.md)
 
 ## 1. Service Overview & Ownership

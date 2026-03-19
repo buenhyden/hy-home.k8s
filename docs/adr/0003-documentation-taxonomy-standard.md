@@ -8,7 +8,7 @@ tags: ['adr', 'meta']
 layer: 'meta'
 ---
 
-# ADR 0003: Documentation Taxonomy and Metadata Standard
+# ADR: Documentation Taxonomy and Metadata Standard - 0003
 
 - **Status**: Accepted
 - **Owner**: buenhyden

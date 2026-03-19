@@ -6,7 +6,7 @@ tags: ['adr', 'architecture']
 layer: 'architecture'
 ---
 
-# ADR 0000: Lazy Loading Implementation for Agent Instructions
+# ADR: Lazy Loading Implementation for Agent Instructions - 0000
 
 - **Status**: Accepted
 - **Owner**: buenhyden

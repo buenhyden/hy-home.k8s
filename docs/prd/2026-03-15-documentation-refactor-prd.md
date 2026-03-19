@@ -1,3 +1,6 @@
+---
+layer: "meta"
+---
 ```
 ---
 title: 'Documentation and Agent Framework Refactor PRD'

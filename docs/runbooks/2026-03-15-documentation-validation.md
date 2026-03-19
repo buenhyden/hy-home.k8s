@@ -25,7 +25,7 @@ Ensure all documentation follows the March 2026 standards for metadata and pathi
 ## Canonical References
 
 - [AGENTS.md](../../AGENTS.md)
-- [do../adr/0005-documentation-normalization.md](../adr/0005-documentation-normalization.md)
+- [../adr/0005-documentation-normalization.md](../adr/0005-documentation-normalization.md)
 
 ## Review Checklist
 

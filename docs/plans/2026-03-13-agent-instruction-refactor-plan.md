@@ -1,3 +1,6 @@
+---
+layer: "meta"
+---
 # Agent Instruction Files Refactor Plan
 
 - **Status**: Completed

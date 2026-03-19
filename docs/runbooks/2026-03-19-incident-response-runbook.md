@@ -85,5 +85,5 @@ Standard response process for production incidents with clear roles and cadence.
 
 ## Canonical References
 
-- [do../operations/2026-03-19-incident-management.md](../operations/2026-03-19-incident-management.md)
-- [do../operations/2026-03-19-postmortem-standard.md](../operations/2026-03-19-postmortem-standard.md)
+- [../operations/2026-03-19-incident-management.md](../operations/2026-03-19-incident-management.md)
+- [../operations/2026-03-19-postmortem-standard.md](../operations/2026-03-19-postmortem-standard.md)

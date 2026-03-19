@@ -24,8 +24,8 @@ The **Planner Agent** and **DevOps Agent** are responsible for maintaining the d
 
 ## Canonical References
 
-- [do../ard/2026-03-16-documentation-system-ard.md](../ard/2026-03-16-documentation-system-ard.md)
-- [do../specs/2026-03-16-documentation-system-spec.md](../specs/2026-03-16-documentation-system-spec.md)
+- [../ard/2026-03-16-documentation-system-ard.md](../ard/2026-03-16-documentation-system-ard.md)
+- [../specs/2026-03-16-documentation-system-spec.md](../specs/2026-03-16-documentation-system-spec.md)
 
 ## 2. Integrity Checks
 

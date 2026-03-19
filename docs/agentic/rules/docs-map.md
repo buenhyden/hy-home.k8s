@@ -1,3 +1,6 @@
+---
+layer: "meta"
+---
 # Docs Map
 
 - `docs/`: durable project knowledge only, never runtime code or scripts

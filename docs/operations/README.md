@@ -1,20 +1,23 @@
-# Strategic Operations (`docs/operations/`)
+---
+layer: "meta"
+---
+# Manuals & Guides (`docs/manuals/`)
 
 - **Status**: Approved
 - **layer:** meta
 
-**Overview (KR):** 인프라 운영의 전략적 청사진과 관리 표준을 정의하는 디렉토리입니다.
+**Overview (KR):** 에이전트 및 사용자를 위한 운영 가이드, 규정 및 보안 지침서 모음입니다.
 
-This directory contains long-term strategic operations documentation and historical records.
+This directory contains deep-dive manuals and standards for specific domains.
 
-## Standards and Guidelines
+## Available Manuals
 
-| Document | Description | Status |
-| --- | --- | --- |
-| [Incident Management](./2026-03-19-incident-management.md) | Standard for SEV definitions and lifecycle. | Approved |
-| [Postmortem Standard](./2026-03-19-postmortem-standard.md) | Standard for root cause analysis and resolution. | Approved |
+- [Collaboration Guide](./collaboration-guide.md): Git branch strategies and PR rules.
+- [Operations Guide](./operations-guide.md): Standard operating procedures for the cluster.
+- [Observability Standard](./observability-standard.md): Logging and metrics requirements.
+- [QA & Security Guide](./qa-security-guide.md): Security baseline and testing requirements.
+- [Deployment Strategy](./deployment-strategy.md): Blue/Green and Canary release patterns.
 
-## Historical Records
+## Governance
 
-- [Incidents](./incidents/): Historical incident reports and logs.
-- [Postmortems](./postmortems/): Past postmortem documents and RCA.
+Refer to [AGENTS.md](../../AGENTS.md) for the root contract governing AI agent behavior.

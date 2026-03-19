@@ -1,11 +1,19 @@
+---
+title: 'GitOps (ArgoCD) Implementation Spec'
+status: 'Draft'
+date: '2026-03-16'
+owner: 'buenhyden'
+tags: ['gitops', 'spec']
+layer: 'gitops'
+---
+
 # GitOps (ArgoCD) Implementation Spec
 
 - **Status**: Draft
-- **Version**: 1.0
 - **layer:** gitops
-- **PRD Reference**: [../prd/2026-03-07-argocd-gitops-prd.md](../prd/2026-03-07-argocd-gitops-prd.md)
-- **Architecture- **ARD Reference**: [Link to ARD](../ard/2026-03-07-argocd-gitops-ard.md)
-- **Architecture Decisions (ADRs)**: [Link to ADRs](../adr/0002-argocd-gitops.md)
+- **PRD Reference**: [2026-03-07-argocd-gitops-prd.md](../prd/2026-03-07-argocd-gitops-prd.md)
+- **ARD Reference**: [2026-03-07-argocd-gitops-ard.md](../ard/2026-03-07-argocd-gitops-ard.md)
+- **ADR Reference**: [0002-argocd-gitops.md](../adr/0002-argocd-gitops.md)
 
 **Overview (KR):** ArgoCD와 Sealed Secrets를 이용한 선언적 인프라 배포 시스템의 기술 규격 및 구현 상세를 설명합니다.
 
@@ -37,8 +45,8 @@
 
 ## Related Documents
 
-- [docs/ard/2026-03-07-argocd-gitops-ard.md](../ard/2026-03-07-argocd-gitops-ard.md)
-- [docs/prd/2026-03-07-argocd-gitops-prd.md](../prd/2026-03-07-argocd-gitops-prd.md)
+- [2026-03-07-argocd-gitops-ard.md](../ard/2026-03-07-argocd-gitops-ard.md)
+- [2026-03-07-argocd-gitops-prd.md](../prd/2026-03-07-argocd-gitops-prd.md)
 | Performance     | Are Core Web Vitals/Latency metrics targeted?  | Must     | Convergence goal | Section 8        |
 | Accessibility   | Is WCAG compliance integrated (contrast/ARIA)? | Must     | N/A             | Section 8         |
 

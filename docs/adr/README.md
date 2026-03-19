@@ -1,3 +1,6 @@
+---
+layer: "meta"
+---
 # Architecture Decision Records (ADR)
 
 This directory contains Architecture Decision Records for the project. ADRs document significant architectural decisions along with their context and consequences.**Overview (KR):** 본 문서는 프로젝트의 아키텍처 결정 레코드(ADR) 목록과 상태를 관리하는 중앙 인덱스입니다.

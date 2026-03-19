@@ -8,7 +8,7 @@ tags: ['adr', 'architecture']
 layer: 'architecture'
 ---
 
-# ADR 0005: Normalized Documentation and Agent Entrypoints
+# ADR: Normalized Documentation and Agent Entrypoints - 0005
 
 - **Status**: Active
 - **Owner**: buenhyden

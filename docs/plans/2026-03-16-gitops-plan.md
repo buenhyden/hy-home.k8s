@@ -1,3 +1,12 @@
+---
+title: 'ArgoCD GitOps Deployment Plan'
+status: 'Planned'
+date: '2026-03-16'
+owner: 'buenhyden'
+tags: ['gitops', 'plan']
+layer: 'gitops'
+---
+
 # ArgoCD GitOps Deployment Plan
 
 - **Status**: Planned
@@ -81,8 +90,6 @@ This plan implements GitOps for the local WSL2 + k3d cluster using ArgoCD and Se
 - [ ] Verification checks passed
 - [ ] Documentation updated
 
-## Related Documents
-
-- **PRD**: [docs/prd/2026-03-07-argocd-gitops-prd.md](../prd/2026-03-07-argocd-gitops-prd.md)
-- **Spec**: `specs/gitops/spec.md`
-- **ADR**: [docs/adr/0002-argocd-gitops.md](../adr/0002-argocd-gitops.md)
+- **PRD**: [2026-03-07-argocd-gitops-prd.md](../prd/2026-03-07-argocd-gitops-prd.md)
+- **Spec**: [2026-03-16-gitops-spec.md](../specs/2026-03-16-gitops-spec.md)
+- **ADR**: [0002-argocd-gitops.md](../adr/0002-argocd-gitops.md)

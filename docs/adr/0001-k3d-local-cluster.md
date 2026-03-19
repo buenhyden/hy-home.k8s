@@ -6,7 +6,7 @@ tags: ['adr', 'infra']
 layer: 'infra'
 ---
 
-# ADR 0001: Local Development Cluster selection (k3d)
+# ADR: Local Development Cluster selection (k3d) - 0001
 
 - **Status**: Accepted
 - **Owner**: buenhyden

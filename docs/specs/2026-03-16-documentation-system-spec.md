@@ -1,6 +1,14 @@
+---
+title: 'Spec: Documentation System Implementation'
+status: 'Approved'
+date: '2026-03-16'
+owner: 'buenhyden'
+tags: ['spec', 'meta']
+layer: 'meta'
+---
+
 # Spec: Documentation System Implementation
 
-- **Status**: Approved
 - **Status**: Approved
 - **layer:** meta
 
@@ -47,20 +55,5 @@ This spec defines the mechanical changes required to implement the flattened doc
 
 ## Related Documents
 
-- [docs/prd/2026-03-16-documentation-system-prd.md](../prd/2026-03-16-documentation-system-prd.md)
-- [docs/ard/2026-03-16-documentation-system-ard.md](../ard/2026-03-16-documentation-system-ard.md)
-
-### 2.4 Governance Files
-
-- **CONTRIBUTING.md**: Add a check for `layer:` metadata in the PR requirements.
-- **ARCHITECTURE.md**: Update links to point to flattened `docs/` paths.
-
-## Related Documents
-
-- [docs/prd/2026-03-16-documentation-system-prd.md](../prd/2026-03-16-documentation-system-prd.md)
-- [docs/ard/2026-03-16-documentation-system-ard.md](../ard/2026-03-16-documentation-system-ard.md)
-
-## Related Documents
-
-- [docs/prd/2026-03-16-documentation-system-prd.md](../prd/2026-03-16-documentation-system-prd.md)
-- [docs/ard/2026-03-16-documentation-system-ard.md](../ard/2026-03-16-documentation-system-ard.md)
+- [2026-03-16-documentation-system-prd.md](../prd/2026-03-16-documentation-system-prd.md)
+- [2026-03-16-documentation-system-ard.md](../ard/2026-03-16-documentation-system-ard.md)

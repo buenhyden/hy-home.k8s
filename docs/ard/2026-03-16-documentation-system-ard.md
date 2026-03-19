@@ -1,3 +1,12 @@
+---
+title: 'Architecture Reference Document: Documentation System'
+status: 'Approved'
+date: '2026-03-16'
+owner: 'buenhyden'
+tags: ['ard', 'meta']
+layer: 'meta'
+---
+
 # Architecture Reference Document: Documentation System
 
 - **Status**: Approved
@@ -27,5 +36,5 @@ Every markdown file MUST include YAML frontmatter with a `layer` key identifying
 
 ## Related Documents
 
-- [docs/prd/2026-03-16-documentation-system-prd.md](../prd/2026-03-16-documentation-system-prd.md)
-- [docs/specs/2026-03-16-documentation-system-spec.md](../specs/2026-03-16-documentation-system-spec.md)
+- [2026-03-16-documentation-system-prd.md](../prd/2026-03-16-documentation-system-prd.md)
+- [2026-03-16-documentation-system-spec.md](../specs/2026-03-16-documentation-system-spec.md)

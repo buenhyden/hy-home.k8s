@@ -1,3 +1,6 @@
+---
+layer: "meta"
+---
 # PRD Agent Instructions
 
 **Bias**: User intent, measurable outcomes, and explicit scope boundaries.

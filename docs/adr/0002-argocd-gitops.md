@@ -8,7 +8,7 @@ tags: ['adr', 'gitops']
 layer: 'gitops'
 ---
 
-# ADR 0002: GitOps Controller Selection (ArgoCD)
+# ADR: GitOps Controller Selection (ArgoCD) - 0002
 
 - **Status**: Accepted
 - **Date**: 2026-02-27

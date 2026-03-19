@@ -1,3 +1,6 @@
+---
+layer: "meta"
+---
 # Agent Instructions Hub
 
 **Bias**: Use this subtree for durable project knowledge. Keep file category and `layer:` metadata correct.

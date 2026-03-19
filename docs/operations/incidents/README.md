@@ -1,3 +1,6 @@
+---
+layer: "ops"
+---
 # Incident Reports (`docs/operations/incidents/`)
 
 - **Status**: Approved

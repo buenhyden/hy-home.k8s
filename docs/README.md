@@ -1,3 +1,6 @@
+---
+layer: "meta"
+---
 # Documentation Hub (`docs/`)
 
 This directory contains the durable project knowledge for the `hy-home.k8s` repository.

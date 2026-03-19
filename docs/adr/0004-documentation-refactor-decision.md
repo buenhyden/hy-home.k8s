@@ -8,7 +8,7 @@ tags: ['adr', 'documentation']
 layer: 'meta'
 ---
 
-# ADR 0004: Documentation Refactor and Hub Consolidation
+# ADR: Documentation Refactor and Hub Consolidation - 0004
 
 - **Status**: Decided
 - **Owner**: buenhyden
