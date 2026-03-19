@@ -10,7 +10,7 @@ Human-readable governance companion for the runtime rules under [rules/](rules/)
 - `AGENTS.md` is the cross-agent root contract.
 - `.claude/` is the primary shared detail layer for agent-facing documentation.
 - Nearest scoped files under `docs/` provide subtree-specific local guidance.
-- Project manuals under [docs/operations/](../operations/) remain the human-facing process layer.
+- Project manuals in [docs/operations/](../operations/) contain the human-facing processes.
 
 ## Canonical Paths
 
@@ -22,7 +22,7 @@ Human-readable governance companion for the runtime rules under [rules/](rules/)
 - Incidents: [docs/operations/incidents/](../operations/incidents/)
 - Runbooks: [docs/runbooks/](../runbooks/) (Flattened with `layer:` metadata)
 - Operations: [docs/operations/](../operations/)
-- Templates: [templates/](../templates/)
+- Templates: [templates/](../../templates/)
 - **Collaborative Writing**: [collaboration-guide.md](../operations/collaboration-guide.md).
 - **Quality Assurance**: [qa-security-guide.md](../operations/qa-security-guide.md).
 - **Documentation Validation**: [2026-03-15-documentation-validation.md](../runbooks/2026-03-15-documentation-validation.md).

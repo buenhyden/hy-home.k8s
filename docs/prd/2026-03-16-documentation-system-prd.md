@@ -21,7 +21,7 @@ layer: 'meta'
 
 ## 1. Goal
 
-Establish a high-trust, low-overhead documentation and automation framework that enables both human operators and AI agents to maintain a complex Kubernetes homelab with zero ambiguity.
+Establish a reliable documentation and automation framework for human-AI collaboration in this Kubernetes homelab.
 
 ## 2. Requirements
 

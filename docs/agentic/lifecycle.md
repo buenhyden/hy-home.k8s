@@ -3,7 +3,7 @@ layer: "meta"
 ---
 # Agent Lifecycle
 
-Human-readable lifecycle companion for document work in this repository.
+Guidelines for managing documents throughout the development lifecycle.
 
 ## Pre-Development
 
@@ -13,14 +13,14 @@ Human-readable lifecycle companion for document work in this repository.
 ## During-Development
 
 - Goal: implement only against approved specs and document any architectural drift.
-- Main sources: [docs/specs/](../specs/), [docs/plans/](../plans/), [qa-security-guide.md](../operations/qa-security-guide.md), [.agent/workflows/](../.agent/workflows/).
+- Main sources: [docs/specs/](../specs/), [docs/plans/](../plans/), [qa-security-guide.md](../operations/qa-security-guide.md), [.agent/workflows/](../../.agent/workflows/).
 
 ## Post-Development
 
 - Goal: verify correctness, operational impact, and handoff readiness.
 - **Collaborative Writing**: [collaboration-guide.md](../operations/collaboration-guide.md).
-- **Quality Assurance**: [docs/specs/](../specs/), [docs/plans/](../plans/), [qa-security.md](../specs/qa-security.md).
-- **Documentation Validation**: [2026-03-15-documentation-validation.md](../operations/2026-03-15-documentation-validation.md).
+- **Quality Assurance**: [docs/specs/](../specs/), [docs/plans/](../plans/), [qa-security-guide.md](../operations/qa-security-guide.md).
+- **Documentation Validation**: [2026-03-15-documentation-validation.md](../runbooks/2026-03-15-documentation-validation.md).
 - **Incident Management**: [2026-03-19-incident-management.md](../operations/2026-03-19-incident-management.md).
 
 ## Handoff Rules

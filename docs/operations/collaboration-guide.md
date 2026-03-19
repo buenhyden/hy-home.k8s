@@ -1,28 +1,28 @@
 ---
-layer: "manual"
+layer: "ops"
 ---
-# Development Process & Collaboration Guide
+# Working Agreements & Collaboration Guide
 
-*Description: This document defines the team's working agreements, development processes, and collaboration SLAs.*
+This guide defines how we work together, our development processes, and our communication rules.
 
-## 1. Development Process & Collaboration Checklist
+## 1. Collaboration Checklist
 
-Please fill out the following agreed-upon points before initiating significant development work.
+Use this checklist to establish clear expectations before starting any major development.
 
-| Category | Check Question | Priority | Notes / Agreements |
+| Category | Requirement | Priority | Agreements |
 | --- | --- | --- | --- |
-| **Development Process** | Has it been agreed which process to use (Scrum, Kanban, Hybrid, etc.)? | **Mandatory** | |
-| **Sprint Operations** | Are the sprint length and routines (planning/daily/review/retro) defined? | *Optional* | |
-| **Issue Management** | Is the issue tracking tool and its mandatory fields (labels, status) defined? | **Mandatory** | |
-| **Branch Strategy** | Has the branching strategy (Git Flow, GitHub Flow, Trunk-based) been decided? | **Mandatory** | |
-| **Merge Policy** | Is direct push to main/trunk prohibited, and are protected branch settings agreed upon? | **Mandatory** | |
-| **Code Review Rules** | Are minimum reviewer counts and mandatory check items (tests, security, perf) defined? | **Mandatory** | |
-| **PR Size Limits** | Is there a guideline for the appropriate size of a PR (e.g., max lines, scope)? | *Optional* | |
-| **Definition of Done (DoD)** | Is there a checklist (tests, docs) required for a feature to be considered "Done"? | **Mandatory** | |
-| **Definition of Ready (DoR)** | Is the minimum required info (ACs, spec) defined before starting development? | *Optional* | |
-| **Communication Channels** | Are official channels (Slack/Teams/Mail) and expected response SLAs established? | **Mandatory** | |
-| **Decision Making** | Is the final decision-making structure (PO, Tech Lead) for technical disputes defined? | **Mandatory** | |
+| **Process** | Which methodology (Scrum, Kanban, etc.)? | **Mandatory** | |
+| **Rhythm** | Sprint length and meeting routines? | *Optional* | |
+| **Tracking** | Tool and mandatory fields (labels, status)? | **Mandatory** | |
+| **Branches** | Branching strategy (Git Flow, Trunk, etc.)? | **Mandatory** | |
+| **Merging** | Protected branches and push policies? | **Mandatory** | |
+| **Reviews** | Minimum reviewers and mandatory checks? | **Mandatory** | |
+| **PR Size** | Max lines or scope limit? | *Optional* | |
+| **DoD** | Definition of Done (tests, docs)? | **Mandatory** | |
+| **DoR** | Definition of Ready (ACs, spec)? | *Optional* | |
+| **SLA** | Primary channels and response times? | **Mandatory** | |
+| **Lead** | Final decision maker for disputes? | **Mandatory** | |
 
-## 2. Additional Collaboration Guidelines
+## 2. Specific Project Notes
 
-[Add any project-specific coding conventions, meeting schedules, or escalation paths here]
+Add any unique coding conventions, meeting schedules, or escalation paths here.
