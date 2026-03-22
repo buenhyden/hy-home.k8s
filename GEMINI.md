@@ -3,15 +3,16 @@ layer: "meta"
 ---
 # GEMINI.md
 
-Gemini-specific entrypoint for `hy-home.k8s`. Primary rules are lazily loaded from the gateway.
+Gemini-specific entrypoint for `hy-home.k8s`. Optimized for Google Gemini agents.
 
 ## 1. Instruction Routing
 
 - **Shared Contract**: [AGENTS.md](AGENTS.md)
-- **Central Gateway**: [docs/agentic/agent-instructions.md](docs/agentic/agent-instructions.md)
+- **Gateway**: [docs/agentic/agent-instructions.md](docs/agentic/agent-instructions.md)
 
-## 2. Model Constraints
+## 2. Model Constraints & Context
 
-- **Context Awareness**: Maintain k3d/WSL2 context awareness.
-- **Metadata Compliance**: Strictly follow `layer:` metadata requirements.
-- **Skill Usage**: Proactively use appropriate skills without restriction.
+- **WSL2/k3d Awareness**: Always operationalize commands for a WSL2/k3d environment.
+- **Metadata Compliance**: Strictly enforce `layer:` frontmatter in all documentation.
+- **Skill Usage**: Proactively use high-level skills (e.g., `writing-plans`, `producing-docs`) without prompts.
+- **Korean Responses**: Unless specified otherwise, provide summaries and explanations in Korean.
