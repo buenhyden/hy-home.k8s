@@ -10,7 +10,7 @@
 > - Keep the document decision-focused. Do not turn ADRs into implementation specs.
 > - Allowed ADR status values: `Accepted | Superseded | Deprecated`.
 > - Allowed scope values where your doc set uses them: `master | domain | historical`.
-> - Allowed scope values layer values: `common | architecture | backend | frontend | infra | mobile | product | qa | security`
+> - Allowed layer values: `meta | infra | gitops | app | ops`
 > - Keep all structural and narrative content in English.
 > - Add exactly one `Overview (KR)` summary near the top. That overview summary alone should be written in Korean.
 >
@@ -29,7 +29,7 @@ date: 'YYYY-MM-DD'
 authors: ['buenhyden']
 deciders: ['buenhyden']
 tags: ['adr', '<topic>']
-layer: '<layer>'
+layer: 'app' # meta | infra | gitops | app | ops
 ---
 ```
 
@@ -42,7 +42,7 @@ Use frontmatter when the surrounding doc set already uses it. Skip it when the a
 - **Status:** [Accepted | Superseded | Deprecated]
 - **Date:** YYYY-MM-DD
 - **Scope:** [master | domain | historical]
-- **layer:** [common | architecture | backend | frontend | infra | mobile | product | qa | security]
+- **layer:** [meta | infra | gitops | app | ops]
 - **Authors:** [Optional]
 - **Deciders:** [Optional]
 
@@ -58,6 +58,16 @@ Use this when the ADR is primarily establishing a boundary, naming a policy, or 
 
 [Explain the context, the current conflict or limitation, and why a formal decision is needed now.]
 
+### Assumptions
+
+- [Assumption 1: e.g., We assume the traffic will remain under 10k RPS.]
+- [Assumption 2: e.g., We assume the current infrastructure supports IPv6.]
+
+### Explicit Non-goals
+
+- [Non-goal 1: e.g., This decision does not cover the billing migration.]
+- [Non-goal 2: e.g., We are not replacing the primary SQL database yet.]
+
 ## Decision
 
 - [Decision point 1]
@@ -68,6 +78,19 @@ Use this when the ADR is primarily establishing a boundary, naming a policy, or 
 
 - [Positive consequence 1]
 - [Trade-off or limitation 1]
+
+## Success Criteria
+
+- [Metric/Result 1: e.g., Build time reduced by 20%.]
+- [Metric/Result 2: e.g., Zero reported P0 security incidents related to this flow.]
+
+## Risks and Mitigations
+
+- **[Risk 1]**: [Impact description] -> **Mitigation**: [How to prevent/fix]
+
+## Open Questions
+
+- [Unresolved item 1: e.g., Final selection of the logging sidecar is pending.]
 
 ## Related
 
