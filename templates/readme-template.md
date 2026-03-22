@@ -1,166 +1,140 @@
-# README Template
-
-> Use this template when creating README.md for new projects or major features.
-
+---
+layer: "{meta|infra|gitops|app|ops}"
 ---
 
-# {Project Name}
+# {Project or Folder Name}
 
+<!-- ROOT ONLY: Badges and high-level status -->
+<!--
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Version](https://img.shields.io/badge/version-1.0.0-green.svg)
+-->
 
-> One-line project description that clearly states what this project does.
+> {A concise one-line description that clearly states the purpose of this project or directory.}
 
 ## Overview
 
-Brief paragraph explaining:
+{Provide a brief paragraph explaining what problem this project/folder solves, its target audience, and key features.}
 
-- What problem does this project solve?
-- Who is the target audience?
-- What are the key features?
-
+<!-- ROOT ONLY: High-level technical summary -->
 ## Tech Stack
 
 | Category   | Technology                        |
 | ---------- | --------------------------------- |
 | Language   | {TypeScript / Python / Go / etc.} |
-| Framework  | {Next.js / FastAPI / etc.}        |
-| Database   | {PostgreSQL / MongoDB / etc.}     |
-| Deployment | {Docker / Kubernetes / etc.}      |
+| Framework  | {k3s / ArgoCD / etc.}             |
+| Database   | {PostgreSQL / etc.}               |
+| Deployment | {k3d / Flux / etc.}               |
 
-## Prerequisites
+---
 
-List all required tools and versions:
+## Scope & Context (Folder Only)
 
-- Node.js >= 18.x
-- npm >= 9.x or pnpm >= 8.x
-- Docker >= 24.x (optional)
+<!-- FOLDER ONLY: Define the boundaries and responsibilities of this specific directory -->
+- **Purpose**: {What is the primary role of this folder?}
+- **Layer**: {Which architectural layer does this belong to (infra, app, etc.)?}
+- **Relationship to Root**: {How does this interact with the global system?}
 
-## Quick Start
+## Prerequisites (Root Only)
 
-### 1. Clone and Install
+- {Tool} >= {Version}
+- {Tool} >= {Version}
 
+## Quick Start (Root or Feature Entry)
+
+### 1. {First Step}
 ```bash
-git clone https://github.com/org/{project-name}.git
-cd {project-name}
-npm install
+{command}
 ```
 
-### 2. Environment Setup
-
+### 2. {Second Step}
 ```bash
-cp .env.example .env
-# Edit .env with your values
+{command}
 ```
 
-### 3. Run Development Server
+---
 
-```bash
-npm run dev
+## Technical Reference
+
+### Architecture
+{Describe the architecture or component boundaries. Use Mermaid diagrams where helpful.}
+
+```mermaid
+graph TD
+    A[Component A] --> B[Component B]
+    B --> C[Data Store]
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+### Request Lifecycle / Data Flow
+1. {Step 1}
+2. {Step 2}
+
+### Database / Schema (If applicable)
+{List key tables or entities.}
+
+---
 
 ## Project Structure
 
-This project follows an AI-Agent-managed, Spec-Driven Development structure:
-
+<!-- ROOT ONLY: Comprehensive structure -->
+<!--
 ```text
-{project-name}/
+.
 ├── .agent/             # AI Agent rules, workflows, and prompts
-├── .github/            # CI/CD workflows and repository templates
-├── app/                # Native application source
-├── server/             # Backend services and API source
-├── web/                # Web frontend application source
-├── docs/               # Project documentation (PRD, ADR, ARD, Guides, Manuals)
-├── operations/         # Operation definitions and infrastructure
-├── runbooks/           # Operational, incident, and deployment runbooks
-├── scripts/            # Utility and automation scripts
-├── specs/              # Implementation Plans, Specs, and API Contracts
-├── templates/          # Markdown templates for engineering and product
-├── tests/              # Unit and Integration test suites
-├── AGENTS.md           # Multi-Agent governance and persona guide
-├── ARCHITECTURE.md     # High-level system blueprints and principles
-├── OPERATION.md       # Target environment and deployment baseline
-├── llms.txt            # System context for prompt construction
-├── .env.example        # Environment template
+├── docs/               # Project documentation (ADR, PRD, Specs)
+├── infrastructure/     # Host and cluster configurations (Terraform, k3d)
+├── gitops/             # ArgoCD application manifests
+├── app/                # Application logic and manifests
+├── scripts/            # Automation and utility scripts
+├── templates/          # Standardized templates
+└── README.md           # This file
+```
+-->
+
+<!-- FOLDER ONLY: Local structure -->
+```text
+{folder-name}/
+├── {subfolder}/        # {description}
+├── {file}.yaml         # {description}
 └── README.md           # This file
 ```
 
-## Available Scripts
+---
 
-| Command          | Description              |
-| ---------------- | ------------------------ |
-| `npm run dev`    | Start development server |
-| `npm run build`  | Build for production     |
-| `npm run test`   | Run test suite           |
-| `npm run lint`   | Run linter               |
-| `npm run format` | Format code              |
+## Operations
 
-## Configuration
+### Available Scripts
+| Command | Description |
+| ------- | ----------- |
+| `{script}` | {description} |
 
-### Environment Variables
+### Configuration
+| Variable | Required | Description |
+| -------- | -------- | ----------- |
+| `{VAR_NAME}` | {Yes/No} | {description} |
 
-| Variable       | Required | Description                          |
-| -------------- | -------- | ------------------------------------ |
-| `DATABASE_URL` | Yes      | Database connection string           |
-| `API_KEY`      | Yes      | External API authentication key      |
-| `NODE_ENV`     | No       | Environment (development/production) |
-
-## Extensibility & Documentation
-
-Ensure you read the governance files before contributing or generating code via AI Agents:
-
-- [🤖 Multi-Agent Governance](./AGENTS.md)
-- [🏛️ System Architecture](./ARCHITECTURE.md)
-- [⚙️ Operations Baseline](./OPERATION.md)
-- [📝 Specifications & API Contracts](./specs/)
-- [📚 Product & Arch Docs](./docs/)
-- [🤝 Contributor Guide](./CONTRIBUTING.md)
-
-## Testing
-
+### Testing
 ```bash
-# Run all tests
-npm run test
-
-# Run with coverage
-npm run test:coverage
-
-# Run specific test file
-npm run test -- path/to/test.spec.ts
+{test-command}
 ```
 
-## Deployment
-
-### Docker
-
+### Deployment
 ```bash
-# Build image
-docker build -t {project-name}:latest .
-
-# Run container
-docker run -p 3000:3000 --env-file .env {project-name}:latest
+{deploy-command}
 ```
 
-### Production Checklist
+---
 
-- [ ] All environment variables are set
-- [ ] Database migrations are applied
-- [ ] SSL/TLS is enabled
-- [ ] Logging is configured
-- [ ] Health check endpoint is accessible
+## Extensibility & Governance
 
-## Contributing
+Before contributing, read the governing documents:
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- [🤖 Multi-Agent Governance](./AGENTS.md) (or relative path to root)
+- [🏛️ System Architecture](./ARCHITECTURE.md) (or relative path to root)
+- [📝 Specifications](./docs/specs/) (or relative path to root)
 
-See [COLLABORATING.md](./COLLABORATING.md) and [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines.
+## Troubleshooting
+{Common issues and their resolutions.}
 
 ## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+{License details}
