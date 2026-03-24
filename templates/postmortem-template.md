@@ -1,6 +1,6 @@
 # Postmortem: [Short Incident Title]
 
-> Use this template for `docs/operations/postmortems/YYYY-MM-DD-<slug>.md`.
+> Use this template for `docs/postmortems/YYYY-MM-DD-<slug>.md`.
 >
 > Repository-derived contract:
 >
@@ -8,7 +8,7 @@
 > - Use relative links only.
 > - Remove every placeholder before saving.
 > - Allowed postmortem status values: `Resolved | Archived`.
-> - Allowed scope values layer values: `common | architecture | backend | frontend | infra | mobile | product | qa | security`
+> - Allowed scope values layer values: `meta | infra | gitops | app | ops`
 > - Keep the tone blameless and system-focused.
 > - A postmortem should explain why the system allowed the incident, not just what command fixed it.
 > - Keep all structural and narrative content in English.
@@ -50,7 +50,7 @@ layer: '<layer>'
 | **Severity**          | `[SEV-1                                 | SEV-2 | SEV-3]` |
 | **Status**            | `Resolved`                              |
 | **Incident Document** | `[../incidents/YYYY-MM-DD-incident.md]` |
-| **layer:** |  [common \| architecture \| backend \| frontend \| infra \| mobile \| product \| qa \| security]|
+| **layer:** |  [meta \| infra \| gitops \| app \| ops]|
 
 ## 2. Impact
 

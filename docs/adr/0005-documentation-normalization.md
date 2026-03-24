@@ -42,6 +42,20 @@ The repository had fragmented documentation paths and bloated agent entrypoints 
 ## Consequences
 
 - Agents must now identify their task scope to load the correct instructions.
+- Reduced "hallucination" by limiting context to relevant scopes.
+
+## Architecture Decision Log (ADL)
+
+| ID | Decision | Impact | Status |
+| :--- | :--- | :--- | :--- |
+| **ADL-01** | Automated metadata validation | Prevents doc drift | **Deferred** to V2 |
+| **ADL-02** | Multi-lingual sync for all docs | Consistency for global team | **In-Progress** |
+
+## Technical Debt Assessment
+
+- **Score**: 2/10 (Low)
+- **Rationale**: The normalization reduces "path debt" but introduces a dependency on agent scope identification logic.
+- **Remediation**: Establish a fallback "global" scope for unknown tasks.
 
 ## Related Documents
 

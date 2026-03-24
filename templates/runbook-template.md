@@ -1,147 +1,59 @@
-# Runbook: [Service or Workflow Name]
-
-> Use this template for `docs/runbooks/<topic>.md`.
->
-> Repository-derived contract:
->
-> - Use exactly one meaningful H1.
-> - Use relative links only.
-> - Remove every placeholder before saving.
-> - Prefer direct, executable guidance over long background explanation.
-> - Allowed runbook status values: `Active | Deprecated | Archived`.
-> - Allowed scope values layer values: `common | architecture | backend | frontend | infra | mobile | product | qa | security`
-> - If this runbook depends on canonical docs, link them explicitly near the top.
-> - Keep all structural and narrative content in English.
-> - Add exactly one `Overview (KR)` summary near the top. That overview summary alone should be written in Korean.
->
-> Shape guidance:
->
-> - Use the checklist form for repeatable review workflows such as active `docs/` validation runbooks.
-> - Use the extended troubleshooting form for operational investigation and recovery workflows such as `docs/runbooks/content-pipeline-verification.md`.
-
-## Optional Frontmatter
-
-```yaml
 ---
-title: 'Runbook: [Service or Workflow Name]'
-status: 'Active'
-date: 'YYYY-MM-DD'
-owner: '[Repository Owner or Responsible Maintainer]'
-tags:
-  - runbook
-  - operation
-layer: '<layer>'
+layer: "ops"
 ---
-```
+# Runbook (RUNBOOK.md)
 
-## H1 and Metadata
+_Target Location: `docs/runbooks/<topic>.md`_
+_Description: A step-by-step operational guide for resolving specific issues or managing recurring tasks. It prioritizes actionable steps over background theory._
 
-# Runbook: [Service or Workflow Name]
+## Overview (KR)
+이 문서는 특정 장애 상황의 해결 방법이나 반복적인 운영 작업의 절차를 정의합니다. 증상별 진단 방법, 단계별 조치 사항, 그리고 에스컬레이션 경로를 포함합니다.
 
-- **Status**: [Active | Deprecated | Archived]
-- **Owner**: [Repository Owner or Responsible Maintainer]
-- **Last Reviewed**: [YYYY-MM-DD or `N/A`]
-- **layer:** [common | architecture | backend | frontend | infra | mobile | product | qa | security]
+---
 
-**Overview (KR):** [Write a 1-2 sentence Korean summary of the operational problem this runbook addresses and when maintainers should use it.]
+## 1. Runbook Metadata
 
-## Required Core Sections
+- **Title**: [Issue or Task Name]
+- **Status**: [Active | Deprecated]
+- **On-Call Role**: [Primary / Secondary Contact]
+- **layer**: [meta | infra | gitops | app | ops]
 
-## Purpose
+## 2. Severity & Impact Matrix (Senior)
 
-[Describe what operational problem this runbook solves and when maintainers should use it.]
+| Severity | Description | SLA (Response) |
+| :--- | :--- | :--- |
+| **SEV-1** | Critical outage (e.g., Main API down) | 15 mins |
+| **SEV-2** | Significant disruption (e.g., 50% increase in latency) | 1 hour |
+| **SEV-3** | Minor issue / Non-blocking bug | 24 hours |
 
-## Canonical References
+## 3. Diagnosis & Symptoms Check
 
-- `[../adr/NNNN-decision.md]`
-- `[../ard/system-or-domain-ard.md]`
-- `[../prd/feature-or-system-prd.md]`
-- `[../specs/YYYY-MM-DD-feature.md]`
-- `[../plans/YYYY-MM-DD-feature.md]`
+| Symptom | Probable Cause | Diagnostic Command |
+| :--- | :--- | :--- |
+| **504 Gateway Timeout** | Backend pod crash / overload | `kubectl get pods -n <ns>` |
+| **High Latency** | DB Lock / Resource exhaustion | `kubectl top pod <pod>` |
+| **Auth Failures** | OIDC Provider / Secret expiry | `kubectl logs <auth-pod>` |
 
-## Procedure or Checklist
+## 4. Remediation Procedure (Step-by-Step)
 
-Choose one of the two approved shapes below.
+### Step 1: Initial Triage
+- [ ] Check Grafana Dashboard: [Link]
+- [ ] List recent deployments: `git log --oneline -n 5`
 
-### Checklist form
+### Step 2: Resolution Action
+- **Action A**: [e.g., Restart pods]
+- **Action B**: [e.g., Scale up replica count]
 
-## Review Checklist
+## 5. Automation & Tooling
+[List scripts or CLI tools that help automate this runbook.]
+- **Cleanup Script**: `scripts/cleanup-tmp.sh`
+- **Verification Tool**: `npm run test:prod`
 
-- [ ] [Check 1]
-- [ ] [Check 2]
-- [ ] [Check 3]
+## 6. Escalation Path
+1. **Developer**: [Name/Slack Name]
+2. **Platform/SRE**: `#ops-critical`
+3. **Management**: [Name]
 
-### Procedure form
-
-## Investigation Procedure
-
-1. [Investigation step 1]
-2. [Investigation step 2]
-3. [Investigation step 3]
-
-## Verification Steps
-
-- [ ] [Verification command or manual check 1]
-- [ ] [Verification command or manual check 2]
-- [ ] [Verification command or manual check 3]
-
-## Related Operational Documents
-
-- **Incident examples**: `[../operations/incidents/YYYY-MM-DD-example-incident.md]`
-- **Postmortem examples**: `[../operations/postmortems/YYYY-MM-DD-example-postmortem.md]`
-
-## Optional Extended Sections
-
-## When to Use This Runbook
-
-- [Use case 1]
-- [Use case 2]
-- [Use case 3]
-
-## Service or Workflow Overview
-
-- **Description**: [Describe the workflow or service]
-- **Owner Team**: [Responsible owner]
-- **Primary Contact**: [Slack handle, local maintainer, or team]
-
-## Dependencies
-
-| Dependency   | Type                                     | Impact if Unavailable | Related Runbook        |
-| ------------ | ---------------------------------------- | --------------------- | ---------------------- |
-| [Dependency] | [Runtime / Build / Toolchain / External] | [Impact]              | `[./other-runbook.md]` |
-
-## Observability and Evidence Sources
-
-- **Primary signals**: [Logs, CI output, build errors, dashboards, browser errors]
-- **Alert or failure trigger**: [Describe the trigger condition]
-- **Evidence to capture**: [List the evidence to keep]
-
-## Common Failure Scenarios
-
-### Scenario A: [Failure Name]
-
-- **Symptoms**: [What the maintainer sees]
-- **Likely Cause**: [Most likely explanation]
-- **Remediation**:
-  - [ ] [Action 1]
-  - [ ] [Action 2]
-
-### Scenario B: [Failure Name]
-
-- **Symptoms**: [What the maintainer sees]
-- **Likely Cause**: [Most likely explanation]
-- **Remediation**:
-  - [ ] [Action 1]
-  - [ ] [Action 2]
-
-## Safe Rollback or Recovery Procedure
-
-- [ ] **Step 1**: [Recovery step]
-- [ ] **Step 2**: [Recovery step]
-- [ ] **Step 3**: [Recovery step]
-
-## Escalation Path
-
-1. **Primary**: [Owner or on-call]
-2. **Secondary**: [Lead or domain maintainer]
-3. **Final escalation**: [Management, broader team, or N/A]
+## 7. Evidence & Verification
+- [ ] Log entry created in `docs/incidents/`?
+- [ ] Post-remediation health check passed?

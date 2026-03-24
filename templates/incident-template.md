@@ -1,6 +1,6 @@
 # Incident: INC-YYYYMMDD-XXX / [Short Incident Title]
 
-> Use this template for `docs/operations/incidents/YYYY-MM-DD-<slug>.md`.
+> Use this template for `docs/incidents/YYYY-MM-DD-<slug>.md`.
 >
 > Repository-derived contract:
 >
@@ -8,7 +8,7 @@
 > - Use relative links only.
 > - Remove every placeholder before saving.
 > - Allowed incident status values: `Investigating | Identified | Mitigating | Monitoring | Resolved | Closed`.
-> - Allowed scope values layer values: `common | architecture | backend | frontend | infra | mobile | product | qa | security`
+> - Allowed scope values layer values: `meta | infra | gitops | app | ops`
 > - Prefer UTC timestamps, and include local time only if it helps the maintainer.
 > - This document tracks live or recently resolved response work, not blameless analysis.
 > - Keep all structural and narrative content in English.
@@ -59,7 +59,7 @@ layer: '<layer>'
 | **Affected Dependencies** | [Key dependency or `N/A`]                              |
 | **Evidence Source**       | [CI log, local command output, dashboard, user report] |
 | **Runbook Link**          | `[../../runbooks/<related-runbook>.md]`                |
-| **layer:** |  [common \| architecture \| backend \| frontend \| infra \| mobile \| product \| qa \| security]|
+| **layer:** |  [meta \| infra \| gitops \| app \| ops]|
 
 ## Incident Summary
 

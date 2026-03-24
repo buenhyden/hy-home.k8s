@@ -9,7 +9,7 @@
 > - Remove every placeholder before saving.
 > - Allowed PRD status values: `Approved | Superseded | Deprecated`.
 > - Allowed scope values where your doc set uses them: `master | domain | historical`.
-> - Allowed scope values layer values: `common | architecture | backend | frontend | infra | mobile | product | qa | security`
+> - Allowed scope values layer values: `meta | infra | gitops | app | ops`
 > - `domain` documents should name their parent master PRD where applicable.
 > - Keep all structural and narrative content in English.
 > - Add exactly one `Overview (KR)` summary near the top. That overview summary alone should be written in Korean.
@@ -39,7 +39,7 @@ layer: '<layer>'
 > **Owner**: [Repository Owner]
 > **Stakeholders**: [Repository Owner, Frontend Engineer]
 > **Scope**: [master | domain | historical]
-> **layer:** [common | architecture | backend | frontend | infra | mobile | product | qa | security]
+> **layer:** [meta | infra | gitops | app | ops]
 > **Parent Epic**: [N/A or parent PRD] (Optional)
 > **Parent Master PRD**: `[./system-master-prd.md]` (Optional for `domain`)
 

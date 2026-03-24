@@ -22,7 +22,8 @@ layer: "meta"
 | `docs/plans/` | Planner | `docs/agentic/scopes/plans.md` | `0102`, `0114`, `0115` |
 | `docs/runbooks/` | DevOps / SRE | `docs/agentic/scopes/runbooks.md` | `0300`, `0325`, `0335` |
 | `docs/incidents/` | SRE | `docs/agentic/scopes/incidents.md` | `0380`, `0381` |
-| `docs/operations/` | DevOps / SRE | `docs/agentic/scopes/operations.md` | `0301`, `2600` |
+| `docs/postmortems/` | SRE | `docs/agentic/scopes/operations.md` | `0380`, `0385` |
+| `docs/manuals/` | End User / Dev | `docs/agentic/scopes/operations.md` | `0301`, `2100`, `2600` |
 
 ---
 

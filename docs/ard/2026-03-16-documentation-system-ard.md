@@ -28,7 +28,38 @@ All documents are organized by type at the root `docs/` level:
 - `specs/`: Technical Specifications
 - `plans/`: Phased Execution Plans
 - `runbooks/`: Operational Procedures
-- `operations/`: Operational Strategies and Team Manuals
+- `manuals/`: System manuals, Collaboration, and Governance
+- `incidents/`: Incident Reports
+- `postmortems/`: System Postmortems
+
+## 3. High-Level Design (C4 Context)
+
+```mermaid
+graph TD
+    User["Team Member / Agent"]
+    Hub["Docs Hub (docs/README.md)"]
+    TypeFolder["Type-based Folders (adr, ard, specs, ...)"]
+    Metadata["Layer Metadata Logic"]
+
+    User --> Hub
+    Hub --> TypeFolder
+    TypeFolder --> Metadata
+```
+
+## 4. Resilience & Failure Modes
+
+### Failure Scenarios
+
+| Failure Mode | Impact | Mitigation Strategy |
+| :--- | :--- | :--- |
+| **Recursive Linking** | Agent loop / Token bloat | Use relative paths; restrict link depth |
+| **Metadata Drift** | Automated filtering fails | CI gate to validate `layer:` field |
+| **Taxonomy Overlap** | Confusion on where to place docs | Clear definitions in `manuals/README.md` |
+
+## 5. Scaling Triggers
+
+- **Trigger 1**: Subdirectory count in `docs/` > 20 -> Re-evaluate hierarchy.
+- **Trigger 2**: Individual file size > 500 lines -> Enforce **Index Pattern**.
 
 ## 3. Mandatory Metadata
 

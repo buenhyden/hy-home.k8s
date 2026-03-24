@@ -15,10 +15,9 @@ Documentation is organized by type at the root level. Use the `layer:` metadata 
 - [ADRs](./adr/): Architecture Decision Records (The **Why**)
 - [ARDs](./ard/): Architecture Reference Documents
 - [Runbooks](./runbooks/): Operator Procedures
-- [Manuals](./manuals/): End-user or system manuals
-- [Operations](./operations/): Strategic Operations Blueprints
-- [Incidents](./operations/incidents/): Incident Reports
-- [Postmortems](./operations/postmortems/): System Postmortems
+- [Manuals](./manuals/): System manuals, Collaboration, and Governance
+- [Incidents](./incidents/): Incident Reports
+- [Postmortems](./postmortems/): System Postmortems
 
 ## Guidelines
 

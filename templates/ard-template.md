@@ -1,177 +1,89 @@
-# [System or Domain Name] Architecture Reference Document (ARD)
-
-> Use this template for `docs/ard/YYYY-MM-DD-<system-or-domain>.md`.
->
-> Repository-derived contract:
->
-> - Use exactly one meaningful H1.
-> - Use relative links only.
-> - Remove every placeholder before saving.
-> - Keep ARDs architectural. File-level implementation detail belongs in the Spec.
-> - Allowed ARD status values: `Approved | Superseded | Deprecated`.
-> - Allowed scope values where your doc set uses them: `master | domain | historical`.
-> - Allowed scope values layer values: `common | architecture | backend | frontend | infra | mobile | product | qa | security`
-> - `domain` documents should name their parent master ARD where applicable.
-> - Keep all structural and narrative content in English.
-> - Add exactly one `Overview (KR)` summary near the top. That overview summary alone should be written in Korean.
-
-## Optional Frontmatter
-
-```yaml
 ---
-title: '[System or Domain Name] Architecture Reference Document'
-status: 'Approved'
-owner: 'buenhyden'
-scope: 'master'
-parent_ard: '../ard/system-master-ard.md'
-prd_reference: '../prd/feature-or-system-prd.md'
-tags: ['ard', '<topic>']
-layer: '<layer>'
+layer: "meta"
 ---
-```
+# Architecture Reference Document (ARD)
 
-## H1 and Metadata
+_Target Location: `docs/ard/YYYY-MM-DD-<system-or-domain>.md`_
+_Description: This document serves as the canonical technical authority for a system or domain boundary. It defines the 'What' and 'Why' of the architecture, leaving the 'How' to Implementation Specs._
 
-# [System or Domain Name] Architecture Reference Document
+## Overview (KR)
+이 문서는 특정 시스템 또는 도메인의 아키텍처 표준을 정의합니다. 시스템의 경계, 상호작용 모델, 그리고 주요 아키텍처 결정을 포함하며 전체 플랫폼 내에서의 역할을 명시합니다.
+
+---
+
+## 1. Metadata & Status
 
 - **Status**: [Approved | Superseded | Deprecated]
-- **Owner**: [Repository Owner]
+- **Owner**: [Repository Owner / Team]
 - **Scope**: [master | domain | historical]
-- **layer:** [common | architecture | backend | frontend | infra | mobile | product | qa | security]
-- **Parent Master ARD**: `[../ard/system-master-ard.md]` (Optional for `master`)
+- **layer:** [meta | infra | gitops | app | ops]
 - **PRD Reference**: `[../prd/feature-or-system-prd.md]`
-- **ADR References**: `[../adr/NNNN-decision.md]`, `[../adr/NNNN-decision-2.md]`
+- **ADR References**: `[../adr/NNNN-decision.md]`
 
-**Overview (KR):** [Write a 1-2 sentence Korean summary of the architecture boundary, the system role, and how it relates to the wider platform.]
+## 2. System Boundaries & Ownership
 
-## Required Core Sections
+- **Owns**: [e.g., User authentication state, Session management]
+- **Consumes**: [e.g., Postgres DB, Redis Cache, External Auth0 API]
+- **Does Not Own**: [e.g., User profile images (owned by Storage Domain)]
 
-These sections must exist even in the compact form.
+## 3. Architecture Context (C4 Model)
 
-## Summary
-
-[Summarize what this system or domain is, what boundary it owns, and how it relates to the wider platform.]
-
-## Boundaries
-
-- **Owns**: [Boundary, responsibility, or source of truth]
-- **Consumes**: [Upstream dependency, data source, or policy input]
-- **Does Not Own**: [Boundary explicitly outside this ARD]
-
-## Ownership
-
-- **Primary owner**: [Repository Owner or maintainer]
-- **Primary artifacts**: `[path/to/dir]`, `[path/to/file]`
-- **Operational evidence**: `[../operations/incidents/]`, `[../runbooks/]`, or `N/A`
-
-## Related
-
-- `[../prd/feature-or-system-prd.md]`
-- `[../specs/YYYY-MM-DD-feature.md]`
-- `[../plans/YYYY-MM-DD-feature.md]`
-- `[../adr/NNNN-decision.md]`
-
-## Optional Extended Sections
-
-Add these when the document is a canonical architecture reference rather than a compact active-chain summary.
-
-## 1. Executive Summary
-
-[Summarize what this system or domain is, what boundary it owns, and how it relates to the wider platform.]
-
-## 2. Business Goals
-
-- [Business goal 1]
-- [Business goal 2]
-- [Business goal 3]
-
-## 3. System Overview & Context
-
-[Describe where this system fits, which users or maintainers interact with it, and which upstream or downstream systems it depends on.]
+### 3.1 Level 1: System Context
+_How the system interacts with users and other systems._
 
 ```mermaid
 C4Context
     title [System Name] Context Diagram
-    Person(user, "User")
-    System(this_system, "[System Name]")
-    System_Ext(ext_system, "External System")
+    Person(user, "User", "A user of the system")
+    System(this_system, "[System Name]", "Description of system")
+    System_Ext(ext_system, "External System", "External dependency")
 
     Rel(user, this_system, "Uses")
     Rel(this_system, ext_system, "Integrates with")
 ```
 
-## 4. Architecture & Tech Stack Decisions
-
-### 4.1 Component Architecture
-
-[Describe internal layers, boundaries, and delegation rules.]
+### 3.2 Level 2: Containers
+_High-level technical building blocks (Apps, DBs, Microservices)._
 
 ```mermaid
-flowchart TD
-    A[Parent Architecture] --> B[This System]
-    B --> C[Layer or Component A]
-    B --> D[Layer or Component B]
-    C --> E[Outcome or Capability]
-    D --> E
+C4Container
+    title [System Name] Container Diagram
+    Container(api, "API Application", "TypeScript/FastAPI", "Handles business logic")
+    ContainerDb(db, "Database", "PostgreSQL", "Stores core data")
+    Container(cache, "Cache", "Redis", "Key-value store")
+
+    Rel(api, db, "Reads/Writes")
+    Rel(api, cache, "Caches results")
 ```
 
-### 4.2 Technology Stack
+## 4. Technical Stack & Integrity
 
-- **Runtime / Frontend / Platform**: [For example: Next.js 16, React 19, Tailwind CSS v4]
-- **Content / Config / Generated Artifacts**: [For example: Markdown, TOML, generated JSON]
-- **Verification / Delivery**: [For example: lint, build, smoke tests, static hosting]
+- **Backend / Platform**: [e.g., Node.js 22, K8s]
+- **Cross-Cutting Concerns**: 
+  - **Auth**: [e.g., JWT-based RBAC]
+  - **Logging**: [e.g., Structured JSON with OpenTelemetry]
+  - **Concurrency**: [e.g., Optimistic locking on State field]
 
-## 5. Data Architecture
+## 5. Resilience & Scalability (Senior)
 
-- **Domain Model**: [Describe the key entities, concepts, or contracts]
-- **Storage Strategy**: [Describe where data, config, or generated artifacts live]
-- **Data Flow**: [Describe how data moves through the system]
+### 5.1 Failure Modes & Mitigation
+| Scenario | Impact | Mitigation Strategy |
+| :--- | :--- | :--- |
+| **DB Timeout** | API 500s | Circuit Breaker + Retry Policy |
+| **Auth Service Down** | Login blocked | Graceful degradation (Cache if possible) |
+| **Cache Miss Storm** | Latency spike | Request collapsing / Locking |
 
-## 6. Security & Compliance
+### 5.2 Scaling Triggers
+- **Vertical Scale**: [e.g., Memory usage > 80% for 5m]
+- **Horizontal Scale (HPA)**: [e.g., Concurrent requests > 200 per pod]
 
-- **Authentication / Authorization**: [Describe the auth boundary or state that it is not applicable]
-- **Data Protection**: [Describe any separation, handling rule, or constraint]
-- **Audit Logging / Traceability**: [Describe the evidence or traceability path]
-- **Accessibility / Localization**: [Describe the required accessibility or locale considerations]
+## 6. Data Architecture & Persistence
 
-## 7. Infrastructure & Deployment
+- **Domain Entities**: [List key models/tables]
+- **Consistency Model**: [e.g., Eventual Consistency via MQ / Strong Consistency via SQL]
+- **Data Retention**: [e.g., PII deleted after 90 days, Logs retained for 1 year]
 
-- **Deployment Hub**: [For example: GitHub Pages static export]
-- **Orchestration**: [For example: build pipeline, generated artifacts, container workflow]
-- **CI/CD Pipeline**: [How verification and delivery work]
-
-## 8. Non-Functional Requirements (NFRs)
-
-- **Availability**: [Target or N/A]
-- **Performance**: [Target, principle, or "no runtime change"]
-- **Throughput / Scale**: [Target or scaling assumption]
-- **Scalability Strategy**: [How growth is handled]
-
-## 9. Architectural Principles, Constraints & Trade-offs
-
-- **What NOT to do**:
-  - [Anti-pattern 1]
-  - [Anti-pattern 2]
-- **Constraints**:
-  - [Constraint 1]
-  - [Constraint 2]
-- **Considered Alternatives**:
-  - [Alternative summary]
-- **Chosen Path Rationale**:
-  - [Explain why this path was chosen]
-- **Known Limitations**:
-  - [List the current limits or deferred concerns]
-
-## 10. Source-of-Truth Map
-
-| Scope   | Canonical Document                            | Role                             |
-| ------- | --------------------------------------------- | -------------------------------- |
-| master  | `docs/ard/system-master-ard.md`    | Top-level architecture authority |
-| domain  | `docs/ard/domain-ard.md`           | Subordinate domain architecture  |
-| feature | `docs/specs/YYYY-MM-DD-feature.md` | Implementation detail            |
-
-## 11. Legacy Document Traceability
-
-| Existing Document                       | New Relationship            |
-| --------------------------------------- | --------------------------- |
-| `docs/ard/old-system-ard.md` | Superseded by this document |
+## 7. Operational Roadmap
+- **Deployment**: [e.g., Zero-downtime Rolling Update]
+- **Observability**: [Link to Dashboards / SLOs in Operation Manual]
+- **Runbook**: `[../runbooks/system-runbook.md]`

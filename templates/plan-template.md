@@ -1,138 +1,50 @@
-# [Feature or Component] Plan
-
-> Use this template for `docs/plans/YYYY-MM-DD-<feature-name>.md`.
->
-> Repository-derived contract:
->
-> - Use exactly one meaningful H1.
-> - Use relative links only.
-> - Remove every placeholder before saving.
-> - Allowed plan status values: `Planned | In Progress | Completed | Superseded | Deprecated`.
-> - Allowed scope values where your doc set uses them: `master | domain | historical`.
-> - Allowed scope values layer values: `common | architecture | backend | frontend | infra | mobile | product | qa | security`
-> - Every active plan must include explicit verification criteria.
-> - Keep all structural and narrative content in English.
-> - Add exactly one `Overview (KR)` summary near the top. That overview summary alone should be written in Korean.
->
-> Shape guidance:
->
-> - Use the compact implementation form when the plan is mainly a phased task ledger, as in the active `docs/` V2 chain.
-
-## Optional Frontmatter
-
-```yaml
 ---
-goal: '[One-sentence implementation goal]'
-version: '1.0'
-date_created: 'YYYY-MM-DD'
-last_updated: 'YYYY-MM-DD'
-owner: '[Repository Owner]'
-status: '[Planned | In Progress | Completed | Superseded | Deprecated]'
-scope: '[master | domain | historical]'
-tags: ['implementation', 'planning']
-stack: '[nextjs | node | python | go | rust | java]'
-layer: '<layer>'
+layer: "meta"
 ---
-```
+# Implementation Plan (PLAN.md)
 
-## H1 and Metadata
+_Target Location: `docs/plans/YYYY-MM-DD-<feature-name>.md`_
+_Description: A project management document that breaks down a specification into executable tasks and phases. It tracks the progress and verification of each step._
 
-# [Feature or Component] Plan
+## Overview (KR)
+이 문서는 아키텍처 및 상세 설계를 실제 구현 단계로 나누어 관리하는 실행 계획서입니다. 단계별 작업 내용, 관련 파일, 검증 방법 및 진행 상황을 추적합니다.
 
-> **Status**: [Planned | In Progress | Completed | Superseded | Deprecated]
-> **Scope**: [master | domain | historical]
-> **layer:** [common | architecture | backend | frontend | infra | mobile | product | qa | security]
-> **Parent Master Plan**: `[./YYYY-MM-DD-system-master-plan.md]` (Optional for `domain`)
+---
 
-**Overview (KR):** [Write a 1-2 sentence Korean summary of why this work exists, where it sits in the document hierarchy, and what this plan is trying to complete.]
+## 1. Plan Metadata
 
-## Required Core Sections
+- **Status**: [Planned | In Progress | Completed]
+- **Owner**: [buenhyden]
+- **layer**: [meta | infra | gitops | app | ops]
+- **Related Spec**: `[../specs/YYYY-MM-DD-feature.md]`
 
-## Context & Introduction
+## 2. Task Ledger (Execution Phases)
 
-[Explain why this work exists, where it sits in the document hierarchy, and whether it is an active implementation plan or a historical record.]
+### Phase 1: Preparation & Setup
+- [ ] TASK-001: [Action] (Affected: `file/path`)
 
-## Tasks
+### Phase 2: Core Implementation
+- [ ] TASK-002: [Action] (Affected: `file/path`)
 
-Use either a phase list or a traceability table.
+## 3. Checkpoints & Durable Execution (Senior)
+[Define major points where progress is saved and verified before moving to the next phase.]
 
-### Phase-style task list
+- **Checkpoint A**: [Phase 1 completion criteria]
+- **Checkpoint B**: [Initial integration success]
 
-1. [Phase 1]
-2. [Phase 2]
-3. [Phase 3]
+## 4. Backtracking & Pivot Strategy (Senior)
+[How to recover if the plan needs a major change mid-execution.]
+- **Fallback Plan**: [e.g., Revert to previous branch if DB migration fails]
+- **Pivot Rule**: [e.g., If API latency > 500ms, switch to [Alternative Approach]]
 
-### Traceability-style task table
+## 5. Verification Matrix
 
-| Task     | Description | Files Affected | Target REQ | Validation Criteria  |
-| -------- | ----------- | -------------- | ---------- | -------------------- |
-| TASK-001 | [Action]    | `path/to/file` | REQ-001    | [Pass/fail evidence] |
-| TASK-002 | [Action]    | `path/to/file` | REQ-002    | [Pass/fail evidence] |
+| Task ID | Level | Verification Command | Expected Result |
+| :--- | :--- | :--- | :--- |
+| **VAL-001** | Unit | `npm run test:unit` | 100% Pass |
+| **VAL-002** | E2E | `npm run test:e2e` | Happy path success |
 
-## Verification
-
-List the commands, manual checks, or evidence collection steps required before the work can be considered complete.
-
-- `[VAL-001]` [Verification step]
-- `[VAL-002]` [Verification step]
-
-## References
-
-- `[../prd/feature-or-system-prd.md]`
-- `[../specs/YYYY-MM-DD-feature.md]`
-- `[../ard/system-or-domain-ard.md]`
-- `[../adr/NNNN-decision.md]`
-
-## Optional Extended Sections
-
-## 2. Goals & In-Scope
-
-- **Goals:**
-  - [Goal 1]
-  - [Goal 2]
-- **In-Scope (Scope of this Plan):**
-  - [File, document, or system 1]
-  - [File, document, or system 2]
-
-## 3. Non-Goals & Out-of-Scope
-
-- **Non-Goals:**
-  - [Non-goal 1]
-- **Out-of-Scope:**
-  - [Out-of-scope item 1]
-
-## 4. Requirements & Constraints
-
-- **Requirements:**
-  - `[REQ-001]`: [Requirement 1]
-  - `[REQ-002]`: [Requirement 2]
-- **Constraints:**
-  - [Constraint 1]
-  - [Constraint 2]
-
-## 5. Work Breakdown (Tasks & Traceability)
-
-| Task     | Description | Files Affected | Target REQ | Validation Criteria  |
-| -------- | ----------- | -------------- | ---------- | -------------------- |
-| TASK-001 | [Action]    | `path/to/file` | REQ-001    | [Pass/fail evidence] |
-| TASK-002 | [Action]    | `path/to/file` | REQ-002    | [Pass/fail evidence] |
-
-## 6. Verification Plan
-
-| ID          | Level                | Description                        | Command / How to Run | Pass Criteria    |
-| ----------- | -------------------- | ---------------------------------- | -------------------- | ---------------- |
-| VAL-PLN-001 | Structural           | [Document or architecture check]   | [Manual or command]  | [Pass condition] |
-| VAL-PLN-002 | Build / Test / Link  | [What is being verified]           | [Command]            | [Pass condition] |
-| VAL-PLN-003 | Manual / Operational | [Manual validation or walkthrough] | [How to inspect]     | [Pass condition] |
-
-## 7. Risks & Mitigations
-
-| Risk         | Impact | Mitigation |
-| ------------ | ------ | ---------- | ---- | ------------ |
-| [Risk title] | [High  | Medium     | Low] | [Mitigation] |
-
-## 8. Completion Criteria
-
-- [ ] All scoped tasks completed
-- [ ] Verification checks passed or failures documented
-- [ ] Documentation and indexes updated where needed
+## 6. Completion Checklist
+- [ ] Code committed and PR created.
+- [ ] All verification steps passed.
+- [ ] Documentation updated (ARD, Spec, Index).

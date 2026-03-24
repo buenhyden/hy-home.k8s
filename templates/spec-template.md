@@ -1,159 +1,83 @@
-# [Feature Name] Specification
-
-> Use this template for `docs/specs/YYYY-MM-DD-<feature-name>.md`.
->
-> Repository-derived contract:
->
-> - Use exactly one meaningful H1.
-> - Use relative links only.
-> - Remove every placeholder before saving.
-> - Allowed spec status values: `Canonical | Implementation | Validated | Superseded | Deprecated`.
-> - Allowed scope values where your doc set uses them: `master | domain | historical`.
-> - Allowed scope values layer values: `common | architecture | backend | frontend | infra | mobile | product | qa | security`
-> - Every active spec must declare PRD and ARD references or make the absence explicit.
-> - Verification is mandatory even for documentation-only tracks.
-> - Keep all structural and narrative content in English.
-> - Add exactly one `Overview (KR)` summary near the top. That overview summary alone should be written in Korean.
-
-## Optional Frontmatter
-
-```yaml
 ---
-title: '[Feature Name] Specification'
-status: 'Canonical'
-version: '1.0'
-owner: 'buenhyden'
-scope: 'master'
-prd_reference: '../prd/<feature-or-system>-prd.md'
-arch_reference: '../ard/<system-or-domain>-ard.md'
-decision_reference: '../adr/NNNN-decision.md'
-tags: ['spec','implementation']
-layer: '<layer>'
+layer: "meta"
 ---
+# Technical Specification (SPEC.md)
+
+_Target Location: `docs/specs/YYYY-MM-DD-<feature-name>.md`_
+_Description: This document defines the 'How' of a feature implementation. It bridges the Gap between the ARD (What/Why) and the Plan (Execution Steps)._
+
+## Overview (KR)
+이 문서는 특정 기능이나 시스템의 구체적인 기술 구현 방안을 정의합니다. 데이터 모델, 인터페이스 명세, 그리고 구현 시 고려해야 할 예외 상황과 검증 계획을 포함합니다.
+
+---
+
+## 1. Metadata & Traceability
+
+- **Status**: [Canonical | Implementation | Validated]
+- **layer**: [meta | infra | gitops | app | ops]
+- **PRD Reference**: `[../prd/feature-prd.md]`
+- **ARD Reference**: `[../ard/system-ard.md]`
+- **ADR Reference**: `[../adr/NNNN-decision.md]`
+
+## 2. Technical Baseline & Dependencies
+
+- **Platform**: [e.g., Next.js 15, FastAPI, K8s]
+- **Core Dependencies**: [List key libraries or services required]
+- **Infrastructure Requirements**: [e.g., New Redis cluster, S3 bucket policy change]
+
+## 3. Implementation Logic & Data Flow
+
+### 3.1 Data Flow Diagram
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant API
+    participant DB
+    
+    User->>Frontend: Action
+    Frontend->>API: Request (JSON)
+    API->>DB: Query
+    DB-->>API: Result
+    API-->>Frontend: Response (200 OK)
 ```
 
-## H1 and Metadata
+### 3.2 Core Algorithms / Logic
+[Explain complex logic, state transitions, or mathematical formulas here.]
 
-# [Feature Name] Specification
+## 4. Implementation Ledger (Component Breakdown)
 
-> **Status**: [Canonical | Implementation | Validated | Superseded | Deprecated]
-> **Scope**: [master | domain | historical]
-> **layer:** [common | architecture | backend | frontend | infra | mobile | product | qa | security]
-> **Parent Master Spec**: `[./YYYY-MM-DD-system-master-spec.md]` (Optional for `domain`)
-> **Related PRD**: `[../prd/feature-or-system-prd.md]`
-> **Related Architecture**: `[../ard/system-or-domain-ard.md]`
-> **Decision Record**: `[../adr/NNNN-decision.md]` (Optional)
+| Component / File | Responsibility | Planned Change | Status |
+| :--- | :--- | :--- | :--- |
+| `src/components/X.tsx` | UI Layer | Add [Feature] support | [Pending] |
+| `src/api/Y.ts` | Logic Layer | Implement [API Endpoint] | [Pending] |
+| `infra/k8s/Z.yaml` | Infra | Define [Resource] | [Pending] |
 
-**Overview (KR):** [Write a 1-2 sentence Korean summary of the technical baseline, the implementation boundary, and the main risk or contract this spec addresses.]
+## 5. Edge Case & Error Matrix (Senior)
 
-## Required Core Sections
+| Condition | Expected Behavior | Error Code / Log |
+| :--- | :--- | :--- |
+| **Network Timeout** | Retry twice then 504 | `ERR_TIMEOUT` |
+| **invalid Input** | Return 400 with details | `ERR_VALIDATION` |
+| **Concurrency Clash** | Use optimistic locking | `ERR_CONFLICT` |
 
-These sections are the minimum contract even for compact active-chain specs.
+## 6. Verification & Quality Plan
 
-## Technical or Platform Baseline
+### 6.1 Automated Testing
+- **Unit Tests**: Mandatory for [Components]
+- **Integration Tests**: Verify [Service A] to [Service B] connection.
+- **E2E Tests**: Path: [Action -> Result]
 
-[Explain the baseline system, platform, or implementation boundary this spec owns.]
-
-## Contracts
-
-Use the headings that best fit the domain, but make the contract explicit.
-
-- **Config Contract**: [If applicable]
-- **Data or Interface Contract**: [If applicable]
-- **Asset / Routing / Rendering Contract**: [If applicable]
-- **Archive / Governance Contract**: [If applicable]
-
-## Verification
-
-List the required commands, manual checks, or evidence capture steps.
-
+### 6.2 Manual Verification
 ```bash
-[command 1]
-[command 2]
+# Command to verify build
+npm run build 
+
+# Command to verify linting
+npm run lint
 ```
 
-## Optional Extended Sections
-
-Use these sections when the spec needs full implementation detail and traceability.
-
-## 1. Technical Overview & Architecture Style
-
-[Explain the technical baseline, what this spec owns, and how it fits into the wider system.]
-
-- **Component Boundary**: [What this spec owns]
-- **Key Dependencies**: [Libraries, generated artifacts, configs, or upstream docs]
-- **Tech Stack**: [Runtime, build, and verification stack]
-
-## 2. Coded Requirements (Traceability)
-
-| ID                | Requirement Description | Priority | Parent PRD REQ |
-| ----------------- | ----------------------- | -------- | -------------- |
-| **[REQ-SPC-001]** | [Technical requirement] | High     | REQ-PRD-FUN-01 |
-| **[REQ-SPC-002]** | [Technical requirement] | Critical | REQ-PRD-FUN-02 |
-
-## 3. Data Modeling & Storage Strategy
-
-- **Database Engine**: [PostgreSQL | None | File-based | N/A]
-- **Schema Strategy**: [How data, config, or generated artifacts are structured]
-- **Migration Plan**: [How existing data or docs transition, or N/A]
-
-## 4. Interfaces & Data Structures
-
-### 4.1 Core Interfaces
-
-```typescript
-interface ExampleContract {
-  id: string;
-  name: string;
-}
-```
-
-### 4.2 Authority or Integration Model (Optional)
-
-```typescript
-type DocumentationScope = 'master' | 'domain' | 'historical';
-```
-
-## 5. Component Breakdown
-
-- **`path/to/file-or-doc`**: [Responsibility or planned change]
-- **`path/to/another-file`**: [Responsibility or planned change]
-
-## 6. Domain-Specific Contract Sections
-
-Add only the sections that the domain truly needs. Examples from the current repository:
-
-- **Routing Rules**
-- **Markdown and Resource Processing**
-- **Multilingual and Taxonomy Contracts**
-- **Common Field Contract**
-- **Enum Registry**
-- **Type-Specific Requirements**
-- **Family Shells**
-- **Asset Presentation Rule**
-- **Anti-Patterns**
-
-## 7. Edge Cases & Error Handling
-
-- **Error 1**: [Describe the concrete condition and expected behavior]
-- **Error 2**: [Describe the concrete condition and expected behavior]
-
-## 8. Verification Plan (Testing & QA)
-
-- **[VAL-SPC-001] Structural review**: [Heading, title, document-shape, or ownership checks]
-- **[VAL-SPC-002] Link review**: [Relative-link and reference checks]
-- **[VAL-SPC-003] Build / test / runtime review**: [Commands or manual validation]
-- **[VAL-SPC-004] Evidence capture**: [How the work is proven complete]
-
-## 9. Non-Functional Requirements (NFR) & Scalability
-
-- **Performance / Latency**: [Target or "no runtime change"]
-- **Throughput**: [Target or N/A]
-- **Scalability Strategy**: [How this area scales]
-
-## 10. Operations & Observability
-
-- **Deployment Strategy**: [How changes reach production or "documentation-only"]
-- **Monitoring & Alerts**: [Signals, dashboards, or N/A]
-- **Logging**: [Describe the evidence source, signal, or logging rule]
-- **Sensitive Data Handling**: [Describe handling rules or state that they are not applicable]
+## 7. Operations & Rollout
+- **Feature Flag**: [Yes/No] - Tag: `feature_x`
+- **Migration**: [e.g., Add `new_field` with default `null`]
+- **Observability**: New dashboard for [Metric X]

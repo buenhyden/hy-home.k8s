@@ -24,7 +24,8 @@ Agents MUST follow this protocol based on user intent:
 | Architecture Decision | `@rules/docs-map.md` | `@scopes/adr.md` | `docs/adr/` |
 | System Reference | `@rules/docs-map.md` | `@scopes/ard.md` | `docs/ard/` |
 | Deployment/Operations | `@rules/core.md` | `@scopes/runbooks.md` | `docs/runbooks/` |
-| Incident Handling | `@rules/personas.md` | `@scopes/incidents.md` | `docs/operations/incidents/` |
+| Incident Handling | `@rules/personas.md` | `@scopes/incidents.md` | `docs/incidents/` |
+| Postmortem Analysis | `@rules/personas.md` | `@scopes/operations.md` | `docs/postmortems/` |
 | Performance/Strategic | `@rules/docs-map.md` | `@scopes/operations.md` | `docs/operations/` |
 
 ## 3. Core Directives
