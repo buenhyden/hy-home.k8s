@@ -1,22 +1,22 @@
 # Agent Framework Contract
 
-Shared cross-agent contract for the `hy-home.k8s` repository. This file is the **Explicit Trigger** for all AI Agent rules.
+Shared contract for `hy-home.k8s`. This is the **Explicit Trigger** for all AI rules.
 
 ## 1. Lazy Loading Protocol
 
-Agents MUST NOT load all instructions into memory. Identify the **Intent** and load the corresponding **Scope**.
+Agents MUST NOT load all instructions. Identify **Intent** and load **Scope**.
 
-- **Instruction Gateway**: [agent-instructions.md](docs/00.agent/agent-instructions.md)
-- **Global Persona**: [global-persona.md](docs/00.agent/rules/global-persona.md)
+- **Gateway**: [agent-instructions.md](docs/00.agent/agent-instructions.md)
+- **Persona**: [persona-matrix.md](docs/00.agent/rules/persona-matrix.md)
 
 ## 2. Shared Directives
 
-- **Spec-First**: Code changes require an approved spec in `docs/04.specs/`.
-- **Metadata**: All docs MUST include `layer:` metadata.
-- **Verification**: Run `pre-commit run --all-files` before commit.
+- **Spec-First**: Changes require `docs/04.specs/`.
+- **Metadata**: All docs MUST include `layer:` frontmatter.
+- **Verify**: `pre-commit run --all-files` before commit.
 
 ## 3. Scope Index
 
-- **PRD/ARD**: `docs/00.agent/scopes/prd.md`
-- **Specs/Plans**: `docs/00.agent/scopes/specs.md`
-- **Ops/Incidents**: `docs/00.agent/scopes/operations.md`
+- **00-06**: [Agent](docs/00.agent/), [PRD](docs/01.prd/), [ARD](docs/02.ard/), [ADR](docs/03.adr/), [Spec](docs/04.specs/), [Plan](docs/05.plans/), [Task](docs/06.tasks/)
+- **07-11**: [Guide](docs/07.guides/), [Ops](docs/08.operations/), [Runbook](docs/09.runbooks/), [Incident](docs/10.incidents/), [Postmortem](docs/11.postmortems/)
+- **90-99**: [Ref](docs/90.references/), [Template](docs/99.templates/)

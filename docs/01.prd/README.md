@@ -29,7 +29,6 @@
 - Spec은 PRD 요구 ID를 추적한다.
 - Agent 기능인 경우 사용 시나리오, 허용/금지 행동, human-in-the-loop 요구를 포함한다.
 
-
 ## Templates
 
 - `../99.templates/prd.template.md`

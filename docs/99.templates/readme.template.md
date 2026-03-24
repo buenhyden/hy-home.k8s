@@ -3,7 +3,7 @@
 <!--
 # README Template — Usage Guidelines
 
-This template is designed to be modular. It consists of a **Base Structure** (required for all READMEs) 
+This template is designed to be modular. It consists of a **Base Structure** (required for all READMEs)
 and a **Snippet Library** from which you should pick sections based on the folder's purpose.
 
 ## 1. Metadata Requirement
@@ -52,7 +52,7 @@ and a **Snippet Library** from which you should pick sections based on the folde
 
 # [SNIPPET LIBRARY - PICK AND DROP BELOW]
 
-<!-- 
+<!--
 ================================================================================
 SNIPPET: PROJECT ROOT (Main Onboarding)
 ================================================================================
@@ -95,7 +95,7 @@ Before contributing, review the core entry points:
 2. [CLAUDE.md](./CLAUDE.md) / [GEMINI.md](./GEMINI.md) - Agent-specific context
 3. [ARCHITECTURE.md](./ARCHITECTURE.md) - System blueprints
 
-<!-- 
+<!--
 ================================================================================
 SNIPPET: IMPLEMENTATION (Source Code Layer)
 ================================================================================
@@ -124,7 +124,7 @@ SNIPPET: IMPLEMENTATION (Source Code Layer)
 {test-command}
 ```
 
-<!-- 
+<!--
 ================================================================================
 SNIPPET: DOCS & GOVERNANCE (Specifications, Rules)
 ================================================================================
@@ -144,7 +144,7 @@ All documents in this folder MUST:
 - [Architecture Decisions](../adr/)
 - [Technical Specs](../specs/)
 
-<!-- 
+<!--
 ================================================================================
 SNIPPET: OPS & UTILS (Scripts, Runbooks)
 ================================================================================
