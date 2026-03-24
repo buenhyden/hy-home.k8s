@@ -9,13 +9,13 @@ layer: "app"
 
 - **Purpose**: Exact implementation instructions, interfaces, file paths, and verification.
 - **Persona**: Strong Reasoner + Architect + Requirements Analyst
-- **Templates**: `templates/spec-template.md` · `templates/plan-template.md` · `templates/api-spec-template.md`
-- **Rules**: `0102-implementation-plan-standard.md` · `0111-impl-task-spec.md` · `0112-impl-workflow.md` · `0113-impl-traceability.md` · `0120-requirements-and-specifications-standard.md`
+- **Templates**: `docs/99.templates/spec.template.md` · `docs/99.templates/plan.template.md` · `docs/99.templates/api-spec.template.md`
+- **Rules**: `.agent/rules/0100-Standards/0102-implementation-plan-standard.md` · `.agent/rules/0100-Standards/0120-requirements-and-specifications-standard.md`
 - **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
 
 ## Behavioral Checkpoints
 
-1. **Flattened Path**: Specs MUST reside in `docs/specs/`.
+1. **Flattened Path**: Specs MUST reside in `docs/04.specs/`.
 2. **Language**: Use SHALL, MUST, and PROHIBITED.
 3. **Traceability**: Map details back to PRD Requirement IDs.
 4. **Verification**: Document exact verification steps (test commands, logs).

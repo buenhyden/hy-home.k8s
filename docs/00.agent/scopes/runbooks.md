@@ -9,8 +9,8 @@ layer: "ops"
 
 - **Purpose**: Step-by-step procedures for bootstrap, maintenance, and recovery.
 - **Persona**: DevOps / SRE
-- **Template**: `templates/runbook-template.md`
-- **Rules**: `0381-runbooks-oncall.md` · `0300-devops-pillar-standard.md`
+- **Template**: `docs/99.templates/runbook.template.md`
+- **Rules**: `.agent/rules/0300-DevOps_and_Infrastructure/0381-runbooks-oncall.md` · `.agent/rules/0300-DevOps_and_Infrastructure/0300-devops-pillar-standard.md`
 - **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
 
 ## Behavioral Checkpoints

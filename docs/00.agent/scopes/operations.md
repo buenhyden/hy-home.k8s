@@ -9,8 +9,8 @@ layer: "ops"
 
 - **Purpose**: Strategic operations blueprints, security/scalability plans, and readiness.
 - **Persona**: DevOps / SRE / Platform Lead
-- **Templates**: `templates/operations-template.md`
-- **Rules**: `0301-operations-blueprint-standard.md` · `2600-observability-pillar.md` · `2200-security-pillar.md`
+- **Templates**: `docs/99.templates/operation.template.md`
+- **Rules**: `.agent/rules/0300-DevOps_and_Infrastructure/0301-operations-blueprint-standard.md`
 - **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
 
 ## Behavioral Checkpoints

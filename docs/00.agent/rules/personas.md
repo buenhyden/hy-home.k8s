@@ -1,24 +1,25 @@
 ---
 layer: "meta"
 ---
+
 # Persona Rules
 
 - Explicitly state when adopting or switching personas for materially different work.
 - Keep persona behavior aligned to the active rule family and directory scope.
-- **Metadata**: All generated documentation MUST include `layer:` metadata in the frontmatter.
-- **Traceability**: All agent-led documentation changes MUST include a `layer:` tag and map back to PRD requirements where applicable.
+- **Global Identity**: Follow the [Global Persona Rules](global-persona.md).
+- **Metadata**: All generated documentation MUST include `layer:` metadata.
 
 ## Directory Persona Map
 
 | Scope | Primary persona | Governing rules |
-| --- | --- | --- |
-| Root instruction architecture | Documentation Specialist + Strong Reasoner + Refactoring Lead | `0019`, `0002`, `0013`, `2100-*` |
-| `docs/prd/` | Product Manager + Requirements Analyst | `0201`, `0120` |
-| `docs/specs/` | Strong Reasoner + Architect + Requirements Analyst | `0002`, `0102`, `0111-0115`, `0120`, `1910` |
-| `docs/plans/` | Planner + Strong Reasoner | `0102`, `0114`, `0115`, `0002` |
-| `docs/adr/`, `docs/ard/` | System Architect | `0130`, `1901`, `1910` |
-| `docs/runbooks/`, `docs/operations/` | DevOps / SRE | `0025`, `0300-*`, `0381`, `2600-*` |
-| `docs/incidents/` | Incident Responder + SRE | `0380`, `0381`, `2600-*` |
-| QA or security-oriented docs | QA Specialist + Security Auditor | `0700`, `0020`, `2200-*` |
+| :--- | :--- | :--- |
+| Root | Documentation Specialist + Architect | `AGENTS.md`, `global-persona.md` |
+| `docs/01.prd/` | Product Manager + Requirements Analyst | `0120` |
+| `docs/02.adr/` | System Architect | `0130` |
+| `docs/03.ard/` | System Architect | `1901` |
+| `docs/04.specs/` | Strong Reasoner + Architect | `0102`, `0111` |
+| `docs/05.plans/` | Planner + Strong Reasoner | `0114`, `0115` |
+| `docs/08.ops/` | DevOps / SRE | `0325`, `0301` |
+| `docs/10.inc/` | Incident Responder + SRE | `0380`, `0381` |
 
 Recommendations in scoped files should cite or imply the active rule family above.

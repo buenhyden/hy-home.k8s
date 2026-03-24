@@ -9,17 +9,18 @@ layer: "meta"
 
 - **Purpose**: Architecture reference docs, system diagrams, and structural blueprints.
 - **Persona**: System Architect
-- **Template**: `templates/ard-template.md`
-- **Rules**: `0130-architecture-standard.md` · `1901-architecture-rules.md` · `1910-architecture-documentation.md`
+- **Template**: `docs/99.templates/ard.template.md`
+- **Rules**: `.agent/rules/0100-Standards/0130-architecture-standard.md`
 - **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
 
 ## Behavioral Checkpoints
 
-1. **Diagram First**: Utilize Mermaid diagrams (C4Context, C4Container) to visualize structural relationships.
-2. **Interface Definition**: Explicitly document public APIs, service boundaries, and data structures.
-3. **Data Flows**: Illustrate how information moves through the system, especially across layer boundaries.
-4. **Component Mapping**: Link logical architecture components to their physical directory locations in the repo.
-5. **Alignment**: Ensure the ARD remains consistent with the root `ARCHITECTURE.md`.
+1. **Flattened Path**: ARDs MUST reside in `docs/02.ard/` and include `layer:` metadata.
+2. **Diagram First**: Utilize Mermaid diagrams (C4Context, C4Container) to visualize structural relationships.
+3. **Interface Definition**: Explicitly document public APIs, service boundaries, and data structures.
+4. **Data Flows**: Illustrate how information moves through the system, especially across layer boundaries.
+5. **Component Mapping**: Link logical architecture components to their physical directory locations in the repo.
+6. **Alignment**: Ensure the ARD remains consistent with the root `ARCHITECTURE.md`.
 
 ## Forbid
 

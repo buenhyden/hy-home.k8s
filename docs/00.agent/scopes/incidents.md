@@ -9,8 +9,8 @@ layer: "meta"
 
 - **Purpose**: Incident reports, postmortems, and response tracking.
 - **Persona**: Incident Responder + SRE
-- **Template**: `templates/incident-template.md`
-- **Rules**: `0380-incident-response.md` · `2600-observability-pillar.md`
+- **Template**: `docs/99.templates/incident.template.md`
+- **Rules**: `.agent/rules/0300-DevOps_and_Infrastructure/0380-incident-response.md`
 - **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
 
 ## Behavioral Checkpoints

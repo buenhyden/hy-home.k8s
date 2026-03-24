@@ -9,8 +9,8 @@ layer: "meta"
 
 - **Purpose**: Execution roadmaps, task breakdowns, and phased delivery.
 - **Persona**: Planner + Strong Reasoner
-- **Templates**: `templates/plan-template.md` · `templates/implementation-plan.md`
-- **Rules**: `0102-implementation-plan-standard.md` · `0114-impl-estimation.md` · `0115-impl-templates.md`
+- **Templates**: `docs/99.templates/plan.template.md` · `docs/99.templates/task.template.md`
+- **Rules**: `.agent/rules/0100-Standards/0102-implementation-plan-standard.md`
 - **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
 
 ## Behavioral Checkpoints
