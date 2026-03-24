@@ -35,3 +35,7 @@ This directory is the shared detailed instruction layer for agent-facing work in
 - Runbooks: `docs/09.runbooks/`
 - Incidents: `docs/10.incidents/`
 - Postmortems: `docs/11.postmortems/`
+
+## Compliance
+
+All documentation in this project follows the **01-11 Stage-Gate Taxonomy**.

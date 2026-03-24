@@ -29,3 +29,7 @@ layer: 'architecture'
 
 - **USER interaction**: Summaries and high-level explanations MUST be in Korean.
 - **Internal Docs**: All instructions and technical documentation in `docs/00.agent/` MUST be in English.
+
+## References
+
+- Anthropic Claude Code memory: <https://docs.anthropic.com/en/docs/claude-code/memory>

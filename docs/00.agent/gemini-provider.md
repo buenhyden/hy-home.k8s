@@ -27,3 +27,9 @@ layer: 'architecture'
 
 - **USER interaction**: Summaries and high-level explanations MUST be in Korean.
 - **Internal Docs**: All instructions and technical documentation in `docs/00.agent/` MUST be in English.
+
+## References
+
+- Gemini CLI context files (GEMINI.md): <https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/gemini-md.md>
+- Gemini CLI settings: <https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/settings.md>
+- Gemini CLI MCP integration: <https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/mcp-server.md>
