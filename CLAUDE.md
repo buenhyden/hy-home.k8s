@@ -21,7 +21,7 @@ Kubernetes homelab platform for WSL2 using k3d. Managed via GitOps, spec-driven 
 ## 3. Instruction Routing
 
 - **Contract**: [AGENTS.md](AGENTS.md)
-- **Gateway**: [docs/agentic/agent-instructions.md](docs/agentic/agent-instructions.md)
+- **Gateway**: [docs/00.agent/agent-instructions.md](docs/00.agent/agent-instructions.md)
 - **Lazy Loading**: Identify intent → Trigger rule → Load scope.
 
 ## 4. Documentation Architecture

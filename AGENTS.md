@@ -6,10 +6,10 @@ Shared cross-agent contract for the `hy-home.k8s` repository. This file serves a
 
 This repository uses a **Lazy Loading Protocol**. Agents MUST NOT load all instructions into memory. Instead, identify the relevant **Rule** or **Scope** based on the current user intent.
 
-- **Unified Gateway**: [agent-instructions.md](docs/agentic/agent-instructions.md)
+- **Unified Gateway**: [agent-instructions.md](docs/00.agent/agent-instructions.md)
 - **Detailed Guidelines**:
-  - [Coding Conventions & Standards](docs/agentic/conventions.md)
-  - [Development Workflows](docs/agentic/workflows.md)
+  - [Coding Conventions & Standards](docs/00.agent/conventions.md)
+  - [Development Workflows](docs/00.agent/workflows.md)
 
 ## 2. Core Directives
 

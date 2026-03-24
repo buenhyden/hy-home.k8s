@@ -8,7 +8,7 @@ Gemini-specific entrypoint for `hy-home.k8s`. Optimized for Google Gemini agents
 ## 1. Instruction Routing
 
 - **Shared Contract**: [AGENTS.md](AGENTS.md)
-- **Gateway**: [docs/agentic/agent-instructions.md](docs/agentic/agent-instructions.md)
+- **Gateway**: [docs/00.agent/agent-instructions.md](docs/00.agent/agent-instructions.md)
 
 ## 2. Model Constraints & Context
 
