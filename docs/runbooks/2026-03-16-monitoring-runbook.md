@@ -6,7 +6,7 @@ owner: 'buenhyden'
 tags:
   - runbook
   - operation
-layer: 'ops'
+layer: "ops"
 ---
 
 # Runbook: Monitoring

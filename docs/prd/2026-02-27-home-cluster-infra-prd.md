@@ -4,7 +4,7 @@ version: v1.0.0
 owner: buenhyden
 stakeholders: ['buenhyden']
 scope: master
-layer: infra
+layer: "infra"
 ---
 
 # Product Requirements Document (PRD): Home Cluster Infrastructure

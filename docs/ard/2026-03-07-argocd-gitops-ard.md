@@ -2,118 +2,110 @@
 title: 'ArgoCD GitOps Architecture Reference Document (ARD)'
 status: 'Approved'
 owner: 'buenhyden'
+scope: 'master'
 tags: ['ard', 'gitops']
-layer: 'gitops'
+layer: "gitops"
 ---
 
 # ArgoCD GitOps Architecture Reference Document (ARD)
 
+## Overview (KR)
+이 문서는 로컬 k3d 클러스터의 선언적 관리(GitOps)를 위한 ArgoCD 및 Sealed Secrets 아키텍처 표준을 정의합니다. 아키텍처 토폴로지(App-of-Apps), 보안 전략, 그리고 복구 모델을 포함합니다.
+
+---
+
+## 1. Metadata & Status
+
 - **Status**: Approved
 - **Owner**: buenhyden
+- **Scope**: master
 - **layer:** gitops
-- **PRD Reference**: [Link to PRD](../prd/2026-03-07-argocd-gitops-prd.md)
-- **ADR References**: [Link to ADRs](../adr/0002-argocd-gitops.md)
+- **PRD Reference**: [2026-03-07-argocd-gitops-prd.md](../prd/2026-03-07-argocd-gitops-prd.md)
+- **ADR References**: [0002-argocd-gitops.md](../adr/0002-argocd-gitops.md)
 
-**Overview (KR):** 로컬 k3d 클러스터의 선언적 관리(GitOps)를 위한 ArgoCD 및 Sealed Secrets 아키텍처를 정의합니다.
+## 2. System Boundaries & Ownership
 
-## 1. Executive Summary
+- **Owns**: GitOps reconciliation logic, App-of-Apps topology, Secret sealing/unsealing (Sealed Secrets), Repository credentials.
+- **Consumes**: GitHub Private Repositories (Desired State), Kubernetes API (Live State), SSH Deploy Keys.
+- **Does Not Own**: Infrastructure provisioning (k3d), External container images (OCI), Workload-specific application logic.
 
-This document describes the architecture for GitOps management of the local WSL2 + k3d Kubernetes cluster using ArgoCD and Sealed Secrets. It focuses on deterministic installation, secure private repository access, and the App-of-Apps topology.
+## 3. Architecture Context (C4 Model)
 
-## 2. Business Goals
-
-- Provide repeatable local cluster convergence from Git.
-- Reduce operational risk of manual apply and unmanaged drift.
-- Standardize secure handling of repository credentials for private Git sources.
-
-## 3. System Overview & Context
+### 3.1 Level 1: System Context
 
 ```mermaid
 C4Context
     title Local GitOps Context Diagram
     Person(operator, "Operator")
-    System(git, "Git Repository (Private)")
-    System(cluster, "Local k3d Cluster")
-    System(argocd, "ArgoCD")
+    System(git, "Git Repository (Private)", "Single source of truth")
+    System(this_system, "ArgoCD GitOps", "Manages state via Git")
+    System(cluster, "Local k3d Cluster", "Hosting platform")
 
-    Rel(operator, argocd, "Bootstraps and observes")
-    Rel(argocd, git, "Fetches desired state", "SSH")
-    Rel(argocd, cluster, "Reconciles resources", "Kubernetes API")
+    Rel(operator, this_system, "Bootstraps and observes")
+    Rel(this_system, git, "Fetches desired state", "SSH")
+    Rel(this_system, cluster, "Reconciles resources", "Kubernetes API")
 ```
 
-## 4. Architecture & Tech Stack Decisions (Checklist)
-
-### 4.1 Component Architecture
+### 3.2 Level 2: Containers
 
 ```mermaid
 C4Container
     title Local GitOps Container Diagram
-    Person(operator, "Operator")
+    Container(argocd, "ArgoCD Application", "Go", "GitOps controller and UI")
+    Container(sealed, "Sealed Secrets", "Go", "Unseals encrypted secrets")
+    ContainerDb(git_repo, "GitHub Repo", "Markdown/YAML", "Desired state storage")
 
-    Container(cluster, "k3d Cluster", "k3s (k3d)", "Local Kubernetes cluster on WSL2 Docker Engine")
-    Container(argocd, "ArgoCD", "ArgoCD v3.3.0", "GitOps controller and UI/API")
-    Container(sealed, "Sealed Secrets", "v0.33.1", "Seals/unseals sensitive Secret material")
-    System_Ext(git, "Git Repository", "GitHub", "Desired state source")
-
-    Rel(operator, argocd, "Accesses", "kubectl port-forward")
-    Rel(argocd, git, "Reads manifests", "SSH deploy key")
-    Rel(argocd, cluster, "Applies desired state", "Kubernetes API")
-    Rel(sealed, cluster, "Creates Secrets from SealedSecret CRs", "Controller")
+    Rel(argocd, git_repo, "Polls/Syncs")
+    Rel(argocd, sealed, "Deploys SealedSecret CRs")
+    Rel(sealed, argocd, "Provides unsealed Secrets to pods")
 ```
 
-### 4.2 Technology Stack
+## 4. Technical Stack & Integrity
 
-- **Orchestration**: Kubernetes on k3d (k3s distribution)
-- **GitOps**: ArgoCD (App-of-Apps)
-- **Secret Handling**: Bitnami Sealed Secrets + SSH deploy key
-- **Manifests**: Kustomize directory structure (no Helm requirement in v1)
+- **GitOps Engine**: ArgoCD v3.3.0 (App-of-Apps pattern)
+- **Secret Management**: Bitnami Sealed Secrets v0.33.1
+- **Manifest Format**: Kustomize
+- **Cross-Cutting Concerns**: 
+  - **Auth**: Local admin login (V1), Deploy keys (SSH)
+  - **Logging**: Git history (Audit trail), Controller logs
+  - **Integrity**: Webhook-based sync (Deferred), Manual/Auto sync policies
 
-## 5. Data Architecture
+## 5. FinOps & Sustainability (Senior)
 
-- **Domain Model**: N/A (Infrastructure control plane)
-- **Storage Strategy**: Git repository as system-of-record; Kubernetes API as applied state
-- **Data Flow**: ArgoCD reads from Git, compares to cluster live state, applies deltas; SealedSecrets unseals sealed payloads into Secrets.
+### 5.1 Cost Architecture (FinOps)
 
-## 6. Security & Compliance
+- **Cost Driver**: Controller CPU/RAM usage.
+- **Monthly Estimate**: $0 (Local).
+- **Optimization Strategy**: Aggressive sync frequency tuning to minimize unnecessary Git API calls.
 
-- **Authentication/Authorization**: Local single-operator ArgoCD admin login (v1). Multi-user SSO/RBAC is a follow-up.
-- **Data Protection**:
-  - No plaintext Secret committed.
-  - SSH deploy key is read-only.
-  - SealedSecrets encryption keys remain inside the cluster; rotation is a follow-up.
-- **Audit Logging**: Git history is the primary audit log for desired state changes.
+### 5.2 Sustainability (Greedy-Green)
 
-## 7. Infrastructure & Deployment
+- **Resource Footprint**: Low.
+- **Carbon Intensity**: Minimized by running only when local cluster is active.
 
-- **Deployment Hub**: Local WSL2 + Docker Engine (WSL-managed) + k3d
-- **Orchestration**: k3d cluster on Docker bridge network
-- **CI/CD Pipeline**: Out of scope for v1 (local GitOps bootstrap only)
+## 6. Resilience & Scalability (Senior)
 
-## 8. Non-Functional Requirements (NFRs)
+### 6.1 Failure Modes & Mitigation
 
-- **Availability**: Best-effort local environment (no SLA); must self-heal drift on operator mistakes.
-- **Performance (Latency)**: GitOps reconciliation should converge within 5 minutes per sync on typical hardware.
-- **Throughput**: Not applicable (control plane only).
-- **Scalability Strategy**: App-of-Apps allows future expansion to ApplicationSet / multi-cluster if required.
+| Scenario | Impact | Mitigation Strategy |
+| :--- | :--- | :--- |
+| **Git Unreachable** | Sync blocked | Cache last-known-good manifests in controller. |
+| **SealedKey Lost** | Secrets unusable | Disaster recovery of master key via offline backup (Sealed Secrets master key). |
+| **ArgoCD Crash** | Drift unmanaged | Self-healing via Deployment replicas; manual recovery via `kubectl apply -k bootstrap/`. |
 
-## 9. Architectural Principles, Constraints & Trade-offs
+### 6.2 Scaling Triggers
 
-- **What NOT to do**:
-  - No plaintext Secrets in Git.
-  - No “latest” tags for controllers or images.
-  - No exposing ArgoCD via Ingress/NodePort in v1 baseline.
-- **Constraints**:
-  - Bootstrap requires manual steps because ArgoCD cannot read a private repo without credentials.
-  - `targetRevision` pinning trades convenience for reproducibility.
-- **Considered Alternatives**: Flux, ArgoCD without sealed secrets, public repo.
-- **Chosen Path Rationale**: ArgoCD UI + reconciliation semantics + SealedSecrets fit local v1 constraints.
-- **Known Limitations**: Secret rotation, multi-user RBAC/SSO, and multi-environment promotions are deferred.
+- **Horizontal Scale**: ApplicationSet usage for multi-cluster/multi-tenant expansion.
+- **Vertical Scale**: Increase resource requests for `argocd-repo-server` if manifest generation latency > 30s.
 
----
+## 7. Data Architecture & Persistence
 
----
+- **Domain Model**: Application, AppProject, SealedSecret CRDs.
+- **Consistency Model**: Eventual Consistency (Sync Loop).
+- **Data Retention**: Git commit history (Permanent audit trail).
 
-## Related Documents
+## 8. Operational Roadmap
 
-- [docs/prd/2026-03-07-argocd-gitops-prd.md](../prd/2026-03-07-argocd-gitops-prd.md)
-- [docs/specs/2026-03-16-gitops-spec.md](../specs/2026-03-16-gitops-spec.md)
+- **Deployment**: `infrastructure/bootstrap/` manual apply for first-run.
+- **Observability**: ArgoCD UI + Prometheus metrics.
+- **Runbook**: [2026-03-16-gitops-spec.md](../specs/2026-03-16-gitops-spec.md)

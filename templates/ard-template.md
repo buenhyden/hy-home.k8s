@@ -64,7 +64,21 @@ C4Container
   - **Logging**: [e.g., Structured JSON with OpenTelemetry]
   - **Concurrency**: [e.g., Optimistic locking on State field]
 
-## 5. Resilience & Scalability (Senior)
+
+## 5. FinOps & Sustainability (Senior)
+
+### 5.1. Cost Architecture (FinOps)
+
+- **Cost Driver**: [Compute/Storage/Network]
+- **Monthly Estimate**: [$... at Scale X]
+- **Optimization Strategy**: [Spot instances, Tiered storage, etc.]
+
+### 5.2. Sustainability (Greedy-Green)
+
+- **Resource Footprint**: [Low/Medium/High]
+- **Carbon Intensity**: [Avoid regions with high CO2 if possible]
+
+## 6. Resilience & Scalability (Senior)
 
 ### 5.1 Failure Modes & Mitigation
 | Scenario | Impact | Mitigation Strategy |
@@ -77,13 +91,13 @@ C4Container
 - **Vertical Scale**: [e.g., Memory usage > 80% for 5m]
 - **Horizontal Scale (HPA)**: [e.g., Concurrent requests > 200 per pod]
 
-## 6. Data Architecture & Persistence
+## 7. Data Architecture & Persistence
 
 - **Domain Entities**: [List key models/tables]
 - **Consistency Model**: [e.g., Eventual Consistency via MQ / Strong Consistency via SQL]
 - **Data Retention**: [e.g., PII deleted after 90 days, Logs retained for 1 year]
 
-## 7. Operational Roadmap
+## 8. Operational Roadmap
 - **Deployment**: [e.g., Zero-downtime Rolling Update]
 - **Observability**: [Link to Dashboards / SLOs in Operation Manual]
 - **Runbook**: `[../runbooks/system-runbook.md]`

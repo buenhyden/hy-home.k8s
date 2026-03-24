@@ -64,8 +64,8 @@ All ADRs MUST use `templates/architecture/adr-template.md`. The template include
 
 ```text
 docs/adr/
-├── 0001-k3d-local-cluster.md (layer: infra)
-├── 0001-argocd-gitops.md (layer: gitops)
+├── 0001-k3d-local-cluster.md (layer: "infra)"
+├── 0001-argocd-gitops.md (layer: "gitops)"
 └── ...
 ```
 

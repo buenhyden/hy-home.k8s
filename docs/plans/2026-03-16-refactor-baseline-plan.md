@@ -2,7 +2,7 @@
 title: 'Documentation and Agent Instruction Refactor Execution Plan'
 status: 'Completed'
 version: 'v1.0.0'
-layer: 'meta'
+layer: "meta"
 ---
 
 # Documentation and Agent Instruction Refactor Execution Plan

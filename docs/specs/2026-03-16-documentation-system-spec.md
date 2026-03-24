@@ -4,7 +4,7 @@ status: 'Approved'
 date: '2026-03-16'
 owner: 'buenhyden'
 tags: ['spec', 'meta']
-layer: 'meta'
+layer: "meta"
 ---
 
 # Spec: Documentation System Implementation

@@ -5,7 +5,7 @@ target_version: 'v1.0.0'
 owner: 'buenhyden'
 stakeholders: ['buenhyden']
 tags: ['prd', 'meta']
-layer: 'meta'
+layer: "meta"
 ---
 
 # Documentation and Agent Framework Refactor PRD

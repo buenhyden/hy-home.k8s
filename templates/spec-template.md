@@ -42,10 +42,23 @@ sequenceDiagram
     API-->>Frontend: Response (200 OK)
 ```
 
-### 3.2 Core Algorithms / Logic
+## 4. Telemetry & Feature Flags (Senior)
+
+### 4.1. Telemetry-First (Observability)
+
+- **New Metrics**: [List gauges/counters to be implemented]
+- **Dashboard Ref**: [Grafana link placeholder]
+
+### 4.2. Feature Flag Strategy
+
+- **Flag Name**: `feat_<feature_name>`
+- **Rollout Plan**: [Percentage / User Segment]
+- **Kill-Switch**: [Yes/No]
+
+## 5. Core Algorithms / Logic
 [Explain complex logic, state transitions, or mathematical formulas here.]
 
-## 4. Implementation Ledger (Component Breakdown)
+## 6. Implementation Ledger (Component Breakdown)
 
 | Component / File | Responsibility | Planned Change | Status |
 | :--- | :--- | :--- | :--- |
@@ -53,7 +66,7 @@ sequenceDiagram
 | `src/api/Y.ts` | Logic Layer | Implement [API Endpoint] | [Pending] |
 | `infra/k8s/Z.yaml` | Infra | Define [Resource] | [Pending] |
 
-## 5. Edge Case & Error Matrix (Senior)
+## 7. Edge Case & Error Matrix (Senior)
 
 | Condition | Expected Behavior | Error Code / Log |
 | :--- | :--- | :--- |
@@ -61,14 +74,14 @@ sequenceDiagram
 | **invalid Input** | Return 400 with details | `ERR_VALIDATION` |
 | **Concurrency Clash** | Use optimistic locking | `ERR_CONFLICT` |
 
-## 6. Verification & Quality Plan
+## 8. Verification & Quality Plan
 
-### 6.1 Automated Testing
+### 8.1 Automated Testing
 - **Unit Tests**: Mandatory for [Components]
 - **Integration Tests**: Verify [Service A] to [Service B] connection.
 - **E2E Tests**: Path: [Action -> Result]
 
-### 6.2 Manual Verification
+### 8.2 Manual Verification
 ```bash
 # Command to verify build
 npm run build 
@@ -77,7 +90,6 @@ npm run build
 npm run lint
 ```
 
-## 7. Operations & Rollout
-- **Feature Flag**: [Yes/No] - Tag: `feature_x`
+## 9. Operations & Rollout
 - **Migration**: [e.g., Add `new_field` with default `null`]
 - **Observability**: New dashboard for [Metric X]

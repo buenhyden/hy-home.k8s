@@ -3,7 +3,7 @@ title: 'ADR 0001: Local Development Cluster selection (k3d)'
 status: 'Accepted'
 date: '2026-02-27'
 tags: ['adr', 'infra']
-layer: 'infra'
+layer: "infra"
 ---
 
 # ADR: Local Development Cluster selection (k3d) - 0001
@@ -14,74 +14,47 @@ layer: 'infra'
 
 **Overview (KR):** k3d를 사용한 로컬 개발용 Kubernetes 클러스터 구축 결정.
 
-## 1. Context and Problem Statement
+## 1. Metadata
 
-The home automation and development environment requires a Kubernetes cluster that can run locally on single or multiple machines without the overhead of full VMs or complex networking setups. We need a lightweight solution that supports easy lifecycle management (create/delete) and advanced features like GPU pass-through.
+- **ADR Number**: 0001
+- **Status**: Accepted
+- **Date**: 2026-02-27
+- **Deciders**: buenhyden
+- **layer**: infra
 
-## 2. Decision Drivers
+## 2. Context & Problem Statement
 
-- **Performance**: Must be lightweight and low-overhead.
+The home automation and development environment requires a Kubernetes cluster that can run locally on single or multiple machines without the overhead of full VMs. We need a lightweight solution that supports easy lifecycle management and advanced features like GPU pass-through.
+
+## 3. Decision Drivers (Senior)
+
+- **Performance**: Must be lightweight and low-overhead (`REQ-PRD-INF-01`).
 - **Developer Experience**: Fast cluster creation/deletion.
-- **GPU Support**: Essential for AI workloads.
-- **Flexibility**: Ability to easily expose ports to the host.
+- **GPU Support**: Essential for home-labs involving AI/ML workloads.
+- **Flexibility**: Ability to easily expose ports to the host (WSL2).
 
-### 3. Decision Outcome
+## 4. Decision Outcome
 
-**Chosen option: "k3d (k3s in Docker)"**, because it provides the best balance between speed, resource usage, and features for local development, especially on **WSL2**. Running **k3s v1.31.0** within Docker containers abstracts away the complexities of running system services directly in WSL, leveraging the high-performance Docker-WSL2 integration.
+**Chosen option: "k3d (k3s in Docker)"**
 
-### 3.1 Core Engineering Pillars Alignment
+### Rationale
+k3d provides the best balance between speed and resource usage on WSL2. Running k3s (v1.31.0) within Docker abstracts away service complexities and simplifies multi-node simulation.
 
-- **Security**: Allows testing k8s security policies locally. Aligns with `REQ-SEC-01`.
-- **Observability**: Supports standard Helm-based observability stacks (Prometheus/Loki). Aligns with `REQ-OBS-01`.
-- **Compliance**: Local environment ensures zero data leakage to public cloud.
-- **Performance**: High performance due to native Docker execution on WSL2.
-- **Documentation**: Minimal learning curve due to k3s/k3d popularity.
-- **Localization**: N/A for infrastructure layer.
+### Consequences
+- **Positive**: Sub-60s cluster startup, simple multi-node simulation.
+- **Negative**: Potential resource contention with host Docker processes.
 
-### 3.2 Positive Consequences
+## 5. Technical Debt & Risk Assessment (Senior)
 
-- Sub-60 second cluster startup.
-- Easy port mapping to the local host (18080/18443).
-- Native integration with Docker-based workflows.
-- Simple multi-node simulation (1 server, 3 agents).
+- **Debt Incurred**: Use of ephemeral Docker volumes for local storage might lead to data loss if clusters are not properly migrated to PersistentVolumes.
+- **Risk Score**: Medium
+- **Mitigation Plan**: Monitor Docker resource limits in WSL2 (`.wslconfig`) and implement CSI drivers early in the staging phase.
 
-### 3.3 Negative Consequences
+## 6. Deferred Decisions (ADL - Architecture Decision Log)
 
-- Potential resource contention with other Docker containers.
-- Some limitations in simulating certain storage backends.
+- **Production Cluster Selection**: Deferred until the home-lab hardware is purchased.
+- **Multi-machine Sync**: Deferred until network adjacency is established for multiple k3d nodes.
 
-## 4. Alternatives Considered (Pros and Cons)
-
-### Kind (Kubernetes in Docker)
-
-Similar to k3d but uses upstream k8s distributions.
-
-- **Good**, because standard k8s.
-- **Bad**, because heavier than k3s and slightly slower startup.
-
-### Minikube
-
-Traditional local k8s tool.
-
-- **Good**, because mature and feature-rich.
-- **Bad**, because heavier resource footprint and often requires a dedicated VM or complex Docker integration.
-
-### k3s (Direct install on WSL2)
-
-Run k3s as a system service directly inside WSL2 (no Docker-based nodes).
-
-- **Good**, because it avoids Docker-in-Docker concerns and reduces dependence on Docker Desktop.
-- **Bad**, because it increases WSL2-specific complexity (service management, cgroups/systemd, networking), and makes multi-node simulation harder than k3d.
-
-## 5. Confidence Level & Technical Requirements
-
-- **Confidence Rating**: High
-- **Notes**: k3d is the industry standard for lightweight local k8s testing.
-- **Technical Requirements Addressed**: REQ-PRD-INF-01, REQ-PRD-INF-04
-
-## Related Documents
-
-- **Supersedes**: N/A
-- **Superseded by**: N/A
-- **Feature PRD**: [Link to PRD](../prd/2026-02-27-home-cluster-infra-prd.md)
-- **Feature Spec**: [Link to Feature Spec](../specs/2026-03-16-infra-spec.md)
+## 7. Related Artifacts
+- **ARD Reference**: `[../ard/2026-02-27-k3d-cluster-ard.md]`
+- **Spec Reference**: `[../specs/2026-03-16-infra-spec.md]`

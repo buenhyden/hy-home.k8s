@@ -5,7 +5,7 @@ target_version: 'v1.0.0'
 owner: 'buenhyden'
 stakeholders: ['buenhyden']
 tags: ['prd', 'architecture']
-layer: 'architecture'
+layer: "architecture"
 ---
 
 # Documentation and Agent Instruction Refactor PRD

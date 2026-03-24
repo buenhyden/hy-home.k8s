@@ -4,7 +4,7 @@ status: 'Draft'
 date: '2026-03-16'
 owner: 'buenhyden'
 tags: ['gitops', 'spec']
-layer: 'gitops'
+layer: "gitops"
 ---
 
 # GitOps (ArgoCD) Implementation Spec

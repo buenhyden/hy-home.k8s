@@ -5,15 +5,16 @@ date: '2026-03-15'
 authors: ['buenhyden']
 deciders: ['buenhyden']
 tags: ['adr', 'architecture']
-layer: 'architecture'
+layer: "architecture"
 ---
 
-# ADR: Normalized Documentation and Agent Entrypoints - 0005
+## 1. Metadata
 
-- **Status**: Active
-- **Owner**: buenhyden
-- **Last Reviewed**: 2026-03-16
-- **layer:** meta
+- **ADR Number**: 0005
+- **Status**: Accepted
+- **Date**: 2026-03-15
+- **Deciders**: buenhyden
+- **layer**: meta
 
 **Overview (KR):** 파편화된 문서들을 하나의 표준(Flat hierarchy, Metadata compliance, Naming convention)으로 통합하고 검증하는 최종 프로세스를 정의합니다.
 

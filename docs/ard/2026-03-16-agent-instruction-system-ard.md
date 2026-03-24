@@ -2,79 +2,109 @@
 title: 'Agent Instruction System Architecture'
 status: 'Approved'
 owner: 'buenhyden'
+scope: 'master'
 tags: ['ard', 'architecture']
-layer: 'architecture'
+layer: "architecture"
 ---
 
-# Agent Instruction System Architecture
+# Agent Instruction System Architecture (ARD)
+
+## Overview (KR)
+이 문서는 AI 에이전트가 리포지토리를 자율적으로 탐색하고 지침을 단계적으로 로드(Lazy Loading)하기 위한 에이전트 지시 시스템 아키텍처를 정의합니다. 지능형 의도 분석, 동적 스코프 로드, 그리고 페르소나별 규칙 세트를 포함합니다.
+
+---
+
+## 1. Metadata & Status
 
 - **Status**: Approved
 - **Owner**: buenhyden
 - **Scope**: master
 - **layer:** architecture
+- **PRD Reference**: [2026-03-15-documentation-refactor-prd.md](../prd/2026-03-15-documentation-refactor-prd.md)
+- **ADR References**: [0000-lazy-loading-implementation.md](../adr/0000-lazy-loading-implementation.md)
 
-**Overview (KR):** AI 에이전트가 리포지토리를 자율적으로 탐색하고 지침을 단계적으로 로드하기 위한 명세 및 아키텍처 구조를 정의합니다. 이를 통해 에이전트의 컨텍스트 관리를 최적화하고 일관된 동작을 보장합니다.
+## 2. System Boundaries & Ownership
 
-## 1. Problem Statement
+- **Owns**: `docs/agentic/` directory, Gateway dispatching (`agent-instructions.md`), Task scope mappings, Persona rules.
+- **Consumes**: User messages (Intent), File system (Context), Metadata frontmatter.
+- **Does Not Own**: Model-specific system prompts (internal to Antigravity/Claude), Code execution engine.
 
-@[/doc-coauthoring] (KR): AI 에이전트가 리포지토리를 자율적으로 탐색하고 지침을 단계적으로 로드하기 위한 명세 및 아키텍처 구조를 정의합니다.
+## 3. Architecture Context (C4 Model)
 
-## Summary
-
-The Agent Instruction System is the primary governance layer for Human-AI collaboration in the `hy-home.k8s` repository. It is designed to be high-performance (low token overhead) and strictly spec-compliant.
-
-## Boundaries
-
-- **Owns**: Instruction dispatching logic, rule set organization, and intent-to-scope mapping.
-- **Consumes**: Markdown files in `docs/agentic/`, user intent signals.
-- **Does Not Own**: Actual code implementation logic beyond document structure rules.
-
-## Ownership
-
-- **Primary owner**: buenhyden
-- **Primary artifacts**: `docs/agentic/`, `AGENTS.md`
-- **Operational evidence**: `[../runbooks/documentation-management.md]`
-
-## 1. Overview
-
-The Agent Instruction System is the primary governance layer for Human-AI collaboration in the `hy-home.k8s` repository. It is designed to be high-performance (low token overhead) and strictly spec-compliant.
-
-## 2. Component Diagram (Mermaid)
+### 3.1 Level 1: System Context
 
 ```mermaid
-graph TD
-    A[CLAUDE.md / GEMINI.md] --> B[AGENTS.md]
-    B --> C[Gateway: agent-instructions.md]
-    C --> D{Intent Dispatcher}
-    D --> E[Governing Rules: rules/*.md]
-    D --> F[Task Scopes: scopes/*.md]
-    E --> G[Context Load]
-    F --> G[Context Load]
+C4Context
+    title Agent Instruction Context Diagram
+    Person(user, "User", "Gives coding commands")
+    System(agent, "AI Agent", "Antigravity / Claude Code")
+    System(instruction_sys, "Agent Instruction System", "Manages rules and scopes")
+    System_Ext(repo, "hy-home.k8s", "The target codebase")
+
+    Rel(user, agent, "Prompts")
+    Rel(agent, instruction_sys, "Consults for rules/scopes")
+    Rel(instruction_sys, repo, "References files and layers")
 ```
 
-## 3. Communication Patterns
+### 3.2 Level 2: Containers
 
-### Lazy Loading Protocol
+```mermaid
+C4Container
+    title Agent Instruction Container Diagram
+    Container(gateway, "Instruction Gateway", "Markdown", "Dispatches instructions based on intent")
+    Container(rules, "Persona Rules", "Markdown", "Behavioral constraints (CLI, UI, DevOps)")
+    Container(scopes, "Task Scopes", "Markdown", "Technically scoped paths (specs, tests, infra)")
 
-1. **Discovery**: Entry points (`AGENTS.md`) provide a minimal context.
-2. **Intent Recognition**: The agent identifies the task type (e.g., "Create a spec").
-3. **Scoped Injection**: The agent reads only the files listed in the **Intent-to-Scope Mapping** within `agent-instructions.md`.
+    Rel(gateway, rules, "Loads required")
+    Rel(gateway, scopes, "Injects task-specific")
+```
 
-### Metadata standards
+## 4. Technical Stack & Integrity
 
-- Every agent-generated file MUST contain a `layer` attribute in YAML frontmatter.
-- Valid Layers: `meta`, `infra`, `gitops`, `app`, `ops`.
+- **Dispatch Model**: Lazy Loading (Intent-based)
+- **Persistence Layer**: Markdown-based persistent memory
+- **Registry**: `agent-instructions.md` as the central hub
+- **Cross-Cutting Concerns**: 
+  - **Security**: Skill invocation required before any response
+  - **Compliance**: Metadata frontmatter enforcement
+  - **Performance**: Goal of <15k tokens per context load
 
-## 4. Constraint Matrix
+## 5. FinOps & Sustainability (Senior)
 
-| Constraint | Enforcement |
-| --- | --- |
-| **Max Token Load** | 15k Tokens (estimated) |
-| **Instruction Location** | `docs/agentic/` |
-| **Template Location** | `templates/` |
-| **Persistence** | Plural directory paths only (`plans/`, `specs/`) |
+### 5.1 Cost Architecture (FinOps)
 
-## 5. Directory Organization
+- **Cost Driver**: Input token count (System prompts + Documentation overhead).
+- **Monthly Estimate**: Optimized via modularity ($0.50 - $1.00 per agent task).
+- **Optimization Strategy**: Sequential Loading of instructions only when necessary for the current task scope.
 
-- `docs/agentic/rules/`: Persona-level behavioral rules.
-- `docs/agentic/scopes/`: Task-level technical instructions and target paths.
+### 5.2 Sustainability (Greedy-Green)
+
+- **Resource Footprint**: Minimal (Logic overhead).
+- **Carbon Intensity**: N/A (Cloud-based LLM computation).
+
+## 6. Resilience & Scalability (Senior)
+
+### 6.1 Failure Modes & Mitigation
+
+| Scenario | Impact | Mitigation Strategy |
+| :--- | :--- | :--- |
+| **Wrong Intent Detected** | Suboptimal context load | Human-in-the-loop verification (notify_user). |
+| **Monolithic Rule Growth** | Token bloat | Skill `agent-md-refactor` to split bloated files. |
+| **Conflicting Rules** | Hallucination/Stall | Hierarchy of rules: Global Rules > Scoped Rules. |
+
+### 6.2 Scaling Triggers
+
+- **Horizontal Scale**: Creation of sub-agent personas (Frontend-specialist, K8s-specialist).
+- **Vertical Scale**: Transition to JSON/Schema-locked instructions if Markdown parsing ambiguity increases.
+
+## 7. Data Architecture & Persistence
+
+- **Domain Entities**: Rule, Scope, Intent, Tool.
+- **Consistency Model**: Sticky Context (per conversation thread).
+- **Data Retention**: Conversation logs as short-term memory; KIs as long-term memory.
+
+## 8. Operational Roadmap
+
+- **Deployment**: `AGENTS.md` shim deployment.
+- **Observability**: Token usage tracking per task.
+- **Runbook**: [agentic-workflows-runbook.md](../runbooks/agentic-workflows-runbook.md)

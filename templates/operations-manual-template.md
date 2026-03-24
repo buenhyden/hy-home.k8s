@@ -63,13 +63,23 @@ _Description: This document defines the project's operational baseline, includin
 - **Logs**: JSON structured logging with `trace_id`.
 - **Tracing**: Distributed tracing (OpenTelemetry) for cross-service calls.
 
-## 5. Continuity & Scalability
+### 4.4. Cost Anomaly Response
+- **Threshold**: [e.g., 20% spike in 24h]
+- **Action**: [Check recent deployments, scaling groups, or API abuse]
 
-- **RTO / RPO**: Target RTO < 1h, RPO < 5m (Database).
+## 5. Disaster Recovery (DR) & Business Continuity
+
+- **RTO (Recovery Time Objective)**: [e.g., 4 hours]
+- **RPO (Recovery Point Objective)**: [e.g., 15 minutes]
+- **Failover Strategy**: [Active/Passive, Multi-tier failover]
+- **Verification**: `make test-dr-failover`
+
+## 6. Continuity & Scalability
+
 - **Backup Strategy**: [e.g., WAL-G for Postgres, Hourly S3 Snapshots]
 - **Auto-scaling**: HPA based on [CPU/Memory/Reqs] threshold (> 70%).
 
-## 6. Incident & Runbooks
+## 7. Incident & Runbooks
 - **Standard Runbooks**: Located in `docs/runbooks/`
 - **Incident Logs**: Located in `docs/incidents/`
 - **Postmortems**: Mandatory for SEV-1/2 incidents.

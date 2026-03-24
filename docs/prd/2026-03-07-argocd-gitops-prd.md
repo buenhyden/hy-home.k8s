@@ -4,7 +4,7 @@ version: v1.0.0
 owner: buenhyden
 stakeholders: ['buenhyden']
 scope: master
-layer: gitops
+layer: "gitops"
 ---
 
 # Product Requirements Document (PRD): ArgoCD GitOps

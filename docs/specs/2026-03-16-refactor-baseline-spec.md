@@ -2,7 +2,7 @@
 title: 'Documentation and Agent Instruction Refactor Spec'
 status: 'Validated'
 version: 'v1.0.0'
-layer: 'meta'
+layer: "meta"
 ---
 
 # Documentation and Agent Instruction Refactor Spec

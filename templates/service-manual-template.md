@@ -49,7 +49,13 @@ _Description: The authoritative operational and technical guide for a specific s
   | `PORT` | Yes | 8080 | Listening port |
   | `DB_URL` | Yes | - | Connection string |
 
-## 5. Deployment & GitOps (Senior)
+## 5. Developer Experience (DX) & Tooling (Senior)
+
+- **Local Setup**: `nix-shell` or `devcontainer` (One-command setup)
+- **Mocking Strategy**: [How to run without external deps / local-stack]
+- **Tooling References**: [CLI tools, specific scripts]
+
+## 6. Deployment & GitOps (Senior)
 
 - **Runtime**: [e.g., K8s / Docker Compose]
 - **GitOps Tool**: [e.g., ArgoCD / Flux]
@@ -58,18 +64,18 @@ _Description: The authoritative operational and technical guide for a specific s
   - **Liveness**: `/healthz`
   - **Readiness**: `/readyz`
 
-## 6. Observability & SLIs
+## 7. Observability & SLIs
 
-### 6.1 Service Level Indicators (SLIs)
+### 7.1 Service Level Indicators (SLIs)
 - **Availability**: 99.9%
 - **Latency (p95)**: < 200ms
 - **Error Rate**: < 0.1%
 
-### 6.2 Monitoring Links
+### 7.2 Monitoring Links
 - **Dashboard**: [Grafana Link]
 - **Logs**: [Datadog/ELK Link]
 
-## 7. Reliability & Failure Modes (Senior)
+## 8. Reliability & Failure Modes (Senior)
 
 | Mode | Symptom | Immediate Action |
 | :--- | :--- | :--- |
@@ -77,12 +83,12 @@ _Description: The authoritative operational and technical guide for a specific s
 | **OOM Killed** | Container restarts frequently | Increase Memory limit |
 | **Conn Pool Full** | 500 errors, timeout | check DB locks |
 
-## 8. Operational Procedures (Day-2)
+## 9. Operational Procedures (Day-2)
 - **Scaling**: `kubectl scale deployment <name> --replicas=5`
 - **Manual Restart**: `kubectl rollout restart deployment <name>`
 - **Credential Rotation**: [Refer to Runbook]
 
-## 9. Related Artifacts
+## 10. Related Artifacts
 - **Architecture**: `[ARD.md]`
 - **Decisions**: `[docs/adr/]`
 - **Runbook**: `[docs/runbooks/<service>.md]`

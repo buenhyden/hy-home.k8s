@@ -5,35 +5,49 @@ date: '2026-03-15'
 authors: ['buenhyden']
 deciders: ['buenhyden']
 tags: ['adr', 'documentation']
-layer: 'meta'
+layer: "meta"
 ---
 
-# ADR: Documentation Refactor and Hub Consolidation - 0004
+## 1. Metadata
 
-- **Status**: Decided
-- **Owner**: buenhyden
-- **Last Reviewed**: 2026-03-15
+- **ADR Number**: 0004
+- **Status**: Accepted
+- **Date**: 2026-03-15
+- **Deciders**: buenhyden
+- **layer**: meta
 
-**Overview (KR):** 프로젝트 문서 구조의 복잡성을 해결하고 유지보수 효율성을 높이기 위해 대규모 리팩토링 및 표준화를 결정한 배경과 세부 전략을 기록합니다.
-지연 로딩(Lazy Loading) 방식으로 변경하고, 문서 구조를 평탄화합니다.
+## 2. Context & Problem Statement
 
-## Context
+Documentation fragmented and deeply nested. AI Agents prone to context bloat. We need a standardized way to trigger specialized rules.
 
-The repository documentation has become fragmented and sometimes deeply nested. AI Agents are prone to context bloat when they ingest too many instructions at once. We need a standardized way to trigger specific rules and load only the necessary scopes for a given task.
+## 3. Decision Drivers (Senior)
 
-## Decision
+- **Token Economy**: Minimize expensive repeated instruction loading.
+- **Decision Authority**: Clear boundaries between global shims and local scopes.
+- **DevOps Alignment**: Treat documentation structures as rigorously as infrastructure paths.
 
-- **Flattened Hierarchy**: Organize all documents in `docs/<type>/` (e.g., `docs/adr/`, `docs/prd/`).
-- **Lazy Loading**: AI Agents MUST only load detailed instructions from `docs/agentic/` when triggered by a specific rule.
-- **Explicit Triggers**: Use `AGENTS.md` as the root contract for these triggers.
-- **Layer Metadata**: Mandate `layer:` in frontmatter to enable programmatic filtering.
+## 4. Decision Outcome
 
-## Consequences
+**Chosen option: "Hub Consolidation & Lazy Loading"**
 
-- **Positive**: Reduced token usage, less hallucination, clearer authority boundaries.
-- **Negative**: Requires agents to perform an extra look-up step to load instructions.
+### Rationale
+Using a lightweight shim (`AGENTS.md`) to route to deep documentation ensures the "Initial Thought" turn remains under 2k tokens while maintaining access to infinite complexity.
 
-## Related Documents
+### Consequences
+- **Positive**: Reduced token usage, higher fidelity in complex reasoning phases.
+- **Negative**: Minimal latency increase during the "Read Scope" turn.
 
-- `[../specs/2026-03-16-doc-and-agent-refactor-spec.md]`
-- `[../prd/2026-03-15-documentation-refactor-prd.md]`
+## 5. Technical Debt & Risk Assessment (Senior)
+
+- **Debt Incurred**: The shim logic relies on agent compliance with the `Lazy Loading Protocol`. Enforcement is currently social/instruction-based, not hard-coded.
+- **Risk Score**: Medium
+- **Mitigation Plan**: Implement a "Scope Validator" tool in the future to check if an agent has loaded the required documents for a task.
+
+## 6. Deferred Decisions (ADL - Architecture Decision Log)
+
+- **Manual vs Guide Naming Strategy**: **DECIDED (2026-03-24)** - Shifted all operational docs to `*-manual-template.md`.
+- **Instruction Pruning Automation**: Deferred.
+
+## 7. Related Artifacts
+- **PRD Reference**: `[../prd/2026-03-15-documentation-refactor-prd.md]`
+- **Spec Reference**: `[../specs/2026-03-16-doc-and-agent-refactor-spec.md]`

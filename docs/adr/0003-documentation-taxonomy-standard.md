@@ -5,32 +5,48 @@ date: '2026-03-15'
 authors: ['buenhyden']
 deciders: ['buenhyden']
 tags: ['adr', 'meta']
-layer: 'meta'
+layer: "meta"
 ---
 
-# ADR: Documentation Taxonomy and Metadata Standard - 0003
+## 1. Metadata
 
+- **ADR Number**: 0003
 - **Status**: Accepted
-- **Owner**: buenhyden
-- **Last Reviewed**: 2026-03-15
+- **Date**: 2026-03-15
+- **Deciders**: buenhyden
+- **layer**: meta
 
-**Overview (KR):** 리포지토리의 문서 체계를 flattened taxonomy로 전환하고, 모든 문서에 layer 메타데이터를 필수적으로 포함하도록 강제함.
-
-## Related Documents
-
-- **PRD Reference**: `[../prd/2026-03-15-doc-and-agent-refactor-prd.md]`
-
-## Context
+## 2. Context & Problem Statement
 
 The project documentation structure grew organically. To ensure clarity for both humans and AI agents, a stricter, flattened taxonomy is required alongside mandatory metadata for classification.
 
-## Decision
+## 3. Decision Drivers (Senior)
 
-1. **Flattened Folders**: All documentation MUST live in root-level `docs/` subdirectories based on type: `ard`, `adr`, `prd`, `specs`, `plans`, `runbooks`, `operations`.
-2. **Mandatory Metadata**: All files in these folders MUST contain YAML frontmatter with a `layer` key identifying the functional component (e.g., `infra`, `gitops`, `app`, `meta`).
-3. **Lazy Loading Implementation**: Implement a mapping between `rules/` and `scopes/` in `docs/agentic/agent-instructions.md` to facilitate lazy loading of specialized instructions.
+- **Determinism**: Agents must be able to predict file locations based on type.
+- **Context Management**: Metadata enables programmatic filtering by AI shims.
+- **Maintainability**: Root-level categorization prevents "deep nesting" sprawl.
 
-## Consequences
+## 4. Decision Outcome
 
-- **Positive**: More deterministic file discovery for agents; clearer division of concerns.
-- **Negative**: Existing links might break and require updating.
+**Chosen option: "Flattened Taxonomy + Mandatory Metadata"**
+
+### Rationale
+Flattening the structure directly reduces path-traversal complexity for agents. Metadata (`layer:`) allows for precise context injection during LLM turns.
+
+### Consequences
+- **Positive**: More deterministic file discovery; clearer division of concerns.
+- **Negative**: Existing links require manual/automated fixing.
+
+## 5. Technical Debt & Risk Assessment (Senior)
+
+- **Debt Incurred**: The rapid transition from nested to flat hierarchy may result in "orphaned" files in git history if not properly pruned.
+- **Risk Score**: Low
+- **Mitigation Plan**: Run a weekly "Orphan Scan" to identify files not tracked by the primary [docs/README.md] index.
+
+## 6. Deferred Decisions (ADL - Architecture Decision Log)
+
+- **Automated Taxonomy Linting**: Deferred until the `pre-commit` hook pipeline is modernized.
+- **Cross-Layer Dependency Mapping**: Deferred until the service mesh complexity warrants automated doc-graph generation.
+
+## 7. Related Artifacts
+- **PRD Reference**: `[../prd/2026-03-15-doc-and-agent-refactor-prd.md]`

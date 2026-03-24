@@ -6,7 +6,7 @@ owner: 'buenhyden'
 tags:
   - runbook
   - gitops
-layer: 'gitops'
+layer: "gitops"
 ---
 
 # Runbook: Local GitOps (ArgoCD App-of-Apps)

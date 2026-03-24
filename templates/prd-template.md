@@ -126,11 +126,15 @@ Use these when the PRD needs full product framing, personas, milestones, or acce
 - **Beta**: YYYY-MM-DD - [Limited validation or rollout]
 - **v1.0**: YYYY-MM-DD - [Completion state]
 
-## 8. Risks, Security & Compliance
+## 8. Risks, Security & Compliance (GRC)
 
 - **Risks & Mitigation**: [List the main risks and mitigation strategy]
-- **Compliance & Privacy**: [List relevant compliance or privacy constraints]
 - **Security Protocols**: [List security-related controls or assumptions]
+- **Compliance & Privacy (Senior)**:
+
+  - **GDPR/CPRA**: [Data residency, right to erase]
+  - **Audit Logging**: [Requirement for PII/Secret access logs]
+  - **Control Mapping**: [e.g., Mapping to SOC2 Control ID X.Y]
 
 ## 9. Assumptions & Dependencies
 

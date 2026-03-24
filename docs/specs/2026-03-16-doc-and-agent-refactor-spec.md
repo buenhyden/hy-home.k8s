@@ -8,7 +8,7 @@ prd_reference: '../prd/2026-03-15-documentation-refactor-prd.md'
 arch_reference: '../ard/2026-03-15-documentation-architecture-ard.md'
 decision_reference: '../adr/0004-documentation-refactor-decision.md'
 tags: ['spec','implementation']
-layer: 'meta'
+layer: "meta"
 ---
 
 # Documentation Refactor Specification

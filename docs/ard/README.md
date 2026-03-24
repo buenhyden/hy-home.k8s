@@ -105,25 +105,21 @@ specs/ (Implementation Specifications)
 
 When working with ARDs:
 
-1. **Read before designing**: Check existing ARDs in the relevant domain folders for requirements
-2. **Use template**: Always use `templates/ard-template.md`
-3. **Be specific**: Quantify NFRs (e.g., "99.9% uptime" not "high availability")
-4. **Link to ADRs**: Reference relevant ADRs in constraints section
-5. **Read before designing**: Check existing ARDs in the relevant domain folders for requirements
-6. **Use template**: Always use `templates/ard-template.md`
-7. **Be specific**: Quantify NFRs (e.g., "99.9% uptime" not "high availability")
-8. **Link to ADRs**: Reference relevant ADRs in constraints section
-9. **Pillar Validation**: Validate that ARDs align with `.agent/rules/1910-architecture-documentation.md` and account for the 6 Core Engineering Pillars (Security, Observability, Performance, Compliance, Documentation, Localization).
+1. **Read before designing**: Check existing ARDs for technical constraints.
+2. **Use template**: Always use `templates/ard-template.md`.
+3. **Be specific**: Quantify NFRs (e.g., "99.9% uptime" not "high availability").
+4. **Link to ADRs**: Reference relevant ADRs in the constraints section.
+5. **Pillar Validation**: Ensure alignment with the 6 Core Engineering Pillars (Security, Observability, Performance, Compliance, Documentation, Localization) as defined in `.agent/rules/`.
 
 ## Index of ARDs
 
 | Last Updated | Document | Description | Status |
-| --- | --- | --- | --- |
-| 2026-02-27 | [k3d-cluster-ard](./2026-02-27-k3d-cluster-ard.md) | Standard for local k3s/k3d cluster layout on WSL2. | Approved |
-| 2026-03-07 | [argocd-gitops-ard](./2026-03-07-argocd-gitops-ard.md) | GitOps and Sealed Secrets architecture. | Approved |
-| 2026-03-15 | [documentation-architecture-ard](./2026-03-15-documentation-architecture-ard.md) | Taxonomy and metadata standards for the repo. | Approved |
-| 2026-03-16 | [agent-instruction-system-ard](./2026-03-16-agent-instruction-system-ard.md) | AI agent collaboration and lazy-loading architecture. | Approved |
-| 2026-03-16 | [architecture-checklist-ard](./2026-03-16-architecture-checklist-ard.md) | Mandatory tech stack and structure checklist. | Approved |
-| 2026-03-16 | [documentation-system-ard](./2026-03-16-documentation-system-ard.md) | Flattened taxonomy and metadata requirements. | Approved |
+| :--- | :--- | :--- | :--- |
+| 2026-03-24 | [k3d-cluster-ard](./2026-02-27-k3d-cluster-ard.md) | Standard for local k3s/k3d cluster layout on WSL2. | Approved |
+| 2026-03-24 | [argocd-gitops-ard](./2026-03-07-argocd-gitops-ard.md) | GitOps and Sealed Secrets architecture. | Approved |
+| 2026-03-24 | [documentation-architecture-ard](./2026-03-15-documentation-architecture-ard.md) | Taxonomy, metadata, and doc system standards. | Approved |
+| 2026-03-24 | [agent-instruction-system-ard](./2026-03-16-agent-instruction-system-ard.md) | AI agent collaboration and lazy-loading architecture. | Approved |
+| 2026-03-24 | [architecture-checklist-ard](./2026-03-16-architecture-checklist-ard.md) | Mandatory tech stack and structure checklist. | Approved |
 
-> Add entries to this index as ARDs are created.
+> [!NOTE]
+> All ARDs have been modernized to the "Elite" enterprise standard as of 2026-03-24.

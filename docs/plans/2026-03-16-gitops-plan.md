@@ -4,7 +4,7 @@ status: 'Planned'
 date: '2026-03-16'
 owner: 'buenhyden'
 tags: ['gitops', 'plan']
-layer: 'gitops'
+layer: "gitops"
 ---
 
 # ArgoCD GitOps Deployment Plan

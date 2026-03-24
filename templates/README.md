@@ -15,6 +15,7 @@ All documentation in this repository MUST adhere to the following standards esta
     - **Allowed Values**: `meta | infra | gitops | app | ops`
 - **Bilingual Context**: Documents MUST include an `Overview (KR)` section at the top (1-2 sentences in Korean).
 - **Relative Linking**: Always use relative links (e.g., `[ARD](../ard/YYYY-MM-DD-feature.md)`) for cross-references.
+- **Elite Architecture Standards**: All core templates (ARD, PRD, Spec, Manuals) now include mandatory sections for **FinOps**, **Disaster Recovery (DR)**, **Compliance (GRC)**, and **Developer Experience (DX)**.
 
 ## 2. Template Categories (Updated)
 

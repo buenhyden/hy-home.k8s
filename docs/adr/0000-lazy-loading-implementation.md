@@ -3,50 +3,50 @@ title: 'ADR 0000: Lazy Loading Implementation for Agent Instructions'
 status: 'Accepted'
 date: '2026-03-16'
 tags: ['adr', 'architecture']
-layer: 'architecture'
+layer: "architecture"
 ---
 
-# ADR: Lazy Loading Implementation for Agent Instructions - 0000
+## 1. Metadata
 
+- **ADR Number**: 0000
 - **Status**: Accepted
-- **Owner**: buenhyden
-- **Last Reviewed**: 2026-03-16
+- **Date**: 2026-03-16
+- **Deciders**: buenhyden
+- **layer**: architecture
 
-**Overview (KR):** 에이전트 지침의 토큰 사용량을 최적화하기 위해 필요한 지침부만 선택적으로 로드하는 게이트웨이 방식의 Lazy Loading 메커니즘을 정의합니다.
-
-## Context
+## 2. Context & Problem Statement
 
 The current AI Agent instruction set in `docs/agentic/` is growing large, leading to high token usage (~39k tokens) in the initial context window. This impacts performance, increases costs, and reduces the effective context available for actual task processing.
 
-## Decision
+## 3. Decision Drivers (Senior)
 
-We will implement a strict **Lazy Loading Protocol** for AI Agent instructions.
+- **Performance**: High token usage slows down initialization and inference.
+- **Cost**: Unnecessary instruction loading increases API billing significantly over thousands of interactions.
+- **Reliability**: Overloading the context window increases the likelihood of "hallucinations" or ignored instructions.
 
-1. **Gateway-Only Initialization**: Agents will initially only load a thin "Gateway" document (`docs/agentic/agent-instructions.md`).
-2. **Intent Dispatching**: The Gateway will contain a mapping table that links specific user intents to "Governing Rules" and "Task Scopes".
-3. **On-Demand Loading**: Agents SHALL only read the Rule and Scope files relevant to the active task.
-4. **Token Budgeting**: A hard limit of 15k tokens is set for the total instruction set loaded into the primary context at any given time.
+## 4. Decision Outcome
 
-## Rationale
+**Chosen option: "Lazy Loading Protocol"**
 
-- **Performance**: Reducing the initial context load speeds up agent response times and reduces latency.
-- **Context Efficiency**: Saving 20k+ tokens in instructions provides significantly more "thinking space" for complex reasoning.
-- **Maintainability**: Granular rules and scopes are easier to update and version-control than monolithic instruction files.
+### Rationale
+- **Context Efficiency**: Saving 20k+ tokens provides more "thinking space" for active reasoning.
+- **Maintainability**: Granular rules/scopes are easier to version-control.
 
-## Consequences
+### Consequences
+- **Positive**: Faster initialization, lower costs, higher precision.
+- **Negative**: Requires an extra "Read" step when switching intents.
 
-### Positive
+## 5. Technical Debt & Risk Assessment (Senior)
 
-- Faster initialization.
-- Lower token costs.
-- Higher precision in task-specific behaviors.
+- **Debt Incurred**: Instruction duplication may occur across Rule/Scope files if not strictly governed.
+- **Risk Score**: Low
+- **Mitigation Plan**: Use `agent-instructions.md` as the strict single-source-of-truth for routing logic.
 
-### Negative
+## 6. Deferred Decisions (ADL - Architecture Decision Log)
 
-- Requires agents to perform an extra "Read" step when switching intents.
-- Slightly higher cognitive load for maintainers to distribute instructions correctly.
+- **Granular Rule Versioning**: Deferred until multi-agent orchestration requires divergent rule sets.
+- **Automated Instruction Pruning**: Deferred until token usage exceeds 100k per turn.
 
-## Alternatives Considered
-
-- **Monolithic Flattening**: Combining all instructions into one file. Rejected because it worsens the token bloat.
-- **Skill-Based Loading**: Loading instructions based on which tools are available. Rejected because intent (PRD vs. Spec) is a better predictor of required logic than tool availability.
+## 7. Related Artifacts
+- **ARD Reference**: `[../ard/agent-instruction-system-ard.md]`
+- **Spec Reference**: `[TODO]`
