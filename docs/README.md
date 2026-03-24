@@ -1,4 +1,4 @@
-# hy-home.k8s Documentation
+# docs/ 문서 체계 안내
 
 ## 목적
 

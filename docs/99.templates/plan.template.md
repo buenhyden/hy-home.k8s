@@ -1,4 +1,5 @@
 <!-- Target: docs/05.plans/YYYY-MM-DD-<feature>.md -->
+
 # [Feature Name] Implementation Plan
 
 > Use this template for `docs/05.plans/YYYY-MM-DD-<feature>.md`.
@@ -10,7 +11,7 @@
 
 ---
 
-## [Feature or Component] Implementation Plan
+# [Feature or Component] Plan
 
 ## Overview (KR)
 
@@ -32,7 +33,7 @@
 
 ## Work Breakdown
 
-| Task | Description | Affected Files / Docs | REQ | Validation |
+| Task | Description | Files / Docs Affected | Target REQ | Validation Criteria |
 | --- | --- | --- | --- | --- |
 | PLN-001 | [Action] | `path/to/file` | REQ-001 | [Evidence] |
 
@@ -65,6 +66,6 @@
 ## Related Documents
 
 - **PRD**: `[../01.prd/YYYY-MM-DD-<feature-or-system>.md]`
-- **ARD**: `[../02.ard/####-<system-or-domain-name>.md]`
+- **ARD**: `[../02.ard/####-<system-or-domain>.md]`
 - **Spec**: `[../04.specs/<feature-id>/spec.md]`
 - **ADR**: `[../03.adr/####-<short-title>.md]`

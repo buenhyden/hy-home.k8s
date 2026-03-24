@@ -1,4 +1,5 @@
-<!-- Target: docs/90.references/<topic>.md -->
+<!-- Target: docs/90.references/<category>/<item>.md -->
+
 # Reference: [Item Name]
 
 > Use this template for `docs/90.references/<topic>.md`.

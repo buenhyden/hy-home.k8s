@@ -1,9 +1,10 @@
-<!-- Target: docs/10.incidents/YYYY/YYYY-MM-DD-<slug>.md -->
+<!-- Target: docs/10.incidents/YYYY/YYYY-MM-DD-<incident-title>.md -->
+
 # Incident: [Incident Title]
 
 NC-YYYYMMDD-XXX / [Short Incident Title]
 
-> Use this template for `docs/10.incidents/YYYY/YYYY-MM-DD-<slug>.md`.
+> Use this template for `docs/10.incidents/YYYY/YYYY-MM-DD-<incident-title>.md`.
 >
 > Rules:
 >
@@ -22,12 +23,12 @@ NC-YYYYMMDD-XXX / [Short Incident Title]
 | Field | Value |
 | --- | --- |
 | Incident ID | `INC-YYYYMMDD-XXX` |
-| Severity | `SEV-1 \| SEV-2 \| SEV-3` |
-| Status | `Investigating \| Mitigating \| Monitoring \| Resolved \| Closed` |
+| Severity | `SEV-1 | SEV-2 | SEV-3` |
+| Status | `Investigating | Identified | Mitigating | Monitoring | Resolved | Closed` |
 | Detection Time | `YYYY-MM-DD HH:MM UTC` |
 | Primary Service | [Affected service] |
 | Evidence Source | [Log / dashboard / report] |
-| Runbook Link | `[../../09.runbooks/<topic>.md]` |
+| Runbook Link | `[../../09.runbooks/####-<topic>.md]` |
 
 ## Agent Metadata (If Applicable)
 
@@ -57,7 +58,6 @@ NC-YYYYMMDD-XXX / [Short Incident Title]
 
 - **Current Hypothesis**:
 - **Mitigation Actions**:
-- **Business / Maintenance Impact**: [Outcome]
 - **Resolution State**:
 
 ## Evidence
@@ -71,4 +71,4 @@ NC-YYYYMMDD-XXX / [Short Incident Title]
 
 ## Postmortem Link
 
-- `[../../11.postmortems/YYYY/YYYY-MM-DD-<slug>.md]`
+- `[../../11.postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`

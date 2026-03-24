@@ -1,4 +1,5 @@
 <!-- Target: docs/04.specs/<feature-id>/agent-design.md -->
+
 # [Feature Name] Agent Design
 
 > Use this template for `docs/04.specs/<feature-id>/agent-design.md`.
@@ -14,8 +15,7 @@
 
 ## Overview (KR)
 
-이 문서는 [기능명]의 AI Agent 설계를 정의한다.
-역할, 도구 사용, 안전 장치, 평가 전략을 구체화한다.
+이 문서는 [기능명]의 AI Agent 설계를 정의한다. Agent 역할, 입력/출력 계약, 도구 사용, 컨텍스트 관리, 안전 장치, 평가 전략을 구체화한다.
 
 ## Parent Documents
 

@@ -1,9 +1,11 @@
 # Agent Workflows
 
 ## Metadata
+
 layer: "agent-core"
 
 ## Overview
+
 이 문서는 효율적인 AI Agent 활용을 위한 표준 워크플로우를 정의한다.
 
 ## Core Workflows
@@ -16,6 +18,7 @@ layer: "agent-core"
    - 템플릿 선택 → 초안 작성 → 거버넌스 준수 검토 → 최종 승인
 
 ## Related Scopes
+
 - [specs.md](file:///home/hy/projects/hy-home.k8s/docs/00.agent/scopes/specs.md)
 - [plans.md](file:///home/hy/projects/hy-home.k8s/docs/00.agent/scopes/plans.md)
 - [tasks.md](file:///home/hy/projects/hy-home.k8s/docs/00.agent/scopes/tasks.md)

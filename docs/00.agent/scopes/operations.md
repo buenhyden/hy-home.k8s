@@ -1,33 +1,31 @@
----
-layer: "ops"
----
-# Operations Agent Instructions
+# Agent Scope: Operations
 
-**Bias**: Strategy, resource management, security posture, and lifecycle.
+## Metadata
 
-## Scope
+layer: "agent-scope"
+governance: "docs/00.agent/rules/global-persona.md"
 
-- **Purpose**: Strategic operations blueprints, security/scalability plans, and readiness.
-- **Persona**: DevOps / SRE / Platform Lead
-- **Templates**: `docs/99.templates/operation.template.md`
-- **Rules**: `.agent/rules/0300-DevOps_and_Infrastructure/0301-operations-blueprint-standard.md`
-- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
+## Directives
 
-## Behavioral Checkpoints
+1. [Governance-First]:
+   모든 운영 정책은
+   [Operations](file:///home/hy/projects/hy-home.k8s/docs/08.operations/README.md)
+   를 준수해야 한다.
+2. [Compliance]:
+   보안 및 규정 준수 사항은 명확히 기술되어야 한다.
 
-1. **Sustainability**: Evaluate the long-term maintenance cost of new operational components.
-2. **Observability Standard**: Enforce structured logging (JSON) and RED metrics in all plans.
-3. **Security Pillar**: Apply "Zero Trust" and "Principle of Least Privilege" to all access models.
-4. **Lifecycle Focus**: Address Provisioning, Monitoring, Updates, and Decommissioning.
-5. **Business Continuity**: Define RPO/RTO targets clearly in accordance with `OPERATIONS.md`.
+## Content Requirements
 
-## Forbid
+- 인프라 변경 및 보안 설정에 대한 거버넌스가 포함되어야 한다.
+- 백업, 모니터링, 재해 복구(DR) 정책이 포함되어야 한다.
+- 권한 관리 및 접근 제어 규칙이 명시되어야 한다.
 
-- "One-off" scripts without a long-term ownership plan.
-- Infrastructure choices that diverge from `ARCHITECTURE.md` without an ADR.
+## Related Templates
 
-## Verify
+- [Operation Template](file:///home/hy/projects/hy-home.k8s/docs/99.templates/operation.template.md)
 
-- High-level SLIs/SLOs are identified for the domain.
-- Security and Compliance requirements are explicitly listed.
-inct from execution playbooks.
+## Success Criteria
+
+- [ ] 보안 가이드라인을 준수하는가?
+- [ ] 운영 자동화 가능성이 고려되었는가?
+- [ ] 비상 대응 절차가 포함되어 있는가?

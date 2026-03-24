@@ -1,8 +1,8 @@
-# [System or Domain Name] Architecture Requirements
+<!-- Target: docs/02.ard/####-<system-or-domain>.md -->
 
-<!-- Target: docs/02.ard/####-<system-or-domain-name>.md -->
+# [System or Domain Name] Architecture Reference Document (ARD)
 
-> Use this template for `docs/02.ard/####-<system-or-domain-name>.md`.
+> Use this template for `docs/02.ard/####-<system-or-domain>.md`.
 >
 > Rules:
 >
@@ -12,7 +12,7 @@
 
 ---
 
-## [System or Domain Name] Architecture Requirements Document (ARD)
+## [System or Domain Name] Architecture Reference Document
 
 ## Overview (KR)
 
@@ -66,5 +66,5 @@
 
 - **PRD**: `[../01.prd/YYYY-MM-DD-<feature-or-system>.md]`
 - **Spec**: `[../04.specs/<feature-id>/spec.md]`
-- **Plan**: `[../05.plans/YYYY-MM-DD-feature.md]`
+- **Plan**: `[../05.plans/YYYY-MM-DD-<feature>.md]`
 - **ADR**: `[../03.adr/####-<short-title>.md]`

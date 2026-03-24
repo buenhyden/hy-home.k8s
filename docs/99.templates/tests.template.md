@@ -1,4 +1,5 @@
 <!-- Target: docs/04.specs/<feature-id>/tests.md -->
+
 # [Feature Name] Test & Evaluation Strategy
 
 > Use this template for `docs/04.specs/<feature-id>/tests.md`.
@@ -7,7 +8,7 @@
 >
 > - This document defines the verification strategy for the feature.
 > - Core behavior defaults to TDD.
-> - Agent functionality must include both software tests and eval coverage.
+> - Agent functionality must include both software tests and eval coverage when applicable.
 > - Execution-tracking remains in `06.tasks/`.
 > - This document defines strategy and test inventory.
 
