@@ -1,4 +1,4 @@
-# 02.ard
+# 02.ARD (Architecture Reference Document)
 
 ## 목적
 
@@ -28,6 +28,6 @@
 
 - `####-<system-or-domain>.md`
 
-## 시작 템플릿
+## Templates
 
 - `../99.templates/ard.template.md`

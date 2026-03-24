@@ -1,5 +1,5 @@
 <!-- Target: docs/05.plans/YYYY-MM-DD-<feature>.md -->
-# [Feature or Component] Plan
+# [Feature Name] Implementation Plan
 
 > Use this template for `docs/05.plans/YYYY-MM-DD-<feature>.md`.
 >
@@ -10,7 +10,7 @@
 
 ---
 
-# [Feature or Component] Plan
+## [Feature or Component] Implementation Plan
 
 ## Overview (KR)
 
@@ -32,7 +32,7 @@
 
 ## Work Breakdown
 
-| Task | Description | Files / Docs Affected | Target REQ | Validation Criteria |
+| Task | Description | Affected Files / Docs | REQ | Validation |
 | --- | --- | --- | --- | --- |
 | PLN-001 | [Action] | `path/to/file` | REQ-001 | [Evidence] |
 

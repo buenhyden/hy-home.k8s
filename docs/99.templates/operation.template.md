@@ -1,7 +1,7 @@
-<!-- Target: docs/08.operations/<policy-name>.md -->
-# [Policy Name] Operations Policy
+<!-- Target: docs/08.operations/<policy-or-standard>.md -->
+# [Policy or Standard Name] Operations Policy
 
-> Use this template for `docs/08.operations/<policy-name>.md`.
+> Use this template for `docs/08.operations/<policy-or-standard>.md`.
 >
 > Rules:
 >

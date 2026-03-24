@@ -1,7 +1,7 @@
-<!-- Target: docs/11.postmortems/YYYY/YYYY-MM-DD-<slug>.md -->
-# Postmortem: [Short Incident Title]
+<!-- Target: docs/11.postmortems/YYYY/YYYY-MM-DD-<incident-title>.md -->
+# Postmortem: [Incident Title]
 
-> Use this template for `docs/11.postmortems/YYYY/YYYY-MM-DD-<slug>.md`.
+> Use this template for `docs/11.postmortems/YYYY/YYYY-MM-DD-<incident-title>.md`.
 
 ---
 
@@ -16,7 +16,7 @@
 | Incident ID | `INC-YYYYMMDD-XXX` |
 | Incident Date | `YYYY-MM-DD` |
 | Analysis Date | `YYYY-MM-DD` |
-| Severity | `SEV-1 | SEV-2 | SEV-3` |
+| Severity | `SEV-1 \| SEV-2 \| SEV-3` |
 | Incident Document | `[../../10.incidents/YYYY/YYYY-MM-DD-<slug>.md]` |
 
 ## Agent Metadata (If Applicable)

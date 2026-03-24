@@ -1,24 +1,21 @@
----
-layer: "meta"
----
-# Development Workflows
+# Agent Workflows
 
-Detailed workflows for building and maintaining the `hy-home.k8s` platform.
+## Metadata
+layer: "agent-core"
 
-## 1. Spec-First Development
+## Overview
+이 문서는 효율적인 AI Agent 활용을 위한 표준 워크플로우를 정의한다.
 
-1. **Understand Intent**: Clarify requirements before design.
-2. **Draft Spec**: Create a new specification in `docs/specs/` using the template.
-3. **Approval**: Get user approval on the spec.
-4. **Implementation Plan**: Draft an execution plan in `docs/plans/`.
-5. **Execute**: Proceed with implementation once the plan is approved.
+## Core Workflows
 
-## 2. Validation & Deployment
+1. **Feature Development**:
+   - PRD 검토 → Spec 작성 → Plan 수립 → Task 수행 → 검증
+2. **Issue Resolution**:
+   - 상황 파악 → 원인 분석(RCA) → 수정 계획 → 적용 → 검증
+3. **Documentation**:
+   - 템플릿 선택 → 초안 작성 → 거버넌스 준수 검토 → 최종 승인
 
-- **Pre-commit**: Always run `pre-commit run --all-files` before committing.
-- **GitOps Flow**: Commits to main trigger ArgoCD synchronization.
-- **Manual kubectl**: Avoid manual `kubectl apply` for infrastructure. Use it only for debugging.
-
-## 3. Rollback Procedure
-
-Every deployment MUST have a corresponding rollback plan documented in `docs/runbooks/`.
+## Related Scopes
+- [specs.md](file:///home/hy/projects/hy-home.k8s/docs/00.agent/scopes/specs.md)
+- [plans.md](file:///home/hy/projects/hy-home.k8s/docs/00.agent/scopes/plans.md)
+- [tasks.md](file:///home/hy/projects/hy-home.k8s/docs/00.agent/scopes/tasks.md)

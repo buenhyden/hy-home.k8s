@@ -1,33 +1,24 @@
----
-layer: "ops"
----
-# Runbooks Agent Instructions
+# Agent Scope: Runbooks
 
-**Bias**: Executable steps, precise commands, and deterministic outcomes.
+## Metadata
+layer: "agent-scope"
+governance: "docs/00.agent/rules/global-persona.md"
 
-## Scope
+## Directives
+1. [Actionable-Only]:
+   Runbook은 즉각 실행 가능한 단계별 절차를 포함해야 한다.
+2. [Location]:
+   Runbook은 `docs/09.runbooks/`에 저장되어야 한다.
 
-- **Purpose**: Step-by-step procedures for bootstrap, maintenance, and recovery.
-- **Persona**: DevOps / SRE
-- **Template**: `docs/99.templates/runbook.template.md`
-- **Rules**: `.agent/rules/0300-DevOps_and_Infrastructure/0381-runbooks-oncall.md` · `.agent/rules/0300-DevOps_and_Infrastructure/0300-devops-pillar-standard.md`
-- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
+## Content Requirements
+- 사전 조건 및 준비 사항이 명시되어야 한다.
+- 각 단계별 기대 결과와 확인 방법이 포함되어야 한다.
+- 실패 시의 롤백/복구 절차가 명확해야 한다.
 
-## Behavioral Checkpoints
+## Related Templates
+- [Runbook Template](file:///home/hy/projects/hy-home.k8s/docs/99.templates/runbook.template.md)
 
-1. **Precision Commands**: All commands MUST be verified against the repo's current CLI tools (k3d, kubectl, etc.).
-2. **Rollback Section**: Every runbook MUST include explicit "Rollback / Cleanup" steps for failure recovery.
-3. **Layer Context**: Include `layer:` metadata (`infra` | `gitops` | `app`) in the frontmatter.
-4. **Idempotency**: Draft procedures so they can be safely re-run without causing state corruption.
-5. **Human-in-the-Loop**: Explicitly mark steps that require human authorization or external state verification.
-
-## Forbid
-
-- Vague descriptions like "Fix the issue" without specific CLI commands.
-- Absolute paths to specific user directories (use repo-relative or home-relative paths).
-
-## Verify
-
-- Every code block has a clear purpose and predicted output.
-- Link to relevant architecture documents (ARD) for system context.
-lback where needed.
+## Success Criteria
+- [ ] 숙련되지 않은 작업자도 따라할 수 있는가?
+- [ ] 각 단계의 검증 방법이 포함되었는가?
+- [ ] 롤백 프로세스가 정의되어 있는가?

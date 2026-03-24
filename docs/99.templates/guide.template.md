@@ -1,14 +1,14 @@
 <!-- Target: docs/07.guides/####-<topic>.md -->
-# [Guide Title]
+# [Topic Name] Guide
 
 > Use this template for `docs/07.guides/####-<topic>.md`.
 >
 > Rules:
 >
-> - This document explains how to do something or how to understand a system.
+> - Every guide must explain 'Why', 'How', and 'Verification'.
 > - This document is not an operations policy.
 > - This document is not a real-time incident response procedure.
-> - If command order, rollback, or recovery is the primary purpose, write a Runbook instead.
+> - If recovery is primarily needed, write a Runbook instead.
 
 ---
 

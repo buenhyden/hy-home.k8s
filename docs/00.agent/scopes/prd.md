@@ -1,32 +1,24 @@
----
-layer: "meta"
----
-# PRD Agent Instructions
+# Agent Scope: PRD (Product Requirements)
 
-**Bias**: User intent, measurable outcomes, and explicit scope boundaries.
+## Metadata
+layer: "agent-scope"
+governance: "docs/00.agent/rules/global-persona.md"
 
-## Scope
+## Directives
+1. [Spec-First](file:///home/hy/projects/hy-home.k8s/docs/04.specs/README.md):
+   모든 PRD는 Spec으로의 추적이 가능해야 한다.
+2. [Traceability](file:///home/hy/projects/hy-home.k8s/docs/README.md):
+   PRD는 `docs/01.prd/`에 저장되어야 한다.
 
-- **Purpose**: Product requirements, personas, metrics, scope, and acceptance framing.
-- **Persona**: Product Manager + Requirements Analyst
-- **Template**: `docs/99.templates/prd.template.md`
-- **Rules**: `.agent/rules/0100-Standards/0120-requirements-and-specifications-standard.md`
-- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
+## Content Requirements
+- 비즈니스 목표와 성공 지표 (KPI)가 명확해야 한다.
+- 사용자 스토리와 페르소나가 포함되어야 한다.
+- 우선순위(MoSCoW)가 명확히 기술되어야 한다.
 
-## Behavioral Checkpoints
+## Related Templates
+- [PRD Template](file:///home/hy/projects/hy-home.k8s/docs/99.templates/prd.template.md)
 
-1. **Layer Metadata**: All PRDs MUST reside in `docs/01.prd/` and include `layer: "infra" | "gitops" | "app"` in frontmatter.
-2. **INVEST Stories**: Every user story MUST be Independent, Negotiable, Valuable, Estimable, Small, and Testable.
-3. **Measurable Success**: Vague metrics are prohibited. Ground all requirements in quantifiable baselines and targets.
-4. **Persona Anchor**: Link every core requirement to a specific target persona.
-5. **No Technical Prescription**: PRDs define *What* and *Why*. Leave the *How* to technical specifications.
-
-## Forbid
-
-- Dictating implementation details (e.g., specific libraries or code patterns).
-- Implicit assumptions about repo structure or external state.
-
-## Verify
-
-- At least three testable Acceptance Criteria (Given-When-Then) per requirement.
-- Requirement IDs (`REQ-PRD-FUN-NNN`) are used for traceability.
+## Success Criteria
+- [ ] 비즈니스 가치가 명확히 기술되었는가?
+- [ ] 사용자 페인 포인트가 정의되었는가?
+- [ ] 수용 기준(Acceptance Criteria)이 구체적인가?

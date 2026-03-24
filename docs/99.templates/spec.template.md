@@ -1,5 +1,5 @@
 <!-- Target: docs/04.specs/<feature-id>/spec.md -->
-# [Feature Name] Specification
+# [Feature Name] Technical Specification (Spec)
 
 > Use this template for `docs/04.specs/<feature-id>/spec.md`.
 >
@@ -9,11 +9,11 @@
 > - Verification is mandatory.
 > - If this feature exposes an external API, link a dedicated API Spec.
 > - Keep one `Overview (KR)` summary near the top.
-> - This document is the parent design doc; API contracts live in `api-spec.md` under the same feature directory.
+> - API contracts live in `api-spec.md` under the same feature directory.
 
 ---
 
-# [Feature Name] Specification
+## [Feature Name] Specification
 
 ## Overview (KR)
 
@@ -62,7 +62,7 @@ interface ExampleContract {
 Contract-first 원칙: 이 기능이 외부 API를 제공하는 경우, 상세 API 계약은 별도 API Spec 문서에서 정의한다.
 
 - **API Spec**: `[./api-spec.md]`
-- **Policy**: API Spec은 `docs/api/` 같은 별도 최상위 경로가 아니라 현재 feature 디렉터리 아래에 둔다.
+- **Policy**: API Spec lives under the feature directory, not in a global path.
 - **Machine-readable Contract**:
   - `./contracts/openapi.yaml`
   - `./contracts/service.proto`

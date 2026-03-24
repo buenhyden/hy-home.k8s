@@ -1,5 +1,5 @@
 <!-- Target: docs/90.references/<topic>.md -->
-# [Reference Title]
+# Reference: [Item Name]
 
 > Use this template for `docs/90.references/<topic>.md`.
 

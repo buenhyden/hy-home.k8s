@@ -1,5 +1,7 @@
 <!-- Target: docs/10.incidents/YYYY/YYYY-MM-DD-<slug>.md -->
-# Incident: INC-YYYYMMDD-XXX / [Short Incident Title]
+# Incident: [Incident Title]
+
+NC-YYYYMMDD-XXX / [Short Incident Title]
 
 > Use this template for `docs/10.incidents/YYYY/YYYY-MM-DD-<slug>.md`.
 >
@@ -20,8 +22,8 @@
 | Field | Value |
 | --- | --- |
 | Incident ID | `INC-YYYYMMDD-XXX` |
-| Severity | `SEV-1 | SEV-2 | SEV-3` |
-| Status | `Investigating | Identified | Mitigating | Monitoring | Resolved | Closed` |
+| Severity | `SEV-1 \| SEV-2 \| SEV-3` |
+| Status | `Investigating \| Mitigating \| Monitoring \| Resolved \| Closed` |
 | Detection Time | `YYYY-MM-DD HH:MM UTC` |
 | Primary Service | [Affected service] |
 | Evidence Source | [Log / dashboard / report] |
@@ -55,6 +57,7 @@
 
 - **Current Hypothesis**:
 - **Mitigation Actions**:
+- **Business / Maintenance Impact**: [Outcome]
 - **Resolution State**:
 
 ## Evidence

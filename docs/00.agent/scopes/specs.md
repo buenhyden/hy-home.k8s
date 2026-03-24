@@ -1,32 +1,24 @@
----
-layer: "app"
----
-# Specs Agent Instructions
+# Agent Scope: Specs (Specifications)
 
-**Bias**: Exact paths, interfaces, verification logic, and implementation-ready detail.
+## Metadata
+layer: "agent-scope"
+governance: "docs/00.agent/rules/global-persona.md"
 
-## Scope
+## Directives
+1. [Logic-First]:
+   모든 기능 명세는 `docs/04.specs/`에 저장되어야 한다.
+2. [Traceability]:
+   Spec은 해당 PRD 또는 요구사항 문서와 연결되어야 한다.
 
-- **Purpose**: Exact implementation instructions, interfaces, file paths, and verification.
-- **Persona**: Strong Reasoner + Architect + Requirements Analyst
-- **Templates**: `docs/99.templates/spec.template.md` · `docs/99.templates/plan.template.md` · `docs/99.templates/api-spec.template.md`
-- **Rules**: `.agent/rules/0100-Standards/0102-implementation-plan-standard.md` · `.agent/rules/0100-Standards/0120-requirements-and-specifications-standard.md`
-- **Skills**: Agents MUST proactively use any appropriate skill provided by the runtime without restriction. Skill selection is guided solely by task necessity.
+## Content Requirements
+- 시스템의 동작 방식과 상태 변화가 명확해야 한다.
+- 인터페이스(API, UI) 명세가 포함되어야 한다.
+- 예외 상황 및 에러 핸들링 전략이 명확해야 한다.
 
-## Behavioral Checkpoints
+## Related Templates
+- [Spec Template](file:///home/hy/projects/hy-home.k8s/docs/99.templates/spec.template.md)
 
-1. **Flattened Path**: Specs MUST reside in `docs/04.specs/`.
-2. **Language**: Use SHALL, MUST, and PROHIBITED.
-3. **Traceability**: Map details back to PRD Requirement IDs.
-4. **Verification**: Document exact verification steps (test commands, logs).
-5. **Precision**: Always use absolute or repo-relative paths.
-
-## Forbid
-
-- Vague "To Be Determined" sections in implementation-ready specs.
-- Out-of-band changes not documented in the spec.
-
-## Verify
-
-- Success criteria include quantifiable state changes (e.g., "Pod is Ready", "HTTP 200").
-- Security and Observability impacts are explicitly addressed.
+## Success Criteria
+- [ ] 모든 시나리오에 대한 동작이 정의되었는가?
+- [ ] 인터페이스 변경 사항이 명확히 기술되었는가?
+- [ ] 하위 호환성 및 마이그레이션이 고려되었는가?

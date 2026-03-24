@@ -1,5 +1,6 @@
+# [System or Domain Name] Architecture Requirements
+
 <!-- Target: docs/02.ard/####-<system-or-domain-name>.md -->
-# [System or Domain Name] Architecture Reference Document (ARD)
 
 > Use this template for `docs/02.ard/####-<system-or-domain-name>.md`.
 >
@@ -11,7 +12,7 @@
 
 ---
 
-# [System or Domain Name] Architecture Reference Document
+## [System or Domain Name] Architecture Requirements Document (ARD)
 
 ## Overview (KR)
 

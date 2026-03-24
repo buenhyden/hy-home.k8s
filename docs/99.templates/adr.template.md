@@ -1,5 +1,5 @@
 <!-- Target: docs/03.adr/####-<short-title>.md -->
-# ADR NNNN: [Short Decision Title]
+# ADR-####: [Short Title]
 
 > Use this template for `docs/03.adr/####-<short-title>.md`.
 >

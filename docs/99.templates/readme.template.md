@@ -1,9 +1,8 @@
-<!-- Target: README.md -->
-<!--
 # README Template — Usage Guidelines
 
-This template is designed to be modular. It consists of a **Base Structure** (required for all READMEs) 
-and a **Snippet Library** from which you should pick sections based on the folder's purpose.
+<!--
+This template is modular. It consists of a **Base Structure** (required) 
+and a **Snippet Library** to pick sections based on the folder's purpose.
 
 ## 1. Metadata Requirement
 Every README MUST include the `layer:` metadata tag at the top.
@@ -31,15 +30,15 @@ Example:
 
 [이 폴더 또는 프로젝트의 역할과 전체 시스템에 기여하는 방식에 대한 1-2문장의 한국어 요약을 작성하십시오.]
 
-# [BASE STRUCTURE]
+## [BASE STRUCTURE]
 
-# {Folder/Project Name}
+## {Folder/Project Name}
 
 > {One-line description of the purpose of this folder/project.}
 
 ## Overview
 
-{Brief paragraph explaining the responsibility of this folder and how it contributes to the overall system.}
+{Paragraph explaining this folder's responsibility and its contribution.}
 
 ## Structure
 
@@ -52,7 +51,7 @@ Example:
 
 ---
 
-# [SNIPPET LIBRARY - PICK AND DROP BELOW]
+## [SNIPPET LIBRARY - PICK AND DROP BELOW]
 
 <!-- 
 ================================================================================
@@ -63,7 +62,8 @@ SNIPPET: PROJECT ROOT (Main Onboarding)
 ## Optimization Note (March 2026)
 
 > [!IMPORTANT]
-> This repository utilizes a **Thin Root** architecture for AI agents, enforcing JIT context loading and late-binding metadata routing for maximum performance and token efficiency.
+> This repository utilizes a **Thin Root** architecture for AI agents.
+> It enforces JIT context loading for maximum token efficiency.
 
 ## Tech Stack
 

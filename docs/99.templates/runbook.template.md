@@ -1,5 +1,7 @@
 <!-- Target: docs/09.runbooks/<topic>.md -->
-# Runbook: [Service or Workflow Name]
+# [Procedure Name] Runbook
+
+: [Service or Workflow Name]
 
 > Use this template for `docs/09.runbooks/<topic>.md`.
 >
