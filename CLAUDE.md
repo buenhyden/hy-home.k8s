@@ -1,15 +1,18 @@
----
-layer: "meta"
----
 # CLAUDE.md
 
 Claude entrypoint for `hy-home.k8s`. Optimized for **Tool-Use** and **Greedy Autonomy**.
 
-- **Primary Gateway**: [agent-instructions.md](docs/00.agent-governance/agent-instructions.md)
-- **Specifics**: [claude-provider.md](docs/00.agent-governance/claude-provider.md)
-- **Rules**: [persona-matrix.md](docs/00.agent-governance/rules/persona-matrix.md)
+## 1. Governance Gateway
 
-## Language Mandate
+- **Primary**: [agent-instructions.md](docs/00.agent-governance/agent-instructions.md)
+- **Rules & Scopes**: [persona-matrix.md](docs/00.agent-governance/rules/persona-matrix.md)
+- **Provider Settings**: [claude-provider.md](docs/00.agent-governance/claude-provider.md)
 
-- **Response**: Always respond to user requests in **Korean (한국어)**.
-- **Internal/External**: See [AGENTS.md](AGENTS.md) for details.
+## 2. Operational Mandate
+
+- **Response**: Always respond in **Korean (한국어)**.
+- **Internal**: Use English for technical governance.
+- **Lazy Loading**: DO NOT read all docs; use JIT loading via `bootstrap.md`.
+
+---
+*Ref: [AGENTS.md](AGENTS.md)*

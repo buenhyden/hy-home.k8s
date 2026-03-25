@@ -10,7 +10,7 @@ Shared entrypoint for all AI agents. Enforces a **Lazy Loading Protocol**.
 
 1. **Identify Intent**: Determine the task type (e.g., Spec work, Infrastructure setup).
 2. **Bootstrap Discovery**: Load `docs/00.agent-governance/rules/bootstrap.md` to verify taxonomy.
-3. **Trigger Rule**: Load `docs/00.agent-governance/rules/persona-matrix.md` to identify the required Persona.
+3. **Trigger Rule**: Load `docs/00.agent-governance/rules/persona-matrix.md` to identify the required Persona and rules.
 4. **Load Scope**: Import the corresponding scope from `docs/00.agent-governance/scopes/`.
 5. **Execute**: Ground work in `docs/01.prd/` to `docs/11.postmortems/`.
 
@@ -39,3 +39,6 @@ Shared entrypoint for all AI agents. Enforces a **Lazy Loading Protocol**.
 - **Spec-Driven**: Changes require approved artifacts in `docs/01.prd/` and `docs/04.specs/`.
 - **Response Mandate**: Always respond to user requests in **Korean (한국어)**.
 - **Bootstrap First**: Always load `docs/00.agent-governance/rules/bootstrap.md` initially to establish context.
+
+---
+*Ref: [AGENTS.md](../../AGENTS.md)*

@@ -15,7 +15,7 @@ This document defines the universal entry point for all AI Agents. It enforces *
 
 | Stage | Path | Purpose |
 | :--- | :--- | :--- |
-| **00** | `docs/00.agent-governance/` | AI Agent Governance & Scopes |
+| **00** | `docs/00.agent-governance/` | AI Agent Governance & Git Workflow |
 | **01** | `docs/01.prd/` | Product Requirements & Intent |
 | **02** | `docs/02.ard/` | Architecture Reference Documents |
 | **03** | `docs/03.adr/` | Architectural Decision Records |

@@ -1,6 +1,6 @@
 # Agent Framework Contract
 
-Shared contract for `hy-home.k8s`. Primary **Explicit Trigger** for AI rules.
+Shared contract for `hy-home.k8s`. Optimized for March 2026.
 
 ## 1. Lazy Loading Protocol (JIT)
 
@@ -11,9 +11,9 @@ Agents MUST NOT load all instructions. Identify **Intent** and load **Scope** fr
 
 ## 2. Core Directives
 
-- **English Mandatory**: All internal instructions in `docs/00.agent-governance/` MUST be in English.
-- **Spec-First**: Implementation work requires approved artifacts in `docs/01.prd/` and `docs/04.specs/`.
-- **Response Mandate**: 요청에 대한 답변은 항상 **한글(Korean)**로 한다.
+- **English Mandatory**: Technical governance in `docs/00.agent-governance/` MUST be in English.
+- **Spec-First**: Requirements/Specs required in `docs/01.prd/` and `docs/04.specs/`.
+- **Response**: Always respond to user requests in **Korean (한국어)**.
 
 ---
-*Generated: 2026-03-25. Context: [bootstrap.md](docs/00.agent-governance/rules/bootstrap.md)*
+*Context: [bootstrap.md](docs/00.agent-governance/rules/bootstrap.md)*
