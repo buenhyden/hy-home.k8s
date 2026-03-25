@@ -22,7 +22,13 @@ This document defines the universal entry point for all AI Agents. It enforces *
 | **04** | `docs/04.specs/` | Technical Specifications (SSoT) |
 | **05** | `docs/05.plans/` | Implementation & Validation Plans |
 | **06** | `docs/06.tasks/` | Granular Task & Progress Tracking |
-| **07-11** | `docs/07~11/` | Guides, Ops, Runbooks, Incidents, Postmortems |
+| **07** | `docs/07.guides/` | User & Technical Guides |
+| **08** | `docs/08.operations/` | Infrastructure & Operations Policies |
+| **09** | `docs/09.runbooks/` | Step-by-step Operational Procedures |
+| **10** | `docs/10.incidents/` | Incident Records & Timelines |
+| **11** | `docs/11.postmortems/` | RCA & Future Prevention |
+| **90** | `docs/90.references/` | Literature & External Research |
+| **99** | `docs/99.templates/` | Standardized Document Templates |
 
 ## 3. Layer Identification Protocol
 

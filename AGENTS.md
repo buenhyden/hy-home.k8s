@@ -13,7 +13,7 @@ Agents MUST NOT load all instructions. Identify **Intent** and load **Scope** fr
 
 - **English Mandatory**: All internal instructions in `docs/00.agent-governance/` MUST be in English.
 - **Spec-First**: Implementation work requires approved artifacts in `docs/01.prd/` and `docs/04.specs/`.
-- **Response Mandate**: 요청에 대한 답변은 **한글(Korean)**로 한다.
+- **Response Mandate**: 요청에 대한 답변은 항상 **한글(Korean)**로 한다.
 
 ---
-*Generated 2026-03-25. Follow [bootstrap.md](docs/00.agent-governance/rules/bootstrap.md) for initial context.*
+*Generated: 2026-03-25. Context: [bootstrap.md](docs/00.agent-governance/rules/bootstrap.md)*

@@ -26,6 +26,11 @@ Shared entrypoint for all AI agents. Enforces a **Lazy Loading Protocol**.
 | Infrastructure | DevOps | `infra.md` | `docs/08.operations/` |
 | Security | Security | `security.md` | `docs/04.specs/`, `docs/10.incidents/` |
 | QA / Testing | QA | `qa.md` | `docs/05.plans/`, `docs/06.tasks/` |
+| Guides | Writer | `docs.md` | `docs/07.guides/` |
+| Operations | Ops | `infra.md` | `docs/09.runbooks/` |
+| Postmortems | Analyst | `docs.md` | `docs/11.postmortems/` |
+| References | Researcher | `docs.md` | `docs/90.references/` |
+| Templates | Engineer | `docs.md` | `docs/99.templates/` |
 
 ## 3. Core Directives
 
