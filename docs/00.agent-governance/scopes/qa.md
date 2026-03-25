@@ -10,7 +10,7 @@ This scope defines the validation constraints for the QA Engineer persona.
 
 ## 2. Standard Taxonomy
 
-- **Guidelines**: Follow TDD/E2E patterns from `.agent/rules/0700-Testing_and_QA/`.
+- **Guidelines**: Follow TDD/E2E patterns defined in `scopes/qa.md` and related testing standards.
 - **SSoT**: `docs/05.plans/`, `docs/06.tasks/`.
 
 ## Layer-specific DoD (QA)

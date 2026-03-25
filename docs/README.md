@@ -1,5 +1,8 @@
 # docs: 프로젝트의 모든 것
 
+> [!NOTE]
+> All AI agent interactions with this documentation suite must comply with the [Agent Governance Hub](./00.agent-governance/README.md).
+
 여기는 `hy-home.k8s` 프로젝트가 어떻게 돌아가는지, 어떤 고민을 거쳐 지금의 모습이 되었는지를 기록하는 저장소입니다. 기획부터 아키텍처, 실제 구현 작업과 운영 기록까지 모든 정보가 이곳에 모입니다.
 
 ## 우리가 문서를 대하는 방식

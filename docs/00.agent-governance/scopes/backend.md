@@ -34,10 +34,10 @@ stage: 04
 
 ## 4. Skills Engagement
 
-- `nodejs-backend-patterns`
-- `postgresql-optimization`
-- `api-design-principles`
 - `fastapi-pro`
+- `nodejs-best-practices`
 - `better-auth-best-practices`
 - `postgres-best-practices`
+- `postgresql-optimization`
+- `api-design-principles`
 - `prisma-schema-optimize`

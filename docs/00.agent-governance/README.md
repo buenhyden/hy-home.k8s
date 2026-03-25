@@ -14,12 +14,12 @@
 
 모든 문서를 한꺼번에 읽는 것은 비효율적입니다. 에이전트는 필요한 순간에만 필요한 정보를 로드하는 **Just-In-Time (JIT)** 전략을 따릅니다.
 
-1. **의도 파악 (Intent Identification)**: 요청받은 작업의 성격을 먼저 조율합니다.
+1. **의도 파악 (Intent Identification)**: 요청받은 작업의 성격을 먼저 조치합니다.
 2. **부트스트랩 (Bootstrap)**: [rules/bootstrap.md](rules/bootstrap.md)를 통해 기본 분류 체계와 거버넌스를 확인합니다.
 3. **규칙 트리거 (Trigger Rule)**: [persona-matrix.md](rules/persona-matrix.md)를 통해 페르소나와 필수 규칙을 로드합니다.
 4. **스코프 로딩 (Scope Loading)**: 작업 레이어에 맞는 상세 지침을 [scopes/](scopes/)에서 동적으로 로드합니다.
 5. **맥락 메모리 (Contextual Memory)**: [memory/](memory/)에서 과거의 교훈을 탐색합니다.
-6. **실행 (Execute)**: 01~11 단계의 SSoT를 도구로 활용하여 작업을 완성합니다.
+6. **실행 (Execute)**: 01~11 단계의 SSoT 및 [commands.md](commands.md)를 활용하여 작업을 완성합니다.
 
 ## 3. 주요 구성 요소
 

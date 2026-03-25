@@ -1,5 +1,8 @@
 # 01. PRD (Product Requirements)
 
+> [!NOTE]
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+
 ## 목적
 
 제품의 목표, 사용자 가치, 그리고 성공 기준을 정의한 문서다.

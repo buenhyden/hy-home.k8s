@@ -1,5 +1,8 @@
 # 08.operations
 
+> [!NOTE]
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+
 ## 목적
 
 이 폴더는 운영 정책(Operations Policy)과 공통 기준을 저장한다. 이곳의 문서는 무엇을 허용하고 금지하는지, 어떤 기준과 통제를 지켜야 하는지를 정의한다.

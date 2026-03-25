@@ -1,5 +1,8 @@
 # 09.runbooks
 
+> [!NOTE]
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+
 ## 목적
 
 이 폴더는 실제 실행 가능한 운영 절차(Runbook)를 저장한다. Runbook은 장문의 배경 설명보다 바로 실행 가능한 순서와 검증 절차를 우선한다.

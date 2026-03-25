@@ -1,5 +1,8 @@
 # 07.guides
 
+> [!NOTE]
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+
 ## 목적
 
 이 폴더는 how-to, 온보딩, 사용 가이드, 스타일 가이드를 저장한다. Guide는 이해와 사용을 돕는 문서이지, 운영 정책이나 장애 대응 절차를 담는 문서가 아니다.

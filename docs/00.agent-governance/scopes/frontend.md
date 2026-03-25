@@ -33,10 +33,10 @@ stage: 04
 
 ## 4. Skills Engagement
 
-- `react-best-practices`
+- `react-patterns`
+- `next-best-practices`
+- `tailwind-patterns`
 - `tailwind-css-patterns`
 - `accessibility-compliance`
 - `frontend-design`
-- `next-best-practices`
-- `tailwind-patterns`
 - `vercel-react-best-practices`

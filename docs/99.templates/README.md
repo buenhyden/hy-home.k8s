@@ -1,5 +1,8 @@
 # 99.templates
 
+> [!NOTE]
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+
 ## 목적
 
 이 폴더는 문서 템플릿을 저장한다. 새 문서는 이 폴더의 템플릿을 복사해 시작한다.

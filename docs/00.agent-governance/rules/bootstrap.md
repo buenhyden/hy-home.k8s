@@ -52,4 +52,4 @@ Before marking a task or batch as complete, the Agent MUST verify:
 - [ ] **Memory Hook**: If a non-trivial lesson was learned, record it in `docs/00.agent-governance/memory/`.
 
 ---
-*Ref: [agent-instructions.md](../agent-instructions.md), [persona-matrix.md](persona-matrix.md)*
+*Ref: [agent-instructions.md](../agent-instructions.md), [persona-matrix.md](persona-matrix.md), [bootstrap.md](bootstrap.md)*

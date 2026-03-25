@@ -7,7 +7,7 @@ This directory is reserved for repository maintenance, utility scripts, and auto
 This folder is necessary to encapsulate build, test, and environment scaffolding tools.
 
 - Separation of Concerns: It deliberately separates development tooling from application logic (`src/`/`web/`) and operational deployments (`runbooks/`).
-- Consistent Execution: It serves as the common execution layer for tasks like dataset syncing, pre-commit hook setups, or database seeding across developer machines.
+- Consistent Execution: It serves as the common execution layer for tasks like dataset syncing, pre-commit hook setups, or database seeding across developer machines. Refer to [commands.md](../docs/00.agent-governance/commands.md) for authoritative command patterns.
 
 ## 2. Required Content
 
@@ -16,7 +16,7 @@ This folder is necessary to encapsulate build, test, and environment scaffolding
 
 ## 3. Agent Workflow Standardization
 
-Any automation scripts or workflows added to this directory MUST comply with the **Idempotent and Deterministic** principles defined in `.agent/rules/0200-workflows-pillar-standard.md`.
+Any automation scripts or workflows added to this directory MUST comply with the **Idempotent and Deterministic** principles defined in [bootstrap.md](../docs/00.agent-governance/rules/bootstrap.md).
 
 - **Idempotency**: Running a script twice should have the exact same effect as running it once (e.g., no corrupted state or duplicate data).
 - **Clear Boundaries**: Scripts should have single responsibilities and handle failures gracefully.

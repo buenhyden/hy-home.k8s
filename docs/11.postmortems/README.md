@@ -1,5 +1,8 @@
 # 11.postmortems
 
+> [!NOTE]
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+
 ## 목적
 
 이 폴더는 사고 사후 분석(Postmortem)을 저장한다. Postmortem은 시스템이 왜 그런 사고를 허용했는지, 무엇을 바꿔야 같은 사고를 줄일 수 있는지를 기록한다.

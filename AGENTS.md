@@ -1,19 +1,18 @@
 # Agent Framework Contract
 
-Shared contract for `hy-home.k8s`. Optimized for March 2026.
+Thin entrypoint for `hy-home.k8s`. Optimized for March 2026.
 
-## 1. Lazy Loading Protocol (JIT)
+## 1. Protocol
 
-Agents MUST NOT load all instructions. Identify **Intent** and load **Scope** from the gateway.
+Agents MUST follow the **JIT Lazy Loading Protocol** to maintain token efficiency and execution accuracy.
 
 - **Gateway**: [agent-instructions.md](docs/00.agent-governance/agent-instructions.md)
-- **Rules**: [persona-matrix.md](docs/00.agent-governance/rules/persona-matrix.md)
+- **Commands**: [commands.md](docs/00.agent-governance/commands.md)
 
-## 2. Core Directives
+## 2. Directives
 
-- **English Mandatory**: Technical governance in `docs/00.agent-governance/` MUST be in English.
-- **Spec-First**: Requirements/Specs required in `docs/01.prd/` and `docs/04.specs/`.
+- **English Mandatory**: All technical governance (Docs/Specs) MUST be in English.
 - **Response**: Always respond to user requests in **Korean (한국어)**.
 
 ---
-*Context: [bootstrap.md](docs/00.agent-governance/rules/bootstrap.md)*
+*Ref: [bootstrap.md](docs/00.agent-governance/rules/bootstrap.md)*

@@ -11,7 +11,7 @@ This scope defines the technical constraints for the Infra/DevOps Miner persona.
 ## 2. Standard Taxonomy
 
 - **Inventory**: Resource mapping in `docs/08.operations/inventory.md`.
-- **Guidelines**: Follow K8s patterns from `.agent/rules/0300-DevOps_and_Infrastructure/`.
+- **Guidelines**: Follow K8s patterns defined in `scopes/infra.md` and related documentation.
 - **SSoT**: `docs/08.operations/`, `docs/04.specs/`.
 - **Secrets Protocol**: Sealed Secrets/Vault guides.
 - **Networking**: Ingress/Gateway configurations.
@@ -34,9 +34,11 @@ stage: 08
 
 ## 4. Skills Engagement
 
+- `kubernetes-specialist`
+- `argocd-gitops`
+- `k8s-loadbalancing-ingress`
 - `terraform-specialist`
 - `kubernetes-architect`
 - `docker-expert`
 - `deployment-procedures`
 - `argocd-gitops`
-- `k8s-loadbalancing-ingress`

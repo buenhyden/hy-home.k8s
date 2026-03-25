@@ -1,5 +1,8 @@
 # 06.tasks
 
+> [!NOTE]
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+
 ## 목적
 
 이 폴더는 구현·검증·평가 작업(Task) 단위를 저장한다. 이 폴더의 문서는 단순 TODO가 아니라, Spec과 Plan에서 파생된 실행 가능한 작업 목록의 정본(canonical location)이어야 한다.

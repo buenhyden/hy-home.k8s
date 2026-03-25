@@ -8,26 +8,29 @@ Shared entrypoint for all AI agents. Enforces a **Lazy Loading Protocol**.
 
 ## 1. Lazy Loading Protocol (JIT)
 
-1. **Identify Intent**: Determine the task type (e.g., Spec work, Infrastructure setup).
-2. **Bootstrap Discovery**: Load `docs/00.agent-governance/rules/bootstrap.md` to verify taxonomy.
-3. **Trigger Rule**: Load `docs/00.agent-governance/rules/persona-matrix.md` to identify the required Persona and rules.
-4. **Load Scope**: Import the corresponding scope from `docs/00.agent-governance/scopes/`.
-5. **Contextual Memory**: Search `docs/00.agent-governance/memory/` for task-relevant lessons. Read ONLY what is pertinent to the current Scope or Intent.
-6. **Execute**: Ground work in `docs/01.prd/` to `docs/11.postmortems/`.
+1. **Intent Identification**: Determine task nature.
+2. **Bootstrap**: Load [bootstrap.md](rules/bootstrap.md).
+3. **Trigger Rules**: Select persona from [persona-matrix.md](rules/persona-matrix.md).
+4. **Load Scope**: Load layer-specific rules from [scopes/](scopes/).
+5. **Context Check**: Check [memory/](memory/) for lessons.
+6. **Execute**: Use tools & [commands.md](commands.md).
 
 ```mermaid
 graph TD
-    A[Start Task] --> B{1. Identify Intent}
-    B --> C[2. Bootstrap Discovery]
-    C --> D[3. Trigger Rule]
-    D --> E[4. Load Scope]
-    E --> F[5. Contextual Memory]
-    F --> G[6. Execute]
-    G --> H[End Task]
+    A[User Request] --> B{Intent?}
+    B --> C[Bootstrap]
+    C --> D[Persona Matrix]
+    D --> E[Scope Loading]
+    E --> F[Contextual Memory]
+    F --> G[Execution]
+    G --> H[Final Task Completion]
     
-    style C fill:#f9f,stroke:#333,stroke-width:2px
-    style D fill:#bbf,stroke:#333,stroke-width:2px
-    style E fill:#bfb,stroke:#333,stroke-width:2px
+    subgraph JIT_Lazy_Loading
+        C
+        D
+        E
+        F
+    end
 ```
 
 ## 2. Intent-to-Scope Mapping
@@ -48,15 +51,26 @@ graph TD
 | References | Researcher | `docs.md` | `docs/90.references/` |
 | Templates | Engineer | `docs.md` | `docs/99.templates/` |
 
-## 3. Core Directives
+## 3. Creative Mandate
+
+Agents are explicitly authorized to populate `scripts/` and `tests/` directories.
+
+- **Purpose**: Automate repetitive tasks and ensure regression safety.
+- **Rules**:
+  - Follow the **Idempotency** standard in `scripts/README.md`.
+  - Co-locate unit tests, but use `tests/` for global suites.
+  - Never hardcode environmental secrets.
+
+## 4. Core Directives
 
 - **English Mandatory**: All internal instructions in `docs/00.agent-governance/` MUST be in English.
+- [commands.md](commands.md): Precise command inventory.
 - **Human-Facing**: READMEs and overviews MUST be in Korean.
 - **Spec-Driven**: Changes require approved artifacts in `docs/01.prd/` and `docs/04.specs/`.
 - **Response Mandate**: Always respond to user requests in **Korean (한국어)**.
 
 ---
-*Ref: [AGENTS.md](../../AGENTS.md), [persona-matrix.md](rules/persona-matrix.md), [bootstrap.md](rules/bootstrap.md)*
+*Ref: [AGENTS.md](../../AGENTS.md), [persona-matrix.md](rules/persona-matrix.md), [bootstrap.md)(rules/bootstrap.md)*
 *Bootstrap First**: Always load `docs/00.agent-governance/rules/bootstrap.md` initially to establish context.
 
 ---

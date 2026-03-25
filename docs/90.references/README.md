@@ -1,5 +1,8 @@
 # 90.references
 
+> [!NOTE]
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+
 ## 목적
 
 이 폴더는 느리게 변하는 기준 지식과 참고 문서를 저장한다.

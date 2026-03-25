@@ -6,7 +6,7 @@ This directory serves as the root for all project-wide tests (e.g., global integ
 
 ## 1. Governance & Standards
 
-All tests written in this repository **MUST** adhere to the rules defined in `.agent/rules/0700-Testing_and_QA/0700-testing-and-qa-standard.md`.
+All tests written in this repository **MUST** adhere to the rules defined in [qa.md](../docs/00.agent-governance/scopes/qa.md) (or the relevant testing scope).
 
 ## 2. The Testing Pyramid `[REQ-TST-01]`
 

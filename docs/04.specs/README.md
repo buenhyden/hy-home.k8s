@@ -1,5 +1,8 @@
 # 04.specs
 
+> [!NOTE]
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+
 ## 목적
 
 이 폴더는 설계 명세(Specification)의 중심이다. SDD(Software Design Description) 관점에서 기능, 서비스, API, 데이터 모델, AI Agent 설계를 구체화한다.

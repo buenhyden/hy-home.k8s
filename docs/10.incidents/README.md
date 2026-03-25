@@ -1,5 +1,8 @@
 # 10.incidents
 
+> [!NOTE]
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+
 ## 목적
 
 이 폴더는 사고 사실 기록(Incident Record)을 저장한다. Incident는 실시간 또는 최근 종료된 대응 흐름을 기록하는 문서다.
