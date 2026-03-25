@@ -1,22 +1,30 @@
 # Agent Framework Contract
 
-Shared contract for `hy-home.k8s`. This is the **Explicit Trigger** for all AI rules.
+Shared contract for `hy-home.k8s`. Primary **Explicit Trigger** for AI rules.
 
-## 1. Lazy Loading Protocol
+## 1. Lazy Loading Protocol (JIT)
 
-Agents MUST NOT load all instructions. Identify **Intent** and load **Scope**.
+Agents MUST NOT load all instructions. Identify **Intent** and load **Scope** from the gateway.
 
 - **Gateway**: [agent-instructions.md](docs/00.agent/agent-instructions.md)
-- **Persona**: [persona-matrix.md](docs/00.agent/rules/persona-matrix.md)
+- **Rules**: [persona-matrix.md](docs/00.agent/rules/persona-matrix.md)
 
-## 2. Shared Directives
+## 2. Core Directives
 
-- **Spec-First**: Changes require `docs/04.specs/`.
-- **Metadata**: All docs MUST include `layer:` frontmatter.
-- **Verify**: `pre-commit run --all-files` before commit.
+- **English Mandatory**: All internal instructions in `docs/00.agent/` MUST be in English.
+- **Spec-First**: Implementation work requires approved artifacts in `docs/01.prd/` and `docs/04.specs/`.
+- **Response Mandate**: 요청에 대한 답변은 **한글(Korean)**로 한다.
 
-## 3. Scope Index
+## 3. Taxonomy (SSoT Paths)
 
-- **00-06**: [Agent](docs/00.agent/), [PRD](docs/01.prd/), [ARD](docs/02.ard/), [ADR](docs/03.adr/), [Spec](docs/04.specs/), [Plan](docs/05.plans/), [Task](docs/06.tasks/)
-- **07-11**: [Guide](docs/07.guides/), [Ops](docs/08.operations/), [Runbook](docs/09.runbooks/), [Incident](docs/10.incidents/), [Postmortem](docs/11.postmortems/)
-- **90-99**: [Ref](docs/90.references/), [Template](docs/99.templates/)
+| Layer | Folder | SSoT Path |
+| :--- | :--- | :--- |
+| **Agent** | 00 | `docs/00.agent/` |
+| **Product** | 01 | `docs/01.prd/` |
+| **Arch** | 02-03 | `docs/02.ard/`, `docs/03.adr/` |
+| **Spec** | 04 | `docs/04.specs/` |
+| **Plan/Task** | 05-06 | `docs/05.plans/`, `docs/06.tasks/` |
+| **Ops/Inc** | 07-11 | `docs/07~11/` |
+
+---
+*Generated 2026-03-25. Follow [bootstrap.md](docs/00.agent/rules/bootstrap.md) for initial context.*

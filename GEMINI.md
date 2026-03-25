@@ -3,8 +3,14 @@ layer: "meta"
 ---
 # GEMINI.md
 
-Gemini entrypoint for `hy-home.k8s`. (March 2026).
+Gemini entrypoint for `hy-home.k8s`. Optimized for **Long-Context Discovery**.
 
-- **Routing**: [AGENTS.md](AGENTS.md) $\to$ [gemini-provider.md](docs/00.agent/gemini-provider.md)
-- **Korean Mandate**: Summaries/Explanations in Korean (Mandatory for user interaction).
-- **English Mandate**: Internal reasoning/docs in English only.
+- **Primary Gateway**: [agent-instructions.md](docs/00.agent/agent-instructions.md)
+- **Specifics**: [gemini-provider.md](docs/00.agent/gemini-provider.md)
+- **Rules**: [persona-matrix.md](docs/00.agent/rules/persona-matrix.md)
+
+## Language Mandate
+
+- **Internal**: English (Governance, Reasoning, Instructions).
+- **External**: Korean (User interaction, READMEs).
+- **Response**: Always respond to user requests in **Korean (한국어)**.

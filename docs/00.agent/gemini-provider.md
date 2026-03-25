@@ -1,35 +1,18 @@
-# Gemini Provider Notes
+# Gemini Engine Governance
 
-## Scope
+Governance for the Gemini family of models, optimized for **Extreme Context** and **Structured Discovery**.
 
-This file contains Gemini CLI-specific guidance for the `hy-home.k8s` project.
+## 1. Core Engine Philosophy
 
-## Context File Hierarchy
+- **Context-First**: Leverage the 1M+ token window to map the entire `docs/` tree before execution.
+- **Deep Research**: Use `search_web` and `mcp-context7` to ground implementations in 2026 standards.
 
-Gemini CLI loads context files in this order (lowest to highest precedence):
+## 2. Discovery Protocol
 
-| File                       | Scope                 | Notes                                                                     |
-| -------------------------- | --------------------- | ------------------------------------------------------------------------- |
-| `~/.gemini/GEMINI.md`      | Global — all projects | User-wide preferences; personal defaults                                  |
-| `./GEMINI.md` (repo root)  | Project — shared      | Checked into git; applies to all team members                             |
-| `<subdirectory>/GEMINI.md` | Directory             | JIT-loaded when a tool accesses a file in that directory or its ancestors |
+- At the start of a session, perform a "Recursive Audit" of the `docs/` folder to understand the current STAGE of the project.
+- Map-Reduce style analysis for large codebases.
 
-## Gemini CLI Guidance
+## 3. Structured Output
 
-layer: 'architecture'
-
-- Keep the root `GEMINI.md` thin and delegate to this provider file.
-- Use hierarchical context discovery: root file for universal rules, subdirectory files for local task context.
-- **Skill Autonomy**: Gemini MUST utilize any available skill (e.g., `writing-plans`, `executing-plans`, `doc-coauthoring`) without persona-based restrictions.
-- **MCP Servers**: Configured in `.gemini/settings.json`.
-
-## Korean Mandate
-
-- **USER interaction**: Summaries and high-level explanations MUST be in Korean.
-- **Internal Docs**: All instructions and technical documentation in `docs/00.agent/` MUST be in English.
-
-## References
-
-- Gemini CLI context files (GEMINI.md): <https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/gemini-md.md>
-- Gemini CLI settings: <https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/settings.md>
-- Gemini CLI MCP integration: <https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/mcp-server.md>
+- Favor Mermaid diagrams for complex logic flows.
+- Ensure all artifacts follow the `99.templates/` structure.

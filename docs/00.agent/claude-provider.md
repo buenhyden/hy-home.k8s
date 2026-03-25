@@ -1,35 +1,19 @@
-# Claude Provider Notes
+# Claude Engine Governance
 
-## Scope
+Governance for the Claude family of models, optimized for **Tool-Use** and **Agentic Autonomy**.
 
-This file contains Claude Code-specific guidance and memory hierarchy for the `hy-home.k8s` project.
+## 1. Core Engine Philosophy
 
-## Memory Hierarchy
+- **Greedy Autonomy**: Claude should use tools proactively without asking for permission if the action is safe and aligns with the task.
+- **Precise Reasoning**: Leverage Claude's ability to follow complex, nested instructions and technical constraints.
 
-Claude Code loads `CLAUDE.md` files in this order (lowest to highest precedence):
+## 2. Tool-Use Protocol
 
-| File                       | Scope                 | Notes                                                    |
-| -------------------------- | --------------------- | -------------------------------------------------------- |
-| `~/.claude/CLAUDE.md`      | Global — all projects | User-wide preferences; personal defaults                 |
-| `./CLAUDE.md` (repo root)  | Project — shared      | Checked into git; applies to all team members            |
-| `./.claude.local.md`       | Project — personal    | Gitignored; use for local overrides not shared with team |
-| `<subdirectory>/CLAUDE.md` | Directory             | Loaded automatically when working within that directory  |
+- Always verify current directory state using `list_dir` or `find_by_name` before deep editing.
+- Prefer targeted `replace_file_content` over full file rewrites for existing files.
+- Document all tool calls in the task summary.
 
-## Claude Code Instructions
+## 3. Metadata Awareness
 
-layer: 'architecture'
-
-- Keep the root `CLAUDE.md` thin and delegate to this provider file.
-- Prefer parent-to-child memory hierarchy: root file for universal rules, subdirectory files for local detail.
-- Use `.claude.local.md` for personal preferences (API keys, editor settings).
-- **Skill Autonomy**: Claude MUST utilize any available skill (e.g., `writing-plans`, `executing-plans`, `doc-coauthoring`) without persona-based restrictions.
-- **Progressive Disclosure**: Use `@` references if needed, but prefer JIT loading of scopes via `agent-instructions.md`.
-
-## Korean Mandate
-
-- **USER interaction**: Summaries and high-level explanations MUST be in Korean.
-- **Internal Docs**: All instructions and technical documentation in `docs/00.agent/` MUST be in English.
-
-## References
-
-- Anthropic Claude Code memory: <https://docs.anthropic.com/en/docs/claude-code/memory>
+- Respect the `layer:` metadata.
+- If a document is missing metadata, promptly add it based on the 01-11 taxonomy.
