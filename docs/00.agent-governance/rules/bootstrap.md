@@ -15,7 +15,7 @@ This document defines the universal entry point for all AI Agents. It enforces *
 
 | Stage | Path | Purpose |
 | :--- | :--- | :--- |
-| **00** | `docs/00.agent/` | AI Agent Governance & Scopes |
+| **00** | `docs/00.agent-governance/` | AI Agent Governance & Scopes |
 | **01** | `docs/01.prd/` | Product Requirements & Intent |
 | **02** | `docs/02.ard/` | Architecture Reference Documents |
 | **03** | `docs/03.adr/` | Architectural Decision Records |
@@ -29,7 +29,7 @@ This document defines the universal entry point for all AI Agents. It enforces *
 Before performing any task, the Agent MUST:
 
 1. Identify the target **Layer** (Product, Architecture, Frontend, Backend, Infra, Security, QA).
-2. Load the corresponding scope from `docs/00.agent/scopes/<layer>.md`.
+2. Load the corresponding scope from `docs/00.agent-governance/scopes/<layer>.md`.
 3. Adopt the required Persona from `persona-matrix.md`.
 4. Announce:
     > "As your **[Persona Name]**, I am targeting the **[Layer]** layer. I am using all available skills to accelerate this task."

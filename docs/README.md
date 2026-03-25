@@ -1,85 +1,38 @@
 # docs/ 문서 체계 안내
 
-## 목적
+이 공간은 `hy-home.k8s` 프로젝트의 모든 비즈니스 요구, 아키텍처 설계, 기술 결정 및 운영 기록을 관리하는 중심지입니다.
 
-이 디렉터리는 요구, 아키텍처, 결정, 명세, 계획, 작업,
-운영, 절차, 사고, 사분석을 통합 관리하는 표준 공간이다.
+## 우리의 목표
 
-이 체계는 다음 세 가지를 만족하도록 설계한다.
+단순히 문서를 저장하는 공간이 아닙니다. 이 체계는 다음을 보장하기 위해 설계되었습니다.
 
-1. 모든 기술 결정은 명시적으로 기록되고 추적 가능해야 한다.
-2. TDD 기반의 검증 가능한 구현과 작업 단위를 관리한다.
-3. AI Agent 설계와 운영을 표준 문서 체계 안에 통합한다.
+1. **투명한 추적성**: 모든 기술적 결정(`ADR`)이 기획(`PRD`)부터 운영 기록까지 선명하게 연결되도록 합니다.
+2. **검증 가능한 설계**: `TDD` 원칙에 따라, 모든 구현은 검증 가능한 명세를 먼저 갖추어야 합니다.
+3. **AI 협업 최적화**: 인간과 AI Agent가 동일한 구조적 문맥을 공유하며 안전하게 협업할 수 있는 환경을 제공합니다.
 
-## 문서 흐름
+## 문서의 흐름 (Lifecycle)
 
-기본 흐름은 아래와 같다.
+작업은 아래의 흐름을 따라 발전하며 구체화됩니다.
 
-`01.prd → 02.ard → 03.adr → 04.specs → 05.plans → 06.tasks → 07.guides / 08.operations / 09.runbooks → 10.incidents → 11.postmortems`
+`01.prd` (기획) → `02.ard/03.adr` (설계/결정) → `04.specs` (상세 명세) → `05.plans/06.tasks` (실행/작업) → `07~09` (운영 지침) → `10~11` (사고/회고)
 
-보조 문서는 다음과 같다.
+## 작성 가치 (SSoT Principles)
 
-- `99.templates`: 모든 문서의 표준 템플릿
-- `00.agent`: AI Agent 전용 실행 지침 (Lazy Loading 전용)
-
-## 작성 원칙
-
-1. 한국어 기술 요약(Overview (KR))을 문서 상단에 배치한다.
-2. 영어와 한국어를 혼용하여 아키텍처적 의도를 명확히 한다.
-3. 모든 문서는 Markdown 형식을 따르며, 상대 경로를 사용한다.
-4. Placeholder는 저장 전에 모두 제거한다.
-5. 결정은 ADR에, 상세 설계는 Spec에, 절차는 Runbook에 둔다.
-6. 사고 기록은 사실에, 사후 분석은 학습에 집중한다.
-7. AI Agent 변경은 설계, 계획, 평가, 운영까지 연결되어야 한다.
-
-## README에 반드시 들어가야 하는 내용
-
-각 하위 폴더의 `README.md`는 다음 내용을 포함해야 한다.
-
-- 해당 단계의 정의와 역할
-- 권장 하위 구조 및 파일명 규칙
-- 사용할 표준 템플릿 링크
+- **언어 원칙**:
+  - **내부 지침**: AI Agent가 해석하는 내부 지침(`docs/00.agent-governance/`)은 추론 정확도를 위해 **English**로 작성합니다.
+  - **외부 문서**: 인간이 읽고 검토하는 `README.md` 및 개요 문서는 **한국어** 작성을 원칙으로 합니다.
+  - **응답 원칙**: 사용자의 모든 요청에 대한 응답은 **한국어(Korean)**로 합니다.
+- **Spec-First**: 코드를 작성하기 전에 반드시 `PRD`와 `Spec`이 승인되어야 합니다.
+- **Relativity**: 모든 경로는 상대 경로를 사용하여 이동성과 호환성을 확보합니다.
 
 ---
 
-## 디렉터리 상세 역할
+## 디렉터리 안내
 
-### [01.prd](01.prd/README.md)
-
-제품 요구사항 정의 (Vision, Use Case, Requirements)
-
-### [02.ard](02.ard/README.md)
-
-아키텍처 참조 모델 및 품질 속성 정의
-
-### [03.adr](03.adr/README.md)
-
-기술적 의사결정 기록 (Decision, Status, Context, Consequence)
-
-### [04.specs](04.specs/README.md)
-
-컴포넌트/기능별 상세 설계 명세 (Data, API, Logic, Agent-Design)
-
-### [05.plans](05.plans/README.md)
-
-실행 계획 및 마일스톤 (Work Breakdown, Risks)
-
-### [06.tasks](06.tasks/README.md)
-
-실제 구현 및 검증 작업 단위 (Task Table, Evidence)
-
-### [08.operations](08.operations/README.md)
-
-시스템 운영 정책 및 거버넌스
-
-### [09.runbooks](09.runbooks/README.md)
-
-반복적 운영 작업의 실행 지침 (Step-by-step)
-
-### [10.incidents](10.incidents/README.md)
-
-발생한 사고의 사실 기록 (Timeline, Mitigation)
-
-### [11.postmortems](11.postmortems/README.md)
-
-사고 구조 분석 및 재발 방지 대책
+- **[00.agent](00.agent/README.md)**: AI Agent 전용 지침 및 Governance (Lazy Loading)
+- **[01.prd](01.prd/README.md)**: 기획서 (Vision, User Journey, Requirements)
+- **[02.ard](02.ard/README.md)** / **[03.adr](03.adr/README.md)**: 아키텍처 모델 및 결정 기록
+- **[04.specs](04.specs/README.md)**: 기능별 상세 설계 및 기술 명세 (SSoT)
+- **[05.plans](05.plans/README.md)** / **[06.tasks](06.tasks/README.md)**: 구현 계획 및 개별 작업 현황
+- **[07~11.Operations](08.operations/README.md)**: 운영 정책, 런북, 사고 대처 및 사후 분석
+- **[99.templates](99.templates/README.md)**: 표준 문서 서식

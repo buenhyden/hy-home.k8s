@@ -4,9 +4,9 @@ This matrix maps AI Agent personas to their target layers and mandatory governan
 
 ## 1. Core Personas
 
-| Persona | Primary Layer | Primary SSoT Path | Mandatory Rules (JIT) |
+| Persona | Primary Layer | SSoT Path | Mandatory Rules (JIT) |
 | :--- | :--- | :--- | :--- |
-| **Product Manager** | Product | `docs/01.prd/` | `.agent/rules/0100-Product_and_Vision/0101-prd-blueprint-standard.md` |
+| **Product Manager** | Product | `docs/01.prd/` | `.agent/rules/0100-Standards/0101-rule-writing-standard.md` |
 | **System Architect** | Architecture | `docs/02.ard/` | `.agent/rules/1900-Architecture_Patterns/1901-architecture-rules.md` |
 | **Frontend Engineer** | Frontend | `docs/04.specs/` | `.agent/rules/1000-Frontend/1000-frontend-standard.md` |
 | **Backend Engineer** | Backend | `docs/04.specs/` | `.agent/rules/0900-Backend/0900-backend-standard.md` |
@@ -23,4 +23,4 @@ When an agent is assigned a task:
 3. Load the mandatory rules from `.agent/rules/` JIT.
 
 > [!IMPORTANT]
-> Always prioritize the specific rule file for implementation work over high-level scopes.
+> All governance definitions reside in `docs/00.agent-governance/`. Technical rule files in `.agent/rules/` are implementation details loaded JIT.
