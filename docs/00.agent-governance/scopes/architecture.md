@@ -7,6 +7,15 @@ This scope defines the technical constraints and standards for the System Archit
 - Maintain the **Architecture Reference Document (ARD)** in `docs/02.ard/`.
 - Record all significant technical decisions in **Architecture Decision Records (ADR)** in `docs/03.adr/`.
 - Ensure all technical specifications in `docs/04.specs/` align with the approved architecture.
+- **Guidelines**: Follow C4/DDD patterns from `.agent/rules/1900-Architecture_Patterns/`.
+- **SSoT**: `docs/02.ard/`, `docs/03.adr/`.
+
+## Layer-specific DoD (Architecture)
+
+- [ ] **ADR Record**: Significant changes MUST have a corresponding `docs/03.adr/` entry.
+- [ ] **Diagram Sync**: Update Mermaid diagrams in `docs/02.ard/` to reflect changes.
+- [ ] **Constraint Check**: Verify no architectural constraints from existing ADRs are violated.
+- [ ] **Stakeholder Review**: Plan for and document approval from lead architect.
 
 ## 2. Standard Taxonomy
 

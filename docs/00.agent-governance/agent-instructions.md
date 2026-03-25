@@ -12,7 +12,23 @@ Shared entrypoint for all AI agents. Enforces a **Lazy Loading Protocol**.
 2. **Bootstrap Discovery**: Load `docs/00.agent-governance/rules/bootstrap.md` to verify taxonomy.
 3. **Trigger Rule**: Load `docs/00.agent-governance/rules/persona-matrix.md` to identify the required Persona and rules.
 4. **Load Scope**: Import the corresponding scope from `docs/00.agent-governance/scopes/`.
-5. **Execute**: Ground work in `docs/01.prd/` to `docs/11.postmortems/`.
+5. **Contextual Memory**: Search `docs/00.agent-governance/memory/` for task-relevant lessons. Read ONLY what is pertinent to the current Scope or Intent.
+6. **Execute**: Ground work in `docs/01.prd/` to `docs/11.postmortems/`.
+
+```mermaid
+graph TD
+    A[Start Task] --> B{1. Identify Intent}
+    B --> C[2. Bootstrap Discovery]
+    C --> D[3. Trigger Rule]
+    D --> E[4. Load Scope]
+    E --> F[5. Contextual Memory]
+    F --> G[6. Execute]
+    G --> H[End Task]
+    
+    style C fill:#f9f,stroke:#333,stroke-width:2px
+    style D fill:#bbf,stroke:#333,stroke-width:2px
+    style E fill:#bfb,stroke:#333,stroke-width:2px
+```
 
 ## 2. Intent-to-Scope Mapping
 
@@ -38,7 +54,10 @@ Shared entrypoint for all AI agents. Enforces a **Lazy Loading Protocol**.
 - **Human-Facing**: READMEs and overviews MUST be in Korean.
 - **Spec-Driven**: Changes require approved artifacts in `docs/01.prd/` and `docs/04.specs/`.
 - **Response Mandate**: Always respond to user requests in **Korean (한국어)**.
-- **Bootstrap First**: Always load `docs/00.agent-governance/rules/bootstrap.md` initially to establish context.
+
+---
+*Ref: [AGENTS.md](../../AGENTS.md), [persona-matrix.md](rules/persona-matrix.md), [bootstrap.md](rules/bootstrap.md)*
+*Bootstrap First**: Always load `docs/00.agent-governance/rules/bootstrap.md` initially to establish context.
 
 ---
 *Ref: [AGENTS.md](../../AGENTS.md)*

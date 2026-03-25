@@ -11,8 +11,16 @@ This scope defines the technical constraints for the Frontend Engineer persona.
 ## 2. Standard Taxonomy
 
 - **Component Lab**: Storybook/Registry.
-- **Design System**: Tokens and Style Guides in `docs/04.specs/design.md`.
+- **Guidelines**: Follow UI/UX patterns from `.agent/rules/1000-Frontend/`.
+- **SSoT**: `docs/04.specs/`, `docs/01.prd/`.
 - **Client State**: Zustand/Redux logic.
+
+## Layer-specific DoD (Frontend)
+
+- [ ] **Accessibility Audit**: Run `wcag-audit-patterns` on new UI components.
+- [ ] **Responsive Check**: Verify layout on Mobile, Tablet, and Desktop.
+- [ ] **Theme Consistency**: Ensure new components use the design system tokens.
+- [ ] **State Management**: Verify data flow adheres to the established store patterns.
 
 ## 3. Required Metadata
 
@@ -29,3 +37,6 @@ stage: 04
 - `tailwind-css-patterns`
 - `accessibility-compliance`
 - `frontend-design`
+- `next-best-practices`
+- `tailwind-patterns`
+- `vercel-react-best-practices`

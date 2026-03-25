@@ -10,8 +10,15 @@ This scope defines the validation constraints for the QA Engineer persona.
 
 ## 2. Standard Taxonomy
 
-- **Test Plan**: High-level strategy in `docs/05.plans/tests.md`.
-- **Evidence**: Test results in `docs/06.tasks/`.
+- **Guidelines**: Follow TDD/E2E patterns from `.agent/rules/0700-Testing_and_QA/`.
+- **SSoT**: `docs/05.plans/`, `docs/06.tasks/`.
+
+## Layer-specific DoD (QA)
+
+- [ ] **Test Coverage**: Ensure 100% coverage for the critical path of the change.
+- [ ] **Regression Check**: Verify existing features are not broken.
+- [ ] **Bug Report**: All identified issues must be logged in `docs/10.incidents/` or task list.
+- [ ] **Environment Parity**: Verify tests pass in a containerized environment (k3s/docker).
 - **Bugs**: Defect tracking.
 
 ## 3. Required Metadata

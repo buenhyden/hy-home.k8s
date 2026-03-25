@@ -39,3 +39,17 @@ Before performing any task, the Agent MUST:
 3. Adopt the required Persona from `persona-matrix.md`.
 4. Announce:
     > "As your **[Persona Name]**, I am targeting the **[Layer]** layer. I am using all available skills to accelerate this task."
+
+## 4. Universal Definition of Done (DoD)
+
+Before marking a task or batch as complete, the Agent MUST verify:
+
+- [ ] **Spec Alignment**: Code/Docs strictly follow the approved `04.specs/`.
+- [ ] **Verification**: Run all automated tests or manual verification steps.
+- [ ] **Documentation**: Update corresponding `06.tasks/` and create/update `walkthrough.md`.
+- [ ] **Clean Code**: Adhere to project linting and naming standards.
+- [ ] **English Governance**: Any updates to `00.agent-governance/` are in English.
+- [ ] **Memory Hook**: If a non-trivial lesson was learned, record it in `docs/00.agent-governance/memory/`.
+
+---
+*Ref: [agent-instructions.md](../agent-instructions.md), [persona-matrix.md](persona-matrix.md)*
