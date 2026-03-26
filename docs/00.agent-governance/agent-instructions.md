@@ -24,7 +24,7 @@ graph TD
     E --> F[Contextual Memory]
     F --> G[Execution]
     G --> H[Final Task Completion]
-    
+
     subgraph JIT_Lazy_Loading
         C
         D

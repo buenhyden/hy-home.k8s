@@ -10,9 +10,10 @@
 
 ---
 
-### Task 1: Update Persona-Matrix Rule Paths
+## Task 1: Update Persona-Matrix Rule Paths
 
 **Files:**
+
 - Modify: `docs/00.agent-governance/rules/persona-matrix.md`
 
 **Step 1: Update rule paths**
@@ -32,9 +33,10 @@ Ensure all mandatory rules point to the correct prefixed directories in `.agent/
 
 ---
 
-### Task 2: Fill Content for Documentation Scope (`docs.md`)
+## Task 2: Fill Content for Documentation Scope (`docs.md`)
 
 **Files:**
+
 - Modify: `docs/00.agent-governance/scopes/docs.md`
 
 **Step 1: Write Documentation Scope content**
@@ -78,9 +80,10 @@ stage: [07|11|90|99]
 
 ---
 
-### Task 3: Fix Path References in Scope Files
+## Task 3: Fix Path References in Scope Files
 
 **Files:**
+
 - Modify: `docs/00.agent-governance/scopes/backend.md`
 - Modify: `docs/00.agent-governance/scopes/frontend.md`
 - Modify: `docs/00.agent-governance/scopes/architecture.md`
@@ -96,9 +99,10 @@ Remove duplicate headers and fix malformed lists.
 
 ---
 
-### Task 4: Finalize Root Shims
+## Task 4: Finalize Root Shims
 
 **Files:**
+
 - Modify: `AGENTS.md`
 - Modify: `CLAUDE.md`
 - Modify: `GEMINI.md`
@@ -111,6 +115,7 @@ Verify that all shims point to `docs/00.agent-governance/agent-instructions.md` 
 ## Verification Plan
 
 ### Manual Verification
+
 - [ ] Check all Markdown links in `docs/00.agent-governance/` using `ls` to verify file existence.
 - [ ] Verify that `CLAUDE.md` correctly instructions me to load `agent-instructions.md`.
 - [ ] Verify that `docs.md` is no longer empty.
