@@ -12,6 +12,7 @@ Central governance for AI agents operating in `hy-home.k8s`.
 ## Runtime Protocol
 
 Start from repository root shims (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`) and load rules JIT:
+
 1. `rules/bootstrap.md`
 2. `rules/persona.md`
 3. `scopes/<layer>.md`

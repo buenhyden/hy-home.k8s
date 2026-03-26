@@ -5,6 +5,7 @@ Thin gateway for `hy-home.k8s` agent execution.
 ## Protocol
 
 Load governance JIT in this order:
+
 1. [bootstrap.md](docs/00.agent-governance/rules/bootstrap.md)
 2. [persona.md](docs/00.agent-governance/rules/persona.md)
 3. matching scope in `docs/00.agent-governance/scopes/`
