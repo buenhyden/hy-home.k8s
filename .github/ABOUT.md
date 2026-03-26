@@ -15,8 +15,7 @@ This directory is the home for GitHub-specific templates, Actions workflows, and
 The DevOps Agent manages the `.github/workflows/` when changes to deployment pipelines or test runners are approved in the `runbooks/`.
 All configuration here is strictly bound by the following Project Standard Rules:
 
-- CI/CD Pipelines: `.agent/rules/0330-infrastructure-cicd.md`
-- Git Workflows & PR Templates: `.agent/rules/0401-git-workflow-standard.md`
+
 
 ### Multi-Language CI Adaptation
 
