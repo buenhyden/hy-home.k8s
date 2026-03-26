@@ -13,16 +13,16 @@
 - Incident Learning (`docs/10.incidents/`, `docs/11.postmortems/`) -> `Base Structure` + `Incident / Postmortem Snippet`
 
 ## docs 디렉터리 상세 역할
-- [01.prd](01.prd/README.md): 제품 요구사항 정의 (Vision, Use Case, Requirements)
-- [02.ard](02.ard/README.md): 아키텍처 참조 모델 및 품질 속성 정의
-- [03.adr](03.adr/README.md): 기술적 의사결정 기록 (Decision, Status, Context, Consequence)
-- [04.specs](04.specs/README.md): 컴포넌트/기능별 상세 설계 명세 (Data, API, Logic, Agent-Design)
-- [05.plans](05.plans/README.md): 실행 계획 및 마일스톤 (Work Breakdown, Risks)
-- [06.tasks](06.tasks/README.md): 실제 구현 및 검증 작업 단위 (Task Table, Evidence)
-- [08.operations](08.operations/README.md): 시스템 운영 정책 및 거버넌스
-- [09.runbooks](09.runbooks/README.md): 반복적 운영 작업의 실행 지침 (Step-by-step)
-- [10.incidents](10.incidents/README.md): 발생한 사고의 사실 기록 (Timeline, Mitigation)
-- [11.postmortems](11.postmortems/README.md): 사고 구조 분석 및 재발 방지 대책
+- [01.prd](../01.prd/README.md): 제품 요구사항 정의 (Vision, Use Case, Requirements)
+- [02.ard](../02.ard/README.md): 아키텍처 참조 모델 및 품질 속성 정의
+- [03.adr](../03.adr/README.md): 기술적 의사결정 기록 (Decision, Status, Context, Consequence)
+- [04.specs](../04.specs/README.md): 컴포넌트/기능별 상세 설계 명세 (Data, API, Logic, Agent-Design)
+- [05.plans](../05.plans/README.md): 실행 계획 및 마일스톤 (Work Breakdown, Risks)
+- [06.tasks](../06.tasks/README.md): 실제 구현 및 검증 작업 단위 (Task Table, Evidence)
+- [08.operations](../08.operations/README.md): 시스템 운영 정책 및 거버넌스
+- [09.runbooks](../09.runbooks/README.md): 반복적 운영 작업의 실행 지침 (Step-by-step)
+- [10.incidents](../10.incidents/README.md): 발생한 사고의 사실 기록 (Timeline, Mitigation)
+- [11.postmortems](../11.postmortems/README.md): 사고 구조 분석 및 재발 방지 대책
 
 ## Assembly Rules
 1. 아래의 `Base Structure`를 먼저 복사한다.
@@ -142,7 +142,7 @@ cd {project-name}
 1. [README.md](./README.md) - 저장소 개요
 2. [docs/README.md](./docs/README.md) - 문서 체계 개요
 3. [AGENTS.md](./AGENTS.md) - Agent 규칙
-4. [ARCHITECTURE.md](./ARCHITECTURE.md) - 상위 구조 설명
+4. `ARCHITECTURE.md` (optional) - 상위 구조 설명
 
 <!--
 ===============================================================================

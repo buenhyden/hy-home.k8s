@@ -8,14 +8,21 @@ Claude-specific guidance for `hy-home.k8s`.
 - Use governance files under `docs/00.agent-governance/rules/*` as canonical policy.
 - Keep provider-specific details here; do not duplicate global rules.
 
+## Context Strategy
+
+- Prefer concise CLAUDE context files (target under 200 lines per file).
+- For larger projects, split rules into `.claude/rules/` files.
+- Use path-scoped rules where applicable to reduce always-loaded context.
+- Keep conflicting instructions out of CLAUDE hierarchy.
+
 ## Memory and Context
 
-- Follow CLAUDE.md hierarchy: managed policy -> project -> user -> subdirectory JIT.
-- Prefer modular imports for large policy sets.
-- Remove conflicting or stale rules before adding new ones.
+- Follow CLAUDE hierarchy: managed policy -> project -> user -> path-specific rules.
+- Use imports for modular instructions when needed.
+- Use auto memory for recurring lessons, but keep governance controls in docs.
 
 ## Execution Expectations
 
-- Use JIT loading: bootstrap -> persona -> scope -> provider.
+- Use JIT loading: bootstrap -> preflight -> persona -> scope -> provider -> postflight.
 - Keep responses to users in Korean.
-- Keep governance/spec text in English where policy requires it.
+- Keep governance control docs in English.

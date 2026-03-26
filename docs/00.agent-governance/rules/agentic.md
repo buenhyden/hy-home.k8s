@@ -4,9 +4,11 @@ Rules for autonomous task execution quality and safety.
 
 ## Execution Contract
 
+- Complete `rules/preflight-checklist.md` before substantial work.
 - Always identify target layer before editing.
 - Always load matching scope rules before taking action.
 - Use the smallest set of rules required for the task.
+- Complete `rules/postflight-checklist.md` before completion.
 
 ## Persona and Rule Enforcement
 

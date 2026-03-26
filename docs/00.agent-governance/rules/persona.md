@@ -4,10 +4,12 @@ Persona routing for layer-based execution.
 
 ## Activation Steps
 
-1. Identify target layer and stage.
-2. Load `rules/bootstrap.md`.
-3. Load one layer scope from `scopes/`.
-4. Execute using the selected persona contract.
+1. Complete `rules/preflight-checklist.md`.
+2. Identify target layer and stage.
+3. Load `rules/bootstrap.md`.
+4. Load one layer scope from `scopes/`.
+5. Execute using the selected persona contract.
+6. Validate completion with `rules/postflight-checklist.md`.
 
 ## Persona Mapping
 
@@ -23,3 +25,7 @@ Persona routing for layer-based execution.
 | QA Engineer | qa | `docs/05.plans/`, `docs/06.tasks/` |
 | Technical Writer | docs | `docs/07.guides/`, `docs/90.references/` |
 | Governance Steward | meta | `docs/00.agent-governance/` |
+
+## Stage Mapping
+
+Use [stage-authoring-matrix.md](stage-authoring-matrix.md) for canonical `00~11` authoring timing, inputs, outputs, templates, and completion criteria.

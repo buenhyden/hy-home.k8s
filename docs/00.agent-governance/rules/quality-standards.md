@@ -14,4 +14,5 @@ Quality gates for governance and execution alignment.
 - Structure parity with expected governance tree.
 - English-only check under `docs/00.agent-governance/`.
 - Root shim link checks for `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`.
-- Diff check confirms no unintended edits in `docs/01~99`.
+- Checklist references remain valid (`preflight`, `postflight`, `stage-authoring-matrix`, `stage-checklists`).
+- Diff check confirms no unintended edits outside the approved change scope.

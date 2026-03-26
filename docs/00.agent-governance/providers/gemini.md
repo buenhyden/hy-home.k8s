@@ -10,12 +10,18 @@ Gemini-specific guidance for `hy-home.k8s`.
 
 ## Context Strategy
 
-- Gemini supports hierarchical context files and JIT local loading.
-- If needed, set `contextFileName` to `AGENTS.md` in Gemini CLI settings for compatibility.
-- Prefer modular `@file` references for large context sets.
+- Gemini CLI supports hierarchical context loading (global, ancestors, subdirectories).
+- Prefer modular imports for large context sets.
+- Keep instructions concise and non-duplicative across hierarchy.
+
+## File Name Compatibility
+
+- Default context file is `GEMINI.md`.
+- Configure settings to include `AGENTS.md` when needed.
+- Prefer project-local settings under `.gemini/settings.json`.
 
 ## Execution Expectations
 
-- Use JIT loading: bootstrap -> persona -> scope -> provider.
+- Use JIT loading: bootstrap -> preflight -> persona -> scope -> provider -> postflight.
 - Keep user-facing responses in Korean.
 - Keep governance and technical control docs in English.
