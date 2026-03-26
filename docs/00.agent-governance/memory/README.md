@@ -1,19 +1,19 @@
-# Contextual Memory (`docs/00.agent-governance/memory/`)
+# Contextual Memory
 
-This directory stores historical context, lessons learned, and "gotchas" discovered during development. It prevents regression and repeats of past mistakes.
+This folder stores reusable technical lessons for agent execution.
 
-## 1. Governance Strategy
+## Policy
 
-Memory is not a full archive of everything but a curated collection of non-obvious insights.
+- Record only non-obvious and repeat-preventing insights.
+- Prefer short, factual entries over narrative summaries.
+- Link each memory item to affected specs, runbooks, incidents, or postmortems.
 
-- **Primary Goal**: Improve agent performance by providing contextually relevant history.
-- **Language**: English (Technical/Technical Insight).
+## When to Write
 
-## 2. Usage Policy
+- After resolving a complex defect.
+- After a high-severity incident or rollback.
+- After discovering a tooling or environment constraint likely to recur.
 
-- **Record**: Create a new entry (using `template.md`) after a post-mortem or after resolving a complex, non-obvious issue.
-- **Search**: This is triggered during **Step 5** of the JIT protocol (Context-Aware Loading).
-- **Format**: Follow `template.md` (Problem, Context, Solution, Prevention).
+## Format
 
----
-*Ref: [agent-instructions.md](../agent-instructions.md)*
+Use `template.md` and keep each item scoped to one problem pattern.

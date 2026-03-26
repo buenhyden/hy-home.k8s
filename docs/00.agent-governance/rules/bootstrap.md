@@ -1,55 +1,42 @@
-# Agent Bootstrap Governance
+# Agent Bootstrap Governance (March 2026)
 
-> [!NOTE]
-> **hy-home.k8s**: A spec-driven Kubernetes home-lab infrastructure for documentation governance and AI-assisted delivery workflows.
+Universal entry point for all agents in `hy-home.k8s`.
 
-This document defines the universal entry point for all AI Agents. It enforces **Spec-Driven Development (SDD)** and JIT (Just-In-Time) metadata routing for maximum context efficiency.
+## Core Rules
 
-## 1. Core Principles (March 2026)
+- Use spec-driven execution anchored to `docs/01.prd/` and `docs/04.specs/`.
+- Load governance just-in-time, not full-repository-first.
+- Do not mutate authored documentation in `docs/01~99` unless explicitly instructed by a human.
 
-- **Spec-Anchored**: All implementation work MUST be grounded in approved `PRD` and `Spec` artifacts in `docs/01.prd/` and `docs/04.specs/`.
-- **Flat Taxonomy**: SSoT files live in numbered folders (01-11).
-- **Lazy Loading**: Load only shared governance initially; dynamically load scope-specific detail JIT via the `scopes/` directory.
+## JIT Loading Sequence
 
-## 2. Mandatory Taxonomy (SSoT Paths)
+1. Load `rules/bootstrap.md`.
+2. Resolve persona via `rules/persona.md`.
+3. Load one layer scope from `scopes/`.
+4. Load provider notes from `providers/` when needed.
+5. Load `memory/` entries only if relevant.
+
+## Stage Taxonomy
 
 | Stage | Path | Purpose |
-| :--- | :--- | :--- |
-| **00** | `docs/00.agent-governance/` | AI Agent Governance & Git Workflow |
-| **01** | `docs/01.prd/` | Product Requirements & Intent |
-| **02** | `docs/02.ard/` | Architecture Reference Documents |
-| **03** | `docs/03.adr/` | Architectural Decision Records |
-| **04** | `docs/04.specs/` | Technical Specifications (SSoT) |
-| **05** | `docs/05.plans/` | Implementation & Validation Plans |
-| **06** | `docs/06.tasks/` | Granular Task & Progress Tracking |
-| **07** | `docs/07.guides/` | User & Technical Guides |
-| **08** | `docs/08.operations/` | Infrastructure & Operations Policies |
-| **09** | `docs/09.runbooks/` | Step-by-step Operational Procedures |
-| **10** | `docs/10.incidents/` | Incident Records & Timelines |
-| **11** | `docs/11.postmortems/` | RCA & Future Prevention |
-| **90** | `docs/90.references/` | Literature & External Research |
-| **99** | `docs/99.templates/` | Standardized Document Templates |
+| --- | --- | --- |
+| 00 | `docs/00.agent-governance/` | Agent governance |
+| 01 | `docs/01.prd/` | Product requirements |
+| 02 | `docs/02.ard/` | Architecture references |
+| 03 | `docs/03.adr/` | Architecture decisions |
+| 04 | `docs/04.specs/` | Technical specs and contracts |
+| 05 | `docs/05.plans/` | Implementation plans |
+| 06 | `docs/06.tasks/` | Execution tracking |
+| 07 | `docs/07.guides/` | Guides |
+| 08 | `docs/08.operations/` | Operations policy |
+| 09 | `docs/09.runbooks/` | Operational runbooks |
+| 10 | `docs/10.incidents/` | Incident records |
+| 11 | `docs/11.postmortems/` | Postmortems |
+| 90 | `docs/90.references/` | References |
+| 99 | `docs/99.templates/` | Templates |
 
-## 3. Layer Identification Protocol
+## Definition of Done for Governance Tasks
 
-Before performing any task, the Agent MUST:
-
-1. Identify the target **Layer** (Product, Architecture, Frontend, Backend, Infra, Security, QA).
-2. Load the corresponding scope from `docs/00.agent-governance/scopes/<layer>.md`.
-3. Adopt the required Persona from `persona-matrix.md`.
-4. Announce:
-    > "As your **[Persona Name]**, I am targeting the **[Layer]** layer. I am using all available skills to accelerate this task."
-
-## 4. Universal Definition of Done (DoD)
-
-Before marking a task or batch as complete, the Agent MUST verify:
-
-- [ ] **Spec Alignment**: Code/Docs strictly follow the approved `04.specs/`.
-- [ ] **Verification**: Run all automated tests or manual verification steps.
-- [ ] **Documentation**: Update corresponding `06.tasks/` and create/update `walkthrough.md`.
-- [ ] **Clean Code**: Adhere to project linting and naming standards.
-- [ ] **English Governance**: Any updates to `00.agent-governance/` are in English.
-- [ ] **Memory Hook**: If a non-trivial lesson was learned, record it in `docs/00.agent-governance/memory/`.
-
----
-*Ref: [agent-instructions.md](../agent-instructions.md), [persona-matrix.md](persona-matrix.md), [bootstrap.md](bootstrap.md)*
+- Policy changes are reflected in the correct file under `rules/`, `scopes/`, or `providers/`.
+- `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` remain thin gateways.
+- English-only policy is preserved under `docs/00.agent-governance/`.

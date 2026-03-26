@@ -1,37 +1,20 @@
-# Product Layer Scope
+# Product Scope
 
-This scope defines the requirements and standards for the Product Manager persona.
+Persona: Product Manager
 
-## 1. Core Responsibilities
+## Source of Truth
 
-- Maintain the **Product Requirements Document (PRD)** in `docs/01.prd/`.
-- Define user intent, business goals, and success metrics.
-- Ensure the **Roadmap** and **User Stories** are current.
+- `docs/01.prd/`
+- `docs/05.plans/`
 
-## Layer-specific DoD (Product)
+## Responsibilities
 
-- [ ] **User Value**: Verify the change directly addresses a requirement in the PRD.
-- [ ] **Acceptance Criteria**: Ensure all ACs defined in the task are met.
-- [ ] **Success Metrics**: Define how the success of this feature will be measured.
-- [ ] **Stakeholder Sync**: Confirm the solution aligns with the product vision.
+- Keep intent, value, and acceptance criteria clear before implementation.
+- Ensure implementation plans and tasks stay traceable to PRD intent.
+- Flag gaps when downstream stages drift from product requirements.
 
-## 2. Standard Taxonomy
+## Definition of Done
 
-- **PRD**: Primary SSoT for "What" we are building and "Why".
-- **User Personas**: Located in `docs/01.prd/personas.md`.
-- **Competitor Analysis**: Located in `docs/90.references/`.
-
-## 3. Required Metadata
-
-```markdown
----
-layer: product
-stage: 01
----
-```
-
-## 4. Skills Engagement
-
-- `writing-plans`
-- `product-manager-toolkit`
-- `content-strategy`
+- Product intent and acceptance criteria are testable.
+- Plan/task references are anchored to PRD entries.
+- Out-of-scope boundaries are explicit.

@@ -1,21 +1,23 @@
-# Memory Template: [Brief Title]
+# Memory Template: <short-title>
 
 - **Date**: YYYY-MM-DD
-- **Target Layer**: [Backend/Infra/etc.]
-- **Tags**: #performance #bug #config
+- **Layer**: product | architecture | backend | frontend | infra | ops | security | qa | docs | meta
+- **Tags**: #incident #performance #tooling #governance
 
 ## Problem
 
-Describe the issue or challenge encountered.
+One-paragraph statement of the exact failure mode.
 
 ## Context
 
-Provide necessary background (files, versions, environment).
+- Affected paths:
+- Environment:
+- Preconditions:
 
-## Solution
+## Resolution
 
-How was it solved? Provide code snippets or config changes if applicable.
+List concrete remediation steps and links to evidence.
 
 ## Prevention
 
-How to avoid this in the future? (Checklists, refactoring, etc.)
+List enforceable checks or policy updates that prevent recurrence.

@@ -1,44 +1,27 @@
-# Infrastructure Layer Scope
+# Infrastructure Scope
 
-This scope defines the technical constraints for the Infra/DevOps Miner persona.
+Persona: Infra Engineer
 
-## 1. Core Responsibilities
+## Source of Truth
 
-- Maintain **Infrastructure as Code (IaC)** (Terraform/Docker/K8s).
-- Document environment configurations in `docs/08.operations/`.
-- Manage CI/CD pipelines and deployment procedures.
+- `docs/08.operations/`
+- `docs/09.runbooks/`
+- `docs/04.specs/`
 
-## 2. Standard Taxonomy
+## Workspace Facts
 
-- **Inventory**: Resource mapping in `docs/08.operations/inventory.md`.
-- **Guidelines**: Follow K8s patterns defined in `scopes/infra.md` and related documentation.
-- **SSoT**: `docs/08.operations/`, `docs/04.specs/`.
-- **Secrets Protocol**: Sealed Secrets/Vault guides.
-- **Networking**: Ingress/Gateway configurations.
+- Local cluster patterns use `k3d` config under `infrastructure/k3d/`.
+- GitOps entrypoint is `gitops/clusters/local/root-application.yaml`.
+- Networking/bootstrap assets are under `infrastructure/`.
 
-## Layer-specific DoD (Infrastructure)
+## Responsibilities
 
-- [ ] **Resource Limits**: All new deployments must have explicit CPU/Memory limits.
-- [ ] **Sealed Secrets**: Never commit plain secrets; use `SealedSecret` patterns.
-- [ ] **Network Isolation**: Verify `NetworkPolicy` for any new service.
-- [ ] **ArgoCD Sync**: Ensure the app is correctly tracked by ArgoCD.
+- Keep infra changes aligned with operations policy and runbooks.
+- Preserve secure secret handling and network isolation.
+- Ensure deployment workflows remain reproducible from repository assets.
 
-## 3. Required Metadata
+## Definition of Done
 
-```markdown
----
-layer: infra
-stage: 08
----
-```
-
-## 4. Skills Engagement
-
-- `kubernetes-specialist`
-- `argocd-gitops`
-- `k8s-loadbalancing-ingress`
-- `terraform-specialist`
-- `kubernetes-architect`
-- `docker-expert`
-- `deployment-procedures`
-- `argocd-gitops`
+- Infra changes map to existing operations/runbook stages.
+- Command and path references point to real workspace assets.
+- No plain-text secret workflow is introduced.
