@@ -1,54 +1,91 @@
 # 07.guides
 
-> [!NOTE]
-> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+> 플랫폼/운영 작업을 재현 가능한 절차로 설명하는 가이드 문서를 관리한다.
 
-## 목적
+## Overview
 
-이 폴더는 how-to, 온보딩, 사용 가이드, 스타일 가이드를 저장한다. Guide는 이해와 사용을 돕는 문서이지, 운영 정책이나 장애 대응 절차를 담는 문서가 아니다.
+이 경로는 운영 정책(`08.operations`)과 실행 런북(`09.runbooks`) 사이에서,  
+작업 배경과 단계별 수행 방법을 설명하는 how-to 중심 문서를 제공한다.
 
-## 문서 책임
+## Audience
 
-- 독자가 반복 가능한 방법으로 작업을 수행하도록 돕는다.
-- 시스템, 기능, 도구 사용법을 설명한다.
-- 흔한 실수와 준비 조건을 정리한다.
+이 README의 주요 독자:
 
-## Guide 타입
+- Developers
+- Operators
+- Documentation Writers
+- AI Agents
 
-- onboarding
-- how-to
-- style-guide
-- troubleshooting-guide
-- system-guide
+## Scope
 
-## 포함할 내용
+### In Scope
 
-- 대상 독자
-- 선행 조건
-- 단계별 절차
-- 흔한 실수
-- 관련 Spec/Operation/Runbook 링크
+- 온보딩/실행 가이드
+- 선행 조건과 점검 명령
+- 공통 실패 패턴 및 회피 방법
+- Spec/Operations/Runbook 교차 링크
 
-## 포함하지 말아야 할 내용
+### Out of Scope
 
-- 조직 공통 정책
-- 운영 통제 기준
-- 실시간 사고 대응 절차
-- 사고 사후 원인 분석
+- 정책 통제 기준 정의
+- 실시간 장애 대응 절차
+- 사후 사고 분석 보고서
 
-위 내용은 각각 `08.operations/`, `09.runbooks/`, `11.postmortems/`로 분리한다.
+## Structure
 
-## 배치 규칙
+```text
+07.guides/
+├── 0001-wsl-k3d-argocd-bootstrap-guide.md  # WSL2 k3d + ArgoCD 부트스트랩 가이드
+└── README.md                               # This file
+```
 
-- 일반 가이드는 `07.guides/####-<topic>.md`
-- 장기 유지 가이드는 날짜 없이 주제명 기반 파일명을 사용할 수 있다.
+## How to Work in This Area
 
-## Templates
+1. 먼저 [spec.md](../04.specs/001-wsl-k3d-argocd-platform/spec.md)에서 현재 계약 값을 확인한다.
+2. 새 가이드 추가/수정 시 `../99.templates/guide.template.md`를 기반으로 작성한다.
+3. 실행 명령은 복붙 가능한 형태로 유지하고, 시크릿 값은 절대 직접 기재하지 않는다.
+4. 문서 변경 시 이 README의 인덱스(상태/설명/수정일)를 함께 갱신한다.
 
-- `../99.templates/guide.template.md`
+## Related References
+
+- [Agent Governance Hub](../00.agent-governance/README.md)
+- [04.specs](../04.specs/README.md)
+- [08.operations](../08.operations/README.md)
+- [09.runbooks](../09.runbooks/README.md)
+
+## Documentation Standards
+
+- 템플릿 기반으로 문서를 작성하고 필수 섹션을 누락하지 않는다.
+- 기존 SSoT 문서를 중복 생성하지 않고, 링크로 추적성을 유지한다.
+- 사람과 Agent가 동일하게 해석할 수 있도록 계약 값(서비스명/포트/경로)을 명시한다.
+
+## Traceability Rules
+
+- 각 Guide는 최소 1개의 Spec, 1개의 Operations Policy, 1개의 Runbook과 연결한다.
+- 링크는 상대 경로만 사용한다.
+- 실재하지 않는 파일은 링크하지 않는다.
+
+## Template Usage
+
+- 가이드 템플릿: [`../99.templates/guide.template.md`](../99.templates/guide.template.md)
+- README 템플릿: [`../99.templates/readme.template.md`](../99.templates/readme.template.md)
+
+## Metadata Expectations
+
+- 문서 제목은 목적을 즉시 식별 가능해야 한다.
+- 상태(`Draft`/`Active`)와 최종 수정일을 인덱스에 유지한다.
+- 운영 계약 변경 시 관련 Guide/Operations/Runbook 인덱스를 같이 업데이트한다.
+
+## SSoT References
+
+- [PRD](../01.prd/2026-03-27-wsl-k3d-argocd-platform.md)
+- [ARD](../02.ard/0001-wsl-k3d-argocd-platform.md)
+- [Spec](../04.specs/001-wsl-k3d-argocd-platform/spec.md)
+- [Plan](../05.plans/2026-03-27-wsl-k3d-argocd-platform.md)
+- [Task](../06.tasks/2026-03-27-wsl-k3d-argocd-platform.md)
 
 ## 문서 인덱스
 
 | 문서 | 설명 | 상태 | 최종 수정 |
 | --- | --- | --- | --- |
-| [`0001-wsl-k3d-argocd-bootstrap-guide.md`](./0001-wsl-k3d-argocd-bootstrap-guide.md) | `bootstrap-local.sh` + mkcert 기반 WSL2 k3d/ArgoCD 부트스트랩 가이드 | Draft | 2026-03-27 |
+| [`0001-wsl-k3d-argocd-bootstrap-guide.md`](./0001-wsl-k3d-argocd-bootstrap-guide.md) | 외부 서비스 분리 운영 + Vault 기반 부트스트랩/검증 가이드 | Active | 2026-03-27 |

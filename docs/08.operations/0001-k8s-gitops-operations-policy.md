@@ -2,55 +2,102 @@
 
 ## Overview (KR)
 
-이 문서는 WSL2 기반 k3d/k3s GitOps 플랫폼의 운영 정책을 정의한다. 접근 통제, 배포 게이트, 예외 승인, 보안 기준을 명시한다.
+이 문서는 WSL2 기반 k3d/k3s GitOps 플랫폼의 운영 정책을 정의한다.  
+외부 서비스 런타임 분리, Vault 기반 시크릿 통제, GitOps 경로 검증 게이트, 포트 계약 준수 기준을 명시한다.
 
 ## Policy Scope
 
-k3d 클러스터, ArgoCD GitOps, ESO/Vault, 외부 PostgreSQL/Valkey 연동 운영 정책.
+- k3d 클러스터와 ArgoCD GitOps 운영
+- ESO + Vault 연동
+- 외부 서비스 인터페이스 계약(`valkey-external`, `postgres-write-external`, `postgres-read-external`)
+- 문서/검증 증적 운영 기준
+- 외부 서비스 런타임 분리 원칙(외부 repo 관리)
 
 ## Applies To
 
-- **Systems**: k3d cluster, ArgoCD, ESO, Vault integration endpoints
+- **Systems**: k3d cluster, ArgoCD, External Secrets Operator, Vault, platform namespace services
 - **Agents**: Docs/DevOps/GitOps automation agents
 - **Environments**: Local WSL2 development platform
 
 ## Controls
 
 - **Required**:
-  - RBAC 최소권한
-  - AppProject `sourceRepos`/`destinations` 제한
-  - Vault policy namespace/path least privilege
-  - NetworkPolicy 기반 egress 제한
-  - 문서 변경 시 README 인덱스 동기화
+  - 외부 서비스 런타임은 별도 워크스페이스(repo)에서만 운영한다.
+  - Vault를 시크릿 단일 소스로 사용한다.
+    - `secret/platform/argocd` -> `valkey_password`
+    - `secret/platform/postgres-app` -> `db_name`, `username`, `password`
+  - 시크릿 평문(비밀번호/토큰/API Key)을 문서, YAML, Git history에 저장하지 않는다.
+  - GitOps 경로/브랜치 검증 게이트를 적용한다.
+    - `root-platform.spec.source.path`는 원격 브랜치 실재 경로여야 한다.
+    - `targetRevision`과 실제 운영 브랜치가 일치해야 한다.
+  - 외부 서비스 포트 계약을 준수한다.
+    - Valkey: `26379`
+    - PostgreSQL write: `15432`
+    - PostgreSQL read: `15433`
+  - RBAC 최소권한 + AppProject source/destination 제한을 유지한다.
+  - NetworkPolicy 기반 egress 제한을 유지한다.
+  - 문서 변경 시 해당 폴더 `README.md` 인덱스를 동기화한다.
 - **Allowed**:
   - 승인된 버전 범위 내 업그레이드
-  - 표준 runbook 절차 기반 복구
+  - 표준 Runbook 기반 복구 및 재동기화
+  - 운영 점검 목적의 read-only 진단 커맨드 실행
 - **Disallowed**:
   - 평문 시크릿 Git 저장
   - 승인 없는 권한 확장
   - 검증 없는 배포 승격
+  - 외부 런타임 의존 리소스를 임의 로컬 값으로 하드코딩
 
 ## Exceptions
 
-- 임시 운영 예외는 platform owner 승인 후 기간/범위/복구조건을 기록해야 한다.
+- 임시 운영 예외는 아래 순서로 승인한다.
+  1. 요청자가 범위/기간/위험/복구 조건을 명시한다.
+  2. Platform Owner 1차 승인, Security Reviewer 2차 승인.
+  3. 만료 시각(UTC)과 종료 조건을 문서화한다.
+  4. 만료 후 기본 정책으로 복귀했는지 검증 증적을 남긴다.
 
 ## Verification
 
-- 정책 검증 체크리스트를 runbook 절차와 task 증적으로 확인한다.
+- 정책 준수 여부는 아래 검증 세트로 확인한다.
+
+```bash
+# GitOps root 경로/브랜치 검증
+kubectl -n argocd get application root-platform -o yaml | \
+  rg 'path: gitops/apps/root|targetRevision: main'
+
+# External service 인터페이스 계약 검증
+kubectl -n platform get svc,endpointslice | \
+  rg 'postgres-(write|read)-external|15432|15433'
+kubectl -n platform get svc valkey-external -o yaml | \
+  rg 'host.k3d.internal|26379'
+
+# Secret plane 검증
+kubectl -n external-secrets get pods
+kubectl -n argocd get externalsecret,secret argocd-external-valkey
+```
+
+- 문서 검증 항목:
+  - 템플릿 필수 섹션 누락 0건
+  - 상대 링크 오류 0건
+  - 평문 비밀번호/토큰 기재 0건
 
 ## Review Cadence
 
-- 월 1회 정책 리뷰 또는 주요 버전 변경 시 즉시 리뷰.
+- 정기: 월 1회
+- 비정기: 아래 변경 시 즉시 리뷰
+  - 외부 서비스 접속 계약(포트/서비스명/경로) 변경
+  - Vault 경로/권한 모델 변경
+  - GitOps 루트 경로/브랜치 전략 변경
 
 ## AI Agent Policy Section (If Applicable)
 
-- **Model / Prompt Change Process**: 변경 시 ADR 또는 task evidence 필수.
-- **Eval / Guardrail Threshold**: 문서 링크/검증 실패 0건.
-- **Log / Trace Retention**: task/runbook 증적을 문서에 보존.
-- **Safety Incident Thresholds**: 권한 오남용 징후 즉시 에스컬레이션.
+- **Model / Prompt Change Process**: 운영 정책/런북 자동 수정 작업은 PR 단위 증적(변경 파일 + 검증 커맨드 결과)을 남긴다.
+- **Eval / Guardrail Threshold**: 링크 오류 0건, 평문 시크릿 0건, 계약 포트 불일치 0건.
+- **Log / Trace Retention**: 정책 변경 검증 로그를 관련 Plan/Task/Runbook에 기록한다.
+- **Safety Incident Thresholds**: 비밀 유출, 무승인 권한 확장, 운영 경로 불일치 탐지 시 즉시 에스컬레이션한다.
 
 ## Related Documents
 
 - **ARD**: [`../02.ard/0001-wsl-k3d-argocd-platform.md`](../02.ard/0001-wsl-k3d-argocd-platform.md)
+- **Spec**: [`../04.specs/001-wsl-k3d-argocd-platform/spec.md`](../04.specs/001-wsl-k3d-argocd-platform/spec.md)
 - **Runbook**: [`../09.runbooks/0001-argocd-platform-bootstrap-runbook.md`](../09.runbooks/0001-argocd-platform-bootstrap-runbook.md)
-- **Postmortem**: `[../11.postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
+- **Postmortem Index**: [`../11.postmortems/README.md`](../11.postmortems/README.md)
