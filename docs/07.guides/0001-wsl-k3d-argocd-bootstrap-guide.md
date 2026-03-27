@@ -23,24 +23,36 @@
 - Docker Desktop (WSL backend)
 - `kubectl`, `helm`, `k3d`, `argocd` CLI
 - `mkcert` (로컬 TLS 인증서 생성)
-- `VALKEY_PASSWORD` 환경변수
+- `VAULT_TOKEN` 환경변수
+- 외부 서비스 런타임은 별도 워크스페이스(repo)에서 사전 기동
+  - Vault: `https://vault.127.0.0.1.nip.io`
+  - PostgreSQL: `172.30.0.11:5432`
+  - Valkey: `mng-valkey:6379` (`infra_net`)
 
 ## Step-by-step Instructions
 
-1. 비밀번호와 호스트 매핑을 먼저 설정한다.
+1. 외부 서비스 런타임(별도 repo) 상태를 먼저 확인한다.
 
    ```bash
-   export VALKEY_PASSWORD='replace-with-strong-password'
+   docker network inspect infra_net >/dev/null
+   docker ps --format '{{.Names}}' | rg '^(vault|vault-agent|mng-valkey)$'
+   curl -ksS -o /dev/null -w '%{http_code}\n' https://vault.127.0.0.1.nip.io/v1/sys/health
+   ```
+
+2. Vault 토큰과 호스트 매핑을 설정한다.
+
+   ```bash
+   export VAULT_TOKEN='replace-with-vault-admin-token'
    echo "127.0.0.1 argocd.local" | sudo tee -a /etc/hosts
    ```
 
-2. 저장소 루트에서 부트스트랩 스크립트를 실행한다.
+3. 저장소 루트에서 부트스트랩 스크립트를 실행한다.
 
    ```bash
    ./infrastructure/bootstrap-local.sh
    ```
 
-3. `argocd.local` TLS 시크릿을 생성한다.
+4. `argocd.local` TLS 시크릿을 생성한다.
 
    ```bash
    mkcert -install
@@ -51,19 +63,19 @@
      --dry-run=client -o yaml | kubectl apply -f -
    ```
 
-4. ArgoCD 루트 앱 및 ApplicationSet 상태를 확인한다.
+5. ArgoCD 루트 앱 및 ApplicationSet 상태를 확인한다.
 
    ```bash
    kubectl -n argocd get applications,applicationsets
    ```
 
-5. ESO가 Vault 값을 읽어 `argocd-external-valkey` 비밀을 유지하는지 확인한다.
+6. ESO가 Vault 값을 읽어 `argocd-external-valkey` 비밀을 유지하는지 확인한다.
 
    ```bash
    kubectl -n argocd get externalsecret,secret argocd-external-valkey
    ```
 
-6. 외부 서비스 래핑(Service/EndpointSlice)과 네트워크 정책을 검증한다.
+7. 외부 서비스 매핑(PostgreSQL EndpointSlice, Valkey ExternalName)과 네트워크 정책을 검증한다.
 
    ```bash
    kubectl get svc,endpointslice,networkpolicy -n platform

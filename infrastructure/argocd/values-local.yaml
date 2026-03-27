@@ -12,7 +12,7 @@ externalRedis:
   host: valkey-external.platform.svc.cluster.local
   port: 6379
   existingSecret: argocd-external-valkey
-  passwordKey: password
+  passwordKey: redis-password
 
 server:
   ingress:

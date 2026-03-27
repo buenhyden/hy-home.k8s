@@ -14,7 +14,7 @@
   - WSL2 기반 로컬 플랫폼 참조 구조
   - ArgoCD GitOps 경계/프로젝트 스코프
   - ESO + Vault 기반 시크릿 동기화 모델
-  - 외부 Docker 서비스(K8s 래핑 포함) 연결 모델
+  - 외부 서비스(K8s 래핑/외부 URL 포함) 연결 모델
 - **Consumes**:
   - Docker Desktop networking
   - Helm/Kustomize 생태계
@@ -41,14 +41,15 @@
 - Cluster: k3d(k3s) `1 server + 3 agents`
 - GitOps Control Plane: ArgoCD(Helm install)
 - Secret Plane: ESO + Vault Kubernetes Auth
-- Data Plane: external PostgreSQL, external Valkey
+- Data Plane: external PostgreSQL, managed Valkey
 
 ## Data Architecture
 
 - **Key Entities / Flows**:
   - Git desired state -> ArgoCD reconciliation -> K8s live state
   - Vault secret path -> ESO -> Kubernetes Secret
-  - Workload/ArgoCD -> Service/EndpointSlice -> external DB/Valkey
+  - Workload -> Service/EndpointSlice -> external PostgreSQL
+  - ArgoCD/Workload -> ExternalName Service -> managed Valkey
 - **Storage Strategy**:
   - 플랫폼 상태는 Git 선언으로 버전 관리
   - 런타임 비밀은 Vault에 저장, Git 비저장

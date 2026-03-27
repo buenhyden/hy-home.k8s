@@ -19,14 +19,30 @@
 
 - **Config Contract**:
   - k3d: `servers=1`, `agents=3`, server arg `--disable=traefik`
-  - Docker external network: `172.30.0.0/24`
-  - Fixed IP: Vault `.10`, PostgreSQL `.11`, Valkey `.12`
+  - External integration network(CIDR): `172.30.0.0/24`
+  - Fixed IP: PostgreSQL `.11`
+  - Vault/Valkey: 외부 관리형 엔드포인트 사용
 - **Data / Interface Contract**:
-  - K8s Service names: `vault-external`, `postgres-external`, `valkey-external`
-  - 각 Service는 EndpointSlice로 외부 고정 IP에 매핑
+  - K8s Service names: `postgres-external`, `valkey-external`
+  - PostgreSQL은 EndpointSlice로 외부 고정 IP에 매핑
+  - Valkey는 ExternalName Service(`host.k3d.internal`)로 외부 관리형 인스턴스에 매핑
 - **Governance Contract**:
   - 01~09 문서 추적성 유지
   - README 인덱스 동기화 필수
+  - 외부 서비스 런타임은 별도 워크스페이스(repo)에서 관리
+
+## External Runtime Integration (Required)
+
+외부 서비스는 이 저장소에서 기동하지 않는다. 이 저장소는 Kubernetes 매핑/연동 계약만 관리한다.
+
+| 서비스 | 외부 런타임(별도 repo) | 필수 접속값 | 이 저장소 연동 방식 | 기본 확인 |
+| --- | --- | --- | --- | --- |
+| Vault | `vault`, `vault-agent` on `infra_net` | `https://vault.127.0.0.1.nip.io` | ESO + Vault Kubernetes auth | `curl -ksS -o /dev/null -w '%{http_code}\n' https://vault.127.0.0.1.nip.io/v1/sys/health` |
+| PostgreSQL | external DB runtime | `172.30.0.11:5432` | `Service + EndpointSlice` (`postgres-external`) | `kubectl -n platform get svc,endpointslice postgres-external` |
+| Valkey | `mng-valkey` on `infra_net` | `mng-valkey:6379` | `ExternalName Service` (`valkey-external -> host.k3d.internal`) | `kubectl -n platform get svc valkey-external -o yaml` |
+
+- 민감정보(예: Valkey 비밀번호)는 Vault KV `secret/platform/argocd`의 `valkey_password`를 단일 소스로 사용한다.
+- `bootstrap-local.sh`는 외부 런타임 기동을 수행하지 않으며, Vault/연동 리소스 검증과 ArgoCD 설치만 수행한다.
 
 ## Core Design
 
@@ -58,9 +74,9 @@ cluster:
     - "--disable=traefik"
 externalServices:
   networkCIDR: "172.30.0.0/24"
-  vault: "172.30.0.10:8200"
+  vault: "https://vault.127.0.0.1.nip.io"
   postgres: "172.30.0.11:5432"
-  valkey: "172.30.0.12:6379"
+  valkey: "mng-valkey:6379"
 ```
 
 ## API Contract (If Applicable)
@@ -100,14 +116,14 @@ externalServices:
 
 - **Eval Types**: 구조 검증, 연결성 검증, 정책 검증
 - **Metrics**: 링크 오류 0, 핵심 체크 통과율 100%
-- **Datasets / Fixtures**: 예시 manifest, endpoint mapping 표
+- **Datasets / Fixtures**: 예시 manifest, external service mapping 표
 - **How to Run**: task 문서의 검증 명령 참조
 
 ## Edge Cases & Error Handling
 
-- EndpointSlice IP 충돌 시 재할당 필요
+- PostgreSQL EndpointSlice IP 충돌 시 재할당 필요
 - Vault auth role mismatch 시 ESO sync 실패
-- ArgoCD external Valkey 연결 실패 시 helm values/secret 재검증
+- ArgoCD external Valkey 연결 실패 시 ExternalName/네트워크 경로와 helm values/secret 재검증
 
 ## Failure Modes & Fallback / Human Escalation
 
@@ -120,7 +136,9 @@ externalServices:
 ```bash
 k3d cluster list
 kubectl get nodes
-kubectl get svc,endpointslice -A | rg 'vault-external|postgres-external|valkey-external'
+curl -ksS -o /dev/null -w '%{http_code}\n' https://vault.127.0.0.1.nip.io/v1/sys/health
+kubectl -n platform get svc,endpointslice postgres-external
+kubectl -n platform get svc valkey-external -o yaml
 kubectl -n argocd get pods
 kubectl -n external-secrets get externalsecret,secretstore,clustersecretstore
 ```
@@ -129,7 +147,7 @@ kubectl -n external-secrets get externalsecret,secretstore,clustersecretstore
 
 - **VAL-SPC-001**: 4개 노드 Ready
 - **VAL-SPC-002**: ArgoCD/ESO 핵심 컴포넌트 정상
-- **VAL-SPC-003**: 외부 서비스 endpoint 연결 확인
+- **VAL-SPC-003**: 외부 서비스(PostgreSQL EndpointSlice, Valkey ExternalName) 연결 확인
 - **VAL-SPC-004**: Vault 기반 secret sync 성공
 
 ## Related Documents

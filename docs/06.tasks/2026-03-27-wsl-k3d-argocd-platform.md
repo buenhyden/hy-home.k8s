@@ -26,7 +26,7 @@
 | T-005 | AppProject 제한 정책 부정 테스트 | test | §Guardrails | Phase 2 | 금지 repo/ns 배포 실패 증적 | DevOps | Todo |
 | T-006 | ApplicationSet 생성/동기화 검증 | impl | §Interfaces | Phase 2 | 앱 자동 생성/health 확인 | DevOps | Todo |
 | T-007 | ESO->Vault Kubernetes Auth sync e2e 검증 | eval | §Data Strategy | Phase 2 | ExternalSecret Ready/Secret 생성 | Security | Todo |
-| T-008 | PostgreSQL/Valkey EndpointSlice 통신 검증 | test | §Contracts | Phase 2 | 테스트 pod 연결 성공 | Platform | Todo |
+| T-008 | PostgreSQL EndpointSlice + Valkey ExternalName 통신 검증 | test | §Contracts | Phase 2 | 테스트 pod 연결 성공 | Platform | Todo |
 | T-009 | NetworkPolicy 허용/차단 검증 | test | §Guardrails | Phase 2 | 허용/거부 케이스 로그 | Security | Todo |
 | T-010 | Drift self-heal 및 rollback 시나리오 검증 | eval | §Failure Modes | Phase 3 | ArgoCD sync/rollback 로그 | DevOps | Todo |
 | T-011 | 문서 링크 무결성 및 README 인덱스 동기화 검증 | doc | §Governance | Phase 3 | 상대 링크/인덱스 점검 결과 | Docs | Todo |

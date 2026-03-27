@@ -1,17 +1,18 @@
-# ADR-0004: External Service Wrapping via Service/EndpointSlice and ArgoCD Valkey Backend
+# ADR-0004: External Service Access Model and ArgoCD Valkey Backend
 
 ## Overview (KR)
 
-이 ADR은 외부 Docker 서비스(Vault, PostgreSQL, Valkey)를 Kubernetes `Service + EndpointSlice`로 래핑하고, ArgoCD 백엔드를 외부 Valkey로 구성하는 결정을 기록한다.
+이 ADR은 외부 서비스 접근 모델(PostgreSQL은 `Service + EndpointSlice`, Valkey는 `ExternalName Service`, Vault는 외부 URL)과 ArgoCD 백엔드를 외부 Valkey로 구성하는 결정을 기록한다.
 
 ## Context
 
-외부 서비스 접근을 앱 관점에서 Kubernetes DNS 인터페이스로 통일해야 설정 일관성과 이식성을 확보할 수 있다.
+외부 서비스 접근을 앱/플랫폼 관점에서 일관된 인터페이스로 제공해야 설정 이식성과 운영 단순성을 확보할 수 있다. 다만 서비스 특성(고정 IP 필요 여부, 관리 주체)에 따라 접근 방식이 달라진다.
 
 ## Decision
 
-- Vault/PostgreSQL/Valkey 각각에 대해 Kubernetes Service/EndpointSlice를 생성한다.
-- EndpointSlice는 고정 IP(`172.30.0.10/11/12`)를 사용한다.
+- PostgreSQL은 Kubernetes `Service + EndpointSlice`로 래핑하고 고정 IP(`172.30.0.11`)를 사용한다.
+- Valkey는 Kubernetes `ExternalName Service`(`valkey-external -> host.k3d.internal`)로 노출한다.
+- Vault는 Kubernetes 내부 래핑 없이 외부 URL(`https://vault.127.0.0.1.nip.io`)로 접근한다.
 - ArgoCD Redis 계층은 외부 Valkey를 사용한다.
 - Valkey 접근은 ACL 비밀번호 + NetworkPolicy 제한을 필수로 한다.
 
@@ -30,19 +31,19 @@
 
 ## Alternatives
 
-### host.docker.internal 직접 사용
+### Vault/Valkey까지 EndpointSlice 고정 IP로 통일
 
 - Good:
-  - 빠른 초기 연결
+  - 인터페이스가 단일 패턴으로 단순화
 - Bad:
-  - 환경 의존성 증가, 추상화 부족
+  - IPAM 운영 부담 증가, 관리형 외부 엔드포인트와 충돌 가능
 
-### ExternalName 서비스
+### host.k3d.internal 직접 참조 (Service 미사용)
 
 - Good:
-  - 매니페스트 간결
+  - 초기 설정이 빠름
 - Bad:
-  - 포트/엔드포인트 통제 한계, 정책 표현력 제한
+  - 워크로드 설정 중복, 추상화/교체 용이성 저하
 
 ## Related Documents
 

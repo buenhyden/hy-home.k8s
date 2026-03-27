@@ -2,7 +2,7 @@
 
 ## Overview (KR)
 
-이 ADR은 WSL2 환경에서 k3d 클러스터 토폴로지와 외부 Docker 네트워크 기준(`172.30.0.0/24`)을 확정한다.
+이 ADR은 WSL2 환경에서 k3d 클러스터 토폴로지와 외부 서비스 연동 네트워크 기준(`172.30.0.0/24`)을 확정한다.
 
 ## Context
 
@@ -12,8 +12,9 @@
 
 - 클러스터는 `servers=1`, `agents=3`으로 고정한다.
 - k3s 서버는 `--disable=traefik` 옵션으로 기본 ingress를 비활성화한다.
-- 외부 Docker 서비스 네트워크는 `172.30.0.0/24` 대역을 사용한다.
-- Vault/PostgreSQL/Valkey는 고정 IP를 부여한다.
+- 외부 서비스(별도 워크스페이스/리포 관리) 연동 네트워크는 `172.30.0.0/24` 대역을 사용한다.
+- PostgreSQL은 고정 IP를 부여한다.
+- Vault/Valkey는 외부 관리형 엔드포인트를 사용한다.
 
 ## Explicit Non-goals
 

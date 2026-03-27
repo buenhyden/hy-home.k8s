@@ -32,8 +32,9 @@
 
 - [ ] WSL2/Docker Desktop 정상 상태
 - [ ] CLI 도구(k3d/kubectl/helm/argocd) 설치
-- [ ] 외부 Docker 서비스 고정 IP 할당
-- [ ] `VALKEY_PASSWORD` 환경변수 설정
+- [ ] 외부 서비스 런타임은 별도 워크스페이스(repo)에서 기동됨 (`vault`, `vault-agent`, `mng-valkey`)
+- [ ] Vault(`https://vault.127.0.0.1.nip.io`) 접근 가능 및 unseal 상태
+- [ ] `VAULT_TOKEN` 환경변수 설정
 - [ ] `/etc/hosts`에 `argocd.local` 매핑
 
 ### Procedure
@@ -41,17 +42,25 @@
 1. 사전 변수 설정 및 호스트 매핑.
 
    ```bash
-   export VALKEY_PASSWORD='replace-with-strong-password'
+   export VAULT_TOKEN='replace-with-vault-admin-token'
    echo "127.0.0.1 argocd.local" | sudo tee -a /etc/hosts
    ```
 
-2. 부트스트랩 스크립트 실행.
+2. 외부 서비스 런타임 계약 확인(별도 repo 운영 범위).
+
+   ```bash
+   docker network inspect infra_net >/dev/null
+   docker ps --format '{{.Names}}' | rg '^(vault|vault-agent|mng-valkey)$'
+   curl -ksS -o /dev/null -w '%{http_code}\n' https://vault.127.0.0.1.nip.io/v1/sys/health
+   ```
+
+3. 부트스트랩 스크립트 실행.
 
    ```bash
    ./infrastructure/bootstrap-local.sh
    ```
 
-3. ingress-nginx 로드 및 TLS 인증서 적용.
+4. ingress-nginx 로드 및 TLS 인증서 적용.
 
    ```bash
    mkcert -install
@@ -62,27 +71,28 @@
      --dry-run=client -o yaml | kubectl apply -f -
    ```
 
-4. ArgoCD 루트 앱 동기화 상태 확인.
+5. ArgoCD 루트 앱 동기화 상태 확인.
 
    ```bash
    kubectl -n argocd get applications
    kubectl -n argocd get applicationsets
    ```
 
-5. ESO 및 Vault 기반 비밀 동기화 확인.
+6. ESO 및 Vault 기반 비밀 동기화 확인.
 
    ```bash
    kubectl -n external-secrets get pods
    kubectl -n argocd get externalsecret,secret argocd-external-valkey
    ```
 
-6. 외부 서비스 EndpointSlice 연결성 확인.
+7. 외부 서비스 매핑(PostgreSQL EndpointSlice, Valkey ExternalName) 연결성 확인.
 
    ```bash
-   kubectl get svc,endpointslice -n platform
+   kubectl -n platform get svc,endpointslice
+   kubectl -n platform get svc valkey-external -o yaml
    ```
 
-7. ArgoCD UI 접속 및 프로젝트 경계 검증.
+8. ArgoCD UI 접속 및 프로젝트 경계 검증.
 
    ```bash
    argocd login argocd.local --grpc-web
@@ -93,7 +103,7 @@
 
 - [ ] `kubectl get nodes`에서 4개 노드 Ready 확인
 - [ ] `kubectl -n argocd get pods` 정상
-- [ ] `kubectl get svc,endpointslice -A | rg 'vault-external|postgres-external|valkey-external'`
+- [ ] `kubectl get svc,endpointslice -A | rg 'postgres-external|valkey-external'`
 - [ ] `kubectl -n external-secrets get externalsecret,secretstore,clustersecretstore`
 - [ ] `argocd app list` 및 sync 상태 확인
 

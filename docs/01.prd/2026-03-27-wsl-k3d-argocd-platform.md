@@ -2,7 +2,7 @@
 
 ## Overview (KR)
 
-이 문서는 Windows WSL2(Ubuntu) 환경에서 k3d(k3s) 기반 멀티노드 Kubernetes 플랫폼과 ArgoCD GitOps 파이프라인을 구축하기 위한 제품 요구사항을 정의한다. 외부 Docker 서비스(Vault, PostgreSQL, Valkey) 연동과 문서 추적성을 핵심 성공 기준으로 삼는다.
+이 문서는 Windows WSL2(Ubuntu) 환경에서 k3d(k3s) 기반 멀티노드 Kubernetes 플랫폼과 ArgoCD GitOps 파이프라인을 구축하기 위한 제품 요구사항을 정의한다. 외부 서비스(Vault, PostgreSQL, Valkey) 연동과 문서 추적성을 핵심 성공 기준으로 삼는다.
 
 ## Vision
 
@@ -23,7 +23,7 @@ Create a reproducible, secure, and automation-first local platform that mirrors 
 - **STORY-01**: 엔지니어는 WSL2에서 `1 server + 3 agents` k3d 클러스터를 재현 가능하게 구축한다.
 - **STORY-02**: 운영자는 ArgoCD App-of-Apps로 플랫폼 구성요소를 선언형으로 배포/동기화한다.
 - **STORY-03**: 애플리케이션은 ESO를 통해 Vault에서 시크릿을 동기화해 사용한다.
-- **STORY-04**: 애플리케이션/ArgoCD는 외부 PostgreSQL/Valkey를 K8s Service/EndpointSlice 경유로 사용한다.
+- **STORY-04**: 애플리케이션/ArgoCD는 외부 PostgreSQL/Valkey를 Kubernetes 표준 인터페이스(Service) 경유로 사용한다.
 
 ## Functional Requirements
 
@@ -32,8 +32,8 @@ Create a reproducible, secure, and automation-first local platform that mirrors 
 - **REQ-PRD-FUN-03**: ArgoCD는 Helm 기반으로 설치/업그레이드 가능해야 한다.
 - **REQ-PRD-FUN-04**: App-of-Apps + ApplicationSet으로 앱 선언을 자동 생성/동기화해야 한다.
 - **REQ-PRD-FUN-05**: Vault 연동은 ESO + Kubernetes Auth를 사용해야 한다.
-- **REQ-PRD-FUN-06**: 외부 서비스는 `172.30.0.0/24` 고정 IP 대역을 사용해야 한다.
-- **REQ-PRD-FUN-07**: PostgreSQL/Valkey/Vault는 Service + EndpointSlice로 래핑되어야 한다.
+- **REQ-PRD-FUN-06**: 외부 PostgreSQL은 `172.30.0.0/24` 고정 IP 대역을 사용해야 한다.
+- **REQ-PRD-FUN-07**: PostgreSQL은 Service + EndpointSlice로 래핑하고, Valkey는 ExternalName Service, Vault는 외부 URL 계약을 사용해야 한다.
 - **REQ-PRD-FUN-08**: ArgoCD 백엔드는 외부 Valkey를 사용해야 한다.
 - **REQ-PRD-FUN-09**: 문서 체계는 01~09 단계 산출물과 상호 상대링크를 제공해야 한다.
 
@@ -48,7 +48,7 @@ Create a reproducible, secure, and automation-first local platform that mirrors 
 
 - **In Scope**:
   - WSL2 + Docker Desktop 백엔드 기준 클러스터/배포/연동 설계
-  - ArgoCD, ESO, Vault, PostgreSQL, Valkey 통합 아키텍처
+  - ArgoCD, ESO, 외부 Vault, 외부 PostgreSQL, 외부 Valkey 통합 아키텍처
   - 01~09 문서화 및 추적성 정립
 - **Out of Scope**:
   - 클라우드 관리형 Kubernetes(EKS/AKS/GKE) 배포
