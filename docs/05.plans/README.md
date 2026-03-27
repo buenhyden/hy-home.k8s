@@ -32,3 +32,9 @@
 ## Templates
 
 - `../99.templates/plan.template.md`
+
+## 문서 인덱스
+
+| 문서 | 설명 | 상태 | 최종 수정 |
+| --- | --- | --- | --- |
+| [`2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md) | WSL2 GitOps 플랫폼 단계별 실행 계획 | Draft | 2026-03-27 |

@@ -108,3 +108,9 @@
 - `../99.templates/openapi.template.yaml`
 - `../99.templates/service.template.proto`
 - `../99.templates/schema.template.graphql`
+
+## 문서 인덱스
+
+| 문서 | 설명 | 상태 | 최종 수정 |
+| --- | --- | --- | --- |
+| [`001-wsl-k3d-argocd-platform/spec.md`](./001-wsl-k3d-argocd-platform/spec.md) | WSL2 k3d/k3s + ArgoCD + ESO/Vault + 외부 DB/Valkey 기술 명세 | Draft | 2026-03-27 |

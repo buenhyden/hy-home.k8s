@@ -48,3 +48,9 @@
 ## Templates
 
 - `../99.templates/runbook.template.md`
+
+## 문서 인덱스
+
+| 문서 | 설명 | 상태 | 최종 수정 |
+| --- | --- | --- | --- |
+| [`0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md) | WSL2 GitOps 플랫폼 부트스트랩 실행 런북 | Draft | 2026-03-27 |

@@ -27,3 +27,9 @@
 ## Templates
 
 - `../99.templates/ard.template.md`
+
+## 문서 인덱스
+
+| 문서 | 설명 | 상태 | 최종 수정 |
+| --- | --- | --- | --- |
+| [`0001-wsl-k3d-argocd-platform.md`](./0001-wsl-k3d-argocd-platform.md) | WSL2 k3d/k3s GitOps 플랫폼 참조 아키텍처 | Draft | 2026-03-27 |

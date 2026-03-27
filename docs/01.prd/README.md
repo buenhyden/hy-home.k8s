@@ -35,3 +35,9 @@
 ## Templates
 
 - `../99.templates/prd.template.md`
+
+## 문서 인덱스
+
+| 문서 | 설명 | 상태 | 최종 수정 |
+| --- | --- | --- | --- |
+| [`2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md) | WSL2 기반 k3d/k3s + ArgoCD GitOps 플랫폼 PRD | Draft | 2026-03-27 |

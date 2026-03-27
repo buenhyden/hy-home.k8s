@@ -33,3 +33,12 @@
 ## Templates
 
 - `../99.templates/adr.template.md`
+
+## 문서 인덱스
+
+| 문서 | 설명 | 상태 | 최종 수정 |
+| --- | --- | --- | --- |
+| [`0001-k3d-topology-and-network.md`](./0001-k3d-topology-and-network.md) | k3d 토폴로지와 외부 네트워크 기준 결정 | Accepted | 2026-03-27 |
+| [`0002-argocd-helm-and-gitops-model.md`](./0002-argocd-helm-and-gitops-model.md) | ArgoCD Helm 설치와 GitOps 모델 결정 | Accepted | 2026-03-27 |
+| [`0003-eso-vault-k8s-auth.md`](./0003-eso-vault-k8s-auth.md) | ESO + Vault Kubernetes Auth 시크릿 패턴 결정 | Accepted | 2026-03-27 |
+| [`0004-external-services-endpoints-and-valkey-backend.md`](./0004-external-services-endpoints-and-valkey-backend.md) | 외부 서비스 EndpointSlice 래핑과 ArgoCD Valkey 백엔드 결정 | Accepted | 2026-03-27 |

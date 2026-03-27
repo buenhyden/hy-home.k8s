@@ -66,3 +66,9 @@
 ## Templates
 
 - `../99.templates/task.template.md`
+
+## 문서 인덱스
+
+| 문서 | 설명 | 상태 | 최종 수정 |
+| --- | --- | --- | --- |
+| [`2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md) | TDD/검증 중심 실행 Task 목록과 증적 기준 | Draft | 2026-03-27 |
