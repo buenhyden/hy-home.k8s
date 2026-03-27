@@ -26,8 +26,8 @@
 - `VAULT_TOKEN` 환경변수
 - 외부 서비스 런타임은 별도 워크스페이스(repo)에서 사전 기동
   - Vault: `https://vault.127.0.0.1.nip.io`
-  - PostgreSQL: `172.30.0.11:5432`
-  - Valkey: `mng-valkey:6379` (`infra_net`)
+  - PostgreSQL HAProxy: write `172.30.0.11:15432`, read `172.30.0.11:15433`
+  - Valkey: `mng-valkey:6379` (`infra_net`), host publish `26379`
 
 ## Step-by-step Instructions
 

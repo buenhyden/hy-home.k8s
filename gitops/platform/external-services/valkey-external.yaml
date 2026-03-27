@@ -8,4 +8,4 @@ spec:
   externalName: host.k3d.internal
   ports:
     - name: valkey
-      port: 6379
+      port: 26379

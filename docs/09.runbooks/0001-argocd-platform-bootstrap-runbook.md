@@ -33,6 +33,8 @@
 - [ ] WSL2/Docker Desktop 정상 상태
 - [ ] CLI 도구(k3d/kubectl/helm/argocd) 설치
 - [ ] 외부 서비스 런타임은 별도 워크스페이스(repo)에서 기동됨 (`vault`, `vault-agent`, `mng-valkey`)
+- [ ] `mng-valkey:6379`가 host `26379`으로 publish됨
+- [ ] PostgreSQL HAProxy write/read 포트(`15432`, `15433`)가 열려 있음
 - [ ] Vault(`https://vault.127.0.0.1.nip.io`) 접근 가능 및 unseal 상태
 - [ ] `VAULT_TOKEN` 환경변수 설정
 - [ ] `/etc/hosts`에 `argocd.local` 매핑
@@ -89,6 +91,7 @@
 
    ```bash
    kubectl -n platform get svc,endpointslice
+   kubectl -n platform get svc,endpointslice | rg 'postgres-(write|read)-external'
    kubectl -n platform get svc valkey-external -o yaml
    ```
 
@@ -103,7 +106,7 @@
 
 - [ ] `kubectl get nodes`에서 4개 노드 Ready 확인
 - [ ] `kubectl -n argocd get pods` 정상
-- [ ] `kubectl get svc,endpointslice -A | rg 'postgres-external|valkey-external'`
+- [ ] `kubectl get svc,endpointslice -A | rg 'postgres-(write|read)-external|valkey-external'`
 - [ ] `kubectl -n external-secrets get externalsecret,secretstore,clustersecretstore`
 - [ ] `argocd app list` 및 sync 상태 확인
 

@@ -19,10 +19,12 @@ spec:
             cidr: 172.30.0.11/32
       ports:
         - protocol: TCP
-          port: 5432
+          port: 15432
+        - protocol: TCP
+          port: 15433
     - to:
         - ipBlock:
             cidr: 172.30.0.12/32
       ports:
         - protocol: TCP
-          port: 6379
+          port: 26379

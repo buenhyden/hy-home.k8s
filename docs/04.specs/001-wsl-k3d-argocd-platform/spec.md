@@ -23,8 +23,8 @@
   - Fixed IP: PostgreSQL `.11`
   - Vault/Valkey: 외부 관리형 엔드포인트 사용
 - **Data / Interface Contract**:
-  - K8s Service names: `postgres-external`, `valkey-external`
-  - PostgreSQL은 EndpointSlice로 외부 고정 IP에 매핑
+  - K8s Service names: `postgres-write-external`, `postgres-read-external`, `valkey-external`
+  - PostgreSQL은 HAProxy write/read 포트를 각각 EndpointSlice로 외부 고정 IP에 매핑
   - Valkey는 ExternalName Service(`host.k3d.internal`)로 외부 관리형 인스턴스에 매핑
 - **Governance Contract**:
   - 01~09 문서 추적성 유지
@@ -38,10 +38,11 @@
 | 서비스 | 외부 런타임(별도 repo) | 필수 접속값 | 이 저장소 연동 방식 | 기본 확인 |
 | --- | --- | --- | --- | --- |
 | Vault | `vault`, `vault-agent` on `infra_net` | `https://vault.127.0.0.1.nip.io` | ESO + Vault Kubernetes auth | `curl -ksS -o /dev/null -w '%{http_code}\n' https://vault.127.0.0.1.nip.io/v1/sys/health` |
-| PostgreSQL | external DB runtime | `172.30.0.11:5432` | `Service + EndpointSlice` (`postgres-external`) | `kubectl -n platform get svc,endpointslice postgres-external` |
-| Valkey | `mng-valkey` on `infra_net` | `mng-valkey:6379` | `ExternalName Service` (`valkey-external -> host.k3d.internal`) | `kubectl -n platform get svc valkey-external -o yaml` |
+| PostgreSQL | HAProxy-backed external DB runtime | `172.30.0.11:15432`(write), `172.30.0.11:15433`(read) | `Service + EndpointSlice` (`postgres-write-external`, `postgres-read-external`) | `kubectl -n platform get svc,endpointslice | rg 'postgres-(write|read)-external'` |
+| Valkey | `mng-valkey` on `infra_net` | `host.k3d.internal:26379` (`mng-valkey:6379` published) | `ExternalName Service` (`valkey-external -> host.k3d.internal`) | `kubectl -n platform get svc valkey-external -o yaml` |
 
 - 민감정보(예: Valkey 비밀번호)는 Vault KV `secret/platform/argocd`의 `valkey_password`를 단일 소스로 사용한다.
+- 서비스용 PostgreSQL 접근 정보(`app_db`, `app_user`, 비밀번호)는 평문 커밋 없이 Vault 경로에서 관리한다.
 - `bootstrap-local.sh`는 외부 런타임 기동을 수행하지 않으며, Vault/연동 리소스 검증과 ArgoCD 설치만 수행한다.
 
 ## Core Design
@@ -75,8 +76,9 @@ cluster:
 externalServices:
   networkCIDR: "172.30.0.0/24"
   vault: "https://vault.127.0.0.1.nip.io"
-  postgres: "172.30.0.11:5432"
-  valkey: "mng-valkey:6379"
+  postgresWrite: "172.30.0.11:15432"
+  postgresRead: "172.30.0.11:15433"
+  valkey: "host.k3d.internal:26379"
 ```
 
 ## API Contract (If Applicable)
@@ -137,7 +139,7 @@ externalServices:
 k3d cluster list
 kubectl get nodes
 curl -ksS -o /dev/null -w '%{http_code}\n' https://vault.127.0.0.1.nip.io/v1/sys/health
-kubectl -n platform get svc,endpointslice postgres-external
+kubectl -n platform get svc,endpointslice | rg 'postgres-(write|read)-external'
 kubectl -n platform get svc valkey-external -o yaml
 kubectl -n argocd get pods
 kubectl -n external-secrets get externalsecret,secretstore,clustersecretstore
