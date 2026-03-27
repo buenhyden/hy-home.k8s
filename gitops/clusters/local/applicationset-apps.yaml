@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: apps-generator
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/buenhyden/hy-home.k8s.git
+        revision: main
+        directories:
+          - path: gitops/workloads/*
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: apps
+      source:
+        repoURL: https://github.com/buenhyden/hy-home.k8s.git
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: apps
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

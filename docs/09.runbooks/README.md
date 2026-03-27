@@ -53,4 +53,4 @@
 
 | 문서 | 설명 | 상태 | 최종 수정 |
 | --- | --- | --- | --- |
-| [`0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md) | WSL2 GitOps 플랫폼 부트스트랩 실행 런북 | Draft | 2026-03-27 |
+| [`0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md) | 환경변수/hosts/TLS/검증 커맨드를 포함한 부트스트랩 실행 런북 | Draft | 2026-03-27 |

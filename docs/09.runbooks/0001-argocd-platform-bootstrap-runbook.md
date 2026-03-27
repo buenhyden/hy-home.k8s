@@ -33,16 +33,61 @@
 - [ ] WSL2/Docker Desktop 정상 상태
 - [ ] CLI 도구(k3d/kubectl/helm/argocd) 설치
 - [ ] 외부 Docker 서비스 고정 IP 할당
+- [ ] `VALKEY_PASSWORD` 환경변수 설정
+- [ ] `/etc/hosts`에 `argocd.local` 매핑
 
 ### Procedure
 
-1. k3d 클러스터 생성(1 server + 3 agents, traefik 비활성화).
-2. ingress-nginx 설치 및 도메인(`argocd.local`) TLS 설정.
-3. ArgoCD Helm 설치 및 외부 Valkey endpoint/credential 반영.
-4. App-of-Apps root application 배포.
-5. ESO 설치 후 Vault Kubernetes Auth 기반 SecretStore 구성.
-6. PostgreSQL/Valkey/Vault Service + EndpointSlice 적용.
-7. NetworkPolicy 적용 및 연결성 검증.
+1. 사전 변수 설정 및 호스트 매핑.
+
+   ```bash
+   export VALKEY_PASSWORD='replace-with-strong-password'
+   echo "127.0.0.1 argocd.local" | sudo tee -a /etc/hosts
+   ```
+
+2. 부트스트랩 스크립트 실행.
+
+   ```bash
+   ./infrastructure/bootstrap-local.sh
+   ```
+
+3. ingress-nginx 로드 및 TLS 인증서 적용.
+
+   ```bash
+   mkcert -install
+   mkcert argocd.local
+   kubectl -n argocd create secret tls argocd-local-tls \
+     --cert=argocd.local.pem \
+     --key=argocd.local-key.pem \
+     --dry-run=client -o yaml | kubectl apply -f -
+   ```
+
+4. ArgoCD 루트 앱 동기화 상태 확인.
+
+   ```bash
+   kubectl -n argocd get applications
+   kubectl -n argocd get applicationsets
+   ```
+
+5. ESO 및 Vault 기반 비밀 동기화 확인.
+
+   ```bash
+   kubectl -n external-secrets get pods
+   kubectl -n argocd get externalsecret,secret argocd-external-valkey
+   ```
+
+6. 외부 서비스 EndpointSlice 연결성 확인.
+
+   ```bash
+   kubectl get svc,endpointslice -n platform
+   ```
+
+7. ArgoCD UI 접속 및 프로젝트 경계 검증.
+
+   ```bash
+   argocd login argocd.local --grpc-web
+   argocd proj list
+   ```
 
 ## Verification Steps
 

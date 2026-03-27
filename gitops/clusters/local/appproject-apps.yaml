@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: apps
+  namespace: argocd
+spec:
+  description: Workload applications only
+  sourceRepos:
+    - https://github.com/buenhyden/hy-home.k8s.git
+  destinations:
+    - namespace: apps
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  roles:
+    - name: apps-readonly
+      policies:
+        - p, proj:apps:apps-readonly, applications, get, apps/*, allow
+      groups:
+        - apps-readonly

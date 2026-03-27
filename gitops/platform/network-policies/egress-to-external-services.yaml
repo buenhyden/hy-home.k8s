@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-external-services
+  namespace: platform
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 172.30.0.10/32
+      ports:
+        - protocol: TCP
+          port: 8200
+    - to:
+        - ipBlock:
+            cidr: 172.30.0.11/32
+      ports:
+        - protocol: TCP
+          port: 5432
+    - to:
+        - ipBlock:
+            cidr: 172.30.0.12/32
+      ports:
+        - protocol: TCP
+          port: 6379

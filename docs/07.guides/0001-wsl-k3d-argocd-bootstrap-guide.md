@@ -22,15 +22,52 @@
 - Windows 11 + WSL2 Ubuntu
 - Docker Desktop (WSL backend)
 - `kubectl`, `helm`, `k3d`, `argocd` CLI
+- `mkcert` (로컬 TLS 인증서 생성)
+- `VALKEY_PASSWORD` 환경변수
 
 ## Step-by-step Instructions
 
-1. WSL 리소스와 Docker backend 상태를 확인한다.
-2. k3d 클러스터를 `1 server + 3 agents`로 생성한다.
-3. ingress-nginx를 설치하고 `argocd.local` 도메인 접근을 설정한다.
-4. ArgoCD를 Helm으로 설치하고 root app(App-of-Apps)을 적용한다.
-5. ESO와 Vault Kubernetes Auth를 구성한다.
-6. PostgreSQL/Valkey 외부 endpoint를 Service/EndpointSlice로 래핑한다.
+1. 비밀번호와 호스트 매핑을 먼저 설정한다.
+
+   ```bash
+   export VALKEY_PASSWORD='replace-with-strong-password'
+   echo "127.0.0.1 argocd.local" | sudo tee -a /etc/hosts
+   ```
+
+2. 저장소 루트에서 부트스트랩 스크립트를 실행한다.
+
+   ```bash
+   ./infrastructure/bootstrap-local.sh
+   ```
+
+3. `argocd.local` TLS 시크릿을 생성한다.
+
+   ```bash
+   mkcert -install
+   mkcert argocd.local
+   kubectl -n argocd create secret tls argocd-local-tls \
+     --cert=argocd.local.pem \
+     --key=argocd.local-key.pem \
+     --dry-run=client -o yaml | kubectl apply -f -
+   ```
+
+4. ArgoCD 루트 앱 및 ApplicationSet 상태를 확인한다.
+
+   ```bash
+   kubectl -n argocd get applications,applicationsets
+   ```
+
+5. ESO가 Vault 값을 읽어 `argocd-external-valkey` 비밀을 유지하는지 확인한다.
+
+   ```bash
+   kubectl -n argocd get externalsecret,secret argocd-external-valkey
+   ```
+
+6. 외부 서비스 래핑(Service/EndpointSlice)과 네트워크 정책을 검증한다.
+
+   ```bash
+   kubectl get svc,endpointslice,networkpolicy -n platform
+   ```
 
 ## Common Pitfalls
 

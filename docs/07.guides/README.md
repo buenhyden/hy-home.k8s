@@ -51,4 +51,4 @@
 
 | 문서 | 설명 | 상태 | 최종 수정 |
 | --- | --- | --- | --- |
-| [`0001-wsl-k3d-argocd-bootstrap-guide.md`](./0001-wsl-k3d-argocd-bootstrap-guide.md) | WSL2 k3d/ArgoCD 플랫폼 초기 부트스트랩 가이드 | Draft | 2026-03-27 |
+| [`0001-wsl-k3d-argocd-bootstrap-guide.md`](./0001-wsl-k3d-argocd-bootstrap-guide.md) | `bootstrap-local.sh` + mkcert 기반 WSL2 k3d/ArgoCD 부트스트랩 가이드 | Draft | 2026-03-27 |
