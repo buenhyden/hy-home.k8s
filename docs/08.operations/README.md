@@ -112,3 +112,4 @@ kubectl -n platform get svc valkey-external -o yaml | \
 | 문서 | 설명 | 상태 | 최종 수정 |
 | --- | --- | --- | --- |
 | [`0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md) | 외부 런타임 분리 + Vault 단일 소스 + GitOps 게이트 운영 정책 | Active | 2026-03-27 |
+| [`0002-wsl2-k3d-gitops-ha-operations-policy.md`](./0002-wsl2-k3d-gitops-ha-operations-policy.md) | WSL2 HA 운영 통제(계약 포트, 최소권한, 핫픽스 예외) 정책 | Active | 2026-03-28 |

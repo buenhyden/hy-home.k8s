@@ -1,0 +1,144 @@
+# WSL2 k3d/k3s ArgoCD HA Platform Specification
+
+## Overview (KR)
+
+이 문서는 WSL2 멀티노드 클러스터와 GitOps/Secret/외부 데이터 연동 구현 계약을 정의한다. 운영 핫픽스(수동 EndpointSlice)와 재발 방지 백로그를 분리해 명시한다.
+
+## Strategic Boundaries & Non-goals
+
+- **Owns**: 클러스터 토폴로지, GitOps 배포 구조, 외부 서비스 인터페이스, 검증 스크립트
+- **Does Not Own**: 외부 서비스 컨테이너 런타임 배포/운영
+
+## Related Inputs
+
+- **PRD**: [`../../01.prd/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../01.prd/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- **ARD**: [`../../02.ard/0002-wsl2-k3d-argocd-ha-platform.md`](../../02.ard/0002-wsl2-k3d-argocd-ha-platform.md)
+- **Related ADRs**: [`../../03.adr/0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](../../03.adr/0005-wsl2-ha-baseline-and-external-endpoint-contract.md)
+
+## Contracts
+
+- **Config Contract**:
+  - `infrastructure/k3d/k3d-cluster.yaml`: `servers: 1`, `agents: 3`
+  - network CIDR: `172.30.0.0/24`
+- **Data / Interface Contract**:
+  - `vault-external.platform.svc.cluster.local:8200`
+  - `postgres-write-external:15432`
+  - `postgres-read-external:15433`
+  - `valkey-external:26379`
+  - Vault paths: `secret/platform/argocd`, `secret/platform/postgres-app`
+- **Governance Contract**:
+  - README 인덱스 즉시 갱신
+  - 상대 경로 링크 추적성 유지
+
+## Phase 0 Analysis Output (Brainstorming)
+
+### Existing Asset Findings
+
+- `gitops/apps/root/*`: App-of-Apps 루트 경로/브랜치 계약(`gitops/apps/root`, `main`) 유지 중.
+- `gitops/platform/external-services/*`: PostgreSQL/Valkey/Vault 외부 인터페이스 모델 존재.
+- `infrastructure/bootstrap-local.sh`: ArgoCD 초기화 및 기본 검증 경로 존재.
+
+### Version Baseline Validation (2026-03-28)
+
+| Component | Baseline in Repo | Release Observation | Decision |
+| --- | --- | --- | --- |
+| k3s | `v1.35.0+k3s1` | `v1.35.2+k3s1` stable, `v1.35.3-rc1+k3s1` pre-release | 운영 baseline 유지, 차기 업그레이드 후보로 `1.35.2` 등록 |
+| k3d | `v5.8.3` | `v5.8.3` latest stable (`v5.9.0-rc.0` pre-release) | 유지 |
+| Valkey | `9.0.1` | `9.0.1` 최신 GA로 확인(문서 수집 시점 기준) | 유지 |
+
+참고 릴리스 페이지:
+
+- `https://github.com/k3s-io/k3s/releases`
+- `https://github.com/k3d-io/k3d/releases`
+- `https://github.com/valkey-io/valkey/releases`
+
+## Core Design
+
+- **Component Boundary**:
+  - Cluster: k3d/k3s
+  - GitOps: ArgoCD + ApplicationSet
+  - Secrets: ESO + Vault Kubernetes auth role `eso-read-platform`
+  - External data: PostgreSQL EndpointSlice, Valkey ExternalName
+- **Key Dependencies**:
+  - `kubectl`, `k3d`, `helm`, `argocd`
+- **Tech Stack**:
+  - WSL2 Ubuntu + Docker Desktop
+
+## Data Modeling & Storage Strategy
+
+- Vault가 시크릿 원본 저장소.
+- ESO가 K8s Secret 생성/회전을 담당.
+- ArgoCD Valkey 연결 비밀번호는 Vault 경로를 단일 소스로 사용.
+
+## Interfaces & Data Structures
+
+### Core Interfaces
+
+```yaml
+externalContracts:
+  vault:
+    dns: vault-external.platform.svc.cluster.local
+    port: 8200
+  postgres:
+    write:
+      service: postgres-write-external
+      port: 15432
+    read:
+      service: postgres-read-external
+      port: 15433
+  valkey:
+    service: valkey-external
+    port: 26379
+```
+
+## API Contract (If Applicable)
+
+해당 범위는 외부 HTTP API가 아닌 Kubernetes 리소스 계약을 중심으로 한다.
+
+## Tools & Tool Contract (If Applicable)
+
+- **Tool List**: `kubectl`, `argocd`, `helm`, shell scripts
+- **Permission Boundary**: 파괴적 변경 금지, 운영 변경은 승인 후 수행
+- **Failure Handling**: Runbook 0002 절차로 단계적 복구
+
+## Guardrails (If Applicable)
+
+- **Input Guardrails**: 고정 포트/경로/서비스명 계약 변경 시 ADR 선행
+- **Output Guardrails**: 평문 시크릿 금지
+- **Blocked Conditions**: 인증 토큰/비밀번호 문서 저장 금지
+- **Escalation Rule**: Vault auth/policy 변경은 운영 승인 필요
+
+## Edge Cases & Error Handling
+
+- `connect: connection refused` on Vault external endpoint
+- EndpointSlice 누락/오타로 인한 Service 라우팅 실패
+- ExternalSecret `SecretSyncedError`로 인한 ArgoCD backend 비밀 누락
+
+## Failure Modes & Fallback / Human Escalation
+
+- **Failure Mode**: `ClusterSecretStore Ready=False`
+- **Fallback**: `EndpointSlice platform/vault-external-1` 수동 적용 후 상태 재평가
+- **Human Escalation**: endpoint contract 자체 변경 필요 시 플랫폼 오너 승인
+
+## Verification
+
+```bash
+./infrastructure/tests/run-all.sh
+./infrastructure/tests/verify-cluster.sh
+./infrastructure/tests/verify-gitops.sh
+./infrastructure/tests/verify-secrets.sh
+./infrastructure/tests/verify-external-services.sh
+```
+
+## Success Criteria & Verification Plan
+
+- **VAL-SPC-001**: 4개 노드 Ready
+- **VAL-SPC-002**: `vault-backend Ready=True`
+- **VAL-SPC-003**: `argocd-external-valkey Ready=True`
+- **VAL-SPC-004**: 포트 계약(8200/15432/15433/26379) 유지
+
+## Related Documents
+
+- **Plan**: [`../../05.plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../05.plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- **Tasks**: [`../../06.tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../06.tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- **Runbook**: [`../../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md)

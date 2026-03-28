@@ -38,3 +38,4 @@
 | 문서 | 설명 | 상태 | 최종 수정 |
 | --- | --- | --- | --- |
 | [`2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md) | WSL2 GitOps 플랫폼 단계별 실행 계획 | Draft | 2026-03-27 |
+| [`2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | Vault-ESO 운영 핫픽스와 HA 계약 중심 실행 계획 | Draft | 2026-03-28 |

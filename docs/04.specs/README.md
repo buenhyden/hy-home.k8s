@@ -114,3 +114,4 @@
 | 문서 | 설명 | 상태 | 최종 수정 |
 | --- | --- | --- | --- |
 | [`001-wsl-k3d-argocd-platform/spec.md`](./001-wsl-k3d-argocd-platform/spec.md) | WSL2 k3d/k3s + ArgoCD + ESO/Vault + 외부 DB/Valkey 기술 명세 | Draft | 2026-03-27 |
+| [`002-wsl2-k3d-argocd-ha-platform/spec.md`](./002-wsl2-k3d-argocd-ha-platform/spec.md) | WSL2 멀티노드 HA 및 Vault/ESO 복구 기준 포함 기술 명세 | Draft | 2026-03-28 |
