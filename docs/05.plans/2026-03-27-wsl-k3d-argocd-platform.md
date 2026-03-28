@@ -40,9 +40,9 @@
 
 | ID | Level | Description | Command / How to Run | Pass Criteria |
 | --- | --- | --- | --- | --- |
-| VAL-PLN-001 | Structural | 문서/버전 기준 확인 | `rg -n "v1.35.0\+k3s1|v5.8.3|9.0.1" docs` | 필수 버전 표기 존재 |
+| VAL-PLN-001 | Structural | 문서/버전 기준 확인 | `rg -n "v1.35.0\+k3s1\|v5.8.3\|9.0.1" docs` | 필수 버전 표기 존재 |
 | VAL-PLN-002 | Structural | 링크 무결성 점검 | `rg -n "\]\(\.\./" docs/0{1,2,3,4,5,6,7,8,9}*` | 상대 링크 누락 없음 |
-| VAL-PLN-003 | Functional | Task 검증 항목 포함 여부 | `rg -n "Task-00|VAL-" docs/06.tasks/*.md` | TDD/검증 항목 존재 |
+| VAL-PLN-003 | Functional | Task 검증 항목 포함 여부 | `rg -n "Task-00\|VAL-" docs/06.tasks/*.md` | TDD/검증 항목 존재 |
 
 ## Risks & Mitigations
 

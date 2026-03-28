@@ -46,7 +46,7 @@ kubectl -n external-secrets logs deploy/external-secrets --tail=200 | \
   rg -i 'vault|clustersecretstore|error|connection refused'
 ```
 
-2. `EndpointSlice` 핫픽스를 적용한다.
+1. `EndpointSlice` 핫픽스를 적용한다.
 
 ```bash
 cat <<'YAML' | kubectl apply -f -
@@ -68,7 +68,7 @@ endpoints:
 YAML
 ```
 
-3. Store/ExternalSecret/ArgoCD 상태를 재평가한다.
+1. Store/ExternalSecret/ArgoCD 상태를 재평가한다.
 
 ```bash
 kubectl -n platform get endpointslice vault-external-1 -o yaml
@@ -77,7 +77,7 @@ kubectl -n argocd get externalsecret argocd-external-valkey
 kubectl -n argocd get app platform-eso-config platform-argocd-config
 ```
 
-4. 필요 시 ArgoCD 재평가/동기화를 수행한다.
+1. 필요 시 ArgoCD 재평가/동기화를 수행한다.
 
 ```bash
 argocd app get platform-eso-config --hard-refresh
@@ -86,7 +86,7 @@ argocd app sync platform-eso-config
 argocd app sync platform-argocd-config
 ```
 
-5. 런타임 계약 회귀를 검증한다.
+1. 런타임 계약 회귀를 검증한다.
 
 ```bash
 ./infrastructure/tests/verify-network-policies.sh
@@ -95,14 +95,14 @@ CHECK_TRAEFIK_443=true ./infrastructure/tests/verify-ingress-tls.sh
 ./infrastructure/tests/run-all.sh
 ```
 
-6. CI 정적 계약 회귀를 검증한다.
+1. CI 정적 계약 회귀를 검증한다.
 
 ```bash
 ./infrastructure/tests/verify-contracts-static.sh
 bash -n infrastructure/bootstrap-local.sh infrastructure/tests/*.sh
 ```
 
-7. GitOps source gate를 확인한다(로컬 파일 수정만으로 반영되지 않음).
+1. GitOps source gate를 확인한다(로컬 파일 수정만으로 반영되지 않음).
 
 ```bash
 kubectl -n argocd get app root-platform -o yaml | \
@@ -116,7 +116,7 @@ kubectl -n argocd get app root-platform -o yaml | \
 - [ ] `platform-eso-config`, `platform-argocd-config` Degraded 해소
 - [ ] 포트/서비스 계약 회귀 없음
 - [ ] `argocd` egress(Valkey + DNS + HTTPS) 통과
-- [ ] ingress/TLS 계약(host=`argocd.127.0.0.1.nip.io`, secret=`argocd-local-tls`) 유지
+- [ ] ingress/TLS 계약(host=`argocd.127.0.0.1.nip.io`, secret=`argocd-local-tls`) 유지 # pragma: allowlist secret
 - [ ] Traefik 443 및 fallback 8443 HTTPS 응답 확인
 - [ ] CI 정적 계약(`verify-contracts-static.sh`) 통과
 

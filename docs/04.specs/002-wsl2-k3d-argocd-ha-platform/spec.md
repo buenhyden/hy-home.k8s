@@ -57,7 +57,7 @@
 ### Access/TLS Contracts
 
 - ArgoCD 공식 host: `argocd.127.0.0.1.nip.io`
-- TLS secret: `argocd-local-tls` (`kubernetes.io/tls`)
+- TLS secret: `argocd-local-tls` (`kubernetes.io/tls`) # pragma: allowlist secret
 - ingress-nginx controller service type: `LoadBalancer`
 - 외부 Traefik 계약: `443 -> k3d :8443`
 - fallback endpoint: `https://argocd.127.0.0.1.nip.io:8443`

@@ -38,7 +38,7 @@
 | 서비스 | 외부 런타임(별도 repo) | 필수 접속값 | 이 저장소 연동 방식 | 기본 확인 |
 | --- | --- | --- | --- | --- |
 | Vault | `vault`, `vault-agent` on `infra_net` | `https://vault.127.0.0.1.nip.io` | ESO + Vault Kubernetes auth | `curl -ksS -o /dev/null -w '%{http_code}\n' https://vault.127.0.0.1.nip.io/v1/sys/health` |
-| PostgreSQL | HAProxy-backed external DB runtime | `172.30.0.11:15432`(write), `172.30.0.11:15433`(read) | `Service + EndpointSlice` (`postgres-write-external`, `postgres-read-external`) | `kubectl -n platform get svc,endpointslice | rg 'postgres-(write|read)-external'` |
+| PostgreSQL | HAProxy-backed external DB runtime | `172.30.0.11:15432`(write), `172.30.0.11:15433`(read) | `Service + EndpointSlice` (`postgres-write-external`, `postgres-read-external`) | `kubectl -n platform get svc,endpointslice \| rg 'postgres-(write\|read)-external'` |
 | Valkey | `mng-valkey` on `infra_net` | `host.k3d.internal:26379` (`mng-valkey:6379` published) | `ExternalName Service` (`valkey-external -> host.k3d.internal`) | `kubectl -n platform get svc valkey-external -o yaml` |
 
 - 민감정보(예: Valkey 비밀번호)는 Vault KV `secret/platform/argocd`의 `valkey_password`를 단일 소스로 사용한다.

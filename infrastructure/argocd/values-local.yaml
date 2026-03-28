@@ -11,8 +11,8 @@ redis:
 externalRedis:
   host: valkey-external.platform.svc.cluster.local
   port: 26379
-  existingSecret: argocd-external-valkey
-  passwordKey: redis-password
+  existingSecret: argocd-external-valkey # pragma: allowlist secret
+  passwordKey: redis-password # pragma: allowlist secret
 
 server:
   ingress:
@@ -23,7 +23,7 @@ server:
     extraTls:
       - hosts:
           - argocd.127.0.0.1.nip.io
-        secretName: argocd-local-tls
+        secretName: argocd-local-tls # pragma: allowlist secret
 
 controller:
   metrics:

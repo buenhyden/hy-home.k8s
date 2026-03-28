@@ -4,7 +4,7 @@
 
 ## Overview
 
-이 경로는 운영 정책(`08.operations`)과 실행 런북(`09.runbooks`) 사이에서,  
+이 경로는 운영 정책(`08.operations`)과 실행 런북(`09.runbooks`) 사이에서,
 작업 배경과 단계별 수행 방법을 설명하는 how-to 중심 문서를 제공한다.
 
 ## Audience

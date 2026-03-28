@@ -15,8 +15,6 @@ This directory is the home for GitHub-specific templates, Actions workflows, and
 The DevOps Agent manages the `.github/workflows/` when changes to deployment pipelines or test runners are approved in the `runbooks/`.
 All configuration here is strictly bound by the following Project Standard Rules:
 
-
-
 ### Multi-Language CI Adaptation
 
 By default, the `verify-application.yml` is scaffolded for **Node.js/NPM**. If the project's `ARCHITECTURE.md` establishes a different stack for backend (`server/`) or native (`app/`) layers (e.g., Python, Go, Rust, Java), the DevOps Agent **MUST** modify the workflow's `Setup Environment` steps to provision the correct compiler/interpreter via the appropriate GitHub Actions before validating code.

@@ -34,25 +34,25 @@ k3d cluster create --config infrastructure/k3d/k3d-cluster.yaml
 kubectl get nodes -o wide
 ```
 
-2. 인증서 SAN과 ArgoCD 호스트 계약을 점검한다.
+1. 인증서 SAN과 ArgoCD 호스트 계약을 점검한다.
 
 ```bash
 openssl x509 -in secrets/certs/cert.pem -noout -ext subjectAltName | \
   rg '127\.0\.0\.1\.nip\.io|\*\.127\.0\.0\.1\.nip\.io'
 ```
 
-3. SAN이 미포함이면 재발급 후 동일 경로에 교체한다.
+1. SAN이 미포함이면 재발급 후 동일 경로에 교체한다.
 
 - 재발급 절차: [`../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md#troubleshooting-signatures`](../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md#troubleshooting-signatures)
 
-4. 부트스트랩 스크립트로 TLS Secret까지 포함해 초기화를 실행한다.
+1. 부트스트랩 스크립트로 TLS Secret까지 포함해 초기화를 실행한다.
 
 ```bash
 export VAULT_TOKEN='<redacted>'
 ./infrastructure/bootstrap-local.sh
 ```
 
-5. ArgoCD 및 GitOps root app 상태를 확인한다.
+1. ArgoCD 및 GitOps root app 상태를 확인한다.
 
 ```bash
 kubectl -n argocd get application root-platform -o yaml | \
@@ -60,7 +60,7 @@ kubectl -n argocd get application root-platform -o yaml | \
 kubectl -n argocd get applications
 ```
 
-6. 외부 서비스 인터페이스 계약을 검증한다.
+1. 외부 서비스 인터페이스 계약을 검증한다.
 
 ```bash
 kubectl -n platform get svc,endpointslice | \

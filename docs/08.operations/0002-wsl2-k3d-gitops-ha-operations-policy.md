@@ -23,7 +23,7 @@
   - 인터페이스 계약 포트 고정(8200/15432/15433/26379)
   - Valkey는 `Service + EndpointSlice(172.30.0.12:26379)` 모델 사용
   - Vault 경로 표준(`secret/platform/argocd`, `secret/platform/postgres-app`)
-  - ArgoCD host=`argocd.127.0.0.1.nip.io`, TLS secret=`argocd-local-tls`
+  - ArgoCD host=`argocd.127.0.0.1.nip.io`, TLS secret=`argocd-local-tls` # pragma: allowlist secret
   - `ingress-nginx-controller`는 `LoadBalancer` 타입 유지
   - 외부 Traefik 443 -> k3d 8443 라우팅 계약 유지
   - AppProject `apps` wildcard 금지 + 최소 allow-list 유지

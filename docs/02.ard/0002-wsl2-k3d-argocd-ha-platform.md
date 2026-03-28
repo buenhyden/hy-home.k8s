@@ -75,7 +75,7 @@
   - 본 저장소는 계약만 정의: `443 -> k3d :8443`
 - **TLS Contract**:
   - 공식 FQDN: `argocd.127.0.0.1.nip.io`
-  - secret: `argocd-local-tls` (`argocd` namespace)
+  - secret: `argocd-local-tls` (`argocd` namespace) # pragma: allowlist secret
 
 ## CI Architecture
 

@@ -2,7 +2,7 @@
 
 ## Overview (KR)
 
-이 문서는 WSL2 기반 k3d/k3s GitOps 플랫폼의 운영 정책을 정의한다.  
+이 문서는 WSL2 기반 k3d/k3s GitOps 플랫폼의 운영 정책을 정의한다.
 외부 서비스 런타임 분리, Vault 기반 시크릿 통제, GitOps 경로 검증 게이트, 포트 계약 준수 기준을 명시한다.
 
 ## Policy Scope
