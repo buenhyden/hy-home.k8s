@@ -110,4 +110,4 @@
 | 문서 | 설명 | 상태 | 최종 수정 |
 | --- | --- | --- | --- |
 | [`0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md) | 검증 커맨드 기반 부트스트랩/트러블슈팅/복구 런북 | Active | 2026-03-27 |
-| [`0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md) | Vault endpoint 복구 중심 ESO/ArgoCD 운영 핫픽스 런북 | Active | 2026-03-28 |
+| [`0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md) | Vault-ESO 복구 + 회귀/증적/네트워크 정책 검증 런북 | Active | 2026-03-28 |

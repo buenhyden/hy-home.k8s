@@ -46,8 +46,8 @@ kubectl -n argocd get applications
 ```bash
 kubectl -n platform get svc,endpointslice | \
   rg 'postgres-(write|read)-external|15432|15433|vault-external|8200'
-kubectl -n platform get svc valkey-external -o yaml | \
-  rg 'host.k3d.internal|26379'
+kubectl -n platform get svc,endpointslice | \
+  rg 'valkey-external|valkey-external-1|172.30.0.12|26379'
 ```
 
 4. Secret plane을 검증한다.
@@ -63,9 +63,18 @@ kubectl -n argocd get externalsecret argocd-external-valkey
 ./infrastructure/tests/run-all.sh
 ```
 
+6. 최소권한 정책이 적용되었는지 확인한다.
+
+```bash
+kubectl -n argocd get appproject platform -o yaml | \
+  rg 'clusterResourceWhitelist|namespaceResourceWhitelist'
+cat infrastructure/vault/policies/eso-read.hcl
+```
+
 ## Common Pitfalls
 
 - `vault-external` EndpointSlice 누락으로 `connection refused` 발생
+- Valkey를 ExternalName으로 유지한 상태에서 ipBlock 기반 네트워크 정책을 적용하면 연결 실패 가능
 - WSL2 메모리 부족으로 control plane pod 재시작 반복
 - `argocd` CLI 미설치/미로그인 상태에서 상태 재평가 누락
 

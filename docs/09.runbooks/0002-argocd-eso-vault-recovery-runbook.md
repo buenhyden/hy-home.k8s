@@ -89,9 +89,8 @@ argocd app sync platform-argocd-config
 kubectl -n argocd get application root-platform -o yaml | \
   rg 'path: gitops/apps/root|targetRevision: main'
 kubectl -n platform get svc,endpointslice | \
-  rg 'postgres-(write|read)-external|15432|15433|vault-external|8200'
-kubectl -n platform get svc valkey-external -o yaml | \
-  rg 'host.k3d.internal|26379'
+  rg 'postgres-(write|read)-external|15432|15433|vault-external|8200|valkey-external|172.30.0.12|26379'
+./infrastructure/tests/verify-network-policies.sh
 ```
 
 ## Verification Steps
@@ -100,11 +99,15 @@ kubectl -n platform get svc valkey-external -o yaml | \
 - [ ] `argocd-external-valkey Ready=True`
 - [ ] `platform-eso-config`, `platform-argocd-config`에서 Degraded 해소
 - [ ] 포트/서비스 계약 회귀 없음
+- [ ] 네트워크 정책 계약(`argocd`/`external-secrets` egress) 통과
 
 ## Observability and Evidence Sources
 
 - **Signals**: ExternalSecrets controller logs, ClusterSecretStore status, ArgoCD app health
-- **Evidence to Capture**: 전후 YAML, 상태 출력, 오류 시그니처 로그
+- **Evidence to Capture**:
+  - 전/후 상태 YAML (`ClusterSecretStore`, `ExternalSecret`, `Application`)
+  - 오류 시그니처 로그 (`connection refused`, `InvalidProviderConfig`)
+  - 검증 스크립트 결과(`run-all.sh`)
 
 ## Safe Rollback or Recovery Procedure
 
@@ -115,6 +118,9 @@ kubectl -n platform delete endpointslice vault-external-1
 ```
 
 - [ ] 기존 운영 상태로 롤백 후 근본원인 분석/백로그 등록
+- [ ] 백로그 등록 항목:
+  - EndpointSlice 수동 의존 제거 구조 개선
+  - AppProject/Vault 정책 변경 필요성 검토
 
 ## Agent Operations (If Applicable)
 

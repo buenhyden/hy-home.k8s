@@ -58,12 +58,19 @@
   - Git에는 평문 비밀값 저장 금지
 - **Data Boundaries**:
   - `platform`, `argocd`, `external-secrets` namespace 분리
+  - namespace별 egress 제어 정책 분리:
+    - `platform`: Vault/PostgreSQL/Valkey 허용
+    - `argocd`: Valkey 허용
+    - `external-secrets`: Vault 허용
 
 ## Infrastructure & Deployment
 
 - **Runtime / Platform**: k3d cluster config(`servers:1`, `agents:3`)
 - **Deployment Model**: root app(`gitops/apps/root`) 기반 GitOps 동기화
 - **Operational Evidence**: `infrastructure/tests/*.sh` + runbook 명령 증적
+- **Network Isolation**:
+  - 외부 브리지 대역 `172.30.0.0/24`로 고정
+  - 서비스 인터페이스는 `Service + EndpointSlice` 표준 래핑
 
 ## AI Agent Architecture Requirements (If Applicable)
 

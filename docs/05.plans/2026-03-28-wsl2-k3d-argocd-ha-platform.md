@@ -35,8 +35,10 @@
 | PLN-002 | HA 토폴로지/자원/네트워크 설계 확정 | `docs/02.ard/0002-...md` | REQ-PRD-FUN-01/02 | VAL-PLN-002 |
 | PLN-003 | GitOps 구조(App-of-Apps/ApplicationSet) 정리 | `docs/07.guides/0002-...md` | REQ-PRD-FUN-03 | VAL-PLN-003 |
 | PLN-004 | ESO+Vault 연동/핫픽스 절차 문서화 | `docs/09.runbooks/0002-...md` | REQ-PRD-FUN-04/05 | VAL-PLN-004 |
-| PLN-005 | TDD 검증 스크립트/Task 생성 | `infrastructure/tests/*.sh`, `docs/06.tasks/...` | REQ-PRD-FUN-06 | VAL-PLN-005 |
-| PLN-006 | 폴더별 README 인덱스 동기화 | `docs/01~09/*/README.md` | REQ-PRD-FUN-06 | VAL-PLN-006 |
+| PLN-005 | Valkey EndpointSlice/네트워크 정책 보강 | `gitops/platform/external-services/valkey-external.yaml`, `gitops/platform/network-policies/*` | REQ-PRD-FUN-03A | VAL-PLN-004 |
+| PLN-006 | AppProject/Vault policy 최소권한화 | `gitops/clusters/local/appproject-platform.yaml`, `infrastructure/vault/policies/eso-read.hcl` | REQ-PRD-FUN-05 | VAL-PLN-003 |
+| PLN-007 | bootstrap/검증 스크립트 고도화 | `infrastructure/bootstrap-local.sh`, `infrastructure/tests/*.sh` | REQ-PRD-FUN-06 | VAL-PLN-005 |
+| PLN-008 | 폴더별 README 인덱스 동기화 | `docs/01~09/*/README.md` | REQ-PRD-FUN-06 | VAL-PLN-006 |
 
 ## Verification Plan
 
@@ -46,7 +48,8 @@
 | VAL-PLN-002 | Functional | 클러스터/앱 상태 점검 | `./infrastructure/tests/verify-cluster.sh && ./infrastructure/tests/verify-gitops.sh` | PASS |
 | VAL-PLN-003 | Functional | Secret 연동 점검 | `./infrastructure/tests/verify-secrets.sh` | PASS |
 | VAL-PLN-004 | Functional | 외부 서비스 계약 점검 | `./infrastructure/tests/verify-external-services.sh` | PASS |
-| VAL-PLN-005 | Structural | README 인덱스 반영 확인 | `rg -n '2026-03-28|0002-|002-' docs/0{1,2,3,4,5,6,7,8,9}*/README.md` | 전 디렉터리 반영 |
+| VAL-PLN-005 | Functional | 네트워크 정책 점검 | `./infrastructure/tests/verify-network-policies.sh` | PASS |
+| VAL-PLN-006 | Structural | README 인덱스 반영 확인 | `rg -n '2026-03-28|0002-|002-' docs/0{1,2,3,4,5,6,7,8,9}*/README.md` | 전 디렉터리 반영 |
 
 ## Risks & Mitigations
 

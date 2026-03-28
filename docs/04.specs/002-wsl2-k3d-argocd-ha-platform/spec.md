@@ -38,6 +38,12 @@
 - `gitops/platform/external-services/*`: PostgreSQL/Valkey/Vault 외부 인터페이스 모델 존재.
 - `infrastructure/bootstrap-local.sh`: ArgoCD 초기화 및 기본 검증 경로 존재.
 
+### Current Operational Risks
+
+- Valkey 연동이 `ExternalName` 모델일 경우 ipBlock 기반 네트워크 정책과 정합성 문제가 발생할 수 있음.
+- Vault 복구가 수동 EndpointSlice에 의존하는 구간이 있어 재발 방지 백로그가 필요함.
+- AppProject의 과도한 와일드카드 화이트리스트(`*/*`)는 권한 경계 약화를 유발함.
+
 ### Version Baseline Validation (2026-03-28)
 
 | Component | Baseline in Repo | Release Observation | Decision |
@@ -58,7 +64,7 @@
   - Cluster: k3d/k3s
   - GitOps: ArgoCD + ApplicationSet
   - Secrets: ESO + Vault Kubernetes auth role `eso-read-platform`
-  - External data: PostgreSQL EndpointSlice, Valkey ExternalName
+  - External data: PostgreSQL EndpointSlice, Valkey EndpointSlice
 - **Key Dependencies**:
   - `kubectl`, `k3d`, `helm`, `argocd`
 - **Tech Stack**:
@@ -88,6 +94,8 @@ externalContracts:
       port: 15433
   valkey:
     service: valkey-external
+    endpointSlice: valkey-external-1
+    address: 172.30.0.12
     port: 26379
 ```
 
@@ -107,6 +115,9 @@ externalContracts:
 - **Output Guardrails**: 평문 시크릿 금지
 - **Blocked Conditions**: 인증 토큰/비밀번호 문서 저장 금지
 - **Escalation Rule**: Vault auth/policy 변경은 운영 승인 필요
+- **Policy Hardening**:
+  - AppProject는 allow-list 리소스만 허용
+  - Vault policy는 `argocd`, `postgres-app` 경로만 허용
 
 ## Edge Cases & Error Handling
 
@@ -128,6 +139,7 @@ externalContracts:
 ./infrastructure/tests/verify-gitops.sh
 ./infrastructure/tests/verify-secrets.sh
 ./infrastructure/tests/verify-external-services.sh
+./infrastructure/tests/verify-network-policies.sh
 ```
 
 ## Success Criteria & Verification Plan

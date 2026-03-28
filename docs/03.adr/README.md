@@ -42,4 +42,4 @@
 | [`0002-argocd-helm-and-gitops-model.md`](./0002-argocd-helm-and-gitops-model.md) | ArgoCD Helm 설치와 GitOps 모델 결정 | Accepted | 2026-03-27 |
 | [`0003-eso-vault-k8s-auth.md`](./0003-eso-vault-k8s-auth.md) | ESO + Vault Kubernetes Auth 시크릿 패턴 결정 | Accepted | 2026-03-27 |
 | [`0004-external-services-endpoints-and-valkey-backend.md`](./0004-external-services-endpoints-and-valkey-backend.md) | 외부 서비스 접근 모델(PostgreSQL EndpointSlice, Valkey ExternalName, Vault 외부 URL)과 ArgoCD Valkey 백엔드 결정 | Accepted | 2026-03-27 |
-| [`0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](./0005-wsl2-ha-baseline-and-external-endpoint-contract.md) | WSL2 HA baseline과 외부 endpoint 계약 고정 및 핫픽스 허용 범위 결정 | Accepted | 2026-03-28 |
+| [`0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](./0005-wsl2-ha-baseline-and-external-endpoint-contract.md) | Valkey EndpointSlice 전환 + AppProject/Vault 최소권한 기준 포함 결정 | Accepted | 2026-03-28 |

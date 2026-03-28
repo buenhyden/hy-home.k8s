@@ -34,6 +34,7 @@ WSL2 개발 환경에서도 운영 수준의 재현성, 보안성, 복구 가능
   - `postgres-write-external:15432`
   - `postgres-read-external:15433`
   - `valkey-external:26379`
+- **REQ-PRD-FUN-03A**: `valkey-external`은 `Service + EndpointSlice(172.30.0.12:26379)` 모델을 사용해야 한다.
 - **REQ-PRD-FUN-04**: Vault 경로는 `secret/platform/argocd`, `secret/platform/postgres-app`를 표준으로 사용해야 한다.
 - **REQ-PRD-FUN-05**: 보안 통제는 RBAC 최소권한 + Vault policy(`eso-read-platform`)를 적용해야 한다.
 - **REQ-PRD-FUN-06**: 01~09 문서는 상호 상대 링크로 추적성을 유지해야 한다.
@@ -44,6 +45,9 @@ WSL2 개발 환경에서도 운영 수준의 재현성, 보안성, 복구 가능
 - **REQ-PRD-MET-02**: `argocd-external-valkey`(ExternalSecret) `Ready=True`.
 - **REQ-PRD-MET-03**: `platform-eso-config`, `platform-argocd-config` 앱 상태에서 `Degraded` 해소.
 - **REQ-PRD-MET-04**: 계약 포트(8200/15432/15433/26379) 회귀 없음.
+- **REQ-PRD-MET-05**: Vault-ESO 장애 복구 목표시간(MTTR) 15분 이내.
+- **REQ-PRD-MET-06**: 보안 검증(AppProject allow-list, Vault 최소권한 정책) 통과율 100%.
+- **REQ-PRD-MET-07**: 릴리스 후 7일 내 인터페이스 회귀율 0건.
 
 ## Scope and Non-goals
 

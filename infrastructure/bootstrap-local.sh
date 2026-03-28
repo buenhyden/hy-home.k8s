@@ -7,6 +7,12 @@ K3D_HTTP_PORT="${K3D_HTTP_PORT:-80}"
 K3D_HTTPS_PORT="${K3D_HTTPS_PORT:-443}"
 VAULT_ADDR="${VAULT_ADDR:-https://vault.127.0.0.1.nip.io}"
 VAULT_SKIP_VERIFY="${VAULT_SKIP_VERIFY:-true}"
+POSTGRES_WRITE_ADDR="${POSTGRES_WRITE_ADDR:-172.30.0.11}"
+POSTGRES_WRITE_PORT="${POSTGRES_WRITE_PORT:-15432}"
+POSTGRES_READ_ADDR="${POSTGRES_READ_ADDR:-172.30.0.11}"
+POSTGRES_READ_PORT="${POSTGRES_READ_PORT:-15433}"
+VALKEY_ADDR="${VALKEY_ADDR:-172.30.0.12}"
+VALKEY_PORT="${VALKEY_PORT:-26379}"
 
 port_in_use() {
   local port="$1"
@@ -30,6 +36,18 @@ vault_curl() {
   fi
 }
 
+check_tcp_dependency() {
+  local name="$1"
+  local host="$2"
+  local port="$3"
+  if timeout 3 bash -c ":</dev/tcp/${host}/${port}" >/dev/null 2>&1; then
+    echo "  - ${name}: ${host}:${port} reachable"
+  else
+    echo "${name} is not reachable at ${host}:${port}" >&2
+    return 1
+  fi
+}
+
 wait_for_vault_ready() {
   local vault_status_code="000"
   for _ in $(seq 1 30); do
@@ -49,18 +67,6 @@ wait_for_vault_ready() {
   fi
   return 1
 }
-
-wait_for_vault_ready
-
-vault_secret_json="$(vault_curl \
-  -H "X-Vault-Token: $VAULT_TOKEN" \
-  "$VAULT_ADDR/v1/secret/data/platform/argocd" || true)"
-VALKEY_PASSWORD="$(printf '%s' "$vault_secret_json" | jq -r '.data.data.valkey_password // empty' 2>/dev/null || true)"
-
-if [ -z "$VALKEY_PASSWORD" ]; then
-  echo "could not read secret key valkey_password from Vault path secret/platform/argocd" >&2
-  exit 1
-fi
 
 if ! k3d cluster list 2>/dev/null | awk 'NR>1 {print $1}' | grep -qx "$CLUSTER_NAME"; then
   if port_in_use "$K3D_HTTP_PORT"; then
@@ -90,10 +96,26 @@ if ! k3d cluster list 2>/dev/null | awk 'NR>1 {print $1}' | grep -qx "$CLUSTER_N
     -e "s/port: 443:443/port: ${K3D_HTTPS_PORT}:443/" \
     "$ROOT_DIR/infrastructure/k3d/k3d-cluster.yaml" >"$K3D_CONFIG_TMP"
 
-  echo "[1/7] Create k3d cluster"
+  echo "[1/8] Create k3d cluster"
   k3d cluster create --config "$K3D_CONFIG_TMP"
 else
-  echo "[1/7] Reuse existing k3d cluster: $CLUSTER_NAME"
+  echo "[1/8] Reuse existing k3d cluster: $CLUSTER_NAME"
+fi
+
+echo "[2/8] Validate external dependencies"
+wait_for_vault_ready
+check_tcp_dependency "postgres-write" "$POSTGRES_WRITE_ADDR" "$POSTGRES_WRITE_PORT"
+check_tcp_dependency "postgres-read" "$POSTGRES_READ_ADDR" "$POSTGRES_READ_PORT"
+check_tcp_dependency "valkey" "$VALKEY_ADDR" "$VALKEY_PORT"
+
+vault_secret_json="$(vault_curl \
+  -H "X-Vault-Token: $VAULT_TOKEN" \
+  "$VAULT_ADDR/v1/secret/data/platform/argocd" || true)"
+VALKEY_PASSWORD="$(printf '%s' "$vault_secret_json" | jq -r '.data.data.valkey_password // empty' 2>/dev/null || true)"
+
+if [ -z "$VALKEY_PASSWORD" ]; then
+  echo "could not read secret key valkey_password from Vault path secret/platform/argocd" >&2
+  exit 1
 fi
 
 if docker inspect "k3d-${CLUSTER_NAME}-serverlb" >/dev/null 2>&1; then
@@ -103,30 +125,33 @@ if docker inspect "k3d-${CLUSTER_NAME}-serverlb" >/dev/null 2>&1; then
   fi
 fi
 
-echo "[2/7] External services are managed in a separate workspace/repo"
+echo "[3/8] External services are managed in a separate workspace/repo"
 
-echo "[3/7] Create argocd namespace"
+echo "[4/8] Create argocd namespace"
 kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
 
-echo "[4/7] Create ArgoCD external Valkey secret"
+echo "[5/8] Create ArgoCD external Valkey secret"
 kubectl -n argocd create secret generic argocd-external-valkey \
   --from-literal=redis-password="$VALKEY_PASSWORD" \
   --dry-run=client -o yaml | kubectl apply -f -
 
-echo "[5/7] Validate Vault KV for ESO sync"
+echo "[6/8] Validate Vault KV for ESO sync"
 
-echo "[6/7] Install ArgoCD via Helm"
+echo "[7/8] Install ArgoCD via Helm"
 helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update
 helm upgrade --install argocd argo/argo-cd \
   -n argocd \
   -f "$ROOT_DIR/infrastructure/argocd/values-local.yaml"
 
-echo "[7/7] Apply GitOps bootstrap resources"
+echo "[8/8] Apply GitOps bootstrap resources"
 kubectl apply -f "$ROOT_DIR/gitops/clusters/local/appproject-platform.yaml"
 kubectl apply -f "$ROOT_DIR/gitops/clusters/local/appproject-apps.yaml"
 kubectl apply -f "$ROOT_DIR/gitops/clusters/local/applicationset-apps.yaml"
 kubectl apply -f "$ROOT_DIR/gitops/clusters/local/root-application.yaml"
+
+echo "[INFO] Wait for ArgoCD control-plane readiness"
+kubectl -n argocd wait --for=condition=available deployment --all --timeout=180s
 
 echo "Done"
 if [ "$K3D_HTTPS_PORT" = "443" ]; then

@@ -16,7 +16,10 @@
   - `postgres-write-external:15432`
   - `postgres-read-external:15433`
   - `valkey-external:26379`
+- `valkey-external` 구현 모델은 `ExternalName`이 아닌 `Service + EndpointSlice(172.30.0.12:26379)`로 고정한다.
 - Vault secret path를 `secret/platform/argocd`, `secret/platform/postgres-app`로 고정한다.
+- AppProject는 `*/*` 화이트리스트를 폐기하고 allow-list 기반 최소권한으로 운영한다.
+- Vault 정책은 `platform/*` 와일드카드를 폐기하고 필요 경로만 허용한다.
 - Vault 연결 실패 시 운영 핫픽스로 `EndpointSlice platform/vault-external-1` 수동 복구 절차를 허용한다(영구 구조 개선은 백로그).
 
 ## Explicit Non-goals
@@ -31,6 +34,7 @@
   - 장애 원인 파악 및 복구 시간 단축
 - **Trade-offs**:
   - 수동 EndpointSlice 핫픽스는 임시 조치이며 drift 관리 부담 존재
+  - AppProject/Vault 정책 축소 시 신규 리소스 추가 때 허용 목록 갱신이 필요
 
 ## Alternatives
 

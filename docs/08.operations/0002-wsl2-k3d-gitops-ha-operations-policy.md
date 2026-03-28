@@ -20,8 +20,11 @@
 
 - **Required**:
   - 인터페이스 계약 포트 고정(8200/15432/15433/26379)
+  - Valkey는 `Service + EndpointSlice(172.30.0.12:26379)` 모델 사용
   - Vault 경로 표준(`secret/platform/argocd`, `secret/platform/postgres-app`)
   - RBAC 최소권한 및 Vault policy 적용
+  - AppProject allow-list 기반 리소스 권한 통제
+  - 네임스페이스별 egress 정책 적용(`platform`, `argocd`, `external-secrets`)
   - README 인덱스/문서 추적성 유지
 - **Allowed**:
   - 장애 시 수동 `EndpointSlice` 핫픽스
@@ -34,6 +37,10 @@
 
 - 긴급 복구를 위해 수동 EndpointSlice 생성은 허용한다.
 - 단, 운영 종료 후 구조 개선 작업(백로그) 등록을 필수로 한다.
+- 예외 승인 절차:
+  1. 장애 증적 첨부(로그, 상태 YAML)
+  2. 플랫폼 오너 승인
+  3. 실행 후 회귀 검증(`run-all.sh`)
 
 ## Verification
 
@@ -41,9 +48,7 @@
 
 ```bash
 kubectl -n platform get svc,endpointslice | \
-  rg 'postgres-(write|read)-external|15432|15433|vault-external|8200'
-kubectl -n platform get svc valkey-external -o yaml | \
-  rg 'host.k3d.internal|26379'
+  rg 'postgres-(write|read)-external|15432|15433|vault-external|8200|valkey-external|172.30.0.12|26379'
 ```
 
 - 상태 검증:
@@ -52,6 +57,7 @@ kubectl -n platform get svc valkey-external -o yaml | \
 kubectl -n external-secrets get clustersecretstore vault-backend
 kubectl -n argocd get externalsecret argocd-external-valkey
 kubectl -n argocd get app platform-eso-config platform-argocd-config
+./infrastructure/tests/verify-network-policies.sh
 ```
 
 ## Review Cadence
@@ -65,6 +71,10 @@ kubectl -n argocd get app platform-eso-config platform-argocd-config
 - **Eval / Guardrail Threshold**: `infrastructure/tests/run-all.sh` PASS
 - **Log / Trace Retention**: runbook 절차/명령 로그 보관
 - **Safety Incident Thresholds**: Vault/Secret 동기화 실패는 즉시 incident 처리
+- **Audit Items**:
+  - AppProject 권한 확장 여부
+  - Vault policy 경로 확장 여부
+  - EndpointSlice 수동 변경 이력
 
 ## Related Documents
 

@@ -4,8 +4,24 @@ metadata:
   name: valkey-external
   namespace: platform
 spec:
-  type: ExternalName
-  externalName: host.k3d.internal
+  type: ClusterIP
   ports:
     - name: valkey
       port: 26379
+      targetPort: 26379
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: valkey-external-1
+  namespace: platform
+  labels:
+    kubernetes.io/service-name: valkey-external
+addressType: IPv4
+ports:
+  - name: valkey
+    protocol: TCP
+    port: 26379
+endpoints:
+  - addresses:
+      - 172.30.0.12
