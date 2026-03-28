@@ -18,9 +18,9 @@ server:
   ingress:
     enabled: true
     ingressClassName: nginx
-    hosts:
-      - argocd.127.0.0.1.nip.io
-    tls:
+    hostname: argocd.127.0.0.1.nip.io
+    tls: false
+    extraTls:
       - hosts:
           - argocd.127.0.0.1.nip.io
         secretName: argocd-local-tls
