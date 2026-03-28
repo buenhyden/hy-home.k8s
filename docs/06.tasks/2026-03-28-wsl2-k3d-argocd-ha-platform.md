@@ -27,7 +27,10 @@
 | T-006 | 통합 실행 스크립트 확장(run-all) | test | Verification | PLN-007 | `infrastructure/tests/run-all.sh` | DevOps | Done |
 | T-007 | Vault endpoint 수동 핫픽스 런북 정리 | ops | Failure Modes | PLN-004 | runbook 0002 체크리스트 | Platform | Done |
 | T-008 | AppProject/Vault policy 최소권한 반영 | impl | Guardrails | PLN-006 | manifest/policy diff 확인 | Security | Done |
-| T-009 | 폴더별 README 인덱스 동기화 | doc | Governance | PLN-008 | README row 반영 확인 | Docs | Done |
+| T-009 | TLS Secret 자동주입/인증서 SAN 검증 추가 | impl | Contracts | PLN-007 | `infrastructure/bootstrap-local.sh` 검토 + dry-run | DevOps | Done |
+| T-010 | TLS/Ingress 검증 스크립트 추가 | test | Verification | PLN-007 | `infrastructure/tests/verify-ingress-tls.sh` | QA | Done |
+| T-011 | GitOps source gate 문서화 | doc | Governance | PLN-008 | guide/ops/runbook 문구 확인 | Docs | Done |
+| T-012 | 폴더별 README 인덱스 동기화 | doc | Governance | PLN-009 | README row 반영 확인 | Docs | Done |
 
 ## Suggested Types
 
@@ -56,6 +59,9 @@
 - [x] T-007
 - [x] T-008
 - [x] T-009
+- [x] T-010
+- [x] T-011
+- [x] T-012
 
 ## TDD Scenarios by Component
 
@@ -95,6 +101,12 @@
 - GREEN: Store/ExternalSecret/App 상태 정상화 시 PASS
 - REFACTOR: 증적 수집 항목 표준화
 
+### TC-07 TLS/Ingress Contract (`verify-ingress-tls.sh`)
+
+- RED: ingress host/secret/service type 불일치 시 실패
+- GREEN: `argocd.127.0.0.1.nip.io`, `argocd-local-tls`, `LoadBalancer`, HTTPS 응답 확인 시 PASS
+- REFACTOR: Traefik 443 검증을 옵션 게이트(`CHECK_TRAEFIK_443=true`)로 분리
+
 ## Verification Summary
 
 - **Test Commands**:
@@ -102,6 +114,8 @@
   - `./infrastructure/tests/verify-gitops.sh`
   - `./infrastructure/tests/verify-secrets.sh`
   - `./infrastructure/tests/verify-external-services.sh`
+  - `./infrastructure/tests/verify-network-policies.sh`
+  - `./infrastructure/tests/verify-ingress-tls.sh`
 - **Eval Commands**:
   - `./infrastructure/tests/run-all.sh`
 - **Logs / Evidence Location**:

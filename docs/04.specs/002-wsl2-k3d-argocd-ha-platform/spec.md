@@ -26,6 +26,16 @@
   - `postgres-read-external:15433`
   - `valkey-external:26379`
   - Vault paths: `secret/platform/argocd`, `secret/platform/postgres-app`
+- **Access / TLS Contract**:
+  - 공식 ArgoCD host: `argocd.127.0.0.1.nip.io`
+  - ingress TLS secret: `argocd-local-tls` (`kubernetes.io/tls`)
+  - `ingress-nginx-controller` service type: `LoadBalancer`
+  - 외부 Traefik 계약: `443 -> k3d :8443`
+  - 운영 fallback: `https://argocd.127.0.0.1.nip.io:8443`
+- **GitOps Source Gate Contract**:
+  - root app source path: `gitops/apps/root`
+  - root app revision: `main`
+  - 로컬 파일 수정만으로는 반영되지 않으며, 원격 `main` 동기화가 선행되어야 함
 - **Governance Contract**:
   - README 인덱스 즉시 갱신
   - 상대 경로 링크 추적성 유지
@@ -37,6 +47,7 @@
 - `gitops/apps/root/*`: App-of-Apps 루트 경로/브랜치 계약(`gitops/apps/root`, `main`) 유지 중.
 - `gitops/platform/external-services/*`: PostgreSQL/Valkey/Vault 외부 인터페이스 모델 존재.
 - `infrastructure/bootstrap-local.sh`: ArgoCD 초기화 및 기본 검증 경로 존재.
+- `secrets/certs/*`: `cert.pem`, `key.pem`, `rootCA.pem` 경로 확인됨.
 
 ### Current Operational Risks
 
@@ -57,6 +68,11 @@
 - `https://github.com/k3s-io/k3s/releases`
 - `https://github.com/k3d-io/k3d/releases`
 - `https://github.com/valkey-io/valkey/releases`
+
+### TLS Certificate Validation Rule
+
+- `cert.pem` SAN은 최소 `argocd.127.0.0.1.nip.io` 또는 `*.127.0.0.1.nip.io`를 포함해야 한다.
+- SAN 미포함 시 `secrets/certs` 기준으로 인증서를 재발급하고 `argocd-local-tls`를 재주입해야 한다.
 
 ## Core Design
 
@@ -140,6 +156,7 @@ externalContracts:
 ./infrastructure/tests/verify-secrets.sh
 ./infrastructure/tests/verify-external-services.sh
 ./infrastructure/tests/verify-network-policies.sh
+./infrastructure/tests/verify-ingress-tls.sh
 ```
 
 ## Success Criteria & Verification Plan
@@ -148,6 +165,7 @@ externalContracts:
 - **VAL-SPC-002**: `vault-backend Ready=True`
 - **VAL-SPC-003**: `argocd-external-valkey Ready=True`
 - **VAL-SPC-004**: 포트 계약(8200/15432/15433/26379) 유지
+- **VAL-SPC-005**: ingress/TLS 계약(host/secret/service type/HTTPS 접속) 유지
 
 ## Related Documents
 

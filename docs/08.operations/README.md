@@ -36,6 +36,7 @@
 ```text
 08.operations/
 ├── 0001-k8s-gitops-operations-policy.md  # k3d/ArgoCD/ESO/Vault 운영 정책
+├── 0002-wsl2-k3d-gitops-ha-operations-policy.md  # WSL2 HA + TLS/최소권한 운영 정책
 └── README.md                             # This file
 ```
 
@@ -87,6 +88,7 @@ kubectl -n platform get svc,endpointslice | \
   rg 'postgres-(write|read)-external|15432|15433'
 kubectl -n platform get svc,endpointslice | \
   rg 'valkey-external|valkey-external-1|172.30.0.12|26379'
+./infrastructure/tests/verify-ingress-tls.sh
 ```
 
 ## Verification and Monitoring
@@ -94,6 +96,7 @@ kubectl -n platform get svc,endpointslice | \
 - 로그 위치: `kubectl -n argocd logs`, `kubectl -n external-secrets logs`
 - 상태 점검: `argocd app list`, `kubectl get applications -n argocd`
 - 이상 시 참조 문서: [`../09.runbooks/0001-argocd-platform-bootstrap-runbook.md`](../09.runbooks/0001-argocd-platform-bootstrap-runbook.md)
+- 이상 시 참조 문서: [`../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 
 ## Incident and Recovery Links
 
@@ -103,13 +106,13 @@ kubectl -n platform get svc,endpointslice | \
 
 ## SSoT References
 
-- [ARD](../02.ard/0001-wsl-k3d-argocd-platform.md)
-- [Spec](../04.specs/001-wsl-k3d-argocd-platform/spec.md)
-- [Runbook](../09.runbooks/0001-argocd-platform-bootstrap-runbook.md)
+- [ARD](../02.ard/0002-wsl2-k3d-argocd-ha-platform.md)
+- [Spec](../04.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
+- [Runbook](../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 
 ## 문서 인덱스
 
 | 문서 | 설명 | 상태 | 최종 수정 |
 | --- | --- | --- | --- |
 | [`0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md) | 외부 런타임 분리 + Vault 단일 소스 + GitOps 게이트 운영 정책 | Active | 2026-03-27 |
-| [`0002-wsl2-k3d-gitops-ha-operations-policy.md`](./0002-wsl2-k3d-gitops-ha-operations-policy.md) | WSL2 HA 운영 통제(EndpointSlice, 최소권한, 감사 항목) 정책 | Active | 2026-03-28 |
+| [`0002-wsl2-k3d-gitops-ha-operations-policy.md`](./0002-wsl2-k3d-gitops-ha-operations-policy.md) | WSL2 HA 운영 통제(TLS/Traefik 경계, EndpointSlice, 최소권한, 감사 항목) 정책 | Active | 2026-03-28 |

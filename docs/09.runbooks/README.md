@@ -36,6 +36,7 @@
 ```text
 09.runbooks/
 ├── 0001-argocd-platform-bootstrap-runbook.md  # k3d + ArgoCD 부트스트랩/복구 런북
+├── 0002-argocd-eso-vault-recovery-runbook.md  # Vault/ESO 복구 + TLS 회귀 검증 런북
 └── README.md                                  # This file
 ```
 
@@ -90,7 +91,7 @@
 
 - 로그 위치: `kubectl -n argocd logs`, `kubectl -n external-secrets logs`
 - 상태 점검: `argocd app list`, `kubectl -n argocd get applications`
-- 재검증 기준 문서: [`0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)
+- 재검증 기준 문서: [`0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)
 
 ## Incident and Recovery Links
 
@@ -100,14 +101,14 @@
 
 ## SSoT References
 
-- [ARD](../02.ard/0001-wsl-k3d-argocd-platform.md)
-- [ADR](../03.adr/0004-external-services-endpoints-and-valkey-backend.md)
-- [Spec](../04.specs/001-wsl-k3d-argocd-platform/spec.md)
-- [Operations Policy](../08.operations/0001-k8s-gitops-operations-policy.md)
+- [ARD](../02.ard/0002-wsl2-k3d-argocd-ha-platform.md)
+- [ADR](../03.adr/0005-wsl2-ha-baseline-and-external-endpoint-contract.md)
+- [Spec](../04.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
+- [Operations Policy](../08.operations/0002-wsl2-k3d-gitops-ha-operations-policy.md)
 
 ## 문서 인덱스
 
 | 문서 | 설명 | 상태 | 최종 수정 |
 | --- | --- | --- | --- |
 | [`0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md) | 검증 커맨드 기반 부트스트랩/트러블슈팅/복구 런북 | Active | 2026-03-27 |
-| [`0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md) | Vault-ESO 복구 + 회귀/증적/네트워크 정책 검증 런북 | Active | 2026-03-28 |
+| [`0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md) | Vault-ESO 복구 + TLS/Ingress 회귀/증적/네트워크 정책 검증 런북 | Active | 2026-03-28 |

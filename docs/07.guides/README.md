@@ -36,12 +36,13 @@
 ```text
 07.guides/
 ├── 0001-wsl-k3d-argocd-bootstrap-guide.md  # WSL2 k3d + ArgoCD 부트스트랩 가이드
+├── 0002-wsl2-k3d-argocd-ha-setup-guide.md   # WSL2 HA + TLS/EndpointSlice/검증 가이드
 └── README.md                               # This file
 ```
 
 ## How to Work in This Area
 
-1. 먼저 [spec.md](../04.specs/001-wsl-k3d-argocd-platform/spec.md)에서 현재 계약 값을 확인한다.
+1. 먼저 [spec.md](../04.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)에서 현재 계약 값을 확인한다.
 2. 새 가이드 추가/수정 시 `../99.templates/guide.template.md`를 기반으로 작성한다.
 3. 실행 명령은 복붙 가능한 형태로 유지하고, 시크릿 값은 절대 직접 기재하지 않는다.
 4. 문서 변경 시 이 README의 인덱스(상태/설명/수정일)를 함께 갱신한다.
@@ -78,15 +79,15 @@
 
 ## SSoT References
 
-- [PRD](../01.prd/2026-03-27-wsl-k3d-argocd-platform.md)
-- [ARD](../02.ard/0001-wsl-k3d-argocd-platform.md)
-- [Spec](../04.specs/001-wsl-k3d-argocd-platform/spec.md)
-- [Plan](../05.plans/2026-03-27-wsl-k3d-argocd-platform.md)
-- [Task](../06.tasks/2026-03-27-wsl-k3d-argocd-platform.md)
+- [PRD](../01.prd/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- [ARD](../02.ard/0002-wsl2-k3d-argocd-ha-platform.md)
+- [Spec](../04.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
+- [Plan](../05.plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- [Task](../06.tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
 
 ## 문서 인덱스
 
 | 문서 | 설명 | 상태 | 최종 수정 |
 | --- | --- | --- | --- |
 | [`0001-wsl-k3d-argocd-bootstrap-guide.md`](./0001-wsl-k3d-argocd-bootstrap-guide.md) | 외부 서비스 분리 운영 + Vault 기반 부트스트랩/검증 가이드 | Active | 2026-03-27 |
-| [`0002-wsl2-k3d-argocd-ha-setup-guide.md`](./0002-wsl2-k3d-argocd-ha-setup-guide.md) | WSL2 멀티노드 HA + EndpointSlice/최소권한 검증 가이드 | Active | 2026-03-28 |
+| [`0002-wsl2-k3d-argocd-ha-setup-guide.md`](./0002-wsl2-k3d-argocd-ha-setup-guide.md) | WSL2 멀티노드 HA + TLS(Traefik 443)/EndpointSlice/최소권한 검증 가이드 | Active | 2026-03-28 |

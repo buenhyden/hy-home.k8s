@@ -20,6 +20,10 @@
 - Vault secret path를 `secret/platform/argocd`, `secret/platform/postgres-app`로 고정한다.
 - AppProject는 `*/*` 화이트리스트를 폐기하고 allow-list 기반 최소권한으로 운영한다.
 - Vault 정책은 `platform/*` 와일드카드를 폐기하고 필요 경로만 허용한다.
+- ArgoCD HTTPS 공식 호스트를 `argocd.127.0.0.1.nip.io`로 고정한다.
+- ArgoCD ingress TLS secret을 `argocd-local-tls`(`argocd` namespace)로 고정한다.
+- `ingress-nginx-controller` 서비스 타입은 `LoadBalancer`로 고정한다.
+- 호스트 `80/443` 소유권은 외부 Docker Traefik에 두고, 본 저장소는 `443 -> k3d :8443` 계약만 유지한다.
 - Vault 연결 실패 시 운영 핫픽스로 `EndpointSlice platform/vault-external-1` 수동 복구 절차를 허용한다(영구 구조 개선은 백로그).
 
 ## Explicit Non-goals
@@ -32,9 +36,11 @@
 - **Positive**:
   - 운영/문서/매니페스트의 계약 일관성 확보
   - 장애 원인 파악 및 복구 시간 단축
+  - `argocd.127.0.0.1.nip.io` 단일 진입점으로 접속 경로 표준화
 - **Trade-offs**:
   - 수동 EndpointSlice 핫픽스는 임시 조치이며 drift 관리 부담 존재
   - AppProject/Vault 정책 축소 시 신규 리소스 추가 때 허용 목록 갱신이 필요
+  - Traefik 실제 라우팅은 외부 저장소 관리이므로 저장소 간 계약 동기화가 필요
 
 ## Alternatives
 

@@ -35,9 +35,13 @@ WSL2 개발 환경에서도 운영 수준의 재현성, 보안성, 복구 가능
   - `postgres-read-external:15433`
   - `valkey-external:26379`
 - **REQ-PRD-FUN-03A**: `valkey-external`은 `Service + EndpointSlice(172.30.0.12:26379)` 모델을 사용해야 한다.
+- **REQ-PRD-FUN-03B**: ArgoCD HTTPS 공식 엔트리포인트는 `argocd.127.0.0.1.nip.io`로 고정해야 한다.
+- **REQ-PRD-FUN-03C**: 호스트 80/443은 외부 Docker Traefik이 소유하며, 443 트래픽은 k3d `:8443`으로 프록시되어야 한다.
 - **REQ-PRD-FUN-04**: Vault 경로는 `secret/platform/argocd`, `secret/platform/postgres-app`를 표준으로 사용해야 한다.
 - **REQ-PRD-FUN-05**: 보안 통제는 RBAC 최소권한 + Vault policy(`eso-read-platform`)를 적용해야 한다.
 - **REQ-PRD-FUN-06**: 01~09 문서는 상호 상대 링크로 추적성을 유지해야 한다.
+- **REQ-PRD-FUN-07**: `argocd-local-tls` Secret은 `secrets/certs/cert.pem,key.pem`를 `bootstrap-local.sh`에서 주입하는 방식을 표준으로 사용해야 한다.
+- **REQ-PRD-FUN-07A**: ArgoCD 접속 경로는 기본 `https://argocd.127.0.0.1.nip.io`(Traefik 443), 운영 fallback `https://argocd.127.0.0.1.nip.io:8443`를 제공해야 한다.
 
 ## Success Criteria
 
@@ -48,6 +52,7 @@ WSL2 개발 환경에서도 운영 수준의 재현성, 보안성, 복구 가능
 - **REQ-PRD-MET-05**: Vault-ESO 장애 복구 목표시간(MTTR) 15분 이내.
 - **REQ-PRD-MET-06**: 보안 검증(AppProject allow-list, Vault 최소권한 정책) 통과율 100%.
 - **REQ-PRD-MET-07**: 릴리스 후 7일 내 인터페이스 회귀율 0건.
+- **REQ-PRD-MET-08**: ArgoCD TLS/Ingress 검증(`verify-ingress-tls.sh`) 회귀 0건.
 
 ## Scope and Non-goals
 
@@ -66,6 +71,7 @@ WSL2 개발 환경에서도 운영 수준의 재현성, 보안성, 복구 가능
 - WSL2 + Docker Desktop 자원 제한으로 인한 성능 저하 가능성.
 - EndpointSlice 수동 핫픽스는 임시 조치이므로 구조 개선 백로그 필요.
 - ArgoCD/ESO 버전 변경 시 Helm values 키 호환성 재검증 필요.
+- 인증서 SAN이 공식 호스트(`argocd.127.0.0.1.nip.io`)를 포함하지 않으면 HTTPS 접속이 실패하므로 재발급 절차가 필요.
 
 ## AI Agent Requirements (If Applicable)
 

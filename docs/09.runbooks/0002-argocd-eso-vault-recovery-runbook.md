@@ -1,6 +1,8 @@
 # ArgoCD ESO Vault Recovery Runbook
 
-: WSL2 k3d/k3s 운영 핫픽스
+## Runbook Type
+
+`WSL2 k3d/k3s 운영 핫픽스`
 
 ## Overview (KR)
 
@@ -22,6 +24,7 @@
 - `vault-backend`가 `Ready=False`
 - ESO 로그에 `connection refused` 또는 `InvalidProviderConfig` 반복
 - `argocd-external-valkey`가 `SecretSyncedError`
+- 복구 후 ArgoCD HTTPS 진입점(`argocd.127.0.0.1.nip.io`) 회귀가 의심될 때
 
 ## Procedure or Checklist
 
@@ -91,6 +94,22 @@ kubectl -n argocd get application root-platform -o yaml | \
 kubectl -n platform get svc,endpointslice | \
   rg 'postgres-(write|read)-external|15432|15433|vault-external|8200|valkey-external|172.30.0.12|26379'
 ./infrastructure/tests/verify-network-policies.sh
+./infrastructure/tests/verify-ingress-tls.sh
+```
+
+6. 운영 경로(외부 Traefik 443)까지 포함해 TLS 회귀를 확인한다.
+
+```bash
+CHECK_TRAEFIK_443=true ./infrastructure/tests/verify-ingress-tls.sh
+curl -kI https://argocd.127.0.0.1.nip.io
+curl -kI https://argocd.127.0.0.1.nip.io:8443
+```
+
+7. GitOps source gate를 확인한다(로컬 파일 수정만으로 반영되지 않음).
+
+```bash
+kubectl -n argocd get app root-platform -o yaml | \
+  rg 'path: gitops/apps/root|targetRevision: main'
 ```
 
 ## Verification Steps
@@ -100,6 +119,8 @@ kubectl -n platform get svc,endpointslice | \
 - [ ] `platform-eso-config`, `platform-argocd-config`에서 Degraded 해소
 - [ ] 포트/서비스 계약 회귀 없음
 - [ ] 네트워크 정책 계약(`argocd`/`external-secrets` egress) 통과
+- [ ] ArgoCD ingress/TLS 계약(host=`argocd.127.0.0.1.nip.io`, secret=`argocd-local-tls`) 유지
+- [ ] Traefik 443 및 fallback 8443 경로 모두 HTTPS 응답 확인
 
 ## Observability and Evidence Sources
 
@@ -108,6 +129,7 @@ kubectl -n platform get svc,endpointslice | \
   - 전/후 상태 YAML (`ClusterSecretStore`, `ExternalSecret`, `Application`)
   - 오류 시그니처 로그 (`connection refused`, `InvalidProviderConfig`)
   - 검증 스크립트 결과(`run-all.sh`)
+  - TLS 증적(`verify-ingress-tls.sh`, `curl -kI` 헤더 출력)
 
 ## Safe Rollback or Recovery Procedure
 

@@ -12,6 +12,7 @@
 - **GitOps Plane**: ArgoCD App-of-Apps + ApplicationSet
 - **Secret Plane**: ESO + Vault(Kubernetes auth)
 - **External Data Plane**: PostgreSQL(write/read), Valkey, Vault endpoint
+- **Access Plane**: External Docker Traefik(443) -> k3d ingress(8443) -> ArgoCD ingress
 
 ## Boundaries & Non-goals
 
@@ -62,6 +63,9 @@
     - `platform`: Vault/PostgreSQL/Valkey 허용
     - `argocd`: Valkey 허용
     - `external-secrets`: Vault 허용
+  - ArgoCD 접근 경계:
+    - 공식 FQDN: `argocd.127.0.0.1.nip.io`
+    - ingress TLS secret: `argocd-local-tls` (`argocd` namespace)
 
 ## Infrastructure & Deployment
 
@@ -71,6 +75,10 @@
 - **Network Isolation**:
   - 외부 브리지 대역 `172.30.0.0/24`로 고정
   - 서비스 인터페이스는 `Service + EndpointSlice` 표준 래핑
+- **Ingress Ownership Boundary**:
+  - 호스트 `80/443`은 외부 Docker Traefik 소유
+  - 본 저장소는 계약만 정의: `443 -> k3d :8443`
+  - 실제 Traefik 라우팅 파일은 외부 인프라 저장소에서 관리
 
 ## AI Agent Architecture Requirements (If Applicable)
 

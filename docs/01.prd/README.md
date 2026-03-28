@@ -41,4 +41,4 @@
 | 문서 | 설명 | 상태 | 최종 수정 |
 | --- | --- | --- | --- |
 | [`2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md) | WSL2 기반 k3d/k3s + ArgoCD GitOps 플랫폼 PRD | Draft | 2026-03-27 |
-| [`2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | WSL2 멀티노드 HA + EndpointSlice/최소권한/복구지표 강화 PRD | Draft | 2026-03-28 |
+| [`2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | WSL2 멀티노드 HA + TLS(Traefik 443)/EndpointSlice/최소권한/복구지표 강화 PRD | Draft | 2026-03-28 |
