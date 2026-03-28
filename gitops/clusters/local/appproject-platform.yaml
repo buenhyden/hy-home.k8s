@@ -72,6 +72,8 @@ spec:
       kind: Ingress
     - group: external-secrets.io
       kind: ExternalSecret
+    - group: argoproj.io
+      kind: Application
   roles:
     - name: platform-readonly
       policies:

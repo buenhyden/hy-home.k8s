@@ -29,6 +29,7 @@ ARGOCD_VALUES="$ROOT_DIR/infrastructure/argocd/values-local.yaml"
 INGRESS_APP="$ROOT_DIR/gitops/apps/root/platform-ingress-nginx-app.yaml"
 VAULT_POLICY="$ROOT_DIR/infrastructure/vault/policies/eso-read.hcl"
 APPPROJECT_APPS="$ROOT_DIR/gitops/clusters/local/appproject-apps.yaml"
+APPPROJECT_PLATFORM="$ROOT_DIR/gitops/clusters/local/appproject-platform.yaml"
 
 for file in \
   "$ROOT_APP" \
@@ -38,7 +39,8 @@ for file in \
   "$ARGOCD_VALUES" \
   "$INGRESS_APP" \
   "$VAULT_POLICY" \
-  "$APPPROJECT_APPS"; do
+  "$APPPROJECT_APPS" \
+  "$APPPROJECT_PLATFORM"; do
   require_file "$file"
 done
 
@@ -94,5 +96,9 @@ require_pattern 'kind:\s*ServiceAccount' "$APPPROJECT_APPS"
 require_pattern 'kind:\s*Role' "$APPPROJECT_APPS"
 require_pattern 'kind:\s*RoleBinding' "$APPPROJECT_APPS"
 require_pattern 'kind:\s*NetworkPolicy' "$APPPROJECT_APPS"
+
+echo "[INFO] verify platform AppProject app-of-apps permission"
+require_pattern 'group:\s*argoproj\.io' "$APPPROJECT_PLATFORM"
+require_pattern 'kind:\s*Application' "$APPPROJECT_PLATFORM"
 
 echo "[PASS] static contract verification passed"
