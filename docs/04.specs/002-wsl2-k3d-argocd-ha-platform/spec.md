@@ -2,66 +2,36 @@
 
 ## Overview (KR)
 
-이 문서는 WSL2 멀티노드 클러스터와 GitOps/Secret/외부 데이터 연동 구현 계약을 정의한다. 운영 핫픽스(수동 EndpointSlice)와 재발 방지 백로그를 분리해 명시한다.
+이 문서는 WSL2 멀티노드 클러스터와 GitOps/Secret/외부 데이터 연동 구현 계약을 정의한다. 이번 확장에서 `argocd egress 안정성`, `AppProject 최소권한`, `CI 정적 계약 게이트`를 추가한다.
 
 ## Strategic Boundaries & Non-goals
 
-- **Owns**: 클러스터 토폴로지, GitOps 배포 구조, 외부 서비스 인터페이스, 검증 스크립트
-- **Does Not Own**: 외부 서비스 컨테이너 런타임 배포/운영
+- **Owns**: 클러스터 토폴로지, GitOps 배포 구조, 외부 서비스 인터페이스, CI 정적 검증, 운영 검증 스크립트
+- **Does Not Own**: 외부 서비스 컨테이너 런타임, 외부 Traefik 라우팅 파일
 
 ## Related Inputs
 
 - **PRD**: [`../../01.prd/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../01.prd/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
 - **ARD**: [`../../02.ard/0002-wsl2-k3d-argocd-ha-platform.md`](../../02.ard/0002-wsl2-k3d-argocd-ha-platform.md)
-- **Related ADRs**: [`../../03.adr/0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](../../03.adr/0005-wsl2-ha-baseline-and-external-endpoint-contract.md)
+- **ADR**: [`../../03.adr/0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](../../03.adr/0005-wsl2-ha-baseline-and-external-endpoint-contract.md)
 
-## Contracts
+## Phase 0 Baseline and Gap Report
 
-- **Config Contract**:
-  - `infrastructure/k3d/k3d-cluster.yaml`: `servers: 1`, `agents: 3`
-  - network CIDR: `172.30.0.0/24`
-- **Data / Interface Contract**:
-  - `vault-external.platform.svc.cluster.local:8200`
-  - `postgres-write-external:15432`
-  - `postgres-read-external:15433`
-  - `valkey-external:26379`
-  - Vault paths: `secret/platform/argocd`, `secret/platform/postgres-app`
-- **Access / TLS Contract**:
-  - 공식 ArgoCD host: `argocd.127.0.0.1.nip.io`
-  - ingress TLS secret: `argocd-local-tls` (`kubernetes.io/tls`)
-  - `ingress-nginx-controller` service type: `LoadBalancer`
-  - 외부 Traefik 계약: `443 -> k3d :8443`
-  - 운영 fallback: `https://argocd.127.0.0.1.nip.io:8443`
-- **GitOps Source Gate Contract**:
-  - root app source path: `gitops/apps/root`
-  - root app revision: `main`
-  - 로컬 파일 수정만으로는 반영되지 않으며, 원격 `main` 동기화가 선행되어야 함
-- **Governance Contract**:
-  - README 인덱스 즉시 갱신
-  - 상대 경로 링크 추적성 유지
+### Existing CI State (as-is)
 
-## Phase 0 Analysis Output (Brainstorming)
+- `.github/workflows/ci.yml`는 기존 `pre-commit` 단일 잡 구조였다.
+- 누락된 영역:
+  - 변경영역(path-aware) 기반 실행 분기
+  - static contract 검증
+  - workflow 보안 게이트(actionlint/zizmor)
 
-### Existing Asset Findings
+### Version Evidence (2026-03-28)
 
-- `gitops/apps/root/*`: App-of-Apps 루트 경로/브랜치 계약(`gitops/apps/root`, `main`) 유지 중.
-- `gitops/platform/external-services/*`: PostgreSQL/Valkey/Vault 외부 인터페이스 모델 존재.
-- `infrastructure/bootstrap-local.sh`: ArgoCD 초기화 및 기본 검증 경로 존재.
-- `secrets/certs/*`: `cert.pem`, `key.pem`, `rootCA.pem` 경로 확인됨.
-
-### Current Operational Risks
-
-- Valkey 연동이 `ExternalName` 모델일 경우 ipBlock 기반 네트워크 정책과 정합성 문제가 발생할 수 있음.
-- Vault 복구가 수동 EndpointSlice에 의존하는 구간이 있어 재발 방지 백로그가 필요함.
-- AppProject의 과도한 와일드카드 화이트리스트(`*/*`)는 권한 경계 약화를 유발함.
-
-### Version Baseline Validation (2026-03-28)
-
-| Component | Baseline in Repo | Release Observation | Decision |
+| Component | Current Baseline | Stable/Release Observation | Policy |
 | --- | --- | --- | --- |
-| k3s | `v1.35.0+k3s1` | `v1.35.2+k3s1` stable, `v1.35.3-rc1+k3s1` pre-release | 운영 baseline 유지, 차기 업그레이드 후보로 `1.35.2` 등록 |
-| k3d | `v5.8.3` | `v5.8.3` latest stable (`v5.9.0-rc.0` pre-release) | 유지 |
-| Valkey | `9.0.1` | `9.0.1` 최신 GA로 확인(문서 수집 시점 기준) | 유지 |
+| k3s | `v1.35.0+k3s1` | `v1.35.2+k3s1` stable, `v1.35.3-rc1+k3s1` preview | baseline 유지, 업그레이드 후보 등록 |
+| k3d | `v5.8.3` | `v5.8.3` stable | baseline 유지 |
+| Valkey | `9.0.1` | `9.0.3` 후보 | baseline 유지, 업그레이드 후보 등록 |
 
 참고 릴리스 페이지:
 
@@ -69,106 +39,109 @@
 - `https://github.com/k3d-io/k3d/releases`
 - `https://github.com/valkey-io/valkey/releases`
 
-### TLS Certificate Validation Rule
+### Certificate Contract
 
-- `cert.pem` SAN은 최소 `argocd.127.0.0.1.nip.io` 또는 `*.127.0.0.1.nip.io`를 포함해야 한다.
-- SAN 미포함 시 `secrets/certs` 기준으로 인증서를 재발급하고 `argocd-local-tls`를 재주입해야 한다.
+- `secrets/certs/cert.pem` SAN은 최소 `127.0.0.1.nip.io` 또는 `*.127.0.0.1.nip.io`를 포함해야 한다.
+- SAN 미포함 시 재발급 후 `bootstrap-local.sh`로 `argocd-local-tls`를 재주입한다.
 
-## Core Design
+## Contracts
 
-- **Component Boundary**:
-  - Cluster: k3d/k3s
-  - GitOps: ArgoCD + ApplicationSet
-  - Secrets: ESO + Vault Kubernetes auth role `eso-read-platform`
-  - External data: PostgreSQL EndpointSlice, Valkey EndpointSlice
-- **Key Dependencies**:
-  - `kubectl`, `k3d`, `helm`, `argocd`
-- **Tech Stack**:
-  - WSL2 Ubuntu + Docker Desktop
+### Runtime Contracts
 
-## Data Modeling & Storage Strategy
+- `vault-external.platform.svc.cluster.local:8200`
+- `postgres-write-external:15432`
+- `postgres-read-external:15433`
+- `valkey-external:26379`
+- Vault paths: `secret/platform/argocd`, `secret/platform/postgres-app`
 
-- Vault가 시크릿 원본 저장소.
-- ESO가 K8s Secret 생성/회전을 담당.
-- ArgoCD Valkey 연결 비밀번호는 Vault 경로를 단일 소스로 사용.
+### Access/TLS Contracts
 
-## Interfaces & Data Structures
+- ArgoCD 공식 host: `argocd.127.0.0.1.nip.io`
+- TLS secret: `argocd-local-tls` (`kubernetes.io/tls`)
+- ingress-nginx controller service type: `LoadBalancer`
+- 외부 Traefik 계약: `443 -> k3d :8443`
+- fallback endpoint: `https://argocd.127.0.0.1.nip.io:8443`
 
-### Core Interfaces
+### Network Policy Contracts
 
-```yaml
-externalContracts:
-  vault:
-    dns: vault-external.platform.svc.cluster.local
-    port: 8200
-  postgres:
-    write:
-      service: postgres-write-external
-      port: 15432
-    read:
-      service: postgres-read-external
-      port: 15433
-  valkey:
-    service: valkey-external
-    endpointSlice: valkey-external-1
-    address: 172.30.0.12
-    port: 26379
-```
+- `argocd` egress 허용:
+  - Valkey: `172.30.0.12:26379/TCP`
+  - DNS: `53/TCP,UDP` (`kube-system` DNS)
+  - HTTPS: `443/TCP`
 
-## API Contract (If Applicable)
+### GitOps Source Contracts
 
-해당 범위는 외부 HTTP API가 아닌 Kubernetes 리소스 계약을 중심으로 한다.
+- root app path: `gitops/apps/root`
+- root app revision: `main`
+- 로컬 파일 변경만으로 반영되지 않으며 원격 `main` 기준으로 reconciliation 수행
 
-## Tools & Tool Contract (If Applicable)
+### CI Static Contracts
 
-- **Tool List**: `kubectl`, `argocd`, `helm`, shell scripts
-- **Permission Boundary**: 파괴적 변경 금지, 운영 변경은 승인 후 수행
-- **Failure Handling**: Runbook 0002 절차로 단계적 복구
+- 변경영역 감지: `dorny/paths-filter`
+- 필수 정적 게이트:
+  - `pre-commit`
+  - `manifest-static`
+  - `workflow-security`
+  - `shell-static`
+- 집계 게이트: `ci-summary`
 
-## Guardrails (If Applicable)
+## File-level Implementation Contract
 
-- **Input Guardrails**: 고정 포트/경로/서비스명 계약 변경 시 ADR 선행
-- **Output Guardrails**: 평문 시크릿 금지
-- **Blocked Conditions**: 인증 토큰/비밀번호 문서 저장 금지
-- **Escalation Rule**: Vault auth/policy 변경은 운영 승인 필요
-- **Policy Hardening**:
-  - AppProject는 allow-list 리소스만 허용
-  - Vault policy는 `argocd`, `postgres-app` 경로만 허용
+- `.github/workflows/ci.yml`
+  - `concurrency`: `ci-${{ github.ref }}` + `cancel-in-progress: true`
+  - path filter 기반 조건부 잡 분기
+  - workflow 변경 시 `actionlint`/`zizmor` 강제
+- `infrastructure/tests/verify-contracts-static.sh` (신규)
+  - root app path/revision
+  - 외부 서비스 포트/EndpointSlice 주소
+  - ArgoCD host/TLS secret 명칭
+  - Vault policy 최소권한 경로
+  - AppProject wildcard 금지 및 allow-list 존재
+- `infrastructure/tests/run-all.sh`
+  - runtime(kubectl) 검증 전용 유지
 
-## Edge Cases & Error Handling
+## Guardrails
 
-- `connect: connection refused` on Vault external endpoint
-- EndpointSlice 누락/오타로 인한 Service 라우팅 실패
-- ExternalSecret `SecretSyncedError`로 인한 ArgoCD backend 비밀 누락
+- AppProject `apps`는 namespace wildcard(`*/*`) 금지
+- Vault 정책에서 `secret/data/platform/*` wildcard 금지
+- 시크릿/토큰/인증서 평문 커밋 금지
 
-## Failure Modes & Fallback / Human Escalation
+## Failure Modes & Fallback
 
-- **Failure Mode**: `ClusterSecretStore Ready=False`
-- **Fallback**: `EndpointSlice platform/vault-external-1` 수동 적용 후 상태 재평가
-- **Human Escalation**: endpoint contract 자체 변경 필요 시 플랫폼 오너 승인
+- **Failure**: repo-server egress 부족으로 Git fetch 실패
+  - **Action**: `argocd` egress에 DNS/443 허용 확인
+- **Failure**: CI false positive
+  - **Action**: 예외 승인 후 룰 보정(ADR/Operations 업데이트)
+- **Failure**: CI false negative
+  - **Action**: `verify-contracts-static.sh` 패턴 강화 + 회귀 테스트 추가
 
 ## Verification
 
+### Static (CI/Local)
+
 ```bash
-./infrastructure/tests/run-all.sh
-./infrastructure/tests/verify-cluster.sh
-./infrastructure/tests/verify-gitops.sh
-./infrastructure/tests/verify-secrets.sh
-./infrastructure/tests/verify-external-services.sh
-./infrastructure/tests/verify-network-policies.sh
-./infrastructure/tests/verify-ingress-tls.sh
+bash -n infrastructure/bootstrap-local.sh infrastructure/tests/*.sh
+./infrastructure/tests/verify-contracts-static.sh
 ```
 
-## Success Criteria & Verification Plan
+### Runtime (Local cluster)
 
-- **VAL-SPC-001**: 4개 노드 Ready
-- **VAL-SPC-002**: `vault-backend Ready=True`
-- **VAL-SPC-003**: `argocd-external-valkey Ready=True`
-- **VAL-SPC-004**: 포트 계약(8200/15432/15433/26379) 유지
-- **VAL-SPC-005**: ingress/TLS 계약(host/secret/service type/HTTPS 접속) 유지
+```bash
+./infrastructure/tests/run-all.sh
+CHECK_TRAEFIK_443=true ./infrastructure/tests/verify-ingress-tls.sh
+```
+
+## Success Criteria
+
+- `gitops/`, `infrastructure/`, `.github/` 변경이 계약 문서와 일치
+- AppProject wildcard 권한 제거
+- `argocd` egress가 Valkey + DNS + HTTPS 충족
+- CI가 변경영역 기반으로 동작하고 정적 계약 검증 포함
+- 문서 체인(01~09) 및 README 인덱스 동기화 완료
 
 ## Related Documents
 
 - **Plan**: [`../../05.plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../05.plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
 - **Tasks**: [`../../06.tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../06.tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- **Guide**: [`../../07.guides/0002-wsl2-k3d-argocd-ha-setup-guide.md`](../../07.guides/0002-wsl2-k3d-argocd-ha-setup-guide.md)
 - **Runbook**: [`../../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md)

@@ -42,4 +42,4 @@
 | [`0002-argocd-helm-and-gitops-model.md`](./0002-argocd-helm-and-gitops-model.md) | ArgoCD Helm 설치와 GitOps 모델 결정 | Accepted | 2026-03-27 |
 | [`0003-eso-vault-k8s-auth.md`](./0003-eso-vault-k8s-auth.md) | ESO + Vault Kubernetes Auth 시크릿 패턴 결정 | Accepted | 2026-03-27 |
 | [`0004-external-services-endpoints-and-valkey-backend.md`](./0004-external-services-endpoints-and-valkey-backend.md) | 외부 서비스 접근 모델(PostgreSQL EndpointSlice, Valkey ExternalName, Vault 외부 URL)과 ArgoCD Valkey 백엔드 결정 | Accepted | 2026-03-27 |
-| [`0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](./0005-wsl2-ha-baseline-and-external-endpoint-contract.md) | Valkey EndpointSlice 전환 + ArgoCD TLS/Traefik 443 계약 + AppProject/Vault 최소권한 기준 결정 | Accepted | 2026-03-28 |
+| [`0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](./0005-wsl2-ha-baseline-and-external-endpoint-contract.md) | Valkey/TLS/최소권한 계약과 CI 정적 게이트 강화 + CD pull 모델 유지 결정을 기록한 ADR | Accepted | 2026-03-28 |

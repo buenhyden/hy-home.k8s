@@ -36,7 +36,7 @@
 ```text
 07.guides/
 ├── 0001-wsl-k3d-argocd-bootstrap-guide.md  # WSL2 k3d + ArgoCD 부트스트랩 가이드
-├── 0002-wsl2-k3d-argocd-ha-setup-guide.md   # WSL2 HA + TLS/EndpointSlice/검증 가이드
+├── 0002-wsl2-k3d-argocd-ha-setup-guide.md   # WSL2 HA + TLS + 로컬/CI 정적 검증 분리 가이드
 └── README.md                               # This file
 ```
 
@@ -90,4 +90,4 @@
 | 문서 | 설명 | 상태 | 최종 수정 |
 | --- | --- | --- | --- |
 | [`0001-wsl-k3d-argocd-bootstrap-guide.md`](./0001-wsl-k3d-argocd-bootstrap-guide.md) | 외부 서비스 분리 운영 + Vault 기반 부트스트랩/검증 가이드 | Active | 2026-03-27 |
-| [`0002-wsl2-k3d-argocd-ha-setup-guide.md`](./0002-wsl2-k3d-argocd-ha-setup-guide.md) | WSL2 멀티노드 HA + TLS(Traefik 443)/EndpointSlice/최소권한 검증 가이드 | Active | 2026-03-28 |
+| [`0002-wsl2-k3d-argocd-ha-setup-guide.md`](./0002-wsl2-k3d-argocd-ha-setup-guide.md) | WSL2 멀티노드 HA + TLS + 런타임/CI 정적 검증 절차를 분리한 운영 가이드 | Active | 2026-03-28 |

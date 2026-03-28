@@ -2,11 +2,11 @@
 
 ## Overview (KR)
 
-이 문서는 WSL2 기반 플랫폼의 HA 기본 토폴로지와 외부 서비스 인터페이스 계약을 고정하기 위한 결정 기록이다.
+이 문서는 WSL2 기반 플랫폼의 HA 기본 토폴로지와 외부 서비스 인터페이스 계약, 그리고 CI/CD 운영 모델 결정을 고정한다.
 
 ## Context
 
-플랫폼 운영 중 Vault/ESO 연동 장애의 핵심 원인이 외부 endpoint 계약 불일치로 확인되었다. 문서/매니페스트/운영 절차 간 동일 계약을 강제할 필요가 있다.
+Vault/ESO 연동 장애와 ArgoCD ingress 회귀는 계약 불일치에서 발생했다. 동시에 CI가 단일 pre-commit 잡으로 구성되어 계약 회귀를 조기에 차단하기 어려웠다.
 
 ## Decision
 
@@ -16,48 +16,45 @@
   - `postgres-write-external:15432`
   - `postgres-read-external:15433`
   - `valkey-external:26379`
-- `valkey-external` 구현 모델은 `ExternalName`이 아닌 `Service + EndpointSlice(172.30.0.12:26379)`로 고정한다.
+- `valkey-external` 구현 모델은 `Service + EndpointSlice(172.30.0.12:26379)`로 고정한다.
 - Vault secret path를 `secret/platform/argocd`, `secret/platform/postgres-app`로 고정한다.
-- AppProject는 `*/*` 화이트리스트를 폐기하고 allow-list 기반 최소권한으로 운영한다.
-- Vault 정책은 `platform/*` 와일드카드를 폐기하고 필요 경로만 허용한다.
-- ArgoCD HTTPS 공식 호스트를 `argocd.127.0.0.1.nip.io`로 고정한다.
-- ArgoCD ingress TLS secret을 `argocd-local-tls`(`argocd` namespace)로 고정한다.
+- ArgoCD HTTPS 공식 호스트를 `argocd.127.0.0.1.nip.io`로 고정하고 ingress TLS secret을 `argocd-local-tls`로 고정한다.
 - `ingress-nginx-controller` 서비스 타입은 `LoadBalancer`로 고정한다.
 - 호스트 `80/443` 소유권은 외부 Docker Traefik에 두고, 본 저장소는 `443 -> k3d :8443` 계약만 유지한다.
-- Vault 연결 실패 시 운영 핫픽스로 `EndpointSlice platform/vault-external-1` 수동 복구 절차를 허용한다(영구 구조 개선은 백로그).
+- `argocd` namespace egress는 Valkey(26379) + DNS(53/TCP,UDP) + HTTPS(443/TCP)를 허용한다.
+- AppProject `apps`는 namespace wildcard(`*/*`)를 금지하고 allow-list 기반 최소권한으로 운영한다.
+- Vault 정책은 `platform/*` 와일드카드를 금지하고 필요 경로만 허용한다.
+- CI는 변경영역 기반 정적 게이트를 필수화하고, CD는 ArgoCD pull reconciliation 모델을 유지한다.
+  - 필수 게이트: `pre-commit`, `manifest-static`, `workflow-security`, `shell-static`
 
 ## Explicit Non-goals
 
 - 외부 런타임(Vault/PostgreSQL/Valkey) 자체 배포 자동화
+- GitHub Actions push 기반 배포
 - 클라우드 멀티AZ/멀티클러스터 HA
 
 ## Consequences
 
 - **Positive**:
-  - 운영/문서/매니페스트의 계약 일관성 확보
-  - 장애 원인 파악 및 복구 시간 단축
-  - `argocd.127.0.0.1.nip.io` 단일 진입점으로 접속 경로 표준화
+  - 운영/문서/매니페스트/CI의 계약 일관성 강화
+  - 런타임 이전에 정적 회귀를 탐지해 장애 확률 감소
+  - CD 경로를 ArgoCD 단일 모델로 단순화
 - **Trade-offs**:
-  - 수동 EndpointSlice 핫픽스는 임시 조치이며 drift 관리 부담 존재
-  - AppProject/Vault 정책 축소 시 신규 리소스 추가 때 허용 목록 갱신이 필요
-  - Traefik 실제 라우팅은 외부 저장소 관리이므로 저장소 간 계약 동기화가 필요
+  - AppProject allow-list 관리 비용 증가
+  - workflow-security 잡 도입으로 CI 시간 증가
+  - 외부 Traefik 라우팅은 별도 저장소와 계약 동기화 필요
 
 ## Alternatives
 
-### Alternative 1: Service DNS 직접 참조만 사용(EndpointSlice 미사용)
+### Alternative 1: CI pre-commit 단일 게이트 유지
 
-- Good: 리소스 단순화
-- Bad: 외부 고정 IP 브리지 모델과 충돌
+- Good: 간단한 운영
+- Bad: 계약/워크플로 보안 회귀 탐지 누락
 
-### Alternative 2: ExternalName-only 모델 통일
+### Alternative 2: GitHub Actions push deploy 도입
 
-- Good: 관리 단순성
-- Bad: PostgreSQL write/read 포트 분리 계약 표현이 약함
-
-## Agent-related Example Decisions (If Applicable)
-
-- 복구 자동화는 증적 수집을 포함해야 한다.
-- 보안 관련 값(토큰/비밀번호)은 출력/문서화 금지.
+- Good: 즉시 배포 가능
+- Bad: GitOps pull 모델과 책임 중복, 운영 복잡도 증가
 
 ## Related Documents
 
@@ -65,4 +62,3 @@
 - **ARD**: [`../02.ard/0002-wsl2-k3d-argocd-ha-platform.md`](../02.ard/0002-wsl2-k3d-argocd-ha-platform.md)
 - **Spec**: [`../04.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../04.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
 - **Plan**: [`../05.plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../05.plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
-- **Related ADR**: [`./0001-k3d-topology-and-network.md`](./0001-k3d-topology-and-network.md), [`./0004-external-services-endpoints-and-valkey-backend.md`](./0004-external-services-endpoints-and-valkey-backend.md)

@@ -24,14 +24,20 @@ port_in_use() {
   ss -ltn "( sport = :$port )" | awk 'NR>1 {print $4}' | grep -q .
 }
 
+fail() {
+  echo "[FAIL] $*" >&2
+  exit 1
+}
+
 for cmd in k3d kubectl helm docker curl jq openssl; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
-    echo "required command not found: $cmd" >&2
-    exit 1
+    fail "required command not found: $cmd"
   fi
 done
 
-: "${VAULT_TOKEN:?Set VAULT_TOKEN before running this script}"
+if [ -z "${VAULT_TOKEN:-}" ]; then
+  fail "Set VAULT_TOKEN before running this script"
+fi
 
 vault_curl() {
   if [ "$VAULT_SKIP_VERIFY" = "true" ]; then
@@ -48,7 +54,7 @@ check_tcp_dependency() {
   if timeout 3 bash -c ":</dev/tcp/${host}/${port}" >/dev/null 2>&1; then
     echo "  - ${name}: ${host}:${port} reachable"
   else
-    echo "${name} is not reachable at ${host}:${port}" >&2
+    echo "[FAIL] ${name} is not reachable at ${host}:${port}" >&2
     return 1
   fi
 }
@@ -66,9 +72,9 @@ wait_for_vault_ready() {
   done
 
   if [ "$vault_status_code" = "503" ]; then
-    echo "vault is sealed (status=503). unseal Vault first." >&2
+    echo "[FAIL] vault is sealed (status=503). unseal Vault first." >&2
   else
-    echo "vault is not ready after 30s (status=${vault_status_code:-000})" >&2
+    echo "[FAIL] vault is not ready after 30s (status=${vault_status_code:-000})" >&2
   fi
   return 1
 }
@@ -76,7 +82,7 @@ wait_for_vault_ready() {
 require_file() {
   local path="$1"
   if [ ! -f "$path" ]; then
-    echo "required file not found: $path" >&2
+    echo "[FAIL] required file not found: $path" >&2
     return 1
   fi
 }
@@ -87,7 +93,7 @@ validate_cert_for_host() {
   local sans
   sans="$(openssl x509 -in "$cert_file" -noout -ext subjectAltName 2>/dev/null || true)"
   if [ -z "$sans" ]; then
-    echo "failed to read certificate SAN from: $cert_file" >&2
+    echo "[FAIL] failed to read certificate SAN from: $cert_file" >&2
     return 1
   fi
 
@@ -100,7 +106,7 @@ validate_cert_for_host() {
     return 0
   fi
 
-  echo "certificate SAN does not include host=${host}. reissue cert in $CERT_DIR" >&2
+  echo "[FAIL] certificate SAN does not include host=${host}. reissue cert in $CERT_DIR" >&2
   return 1
 }
 
@@ -110,8 +116,7 @@ if ! k3d cluster list 2>/dev/null | awk 'NR>1 {print $1}' | grep -qx "$CLUSTER_N
       K3D_HTTP_PORT=8080
       echo "port 80 already in use, fallback to $K3D_HTTP_PORT"
     else
-      echo "configured K3D_HTTP_PORT=$K3D_HTTP_PORT is already in use" >&2
-      exit 1
+      fail "configured K3D_HTTP_PORT=$K3D_HTTP_PORT is already in use"
     fi
   fi
 
@@ -120,8 +125,7 @@ if ! k3d cluster list 2>/dev/null | awk 'NR>1 {print $1}' | grep -qx "$CLUSTER_N
       K3D_HTTPS_PORT=8443
       echo "port 443 already in use, fallback to $K3D_HTTPS_PORT"
     else
-      echo "configured K3D_HTTPS_PORT=$K3D_HTTPS_PORT is already in use" >&2
-      exit 1
+      fail "configured K3D_HTTPS_PORT=$K3D_HTTPS_PORT is already in use"
     fi
   fi
 
@@ -138,7 +142,7 @@ else
   echo "[1/9] Reuse existing k3d cluster: $CLUSTER_NAME"
 fi
 
-echo "[2/8] Validate external dependencies"
+echo "[2/9] Validate external dependencies"
 wait_for_vault_ready
 check_tcp_dependency "postgres-write" "$POSTGRES_WRITE_ADDR" "$POSTGRES_WRITE_PORT"
 check_tcp_dependency "postgres-read" "$POSTGRES_READ_ADDR" "$POSTGRES_READ_PORT"
@@ -150,8 +154,7 @@ vault_secret_json="$(vault_curl \
 VALKEY_PASSWORD="$(printf '%s' "$vault_secret_json" | jq -r '.data.data.valkey_password // empty' 2>/dev/null || true)"
 
 if [ -z "$VALKEY_PASSWORD" ]; then
-  echo "could not read secret key valkey_password from Vault path secret/platform/argocd" >&2
-  exit 1
+  fail "could not read secret key valkey_password from Vault path secret/platform/argocd"
 fi
 
 if docker inspect "k3d-${CLUSTER_NAME}-serverlb" >/dev/null 2>&1; then

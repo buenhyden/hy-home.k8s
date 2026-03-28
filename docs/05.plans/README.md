@@ -38,4 +38,4 @@
 | 문서 | 설명 | 상태 | 최종 수정 |
 | --- | --- | --- | --- |
 | [`2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md) | WSL2 GitOps 플랫폼 단계별 실행 계획 | Draft | 2026-03-27 |
-| [`2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | EndpointSlice 전환 + TLS(Traefik 443) + 최소권한/검증 자동화 포함 실행 계획 | Draft | 2026-03-28 |
+| [`2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | TLS/최소권한 유지 + 변경영역 기반 CI 정적 게이트 + 롤백 규칙을 포함한 실행 계획 | Draft | 2026-03-28 |

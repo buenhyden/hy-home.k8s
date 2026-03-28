@@ -2,7 +2,7 @@
 
 ## Overview (KR)
 
-이 문서는 인프라 컴포넌트별 TDD 검증 스크립트를 중심으로 실행 작업을 추적한다.
+이 문서는 WSL2 GitOps 플랫폼 고도화 작업을 TDD(RED/GREEN/REFACTOR) 중심으로 추적한다. 이번 사이클은 `gitops/`, `infrastructure/`, `.github/` 동시 변경을 포함한다.
 
 ## Inputs
 
@@ -11,112 +11,78 @@
 
 ## Working Rules
 
-- RED: 먼저 실패 가능한 검증 조건을 정의한다.
-- GREEN: 최소 변경으로 조건을 통과시킨다.
-- REFACTOR: 문서/스크립트 중복을 줄이고 추적성을 유지한다.
+- RED: 실패 조건을 먼저 정의한다.
+- GREEN: 최소 변경으로 통과한다.
+- REFACTOR: 검증 메시지/계약 문구를 표준화한다.
 
 ## Task Table
 
-| Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| T-001 | Cluster topology 검증 스크립트 작성 | test | Contracts | PLN-005 | `infrastructure/tests/verify-cluster.sh` | Platform | Done |
-| T-002 | GitOps(App/Project) 검증 스크립트 작성 | test | Core Design | PLN-005 | `infrastructure/tests/verify-gitops.sh` | DevOps | Done |
-| T-003 | ESO/Vault 연동 검증 스크립트 작성 | test | Data Strategy | PLN-005 | `infrastructure/tests/verify-secrets.sh` | Security | Done |
-| T-004 | 외부 서비스 계약 검증 스크립트 작성 | test | Interfaces | PLN-005 | `infrastructure/tests/verify-external-services.sh` | Platform | Done |
-| T-005 | 네트워크 정책 검증 스크립트 작성 | test | Guardrails | PLN-007 | `infrastructure/tests/verify-network-policies.sh` | Security | Done |
-| T-006 | 통합 실행 스크립트 확장(run-all) | test | Verification | PLN-007 | `infrastructure/tests/run-all.sh` | DevOps | Done |
-| T-007 | Vault endpoint 수동 핫픽스 런북 정리 | ops | Failure Modes | PLN-004 | runbook 0002 체크리스트 | Platform | Done |
-| T-008 | AppProject/Vault policy 최소권한 반영 | impl | Guardrails | PLN-006 | manifest/policy diff 확인 | Security | Done |
-| T-009 | TLS Secret 자동주입/인증서 SAN 검증 추가 | impl | Contracts | PLN-007 | `infrastructure/bootstrap-local.sh` 검토 + dry-run | DevOps | Done |
-| T-010 | TLS/Ingress 검증 스크립트 추가 | test | Verification | PLN-007 | `infrastructure/tests/verify-ingress-tls.sh` | QA | Done |
-| T-011 | GitOps source gate 문서화 | doc | Governance | PLN-008 | guide/ops/runbook 문구 확인 | Docs | Done |
-| T-012 | 폴더별 README 인덱스 동기화 | doc | Governance | PLN-009 | README row 반영 확인 | Docs | Done |
-
-## Suggested Types
-
-- `impl`
-- `test`
-- `eval`
-- `doc`
-- `ops`
-
-## Phase View (Optional)
-
-### Phase 1
-
-- [x] T-001
-- [x] T-002
-
-### Phase 2
-
-- [x] T-003
-- [x] T-004
-- [x] T-005
-- [x] T-006
-
-### Phase 3
-
-- [x] T-007
-- [x] T-008
-- [x] T-009
-- [x] T-010
-- [x] T-011
-- [x] T-012
+| Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| T-001 | `argocd` egress 정책에 DNS/HTTPS 허용 추가 | impl | Network Policy Contracts | Phase 1 | `verify-network-policies.sh` | Done |
+| T-002 | `appproject-apps` wildcard 제거 및 allow-list 적용 | impl | Guardrails | Phase 1 | `verify-contracts-static.sh` | Done |
+| T-003 | `bootstrap-local.sh` 실패 메시지 표준화 | refactor | File-level Contract | Phase 1 | `bash -n` + 로그 확인 | Done |
+| T-004 | 정적 계약 스크립트 `verify-contracts-static.sh` 신규 작성 | test | CI Static Contracts | Phase 2 | 스크립트 standalone PASS | Done |
+| T-005 | CI workflow 변경영역 분기 구조 반영 | impl | CI Architecture | Phase 2 | workflow YAML 검증 | Done |
+| T-006 | workflow-security gate(actionlint/zizmor) 추가 | impl | CI Architecture | Phase 2 | `.github` 변경 시 강제 실행 | Done |
+| T-007 | shell-static gate(`bash -n`, `shellcheck`) 추가 | test | CI Architecture | Phase 2 | shell 스크립트 정적 검증 | Done |
+| T-008 | dependabot docker/pip 경로 정리 | impl | File-level Contract | Phase 2 | config lint/리뷰 | Done |
+| T-009 | PRD/ARD/ADR/SPEC 문서 업데이트 | doc | Traceability | Phase 3 | 상대 링크/계약 반영 | Done |
+| T-010 | PLAN/TASK/GUIDE/OPER/RUN 문서 업데이트 | doc | Traceability | Phase 3 | 절차/게이트 반영 | Done |
+| T-011 | 01~09 README 인덱스 동기화 | doc | Governance Contract | Phase 3 | 인덱스 설명/수정일 반영 | Done |
 
 ## TDD Scenarios by Component
 
-### TC-01 Cluster Topology (`verify-cluster.sh`)
+### TC-01 Network Policy (`argocd` egress)
 
-- RED: 노드 수/Ready 상태가 기준(<4)일 때 실패 확인
-- GREEN: 4노드 Ready에서 PASS
-- REFACTOR: 실패 원인 메시지 표준화(`[FAIL] cause`)
+- RED: Valkey만 허용된 정책에서 repo-server fetch 실패 위험을 명시
+- GREEN: DNS(53), HTTPS(443) 허용 추가
+- REFACTOR: 정책명/계약 문구를 문서와 일치
 
-### TC-02 GitOps Contract (`verify-gitops.sh`)
+### TC-02 AppProject Least Privilege
 
-- RED: `root-platform` path/revision 불일치 시 실패
-- GREEN: `gitops/apps/root`, `main` 일치 시 PASS
-- REFACTOR: 건강성 체크 로직 재사용 가능 구조 유지
+- RED: `namespaceResourceWhitelist * / *` 검출 시 실패
+- GREEN: 최소 allow-list 리소스만 허용
+- REFACTOR: 신규 리소스 추가 절차를 운영 정책으로 분리
 
-### TC-03 Secret Plane (`verify-secrets.sh`)
+### TC-03 Static Contract Script
 
-- RED: `vault-backend`/`argocd-external-valkey` Ready=False 시 실패
-- GREEN: Ready=True 및 role/SA 참조 일치 시 PASS
-- REFACTOR: role/SA 검증을 명시 조건으로 고정
+- RED: root app path/revision, external service 계약, TLS 계약, Vault policy, wildcard 금지 중 하나라도 불일치 시 실패
+- GREEN: `verify-contracts-static.sh` PASS
+- REFACTOR: 실패 메시지 `[FAIL] cause` 표준 유지
 
-### TC-04 External Services (`verify-external-services.sh`)
+### TC-04 Workflow Security
 
-- RED: 서비스/포트/EndpointSlice 주소 불일치 시 실패
-- GREEN: Vault/Postgres/Valkey 계약 일치 시 PASS
-- REFACTOR: ExternalName 의존 제거 후 EndpointSlice 검증 일원화
+- RED: `.github/workflows/**` 변경 시 보안 검증 누락
+- GREEN: `actionlint`, `zizmor` 잡 강제
+- REFACTOR: `ci-summary`에서 집계 실패 기준 일원화
 
-### TC-05 Network Policies (`verify-network-policies.sh`)
+### TC-05 Shell Static
 
-- RED: `argocd`/`external-secrets` 정책 누락 시 실패
-- GREEN: CIDR/포트(172.30.0.12:26379, 172.30.0.10:8200) 일치 시 PASS
-- REFACTOR: 정책명/검증 키를 계약화
+- RED: shell 문법 오류/취약 패턴 누락
+- GREEN: `bash -n`, `shellcheck` 통과
+- REFACTOR: 대상 경로를 `infrastructure/**/*.sh`, `scripts/**/*.sh`로 고정
 
-### TC-06 Runbook Regression (`0002 runbook`)
+### TC-06 Runtime Regression
 
-- RED: 복구 절차 후 Degraded 지속 시 실패
-- GREEN: Store/ExternalSecret/App 상태 정상화 시 PASS
-- REFACTOR: 증적 수집 항목 표준화
-
-### TC-07 TLS/Ingress Contract (`verify-ingress-tls.sh`)
-
-- RED: ingress host/secret/service type 불일치 시 실패
-- GREEN: `argocd.127.0.0.1.nip.io`, `argocd-local-tls`, `LoadBalancer`, HTTPS 응답 확인 시 PASS
-- REFACTOR: Traefik 443 검증을 옵션 게이트(`CHECK_TRAEFIK_443=true`)로 분리
+- RED: 런타임 계약 검증 누락
+- GREEN: `run-all.sh` + `verify-ingress-tls.sh` PASS
+- REFACTOR: CI 정적 검증과 런타임 검증을 분리 운영
 
 ## Verification Summary
 
-- **Test Commands**:
-  - `./infrastructure/tests/verify-cluster.sh`
-  - `./infrastructure/tests/verify-gitops.sh`
-  - `./infrastructure/tests/verify-secrets.sh`
-  - `./infrastructure/tests/verify-external-services.sh`
-  - `./infrastructure/tests/verify-network-policies.sh`
-  - `./infrastructure/tests/verify-ingress-tls.sh`
-- **Eval Commands**:
+- **Static**:
+  - `bash -n infrastructure/bootstrap-local.sh infrastructure/tests/*.sh`
+  - `./infrastructure/tests/verify-contracts-static.sh`
+- **Runtime**:
   - `./infrastructure/tests/run-all.sh`
-- **Logs / Evidence Location**:
-  - `docs/09.runbooks/0002-argocd-eso-vault-recovery-runbook.md`
+  - `CHECK_TRAEFIK_443=true ./infrastructure/tests/verify-ingress-tls.sh`
+- **CI Security**:
+  - `actionlint`
+  - `zizmor`
+
+## Evidence Location
+
+- Scripts: `infrastructure/tests/*`
+- Workflow: `.github/workflows/ci.yml`
+- Ops 증적: [`../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md)

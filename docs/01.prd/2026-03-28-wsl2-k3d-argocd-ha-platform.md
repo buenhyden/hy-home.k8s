@@ -10,7 +10,7 @@ WSL2 개발 환경에서도 운영 수준의 재현성, 보안성, 복구 가능
 
 ## Problem Statement
 
-현재 로컬 플랫폼 운영에서는 외부 서비스 연결 계약(서비스명/포트/엔드포인트), 시크릿 동기화, ArgoCD 상태 복구 절차가 분산되어 재현성과 운영 안정성이 낮다. 문서 기반 표준과 검증 자동화가 필요하다.
+로컬 플랫폼 운영에서 외부 서비스 연결 계약, 시크릿 동기화, ArgoCD 상태 복구 절차가 분산되어 재현성과 운영 안정성이 낮다. 또한 CI가 단일 품질 게이트에 집중되어 계약 회귀를 조기에 차단하지 못한다.
 
 ## Personas
 
@@ -24,6 +24,7 @@ WSL2 개발 환경에서도 운영 수준의 재현성, 보안성, 복구 가능
 - **STORY-02**: ArgoCD App-of-Apps + ApplicationSet으로 플랫폼 컴포넌트를 자동 동기화한다.
 - **STORY-03**: ESO가 Vault에서 시크릿을 동기화해 ArgoCD/워크로드가 소비한다.
 - **STORY-04**: 외부 PostgreSQL/Valkey/Vault를 Kubernetes Service/EndpointSlice 계약으로 소비한다.
+- **STORY-05**: CI에서 변경영역 기반 정적 게이트로 계약 회귀를 클러스터 없이 탐지한다.
 
 ## Functional Requirements
 
@@ -40,38 +41,42 @@ WSL2 개발 환경에서도 운영 수준의 재현성, 보안성, 복구 가능
 - **REQ-PRD-FUN-04**: Vault 경로는 `secret/platform/argocd`, `secret/platform/postgres-app`를 표준으로 사용해야 한다.
 - **REQ-PRD-FUN-05**: 보안 통제는 RBAC 최소권한 + Vault policy(`eso-read-platform`)를 적용해야 한다.
 - **REQ-PRD-FUN-06**: 01~09 문서는 상호 상대 링크로 추적성을 유지해야 한다.
-- **REQ-PRD-FUN-07**: `argocd-local-tls` Secret은 `secrets/certs/cert.pem,key.pem`를 `bootstrap-local.sh`에서 주입하는 방식을 표준으로 사용해야 한다.
-- **REQ-PRD-FUN-07A**: ArgoCD 접속 경로는 기본 `https://argocd.127.0.0.1.nip.io`(Traefik 443), 운영 fallback `https://argocd.127.0.0.1.nip.io:8443`를 제공해야 한다.
+- **REQ-PRD-FUN-07**: `argocd-local-tls` Secret은 `secrets/certs/cert.pem,key.pem`를 `bootstrap-local.sh`에서 주입해야 한다.
+- **REQ-PRD-FUN-08**: `argocd` namespace egress는 Valkey(26379) + DNS(53/TCP,UDP) + HTTPS(443/TCP)를 허용해야 한다.
+- **REQ-PRD-FUN-09**: CI는 정적 검증 중심으로 운영하고 CD는 ArgoCD pull reconciliation 모델을 유지해야 한다.
+- **REQ-PRD-FUN-10**: CI 필수 게이트는 `pre-commit`, `manifest-static`, `workflow-security`, `shell-static`를 포함해야 한다.
 
 ## Success Criteria
 
 - **REQ-PRD-MET-01**: `vault-backend`(ClusterSecretStore) `Ready=True`.
 - **REQ-PRD-MET-02**: `argocd-external-valkey`(ExternalSecret) `Ready=True`.
-- **REQ-PRD-MET-03**: `platform-eso-config`, `platform-argocd-config` 앱 상태에서 `Degraded` 해소.
-- **REQ-PRD-MET-04**: 계약 포트(8200/15432/15433/26379) 회귀 없음.
+- **REQ-PRD-MET-03**: `platform-eso-config`, `platform-argocd-config` 앱 `Degraded` 해소.
+- **REQ-PRD-MET-04**: 계약 포트(8200/15432/15433/26379) 회귀 0건.
 - **REQ-PRD-MET-05**: Vault-ESO 장애 복구 목표시간(MTTR) 15분 이내.
 - **REQ-PRD-MET-06**: 보안 검증(AppProject allow-list, Vault 최소권한 정책) 통과율 100%.
-- **REQ-PRD-MET-07**: 릴리스 후 7일 내 인터페이스 회귀율 0건.
-- **REQ-PRD-MET-08**: ArgoCD TLS/Ingress 검증(`verify-ingress-tls.sh`) 회귀 0건.
+- **REQ-PRD-MET-07**: ArgoCD TLS/Ingress 검증(`verify-ingress-tls.sh`) 회귀 0건.
+- **REQ-PRD-MET-08**: CI 정적 계약 검증(`verify-contracts-static.sh`) 회귀 0건.
 
 ## Scope and Non-goals
 
 - **In Scope**:
   - WSL2 최적화 멀티노드 토폴로지 설계
   - ArgoCD/ESO/Vault/외부 DB/외부 Valkey 통합 설계
+  - 변경영역 기반 정적 CI 게이트 구현
   - 검증 스크립트 포함 운영 문서화
 - **Out of Scope**:
   - 클라우드 관리형 Kubernetes(EKS/AKS/GKE) 운영
   - 애플리케이션 비즈니스 기능 구현
 - **Non-goals**:
   - 외부 서비스 런타임(컨테이너) 자체를 본 저장소에서 기동
+  - GitHub Actions push 기반 직접 배포
 
 ## Risks, Dependencies, and Assumptions
 
 - WSL2 + Docker Desktop 자원 제한으로 인한 성능 저하 가능성.
-- EndpointSlice 수동 핫픽스는 임시 조치이므로 구조 개선 백로그 필요.
-- ArgoCD/ESO 버전 변경 시 Helm values 키 호환성 재검증 필요.
+- AppProject allow-list 축소 시 신규 리소스 도입 때 화이트리스트 업데이트 필요.
 - 인증서 SAN이 공식 호스트(`argocd.127.0.0.1.nip.io`)를 포함하지 않으면 HTTPS 접속이 실패하므로 재발급 절차가 필요.
+- CI 정적 게이트 false-positive/false-negative는 정책 예외 승인/룰 개선 루프로 관리한다.
 
 ## AI Agent Requirements (If Applicable)
 

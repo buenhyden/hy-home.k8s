@@ -1,66 +1,45 @@
-# ============================================================================
-# Dependabot Configuration for hy-home.k8s
-# ============================================================================
-# This configuration ensures all core components of the home lab are kept up-to-date.
-# Reference: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-# ============================================================================
-
 version: 2
 updates:
-  # 1. GitHub Actions
-  # Updates workflows in .github/workflows/
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: "weekly"
+      interval: weekly
     labels:
-      - "dependencies"
-      - "github-actions"
+      - dependencies
+      - github-actions
     groups:
-      actions:
+      github-actions:
         patterns:
-          - "*"
+          - '*'
     cooldown:
       default-days: 7
 
-  # 3. Docker
-  # Updates base images in apps/ and infrastructure/
-  - package-ecosystem: "docker"
-    directory: "/"
+  - package-ecosystem: docker
+    directories:
+      - /infrastructure
+      - /apps
     schedule:
-      interval: "weekly"
+      interval: weekly
     labels:
-      - "dependencies"
-      - "docker"
+      - dependencies
+      - docker
     groups:
-      actions:
+      docker-infra:
         patterns:
-          - "*"
+          - '*'
     cooldown:
       default-days: 7
 
-  # 4. Pip (Python)
-  # Updates dependencies for the demo-backend
-  - package-ecosystem: "pip"
-    directory: "/apps/_examples/demo-backend/app"
+  - package-ecosystem: pip
+    directory: /apps/_examples/demo-backend/app
     schedule:
-      interval: "weekly"
+      interval: weekly
     labels:
-      - "dependencies"
-      - "python"
-    open-pull-requests-limit: 10
+      - dependencies
+      - python
     groups:
       python-dependencies:
         patterns:
-          - "*"
+          - '*'
     cooldown:
       default-days: 7
-
-  # 5. NPM (Frontend - future use)
-  # Placeholder for when a frontend demo is added
-  # - package-ecosystem: "npm"
-  #   directory: "/"
-  #   schedule:
-  #     interval: "weekly"
-  #   reviewers:
-  #     - "buenhyden"

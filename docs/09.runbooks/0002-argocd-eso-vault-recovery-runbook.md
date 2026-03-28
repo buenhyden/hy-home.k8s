@@ -6,11 +6,11 @@
 
 ## Overview (KR)
 
-이 런북은 `ClusterSecretStore/vault-backend Ready=False` 상황에서 수동 EndpointSlice 핫픽스로 연동을 복구하고, ArgoCD/ESO 상태를 정상화하는 즉시 실행 절차를 제공한다.
+이 런북은 `ClusterSecretStore/vault-backend Ready=False` 상황에서 수동 EndpointSlice 핫픽스로 연동을 복구하고, ArgoCD/ESO 상태를 정상화한 뒤 TLS/CI 계약 회귀를 점검하는 절차를 제공한다.
 
 ## Purpose
 
-`vault-external` endpoint 부재 또는 연결 거부로 발생하는 ESO/Vault 연동 장애를 빠르게 복구한다.
+`vault-external` endpoint 부재 또는 연결 거부로 발생하는 ESO/Vault 연동 장애를 빠르게 복구하고, 계약 회귀를 방지한다.
 
 ## Canonical References
 
@@ -30,7 +30,7 @@
 
 ### Checklist
 
-- [ ] `kubectl` 컨텍스트가 대상 클러스터인지 확인
+- [ ] `kubectl` 컨텍스트 확인
 - [ ] 평문 시크릿/토큰 출력 금지
 - [ ] 복구 전 상태 스냅샷 수집
 
@@ -86,23 +86,20 @@ argocd app sync platform-eso-config
 argocd app sync platform-argocd-config
 ```
 
-5. 회귀 검증을 수행한다.
+5. 런타임 계약 회귀를 검증한다.
 
 ```bash
-kubectl -n argocd get application root-platform -o yaml | \
-  rg 'path: gitops/apps/root|targetRevision: main'
-kubectl -n platform get svc,endpointslice | \
-  rg 'postgres-(write|read)-external|15432|15433|vault-external|8200|valkey-external|172.30.0.12|26379'
 ./infrastructure/tests/verify-network-policies.sh
 ./infrastructure/tests/verify-ingress-tls.sh
+CHECK_TRAEFIK_443=true ./infrastructure/tests/verify-ingress-tls.sh
+./infrastructure/tests/run-all.sh
 ```
 
-6. 운영 경로(외부 Traefik 443)까지 포함해 TLS 회귀를 확인한다.
+6. CI 정적 계약 회귀를 검증한다.
 
 ```bash
-CHECK_TRAEFIK_443=true ./infrastructure/tests/verify-ingress-tls.sh
-curl -kI https://argocd.127.0.0.1.nip.io
-curl -kI https://argocd.127.0.0.1.nip.io:8443
+./infrastructure/tests/verify-contracts-static.sh
+bash -n infrastructure/bootstrap-local.sh infrastructure/tests/*.sh
 ```
 
 7. GitOps source gate를 확인한다(로컬 파일 수정만으로 반영되지 않음).
@@ -116,41 +113,37 @@ kubectl -n argocd get app root-platform -o yaml | \
 
 - [ ] `vault-backend Ready=True`
 - [ ] `argocd-external-valkey Ready=True`
-- [ ] `platform-eso-config`, `platform-argocd-config`에서 Degraded 해소
+- [ ] `platform-eso-config`, `platform-argocd-config` Degraded 해소
 - [ ] 포트/서비스 계약 회귀 없음
-- [ ] 네트워크 정책 계약(`argocd`/`external-secrets` egress) 통과
-- [ ] ArgoCD ingress/TLS 계약(host=`argocd.127.0.0.1.nip.io`, secret=`argocd-local-tls`) 유지
-- [ ] Traefik 443 및 fallback 8443 경로 모두 HTTPS 응답 확인
+- [ ] `argocd` egress(Valkey + DNS + HTTPS) 통과
+- [ ] ingress/TLS 계약(host=`argocd.127.0.0.1.nip.io`, secret=`argocd-local-tls`) 유지
+- [ ] Traefik 443 및 fallback 8443 HTTPS 응답 확인
+- [ ] CI 정적 계약(`verify-contracts-static.sh`) 통과
 
-## Observability and Evidence Sources
+## Troubleshooting Signatures
 
-- **Signals**: ExternalSecrets controller logs, ClusterSecretStore status, ArgoCD app health
-- **Evidence to Capture**:
-  - 전/후 상태 YAML (`ClusterSecretStore`, `ExternalSecret`, `Application`)
-  - 오류 시그니처 로그 (`connection refused`, `InvalidProviderConfig`)
-  - 검증 스크립트 결과(`run-all.sh`)
-  - TLS 증적(`verify-ingress-tls.sh`, `curl -kI` 헤더 출력)
+- `connection refused` on `vault-external.platform.svc.cluster.local:8200`
+- `InvalidProviderConfig` in ESO controller logs
+- `argocd-external-valkey SecretSyncedError`
+- TLS handshake error due to SAN mismatch (`cert.pem`)
+
+### SAN mismatch remediation
+
+```bash
+openssl x509 -in secrets/certs/cert.pem -noout -ext subjectAltName | \
+  rg '127\.0\.0\.1\.nip\.io|\*\.127\.0\.0\.1\.nip\.io'
+# 미포함 시 인증서 재발급 후 bootstrap 재실행
+./infrastructure/bootstrap-local.sh
+```
 
 ## Safe Rollback or Recovery Procedure
-
-- [ ] 수동 EndpointSlice 제거(필요 시)
 
 ```bash
 kubectl -n platform delete endpointslice vault-external-1
 ```
 
-- [ ] 기존 운영 상태로 롤백 후 근본원인 분석/백로그 등록
-- [ ] 백로그 등록 항목:
-  - EndpointSlice 수동 의존 제거 구조 개선
-  - AppProject/Vault 정책 변경 필요성 검토
-
-## Agent Operations (If Applicable)
-
-- **Prompt Rollback**: 변경 전 문서 버전으로 복귀
-- **Model Fallback**: 보수적 복구 절차 우선
-- **Tool Disable / Revoke**: 자동 변경 중단
-- **Eval Re-run**: `./infrastructure/tests/run-all.sh`
-- **Trace Capture**: `docs/06.tasks/...`에 증적 반영
+- 롤백 후 `verify-contracts-static.sh`와 `run-all.sh`를 재실행한다.
+- 동일 증상이 반복되면 Operations 예외 승인 절차를 따른다.
 
 ## Related Operational Documents
 
