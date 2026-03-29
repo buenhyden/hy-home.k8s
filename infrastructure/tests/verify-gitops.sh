@@ -18,7 +18,23 @@ rg -q 'path: gitops/apps/root' /tmp/root-platform.yaml || \
 rg -q 'targetRevision: main' /tmp/root-platform.yaml || \
   fail "root-platform targetRevision contract mismatch"
 
-app_health="$(kubectl -n argocd get app platform-eso-config -o jsonpath='{.status.health.status}' 2>/dev/null || true)"
-[ -n "$app_health" ] || fail "platform-eso-config app not found"
+check_app() {
+  local app="$1"
+  local health
+  health="$(kubectl -n argocd get app "$app" -o jsonpath='{.status.health.status}' 2>/dev/null || true)"
+  [ -n "$health" ] || fail "${app} app not found in argocd namespace"
+  echo "  - ${app}: health=${health}"
+}
 
-echo "[PASS] GitOps contract check passed (platform-eso-config health=$app_health)"
+echo "[INFO] Checking platform application presence"
+check_app "platform-eso-config"
+check_app "platform-cert-manager"
+check_app "platform-cert-manager-config"
+check_app "platform-istio-base"
+check_app "platform-istiod"
+check_app "platform-dashboard"
+check_app "platform-dashboard-config"
+check_app "platform-kiali"
+check_app "platform-kiali-config"
+
+echo "[PASS] GitOps contract check passed"

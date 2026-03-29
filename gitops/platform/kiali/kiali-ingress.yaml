@@ -6,6 +6,7 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: mkcert-ca-issuer
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    nginx.ingress.kubernetes.io/app-root: /kiali
 spec:
   ingressClassName: nginx
   rules:

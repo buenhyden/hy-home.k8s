@@ -45,6 +45,18 @@
 
 ### Procedure
 
+0. Docker Traefik 동적 설정 파일 배포
+
+   신규 호스트명(Dashboard/Kiali)에 처음 접근하는 경우, 외부 Docker Traefik에 라우터를 등록한다:
+
+   ```bash
+   # Traefik 동적 설정 마운트 경로에 파일 복사
+   cp traefik/dashboard-k3d.yaml  <traefik-dynamic-conf-dir>/
+   cp traefik/kiali-k3d.yaml      <traefik-dynamic-conf-dir>/
+   ```
+
+   ArgoCD 라우터(`argocd-k3d.yaml`)가 이미 등록된 경우 생략 가능. Traefik이 File Provider로 자동 감지한다.
+
 1. 기본 플랫폼 부트스트랩 실행
 
    ```bash

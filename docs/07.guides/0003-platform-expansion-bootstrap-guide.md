@@ -71,6 +71,27 @@ nc -z 172.19.0.24 3000  && echo "grafana OK"     # Kiali용
 
 ## Step-by-step Instructions
 
+### 0. Docker Traefik 동적 설정 배포 (신규 호스트명 필요 시)
+
+Dashboard(`k8s-dashboard.127.0.0.1.nip.io`)와 Kiali(`kiali.127.0.0.1.nip.io`)에 접근하려면
+외부 Docker Traefik에 라우팅 파일이 등록되어 있어야 한다.
+
+```bash
+# Docker Traefik의 동적 설정 마운트 경로 확인 (예시)
+# docker inspect <traefik-container> | jq '.[].Mounts'
+
+# traefik/ 디렉토리의 라우팅 파일을 동적 설정 디렉토리에 복사
+cp traefik/dashboard-k3d.yaml  <traefik-dynamic-conf-dir>/
+cp traefik/kiali-k3d.yaml      <traefik-dynamic-conf-dir>/
+# argocd-k3d.yaml은 이미 배포되어 있으면 생략 가능
+
+# Traefik이 파일 변경을 자동 감지함 (File Provider)
+# 신규 라우터 등록 확인: Traefik 대시보드 또는 로그 확인
+```
+
+> **Note**: Traefik 라우팅 파일은 외부 관리 대상이며 이 repo에서 직접 배포하지 않는다.
+> `traefik/*.yaml`은 참조 복사본이다 (운영 정책: `0003-service-mesh-cert-manager-policy.md` §Traefik Router 계약).
+
 ### 1. 기존 플랫폼 부트스트랩 (변경 없음)
 
 ```bash
