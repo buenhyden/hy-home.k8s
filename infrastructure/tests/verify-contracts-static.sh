@@ -61,7 +61,7 @@ require_pattern '172\.19\.0\.9' "$VAULT_EXTERNAL"
 
 require_pattern 'name:\s*valkey-external' "$VALKEY_EXTERNAL"
 require_pattern 'name:\s*valkey-external-1' "$VALKEY_EXTERNAL"
-require_pattern 'port:\s*26379' "$VALKEY_EXTERNAL"
+require_pattern 'port:\s*6379' "$VALKEY_EXTERNAL"
 require_pattern '172\.19\.0\.12' "$VALKEY_EXTERNAL"
 
 echo "[INFO] verify ArgoCD host/TLS/ingress contracts"

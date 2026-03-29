@@ -23,7 +23,7 @@ argocd_np_ip="$(kubectl -n argocd get networkpolicy allow-argocd-egress-to-exter
 [ "$argocd_np_ip" = "172.19.0.12/32" ] || fail "argocd valkey egress cidr mismatch (actual=$argocd_np_ip)"
 
 argocd_np_port="$(kubectl -n argocd get networkpolicy allow-argocd-egress-to-external-valkey -o jsonpath='{.spec.egress[0].ports[0].port}' 2>/dev/null || true)"
-[ "$argocd_np_port" = "26379" ] || fail "argocd valkey egress port mismatch (actual=$argocd_np_port)"
+[ "$argocd_np_port" = "6379" ] || fail "argocd valkey egress port mismatch (actual=$argocd_np_port)"
 
 # external-secrets namespace policy for vault
 eso_np="$(kubectl -n external-secrets get networkpolicy allow-external-secrets-egress-to-vault -o name 2>/dev/null || true)"

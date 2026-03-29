@@ -28,10 +28,10 @@ vault_port="$(kubectl -n platform get svc vault-external -o jsonpath='{.spec.por
 [ "$vault_port" = "8200" ] || fail "vault-external port mismatch (actual=$vault_port)"
 
 valkey_port="$(kubectl -n platform get svc valkey-external -o jsonpath='{.spec.ports[0].port}' 2>/dev/null || true)"
-[ "$valkey_port" = "26379" ] || fail "valkey-external port mismatch (actual=$valkey_port)"
+[ "$valkey_port" = "6379" ] || fail "valkey-external port mismatch (actual=$valkey_port)"
 
 valkey_ep_port="$(kubectl -n platform get endpointslice valkey-external-1 -o jsonpath='{.ports[0].port}' 2>/dev/null || true)"
-[ "$valkey_ep_port" = "26379" ] || fail "valkey EndpointSlice port mismatch (actual=$valkey_ep_port)"
+[ "$valkey_ep_port" = "6379" ] || fail "valkey EndpointSlice port mismatch (actual=$valkey_ep_port)"
 
 valkey_ep_addr="$(kubectl -n platform get endpointslice valkey-external-1 -o jsonpath='{.endpoints[0].addresses[0]}' 2>/dev/null || true)"
 [ "$valkey_ep_addr" = "172.19.0.12" ] || fail "valkey EndpointSlice address mismatch (actual=$valkey_ep_addr)"
