@@ -3,7 +3,7 @@
 ## Overview (KR)
 
 이 ADR은 외부 서비스 접근 모델과 ArgoCD 백엔드를 외부 Valkey로 구성하는 결정을 기록한다.
-**2026-03-29 갱신**: Valkey 접근 모델을 `ExternalName Service`에서 `Service + EndpointSlice`로 정정하고, IP 대역을 `172.19.0.x`로 갱신한다. Vault도 동일 패턴으로 통일한다.
+**2026-03-29 갱신**: Valkey 접근 모델을 `ExternalName Service`에서 `Service + EndpointSlice`로 정정하고, IP 대역을 `172.19.0.x`로 갱신한다. Vault도 동일 패턴으로 통일한다. Valkey K8s-side 포트를 컨테이너 내부 포트(`6379`)로 정정한다(`26379`는 Docker host publish 포트로 호스트 접근 전용).
 
 ## Context
 
@@ -15,9 +15,9 @@ ADR-0005(WSL2 HA Baseline) 구현 이후 실제 Valkey 접근 모델이 `Externa
 - **PostgreSQL**, **Valkey**, **Vault** 모두 `Service + EndpointSlice(고정 IP)` 패턴을 사용한다.
   - `postgres-write-external`: `172.19.0.11:15432`
   - `postgres-read-external`: `172.19.0.11:15433`
-  - `valkey-external`: `172.19.0.12:26379`
+  - `valkey-external`: `172.19.0.12:6379` (K8s EndpointSlice 대상 포트; Docker host publish `26379:6379`는 호스트 접근 전용)
   - `vault-external`: `172.19.0.9:8200`
-- ArgoCD Redis 계층은 외부 Valkey(`valkey-external.platform.svc.cluster.local:26379`)를 사용한다.
+- ArgoCD Redis 계층은 외부 Valkey(`valkey-external.platform.svc.cluster.local:6379`)를 사용한다.
 - Valkey 접근은 ACL 비밀번호 + NetworkPolicy 제한을 필수로 한다.
 - 모든 외부 서비스 Service는 `platform` namespace에 배치한다.
 - Vault Agent(`172.19.0.10`)는 K8s 인터페이스 불필요 — ESO는 `vault-external:8200`(Vault 자체)만 참조한다.
