@@ -24,3 +24,15 @@ if [ "$ready_count" -lt 4 ]; then
 fi
 
 echo "[PASS] cluster topology check passed (nodes=$node_count, ready=$ready_count)"
+
+echo "[INFO] Checking MetalLB readiness"
+metallb_ready="$(kubectl -n metallb-system get deploy controller \
+  -o jsonpath='{.status.readyReplicas}' 2>/dev/null || true)"
+[ "${metallb_ready:-0}" -ge 1 ] || \
+  fail "metallb controller is not ready (readyReplicas=${metallb_ready:-0})"
+
+ip_pool="$(kubectl get ipaddresspool -n metallb-system local-services \
+  -o jsonpath='{.spec.addresses[0]}' 2>/dev/null || true)"
+[ -n "$ip_pool" ] || fail "MetalLB IPAddressPool 'local-services' not found"
+
+echo "[PASS] MetalLB ready (pool=$ip_pool)"

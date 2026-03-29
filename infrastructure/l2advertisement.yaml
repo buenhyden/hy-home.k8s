@@ -1,8 +1,8 @@
 apiVersion: metallb.io/v1beta1
-kind: IPAddressPool
+kind: L2Advertisement
 metadata:
   name: local-services
   namespace: metallb-system
 spec:
-  addresses:
-    - 172.18.0.240-172.18.0.250
+  ipAddressPools:
+    - local-services

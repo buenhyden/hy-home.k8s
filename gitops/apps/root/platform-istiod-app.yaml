@@ -1,31 +1,38 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: platform-ingress-nginx
+  name: platform-istiod
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: '2'
 spec:
   project: platform
   source:
-    repoURL: https://kubernetes.github.io/ingress-nginx
-    chart: ingress-nginx
-    targetRevision: 4.12.0
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: istiod
+    targetRevision: 1.25.2
     helm:
-      releaseName: ingress-nginx
+      releaseName: istiod
       values: |
-        controller:
-          service:
-            type: LoadBalancer
+        pilot:
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+        meshConfig:
+          defaultConfig:
+            holdApplicationUntilProxyStarts: false
   destination:
     server: https://kubernetes.default.svc
-    namespace: ingress-nginx
+    namespace: istio-system
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
       - ServerSideApply=true
     retry:
       limit: 3

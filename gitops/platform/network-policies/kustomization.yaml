@@ -4,3 +4,4 @@ resources:
   - egress-to-external-services.yaml
   - argocd-egress-to-external-valkey.yaml
   - external-secrets-egress-to-vault.yaml
+  - kiali-egress-to-observability.yaml

@@ -34,6 +34,6 @@ valkey_ep_port="$(kubectl -n platform get endpointslice valkey-external-1 -o jso
 [ "$valkey_ep_port" = "26379" ] || fail "valkey EndpointSlice port mismatch (actual=$valkey_ep_port)"
 
 valkey_ep_addr="$(kubectl -n platform get endpointslice valkey-external-1 -o jsonpath='{.endpoints[0].addresses[0]}' 2>/dev/null || true)"
-[ "$valkey_ep_addr" = "172.30.0.12" ] || fail "valkey EndpointSlice address mismatch (actual=$valkey_ep_addr)"
+[ "$valkey_ep_addr" = "172.19.0.12" ] || fail "valkey EndpointSlice address mismatch (actual=$valkey_ep_addr)"
 
 echo "[PASS] external service contract checks passed"

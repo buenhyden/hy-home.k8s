@@ -1,19 +1,33 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-argocd-egress-to-external-valkey
-  namespace: argocd
+  name: allow-kiali-egress-to-observability
+  namespace: istio-system
 spec:
-  podSelector: {}
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: kiali
   policyTypes:
     - Egress
   egress:
     - to:
         - ipBlock:
-            cidr: 172.19.0.12/32
+            cidr: 172.19.0.20/32
       ports:
         - protocol: TCP
-          port: 26379
+          port: 9090
+    - to:
+        - ipBlock:
+            cidr: 172.19.0.24/32
+      ports:
+        - protocol: TCP
+          port: 3000
+    - to:
+        - ipBlock:
+            cidr: 172.19.0.22/32
+      ports:
+        - protocol: TCP
+          port: 3200
     - to:
         - namespaceSelector:
             matchLabels:
@@ -26,9 +40,3 @@ spec:
           port: 53
         - protocol: TCP
           port: 53
-    - to:
-        - ipBlock:
-            cidr: 0.0.0.0/0
-      ports:
-        - protocol: TCP
-          port: 443

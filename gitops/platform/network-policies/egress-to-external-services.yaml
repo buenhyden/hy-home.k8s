@@ -10,13 +10,13 @@ spec:
   egress:
     - to:
         - ipBlock:
-            cidr: 172.30.0.10/32
+            cidr: 172.19.0.9/32
       ports:
         - protocol: TCP
           port: 8200
     - to:
         - ipBlock:
-            cidr: 172.30.0.11/32
+            cidr: 172.19.0.11/32
       ports:
         - protocol: TCP
           port: 15432
@@ -24,7 +24,7 @@ spec:
           port: 15433
     - to:
         - ipBlock:
-            cidr: 172.30.0.12/32
+            cidr: 172.19.0.12/32
       ports:
         - protocol: TCP
           port: 26379

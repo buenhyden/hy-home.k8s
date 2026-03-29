@@ -1,10 +1,18 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - platform-argocd-config-app.yaml
   - platform-namespaces-app.yaml
   - platform-external-services-app.yaml
   - platform-network-policies-app.yaml
+  - platform-external-secrets-operator-app.yaml
+  - platform-cert-manager-app.yaml
+  - platform-istio-base-app.yaml
   - platform-eso-config-app.yaml
   - platform-ingress-nginx-app.yaml
-  - platform-external-secrets-operator-app.yaml
+  - platform-cert-manager-config-app.yaml
+  - platform-istiod-app.yaml
+  - platform-dashboard-app.yaml
+  - platform-argocd-config-app.yaml
+  - platform-dashboard-config-app.yaml
+  - platform-kiali-app.yaml
+  - platform-kiali-config-app.yaml

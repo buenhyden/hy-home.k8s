@@ -10,13 +10,14 @@ CERT_DIR="${CERT_DIR:-$ROOT_DIR/secrets/certs}"
 CERT_FILE="${CERT_FILE:-$CERT_DIR/cert.pem}"
 KEY_FILE="${KEY_FILE:-$CERT_DIR/key.pem}"
 ROOT_CA_FILE="${ROOT_CA_FILE:-$CERT_DIR/rootCA.pem}"
+ROOT_CA_KEY_FILE="${ROOT_CA_KEY_FILE:-$CERT_DIR/rootCA-key.pem}"
 VAULT_ADDR="${VAULT_ADDR:-https://vault.127.0.0.1.nip.io}"
 VAULT_SKIP_VERIFY="${VAULT_SKIP_VERIFY:-true}"
-POSTGRES_WRITE_ADDR="${POSTGRES_WRITE_ADDR:-172.30.0.11}"
+POSTGRES_WRITE_ADDR="${POSTGRES_WRITE_ADDR:-172.19.0.11}"
 POSTGRES_WRITE_PORT="${POSTGRES_WRITE_PORT:-15432}"
-POSTGRES_READ_ADDR="${POSTGRES_READ_ADDR:-172.30.0.11}"
+POSTGRES_READ_ADDR="${POSTGRES_READ_ADDR:-172.19.0.11}"
 POSTGRES_READ_PORT="${POSTGRES_READ_PORT:-15433}"
-VALKEY_ADDR="${VALKEY_ADDR:-172.30.0.12}"
+VALKEY_ADDR="${VALKEY_ADDR:-172.19.0.12}"
 VALKEY_PORT="${VALKEY_PORT:-26379}"
 
 port_in_use() {
@@ -29,7 +30,7 @@ fail() {
   exit 1
 }
 
-for cmd in k3d kubectl helm docker curl jq openssl; do
+for cmd in k3d kubectl helm docker curl jq openssl rg; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     fail "required command not found: $cmd"
   fi
@@ -56,6 +57,17 @@ check_tcp_dependency() {
   else
     echo "[FAIL] ${name} is not reachable at ${host}:${port}" >&2
     return 1
+  fi
+}
+
+warn_tcp_dependency() {
+  local name="$1"
+  local host="$2"
+  local port="$3"
+  if timeout 3 bash -c ":</dev/tcp/${host}/${port}" >/dev/null 2>&1; then
+    echo "  - ${name}: ${host}:${port} reachable"
+  else
+    echo "[WARN] ${name} is not reachable at ${host}:${port} (observability, non-critical)" >&2
   fi
 }
 
@@ -136,13 +148,13 @@ if ! k3d cluster list 2>/dev/null | awk 'NR>1 {print $1}' | grep -qx "$CLUSTER_N
     -e "s/port: 443:443/port: ${K3D_HTTPS_PORT}:443/" \
     "$ROOT_DIR/infrastructure/k3d/k3d-cluster.yaml" >"$K3D_CONFIG_TMP"
 
-  echo "[1/9] Create k3d cluster"
+  echo "[1/11] Create k3d cluster"
   k3d cluster create --config "$K3D_CONFIG_TMP"
 else
-  echo "[1/9] Reuse existing k3d cluster: $CLUSTER_NAME"
+  echo "[1/11] Reuse existing k3d cluster: $CLUSTER_NAME"
 fi
 
-echo "[2/9] Validate external dependencies"
+echo "[2/11] Validate external dependencies"
 wait_for_vault_ready
 check_tcp_dependency "postgres-write" "$POSTGRES_WRITE_ADDR" "$POSTGRES_WRITE_PORT"
 check_tcp_dependency "postgres-read" "$POSTGRES_READ_ADDR" "$POSTGRES_READ_PORT"
@@ -164,46 +176,61 @@ if docker inspect "k3d-${CLUSTER_NAME}-serverlb" >/dev/null 2>&1; then
   fi
 fi
 
-echo "[3/9] Validate TLS certificate inputs"
+echo "[3/11] Validate TLS certificate inputs"
 require_file "$CERT_FILE"
 require_file "$KEY_FILE"
+require_file "$ROOT_CA_FILE"
+require_file "$ROOT_CA_KEY_FILE"
 validate_cert_for_host "$CERT_FILE" "$ARGOCD_HOST"
 
-echo "[4/9] External services are managed in a separate workspace/repo"
+echo "[4/11] Pre-check observability endpoints (warn-only)"
+warn_tcp_dependency "prometheus" "172.19.0.20" "9090"
+warn_tcp_dependency "grafana" "172.19.0.24" "3000"
+warn_tcp_dependency "tempo" "172.19.0.22" "3200"
 
-echo "[5/9] Create argocd namespace"
+echo "[5/11] Install MetalLB and configure IP pool"
+helm repo add metallb https://metallb.github.io/metallb
+helm repo update metallb
+helm upgrade --install metallb metallb/metallb \
+  -n metallb-system --create-namespace \
+  --wait --timeout=120s
+kubectl apply -f "$ROOT_DIR/infrastructure/ipaddresspool.yaml"
+kubectl apply -f "$ROOT_DIR/infrastructure/l2advertisement.yaml"
+
+echo "[6/11] Bootstrap argocd namespace and secrets"
 kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
-
-echo "[6/9] Create ArgoCD external Valkey secret"
 kubectl -n argocd create secret generic argocd-external-valkey \
   --from-literal=redis-password="$VALKEY_PASSWORD" \
   --dry-run=client -o yaml | kubectl apply -f -
-
-echo "[7/9] Create ArgoCD ingress TLS secret from local certs"
 kubectl -n argocd create secret tls argocd-local-tls \
   --cert="$CERT_FILE" \
   --key="$KEY_FILE" \
   --dry-run=client -o yaml | kubectl apply -f -
 
-echo "[8/9] Validate Vault KV for ESO sync"
+echo "[7/11] Bootstrap cert-manager prerequisites"
+kubectl create namespace cert-manager --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n cert-manager create secret tls mkcert-root-ca \
+  --cert="$ROOT_CA_FILE" \
+  --key="$ROOT_CA_KEY_FILE" \
+  --dry-run=client -o yaml | kubectl apply -f -
 
-echo "[9/9] Install ArgoCD via Helm"
+echo "[8/11] Install ArgoCD via Helm"
 helm repo add argo https://argoproj.github.io/argo-helm
-helm repo update
+helm repo update argo
 helm upgrade --install argocd argo/argo-cd \
   -n argocd \
   -f "$ROOT_DIR/infrastructure/argocd/values-local.yaml"
 
-echo "[INFO] Apply GitOps bootstrap resources"
+echo "[9/11] Apply GitOps bootstrap resources"
 kubectl apply -f "$ROOT_DIR/gitops/clusters/local/appproject-platform.yaml"
 kubectl apply -f "$ROOT_DIR/gitops/clusters/local/appproject-apps.yaml"
 kubectl apply -f "$ROOT_DIR/gitops/clusters/local/applicationset-apps.yaml"
 kubectl apply -f "$ROOT_DIR/gitops/clusters/local/root-application.yaml"
 
-echo "[INFO] Wait for ArgoCD control-plane readiness"
+echo "[10/11] Wait for ArgoCD control-plane readiness"
 kubectl -n argocd wait --for=condition=available deployment --all --timeout=180s
 
-echo "Done"
+echo "[11/11] Done"
 if [ "$K3D_HTTPS_PORT" = "443" ]; then
   echo "ArgoCD URL: https://$ARGOCD_HOST (Traefik 443 경유)"
 else

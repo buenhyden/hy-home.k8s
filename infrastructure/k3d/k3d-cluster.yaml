@@ -7,7 +7,7 @@ servers: 1
 agents: 3
 kubeAPI:
   host: 0.0.0.0
-  hostPort: "6550"
+  hostPort: '6550'
 ports:
   - port: 80:80
     nodeFilters:
@@ -18,9 +18,12 @@ ports:
 options:
   k3d:
     wait: true
-    timeout: "120s"
+    timeout: '180s'
   k3s:
     extraArgs:
       - arg: --disable=traefik
+        nodeFilters:
+          - server:*
+      - arg: --disable=servicelb
         nodeFilters:
           - server:*

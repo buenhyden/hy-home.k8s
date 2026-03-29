@@ -1,0 +1,57 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-kiali
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: '3'
+spec:
+  project: platform
+  source:
+    repoURL: https://kiali.io/helm-charts
+    chart: kiali-server
+    targetRevision: 2.6.0
+    helm:
+      releaseName: kiali
+      values: |
+        cr:
+          create: true
+          spec:
+            auth:
+              strategy: "anonymous"
+            external_services:
+              prometheus:
+                url: "http://172.19.0.20:9090"
+              grafana:
+                enabled: true
+                in_cluster_url: "http://172.19.0.24:3000"
+                url: "http://172.19.0.24:3000"
+              tracing:
+                enabled: true
+                provider: "tempo"
+                in_cluster_url: "http://172.19.0.22:3200"
+                use_grpc: false
+            server:
+              web_root: "/kiali"
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: istio-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m

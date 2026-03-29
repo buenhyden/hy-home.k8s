@@ -1,25 +1,21 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: platform-ingress-nginx
+  name: platform-istio-base
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: '2'
+    argocd.argoproj.io/sync-wave: '1'
 spec:
   project: platform
   source:
-    repoURL: https://kubernetes.github.io/ingress-nginx
-    chart: ingress-nginx
-    targetRevision: 4.12.0
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: base
+    targetRevision: 1.25.2
     helm:
-      releaseName: ingress-nginx
-      values: |
-        controller:
-          service:
-            type: LoadBalancer
+      releaseName: istio-base
   destination:
     server: https://kubernetes.default.svc
-    namespace: ingress-nginx
+    namespace: istio-system
   syncPolicy:
     automated:
       prune: true

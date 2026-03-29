@@ -5,6 +5,9 @@ configs:
   params:
     server.insecure: true
 
+dex:
+  enabled: false
+
 redis:
   enabled: false
 
@@ -30,5 +33,9 @@ controller:
     enabled: true
 
 repoServer:
+  metrics:
+    enabled: true
+
+applicationSet:
   metrics:
     enabled: true

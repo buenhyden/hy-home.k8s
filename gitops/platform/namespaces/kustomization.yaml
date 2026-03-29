@@ -5,3 +5,6 @@ resources:
   - namespace-apps.yaml
   - namespace-ingress-nginx.yaml
   - namespace-external-secrets.yaml
+  - namespace-cert-manager.yaml
+  - namespace-kubernetes-dashboard.yaml
+  - namespace-istio-system.yaml
