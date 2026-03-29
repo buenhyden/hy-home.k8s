@@ -87,7 +87,8 @@
 
 ## 문서 인덱스
 
-| 문서 | 설명 | 상태 | 최종 수정 |
-| --- | --- | --- | --- |
-| [`0001-wsl-k3d-argocd-bootstrap-guide.md`](./0001-wsl-k3d-argocd-bootstrap-guide.md) | 외부 서비스 분리 운영 + Vault 기반 부트스트랩/검증 가이드 | Active | 2026-03-27 |
-| [`0002-wsl2-k3d-argocd-ha-setup-guide.md`](./0002-wsl2-k3d-argocd-ha-setup-guide.md) | WSL2 멀티노드 HA + TLS + 런타임/CI 정적 검증 절차를 분리한 운영 가이드 | Active | 2026-03-28 |
+| 문서                                                                                         | 설명                                                                   | 상태   | 최종 수정  |
+| -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------ | ---------- |
+| [`0001-wsl-k3d-argocd-bootstrap-guide.md`](./0001-wsl-k3d-argocd-bootstrap-guide.md)         | 외부 서비스 분리 운영 + Vault 기반 부트스트랩/검증 가이드              | Active | 2026-03-27 |
+| [`0002-wsl2-k3d-argocd-ha-setup-guide.md`](./0002-wsl2-k3d-argocd-ha-setup-guide.md)         | WSL2 멀티노드 HA + TLS + 런타임/CI 정적 검증 절차를 분리한 운영 가이드 | Active | 2026-03-28 |
+| [`0003-platform-expansion-bootstrap-guide.md`](./0003-platform-expansion-bootstrap-guide.md) | cert-manager/Dashboard/Istio/Kiali 포함 확장 플랫폼 부트스트랩 가이드  | Active | 2026-03-29 |

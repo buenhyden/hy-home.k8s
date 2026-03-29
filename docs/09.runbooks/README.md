@@ -108,7 +108,8 @@
 
 ## 문서 인덱스
 
-| 문서 | 설명 | 상태 | 최종 수정 |
-| --- | --- | --- | --- |
-| [`0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md) | 검증 커맨드 기반 부트스트랩/트러블슈팅/복구 런북 | Active | 2026-03-27 |
-| [`0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md) | Vault-ESO 복구 + TLS/Ingress + CI 정적 계약 회귀/증적 검증 런북 | Active | 2026-03-28 |
+| 문서                                                                                             | 설명                                                              | 상태   | 최종 수정  |
+| ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- | ------ | ---------- |
+| [`0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)       | 검증 커맨드 기반 부트스트랩/트러블슈팅/복구 런북                  | Active | 2026-03-27 |
+| [`0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)       | Vault-ESO 복구 + TLS/Ingress + CI 정적 계약 회귀/증적 검증 런북   | Active | 2026-03-28 |
+| [`0003-platform-expansion-bootstrap-runbook.md`](./0003-platform-expansion-bootstrap-runbook.md) | cert-manager/Dashboard/Istio/Kiali 부트스트랩 및 증상별 복구 런북 | Active | 2026-03-29 |

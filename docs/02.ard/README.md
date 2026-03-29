@@ -30,7 +30,8 @@
 
 ## 문서 인덱스
 
-| 문서 | 설명 | 상태 | 최종 수정 |
-| --- | --- | --- | --- |
-| [`0001-wsl-k3d-argocd-platform.md`](./0001-wsl-k3d-argocd-platform.md) | WSL2 k3d/k3s GitOps 플랫폼 참조 아키텍처 | Draft | 2026-03-27 |
-| [`0002-wsl2-k3d-argocd-ha-platform.md`](./0002-wsl2-k3d-argocd-ha-platform.md) | WSL2 멀티노드 HA + Traefik↔k3d TLS 경계 + CI 정적 게이트 계층을 포함한 참조 아키텍처 | Draft | 2026-03-28 |
+| 문서                                                                                       | 설명                                                                                 | 상태  | 최종 수정  |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ----- | ---------- |
+| [`0001-wsl-k3d-argocd-platform.md`](./0001-wsl-k3d-argocd-platform.md)                     | WSL2 k3d/k3s GitOps 플랫폼 참조 아키텍처                                             | Draft | 2026-03-27 |
+| [`0002-wsl2-k3d-argocd-ha-platform.md`](./0002-wsl2-k3d-argocd-ha-platform.md)             | WSL2 멀티노드 HA + Traefik↔k3d TLS 경계 + CI 정적 게이트 계층을 포함한 참조 아키텍처 | Draft | 2026-03-28 |
+| [`0003-platform-expansion-mesh-dashboard.md`](./0003-platform-expansion-mesh-dashboard.md) | cert-manager/Dashboard/Istio/Kiali 추가 + IP 수정을 포함한 플랫폼 확장 참조 아키텍처 | Draft | 2026-03-29 |

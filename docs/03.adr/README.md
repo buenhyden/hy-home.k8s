@@ -36,10 +36,14 @@
 
 ## 문서 인덱스
 
-| 문서 | 설명 | 상태 | 최종 수정 |
-| --- | --- | --- | --- |
-| [`0001-k3d-topology-and-network.md`](./0001-k3d-topology-and-network.md) | k3d 토폴로지와 외부 네트워크 기준 결정 | Accepted | 2026-03-27 |
-| [`0002-argocd-helm-and-gitops-model.md`](./0002-argocd-helm-and-gitops-model.md) | ArgoCD Helm 설치와 GitOps 모델 결정 | Accepted | 2026-03-27 |
-| [`0003-eso-vault-k8s-auth.md`](./0003-eso-vault-k8s-auth.md) | ESO + Vault Kubernetes Auth 시크릿 패턴 결정 | Accepted | 2026-03-27 |
-| [`0004-external-services-endpoints-and-valkey-backend.md`](./0004-external-services-endpoints-and-valkey-backend.md) | 외부 서비스 접근 모델(PostgreSQL EndpointSlice, Valkey ExternalName, Vault 외부 URL)과 ArgoCD Valkey 백엔드 결정 | Accepted | 2026-03-27 |
-| [`0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](./0005-wsl2-ha-baseline-and-external-endpoint-contract.md) | Valkey/TLS/최소권한 계약과 CI 정적 게이트 강화 + CD pull 모델 유지 결정을 기록한 ADR | Accepted | 2026-03-28 |
+| 문서                                                                                                                   | 설명                                                                                                             | 상태     | 최종 수정  |
+| ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | -------- | ---------- |
+| [`0001-k3d-topology-and-network.md`](./0001-k3d-topology-and-network.md)                                               | k3d 토폴로지와 외부 네트워크 기준 결정                                                                           | Accepted | 2026-03-27 |
+| [`0002-argocd-helm-and-gitops-model.md`](./0002-argocd-helm-and-gitops-model.md)                                       | ArgoCD Helm 설치와 GitOps 모델 결정                                                                              | Accepted | 2026-03-27 |
+| [`0003-eso-vault-k8s-auth.md`](./0003-eso-vault-k8s-auth.md)                                                           | ESO + Vault Kubernetes Auth 시크릿 패턴 결정                                                                     | Accepted | 2026-03-27 |
+| [`0004-external-services-endpoints-and-valkey-backend.md`](./0004-external-services-endpoints-and-valkey-backend.md)   | 외부 서비스 접근 모델(PostgreSQL EndpointSlice, Valkey ExternalName, Vault 외부 URL)과 ArgoCD Valkey 백엔드 결정 | Accepted | 2026-03-27 |
+| [`0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](./0005-wsl2-ha-baseline-and-external-endpoint-contract.md) | Valkey/TLS/최소권한 계약과 CI 정적 게이트 강화 + CD pull 모델 유지 결정을 기록한 ADR                             | Accepted | 2026-03-28 |
+| [`0006-cert-manager-mkcert-ca-issuer.md`](./0006-cert-manager-mkcert-ca-issuer.md)                                     | cert-manager + mkcert rootCA ClusterIssuer 도입 결정                                                             | Accepted | 2026-03-29 |
+| [`0007-kubernetes-dashboard-v3.md`](./0007-kubernetes-dashboard-v3.md)                                                 | Kubernetes Dashboard v3 Helm 설치 및 k8s-dashboard.127.0.0.1.nip.io 노출 결정                                    | Accepted | 2026-03-29 |
+| [`0008-istio-install-and-ingress-coexist.md`](./0008-istio-install-and-ingress-coexist.md)                             | Istio v1.25.x 설치(IngressGateway 비활성, ingress-nginx 공존) 결정                                               | Accepted | 2026-03-29 |
+| [`0009-kiali-external-observability.md`](./0009-kiali-external-observability.md)                                       | Kiali v2.6.x + 외부 Prometheus/Grafana/Tempo 연동 결정                                                           | Accepted | 2026-03-29 |

@@ -1,0 +1,219 @@
+# Platform Expansion Bootstrap Runbook
+
+: WSL2 k3d Platform — cert-manager / Dashboard / Istio / Kiali
+
+## Overview (KR)
+
+이 런북은 cert-manager, Kubernetes Dashboard, Istio, Kiali가 추가된 확장 플랫폼을 부트스트랩하거나 복구하기 위한 즉시 실행 가능한 체크리스트와 증상별 복구 절차를 제공한다.
+
+## Purpose
+
+플랫폼 확장 컴포넌트의 부트스트랩 단계를 재현 가능하게 수행하고, 장애 발생 시 원인별 복구 명령을 제공한다.
+
+## Canonical References
+
+- [`../04.specs/003-platform-expansion/spec.md`](../04.specs/003-platform-expansion/spec.md)
+- [`../07.guides/0003-platform-expansion-bootstrap-guide.md`](../07.guides/0003-platform-expansion-bootstrap-guide.md)
+- [`../08.operations/0003-service-mesh-cert-manager-policy.md`](../08.operations/0003-service-mesh-cert-manager-policy.md)
+- [`../03.adr/0006-cert-manager-mkcert-ca-issuer.md`](../03.adr/0006-cert-manager-mkcert-ca-issuer.md)
+
+## When to Use
+
+- 신규 플랫폼 확장 컴포넌트 설치
+- WSL2 재시작 또는 k3d 클러스터 재생성 후 복구
+- cert-manager ClusterIssuer NotReady 복구
+- Dashboard Token 만료 또는 접근 불가
+- Istio/Kiali 배포 실패 복구
+
+## Procedure or Checklist
+
+### Checklist
+
+- [ ] `secrets/certs/cert.pem` / `key.pem` 존재 (ArgoCD용)
+- [ ] `secrets/certs/rootCA.pem` 존재 (cert-manager용)
+- [ ] `secrets/certs/rootCA-key.pem` 존재 (ClusterIssuer CA key)
+- [ ] `rootCA.pem`이 로컬 신뢰 저장소에 등록됨
+- [ ] `VAULT_TOKEN` 환경변수 설정
+- [ ] Vault unseal 상태: `curl -ks https://vault.127.0.0.1.nip.io/v1/sys/health | jq '.sealed'` → `false`
+- [ ] PostgreSQL 연결: `nc -z 172.19.0.11 15432`
+- [ ] Valkey 연결: `nc -z 172.19.0.12 26379`
+- [ ] Prometheus 연결 (Kiali용): `nc -z 172.19.0.20 9090`
+- [ ] Grafana 연결 (Kiali용): `nc -z 172.19.0.24 3000`
+
+### Procedure
+
+1. 기본 플랫폼 부트스트랩 실행
+
+   ```bash
+   VAULT_TOKEN="<token>" bash infrastructure/bootstrap-local.sh
+   ```
+
+   bootstrap 내부 단계:
+   - Step 1-4: k3d 클러스터 + ArgoCD namespace + Secret 생성
+   - **Step 5.5**: cert-manager namespace + rootCA Secret 주입
+   - Step 6-8: ArgoCD Helm + GitOps 리소스 적용 + 대기
+
+2. cert-manager ClusterIssuer 상태 확인
+
+   ```bash
+   kubectl -n cert-manager get deployment cert-manager
+   kubectl get clusterissuer mkcert-ca-issuer \
+     -o jsonpath='{.status.conditions[0].type}'
+   # 출력: Ready
+   ```
+
+3. Dashboard 접근 토큰 발급
+
+   ```bash
+   kubectl -n kubernetes-dashboard get certificate dashboard-tls
+   # READY=True 확인 후 토큰 발급
+   kubectl -n kubernetes-dashboard create token dashboard-admin --duration=24h
+   ```
+
+4. Istio 가용성 확인
+
+   ```bash
+   kubectl get crd | grep istio.io | wc -l   # 10개 이상
+   kubectl -n istio-system get deployment istiod
+   ```
+
+5. Kiali 가용성 + Prometheus 연결 확인
+
+   ```bash
+   kubectl -n istio-system get deployment kiali
+   kubectl -n istio-system logs deploy/kiali | grep -i prometheus | tail -5
+   ```
+
+6. 전체 정적 계약 검증
+
+   ```bash
+   ./infrastructure/tests/verify-contracts-static.sh
+   ```
+
+## Recovery Procedures
+
+### cert-manager ClusterIssuer NotReady
+
+**증상**: `kubectl get clusterissuer mkcert-ca-issuer` → `READY=False`
+
+```bash
+# 1. rootCA Secret 존재 확인
+kubectl -n cert-manager get secret mkcert-root-ca
+
+# 2. Secret 없으면 재주입
+kubectl -n cert-manager create secret tls mkcert-root-ca \
+  --cert=secrets/certs/rootCA.pem \
+  --key=secrets/certs/rootCA-key.pem \
+  --dry-run=client -o yaml | kubectl apply -f -
+
+# 3. cert-manager controller 재시작
+kubectl -n cert-manager rollout restart deploy/cert-manager
+
+# 4. ClusterIssuer 상태 재확인 (30초 대기)
+kubectl wait clusterissuer mkcert-ca-issuer \
+  --for=condition=Ready --timeout=60s
+```
+
+### Dashboard Certificate Pending
+
+**증상**: `kubectl -n kubernetes-dashboard get certificate dashboard-tls` → `READY=False`
+
+```bash
+# 1. ClusterIssuer Ready 상태 선행 확인 (위 절차 참조)
+
+# 2. Certificate 이벤트 확인
+kubectl -n kubernetes-dashboard describe certificate dashboard-tls
+
+# 3. cert-manager 로그 확인
+kubectl -n cert-manager logs deploy/cert-manager | grep -i "dashboard" | tail -20
+
+# 4. Certificate CR 재apply (ArgoCD hard-refresh)
+argocd app get platform-dashboard --hard-refresh
+```
+
+### Dashboard Token Unauthorized
+
+**증상**: 브라우저 `https://k8s-dashboard.127.0.0.1.nip.io` 접근 시 401
+
+```bash
+# ClusterRoleBinding 확인
+kubectl get clusterrolebinding dashboard-admin
+
+# 토큰 재발급 (24시간 유효)
+kubectl -n kubernetes-dashboard create token dashboard-admin --duration=24h
+```
+
+### Istiod CrashLoop / OOMKilled
+
+**증상**: `kubectl -n istio-system get pods -l app=istiod` → CrashLoopBackOff 또는 OOMKilled
+
+```bash
+# 1. 자원 사용량 확인
+kubectl -n istio-system top pod -l app=istiod
+
+# 2. istiod Helm values에서 requests 축소
+# gitops/platform/istio/istiod-values.yaml 수정:
+#   pilot.resources.requests.memory: "64Mi"  # 128Mi → 64Mi
+# ArgoCD sync 후 확인
+
+# 3. 재시작
+kubectl -n istio-system rollout restart deploy/istiod
+```
+
+### Kiali "No Prometheus" 오류
+
+**증상**: Kiali UI에서 "No Prometheus" 또는 "Prometheus unreachable"
+
+```bash
+# 1. Prometheus 연결 확인
+nc -z 172.19.0.20 9090 && echo "OK" || echo "FAIL"
+
+# 2. egress NetworkPolicy 확인
+kubectl -n istio-system get networkpolicy kiali-egress-to-observability -o yaml
+# cidr 172.19.0.20/32 존재 여부 확인
+
+# 3. Kiali config 확인
+kubectl -n istio-system get configmap kiali -o yaml | grep prometheus
+
+# 4. Kiali 재시작
+kubectl -n istio-system rollout restart deploy/kiali
+```
+
+### Istio CRD 없이 istiod 설치 오류
+
+**증상**: `platform-istiod` ArgoCD app sync 실패 — CRD not found
+
+```bash
+# 1. istio-base sync 상태 확인
+argocd app get platform-istio-base
+
+# 2. istio-base 수동 sync (sync-wave 강제)
+argocd app sync platform-istio-base --prune
+
+# 3. CRD 설치 확인 후 istiod sync
+kubectl get crd | grep istio.io | wc -l
+argocd app sync platform-istiod
+```
+
+## Verification Summary
+
+```bash
+# 정적 계약
+./infrastructure/tests/verify-contracts-static.sh
+
+# 런타임
+kubectl get clusterissuer mkcert-ca-issuer
+kubectl -n kubernetes-dashboard get certificate dashboard-tls
+kubectl -n istio-system get deploy istiod kiali
+
+# TLS 접근
+curl -sk https://k8s-dashboard.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
+curl -sk https://kiali.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
+```
+
+## Related Documents
+
+- **Guide**: [`../07.guides/0003-platform-expansion-bootstrap-guide.md`](../07.guides/0003-platform-expansion-bootstrap-guide.md)
+- **Spec**: [`../04.specs/003-platform-expansion/spec.md`](../04.specs/003-platform-expansion/spec.md)
+- **Operations**: [`../08.operations/0003-service-mesh-cert-manager-policy.md`](../08.operations/0003-service-mesh-cert-manager-policy.md)
+- **Previous Runbook**: [`./0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)

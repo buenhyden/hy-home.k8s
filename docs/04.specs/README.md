@@ -111,7 +111,8 @@
 
 ## 문서 인덱스
 
-| 문서 | 설명 | 상태 | 최종 수정 |
-| --- | --- | --- | --- |
-| [`001-wsl-k3d-argocd-platform/spec.md`](./001-wsl-k3d-argocd-platform/spec.md) | WSL2 k3d/k3s + ArgoCD + ESO/Vault + 외부 DB/Valkey 기술 명세 | Draft | 2026-03-27 |
+| 문서                                                                                   | 설명                                                                                                     | 상태  | 최종 수정  |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----- | ---------- |
+| [`001-wsl-k3d-argocd-platform/spec.md`](./001-wsl-k3d-argocd-platform/spec.md)         | WSL2 k3d/k3s + ArgoCD + ESO/Vault + 외부 DB/Valkey 기술 명세                                             | Draft | 2026-03-27 |
 | [`002-wsl2-k3d-argocd-ha-platform/spec.md`](./002-wsl2-k3d-argocd-ha-platform/spec.md) | Valkey/TLS/최소권한 계약과 `.github` CI 정적 게이트/`verify-contracts-static.sh` 명세를 포함한 기술 명세 | Draft | 2026-03-28 |
+| [`003-platform-expansion/spec.md`](./003-platform-expansion/spec.md)                   | IP 수정 + cert-manager/Dashboard/Istio/Kiali 플랫폼 확장 기술 명세                                       | Draft | 2026-03-29 |
