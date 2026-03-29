@@ -40,6 +40,11 @@ if [ -z "${VAULT_TOKEN:-}" ]; then
   fail "Set VAULT_TOKEN before running this script"
 fi
 
+INOTIFY_INSTANCES="$(cat /proc/sys/fs/inotify/max_user_instances 2>/dev/null || echo 0)"
+if [ "${INOTIFY_INSTANCES}" -lt 512 ]; then
+  fail "fs.inotify.max_user_instances=${INOTIFY_INSTANCES} is too low for k3d (need >=512). Run: sudo sysctl -w fs.inotify.max_user_instances=1024 && echo 'fs.inotify.max_user_instances=1024' | sudo tee /etc/sysctl.d/99-k3d.conf"
+fi
+
 vault_curl() {
   if [ "$VAULT_SKIP_VERIFY" = "true" ]; then
     curl -ksS "$@"

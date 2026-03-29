@@ -98,6 +98,23 @@ kubectl -n platform get svc,endpointslice | \
 - 이상 시 참조 문서: [`../09.runbooks/0001-argocd-platform-bootstrap-runbook.md`](../09.runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - 이상 시 참조 문서: [`../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 
+## WSL2 사전 요구사항
+
+k3d 4노드 구성 실행 전 아래 커널 파라미터를 확인하고 부족한 경우 조정한다.
+
+```bash
+# 현재 값 확인
+cat /proc/sys/fs/inotify/max_user_instances  # 최소 512 필요
+
+# 부족한 경우 (sudo 필요)
+sudo sysctl -w fs.inotify.max_user_instances=1024
+echo 'fs.inotify.max_user_instances=1024' | sudo tee /etc/sysctl.d/99-k3d.conf
+```
+
+**증상**: `max_user_instances`가 낮으면 k3d 에이전트 노드의 kubelet이 `inotify_init: too many open files` 오류로 TLS 인증서 감시에 실패하고, 노드가 `NotReady` → heartbeat 중단 → Terminating 파드 누적으로 이어진다.
+
+**bootstrap-local.sh**는 이 값을 사전 검증하며 512 미만이면 즉시 실패한다.
+
 ## Incident and Recovery Links
 
 - Runbooks: [`../09.runbooks/README.md`](../09.runbooks/README.md)
