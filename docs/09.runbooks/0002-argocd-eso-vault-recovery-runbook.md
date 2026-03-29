@@ -64,7 +64,7 @@ ports:
     port: 8200
 endpoints:
   - addresses:
-      - 172.30.0.10
+      - 172.19.0.9
 YAML
 ```
 

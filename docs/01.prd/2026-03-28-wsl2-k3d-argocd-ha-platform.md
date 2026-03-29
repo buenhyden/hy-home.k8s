@@ -29,7 +29,7 @@ WSL2 개발 환경에서도 운영 수준의 재현성, 보안성, 복구 가능
 ## Functional Requirements
 
 - **REQ-PRD-FUN-01**: 클러스터 토폴로지는 `Master 1 + Worker 3`을 만족해야 한다.
-- **REQ-PRD-FUN-02**: 외부 서비스 네트워크 대역은 `172.30.0.0/24`를 사용해야 한다.
+- **REQ-PRD-FUN-02**: 외부 서비스 네트워크 대역은 `172.19.0.0/16`(Docker `infra_net` 실제 서브넷)을 사용해야 한다.
 - **REQ-PRD-FUN-03**: 다음 공용 인터페이스 계약을 유지해야 한다.
   - `vault-external.platform.svc.cluster.local:8200`
   - `postgres-write-external:15432`

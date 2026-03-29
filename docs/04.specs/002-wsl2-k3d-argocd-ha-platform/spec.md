@@ -27,11 +27,11 @@
 
 ### Version Evidence (2026-03-28)
 
-| Component | Current Baseline | Stable/Release Observation | Policy |
-| --- | --- | --- | --- |
-| k3s | `v1.35.0+k3s1` | `v1.35.2+k3s1` stable, `v1.35.3-rc1+k3s1` preview | baseline 유지, 업그레이드 후보 등록 |
-| k3d | `v5.8.3` | `v5.8.3` stable | baseline 유지 |
-| Valkey | `9.0.1` | `9.0.3` 후보 | baseline 유지, 업그레이드 후보 등록 |
+| Component | Current Baseline | Stable/Release Observation                        | Policy                              |
+| --------- | ---------------- | ------------------------------------------------- | ----------------------------------- |
+| k3s       | `v1.35.0+k3s1`   | `v1.35.2+k3s1` stable, `v1.35.3-rc1+k3s1` preview | baseline 유지, 업그레이드 후보 등록 |
+| k3d       | `v5.8.3`         | `v5.8.3` stable                                   | baseline 유지                       |
+| Valkey    | `9.0.1`          | `9.0.3` 후보                                      | baseline 유지, 업그레이드 후보 등록 |
 
 참고 릴리스 페이지:
 
@@ -51,7 +51,7 @@
 - `vault-external.platform.svc.cluster.local:8200`
 - `postgres-write-external:15432`
 - `postgres-read-external:15433`
-- `valkey-external:26379`
+- `valkey-external:6379` (K8s-side 포트; Docker host publish `26379:6379`는 호스트 접근 전용)
 - Vault paths: `secret/platform/argocd`, `secret/platform/postgres-app`
 
 ### Access/TLS Contracts
@@ -65,7 +65,7 @@
 ### Network Policy Contracts
 
 - `argocd` egress 허용:
-  - Valkey: `172.30.0.12:26379/TCP`
+  - Valkey: `172.19.0.12:6379/TCP`
   - DNS: `53/TCP,UDP` (`kube-system` DNS)
   - HTTPS: `443/TCP`
 

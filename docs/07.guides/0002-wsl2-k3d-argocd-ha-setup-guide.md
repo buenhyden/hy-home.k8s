@@ -64,7 +64,7 @@ kubectl -n argocd get applications
 
 ```bash
 kubectl -n platform get svc,endpointslice | \
-  rg 'postgres-(write|read)-external|15432|15433|vault-external|8200|valkey-external|172.30.0.12|26379'
+  rg 'postgres-(write|read)-external|15432|15433|vault-external|8200|valkey-external|172.19.0.12|6379'
 ```
 
 ## Local Runtime Validation vs CI Static Validation

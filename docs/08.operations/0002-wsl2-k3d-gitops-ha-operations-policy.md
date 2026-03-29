@@ -20,8 +20,8 @@
 ## Controls
 
 - **Required**:
-  - 인터페이스 계약 포트 고정(8200/15432/15433/26379)
-  - Valkey는 `Service + EndpointSlice(172.30.0.12:26379)` 모델 사용
+  - 인터페이스 계약 포트 고정(8200/15432/15433/6379)
+  - Valkey는 `Service + EndpointSlice(172.19.0.12:6379)` 모델 사용
   - Vault 경로 표준(`secret/platform/argocd`, `secret/platform/postgres-app`)
   - ArgoCD host=`argocd.127.0.0.1.nip.io`, TLS secret=`argocd-local-tls` # pragma: allowlist secret
   - `ingress-nginx-controller`는 `LoadBalancer` 타입 유지
