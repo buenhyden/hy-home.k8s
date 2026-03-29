@@ -110,6 +110,42 @@ require_pattern 'namespace:\s*cert-manager' "$APPPROJECT_PLATFORM"
 require_pattern 'namespace:\s*istio-system' "$APPPROJECT_PLATFORM"
 require_pattern 'kind:\s*ClusterIssuer' "$APPPROJECT_PLATFORM"
 
+echo "[INFO] verify observability external service contracts"
+PROMETHEUS_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/prometheus-external.yaml"
+LOKI_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/loki-external.yaml"
+TEMPO_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/tempo-external.yaml"
+ALLOY_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/alloy-external.yaml"
+GRAFANA_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/grafana-external.yaml"
+
+for file in \
+  "$PROMETHEUS_EXTERNAL" \
+  "$LOKI_EXTERNAL" \
+  "$TEMPO_EXTERNAL" \
+  "$ALLOY_EXTERNAL" \
+  "$GRAFANA_EXTERNAL"; do
+  require_file "$file"
+done
+
+require_pattern 'name:\s*prometheus-external' "$PROMETHEUS_EXTERNAL"
+require_pattern 'port:\s*9090' "$PROMETHEUS_EXTERNAL"
+require_pattern '172\.19\.0\.20' "$PROMETHEUS_EXTERNAL"
+
+require_pattern 'name:\s*loki-external' "$LOKI_EXTERNAL"
+require_pattern 'port:\s*3100' "$LOKI_EXTERNAL"
+require_pattern '172\.19\.0\.21' "$LOKI_EXTERNAL"
+
+require_pattern 'name:\s*tempo-external' "$TEMPO_EXTERNAL"
+require_pattern 'port:\s*3200' "$TEMPO_EXTERNAL"
+require_pattern '172\.19\.0\.22' "$TEMPO_EXTERNAL"
+
+require_pattern 'name:\s*alloy-external' "$ALLOY_EXTERNAL"
+require_pattern 'port:\s*4317' "$ALLOY_EXTERNAL"
+require_pattern '172\.19\.0\.23' "$ALLOY_EXTERNAL"
+
+require_pattern 'name:\s*grafana-external' "$GRAFANA_EXTERNAL"
+require_pattern 'port:\s*3000' "$GRAFANA_EXTERNAL"
+require_pattern '172\.19\.0\.24' "$GRAFANA_EXTERNAL"
+
 echo "[INFO] verify ClusterIssuer source"
 CLUSTER_ISSUER="$ROOT_DIR/gitops/platform/cert-manager/cluster-issuer-mkcert.yaml"
 require_file "$CLUSTER_ISSUER"

@@ -36,4 +36,40 @@ valkey_ep_port="$(kubectl -n platform get endpointslice valkey-external-1 -o jso
 valkey_ep_addr="$(kubectl -n platform get endpointslice valkey-external-1 -o jsonpath='{.endpoints[0].addresses[0]}' 2>/dev/null || true)"
 [ "$valkey_ep_addr" = "172.19.0.12" ] || fail "valkey EndpointSlice address mismatch (actual=$valkey_ep_addr)"
 
+echo "[INFO] Checking observability external service contracts"
+
+kubectl -n platform get svc,endpointslice > /tmp/platform-services.txt 2>/dev/null || true
+
+for svc in prometheus-external loki-external tempo-external alloy-external grafana-external; do
+  rg -q "$svc" /tmp/platform-services.txt || fail "missing $svc in platform namespace"
+done
+
+check_obs_port() {
+  local svc="$1"
+  local expected_port="$2"
+  local actual
+  actual="$(kubectl -n platform get svc "$svc" -o jsonpath='{.spec.ports[0].port}' 2>/dev/null || true)"
+  [ "$actual" = "$expected_port" ] || fail "${svc} port mismatch (expected=${expected_port}, actual=${actual})"
+}
+
+check_obs_port "prometheus-external" "9090"
+check_obs_port "loki-external" "3100"
+check_obs_port "tempo-external" "3200"
+check_obs_port "alloy-external" "4317"
+check_obs_port "grafana-external" "3000"
+
+check_obs_ep() {
+  local slice="$1"
+  local expected_addr="$2"
+  local actual
+  actual="$(kubectl -n platform get endpointslice "${slice}-1" -o jsonpath='{.endpoints[0].addresses[0]}' 2>/dev/null || true)"
+  [ "$actual" = "$expected_addr" ] || fail "${slice}-1 address mismatch (expected=${expected_addr}, actual=${actual})"
+}
+
+check_obs_ep "prometheus-external" "172.19.0.20"
+check_obs_ep "loki-external" "172.19.0.21"
+check_obs_ep "tempo-external" "172.19.0.22"
+check_obs_ep "alloy-external" "172.19.0.23"
+check_obs_ep "grafana-external" "172.19.0.24"
+
 echo "[PASS] external service contract checks passed"

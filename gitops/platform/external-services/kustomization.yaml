@@ -4,3 +4,8 @@ resources:
   - vault-external.yaml
   - postgres-external.yaml
   - valkey-external.yaml
+  - prometheus-external.yaml
+  - loki-external.yaml
+  - tempo-external.yaml
+  - alloy-external.yaml
+  - grafana-external.yaml

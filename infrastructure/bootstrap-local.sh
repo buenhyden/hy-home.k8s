@@ -185,8 +185,10 @@ validate_cert_for_host "$CERT_FILE" "$ARGOCD_HOST"
 
 echo "[4/11] Pre-check observability endpoints (warn-only)"
 warn_tcp_dependency "prometheus" "172.19.0.20" "9090"
-warn_tcp_dependency "grafana" "172.19.0.24" "3000"
+warn_tcp_dependency "loki" "172.19.0.21" "3100"
 warn_tcp_dependency "tempo" "172.19.0.22" "3200"
+warn_tcp_dependency "alloy" "172.19.0.23" "4317"
+warn_tcp_dependency "grafana" "172.19.0.24" "3000"
 
 echo "[5/11] Install MetalLB and configure IP pool"
 helm repo add metallb https://metallb.github.io/metallb
