@@ -34,7 +34,7 @@
 - **REQ-PRD-FUN-01**: 외부 서비스 EndpointSlice 주소를 `172.19.0.x`로 갱신한다.
   - Vault: `172.19.0.9:8200`
   - PostgreSQL: `172.19.0.11:15432/15433`
-  - Valkey: `172.19.0.12:26379`
+  - Valkey: `172.19.0.12:6379` (K8s-side 포트; Docker host publish `26379:6379`는 호스트 접근 전용)
 - **REQ-PRD-FUN-02**: NetworkPolicy cidr을 `172.19.0.x` 기준으로 수정한다.
 - **REQ-PRD-FUN-03**: `bootstrap-local.sh` 기본값을 `172.19.0.x`로 수정한다.
 - **REQ-PRD-FUN-04**: cert-manager v1.17.x를 GitOps 방식으로 설치한다.

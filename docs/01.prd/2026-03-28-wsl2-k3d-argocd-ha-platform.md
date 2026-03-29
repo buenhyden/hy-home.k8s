@@ -34,15 +34,15 @@ WSL2 개발 환경에서도 운영 수준의 재현성, 보안성, 복구 가능
   - `vault-external.platform.svc.cluster.local:8200`
   - `postgres-write-external:15432`
   - `postgres-read-external:15433`
-  - `valkey-external:26379`
-- **REQ-PRD-FUN-03A**: `valkey-external`은 `Service + EndpointSlice(172.30.0.12:26379)` 모델을 사용해야 한다.
+  - `valkey-external:6379` (K8s-side 포트; Docker host publish `26379:6379`는 호스트 접근 전용)
+- **REQ-PRD-FUN-03A**: `valkey-external`은 `Service + EndpointSlice(172.19.0.12:6379)` 모델을 사용해야 한다.
 - **REQ-PRD-FUN-03B**: ArgoCD HTTPS 공식 엔트리포인트는 `argocd.127.0.0.1.nip.io`로 고정해야 한다.
 - **REQ-PRD-FUN-03C**: 호스트 80/443은 외부 Docker Traefik이 소유하며, 443 트래픽은 k3d `:8443`으로 프록시되어야 한다.
 - **REQ-PRD-FUN-04**: Vault 경로는 `secret/platform/argocd`, `secret/platform/postgres-app`를 표준으로 사용해야 한다.
 - **REQ-PRD-FUN-05**: 보안 통제는 RBAC 최소권한 + Vault policy(`eso-read-platform`)를 적용해야 한다.
 - **REQ-PRD-FUN-06**: 01~09 문서는 상호 상대 링크로 추적성을 유지해야 한다.
 - **REQ-PRD-FUN-07**: `argocd-local-tls` Secret은 `secrets/certs/cert.pem,key.pem`를 `bootstrap-local.sh`에서 주입해야 한다.
-- **REQ-PRD-FUN-08**: `argocd` namespace egress는 Valkey(26379) + DNS(53/TCP,UDP) + HTTPS(443/TCP)를 허용해야 한다.
+- **REQ-PRD-FUN-08**: `argocd` namespace egress는 Valkey(6379) + DNS(53/TCP,UDP) + HTTPS(443/TCP)를 허용해야 한다.
 - **REQ-PRD-FUN-09**: CI는 정적 검증 중심으로 운영하고 CD는 ArgoCD pull reconciliation 모델을 유지해야 한다.
 - **REQ-PRD-FUN-10**: CI 필수 게이트는 `pre-commit`, `manifest-static`, `workflow-security`, `shell-static`를 포함해야 한다.
 
@@ -51,7 +51,7 @@ WSL2 개발 환경에서도 운영 수준의 재현성, 보안성, 복구 가능
 - **REQ-PRD-MET-01**: `vault-backend`(ClusterSecretStore) `Ready=True`.
 - **REQ-PRD-MET-02**: `argocd-external-valkey`(ExternalSecret) `Ready=True`.
 - **REQ-PRD-MET-03**: `platform-eso-config`, `platform-argocd-config` 앱 `Degraded` 해소.
-- **REQ-PRD-MET-04**: 계약 포트(8200/15432/15433/26379) 회귀 0건.
+- **REQ-PRD-MET-04**: 계약 포트(8200/15432/15433/6379) 회귀 0건.
 - **REQ-PRD-MET-05**: Vault-ESO 장애 복구 목표시간(MTTR) 15분 이내.
 - **REQ-PRD-MET-06**: 보안 검증(AppProject allow-list, Vault 최소권한 정책) 통과율 100%.
 - **REQ-PRD-MET-07**: ArgoCD TLS/Ingress 검증(`verify-ingress-tls.sh`) 회귀 0건.

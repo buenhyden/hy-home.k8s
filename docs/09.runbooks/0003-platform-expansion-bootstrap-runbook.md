@@ -36,7 +36,7 @@
 - [ ] `VAULT_TOKEN` 환경변수 설정
 - [ ] Vault unseal 상태: `curl -ks https://vault.127.0.0.1.nip.io/v1/sys/health | jq '.sealed'` → `false`
 - [ ] PostgreSQL 연결: `nc -z 172.19.0.11 15432`
-- [ ] Valkey 연결: `nc -z 172.19.0.12 26379`
+- [ ] Valkey 연결: `nc -z 172.19.0.12 6379`
 - [ ] Prometheus 연결 (Kiali용): `nc -z 172.19.0.20 9090`
 - [ ] Loki 연결 (로그 수집): `nc -z 172.19.0.21 3100`
 - [ ] Tempo 연결 (트레이싱): `nc -z 172.19.0.22 3200`

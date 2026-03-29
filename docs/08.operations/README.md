@@ -87,7 +87,7 @@ kubectl -n argocd get application root-platform -o yaml | \
 kubectl -n platform get svc,endpointslice | \
   rg 'postgres-(write|read)-external|15432|15433'
 kubectl -n platform get svc,endpointslice | \
-  rg 'valkey-external|valkey-external-1|172.30.0.12|26379'
+  rg 'valkey-external|valkey-external-1|172.19.0.12|6379'
 ./infrastructure/tests/verify-ingress-tls.sh
 ```
 

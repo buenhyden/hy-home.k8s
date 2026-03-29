@@ -61,7 +61,7 @@ export VALKEY_ADDR="172.19.0.12"
 # infra_net 서비스 연결 확인
 curl -ks https://vault.127.0.0.1.nip.io/v1/sys/health | jq '.sealed'
 nc -z 172.19.0.11 15432 && echo "postgres-write OK"
-nc -z 172.19.0.12 26379 && echo "valkey OK"
+nc -z 172.19.0.12 6379 && echo "valkey OK"
 nc -z 172.19.0.20 9090  && echo "prometheus OK"  # Kiali용
 nc -z 172.19.0.21 3100  && echo "loki OK"        # 로그 수집
 nc -z 172.19.0.22 3200  && echo "tempo OK"       # Kiali/트레이싱용

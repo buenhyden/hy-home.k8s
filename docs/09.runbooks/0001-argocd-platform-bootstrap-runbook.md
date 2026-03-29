@@ -8,7 +8,7 @@
 
 ## Purpose
 
-클러스터 구성, ArgoCD 설치, ESO/Vault 연동, 외부 endpoint 연결(Valkey `26379`, PostgreSQL `15432/15433`)을 재현 가능하게 수행한다.
+클러스터 구성, ArgoCD 설치, ESO/Vault 연동, 외부 endpoint 연결(Valkey `6379`, PostgreSQL `15432/15433`)을 재현 가능하게 수행한다.
 
 ## Canonical References
 
@@ -120,16 +120,16 @@
      --image=busybox:1.36 -- sh -c \
      "nc -zvw3 postgres-write-external 15432 && \
       nc -zvw3 postgres-read-external 15433 && \
-      nc -zvw3 valkey-external 26379"
+      nc -zvw3 valkey-external 6379"
    ```
 
 10. ArgoCD 접속 후 프로젝트 경계와 앱 상태를 확인한다.
 
-   ```bash
-   argocd login argocd.local --grpc-web
-   argocd proj list
-   argocd app list
-   ```
+```bash
+argocd login argocd.local --grpc-web
+argocd proj list
+argocd app list
+```
 
 ## Verification Steps
 
@@ -138,7 +138,7 @@
 - [ ] `kubectl get svc,endpointslice -A | rg 'postgres-(write|read)-external|valkey-external'`
 - [ ] `kubectl -n external-secrets get externalsecret,secretstore,clustersecretstore`
 - [ ] `argocd app list` 및 sync 상태 확인
-- [ ] `svc-probe`에서 `postgres-write-external:15432`, `postgres-read-external:15433`, `valkey-external:26379` 연결 성공
+- [ ] `svc-probe`에서 `postgres-write-external:15432`, `postgres-read-external:15433`, `valkey-external:6379` 연결 성공
 
 ## Observability and Evidence Sources
 
@@ -147,12 +147,12 @@
 
 ## Troubleshooting Matrix
 
-| 에러 시그니처 | 진단 포인트 | 즉시 조치 | 재검증 |
-| --- | --- | --- | --- |
-| `vault is sealed (status=503)` | Vault health code가 503 | Vault unseal 수행 후 health 재확인 | `curl -ksS -o /dev/null -w '%{http_code}\n' https://vault.127.0.0.1.nip.io/v1/sys/health` |
-| `could not read secret key valkey_password from Vault path secret/platform/argocd` | 경로/키 누락 또는 토큰 권한 부족 | `secret/platform/argocd`에 `valkey_password` 확인, 권한 재설정 | Vault API + `jq -e '.data.data.valkey_password != null'` |
-| `WRONGPASS invalid username-password pair` | ArgoCD secret과 Vault 값 불일치 | Vault 기준으로 `argocd-external-valkey` 재동기화 | `kubectl -n argocd get secret argocd-external-valkey -o yaml` + ArgoCD 로그 |
-| `app path does not exist` (`root-platform`) | `spec.source.path`와 원격 브랜치 구조 불일치 | `gitops/apps/root` 경로 확인 후 앱 재동기화 | `kubectl -n argocd get application root-platform -o yaml \| rg 'path:'` |
+| 에러 시그니처                                                                      | 진단 포인트                                  | 즉시 조치                                                      | 재검증                                                                                    |
+| ---------------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `vault is sealed (status=503)`                                                     | Vault health code가 503                      | Vault unseal 수행 후 health 재확인                             | `curl -ksS -o /dev/null -w '%{http_code}\n' https://vault.127.0.0.1.nip.io/v1/sys/health` |
+| `could not read secret key valkey_password from Vault path secret/platform/argocd` | 경로/키 누락 또는 토큰 권한 부족             | `secret/platform/argocd`에 `valkey_password` 확인, 권한 재설정 | Vault API + `jq -e '.data.data.valkey_password != null'`                                  |
+| `WRONGPASS invalid username-password pair`                                         | ArgoCD secret과 Vault 값 불일치              | Vault 기준으로 `argocd-external-valkey` 재동기화               | `kubectl -n argocd get secret argocd-external-valkey -o yaml` + ArgoCD 로그               |
+| `app path does not exist` (`root-platform`)                                        | `spec.source.path`와 원격 브랜치 구조 불일치 | `gitops/apps/root` 경로 확인 후 앱 재동기화                    | `kubectl -n argocd get application root-platform -o yaml \| rg 'path:'`                   |
 
 ## Safe Rollback or Recovery Procedure
 

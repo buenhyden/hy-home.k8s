@@ -31,7 +31,7 @@
 | vault-external          | `vault-external.platform.svc.cluster.local`          | `172.19.0.9`  | `8200`  |
 | postgres-write-external | `postgres-write-external.platform.svc.cluster.local` | `172.19.0.11` | `15432` |
 | postgres-read-external  | `postgres-read-external.platform.svc.cluster.local`  | `172.19.0.11` | `15433` |
-| valkey-external         | `valkey-external.platform.svc.cluster.local`         | `172.19.0.12` | `26379` |
+| valkey-external         | `valkey-external.platform.svc.cluster.local`         | `172.19.0.12` | `6379`  |
 
 ### File-level Contract (수정 파일)
 
