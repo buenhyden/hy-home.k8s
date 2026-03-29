@@ -63,8 +63,10 @@ curl -ks https://vault.127.0.0.1.nip.io/v1/sys/health | jq '.sealed'
 nc -z 172.19.0.11 15432 && echo "postgres-write OK"
 nc -z 172.19.0.12 26379 && echo "valkey OK"
 nc -z 172.19.0.20 9090  && echo "prometheus OK"  # Kiali용
+nc -z 172.19.0.21 3100  && echo "loki OK"        # 로그 수집
+nc -z 172.19.0.22 3200  && echo "tempo OK"       # Kiali/트레이싱용
+nc -z 172.19.0.23 4317  && echo "alloy OK"       # OTLP gRPC 수신
 nc -z 172.19.0.24 3000  && echo "grafana OK"     # Kiali용
-nc -z 172.19.0.22 3200  && echo "tempo OK"       # Kiali용
 ```
 
 ## Step-by-step Instructions
@@ -76,16 +78,19 @@ cd /path/to/hy-home.k8s
 VAULT_TOKEN="<token>" bash infrastructure/bootstrap-local.sh
 ```
 
-bootstrap 단계 요약:
+bootstrap 단계 (`[1/11]`~`[11/11]`):
 
 1. k3d 클러스터 생성/재사용
-2. 외부 서비스 연결 확인 (vault/postgres/valkey — `172.19.0.x` 기준)
-3. TLS cert 검증 (SAN 확인)
-4. argocd namespace + Secret 생성
-5. **[NEW]** cert-manager namespace + rootCA Secret 주입
-6. ArgoCD Helm 설치
-7. GitOps 부트스트랩 리소스 적용
-8. ArgoCD 컨트롤 플레인 대기
+2. 외부 의존성 검증 (vault/postgres/valkey TCP + Vault에서 `valkey_password` 읽기)
+3. TLS cert 검증 (4개 파일 존재 + SAN 확인)
+4. 관측성 endpoints pre-check (warn-only: prometheus/loki/tempo/alloy/grafana)
+5. MetalLB 설치 + IPAddressPool + L2Advertisement 적용
+6. argocd namespace + Secrets (valkey + TLS) 생성
+7. cert-manager namespace + `mkcert-root-ca` Secret 주입
+8. ArgoCD Helm 설치
+9. GitOps 부트스트랩 리소스 적용
+10. ArgoCD 컨트롤 플레인 대기
+11. Done (URL 출력 + rootCA hint)
 
 ### 2. cert-manager ClusterIssuer 검증
 

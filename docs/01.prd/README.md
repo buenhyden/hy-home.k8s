@@ -38,8 +38,8 @@
 
 ## 문서 인덱스
 
-| 문서                                                                                                   | 설명                                                                               | 상태  | 최종 수정  |
-| ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- | ----- | ---------- |
-| [`2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md)                     | WSL2 기반 k3d/k3s + ArgoCD GitOps 플랫폼 PRD                                       | Draft | 2026-03-27 |
-| [`2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md)             | WSL2 멀티노드 HA + TLS + 최소권한 + 변경영역 기반 CI 정적 게이트 요구를 포함한 PRD | Draft | 2026-03-28 |
-| [`2026-03-29-platform-expansion-dashboard-mesh.md`](./2026-03-29-platform-expansion-dashboard-mesh.md) | IP 수정 + cert-manager/Dashboard/Istio/Kiali 플랫폼 확장 PRD                       | Draft | 2026-03-29 |
+| 문서                                                                                                   | 설명                                                                               | 상태   | 최종 수정  |
+| ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- | ------ | ---------- |
+| [`2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md)                     | WSL2 기반 k3d/k3s + ArgoCD GitOps 플랫폼 PRD                                       | Draft  | 2026-03-27 |
+| [`2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md)             | WSL2 멀티노드 HA + TLS + 최소권한 + 변경영역 기반 CI 정적 게이트 요구를 포함한 PRD | Draft  | 2026-03-28 |
+| [`2026-03-29-platform-expansion-dashboard-mesh.md`](./2026-03-29-platform-expansion-dashboard-mesh.md) | IP 수정 + cert-manager/Dashboard/Istio/Kiali 플랫폼 확장 PRD                       | Active | 2026-03-29 |

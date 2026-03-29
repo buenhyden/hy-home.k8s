@@ -39,4 +39,4 @@
 | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- | ----- | ---------- |
 | [`2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md)         | WSL2 GitOps 플랫폼 단계별 실행 계획                                             | Draft | 2026-03-27 |
 | [`2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | TLS/최소권한 유지 + 변경영역 기반 CI 정적 게이트 + 롤백 규칙을 포함한 실행 계획 | Draft | 2026-03-28 |
-| [`2026-03-29-platform-expansion.md`](./2026-03-29-platform-expansion.md)                   | IP 수정 + cert-manager/Dashboard/Istio/Kiali 플랫폼 확장 단계별 실행 계획       | Draft | 2026-03-29 |
+| [`2026-03-29-platform-expansion.md`](./2026-03-29-platform-expansion.md)                   | IP 수정 + cert-manager/Dashboard/Istio/Kiali 플랫폼 확장 단계별 실행 계획       | Done  | 2026-03-29 |

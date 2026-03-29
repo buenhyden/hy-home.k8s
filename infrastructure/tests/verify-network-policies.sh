@@ -35,4 +35,12 @@ eso_np_ip="$(kubectl -n external-secrets get networkpolicy allow-external-secret
 eso_np_port="$(kubectl -n external-secrets get networkpolicy allow-external-secrets-egress-to-vault -o jsonpath='{.spec.egress[0].ports[0].port}' 2>/dev/null || true)"
 [ "$eso_np_port" = "8200" ] || fail "external-secrets vault egress port mismatch (actual=$eso_np_port)"
 
+# kiali egress networkpolicy (istio-system)
+kiali_np="$(kubectl -n istio-system get networkpolicy allow-kiali-egress-to-observability -o name 2>/dev/null || true)"
+[ -n "$kiali_np" ] || fail "missing istio-system/allow-kiali-egress-to-observability"
+
+kiali_prom_cidr="$(kubectl -n istio-system get networkpolicy allow-kiali-egress-to-observability \
+  -o jsonpath='{.spec.egress[0].to[0].ipBlock.cidr}' 2>/dev/null || true)"
+[ "$kiali_prom_cidr" = "172.19.0.20/32" ] || fail "kiali prometheus egress cidr mismatch (actual=$kiali_prom_cidr)"
+
 echo "[PASS] network policy contract checks passed"

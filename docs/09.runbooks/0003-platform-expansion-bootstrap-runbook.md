@@ -38,6 +38,9 @@
 - [ ] PostgreSQL 연결: `nc -z 172.19.0.11 15432`
 - [ ] Valkey 연결: `nc -z 172.19.0.12 26379`
 - [ ] Prometheus 연결 (Kiali용): `nc -z 172.19.0.20 9090`
+- [ ] Loki 연결 (로그 수집): `nc -z 172.19.0.21 3100`
+- [ ] Tempo 연결 (트레이싱): `nc -z 172.19.0.22 3200`
+- [ ] Alloy OTLP 연결: `nc -z 172.19.0.23 4317`
 - [ ] Grafana 연결 (Kiali용): `nc -z 172.19.0.24 3000`
 
 ### Procedure
@@ -48,10 +51,18 @@
    VAULT_TOKEN="<token>" bash infrastructure/bootstrap-local.sh
    ```
 
-   bootstrap 내부 단계:
-   - Step 1-4: k3d 클러스터 + ArgoCD namespace + Secret 생성
-   - **Step 5.5**: cert-manager namespace + rootCA Secret 주입
-   - Step 6-8: ArgoCD Helm + GitOps 리소스 적용 + 대기
+   bootstrap 내부 단계 (`[1/11]`~`[11/11]`):
+   - `[1/11]` k3d 클러스터 생성/재사용
+   - `[2/11]` 외부 의존성 검증 (vault/postgres/valkey TCP + valkey_password 읽기)
+   - `[3/11]` TLS cert 검증 (4개 파일 + SAN)
+   - `[4/11]` 관측성 pre-check warn-only (prometheus/loki/tempo/alloy/grafana)
+   - `[5/11]` MetalLB + IPAddressPool + L2Advertisement 설치
+   - `[6/11]` argocd namespace + Secrets (valkey + TLS)
+   - `[7/11]` cert-manager namespace + mkcert-root-ca Secret 주입
+   - `[8/11]` ArgoCD Helm 설치
+   - `[9/11]` GitOps 부트스트랩 리소스 적용
+   - `[10/11]` ArgoCD 컨트롤 플레인 대기
+   - `[11/11]` Done
 
 2. cert-manager ClusterIssuer 상태 확인
 

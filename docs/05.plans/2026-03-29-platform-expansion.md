@@ -75,14 +75,15 @@
 
 ## Completion Criteria
 
-- [ ] PLN-001~004 완료 (IP 수정 + 정적 검증 패턴)
-- [ ] PLN-005~007 완료 (cert-manager + ClusterIssuer)
-- [ ] PLN-008~009 완료 (Dashboard)
-- [ ] PLN-010~011 완료 (Istio)
-- [ ] PLN-012~013 완료 (Kiali)
-- [ ] PLN-014~015 완료 (AppProject + kustomization)
-- [ ] VAL-PLN-001~008 전체 PASS
-- [ ] PLN-017~018 완료 (문서 + README 동기화)
+- [x] PLN-001~004 완료 (IP 수정 + 정적 검증 패턴)
+- [x] PLN-005~007 완료 (cert-manager + ClusterIssuer)
+- [x] PLN-008~009 완료 (Dashboard)
+- [x] PLN-010~011 완료 (Istio)
+- [x] PLN-012~013 완료 (Kiali)
+- [x] PLN-014~015 완료 (AppProject + kustomization)
+- [x] VAL-PLN-001~002 정적 검증 PASS (`verify-contracts-static.sh`)
+- [x] PLN-017~018 완료 (문서 + README 동기화)
+- [x] Phase 4D 완료 (관측성 외부 서비스 T-027~T-031)
 
 ## Related Documents
 

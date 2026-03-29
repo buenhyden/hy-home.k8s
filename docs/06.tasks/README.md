@@ -73,4 +73,4 @@
 | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ----- | ---------- |
 | [`2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md)         | TDD/검증 중심 실행 Task 목록과 증적 기준                                             | Draft | 2026-03-27 |
 | [`2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | RED/GREEN/REFACTOR 기반 TLS/Ingress + CI static contract/workflow-security 작업 Task | Draft | 2026-03-28 |
-| [`2026-03-29-platform-expansion.md`](./2026-03-29-platform-expansion.md)                   | IP 수정 + cert-manager/Dashboard/Istio/Kiali 플랫폼 확장 TDD 기반 Task 목록          | Draft | 2026-03-29 |
+| [`2026-03-29-platform-expansion.md`](./2026-03-29-platform-expansion.md)                   | IP 수정 + cert-manager/Dashboard/Istio/Kiali 플랫폼 확장 TDD 기반 Task 목록          | Done  | 2026-03-29 |
