@@ -216,6 +216,10 @@ kubectl -n cert-manager create secret tls mkcert-root-ca \
   --key="$ROOT_CA_KEY_FILE" \
   --dry-run=client -o yaml | kubectl apply -f -
 
+echo "[7.5/11] Pre-create platform namespace and valkey-external service"
+kubectl create namespace platform --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -f "$ROOT_DIR/gitops/platform/external-services/valkey-external.yaml"
+
 echo "[8/11] Install ArgoCD via Helm"
 helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update argo
