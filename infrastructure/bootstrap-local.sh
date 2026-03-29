@@ -234,7 +234,12 @@ kubectl apply -f "$ROOT_DIR/gitops/clusters/local/applicationset-apps.yaml"
 kubectl apply -f "$ROOT_DIR/gitops/clusters/local/root-application.yaml"
 
 echo "[10/11] Wait for ArgoCD control-plane readiness"
-kubectl -n argocd wait --for=condition=available deployment --all --timeout=180s
+if ! kubectl -n argocd wait --for=condition=available deployment --all --timeout=300s; then
+  echo "[WARN] some ArgoCD deployments not ready within 300s — current state:" >&2
+  kubectl -n argocd get deployment -o wide >&2
+  kubectl -n argocd get pods --field-selector=status.phase!=Running >&2
+  fail "ArgoCD control-plane did not become fully available"
+fi
 
 echo "[11/11] Done"
 if [ "$K3D_HTTPS_PORT" = "443" ]; then
