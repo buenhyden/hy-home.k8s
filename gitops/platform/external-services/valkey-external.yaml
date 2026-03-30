@@ -6,7 +6,7 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - name: valkey
+    - name: tcp-valkey
       port: 6379
       targetPort: 6379
 ---
@@ -19,7 +19,7 @@ metadata:
     kubernetes.io/service-name: valkey-external
 addressType: IPv4
 ports:
-  - name: valkey
+  - name: tcp-valkey
     protocol: TCP
     port: 6379
 endpoints:

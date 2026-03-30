@@ -5,7 +5,7 @@ metadata:
   namespace: platform
 spec:
   ports:
-    - name: postgres-write
+    - name: tcp-postgres-write
       port: 15432
       targetPort: 15432
   type: ClusterIP
@@ -19,7 +19,7 @@ metadata:
     kubernetes.io/service-name: postgres-write-external
 addressType: IPv4
 ports:
-  - name: postgres-write
+  - name: tcp-postgres-write
     protocol: TCP
     port: 15432
 endpoints:
@@ -33,7 +33,7 @@ metadata:
   namespace: platform
 spec:
   ports:
-    - name: postgres-read
+    - name: tcp-postgres-read
       port: 15433
       targetPort: 15433
   type: ClusterIP
@@ -47,7 +47,7 @@ metadata:
     kubernetes.io/service-name: postgres-read-external
 addressType: IPv4
 ports:
-  - name: postgres-read
+  - name: tcp-postgres-read
     protocol: TCP
     port: 15433
 endpoints:
