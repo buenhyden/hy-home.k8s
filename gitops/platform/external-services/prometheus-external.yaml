@@ -24,4 +24,4 @@ ports:
     port: 9090
 endpoints:
   - addresses:
-      - 172.19.0.20
+      - 172.18.0.10
