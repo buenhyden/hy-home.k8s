@@ -24,4 +24,4 @@ ports:
     port: 6379
 endpoints:
   - addresses:
-      - 172.19.0.12
+      - 172.18.0.9
