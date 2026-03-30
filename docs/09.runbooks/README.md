@@ -117,3 +117,4 @@
 | [`0005-headlamp-keycloak-runbook.md`](./0005-headlamp-keycloak-runbook.md)                               | Headlamp ServiceAccount 토큰 로그인 및 Keycloak OIDC 전환 런북    | Active | 2026-03-31 |
 | [`0006-new-app-onboarding-runbook.md`](./0006-new-app-onboarding-runbook.md)                             | 새 애플리케이션 GitOps 온보딩 체크리스트 및 트러블슈팅 런북       | Active | 2026-03-31 |
 | [`0007-kiali-observability-connectivity-runbook.md`](./0007-kiali-observability-connectivity-runbook.md) | Kiali 관측성 서비스 연결 장애 진단 및 복구 런북                   | Active | 2026-03-31 |
+| [`0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md)               | ArgoCD 메트릭 NodePort/Prometheus 수집 장애 진단 및 복구 런북     | Active | 2026-03-31 |
