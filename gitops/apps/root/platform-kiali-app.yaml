@@ -8,9 +8,9 @@ metadata:
 spec:
   project: platform
   source:
-    repoURL: https://kiali.io/helm-charts
-    chart: kiali-server
-    targetRevision: 2.6.0
+    repoURL: https://kiali.org/helm-charts
+    chart: kiali-operator
+    targetRevision: 2.10.0
     helm:
       releaseName: kiali
       values: |

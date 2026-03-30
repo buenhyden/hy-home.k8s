@@ -8,7 +8,7 @@ metadata:
 spec:
   project: platform
   source:
-    repoURL: https://kubernetes.github.io/dashboard
+    repoURL: https://raw.githubusercontent.com/kubernetes/dashboard/gh-pages/
     chart: kubernetes-dashboard
     targetRevision: 7.12.0
     helm:

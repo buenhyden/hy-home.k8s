@@ -29,14 +29,22 @@
   - AppProject `apps` wildcard 금지 + 최소 allow-list 유지
   - `argocd` egress는 Valkey + DNS + HTTPS 허용
   - CI 정적 게이트 필수화(`pre-commit`, `manifest-static`, `workflow-security`, `shell-static`)
+  - `fs.inotify.max_user_instances >= 512` (권장 1024) — k3d 4노드 안정 기동 조건
+  - Vault 컨테이너는 k3d-hyhome Docker 네트워크에 연결 상태를 유지해야 한다
+  - `vault-external` EndpointSlice IP는 Vault의 k3d-hyhome 네트워크 IP(172.18.x.x)를 사용해야 한다
+  - Vault Kubernetes auth `kubernetes_host`는 `https://172.18.0.2:6443`으로 고정한다
+  - Vault Kubernetes auth `disable_local_ca_jwt: true` + `token_reviewer_jwt` 설정 필수
 - **Allowed**:
   - 장애 시 수동 `EndpointSlice` 핫픽스
   - `argocd --hard-refresh` 기반 상태 재평가
   - `CHECK_TRAEFIK_443=true` 기반 운영 TLS 점검
+  - Docker 재시작 후 `docker network connect k3d-hyhome vault` 수동 재연결
+  - k3d 에이전트 노드 inotify 문제 시 순차 재시작(하나씩)
 - **Disallowed**:
   - 평문 시크릿 커밋
   - 승인 없는 정책 완화/권한 확장
   - 로컬 파일 수정 상태만으로 배포 완료로 판단하는 행위
+  - k3d 에이전트 노드 동시 재시작(inotify thundering herd 유발)
 
 ## CI Governance
 

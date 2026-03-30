@@ -22,9 +22,10 @@
 ## When to Use
 
 - `vault-backend`가 `Ready=False`
-- ESO 로그에 `connection refused` 또는 `InvalidProviderConfig` 반복
+- ESO 로그에 `connection refused`, `InvalidProviderConfig`, 또는 `context deadline exceeded` 반복
 - `argocd-external-valkey`가 `SecretSyncedError`
 - 복구 후 ArgoCD HTTPS 진입점(`argocd.127.0.0.1.nip.io`) 회귀가 의심될 때
+- Docker 재시작 후 vault 컨테이너가 k3d 네트워크에서 분리된 경우
 
 ## Procedure or Checklist
 
@@ -46,10 +47,21 @@ kubectl -n external-secrets logs deploy/external-secrets --tail=200 | \
   rg -i 'vault|clustersecretstore|error|connection refused'
 ```
 
-1. `EndpointSlice` 핫픽스를 적용한다.
+1. Vault 컨테이너를 k3d 네트워크에 연결하고 `EndpointSlice` 핫픽스를 적용한다.
 
 ```bash
-cat <<'YAML' | kubectl apply -f -
+# Vault가 k3d-hyhome 네트워크에 연결되어 있는지 확인
+VAULT_K3D_IP=$(docker inspect vault --format '{{(index .NetworkSettings.Networks "k3d-hyhome").IPAddress}}' 2>/dev/null)
+
+# 연결되지 않은 경우 연결
+if [ -z "$VAULT_K3D_IP" ]; then
+  docker network connect k3d-hyhome vault
+  VAULT_K3D_IP=$(docker inspect vault --format '{{(index .NetworkSettings.Networks "k3d-hyhome").IPAddress}}')
+  echo "vault connected to k3d-hyhome: $VAULT_K3D_IP"
+fi
+
+# vault-external EndpointSlice를 k3d-hyhome IP로 업데이트
+cat <<YAML | kubectl apply -f -
 apiVersion: discovery.k8s.io/v1
 kind: EndpointSlice
 metadata:
@@ -64,9 +76,13 @@ ports:
     port: 8200
 endpoints:
   - addresses:
-      - 172.19.0.9
+      - ${VAULT_K3D_IP}
 YAML
 ```
+
+> **참고**: vault-external EndpointSlice는 `172.19.0.9`(infra_net)가 아니라 vault의 k3d-hyhome IP를 사용해야 한다.
+> k3d 노드는 infra_net(172.19.0.0/16)으로의 라우트가 없고, Docker network isolation이 두 네트워크 간 FORWARD를 차단하기 때문이다.
+> Vault Kubernetes auth `kubernetes_host`는 `https://172.18.0.2:6443`으로 설정되어야 한다(k3d-hyhome 경유).
 
 1. Store/ExternalSecret/ArgoCD 상태를 재평가한다.
 
