@@ -4,3 +4,4 @@ resources:
   - argocd-external-valkey-secret.yaml
   - argocd-notifications-cm.yaml
   - argocd-notifications-secret.yaml
+  - argocd-metrics-nodeport.yaml
