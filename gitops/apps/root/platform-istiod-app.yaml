@@ -37,8 +37,9 @@ spec:
     - group: apps
       kind: Deployment
       name: istiod
-      managedFieldsManagers:
-        - k3s
+      jsonPointers:
+        - /spec/progressDeadlineSeconds
+        - /spec/strategy/type
   syncPolicy:
     automated:
       prune: true
