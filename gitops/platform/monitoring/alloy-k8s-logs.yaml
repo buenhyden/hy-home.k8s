@@ -1,0 +1,220 @@
+# Alloy in-cluster — k3d/k3s 파드 로그 + Kubernetes 이벤트 수집
+# 역할: k3d 클러스터 내부에서 실행되어 k8s API로 파드 로그를 수집, 외부 Loki로 전송
+# 외부 Docker Alloy는 Docker daemon 소켓 기반이라 containerd(k3d) 파드 로그를 볼 수 없음
+# 이 Alloy는 loki.source.kubernetes 컴포넌트로 k8s API 경유 로그 수집 수행
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: alloy-k8s-logs
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: alloy-k8s-logs
+    app.kubernetes.io/component: log-collector
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: alloy-k8s-logs
+  labels:
+    app.kubernetes.io/name: alloy-k8s-logs
+rules:
+  - apiGroups: ['']
+    resources: [nodes, nodes/proxy, services, endpoints, pods, namespaces]
+    verbs: [get, list, watch]
+  - apiGroups: ['']
+    resources: [pods/log]
+    verbs: [get]
+  - apiGroups: ['']
+    resources: [events]
+    verbs: [get, list, watch]
+  - nonResourceURLs: [/metrics]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: alloy-k8s-logs
+  labels:
+    app.kubernetes.io/name: alloy-k8s-logs
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: alloy-k8s-logs
+subjects:
+  - kind: ServiceAccount
+    name: alloy-k8s-logs
+    namespace: monitoring
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alloy-k8s-logs-config
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: alloy-k8s-logs
+data:
+  config.alloy: |
+    logging {
+      level  = "info"
+      format = "logfmt"
+    }
+
+    // ----------------------------------------------------------------
+    // 1. Kubernetes 파드 로그 수집
+    //    loki.source.kubernetes: k8s API 경유로 파드 로그 tail
+    //    → 외부 Loki(loki-external.platform.svc.cluster.local:3100)로 전송
+    // ----------------------------------------------------------------
+    discovery.kubernetes "pods" {
+      role = "pod"
+    }
+
+    discovery.relabel "pod_logs" {
+      targets = discovery.kubernetes.pods.targets
+
+      // 애노테이션 observability.logs/disabled: "true" 이면 수집 제외
+      rule {
+        source_labels = ["__meta_kubernetes_pod_annotation_observability_logs_disabled"]
+        regex         = "(?i)true|yes|1"
+        action        = "drop"
+      }
+
+      // Completed/Succeeded 파드는 로그 수집에서 제외
+      rule {
+        source_labels = ["__meta_kubernetes_pod_phase"]
+        regex         = "Succeeded|Failed"
+        action        = "drop"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_name"]
+        target_label  = "pod"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_container_name"]
+        target_label  = "container"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+        target_label  = "app"
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_node_name"]
+        target_label  = "node"
+      }
+
+      rule {
+        target_label = "cluster"
+        replacement  = "k3d-hyhome"
+      }
+
+      rule {
+        target_label = "env"
+        replacement  = "dev"
+      }
+    }
+
+    loki.source.kubernetes "pods" {
+      targets    = discovery.relabel.pod_logs.output
+      forward_to = [loki.write.external_loki.receiver]
+    }
+
+    // ----------------------------------------------------------------
+    // 2. Kubernetes 이벤트 수집
+    //    클러스터 이벤트(FailedScheduling, Evicted, OOMKilled 등)를 로그로 기록
+    // ----------------------------------------------------------------
+    loki.source.kubernetes_events "events" {
+      namespaces = []
+      forward_to = [loki.write.external_loki.receiver]
+      extra_labels = {
+        cluster = "k3d-hyhome",
+        env     = "dev",
+        job     = "kubernetes-events",
+      }
+    }
+
+    // ----------------------------------------------------------------
+    // 3. 외부 Loki 전송
+    //    loki-external.platform.svc.cluster.local: ExternalService (172.18.0.13:3100)
+    // ----------------------------------------------------------------
+    loki.write "external_loki" {
+      endpoint {
+        url = "http://loki-external.platform.svc.cluster.local:3100/loki/api/v1/push"
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alloy-k8s-logs
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: alloy-k8s-logs
+    app.kubernetes.io/component: log-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: alloy-k8s-logs
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: alloy-k8s-logs
+        app.kubernetes.io/component: log-collector
+    spec:
+      serviceAccountName: alloy-k8s-logs
+      automountServiceAccountToken: true
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        fsGroup: 65534
+      containers:
+        - name: alloy
+          image: grafana/alloy:v1.13.1
+          args:
+            - run
+            - --server.http.listen-addr=0.0.0.0:12345
+            - /etc/alloy/config.alloy
+          ports:
+            - name: http
+              containerPort: 12345
+          volumeMounts:
+            - name: config
+              mountPath: /etc/alloy
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: 12345
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: 12345
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: config
+          configMap:
+            name: alloy-k8s-logs-config

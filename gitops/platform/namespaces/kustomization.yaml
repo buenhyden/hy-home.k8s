@@ -9,3 +9,4 @@ resources:
   - namespace-istio-system.yaml
   - namespace-headlamp.yaml
   - namespace-argo-rollouts.yaml
+  - namespace-monitoring.yaml

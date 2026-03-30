@@ -17,3 +17,4 @@ resources:
   - platform-argocd-config-app.yaml
   - platform-kiali-app.yaml
   - platform-kiali-config-app.yaml
+  - platform-monitoring-app.yaml
