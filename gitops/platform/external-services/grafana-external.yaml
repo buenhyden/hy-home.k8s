@@ -24,4 +24,4 @@ ports:
     port: 3000
 endpoints:
   - addresses:
-      - 172.18.0.11
+      - 172.18.0.14

@@ -20,7 +20,7 @@ spec:
     # Grafana (infra-grafana on k3d-hyhome network)
     - to:
         - ipBlock:
-            cidr: 172.18.0.11/32
+            cidr: 172.18.0.14/32
       ports:
         - protocol: TCP
           port: 3000
