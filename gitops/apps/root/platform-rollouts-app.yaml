@@ -1,0 +1,70 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-rollouts
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: '2'
+spec:
+  project: platform
+  source:
+    repoURL: https://argoproj.github.io/argo-helm
+    chart: argo-rollouts
+    targetRevision: 2.40.9
+    helm:
+      releaseName: argo-rollouts
+      values: |
+        controller:
+          replicas: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          metrics:
+            enabled: true
+        dashboard:
+          enabled: true
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            annotations:
+              cert-manager.io/cluster-issuer: mkcert-ca-issuer
+              nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+            hosts:
+              - rollouts.127.0.0.1.nip.io
+            tls:
+              - hosts:
+                  - rollouts.127.0.0.1.nip.io
+                secretName: rollouts-dashboard-tls
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+        notifications:
+          enabled: false
+        serviceAccount:
+          create: true
+          name: argo-rollouts
+        installCRDs: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argo-rollouts
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m

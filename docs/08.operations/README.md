@@ -129,8 +129,9 @@ echo 'fs.inotify.max_user_instances=1024' | sudo tee /etc/sysctl.d/99-k3d.conf
 
 ## 문서 인덱스
 
-| 문서                                                                                             | 설명                                                                                    | 상태   | 최종 수정  |
-| ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- | ------ | ---------- |
-| [`0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md)                 | 외부 런타임 분리 + Vault 단일 소스 + GitOps 게이트 운영 정책                            | Active | 2026-03-27 |
-| [`0002-wsl2-k3d-gitops-ha-operations-policy.md`](./0002-wsl2-k3d-gitops-ha-operations-policy.md) | WSL2 HA 운영 통제(TLS/Traefik 경계, EndpointSlice, 최소권한, CI 게이트, 감사 항목) 정책 | Active | 2026-03-28 |
-| [`0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md)         | cert-manager/Dashboard/Istio/Kiali 운영 통제(TLS/sidecar/Kiali auth/Traefik 계약) 정책  | Active | 2026-03-29 |
+| 문서                                                                                                 | 설명                                                                                    | 상태   | 최종 수정  |
+| ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------ | ---------- |
+| [`0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md)                     | 외부 런타임 분리 + Vault 단일 소스 + GitOps 게이트 운영 정책                            | Active | 2026-03-27 |
+| [`0002-wsl2-k3d-gitops-ha-operations-policy.md`](./0002-wsl2-k3d-gitops-ha-operations-policy.md)     | WSL2 HA 운영 통제(TLS/Traefik 경계, EndpointSlice, 최소권한, CI 게이트, 감사 항목) 정책 | Active | 2026-03-28 |
+| [`0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md)             | cert-manager/Istio/Kiali 운영 통제(TLS/sidecar/Kiali auth/Traefik 계약) 정책            | Active | 2026-03-29 |
+| [`0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md) | Argo Rollouts/Notifications(Slack)/Headlamp 운영 통제 정책                              | Active | 2026-03-30 |

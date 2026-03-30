@@ -1,0 +1,50 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-headlamp
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: '2'
+spec:
+  project: platform
+  source:
+    repoURL: https://kubernetes-sigs.github.io/headlamp/
+    chart: headlamp
+    targetRevision: 0.41.0
+    helm:
+      releaseName: headlamp
+      values: |
+        replicaCount: 1
+        image:
+          pullPolicy: IfNotPresent
+        clusterScoped: true
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+        initContainers: []
+        env: []
+        podAnnotations: {}
+        serviceAccount:
+          create: true
+        service:
+          type: ClusterIP
+          port: 4466
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: headlamp
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m

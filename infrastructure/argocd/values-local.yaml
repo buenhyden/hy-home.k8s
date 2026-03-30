@@ -28,6 +28,11 @@ server:
           - argocd.127.0.0.1.nip.io
         secretName: argocd-local-tls # pragma: allowlist secret
 
+notifications:
+  enabled: true
+  metrics:
+    enabled: true
+
 controller:
   metrics:
     enabled: true

@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-headlamp-config
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: '3'
+spec:
+  project: platform
+  source:
+    repoURL: https://github.com/buenhyden/hy-home.k8s.git
+    targetRevision: main
+    path: gitops/platform/headlamp
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: headlamp
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m

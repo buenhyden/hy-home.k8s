@@ -12,6 +12,8 @@ spec:
     - https://charts.jetstack.io
     - https://istio-release.storage.googleapis.com/charts
     - https://kiali.org/helm-charts
+    - https://kubernetes-sigs.github.io/headlamp/
+    - https://argoproj.github.io/argo-helm
     - https://metallb.github.io/metallb
   destinations:
     - namespace: argocd
@@ -25,6 +27,10 @@ spec:
     - namespace: cert-manager
       server: https://kubernetes.default.svc
     - namespace: istio-system
+      server: https://kubernetes.default.svc
+    - namespace: headlamp
+      server: https://kubernetes.default.svc
+    - namespace: argo-rollouts
       server: https://kubernetes.default.svc
     - namespace: metallb-system
       server: https://kubernetes.default.svc
@@ -104,6 +110,14 @@ spec:
       kind: Gateway
     - group: install.istio.io
       kind: IstioOperator
+    - group: argoproj.io
+      kind: Rollout
+    - group: argoproj.io
+      kind: AnalysisTemplate
+    - group: argoproj.io
+      kind: ClusterAnalysisTemplate
+    - group: argoproj.io
+      kind: AnalysisRun
   roles:
     - name: platform-readonly
       policies:

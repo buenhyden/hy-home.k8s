@@ -7,3 +7,5 @@ resources:
   - namespace-external-secrets.yaml
   - namespace-cert-manager.yaml
   - namespace-istio-system.yaml
+  - namespace-headlamp.yaml
+  - namespace-argo-rollouts.yaml

@@ -1,0 +1,132 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd
+data:
+  # ── Notification services ───────────────────────────────────────────────
+  service.slack: |
+    token: $slack-token
+
+  # ── Templates ───────────────────────────────────────────────────────────
+  template.app-deployed: |
+    slack:
+      attachments: |
+        [{
+          "title": "{{.app.metadata.name}} deployed",
+          "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+          "color": "#18be52",
+          "fields": [{
+            "title": "Sync Status",
+            "value": "{{.app.status.sync.status}}",
+            "short": true
+          }, {
+            "title": "Revision",
+            "value": "{{.app.status.sync.revision}}",
+            "short": true
+          }]
+        }]
+
+  template.app-health-degraded: |
+    slack:
+      attachments: |
+        [{
+          "title": "{{.app.metadata.name}} health degraded",
+          "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+          "color": "#f4c030",
+          "fields": [{
+            "title": "Health Status",
+            "value": "{{.app.status.health.status}}",
+            "short": true
+          }, {
+            "title": "Message",
+            "value": "{{.app.status.health.message}}",
+            "short": false
+          }]
+        }]
+
+  template.app-sync-failed: |
+    slack:
+      attachments: |
+        [{
+          "title": "{{.app.metadata.name}} sync failed",
+          "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+          "color": "#e96d76",
+          "fields": [{
+            "title": "Sync Status",
+            "value": "{{.app.status.sync.status}}",
+            "short": true
+          }, {
+            "title": "Message",
+            "value": "{{.app.status.operationState.message}}",
+            "short": false
+          }]
+        }]
+
+  template.rollout-completed: |
+    slack:
+      attachments: |
+        [{
+          "title": "Rollout {{.rollout.metadata.name}} completed",
+          "title_link": "{{.context.argocdUrl}}",
+          "color": "#18be52",
+          "fields": [{
+            "title": "Namespace",
+            "value": "{{.rollout.metadata.namespace}}",
+            "short": true
+          }, {
+            "title": "Image",
+            "value": "{{(index .rollout.spec.template.spec.containers 0).image}}",
+            "short": true
+          }]
+        }]
+
+  template.rollout-aborted: |
+    slack:
+      attachments: |
+        [{
+          "title": "Rollout {{.rollout.metadata.name}} aborted",
+          "title_link": "{{.context.argocdUrl}}",
+          "color": "#e96d76",
+          "fields": [{
+            "title": "Namespace",
+            "value": "{{.rollout.metadata.namespace}}",
+            "short": true
+          }]
+        }]
+
+  # ── Triggers ────────────────────────────────────────────────────────────
+  trigger.on-deployed: |
+    - description: Notify when app is successfully deployed
+      send:
+        - app-deployed
+      when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+
+  trigger.on-health-degraded: |
+    - description: Notify when app health is degraded
+      send:
+        - app-health-degraded
+      when: app.status.health.status == 'Degraded'
+
+  trigger.on-sync-failed: |
+    - description: Notify when app sync fails
+      send:
+        - app-sync-failed
+      when: app.status.operationState.phase in ['Error', 'Failed']
+
+  trigger.on-rollout-completed: |
+    - description: Notify when rollout completes
+      send:
+        - rollout-completed
+      when: rollout.status.phase == 'Healthy'
+
+  trigger.on-rollout-aborted: |
+    - description: Notify when rollout is aborted
+      send:
+        - rollout-aborted
+      when: rollout.status.phase == 'Degraded'
+
+  # ── Default subscriptions ─────────────────────────────────────────────
+  defaultTriggers: |
+    - on-health-degraded
+    - on-sync-failed
