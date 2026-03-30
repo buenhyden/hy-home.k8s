@@ -12,7 +12,7 @@ Docker Traefik은 `kiali.127.0.0.1.nip.io`를 k3d ingress로 프록시한다.
 
 ## Decision
 
-- Kiali `kiali-server` Helm chart(`https://kiali.io/helm-charts`)를 `istio-system` namespace에 설치한다.
+- Kiali `kiali-server` Helm chart(`https://kiali.org/helm-charts`)를 `istio-system` namespace에 설치한다.
   - 별도 Kiali Operator 없이 단일 인스턴스로 운영.
 - Kiali 버전: v2.6.x
 - 외부 Observability 연동:

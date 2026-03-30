@@ -118,6 +118,8 @@ spec:
       kind: ClusterAnalysisTemplate
     - group: argoproj.io
       kind: AnalysisRun
+    - group: kiali.io
+      kind: Kiali
   roles:
     - name: platform-readonly
       policies:

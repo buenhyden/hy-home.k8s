@@ -181,7 +181,7 @@ gitops/apps/root/
 
 | 항목           | 값                                              |
 | -------------- | ----------------------------------------------- |
-| Helm chart     | `kiali-server` @ `https://kiali.io/helm-charts` |
+| Helm chart     | `kiali-server` @ `https://kiali.org/helm-charts` |
 | Version        | `v2.6.x`                                        |
 | Namespace      | `istio-system`                                  |
 | Prometheus URL | `http://172.19.0.20:9090`                       |
@@ -251,7 +251,7 @@ sourceRepos 추가:
   - https://charts.jetstack.io
   - https://kubernetes.github.io/dashboard
   - https://istio-release.storage.googleapis.com/charts
-  - https://kiali.io/helm-charts
+  - https://kiali.org/helm-charts
 
 destinations 추가:
   - namespace: cert-manager

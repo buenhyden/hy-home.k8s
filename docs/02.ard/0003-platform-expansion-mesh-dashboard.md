@@ -104,7 +104,7 @@ Host (Windows + WSL2)
 - **cert-manager**: v1.17.x via `https://charts.jetstack.io`
 - **Kubernetes Dashboard**: v3.x via `https://kubernetes.github.io/dashboard`
 - **Istio**: v1.25.x via `https://istio-release.storage.googleapis.com/charts`
-- **Kiali**: v2.6.x via `https://kiali.io/helm-charts`
+- **Kiali**: v2.6.x via `https://kiali.org/helm-charts`
 - **Deployment Model**: ArgoCD GitOps (App-of-Apps 확장)
 - **Operational Evidence**: `verify-contracts-static.sh`, `verify-ingress-tls.sh`, `run-all.sh`
 
