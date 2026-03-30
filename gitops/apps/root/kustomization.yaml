@@ -11,8 +11,6 @@ resources:
   - platform-ingress-nginx-app.yaml
   - platform-cert-manager-config-app.yaml
   - platform-istiod-app.yaml
-  - platform-dashboard-app.yaml
   - platform-argocd-config-app.yaml
-  - platform-dashboard-config-app.yaml
   - platform-kiali-app.yaml
   - platform-kiali-config-app.yaml

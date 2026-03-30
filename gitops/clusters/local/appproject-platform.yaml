@@ -10,7 +10,6 @@ spec:
     - https://kubernetes.github.io/ingress-nginx
     - https://charts.external-secrets.io
     - https://charts.jetstack.io
-    - https://raw.githubusercontent.com/kubernetes/dashboard/gh-pages/
     - https://istio-release.storage.googleapis.com/charts
     - https://kiali.org/helm-charts
     - https://metallb.github.io/metallb
@@ -24,8 +23,6 @@ spec:
     - namespace: platform
       server: https://kubernetes.default.svc
     - namespace: cert-manager
-      server: https://kubernetes.default.svc
-    - namespace: kubernetes-dashboard
       server: https://kubernetes.default.svc
     - namespace: istio-system
       server: https://kubernetes.default.svc
