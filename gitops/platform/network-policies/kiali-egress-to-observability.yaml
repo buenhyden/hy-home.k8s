@@ -10,24 +10,28 @@ spec:
   policyTypes:
     - Egress
   egress:
+    # Prometheus (infra-prometheus on k3d-hyhome network)
     - to:
         - ipBlock:
-            cidr: 172.19.0.20/32
+            cidr: 172.18.0.10/32
       ports:
         - protocol: TCP
           port: 9090
+    # Grafana (infra-grafana on k3d-hyhome network)
     - to:
         - ipBlock:
-            cidr: 172.19.0.24/32
+            cidr: 172.18.0.11/32
       ports:
         - protocol: TCP
           port: 3000
+    # Tempo (infra-tempo on k3d-hyhome network)
     - to:
         - ipBlock:
-            cidr: 172.19.0.22/32
+            cidr: 172.18.0.12/32
       ports:
         - protocol: TCP
           port: 3200
+    # kube-dns for service discovery
     - to:
         - namespaceSelector:
             matchLabels:
@@ -40,3 +44,22 @@ spec:
           port: 53
         - protocol: TCP
           port: 53
+    # Kubernetes API server (post-DNAT: 172.18.0.2:6443)
+    - to:
+        - ipBlock:
+            cidr: 172.18.0.0/24
+      ports:
+        - protocol: TCP
+          port: 6443
+    # Istiod control plane (in-cluster)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: istio-system
+      ports:
+        - protocol: TCP
+          port: 15010
+        - protocol: TCP
+          port: 15012
+        - protocol: TCP
+          port: 15014

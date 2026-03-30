@@ -8,12 +8,14 @@ spec:
   policyTypes:
     - Egress
   egress:
+    # External Valkey (mng-valkey on k3d-hyhome network)
     - to:
         - ipBlock:
-            cidr: 172.19.0.12/32
+            cidr: 172.18.0.9/32
       ports:
         - protocol: TCP
           port: 6379
+    # kube-dns for service discovery
     - to:
         - namespaceSelector:
             matchLabels:
@@ -26,9 +28,27 @@ spec:
           port: 53
         - protocol: TCP
           port: 53
+    # External HTTPS (git repos, Helm chart repos, etc.)
     - to:
         - ipBlock:
             cidr: 0.0.0.0/0
+            except:
+              - 10.42.0.0/16
+              - 10.43.0.0/16
       ports:
         - protocol: TCP
           port: 443
+    # Inter-component communication within pod CIDR
+    # (repo-server:8081, argocd-server:8080, metrics ports, etc.)
+    - to:
+        - ipBlock:
+            cidr: 10.42.0.0/16
+    # Kubernetes API server (k3s server on k3d-hyhome network, port 6443)
+    # kube-router evaluates NetworkPolicy AFTER iptables DNAT:
+    # ClusterIP 10.43.0.1:443 -> DNAT -> 172.18.0.2:6443
+    - to:
+        - ipBlock:
+            cidr: 172.18.0.0/24
+      ports:
+        - protocol: TCP
+          port: 6443

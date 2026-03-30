@@ -8,23 +8,41 @@ spec:
   policyTypes:
     - Egress
   egress:
+    # Vault (mng-vault on k3d-hyhome network)
     - to:
         - ipBlock:
-            cidr: 172.19.0.9/32
+            cidr: 172.18.0.8/32
       ports:
         - protocol: TCP
           port: 8200
+    # External Valkey (mng-valkey on k3d-hyhome network)
     - to:
         - ipBlock:
-            cidr: 172.19.0.11/32
-      ports:
-        - protocol: TCP
-          port: 15432
-        - protocol: TCP
-          port: 15433
-    - to:
-        - ipBlock:
-            cidr: 172.19.0.12/32
+            cidr: 172.18.0.9/32
       ports:
         - protocol: TCP
           port: 6379
+    # kube-dns for service discovery
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # Kubernetes API server (post-DNAT: 172.18.0.2:6443)
+    - to:
+        - ipBlock:
+            cidr: 172.18.0.0/24
+      ports:
+        - protocol: TCP
+          port: 6443
+    # Pod-to-pod communication
+    - to:
+        - ipBlock:
+            cidr: 10.42.0.0/16
