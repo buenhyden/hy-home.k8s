@@ -108,8 +108,12 @@
 
 ## 문서 인덱스
 
-| 문서                                                                                             | 설명                                                              | 상태   | 최종 수정  |
-| ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- | ------ | ---------- |
-| [`0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)       | 검증 커맨드 기반 부트스트랩/트러블슈팅/복구 런북                  | Active | 2026-03-27 |
-| [`0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)       | Vault-ESO 복구 + TLS/Ingress + CI 정적 계약 회귀/증적 검증 런북   | Active | 2026-03-28 |
-| [`0003-platform-expansion-bootstrap-runbook.md`](./0003-platform-expansion-bootstrap-runbook.md) | cert-manager/Dashboard/Istio/Kiali 부트스트랩 및 증상별 복구 런북 | Active | 2026-03-29 |
+| 문서                                                                                                     | 설명                                                              | 상태   | 최종 수정  |
+| -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------ | ---------- |
+| [`0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)               | 검증 커맨드 기반 부트스트랩/트러블슈팅/복구 런북                  | Active | 2026-03-27 |
+| [`0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)               | Vault-ESO 복구 + TLS/Ingress + CI 정적 계약 회귀/증적 검증 런북   | Active | 2026-03-28 |
+| [`0003-platform-expansion-bootstrap-runbook.md`](./0003-platform-expansion-bootstrap-runbook.md)         | cert-manager/Dashboard/Istio/Kiali 부트스트랩 및 증상별 복구 런북 | Active | 2026-03-29 |
+| [`0004-rollouts-notifications-headlamp-runbook.md`](./0004-rollouts-notifications-headlamp-runbook.md)   | Argo Rollouts/Notifications/Headlamp 설치 및 운영 런북            | Active | 2026-03-30 |
+| [`0005-headlamp-keycloak-runbook.md`](./0005-headlamp-keycloak-runbook.md)                               | Headlamp ServiceAccount 토큰 로그인 및 Keycloak OIDC 전환 런북    | Active | 2026-03-31 |
+| [`0006-new-app-onboarding-runbook.md`](./0006-new-app-onboarding-runbook.md)                             | 새 애플리케이션 GitOps 온보딩 체크리스트 및 트러블슈팅 런북       | Active | 2026-03-31 |
+| [`0007-kiali-observability-connectivity-runbook.md`](./0007-kiali-observability-connectivity-runbook.md) | Kiali 관측성 서비스 연결 장애 진단 및 복구 런북                   | Active | 2026-03-31 |

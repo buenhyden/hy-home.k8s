@@ -92,3 +92,5 @@
 | [`0001-wsl-k3d-argocd-bootstrap-guide.md`](./0001-wsl-k3d-argocd-bootstrap-guide.md)         | 외부 서비스 분리 운영 + Vault 기반 부트스트랩/검증 가이드              | Active | 2026-03-27 |
 | [`0002-wsl2-k3d-argocd-ha-setup-guide.md`](./0002-wsl2-k3d-argocd-ha-setup-guide.md)         | WSL2 멀티노드 HA + TLS + 런타임/CI 정적 검증 절차를 분리한 운영 가이드 | Active | 2026-03-28 |
 | [`0003-platform-expansion-bootstrap-guide.md`](./0003-platform-expansion-bootstrap-guide.md) | cert-manager/Dashboard/Istio/Kiali 포함 확장 플랫폼 부트스트랩 가이드  | Active | 2026-03-29 |
+| [`0004-headlamp-auth-oidc-guide.md`](./0004-headlamp-auth-oidc-guide.md)                     | Headlamp 인증/로그인 방식 및 Keycloak OIDC 연동 how-to 가이드          | Active | 2026-03-31 |
+| [`0005-new-app-gitops-onboarding-guide.md`](./0005-new-app-gitops-onboarding-guide.md)       | 새 애플리케이션 GitOps 온보딩 (ApplicationSet/Application CR) 가이드   | Active | 2026-03-31 |
