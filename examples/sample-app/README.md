@@ -1,0 +1,70 @@
+# Sample App — GitOps 예시
+
+이 디렉토리는 `hy-home.k8s` 클러스터에 새로운 앱을 온보딩할 때 참조하는 완전한 GitOps 예시다.
+
+## 파일 구조
+
+```
+examples/sample-app/
+├── kustomization.yaml        # Kustomize 진입점
+├── rollout.yaml              # Argo Rollout (canary 전략)
+├── service.yaml              # Service (Istio http- 포트 명명 규칙)
+├── ingress.yaml              # Ingress (nginx + cert-manager mkcert TLS)
+├── analysis-template.yaml    # AnalysisTemplate (Prometheus 재시작 검사)
+├── external-secret.yaml      # ExternalSecret (Vault 연동, 선택 사항)
+└── traefik-k3d.yaml.example  # Traefik dynamic config (hy-home.docker 레포용)
+```
+
+## 사용 방법
+
+### 1. 플레이스홀더 교체
+
+파일 내 `<appname>`, `<owner>`, `<tag>`, `<port>`를 실제 값으로 교체한다.
+
+| 플레이스홀더 | 설명                     | 예시        |
+| ------------ | ------------------------ | ----------- |
+| `<appname>`  | 앱 이름 (소문자, 하이픈) | `my-api`    |
+| `<owner>`    | GitHub 사용자명/조직명   | `buenhyden` |
+| `<tag>`      | 컨테이너 이미지 태그     | `v1.2.3`    |
+| `<port>`     | 앱 listen 포트           | `8080`      |
+
+### 2. workloads 디렉토리에 복사
+
+```bash
+cp -r examples/sample-app gitops/workloads/<appname>
+# 플레이스홀더 일괄 교체
+sed -i 's/<appname>/my-api/g; s/<owner>/buenhyden/g; s/<tag>/v1.0.0/g; s/<port>/8080/g' \
+  gitops/workloads/<appname>/*.yaml
+```
+
+### 3. Traefik 설정 추가 (hy-home.docker 레포)
+
+```bash
+cp examples/sample-app/traefik-k3d.yaml.example \
+  ../hy-home.docker/infra/01-gateway/traefik/dynamic/<appname>-k3d.yaml
+# 플레이스홀더 교체
+```
+
+### 4. 커밋 & 푸시
+
+```bash
+git add gitops/workloads/<appname>/
+git commit -m "feat: add <appname> to GitOps"
+git push origin main
+```
+
+ArgoCD `apps-generator` ApplicationSet이 자동으로 Application을 생성하고 배포한다.
+
+## 현재 플랫폼 전제 조건
+
+- `apps` namespace에 `PeerAuthentication STRICT` 적용 중 → Istio mTLS 강제
+- `apps` namespace NetworkPolicy → postgres(172.18.0.15) egress 허용
+- `ingress-nginx`에 Istio sidecar 주입 → mTLS 체인 완성
+- AnalysisTemplate이 Prometheus(`prometheus-external.platform.svc.cluster.local:9090`) 접근 필요
+
+## 관련 문서
+
+- Guide: [`docs/07.guides/0008-github-app-gitops-onboarding-guide.md`](../../docs/07.guides/0008-github-app-gitops-onboarding-guide.md)
+- Runbook: [`docs/09.runbooks/0010-github-app-gitops-onboarding-runbook.md`](../../docs/09.runbooks/0010-github-app-gitops-onboarding-runbook.md)
+- Operations: [`docs/08.operations/0007-app-gitops-onboarding-policy.md`](../../docs/08.operations/0007-app-gitops-onboarding-policy.md)
+- 참조 구현: [`gitops/workloads/adminer/`](../../gitops/workloads/adminer/)

@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - rollout.yaml
+  - service.yaml
+  - ingress.yaml
+  - analysis-template.yaml
+  # 시크릿 연동이 필요한 경우 아래 주석 해제
+  # - external-secret.yaml

@@ -1,0 +1,31 @@
+# Traefik dynamic config — hy-home.docker 레포에 추가 필요
+#
+# 파일 경로 (hy-home.docker 레포):
+#   infra/01-gateway/traefik/dynamic/<appname>-k3d.yaml
+#
+# 트래픽 흐름:
+#   Browser → Traefik (websecure/443) → k3d-hyhome-serverlb:443
+#     → ingress-nginx → <appname> service (apps:<port>)
+#
+# Traefik은 dynamic config 디렉토리를 watch하므로 재시작 없이 자동 반영된다.
+
+http:
+  serversTransports:
+    <appname>-k3d-transport:
+      insecureSkipVerify: true
+
+  services:
+    <appname>-k3d:
+      loadBalancer:
+        passHostHeader: true
+        serversTransport: <appname>-k3d-transport
+        servers:
+          - url: 'https://k3d-hyhome-serverlb:443'
+
+  routers:
+    <appname>-k3d:
+      rule: 'Host(`<appname>.127.0.0.1.nip.io`)'
+      entryPoints:
+        - websecure
+      service: <appname>-k3d
+      tls: {}

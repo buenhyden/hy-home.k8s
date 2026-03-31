@@ -1,0 +1,76 @@
+# Argo Rollout — canary 전략
+#
+# 배포 흐름:
+#   새 버전 → 20% 트래픽 → AnalysisTemplate 검사(재시작 없음) → pause 30s
+#   → 60% → pause 30s → 100% 전환
+#
+# 이미지: GitHub Container Registry (ghcr.io) 기반
+#   - 앱 GitHub 레포: https://github.com/<owner>/<appname>
+#   - CI: GitHub Actions → docker build → ghcr.io/<owner>/<appname>:<tag>
+#
+# 변경 전 필수:
+#   - <appname>   → 실제 앱 이름 (소문자, 하이픈)
+#   - <owner>     → GitHub 사용자명 또는 조직명
+#   - <tag>       → 고정 태그 사용 권장 (latest 지양)
+#   - <port>      → 앱이 listen하는 포트
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: <appname>
+  namespace: apps
+  labels:
+    app.kubernetes.io/name: <appname>
+    app.kubernetes.io/component: web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: <appname>
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: <appname>
+        app.kubernetes.io/component: web
+    spec:
+      containers:
+        - name: <appname>
+          image: ghcr.io/<owner>/<appname>:<tag>
+          ports:
+            - name: http
+              containerPort: <port>
+          # 환경변수 — 시크릿 연동 시 envFrom 사용 (external-secret.yaml 참조)
+          env:
+            - name: PORT
+              value: '<port>'
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          readinessProbe:
+            httpGet:
+              path: /healthz # 앱의 health check 경로로 변경
+              port: <port>
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: <port>
+            initialDelaySeconds: 10
+            periodSeconds: 20
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - analysis:
+            templates:
+              - templateName: <appname>-stability
+        - pause:
+            duration: 30s
+        - setWeight: 60
+        - pause:
+            duration: 30s
+        - setWeight: 100

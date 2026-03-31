@@ -1,0 +1,36 @@
+# Ingress — ingress-nginx + cert-manager mkcert-ca-issuer
+#
+# TLS 흐름:
+#   cert-manager가 mkcert-ca-issuer로 인증서를 발급하여 <appname>-tls Secret에 저장한다.
+#   ingress-nginx가 해당 Secret을 사용하여 TLS 종료를 수행한다.
+#
+# 접근 URL: https://<appname>.127.0.0.1.nip.io
+#
+# Traefik 연동 필요:
+#   hy-home.docker 레포에 infra/01-gateway/traefik/dynamic/<appname>-k3d.yaml 추가 필요.
+#   패턴: examples/sample-app/traefik-k3d.yaml.example 참조.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: <appname>
+  namespace: apps
+  annotations:
+    cert-manager.io/cluster-issuer: mkcert-ca-issuer
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: <appname>.127.0.0.1.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: <appname>
+                port:
+                  number: <port>
+  tls:
+    - hosts:
+        - <appname>.127.0.0.1.nip.io
+      secretName: <appname>-tls # pragma: allowlist secret

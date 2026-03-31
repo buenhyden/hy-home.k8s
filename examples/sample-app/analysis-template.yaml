@@ -1,0 +1,30 @@
+# AnalysisTemplate — canary 단계 안정성 검사
+#
+# 측정 방법:
+#   Prometheus(kube-state-metrics)로 canary 파드의 컨테이너 재시작 횟수를 측정한다.
+#   canary step 동안 30초마다 측정하며, 재시작이 1회라도 발생하면 실패로 판정하고
+#   Rollout을 자동으로 이전 버전으로 rollback한다.
+#
+# 전제:
+#   - prometheus-external.platform.svc.cluster.local:9090 접근 가능
+#   - kube-state-metrics가 apps namespace 파드를 수집 중
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: <appname>-stability
+  namespace: apps
+spec:
+  metrics:
+    - name: container-restarts
+      interval: 30s
+      failureLimit: 1
+      provider:
+        prometheus:
+          address: http://prometheus-external.platform.svc.cluster.local:9090
+          query: |
+            sum(increase(kube_pod_container_status_restarts_total{
+              namespace="apps",
+              container="<appname>"
+            }[2m]))
+      successCondition: result[0] == "0"
+      failureCondition: result[0] != "0"
