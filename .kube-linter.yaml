@@ -5,4 +5,5 @@ checks:
     - "no-anti-affinity" # Many home lab apps don't have enough nodes for anti-affinity
     - "unset-cpu-requirements" # Allow development without strict CPU requests
     - "unset-memory-requirements" # Allow development without strict memory requests
+    - "dangling-service"
 customChecks: []
