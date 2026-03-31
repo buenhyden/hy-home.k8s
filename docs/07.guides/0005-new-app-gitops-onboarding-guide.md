@@ -343,7 +343,7 @@ argocd app get <appname> --refresh
 
 - ArgoCD Application: `Synced` / `Healthy`
 - Pod: `Running`
-- ExternalSecret: `SecretSynced` (시크릿 연동 시)
+- ExternalSecret: `SecretSynced` (시크릿 연동 시) # pragma: allowlist secret
 
 ## Common Pitfalls
 

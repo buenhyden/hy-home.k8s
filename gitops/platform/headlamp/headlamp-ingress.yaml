@@ -22,4 +22,4 @@ spec:
   tls:
     - hosts:
         - headlamp.127.0.0.1.nip.io
-      secretName: headlamp-tls
+      secretName: headlamp-tls # pragma: allowlist secret
