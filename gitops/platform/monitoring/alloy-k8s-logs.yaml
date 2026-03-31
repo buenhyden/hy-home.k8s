@@ -133,12 +133,18 @@ data:
     // ----------------------------------------------------------------
     loki.source.kubernetes_events "events" {
       namespaces = []
-      forward_to = [loki.write.external_loki.receiver]
-      extra_labels = {
-        cluster = "k3d-hyhome",
-        env     = "dev",
-        job     = "kubernetes-events",
+      forward_to = [loki.process.events_label.receiver]
+    }
+
+    loki.process "events_label" {
+      stage.static_labels {
+        values = {
+          cluster = "k3d-hyhome",
+          env     = "dev",
+          job     = "kubernetes-events",
+        }
       }
+      forward_to = [loki.write.external_loki.receiver]
     }
 
     // ----------------------------------------------------------------
