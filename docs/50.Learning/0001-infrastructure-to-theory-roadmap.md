@@ -1,6 +1,7 @@
 # Infrastructure to Theory: 2026 Learning Roadmap
 
 ## 1. Overview
+
 이 가이드는 `hy-home.k8s` 인프라 구축 경험을 바탕으로, 실무 기술이 어떤 컴퓨터 과학(CS) 및 공학(CE) 이론에 뿌리를 두고 있는지 연결합니다. 단순히 도구를 사용하는 법을 넘어, **"왜 이렇게 동작하는가?"**에 대한 해답을 찾는 여정입니다.
 
 ---
@@ -19,12 +20,14 @@
 ## 3. Deep Dive Modules
 
 ### Module A: The Memory Wall (vLLM & OS Paging)
+
 - **Problem**: LLM 추론 시 KV Cache가 메모리를 과도하게 점유하여 처리량이 저하됨.
 - **Theory**: 운영체제의 **Virtual Memory Paging**.
 - **Assignment**: Kwon et al. (2023) 논문을 읽고, vLLM이 어떻게 메모리 파편화를 해결하는지 파악하세요.
 - **Mini-Project**: [Custom Controller 구현](#module-c-mini-project-custom-initialization-controller)
 
 ### Module B: The Vector Space (RAG & Geometry)
+
 - **Problem**: 텍스트의 의미를 어떻게 숫자로 표현하고 빠르게 검색할 것인가?
 - **Theory**: **High-dimensional Vector Space** & **Graph Theory (HNSW)**.
 - **Reference**: [RAG & Vector DB Theory](../.agent/skills/self-learning-guide/references/rag-vector-db/theory.md)
@@ -36,6 +39,7 @@
 실질적인 인프라 제어 로직을 이해하기 위한 실습 과제입니다.
 
 ### [Task] ConfigMap Watcher Controller
+
 Kubernetes의 특정 ConfigMap이 변경될 때마다 관련 Pod을 자동으로 재시작(Rolling Update)하는 간단한 컨트롤러를 구현합니다.
 
 - **Objective**: Kubernetes Reconciliation Loop의 원리 이해.
@@ -48,6 +52,7 @@ Kubernetes의 특정 ConfigMap이 변경될 때마다 관련 Pod을 자동으로
 ---
 
 ## 5. Recommended Reading List
+
 1. Kwon et al., "Efficient Memory Management for LLM Serving with PagedAttention" (SOSP '23)
 2. Vaswani et al., "Attention Is All You Need" (2017)
 3. Lewis et al., "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks" (2020)

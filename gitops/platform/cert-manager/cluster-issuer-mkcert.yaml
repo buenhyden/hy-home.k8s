@@ -4,4 +4,4 @@ metadata:
   name: mkcert-ca-issuer
 spec:
   ca:
-    secretName: mkcert-root-ca
+    secretName: mkcert-root-ca # pragma: allowlist secret

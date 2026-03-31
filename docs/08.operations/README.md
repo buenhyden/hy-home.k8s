@@ -136,3 +136,4 @@ echo 'fs.inotify.max_user_instances=1024' | sudo tee /etc/sysctl.d/99-k3d.conf
 | [`0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md)                 | cert-manager/Istio/Kiali 운영 통제(TLS/sidecar/Kiali auth/Traefik 계약) 정책            | Active | 2026-03-29 |
 | [`0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md)     | Argo Rollouts/Notifications(Slack)/Headlamp 운영 통제 정책                              | Active | 2026-03-30 |
 | [`0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | Istio 포트 네이밍/Grafana Anonymous Access/ArgoCD NodePort 예약 정책                    | Active | 2026-03-31 |
+| [`0006-k8s-observability-operations-policy.md`](./0006-k8s-observability-operations-policy.md)           | k8s 메트릭 NodePort 예약/in-cluster Alloy/alert_rules 로드 패턴 정책                    | Active | 2026-03-31 |

@@ -55,7 +55,7 @@
 - **Required**:
   - Headlamp namespace: `headlamp` 고정
   - Ingress hostname: `headlamp.127.0.0.1.nip.io`
-  - TLS Secret: `headlamp-tls` (cert-manager `mkcert-ca-issuer` 자동 발급)
+  - TLS Secret: `headlamp-tls` (cert-manager `mkcert-ca-issuer` 자동 발급) # pragma: allowlist secret
   - Traefik artifact `headlamp-k3d.yaml` 별도 Traefik 레포에 적용 유지
 - **Allowed**:
   - ServiceAccount Token 방식 인증 (로컬 플랫폼 기본)

@@ -239,7 +239,7 @@ kubectl run -it --rm debug --image=busybox --restart=Never -- \
   nslookup grafana-external.platform.svc.cluster.local
 ```
 
-3. Kiali 파드를 재시작하여 캐시를 초기화한다.
+1. Kiali 파드를 재시작하여 캐시를 초기화한다.
 
 ```bash
 kubectl rollout restart deployment/kiali -n istio-system

@@ -283,6 +283,7 @@ kubectl -n headlamp get deployment headlamp \
 
 - 토큰 로그인: `kubectl -n headlamp create token headlamp-admin --duration=24h` 재발급
 - OIDC 사용 시: Keycloak 세션 정책에서 `SSO Session Max` 시간 확인
+
   ```
   Keycloak 콘솔 → Realm Settings → Sessions → SSO Session Max
   ```

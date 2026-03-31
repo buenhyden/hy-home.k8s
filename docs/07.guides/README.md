@@ -95,3 +95,4 @@
 | [`0004-headlamp-auth-oidc-guide.md`](./0004-headlamp-auth-oidc-guide.md)                     | Headlamp 인증/로그인 방식 및 Keycloak OIDC 연동 how-to 가이드           | Active | 2026-03-31 |
 | [`0005-new-app-gitops-onboarding-guide.md`](./0005-new-app-gitops-onboarding-guide.md)       | 새 애플리케이션 GitOps 온보딩 (ApplicationSet/Application CR) 가이드    | Active | 2026-03-31 |
 | [`0006-argocd-prometheus-grafana-guide.md`](./0006-argocd-prometheus-grafana-guide.md)       | ArgoCD 메트릭 NodePort 수집 + Prometheus 설정 + Grafana 대시보드 가이드 | Active | 2026-03-31 |
+| [`0007-k8s-observability-bootstrap-guide.md`](./0007-k8s-observability-bootstrap-guide.md)   | k3d 클러스터 메트릭/로그 수집 관측성 스택 부트스트랩 가이드             | Active | 2026-03-31 |

@@ -236,8 +236,8 @@ export VAULT_TOKEN="<token>"
 
 # 앱 시크릿 저장 (경로 규칙: secret/apps/<appname>/...)
 vault kv put secret/apps/<appname>/config \
-  db_password="supersecret" \
-  api_key="myapikey"
+  db_password="supersecret" \ # pragma: allowlist secret
+  api_key="myapikey" # pragma: allowlist secret
 
 # 확인
 vault kv get secret/apps/<appname>/config

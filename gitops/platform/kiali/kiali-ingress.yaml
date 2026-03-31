@@ -23,4 +23,4 @@ spec:
   tls:
     - hosts:
         - kiali.127.0.0.1.nip.io
-      secretName: kiali-tls
+      secretName: kiali-tls # pragma: allowlist secret
