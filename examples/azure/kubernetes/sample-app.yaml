@@ -58,19 +58,19 @@ spec:
     spec:
       serviceAccountName: hy-home-sa
       containers:
-      - name: web
-        image: nginx:latest # Replace with your app image
-        ports:
-        - containerPort: 80
-        env:
-        - name: DATABASE_HOST
-          value: "hy-home-pg-server.postgres.database.azure.com"
-        - name: REDIS_HOST
-          value: "hy-home-redis-cache.redis.cache.windows.com"
-        volumeMounts:
-        - name: secrets-store-inline
-          mountPath: "/mnt/secrets-store"
-          readOnly: true
+        - name: web
+          image: nginx:latest # Replace with your app image
+          ports:
+            - containerPort: 80
+          env:
+            - name: DATABASE_HOST
+              value: "hy-home-pg-server.postgres.database.azure.com"
+            - name: REDIS_HOST
+              value: "hy-home-redis-cache.redis.cache.windows.com"
+          volumeMounts:
+            - name: secrets-store-inline
+              mountPath: "/mnt/secrets-store"
+              readOnly: true
       volumes:
         - name: secrets-store-inline
           csi:
