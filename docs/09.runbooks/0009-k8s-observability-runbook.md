@@ -108,7 +108,7 @@ kubectl get all -n monitoring
 
 예상 출력:
 
-```
+```text
 NAME                                  READY   STATUS    RESTARTS
 pod/alloy-k8s-logs-xxxx              1/1     Running   0
 pod/kube-state-metrics-xxxx          1/1     Running   0

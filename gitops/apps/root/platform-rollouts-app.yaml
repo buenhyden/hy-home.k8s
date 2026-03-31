@@ -4,7 +4,7 @@ metadata:
   name: platform-rollouts
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: '2'
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   project: platform
   source:
@@ -13,7 +13,7 @@ spec:
     targetRevision: 2.40.9
     helm:
       releaseName: argo-rollouts
-      values: |
+      values: | # pragma: allowlist secret
         controller:
           replicas: 1
           resources:

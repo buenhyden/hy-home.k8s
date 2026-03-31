@@ -35,7 +35,7 @@
 
 ### File-level Contract (수정 파일)
 
-```
+```text
 gitops/platform/external-services/vault-external.yaml          172.30.0.10 → 172.19.0.9
 gitops/platform/external-services/postgres-external.yaml       172.30.0.11 → 172.19.0.11
 gitops/platform/external-services/valkey-external.yaml         172.30.0.12 → 172.19.0.12
@@ -76,7 +76,7 @@ kubectl -n cert-manager create secret tls mkcert-root-ca \
 
 ### File-level Contract (신규 파일)
 
-```
+```text
 gitops/platform/cert-manager/
   kustomization.yaml
   cluster-issuer-mkcert.yaml          # ClusterIssuer (mkcert-ca-issuer)
@@ -131,7 +131,7 @@ http:
 
 ### File-level Contract (신규 파일)
 
-```
+```text
 gitops/platform/dashboard/
   kustomization.yaml
   dashboard-ingress.yaml              # Ingress + cert-manager TLS
@@ -161,7 +161,7 @@ gitops/apps/root/
 
 ### File-level Contract (신규 파일)
 
-```
+```text
 gitops/platform/istio/
   kustomization.yaml
   istio-base-values.yaml
@@ -231,7 +231,7 @@ egress:
 
 ### File-level Contract (신규 파일)
 
-```
+```text
 gitops/platform/kiali/
   kustomization.yaml
   kiali-values.yaml                   # Prometheus/Grafana/Tempo URLs

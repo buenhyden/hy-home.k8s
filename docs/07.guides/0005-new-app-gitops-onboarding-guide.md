@@ -62,7 +62,7 @@ kubectl -n argocd get applicationset apps-generator
 `apps-generator` ApplicationSet은 `gitops/workloads/*` 경로를 자동 스캔한다.
 이 레포에 workload 디렉토리를 추가하는 것이 가장 간단한 방법이다.
 
-```
+```text
 gitops/workloads/
 └── <appname>/
     ├── kustomization.yaml

@@ -73,7 +73,7 @@ kubectl -n headlamp get deployment headlamp \
 
 현재 구성된 args:
 
-```
+```text
 -in-cluster
 -in-cluster-context-name=main
 -plugins-dir=/headlamp/plugins
@@ -140,7 +140,7 @@ Keycloak 관리 콘솔(`https://keycloak.example.com/admin`)에서 아래 순서
 
 **Client 생성**:
 
-```
+```text
 Client ID:               headlamp
 Client Protocol:         openid-connect
 Access Type:             confidential
@@ -158,7 +158,7 @@ Web Origins:             https://headlamp.127.0.0.1.nip.io
 
 **Client Secret 확인**:
 
-```
+```text
 Credentials 탭 → Secret 복사
 ```
 
@@ -306,7 +306,7 @@ kubectl auth can-i list pods --as=<username> --as-group=k8s-admins
 
 Keycloak Client의 `Valid Redirect URIs`가 정확히 일치해야 한다.
 
-```
+```text
 올바름: https://headlamp.127.0.0.1.nip.io/oidc-callback
 잘못됨: https://headlamp.127.0.0.1.nip.io/oidc-callback/  (후행 슬래시 주의)
 ```

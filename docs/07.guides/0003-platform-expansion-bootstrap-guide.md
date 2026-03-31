@@ -34,7 +34,7 @@ openssl version
 
 ### 필수 파일
 
-```
+```text
 secrets/certs/cert.pem          # argocd용 TLS cert (mkcert 발급)
 secrets/certs/key.pem           # argocd용 TLS key
 secrets/certs/rootCA.pem        # mkcert rootCA cert

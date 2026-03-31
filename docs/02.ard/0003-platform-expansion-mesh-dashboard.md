@@ -52,7 +52,7 @@
 
 ## System Overview & Context
 
-```
+```text
 Host (Windows + WSL2)
   └─ Docker Desktop
        ├─ infra_net (172.19.0.0/16)

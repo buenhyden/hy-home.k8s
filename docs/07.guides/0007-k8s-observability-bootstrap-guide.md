@@ -21,7 +21,7 @@ k3d 클러스터의 Kubernetes 오브젝트 상태 메트릭, 파드 로그, 이
 
 ## 아키텍처 개요
 
-```
+```text
 k3d-hyhome (Docker network: 172.18.0.0/16)
 ├── server-0 (172.18.0.2)         ← NodePort gateway
 │   ├── monitoring/kube-state-metrics (NodePort 30091)
@@ -71,7 +71,7 @@ kubectl get all -n monitoring
 
 예상 출력:
 
-```
+```text
 NAME                                       READY   STATUS    RESTARTS
 pod/alloy-k8s-logs-xxxx-xxxx              1/1     Running   0
 pod/kube-state-metrics-xxxx-xxxx          1/1     Running   0
@@ -184,7 +184,7 @@ Grafana UI에서 아래 커뮤니티 대시보드를 임포트한다:
 | Istio Control Plane Dashboard  | 7645       | Prometheus      |
 | Argo Rollouts Dashboard        | 21177      | Prometheus      |
 
-```
+```text
 Grafana UI → Dashboards → Import → ID 입력 → Prometheus datasource 선택
 ```
 

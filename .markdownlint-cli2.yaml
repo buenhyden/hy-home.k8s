@@ -3,6 +3,7 @@ config:
   MD025: false
   MD028: false
   MD036: false
+  MD051: false
   MD060:
     style: consistent
   MD033:

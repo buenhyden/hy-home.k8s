@@ -52,7 +52,7 @@ kubectl -n headlamp create token headlamp-admin --duration=24h
 
 ### 1-3. Headlamp UI 로그인
 
-```
+```text
 1. https://headlamp.127.0.0.1.nip.io 접속
 2. 로그인 화면에서 토큰 붙여넣기
 3. 클러스터 "main" 선택 → 로그인 완료
@@ -188,14 +188,14 @@ Keycloak 관리 콘솔(`https://keycloak.example.com/admin`) 접속 후 확인.
 
 ### 3-1. Realm 확인
 
-```
+```text
 [ ] Realm 이름: hyhome (존재 확인)
 [ ] Realm 활성화 상태: Enabled
 ```
 
 ### 3-2. Client 설정 확인
 
-```
+```text
 [ ] Client ID: headlamp
 [ ] Client Protocol: openid-connect
 [ ] Access Type: confidential
@@ -208,7 +208,7 @@ Keycloak 관리 콘솔(`https://keycloak.example.com/admin`) 접속 후 확인.
 
 ### 3-3. Groups Scope 확인
 
-```
+```text
 [ ] Client Scopes → "groups" 스코프 존재
 [ ] groups 스코프에 Group Membership mapper 포함
     - Token Claim Name: groups
@@ -224,7 +224,7 @@ curl -s "https://keycloak.example.com/realms/hyhome/.well-known/openid-configura
   jq '{issuer, authorization_endpoint, token_endpoint}'
 ```
 
-```
+```text
 [ ] hyhome Realm well-known endpoint 응답 정상
 [ ] 사용자가 Keycloak Group(k8s-admins 등)에 할당됨
 ```
@@ -259,7 +259,7 @@ kubectl -n headlamp get deployment headlamp \
 
 Keycloak Client `Valid Redirect URIs`가 정확히 아래와 일치하는지 확인:
 
-```
+```text
 https://headlamp.127.0.0.1.nip.io/oidc-callback
 ```
 
@@ -284,7 +284,7 @@ kubectl -n headlamp get deployment headlamp \
 - 토큰 로그인: `kubectl -n headlamp create token headlamp-admin --duration=24h` 재발급
 - OIDC 사용 시: Keycloak 세션 정책에서 `SSO Session Max` 시간 확인
 
-  ```
+  ```text
   Keycloak 콘솔 → Realm Settings → Sessions → SSO Session Max
   ```
 
