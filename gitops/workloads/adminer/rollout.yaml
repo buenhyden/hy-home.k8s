@@ -51,6 +51,9 @@ spec:
     canary:
       steps:
         - setWeight: 20
+        - analysis:
+            templates:
+              - templateName: adminer-stability
         - pause:
             duration: 30s
         - setWeight: 60

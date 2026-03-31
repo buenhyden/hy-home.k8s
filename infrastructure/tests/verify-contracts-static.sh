@@ -163,4 +163,35 @@ require_pattern '172\.18\.0\.10/32' "$KIALI_NP"
 require_pattern '172\.18\.0\.14/32' "$KIALI_NP"
 require_pattern '172\.18\.0\.12/32' "$KIALI_NP"
 
+echo "[INFO] verify adminer workload contracts"
+ADMINER_ROLLOUT="$ROOT_DIR/gitops/workloads/adminer/rollout.yaml"
+ADMINER_SERVICE="$ROOT_DIR/gitops/workloads/adminer/service.yaml"
+ADMINER_INGRESS="$ROOT_DIR/gitops/workloads/adminer/ingress.yaml"
+ADMINER_PA="$ROOT_DIR/gitops/workloads/adminer/peer-authentication.yaml"
+ADMINER_AT="$ROOT_DIR/gitops/workloads/adminer/analysis-template.yaml"
+
+for file in "$ADMINER_ROLLOUT" "$ADMINER_SERVICE" "$ADMINER_INGRESS" "$ADMINER_PA" "$ADMINER_AT"; do
+  require_file "$file"
+done
+
+require_pattern 'kind:\s*Rollout' "$ADMINER_ROLLOUT"
+require_pattern 'image:\s*adminer:' "$ADMINER_ROLLOUT"
+require_pattern 'templateName:\s*adminer-stability' "$ADMINER_ROLLOUT"
+require_pattern 'host:\s*adminer\.127\.0\.0\.1\.nip\.io' "$ADMINER_INGRESS"
+require_pattern 'ingressClassName:\s*nginx' "$ADMINER_INGRESS"
+require_pattern 'mode:\s*STRICT' "$ADMINER_PA"
+require_pattern 'name:\s*adminer-stability' "$ADMINER_AT"
+
+echo "[INFO] verify apps namespace NetworkPolicy"
+APPS_NP="$ROOT_DIR/gitops/platform/network-policies/apps-egress.yaml"
+require_file "$APPS_NP"
+require_pattern '172\.18\.0\.15/32' "$APPS_NP"
+require_pattern 'port:\s*15432' "$APPS_NP"
+
+echo "[INFO] verify monitoring namespace NetworkPolicy"
+MONITORING_NP="$ROOT_DIR/gitops/platform/network-policies/monitoring-egress.yaml"
+require_file "$MONITORING_NP"
+require_pattern '172\.18\.0\.13/32' "$MONITORING_NP"
+require_pattern 'port:\s*3100' "$MONITORING_NP"
+
 echo "[PASS] static contract verification passed"

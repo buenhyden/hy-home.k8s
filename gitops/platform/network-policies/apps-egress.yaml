@@ -1,0 +1,55 @@
+# apps namespace egress NetworkPolicy
+# 대상: apps namespace의 모든 파드 (현재: adminer)
+# 허용 egress:
+#   - postgres-write-external / postgres-read-external (172.18.0.15)
+#   - kube-dns (kube-system)
+#   - Istiod control plane (istio-system:15010/15012/15014)
+#   - in-cluster pod-to-pod (10.42.0.0/16) for Istio mTLS
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-apps
+  namespace: apps
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    # PostgreSQL write/read (postgres-write-external / postgres-read-external)
+    - to:
+        - ipBlock:
+            cidr: 172.18.0.15/32
+      ports:
+        - protocol: TCP
+          port: 15432
+        - protocol: TCP
+          port: 15433
+    # kube-dns
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # Istiod control plane (xDS, cert)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: istio-system
+      ports:
+        - protocol: TCP
+          port: 15010
+        - protocol: TCP
+          port: 15012
+        - protocol: TCP
+          port: 15014
+    # in-cluster pod-to-pod (Istio mTLS, cluster service IPs)
+    - to:
+        - ipBlock:
+            cidr: 10.42.0.0/16

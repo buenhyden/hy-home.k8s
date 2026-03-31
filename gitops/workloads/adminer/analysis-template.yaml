@@ -1,0 +1,25 @@
+# adminer canary AnalysisTemplate
+# Prometheus(kube-state-metrics)로 canary 파드 컨테이너 재시작 횟수를 측정
+# 재시작이 없으면(== 0) 성공, 재시작이 발생하면 실패 → 자동 rollback
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: adminer-stability
+  namespace: apps
+spec:
+  metrics:
+    - name: container-restarts
+      # canary step 동안 30초마다 측정, 연속 1회 실패 시 Rollout rollback
+      interval: 30s
+      failureLimit: 1
+      provider:
+        prometheus:
+          address: http://prometheus-external.platform.svc.cluster.local:9090
+          query: |
+            sum(increase(kube_pod_container_status_restarts_total{
+              namespace="apps",
+              container="adminer"
+            }[2m]))
+      # 재시작 횟수가 0이어야 성공
+      successCondition: result[0] == "0"
+      failureCondition: result[0] != "0"

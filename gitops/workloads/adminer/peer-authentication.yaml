@@ -1,0 +1,12 @@
+# apps namespace PeerAuthentication — Istio mTLS STRICT
+# 적용 범위: apps namespace 전체 (podSelector 없음 = 모든 파드)
+# 전제: ingress-nginx namespace에도 istio-injection: enabled 라벨 필요
+#        (ingress-nginx sidecar가 없으면 ingress → adminer 트래픽 거부됨)
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: apps
+spec:
+  mtls:
+    mode: STRICT

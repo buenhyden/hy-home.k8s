@@ -3,3 +3,5 @@ kind: Kustomization
 resources:
   - egress-to-external-services.yaml
   - kiali-egress-to-observability.yaml
+  - apps-egress.yaml
+  - monitoring-egress.yaml

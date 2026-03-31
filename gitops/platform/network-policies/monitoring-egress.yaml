@@ -1,0 +1,48 @@
+# monitoring namespace egress NetworkPolicy
+# 대상: monitoring namespace의 모든 파드 (현재: alloy-k8s-logs, kube-state-metrics)
+# 허용 egress:
+#   - Loki external (172.18.0.13:3100) — 로그 전송
+#   - Kubernetes API server (172.18.0.0/24:6443) — pod/log/event watch
+#   - kube-dns (kube-system)
+#   - in-cluster pod-to-pod (10.42.0.0/16)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-monitoring
+  namespace: monitoring
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    # Loki external (infra-loki on k3d-hyhome network)
+    - to:
+        - ipBlock:
+            cidr: 172.18.0.13/32
+      ports:
+        - protocol: TCP
+          port: 3100
+    # Kubernetes API server (post-DNAT via k3d network)
+    - to:
+        - ipBlock:
+            cidr: 172.18.0.0/24
+      ports:
+        - protocol: TCP
+          port: 6443
+    # kube-dns
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # in-cluster pod-to-pod
+    - to:
+        - ipBlock:
+            cidr: 10.42.0.0/16
