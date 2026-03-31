@@ -182,6 +182,7 @@ spec:
           args:
             - run
             - --server.http.listen-addr=0.0.0.0:12345
+            - --storage.path=/var/lib/alloy
             - /etc/alloy/config.alloy
           ports:
             - name: http
@@ -189,6 +190,8 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /etc/alloy
+            - name: storage
+              mountPath: /var/lib/alloy
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -218,3 +221,5 @@ spec:
         - name: config
           configMap:
             name: alloy-k8s-logs-config
+        - name: storage
+          emptyDir: {}
