@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: adminer
+  namespace: apps
+  labels:
+    app.kubernetes.io/name: adminer
+    app.kubernetes.io/component: db-admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: adminer
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: adminer
+        app.kubernetes.io/component: db-admin
+    spec:
+      containers:
+        - name: adminer
+          image: adminer:4.8.1
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: ADMINER_DEFAULT_SERVER
+              value: postgres-write-external.platform.svc.cluster.local:15432
+            - name: ADMINER_DESIGN
+              value: pepa-linha
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 20
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause:
+            duration: 30s
+        - setWeight: 60
+        - pause:
+            duration: 30s
+        - setWeight: 100

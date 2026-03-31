@@ -101,6 +101,10 @@ echo "[INFO] verify platform AppProject app-of-apps permission"
 require_pattern 'group:\s*argoproj\.io' "$APPPROJECT_PLATFORM"
 require_pattern 'kind:\s*Application' "$APPPROJECT_PLATFORM"
 
+echo "[INFO] verify apps AppProject Rollout permission"
+APPPROJECT_APPS="$ROOT_DIR/gitops/clusters/local/appproject-apps.yaml"
+require_pattern 'kind:\s*Rollout' "$APPPROJECT_APPS"
+
 echo "[INFO] verify platform AppProject new component contracts"
 require_pattern 'https://charts\.jetstack\.io' "$APPPROJECT_PLATFORM"
 require_pattern 'https://kubernetes-sigs\.github\.io/headlamp/' "$APPPROJECT_PLATFORM"

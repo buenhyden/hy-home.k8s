@@ -11,16 +11,16 @@ spec:
     - namespace: apps
       server: https://kubernetes.default.svc
   clusterResourceWhitelist:
-    - group: ""
+    - group: ''
       kind: Namespace
   namespaceResourceWhitelist:
-    - group: ""
+    - group: ''
       kind: ServiceAccount
-    - group: ""
+    - group: ''
       kind: ConfigMap
-    - group: ""
+    - group: ''
       kind: Secret
-    - group: ""
+    - group: ''
       kind: Service
     - group: apps
       kind: Deployment
@@ -40,6 +40,12 @@ spec:
       kind: RoleBinding
     - group: networking.k8s.io
       kind: NetworkPolicy
+    - group: argoproj.io
+      kind: Rollout
+    - group: argoproj.io
+      kind: AnalysisTemplate
+    - group: argoproj.io
+      kind: AnalysisRun
   roles:
     - name: apps-readonly
       policies:
