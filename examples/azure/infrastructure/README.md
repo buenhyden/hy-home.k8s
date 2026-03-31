@@ -44,6 +44,7 @@ infrastructure/
 2. 배포 전 `az bicep lint` 명령어로 코드 무결성을 검증한다.
 3. 리소스 생성 시 [Spec](../docs/04.specs/azure-migration-spec.md)에 정의된 명세를 준수한다.
 4. 배포 명령어 예시:
+
    ```bash
    az group create --name <rg-name> --location <location>
    az deployment group create --resource-group <rg-name> --template-file main.bicep

@@ -40,18 +40,18 @@ graph TD
     Client([Client]) --> WAF[AWS WAF]
     WAF --> ALB[Application Load Balancer]
     ALB --> EKS[Amazon EKS Cluster]
-    
+
     subgraph "EKS Cluster (VPC)"
         direction TB
         Ingress[ALB Ingress Controller]
         Pods[Application Pods]
         Karpenter[Karpenter Scaler]
     end
-    
+
     Pods --> Lattice[VPC Lattice Service Network]
     Lattice --> RDS[(Aurora PostgreSQL)]
     Lattice --> Cache[(ElastiCache Redis)]
-    
+
     Pods --> SM[AWS Secrets Manager]
     ESO[External Secrets Operator] --> SM
 ```

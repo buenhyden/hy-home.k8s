@@ -33,10 +33,12 @@
 ## Alternatives
 
 ### Alternative 1: Self-managed Kubernetes on EC2
+
 - Good: 초기 비용 절감 가능, 전체 인프라에 대한 완전한 제어.
 - Bad: 업그레이드, 보안 패치, 노드 관리 등 운영 부담(Undifferentiated Heavy Lifting) 매우 높음.
 
 ### Alternative 2: Managed Node Groups (EKS)
+
 - Good: AWS 기본 기능으로 안정적, 노드 그룹별 관리 가능.
 - Bad: Karpenter 대비 확장 속도가 느리고 인스턴스 타입 선택의 유연성이 부족함.
 

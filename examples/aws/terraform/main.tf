@@ -2,7 +2,7 @@
 
 terraform {
   required_version = ">= 1.8.0"
-  
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -13,7 +13,7 @@ terraform {
       version = "~> 2.30"
     }
   }
-  
+
   # Backend 설정 (S3/DynamoDB) - 로컬에서는 주석 처리 권장
   # backend "s3" {
   #   bucket         = "hyhome-terraform-state"
@@ -25,7 +25,7 @@ terraform {
 
 provider "aws" {
   region = var.region
-  
+
   default_tags {
     tags = {
       Project     = "hy-home.k8s"

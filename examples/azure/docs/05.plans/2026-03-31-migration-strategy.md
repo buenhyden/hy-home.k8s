@@ -7,6 +7,7 @@
 ## Migration Phases
 
 ### Phase 1: Infrastructure Foundations (W1)
+
 - **Goal**: AKS 클러스터 및 네트워크 기반 환경 구축.
 - **Tasks**:
   - Bicep을 활용한 VNet, Subnet, AKS(CNI Overlay) 프로비저닝.
@@ -14,6 +15,7 @@
 - **Dependency**: Azure Subscription 및 RBAC 권한 확보.
 
 ### Phase 2: Platform Services Adoption (W2)
+
 - **Goal**: 클라우드 관리형 데이터 및 보안 서비스 연동.
 - **Tasks**:
   - PostgreSQL Flexible Server(HA) 및 Redis Premium 배포.
@@ -21,12 +23,14 @@
   - **AGC (Gateway API)** 컨트롤러 설치 및 매니페스트 배포.
 
 ### Phase 3: Application Migration (W3)
+
 - **Goal**: 실제 워크로드 이전 및 데이터 동기화.
 - **Tasks**:
   - ArgoCD를 통한 하이브리드 배포 (Local & Azure 병행).
   - DB 데이터 마이그레이션 및 서비스 엔드포인트 AGC 전환.
 
 ### Phase 4: Production Stabilization (W4)
+
 - **Goal**: 운영 모니터링 및 로컬 인프라 해제.
 - **Tasks**:
   - Azure Monitor 통합 및 알람 설정.

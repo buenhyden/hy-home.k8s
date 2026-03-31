@@ -26,19 +26,25 @@
 ## Step-by-step Instructions
 
 ### 1. Kubeconfig 업데이트
+
 로컬 환경에서 EKS 클러스터로의 컨텍스트를 추가한다.
+
 ```bash
 aws eks update-kubeconfig --name hyhome-cluster --region ap-northeast-2
 ```
 
 ### 2. 접속 확인
+
 클러스터 노드 상태를 확인하여 연결이 정상인지 검증한다.
+
 ```bash
 kubectl get nodes
 ```
 
 ### 3. IAM Pod Identity 권한 확인 (개발자용)
+
 애플리케이션 Pod가 적절한 IAM 권한을 가졌는지 확인하기 위해 테스트 Pod를 실행해볼 수 있다.
+
 ```bash
 kubectl run aws-cli --image=amazon/aws-cli:latest --restart=Never -- aws sts get-caller-identity
 ```

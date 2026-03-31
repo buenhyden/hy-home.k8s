@@ -7,6 +7,7 @@
 ## Context
 
 현재 로컬 환경에서는 Traefik 또는 Nginx Ingress Controller를 사용하고 있으나, Azure 환경으로 이전하면서 다음과 같은 요구사항이 발생했다:
+
 - **Kubernetes Native Management**: 인프라 영역과 애플리케이션 영역의 관심사 분리(Gateway API).
 - **Auto-scaling & Performance**: 트래픽 부하에 따른 즉각적인 프로비저닝 없이 자동 성능 확장 필요.
 - **ALB Controller/Add-on**: 클러스터 외부의 관리형 서비스와 밀접하게 연동되는 공식 지원 솔루션 필요.
@@ -24,13 +25,13 @@
 
 ## Consequences
 
-- **Positive**: 
-    - 인바운드 트래픽 처리 성능 극대화 (최대 30,000 requests/sec).
-    - Gateway API를 통한 역할 기반(Role-based) 네트워크 관리 가능.
-    - AKS 업그레이드나 노드 재시작에 관계없는 독립적인 엔드포인트 유지.
-- **Trade-offs**: 
-    - 기존 Ingress 리소스 대비 Gateway API 학습 곡선 필요.
-    - 리소스 사용에 따른 Azure 추가 비용 발생.
+- **Positive**:
+  - 인바운드 트래픽 처리 성능 극대화 (최대 30,000 requests/sec).
+  - Gateway API를 통한 역할 기반(Role-based) 네트워크 관리 가능.
+  - AKS 업그레이드나 노드 재시작에 관계없는 독립적인 엔드포인트 유지.
+- **Trade-offs**:
+  - 기존 Ingress 리소스 대비 Gateway API 학습 곡선 필요.
+  - 리소스 사용에 따른 Azure 추가 비용 발생.
 
 ## Alternatives
 

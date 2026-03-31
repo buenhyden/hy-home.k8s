@@ -13,7 +13,7 @@ module "eks" {
 
   # Access Entry (New in 2024+)
   enable_cluster_creator_admin_permissions = true
-  
+
   # Authentication (OIDC is still useful for some operators, but Pod Identity is preferred)
   enable_irsa = true
 
@@ -49,7 +49,7 @@ module "karpenter" {
 
   enable_pod_identity = true
   create_node_iam_role = true
-  
+
   node_iam_role_additional_policies = {
     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }

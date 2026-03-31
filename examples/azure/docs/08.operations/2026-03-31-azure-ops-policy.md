@@ -15,17 +15,17 @@ Azure Subscription 내의 모든 AKS 클러스터, VNet, Managed Databases(Postg
 
 ## Controls
 
-- **Required**: 
-    - 모든 리소스는 Bicep(IaC)을 통해 배포되어야 함.
-    - AKS Workload Identity를 사용한 패스워드리스 인증 적용 필수.
-    - 데이터베이스의 High Availability(Zone-redundancy) 설정 활성화.
-- **Allowed**: 
-    - 개발 목적의 Burstable tier(B-series) SKU 사용 (단, production 제외).
-    - 긴급 장애 복구를 위한 수동 스케일 조절 (사후 보고 필수).
-- **Disallowed**: 
-    - 공용 인터넷에 노출된 Private Endpoint 없는 데이터베이스.
-    - 루트 사용자에 의한 직접적인 시크릿 접근 (Key Vault RBAC 사용).
-    - `0.0.0.0/0` 허용 인바운드 규칙 (AGC 제외).
+- **Required**:
+  - 모든 리소스는 Bicep(IaC)을 통해 배포되어야 함.
+  - AKS Workload Identity를 사용한 패스워드리스 인증 적용 필수.
+  - 데이터베이스의 High Availability(Zone-redundancy) 설정 활성화.
+- **Allowed**:
+  - 개발 목적의 Burstable tier(B-series) SKU 사용 (단, production 제외).
+  - 긴급 장애 복구를 위한 수동 스케일 조절 (사후 보고 필수).
+- **Disallowed**:
+  - 공용 인터넷에 노출된 Private Endpoint 없는 데이터베이스.
+  - 루트 사용자에 의한 직접적인 시크릿 접근 (Key Vault RBAC 사용).
+  - `0.0.0.0/0` 허용 인바운드 규칙 (AGC 제외).
 
 ## Exceptions
 

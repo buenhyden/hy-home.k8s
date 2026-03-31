@@ -4,15 +4,15 @@
 resource "aws_secretsmanager_secret" "app_secrets" {
   name        = "${var.cluster_name}-app-secrets"
   description = "Secrets for applications migrated to AWS"
-  
+
   recovery_window_in_days = 7 # 2026 기준 표준 보안 정책 반영
 }
 
 resource "aws_secretsmanager_secret_version" "example" {
   secret_id     = aws_secretsmanager_secret.app_secrets.id
   secret_string = jsonencode({
-    DB_PASSWORD    = "dummy-password-from-terraform"
-    REDIS_PASSWORD = "dummy-redis-password"
+    DB_PASSWORD    = "dummy-password-from-terraform" # gitleaks:allow # pragma: allowlist secret
+    REDIS_PASSWORD = "dummy-redis-password" # gitleaks:allow # pragma: allowlist secret
   })
 }
 

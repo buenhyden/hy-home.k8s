@@ -31,7 +31,7 @@ resource postgres 'Microsoft.DBforPostgreSQL/flexibleServers@2023-12-01-preview'
     administratorLogin: adminLogin
     authConfig: {
       activeDirectoryAuth: 'Enabled'
-      passwordAuth: 'Disabled'
+      passwordAuth: 'Disabled' # pragma: allowlist secret
       tenantId: subscription().tenantId
     }
     highAvailability: {

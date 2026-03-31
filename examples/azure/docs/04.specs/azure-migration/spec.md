@@ -7,25 +7,29 @@
 ## System Specification
 
 ### 1. Compute (AKS)
+
 - **Version**: Kubernetes v1.30 or higher.
-- **Node Pool**: 
+- **Node Pool**:
   - System Pool: `Standard_D2s_v3` (Min 2 nodes).
   - OS: Azure Linux (CBL-Mariner).
 - **Network Plugin**: Azure CNI Overlay.
 
 ### 2. Networking (AGC)
+
 - **Ingress Controller**: Application Gateway for Containers (ALB Controller).
 - **API Standard**: Kubernetes Gateway API (v1).
-- **Security**: 
+- **Security**:
   - Subnet delegation to `Microsoft.ServiceNetworking/trafficControllers`.
   - TLS 1.2+ mandatory for all listeners.
 
 ### 3. Identity & Authentication
+
 - **Mechanism**: Entra ID Workload Identity (OIDC Federation).
 - **Policy**: Passwordless authentication for DB and Key Vault.
 - **Role Assignment**: RBAC-based access control (Least Privilege).
 
 ### 4. Persistence & Cache
+
 - **Database**: Azure Database for PostgreSQL Flexible Server.
   - Sizing: `Burstable B1ms` (for example) / `General Purpose` (for prod).
   - Storage: 32GB LRS.

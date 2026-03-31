@@ -28,6 +28,7 @@
 ## Step-by-step Instructions
 
 ### 1. Bicep 인프라 배포
+
 리소스 그룹을 생성하고 제공된 Bicep 템플릿을 사용하여 인프라를 프로비저닝한다.
 
 ```bash
@@ -42,6 +43,7 @@ az deployment group create \
 ```
 
 ### 2. AKS 클러스터 자격 증명 획득
+
 배포된 클러스터에 접근하기 위해 `kubeconfig`를 업데이트한다.
 
 ```bash
@@ -49,6 +51,7 @@ az aks get-credentials --resource-group rg-hyhome-prod --name hyhome-aks
 ```
 
 ### 3. ALB Controller (AGC) 설치
+
 Azure Application Gateway for Containers를 제어하기 위한 컨트롤러를 클러스터에 설치한다.
 
 ```bash
@@ -59,6 +62,7 @@ helm install alb-controller oci://mcr.microsoft.com/azure-alb/charts/alb-control
 ```
 
 ### 4. Workload Identity 및 Secret 연동 확인
+
 애플리케이션이 Key Vault 시크릿을 정상적으로 가져오는지 테스트한다.
 
 ```bash

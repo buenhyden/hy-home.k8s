@@ -4,7 +4,7 @@
 
 ## 구조
 
-```
+```text
 examples/
 └── sample-app/      ← GitOps 앱 온보딩 완전 예시 (템플릿)
 ```

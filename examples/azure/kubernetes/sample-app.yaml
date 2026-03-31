@@ -18,17 +18,17 @@ metadata:
 spec:
   provider: azure
   secretObjects: # Sync KV to K8s Secret
-    - secretName: db-secret
+    - secretName: db-secret # pragma: allowlist secret
       type: Opaque
       data:
         - objectName: db-password
-          key: password
+          key: password # pragma: allowlist secret
   parameters:
     usePodIdentity: "false"
-    useVMManagedIdentity: "false"          
-    userAssignedIdentityID: "" 
+    useVMManagedIdentity: "false"
+    userAssignedIdentityID: ""
     keyvaultName: "hy-home-kv"
-    cloudName: ""                 
+    cloudName: ""
     objects: |
       array:
         - |
@@ -77,4 +77,4 @@ spec:
             driver: secrets-store.csi.k8s.io
             readOnly: true
             volumeAttributes:
-              secretProviderClass: "azure-kvname-user-msi"
+              secretProviderClass: "azure-kvname-user-msi" # pragma: allowlist secret

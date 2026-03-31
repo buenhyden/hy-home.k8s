@@ -24,30 +24,35 @@
 ## Procedure or Checklist
 
 ### 🏗️ AKS Node Pool Recovery
+
 일부 노드가 `NotReady` 상태이거나 파드 스케줄링이 불가능할 경우:
 
-1.  노드 상태 확인: `kubectl get nodes`
-2.  이벤트 확인: `kubectl get events -A --sort-by='.lastTimestamp'`
-3.  노드 재생성(Reimage) 또는 확장:
+1. 노드 상태 확인: `kubectl get nodes`
+2. 이벤트 확인: `kubectl get events -A --sort-by='.lastTimestamp'`
+3. 노드 재생성(Reimage) 또는 확장:
+
     ```bash
     az aks nodepool update --resource-group rg-hyhome-prod --cluster-name hyhome-aks --name userpool --node-count 5
     ```
 
 ### 💾 PostgreSQL Flexible Server Failover
+
 DB 접근이 불가능하거나 지연이 발생할 경우:
 
-1.  상태 확인: `az postgres flexible-server show --resource-group rg-hyhome-prod --name hyhome-pg-server`
-2.  수동 장애 조치 트리거 (필요 시):
+1. 상태 확인: `az postgres flexible-server show --resource-group rg-hyhome-prod --name hyhome-pg-server`
+2. 수동 장애 조치 트리거 (필요 시):
+
     ```bash
     az postgres flexible-server restart --resource-group rg-hyhome-prod --name hyhome-pg-server --failover Forced
     ```
 
 ### 🌐 AGC Configuration Fix
+
 HTTPRoute 또는 Gateway가 정상적으로 작동하지 않을 경우:
 
-1.  ALB Controller 로그 확인: `kubectl logs -n azure-alb-system -l app=alb-controller`
-2.  리소스 상태 확인: `kubectl get gateway,httproute -A`
-3.  상태 메시지(Condition) 체크: `kubectl describe httproute hyhome-route`
+1. ALB Controller 로그 확인: `kubectl logs -n azure-alb-system -l app=alb-controller`
+2. 리소스 상태 확인: `kubectl get gateway,httproute -A`
+3. 상태 메시지(Condition) 체크: `kubectl describe httproute hyhome-route`
 
 ## Verification Steps
 

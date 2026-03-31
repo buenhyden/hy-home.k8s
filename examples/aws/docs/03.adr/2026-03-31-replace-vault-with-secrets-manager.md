@@ -7,6 +7,7 @@
 ## Context
 
 현재 로컬 K3s 환경에서는 HashiCorp Vault를 별도 컨테이너로 실행하여 시크릿을 관리하고 있다. 하지만 AWS로 이식할 경우 다음 문제들이 발생한다:
+
 1. **운영 복잡성**: EKS 내부에 Vault를 안정적으로 운영(HA 구성, Unseal 자동화 등)하기 위한 리소스와 노력이 크다.
 2. **연동 편의성**: AWS의 다른 서비스(RDS, ElastiCache)와의 자격 증명 자동 로테이션 기능을 활용하기 어렵다.
 3. **IAM 통합**: AWS Secrets Manager는 IAM Policy를 통한 세밀한 접근 제어가 기본적으로 지원된다.
@@ -24,11 +25,11 @@
 
 ## Consequences
 
-- **Positive**: 
+- **Positive**:
   - 서버리스 관리형 서비스로 운영 부담 제로.
   - RDS 자격 증명 자동 로테이션 기능 활용 가능.
   - IAM IRSA를 통한 안전한 시크릿 접근 제어.
-- **Trade-offs**: 
+- **Trade-offs**:
   - AWS 서비스 비용 발생 (Secrets 당 비용).
   - 로컬 환경(Vault)과 클라우드 환경(Secrets Manager) 간의 관리 도구 이원화.
 

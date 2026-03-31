@@ -9,6 +9,7 @@
 기존 노드 풀의 VM 크기를 변경하거나 구성 수정을 위해 새로운 풀로 교체할 때 사용한다.
 
 ### 가. 신규 노드 풀 생성
+
 ```bash
 az aks nodepool add \
   --resource-group rg-hyhome \
@@ -20,12 +21,15 @@ az aks nodepool add \
 ```
 
 ### 나. 기존 노드 드레인 (Drain)
+
 Pod들이 안전하게 신규 노드로 이동하도록 유도한다.
+
 ```bash
 kubectl drain <old-node-name> --ignore-daemonsets --delete-emptydir-data
 ```
 
 ### 다. 기존 노드 풀 삭제
+
 ```bash
 az aks nodepool delete \
   --resource-group rg-hyhome \
@@ -38,6 +42,7 @@ az aks nodepool delete \
 트래픽 급증 또는 야간 시간대 비용 절감을 위해 노드 수를 수동으로 조정한다.
 
 ### 가. 수동 스케일 아웃 (Scale-out)
+
 ```bash
 az aks nodepool scale \
   --resource-group rg-hyhome \
@@ -47,6 +52,7 @@ az aks nodepool scale \
 ```
 
 ### 나. 자동 크기 조정 (Autoscaler) 활성화
+
 ```bash
 az aks nodepool update \
   --resource-group rg-hyhome \

@@ -45,7 +45,7 @@ graph TD
 
 ## Data Architecture
 
-- **Key Entities / Flows**: 
+- **Key Entities / Flows**:
   - Application Service -> Azure Database for PostgreSQL (Application Data)
   - Application Service -> Azure Cache for Redis (Cache/Session Data)
 - **Storage Strategy**: 스테이트리스 파드는 CSI 드라이버를 통해 Azure Disk(Standard/Premium SSD)를 사용하여 볼륨을 할당받음.

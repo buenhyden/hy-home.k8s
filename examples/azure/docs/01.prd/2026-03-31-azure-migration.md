@@ -16,6 +16,7 @@
 - **Observability**: Prometheus/Alloy/Loki/Tempo/Grafana의 개별 외부 스택.
 
 ### Pain Points
+
 1. **관리 오버헤드**: 데이터베이스 및 캐시의 고가용성(HA)을 로컬에서 수동으로 관리해야 함.
 2. **보안/인증**: Vault 토큰 및 정적 자격 증명(Database Password) 관리가 분산되어 있음.
 3. **확장성**: 단일 물리 노드(또는 VM)의 리소스 한계로 인해 스케일 아웃이 불가능함.
@@ -23,12 +24,14 @@
 ## Target Requirements (2026-03 Standard)
 
 ### Functional Requirements (FR)
+
 - **REQ-PRD-001**: AKS 클러스터(v1.30+)로의 모든 워크로드 이전 및 무중단 가동.
 - **REQ-PRD-002**: L7 입구(Ingress)는 **Application Gateway for Containers (AGC)**와 **Gateway API (v1)**를 도입한다.
 - **REQ-PRD-003**: 인프라 인증은 **Managed Identity** 및 **Workload Identity (OIDC Federation)** 체계로 일원화한다 (Passwordless).
 - **REQ-PRD-004**: 모든 시크릿은 Azure Key Vault와 **Secret Store CSI Driver**를 연동하여 파일로 마운트한다.
 
 ### Non-Functional Requirements (NFR)
+
 - **REQ-NFR-101 (Security)**: Entra ID 통합을 통한 RBAC 통제 및 테넌트 격리.
 - **REQ-NFR-102 (Availability)**: PostgreSQL 및 Redis의 99.9% 이상 관리형 가용성 보장 (Zone-redundant HA).
 - **REQ-NFR-103 (Maintainability)**: 모든 인프라는 Bicep(IaC)으로 정의하고, 앱 배포는 ArgoCD(GitOps)를 표준으로 한다.

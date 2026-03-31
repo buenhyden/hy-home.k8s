@@ -34,6 +34,7 @@
 ### Procedure
 
 #### 1. 인프라 재구축 (EKS 클러스터)
+
 ```bash
 # Terraform을 통한 인프라 재생성
 cd examples/aws/terraform
@@ -44,11 +45,13 @@ aws eks update-kubeconfig --name hyhome-cluster --region ap-northeast-2
 ```
 
 #### 2. 데이터 복구 (RDS Aurora)
+
 1. RDS 콘솔에서 'Restore from Snapshot' 기능을 선택한다.
 2. 장애 발생 직전의 최신 자동 스냅샷을 선택하여 복원한다.
 3. 복원된 인스턴스의 엔드포인트를 애플리케이션 시크릿(Secrets Manager)에 업데이트한다.
 
 #### 3. 서비스 배포 (GitOps)
+
 ```bash
 # ArgoCD 강제 동기화 (Sync)
 argocd app sync root-apps --force

@@ -36,7 +36,7 @@ module "db" {
 resource "aws_elasticache_serverless_cache" "redis" {
   engine = "redis"
   name   = "${var.cluster_name}-redis"
-  
+
   cache_usage_limits {
     data_storage {
       maximum = 10

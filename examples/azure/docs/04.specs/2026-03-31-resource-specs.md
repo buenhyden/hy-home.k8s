@@ -26,6 +26,7 @@
 ## Core Design
 
 ### 1. Networking (VNet)
+
 - **Address Space**: `10.200.0.0/16`
 - **Subnets**:
   - `aks-subnet`: `10.200.0.0/22` (Nodes & Pods via CNI Overlay)
@@ -33,6 +34,7 @@
   - `db-subnet`: `10.200.5.0/24` (PostgreSQL Private Link)
 
 ### 2. Compute (AKS)
+
 - **SKU**: Standard Tier (Uptime SLA 지원)
 - **Node Pool**:
   - `systempool`: Linux, DS2_v2, 2 nodes (System only)
@@ -41,6 +43,7 @@
 - **Identity**: Azure AD Workload Identity Enabled.
 
 ### 3. Data Services
+
 - **PostgreSQL**: Flexible Server, GP_Standard_D2s_v3, 32GB Storage, High Availability(Zone-redundant).
 - **Redis**: Premium Tier P1 (6GB), No Clustering (Primary/Replica)
 

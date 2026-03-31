@@ -36,7 +36,7 @@
 1. **상태 진단**: `aws eks describe-cluster --name hy-home-eks` 명령으로 클러스터 상태가 `ACTIVE`인지 확인.
 2. **네트워크 확인**: 장애가 발생한 서비스의 Security Group 및 NACL 설정이 최근 변경되었는지 감사 로그(`CloudTrail`) 확인.
 3. **데이터 소스 복구**: RDS 인스턴스 중단 시 Multi-AZ Failover가 자동으로 발생했는지 확인하고, 필요시 최신 스냅샷에서 수동 복원.
-4. ** IaC 동기화**: `terraform apply`를 실행하여 의도하지 않은 수동 변경 사항을 백업된 코드로 복구(Force overwrite).
+4. **IaC 동기화**: `terraform apply`를 실행하여 의도하지 않은 수동 변경 사항을 백업된 코드로 복구(Force overwrite).
 
 ## Verification Steps
 

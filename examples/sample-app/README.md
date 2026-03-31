@@ -4,7 +4,7 @@
 
 ## 파일 구조
 
-```
+```text
 examples/sample-app/
 ├── kustomization.yaml        # Kustomize 진입점
 ├── rollout.yaml              # Argo Rollout (canary 전략)

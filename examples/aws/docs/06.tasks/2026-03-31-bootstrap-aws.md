@@ -29,17 +29,21 @@
 ## Phase View
 
 ### Phase 1: 설계 및 문서화
+
 - [x] T-001 PRD 작성
 - [x] T-002 ARD 작성
 - [x] T-003 ADR 작성
 
 ### Phase 2: 인프라 코드화 (IaC)
+
 - [x] T-004 Terraform 코드 작성
 
 ### Phase 3: Kubernetes 연동
+
 - [x] T-005 서비스 매니페스트 작성
 
 ### Phase 4: 운영 가이드 및 검증
+
 - [x] T-006 가이드 작성
 
 ## Verification Summary

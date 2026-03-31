@@ -12,17 +12,20 @@
 ## Operational Standards
 
 ### 1. AKS Node Autoupgrade
+
 - **Policy**: `NodeImage` 채택 및 최신 보안 패치 자동 적용.
 - **Cycle**: 주간 단위 최신 이미지 체크.
 
 ### 2. Database Backup & Retention
+
 - **Service**: Azure Database for PostgreSQL Flexible Server Backup.
 - **Retention**: 7일간 기본 보관 (Point-in-time Restore 지원).
 - **Redundancy**: 리전 장애 대비 고가용성(HA) 구성 상시 유지.
 
 ### 3. Monitoring & Alerting
+
 - **Platform**: Azure Monitor (Metrics) & Log Analytics.
-- **Critical Alerts**: 
+- **Critical Alerts**:
   - CPU/Memory Usage > 85% (Critical)
   - AGC Backend 5xx Error Rate > 1% (High)
   - Key Vault Access Denied Rate > 5% (Security)

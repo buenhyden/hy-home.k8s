@@ -6,7 +6,7 @@
 
 ## Prerequisites
 
-- **Tools**: 
+- **Tools**:
   - `az` CLI v2.60.0+
   - `kubectl` v1.30+
   - `fubectl` (Optional, for helper functions)
@@ -15,22 +15,26 @@
 ## Enrollment & Authentication
 
 ### 1. Azure CLI Login
+
 ```bash
 az login --tenant <YOUR_TENANT_ID>
 az account set --subscription <YOUR_SUBSCRIPTION_ID>
 ```
 
 ### 2. Get AKS Credentials
+
 ```bash
 az aks get-credentials --resource-group hy-home-rg --name hy-home-aks
 ```
 
 ### 3. Workload Identity Integration
+
 - 모든 애플리케이션 Pod은 `azure.workload.identity/use: "true"` 라벨을 포함해야 하며, 지정된 `ServiceAccount`를 사용하여 패워드 없이 Azure 리소스에 접근한다.
 
 ## Secret Management (Secret Store CSI)
 
 모든 시크릿은 Azure Key Vault(AKV)에서 중앙 관리된다.
+
 - **Mount Path**: `/mnt/secrets-store`
 - **Synchronization**: `SecretProviderClass`를 통해 K8s Native Secret으로 동기화되어 환경 변수로 주입 가능하다.
 

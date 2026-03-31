@@ -188,8 +188,7 @@ kubectl argo rollouts get rollout ${APP} -n apps
 export VAULT_ADDR=http://172.18.0.8:8200
 vault login
 vault kv put secret/apps/${APP}/config \
-  db_password="changeme" \
-  api_key="changeme"
+  db_password="changeme" api_key="changeme" # pragma: allowlist secret
 
 # 2. Vault 정책 갱신
 cat >> infrastructure/vault/policies/eso-read.hcl << EOF

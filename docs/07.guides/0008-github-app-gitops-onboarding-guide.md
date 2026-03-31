@@ -222,8 +222,7 @@ vault login
 
 # 시크릿 저장 (경로 규칙: secret/apps/<appname>/config)
 vault kv put secret/apps/<appname>/config \
-  db_password="changeme" \
-  api_key="changeme"
+  db_password="changeme" api_key="changeme" # pragma: allowlist secret
 ```
 
 ### 4-2. Vault 정책 갱신

@@ -9,7 +9,7 @@ repos:
       - id: check-merge-conflict
       - id: check-symlinks
       - id: check-yaml
-        exclude: '^(gitops/|infrastructure/).*\.ya?ml$'
+        exclude: '^(examples/|gitops/|infrastructure/).*\.ya?ml$'
       - id: check-toml
       - id: check-json
       - id: end-of-file-fixer
