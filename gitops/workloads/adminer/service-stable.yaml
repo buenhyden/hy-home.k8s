@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: adminer-stable
+  namespace: apps
+  labels:
+    app.kubernetes.io/name: adminer
+    app.kubernetes.io/component: db-admin
+spec:
+  selector:
+    app.kubernetes.io/name: adminer
+  ports:
+    - name: http-adminer
+      port: 8080
+      targetPort: 8080

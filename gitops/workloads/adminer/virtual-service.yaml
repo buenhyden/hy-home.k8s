@@ -1,0 +1,21 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: adminer
+  namespace: apps
+spec:
+  hosts:
+    - adminer.apps.svc.cluster.local
+  http:
+    - name: primary
+      route:
+        - destination:
+            host: adminer-stable.apps.svc.cluster.local
+            port:
+              number: 8080
+          weight: 100
+        - destination:
+            host: adminer-canary.apps.svc.cluster.local
+            port:
+              number: 8080
+          weight: 0

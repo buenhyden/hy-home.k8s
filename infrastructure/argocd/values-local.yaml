@@ -2,6 +2,8 @@ global:
   domain: argocd.127.0.0.1.nip.io
 
 configs:
+  cm:
+    timeout.reconciliation: 30s
   params:
     server.insecure: true
 

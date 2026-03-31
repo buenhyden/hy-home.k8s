@@ -3,6 +3,10 @@ kind: Kustomization
 resources:
   - rollout.yaml
   - service.yaml
+  - service-stable.yaml
+  - service-canary.yaml
   - ingress.yaml
   - peer-authentication.yaml
   - analysis-template.yaml
+  - virtual-service.yaml
+  - destination-rule.yaml

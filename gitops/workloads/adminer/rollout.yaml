@@ -49,6 +49,14 @@ spec:
             periodSeconds: 20
   strategy:
     canary:
+      stableService: adminer-stable
+      canaryService: adminer-canary
+      trafficRouting:
+        istio:
+          virtualServices:
+            - name: adminer
+              routes:
+                - primary
       steps:
         - setWeight: 20
         - analysis:

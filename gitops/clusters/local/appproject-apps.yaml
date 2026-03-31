@@ -48,6 +48,10 @@ spec:
       kind: AnalysisRun
     - group: security.istio.io
       kind: PeerAuthentication
+    - group: networking.istio.io
+      kind: VirtualService
+    - group: networking.istio.io
+      kind: DestinationRule
   roles:
     - name: apps-readonly
       policies:

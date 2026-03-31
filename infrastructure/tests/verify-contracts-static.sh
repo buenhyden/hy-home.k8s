@@ -172,18 +172,25 @@ ADMINER_SERVICE="$ROOT_DIR/gitops/workloads/adminer/service.yaml"
 ADMINER_INGRESS="$ROOT_DIR/gitops/workloads/adminer/ingress.yaml"
 ADMINER_PA="$ROOT_DIR/gitops/workloads/adminer/peer-authentication.yaml"
 ADMINER_AT="$ROOT_DIR/gitops/workloads/adminer/analysis-template.yaml"
+ADMINER_VS="$ROOT_DIR/gitops/workloads/adminer/virtual-service.yaml"
+ADMINER_DR="$ROOT_DIR/gitops/workloads/adminer/destination-rule.yaml"
 
-for file in "$ADMINER_ROLLOUT" "$ADMINER_SERVICE" "$ADMINER_INGRESS" "$ADMINER_PA" "$ADMINER_AT"; do
+for file in "$ADMINER_ROLLOUT" "$ADMINER_SERVICE" "$ADMINER_INGRESS" "$ADMINER_PA" "$ADMINER_AT" "$ADMINER_VS" "$ADMINER_DR"; do
   require_file "$file"
 done
 
 require_pattern 'kind:\s*Rollout' "$ADMINER_ROLLOUT"
 require_pattern 'image:\s*adminer:' "$ADMINER_ROLLOUT"
 require_pattern 'templateName:\s*adminer-stability' "$ADMINER_ROLLOUT"
+require_pattern 'stableService:\s*adminer-stable' "$ADMINER_ROLLOUT"
+require_pattern 'canaryService:\s*adminer-canary' "$ADMINER_ROLLOUT"
 require_pattern 'host:\s*adminer\.127\.0\.0\.1\.nip\.io' "$ADMINER_INGRESS"
 require_pattern 'ingressClassName:\s*nginx' "$ADMINER_INGRESS"
 require_pattern 'mode:\s*STRICT' "$ADMINER_PA"
 require_pattern 'name:\s*adminer-stability' "$ADMINER_AT"
+require_pattern 'kind:\s*VirtualService' "$ADMINER_VS"
+require_pattern 'host:\s*adminer-stable' "$ADMINER_VS"
+require_pattern 'kind:\s*DestinationRule' "$ADMINER_DR"
 
 echo "[INFO] verify apps namespace NetworkPolicy"
 APPS_NP="$ROOT_DIR/gitops/platform/network-policies/apps-egress.yaml"
