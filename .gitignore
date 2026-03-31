@@ -62,3 +62,4 @@ secrets/certs/*.p12
 
 .claude/settings.local.json
 .agent/
+kube-linter-linux.tar.gz

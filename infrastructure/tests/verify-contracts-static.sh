@@ -16,7 +16,7 @@ require_file() {
 require_pattern() {
   local pattern="$1"
   local path="$2"
-  rg -q -- "$pattern" "$path" || fail "pattern not found in ${path}: ${pattern}"
+  grep -Pq -- "$pattern" "$path" || fail "pattern not found in ${path}: ${pattern}"
 }
 
 echo "[INFO] static contract verification started"
@@ -74,12 +74,12 @@ require_pattern 'type:\s*LoadBalancer' "$INGRESS_APP"
 echo "[INFO] verify vault least-privilege contract"
 require_pattern 'path "secret/data/platform/argocd"' "$VAULT_POLICY"
 require_pattern 'path "secret/data/platform/postgres-app"' "$VAULT_POLICY"
-if rg -q 'secret/data/platform/\*' "$VAULT_POLICY"; then
+if grep -Pq 'secret/data/platform/\*' "$VAULT_POLICY"; then
   fail 'vault policy must not allow wildcard secret/data/platform/*'
 fi
 
 echo "[INFO] verify AppProject wildcard ban and allow-list"
-if rg -q 'group:\s*"\*"|kind:\s*"\*"' "$APPPROJECT_APPS"; then
+if grep -Pq 'group:\s*"\*"|kind:\s*"\*"' "$APPPROJECT_APPS"; then
   fail 'appproject apps must not contain wildcard namespaceResourceWhitelist'
 fi
 
@@ -104,6 +104,9 @@ require_pattern 'kind:\s*Application' "$APPPROJECT_PLATFORM"
 echo "[INFO] verify apps AppProject Rollout permission"
 APPPROJECT_APPS="$ROOT_DIR/gitops/clusters/local/appproject-apps.yaml"
 require_pattern 'kind:\s*Rollout' "$APPPROJECT_APPS"
+
+echo "[INFO] verify platform AppProject apps namespace destination"
+require_pattern 'namespace:\s*apps' "$APPPROJECT_PLATFORM"
 
 echo "[INFO] verify platform AppProject new component contracts"
 require_pattern 'https://charts\.jetstack\.io' "$APPPROJECT_PLATFORM"
