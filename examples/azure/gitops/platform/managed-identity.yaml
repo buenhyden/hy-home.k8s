@@ -1,0 +1,18 @@
+apiVersion: aadpodidentity.k8s.io/v1
+kind: AzureIdentity
+metadata:
+  name: hy-home-app-identity
+  namespace: default
+spec:
+  type: 0 # 0 for User-assigned MSI
+  resourceID: /subscriptions/<sub-id>/resourceGroups/<rg-name>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/hy-home-app-id
+  clientID: <client-id>
+---
+apiVersion: aadpodidentity.k8s.io/v1
+kind: AzureIdentityBinding
+metadata:
+  name: hy-home-app-identity-binding
+  namespace: default
+spec:
+  azureIdentity: hy-home-app-identity
+  selector: hy_home_app_selector

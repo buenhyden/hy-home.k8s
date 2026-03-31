@@ -1,0 +1,55 @@
+# AWS External Services Integration
+# This replaces the local Docker container endpoints with AWS Managed Services (RDS, ElastiCache)
+
+# 1. PostgreSQL (AWS RDS/Aurora)
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-external
+  namespace: platform
+spec:
+  type: ExternalName
+  externalName: hy-home-db.xxxx.region.rds.amazonaws.com # Replace with actual RDS Endpoint
+  ports:
+  - port: 5432
+    targetPort: 5432
+
+---
+# 2. Redis (AWS ElastiCache/Valkey Compatible)
+apiVersion: v1
+kind: Service
+metadata:
+  name: valkey-external
+  namespace: platform
+spec:
+  type: ExternalName
+  externalName: hy-home-redis.xxxx.region.cache.amazonaws.com # Replace with actual ElastiCache Endpoint
+  ports:
+  - port: 6379
+    targetPort: 6379
+
+---
+# 3. AWS Load Balancer Controller Installation (EKS Addon)
+# In EKS, we use Ingress with ALB instead of Ingress-Nginx or MetalLB.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  namespace: apps
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:region:account:certificate/xxx # ACM Certificate
+spec:
+  ingressClassName: alb
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: sample-app
+            port:
+              number: 80

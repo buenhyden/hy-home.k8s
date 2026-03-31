@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: hy-home-sa
+  namespace: default
+  annotations:
+    azure.workload.identity/client-id: <USER_ASSIGNED_IDENTITY_CLIENT_ID>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hy-home-app
+  namespace: default
+  labels:
+    azure.workload.identity/use: "true" # Required for Workload Identity
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hy-home-app
+  template:
+    metadata:
+      labels:
+        app: hy-home-app
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: hy-home-sa
+      containers:
+      - name: app
+        image: acr-name.azurecr.io/hy-home/app:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: AZURE_CLIENT_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.annotations['azure.workload.identity/client-id']
+        - name: DB_HOST
+          value: "hy-home-pg.postgres.database.azure.com"
+        volumeMounts:
+        - name: secrets-store-inline
+          mountPath: "/mnt/secrets"
+          readOnly: true
+      volumes:
+      - name: secrets-store-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "hy-home-secret-provider"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hy-home-app-svc
+  namespace: default
+spec:
+  selector:
+    app: hy-home-app
+  ports:
+  - protocol: Tcp
+    port: 80
+    targetPort: 80

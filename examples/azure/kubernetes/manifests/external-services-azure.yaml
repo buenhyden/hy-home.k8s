@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-external
+  namespace: platform
+spec:
+  type: ExternalName
+  externalName: psql-hyhome.postgres.database.azure.com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-external
+  namespace: platform
+spec:
+  type: ExternalName
+  externalName: redis-hyhome.redis.cache.windows.net
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: vault-external
+  namespace: platform
+subsets:
+  - addresses:
+      - ip: 10.0.2.100 # Azure Internal IP for Private Endpoint
+    ports:
+      - port: 8200

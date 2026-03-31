@@ -1,0 +1,39 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: hy-home-gateway
+  namespace: managed-alb-system
+  annotations:
+    alb.networking.azure.io/alb-name: hy-home-agc
+    alb.networking.azure.io/alb-namespace: managed-alb-system
+spec:
+  gatewayClassName: azure-alb-external
+  listeners:
+  - name: https
+    port: 443
+    protocol: HTTPS
+    allowedRoutes:
+      namespaces:
+        from: All
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: hy-home-cert # Managed by AKV Secret Store CSI
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: hy-home-route
+  namespace: default
+spec:
+  parentRefs:
+  - name: hy-home-gateway
+    namespace: managed-alb-system
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: hy-home-app-svc
+      port: 80
