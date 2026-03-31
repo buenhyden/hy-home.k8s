@@ -1,77 +1,56 @@
-# Azure Migration Technical Specification (Spec)
+# Azure Migration Technical Specification
 
 ## Overview (KR)
 
-본 문서는 k3s/k3d 환경에서 Azure AKS로 인프라를 이전하기 위한 기술 설계 및 구현 명세서다. PRD와 ARD에서 정의된 요구사항을 기술적으로 구체화하며, Bicep을 이용한 리소스 배포 파라미터, Gateway API(v1) 트래픽 라우팅, 그리고 Workload Identity(OIDC) 통합 설정을 기술한다.
+로컬 k3s 환경을 Azure(AKS)로 이전하기 위한 엔지니어링 세부 규격을 정의한다. 본 명세는 Bicep 코드 구현 및 Kubernetes 매니페스트 작성의 기준이 되며, 2026년 3월 기준 Azure 기술 표준을 준수한다.
 
-## Strategic Boundaries & Non-goals
+## System Specification
 
-- **Owns**:
-  - Azure Bicep 구성 (main.bicep, agc.bicep)
-  - GitHub Actions/ArgoCD를 위한 Managed Identity 관리 체계
-  - AGC(ALB Controller) 및 Gateway API 리소스 정의
-  - Managed PostgreSQL/Redis 연결 설정 명세
-- **Does Not Own**:
-  - 기존 로컬 환경 하드웨어 관리
-  - 애플리케이션 소스 코드 레벨의 리팩토링 (인프라 통합 계층에 집중)
+### 1. Compute (AKS)
+- **Version**: Kubernetes v1.30 or higher.
+- **Node Pool**: 
+  - System Pool: `Standard_D2s_v3` (Min 2 nodes).
+  - OS: Azure Linux (CBL-Mariner).
+- **Network Plugin**: Azure CNI Overlay.
 
-## Related Inputs
+### 2. Networking (AGC)
+- **Ingress Controller**: Application Gateway for Containers (ALB Controller).
+- **API Standard**: Kubernetes Gateway API (v1).
+- **Security**: 
+  - Subnet delegation to `Microsoft.ServiceNetworking/trafficControllers`.
+  - TLS 1.2+ mandatory for all listeners.
 
-- **PRD**: [../../01.prd/2026-03-31-azure-migration.md](../../01.prd/2026-03-31-azure-migration.md)
-- **ARD**: [../../02.ard/0001-azure-migration-architecture.md](../../02.ard/0001-azure-migration-architecture.md)
-- **Related ADRs**:
-  - [../../03.adr/0001-cni-overlay.md](../../03.adr/0001-cni-overlay.md)
-  - [../../03.adr/0002-agc-gateway-api.md](../../03.adr/0002-agc-gateway-api.md)
-  - [../../03.adr/0003-workload-identity.md](../../03.adr/0003-workload-identity.md)
+### 3. Identity & Authentication
+- **Mechanism**: Entra ID Workload Identity (OIDC Federation).
+- **Policy**: Passwordless authentication for DB and Key Vault.
+- **Role Assignment**: RBAC-based access control (Least Privilege).
 
-## Contracts
+### 4. Persistence & Cache
+- **Database**: Azure Database for PostgreSQL Flexible Server.
+  - Sizing: `Burstable B1ms` (for example) / `General Purpose` (for prod).
+  - Storage: 32GB LRS.
+- **Cache**: Azure Cache for Redis (Premium).
+  - Version: v6.0+.
+  - Connectivity: Private Endpoint only.
 
-- **Config Contract**: Bicep parameter 기반의 환경 변수 관리 (Regional/Teiring).
-- **Data / Interface Contract**:
-  - Identity: Federated Credential (Issuer: AKS OIDC URL, Subject: system:serviceaccount:namespace:sa).
-  - Networking: Gateway API (Classic-Ingress 대신 Gateway/HTTPRoute 사용).
-- **Governance Contract**: 모든 리소스는 `Project: hy-home-k8s`, `Env: prod` 태그 준수.
+## Technical Standards (2026-03)
 
-## Core Design
+- **VAL-SPEC-001**: 모든 외부 도메인은 AGC의 Frontend IP를 경유해야 한다.
+- **VAL-SPEC-002**: 모든 시크릿은 Key Vault에 보관하며, Pod 내에서는 CSI Driver를 통해 파일로만 마운트한다.
+- **VAL-SPEC-003**: 인프라 배포는 `main.bicep` 모듈화를 통해 재사용성을 확보한다.
 
-- **Component Boundary**:
-  - Foundation: Azure VNet (Private Subnets for AKS/AGC).
-  - Compute: Managed clusters (AKS) with System/User Node Pools.
-  - Traffic: Application Gateway for Containers (v2).
-  - Persistence: Azure DB for PostgreSQL Flexible Server, Azure Cache for Redis.
-- **Tech Stack**:
-  - IaC: Bicep
-  - Runtime: AKS (Kubernetes 1.30+)
-  - Auth: OIDC / Workload Identity
-  - L7 ALB: Application Gateway for Containers (AGC)
+## Resource Mapping Table
 
-## Data Modeling & Storage Strategy
-
-- **Schema / Entity Strategy**: Bicep 모듈화를 통해 네트워크, 컴퓨팅, 영속성 계층을 분리하여 확장성 확보.
-- **Transition Plan**: 05.plans의 실행 계획을 따르며, 초기 클러스터 프로비저닝 후 플랫폼 구성을 선행한다.
-
-## Verification
-
-### Automated Verification
-```bash
-# Bicep lint validation
-az bicep lint --file examples/azure/infrastructure/main.bicep
-
-# Kube-linter for manifests
-kube-linter lint examples/azure/kubernetes/
-```
-
-### Manual Verification
-- `kubectl get gateway`를 통해 AGC Gateway 리소스가 `Programmed: True`인지 확인.
-- `az identity federated-credential show` 결과의 `issuer`와 AKS OIDC URL 일치 여부 확인.
-
-## Success Criteria & Verification Plan
-
-- **VAL-SPC-001**: Bicep을 통한 Azure 리소스 생성이 오류 없이 완료됨.
-- **VAL-SPC-002**: 외부 도메인을 통해 AGC로 유입된 트래픽이 AKS 파드로 정상 도달함.
-- **VAL-SPC-003**: 파드 내부에서 패스워드 없이 Key Vault 시크릿 마운트가 성공함.
+| Local Component | Azure Replacement | Standard Note |
+| :--- | :--- | :--- |
+| MetalLB | Azure Public IP + AGC | Layer 4/7 Isolation |
+| Ingress-Nginx | AGC Gateway API | Native Cloud Ingress |
+| Vault | Azure Key Vault | Entra ID Integrated |
+| PostgreSQL | PG Flexible Server | Zone-Redundant HA |
+| Valkey | Azure Cache for Redis | Managed Redundancy |
 
 ## Related Documents
 
-- **Plan**: [../../05.plans/2026-03-31-migration-strategy.md](../../05.plans/2026-03-31-migration-strategy.md)
-- **Runbook**: [../../09.runbooks/0001-disaster-recovery.md](../../09.runbooks/0001-disaster-recovery.md)
+- **PRD**: [../../01.prd/2026-03-31-azure-migration.md](../../01.prd/2026-03-31-azure-migration.md)
+- **ARD**: [../../02.ard/0001-azure-migration-architecture.md](../../02.ard/0001-azure-migration-architecture.md)
+- **ADR**: [../../03.adr/README.md](../../03.adr/README.md)

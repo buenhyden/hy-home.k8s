@@ -2,42 +2,45 @@
 
 ## Overview (KR)
 
-본 문서는 로컬 k3s/k3d 환경의 프로젝트 인프라를 2026년 3월 기준 Azure(AKS) 환경으로 이전하기 위한 제품 요구사항을 정의한다. 기존 로컬 리소스의 제약(가용성, 성능, 관리 오버헤드)을 해결하고, 클라우드 네이티브 관리형 서비스(PostgreSQL, Redis, Key Vault, AGC)를 통해 고가용성과 보안성을 확보하는 것을 최상위 목표로 한다.
+본 문서는 로컬 k3s/k3d 환경의 `hy-home.k8s` 인프라를 2026년 3월 기준 Azure(AKS) 환경으로 마이그레이션하기 위한 요구사항을 정의한다. 로컬 환경의 관리 복잡성과 가용성 한계를 해결하고, 클라우드 네이티브 관리형 서비스(AGC, Managed Identity, PostgreSQL Flexible)를 통해 엔터프라이즈급 안정성을 확보하는 것이 목표다.
 
-## Summary
+## Current Situation Audit (Analysis)
 
-`hy-home.k8s` 프로젝트는 기존 로컬 하드웨어(k3s) 기반의 운영에서 탈피하여, 글로벌 가용성과 현대적인 보안 거버넌스(Entra ID 통합)가 보장되는 Azure Managed 환경으로 전격 이전한다. 인프라 관리를 위한 최소한의 노력을 지향하며(Serverless/Managed), 모든 인증은 Passwordless(Workload Identity) 체계로 전환한다.
+로컬 `hy-home.k8s` 인프라는 다음과 같이 구성되어 있다.
 
-## Boundaries & Use Cases
+- **Cluster**: k3d v1.35.0 (1 Server, 3 Agents).
+- **Ingress/LB**: MetalLB (Layer 2) 및 Ingress-Nginx 또는 Traefik (k3d 기본).
+- **Secrets**: HashiCorp Vault (`vault.127.0.0.1.nip.io`).
+- **Database**: 외부 PostgreSQL 인스턴스 (`172.18.0.15:15432`).
+- **Cache**: 외부 Valkey (Redis-compatible) 인스턴스 (`172.18.0.9:6379`).
+- **Observability**: Prometheus/Alloy/Loki/Tempo/Grafana의 개별 외부 스택.
 
-- **Target Systems**: AKS v1.30+, Azure Database for PostgreSQL Flexible, Azure Cache for Redis, Azure Key Vault, Azure App Gateway for Containers (AGC).
-- **Core Use Case**:
-  - 로컬 k3s에서 실행되던 모든 워크로드의 AKS 무중단 이전.
-  - 외부 트래픽의 AGC 및 Gateway API 기반 라우팅.
-  - Azure Key Vault와 Kubernetes Secret Store CSI 드라이버를 통합한 시크릿 관리.
+### Pain Points
+1. **관리 오버헤드**: 데이터베이스 및 캐시의 고가용성(HA)을 로컬에서 수동으로 관리해야 함.
+2. **보안/인증**: Vault 토큰 및 정적 자격 증명(Database Password) 관리가 분산되어 있음.
+3. **확장성**: 단일 물리 노드(또는 VM)의 리소스 한계로 인해 스케일 아웃이 불가능함.
 
-## Requirements
+## Target Requirements (2026-03 Standard)
 
 ### Functional Requirements (FR)
-- **REQ-PRD-001**: AKS 클러스터는 Azure CNI Overlay 및 Workload Identity(OIDC) 기능을 지원해야 한다.
-- **REQ-PRD-002**: L7 부하 분산은 Gateway API를 통해 Application Gateway for Containers(AGC)와 연동되어야 한다.
-- **REQ-PRD-003**: 모든 데이터베이스(PostgreSQL)는 관리형 Flexible Server를 사용하며, 고가용성(High Availability) 옵션을 유지한다.
-- **REQ-PRD-004**: 캐시는 Azure Cache for Redis를 통해 외부화하며, 클러스터링을 지원한다.
+- **REQ-PRD-001**: AKS 클러스터(v1.30+)로의 모든 워크로드 이전 및 무중단 가동.
+- **REQ-PRD-002**: L7 입구(Ingress)는 **Application Gateway for Containers (AGC)**와 **Gateway API (v1)**를 도입한다.
+- **REQ-PRD-003**: 인프라 인증은 **Managed Identity** 및 **Workload Identity (OIDC Federation)** 체계로 일원화한다 (Passwordless).
+- **REQ-PRD-004**: 모든 시크릿은 Azure Key Vault와 **Secret Store CSI Driver**를 연동하여 파일로 마운트한다.
 
 ### Non-Functional Requirements (NFR)
-- **REQ-NFR-101 (Security)**: 모든 서비스 자격 증명은 고정된 Secret 대신 Managed Identity와 Federated Identity Credential(Workload Identity)을 사용한다.
-- **REQ-NFR-102 (Availability)**: 핵심 인프라는 2026년 3월 기준 Azure SLA 99.95% 이상을 준수하는 리전 및 티어로 구성한다.
-- **REQ-NFR-103 (Manageability)**: 모든 인프라는 Bicep(IaC)을 통해 형상 관리되며, 배포는 ArgoCD(GitOps)를 표준으로 한다.
+- **REQ-NFR-101 (Security)**: Entra ID 통합을 통한 RBAC 통제 및 테넌트 격리.
+- **REQ-NFR-102 (Availability)**: PostgreSQL 및 Redis의 99.9% 이상 관리형 가용성 보장 (Zone-redundant HA).
+- **REQ-NFR-103 (Maintainability)**: 모든 인프라는 Bicep(IaC)으로 정의하고, 앱 배포는 ArgoCD(GitOps)를 표준으로 한다.
 
 ## Success Criteria
 
-1. Bicep 배포가 정상적으로 완료되고, AKS 클러스터가 Healthy 상태로 기동됨.
-2. 외부 도메인을 통한 서비스 접속이 AGC 및 Gateway API를 통해 200 OK로 반환됨.
-3. Pod 내부에서 패스워드 없이 Azure Key Vault 및 PostgreSQL에 접근 가능함 (Workload Identity 검증).
+1. Bicep을 통한 Azure 리소스 배포 성공 및 AKS 노드 Readiness 확보.
+2. 외부 트래픽이 AGC를 통해 AKS 내부 서비스로 정상 라우팅됨 (200 OK).
+3. Pod 내부에서 패스워드 없이 DB 및 Key Vault에 접근 성공 (Workload Identity 검증).
 
 ## Related Documents
 
 - **ARD**: [../02.ard/0001-azure-migration-architecture.md](../02.ard/0001-azure-migration-architecture.md)
 - **Spec**: [../04.specs/azure-migration/spec.md](../04.specs/azure-migration/spec.md)
-- **Plan**: [../05.plans/2026-03-31-migration-strategy.md](../05.plans/2026-03-31-migration-strategy.md)
-- **ADR**: [../03.adr/0001-cni-overlay.md](../03.adr/0001-cni-overlay.md)
+- **ADR**: [../03.adr/README.md](../03.adr/README.md)

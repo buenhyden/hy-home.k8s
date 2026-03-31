@@ -1,48 +1,46 @@
-# Azure Infrastructure Maintenance Operations Policy
+# Azure Maintenance & Operations Policy
 
 ## Overview (KR)
 
-이 문서는 Azure AKS 및 관련 관리형 서비스의 유지보수 정책을 정의한다. 시스템의 안정성, 보안성 및 비용 효율성을 유지하기 위한 정기 점검과 업데이트 기준을 규정한다.
+로컬 k3s에서 Azure(AKS)로 이전된 인프라의 장기적인 안정성과 가용성을 유지하기 위한 운영 및 점검 정책을 정의한다. 본 운영 가이드는 2026년 3월 기준 Azure 최신 패치 관리 및 보안 준수를 기준으로 작성되었다.
 
-## Policy Scope
+## Maintenance Windows
 
-본 정책은 Azure Kubernetes Service (AKS), PostgreSQL Flexible Server, Redis, Application Gateway for Containers (AGC) 등 모든 프로덕션용 Azure 리소스에 적용된다.
+- **Regular Maintenance**: 매월 세 번째 일요일 02:00 ~ 05:00 (KST).
+- **Critical Security Patching**: 취약점 발견 시 즉시 수행 (Rolling Update 방식).
 
-## Applies To
+## Operational Standards
 
-- **Systems**: AKS Cluster, AGC Traffic Controller, Database instances.
-- **Environments**: Production (hy-home-k8s-prod), Staging.
+### 1. AKS Node Autoupgrade
+- **Policy**: `NodeImage` 채택 및 최신 보안 패치 자동 적용.
+- **Cycle**: 주간 단위 최신 이미지 체크.
 
-## Controls
+### 2. Database Backup & Retention
+- **Service**: Azure Database for PostgreSQL Flexible Server Backup.
+- **Retention**: 7일간 기본 보관 (Point-in-time Restore 지원).
+- **Redundancy**: 리전 장애 대비 고가용성(HA) 구성 상시 유지.
 
-- **Required**:
-  - Kubernetes 마이너 버전 업데이트는 가용 시간(Maintenance Window) 내에 수행해야 함.
-  - 모든 리소스에는 `Owner`, `Project`, `Env` 태그가 부착되어야 함.
-  - 월 1회 이상의 보안 패치 검토 및 적용.
-- **Allowed**:
-  - 개발 환경에서의 수동 리소스 스케일 업/다운.
-  - 비정기적인 인프라 메트릭 감사.
-- **Disallowed**:
-  - 프로덕션 그룹 내에서의 수동(Portal) 리소스 생성 (반드시 Bicep/GitOps 경유).
-  - 테넌트 관리자의 승인 없는 Public IP 노출.
+### 3. Monitoring & Alerting
+- **Platform**: Azure Monitor (Metrics) & Log Analytics.
+- **Critical Alerts**: 
+  - CPU/Memory Usage > 85% (Critical)
+  - AGC Backend 5xx Error Rate > 1% (High)
+  - Key Vault Access Denied Rate > 5% (Security)
 
-## Exceptions
+## Change Management
 
-- 긴급 보안 취약점(Zero-day) 대응 시 선조치 후보고 (CTO 승인 필요).
-- 테스트용 임시 리소스 groups 생성 (72시간 이내 자동 삭제 규칙 적용).
+1. 모든 변경사항은 Bicep IaC 및 ArgoCD GitOps를 통해 수행한다.
+2. 매니페스트 변경 전 `infrastructure/tests` 하위의 정적 분석 및 컨텍스트 검증을 통과해야 한다.
+3. 중대 변경 시 PR(Pull Request) 내에 ADR(Architecture Decision Record) 작성을 권장한다.
 
-## Verification
+## KPIs (Success Metrics)
 
-- `az resource list --tag Project=hy-home-k8s` 명령어를 통해 태그 준수 여부 정기 감사.
-- Azure Advisor 권장 사항 월별 검토 (Cost & Security).
-
-## Review Cadence
-
-- **Monthly**: 비용 및 보안 권고 사항 검토.
-- **Quarterly**: 아키텍처 ARD 정합성 및 성능 벤치마크 검토.
+- **Availability**: 월간 가동률 99.9% 이상.
+- **Response Time**: AGC 평균 지연 시간(Latency) 100ms 이내.
+- **Compliance**: 보안 취약점 0건 유지 (Critical 기준).
 
 ## Related Documents
 
-- **ARD**: [../02.ard/0001-azure-migration-architecture.md](../02.ard/0001-azure-migration-architecture.md)
+- **PRD**: [../01.prd/2026-03-31-azure-migration.md](../01.prd/2026-03-31-azure-migration.md)
+- **RD**: [../02.ard/0001-azure-migration-architecture.md](../02.ard/0001-azure-migration-architecture.md)
 - **Runbook**: [../09.runbooks/0001-disaster-recovery.md](../09.runbooks/0001-disaster-recovery.md)
-- **Spec**: [../04.specs/azure-migration/spec.md](../04.specs/azure-migration/spec.md)

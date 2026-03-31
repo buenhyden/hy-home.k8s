@@ -1,0 +1,29 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: hyhome-gateway
+  namespace: default
+  annotations:
+    alb.networking.azure.io/alb-id: "/subscriptions/.../resourceGroups/.../trafficControllers/hyhome-agc" # Replace with trafficControllerId from Bicep
+spec:
+  gatewayClassName: azure-alb-external
+  listeners:
+  - name: http
+    port: 80
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: All
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: hyhome-route
+  namespace: default
+spec:
+  parentRefs:
+  - name: hyhome-gateway
+  rules:
+  - backendRefs:
+    - name: hyhome-app-service
+      port: 80

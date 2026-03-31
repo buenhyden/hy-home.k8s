@@ -1,34 +1,21 @@
-# AWS Infrastructure Operations Policies
+# 08.operations (System Operations & Governance)
 
-> 시스템 운영 원칙, 통제 기준 및 관리 정책을 정의하는 보관소
+> AWS 클라우드 인프라 자산 운영 정책 및 관리 표준
 
 ## Overview
 
-이 경로는 AWS 환경에서 클라우드 리소스를 안전하고 일관되게 운영하기 위한 정책, 표준, 거버넌스 문서를 관리한다.
-
-## Audience
-
-이 README의 주요 독자:
-
-- Operators
-- Architects
-- AI Agents
+이 디렉토리는 마이그레이션 이후의 지속 가능한 운영 거버넌스를 정의합니다. AWS 비용 최적화 전략, 클라우드 리소스 태깅 표준, 백업 및 데이터 보관 정책을 포함합니다.
 
 ## Structure
 
 ```text
 08.operations/
-├── aws-management.md  # AWS Management Policy
-└── README.md          # This file
+├── finops-guide.md       # 비용 관리 정책
+└── README.md             # This file
 ```
-
-## Documentation Standards
-
-- 모든 운영 정책은 `operation.template.md`를 기반으로 작성한다.
-- 구체적인 실행 절차보다는 통제 기준(Controls)과 예외(Exceptions)를 규정한다.
 
 ## Related References
 
-- **ARD**: [../02.ard/README.md](../02.ard/README.md)
-- **Runbook**: [../09.runbooks/README.md](../09.runbooks/README.md)
-- **Guide**: [../07.guides/README.md](../07.guides/README.md)
+- [01.prd](../01.prd/README.md) - 마이그레이션 목표
+- [07.guides](../07.guides/README.md) - 운영 실무 가이드
+- [09.runbooks](../09.runbooks/README.md) - 장애 조치 지침

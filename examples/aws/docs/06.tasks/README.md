@@ -1,34 +1,21 @@
-# AWS Migration Tasks
+# 06.tasks (Implementation Tasks)
 
-> 실제 구현 및 검증 작업 단위의 실행 내역을 기록하는 보관소
+> 마이그레이션 실행 및 검증을 위한 세부 작업 단위 관리
 
 ## Overview
 
-이 경로는 ‘AWS 이식’이라는 대주제 아래에서 실행되는 모든 커밋 수준의 단위 작업들에 대한 추적 기록을 관리한다. 수행된 일, 수행한 사람, 수행 결과(증거)를 포함한다.
-
-## Audience
-
-이 README의 주요 독자:
-
-- Developers
-- Operators
-- AI Agents
+이 디렉토리는 `05.plans`에서 정의된 로드맵을 달성하기 위한 구체적인 작업(WBS)을 관리합니다. 인프라 프로비저닝, 데이터 싱크 개시, 트래픽 전환 등 단계별 동작을 트래킹합니다.
 
 ## Structure
 
 ```text
 06.tasks/
-├── 2026-03-31-bootstrap-aws.md  # Core Cluster Setup Tasks
-└── README.md                    # This file
+├── migration-tasks.md  # 마이그레이션 실행 작업 리스트
+└── README.md           # This file
 ```
-
-## Documentation Standards
-
-- 모든 작업 단위 기록은 `task.template.md`를 기반으로 작성한다.
-- 추적 가능하며, 검증 결과(Evidence)를 반드시 포함한다.
 
 ## Related References
 
-- **Plan**: [../05.plans/README.md](../05.plans/README.md)
-- **Spec**: [../04.specs/README.md](../04.specs/README.md)
-- **Walkthrough**: `walkthrough.md` (If applicable)
+- [05.plans](../05.plans/README.md) - 마이그레이션 실행 계획
+- [07.guides](../07.guides/README.md) - 운영 가이드
+- [Root task.md](../../../task.md) - 프로젝트 전체 태스크

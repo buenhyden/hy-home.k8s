@@ -1,71 +1,34 @@
-# Azure Migration Execution Tasks
+# Task: Azure Migration Implementation
 
 ## Overview (KR)
 
-본 문서는 로컬 k3s 환경을 2026년 3월 기준 Azure(AKS) 환경으로 이전하기 위한 실행 태스크를 정의한다. 실행 계획(05.plans)을 실제 수행 가능한 가장 작은 작업 단위(Task ID: T-*)로 분해하여 관리한다. 각 작업의 수행 여부, 담당자, 상태 및 검증 증적(Evidence)을 기록한다.
+이 문서는 `hy-home.k8s` 인프라의 Azure 마이그레이션 구현 및 검증 작업 목록이다. 설계 명세(Spec)와 마이그레이션 전략(Plan)에서 도출된 세부 태스크를 추적한다.
 
-## Status Summary
+## Inputs
 
-- **Total Tasks**: 12
-- **Completed**: 4
-- **In Progress**: 2
-- **Todo**: 6
+- **Parent Spec**: [../04.specs/2026-03-31-resource-specs.md](../04.specs/2026-03-31-resource-specs.md)
+- **Parent Plan**: [../05.plans/2026-03-31-migration-strategy.md](../05.plans/2026-03-31-migration-strategy.md)
 
-## Phase 1: Foundation Setup (Infra)
+## Working Rules
 
-- **T-001**: Azure VNet 및 Subnet(AKS/AGC 전용) 생성.
-  - *Status*: `Completed`
-  - *Evidence*: `az network vnet list` 성공.
-- **T-002**: Managed Identity(UAMI) 및 Federated Identity Credential(OIDC) 기초 설정.
-  - *Status*: `Completed`
-  - *Evidence*: Bicep deployment successful (`main.bicep`).
-- **T-003**: Azure Key Vault 프로비저닝 및 CSI Driver 접근 권한 부여.
-  - *Status*: `Completed`
-  - *Evidence*: `az keyvault list` 성공.
+- 인프라(Bicep) 배포 전 `what-if`를 통해 영향도를 먼저 확인한다.
+- 모든 쿠버네티스 리소스는 `dry-run` 검증 후 적용한다.
+- 2026년 보안 표준(Workload Identity) 적용을 최우선으로 한다.
 
-## Phase 2: Platform Configuration (K8s)
+## Task Table
 
-- **T-101**: AKS Cluster v1.30+ 프로비저닝 및 노드 풀 구성.
-  - *Status*: `Completed`
-  - *证据*: `kubectl get nodes` Ready 상태 확인.
-- **T-102**: AGC(Application Gateway for Containers) Traffic Controller 설치.
-  - *Status*: `In Progress`
-  - *Task*: Helm chart deployment for ALB Controller.
-- **T-103**: Gateway API (v1) 리소스 배포 및 AGC 연동 검증.
-  - *Status*: `Todo`
+| Task ID | Description | Type | Parent Spec Section | Parent Plan Phase | Validation / Evidence | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| T-001 | PRD/ARD/ADR/Spec 작성 | doc | All | Phase 1 | 파일 존재 확인 | [x] Done |
+| T-002 | `main.bicep` 기초 아키텍처 완성 | impl | §1, §2 | Phase 1 | `bicep lint` | [ ] Todo |
+| T-003 | Managed 서비스 (DB/Redis) Bicep 작성 | impl | §3 | Phase 2 | 리소스 배포 확인 | [ ] Todo |
+| T-004 | AGC (Application Gateway) Bicep 구성 | impl | §1 | Phase 2 | ALB Controller 연결 | [ ] Todo |
+| T-005 | Workload Identity 매니페스트 작성 | impl | §2 | Phase 1 | ServiceAccount 속성 확인 | [ ] Todo |
+| T-006 | KeyVault Secret Store 연동 매니페스트 | impl | §2 | Phase 2 | SecretProviderClass 생성 | [ ] Todo |
+| T-007 | 운영 가이드 및 런북(07-09) 작성 | doc | All | Phase 4 | 가이드 리뷰 | [ ] Todo |
+| T-008 | 최종 README 인덱싱 및 검증 | doc | All | Phase 5 | 링크 유효성 체크 | [ ] Todo |
 
-## Phase 3: Data & Apps (App Layer)
+## Verification Summary
 
-- **T-201**: Azure Database for PostgreSQL Flexible Server(HA) 배포.
-  - *Status*: `Todo`
-- **T-202**: Azure Cache for Redis 전환 설정 및 연결 정보 업데이트.
-  - *Status*: `Todo`
-- **T-203**: Workload Identity 기반의 애플리케이션 파드 배포 및 Secret CSI 연동 검증.
-  - *Status*: `In Progress`
-
-## Phase 4: Final Cutover (Ops)
-
-- **T-301**: AGC 기반의 실시간 트래픽 처리 검증 (L7 Routing).
-  - *Status*: `Todo`
-- **T-302**: DNS 전환 및 SSL 인증서 갱신 (Key Vault 통합).
-  - *Status*: `Todo`
-- **T-303**: 기존 로컬 k3s 리소스 정지 및 프로젝트 완료 보고.
-  - *Status*: `Todo`
-
-## Verification
-
-### Automated Verification
-```bash
-# Verify Gateway API resources in cluster
-kubectl get gateway,httproute -A
-```
-
-### Manual Verification
-- `kubectl describe pods`를 통해 `azure-wi` 관련 설정 확인.
-- `az monitor metrics list`를 통해 리소스 실시간 지표 확인.
-
-## Related Documents
-
-- **Plan**: [../05.plans/2026-03-31-migration-strategy.md](../05.plans/2026-03-31-migration-strategy.md)
-- **Runbook**: [../09.runbooks/0001-disaster-recovery.md](../09.runbooks/0001-disaster-recovery.md)
-- **Spec**: [../04.specs/azure-migration/spec.md](../04.specs/azure-migration/spec.md)
+- **Test Commands**: `az deployment group what-if`, `kubectl get gateway`, `kubectl get secretproviderclass`
+- **Logs / Evidence Location**: `examples/azure/logs/` (필요 시 생성)

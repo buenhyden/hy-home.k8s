@@ -1,32 +1,76 @@
-# Azure Migration Documentation
+# Azure Migration Documentation Hub
 
-> 이 경로는 로컬 k3s/k3d 환경을 2026년 3월 기준 Azure(AKS) 환경으로 이전하기 위한 전체 문서 체계를 관리한다.
+> K3s 로컬 인프라의 Azure(AKS) 전 이전을 위한 통합 문서 센터
 
 ## Overview
 
-본 디렉토리는 `hy-home.k8s` 프로젝트의 Azure 클라우드 전환을 위한 전략, 설계, 구현 명세 및 운영 지침을 포함하는 9단계 문서 체계(9-Directory Structure)를 관리한다. 모든 문서는 프로젝트 거거넌스 표준에 따라 작성되었으며, 상호 참조(Traceability)를 통해 마이그레이션의 전 과정을 추적 가능하게 한다.
+이 경로는 `hy-home.k8s` 프로젝트의 로컬 Kubernetes 환경을 Azure 클라우드로 마이그레이션하기 위한 모든 설계, 계획, 작업 및 운영 지식을 관리한다. 2026년 3월 기준의 최신 Azure 클라우드 네이티브 아키텍처를 지향하며, 총 9개의 표준화된 디렉토리 구조를 통해 체계적인 지식 관리를 수행한다.
 
-## Content Structure (9 Dirs)
+## Audience
 
-| Directory | Type | Description |
-| :--- | :--- | :--- |
-| [01.prd](./01.prd) | PRD | 마이그레이션 요구사항 및 성공 지표 정의 |
-| [02.ard](./02.ard) | ARD | 참조 아키텍처 모델 및 품질 속성 정의 |
-| [03.adr](./03.adr) | ADR | 기술적 의사결정 기록 (CNI, ALB, Identity 등) |
-| [04.specs](./04.specs) | SPEC | 상세 기술 명세 및 인터페이스 정의 |
-| [05.plans](./05.plans) | PLAN | 단계별 이행 전략 및 릴리스 계획 |
-| [06.tasks](./06.tasks) | TASK | 개별 작업 진행 상황 및 검증 증적 관리 |
-| [07.guides](./07.guides) | GUIDE | 개발자 및 운영자 온보딩 가이드 |
-| [08.operations](./08.operations) | OPER | 운영 정책, 거버넌스 및 통제 기준 |
-| [09.runbooks](./09.runbooks) | RUN | 재해 복구 및 긴급 대응 절차서 |
+이 README의 주요 독자:
 
-## Global Rules & Standards
+- Platform Engineers
+- Infrastructure Operations
+- Cloud Architects
+- AI Agents (Antigravity)
 
-1. **Naming Convention**: 모든 문서는 템플릿(01~09)에 정의된 접두어(`YYYY-MM-DD-` 또는 `####-`)를 준수한다.
-2. **KR Overview**: 모든 기본 문서의 상단에는 한국어 요약(Overview) 섹션을 포함한다.
-3. **Traceability**: 모든 산출물은 상대 경로를 통한 유기적 링크 관계를 유지한다.
+## Scope
 
-## AI Agent Guidance
+### In Scope
 
-- 모든 인프라 변경 및 운영 작업은 위 9개 가이드라인의 범위 내에서 수행되어야 함.
-- 2026년 3월 기준 Azure 기술 표준(AKS v1.30+, AGC, Workload Identity)이 문서 전반에 적용되었음을 인지할 것.
+- **01.prd**: 제품 요구사항 정의 및 성공 지표
+- **02.ard**: 참조 아키텍처 및 품질 속성
+- **03.adr**: 주요 기술적 선택 배경 (AGC, Workload Identity 등)
+- **04.specs**: 리소스 모델링 및 상세 기술 사양
+- **05.plans**: 단계별 마이그레이션 전략 및 로드맵
+- **06.tasks**: 상세 구현 태스크 및 검증 로그
+- **07.guides**: 배포 가이드 및 온보딩 절차
+- **08.operations**: 클라우드 운영 정책 및 거버넌스
+- **09.runbooks**: 장애 대응 및 긴급 복구 매뉴얼
+
+### Out of Scope
+
+- 애플리케이션 비즈니스 로직 소스 코드
+- AWS 또는 GCP 등 타 클라우드 아키텍처 (별도 경로에서 관리)
+- 레거시 하드웨어 폐기 절차
+
+## Structure
+
+```text
+examples/azure/docs/
+├── 01.prd/           # Product Requirements
+├── 02.ard/           # Architecture Reference
+├── 03.adr/           # Architecture Decision Records
+├── 04.specs/         # Technical Specifications
+├── 05.plans/         # Migration Strategies
+├── 06.tasks/         # Implementation Tasks
+├── 07.guides/        # Deployment Guides
+├── 08.operations/    # Ops Policies
+├── 09.runbooks/      # Recovery Procedures
+└── README.md         # This hub file
+```
+
+## Tech Stack (March 2026)
+
+| Category   | Technology                                | Notes                     |
+| ---------- | ----------------------------------------- | ------------------------- |
+| Platform   | Azure Kubernetes Service (AKS)            | v1.30+, CNI Overlay       |
+| Networking | Application Gateway for Containers (AGC)  | Gateway API Standard      |
+| Database   | Azure DB for PostgreSQL Flexible Server   | High Availability Enabled |
+| Cache      | Azure Cache for Redis                     | Premium Tier              |
+| Security   | Azure Key Vault + Workload Identity       | Passwordless Auth         |
+| IaC        | Bicep                                     | Resource Module Pattern   |
+
+## How to Work in This Area
+
+1. **Requirement First**: 변경 사항은 항상 [01.prd](./01.prd/README.md)에서 시작하여 하위 문서로 전파한다.
+2. **Standard Templates**: 모든 문서는 `docs/99.templates/` 산하의 최신 템플릿을 사용하여 작성한다.
+3. **Traceability**: 문서 내 상호 참조는 반드시 상대 경로를 사용하여 링크를 유지한다.
+4. **Agent Guidance**: 에이전트는 작업 전 [06.tasks](./06.tasks/README.md)를 확인하고 진행 상황을 업데이트한다.
+
+## Related References
+
+- [Main Project README](../../README.md)
+- [Local Infrastructure Specs](../../infrastructure/README.md)
+- [Governance Rules](../../docs/00.agent-governance/README.md)

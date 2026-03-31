@@ -1,35 +1,21 @@
-# AWS Infrastructure Guides
+# 07.guides (Operational Guides)
 
-> 시스템 이해와 작업 수행을 돕는 단계별 사용 지침 및 학습 보관소
+> AWS EKS 및 관리형 서비스 설정 및 운영 지침
 
 ## Overview
 
-이 경로는 AWS 환경에서 인프라를 구축하거나 운영할 때 개발자와 운영자가 따라야 할 온보딩 및 기술 가이드들을 관리한다.
-
-## Audience
-
-이 README의 주요 독자:
-
-- Developers
-- Operators
-- Contributors
-- AI Agents
+이 디렉토리는 마이그레이션이 완료된 인프라 환경을 안전하고 효과적으로 사용하기 위한 실무 지침서를 보관합니다. EKS 인증 설정(aws-auth), ArgoCD 연동 가이드, 로컬 개발 환경 구성 가이드 등을 다룹니다.
 
 ## Structure
 
 ```text
 07.guides/
-├── aws-setup-guide.md  # Infrastructure Setup Procedures
+├── eks-setup-guide.md  # EKS 클러스터 초기 설정 가이드
 └── README.md           # This file
 ```
 
-## Documentation Standards
-
-- 모든 가이드는 `guide.template.md`를 기반으로 작성한다.
-- 실시간 장애 대응이 아닌 시스템 이해와 수행 방법에 초점을 맞춘다.
-
 ## Related References
 
-- **Spec**: [../04.specs/README.md](../04.specs/README.md)
-- **Operation**: [../08.operations/README.md](../08.operations/README.md)
-- **Runbook**: [../09.runbooks/README.md](../09.runbooks/README.md)
+- [02.ard](../02.ard/README.md) - 아키텍처 아는 법
+- [06.tasks](../06.tasks/README.md) - 실행 작업 목록
+- [08.operations](../08.operations/README.md) - 거버넌스 정책

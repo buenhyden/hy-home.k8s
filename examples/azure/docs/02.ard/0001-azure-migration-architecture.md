@@ -44,8 +44,8 @@ graph TD
         App[Application Pods]
         WI[Workload Identity]
     end
-    App --> PG[Azure Database for PostgreSQL]
-    App --> Redis[Azure Cache for Redis]
+    App --> PG[Azure Database for PostgreSQL HA]
+    App --> Redis[Azure Cache for Redis Premium]
     App --> AKV[Azure Key Vault]
     WI --> AKV
 ```
@@ -54,16 +54,16 @@ graph TD
 
 - **Key Entities / Flows**: 모든 애플리케이션 데이터는 AKS 내부가 아닌 Azure Managed Service에 영속화된다.
 - **Storage Strategy**:
-  - RDBMS: Azure Database for PostgreSQL Flexible Server (HA Option).
-  - Caching: Azure Cache for Redis (Premium Layer).
-  - Secrets: Azure Key Vault (CSI-backed External Secret Mode).
+  - RDBMS: Azure Database for PostgreSQL Flexible Server (Zone-redundant HA).
+  - Caching: Azure Cache for Redis (Premium P1).
+  - Secrets: Azure Key Vault (Key Vault RBAC Authorized CSI Mode).
 - **Data Boundaries**: AKS는 연산 계층으로만 격리하며, 상태(State)는 관리형 서비스 저장소에서 관리한다.
 
 ## Infrastructure & Deployment
 
 - **Runtime / Platform**: Azure Kubernetes Service (AKS).
 - **Deployment Model**:
-  - Infrastructure: Azure Bicep (Standard Template Layer).
+  - Infrastructure: Azure Bicep (Modular Foundation).
   - Deployment: ArgoCD (GitOps Pull Model).
 - **Operational Evidence**: Azure Resource Graph 및 Metrics Advisor를 통한 상태 리포팅.
 
@@ -74,3 +74,4 @@ graph TD
 - **ADR**: [../03.adr/0001-cni-overlay.md](../03.adr/0001-cni-overlay.md)
 - **ADR**: [../03.adr/0002-agc-gateway-api.md](../03.adr/0002-agc-gateway-api.md)
 - **ADR**: [../03.adr/0003-workload-identity.md](../03.adr/0003-workload-identity.md)
+- **ADR**: [../03.adr/0004-postgresql-flexible-ha.md](../03.adr/0004-postgresql-flexible-ha.md)
