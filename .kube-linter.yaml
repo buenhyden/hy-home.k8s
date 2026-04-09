@@ -1,11 +1,14 @@
 checks:
   doNotAutoaddChecks: false
   exclude:
+    # Local home-lab constraints
     - "no-read-only-root-fs" # Home labs often need write access
-    - "no-anti-affinity" # Many home lab apps don't have enough nodes for anti-affinity
+    - "no-anti-affinity" # Many home lab apps do not have enough nodes for anti-affinity
     - "unset-cpu-requirements" # Allow development without strict CPU requests
     - "unset-memory-requirements" # Allow development without strict memory requests
-    - "dangling-service" # Progressive delivery manifests can define staged services ahead of rollout wiring
     - "run-as-non-root" # Some upstream images used in this lab still require root at bootstrap time
     - "latest-tag" # Local bootstrap manifests may track upstream defaults before pinning policy is introduced
+
+    # Argo Rollouts / GitOps workflow allowances
+    - "dangling-service" # Progressive delivery manifests can define staged services ahead of rollout wiring
 customChecks: []

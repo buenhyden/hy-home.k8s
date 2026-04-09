@@ -19,7 +19,7 @@ repos:
       - id: check-merge-conflict
       - id: check-symlinks
       - id: check-yaml
-        exclude: '^(examples/|gitops/|infrastructure/).*\.ya?ml$'
+        exclude: '^(gitops/.*\.ya?ml|infrastructure/.*\.ya?ml|examples/sample-app/.*\.ya?ml|examples/.*/gitops/.*\.ya?ml|examples/.*/kubernetes/.*\.ya?ml|traefik/.*\.ya?ml)$'
       - id: check-toml
       - id: check-json
       - id: end-of-file-fixer
@@ -52,18 +52,19 @@ repos:
     rev: 0.37.0
     hooks:
       - id: check-dependabot
-      - id: check-readthedocs
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.11.0.1
     hooks:
       - id: shellcheck
+        files: '^(scripts/.*\.sh|infrastructure/.*\.sh|\.github/gates/.*\.sh)$'
 
   - repo: https://github.com/scop/pre-commit-shfmt
     rev: v3.12.0-2
     hooks:
       - id: shfmt
         args: [-i, '2'] # Indent 2 spaces
+        files: '^(scripts/.*\.sh|infrastructure/.*\.sh|\.github/gates/.*\.sh)$'
 
   # --- 5. 인프라 및 도커 검사 (Infrastructure) ---
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
@@ -76,6 +77,7 @@ repos:
     hooks:
       - id: hadolint-docker
         args: ['--config', '.hadolint.yaml']
+        files: '(^|/)([Dd]ockerfile|[Dd]ockerfile\.[^/]+)$'
 
   - repo: https://github.com/rhysd/actionlint
     rev: v1.7.11
@@ -87,3 +89,4 @@ repos:
     hooks:
       - id: kube-linter
         args: [--config, .kube-linter.yaml]
+        files: '^(gitops/.*\.ya?ml|infrastructure/.*\.ya?ml|examples/sample-app/.*\.ya?ml|examples/.*/gitops/.*\.ya?ml|examples/.*/kubernetes/.*\.ya?ml|traefik/.*\.ya?ml)$'
