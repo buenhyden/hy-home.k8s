@@ -1,3 +1,11 @@
+---
+title: 'Reference: {Item Name}'
+type: reference
+status: draft
+owner: '{team-or-person}'
+updated: YYYY-MM-DD
+---
+
 <!-- Target: docs/90.references/<category>/<item>.md -->
 
 # Reference: [Item Name]

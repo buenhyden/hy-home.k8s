@@ -1,3 +1,11 @@
+---
+title: '{API Name} Specification'
+type: api-spec
+status: draft
+owner: '{team-or-person}'
+updated: YYYY-MM-DD
+---
+
 <!-- Target: docs/04.specs/<feature-id>/api-spec.md -->
 
 # [API Name] Specification
@@ -41,9 +49,9 @@
 
 ## Endpoint / Operation Catalog
 
-| Operation ID | Method / Type | Path / Name | Purpose | Caller |
-| --- | --- | --- | --- | --- |
-| API-001 | GET | `/example` | [Purpose] | [Client] |
+| Operation ID | Method / Type | Path / Name | Purpose   | Caller   |
+| ------------ | ------------- | ----------- | --------- | -------- |
+| API-001      | GET           | `/example`  | [Purpose] | [Client] |
 
 ## Request / Response Schemas
 
@@ -66,9 +74,9 @@
 
 ## Error Model
 
-| Code | Meaning | Retryable | Notes |
-| --- | --- | --- | --- |
-| 400 | Bad Request | No | Validation error |
+| Code | Meaning     | Retryable | Notes            |
+| ---- | ----------- | --------- | ---------------- |
+| 400  | Bad Request | No        | Validation error |
 
 ## Data Contract Compatibility
 
@@ -94,3 +102,10 @@
 - Contract lint
 - Mock / integration test
 - Consumer compatibility check
+
+## Related Documents
+
+- **Spec**: `[./spec.md]`
+- **Plan**: `[../../05.plans/YYYY-MM-DD-<feature>.md]`
+- **Tasks**: `[../../06.tasks/YYYY-MM-DD-<feature-or-stream>.md]`
+- **Runbook**: `[../../09.runbooks/####-<topic>.md]`

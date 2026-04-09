@@ -1,0 +1,10 @@
+title = "hy-home.k8s gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allow the detect-secrets baseline artifact tracked in this repository"
+paths = [
+  '''^\.secrets\.baseline$''',
+]

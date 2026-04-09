@@ -1,10 +1,9 @@
 @AGENTS.md
+@docs/00.agent-governance/providers/gemini.md
 
 # GEMINI.md
 
-Gemini-specific overlay for `hy-home.k8s`.
-
-- Canonical policy source: `docs/00.agent-governance/rules/*`
-- Provider details: [providers/gemini.md](docs/00.agent-governance/providers/gemini.md)
-- Keep this file minimal; move detailed rules to `docs/00.agent-governance/*`.
-- Gemini CLI context filename can be configured to include `AGENTS.md`.
+- Canonical policy: `docs/00.agent-governance/rules/*`
+- H100: github.com/revfactory/harness-100
+- postflight-checklist before every completion · `/memory show|refresh` for context
+- GitOps-First: no `kubectl apply`; always PR path

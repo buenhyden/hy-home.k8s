@@ -1,3 +1,11 @@
+---
+title: 'Incident: {Incident Title}'
+type: incident
+status: draft
+owner: '{team-or-person}'
+updated: YYYY-MM-DD
+---
+
 <!-- Target: docs/10.incidents/YYYY/YYYY-MM-DD-<incident-title>.md -->
 
 # Incident: [Incident Title]
@@ -20,15 +28,15 @@ NC-YYYYMMDD-XXX / [Short Incident Title]
 
 ## Incident Metadata
 
-| Field | Value |
-| --- | --- |
-| Incident ID | `INC-YYYYMMDD-XXX` |
-| Severity | `SEV-1 / SEV-2 / SEV-3` |
-| Status | `Investigating / Identified / Mitigating / Monitoring / Resolved / Closed` |
-| Detection Time | `YYYY-MM-DD HH:MM UTC` |
-| Primary Service | [Affected service] |
-| Evidence Source | [Log / dashboard / report] |
-| Runbook Link | `[../../09.runbooks/####-<topic>.md]` |
+| Field           | Value                                                                      |
+| --------------- | -------------------------------------------------------------------------- |
+| Incident ID     | `INC-YYYYMMDD-XXX`                                                         |
+| Severity        | `SEV-1 / SEV-2 / SEV-3`                                                    |
+| Status          | `Investigating / Identified / Mitigating / Monitoring / Resolved / Closed` |
+| Detection Time  | `YYYY-MM-DD HH:MM UTC`                                                     |
+| Primary Service | [Affected service]                                                         |
+| Evidence Source | [Log / dashboard / report]                                                 |
+| Runbook Link    | `[../../09.runbooks/####-<topic>.md]`                                      |
 
 ## Agent Metadata (If Applicable)
 
@@ -50,9 +58,9 @@ NC-YYYYMMDD-XXX / [Short Incident Title]
 
 ## Timeline
 
-| Time (UTC) | Actor | Detail |
-| --- | --- | --- |
-| HH:MM | [Name] | [What happened] |
+| Time (UTC) | Actor  | Detail          |
+| ---------- | ------ | --------------- |
+| HH:MM      | [Name] | [What happened] |
 
 ## Current Hypothesis / Response State
 
@@ -69,6 +77,8 @@ NC-YYYYMMDD-XXX / [Short Incident Title]
 
 - [ ] [Action] — Owner: [Name]
 
-## Postmortem Link
+## Related Documents
 
-- `[../../11.postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
+- **Postmortem**: `[../../11.postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
+- **Runbook**: `[../../09.runbooks/####-<topic>.md]`
+- **Operation**: `[../../08.operations/<policy-or-standard>.md]`

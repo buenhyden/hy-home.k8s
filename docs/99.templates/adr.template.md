@@ -1,3 +1,11 @@
+---
+title: 'ADR-####: {Short Title}'
+type: adr
+status: draft
+owner: '{team-or-person}'
+updated: YYYY-MM-DD
+---
+
 <!-- Target: docs/03.adr/####-<short-title>.md -->
 
 # ADR-####: [Short Title]

@@ -1,3 +1,11 @@
+---
+title: '{System or Domain Name} Architecture Reference Document'
+type: ard
+status: draft
+owner: '{team-or-person}'
+updated: YYYY-MM-DD
+---
+
 <!-- Target: docs/02.ard/####-<system-or-domain>.md -->
 
 # [System or Domain Name] Architecture Reference Document (ARD)

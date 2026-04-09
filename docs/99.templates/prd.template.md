@@ -1,3 +1,11 @@
+---
+title: '{Feature or System Name} Product Requirements'
+type: prd
+status: draft
+owner: '{team-or-person}'
+updated: YYYY-MM-DD
+---
+
 <!-- Target: docs/01.prd/YYYY-MM-DD-<feature-or-system>.md -->
 
 # Product Requirements Document

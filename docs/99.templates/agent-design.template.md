@@ -1,3 +1,11 @@
+---
+title: '{Feature Name} Agent Design'
+type: agent-design
+status: draft
+owner: '{team-or-person}'
+updated: YYYY-MM-DD
+---
+
 <!-- Target: docs/04.specs/<feature-id>/agent-design.md -->
 
 # [Feature Name] Agent Design
@@ -49,9 +57,9 @@
 
 ## Tools & Permissions
 
-| Tool | Purpose | Allowed Actions | Forbidden Actions | Failure Handling |
-| --- | --- | --- | --- | --- |
-| [Tool] | [Purpose] | [Allowed] | [Forbidden] | [Fallback] |
+| Tool   | Purpose   | Allowed Actions | Forbidden Actions | Failure Handling |
+| ------ | --------- | --------------- | ----------------- | ---------------- |
+| [Tool] | [Purpose] | [Allowed]       | [Forbidden]       | [Fallback]       |
 
 ## Prompt / Policy Contract
 

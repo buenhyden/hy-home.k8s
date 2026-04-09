@@ -1,3 +1,11 @@
+---
+title: '{Feature Name} Test & Evaluation Strategy'
+type: tests
+status: draft
+owner: '{team-or-person}'
+updated: YYYY-MM-DD
+---
+
 <!-- Target: docs/04.specs/<feature-id>/tests.md -->
 
 # [Feature Name] Test & Evaluation Strategy
@@ -36,9 +44,9 @@
 
 ## Test Matrix
 
-| Test ID | Layer | Purpose | Input / Fixture | Expected Result | Automation |
-| --- | --- | --- | --- | --- | --- |
-| TEST-001 | unit | [Purpose] | [Input] | [Result] | yes |
+| Test ID  | Layer | Purpose   | Input / Fixture | Expected Result | Automation |
+| -------- | ----- | --------- | --------------- | --------------- | ---------- |
+| TEST-001 | unit  | [Purpose] | [Input]         | [Result]        | yes        |
 
 ## Contract & Integration Tests
 
@@ -54,9 +62,9 @@
 
 ## Agent Evals (If Applicable)
 
-| Eval ID | Type | Scenario | Dataset / Prompt Set | Metric | Threshold |
-| --- | --- | --- | --- | --- | --- |
-| EVAL-001 | offline | [Scenario] | [Dataset] | [Metric] | [Threshold] |
+| Eval ID  | Type    | Scenario   | Dataset / Prompt Set | Metric   | Threshold   |
+| -------- | ------- | ---------- | -------------------- | -------- | ----------- |
+| EVAL-001 | offline | [Scenario] | [Dataset]            | [Metric] | [Threshold] |
 
 ## Fixtures / Datasets
 
@@ -77,3 +85,10 @@ python evals/run_feature_eval.py
 - **Where results are stored**:
 - **Failure triage rule**:
 - **Linked execution tasks**: `[../../06.tasks/YYYY-MM-DD-<feature-or-stream>.md]`
+
+## Related Documents
+
+- **Spec**: `[./spec.md]`
+- **Agent Design**: `[./agent-design.md]`
+- **Tasks**: `[../../06.tasks/YYYY-MM-DD-<feature-or-stream>.md]`
+- **Plan**: `[../../05.plans/YYYY-MM-DD-<feature>.md]`

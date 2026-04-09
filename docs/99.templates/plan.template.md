@@ -1,3 +1,11 @@
+---
+title: '{Feature Name} Implementation Plan'
+type: plan
+status: draft
+owner: '{team-or-person}'
+updated: YYYY-MM-DD
+---
+
 <!-- Target: docs/05.plans/YYYY-MM-DD-<feature>.md -->
 
 # [Feature Name] Implementation Plan
@@ -33,21 +41,21 @@
 
 ## Work Breakdown
 
-| Task | Description | Files / Docs Affected | Target REQ | Validation Criteria |
-| --- | --- | --- | --- | --- |
-| PLN-001 | [Action] | `path/to/file` | REQ-001 | [Evidence] |
+| Task    | Description | Files / Docs Affected | Target REQ | Validation Criteria |
+| ------- | ----------- | --------------------- | ---------- | ------------------- |
+| PLN-001 | [Action]    | `path/to/file`        | REQ-001    | [Evidence]          |
 
 ## Verification Plan
 
-| ID | Level | Description | Command / How to Run | Pass Criteria |
-| --- | --- | --- | --- | --- |
-| VAL-PLN-001 | Structural | [Check] | [Command] | [Pass] |
+| ID          | Level      | Description | Command / How to Run | Pass Criteria |
+| ----------- | ---------- | ----------- | -------------------- | ------------- |
+| VAL-PLN-001 | Structural | [Check]     | [Command]            | [Pass]        |
 
 ## Risks & Mitigations
 
-| Risk | Impact | Mitigation |
-| --- | --- | --- |
-| [Risk] | High | [Mitigation] |
+| Risk   | Impact | Mitigation   |
+| ------ | ------ | ------------ |
+| [Risk] | High   | [Mitigation] |
 
 ## Agent Rollout & Evaluation Gates (If Applicable)
 

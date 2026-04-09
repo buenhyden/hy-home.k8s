@@ -30,3 +30,10 @@ Run this checklist before finalizing a response.
 - [ ] Validation commands were executed (or limitations were stated).
 - [ ] Relevant outputs were reviewed.
 - [ ] Unresolved risks are explicitly documented.
+
+## 6. Docs 3 Rules Compliance
+
+- [ ] R1: Template read before document creation; `status: draft` set; k8s triggers respected (namespace→ARD, RBAC→ADR, prod→OPER first).
+- [ ] R2: Folder-level changes include README update in same PR.
+- [ ] R3: Every new authored document includes `## Related Documents` section.
+- [ ] No HALT condition is unresolved before PR submission.

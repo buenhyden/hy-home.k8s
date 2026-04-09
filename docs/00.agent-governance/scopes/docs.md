@@ -14,6 +14,24 @@ Persona: Technical Writer
 - Keep language policy explicit: governance/spec internals in English, human overviews in Korean.
 - Avoid rewriting authored stage content unless explicitly requested.
 
+## File Ownership
+
+| Path                    | Owner | Notes                           |
+| ----------------------- | ----- | ------------------------------- |
+| `docs/07.guides/**`     | docs  | Bootstrap and onboarding guides |
+| `docs/90.references/**` | docs  | Reference documents             |
+| `docs/99.templates/**`  | docs  | Document templates              |
+| `README.md`             | docs  | Root README (Korean)            |
+| `docs/README.md`        | docs  | Docs index README (Korean)      |
+
+Docs scope does **not** own `docs/00.agent-governance/` (meta scope) or infra manifests.
+
+## Subagent Bridge
+
+Agents that import this scope: `.claude/agents/doc-writer.md`.
+
+Subagent dispatch: use Task tool only; never inline role definitions in prompts.
+
 ## Definition of Done
 
 - Links across related stage docs are valid.

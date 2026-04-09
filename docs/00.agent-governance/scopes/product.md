@@ -13,6 +13,21 @@ Persona: Product Manager
 - Ensure implementation plans and tasks stay traceable to PRD intent.
 - Flag gaps when downstream stages drift from product requirements.
 
+## File Ownership
+
+| Path               | Owner   | Notes                                 |
+| ------------------ | ------- | ------------------------------------- |
+| `docs/01.prd/**`   | product | Product Requirement Documents         |
+| `docs/05.plans/**` | product | Implementation plans (shared with qa) |
+
+Product scope does **not** own infra manifests, governance files, or authored specs downstream of PRD.
+
+## Subagent Bridge
+
+No dedicated subagent for product scope in this k8s-focused repo.
+
+Subagent dispatch: use Task tool only; never inline role definitions in prompts.
+
 ## Definition of Done
 
 - Product intent and acceptance criteria are testable.

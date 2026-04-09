@@ -1,3 +1,11 @@
+---
+title: 'Task: {Task Name}'
+type: task
+status: draft
+owner: '{team-or-person}'
+updated: YYYY-MM-DD
+---
+
 <!-- Target: docs/06.tasks/YYYY-MM-DD-<feature-or-stream>.md -->
 
 # Task: [Task Name]
@@ -31,9 +39,9 @@
 
 ## Task Table
 
-| Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| T-001 | [Action] | impl | SPC-001 / §2 | Phase 1 | `pytest ...` | [Name] | Todo |
+| Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner  | Status |
+| ------- | ----------- | ---- | --------------------- | ------------------- | --------------------- | ------ | ------ |
+| T-001   | [Action]    | impl | SPC-001 / §2          | Phase 1             | `pytest ...`          | [Name] | Todo   |
 
 ## Suggested Types
 
@@ -67,3 +75,9 @@
 - **Test Commands**:
 - **Eval Commands**:
 - **Logs / Evidence Location**:
+
+## Related Documents
+
+- **Spec**: `[../04.specs/<feature-id>/spec.md]`
+- **Plan**: `[../05.plans/YYYY-MM-DD-<feature>.md]`
+- **Tests**: `[../04.specs/<feature-id>/tests.md]`

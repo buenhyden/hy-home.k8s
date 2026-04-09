@@ -1,3 +1,11 @@
+---
+title: '{Policy or Standard Name} Operations Policy'
+type: operation
+status: draft
+owner: '{team-or-person}'
+updated: YYYY-MM-DD
+---
+
 <!-- Target: docs/08.operations/<policy-or-standard>.md -->
 
 # [Policy or Standard Name] Operations Policy

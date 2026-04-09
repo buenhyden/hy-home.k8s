@@ -1,3 +1,11 @@
+---
+title: '{Topic Name} Runbook'
+type: runbook
+status: draft
+owner: '{team-or-person}'
+updated: YYYY-MM-DD
+---
+
 <!-- Target: docs/09.runbooks/####-<topic>.md -->
 
 # [topic Name] Runbook
@@ -70,7 +78,8 @@
 - **Eval Re-run**:
 - **Trace Capture**:
 
-## Related Operational Documents
+## Related Documents
 
 - **Incident examples**: `[../10.incidents/YYYY/YYYY-MM-DD-<incident-title>.md]`
 - **Postmortem examples**: `[../11.postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
+- **Operation**: `[../08.operations/<policy-or-standard>.md]`

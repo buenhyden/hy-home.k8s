@@ -14,6 +14,23 @@ Persona: Security Engineer
 - Ensure secrets and access controls follow secure repository patterns.
 - Keep incident learnings connected to prevent recurrence.
 
+## File Ownership
+
+| Path                                  | Owner    | Notes                       |
+| ------------------------------------- | -------- | --------------------------- |
+| `docs/10.incidents/**`                | security | Incident records            |
+| `docs/11.postmortems/**`              | security | Postmortem documents        |
+| `gitops/platform/network-policies/**` | security | k8s NetworkPolicy manifests |
+| `infrastructure/vault/**`             | security | Vault policy definitions    |
+
+Security scope does **not** own `gitops/apps/` or `docs/00.agent-governance/` (meta scope).
+
+## Subagent Bridge
+
+Agents that import this scope: `.claude/agents/security-auditor.md`.
+
+Subagent dispatch: use Task tool only; never inline role definitions in prompts.
+
 ## Definition of Done
 
 - Security-impacting changes are traceable to specs or incident actions.

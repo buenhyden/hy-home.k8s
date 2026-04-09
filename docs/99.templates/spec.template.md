@@ -1,3 +1,11 @@
+---
+title: '{Feature Name} Technical Specification'
+type: spec
+status: draft
+owner: '{team-or-person}'
+updated: YYYY-MM-DD
+---
+
 <!-- Target: docs/04.specs/<feature-id>/spec.md -->
 
 # [Feature Name] Technical Specification (Spec)

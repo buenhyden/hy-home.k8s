@@ -1,4 +1,5 @@
 config:
+  # Repository docs include templates, generated gateway docs, and long reference links.
   MD013: false
   MD025: false
   MD028: false
@@ -27,8 +28,6 @@ ignores:
   - "CLAUDE.md"
   - "GEMINI.md"
   - "docs/00.agent-governance/memory/template.md"
-# 자동 고침 활성화
+
+# Safe auto-fixes such as whitespace cleanup are allowed during markdown linting.
 fix: true
-# 출력 포맷(선택)
-# outputFormatters:
-#   - - markdownlint-cli2-formatter-pretty

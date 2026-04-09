@@ -1,10 +1,10 @@
 @AGENTS.md
+@docs/00.agent-governance/providers/claude.md
 
 # CLAUDE.md
 
-Claude-specific overlay for `hy-home.k8s`.
-
-- Canonical policy source: `docs/00.agent-governance/rules/*`
-- Provider details: [providers/claude.md](docs/00.agent-governance/providers/claude.md)
-- Keep this file minimal; move detailed rules to `docs/00.agent-governance/*`.
-- For large repos, prefer `.claude/rules/` with path-scoped rule files.
+- Canonical policy: `docs/00.agent-governance/rules/*`
+- Harness: `.claude/agents/` (6, @import, model:opus) + `.claude/skills/` (k8s-validate · gitops-workflow · risk-report)
+- H100: github.com/revfactory/harness-100 — H100:26,20,28,25,21,88,92 adapted
+- `settings.json` = team (git tracked) · `settings.local.json` = personal (.gitignored) · no duplication
+- GitOps-First: no `kubectl apply`; always PR path · postflight required every task

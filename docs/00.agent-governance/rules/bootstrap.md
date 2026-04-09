@@ -8,6 +8,7 @@ Universal entry point for all agents in `hy-home.k8s`.
 - Load governance just-in-time, not full-repository-first.
 - Complete [Preflight Checklist](preflight-checklist.md) before substantial work.
 - Complete [Postflight Checklist](postflight-checklist.md) before final response.
+- **In-place refactor only.** Modify existing files rather than creating new ones unless explicitly requested by a human.
 
 ## JIT Loading Sequence
 
@@ -29,3 +30,4 @@ Use [stage-authoring-matrix.md](stage-authoring-matrix.md) as the canonical auth
 - `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` remain thin gateways.
 - English-only policy is preserved under `docs/00.agent-governance/`.
 - References to checklist and matrix docs remain valid.
+- No new files created without explicit human request.

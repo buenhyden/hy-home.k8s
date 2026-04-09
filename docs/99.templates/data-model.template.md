@@ -1,3 +1,11 @@
+---
+title: '{Feature Name} Data Model'
+type: data-model
+status: draft
+owner: '{team-or-person}'
+updated: YYYY-MM-DD
+---
+
 <!-- Target: docs/04.specs/<feature-id>/data-model.md -->
 
 # [Feature Name] Data Model
@@ -28,9 +36,9 @@
 
 ## Entities / Aggregates
 
-| Entity | Purpose | Identifier | Ownership | Notes |
-| --- | --- | --- | --- | --- |
-| [Entity] | [Purpose] | [ID] | [Owner] | [Notes] |
+| Entity   | Purpose   | Identifier | Ownership | Notes   |
+| -------- | --------- | ---------- | --------- | ------- |
+| [Entity] | [Purpose] | [ID]       | [Owner]   | [Notes] |
 
 ## Relationships
 

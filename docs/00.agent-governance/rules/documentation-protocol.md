@@ -30,3 +30,13 @@ This protocol defines how governance references authored docs and how language b
 
 - Run `preflight-checklist.md` before editing.
 - Run `postflight-checklist.md` before finalization.
+
+## Docs 3 Rules (HALT)
+
+**R1 — Template-First:** Read the matching template in `docs/99.templates/` before creating any document. Fill all required fields; set `status: draft`. k8s-specific triggers: new namespace → ARD required; RBAC change → ADR required; production change → OPER policy first.
+
+**R2 — README Sync:** Any folder-level change (add, move, remove files) requires the folder's `README.md` to be updated in the same PR. Work is **BLOCKED** until the README reflects the change.
+
+**R3 — Related Documents:** Every authored document must include a `## Related Documents` section with upstream links. A document without this section is **INCOMPLETE**.
+
+**HALT conditions:** Missing template read → HALT. README not updated → HALT. Related Documents section absent → HALT.
