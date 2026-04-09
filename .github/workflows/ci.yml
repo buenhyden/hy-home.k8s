@@ -101,22 +101,22 @@ jobs:
           sudo apt-get install -y shellcheck
       - name: Bash syntax check
         run: |
-          for file in .github/gates/*.sh; do
-            bash -n "$file"
-          done
-          bash -n infrastructure/bootstrap-local.sh
-          for file in infrastructure/tests/*.sh; do
-            bash -n "$file"
-          done
-          for file in scripts/*.sh; do
+          mapfile -t shell_files < <(find .github/gates infrastructure scripts -type f -name '*.sh' | sort)
+          if [ "${#shell_files[@]}" -eq 0 ]; then
+            echo "no shell files matched shell-static scope"
+            exit 0
+          fi
+          for file in "${shell_files[@]}"; do
             bash -n "$file"
           done
       - name: Shellcheck
         run: |
-          shellcheck .github/gates/*.sh
-          shellcheck infrastructure/bootstrap-local.sh
-          shellcheck infrastructure/tests/*.sh
-          shellcheck scripts/*.sh
+          mapfile -t shell_files < <(find .github/gates infrastructure scripts -type f -name '*.sh' | sort)
+          if [ "${#shell_files[@]}" -eq 0 ]; then
+            echo "no shell files matched shell-static scope"
+            exit 0
+          fi
+          shellcheck "${shell_files[@]}"
 
   ci-summary:
     needs:
