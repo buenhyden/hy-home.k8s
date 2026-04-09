@@ -33,10 +33,16 @@ jobs:
               - '**'
             manifests:
               - 'gitops/**'
-              - 'infrastructure/**'
+              - 'infrastructure/**/*.yaml'
+              - 'infrastructure/**/*.yml'
+              - 'examples/sample-app/**'
+              - 'examples/**/gitops/**'
+              - 'examples/**/kubernetes/**'
+              - 'traefik/**'
             workflows:
               - '.github/**'
             shell:
+              - '.github/gates/*.sh'
               - 'infrastructure/**/*.sh'
               - 'scripts/**/*.sh'
 
@@ -62,7 +68,9 @@ jobs:
         with:
           persist-credentials: false
       - name: Run static contract checks
-        run: ./infrastructure/tests/verify-contracts-static.sh
+        run: |
+          ./infrastructure/tests/verify-contracts-static.sh
+          bash scripts/validate-k8s-manifests.sh .
 
   workflow-security:
     needs: changes
@@ -93,14 +101,22 @@ jobs:
           sudo apt-get install -y shellcheck
       - name: Bash syntax check
         run: |
+          for file in .github/gates/*.sh; do
+            bash -n "$file"
+          done
           bash -n infrastructure/bootstrap-local.sh
           for file in infrastructure/tests/*.sh; do
             bash -n "$file"
           done
+          for file in scripts/*.sh; do
+            bash -n "$file"
+          done
       - name: Shellcheck
         run: |
+          shellcheck .github/gates/*.sh
           shellcheck infrastructure/bootstrap-local.sh
           shellcheck infrastructure/tests/*.sh
+          shellcheck scripts/*.sh
 
   ci-summary:
     needs:
