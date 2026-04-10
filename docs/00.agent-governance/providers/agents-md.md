@@ -26,11 +26,11 @@ It defines §1–§8 pointers; it does not duplicate policy text from `rules/` o
 - All providers must honor GitOps-First and no-plaintext-secrets constraints (§2 Constraints).
 - Provider-specific tuning belongs in `providers/claude.md`, `providers/gemini.md`, etc.
 
-## GitHub Instruction Compatibility
+## Repository Instruction Model
 
-- GitHub supports repository-wide instructions via `.github/copilot-instructions.md`.
-- GitHub supports path-specific instructions via `.github/instructions/**/*.instructions.md`.
-- GitHub supports agent instructions via `AGENTS.md`, and the nearest matching `AGENTS.md` in the directory tree takes precedence for agent flows.
+- `AGENTS.md` is the shared gateway contract for agent-capable tools in this repository.
 - Root `CLAUDE.md` and `GEMINI.md` are provider-specific shims, not replacements for shared governance policy.
-- If GitHub-native instruction files are added later, they must point back to this gateway model and must not duplicate or drift from `docs/00.agent-governance/*`.
-- If repository-wide and path-specific GitHub instructions are both present, keep them non-conflicting; overlapping instruction resolution is not a safe place for policy divergence.
+- Runtime behavior and editor/tool hooks belong under `.claude/**`.
+- Durable policy and governance belong under `docs/00.agent-governance/**`.
+- This repository does **not** use GitHub-native instruction files such as `.github/copilot-instructions.md` or `.github/instructions/**/*.instructions.md`.
+- If GitHub tooling needs guidance, it must be routed through the existing gateway model instead of adding a parallel instruction hierarchy.

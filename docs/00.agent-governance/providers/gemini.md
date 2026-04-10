@@ -7,14 +7,14 @@ Gemini-specific guidance for `hy-home.k8s`.
 - Keep root `GEMINI.md` thin and import shared policy from `@AGENTS.md`.
 - Use governance files under `docs/00.agent-governance/rules/*` as canonical policy.
 - Keep provider-specific details here; avoid policy duplication.
-- If GitHub-native instruction files are added, treat them as a compatibility surface only. `GEMINI.md` and `AGENTS.md` remain the durable gateway pair for this repository.
+- Keep Gemini-specific runtime wiring under the existing gateway hierarchy; do not create a parallel `.github/**` instruction layer for this repository.
 
 ## Context Strategy
 
 - Gemini CLI supports hierarchical context loading (global, ancestors, subdirectories).
 - Prefer modular imports for large context sets.
 - Keep instructions concise and non-duplicative across hierarchy.
-- Avoid introducing provider-specific guidance that conflicts with `.github/copilot-instructions.md` or `.github/instructions/**/*.instructions.md`.
+- Avoid introducing provider-specific guidance outside the existing `AGENTS.md` + `.claude/**` + `docs/00.agent-governance/**` hierarchy.
 
 ## File Name Compatibility
 

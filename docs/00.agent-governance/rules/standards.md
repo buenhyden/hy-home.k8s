@@ -14,9 +14,11 @@ Global standards for all agents in this repository.
 - Recommended max length for each root shim: 40 lines.
 - Avoid duplicated policy text across gateway files.
 - Use JIT loading via `bootstrap -> preflight -> persona -> scope -> provider -> postflight`.
-- Treat GitHub-native instruction files (`.github/copilot-instructions.md`, `.github/instructions/**/*.instructions.md`) as adapters, not policy SSoT.
-- When multiple instruction layers coexist, keep them non-conflicting and narrowly scoped.
-- If path-scoped instruction files are introduced later, they must refine behavior for matching paths only and still resolve back to `AGENTS.md` plus `docs/00.agent-governance/*`.
+- Keep the instruction hierarchy inside repository gateway files plus runtime governance assets only:
+  - root shims: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`
+  - runtime bridge: `.claude/**`
+  - policy SSoT: `docs/00.agent-governance/**`
+- Do not introduce GitHub-native instruction files such as `.github/copilot-instructions.md` or `.github/instructions/**/*.instructions.md` in this repository.
 
 ## Documentation Boundary Policy
 
