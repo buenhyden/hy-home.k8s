@@ -4,13 +4,14 @@
 set -euo pipefail
 
 FILE="${CLAUDE_TOOL_INPUT_FILE_PATH:-}"
+K8S_MANIFEST_REGEX='(gitops/.*\.ya?ml|infrastructure/.*\.ya?ml|examples/sample-app/.*\.ya?ml|examples/.*/gitops/.*\.ya?ml|examples/.*/kubernetes/.*\.ya?ml|traefik/.*\.ya?ml)$'
 
 if [[ -z "$FILE" ]]; then
   exit 0
 fi
 
 # Warn if editing a k8s manifest
-if echo "$FILE" | grep -qE '(gitops/|infrastructure/)(.*)\.(yaml|yml)$'; then
+if echo "$FILE" | grep -qE "$K8S_MANIFEST_REGEX"; then
   echo "WARNING: Editing k8s manifest: $FILE"
   echo "  - Ensure change is GitOps-First (PR → ArgoCD, no kubectl apply)."
   echo "  - Ensure no plaintext secrets are introduced."

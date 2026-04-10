@@ -25,3 +25,12 @@ It defines §1–§8 pointers; it does not duplicate policy text from `rules/` o
 - All providers must run preflight and postflight (§1 Bootstrap).
 - All providers must honor GitOps-First and no-plaintext-secrets constraints (§2 Constraints).
 - Provider-specific tuning belongs in `providers/claude.md`, `providers/gemini.md`, etc.
+
+## GitHub Instruction Compatibility
+
+- GitHub supports repository-wide instructions via `.github/copilot-instructions.md`.
+- GitHub supports path-specific instructions via `.github/instructions/**/*.instructions.md`.
+- GitHub supports agent instructions via `AGENTS.md`, and the nearest matching `AGENTS.md` in the directory tree takes precedence for agent flows.
+- Root `CLAUDE.md` and `GEMINI.md` are provider-specific shims, not replacements for shared governance policy.
+- If GitHub-native instruction files are added later, they must point back to this gateway model and must not duplicate or drift from `docs/00.agent-governance/*`.
+- If repository-wide and path-specific GitHub instructions are both present, keep them non-conflicting; overlapping instruction resolution is not a safe place for policy divergence.
