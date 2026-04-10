@@ -14,7 +14,8 @@ Fixes # (link to issue if applicable)
 - [ ] `fix`: Bug fix
 - [ ] `refactor`: Code reorganization
 - [ ] `docs`: Documentation updates
-- [ ] `infra`: Changes to kubernetes manifests
+- [ ] `infra`: Changes to Kubernetes manifests or GitOps assets
+- [ ] `ci`: Changes to GitHub Actions, hooks, or automation
 
 ## 4. Breaking Changes
 
@@ -27,13 +28,13 @@ If yes, please describe the impact and migration path.
 
 Describe the manual verification or automated tests conducted.
 
-- [ ] `kubectl apply --dry-run=client` successful
-- [ ] `kustomize build` successful
-- [ ] ArgoCD sync status verified (if applicable)
+- [ ] Relevant `pre-commit` hooks passed
+- [ ] `bash scripts/validate-k8s-manifests.sh .` successful (if manifests changed)
+- [ ] ArgoCD/GitOps impact reviewed (if applicable)
 
 ## 6. Checklist
 
-- [ ] My code follows the [Naming Conventions](../../docs/standards/naming-conventions.md).
+- [ ] My change follows the governance and workflow rules in `AGENTS.md` and `docs/00.agent-governance/`.
 - [ ] I have updated the documentation accordingly.
-- [ ] My commit messages follow the [Conventional Commits](../../.gitmessage.json).
-- [ ] (Security) Any new secrets have been encrypted with [Sealed Secrets](../../docs/guides/secret-management.md).
+- [ ] My commit messages follow Conventional Commits.
+- [ ] I did not introduce plaintext secrets. Secret-related changes use GitOps-approved patterns only.

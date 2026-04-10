@@ -3,12 +3,13 @@
 
 # Infrastructure
 /infrastructure/ @buenhyden
-
-# Applications
-/apps/ @buenhyden
+/gitops/ @buenhyden
+/scripts/ @buenhyden
 
 # Agent Rules
 /.agent/ @buenhyden
+/.claude/ @buenhyden
+/docs/00.agent-governance/ @buenhyden
 
 # Security
 /.github/SECURITY.md @buenhyden
