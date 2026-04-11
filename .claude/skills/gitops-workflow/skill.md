@@ -4,12 +4,12 @@ description: >
   ArgoCD GitOps 워크플로우 스킬. 앱 온보딩, sync 절차, PR→ArgoCD 파이프라인 실행 가이드를 제공한다.
   "ArgoCD에 앱 등록", "GitOps 절차", "sync 실패 원인", "ApplicationSet 추가",
   "새 워크로드 온보딩"을 요청하면 반드시 이 스킬을 사용할 것.
-  H100:20 pipeline-designer 패턴을 ArgoCD GitOps-First 제약으로 적용.
+  pipeline-designer 패턴을 ArgoCD GitOps-First 제약으로 적용.
 ---
 
 # gitops-workflow
 
-ArgoCD 기반 GitOps 절차 가이드. H100:20 cicd-pipeline의 pipeline-designer 패턴을 적용한다.
+ArgoCD 기반 GitOps 절차 가이드. pipeline-designer 패턴 기반으로 온보딩·변경·sync 진단 워크플로우를 표준화한다.
 
 ## 핵심 원칙: GitOps-First
 

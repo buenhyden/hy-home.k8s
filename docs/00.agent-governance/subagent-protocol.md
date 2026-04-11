@@ -32,4 +32,5 @@ Every subagent must have a corresponding file in `.claude/agents/`. The file mus
 
 ## Catalog Reference
 
-See `AGENTS.md §3` for the current agent catalog and H100 mapping.
+See `AGENTS.md §3` for the current agent catalog and
+`docs/00.agent-governance/harness-catalog.md` for local harness mapping.

@@ -38,6 +38,12 @@ Harness layers L1–L6 were incomplete: no `settings.json`, no agent files, no h
 - `.claude/agents/` (6 agent files) — to create.
 - `scripts/` (3 validation scripts) — to create.
 
+**P3 (complete):**
+
+- Local harness catalog authored under `docs/00.agent-governance/`.
+- Model policy standardized: agents use sonnet; supervisor uses opus.
+- H100 references removed from gateway and protocol files.
+
 ## Prevention
 
 - Run `postflight-checklist.md §6 Docs 3 Rules` before every PR.

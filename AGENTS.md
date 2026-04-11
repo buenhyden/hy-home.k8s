@@ -26,16 +26,18 @@ Load governance JIT in this order:
 
 ## §3 Agent Catalog
 
-Subagents in `.claude/agents/` adapt harness-100 patterns for this cluster.
+Subagents in `.claude/agents/` implement the local harness catalog for this cluster.
+See `docs/00.agent-governance/harness-catalog.md`.
 
-| Agent File              | H100 Ref                    | Role                                     |
-| ----------------------- | --------------------------- | ---------------------------------------- |
-| `k8s-implementer.md`    | H100:26 infra-as-code       | k8s IaC, kube-linter, manifest authoring |
-| `gitops-reviewer.md`    | H100:20 cicd-pipeline       | ArgoCD pipeline, GitOps PR review        |
-| `security-auditor.md`   | H100:28 security-audit      | RBAC, network policy, secret audit       |
-| `incident-responder.md` | H100:25 incident-postmortem | Cluster incident, timeline, remediation  |
-| `code-reviewer.md`      | H100:21 code-review         | YAML/Helm/script quality review          |
-| `doc-writer.md`         | H100:81 documentation       | Runbook, guide, postmortem authoring     |
+| Agent File              | Role                                     |
+| ----------------------- | ---------------------------------------- |
+| `supervisor.md`         | Agent supervision, orchestration control |
+| `k8s-implementer.md`    | k8s IaC, kube-linter, manifest authoring |
+| `gitops-reviewer.md`    | ArgoCD pipeline, GitOps PR review        |
+| `security-auditor.md`   | RBAC, network policy, secret audit       |
+| `incident-responder.md` | Cluster incident, timeline, remediation  |
+| `code-reviewer.md`      | YAML/Helm/script quality review          |
+| `doc-writer.md`         | Runbook, guide, postmortem authoring     |
 
 Each agent `@import`s the matching scope from `scopes/<layer>.md`.
 

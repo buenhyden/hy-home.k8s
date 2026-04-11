@@ -4,12 +4,12 @@ description: >
   k8s 매니페스트 검증 스킬. kube-linter 실행, YAML 문법 검사, GitOps 구조 검증, 시크릿 패턴 스캔을 수행한다.
   매니페스트 수정 후 검증이 필요하거나, "kube-linter 실행해줘", "매니페스트 검증", "gitops 구조 확인",
   "시크릿 패턴 스캔"을 요청하면 반드시 이 스킬을 사용할 것.
-  H100:26 drift-detector 패턴을 kube-linter 파이프라인으로 적용.
+  drift-detector 패턴을 kube-linter 파이프라인으로 적용.
 ---
 
 # k8s-validate
 
-k8s manifest 검증 파이프라인. H100:26 infra-as-code의 drift-detector 패턴을 적용한다.
+k8s manifest 검증 파이프라인. drift-detector 패턴 기반으로 편집 → 검증 → PR 흐름을 표준화한다.
 
 ## 왜 이 스킬이 필요한가
 
