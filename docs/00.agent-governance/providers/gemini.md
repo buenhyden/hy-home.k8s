@@ -5,6 +5,7 @@ Gemini-specific guidance for `hy-home.k8s`.
 ## Loading Model
 
 - Keep root `GEMINI.md` thin and import shared policy from `@AGENTS.md`.
+- Use `.claude/CLAUDE.md` as the runtime baseline when agent roster or model hierarchy is needed.
 - Use governance files under `docs/00.agent-governance/rules/*` as canonical policy.
 - Keep provider-specific details here; avoid policy duplication.
 - Keep Gemini-specific runtime wiring under the existing gateway hierarchy; do not create a parallel `.github/**` instruction layer for this repository.
@@ -27,3 +28,4 @@ Gemini-specific guidance for `hy-home.k8s`.
 - Use JIT loading: bootstrap -> preflight -> persona -> scope -> provider -> postflight.
 - Keep user-facing responses in Korean.
 - Keep governance and technical control docs in English.
+- Use `docs/00.agent-governance/harness-catalog.md` as the canonical runtime roster.

@@ -1,142 +1,43 @@
 ---
 name: risk-report
-description: >
-  k8s 클러스터 리스크 레지스터 생성 스킬. RBAC 과잉 권한, 네트워크 격리 취약점, 시크릿 노출,
-  단일 장애점(SPoF), 모니터링 공백을 식별하고 위험도 매트릭스로 정리한다.
-  "리스크 분석", "위험 등록부", "클러스터 보안 리스크", "취약점 보고서", "risk register"를
-  요청하면 반드시 이 스킬을 사용할 것.
+description: Risk register workflow for identifying, scoring, and reporting cluster-specific operational and security risks.
 ---
 
 # risk-report
 
-k8s 클러스터 리스크 레지스터. risk-identifier + monitoring-planner 패턴 기반으로 5개 영역을 체계적으로 식별하고 위험도 매트릭스로 정리한다.
+## Purpose
 
-## 왜 리스크 레지스터가 필요한가
+Define how to identify, score, and report cluster risks in a repeatable format for `hy-home.k8s`.
 
-k8s 클러스터는 여러 레이어(RBAC, 네트워크, 시크릿, 워크로드)가 상호 의존한다.
-개별 설정이 정상처럼 보여도 조합 취약점이 존재한다. 이 스킬은 체계적 리스크 식별과
-우선순위화로 보안 공백을 줄인다.
+## Trigger Phrases
 
-## RBS (Risk Breakdown Structure)
+- "create a risk register"
+- "analyze cluster risk"
+- "summarize operational risk"
+- "prepare a risk review"
 
-리스크를 다음 6개 Level 1 카테고리로 분류한다:
+## Workflow Steps
 
-| Level 1 카테고리 | Level 2 예시                                       |
-| ---------------- | -------------------------------------------------- |
-| 기술 리스크      | 구성 오류, 버전 의존성, 컴포넌트 결함              |
-| 보안 리스크      | RBAC 과잉 권한, 시크릿 노출, 네트워크 격리 취약점  |
-| 가용성 리스크    | 단일 장애점(SPoF), PDB 누락, 외부 의존성           |
-| 운영 리스크      | 모니터링 공백, 알림 미설정, 로그 수집 누락         |
-| 변경 리스크      | GitOps drift, 승인 게이트 없는 배포, 롤백 불가     |
-| 외부 리스크      | 업스트림 이미지 취약점, 외부 API 의존성, 규정 변경 |
+1. Identify risks across security, availability, operations, and change management.
+2. Score risks using a simple likelihood and impact model.
+3. Record leading indicators or monitoring hooks where applicable.
+4. Produce a cluster-specific risk summary with recommended actions.
 
-**리스크 기술 형식 (Risk Statement):**
-`[원인]으로 인해 [사건]이 발생할 경우 [영향]이 생긴다.`
-예: "cluster-admin ServiceAccount 과잉 부여로 인해 Pod 탈출 공격이 발생할 경우 클러스터 전체 침해 위험이 생긴다."
+## Constraints
 
-**종속 리스크 매핑:**
+- Keep the register specific to `hy-home.k8s`.
+- Prefer repository and approved inspection evidence over generic risk lists.
+- Distinguish blocking risks from monitor-only risks.
+- Do not create source-path lineage or upstream reference leakage in the output.
 
-| 선행 리스크 | 조건 | 종속 리스크 | 최종 영향 |
-| ----------- | ---- | ----------- | --------- |
+## Expected Outputs
 
-## 리스크 식별 영역
+- A structured risk register or risk summary
+- Severity-ranked recommendations
+- Monitoring or review cues for follow-up work
 
-### 1. RBAC 과잉 권한
+## Failure Handling
 
-- ClusterRole에 `*` 리소스 또는 `*` verbs 존재 여부
-- ServiceAccount가 필요 이상의 권한 보유
-- `cluster-admin` 바인딩 수 최소화 확인
-
-### 2. 네트워크 격리
-
-- NetworkPolicy 미적용 네임스페이스 (egress/ingress 무제한)
-- Istio PeerAuthentication 누락 워크로드
-- 외부 서비스 접근이 명시적 ExternalName / ServiceEntry로 관리되는지
-
-### 3. 시크릿 노출
-
-- `check-secret-handling.sh` 결과 기반
-- ExternalSecret / SealedSecret 미사용 패턴
-- Secret 리소스가 etcd 암호화 정책 하에 있는지 (클러스터 수준)
-
-### 4. 단일 장애점 (SPoF)
-
-- `replicas: 1` 인 플랫폼 컴포넌트 (ArgoCD, ESO 등)
-- PodDisruptionBudget 누락
-- 외부 의존성 (Vault, Grafana) 가용성 보장 여부
-
-### 5. 모니터링 공백
-
-- Prometheus scrape 대상 누락 네임스페이스
-- ArgoCD 알림 미설정 앱
-- 로그 수집(Alloy) 미연결 워크로드
-
-## 출력 형식: 리스크 매트릭스
-
-```markdown
-## 리스크 레지스터 — hy-home.k8s — {날짜}
-
-| ID  | 카테고리 | 리스크 기술                   | 가능성         | 영향           | 위험도              | 권고 조치 |
-| --- | -------- | ----------------------------- | -------------- | -------------- | ------------------- | --------- |
-| R01 | 보안     | cluster-admin SA 과잉 부여로… | 높음/중간/낮음 | 높음/중간/낮음 | 심각/높음/중간/낮음 | …         |
-```
-
-위험도 = 가능성 × 영향 (심각 > 높음 > 중간 > 낮음)
-
-## KRI (Key Risk Indicator)
-
-리스크 발생 전에 감지할 수 있는 선행 지표(Leading Indicator)를 정의한다:
-
-| ID     | 리스크        | KRI                                | 임계값 | 경보 방법        | 모니터링 주기 |
-| ------ | ------------- | ---------------------------------- | ------ | ---------------- | ------------- |
-| KRI-01 | RBAC 과잉     | cluster-admin binding 수           | > 2    | Alertmanager     | 일간          |
-| KRI-02 | 시크릿 노출   | check-secret-handling.sh 위반 건수 | > 0    | CI 차단          | PR마다        |
-| KRI-03 | SPoF          | replicas=1 플랫폼 Pod 수           | > 0    | Grafana 대시보드 | 주간          |
-| KRI-04 | 모니터링 공백 | scrape 미설정 네임스페이스 수      | > 0    | Prometheus 쿼리  | 주간          |
-
-## 트리거 조건 및 에스컬레이션
-
-| ID   | 리스크      | 트리거 조건             | 대응 행동                   | 의사결정자 |
-| ---- | ----------- | ----------------------- | --------------------------- | ---------- |
-| T-01 | 보안 심각   | KRI-01 또는 KRI-02 발화 | 즉시 PR 차단 + on-call 호출 | Infra 팀   |
-| T-02 | 가용성 높음 | KRI-03 발화             | 다음 스프린트 내 PDB 추가   | Infra 팀   |
-| T-03 | 운영 중간   | KRI-04 발화             | 백로그 등록, 월간 리뷰 반영 | SRE 팀     |
-
-## 모니터링 스케줄
-
-| 주기   | 대상 리스크         | 활동                                            | 담당  | 산출물           |
-| ------ | ------------------- | ----------------------------------------------- | ----- | ---------------- |
-| PR마다 | 시크릿 노출         | check-secret-handling.sh 자동                   | CI    | 스캔 결과        |
-| 일간   | RBAC 과잉           | KRI-01 Alertmanager 점검                        | SRE   | 알림 로그        |
-| 주간   | SPoF, 모니터링 공백 | KRI-03/04 Grafana 대시보드                      | Infra | 주간 상태 리포트 |
-| 월간   | 전체                | 리스크 재평가 + 매트릭스 갱신                   | Infra | 월간 리포트      |
-| 분기별 | 전체                | 종합 보안 감사 (security-auditor 에이전트 실행) | Infra | 감사 보고서      |
-
-## 리스크 리뷰 미팅 아젠다
-
-1. 기존 리스크 현황 확인 (매트릭스 KRI 트렌드)
-2. 신규 리스크 식별 (변경 요청, 외부 환경 변화)
-3. 리스크 재평가 (가능성·영향 변경 여부)
-4. 대응 전략 효과성 리뷰
-5. 리스크 스코어 트렌드 기록
-
-## 실행 절차
-
-```
-1. bash scripts/check-secret-handling.sh  → 시크릿 리스크 항목 도출
-2. kubectl get clusterrolebindings -A     → RBAC 리스크 항목 도출
-3. kubectl get networkpolicies -A         → 네트워크 리스크 항목 도출
-4. kubectl get pods -A | grep -v Running  → SPoF / 가용성 리스크 도출
-5. 매트릭스 작성 → docs/10.incidents/ 또는 별도 보고서로 저장
-```
-
-## 에러 처리
-
-- kubectl 접근 불가 → 매니페스트 정적 분석으로 대체 (gitops/ 기준)
-- 일부 네임스페이스 접근 제한 → 접근 가능 범위만 분석 후 한계 명시
-
-## 테스트 시나리오
-
-**정상 흐름:** "클러스터 리스크 분석해줘" → RBS 기반 6개 카테고리 스캔 → 매트릭스 출력 → KRI 정의 → `docs/10.incidents/` 저장 제안
-
-**에러 흐름:** kubectl 미연결 → gitops/ 매니페스트 정적 분석 → 한계 명시 후 부분 리포트 출력
+- If live inspection is unavailable, fall back to repository-backed static analysis and state the limitation.
+- If security-critical findings emerge, escalate to `security-auditor.md`.
+- If ownership or routing is unclear, escalate to `supervisor.md`.

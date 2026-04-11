@@ -13,6 +13,8 @@ Load governance JIT in this order:
 5. provider notes in `docs/00.agent-governance/providers/`
 6. [postflight-checklist.md](docs/00.agent-governance/rules/postflight-checklist.md) before completion
 
+Local runtime baseline: [`.claude/CLAUDE.md`](.claude/CLAUDE.md)
+
 ## §2 Constraints
 
 - Respond to users in Korean.
@@ -41,27 +43,32 @@ See `docs/00.agent-governance/harness-catalog.md`.
 
 Each agent `@import`s the matching scope from `scopes/<layer>.md`.
 
-## §4 Orchestration
+## §4 Skill Catalog
+
+Runtime skills live under `.claude/skills/`.
+Use `docs/00.agent-governance/harness-catalog.md` as the canonical skill roster.
+
+## §5 Orchestration
 
 - Dispatch subagents via Task tool only; never inline role definitions.
 - Run [postflight-checklist.md](docs/00.agent-governance/rules/postflight-checklist.md) before every completion.
 - Subagent protocol: [subagent-protocol.md](docs/00.agent-governance/subagent-protocol.md).
 
-## §5 Documentation
+## §6 Documentation
 
 See [documentation-protocol.md](docs/00.agent-governance/rules/documentation-protocol.md) for Docs 3 Rules (HALT triggers).
 
-## §6 Linting
+## §7 Linting
 
 All lint and format checks: `.pre-commit-config.yaml`. Never run lint tools manually outside pre-commit.
 
-## §7 Settings
+## §8 Settings
 
 - `settings.json` — team shared, git tracked.
 - `settings.local.json` — personal overrides only, `.gitignore`d.
 - No duplication between the two files.
 
-## §8 Role Separation
+## §9 Role Separation
 
 - `scopes/*.md` — policy SSOT for each layer.
 - `.claude/agents/*.md` — runtime bridge; each `@import`s one scope.

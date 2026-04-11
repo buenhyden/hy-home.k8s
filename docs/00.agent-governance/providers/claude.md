@@ -5,6 +5,7 @@ Claude-specific guidance for `hy-home.k8s`.
 ## Loading Model
 
 - Keep root `CLAUDE.md` thin and import shared policy from `@AGENTS.md`.
+- Use `.claude/CLAUDE.md` as the local runtime baseline for agent roster and model hierarchy.
 - Use governance files under `docs/00.agent-governance/rules/*` as canonical policy.
 - Keep provider-specific details here; do not duplicate global rules.
 - Keep Claude-specific runtime wiring under `.claude/**`; do not create a parallel `.github/**` instruction layer for this repository.
@@ -28,3 +29,4 @@ Claude-specific guidance for `hy-home.k8s`.
 - Use JIT loading: bootstrap -> preflight -> persona -> scope -> provider -> postflight.
 - Keep responses to users in Korean.
 - Keep governance control docs in English.
+- Use `docs/00.agent-governance/harness-catalog.md` as the canonical runtime roster.

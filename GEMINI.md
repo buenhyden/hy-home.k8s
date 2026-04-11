@@ -1,9 +1,9 @@
 @AGENTS.md
 @docs/00.agent-governance/providers/gemini.md
+@.claude/CLAUDE.md
 
 # GEMINI.md
 
-- Canonical policy: `docs/00.agent-governance/rules/*`
-- Harness catalog: `docs/00.agent-governance/harness-catalog.md`
-- postflight-checklist before every completion · `/memory show|refresh` for context
-- GitOps-First: no `kubectl apply`; always PR path
+- Runtime baseline: `.claude/CLAUDE.md`
+- Canonical runtime roster: `docs/00.agent-governance/harness-catalog.md`
+- Shared policy and constraints: `AGENTS.md` + `docs/00.agent-governance/**`

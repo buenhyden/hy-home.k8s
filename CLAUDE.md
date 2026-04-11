@@ -1,11 +1,9 @@
 @AGENTS.md
 @docs/00.agent-governance/providers/claude.md
+@.claude/CLAUDE.md
 
 # CLAUDE.md
 
-- Canonical policy: `docs/00.agent-governance/rules/*`
-- Harness catalog: `docs/00.agent-governance/harness-catalog.md`
-- Agents: `.claude/agents/` (sonnet) + `supervisor.md` (opus)
-- Skills: `.claude/skills/` (`k8s-validate` · `gitops-workflow` · `risk-report`)
-- `settings.json` = team (git tracked) · `settings.local.json` = personal (.gitignored) · no duplication
-- GitOps-First: no `kubectl apply`; always PR path · postflight required every task
+- Runtime baseline: `.claude/CLAUDE.md`
+- Canonical runtime roster: `docs/00.agent-governance/harness-catalog.md`
+- Shared policy and constraints: `AGENTS.md` + `docs/00.agent-governance/**`

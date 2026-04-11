@@ -42,7 +42,7 @@ Harness layers L1–L6 were incomplete: no `settings.json`, no agent files, no h
 
 - Local harness catalog authored under `docs/00.agent-governance/`.
 - Model policy standardized: agents use sonnet; supervisor uses opus.
-- H100 references removed from gateway and protocol files.
+- Legacy source-directory references removed from gateway and protocol files.
 
 ## Prevention
 
