@@ -1,6 +1,6 @@
 # Memory: Harness Implementation Progress
 
-- **Date**: 2026-04-09
+- **Date**: 2026-04-13
 - **Layer**: meta
 - **Tags**: #governance #harness #settings
 
@@ -31,12 +31,23 @@ Harness layers L1–L6 were incomplete: no `settings.json`, no agent files, no h
 - `subagent-protocol.md` created.
 - `memory/progress.md` created (this file).
 
-**P2 (in progress):**
+**P2 (complete):**
 
-- `.claude/settings.json` — to create.
-- `.claude/hooks/` (3 scripts) — to create.
-- `.claude/agents/` (6 agent files) — to create.
-- `scripts/` (3 validation scripts) — to create.
+- `.claude/settings.json` — created; git-tracked with allow/deny permission lists and 3 hooks (SessionStart, PreToolUse, PostToolUse).
+- `.claude/hooks/` — 3 scripts created: `session-start.sh`, `k8s-pre-edit.sh`, `post-validate.sh`.
+- `.claude/agents/` — 7 agent files created: `supervisor.md`, `k8s-implementer.md`, `gitops-reviewer.md`, `security-auditor.md`, `incident-responder.md`, `code-reviewer.md`, `doc-writer.md`.
+- `scripts/` — 3 validation scripts created: `validate-k8s-manifests.sh`, `validate-gitops-structure.sh`, `check-secret-handling.sh`.
+
+**P4 (complete, 2026-04-13):**
+
+- H100 harness examples migrated into workspace-specific skills under `.claude/skills/`:
+  - `deployment-strategies` — k8s/ArgoCD deployment strategy catalog (cicd-pipeline lineage)
+  - `incident-postmortem` — cluster incident post-analysis pipeline (incident-postmortem lineage)
+  - `rca-methodology` — 5 Whys / Fishbone / FTA / Change Analysis reference (incident-postmortem lineage)
+  - `k8s-security-audit` — structured RBAC/NetworkPolicy/Secret/container/supply-chain audit workflow (security-audit lineage)
+  - `vulnerability-patterns` — k8s manifest and Helm chart misconfiguration catalog with CIS 5.x mappings (security-audit, code-reviewer lineage)
+- `docs/00.agent-governance/harness-catalog.md` Skills table updated from 3 to 8 entries.
+- `examples/harness-100/` source directory removed.
 
 **P3 (complete):**
 
