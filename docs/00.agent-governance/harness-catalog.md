@@ -3,7 +3,7 @@ title: 'Reference: Local Harness Catalog'
 type: reference
 status: draft
 owner: 'platform'
-updated: 2026-04-11
+updated: 2026-04-20
 ---
 
 # Reference: Local Harness Catalog
@@ -51,6 +51,7 @@ that shape the runtime contract under `.claude/`.
 | Path                                             | Purpose                                                                                                                          | Supported Workflows                                                                 | Lineage Family                               |
 | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------- |
 | `.claude/skills/gitops-workflow/skill.md`        | Define the approved GitOps workflow for onboarding, updating, and diagnosing workloads                                           | onboarding, change review, sync diagnosis                                           | cicd-pipeline, infra-as-code, security-audit |
+| `.claude/skills/docs-stage-routing/skill.md`     | Route generated documentation into the canonical stage tree and block parallel doc hierarchies                                   | doc routing, template selection, stage mapping, superpowers rerouting                | governance, technical-writer                  |
 | `.claude/skills/k8s-validate/skill.md`           | Define the manifest validation pipeline for YAML, GitOps structure, and secret scanning                                          | validation, pre-PR checks, failure triage                                           | cicd-pipeline, infra-as-code, security-audit |
 | `.claude/skills/risk-report/skill.md`            | Define the cluster risk register workflow and output shape                                                                       | risk identification, risk tracking, review cadence                                  | risk-register                                |
 | `.claude/skills/deployment-strategies/skill.md`  | Kubernetes and ArgoCD deployment strategy catalog with YAML patterns, health check probes, rollback procedures, and DORA metrics | deployment planning, strategy selection, rollback, DORA measurement                 | cicd-pipeline                                |
@@ -64,6 +65,7 @@ that shape the runtime contract under `.claude/`.
 - `AGENTS.md §3` must match the Agents table in this document.
 - Root `CLAUDE.md` and `GEMINI.md` must point to this catalog when describing runtime agents.
 - `.claude/CLAUDE.md` must remain the runtime baseline for local agent execution.
+- Document-generation workflows must use `.claude/skills/docs-stage-routing/skill.md` before proposing new authored-document paths.
 - Any new local agent or skill must be added here in the same change set.
 
 ## Related Documents

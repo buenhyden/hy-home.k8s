@@ -57,6 +57,7 @@ Use `docs/00.agent-governance/harness-catalog.md` as the canonical skill roster.
 ## §6 Documentation
 
 See [documentation-protocol.md](docs/00.agent-governance/rules/documentation-protocol.md) for Docs 3 Rules (HALT triggers).
+Use [document-stage-routing.md](docs/00.agent-governance/rules/document-stage-routing.md) for canonical generated-document paths and rerouting rules.
 
 ## §7 Linting
 

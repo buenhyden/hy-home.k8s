@@ -8,6 +8,13 @@ This protocol defines how governance references authored docs and how language b
 - Product and delivery truth remains in `docs/01~99`.
 - Governance files must reference authored docs and must not duplicate stage content.
 
+## Document Output Routing
+
+- Generated documents must use the canonical stage tree only.
+- Use [document-stage-routing.md](./document-stage-routing.md) for path selection and skill-specific rerouting rules.
+- Do not create parallel authored trees such as `docs/superpowers/**`.
+- Do not place API contract docs under `docs/api/**`; keep them under `docs/04.specs/<feature-id>/`.
+
 ## Language Boundary Rules
 
 - `docs/00.agent-governance/*`: English only.

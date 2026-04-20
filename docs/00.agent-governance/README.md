@@ -57,6 +57,7 @@ docs/00.agent-governance/
 
 - [Preflight Checklist](rules/preflight-checklist.md)
 - [Postflight Checklist](rules/postflight-checklist.md)
+- [Document Stage Routing Rules](rules/document-stage-routing.md)
 - [Stage Authoring Matrix (00-11)](rules/stage-authoring-matrix.md)
 - [Stage Checklists](rules/stage-checklists.md)
 - [Local Harness Catalog](harness-catalog.md)

@@ -29,6 +29,12 @@
 - `architecture/`
 - `agents/`
 
+## Agent 참고 문서 배치 규칙
+
+- 재사용 가능한 Agent 개념, 메모리 전략, 문서화 규칙 요약은 `agents/` 하위에 둔다.
+- 특정 기능에 종속된 Agent 설계는 `docs/04.specs/<feature-id>/agent-design.md`에 둔다.
+- 실행 계획은 `docs/05.plans/`, 운영 절차는 `docs/07~09/`, 거버넌스 규칙은 `docs/00.agent-governance/`로 분리한다.
+
 ## Templates
 
 - `../99.templates/reference.template.md`
