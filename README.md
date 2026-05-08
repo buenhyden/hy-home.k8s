@@ -32,7 +32,7 @@
 
 - 외부 Vault/PostgreSQL/Valkey 런타임 자체의 생성 및 운영
 - 애플리케이션 비즈니스 로직 구현
-- `docs/01~99` SSoT 문서의 승인 없는 임의 재작성
+- `docs/01-10`, `docs/90.references`, `docs/99.templates` SSoT 문서의 승인 없는 임의 재작성
 - 운영 환경 SLA/DR 자체 보장
 
 ## Structure

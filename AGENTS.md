@@ -20,7 +20,7 @@ Runtime baseline: [`.claude/CLAUDE.md`](.claude/CLAUDE.md)
 - Respond to users in Korean.
 - Keep `docs/00.agent-governance/**`, `.claude/**`, and `.codex/**` runtime/policy docs in English.
 - Keep human-facing READMEs in Korean.
-- Treat `docs/01~99` as authored SSoT; modify only when explicitly requested by a human.
+- Treat `docs/01-10`, `docs/90.references`, and `docs/99.templates` as authored SSoT; modify only when explicitly requested by a human.
 - Keep gateway files minimal and route detailed policy to governance docs.
 - GitOps-first: all infra changes go through repository review and ArgoCD reconciliation; never run direct cluster mutation such as `kubectl apply`.
 - Secrets: never write plaintext Kubernetes secrets.
@@ -30,6 +30,7 @@ Runtime baseline: [`.claude/CLAUDE.md`](.claude/CLAUDE.md)
 
 - Agents, skills, models, and `.codex` mirrors: [harness-catalog.md](docs/00.agent-governance/harness-catalog.md)
 - Delegation and handoff rules: [subagent-protocol.md](docs/00.agent-governance/subagent-protocol.md)
+- Agent-first execution rules: [agentic.md](docs/00.agent-governance/rules/agentic.md)
 - Documentation protocol: [documentation-protocol.md](docs/00.agent-governance/rules/documentation-protocol.md)
 - Generated document routing: [document-stage-routing.md](docs/00.agent-governance/rules/document-stage-routing.md)
 - Git workflow: [git-workflow.md](docs/00.agent-governance/rules/git-workflow.md)

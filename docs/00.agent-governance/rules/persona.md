@@ -29,4 +29,4 @@ Persona routing for layer-based execution.
 
 ## Stage Mapping
 
-Use [stage-authoring-matrix.md](stage-authoring-matrix.md) for canonical `00~11` authoring timing, inputs, outputs, templates, and completion criteria.
+Use [stage-authoring-matrix.md](stage-authoring-matrix.md) for canonical `00-10, 90, 99` authoring timing, inputs, outputs, templates, and completion criteria.

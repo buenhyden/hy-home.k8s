@@ -22,7 +22,7 @@ Persona: Governance Steward
 | `GEMINI.md`                   | meta  | Gemini provider overlay                         |
 | `.claude/settings.json`       | meta  | Team settings (git tracked)                     |
 
-Meta scope does **not** own `docs/01~99/` (authored SSoT) or `.claude/agents/` runtime files.
+Meta scope does **not** own `docs/01-10/`, `docs/90.references/`, `docs/99.templates/` (authored SSoT), or `.claude/agents/` runtime files.
 
 ## Subagent Bridge
 

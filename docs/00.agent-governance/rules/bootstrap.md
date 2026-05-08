@@ -5,7 +5,8 @@ Universal entry point for all agents in `hy-home.k8s`.
 ## Core Rules
 
 - Workspace purpose: this repository is a WSL2+k3d home-lab platform managed through ArgoCD GitOps.
-- Plan from repo-backed evidence: `docs/01~99`, `gitops/`, `infrastructure/`, `scripts/`, tests, and current manifests.
+- Plan from repo-backed evidence: `docs/01-10`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, tests, and current manifests.
+- Use [Agentic Execution Rules](agentic.md) as the Agent-first Engineering contract for non-trivial work.
 - Use spec-driven execution anchored to `docs/01.prd/` and `docs/04.specs/`.
 - Load governance just-in-time, not full-repository-first.
 - Complete [Preflight Checklist](preflight-checklist.md) before substantial work.
@@ -27,7 +28,7 @@ Universal entry point for all agents in `hy-home.k8s`.
 
 ## Stage Taxonomy
 
-Use [stage-authoring-matrix.md](stage-authoring-matrix.md) as the canonical authoring matrix for stages `00~11`.
+Use [stage-authoring-matrix.md](stage-authoring-matrix.md) as the canonical authoring matrix for stages `00-10, 90, 99`.
 
 ## Definition of Done for Governance Tasks
 

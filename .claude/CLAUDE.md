@@ -24,7 +24,8 @@ Start from the repository gateway files, then follow the governance JIT sequence
 
 ## Workspace Contract
 
-- Plan and implement from repo evidence: `docs/01~99`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
+- Plan and implement from repo evidence: `docs/01-10`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
+- Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
 - Keep infrastructure changes repo-backed; never mutate the live cluster directly unless a human explicitly approves an emergency path.
 - Do not write plaintext Kubernetes secrets.
 - Treat `.codex/agents/*.toml` as Codex mirrors of `.claude/agents/*.md`; keep both sides aligned.

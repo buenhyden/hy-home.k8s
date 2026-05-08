@@ -18,12 +18,18 @@ fi
 
 python3 - "$ROOT_DIR" <<'PY'
 import collections
+import json
 import pathlib
 import re
 import subprocess
 import sys
 
 import yaml
+
+try:
+    import tomllib
+except ModuleNotFoundError:  # pragma: no cover - Python < 3.11 fallback path
+    tomllib = None
 
 root = pathlib.Path(sys.argv[1])
 failures = []
@@ -60,6 +66,22 @@ def read_text(path: pathlib.Path) -> str:
 def load_yaml(path: pathlib.Path):
     with path.open(encoding="utf-8") as handle:
         return yaml.load(handle, Loader=DuplicateKeyLoader) or {}
+
+
+def load_json(path: pathlib.Path):
+    with path.open(encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def load_toml(path: pathlib.Path):
+    if tomllib is None:
+        raise RuntimeError("python3 tomllib module is required to parse TOML agent mirrors")
+    with path.open("rb") as handle:
+        return tomllib.load(handle)
+
+
+def extract_scope_imports(text: str) -> list[str]:
+    return sorted(re.findall(r"@import\s+(docs/00\.agent-governance/scopes/[A-Za-z0-9_.-]+\.md)", text))
 
 
 def rel(path: pathlib.Path) -> str:
@@ -120,11 +142,21 @@ for path in docs_dir.rglob("*"):
 
 legacy_postmortems = "11" + ".postmortems"
 legacy_learning = "50" + ".Learning"
+legacy_stage_range = "00" + "~" + "11"
+legacy_docs_range = "01" + "~" + "99"
+legacy_stage_label = "Stage " + "11"
+legacy_harness = "H" + "100"
+legacy_harness_examples = "examples/" + "harness-100"
 stale_patterns = [
     "docs/" + legacy_postmortems,
     "docs/" + legacy_learning,
     legacy_postmortems,
     legacy_learning,
+    legacy_stage_range,
+    legacy_docs_range,
+    legacy_stage_label,
+    legacy_harness,
+    legacy_harness_examples,
 ]
 scan_roots = [
     root / "README.md",
@@ -184,6 +216,60 @@ for rule_name, rule_config in sorted(zizmor_rules.items()):
         fail(f"{rel(zizmor_path)} disables unsupported zizmor rule: {rule_name}")
 if not isinstance(zizmor_rules.get("unpinned-uses"), dict) or zizmor_rules["unpinned-uses"].get("disable") is not True:
     fail(f"{rel(zizmor_path)} must keep only unpinned-uses disabled for tag-plus-inventory action pinning")
+
+for json_path in [root / ".claude/settings.json", root / ".codex/hooks.json"]:
+    try:
+        load_json(json_path)
+    except Exception as exc:
+        fail(f"agent runtime JSON parse failed for {rel(json_path)}: {exc}")
+
+claude_agents_dir = root / ".claude/agents"
+codex_agents_dir = root / ".codex/agents"
+claude_agents = {path.stem: path for path in sorted(claude_agents_dir.glob("*.md"))}
+codex_agents = {path.stem: path for path in sorted(codex_agents_dir.glob("*.toml"))}
+for stem in sorted(set(claude_agents) - set(codex_agents)):
+    fail(f"missing Codex agent mirror for .claude/agents/{stem}.md")
+for stem in sorted(set(codex_agents) - set(claude_agents)):
+    fail(f"Codex agent mirror has no .claude source: .codex/agents/{stem}.toml")
+
+runtime_contract_phrases = [
+    "## Runtime Bootstrap",
+    "bootstrap -> preflight -> persona -> scope -> provider -> postflight",
+    "## Guardrails",
+    "## Handoff / Escalation",
+    "postflight-checklist.md",
+]
+for stem, claude_path in sorted(claude_agents.items()):
+    claude_text = read_text(claude_path)
+    for phrase in runtime_contract_phrases:
+        if phrase not in claude_text:
+            fail(f"{rel(claude_path)} missing runtime contract phrase: {phrase}")
+
+    codex_path = codex_agents.get(stem)
+    if not codex_path:
+        continue
+    codex_text = read_text(codex_path)
+    try:
+        codex_data = load_toml(codex_path)
+    except Exception as exc:
+        fail(f"Codex agent TOML parse failed for {rel(codex_path)}: {exc}")
+        codex_data = {}
+    if codex_data.get("name") != stem:
+        fail(f"{rel(codex_path)} name must match file stem: {stem}")
+    for phrase in runtime_contract_phrases:
+        if phrase not in codex_text:
+            fail(f"{rel(codex_path)} missing runtime contract phrase: {phrase}")
+    if extract_scope_imports(claude_text) != extract_scope_imports(codex_text):
+        fail(f"scope import mismatch between {rel(claude_path)} and {rel(codex_path)}")
+
+harness_catalog_path = root / "docs/00.agent-governance/harness-catalog.md"
+harness_catalog_text = read_text(harness_catalog_path)
+for agent_path in sorted(claude_agents.values()):
+    if rel(agent_path) not in harness_catalog_text:
+        fail(f"{rel(harness_catalog_path)} missing agent inventory entry: {rel(agent_path)}")
+for skill_path in sorted((root / ".claude/skills").glob("*/skill.md")):
+    if rel(skill_path) not in harness_catalog_text:
+        fail(f"{rel(harness_catalog_path)} missing skill inventory entry: {rel(skill_path)}")
 
 scripts_dir = root / "scripts"
 scripts_readme = read_text(scripts_dir / "README.md")

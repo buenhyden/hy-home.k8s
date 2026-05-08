@@ -5,7 +5,7 @@ This protocol defines how governance references authored docs and how language b
 ## Core Requirements
 
 - Governance policy belongs in `docs/00.agent-governance/`.
-- Product and delivery truth remains in `docs/01~99`.
+- Product and delivery truth remains in `docs/01-10`, `docs/90.references`, and `docs/99.templates`.
 - Governance files must reference authored docs and must not duplicate stage content.
 
 ## Document Output Routing
@@ -23,7 +23,8 @@ This protocol defines how governance references authored docs and how language b
 
 ## Traceability Rules
 
-- Every governance change should keep clear links to stage folders (`01` to `11`, `90`, `99`).
+- Every governance change should keep clear links to stage folders (`01` to `10`, `90`, `99`).
+- Postmortems belong under `docs/10.incidents/postmortems/`, not a separate top-level docs stage.
 - Persona and scope instructions must state which stage folders are authoritative.
 - Stage expectations must map to [stage-authoring-matrix.md](stage-authoring-matrix.md).
 

@@ -56,9 +56,5 @@ Execution-focused checklist index by stage.
 ## Stage 10 (Incidents)
 
 - [ ] Timeline, impact, evidence, and mitigations are recorded.
-- [ ] Related runbook/postmortem links are attached.
-
-## Stage 11 (Postmortems)
-
-- [ ] RCA is completed with concrete preventive actions.
-- [ ] Follow-up links to specs/policies/runbooks/tasks are in place.
+- [ ] Related runbook links are attached.
+- [ ] Postmortem RCA, preventive actions, and follow-up links are recorded under `docs/10.incidents/postmortems/` when needed.

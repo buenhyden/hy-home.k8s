@@ -45,6 +45,11 @@ Every `.claude/agents/<name>.md` file must have a `.codex/agents/<name>.toml`
 mirror for Codex execution. Mirrors must preserve the same role, scope imports,
 guardrails, and postflight requirements.
 
+The mirror relationship is validated by `scripts/validate-repo-quality-gates.sh`.
+Runtime files must keep matching file stems, matching scope imports, Runtime
+Bootstrap text, Guardrails, Handoff / Escalation, and Postflight requirements so
+delegated work follows the same contract in Claude and Codex.
+
 ## Model Hierarchy
 
 - `supervisor.md` uses `opus`.

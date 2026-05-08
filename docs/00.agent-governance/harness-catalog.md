@@ -55,6 +55,11 @@ contracts for Codex execution. Mirror files must keep the same name, role,
 scope imports, guardrails, and postflight requirements. Update the `.claude`
 source and Codex mirror in the same change set.
 
+Mirror consistency is a quality-gate contract. `scripts/validate-repo-quality-gates.sh`
+must be able to verify matching file stems, matching scope imports, Runtime
+Bootstrap text, Guardrails, Handoff / Escalation, and Postflight requirements
+across the `.claude` source and `.codex` mirror.
+
 ## Skills
 
 | Path                                             | Purpose                                                                                                                          | Supported Workflows                                                                 | Lineage Family                               |
@@ -74,7 +79,7 @@ source and Codex mirror in the same change set.
 - `AGENTS.md` must route to this catalog instead of embedding a duplicate agent table.
 - Root `CLAUDE.md` and `GEMINI.md` must point to this catalog when describing runtime agents.
 - `.claude/CLAUDE.md` must remain the runtime baseline for local agent execution.
-- `.codex/agents/*.toml` mirrors must stay aligned with `.claude/agents/*.md`.
+- `.codex/agents/*.toml` mirrors must stay aligned with `.claude/agents/*.md` and pass the mirror checks in `scripts/validate-repo-quality-gates.sh`.
 - Document-generation workflows must use `.claude/skills/docs-stage-routing/skill.md` before proposing new authored-document paths.
 - Any new local agent or skill must be added here in the same change set.
 

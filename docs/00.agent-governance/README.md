@@ -43,7 +43,7 @@ This README is primarily for:
 
 ### Out of Scope
 
-- Product, architecture, and implementation SSoT under `docs/01~99`
+- Product, architecture, and implementation SSoT under `docs/01-10`, `docs/90.references`, and `docs/99.templates`
 - Runtime bridge content under `.claude/**`
 - Human-facing project onboarding outside this governance area
 
