@@ -4,6 +4,9 @@
 
 # GEMINI.md
 
-- Runtime baseline: `.claude/CLAUDE.md`
-- Canonical runtime roster: `docs/00.agent-governance/harness-catalog.md`
-- Shared policy and constraints: `AGENTS.md` + `docs/00.agent-governance/**`
+Thin Gemini provider shim for `hy-home.k8s`.
+
+- Shared gateway: `AGENTS.md`
+- Gemini provider notes: `docs/00.agent-governance/providers/gemini.md`
+- Local runtime baseline: `.claude/CLAUDE.md`
+- Runtime roster: `docs/00.agent-governance/harness-catalog.md`

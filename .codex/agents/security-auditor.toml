@@ -2,6 +2,11 @@ description = "Worker agent for auditing Kubernetes RBAC, network isolation, and
 developer_instructions = """
 # security-auditor
 
+## Runtime Bootstrap
+
+- Load `AGENTS.md`, `.claude/CLAUDE.md`, and this agent's imported scope before work.
+- Follow `bootstrap -> preflight -> persona -> scope -> provider -> postflight`.
+
 @import docs/00.agent-governance/scopes/security.md
 
 ## Role

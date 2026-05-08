@@ -7,6 +7,7 @@ Run this checklist before making substantial edits.
 - [ ] Goal and success criteria are explicit.
 - [ ] In-scope and out-of-scope boundaries are identified.
 - [ ] High-risk assumptions are listed.
+- [ ] Workspace purpose and active repo contracts are identified.
 
 ## 2. Governance Routing
 
@@ -26,8 +27,11 @@ Run this checklist before making substantial edits.
 - [ ] Language boundary confirmed (governance English, user-facing Korean).
 - [ ] Planned edits avoid unintended scope expansion.
 - [ ] Path references to be changed are real workspace paths.
+- [ ] Existing staged and unstaged changes reviewed; unrelated user changes will be preserved.
+- [ ] Repo-backed vs live-cluster boundary is stated; no direct cluster mutation is planned.
 
 ## 5. Execution Readiness
 
 - [ ] Validation commands/checks are defined before editing.
 - [ ] Evidence requirements for completion are defined.
+- [ ] Unavailable local tools and expected validation limitations are identified.

@@ -11,11 +11,17 @@ The `incident-responder` agent leads timeline reconstruction → root cause anal
 
 **Single orchestrated agent** — `incident-responder.md` leads all phases and produces the final deliverables.
 
+## Workspace Boundary
+
+`_workspace/` is scratch-only for intermediate analysis. Durable incident records
+belong under `docs/10.incidents/`; durable postmortems belong under
+`docs/11.postmortems/` using the approved templates.
+
 ## Workflow
 
 ### Phase 0: Context Check
 
-1. Check for existing files in `_workspace/`:
+1. Check for existing scratch files in `_workspace/`:
    - If found + user requests partial update → **partial re-run** (relevant phase only)
    - If found + user provides new incident data → **new run** (rename existing to `_workspace_prev/`)
    - If absent → **initial run**
@@ -177,8 +183,9 @@ Root Cause: [Conclusion]
 
 ## Data Protocol
 
-- All intermediate files written to `_workspace/` under repository root
-- Final report at `docs/11.postmortems/YYYY-MM-DD-[incident-slug].md` when durable record is requested
+- Intermediate files may be written to `_workspace/` under repository root as scratch analysis only.
+- Durable final reports go to `docs/11.postmortems/YYYY-MM-DD-[incident-slug].md` when a postmortem record is requested.
+- Durable incident records go to `docs/10.incidents/` when an incident log is requested.
 - Use `docs/99.templates/postmortem.template.md` as the structural baseline
 
 ## Error Handling

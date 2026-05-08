@@ -4,12 +4,13 @@ Persona routing for layer-based execution.
 
 ## Activation Steps
 
-1. Complete `rules/preflight-checklist.md`.
-2. Identify target layer and stage.
-3. Load `rules/bootstrap.md`.
-4. Load one layer scope from `scopes/`.
-5. Execute using the selected persona contract.
-6. Validate completion with `rules/postflight-checklist.md`.
+1. Load `rules/bootstrap.md`.
+2. Complete `rules/preflight-checklist.md`.
+3. Identify target layer and stage.
+4. Select the persona and load one matching layer scope from `scopes/`.
+5. Load provider notes from `providers/` when relevant.
+6. Execute using the selected persona contract.
+7. Validate completion with `rules/postflight-checklist.md`.
 
 ## Persona Mapping
 

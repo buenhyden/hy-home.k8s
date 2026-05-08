@@ -28,6 +28,7 @@ coordinated in `hy-home.k8s`.
 
 - Dispatch subagents via the **Task tool only**. Never embed role definitions inline in prompts.
 - Each delegated agent must read its `.claude/agents/<name>.md` file before starting work.
+- Codex delegated agents must use the corresponding `.codex/agents/<name>.toml` mirror with the same scope and guardrails.
 - Each agent file must `@import` one or more matching scope files from `scopes/`.
 - `supervisor.md` is the only supervising agent and owns routing and escalation decisions.
 
@@ -39,6 +40,10 @@ Every delegated agent must have a corresponding file in `.claude/agents/`. Each 
 2. One or more `@import` scope references.
 3. A thin runtime contract: Role, When to use, Inputs, Outputs, Guardrails, Handoff / Escalation, Postflight.
 4. No embedded policy text that belongs in `rules/`, `scopes/`, or `providers/`.
+
+Every `.claude/agents/<name>.md` file must have a `.codex/agents/<name>.toml`
+mirror for Codex execution. Mirrors must preserve the same role, scope imports,
+guardrails, and postflight requirements.
 
 ## Model Hierarchy
 
@@ -61,8 +66,9 @@ Every delegated agent must have a corresponding file in `.claude/agents/`. Each 
 
 ## Catalog Reference
 
-See `AGENTS.md §3` for the gateway roster and
-`docs/00.agent-governance/harness-catalog.md` for the canonical local runtime catalog.
+See `AGENTS.md` for the gateway routing pointer and
+`docs/00.agent-governance/harness-catalog.md` for the canonical local runtime
+catalog, including Codex mirrors.
 
 ## Related Documents
 

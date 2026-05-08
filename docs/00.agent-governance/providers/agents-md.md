@@ -5,7 +5,7 @@ Guidance for consuming the `AGENTS.md` gateway contract.
 ## Role
 
 `AGENTS.md` is the thin gateway contract for all agent providers (Claude, Gemini, Codex, etc.).
-It defines §1–§8 pointers; it does not duplicate policy text from `rules/` or `scopes/`.
+It defines bootstrap, constraints, and routing pointers; it does not duplicate policy text from `rules/`, `scopes/`, or provider files.
 
 ## Loading Model
 
@@ -16,9 +16,9 @@ It defines §1–§8 pointers; it does not duplicate policy text from `rules/` o
 ## Gateway Integrity Rules
 
 - Never add policy text to `AGENTS.md` directly; add it to the appropriate `rules/` or `scopes/` file and add a pointer in `AGENTS.md`.
-- §3 Agent Catalog must stay in sync with `.claude/agents/` directory contents.
-- §7 Settings must reflect the current `settings.json` / `settings.local.json` split.
+- Routing pointers must stay in sync with `docs/00.agent-governance/harness-catalog.md`, `subagent-protocol.md`, and rule documents.
 - Runtime roster details belong in `docs/00.agent-governance/harness-catalog.md`, not in `AGENTS.md`.
+- `.codex/agents/*.toml` mirror status belongs in `harness-catalog.md` and `subagent-protocol.md`, not in a root catalog table.
 
 ## Cross-Provider Consistency
 

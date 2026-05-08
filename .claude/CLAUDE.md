@@ -1,12 +1,14 @@
 # Local Runtime Baseline
 
-This file is the runtime baseline for local agent execution in `hy-home.k8s`.
+This file is the runtime baseline for local agent execution in `hy-home.k8s`, a
+WSL2+k3d cluster repository managed through ArgoCD GitOps.
 
 ## Purpose
 
 - Anchor the local `.claude/**` runtime contract.
 - Point agents to the canonical governance documents.
 - Keep runtime roster and model hierarchy easy to resolve without duplicating policy text.
+- Make repo-backed GitOps validation the default execution model.
 
 ## Loading Order
 
@@ -20,10 +22,23 @@ Start from the repository gateway files, then follow the governance JIT sequence
 6. `docs/00.agent-governance/providers/<provider>.md`
 7. `docs/00.agent-governance/rules/postflight-checklist.md`
 
+## Workspace Contract
+
+- Plan and implement from repo evidence: `docs/01~99`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
+- Keep infrastructure changes repo-backed; never mutate the live cluster directly unless a human explicitly approves an emergency path.
+- Do not write plaintext Kubernetes secrets.
+- Treat `.codex/agents/*.toml` as Codex mirrors of `.claude/agents/*.md`; keep both sides aligned.
+
 ## Runtime Roster
 
 - Agents: see `docs/00.agent-governance/harness-catalog.md`
 - Skills: see `docs/00.agent-governance/harness-catalog.md`
+
+## Validation and Tooling
+
+- Use `.pre-commit-config.yaml`, `.github/workflows/ci.yml`, `scripts/*.sh`, and `infrastructure/tests/*.sh` as validation sources.
+- Use `RTK.md` for shell-command guidance. If `rtk` is not on PATH, run the underlying command directly and report the limitation.
+- If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers. If graphify data or the `graphify` CLI is unavailable, use repo inspection and report the limitation.
 
 ## Model Hierarchy
 

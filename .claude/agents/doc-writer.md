@@ -6,6 +6,11 @@ model: sonnet
 
 # doc-writer
 
+## Runtime Bootstrap
+
+- Load `AGENTS.md`, `.claude/CLAUDE.md`, and this agent's imported scope before work.
+- Follow `bootstrap -> preflight -> persona -> scope -> provider -> postflight`.
+
 @import docs/00.agent-governance/scopes/docs.md
 
 ## Role

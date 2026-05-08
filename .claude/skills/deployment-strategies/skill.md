@@ -47,13 +47,13 @@ spec:
 **GitOps rollback:**
 
 ```bash
-# ArgoCD: revert the image tag commit in Git, then sync
-argocd app sync <app-name>
+# Revert the image tag or rollout manifest commit.
+git revert <commit-sha>
 
-# kubectl fallback (only for emergency):
-kubectl rollout undo deployment/<name> -n <namespace>
-kubectl rollout status deployment/<name> -n <namespace>
+# Open or update a PR, wait for review/merge, then let ArgoCD reconcile from Git.
 ```
+
+Direct cluster mutation commands are outside the normal path and require explicit human emergency approval.
 
 ---
 
@@ -88,11 +88,11 @@ spec:
 
 1. ArgoCD deploys new version to preview (Green) replicas.
 2. Run smoke tests against `previewService`.
-3. Promote: `argocd app actions run <app> promote --kind Rollout`.
+3. Promote through the approved repository-backed release gate, or an explicitly approved Argo Rollouts manual gate.
 4. Monitor for 5 minutes; keep Blue scaled until confirmed stable.
 5. `scaleDownDelaySeconds` elapses → Blue automatically removed.
 
-**Rollback:** `argocd app actions run <app> abort --kind Rollout` — traffic reverts to Blue within seconds.
+**Rollback:** use the repository-backed rollback plan. Direct Argo Rollouts abort actions require explicit human emergency approval.
 
 ---
 
@@ -233,12 +233,11 @@ Readiness endpoint must return non-2xx when any required dependency is unhealthy
 ```
 Trigger detected
     ├── ArgoCD Rollout (Canary/Blue-Green)
-    │       → argocd app actions run <app> abort --kind Rollout
-    │         (instant traffic revert; no Git change needed)
+    │       → Revert or abort through the repository-backed rollback plan
+    │       → Let ArgoCD reconcile from the merged Git state
     │
     └── Standard Deployment (Rolling)
-            → Revert image tag commit in Git → argocd app sync
-              (or kubectl rollout undo as emergency fallback)
+            → Revert image tag commit in Git → PR/merge → ArgoCD reconciliation
 ```
 
 After rollback:

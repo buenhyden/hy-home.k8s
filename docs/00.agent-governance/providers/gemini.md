@@ -5,6 +5,7 @@ Gemini-specific guidance for `hy-home.k8s`.
 ## Loading Model
 
 - Keep root `GEMINI.md` thin and import shared policy from `@AGENTS.md`.
+- Root `GEMINI.md` must load the existing hierarchy; it must not copy RTK, graphify, catalog, or governance policy blocks inline.
 - Use `.claude/CLAUDE.md` as the runtime baseline when agent roster or model hierarchy is needed.
 - Use governance files under `docs/00.agent-governance/rules/*` as canonical policy.
 - Keep provider-specific details here; avoid policy duplication.

@@ -40,14 +40,14 @@ Harness layers L1–L6 were incomplete: no `settings.json`, no agent files, no h
 
 **P4 (complete, 2026-04-13):**
 
-- H100 harness examples migrated into workspace-specific skills under `.claude/skills/`:
+- Legacy harness examples were migrated into workspace-specific skills under `.claude/skills/`:
   - `deployment-strategies` — k8s/ArgoCD deployment strategy catalog (cicd-pipeline lineage)
   - `incident-postmortem` — cluster incident post-analysis pipeline (incident-postmortem lineage)
   - `rca-methodology` — 5 Whys / Fishbone / FTA / Change Analysis reference (incident-postmortem lineage)
   - `k8s-security-audit` — structured RBAC/NetworkPolicy/Secret/container/supply-chain audit workflow (security-audit lineage)
   - `vulnerability-patterns` — k8s manifest and Helm chart misconfiguration catalog with CIS 5.x mappings (security-audit, code-reviewer lineage)
 - `docs/00.agent-governance/harness-catalog.md` Skills table updated from 3 to 8 entries.
-- `examples/harness-100/` source directory removed.
+- Legacy source example directory removed after migration.
 
 **P3 (complete):**
 

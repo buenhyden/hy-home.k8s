@@ -2,6 +2,11 @@ description = "Worker agent for cluster incident analysis, timeline reconstructi
 developer_instructions = """
 # incident-responder
 
+## Runtime Bootstrap
+
+- Load `AGENTS.md`, `.claude/CLAUDE.md`, and this agent's imported scope before work.
+- Follow `bootstrap -> preflight -> persona -> scope -> provider -> postflight`.
+
 @import docs/00.agent-governance/scopes/ops.md
 @import docs/00.agent-governance/scopes/infra.md
 

@@ -12,12 +12,13 @@ updated: 2026-04-20
 
 This document is the canonical catalog for the local agent runtime used in `hy-home.k8s`.
 It defines the supported agents, skills, model allocation, scope imports, and pattern families
-that shape the runtime contract under `.claude/`.
+that shape the runtime contract under `.claude/` and its Codex mirror under `.codex/`.
 
 ## Purpose
 
 - Provide a single source of truth for the local runtime roster.
 - Keep gateway files and runtime files in sync.
+- Keep `.claude/agents/*.md` and `.codex/agents/*.toml` mirrors in sync.
 - Record the model hierarchy for supervising and worker agents.
 - Preserve pattern lineage without exposing source directory paths.
 
@@ -32,6 +33,7 @@ that shape the runtime contract under `.claude/`.
 - Supervising agents use `opus`.
 - Task and worker agents use `sonnet`.
 - Agent files are thin runtime bridges and must not duplicate governance policy.
+- Codex mirror files are thin runtime bridges with the same contract as their `.claude` source.
 - Skill files are workflow contracts and must remain specific to this cluster.
 
 ## Agents
@@ -45,6 +47,13 @@ that shape the runtime contract under `.claude/`.
 | `.claude/agents/incident-responder.md` | Cluster incident analysis              | `sonnet` | `ops`, `infra` | Reconstruct timelines, assess impact, and define remediation            | incident-postmortem                          |
 | `.claude/agents/code-reviewer.md`      | YAML, Helm, and shell quality review   | `sonnet` | `architecture` | Review correctness, maintainability, and policy alignment               | code-reviewer                                |
 | `.claude/agents/doc-writer.md`         | Runbook and guide authoring            | `sonnet` | `docs`         | Produce template-aligned operational and explanatory documents          | technical-writer                             |
+
+## Codex Mirrors
+
+`.codex/agents/*.toml` mirrors the corresponding `.claude/agents/*.md` worker
+contracts for Codex execution. Mirror files must keep the same name, role,
+scope imports, guardrails, and postflight requirements. Update the `.claude`
+source and Codex mirror in the same change set.
 
 ## Skills
 
@@ -62,9 +71,10 @@ that shape the runtime contract under `.claude/`.
 
 ## Consistency Rules
 
-- `AGENTS.md §3` must match the Agents table in this document.
+- `AGENTS.md` must route to this catalog instead of embedding a duplicate agent table.
 - Root `CLAUDE.md` and `GEMINI.md` must point to this catalog when describing runtime agents.
 - `.claude/CLAUDE.md` must remain the runtime baseline for local agent execution.
+- `.codex/agents/*.toml` mirrors must stay aligned with `.claude/agents/*.md`.
 - Document-generation workflows must use `.claude/skills/docs-stage-routing/skill.md` before proposing new authored-document paths.
 - Any new local agent or skill must be added here in the same change set.
 

@@ -30,6 +30,9 @@ Run this checklist before finalizing a response.
 - [ ] Validation commands were executed (or limitations were stated).
 - [ ] Relevant outputs were reviewed.
 - [ ] Unresolved risks are explicitly documented.
+- [ ] No direct cluster mutation or plaintext Kubernetes secret was introduced.
+- [ ] Staged and unstaged changes were reviewed for scope.
+- [ ] Unavailable tools, skipped live validation, or CI-only checks were stated.
 
 ## 6. Docs 3 Rules Compliance
 
