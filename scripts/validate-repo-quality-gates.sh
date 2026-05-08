@@ -171,6 +171,20 @@ for workflow in sorted((root / ".github/workflows").glob("*.yml")):
             if label and label != "<unnamed>" and count > 1:
                 fail(f"duplicate workflow step in {rel(workflow)} job {job_id}: {label}")
 
+codeowners_path = root / ".github/CODEOWNERS"
+codeowners_text = read_text(codeowners_path)
+if not re.search(r"^/\.github/\s+@buenhyden(?:\s|$)", codeowners_text, re.MULTILINE):
+    fail(".github/CODEOWNERS must assign /.github/ ownership to @buenhyden")
+
+zizmor_path = root / ".github/zizmor.yml"
+zizmor_rules = (load_yaml(zizmor_path).get("rules") or {})
+allowed_zizmor_disables = {"unpinned-uses"}
+for rule_name, rule_config in sorted(zizmor_rules.items()):
+    if isinstance(rule_config, dict) and rule_config.get("disable") is True and rule_name not in allowed_zizmor_disables:
+        fail(f"{rel(zizmor_path)} disables unsupported zizmor rule: {rule_name}")
+if not isinstance(zizmor_rules.get("unpinned-uses"), dict) or zizmor_rules["unpinned-uses"].get("disable") is not True:
+    fail(f"{rel(zizmor_path)} must keep only unpinned-uses disabled for tag-plus-inventory action pinning")
+
 scripts_dir = root / "scripts"
 scripts_readme = read_text(scripts_dir / "README.md")
 for script in sorted(scripts_dir.glob("*.sh")):

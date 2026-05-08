@@ -38,6 +38,8 @@ Describe the manual verification or automated tests conducted.
 - [ ] `bash scripts/validate-k8s-manifests.sh .` successful (if manifests changed)
 - [ ] `bash scripts/check-secret-handling.sh .` successful (if manifests or secret wiring changed)
 - [ ] ArgoCD/GitOps impact reviewed (if applicable)
+- [ ] Workflow path filters and job ownership reviewed (if `.github` automation changed)
+- [ ] No live cluster mutation, `kubectl apply`, or external Vault mutation was introduced
 - [ ] Tracked changelog updates were merged by PR before tagging (if release-facing)
 
 ## 7. Checklist

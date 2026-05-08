@@ -50,8 +50,8 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: OS, runtime, browser, app version
-      placeholder: Ubuntu 24.04 / Node 20 / Chrome 122
+      description: OS, WSL/Docker Desktop, k3d/k3s, kubectl, Helm, ArgoCD, and relevant GitHub Actions run if applicable.
+      placeholder: Ubuntu 24.04 WSL2 / Docker Desktop 4.x / k3d 5.x / k3s v1.35.x / kubectl v1.35.x / ArgoCD 3.x
     validations:
       required: true
   - type: dropdown
@@ -71,6 +71,6 @@ body:
     attributes:
       label: Diagnostics / Logs
       description:
-        Paste relevant logs, trace IDs, or screenshots (redact secrets/PII).
+        Paste relevant static validator output, ArgoCD application state, CI run link, or redacted logs. Do not include secrets, kubeconfigs, tokens, or private Vault data.
     validations:
       required: false

@@ -11,5 +11,5 @@
 /.codex/ @buenhyden
 /docs/00.agent-governance/ @buenhyden
 
-# Security
-/.github/SECURITY.md @buenhyden
+# GitHub configuration
+/.github/ @buenhyden

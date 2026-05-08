@@ -33,6 +33,11 @@ jobs:
               - '**'
             repo_quality:
               - 'README.md'
+              - 'AGENTS.md'
+              - 'CLAUDE.md'
+              - 'GEMINI.md'
+              - 'RTK.md'
+              - 'cliff.toml'
               - 'docs/**'
               - '.github/**'
               - '.claude/**'
@@ -45,13 +50,19 @@ jobs:
               - 'gitops/**'
               - 'infrastructure/**/*.yaml'
               - 'infrastructure/**/*.yml'
+              - 'infrastructure/tests/**/*.sh'
+              - '.kube-linter.yaml'
               - 'examples/sample-app/**'
               - 'examples/**/gitops/**'
               - 'examples/**/kubernetes/**'
+              - 'scripts/validate-gitops-structure.sh'
+              - 'scripts/validate-k8s-manifests.sh'
+              - 'scripts/check-secret-handling.sh'
               - 'traefik/**'
             shell:
               - 'infrastructure/**/*.sh'
               - 'scripts/**/*.sh'
+              - '.claude/hooks/**/*.sh'
 
   pre-commit:
     needs: changes
@@ -115,7 +126,13 @@ jobs:
           persist-credentials: false
       - name: Bash syntax check
         run: |
-          mapfile -t shell_files < <(find infrastructure scripts -type f -name '*.sh' | sort)
+          mapfile -t shell_files < <(
+            for dir in infrastructure scripts .claude/hooks; do
+              if [ -d "$dir" ]; then
+                find "$dir" -type f -name '*.sh'
+              fi
+            done | sort
+          )
           if [ "${#shell_files[@]}" -eq 0 ]; then
             echo "no shell files matched shell-static scope"
             exit 0
@@ -135,12 +152,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Summarize CI result
+        env:
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          PRE_COMMIT_RESULT: ${{ needs['pre-commit'].result }}
+          REPO_QUALITY_STATIC_RESULT: ${{ needs['repo-quality-static'].result }}
+          MANIFEST_STATIC_RESULT: ${{ needs['manifest-static'].result }}
+          SHELL_STATIC_RESULT: ${{ needs['shell-static'].result }}
         run: |
-          echo "changes=${{ needs.changes.result }}"
-          echo "pre-commit=${{ needs['pre-commit'].result }}"
-          echo "repo-quality-static=${{ needs['repo-quality-static'].result }}"
-          echo "manifest-static=${{ needs['manifest-static'].result }}"
-          echo "shell-static=${{ needs['shell-static'].result }}"
+          printf 'changes=%s\n' "$CHANGES_RESULT"
+          printf 'pre-commit=%s\n' "$PRE_COMMIT_RESULT"
+          printf 'repo-quality-static=%s\n' "$REPO_QUALITY_STATIC_RESULT"
+          printf 'manifest-static=%s\n' "$MANIFEST_STATIC_RESULT"
+          printf 'shell-static=%s\n' "$SHELL_STATIC_RESULT"
       - name: Fail on gate failure
         if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
         run: |
