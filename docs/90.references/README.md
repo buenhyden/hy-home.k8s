@@ -28,6 +28,7 @@
 - `standards/`
 - `architecture/`
 - `agents/`
+- `learning/`
 
 ## Agent 참고 문서 배치 규칙
 
@@ -38,3 +39,15 @@
 ## Templates
 
 - `../99.templates/reference.template.md`
+
+## 관련 폴더
+
+- `00.agent-governance/`: Agent 실행 정책과 거버넌스
+- `02.ard/`: 아키텍처 참조 모델
+- `99.templates/`: Reference 문서 템플릿
+
+## 예시
+
+- Agent 관련 참고 자료는 `agents/` 하위에 둔다.
+- 학습 로드맵은 `learning/infrastructure-to-theory-roadmap.md`처럼 참고 자료로 둔다.
+- 버전 기준은 `tech-stack-version-inventory.md`에서 관리한다.

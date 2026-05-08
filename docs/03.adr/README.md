@@ -50,3 +50,13 @@
 | [`0010-headlamp-replaces-dashboard.md`](./0010-headlamp-replaces-dashboard.md)                                         | K8s Dashboard v3 제거, Headlamp v0.41.0 교체 결정 (chart repo 비활성화, Kong 의존성 제거)                        | Accepted | 2026-03-30 |
 | [`0011-argo-rollouts-progressive-delivery.md`](./0011-argo-rollouts-progressive-delivery.md)                           | Argo Rollouts v1.9.0 도입, Rollouts Dashboard 포함, 수동 promotion 기본 결정                                     | Accepted | 2026-05-09 |
 | [`0012-argo-notifications-slack.md`](./0012-argo-notifications-slack.md)                                               | Argo Notifications Slack webhook 도입 (ArgoCD Helm 내장 컨트롤러 활성화, ESO로 token 관리)                       | Accepted | 2026-03-30 |
+
+## 관련 폴더
+
+- `02.ard/`: ADR의 상위 아키텍처 참조
+- `04.specs/`: ADR 결정을 반영하는 구현 명세
+- `08.operations/`: 운영 정책으로 이어지는 결정 근거
+
+## 예시
+
+- UI 전환 결정은 `0010-headlamp-replaces-dashboard.md`처럼 superseded 대상과 새 운영 기준을 함께 기록한다.

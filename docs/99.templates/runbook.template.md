@@ -81,5 +81,5 @@ updated: YYYY-MM-DD
 ## Related Documents
 
 - **Incident examples**: `[../10.incidents/YYYY/YYYY-MM-DD-<incident-title>.md]`
-- **Postmortem examples**: `[../11.postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
+- **Postmortem examples**: `[../10.incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
 - **Operation**: `[../08.operations/<policy-or-standard>.md]`

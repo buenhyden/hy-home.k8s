@@ -16,4 +16,4 @@ This folder stores reusable technical lessons for agent execution.
 
 ## Format
 
-Use `template.md` and keep each item scoped to one problem pattern.
+Use `docs/99.templates/memory.template.md` and keep each item scoped to one problem pattern.

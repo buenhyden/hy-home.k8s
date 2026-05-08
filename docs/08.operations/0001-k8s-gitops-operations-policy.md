@@ -100,4 +100,4 @@ kubectl -n argocd get externalsecret,secret argocd-external-valkey
 - **ARD**: [`../02.ard/0001-wsl-k3d-argocd-platform.md`](../02.ard/0001-wsl-k3d-argocd-platform.md)
 - **Spec**: [`../04.specs/001-wsl-k3d-argocd-platform/spec.md`](../04.specs/001-wsl-k3d-argocd-platform/spec.md)
 - **Runbook**: [`../09.runbooks/0001-argocd-platform-bootstrap-runbook.md`](../09.runbooks/0001-argocd-platform-bootstrap-runbook.md)
-- **Postmortem Index**: [`../11.postmortems/README.md`](../11.postmortems/README.md)
+- **Postmortem Index**: [`../10.incidents/README.md`](../10.incidents/README.md)

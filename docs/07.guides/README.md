@@ -2,6 +2,10 @@
 
 > 플랫폼/운영 작업을 재현 가능한 절차로 설명하는 가이드 문서를 관리한다.
 
+## 목적
+
+이 폴더는 운영자와 개발자가 k3d/GitOps 작업을 이해하고 재현할 수 있도록 how-to 중심 가이드를 저장한다.
+
 ## Overview
 
 이 경로는 운영 정책(`08.operations`)과 실행 런북(`09.runbooks`) 사이에서,
@@ -17,6 +21,13 @@
 - AI Agents
 
 ## Scope
+
+## 포함할 내용
+
+- 온보딩/실행 가이드
+- 선행 조건과 점검 명령
+- 공통 실패 패턴 및 회피 방법
+- Spec/Operations/Runbook 교차 링크
 
 ### In Scope
 
@@ -54,6 +65,12 @@
 - [08.operations](../08.operations/README.md)
 - [09.runbooks](../09.runbooks/README.md)
 
+## 관련 폴더
+
+- `04.specs/`: 가이드가 설명하는 구현 계약
+- `08.operations/`: 가이드의 운영 정책 기준
+- `09.runbooks/`: 가이드에서 이어지는 실행 절차
+
 ## Documentation Standards
 
 - 템플릿 기반으로 문서를 작성하고 필수 섹션을 누락하지 않는다.
@@ -70,6 +87,11 @@
 
 - 가이드 템플릿: [`../99.templates/guide.template.md`](../99.templates/guide.template.md)
 - README 템플릿: [`../99.templates/readme.template.md`](../99.templates/readme.template.md)
+
+## 예시
+
+- 플랫폼 부트스트랩 설명은 `0001-wsl-k3d-argocd-bootstrap-guide.md`처럼 배경과 절차를 함께 제공한다.
+- Headlamp 인증 전환 설명은 `0004-headlamp-auth-oidc-guide.md`처럼 선행 조건, 단계, 검증을 포함한다.
 
 ## Metadata Expectations
 

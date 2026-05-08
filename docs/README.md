@@ -17,7 +17,7 @@
 
 모든 작업은 아이디어에서 시작해 회고까지 선형적인 흐름을 따라 구체화됩니다.
 
-`01.prd` (기획) → `02.ard/03.adr` (설계/결정) → `04.specs` (상세 명세) → `05.plans/06.tasks` (실행/작업) → `07~09` (운영 지침) → `10~11` (사고/회고)
+`01.prd` (기획) → `02.ard/03.adr` (설계/결정) → `04.specs` (상세 명세) → `05.plans/06.tasks` (실행/작업) → `07~09` (운영 지침) → `10.incidents` (사고/회고)
 
 ## 언어 및 협업 원칙
 
@@ -37,5 +37,5 @@
 - **[04.specs](04.specs/README.md)**: 기술 명세 및 상세 설계 (SSoT)
 - **[05.plans](05.plans/README.md)** / **[06.tasks](06.tasks/README.md)**: 구현 계획 및 작업 현황 관리
 - **[07.guides](07.guides/README.md)** / **[08.operations](08.operations/README.md)**: 가이드라인 및 운영 정책
-- **[09.runbooks](09.runbooks/README.md)** / **[10.incidents](10.incidents/README.md)**: 운영 절차 및 사고 대응 기록
-- **[11.postmortems](11.postmortems/README.md)** / **[99.templates](99.templates/README.md)**: 장애 회고 및 공통 템플릿
+- **[09.runbooks](09.runbooks/README.md)** / **[10.incidents](10.incidents/README.md)**: 운영 절차, 사고 대응 기록, 장애 회고
+- **[90.references](90.references/README.md)** / **[99.templates](99.templates/README.md)**: 참고 자료와 공통 템플릿

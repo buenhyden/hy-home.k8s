@@ -195,4 +195,4 @@ argocd app list
 ## Related Operational Documents
 
 - **Incident Index**: [`../10.incidents/README.md`](../10.incidents/README.md)
-- **Postmortem Index**: [`../11.postmortems/README.md`](../11.postmortems/README.md)
+- **Postmortem Index**: [`../10.incidents/README.md`](../10.incidents/README.md)

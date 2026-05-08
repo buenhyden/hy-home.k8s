@@ -116,3 +116,13 @@
 | [`001-wsl-k3d-argocd-platform/spec.md`](./001-wsl-k3d-argocd-platform/spec.md)         | WSL2 k3d/k3s + ArgoCD + ESO/Vault + 외부 DB/Valkey 기술 명세                                             | Draft  | 2026-03-27 |
 | [`002-wsl2-k3d-argocd-ha-platform/spec.md`](./002-wsl2-k3d-argocd-ha-platform/spec.md) | Valkey/TLS/최소권한 계약과 `.github` CI 정적 게이트/`verify-contracts-static.sh` 명세를 포함한 기술 명세 | Draft  | 2026-05-09 |
 | [`003-platform-expansion/spec.md`](./003-platform-expansion/spec.md)                   | 2026-03-29 IP 수정 + cert-manager/Dashboard/Istio/Kiali 확장 명세, 현재 실행계약은 Headlamp/172.18.x 기준 | Active | 2026-05-09 |
+
+## 관련 폴더
+
+- `01.prd/`: Spec이 만족해야 할 요구사항
+- `02.ard/` / `03.adr/`: 설계 경계와 결정 근거
+- `06.tasks/`: Spec 구현과 검증 추적
+
+## 예시
+
+- k3d/GitOps 플랫폼 구현 계약은 `001-wsl-k3d-argocd-platform/spec.md`처럼 feature 하위 폴더의 `spec.md`로 관리한다.

@@ -2,10 +2,14 @@
 
 > 반복 가능한 운영 작업을 즉시 실행할 수 있는 체크리스트/절차 문서를 관리한다.
 
+## 목적
+
+이 폴더는 k3d/GitOps 플랫폼에서 반복 실행하는 운영 절차와 복구 절차를 저장한다.
+
 ## Overview
 
 이 경로는 운영자가 장애 상황 또는 재구축 상황에서 바로 실행 가능한 절차를 제공한다.
-정책 정의는 `08.operations`, 가이드 설명은 `07.guides`, 사고 분석은 `11.postmortems`에서 관리한다.
+정책 정의는 `08.operations`, 가이드 설명은 `07.guides`, 사고 분석은 `10.incidents/postmortems`에서 관리한다.
 
 ## Audience
 
@@ -17,6 +21,13 @@
 - AI Agents
 
 ## Scope
+
+## 포함할 내용
+
+- 실행 순서 중심 체크리스트
+- 검증 커맨드와 성공 기준
+- 오류 시그니처 기반 트러블슈팅
+- 안전한 롤백/복구 절차
 
 ### In Scope
 
@@ -52,7 +63,13 @@
 - [07.guides](../07.guides/README.md)
 - [08.operations](../08.operations/README.md)
 - [10.incidents](../10.incidents/README.md)
-- [11.postmortems](../11.postmortems/README.md)
+
+## 관련 폴더
+
+- `07.guides/`: 절차의 배경과 how-to 설명
+- `08.operations/`: 런북이 따라야 할 운영 정책
+- `10.incidents/`: 런북 실행 결과가 연결되는 사고 기록
+- [10.incidents](../10.incidents/README.md)
 
 ## Documentation Standards
 
@@ -97,7 +114,12 @@
 
 - Runbooks: [`./README.md`](./README.md)
 - Incident Records: [`../10.incidents/README.md`](../10.incidents/README.md)
-- Postmortems: [`../11.postmortems/README.md`](../11.postmortems/README.md)
+- Postmortems: [`../10.incidents/README.md`](../10.incidents/README.md)
+
+## 예시
+
+- 플랫폼 부트스트랩은 `0001-argocd-platform-bootstrap-runbook.md`를 따른다.
+- Vault/ESO 복구는 `0002-argocd-eso-vault-recovery-runbook.md`를 따른다.
 
 ## SSoT References
 

@@ -2,6 +2,10 @@
 
 > GitOps 플랫폼 운영 정책과 통제 기준(허용/금지/예외/검증)을 관리한다.
 
+## 목적
+
+이 폴더는 k3d/GitOps 플랫폼 운영 정책, 통제 기준, 예외 승인 흐름을 저장한다.
+
 ## Overview
 
 이 경로는 플랫폼 운영 정책의 단일 기준점이다.
@@ -17,6 +21,13 @@
 - AI Agents
 
 ## Scope
+
+## 포함할 내용
+
+- 운영 정책 문서(Operations Policy)
+- 통제 항목(Required/Allowed/Disallowed)
+- 예외 승인 흐름
+- 정책 검증 방법 및 검토 주기
 
 ### In Scope
 
@@ -52,7 +63,13 @@
 - [04.specs](../04.specs/README.md)
 - [09.runbooks](../09.runbooks/README.md)
 - [10.incidents](../10.incidents/README.md)
-- [11.postmortems](../11.postmortems/README.md)
+
+## 관련 폴더
+
+- `04.specs/`: 운영 정책의 기술 계약
+- `09.runbooks/`: 정책을 실행하는 절차
+- `10.incidents/`: 정책 위반 또는 장애 대응 기록
+- [10.incidents](../10.incidents/README.md)
 
 ## Documentation Standards
 
@@ -119,7 +136,12 @@ echo 'fs.inotify.max_user_instances=1024' | sudo tee /etc/sysctl.d/99-k3d.conf
 
 - Runbooks: [`../09.runbooks/README.md`](../09.runbooks/README.md)
 - Incident Records: [`../10.incidents/README.md`](../10.incidents/README.md)
-- Postmortems: [`../11.postmortems/README.md`](../11.postmortems/README.md)
+- Postmortems: [`../10.incidents/README.md`](../10.incidents/README.md)
+
+## 예시
+
+- GitOps 운영 통제는 `0001-k8s-gitops-operations-policy.md`에서 관리한다.
+- 관측성 운영 통제는 `0006-k8s-observability-operations-policy.md`에서 관리한다.
 
 ## SSoT References
 

@@ -271,4 +271,4 @@ docker exec infra-prometheus promtool check config /etc/prometheus/prometheus.ym
 - [Operations Policy](../08.operations/0005-observability-platform-operations-policy.md)
 - [Guide](../07.guides/0006-argocd-prometheus-grafana-guide.md)
 - [NodePort YAML](../../gitops/platform/argocd/argocd-metrics-nodeport.yaml)
-- [Prometheus config](../../hy-home.docker/infra/06-observability/prometheus/config/prometheus.yml)
+- [Prometheus config](../../../hy-home.docker/infra/06-observability/prometheus/config/prometheus.yml)

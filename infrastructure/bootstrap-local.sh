@@ -36,6 +36,11 @@ for cmd in k3d kubectl helm docker curl jq openssl rg; do
   fi
 done
 
+# Bootstrap-only exception:
+# this script may use kubectl apply before ArgoCD owns the cluster because it creates
+# the initial namespaces, secrets, MetalLB primitives, and root GitOps applications.
+# Steady-state infrastructure changes must remain repo-backed and reconciled by ArgoCD.
+
 if [ -z "${VAULT_TOKEN:-}" ]; then
   fail "Set VAULT_TOKEN before running this script"
 fi

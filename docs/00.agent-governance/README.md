@@ -2,11 +2,25 @@
 
 > Central governance entry point for AI agents operating in `hy-home.k8s`.
 
-## Overview
+## Purpose
 
 This directory contains the durable governance policy for the local agent runtime.
 It defines execution rules, scope-specific constraints, provider notes, reusable
 operational memory, and the canonical runtime catalog that supports `.claude/**`.
+
+## Allowed Content
+
+- Governance rules and execution checklists
+- Scope-specific policy for agent work
+- Provider-specific notes for supported engines
+- Canonical runtime roster and subagent protocol
+- Reusable operational memory entries
+
+## Disallowed Content
+
+- Product, architecture, and implementation SSoT under `docs/01~10`
+- Human-facing project onboarding outside this governance area
+- Runtime bridge files that belong under `.claude/**` or `.codex/**`
 
 ## Audience
 
@@ -58,7 +72,7 @@ docs/00.agent-governance/
 - [Preflight Checklist](rules/preflight-checklist.md)
 - [Postflight Checklist](rules/postflight-checklist.md)
 - [Document Stage Routing Rules](rules/document-stage-routing.md)
-- [Stage Authoring Matrix (00-11)](rules/stage-authoring-matrix.md)
+- [Stage Authoring Matrix](rules/stage-authoring-matrix.md)
 - [Stage Checklists](rules/stage-checklists.md)
 - [Local Harness Catalog](harness-catalog.md)
 - [Subagent Protocol](subagent-protocol.md)
@@ -69,3 +83,16 @@ docs/00.agent-governance/
 - [Runtime Baseline](../../.claude/CLAUDE.md)
 - [Claude Provider Notes](providers/claude.md)
 - [Gemini Provider Notes](providers/gemini.md)
+
+## Related Folders
+
+- `rules/`: global policy, checklists, and documentation protocol
+- `scopes/`: layer-specific execution rules
+- `providers/`: provider-specific notes
+- `memory/`: reusable operational lessons
+
+## Examples
+
+- Add a new execution rule under `rules/`.
+- Add a provider note under `providers/`.
+- Add a reusable governance lesson under `memory/` using `docs/99.templates/memory.template.md`.

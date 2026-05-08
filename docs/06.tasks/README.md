@@ -30,7 +30,7 @@
 - 장애 대응 절차
 - 근본 원인 분석
 
-위 내용은 각각 `04.specs/`, `08.operations/`, `09.runbooks/`, `11.postmortems/`로 분리한다.
+위 내용은 각각 `04.specs/`, `08.operations/`, `09.runbooks/`, `10.incidents/postmortems/`로 분리한다.
 
 ## 핵심 원칙
 
@@ -74,3 +74,14 @@
 | [`2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md)         | TDD/검증 중심 실행 Task 목록과 증적 기준                                             | Draft | 2026-03-27 |
 | [`2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | RED/GREEN/REFACTOR 기반 TLS/Ingress + CI static contract/workflow-security 작업 Task | Draft | 2026-03-28 |
 | [`2026-03-29-platform-expansion.md`](./2026-03-29-platform-expansion.md)                   | 2026-03-29 IP 수정 + cert-manager/Dashboard/Istio/Kiali 확장 Task, 현재 실행계약은 Headlamp/172.18.x 기준 | Done  | 2026-05-09 |
+
+## 관련 폴더
+
+- `04.specs/`: Task의 상위 기술 명세
+- `05.plans/`: Task의 상위 실행 계획
+- `10.incidents/`: 사고 대응 및 회고 후속 작업 근거
+
+## 예시
+
+- 구현 작업은 `impl` 타입으로 기록한다.
+- 검증 작업은 실행 명령과 증거를 포함해 `test` 타입으로 기록한다.

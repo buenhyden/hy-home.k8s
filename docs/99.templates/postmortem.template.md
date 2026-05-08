@@ -6,11 +6,11 @@ owner: '{team-or-person}'
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/11.postmortems/YYYY-MM-DD-<incident-title>.md -->
+<!-- Target: docs/10.incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md -->
 
 # Postmortem: [Incident Title]
 
-> Use this template for `docs/11.postmortems/YYYY/YYYY-MM-DD-<incident-title>.md`.
+> Use this template for `docs/10.incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md`.
 
 ---
 

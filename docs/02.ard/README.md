@@ -35,3 +35,13 @@
 | [`0001-wsl-k3d-argocd-platform.md`](./0001-wsl-k3d-argocd-platform.md)                     | WSL2 k3d/k3s GitOps 플랫폼 참조 아키텍처                                             | Draft | 2026-03-27 |
 | [`0002-wsl2-k3d-argocd-ha-platform.md`](./0002-wsl2-k3d-argocd-ha-platform.md)             | WSL2 멀티노드 HA + Traefik↔k3d TLS 경계 + CI 정적 게이트 계층을 포함한 참조 아키텍처 | Draft | 2026-05-09 |
 | [`0003-platform-expansion-mesh-dashboard.md`](./0003-platform-expansion-mesh-dashboard.md) | 2026-03-29 cert-manager/Dashboard/Istio/Kiali 확장 ARD, 현재 실행계약은 Headlamp/172.18.x 기준 | Draft | 2026-05-09 |
+
+## 관련 폴더
+
+- `01.prd/`: ARD의 입력이 되는 요구사항
+- `03.adr/`: ARD에서 파생되는 결정 기록
+- `04.specs/`: ARD를 구현 계약으로 구체화하는 명세
+
+## 예시
+
+- WSL2/k3d 플랫폼의 경계와 품질 속성은 `0002-wsl2-k3d-argocd-ha-platform.md`에 기록한다.

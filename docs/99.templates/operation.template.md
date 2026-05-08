@@ -64,4 +64,4 @@ updated: YYYY-MM-DD
 
 - **ARD**: `[../02.ard/####-<system-or-domain>.md]`
 - **Runbook**: `[../09.runbooks/####-<topic>.md]`
-- **Postmortem**: `[../11.postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
+- **Postmortem**: `[../10.incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`

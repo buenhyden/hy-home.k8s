@@ -1,0 +1,279 @@
+#!/usr/bin/env bash
+# validate-repo-quality-gates.sh — repository docs, workflow, script, and version contract checks
+# Usage: bash scripts/validate-repo-quality-gates.sh [repo-root]
+set -euo pipefail
+
+ROOT_INPUT="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+ROOT_DIR="$(cd "$ROOT_INPUT" && pwd)"
+
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "ERR python3 is required for repository quality validation" >&2
+  exit 1
+fi
+
+if ! python3 -c 'import yaml' >/dev/null 2>&1; then
+  echo "ERR python3 PyYAML package is required for repository quality validation" >&2
+  exit 1
+fi
+
+python3 - "$ROOT_DIR" <<'PY'
+import collections
+import pathlib
+import re
+import subprocess
+import sys
+
+import yaml
+
+root = pathlib.Path(sys.argv[1])
+failures = []
+
+
+class DuplicateKeyLoader(yaml.SafeLoader):
+    pass
+
+
+def construct_mapping_without_duplicates(loader, node, deep=False):
+    seen = set()
+    for key_node, _ in node.value:
+        key = loader.construct_object(key_node, deep=deep)
+        if key in seen:
+            raise ValueError(f"duplicate YAML key: {key}")
+        seen.add(key)
+    return yaml.SafeLoader.construct_mapping(loader, node, deep=deep)
+
+
+DuplicateKeyLoader.add_constructor(
+    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+    construct_mapping_without_duplicates,
+)
+
+
+def fail(message: str) -> None:
+    failures.append(f"ERR {message}")
+
+
+def read_text(path: pathlib.Path) -> str:
+    return path.read_text(encoding="utf-8", errors="ignore")
+
+
+def load_yaml(path: pathlib.Path):
+    with path.open(encoding="utf-8") as handle:
+        return yaml.load(handle, Loader=DuplicateKeyLoader) or {}
+
+
+def rel(path: pathlib.Path) -> str:
+    return str(path.relative_to(root))
+
+
+allowed_docs = {
+    "00.agent-governance",
+    "01.prd",
+    "02.ard",
+    "03.adr",
+    "04.specs",
+    "05.plans",
+    "06.tasks",
+    "07.guides",
+    "08.operations",
+    "09.runbooks",
+    "10.incidents",
+    "90.references",
+    "99.templates",
+}
+
+docs_dir = root / "docs"
+actual_docs = {path.name for path in docs_dir.iterdir() if path.is_dir()}
+for name in sorted(actual_docs - allowed_docs):
+    fail(f"docs top-level folder is not allowed: docs/{name}")
+for name in sorted(allowed_docs - actual_docs):
+    fail(f"required docs top-level folder is missing: docs/{name}")
+
+readme_sections = {
+    "purpose": re.compile(r"^##\s+(목적|Purpose)\b", re.MULTILINE),
+    "allowed": re.compile(r"^##\s+(포함할 내용|Allowed Content)\b", re.MULTILINE),
+    "related": re.compile(r"^##\s+(관련 폴더|Related Folders)\b", re.MULTILINE),
+    "examples": re.compile(r"^##\s+(예시|Examples)\b", re.MULTILINE),
+}
+for name in sorted(allowed_docs):
+    readme = docs_dir / name / "README.md"
+    if not readme.exists():
+        fail(f"required README.md is missing: {rel(readme)}")
+        continue
+    text = read_text(readme)
+    for section, pattern in readme_sections.items():
+        if not pattern.search(text):
+            fail(f"{rel(readme)} missing required section: {section}")
+
+template_readme = read_text(root / "docs/99.templates/README.md")
+for template in sorted((root / "docs/99.templates").iterdir()):
+    if template.is_file() and template.name != "README.md" and template.name not in template_readme:
+        fail(f"template is not listed in docs/99.templates/README.md: {template.name}")
+
+for path in docs_dir.rglob("*"):
+    if not path.is_file():
+        continue
+    if path.is_relative_to(root / "docs/99.templates"):
+        continue
+    if re.search(r"(^template\.md$|\.template\.|template\.)", path.name):
+        fail(f"template-like docs file must live in docs/99.templates: {rel(path)}")
+
+legacy_postmortems = "11" + ".postmortems"
+legacy_learning = "50" + ".Learning"
+stale_patterns = [
+    "docs/" + legacy_postmortems,
+    "docs/" + legacy_learning,
+    legacy_postmortems,
+    legacy_learning,
+]
+scan_roots = [
+    root / "README.md",
+    root / "docs",
+    root / ".claude",
+    root / ".codex",
+    root / ".github",
+    root / "scripts",
+    root / "infrastructure",
+    root / "gitops",
+]
+for scan_root in scan_roots:
+    candidates = [scan_root] if scan_root.is_file() else scan_root.rglob("*")
+    for path in candidates:
+        if not path.is_file() or path.name == "validate-repo-quality-gates.sh":
+            continue
+        if path.suffix not in {".md", ".toml", ".json", ".yml", ".yaml", ".sh"}:
+            continue
+        text = read_text(path)
+        for pattern in stale_patterns:
+            if pattern in text:
+                fail(f"stale docs path reference found in {rel(path)}: {pattern}")
+
+workflow_paths = sorted((root / ".github").glob("**/*.yml")) + sorted((root / ".github").glob("**/*.yaml"))
+for workflow in workflow_paths:
+    try:
+        load_yaml(workflow)
+    except Exception as exc:
+        fail(f"GitHub Actions YAML parse failed for {rel(workflow)}: {exc}")
+
+for workflow in sorted((root / ".github/workflows").glob("*.yml")):
+    try:
+        data = load_yaml(workflow)
+    except Exception:
+        continue
+    for job_id, job in (data.get("jobs") or {}).items():
+        seen = collections.Counter()
+        for step in job.get("steps") or []:
+            label = step.get("name") or step.get("uses") or (step.get("run") or "").strip().splitlines()[0:1]
+            if isinstance(label, list):
+                label = label[0] if label else "<unnamed>"
+            seen[str(label)] += 1
+        for label, count in seen.items():
+            if label and label != "<unnamed>" and count > 1:
+                fail(f"duplicate workflow step in {rel(workflow)} job {job_id}: {label}")
+
+scripts_dir = root / "scripts"
+scripts_readme = read_text(scripts_dir / "README.md")
+for script in sorted(scripts_dir.glob("*.sh")):
+    if script.name not in scripts_readme:
+        fail(f"script missing from scripts/README.md inventory: {script.name}")
+
+script_ref_pattern = re.compile(r"scripts/[A-Za-z0-9_.-]+\.sh")
+for path in [root / "README.md", scripts_dir / "README.md", root / ".github/workflows/ci.yml", root / ".claude/settings.json"]:
+    if not path.exists():
+        continue
+    for match in script_ref_pattern.findall(read_text(path)):
+        if not (root / match).exists():
+            fail(f"script reference points to missing file in {rel(path)}: {match}")
+
+tracked = set()
+try:
+    proc = subprocess.run(["git", "ls-files"], cwd=root, check=True, text=True, capture_output=True)
+    tracked = set(proc.stdout.splitlines())
+except Exception as exc:
+    fail(f"git ls-files failed: {exc}")
+
+for obsolete in ["k3d_kubeconfig.yaml"]:
+    if obsolete in tracked:
+        fail(f"obsolete tracked file remains: {obsolete}")
+for tracked_path in tracked:
+    if tracked_path.startswith("docs/" + legacy_postmortems + "/") or tracked_path.startswith("docs/" + legacy_learning + "/"):
+        fail(f"obsolete tracked docs path remains: {tracked_path}")
+
+inventory_path = root / "docs/90.references/tech-stack-version-inventory.md"
+inventory_text = read_text(inventory_path)
+match = re.search(r"```yaml\n(.*?)\n```", inventory_text, re.DOTALL)
+if not match:
+    fail(f"missing YAML inventory block in {rel(inventory_path)}")
+    inventory = {}
+else:
+    inventory = yaml.safe_load(match.group(1)) or {}
+
+k3d_config = load_yaml(root / "infrastructure/k3d/k3d-cluster.yaml")
+actual_k3s_image = k3d_config.get("image")
+if inventory.get("k3s_image") != actual_k3s_image:
+    fail(f"k3s image drift: inventory={inventory.get('k3s_image')} actual={actual_k3s_image}")
+
+actual_charts = {}
+for app_file in sorted((root / "gitops/apps/root").glob("*.yaml")):
+    data = load_yaml(app_file)
+    source = ((data.get("spec") or {}).get("source") or {})
+    if source.get("chart"):
+        actual_charts[(data.get("metadata") or {}).get("name")] = {
+            "repoURL": source.get("repoURL"),
+            "chart": source.get("chart"),
+            "targetRevision": str(source.get("targetRevision")),
+        }
+expected_charts = inventory.get("helm_charts") or {}
+for name, expected in sorted(expected_charts.items()):
+    actual = actual_charts.get(name)
+    if actual != expected:
+        fail(f"Helm chart drift for {name}: inventory={expected} actual={actual}")
+for name in sorted(set(actual_charts) - set(expected_charts)):
+    fail(f"Helm chart missing from inventory: {name}")
+
+actual_actions = {}
+for workflow in sorted((root / ".github/workflows").glob("*.yml")):
+    data = load_yaml(workflow)
+    for job in (data.get("jobs") or {}).values():
+        for step in job.get("steps") or []:
+            uses = step.get("uses")
+            if not uses:
+                continue
+            if "@" not in uses:
+                fail(f"GitHub Action is not pinned with @version in {rel(workflow)}: {uses}")
+                continue
+            action, version = uses.rsplit("@", 1)
+            previous = actual_actions.get(action)
+            if previous and previous != version:
+                fail(f"GitHub Action version conflict for {action}: {previous} vs {version}")
+            actual_actions[action] = version
+expected_actions = inventory.get("github_actions") or {}
+for action, expected in sorted(expected_actions.items()):
+    actual = actual_actions.get(action)
+    if actual != expected:
+        fail(f"GitHub Action version drift for {action}: inventory={expected} actual={actual}")
+for action in sorted(set(actual_actions) - set(expected_actions)):
+    fail(f"GitHub Action missing from inventory: {action}")
+
+pre_commit_data = load_yaml(root / ".pre-commit-config.yaml")
+actual_pre_commit = {
+    repo_entry.get("repo"): str(repo_entry.get("rev"))
+    for repo_entry in pre_commit_data.get("repos") or []
+    if repo_entry.get("repo") and repo_entry.get("rev")
+}
+expected_pre_commit = inventory.get("pre_commit") or {}
+for repo_url, expected in sorted(expected_pre_commit.items()):
+    actual = actual_pre_commit.get(repo_url)
+    if actual != expected:
+        fail(f"pre-commit version drift for {repo_url}: inventory={expected} actual={actual}")
+for repo_url in sorted(set(actual_pre_commit) - set(expected_pre_commit)):
+    fail(f"pre-commit repo missing from inventory: {repo_url}")
+
+if failures:
+    print("=== validate-repo-quality-gates ===")
+    for item in failures:
+        print(item)
+    sys.exit(1)
+
+print("[PASS] repository quality gates passed")
+PY

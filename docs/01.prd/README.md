@@ -43,3 +43,13 @@
 | [`2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md)                     | WSL2 기반 k3d/k3s + ArgoCD GitOps 플랫폼 PRD                                       | Draft  | 2026-03-27 |
 | [`2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md)             | WSL2 멀티노드 HA + TLS + 최소권한 + 변경영역 기반 CI 정적 게이트 요구를 포함한 PRD | Draft  | 2026-05-09 |
 | [`2026-03-29-platform-expansion-dashboard-mesh.md`](./2026-03-29-platform-expansion-dashboard-mesh.md) | 2026-03-29 cert-manager/Dashboard/Istio/Kiali 확장 PRD, 현재 실행계약은 Headlamp/172.18.x 기준 | Active | 2026-05-09 |
+
+## 관련 폴더
+
+- `02.ard/`: PRD 요구를 시스템 경계와 품질 속성으로 확장한다.
+- `04.specs/`: PRD 요구를 구현 가능한 계약으로 구체화한다.
+- `05.plans/`: PRD와 Spec을 실행 순서로 전환한다.
+
+## 예시
+
+- 신규 플랫폼 기능은 `2026-03-29-platform-expansion-dashboard-mesh.md`처럼 사용자 가치, 범위, 성공 기준을 먼저 기록한다.

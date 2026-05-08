@@ -23,7 +23,10 @@ Use the existing stage structure only.
 | User or operator guide | `docs/07.guides/<doc>.md` | `docs/99.templates/guide.template.md` | Use after the relevant spec is stable. |
 | Operations policy | `docs/08.operations/<doc>.md` | `docs/99.templates/operation.template.md` | Required for release and operational controls. |
 | Runbook | `docs/09.runbooks/<doc>.md` | `docs/99.templates/runbook.template.md` | Use for executable operational procedures. |
+| Incident record | `docs/10.incidents/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/incident.template.md` | Use for facts, timelines, mitigations, and active incident evidence. |
+| Postmortem | `docs/10.incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/postmortem.template.md` | Use for RCA, prevention actions, and post-incident learning. |
 | Durable reference | `docs/90.references/<category>/<topic>.md` | `docs/99.templates/reference.template.md` | Use for slow-moving concepts, glossaries, standards, and reusable agent knowledge. |
+| Governance memory | `docs/00.agent-governance/memory/<topic>.md` | `docs/99.templates/memory.template.md` | Use for reusable agent governance lessons. |
 
 ## Prohibited Paths
 
@@ -31,6 +34,8 @@ The following paths are not valid authored-document targets in this repository:
 
 - `docs/superpowers/**`
 - `docs/api/**`
+- Legacy postmortem top-level trees
+- Legacy learning top-level trees
 - Ad hoc top-level trees for plans, specs, or references outside the canonical stage folders
 
 When a skill suggests one of these paths, reroute the output into the canonical stage location instead of creating the proposed path.

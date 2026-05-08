@@ -18,6 +18,7 @@ This folder is necessary to encapsulate repository checks that support the k3d/G
 
 | Script | Status | Purpose |
 | --- | --- | --- |
+| `validate-repo-quality-gates.sh` | CI-wired / manual fallback | Docs structure, README sections, template placement, workflow duplication, script references, obsolete files, and version inventory drift validation. |
 | `validate-k8s-manifests.sh` | CI-used / manual fallback | YAML syntax validation and optional `kube-linter` coverage for manifests. |
 | `validate-gitops-structure.sh` | CI-wired / manual fallback | ArgoCD root app, root app kind, and GitOps kustomization structure validation. |
 | `check-secret-handling.sh` | CI-wired / manual fallback | Plaintext secret pattern scan for GitOps and infrastructure manifests. |

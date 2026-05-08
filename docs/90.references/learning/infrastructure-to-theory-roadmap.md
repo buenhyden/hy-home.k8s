@@ -45,9 +45,9 @@ Kubernetes의 특정 ConfigMap이 변경될 때마다 관련 Pod을 자동으로
 - **Objective**: Kubernetes Reconciliation Loop의 원리 이해.
 - **Tech Stack**: Python (kubernetes-client) or Go (controller-runtime).
 - **Core Logic**:
-    1. `ConfigMap` 리소스를 리스트하고 이벤트를 감시(Watch)합니다.
-    2. 변경 감지 시, 해당 `ConfigMap`을 사용하는 `Deployment`의 Annotations에 타임스탬프를 추가하여 재배포를 유도합니다.
-- **Validation**: `kubectl apply` 후 Pod이 새롭게 생성되는지 확인.
+  1. `ConfigMap` 리소스를 리스트하고 이벤트를 감시(Watch)합니다.
+  2. 변경 감지 시, 해당 `ConfigMap`을 사용하는 `Deployment`의 Annotations에 타임스탬프를 추가하여 재배포를 유도합니다.
+- **Validation**: GitOps manifest 변경 후 ArgoCD reconciliation으로 Pod 교체를 확인합니다.
 
 ---
 
@@ -61,3 +61,8 @@ Kubernetes의 특정 ConfigMap이 변경될 때마다 관련 Pod을 자동으로
 
 > [!TIP]
 > 이 저장소의 활성 에이전트 런타임은 `.claude/`와 `.codex/` 기준입니다. 내구성 있는 학습 참고 자료를 추가할 때는 빈 `.agent/` 경로를 만들지 말고 `docs/90.references/` 또는 현재 활성 런타임 문서로 연결하세요.
+
+## Related Documents
+
+- [References README](../README.md)
+- [Agent Governance Hub](../../00.agent-governance/README.md)

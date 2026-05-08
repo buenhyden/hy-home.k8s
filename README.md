@@ -165,6 +165,7 @@ repo-backed 정적 검증을 로컬에서 확인할 때는 아래 순서로 실�
 
 ```bash
 bash infrastructure/tests/verify-contracts-static.sh
+bash scripts/validate-repo-quality-gates.sh .
 bash scripts/validate-gitops-structure.sh
 bash scripts/validate-k8s-manifests.sh .
 bash scripts/check-secret-handling.sh .

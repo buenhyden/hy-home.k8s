@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       precommit: ${{ steps.filter.outputs.precommit }}
+      repo_quality: ${{ steps.filter.outputs.repo_quality }}
       manifests: ${{ steps.filter.outputs.manifests }}
       shell: ${{ steps.filter.outputs.shell }}
     steps:
@@ -30,6 +31,16 @@ jobs:
           filters: |
             precommit:
               - '**'
+            repo_quality:
+              - 'README.md'
+              - 'docs/**'
+              - '.github/**'
+              - '.claude/**'
+              - '.codex/**'
+              - 'scripts/**'
+              - '.pre-commit-config.yaml'
+              - 'infrastructure/k3d/k3d-cluster.yaml'
+              - 'gitops/apps/root/**'
             manifests:
               - 'gitops/**'
               - 'infrastructure/**/*.yaml'
@@ -54,6 +65,24 @@ jobs:
         with:
           python-version: '3.x'
       - uses: pre-commit/action@v3.0.1
+
+  repo-quality-static:
+    needs: changes
+    if: needs.changes.outputs.repo_quality == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+      - name: Install repository validation dependencies
+        run: |
+          python -m pip install --disable-pip-version-check pyyaml
+      - name: Run repository quality gates
+        run: |
+          bash scripts/validate-repo-quality-gates.sh .
 
   manifest-static:
     needs: changes
@@ -99,6 +128,7 @@ jobs:
     needs:
       - changes
       - pre-commit
+      - repo-quality-static
       - manifest-static
       - shell-static
     if: always()
@@ -108,6 +138,7 @@ jobs:
         run: |
           echo "changes=${{ needs.changes.result }}"
           echo "pre-commit=${{ needs['pre-commit'].result }}"
+          echo "repo-quality-static=${{ needs['repo-quality-static'].result }}"
           echo "manifest-static=${{ needs['manifest-static'].result }}"
           echo "shell-static=${{ needs['shell-static'].result }}"
       - name: Fail on gate failure

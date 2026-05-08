@@ -40,3 +40,13 @@
 | [`2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md)         | WSL2 GitOps 플랫폼 단계별 실행 계획                                             | Draft | 2026-03-27 |
 | [`2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | TLS/최소권한 유지 + 변경영역 기반 CI 정적 게이트 + 롤백 규칙을 포함한 실행 계획 | Draft | 2026-03-28 |
 | [`2026-03-29-platform-expansion.md`](./2026-03-29-platform-expansion.md)                   | 2026-03-29 IP 수정 + cert-manager/Dashboard/Istio/Kiali 확장 계획, 현재 실행계약은 Headlamp/172.18.x 기준 | Done  | 2026-05-09 |
+
+## 관련 폴더
+
+- `04.specs/`: 계획의 입력이 되는 기술 명세
+- `06.tasks/`: 계획을 실행 가능한 작업으로 나눈 기록
+- `08.operations/`: 롤아웃과 운영 정책 기준
+
+## 예시
+
+- 플랫폼 확장 작업은 `2026-03-29-platform-expansion.md`처럼 단계, 위험, 검증 게이트를 포함한다.

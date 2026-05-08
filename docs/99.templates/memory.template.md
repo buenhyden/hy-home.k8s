@@ -1,4 +1,4 @@
-# Memory Template: <short-title>
+# Memory Template: \<short-title\>
 
 - **Date**: YYYY-MM-DD
 - **Layer**: product | architecture | backend | frontend | infra | ops | security | qa | docs | meta
