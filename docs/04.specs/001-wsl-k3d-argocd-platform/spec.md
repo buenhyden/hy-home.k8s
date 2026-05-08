@@ -4,6 +4,8 @@
 
 이 문서는 WSL2 기반 k3d(k3s) 플랫폼에서 ArgoCD GitOps, ESO+Vault, 외부 PostgreSQL/Valkey 연동을 구현하기 위한 기술 명세를 정의한다.
 
+> **현재 실행계약 메모 (2026-05-09)**: 이 Spec은 초기 플랫폼 설계 기록이다. 현재 repo-backed 외부 서비스 실행계약은 `gitops/platform/external-services/`, `gitops/platform/network-policies/`, `infrastructure/tests/verify-contracts-static.sh`의 `172.18.x` EndpointSlice/CIDR 값이 우선한다.
+
 ## Strategic Boundaries & Non-goals
 
 - Owns: 클러스터 토폴로지, GitOps 경계, 외부 서비스 인터페이스, 보안 기본 통제.

@@ -8,6 +8,8 @@
 
 이 런북은 Kiali에서 Grafana, Prometheus, Tempo 등 외부 관측성 서비스가 Unreachable로 표시되는 장애를 진단하고 복구하는 절차를 제공한다.
 
+> **현재 실행계약 메모 (2026-05-09)**: 현재 `gitops/platform/external-services/`와 정적 검증 스크립트는 외부 Observability EndpointSlice/CIDR을 `172.18.x` 기준으로 고정한다. 이 런북의 `172.19.x` 언급은 과거 Grafana URL을 현재 `172.18.x` 계약으로 바꾸는 예시로만 해석한다.
+
 주된 원인은 세 가지다:
 
 1. **Docker 네트워크 재할당**: k3d-hyhome 네트워크가 재시작되면 외부 컨테이너(infra-grafana 등)의 IP가 변경된다. `gitops/platform/external-services/` 아래의 EndpointSlice YAML과 Kiali ConfigMap의 Grafana URL이 구 IP를 가리키게 되어 연결이 끊긴다.

@@ -4,6 +4,8 @@
 
 이 문서는 Windows WSL2(Ubuntu) 환경에서 k3d(k3s) 기반 멀티노드 Kubernetes 플랫폼과 ArgoCD GitOps 파이프라인을 구축하기 위한 제품 요구사항을 정의한다. 외부 서비스(Vault, PostgreSQL, Valkey) 연동과 문서 추적성을 핵심 성공 기준으로 삼는다.
 
+> **현재 실행계약 메모 (2026-05-09)**: 이 PRD는 초기 플랫폼 요구사항 기록이다. 현재 repo-backed 외부 서비스 실행계약은 `gitops/platform/external-services/`, `gitops/platform/network-policies/`, `infrastructure/tests/verify-contracts-static.sh`의 `172.18.x` EndpointSlice/CIDR 값이 우선한다.
+
 ## Vision
 
 Create a reproducible, secure, and automation-first local platform that mirrors production-grade GitOps workflows for development and operations teams.

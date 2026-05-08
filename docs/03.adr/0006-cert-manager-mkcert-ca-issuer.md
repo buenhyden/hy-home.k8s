@@ -4,6 +4,8 @@
 
 이 ADR은 cert-manager를 플랫폼 TLS 인증서 관리 컴포넌트로 도입하고, mkcert가 생성한 rootCA를 cert-manager `ClusterIssuer`(CA 타입)로 등록하는 결정을 기록한다.
 
+> **현재 실행계약 메모 (2026-05-09)**: 이 ADR의 Dashboard 관련 입력은 2026-03-29 기준의 역사적 플랫폼 확장 맥락이다. 현재 클러스터 UI 계약은 [ADR-0010](./0010-headlamp-replaces-dashboard.md)에 따라 Headlamp를 기준으로 한다.
+
 ## Context
 
 플랫폼 확장(Kubernetes Dashboard, Istio/Kiali)으로 TLS가 필요한 ingress가 증가한다.

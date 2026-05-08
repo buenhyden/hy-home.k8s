@@ -147,6 +147,12 @@ legacy_docs_range = "01" + "~" + "99"
 legacy_stage_label = "Stage " + "11"
 legacy_harness = "H" + "100"
 legacy_harness_examples = "examples/" + "harness-100"
+legacy_dashboard_app = "platform" + "-dashboard"
+legacy_dashboard_ns_file = "namespace" + "-kubernetes-dashboard"
+legacy_dashboard_kubectl = "kubectl -n " + "kubernetes-dashboard"
+legacy_dashboard_namespace_code = "`" + "kubernetes-dashboard" + "` namespace"
+legacy_dashboard_namespace_text = "kubernetes-dashboard " + "namespace"
+legacy_docs_traefik = "docs/" + "traefik"
 stale_patterns = [
     "docs/" + legacy_postmortems,
     "docs/" + legacy_learning,
@@ -157,6 +163,21 @@ stale_patterns = [
     legacy_stage_label,
     legacy_harness,
     legacy_harness_examples,
+]
+legacy_contract_patterns = [
+    legacy_dashboard_app,
+    legacy_dashboard_ns_file,
+    legacy_dashboard_kubectl,
+    legacy_dashboard_namespace_code,
+    legacy_dashboard_namespace_text,
+    legacy_docs_traefik,
+]
+legacy_contract_markers = [
+    "현재 실행계약 메모",
+    "Superseded",
+    "superseded",
+    "역사적",
+    "Headlamp Replaces Kubernetes Dashboard",
 ]
 scan_roots = [
     root / "README.md",
@@ -179,6 +200,9 @@ for scan_root in scan_roots:
         for pattern in stale_patterns:
             if pattern in text:
                 fail(f"stale docs path reference found in {rel(path)}: {pattern}")
+        for pattern in legacy_contract_patterns:
+            if pattern in text and not any(marker in text for marker in legacy_contract_markers):
+                fail(f"legacy runtime contract reference lacks historical/superseded note in {rel(path)}: {pattern}")
 
 workflow_paths = sorted((root / ".github").glob("**/*.yml")) + sorted((root / ".github").glob("**/*.yaml"))
 for workflow in workflow_paths:
