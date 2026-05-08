@@ -12,8 +12,11 @@
 - `docs/<scope>-<slug>`
 - `refactor/<scope>-<slug>`
 - `chore/<scope>-<slug>`
+- `ci/<scope>-<slug>`
 - `release/<version-or-slug>`
 - `hotfix/<scope>-<slug>`
+- `codex/<scope>-<slug>`
+- `dependabot/<ecosystem-or-scope>`
 
 ## Rules
 

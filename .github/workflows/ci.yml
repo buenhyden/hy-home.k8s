@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,8 +15,32 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  branch-policy:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Validate pull request branch policy
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+          allowed_branch_regex='^(feat|fix|docs|refactor|chore|ci|release|hotfix|codex|dependabot)/'
+          if [ "$BASE_REF" != "main" ]; then
+            echo "PR base branch must be main, got: $BASE_REF"
+            exit 1
+          fi
+          if ! [[ "$HEAD_REF" =~ $allowed_branch_regex ]]; then
+            echo "PR source branch must start with one of: feat/, fix/, docs/, refactor/, chore/, ci/, release/, hotfix/, codex/, dependabot/"
+            echo "got: $HEAD_REF"
+            exit 1
+          fi
+          printf 'branch-policy=ok base=%s head=%s\n' "$BASE_REF" "$HEAD_REF"
+
   changes:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     outputs:
       precommit: ${{ steps.filter.outputs.precommit }}
       repo_quality: ${{ steps.filter.outputs.repo_quality }}
@@ -68,6 +93,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.precommit == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
         with:
@@ -81,6 +107,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.repo_quality == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
         with:
@@ -99,6 +126,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.manifests == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
         with:
@@ -120,6 +148,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.shell == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v6
         with:
@@ -143,6 +172,7 @@ jobs:
 
   ci-summary:
     needs:
+      - branch-policy
       - changes
       - pre-commit
       - repo-quality-static
@@ -150,15 +180,18 @@ jobs:
       - shell-static
     if: always()
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Summarize CI result
         env:
+          BRANCH_POLICY_RESULT: ${{ needs['branch-policy'].result }}
           CHANGES_RESULT: ${{ needs.changes.result }}
           PRE_COMMIT_RESULT: ${{ needs['pre-commit'].result }}
           REPO_QUALITY_STATIC_RESULT: ${{ needs['repo-quality-static'].result }}
           MANIFEST_STATIC_RESULT: ${{ needs['manifest-static'].result }}
           SHELL_STATIC_RESULT: ${{ needs['shell-static'].result }}
         run: |
+          printf 'branch-policy=%s\n' "$BRANCH_POLICY_RESULT"
           printf 'changes=%s\n' "$CHANGES_RESULT"
           printf 'pre-commit=%s\n' "$PRE_COMMIT_RESULT"
           printf 'repo-quality-static=%s\n' "$REPO_QUALITY_STATIC_RESULT"

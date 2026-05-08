@@ -13,6 +13,7 @@ jobs:
       pull-requests: write # PR에 코멘트 남길 때
       contents: read
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/first-interaction@v3
         with:

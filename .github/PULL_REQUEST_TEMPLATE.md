@@ -11,6 +11,7 @@ Fixes # (link to issue if applicable)
 ## 3. Branch Target
 
 - [ ] This PR targets `main`, unless a documented release or hotfix flow requires otherwise.
+- [ ] The source branch uses an approved prefix: `feat/`, `fix/`, `docs/`, `refactor/`, `chore/`, `ci/`, `release/`, `hotfix/`, `codex/`, or `dependabot/`.
 
 ## 4. Type of Change
 

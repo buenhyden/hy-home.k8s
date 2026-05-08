@@ -76,6 +76,7 @@
 | [`2026-03-29-platform-expansion.md`](./2026-03-29-platform-expansion.md)                   | 2026-03-29 IP 수정 + cert-manager/Dashboard/Istio/Kiali 확장 Task, 현재 실행계약은 Headlamp/172.18.x 기준 | Done  | 2026-05-09 |
 | [`2026-05-09-k3d-agent-first-remediation.md`](./2026-05-09-k3d-agent-first-remediation.md) | k3d 운영 문서와 Agent-first 실행 계약의 GitOps-first 충돌 보정 Task | Done  | 2026-05-09 |
 | [`2026-05-09-scripts-inventory-remediation.md`](./2026-05-09-scripts-inventory-remediation.md) | `scripts/` 인벤토리 조사와 README 실행 계약 보정 Task | Done  | 2026-05-09 |
+| [`2026-05-09-github-qa-ci-remediation.md`](./2026-05-09-github-qa-ci-remediation.md) | `.github` QA, CI, 브랜치 정책, PR intake 계약 보정 Task | Done  | 2026-05-09 |
 
 ## 관련 폴더
 

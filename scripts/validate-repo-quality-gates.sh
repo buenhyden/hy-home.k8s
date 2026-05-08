@@ -280,9 +280,12 @@ else:
             branches = branch_value if isinstance(branch_value, list) else [branch_value]
         if branches != ["main"]:
             fail(f"{rel(ci_path)} {event_name} trigger must target only main: {branches}")
+    if "workflow_dispatch" not in ci_on:
+        fail(f"{rel(ci_path)} must include workflow_dispatch for manual QA reruns")
 
 ci_jobs = ci_data.get("jobs") or {}
 required_ci_jobs = {
+    "branch-policy",
     "changes",
     "pre-commit",
     "repo-quality-static",
@@ -292,6 +295,46 @@ required_ci_jobs = {
 }
 for job_id in sorted(required_ci_jobs - set(ci_jobs)):
     fail(f"{rel(ci_path)} missing required CI job: {job_id}")
+
+branch_policy_job = ci_jobs.get("branch-policy") or {}
+branch_policy_if = str(branch_policy_job.get("if") or "")
+if "github.event_name == 'pull_request'" not in branch_policy_if:
+    fail(f"{rel(ci_path)} branch-policy must run only for pull_request")
+branch_policy_text = "\n".join(
+    str(step.get("run") or "")
+    for step in branch_policy_job.get("steps") or []
+)
+for phrase in [
+    "BASE_REF",
+    "HEAD_REF",
+    "allowed_branch_regex",
+    "PR base branch must be main",
+    "branch-policy=ok",
+]:
+    if phrase not in branch_policy_text:
+        fail(f"{rel(ci_path)} branch-policy missing validation phrase: {phrase}")
+for prefix in ["feat", "fix", "docs", "refactor", "chore", "ci", "release", "hotfix", "codex", "dependabot"]:
+    if prefix not in branch_policy_text:
+        fail(f"{rel(ci_path)} branch-policy missing allowed branch prefix: {prefix}/")
+
+ci_summary_job = ci_jobs.get("ci-summary") or {}
+ci_summary_needs = ci_summary_job.get("needs") or []
+if isinstance(ci_summary_needs, str):
+    ci_summary_needs = [ci_summary_needs]
+for job_id in sorted(required_ci_jobs - set(ci_summary_needs)):
+    if job_id != "ci-summary":
+        fail(f"{rel(ci_path)} ci-summary must aggregate required CI job: {job_id}")
+ci_summary_text = "\n".join(
+    str(step.get("run") or "")
+    for step in ci_summary_job.get("steps") or []
+)
+ci_summary_env_text = "\n".join(
+    "\n".join(f"{key}={value}" for key, value in (step.get("env") or {}).items())
+    for step in ci_summary_job.get("steps") or []
+)
+for phrase in ["BRANCH_POLICY_RESULT", "branch-policy="]:
+    if phrase not in (ci_summary_text + "\n" + ci_summary_env_text):
+        fail(f"{rel(ci_path)} ci-summary missing branch-policy linkage: {phrase}")
 
 changes_job = ci_jobs.get("changes") or {}
 filters = {}
@@ -340,9 +383,14 @@ for command in [
 for phrase in [
     "Workflow path filters and job ownership reviewed",
     "No live cluster mutation",
+    "approved prefix",
+    "`main`",
 ]:
     if phrase not in pr_template_text:
         fail(f"{rel(pr_template_path)} missing GitHub/GitOps review phrase: {phrase}")
+for prefix in ["feat/", "fix/", "docs/", "refactor/", "chore/", "ci/", "release/", "hotfix/", "codex/", "dependabot/"]:
+    if prefix not in pr_template_text:
+        fail(f"{rel(pr_template_path)} missing approved source branch prefix: {prefix}")
 
 labeler_path = root / ".github/labeler.yml"
 labeler_data = load_yaml(labeler_path)
@@ -369,7 +417,11 @@ for workflow in sorted((root / ".github/workflows").glob("*.yml")):
         workflow_data = load_yaml(workflow)
     except Exception:
         continue
+    if workflow.name in {"generate-changelog.yml", "labeler.yml", "stale.yml"} and "concurrency" not in workflow_data:
+        fail(f"{rel(workflow)} must declare workflow-level concurrency")
     for job_id, job in (workflow_data.get("jobs") or {}).items():
+        if "timeout-minutes" not in job:
+            fail(f"{rel(workflow)} job {job_id} must declare timeout-minutes")
         for step in job.get("steps") or []:
             run_block = str(step.get("run") or "")
             if re.search(r"\$\{\{\s*needs(?:\.|\[)[^}]*\.result\s*\}\}", run_block):
