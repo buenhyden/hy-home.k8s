@@ -37,6 +37,7 @@ Harness layers L1–L6 were incomplete: no `settings.json`, no agent files, no h
 - `.claude/hooks/` — 3 scripts created: `session-start.sh`, `k8s-pre-edit.sh`, `post-validate.sh`.
 - `.claude/agents/` — 7 agent files created: `supervisor.md`, `k8s-implementer.md`, `gitops-reviewer.md`, `security-auditor.md`, `incident-responder.md`, `code-reviewer.md`, `doc-writer.md`.
 - `scripts/` — 3 validation scripts created: `validate-k8s-manifests.sh`, `validate-gitops-structure.sh`, `check-secret-handling.sh`.
+  Current script inventory is maintained in `scripts/README.md`; this memory entry records the initial harness implementation state.
 
 **P4 (complete, 2026-04-13):**
 
