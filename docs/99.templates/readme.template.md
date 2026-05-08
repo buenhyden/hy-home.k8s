@@ -8,7 +8,7 @@
 ## Selection Guide
 - Repository Root (`/`) -> `Base Structure` + `Root Snippet`
 - Implementation Layer (`web/`, `server/`, `app/`, `packages/`, `gitops/`, `infra/`, `infrastructure/`) -> `Base Structure` + `Implementation Snippet`
-- Documentation & Governance (`docs/`, `docs/99.templates/`, `.agent/`) -> `Base Structure` + `Docs & Governance Snippet`
+- Documentation & Governance (`docs/`, `docs/99.templates/`, `.claude/`, `.codex/`) -> `Base Structure` + `Docs & Governance Snippet`
 - Operations & Procedures (`docs/08.operations/`, `docs/09.runbooks/`, `scripts/`) -> `Base Structure` + `Ops & Utils Snippet`
 - Incident Learning (`docs/10.incidents/`, `docs/11.postmortems/`) -> `Base Structure` + `Incident / Postmortem Snippet`
 
@@ -108,7 +108,7 @@ SNIPPET: ROOT
 - `docs/` - 공식 문서 체계, 요구사항, 아키텍처, 스펙, 운영 지식
 - `{implementation-dir}/` - 구현 코드와 런타임 구성
 - `{ops-dir}/` - 운영 자산, 스크립트, 절차
-- `.agent/` - 에이전트 규칙, 워크플로, 실행 가이드
+- `.claude/`, `.codex/` - 에이전트 규칙, 워크플로, 실행 가이드
 
 ## Tech Stack
 

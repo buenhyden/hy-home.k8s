@@ -9,11 +9,11 @@
 - Argo Rollouts v1.9.0 (chart 2.40.9) — `argo-rollouts` namespace
 - Argo Notifications (ArgoCD 내장 컨트롤러) — `argocd` namespace
 - Headlamp v0.41.0 — `headlamp` namespace
-- Traefik 외부 artifact — `docs/traefik/` (별도 Traefik 레포 적용)
+- Traefik 외부 artifact — `traefik/` (별도 Traefik 레포 적용)
 
 ## Applies To
 
-- **Systems**: `gitops/apps/root/platform-rollouts-app.yaml`, `gitops/apps/root/platform-headlamp-app.yaml`, `gitops/platform/argocd/argocd-notifications-*`, `docs/traefik/`
+- **Systems**: `gitops/apps/root/platform-rollouts-app.yaml`, `gitops/apps/root/platform-headlamp-app.yaml`, `gitops/platform/argocd/argocd-notifications-*`, `traefik/`
 - **Agents**: 운영 자동화 에이전트
 - **Environments**: WSL2 local cluster
 
@@ -31,7 +31,7 @@
 - **Allowed**:
   - 수동 `kubectl argo rollouts promote <rollout>` 실행
   - canary/blue-green 전략 선택
-  - Prometheus AnalysisTemplate 정의 (외부 Prometheus `172.19.0.20:9090` 활용)
+  - Prometheus AnalysisTemplate 정의 (외부 Prometheus `172.18.0.10:9090` 활용)
 - **Disallowed**:
   - `argo-rollouts` namespace에 Rollouts 외 워크로드 배치
   - `skipAnalysis: true` 임의 사용
@@ -65,9 +65,9 @@
 
 ## Traefik 외부 Artifact 관리
 
-- `docs/traefik/kiali-k3d.yaml` — Kiali Traefik 라우터
-- `docs/traefik/headlamp-k3d.yaml` — Headlamp Traefik 라우터
-- `docs/traefik/rollouts-k3d.yaml` — Rollouts Dashboard Traefik 라우터
+- `traefik/kiali-k3d.yaml` — Kiali Traefik 라우터
+- `traefik/headlamp-k3d.yaml` — Headlamp Traefik 라우터
+- `traefik/rollouts-k3d.yaml` — Rollouts Dashboard Traefik 라우터
 - 이 파일들은 별도 Traefik 레포에 수동 적용한다. 자동화 금지.
 
 ## Verification

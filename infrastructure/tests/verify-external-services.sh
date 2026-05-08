@@ -34,7 +34,7 @@ valkey_ep_port="$(kubectl -n platform get endpointslice valkey-external-1 -o jso
 [ "$valkey_ep_port" = "6379" ] || fail "valkey EndpointSlice port mismatch (actual=$valkey_ep_port)"
 
 valkey_ep_addr="$(kubectl -n platform get endpointslice valkey-external-1 -o jsonpath='{.endpoints[0].addresses[0]}' 2>/dev/null || true)"
-[ "$valkey_ep_addr" = "172.19.0.12" ] || fail "valkey EndpointSlice address mismatch (actual=$valkey_ep_addr)"
+[ "$valkey_ep_addr" = "172.18.0.9" ] || fail "valkey EndpointSlice address mismatch (actual=$valkey_ep_addr)"
 
 echo "[INFO] Checking observability external service contracts"
 
@@ -66,10 +66,10 @@ check_obs_ep() {
   [ "$actual" = "$expected_addr" ] || fail "${slice}-1 address mismatch (expected=${expected_addr}, actual=${actual})"
 }
 
-check_obs_ep "prometheus-external" "172.19.0.20"
-check_obs_ep "loki-external" "172.19.0.21"
-check_obs_ep "tempo-external" "172.19.0.22"
-check_obs_ep "alloy-external" "172.19.0.23"
-check_obs_ep "grafana-external" "172.19.0.24"
+check_obs_ep "prometheus-external" "172.18.0.10"
+check_obs_ep "loki-external" "172.18.0.13"
+check_obs_ep "tempo-external" "172.18.0.12"
+check_obs_ep "alloy-external" "172.18.0.11"
+check_obs_ep "grafana-external" "172.18.0.14"
 
 echo "[PASS] external service contract checks passed"

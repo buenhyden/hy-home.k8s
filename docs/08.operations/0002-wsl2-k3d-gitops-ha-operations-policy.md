@@ -21,7 +21,7 @@
 
 - **Required**:
   - 인터페이스 계약 포트 고정(8200/15432/15433/6379)
-  - Valkey는 `Service + EndpointSlice(172.19.0.12:6379)` 모델 사용
+  - Valkey는 `Service + EndpointSlice(172.18.0.9:6379)` 모델 사용
   - Vault 경로 표준(`secret/platform/argocd`, `secret/platform/postgres-app`)
   - ArgoCD host=`argocd.127.0.0.1.nip.io`, TLS secret=`argocd-local-tls` # pragma: allowlist secret
   - `ingress-nginx-controller`는 `LoadBalancer` 타입 유지
@@ -31,7 +31,7 @@
   - CI 정적 게이트 필수화(`pre-commit`, `manifest-static`, `workflow-security`, `shell-static`)
   - `fs.inotify.max_user_instances >= 512` (권장 1024) — k3d 4노드 안정 기동 조건
   - Vault 컨테이너는 k3d-hyhome Docker 네트워크에 연결 상태를 유지해야 한다
-  - `vault-external` EndpointSlice IP는 Vault의 k3d-hyhome 네트워크 IP(172.18.x.x)를 사용해야 한다
+  - `vault-external` EndpointSlice IP는 Vault의 k3d-hyhome 네트워크 IP(`172.18.0.8`)를 사용해야 한다
   - Vault Kubernetes auth `kubernetes_host`는 `https://172.18.0.2:6443`으로 고정한다
   - Vault Kubernetes auth `disable_local_ca_jwt: true` + `token_reviewer_jwt` 설정 필수
 - **Allowed**:

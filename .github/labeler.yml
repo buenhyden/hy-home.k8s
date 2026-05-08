@@ -16,7 +16,13 @@ area/documentation:
 
 area/agent:
   - changed-files:
-      - any-glob-to-any-file: ".agent/**"
+      - any-glob-to-any-file:
+          - ".claude/**"
+          - ".codex/**"
+          - "AGENTS.md"
+          - "CLAUDE.md"
+          - "GEMINI.md"
+          - "docs/00.agent-governance/**"
 
 area/github:
   - changed-files:

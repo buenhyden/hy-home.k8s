@@ -57,11 +57,11 @@ rg -q 'path "secret/data/platform/argocd"' "$ROOT_DIR/infrastructure/vault/polic
 rg -q 'path "secret/data/platform/postgres-app"' "$ROOT_DIR/infrastructure/vault/policies/eso-read.hcl" || \
   fail "Vault policy missing secret/data/platform/postgres-app"
 
-echo "[INFO] Checking Dashboard and Kiali ingress TLS"
+echo "[INFO] Checking Headlamp and Kiali ingress TLS"
 
-dashboard_tls_secret="$(kubectl -n kubernetes-dashboard get ingress kubernetes-dashboard-kong-proxy -o jsonpath='{.spec.tls[0].secretName}' 2>/dev/null || true)"
-[ "$dashboard_tls_secret" = "dashboard-tls" ] || \
-  echo "[WARN] dashboard ingress tls secret not found or mismatch (actual=$dashboard_tls_secret)"
+headlamp_tls_secret="$(kubectl -n headlamp get ingress headlamp -o jsonpath='{.spec.tls[0].secretName}' 2>/dev/null || true)"
+[ "$headlamp_tls_secret" = "headlamp-tls" ] || \
+  echo "[WARN] headlamp ingress tls secret not found or mismatch (actual=$headlamp_tls_secret)"
 
 kiali_tls_secret="$(kubectl -n istio-system get ingress kiali -o jsonpath='{.spec.tls[0].secretName}' 2>/dev/null || true)"
 [ "$kiali_tls_secret" = "kiali-tls" ] || \

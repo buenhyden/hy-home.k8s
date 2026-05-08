@@ -77,7 +77,7 @@ hy-home.k8s/
 - `infrastructure/` - k3d 클러스터 설정, ArgoCD Helm values, bootstrap 및 검증 스크립트
 - `examples/` - 앱 GitOps 온보딩용 참조 구현과 템플릿
 - `scripts/` - 저장소 유지보수와 자동화 보조 스크립트
-- `.agent/`, `.claude/` - 에이전트 실행 규칙, 스킬, 워크플로 오버레이
+- `.claude/`, `.codex/` - 에이전트 실행 규칙, 스킬, 워크플로 오버레이
 
 ## Tech Stack
 

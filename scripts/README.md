@@ -1,13 +1,13 @@
 # Utilities & Automation Scripts (`scripts/`)
 
-This directory is reserved for repository maintenance, utility scripts, and automation triggers.
+This directory is reserved for repository maintenance, static validation, and automation helpers.
 
 ## 1. Necessity and Purpose
 
-This folder is necessary to encapsulate build, test, and environment scaffolding tools.
+This folder is necessary to encapsulate repository checks that support the k3d/GitOps workflow.
 
-- Separation of Concerns: It deliberately separates development tooling from application logic (`src/`/`web/`) and operational deployments (`runbooks/`).
-- Consistent Execution: It serves as the common execution layer for tasks like dataset syncing, pre-commit hook setups, or database seeding across developer machines. Refer to [commands.md](../docs/00.agent-governance/commands.md) for authoritative command patterns.
+- Separation of Concerns: It keeps static repository validation separate from GitOps manifests (`gitops/`) and live runtime checks (`infrastructure/tests/`).
+- Consistent Execution: It provides small, repeatable checks for manifest syntax, GitOps structure, and plaintext secret handling. Use `.pre-commit-config.yaml` and `.github/workflows/ci.yml` as the authoritative command inventory.
 
 ## 2. Required Content
 

@@ -30,3 +30,7 @@ rtk --version
 rtk gain
 which rtk
 ```
+
+If `which rtk` returns nothing, the current shell cannot use the RTK proxy.
+In that case, run the underlying command directly and record the limitation in
+the completion summary instead of blocking repository validation.

@@ -44,4 +44,5 @@ Infrastructure assumptions must match current workspace assets:
 - `gitops/`
 - `scripts/`
 - `tests/`
-- `.agent/workflows/`
+- `.claude/`
+- `.codex/`

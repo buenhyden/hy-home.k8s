@@ -7,8 +7,8 @@
 /scripts/ @buenhyden
 
 # Agent Rules
-/.agent/ @buenhyden
 /.claude/ @buenhyden
+/.codex/ @buenhyden
 /docs/00.agent-governance/ @buenhyden
 
 # Security
