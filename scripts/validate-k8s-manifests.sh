@@ -8,6 +8,17 @@ PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TARGET="${1:-${PROJECT_DIR}}"
 CONFIG="${PROJECT_DIR}/.kube-linter.yaml"
 EXIT_CODE=0
+
+if ! command -v python3 &>/dev/null; then
+  echo "ERR python3 is required for YAML syntax validation" >&2
+  exit 1
+fi
+
+if ! python3 -c 'import yaml' &>/dev/null; then
+  echo "ERR python3 PyYAML package is required for YAML syntax validation" >&2
+  exit 1
+fi
+
 declare -a YAML_TARGETS=(
   "$TARGET/gitops"
   "$TARGET/infrastructure"
@@ -27,21 +38,17 @@ echo "=== validate-k8s-manifests ==="
 echo "Target : $TARGET"
 echo "Config : $CONFIG"
 
-# YAML syntax check via python (no external deps)
+# YAML syntax check via python
 echo ""
 echo "--- YAML syntax check ---"
-if command -v python3 &>/dev/null; then
-  find "${YAML_TARGETS[@]}" \( -name "*.yaml" -o -name "*.yml" \) 2>/dev/null | \
-    while read -r f; do
-      if python3 -c "import sys, yaml; yaml.safe_load_all(open('$f'))" 2>&1; then
-        echo "  OK  $f"
-      else
-        echo "  ERR $f"; EXIT_CODE=1
-      fi
-    done
-else
-  echo "(python3 not available — skipping YAML syntax check)"
-fi
+while IFS= read -r -d '' f; do
+  if python3 -c 'import sys, yaml; list(yaml.safe_load_all(open(sys.argv[1])))' "$f" 2>&1; then
+    echo "  OK  $f"
+  else
+    echo "  ERR $f"
+    EXIT_CODE=1
+  fi
+done < <(find "${YAML_TARGETS[@]}" \( -name "*.yaml" -o -name "*.yml" \) -print0 2>/dev/null)
 
 # kube-linter
 echo ""

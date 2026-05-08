@@ -160,3 +160,13 @@ cd hy-home.k8s
 
 - [`.pre-commit-config.yaml`](./.pre-commit-config.yaml)
 - [`.github/workflows/ci.yml`](./.github/workflows/ci.yml)
+
+repo-backed 정적 검증을 로컬에서 확인할 때는 아래 순서로 실행한다.
+
+```bash
+bash infrastructure/tests/verify-contracts-static.sh
+bash scripts/validate-gitops-structure.sh
+bash scripts/validate-k8s-manifests.sh .
+bash scripts/check-secret-handling.sh .
+find .github/gates infrastructure scripts -type f -name '*.sh' -exec bash -n {} \;
+```

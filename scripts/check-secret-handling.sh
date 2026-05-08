@@ -9,6 +9,16 @@ PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TARGET="${1:-${PROJECT_DIR}}"
 EXIT_CODE=0
 
+if ! command -v python3 &>/dev/null; then
+  echo "ERR python3 is required for Kubernetes kind detection" >&2
+  exit 1
+fi
+
+if ! python3 -c 'import yaml' &>/dev/null; then
+  echo "ERR python3 PyYAML package is required for Kubernetes kind detection" >&2
+  exit 1
+fi
+
 echo "=== check-secret-handling ==="
 echo "Target : $TARGET"
 
@@ -30,14 +40,9 @@ for pat in "${DANGEROUS_PATTERNS[@]}"; do
   while IFS= read -r match; do
     # Skip ExternalSecret, SealedSecret, and comment lines
     FILE=$(echo "$match" | cut -d: -f1)
-    KIND=$(python3 -c "
-import yaml, sys
-try:
-  docs = list(yaml.safe_load_all(open('$FILE')))
-  print(docs[0].get('kind','') if docs else '')
-except Exception:
-  print('')
-" 2>/dev/null || echo "")
+    KIND=$(python3 -c 'import sys, yaml
+docs = [d for d in yaml.safe_load_all(open(sys.argv[1])) if isinstance(d, dict)]
+print(docs[0].get("kind", "") if docs else "")' "$FILE" 2>/dev/null || echo "")
     if [[ "$KIND" =~ ^(ExternalSecret|SealedSecret|SecretStore|ClusterSecretStore)$ ]]; then
       continue
     fi

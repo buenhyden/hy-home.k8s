@@ -29,7 +29,9 @@ If yes, please describe the impact and migration path.
 Describe the manual verification or automated tests conducted.
 
 - [ ] Relevant `pre-commit` hooks passed
+- [ ] `bash scripts/validate-gitops-structure.sh` successful (if GitOps assets changed)
 - [ ] `bash scripts/validate-k8s-manifests.sh .` successful (if manifests changed)
+- [ ] `bash scripts/check-secret-handling.sh .` successful (if manifests or secret wiring changed)
 - [ ] ArgoCD/GitOps impact reviewed (if applicable)
 
 ## 6. Checklist
