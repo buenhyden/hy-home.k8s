@@ -21,7 +21,9 @@ area/examples:
 
 area/tests:
   - changed-files:
-      - any-glob-to-any-file: "tests/**"
+      - any-glob-to-any-file:
+          - "tests/**"
+          - "infrastructure/tests/**"
 
 area/scripts:
   - changed-files:

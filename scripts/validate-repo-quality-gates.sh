@@ -68,6 +68,10 @@ def load_yaml(path: pathlib.Path):
         return yaml.load(handle, Loader=DuplicateKeyLoader) or {}
 
 
+def workflow_on(data):
+    return data.get("on") if "on" in data else data.get(True, {})
+
+
 def load_json(path: pathlib.Path):
     with path.open(encoding="utf-8") as handle:
         return json.load(handle)
@@ -86,6 +90,22 @@ def extract_scope_imports(text: str) -> list[str]:
 
 def rel(path: pathlib.Path) -> str:
     return str(path.relative_to(root))
+
+
+def collect_strings(value) -> list[str]:
+    if isinstance(value, str):
+        return [value]
+    if isinstance(value, dict):
+        values: list[str] = []
+        for item in value.values():
+            values.extend(collect_strings(item))
+        return values
+    if isinstance(value, list):
+        values: list[str] = []
+        for item in value:
+            values.extend(collect_strings(item))
+        return values
+    return []
 
 
 allowed_docs = {
@@ -240,6 +260,120 @@ for rule_name, rule_config in sorted(zizmor_rules.items()):
         fail(f"{rel(zizmor_path)} disables unsupported zizmor rule: {rule_name}")
 if not isinstance(zizmor_rules.get("unpinned-uses"), dict) or zizmor_rules["unpinned-uses"].get("disable") is not True:
     fail(f"{rel(zizmor_path)} must keep only unpinned-uses disabled for tag-plus-inventory action pinning")
+
+ci_path = root / ".github/workflows/ci.yml"
+try:
+    ci_data = load_yaml(ci_path)
+except Exception as exc:
+    fail(f"CI workflow parse failed for {rel(ci_path)}: {exc}")
+    ci_data = {}
+
+ci_on = workflow_on(ci_data)
+if not isinstance(ci_on, dict):
+    fail(f"{rel(ci_path)} must declare structured push and pull_request triggers")
+else:
+    for event_name in ["push", "pull_request"]:
+        event_config = ci_on.get(event_name)
+        branches = []
+        if isinstance(event_config, dict):
+            branch_value = event_config.get("branches") or []
+            branches = branch_value if isinstance(branch_value, list) else [branch_value]
+        if branches != ["main"]:
+            fail(f"{rel(ci_path)} {event_name} trigger must target only main: {branches}")
+
+ci_jobs = ci_data.get("jobs") or {}
+required_ci_jobs = {
+    "changes",
+    "pre-commit",
+    "repo-quality-static",
+    "manifest-static",
+    "shell-static",
+    "ci-summary",
+}
+for job_id in sorted(required_ci_jobs - set(ci_jobs)):
+    fail(f"{rel(ci_path)} missing required CI job: {job_id}")
+
+changes_job = ci_jobs.get("changes") or {}
+filters = {}
+for step in changes_job.get("steps") or []:
+    if step.get("id") == "filter":
+        try:
+            filters = yaml.safe_load(((step.get("with") or {}).get("filters") or "")) or {}
+        except Exception as exc:
+            fail(f"{rel(ci_path)} changes filter YAML parse failed: {exc}")
+        break
+shell_filter_paths = filters.get("shell") or []
+if ".claude/hooks/**/*.sh" not in shell_filter_paths:
+    fail(f"{rel(ci_path)} shell path filter must include .claude/hooks/**/*.sh")
+
+manifest_static_runs = "\n".join(
+    str(step.get("run") or "")
+    for step in (ci_jobs.get("manifest-static") or {}).get("steps") or []
+)
+for command in [
+    "bash infrastructure/tests/verify-contracts-static.sh",
+    "bash scripts/validate-gitops-structure.sh",
+    "bash scripts/validate-k8s-manifests.sh .",
+    "bash scripts/check-secret-handling.sh .",
+]:
+    if command not in manifest_static_runs:
+        fail(f"{rel(ci_path)} manifest-static missing command: {command}")
+
+shell_static_text = "\n".join(
+    str(step.get("run") or "")
+    for step in (ci_jobs.get("shell-static") or {}).get("steps") or []
+)
+if ".claude/hooks" not in shell_static_text:
+    fail(f"{rel(ci_path)} shell-static scope must include .claude/hooks")
+
+pr_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
+pr_template_text = read_text(pr_template_path)
+for command in [
+    "bash scripts/validate-repo-quality-gates.sh .",
+    "bash infrastructure/tests/verify-contracts-static.sh",
+    "bash scripts/validate-gitops-structure.sh",
+    "bash scripts/validate-k8s-manifests.sh .",
+    "bash scripts/check-secret-handling.sh .",
+]:
+    if command not in pr_template_text:
+        fail(f"{rel(pr_template_path)} missing manual verification command: {command}")
+for phrase in [
+    "Workflow path filters and job ownership reviewed",
+    "No live cluster mutation",
+]:
+    if phrase not in pr_template_text:
+        fail(f"{rel(pr_template_path)} missing GitHub/GitOps review phrase: {phrase}")
+
+labeler_path = root / ".github/labeler.yml"
+labeler_data = load_yaml(labeler_path)
+test_label_globs = set(collect_strings(labeler_data.get("area/tests") or []))
+for expected_glob in ["tests/**", "infrastructure/tests/**"]:
+    if expected_glob not in test_label_globs:
+        fail(f"{rel(labeler_path)} area/tests missing glob: {expected_glob}")
+
+for workflow in sorted((root / ".github/workflows").glob("*.yml")):
+    workflow_text = read_text(workflow)
+    for command in [
+        "kubectl apply",
+        "kubectl patch",
+        "argocd app sync",
+        "argocd app set",
+        "vault kv",
+        "docker push",
+        "git push",
+    ]:
+        if command in workflow_text:
+            fail(f"{rel(workflow)} contains forbidden live mutation or publish command: {command}")
+
+    try:
+        workflow_data = load_yaml(workflow)
+    except Exception:
+        continue
+    for job_id, job in (workflow_data.get("jobs") or {}).items():
+        for step in job.get("steps") or []:
+            run_block = str(step.get("run") or "")
+            if re.search(r"\$\{\{\s*needs(?:\.|\[)[^}]*\.result\s*\}\}", run_block):
+                fail(f"{rel(workflow)} job {job_id} run block expands needs.*.result directly")
 
 for json_path in [root / ".claude/settings.json", root / ".codex/hooks.json"]:
     try:
