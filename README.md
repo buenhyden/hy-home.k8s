@@ -168,5 +168,5 @@ bash infrastructure/tests/verify-contracts-static.sh
 bash scripts/validate-gitops-structure.sh
 bash scripts/validate-k8s-manifests.sh .
 bash scripts/check-secret-handling.sh .
-find .github/gates infrastructure scripts -type f -name '*.sh' -exec bash -n {} \;
+find infrastructure scripts -type f -name '*.sh' -exec bash -n {} \;
 ```

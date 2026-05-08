@@ -1,20 +1,24 @@
 # GitHub Configuration Hub
 
-This directory is the home for GitHub-specific templates, Actions workflows, and automated checks.
+This directory contains repository-specific GitHub automation for the `hy-home.k8s` main-branch PR flow.
 
 ## Content Mapping
 
-- `workflows/` — CI/CD pipelines triggered on PRs, merges, or schedules.
-- `gates/` — Custom shell scripts or policies (like coverage or security checks) used within workflows to enforce "Quality Gates" before merging or deployment.
-- `ISSUE_TEMPLATE/` — Forms enforcing structured reporting for bug tracking or feature requests.
-- `PULL_REQUEST_TEMPLATE.md` — Enforces PR traceability back to the `/specs` directory.
-- `SECURITY.md` — The security policy outlining vulnerability reporting instructions.
+- `workflows/` - CI, release evidence, and repository maintenance automations.
+- `ISSUE_TEMPLATE/` - Structured bug and feature intake forms.
+- `PULL_REQUEST_TEMPLATE.md` - PR verification checklist aligned with `docs/01.prd/`, `docs/02.ard/`, `docs/04.specs/`, and GitOps QA.
+- `CODEOWNERS` - Review ownership for repository paths and GitHub configuration.
+- `dependabot.yml`, `labeler.yml`, `zizmor.yml` - GitHub-native dependency, labeling, and workflow hardening configuration.
+- `SECURITY.md` - Vulnerability reporting instructions.
 
-## AI Interaction
+## Workflow Roles
 
-The DevOps Agent manages the `.github/workflows/` when changes to deployment pipelines or test runners are approved in the `runbooks/`.
-All configuration here is strictly bound by the following Project Standard Rules:
+- `ci.yml` is the required quality gate for pushes and pull requests targeting `main`. `pre-commit` owns broad lint, formatting, and security hooks; `manifest-static` owns k3d/GitOps contract checks; `shell-static` performs Bash syntax checks only.
+- `generate-changelog.yml` runs on `v*.*.*` tags and stores changelog evidence as a workflow artifact. It does not commit or push to `main`.
+- `labeler.yml`, `greetings.yml`, and `stale.yml` are repository maintenance automations, not QA gates.
 
-### Multi-Language CI Adaptation
+## Branch and Release Rules
 
-By default, the `verify-application.yml` is scaffolded for **Node.js/NPM**. If the project's `ARCHITECTURE.md` establishes a different stack for backend (`server/`) or native (`app/`) layers (e.g., Python, Go, Rust, Java), the DevOps Agent **MUST** modify the workflow's `Setup Environment` steps to provision the correct compiler/interpreter via the appropriate GitHub Actions before validating code.
+- Default PR target is `main`; long-lived `dev` or `develop` branches are not assumed.
+- Tracked changelog updates must be merged by PR before tagging.
+- Workflows in this directory must not deploy to a live cluster, run `kubectl apply`, or mutate external Vault resources.

@@ -8,7 +8,11 @@ A clear and concise description of the changes being proposed.
 
 Fixes # (link to issue if applicable)
 
-## 3. Type of Change
+## 3. Branch Target
+
+- [ ] This PR targets `main`, unless a documented release or hotfix flow requires otherwise.
+
+## 4. Type of Change
 
 - [ ] `feat`: New feature or enhancement
 - [ ] `fix`: Bug fix
@@ -17,14 +21,14 @@ Fixes # (link to issue if applicable)
 - [ ] `infra`: Changes to Kubernetes manifests or GitOps assets
 - [ ] `ci`: Changes to GitHub Actions, hooks, or automation
 
-## 4. Breaking Changes
+## 5. Breaking Changes
 
 - [ ] Yes
 - [ ] No
 
 If yes, please describe the impact and migration path.
 
-## 5. How Has This Been Tested?
+## 6. How Has This Been Tested?
 
 Describe the manual verification or automated tests conducted.
 
@@ -33,8 +37,9 @@ Describe the manual verification or automated tests conducted.
 - [ ] `bash scripts/validate-k8s-manifests.sh .` successful (if manifests changed)
 - [ ] `bash scripts/check-secret-handling.sh .` successful (if manifests or secret wiring changed)
 - [ ] ArgoCD/GitOps impact reviewed (if applicable)
+- [ ] Tracked changelog updates were merged by PR before tagging (if release-facing)
 
-## 6. Checklist
+## 7. Checklist
 
 - [ ] My change follows the governance and workflow rules in `AGENTS.md` and `docs/00.agent-governance/`.
 - [ ] I have updated the documentation accordingly.

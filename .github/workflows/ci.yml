@@ -19,7 +19,6 @@ jobs:
     outputs:
       precommit: ${{ steps.filter.outputs.precommit }}
       manifests: ${{ steps.filter.outputs.manifests }}
-      workflows: ${{ steps.filter.outputs.workflows }}
       shell: ${{ steps.filter.outputs.shell }}
     steps:
       - uses: actions/checkout@v6
@@ -39,10 +38,7 @@ jobs:
               - 'examples/**/gitops/**'
               - 'examples/**/kubernetes/**'
               - 'traefik/**'
-            workflows:
-              - '.github/**'
             shell:
-              - '.github/gates/*.sh'
               - 'infrastructure/**/*.sh'
               - 'scripts/**/*.sh'
 
@@ -80,21 +76,6 @@ jobs:
           bash scripts/validate-k8s-manifests.sh .
           bash scripts/check-secret-handling.sh .
 
-  workflow-security:
-    needs: changes
-    if: needs.changes.outputs.workflows == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-      - name: Run actionlint
-        run: |
-          docker run --rm -v "$PWD:/work" -w /work rhysd/actionlint:latest -color
-      - name: Run zizmor
-        run: |
-          docker run --rm -v "$PWD:/work" -w /work ghcr.io/zizmorcore/zizmor:latest .
-
   shell-static:
     needs: changes
     if: needs.changes.outputs.shell == 'true'
@@ -103,13 +84,9 @@ jobs:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - name: Install shellcheck
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y shellcheck
       - name: Bash syntax check
         run: |
-          mapfile -t shell_files < <(find .github/gates infrastructure scripts -type f -name '*.sh' | sort)
+          mapfile -t shell_files < <(find infrastructure scripts -type f -name '*.sh' | sort)
           if [ "${#shell_files[@]}" -eq 0 ]; then
             echo "no shell files matched shell-static scope"
             exit 0
@@ -117,21 +94,12 @@ jobs:
           for file in "${shell_files[@]}"; do
             bash -n "$file"
           done
-      - name: Shellcheck
-        run: |
-          mapfile -t shell_files < <(find .github/gates infrastructure scripts -type f -name '*.sh' | sort)
-          if [ "${#shell_files[@]}" -eq 0 ]; then
-            echo "no shell files matched shell-static scope"
-            exit 0
-          fi
-          shellcheck "${shell_files[@]}"
 
   ci-summary:
     needs:
       - changes
       - pre-commit
       - manifest-static
-      - workflow-security
       - shell-static
     if: always()
     runs-on: ubuntu-latest
@@ -141,7 +109,6 @@ jobs:
           echo "changes=${{ needs.changes.result }}"
           echo "pre-commit=${{ needs['pre-commit'].result }}"
           echo "manifest-static=${{ needs['manifest-static'].result }}"
-          echo "workflow-security=${{ needs['workflow-security'].result }}"
           echo "shell-static=${{ needs['shell-static'].result }}"
       - name: Fail on gate failure
         if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}

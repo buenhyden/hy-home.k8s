@@ -1,18 +1,35 @@
-area/infrastructure:
+area/gitops:
   - changed-files:
-      - any-glob-to-any-file: "infrastructure/**"
-
-area/apps:
-  - changed-files:
-      - any-glob-to-any-file: "apps/**"
+      - any-glob-to-any-file:
+          - "gitops/apps/**"
+          - "gitops/platform/**"
+          - "gitops/workloads/**"
 
 area/cluster:
   - changed-files:
-      - any-glob-to-any-file: "clusters/**"
+      - any-glob-to-any-file: "gitops/clusters/**"
+
+area/infrastructure:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "infrastructure/**"
+          - "traefik/**"
+
+area/examples:
+  - changed-files:
+      - any-glob-to-any-file: "examples/**"
+
+area/tests:
+  - changed-files:
+      - any-glob-to-any-file: "tests/**"
+
+area/scripts:
+  - changed-files:
+      - any-glob-to-any-file: "scripts/**"
 
 area/documentation:
   - changed-files:
-      - any-glob-to-any-file: ["docs/**", "README.md", "ARCHITECTURE.md"]
+      - any-glob-to-any-file: ["docs/**", "README.md"]
 
 area/agent:
   - changed-files:
