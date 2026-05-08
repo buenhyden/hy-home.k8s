@@ -5,6 +5,8 @@
 이 ADR은 외부 서비스 접근 모델과 ArgoCD 백엔드를 외부 Valkey로 구성하는 결정을 기록한다.
 **2026-03-29 갱신**: Valkey 접근 모델을 `ExternalName Service`에서 `Service + EndpointSlice`로 정정하고, IP 대역을 `172.19.0.x`로 갱신한다. Vault도 동일 패턴으로 통일한다. Valkey K8s-side 포트를 컨테이너 내부 포트(`6379`)로 정정한다(`26379`는 Docker host publish 포트로 호스트 접근 전용).
 
+> **현재 실행계약 메모 (2026-05-09)**: 아래 `172.19.x` 외부 서비스 주소는 2026-03-29 기준의 역사적 `infra_net` 계약이다. 현재 repo-backed 실행계약은 `gitops/platform/external-services/`, `gitops/platform/network-policies/`, `infrastructure/tests/verify-contracts-static.sh`의 `172.18.x` EndpointSlice/CIDR 값이 우선한다.
+
 ## Context
 
 외부 서비스 접근을 앱/플랫폼 관점에서 일관된 인터페이스로 제공해야 설정 이식성과 운영 단순성을 확보할 수 있다.

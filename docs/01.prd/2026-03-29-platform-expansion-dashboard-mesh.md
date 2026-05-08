@@ -4,6 +4,8 @@
 
 이 문서는 WSL2 기반 k3d/k3s 플랫폼에 Kubernetes Dashboard, cert-manager, Istio 서비스메시, Kiali를 추가하고, 외부 서비스 IP 계약을 실제 Docker infra_net(`172.19.0.0/16`)으로 수정하기 위한 제품 요구사항을 정의한다.
 
+> **현재 실행계약 메모 (2026-05-09)**: 이 문서는 2026-03-29 플랫폼 확장 요구사항 기록이다. 현재 repo-backed 실행계약은 [ADR-0010](../03.adr/0010-headlamp-replaces-dashboard.md)과 현재 `gitops/**` 매니페스트/정적 검증 스크립트가 우선한다. Kubernetes Dashboard는 Headlamp로 대체되었고, 외부 서비스 EndpointSlice/CIDR 계약은 `172.18.x` 기준이다.
+
 ## Vision
 
 로컬 플랫폼이 웹 UI 기반 클러스터 관찰, 자동화된 TLS 인증서 관리, 서비스메시 기반 트래픽 제어와 가시성을 갖춘 운영 수준 환경으로 발전한다.

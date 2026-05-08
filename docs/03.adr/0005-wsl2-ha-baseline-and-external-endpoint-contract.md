@@ -5,6 +5,8 @@
 이 문서는 WSL2 기반 플랫폼의 HA 기본 토폴로지와 외부 서비스 인터페이스 계약, 그리고 CI/CD 운영 모델 결정을 고정한다.
 **2026-03-29 갱신**: EndpointSlice 주소를 `172.19.0.x`(infra_net 실제 서브넷)로 전면 수정한다. Valkey K8s-side 포트를 컨테이너 내부 포트(`6379`)로 정정한다(`26379`는 Docker host publish 포트로 호스트 접근 전용).
 
+> **현재 실행계약 메모 (2026-05-09)**: 아래 `172.19.x` 외부 서비스 주소는 2026-03-29 기준의 역사적 `infra_net` 계약이다. 현재 repo-backed 실행계약은 `gitops/platform/external-services/`, `gitops/platform/network-policies/`, `infrastructure/tests/verify-contracts-static.sh`의 `172.18.x` EndpointSlice/CIDR 값이 우선한다.
+
 ## Context
 
 Vault/ESO 연동 장애와 ArgoCD ingress 회귀는 계약 불일치에서 발생했다. 동시에 CI가 단일 pre-commit 잡으로 구성되어 계약 회귀를 조기에 차단하기 어려웠다.

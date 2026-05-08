@@ -1,10 +1,13 @@
 # Platform Expansion Bootstrap Runbook
 
-: WSL2 k3d Platform — cert-manager / Dashboard / Istio / Kiali
+: WSL2 k3d Platform — cert-manager / Headlamp / Istio / Kiali
 
 ## Overview (KR)
 
-이 런북은 cert-manager, Kubernetes Dashboard, Istio, Kiali가 추가된 확장 플랫폼을 부트스트랩하거나 복구하기 위한 즉시 실행 가능한 체크리스트와 증상별 복구 절차를 제공한다.
+이 런북은 cert-manager, Headlamp, Istio, Kiali가 추가된 확장 플랫폼을 부트스트랩하거나 복구하기 위한 즉시 실행 가능한 체크리스트와 증상별 복구 절차를 제공한다.
+
+> 현재 클러스터 UI 계약은 ADR-0010에 따라 Kubernetes Dashboard가 아니라 Headlamp다.
+> 오래된 Dashboard 절차는 현재 실행 기준이 아니며, Headlamp 상세 인증 절차는 `0005-headlamp-keycloak-runbook.md`를 따른다.
 
 ## Purpose
 
@@ -22,7 +25,7 @@
 - 신규 플랫폼 확장 컴포넌트 설치
 - WSL2 재시작 또는 k3d 클러스터 재생성 후 복구
 - cert-manager ClusterIssuer NotReady 복구
-- Dashboard Token 만료 또는 접근 불가
+- Headlamp Token 만료 또는 접근 불가
 - Istio/Kiali 배포 실패 복구
 
 ## Procedure or Checklist
@@ -35,24 +38,24 @@
 - [ ] `rootCA.pem`이 로컬 신뢰 저장소에 등록됨
 - [ ] `VAULT_TOKEN` 환경변수 설정
 - [ ] Vault unseal 상태: `curl -ks https://vault.127.0.0.1.nip.io/v1/sys/health | jq '.sealed'` → `false`
-- [ ] PostgreSQL 연결: `nc -z 172.19.0.11 15432`
-- [ ] Valkey 연결: `nc -z 172.19.0.12 6379`
-- [ ] Prometheus 연결 (Kiali용): `nc -z 172.19.0.20 9090`
-- [ ] Loki 연결 (로그 수집): `nc -z 172.19.0.21 3100`
-- [ ] Tempo 연결 (트레이싱): `nc -z 172.19.0.22 3200`
-- [ ] Alloy OTLP 연결: `nc -z 172.19.0.23 4317`
-- [ ] Grafana 연결 (Kiali용): `nc -z 172.19.0.24 3000`
+- [ ] PostgreSQL 연결: `nc -z 172.18.0.15 15432`
+- [ ] Valkey 연결: `nc -z 172.18.0.9 6379`
+- [ ] Prometheus 연결 (Kiali용): `nc -z 172.18.0.10 9090`
+- [ ] Loki 연결 (로그 수집): `nc -z 172.18.0.13 3100`
+- [ ] Tempo 연결 (트레이싱): `nc -z 172.18.0.12 3200`
+- [ ] Alloy OTLP 연결: `nc -z 172.18.0.11 4317`
+- [ ] Grafana 연결 (Kiali용): `nc -z 172.18.0.14 3000`
 
 ### Procedure
 
 0. Docker Traefik 동적 설정 파일 배포
 
-   신규 호스트명(Dashboard/Kiali)에 처음 접근하는 경우, 외부 Docker Traefik에 라우터를 등록한다:
+   신규 호스트명(Headlamp/Kiali)에 처음 접근하는 경우, 외부 Docker Traefik에 라우터를 등록한다:
 
    ```bash
    # Traefik 동적 설정 마운트 경로에 파일 복사
-   cp traefik/dashboard-k3d.yaml  <traefik-dynamic-conf-dir>/
-   cp traefik/kiali-k3d.yaml      <traefik-dynamic-conf-dir>/
+   cp traefik/headlamp-k3d.yaml  <traefik-dynamic-conf-dir>/
+   cp traefik/kiali-k3d.yaml     <traefik-dynamic-conf-dir>/
    ```
 
    ArgoCD 라우터(`argocd-k3d.yaml`)가 이미 등록된 경우 생략 가능. Traefik이 File Provider로 자동 감지한다.
@@ -85,12 +88,13 @@
    # 출력: Ready
    ```
 
-3. Dashboard 접근 토큰 발급
+3. Headlamp 접근 검증
 
    ```bash
-   kubectl -n kubernetes-dashboard get certificate dashboard-tls
-   # READY=True 확인 후 토큰 발급
-   kubectl -n kubernetes-dashboard create token dashboard-admin --duration=24h
+   kubectl -n headlamp get pods,ingress,svc
+   kubectl -n headlamp get certificate headlamp-tls 2>/dev/null || \
+   kubectl -n headlamp get secret headlamp-tls
+   curl -ksS -o /dev/null -w '%{http_code}' https://headlamp.127.0.0.1.nip.io/
    ```
 
 4. Istio 가용성 확인
@@ -137,33 +141,33 @@ kubectl wait clusterissuer mkcert-ca-issuer \
   --for=condition=Ready --timeout=60s
 ```
 
-### Dashboard Certificate Pending
+### Headlamp TLS NotReady
 
-**증상**: `kubectl -n kubernetes-dashboard get certificate dashboard-tls` → `READY=False`
+**증상**: `kubectl -n headlamp get certificate headlamp-tls` → `READY=False`
 
 ```bash
 # 1. ClusterIssuer Ready 상태 선행 확인 (위 절차 참조)
 
 # 2. Certificate 이벤트 확인
-kubectl -n kubernetes-dashboard describe certificate dashboard-tls
+kubectl -n headlamp describe certificate headlamp-tls
 
 # 3. cert-manager 로그 확인
-kubectl -n cert-manager logs deploy/cert-manager | grep -i "dashboard" | tail -20
+kubectl -n cert-manager logs deploy/cert-manager | grep -i "headlamp" | tail -20
 
 # 4. Certificate CR 재apply (ArgoCD hard-refresh)
-argocd app get platform-dashboard --hard-refresh
+argocd app get platform-headlamp-config --hard-refresh
 ```
 
-### Dashboard Token Unauthorized
+### Headlamp Token Unauthorized
 
-**증상**: 브라우저 `https://k8s-dashboard.127.0.0.1.nip.io` 접근 시 401
+**증상**: 브라우저 `https://headlamp.127.0.0.1.nip.io` 접근 시 401
 
 ```bash
 # ClusterRoleBinding 확인
-kubectl get clusterrolebinding dashboard-admin
+kubectl get clusterrolebinding headlamp-admin
 
-# 토큰 재발급 (24시간 유효)
-kubectl -n kubernetes-dashboard create token dashboard-admin --duration=24h
+# 토큰 재발급
+kubectl -n headlamp create token headlamp-admin --duration=1h
 ```
 
 ### Istiod CrashLoop / OOMKilled
@@ -189,11 +193,11 @@ kubectl -n istio-system rollout restart deploy/istiod
 
 ```bash
 # 1. Prometheus 연결 확인
-nc -z 172.19.0.20 9090 && echo "OK" || echo "FAIL"
+nc -z 172.18.0.10 9090 && echo "OK" || echo "FAIL"
 
 # 2. egress NetworkPolicy 확인
 kubectl -n istio-system get networkpolicy kiali-egress-to-observability -o yaml
-# cidr 172.19.0.20/32 존재 여부 확인
+# cidr 172.18.0.10/32 존재 여부 확인
 
 # 3. Kiali config 확인
 kubectl -n istio-system get configmap kiali -o yaml | grep prometheus
@@ -226,11 +230,11 @@ argocd app sync platform-istiod
 
 # 런타임
 kubectl get clusterissuer mkcert-ca-issuer
-kubectl -n kubernetes-dashboard get certificate dashboard-tls
+kubectl -n headlamp get certificate headlamp-tls 2>/dev/null || kubectl -n headlamp get secret headlamp-tls
 kubectl -n istio-system get deploy istiod kiali
 
 # TLS 접근
-curl -sk https://k8s-dashboard.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
+curl -sk https://headlamp.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
 curl -sk https://kiali.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
 ```
 
@@ -239,4 +243,5 @@ curl -sk https://kiali.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
 - **Guide**: [`../07.guides/0003-platform-expansion-bootstrap-guide.md`](../07.guides/0003-platform-expansion-bootstrap-guide.md)
 - **Spec**: [`../04.specs/003-platform-expansion/spec.md`](../04.specs/003-platform-expansion/spec.md)
 - **Operations**: [`../08.operations/0003-service-mesh-cert-manager-policy.md`](../08.operations/0003-service-mesh-cert-manager-policy.md)
+- **ADR-0010**: [`../03.adr/0010-headlamp-replaces-dashboard.md`](../03.adr/0010-headlamp-replaces-dashboard.md)
 - **Previous Runbook**: [`./0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)

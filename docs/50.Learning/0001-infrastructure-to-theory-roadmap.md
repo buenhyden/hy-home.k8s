@@ -10,10 +10,10 @@
 
 | Current Tool | Academic Domain | Key Concept | Reference |
 | --- | --- | --- | --- |
-| **k3d / Docker** | Operating Systems | Namespace & CGroups, Virtualization | [OS Theory](../.agent/skills/self-learning-guide/references/os-virtualization/theory.md) |
-| **MetalLB / Traefik** | Networking | L2/L3 Routing, BGP, Load Balancing | [Network Theory](../.agent/skills/self-learning-guide/references/network/theory.md) |
-| **ArgoCD (GitOps)** | Software Engineering | Declarative State, Reconciliation Loop | [Ops Theory](../.agent/skills/self-learning-guide/references/security-automation/theory.md) |
-| **vLLM / Valkey** | Distributed Systems | PagedAttention, Vector Indexing (HNSW) | [AI Infra](../.agent/skills/self-learning-guide/references/ai-infra/theory.md) |
+| **k3d / Docker** | Operating Systems | Namespace & CGroups, Virtualization | OS virtualization theory |
+| **MetalLB / Traefik** | Networking | L2/L3 Routing, BGP, Load Balancing | Network theory |
+| **ArgoCD (GitOps)** | Software Engineering | Declarative State, Reconciliation Loop | Security automation theory |
+| **vLLM / Valkey** | Distributed Systems | PagedAttention, Vector Indexing (HNSW) | AI infrastructure theory |
 
 ---
 
@@ -30,7 +30,7 @@
 
 - **Problem**: 텍스트의 의미를 어떻게 숫자로 표현하고 빠르게 검색할 것인가?
 - **Theory**: **High-dimensional Vector Space** & **Graph Theory (HNSW)**.
-- **Reference**: [RAG & Vector DB Theory](../.agent/skills/self-learning-guide/references/rag-vector-db/theory.md)
+- **Reference**: RAG and vector database theory
 
 ---
 
@@ -60,4 +60,4 @@ Kubernetes의 특정 ConfigMap이 변경될 때마다 관련 Pod을 자동으로
 ---
 
 > [!TIP]
-> 모든 이론은 `.agent/skills/self-learning-guide/references/` 폴더 내의 `validation_guide.md`를 통해 실제 터미널에서 검증할 수 있습니다.
+> 이 저장소의 활성 에이전트 런타임은 `.claude/`와 `.codex/` 기준입니다. 내구성 있는 학습 참고 자료를 추가할 때는 빈 `.agent/` 경로를 만들지 말고 `docs/90.references/` 또는 현재 활성 런타임 문서로 연결하세요.

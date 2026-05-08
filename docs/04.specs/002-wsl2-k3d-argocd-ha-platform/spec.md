@@ -4,6 +4,8 @@
 
 이 문서는 WSL2 멀티노드 클러스터와 GitOps/Secret/외부 데이터 연동 구현 계약을 정의한다. 이번 확장에서 `argocd egress 안정성`, `AppProject 최소권한`, `CI 정적 계약 게이트`를 추가한다.
 
+> **현재 실행계약 메모 (2026-05-09)**: 이 Spec은 2026-03-28 HA 플랫폼 설계 기록이다. 현재 repo-backed 외부 서비스 실행계약은 `gitops/platform/external-services/`, `gitops/platform/network-policies/`, `infrastructure/tests/verify-contracts-static.sh`의 `172.18.x` EndpointSlice/CIDR 값이 우선한다.
+
 ## Strategic Boundaries & Non-goals
 
 - **Owns**: 클러스터 토폴로지, GitOps 배포 구조, 외부 서비스 인터페이스, CI 정적 검증, 운영 검증 스크립트

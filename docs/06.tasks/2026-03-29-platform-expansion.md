@@ -5,6 +5,8 @@
 이 문서는 플랫폼 확장(IP 수정, cert-manager, Dashboard, Istio, Kiali) 구현 작업을 추적한다.
 TDD(RED/GREEN/REFACTOR) 중심으로 정적 계약 검증이 먼저 정의되고, 구현이 이를 통과하는 방식으로 진행한다.
 
+> **현재 실행계약 메모 (2026-05-09)**: 이 Task 문서는 2026-03-29 플랫폼 확장 작업 기록이다. 현재 repo-backed 실행계약은 [ADR-0010](../03.adr/0010-headlamp-replaces-dashboard.md)과 현재 `gitops/**` 매니페스트/정적 검증 스크립트가 우선한다. Kubernetes Dashboard는 Headlamp로 대체되었고, 외부 서비스 EndpointSlice/CIDR 계약은 `172.18.x` 기준이다.
+
 ## Inputs
 
 - **Parent Spec**: [`../04.specs/003-platform-expansion/spec.md`](../04.specs/003-platform-expansion/spec.md)

@@ -5,6 +5,8 @@
 이 ADR은 WSL2 환경에서 k3d 클러스터 토폴로지와 외부 서비스 연동 네트워크 기준을 확정한다.
 **2026-03-29 갱신**: 외부 서비스 네트워크 대역을 실제 Docker `infra_net` 서브넷인 `172.19.0.0/16`으로 정정한다. Valkey 포트를 컨테이너 내부 포트(`6379`)로 정정한다(`26379`는 Docker host publish 포트로 호스트 접근 전용).
 
+> **현재 실행계약 메모 (2026-05-09)**: 아래 `172.19.x` 외부 서비스 주소는 2026-03-29 기준의 역사적 `infra_net` 계약이다. 현재 repo-backed 실행계약은 `gitops/platform/external-services/`, `gitops/platform/network-policies/`, `infrastructure/tests/verify-contracts-static.sh`의 `172.18.x` EndpointSlice/CIDR 값이 우선한다.
+
 ## Context
 
 멀티노드 개발/운영 검증과 외부 서비스 연결 재현성을 동시에 만족시키기 위해 노드 수, ingress 방식, 네트워크 대역을 표준화할 필요가 있다.

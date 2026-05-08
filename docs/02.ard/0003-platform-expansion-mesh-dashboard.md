@@ -4,6 +4,8 @@
 
 이 문서는 WSL2 k3d 플랫폼 확장의 참조 아키텍처를 정의한다. cert-manager(TLS 자동화), Kubernetes Dashboard(웹 UI), Istio(서비스메시), Kiali(메시 관측) 추가와 외부 서비스 IP 수정을 포함한다.
 
+> **현재 실행계약 메모 (2026-05-09)**: 이 ARD는 2026-03-29 플랫폼 확장 참조 아키텍처 기록이다. 현재 repo-backed 실행계약은 [ADR-0010](../03.adr/0010-headlamp-replaces-dashboard.md)과 현재 `gitops/**` 매니페스트/정적 검증 스크립트가 우선한다. Kubernetes Dashboard는 Headlamp로 대체되었고, 외부 서비스 EndpointSlice/CIDR 계약은 `172.18.x` 기준이다.
+
 ## Summary
 
 플랫폼은 기존 5개 평면에 3개 평면을 추가한다.

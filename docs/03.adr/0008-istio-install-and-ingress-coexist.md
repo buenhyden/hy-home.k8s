@@ -4,6 +4,8 @@
 
 이 ADR은 Istio를 `default` 프로필로 Helm 기반 설치하고, 기존 ingress-nginx와 공존하는 전략을 확정한다.
 
+> **현재 실행계약 메모 (2026-05-09)**: 이 ADR의 `kubernetes-dashboard` namespace 언급은 2026-03-29 기준이다. 현재 클러스터 UI 계약은 [ADR-0010](./0010-headlamp-replaces-dashboard.md)에 따라 `headlamp` namespace를 기준으로 한다.
+
 ## Context
 
 서비스메시(mTLS, 트래픽 관리, 관측가능성)가 필요하며, 기존 ingress-nginx 기반 외부 노출 구조를 유지해야 한다.

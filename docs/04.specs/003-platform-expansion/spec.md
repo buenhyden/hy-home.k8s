@@ -4,6 +4,8 @@
 
 이 문서는 플랫폼 확장(IP 수정, cert-manager, Kubernetes Dashboard, Istio, Kiali)의 기술 설계와 구현 계약을 정의한다. 기존 플랫폼 계약을 보전하면서 신규 컴포넌트와 수정 사항을 명시한다.
 
+> **현재 실행계약 메모 (2026-05-09)**: 이 Spec은 2026-03-29 플랫폼 확장 설계 기록이다. 현재 repo-backed 실행계약은 [ADR-0010](../../03.adr/0010-headlamp-replaces-dashboard.md)과 현재 `gitops/**` 매니페스트/정적 검증 스크립트가 우선한다. Kubernetes Dashboard는 Headlamp로 대체되었고, 외부 서비스 EndpointSlice/CIDR 계약은 `172.18.x` 기준이다.
+
 ## Strategic Boundaries & Non-goals
 
 - **Owns**: IP 계약 수정, cert-manager TLS 자동화, Dashboard/Istio/Kiali GitOps 설치, Traefik router 계약, 검증 스크립트 갱신

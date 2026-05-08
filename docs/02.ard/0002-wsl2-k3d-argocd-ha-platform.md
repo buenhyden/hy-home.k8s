@@ -4,6 +4,8 @@
 
 이 문서는 WSL2 기반 k3d/k3s 멀티노드 플랫폼의 참조 아키텍처를 정의한다. GitOps, Secret, 외부 데이터 서비스 통합 경계와 CI 정적 검증 계층을 표준 계약으로 명시한다.
 
+> **현재 실행계약 메모 (2026-05-09)**: 이 ARD는 2026-03-28 HA 플랫폼 참조 아키텍처 기록이다. 현재 repo-backed 외부 서비스 실행계약은 `gitops/platform/external-services/`, `gitops/platform/network-policies/`, `infrastructure/tests/verify-contracts-static.sh`의 `172.18.x` EndpointSlice/CIDR 값이 우선한다.
+
 ## Summary
 
 플랫폼은 다음 5개 평면으로 구성한다.

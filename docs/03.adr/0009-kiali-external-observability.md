@@ -10,6 +10,8 @@ Istio 서비스메시의 트래픽 토폴로지와 메트릭을 시각화하기 
 Prometheus, Grafana, Tempo는 이미 Docker infra_net(`172.19.0.x`)에서 운영 중이며, K8s 내부에 별도 설치 없이 외부 엔드포인트로 연동한다.
 Docker Traefik은 `kiali.127.0.0.1.nip.io`를 k3d ingress로 프록시한다.
 
+> **현재 실행계약 메모 (2026-05-09)**: 아래 `172.19.x` observability 주소는 2026-03-29 기준의 역사적 `infra_net` 계약이다. 현재 repo-backed 실행계약은 `gitops/platform/external-services/`, `gitops/platform/network-policies/`, `infrastructure/tests/verify-contracts-static.sh`의 `172.18.x` EndpointSlice/CIDR 값이 우선한다.
+
 ## Decision
 
 - Kiali `kiali-server` Helm chart(`https://kiali.org/helm-charts`)를 `istio-system` namespace에 설치한다.

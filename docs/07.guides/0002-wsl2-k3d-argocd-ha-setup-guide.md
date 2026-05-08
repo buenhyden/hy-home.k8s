@@ -4,6 +4,8 @@
 
 이 문서는 WSL2 환경에서 멀티노드 k3d 클러스터와 ArgoCD/ESO/Vault/외부 서비스 계약을 설정하고 검증하는 방법을 설명한다.
 
+> **현재 실행계약 메모 (2026-05-09)**: 현재 `gitops/platform/external-services/`와 정적 검증 스크립트는 외부 서비스 EndpointSlice/CIDR을 `172.18.x` 기준으로 고정한다. 이 문서의 `172.19.x` 언급은 k3d 네트워크 경로 문제를 설명하는 역사적 `infra_net` 맥락으로만 해석한다.
+
 ## Guide Type
 
 `how-to`
@@ -94,7 +96,7 @@ kubectl -n argocd get applications
 
 ```bash
 kubectl -n platform get svc,endpointslice | \
-  rg 'postgres-(write|read)-external|15432|15433|vault-external|8200|valkey-external|172.19.0.12|6379'
+  rg 'postgres-(write|read)-external|15432|15433|172.18.0.15|vault-external|172.18.0.8|8200|valkey-external|172.18.0.9|6379'
 ```
 
 1. vault-external EndpointSlice를 Vault의 k3d-hyhome IP로 설정한다.

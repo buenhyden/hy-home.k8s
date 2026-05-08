@@ -4,6 +4,8 @@
 
 이 문서는 Windows WSL2 환경에서 `k3s + k3d` 멀티노드(`1 Master + 3 Workers`) 플랫폼을 구축하고, ArgoCD GitOps/ESO+Vault/외부 PostgreSQL/외부 Valkey를 안정적으로 통합하기 위한 제품 요구사항을 정의한다.
 
+> **현재 실행계약 메모 (2026-05-09)**: 이 PRD는 2026-03-28 HA 플랫폼 요구사항 기록이다. 현재 repo-backed 외부 서비스 실행계약은 `gitops/platform/external-services/`, `gitops/platform/network-policies/`, `infrastructure/tests/verify-contracts-static.sh`의 `172.18.x` EndpointSlice/CIDR 값이 우선한다.
+
 ## Vision
 
 WSL2 개발 환경에서도 운영 수준의 재현성, 보안성, 복구 가능성을 갖춘 GitOps 플랫폼을 표준화한다.
