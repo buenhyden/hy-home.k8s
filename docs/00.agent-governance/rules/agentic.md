@@ -28,6 +28,17 @@ Rules for AI Agent-first Engineering quality and safety.
 - Keep direct `kubectl apply`, `kubectl patch`, external secret writes, and other live-cluster mutations outside the default Agent-first path.
 - If a runbook requires live mutation for bootstrap or emergency recovery, mark it as human-approved bootstrap or break-glass work and record the expected evidence.
 
+## Gateway and Runtime Audit Checklist
+
+Before changing gateway, runtime, hook, mirror, or governance-memory files:
+
+- Confirm root shims stay thin: `AGENTS.md`, root `CLAUDE.md`, and root `GEMINI.md` route to canonical governance/runtime files instead of embedding duplicate policy.
+- Confirm tracked governance/runtime files under `docs/00.agent-governance/**`, `.claude/**`, and `.codex/**` remain English-only.
+- Confirm no legacy source labels from prior external harness examples remain.
+- Confirm `.claude/agents/*.md` and `.codex/agents/*.toml` mirror parity stays intact.
+- Confirm provider-specific hook boundaries are described accurately: `.claude/settings.json` owns Claude permissions/hooks; `.codex/hooks.json` is a Codex context hook, not an equivalent permission gate.
+- Confirm historical memory entries point to the current source of truth instead of presenting initial implementation snapshots as current inventory.
+
 ## Persona and Rule Enforcement
 
 - Every non-trivial task must align to one persona in `rules/persona.md`.

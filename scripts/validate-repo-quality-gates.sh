@@ -108,6 +108,13 @@ def collect_strings(value) -> list[str]:
     return []
 
 
+tracked = set()
+try:
+    proc = subprocess.run(["git", "ls-files"], cwd=root, check=True, text=True, capture_output=True)
+    tracked = set(proc.stdout.splitlines())
+except Exception as exc:
+    fail(f"git ls-files failed: {exc}")
+
 allowed_docs = {
     "00.agent-governance",
     "01.prd",
@@ -223,6 +230,97 @@ for scan_root in scan_roots:
         for pattern in legacy_contract_patterns:
             if pattern in text and not any(marker in text for marker in legacy_contract_markers):
                 fail(f"legacy runtime contract reference lacks historical/superseded note in {rel(path)}: {pattern}")
+
+gateway_contracts = {
+    "AGENTS.md": {
+        "max_lines": 40,
+        "required": [
+            "docs/00.agent-governance/rules/bootstrap.md",
+            "docs/00.agent-governance/rules/preflight-checklist.md",
+            "docs/00.agent-governance/rules/persona.md",
+            ".claude/CLAUDE.md",
+            "docs/00.agent-governance/harness-catalog.md",
+            "docs/00.agent-governance/rules/agentic.md",
+            "docs/00.agent-governance/rules/document-stage-routing.md",
+            "docs/00.agent-governance/rules/git-workflow.md",
+        ],
+    },
+    "CLAUDE.md": {
+        "max_lines": 30,
+        "required": [
+            "@AGENTS.md",
+            "@docs/00.agent-governance/providers/claude.md",
+            "@.claude/CLAUDE.md",
+            "@RTK.md",
+            "docs/00.agent-governance/harness-catalog.md",
+        ],
+    },
+    "GEMINI.md": {
+        "max_lines": 25,
+        "required": [
+            "@AGENTS.md",
+            "@docs/00.agent-governance/providers/gemini.md",
+            "@.claude/CLAUDE.md",
+            "docs/00.agent-governance/harness-catalog.md",
+        ],
+    },
+}
+for rel_path, contract in gateway_contracts.items():
+    path = root / rel_path
+    if not path.exists():
+        fail(f"gateway file missing: {rel_path}")
+        continue
+    text = read_text(path)
+    line_count = len(text.splitlines())
+    if line_count > contract["max_lines"]:
+        fail(f"{rel_path} must remain a thin gateway: {line_count} lines > {contract['max_lines']}")
+    for phrase in contract["required"]:
+        if phrase not in text:
+            fail(f"{rel_path} missing required gateway pointer: {phrase}")
+    for stale_heading in ["Agent Catalog", "Role Separation", "Runtime Roster"]:
+        if stale_heading in text:
+            fail(f"{rel_path} must not embed runtime catalog policy: {stale_heading}")
+
+tracked_language_roots = (
+    "docs/00.agent-governance/",
+    ".claude/",
+    ".codex/",
+)
+for tracked_path in sorted(tracked):
+    if tracked_path == ".claude/settings.local.json":
+        continue
+    if not tracked_path.startswith(tracked_language_roots):
+        continue
+    path = root / tracked_path
+    if not path.is_file() or path.suffix not in {".md", ".toml", ".json", ".sh"}:
+        continue
+    if re.search(r"[가-힣]", read_text(path)):
+        fail(f"tracked governance/runtime file must remain English-only: {tracked_path}")
+
+harness_catalog_path = root / "docs/00.agent-governance/harness-catalog.md"
+harness_catalog_text = read_text(harness_catalog_path)
+for phrase in [
+    "Claude permissions/hooks",
+    "Codex context hook",
+    "not a permission gate equivalent",
+    ".claude/settings.json",
+    ".codex/hooks.json",
+    "no current readiness gap",
+]:
+    if phrase not in harness_catalog_text:
+        fail(f"{rel(harness_catalog_path)} missing runtime readiness boundary phrase: {phrase}")
+
+memory_progress_path = root / "docs/00.agent-governance/memory/progress.md"
+memory_progress_text = read_text(memory_progress_path)
+for phrase in [
+    "historical initial implementation snapshot",
+    "Current runtime truth",
+    "Current script inventory",
+    "docs/00.agent-governance/harness-catalog.md",
+    "scripts/README.md",
+]:
+    if phrase not in memory_progress_text:
+        fail(f"{rel(memory_progress_path)} missing historical/current-source phrase: {phrase}")
 
 workflow_paths = sorted((root / ".github").glob("**/*.yml")) + sorted((root / ".github").glob("**/*.yaml"))
 for workflow in workflow_paths:
@@ -494,13 +592,6 @@ for path in [root / "README.md", scripts_dir / "README.md", root / ".github/work
     for match in script_ref_pattern.findall(read_text(path)):
         if not (root / match).exists():
             fail(f"script reference points to missing file in {rel(path)}: {match}")
-
-tracked = set()
-try:
-    proc = subprocess.run(["git", "ls-files"], cwd=root, check=True, text=True, capture_output=True)
-    tracked = set(proc.stdout.splitlines())
-except Exception as exc:
-    fail(f"git ls-files failed: {exc}")
 
 for obsolete in ["k3d_kubeconfig.yaml"]:
     if obsolete in tracked:

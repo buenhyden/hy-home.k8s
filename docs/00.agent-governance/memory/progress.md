@@ -3,6 +3,12 @@
 - **Date**: 2026-04-13
 - **Layer**: meta
 - **Tags**: #governance #harness #settings
+- **Record type**: historical initial implementation snapshot.
+
+Current runtime truth is maintained in `docs/00.agent-governance/harness-catalog.md`.
+Current script inventory is maintained in `scripts/README.md`. This memory entry
+preserves the initial remediation history and must not be treated as the current
+runtime or script roster when those files disagree.
 
 ## Problem
 
@@ -60,4 +66,6 @@ Harness layers L1–L6 were incomplete: no `settings.json`, no agent files, no h
 
 - Run `postflight-checklist.md §6 Docs 3 Rules` before every PR.
 - `settings.json` must be git-tracked; `settings.local.json` must stay `.gitignore`d.
-- Agent catalog in `AGENTS.md §3` must stay in sync with `.claude/agents/` contents.
+- Runtime catalog entries in `docs/00.agent-governance/harness-catalog.md` must
+  stay in sync with `.claude/agents/`, `.codex/agents/`, `.claude/skills/`,
+  and the hook boundary between `.claude/settings.json` and `.codex/hooks.json`.

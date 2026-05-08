@@ -32,6 +32,8 @@ updated: 2026-05-09
 
 문서 taxonomy도 `docs/01.prd`부터 `docs/10.incidents`, `docs/90.references`, `docs/99.templates`까지 정리되어 있어 k3d 운영과 Agent-first 협업에 적절하다. 남은 문제는 구조 부족이 아니라 일부 가이드/운영/런북 문서에서 직접 `kubectl apply`/`kubectl patch` 절차가 기본 경로처럼 보이는 점과, 하네스 readiness를 한눈에 확인하기 어렵다는 점이다.
 
+2026-05-09 추가 audit 결과, `AGENTS.md`, root `CLAUDE.md`, `GEMINI.md`, `.claude/CLAUDE.md`, local agents/skills, `.codex` mirrors, `docs/00.agent-governance/**`는 thin gateway, JIT governance, GitOps-first, mirror validation 구조를 이미 갖추고 있다. 따라서 추가 보정은 새 runtime surface 생성이 아니라 current catalog clarity와 regression gate 강화로 제한한다.
+
 ## Goals & In-Scope
 
 - **Goals**:
@@ -66,6 +68,8 @@ updated: 2026-05-09
 | PLN-003 | Dashboard/`172.19.x` 역사적 문맥과 현재 Headlamp/`172.18.x` 계약 분리 강화 | `docs/01-09` 관련 문서 중 보정 대상 | REQ-DOC-002 | stale contract gate PASS |
 | PLN-004 | 하네스 readiness matrix와 Agent-first execution boundary 보강 | `docs/00.agent-governance/` | REQ-AI-001 | harness catalog mirror gate PASS |
 | PLN-005 | 최소 정적 검증 묶음 실행 | `scripts/`, `infrastructure/tests/` | REQ-VAL-001 | 모든 repo-backed command PASS 또는 제한 명시 |
+| PLN-006 | gateway/runtime audit 결과를 반영해 hook boundary와 historical memory current-source 문맥 보강 | `docs/00.agent-governance/` | REQ-AI-002 | repo quality gate PASS |
+| PLN-007 | root shim thinness, governance/runtime English-only, hook-boundary clarity를 repo quality gate로 고정 | `scripts/validate-repo-quality-gates.sh` | REQ-VAL-002 | regression checks PASS |
 
 ## Verification Plan
 
@@ -101,6 +105,8 @@ updated: 2026-05-09
 - [x] Stage README indexes updated
 - [x] GitOps-first direct mutation boundaries clarified
 - [x] Harness readiness matrix added
+- [x] Gateway/runtime audit results reflected without adding new runtime surfaces
+- [x] Regression gates cover gateway thinness, language boundaries, historical memory, and hook-boundary clarity
 - [x] Required verification passed or limitations documented
 
 ## Related Documents

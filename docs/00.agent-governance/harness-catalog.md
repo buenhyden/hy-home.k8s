@@ -26,6 +26,9 @@ that shape the runtime contract under `.claude/` and its Codex mirror under `.co
 
 - Covers local runtime agents, skills, scope imports, and model allocation.
 - Does not duplicate rule text from `rules/`, `scopes/`, or `providers/`.
+- Current remediation scope is in-place clarity and regression-gate hardening.
+  There is no current readiness gap that requires a new agent, skill, hook, or
+  runtime surface.
 
 ## Runtime Principles
 
@@ -45,9 +48,10 @@ that shape the runtime contract under `.claude/` and its Codex mirror under `.co
 | Agents | `.claude/agents/*.md` | Ready | Seven local agents exist with frontmatter, scope imports, guardrails, handoff, and postflight |
 | Codex mirrors | `.codex/agents/*.toml` | Ready | Mirror stems, imports, guardrails, and postflight are checked by `scripts/validate-repo-quality-gates.sh` |
 | Skills | `.claude/skills/*/skill.md` | Ready | GitOps, validation, docs routing, deployment, incident, RCA, risk, and security workflows are local |
-| Hooks | `.claude/hooks/*.sh`, `.claude/settings.json`, `.codex/hooks.json` | Ready | Session, pre-edit, post-validate, and graphify context hooks are configured |
-| Validation scripts | `scripts/*.sh`, `infrastructure/tests/*.sh` | Ready | Repo-backed gates cover quality, GitOps structure, manifests, contracts, secret handling, and shell syntax |
-| Memory | `docs/00.agent-governance/memory/` | Ready | Recurring governance lessons have a local template-backed home |
+| Claude permissions/hooks | `.claude/settings.json`, `.claude/hooks/*.sh` | Ready | Claude runtime has allow/deny command policy plus session-start, pre-edit, and post-validate hooks |
+| Codex context hook | `.codex/hooks.json` | Ready | Codex mirror provides graphify context injection only; it is not a permission gate equivalent to `.claude/settings.json` |
+| Validation scripts | `scripts/*.sh`, `infrastructure/tests/*.sh` | Ready | Repo-backed gates cover quality, GitOps structure, manifests, contracts, secret handling, shell syntax, gateway thinness, language boundaries, and hook-boundary clarity |
+| Memory | `docs/00.agent-governance/memory/` | Ready | Historical implementation notes have a local template-backed home; current runtime truth stays in this catalog and current script inventory stays in `scripts/README.md` |
 | Escalation boundary | `subagent-protocol.md`, `rules/agentic.md` | Ready | Delegation, file ownership, direct mutation, and human approval boundaries are explicit |
 
 Direct cluster mutation is not part of the default Agent-first execution path.
