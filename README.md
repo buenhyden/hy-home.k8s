@@ -47,6 +47,7 @@ hy-home.k8s/
 ├── tests/                 # 저장소 전역 테스트 기준 문서 및 교차 테스트 영역
 ├── traefik/               # 로컬 ingress 노출용 Traefik 관련 매니페스트
 ├── secrets/               # 로컬 인증서 등 민감 파일 저장 경로
+├── .github/               # GitHub Actions, PR template, CODEOWNERS, labeler, zizmor
 ├── AGENTS.md              # 공통 에이전트 진입 게이트웨이
 ├── CLAUDE.md              # Claude 전용 얇은 오버레이
 ├── GEMINI.md              # Gemini 전용 얇은 오버레이
@@ -56,11 +57,14 @@ hy-home.k8s/
 ## How to Work in This Area
 
 1. 저장소를 처음 읽을 때는 `README.md -> docs/README.md -> AGENTS.md -> 관련 stage 문서` 순서로 진입한다.
-2. 설계/구현/운영 판단은 가능한 한 `docs/01~09` 문서 체인을 기준으로 추적한다.
+2. 설계/구현/운영 판단은 가능한 한 `docs/01.prd`부터 `docs/09.runbooks`까지의 문서 체인을 기준으로 추적한다.
 3. 새 README나 가이드는 [`docs/99.templates/readme.template.md`](docs/99.templates/readme.template.md) 같은 승인된 템플릿에서 시작한다.
 4. 문서 링크는 상대 경로를 사용하고, 사람 대상 README는 한국어를 유지한다.
 5. `docs/00.agent-governance/*`는 영어로 유지하며, 게이트웨이 파일에는 규칙을 중복 복사하지 않는다.
-6. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
+6. 브랜치 전략은 `main` 중심 PR flow를 기본으로 하며, 상세 규칙은 [`docs/00.agent-governance/rules/git-workflow.md`](docs/00.agent-governance/rules/git-workflow.md)를 따른다.
+7. 인프라 변경은 GitOps-first로 다룬다. 일반 변경에서 live cluster mutation, `kubectl apply`, 외부 Vault 조작을 도입하지 않는다.
+8. `.github` 자동화나 QA gate를 바꿀 때는 [`.github/ABOUT.md`](.github/ABOUT.md)와 PR template의 검증 체크리스트를 함께 확인한다.
+9. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
 
 ## Related References
 
@@ -69,6 +73,8 @@ hy-home.k8s/
 - [docs/01.prd/2026-03-27-wsl-k3d-argocd-platform.md](docs/01.prd/2026-03-27-wsl-k3d-argocd-platform.md)
 - [docs/04.specs/001-wsl-k3d-argocd-platform/spec.md](docs/04.specs/001-wsl-k3d-argocd-platform/spec.md)
 - [docs/09.runbooks/0001-argocd-platform-bootstrap-runbook.md](docs/09.runbooks/0001-argocd-platform-bootstrap-runbook.md)
+- [.github/ABOUT.md](.github/ABOUT.md)
+- [scripts/README.md](scripts/README.md)
 
 ## Repository Map
 
@@ -77,6 +83,7 @@ hy-home.k8s/
 - `infrastructure/` - k3d 클러스터 설정, ArgoCD Helm values, bootstrap 및 검증 스크립트
 - `examples/` - 앱 GitOps 온보딩용 참조 구현과 템플릿
 - `scripts/` - 저장소 유지보수와 자동화 보조 스크립트
+- `.github/` - `main` PR flow용 CI, release evidence, PR/issue intake, CODEOWNERS, labeler, zizmor 설정
 - `.claude/`, `.codex/` - 에이전트 실행 규칙, 스킬, 워크플로 오버레이
 
 ## Tech Stack
@@ -160,14 +167,17 @@ cd hy-home.k8s
 
 - [`.pre-commit-config.yaml`](./.pre-commit-config.yaml)
 - [`.github/workflows/ci.yml`](./.github/workflows/ci.yml)
+- [`.github/ABOUT.md`](./.github/ABOUT.md)
 
-repo-backed 정적 검증을 로컬에서 확인할 때는 아래 순서로 실행한다.
+repo-backed 정적 검증을 로컬에서 확인할 때는 아래 순서로 실행한다. 이 묶음은 CI의 `repo-quality-static`, `manifest-static`, `shell-static` 책임과 맞춰져 있다.
 
 ```bash
-bash infrastructure/tests/verify-contracts-static.sh
 bash scripts/validate-repo-quality-gates.sh .
+bash infrastructure/tests/verify-contracts-static.sh
 bash scripts/validate-gitops-structure.sh
 bash scripts/validate-k8s-manifests.sh .
 bash scripts/check-secret-handling.sh .
-find infrastructure scripts -type f -name '*.sh' -exec bash -n {} \;
+find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +
 ```
+
+`pre-commit`, `kube-linter`, `zizmor`, `actionlint`, `shellcheck`는 로컬에 있으면 사용한다. 로컬 `PATH`에 없을 때는 위의 repo-backed 검증을 먼저 실행하고, 전체 hook/tool matrix는 GitHub Actions에서 확인한다.
