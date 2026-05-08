@@ -28,6 +28,8 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 
 2026-05-09 gateway/runtime audit 보정은 새 plan/task 문서를 만들지 않고 이 작업 문서에 누적한다. 현재 구조는 이미 thin gateway와 local harness runtime을 갖추고 있으므로, 보정 범위는 catalog clarity와 regression gate 강화로 제한한다.
 
+2026-05-09 하네스/Agent-first 구성요소 추가 조사는 `harness-catalog.md`의 compact matrix와 `agentic.md`의 matrix-first/context hierarchy 규칙으로 추적한다. 새 runtime surface 또는 새 stage 문서는 만들지 않는다.
+
 ## Inputs
 
 - **Parent Spec**: not applicable; this remediation does not introduce a new technical contract.
@@ -53,6 +55,9 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 | T-006 | Clarify Claude permission hooks versus Codex context hook in the harness catalog | doc | n/a | PLN-006 | repo quality gate validates hook-boundary wording | Platform | Done |
 | T-007 | Mark historical harness memory as an initial snapshot with current-source pointers | doc | n/a | PLN-006 | repo quality gate validates historical/current-source wording | Platform | Done |
 | T-008 | Add gateway/runtime regression checks to repo quality gate | test | n/a | PLN-007 | gateway thinness, English-only governance/runtime, and hook-boundary checks pass | Platform | Done |
+| T-009 | Add Harness Engineering and Agent-first Engineering component audit matrices | doc | n/a | PLN-008 | matrix headings and `Gap`/`Remediation` columns pass repo quality gate | Platform | Done |
+| T-010 | Add matrix-first and context hierarchy rules for future harness changes | guardrail | n/a | PLN-009 | agentic rule phrases pass repo quality gate | Platform | Done |
+| T-011 | Extend repo quality gate for component audit matrix presence | test | n/a | PLN-008, PLN-009 | quality gate fails if matrix or rule contracts are removed | Platform | Done |
 
 ## Suggested Types
 
@@ -86,6 +91,9 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 - [x] T-006 Clarify hook boundary in harness catalog
 - [x] T-007 Clarify historical memory current-source pointers
 - [x] T-008 Add gateway/runtime regression checks
+- [x] T-009 Add component audit matrices
+- [x] T-010 Add matrix-first/context hierarchy rules
+- [x] T-011 Extend component audit regression checks
 
 ## Verification Summary
 
@@ -97,6 +105,7 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
   - `bash scripts/check-secret-handling.sh .`
   - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +`
   - Legacy external harness source-label scan across root gateways, `.claude`, `.codex`, and `docs/00.agent-governance`
+  - Harness and Agent-first component matrix contract check through `scripts/validate-repo-quality-gates.sh`
 - **Eval Commands**: not applicable; no prompt/model behavior is changed.
 - **Logs / Evidence Location**: conversation validation output for this implementation turn. `kube-linter` was skipped by `validate-k8s-manifests.sh` because it is not installed locally.
 

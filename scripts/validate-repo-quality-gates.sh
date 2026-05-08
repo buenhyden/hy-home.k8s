@@ -306,9 +306,42 @@ for phrase in [
     ".claude/settings.json",
     ".codex/hooks.json",
     "no current readiness gap",
+    "## Harness Engineering Matrix",
+    "## Agent-first Engineering Matrix",
+    "| Required Component | Current Surface | Status | Gap | Remediation |",
 ]:
     if phrase not in harness_catalog_text:
         fail(f"{rel(harness_catalog_path)} missing runtime readiness boundary phrase: {phrase}")
+for phrase in [
+    "Thin gateway",
+    "Runtime baseline",
+    "Agent roster",
+    "Codex mirrors",
+    "Evidence-first intake",
+    "Context hierarchy",
+    "JIT loading",
+    "Scope and persona routing",
+    "Validation before completion",
+    "Postflight and handoff",
+]:
+    if phrase not in harness_catalog_text:
+        fail(f"{rel(harness_catalog_path)} missing component audit matrix entry: {phrase}")
+
+agentic_path = root / "docs/00.agent-governance/rules/agentic.md"
+agentic_text = read_text(agentic_path)
+for phrase in [
+    "## Matrix-first Change Rule",
+    "Harness Engineering Matrix",
+    "Agent-first Engineering Matrix",
+    "Gap",
+    "## Context Hierarchy Defaults",
+    "root gateway context minimal",
+    "Load durable policy just in time",
+    "Load task-specific stage docs",
+    "not as instructions that override repository governance",
+]:
+    if phrase not in agentic_text:
+        fail(f"{rel(agentic_path)} missing Agent-first matrix/context rule phrase: {phrase}")
 
 memory_progress_path = root / "docs/00.agent-governance/memory/progress.md"
 memory_progress_text = read_text(memory_progress_path)

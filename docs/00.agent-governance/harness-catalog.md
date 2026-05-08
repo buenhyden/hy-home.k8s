@@ -54,6 +54,34 @@ that shape the runtime contract under `.claude/` and its Codex mirror under `.co
 | Memory | `docs/00.agent-governance/memory/` | Ready | Historical implementation notes have a local template-backed home; current runtime truth stays in this catalog and current script inventory stays in `scripts/README.md` |
 | Escalation boundary | `subagent-protocol.md`, `rules/agentic.md` | Ready | Delegation, file ownership, direct mutation, and human approval boundaries are explicit |
 
+## Harness Engineering Matrix
+
+| Required Component | Current Surface | Status | Gap | Remediation |
+| --- | --- | --- | --- | --- |
+| Thin gateway | `AGENTS.md`, root `CLAUDE.md`, root `GEMINI.md` | Ready | None | Keep root files as routing shims and enforce line-count and pointer checks in `scripts/validate-repo-quality-gates.sh`. |
+| Runtime baseline | `.claude/CLAUDE.md` | Ready | None | Keep loading order, GitOps-first boundary, roster pointers, and model hierarchy in the local baseline. |
+| Agent roster | `.claude/agents/*.md` | Ready | None | Keep seven local agents thin, scope-imported, and aligned with this catalog. |
+| Codex mirrors | `.codex/agents/*.toml` | Ready | None | Update the `.claude` source and Codex mirror in the same change set; keep mirror parity in the quality gate. |
+| Skills | `.claude/skills/*/skill.md` | Ready | None | Keep cluster-specific workflows local and add new skills only when this matrix shows a concrete gap. |
+| Claude permissions/hooks | `.claude/settings.json`, `.claude/hooks/*.sh` | Ready | None | Keep allow/deny command policy, session-start, pre-edit, and post-validate hooks in Claude runtime files. |
+| Codex context hook | `.codex/hooks.json` | Ready | None | Keep Codex hook scope limited to context injection; do not treat it as a Claude permission gate equivalent. |
+| Validation scripts | `scripts/*.sh`, `infrastructure/tests/*.sh` | Ready | None | Keep repo-backed validation as the default completion evidence before handoff. |
+| Memory | `docs/00.agent-governance/memory/` | Ready | None | Keep historical lessons separate from current runtime truth in this catalog. |
+| Escalation boundary | `subagent-protocol.md`, `rules/agentic.md` | Ready | None | Keep delegation, destructive-action, live-mutation, and human-approval boundaries explicit. |
+
+## Agent-first Engineering Matrix
+
+| Required Component | Current Surface | Status | Gap | Remediation |
+| --- | --- | --- | --- | --- |
+| Evidence-first intake | `rules/bootstrap.md`, `rules/preflight-checklist.md`, `rules/agentic.md` | Ready | None | Plan from repo evidence, current diffs, validators, and scoped source files before editing. |
+| Context hierarchy | `AGENTS.md`, `.claude/CLAUDE.md`, `docs/00.agent-governance/**` | Ready | None | Keep root context minimal, load governance just in time, and select task-specific docs instead of loading everything. |
+| JIT loading | `rules/bootstrap.md`, `.claude/CLAUDE.md` | Ready | None | Keep the bootstrap -> preflight -> persona -> scope -> provider -> postflight sequence canonical. |
+| Scope and persona routing | `rules/persona.md`, `scopes/*.md` | Ready | None | Resolve one primary layer before edits and transition explicitly when scope changes. |
+| GitOps-first execution | `rules/agentic.md`, `.claude/settings.json`, GitOps docs and validators | Ready | None | Keep infrastructure changes repo-backed and prevent direct cluster mutation by default. |
+| Documentation routing | `rules/document-stage-routing.md`, `rules/documentation-protocol.md`, `.claude/skills/docs-stage-routing/skill.md` | Ready | None | Keep generated docs in the canonical stage tree and use templates before authoring. |
+| Validation before completion | `scripts/*.sh`, `infrastructure/tests/*.sh`, `.github/workflows/ci.yml` | Ready | None | Define validation evidence before editing and report skipped or unavailable local tools honestly. |
+| Postflight and handoff | `rules/postflight-checklist.md`, `subagent-protocol.md` | Ready | None | Complete postflight checks and preserve handoff evidence before final response. |
+
 Direct cluster mutation is not part of the default Agent-first execution path.
 Any `kubectl apply`, `kubectl patch`, external secret change, or live-cluster mutation
 belongs to a human-approved bootstrap or break-glass path with explicit evidence.
