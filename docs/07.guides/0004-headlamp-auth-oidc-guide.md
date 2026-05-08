@@ -20,6 +20,8 @@ GitOps(ArgoCD + Helm values) 기반으로 변경사항을 적용하며, Kubernet
 Headlamp 인증 방식을 anonymous → 토큰(ServiceAccount) → OIDC(Keycloak) 순서로 전환하고,
 Keycloak groups를 Kubernetes RBAC에 매핑하여 최소 권한 접근을 구현한다.
 
+> **Agent execution boundary**: 이 가이드의 `kubectl create`/`kubectl apply` 예시는 운영자 승인 하의 로컬 bootstrap 또는 break-glass 절차다. Agent는 기본적으로 GitOps 변경안, RBAC 최소권한 검토, 검증 계획까지만 작성한다.
+
 ## Prerequisites
 
 ### 필수 도구
@@ -85,7 +87,7 @@ kubectl -n headlamp get deployment headlamp \
 
 ### 2. ServiceAccount 토큰으로 로그인
 
-#### 2-A. 단기 토큰 발급 (추천)
+#### 2-A. 단기 토큰 발급 (human-approved local admin)
 
 ```bash
 # headlamp-admin ServiceAccount가 없으면 생성
@@ -102,7 +104,7 @@ kubectl create clusterrolebinding headlamp-admin \
 kubectl -n headlamp create token headlamp-admin --duration=1h
 ```
 
-#### 2-B. Long-lived Token Secret (Kubernetes 1.24+에서는 비권장)
+#### 2-B. Long-lived Token Secret (Kubernetes 1.24+에서는 비권장, break-glass only)
 
 ```bash
 # Long-lived token Secret 생성

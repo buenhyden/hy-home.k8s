@@ -88,12 +88,14 @@ curl -s -G "http://172.18.0.13:3100/loki/api/v1/query" \
 
 ## Procedure 2: platform-monitoring ArgoCD App 배포 복구
 
+> **Agent execution boundary**: AppProject 직접 적용은 human-approved bootstrap 또는 break-glass 전용이다. Agent는 기본적으로 Git 파일 수정, 리뷰, ArgoCD reconciliation 계획, 증적 정리까지만 수행한다.
+
 ```bash
 # AppProject에 monitoring namespace 포함 확인
 kubectl get appproject platform -n argocd \
   -o jsonpath='{.spec.destinations[*].namespace}' | tr ' ' '\n' | grep monitoring
 
-# 없으면 직접 적용 (ArgoCD 자동 반영 불가)
+# 없으면 human-approved bootstrap/break-glass로 직접 적용
 kubectl apply -f gitops/clusters/local/appproject-platform.yaml
 
 # namespace 먼저 배포
@@ -154,9 +156,9 @@ args:
 ```
 
 ```bash
-# ArgoCD sync 또는 직접 적용
+# 기본 경로: ArgoCD sync
 argocd app sync platform-monitoring
-# 또는
+# human-approved break-glass only
 kubectl apply -f gitops/platform/monitoring/alloy-k8s-logs.yaml
 ```
 
@@ -312,7 +314,7 @@ curl -s -G "http://172.18.0.13:3100/loki/api/v1/query" \
 
 | 증상                                       | 원인                                               | 조치                                              |
 | ------------------------------------------ | -------------------------------------------------- | ------------------------------------------------- |
-| platform-monitoring InvalidSpecError       | AppProject에 monitoring namespace 미포함           | `kubectl apply -f appproject-platform.yaml`       |
+| platform-monitoring InvalidSpecError       | AppProject에 monitoring namespace 미포함           | Git 파일 확인 후 human-approved bootstrap/break-glass로 AppProject 반영 |
 | alloy CrashLoop: read-only file system     | `--storage.path` 미설정                            | args에 `--storage.path=/var/lib/alloy` + emptyDir |
 | alloy CrashLoop: unrecognized extra_labels | `loki.source.kubernetes_events` 미지원 속성        | `loki.process` + `stage.static_labels` 파이프라인 |
 | kube-state-metrics target down             | NodePort 30091 미배포                              | `argocd app sync platform-monitoring`             |

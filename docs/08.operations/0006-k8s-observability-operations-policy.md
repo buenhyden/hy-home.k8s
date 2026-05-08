@@ -167,7 +167,7 @@ ArgoCD Application이 새 네임스페이스에 리소스를 배포하려면 App
 **Required**:
 
 - 새 네임스페이스 추가 시 `gitops/clusters/local/appproject-platform.yaml` destinations에 명시
-- AppProject 변경 후 `kubectl apply -f gitops/clusters/local/appproject-platform.yaml` 수동 적용 필요 (ArgoCD 자동 반영 불가)
+- AppProject 변경 후 live 반영은 운영자 승인 하의 bootstrap 또는 break-glass 절차로만 수행
 
 **현재 destinations 목록:**
 
@@ -179,7 +179,8 @@ istio-system, headlamp, argo-rollouts, metallb-system, monitoring
 **Disallowed**:
 
 - AppProject destinations 미추가 상태에서 Application 배포 시도 (→ InvalidSpecError)
-- AppProject 변경을 ArgoCD UI/CLI sync에만 의존 (bootstrap 직접 적용 필요)
+- Agent가 AppProject 변경을 직접 `kubectl apply`로 반영
+- AppProject 변경을 ArgoCD UI/CLI sync에만 의존하고 승인된 bootstrap/break-glass 증적을 남기지 않는 것
 
 ```bash
 # AppProject destinations 확인

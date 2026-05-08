@@ -68,7 +68,7 @@ kubectl get pod -n argocd -l app.kubernetes.io/name=argocd-server \
 # ArgoCD는 platform-argocd-config app이 관리하므로 ArgoCD sync로 배포됨
 argocd app sync platform-argocd-config
 
-# 수동 배포가 필요한 경우
+# human-approved break-glass only
 kubectl apply -f gitops/platform/argocd/argocd-metrics-nodeport.yaml
 
 # 서비스 생성 확인

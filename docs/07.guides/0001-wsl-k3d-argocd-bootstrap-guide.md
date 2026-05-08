@@ -76,6 +76,7 @@
    ```bash
    mkcert -install
    mkcert argocd.local
+   # bootstrap-only exception: ArgoCD owns steady-state changes after this point.
    kubectl -n argocd create secret tls argocd-local-tls \
      --cert=argocd.local.pem \
      --key=argocd.local-key.pem \

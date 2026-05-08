@@ -100,9 +100,10 @@ argocd app sync platform-argocd-config
 kubectl get svc -n argocd | grep metrics-np
 ```
 
-ArgoCD가 접근 불가능한 경우 수동 배포:
+ArgoCD가 접근 불가능한 경우에도 직접 배포는 human-approved break-glass로만 수행한다.
 
 ```bash
+# human-approved break-glass only
 kubectl apply -f gitops/platform/argocd/argocd-metrics-nodeport.yaml
 
 # 배포 확인

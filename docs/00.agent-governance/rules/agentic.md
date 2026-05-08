@@ -20,6 +20,14 @@ Rules for AI Agent-first Engineering quality and safety.
 - Keep `.claude/agents/*.md` and `.codex/agents/*.toml` aligned whenever runtime contracts change.
 - Report unavailable tools, skipped live checks, and CI-only validation honestly.
 
+## Readiness Review Defaults
+
+- Check `harness-catalog.md` before changing agent, skill, hook, or mirror contracts.
+- Treat readiness as a matrix across gateways, runtime baseline, agents, mirrors, skills, hooks, validation scripts, memory, and escalation boundaries.
+- Do not add new runtime surfaces until the existing readiness matrix shows a concrete gap.
+- Keep direct `kubectl apply`, `kubectl patch`, external secret writes, and other live-cluster mutations outside the default Agent-first path.
+- If a runbook requires live mutation for bootstrap or emergency recovery, mark it as human-approved bootstrap or break-glass work and record the expected evidence.
+
 ## Persona and Rule Enforcement
 
 - Every non-trivial task must align to one persona in `rules/persona.md`.

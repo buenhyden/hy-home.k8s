@@ -13,7 +13,7 @@
 주된 원인은 세 가지다:
 
 1. **Docker 네트워크 재할당**: k3d-hyhome 네트워크가 재시작되면 외부 컨테이너(infra-grafana 등)의 IP가 변경된다. `gitops/platform/external-services/` 아래의 EndpointSlice YAML과 Kiali ConfigMap의 Grafana URL이 구 IP를 가리키게 되어 연결이 끊긴다.
-2. **ArgoCD EndpointSlice 제외**: ArgoCD는 `discovery.k8s.io/EndpointSlice` 리소스를 기본 resource.exclusions에 포함하여 직접 관리하지 않는다. 따라서 YAML을 수정하고 커밋해도 EndpointSlice가 자동으로 클러스터에 동기화되지 않는다. 수동 `kubectl apply`가 필수다.
+2. **ArgoCD EndpointSlice 제외**: ArgoCD는 `discovery.k8s.io/EndpointSlice` 리소스를 기본 resource.exclusions에 포함하여 직접 관리하지 않을 수 있다. 따라서 YAML을 수정하고 커밋해도 EndpointSlice가 자동으로 클러스터에 동기화되지 않을 수 있다. 직접 `kubectl apply`/`kubectl patch`는 운영자가 승인한 break-glass 복구에서만 사용한다.
 3. **Grafana OAuth 전용 설정**: Grafana가 `GF_AUTH_DISABLE_LOGIN_FORM=true`, `GF_AUTH_OAUTH_AUTO_LOGIN=true`로 설정된 경우 `/api/frontend/settings` 등 API 엔드포인트가 401을 반환한다. Kiali는 이 엔드포인트로 Grafana 버전을 확인하므로 Unreachable로 표시된다. 해결책: Grafana에 Anonymous Viewer 접근 활성화.
 
 ## When to Use
@@ -86,7 +86,9 @@ kubectl get configmap argocd-cm -n argocd \
 
 ## Procedure 2: EndpointSlice IP 업데이트
 
-### 2-1. 기존 EndpointSlice 패치 (즉시 적용)
+> **Agent execution boundary**: 아래 `kubectl patch`/`kubectl apply` 절차는 human-approved break-glass 전용이다. Agent는 기본적으로 Git 파일 수정, 리뷰, ArgoCD reconciliation 계획, 증적 정리까지만 수행한다.
+
+### 2-1. 기존 EndpointSlice 패치 (human-approved break-glass)
 
 ```bash
 # Grafana
@@ -102,9 +104,9 @@ kubectl patch endpointslice loki-external-1 -n platform --type=json \
   -p='[{"op":"replace","path":"/endpoints/0/addresses/0","value":"172.18.0.13"}]'
 ```
 
-### 2-2. 누락된 EndpointSlice 생성 (kubectl apply)
+### 2-2. 누락된 EndpointSlice 생성 (human-approved break-glass)
 
-ArgoCD가 동기화하지 않으므로 직접 apply해야 한다.
+ArgoCD가 동기화하지 않는 경우에도 직접 apply는 운영자가 승인한 break-glass 상황에서만 수행한다.
 
 ```bash
 kubectl apply -f gitops/platform/external-services/alloy-external.yaml
@@ -120,7 +122,7 @@ git add gitops/platform/external-services/
 git commit -m "chore: update external service endpoint IPs after network reassignment"
 ```
 
-> **주의**: git 커밋만으로는 클러스터에 반영되지 않는다. `kubectl apply` 또는 `kubectl patch`를 별도로 실행해야 한다.
+> **주의**: git 커밋만으로는 EndpointSlice가 클러스터에 반영되지 않을 수 있다. 직접 `kubectl apply` 또는 `kubectl patch`는 human-approved break-glass 절차로만 실행하고, 실행 전후 증적을 남긴다.
 
 ### 2-4. 적용 결과 확인
 
@@ -209,7 +211,7 @@ ArgoCD는 `discovery.k8s.io/EndpointSlice`를 `resource.exclusions`에 포함하
 
 - `gitops/platform/external-services/*.yaml`에 EndpointSlice를 커밋하고 ArgoCD Sync해도 클러스터에 반영되지 않는다.
 - 클러스터에 EndpointSlice가 없어도 ArgoCD 앱 상태가 `Synced`로 표시될 수 있다.
-- IP 변경 시 git 수정과 함께 반드시 `kubectl apply` 또는 `kubectl patch`를 수동으로 실행해야 한다.
+- IP 변경 시 기본 경로는 git 수정, 리뷰, 증적 기록이다. `kubectl apply` 또는 `kubectl patch`는 human-approved break-glass에서만 실행한다.
 
 **확인 방법:**
 
@@ -318,7 +320,7 @@ argocd app set platform-external-services \
 
 | 항목                  | 내용                                                                        |
 | --------------------- | --------------------------------------------------------------------------- |
-| ArgoCD EndpointSlice  | ArgoCD는 EndpointSlice를 관리하지 않음. 수동 `kubectl apply` 필수           |
+| ArgoCD EndpointSlice  | ArgoCD는 EndpointSlice를 관리하지 않을 수 있음. 직접 apply는 human-approved break-glass 전용 |
 | 연결 테스트           | Kiali 파드에서 `nc` 대신 `bash -c 'echo >/dev/tcp/<ip>/<port>'` 사용        |
 | NetworkPolicy         | egress ipBlock 규칙은 post-DNAT 기준 IP로 작성                              |
 | IP 변경 시 체크리스트 | EndpointSlice YAML, Kiali Grafana URL, NetworkPolicy egress 세 곳 모두 확인 |

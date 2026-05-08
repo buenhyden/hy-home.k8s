@@ -3,7 +3,7 @@ title: 'Reference: Local Harness Catalog'
 type: reference
 status: draft
 owner: 'platform'
-updated: 2026-04-20
+updated: 2026-05-09
 ---
 
 # Reference: Local Harness Catalog
@@ -35,6 +35,24 @@ that shape the runtime contract under `.claude/` and its Codex mirror under `.co
 - Agent files are thin runtime bridges and must not duplicate governance policy.
 - Codex mirror files are thin runtime bridges with the same contract as their `.claude` source.
 - Skill files are workflow contracts and must remain specific to this cluster.
+
+## Readiness Matrix
+
+| Layer | Implemented Surface | Status | Readiness Evidence |
+| --- | --- | --- | --- |
+| Gateway | `AGENTS.md`, root `CLAUDE.md`, root `GEMINI.md` | Ready | Thin routers point to governance docs and runtime baseline |
+| Runtime baseline | `.claude/CLAUDE.md` | Ready | Defines loading order, GitOps-first boundary, roster pointers, and model hierarchy |
+| Agents | `.claude/agents/*.md` | Ready | Seven local agents exist with frontmatter, scope imports, guardrails, handoff, and postflight |
+| Codex mirrors | `.codex/agents/*.toml` | Ready | Mirror stems, imports, guardrails, and postflight are checked by `scripts/validate-repo-quality-gates.sh` |
+| Skills | `.claude/skills/*/skill.md` | Ready | GitOps, validation, docs routing, deployment, incident, RCA, risk, and security workflows are local |
+| Hooks | `.claude/hooks/*.sh`, `.claude/settings.json`, `.codex/hooks.json` | Ready | Session, pre-edit, post-validate, and graphify context hooks are configured |
+| Validation scripts | `scripts/*.sh`, `infrastructure/tests/*.sh` | Ready | Repo-backed gates cover quality, GitOps structure, manifests, contracts, secret handling, and shell syntax |
+| Memory | `docs/00.agent-governance/memory/` | Ready | Recurring governance lessons have a local template-backed home |
+| Escalation boundary | `subagent-protocol.md`, `rules/agentic.md` | Ready | Delegation, file ownership, direct mutation, and human approval boundaries are explicit |
+
+Direct cluster mutation is not part of the default Agent-first execution path.
+Any `kubectl apply`, `kubectl patch`, external secret change, or live-cluster mutation
+belongs to a human-approved bootstrap or break-glass path with explicit evidence.
 
 ## Agents
 

@@ -123,11 +123,13 @@
 
 **증상**: `kubectl get clusterissuer mkcert-ca-issuer` → `READY=False`
 
+> **Execution boundary**: Secret 재주입과 controller 재시작은 bootstrap 또는 human-approved break-glass 전용이다.
+
 ```bash
 # 1. rootCA Secret 존재 확인
 kubectl -n cert-manager get secret mkcert-root-ca
 
-# 2. Secret 없으면 재주입
+# 2. Secret 없으면 재주입 (bootstrap/break-glass only)
 kubectl -n cert-manager create secret tls mkcert-root-ca \
   --cert=secrets/certs/rootCA.pem \
   --key=secrets/certs/rootCA-key.pem \

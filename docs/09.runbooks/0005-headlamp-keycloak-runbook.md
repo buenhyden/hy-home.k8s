@@ -10,6 +10,8 @@
 ServiceAccount 토큰 로그인, Keycloak OIDC 전환(GitOps via ArgoCD), Keycloak 설정 체크리스트,
 그리고 OIDC 관련 오류 트러블슈팅을 다룬다.
 
+> **Agent execution boundary**: 이 런북의 ServiceAccount, ClusterRoleBinding, token Secret 생성은 human-approved local bootstrap 또는 break-glass 전용이다. Agent는 기본적으로 RBAC 최소권한 검토, GitOps 변경안, 검증 계획까지만 작성한다.
+
 ## When to Use
 
 - Headlamp에서 ServiceAccount 토큰으로 로그인이 필요할 때
@@ -27,10 +29,10 @@ ServiceAccount 토큰 로그인, Keycloak OIDC 전환(GitOps via ArgoCD), Keyclo
 # ServiceAccount 존재 확인
 kubectl -n headlamp get sa headlamp-admin 2>/dev/null && echo "EXISTS" || echo "NOT FOUND"
 
-# 없으면 생성
+# 없으면 생성 (human-approved local bootstrap only)
 kubectl -n headlamp create serviceaccount headlamp-admin
 
-# ClusterRoleBinding 생성 (멱등)
+# ClusterRoleBinding 생성 (human-approved local bootstrap only)
 kubectl create clusterrolebinding headlamp-admin \
   --clusterrole=cluster-admin \
   --serviceaccount=headlamp:headlamp-admin \

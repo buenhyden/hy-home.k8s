@@ -9,6 +9,8 @@
 이 런북은 `ClusterSecretStore/vault-backend Ready=False` 상황에서 수동 EndpointSlice 핫픽스로 연동을 복구하고, ArgoCD/ESO 상태를 정상화한 뒤 TLS/CI 계약 회귀를 점검하는 절차를 제공한다.
 
 > **현재 실행계약 메모 (2026-05-09)**: 현재 `gitops/platform/external-services/`와 정적 검증 스크립트는 외부 서비스 EndpointSlice/CIDR을 `172.18.x` 기준으로 고정한다. 이 런북의 `172.19.x` 언급은 k3d 네트워크 경로 문제를 설명하는 역사적 `infra_net` 맥락으로만 해석한다.
+>
+> **Agent execution boundary**: EndpointSlice hotfix와 Docker network mutation은 human-approved break-glass 전용이다. Agent는 기본적으로 사전 스냅샷, Git 파일 보정안, 검증 계획, 후속 증적 정리까지만 수행한다.
 
 ## Purpose
 
@@ -49,7 +51,7 @@ kubectl -n external-secrets logs deploy/external-secrets --tail=200 | \
   rg -i 'vault|clustersecretstore|error|connection refused'
 ```
 
-1. Vault 컨테이너를 k3d 네트워크에 연결하고 `EndpointSlice` 핫픽스를 적용한다.
+1. Vault 컨테이너를 k3d 네트워크에 연결하고 `EndpointSlice` 핫픽스를 적용한다. 이 단계는 human-approved break-glass 전용이다.
 
 ```bash
 # Vault가 k3d-hyhome 네트워크에 연결되어 있는지 확인

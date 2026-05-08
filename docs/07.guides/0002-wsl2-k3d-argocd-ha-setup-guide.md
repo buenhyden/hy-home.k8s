@@ -105,7 +105,7 @@ kubectl -n platform get svc,endpointslice | \
 VAULT_K3D_IP=$(docker inspect vault --format '{{(index .NetworkSettings.Networks "k3d-hyhome").IPAddress}}')
 echo "Vault k3d IP: $VAULT_K3D_IP"
 
-# EndpointSlice에 k3d-hyhome IP 적용
+# EndpointSlice에 k3d-hyhome IP 적용 (human-approved bootstrap/break-glass only)
 cat <<YAML | kubectl apply -f -
 apiVersion: discovery.k8s.io/v1
 kind: EndpointSlice

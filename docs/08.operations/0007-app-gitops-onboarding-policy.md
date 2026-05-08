@@ -164,7 +164,7 @@ fix: fix <appname> config             ← 설정 수정
 
 ### 4-4. 금지 사항
 
-- `kubectl apply`로 직접 클러스터 변경 (AppProject 변경, 긴급 hotfix 제외)
+- `kubectl apply`로 직접 클러스터 변경 (human-approved AppProject bootstrap/break-glass 제외)
 - `latest` 태그 이미지 사용
 - Git 없이 ArgoCD UI에서만 변경
 - `namespace: default` 사용 (반드시 `apps` 또는 플랫폼 지정 namespace)

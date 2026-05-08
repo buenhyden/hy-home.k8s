@@ -260,7 +260,7 @@ kubectl get clusterissuer mkcert-ca-issuer -o jsonpath='{.status.conditions[0]}'
 # AppProject whitelist 확인
 kubectl -n argocd get appproject apps -o yaml | grep -A2 "namespaceResourceWhitelist"
 
-# 수동 AppProject 적용 (Git sync 대기 없이)
+# human-approved AppProject bootstrap/break-glass only
 kubectl apply -f gitops/clusters/local/appproject-apps.yaml
 ```
 

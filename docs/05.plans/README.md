@@ -40,6 +40,7 @@
 | [`2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md)         | WSL2 GitOps 플랫폼 단계별 실행 계획                                             | Draft | 2026-03-27 |
 | [`2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | TLS/최소권한 유지 + 변경영역 기반 CI 정적 게이트 + 롤백 규칙을 포함한 실행 계획 | Draft | 2026-03-28 |
 | [`2026-03-29-platform-expansion.md`](./2026-03-29-platform-expansion.md)                   | 2026-03-29 IP 수정 + cert-manager/Dashboard/Istio/Kiali 확장 계획, 현재 실행계약은 Headlamp/172.18.x 기준 | Done  | 2026-05-09 |
+| [`2026-05-09-k3d-agent-first-remediation.md`](./2026-05-09-k3d-agent-first-remediation.md) | k3d 운영 문서와 Agent-first 실행 계약의 GitOps-first 충돌 보정 계획 | Done  | 2026-05-09 |
 
 ## 관련 폴더
 
