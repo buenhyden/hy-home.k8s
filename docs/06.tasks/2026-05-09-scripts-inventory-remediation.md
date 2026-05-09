@@ -23,6 +23,7 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 - Documentation-only work still needs validation evidence.
 - Do not delete, rename, or merge scripts unless a future plan finds concrete unused code.
 - Keep the public command contract unchanged.
+- Clarify existing optional arguments as repo root only; do not add arbitrary subpath scan mode.
 - Keep `scripts/README.md` as the current script inventory entry point.
 - This document remains the execution-tracking source of truth for this remediation.
 
@@ -35,6 +36,7 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 | T-003 | Mark all current scripts as `Keep` and document usage evidence | doc | n/a | PLN-003 | Four current scripts listed with usage contracts | Platform | Done |
 | T-004 | Add a current-inventory note to historical governance memory | doc | n/a | PLN-004 | Historical note remains intact and points to `scripts/README.md` | Platform | Done |
 | T-005 | Run repo-backed validation bundle | test | n/a | PLN-005 | validation command output reviewed | Platform | Done |
+| T-006 | Clarify repo-root argument contract and fail invalid manifest/secret scan roots | impl | n/a | PLN-006 | canonical commands pass and subpath negative checks fail clearly | Platform | Done |
 
 ## Suggested Types
 
@@ -65,6 +67,7 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 ### Phase 2
 
 - [x] T-005 Run and record repo-backed validation bundle
+- [x] T-006 Clarify repo-root argument contract for manifest and secret scan scripts
 
 ## Verification Summary
 
@@ -76,6 +79,8 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
   - `bash scripts/validate-gitops-structure.sh`
   - `bash scripts/validate-k8s-manifests.sh .`
   - `bash scripts/check-secret-handling.sh .`
+  - `bash scripts/validate-k8s-manifests.sh gitops` (expected failure)
+  - `bash scripts/check-secret-handling.sh gitops` (expected failure)
 - **Eval Commands**: not applicable; no prompt/model behavior is changed.
 - **Logs / Evidence Location**: conversation validation output for this implementation turn. If `kube-linter` is not installed locally, `validate-k8s-manifests.sh` reports the skip and still validates YAML syntax.
 

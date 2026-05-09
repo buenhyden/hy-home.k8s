@@ -1,13 +1,28 @@
 #!/usr/bin/env bash
 # check-secret-handling.sh — scan for plaintext secret patterns in manifests
 # Idempotent: safe to run multiple times.
-# Usage: bash scripts/check-secret-handling.sh [path]
+# Usage: bash scripts/check-secret-handling.sh [repo-root]
 # Exit 0 = clean. Exit 1 = plaintext secrets found.
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-TARGET="${1:-${PROJECT_DIR}}"
+TARGET_INPUT="${1:-${PROJECT_DIR}}"
 EXIT_CODE=0
+
+if [[ ! -d "$TARGET_INPUT" ]]; then
+  echo "ERR repo root does not exist: $TARGET_INPUT" >&2
+  exit 1
+fi
+
+TARGET="$(cd "$TARGET_INPUT" && pwd)"
+
+for required_dir in gitops infrastructure; do
+  if [[ ! -d "$TARGET/$required_dir" ]]; then
+    echo "ERR expected repo root at $TARGET_INPUT; missing $required_dir/ under that root" >&2
+    echo "Usage: bash scripts/check-secret-handling.sh [repo-root]" >&2
+    exit 1
+  fi
+done
 
 if ! command -v python3 &>/dev/null; then
   echo "ERR python3 is required for Kubernetes kind detection" >&2
@@ -21,6 +36,15 @@ fi
 
 echo "=== check-secret-handling ==="
 echo "Target : $TARGET"
+
+mapfile -d '' SECRET_SCAN_FILES < <(find "$TARGET/gitops" "$TARGET/infrastructure" \( -name "*.yaml" -o -name "*.yml" \) -print0 2>/dev/null)
+
+if [[ "${#SECRET_SCAN_FILES[@]}" -eq 0 ]]; then
+  echo "ERR no YAML manifests matched under repo root: $TARGET" >&2
+  exit 1
+fi
+
+echo "Files  : ${#SECRET_SCAN_FILES[@]}"
 
 # Patterns that indicate plaintext secrets in k8s manifests
 # Excludes: {template}, <placeholder>, $variable (ArgoCD/Helm refs), empty values

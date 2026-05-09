@@ -63,6 +63,15 @@ scripts/
 | `validate-k8s-manifests.sh` | Keep | root README, CI `manifest-static`, PR template, `.claude/settings.json` | YAML syntax validation and optional `kube-linter` coverage for manifests. |
 | `check-secret-handling.sh` | Keep | root README, CI `manifest-static`, PR template, `.claude/settings.json` | Plaintext secret pattern scan for GitOps and infrastructure manifests. |
 
+## Command Contract
+
+| Command | Argument Contract | Scan / Validation Scope | Result Semantics |
+| --- | --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | 선택 인자는 repository root다. | 문서 taxonomy, 템플릿, workflow 계약, script 참조, runtime mirror inventory, version inventory를 검증한다. | `PASS`는 repository governance gate 통과를 뜻하고, `ERR`는 계약 drift를 뜻한다. |
+| `bash scripts/validate-gitops-structure.sh` | 인자를 받지 않는다. 스크립트가 속한 repository에서 실행된다. | ArgoCD root app, root application kind, root app manifest, `gitops/**/kustomization.yaml` syntax를 검증한다. | exit `0`은 필요한 GitOps 구조가 있고 parse 가능하다는 뜻이다. |
+| `bash scripts/validate-k8s-manifests.sh .` | 선택 인자는 arbitrary subpath가 아니라 repository root다. | `gitops/`, `infrastructure/`, `examples/sample-app/`, `examples/**/{gitops,kubernetes}/`, `traefik/` 아래 YAML을 검사하고, `kube-linter`가 있으면 함께 실행한다. | exit `0`은 YAML syntax가 통과했고 optional `kube-linter`도 실패하지 않았다는 뜻이다. `SKIP optional kube-linter`는 local YAML-only validation을 뜻한다. 잘못된 repo root 또는 YAML 0건은 실패한다. |
+| `bash scripts/check-secret-handling.sh .` | 선택 인자는 arbitrary subpath가 아니라 repository root다. | `gitops/`와 `infrastructure/` 아래 YAML에서 plaintext secret pattern을 검사하되 ExternalSecret-like resource는 제외한다. | exit `0`은 검사 대상 파일이 있고 plaintext secret pattern이 없다는 뜻이다. 잘못된 repo root, YAML 0건, finding은 실패한다. |
+
 ## Local Tool Availability
 
 필수 도구:
