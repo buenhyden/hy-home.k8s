@@ -36,7 +36,7 @@
 
 ## Infrastructure & Deployment
 
-- **Runtime / Platform**: Amazon EKS (Kubernetes 1.28+)
+- **Runtime / Platform**: Amazon EKS 1.35 target
 - **Deployment Model**: Terraform 기반 인프라 프로비저닝 + ArgoCD 기반 애플리케이션 배포
 - **Operational Evidence**: AWS CloudWatch Metrics, EKS Control Plane Logs.
 

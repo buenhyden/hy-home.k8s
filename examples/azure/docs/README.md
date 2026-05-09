@@ -4,7 +4,7 @@
 
 ## Overview
 
-이 경로는 `hy-home.k8s` 프로젝트의 로컬 Kubernetes 환경을 Azure 클라우드로 마이그레이션하기 위한 모든 설계, 계획, 작업 및 운영 지식을 관리한다. 2026년 3월 기준의 최신 Azure 클라우드 네이티브 아키텍처를 지향하며, 총 9개의 표준화된 디렉토리 구조를 통해 체계적인 지식 관리를 수행한다.
+이 경로는 `hy-home.k8s` 프로젝트의 로컬 Kubernetes 환경을 Azure 클라우드로 마이그레이션하기 위한 모든 설계, 계획, 작업 및 운영 지식을 관리한다. 2026-05-09 공식 지원 스냅샷 기준의 Azure 클라우드 네이티브 아키텍처를 지향하며, 총 9개의 표준화된 디렉토리 구조를 통해 체계적인 지식 관리를 수행한다.
 
 ## Audience
 
@@ -51,11 +51,11 @@ examples/azure/docs/
 └── README.md         # This hub file
 ```
 
-## Tech Stack (March 2026)
+## Tech Stack (2026-05-09 Snapshot)
 
 | Category   | Technology                                | Notes                     |
 | ---------- | ----------------------------------------- | ------------------------- |
-| Platform   | Azure Kubernetes Service (AKS)            | v1.30+, CNI Overlay       |
+| Platform   | Azure Kubernetes Service (AKS)            | AKS 1.35 target, CNI Overlay |
 | Networking | Application Gateway for Containers (AGC)  | Gateway API Standard      |
 | Database   | Azure DB for PostgreSQL Flexible Server   | High Availability Enabled |
 | Cache      | Azure Cache for Redis                     | Premium Tier              |
@@ -71,6 +71,6 @@ examples/azure/docs/
 
 ## Related References
 
-- [Main Project README](../../README.md)
-- [Local Infrastructure Specs](../../infrastructure/README.md)
-- [Governance Rules](../../docs/00.agent-governance/README.md)
+- [Main Project README](../../../README.md)
+- [Local Infrastructure Specs](../../../infrastructure/README.md)
+- [Governance Rules](../../../docs/00.agent-governance/README.md)

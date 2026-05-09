@@ -4,7 +4,7 @@
 
 ## Overview
 
-본 디렉토리는 Azure 배포 환경(AKS v1.30+)에 최적화된 애플리케이션 매니페스트를 포함한다. 특히 Azure Workload Identity 연동용 Service Account, Secret Store CSI 볼륨 마운트, 리소스 제한 설정(Resource Limit) 및 헬스 체크 설정을 관리한다.
+본 디렉토리는 Azure 배포 환경(AKS 1.35 target)에 최적화된 애플리케이션 매니페스트를 포함한다. 특히 Azure Workload Identity 연동용 Service Account, Secret Store CSI 볼륨 마운트, 리소스 제한 설정(Resource Limit) 및 헬스 체크 설정을 관리한다.
 
 ## Audience
 

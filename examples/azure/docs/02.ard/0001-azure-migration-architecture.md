@@ -2,7 +2,7 @@
 
 ## Overview (KR)
 
-본 문서는 로컬 k3s 인프라를 2026년 3월 기준 Azure(AKS) 클라우드 환경으로 마이그레이션하기 위한 참조 아키텍처를 정의한다. 시스템의 경계, 책임, 데이터 흐름, 핵심 품질 속성을 규정하며, 모든 인프라는 클라우드 네이티브 관리형 서비스를 최우선으로 활용한다.
+본 문서는 로컬 k3s 인프라를 2026-05-09 공식 지원 스냅샷 기준 Azure(AKS) 클라우드 환경으로 마이그레이션하기 위한 참조 아키텍처를 정의한다. 시스템의 경계, 책임, 데이터 흐름, 핵심 품질 속성을 규정하며, 모든 인프라는 클라우드 네이티브 관리형 서비스를 최우선으로 활용한다.
 
 ## Summary
 
@@ -11,7 +11,7 @@
 ## Boundaries & Non-goals
 
 - **Owns**:
-  - AKS Cluster (v1.30+, Standard Tier)
+  - AKS Cluster (1.35 target, Standard Tier)
   - VNet Architecture (Azure CNI Overlay)
   - AGC (Application Gateway for Containers) & Gateway API
   - Azure Database for PostgreSQL Flexible

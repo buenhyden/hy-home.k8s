@@ -2,7 +2,7 @@
 
 ## Overview (KR)
 
-본 문서는 로컬 k3s/k3d 환경의 `hy-home.k8s` 인프라를 2026년 3월 기준 Azure(AKS) 환경으로 마이그레이션하기 위한 요구사항을 정의한다. 로컬 환경의 관리 복잡성과 가용성 한계를 해결하고, 클라우드 네이티브 관리형 서비스(AGC, Managed Identity, PostgreSQL Flexible)를 통해 엔터프라이즈급 안정성을 확보하는 것이 목표다.
+본 문서는 로컬 k3s/k3d 환경의 `hy-home.k8s` 인프라를 2026-05-09 공식 지원 스냅샷 기준 Azure(AKS) 환경으로 마이그레이션하기 위한 요구사항을 정의한다. 로컬 환경의 관리 복잡성과 가용성 한계를 해결하고, 클라우드 네이티브 관리형 서비스(AGC, Managed Identity, PostgreSQL Flexible)를 통해 엔터프라이즈급 안정성을 확보하는 것이 목표다.
 
 ## Current Situation Audit (Analysis)
 
@@ -21,11 +21,11 @@
 2. **보안/인증**: Vault 토큰 및 정적 자격 증명(Database Password) 관리가 분산되어 있음.
 3. **확장성**: 단일 물리 노드(또는 VM)의 리소스 한계로 인해 스케일 아웃이 불가능함.
 
-## Target Requirements (2026-03 Standard)
+## Target Requirements (2026-05-09 Snapshot)
 
 ### Functional Requirements (FR)
 
-- **REQ-PRD-001**: AKS 클러스터(v1.30+)로의 모든 워크로드 이전 및 무중단 가동.
+- **REQ-PRD-001**: AKS 1.35 target 클러스터로의 모든 워크로드 이전 및 무중단 가동.
 - **REQ-PRD-002**: L7 입구(Ingress)는 **Application Gateway for Containers (AGC)**와 **Gateway API (v1)**를 도입한다.
 - **REQ-PRD-003**: 인프라 인증은 **Managed Identity** 및 **Workload Identity (OIDC Federation)** 체계로 일원화한다 (Passwordless).
 - **REQ-PRD-004**: 모든 시크릿은 Azure Key Vault와 **Secret Store CSI Driver**를 연동하여 파일로 마운트한다.

@@ -3,7 +3,7 @@
 # RDS Aurora Serverless v2 (PostgreSQL)
 module "db" {
   source  = "terraform-aws-modules/rds-aurora/aws"
-  version = "~> 9.0"
+  version = "10.2.0"
 
   name           = "${var.cluster_name}-rds"
   engine         = "aurora-postgresql"

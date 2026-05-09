@@ -4,7 +4,7 @@
 
 ## Overview
 
-본 디렉토리는 k3s 로컬 인프라를 2026년 3월 기준 Azure(AKS) 환경으로 이전할 때 프로젝트 전반의 기술적 근거가 되는 아키텍처 참조 명세서를 관리한다. 시스템의 경계, 책임 소유권, 데이터 아키텍처 및 품질 속성을 정의한다.
+본 디렉토리는 k3s 로컬 인프라를 2026-05-09 공식 지원 스냅샷 기준 Azure(AKS) 환경으로 이전할 때 프로젝트 전반의 기술적 근거가 되는 아키텍처 참조 명세서를 관리한다. 시스템의 경계, 책임 소유권, 데이터 아키텍처 및 품질 속성을 정의한다.
 
 ## Audience
 
@@ -21,7 +21,7 @@
 
 - Azure 마이그레이션 대상 참조 아키텍처 (AKS, AGC,Managed Storage 등)
 - 시스템 간 데이터 흐름(Data Flow) 및 계층 분리 전략
-- 2026년 3월 기준 Azure 기술 스택의 품질 속성(Performance, Availability 등) 규정
+- 2026-05-09 공식 지원 스냅샷 기준 Azure 기술 스택의 품질 속성(Performance, Availability 등) 규정
 - 리소스 간 소유권 및 결합도(Cohesion / Coupling) 수준 정의
 
 ### Out of Scope

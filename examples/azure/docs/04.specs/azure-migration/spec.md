@@ -2,13 +2,13 @@
 
 ## Overview (KR)
 
-로컬 k3s 환경을 Azure(AKS)로 이전하기 위한 엔지니어링 세부 규격을 정의한다. 본 명세는 Bicep 코드 구현 및 Kubernetes 매니페스트 작성의 기준이 되며, 2026년 3월 기준 Azure 기술 표준을 준수한다.
+로컬 k3s 환경을 Azure(AKS)로 이전하기 위한 엔지니어링 세부 규격을 정의한다. 본 명세는 Bicep 코드 구현 및 Kubernetes 매니페스트 작성의 기준이 되며, 2026-05-09 공식 지원 스냅샷 기준 Azure 기술 표준을 준수한다.
 
 ## System Specification
 
 ### 1. Compute (AKS)
 
-- **Version**: Kubernetes v1.30 or higher.
+- **Version**: AKS 1.35 target.
 - **Node Pool**:
   - System Pool: `Standard_D2s_v3` (Min 2 nodes).
   - OS: Azure Linux (CBL-Mariner).

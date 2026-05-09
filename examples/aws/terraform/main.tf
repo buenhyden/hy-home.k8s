@@ -1,12 +1,12 @@
 # Terraform Main Configuration (AWS 2026)
 
 terraform {
-  required_version = ">= 1.8.0"
+  required_version = ">= 1.14.0, < 2.0.0"
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.50" # 2026년 기준 5.x의 성숙한 버전 사용
+      version = ">= 6.28, < 7.0" # 2026-05-09 공식 지원 스냅샷 기준
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"

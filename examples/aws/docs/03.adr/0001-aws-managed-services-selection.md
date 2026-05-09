@@ -10,7 +10,7 @@
 
 ## Decision
 
-- **Compute**: **Amazon EKS (v1.31+)**를 표준 런타임으로 선택하며, 노드 관리는 **Karpenter**로 자동화한다.
+- **Compute**: **Amazon EKS 1.35 target**을 표준 런타임으로 선택하며, 노드 관리는 **Karpenter**로 자동화한다.
 - **Relational Database**: **Amazon RDS Aurora Serverless v2 (PostgreSQL)**를 선택하여 부하에 따른 유연한 스케일링과 고가용성을 확보한다.
 - **In-memory Cache**: **Amazon ElastiCache Serverless (Redis compatible)**를 사용하여 운영 오버헤드 없이 캐시 용량을 자동 조정한다.
 - **Secret Management**: **AWS Secrets Manager**와 **External Secrets Operator (ESO)**를 통합하여 K8s 매니페스트 내 시크릿 관리를 자동화한다.

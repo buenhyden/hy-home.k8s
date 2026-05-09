@@ -275,6 +275,29 @@ for docs_root in authored_command_roots:
                 if pattern.search(line) and not has_nearby_marker(lines, index, markers):
                     fail(f"{rel(path)} has unmarked {label} example near line {index + 1}")
 
+markdown_direct_push_roots = [
+    root / "README.md",
+    root / "docs/README.md",
+    root / "gitops",
+    root / "infrastructure",
+    root / "traefik",
+    root / "examples",
+    root / "docs/08.operations",
+    root / "docs/90.references",
+]
+seen_markdown_direct_push_paths: set[pathlib.Path] = set()
+for scan_root in markdown_direct_push_roots:
+    candidates = [scan_root] if scan_root.is_file() else scan_root.rglob("*.md")
+    for path in sorted(candidates):
+        if not path.is_file() or path in seen_markdown_direct_push_paths:
+            continue
+        seen_markdown_direct_push_paths.add(path)
+        lines = read_text(path).splitlines()
+        for index, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped == "git push" or "git push origin main" in stripped:
+                fail(f"{rel(path)} contains direct push example; use feature branch + PR flow: line {index + 1}")
+
 gateway_contracts = {
     "AGENTS.md": {
         "max_lines": 40,

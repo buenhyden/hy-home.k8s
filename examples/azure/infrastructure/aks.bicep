@@ -7,7 +7,7 @@ param location string = resourceGroup().location
 param clusterName string
 
 @description('Kubernetes version')
-param kubernetesVersion string = '1.30'
+param kubernetesVersion string = '1.35'
 
 @description('The ID of the subnet where AKS nodes will be located')
 param aksSubnetId string

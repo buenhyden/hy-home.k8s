@@ -20,7 +20,7 @@
 ## Prerequisites
 
 - AWS CLI v2.20+ 설치 및 프로필 설정 (`aws configure`)
-- kubectl v1.31+ 설치
+- kubectl 1.35-compatible version 설치
 - 해당 AWS 계정에 대한 `EKS:DescribeCluster` 권한 보유
 
 ## Step-by-step Instructions

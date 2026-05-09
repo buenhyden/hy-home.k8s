@@ -8,7 +8,7 @@
 
 - **Tools**:
   - `az` CLI v2.60.0+
-  - `kubectl` v1.30+
+  - `kubectl` 1.35-compatible version
   - `fubectl` (Optional, for helper functions)
   - `stern` (For log streaming)
 

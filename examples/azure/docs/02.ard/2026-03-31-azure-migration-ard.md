@@ -53,7 +53,7 @@ graph TD
 
 ## Infrastructure & Deployment
 
-- **Runtime / Platform**: AKS (v1.30+), Ubuntu Node OS, Azure CNI Overlay.
+- **Runtime / Platform**: AKS 1.35 target, Ubuntu Node OS, Azure CNI Overlay.
 - **Deployment Model**: GitOps 기반의 Push/Pull 모델 (Main 레파지토리 변경 시 ArgoCD가 클러스터에 반영).
 - **Operational Evidence**: Bicep 배포 로그, Azure Activity Logs, AKS Control Plane Logs.
 

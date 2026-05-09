@@ -25,7 +25,7 @@
     - Private: `10.100.11.0/24`, `10.100.12.0/24`, `10.100.13.0/24` (EKS Nodes/Pods)
     - Database (Isolated): `10.100.21.0/24`, `10.100.22.0/24`, `10.100.23.0/24` (RDS, Cache)
 - **Compute Contract**:
-  - EKS Version: `1.31`
+  - EKS Version: `1.35`
   - Authentication: IAM Pod Identity (v2026 update)
   - Node Management: Karpenter (Provisioner with Spot/On-demand mix)
 

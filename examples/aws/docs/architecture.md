@@ -1,6 +1,6 @@
 # AWS Cloud Architecture (Migration from K3s/k3d)
 
-이 문서는 2026년 3월 기준 최신 AWS 관리형 서비스를 활용하여 로컬 K3s 인프라를 AWS로 이식하기 위한 아키텍처를 정의합니다.
+이 문서는 2026-05-09 공식 지원 스냅샷 기준 AWS 관리형 서비스를 활용하여 로컬 K3s 인프라를 AWS로 이식하기 위한 아키텍처를 정의합니다.
 
 ## Architecture Overview
 

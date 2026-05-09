@@ -2,10 +2,10 @@
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.0"
+  version = "21.20.0"
 
   cluster_name    = var.cluster_name
-  cluster_version = "1.31" # 2026년 기준 실무에서 널리 쓰이는 버전
+  cluster_version = "1.35" # 2026-05-09 EKS standard support snapshot target
 
   # Network
   vpc_id     = module.vpc.vpc_id

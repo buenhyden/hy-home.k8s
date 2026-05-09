@@ -22,7 +22,7 @@
 - Azure 마이그레이션 핵심 기술 스택 선택 기록 (CNI, ALB, Identity 등)
 - 결정 당시 고려된 대안(Alternatives) 분석
 - 결정으로 인한 긍정적 영향과 트레이드오프(Consequences)
-- 2026년 3월 기준 Azure 기술 표준 준수 여부 기록
+- 2026-05-09 공식 지원 스냅샷 기준 Azure 기술 표준 준수 여부 기록
 
 ### Out of Scope
 
