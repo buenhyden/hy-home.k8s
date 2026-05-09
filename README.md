@@ -56,6 +56,13 @@ hy-home.k8s/
 └── README.md              # This file
 ```
 
+## 현재 구현 경계
+
+- `gitops/`는 로컬 k3d 클러스터의 desired state 정본이다. 현재 구현은 `clusters/local`의 bootstrap/AppProject/ApplicationSet, `apps/root`의 App-of-Apps 선언, `platform/*` 공통 컴포넌트, `workloads/adminer` 참조 워크로드를 포함한다.
+- `infrastructure/`는 클러스터 bootstrap과 repo-backed static checks를 위한 실행 자산이다. MetalLB 계약은 별도 디렉터리가 아니라 `ipaddresspool.yaml`, `l2advertisement.yaml` 루트 파일로 관리한다.
+- `traefik/`은 canonical 배포 경로가 아니라 `hy-home.docker` Traefik gateway와 맞물리는 로컬 dynamic config 참조다. Kubernetes desired state는 `gitops/`와 ArgoCD reconciliation이 기준이다.
+- `examples/`는 앱 온보딩 템플릿과 AWS/Azure cloud target reference-only 자산이다. 실제 cloud 계정, live cluster, provider runtime 변경은 이 저장소의 일반 실행 경로가 아니다.
+
 ## How to Work in This Area
 
 1. 저장소를 처음 읽을 때는 `README.md -> docs/README.md -> AGENTS.md -> 관련 stage 문서` 순서로 진입한다.

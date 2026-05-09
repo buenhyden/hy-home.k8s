@@ -8,6 +8,8 @@
 
 이 경로는 로컬 k3d 플랫폼을 만들기 위한 실행 자산을 보관하지만, 정상 운영 변경은 `gitops/` 선언과 ArgoCD reconciliation을 통해 처리한다.
 
+MetalLB bootstrap manifest는 별도 `metallb/` 디렉터리가 아니라 이 디렉터리 루트의 `ipaddresspool.yaml`, `l2advertisement.yaml` 두 파일로 관리한다.
+
 ## Audience
 
 이 README의 주요 독자:
@@ -39,10 +41,11 @@
 infrastructure/
 ├── argocd/                  # ArgoCD Helm values
 ├── k3d/                     # k3d 클러스터 설정
-├── metallb/                 # 로컬 LoadBalancer 주소 풀 선언
 ├── tests/                   # 정적 계약 검증 스크립트
 ├── vault/                   # Vault 정책 샘플
 ├── bootstrap-local.sh       # 로컬 플랫폼 bootstrap 진입점
+├── ipaddresspool.yaml       # MetalLB 로컬 LoadBalancer 주소 풀
+├── l2advertisement.yaml     # MetalLB L2 advertisement
 └── README.md                # This file
 ```
 

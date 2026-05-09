@@ -4,7 +4,7 @@
 
 ## Overview
 
-이 경로는 `hy-home.k8s` 프로젝트의 로컬 Kubernetes 환경을 Azure 클라우드로 마이그레이션하기 위한 모든 설계, 계획, 작업 및 운영 지식을 관리한다. 2026-05-09 공식 지원 스냅샷 기준의 Azure 클라우드 네이티브 아키텍처를 지향하며, 총 9개의 표준화된 디렉토리 구조를 통해 체계적인 지식 관리를 수행한다.
+이 경로는 `hy-home.k8s` 프로젝트의 로컬 Kubernetes 환경을 Azure 클라우드로 마이그레이션할 때 참고하는 설계, 계획, 작업 및 운영 지식 예시를 관리한다. 2026-05-09 공식 지원 스냅샷 기준의 reference-only 영역이며, 현재 로컬 플랫폼의 active SSoT나 실제 Azure 배포 절차를 대체하지 않는다.
 
 ## Audience
 
@@ -34,6 +34,7 @@
 - 애플리케이션 비즈니스 로직 소스 코드
 - AWS 또는 GCP 등 타 클라우드 아키텍처 (별도 경로에서 관리)
 - 레거시 하드웨어 폐기 절차
+- 실제 Azure 구독 프로비저닝 또는 live cluster 변경
 
 ## Structure
 
@@ -67,7 +68,8 @@ examples/azure/docs/
 1. **Requirement First**: 변경 사항은 항상 [01.prd](./01.prd/README.md)에서 시작하여 하위 문서로 전파한다.
 2. **Standard Templates**: 모든 문서는 `docs/99.templates/` 산하의 최신 템플릿을 사용하여 작성한다.
 3. **Traceability**: 문서 내 상호 참조는 반드시 상대 경로를 사용하여 링크를 유지한다.
-4. **Agent Guidance**: 에이전트는 작업 전 [06.tasks](./06.tasks/README.md)를 확인하고 진행 상황을 업데이트한다.
+4. **Reference Boundary**: 실제 Azure 배포 전에는 provider 공식 지원 버전, 비용, RBAC, 네트워크 경계를 다시 확인한다.
+5. **Agent Guidance**: 에이전트는 작업 전 [06.tasks](./06.tasks/README.md)를 확인하고 진행 상황을 업데이트한다.
 
 ## Related References
 

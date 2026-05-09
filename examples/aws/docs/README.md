@@ -4,7 +4,7 @@
 
 ## Overview
 
-이 디렉토리는 `hy-home.k8s` 인프라를 AWS EKS 1.35 target 및 Managed Services 환경으로 성공적으로 마이그레이션하기 위한 모든 설계, 계획, 운영 문서를 포함합니다. 2026-05-09 공식 지원 스냅샷 기준으로 구축되었습니다.
+이 디렉토리는 `hy-home.k8s` 인프라를 AWS EKS 1.35 target 및 Managed Services 환경으로 전환할 때 참고하는 설계, 계획, 운영 문서 예시를 포함합니다. 2026-05-09 공식 지원 스냅샷 기준으로 구축된 reference-only 영역이며, 현재 로컬 플랫폼의 active SSoT나 실제 AWS 배포 절차를 대체하지 않습니다.
 
 ## Audience
 
@@ -13,7 +13,21 @@
 - Operations Team
 - AI Agents
 
-## Documentation Structure (9 Directories)
+## Scope
+
+### In Scope
+
+- AWS EKS 1.35 target migration reference 문서
+- Terraform AWS provider 6.x 기반 예시 구조
+- Managed Services 전환 시 검토할 PRD/ARD/ADR/Spec/Plan/Task/Guide/Policy/Runbook 예시
+
+### Out of Scope
+
+- 실제 AWS 계정 프로비저닝
+- live Kubernetes 클러스터 변경
+- 로컬 k3d desired state의 정본 변경
+
+## Structure
 
 | Directory | Purpose | Primary Document |
 | :--- | :--- | :--- |
@@ -35,11 +49,17 @@
 - **Security**: IAM Pod Identity, AWS Secrets Manager + External Secrets Operator
 - **IaC**: Terraform v1.14+
 
-## Governance Rules
+## How to Work in This Area
 
-1. 모든 문서는 `../../../docs/99.templates/`에 정의된 전용 템플릿을 준수해야 합니다.
-2. 모든 디렉토리는 자체 `README.md`를 통해 하위 산출물을 인덱싱해야 합니다.
-3. 문서 간에는 반드시 상대 경로 링크(Cross-Referencing)를 유지하여 추적성을 확보해야 합니다.
+1. 이 경로의 문서는 AWS migration reference로만 사용합니다.
+2. 버전 기준을 바꾸면 [Tech Stack Version Inventory](../../../docs/90.references/tech-stack-version-inventory.md)를 같은 변경에서 갱신합니다.
+3. 실제 AWS 배포 전에는 provider 공식 지원 버전, IAM/RBAC, 비용, 네트워크 경계를 다시 확인합니다.
+4. 문서 간에는 상대 경로 링크를 유지하여 추적성을 확보합니다.
+
+## Related References
+
+- [Examples README](../../README.md)
+- [Tech Stack Version Inventory](../../../docs/90.references/tech-stack-version-inventory.md)
 
 ---
 마이그레이션 실행 및 상세 작업 내역은 [06.tasks](./06.tasks/README.md)를 참조하십시오.

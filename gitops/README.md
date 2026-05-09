@@ -8,6 +8,8 @@
 
 정상 운영 변경은 feature branch에서 매니페스트를 수정하고 PR review 이후 ArgoCD reconciliation으로 반영한다. live cluster를 직접 변경하는 명령은 bootstrap-only 또는 break-glass 맥락이 명시된 경우에만 문서화한다.
 
+현재 구현 범위는 `clusters/local`의 bootstrap/AppProject/ApplicationSet, `apps/root`의 플랫폼 Application 선언, `platform/*`의 공통 컴포넌트, `workloads/adminer`의 앱 패턴 참조 구현이다.
+
 ## Audience
 
 이 README의 주요 독자:
@@ -37,10 +39,11 @@
 
 ```text
 gitops/
-├── clusters/local/          # ArgoCD 부트스트랩 리소스
-├── apps/root/               # App-of-Apps 루트 애플리케이션과 하위 app 선언
-├── platform/                # 플랫폼 공통 리소스
-├── workloads/               # ApplicationSet이 스캔하는 앱 매니페스트
+├── clusters/local/          # root Application, AppProjects, apps ApplicationSet
+├── apps/root/               # platform-* Application 선언과 App-of-Apps entry
+├── platform/                # argocd, cert-manager, eso, ingress, istio, monitoring 등 공통 리소스
+├── workloads/
+│   └── adminer/             # Rollout/AnalysisTemplate/Ingress/Istio 패턴 참조 워크로드
 └── README.md                # This file
 ```
 

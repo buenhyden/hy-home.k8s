@@ -22,6 +22,7 @@
 - EKS 클러스터가 제어 불능 상태(Control Plane Failure)가 된 경우.
 - RDS 데이터베이스의 데이터가 물리 데이터 오염으로 인해 복구가 필요한 경우.
 - 잘못된 Helm 배포로 인해 클러스터 전체 하이재킹이 의심되는 경우.
+- 이 문서는 `examples/aws` reference-only 런북이다. 실제 AWS 계정에서는 운영자 승인 DR 상황에서만 실행한다.
 
 ## Procedure or Checklist
 
@@ -36,7 +37,7 @@
 #### 1. 인프라 재구축 (EKS 클러스터)
 
 ```bash
-# Terraform을 통한 인프라 재생성
+# reference-only AWS DR; operator-approved only
 cd examples/aws/terraform
 terraform apply -auto-approve
 
@@ -53,7 +54,7 @@ aws eks update-kubeconfig --name hyhome-cluster --region ap-northeast-2
 #### 3. 서비스 배포 (GitOps)
 
 ```bash
-# ArgoCD 강제 동기화 (Sync)
+# reference-only AWS DR; operator-approved only
 argocd app sync root-apps --force
 ```
 

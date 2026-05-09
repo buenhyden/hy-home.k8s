@@ -66,6 +66,7 @@ helm install alb-controller oci://mcr.microsoft.com/azure-alb/charts/alb-control
 애플리케이션이 Key Vault 시크릿을 정상적으로 가져오는지 테스트한다.
 
 ```bash
+# reference-only Azure sandbox; operator-approved bootstrap only
 kubectl apply -f kubernetes/manifests/workload-identity.yaml
 kubectl apply -f kubernetes/manifests/external-secrets-azure.yaml
 kubectl get secret db-credentials -o yaml

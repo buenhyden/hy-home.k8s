@@ -1,12 +1,34 @@
 # Infrastructure to Theory: 2026 Learning Roadmap
 
-## 1. Overview
+## Overview (KR)
 
 이 가이드는 `hy-home.k8s` 인프라 구축 경험을 바탕으로, 실무 기술이 어떤 컴퓨터 과학(CS) 및 공학(CE) 이론에 뿌리를 두고 있는지 연결합니다. 단순히 도구를 사용하는 법을 넘어, **"왜 이렇게 동작하는가?"**에 대한 해답을 찾는 여정입니다.
 
 ---
 
-## 2. Theoretical Mapping (Infrastructure -> CS Theory)
+## Purpose
+
+로컬 Kubernetes/GitOps/AI infrastructure 경험을 운영체제, 네트워크, 분산 시스템, 소프트웨어 공학 이론 학습으로 연결한다.
+
+## Scope
+
+- `hy-home.k8s`에서 사용하는 인프라 도구와 관련 CS/CE 이론 연결
+- 개인 학습용 reading list와 미니 프로젝트 아이디어
+- 운영 절차, 정책, 사고 대응, 버전 계약은 제외한다.
+
+## Definitions / Facts
+
+- **Reconciliation Loop**: 선언된 desired state와 실제 상태를 지속적으로 맞추는 제어 패턴이다.
+- **Vector Indexing**: RAG 검색에서 고차원 벡터를 근사 탐색하는 자료구조/알고리즘 계열이다.
+- **Virtual Memory Paging**: 제한된 물리 메모리를 페이지 단위로 관리하는 운영체제 메모리 모델이다.
+
+## Sources
+
+- Recommended Reading List의 논문과 이 저장소의 GitOps/observability 구현 경험을 학습 출발점으로 삼는다.
+
+---
+
+## Theoretical Mapping (Infrastructure -> CS Theory)
 
 | Current Tool | Academic Domain | Key Concept | Reference |
 | --- | --- | --- | --- |
@@ -17,7 +39,7 @@
 
 ---
 
-## 3. Deep Dive Modules
+## Deep Dive Modules
 
 ### Module A: The Memory Wall (vLLM & OS Paging)
 
@@ -34,7 +56,7 @@
 
 ---
 
-## 4. Module C: Mini-Project (Custom Initialization Controller)
+## Module C: Mini-Project (Custom Initialization Controller)
 
 실질적인 인프라 제어 로직을 이해하기 위한 실습 과제입니다.
 
@@ -51,7 +73,7 @@ Kubernetes의 특정 ConfigMap이 변경될 때마다 관련 Pod을 자동으로
 
 ---
 
-## 5. Recommended Reading List
+## Recommended Reading List
 
 1. Kwon et al., "Efficient Memory Management for LLM Serving with PagedAttention" (SOSP '23)
 2. Vaswani et al., "Attention Is All You Need" (2017)

@@ -91,6 +91,16 @@
 - rootCA 재발급 시 `mkcert-root-ca` Secret 재주입 후 cert-manager controller 재시작 허용.
 - Istio istiod CrashLoop 시 자원 requests 축소 허용 (단, 128Mi 미만으로 낮추지 않음).
 
+## Verification
+
+- `bash infrastructure/tests/verify-contracts-static.sh`로 endpoint, TLS, Traefik 경계 계약을 확인한다.
+- cert-manager/Istio/Kiali 변경 후 관련 GitOps manifest와 runbook의 계약 값이 일치하는지 확인한다.
+
+## Review Cadence
+
+- 플랫폼 컴포넌트 버전 변경 시마다 검토한다.
+- cert-manager, Istio, Kiali, Headlamp 관련 ADR/Spec 변경 시 같은 PR에서 검토한다.
+
 ## Related Documents
 
 - **Spec**: [`../04.specs/003-platform-expansion/spec.md`](../04.specs/003-platform-expansion/spec.md)

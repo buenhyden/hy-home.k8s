@@ -5,6 +5,28 @@
 이 문서는 `hy-home.k8s`의 repo-backed 매니페스트와 품질 게이트에서 읽어야 하는 버전 기준을 고정한다.
 새 버전으로 올릴 때는 실제 manifest/config와 이 문서를 같은 변경으로 수정한다.
 
+## Overview (KR)
+
+이 문서는 일반 참고 링크 모음이 아니라 검증 대상 버전 계약 인벤토리다. repo-backed manifest, GitHub Actions, pre-commit hook, cloud example snapshot의 기준 값을 한곳에서 추적한다.
+
+## Scope
+
+- repo-backed k3s/Helm chart/GitHub Actions/pre-commit 버전 계약
+- `examples/aws`, `examples/azure`를 갱신할 때 사용한 공식 cloud example snapshot
+- 버전 drift 검증과 README/docs 설명을 맞추기 위한 기준값
+- 실제 cloud provider 계정 변경, live cluster upgrade, 자동 dependency bump는 제외한다.
+
+## Definitions / Facts
+
+- **Version Contracts**: 아래 YAML 블록의 값이며 repo manifest/config와 함께 검증되는 기준이다.
+- **Cloud Example Snapshot**: AWS/Azure 예시를 갱신할 때 확인한 2026-05-09 기준 공식 지원 상태다.
+- **Ingress NGINX boundary**: 로컬 k3d 계약은 유지하되 cloud target은 ALB/Gateway API/AGC 경로로 분리한다.
+
+## Sources
+
+- cloud example snapshot의 각 행에 공식 기준 링크를 둔다.
+- repo-backed version contracts는 `.github/`, `.pre-commit-config.yaml`, `gitops/`, `infrastructure/`의 실제 파일과 함께 유지한다.
+
 ## Cloud Example Snapshot: 2026-05-09
 
 이 섹션은 `examples/aws`와 `examples/azure`의 참조 구현을 갱신할 때 사용한 공식 기준이다. 로컬 k3d 실행 계약은 아래 `Version Contracts`의 `rancher/k3s:v1.35.0-k3s1`을 따른다.

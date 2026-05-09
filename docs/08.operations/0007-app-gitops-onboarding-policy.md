@@ -9,6 +9,26 @@
 이 문서는 `hy-home.k8s` 클러스터에 새로운 애플리케이션을 온보딩할 때 따라야 하는
 플랫폼 운영 정책을 정의한다.
 
+## Overview (KR)
+
+이 정책은 `gitops/workloads/<appname>/`에 새 앱을 추가할 때 필요한 배포 리소스, 네트워킹, 보안, GitOps 워크플로우 통제를 정의한다.
+
+## Policy Scope
+
+- `apps` namespace에 배포되는 신규 애플리케이션 workload
+- Argo Rollouts, AnalysisTemplate, ingress-nginx, cert-manager, Istio sidecar/mTLS 패턴
+- 앱 단위 Vault/ExternalSecret 연동과 Traefik local dynamic config 연결
+
+## Applies To
+
+- **Systems**: `gitops/workloads/`, `examples/sample-app/`, `gitops/clusters/local/appproject-apps.yaml`
+- **Agents**: 문서/운영 자동화 에이전트
+- **Environments**: WSL2 local cluster
+
+## Controls
+
+세부 통제는 아래 1-4장에 정의한다. 모든 신규 앱은 Rollout, AnalysisTemplate, 명시적 ingress/TLS, GitOps PR flow, secret/Vault 경계를 따라야 한다.
+
 ---
 
 ## 1. 배포 리소스 정책
@@ -192,6 +212,23 @@ fix: fix <appname> config             ← 설정 수정
 ```
 
 ---
+
+## Exceptions
+
+- `kubectl apply` 또는 AppProject live 반영은 human-approved bootstrap/break-glass 상황에서만 허용한다.
+- ExternalSecret이 필요 없는 앱은 Vault 연동 파일을 생략할 수 있지만, plaintext Kubernetes Secret manifest는 허용하지 않는다.
+
+## Verification
+
+- `bash scripts/validate-gitops-structure.sh`
+- `bash scripts/validate-k8s-manifests.sh .`
+- `bash scripts/check-secret-handling.sh .`
+- 온보딩 후 ArgoCD Application `Synced/Healthy`, Rollout `Healthy`, Pod `2/2 Running`, Ingress TLS 발급 상태를 확인한다.
+
+## Review Cadence
+
+- 새 앱 온보딩 또는 `examples/sample-app/` 변경 시마다 검토한다.
+- Rollouts, Istio, cert-manager, Vault/ESO 계약 변경 시 관련 guide/runbook과 함께 검토한다.
 
 ## Related Documents
 

@@ -24,6 +24,10 @@
 - 홈 랩 운영자 (Platform Engineer / Solo Developer)
 - GitHub 레포에서 빌드한 컨테이너 이미지를 클러스터에 배포하려는 사용자
 
+## Purpose
+
+GitHub 레포에서 빌드한 컨테이너 이미지를 현재 플랫폼의 Rollout, AnalysisTemplate, Istio mTLS, ingress/TLS 패턴에 맞춰 온보딩할 수 있게 한다.
+
 ## Prerequisites
 
 ### 필수 도구
@@ -54,6 +58,10 @@ kubectl -n argo-rollouts get pods
 - ghcr.io 패키지를 **Public**으로 설정 (또는 imagePullSecret 구성)
 
 ---
+
+## Step-by-step Instructions
+
+아래 Step 1-6을 순서대로 수행한다. 운영 중 즉시 실행/복구가 필요한 경우에는 관련 런북을 우선한다.
 
 ## Step 1: GitHub Actions CI 파이프라인 설정
 

@@ -22,13 +22,6 @@
 
 ## Scope
 
-## 포함할 내용
-
-- 운영 정책 문서(Operations Policy)
-- 통제 항목(Required/Allowed/Disallowed)
-- 예외 승인 흐름
-- 정책 검증 방법 및 검토 주기
-
 ### In Scope
 
 - 운영 정책 문서(Operations Policy)
@@ -41,6 +34,10 @@
 - 실행 절차 중심의 명령 순서 문서
 - 장애 타임라인/사후 분석
 - 온보딩 중심 가이드
+
+## 포함할 내용
+
+이 stage는 위 In Scope 항목만 포함한다. 정책 변경 시 예외 승인 흐름, 검증 방법, 검토 주기를 같은 문서에서 유지한다.
 
 ## Structure
 
@@ -74,7 +71,6 @@ docs/08.operations/
 - `04.specs/`: 운영 정책의 기술 계약
 - `09.runbooks/`: 정책을 실행하는 절차
 - `10.incidents/`: 정책 위반 또는 장애 대응 기록
-- [10.incidents](../10.incidents/README.md)
 
 ## Documentation Standards
 

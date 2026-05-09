@@ -69,6 +69,13 @@ docs/
 
 `01.prd` (기획) -> `02.ard` / `03.adr` (설계와 결정) -> `04.specs` (상세 명세) -> `05.plans` / `06.tasks` (실행과 검증) -> `07.guides` / `08.operations` / `09.runbooks` (운영 지식) -> `10.incidents` (사고와 회고)
 
+## 구현 영역 연결
+
+- `gitops/`: 현재 로컬 플랫폼 desired state다. `clusters/local`, `apps/root`, `platform/*`, `workloads/adminer` 변경은 관련 Spec/Policy/Runbook 링크와 함께 추적한다.
+- `infrastructure/`: bootstrap, k3d/ArgoCD values, MetalLB root manifest, static contract tests를 둔다. 정상 운영 변경의 정본은 GitOps 경로로 넘긴다.
+- `traefik/`: 로컬 플랫폼 UI 접근을 돕는 dynamic config reference다. cloud ingress target이나 ArgoCD canonical 배포 경로로 취급하지 않는다.
+- `examples/`: 앱 온보딩과 AWS/Azure migration reference-only 자산이다. 버전 스냅샷은 `90.references/tech-stack-version-inventory.md`와 함께 관리한다.
+
 ## Quality Gates
 
 문서 구조와 저장소 품질은 `bash scripts/validate-repo-quality-gates.sh .`로 검증한다. 이 게이트는 다음 계약을 확인한다.

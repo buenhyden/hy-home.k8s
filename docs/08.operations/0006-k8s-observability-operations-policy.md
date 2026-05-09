@@ -193,6 +193,15 @@ kubectl get appproject platform -n argocd \
 
 ---
 
+## Exceptions
+
+- AppProject live 반영은 운영자가 명시 승인한 bootstrap 또는 break-glass 상황에서만 허용한다.
+- NodePort 번호 변경은 Prometheus scrape target, manifest, runbook을 같은 변경에서 갱신할 때만 허용한다.
+
+## Verification
+
+아래 Audit / Verification 명령으로 NodePort 예약 상태, Prometheus target, alert rules, Alloy 로그 수집, AppProject destinations를 확인한다.
+
 ## Audit / Verification
 
 ```bash
@@ -230,6 +239,11 @@ kubectl get appproject platform -n argocd \
 ```
 
 ---
+
+## Review Cadence
+
+- monitoring namespace, NodePort, alert_rules, Alloy 설정 변경 시마다 검토한다.
+- k3d/k3s 버전 또는 observability backend 주소가 바뀌면 관련 Spec/Runbook과 함께 검토한다.
 
 ## Related Documents
 

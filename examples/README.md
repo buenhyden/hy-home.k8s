@@ -8,6 +8,8 @@
 
 AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 실제 배포 전에 각 provider의 최신 지원 버전, 비용, IAM/RBAC, 네트워크 경계를 다시 확인해야 한다.
 
+활성 desired state의 정본은 `gitops/`이며, `examples/`는 복사하거나 비교하기 위한 reference-only 영역이다.
+
 ## Audience
 
 이 README의 주요 독자:
@@ -74,8 +76,8 @@ examples/
 cp -r examples/sample-app gitops/workloads/<appname>
 ```
 
-## 참조 구현
+## 구현 참조
 
-실제 운영 중인 참조 구현:
+로컬 앱 패턴을 확인할 때는 활성 GitOps 구현과 예시 템플릿을 구분한다.
 
 - [`gitops/workloads/adminer/`](../gitops/workloads/adminer/) — DB 관리 UI (Rollout + AnalysisTemplate + PeerAuthentication)

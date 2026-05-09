@@ -10,6 +10,17 @@
 단계별 운영 절차를 제공한다. Argo Rollout canary 전략, AnalysisTemplate, Istio mTLS 등
 현재 플랫폼 패턴을 모두 적용한다.
 
+## Purpose
+
+신규 GitHub 앱을 `gitops/workloads/`에 추가하고 PR review 이후 ArgoCD reconciliation으로 배포/검증/rollback할 수 있게 한다.
+
+## Canonical References
+
+- [`../07.guides/0008-github-app-gitops-onboarding-guide.md`](../07.guides/0008-github-app-gitops-onboarding-guide.md)
+- [`../08.operations/0007-app-gitops-onboarding-policy.md`](../08.operations/0007-app-gitops-onboarding-policy.md)
+- [`../../gitops/workloads/adminer/`](../../gitops/workloads/adminer/)
+- [`../../examples/sample-app/`](../../examples/sample-app/)
+
 ## When to Use
 
 - GitHub Container Registry(ghcr.io) 이미지를 클러스터에 처음 배포할 때
@@ -42,6 +53,10 @@ kubectl exec -n argo-rollouts deploy/argo-rollouts -- \
 ```
 
 ---
+
+## Procedure or Checklist
+
+아래 Procedure 1-5를 순서대로 수행한다. 배포 변경은 feature branch와 PR review를 거쳐 GitOps reconciliation으로 반영한다.
 
 ## Procedure 1: GitOps 매니페스트 생성 및 배포
 
@@ -113,6 +128,10 @@ argocd app sync argocd/apps-generator
 
 ---
 
+## Verification Steps
+
+Procedure 2의 명령으로 Rollout, Pod, AnalysisRun, Ingress, HTTPS 접근 상태를 확인한다.
+
 ## Procedure 2: 배포 상태 검증
 
 ```bash
@@ -183,6 +202,10 @@ kubectl argo rollouts get rollout ${APP} -n apps
 ```
 
 ---
+
+## Safe Rollback or Recovery Procedure
+
+Procedure 4의 abort/rollback 절차를 우선 사용한다. GitOps manifest 수정이 필요한 경우 이미지 태그 또는 설정을 수정한 뒤 feature branch PR flow로 재배포한다.
 
 ## Procedure 5: Vault 시크릿 연동 추가
 
@@ -270,6 +293,19 @@ kubectl apply -f gitops/clusters/local/appproject-apps.yaml
 ```
 
 ---
+
+## Observability and Evidence Sources
+
+- **Signals**: ArgoCD Application health/sync, Rollout status, AnalysisRun result, Pod readiness, Ingress certificate status
+- **Evidence to Capture**: PR diff, ArgoCD app status, rollout history, relevant events/log snippets, HTTPS verification output
+
+## Agent Operations (If Applicable)
+
+- **Prompt Rollback**: 최근 agent-generated manifest 변경을 PR diff 기준으로 되돌린다.
+- **Model Fallback**: 검증 실패 시 sample-app/adminer 패턴에 맞춘 최소 변경만 유지한다.
+- **Tool Disable / Revoke**: 실패 중 live cluster mutation 또는 secret write 자동화를 중지한다.
+- **Eval Re-run**: GitOps structure, manifest validation, secret handling gate를 재실행한다.
+- **Trace Capture**: 온보딩 task 또는 PR에 검증 명령과 결과를 남긴다.
 
 ## Related Documents
 

@@ -144,6 +144,15 @@ curl -s "http://172.18.0.10:9090/api/v1/query?query=argocd_app_info" \
 
 ---
 
+## Exceptions
+
+- EndpointSlice 또는 AppProject live 반영은 운영자가 명시 승인한 bootstrap 또는 break-glass 상황에서만 허용한다.
+- NodePort 번호 변경은 관련 Prometheus scrape config, README, runbook을 같은 변경에서 갱신할 때만 허용한다.
+
+## Verification
+
+아래 Audit / Verification 명령으로 Istio 포트명, Grafana API 접근, ArgoCD metrics NodePort, Prometheus target 상태를 확인한다.
+
 ## Audit / Verification
 
 ```bash
@@ -173,6 +182,11 @@ for t in d['data']['activeTargets']:
 ```
 
 ---
+
+## Review Cadence
+
+- 관측성 포트, external service, Prometheus scrape target 변경 시마다 검토한다.
+- Ingress/Grafana/Kiali 인증 경계 변경 시 관련 policy/runbook과 함께 검토한다.
 
 ## Related Documents
 

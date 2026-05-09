@@ -13,6 +13,14 @@
 
 기능 또는 서비스에 종속된 Agent 설계는 이 폴더가 아니라 `docs/04.specs/<feature-id>/agent-design.md`가 정본 위치다.
 
+## Audience
+
+이 README의 주요 독자:
+
+- Developers
+- Documentation Writers
+- AI Agents
+
 ## Scope
 
 ### In Scope
@@ -42,7 +50,7 @@ agents/
 3. 실행 순서나 롤아웃이 핵심이면 `docs/05.plans/`로 보낸다.
 4. 새 문서를 추가하면 이 README와 상위 `docs/90.references/README.md`의 구조 설명이 계속 맞는지 확인한다.
 
-## Related Documents
+## Related References
 
 - [90.references README](../README.md)
 - [04.specs README](../../04.specs/README.md)

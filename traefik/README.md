@@ -8,6 +8,8 @@
 
 Ingress NGINX는 2026-03-24 이후 upstream retired 상태이므로 cloud target에서는 이 경로를 확장하지 않는다. AWS/Azure 예시는 각각 ALB/Gateway API/AGC 같은 cloud-native ingress 경로로 분리하고, 이 디렉터리는 현재 로컬 k3d 계약을 설명하는 참조로 유지한다.
 
+이 파일들은 ArgoCD가 동기화하는 Kubernetes manifest가 아니다. `hy-home.docker` Traefik dynamic config와 대조하거나 로컬 gateway에 반영할 때 쓰는 보조 참조로만 다룬다.
+
 ## Audience
 
 이 README의 주요 독자:
