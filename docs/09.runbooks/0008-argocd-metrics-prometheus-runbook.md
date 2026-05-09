@@ -94,6 +94,7 @@ NodePort 서비스가 없거나 ArgoCD가 OutOfSync인 경우:
 
 ```bash
 # ArgoCD 동기화로 배포 (권장)
+# operator-triggered reconciliation only
 argocd app sync platform-argocd-config
 
 # 동기화 후 서비스 확인

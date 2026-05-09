@@ -173,6 +173,7 @@ export VAULT_TOKEN="<token>"
 vault status
 
 # 2. 앱 시크릿 저장 (경로 규칙: secret/apps/<appname>/...)
+# external secret operation; human-approved only
 vault kv put secret/apps/<appname>/config \
   db_password="<password>" \
   api_key="<key>"
@@ -229,7 +230,7 @@ git add gitops/workloads/<appname>/
 
 # 2. 커밋 및 푸시
 git commit -m "feat: add <appname> gitops workload"
-git push origin main
+git push origin feat/<appname>-gitops
 
 # 3. ArgoCD 감지 대기 (기본 폴링 주기: 3분) 또는 수동 새로고침
 argocd app list
@@ -241,7 +242,7 @@ argocd app list | grep <appname>
 # 5. Application sync 상태 확인
 argocd app get <appname>
 
-# 6. 수동 sync (필요 시)
+# 6. operator-triggered reconciliation only
 argocd app sync <appname>
 
 # 7. Pod 상태 확인
@@ -291,6 +292,7 @@ kubectl get namespace <appname> 2>/dev/null || echo "namespace not found"
 
 # platform-namespaces ArgoCD App sync 상태 확인
 argocd app get platform-namespaces
+# operator-triggered reconciliation only
 argocd app sync platform-namespaces
 
 # namespace 매니페스트가 kustomization.yaml에 등록됐는지 확인
@@ -350,6 +352,7 @@ argocd proj get apps | grep "Destinations"
 - AppProject 변경 후 ArgoCD root-application sync 필요:
 
 ```bash
+# operator-triggered reconciliation only
 argocd app sync root-application
 # AppProject 변경이 반영될 때까지 대기 후 앱 재시도
 argocd app sync <appname>

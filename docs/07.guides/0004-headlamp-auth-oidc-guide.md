@@ -95,6 +95,7 @@ kubectl -n headlamp get sa headlamp-admin 2>/dev/null || \
   kubectl -n headlamp create serviceaccount headlamp-admin
 
 # ClusterRoleBinding 생성 (cluster-admin 권한, 필요에 따라 조정)
+# human-approved local admin bootstrap only
 kubectl create clusterrolebinding headlamp-admin \
   --clusterrole=cluster-admin \
   --serviceaccount=headlamp:headlamp-admin \
@@ -108,6 +109,7 @@ kubectl -n headlamp create token headlamp-admin --duration=1h
 
 ```bash
 # Long-lived token Secret 생성
+# human-approved break-glass only
 kubectl apply -f - <<EOF
 apiVersion: v1
 kind: Secret
@@ -167,6 +169,7 @@ Credentials 탭 → Secret 복사
 #### 3-B. OIDC Client Secret을 Vault에 저장
 
 ```bash
+# external secret operation; human-approved bootstrap only
 vault kv put secret/platform/headlamp \
   oidc_client_secret="<keycloak-client-secret>"
 
@@ -234,7 +237,7 @@ env:
 # GitOps 변경사항 push 후 ArgoCD sync
 kubectl -n argocd get app platform-headlamp
 
-# 수동 sync (필요 시)
+# human-approved operator-triggered reconciliation only
 kubectl -n argocd patch app platform-headlamp \
   --type merge \
   -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'
@@ -255,6 +258,7 @@ Keycloak 관리 콘솔:
 
 ```bash
 # k8s-admins 그룹 → cluster-admin
+# human-approved RBAC bootstrap only
 kubectl apply -f - <<EOF
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -271,6 +275,7 @@ roleRef:
 EOF
 
 # k8s-viewers 그룹 → view (읽기 전용)
+# human-approved RBAC bootstrap only
 kubectl apply -f - <<EOF
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

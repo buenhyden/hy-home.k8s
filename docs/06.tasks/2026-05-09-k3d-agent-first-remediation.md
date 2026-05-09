@@ -30,6 +30,8 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 
 2026-05-09 하네스/Agent-first 구성요소 추가 조사는 `harness-catalog.md`의 compact matrix와 `agentic.md`의 matrix-first/context hierarchy 규칙으로 추적한다. 새 runtime surface 또는 새 stage 문서는 만들지 않는다.
 
+2026-05-09 command-boundary follow-up은 새 runtime surface 없이 기존 plan/task 문서에 누적한다. 목적은 authored docs의 위험 명령 예시가 Agent 기본 실행 경로로 해석되지 않도록 문서 문맥과 repo quality gate를 함께 고정하는 것이다.
+
 ## Inputs
 
 - **Parent Spec**: not applicable; this remediation does not introduce a new technical contract.
@@ -58,6 +60,8 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 | T-009 | Add Harness Engineering and Agent-first Engineering component audit matrices | doc | n/a | PLN-008 | matrix headings and `Gap`/`Remediation` columns pass repo quality gate | Platform | Done |
 | T-010 | Add matrix-first and context hierarchy rules for future harness changes | guardrail | n/a | PLN-009 | agentic rule phrases pass repo quality gate | Platform | Done |
 | T-011 | Extend repo quality gate for component audit matrix presence | test | n/a | PLN-008, PLN-009 | quality gate fails if matrix or rule contracts are removed | Platform | Done |
+| T-012 | Add authored-doc command-boundary regression gate | test | n/a | PLN-010 | quality gate rejects unmarked risky command examples and direct push examples | Platform | Done |
+| T-013 | Mark authored-doc risky command examples with human/operator boundaries and PR flow | doc | n/a | PLN-010 | final `rg` review finds no direct push examples and no unmarked risky command examples | Platform | Done |
 
 ## Suggested Types
 
@@ -94,6 +98,8 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 - [x] T-009 Add component audit matrices
 - [x] T-010 Add matrix-first/context hierarchy rules
 - [x] T-011 Extend component audit regression checks
+- [x] T-012 Add authored-doc command-boundary regression gate
+- [x] T-013 Mark authored-doc risky command examples
 
 ## Verification Summary
 
@@ -106,6 +112,7 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
   - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +`
   - Legacy external harness source-label scan across root gateways, `.claude`, `.codex`, and `docs/00.agent-governance`
   - Harness and Agent-first component matrix contract check through `scripts/validate-repo-quality-gates.sh`
+  - Authored-doc command-boundary regression check through `scripts/validate-repo-quality-gates.sh`
 - **Eval Commands**: not applicable; no prompt/model behavior is changed.
 - **Logs / Evidence Location**: conversation validation output for this implementation turn. `kube-linter` was skipped by `validate-k8s-manifests.sh` because it is not installed locally.
 

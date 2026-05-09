@@ -68,6 +68,7 @@ infrastructure/tests/verify-contracts-static.sh                172\.30\.0\. íŒ¨í
 
 ```bash
 [NEW: 5.5/9] Inject mkcert rootCA into cert-manager namespace
+# human-approved bootstrap only
 kubectl -n cert-manager create secret tls mkcert-root-ca \
   --cert="$ROOT_CA_FILE" \
   --key="$ROOT_CA_KEY_FILE" \

@@ -61,10 +61,10 @@ ArgoCD가 자동으로 배포하지만, 최초 부트스트랩 시 순서가 필
 # 1. AppProject에 monitoring namespace destination 추가 (operator-approved bootstrap only)
 kubectl apply -f gitops/clusters/local/appproject-platform.yaml
 
-# 2. namespace 배포
+# 2. namespace 배포 (operator-triggered reconciliation only)
 argocd app sync platform-namespaces
 
-# 3. monitoring 리소스 배포
+# 3. monitoring 리소스 배포 (operator-triggered reconciliation only)
 argocd app sync platform-monitoring
 
 # 4. 배포 확인
@@ -238,7 +238,7 @@ kubectl get pods -n monitoring -l app.kubernetes.io/name=alloy-k8s-logs --no-hea
 | ------------------------------------ | ----------------------------------------------- | ---------------------------------------------------- |
 | alloy-k8s-logs CrashLoopBackOff      | readOnlyRootFilesystem + storage 경로 미설정    | `--storage.path=/var/lib/alloy` + emptyDir 볼륨 확인 |
 | platform-monitoring InvalidSpecError | AppProject에 monitoring namespace 미포함        | human-approved bootstrap/break-glass로 AppProject 반영 |
-| kube-state-metrics target down       | NodePort 30091 미배포                           | `argocd app sync platform-monitoring`                |
+| kube-state-metrics target down       | NodePort 30091 미배포                           | operator-triggered reconciliation: `argocd app sync platform-monitoring` |
 | alert rules 로드 안 됨 (0 rules)     | rule_files 패턴에 alert_rules.k8s.yml 미포함    | prometheus.yml rule_files 확인                       |
 | k8s 로그가 Loki에 없음               | alloy-k8s-logs 미실행 또는 loki-external 미연결 | alloy 파드 로그 + loki-external 서비스 확인          |
 

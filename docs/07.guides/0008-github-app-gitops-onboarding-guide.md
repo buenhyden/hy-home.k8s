@@ -221,6 +221,7 @@ export VAULT_ADDR=http://172.18.0.8:8200
 vault login
 
 # 시크릿 저장 (경로 규칙: secret/apps/<appname>/config)
+# external secret operation; human-approved only
 vault kv put secret/apps/<appname>/config \
   db_password="changeme" api_key="changeme" # pragma: allowlist secret
 ```
@@ -269,11 +270,11 @@ envFrom:
 ```bash
 git add gitops/workloads/<appname>/
 git commit -m "feat: add <appname> to GitOps"
-git push origin main
+git push origin feat/<appname>-gitops
 ```
 
 ArgoCD `apps-generator` ApplicationSet이 `gitops/workloads/*`를 자동 스캔하여
-3분 이내(또는 webhook 설정 시 즉시) `<appname>` Application을 생성하고 배포한다.
+PR review 후 `main`에 merge되면 3분 이내(또는 webhook 설정 시 즉시) `<appname>` Application을 생성하고 배포한다.
 
 ---
 
@@ -352,9 +353,9 @@ kubectl argo rollouts get rollout <appname> -n apps
 sed -i "s|<appname>:v1.0.0|<appname>:v1.1.0|" gitops/workloads/<appname>/rollout.yaml
 git add gitops/workloads/<appname>/rollout.yaml
 git commit -m "chore: bump <appname> to v1.1.0"
-git push origin main
+git push origin chore/<appname>-v1.1.0
 
-# 방법 2: kubectl (GitOps 원칙상 비권장, 테스트 목적)
+# 방법 2: operator-triggered break-glass only
 kubectl argo rollouts set image <appname> \
   <appname>=ghcr.io/<owner>/<appname>:v1.1.0 -n apps
 ```

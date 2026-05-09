@@ -77,6 +77,7 @@ curl -ksS -o /dev/null -w '%{http_code}' https://headlamp.127.0.0.1.nip.io/
 export VAULT_TOKEN="<token>"
 export VAULT_ADDR="https://vault.127.0.0.1.nip.io"
 
+# external secret operation; human-approved bootstrap only
 vault kv put secret/platform/headlamp \
   oidc_client_secret="<keycloak-client-secret>"
 
@@ -154,12 +155,12 @@ config:
 # Git push
 git add gitops/platform/headlamp/
 git commit -m "feat: enable headlamp OIDC via keycloak"
-git push
+git push origin feat/headlamp-oidc
 
 # ArgoCD sync 대기
 kubectl -n argocd get app platform-headlamp --watch
 
-# 수동 sync (필요 시)
+# human-approved operator-triggered reconciliation only
 kubectl -n argocd patch app platform-headlamp \
   --type merge \
   -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{"revision":"HEAD"}}}'

@@ -84,6 +84,7 @@
    ```bash
    mkcert -install
    mkcert argocd.local
+   # human-approved bootstrap only
    kubectl -n argocd create secret tls argocd-local-tls \
      --cert=argocd.local.pem \
      --key=argocd.local-key.pem \
@@ -170,6 +171,7 @@ argocd app list
     https://vault.127.0.0.1.nip.io/v1/secret/data/platform/argocd \
     | jq -r '.data.data.valkey_password')"
 
+  # human-approved break-glass only
   kubectl -n argocd create secret generic argocd-external-valkey \
     --from-literal=redis-password="$VALKEY_PASSWORD" \
     --dry-run=client -o yaml | kubectl apply -f -
@@ -179,6 +181,7 @@ argocd app list
 
   ```bash
   argocd app get root-platform --hard-refresh
+  # operator-triggered reconciliation only
   argocd app sync root-platform
   ```
 

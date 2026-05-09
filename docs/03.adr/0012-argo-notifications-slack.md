@@ -42,6 +42,7 @@ ArgoCD Helm chart v2.x에 Notifications controller가 내장되어 있어 별도
 ## Vault Secret 준비
 
 ```bash
+# external secret operation; human-approved bootstrap only
 vault kv put secret/platform/notifications \
   slack_token="xoxb-your-slack-bot-token"
 ```

@@ -216,11 +216,12 @@ kubectl -n istio-system rollout restart deploy/kiali
 # 1. istio-base sync 상태 확인
 argocd app get platform-istio-base
 
-# 2. istio-base 수동 sync (sync-wave 강제)
+# 2. operator-triggered reconciliation only (sync-wave 강제)
 argocd app sync platform-istio-base --prune
 
 # 3. CRD 설치 확인 후 istiod sync
 kubectl get crd | grep istio.io | wc -l
+# operator-triggered reconciliation only
 argocd app sync platform-istiod
 ```
 

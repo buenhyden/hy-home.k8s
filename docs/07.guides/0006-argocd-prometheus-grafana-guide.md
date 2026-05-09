@@ -66,6 +66,7 @@ kubectl get pod -n argocd -l app.kubernetes.io/name=argocd-server \
 
 ```bash
 # ArgoCD는 platform-argocd-config app이 관리하므로 ArgoCD sync로 배포됨
+# operator-triggered reconciliation only
 argocd app sync platform-argocd-config
 
 # human-approved break-glass only

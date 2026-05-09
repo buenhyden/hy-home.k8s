@@ -27,12 +27,14 @@ Rules for AI Agent-first Engineering quality and safety.
 - Do not add new runtime surfaces until the existing readiness matrix shows a concrete gap.
 - Keep direct `kubectl apply`, `kubectl patch`, external secret writes, and other live-cluster mutations outside the default Agent-first path.
 - If a runbook requires live mutation for bootstrap or emergency recovery, mark it as human-approved bootstrap or break-glass work and record the expected evidence.
+- Treat authored-doc command examples as policy-sensitive context: `kubectl apply/patch`, `argocd app sync`, `vault kv put`, and push examples must state human/operator boundaries or PR-flow expectations instead of implying Agent execution.
 
 ## Matrix-first Change Rule
 
 - Before changing harness or Agent-first execution behavior, inspect the Harness Engineering Matrix and Agent-first Engineering Matrix in `harness-catalog.md`.
 - Add a new agent, skill, hook, mirror, or runtime surface only when a matrix row has `Gap` other than `None` and the gap cannot be closed by an existing surface.
 - Prefer in-place clarity, regression-gate hardening, or catalog updates when the matrix already marks the component `Ready`.
+- When a component is already `Ready`, prefer command-boundary regression gates over adding new runtime surfaces for documentation drift.
 
 ## Context Hierarchy Defaults
 

@@ -65,6 +65,7 @@ if [ -z "$VAULT_K3D_IP" ]; then
 fi
 
 # vault-external EndpointSlice를 k3d-hyhome IP로 업데이트
+# human-approved break-glass only
 cat <<YAML | kubectl apply -f -
 apiVersion: discovery.k8s.io/v1
 kind: EndpointSlice
@@ -102,6 +103,7 @@ kubectl -n argocd get app platform-eso-config platform-argocd-config
 ```bash
 argocd app get platform-eso-config --hard-refresh
 argocd app get platform-argocd-config --hard-refresh
+# operator-triggered reconciliation only
 argocd app sync platform-eso-config
 argocd app sync platform-argocd-config
 ```

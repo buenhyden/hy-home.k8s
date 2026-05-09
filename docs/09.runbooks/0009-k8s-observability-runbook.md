@@ -98,10 +98,10 @@ kubectl get appproject platform -n argocd \
 # 없으면 human-approved bootstrap/break-glass로 직접 적용
 kubectl apply -f gitops/clusters/local/appproject-platform.yaml
 
-# namespace 먼저 배포
+# namespace 먼저 배포 (operator-triggered reconciliation only)
 argocd app sync platform-namespaces
 
-# monitoring 리소스 배포
+# monitoring 리소스 배포 (operator-triggered reconciliation only)
 argocd app sync platform-monitoring
 
 # 배포 확인
@@ -156,7 +156,7 @@ args:
 ```
 
 ```bash
-# 기본 경로: ArgoCD sync
+# 기본 경로: ArgoCD sync (operator-triggered reconciliation only)
 argocd app sync platform-monitoring
 # human-approved break-glass only
 kubectl apply -f gitops/platform/monitoring/alloy-k8s-logs.yaml
@@ -317,7 +317,7 @@ curl -s -G "http://172.18.0.13:3100/loki/api/v1/query" \
 | platform-monitoring InvalidSpecError       | AppProject에 monitoring namespace 미포함           | Git 파일 확인 후 human-approved bootstrap/break-glass로 AppProject 반영 |
 | alloy CrashLoop: read-only file system     | `--storage.path` 미설정                            | args에 `--storage.path=/var/lib/alloy` + emptyDir |
 | alloy CrashLoop: unrecognized extra_labels | `loki.source.kubernetes_events` 미지원 속성        | `loki.process` + `stage.static_labels` 파이프라인 |
-| kube-state-metrics target down             | NodePort 30091 미배포                              | `argocd app sync platform-monitoring`             |
+| kube-state-metrics target down             | NodePort 30091 미배포                              | operator-triggered reconciliation: `argocd app sync platform-monitoring` |
 | alert rules 0건                            | rule_files 패턴이 고정 파일명 미포함               | prometheus.yml rule_files 항목 추가 후 reload     |
 | Loki에 k8s 로그 없음                       | alloy-k8s-logs 미실행 또는 loki-external 연결 실패 | Procedure 3 참고                                  |
 | NodePort HTTP 000 (timeout)                | 파드 미기동 또는 k3d 재시작 중                     | 파드 Ready 대기 후 재시도                         |

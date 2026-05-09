@@ -36,6 +36,8 @@ updated: 2026-05-09
 
 2026-05-09 하네스/Agent-first 구성요소 추가 조사 결과, 부족한 부분은 새 agent, skill, hook, script, workflow, manifest가 아니라 조사 결과를 명시적으로 남기는 audit matrix와 matrix-first 회귀 방지 기준이다.
 
+2026-05-09 command-boundary follow-up 결과, 남은 구현 대상은 authored docs 안의 `kubectl apply/patch`, `argocd app sync`, `vault kv put`, direct `git push` 예시가 Agent 기본 실행 경로로 오해되지 않도록 문서 문맥과 repo quality gate를 함께 강화하는 것이다.
+
 ## Goals & In-Scope
 
 - **Goals**:
@@ -74,6 +76,7 @@ updated: 2026-05-09
 | PLN-007 | root shim thinness, governance/runtime English-only, hook-boundary clarity를 repo quality gate로 고정 | `scripts/validate-repo-quality-gates.sh` | REQ-VAL-002 | regression checks PASS |
 | PLN-008 | Harness component audit matrix와 Agent-first component audit matrix 추가 | `docs/00.agent-governance/harness-catalog.md` | REQ-AI-003 | matrix headings and `Gap`/`Remediation` columns validated |
 | PLN-009 | matrix-first change rule과 repo-local context hierarchy rule 추가 | `docs/00.agent-governance/rules/agentic.md` | REQ-AI-004 | repo quality gate validates matrix-first and context hierarchy rules |
+| PLN-010 | Authored docs command-boundary follow-up 적용 | `docs/03.adr/`, `docs/04.specs/`, `docs/07.guides/`, `docs/09.runbooks/`, `scripts/validate-repo-quality-gates.sh` | REQ-AI-005 | risky command examples require human/operator boundary markers and PR flow |
 
 ## Verification Plan
 
@@ -91,6 +94,7 @@ updated: 2026-05-09
 | Risk | Impact | Mitigation |
 | --- | --- | --- |
 | Direct mutation guidance remains ambiguous | High | Mark direct `kubectl apply/patch` paths as human-approved bootstrap/break-glass only |
+| Authored docs normalize risky commands as agent-executable defaults | High | Gate risky command examples with explicit human/operator boundary markers and reject direct `git push` examples |
 | Historical docs are mistaken for current runtime contract | Medium | Keep historical content but add current-contract notes pointing to Headlamp and `172.18.x` manifests |
 | Documentation remediation expands into manifest changes | Medium | Keep Kubernetes manifests explicitly out of scope |
 | New documents drift from templates | Medium | Start from `plan.template.md` and `task.template.md`; update stage README indexes |
@@ -113,6 +117,7 @@ updated: 2026-05-09
 - [x] Regression gates cover gateway thinness, language boundaries, historical memory, and hook-boundary clarity
 - [x] Harness and Agent-first component audits are captured as matrix artifacts
 - [x] Matrix-first change rules prevent unnecessary new runtime surfaces
+- [x] Authored docs command-boundary follow-up completed
 - [x] Required verification passed or limitations documented
 
 ## Related Documents

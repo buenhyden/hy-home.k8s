@@ -22,6 +22,7 @@
 ```bash
 # Slack Bot Token 준비 후 Vault에 저장
 export VAULT_TOKEN='<redacted>'
+# external secret operation; human-approved bootstrap only
 vault kv put secret/platform/notifications \
   slack_token="xoxb-your-slack-bot-token"
 

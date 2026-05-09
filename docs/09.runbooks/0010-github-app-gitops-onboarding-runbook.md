@@ -87,7 +87,7 @@ sed -i "s|<appname>|${APP}|g" \
 cd ${DOCKER_REPO}
 git add infra/01-gateway/traefik/dynamic/${APP}-k3d.yaml
 git commit -m "feat: add traefik router for ${APP}"
-git push origin main
+git push origin feat/${APP}-traefik
 cd -
 ```
 
@@ -96,7 +96,7 @@ cd -
 ```bash
 git add gitops/workloads/${APP}/
 git commit -m "feat: add ${APP} to GitOps"
-git push origin main
+git push origin feat/${APP}-gitops
 ```
 
 ### 1-4. ArgoCD Application 생성 확인
@@ -105,7 +105,7 @@ git push origin main
 # apps-generator가 새 Application을 생성하는지 확인 (최대 3분)
 watch argocd app list | grep ${APP}
 
-# 수동 즉시 sync (선택)
+# operator-triggered reconciliation only
 argocd app sync argocd/apps-generator
 ```
 
@@ -155,7 +155,7 @@ sed -i "s|ghcr.io/${OWNER}/${APP}:.*|ghcr.io/${OWNER}/${APP}:${NEW_TAG}|" \
 
 git add gitops/workloads/${APP}/rollout.yaml
 git commit -m "chore: bump ${APP} to ${NEW_TAG}"
-git push origin main
+git push origin chore/${APP}-${NEW_TAG}
 
 # canary 진행 상황 확인
 kubectl argo rollouts get rollout ${APP} -n apps --watch
@@ -187,6 +187,7 @@ kubectl argo rollouts get rollout ${APP} -n apps
 # 1. Vault에 시크릿 등록
 export VAULT_ADDR=http://172.18.0.8:8200
 vault login
+# external secret operation; human-approved only
 vault kv put secret/apps/${APP}/config \
   db_password="changeme" api_key="changeme" # pragma: allowlist secret
 
@@ -228,6 +229,7 @@ kubectl kustomize gitops/workloads/${APP}/
 kubectl get namespace apps --show-labels | grep istio-injection
 
 # 라벨 누락 시 (이미 있어야 함, 이상 시 platform sync 확인)
+# operator-triggered reconciliation only
 argocd app sync platform-namespaces
 ```
 

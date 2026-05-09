@@ -231,6 +231,50 @@ for scan_root in scan_roots:
             if pattern in text and not any(marker in text for marker in legacy_contract_markers):
                 fail(f"legacy runtime contract reference lacks historical/superseded note in {rel(path)}: {pattern}")
 
+authored_command_roots = [
+    root / "docs/03.adr",
+    root / "docs/04.specs",
+    root / "docs/07.guides",
+    root / "docs/09.runbooks",
+]
+
+
+def has_nearby_marker(lines: list[str], index: int, markers: list[str]) -> bool:
+    start = max(0, index - 8)
+    end = min(len(lines), index + 5)
+    window = "\n".join(lines[start:end])
+    return any(marker in window for marker in markers)
+
+
+command_boundary_rules = [
+    (
+        "kubectl apply/patch",
+        re.compile(r"\bkubectl\b.*\b(?:apply|patch)\b"),
+        ["human-approved", "break-glass", "bootstrap-only", "bootstrap only", "operator-approved"],
+    ),
+    (
+        "argocd app sync",
+        re.compile(r"\bargocd\s+app\s+sync\b"),
+        ["operator-triggered reconciliation"],
+    ),
+    (
+        "vault kv put",
+        re.compile(r"\bvault\s+kv\s+put\b"),
+        ["external secret operation", "human-approved"],
+    ),
+]
+
+for docs_root in authored_command_roots:
+    for path in sorted(docs_root.rglob("*.md")):
+        lines = read_text(path).splitlines()
+        for index, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped == "git push" or "git push origin main" in stripped:
+                fail(f"{rel(path)} contains direct push example; use feature branch + PR flow: line {index + 1}")
+            for label, pattern, markers in command_boundary_rules:
+                if pattern.search(line) and not has_nearby_marker(lines, index, markers):
+                    fail(f"{rel(path)} has unmarked {label} example near line {index + 1}")
+
 gateway_contracts = {
     "AGENTS.md": {
         "max_lines": 40,
@@ -306,6 +350,8 @@ for phrase in [
     ".claude/settings.json",
     ".codex/hooks.json",
     "no current readiness gap",
+    "Authored-doc command boundary",
+    "command examples in authored docs require",
     "## Harness Engineering Matrix",
     "## Agent-first Engineering Matrix",
     "| Required Component | Current Surface | Status | Gap | Remediation |",
@@ -321,6 +367,8 @@ for phrase in [
     "Context hierarchy",
     "JIT loading",
     "Scope and persona routing",
+    "Authored-doc command boundaries",
+    "risky command examples",
     "Validation before completion",
     "Postflight and handoff",
 ]:
@@ -339,6 +387,8 @@ for phrase in [
     "Load durable policy just in time",
     "Load task-specific stage docs",
     "not as instructions that override repository governance",
+    "Treat authored-doc command examples",
+    "command-boundary regression gates",
 ]:
     if phrase not in agentic_text:
         fail(f"{rel(agentic_path)} missing Agent-first matrix/context rule phrase: {phrase}")

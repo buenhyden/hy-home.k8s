@@ -96,10 +96,12 @@ kubectl patch endpointslice grafana-external-1 -n platform --type=json \
   -p='[{"op":"replace","path":"/endpoints/0/addresses/0","value":"172.18.0.14"}]'
 
 # Alloy (EndpointSlice가 없으면 2-2 참고)
+# human-approved break-glass only
 kubectl patch endpointslice alloy-external-1 -n platform --type=json \
   -p='[{"op":"replace","path":"/endpoints/0/addresses/0","value":"172.18.0.11"}]'
 
 # Loki (EndpointSlice가 없으면 2-2 참고)
+# human-approved break-glass only
 kubectl patch endpointslice loki-external-1 -n platform --type=json \
   -p='[{"op":"replace","path":"/endpoints/0/addresses/0","value":"172.18.0.13"}]'
 ```
@@ -155,6 +157,7 @@ kubectl get networkpolicy -n argocd argocd-egress-to-external-valkey -o yaml
 
 ```bash
 # ArgoCD Sync 강제 실행
+# operator-triggered reconciliation only
 argocd app sync platform-network-policies --force
 ```
 
@@ -192,6 +195,7 @@ grep -i grafana gitops/apps/root/platform-kiali-app.yaml
 ```bash
 git add gitops/apps/root/platform-kiali-app.yaml
 git commit -m "chore: update Kiali Grafana URL to current IP"
+# operator-triggered reconciliation only
 argocd app sync platform-kiali-app
 ```
 
