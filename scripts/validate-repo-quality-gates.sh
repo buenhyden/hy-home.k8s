@@ -167,6 +167,14 @@ for path in docs_dir.rglob("*"):
     if re.search(r"(^template\.md$|\.template\.|template\.)", path.name):
         fail(f"template-like docs file must live in docs/99.templates: {rel(path)}")
 
+authored_template_residue = ("Target: docs/", "Use this template")
+for path in docs_dir.rglob("*.md"):
+    if path.is_relative_to(root / "docs/99.templates"):
+        continue
+    for line_number, line in enumerate(read_text(path).splitlines(), start=1):
+        if any(marker in line for marker in authored_template_residue):
+            fail(f"authored docs template residue in {rel(path)}:{line_number}")
+
 legacy_postmortems = "11" + ".postmortems"
 legacy_learning = "50" + ".Learning"
 legacy_stage_range = "00" + "~" + "11"

@@ -6,20 +6,7 @@ owner: 'platform'
 updated: 2026-05-09
 ---
 
-<!-- Target: docs/06.tasks/YYYY-MM-DD-<feature-or-stream>.md -->
-
 # Task: scripts Inventory Remediation
-
-> Use this template for `docs/06.tasks/YYYY-MM-DD-<feature-or-stream>.md`.
->
-> Rules:
->
-> - Task documents are traceability-first.
-> - Core behavior should default to TDD.
-> - Agent work must include eval tasks where applicable.
-> - This is the canonical execution-tracking location; feature-local task notes under `04.specs/` are secondary.
-
----
 
 ## Overview (KR)
 

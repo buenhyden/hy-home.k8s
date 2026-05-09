@@ -20,6 +20,13 @@ Rules for AI Agent-first Engineering quality and safety.
 - Keep `.claude/agents/*.md` and `.codex/agents/*.toml` aligned whenever runtime contracts change.
 - Report unavailable tools, skipped live checks, and CI-only validation honestly.
 
+## Direct Mutation Boundary
+
+- Agent default: prepare GitOps PR-ready repository changes and static evidence.
+- Human-approved exceptions: bootstrap, break-glass recovery, external secret rotation, or live-cluster diagnosis that explicitly requires mutation.
+- Live mutation commands such as `kubectl apply`, `kubectl patch`, direct external secret writes, and forced reconciliation commands must not be treated as normal Agent execution.
+- When an exception is approved, record the approval scope, target environment, command class, rollback expectation, and verification evidence.
+
 ## Readiness Review Defaults
 
 - Check `harness-catalog.md` before changing agent, skill, hook, or mirror contracts.

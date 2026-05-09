@@ -6,19 +6,6 @@ owner: 'platform'
 updated: 2026-05-09
 ---
 
-<!-- Target: docs/05.plans/YYYY-MM-DD-<feature>.md -->
-
-# scripts Inventory Remediation Implementation Plan
-
-> Use this template for `docs/05.plans/YYYY-MM-DD-<feature>.md`.
->
-> Rules:
->
-> - Every active plan must include explicit verification criteria.
-> - Plan explains execution order, risk control, and rollout strategy.
-
----
-
 # scripts Inventory Remediation Plan
 
 ## Overview (KR)

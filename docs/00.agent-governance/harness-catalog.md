@@ -39,6 +39,19 @@ that shape the runtime contract under `.claude/` and its Codex mirror under `.co
 - Codex mirror files are thin runtime bridges with the same contract as their `.claude` source.
 - Skill files are workflow contracts and must remain specific to this cluster.
 
+## Readiness Evidence Boundary
+
+`Ready` in this catalog means the repository surface exists, is wired into the local
+governance/runtime contract, and is covered by repo-backed static gates where applicable.
+It is not proof that GitHub CI, the full optional local toolchain, live k3d bootstrap,
+ArgoCD health, or live cluster reconciliation completed in the current session.
+
+Report readiness evidence in separate lanes:
+
+- Repo/static readiness: local files, mirror contracts, command boundaries, and validation scripts.
+- CI/toolchain readiness: GitHub Actions and optional tools such as `pre-commit`, `kube-linter`, `actionlint`, `zizmor`, `graphify`, and `rtk`.
+- Live k3d readiness: human-approved bootstrap, ArgoCD reconciliation, Kubernetes API checks, and runtime health evidence.
+
 ## Readiness Matrix
 
 | Layer | Implemented Surface | Status | Readiness Evidence |
