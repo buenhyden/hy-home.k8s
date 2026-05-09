@@ -9,7 +9,7 @@
 ## Overview
 
 이 경로는 운영자가 장애 상황 또는 재구축 상황에서 바로 실행 가능한 절차를 제공한다.
-정책 정의는 `08.operations`, 가이드 설명은 `07.guides`, 사고 분석은 `10.incidents/postmortems`에서 관리한다.
+정책 정의는 `08.operations`, 가이드 설명은 `07.guides`, 사고 분석은 `10.incidents`에서 관리한다.
 
 ## Audience
 
@@ -45,10 +45,18 @@
 ## Structure
 
 ```text
-09.runbooks/
-├── 0001-argocd-platform-bootstrap-runbook.md  # k3d + ArgoCD 부트스트랩/복구 런북
-├── 0002-argocd-eso-vault-recovery-runbook.md  # Vault/ESO 복구 + TLS/CI 계약 회귀 검증 런북
-└── README.md                                  # This file
+docs/09.runbooks/
+├── 0001-argocd-platform-bootstrap-runbook.md               # k3d + ArgoCD 부트스트랩/복구 런북
+├── 0002-argocd-eso-vault-recovery-runbook.md               # Vault/ESO 복구 + TLS/CI 계약 회귀 검증
+├── 0003-platform-expansion-bootstrap-runbook.md             # cert-manager/Headlamp/Istio/Kiali 부트스트랩
+├── 0004-rollouts-notifications-headlamp-runbook.md          # Rollouts/Notifications/Headlamp 운영
+├── 0005-headlamp-keycloak-runbook.md                        # Headlamp token/OIDC 전환 운영
+├── 0006-new-app-onboarding-runbook.md                       # 신규 앱 온보딩 절차
+├── 0007-kiali-observability-connectivity-runbook.md         # Kiali 관측성 연결 복구
+├── 0008-argocd-metrics-prometheus-runbook.md                # ArgoCD metrics/Prometheus 복구
+├── 0009-k8s-observability-runbook.md                        # 관측성 스택 장애 진단
+├── 0010-github-app-gitops-onboarding-runbook.md             # GitHub 앱 온보딩 절차
+└── README.md                                                # This file
 ```
 
 ## How to Work in This Area
@@ -135,10 +143,10 @@
 | [`0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)               | 검증 커맨드 기반 부트스트랩/트러블슈팅/복구 런북                  | Active | 2026-03-27 |
 | [`0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)               | Vault-ESO 복구 + TLS/Ingress + CI 정적 계약 회귀/증적 검증 런북   | Active | 2026-05-09 |
 | [`0003-platform-expansion-bootstrap-runbook.md`](./0003-platform-expansion-bootstrap-runbook.md)         | cert-manager/Headlamp/Istio/Kiali 부트스트랩 및 증상별 복구 런북  | Active | 2026-05-09 |
-| [`0004-rollouts-notifications-headlamp-runbook.md`](./0004-rollouts-notifications-headlamp-runbook.md)   | Argo Rollouts/Notifications/Headlamp 설치 및 운영 런북            | Active | 2026-03-30 |
-| [`0005-headlamp-keycloak-runbook.md`](./0005-headlamp-keycloak-runbook.md)                               | Headlamp ServiceAccount 토큰 로그인 및 Keycloak OIDC 전환 런북    | Active | 2026-03-31 |
-| [`0006-new-app-onboarding-runbook.md`](./0006-new-app-onboarding-runbook.md)                             | 새 애플리케이션 GitOps 온보딩 체크리스트 및 트러블슈팅 런북       | Active | 2026-03-31 |
-| [`0007-kiali-observability-connectivity-runbook.md`](./0007-kiali-observability-connectivity-runbook.md) | Kiali 관측성 서비스 연결 장애 진단 및 복구 런북                   | Active | 2026-03-31 |
-| [`0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md)               | ArgoCD 메트릭 NodePort/Prometheus 수집 장애 진단 및 복구 런북     | Active | 2026-03-31 |
-| [`0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md)                               | kube-state-metrics/alloy/alert_rules/AppProject 장애 진단 런북    | Active | 2026-03-31 |
-| [`0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md)         | GitHub 레포 기반 앱 온보딩 절차 런북 (배포/검증/rollback/Vault)   | Active | 2026-03-31 |
+| [`0004-rollouts-notifications-headlamp-runbook.md`](./0004-rollouts-notifications-headlamp-runbook.md)   | Argo Rollouts/Notifications/Headlamp 설치 및 운영 런북            | Active | 2026-05-09 |
+| [`0005-headlamp-keycloak-runbook.md`](./0005-headlamp-keycloak-runbook.md)                               | Headlamp ServiceAccount 토큰 로그인 및 Keycloak OIDC 전환 런북    | Active | 2026-05-09 |
+| [`0006-new-app-onboarding-runbook.md`](./0006-new-app-onboarding-runbook.md)                             | 새 애플리케이션 GitOps 온보딩 체크리스트 및 트러블슈팅 런북       | Active | 2026-05-09 |
+| [`0007-kiali-observability-connectivity-runbook.md`](./0007-kiali-observability-connectivity-runbook.md) | Kiali 관측성 서비스 연결 장애 진단 및 복구 런북                   | Active | 2026-05-09 |
+| [`0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md)               | ArgoCD 메트릭 NodePort/Prometheus 수집 장애 진단 및 복구 런북     | Active | 2026-05-09 |
+| [`0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md)                               | kube-state-metrics/alloy/alert_rules/AppProject 장애 진단 런북    | Active | 2026-05-09 |
+| [`0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md)         | GitHub 레포 기반 앱 온보딩 절차 런북 (배포/검증/rollback/Vault)   | Active | 2026-05-09 |

@@ -1,0 +1,59 @@
+# traefik
+
+> k3d 로컬 환경에서 ingress-nginx 뒤의 플랫폼 UI를 보조 노출하기 위한 Traefik dynamic config 예시를 관리한다.
+
+## Overview
+
+이 경로는 ArgoCD, Headlamp, Kiali, Argo Rollouts 같은 로컬 플랫폼 UI를 `hy-home.docker` 쪽 Traefik gateway에 연결할 때 참고하는 dynamic config를 담는다. 이 저장소의 canonical 배포 경로는 여전히 `gitops/`와 ArgoCD이며, `traefik/`은 k3d 로컬 접근성을 높이기 위한 보조 경로다.
+
+Ingress NGINX는 2026-03-24 이후 upstream retired 상태이므로 cloud target에서는 이 경로를 확장하지 않는다. AWS/Azure 예시는 각각 ALB/Gateway API/AGC 같은 cloud-native ingress 경로로 분리하고, 이 디렉터리는 현재 로컬 k3d 계약을 설명하는 참조로 유지한다.
+
+## Audience
+
+이 README의 주요 독자:
+
+- Operators
+- Developers
+- Documentation Writers
+- AI Agents
+
+## Scope
+
+### In Scope
+
+- k3d 로컬 플랫폼 UI용 Traefik dynamic config 예시
+- `hy-home.docker` gateway와 연결되는 파일 배치 힌트
+- ArgoCD, Headlamp, Kiali, Argo Rollouts 로컬 노출 경로 설명
+
+### Out of Scope
+
+- Kubernetes ingress controller 교체
+- cloud 환경용 ALB, AGC, Gateway API 구현
+- live cluster mutation 또는 Traefik 런타임 직접 변경
+- 외부 TLS 인증서나 secret material 저장
+
+## Structure
+
+```text
+traefik/
+├── argocd-k3d.yaml      # ArgoCD UI 로컬 노출 dynamic config
+├── headlamp-k3d.yaml    # Headlamp UI 로컬 노출 dynamic config
+├── kiali-k3d.yaml       # Kiali UI 로컬 노출 dynamic config
+├── rollouts-k3d.yaml    # Argo Rollouts UI 로컬 노출 dynamic config
+└── README.md            # This file
+```
+
+## How to Work in This Area
+
+1. 로컬 플랫폼 UI 노출이 필요한지 먼저 [gitops/README.md](../gitops/README.md)와 [infrastructure/README.md](../infrastructure/README.md)에서 현재 경계를 확인한다.
+2. dynamic config를 수정할 때는 대상 서비스명, 포트, host rule이 현재 GitOps manifest와 일치하는지 확인한다.
+3. cloud target 예시는 이 디렉터리에 추가하지 않고 [examples/README.md](../examples/README.md)와 각 cloud 문서에 둔다.
+4. 변경 후에는 direct push 예시와 secret material이 들어가지 않았는지 repository quality gate로 확인한다.
+
+## Related References
+
+- [Root README](../README.md)
+- [GitOps README](../gitops/README.md)
+- [Infrastructure README](../infrastructure/README.md)
+- [Tech Stack Version Inventory](../docs/90.references/tech-stack-version-inventory.md)
+- [Ingress NGINX retirement statement](https://kubernetes.io/blog/2026/01/29/ingress-nginx-statement/)

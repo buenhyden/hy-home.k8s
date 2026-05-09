@@ -45,10 +45,15 @@
 ## Structure
 
 ```text
-08.operations/
-├── 0001-k8s-gitops-operations-policy.md  # k3d/ArgoCD/ESO/Vault 운영 정책
-├── 0002-wsl2-k3d-gitops-ha-operations-policy.md  # WSL2 HA + TLS/최소권한 + CI 게이트 운영 정책
-└── README.md                             # This file
+docs/08.operations/
+├── 0001-k8s-gitops-operations-policy.md                         # k3d/ArgoCD/ESO/Vault 운영 정책
+├── 0002-wsl2-k3d-gitops-ha-operations-policy.md                 # WSL2 HA + TLS/최소권한 + CI 게이트 정책
+├── 0003-service-mesh-cert-manager-policy.md                     # cert-manager/Istio/Kiali 운영 통제
+├── 0004-rollouts-notifications-headlamp-policy.md               # Rollouts/Notifications/Headlamp 운영 통제
+├── 0005-observability-platform-operations-policy.md             # ArgoCD/Grafana/포트 계약 정책
+├── 0006-k8s-observability-operations-policy.md                  # 관측성 스택 운영 정책
+├── 0007-app-gitops-onboarding-policy.md                         # 앱 GitOps 온보딩 운영 정책
+└── README.md                                                    # This file
 ```
 
 ## How to Work in This Area
@@ -157,6 +162,6 @@ echo 'fs.inotify.max_user_instances=1024' | sudo tee /etc/sysctl.d/99-k3d.conf
 | [`0002-wsl2-k3d-gitops-ha-operations-policy.md`](./0002-wsl2-k3d-gitops-ha-operations-policy.md)         | WSL2 HA 운영 통제(TLS/Traefik 경계, EndpointSlice, 최소권한, CI 게이트, 감사 항목) 정책 | Active | 2026-05-09 |
 | [`0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md)                 | cert-manager/Headlamp/Istio/Kiali 운영 통제(TLS/sidecar/Kiali auth/Traefik 계약) 정책   | Active | 2026-05-09 |
 | [`0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md)     | Argo Rollouts/Notifications(Slack)/Headlamp 운영 통제 정책                              | Active | 2026-05-09 |
-| [`0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | Istio 포트 네이밍/Grafana Anonymous Access/ArgoCD NodePort 예약 정책                    | Active | 2026-03-31 |
-| [`0006-k8s-observability-operations-policy.md`](./0006-k8s-observability-operations-policy.md)           | k8s 메트릭 NodePort 예약/in-cluster Alloy/alert_rules 로드 패턴 정책                    | Active | 2026-03-31 |
-| [`0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md)                         | 앱 온보딩 운영 정책 (Rollout 필수/이미지 태그/Istio 포트 명명/Traefik/Vault 규칙)       | Active | 2026-03-31 |
+| [`0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | Istio 포트 네이밍/Grafana Anonymous Access/ArgoCD NodePort 예약 정책                    | Active | 2026-05-09 |
+| [`0006-k8s-observability-operations-policy.md`](./0006-k8s-observability-operations-policy.md)           | k8s 메트릭 NodePort 예약/in-cluster Alloy/alert_rules 로드 패턴 정책                    | Active | 2026-05-09 |
+| [`0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md)                         | 앱 온보딩 운영 정책 (Rollout 필수/이미지 태그/Istio 포트 명명/Traefik/Vault 규칙)       | Active | 2026-05-09 |

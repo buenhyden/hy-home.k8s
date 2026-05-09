@@ -24,7 +24,8 @@
 - `docs/` 단계 문서 체계와 README 인덱스
 - `gitops/` 아래의 ArgoCD, 플랫폼, 워크로드 매니페스트
 - `infrastructure/` 아래의 클러스터/Helm 값/부트스트랩 및 검증 스크립트
-- `examples/` 아래의 참조 구현 및 온보딩 예시
+- `traefik/` 아래의 k3d 로컬 노출 보조용 dynamic config
+- `examples/` 아래의 앱 온보딩 및 AWS/Azure cloud target 참조 예시
 - 에이전트 게이트웨이 파일(`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`)
 - 저장소 차원의 CI, pre-commit, 문서/정적 검증 설정
 
@@ -32,6 +33,7 @@
 
 - 외부 Vault/PostgreSQL/Valkey 런타임 자체의 생성 및 운영
 - 애플리케이션 비즈니스 로직 구현
+- AWS/Azure 실제 리소스 프로비저닝과 cloud 계정 상태 변경
 - `docs/01-10`, `docs/90.references`, `docs/99.templates` SSoT 문서의 승인 없는 임의 재작성
 - 운영 환경 SLA/DR 자체 보장
 
@@ -42,10 +44,10 @@ hy-home.k8s/
 ├── docs/                  # PRD/ARD/ADR/Spec/Plan/Task/Operations/Runbook 체계
 ├── gitops/                # ArgoCD가 동기화하는 선언형 GitOps 리소스
 ├── infrastructure/        # k3d, ArgoCD values, bootstrap 및 검증 스크립트
-├── examples/              # 앱 온보딩/플랫폼 참조 예시
+├── examples/              # 앱 온보딩 및 AWS/Azure cloud target 참조 예시
 ├── scripts/               # 저장소 유틸리티 및 자동화 스크립트
 ├── tests/                 # 저장소 전역 테스트 기준 문서 및 교차 테스트 영역
-├── traefik/               # 로컬 ingress 노출용 Traefik 관련 매니페스트
+├── traefik/               # k3d 로컬 노출 보조용 Traefik dynamic config
 ├── secrets/               # 로컬 인증서 등 민감 파일 저장 경로
 ├── .github/               # GitHub Actions, PR template, CODEOWNERS, labeler, zizmor
 ├── AGENTS.md              # 공통 에이전트 진입 게이트웨이
@@ -65,6 +67,7 @@ hy-home.k8s/
 7. 인프라 변경은 GitOps-first로 다룬다. 일반 변경에서 live cluster mutation, `kubectl apply`, 외부 Vault 조작을 도입하지 않는다.
 8. `.github` 자동화나 QA gate를 바꿀 때는 [`.github/ABOUT.md`](.github/ABOUT.md)와 PR template의 검증 체크리스트를 함께 확인한다.
 9. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
+10. AWS/Azure 예시는 2026-05-09 공식 지원 스냅샷을 기준으로 관리하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
 
 ## Related References
 
@@ -81,7 +84,8 @@ hy-home.k8s/
 - `docs/` - 공식 문서 체계, 요구사항부터 운영/회고까지의 단계형 SSoT
 - `gitops/` - ArgoCD App-of-Apps 루트, 플랫폼 리소스, 워크로드 선언
 - `infrastructure/` - k3d 클러스터 설정, ArgoCD Helm values, bootstrap 및 검증 스크립트
-- `examples/` - 앱 GitOps 온보딩용 참조 구현과 템플릿
+- `traefik/` - k3d 로컬 ingress-nginx 뒤에서 ArgoCD/Headlamp/Kiali/Rollouts를 노출하는 보조 dynamic config
+- `examples/` - 앱 GitOps 온보딩용 참조 구현과 AWS/Azure cloud target 예시
 - `scripts/` - 저장소 유지보수와 자동화 보조 스크립트
 - `.github/` - `main` PR flow용 CI, release evidence, PR/issue intake, CODEOWNERS, labeler, zizmor 설정
 - `.claude/`, `.codex/` - 에이전트 실행 규칙, 스킬, 워크플로 오버레이
@@ -94,8 +98,10 @@ hy-home.k8s/
 | Platform | WSL2 Ubuntu, Docker Desktop | 로컬 실행 환경 기준 |
 | Kubernetes | k3d, k3s, kubectl, Helm | 로컬 멀티노드 클러스터와 패키징 |
 | GitOps | ArgoCD, ApplicationSet | App-of-Apps 선언형 배포 |
+| Ingress | ingress-nginx, Traefik dynamic config | 로컬 k3d 유지. Ingress NGINX upstream retirement 이후 cloud target은 Gateway API/ALB/AGC로 분리 |
 | Secrets | External Secrets Operator, Vault | 외부 시크릿 동기화 계약 |
 | Data Services | External PostgreSQL, External Valkey | 저장소 외부 런타임을 Service 계약으로 연결 |
+| Cloud Examples | AWS EKS 1.35 target, AKS 1.35 target, Terraform AWS provider 6.x | 2026-05-09 공식 지원 스냅샷 기준 참조 구현 |
 | CI / Quality | GitHub Actions, pre-commit, markdownlint, shellcheck, kube-linter, hadolint, actionlint, zizmor | 정적 검증 및 정책 게이트 |
 
 ## Prerequisites
@@ -160,7 +166,8 @@ cd hy-home.k8s
 
 - [gitops/README.md](./gitops/README.md) - GitOps 경계와 구조
 - [infrastructure/README.md](./infrastructure/README.md) - 인프라 자산과 bootstrap note
-- [examples/README.md](./examples/README.md) - 참조 워크로드 온보딩 예시
+- [traefik/README.md](./traefik/README.md) - k3d 로컬 노출 보조 경로
+- [examples/README.md](./examples/README.md) - 앱 온보딩 및 cloud target 참조 예시
 - [tests/README.md](./tests/README.md) - 저장소 전역 테스트 원칙
 
 정적 품질 검증은 CI와 pre-commit 설정을 기준으로 한다.
@@ -180,4 +187,6 @@ bash scripts/check-secret-handling.sh .
 find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +
 ```
 
-`pre-commit`, `kube-linter`, `zizmor`, `actionlint`, `shellcheck`는 로컬에 있으면 사용한다. 로컬 `PATH`에 없을 때는 위의 repo-backed 검증을 먼저 실행하고, 전체 hook/tool matrix는 GitHub Actions에서 확인한다.
+`validate-repo-quality-gates.sh`는 authored docs와 README/examples Markdown의 direct push 예시 회귀도 차단한다. `pre-commit`, `kube-linter`, `zizmor`, `actionlint`, `shellcheck`는 로컬에 있으면 사용한다. 로컬 `PATH`에 없을 때는 위의 repo-backed 검증을 먼저 실행하고, 전체 hook/tool matrix는 GitHub Actions에서 확인한다.
+
+Cloud 예시의 버전 기준은 [Tech Stack Version Inventory](./docs/90.references/tech-stack-version-inventory.md)에 기록한다. 2026-03-24 이후 Ingress NGINX는 upstream retired 상태이므로 로컬 k3d 계약은 유지하되, AWS/Azure target은 ALB/Gateway API/AGC 계열로 분리한다.

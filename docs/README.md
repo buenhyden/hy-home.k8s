@@ -8,6 +8,7 @@
 `docs/`는 `hy-home.k8s`의 요구사항, 아키텍처, 결정, 명세, 실행 계획, 작업 증적, 운영 절차, 사고 기록, 참조 자료, 템플릿을 연결하는 문서 SSoT다. 단순 기록 저장소가 아니라 k3d/GitOps 홈랩을 사람이 운영하고 AI Agent가 안전하게 협업하기 위한 추적 가능한 작업 체계다.
 
 문서는 Spec-First 흐름을 따른다. 기획의 맥락은 설계와 결정으로 이어지고, 상세 명세와 실행 계획을 거쳐 작업 증적, 운영 지침, 런북, 사고 기록으로 연결된다.
+AWS/Azure 예시와 외부 기술 버전 기준처럼 빠르게 변할 수 있는 참조값은 [90.references](./90.references/README.md)와 [tech-stack-version-inventory.md](./90.references/tech-stack-version-inventory.md)에 스냅샷 기준일과 함께 기록한다.
 
 ## Audience
 
@@ -62,6 +63,7 @@ docs/
 3. 문서가 추가되거나 이동되면 해당 stage의 `README.md` 인덱스와 관련 링크를 같은 변경에서 갱신한다.
 4. 사람 대상 README와 개요 문서는 한국어를 유지하고, `00.agent-governance` 정책 문서는 영어를 유지한다.
 5. 일반 운영 변경은 GitOps-first 원칙을 따르며, 문서가 live `kubectl apply`나 외부 Vault 조작을 우회 절차처럼 안내하지 않도록 한다.
+6. cloud example 버전을 갱신할 때는 코드, README, [tech-stack-version-inventory.md](./90.references/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
 
 ## Documentation Flow
 
@@ -77,6 +79,9 @@ docs/
 - Agent gateway, `.claude`, `.codex`, `docs/00.agent-governance`의 runtime mirror와 harness catalog가 일관되어야 한다.
 - GitHub Actions YAML, workflow 중복 step, script reference, obsolete file, tech-stack version drift가 검증되어야 한다.
 - 오래된 docs path, Dashboard runtime 계약, legacy stage 표현은 명시된 역사/대체 문맥 없이 재등장하면 안 된다.
+- authored docs, README, examples Markdown에는 feature branch + PR flow를 우회하는 direct push 예시가 없어야 한다.
+
+로컬 k3d에서는 기존 ingress-nginx 계약과 [traefik](../traefik/README.md) 보조 노출 경로를 유지한다. Ingress NGINX upstream retirement 이후 cloud target은 AWS ALB/Gateway API, Azure AGC/Gateway API 계열로 분리해 추적한다.
 
 ## Related References
 
@@ -86,3 +91,5 @@ docs/
 - [Stage Authoring Matrix](./00.agent-governance/rules/stage-authoring-matrix.md)
 - [Templates README](./99.templates/README.md)
 - [Scripts README](../scripts/README.md)
+- [Traefik README](../traefik/README.md)
+- [Tech Stack Version Inventory](./90.references/tech-stack-version-inventory.md)

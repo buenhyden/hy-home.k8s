@@ -4,24 +4,62 @@
 
 ## Overview
 
-이 디렉터리는 로컬 Kubernetes 플랫폼 부트스트랩에 필요한 인프라 설정을 담는다.
-WSL2/Docker Desktop/k3d 클러스터, 외부 서비스 연동(외부 repo 관리), ArgoCD 설치 값 파일을 포함한다.
+이 디렉터리는 로컬 Kubernetes 플랫폼 부트스트랩에 필요한 인프라 설정을 담는다. WSL2/Docker Desktop/k3d 클러스터, 외부 서비스 연동 계약, ArgoCD 설치 값 파일, bootstrap 검증 스크립트, 정적 계약 테스트를 포함한다.
+
+이 경로는 로컬 k3d 플랫폼을 만들기 위한 실행 자산을 보관하지만, 정상 운영 변경은 `gitops/` 선언과 ArgoCD reconciliation을 통해 처리한다.
+
+## Audience
+
+이 README의 주요 독자:
+
+- Operators
+- Platform Engineers
+- Documentation Writers
+- AI Agents
+
+## Scope
+
+### In Scope
+
+- k3d 클러스터 설정과 bootstrap 스크립트
+- ArgoCD Helm values와 초기 GitOps 연결 자산
+- MetalLB/EndpointSlice 같은 로컬 외부 서비스 연결 manifest
+- repo-backed 정적 검증 스크립트와 계약 테스트
+
+### Out of Scope
+
+- 외부 Vault/PostgreSQL/Valkey 런타임 자체 생성
+- AWS/Azure 실제 cloud 리소스 프로비저닝
+- 애플리케이션 워크로드 매니페스트
+- 정상 운영 변경을 위한 live cluster mutation
 
 ## Structure
 
 ```text
 infrastructure/
-├── k3d/                     # k3d 클러스터 설정
 ├── argocd/                  # ArgoCD Helm values
+├── k3d/                     # k3d 클러스터 설정
+├── metallb/                 # 로컬 LoadBalancer 주소 풀 선언
+├── tests/                   # 정적 계약 검증 스크립트
 ├── vault/                   # Vault 정책 샘플
-└── README.md
+├── bootstrap-local.sh       # 로컬 플랫폼 bootstrap 진입점
+└── README.md                # This file
 ```
+
+## How to Work in This Area
+
+1. bootstrap 전 [Runbook](../docs/09.runbooks/0001-argocd-platform-bootstrap-runbook.md)의 외부 의존성 점검을 확인한다.
+2. `bootstrap-local.sh` 변경 시 bootstrap-only 예외 범위와 GitOps 소유권 전환 지점을 함께 점검한다.
+3. Helm values, k3d config, static test 변경은 관련 Spec/Operations/Runbook 링크를 함께 갱신한다.
+4. 변경 후 `bash infrastructure/tests/verify-contracts-static.sh`와 shell syntax check를 실행한다.
 
 ## Related References
 
 - [PRD](../docs/01.prd/2026-03-27-wsl-k3d-argocd-platform.md)
 - [Spec](../docs/04.specs/001-wsl-k3d-argocd-platform/spec.md)
 - [Runbook](../docs/09.runbooks/0001-argocd-platform-bootstrap-runbook.md)
+- [GitOps README](../gitops/README.md)
+- [Tech Stack Version Inventory](../docs/90.references/tech-stack-version-inventory.md)
 
 ## Bootstrap Note
 
