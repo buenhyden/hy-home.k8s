@@ -40,7 +40,7 @@
 ## How to Work in This Area
 
 1. [2026-03-31-migration-tasks.md](./2026-03-31-migration-tasks.md)를 통해 현재 작업 진행 상태를 확인한다.
-2. 새 작업 할당 시 [task.template.md](../../../docs/99.templates/task.template.md) 템플릿을 준수한다.
+2. 새 작업 할당 시 [task.template.md](../../../../docs/99.templates/task.template.md) 템플릿을 준수한다.
 3. 작업 완료 시 반드시 검증 증적(Evidence) 섹션을 갱신한다.
 
 ## Related References

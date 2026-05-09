@@ -1,5 +1,57 @@
 # 02.ARD (Architecture Reference Document)
 
+## Overview
+
+이 경로는 PRD 요구를 시스템 경계, 품질 속성, 참조 구조로 확장하는 ARD stage다.
+여기서 정의한 아키텍처 관점은 ADR과 Spec의 상위 입력으로 사용된다.
+
+## Audience
+
+이 README의 주요 독자:
+
+- Platform Architects
+- Platform Engineers
+- Documentation Writers
+- AI Agents
+
+## Scope
+
+### In Scope
+
+- 시스템 경계와 책임
+- 품질 속성, 데이터 흐름, 보안/관측성/운영성 요구
+- 참조 아키텍처와 하위 ADR/Spec 링크
+
+### Out of Scope
+
+- 단일 기술 결정 기록
+- 세부 구현 파일 설계
+- 운영 명령 절차
+
+## Structure
+
+```text
+02.ard/
+├── 0001-wsl-k3d-argocd-platform.md
+├── 0002-wsl2-k3d-argocd-ha-platform.md
+├── 0003-platform-expansion-mesh-dashboard.md
+└── README.md
+```
+
+## How to Work in This Area
+
+1. 관련 `01.prd/` 문서를 먼저 읽어 요구사항 경계를 고정한다.
+2. 새 ARD는 `../99.templates/ard.template.md`에서 시작한다.
+3. 주요 설계 결정은 `03.adr/`에 별도 ADR로 연결한다.
+4. 구현 가능한 계약은 `04.specs/`로 내려보내고 양방향 링크를 유지한다.
+
+## Related References
+
+- [Docs README](../README.md)
+- [01.prd](../01.prd/README.md)
+- [03.adr](../03.adr/README.md)
+- [04.specs](../04.specs/README.md)
+
 ## 목적
 
 이 폴더는 아키텍처 참조 문서(Architecture Reference Document, ARD)를 저장한다. ARD는 시스템 수준의 경계, 품질 속성, 참조 구조, 데이터 흐름, 보안·관측성·운영성 요구를 정의한다.

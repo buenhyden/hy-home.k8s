@@ -39,11 +39,11 @@
 ## How to Work in This Area
 
 1. [2026-03-31-aws-migration-prd.md](./2026-03-31-aws-migration-prd.md)를 통해 프로젝트 전반의 요구사항을 먼저 파악하십시오.
-2. `./docs/99.templates/prd.template.md`를 사용하여 새로운 요구사항을 추가합니다.
+2. `../../../../docs/99.templates/prd.template.md`를 사용하여 새로운 요구사항을 추가합니다.
 3. 요구사항 변경 시 `05.plans` 및 `06.tasks`와의 정렬을 확인하십시오.
 
 ## Related References
 
-- [Root README](../../README.md)
+- [AWS Docs README](../README.md)
 - [02.ard](../02.ard/README.md) - 아키텍처 참조 모델
 - [05.plans](../05.plans/README.md) - 실행 로드맵

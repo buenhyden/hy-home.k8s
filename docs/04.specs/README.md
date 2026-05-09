@@ -3,6 +3,63 @@
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
 
+## Overview
+
+이 경로는 PRD/ARD/ADR을 구현 가능한 기술 계약으로 구체화하는 Spec stage다.
+서비스, API, 데이터 모델, Agent 설계, 검증 기준은 이곳에서 하위 구현과 추적 가능해야 한다.
+
+## Audience
+
+이 README의 주요 독자:
+
+- Platform Engineers
+- Application Developers
+- Documentation Writers
+- AI Agents
+
+## Scope
+
+### In Scope
+
+- 기능/서비스 기술 설계와 인터페이스 계약
+- 데이터 모델, API 계약, 비기능 요구, 검증 기준
+- Agent 역할, 도구, 정책, 평가, 실패 모드 설계
+
+### Out of Scope
+
+- 제품 우선순위와 사용자 가치 중심 설명
+- 전사 운영 정책
+- 실시간 장애 대응 절차
+- 실행 추적의 정본 작업 목록
+
+## Structure
+
+```text
+04.specs/
+├── 001-wsl-k3d-argocd-platform/
+│   └── spec.md
+├── 002-wsl2-k3d-argocd-ha-platform/
+│   └── spec.md
+├── 003-platform-expansion/
+│   └── spec.md
+└── README.md
+```
+
+## How to Work in This Area
+
+1. 관련 PRD, ARD, ADR 링크를 확인하고 Spec의 입력으로 고정한다.
+2. 새 Spec은 `../99.templates/spec.template.md`에서 시작한다.
+3. API/데이터/Agent 보조 문서는 기능 하위 폴더에 두고 상위 `spec.md`와 연결한다.
+4. 구현 및 검증 추적은 `06.tasks/`로 연결한다.
+
+## Related References
+
+- [Docs README](../README.md)
+- [01.prd](../01.prd/README.md)
+- [02.ard](../02.ard/README.md)
+- [03.adr](../03.adr/README.md)
+- [06.tasks](../06.tasks/README.md)
+
 ## 목적
 
 이 폴더는 설계 명세(Specification)의 중심이다. SDD(Software Design Description) 관점에서 기능, 서비스, API, 데이터 모델, AI Agent 설계를 구체화한다.

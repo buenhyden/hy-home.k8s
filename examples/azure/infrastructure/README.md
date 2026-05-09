@@ -42,7 +42,7 @@ infrastructure/
 
 1. [main.bicep](./main.bicep)을 통해 전체 리소스 관계를 파악한다.
 2. 배포 전 `az bicep lint` 명령어로 코드 무결성을 검증한다.
-3. 리소스 생성 시 [Spec](../docs/04.specs/azure-migration-spec.md)에 정의된 명세를 준수한다.
+3. 리소스 생성 시 [Spec](../docs/04.specs/azure-migration/spec.md)에 정의된 명세를 준수한다.
 4. 배포 명령어 예시:
 
    ```bash
@@ -52,7 +52,7 @@ infrastructure/
 
 ## Related References
 
-- **Spec**: [../docs/04.specs/azure-migration-spec.md](../docs/04.specs/azure-migration-spec.md)
+- **Spec**: [../docs/04.specs/azure-migration/spec.md](../docs/04.specs/azure-migration/spec.md)
 - **ADR**: [../docs/03.adr/README.md](../docs/03.adr/README.md)
 - **GitOps**: [../gitops/README.md](../gitops/README.md)
 

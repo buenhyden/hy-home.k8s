@@ -2,6 +2,13 @@
 
 > Central governance entry point for AI agents operating in `hy-home.k8s`.
 
+## Overview
+
+This directory is the policy SSoT for local agent execution in `hy-home.k8s`.
+It keeps gateway files thin by hosting durable rules, execution checklists,
+scope routing, provider notes, reusable memory, and the canonical runtime
+catalog used by `.claude/**` and `.codex/**` mirrors.
+
 ## Purpose
 
 This directory contains the durable governance policy for the local agent runtime.

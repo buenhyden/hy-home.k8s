@@ -3,6 +3,59 @@
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
 
+## Overview
+
+이 경로는 중요한 기술/아키텍처 결정을 ADR로 기록하는 canonical stage다.
+각 ADR은 하나의 결정, 그 맥락, 대안, 결과를 보존해 이후 Spec과 운영 정책이 같은 근거를 공유하게 한다.
+
+## Audience
+
+이 README의 주요 독자:
+
+- Platform Architects
+- Platform Engineers
+- Operators
+- AI Agents
+
+## Scope
+
+### In Scope
+
+- 중요한 기술 결정 1건을 다루는 ADR
+- 맥락, 결정, 비목표, 대안, 결과
+- 관련 PRD/ARD/Spec/Plan/Operations 링크
+
+### Out of Scope
+
+- 상세 구현 설계
+- 운영 절차와 장애 대응 단계
+- 장문의 제품 배경 설명
+
+## Structure
+
+```text
+03.adr/
+├── 0001-k3d-topology-and-network.md
+├── 0002-argocd-helm-and-gitops-model.md
+├── ...
+├── 0012-argo-notifications-slack.md
+└── README.md
+```
+
+## How to Work in This Area
+
+1. 결정의 상위 요구와 참조 구조를 `01.prd/`, `02.ard/`에서 확인한다.
+2. 새 ADR은 `../99.templates/adr.template.md`에서 시작한다.
+3. superseded 결정은 삭제하지 않고 상태와 대체 ADR/운영 기준을 명시한다.
+4. ADR이 구현 또는 운영 계약을 바꾸면 `04.specs/`, `08.operations/` 링크를 갱신한다.
+
+## Related References
+
+- [Docs README](../README.md)
+- [02.ard](../02.ard/README.md)
+- [04.specs](../04.specs/README.md)
+- [08.operations](../08.operations/README.md)
+
 ## 목적
 
 이 폴더는 아키텍처 결정 기록(Architecture Decision Record, ADR)을 저장한다. ADR은 중요한 기술·아키텍처 결정 1건을 1문서로 기록한다.

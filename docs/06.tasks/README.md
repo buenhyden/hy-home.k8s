@@ -3,6 +3,62 @@
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
 
+## Overview
+
+이 경로는 Plan과 Spec에서 파생된 구현, 검증, 평가 작업 단위의 canonical stage다.
+단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 증거를 함께 보존하는 실행 추적 위치다.
+
+## Audience
+
+이 README의 주요 독자:
+
+- Platform Engineers
+- Operators
+- QA/Verification Reviewers
+- AI Agents
+
+## Scope
+
+### In Scope
+
+- 구현, 테스트, 평가, 문서, 운영 작업 단위
+- Parent Spec/Plan 링크
+- 검증 기준, 실행 명령, 증거, 상태
+
+### Out of Scope
+
+- 전체 시스템 설계 설명
+- 운영 정책 정의
+- 장애 대응 절차
+- 근본 원인 분석
+
+## Structure
+
+```text
+06.tasks/
+├── 2026-03-27-wsl-k3d-argocd-platform.md
+├── 2026-03-28-wsl2-k3d-argocd-ha-platform.md
+├── 2026-03-29-platform-expansion.md
+├── 2026-05-09-github-qa-ci-remediation.md
+├── 2026-05-09-k3d-agent-first-remediation.md
+├── 2026-05-09-scripts-inventory-remediation.md
+└── README.md
+```
+
+## How to Work in This Area
+
+1. 작업의 Parent Spec 또는 Parent Plan을 먼저 확인한다.
+2. 새 Task 문서는 `../99.templates/task.template.md`에서 시작한다.
+3. 각 작업은 검증 방법과 증거 위치를 함께 기록한다.
+4. 설계 보조용 `tasks.md`와 실행 추적 정본을 혼동하지 않는다.
+
+## Related References
+
+- [Docs README](../README.md)
+- [04.specs](../04.specs/README.md)
+- [05.plans](../05.plans/README.md)
+- [10.incidents](../10.incidents/README.md)
+
 ## 목적
 
 이 폴더는 구현·검증·평가 작업(Task) 단위를 저장한다. 이 폴더의 문서는 단순 TODO가 아니라, Spec과 Plan에서 파생된 실행 가능한 작업 목록의 정본(canonical location)이어야 한다.

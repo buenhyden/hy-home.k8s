@@ -3,6 +3,76 @@
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
 
+## Overview
+
+이 경로는 repo-authored 문서와 README가 시작해야 하는 canonical template stage다.
+새 문서 형식을 임의로 만들기 전에 여기의 템플릿과 상위 문서 라우팅 규칙을 먼저 확인한다.
+
+## Audience
+
+이 README의 주요 독자:
+
+- Documentation Writers
+- Platform Engineers
+- Repository Maintainers
+- AI Agents
+
+## Scope
+
+### In Scope
+
+- 문서 stage별 Markdown 템플릿
+- API/OpenAPI, GraphQL, proto 계약 템플릿
+- README와 governance memory 항목 템플릿
+
+### Out of Scope
+
+- 실제 PRD/ARD/ADR/Spec/Plan/Task 문서
+- 운영 기록이나 사고 기록
+- 특정 기능의 구현 계약
+
+## Structure
+
+```text
+99.templates/
+├── adr.template.md
+├── agent-design.template.md
+├── api-spec.template.md
+├── ard.template.md
+├── data-model.template.md
+├── guide.template.md
+├── incident.template.md
+├── memory.template.md
+├── openapi.template.yaml
+├── operation.template.md
+├── plan.template.md
+├── postmortem.template.md
+├── prd.template.md
+├── readme.template.md
+├── reference.template.md
+├── runbook.template.md
+├── schema.template.graphql
+├── service.template.proto
+├── spec.template.md
+├── task.template.md
+├── tests.template.md
+└── README.md
+```
+
+## How to Work in This Area
+
+1. 새 문서를 만들 때 현재 stage에 맞는 템플릿을 먼저 선택한다.
+2. 템플릿의 placeholder와 안내 주석은 authored 문서에서 제거한다.
+3. 템플릿을 추가하거나 제거하면 이 README의 목록과 매핑을 함께 갱신한다.
+4. README 변경 시 `readme.template.md`의 base structure와 품질 게이트가 일치하는지 확인한다.
+
+## Related References
+
+- [Docs README](../README.md)
+- [Agent Governance Hub](../00.agent-governance/README.md)
+- [Documentation Protocol](../00.agent-governance/rules/documentation-protocol.md)
+- [Stage Authoring Matrix](../00.agent-governance/rules/stage-authoring-matrix.md)
+
 ## 목적
 
 이 폴더는 문서 템플릿을 저장한다. 새 문서는 이 폴더의 템플릿을 복사해 시작한다.

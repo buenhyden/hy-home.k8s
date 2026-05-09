@@ -41,7 +41,7 @@
 
 ## How to Work in This Area
 
-1. 새로운 기술 기능 또는 시스템 연동 설계 시 [spec.template.md](../../../docs/99.templates/spec.template.md) 템플릿을 사용하여 새 문서를 생성한다.
+1. 새로운 기술 기능 또는 시스템 연동 설계 시 [spec.template.md](../../../../docs/99.templates/spec.template.md) 템플릿을 사용하여 새 문서를 생성한다.
 2. 모든 문서는 01~03번 산출물의 고유 아이디를 참조하여 추적성을 유지한다.
 3. [azure-migration/spec.md](./azure-migration/spec.md)는 개발 단계에서 구현의 기준점이 된다.
 

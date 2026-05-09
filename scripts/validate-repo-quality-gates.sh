@@ -23,6 +23,7 @@ import pathlib
 import re
 import subprocess
 import sys
+import urllib.parse
 
 import yaml
 
@@ -228,21 +229,71 @@ for name in sorted(actual_docs - allowed_docs):
 for name in sorted(allowed_docs - actual_docs):
     fail(f"required docs top-level folder is missing: docs/{name}")
 
-readme_sections = {
-    "purpose": re.compile(r"^##\s+(목적|Purpose)\b", re.MULTILINE),
-    "allowed": re.compile(r"^##\s+(포함할 내용|Allowed Content)\b", re.MULTILINE),
-    "related": re.compile(r"^##\s+(관련 폴더|Related Folders)\b", re.MULTILINE),
-    "examples": re.compile(r"^##\s+(예시|Examples)\b", re.MULTILINE),
+readme_base_sections = {
+    "Overview": re.compile(r"^##\s+Overview\b", re.MULTILINE),
+    "Audience": re.compile(r"^##\s+Audience\b", re.MULTILINE),
+    "Scope": re.compile(r"^##\s+Scope\b", re.MULTILINE),
+    "Structure": re.compile(r"^##\s+Structure\b", re.MULTILINE),
+    "How to Work in This Area": re.compile(r"^##\s+How to Work in This Area\b", re.MULTILINE),
+    "Related References": re.compile(r"^##\s+Related References\b", re.MULTILINE),
 }
 for name in sorted(allowed_docs):
     readme = docs_dir / name / "README.md"
     if not readme.exists():
         fail(f"required README.md is missing: {rel(readme)}")
+for readme in sorted(root.rglob("README.md")):
+    if ".git" in readme.parts:
         continue
     text = read_text(readme)
-    for section, pattern in readme_sections.items():
+    for section, pattern in readme_base_sections.items():
         if not pattern.search(text):
-            fail(f"{rel(readme)} missing required section: {section}")
+            fail(f"{rel(readme)} missing README base section: {section}")
+
+
+def iter_markdown_link_targets(text: str):
+    in_fence = False
+    inline_link = re.compile(r"!?\[[^\]\n]*\]\(([^\)\n]+)\)")
+    reference_link = re.compile(r"^\[[^\]\n]+\]:\s+(\S+)")
+    for line in text.splitlines():
+        if line.lstrip().startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
+        for match in inline_link.finditer(line):
+            yield match.group(1).strip()
+        match = reference_link.match(line.strip())
+        if match:
+            yield match.group(1).strip()
+
+
+def normalize_markdown_target(raw_target: str) -> str:
+    target = raw_target.strip()
+    if target.startswith("<") and ">" in target:
+        target = target[1 : target.index(">")]
+    else:
+        target = target.split()[0]
+    return target.strip()
+
+
+for readme in sorted(root.rglob("README.md")):
+    if ".git" in readme.parts:
+        continue
+    for raw_target in iter_markdown_link_targets(read_text(readme)):
+        target = normalize_markdown_target(raw_target)
+        if not target or target.startswith("#"):
+            continue
+        if re.match(r"^[A-Za-z][A-Za-z0-9+.-]*:", target):
+            continue
+        target_without_fragment = target.split("#", 1)[0]
+        if not target_without_fragment:
+            continue
+        target_path = pathlib.Path(urllib.parse.unquote(target_without_fragment))
+        if target_path.is_absolute():
+            fail(f"{rel(readme)} uses absolute README link target: {target}")
+            continue
+        if not (readme.parent / target_path).exists():
+            fail(f"{rel(readme)} has broken README link target: {target}")
 
 template_readme = read_text(root / "docs/99.templates/README.md")
 for template in sorted((root / "docs/99.templates").iterdir()):

@@ -3,6 +3,56 @@
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
 
+## Overview
+
+이 경로는 사고 사실 기록과 사고 후 회고를 보관하는 canonical stage다.
+실시간 대응 기록과 구조적 재발 방지 분석을 같은 stage 안에서 분리해 보존한다.
+
+## Audience
+
+이 README의 주요 독자:
+
+- Operators
+- Incident Commanders
+- Platform Engineers
+- AI Agents
+
+## Scope
+
+### In Scope
+
+- Incident Record: 영향, 타임라인, 가설, 대응, 증거, 후속 액션
+- Postmortem: 근본 원인, 기여 요인, 감지 공백, 재발 방지 액션
+- 관련 Runbook, Operation, ADR, Spec 링크
+
+### Out of Scope
+
+- 일반 운영 정책
+- 실행 절차 중심 런북
+- 기능 요구사항 또는 상세 설계
+
+## Structure
+
+```text
+10.incidents/
+├── postmortems/  # Incident 종료 후 구조 분석 문서
+└── README.md     # This file
+```
+
+## How to Work in This Area
+
+1. 대응 중에는 `../99.templates/incident.template.md`로 사실 기록을 시작한다.
+2. 사고 종료 후 구조 분석이 필요하면 `../99.templates/postmortem.template.md`를 사용한다.
+3. Runbook/Operations/ADR/Spec 링크를 남겨 재발 방지 액션을 추적한다.
+4. 비밀 값, 토큰, 개인 식별 정보는 사고 기록에 직접 남기지 않는다.
+
+## Related References
+
+- [Docs README](../README.md)
+- [08.operations](../08.operations/README.md)
+- [09.runbooks](../09.runbooks/README.md)
+- [99.templates](../99.templates/README.md)
+
 ## 목적
 
 이 폴더는 사고 사실 기록(Incident Record)과 사고 후 회고(Postmortem)를 저장한다.

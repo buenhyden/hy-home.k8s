@@ -3,6 +3,62 @@
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
 
+## Overview
+
+이 경로는 승인된 요구와 기술 계약을 실행 순서, 위험 관리, 검증 게이트로 전환하는 Plan stage다.
+Plan은 구현을 시작하기 전 작업 흐름, 롤아웃/롤백, 완료 기준을 합의하는 문서다.
+
+## Audience
+
+이 README의 주요 독자:
+
+- Platform Engineers
+- Operators
+- Project Maintainers
+- AI Agents
+
+## Scope
+
+### In Scope
+
+- 목표, 범위, 단계, 마일스톤
+- 위험과 완화 전략
+- 검증 게이트, 완료 기준, 롤아웃/롤백 전략
+- 하위 Task로 이어지는 실행 단위 참조
+
+### Out of Scope
+
+- 요구사항 정본
+- 상세 기술 설계 정본
+- 실제 작업 증거와 상태 추적의 정본
+
+## Structure
+
+```text
+05.plans/
+├── 2026-03-27-wsl-k3d-argocd-platform.md
+├── 2026-03-28-wsl2-k3d-argocd-ha-platform.md
+├── 2026-03-29-platform-expansion.md
+├── 2026-05-09-github-qa-ci-remediation.md
+├── 2026-05-09-k3d-agent-first-remediation.md
+├── 2026-05-09-scripts-inventory-remediation.md
+└── README.md
+```
+
+## How to Work in This Area
+
+1. 관련 PRD/ARD/ADR/Spec을 먼저 읽고 계획의 입력을 고정한다.
+2. 새 Plan은 `../99.templates/plan.template.md`에서 시작한다.
+3. Plan 변경 시 관련 `06.tasks/`의 Parent Plan/Phase 링크를 확인한다.
+4. 완료된 계획은 검증 결과와 후속 문서 링크를 남긴다.
+
+## Related References
+
+- [Docs README](../README.md)
+- [04.specs](../04.specs/README.md)
+- [06.tasks](../06.tasks/README.md)
+- [08.operations](../08.operations/README.md)
+
 ## 목적
 
 이 폴더는 실행 계획(Plan)을 저장한다. Plan은 언제, 누가, 어떤 순서로, 어떤 제약과 위험을 관리하며 작업을 진행하는지 정의한다.

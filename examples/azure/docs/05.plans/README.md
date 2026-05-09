@@ -39,7 +39,7 @@
 
 ## How to Work in This Area
 
-1. 새로운 프로젝트 마일스톤이나 릴리스 계획 수립 시 [plan.template.md](../../../docs/99.templates/plan.template.md) 템플릿을 준수한다.
+1. 새로운 프로젝트 마일스톤이나 릴리스 계획 수립 시 [plan.template.md](../../../../docs/99.templates/plan.template.md) 템플릿을 준수한다.
 2. 모든 계획은 PRD와 Spec의 요구사항을 기반으로 수립한다.
 3. [2026-03-31-migration-strategy.md](./2026-03-31-migration-strategy.md)는 프로젝트 실행의 기준이 된다.
 

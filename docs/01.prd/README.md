@@ -3,6 +3,58 @@
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
 
+## Overview
+
+이 경로는 `hy-home.k8s` 플랫폼의 제품 요구사항(PRD)을 보관하는 canonical stage다.
+새 기능이나 플랫폼 변화가 어떤 사용자/운영자 가치와 성공 기준을 가져야 하는지 먼저 정의한다.
+
+## Audience
+
+이 README의 주요 독자:
+
+- Product Owners
+- Platform Engineers
+- Documentation Writers
+- AI Agents
+
+## Scope
+
+### In Scope
+
+- 문제 정의, 사용자/운영자 가치, 성공 지표
+- 기능 요구, 수용 기준, 범위/비범위
+- 관련 ARD, Spec, Plan으로 이어지는 요구사항 추적 링크
+
+### Out of Scope
+
+- 상세 구현 방법과 파일 수준 설계
+- 구체 기술 스택 결정
+- 장애 대응 절차와 운영 명령
+
+## Structure
+
+```text
+01.prd/
+├── 2026-03-27-wsl-k3d-argocd-platform.md
+├── 2026-03-28-wsl2-k3d-argocd-ha-platform.md
+├── 2026-03-29-platform-expansion-dashboard-mesh.md
+└── README.md
+```
+
+## How to Work in This Area
+
+1. 새 요구사항을 작성하기 전에 같은 문제를 다루는 기존 PRD를 먼저 확인한다.
+2. 새 PRD는 `../99.templates/prd.template.md`에서 시작한다.
+3. 요구사항 변경 시 관련 `02.ard/`, `04.specs/`, `05.plans/` 링크를 함께 갱신한다.
+4. Agent 기능 요구에는 허용/금지 행동과 human-in-the-loop 기준을 포함한다.
+
+## Related References
+
+- [Docs README](../README.md)
+- [02.ard](../02.ard/README.md)
+- [04.specs](../04.specs/README.md)
+- [05.plans](../05.plans/README.md)
+
 ## 목적
 
 제품의 목표, 사용자 가치, 그리고 성공 기준을 정의한 문서다.

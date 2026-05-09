@@ -37,7 +37,7 @@
 
 ## How to Work in This Area
 
-1. 신규 요구사항 발생 시 [prd.template.md](../../../docs/99.templates/prd.template.md) 템플릿을 사용하여 새 문서를 생성한다.
+1. 신규 요구사항 발생 시 [prd.template.md](../../../../docs/99.templates/prd.template.md) 템플릿을 사용하여 새 문서를 생성한다.
 2. 모든 요구사항은 고유 아이디(REQ-PRD-*)를 부여하며 상호 추적성을 보장한다.
 
 ## Related References

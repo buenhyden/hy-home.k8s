@@ -28,7 +28,7 @@
 
 - 일반적인 시스템 이해 및 교육 (07.guides 참조)
 - 상세 이행 계획 및 마일스톤 (05.plans 참조)
-- 장애 발생 후의 사후 분석 문서 (11.postmortems 참조)
+- 장애 발생 후의 사후 분석 문서 (`docs/10.incidents` 참조)
 
 ## Structure
 
@@ -41,14 +41,14 @@
 ## How to Work in This Area
 
 1. [0001-disaster-recovery.md](./0001-disaster-recovery.md)를 통해 긴급 상황 대응 절차를 숙지한다.
-2. 런북 작성 시 [runbook.template.md](../../../docs/99.templates/runbook.template.md) 템플릿을 준수한다.
+2. 런북 작성 시 [runbook.template.md](../../../../docs/99.templates/runbook.template.md) 템플릿을 준수한다.
 3. 모든 단계는 명령어를 포함하여 즉시 실행 가능해야 하며, 실행 결과의 기댓값을 명시한다.
 
 ## Related References
 
 - **Spec**: [../04.specs/azure-migration/spec.md](../04.specs/azure-migration/spec.md)
 - **Operation**: [../08.operations/azure-maintenance-policy.md](../08.operations/azure-maintenance-policy.md)
-- **Incidents**: [../10.incidents/README.md](../10.incidents/README.md)
+- **Incidents**: [Root 10.incidents](../../../../docs/10.incidents/README.md)
 
 ## AI Agent Guidance
 
