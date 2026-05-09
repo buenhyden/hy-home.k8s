@@ -1,6 +1,7 @@
 # GitHub Configuration Hub
 
 This directory contains repository-specific GitHub automation for the `hy-home.k8s` main-branch PR flow.
+It is a map and routing surface, not the policy source of truth.
 
 ## Content Mapping
 
@@ -11,17 +12,21 @@ This directory contains repository-specific GitHub automation for the `hy-home.k
 - `dependabot.yml`, `labeler.yml`, `zizmor.yml` - GitHub-native dependency, labeling, and workflow hardening configuration.
 - `SECURITY.md` - Vulnerability reporting instructions.
 
+## Policy Routing
+
+- Branch strategy policy lives in `docs/00.agent-governance/rules/git-workflow.md`.
+- CI enforcement lives in `workflows/ci.yml` and `scripts/validate-repo-quality-gates.sh`.
+- PR author and reviewer prompts live in `PULL_REQUEST_TEMPLATE.md`.
+- Version inventory and action tag policy live in `docs/90.references/tech-stack-version-inventory.md`.
+
 ## Workflow Roles
 
-- `ci.yml` is the required quality gate for pushes and pull requests targeting `main`, and it can also be rerun with `workflow_dispatch` for manual QA. `branch-policy` rejects PRs that target a non-`main` base or use a source branch outside the approved prefix set; `pre-commit` owns broad lint, formatting, and security hooks; `repo-quality-static` owns repository structure, workflow duplication, script references, and version inventory drift; `manifest-static` owns k3d/GitOps contract checks; `shell-static` performs Bash syntax checks only.
-- `generate-changelog.yml` runs on `v*.*.*` tags and stores changelog evidence as a workflow artifact. It does not commit or push to `main`.
+- `ci.yml` is the required QA gate for pushes and pull requests targeting the repository's canonical integration branch, with manual reruns through `workflow_dispatch`.
+- `generate-changelog.yml` creates release-evidence artifacts for version tags. It does not commit, push, or publish.
 - `labeler.yml`, `greetings.yml`, and `stale.yml` are repository maintenance automations, not QA gates.
-- CI and maintenance jobs must set explicit timeouts. Maintenance workflows that can overlap should use workflow-level concurrency.
+- Defensive overlap between CI jobs is intentional QA coverage, not prose duplication.
 
-## Branch and Release Rules
+## Boundaries
 
-- Default PR target is `main`; long-lived `dev` or `develop` branches are not assumed.
-- PR source branches must start with `feat/`, `fix/`, `docs/`, `refactor/`, `chore/`, `ci/`, `release/`, `hotfix/`, `codex/`, or `dependabot/`.
-- Tracked changelog updates must be merged by PR before tagging.
-- GitHub Actions use version tags plus `docs/90.references/tech-stack-version-inventory.md` drift checks. Full SHA pinning is not the current repository policy.
-- Workflows in this directory must not deploy to a live cluster, run `kubectl apply`, or mutate external Vault resources.
+- `.github` automation provides QA gates and release-evidence automation, not deploy CD.
+- Workflows in this directory must not deploy to a live cluster, run direct Kubernetes mutations, mutate external Vault resources, publish containers, or push commits.

@@ -11,7 +11,6 @@ jobs:
     permissions:
       issues: write # 코멘트/라벨 정도만 필요
       pull-requests: write # PR에 코멘트 남길 때
-      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

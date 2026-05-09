@@ -10,7 +10,7 @@ Fixes # (link to issue if applicable)
 
 ## 3. Branch Target
 
-- [ ] This PR targets `main`, unless a documented release or hotfix flow requires otherwise.
+- [ ] This PR targets `main`; any exception must update CI `branch-policy` and governance in the same change.
 - [ ] The source branch uses an approved prefix: `feat/`, `fix/`, `docs/`, `refactor/`, `chore/`, `ci/`, `release/`, `hotfix/`, `codex/`, or `dependabot/`.
 
 ## 4. Type of Change
@@ -21,6 +21,8 @@ Fixes # (link to issue if applicable)
 - [ ] `docs`: Documentation updates
 - [ ] `infra`: Changes to Kubernetes manifests or GitOps assets
 - [ ] `ci`: Changes to GitHub Actions, hooks, or automation
+
+Note: `infra` is a change type, not an approved branch prefix. Use an approved source branch prefix above.
 
 ## 5. Breaking Changes
 

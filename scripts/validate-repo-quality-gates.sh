@@ -108,6 +108,30 @@ def collect_strings(value) -> list[str]:
     return []
 
 
+def branch_prefixes_from_git_workflow(path: pathlib.Path) -> list[str]:
+    prefixes: list[str] = []
+    for line in read_text(path).splitlines():
+        match = re.match(r"^-\s+`([a-z0-9-]+)/<[^`]+>`$", line.strip())
+        if match:
+            prefixes.append(match.group(1))
+    return prefixes
+
+
+def format_branch_prefixes(prefixes: list[str]) -> str:
+    return ", ".join(f"{prefix}/" for prefix in prefixes)
+
+
+def extract_ci_branch_policy_prefixes(branch_policy_text: str) -> list[str]:
+    match = re.search(r"allowed_branch_regex=['\"]\^\(([^)]+)\)/['\"]", branch_policy_text)
+    if not match:
+        return []
+    return match.group(1).split("|")
+
+
+def extract_pr_template_prefixes(text: str) -> list[str]:
+    return [prefix.rstrip("/") for prefix in re.findall(r"`([a-z0-9-]+/)`", text)]
+
+
 def markdown_table_after_heading(text: str, heading: str) -> list[list[str]]:
     lines = text.splitlines()
     try:
@@ -574,6 +598,11 @@ for rule_name, rule_config in sorted(zizmor_rules.items()):
 if not isinstance(zizmor_rules.get("unpinned-uses"), dict) or zizmor_rules["unpinned-uses"].get("disable") is not True:
     fail(f"{rel(zizmor_path)} must keep only unpinned-uses disabled for tag-plus-inventory action pinning")
 
+git_workflow_path = root / "docs/00.agent-governance/rules/git-workflow.md"
+branch_prefixes = branch_prefixes_from_git_workflow(git_workflow_path)
+if not branch_prefixes:
+    fail(f"{rel(git_workflow_path)} must define branch types as the branch prefix policy SSoT")
+
 ci_path = root / ".github/workflows/ci.yml"
 try:
     ci_data = load_yaml(ci_path)
@@ -626,9 +655,19 @@ for phrase in [
 ]:
     if phrase not in branch_policy_text:
         fail(f"{rel(ci_path)} branch-policy missing validation phrase: {phrase}")
-for prefix in ["feat", "fix", "docs", "refactor", "chore", "ci", "release", "hotfix", "codex", "dependabot"]:
+
+ci_branch_prefixes = extract_ci_branch_policy_prefixes(branch_policy_text)
+if ci_branch_prefixes != branch_prefixes:
+    fail(
+        f"{rel(ci_path)} branch-policy prefixes must match {rel(git_workflow_path)} "
+        f"SSoT: expected {format_branch_prefixes(branch_prefixes)} got {format_branch_prefixes(ci_branch_prefixes)}"
+    )
+for prefix in branch_prefixes:
     if prefix not in branch_policy_text:
-        fail(f"{rel(ci_path)} branch-policy missing allowed branch prefix: {prefix}/")
+        fail(
+            f"{rel(ci_path)} branch-policy message missing branch prefix from "
+            f"{rel(git_workflow_path)} SSoT: {prefix}/"
+        )
 
 ci_summary_job = ci_jobs.get("ci-summary") or {}
 ci_summary_needs = ci_summary_job.get("needs") or []
@@ -701,9 +740,50 @@ for phrase in [
 ]:
     if phrase not in pr_template_text:
         fail(f"{rel(pr_template_path)} missing GitHub/GitOps review phrase: {phrase}")
-for prefix in ["feat/", "fix/", "docs/", "refactor/", "chore/", "ci/", "release/", "hotfix/", "codex/", "dependabot/"]:
+for phrase in [
+    "any exception must update CI `branch-policy` and governance in the same change",
+    "`infra` is a change type, not an approved branch prefix",
+]:
+    if phrase not in pr_template_text:
+        fail(f"{rel(pr_template_path)} missing branch-policy clarification: {phrase}")
+
+pr_branch_prefixes = extract_pr_template_prefixes(pr_template_text)
+if pr_branch_prefixes != branch_prefixes:
+    fail(
+        f"{rel(pr_template_path)} approved branch prefixes must match {rel(git_workflow_path)} "
+        f"SSoT: expected {format_branch_prefixes(branch_prefixes)} got {format_branch_prefixes(pr_branch_prefixes)}"
+    )
+for prefix in branch_prefixes:
+    prefix_label = f"{prefix}/"
     if prefix not in pr_template_text:
-        fail(f"{rel(pr_template_path)} missing approved source branch prefix: {prefix}")
+        fail(
+            f"{rel(pr_template_path)} missing approved source branch prefix from "
+            f"{rel(git_workflow_path)} SSoT: {prefix_label}"
+        )
+
+github_about_path = root / ".github/ABOUT.md"
+github_about_text = read_text(github_about_path)
+for phrase in [
+    "docs/00.agent-governance/rules/git-workflow.md",
+    "workflows/ci.yml",
+    "scripts/validate-repo-quality-gates.sh",
+    "PULL_REQUEST_TEMPLATE.md",
+    "QA gates and release-evidence automation, not deploy CD",
+    "Defensive overlap between CI jobs is intentional QA coverage",
+]:
+    if phrase not in github_about_text:
+        fail(f"{rel(github_about_path)} must route to the policy/enforcement SSoT instead of duplicating policy: {phrase}")
+if "PR source branches must start" in github_about_text or "Default PR target is `main`" in github_about_text:
+    fail(
+        f"{rel(github_about_path)} must not duplicate branch-policy prose; "
+        f"move branch rules to {rel(git_workflow_path)} and keep enforcement in {rel(ci_path)}"
+    )
+about_prefix_count = sum(1 for prefix in branch_prefixes if f"{prefix}/" in github_about_text)
+if about_prefix_count >= len(branch_prefixes):
+    fail(
+        f"{rel(github_about_path)} must not mirror the full branch prefix list; "
+        f"use {rel(git_workflow_path)} as the branch policy SSoT"
+    )
 
 labeler_path = root / ".github/labeler.yml"
 labeler_data = load_yaml(labeler_path)
