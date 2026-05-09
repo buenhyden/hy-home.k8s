@@ -28,7 +28,7 @@ that shape the runtime contract under `.claude/` and its Codex mirror under `.co
 - Does not duplicate rule text from `rules/`, `scopes/`, or `providers/`.
 - Current remediation scope is in-place clarity and regression-gate hardening.
   There is no current readiness gap that requires a new agent, skill, hook, or
-  runtime surface.
+  runtime surface in the current evidence snapshot.
 
 ## Runtime Principles
 
@@ -45,12 +45,32 @@ that shape the runtime contract under `.claude/` and its Codex mirror under `.co
 governance/runtime contract, and is covered by repo-backed static gates where applicable.
 It is not proof that GitHub CI, the full optional local toolchain, live k3d bootstrap,
 ArgoCD health, or live cluster reconciliation completed in the current session.
+Matrix validation is a regression and structure guard for catalog shape and required
+fields. It is not semantic proof that every `Ready` claim was freshly revalidated.
 
 Report readiness evidence in separate lanes:
 
 - Repo/static readiness: local files, mirror contracts, command boundaries, and validation scripts.
 - CI/toolchain readiness: GitHub Actions and optional tools such as `pre-commit`, `kube-linter`, `actionlint`, `zizmor`, `graphify`, and `rtk`.
 - Live k3d readiness: human-approved bootstrap, ArgoCD reconciliation, Kubernetes API checks, and runtime health evidence.
+
+## Matrix Status Contract
+
+Matrix status values are limited to `Ready`, `Partial`, and `Missing`.
+
+- `Ready` means repo/static surface readiness: the surface exists, is wired into
+  governance/runtime contracts, and has no currently tracked concrete gap. A
+  `Ready` row must use `Gap=None`.
+- `Partial` means a surface exists but a concrete gap remains. The `Gap` field
+  must name the incomplete behavior and `Remediation` must state how to close it.
+- `Missing` means the required surface does not exist. The `Gap` field must name
+  the missing surface and `Remediation` must state whether to create or defer it.
+
+A `Ready` row is not semantic proof of agent behavior, GitHub CI, optional
+toolchain availability, live k3d health, or ArgoCD reconciliation. When a human
+explicitly requests a new runtime surface or future work discovers a concrete
+gap, update this matrix first, then implement only the smallest surface needed
+to close that gap.
 
 ## Readiness Matrix
 
@@ -64,7 +84,7 @@ Report readiness evidence in separate lanes:
 | Claude permissions/hooks | `.claude/settings.json`, `.claude/hooks/*.sh` | Ready | Claude runtime has allow/deny command policy plus session-start, pre-edit, and post-validate hooks |
 | Codex context hook | `.codex/hooks.json` | Ready | Codex mirror provides graphify context injection only; it is not a permission gate equivalent to `.claude/settings.json` |
 | Validation scripts | `scripts/*.sh`, `infrastructure/tests/*.sh` | Ready | Repo-backed gates cover quality, GitOps structure, manifests, contracts, secret handling, shell syntax, gateway thinness, language boundaries, and hook-boundary clarity |
-| Authored-doc command boundary | `scripts/validate-repo-quality-gates.sh`, staged docs | Ready | Risky command examples in authored docs require explicit human/operator boundary markers and direct push examples are blocked |
+| Authored-doc command boundary | `scripts/validate-repo-quality-gates.sh`, staged docs | Ready | Risky command examples in authored docs require explicit human/operator boundary markers; authored docs block bare/main direct push and push examples without PR-flow context, while broader Markdown roots block bare/main direct push examples |
 | Memory | `docs/00.agent-governance/memory/` | Ready | Historical implementation notes have a local template-backed home; current runtime truth stays in this catalog and current script inventory stays in `scripts/README.md` |
 | Escalation boundary | `subagent-protocol.md`, `rules/agentic.md` | Ready | Delegation, file ownership, direct mutation, and human approval boundaries are explicit |
 
@@ -80,7 +100,7 @@ Report readiness evidence in separate lanes:
 | Claude permissions/hooks | `.claude/settings.json`, `.claude/hooks/*.sh` | Ready | None | Keep allow/deny command policy, session-start, pre-edit, and post-validate hooks in Claude runtime files. |
 | Codex context hook | `.codex/hooks.json` | Ready | None | Keep Codex hook scope limited to context injection; do not treat it as a Claude permission gate equivalent. |
 | Validation scripts | `scripts/*.sh`, `infrastructure/tests/*.sh` | Ready | None | Keep repo-backed validation as the default completion evidence before handoff. |
-| Authored-doc command boundary | `scripts/validate-repo-quality-gates.sh`, staged docs | Ready | None | Keep `kubectl apply/patch`, `argocd app sync`, `vault kv put`, and push examples marked as human/operator-only or PR-flow work in authored docs. |
+| Authored-doc command boundary | `scripts/validate-repo-quality-gates.sh`, staged docs | Ready | None | Keep `kubectl apply/patch`, `argocd app sync`, `vault kv put`, and push examples marked as human/operator-only or PR-flow work in authored docs, including operations policies; keep broader Markdown scans limited to bare/main direct push examples. |
 | Memory | `docs/00.agent-governance/memory/` | Ready | None | Keep historical lessons separate from current runtime truth in this catalog. |
 | Escalation boundary | `subagent-protocol.md`, `rules/agentic.md` | Ready | None | Keep delegation, destructive-action, live-mutation, and human-approval boundaries explicit. |
 
@@ -94,7 +114,7 @@ Report readiness evidence in separate lanes:
 | Scope and persona routing | `rules/persona.md`, `scopes/*.md` | Ready | None | Resolve one primary layer before edits and transition explicitly when scope changes. |
 | GitOps-first execution | `rules/agentic.md`, `.claude/settings.json`, GitOps docs and validators | Ready | None | Keep infrastructure changes repo-backed and prevent direct cluster mutation by default. |
 | Documentation routing | `rules/document-stage-routing.md`, `rules/documentation-protocol.md`, `.claude/skills/docs-stage-routing/skill.md` | Ready | None | Keep generated docs in the canonical stage tree and use templates before authoring. |
-| Authored-doc command boundaries | `scripts/validate-repo-quality-gates.sh`, `docs/03.adr`, `docs/04.specs`, `docs/07.guides`, `docs/09.runbooks` | Ready | None | Keep risky command examples framed as human/operator-approved bootstrap, break-glass, external secret, or PR-flow work. |
+| Authored-doc command boundaries | `scripts/validate-repo-quality-gates.sh`, `docs/03.adr`, `docs/04.specs`, `docs/07.guides`, `docs/08.operations`, `docs/09.runbooks` | Ready | None | Keep risky command examples framed as human/operator-approved bootstrap, break-glass, external secret, or PR-flow work. |
 | Validation before completion | `scripts/*.sh`, `infrastructure/tests/*.sh`, `.github/workflows/ci.yml` | Ready | None | Define validation evidence before editing and report skipped or unavailable local tools honestly. |
 | Postflight and handoff | `rules/postflight-checklist.md`, `subagent-protocol.md` | Ready | None | Complete postflight checks and preserve handoff evidence before final response. |
 

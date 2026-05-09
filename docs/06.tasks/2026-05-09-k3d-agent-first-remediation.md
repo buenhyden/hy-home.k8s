@@ -19,6 +19,8 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 
 2026-05-09 command-boundary follow-up은 새 runtime surface 없이 기존 plan/task 문서에 누적한다. 목적은 authored docs의 위험 명령 예시가 Agent 기본 실행 경로로 해석되지 않도록 문서 문맥과 repo quality gate를 함께 고정하는 것이다.
 
+2026-05-09 hardening follow-up은 완료 상태를 뒤집지 않고 보강한다. 추가 조사에서 확인된 gap은 `docs/08.operations` risky-command gate 누락, 대화 출력에 의존하는 완료 증거, matrix 검증 범위의 과장 가능성, direct push 차단 표현의 범위 불일치다. Final multi-agent disposition은 REVISE 후 승인 가능이며, 남은 보강은 readiness 의미 축소, matrix gap 표현 가능성, validator 범위 정합성, 검증 증거의 snapshot 성격으로 제한한다.
+
 ## Inputs
 
 - **Parent Spec**: not applicable; this remediation does not introduce a new technical contract.
@@ -47,8 +49,16 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 | T-009 | Add Harness Engineering and Agent-first Engineering component audit matrices | doc | n/a | PLN-008 | matrix headings and `Gap`/`Remediation` columns pass repo quality gate | Platform | Done |
 | T-010 | Add matrix-first and context hierarchy rules for future harness changes | guardrail | n/a | PLN-009 | agentic rule phrases pass repo quality gate | Platform | Done |
 | T-011 | Extend repo quality gate for component audit matrix presence | test | n/a | PLN-008, PLN-009 | quality gate fails if matrix or rule contracts are removed | Platform | Done |
-| T-012 | Add authored-doc command-boundary regression gate | test | n/a | PLN-010 | quality gate rejects unmarked risky command examples and direct push examples | Platform | Done |
-| T-013 | Mark authored-doc risky command examples with human/operator boundaries and PR flow | doc | n/a | PLN-010 | final `rg` review finds no direct push examples and no unmarked risky command examples | Platform | Done |
+| T-012 | Add authored-doc command-boundary regression gate | test | n/a | PLN-010 | quality gate rejects unmarked risky command examples, bare/main direct push examples, and push examples without PR-flow context | Platform | Done |
+| T-013 | Mark authored-doc risky command examples with human/operator boundaries and PR flow | doc | n/a | PLN-010 | final `rg` review finds no unmarked risky command examples and no PR-flow-bypassing push examples | Platform | Done |
+| T-014 | Include `docs/08.operations` in risky-command boundary scanning | test | n/a | PLN-010 | quality gate scans operations policies for unmarked `kubectl apply/patch`, `argocd app sync`, and `vault kv put` examples | Platform | Done |
+| T-015 | Add durable verification evidence summary | doc | n/a | PLN-011 | this task records date, command result, and skipped optional tool evidence | Platform | Done |
+| T-016 | Validate matrix tables as structure/regression guards | test | n/a | PLN-008 | quality gate validates matrix header, row column count, and non-empty fields | Platform | Done |
+| T-017 | Align push-example checks and wording with PR flow | test | n/a | PLN-010 | bare/main direct push and push examples without nearby PR-flow context fail | Platform | Done |
+| T-018 | Add matrix status contract and future gap pathway | guardrail | n/a | PLN-012 | catalog limits matrix status to Ready/Partial/Missing and describes evidence lanes | Platform | Done |
+| T-019 | Validate status/gap/remediation consistency | test | n/a | PLN-012 | quality gate allows Ready/Partial/Missing and requires concrete gaps for Partial/Missing rows | Platform | Done |
+| T-020 | Align push-scope and verification snapshot wording | doc | n/a | PLN-011, PLN-013 | README and task summary distinguish authored-doc PR-flow checks from broader Markdown direct-push checks and mark validation as a dated snapshot | Platform | Done |
+| T-021 | Keep provider hook enforcement semantics precise | guardrail | n/a | PLN-013 | agentic rule states Claude permissions/hooks and Codex context hook are not equivalent enforcement layers | Platform | Done |
 
 ## Suggested Types
 
@@ -87,6 +97,14 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 - [x] T-011 Extend component audit regression checks
 - [x] T-012 Add authored-doc command-boundary regression gate
 - [x] T-013 Mark authored-doc risky command examples
+- [x] T-014 Include operations policies in risky-command scans
+- [x] T-015 Add durable verification evidence summary
+- [x] T-016 Validate matrix table structure and non-empty fields
+- [x] T-017 Align push-example gate and wording with PR flow
+- [x] T-018 Add matrix status contract and future gap pathway
+- [x] T-019 Validate status/gap/remediation consistency
+- [x] T-020 Align push-scope and verification snapshot wording
+- [x] T-021 Keep provider hook enforcement semantics precise
 
 ## Verification Summary
 
@@ -97,11 +115,25 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
   - `bash scripts/validate-k8s-manifests.sh .`
   - `bash scripts/check-secret-handling.sh .`
   - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +`
+  - `git diff --check`
   - Legacy external harness source-label scan across root gateways, `.claude`, `.codex`, and `docs/00.agent-governance`
-  - Harness and Agent-first component matrix contract check through `scripts/validate-repo-quality-gates.sh`
-  - Authored-doc command-boundary regression check through `scripts/validate-repo-quality-gates.sh`
+  - Harness and Agent-first component matrix structure/regression check through `scripts/validate-repo-quality-gates.sh`
+  - Authored-doc command-boundary regression check through `scripts/validate-repo-quality-gates.sh`, including `docs/08.operations`
+  - Push-example regression check through `scripts/validate-repo-quality-gates.sh`; authored docs reject bare/main direct push and push examples without nearby PR-flow context, while broader Markdown roots reject bare/main direct push examples
 - **Eval Commands**: not applicable; no prompt/model behavior is changed.
-- **Logs / Evidence Location**: conversation validation output for this implementation turn. `kube-linter` was skipped by `validate-k8s-manifests.sh` because it is not installed locally.
+- **Logs / Evidence Location**: repo-discoverable summary in this section. This is a 2026-05-09 execution snapshot, not proof of future CI/toolchain/live k3d/ArgoCD state. Rerun the validation bundle before using it for future handoff claims. Latest follow-up validation on 2026-05-09:
+  - `bash scripts/validate-repo-quality-gates.sh .` — PASS after hardening edits.
+  - `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+  - `bash scripts/validate-gitops-structure.sh` — PASS.
+  - `bash scripts/validate-k8s-manifests.sh .` — PASS for YAML syntax; `kube-linter` skipped because it is not installed locally.
+  - `bash scripts/check-secret-handling.sh .` — PASS.
+  - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` — PASS.
+  - `git diff --check` — PASS.
+  - Targeted risky-command review — PASS through `scripts/validate-repo-quality-gates.sh`; `docs/08.operations` is included in authored-doc scanning.
+  - Targeted push-example review — PASS through `scripts/validate-repo-quality-gates.sh`; authored-doc feature-branch push examples carry nearby PR-flow context, authored docs reject bare/main direct push and push examples without PR-flow context, and broader Markdown roots reject bare/main direct push examples.
+  - Targeted matrix status review — PASS through `scripts/validate-repo-quality-gates.sh`; `Ready` rows require `Gap=None`, while future `Partial`/`Missing` rows require concrete `Gap` and `Remediation`.
+  - Authored SSoT rewrite boundary — unchanged; rewriting `docs/01-10`, `docs/90.references`, or `docs/99.templates` outside the current command-boundary hardening scope requires separate human approval.
+  - Targeted legacy external harness source-label scan — PASS; only validator sentinel definitions remain.
 
 ## Related Documents
 

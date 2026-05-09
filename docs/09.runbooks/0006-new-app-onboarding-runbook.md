@@ -228,7 +228,7 @@ git add gitops/workloads/<appname>/
 # git add gitops/apps/root/kustomization.yaml
 # git add gitops/clusters/local/appproject-apps.yaml
 
-# 2. 커밋 및 푸시
+# 2. 커밋 및 feature branch push 후 PR review/merge 진행
 git commit -m "feat: add <appname> gitops workload"
 git push origin feat/<appname>-gitops
 

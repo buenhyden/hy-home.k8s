@@ -31,7 +31,7 @@ Rules for AI Agent-first Engineering quality and safety.
 
 - Check `harness-catalog.md` before changing agent, skill, hook, or mirror contracts.
 - Treat readiness as a matrix across gateways, runtime baseline, agents, mirrors, skills, hooks, validation scripts, memory, and escalation boundaries.
-- Do not add new runtime surfaces until the existing readiness matrix shows a concrete gap.
+- Do not add new runtime surfaces until a human explicitly requests one or the existing readiness matrix shows a concrete gap.
 - Keep direct `kubectl apply`, `kubectl patch`, external secret writes, and other live-cluster mutations outside the default Agent-first path.
 - If a runbook requires live mutation for bootstrap or emergency recovery, mark it as human-approved bootstrap or break-glass work and record the expected evidence.
 - Treat authored-doc command examples as policy-sensitive context: `kubectl apply/patch`, `argocd app sync`, `vault kv put`, and push examples must state human/operator boundaries or PR-flow expectations instead of implying Agent execution.
@@ -39,9 +39,12 @@ Rules for AI Agent-first Engineering quality and safety.
 ## Matrix-first Change Rule
 
 - Before changing harness or Agent-first execution behavior, inspect the Harness Engineering Matrix and Agent-first Engineering Matrix in `harness-catalog.md`.
-- Add a new agent, skill, hook, mirror, or runtime surface only when a matrix row has `Gap` other than `None` and the gap cannot be closed by an existing surface.
+- Treat `Gap=None` as no currently tracked concrete gap in the latest repo/static evidence, not proof that future gaps cannot exist.
+- Add a new agent, skill, hook, mirror, or runtime surface only when a human explicitly requests it or when the matrix is first updated to record a concrete `Partial` or `Missing` gap that cannot be closed by an existing surface.
+- If all affected matrix rows remain `Ready` with `Gap=None`, treat speculative new runtime surfaces as out of scope and harden the existing surface instead.
 - Prefer in-place clarity, regression-gate hardening, or catalog updates when the matrix already marks the component `Ready`.
 - When a component is already `Ready`, prefer command-boundary regression gates over adding new runtime surfaces for documentation drift.
+- Keep `.claude/settings.json` as Claude permission and hook policy, and keep `.codex/hooks.json` as Codex context injection; do not describe them as equivalent enforcement layers.
 
 ## Context Hierarchy Defaults
 

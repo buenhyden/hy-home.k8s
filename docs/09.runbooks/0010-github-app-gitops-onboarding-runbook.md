@@ -87,6 +87,7 @@ sed -i "s|<appname>|${APP}|g" \
 cd ${DOCKER_REPO}
 git add infra/01-gateway/traefik/dynamic/${APP}-k3d.yaml
 git commit -m "feat: add traefik router for ${APP}"
+# feature branch로 push한 뒤 PR review/merge를 거친다
 git push origin feat/${APP}-traefik
 cd -
 ```
@@ -96,6 +97,7 @@ cd -
 ```bash
 git add gitops/workloads/${APP}/
 git commit -m "feat: add ${APP} to GitOps"
+# feature branch로 push한 뒤 PR review/merge를 거친다
 git push origin feat/${APP}-gitops
 ```
 
@@ -155,6 +157,7 @@ sed -i "s|ghcr.io/${OWNER}/${APP}:.*|ghcr.io/${OWNER}/${APP}:${NEW_TAG}|" \
 
 git add gitops/workloads/${APP}/rollout.yaml
 git commit -m "chore: bump ${APP} to ${NEW_TAG}"
+# feature branch로 push한 뒤 PR review/merge를 거친다
 git push origin chore/${APP}-${NEW_TAG}
 
 # canary 진행 상황 확인

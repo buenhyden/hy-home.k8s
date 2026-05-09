@@ -152,7 +152,7 @@ config:
 ### 2-4. 변경사항 커밋 & ArgoCD Sync
 
 ```bash
-# Git push
+# feature branch로 push한 뒤 PR review/merge를 거친다
 git add gitops/platform/headlamp/
 git commit -m "feat: enable headlamp OIDC via keycloak"
 git push origin feat/headlamp-oidc

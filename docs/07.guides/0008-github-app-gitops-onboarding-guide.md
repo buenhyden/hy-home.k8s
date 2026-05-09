@@ -353,6 +353,7 @@ kubectl argo rollouts get rollout <appname> -n apps
 sed -i "s|<appname>:v1.0.0|<appname>:v1.1.0|" gitops/workloads/<appname>/rollout.yaml
 git add gitops/workloads/<appname>/rollout.yaml
 git commit -m "chore: bump <appname> to v1.1.0"
+# feature branch로 push한 뒤 PR review/merge를 거친다
 git push origin chore/<appname>-v1.1.0
 
 # 방법 2: operator-triggered break-glass only

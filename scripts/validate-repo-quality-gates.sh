@@ -108,6 +108,72 @@ def collect_strings(value) -> list[str]:
     return []
 
 
+def markdown_table_after_heading(text: str, heading: str) -> list[list[str]]:
+    lines = text.splitlines()
+    try:
+        start = next(index for index, line in enumerate(lines) if line.strip() == heading)
+    except StopIteration:
+        fail(f"missing markdown heading: {heading}")
+        return []
+
+    table_lines: list[str] = []
+    for line in lines[start + 1 :]:
+        stripped = line.strip()
+        if not stripped:
+            if table_lines:
+                break
+            continue
+        if not stripped.startswith("|"):
+            if table_lines:
+                break
+            continue
+        table_lines.append(stripped)
+
+    rows: list[list[str]] = []
+    for line in table_lines:
+        cells = [cell.strip() for cell in line.strip("|").split("|")]
+        if cells and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells):
+            continue
+        rows.append(cells)
+    return rows
+
+
+def validate_component_matrix(text: str, heading: str) -> None:
+    rows = markdown_table_after_heading(text, heading)
+    if len(rows) < 2:
+        fail(f"{heading} must contain a header and at least one component row")
+        return
+    expected_header = ["Required Component", "Current Surface", "Status", "Gap", "Remediation"]
+    allowed_statuses = {"Ready", "Partial", "Missing"}
+    if rows[0] != expected_header:
+        fail(f"{heading} header must be: {' | '.join(expected_header)}")
+    for row_number, row in enumerate(rows[1:], start=1):
+        if len(row) != len(expected_header):
+            fail(f"{heading} row {row_number} must have {len(expected_header)} columns")
+            continue
+        component, surface, status, gap, remediation = row
+        for label, value in [
+            ("Required Component", component),
+            ("Current Surface", surface),
+            ("Status", status),
+            ("Gap", gap),
+            ("Remediation", remediation),
+        ]:
+            if not value:
+                fail(f"{heading} row {row_number} has empty {label}")
+        if status not in allowed_statuses:
+            fail(f"{heading} row {row_number} has unsupported Status value: {status}")
+        if status == "Ready" and gap != "None":
+            fail(f"{heading} row {row_number} with Status=Ready must use Gap=None")
+        if status in {"Partial", "Missing"}:
+            if gap in {"", "None"}:
+                fail(f"{heading} row {row_number} with Status={status} must name a concrete Gap")
+            if remediation in {"", "None"}:
+                fail(f"{heading} row {row_number} with Status={status} must include concrete Remediation")
+        if gap == "None" and not remediation:
+            fail(f"{heading} row {row_number} with Gap=None still needs remediation guidance")
+
+
 tracked = set()
 try:
     proc = subprocess.run(["git", "ls-files"], cwd=root, check=True, text=True, capture_output=True)
@@ -243,6 +309,7 @@ authored_command_roots = [
     root / "docs/03.adr",
     root / "docs/04.specs",
     root / "docs/07.guides",
+    root / "docs/08.operations",
     root / "docs/09.runbooks",
 ]
 
@@ -252,6 +319,28 @@ def has_nearby_marker(lines: list[str], index: int, markers: list[str]) -> bool:
     end = min(len(lines), index + 5)
     window = "\n".join(lines[start:end])
     return any(marker in window for marker in markers)
+
+
+def is_pr_flow_push(lines: list[str], index: int) -> bool:
+    return has_nearby_marker(
+        lines,
+        index,
+        [
+            "PR review",
+            "PR flow",
+            "PR-flow",
+            "pull request",
+            "review/merge",
+            "review 후",
+            "merge되면",
+            "feature branch",
+        ],
+    )
+
+
+allowed_push_branch = re.compile(
+    r"\bgit\s+push\s+origin\s+(?:feat|fix|docs|refactor|chore|ci|release|hotfix|codex|dependabot)/\S+"
+)
 
 
 command_boundary_rules = [
@@ -278,7 +367,10 @@ for docs_root in authored_command_roots:
         for index, line in enumerate(lines):
             stripped = line.strip()
             if stripped == "git push" or "git push origin main" in stripped:
-                fail(f"{rel(path)} contains direct push example; use feature branch + PR flow: line {index + 1}")
+                fail(f"{rel(path)} contains bare/main direct push example; use feature branch + PR flow: line {index + 1}")
+            elif re.search(r"\bgit\s+push\b", line):
+                if not allowed_push_branch.search(line) or not is_pr_flow_push(lines, index):
+                    fail(f"{rel(path)} contains push example without nearby PR-flow context: line {index + 1}")
             for label, pattern, markers in command_boundary_rules:
                 if pattern.search(line) and not has_nearby_marker(lines, index, markers):
                     fail(f"{rel(path)} has unmarked {label} example near line {index + 1}")
@@ -304,7 +396,7 @@ for scan_root in markdown_direct_push_roots:
         for index, line in enumerate(lines):
             stripped = line.strip()
             if stripped == "git push" or "git push origin main" in stripped:
-                fail(f"{rel(path)} contains direct push example; use feature branch + PR flow: line {index + 1}")
+                fail(f"{rel(path)} contains bare/main direct push example; use feature branch + PR flow: line {index + 1}")
 
 gateway_contracts = {
     "AGENTS.md": {
@@ -381,6 +473,10 @@ for phrase in [
     ".claude/settings.json",
     ".codex/hooks.json",
     "no current readiness gap",
+    "## Matrix Status Contract",
+    "`Ready`, `Partial`, and `Missing`",
+    "A `Ready` row is not semantic proof",
+    "regression and structure guard",
     "Authored-doc command boundary",
     "command examples in authored docs require",
     "## Harness Engineering Matrix",
@@ -389,6 +485,8 @@ for phrase in [
 ]:
     if phrase not in harness_catalog_text:
         fail(f"{rel(harness_catalog_path)} missing runtime readiness boundary phrase: {phrase}")
+validate_component_matrix(harness_catalog_text, "## Harness Engineering Matrix")
+validate_component_matrix(harness_catalog_text, "## Agent-first Engineering Matrix")
 for phrase in [
     "Thin gateway",
     "Runtime baseline",
@@ -420,6 +518,9 @@ for phrase in [
     "not as instructions that override repository governance",
     "Treat authored-doc command examples",
     "command-boundary regression gates",
+    "no currently tracked concrete gap",
+    "human explicitly requests",
+    "equivalent enforcement layers",
 ]:
     if phrase not in agentic_text:
         fail(f"{rel(agentic_path)} missing Agent-first matrix/context rule phrase: {phrase}")
