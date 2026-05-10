@@ -36,7 +36,7 @@ jobs:
           GITHUB_REPO: ${{ github.repository }}
 
       - name: Upload changelog artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: changelog-${{ github.ref_name }}
           path: CHANGELOG.md
