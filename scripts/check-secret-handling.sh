@@ -16,7 +16,7 @@ fi
 
 TARGET="$(cd "$TARGET_INPUT" && pwd)"
 
-for required_dir in gitops infrastructure; do
+for required_dir in gitops infrastructure examples; do
   if [[ ! -d "$TARGET/$required_dir" ]]; then
     echo "ERR expected repo root at $TARGET_INPUT; missing $required_dir/ under that root" >&2
     echo "Usage: bash scripts/check-secret-handling.sh [repo-root]" >&2
@@ -37,7 +37,25 @@ fi
 echo "=== check-secret-handling ==="
 echo "Target : $TARGET"
 
-mapfile -d '' SECRET_SCAN_FILES < <(find "$TARGET/gitops" "$TARGET/infrastructure" \( -name "*.yaml" -o -name "*.yml" \) -print0 2>/dev/null)
+SECRET_SCAN_ROOTS=()
+add_scan_root() {
+  local candidate="$1"
+  [[ -d "$candidate" ]] || return 0
+  local existing
+  for existing in "${SECRET_SCAN_ROOTS[@]}"; do
+    [[ "$existing" == "$candidate" ]] && return 0
+  done
+  SECRET_SCAN_ROOTS+=("$candidate")
+}
+
+add_scan_root "$TARGET/gitops"
+add_scan_root "$TARGET/infrastructure"
+add_scan_root "$TARGET/examples/sample-app"
+while IFS= read -r -d '' example_dir; do
+  add_scan_root "$example_dir"
+done < <(find "$TARGET/examples" -type d \( -name "gitops" -o -name "kubernetes" \) -print0 2>/dev/null)
+
+mapfile -d '' SECRET_SCAN_FILES < <(find "${SECRET_SCAN_ROOTS[@]}" \( -name "*.yaml" -o -name "*.yml" \) -print0 2>/dev/null)
 
 if [[ "${#SECRET_SCAN_FILES[@]}" -eq 0 ]]; then
   echo "ERR no YAML manifests matched under repo root: $TARGET" >&2
@@ -84,7 +102,7 @@ print(docs[0].get("kind", "") if docs else "")' "$FILE" 2>/dev/null || echo "")
     REL_FILE="${FILE#"$TARGET"/}"
     echo "  WARN ${REL_FILE}:${LINE_NO} kind=${KIND:-Unknown} key=${KEY} value=<redacted>"
     FOUND=1
-  done < <(grep -rn --include="*.yaml" --include="*.yml" -E "$pat" "$TARGET/gitops" "$TARGET/infrastructure" 2>/dev/null || true)
+  done < <(grep -rn --include="*.yaml" --include="*.yml" -E "$pat" "${SECRET_SCAN_ROOTS[@]}" 2>/dev/null || true)
 done
 
 if [[ $FOUND -eq 0 ]]; then

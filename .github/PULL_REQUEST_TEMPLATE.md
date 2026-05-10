@@ -12,6 +12,7 @@ Fixes # (link to issue if applicable)
 
 - [ ] This PR targets `main`; any exception must update CI `branch-policy` and governance in the same change.
 - [ ] The source branch uses an approved prefix: `feat/`, `fix/`, `docs/`, `refactor/`, `chore/`, `ci/`, `release/`, `hotfix/`, `codex/`, or `dependabot/`.
+- [ ] CI `branch-policy` validates pull request shape; GitHub branch protection/rulesets enforce direct-push restrictions.
 
 ## 4. Type of Change
 

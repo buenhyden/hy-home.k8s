@@ -68,6 +68,7 @@ jobs:
               - '.claude/**'
               - '.codex/**'
               - 'scripts/**'
+              - 'examples/**'
               - '.pre-commit-config.yaml'
               - 'infrastructure/k3d/k3d-cluster.yaml'
               - 'gitops/apps/root/**'

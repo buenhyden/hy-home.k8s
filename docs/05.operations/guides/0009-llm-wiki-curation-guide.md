@@ -2,7 +2,7 @@
 
 ## Overview (KR)
 
-이 문서는 `hy-home.k8s`의 repo-local LLM Wiki를 관리하는 방법을 설명한다. LLM Wiki는 vector store, retrieval service, static wiki site가 아니라 canonical owner를 찾기 위한 Markdown discovery layer다.
+이 문서는 `hy-home.k8s`의 repo-local LLM Wiki를 관리하는 방법을 설명한다. LLM Wiki는 vector store, retrieval service, static wiki site가 아니라 canonical owner를 찾기 위한 deterministic Markdown link map이다.
 
 `wiki-curator` agent는 이 링크맵을 갱신하고 stale link를 찾는 worker다. 정책, 절차, 배포 승인, runtime 권한은 이 guide나 LLM Wiki가 아니라 각 canonical owner가 소유한다.
 

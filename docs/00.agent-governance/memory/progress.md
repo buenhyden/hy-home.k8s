@@ -35,7 +35,7 @@ inventory stays in `scripts/README.md`.
 
 - `wiki-curator` is a real `.claude`/`.codex` worker agent in this repo, not
   only a documented responsibility.
-- LLM Wiki remains a generated Markdown discovery layer; policy and procedure
+- LLM Wiki remains a deterministic generated Markdown link map; policy and procedure
   changes must still go to canonical owners.
 - `docs/90.references/llm-wiki/wiki-index.md` should be regenerated through
   `scripts/generate-llm-wiki-index.sh`, not edited by hand.

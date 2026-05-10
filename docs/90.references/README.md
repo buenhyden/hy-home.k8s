@@ -51,6 +51,18 @@ docs/90.references/
 └── README.md                            # This file
 ```
 
+### Reference Index
+
+| 문서 | Reference Type | 역할 | Freshness 기준 |
+| --- | --- | --- | --- |
+| [versions/tech-stack-version-inventory.md](./versions/tech-stack-version-inventory.md) | version-contract-inventory / external-standard-snapshot | repo-backed 버전 기준과 cloud example snapshot | manifest/config/example version 변경 또는 외부 공식 지원 범위 변경 |
+| [llm-wiki/README.md](./llm-wiki/README.md) | durable-concept / faq | LLM WIKI boundary and canonical owner link map | docs/examples taxonomy, Agent governance routing, or version inventory path 변경 시 |
+| [llm-wiki/wiki-index.md](./llm-wiki/wiki-index.md) | durable-concept / faq | Generated LLM-readable canonical owner index | generator, runtime roster, docs/examples taxonomy, or canonical owner path 변경 시 |
+| [learning/infrastructure-to-theory-roadmap.md](./learning/infrastructure-to-theory-roadmap.md) | learning-roadmap | 인프라 구현 경험과 CS/CE 이론 연결 | 학습 자료나 repo 구현 축이 크게 바뀔 때 |
+| [agents/README.md](./agents/README.md) | durable-concept index | Agent reference 하위 폴더의 범위와 라우팅 | Agent reference 문서 추가/이동 시 |
+| [learning/README.md](./learning/README.md) | learning-roadmap index | learning reference 하위 폴더의 범위와 라우팅 | learning reference 문서 추가/이동 시 |
+| [versions/README.md](./versions/README.md) | version-contract index | version reference 하위 폴더의 범위와 라우팅 | version reference 문서 추가/이동 시 |
+
 ## How to Work in This Area
 
 1. 새 참고 자료가 정책/계약/절차를 정의하는지 확인한다. 그렇다면 `00.agent-governance`, `03.specs`, `05.operations/policies`, `05.operations/runbooks`로 라우팅한다.
@@ -96,62 +108,3 @@ docs/90.references/
 - [Agent Governance Hub](../00.agent-governance/README.md)
 - [Templates README](../99.templates/README.md)
 - [Tech Stack Version Inventory](./versions/tech-stack-version-inventory.md)
-
-## 목적
-
-이 폴더는 느리게 변하는 기준 지식, dated external snapshot, repo-backed version inventory, 학습 참고 문서를 저장한다.
-
-## 포함할 내용
-
-- 용어집(Glossary)
-- 외부 표준 요약
-- 시스템 인벤토리
-- 아키텍처 개념 참고
-- 공통 FAQ
-- Agent 관련 개념 요약
-- 외부 공식 기준의 확인일이 있는 snapshot
-
-## 포함하지 말아야 할 내용
-
-- 현재 진행 중인 설계 의사결정
-- 실행 계획
-- 운영 절차
-- release approval, incident response, live mutation 절차
-
-## 관련 폴더
-
-- `00.agent-governance/`: Agent 실행 정책과 거버넌스
-- `02.architecture/requirements/`: 아키텍처 참조 모델
-- `99.templates/`: Reference 문서 템플릿
-- `agents/`: Agent 관련 참고 자료
-- `llm-wiki/`: LLM-readable generated Markdown 링크맵
-- `learning/`: 학습 로드맵과 이론 연결 자료
-- `versions/`: 버전 계약과 외부 공식 지원 범위 snapshot
-
-## 예시
-
-- Agent 관련 참고 자료는 `agents/` 하위에 둔다.
-- 학습 로드맵은 `learning/infrastructure-to-theory-roadmap.md`처럼 참고 자료로 둔다.
-- 버전 기준은 `versions/tech-stack-version-inventory.md`에서 관리한다.
-
-## Agent 참고 문서 배치 규칙
-
-- 재사용 가능한 Agent 개념, 메모리 전략, 문서화 규칙 요약은 `agents/` 하위에 둔다.
-- 특정 기능에 종속된 Agent 설계는 `docs/03.specs/<feature-id>/agent-design.md`에 둔다.
-- 실행 계획은 `docs/04.execution/plans/`, 운영 절차는 `docs/05.operations/runbooks/`, 운영 정책은 `docs/05.operations/policies/`, 거버넌스 규칙은 `docs/00.agent-governance/`로 분리한다.
-
-## 문서 인덱스
-
-| 문서 | Reference Type | 역할 | Freshness 기준 |
-| --- | --- | --- | --- |
-| [versions/tech-stack-version-inventory.md](./versions/tech-stack-version-inventory.md) | version-contract-inventory / external-standard-snapshot | repo-backed 버전 기준과 cloud example snapshot | manifest/config/example version 변경 또는 외부 공식 지원 범위 변경 |
-| [llm-wiki/README.md](./llm-wiki/README.md) | durable-concept / faq | LLM WIKI boundary and canonical owner link map | docs/examples taxonomy, Agent governance routing, or version inventory path 변경 시 |
-| [llm-wiki/wiki-index.md](./llm-wiki/wiki-index.md) | durable-concept / faq | Generated LLM-readable canonical owner index | generator, runtime roster, docs/examples taxonomy, or canonical owner path 변경 시 |
-| [learning/infrastructure-to-theory-roadmap.md](./learning/infrastructure-to-theory-roadmap.md) | learning-roadmap | 인프라 구현 경험과 CS/CE 이론 연결 | 학습 자료나 repo 구현 축이 크게 바뀔 때 |
-| [agents/README.md](./agents/README.md) | durable-concept index | Agent reference 하위 폴더의 범위와 라우팅 | Agent reference 문서 추가/이동 시 |
-| [learning/README.md](./learning/README.md) | learning-roadmap index | learning reference 하위 폴더의 범위와 라우팅 | learning reference 문서 추가/이동 시 |
-| [versions/README.md](./versions/README.md) | version-contract index | version reference 하위 폴더의 범위와 라우팅 | version reference 문서 추가/이동 시 |
-
-## Templates
-
-- `../99.templates/reference.template.md`

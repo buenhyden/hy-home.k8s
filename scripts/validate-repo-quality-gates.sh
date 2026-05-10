@@ -311,6 +311,21 @@ for readme in sorted(root.rglob("README.md")):
         if not pattern.search(text):
             fail(f"{rel(readme)} missing README base section: {section}")
 
+reference_readme_path = root / "docs/90.references/README.md"
+reference_readme_text = read_text(reference_readme_path)
+for obsolete_heading in [
+    "## 목적",
+    "## 포함할 내용",
+    "## 포함하지 말아야 할 내용",
+    "## 관련 폴더",
+    "## 예시",
+    "## Agent 참고 문서 배치 규칙",
+    "## 문서 인덱스",
+    "## Templates",
+]:
+    if re.search(rf"^{re.escape(obsolete_heading)}\s*$", reference_readme_text, re.MULTILINE):
+        fail(f"{rel(reference_readme_path)} contains obsolete duplicate README heading: {obsolete_heading}")
+
 
 def iter_markdown_link_targets(text: str):
     in_fence = False
@@ -454,6 +469,7 @@ else:
     llm_wiki_text = read_text(llm_wiki_readme)
     for phrase in [
         "reference-only",
+        "deterministic",
         "link map",
         "not a runtime surface",
         "not a static wiki site",
@@ -1064,6 +1080,9 @@ for step in changes_job.get("steps") or []:
         except Exception as exc:
             fail(f"{rel(ci_path)} changes filter YAML parse failed: {exc}")
         break
+repo_quality_filter_paths = filters.get("repo_quality") or []
+if "examples/**" not in repo_quality_filter_paths:
+    fail(f"{rel(ci_path)} repo_quality path filter must include examples/**")
 shell_filter_paths = filters.get("shell") or []
 if ".claude/hooks/**/*.sh" not in shell_filter_paths:
     fail(f"{rel(ci_path)} shell path filter must include .claude/hooks/**/*.sh")
@@ -1110,6 +1129,7 @@ for phrase in [
 for phrase in [
     "any exception must update CI `branch-policy` and governance in the same change",
     "`infra` is a change type, not an approved branch prefix",
+    "branch protection/rulesets enforce direct-push restrictions",
 ]:
     if phrase not in pr_template_text:
         fail(f"{rel(pr_template_path)} missing branch-policy clarification: {phrase}")
@@ -1135,11 +1155,15 @@ for phrase in [
     "workflows/ci.yml",
     "scripts/validate-repo-quality-gates.sh",
     "PULL_REQUEST_TEMPLATE.md",
+    "docs/90.references/versions/tech-stack-version-inventory.md",
+    "branch protection/rulesets enforce direct-push restrictions",
     "QA gates and release-evidence automation, not deploy CD",
     "Defensive overlap between CI jobs is intentional QA coverage",
 ]:
     if phrase not in github_about_text:
         fail(f"{rel(github_about_path)} must route to the policy/enforcement SSoT instead of duplicating policy: {phrase}")
+if "docs/90.references/tech-stack-version-inventory.md" in github_about_text:
+    fail(f"{rel(github_about_path)} contains stale version inventory path without versions/ segment")
 if "PR source branches must start" in github_about_text or "Default PR target is `main`" in github_about_text:
     fail(
         f"{rel(github_about_path)} must not duplicate branch-policy prose; "
@@ -1232,6 +1256,16 @@ for stem, claude_path in sorted(claude_agents.items()):
     if extract_scope_imports(claude_text) != extract_scope_imports(codex_text):
         fail(f"scope import mismatch between {rel(claude_path)} and {rel(codex_path)}")
 
+    if stem == "wiki-curator":
+        for phrase in [
+            "canonical owners without duplicating policy",
+            "Do not create vector stores",
+            "Target LLM Wiki path or generator command",
+            "Keep policy and procedure changes in their canonical owner files",
+        ]:
+            if phrase not in claude_text or phrase not in codex_text:
+                fail(f"wiki-curator mirror missing core guardrail phrase: {phrase}")
+
 harness_catalog_path = root / "docs/00.agent-governance/harness-catalog.md"
 harness_catalog_text = read_text(harness_catalog_path)
 for agent_path in sorted(claude_agents.values()):
@@ -1254,6 +1288,16 @@ for path in [root / "README.md", scripts_dir / "README.md", root / ".github/work
     for match in script_ref_pattern.findall(read_text(path)):
         if not (root / match).exists():
             fail(f"script reference points to missing file in {rel(path)}: {match}")
+
+secret_scanner_text = read_text(scripts_dir / "check-secret-handling.sh")
+for phrase in [
+    "examples/sample-app",
+    '-name "gitops"',
+    '-name "kubernetes"',
+    "value=<redacted>",
+]:
+    if phrase not in secret_scanner_text:
+        fail(f"{rel(scripts_dir / 'check-secret-handling.sh')} missing examples secret-scan contract phrase: {phrase}")
 
 for obsolete in ["k3d_kubeconfig.yaml"]:
     if obsolete in tracked:

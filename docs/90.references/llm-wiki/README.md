@@ -5,7 +5,7 @@
 
 ## Overview
 
-`llm-wiki/` is a repo-local, reference-only link map for LLM-readable navigation across `hy-home.k8s`.
+`llm-wiki/` is a repo-local, reference-only, deterministic link map for LLM-readable navigation across `hy-home.k8s`.
 It is not a runtime surface, not a static wiki site, not a vector store, and not a retrieval service.
 It may contain generated Markdown indexes produced by `scripts/generate-llm-wiki-index.sh`.
 
@@ -50,7 +50,7 @@ LLM과 사람이 저장소의 문서 경계를 빠르게 찾도록 돕는다. �
 
 ### In Scope
 
-- Link map for canonical repository surfaces.
+- Deterministic link map for canonical repository surfaces.
 - Generated Markdown index maintained by `scripts/generate-llm-wiki-index.sh`.
 - Ownership boundary summary by domain.
 - Freshness trigger for keeping the link map current.

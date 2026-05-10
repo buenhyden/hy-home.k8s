@@ -49,13 +49,13 @@ generator: scripts/generate-llm-wiki-index.sh
 
 ## Overview (KR)
 
-이 문서는 `hy-home.k8s`의 LLM WIKI generated Markdown index다. Agent와 사람이 정책, 절차, runtime roster, GitOps 상태, reference 자료의 canonical owner를 빠르게 찾도록 돕는다.
+이 문서는 `hy-home.k8s`의 LLM WIKI deterministic generated Markdown index다. Agent와 사람이 정책, 절차, runtime roster, GitOps 상태, reference 자료의 canonical owner를 빠르게 찾도록 돕는다.
 
 이 문서는 검색/탐색용 링크맵이다. 정책, 절차, 배포 승인, runtime 권한, secret handling, live cluster mutation 기준을 새로 정의하지 않는다.
 
 ## Purpose
 
-- Provide one generated entrypoint for LLM-readable repository navigation.
+- Provide one deterministic generated entrypoint for LLM-readable repository navigation.
 - Link each major topic to the canonical owner instead of copying policy or procedure text.
 - Make stale LLM Wiki output detectable through `bash scripts/generate-llm-wiki-index.sh --check`.
 
