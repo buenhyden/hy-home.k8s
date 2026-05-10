@@ -12,8 +12,8 @@ body:
     id: spec_link
     attributes:
       label: Related Spec Link
-      description: Link to the related spec in `docs/04.specs/` if available.
-      placeholder: https://github.com/<org>/<repo>/blob/main/docs/04.specs/<spec>/spec.md
+      description: Link to the related spec in `docs/03.specs/` if available.
+      placeholder: https://github.com/<org>/<repo>/blob/main/docs/03.specs/<spec>/spec.md
     validations:
       required: false
   - type: textarea

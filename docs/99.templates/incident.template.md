@@ -6,13 +6,13 @@ owner: '{team-or-person}'
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/10.incidents/YYYY/YYYY-MM-DD-<incident-title>.md -->
+<!-- Target: docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident-title>.md -->
 
 # Incident: [Incident Title]
 
 INC-YYYYMMDD-XXX / [Short Incident Title]
 
-> Use this template for `docs/10.incidents/YYYY/YYYY-MM-DD-<incident-title>.md`.
+> Use this template for `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident-title>.md`.
 >
 > Rules:
 >
@@ -36,7 +36,7 @@ INC-YYYYMMDD-XXX / [Short Incident Title]
 | Detection Time  | `YYYY-MM-DD HH:MM UTC`                                                     |
 | Primary Service | [Affected service]                                                         |
 | Evidence Source | [Log / dashboard / report]                                                 |
-| Runbook Link    | `[../../09.runbooks/####-<topic>.md]`                                      |
+| Runbook Link    | `[../../05.operations/runbooks/####-<topic>.md]`                                      |
 
 ## Agent Metadata (If Applicable)
 
@@ -80,5 +80,5 @@ INC-YYYYMMDD-XXX / [Short Incident Title]
 ## Related Documents
 
 - **Postmortem**: `[../postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
-- **Runbook**: `[../../09.runbooks/####-<topic>.md]`
-- **Operation**: `[../../08.operations/<policy-or-standard>.md]`
+- **Runbook**: `[../../05.operations/runbooks/####-<topic>.md]`
+- **Operation**: `[../../05.operations/policies/<policy-or-standard>.md]`

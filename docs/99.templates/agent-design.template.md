@@ -6,17 +6,17 @@ owner: '{team-or-person}'
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/04.specs/<feature-id>/agent-design.md -->
+<!-- Target: docs/03.specs/<feature-id>/agent-design.md -->
 
 # [Feature Name] Agent Design
 
-> Use this template for `docs/04.specs/<feature-id>/agent-design.md`.
+> Use this template for `docs/03.specs/<feature-id>/agent-design.md`.
 >
 > Rules:
 >
 > - This document is a child design document under the feature spec.
 > - Keep product intent in PRD and system-wide constraints in ARD.
-> - Keep implementation tasks in `06.tasks/`.
+> - Keep implementation tasks in `04.execution/tasks/`.
 > - This document focuses on AI Agent behavior, orchestration, safety, and evaluation.
 
 ---
@@ -28,9 +28,9 @@ updated: YYYY-MM-DD
 ## Parent Documents
 
 - **Spec**: `[./spec.md]`
-- **PRD**: `[../../01.prd/YYYY-MM-DD-feature.md]`
-- **ARD**: `[../../02.ard/0001-system.md]`
-- **Related ADRs**: `[../../03.adr/0001-example.md]`
+- **PRD**: `[../../01.requirements/YYYY-MM-DD-feature.md]`
+- **ARD**: `[../../02.architecture/requirements/0001-system.md]`
+- **Related ADRs**: `[../../02.architecture/decisions/0001-example.md]`
 
 ## Scope & Non-goals
 
@@ -93,7 +93,7 @@ updated: YYYY-MM-DD
 - **Offline Evals**:
 - **Online Signals**:
 - **Acceptance Thresholds**:
-- **Linked Task / Eval Docs**: `[../../06.tasks/YYYY-MM-DD-feature.md]`
+- **Linked Task / Eval Docs**: `[../../04.execution/tasks/YYYY-MM-DD-feature.md]`
 
 ## Observability
 
@@ -104,5 +104,5 @@ updated: YYYY-MM-DD
 ## Related Documents
 
 - **Tests**: `[./tests.md]`
-- **Operation**: `[../../08.operations/<policy>.md]`
-- **Runbook**: `[../../09.runbooks/<topic>.md]`
+- **Operation**: `[../../05.operations/policies/<policy>.md]`
+- **Runbook**: `[../../05.operations/runbooks/<topic>.md]`

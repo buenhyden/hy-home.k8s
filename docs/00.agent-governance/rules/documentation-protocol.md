@@ -5,7 +5,7 @@ This protocol defines how governance references authored docs and how language b
 ## Core Requirements
 
 - Governance policy belongs in `docs/00.agent-governance/`.
-- Product and delivery truth remains in `docs/01-10`, `docs/90.references`, and `docs/99.templates`.
+- Product and delivery truth remains in `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, and `docs/99.templates`.
 - Governance files must reference authored docs and must not duplicate stage content.
 
 ## Document Output Routing
@@ -13,7 +13,7 @@ This protocol defines how governance references authored docs and how language b
 - Generated documents must use the canonical stage tree only.
 - Use [document-stage-routing.md](./document-stage-routing.md) for path selection and skill-specific rerouting rules.
 - Do not create parallel authored trees such as `docs/superpowers/**`.
-- Do not place API contract docs under `docs/api/**`; keep them under `docs/04.specs/<feature-id>/`.
+- Do not place API contract docs under `docs/api/**`; keep them under `docs/03.specs/<feature-id>/`.
 
 ## Language Boundary Rules
 
@@ -23,8 +23,8 @@ This protocol defines how governance references authored docs and how language b
 
 ## Traceability Rules
 
-- Every governance change should keep clear links to stage folders (`01` to `10`, `90`, `99`).
-- Postmortems belong under `docs/10.incidents/postmortems/`, not a separate top-level docs stage.
+- Every governance change should keep clear links to the canonical docs taxonomy (`01.requirements`, `02.architecture`, `03.specs`, `04.execution`, `05.operations`, `90.references`, `99.templates`).
+- Postmortems belong under `docs/05.operations/incidents/postmortems/`, not a separate top-level docs stage.
 - Persona and scope instructions must state which stage folders are authoritative.
 - Stage expectations must map to [stage-authoring-matrix.md](stage-authoring-matrix.md).
 

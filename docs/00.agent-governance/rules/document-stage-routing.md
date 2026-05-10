@@ -14,17 +14,17 @@ Use the existing stage structure only.
 
 | Document Intent | Canonical Path | Required Template | Notes |
 | --- | --- | --- | --- |
-| Technical specification | `docs/04.specs/<feature-id>/spec.md` | `docs/99.templates/spec.template.md` | Use for implementation contracts and detailed design. |
-| Implementation plan | `docs/05.plans/YYYY-MM-DD-<feature>.md` | `docs/99.templates/plan.template.md` | Use for execution order, risks, gates, and rollout. |
-| API contract | `docs/04.specs/<feature-id>/api-spec.md` | `docs/99.templates/api-spec.template.md` | Never route to `docs/api/**`. |
-| Agent design | `docs/04.specs/<feature-id>/agent-design.md` | `docs/99.templates/agent-design.template.md` | Use for role/tool/policy/memory design tied to one feature. |
-| Data model | `docs/04.specs/<feature-id>/data-model.md` | `docs/99.templates/data-model.template.md` | Use for schema and storage design tied to one feature. |
-| Test design | `docs/04.specs/<feature-id>/tests.md` | `docs/99.templates/tests.template.md` | Use for verification strategy tied to one feature. |
-| User or operator guide | `docs/07.guides/<doc>.md` | `docs/99.templates/guide.template.md` | Use after the relevant spec is stable. |
-| Operations policy | `docs/08.operations/<doc>.md` | `docs/99.templates/operation.template.md` | Required for release and operational controls. |
-| Runbook | `docs/09.runbooks/<doc>.md` | `docs/99.templates/runbook.template.md` | Use for executable operational procedures. |
-| Incident record | `docs/10.incidents/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/incident.template.md` | Use for facts, timelines, mitigations, and active incident evidence. |
-| Postmortem | `docs/10.incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/postmortem.template.md` | Use for RCA, prevention actions, and post-incident learning. |
+| Technical specification | `docs/03.specs/<feature-id>/spec.md` | `docs/99.templates/spec.template.md` | Use for implementation contracts and detailed design. |
+| Implementation plan | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `docs/99.templates/plan.template.md` | Use for execution order, risks, gates, and rollout. |
+| API contract | `docs/03.specs/<feature-id>/api-spec.md` | `docs/99.templates/api-spec.template.md` | Never route to `docs/api/**`. |
+| Agent design | `docs/03.specs/<feature-id>/agent-design.md` | `docs/99.templates/agent-design.template.md` | Use for role/tool/policy/memory design tied to one feature. |
+| Data model | `docs/03.specs/<feature-id>/data-model.md` | `docs/99.templates/data-model.template.md` | Use for schema and storage design tied to one feature. |
+| Test design | `docs/03.specs/<feature-id>/tests.md` | `docs/99.templates/tests.template.md` | Use for verification strategy tied to one feature. |
+| User or operator guide | `docs/05.operations/guides/<doc>.md` | `docs/99.templates/guide.template.md` | Use after the relevant spec is stable. |
+| Operations policy | `docs/05.operations/policies/<doc>.md` | `docs/99.templates/operation.template.md` | Required for release and operational controls. |
+| Runbook | `docs/05.operations/runbooks/<doc>.md` | `docs/99.templates/runbook.template.md` | Use for executable operational procedures. |
+| Incident record | `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/incident.template.md` | Use for facts, timelines, mitigations, and active incident evidence. |
+| Postmortem | `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/postmortem.template.md` | Use for RCA, prevention actions, and post-incident learning. |
 | Durable reference | `docs/90.references/<category>/<topic>.md` | `docs/99.templates/reference.template.md` | Use for slow-moving concepts, glossaries, standards, and reusable agent knowledge. |
 | Governance memory | `docs/00.agent-governance/memory/<topic>.md` | `docs/99.templates/memory.template.md` | Use for reusable agent governance lessons. |
 
@@ -44,15 +44,15 @@ When a skill suggests one of these paths, reroute the output into the canonical 
 
 ### Feature-Bound vs Durable Knowledge
 
-- If the content is tied to one feature, service, or rollout stream, route it to `docs/04.specs/` or `docs/05.plans/`.
+- If the content is tied to one feature, service, or rollout stream, route it to `docs/03.specs/` or `docs/04.execution/plans/`.
 - If the content is long-lived reusable knowledge, route it to `docs/90.references/`.
 - If the content changes governance or agent execution policy, route it to `docs/00.agent-governance/`.
 
 ### Operational Knowledge Split
 
-- Use `docs/07.guides/` when the reader needs stable user, developer, or operator guidance.
-- Use `docs/08.operations/` when the content defines a reusable policy, boundary, or standard.
-- Use `docs/09.runbooks/` when the content must be executable in order, including verification, rollback, or recovery steps.
+- Use `docs/05.operations/guides/` when the reader needs stable user, developer, or operator guidance.
+- Use `docs/05.operations/policies/` when the content defines a reusable policy, boundary, or standard.
+- Use `docs/05.operations/runbooks/` when the content must be executable in order, including verification, rollback, or recovery steps.
 - Use `docs/90.references/` when the content is a durable reference, glossary, external standard summary, or dated version snapshot.
 - Do not duplicate the same operational content across guide, policy, and runbook stages. Link to the canonical owner instead.
 
@@ -60,7 +60,7 @@ When a skill suggests one of these paths, reroute the output into the canonical 
 
 #### `agent-memory-systems`
 
-- Feature-specific memory or context strategy belongs in `docs/04.specs/<feature-id>/agent-design.md`.
+- Feature-specific memory or context strategy belongs in `docs/03.specs/<feature-id>/agent-design.md`.
 - Reusable memory-system concepts belong in `docs/90.references/agents/<topic>.md`.
 
 #### `agent-md-refactor`

@@ -6,11 +6,11 @@ owner: '{team-or-person}'
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/08.operations/<policy-or-standard>.md -->
+<!-- Target: docs/05.operations/policies/<policy-or-standard>.md -->
 
 # [Policy or Standard Name] Operations Policy
 
-> Use this template for `docs/08.operations/<policy-or-standard>.md`.
+> Use this template for `docs/05.operations/policies/<policy-or-standard>.md`.
 >
 > Rules:
 >
@@ -62,6 +62,6 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
-- **ARD**: `[../02.ard/####-<system-or-domain>.md]`
-- **Runbook**: `[../09.runbooks/####-<topic>.md]`
-- **Postmortem**: `[../10.incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
+- **ARD**: `[../02.architecture/requirements/####-<system-or-domain>.md]`
+- **Runbook**: `[../05.operations/runbooks/####-<topic>.md]`
+- **Postmortem**: `[../05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`

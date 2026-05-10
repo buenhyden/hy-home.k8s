@@ -6,11 +6,11 @@ owner: '{team-or-person}'
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/07.guides/####-<topic>.md -->
+<!-- Target: docs/05.operations/guides/####-<topic>.md -->
 
 # [Topic Name] Guide
 
-> Use this template for `docs/07.guides/####-<topic>.md`.
+> Use this template for `docs/05.operations/guides/####-<topic>.md`.
 >
 > Rules:
 >
@@ -58,6 +58,6 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
-- **Spec**: `[../04.specs/<feature-id>/spec.md]`
-- **Operation**: `[../08.operations/<policy-or-standard>.md]`
-- **Runbook**: `[../09.runbooks/<topic>.md]`
+- **Spec**: `[../03.specs/<feature-id>/spec.md]`
+- **Operation**: `[../05.operations/policies/<policy-or-standard>.md]`
+- **Runbook**: `[../05.operations/runbooks/<topic>.md]`

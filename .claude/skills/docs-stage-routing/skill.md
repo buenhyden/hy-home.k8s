@@ -34,22 +34,24 @@ Define the repository-local routing contract for document-generation workflows.
 
 | Requested Output | Route To |
 | --- | --- |
-| Spec | `docs/04.specs/<feature-id>/spec.md` |
-| Plan | `docs/05.plans/YYYY-MM-DD-<feature>.md` |
-| API spec | `docs/04.specs/<feature-id>/api-spec.md` |
-| Agent design | `docs/04.specs/<feature-id>/agent-design.md` |
-| Data model | `docs/04.specs/<feature-id>/data-model.md` |
-| Test design | `docs/04.specs/<feature-id>/tests.md` |
-| Guide | `docs/07.guides/<doc>.md` |
-| Operations policy | `docs/08.operations/<doc>.md` |
-| Runbook | `docs/09.runbooks/<doc>.md` |
+| Spec | `docs/03.specs/<feature-id>/spec.md` |
+| Plan | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` |
+| API spec | `docs/03.specs/<feature-id>/api-spec.md` |
+| Agent design | `docs/03.specs/<feature-id>/agent-design.md` |
+| Data model | `docs/03.specs/<feature-id>/data-model.md` |
+| Test design | `docs/03.specs/<feature-id>/tests.md` |
+| Guide | `docs/05.operations/guides/<doc>.md` |
+| Operations policy | `docs/05.operations/policies/<doc>.md` |
+| Runbook | `docs/05.operations/runbooks/<doc>.md` |
+| Incident record | `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` |
+| Postmortem | `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` |
 | Durable agent/reference doc | `docs/90.references/<category>/<topic>.md` |
 
 ## Named Skill Routing
 
 ### `agent-memory-systems`
 
-- Feature-specific memory strategy goes to `docs/04.specs/<feature-id>/agent-design.md`.
+- Feature-specific memory strategy goes to `docs/03.specs/<feature-id>/agent-design.md`.
 - Durable reusable memory concepts go to `docs/90.references/agents/<topic>.md`.
 
 ### `agent-md-refactor`
@@ -82,5 +84,5 @@ Define the repository-local routing contract for document-generation workflows.
 ## Failure Handling
 
 - If the request does not map cleanly to one stage, stop and classify it before writing.
-- If content mixes durable reference and feature design, split the durable parts into `docs/90.references/**` and the feature contract into `docs/04.specs/**`.
+- If content mixes durable reference and feature design, split the durable parts into `docs/90.references/**` and the feature contract into `docs/03.specs/**`.
 - If governance and authored-stage content are mixed together, keep policy in `docs/00.agent-governance/**` and route authored content to the correct stage folder.

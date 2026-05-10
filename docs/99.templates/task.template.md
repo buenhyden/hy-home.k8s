@@ -6,18 +6,18 @@ owner: '{team-or-person}'
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/06.tasks/YYYY-MM-DD-<feature-or-stream>.md -->
+<!-- Target: docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md -->
 
 # Task: [Task Name]
 
-> Use this template for `docs/06.tasks/YYYY-MM-DD-<feature-or-stream>.md`.
+> Use this template for `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md`.
 >
 > Rules:
 >
 > - Task documents are traceability-first.
 > - Core behavior should default to TDD.
 > - Agent work must include eval tasks where applicable.
-> - This is the canonical execution-tracking location; feature-local task notes under `04.specs/` are secondary.
+> - This is the canonical execution-tracking location; feature-local task notes under `03.specs/` are secondary.
 
 ---
 
@@ -27,15 +27,15 @@ updated: YYYY-MM-DD
 
 ## Inputs
 
-- **Parent Spec**: `[../04.specs/<feature-id>/spec.md]`
-- **Parent Plan**: `[../05.plans/YYYY-MM-DD-<feature>.md]`
+- **Parent Spec**: `[../03.specs/<feature-id>/spec.md]`
+- **Parent Plan**: `[../04.execution/plans/YYYY-MM-DD-<feature>.md]`
 
 ## Working Rules
 
 - Write failing tests first for core behavior.
 - Every task must define evidence.
 - Documentation-only work still needs validation evidence.
-- If a feature-local `tasks.md` exists under `04.specs/`, this document remains the execution-tracking source of truth.
+- If a feature-local `tasks.md` exists under `03.specs/`, this document remains the execution-tracking source of truth.
 
 ## Task Table
 
@@ -78,6 +78,6 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
-- **Spec**: `[../04.specs/<feature-id>/spec.md]`
-- **Plan**: `[../05.plans/YYYY-MM-DD-<feature>.md]`
-- **Tests**: `[../04.specs/<feature-id>/tests.md]`
+- **Spec**: `[../03.specs/<feature-id>/spec.md]`
+- **Plan**: `[../04.execution/plans/YYYY-MM-DD-<feature>.md]`
+- **Tests**: `[../03.specs/<feature-id>/tests.md]`

@@ -206,8 +206,35 @@ try:
 except Exception as exc:
     fail(f"git ls-files failed: {exc}")
 
-allowed_docs = {
+allowed_top_level_docs = {
     "00.agent-governance",
+    "01.requirements",
+    "02.architecture",
+    "03.specs",
+    "04.execution",
+    "05.operations",
+    "90.references",
+    "99.templates",
+}
+required_doc_dirs = {
+    "00.agent-governance",
+    "01.requirements",
+    "02.architecture",
+    "02.architecture/requirements",
+    "02.architecture/decisions",
+    "03.specs",
+    "04.execution",
+    "04.execution/plans",
+    "04.execution/tasks",
+    "05.operations",
+    "05.operations/guides",
+    "05.operations/policies",
+    "05.operations/runbooks",
+    "05.operations/incidents",
+    "90.references",
+    "99.templates",
+}
+old_top_level_docs = {
     "01.prd",
     "02.ard",
     "03.adr",
@@ -218,15 +245,15 @@ allowed_docs = {
     "08.operations",
     "09.runbooks",
     "10.incidents",
-    "90.references",
-    "99.templates",
 }
 
 docs_dir = root / "docs"
 actual_docs = {path.name for path in docs_dir.iterdir() if path.is_dir()}
-for name in sorted(actual_docs - allowed_docs):
+for name in sorted(actual_docs & old_top_level_docs):
+    fail(f"old docs stage folder must not exist after hard migration: docs/{name}")
+for name in sorted(actual_docs - allowed_top_level_docs):
     fail(f"docs top-level folder is not allowed: docs/{name}")
-for name in sorted(allowed_docs - actual_docs):
+for name in sorted(allowed_top_level_docs - actual_docs):
     fail(f"required docs top-level folder is missing: docs/{name}")
 
 readme_base_sections = {
@@ -237,12 +264,12 @@ readme_base_sections = {
     "How to Work in This Area": re.compile(r"^##\s+How to Work in This Area\b", re.MULTILINE),
     "Related References": re.compile(r"^##\s+Related References\b", re.MULTILINE),
 }
-for name in sorted(allowed_docs):
+for name in sorted(required_doc_dirs):
     readme = docs_dir / name / "README.md"
     if not readme.exists():
         fail(f"required README.md is missing: {rel(readme)}")
 for readme in sorted(root.rglob("README.md")):
-    if ".git" in readme.parts:
+    if ".git" in readme.parts or ".agents" in readme.parts:
         continue
     text = read_text(readme)
     for section, pattern in readme_base_sections.items():
@@ -276,24 +303,42 @@ def normalize_markdown_target(raw_target: str) -> str:
     return target.strip()
 
 
-for readme in sorted(root.rglob("README.md")):
-    if ".git" in readme.parts:
-        continue
-    for raw_target in iter_markdown_link_targets(read_text(readme)):
-        target = normalize_markdown_target(raw_target)
-        if not target or target.startswith("#"):
+markdown_link_roots = [
+    root / "README.md",
+    root / "docs",
+    root / ".claude",
+    root / ".codex",
+    root / ".github",
+    root / "scripts",
+    root / "infrastructure",
+    root / "gitops",
+    root / "traefik",
+    root / "tests",
+]
+seen_markdown_link_paths: set[pathlib.Path] = set()
+for scan_root in markdown_link_roots:
+    candidates = [scan_root] if scan_root.is_file() else scan_root.rglob("*.md")
+    for markdown in sorted(candidates):
+        if not markdown.is_file() or markdown in seen_markdown_link_paths:
             continue
-        if re.match(r"^[A-Za-z][A-Za-z0-9+.-]*:", target):
+        if ".git" in markdown.parts or ".agents" in markdown.parts or "examples" in markdown.parts:
             continue
-        target_without_fragment = target.split("#", 1)[0]
-        if not target_without_fragment:
-            continue
-        target_path = pathlib.Path(urllib.parse.unquote(target_without_fragment))
-        if target_path.is_absolute():
-            fail(f"{rel(readme)} uses absolute README link target: {target}")
-            continue
-        if not (readme.parent / target_path).exists():
-            fail(f"{rel(readme)} has broken README link target: {target}")
+        seen_markdown_link_paths.add(markdown)
+        for raw_target in iter_markdown_link_targets(read_text(markdown)):
+            target = normalize_markdown_target(raw_target)
+            if not target or target.startswith("#"):
+                continue
+            if re.match(r"^[A-Za-z][A-Za-z0-9+.-]*:", target):
+                continue
+            target_without_fragment = target.split("#", 1)[0]
+            if not target_without_fragment:
+                continue
+            target_path = pathlib.Path(urllib.parse.unquote(target_without_fragment))
+            if target_path.is_absolute():
+                fail(f"{rel(markdown)} uses absolute Markdown link target: {target}")
+                continue
+            if not (markdown.parent / target_path).exists():
+                fail(f"{rel(markdown)} has broken Markdown link target: {target}")
 
 template_readme = read_text(root / "docs/99.templates/README.md")
 for template in sorted((root / "docs/99.templates").iterdir()):
@@ -317,13 +362,17 @@ for path in docs_dir.rglob("*.md"):
             fail(f"authored docs template residue in {rel(path)}:{line_number}")
 
 required_stage_templates = [
-    ("docs/03.adr/*.md", "adr.template.md"),
-    ("docs/04.specs/*/spec.md", "spec.template.md"),
-    ("docs/05.plans/*.md", "plan.template.md"),
-    ("docs/06.tasks/*.md", "task.template.md"),
-    ("docs/07.guides/*.md", "guide.template.md"),
-    ("docs/08.operations/*.md", "operation.template.md"),
-    ("docs/09.runbooks/*.md", "runbook.template.md"),
+    ("docs/01.requirements/*.md", "prd.template.md"),
+    ("docs/02.architecture/requirements/*.md", "ard.template.md"),
+    ("docs/02.architecture/decisions/*.md", "adr.template.md"),
+    ("docs/03.specs/*/spec.md", "spec.template.md"),
+    ("docs/04.execution/plans/*.md", "plan.template.md"),
+    ("docs/04.execution/tasks/*.md", "task.template.md"),
+    ("docs/05.operations/guides/*.md", "guide.template.md"),
+    ("docs/05.operations/policies/*.md", "operation.template.md"),
+    ("docs/05.operations/runbooks/*.md", "runbook.template.md"),
+    ("docs/05.operations/incidents/[0-9][0-9][0-9][0-9]/*.md", "incident.template.md"),
+    ("docs/05.operations/incidents/postmortems/**/*.md", "postmortem.template.md"),
     ("docs/90.references/**/*.md", "reference.template.md"),
 ]
 
@@ -334,6 +383,8 @@ def required_headings_from_template(template_name: str) -> list[str]:
         if not line.startswith("## "):
             continue
         heading = line.strip()
+        if "[" in heading or "<" in heading:
+            continue
         if "(If Applicable)" in heading or "(Optional)" in heading:
             continue
         headings.append(heading)
@@ -361,6 +412,11 @@ legacy_docs_range = "01" + "~" + "99"
 legacy_stage_label = "Stage " + "11"
 legacy_harness = "H" + "100"
 legacy_harness_examples = "examples/" + "harness-100"
+old_docs_path_refs = [
+    "docs/" + name for name in sorted(old_top_level_docs)
+] + [
+    "../" + name for name in sorted(old_top_level_docs)
+]
 legacy_dashboard_app = "platform" + "-dashboard"
 legacy_dashboard_ns_file = "namespace" + "-kubernetes-dashboard"
 legacy_dashboard_kubectl = "kubectl -n " + "kubernetes-dashboard"
@@ -368,6 +424,7 @@ legacy_dashboard_namespace_code = "`" + "kubernetes-dashboard" + "` namespace"
 legacy_dashboard_namespace_text = "kubernetes-dashboard " + "namespace"
 legacy_docs_traefik = "docs/" + "traefik"
 stale_patterns = [
+    *old_docs_path_refs,
     "docs/" + legacy_postmortems,
     "docs/" + legacy_learning,
     legacy_postmortems,
@@ -419,11 +476,12 @@ for scan_root in scan_roots:
                 fail(f"legacy runtime contract reference lacks historical/superseded note in {rel(path)}: {pattern}")
 
 authored_command_roots = [
-    root / "docs/03.adr",
-    root / "docs/04.specs",
-    root / "docs/07.guides",
-    root / "docs/08.operations",
-    root / "docs/09.runbooks",
+    root / "docs/02.architecture/decisions",
+    root / "docs/03.specs",
+    root / "docs/05.operations/guides",
+    root / "docs/05.operations/policies",
+    root / "docs/05.operations/runbooks",
+    root / "docs/05.operations/incidents",
 ]
 
 
@@ -495,7 +553,7 @@ markdown_direct_push_roots = [
     root / "infrastructure",
     root / "traefik",
     root / "examples",
-    root / "docs/08.operations",
+    root / "docs/05.operations",
     root / "docs/90.references",
 ]
 seen_markdown_direct_push_paths: set[pathlib.Path] = set()

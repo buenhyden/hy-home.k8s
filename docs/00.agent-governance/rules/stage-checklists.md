@@ -1,60 +1,60 @@
-# Stage Checklists (00-10, 90, 99)
+# Stage Checklists
 
-Execution-focused checklist index by stage.
+Execution-focused checklist index by taxonomy path.
 
-## Stage 00 (Governance)
+## `00.agent-governance`
 
 - [ ] Routing files and checklists are current.
 - [ ] JIT loading order is valid.
 - [ ] English-only governance policy is preserved.
 
-## Stage 01 (PRD)
+## `01.requirements`
 
 - [ ] Problem, value, acceptance criteria, and scope are explicit.
-- [ ] Links to downstream stages are prepared.
+- [ ] Links to downstream docs are prepared.
 
-## Stage 02 (ARD)
+## `02.architecture/requirements`
 
 - [ ] System boundaries and quality attributes are documented.
 - [ ] Inputs from PRD are traceable.
 
-## Stage 03 (ADR)
+## `02.architecture/decisions`
 
 - [ ] Decision context, alternatives, and consequences are captured.
 - [ ] Links to PRD/ARD/Spec are valid.
 
-## Stage 04 (Spec)
+## `03.specs`
 
 - [ ] Contracts, data models, and verification plan are defined.
 - [ ] API/Agent design docs are included when needed.
 
-## Stage 05 (Plan)
+## `04.execution/plans`
 
 - [ ] Phases, risks, gates, and rollback strategy are documented.
 - [ ] Plan links to source specs and tasks.
 
-## Stage 06 (Task)
+## `04.execution/tasks`
 
 - [ ] Each task references parent plan/spec.
 - [ ] Validation commands and evidence are attached.
 
-## Stage 07 (Guides)
+## `05.operations/guides`
 
 - [ ] Audience, prerequisites, and reproducible steps are clear.
-- [ ] Cross-links to specs and operations are present.
+- [ ] Cross-links to specs, policies, and runbooks are present.
 
-## Stage 08 (Operations)
+## `05.operations/policies`
 
 - [ ] Policy controls and promotion criteria are explicit.
 - [ ] Security and evidence-retention requirements are defined.
 
-## Stage 09 (Runbooks)
+## `05.operations/runbooks`
 
 - [ ] Step-by-step execution and recovery paths are operational.
 - [ ] Validation and escalation paths are explicit.
 
-## Stage 10 (Incidents)
+## `05.operations/incidents`
 
 - [ ] Timeline, impact, evidence, and mitigations are recorded.
 - [ ] Related runbook links are attached.
-- [ ] Postmortem RCA, preventive actions, and follow-up links are recorded under `docs/10.incidents/postmortems/` when needed.
+- [ ] Postmortem RCA, preventive actions, and follow-up links are recorded under `docs/05.operations/incidents/postmortems/` when needed.

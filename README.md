@@ -34,7 +34,7 @@
 - 외부 Vault/PostgreSQL/Valkey 런타임 자체의 생성 및 운영
 - 애플리케이션 비즈니스 로직 구현
 - AWS/Azure 실제 리소스 프로비저닝과 cloud 계정 상태 변경
-- `docs/01-10`, `docs/90.references`, `docs/99.templates` SSoT 문서의 승인 없는 임의 재작성
+- `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/99.templates` SSoT 문서의 승인 없는 임의 재작성
 - 운영 환경 SLA/DR 자체 보장
 
 ## Structure
@@ -66,7 +66,7 @@ hy-home.k8s/
 ## How to Work in This Area
 
 1. 저장소를 처음 읽을 때는 `README.md -> docs/README.md -> AGENTS.md -> 관련 stage 문서` 순서로 진입한다.
-2. 설계/구현/운영 판단은 가능한 한 `docs/01.prd`부터 `docs/09.runbooks`까지의 문서 체인을 기준으로 추적한다.
+2. 설계/구현/운영 판단은 가능한 한 `docs/01.requirements`부터 `docs/05.operations/runbooks`까지의 문서 체인을 기준으로 추적한다.
 3. 새 README나 가이드는 [`docs/99.templates/readme.template.md`](docs/99.templates/readme.template.md) 같은 승인된 템플릿에서 시작한다.
 4. 문서 링크는 상대 경로를 사용하고, 사람 대상 README는 한국어를 유지한다.
 5. `docs/00.agent-governance/*`는 영어로 유지하며, 게이트웨이 파일에는 규칙을 중복 복사하지 않는다.
@@ -80,9 +80,9 @@ hy-home.k8s/
 
 - [docs/README.md](docs/README.md)
 - [AGENTS.md](AGENTS.md)
-- [docs/01.prd/2026-03-27-wsl-k3d-argocd-platform.md](docs/01.prd/2026-03-27-wsl-k3d-argocd-platform.md)
-- [docs/04.specs/001-wsl-k3d-argocd-platform/spec.md](docs/04.specs/001-wsl-k3d-argocd-platform/spec.md)
-- [docs/09.runbooks/0001-argocd-platform-bootstrap-runbook.md](docs/09.runbooks/0001-argocd-platform-bootstrap-runbook.md)
+- [docs/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md](docs/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md)
+- [docs/03.specs/001-wsl-k3d-argocd-platform/spec.md](docs/03.specs/001-wsl-k3d-argocd-platform/spec.md)
+- [docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md](docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - [.github/ABOUT.md](.github/ABOUT.md)
 - [scripts/README.md](scripts/README.md)
 
@@ -144,7 +144,7 @@ cd hy-home.k8s
 1. [README.md](./README.md) - 저장소 개요
 2. [docs/README.md](./docs/README.md) - 단계형 문서 체계 개요
 3. [AGENTS.md](./AGENTS.md) - 에이전트 공통 규칙
-4. [docs/09.runbooks/0001-argocd-platform-bootstrap-runbook.md](./docs/09.runbooks/0001-argocd-platform-bootstrap-runbook.md) - 실제 부트스트랩 절차
+4. [docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md](./docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md) - 실제 부트스트랩 절차
 
 ### 3. External Dependencies Readiness
 
@@ -155,7 +155,7 @@ cd hy-home.k8s
 - PostgreSQL write/read 포트가 열려 있다.
 - Valkey가 저장소 문서에 정의된 호스트/포트로 노출된다.
 
-필요한 확인 방법은 [runbook](./docs/09.runbooks/0001-argocd-platform-bootstrap-runbook.md)에 정리되어 있다.
+필요한 확인 방법은 [runbook](./docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)에 정리되어 있다.
 
 ### 4. Bootstrap Local Platform
 

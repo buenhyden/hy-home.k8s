@@ -4,7 +4,7 @@ Persona: Technical Writer
 
 ## Source of Truth
 
-- `docs/07.guides/`
+- `docs/05.operations/guides/`
 - `docs/90.references/`
 - `docs/99.templates/`
 
@@ -18,7 +18,7 @@ Persona: Technical Writer
 
 | Path                    | Owner | Notes                           |
 | ----------------------- | ----- | ------------------------------- |
-| `docs/07.guides/**`     | docs  | Bootstrap and onboarding guides |
+| `docs/05.operations/guides/**`     | docs  | Bootstrap and onboarding guides |
 | `docs/90.references/**` | docs  | Reference documents             |
 | `docs/99.templates/**`  | docs  | Document templates              |
 | `README.md`             | docs  | Root README (Korean)            |

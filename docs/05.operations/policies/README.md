@@ -1,0 +1,163 @@
+# 05.operations/policies
+
+> GitOps 플랫폼 운영 정책과 통제 기준(허용/금지/예외/검증)을 관리한다.
+
+## 목적
+
+이 폴더는 k3d/GitOps 플랫폼 운영 정책, 통제 기준, 예외 승인 흐름을 저장한다.
+
+## Overview
+
+이 경로는 플랫폼 운영 정책의 단일 기준점이다.
+외부 서비스 런타임 분리, Vault 단일 소스, GitOps 경로/브랜치 게이트, 포트 계약 준수 같은 운영 규칙을 문서화한다.
+
+## Audience
+
+이 README의 주요 독자:
+
+- Developers
+- Operators
+- Documentation Writers
+- AI Agents
+
+## Scope
+
+### In Scope
+
+- 운영 정책 문서(Operations Policy)
+- 통제 항목(Required/Allowed/Disallowed)
+- 예외 승인 흐름
+- 정책 검증 방법 및 검토 주기
+
+### Out of Scope
+
+- 실행 절차 중심의 명령 순서 문서
+- 장애 타임라인/사후 분석
+- 온보딩 중심 가이드
+
+## 포함할 내용
+
+이 stage는 위 In Scope 항목만 포함한다. 정책 변경 시 예외 승인 흐름, 검증 방법, 검토 주기를 같은 문서에서 유지한다.
+
+## Structure
+
+```text
+docs/05.operations/policies/
+├── 0001-k8s-gitops-operations-policy.md                         # k3d/ArgoCD/ESO/Vault 운영 정책
+├── 0002-wsl2-k3d-gitops-ha-operations-policy.md                 # WSL2 HA + TLS/최소권한 + CI 게이트 정책
+├── 0003-service-mesh-cert-manager-policy.md                     # cert-manager/Istio/Kiali 운영 통제
+├── 0004-rollouts-notifications-headlamp-policy.md               # Rollouts/Notifications/Headlamp 운영 통제
+├── 0005-observability-platform-operations-policy.md             # ArgoCD/Grafana/포트 계약 정책
+├── 0006-k8s-observability-operations-policy.md                  # 관측성 스택 운영 정책
+├── 0007-app-gitops-onboarding-policy.md                         # 앱 GitOps 온보딩 운영 정책
+└── README.md                                                    # This file
+```
+
+## How to Work in This Area
+
+1. 정책 수정 전에 관련 Spec/Runbook을 확인한다.
+2. `../99.templates/operation.template.md`를 기준으로 섹션을 유지한다.
+3. 통제 변경 시 검증 명령과 예외 승인 흐름을 함께 갱신한다.
+4. 문서 변경 후 이 README 인덱스를 동기화한다.
+
+## Related References
+
+- [03.specs](../../03.specs/README.md)
+- [05.operations/runbooks](../runbooks/README.md)
+- [05.operations/incidents](../incidents/README.md)
+
+## 관련 폴더
+
+- `03.specs/`: 운영 정책의 기술 계약
+- `05.operations/runbooks/`: 정책을 실행하는 절차
+- `05.operations/incidents/`: 정책 위반 또는 장애 대응 기록
+
+## Documentation Standards
+
+- 정책 문서는 실행 가이드가 아니라 통제 기준을 정의해야 한다.
+- 계약 값(서비스명/포트/경로)은 코드/매니페스트와 일치해야 한다.
+- 평문 비밀번호/토큰/API key 기재를 금지한다.
+
+## Traceability Rules
+
+- Policy는 최소 1개의 ARD, 1개의 Spec, 1개의 Runbook과 연결한다.
+- Incident/Postmortem은 인덱스 링크로 연결해 추적성을 유지한다.
+- 링크는 상대 경로로 작성한다.
+
+## Template Usage
+
+- 정책 템플릿: [`../99.templates/operation.template.md`](../../99.templates/operation.template.md)
+- README 템플릿: [`../99.templates/readme.template.md`](../../99.templates/readme.template.md)
+
+## Metadata Expectations
+
+- 정책 문서는 상태와 검토 주기를 명시해야 한다.
+- 예외 승인 경로가 변경되면 즉시 문서화한다.
+- 인덱스의 `최종 수정` 날짜를 최신화한다.
+
+## Usage Instructions
+
+정책 검토/적용 시 아래 핵심 검증 명령을 사용한다.
+
+```bash
+kubectl -n argocd get application root-platform -o yaml | \
+  rg 'path: gitops/apps/root|targetRevision: main'
+kubectl -n platform get svc,endpointslice | \
+  rg 'postgres-(write|read)-external|15432|15433'
+kubectl -n platform get svc,endpointslice | \
+  rg 'valkey-external|valkey-external-1|172.18.0.9|6379'
+./infrastructure/tests/verify-ingress-tls.sh
+```
+
+## Verification and Monitoring
+
+- 로그 위치: `kubectl -n argocd logs`, `kubectl -n external-secrets logs`
+- 상태 점검: `argocd app list`, `kubectl get applications -n argocd`
+- 이상 시 참조 문서: [`../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md`](../runbooks/0001-argocd-platform-bootstrap-runbook.md)
+- 이상 시 참조 문서: [`../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+
+## WSL2 사전 요구사항
+
+k3d 4노드 구성 실행 전 아래 커널 파라미터를 확인하고 부족한 경우 조정한다.
+
+```bash
+# 현재 값 확인
+cat /proc/sys/fs/inotify/max_user_instances  # 최소 512 필요
+
+# 부족한 경우 (sudo 필요)
+sudo sysctl -w fs.inotify.max_user_instances=1024
+echo 'fs.inotify.max_user_instances=1024' | sudo tee /etc/sysctl.d/99-k3d.conf
+```
+
+**증상**: `max_user_instances`가 낮으면 k3d 에이전트 노드의 kubelet이 `inotify_init: too many open files` 오류로 TLS 인증서 감시에 실패하고, 노드가 `NotReady` → heartbeat 중단 → Terminating 파드 누적으로 이어진다.
+
+**bootstrap-local.sh**는 이 값을 사전 검증하며 512 미만이면 즉시 실패한다.
+
+## Incident and Recovery Links
+
+- Runbooks: [`../05.operations/runbooks/README.md`](../runbooks/README.md)
+- Incident Records: [`../05.operations/incidents/README.md`](../incidents/README.md)
+- Postmortems: [`../05.operations/incidents/README.md`](../incidents/README.md)
+
+## 예시
+
+- GitOps 운영 통제는 `0001-k8s-gitops-operations-policy.md`에서 관리한다.
+- 관측성 운영 통제는 `0006-k8s-observability-operations-policy.md`에서 관리한다.
+
+## SSoT References
+
+- [ARD](../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md)
+- [Spec](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
+- [Runbook](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+
+## 문서 인덱스
+
+| 문서                                                                                                     | 설명                                                                                    | 상태   | 최종 수정  |
+| -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------ | ---------- |
+| [`0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md)                         | 외부 런타임 분리 + Vault 단일 소스 + GitOps 게이트 운영 정책                            | Active | 2026-03-27 |
+| [`0002-wsl2-k3d-gitops-ha-operations-policy.md`](./0002-wsl2-k3d-gitops-ha-operations-policy.md)         | WSL2 HA 운영 통제(TLS/Traefik 경계, EndpointSlice, 최소권한, CI 게이트, 감사 항목) 정책 | Active | 2026-05-09 |
+| [`0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md)                 | cert-manager/Headlamp/Istio/Kiali 운영 통제(TLS/sidecar/Kiali auth/Traefik 계약) 정책   | Active | 2026-05-09 |
+| [`0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md)     | Argo Rollouts/Notifications(Slack)/Headlamp 운영 통제 정책                              | Active | 2026-05-09 |
+| [`0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | Istio 포트 네이밍/Grafana Anonymous Access/ArgoCD NodePort 예약 정책                    | Active | 2026-05-09 |
+| [`0006-k8s-observability-operations-policy.md`](./0006-k8s-observability-operations-policy.md)           | k8s 메트릭 NodePort 예약/in-cluster Alloy/alert_rules 로드 패턴 정책                    | Active | 2026-05-09 |
+| [`0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md)                         | 앱 온보딩 운영 정책 (Rollout 필수/이미지 태그/Istio 포트 명명/Traefik/Vault 규칙)       | Active | 2026-05-09 |

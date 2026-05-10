@@ -51,16 +51,16 @@ infrastructure/
 
 ## How to Work in This Area
 
-1. bootstrap 전 [Runbook](../docs/09.runbooks/0001-argocd-platform-bootstrap-runbook.md)의 외부 의존성 점검을 확인한다.
+1. bootstrap 전 [Runbook](../docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)의 외부 의존성 점검을 확인한다.
 2. `bootstrap-local.sh` 변경 시 bootstrap-only 예외 범위와 GitOps 소유권 전환 지점을 함께 점검한다.
 3. Helm values, k3d config, static test 변경은 관련 Spec/Operations/Runbook 링크를 함께 갱신한다.
 4. 변경 후 `bash infrastructure/tests/verify-contracts-static.sh`와 shell syntax check를 실행한다.
 
 ## Related References
 
-- [PRD](../docs/01.prd/2026-03-27-wsl-k3d-argocd-platform.md)
-- [Spec](../docs/04.specs/001-wsl-k3d-argocd-platform/spec.md)
-- [Runbook](../docs/09.runbooks/0001-argocd-platform-bootstrap-runbook.md)
+- [PRD](../docs/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md)
+- [Spec](../docs/03.specs/001-wsl-k3d-argocd-platform/spec.md)
+- [Runbook](../docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - [GitOps README](../gitops/README.md)
 - [Tech Stack Version Inventory](../docs/90.references/tech-stack-version-inventory.md)
 

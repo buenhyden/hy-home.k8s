@@ -28,7 +28,7 @@ This README is primarily for:
 
 - New policy rules that belong in `../rules/`
 - Runtime bridge configuration that belongs under `.claude/**` or `.codex/**`
-- Product, architecture, and implementation SSoT under `docs/01-10`
+- Product, architecture, execution, and operations SSoT under the current docs taxonomy
 
 ## Structure
 

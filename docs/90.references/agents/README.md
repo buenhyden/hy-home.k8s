@@ -11,7 +11,7 @@
 
 여기에는 특정 기능 하나에 묶이지 않는 Agent 관련 기준 지식만 둔다. 예를 들어 메모리 시스템 개념, 문서 라우팅 기준, 반복적으로 참조하는 Agent 패턴 요약이 여기에 해당한다.
 
-기능 또는 서비스에 종속된 Agent 설계는 이 폴더가 아니라 `docs/04.specs/<feature-id>/agent-design.md`가 정본 위치다.
+기능 또는 서비스에 종속된 Agent 설계는 이 폴더가 아니라 `docs/03.specs/<feature-id>/agent-design.md`가 정본 위치다.
 
 ## Audience
 
@@ -46,12 +46,12 @@ agents/
 ## How to Work in This Area
 
 1. 새 문서를 만들기 전에 `docs/99.templates/reference.template.md`를 먼저 확인한다.
-2. 기능 범위에 묶인 내용이면 `docs/04.specs/<feature-id>/agent-design.md`로 보낸다.
-3. 실행 순서나 롤아웃이 핵심이면 `docs/05.plans/`로 보낸다.
+2. 기능 범위에 묶인 내용이면 `docs/03.specs/<feature-id>/agent-design.md`로 보낸다.
+3. 실행 순서나 롤아웃이 핵심이면 `docs/04.execution/plans/`로 보낸다.
 4. 새 문서를 추가하면 이 README와 상위 `docs/90.references/README.md`의 구조 설명이 계속 맞는지 확인한다.
 
 ## Related References
 
 - [90.references README](../README.md)
-- [04.specs README](../../04.specs/README.md)
+- [03.specs README](../../03.specs/README.md)
 - [Templates README](../../99.templates/README.md)

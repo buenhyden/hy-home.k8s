@@ -94,4 +94,4 @@ scripts/
 - [Claude Settings](../.claude/settings.json)
 - [Infrastructure Tests](../infrastructure/tests/)
 - [Agent Governance Bootstrap](../docs/00.agent-governance/rules/bootstrap.md)
-- [scripts Inventory Remediation Plan](../docs/05.plans/2026-05-09-scripts-inventory-remediation.md)
+- [scripts Inventory Remediation Plan](../docs/04.execution/plans/2026-05-09-scripts-inventory-remediation.md)

@@ -6,13 +6,13 @@ owner: '{team-or-person}'
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/09.runbooks/####-<topic>.md -->
+<!-- Target: docs/05.operations/runbooks/####-<topic>.md -->
 
 # [Topic Name] Runbook
 
 : [Service or Workflow Name]
 
-> Use this template for `docs/09.runbooks/####-<topic>.md`.
+> Use this template for `docs/05.operations/runbooks/####-<topic>.md`.
 >
 > Rules:
 >
@@ -33,10 +33,10 @@ updated: YYYY-MM-DD
 
 ## Canonical References
 
-- `[../02.ard/####-<system-or-domain>.md]`
-- `[../03.adr/####-<short-title>.md]`
-- `[../04.specs/<feature-id>/spec.md]`
-- `[../05.plans/YYYY-MM-DD-<feature>.md]`
+- `[../02.architecture/requirements/####-<system-or-domain>.md]`
+- `[../02.architecture/decisions/####-<short-title>.md]`
+- `[../03.specs/<feature-id>/spec.md]`
+- `[../04.execution/plans/YYYY-MM-DD-<feature>.md]`
 
 ## When to Use
 
@@ -80,6 +80,6 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
-- **Incident examples**: `[../10.incidents/YYYY/YYYY-MM-DD-<incident-title>.md]`
-- **Postmortem examples**: `[../10.incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
-- **Operation**: `[../08.operations/<policy-or-standard>.md]`
+- **Incident examples**: `[../05.operations/incidents/YYYY/YYYY-MM-DD-<incident-title>.md]`
+- **Postmortem examples**: `[../05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
+- **Operation**: `[../05.operations/policies/<policy-or-standard>.md]`

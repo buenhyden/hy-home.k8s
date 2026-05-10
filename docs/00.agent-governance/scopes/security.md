@@ -4,9 +4,9 @@ Persona: Security Engineer
 
 ## Source of Truth
 
-- `docs/04.specs/`
-- `docs/10.incidents/`
-- `docs/10.incidents/postmortems/`
+- `docs/03.specs/`
+- `docs/05.operations/incidents/`
+- `docs/05.operations/incidents/postmortems/`
 
 ## Responsibilities
 
@@ -18,8 +18,8 @@ Persona: Security Engineer
 
 | Path                                  | Owner    | Notes                       |
 | ------------------------------------- | -------- | --------------------------- |
-| `docs/10.incidents/**`                | security | Incident records            |
-| `docs/10.incidents/postmortems/**`    | security | Postmortem documents        |
+| `docs/05.operations/incidents/**`                | security | Incident records            |
+| `docs/05.operations/incidents/postmortems/**`    | security | Postmortem documents        |
 | `gitops/platform/network-policies/**` | security | k8s NetworkPolicy manifests |
 | `infrastructure/vault/**`             | security | Vault policy definitions    |
 

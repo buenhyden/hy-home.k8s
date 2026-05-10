@@ -4,9 +4,9 @@ Persona: Infra Engineer
 
 ## Source of Truth
 
-- `docs/08.operations/`
-- `docs/09.runbooks/`
-- `docs/04.specs/`
+- `docs/05.operations/policies/`
+- `docs/05.operations/runbooks/`
+- `docs/03.specs/`
 
 ## Workspace Facts
 
@@ -27,10 +27,10 @@ Persona: Infra Engineer
 | `infrastructure/**`     | infra | k3d, bootstrap, networking assets     |
 | `gitops/**`             | infra | ArgoCD apps, platform, workloads      |
 | `scripts/**`            | infra | k8s validation and automation scripts |
-| `docs/08.operations/**` | infra | Operations policy                     |
-| `docs/09.runbooks/**`   | infra | Runbook procedures                    |
+| `docs/05.operations/policies/**` | infra | Operations policy                     |
+| `docs/05.operations/runbooks/**`   | infra | Runbook procedures                    |
 
-Infra scope does **not** own `docs/00.agent-governance/` (meta scope) or `docs/01~07/` (upstream stages).
+Infra scope does **not** own `docs/00.agent-governance/` (meta scope) or upstream requirements/architecture/execution docs.
 
 ## Subagent Bridge
 

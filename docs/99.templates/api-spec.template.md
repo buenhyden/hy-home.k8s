@@ -6,11 +6,11 @@ owner: '{team-or-person}'
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/04.specs/<feature-id>/api-spec.md -->
+<!-- Target: docs/03.specs/<feature-id>/api-spec.md -->
 
 # [API Name] Specification
 
-> Use this template for `docs/04.specs/<feature-id>/api-spec.md`.
+> Use this template for `docs/03.specs/<feature-id>/api-spec.md`.
 >
 > Rules:
 >
@@ -106,6 +106,6 @@ updated: YYYY-MM-DD
 ## Related Documents
 
 - **Spec**: `[./spec.md]`
-- **Plan**: `[../../05.plans/YYYY-MM-DD-<feature>.md]`
-- **Tasks**: `[../../06.tasks/YYYY-MM-DD-<feature-or-stream>.md]`
-- **Runbook**: `[../../09.runbooks/####-<topic>.md]`
+- **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
+- **Tasks**: `[../../04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md]`
+- **Runbook**: `[../../05.operations/runbooks/####-<topic>.md]`

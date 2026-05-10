@@ -51,6 +51,6 @@ workloads/
 ## Related References
 
 - [GitOps README](../README.md)
-- [App Onboarding Guide](../../docs/07.guides/0008-github-app-gitops-onboarding-guide.md)
-- [App Onboarding Policy](../../docs/08.operations/0007-app-gitops-onboarding-policy.md)
-- [App Onboarding Runbook](../../docs/09.runbooks/0010-github-app-gitops-onboarding-runbook.md)
+- [App Onboarding Guide](../../docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md)
+- [App Onboarding Policy](../../docs/05.operations/policies/0007-app-gitops-onboarding-policy.md)
+- [App Onboarding Runbook](../../docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md)

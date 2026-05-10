@@ -4,8 +4,8 @@ Persona: Frontend Engineer
 
 ## Source of Truth
 
-- `docs/04.specs/`
-- `docs/01.prd/`
+- `docs/03.specs/`
+- `docs/01.requirements/`
 
 ## Responsibilities
 
@@ -17,8 +17,8 @@ Persona: Frontend Engineer
 
 | Path               | Owner    | Notes                                          |
 | ------------------ | -------- | ---------------------------------------------- |
-| `docs/04.specs/**` | frontend | Technical specifications (shared with backend) |
-| `docs/01.prd/**`   | frontend | Product requirements (read-only input)         |
+| `docs/03.specs/**` | frontend | Technical specifications (shared with backend) |
+| `docs/01.requirements/**`   | frontend | Product requirements (read-only input)         |
 
 Frontend scope does **not** own infra manifests (`gitops/`, `infrastructure/`) or governance files.
 

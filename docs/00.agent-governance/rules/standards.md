@@ -24,8 +24,8 @@ Global standards for all agents in this repository.
 
 ## Documentation Boundary Policy
 
-- Treat `docs/01-10`, `docs/90.references`, and `docs/99.templates` as authored source of truth by default.
-- Changes to `docs/01-10`, `docs/90.references`, and `docs/99.templates` must be explicitly requested by a human.
+- Treat `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, and `docs/99.templates` as authored source of truth by default.
+- Changes to `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, and `docs/99.templates` must be explicitly requested by a human.
 - Route governance evolution to `docs/00.agent-governance/*`.
 - Do not introduce parallel authored trees such as `docs/superpowers/**`; route outputs into the official stage folders.
 

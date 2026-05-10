@@ -25,7 +25,7 @@ operational memory, and the canonical runtime catalog that supports `.claude/**`
 
 ## Disallowed Content
 
-- Product, architecture, and implementation SSoT under `docs/01~10`
+- Product, architecture, execution, and operations SSoT under `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, and `docs/05.operations`
 - Human-facing project onboarding outside this governance area
 - Runtime bridge files that belong under `.claude/**` or `.codex/**`
 
@@ -50,7 +50,7 @@ This README is primarily for:
 
 ### Out of Scope
 
-- Product, architecture, and implementation SSoT under `docs/01-10`, `docs/90.references`, and `docs/99.templates`
+- Product, architecture, execution, and operations SSoT under `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, and `docs/99.templates`
 - Runtime bridge content under `.claude/**`
 - Human-facing project onboarding outside this governance area
 

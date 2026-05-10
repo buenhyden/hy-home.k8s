@@ -4,9 +4,9 @@ Persona: System Architect
 
 ## Source of Truth
 
-- `docs/02.ard/`
-- `docs/03.adr/`
-- `docs/04.specs/`
+- `docs/02.architecture/requirements/`
+- `docs/02.architecture/decisions/`
+- `docs/03.specs/`
 
 ## Responsibilities
 
@@ -18,9 +18,9 @@ Persona: System Architect
 
 | Path               | Owner        | Notes                              |
 | ------------------ | ------------ | ---------------------------------- |
-| `docs/02.ard/**`   | architecture | Architecture Requirement Documents |
-| `docs/03.adr/**`   | architecture | Architecture Decision Records      |
-| `docs/04.specs/**` | architecture | Technical specifications           |
+| `docs/02.architecture/requirements/**`   | architecture | Architecture Requirement Documents |
+| `docs/02.architecture/decisions/**`   | architecture | Architecture Decision Records      |
+| `docs/03.specs/**` | architecture | Technical specifications           |
 
 Architecture scope does **not** own infrastructure (`gitops/`, `infrastructure/`) or governance (`docs/00.agent-governance/`).
 

@@ -4,9 +4,9 @@ Persona: Operations Engineer
 
 ## Source of Truth
 
-- `docs/08.operations/`
-- `docs/09.runbooks/`
-- `docs/10.incidents/`
+- `docs/05.operations/policies/`
+- `docs/05.operations/runbooks/`
+- `docs/05.operations/incidents/`
 
 ## Responsibilities
 
@@ -18,9 +18,9 @@ Persona: Operations Engineer
 
 | Path                      | Owner | Notes                        |
 | ------------------------- | ----- | ---------------------------- |
-| `docs/08.operations/**`   | ops   | Operations policy documents  |
-| `docs/09.runbooks/**`     | ops   | Runbook procedures           |
-| `docs/10.incidents/**`    | ops   | Incident records             |
+| `docs/05.operations/policies/**`   | ops   | Operations policy documents  |
+| `docs/05.operations/runbooks/**`     | ops   | Runbook procedures           |
+| `docs/05.operations/incidents/**`    | ops   | Incident records             |
 | `infrastructure/tests/**` | ops   | Cluster verification scripts |
 
 Ops scope does **not** own `gitops/` (infra scope) or `docs/00.agent-governance/` (meta scope).

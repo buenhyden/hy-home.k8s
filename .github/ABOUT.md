@@ -7,7 +7,7 @@ It is a map and routing surface, not the policy source of truth.
 
 - `workflows/` - CI, release evidence, and repository maintenance automations.
 - `ISSUE_TEMPLATE/` - Structured bug and feature intake forms.
-- `PULL_REQUEST_TEMPLATE.md` - PR verification checklist aligned with `docs/01.prd/`, `docs/02.ard/`, `docs/04.specs/`, and GitOps QA.
+- `PULL_REQUEST_TEMPLATE.md` - PR verification checklist aligned with `docs/01.requirements/`, `docs/02.architecture/requirements/`, `docs/03.specs/`, and GitOps QA.
 - `CODEOWNERS` - Review ownership for repository paths and GitHub configuration.
 - `dependabot.yml`, `labeler.yml`, `zizmor.yml` - GitHub-native dependency, labeling, and workflow hardening configuration.
 - `SECURITY.md` - Vulnerability reporting instructions.

@@ -20,7 +20,7 @@ Runtime baseline: [`.claude/CLAUDE.md`](.claude/CLAUDE.md)
 - Respond to users in Korean.
 - Keep `docs/00.agent-governance/**`, `.claude/**`, and `.codex/**` runtime/policy docs in English.
 - Keep human-facing READMEs in Korean.
-- Treat `docs/01-10`, `docs/90.references`, and `docs/99.templates` as authored SSoT; modify only when explicitly requested by a human.
+- Treat `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, and `docs/99.templates` as authored SSoT; modify only when explicitly requested by a human.
 - Keep gateway files minimal and route detailed policy to governance docs.
 - GitOps-first: all infra changes go through repository review and ArgoCD reconciliation; never run direct cluster mutation such as `kubectl apply`.
 - Secrets: never write plaintext Kubernetes secrets.

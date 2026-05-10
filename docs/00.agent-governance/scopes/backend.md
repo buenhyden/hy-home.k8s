@@ -4,8 +4,8 @@ Persona: Backend Engineer
 
 ## Source of Truth
 
-- `docs/04.specs/`
-- `docs/01.prd/`
+- `docs/03.specs/`
+- `docs/01.requirements/`
 
 ## Responsibilities
 
@@ -17,8 +17,8 @@ Persona: Backend Engineer
 
 | Path               | Owner   | Notes                                  |
 | ------------------ | ------- | -------------------------------------- |
-| `docs/04.specs/**` | backend | Technical specifications               |
-| `docs/01.prd/**`   | backend | Product requirements (read-only input) |
+| `docs/03.specs/**` | backend | Technical specifications               |
+| `docs/01.requirements/**`   | backend | Product requirements (read-only input) |
 
 Backend scope does **not** own infra manifests (`gitops/`, `infrastructure/`) or governance files.
 

@@ -4,9 +4,9 @@ Persona: QA Engineer
 
 ## Source of Truth
 
-- `docs/05.plans/`
-- `docs/06.tasks/`
-- `docs/10.incidents/`
+- `docs/04.execution/plans/`
+- `docs/04.execution/tasks/`
+- `docs/05.operations/incidents/`
 
 ## Responsibilities
 
@@ -18,9 +18,9 @@ Persona: QA Engineer
 
 | Path                      | Owner | Notes                                                  |
 | ------------------------- | ----- | ------------------------------------------------------ |
-| `docs/05.plans/**`        | qa    | Test and implementation plans                          |
-| `docs/06.tasks/**`        | qa    | Task tracking artifacts                                |
-| `docs/10.incidents/**`    | qa    | Defect and incident records (shared with security/ops) |
+| `docs/04.execution/plans/**`        | qa    | Test and implementation plans                          |
+| `docs/04.execution/tasks/**`        | qa    | Task tracking artifacts                                |
+| `docs/05.operations/incidents/**`    | qa    | Defect and incident records (shared with security/ops) |
 | `infrastructure/tests/**` | qa    | Cluster verification test scripts (shared with ops)    |
 
 QA scope does **not** own `gitops/` manifests or `docs/00.agent-governance/` (meta scope).

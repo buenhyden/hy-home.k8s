@@ -4,8 +4,8 @@ Persona: Product Manager
 
 ## Source of Truth
 
-- `docs/01.prd/`
-- `docs/05.plans/`
+- `docs/01.requirements/`
+- `docs/04.execution/plans/`
 
 ## Responsibilities
 
@@ -17,8 +17,8 @@ Persona: Product Manager
 
 | Path               | Owner   | Notes                                 |
 | ------------------ | ------- | ------------------------------------- |
-| `docs/01.prd/**`   | product | Product Requirement Documents         |
-| `docs/05.plans/**` | product | Implementation plans (shared with qa) |
+| `docs/01.requirements/**`   | product | Product Requirement Documents         |
+| `docs/04.execution/plans/**` | product | Implementation plans (shared with qa) |
 
 Product scope does **not** own infra manifests, governance files, or authored specs downstream of PRD.
 

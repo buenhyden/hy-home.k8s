@@ -114,7 +114,7 @@ to close that gap.
 | Scope and persona routing | `rules/persona.md`, `scopes/*.md` | Ready | None | Resolve one primary layer before edits and transition explicitly when scope changes. |
 | GitOps-first execution | `rules/agentic.md`, `.claude/settings.json`, GitOps docs and validators | Ready | None | Keep infrastructure changes repo-backed and prevent direct cluster mutation by default. |
 | Documentation routing | `rules/document-stage-routing.md`, `rules/documentation-protocol.md`, `.claude/skills/docs-stage-routing/skill.md` | Ready | None | Keep generated docs in the canonical stage tree and use templates before authoring. |
-| Authored-doc command boundaries | `scripts/validate-repo-quality-gates.sh`, `docs/03.adr`, `docs/04.specs`, `docs/07.guides`, `docs/08.operations`, `docs/09.runbooks` | Ready | None | Keep risky command examples framed as human/operator-approved bootstrap, break-glass, external secret, or PR-flow work. |
+| Authored-doc command boundaries | `scripts/validate-repo-quality-gates.sh`, `docs/02.architecture/decisions`, `docs/03.specs`, `docs/05.operations/guides`, `docs/05.operations/policies`, `docs/05.operations/runbooks` | Ready | None | Keep risky command examples framed as human/operator-approved bootstrap, break-glass, external secret, or PR-flow work. |
 | Validation before completion | `scripts/*.sh`, `infrastructure/tests/*.sh`, `.github/workflows/ci.yml` | Ready | None | Define validation evidence before editing and report skipped or unavailable local tools honestly. |
 | Postflight and handoff | `rules/postflight-checklist.md`, `subagent-protocol.md` | Ready | None | Complete postflight checks and preserve handoff evidence before final response. |
 
