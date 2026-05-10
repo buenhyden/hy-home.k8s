@@ -13,21 +13,21 @@
 - Platform Engineers
 - Infrastructure Operations
 - Cloud Architects
-- AI Agents (Antigravity)
+- AI Agents
 
 ## Scope
 
 ### In Scope
 
-- **01.prd**: 제품 요구사항 정의 및 성공 지표
-- **02.ard**: 참조 아키텍처 및 품질 속성
-- **03.adr**: 주요 기술적 선택 배경 (AGC, Workload Identity 등)
-- **04.specs**: 리소스 모델링 및 상세 기술 사양
-- **05.plans**: 단계별 마이그레이션 전략 및 로드맵
-- **06.tasks**: 상세 구현 태스크 및 검증 로그
-- **07.guides**: 배포 가이드 및 온보딩 절차
-- **08.operations**: 클라우드 운영 정책 및 거버넌스
-- **09.runbooks**: 장애 대응 및 긴급 복구 매뉴얼
+- **01.requirements**: 제품 요구사항 정의 및 성공 지표
+- **02.architecture/requirements**: 참조 아키텍처 및 품질 속성
+- **02.architecture/decisions**: 주요 기술적 선택 배경 (AGC, Workload Identity 등)
+- **03.specs**: 리소스 모델링 및 상세 기술 사양
+- **04.execution/plans**: 단계별 마이그레이션 전략 및 로드맵
+- **04.execution/tasks**: 상세 구현 태스크 및 검증 로그
+- **05.operations/guides**: 배포 가이드 및 온보딩 절차
+- **05.operations/policies**: 클라우드 운영 정책 및 거버넌스
+- **05.operations/runbooks**: 장애 대응 및 긴급 복구 매뉴얼
 
 ### Out of Scope
 
@@ -40,15 +40,15 @@
 
 ```text
 examples/azure/docs/
-├── 01.prd/           # Product Requirements
-├── 02.ard/           # Architecture Reference
-├── 03.adr/           # Architecture Decision Records
-├── 04.specs/         # Technical Specifications
-├── 05.plans/         # Migration Strategies
-├── 06.tasks/         # Implementation Tasks
-├── 07.guides/        # Deployment Guides
-├── 08.operations/    # Ops Policies
-├── 09.runbooks/      # Recovery Procedures
+├── 01.requirements/           # Product Requirements
+├── 02.architecture/requirements/           # Architecture Reference
+├── 02.architecture/decisions/           # Architecture Decision Records
+├── 03.specs/         # Technical Specifications
+├── 04.execution/plans/         # Migration Strategies
+├── 04.execution/tasks/         # Implementation Tasks
+├── 05.operations/guides/        # Deployment Guides
+├── 05.operations/policies/    # Ops Policies
+├── 05.operations/runbooks/      # Recovery Procedures
 └── README.md         # This hub file
 ```
 
@@ -65,11 +65,11 @@ examples/azure/docs/
 
 ## How to Work in This Area
 
-1. **Requirement First**: 변경 사항은 항상 [01.prd](./01.prd/README.md)에서 시작하여 하위 문서로 전파한다.
+1. **Requirement First**: 변경 사항은 항상 [01.requirements](01.requirements/README.md)에서 시작하여 하위 문서로 전파한다.
 2. **Standard Templates**: 모든 문서는 `docs/99.templates/` 산하의 최신 템플릿을 사용하여 작성한다.
 3. **Traceability**: 문서 내 상호 참조는 반드시 상대 경로를 사용하여 링크를 유지한다.
 4. **Reference Boundary**: 실제 Azure 배포 전에는 provider 공식 지원 버전, 비용, RBAC, 네트워크 경계를 다시 확인한다.
-5. **Agent Guidance**: 에이전트는 작업 전 [06.tasks](./06.tasks/README.md)를 확인하고 진행 상황을 업데이트한다.
+5. **Agent Guidance**: 에이전트는 작업 전 [04.execution/tasks](04.execution/tasks/README.md)를 확인하고 진행 상황을 업데이트한다.
 
 ## Related References
 

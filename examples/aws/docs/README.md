@@ -31,15 +31,15 @@
 
 | Directory | Purpose | Primary Document |
 | :--- | :--- | :--- |
-| [01.prd](./01.prd/README.md) | 제품 요구사항 정의 | [AWS Migration PRD](./01.prd/2026-03-31-aws-migration-prd.md) |
-| [02.ard](./02.ard/README.md) | 아키텍처 설계서 | [Target Architecture](./02.ard/0001-aws-cloud-native-architecture.md) |
-| [03.adr](./03.adr/README.md) | 기술 의사결정 기록 | [Managed Service Selection](./03.adr/0001-aws-managed-services-selection.md) |
-| [04.specs](./04.specs/README.md) | 상세 기술 명세 | [AWS Migration Spec](./04.specs/aws-migration/spec.md) |
-| [05.plans](./05.plans/README.md) | 마이그레이션 로드맵 | [Migration Roadmap](./05.plans/2026-03-31-aws-migration-roadmap.md) |
-| [06.tasks](./06.tasks/README.md) | 개별 실행 작업 리스트 | [Implementation Tasks](./06.tasks/2026-03-31-aws-migration-tasks.md) |
-| [07.guides](./07.guides/README.md) | 운영 및 설정 가이드 | [AWS Setup Guide](./07.guides/aws-setup-guide.md) |
-| [08.operations](./08.operations/README.md) | 시스템 운영 거버넌스 | [AWS Operations Policy](./08.operations/aws-operations-policy.md) |
-| [09.runbooks](./09.runbooks/README.md) | 장애 대응 런북 | [AWS Disaster Recovery](./09.runbooks/aws-disaster-recovery.md) |
+| [01.requirements](01.requirements/README.md) | 제품 요구사항 정의 | [AWS Migration PRD](01.requirements/2026-03-31-aws-migration-prd.md) |
+| [02.architecture/requirements](02.architecture/requirements/README.md) | 아키텍처 설계서 | [Target Architecture](02.architecture/requirements/0001-aws-cloud-native-architecture.md) |
+| [02.architecture/decisions](02.architecture/decisions/README.md) | 기술 의사결정 기록 | [Managed Service Selection](02.architecture/decisions/0001-aws-managed-services-selection.md) |
+| [03.specs](03.specs/README.md) | 상세 기술 명세 | [AWS Migration Spec](03.specs/aws-migration/spec.md) |
+| [04.execution/plans](04.execution/plans/README.md) | 마이그레이션 로드맵 | [Migration Roadmap](04.execution/plans/2026-03-31-aws-migration-roadmap.md) |
+| [04.execution/tasks](04.execution/tasks/README.md) | 개별 실행 작업 리스트 | [Implementation Tasks](04.execution/tasks/2026-03-31-aws-migration-tasks.md) |
+| [05.operations/guides](05.operations/guides/README.md) | 운영 및 설정 가이드 | [AWS Setup Guide](05.operations/guides/aws-setup-guide.md) |
+| [05.operations/policies](05.operations/policies/README.md) | 시스템 운영 거버넌스 | [AWS Operations Policy](05.operations/policies/aws-operations-policy.md) |
+| [05.operations/runbooks](05.operations/runbooks/README.md) | 장애 대응 런북 | [AWS Disaster Recovery](05.operations/runbooks/aws-disaster-recovery.md) |
 
 ## Tech Stack & Standards
 
@@ -62,4 +62,4 @@
 - [Tech Stack Version Inventory](../../../docs/90.references/versions/tech-stack-version-inventory.md)
 
 ---
-마이그레이션 실행 및 상세 작업 내역은 [06.tasks](./06.tasks/README.md)를 참조하십시오.
+마이그레이션 실행 및 상세 작업 내역은 [04.execution/tasks](04.execution/tasks/README.md)를 참조하십시오.

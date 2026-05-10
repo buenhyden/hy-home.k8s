@@ -39,13 +39,13 @@ kubernetes/
 
 ## How to Work in This Area
 
-1. [sample-app.yaml](./sample-app.yaml)을 템플릿으로 사용하여 새 서비스를 정의한다.
-2. 매니페스트 작성 전 [Spec](../docs/04.specs/azure-migration/spec.md)의 가이드와 통제 표준을 반드시 확인한다.
+1. [sample-app.yaml](sample-app.yaml)을 템플릿으로 사용하여 새 서비스를 정의한다.
+2. 매니페스트 작성 전 [Spec](../docs/03.specs/azure-migration/spec.md)의 가이드와 통제 표준을 반드시 확인한다.
 3. 리소스 제한(Requests/Limits)은 실제 워크로드의 프로파일을 바탕으로 설정한다.
 
 ## Related References
 
-- **Guide**: [../docs/07.guides/0001-azure-onboarding-guide.md](../docs/07.guides/0001-azure-onboarding-guide.md)
+- **Guide**: [../docs/05.operations/guides/0001-azure-onboarding-guide.md](../docs/05.operations/guides/0001-azure-onboarding-guide.md)
 - **GitOps**: [../gitops/README.md](../gitops/README.md)
 - **Infrastructure**: [../infrastructure/main.bicep](../infrastructure/main.bicep)
 
