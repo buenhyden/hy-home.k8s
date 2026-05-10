@@ -81,6 +81,48 @@ inventory stays in `scripts/README.md`.
 
 - None.
 
+### 2026-05-10 — 90.references learning and version inventory routing
+
+- **Date**: 2026-05-10
+- **Layer**: docs
+- **Status**: complete
+- **Tags**: #docs #references #versions
+
+#### Progress
+
+- Added `docs/90.references/learning/README.md` to define the learning
+  reference scope, authoring rules, routing boundaries, and related references.
+- Moved the root-level tech stack inventory into
+  `docs/90.references/versions/tech-stack-version-inventory.md` because it is a
+  version-contract inventory and dated external-standard snapshot.
+- Added `docs/90.references/versions/README.md` and updated root/docs/examples,
+  infrastructure, Traefik, and repo-quality validator references to the new
+  version inventory path.
+
+#### Memory
+
+- Learning roadmaps and durable theory connections belong under
+  `docs/90.references/learning/` and need a local README index.
+- Version inventories, cloud support snapshots, and repo-backed dependency
+  contract references belong under `docs/90.references/versions/`.
+- `docs/90.references/README.md` should stay the routing hub, not a mixed
+  document dump for every reference type.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS with optional
+  `kube-linter` skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+- Targeted old root-level inventory path grep returned no matches.
+
+#### Handoff
+
+- None.
+
 ## Historical Entries
 
 ### Harness Implementation Progress

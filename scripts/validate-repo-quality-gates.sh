@@ -1049,7 +1049,7 @@ for tracked_path in tracked:
     if tracked_path.startswith("docs/" + legacy_postmortems + "/") or tracked_path.startswith("docs/" + legacy_learning + "/"):
         fail(f"obsolete tracked docs path remains: {tracked_path}")
 
-inventory_path = root / "docs/90.references/tech-stack-version-inventory.md"
+inventory_path = root / "docs/90.references/versions/tech-stack-version-inventory.md"
 inventory_text = read_text(inventory_path)
 match = re.search(r"```yaml\n(.*?)\n```", inventory_text, re.DOTALL)
 if not match:

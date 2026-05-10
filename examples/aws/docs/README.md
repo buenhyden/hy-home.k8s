@@ -52,14 +52,14 @@
 ## How to Work in This Area
 
 1. 이 경로의 문서는 AWS migration reference로만 사용합니다.
-2. 버전 기준을 바꾸면 [Tech Stack Version Inventory](../../../docs/90.references/tech-stack-version-inventory.md)를 같은 변경에서 갱신합니다.
+2. 버전 기준을 바꾸면 [Tech Stack Version Inventory](../../../docs/90.references/versions/tech-stack-version-inventory.md)를 같은 변경에서 갱신합니다.
 3. 실제 AWS 배포 전에는 provider 공식 지원 버전, IAM/RBAC, 비용, 네트워크 경계를 다시 확인합니다.
 4. 문서 간에는 상대 경로 링크를 유지하여 추적성을 확보합니다.
 
 ## Related References
 
 - [Examples README](../../README.md)
-- [Tech Stack Version Inventory](../../../docs/90.references/tech-stack-version-inventory.md)
+- [Tech Stack Version Inventory](../../../docs/90.references/versions/tech-stack-version-inventory.md)
 
 ---
 마이그레이션 실행 및 상세 작업 내역은 [06.tasks](./06.tasks/README.md)를 참조하십시오.

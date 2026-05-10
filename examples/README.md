@@ -49,7 +49,7 @@ examples/
 ## How to Work in This Area
 
 1. 로컬 앱 온보딩은 [sample-app](./sample-app/README.md)을 복사해 시작한다.
-2. AWS/Azure 예시는 [Tech Stack Version Inventory](../docs/90.references/tech-stack-version-inventory.md)의 `Cloud Example Snapshot` 기준과 맞춰 수정한다.
+2. AWS/Azure 예시는 [Tech Stack Version Inventory](../docs/90.references/versions/tech-stack-version-inventory.md)의 `Cloud Example Snapshot` 기준과 맞춰 수정한다.
 3. provider module, Kubernetes version, ingress/gateway 선택이 바뀌면 관련 README와 docs 예시를 같은 변경에서 갱신한다.
 4. 변경 후 `bash scripts/validate-repo-quality-gates.sh .`와 outdated marker scan을 실행한다.
 
@@ -57,7 +57,7 @@ examples/
 
 - [Root README](../README.md)
 - [GitOps README](../gitops/README.md)
-- [Tech Stack Version Inventory](../docs/90.references/tech-stack-version-inventory.md)
+- [Tech Stack Version Inventory](../docs/90.references/versions/tech-stack-version-inventory.md)
 - [Ingress NGINX retirement statement](https://kubernetes.io/blog/2026/01/29/ingress-nginx-statement/)
 
 ## 예시 목록

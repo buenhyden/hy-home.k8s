@@ -130,6 +130,7 @@ pre_commit:
 
 ## Related Documents
 
-- [References README](./README.md)
-- [CI Workflow](../../.github/workflows/ci.yml)
-- [Pre-commit Config](../../.pre-commit-config.yaml)
+- [References README](../README.md)
+- [Versions README](./README.md)
+- [CI Workflow](../../../.github/workflows/ci.yml)
+- [Pre-commit Config](../../../.pre-commit-config.yaml)

@@ -46,14 +46,14 @@
 docs/90.references/
 ├── agents/                              # Agent 관련 참고 자료
 ├── learning/                            # 학습 로드맵과 이론 연결 자료
-├── tech-stack-version-inventory.md      # repo-backed 버전 기준과 cloud snapshot
+├── versions/                            # repo-backed 버전 기준과 cloud snapshot
 └── README.md                            # This file
 ```
 
 ## How to Work in This Area
 
 1. 새 참고 자료가 정책/계약/절차를 정의하는지 확인한다. 그렇다면 `00.agent-governance`, `03.specs`, `05.operations/policies`, `05.operations/runbooks`로 라우팅한다.
-2. 버전 기준을 갱신할 때는 실제 manifest/config/example code와 [tech-stack-version-inventory.md](./tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
+2. 버전 기준을 갱신할 때는 실제 manifest/config/example code와 [tech-stack-version-inventory.md](./versions/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
 3. 외부 공식 기준은 확인일을 명시하고 링크를 남긴다.
 4. 새 파일을 만들 경우 [reference template](../99.templates/reference.template.md)을 사용하고 이 README 인덱스를 갱신한다.
 5. 모든 reference 문서는 `Reference Type`, `Authority Boundary`, `Review and Freshness`를 포함해야 한다.
@@ -73,7 +73,7 @@ docs/90.references/
 
 - `90.references`는 factual lookup과 dated snapshot의 SSoT다.
 - 제품 요구는 `01.requirements`, 아키텍처 요구/결정은 `02.architecture`, 구현 계약은 `03.specs`, 실행 계획/작업 증적은 `04.execution`, 운영 지식은 `05.operations`가 SSoT다.
-- `90.references/tech-stack-version-inventory.md`의 버전 값은 실제 repo manifest/config와 함께 유지될 때만 기준값으로 취급한다.
+- `90.references/versions/tech-stack-version-inventory.md`의 버전 값은 실제 repo manifest/config와 함께 유지될 때만 기준값으로 취급한다.
 - 외부 기준은 시간에 따라 바뀌므로 `Source checked`, `Last reviewed`, refresh trigger를 남긴다.
 
 ## Required Reference Format
@@ -94,7 +94,7 @@ docs/90.references/
 - [Docs README](../README.md)
 - [Agent Governance Hub](../00.agent-governance/README.md)
 - [Templates README](../99.templates/README.md)
-- [Tech Stack Version Inventory](./tech-stack-version-inventory.md)
+- [Tech Stack Version Inventory](./versions/tech-stack-version-inventory.md)
 
 ## 목적
 
@@ -124,12 +124,13 @@ docs/90.references/
 - `99.templates/`: Reference 문서 템플릿
 - `agents/`: Agent 관련 참고 자료
 - `learning/`: 학습 로드맵과 이론 연결 자료
+- `versions/`: 버전 계약과 외부 공식 지원 범위 snapshot
 
 ## 예시
 
 - Agent 관련 참고 자료는 `agents/` 하위에 둔다.
 - 학습 로드맵은 `learning/infrastructure-to-theory-roadmap.md`처럼 참고 자료로 둔다.
-- 버전 기준은 `tech-stack-version-inventory.md`에서 관리한다.
+- 버전 기준은 `versions/tech-stack-version-inventory.md`에서 관리한다.
 
 ## Agent 참고 문서 배치 규칙
 
@@ -141,9 +142,11 @@ docs/90.references/
 
 | 문서 | Reference Type | 역할 | Freshness 기준 |
 | --- | --- | --- | --- |
-| [tech-stack-version-inventory.md](./tech-stack-version-inventory.md) | version-contract-inventory / external-standard-snapshot | repo-backed 버전 기준과 cloud example snapshot | manifest/config/example version 변경 또는 외부 공식 지원 범위 변경 |
+| [versions/tech-stack-version-inventory.md](./versions/tech-stack-version-inventory.md) | version-contract-inventory / external-standard-snapshot | repo-backed 버전 기준과 cloud example snapshot | manifest/config/example version 변경 또는 외부 공식 지원 범위 변경 |
 | [learning/infrastructure-to-theory-roadmap.md](./learning/infrastructure-to-theory-roadmap.md) | learning-roadmap | 인프라 구현 경험과 CS/CE 이론 연결 | 학습 자료나 repo 구현 축이 크게 바뀔 때 |
 | [agents/README.md](./agents/README.md) | durable-concept index | Agent reference 하위 폴더의 범위와 라우팅 | Agent reference 문서 추가/이동 시 |
+| [learning/README.md](./learning/README.md) | learning-roadmap index | learning reference 하위 폴더의 범위와 라우팅 | learning reference 문서 추가/이동 시 |
+| [versions/README.md](./versions/README.md) | version-contract index | version reference 하위 폴더의 범위와 라우팅 | version reference 문서 추가/이동 시 |
 
 ## Templates
 

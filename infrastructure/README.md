@@ -62,7 +62,7 @@ infrastructure/
 - [Spec](../docs/03.specs/001-wsl-k3d-argocd-platform/spec.md)
 - [Runbook](../docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - [GitOps README](../gitops/README.md)
-- [Tech Stack Version Inventory](../docs/90.references/tech-stack-version-inventory.md)
+- [Tech Stack Version Inventory](../docs/90.references/versions/tech-stack-version-inventory.md)
 
 ## Bootstrap Note
 
