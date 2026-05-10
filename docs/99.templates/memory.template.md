@@ -1,5 +1,11 @@
 # Memory Template: \<short-title\>
 
+Use this template for standalone files under
+`docs/00.agent-governance/memory/`. When a standalone memory file is created or
+updated, append the related progress entry to
+`docs/00.agent-governance/memory/progress.md` using
+`docs/99.templates/progress.template.md` in the same change.
+
 - **Date**: YYYY-MM-DD
 - **Layer**: product | architecture | backend | frontend | infra | ops | security | qa | docs | meta
 - **Tags**: #incident #performance #tooling #governance
@@ -21,3 +27,7 @@ List concrete remediation steps and links to evidence.
 ## Prevention
 
 List enforceable checks or policy updates that prevent recurrence.
+
+## Related Progress
+
+- Progress entry: `docs/00.agent-governance/memory/progress.md#<entry-anchor>`

@@ -27,6 +27,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 
 - Plan and implement from repo evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
 - Record repo-changing work progress and reusable memory in `docs/00.agent-governance/memory/progress.md`.
+- Use `docs/99.templates/memory.template.md` for standalone files under `docs/00.agent-governance/memory/`, and update the related `progress.md` entry in the same change.
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
 - Keep infrastructure changes repo-backed; never mutate the live cluster directly unless a human explicitly approves an emergency path.
 - Do not write plaintext Kubernetes secrets.

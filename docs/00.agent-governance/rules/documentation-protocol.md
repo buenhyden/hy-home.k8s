@@ -28,6 +28,7 @@ This protocol defines how governance references authored docs and how language b
 - Persona and scope instructions must state which stage folders are authoritative.
 - Stage expectations must map to [stage-authoring-matrix.md](stage-authoring-matrix.md).
 - Repo-changing agent work must append progress and reusable memory to `docs/00.agent-governance/memory/progress.md` using `docs/99.templates/progress.template.md`.
+- Standalone files under `docs/00.agent-governance/memory/` must use `docs/99.templates/memory.template.md` and must be accompanied by a related `progress.md` entry in the same change.
 
 ## Template Link Policy
 
@@ -48,4 +49,6 @@ This protocol defines how governance references authored docs and how language b
 
 **R3 — Related Documents:** Every authored document must include a `## Related Documents` section with upstream links. A document without this section is **INCOMPLETE**.
 
-**HALT conditions:** Missing template read → HALT. README not updated → HALT. Related Documents section absent → HALT.
+**R4 — Memory Ledger Coupling:** Repo-changing work updates `memory/progress.md`. Standalone memory files use `memory.template.md` and link back to their related progress entry.
+
+**HALT conditions:** Missing template read → HALT. README not updated → HALT. Related Documents section absent → HALT. Memory entry without progress ledger update → HALT.

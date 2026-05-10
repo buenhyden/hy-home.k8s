@@ -34,10 +34,12 @@ Run this checklist before finalizing a response.
 - [ ] Staged and unstaged changes were reviewed for scope.
 - [ ] Unavailable tools, skipped live validation, or CI-only checks were stated.
 - [ ] `memory/progress.md` was updated with progress, reusable memory, evidence, and handoff for repo-changing work.
+- [ ] Standalone memory files, if any, used `docs/99.templates/memory.template.md` and link back to a related `progress.md` entry.
 
 ## 6. Docs 3 Rules Compliance
 
 - [ ] R1: Template read before document creation; `status: draft` set; k8s triggers respected (namespace→ARD, RBAC→ADR, prod→OPER first).
 - [ ] R2: Folder-level changes include README update in same PR.
 - [ ] R3: Every new authored document includes `## Related Documents` section.
+- [ ] R4: Memory ledger coupling is satisfied for repo-changing work and standalone memory files.
 - [ ] No HALT condition is unresolved before PR submission.

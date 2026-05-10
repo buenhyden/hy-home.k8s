@@ -37,6 +37,7 @@ This README is primarily for:
 ```text
 memory/
 ├── progress.md  # Agent progress and reusable memory ledger
+├── <topic>.md   # Optional standalone memory entry using memory.template.md
 └── README.md    # This file
 ```
 
@@ -51,6 +52,8 @@ memory/
 4. Link the entry to the affected spec, runbook, incident, or postmortem when
    useful.
 5. Keep policy changes in `../rules/` instead of relying on memory notes.
+6. When a standalone memory file is added or updated, append a matching
+   progress entry to `progress.md` in the same change.
 
 ## Related References
 
@@ -76,3 +79,8 @@ memory/
 
 Use `docs/99.templates/progress.template.md` for `progress.md` entries and keep
 each item scoped to one workstream.
+
+Standalone files under this folder must use
+`docs/99.templates/memory.template.md`. They are supporting context only and
+must include a `Related Progress` section that points back to the matching
+`progress.md` work entry.

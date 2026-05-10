@@ -37,3 +37,4 @@ Run this checklist before making substantial edits.
 - [ ] Evidence requirements for completion are defined.
 - [ ] Unavailable local tools and expected validation limitations are identified.
 - [ ] A `memory/progress.md` update is planned for repo-changing work.
+- [ ] If a standalone memory file will be created or updated, `docs/99.templates/memory.template.md` has been read and a matching `progress.md` entry is planned.

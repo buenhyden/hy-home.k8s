@@ -1,5 +1,8 @@
 # Progress Entry Template: \<workstream-title\>
 
+Append this entry under `## Work Entries` in
+`docs/00.agent-governance/memory/progress.md` for repo-changing agent work.
+
 - **Date**: YYYY-MM-DD
 - **Layer**: product | architecture | backend | frontend | infra | ops | security | qa | docs | meta
 - **Status**: in-progress | complete | blocked

@@ -715,6 +715,56 @@ for phrase in [
     if phrase not in memory_progress_text:
         fail(f"{rel(memory_progress_path)} missing historical/current-source phrase: {phrase}")
 
+memory_dir = root / "docs/00.agent-governance/memory"
+memory_template_path = root / "docs/99.templates/memory.template.md"
+progress_template_path = root / "docs/99.templates/progress.template.md"
+for path in [memory_dir / "README.md", memory_progress_path, memory_template_path, progress_template_path]:
+    if not path.exists():
+        fail(f"required memory contract file is missing: {rel(path)}")
+
+memory_readme_text = read_text(memory_dir / "README.md")
+for phrase in [
+    "docs/99.templates/memory.template.md",
+    "docs/99.templates/progress.template.md",
+    "Standalone files under this folder must use",
+    "Related Progress",
+    "`progress.md` work entry",
+]:
+    if phrase not in memory_readme_text:
+        fail(f"{rel(memory_dir / 'README.md')} missing memory contract phrase: {phrase}")
+
+for phrase in [
+    "docs/00.agent-governance/memory/progress.md",
+    "docs/99.templates/progress.template.md",
+    "## Related Progress",
+]:
+    if phrase not in read_text(memory_template_path):
+        fail(f"{rel(memory_template_path)} missing standalone memory template phrase: {phrase}")
+
+for phrase in [
+    "docs/00.agent-governance/memory/progress.md",
+    "## Work Entries",
+]:
+    if phrase not in read_text(progress_template_path):
+        fail(f"{rel(progress_template_path)} missing progress template phrase: {phrase}")
+
+for phrase in ["memory.template.md", "progress.template.md", "00.agent-governance/memory/"]:
+    if phrase not in template_readme:
+        fail(f"{rel(root / 'docs/99.templates/README.md')} missing memory template inventory phrase: {phrase}")
+
+standalone_memory_required_headings = required_headings_from_template("memory.template.md")
+for memory_file in sorted(memory_dir.glob("*.md")):
+    if memory_file.name in {"README.md", "progress.md"}:
+        continue
+    document_headings = {
+        line.strip()
+        for line in read_text(memory_file).splitlines()
+        if line.startswith("## ")
+    }
+    for heading in standalone_memory_required_headings:
+        if heading not in document_headings:
+            fail(f"{rel(memory_file)} missing required template heading from memory.template.md: {heading}")
+
 workflow_paths = sorted((root / ".github").glob("**/*.yml")) + sorted((root / ".github").glob("**/*.yaml"))
 for workflow in workflow_paths:
     try:

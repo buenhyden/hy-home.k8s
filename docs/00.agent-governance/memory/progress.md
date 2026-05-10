@@ -123,6 +123,42 @@ inventory stays in `scripts/README.md`.
 
 - None.
 
+### 2026-05-10 — Memory template and progress ledger enforcement
+
+- **Date**: 2026-05-10
+- **Layer**: meta
+- **Status**: complete
+- **Tags**: #governance #memory #templates
+
+#### Progress
+
+- Strengthened `docs/00.agent-governance/memory/README.md` so agents must use
+  `docs/99.templates/progress.template.md` for `progress.md` updates and
+  `docs/99.templates/memory.template.md` for standalone memory files.
+- Updated bootstrap, documentation protocol, preflight, postflight, and the
+  local runtime baseline so repo-changing agent work plans and records
+  `memory/progress.md` updates.
+- Added repo-quality gate checks for the memory template inventory, standalone
+  memory file template headings, and progress-ledger coupling.
+
+#### Memory
+
+- `docs/00.agent-governance/memory/progress.md` is the mandatory progress
+  ledger for repo-changing agent work.
+- Standalone files under `docs/00.agent-governance/memory/` must use
+  `docs/99.templates/memory.template.md` and include a `Related Progress`
+  section.
+- Standalone memory file changes must be accompanied by a related
+  `progress.md` entry in the same change.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+
+#### Handoff
+
+- None.
+
 ## Historical Entries
 
 ### Harness Implementation Progress
