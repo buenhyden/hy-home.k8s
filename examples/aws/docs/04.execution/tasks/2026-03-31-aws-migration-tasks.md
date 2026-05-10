@@ -13,7 +13,7 @@
 
 | Task ID | Description | Type | Parent Spec Section | Parent Plan Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| TSK-AWS-001 | AWS VPC 및 서브넷 구조 생성 (Terraform) | impl | Network Contract | Phase 1 | `terraform apply` log | DevOps | Todo |
+| TSK-AWS-001 | AWS VPC 및 서브넷 구조 생성 (Terraform) | impl | Network Contract | Phase 1 | `terraform plan` log | DevOps | Todo |
 | TSK-AWS-002 | EKS 클러스터 및 IAM Role 생성 | impl | Compute Contract | Phase 1 | `aws eks list-clusters` | DevOps | Todo |
 | TSK-AWS-003 | Karpenter v1.0+ 설치 및 설정 | impl | Compute Contract | Phase 2 | `kubectl get pods -n karpenter` | Platform | Todo |
 | TSK-AWS-004 | RDS Aurora Serverless v2 생성 | impl | Storage Strategy | Phase 3 | AWS Console / CLI check | DB Admin | Todo |

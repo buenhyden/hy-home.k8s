@@ -54,8 +54,9 @@
 
 ```bash
 # EKS 클러스터 접속 확인
-aws eks update-kubeconfig --name hyhome-cluster --region ap-northeast-2
-kubectl get nodes
+TMP_KUBECONFIG="$(mktemp)"
+aws eks update-kubeconfig --name hyhome-cluster --region ap-northeast-2 --kubeconfig "$TMP_KUBECONFIG"
+KUBECONFIG="$TMP_KUBECONFIG" kubectl get nodes
 
 # Managed Service 엔드포인트 도달 확인
 nc -zv <rds-endpoint> 5432

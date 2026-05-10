@@ -16,7 +16,7 @@
 
 ## Purpose
 
-이 가이드는 Bicep을 이용한 인프라 프로비저닝부터 AKS 클러스터 접근 설정, 그리고 첫 번째 워크로드 배포 확인까지의 과정을 안내한다.
+이 가이드는 Bicep 기반 인프라 정의를 검토하고 AKS 클러스터 접근과 워크로드 연동 상태를 확인하는 reference-only 절차를 안내한다.
 
 ## Prerequisites
 
@@ -29,14 +29,11 @@
 
 ### 1. Bicep 인프라 배포
 
-리소스 그룹을 생성하고 제공된 Bicep 템플릿을 사용하여 인프라를 프로비저닝한다.
+리소스 그룹과 제공된 Bicep 템플릿의 변경 내용을 배포 전 검토한다. 실제 배포는 operator-approved change로 별도 실행한다.
 
 ```bash
-# 리소스 그룹 생성
-az group create --name rg-hyhome-prod --location koreacentral
-
-# Bicep 배포 (adminObjectId는 본인의 Entra ID 객체 ID 입력)
-az deployment group create \
+# reference-only Azure sandbox; no live resource mutation
+az deployment group what-if \
   --resource-group rg-hyhome-prod \
   --template-file infrastructure/main.bicep \
   --parameters adminName=admin@example.com adminObjectId=0000-0000-0000-0000
@@ -44,32 +41,32 @@ az deployment group create \
 
 ### 2. AKS 클러스터 자격 증명 획득
 
-배포된 클러스터에 접근하기 위해 `kubeconfig`를 업데이트한다.
+배포된 클러스터 접근은 기본 kubeconfig를 변경하지 않는 임시 파일로 확인한다.
 
 ```bash
-az aks get-credentials --resource-group rg-hyhome-prod --name hyhome-aks
+TMP_KUBECONFIG="$(mktemp)"
+az aks get-credentials --resource-group rg-hyhome-prod --name hyhome-aks --file "$TMP_KUBECONFIG" --overwrite-existing
+KUBECONFIG="$TMP_KUBECONFIG" kubectl get nodes
 ```
 
 ### 3. ALB Controller (AGC) 설치
 
-Azure Application Gateway for Containers를 제어하기 위한 컨트롤러를 클러스터에 설치한다.
+Azure Application Gateway for Containers 컨트롤러 매니페스트를 배포 전 렌더링한다.
 
 ```bash
-# Helm을 통한 설치 (사전 정의된 가이드 준수)
-helm install alb-controller oci://mcr.microsoft.com/azure-alb/charts/alb-controller \
+helm template alb-controller oci://mcr.microsoft.com/azure-alb/charts/alb-controller \
   --version 1.0.0 \
-  --set albId=$ALB_ID
+  --set albId=$ALB_ID > /tmp/alb-controller.rendered.yaml
 ```
 
 ### 4. Workload Identity 및 Secret 연동 확인
 
-애플리케이션이 Key Vault 시크릿을 정상적으로 가져오는지 테스트한다.
+애플리케이션이 Key Vault 시크릿을 정상적으로 가져오는지 secret value를 출력하지 않는 상태 점검으로 확인한다.
 
 ```bash
-# reference-only Azure sandbox; operator-approved bootstrap only
-kubectl apply -f kubernetes/manifests/workload-identity.yaml
-kubectl apply -f kubernetes/manifests/external-secrets-azure.yaml
-kubectl get secret db-credentials -o yaml
+kubectl diff -f kubernetes/manifests/workload-identity.yaml
+kubectl diff -f kubernetes/manifests/external-secrets-azure.yaml
+kubectl get externalsecret db-credentials -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}'
 ```
 
 ## Common Pitfalls

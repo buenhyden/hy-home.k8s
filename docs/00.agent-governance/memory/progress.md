@@ -8,6 +8,104 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-10 — Runtime wiki-curator and generated LLM Wiki index
+
+- **Date**: 2026-05-10
+- **Layer**: docs
+- **Status**: complete
+- **Tags**: #governance #runtime #references #quality-gates
+
+#### Progress
+
+- Added `wiki-curator` as a real local worker agent under `.claude/agents/`
+  with a matching `.codex/agents/` mirror and docs scope import.
+- Updated the local harness catalog, runtime baseline, document routing, and
+  Claude permission allowlist so LLM Wiki curation is a cataloged runtime
+  surface with `sonnet` model allocation.
+- Added `scripts/generate-llm-wiki-index.sh` and generated
+  `docs/90.references/llm-wiki/wiki-index.md` as a Markdown-only canonical
+  owner link map.
+- Added `docs/05.operations/guides/0009-llm-wiki-curation-guide.md` and updated
+  related README indexes for scripts, guides, docs, and references.
+- Extended `scripts/validate-repo-quality-gates.sh` to check generated index
+  freshness and block runtime/cache/vector/static-site artifacts under
+  `docs/90.references/llm-wiki/`.
+
+#### Memory
+
+- `wiki-curator` is a real `.claude`/`.codex` worker agent in this repo, not
+  only a documented responsibility.
+- LLM Wiki remains a generated Markdown discovery layer; policy and procedure
+  changes must still go to canonical owners.
+- `docs/90.references/llm-wiki/wiki-index.md` should be regenerated through
+  `scripts/generate-llm-wiki-index.sh`, not edited by hand.
+
+#### Evidence
+
+- `bash scripts/generate-llm-wiki-index.sh` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS with optional
+  `kube-linter` skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash -n scripts/*.sh .claude/hooks/*.sh` PASS.
+- `git diff --check` PASS.
+
+#### Handoff
+
+- None.
+
+### 2026-05-10 — Examples docs and LLM WIKI reference guardrails
+
+- **Date**: 2026-05-10
+- **Layer**: docs
+- **Status**: complete
+- **Tags**: #examples #references #quality-gates #secret-handling
+
+#### Progress
+
+- Aligned AWS and Azure example documentation with the canonical in-place
+  taxonomy under `01.requirements`, `02.architecture`, `03.specs`,
+  `04.execution`, and `05.operations`.
+- Added `docs/90.references/llm-wiki/README.md` as a repo-local,
+  reference-only LLM-readable link map. It does not define policy, create a
+  static wiki site, or introduce a retrieval/vector runtime.
+- Extended `scripts/validate-repo-quality-gates.sh` to validate example
+  Markdown links, block legacy stage references, reject file-scheme and local
+  absolute paths, enforce LLM WIKI reference-only boundaries, and scan examples
+  for unmarked risky command patterns.
+- Updated `scripts/check-secret-handling.sh` so findings print
+  `path:line kind=<kind> key=<key> value=<redacted>` instead of raw matched
+  lines or secret-like values.
+
+#### Memory
+
+- Cloud example docs remain dated reference-only material, not live deployment
+  instructions.
+- LLM WIKI in this repo means a Markdown link map and ownership index only.
+- Example command snippets that mention kubeconfig mutation must use an
+  explicit temporary kubeconfig file marker such as `--file` or `--kubeconfig`.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS with optional
+  `kube-linter` skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+- `git diff --check` PASS.
+- Targeted example taxonomy and stale-reference scans returned no active drift.
+- Fake plaintext-secret fixture failed as expected and printed
+  `value=<redacted>` without echoing the fixture value.
+
+#### Handoff
+
+- None.
+
 ### 2026-05-10 — Docs taxonomy and progress memory contract
 
 - **Date**: 2026-05-10

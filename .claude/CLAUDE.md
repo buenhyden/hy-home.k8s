@@ -29,6 +29,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Record repo-changing work progress and reusable memory in `docs/00.agent-governance/memory/progress.md`.
 - Use `docs/99.templates/memory.template.md` for standalone files under `docs/00.agent-governance/memory/`, and update the related `progress.md` entry in the same change.
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
+- Treat `docs/90.references/llm-wiki/wiki-index.md` as generated Markdown maintained by `scripts/generate-llm-wiki-index.sh`; route policy and procedure changes to canonical owner files.
 - Keep infrastructure changes repo-backed; never mutate the live cluster directly unless a human explicitly approves an emergency path.
 - Do not write plaintext Kubernetes secrets.
 - Treat `.codex/agents/*.toml` as Codex mirrors of `.claude/agents/*.md`; keep both sides aligned.
@@ -47,7 +48,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 ## Model Hierarchy
 
 - `supervisor.md` uses `opus`
-- All worker agents use `sonnet`
+- All worker agents, including `wiki-curator.md`, use `sonnet`
 
 ## Relationship to Gateway Files
 

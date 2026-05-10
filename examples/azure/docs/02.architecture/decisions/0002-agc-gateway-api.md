@@ -44,4 +44,4 @@
 
 - **AARD**: [../02.architecture/requirements/0001-azure-migration-architecture.md](../requirements/0001-azure-migration-architecture.md)
 - **ADR**: [./0001-cni-overlay.md](0001-cni-overlay.md)
-- **Spec**: [../03.specs/azure-migration-spec.md](../../03.specs/azure-migration-spec.md)
+- **Spec**: [../03.specs/azure-migration/spec.md](../../03.specs/azure-migration/spec.md)

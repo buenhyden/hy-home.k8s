@@ -12,7 +12,7 @@
 | **02** | Azure 리소스 그룹(`rg-hyhome`) 생성 | [ ] | 2026-03-31 | - |
 | **03** | `main.bicep`을 통한 리소스 배포(`What-If` 포함) | [ ] | 2026-03-31 | - |
 | **04** | AKS 노드 풀 생성 성공 여부 확인 | [ ] | 2026-03-31 | - |
-| **05** | `az aks get-credentials`를 이용한 context 병합 | [ ] | 2026-03-31 | - |
+| **05** | `az aks get-credentials --file`을 이용한 임시 kubeconfig 검증 | [ ] | 2026-03-31 | - |
 
 ## Performance & Quality Expectations
 

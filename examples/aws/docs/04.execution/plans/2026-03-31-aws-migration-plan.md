@@ -22,10 +22,10 @@
 
 | Task | Description | Files / Docs Affected | Target REQ | Validation Criteria |
 | --- | --- | --- | --- | --- |
-| PLN-001 | AWS 기반 설계 문서화 | [architecture.md](../../architecture.md) | REQ-PRD-FUN-01 | 문서 승인 완료 |
-| PLN-002 | Terraform IaC 작성 | [main.tf](../../terraform/main.tf) | REQ-PRD-FUN-02 | `terraform validate` 패스 |
+| PLN-001 | AWS 기반 설계 문서화 | [aws-cloud-architecture.md](../../02.architecture/requirements/aws-cloud-architecture.md) | REQ-PRD-FUN-01 | 문서 승인 완료 |
+| PLN-002 | Terraform IaC 작성 | [main.tf](../../../terraform/main.tf) | REQ-PRD-FUN-02 | `terraform validate` 패스 |
 | PLN-003 | EKS 클러스터 프로비저닝 | - | REQ-PRD-FUN-03 | `kubectl get nodes` 확인 |
-| PLN-004 | 서비스 연동 매니페스트 배포 | [external-services-aws.yaml](../../kubernetes/external-services-aws.yaml) | REQ-PRD-FUN-04 | 서비스 엔드포인트 확인 |
+| PLN-004 | 서비스 연동 매니페스트 배포 | [external-services-aws.yaml](../../../kubernetes/external-services-aws.yaml) | REQ-PRD-FUN-04 | 서비스 엔드포인트 확인 |
 
 ## Verification Plan
 

@@ -8,7 +8,7 @@
 `docs/`는 `hy-home.k8s`의 요구사항, 아키텍처, 결정, 명세, 실행 계획, 작업 증적, 운영 절차, 사고 기록, 참조 자료, 템플릿을 연결하는 문서 SSoT다. 단순 기록 저장소가 아니라 k3d/GitOps 홈랩을 사람이 운영하고 AI Agent가 안전하게 협업하기 위한 추적 가능한 작업 체계다.
 
 문서는 Spec-First 흐름을 따른다. 기획의 맥락은 설계와 결정으로 이어지고, 상세 명세와 실행 계획을 거쳐 작업 증적, 운영 지침, 런북, 사고 기록으로 연결된다.
-AWS/Azure 예시와 외부 기술 버전 기준처럼 빠르게 변할 수 있는 참조값은 [90.references](./90.references/README.md)와 [tech-stack-version-inventory.md](./90.references/versions/tech-stack-version-inventory.md)에 스냅샷 기준일과 함께 기록한다.
+AWS/Azure 예시와 외부 기술 버전 기준처럼 빠르게 변할 수 있는 참조값은 [90.references](./90.references/README.md)와 [tech-stack-version-inventory.md](./90.references/versions/tech-stack-version-inventory.md)에 스냅샷 기준일과 함께 기록한다. LLM-readable 탐색용 링크맵은 [LLM WIKI Reference Index](./90.references/llm-wiki/README.md)와 [generated wiki index](./90.references/llm-wiki/wiki-index.md)를 사용하되, 정책과 절차의 정본은 각 canonical stage에 둔다.
 
 ## Audience
 
@@ -112,3 +112,5 @@ docs/
 - [Scripts README](../scripts/README.md)
 - [Traefik README](../traefik/README.md)
 - [Tech Stack Version Inventory](./90.references/versions/tech-stack-version-inventory.md)
+- [LLM WIKI Reference Index](./90.references/llm-wiki/README.md)
+- [Generated LLM WIKI Index](./90.references/llm-wiki/wiki-index.md)

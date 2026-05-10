@@ -24,12 +24,14 @@ az account set --subscription <YOUR_SUBSCRIPTION_ID>
 ### 2. Get AKS Credentials
 
 ```bash
-az aks get-credentials --resource-group hy-home-rg --name hy-home-aks
+TMP_KUBECONFIG="$(mktemp)"
+az aks get-credentials --resource-group hy-home-rg --name hy-home-aks --file "$TMP_KUBECONFIG" --overwrite-existing
+KUBECONFIG="$TMP_KUBECONFIG" kubectl get nodes
 ```
 
 ### 3. Workload Identity Integration
 
-- 모든 애플리케이션 Pod은 `azure.workload.identity/use: "true"` 라벨을 포함해야 하며, 지정된 `ServiceAccount`를 사용하여 패워드 없이 Azure 리소스에 접근한다.
+- 모든 애플리케이션 Pod은 `azure.workload.identity/use: "true"` 라벨을 포함해야 하며, 지정된 `ServiceAccount`를 사용하여 패스워드 없이 Azure 리소스에 접근한다.
 
 ## Secret Management (Secret Store CSI)
 

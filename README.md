@@ -186,6 +186,7 @@ cd hy-home.k8s
 repo-backed 정적 검증을 로컬에서 확인할 때는 아래 순서로 실행한다. 이 묶음은 CI의 `repo-quality-static`, `manifest-static`, `shell-static` 책임과 맞춰져 있다.
 
 ```bash
+bash scripts/generate-llm-wiki-index.sh --check
 bash scripts/validate-repo-quality-gates.sh .
 bash infrastructure/tests/verify-contracts-static.sh
 bash scripts/validate-gitops-structure.sh
@@ -194,6 +195,6 @@ bash scripts/check-secret-handling.sh .
 find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +
 ```
 
-`validate-repo-quality-gates.sh`는 authored docs에서 bare/main direct push 예시와 PR-flow 문맥 없는 push 예시 회귀를 차단하고, README/examples 등 broader Markdown roots에서는 bare/main direct push 예시를 차단한다. `pre-commit`, `kube-linter`, `zizmor`, `actionlint`, `shellcheck`는 로컬에 있으면 사용한다. 로컬 `PATH`에 없을 때는 위의 repo-backed 검증을 먼저 실행하고, 전체 hook/tool matrix는 GitHub Actions에서 확인한다.
+`validate-repo-quality-gates.sh`는 authored docs에서 bare/main direct push 예시와 PR-flow 문맥 없는 push 예시 회귀를 차단하고, README/examples 등 broader Markdown roots에서는 bare/main direct push 예시를 차단한다. 또한 `generate-llm-wiki-index.sh --check`로 LLM WIKI generated index freshness를 확인한다. `pre-commit`, `kube-linter`, `zizmor`, `actionlint`, `shellcheck`는 로컬에 있으면 사용한다. 로컬 `PATH`에 없을 때는 위의 repo-backed 검증을 먼저 실행하고, 전체 hook/tool matrix는 GitHub Actions에서 확인한다.
 
 Cloud 예시의 버전 기준은 [Tech Stack Version Inventory](./docs/90.references/versions/tech-stack-version-inventory.md)에 기록한다. 2026-03-24 이후 Ingress NGINX는 upstream retired 상태이므로 로컬 k3d 계약은 유지하되, AWS/Azure target은 ALB/Gateway API/AGC 계열로 분리한다.

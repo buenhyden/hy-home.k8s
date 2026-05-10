@@ -256,6 +256,41 @@ for name in sorted(actual_docs - allowed_top_level_docs):
 for name in sorted(allowed_top_level_docs - actual_docs):
     fail(f"required docs top-level folder is missing: docs/{name}")
 
+example_docs_required = {
+    "01.requirements",
+    "02.architecture",
+    "02.architecture/requirements",
+    "02.architecture/decisions",
+    "03.specs",
+    "04.execution",
+    "04.execution/plans",
+    "04.execution/tasks",
+    "05.operations",
+    "05.operations/guides",
+    "05.operations/policies",
+    "05.operations/runbooks",
+}
+example_docs_allowed_top_level = {
+    "01.requirements",
+    "02.architecture",
+    "03.specs",
+    "04.execution",
+    "05.operations",
+}
+for provider in ["aws", "azure"]:
+    example_docs = root / "examples" / provider / "docs"
+    if not example_docs.exists():
+        fail(f"example docs root is missing: {rel(example_docs)}")
+        continue
+    actual_example_top_level = {path.name for path in example_docs.iterdir() if path.is_dir()}
+    for name in sorted(actual_example_top_level & old_top_level_docs):
+        fail(f"old example docs stage folder must not exist after hard migration: {rel(example_docs / name)}")
+    for name in sorted(actual_example_top_level - example_docs_allowed_top_level):
+        fail(f"example docs top-level folder is not allowed: {rel(example_docs / name)}")
+    for name in sorted(example_docs_required):
+        if not (example_docs / name).is_dir():
+            fail(f"required example docs taxonomy folder is missing: {rel(example_docs / name)}")
+
 readme_base_sections = {
     "Overview": re.compile(r"^##\s+Overview\b", re.MULTILINE),
     "Audience": re.compile(r"^##\s+Audience\b", re.MULTILINE),
@@ -314,6 +349,7 @@ markdown_link_roots = [
     root / "gitops",
     root / "traefik",
     root / "tests",
+    root / "examples",
 ]
 seen_markdown_link_paths: set[pathlib.Path] = set()
 for scan_root in markdown_link_roots:
@@ -321,12 +357,15 @@ for scan_root in markdown_link_roots:
     for markdown in sorted(candidates):
         if not markdown.is_file() or markdown in seen_markdown_link_paths:
             continue
-        if ".git" in markdown.parts or ".agents" in markdown.parts or "examples" in markdown.parts:
+        if ".git" in markdown.parts or ".agents" in markdown.parts:
             continue
         seen_markdown_link_paths.add(markdown)
         for raw_target in iter_markdown_link_targets(read_text(markdown)):
             target = normalize_markdown_target(raw_target)
             if not target or target.startswith("#"):
+                continue
+            if target.startswith("file://"):
+                fail(f"{rel(markdown)} uses file:// Markdown link target: {target}")
                 continue
             if re.match(r"^[A-Za-z][A-Za-z0-9+.-]*:", target):
                 continue
@@ -405,6 +444,95 @@ for glob_pattern, template_name in required_stage_templates:
             if heading not in document_headings:
                 fail(f"{rel(path)} missing required template heading from {template_name}: {heading}")
 
+llm_wiki_dir = root / "docs/90.references/llm-wiki"
+llm_wiki_readme = llm_wiki_dir / "README.md"
+llm_wiki_index = llm_wiki_dir / "wiki-index.md"
+llm_wiki_generator = root / "scripts/generate-llm-wiki-index.sh"
+if not llm_wiki_readme.exists():
+    fail(f"LLM WIKI reference index is missing: {rel(llm_wiki_readme)}")
+else:
+    llm_wiki_text = read_text(llm_wiki_readme)
+    for phrase in [
+        "reference-only",
+        "link map",
+        "not a runtime surface",
+        "not a static wiki site",
+        "not a vector store",
+        "not a retrieval service",
+        "generated Markdown",
+        "scripts/generate-llm-wiki-index.sh",
+        "wiki-index.md",
+        "does not define policy",
+        "canonical owner",
+    ]:
+        if phrase not in llm_wiki_text:
+            fail(f"{rel(llm_wiki_readme)} missing LLM WIKI reference-only boundary phrase: {phrase}")
+if not llm_wiki_index.exists():
+    fail(f"generated LLM WIKI index is missing: {rel(llm_wiki_index)}")
+if not llm_wiki_generator.exists():
+    fail(f"LLM WIKI generator is missing: {rel(llm_wiki_generator)}")
+else:
+    generator_check = subprocess.run(
+        ["bash", str(llm_wiki_generator), "--check"],
+        cwd=root,
+        text=True,
+        capture_output=True,
+    )
+    if generator_check.returncode != 0:
+        detail = "\n".join(
+            item
+            for item in [generator_check.stdout.strip(), generator_check.stderr.strip()]
+            if item
+        )
+        fail(f"generated LLM WIKI index is stale; run bash scripts/generate-llm-wiki-index.sh\n{detail}")
+if llm_wiki_dir.exists():
+    disallowed_llm_wiki_suffixes = {
+        ".db",
+        ".sqlite",
+        ".sqlite3",
+        ".faiss",
+        ".npy",
+        ".npz",
+        ".parquet",
+        ".lock",
+    }
+    disallowed_llm_wiki_names = {
+        "package.json",
+        "package-lock.json",
+        "pnpm-lock.yaml",
+        "yarn.lock",
+        "poetry.lock",
+        "uv.lock",
+        "requirements.txt",
+        "pyproject.toml",
+        "Cargo.toml",
+        "go.mod",
+    }
+    disallowed_llm_wiki_path_names = {
+        ".cache",
+        ".venv",
+        "__pycache__",
+        "cache",
+        "dist",
+        "embeddings",
+        "node_modules",
+        "runtime",
+        "site",
+        "vector",
+        "vectors",
+        "venv",
+    }
+    for path in sorted(llm_wiki_dir.rglob("*")):
+        relative_parts = set(path.relative_to(llm_wiki_dir).parts)
+        if relative_parts & disallowed_llm_wiki_path_names:
+            fail(f"LLM WIKI must not contain generated runtime/cache/vector/static-site paths: {rel(path)}")
+        if path.is_dir():
+            continue
+        if path.suffix in disallowed_llm_wiki_suffixes or path.name in disallowed_llm_wiki_names:
+            fail(f"LLM WIKI must remain a reference-only index, not a generated/runtime store: {rel(path)}")
+        if path.suffix != ".md":
+            fail(f"LLM WIKI may only contain Markdown reference files: {rel(path)}")
+
 legacy_postmortems = "11" + ".postmortems"
 legacy_learning = "50" + ".Learning"
 legacy_stage_range = "00" + "~" + "11"
@@ -425,6 +553,8 @@ legacy_dashboard_namespace_text = "kubernetes-dashboard " + "namespace"
 legacy_docs_traefik = "docs/" + "traefik"
 stale_patterns = [
     *old_docs_path_refs,
+    "file://",
+    str(root),
     "docs/" + legacy_postmortems,
     "docs/" + legacy_learning,
     legacy_postmortems,
@@ -459,6 +589,7 @@ scan_roots = [
     root / "scripts",
     root / "infrastructure",
     root / "gitops",
+    root / "examples",
 ]
 for scan_root in scan_roots:
     candidates = [scan_root] if scan_root.is_file() else scan_root.rglob("*")
@@ -518,22 +649,53 @@ command_boundary_rules = [
     (
         "kubectl apply/patch",
         re.compile(r"\bkubectl\b.*\b(?:apply|patch)\b"),
-        ["human-approved", "break-glass", "bootstrap-only", "bootstrap only", "operator-approved"],
+        ["human-approved", "break-glass", "bootstrap-only", "bootstrap only", "operator-approved", "dry-run"],
+    ),
+    (
+        "kubectl get secret yaml/json",
+        re.compile(r"\bkubectl\s+get\s+secret\b.*\b-o\s+(?:yaml|json)\b"),
+        ["metadata-only", "status-only", "jsonpath", "no secret value", "redacted"],
     ),
     (
         "argocd app sync",
         re.compile(r"\bargocd\s+app\s+sync\b"),
-        ["operator-triggered reconciliation"],
+        ["operator-triggered reconciliation", "operator-approved", "break-glass"],
     ),
     (
         "vault kv put",
         re.compile(r"\bvault\s+kv\s+put\b"),
         ["external secret operation", "human-approved"],
     ),
+    (
+        "terraform apply/destroy",
+        re.compile(r"\bterraform\s+(?:apply|destroy)\b"),
+        ["operator-approved", "break-glass", "human-approved", "approved DR change"],
+    ),
+    (
+        "helm install/upgrade",
+        re.compile(r"\bhelm\s+(?:install|upgrade)\b"),
+        ["operator-approved", "break-glass", "human-approved"],
+    ),
+    (
+        "az deployment group create",
+        re.compile(r"\baz\s+deployment\s+group\s+create\b"),
+        ["operator-approved", "break-glass", "human-approved"],
+    ),
+    (
+        "kubeconfig mutation",
+        re.compile(r"\b(?:aws\s+eks\s+update-kubeconfig|az\s+aks\s+get-credentials|kubectl\s+config)\b"),
+        ["--kubeconfig", "--file", "temporary kubeconfig", "임시 kubeconfig"],
+    ),
 ]
 
-for docs_root in authored_command_roots:
-    for path in sorted(docs_root.rglob("*.md")):
+command_boundary_roots = authored_command_roots + [root / "examples"]
+for command_root in command_boundary_roots:
+    candidates = command_root.rglob("*") if command_root == root / "examples" else command_root.rglob("*.md")
+    for path in sorted(candidates):
+        if not path.is_file():
+            continue
+        if command_root == root / "examples" and path.suffix not in {".md", ".yaml", ".yml", ".sh", ".tf", ".bicep"}:
+            continue
         lines = read_text(path).splitlines()
         for index, line in enumerate(lines):
             stripped = line.strip()
@@ -643,7 +805,7 @@ for phrase in [
     "not a permission gate equivalent",
     ".claude/settings.json",
     ".codex/hooks.json",
-    "no current readiness gap",
+    "Runtime surface added for LLM Wiki curation",
     "## Matrix Status Contract",
     "`Ready`, `Partial`, and `Missing`",
     "A `Ready` row is not semantic proof",
@@ -671,6 +833,7 @@ for phrase in [
     "risky command examples",
     "Validation before completion",
     "Postflight and handoff",
+    "LLM Wiki curation",
 ]:
     if phrase not in harness_catalog_text:
         fail(f"{rel(harness_catalog_path)} missing component audit matrix entry: {phrase}")

@@ -13,9 +13,9 @@
 
 ## Related Inputs
 
-- **PARD**: [../../01.requirements/2026-03-31-azure-migration-prd.md](../../01.requirements/2026-03-31-azure-migration-prd.md)
-- **AARD**: [../../02.architecture/requirements/2026-03-31-azure-migration-ard.md](../../02.architecture/requirements/2026-03-31-azure-migration-ard.md)
-- **Related ADRs**: [../../02.architecture/decisions/2026-03-31-adr-agc-selection.md](../../02.architecture/decisions/2026-03-31-adr-agc-selection.md)
+- **PARD**: [../01.requirements/2026-03-31-azure-migration-prd.md](../01.requirements/2026-03-31-azure-migration-prd.md)
+- **AARD**: [../02.architecture/requirements/2026-03-31-azure-migration-ard.md](../02.architecture/requirements/2026-03-31-azure-migration-ard.md)
+- **Related ADRs**: [../02.architecture/decisions/2026-03-31-adr-agc-selection.md](../02.architecture/decisions/2026-03-31-adr-agc-selection.md)
 
 ## Contracts
 
@@ -75,6 +75,6 @@ kubectl get pods -n azure-alb-system
 
 ## Related Documents
 
-- **Plan**: [../../04.execution/plans/2026-03-31-migration-strategy.md](../../04.execution/plans/2026-03-31-migration-strategy.md)
-- **Tasks**: [../../04.execution/tasks/2026-03-31-migration-tasks.md](../../04.execution/tasks/2026-03-31-migration-tasks.md)
-- **Runbook**: [../../05.operations/runbooks/2026-03-31-fault-tolerance-runbook.md](../../05.operations/runbooks/2026-03-31-fault-tolerance-runbook.md)
+- **Plan**: [../04.execution/plans/2026-03-31-migration-strategy.md](../04.execution/plans/2026-03-31-migration-strategy.md)
+- **Tasks**: [../04.execution/tasks/2026-03-31-migration-tasks.md](../04.execution/tasks/2026-03-31-migration-tasks.md)
+- **Runbook**: [../05.operations/runbooks/2026-03-31-fault-tolerance-runbook.md](../05.operations/runbooks/2026-03-31-fault-tolerance-runbook.md)

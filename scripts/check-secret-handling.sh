@@ -63,16 +63,28 @@ FOUND=0
 for pat in "${DANGEROUS_PATTERNS[@]}"; do
   while IFS= read -r match; do
     # Skip ExternalSecret, SealedSecret, and comment lines
-    FILE=$(echo "$match" | cut -d: -f1)
+    FILE="${match%%:*}"
+    REST="${match#*:}"
+    LINE_NO="${REST%%:*}"
+    MATCH_TEXT="${REST#*:}"
+    TRIMMED="${MATCH_TEXT#"${MATCH_TEXT%%[![:space:]]*}"}"
+    if [[ "$TRIMMED" == \#* ]]; then
+      continue
+    fi
     KIND=$(python3 -c 'import sys, yaml
 docs = [d for d in yaml.safe_load_all(open(sys.argv[1])) if isinstance(d, dict)]
 print(docs[0].get("kind", "") if docs else "")' "$FILE" 2>/dev/null || echo "")
     if [[ "$KIND" =~ ^(ExternalSecret|SealedSecret|SecretStore|ClusterSecretStore)$ ]]; then
       continue
     fi
-    echo "  WARN $match"
+    KEY=$(printf '%s\n' "$MATCH_TEXT" | sed -E 's/^[[:space:]-]*([A-Za-z0-9_.-]+):.*/\1/')
+    if [[ "$KEY" == "$MATCH_TEXT" ]]; then
+      KEY="<unknown>"
+    fi
+    REL_FILE="${FILE#"$TARGET"/}"
+    echo "  WARN ${REL_FILE}:${LINE_NO} kind=${KIND:-Unknown} key=${KEY} value=<redacted>"
     FOUND=1
-  done < <(grep -rn --include="*.yaml" --include="*.yml" -E "$pat" "$TARGET/gitops" "$TARGET/infrastructure" 2>/dev/null | grep -v "^.*#" || true)
+  done < <(grep -rn --include="*.yaml" --include="*.yml" -E "$pat" "$TARGET/gitops" "$TARGET/infrastructure" 2>/dev/null || true)
 done
 
 if [[ $FOUND -eq 0 ]]; then

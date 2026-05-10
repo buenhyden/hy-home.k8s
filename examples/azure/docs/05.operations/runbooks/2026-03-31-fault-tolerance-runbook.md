@@ -72,5 +72,5 @@ HTTPRoute 또는 Gateway가 정상적으로 작동하지 않을 경우:
 
 ## Related Operational Documents
 
-- **Incident examples**: `[../05.operations/incidents/2026/2026-03-31-cluster-connect-failure.md]`
-- **Postmortem examples**: `[../11.postmortems/2026/2026-03-31-db-failover-postmortem.md]`
+- **Incident index**: [root incident README](../../../../../docs/05.operations/incidents/README.md)
+- **Postmortem examples**: 기록이 생기면 root incident/postmortem taxonomy에 맞춰 연결한다.

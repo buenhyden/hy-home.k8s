@@ -37,12 +37,14 @@
 #### 1. 인프라 재구축 (EKS 클러스터)
 
 ```bash
-# reference-only AWS DR; operator-approved only
+# reference-only AWS DR; no live resource mutation
 cd examples/aws/terraform
-terraform apply -auto-approve
+terraform plan -out dr-recovery.plan
 
-# Kubeconfig 갱신
-aws eks update-kubeconfig --name hyhome-cluster --region ap-northeast-2
+# Kubeconfig access check with a temporary file
+TMP_KUBECONFIG="$(mktemp)"
+aws eks update-kubeconfig --name hyhome-cluster --region ap-northeast-2 --kubeconfig "$TMP_KUBECONFIG"
+KUBECONFIG="$TMP_KUBECONFIG" kubectl get nodes
 ```
 
 #### 2. 데이터 복구 (RDS Aurora)
@@ -54,8 +56,7 @@ aws eks update-kubeconfig --name hyhome-cluster --region ap-northeast-2
 #### 3. 서비스 배포 (GitOps)
 
 ```bash
-# reference-only AWS DR; operator-approved only
-argocd app sync root-apps --force
+argocd app diff root-apps --refresh
 ```
 
 ## Verification Steps

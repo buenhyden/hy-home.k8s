@@ -3,7 +3,7 @@ title: 'Reference: Local Harness Catalog'
 type: reference
 status: draft
 owner: 'platform'
-updated: 2026-05-09
+updated: 2026-05-10
 ---
 
 # Reference: Local Harness Catalog
@@ -26,9 +26,9 @@ that shape the runtime contract under `.claude/` and its Codex mirror under `.co
 
 - Covers local runtime agents, skills, scope imports, and model allocation.
 - Does not duplicate rule text from `rules/`, `scopes/`, or `providers/`.
-- Current remediation scope is in-place clarity and regression-gate hardening.
-  There is no current readiness gap that requires a new agent, skill, hook, or
-  runtime surface in the current evidence snapshot.
+- Current remediation scope adds a `wiki-curator` runtime surface for LLM Wiki
+  curation by explicit human request, while keeping all other new runtime
+  surfaces out of scope unless this matrix records a concrete gap.
 
 ## Runtime Principles
 
@@ -78,7 +78,7 @@ to close that gap.
 | --- | --- | --- | --- |
 | Gateway | `AGENTS.md`, root `CLAUDE.md`, root `GEMINI.md` | Ready | Thin routers point to governance docs and runtime baseline |
 | Runtime baseline | `.claude/CLAUDE.md` | Ready | Defines loading order, GitOps-first boundary, roster pointers, and model hierarchy |
-| Agents | `.claude/agents/*.md` | Ready | Seven local agents exist with frontmatter, scope imports, guardrails, handoff, and postflight |
+| Agents | `.claude/agents/*.md` | Ready | Eight local agents exist with frontmatter, scope imports, guardrails, handoff, and postflight |
 | Codex mirrors | `.codex/agents/*.toml` | Ready | Mirror stems, imports, guardrails, and postflight are checked by `scripts/validate-repo-quality-gates.sh` |
 | Skills | `.claude/skills/*/skill.md` | Ready | GitOps, validation, docs routing, deployment, incident, RCA, risk, and security workflows are local |
 | Claude permissions/hooks | `.claude/settings.json`, `.claude/hooks/*.sh` | Ready | Claude runtime has allow/deny command policy plus session-start, pre-edit, and post-validate hooks |
@@ -86,6 +86,7 @@ to close that gap.
 | Validation scripts | `scripts/*.sh`, `infrastructure/tests/*.sh` | Ready | Repo-backed gates cover quality, GitOps structure, manifests, contracts, secret handling, shell syntax, gateway thinness, language boundaries, and hook-boundary clarity |
 | Authored-doc command boundary | `scripts/validate-repo-quality-gates.sh`, staged docs | Ready | Risky command examples in authored docs require explicit human/operator boundary markers; authored docs block bare/main direct push and push examples without PR-flow context, while broader Markdown roots block bare/main direct push examples |
 | Memory | `docs/00.agent-governance/memory/` | Ready | Agent progress and reusable memory have a local template-backed home; current runtime truth stays in this catalog and current script inventory stays in `scripts/README.md` |
+| LLM Wiki curation | `.claude/agents/wiki-curator.md`, `.codex/agents/wiki-curator.toml`, `docs/90.references/llm-wiki/wiki-index.md`, `scripts/generate-llm-wiki-index.sh` | Ready | Runtime surface added for LLM Wiki curation with Markdown-only generated index and repo-quality freshness check |
 | Escalation boundary | `subagent-protocol.md`, `rules/agentic.md` | Ready | Delegation, file ownership, direct mutation, and human approval boundaries are explicit |
 
 ## Harness Engineering Matrix
@@ -94,7 +95,7 @@ to close that gap.
 | --- | --- | --- | --- | --- |
 | Thin gateway | `AGENTS.md`, root `CLAUDE.md`, root `GEMINI.md` | Ready | None | Keep root files as routing shims and enforce line-count and pointer checks in `scripts/validate-repo-quality-gates.sh`. |
 | Runtime baseline | `.claude/CLAUDE.md` | Ready | None | Keep loading order, GitOps-first boundary, roster pointers, and model hierarchy in the local baseline. |
-| Agent roster | `.claude/agents/*.md` | Ready | None | Keep seven local agents thin, scope-imported, and aligned with this catalog. |
+| Agent roster | `.claude/agents/*.md` | Ready | None | Keep eight local agents thin, scope-imported, and aligned with this catalog. |
 | Codex mirrors | `.codex/agents/*.toml` | Ready | None | Update the `.claude` source and Codex mirror in the same change set; keep mirror parity in the quality gate. |
 | Skills | `.claude/skills/*/skill.md` | Ready | None | Keep cluster-specific workflows local and add new skills only when this matrix shows a concrete gap. |
 | Claude permissions/hooks | `.claude/settings.json`, `.claude/hooks/*.sh` | Ready | None | Keep allow/deny command policy, session-start, pre-edit, and post-validate hooks in Claude runtime files. |
@@ -102,6 +103,7 @@ to close that gap.
 | Validation scripts | `scripts/*.sh`, `infrastructure/tests/*.sh` | Ready | None | Keep repo-backed validation as the default completion evidence before handoff. |
 | Authored-doc command boundary | `scripts/validate-repo-quality-gates.sh`, staged docs | Ready | None | Keep `kubectl apply/patch`, `argocd app sync`, `vault kv put`, and push examples marked as human/operator-only or PR-flow work in authored docs, including operations policies; keep broader Markdown scans limited to bare/main direct push examples. |
 | Memory | `docs/00.agent-governance/memory/` | Ready | None | Keep progress and reusable memory in `memory/progress.md`, while current runtime truth stays in this catalog. |
+| LLM Wiki curation | `.claude/agents/wiki-curator.md`, `.codex/agents/wiki-curator.toml`, `docs/90.references/llm-wiki/wiki-index.md`, `scripts/generate-llm-wiki-index.sh` | Ready | None | Runtime surface added for LLM Wiki curation; keep it Markdown-only, generator-checked, and routed back to canonical owners. |
 | Escalation boundary | `subagent-protocol.md`, `rules/agentic.md` | Ready | None | Keep delegation, destructive-action, live-mutation, and human-approval boundaries explicit. |
 
 ## Agent-first Engineering Matrix
@@ -114,6 +116,7 @@ to close that gap.
 | Scope and persona routing | `rules/persona.md`, `scopes/*.md` | Ready | None | Resolve one primary layer before edits and transition explicitly when scope changes. |
 | GitOps-first execution | `rules/agentic.md`, `.claude/settings.json`, GitOps docs and validators | Ready | None | Keep infrastructure changes repo-backed and prevent direct cluster mutation by default. |
 | Documentation routing | `rules/document-stage-routing.md`, `rules/documentation-protocol.md`, `.claude/skills/docs-stage-routing/skill.md` | Ready | None | Keep generated docs in the canonical stage tree and use templates before authoring. |
+| LLM Wiki curation | `.claude/agents/wiki-curator.md`, `.codex/agents/wiki-curator.toml`, `docs/90.references/llm-wiki/wiki-index.md`, `scripts/generate-llm-wiki-index.sh` | Ready | None | Runtime surface added for LLM Wiki curation by explicit human request; route policy and procedure changes to canonical owners instead of the generated index. |
 | Authored-doc command boundaries | `scripts/validate-repo-quality-gates.sh`, `docs/02.architecture/decisions`, `docs/03.specs`, `docs/05.operations/guides`, `docs/05.operations/policies`, `docs/05.operations/runbooks` | Ready | None | Keep risky command examples framed as human/operator-approved bootstrap, break-glass, external secret, or PR-flow work. |
 | Validation before completion | `scripts/*.sh`, `infrastructure/tests/*.sh`, `.github/workflows/ci.yml` | Ready | None | Define validation evidence before editing and report skipped or unavailable local tools honestly. |
 | Postflight and handoff | `rules/postflight-checklist.md`, `subagent-protocol.md` | Ready | None | Complete postflight checks and preserve handoff evidence before final response. |
@@ -133,6 +136,7 @@ belongs to a human-approved bootstrap or break-glass path with explicit evidence
 | `.claude/agents/incident-responder.md` | Cluster incident analysis              | `sonnet` | `ops`, `infra` | Reconstruct timelines, assess impact, and define remediation            | incident-postmortem                          |
 | `.claude/agents/code-reviewer.md`      | YAML, Helm, and shell quality review   | `sonnet` | `architecture` | Review correctness, maintainability, and policy alignment               | code-reviewer                                |
 | `.claude/agents/doc-writer.md`         | Runbook and guide authoring            | `sonnet` | `docs`         | Produce template-aligned operational and explanatory documents          | technical-writer                             |
+| `.claude/agents/wiki-curator.md`       | LLM Wiki curation                      | `sonnet` | `docs`         | Maintain generated canonical-owner link maps and route stale links      | technical-writer, governance                 |
 
 ## Codex Mirrors
 

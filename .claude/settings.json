@@ -12,6 +12,7 @@
       "Bash(helm lint:*)",
       "Bash(k3d cluster list:*)",
       "Bash(bash scripts/validate-repo-quality-gates.sh:*)",
+      "Bash(bash scripts/generate-llm-wiki-index.sh:*)",
       "Bash(bash scripts/validate-k8s-manifests.sh:*)",
       "Bash(bash scripts/validate-gitops-structure.sh:*)",
       "Bash(bash scripts/check-secret-handling.sh:*)"

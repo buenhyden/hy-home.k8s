@@ -23,7 +23,7 @@
 | T-002 | AWS 마이그레이션 ARD 작성 | doc | §2 | Phase 1 | `file existence` | AI Agents | Done |
 | T-003 | Secret Manager 전환 ADR 작성 | doc | §3 | Phase 1 | ADR-001 | AI Agents | Done |
 | T-004 | Terraform main.tf 코드 작성 | impl | §4 | Phase 2 | `tf validate` | AI Agents | Done |
-| T-005 | K8s External Service 매니페스트 작성 | impl | §5 | Phase 3 | `kubectl apply --dry-run` | AI Agents | Done |
+| T-005 | K8s External Service 매니페스트 작성 | impl | §5 | Phase 3 | `kubectl diff` | AI Agents | Done |
 | T-006 | 인프라 셋업 가이드 작성 | doc | §7 | Phase 4 | `file existence` | AI Agents | Done |
 
 ## Phase View
@@ -49,5 +49,5 @@
 ## Verification Summary
 
 - **Infrastructure Check**: `terraform validate` (Draft checked)
-- **Manifest Check**: `kubectl apply --dry-run=client` (Draft checked)
+- **Manifest Check**: `kubectl diff` (Draft checked)
 - **Documentation Check**: Relative Link Integrity (Checked)

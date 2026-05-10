@@ -43,4 +43,4 @@
 ## Related Documents
 
 - **AARD**: [../02.architecture/requirements/0001-azure-migration-architecture.md](../requirements/0001-azure-migration-architecture.md)
-- **Spec**: [../03.specs/azure-migration-spec.md](../../03.specs/azure-migration-spec.md)
+- **Spec**: [../03.specs/azure-migration/spec.md](../../03.specs/azure-migration/spec.md)

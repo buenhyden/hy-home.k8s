@@ -43,4 +43,4 @@
 
 - **AARD**: [../02.architecture/requirements/0001-azure-migration-architecture.md](../../02.architecture/requirements/0001-azure-migration-architecture.md)
 - **Runbook**: [../05.operations/runbooks/aks-node-replacement.md](../runbooks/aks-node-replacement.md)
-- **Strategy**: [../../docs/managed-services-strategy.md](../../managed-services-strategy.md)
+- **Strategy**: [migration strategy](../../04.execution/plans/2026-03-31-migration-strategy.md)

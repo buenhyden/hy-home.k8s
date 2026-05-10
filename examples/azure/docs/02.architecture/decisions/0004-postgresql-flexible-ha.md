@@ -41,4 +41,4 @@
 ## Related Documents
 
 - **Spec**: [../03.specs/azure-migration/spec.md](../../03.specs/azure-migration/spec.md)
-- **Bicep**: [../infrastructure/database.bicep](../../infrastructure/database.bicep)
+- **Bicep**: [../infrastructure/database.bicep](../../../infrastructure/database.bicep)

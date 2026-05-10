@@ -45,6 +45,7 @@
 ```text
 docs/90.references/
 ├── agents/                              # Agent 관련 참고 자료
+├── llm-wiki/                            # LLM-readable generated Markdown link map
 ├── learning/                            # 학습 로드맵과 이론 연결 자료
 ├── versions/                            # repo-backed 버전 기준과 cloud snapshot
 └── README.md                            # This file
@@ -55,7 +56,7 @@ docs/90.references/
 1. 새 참고 자료가 정책/계약/절차를 정의하는지 확인한다. 그렇다면 `00.agent-governance`, `03.specs`, `05.operations/policies`, `05.operations/runbooks`로 라우팅한다.
 2. 버전 기준을 갱신할 때는 실제 manifest/config/example code와 [tech-stack-version-inventory.md](./versions/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
 3. 외부 공식 기준은 확인일을 명시하고 링크를 남긴다.
-4. 새 파일을 만들 경우 [reference template](../99.templates/reference.template.md)을 사용하고 이 README 인덱스를 갱신한다.
+4. 새 파일을 만들 경우 [reference template](../99.templates/reference.template.md)을 사용하고 이 README 인덱스를 갱신한다. `llm-wiki/wiki-index.md`는 `scripts/generate-llm-wiki-index.sh`로만 갱신한다.
 5. 모든 reference 문서는 `Reference Type`, `Authority Boundary`, `Review and Freshness`를 포함해야 한다.
 
 ## Role and Authority Boundary
@@ -123,6 +124,7 @@ docs/90.references/
 - `02.architecture/requirements/`: 아키텍처 참조 모델
 - `99.templates/`: Reference 문서 템플릿
 - `agents/`: Agent 관련 참고 자료
+- `llm-wiki/`: LLM-readable generated Markdown 링크맵
 - `learning/`: 학습 로드맵과 이론 연결 자료
 - `versions/`: 버전 계약과 외부 공식 지원 범위 snapshot
 
@@ -143,6 +145,8 @@ docs/90.references/
 | 문서 | Reference Type | 역할 | Freshness 기준 |
 | --- | --- | --- | --- |
 | [versions/tech-stack-version-inventory.md](./versions/tech-stack-version-inventory.md) | version-contract-inventory / external-standard-snapshot | repo-backed 버전 기준과 cloud example snapshot | manifest/config/example version 변경 또는 외부 공식 지원 범위 변경 |
+| [llm-wiki/README.md](./llm-wiki/README.md) | durable-concept / faq | LLM WIKI boundary and canonical owner link map | docs/examples taxonomy, Agent governance routing, or version inventory path 변경 시 |
+| [llm-wiki/wiki-index.md](./llm-wiki/wiki-index.md) | durable-concept / faq | Generated LLM-readable canonical owner index | generator, runtime roster, docs/examples taxonomy, or canonical owner path 변경 시 |
 | [learning/infrastructure-to-theory-roadmap.md](./learning/infrastructure-to-theory-roadmap.md) | learning-roadmap | 인프라 구현 경험과 CS/CE 이론 연결 | 학습 자료나 repo 구현 축이 크게 바뀔 때 |
 | [agents/README.md](./agents/README.md) | durable-concept index | Agent reference 하위 폴더의 범위와 라우팅 | Agent reference 문서 추가/이동 시 |
 | [learning/README.md](./learning/README.md) | learning-roadmap index | learning reference 하위 폴더의 범위와 라우팅 | learning reference 문서 추가/이동 시 |

@@ -30,7 +30,9 @@
 로컬 환경에서 EKS 클러스터로의 컨텍스트를 추가한다.
 
 ```bash
-aws eks update-kubeconfig --name hyhome-cluster --region ap-northeast-2
+TMP_KUBECONFIG="$(mktemp)"
+aws eks update-kubeconfig --name hyhome-cluster --region ap-northeast-2 --kubeconfig "$TMP_KUBECONFIG"
+KUBECONFIG="$TMP_KUBECONFIG" kubectl get nodes
 ```
 
 ### 2. 접속 확인
