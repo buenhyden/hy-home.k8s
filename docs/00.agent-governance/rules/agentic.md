@@ -44,7 +44,7 @@ Rules for AI Agent-first Engineering quality and safety.
 - If all affected matrix rows remain `Ready` with `Gap=None`, treat speculative new runtime surfaces as out of scope and harden the existing surface instead.
 - Prefer in-place clarity, regression-gate hardening, or catalog updates when the matrix already marks the component `Ready`.
 - When a component is already `Ready`, prefer command-boundary regression gates over adding new runtime surfaces for documentation drift.
-- Keep `.claude/settings.json` as Claude permission and hook policy, and keep `.codex/hooks.json` as Codex context injection; do not describe them as equivalent enforcement layers.
+- Keep `.claude/settings.json` as Claude permission and hook policy, and keep `.codex/hooks.json` as Codex context/validation hook wiring; do not describe them as equivalent enforcement layers.
 
 ## Context Hierarchy Defaults
 
@@ -61,7 +61,7 @@ Before changing gateway, runtime, hook, mirror, or governance-memory files:
 - Confirm tracked governance/runtime files under `docs/00.agent-governance/**`, `.claude/**`, and `.codex/**` remain English-only.
 - Confirm no legacy source labels from prior external harness examples remain.
 - Confirm `.claude/agents/*.md` and `.codex/agents/*.toml` mirror parity stays intact.
-- Confirm provider-specific hook boundaries are described accurately: `.claude/settings.json` owns Claude permissions/hooks; `.codex/hooks.json` is a Codex context hook, not an equivalent permission gate.
+- Confirm provider-specific hook boundaries are described accurately: `.claude/settings.json` owns Claude permissions/hooks; `.codex/hooks.json` is Codex context/validation hook wiring, not an equivalent permission gate.
 - Confirm historical memory entries point to the current source of truth instead of presenting initial implementation snapshots as current inventory.
 
 ## Persona and Rule Enforcement

@@ -29,12 +29,43 @@ Use the existing stage structure only.
 | LLM Wiki generated index | `docs/90.references/llm-wiki/wiki-index.md` | `docs/99.templates/reference.template.md` through `scripts/generate-llm-wiki-index.sh` | Use only as a generated canonical-owner link map. |
 | Governance memory | `docs/00.agent-governance/memory/<topic>.md` | `docs/99.templates/memory.template.md` | Use for reusable agent governance lessons. |
 
+## Legacy Path Migration Map
+
+The repository uses the reduced canonical docs model below. Do not recreate the
+old top-level 13-folder model.
+
+| Legacy Path | Canonical Path |
+| --- | --- |
+| `docs/01.prd/` | `docs/01.requirements/` |
+| `docs/02.ard/` | `docs/02.architecture/requirements/` |
+| `docs/03.adr/` | `docs/02.architecture/decisions/` |
+| `docs/04.specs/` | `docs/03.specs/` |
+| `docs/05.plans/` | `docs/04.execution/plans/` |
+| `docs/06.tasks/` | `docs/04.execution/tasks/` |
+| `docs/07.guides/` | `docs/05.operations/guides/` |
+| `docs/08.operations/` | `docs/05.operations/policies/` |
+| `docs/09.runbooks/` | `docs/05.operations/runbooks/` |
+| `docs/10.incidents/` | `docs/05.operations/incidents/` |
+| `docs/00.agent-governance/` | `docs/00.agent-governance/` |
+| `docs/90.references/` | `docs/90.references/` |
+| `docs/99.templates/` | `docs/99.templates/` |
+
 ## Prohibited Paths
 
 The following paths are not valid authored-document targets in this repository:
 
 - `docs/superpowers/**`
 - `docs/api/**`
+- `docs/01.prd/**`
+- `docs/02.ard/**`
+- `docs/03.adr/**`
+- `docs/04.specs/**`
+- `docs/05.plans/**`
+- `docs/06.tasks/**`
+- `docs/07.guides/**`
+- `docs/08.operations/**`
+- `docs/09.runbooks/**`
+- `docs/10.incidents/**`
 - Legacy postmortem top-level trees
 - Legacy learning top-level trees
 - Ad hoc top-level trees for plans, specs, or references outside the canonical stage folders

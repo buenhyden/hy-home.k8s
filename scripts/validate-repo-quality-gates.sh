@@ -19,6 +19,7 @@ fi
 python3 - "$ROOT_DIR" <<'PY'
 import collections
 import json
+import os
 import pathlib
 import re
 import subprocess
@@ -817,7 +818,7 @@ harness_catalog_path = root / "docs/00.agent-governance/harness-catalog.md"
 harness_catalog_text = read_text(harness_catalog_path)
 for phrase in [
     "Claude permissions/hooks",
-    "Codex context hook",
+    "Codex event hooks",
     "not a permission gate equivalent",
     ".claude/settings.json",
     ".codex/hooks.json",
@@ -1216,6 +1217,137 @@ for json_path in [root / ".claude/settings.json", root / ".codex/hooks.json"]:
         load_json(json_path)
     except Exception as exc:
         fail(f"agent runtime JSON parse failed for {rel(json_path)}: {exc}")
+
+claude_settings = load_json(root / ".claude/settings.json")
+post_validate_command = json.dumps(claude_settings.get("hooks", {}))
+for phrase in [
+    ".claude/hooks/k8s-pre-edit.sh",
+    ".claude/hooks/post-validate.sh",
+    ".claude/hooks/session-start.sh",
+    '"timeout": 60',
+]:
+    if phrase not in post_validate_command and phrase not in read_text(root / ".claude/settings.json"):
+        fail(f".claude/settings.json missing hook contract phrase: {phrase}")
+
+codex_hooks_path = root / ".codex/hooks.json"
+codex_hooks = load_json(codex_hooks_path).get("hooks", {})
+for event_name in ["SessionStart", "PreToolUse", "PostToolUse"]:
+    if event_name not in codex_hooks:
+        fail(f"{rel(codex_hooks_path)} missing event hook: {event_name}")
+codex_hooks_text = read_text(codex_hooks_path)
+for phrase in [
+    ".claude/hooks/session-start.sh",
+    ".claude/hooks/k8s-pre-edit.sh",
+    ".claude/hooks/post-validate.sh",
+    "CODEX_PROJECT_DIR",
+    "Bash|Glob|Grep",
+    '"timeout": 60',
+]:
+    if phrase not in codex_hooks_text:
+        fail(f"{rel(codex_hooks_path)} missing Codex event hook phrase: {phrase}")
+
+
+def hook_command(data: dict, event_name: str, matcher: str, script_name: str) -> str:
+    for entry in data.get(event_name, []) or []:
+        if entry.get("matcher") != matcher:
+            continue
+        for hook in entry.get("hooks", []) or []:
+            command = str(hook.get("command") or "")
+            if script_name in command:
+                return command
+    return ""
+
+
+if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
+    hook_env = {**os.environ, "CLAUDE_PROJECT_DIR": str(root)}
+    manifest_hook_payload = json.dumps(
+        {"tool_input": {"file_path": "gitops/platform/headlamp/headlamp-ingress.yaml"}}
+    )
+    pre_hook_path = root / ".claude/hooks/k8s-pre-edit.sh"
+    pre_hook_result = subprocess.run(
+        ["bash", str(pre_hook_path)],
+        cwd=root,
+        input=manifest_hook_payload,
+        text=True,
+        capture_output=True,
+        env=hook_env,
+    )
+    if pre_hook_result.returncode != 0:
+        fail(f"{rel(pre_hook_path)} payload simulation failed: {pre_hook_result.stderr.strip()}")
+    for phrase in ["systemMessage", "GitOps-first", "PostToolUse hook"]:
+        if phrase not in pre_hook_result.stdout:
+            fail(f"{rel(pre_hook_path)} payload simulation missing output phrase: {phrase}")
+
+    post_hook_path = root / ".claude/hooks/post-validate.sh"
+    post_hook_result = subprocess.run(
+        ["bash", str(post_hook_path)],
+        cwd=root,
+        input=manifest_hook_payload,
+        text=True,
+        capture_output=True,
+        env=hook_env,
+    )
+    if post_hook_result.returncode != 0:
+        detail = "\n".join(
+            item
+            for item in [post_hook_result.stdout.strip(), post_hook_result.stderr.strip()]
+            if item
+        )
+        fail(f"{rel(post_hook_path)} manifest payload simulation failed:\n{detail}")
+    for phrase in [
+        "[hook] PASS Kubernetes manifests",
+        "[hook] PASS secret handling",
+    ]:
+        if phrase not in post_hook_result.stdout:
+            fail(f"{rel(post_hook_path)} manifest payload simulation missing output phrase: {phrase}")
+
+    codex_hook_env = {
+        **os.environ,
+        "CODEX_PROJECT_DIR": str(root),
+        "CLAUDE_PROJECT_DIR": str(root),
+    }
+    codex_pre_command = hook_command(codex_hooks, "PreToolUse", "Write|Edit|MultiEdit", "k8s-pre-edit.sh")
+    if not codex_pre_command:
+        fail(f"{rel(codex_hooks_path)} missing Codex PreToolUse edit hook command")
+    else:
+        codex_pre_result = subprocess.run(
+            ["bash", "-lc", codex_pre_command],
+            cwd=root,
+            input=manifest_hook_payload,
+            text=True,
+            capture_output=True,
+            env=codex_hook_env,
+        )
+        if codex_pre_result.returncode != 0:
+            fail(f"{rel(codex_hooks_path)} Codex PreToolUse payload simulation failed: {codex_pre_result.stderr.strip()}")
+        if "GitOps-first" not in codex_pre_result.stdout:
+            fail(f"{rel(codex_hooks_path)} Codex PreToolUse simulation missing GitOps warning")
+
+    codex_post_command = hook_command(codex_hooks, "PostToolUse", "Write|Edit|MultiEdit", "post-validate.sh")
+    if not codex_post_command:
+        fail(f"{rel(codex_hooks_path)} missing Codex PostToolUse edit hook command")
+    else:
+        codex_post_result = subprocess.run(
+            ["bash", "-lc", codex_post_command],
+            cwd=root,
+            input=manifest_hook_payload,
+            text=True,
+            capture_output=True,
+            env=codex_hook_env,
+        )
+        if codex_post_result.returncode != 0:
+            detail = "\n".join(
+                item
+                for item in [codex_post_result.stdout.strip(), codex_post_result.stderr.strip()]
+                if item
+            )
+            fail(f"{rel(codex_hooks_path)} Codex PostToolUse payload simulation failed:\n{detail}")
+        for phrase in [
+            "[hook] PASS Kubernetes manifests",
+            "[hook] PASS secret handling",
+        ]:
+            if phrase not in codex_post_result.stdout:
+                fail(f"{rel(codex_hooks_path)} Codex PostToolUse simulation missing output phrase: {phrase}")
 
 claude_agents_dir = root / ".claude/agents"
 codex_agents_dir = root / ".codex/agents"

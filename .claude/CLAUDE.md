@@ -33,6 +33,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Keep infrastructure changes repo-backed; never mutate the live cluster directly unless a human explicitly approves an emergency path.
 - Do not write plaintext Kubernetes secrets.
 - Treat `.codex/agents/*.toml` as Codex mirrors of `.claude/agents/*.md`; keep both sides aligned.
+- Treat `.codex/hooks.json` as Codex event wiring for repo-local context and validation hooks, not as an equivalent permission gate to `.claude/settings.json`.
 
 ## Runtime Roster
 

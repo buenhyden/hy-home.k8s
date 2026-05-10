@@ -8,6 +8,57 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-10 — Hook payload and post-edit validation hardening
+
+- **Date**: 2026-05-10
+- **Layer**: runtime
+- **Status**: complete
+- **Tags**: #hooks #governance #validation #gitops
+
+#### Progress
+
+- Hardened `.claude/hooks/k8s-pre-edit.sh` to parse Claude hook JSON stdin
+  with environment-variable fallback, normalize workspace-relative paths, and
+  emit structured `systemMessage` warnings for Kubernetes manifest and
+  secret-adjacent edits.
+- Hardened `.claude/hooks/post-validate.sh` to parse hook JSON stdin and run
+  scoped validation for JSON runtime files, shell hooks/scripts, Kubernetes
+  manifests, secret handling, and repo-quality surfaces.
+- Wired `.codex/hooks.json` to the same SessionStart, PreToolUse, and
+  PostToolUse event contract where Codex supports repo-local hooks, while
+  preserving the boundary that Codex hooks are context/validation wiring rather
+  than Claude-equivalent permission gates.
+- Added a recursion guard for post-edit repo-quality validation so the central
+  quality gate can simulate hook payloads without recursively invoking itself.
+- Extended `scripts/validate-repo-quality-gates.sh` to validate hook payload
+  parsing behavior, not only JSON and shell syntax.
+
+#### Memory
+
+- Claude hook scripts in this repo must read `tool_input` from JSON stdin and
+  keep `CLAUDE_TOOL_INPUT_FILE_PATH` only as a fallback.
+- When a PostToolUse hook runs `scripts/validate-repo-quality-gates.sh`, set
+  `HY_HOME_K8S_SKIP_HOOK_SIMULATION=1` to avoid recursive hook simulation.
+- `.codex/hooks.json` should reuse `.claude/hooks/*.sh` through `CODEX_PROJECT_DIR`
+  / `CLAUDE_PROJECT_DIR` mapping instead of carrying separate hook logic.
+- Manifest-edit hook validation should use a non-root-app manifest path for
+  payload simulation so manifest checks run without also triggering the
+  repo-quality path-filter lane.
+
+#### Evidence
+
+- `bash -n .claude/hooks/k8s-pre-edit.sh .claude/hooks/post-validate.sh .claude/hooks/session-start.sh scripts/validate-repo-quality-gates.sh` PASS.
+- `printf '{"tool_input":{"file_path":"gitops/apps/root/kustomization.yaml"}}' | CLAUDE_PROJECT_DIR="$PWD" bash .claude/hooks/k8s-pre-edit.sh` PASS.
+- `printf '{"tool_input":{"file_path":"gitops/platform/headlamp/headlamp-ingress.yaml"}}' | CLAUDE_PROJECT_DIR="$PWD" bash .claude/hooks/post-validate.sh` PASS.
+- `printf '{"tool_input":{"file_path":".claude/hooks/post-validate.sh"}}' | CLAUDE_PROJECT_DIR="$PWD" bash .claude/hooks/post-validate.sh` PASS.
+- `printf '{"tool_input":{"file_path":".claude/settings.json"}}' | CLAUDE_PROJECT_DIR="$PWD" bash .claude/hooks/post-validate.sh` PASS.
+- Codex PreToolUse/PostToolUse payload simulation through `.codex/hooks.json` command extraction PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+
+#### Handoff
+
+- None.
+
 ### 2026-05-10 — Runtime wiki-curator and generated LLM Wiki index
 
 - **Date**: 2026-05-10
