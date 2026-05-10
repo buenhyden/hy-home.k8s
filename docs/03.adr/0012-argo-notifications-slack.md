@@ -24,7 +24,7 @@ ArgoCD Helm chart v2.x에 Notifications controller가 내장되어 있어 별도
 - 알림 채널 per-app 자동 분기 (단일 채널 기본)
 - Alertmanager 통합
 
-## Alternatives Considered
+## Alternatives
 
 | 옵션                            | 평가                                                                                  |
 | ------------------------------- | ------------------------------------------------------------------------------------- |
@@ -51,7 +51,7 @@ vault kv put secret/platform/notifications \
 
 Accepted — 2026-03-30
 
-## Related
+## Related Documents
 
 - [ADR-0011](./0011-argo-rollouts-progressive-delivery.md) — Rollouts 이벤트 소스
 - [ADR-0003](./0003-eso-vault-k8s-auth.md) — ESO/Vault 시크릿 관리 패턴

@@ -19,6 +19,7 @@
 - [04.specs](../04.specs/README.md): 컴포넌트/기능별 상세 설계 명세 (Data, API, Logic, Agent-Design)
 - [05.plans](../05.plans/README.md): 실행 계획 및 마일스톤 (Work Breakdown, Risks)
 - [06.tasks](../06.tasks/README.md): 실제 구현 및 검증 작업 단위 (Task Table, Evidence)
+- [07.guides](../07.guides/README.md): 사용자/개발자/운영자 대상 안정 상태 안내
 - [08.operations](../08.operations/README.md): 시스템 운영 정책 및 거버넌스
 - [09.runbooks](../09.runbooks/README.md): 반복적 운영 작업의 실행 지침 (Step-by-step)
 - [10.incidents](../10.incidents/README.md): 발생한 사고의 사실 기록 (Timeline, Mitigation)

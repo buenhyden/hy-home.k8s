@@ -24,7 +24,7 @@ Headlamp는 CNCF 프로젝트로, 경량 단일 컨테이너 구성과 ServiceAc
 - 멀티클러스터 Headlamp 연결
 - OIDC 인증 (로컬 플랫폼은 ServiceAccount Token 방식)
 
-## Alternatives Considered
+## Alternatives
 
 | 옵션                  | 평가                                                          |
 | --------------------- | ------------------------------------------------------------- |
@@ -43,7 +43,7 @@ Headlamp는 CNCF 프로젝트로, 경량 단일 컨테이너 구성과 ServiceAc
 
 Accepted — 2026-03-30
 
-## Related
+## Related Documents
 
 - [ADR-0007](./0007-kubernetes-dashboard-v3.md) — 기존 Dashboard 결정 (superseded)
 - [Spec 003](../04.specs/003-platform-expansion/spec.md)

@@ -142,6 +142,11 @@ kubectl -n argocd get app root-platform -o yaml | \
 - [ ] Traefik 443 및 fallback 8443 HTTPS 응답 확인
 - [ ] CI 정적 계약(`verify-contracts-static.sh`) 통과
 
+## Observability and Evidence Sources
+
+- **Signals**: ArgoCD Application health, ExternalSecret Ready status, ESO controller logs, repo-server logs.
+- **Evidence to Capture**: failed sync output, ExternalSecret condition, Vault auth role read result, recovery command output.
+
 ## Troubleshooting Signatures
 
 - `connection refused` on `vault-external.platform.svc.cluster.local:8200`
@@ -167,7 +172,7 @@ kubectl -n platform delete endpointslice vault-external-1
 - 롤백 후 `verify-contracts-static.sh`와 `run-all.sh`를 재실행한다.
 - 동일 증상이 반복되면 Operations 예외 승인 절차를 따른다.
 
-## Related Operational Documents
+## Related Documents
 
 - **Guide**: [`../07.guides/0002-wsl2-k3d-argocd-ha-setup-guide.md`](../07.guides/0002-wsl2-k3d-argocd-ha-setup-guide.md)
 - **Operations Policy**: [`../08.operations/0002-wsl2-k3d-gitops-ha-operations-policy.md`](../08.operations/0002-wsl2-k3d-gitops-ha-operations-policy.md)

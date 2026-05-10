@@ -4,6 +4,10 @@
 
 이 문서는 WSL2 환경에서 멀티노드 Kubernetes + GitOps + ESO/Vault + 외부 DB/Valkey 통합을 고도화하고, CI 정적 게이트를 추가하기 위한 단계별 실행 계획이다.
 
+## Context
+
+이 계획은 2026-03-28 기준 HA 플랫폼 고도화 작업의 실행 순서와 검증 기준을 기록한다. 현재 repo-backed 실행계약과 다를 수 있는 런타임 값은 관련 Spec, Operations policy, 정적 검증 스크립트가 우선한다.
+
 ## Goals & In-Scope
 
 - `argocd` egress 안정성 확보(Valkey + DNS + HTTPS)
@@ -60,7 +64,7 @@
 | PLN-006 | 문서 체인 업데이트 | `docs/01~09` target docs | 링크/계약 반영 |
 | PLN-007 | README 인덱스 동기화 | `docs/01~09/README.md` | 설명/수정일 반영 |
 
-## Verification Gates
+## Verification Plan
 
 ### Static Gate
 

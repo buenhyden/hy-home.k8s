@@ -8,7 +8,7 @@ updated: YYYY-MM-DD
 
 <!-- Target: docs/09.runbooks/####-<topic>.md -->
 
-# [topic Name] Runbook
+# [Topic Name] Runbook
 
 : [Service or Workflow Name]
 

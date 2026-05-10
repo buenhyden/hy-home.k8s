@@ -16,6 +16,16 @@
 4. **AppProject destinations 미포함**: `monitoring` 네임스페이스가 AppProject에 없어 Application 배포 실패
 5. **k3d 재시작 후 NodePort 접근 실패**: 노드 IP 변경 또는 파드 재기동 지연
 
+## Purpose
+
+k3d cluster observability metrics, logs, and alert rule loading failures를 진단하고, GitOps 상태와 external observability endpoint 연결을 복구한다.
+
+## Canonical References
+
+- [`../07.guides/0007-k8s-observability-bootstrap-guide.md`](../07.guides/0007-k8s-observability-bootstrap-guide.md)
+- [`../08.operations/0006-k8s-observability-operations-policy.md`](../08.operations/0006-k8s-observability-operations-policy.md)
+- [`../../gitops/platform/monitoring/`](../../gitops/platform/monitoring/)
+
 ## When to Use
 
 - Prometheus 타겟에서 `kube-state-metrics`, `istiod`, `argo-rollouts` job이 `down`으로 표시될 때
@@ -25,6 +35,10 @@
 - alert_rules 로드 수가 0이거나 kubernetes_alerts 그룹이 없을 때
 
 ---
+
+## Procedure or Checklist
+
+아래 절차는 전체 상태 진단, platform-monitoring App 복구, Alloy 로그 수집 복구, alert rule reload, NodePort 복구 순서로 수행한다.
 
 ## 정상 상태 기준값
 
@@ -261,7 +275,7 @@ curl -s -X POST http://172.18.0.10:9090/-/reload && echo "Reloaded"
 
 ---
 
-## Verification
+## Verification Steps
 
 ```bash
 echo "=== 전체 검증 ==="
@@ -309,6 +323,17 @@ curl -s -G "http://172.18.0.13:3100/loki/api/v1/query" \
 ```
 
 ---
+
+## Observability and Evidence Sources
+
+- **Signals**: NodePort HTTP status, Prometheus target health, Loki stream count, Alert rule group count, Alloy pod readiness.
+- **Evidence to Capture**: verification command output, ArgoCD Application status, Alloy logs, Prometheus rules output.
+
+## Safe Rollback or Recovery Procedure
+
+- Monitoring manifest changes should be reverted through GitOps if NodePort, Alloy, or alert rule changes regress collection.
+- Docker-side Prometheus config changes must be reverted in the owning Docker repo if reload introduces scrape failures.
+- AppProject destination changes require reviewed GitOps updates; direct cluster edits remain bootstrap/break-glass only.
 
 ## Troubleshooting
 

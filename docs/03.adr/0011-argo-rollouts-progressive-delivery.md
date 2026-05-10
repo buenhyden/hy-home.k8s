@@ -28,7 +28,7 @@ Argo Rollouts는 ArgoCD와 동일 생태계(argoproj)에서 기본 통합을 제
 - 멀티클러스터 Rollouts
 - 커스텀 Analysis metric 정의 (초기 설치 범위 외)
 
-## Alternatives Considered
+## Alternatives
 
 | 옵션          | 평가                                                         |
 | ------------- | ------------------------------------------------------------ |
@@ -48,7 +48,7 @@ Argo Rollouts는 ArgoCD와 동일 생태계(argoproj)에서 기본 통합을 제
 
 Accepted — 2026-03-30
 
-## Related
+## Related Documents
 
 - [ADR-0002](./0002-argocd-helm-and-gitops-model.md) — ArgoCD GitOps 모델
 - [ADR-0012](./0012-argo-notifications-slack.md) — Rollouts 이벤트 알림

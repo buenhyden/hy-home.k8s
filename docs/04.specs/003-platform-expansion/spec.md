@@ -22,6 +22,34 @@
 
 ---
 
+## Contracts
+
+- **Config Contract**: GitOps manifests under `gitops/platform/**` and root ArgoCD Applications under `gitops/apps/root/**`.
+- **Data / Interface Contract**: external service EndpointSlices, cert-manager TLS resources, ingress hostnames, and observability endpoint URLs.
+- **Governance Contract**: changes are reviewed through GitOps paths; direct cluster mutation appears only as human-approved bootstrap or break-glass context.
+
+## Core Design
+
+- Phase-based platform expansion keeps each component independently reviewable while sharing the same root app reconciliation model.
+- cert-manager owns local TLS issuance for platform UI endpoints.
+- Dashboard-era UI contracts are retained as historical design evidence and superseded by the current Headlamp ADR and live manifests.
+- Istio and Kiali are optional platform expansion components and do not replace the ingress-nginx local access contract.
+
+## Data Modeling & Storage Strategy
+
+- This spec does not introduce application data models or storage migrations.
+- Platform state is modeled as Kubernetes desired state, Helm values, EndpointSlices, and NetworkPolicies.
+- External observability and secret systems remain outside the k3d cluster; only their interface contracts are represented here.
+
+## Interfaces & Data Structures
+
+### Core Interfaces
+
+- ArgoCD Application manifests under `gitops/apps/root/`
+- component Kustomizations and Helm values under `gitops/platform/`
+- Traefik dynamic config snippets maintained outside this GitOps repo
+- static verification scripts under `infrastructure/tests/`
+
 ## Phase 0: IP Subnet Correction
 
 ### Contracts (수정)
@@ -290,15 +318,21 @@ clusterResourceWhitelist 추가:
 - rootCA Secret(`mkcert-root-ca`) 평문 커밋 금지.
 - Kiali auth는 로컬 전용 anonymous — 프로덕션 배포 시 변경 필수.
 
-## Failure Modes & Fallback
+## Edge Cases & Error Handling
 
-| Failure                             | Action                                                             |
-| ----------------------------------- | ------------------------------------------------------------------ |
-| cert-manager ClusterIssuer NotReady | rootCA Secret 재주입 → controller 재시작 확인                      |
-| Dashboard 접근 불가                 | `dashboard-tls` Certificate 상태 확인 → cert-manager log           |
-| Istiod CrashLoop                    | 자원 예산 초과 → requests 축소 또는 agent 노드 메모리 확인         |
-| Kiali observability 연결 실패       | egress NetworkPolicy cidr 확인, Prometheus 172.19.0.20 가용성 확인 |
-| IP 변경 후 연결 실패                | EndpointSlice 갱신 여부 및 verify-contracts 재실행                 |
+- The historical Dashboard sections are superseded by Headlamp and must not be used as current deployment instructions.
+- External service IP contracts may differ between historical design notes and current repo-backed manifests; current GitOps manifests and static tests take precedence.
+- cert-manager, mesh, and observability components may be partially installed during bootstrap; verification should check each component independently before treating the platform as ready.
+
+## Failure Modes & Fallback / Human Escalation
+
+| Failure                             | Fallback                                                           | Human Escalation                                                    |
+| ----------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| cert-manager ClusterIssuer NotReady | rootCA Secret 상태와 controller log 확인                           | Secret reinjection은 human-approved bootstrap 절차로만 수행         |
+| Dashboard 접근 불가                 | 현재 Headlamp ADR과 live manifests 우선 확인                       | Dashboard 복구가 아니라 Headlamp 경로 검증으로 전환                 |
+| Istiod CrashLoop                    | 자원 예산 확인 후 requests 조정 PR 작성                            | runtime patch 대신 GitOps 변경 PR로 처리                            |
+| Kiali observability 연결 실패       | egress NetworkPolicy cidr 확인, Prometheus 172.19.0.20 가용성 확인 | 외부 observability endpoint 변경 시 reference snapshot 함께 갱신    |
+| IP 변경 후 연결 실패                | EndpointSlice 갱신 여부 및 verify-contracts 재실행                 | static contract가 틀렸다면 spec, operation, script를 같은 PR로 보정 |
 
 ## Verification
 
@@ -324,7 +358,7 @@ kubectl -n istio-system get deployment istiod
 kubectl -n istio-system get deployment kiali
 ```
 
-## Success Criteria
+## Success Criteria & Verification Plan
 
 - **VAL-SPC-001**: `verify-contracts-static.sh` PASS (IP 수정 반영).
 - **VAL-SPC-002**: cert-manager `ClusterIssuer` `mkcert-ca-issuer` Ready=True.

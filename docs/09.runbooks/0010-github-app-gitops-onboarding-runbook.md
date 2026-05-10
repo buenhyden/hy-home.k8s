@@ -4,7 +4,7 @@
 
 `WSL2 k3d/k3s GitOps 앱 온보딩 (Rollout 패턴)`
 
-## Overview
+## Overview (KR)
 
 이 런북은 GitHub 레포 기반 애플리케이션을 `hy-home.k8s` 클러스터에 GitOps 방식으로 온보딩하는
 단계별 운영 절차를 제공한다. Argo Rollout canary 전략, AnalysisTemplate, Istio mTLS 등

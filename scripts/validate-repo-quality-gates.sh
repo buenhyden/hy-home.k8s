@@ -316,6 +316,44 @@ for path in docs_dir.rglob("*.md"):
         if any(marker in line for marker in authored_template_residue):
             fail(f"authored docs template residue in {rel(path)}:{line_number}")
 
+required_stage_templates = [
+    ("docs/03.adr/*.md", "adr.template.md"),
+    ("docs/04.specs/*/spec.md", "spec.template.md"),
+    ("docs/05.plans/*.md", "plan.template.md"),
+    ("docs/06.tasks/*.md", "task.template.md"),
+    ("docs/07.guides/*.md", "guide.template.md"),
+    ("docs/08.operations/*.md", "operation.template.md"),
+    ("docs/09.runbooks/*.md", "runbook.template.md"),
+    ("docs/90.references/**/*.md", "reference.template.md"),
+]
+
+
+def required_headings_from_template(template_name: str) -> list[str]:
+    headings: list[str] = []
+    for line in read_text(root / "docs/99.templates" / template_name).splitlines():
+        if not line.startswith("## "):
+            continue
+        heading = line.strip()
+        if "(If Applicable)" in heading or "(Optional)" in heading:
+            continue
+        headings.append(heading)
+    return headings
+
+
+for glob_pattern, template_name in required_stage_templates:
+    required_headings = required_headings_from_template(template_name)
+    for path in sorted(root.glob(glob_pattern)):
+        if path.name == "README.md":
+            continue
+        document_headings = {
+            line.strip()
+            for line in read_text(path).splitlines()
+            if line.startswith("## ")
+        }
+        for heading in required_headings:
+            if heading not in document_headings:
+                fail(f"{rel(path)} missing required template heading from {template_name}: {heading}")
+
 legacy_postmortems = "11" + ".postmortems"
 legacy_learning = "50" + ".Learning"
 legacy_stage_range = "00" + "~" + "11"

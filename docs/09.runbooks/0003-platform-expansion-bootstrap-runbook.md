@@ -117,7 +117,7 @@
    ./infrastructure/tests/verify-contracts-static.sh
    ```
 
-## Recovery Procedures
+## Safe Rollback or Recovery Procedure
 
 ### cert-manager ClusterIssuer NotReady
 
@@ -225,7 +225,7 @@ kubectl get crd | grep istio.io | wc -l
 argocd app sync platform-istiod
 ```
 
-## Verification Summary
+## Verification Steps
 
 ```bash
 # 정적 계약
@@ -240,6 +240,11 @@ kubectl -n istio-system get deploy istiod kiali
 curl -sk https://headlamp.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
 curl -sk https://kiali.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
 ```
+
+## Observability and Evidence Sources
+
+- **Signals**: ClusterIssuer readiness, Headlamp TLS state, Istiod/Kiali deployment availability, ArgoCD Application health.
+- **Evidence to Capture**: static contract output, relevant Kubernetes events, cert-manager logs, Kiali Prometheus connection logs.
 
 ## Related Documents
 

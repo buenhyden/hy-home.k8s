@@ -51,6 +51,10 @@ curl -s http://172.18.0.13:3100/ready      # → ready
 
 ---
 
+## Step-by-step Instructions
+
+아래 절차는 monitoring 리소스 배포, NodePort 접근 확인, Prometheus 수집 확인, Loki 로그 확인, Grafana 대시보드 임포트 순서로 진행한다.
+
 ## Procedure 1: monitoring namespace + 리소스 배포
 
 ArgoCD가 자동으로 배포하지만, 최초 부트스트랩 시 순서가 필요하다.

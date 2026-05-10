@@ -6,7 +6,7 @@ owner: '{team-or-person}'
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/07.guides//####-<topic>.md -->
+<!-- Target: docs/07.guides/####-<topic>.md -->
 
 # [Topic Name] Guide
 

@@ -63,6 +63,12 @@
 - **Disallowed**:
   - K8s Dashboard 재설치 (ADR-0010에 의해 교체됨)
 
+## Exceptions
+
+- Rollouts analysis skip, notifications disablement, or Headlamp authentication changes require platform owner approval and a linked PR.
+- Direct cluster changes are allowed only for human-approved bootstrap or break-glass recovery and must be followed by GitOps state reconciliation.
+- Traefik external artifact changes must be reviewed with the matching k8s ingress and TLS contract.
+
 ## Traefik 외부 Artifact 관리
 
 - `traefik/kiali-k3d.yaml` — Kiali Traefik 라우터

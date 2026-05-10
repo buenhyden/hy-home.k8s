@@ -10,7 +10,7 @@ updated: YYYY-MM-DD
 
 # Reference: [Item Name]
 
-> Use this template for `docs/90.references/<topic>.md`.
+> Use this template for `docs/90.references/<category>/<item>.md`.
 
 ---
 

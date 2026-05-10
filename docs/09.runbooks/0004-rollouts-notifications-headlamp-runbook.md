@@ -8,6 +8,17 @@
 
 이 런북은 Argo Rollouts, Argo Notifications(Slack), Headlamp의 초기 부트스트랩, 복구, 검증 절차를 제공한다.
 
+## Purpose
+
+Rollouts, Notifications, Headlamp 운영 상태를 빠르게 확인하고, 초기 부트스트랩 또는 장애 복구 시 필요한 순서를 제공한다.
+
+## Canonical References
+
+- [`../08.operations/0004-rollouts-notifications-headlamp-policy.md`](../08.operations/0004-rollouts-notifications-headlamp-policy.md)
+- [`../03.adr/0010-headlamp-replaces-dashboard.md`](../03.adr/0010-headlamp-replaces-dashboard.md)
+- [`../03.adr/0011-argo-rollouts-progressive-delivery.md`](../03.adr/0011-argo-rollouts-progressive-delivery.md)
+- [`../03.adr/0012-argo-notifications-slack.md`](../03.adr/0012-argo-notifications-slack.md)
+
 ## When to Use
 
 - Rollouts Controller가 기동하지 않거나 CRD가 없을 때
@@ -16,6 +27,10 @@
 - 초기 플랫폼 부트스트랩 후 신규 컴포넌트 검증 시
 
 ---
+
+## Procedure or Checklist
+
+아래 절차는 Notifications secret 준비, controller 상태 확인, Rollouts 상태 확인, Headlamp 및 Rollouts Dashboard 접근 검증 순서로 수행한다.
 
 ## Procedure 1: Vault Notifications Secret 준비 (최초 1회)
 
@@ -134,7 +149,7 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 
 ---
 
-## Verification Checklist
+## Verification Steps
 
 - [ ] `argo-rollouts` namespace에 controller + dashboard Pod Running
 - [ ] `argo-rollouts` Rollout CRD 존재
@@ -145,6 +160,17 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 - [ ] `https://headlamp.127.0.0.1.nip.io/` → 200 응답
 - [ ] `https://rollouts.127.0.0.1.nip.io/` → 200 응답
 - [ ] Traefik artifact (`headlamp-k3d.yaml`, `rollouts-k3d.yaml`) 외부 Traefik 레포에 적용됨
+
+## Observability and Evidence Sources
+
+- **Signals**: Rollouts controller readiness, notification controller logs, Headlamp ingress/TLS status, Traefik HTTP response codes.
+- **Evidence to Capture**: pod status output, Slack send/error log snippets, HTTP response codes, ArgoCD Application health.
+
+## Safe Rollback or Recovery Procedure
+
+- Rollout 문제가 발생하면 `kubectl argo rollouts undo`로 workload 단위 rollback을 수행한다.
+- Notifications 문제가 발생하면 Vault secret과 ExternalSecret 동기화 상태를 먼저 복구하고 controller 재시작은 마지막 수단으로 둔다.
+- Headlamp 접근 실패 시 Ingress/TLS/Traefik artifact를 확인하고, Dashboard 재도입이 아니라 Headlamp 경로를 복구한다.
 
 ## Troubleshooting Signatures
 

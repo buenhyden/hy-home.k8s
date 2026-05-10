@@ -52,6 +52,10 @@ kubectl get pod -n argocd -l app.kubernetes.io/name=argocd-server \
 
 ---
 
+## Step-by-step Instructions
+
+아래 절차는 ArgoCD metric NodePort 노출, Prometheus scrape 설정, Grafana 대시보드 확인 순서로 진행한다.
+
 ## Procedure 1: NodePort 서비스 배포
 
 `gitops/platform/argocd/argocd-metrics-nodeport.yaml`에 5개 NodePort 서비스를 정의하고 배포한다.

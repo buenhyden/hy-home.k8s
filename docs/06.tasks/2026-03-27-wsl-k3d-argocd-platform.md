@@ -73,3 +73,9 @@
   - `argocd app sync <app>`
 - **Logs / Evidence Location**:
   - `docs/09.runbooks/0001-argocd-platform-bootstrap-runbook.md` 체크리스트 기반 증적
+
+## Related Documents
+
+- **Spec**: [`../04.specs/001-wsl-k3d-argocd-platform/spec.md`](../04.specs/001-wsl-k3d-argocd-platform/spec.md)
+- **Plan**: [`../05.plans/2026-03-27-wsl-k3d-argocd-platform.md`](../05.plans/2026-03-27-wsl-k3d-argocd-platform.md)
+- **Runbook**: [`../09.runbooks/0001-argocd-platform-bootstrap-runbook.md`](../09.runbooks/0001-argocd-platform-bootstrap-runbook.md)

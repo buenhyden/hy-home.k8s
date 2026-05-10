@@ -16,6 +16,16 @@
 2. **ArgoCD EndpointSlice 제외**: ArgoCD는 `discovery.k8s.io/EndpointSlice` 리소스를 기본 resource.exclusions에 포함하여 직접 관리하지 않을 수 있다. 따라서 YAML을 수정하고 커밋해도 EndpointSlice가 자동으로 클러스터에 동기화되지 않을 수 있다. 직접 `kubectl apply`/`kubectl patch`는 운영자가 승인한 break-glass 복구에서만 사용한다.
 3. **Grafana OAuth 전용 설정**: Grafana가 `GF_AUTH_DISABLE_LOGIN_FORM=true`, `GF_AUTH_OAUTH_AUTO_LOGIN=true`로 설정된 경우 `/api/frontend/settings` 등 API 엔드포인트가 401을 반환한다. Kiali는 이 엔드포인트로 Grafana 버전을 확인하므로 Unreachable로 표시된다. 해결책: Grafana에 Anonymous Viewer 접근 활성화.
 
+## Purpose
+
+Kiali에서 외부 observability service가 unreachable로 표시될 때 EndpointSlice, NetworkPolicy, Kiali configuration, Grafana auth 상태를 순서대로 진단하고 복구한다.
+
+## Canonical References
+
+- [`../08.operations/0005-observability-platform-operations-policy.md`](../08.operations/0005-observability-platform-operations-policy.md)
+- [`../07.guides/0006-argocd-prometheus-grafana-guide.md`](../07.guides/0006-argocd-prometheus-grafana-guide.md)
+- [`../../gitops/platform/external-services/`](../../gitops/platform/external-services/)
+
 ## When to Use
 
 - Kiali에서 Grafana/Prometheus/Tempo가 unreachable로 표시될 때
@@ -24,6 +34,10 @@
 - `kubectl get endpointslice -n platform`에서 alloy, loki, grafana의 주소가 비어있거나 없을 때
 
 ---
+
+## Procedure or Checklist
+
+아래 절차는 현재 IP 확인, Kiali 파드 연결 테스트, EndpointSlice/NetworkPolicy 점검, Grafana auth 확인 순서로 수행한다.
 
 ## k3d-hyhome 올바른 IP 할당표
 
@@ -329,3 +343,27 @@ argocd app set platform-external-services \
 | NetworkPolicy         | egress ipBlock 규칙은 post-DNAT 기준 IP로 작성                              |
 | IP 변경 시 체크리스트 | EndpointSlice YAML, Kiali Grafana URL, NetworkPolicy egress 세 곳 모두 확인 |
 | Grafana OAuth 전용    | Kiali API 호출 401 → Grafana에 `GF_AUTH_ANONYMOUS_ENABLED=true` 추가        |
+
+## Verification Steps
+
+- [ ] Kiali pod에서 Prometheus, Grafana, Tempo endpoint TCP 연결이 성공한다.
+- [ ] EndpointSlice YAML과 실제 container IP가 일치한다.
+- [ ] NetworkPolicy egress ipBlock이 현재 external service IP를 허용한다.
+- [ ] Grafana `/api/frontend/settings`가 Kiali에서 200 응답을 반환한다.
+
+## Observability and Evidence Sources
+
+- **Signals**: Kiali external service status, Kiali logs, EndpointSlice endpoints, NetworkPolicy egress rules, Grafana API response code.
+- **Evidence to Capture**: Kiali log excerpts, endpoint IP table, `/api/frontend/settings` HTTP result, applied PR link for GitOps corrections.
+
+## Safe Rollback or Recovery Procedure
+
+- EndpointSlice or NetworkPolicy changes should be reverted through GitOps if the new IP mapping is wrong.
+- Docker-side Grafana auth changes must be reflected in the owning Docker repo before treating the fix as persistent.
+- Direct EndpointSlice apply/patch remains human-approved break-glass only and must be reconciled back into Git.
+
+## Related Documents
+
+- **Operations Policy**: [`../08.operations/0005-observability-platform-operations-policy.md`](../08.operations/0005-observability-platform-operations-policy.md)
+- **ArgoCD Metrics Runbook**: [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md)
+- **External Services**: [`../../gitops/platform/external-services/`](../../gitops/platform/external-services/)

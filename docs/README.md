@@ -65,6 +65,17 @@ docs/
 5. 일반 운영 변경은 GitOps-first 원칙을 따르며, 문서가 live `kubectl apply`나 외부 Vault 조작을 우회 절차처럼 안내하지 않도록 한다.
 6. cloud example 버전을 갱신할 때는 코드, README, [tech-stack-version-inventory.md](./90.references/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
 
+## Stage Usage Criteria
+
+모든 변경이 `01.prd`부터 `10.incidents`까지의 전체 체인을 요구하지는 않는다. 새 기능이나 플랫폼 변경은 영향도에 따라 필요한 stage만 작성하되, 요구사항, 설계 판단, 실행 증적, 운영 절차가 서로 추적 가능해야 한다.
+
+- 제품 요구나 사용자 시나리오가 바뀌면 `01.prd`를 갱신한다.
+- 아키텍처 모델이나 품질 속성이 바뀌면 `02.ard`를, 선택지와 결정 근거가 바뀌면 `03.adr`을 갱신한다.
+- 구현 계약, manifest 구조, agent/tool contract처럼 구현자가 따라야 할 세부 설계는 `04.specs`에 둔다.
+- 수행 순서와 risk/verification gate는 `05.plans`에, 실제 작업과 evidence는 `06.tasks`에 둔다.
+- 운영 지식은 먼저 `07.guides`, `08.operations`, `09.runbooks` 중 하나로 분류한다. guide는 안정 상태 안내, operation은 정책과 경계, runbook은 실행 가능한 절차와 복구 순서를 담당한다.
+- 사고가 없으면 `10.incidents`는 README만 있는 상태가 정상이다. 실제 사고 기록과 postmortem이 생길 때만 하위 문서를 추가한다.
+
 ## Documentation Flow
 
 `01.prd` (기획) -> `02.ard` / `03.adr` (설계와 결정) -> `04.specs` (상세 명세) -> `05.plans` / `06.tasks` (실행과 검증) -> `07.guides` / `08.operations` / `09.runbooks` (운영 지식) -> `10.incidents` (사고와 회고)
@@ -83,6 +94,7 @@ docs/
 - 허용된 `docs/` top-level 폴더만 존재해야 한다.
 - 모든 허용 stage 폴더는 `README.md`를 가져야 하며, 목적, 포함할 내용, 관련 폴더, 예시 섹션을 포함해야 한다.
 - 모든 템플릿은 `docs/99.templates/`에 있어야 하고 template inventory에 등록되어야 한다.
+- authored stage 문서는 템플릿의 필수 heading을 유지해야 한다. `If Applicable`과 `Optional` 섹션은 실제 필요가 있을 때만 작성한다.
 - Agent gateway, `.claude`, `.codex`, `docs/00.agent-governance`의 runtime mirror와 harness catalog가 일관되어야 한다.
 - GitHub Actions YAML, workflow 중복 step, script reference, obsolete file, tech-stack version drift가 검증되어야 한다.
 - 오래된 docs path, Dashboard runtime 계약, legacy stage 표현은 명시된 역사/대체 문맥 없이 재등장하면 안 된다.

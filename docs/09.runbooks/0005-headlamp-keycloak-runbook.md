@@ -12,6 +12,16 @@ ServiceAccount 토큰 로그인, Keycloak OIDC 전환(GitOps via ArgoCD), Keyclo
 
 > **Agent execution boundary**: 이 런북의 ServiceAccount, ClusterRoleBinding, token Secret 생성은 human-approved local bootstrap 또는 break-glass 전용이다. Agent는 기본적으로 RBAC 최소권한 검토, GitOps 변경안, 검증 계획까지만 작성한다.
 
+## Purpose
+
+Headlamp 인증 방식을 ServiceAccount token 또는 Keycloak OIDC로 운영하고, 인증 실패와 RBAC 오류를 복구한다.
+
+## Canonical References
+
+- [`../07.guides/0004-headlamp-auth-oidc-guide.md`](../07.guides/0004-headlamp-auth-oidc-guide.md)
+- [`../08.operations/0004-rollouts-notifications-headlamp-policy.md`](../08.operations/0004-rollouts-notifications-headlamp-policy.md)
+- [`../03.adr/0010-headlamp-replaces-dashboard.md`](../03.adr/0010-headlamp-replaces-dashboard.md)
+
 ## When to Use
 
 - Headlamp에서 ServiceAccount 토큰으로 로그인이 필요할 때
@@ -20,6 +30,10 @@ ServiceAccount 토큰 로그인, Keycloak OIDC 전환(GitOps via ArgoCD), Keyclo
 - Keycloak Client 설정을 검증해야 할 때
 
 ---
+
+## Procedure or Checklist
+
+아래 절차는 ServiceAccount token 로그인, OIDC 전환, Keycloak 설정 검증, 오류 복구 순서로 수행한다.
 
 ## Procedure 1: ServiceAccount 토큰으로 Headlamp 로그인
 
@@ -353,7 +367,7 @@ kubectl -n headlamp rollout restart deployment headlamp
 
 ---
 
-## Verification Checklist
+## Verification Steps
 
 - [ ] `headlamp` namespace에 Pod Running
 - [ ] `https://headlamp.127.0.0.1.nip.io/` → 200 응답
@@ -362,6 +376,17 @@ kubectl -n headlamp rollout restart deployment headlamp
 - [ ] OIDC 활성화 시: `headlamp-oidc-secret` ExternalSecret 동기화 완료
 - [ ] OIDC 활성화 시: Keycloak groups claim → Kubernetes RBAC 적용 확인
 - [ ] `secret/platform/headlamp` Vault 경로에 `oidc_client_secret` 저장됨
+
+## Observability and Evidence Sources
+
+- **Signals**: Headlamp pod readiness, ExternalSecret Ready status, Keycloak redirect result, RBAC can-i output.
+- **Evidence to Capture**: HTTP response code, Headlamp logs, ExternalSecret condition, Keycloak client setting screenshot or export.
+
+## Safe Rollback or Recovery Procedure
+
+- OIDC 전환 실패 시 Headlamp values를 ServiceAccount token 인증 경로로 되돌리는 GitOps PR을 작성한다.
+- break-glass token은 짧은 duration으로 발급하고 사용 후 폐기한다.
+- RBAC 변경은 ClusterRoleBinding diff와 승인 근거를 남긴 뒤 적용한다.
 
 ## Related Documents
 

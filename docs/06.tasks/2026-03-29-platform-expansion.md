@@ -54,6 +54,14 @@ TDD(RED/GREEN/REFACTOR) 중심으로 정적 계약 검증이 먼저 정의되고
 | T-030   | `.env.example` 서비스 엔드포인트 전체 문서화                        | doc  | Phase 4D / env          | PLN-003             | 모든 서비스 경로 기재                            | Done   |
 | T-031   | `verify-external-services.sh` 관측성 서비스 검증 추가               | test | Phase 4D / Verification | PLN-004             | standalone PASS                                  | Done   |
 
+## Suggested Types
+
+- `impl`
+- `test`
+- `eval`
+- `doc`
+- `ops`
+
 ## TDD Scenarios
 
 ### TC-01 IP Contract
@@ -104,3 +112,9 @@ TDD(RED/GREEN/REFACTOR) 중심으로 정적 계약 검증이 먼저 정의되고
 - GitOps: `gitops/platform/{cert-manager,dashboard,istio,kiali}/`
 - Apps: `gitops/apps/root/`
 - Spec: `../04.specs/003-platform-expansion/spec.md`
+
+## Related Documents
+
+- **Spec**: [`../04.specs/003-platform-expansion/spec.md`](../04.specs/003-platform-expansion/spec.md)
+- **Plan**: [`../05.plans/2026-03-29-platform-expansion.md`](../05.plans/2026-03-29-platform-expansion.md)
+- **Runbook**: [`../09.runbooks/0003-platform-expansion-bootstrap-runbook.md`](../09.runbooks/0003-platform-expansion-bootstrap-runbook.md)

@@ -87,6 +87,27 @@
   - `shell-static`
 - 집계 게이트: `ci-summary`
 
+## Core Design
+
+- WSL2/k3d cluster state is managed through GitOps manifests, static contract tests, and documented bootstrap boundaries.
+- ArgoCD remains the reconciliation controller; local file edits are not treated as live deployment proof.
+- External service access is modeled through Kubernetes Services, EndpointSlices, NetworkPolicies, and Vault-backed ESO contracts.
+
+## Data Modeling & Storage Strategy
+
+- This spec does not introduce application storage schemas.
+- Persistent data remains outside the local k3d cluster in external PostgreSQL, Valkey, and Vault services.
+- Storage-related changes are represented as endpoint, secret-path, and policy contracts rather than database migrations.
+
+## Interfaces & Data Structures
+
+### Core Interfaces
+
+- Kubernetes YAML manifests under `gitops/`
+- static verification shell scripts under `infrastructure/tests/`
+- GitHub Actions workflow definitions under `.github/workflows/`
+- Vault path and Kubernetes ExternalSecret conventions documented in this spec and related ADRs
+
 ## File-level Implementation Contract
 
 - `.github/workflows/ci.yml`
@@ -108,14 +129,23 @@
 - Vault 정책에서 `secret/data/platform/*` wildcard 금지
 - 시크릿/토큰/인증서 평문 커밋 금지
 
-## Failure Modes & Fallback
+## Edge Cases & Error Handling
+
+- External services may be reachable from the Docker network but not from k3d pods; verify EndpointSlice IPs and NetworkPolicy egress together.
+- Local k3d readiness can drift from repo/static readiness; treat runtime checks as separate evidence.
+- Optional local tools such as `kube-linter`, `actionlint`, or `zizmor` may be unavailable in a developer shell; CI/static script results remain the canonical minimum evidence.
+
+## Failure Modes & Fallback / Human Escalation
 
 - **Failure**: repo-server egress 부족으로 Git fetch 실패
-  - **Action**: `argocd` egress에 DNS/443 허용 확인
+  - **Fallback**: `argocd` egress에 DNS/443 허용 확인
+  - **Human Escalation**: NetworkPolicy 변경은 PR review 후 GitOps reconciliation으로 반영한다.
 - **Failure**: CI false positive
-  - **Action**: 예외 승인 후 룰 보정(ADR/Operations 업데이트)
+  - **Fallback**: 예외 승인 후 룰 보정(ADR/Operations 업데이트)
+  - **Human Escalation**: gate 예외는 PR에 근거와 후속 보정 작업을 남긴다.
 - **Failure**: CI false negative
-  - **Action**: `verify-contracts-static.sh` 패턴 강화 + 회귀 테스트 추가
+  - **Fallback**: `verify-contracts-static.sh` 패턴 강화 + 회귀 테스트 추가
+  - **Human Escalation**: 정적 계약 누락이 반복되면 관련 Operations policy를 갱신한다.
 
 ## Verification
 
@@ -133,7 +163,7 @@ bash -n infrastructure/bootstrap-local.sh infrastructure/tests/*.sh
 CHECK_TRAEFIK_443=true ./infrastructure/tests/verify-ingress-tls.sh
 ```
 
-## Success Criteria
+## Success Criteria & Verification Plan
 
 - `gitops/`, `infrastructure/`, `.github/` 변경이 계약 문서와 일치
 - AppProject wildcard 권한 제거

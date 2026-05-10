@@ -7,6 +7,10 @@
 
 > **현재 실행계약 메모 (2026-05-09)**: 이 Plan은 2026-03-29 플랫폼 확장 실행 기록이다. 현재 repo-backed 실행계약은 [ADR-0010](../03.adr/0010-headlamp-replaces-dashboard.md)과 현재 `gitops/**` 매니페스트/정적 검증 스크립트가 우선한다. Kubernetes Dashboard는 Headlamp로 대체되었고, 외부 서비스 EndpointSlice/CIDR 계약은 `172.18.x` 기준이다.
 
+## Context
+
+이 계획은 2026-03-29 기준 플랫폼 확장 작업의 실행 순서와 완료 증적을 기록한다. Dashboard 관련 항목은 역사적 실행 기록이며, 현재 UI 실행계약은 Headlamp ADR과 live GitOps manifests를 우선한다.
+
 ## Goals & In-Scope
 
 - **Goals**:

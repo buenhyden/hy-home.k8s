@@ -31,6 +31,15 @@
 | T-010 | PLAN/TASK/GUIDE/OPER/RUN 문서 업데이트 | doc | Traceability | Phase 3 | 절차/게이트 반영 | Done |
 | T-011 | 01~09 README 인덱스 동기화 | doc | Governance Contract | Phase 3 | 인덱스 설명/수정일 반영 | Done |
 
+## Suggested Types
+
+- `impl`
+- `test`
+- `eval`
+- `doc`
+- `ops`
+- `refactor`
+
 ## TDD Scenarios by Component
 
 ### TC-01 Network Policy (`argocd` egress)
@@ -86,3 +95,9 @@
 - Scripts: `infrastructure/tests/*`
 - Workflow: `.github/workflows/ci.yml`
 - Ops 증적: [`../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+
+## Related Documents
+
+- **Spec**: [`../04.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../04.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
+- **Plan**: [`../05.plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../05.plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- **Runbook**: [`../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../09.runbooks/0002-argocd-eso-vault-recovery-runbook.md)

@@ -10,7 +10,7 @@ updated: YYYY-MM-DD
 
 # Incident: [Incident Title]
 
-NC-YYYYMMDD-XXX / [Short Incident Title]
+INC-YYYYMMDD-XXX / [Short Incident Title]
 
 > Use this template for `docs/10.incidents/YYYY/YYYY-MM-DD-<incident-title>.md`.
 >

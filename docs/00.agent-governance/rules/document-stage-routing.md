@@ -48,6 +48,14 @@ When a skill suggests one of these paths, reroute the output into the canonical 
 - If the content is long-lived reusable knowledge, route it to `docs/90.references/`.
 - If the content changes governance or agent execution policy, route it to `docs/00.agent-governance/`.
 
+### Operational Knowledge Split
+
+- Use `docs/07.guides/` when the reader needs stable user, developer, or operator guidance.
+- Use `docs/08.operations/` when the content defines a reusable policy, boundary, or standard.
+- Use `docs/09.runbooks/` when the content must be executable in order, including verification, rollback, or recovery steps.
+- Use `docs/90.references/` when the content is a durable reference, glossary, external standard summary, or dated version snapshot.
+- Do not duplicate the same operational content across guide, policy, and runbook stages. Link to the canonical owner instead.
+
 ### Named Skill Handling
 
 #### `agent-memory-systems`

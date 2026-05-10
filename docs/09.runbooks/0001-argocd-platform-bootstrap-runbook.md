@@ -195,7 +195,7 @@ argocd app list
 - **Eval Re-run**: T-001~T-011 검증 재실행
 - **Trace Capture**: task 문서에 증적 추가
 
-## Related Operational Documents
+## Related Documents
 
 - **Incident Index**: [`../10.incidents/README.md`](../10.incidents/README.md)
 - **Postmortem Index**: [`../10.incidents/README.md`](../10.incidents/README.md)
