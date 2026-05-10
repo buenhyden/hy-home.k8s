@@ -4,9 +4,10 @@
 
 ## Overview
 
-This folder stores durable technical lessons that reduce repeated mistakes in
-agent work. Memory entries are supporting context only; they do not override
-repository governance, scope rules, or direct user instructions.
+This folder stores agent work progress and durable technical lessons that reduce
+repeated mistakes in agent work. Memory entries are supporting context only;
+they do not override repository governance, scope rules, or direct user
+instructions.
 
 ## Audience
 
@@ -21,6 +22,7 @@ This README is primarily for:
 ### In Scope
 
 - Non-obvious technical findings likely to recur
+- Work progress and handoff notes in `progress.md`
 - Lessons connected to specs, runbooks, incidents, or postmortems
 - Short operational notes that support future task intake
 
@@ -34,26 +36,33 @@ This README is primarily for:
 
 ```text
 memory/
-├── progress.md  # Historical/current-source context for agent execution
+├── progress.md  # Agent progress and reusable memory ledger
 └── README.md    # This file
 ```
 
 ## How to Work in This Area
 
-1. Confirm the lesson is repeat-preventing and not merely a session summary.
-2. Use `../../99.templates/memory.template.md` for new memory entries.
-3. Link the entry to the affected spec, runbook, incident, or postmortem.
-4. Keep policy changes in `../rules/` instead of relying on memory notes.
+1. Read `progress.md` before substantial repo-changing work to avoid repeating
+   stale assumptions.
+2. Append progress and reusable memory to `progress.md` during repo-changing
+   work using `../../99.templates/progress.template.md`.
+3. Use `../../99.templates/memory.template.md` for standalone memory entries if
+   a future task creates separate memory files.
+4. Link the entry to the affected spec, runbook, incident, or postmortem when
+   useful.
+5. Keep policy changes in `../rules/` instead of relying on memory notes.
 
 ## Related References
 
 - [Agent Governance Hub](../README.md)
 - [Memory Template](../../99.templates/memory.template.md)
+- [Progress Template](../../99.templates/progress.template.md)
 - [Documentation Protocol](../rules/documentation-protocol.md)
 
 ## Policy
 
 - Record only non-obvious and repeat-preventing insights.
+- Record progress and handoff notes for repo-changing agent work.
 - Prefer short, factual entries over narrative summaries.
 - Link each memory item to affected specs, runbooks, incidents, or postmortems.
 
@@ -65,4 +74,5 @@ memory/
 
 ## Format
 
-Use `docs/99.templates/memory.template.md` and keep each item scoped to one problem pattern.
+Use `docs/99.templates/progress.template.md` for `progress.md` entries and keep
+each item scoped to one workstream.

@@ -96,10 +96,10 @@ docs/00.agent-governance/
 - `rules/`: global policy, checklists, and documentation protocol
 - `scopes/`: layer-specific execution rules
 - `providers/`: provider-specific notes
-- `memory/`: reusable operational lessons
+- `memory/`: agent progress ledger and reusable operational lessons
 
 ## Examples
 
 - Add a new execution rule under `rules/`.
 - Add a provider note under `providers/`.
-- Add a reusable governance lesson under `memory/` using `docs/99.templates/memory.template.md`.
+- Add work progress and reusable memory under `memory/progress.md` using `docs/99.templates/progress.template.md`.

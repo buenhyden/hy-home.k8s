@@ -1,4 +1,51 @@
-# Memory: Harness Implementation Progress
+# Agent Progress and Memory Ledger
+
+This file is the repo-local progress and reusable memory ledger for AI agent
+work in `hy-home.k8s`. Use `docs/99.templates/progress.template.md` for new
+entries. Memory here supports future task intake, but current runtime truth
+stays in `docs/00.agent-governance/harness-catalog.md` and current script
+inventory stays in `scripts/README.md`.
+
+## Work Entries
+
+### 2026-05-10 — Docs taxonomy and progress memory contract
+
+- **Date**: 2026-05-10
+- **Layer**: meta
+- **Status**: complete
+- **Tags**: #governance #docs #memory
+
+#### Progress
+
+- Migrated the canonical docs taxonomy from the old stage folders to
+  `01.requirements`, `02.architecture`, `03.specs`, `04.execution`, and
+  `05.operations`.
+- Added `docs/99.templates/progress.template.md` as the template for this
+  `progress.md` ledger.
+- Updated bootstrap, preflight, postflight, documentation protocol, runtime
+  baseline, and memory README guidance so AI agents read and write this ledger
+  during repo-changing work.
+
+#### Memory
+
+- `docs/00.agent-governance/memory/progress.md` is the mandatory local ledger
+  for repo-changing agent progress, reusable memory, evidence, and handoff.
+- Standalone memory notes may still use `docs/99.templates/memory.template.md`,
+  but normal agent work should append to this file using
+  `docs/99.templates/progress.template.md`.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+
+#### Handoff
+
+- None.
+
+## Historical Entries
+
+### Harness Implementation Progress
 
 - **Date**: 2026-04-13
 - **Layer**: meta
@@ -10,17 +57,17 @@ Current script inventory is maintained in `scripts/README.md`. This memory entry
 preserves the initial remediation history and must not be treated as the current
 runtime or script roster when those files disagree.
 
-## Problem
+### Problem
 
 Harness layers L1–L6 were incomplete: no `settings.json`, no agent files, no hooks, no k8s scripts, scopes lacked §File Ownership, and no subagent protocol existed.
 
-## Context
+### Context
 
 - Affected paths: `.claude/`, `scripts/`, `docs/00.agent-governance/scopes/`, `AGENTS.md`, `CLAUDE.md`
 - Environment: k3d local cluster, WSL2, ArgoCD GitOps
 - Preconditions: Only `settings.local.json` and empty `.claude/` subdirectories existed.
 
-## Resolution
+### Resolution
 
 **P0 (complete):**
 
@@ -62,7 +109,7 @@ Harness layers L1–L6 were incomplete: no `settings.json`, no agent files, no h
 - Model policy standardized: agents use sonnet; supervisor uses opus.
 - Legacy source-directory references removed from gateway and protocol files.
 
-## Prevention
+### Prevention
 
 - Run `postflight-checklist.md §6 Docs 3 Rules` before every PR.
 - `settings.json` must be git-tracked; `settings.local.json` must stay `.gitignore`d.

@@ -699,6 +699,13 @@ for phrase in [
 memory_progress_path = root / "docs/00.agent-governance/memory/progress.md"
 memory_progress_text = read_text(memory_progress_path)
 for phrase in [
+    "docs/99.templates/progress.template.md",
+    "## Work Entries",
+    "#### Progress",
+    "#### Memory",
+    "#### Evidence",
+    "#### Handoff",
+    "repo-changing agent progress",
     "historical initial implementation snapshot",
     "Current runtime truth",
     "Current script inventory",

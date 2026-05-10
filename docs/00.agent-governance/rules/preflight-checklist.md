@@ -15,6 +15,7 @@ Run this checklist before making substantial edits.
 - [ ] Persona selected via `rules/persona.md`.
 - [ ] Matching scope loaded from `scopes/`.
 - [ ] Provider notes loaded from `providers/` when relevant.
+- [ ] `memory/progress.md` reviewed for current progress, handoff, and reusable memory context.
 
 ## 3. Stage and Source Mapping
 
@@ -35,3 +36,4 @@ Run this checklist before making substantial edits.
 - [ ] Validation commands/checks are defined before editing.
 - [ ] Evidence requirements for completion are defined.
 - [ ] Unavailable local tools and expected validation limitations are identified.
+- [ ] A `memory/progress.md` update is planned for repo-changing work.

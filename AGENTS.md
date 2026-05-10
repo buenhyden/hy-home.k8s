@@ -11,7 +11,8 @@ Load governance just-in-time in this order:
 3. [persona.md](docs/00.agent-governance/rules/persona.md)
 4. matching scope in `docs/00.agent-governance/scopes/`
 5. provider notes in `docs/00.agent-governance/providers/`
-6. [postflight-checklist.md](docs/00.agent-governance/rules/postflight-checklist.md)
+6. [progress.md](docs/00.agent-governance/memory/progress.md)
+7. [postflight-checklist.md](docs/00.agent-governance/rules/postflight-checklist.md)
 
 Runtime baseline: [`.claude/CLAUDE.md`](.claude/CLAUDE.md)
 

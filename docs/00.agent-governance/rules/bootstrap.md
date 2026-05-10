@@ -8,6 +8,7 @@ Universal entry point for all agents in `hy-home.k8s`.
 - Plan from repo-backed evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, tests, and current manifests.
 - Use [Agentic Execution Rules](agentic.md) as the Agent-first Engineering contract for non-trivial work.
 - Use spec-driven execution anchored to `docs/01.requirements/` and `docs/03.specs/`.
+- Use `docs/00.agent-governance/memory/progress.md` as the agent progress and reusable memory ledger for repo-changing work.
 - Load governance just-in-time, not full-repository-first.
 - Complete [Preflight Checklist](preflight-checklist.md) before substantial work.
 - Complete [Postflight Checklist](postflight-checklist.md) before final response.
@@ -23,7 +24,7 @@ Universal entry point for all agents in `hy-home.k8s`.
 3. Resolve persona via `rules/persona.md`.
 4. Load one layer scope from `scopes/`.
 5. Load provider notes from `providers/` when needed.
-6. Load `memory/` entries only if relevant.
+6. Load `memory/progress.md` for current progress, handoff, and reusable memory context.
 7. Load `rules/postflight-checklist.md` before completion.
 
 ## Stage Taxonomy

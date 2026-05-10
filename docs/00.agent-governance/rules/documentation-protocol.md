@@ -27,6 +27,7 @@ This protocol defines how governance references authored docs and how language b
 - Postmortems belong under `docs/05.operations/incidents/postmortems/`, not a separate top-level docs stage.
 - Persona and scope instructions must state which stage folders are authoritative.
 - Stage expectations must map to [stage-authoring-matrix.md](stage-authoring-matrix.md).
+- Repo-changing agent work must append progress and reusable memory to `docs/00.agent-governance/memory/progress.md` using `docs/99.templates/progress.template.md`.
 
 ## Template Link Policy
 

@@ -4,7 +4,7 @@ Canonical authoring matrix for the current docs taxonomy.
 
 | Taxonomy Path | Purpose | Authoring Timing | Persona (Primary) | Input Documents | Output Documents | Template | Completion Criteria |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `00.agent-governance` | Agent governance and execution control | Before work starts and when governance changes | Governance Steward | Repository structure, policy context | Rules/scopes/providers/memory entries | `memory.template.md` | JIT loading, language boundary, and checklist consistency are enforced |
+| `00.agent-governance` | Agent governance and execution control | Before work starts and when governance changes | Governance Steward | Repository structure, policy context | Rules/scopes/providers/memory entries | `memory.template.md`, `progress.template.md` | JIT loading, language boundary, progress ledger, and checklist consistency are enforced |
 | `01.requirements` | Product intent and requirements | Before feature implementation | Product Manager | Problem statement, business goals | PRD | `prd.template.md` | Acceptance criteria, scope, and success metrics are testable |
 | `02.architecture/requirements` | Architecture requirements and reference design | After PRD baseline | System Architect | PRD | ARD | `ard.template.md` | Boundaries, quality attributes, and data flow are explicit |
 | `02.architecture/decisions` | Architecture decision records | When major decisions are made | System Architect | ARD, alternatives | ADR | `adr.template.md` | Decision rationale, alternatives, and consequences are traceable |

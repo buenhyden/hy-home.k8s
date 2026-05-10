@@ -33,6 +33,7 @@ Run this checklist before finalizing a response.
 - [ ] No direct cluster mutation or plaintext Kubernetes secret was introduced.
 - [ ] Staged and unstaged changes were reviewed for scope.
 - [ ] Unavailable tools, skipped live validation, or CI-only checks were stated.
+- [ ] `memory/progress.md` was updated with progress, reusable memory, evidence, and handoff for repo-changing work.
 
 ## 6. Docs 3 Rules Compliance
 

@@ -85,7 +85,7 @@ to close that gap.
 | Codex context hook | `.codex/hooks.json` | Ready | Codex mirror provides graphify context injection only; it is not a permission gate equivalent to `.claude/settings.json` |
 | Validation scripts | `scripts/*.sh`, `infrastructure/tests/*.sh` | Ready | Repo-backed gates cover quality, GitOps structure, manifests, contracts, secret handling, shell syntax, gateway thinness, language boundaries, and hook-boundary clarity |
 | Authored-doc command boundary | `scripts/validate-repo-quality-gates.sh`, staged docs | Ready | Risky command examples in authored docs require explicit human/operator boundary markers; authored docs block bare/main direct push and push examples without PR-flow context, while broader Markdown roots block bare/main direct push examples |
-| Memory | `docs/00.agent-governance/memory/` | Ready | Historical implementation notes have a local template-backed home; current runtime truth stays in this catalog and current script inventory stays in `scripts/README.md` |
+| Memory | `docs/00.agent-governance/memory/` | Ready | Agent progress and reusable memory have a local template-backed home; current runtime truth stays in this catalog and current script inventory stays in `scripts/README.md` |
 | Escalation boundary | `subagent-protocol.md`, `rules/agentic.md` | Ready | Delegation, file ownership, direct mutation, and human approval boundaries are explicit |
 
 ## Harness Engineering Matrix
@@ -101,7 +101,7 @@ to close that gap.
 | Codex context hook | `.codex/hooks.json` | Ready | None | Keep Codex hook scope limited to context injection; do not treat it as a Claude permission gate equivalent. |
 | Validation scripts | `scripts/*.sh`, `infrastructure/tests/*.sh` | Ready | None | Keep repo-backed validation as the default completion evidence before handoff. |
 | Authored-doc command boundary | `scripts/validate-repo-quality-gates.sh`, staged docs | Ready | None | Keep `kubectl apply/patch`, `argocd app sync`, `vault kv put`, and push examples marked as human/operator-only or PR-flow work in authored docs, including operations policies; keep broader Markdown scans limited to bare/main direct push examples. |
-| Memory | `docs/00.agent-governance/memory/` | Ready | None | Keep historical lessons separate from current runtime truth in this catalog. |
+| Memory | `docs/00.agent-governance/memory/` | Ready | None | Keep progress and reusable memory in `memory/progress.md`, while current runtime truth stays in this catalog. |
 | Escalation boundary | `subagent-protocol.md`, `rules/agentic.md` | Ready | None | Keep delegation, destructive-action, live-mutation, and human-approval boundaries explicit. |
 
 ## Agent-first Engineering Matrix
