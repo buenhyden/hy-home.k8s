@@ -5,6 +5,24 @@
 이 문서는 `hy-home.k8s`의 repo-backed 매니페스트와 품질 게이트에서 읽어야 하는 버전 기준을 고정한다.
 새 버전으로 올릴 때는 실제 manifest/config와 이 문서를 같은 변경으로 수정한다.
 
+## Reference Type
+
+- Type: version-contract-inventory / external-standard-snapshot
+- Source checked: 2026-05-09
+- Refresh trigger: repo manifest/config version bump, GitHub Actions/pre-commit pin change, cloud example target update, or official provider support range change.
+
+## Authority Boundary
+
+- **Authoritative for**:
+  - Repo-backed version contract values listed in `Version Contracts`.
+  - AWS/Azure example snapshot values used by `examples/aws` and `examples/azure`.
+  - Ingress NGINX cloud-target warning context recorded on 2026-05-09.
+- **Not authoritative for**:
+  - Live cluster upgrade execution.
+  - Cloud account deployment procedure.
+  - Product requirements, architecture decisions, implementation plans, or runbooks.
+  - Dependency updates that were not applied to the corresponding repo files.
+
 ## Overview (KR)
 
 이 문서는 일반 참고 링크 모음이 아니라 검증 대상 버전 계약 인벤토리다. repo-backed manifest, GitHub Actions, pre-commit hook, cloud example snapshot의 기준 값을 한곳에서 추적한다.
@@ -26,6 +44,12 @@
 
 - cloud example snapshot의 각 행에 공식 기준 링크를 둔다.
 - repo-backed version contracts는 `.github/`, `.pre-commit-config.yaml`, `gitops/`, `infrastructure/`의 실제 파일과 함께 유지한다.
+
+## Review and Freshness
+
+- Review cadence: on dependency bump, cloud example refresh, or official support-range change.
+- Last reviewed: 2026-05-09.
+- Next review trigger: a PR that changes `gitops/**`, `infrastructure/**`, `.github/workflows/**`, `.pre-commit-config.yaml`, `examples/aws/**`, or `examples/azure/**` version pins.
 
 ## Cloud Example Snapshot: 2026-05-09
 

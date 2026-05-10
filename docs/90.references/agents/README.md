@@ -12,6 +12,7 @@
 여기에는 특정 기능 하나에 묶이지 않는 Agent 관련 기준 지식만 둔다. 예를 들어 메모리 시스템 개념, 문서 라우팅 기준, 반복적으로 참조하는 Agent 패턴 요약이 여기에 해당한다.
 
 기능 또는 서비스에 종속된 Agent 설계는 이 폴더가 아니라 `docs/03.specs/<feature-id>/agent-design.md`가 정본 위치다.
+Agent runtime policy, scope ownership, provider notes, and execution rules remain under `docs/00.agent-governance/` and must not be redefined here.
 
 ## Audience
 
@@ -34,6 +35,7 @@
 - 기능별 Agent 상세 설계
 - 구현 계획 및 작업 추적 문서
 - 거버넌스 정책 원문
+- runtime roster, provider policy, hook permissions, and live execution rules
 
 ## Structure
 
@@ -49,6 +51,14 @@ agents/
 2. 기능 범위에 묶인 내용이면 `docs/03.specs/<feature-id>/agent-design.md`로 보낸다.
 3. 실행 순서나 롤아웃이 핵심이면 `docs/04.execution/plans/`로 보낸다.
 4. 새 문서를 추가하면 이 README와 상위 `docs/90.references/README.md`의 구조 설명이 계속 맞는지 확인한다.
+5. 새 Agent reference 문서는 `Reference Type`, `Authority Boundary`, `Review and Freshness`를 포함한다.
+
+## Reference Boundary
+
+- `agents/`는 재사용 가능한 Agent 개념과 학습용 reference를 보관한다.
+- `.claude/`, `.codex/`, `docs/00.agent-governance/harness-catalog.md`는 현재 runtime truth를 보관한다.
+- `docs/03.specs/<feature-id>/agent-design.md`는 기능별 Agent 설계를 보관한다.
+- `docs/00.agent-governance/memory/progress.md`는 repo-changing work의 progress와 reusable memory ledger를 보관한다.
 
 ## Related References
 

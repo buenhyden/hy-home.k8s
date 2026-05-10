@@ -10,6 +10,21 @@
 
 로컬 Kubernetes/GitOps/AI infrastructure 경험을 운영체제, 네트워크, 분산 시스템, 소프트웨어 공학 이론 학습으로 연결한다.
 
+## Reference Type
+
+- Type: learning-roadmap / durable-concept
+- Source checked: 2026-05-10
+- Refresh trigger: major repo architecture shift, new learning module, or replacement of the referenced infrastructure concepts.
+
+## Authority Boundary
+
+- **Authoritative for**:
+  - Learning orientation that maps this repository's infrastructure experience to CS/CE theory.
+  - Durable concept names and reading prompts for personal study.
+- **Not authoritative for**:
+  - Current platform requirements, architecture decisions, implementation contracts, or runbooks.
+  - Operational validation, release gates, incident response, or live cluster procedures.
+
 ## Scope
 
 - `hy-home.k8s`에서 사용하는 인프라 도구와 관련 CS/CE 이론 연결
@@ -25,6 +40,12 @@
 ## Sources
 
 - Recommended Reading List의 논문과 이 저장소의 GitOps/observability 구현 경험을 학습 출발점으로 삼는다.
+
+## Review and Freshness
+
+- Review cadence: on major learning roadmap update or major repo architecture shift.
+- Last reviewed: 2026-05-10.
+- Next review trigger: a new durable learning module, removal of a referenced platform capability, or a new official learning source replacing an existing one.
 
 ---
 

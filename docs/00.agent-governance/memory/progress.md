@@ -43,6 +43,44 @@ inventory stays in `scripts/README.md`.
 
 - None.
 
+### 2026-05-10 — 90.references role and format contract
+
+- **Date**: 2026-05-10
+- **Layer**: docs
+- **Status**: complete
+- **Tags**: #docs #references #governance
+
+#### Progress
+
+- Audited `docs/90.references/README.md`, `docs/90.references/agents/README.md`,
+  current reference documents, `docs/99.templates/reference.template.md`, and
+  document routing rules.
+- Clarified that `90.references` owns durable lookup facts, dated external
+  snapshots, version inventories, and learning references, but not requirements,
+  architecture decisions, implementation contracts, plans, policies, runbooks,
+  release approval, or live mutation procedures.
+- Added required `Reference Type`, `Authority Boundary`, and
+  `Review and Freshness` sections to `reference.template.md` and aligned current
+  reference documents to that format.
+
+#### Memory
+
+- `90.references` can be authoritative for factual lookup and dated snapshot
+  values only when the document states its source checked date and freshness
+  trigger.
+- `tech-stack-version-inventory.md` remains a version-contract inventory only
+  when repo manifests/config/examples are updated with it in the same change.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- Targeted stale taxonomy/reference grep returned no matches.
+
+#### Handoff
+
+- None.
+
 ## Historical Entries
 
 ### Harness Implementation Progress

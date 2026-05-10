@@ -22,6 +22,19 @@ updated: YYYY-MM-DD
 
 [Why this reference exists.]
 
+## Reference Type
+
+- Type: version-contract-inventory | external-standard-snapshot | durable-concept | learning-roadmap | glossary | faq
+- Source checked: YYYY-MM-DD
+- Refresh trigger: [What event requires review.]
+
+## Authority Boundary
+
+- **Authoritative for**:
+  - [Facts, versions, concepts, or lookup material this document owns.]
+- **Not authoritative for**:
+  - [Requirements, decisions, implementation contracts, plans, tasks, policies, or runbooks that belong in other stages.]
+
 ## Scope
 
 - [What is covered]
@@ -36,6 +49,12 @@ updated: YYYY-MM-DD
 
 - [Source 1]
 - [Source 2]
+
+## Review and Freshness
+
+- Review cadence: [monthly | quarterly | on source change | on dependency bump]
+- Last reviewed: YYYY-MM-DD
+- Next review trigger: [Manifest/config change, cloud-provider support change, or linked stage update.]
 
 ## Related Documents
 
