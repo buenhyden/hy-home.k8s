@@ -64,3 +64,5 @@ secrets/certs/*.p12
 .agent/
 kube-linter-linux.tar.gz
 .gstack/
+
+.agent-work/
