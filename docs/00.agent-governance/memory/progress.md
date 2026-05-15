@@ -8,6 +8,48 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-16 — Cycle 2 implementation: local toolchain setup documentation
+
+- **Date**: 2026-05-16
+- **Layer**: docs, operations
+- **Status**: complete
+- **Tags**: #docs #toolchain #dx #wsl2
+
+#### Progress
+
+- Extended `docs/05.operations/guides/0002-wsl2-k3d-argocd-ha-setup-guide.md` in-place with
+  a local toolchain prerequisites section covering: shellcheck, actionlint, zizmor, pre-commit,
+  kube-linter (required tools); graphify, rtk (optional); WSL2 non-interactive shell PATH
+  configuration via `~/.profile` or `/etc/environment`; and local verification commands.
+  Inserted before "Step-by-step Instructions", after existing Prerequisites subsections.
+
+#### Memory
+
+- WSL2 non-interactive shells do not source `.bashrc`/`.zshrc`, so `~/.local/bin` and
+  `~/.go/bin` are absent from PATH. Fix: add `export PATH="$HOME/.local/bin:$(go env GOPATH)/bin:$PATH"`
+  to `~/.profile` or set PATH in `/etc/environment` for system-wide effect.
+- CI uses `pre-commit/action@v3.0.1` which auto-installs all hook dependencies at runtime;
+  CI coverage is complete. Local PATH inconsistency is a DX concern only, not a CI gap.
+- Cycle 2 Batch 2 (harness-catalog.md and agentic.md lifecycle hook boundary documentation):
+  Already implemented in Cycle 1/PR #35. harness-catalog.md Stop/SubagentStop/PreCompact rows
+  already show Partial status with policy-driven remediation notes. agentic.md lines 21 and 49
+  already document the policy-only completion/compaction safeguard boundary.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS
+- `bash scripts/validate-gitops-structure.sh` exit 0, all 11 directories PASS
+- `bash scripts/validate-k8s-manifests.sh .` No lint errors found
+- `bash scripts/check-secret-handling.sh .` PASS
+- `bash -n scripts/*.sh .claude/hooks/*.sh infrastructure/tests/*.sh infrastructure/*.sh` PASS
+- Changed file: `docs/05.operations/guides/0002-wsl2-k3d-argocd-ha-setup-guide.md` (+60 lines)
+- Skipped: cluster bootstrap (BLOCKED, requires human approval); per-service README files
+  (DEFERRED, no human request); Batch 3 aggregate service docs (DEFERRED, requires human approval).
+
+---
+
 ### 2026-05-15 — Workspace audit pipeline: housekeeping and quality-gate alignment
 
 - **Date**: 2026-05-15

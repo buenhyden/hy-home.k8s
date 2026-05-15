@@ -57,6 +57,66 @@ docker inspect vault --format '{{(index .NetworkSettings.Networks "k3d-hyhome").
 docker network connect k3d-hyhome vault
 ```
 
+### 로컬 툴체인 사전 요구사항
+
+정적 검증과 pre-commit 훅을 로컬에서 실행하려면 아래 도구가 필요하다.
+CI에서는 `pre-commit/action@v3.0.1`이 모든 도구를 자동 설치하므로 CI 커버리지에는 영향이 없다.
+로컬 PATH 설정이 불일치하면 pre-commit 훅이 조용히 스킵될 수 있다.
+
+#### 필수 도구 설치
+
+```bash
+# pre-commit (훅 러너)
+pip install pre-commit
+# 또는: pip3 install pre-commit
+
+# shellcheck (셸 스크립트 린팅) — Ubuntu/Debian
+sudo apt-get install shellcheck
+
+# actionlint (GitHub Actions 워크플로우 린팅)
+go install github.com/rhysd/actionlint/cmd/actionlint@latest
+
+# zizmor (워크플로우 보안 스캐닝)
+pip install zizmor
+
+# kube-linter (Kubernetes 매니페스트 린팅)
+go install golang.stackrox.io/kube-linter/cmd/kube-linter@latest
+```
+
+#### 선택 도구 설치
+
+```bash
+# graphify (지식 그래프, 선택사항)
+# rtk (Codex CLI 프록시, 선택사항)
+which graphify rtk 2>/dev/null || echo "Optional tools not installed — CI unaffected"
+```
+
+#### WSL2 비대화형 셸 PATH 설정
+
+WSL2 비대화형 셸(pre-commit, CI 에뮬레이션)은 `.bashrc`/`.zshrc`를 로드하지 않으므로
+`~/.local/bin`, `~/.go/bin` 등이 PATH에서 누락될 수 있다.
+
+```bash
+# ~/.profile에 추가 (로그인 셸에서 적용)
+echo 'export PATH="$HOME/.local/bin:$(go env GOPATH)/bin:$PATH"' >> ~/.profile
+
+# 시스템 전체 적용이 필요한 경우 /etc/environment 수정 (sudo 필요, 재부팅 후 적용)
+# sudo sed -i 's|PATH="|PATH="/home/<user>/.local/bin:/home/<user>/go/bin:|' /etc/environment
+```
+
+#### 설치 검증
+
+```bash
+command -v shellcheck actionlint zizmor pre-commit kube-linter
+# 각 도구가 경로를 출력하면 정상
+
+pre-commit run --all-files  # 로컬 전체 pre-commit 검증
+```
+
+> **참고**: CI는 `.github/workflows/ci.yml`의 `pre-commit/action@v3.0.1`이 actionlint, zizmor,
+> shellcheck, kube-linter 등을 런타임에 자동 설치한다. 로컬 PATH 불일치는 로컬 개발자 경험(DX)
+> 문제이며 CI 커버리지에는 영향이 없다.
+
 ## Step-by-step Instructions
 
 1. 클러스터 baseline을 생성/확인한다.
