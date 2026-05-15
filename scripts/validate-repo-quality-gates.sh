@@ -305,7 +305,7 @@ for name in sorted(required_doc_dirs):
     if not readme.exists():
         fail(f"required README.md is missing: {rel(readme)}")
 for readme in sorted(root.rglob("README.md")):
-    if ".git" in readme.parts or ".agents" in readme.parts:
+    if ".git" in readme.parts or ".agents" in readme.parts or ".agent-work" in readme.parts:
         continue
     text = read_text(readme)
     for section, pattern in readme_base_sections.items():
@@ -608,10 +608,15 @@ scan_roots = [
     root / "gitops",
     root / "examples",
 ]
+stale_scan_skip = {
+    root / "docs/00.agent-governance/rules/document-stage-routing.md",
+}
 for scan_root in scan_roots:
     candidates = [scan_root] if scan_root.is_file() else scan_root.rglob("*")
     for path in candidates:
         if not path.is_file() or path.name == "validate-repo-quality-gates.sh":
+            continue
+        if path in stale_scan_skip:
             continue
         if path.suffix not in {".md", ".toml", ".json", ".yml", ".yaml", ".sh"}:
             continue
@@ -1240,7 +1245,7 @@ for phrase in [
     ".claude/hooks/k8s-pre-edit.sh",
     ".claude/hooks/post-validate.sh",
     "CODEX_PROJECT_DIR",
-    "Bash|Glob|Grep",
+    "Glob|Grep",
     '"timeout": 60',
 ]:
     if phrase not in codex_hooks_text:

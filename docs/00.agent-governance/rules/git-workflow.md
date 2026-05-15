@@ -26,6 +26,7 @@
 - Keep commits atomic and traceable to spec/task IDs.
 - Do not force-push protected branches.
 - Keep local guidance aligned with the active GitHub branch protection or ruleset configuration. If repository defaults change, update this file in the same change window.
+- Do not bypass the commit-msg hook with `--no-verify`. Commitizen enforces Conventional Commit format; bypassing it leaves malformed messages in the permanent history.
 
 ## Pull Requests
 

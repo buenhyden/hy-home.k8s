@@ -62,6 +62,7 @@ secrets/certs/*.p12
 
 .claude/settings.local.json
 .agent/
+.agents/
 kube-linter-linux.tar.gz
 .gstack/
 

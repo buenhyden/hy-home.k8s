@@ -8,6 +8,48 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-15 — Workspace audit pipeline: housekeeping and quality-gate alignment
+
+- **Date**: 2026-05-15
+- **Layer**: meta, runtime, docs
+- **Status**: complete
+- **Tags**: #governance #quality-gates #versions #hooks #gitops
+
+#### Progress
+
+- Updated `docs/90.references/versions/tech-stack-version-inventory.md` to match actual pinned versions in `.pre-commit-config.yaml` and `.github/workflows/`: commitizen, gitleaks, markdownlint-cli2, check-jsonschema, shfmt, zizmor, actionlint (pre-commit); actions/labeler, actions/upload-artifact (github_actions). Total: 9 version entries corrected.
+- Added `Validation Note` section to `infrastructure/README.md` to distinguish CI-runnable static test (`verify-contracts-static.sh`) from live-cluster-only tests.
+- Added `--no-verify` prohibition rule to `docs/00.agent-governance/rules/git-workflow.md`, referencing the commitizen commit-msg hook enforcement.
+- Aligned `.codex/hooks.json` PreToolUse graphify matcher from `Bash|Glob|Grep` to `Glob|Grep` to match `.claude/settings.json`.
+- Removed empty `.github/gates/` directory (no files, no references, no purpose documented).
+- Removed `.agents/skills/` from git tracking (`git rm -r --cached`) and added `.agents/` to `.gitignore`. Files remain on disk; duplication of `.claude/skills/` content is resolved.
+- Updated `scripts/validate-repo-quality-gates.sh`:
+  - Excluded `.agent-work/` from README base-section check (gitignored pipeline output directory).
+  - Excluded `docs/00.agent-governance/rules/document-stage-routing.md` from stale-path scan (authoritative migration map that intentionally references legacy paths).
+  - Updated Codex hook phrase check from `Bash|Glob|Grep` to `Glob|Grep` to reflect the corrected hook contract.
+
+#### Memory
+
+- `tech-stack-version-inventory.md` had 9 version entries drifted from actual pinned versions. Source-checked date was 2026-05-09; actual pins diverged over subsequent dependabot/pre-commit updates.
+- `validate-repo-quality-gates.sh` README base-section check must exclude gitignored pipeline output directories (`.agent-work/`, analogous to existing `.agents/` and `.git/` exclusions).
+- `document-stage-routing.md` is the authoritative legacy-path migration map and must be exempt from the stale-path scanner.
+- When changing Codex hook matchers, update the corresponding quality-gate phrase check in the same change.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash -n scripts/*.sh .claude/hooks/*.sh` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `git ls-files .agents/` returns 0 (untracked).
+
+#### Handoff
+
+- None.
+
 ### 2026-05-10 — Hook payload and post-edit validation hardening
 
 - **Date**: 2026-05-10
