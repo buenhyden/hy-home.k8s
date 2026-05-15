@@ -988,9 +988,28 @@ if not isinstance(zizmor_rules.get("unpinned-uses"), dict) or zizmor_rules["unpi
     fail(f"{rel(zizmor_path)} must keep only unpinned-uses disabled for tag-plus-inventory action pinning")
 
 git_workflow_path = root / "docs/00.agent-governance/rules/git-workflow.md"
+git_workflow_text = read_text(git_workflow_path)
 branch_prefixes = branch_prefixes_from_git_workflow(git_workflow_path)
 if not branch_prefixes:
     fail(f"{rel(git_workflow_path)} must define branch types as the branch prefix policy SSoT")
+for phrase in [
+    "Every pull request targeting `main` must run the required CI and branch-policy checks with no bypass exceptions.",
+    "Draft or WIP PRs",
+    "90% coverage",
+    "validation-matrix coverage",
+]:
+    if phrase not in git_workflow_text:
+        fail(f"{rel(git_workflow_path)} missing PR/coverage governance phrase: {phrase}")
+
+quality_standards_path = root / "docs/00.agent-governance/rules/quality-standards.md"
+quality_standards_text = read_text(quality_standards_path)
+for phrase in [
+    "90% line and branch coverage",
+    "validation-matrix coverage",
+    "PR verification must state which coverage lane applies",
+]:
+    if phrase not in quality_standards_text:
+        fail(f"{rel(quality_standards_path)} missing coverage applicability phrase: {phrase}")
 
 ci_path = root / ".github/workflows/ci.yml"
 try:
@@ -1134,6 +1153,11 @@ for phrase in [
         fail(f"{rel(pr_template_path)} missing GitHub/GitOps review phrase: {phrase}")
 for phrase in [
     "any exception must update CI `branch-policy` and governance in the same change",
+    "No PR targeting `main` bypasses CI or branch-policy checks",
+    "Draft/WIP status is intentional",
+    "90% target for future testable application code",
+    "`test`: Tests or validation updates",
+    "`chore`: Maintenance updates",
     "`infra` is a change type, not an approved branch prefix",
     "branch protection/rulesets enforce direct-push restrictions",
 ]:

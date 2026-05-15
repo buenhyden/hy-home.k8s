@@ -18,6 +18,7 @@ Rules for AI Agent-first Engineering quality and safety.
 - Keep implementation GitOps-first: repository change -> review -> ArgoCD reconciliation.
 - Keep generated documents in the canonical docs taxonomy and route through `document-stage-routing.md`.
 - Keep `.claude/agents/*.md` and `.codex/agents/*.toml` aligned whenever runtime contracts change.
+- Treat completion and compaction safeguards as report, handoff, memory/progress, and postflight-checklist responsibilities unless a future approved plan adds Stop, SubagentStop, or PreCompact hooks.
 - Report unavailable tools, skipped live checks, and CI-only validation honestly.
 
 ## Direct Mutation Boundary
@@ -45,6 +46,7 @@ Rules for AI Agent-first Engineering quality and safety.
 - Prefer in-place clarity, regression-gate hardening, or catalog updates when the matrix already marks the component `Ready`.
 - When a component is already `Ready`, prefer command-boundary regression gates over adding new runtime surfaces for documentation drift.
 - Keep `.claude/settings.json` as Claude permission and hook policy, and keep `.codex/hooks.json` as Codex context/validation hook wiring; do not describe them as equivalent enforcement layers.
+- Current lifecycle-hook coverage is partial: SessionStart, PreToolUse, and PostToolUse are wired, while Stop, SubagentStop, and PreCompact safeguards remain policy/report-driven.
 
 ## Context Hierarchy Defaults
 

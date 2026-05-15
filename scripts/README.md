@@ -41,7 +41,7 @@
 scripts/
 ├── check-secret-handling.sh          # GitOps/infrastructure/examples manifest plaintext secret pattern scan
 ├── generate-llm-wiki-index.sh        # LLM Wiki generated Markdown index refresh/check
-├── validate-gitops-structure.sh      # ArgoCD root app and kustomization structure validation
+├── validate-gitops-structure.sh      # ArgoCD root app, kustomization structure, and resource completeness validation
 ├── validate-k8s-manifests.sh         # YAML syntax and optional kube-linter validation
 ├── validate-repo-quality-gates.sh    # Repository governance, workflow, docs, and inventory gates
 └── README.md                         # This file
@@ -61,7 +61,7 @@ scripts/
 | --- | --- | --- | --- |
 | `validate-repo-quality-gates.sh` | Keep | root README, CI `repo-quality-static`, PR template, `.claude/settings.json` | Docs structure, README sections, template placement, workflow duplication, script references, obsolete files, version inventory drift, and agent mirror validation. |
 | `generate-llm-wiki-index.sh` | Keep | LLM Wiki curation guide, repo quality gate, `.claude/settings.json` | Deterministically regenerate or check `docs/90.references/llm-wiki/wiki-index.md` as a Markdown-only canonical-owner link map. |
-| `validate-gitops-structure.sh` | Keep | root README, CI `manifest-static`, PR template, `.claude/settings.json` | ArgoCD root app, root app kind, and GitOps kustomization structure validation. |
+| `validate-gitops-structure.sh` | Keep | root README, CI `manifest-static`, PR template, `.claude/settings.json` | ArgoCD root app, root app kind, GitOps kustomization structure, and sibling manifest resource completeness validation. |
 | `validate-k8s-manifests.sh` | Keep | root README, CI `manifest-static`, PR template, `.claude/settings.json` | YAML syntax validation and optional `kube-linter` coverage for manifests. |
 | `check-secret-handling.sh` | Keep | root README, CI `manifest-static`, PR template, `.claude/settings.json` | Plaintext secret pattern scan for GitOps, infrastructure, and examples manifests. |
 
@@ -72,7 +72,7 @@ scripts/
 | `bash scripts/generate-llm-wiki-index.sh` | 인자를 받지 않는다. | `docs/90.references/llm-wiki/wiki-index.md`를 generator에 정의된 canonical owner 링크맵으로 재생성한다. | exit `0`은 generated Markdown index를 갱신했다는 뜻이다. |
 | `bash scripts/generate-llm-wiki-index.sh --check` | `--check`만 지원한다. | 현재 `wiki-index.md`가 generator output과 일치하는지 비교한다. | exit `0`은 generated index가 최신이라는 뜻이고, 불일치 또는 누락은 실패한다. |
 | `bash scripts/validate-repo-quality-gates.sh .` | 선택 인자는 repository root다. | 문서 taxonomy, 템플릿, workflow 계약, script 참조, runtime mirror inventory, version inventory를 검증한다. | `PASS`는 repository governance gate 통과를 뜻하고, `ERR`는 계약 drift를 뜻한다. |
-| `bash scripts/validate-gitops-structure.sh` | 인자를 받지 않는다. 스크립트가 속한 repository에서 실행된다. | ArgoCD root app, root application kind, root app manifest, `gitops/**/kustomization.yaml` syntax를 검증한다. | exit `0`은 필요한 GitOps 구조가 있고 parse 가능하다는 뜻이다. |
+| `bash scripts/validate-gitops-structure.sh` | 인자를 받지 않는다. 스크립트가 속한 repository에서 실행된다. | ArgoCD root app, root application kind, root app manifest, `gitops/**/kustomization.yaml` syntax, sibling manifest resource completeness를 검증한다. | exit `0`은 필요한 GitOps 구조가 있고 parse 가능하며 각 `kustomization.yaml`이 같은 폴더의 sibling YAML manifest를 빠짐없이 참조한다는 뜻이다. |
 | `bash scripts/validate-k8s-manifests.sh .` | 선택 인자는 arbitrary subpath가 아니라 repository root다. | `gitops/`, `infrastructure/`, `examples/sample-app/`, `examples/**/{gitops,kubernetes}/`, `traefik/` 아래 YAML을 검사하고, `kube-linter`가 있으면 함께 실행한다. | exit `0`은 YAML syntax가 통과했고 optional `kube-linter`도 실패하지 않았다는 뜻이다. `SKIP optional kube-linter`는 local YAML-only validation을 뜻한다. 잘못된 repo root 또는 YAML 0건은 실패한다. |
 | `bash scripts/check-secret-handling.sh .` | 선택 인자는 arbitrary subpath가 아니라 repository root다. | `gitops/`, `infrastructure/`, `examples/sample-app/`, `examples/**/{gitops,kubernetes}/` 아래 YAML에서 plaintext secret pattern을 검사하되 ExternalSecret-like resource는 제외한다. | exit `0`은 검사 대상 파일이 있고 plaintext secret pattern이 없다는 뜻이다. 잘못된 repo root, YAML 0건, finding은 실패한다. |
 

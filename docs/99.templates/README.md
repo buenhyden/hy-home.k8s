@@ -66,64 +66,11 @@
 2. 템플릿의 placeholder와 안내 주석은 authored 문서에서 제거한다.
 3. 템플릿을 추가하거나 제거하면 이 README의 목록과 매핑을 함께 갱신한다.
 4. README 변경 시 `readme.template.md`의 base structure와 품질 게이트가 일치하는지 확인한다.
+5. 템플릿의 Target 경로와 실제 저장 위치를 맞추고, 상대 경로만 사용한다.
+6. PRD/ARD/ADR/Spec/Plan/Task의 추적성을 유지한다.
+7. Agent 기능 문서는 Role, Tool, Guardrail, Eval, Fallback을 빠뜨리지 않는다.
 
-## Related References
-
-- [Docs README](../README.md)
-- [Agent Governance Hub](../00.agent-governance/README.md)
-- [Documentation Protocol](../00.agent-governance/rules/documentation-protocol.md)
-- [Stage Authoring Matrix](../00.agent-governance/rules/stage-authoring-matrix.md)
-
-## 목적
-
-이 폴더는 문서 템플릿을 저장한다. 새 문서는 이 폴더의 템플릿을 복사해 시작한다.
-
-## 포함할 내용
-
-- 문서 stage별 Markdown 템플릿
-- API/OpenAPI, GraphQL, proto 같은 계약 템플릿
-- README와 governance memory 항목 템플릿
-
-## 포함하지 말아야 할 내용
-
-- 실제 PRD/ARD/ADR/Spec/Plan/Task 문서
-- 운영 기록이나 사고 기록
-- 특정 기능의 구현 계약
-
-## 템플릿 목록
-
-- `agent-design.template.md`
-- `data-model.template.md`
-- `tests.template.md`
-- `openapi.template.yaml`
-- `service.template.proto`
-- `schema.template.graphql`
-- `prd.template.md`
-- `ard.template.md`
-- `adr.template.md`
-- `spec.template.md`
-- `api-spec.template.md`
-- `plan.template.md`
-- `task.template.md`
-- `guide.template.md`
-- `operation.template.md`
-- `runbook.template.md`
-- `incident.template.md`
-- `postmortem.template.md`
-- `progress.template.md`
-- `reference.template.md`
-- `readme.template.md`
-- `memory.template.md`
-
-## 사용 원칙
-
-1. 템플릿의 Target 경로를 실제 저장 위치와 맞춘다.
-2. Placeholder는 모두 제거한다.
-3. 상대 경로만 사용한다.
-4. PRD/ARD/ADR/Spec/Plan/Task의 추적성을 유지한다.
-5. Agent 기능은 Role, Tool, Guardrail, Eval, Fallback을 빠뜨리지 않는다.
-
-## 템플릿-폴더 매핑
+## Template-Folder Mapping
 
 | Folder | Template |
 | --- | --- |
@@ -143,44 +90,34 @@
 | `00.agent-governance/memory/` | `memory.template.md` |
 | `00.agent-governance/memory/progress.md` | `progress.template.md` |
 
-## API Spec 템플릿 위치
+## Contract Template Placement
 
-API 계약 문서는 별도 유형이 아니라 `03.specs/` 아래에서 사용하는 하위 템플릿이다.
+API 계약 문서는 별도 top-level docs 유형이 아니라 `03.specs/` 아래에서 사용하는 하위 템플릿이다.
 
 - 올바른 위치: `docs/03.specs/<feature-id>/api-spec.md`
 - 잘못된 패턴: `docs/api/...`
 
-## Reference 템플릿 규칙
+OpenAPI, GraphQL, proto 같은 계약 파일은 관련 `docs/03.specs/<feature-id>/` 문맥에서 추적성을 유지한다.
+
+## Reference and Memory Rules
 
 `reference.template.md`는 `90.references/` 문서의 역할과 freshness를 강제한다.
-
-## Memory 템플릿 규칙
-
-- repo-changing agent work의 진행 상황은 `progress.template.md` 구조로 `00.agent-governance/memory/progress.md`에 작성한다.
-- `00.agent-governance/memory/`에 standalone memory 파일을 만들거나 갱신할 때는 `memory.template.md`를 사용한다.
-- standalone memory 파일 변경은 같은 변경 단위에서 `progress.md` entry를 함께 남긴다.
 
 - 모든 reference 문서는 `Reference Type`을 명시한다.
 - 모든 reference 문서는 `Authority Boundary`에서 소유하는 사실과 소유하지 않는 실행계약을 분리한다.
 - 외부 기준이나 버전 snapshot은 `Review and Freshness`에 검토일과 갱신 trigger를 남긴다.
+- repo-changing agent work의 진행 상황은 `progress.template.md` 구조로 `00.agent-governance/memory/progress.md`에 작성한다.
+- `00.agent-governance/memory/`에 standalone memory 파일을 만들거나 갱신할 때는 `memory.template.md`를 사용한다.
+- standalone memory 파일 변경은 같은 변경 단위에서 `progress.md` entry를 함께 남긴다.
 
-## README 템플릿
+## README and Spec Helper Templates
 
 각 폴더 README도 반복적으로 재사용되는 문서 유형이므로 별도 README 템플릿을 함께 제공한다.
-
-## Spec 하위 보조 문서 템플릿
-
 `03.specs/<feature-id>/` 아래에서 반복적으로 사용하는 보조 설계 문서와 계약 파일용 템플릿을 함께 제공한다.
 
-## 관련 폴더
+## Related References
 
-- `00.agent-governance/`: 템플릿 사용 규칙, 문서 라우팅 정책, progress/memory ledger
-- `01.requirements/` ~ `05.operations/incidents/`: 템플릿을 적용하는 authored stage
-- `90.references/`: reference 템플릿 적용 대상
-
-## 예시
-
-- 새 PRD는 `prd.template.md`에서 시작한다.
-- 새 런북은 `runbook.template.md`에서 시작한다.
-- 사고 후 회고는 `postmortem.template.md`를 사용해 `05.operations/incidents/postmortems/`에 작성한다.
-- 작업 진행과 재사용 memory는 `progress.template.md` 구조로 `00.agent-governance/memory/progress.md`에 작성한다.
+- [Docs README](../README.md)
+- [Agent Governance Hub](../00.agent-governance/README.md)
+- [Documentation Protocol](../00.agent-governance/rules/documentation-protocol.md)
+- [Stage Authoring Matrix](../00.agent-governance/rules/stage-authoring-matrix.md)

@@ -68,6 +68,62 @@ while IFS= read -r -d '' k; do
   fi
 done < <(find "${PROJECT_DIR}/gitops" -name "kustomization.yaml" -print0)
 
+# 4. Sibling manifest files must be referenced by their kustomization.yaml.
+echo ""
+echo "--- Kustomization resource completeness check ---"
+if python3 - "$PROJECT_DIR" <<'PY'
+import pathlib
+import sys
+
+import yaml
+
+root = pathlib.Path(sys.argv[1])
+errors = 0
+
+for kustomization in sorted((root / "gitops").rglob("kustomization.yaml")):
+    try:
+        data = yaml.safe_load(kustomization.read_text(encoding="utf-8")) or {}
+    except Exception as exc:
+        print(f"  ERR {kustomization}: {exc}")
+        errors += 1
+        continue
+
+    resources = data.get("resources") or []
+    if not isinstance(resources, list):
+        print(f"  ERR {kustomization}: resources must be a list")
+        errors += 1
+        continue
+
+    referenced = {
+        item.strip().removeprefix("./")
+        for item in resources
+        if isinstance(item, str) and item.strip()
+    }
+    sibling_manifests = sorted(
+        path.name
+        for path in kustomization.parent.iterdir()
+        if path.is_file()
+        and path.name != "kustomization.yaml"
+        and path.suffix in {".yaml", ".yml"}
+    )
+    missing = [name for name in sibling_manifests if name not in referenced]
+    if missing:
+        print(
+            f"  ERR {kustomization}: unreferenced sibling manifest(s): "
+            + ", ".join(missing)
+        )
+        errors += 1
+    else:
+        print(f"  OK  {kustomization}")
+
+sys.exit(1 if errors else 0)
+PY
+then
+  :
+else
+  EXIT_CODE=1
+fi
+
 echo ""
 echo "=== done (exit: $EXIT_CODE) ==="
 exit $EXIT_CODE

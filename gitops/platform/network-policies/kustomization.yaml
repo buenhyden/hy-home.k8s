@@ -2,6 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - egress-to-external-services.yaml
+  - external-secrets-egress-to-vault.yaml
+  - argocd-egress-to-external-valkey.yaml
   - kiali-egress-to-observability.yaml
   - apps-egress.yaml
   - monitoring-egress.yaml

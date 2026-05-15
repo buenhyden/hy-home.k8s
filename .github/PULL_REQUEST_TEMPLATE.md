@@ -11,7 +11,9 @@ Fixes # (link to issue if applicable)
 ## 3. Branch Target
 
 - [ ] This PR targets `main`; any exception must update CI `branch-policy` and governance in the same change.
-- [ ] The source branch uses an approved prefix: `feat/`, `fix/`, `docs/`, `refactor/`, `chore/`, `ci/`, `release/`, `hotfix/`, `codex/`, or `dependabot/`.
+- [ ] No PR targeting `main` bypasses CI or branch-policy checks.
+- [ ] Draft/WIP status is intentional; this PR is not ready for review or merge until required checks pass and verification evidence is complete.
+- [ ] The source branch uses an approved prefix: `feat/`, `fix/`, `docs/`, `refactor/`, `test/`, `chore/`, `ci/`, `release/`, `hotfix/`, `codex/`, or `dependabot/`.
 - [ ] CI `branch-policy` validates pull request shape; GitHub branch protection/rulesets enforce direct-push restrictions.
 
 ## 4. Type of Change
@@ -20,6 +22,8 @@ Fixes # (link to issue if applicable)
 - [ ] `fix`: Bug fix
 - [ ] `refactor`: Code reorganization
 - [ ] `docs`: Documentation updates
+- [ ] `test`: Tests or validation updates
+- [ ] `chore`: Maintenance updates
 - [ ] `infra`: Changes to Kubernetes manifests or GitOps assets
 - [ ] `ci`: Changes to GitHub Actions, hooks, or automation
 
@@ -44,6 +48,7 @@ Describe the manual verification or automated tests conducted.
 - [ ] `bash scripts/check-secret-handling.sh .` successful (if manifests or secret wiring changed)
 - [ ] ArgoCD/GitOps impact reviewed (if applicable)
 - [ ] Workflow path filters and job ownership reviewed (if `.github` automation changed)
+- [ ] Coverage policy reviewed: 90% target for future testable application code where applicable, or validation-matrix coverage for Bash/YAML/Markdown infrastructure changes
 - [ ] No live cluster mutation, `kubectl apply`, or external Vault mutation was introduced
 - [ ] Tracked changelog updates were merged by PR before tagging (if release-facing)
 
