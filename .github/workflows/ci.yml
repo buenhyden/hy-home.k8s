@@ -26,13 +26,13 @@ jobs:
           HEAD_REF: ${{ github.head_ref }}
         run: |
           set -euo pipefail
-          allowed_branch_regex='^(feat|fix|docs|refactor|chore|ci|release|hotfix|codex|dependabot)/'
+          allowed_branch_regex='^(feat|fix|docs|refactor|test|chore|ci|release|hotfix|codex|dependabot)/'
           if [ "$BASE_REF" != "main" ]; then
             echo "PR base branch must be main, got: $BASE_REF"
             exit 1
           fi
           if ! [[ "$HEAD_REF" =~ $allowed_branch_regex ]]; then
-            echo "PR source branch must start with one of: feat/, fix/, docs/, refactor/, chore/, ci/, release/, hotfix/, codex/, dependabot/"
+            echo "PR source branch must start with one of: feat/, fix/, docs/, refactor/, test/, chore/, ci/, release/, hotfix/, codex/, dependabot/"
             echo "got: $HEAD_REF"
             exit 1
           fi

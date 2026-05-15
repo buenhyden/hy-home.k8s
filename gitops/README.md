@@ -47,6 +47,23 @@ gitops/
 └── README.md                # This file
 ```
 
+## Service Coverage Matrix
+
+| Area | Purpose and owner | Lifecycle and config | Dependencies, routes, secrets | Validation and operations |
+| --- | --- | --- | --- | --- |
+| `clusters/local` | Local ArgoCD bootstrap entrypoint owned by platform maintainers. | Contains root Application, AppProjects, and workload ApplicationSet. | Depends on ArgoCD and the repository URL/target revision contract; no application secrets live here. | Validate with `bash scripts/validate-gitops-structure.sh` and `bash infrastructure/tests/verify-contracts-static.sh`. |
+| `apps/root` | App-of-Apps root for platform components owned by platform maintainers. | Declares platform Application resources and Kustomize entrypoint. | Depends on `gitops/platform/*` paths and ArgoCD project permissions. | Validate with GitOps structure and manifest checks before PR merge. |
+| `platform/argocd` | ArgoCD runtime config and external Valkey integration owned by platform maintainers. | Kustomize config for metrics, notifications, and external Valkey secret wiring. | Depends on Vault-backed ExternalSecret and external Valkey endpoint; routes are handled by ArgoCD ingress/Traefik docs. | Validate static contracts and secret handling; live sync requires ArgoCD runtime checks. |
+| `platform/cert-manager` | Local certificate issuer config owned by platform maintainers. | Kustomize config for mkcert ClusterIssuer. | Depends on cert-manager controller and local CA material; do not commit private keys. | Validate manifests statically; live readiness requires cert-manager checks. |
+| `platform/eso` | External Secrets Operator platform config owned by platform maintainers. | Kustomize config for Vault ClusterSecretStore and app ExternalSecret examples. | Depends on external Vault and approved Vault policy; secret values stay outside Git. | Validate static contracts and secret handling; live readiness requires ESO/Vault checks. |
+| `platform/external-services` | In-cluster Service/EndpointSlice contracts for external services owned by platform maintainers. | Kustomize config for Vault, PostgreSQL, Valkey, Prometheus, Loki, Tempo, Alloy, and Grafana endpoints. | Depends on external runtimes and stable local network addresses; no live mutation in normal GitOps flow. | Validate static contracts; live reachability requires `infrastructure/tests/verify-external-services.sh`. |
+| `platform/headlamp` | Headlamp ingress config owned by platform maintainers. | Kustomize config for Headlamp ingress. | Depends on Headlamp controller and local ingress/TLS route. | Validate manifests statically; live route requires ingress/TLS checks. |
+| `platform/kiali` | Kiali ingress config owned by platform maintainers. | Kustomize config for Kiali ingress. | Depends on Kiali, Istio, and observability endpoints. | Validate manifests and Kiali egress policy; live route requires ingress/TLS checks. |
+| `platform/monitoring` | Monitoring integration config owned by platform maintainers. | Kustomize config for kube-state-metrics, Alloy log collection, and metrics NodePorts. | Depends on monitoring namespace and external observability services. | Validate manifests statically; live behavior requires monitoring and external service checks. |
+| `platform/namespaces` | Namespace desired state owned by platform maintainers. | Kustomize config for platform, apps, ingress, ESO, cert-manager, Istio, Headlamp, Rollouts, and monitoring namespaces. | Dependencies are cluster-scoped namespace resources; no secrets. | Validate Kustomize completeness and manifest syntax. |
+| `platform/network-policies` | Network egress policy owned by platform/security maintainers. | Kustomize config for apps, monitoring, Kiali, ESO-to-Vault, and ArgoCD-to-Valkey egress. | Depends on namespace labels, external service addresses, Vault, Valkey, and observability endpoints. | Validate Kustomize completeness and manifests; live behavior requires `verify-network-policies.sh`. |
+| `workloads/adminer` | Reference workload owned by platform maintainers and app operators. | Kustomize config for Rollout, services, ingress, Istio routing, PeerAuthentication, and analysis. | Depends on apps namespace, ingress, Rollouts, Istio, and ExternalSecret-backed app config. | Validate manifests statically; live rollout and route checks require cluster validation. |
+
 ## How to Work in This Area
 
 1. 플랫폼 계약은 먼저 [Spec](../docs/03.specs/001-wsl-k3d-argocd-platform/spec.md)과 [Operations Policy](../docs/05.operations/policies/0001-k8s-gitops-operations-policy.md)에서 확인한다.

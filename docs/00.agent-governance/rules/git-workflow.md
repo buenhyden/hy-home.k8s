@@ -11,6 +11,7 @@
 - `fix/<scope>-<slug>`
 - `docs/<scope>-<slug>`
 - `refactor/<scope>-<slug>`
+- `test/<scope>-<slug>`
 - `chore/<scope>-<slug>`
 - `ci/<scope>-<slug>`
 - `release/<version-or-slug>`
@@ -25,12 +26,15 @@
 - Use Conventional Commit messages.
 - Keep commits atomic and traceable to spec/task IDs.
 - Do not force-push protected branches.
+- Every pull request targeting `main` must run the required CI and branch-policy checks with no bypass exceptions.
 - Keep local guidance aligned with the active GitHub branch protection or ruleset configuration. If repository defaults change, update this file in the same change window.
 - Do not bypass the commit-msg hook with `--no-verify`. Commitizen enforces Conventional Commit format; bypassing it leaves malformed messages in the permanent history.
+- Apply the coverage policy in `quality-standards.md`: future testable application code targets 90% coverage where applicable, while current infra-only Bash/YAML/Markdown work uses validation-matrix coverage.
 
 ## Pull Requests
 
 - Default PR target: `main`.
+- Draft or WIP PRs may be opened for early CI feedback, but they are not ready for review or merge until required checks pass and verification evidence is complete.
 - Require verification evidence before merge (tests, checks, or runbook validation).
 - Required checks must match the active GitHub branch protection or ruleset, not stale local assumptions.
 - Keep PR scope aligned to one plan/task slice where possible.

@@ -350,6 +350,45 @@ inventory stays in `scripts/README.md`.
 
 - None.
 
+### 2026-05-16 — Prompt-kit implementation executor pass
+
+- **Date**: 2026-05-16
+- **Layer**: meta, infra, qa, docs
+- **Status**: complete
+- **Tags**: #prompt-kit #gitops #ci #governance #docs
+
+#### Progress
+
+- Executed the approved file-by-file plan from `.agent-work/report/08_integrated_implementation_planner.md`.
+- Added omitted NetworkPolicy resources to the active Kustomize entrypoint for `gitops/platform/network-policies/`.
+- Extended `scripts/validate-gitops-structure.sh` to detect sibling GitOps YAML manifests that are not listed in their local `kustomization.yaml`.
+- Aligned branch, PR, and QA governance for `test/`, WIP/draft PRs, every-PR/no-exceptions language, and coverage applicability.
+- Documented hook lifecycle coverage as policy/report-driven for Stop, SubagentStop, and PreCompact safeguards instead of adding runtime hooks.
+- Consolidated `docs/99.templates/README.md` and added aggregate service coverage matrices to existing GitOps and infrastructure READMEs.
+
+#### Memory
+
+- Kustomize resource completeness is now part of the GitOps static validation path.
+- Current completion and compaction safeguards remain report, handoff, memory/progress, and postflight-checklist responsibilities unless a future approved plan adds lifecycle hooks.
+- Current infrastructure coverage uses a validation matrix; future testable application code should target 90% line and branch coverage where applicable.
+
+#### Evidence
+
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS before memory entry.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS, including resource completeness checks.
+- `bash scripts/validate-k8s-manifests.sh .` PASS with optional `kube-linter` skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash -n scripts/*.sh .claude/hooks/*.sh infrastructure/tests/*.sh infrastructure/*.sh` PASS.
+- `git diff --check` PASS.
+
+#### Handoff
+
+- Write `.agent-work/report/09_implementation_executor_agent.md`.
+- Hand off to `.agent-work/prompts/10_verification_completion_reporter_agent.md`.
+- Live k3d, ArgoCD sync, external service, ingress/TLS, network policy, and secret reconciliation checks remain deferred unless a live environment is intentionally available.
+
 ## Historical Entries
 
 ### Harness Implementation Progress

@@ -49,6 +49,17 @@ infrastructure/
 └── README.md                # This file
 ```
 
+## Infrastructure Coverage Matrix
+
+| Area | Purpose and owner | Lifecycle and config | Dependencies, routes, secrets | Validation and operations |
+| --- | --- | --- | --- | --- |
+| `argocd/` | Local ArgoCD Helm values owned by platform maintainers. | Bootstrap-time values for ingress, TLS, and external Valkey integration. | Depends on k3d, ingress, mkcert CA, external Valkey, and Vault-backed secret flow. | Validate with `bash infrastructure/tests/verify-contracts-static.sh`; live state requires ArgoCD and ingress/TLS checks. |
+| `k3d/` | Local cluster configuration owned by platform maintainers. | Defines local k3d cluster shape and port exposure. | Depends on WSL2, Docker Desktop, k3d, and local network conventions. | Validate by static review and live `infrastructure/tests/verify-cluster.sh` when a cluster is available. |
+| `tests/` | Static and live validation scripts owned by platform/ops maintainers. | Includes static contracts plus cluster, GitOps, external service, ingress/TLS, network policy, and secret verification. | Static tests require local files; live tests require a bootstrapped k3d/ArgoCD environment and external services. | Run `verify-contracts-static.sh` in CI-capable contexts; run `run-all.sh` only for intentional live validation. |
+| `vault/` | Vault policy samples owned by platform/security maintainers. | Stores least-privilege policy material for ESO read access. | Depends on external Vault runtime and approved secret paths; never stores secret values. | Validate policy expectations through static contracts; live policy state requires external Vault verification. |
+| `bootstrap-local.sh` | Local bootstrap entrypoint owned by platform maintainers. | Creates initial namespace, secret, MetalLB, and root GitOps application before ArgoCD owns desired state. | Depends on exported `VAULT_TOKEN`, kubectl context, k3d, Helm, Vault, and local certificates. | Validate shell syntax and bootstrap runbook alignment; execution is human-approved bootstrap work, not normal agent mutation. |
+| `ipaddresspool.yaml` and `l2advertisement.yaml` | MetalLB bootstrap manifests owned by platform maintainers. | Bootstrap-time LoadBalancer address pool and L2 advertisement. | Depends on local network range and MetalLB controller. | Validate manifests statically; live behavior requires cluster networking checks. |
+
 ## How to Work in This Area
 
 1. bootstrap 전 [Runbook](../docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)의 외부 의존성 점검을 확인한다.

@@ -41,6 +41,12 @@ workloads/
 └── README.md      # This file
 ```
 
+## Workload Coverage Matrix
+
+| Workload | Purpose and owner | Lifecycle and config | Dependencies, routes, secrets | Validation and operations |
+| --- | --- | --- | --- | --- |
+| `adminer` | Reference admin workload owned by platform maintainers and app operators. | Managed by the local apps ApplicationSet from `gitops/workloads/adminer/kustomization.yaml`; includes Rollout, services, ingress, Istio routing, PeerAuthentication, and AnalysisTemplate. | Depends on `apps` namespace, Argo Rollouts, ingress, Istio, PostgreSQL external service, and ExternalSecret-backed app credentials. | Validate with `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, and `bash scripts/check-secret-handling.sh .`; live rollout, ingress, and secret checks require intentional cluster validation. |
+
 ## How to Work in This Area
 
 1. [examples/sample-app](../../examples/sample-app/README.md)의 파일 구성을 먼저 확인한다.
