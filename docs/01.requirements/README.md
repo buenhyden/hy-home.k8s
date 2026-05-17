@@ -53,7 +53,8 @@
 1. 새 요구사항을 작성하기 전에 같은 문제를 다루는 기존 PRD를 먼저 확인한다.
 2. 새 PRD는 `../99.templates/prd.template.md`에서 시작한다.
 3. 요구사항 변경 시 관련 `02.architecture/requirements/`, `03.specs/`, `04.execution/plans/` 링크를 함께 갱신한다.
-4. Agent 기능 요구에는 허용/금지 행동과 human-in-the-loop 기준을 포함한다.
+4. 구현 파일, manifest, 스크립트, 운영 명령 수준의 상세 설계는 PRD에 직접 확장하지 않고 후속 ARD/Spec/Plan 갭으로 남긴다.
+5. Agent 기능 요구에는 허용/금지 행동과 human-in-the-loop 기준을 포함한다.
 
 ## Link Basis
 
@@ -68,16 +69,34 @@ Stage README files: links start from the owning stage folder (`docs/01.requireme
 - PRD는 관련 ARD, Spec, Plan, ADR 링크를 가진다.
 - Spec은 PRD 요구 ID를 추적한다.
 - Agent 기능인 경우 사용 시나리오, 허용/금지 행동, human-in-the-loop 요구를 포함한다.
+- 후속 ARD/Spec/Plan이 아직 없으면 없는 링크를 만들지 않고, 문서 인덱스와 PRD의 `Related Documents`에 후속 갭으로 표시한다.
+- 오래된 실행계약은 삭제하지 않는다. 대신 historical/superseded/current contract를 분리해 현재 작업 기준을 오해하지 않게 한다.
+
+## 요구사항 읽는 순서
+
+1. 현재 플랫폼 기준은 최신 `current contract` 메모와 `gitops/**`, 검증 스크립트가 소유한다.
+2. 날짜가 오래된 PRD는 요구사항 이력과 결정 배경을 설명한다. 현재 구현 기준으로 사용하기 전에 상단 메모와 관련 ADR을 확인한다.
+3. `Active` 문서는 현재 작업 기준으로 사용할 수 있지만, 대체된 항목은 PRD 안의 superseded 표시와 관련 ADR을 따른다.
+4. `Draft` 문서는 후속 ARD/Spec/Plan이 완성되기 전의 제품 의도다. 구현은 별도 downstream 문서와 승인된 계획이 있어야 시작한다.
+
+## 상태 해석
+
+| 상태 | 의미 | 작업 기준 |
+| --- | --- | --- |
+| Active | 현재 제품 의도를 설명하는 PRD | 관련 ADR/Spec/Plan과 current contract 메모를 함께 확인한다. |
+| Draft | 요구사항 초안 또는 후속 설계 대기 상태 | 구현 시작 전 ARD/Spec/Plan 후속 갭을 해소한다. |
+| Historical | 초기 요구사항 또는 이전 실행계약 기록 | 배경 자료로 보존하며 현재 실행계약으로 해석하지 않는다. |
+| Superseded | 다른 문서나 ADR이 대체한 요구사항 | 대체 문서가 현재 기준을 소유한다. |
 
 ## 문서 인덱스
 
-| 문서                                                                                                       | 설명                                                                                                     | 상태   | 최종 수정  |
-| ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ------ | ---------- |
-| [`./2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md)                       | WSL2 기반 k3d/k3s + ArgoCD GitOps 플랫폼 PRD                                                             | Draft  | 2026-03-27 |
-| [`./2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md)               | WSL2 멀티노드 HA + TLS + 최소권한 + 변경영역 기반 CI 정적 게이트 요구를 포함한 PRD                       | Draft  | 2026-05-09 |
-| [`./2026-03-29-platform-expansion-dashboard-mesh.md`](./2026-03-29-platform-expansion-dashboard-mesh.md)   | cert-manager/Headlamp/Istio/Kiali 확장 PRD (Dashboard→Headlamp: ADR-0010; 현재 실행계약은 172.18.x 기준) | Active | 2026-05-09 |
-| [`./2026-05-17-argo-rollouts-progressive-delivery.md`](./2026-05-17-argo-rollouts-progressive-delivery.md) | Argo Rollouts v1.9.0 canary/blue-green 점진적 배포 PRD                                                   | Draft  | 2026-05-17 |
-| [`./2026-05-17-argo-notifications-slack.md`](./2026-05-17-argo-notifications-slack.md)                     | Argo Notifications Slack webhook 알림 PRD                                                                | Draft  | 2026-05-17 |
+| 문서 | 역할 | 현재성 | 추적성 / 후속 갭 | 최종 수정 |
+| --- | --- | --- | --- | --- |
+| [`./2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md) | 초기 WSL2 k3d/k3s + ArgoCD GitOps 플랫폼 PRD | Historical draft | ARD/Spec/Plan/ADR 연결 완료. 현재 외부 서비스 실행계약은 `172.18.x` repo-backed 계약이 우선. | 2026-05-17 |
+| [`./2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | HA 플랫폼, TLS, 최소권한, 정적 게이트 요구 PRD | Historical draft | ARD/Spec/Plan/ADR 연결 완료. `172.19.x` 값은 이력이며 현재 실행계약은 `172.18.x` 기준. | 2026-05-17 |
+| [`./2026-03-29-platform-expansion-dashboard-mesh.md`](./2026-03-29-platform-expansion-dashboard-mesh.md) | cert-manager, Headlamp, Istio/Kiali 확장 PRD | Active with superseded items | ARD/Spec/Plan/ADR 연결 완료. Dashboard 요구는 ADR-0010에 의해 Headlamp로 대체. | 2026-05-17 |
+| [`./2026-05-17-argo-rollouts-progressive-delivery.md`](./2026-05-17-argo-rollouts-progressive-delivery.md) | Argo Rollouts canary/blue-green 점진적 배포 PRD | Draft planned feature | ADR 연결 완료. ARD/Spec/Plan은 후속 갭이며 이번 PRD 정비에서 생성하지 않음. | 2026-05-17 |
+| [`./2026-05-17-argo-notifications-slack.md`](./2026-05-17-argo-notifications-slack.md) | Argo Notifications Slack 알림 PRD | Draft planned feature | ADR/의존 PRD 연결 완료. ARD/Spec/Plan은 후속 갭이며 이번 PRD 정비에서 생성하지 않음. | 2026-05-17 |
 
 ## 예시
 

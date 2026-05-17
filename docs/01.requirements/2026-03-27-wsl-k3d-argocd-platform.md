@@ -3,7 +3,7 @@ title: 'WSL2 k3s/k3d + ArgoCD GitOps Platform Product Requirements'
 type: prd
 status: draft
 owner: platform-team
-updated: 2026-03-27
+updated: 2026-05-17
 ---
 
 # WSL2 k3s/k3d + ArgoCD GitOps Platform Product Requirements
@@ -13,6 +13,12 @@ updated: 2026-03-27
 이 문서는 Windows WSL2(Ubuntu) 환경에서 k3d(k3s) 기반 멀티노드 Kubernetes 플랫폼과 ArgoCD GitOps 파이프라인을 구축하기 위한 제품 요구사항을 정의한다. 외부 서비스(Vault, PostgreSQL, Valkey) 연동과 문서 추적성을 핵심 성공 기준으로 삼는다.
 
 > **현재 실행계약 메모 (2026-05-09)**: 이 PRD는 초기 플랫폼 요구사항 기록이다. 현재 repo-backed 외부 서비스 실행계약은 `gitops/platform/external-services/`, `gitops/platform/network-policies/`, `infrastructure/tests/verify-contracts-static.sh`의 `172.18.x` EndpointSlice/CIDR 값이 우선한다.
+
+## Requirement Status
+
+이 PRD는 초기 플랫폼 요구사항을 보존하는 historical draft다.
+현재 구현 기준은 위 current contract 메모와 연결된 ARD/Spec/Plan이 소유한다.
+이 문서의 오래된 네트워크 값은 실행계약이 아니라 요구사항 이력으로 읽어야 한다.
 
 ## Vision
 
@@ -42,17 +48,17 @@ Create a reproducible, secure, and automation-first local platform that mirrors 
 - **REQ-PRD-FUN-03**: ArgoCD는 Helm 기반으로 설치/업그레이드 가능해야 한다.
 - **REQ-PRD-FUN-04**: App-of-Apps + ApplicationSet으로 앱 선언을 자동 생성/동기화해야 한다.
 - **REQ-PRD-FUN-05**: Vault 연동은 ESO + Kubernetes Auth를 사용해야 한다.
-- **REQ-PRD-FUN-06**: 외부 PostgreSQL은 `172.30.0.0/24` 고정 IP 대역을 사용해야 한다.
+- **REQ-PRD-FUN-06**: 외부 PostgreSQL은 안정적인 고정 endpoint 계약으로 노출되어야 한다. 초기 기록의 `172.30.0.0/24` 값은 historical requirement이며, 현재 값은 current contract 메모의 repo-backed 계약을 따른다.
 - **REQ-PRD-FUN-07**: PostgreSQL은 Service + EndpointSlice로 래핑하고, Valkey는 ExternalName Service, Vault는 외부 URL 계약을 사용해야 한다.
 - **REQ-PRD-FUN-08**: ArgoCD 백엔드는 외부 Valkey를 사용해야 한다.
 - **REQ-PRD-FUN-09**: 문서 체계는 `01.requirements`부터 `05.operations`까지의 산출물과 상호 상대링크를 제공해야 한다.
 
 ## Success Criteria
 
-- **REQ-PRD-MET-01**: 클러스터 재구축 리드타임 30분 이내.
-- **REQ-PRD-MET-02**: ArgoCD 동기화 성공률 99% 이상(테스트 시나리오 기준).
-- **REQ-PRD-MET-03**: 문서 링크 무결성 검사에서 깨진 상대 링크 0건.
-- **REQ-PRD-MET-04**: 필수 보안 검증(RBAC 최소권한, Vault 정책, egress 제한) 통과.
+- **REQ-PRD-MET-01**: Platform Engineer가 로컬 클러스터를 30분 이내 재구축할 수 있다. Evidence: 연결된 Plan/Task의 bootstrap 검증 기록.
+- **REQ-PRD-MET-02**: 운영자가 ArgoCD 동기화 상태를 안정적으로 확인할 수 있다. Evidence: 테스트 시나리오 기준 ArgoCD 동기화 성공률 99% 이상.
+- **REQ-PRD-MET-03**: Documentation Writer와 AI Agent가 PRD에서 downstream 문서로 이동할 수 있다. Evidence: 문서 링크 무결성 검사에서 깨진 상대 링크 0건.
+- **REQ-PRD-MET-04**: Security Engineer가 최소권한과 egress 제한을 검증할 수 있다. Evidence: RBAC 최소권한, Vault 정책, egress 제한 검증 통과.
 
 ## Scope and Non-goals
 

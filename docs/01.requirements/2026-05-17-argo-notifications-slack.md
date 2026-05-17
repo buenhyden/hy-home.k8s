@@ -12,6 +12,12 @@ updated: 2026-05-17
 
 이 문서는 ArgoCD Notifications 컨트롤러를 활성화하고 Slack webhook을 알림 destination으로 사용하여 GitOps 이벤트(sync 실패, health 저하, 배포 완료)와 Rollouts 이벤트(완료, abort)를 운영자에게 자동 전달하기 위한 제품 요구사항을 정의한다.
 
+## Requirement Status
+
+이 PRD는 planned feature draft다.
+ADR은 존재하지만 대응 ARD, Spec, Plan, Task는 아직 작성하지 않았다.
+이 문서는 알림의 사용자 가치와 보안 경계를 정의하며, Secret 생성 절차와 manifest 변경은 후속 downstream 문서와 승인된 계획에서 다룬다.
+
 ## Vision
 
 플랫폼 이벤트(ArgoCD 동기화 실패, 서비스 health 저하, Rollouts 완료/abort)가 운영자에게 Slack으로 자동 전달되어 수동 모니터링 없이 신속한 대응이 가능해진다.
@@ -35,29 +41,27 @@ updated: 2026-05-17
 
 ## Functional Requirements
 
-- **REQ-PRD-FUN-01**: ArgoCD Helm values에 `notifications.enabled: true`를 설정하여 Notifications 컨트롤러를 활성화해야 한다.
-- **REQ-PRD-FUN-02**: Slack token은 Vault `secret/platform/notifications` → ESO ExternalSecret → `argocd-notifications-secret` K8s Secret으로 관리해야 한다.
-- **REQ-PRD-FUN-03**: `argocd-notifications-cm` ConfigMap에 다음 template과 trigger를 정의해야 한다:
-  - Templates: `app-deployed`, `app-health-degraded`, `app-sync-failed`, `rollout-completed`, `rollout-aborted`
-  - Triggers: `on-deployed`, `on-health-degraded`, `on-sync-failed`
+- **REQ-PRD-FUN-01**: 플랫폼은 ArgoCD Notifications 기반 GitOps 이벤트 알림을 제공해야 한다. 구체 Helm value는 downstream Spec이 소유한다.
+- **REQ-PRD-FUN-02**: Slack credential material은 Vault → ESO → Kubernetes Secret 흐름으로만 소비되어야 하며 PRD, manifest, 로그에 평문으로 노출되지 않아야 한다.
+- **REQ-PRD-FUN-03**: 알림 템플릿과 trigger는 배포 완료, health 저하, sync 실패, Rollouts 완료, Rollouts abort 이벤트를 표현해야 한다.
 - **REQ-PRD-FUN-04**: Default subscriptions는 `on-health-degraded`, `on-sync-failed`를 전체 앱에 적용해야 한다.
 - **REQ-PRD-FUN-05**: 앱별 opt-in은 annotation `notifications.argoproj.io/subscribe.on-deployed.slack: <channel>`로 설정 가능해야 한다.
-- **REQ-PRD-FUN-06**: Vault에 `secret/platform/notifications` path가 준비되어야 한다 (human-approved bootstrap 외부 작업).
+- **REQ-PRD-FUN-06**: 알림 credential bootstrap은 human-approved 외부 작업으로만 수행되어야 한다.
 
 ## Success Criteria
 
-- **REQ-PRD-MET-01**: `argocd-notifications-controller` Pod `Running` 상태.
-- **REQ-PRD-MET-02**: `argocd-notifications-secret` ExternalSecret `Ready=True`.
-- **REQ-PRD-MET-03**: sync 실패 시 Slack 채널에 알림 수신 확인.
-- **REQ-PRD-MET-04**: health 저하 시 Slack 채널에 알림 수신 확인.
-- **REQ-PRD-MET-05**: Rollouts abort 시 Slack 채널에 알림 수신 확인.
+- **REQ-PRD-MET-01**: 운영자가 Notifications controller 상태를 확인할 수 있다. Evidence: `argocd-notifications-controller` Pod `Running`.
+- **REQ-PRD-MET-02**: 운영자가 Vault-backed notification credential sync 상태를 확인할 수 있다. Evidence: `argocd-notifications-secret` ExternalSecret `Ready=True`.
+- **REQ-PRD-MET-03**: 운영자가 sync 실패를 Slack에서 인지할 수 있다. Evidence: sync 실패 이벤트의 Slack 수신 확인.
+- **REQ-PRD-MET-04**: 운영자가 health 저하를 Slack에서 인지할 수 있다. Evidence: health degraded 이벤트의 Slack 수신 확인.
+- **REQ-PRD-MET-05**: 운영자가 Rollouts abort를 Slack에서 인지할 수 있다. Evidence: Rollouts abort 이벤트의 Slack 수신 확인.
 
 ## Scope and Non-goals
 
 - **In Scope**:
-  - ArgoCD Notifications 컨트롤러 활성화 (Helm values)
-  - Slack token Vault/ESO 시크릿 관리
-  - ConfigMap templates + triggers GitOps 관리
+  - ArgoCD Notifications 컨트롤러 활성화 요구
+  - Slack credential Vault/ESO 보안 경계
+  - 알림 template + trigger 요구
   - Default subscriptions 설정
 - **Out of Scope**:
   - Email/PagerDuty 알림 채널
@@ -68,17 +72,17 @@ updated: 2026-05-17
 
 ## Risks, Dependencies, and Assumptions
 
-- Vault에 `secret/platform/notifications` path가 사전 준비되어야 한다 (human-approved 외부 bootstrap 작업 필요).
+- Notification credential은 human-approved 외부 bootstrap 작업으로 준비되어야 한다.
 - Slack Bot token 발급 및 채널 권한 부여는 Slack workspace 관리자 협력이 필요하다.
 - ESO가 정상 동작 중인 상태를 전제한다 (PRD `2026-03-28` 의존).
 - Argo Rollouts가 설치된 상태에서 rollout-\* 이벤트가 동작한다 (PRD `2026-05-17-argo-rollouts-progressive-delivery.md` 의존).
 
 ## AI Agent Requirements (If Applicable)
 
-- **Allowed Actions**: GitOps manifest 생성/갱신, 비파괴 상태 검증, 문서 갱신.
-- **Disallowed Actions**: Slack token 평문 저장, 승인 없는 Vault 경로 조작.
-- **Human-in-the-loop Requirement**: Vault `secret/platform/notifications` 초기 등록 시 승인 필수.
-- **Evaluation Expectation**: 컨트롤러 상태, ExternalSecret Ready, Slack 알림 수신을 검증 단계에서 확인.
+- **Allowed Actions**: PRD/문서 갱신, 비파괴 정적 검증, 상태 수집.
+- **Disallowed Actions**: Slack credential 평문 저장, 승인 없는 Vault 경로 조작, manifest 변경.
+- **Human-in-the-loop Requirement**: notification credential 초기 등록 또는 Slack channel permission 변경 시 승인 필수.
+- **Evaluation Expectation**: 컨트롤러 상태, ExternalSecret Ready, Slack 알림 수신을 후속 검증 단계에서 확인.
 
 ## Related Documents
 
@@ -86,3 +90,4 @@ updated: 2026-05-17
 - **ADR**: [`../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../02.architecture/decisions/0003-eso-vault-k8s-auth.md)
 - **PRD**: [`./2026-05-17-argo-rollouts-progressive-delivery.md`](./2026-05-17-argo-rollouts-progressive-delivery.md) — Rollouts 이벤트 소스
 - **PRD**: [`./2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) — ESO/Vault 의존
+- **Follow-up Gap**: ARD, Spec, Plan, Task are not present yet. Intended stages: `../02.architecture/requirements/`, `../03.specs/`, `../04.execution/plans/`, `../04.execution/tasks/`.

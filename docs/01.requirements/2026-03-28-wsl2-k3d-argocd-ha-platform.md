@@ -3,7 +3,7 @@ title: 'WSL2 k3d/k3s ArgoCD HA Platform Product Requirements'
 type: prd
 status: draft
 owner: platform-team
-updated: 2026-05-09
+updated: 2026-05-17
 ---
 
 # WSL2 k3d/k3s ArgoCD HA Platform Product Requirements
@@ -13,6 +13,12 @@ updated: 2026-05-09
 이 문서는 Windows WSL2 환경에서 `k3s + k3d` 멀티노드(`1 Master + 3 Workers`) 플랫폼을 구축하고, ArgoCD GitOps/ESO+Vault/외부 PostgreSQL/외부 Valkey를 안정적으로 통합하기 위한 제품 요구사항을 정의한다.
 
 > **현재 실행계약 메모 (2026-05-09)**: 이 PRD는 2026-03-28 HA 플랫폼 요구사항 기록이다. 현재 repo-backed 외부 서비스 실행계약은 `gitops/platform/external-services/`, `gitops/platform/network-policies/`, `infrastructure/tests/verify-contracts-static.sh`의 `172.18.x` EndpointSlice/CIDR 값이 우선한다.
+
+## Requirement Status
+
+이 PRD는 HA 플랫폼 요구사항의 historical draft다.
+`172.19.x` 값과 일부 bootstrap 세부사항은 당시 실행계약 기록이며, 현재 값은 repo-backed external service manifests와 정적 검증 스크립트가 소유한다.
+새 구현은 이 문서만으로 시작하지 않고 연결된 ARD/Spec/Plan과 current contract를 함께 확인해야 한다.
 
 ## Vision
 
@@ -39,33 +45,33 @@ WSL2 개발 환경에서도 운영 수준의 재현성, 보안성, 복구 가능
 ## Functional Requirements
 
 - **REQ-PRD-FUN-01**: 클러스터 토폴로지는 `Master 1 + Worker 3`을 만족해야 한다.
-- **REQ-PRD-FUN-02**: 외부 서비스 네트워크 대역은 `172.19.0.0/16`(Docker `infra_net` 실제 서브넷)을 사용해야 한다.
+- **REQ-PRD-FUN-02**: 외부 서비스 네트워크 대역은 repo-backed EndpointSlice/CIDR 계약과 일치해야 한다. `172.19.0.0/16` 값은 historical requirement이며 현재 값은 current contract 메모를 따른다.
 - **REQ-PRD-FUN-03**: 다음 공용 인터페이스 계약을 유지해야 한다.
   - `vault-external.platform.svc.cluster.local:8200`
   - `postgres-write-external:15432`
   - `postgres-read-external:15433`
   - `valkey-external:6379` (K8s-side 포트; Docker host publish `26379:6379`는 호스트 접근 전용)
-- **REQ-PRD-FUN-03A**: `valkey-external`은 `Service + EndpointSlice(172.19.0.12:6379)` 모델을 사용해야 한다.
+- **REQ-PRD-FUN-03A**: `valkey-external`은 Service + EndpointSlice 모델을 사용해야 한다. 구체 IP는 현재 external service manifest가 소유한다.
 - **REQ-PRD-FUN-03B**: ArgoCD HTTPS 공식 엔트리포인트는 `argocd.127.0.0.1.nip.io`로 고정해야 한다.
 - **REQ-PRD-FUN-03C**: 호스트 80/443은 외부 Docker Traefik이 소유하며, 443 트래픽은 k3d `:8443`으로 프록시되어야 한다.
 - **REQ-PRD-FUN-04**: Vault 경로는 `secret/platform/argocd`, `secret/platform/postgres-app`를 표준으로 사용해야 한다.
 - **REQ-PRD-FUN-05**: 보안 통제는 RBAC 최소권한 + Vault policy(`eso-read-platform`)를 적용해야 한다.
 - **REQ-PRD-FUN-06**: 현재 docs taxonomy 문서는 상호 상대 링크로 추적성을 유지해야 한다.
-- **REQ-PRD-FUN-07**: `argocd-local-tls` Secret은 `secrets/certs/cert.pem,key.pem`를 `bootstrap-local.sh`에서 주입해야 한다.
+- **REQ-PRD-FUN-07**: ArgoCD local TLS bootstrap은 승인된 인증서 입력과 GitOps 상태를 일치시켜야 한다. 파일 경로와 주입 절차는 downstream Spec/Runbook이 소유한다.
 - **REQ-PRD-FUN-08**: `argocd` namespace egress는 Valkey(6379) + DNS(53/TCP,UDP) + HTTPS(443/TCP)를 허용해야 한다.
 - **REQ-PRD-FUN-09**: CI는 정적 검증 중심으로 운영하고 CD는 ArgoCD pull reconciliation 모델을 유지해야 한다.
 - **REQ-PRD-FUN-10**: CI 필수 게이트는 `pre-commit`, `manifest-static`, `workflow-security`, `shell-static`를 포함해야 한다.
 
 ## Success Criteria
 
-- **REQ-PRD-MET-01**: `vault-backend`(ClusterSecretStore) `Ready=True`.
-- **REQ-PRD-MET-02**: `argocd-external-valkey`(ExternalSecret) `Ready=True`.
-- **REQ-PRD-MET-03**: `platform-eso-config`, `platform-argocd-config` 앱 `Degraded` 해소.
-- **REQ-PRD-MET-04**: 계약 포트(8200/15432/15433/6379) 회귀 0건.
-- **REQ-PRD-MET-05**: Vault-ESO 장애 복구 목표시간(MTTR) 15분 이내.
-- **REQ-PRD-MET-06**: 보안 검증(AppProject allow-list, Vault 최소권한 정책) 통과율 100%.
-- **REQ-PRD-MET-07**: ArgoCD TLS/Ingress 검증(`verify-ingress-tls.sh`) 회귀 0건.
-- **REQ-PRD-MET-08**: CI 정적 계약 검증(`verify-contracts-static.sh`) 회귀 0건.
+- **REQ-PRD-MET-01**: 운영자가 Vault-backed secret sync 상태를 확인할 수 있다. Evidence: `vault-backend` ClusterSecretStore `Ready=True`.
+- **REQ-PRD-MET-02**: 운영자가 ArgoCD external Valkey secret sync 상태를 확인할 수 있다. Evidence: `argocd-external-valkey` ExternalSecret `Ready=True`.
+- **REQ-PRD-MET-03**: 운영자가 ArgoCD/ESO 구성 앱의 장애 상태를 해소할 수 있다. Evidence: `platform-eso-config`, `platform-argocd-config` 앱 `Degraded` 해소.
+- **REQ-PRD-MET-04**: Platform Engineer가 외부 서비스 endpoint 회귀를 탐지할 수 있다. Evidence: 계약 포트(8200/15432/15433/6379) 회귀 0건.
+- **REQ-PRD-MET-05**: 운영자가 Vault-ESO 장애를 15분 이내 복구할 수 있다. Evidence: 복구 작업 기록의 MTTR 15분 이내.
+- **REQ-PRD-MET-06**: Security Engineer가 최소권한 경계를 검증할 수 있다. Evidence: AppProject allow-list와 Vault 최소권한 정책 검증 통과율 100%.
+- **REQ-PRD-MET-07**: 운영자가 ArgoCD TLS/Ingress 상태를 확인할 수 있다. Evidence: TLS/Ingress 검증 회귀 0건.
+- **REQ-PRD-MET-08**: CI가 클러스터 없이 계약 회귀를 차단한다. Evidence: 정적 계약 검증 회귀 0건.
 
 ## Scope and Non-goals
 

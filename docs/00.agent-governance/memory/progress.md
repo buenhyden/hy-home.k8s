@@ -8,6 +8,53 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-17 — 01.requirements PRD currentness remediation
+
+- **Date**: 2026-05-17
+- **Layer**: product, docs, meta
+- **Status**: complete
+- **Tags**: #requirements #prd #docs #validation
+
+#### Progress
+
+- Updated `docs/01.requirements/README.md` with PRD reading order,
+  lifecycle/status interpretation, current-vs-historical contract guidance,
+  and downstream gap visibility for Rollouts/Notifications PRDs.
+- Clarified currentness and historical contract boundaries across the five
+  existing PRDs in `docs/01.requirements/`.
+- Aligned the platform expansion PRD around Headlamp as the current cluster UI,
+  while preserving Kubernetes Dashboard as superseded ADR-linked history.
+- Reframed Rollouts and Notifications requirements away from manifest-level
+  implementation instructions and toward PRD-level value, constraints, and
+  verifiable acceptance evidence.
+
+#### Memory
+
+- `docs/01.requirements` PRDs should preserve historical requirements instead
+  of deleting them, but must label stale runtime values as historical or
+  superseded when current `gitops/**` contracts own execution truth.
+- Missing ARD/Spec/Plan/Task documents for a draft PRD should be recorded as
+  downstream gaps, not linked as nonexistent Markdown targets.
+- PRD success criteria should pair user/operator capability with evidence, not
+  only list Kubernetes object states.
+
+#### Evidence
+
+- `git diff --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- Direct mutation / secret-literal scan over `docs/01.requirements` PASS.
+- Dashboard supersession scan for the platform expansion PRD PASS.
+
+#### Handoff
+
+- Rollouts and Notifications ARD/Spec/Plan/Task documents remain follow-up
+  gaps and were not created in this PRD-focused pass.
+- No live cluster mutation, ArgoCD action, Vault write, Slack action, manifest
+  change, or plaintext secret change was performed.
+
+---
+
 ### 2026-05-17 — 90.references template hardening
 
 - **Date**: 2026-05-17
