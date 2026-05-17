@@ -1,3 +1,11 @@
+---
+title: 'Platform Expansion Bootstrap Guide'
+type: guide
+status: active
+owner: platform
+updated: 2026-05-09
+---
+
 # Platform Expansion Bootstrap Guide
 
 ## Overview (KR)

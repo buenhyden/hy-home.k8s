@@ -1,3 +1,11 @@
+---
+title: 'Kiali Observability 연결 복구 Runbook'
+type: runbook
+status: active
+owner: platform
+updated: 2026-05-09
+---
+
 # Kiali Observability 연결 복구 Runbook
 
 ## Runbook Type

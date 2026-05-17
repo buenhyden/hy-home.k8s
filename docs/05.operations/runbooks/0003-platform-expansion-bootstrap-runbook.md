@@ -1,3 +1,11 @@
+---
+title: 'Platform Expansion Bootstrap Runbook'
+type: runbook
+status: active
+owner: platform
+updated: 2026-05-09
+---
+
 # Platform Expansion Bootstrap Runbook
 
 : WSL2 k3d Platform — cert-manager / Headlamp / Istio / Kiali

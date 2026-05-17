@@ -1,3 +1,11 @@
+---
+title: 'WSL2 k3d/k3s ArgoCD HA Setup Guide'
+type: guide
+status: active
+owner: platform
+updated: 2026-05-09
+---
+
 # WSL2 k3d/k3s ArgoCD HA Setup Guide
 
 ## Overview (KR)

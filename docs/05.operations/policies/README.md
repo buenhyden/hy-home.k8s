@@ -60,7 +60,7 @@ docs/05.operations/policies/
 3. 통제 변경 시 검증 명령과 예외 승인 흐름을 함께 갱신한다.
 4. 문서 변경 후 이 README 인덱스를 동기화한다.
 
-## Related References
+## Related Documents
 
 - [03.specs](../../03.specs/README.md)
 - [05.operations/runbooks](../runbooks/README.md)

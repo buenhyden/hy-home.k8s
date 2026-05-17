@@ -1,3 +1,11 @@
+---
+title: 'ArgoCD Platform Bootstrap Runbook'
+type: runbook
+status: active
+owner: platform
+updated: 2026-03-27
+---
+
 # ArgoCD Platform Bootstrap Runbook
 
 : WSL k3d/k3s GitOps Bootstrap

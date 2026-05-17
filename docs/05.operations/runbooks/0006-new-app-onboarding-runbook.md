@@ -1,3 +1,11 @@
+---
+title: 'New App GitOps Onboarding Runbook'
+type: runbook
+status: active
+owner: platform
+updated: 2026-05-09
+---
+
 # New App GitOps Onboarding Runbook
 
 ## Runbook Type

@@ -1,3 +1,11 @@
+---
+title: 'K8s GitOps Platform Operations Policy'
+type: operation
+status: active
+owner: platform
+updated: 2026-03-27
+---
+
 # K8s GitOps Platform Operations Policy
 
 ## Overview (KR)

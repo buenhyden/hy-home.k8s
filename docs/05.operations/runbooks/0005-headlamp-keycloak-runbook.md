@@ -1,3 +1,11 @@
+---
+title: 'Headlamp Keycloak OIDC 전환 Runbook'
+type: runbook
+status: active
+owner: platform
+updated: 2026-05-09
+---
+
 # Headlamp Keycloak OIDC 전환 Runbook
 
 ## Runbook Type

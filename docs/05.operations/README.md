@@ -46,7 +46,7 @@
 3. live cluster mutation 예시는 승인 조건, bootstrap-only 예외, break-glass 문맥 없이 추가하지 않는다.
 4. 운영 문서가 현재 `bootstrap-local.sh`, `gitops/platform/external-services`, 정적 검증 계약과 충돌하지 않게 유지한다.
 
-## Related References
+## Related Documents
 
 - [Guides README](./guides/README.md)
 - [Policies README](./policies/README.md)

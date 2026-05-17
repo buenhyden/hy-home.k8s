@@ -1,3 +1,11 @@
+---
+title: 'ArgoCD ESO Vault Recovery Runbook'
+type: runbook
+status: active
+owner: platform
+updated: 2026-05-09
+---
+
 # ArgoCD ESO Vault Recovery Runbook
 
 ## Runbook Type

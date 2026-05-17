@@ -62,7 +62,7 @@ docs/05.operations/guides/
 3. 실행 명령은 복붙 가능한 형태로 유지하고, 시크릿 값은 절대 직접 기재하지 않는다.
 4. 문서 변경 시 이 README의 인덱스(상태/설명/수정일)를 함께 갱신한다.
 
-## Related References
+## Related Documents
 
 - [Agent Governance Hub](../../00.agent-governance/README.md)
 - [03.specs](../../03.specs/README.md)

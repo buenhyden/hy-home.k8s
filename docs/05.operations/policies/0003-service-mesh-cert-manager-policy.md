@@ -1,3 +1,11 @@
+---
+title: 'Service Mesh & cert-manager Operations Policy'
+type: operation
+status: active
+owner: platform
+updated: 2026-05-09
+---
+
 # Service Mesh & cert-manager Operations Policy
 
 ## Overview (KR)

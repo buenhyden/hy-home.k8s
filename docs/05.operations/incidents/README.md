@@ -46,7 +46,7 @@
 3. Runbook/Operations/ADR/Spec 링크를 남겨 재발 방지 액션을 추적한다.
 4. 비밀 값, 토큰, 개인 식별 정보는 사고 기록에 직접 남기지 않는다.
 
-## Related References
+## Related Documents
 
 - [Docs README](../README.md)
 - [05.operations/policies](../policies/README.md)

@@ -1,3 +1,11 @@
+---
+title: 'Headlamp 인증 & OIDC 연동 Guide'
+type: guide
+status: active
+owner: platform
+updated: 2026-05-09
+---
+
 # Headlamp 인증 & OIDC 연동 Guide
 
 ## Overview (KR)

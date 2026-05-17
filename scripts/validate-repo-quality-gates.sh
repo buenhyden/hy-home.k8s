@@ -298,7 +298,7 @@ readme_base_sections = {
     "Scope": re.compile(r"^##\s+Scope\b", re.MULTILINE),
     "Structure": re.compile(r"^##\s+Structure\b", re.MULTILINE),
     "How to Work in This Area": re.compile(r"^##\s+How to Work in This Area\b", re.MULTILINE),
-    "Related References": re.compile(r"^##\s+Related References\b", re.MULTILINE),
+    "Related Documents": re.compile(r"^##\s+Related (Documents|References)\b", re.MULTILINE),
 }
 for name in sorted(required_doc_dirs):
     readme = docs_dir / name / "README.md"
@@ -311,6 +311,22 @@ for readme in sorted(root.rglob("README.md")):
     for section, pattern in readme_base_sections.items():
         if not pattern.search(text):
             fail(f"{rel(readme)} missing README base section: {section}")
+
+canonical_related_documents_readmes = [
+    root / "README.md",
+    root / "docs/README.md",
+    root / "docs/05.operations/README.md",
+    root / "docs/05.operations/guides/README.md",
+    root / "docs/05.operations/policies/README.md",
+    root / "docs/05.operations/runbooks/README.md",
+    root / "docs/05.operations/incidents/README.md",
+]
+for readme in canonical_related_documents_readmes:
+    text = read_text(readme)
+    if not re.search(r"^##\s+Related Documents\b", text, re.MULTILINE):
+        fail(f"{rel(readme)} missing canonical README section: Related Documents")
+    if re.search(r"^##\s+Related References\b", text, re.MULTILINE):
+        fail(f"{rel(readme)} still uses legacy README section: Related References")
 
 reference_readme_path = root / "docs/90.references/README.md"
 reference_readme_text = read_text(reference_readme_path)

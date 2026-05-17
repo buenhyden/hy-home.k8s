@@ -63,7 +63,7 @@ docs/05.operations/runbooks/
 3. 절차는 명령 실행 순서와 검증 기준을 함께 제시한다.
 4. 복구 절차에는 롤백, 재동기화, 증적 수집 단계를 반드시 포함한다.
 
-## Related References
+## Related Documents
 
 - [05.operations/guides](../guides/README.md)
 - [05.operations/policies](../policies/README.md)

@@ -1,3 +1,11 @@
+---
+title: 'k8s Observability Operations Policy'
+type: operation
+status: active
+owner: platform
+updated: 2026-05-09
+---
+
 # k8s Observability Operations Policy
 
 ## Overview (KR)

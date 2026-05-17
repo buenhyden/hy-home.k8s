@@ -1,3 +1,11 @@
+---
+title: 'LLM Wiki Curation Guide'
+type: guide
+status: active
+owner: platform
+updated: 2026-05-10
+---
+
 # LLM Wiki Curation Guide
 
 ## Overview (KR)

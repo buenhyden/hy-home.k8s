@@ -76,7 +76,7 @@ hy-home.k8s/
 9. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
 10. AWS/Azure 예시는 2026-05-09 공식 지원 스냅샷을 기준으로 관리하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
 
-## Related References
+## Related Documents
 
 - [docs/README.md](docs/README.md)
 - [AGENTS.md](AGENTS.md)

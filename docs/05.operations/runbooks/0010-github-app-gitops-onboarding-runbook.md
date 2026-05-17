@@ -1,3 +1,11 @@
+---
+title: 'GitHub 앱 GitOps 온보딩 런북'
+type: runbook
+status: active
+owner: platform
+updated: 2026-05-09
+---
+
 # GitHub 앱 GitOps 온보딩 런북
 
 ## Runbook Type

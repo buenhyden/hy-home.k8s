@@ -1,3 +1,11 @@
+---
+title: 'Argo Rollouts, Notifications & Headlamp Runbook'
+type: runbook
+status: active
+owner: platform
+updated: 2026-05-09
+---
+
 # Argo Rollouts, Notifications & Headlamp Runbook
 
 ## Runbook Type

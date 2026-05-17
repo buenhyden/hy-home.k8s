@@ -6,11 +6,11 @@ owner: '{team-or-person}'
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/05.operations/policies/<policy-or-standard>.md -->
+<!-- Target: docs/05.operations/policies/####-<policy-or-standard>.md -->
 
 # [Policy or Standard Name] Operations Policy
 
-> Use this template for `docs/05.operations/policies/<policy-or-standard>.md`.
+> Use this template for `docs/05.operations/policies/####-<policy-or-standard>.md`.
 >
 > Rules:
 >

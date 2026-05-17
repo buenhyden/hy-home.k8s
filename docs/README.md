@@ -102,7 +102,7 @@ docs/
 
 로컬 k3d에서는 기존 ingress-nginx 계약과 [traefik](../traefik/README.md) 보조 노출 경로를 유지한다. Ingress NGINX upstream retirement 이후 cloud target은 AWS ALB/Gateway API, Azure AGC/Gateway API 계열로 분리해 추적한다.
 
-## Related References
+## Related Documents
 
 - [Root README](../README.md)
 - [Agent Governance Hub](./00.agent-governance/README.md)

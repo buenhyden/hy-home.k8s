@@ -8,6 +8,54 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-17 — 05.operations metadata and template alignment
+
+- **Date**: 2026-05-17
+- **Layer**: docs, ops, meta
+- **Status**: complete
+- **Tags**: #docs #operations #templates #validation
+
+#### Progress
+
+- Standardized the related-link heading to `## Related Documents` for the root
+  README, docs README, `docs/05.operations/README.md`, and the four
+  `docs/05.operations/*/README.md` entrypoints.
+- Added template-aligned frontmatter to 26 authored operations documents:
+  9 guides, 7 operations policies, and 10 runbooks.
+- Updated the README quality gate to accept legacy README headings outside the
+  touched scope while requiring the canonical heading in the root/docs/operations
+  entrypoints.
+- Aligned directly affected templates in `docs/99.templates/` with the canonical
+  README heading and numeric operations policy/runbook naming placeholders.
+
+#### Memory
+
+- `## Related Documents` is the canonical related-link heading for root/docs and
+  `docs/05.operations` README entrypoints; older `## Related References` headings
+  remain temporarily allowed only outside this touched scope.
+- Operations policy documents keep `type: operation` to match
+  `operation.template.md` and the stage authoring matrix.
+- Frontmatter `updated` values for the 26 operations documents came from the
+  owning README document index. No fallback date was used.
+
+#### Evidence
+
+- Targeted README heading check for root/docs/operations entrypoints: PASS.
+- Targeted frontmatter shape check for 26 operations documents: PASS.
+- Targeted policy `type: operation` check: PASS.
+- Targeted frontmatter updated-date check against README index dates: PASS.
+- Targeted template placeholder check: PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `git diff --check` PASS.
+
+#### Handoff
+
+- No live cluster mutation, secret change, deployment, or direct ArgoCD action
+  was performed.
+
+---
+
 ### 2026-05-17 — template cross-link completion
 
 - **Date**: 2026-05-17

@@ -1,3 +1,11 @@
+---
+title: 'WSL k3d ArgoCD Bootstrap Guide'
+type: guide
+status: active
+owner: platform
+updated: 2026-03-27
+---
+
 # WSL k3d ArgoCD Bootstrap Guide
 
 ## Overview (KR)

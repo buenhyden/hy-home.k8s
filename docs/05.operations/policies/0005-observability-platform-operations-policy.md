@@ -1,3 +1,11 @@
+---
+title: 'Observability Platform Operations Policy'
+type: operation
+status: active
+owner: platform
+updated: 2026-05-09
+---
+
 # Observability Platform Operations Policy
 
 ## Overview (KR)

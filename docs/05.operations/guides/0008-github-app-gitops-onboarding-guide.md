@@ -1,3 +1,11 @@
+---
+title: 'GitHub 앱 GitOps 온보딩 가이드'
+type: guide
+status: active
+owner: platform
+updated: 2026-05-09
+---
+
 # GitHub 앱 GitOps 온보딩 가이드
 
 ## Overview (KR)

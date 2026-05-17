@@ -1,3 +1,11 @@
+---
+title: 'WSL2 k3d/k3s GitOps HA Operations Policy'
+type: operation
+status: active
+owner: platform
+updated: 2026-05-09
+---
+
 # WSL2 k3d/k3s GitOps HA Operations Policy
 
 ## Overview (KR)
