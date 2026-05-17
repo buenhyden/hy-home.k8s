@@ -4,7 +4,7 @@
 
 ## Overview
 
-이 경로의 각 하위 디렉터리는 독립적인 앱 단위다. 일반적으로 Kustomize 기반 Kubernetes manifest, Argo Rollout, Service, Ingress, ExternalSecret, AnalysisTemplate을 함께 둔다.
+이 경로의 각 하위 디렉터리는 독립적인 앱 단위다. 일반적으로 Kustomize 기반 Kubernetes manifest, Argo Rollout, Service, Ingress, AnalysisTemplate을 함께 두며, secret-backed config가 필요한 앱만 ExternalSecret을 포함한다.
 
 새 앱은 [examples/sample-app](../../examples/sample-app/README.md)을 복사해 시작하고, placeholder를 실제 앱 값으로 바꾼 뒤 feature branch + PR flow로 반영한다.
 
@@ -45,7 +45,7 @@ workloads/
 
 | Workload | Purpose and owner | Lifecycle and config | Dependencies, routes, secrets | Validation and operations |
 | --- | --- | --- | --- | --- |
-| `adminer` | Reference admin workload owned by platform maintainers and app operators. | Managed by the local apps ApplicationSet from `gitops/workloads/adminer/kustomization.yaml`; includes Rollout, services, ingress, Istio routing, PeerAuthentication, and AnalysisTemplate. | Depends on `apps` namespace, Argo Rollouts, ingress, Istio, PostgreSQL external service, and ExternalSecret-backed app credentials. | Validate with `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, and `bash scripts/check-secret-handling.sh .`; live rollout, ingress, and secret checks require intentional cluster validation. |
+| `adminer` | Reference admin workload owned by platform maintainers and app operators. | Managed by the local apps ApplicationSet from `gitops/workloads/adminer/kustomization.yaml`; includes Rollout, services, ingress, Istio routing, PeerAuthentication, and AnalysisTemplate. | Depends on `apps` namespace, Argo Rollouts, ingress, Istio, and the PostgreSQL external service route. | Validate with `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, and `bash scripts/check-secret-handling.sh .`; live rollout and ingress checks require intentional cluster validation. |
 
 ## How to Work in This Area
 

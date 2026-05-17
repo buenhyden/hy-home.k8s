@@ -61,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     {body=".*BREAKING CHANGE", group="Breaking Changes"},
     {message="^chore", group="Miscellaneous"},
     {message="^chore\\(release\\)", skip=true},
+    {message="^ci", group="Continuous Integration"},
     {message="^doc", group="Documentation"},
     {message="^feat", group="Added"},
     {message="^fix", group="Fixed"},
