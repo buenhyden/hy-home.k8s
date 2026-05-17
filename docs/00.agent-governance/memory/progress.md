@@ -8,6 +8,53 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-17 — 90.references operations maintenance runbook
+
+- **Date**: 2026-05-17
+- **Layer**: docs, ops, meta
+- **Status**: complete
+- **Tags**: #docs #references #operations #templates #validation
+
+#### Progress
+
+- Created one operations runbook for `docs/90.references` maintenance:
+  `docs/05.operations/runbooks/0011-reference-maintenance-runbook.md`.
+- Updated `docs/05.operations` and `docs/05.operations/runbooks` README
+  discoverability for the new runbook.
+- Standardized the touched `docs/90.references/**/README.md` and
+  `docs/99.templates/README.md` related-link heading to
+  `## Related Documents`.
+- Added target-relative reference maintenance links to
+  `docs/99.templates/reference.template.md` and a touched-scope validation check
+  in `scripts/validate-repo-quality-gates.sh`.
+
+#### Memory
+
+- Local `main` was clean but ahead of `origin/main` by 1 commit before this work;
+  implementation was done on `codex/90-references-operations-maintenance`.
+- `docs/90.references` remains the SSoT for reference facts and version values.
+  The new runbook owns only the repeated maintenance checklist.
+- `scripts/generate-llm-wiki-index.sh` and
+  `docs/90.references/llm-wiki/wiki-index.md` were not edited by hand.
+- No frontmatter date fallback list was needed; the new runbook uses the
+  plan-approved date `2026-05-17`.
+
+#### Evidence
+
+- Targeted touched README heading check: PASS.
+- Targeted new runbook frontmatter/section/scenario check: PASS.
+- Targeted `reference.template.md` target-relative link check: PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `git diff --check` PASS.
+
+#### Handoff
+
+- No live cluster mutation, Vault write, deployment approval, secret change, or
+  direct ArgoCD action was performed.
+
+---
+
 ### 2026-05-17 — 05.operations metadata and template alignment
 
 - **Date**: 2026-05-17
