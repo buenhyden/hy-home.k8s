@@ -8,6 +8,52 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-17 — template cross-link completion
+
+- **Date**: 2026-05-17
+- **Layer**: docs, meta
+- **Status**: complete
+- **Tags**: #docs #templates #cross-links #validation
+
+#### Progress
+
+- Completed the remaining target-relative placeholders in `incident.template.md`,
+  `postmortem.template.md`, `operation.template.md`, and `reference.template.md`.
+- Aligned generated `docs/**` Markdown code-link labels with their actual
+  relative hrefs so rendered paths match the file location that owns the link.
+- Aligned root, docs stage, and examples README code-link labels with their
+  actual relative hrefs.
+- Refreshed the execution plan index and completion state for the template
+  cross-link pass.
+
+#### Memory
+
+- Template placeholder links shown as code literals are authored from the
+  template `Target` location, not from `docs/99.templates/`.
+- Actual Markdown links inside template files still resolve relative to the
+  template file location, per the template link policy.
+- For `docs/05.operations/incidents/YYYY/`, links to runbooks and policies
+  resolve through `../../runbooks/` and `../../policies/`; postmortem links
+  resolve through `../postmortems/YYYY/`.
+- For `docs/05.operations/incidents/postmortems/YYYY/`, links back to incident
+  records resolve through `../../YYYY/`, and runbooks/policies through
+  `../../../`.
+
+#### Evidence
+
+- Fenced-code-aware Markdown link scanner over `README.md`, `docs/**/*.md`, and
+  `examples/**/README.md`: missing target 0, code-label/href mismatch 0.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `git diff --check` PASS.
+
+#### Handoff
+
+- No live cluster mutation, secret change, deployment, or direct ArgoCD action
+  was performed.
+
+---
+
 ### 2026-05-17 — scripts cleanup retention evidence refresh
 
 - **Date**: 2026-05-17

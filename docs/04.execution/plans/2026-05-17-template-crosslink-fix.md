@@ -1,7 +1,7 @@
 ---
 title: 'Template Cross-link Fix Implementation Plan'
 type: plan
-status: active
+status: complete
 owner: 'platform-team'
 updated: 2026-05-17
 ---
@@ -33,9 +33,11 @@ updated: 2026-05-17
 분석 결과:
 
 - `spec.template.md`와 `prd.template.md`는 이미 올바른 상대 경로를 사용함 (변경 불필요)
-- 나머지 10개 템플릿은 `../`을 `../../`로 또는 형제 디렉터리 상대 경로로 수정 필요
-- 생성된 파일 약 30개의 표시 텍스트가 실제 href와 불일치 (링크 동작은 정상)
+- 10개 템플릿은 `../`을 `../../`로 또는 형제 디렉터리 상대 경로로 수정 필요
+- 나머지 Target 주석이 있는 Markdown 템플릿 6개는 이미 target-relative placeholder를 사용함
+- 생성된 문서와 stage README 53개 파일의 표시 텍스트가 실제 href와 불일치 (링크 동작은 정상)
 - 각 Template의 `<!-- Target: ... -->` 주석이 올바른 Target 위치를 명시하고 있으므로 이를 기준으로 상대 경로 계산
+- 실제 Markdown 링크는 `docs/99.templates/` 파일 위치 기준으로 검증하고, backtick code literal placeholder는 Target 위치 기준으로 검증
 
 경로 계산 원칙:
 
@@ -48,24 +50,26 @@ updated: 2026-05-17
 ## Goals & In-Scope
 
 - **Goals**:
-  - 10개 템플릿의 Cross-link 플레이스홀더를 Target 위치 기준 올바른 상대 경로로 수정
-  - 30개 이상 생성 파일의 표시 텍스트(backtick 코드)를 실제 href와 일치시킴
+  - 16개 Target-bearing Markdown 템플릿의 Cross-link 플레이스홀더를 Target 위치 기준으로 검토
+  - 수정이 필요한 10개 템플릿의 Cross-link 플레이스홀더를 올바른 상대 경로로 수정
+  - 50개 이상 생성 문서와 README 표면의 표시 텍스트(backtick 코드)를 실제 href와 일치시킴
 - **In Scope**:
   - `docs/99.templates/` 내 Cross-link가 있는 10개 템플릿 파일
+  - `docs/99.templates/` 내 이미 정합한 Target-bearing helper template 6개 검토
   - `docs/02.architecture/decisions/*.md` (ADR 9개)
   - `docs/02.architecture/requirements/*.md` (ARD 3개)
   - `docs/04.execution/plans/*.md` (Plan 6개)
   - `docs/04.execution/tasks/*.md` (Task 6개)
   - `docs/05.operations/guides/*.md` (Guide 5개 — 링크 불일치 있는 것)
   - `docs/05.operations/runbooks/*.md` (Runbook 4개)
+  - Root, docs stage, and examples README 문서의 code-label/href 정합성
 
 ## Non-Goals & Out-of-Scope
 
 - **Non-goals**:
   - 실제 href 링크 경로 변경 (href는 이미 올바름)
   - 문서 내용(Content) 변경
-  - `docs/03.specs/` 파일 수정 (spec 파일들의 링크는 이미 올바름)
-  - `docs/01.requirements/` 파일 수정 (prd 파일들의 링크는 이미 올바름)
+  - PRD/Spec 본문 파일 수정 (PRD/Spec 템플릿과 본문 링크는 이미 올바름)
 - **Out of Scope**:
   - `docs/05.operations/incidents/` — 현재 incident 파일 없음
   - `docs/90.references/` — 현재 reference 파일 없음
@@ -93,13 +97,38 @@ updated: 2026-05-17
 | T-16 | Runbook 생성 파일 표시 텍스트 수정 | `docs/05.operations/runbooks/000{1-4}*.md`       | REQ-GEN-001 | backtick 표시 텍스트가 href와 일치                                        |
 | T-17 | 최종 통합 검증                     | 전체 docs/                                       | REQ-VAL-001 | 스캔 명령 출력 없음                                                       |
 
+## Template Coverage Matrix
+
+| Template | Target scope | Result |
+| --- | --- | --- |
+| `prd.template.md` | `docs/01.requirements/` | Already target-relative |
+| `ard.template.md` | `docs/02.architecture/requirements/` | Fixed before final integration |
+| `adr.template.md` | `docs/02.architecture/decisions/` | Fixed before final integration |
+| `spec.template.md` | `docs/03.specs/<feature-id>/` | Already target-relative |
+| `api-spec.template.md` | `docs/03.specs/<feature-id>/` | Already target-relative |
+| `agent-design.template.md` | `docs/03.specs/<feature-id>/` | Already target-relative |
+| `data-model.template.md` | `docs/03.specs/<feature-id>/` | Already target-relative |
+| `tests.template.md` | `docs/03.specs/<feature-id>/` | Already target-relative |
+| `plan.template.md` | `docs/04.execution/plans/` | Fixed before final integration |
+| `task.template.md` | `docs/04.execution/tasks/` | Fixed before final integration |
+| `guide.template.md` | `docs/05.operations/guides/` | Fixed before final integration |
+| `operation.template.md` | `docs/05.operations/policies/` | Fixed in final integration |
+| `runbook.template.md` | `docs/05.operations/runbooks/` | Fixed before final integration |
+| `incident.template.md` | `docs/05.operations/incidents/YYYY/` | Fixed in final integration |
+| `postmortem.template.md` | `docs/05.operations/incidents/postmortems/YYYY/` | Fixed in final integration |
+| `reference.template.md` | `docs/90.references/<category>/` | Fixed in final integration |
+
+`readme.template.md` has no fixed Target because README files live at multiple
+depths. Its example links must either resolve relative to the template file or be
+rewritten by the author for the final README location.
+
 ## Verification Plan
 
 | ID          | Level      | Description                       | Command / How to Run                                                                                                     | Pass Criteria                                                                                |
 | ----------- | ---------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
 | VAL-PLN-001 | Structural | 템플릿 경로 패턴 확인             | `grep -n "Related Documents" -A 6 docs/99.templates/adr.template.md`                                                     | `../../01.requirements/`, `../requirements/`, `../../03.specs/`, `../../04.execution/plans/` |
-| VAL-PLN-002 | Structural | 생성 파일 불일치 스캔             | `grep -rn "\x60\.\./0[0-9]\." docs/ --include="*.md" \| grep -v "99.templates"`                                          | 출력 없음                                                                                    |
-| VAL-PLN-003 | Structural | 생성 파일 05.operations 경로 스캔 | `grep -rn "\x60\.\./05\.operations/" docs/ --include="*.md" \| grep -v "99.templates"`                                   | 출력 없음                                                                                    |
+| VAL-PLN-002 | Structural | 생성 파일 불일치 스캔             | fenced code block을 제외하고 backtick code label과 href를 직접 비교                                                     | mismatch 0건                                                                                 |
+| VAL-PLN-003 | Structural | 내부 Markdown 링크 존재 확인      | fenced code block을 제외하고 `README.md`와 `docs/**/*.md`의 상대 Markdown 링크 target을 확인                              | missing target 0건                                                                           |
 | VAL-PLN-004 | Content    | 실제 파일 존재 확인               | `ls docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md docs/03.specs/001-wsl-k3d-argocd-platform/spec.md` | 두 파일 모두 존재                                                                            |
 
 ## Risks & Mitigations
@@ -112,11 +141,20 @@ updated: 2026-05-17
 
 ## Completion Criteria
 
-- [ ] 10개 템플릿 파일의 Cross-link 플레이스홀더가 Target 위치 기준 올바른 상대 경로 사용
-- [ ] 30개 이상 생성 파일의 표시 텍스트(backtick)가 실제 href와 일치
-- [ ] `grep -rn "\x60\.\./0[0-9]\." docs/ --include="*.md" | grep -v "99.templates"` 출력 없음
-- [ ] `grep -rn "\x60\.\./05\.operations/" docs/ --include="*.md" | grep -v "99.templates"` 출력 없음
-- [ ] `docs/00.agent-governance/memory/progress.md`에 작업 완료 entry 추가
+- [x] 16개 Target-bearing Markdown 템플릿 검토 완료
+- [x] 수정이 필요한 10개 템플릿 파일의 Cross-link 플레이스홀더가 Target 위치 기준 올바른 상대 경로 사용
+- [x] 50개 이상 생성 문서와 README 표면의 표시 텍스트(backtick)가 실제 href와 일치
+- [x] fenced code block 제외 Markdown 링크 target 확인에서 missing target 0건
+- [x] fenced code block 제외 code-label/href 비교에서 mismatch 0건
+- [x] `docs/00.agent-governance/memory/progress.md`에 작업 완료 entry 추가
+
+## Template Improvement Plan
+
+`docs/99.templates/readme.template.md` is intentionally generic, but README
+targets vary by directory depth. A future template hardening pass should add
+target-specific path guidance for root README, `docs/README.md`, and nested
+stage READMEs, or convert the instructional example links into code literal path
+tables so authors must recalculate final relative links for the target location.
 
 ## Related Documents
 
