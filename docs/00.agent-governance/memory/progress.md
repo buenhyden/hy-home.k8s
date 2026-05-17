@@ -819,6 +819,40 @@ inventory stays in `scripts/README.md`.
 - Hand off to `.agent-work/prompts/10_verification_completion_reporter_agent.md`.
 - Live k3d, ArgoCD sync, external service, ingress/TLS, network policy, and secret reconciliation checks remain deferred unless a live environment is intentionally available.
 
+### 2026-05-18 — 05.operations README routing cleanup
+
+- **Date**: 2026-05-18
+- **Layer**: docs, ops
+- **Status**: complete
+- **Tags**: #docs #operations #readme #validation
+
+#### Progress
+
+- Added a concise routing table to `docs/05.operations/README.md` so operators can choose guide, policy, runbook, or incident documents by task.
+- Consolidated duplicate purpose, related-folder, template, example, and SSoT sections in the guides, policies, runbooks, and incidents README entrypoints.
+- Reframed `docs/05.operations/policies/README.md` around controls and exception rules instead of executable command examples.
+- Clarified that `docs/05.operations/incidents/` currently has no tracked incident or postmortem documents and should create dated subfolders only when a real record is needed.
+- Did not create new operations documents, move files, or rewrite individual guide/policy/runbook bodies.
+
+#### Memory
+
+- `docs/05.operations/*/README.md` should act as operator routing and index entrypoints; detailed commands belong in runbooks, policy controls in policies, and background/onboarding material in guides.
+- Keep empty incident state explicit in `docs/05.operations/incidents/README.md`; do not add placeholder incident or postmortem files.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS with optional `kube-linter` skipped locally because it is not installed.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `git diff --check` PASS.
+
+#### Handoff
+
+- None.
+
 ## Historical Entries
 
 ### Harness Implementation Progress

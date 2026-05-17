@@ -2,14 +2,20 @@
 
 > 반복 가능한 운영 작업을 즉시 실행할 수 있는 체크리스트/절차 문서를 관리한다.
 
-## 목적
-
-이 폴더는 k3d/GitOps 플랫폼에서 반복 실행하는 운영 절차와 복구 절차를 저장한다.
-
 ## Overview
 
 이 경로는 운영자가 장애 상황 또는 재구축 상황에서 바로 실행 가능한 절차를 제공한다.
-정책 정의는 `05.operations/policies`, 가이드 설명은 `05.operations/guides`, 사고 분석은 `05.operations/incidents`에서 관리한다.
+정책 정의는 [policies](../policies/README.md), 가이드 설명은 [guides](../guides/README.md), 사고 분석은 [incidents](../incidents/README.md)에서 관리한다.
+
+런북은 “정해진 순서로 실행하고, 증적을 남기고, 실패 시 복구하는 문서”다.
+배경 설명과 온보딩은 [guides](../guides/README.md), 허용/금지/예외 기준은 [policies](../policies/README.md), 실제 사고 기록은 [incidents](../incidents/README.md)로 보낸다.
+
+| 필요 상황 | 문서 유형 |
+| --- | --- |
+| 명령 순서, 검증 기준, 복구 경로가 필요함 | Runbook |
+| 장애 시그니처를 보고 대응해야 함 | Runbook |
+| 정책의 허용/금지 기준을 확인해야 함 | Policy로 이동 |
+| 작업 배경과 선행 지식을 익혀야 함 | Guide로 이동 |
 
 ## Audience
 
@@ -35,10 +41,6 @@
 - 튜토리얼 중심 배경 설명
 - 사고 원인 분석 보고서
 
-## 포함할 내용
-
-이 stage는 위 In Scope 항목만 포함한다. 런북 수정 시 명령 순서, 성공 기준, 롤백/복구 증적을 함께 유지한다.
-
 ## Structure
 
 ```text
@@ -60,78 +62,23 @@ docs/05.operations/runbooks/
 ## How to Work in This Area
 
 1. 관련 Spec/Operations를 먼저 확인해 계약값을 고정한다.
-2. `../../99.templates/runbook.template.md` 기반으로 작성한다.
+2. [runbook.template.md](../../99.templates/runbook.template.md)를 기반으로 작성한다.
 3. 절차는 명령 실행 순서와 검증 기준을 함께 제시한다.
 4. 복구 절차에는 롤백, 재동기화, 증적 수집 단계를 반드시 포함한다.
+5. 정책 통제 기준은 런북에 복제하지 말고 [policies](../policies/README.md)로 연결한다.
+6. live cluster mutation, Vault write, kubeconfig 변경 예시는 human-approved, bootstrap-only, break-glass 문맥을 유지한다.
 
 ## Related Documents
 
 - [05.operations/guides](../guides/README.md)
 - [05.operations/policies](../policies/README.md)
 - [05.operations/incidents](../incidents/README.md)
-
-## 관련 폴더
-
-- `05.operations/guides/`: 절차의 배경과 how-to 설명
-- `05.operations/policies/`: 런북이 따라야 할 운영 정책
-- `05.operations/incidents/`: 런북 실행 결과가 연결되는 사고 기록
-
-## Documentation Standards
-
-- Runbook은 즉시 실행 가능한 형태를 유지한다.
-- 명령은 복붙 가능한 블록으로 제공한다.
-- 비밀 값은 문서에 기록하지 않고 Vault 경로만 명시한다.
-
-## Traceability Rules
-
-- 각 Runbook은 Canonical References에 ARD/ADR/Spec/Plan을 연결한다.
-- Incident/Postmortem 인덱스와 상호 링크를 유지한다.
-- 상대 경로 링크만 사용한다.
-
-## Template Usage
-
-- 런북 템플릿: [`../../99.templates/runbook.template.md`](../../99.templates/runbook.template.md)
-- README 템플릿: [`../../99.templates/readme.template.md`](../../99.templates/readme.template.md)
-
-## Metadata Expectations
-
-- 사용 시점(When to Use)과 검증 항목을 명확히 유지한다.
-- 트러블슈팅 에러 시그니처는 실제 로그 문구 기준으로 작성한다.
-- 인덱스 상태/수정일을 최신으로 유지한다.
-
-## Usage Instructions
-
-런북 실행 시 핵심 흐름:
-
-1. 사전 점검(외부 서비스/Vault/포트)
-2. 부트스트랩 실행
-3. ArgoCD/ESO/서비스 인터페이스 검증
-4. 오류 시그니처 기반 트러블슈팅
-5. 롤백/복구 및 hard refresh
-
-## Verification and Monitoring
-
-- 로그 위치: `kubectl -n argocd logs`, `kubectl -n external-secrets logs`
-- 상태 점검: `argocd app list`, `kubectl -n argocd get applications`
-- 재검증 기준 문서: [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)
-
-## Incident and Recovery Links
-
-- Runbooks: [`./README.md`](./README.md)
-- Incident Records: [`../incidents/README.md`](../incidents/README.md)
-- Postmortems: [`../incidents/README.md`](../incidents/README.md)
-
-## 예시
-
-- 플랫폼 부트스트랩은 `0001-argocd-platform-bootstrap-runbook.md`를 따른다.
-- Vault/ESO 복구는 `0002-argocd-eso-vault-recovery-runbook.md`를 따른다.
-
-## SSoT References
-
 - [ARD](../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md)
 - [ADR](../../02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md)
 - [Spec](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
 - [Operations Policy](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md)
+- [Runbook Template](../../99.templates/runbook.template.md)
+- [README Template](../../99.templates/readme.template.md)
 
 ## 문서 인덱스
 

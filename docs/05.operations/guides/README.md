@@ -1,15 +1,18 @@
 # 05.operations/guides
 
-> 플랫폼/운영 작업을 재현 가능한 절차로 설명하는 가이드 문서를 관리한다.
-
-## 목적
-
-이 폴더는 운영자와 개발자가 k3d/GitOps 작업을 이해하고 재현할 수 있도록 how-to 중심 가이드를 저장한다.
+> 운영자와 개발자가 k3d/GitOps 작업을 이해하고 재현할 수 있도록 how-to 중심 가이드를 관리한다.
 
 ## Overview
 
-이 경로는 운영 정책(`05.operations/policies`)과 실행 런북(`05.operations/runbooks`) 사이에서,
-작업 배경과 단계별 수행 방법을 설명하는 how-to 중심 문서를 제공한다.
+이 경로는 안정 상태의 사용법, 온보딩 흐름, 배경 설명을 제공한다.
+정책 통제 기준은 [policies](../policies/README.md), 즉시 실행할 복구 절차는 [runbooks](../runbooks/README.md), 실제 사고 기록은 [incidents](../incidents/README.md)에서 관리한다.
+
+| 필요 상황 | 문서 유형 |
+| --- | --- |
+| 작업 배경과 선행 조건을 이해해야 함 | Guide |
+| 실행 순서보다 개념, 설정 방법, 주의사항이 중요함 | Guide |
+| 실패 상황에서 바로 따라 할 체크리스트가 필요함 | Runbook으로 이동 |
+| 허용/금지/예외 기준을 확인해야 함 | Policy로 이동 |
 
 ## Audience
 
@@ -24,7 +27,7 @@
 
 ### In Scope
 
-- 온보딩/실행 가이드
+- 온보딩/이해 중심 가이드
 - 선행 조건과 점검 명령
 - 공통 실패 패턴 및 회피 방법
 - Spec/Operations/Runbook 교차 링크
@@ -34,10 +37,6 @@
 - 정책 통제 기준 정의
 - 실시간 장애 대응 절차
 - 사후 사고 분석 보고서
-
-## 포함할 내용
-
-이 stage는 위 In Scope 항목만 포함한다. 새 가이드나 인덱스 항목을 추가할 때는 관련 Spec/Operations/Runbook 링크를 함께 갱신한다.
 
 ## Structure
 
@@ -58,9 +57,11 @@ docs/05.operations/guides/
 ## How to Work in This Area
 
 1. 먼저 [spec.md](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)에서 현재 계약 값을 확인한다.
-2. 새 가이드 추가/수정 시 `../../99.templates/guide.template.md`를 기반으로 작성한다.
+2. 새 가이드 추가/수정 시 [guide.template.md](../../99.templates/guide.template.md)를 기반으로 작성한다.
 3. 실행 명령은 복붙 가능한 형태로 유지하고, 시크릿 값은 절대 직접 기재하지 않는다.
 4. 문서 변경 시 이 README의 인덱스(상태/설명/수정일)를 함께 갱신한다.
+5. 명령 순서, 롤백, 복구가 핵심이면 가이드에 복제하지 말고 [runbooks](../runbooks/README.md)에 둔다.
+6. 허용/금지/예외 승인 기준은 가이드가 아니라 [policies](../policies/README.md)에 둔다.
 
 ## Related Documents
 
@@ -68,48 +69,14 @@ docs/05.operations/guides/
 - [03.specs](../../03.specs/README.md)
 - [05.operations/policies](../policies/README.md)
 - [05.operations/runbooks](../runbooks/README.md)
-
-## 관련 폴더
-
-- `03.specs/`: 가이드가 설명하는 구현 계약
-- `05.operations/policies/`: 가이드의 운영 정책 기준
-- `05.operations/runbooks/`: 가이드에서 이어지는 실행 절차
-
-## Documentation Standards
-
-- 템플릿 기반으로 문서를 작성하고 필수 섹션을 누락하지 않는다.
-- 기존 SSoT 문서를 중복 생성하지 않고, 링크로 추적성을 유지한다.
-- 사람과 Agent가 동일하게 해석할 수 있도록 계약 값(서비스명/포트/경로)을 명시한다.
-
-## Traceability Rules
-
-- 각 Guide는 최소 1개의 Spec, 1개의 Operations Policy, 1개의 Runbook과 연결한다.
-- 링크는 상대 경로만 사용한다.
-- 실재하지 않는 파일은 링크하지 않는다.
-
-## Template Usage
-
-- 가이드 템플릿: [`../../99.templates/guide.template.md`](../../99.templates/guide.template.md)
-- README 템플릿: [`../../99.templates/readme.template.md`](../../99.templates/readme.template.md)
-
-## 예시
-
-- 플랫폼 부트스트랩 설명은 `0001-wsl-k3d-argocd-bootstrap-guide.md`처럼 배경과 절차를 함께 제공한다.
-- Headlamp 인증 전환 설명은 `0004-headlamp-auth-oidc-guide.md`처럼 선행 조건, 단계, 검증을 포함한다.
-
-## Metadata Expectations
-
-- 문서 제목은 목적을 즉시 식별 가능해야 한다.
-- 상태(`Draft`/`Active`)와 최종 수정일을 인덱스에 유지한다.
-- 운영 계약 변경 시 관련 Guide/Operations/Runbook 인덱스를 같이 업데이트한다.
-
-## SSoT References
-
+- [05.operations/incidents](../incidents/README.md)
 - [PRD](../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
 - [ARD](../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md)
 - [Spec](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
 - [Plan](../../04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
 - [Task](../../04.execution/tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- [Guide Template](../../99.templates/guide.template.md)
+- [README Template](../../99.templates/readme.template.md)
 
 ## 문서 인덱스
 

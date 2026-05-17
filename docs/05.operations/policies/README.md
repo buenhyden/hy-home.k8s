@@ -2,14 +2,20 @@
 
 > GitOps 플랫폼 운영 정책과 통제 기준(허용/금지/예외/검증)을 관리한다.
 
-## 목적
-
-이 폴더는 k3d/GitOps 플랫폼 운영 정책, 통제 기준, 예외 승인 흐름을 저장한다.
-
 ## Overview
 
 이 경로는 플랫폼 운영 정책의 단일 기준점이다.
 외부 서비스 런타임 분리, Vault 단일 소스, GitOps 경로/브랜치 게이트, 포트 계약 준수 같은 운영 규칙을 문서화한다.
+
+정책 문서는 “무엇이 허용되고 금지되는가”를 정의한다.
+명령 순서와 복구 절차는 [runbooks](../runbooks/README.md), 배경과 온보딩 설명은 [guides](../guides/README.md), 정책 위반이나 장애 기록은 [incidents](../incidents/README.md)로 보낸다.
+
+| 필요 상황 | 문서 유형 |
+| --- | --- |
+| Required/Allowed/Disallowed 기준이 필요함 | Policy |
+| 예외 승인 경로와 검토 주기를 확인해야 함 | Policy |
+| 명령을 순서대로 실행하거나 복구해야 함 | Runbook으로 이동 |
+| 작업 배경과 사용법을 익혀야 함 | Guide로 이동 |
 
 ## Audience
 
@@ -35,10 +41,6 @@
 - 장애 타임라인/사후 분석
 - 온보딩 중심 가이드
 
-## 포함할 내용
-
-이 stage는 위 In Scope 항목만 포함한다. 정책 변경 시 예외 승인 흐름, 검증 방법, 검토 주기를 같은 문서에서 유지한다.
-
 ## Structure
 
 ```text
@@ -56,99 +58,23 @@ docs/05.operations/policies/
 ## How to Work in This Area
 
 1. 정책 수정 전에 관련 Spec/Runbook을 확인한다.
-2. `../../99.templates/operation.template.md`를 기준으로 섹션을 유지한다.
+2. [operation.template.md](../../99.templates/operation.template.md)를 기준으로 섹션을 유지한다.
 3. 통제 변경 시 검증 명령과 예외 승인 흐름을 함께 갱신한다.
 4. 문서 변경 후 이 README 인덱스를 동기화한다.
+5. 정책 README에는 실행 절차를 복제하지 않는다. 필요한 경우 소유 guide/runbook 링크로 연결한다.
+6. live cluster mutation, Vault write, kubeconfig 변경 예시는 human-approved, bootstrap-only, break-glass 문맥 없이는 추가하지 않는다.
 
 ## Related Documents
 
-- [03.specs](../../03.specs/README.md)
+- [05.operations/guides](../guides/README.md)
 - [05.operations/runbooks](../runbooks/README.md)
 - [05.operations/incidents](../incidents/README.md)
-
-## 관련 폴더
-
-- `03.specs/`: 운영 정책의 기술 계약
-- `05.operations/runbooks/`: 정책을 실행하는 절차
-- `05.operations/incidents/`: 정책 위반 또는 장애 대응 기록
-
-## Documentation Standards
-
-- 정책 문서는 실행 가이드가 아니라 통제 기준을 정의해야 한다.
-- 계약 값(서비스명/포트/경로)은 코드/매니페스트와 일치해야 한다.
-- 평문 비밀번호/토큰/API key 기재를 금지한다.
-
-## Traceability Rules
-
-- Policy는 최소 1개의 ARD, 1개의 Spec, 1개의 Runbook과 연결한다.
-- Incident/Postmortem은 인덱스 링크로 연결해 추적성을 유지한다.
-- 링크는 상대 경로로 작성한다.
-
-## Template Usage
-
-- 정책 템플릿: [`../../99.templates/operation.template.md`](../../99.templates/operation.template.md)
-- README 템플릿: [`../../99.templates/readme.template.md`](../../99.templates/readme.template.md)
-
-## Metadata Expectations
-
-- 정책 문서는 상태와 검토 주기를 명시해야 한다.
-- 예외 승인 경로가 변경되면 즉시 문서화한다.
-- 인덱스의 `최종 수정` 날짜를 최신화한다.
-
-## Usage Instructions
-
-정책 검토/적용 시 아래 핵심 검증 명령을 사용한다.
-
-```bash
-kubectl -n argocd get application root-platform -o yaml | \
-  rg 'path: gitops/apps/root|targetRevision: main'
-kubectl -n platform get svc,endpointslice | \
-  rg 'postgres-(write|read)-external|15432|15433'
-kubectl -n platform get svc,endpointslice | \
-  rg 'valkey-external|valkey-external-1|172.18.0.9|6379'
-./infrastructure/tests/verify-ingress-tls.sh
-```
-
-## Verification and Monitoring
-
-- 로그 위치: `kubectl -n argocd logs`, `kubectl -n external-secrets logs`
-- 상태 점검: `argocd app list`, `kubectl get applications -n argocd`
-- 이상 시 참조 문서: [`../runbooks/0001-argocd-platform-bootstrap-runbook.md`](../runbooks/0001-argocd-platform-bootstrap-runbook.md)
-- 이상 시 참조 문서: [`../runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
-
-## WSL2 사전 요구사항
-
-k3d 4노드 구성 실행 전 아래 커널 파라미터를 확인하고 부족한 경우 조정한다.
-
-```bash
-# 현재 값 확인
-cat /proc/sys/fs/inotify/max_user_instances  # 최소 512 필요
-
-# 부족한 경우 (sudo 필요)
-sudo sysctl -w fs.inotify.max_user_instances=1024
-echo 'fs.inotify.max_user_instances=1024' | sudo tee /etc/sysctl.d/99-k3d.conf
-```
-
-**증상**: `max_user_instances`가 낮으면 k3d 에이전트 노드의 kubelet이 `inotify_init: too many open files` 오류로 TLS 인증서 감시에 실패하고, 노드가 `NotReady` → heartbeat 중단 → Terminating 파드 누적으로 이어진다.
-
-**bootstrap-local.sh**는 이 값을 사전 검증하며 512 미만이면 즉시 실패한다.
-
-## Incident and Recovery Links
-
-- Runbooks: [`../runbooks/README.md`](../runbooks/README.md)
-- Incident Records: [`../incidents/README.md`](../incidents/README.md)
-- Postmortems: [`../incidents/README.md`](../incidents/README.md)
-
-## 예시
-
-- GitOps 운영 통제는 `0001-k8s-gitops-operations-policy.md`에서 관리한다.
-- 관측성 운영 통제는 `0006-k8s-observability-operations-policy.md`에서 관리한다.
-
-## SSoT References
-
+- [03.specs](../../03.specs/README.md)
 - [ARD](../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md)
 - [Spec](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
 - [Runbook](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+- [Operation Template](../../99.templates/operation.template.md)
+- [README Template](../../99.templates/readme.template.md)
 
 ## 문서 인덱스
 
