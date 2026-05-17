@@ -115,7 +115,7 @@ OpenAPI, GraphQL, proto 같은 계약 파일은 관련 `docs/03.specs/<feature-i
 각 폴더 README도 반복적으로 재사용되는 문서 유형이므로 별도 README 템플릿을 함께 제공한다.
 `03.specs/<feature-id>/` 아래에서 반복적으로 사용하는 보조 설계 문서와 계약 파일용 템플릿을 함께 제공한다.
 
-## Related References
+## Related Documents
 
 - [Docs README](../README.md)
 - [Agent Governance Hub](../00.agent-governance/README.md)

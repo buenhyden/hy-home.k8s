@@ -320,7 +320,11 @@ canonical_related_documents_readmes = [
     root / "docs/05.operations/policies/README.md",
     root / "docs/05.operations/runbooks/README.md",
     root / "docs/05.operations/incidents/README.md",
+    root / "docs/99.templates/README.md",
 ]
+canonical_related_documents_readmes.extend(
+    sorted((root / "docs/90.references").glob("**/README.md"))
+)
 for readme in canonical_related_documents_readmes:
     text = read_text(readme)
     if not re.search(r"^##\s+Related Documents\b", text, re.MULTILINE):
@@ -415,6 +419,27 @@ template_readme = read_text(root / "docs/99.templates/README.md")
 for template in sorted((root / "docs/99.templates").iterdir()):
     if template.is_file() and template.name != "README.md" and template.name not in template_readme:
         fail(f"template is not listed in docs/99.templates/README.md: {template.name}")
+
+reference_template_path = root / "docs/99.templates/reference.template.md"
+reference_template_text = read_text(reference_template_path)
+reference_template_target_parent = root / "docs/90.references/example-category"
+reference_template_target_relative_links = {
+    "../../05.operations/runbooks/0011-reference-maintenance-runbook.md": root
+    / "docs/05.operations/runbooks/0011-reference-maintenance-runbook.md",
+    "../../05.operations/guides/0009-llm-wiki-curation-guide.md": root
+    / "docs/05.operations/guides/0009-llm-wiki-curation-guide.md",
+}
+for target, expected_path in reference_template_target_relative_links.items():
+    if f"`{target}`" not in reference_template_text:
+        fail(f"{rel(reference_template_path)} missing target-relative reference link: {target}")
+    resolved_path = (reference_template_target_parent / target).resolve()
+    if resolved_path != expected_path.resolve():
+        fail(
+            f"{rel(reference_template_path)} target-relative link does not resolve from "
+            f"docs/90.references/<category>/<item>.md: {target}"
+        )
+    if not expected_path.exists():
+        fail(f"{rel(reference_template_path)} target-relative link points to missing file: {target}")
 
 for path in docs_dir.rglob("*"):
     if not path.is_file():
