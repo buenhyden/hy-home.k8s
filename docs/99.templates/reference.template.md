@@ -58,5 +58,5 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
-- **ARD**: `[../02.architecture/requirements/####-<system-or-domain-name>.md]`
-- **Spec**: `[../03.specs/<feature-id>/spec.md]`
+- **ARD**: `[../../02.architecture/requirements/####-<system-or-domain-name>.md]`
+- **Spec**: `[../../03.specs/<feature-id>/spec.md]`

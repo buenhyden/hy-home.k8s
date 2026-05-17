@@ -80,5 +80,5 @@ INC-YYYYMMDD-XXX / [Short Incident Title]
 ## Related Documents
 
 - **Postmortem**: `[../postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
-- **Runbook**: `[../../05.operations/runbooks/####-<topic>.md]`
-- **Operation**: `[../../05.operations/policies/<policy-or-standard>.md]`
+- **Runbook**: `[../../runbooks/####-<topic>.md]`
+- **Operation**: `[../../policies/<policy-or-standard>.md]`

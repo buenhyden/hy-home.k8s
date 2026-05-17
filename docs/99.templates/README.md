@@ -86,7 +86,7 @@
 | `05.operations/runbooks/` | `runbook.template.md` |
 | `05.operations/incidents/` | `incident.template.md` |
 | `05.operations/incidents/postmortems/` | `postmortem.template.md` |
-| `90.references/` | `reference.template.md` |
+| `90.references/<category>/` | `reference.template.md` |
 | `00.agent-governance/memory/` | `memory.template.md` |
 | `00.agent-governance/memory/progress.md` | `progress.template.md` |
 

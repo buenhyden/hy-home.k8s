@@ -62,6 +62,6 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
-- **ARD**: `[../02.architecture/requirements/####-<system-or-domain>.md]`
-- **Runbook**: `[../05.operations/runbooks/####-<topic>.md]`
-- **Postmortem**: `[../05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
+- **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
+- **Runbook**: `[../runbooks/####-<topic>.md]`
+- **Postmortem**: `[../incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`

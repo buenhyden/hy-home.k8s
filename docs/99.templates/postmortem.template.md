@@ -26,7 +26,7 @@ updated: YYYY-MM-DD
 | Incident Date     | `YYYY-MM-DD`                                               |
 | Analysis Date     | `YYYY-MM-DD`                                               |
 | Severity          | `SEV-1 / SEV-2 / SEV-3`                                    |
-| Incident Document | `[../../05.operations/incidents/YYYY/YYYY-MM-DD-<incident-title>.md]` |
+| Incident Document | `[../../YYYY/YYYY-MM-DD-<incident-title>.md]` |
 
 ## Agent Metadata (If Applicable)
 
@@ -94,6 +94,6 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
-- **Runbook**: `[../../05.operations/runbooks/####-<topic>.md]`
-- **Operation**: `[../../05.operations/policies/<policy-or-standard>.md]`
-- **Incident**: `[../../05.operations/incidents/YYYY/YYYY-MM-DD-<incident-title>.md]`
+- **Runbook**: `[../../../runbooks/####-<topic>.md]`
+- **Operation**: `[../../../policies/<policy-or-standard>.md]`
+- **Incident**: `[../../YYYY/YYYY-MM-DD-<incident-title>.md]`
