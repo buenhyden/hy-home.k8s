@@ -1,3 +1,11 @@
+---
+title: 'Platform Expansion: cert-manager, Headlamp, Istio/Kiali Product Requirements'
+type: prd
+status: active
+owner: platform-team
+updated: 2026-05-09
+---
+
 # Platform Expansion: Dashboard, cert-manager, Istio/Kiali Product Requirements
 
 ## Overview (KR)
@@ -98,5 +106,6 @@
 - **ADR**: [`../02.architecture/decisions/0007-kubernetes-dashboard-v3.md`](../02.architecture/decisions/0007-kubernetes-dashboard-v3.md)
 - **ADR**: [`../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md`](../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md)
 - **ADR**: [`../02.architecture/decisions/0009-kiali-external-observability.md`](../02.architecture/decisions/0009-kiali-external-observability.md)
+- **ADR**: [`../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../02.architecture/decisions/0010-headlamp-replaces-dashboard.md) — REQ-PRD-FUN-07, REQ-PRD-FUN-08의 Dashboard 요구사항을 Headlamp로 대체
 - **Spec**: [`../03.specs/003-platform-expansion/spec.md`](../03.specs/003-platform-expansion/spec.md)
 - **Plan**: [`../04.execution/plans/2026-03-29-platform-expansion.md`](../04.execution/plans/2026-03-29-platform-expansion.md)

@@ -1,3 +1,11 @@
+---
+title: 'WSL2 k3s/k3d + ArgoCD GitOps Platform Product Requirements'
+type: prd
+status: draft
+owner: platform-team
+updated: 2026-03-27
+---
+
 # WSL2 k3s/k3d + ArgoCD GitOps Platform Product Requirements
 
 ## Overview (KR)

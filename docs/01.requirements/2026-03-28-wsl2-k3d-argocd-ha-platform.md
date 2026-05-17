@@ -1,3 +1,11 @@
+---
+title: 'WSL2 k3d/k3s ArgoCD HA Platform Product Requirements'
+type: prd
+status: draft
+owner: platform-team
+updated: 2026-05-09
+---
+
 # WSL2 k3d/k3s ArgoCD HA Platform Product Requirements
 
 ## Overview (KR)
