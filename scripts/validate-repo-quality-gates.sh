@@ -1443,10 +1443,29 @@ for script in sorted(scripts_dir.glob("*.sh")):
         fail(f"script missing from scripts/README.md inventory: {script.name}")
 
 script_ref_pattern = re.compile(r"scripts/[A-Za-z0-9_.-]+\.sh")
-for path in [root / "README.md", scripts_dir / "README.md", root / ".github/workflows/ci.yml", root / ".claude/settings.json"]:
+script_command_contract_paths = [
+    root / "README.md",
+    scripts_dir / "README.md",
+    root / ".github/workflows/ci.yml",
+    root / ".github/PULL_REQUEST_TEMPLATE.md",
+    root / ".github/ABOUT.md",
+    root / ".claude/settings.json",
+    root / ".claude/CLAUDE.md",
+    root / ".claude/hooks/post-validate.sh",
+    root / ".codex/hooks.json",
+    root / "docs/05.operations/guides/0009-llm-wiki-curation-guide.md",
+    root / "docs/90.references/README.md",
+    root / "docs/90.references/llm-wiki/README.md",
+    root / "docs/90.references/llm-wiki/wiki-index.md",
+    root / "gitops/README.md",
+    root / "gitops/workloads/README.md",
+    root / "docs/README.md",
+    root / "docs/00.agent-governance/rules/document-stage-routing.md",
+]
+for path in script_command_contract_paths:
     if not path.exists():
         continue
-    for match in script_ref_pattern.findall(read_text(path)):
+    for match in sorted(set(script_ref_pattern.findall(read_text(path)))):
         if not (root / match).exists():
             fail(f"script reference points to missing file in {rel(path)}: {match}")
 

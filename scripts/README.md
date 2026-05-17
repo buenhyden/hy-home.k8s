@@ -5,10 +5,13 @@
 ## Overview
 
 `scripts/`는 k3d/GitOps 저장소를 live cluster mutation 없이 검증하기 위한 repo-backed 유틸리티를 보관한다.
-현재 스크립트는 모두 유지 대상이며, 삭제·통합·리네임 대상은 없다.
+2026-05-17 기준 현재 `*.sh` 스크립트 5개는 모두 유지 대상이며, Tier C-only, unused, one-off 삭제 후보는 없다.
 
 이 영역은 GitOps manifest 자체(`gitops/`)나 live runtime 점검(`infrastructure/tests/`)을 대체하지 않는다.
-대신 CI, PR 템플릿, root README, `.claude/settings.json`에서 호출하거나 허용하는 반복 가능한 정적 검증 명령을 제공한다.
+대신 CI, post-edit hook, 필수 품질 게이트, 수동 검증 문서가 호출하거나 허용하는 반복 가능한 정적 검증 명령을 제공한다.
+
+보존 근거(retention evidence)와 명령·문서 표면(command/documentation surface)은 분리해서 판단한다.
+Tier A와 Tier B만 보존 근거이며, Tier C는 유지보수자가 갱신해야 하는 명령 계약 표면일 뿐 그 자체로 보존 근거가 아니다.
 
 ## Audience
 
@@ -26,7 +29,7 @@
 - 저장소 문서, GitOps 구조, manifest syntax, secret handling을 검증하는 작은 스크립트
 - CI와 로컬 수동 검증에서 반복 실행할 수 있는 deterministic check
 - 선택 도구가 없을 때의 local fallback 안내
-- 현재 스크립트 유지 여부와 사용 근거
+- 현재 스크립트 유지 여부, 보존 근거, 명령 계약 표면
 
 ### Out of Scope
 
@@ -49,21 +52,67 @@ scripts/
 
 ## How to Work in This Area
 
-1. 새 스크립트를 만들기 전에 `.github/workflows/ci.yml`, `.pre-commit-config.yaml`, root `README.md`, `.claude/settings.json`의 기존 명령 계약을 확인한다.
+1. 새 스크립트를 만들기 전에 이 README의 Tier 기준과 command-contract allowlist를 확인한다.
 2. 스크립트는 한 가지 검증 책임만 가져야 하며, 반복 실행해도 결과가 달라지지 않아야 한다.
 3. secret, credential, live cluster mutation, publish/deploy 동작은 이 폴더의 기본 경로에 추가하지 않는다.
-4. 스크립트를 추가·삭제·리네임하면 이 README, root `README.md`, PR 템플릿, CI path filter, `.claude/settings.json` 허용 목록을 함께 검토한다.
-5. 변경 후 최소한 `bash scripts/validate-repo-quality-gates.sh .`와 `git diff --check`를 실행한다.
+4. 스크립트를 추가·삭제·리네임하면 아래 command-contract allowlist의 파일을 함께 검토한다.
+5. 새 참조가 Tier A/B 보존 근거인지, Tier C 명령·문서 표면인지 분리해서 기록한다.
+6. 변경 후 최소한 `bash scripts/validate-repo-quality-gates.sh .`와 `git diff --check`를 실행한다.
+
+## 보존 기준 (Tier A/B/C)
+
+| Tier | 의미 | 보존 근거 |
+| --- | --- | --- |
+| Tier A / 자동 실행 게이트 | CI job 또는 post-edit hook이 스크립트를 직접 실행한다. | 예 |
+| Tier B / 필수 간접 품질 게이트 | 필수 품질 게이트가 스크립트를 간접 실행하고, 스크립트가 generated artifact 또는 check contract를 소유한다. | 예, indirect |
+| Tier C / 문서·수동·허용 목록 표면 | README, PR template, docs, allowlist, manual command reference에만 등장한다. | 아니오 |
+
+`shell-static` syntax coverage는 Bash 문법 검증 범위일 뿐 보존 근거가 아니다.
+문법 검증에 포함된다는 사실만으로 스크립트를 유지하지 않는다.
 
 ## Script Inventory
 
-| Script | Status | Usage Evidence | Purpose |
-| --- | --- | --- | --- |
-| `validate-repo-quality-gates.sh` | Keep | root README, CI `repo-quality-static`, PR template, `.claude/settings.json` | Docs structure, README sections, template placement, workflow duplication, script references, obsolete files, version inventory drift, and agent mirror validation. |
-| `generate-llm-wiki-index.sh` | Keep | LLM Wiki curation guide, repo quality gate, `.claude/settings.json` | Deterministically regenerate or check `docs/90.references/llm-wiki/wiki-index.md` as a Markdown-only canonical-owner link map. |
-| `validate-gitops-structure.sh` | Keep | root README, CI `manifest-static`, PR template, `.claude/settings.json` | ArgoCD root app, root app kind, GitOps kustomization structure, and sibling manifest resource completeness validation. |
-| `validate-k8s-manifests.sh` | Keep | root README, CI `manifest-static`, PR template, `.claude/settings.json` | YAML syntax validation and optional `kube-linter` coverage for manifests. |
-| `check-secret-handling.sh` | Keep | root README, CI `manifest-static`, PR template, `.claude/settings.json` | Plaintext secret pattern scan for GitOps, infrastructure, and examples manifests. |
+| 스크립트 | 결정 | 보존 근거 | 명령·문서 표면 | 목적 |
+| --- | --- | --- | --- | --- |
+| `validate-repo-quality-gates.sh` | Keep | Tier A: CI `repo-quality-static`와 post-edit repository quality hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.github/ABOUT.md`, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, docs quality guidance | 문서 구조, README 섹션, 템플릿 위치, workflow 중복, 스크립트 참조, obsolete 파일, version inventory drift, generated LLM Wiki freshness, agent mirror를 검증한다. |
+| `validate-gitops-structure.sh` | Keep | Tier A: CI `manifest-static` job이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.claude/settings.json`, GitOps READMEs | ArgoCD root app, root app kind, GitOps kustomization structure, sibling manifest resource completeness를 검증한다. |
+| `validate-k8s-manifests.sh` | Keep | Tier A: CI `manifest-static`와 post-edit manifest hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, GitOps READMEs | manifest YAML syntax와 선택적 `kube-linter` 검증을 수행한다. |
+| `check-secret-handling.sh` | Keep | Tier A: CI `manifest-static`와 post-edit manifest hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, GitOps READMEs | GitOps, infrastructure, examples manifest의 plaintext secret pattern을 검사한다. |
+| `generate-llm-wiki-index.sh` | Keep | Tier B indirect: 필수 `validate-repo-quality-gates.sh`가 `--check`로 간접 실행하고 `docs/90.references/llm-wiki/wiki-index.md` generated artifact contract를 소유한다. | root README, `scripts/README.md`, `.claude/settings.json`, LLM Wiki guide, references README, generated wiki index, document stage routing | `docs/90.references/llm-wiki/wiki-index.md`를 Markdown-only canonical-owner link map으로 결정적으로 재생성하거나 검사한다. |
+
+2026-05-17 기준 Tier C-only, unused, one-off 삭제 후보는 없다.
+
+## 통합하지 않는 기준
+
+스크립트 통합은 같은 trigger, 같은 scan domain, 같은 failure semantics, 별도 command contract 없음이라는 네 조건을 모두 만족할 때만 검토한다.
+현재 스크립트는 repository governance, GitOps structure, Kubernetes manifest syntax, plaintext secret scan, generated LLM Wiki index라는 서로 다른 실패 의미와 명령 계약을 가진다.
+따라서 현재 스크립트는 삭제·통합·리네임하지 않고 분리 유지한다.
+
+## 명령 계약 허용 목록
+
+이 표가 command-contract allowlist maintenance surface다.
+`scripts/validate-repo-quality-gates.sh`는 아래 명시 파일에서 `scripts/<name>.sh` 형식의 활성 명령 계약 참조만 검사한다.
+새 스크립트를 추가·삭제·리네임할 때는 broad docs/runtime tree glob이 아니라 이 표면을 갱신하거나 확인한다.
+
+| 표면 | 유지보수 이유 |
+| --- | --- |
+| `README.md` | root-level 수동 검증 명령 표면 |
+| `scripts/README.md` | 현재 스크립트 inventory, retention tier, command contract SSoT |
+| `.github/workflows/ci.yml` | CI job 실행과 path-filter 계약 |
+| `.github/PULL_REQUEST_TEMPLATE.md` | reviewer-facing 수동 검증 checklist |
+| `.github/ABOUT.md` | GitHub governance routing 표면 |
+| `.claude/settings.json` | Claude command allowlist 표면 |
+| `.claude/CLAUDE.md` | local runtime baseline의 generated-script ownership 참조 |
+| `.claude/hooks/post-validate.sh` | post-edit validation 실행 표면 |
+| `.codex/hooks.json` | Codex event hook wiring 표면 |
+| `docs/05.operations/guides/0009-llm-wiki-curation-guide.md` | LLM Wiki generator 운영 guide |
+| `docs/90.references/README.md` | references index와 generated-index maintenance note |
+| `docs/90.references/llm-wiki/README.md` | LLM Wiki reference-only boundary와 generator command |
+| `docs/90.references/llm-wiki/wiki-index.md` | generated artifact metadata와 freshness contract |
+| `gitops/README.md` | GitOps validation command 표면 |
+| `gitops/workloads/README.md` | workload validation command 표면 |
+| `docs/README.md` | docs quality gate command 표면 |
+| `docs/00.agent-governance/rules/document-stage-routing.md` | active generated-index routing contract |
 
 ## Command Contract
 

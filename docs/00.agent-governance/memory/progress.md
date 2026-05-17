@@ -8,6 +8,53 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-17 — scripts cleanup retention evidence refresh
+
+- **Date**: 2026-05-17
+- **Layer**: qa, docs, meta
+- **Status**: complete
+- **Tags**: #scripts #quality-gates #governance #docs
+
+#### Progress
+
+- Refreshed `scripts/README.md` in-place to separate Tier A/B retention evidence
+  from Tier C command/documentation surfaces.
+- Narrowed the missing `scripts/<name>.sh` reference check in
+  `scripts/validate-repo-quality-gates.sh` to an explicit active command-contract
+  allowlist instead of broad docs/runtime tree globs.
+- Added 2026-05-17 evidence refresh sections to the scripts remediation plan and
+  task records while preserving the 2026-05-09 four-script historical snapshot.
+
+#### Memory
+
+- Current script inventory is maintained in `scripts/README.md`; historical
+  four-script references in the 2026-05-09 remediation docs are snapshot context,
+  not current inventory.
+- Retention evidence now has three tiers: Tier A direct CI/post-edit execution,
+  Tier B indirect required quality-gate dependency with generated artifact/check
+  ownership, and Tier C command/documentation/allowlist references that do not
+  prove retention by themselves.
+- `scripts/generate-llm-wiki-index.sh` is a Tier B indirect quality-gate
+  dependency because `scripts/validate-repo-quality-gates.sh` runs its `--check`
+  mode and it owns the generated LLM Wiki index contract.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash -n scripts/*.sh .claude/hooks/*.sh infrastructure/tests/*.sh infrastructure/*.sh` PASS.
+- `find scripts .claude/hooks infrastructure -type f -name '*.sh' -exec bash -n {} \;` PASS.
+- `git diff --check` PASS.
+- Controller final validation is expected after review.
+
+#### Handoff
+
+- Review the scripts cleanup diff and rerun the final controller checks. No live
+  cluster mutation, commit, script deletion, rename, or merge was part of this
+  work.
+
+---
+
 ### 2026-05-16 — Cycle 2 implementation: local toolchain setup documentation
 
 - **Date**: 2026-05-16
