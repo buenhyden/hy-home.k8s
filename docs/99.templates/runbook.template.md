@@ -33,10 +33,10 @@ updated: YYYY-MM-DD
 
 ## Canonical References
 
-- `[../02.architecture/requirements/####-<system-or-domain>.md]`
-- `[../02.architecture/decisions/####-<short-title>.md]`
-- `[../03.specs/<feature-id>/spec.md]`
-- `[../04.execution/plans/YYYY-MM-DD-<feature>.md]`
+- `[../../02.architecture/requirements/####-<system-or-domain>.md]`
+- `[../../02.architecture/decisions/####-<short-title>.md]`
+- `[../../03.specs/<feature-id>/spec.md]`
+- `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
 
 ## When to Use
 
@@ -80,6 +80,6 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
-- **Incident examples**: `[../05.operations/incidents/YYYY/YYYY-MM-DD-<incident-title>.md]`
-- **Postmortem examples**: `[../05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
-- **Operation**: `[../05.operations/policies/<policy-or-standard>.md]`
+- **Incident examples**: `[../incidents/YYYY/YYYY-MM-DD-<incident-title>.md]`
+- **Postmortem examples**: `[../incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
+- **Operation**: `[../policies/<policy-or-standard>.md]`

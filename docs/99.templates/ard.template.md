@@ -72,7 +72,7 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
-- **PRD**: `[../01.requirements/YYYY-MM-DD-<feature-or-system>.md]`
-- **Spec**: `[../03.specs/<feature-id>/spec.md]`
-- **Plan**: `[../04.execution/plans/YYYY-MM-DD-<feature>.md]`
-- **ADR**: `[../02.architecture/decisions/####-<short-title>.md]`
+- **PRD**: `[../../01.requirements/YYYY-MM-DD-<feature-or-system>.md]`
+- **Spec**: `[../../03.specs/<feature-id>/spec.md]`
+- **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
+- **ADR**: `[../decisions/####-<short-title>.md]`

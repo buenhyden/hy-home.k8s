@@ -36,7 +36,7 @@ INC-YYYYMMDD-XXX / [Short Incident Title]
 | Detection Time  | `YYYY-MM-DD HH:MM UTC`                                                     |
 | Primary Service | [Affected service]                                                         |
 | Evidence Source | [Log / dashboard / report]                                                 |
-| Runbook Link    | `[../../05.operations/runbooks/####-<topic>.md]`                                      |
+| Runbook Link    | `[../../runbooks/####-<topic>.md]`                                         |
 
 ## Agent Metadata (If Applicable)
 

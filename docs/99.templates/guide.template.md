@@ -58,6 +58,6 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
-- **Spec**: `[../03.specs/<feature-id>/spec.md]`
-- **Operation**: `[../05.operations/policies/<policy-or-standard>.md]`
-- **Runbook**: `[../05.operations/runbooks/<topic>.md]`
+- **Spec**: `[../../03.specs/<feature-id>/spec.md]`
+- **Operation**: `[../policies/<policy-or-standard>.md]`
+- **Runbook**: `[../runbooks/<topic>.md]`

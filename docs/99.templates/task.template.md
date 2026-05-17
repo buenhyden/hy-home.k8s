@@ -27,8 +27,8 @@ updated: YYYY-MM-DD
 
 ## Inputs
 
-- **Parent Spec**: `[../03.specs/<feature-id>/spec.md]`
-- **Parent Plan**: `[../04.execution/plans/YYYY-MM-DD-<feature>.md]`
+- **Parent Spec**: `[../../03.specs/<feature-id>/spec.md]`
+- **Parent Plan**: `[../plans/YYYY-MM-DD-<feature>.md]`
 
 ## Working Rules
 
@@ -78,6 +78,6 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
-- **Spec**: `[../03.specs/<feature-id>/spec.md]`
-- **Plan**: `[../04.execution/plans/YYYY-MM-DD-<feature>.md]`
-- **Tests**: `[../03.specs/<feature-id>/tests.md]`
+- **Spec**: `[../../03.specs/<feature-id>/spec.md]`
+- **Plan**: `[../plans/YYYY-MM-DD-<feature>.md]`
+- **Tests**: `[../../03.specs/<feature-id>/tests.md]`
