@@ -145,6 +145,9 @@ python evals/run_[feature]_eval.py
 
 ## Related Documents
 
+Target-relative examples below assume the authored file will be created at
+`docs/03.specs/<feature-id>/spec.md`.
+
 - **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
 - **Tasks**: `[../../04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md]`
 - **Runbook**: `[../../05.operations/runbooks/<topic>.md]`

@@ -78,6 +78,9 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
+Target-relative examples below assume the authored file will be created at
+`docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md`.
+
 - **Spec**: `[../../03.specs/<feature-id>/spec.md]`
 - **Plan**: `[../plans/YYYY-MM-DD-<feature>.md]`
 - **Tests**: `[../../03.specs/<feature-id>/tests.md]`

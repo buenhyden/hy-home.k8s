@@ -1,3 +1,11 @@
+---
+title: 'Reference: Infrastructure to Theory Learning Roadmap'
+type: reference
+status: draft
+owner: 'platform'
+updated: 2026-05-17
+---
+
 # Infrastructure to Theory: 2026 Learning Roadmap
 
 ## Overview (KR)
@@ -108,4 +116,6 @@ Kubernetes의 특정 ConfigMap이 변경될 때마다 관련 Pod을 자동으로
 ## Related Documents
 
 - [References README](../README.md)
+- [Learning README](./README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
+- [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

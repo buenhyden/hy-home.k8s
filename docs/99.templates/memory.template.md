@@ -6,6 +6,9 @@ updated, append the related progress entry to
 `docs/00.agent-governance/memory/progress.md` using
 `docs/99.templates/progress.template.md` in the same change.
 
+Link basis: standalone memory files live beside `progress.md`, so related
+progress links should be calculated from `docs/00.agent-governance/memory/`.
+
 - **Date**: YYYY-MM-DD
 - **Layer**: product | architecture | backend | frontend | infra | ops | security | qa | docs | meta
 - **Tags**: #incident #performance #tooling #governance
@@ -30,4 +33,4 @@ List enforceable checks or policy updates that prevent recurrence.
 
 ## Related Progress
 
-- Progress entry: `docs/00.agent-governance/memory/progress.md#<entry-anchor>`
+- Progress entry: `./progress.md#<entry-anchor>`

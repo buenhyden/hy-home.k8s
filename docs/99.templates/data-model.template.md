@@ -85,6 +85,9 @@ CREATE TABLE example (
 
 ## Related Documents
 
+Target-relative examples below assume the authored file will be created at
+`docs/03.specs/<feature-id>/data-model.md`.
+
 - **Spec**: `[./spec.md]`
 - **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
 - **Runbook**: `[../../05.operations/runbooks/####-<topic>.md]`

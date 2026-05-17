@@ -88,6 +88,9 @@ python evals/run_feature_eval.py
 
 ## Related Documents
 
+Target-relative examples below assume the authored file will be created at
+`docs/03.specs/<feature-id>/tests.md`.
+
 - **Spec**: `[./spec.md]`
 - **Agent Design**: `[./agent-design.md]`
 - **Tasks**: `[../../04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md]`

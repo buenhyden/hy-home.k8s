@@ -8,6 +8,53 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-17 — 90.references template hardening
+
+- **Date**: 2026-05-17
+- **Layer**: docs, meta
+- **Status**: complete
+- **Tags**: #docs #references #templates #validation
+
+#### Progress
+
+- Added template-aligned frontmatter to the two authored reference documents
+  that were missing it:
+  `docs/90.references/learning/infrastructure-to-theory-roadmap.md` and
+  `docs/90.references/versions/tech-stack-version-inventory.md`.
+- Strengthened their `## Related Documents` sections with the owning category
+  README or reference maintenance runbook links.
+- Added target-relative link-basis guidance to fixed-target Markdown templates
+  under `docs/99.templates/`.
+- Added variable-target guidance to `readme.template.md`, `memory.template.md`,
+  and `progress.template.md` without inventing fixed target paths.
+- Added syntax-safe owner comments to OpenAPI, GraphQL, and proto contract
+  templates.
+
+#### Memory
+
+- `docs/90.references/llm-wiki/wiki-index.md` remains generated-only and was
+  not edited by hand.
+- Reference frontmatter alignment is treated as a template conformance
+  improvement, not as a new hard validator rule.
+- Template placeholder and code-literal cross-links should be calculated from
+  the final authored Target location; actual Markdown links inside template
+  files still must resolve from `docs/99.templates/`.
+
+#### Evidence
+
+- Targeted template target-relative guidance check: PASS.
+- `git diff --check` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+
+#### Handoff
+
+- No live cluster mutation, secret read/write, deployment approval, direct
+  ArgoCD action, generated LLM Wiki manual edit, or external version refresh was
+  performed.
+
+---
+
 ### 2026-05-17 — 90.references operations maintenance runbook
 
 - **Date**: 2026-05-17

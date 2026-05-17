@@ -94,6 +94,9 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
+Target-relative examples below assume the authored file will be created at
+`docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md`.
+
 - **Runbook**: `[../../../runbooks/####-<topic>.md]`
 - **Operation**: `[../../../policies/<policy-or-standard>.md]`
 - **Incident**: `[../../YYYY/YYYY-MM-DD-<incident-title>.md]`

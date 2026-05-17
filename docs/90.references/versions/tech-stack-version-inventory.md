@@ -1,3 +1,11 @@
+---
+title: 'Reference: Tech Stack Version Inventory'
+type: reference
+status: draft
+owner: 'platform'
+updated: 2026-05-17
+---
+
 # Tech Stack Version Inventory
 
 ## Purpose
@@ -132,5 +140,6 @@ pre_commit:
 
 - [References README](../README.md)
 - [Versions README](./README.md)
+- [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
 - [CI Workflow](../../../.github/workflows/ci.yml)
 - [Pre-commit Config](../../../.pre-commit-config.yaml)

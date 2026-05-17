@@ -80,6 +80,9 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
+Target-relative examples below assume the authored file will be created at
+`docs/05.operations/runbooks/####-<topic>.md`.
+
 - **Incident examples**: `[../incidents/YYYY/YYYY-MM-DD-<incident-title>.md]`
 - **Postmortem examples**: `[../incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
 - **Operation**: `[../policies/<policy-or-standard>.md]`

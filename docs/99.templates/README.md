@@ -69,6 +69,8 @@
 5. 템플릿의 Target 경로와 실제 저장 위치를 맞추고, 상대 경로만 사용한다.
 6. PRD/ARD/ADR/Spec/Plan/Task의 추적성을 유지한다.
 7. Agent 기능 문서는 Role, Tool, Guardrail, Eval, Fallback을 빠뜨리지 않는다.
+8. 템플릿의 placeholder 또는 code-literal cross-link는 최종 authored Target 위치 기준으로 계산한다.
+   실제 Markdown 링크는 이 템플릿 파일 위치에서도 깨지지 않아야 한다.
 
 ## Template-Folder Mapping
 

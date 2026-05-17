@@ -79,6 +79,9 @@ INC-YYYYMMDD-XXX / [Short Incident Title]
 
 ## Related Documents
 
+Target-relative examples below assume the authored file will be created at
+`docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident-title>.md`.
+
 - **Postmortem**: `[../postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
 - **Runbook**: `[../../runbooks/####-<topic>.md]`
 - **Operation**: `[../../policies/<policy-or-standard>.md]`

@@ -62,6 +62,9 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
+Target-relative examples below assume the authored file will be created at
+`docs/05.operations/policies/####-<policy-or-standard>.md`.
+
 - **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
 - **Runbook**: `[../runbooks/####-<topic>.md]`
 - **Postmortem**: `[../incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`

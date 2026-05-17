@@ -1,4 +1,7 @@
 // Target: docs/03.specs/<feature-id>/contracts/service.proto
+// Owner docs from target directory:
+// - Parent spec: ../spec.md
+// - API spec: ../api-spec.md
 syntax = "proto3";
 
 package example.v1;

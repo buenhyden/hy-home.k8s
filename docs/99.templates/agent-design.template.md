@@ -103,6 +103,9 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
+Target-relative examples below assume the authored file will be created at
+`docs/03.specs/<feature-id>/agent-design.md`.
+
 - **Tests**: `[./tests.md]`
 - **Operation**: `[../../05.operations/policies/<policy>.md]`
 - **Runbook**: `[../../05.operations/runbooks/<topic>.md]`

@@ -105,6 +105,9 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
+Target-relative examples below assume the authored file will be created at
+`docs/03.specs/<feature-id>/api-spec.md`.
+
 - **Spec**: `[./spec.md]`
 - **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
 - **Tasks**: `[../../04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md]`

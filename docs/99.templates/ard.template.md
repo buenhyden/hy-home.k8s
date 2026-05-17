@@ -72,6 +72,9 @@ updated: YYYY-MM-DD
 
 ## Related Documents
 
+Target-relative examples below assume the authored file will be created at
+`docs/02.architecture/requirements/####-<system-or-domain>.md`.
+
 - **PRD**: `[../../01.requirements/YYYY-MM-DD-<feature-or-system>.md]`
 - **Spec**: `[../../03.specs/<feature-id>/spec.md]`
 - **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`

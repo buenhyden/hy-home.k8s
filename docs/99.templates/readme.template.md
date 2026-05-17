@@ -88,6 +88,15 @@
 3. {따라야 하는 템플릿, 규칙, 표준}
 4. {변경 후 함께 갱신해야 하는 링크, 메타데이터, 관련 문서}
 
+## Link Basis
+
+README targets vary by folder depth. Recalculate every relative link from the
+final README location:
+
+- Root README: links start from repository root.
+- `docs/README.md`: links start from `docs/`.
+- Stage README files: links start from the owning stage folder.
+
 ## Related Documents
 
 - {상위 문서 또는 상위 컨텍스트}

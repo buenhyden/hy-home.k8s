@@ -1,4 +1,7 @@
 # Target: docs/03.specs/<feature-id>/contracts/openapi.yaml
+# Owner docs from target directory:
+# - Parent spec: ../spec.md
+# - API spec: ../api-spec.md
 openapi: 3.1.0
 info:
   title: Example Feature API
