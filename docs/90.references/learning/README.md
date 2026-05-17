@@ -54,9 +54,10 @@ learning/
 4. 학습 자료에는 `Reference Type`, `Authority Boundary`, `Review and Freshness`를 유지한다.
 5. 새 learning 문서를 추가하거나 이동하면 이 README와 상위 [90.references README](../README.md)를 함께 갱신한다.
 
-## Related References
+## Related Documents
 
 - [90.references README](../README.md)
 - [Infrastructure to Theory Roadmap](./infrastructure-to-theory-roadmap.md)
 - [Templates README](../../99.templates/README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
+- [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

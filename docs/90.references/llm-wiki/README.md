@@ -111,15 +111,12 @@ docs/90.references/llm-wiki/
 ## Related Documents
 
 - [90.references README](../README.md)
+- [Tech Stack Version Inventory](../versions/tech-stack-version-inventory.md)
 - [Generated LLM WIKI Index](./wiki-index.md)
 - [LLM Wiki Curation Guide](../../05.operations/guides/0009-llm-wiki-curation-guide.md)
+- [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
 - [Docs README](../../README.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
 - [Agentic Execution Rule](../../00.agent-governance/rules/agentic.md)
 - [Harness Catalog](../../00.agent-governance/harness-catalog.md)
 - [Examples README](../../../examples/README.md)
-
-## Related References
-
-- [90.references README](../README.md)
-- [Tech Stack Version Inventory](../versions/tech-stack-version-inventory.md)

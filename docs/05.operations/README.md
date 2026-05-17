@@ -51,5 +51,6 @@
 - [Guides README](./guides/README.md)
 - [Policies README](./policies/README.md)
 - [Runbooks README](./runbooks/README.md)
+- [Reference Maintenance Runbook](./runbooks/0011-reference-maintenance-runbook.md)
 - [Incidents README](./incidents/README.md)
 - [Document Stage Routing](../00.agent-governance/rules/document-stage-routing.md)

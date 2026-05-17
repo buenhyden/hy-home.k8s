@@ -54,9 +54,10 @@ versions/
 4. live upgrade 순서나 장애 대응 절차가 필요하면 `docs/05.operations/runbooks/`로 라우팅한다.
 5. 새 파일을 추가하거나 이동하면 이 README, 상위 [90.references README](../README.md), 관련 consumer README를 함께 갱신한다.
 
-## Related References
+## Related Documents
 
 - [90.references README](../README.md)
 - [Tech Stack Version Inventory](./tech-stack-version-inventory.md)
 - [Docs README](../../README.md)
 - [Templates README](../../99.templates/README.md)
+- [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

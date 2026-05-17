@@ -60,8 +60,9 @@ agents/
 - `docs/03.specs/<feature-id>/agent-design.md`는 기능별 Agent 설계를 보관한다.
 - `docs/00.agent-governance/memory/progress.md`는 repo-changing work의 progress와 reusable memory ledger를 보관한다.
 
-## Related References
+## Related Documents
 
 - [90.references README](../README.md)
 - [03.specs README](../../03.specs/README.md)
 - [Templates README](../../99.templates/README.md)
+- [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

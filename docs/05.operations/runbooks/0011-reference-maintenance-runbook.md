@@ -1,0 +1,152 @@
+---
+title: 'Reference Maintenance Runbook'
+type: runbook
+status: active
+owner: platform
+updated: 2026-05-17
+---
+
+# Reference Maintenance Runbook
+
+## Runbook Type
+
+`documentation reference maintenance`
+
+## Overview (KR)
+
+이 런북은 `docs/90.references`의 reference 문서, 버전 인벤토리, LLM Wiki 링크맵을 변경할 때 따라야 하는 반복 유지보수 절차를 정의한다.
+
+이 문서는 실행 체크리스트만 소유한다. Reference facts, version values, 운영 정책, generated wiki content의 정본은 각각 `docs/90.references`, 관련 canonical stage, 그리고 `scripts/generate-llm-wiki-index.sh`가 소유한다.
+
+이 런북은 live cluster mutation, Vault write, deployment approval 절차를 요구하거나 승인하지 않는다.
+
+## Purpose
+
+Reference 추가, 이동, 버전 snapshot 갱신, LLM Wiki owner/link 변경이 있을 때 `90.references`의 사실 경계와 `05.operations`의 반복 절차 경계를 유지하면서 README, template, generated index, 품질 게이트를 같은 변경 단위에서 검증한다.
+
+## Canonical References
+
+- [90.references README](../../90.references/README.md)
+- [Tech Stack Version Inventory](../../90.references/versions/tech-stack-version-inventory.md)
+- [LLM WIKI README](../../90.references/llm-wiki/README.md)
+- [LLM Wiki Curation Guide](../guides/0009-llm-wiki-curation-guide.md)
+- [Reference Template](../../99.templates/reference.template.md)
+- [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
+
+## When to Use
+
+- **Reference doc/category add or move**: `docs/90.references/<category>/` 아래 문서를 새로 만들거나, README 인덱스가 바뀌는 이동을 할 때.
+- **Version inventory refresh**: manifest, config, example code, provider support range, GitHub Actions pin, pre-commit pin 변경이 `tech-stack-version-inventory.md`와 연결될 때.
+- **LLM Wiki owner/link change**: LLM Wiki README, generated owner table, `wiki-curator` routing, canonical owner path가 바뀔 때.
+- **Periodic validation**: reference facts를 바꾸지 않더라도 README 링크, generated index, 품질 게이트가 stale 상태인지 확인할 때.
+
+## Procedure or Checklist
+
+### Scenario A: Reference doc/category add or move
+
+1. 변경하려는 내용이 durable reference인지 먼저 분류한다.
+   - 사실, 버전 snapshot, learning roadmap, glossary, FAQ이면 `docs/90.references`에 둔다.
+   - 실행 순서, 복구, rollback, 승인 절차이면 `docs/05.operations/runbooks`로 보낸다.
+   - 운영 정책, 통제, 예외 승인 기준이면 `docs/05.operations/policies`로 보낸다.
+2. 새 authored reference 문서는 [Reference Template](../../99.templates/reference.template.md)의 필수 heading을 유지한다.
+3. 해당 category README와 [90.references README](../../90.references/README.md)의 Structure, Reference Index, freshness 기준을 함께 갱신한다.
+4. reference 문서의 `Related Documents`는 consumer stage와 이 런북을 연결하되, 절차 본문을 reference 쪽에 복제하지 않는다.
+5. 문서 링크를 확인한다.
+
+   ```bash
+   bash scripts/validate-repo-quality-gates.sh .
+   ```
+
+### Scenario B: Version inventory refresh
+
+1. 실제 repo manifest/config/example code 변경이 있는지 먼저 확인한다.
+2. [Tech Stack Version Inventory](../../90.references/versions/tech-stack-version-inventory.md)의 `Version Contracts`와 `Cloud Example Snapshot`을 실제 변경과 같은 변경 단위에서 맞춘다.
+3. 외부 공식 기준을 확인했다면 `Source checked`, `Last reviewed`, refresh trigger를 갱신한다.
+4. live cluster upgrade, cloud account deployment, release approval 절차를 이 inventory에 추가하지 않는다. 그런 절차가 필요하면 별도 runbook이나 policy로 라우팅한다.
+5. version drift 품질 게이트를 실행한다.
+
+   ```bash
+   bash scripts/validate-repo-quality-gates.sh .
+   ```
+
+### Scenario C: LLM Wiki owner/link change
+
+1. canonical owner path가 바뀌었는지 확인한다.
+2. generated owner table 변경이 필요하지 않은 단순 README 역링크라면 `scripts/generate-llm-wiki-index.sh`를 수정하지 않는다.
+3. generated owner table 변경이 필요하면 generator를 수정하고 Markdown index를 generator로 재생성한다.
+
+   ```bash
+   bash scripts/generate-llm-wiki-index.sh
+   ```
+
+4. generated output이 current 상태인지 확인한다.
+
+   ```bash
+   bash scripts/generate-llm-wiki-index.sh --check
+   ```
+
+5. `docs/90.references/llm-wiki/wiki-index.md`를 수동 편집하지 않는다.
+
+### Scenario D: Periodic validation
+
+1. reference README heading이 canonical `## Related Documents`인지 확인한다.
+2. reference links가 실제 파일을 가리키는지 확인한다.
+3. generated LLM Wiki index가 current 상태인지 확인한다.
+
+   ```bash
+   bash scripts/generate-llm-wiki-index.sh --check
+   ```
+
+4. repository quality gate를 실행한다.
+
+   ```bash
+   bash scripts/validate-repo-quality-gates.sh .
+   ```
+
+5. whitespace와 conflict marker를 확인한다.
+
+   ```bash
+   git diff --check
+   ```
+
+## Verification Steps
+
+- [ ] `docs/90.references` facts/version values는 canonical reference 문서에만 남아 있다.
+- [ ] `docs/05.operations/runbooks/0011-reference-maintenance-runbook.md`는 실행 절차만 담고 있다.
+- [ ] touched README files use `## Related Documents` and do not use `## Related References`.
+- [ ] LLM Wiki generated index is current.
+- [ ] Repository quality gate passes.
+- [ ] Diff whitespace check passes.
+
+```bash
+bash scripts/generate-llm-wiki-index.sh --check
+bash scripts/validate-repo-quality-gates.sh .
+git diff --check
+```
+
+## Observability and Evidence Sources
+
+- **Signals**:
+  - `bash scripts/generate-llm-wiki-index.sh --check` returns `[PASS] LLM WIKI generated index is current`.
+  - `bash scripts/validate-repo-quality-gates.sh .` returns `[PASS] repository quality gates passed`.
+  - `git diff --check` exits with status 0.
+- **Evidence to Capture**:
+  - Changed reference README paths.
+  - Whether `scripts/generate-llm-wiki-index.sh` changed.
+  - Whether `docs/90.references/llm-wiki/wiki-index.md` was regenerated by the generator.
+  - Final validation command output.
+
+## Safe Rollback or Recovery Procedure
+
+- [ ] If a reference fact is wrong, revert or correct the owning `docs/90.references` document and rerun the quality gate.
+- [ ] If `wiki-index.md` is stale, update the generator or canonical owner links, then regenerate with `bash scripts/generate-llm-wiki-index.sh`.
+- [ ] If a README heading fails the touched-scope canonical check, rename the heading to `## Related Documents` and rerun validation.
+- [ ] If a version inventory value drifts from repo files, either correct the inventory or correct the repo-backed manifest/config in the same change.
+
+## Related Documents
+
+- **Reference**: [90.references README](../../90.references/README.md)
+- **Reference**: [Tech Stack Version Inventory](../../90.references/versions/tech-stack-version-inventory.md)
+- **Reference**: [LLM WIKI README](../../90.references/llm-wiki/README.md)
+- **Guide**: [LLM Wiki Curation Guide](../guides/0009-llm-wiki-curation-guide.md)
+- **Template**: [Reference Template](../../99.templates/reference.template.md)

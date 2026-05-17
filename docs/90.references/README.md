@@ -102,9 +102,10 @@ docs/90.references/
 - `Review and Freshness`: 검토 주기, 마지막 검토일, 갱신 trigger
 - `Related Documents`: 이 reference를 소비하는 stage 문서
 
-## Related References
+## Related Documents
 
 - [Docs README](../README.md)
 - [Agent Governance Hub](../00.agent-governance/README.md)
 - [Templates README](../99.templates/README.md)
 - [Tech Stack Version Inventory](./versions/tech-stack-version-inventory.md)
+- [Reference Maintenance Runbook](../05.operations/runbooks/0011-reference-maintenance-runbook.md)
