@@ -64,8 +64,8 @@ Docker Traefik은 `kiali.127.0.0.1.nip.io`를 k3d ingress로 프록시한다.
 
 ## Related Documents
 
-- **PRD**: [`../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md`](../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md)
-- **ARD**: [`../02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md`](../requirements/0003-platform-expansion-mesh-dashboard.md)
-- **Spec**: [`../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
+- **PRD**: [`../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md`](../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md)
+- **ARD**: [`../requirements/0003-platform-expansion-mesh-dashboard.md`](../requirements/0003-platform-expansion-mesh-dashboard.md)
+- **Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
 - **Related ADR**: [`./0008-istio-install-and-ingress-coexist.md`](./0008-istio-install-and-ingress-coexist.md)
 - **Related ADR**: [`./0001-k3d-topology-and-network.md`](./0001-k3d-topology-and-network.md)

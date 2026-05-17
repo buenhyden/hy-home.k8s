@@ -6,8 +6,8 @@
 
 ## Inputs
 
-- **Parent Spec**: [`../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
-- **Parent Plan**: [`../04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- **Parent Spec**: [`../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
+- **Parent Plan**: [`../plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
 
 ## Working Rules
 
@@ -94,10 +94,10 @@
 
 - Scripts: `infrastructure/tests/*`
 - Workflow: `.github/workflows/ci.yml`
-- Ops 증적: [`../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+- Ops 증적: [`../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 
 ## Related Documents
 
-- **Spec**: [`../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
-- **Plan**: [`../04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
-- **Runbook**: [`../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+- **Spec**: [`../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
+- **Plan**: [`../plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- **Runbook**: [`../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md)

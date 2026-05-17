@@ -6,8 +6,8 @@
 
 ## Inputs
 
-- **Parent Spec**: [`../03.specs/001-wsl-k3d-argocd-platform/spec.md`](../../03.specs/001-wsl-k3d-argocd-platform/spec.md)
-- **Parent Plan**: [`../04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md`](../plans/2026-03-27-wsl-k3d-argocd-platform.md)
+- **Parent Spec**: [`../../03.specs/001-wsl-k3d-argocd-platform/spec.md`](../../03.specs/001-wsl-k3d-argocd-platform/spec.md)
+- **Parent Plan**: [`../plans/2026-03-27-wsl-k3d-argocd-platform.md`](../plans/2026-03-27-wsl-k3d-argocd-platform.md)
 
 ## Working Rules
 
@@ -76,6 +76,6 @@
 
 ## Related Documents
 
-- **Spec**: [`../03.specs/001-wsl-k3d-argocd-platform/spec.md`](../../03.specs/001-wsl-k3d-argocd-platform/spec.md)
-- **Plan**: [`../04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md`](../plans/2026-03-27-wsl-k3d-argocd-platform.md)
-- **Runbook**: [`../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md`](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
+- **Spec**: [`../../03.specs/001-wsl-k3d-argocd-platform/spec.md`](../../03.specs/001-wsl-k3d-argocd-platform/spec.md)
+- **Plan**: [`../plans/2026-03-27-wsl-k3d-argocd-platform.md`](../plans/2026-03-27-wsl-k3d-argocd-platform.md)
+- **Runbook**: [`../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md`](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)

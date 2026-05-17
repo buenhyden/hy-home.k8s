@@ -72,7 +72,7 @@
 
 ## Related Documents
 
-- **PRD**: [`../01.requirements/2026-03-27-wsl-k3d-argocd-platform.md`](../../01.requirements/2026-03-27-wsl-k3d-argocd-platform.md)
-- **Spec**: [`../03.specs/001-wsl-k3d-argocd-platform/spec.md`](../../03.specs/001-wsl-k3d-argocd-platform/spec.md)
-- **Plan**: [`../04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md`](../../04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md)
-- **ADR**: [`../02.architecture/decisions/0001-k3d-topology-and-network.md`](../decisions/0001-k3d-topology-and-network.md), [`../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../decisions/0002-argocd-helm-and-gitops-model.md), [`../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../decisions/0003-eso-vault-k8s-auth.md), [`../02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md`](../decisions/0004-external-services-endpoints-and-valkey-backend.md)
+- **PRD**: [`../../01.requirements/2026-03-27-wsl-k3d-argocd-platform.md`](../../01.requirements/2026-03-27-wsl-k3d-argocd-platform.md)
+- **Spec**: [`../../03.specs/001-wsl-k3d-argocd-platform/spec.md`](../../03.specs/001-wsl-k3d-argocd-platform/spec.md)
+- **Plan**: [`../../04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md`](../../04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md)
+- **ADR**: [`../decisions/0001-k3d-topology-and-network.md`](../decisions/0001-k3d-topology-and-network.md), [`../decisions/0002-argocd-helm-and-gitops-model.md`](../decisions/0002-argocd-helm-and-gitops-model.md), [`../decisions/0003-eso-vault-k8s-auth.md`](../decisions/0003-eso-vault-k8s-auth.md), [`../decisions/0004-external-services-endpoints-and-valkey-backend.md`](../decisions/0004-external-services-endpoints-and-valkey-backend.md)

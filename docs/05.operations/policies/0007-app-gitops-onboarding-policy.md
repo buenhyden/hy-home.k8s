@@ -232,9 +232,9 @@ fix: fix <appname> config             ← 설정 수정
 
 ## Related Documents
 
-- **Guide**: [`../05.operations/guides/0008-github-app-gitops-onboarding-guide.md`](../guides/0008-github-app-gitops-onboarding-guide.md)
-- **Runbook**: [`../05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md)
-- **예시 템플릿**: [`../../examples/sample-app/`](../../../examples/sample-app)
-- **참조 구현**: [`../../gitops/workloads/adminer/`](../../../gitops/workloads/adminer)
-- **AppProject**: [`../../gitops/clusters/local/appproject-apps.yaml`](../../../gitops/clusters/local/appproject-apps.yaml)
-- **NetworkPolicy**: [`../../gitops/platform/network-policies/apps-egress.yaml`](../../../gitops/platform/network-policies/apps-egress.yaml)
+- **Guide**: [`../guides/0008-github-app-gitops-onboarding-guide.md`](../guides/0008-github-app-gitops-onboarding-guide.md)
+- **Runbook**: [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md)
+- **예시 템플릿**: [`../../../examples/sample-app`](../../../examples/sample-app)
+- **참조 구현**: [`../../../gitops/workloads/adminer`](../../../gitops/workloads/adminer)
+- **AppProject**: [`../../../gitops/clusters/local/appproject-apps.yaml`](../../../gitops/clusters/local/appproject-apps.yaml)
+- **NetworkPolicy**: [`../../../gitops/platform/network-policies/apps-egress.yaml`](../../../gitops/platform/network-policies/apps-egress.yaml)

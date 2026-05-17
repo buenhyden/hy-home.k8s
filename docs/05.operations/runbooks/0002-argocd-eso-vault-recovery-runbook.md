@@ -18,10 +18,10 @@
 
 ## Canonical References
 
-- [`../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md`](../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md)
-- [`../02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](../../02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md)
-- [`../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
-- [`../04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- [`../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md`](../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md)
+- [`../../02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](../../02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md)
+- [`../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
+- [`../../04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
 
 ## When to Use
 
@@ -174,5 +174,5 @@ kubectl -n platform delete endpointslice vault-external-1
 
 ## Related Documents
 
-- **Guide**: [`../05.operations/guides/0002-wsl2-k3d-argocd-ha-setup-guide.md`](../guides/0002-wsl2-k3d-argocd-ha-setup-guide.md)
-- **Operations Policy**: [`../05.operations/policies/0002-wsl2-k3d-gitops-ha-operations-policy.md`](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md)
+- **Guide**: [`../guides/0002-wsl2-k3d-argocd-ha-setup-guide.md`](../guides/0002-wsl2-k3d-argocd-ha-setup-guide.md)
+- **Operations Policy**: [`../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md`](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md)

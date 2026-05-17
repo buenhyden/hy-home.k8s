@@ -93,8 +93,8 @@
 
 ## Related Documents
 
-- **PRD**: [`../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md`](../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md)
-- **ARD**: [`../02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md`](../../02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md)
-- **Spec**: [`../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
-- **ADR**: [`../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
-- **Tasks**: [`../04.execution/tasks/2026-03-29-platform-expansion.md`](../tasks/2026-03-29-platform-expansion.md)
+- **PRD**: [`../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md`](../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md)
+- **ARD**: [`../../02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md`](../../02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md)
+- **Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
+- **ADR**: [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
+- **Tasks**: [`../tasks/2026-03-29-platform-expansion.md`](../tasks/2026-03-29-platform-expansion.md)

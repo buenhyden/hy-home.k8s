@@ -22,9 +22,9 @@ k3d cluster observability metrics, logs, and alert rule loading failures를 진�
 
 ## Canonical References
 
-- [`../05.operations/guides/0007-k8s-observability-bootstrap-guide.md`](../guides/0007-k8s-observability-bootstrap-guide.md)
-- [`../05.operations/policies/0006-k8s-observability-operations-policy.md`](../policies/0006-k8s-observability-operations-policy.md)
-- [`../../gitops/platform/monitoring/`](../../../gitops/platform/monitoring)
+- [`../guides/0007-k8s-observability-bootstrap-guide.md`](../guides/0007-k8s-observability-bootstrap-guide.md)
+- [`../policies/0006-k8s-observability-operations-policy.md`](../policies/0006-k8s-observability-operations-policy.md)
+- [`../../../gitops/platform/monitoring`](../../../gitops/platform/monitoring)
 
 ## When to Use
 

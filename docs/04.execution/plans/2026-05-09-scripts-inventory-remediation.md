@@ -117,7 +117,7 @@ Tier C는 README, PR template, docs, allowlist, manual command reference 같은 
 
 ## Related Documents
 
-- **Task**: [`../04.execution/tasks/2026-05-09-scripts-inventory-remediation.md`](../tasks/2026-05-09-scripts-inventory-remediation.md)
-- **Scripts README**: [`../../scripts/README.md`](../../../scripts/README.md)
+- **Task**: [`../tasks/2026-05-09-scripts-inventory-remediation.md`](../tasks/2026-05-09-scripts-inventory-remediation.md)
+- **Scripts README**: [`../../../scripts/README.md`](../../../scripts/README.md)
 - **Root README**: [`../../README.md`](../../README.md)
-- **Agent Governance Memory**: [`../00.agent-governance/memory/progress.md`](../../00.agent-governance/memory/progress.md)
+- **Agent Governance Memory**: [`../../00.agent-governance/memory/progress.md`](../../00.agent-governance/memory/progress.md)

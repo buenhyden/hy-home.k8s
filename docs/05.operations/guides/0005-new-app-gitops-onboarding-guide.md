@@ -389,10 +389,10 @@ Vault에 레지스트리 자격증명을 저장하고 ESO로 연동해야 한다
 
 ## Related Documents
 
-- **AppProject 정책**: [`../../gitops/clusters/local/appproject-apps.yaml`](../../../gitops/clusters/local/appproject-apps.yaml)
-- **ApplicationSet**: [`../../gitops/clusters/local/applicationset-apps.yaml`](../../../gitops/clusters/local/applicationset-apps.yaml)
-- **Namespace 매니페스트**: [`../../gitops/platform/namespaces/`](../../../gitops/platform/namespaces)
-- **NetworkPolicy 패턴**: [`../../gitops/platform/network-policies/`](../../../gitops/platform/network-policies)
-- **Runbook**: [`../05.operations/runbooks/0006-new-app-onboarding-runbook.md`](../runbooks/0006-new-app-onboarding-runbook.md)
-- **ESO/Vault Recovery Runbook**: [`../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+- **AppProject 정책**: [`../../../gitops/clusters/local/appproject-apps.yaml`](../../../gitops/clusters/local/appproject-apps.yaml)
+- **ApplicationSet**: [`../../../gitops/clusters/local/applicationset-apps.yaml`](../../../gitops/clusters/local/applicationset-apps.yaml)
+- **Namespace 매니페스트**: [`../../../gitops/platform/namespaces`](../../../gitops/platform/namespaces)
+- **NetworkPolicy 패턴**: [`../../../gitops/platform/network-policies`](../../../gitops/platform/network-policies)
+- **Runbook**: [`../runbooks/0006-new-app-onboarding-runbook.md`](../runbooks/0006-new-app-onboarding-runbook.md)
+- **ESO/Vault Recovery Runbook**: [`../runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 - **Bootstrap Guide**: [`./0001-wsl-k3d-argocd-bootstrap-guide.md`](./0001-wsl-k3d-argocd-bootstrap-guide.md)

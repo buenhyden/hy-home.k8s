@@ -18,7 +18,7 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 ## Inputs
 
 - **Parent Spec**: not applicable; this remediation does not introduce a new Kubernetes or runtime contract.
-- **Parent Plan**: [`../04.execution/plans/2026-05-09-github-qa-ci-remediation.md`](../plans/2026-05-09-github-qa-ci-remediation.md)
+- **Parent Plan**: [`../plans/2026-05-09-github-qa-ci-remediation.md`](../plans/2026-05-09-github-qa-ci-remediation.md)
 
 ## Working Rules
 
@@ -110,7 +110,7 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 
 ## Related Documents
 
-- **Plan**: [`../04.execution/plans/2026-05-09-github-qa-ci-remediation.md`](../plans/2026-05-09-github-qa-ci-remediation.md)
-- **GitHub Hub**: [`../../.github/ABOUT.md`](../../../.github/ABOUT.md)
-- **PR Template**: [`../../.github/PULL_REQUEST_TEMPLATE.md`](../../../.github/PULL_REQUEST_TEMPLATE.md)
-- **Git Workflow**: [`../00.agent-governance/rules/git-workflow.md`](../../00.agent-governance/rules/git-workflow.md)
+- **Plan**: [`../plans/2026-05-09-github-qa-ci-remediation.md`](../plans/2026-05-09-github-qa-ci-remediation.md)
+- **GitHub Hub**: [`../../../.github/ABOUT.md`](../../../.github/ABOUT.md)
+- **PR Template**: [`../../../.github/PULL_REQUEST_TEMPLATE.md`](../../../.github/PULL_REQUEST_TEMPLATE.md)
+- **Git Workflow**: [`../../00.agent-governance/rules/git-workflow.md`](../../00.agent-governance/rules/git-workflow.md)

@@ -112,8 +112,8 @@ CHECK_TRAEFIK_443=true ./infrastructure/tests/verify-ingress-tls.sh
 
 ## Related Documents
 
-- **PRD**: [`../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
-- **ARD**: [`../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md`](../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md)
-- **ADR**: [`../02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](../../02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md)
-- **Spec**: [`../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
-- **Tasks**: [`../04.execution/tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- **PRD**: [`../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- **ARD**: [`../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md`](../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md)
+- **ADR**: [`../../02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](../../02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md)
+- **Spec**: [`../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
+- **Tasks**: [`../tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md)

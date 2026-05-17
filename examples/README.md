@@ -64,9 +64,9 @@ examples/
 
 | 디렉토리 | 설명 | 관련 문서 |
 | --- | --- | --- |
-| [`sample-app/`](sample-app) | Rollout + AnalysisTemplate + Ingress + ESO 패턴 앱 온보딩 예시 | [Guide](../docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md) · [Runbook](../docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md) · [Policy](../docs/05.operations/policies/0007-app-gitops-onboarding-policy.md) |
-| [`aws/`](aws) | EKS 1.35 target, Terraform AWS provider 6.x 기반 AWS migration 참조 예시 | [AWS docs](aws/docs/README.md) |
-| [`azure/`](azure) | AKS 1.35 target, Bicep, AGC/Gateway API 기반 Azure migration 참조 예시 | [Azure docs](azure/docs/README.md) |
+| [`sample-app`](sample-app) | Rollout + AnalysisTemplate + Ingress + ESO 패턴 앱 온보딩 예시 | [Guide](../docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md) · [Runbook](../docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md) · [Policy](../docs/05.operations/policies/0007-app-gitops-onboarding-policy.md) |
+| [`aws`](aws) | EKS 1.35 target, Terraform AWS provider 6.x 기반 AWS migration 참조 예시 | [AWS docs](aws/docs/README.md) |
+| [`azure`](azure) | AKS 1.35 target, Bicep, AGC/Gateway API 기반 Azure migration 참조 예시 | [Azure docs](azure/docs/README.md) |
 
 ## 사용 방법
 
@@ -80,4 +80,4 @@ cp -r examples/sample-app gitops/workloads/<appname>
 
 로컬 앱 패턴을 확인할 때는 활성 GitOps 구현과 예시 템플릿을 구분한다.
 
-- [`gitops/workloads/adminer/`](../gitops/workloads/adminer) — DB 관리 UI (Rollout + AnalysisTemplate + PeerAuthentication)
+- [`../gitops/workloads/adminer`](../gitops/workloads/adminer) — DB 관리 UI (Rollout + AnalysisTemplate + PeerAuthentication)

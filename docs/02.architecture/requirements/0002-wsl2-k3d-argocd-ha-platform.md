@@ -92,7 +92,7 @@
 
 ## Related Documents
 
-- **PRD**: [`../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
-- **Spec**: [`../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
-- **Plan**: [`../04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
-- **ADR**: [`../02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](../decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md)
+- **PRD**: [`../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- **Spec**: [`../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
+- **Plan**: [`../../04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- **ADR**: [`../decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](../decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md)

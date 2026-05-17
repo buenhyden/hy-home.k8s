@@ -16,7 +16,7 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 ## Inputs
 
 - **Parent Spec**: not applicable; this remediation does not introduce a new technical contract.
-- **Parent Plan**: [`../04.execution/plans/2026-05-09-scripts-inventory-remediation.md`](../plans/2026-05-09-scripts-inventory-remediation.md)
+- **Parent Plan**: [`../plans/2026-05-09-scripts-inventory-remediation.md`](../plans/2026-05-09-scripts-inventory-remediation.md)
 
 ## Working Rules
 
@@ -102,6 +102,6 @@ No Tier C-only, unused, or one-off deletion candidates are present as of 2026-05
 
 ## Related Documents
 
-- **Plan**: [`../04.execution/plans/2026-05-09-scripts-inventory-remediation.md`](../plans/2026-05-09-scripts-inventory-remediation.md)
-- **Scripts README**: [`../../scripts/README.md`](../../../scripts/README.md)
+- **Plan**: [`../plans/2026-05-09-scripts-inventory-remediation.md`](../plans/2026-05-09-scripts-inventory-remediation.md)
+- **Scripts README**: [`../../../scripts/README.md`](../../../scripts/README.md)
 - **Root README**: [`../../README.md`](../../README.md)

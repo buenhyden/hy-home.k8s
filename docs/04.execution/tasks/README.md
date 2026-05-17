@@ -48,7 +48,7 @@
 ## How to Work in This Area
 
 1. 작업의 Parent Spec 또는 Parent Plan을 먼저 확인한다.
-2. 새 Task 문서는 `../99.templates/task.template.md`에서 시작한다.
+2. 새 Task 문서는 `../../99.templates/task.template.md`에서 시작한다.
 3. 각 작업은 검증 방법과 증거 위치를 함께 기록한다.
 4. 설계 보조용 `tasks.md`와 실행 추적 정본을 혼동하지 않는다.
 
@@ -121,18 +121,18 @@
 
 ## Templates
 
-- `../99.templates/task.template.md`
+- `../../99.templates/task.template.md`
 
 ## 문서 인덱스
 
 | 문서                                                                                       | 설명                                                                                 | 상태  | 최종 수정  |
 | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ----- | ---------- |
-| [`2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md)         | TDD/검증 중심 실행 Task 목록과 증적 기준                                             | Draft | 2026-03-27 |
-| [`2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | RED/GREEN/REFACTOR 기반 TLS/Ingress + CI static contract/workflow-security 작업 Task | Draft | 2026-03-28 |
-| [`2026-03-29-platform-expansion.md`](./2026-03-29-platform-expansion.md)                   | 2026-03-29 IP 수정 + cert-manager/Dashboard/Istio/Kiali 확장 Task, 현재 실행계약은 Headlamp/172.18.x 기준 | Done  | 2026-05-09 |
-| [`2026-05-09-k3d-agent-first-remediation.md`](./2026-05-09-k3d-agent-first-remediation.md) | k3d 운영 문서와 Agent-first 실행 계약의 GitOps-first 충돌 보정 Task | Done  | 2026-05-09 |
-| [`2026-05-09-scripts-inventory-remediation.md`](./2026-05-09-scripts-inventory-remediation.md) | `scripts/` 인벤토리 조사와 README 실행 계약 보정 Task | Done  | 2026-05-09 |
-| [`2026-05-09-github-qa-ci-remediation.md`](./2026-05-09-github-qa-ci-remediation.md) | `.github` QA, CI, 브랜치 정책, PR intake 계약 보정 Task | Done  | 2026-05-09 |
+| [`./2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md)         | TDD/검증 중심 실행 Task 목록과 증적 기준                                             | Draft | 2026-03-27 |
+| [`./2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | RED/GREEN/REFACTOR 기반 TLS/Ingress + CI static contract/workflow-security 작업 Task | Draft | 2026-03-28 |
+| [`./2026-03-29-platform-expansion.md`](./2026-03-29-platform-expansion.md)                   | 2026-03-29 IP 수정 + cert-manager/Dashboard/Istio/Kiali 확장 Task, 현재 실행계약은 Headlamp/172.18.x 기준 | Done  | 2026-05-09 |
+| [`./2026-05-09-k3d-agent-first-remediation.md`](./2026-05-09-k3d-agent-first-remediation.md) | k3d 운영 문서와 Agent-first 실행 계약의 GitOps-first 충돌 보정 Task | Done  | 2026-05-09 |
+| [`./2026-05-09-scripts-inventory-remediation.md`](./2026-05-09-scripts-inventory-remediation.md) | `scripts/` 인벤토리 조사와 README 실행 계약 보정 Task | Done  | 2026-05-09 |
+| [`./2026-05-09-github-qa-ci-remediation.md`](./2026-05-09-github-qa-ci-remediation.md) | `.github` QA, CI, 브랜치 정책, PR intake 계약 보정 Task | Done  | 2026-05-09 |
 
 ## 관련 폴더
 

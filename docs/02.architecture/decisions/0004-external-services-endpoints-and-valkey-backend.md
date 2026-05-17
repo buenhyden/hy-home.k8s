@@ -59,8 +59,8 @@ ADR-0005(WSL2 HA Baseline) 구현 이후 실제 Valkey 접근 모델이 `Externa
 
 ## Related Documents
 
-- **PRD**: [`../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
-- **ARD**: [`../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md`](../requirements/0002-wsl2-k3d-argocd-ha-platform.md)
-- **Spec**: [`../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
+- **PRD**: [`../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- **ARD**: [`../requirements/0002-wsl2-k3d-argocd-ha-platform.md`](../requirements/0002-wsl2-k3d-argocd-ha-platform.md)
+- **Spec**: [`../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
 - **Related ADR**: [`./0001-k3d-topology-and-network.md`](./0001-k3d-topology-and-network.md)
 - **Related ADR**: [`./0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](./0005-wsl2-ha-baseline-and-external-endpoint-contract.md)

@@ -41,7 +41,7 @@
 ### Cluster UI
 
 - **Required**:
-  - Headlamp 운영 기준은 [`0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md)를 따른다.
+  - Headlamp 운영 기준은 [`./0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md)를 따른다.
   - Kubernetes Dashboard 재설치는 ADR-0010에 의해 금지한다.
 
 ### Istio / Service Mesh
@@ -103,12 +103,12 @@
 
 ## Related Documents
 
-- **Spec**: [`../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
-- **Runbook**: [`../05.operations/runbooks/0003-platform-expansion-bootstrap-runbook.md`](../runbooks/0003-platform-expansion-bootstrap-runbook.md)
-- **Guide**: [`../05.operations/guides/0003-platform-expansion-bootstrap-guide.md`](../guides/0003-platform-expansion-bootstrap-guide.md)
-- **ADR-0006**: [`../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
-- **ADR-0007**: [`../02.architecture/decisions/0007-kubernetes-dashboard-v3.md`](../../02.architecture/decisions/0007-kubernetes-dashboard-v3.md)
-- **ADR-0008**: [`../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md`](../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md)
-- **ADR-0009**: [`../02.architecture/decisions/0009-kiali-external-observability.md`](../../02.architecture/decisions/0009-kiali-external-observability.md)
-- **ADR-0010**: [`../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md)
+- **Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
+- **Runbook**: [`../runbooks/0003-platform-expansion-bootstrap-runbook.md`](../runbooks/0003-platform-expansion-bootstrap-runbook.md)
+- **Guide**: [`../guides/0003-platform-expansion-bootstrap-guide.md`](../guides/0003-platform-expansion-bootstrap-guide.md)
+- **ADR-0006**: [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
+- **ADR-0007**: [`../../02.architecture/decisions/0007-kubernetes-dashboard-v3.md`](../../02.architecture/decisions/0007-kubernetes-dashboard-v3.md)
+- **ADR-0008**: [`../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md`](../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md)
+- **ADR-0009**: [`../../02.architecture/decisions/0009-kiali-external-observability.md`](../../02.architecture/decisions/0009-kiali-external-observability.md)
+- **ADR-0010**: [`../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md)
 - **Previous Policy**: [`./0002-wsl2-k3d-gitops-ha-operations-policy.md`](./0002-wsl2-k3d-gitops-ha-operations-policy.md)

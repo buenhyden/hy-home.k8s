@@ -56,7 +56,7 @@ docs/05.operations/policies/
 ## How to Work in This Area
 
 1. 정책 수정 전에 관련 Spec/Runbook을 확인한다.
-2. `../99.templates/operation.template.md`를 기준으로 섹션을 유지한다.
+2. `../../99.templates/operation.template.md`를 기준으로 섹션을 유지한다.
 3. 통제 변경 시 검증 명령과 예외 승인 흐름을 함께 갱신한다.
 4. 문서 변경 후 이 README 인덱스를 동기화한다.
 
@@ -86,8 +86,8 @@ docs/05.operations/policies/
 
 ## Template Usage
 
-- 정책 템플릿: [`../99.templates/operation.template.md`](../../99.templates/operation.template.md)
-- README 템플릿: [`../99.templates/readme.template.md`](../../99.templates/readme.template.md)
+- 정책 템플릿: [`../../99.templates/operation.template.md`](../../99.templates/operation.template.md)
+- README 템플릿: [`../../99.templates/readme.template.md`](../../99.templates/readme.template.md)
 
 ## Metadata Expectations
 
@@ -113,8 +113,8 @@ kubectl -n platform get svc,endpointslice | \
 
 - 로그 위치: `kubectl -n argocd logs`, `kubectl -n external-secrets logs`
 - 상태 점검: `argocd app list`, `kubectl get applications -n argocd`
-- 이상 시 참조 문서: [`../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md`](../runbooks/0001-argocd-platform-bootstrap-runbook.md)
-- 이상 시 참조 문서: [`../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+- 이상 시 참조 문서: [`../runbooks/0001-argocd-platform-bootstrap-runbook.md`](../runbooks/0001-argocd-platform-bootstrap-runbook.md)
+- 이상 시 참조 문서: [`../runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 
 ## WSL2 사전 요구사항
 
@@ -135,9 +135,9 @@ echo 'fs.inotify.max_user_instances=1024' | sudo tee /etc/sysctl.d/99-k3d.conf
 
 ## Incident and Recovery Links
 
-- Runbooks: [`../05.operations/runbooks/README.md`](../runbooks/README.md)
-- Incident Records: [`../05.operations/incidents/README.md`](../incidents/README.md)
-- Postmortems: [`../05.operations/incidents/README.md`](../incidents/README.md)
+- Runbooks: [`../runbooks/README.md`](../runbooks/README.md)
+- Incident Records: [`../incidents/README.md`](../incidents/README.md)
+- Postmortems: [`../incidents/README.md`](../incidents/README.md)
 
 ## 예시
 
@@ -154,10 +154,10 @@ echo 'fs.inotify.max_user_instances=1024' | sudo tee /etc/sysctl.d/99-k3d.conf
 
 | 문서                                                                                                     | 설명                                                                                    | 상태   | 최종 수정  |
 | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------ | ---------- |
-| [`0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md)                         | 외부 런타임 분리 + Vault 단일 소스 + GitOps 게이트 운영 정책                            | Active | 2026-03-27 |
-| [`0002-wsl2-k3d-gitops-ha-operations-policy.md`](./0002-wsl2-k3d-gitops-ha-operations-policy.md)         | WSL2 HA 운영 통제(TLS/Traefik 경계, EndpointSlice, 최소권한, CI 게이트, 감사 항목) 정책 | Active | 2026-05-09 |
-| [`0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md)                 | cert-manager/Headlamp/Istio/Kiali 운영 통제(TLS/sidecar/Kiali auth/Traefik 계약) 정책   | Active | 2026-05-09 |
-| [`0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md)     | Argo Rollouts/Notifications(Slack)/Headlamp 운영 통제 정책                              | Active | 2026-05-09 |
-| [`0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | Istio 포트 네이밍/Grafana Anonymous Access/ArgoCD NodePort 예약 정책                    | Active | 2026-05-09 |
-| [`0006-k8s-observability-operations-policy.md`](./0006-k8s-observability-operations-policy.md)           | k8s 메트릭 NodePort 예약/in-cluster Alloy/alert_rules 로드 패턴 정책                    | Active | 2026-05-09 |
-| [`0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md)                         | 앱 온보딩 운영 정책 (Rollout 필수/이미지 태그/Istio 포트 명명/Traefik/Vault 규칙)       | Active | 2026-05-09 |
+| [`./0001-k8s-gitops-operations-policy.md`](./0001-k8s-gitops-operations-policy.md)                         | 외부 런타임 분리 + Vault 단일 소스 + GitOps 게이트 운영 정책                            | Active | 2026-03-27 |
+| [`./0002-wsl2-k3d-gitops-ha-operations-policy.md`](./0002-wsl2-k3d-gitops-ha-operations-policy.md)         | WSL2 HA 운영 통제(TLS/Traefik 경계, EndpointSlice, 최소권한, CI 게이트, 감사 항목) 정책 | Active | 2026-05-09 |
+| [`./0003-service-mesh-cert-manager-policy.md`](./0003-service-mesh-cert-manager-policy.md)                 | cert-manager/Headlamp/Istio/Kiali 운영 통제(TLS/sidecar/Kiali auth/Traefik 계약) 정책   | Active | 2026-05-09 |
+| [`./0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md)     | Argo Rollouts/Notifications(Slack)/Headlamp 운영 통제 정책                              | Active | 2026-05-09 |
+| [`./0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | Istio 포트 네이밍/Grafana Anonymous Access/ArgoCD NodePort 예약 정책                    | Active | 2026-05-09 |
+| [`./0006-k8s-observability-operations-policy.md`](./0006-k8s-observability-operations-policy.md)           | k8s 메트릭 NodePort 예약/in-cluster Alloy/alert_rules 로드 패턴 정책                    | Active | 2026-05-09 |
+| [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md)                         | 앱 온보딩 운영 정책 (Rollout 필수/이미지 태그/Istio 포트 명명/Traefik/Vault 규칙)       | Active | 2026-05-09 |

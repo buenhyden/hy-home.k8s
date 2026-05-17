@@ -347,8 +347,8 @@ metadata:
 
 ## Related Documents
 
-- **Runbook**: [`../05.operations/runbooks/0005-headlamp-keycloak-runbook.md`](../runbooks/0005-headlamp-keycloak-runbook.md)
-- **ADR-0010**: [`../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md)
-- **Operations**: [`../05.operations/policies/0004-rollouts-notifications-headlamp-policy.md`](../policies/0004-rollouts-notifications-headlamp-policy.md)
-- **Bootstrap Runbook**: [`../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)
+- **Runbook**: [`../runbooks/0005-headlamp-keycloak-runbook.md`](../runbooks/0005-headlamp-keycloak-runbook.md)
+- **ADR-0010**: [`../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md)
+- **Operations**: [`../policies/0004-rollouts-notifications-headlamp-policy.md`](../policies/0004-rollouts-notifications-headlamp-policy.md)
+- **Bootstrap Runbook**: [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)
 - **Headlamp Chart**: [headlamp-k8s.github.io/headlamp](https://headlamp-k8s.github.io/headlamp/)

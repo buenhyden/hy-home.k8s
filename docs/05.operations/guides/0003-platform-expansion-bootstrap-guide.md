@@ -142,7 +142,7 @@ kubectl -n headlamp get secret headlamp-tls
 curl -ksS -o /dev/null -w '%{http_code}' https://headlamp.127.0.0.1.nip.io/
 ```
 
-로그인 토큰 절차는 [`0004-headlamp-auth-oidc-guide.md`](./0004-headlamp-auth-oidc-guide.md)를 따른다.
+로그인 토큰 절차는 [`./0004-headlamp-auth-oidc-guide.md`](./0004-headlamp-auth-oidc-guide.md)를 따른다.
 
 ### 4. Istio 설치 검증
 
@@ -226,8 +226,8 @@ kubectl -n headlamp create token headlamp-admin --duration=1h
 
 ## Related Documents
 
-- **Spec**: [`../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
-- **Operation**: [`../05.operations/policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md)
-- **Runbook**: [`../05.operations/runbooks/0003-platform-expansion-bootstrap-runbook.md`](../runbooks/0003-platform-expansion-bootstrap-runbook.md)
-- **ADR-0010**: [`../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md)
+- **Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
+- **Operation**: [`../policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md)
+- **Runbook**: [`../runbooks/0003-platform-expansion-bootstrap-runbook.md`](../runbooks/0003-platform-expansion-bootstrap-runbook.md)
+- **ADR-0010**: [`../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md)
 - **Previous Guide**: [`./0002-wsl2-k3d-argocd-ha-setup-guide.md`](./0002-wsl2-k3d-argocd-ha-setup-guide.md)

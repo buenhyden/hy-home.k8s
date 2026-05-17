@@ -24,7 +24,7 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 ## Inputs
 
 - **Parent Spec**: not applicable; this remediation does not introduce a new technical contract.
-- **Parent Plan**: [`../04.execution/plans/2026-05-09-k3d-agent-first-remediation.md`](../plans/2026-05-09-k3d-agent-first-remediation.md)
+- **Parent Plan**: [`../plans/2026-05-09-k3d-agent-first-remediation.md`](../plans/2026-05-09-k3d-agent-first-remediation.md)
 
 ## Working Rules
 
@@ -137,6 +137,6 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 
 ## Related Documents
 
-- **Plan**: [`../04.execution/plans/2026-05-09-k3d-agent-first-remediation.md`](../plans/2026-05-09-k3d-agent-first-remediation.md)
-- **Governance**: [`../00.agent-governance/harness-catalog.md`](../../00.agent-governance/harness-catalog.md)
-- **Agent-first Rules**: [`../00.agent-governance/rules/agentic.md`](../../00.agent-governance/rules/agentic.md)
+- **Plan**: [`../plans/2026-05-09-k3d-agent-first-remediation.md`](../plans/2026-05-09-k3d-agent-first-remediation.md)
+- **Governance**: [`../../00.agent-governance/harness-catalog.md`](../../00.agent-governance/harness-catalog.md)
+- **Agent-first Rules**: [`../../00.agent-governance/rules/agentic.md`](../../00.agent-governance/rules/agentic.md)

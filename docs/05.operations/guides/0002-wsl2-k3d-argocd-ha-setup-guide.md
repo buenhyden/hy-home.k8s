@@ -135,7 +135,7 @@ openssl x509 -in secrets/certs/cert.pem -noout -ext subjectAltName | \
 
 1. SAN이 미포함이면 재발급 후 동일 경로에 교체한다.
 
-- 재발급 절차: [`../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md#troubleshooting-signatures`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md#troubleshooting-signatures)
+- 재발급 절차: [`../runbooks/0002-argocd-eso-vault-recovery-runbook.md#troubleshooting-signatures`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md#troubleshooting-signatures)
 
 1. 부트스트랩 스크립트로 TLS Secret까지 포함해 초기화를 실행한다.
 
@@ -261,6 +261,6 @@ bash -n infrastructure/bootstrap-local.sh infrastructure/tests/*.sh
 
 ## Related Documents
 
-- **Spec**: [`../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
-- **Operation**: [`../05.operations/policies/0002-wsl2-k3d-gitops-ha-operations-policy.md`](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md)
-- **Runbook**: [`../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+- **Spec**: [`../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
+- **Operation**: [`../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md`](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md)
+- **Runbook**: [`../runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)

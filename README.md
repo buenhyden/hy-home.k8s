@@ -179,9 +179,9 @@ cd hy-home.k8s
 
 정적 품질 검증은 CI와 pre-commit 설정을 기준으로 한다.
 
-- [`.pre-commit-config.yaml`](./.pre-commit-config.yaml)
-- [`.github/workflows/ci.yml`](./.github/workflows/ci.yml)
-- [`.github/ABOUT.md`](./.github/ABOUT.md)
+- [`./.pre-commit-config.yaml`](./.pre-commit-config.yaml)
+- [`./.github/workflows/ci.yml`](./.github/workflows/ci.yml)
+- [`./.github/ABOUT.md`](./.github/ABOUT.md)
 
 repo-backed 정적 검증을 로컬에서 확인할 때는 아래 순서로 실행한다. 이 묶음은 CI의 `repo-quality-static`, `manifest-static`, `shell-static` 책임과 맞춰져 있다.
 

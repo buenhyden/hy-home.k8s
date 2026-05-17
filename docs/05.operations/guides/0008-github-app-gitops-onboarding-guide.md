@@ -412,9 +412,9 @@ kubectl get clusterissuer mkcert-ca-issuer
 
 ## Related Documents
 
-- **템플릿**: [`examples/sample-app/`](../../../examples/sample-app)
-- **참조 구현**: [`gitops/workloads/adminer/`](../../../gitops/workloads/adminer)
-- **Runbook**: [`../05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md)
-- **Operations 정책**: [`../05.operations/policies/0007-app-gitops-onboarding-policy.md`](../policies/0007-app-gitops-onboarding-policy.md)
-- **AppProject**: [`../../gitops/clusters/local/appproject-apps.yaml`](../../../gitops/clusters/local/appproject-apps.yaml)
-- **ApplicationSet**: [`../../gitops/clusters/local/applicationset-apps.yaml`](../../../gitops/clusters/local/applicationset-apps.yaml)
+- **템플릿**: [`../../../examples/sample-app`](../../../examples/sample-app)
+- **참조 구현**: [`../../../gitops/workloads/adminer`](../../../gitops/workloads/adminer)
+- **Runbook**: [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md)
+- **Operations 정책**: [`../policies/0007-app-gitops-onboarding-policy.md`](../policies/0007-app-gitops-onboarding-policy.md)
+- **AppProject**: [`../../../gitops/clusters/local/appproject-apps.yaml`](../../../gitops/clusters/local/appproject-apps.yaml)
+- **ApplicationSet**: [`../../../gitops/clusters/local/applicationset-apps.yaml`](../../../gitops/clusters/local/applicationset-apps.yaml)

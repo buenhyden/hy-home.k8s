@@ -112,10 +112,10 @@ Host (Windows + WSL2)
 
 ## Related Documents
 
-- **PRD**: [`../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md`](../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md)
-- **ADR**: [`../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../decisions/0006-cert-manager-mkcert-ca-issuer.md)
-- **ADR**: [`../02.architecture/decisions/0007-kubernetes-dashboard-v3.md`](../decisions/0007-kubernetes-dashboard-v3.md)
-- **ADR**: [`../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md`](../decisions/0008-istio-install-and-ingress-coexist.md)
-- **ADR**: [`../02.architecture/decisions/0009-kiali-external-observability.md`](../decisions/0009-kiali-external-observability.md)
-- **Spec**: [`../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
-- **Plan**: [`../04.execution/plans/2026-03-29-platform-expansion.md`](../../04.execution/plans/2026-03-29-platform-expansion.md)
+- **PRD**: [`../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md`](../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md)
+- **ADR**: [`../decisions/0006-cert-manager-mkcert-ca-issuer.md`](../decisions/0006-cert-manager-mkcert-ca-issuer.md)
+- **ADR**: [`../decisions/0007-kubernetes-dashboard-v3.md`](../decisions/0007-kubernetes-dashboard-v3.md)
+- **ADR**: [`../decisions/0008-istio-install-and-ingress-coexist.md`](../decisions/0008-istio-install-and-ingress-coexist.md)
+- **ADR**: [`../decisions/0009-kiali-external-observability.md`](../decisions/0009-kiali-external-observability.md)
+- **Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
+- **Plan**: [`../../04.execution/plans/2026-03-29-platform-expansion.md`](../../04.execution/plans/2026-03-29-platform-expansion.md)

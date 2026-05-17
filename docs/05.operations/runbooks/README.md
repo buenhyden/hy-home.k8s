@@ -59,7 +59,7 @@ docs/05.operations/runbooks/
 ## How to Work in This Area
 
 1. 관련 Spec/Operations를 먼저 확인해 계약값을 고정한다.
-2. `../99.templates/runbook.template.md` 기반으로 작성한다.
+2. `../../99.templates/runbook.template.md` 기반으로 작성한다.
 3. 절차는 명령 실행 순서와 검증 기준을 함께 제시한다.
 4. 복구 절차에는 롤백, 재동기화, 증적 수집 단계를 반드시 포함한다.
 
@@ -89,8 +89,8 @@ docs/05.operations/runbooks/
 
 ## Template Usage
 
-- 런북 템플릿: [`../99.templates/runbook.template.md`](../../99.templates/runbook.template.md)
-- README 템플릿: [`../99.templates/readme.template.md`](../../99.templates/readme.template.md)
+- 런북 템플릿: [`../../99.templates/runbook.template.md`](../../99.templates/runbook.template.md)
+- README 템플릿: [`../../99.templates/readme.template.md`](../../99.templates/readme.template.md)
 
 ## Metadata Expectations
 
@@ -112,13 +112,13 @@ docs/05.operations/runbooks/
 
 - 로그 위치: `kubectl -n argocd logs`, `kubectl -n external-secrets logs`
 - 상태 점검: `argocd app list`, `kubectl -n argocd get applications`
-- 재검증 기준 문서: [`0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)
+- 재검증 기준 문서: [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)
 
 ## Incident and Recovery Links
 
 - Runbooks: [`./README.md`](./README.md)
-- Incident Records: [`../05.operations/incidents/README.md`](../incidents/README.md)
-- Postmortems: [`../05.operations/incidents/README.md`](../incidents/README.md)
+- Incident Records: [`../incidents/README.md`](../incidents/README.md)
+- Postmortems: [`../incidents/README.md`](../incidents/README.md)
 
 ## 예시
 
@@ -136,13 +136,13 @@ docs/05.operations/runbooks/
 
 | 문서                                                                                                     | 설명                                                              | 상태   | 최종 수정  |
 | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------ | ---------- |
-| [`0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)               | 검증 커맨드 기반 부트스트랩/트러블슈팅/복구 런북                  | Active | 2026-03-27 |
-| [`0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)               | Vault-ESO 복구 + TLS/Ingress + CI 정적 계약 회귀/증적 검증 런북   | Active | 2026-05-09 |
-| [`0003-platform-expansion-bootstrap-runbook.md`](./0003-platform-expansion-bootstrap-runbook.md)         | cert-manager/Headlamp/Istio/Kiali 부트스트랩 및 증상별 복구 런북  | Active | 2026-05-09 |
-| [`0004-rollouts-notifications-headlamp-runbook.md`](./0004-rollouts-notifications-headlamp-runbook.md)   | Argo Rollouts/Notifications/Headlamp 설치 및 운영 런북            | Active | 2026-05-09 |
-| [`0005-headlamp-keycloak-runbook.md`](./0005-headlamp-keycloak-runbook.md)                               | Headlamp ServiceAccount 토큰 로그인 및 Keycloak OIDC 전환 런북    | Active | 2026-05-09 |
-| [`0006-new-app-onboarding-runbook.md`](./0006-new-app-onboarding-runbook.md)                             | 새 애플리케이션 GitOps 온보딩 체크리스트 및 트러블슈팅 런북       | Active | 2026-05-09 |
-| [`0007-kiali-observability-connectivity-runbook.md`](./0007-kiali-observability-connectivity-runbook.md) | Kiali 관측성 서비스 연결 장애 진단 및 복구 런북                   | Active | 2026-05-09 |
-| [`0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md)               | ArgoCD 메트릭 NodePort/Prometheus 수집 장애 진단 및 복구 런북     | Active | 2026-05-09 |
-| [`0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md)                               | kube-state-metrics/alloy/alert_rules/AppProject 장애 진단 런북    | Active | 2026-05-09 |
-| [`0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md)         | GitHub 레포 기반 앱 온보딩 절차 런북 (배포/검증/rollback/Vault)   | Active | 2026-05-09 |
+| [`./0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)               | 검증 커맨드 기반 부트스트랩/트러블슈팅/복구 런북                  | Active | 2026-03-27 |
+| [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)               | Vault-ESO 복구 + TLS/Ingress + CI 정적 계약 회귀/증적 검증 런북   | Active | 2026-05-09 |
+| [`./0003-platform-expansion-bootstrap-runbook.md`](./0003-platform-expansion-bootstrap-runbook.md)         | cert-manager/Headlamp/Istio/Kiali 부트스트랩 및 증상별 복구 런북  | Active | 2026-05-09 |
+| [`./0004-rollouts-notifications-headlamp-runbook.md`](./0004-rollouts-notifications-headlamp-runbook.md)   | Argo Rollouts/Notifications/Headlamp 설치 및 운영 런북            | Active | 2026-05-09 |
+| [`./0005-headlamp-keycloak-runbook.md`](./0005-headlamp-keycloak-runbook.md)                               | Headlamp ServiceAccount 토큰 로그인 및 Keycloak OIDC 전환 런북    | Active | 2026-05-09 |
+| [`./0006-new-app-onboarding-runbook.md`](./0006-new-app-onboarding-runbook.md)                             | 새 애플리케이션 GitOps 온보딩 체크리스트 및 트러블슈팅 런북       | Active | 2026-05-09 |
+| [`./0007-kiali-observability-connectivity-runbook.md`](./0007-kiali-observability-connectivity-runbook.md) | Kiali 관측성 서비스 연결 장애 진단 및 복구 런북                   | Active | 2026-05-09 |
+| [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md)               | ArgoCD 메트릭 NodePort/Prometheus 수집 장애 진단 및 복구 런북     | Active | 2026-05-09 |
+| [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md)                               | kube-state-metrics/alloy/alert_rules/AppProject 장애 진단 런북    | Active | 2026-05-09 |
+| [`./0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md)         | GitHub 레포 기반 앱 온보딩 절차 런북 (배포/검증/rollback/Vault)   | Active | 2026-05-09 |

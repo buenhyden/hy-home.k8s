@@ -22,9 +22,9 @@ Kiali에서 외부 observability service가 unreachable로 표시될 때 Endpoin
 
 ## Canonical References
 
-- [`../05.operations/policies/0005-observability-platform-operations-policy.md`](../policies/0005-observability-platform-operations-policy.md)
-- [`../05.operations/guides/0006-argocd-prometheus-grafana-guide.md`](../guides/0006-argocd-prometheus-grafana-guide.md)
-- [`../../gitops/platform/external-services/`](../../../gitops/platform/external-services)
+- [`../policies/0005-observability-platform-operations-policy.md`](../policies/0005-observability-platform-operations-policy.md)
+- [`../guides/0006-argocd-prometheus-grafana-guide.md`](../guides/0006-argocd-prometheus-grafana-guide.md)
+- [`../../../gitops/platform/external-services`](../../../gitops/platform/external-services)
 
 ## When to Use
 
@@ -364,6 +364,6 @@ argocd app set platform-external-services \
 
 ## Related Documents
 
-- **Operations Policy**: [`../05.operations/policies/0005-observability-platform-operations-policy.md`](../policies/0005-observability-platform-operations-policy.md)
+- **Operations Policy**: [`../policies/0005-observability-platform-operations-policy.md`](../policies/0005-observability-platform-operations-policy.md)
 - **ArgoCD Metrics Runbook**: [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md)
-- **External Services**: [`../../gitops/platform/external-services/`](../../../gitops/platform/external-services)
+- **External Services**: [`../../../gitops/platform/external-services`](../../../gitops/platform/external-services)

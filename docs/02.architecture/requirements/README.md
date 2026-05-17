@@ -41,7 +41,7 @@
 ## How to Work in This Area
 
 1. 관련 `01.requirements/` 문서를 먼저 읽어 요구사항 경계를 고정한다.
-2. 새 ARD는 `../99.templates/ard.template.md`에서 시작한다.
+2. 새 ARD는 `../../99.templates/ard.template.md`에서 시작한다.
 3. 주요 설계 결정은 `02.architecture/decisions/`에 별도 ADR로 연결한다.
 4. 구현 가능한 계약은 `03.specs/`로 내려보내고 양방향 링크를 유지한다.
 
@@ -78,15 +78,15 @@
 
 ## Templates
 
-- `../99.templates/ard.template.md`
+- `../../99.templates/ard.template.md`
 
 ## 문서 인덱스
 
 | 문서                                                                                       | 설명                                                                                 | 상태  | 최종 수정  |
 | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ----- | ---------- |
-| [`0001-wsl-k3d-argocd-platform.md`](./0001-wsl-k3d-argocd-platform.md)                     | WSL2 k3d/k3s GitOps 플랫폼 참조 아키텍처                                             | Draft | 2026-03-27 |
-| [`0002-wsl2-k3d-argocd-ha-platform.md`](./0002-wsl2-k3d-argocd-ha-platform.md)             | WSL2 멀티노드 HA + Traefik↔k3d TLS 경계 + CI 정적 게이트 계층을 포함한 참조 아키텍처 | Draft | 2026-05-09 |
-| [`0003-platform-expansion-mesh-dashboard.md`](./0003-platform-expansion-mesh-dashboard.md) | 2026-03-29 cert-manager/Dashboard/Istio/Kiali 확장 ARD, 현재 실행계약은 Headlamp/172.18.x 기준 | Draft | 2026-05-09 |
+| [`./0001-wsl-k3d-argocd-platform.md`](./0001-wsl-k3d-argocd-platform.md)                     | WSL2 k3d/k3s GitOps 플랫폼 참조 아키텍처                                             | Draft | 2026-03-27 |
+| [`./0002-wsl2-k3d-argocd-ha-platform.md`](./0002-wsl2-k3d-argocd-ha-platform.md)             | WSL2 멀티노드 HA + Traefik↔k3d TLS 경계 + CI 정적 게이트 계층을 포함한 참조 아키텍처 | Draft | 2026-05-09 |
+| [`./0003-platform-expansion-mesh-dashboard.md`](./0003-platform-expansion-mesh-dashboard.md) | 2026-03-29 cert-manager/Dashboard/Istio/Kiali 확장 ARD, 현재 실행계약은 Headlamp/172.18.x 기준 | Draft | 2026-05-09 |
 
 ## 관련 폴더
 

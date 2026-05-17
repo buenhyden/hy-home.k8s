@@ -9,8 +9,8 @@ TDD(RED/GREEN/REFACTOR) 중심으로 정적 계약 검증이 먼저 정의되고
 
 ## Inputs
 
-- **Parent Spec**: [`../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
-- **Parent Plan**: [`../04.execution/plans/2026-03-29-platform-expansion.md`](../plans/2026-03-29-platform-expansion.md)
+- **Parent Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
+- **Parent Plan**: [`../plans/2026-03-29-platform-expansion.md`](../plans/2026-03-29-platform-expansion.md)
 
 ## Working Rules
 
@@ -115,6 +115,6 @@ TDD(RED/GREEN/REFACTOR) 중심으로 정적 계약 검증이 먼저 정의되고
 
 ## Related Documents
 
-- **Spec**: [`../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
-- **Plan**: [`../04.execution/plans/2026-03-29-platform-expansion.md`](../plans/2026-03-29-platform-expansion.md)
-- **Runbook**: [`../05.operations/runbooks/0003-platform-expansion-bootstrap-runbook.md`](../../05.operations/runbooks/0003-platform-expansion-bootstrap-runbook.md)
+- **Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
+- **Plan**: [`../plans/2026-03-29-platform-expansion.md`](../plans/2026-03-29-platform-expansion.md)
+- **Runbook**: [`../../05.operations/runbooks/0003-platform-expansion-bootstrap-runbook.md`](../../05.operations/runbooks/0003-platform-expansion-bootstrap-runbook.md)

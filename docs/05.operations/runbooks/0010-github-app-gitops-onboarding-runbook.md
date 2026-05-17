@@ -16,10 +16,10 @@
 
 ## Canonical References
 
-- [`../05.operations/guides/0008-github-app-gitops-onboarding-guide.md`](../guides/0008-github-app-gitops-onboarding-guide.md)
-- [`../05.operations/policies/0007-app-gitops-onboarding-policy.md`](../policies/0007-app-gitops-onboarding-policy.md)
-- [`../../gitops/workloads/adminer/`](../../../gitops/workloads/adminer)
-- [`../../examples/sample-app/`](../../../examples/sample-app)
+- [`../guides/0008-github-app-gitops-onboarding-guide.md`](../guides/0008-github-app-gitops-onboarding-guide.md)
+- [`../policies/0007-app-gitops-onboarding-policy.md`](../policies/0007-app-gitops-onboarding-policy.md)
+- [`../../../gitops/workloads/adminer`](../../../gitops/workloads/adminer)
+- [`../../../examples/sample-app`](../../../examples/sample-app)
 
 ## When to Use
 
@@ -309,7 +309,7 @@ kubectl apply -f gitops/clusters/local/appproject-apps.yaml
 
 ## Related Documents
 
-- **Guide**: [`../05.operations/guides/0008-github-app-gitops-onboarding-guide.md`](../guides/0008-github-app-gitops-onboarding-guide.md)
-- **Operations 정책**: [`../05.operations/policies/0007-app-gitops-onboarding-policy.md`](../policies/0007-app-gitops-onboarding-policy.md)
+- **Guide**: [`../guides/0008-github-app-gitops-onboarding-guide.md`](../guides/0008-github-app-gitops-onboarding-guide.md)
+- **Operations 정책**: [`../policies/0007-app-gitops-onboarding-policy.md`](../policies/0007-app-gitops-onboarding-policy.md)
 - **ESO/Vault Recovery**: [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)
-- **예시 템플릿**: [`../../examples/sample-app/`](../../../examples/sample-app)
+- **예시 템플릿**: [`../../../examples/sample-app`](../../../examples/sample-app)

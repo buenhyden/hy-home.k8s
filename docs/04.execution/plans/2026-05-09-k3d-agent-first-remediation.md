@@ -124,7 +124,7 @@ updated: 2026-05-09
 
 ## Related Documents
 
-- **Governance**: [`../00.agent-governance/harness-catalog.md`](../../00.agent-governance/harness-catalog.md)
-- **Agent-first Rules**: [`../00.agent-governance/rules/agentic.md`](../../00.agent-governance/rules/agentic.md)
-- **Document Routing**: [`../00.agent-governance/rules/document-stage-routing.md`](../../00.agent-governance/rules/document-stage-routing.md)
-- **Task**: [`../04.execution/tasks/2026-05-09-k3d-agent-first-remediation.md`](../tasks/2026-05-09-k3d-agent-first-remediation.md)
+- **Governance**: [`../../00.agent-governance/harness-catalog.md`](../../00.agent-governance/harness-catalog.md)
+- **Agent-first Rules**: [`../../00.agent-governance/rules/agentic.md`](../../00.agent-governance/rules/agentic.md)
+- **Document Routing**: [`../../00.agent-governance/rules/document-stage-routing.md`](../../00.agent-governance/rules/document-stage-routing.md)
+- **Task**: [`../tasks/2026-05-09-k3d-agent-first-remediation.md`](../tasks/2026-05-09-k3d-agent-first-remediation.md)

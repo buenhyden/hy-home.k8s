@@ -15,10 +15,10 @@
 
 ## Canonical References
 
-- [`../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
-- [`../05.operations/guides/0003-platform-expansion-bootstrap-guide.md`](../guides/0003-platform-expansion-bootstrap-guide.md)
-- [`../05.operations/policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md)
-- [`../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
+- [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
+- [`../guides/0003-platform-expansion-bootstrap-guide.md`](../guides/0003-platform-expansion-bootstrap-guide.md)
+- [`../policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md)
+- [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
 
 ## When to Use
 
@@ -248,8 +248,8 @@ curl -sk https://kiali.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
 
 ## Related Documents
 
-- **Guide**: [`../05.operations/guides/0003-platform-expansion-bootstrap-guide.md`](../guides/0003-platform-expansion-bootstrap-guide.md)
-- **Spec**: [`../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
-- **Operations**: [`../05.operations/policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md)
-- **ADR-0010**: [`../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md)
+- **Guide**: [`../guides/0003-platform-expansion-bootstrap-guide.md`](../guides/0003-platform-expansion-bootstrap-guide.md)
+- **Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
+- **Operations**: [`../policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md)
+- **ADR-0010**: [`../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md)
 - **Previous Runbook**: [`./0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)
