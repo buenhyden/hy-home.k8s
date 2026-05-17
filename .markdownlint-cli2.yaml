@@ -12,6 +12,12 @@ config:
       - div
       - br
       - p
+      - feature-or-system
+      - system-or-domain
+      - feature-id
+      - short-title
+      - feature
+      - topic
   MD024: false
 ignores:
   - ".agent/"
