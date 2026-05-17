@@ -8,6 +8,61 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-18 — 03.specs traceability backfill
+
+- **Date**: 2026-05-18
+- **Layer**: docs, architecture, execution, operations
+- **Status**: complete
+- **Tags**: #specs #traceability #rollouts #notifications #validation
+
+#### Progress
+
+- Added current-contract ARD, Spec, Plan, and Task chains for Argo Rollouts
+  progressive delivery and ArgoCD Notifications Slack integration.
+- Replaced Rollouts/Notifications PRD downstream-gap wording with links to the
+  new ARD/Spec/Plan/Task documents.
+- Added downstream traceability backlinks to ADR-0011, ADR-0012, and the
+  Rollouts/Notifications/Headlamp operations policy and runbook.
+- Rebuilt `docs/03.specs/README.md` as a single stage README with five indexed
+  specs and explicit currentness notes.
+- Updated Spec 001, 002, and 003 frontmatter. Spec 003 now keeps Dashboard and
+  `172.19.x` content only as superseded historical context, with Headlamp and
+  `172.18.x` as the current contract.
+
+#### Memory
+
+- Rollouts chart notifications and ArgoCD Notifications are separate contracts:
+  Rollouts keeps chart-level notifications disabled while ArgoCD Notifications
+  owns Slack templates, triggers, and the Vault/ESO credential boundary.
+- Spec 003 should use Headlamp, `mkcert-ca-issuer`, and `172.18.x` external
+  service endpoints as current contract evidence; Dashboard-era values are
+  historical only.
+- Closeout for this task intentionally stayed in this progress ledger. No
+  standalone memory note was created.
+
+#### Evidence
+
+- Targeted stale PRD gap scan over `docs/01.requirements` returned no matches.
+- Dashboard terms in Spec 003 are marked historical/superseded or appear only
+  in historical document/link names.
+- Rollouts chart `notifications.enabled: false` is documented separately from
+  ArgoCD Notifications `notifications.enabled: true`.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `git diff --check` PASS.
+
+#### Handoff
+
+- No runtime manifest change, cluster mutation, Secret change, live ArgoCD
+  action, or external Slack action was performed.
+- Live cluster validation remains deferred unless a human explicitly requests
+  an operator run against an available cluster.
+
+---
+
 ### 2026-05-17 — 01.requirements PRD currentness remediation
 
 - **Date**: 2026-05-17

@@ -42,6 +42,9 @@
 ├── 2026-05-09-github-qa-ci-remediation.md
 ├── 2026-05-09-k3d-agent-first-remediation.md
 ├── 2026-05-09-scripts-inventory-remediation.md
+├── 2026-05-10-agent-first-harness-llm-wiki-hooks.md
+├── 2026-05-18-argo-rollouts-progressive-delivery.md
+├── 2026-05-18-argo-notifications-slack.md
 └── README.md
 ```
 
@@ -133,6 +136,9 @@
 | [`./2026-05-09-k3d-agent-first-remediation.md`](./2026-05-09-k3d-agent-first-remediation.md) | k3d 운영 문서와 Agent-first 실행 계약의 GitOps-first 충돌 보정 Task | Done  | 2026-05-09 |
 | [`./2026-05-09-scripts-inventory-remediation.md`](./2026-05-09-scripts-inventory-remediation.md) | `scripts/` 인벤토리 조사와 README 실행 계약 보정 Task | Done  | 2026-05-09 |
 | [`./2026-05-09-github-qa-ci-remediation.md`](./2026-05-09-github-qa-ci-remediation.md) | `.github` QA, CI, 브랜치 정책, PR intake 계약 보정 Task | Done  | 2026-05-09 |
+| [`./2026-05-10-agent-first-harness-llm-wiki-hooks.md`](./2026-05-10-agent-first-harness-llm-wiki-hooks.md) | Agent-first harness, LLM Wiki, hook 계약 보정 Task | Done | 2026-05-10 |
+| [`./2026-05-18-argo-rollouts-progressive-delivery.md`](./2026-05-18-argo-rollouts-progressive-delivery.md) | Argo Rollouts current-contract backfill Task | Done | 2026-05-18 |
+| [`./2026-05-18-argo-notifications-slack.md`](./2026-05-18-argo-notifications-slack.md) | ArgoCD Notifications Slack current-contract backfill Task | Done | 2026-05-18 |
 
 ## 관련 폴더
 
