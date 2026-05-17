@@ -8,6 +8,57 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-18 — 04.execution README normalization
+
+- **Date**: 2026-05-18
+- **Layer**: docs, execution, meta
+- **Status**: complete
+- **Tags**: #execution #readme #templates #validation
+
+#### Progress
+
+- Normalized the three `docs/04.execution` README surfaces to the repository
+  README base structure: Overview, Audience, Scope, Structure,
+  How to Work in This Area, Link Basis, and Related Documents.
+- Removed duplicate legacy sections from `docs/04.execution/plans/README.md`
+  and `docs/04.execution/tasks/README.md` while preserving their Structure
+  trees and document indexes.
+- Clarified the default routing split: plans own execution order, risk,
+  gates, rollout, and rollback; tasks own executable work state and evidence.
+- Standardized the touched execution README headings from Related References to
+  Related Documents.
+
+#### Memory
+
+- `docs/04.execution/plans/README.md` and
+  `docs/04.execution/tasks/README.md` should stay as compact entrypoints, not
+  mixed template fragments plus historical duplicate sections.
+- Existing Plan and Task artifact files were intentionally not normalized in
+  this pass. Their historical status, date, and evidence fields remain owned by
+  the artifact documents.
+- The repository quality gate still allows `Related References` in some README
+  surfaces, so touched-scope heading consistency needs a targeted check until
+  the validator explicitly includes `docs/04.execution`.
+
+#### Evidence
+
+- Changed-file scope was limited to the three execution READMEs and this
+  progress ledger entry.
+- Targeted `docs/04.execution` Related References scan: PASS.
+- Targeted execution README document-index scan: PASS.
+- Targeted duplicate legacy heading scan: PASS.
+- `git diff --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+
+#### Handoff
+
+- No Plan/Task artifact body, validator, template, Kubernetes manifest, ArgoCD
+  object, cluster state, or Secret was changed.
+- No live cluster mutation, direct ArgoCD action, or external service action was
+  performed.
+
+---
+
 ### 2026-05-18 — 03.specs traceability backfill
 
 - **Date**: 2026-05-18
