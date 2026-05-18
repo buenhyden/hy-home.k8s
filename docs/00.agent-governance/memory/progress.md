@@ -853,6 +853,41 @@ inventory stays in `scripts/README.md`.
 
 - None.
 
+### 2026-05-18 — 90.references learning roadmap boundary clarification
+
+- **Date**: 2026-05-18
+- **Layer**: docs, meta
+- **Status**: complete
+- **Tags**: #docs #references #learning #validation
+
+#### Progress
+
+- Clarified `docs/90.references/learning/infrastructure-to-theory-roadmap.md`
+  Module C wording so the learning roadmap reads as an offline concept exercise,
+  not as repository, live cluster, ArgoCD, Vault, or manifest work.
+- Left `docs/90.references/README.md` untouched because its existing overview,
+  work rules, and authority boundary already cover the reference-only scope.
+- Did not create new files, edit generated LLM Wiki output, change version
+  inventory values or freshness dates, or modify runtime/GitOps/secret surfaces.
+
+#### Memory
+
+- When `90.references` learning material uses exercises, keep the exercise
+  explicitly offline unless a separate spec, plan, or runbook authorizes repo or
+  cluster work.
+
+#### Evidence
+
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `git diff --check` PASS.
+- Targeted negative checks confirmed no generated LLM Wiki, version inventory,
+  new file, runtime, manifest, secret, cluster, or deployment changes.
+
+#### Handoff
+
+- None.
+
 ## Historical Entries
 
 ### Harness Implementation Progress

@@ -75,7 +75,7 @@ updated: 2026-05-17
 - **Problem**: LLM 추론 시 KV Cache가 메모리를 과도하게 점유하여 처리량이 저하됨.
 - **Theory**: 운영체제의 **Virtual Memory Paging**.
 - **Assignment**: Kwon et al. (2023) 논문을 읽고, vLLM이 어떻게 메모리 파편화를 해결하는지 파악하세요.
-- **Mini-Project**: [Custom Controller 구현](#module-c-mini-project-custom-initialization-controller)
+- **Concept Exercise**: [Controller reconciliation thought experiment](#module-c-offline-controller-thought-experiment)
 
 ### Module B: The Vector Space (RAG & Geometry)
 
@@ -85,20 +85,22 @@ updated: 2026-05-17
 
 ---
 
-## Module C: Mini-Project (Custom Initialization Controller)
+## Module C: Offline Controller Thought Experiment
 
-실질적인 인프라 제어 로직을 이해하기 위한 실습 과제입니다.
+이 섹션은 repo 변경 없이 reconciliation loop를 이해하기 위한 오프라인 학습 연습입니다.
+실제 manifest, live cluster, ArgoCD, Vault, 또는 이 저장소의 GitOps desired state에 적용하지 않습니다.
 
-### [Task] ConfigMap Watcher Controller
+### Concept Exercise: ConfigMap Watcher
 
-Kubernetes의 특정 ConfigMap이 변경될 때마다 관련 Pod을 자동으로 재시작(Rolling Update)하는 간단한 컨트롤러를 구현합니다.
+Kubernetes controller가 특정 ConfigMap 변경을 관찰한다고 가정하고, 어떤 상태 관찰, 관계 추론, desired-state 표현 단계를 거치는지 설명합니다.
 
 - **Objective**: Kubernetes Reconciliation Loop의 원리 이해.
-- **Tech Stack**: Python (kubernetes-client) or Go (controller-runtime).
-- **Core Logic**:
-  1. `ConfigMap` 리소스를 리스트하고 이벤트를 감시(Watch)합니다.
-  2. 변경 감지 시, 해당 `ConfigMap`을 사용하는 `Deployment`의 Annotations에 타임스탬프를 추가하여 재배포를 유도합니다.
-- **Validation**: GitOps manifest 변경 후 ArgoCD reconciliation으로 Pod 교체를 확인합니다.
+- **Study Boundary**: 코드 작성, manifest 수정, cluster 검증 없이 개념만 정리한다.
+- **Thought Process**:
+  1. 어떤 resource state를 관찰해야 하는지 적는다.
+  2. ConfigMap과 workload의 관계를 어떻게 추론할지 설명한다.
+  3. isolated lab이라면 어떤 metadata change가 rollout intent를 표현할 수 있는지 논의한다.
+- **Reflection Prompt**: 단순 event watching과 reconciliation loop의 차이를 이 저장소의 GitOps-first 원칙과 연결해 설명한다.
 
 ---
 
