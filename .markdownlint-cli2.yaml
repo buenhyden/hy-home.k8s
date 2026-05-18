@@ -18,6 +18,12 @@ config:
       - short-title
       - feature
       - topic
+      - policy
+      - domain
+      - related-decision
+      - policy-or-standard
+      - system-or-domain-name
+      - feature-or-stream
   MD024: false
 ignores:
   - ".agent/"
