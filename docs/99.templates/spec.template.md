@@ -22,7 +22,7 @@ updated: YYYY-MM-DD
 
 ---
 
-# [Feature Name] Specification
+## [Feature Name] Specification
 
 ## Overview (KR)
 

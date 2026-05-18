@@ -8,6 +8,56 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-18 — docs stage conformance follow-up
+
+- **Date**: 2026-05-18
+- **Layer**: docs, meta
+- **Status**: complete
+- **Tags**: #docs #templates #readme #validation
+
+#### Progress
+
+- Demoted duplicate actionable H1 headings in the Plan and Spec templates while
+  preserving their primary document title H1.
+- Demoted the duplicate H1 in the completed template cross-link plan without
+  changing its status, update date, or execution-history content.
+- Added `graphify-out/` to the root README repository map because tracked
+  graphify outputs are shared exploration artifacts and `.claude/CLAUDE.md`
+  treats `GRAPH_REPORT.md` as architecture/codebase context when present.
+- Left `readme.template.md`, `memory.template.md`, `progress.template.md`, and
+  the generated LLM Wiki index unchanged as intentional exceptions.
+
+#### Memory
+
+- Duplicate H1 checks for templates must ignore fenced code and HTML comments;
+  `readme.template.md` intentionally includes instructional H1 examples.
+- Stale Dashboard scans should target old Kubernetes Dashboard markers, not
+  `Rollouts Dashboard`, which is a current contract.
+- `memory.template.md` uses `Related Progress` intentionally, and
+  `progress.template.md` is an append-entry template rather than a standalone
+  authored document.
+
+#### Evidence
+
+- `git diff --check` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- Authored non-README frontmatter/status/Overview/Related Documents scan PASS.
+- README index sync scan PASS.
+- Duplicate H1 scan reviewed; only the intentional `readme.template.md`
+  instructional examples remain.
+- Stale contract boundary scan PASS after treating historical, superseded,
+  bootstrap, break-glass, and operator-triggered reconciliation contexts as
+  explicit boundaries.
+
+#### Handoff
+
+- No PRD, ARD, ADR, Spec, Plan, Task, GitOps manifest, generated wiki index,
+  live cluster state, Vault secret, or plaintext Kubernetes Secret was changed.
+- No follow-up is required for this scoped conformance follow-up.
+
+---
+
 ### 2026-05-18 — docs template conformance pass
 
 - **Date**: 2026-05-18

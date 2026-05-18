@@ -94,6 +94,7 @@ hy-home.k8s/
 - `traefik/` - k3d 로컬 ingress-nginx 뒤에서 ArgoCD/Headlamp/Kiali/Rollouts를 노출하는 보조 dynamic config
 - `examples/` - 앱 GitOps 온보딩용 참조 구현과 AWS/Azure cloud target 예시
 - `scripts/` - 저장소 유지보수와 자동화 보조 스크립트
+- `graphify-out/` - 공유된 graphify 탐색 산출물. `GRAPH_REPORT.md`, `graph.json`, `graph.html`만 추적한다.
 - `.github/` - `main` PR flow용 CI, release evidence, PR/issue intake, CODEOWNERS, labeler, zizmor 설정
 - `.claude/`, `.codex/` - 에이전트 실행 규칙, 스킬, 워크플로 오버레이
 

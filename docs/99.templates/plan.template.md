@@ -19,7 +19,7 @@ updated: YYYY-MM-DD
 
 ---
 
-# [Feature or Component] Plan
+## [Feature or Component] Plan
 
 ## Overview (KR)
 

@@ -17,7 +17,7 @@ updated: 2026-05-17
 
 ---
 
-# Template Cross-link Fix Plan
+## Template Cross-link Fix Plan
 
 ## Overview (KR)
 
