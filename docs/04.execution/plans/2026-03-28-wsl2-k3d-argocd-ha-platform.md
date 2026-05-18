@@ -1,3 +1,11 @@
+---
+title: 'WSL2 k3d/k3s ArgoCD HA Platform Plan'
+type: plan
+status: draft
+owner: platform-team
+updated: 2026-05-18
+---
+
 # WSL2 k3d/k3s ArgoCD HA Platform Plan
 
 ## Overview (KR)

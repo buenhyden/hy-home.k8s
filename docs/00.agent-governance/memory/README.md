@@ -55,7 +55,7 @@ memory/
 6. When a standalone memory file is added or updated, append a matching
    progress entry to `progress.md` in the same change.
 
-## Related References
+## Related Documents
 
 - [Agent Governance Hub](../README.md)
 - [Memory Template](../../99.templates/memory.template.md)

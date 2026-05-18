@@ -1,3 +1,11 @@
+---
+title: 'Platform Expansion Mesh Dashboard Architecture Reference Document'
+type: ard
+status: draft
+owner: platform-team
+updated: 2026-05-18
+---
+
 # Platform Expansion: Mesh, Dashboard, cert-manager Architecture Reference Document (ARD)
 
 ## Overview (KR)

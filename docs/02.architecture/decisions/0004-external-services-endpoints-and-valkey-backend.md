@@ -1,3 +1,11 @@
+---
+title: 'ADR-0004: External Service Access Model and ArgoCD Valkey Backend'
+type: adr
+status: accepted
+owner: platform-team
+updated: 2026-05-18
+---
+
 # ADR-0004: External Service Access Model and ArgoCD Valkey Backend
 
 ## Overview (KR)

@@ -1,3 +1,11 @@
+---
+title: 'ADR-0011: Argo Rollouts for Progressive Delivery'
+type: adr
+status: accepted
+owner: platform-team
+updated: 2026-05-18
+---
+
 # ADR-0011: Argo Rollouts for Progressive Delivery
 
 ## Overview (KR)

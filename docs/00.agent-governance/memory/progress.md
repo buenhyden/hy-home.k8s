@@ -8,6 +8,56 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-18 — docs template conformance pass
+
+- **Date**: 2026-05-18
+- **Layer**: docs, meta
+- **Status**: complete
+- **Tags**: #docs #templates #frontmatter #validation
+
+#### Progress
+
+- Audited the target-bearing templates under `docs/99.templates/` against their
+  `Target` comments and target-relative code-literal link examples.
+- Confirmed no concrete template path defect required changes in this pass.
+- Added minimal YAML frontmatter to legacy template-governed authored documents
+  that lacked it: ARD 0001-0003, ADR 0001-0012, the 2026-03-27/28/29 execution
+  plans, and the 2026-03-27/28/29 execution tasks.
+- Normalized the governance README related-link heading from
+  `Related References` to `Related Documents` in the governance hub and memory
+  README without changing their English body content.
+
+#### Memory
+
+- Template code-literal placeholder links are calculated from the final authored
+  `Target` location, while real Markdown links inside template files still
+  resolve from `docs/99.templates/`.
+- Code-label versus href scans are advisory unless the label claims an exact
+  path that points readers to a different target. Short labels that route to a
+  folder README are acceptable when the Markdown link resolves.
+- Legacy document frontmatter status should be evidence-backed from the
+  document body or owning README index, not inferred from file age alone.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `git diff --check` PASS.
+- Targeted legacy frontmatter check PASS.
+- Target-relative template placeholder scanner PASS.
+- README and `docs/**/*.md` missing-link scanner: `MISSING_LINKS: 0`.
+- Code-label/href advisory report reviewed; remaining items are short labels or
+  anchor comparison noise, not broken links.
+
+#### Handoff
+
+- No generated/index file, Kubernetes manifest, ArgoCD object, live cluster
+  state, Vault secret, Slack configuration, or plaintext Kubernetes Secret was
+  changed.
+- No follow-up is required for this scoped conformance pass.
+
+---
+
 ### 2026-05-18 — 04.execution README normalization
 
 - **Date**: 2026-05-18

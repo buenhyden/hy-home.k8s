@@ -1,3 +1,11 @@
+---
+title: 'ADR-0009: Kiali with External Observability Stack'
+type: adr
+status: accepted
+owner: platform-team
+updated: 2026-05-18
+---
+
 # ADR-0009: Kiali with External Observability Stack
 
 ## Overview (KR)

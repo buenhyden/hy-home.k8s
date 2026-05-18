@@ -1,3 +1,11 @@
+---
+title: 'Task: Platform Expansion Execution'
+type: task
+status: complete
+owner: platform-team
+updated: 2026-05-18
+---
+
 # Task: Platform Expansion Execution
 
 ## Overview (KR)

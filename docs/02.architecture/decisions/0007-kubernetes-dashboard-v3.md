@@ -1,3 +1,11 @@
+---
+title: 'ADR-0007: Kubernetes Dashboard v3 Installation'
+type: adr
+status: superseded
+owner: platform-team
+updated: 2026-05-18
+---
+
 # ADR-0007: Kubernetes Dashboard v3 Installation
 
 ## Overview (KR)

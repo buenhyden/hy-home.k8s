@@ -1,3 +1,11 @@
+---
+title: 'ADR-0006: cert-manager with mkcert CA as ClusterIssuer'
+type: adr
+status: accepted
+owner: platform-team
+updated: 2026-05-18
+---
+
 # ADR-0006: cert-manager with mkcert CA as ClusterIssuer
 
 ## Overview (KR)

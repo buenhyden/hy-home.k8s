@@ -1,3 +1,11 @@
+---
+title: 'ADR-0001: k3d Topology and External Network Baseline'
+type: adr
+status: accepted
+owner: platform-team
+updated: 2026-05-18
+---
+
 # ADR-0001: k3d Topology and External Network Baseline
 
 ## Overview (KR)

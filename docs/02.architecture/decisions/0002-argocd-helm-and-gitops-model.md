@@ -1,3 +1,11 @@
+---
+title: 'ADR-0002: ArgoCD Helm Install with App-of-Apps and ApplicationSet'
+type: adr
+status: accepted
+owner: platform-team
+updated: 2026-05-18
+---
+
 # ADR-0002: ArgoCD Helm Install with App-of-Apps and ApplicationSet
 
 ## Overview (KR)

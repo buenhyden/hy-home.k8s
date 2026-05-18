@@ -1,3 +1,11 @@
+---
+title: 'Task: WSL k3d/k3s ArgoCD Platform Execution'
+type: task
+status: draft
+owner: platform-team
+updated: 2026-05-18
+---
+
 # Task: WSL k3d/k3s ArgoCD Platform Execution
 
 ## Overview (KR)

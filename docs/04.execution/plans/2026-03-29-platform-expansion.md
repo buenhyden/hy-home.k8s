@@ -1,3 +1,11 @@
+---
+title: 'Platform Expansion Implementation Plan'
+type: plan
+status: complete
+owner: platform-team
+updated: 2026-05-18
+---
+
 # Platform Expansion Implementation Plan
 
 ## Overview (KR)

@@ -84,7 +84,7 @@ docs/00.agent-governance/
 - [Local Harness Catalog](harness-catalog.md)
 - [Subagent Protocol](subagent-protocol.md)
 
-## Related References
+## Related Documents
 
 - [AGENTS.md](../../AGENTS.md)
 - [Runtime Baseline](../../.claude/CLAUDE.md)

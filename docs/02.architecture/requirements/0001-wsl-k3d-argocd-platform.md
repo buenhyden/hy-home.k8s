@@ -1,3 +1,11 @@
+---
+title: 'WSL k3d/k3s ArgoCD Platform Architecture Reference Document'
+type: ard
+status: draft
+owner: platform-team
+updated: 2026-05-18
+---
+
 # WSL k3d/k3s ArgoCD Platform Architecture Reference Document (ARD)
 
 ## Overview (KR)
