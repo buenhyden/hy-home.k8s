@@ -54,6 +54,14 @@ learning/
 4. 학습 자료에는 `Reference Type`, `Authority Boundary`, `Review and Freshness`를 유지한다.
 5. 새 learning 문서를 추가하거나 이동하면 이 README와 상위 [90.references README](../README.md)를 함께 갱신한다.
 
+## Link Basis
+
+이 README의 링크 기준 위치는 `docs/90.references/learning/`다.
+
+- 같은 폴더의 learning reference 문서는 `./`로 시작한다.
+- sibling reference folder는 `../agents/`, `../llm-wiki/`, `../versions/`로 연결한다.
+- operational owner docs는 `../../05.operations/`, governance owner docs는 `../../00.agent-governance/`로 연결한다.
+
 ## Related Documents
 
 - [90.references README](../README.md)

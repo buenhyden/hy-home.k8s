@@ -1,5 +1,7 @@
 # 02.architecture/decisions (ADR)
 
+> 아키텍처 선택의 맥락, 대안, 결과를 보존하는 ADR stage다.
+
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../00.agent-governance/README.md).
 
@@ -49,6 +51,14 @@
 3. superseded 결정은 삭제하지 않고 상태와 대체 ADR/운영 기준을 명시한다.
 4. `Accepted`는 결정 기록이 보존된다는 뜻이다. 현재 런타임 값은 README 인덱스의 `현재성/후속 기준`, GitOps manifest, 정적 검증 스크립트로 확인한다.
 5. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
+
+## Link Basis
+
+이 README의 링크 기준 위치는 `docs/02.architecture/decisions/`다.
+
+- 같은 폴더의 ADR 문서는 `./`로 시작한다.
+- sibling ARD stage는 `../requirements/`로 연결한다.
+- upstream/downstream docs stage는 `../../01.requirements/`, `../../03.specs/`, `../../04.execution/`, `../../05.operations/`로 연결한다.
 
 ## Document Index
 

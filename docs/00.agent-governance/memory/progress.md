@@ -8,6 +8,66 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-18 — docs stage README link-basis normalization
+
+- **Date**: 2026-05-18
+- **Layer**: docs, product, architecture, ops
+- **Status**: complete
+- **Tags**: #docs #readme #templates #validation
+
+#### Progress
+
+- Normalized root, docs hub, and affected stage README entrypoints against
+  the repository README template base structure.
+- Added missing `Link Basis` sections to root/docs/architecture/operations/
+  references README surfaces and translated touched link-basis guidance for
+  human-facing README files.
+- Added missing one-line purpose statements to `docs/README.md`,
+  `docs/02.architecture/README.md`,
+  `docs/02.architecture/requirements/README.md`,
+  `docs/02.architecture/decisions/README.md`,
+  `docs/03.specs/README.md`, `docs/04.execution/README.md`, and
+  `docs/05.operations/README.md`.
+- Added operations template routing in `docs/05.operations/README.md` so Guide,
+  Policy, Runbook, Incident, and Postmortem entrypoints point to their starting
+  templates.
+- Clarified `docs/90.references/README.md` so non-README reference documents
+  keep the full reference template contract while README index files can remain
+  navigation surfaces.
+
+#### Memory
+
+- README template conformance in this repository should include a short purpose
+  statement, `## Link Basis`, and `## Related Documents` for root, stage, and
+  nested README entrypoints.
+- Reference README index files are not standalone reference documents; they can
+  summarize reference metadata instead of duplicating every
+  `reference.template.md` section.
+- `/latest` external URLs in version references should be treated as dated
+  source-check URLs unless a stable release permalink is explicitly recorded.
+
+#### Evidence
+
+- `git diff --check` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- Targeted README scan over root, docs hub, requested stage READMEs, and nested
+  `02.architecture`, `04.execution`, `05.operations`, and `90.references`
+  READMEs found no missing `## Link Basis` or `## Related Documents` sections.
+- Read-only subagent audits reviewed `01.requirements`/`02.architecture`/
+  `03.specs`, `04.execution`/`05.operations`, and `90.references`/root
+  README scopes; accepted concrete gaps were folded into this change.
+
+#### Handoff
+
+- No PRD, ARD, ADR, Spec, Plan, Task, operations document body, GitOps
+  manifest, live cluster state, Vault secret, or plaintext Kubernetes Secret
+  was changed.
+- External version facts were not refreshed in this pass; only the README rule
+  for interpreting `/latest` source URLs was clarified.
+
+---
+
 ### 2026-05-18 — docs template link-basis clarification
 
 - **Date**: 2026-05-18

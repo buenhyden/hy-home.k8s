@@ -53,16 +53,26 @@ agents/
 4. 새 문서를 추가하면 이 README와 상위 `docs/90.references/README.md`의 구조 설명이 계속 맞는지 확인한다.
 5. 새 Agent reference 문서는 `Reference Type`, `Authority Boundary`, `Review and Freshness`를 포함한다.
 
+## Link Basis
+
+이 README의 링크 기준 위치는 `docs/90.references/agents/`다.
+
+- 같은 폴더의 Agent reference 문서는 `./`로 시작한다.
+- sibling reference folder는 `../learning/`, `../llm-wiki/`, `../versions/`로 연결한다.
+- canonical owner stage는 `../../00.agent-governance/`, `../../03.specs/`, `../../05.operations/`로 연결한다.
+
 ## Reference Boundary
 
 - `agents/`는 재사용 가능한 Agent 개념과 학습용 reference를 보관한다.
-- `.claude/`, `.codex/`, `docs/00.agent-governance/harness-catalog.md`는 현재 runtime truth를 보관한다.
+- [Agent Governance Hub](../../00.agent-governance/README.md), [Harness Catalog](../../00.agent-governance/harness-catalog.md), `.claude/`, `.codex/`는 현재 runtime truth를 보관한다.
 - `docs/03.specs/<feature-id>/agent-design.md`는 기능별 Agent 설계를 보관한다.
 - `docs/00.agent-governance/memory/progress.md`는 repo-changing work의 progress와 reusable memory ledger를 보관한다.
 
 ## Related Documents
 
 - [90.references README](../README.md)
+- [Agent Governance Hub](../../00.agent-governance/README.md)
+- [Harness Catalog](../../00.agent-governance/harness-catalog.md)
 - [03.specs README](../../03.specs/README.md)
 - [Templates README](../../99.templates/README.md)
 - [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

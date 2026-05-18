@@ -65,7 +65,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 
 ## Link Basis
 
-Stage README files: links start from the owning stage folder (`docs/04.execution/plans/`).
+이 README의 링크 기준 위치는 `docs/04.execution/plans/`다.
 
 - 같은 폴더의 Plan 문서는 `./`로 시작하는 상대 경로를 사용한다.
 - sibling Task stage는 `../tasks/`로 연결한다.

@@ -1,5 +1,7 @@
 # docs: 프로젝트 문서 허브
 
+> 요구사항부터 운영·참조 자료까지의 canonical documentation taxonomy를 안내하는 진입점이다.
+
 > [!NOTE]
 > All AI agent interactions with this documentation suite must comply with the [Agent Governance Hub](./00.agent-governance/README.md).
 
@@ -64,6 +66,14 @@ docs/
 4. 사람 대상 README와 개요 문서는 한국어를 유지하고, `00.agent-governance` 정책 문서는 영어를 유지한다.
 5. 일반 운영 변경은 GitOps-first 원칙을 따르며, 문서가 live `kubectl apply`나 외부 Vault 조작을 우회 절차처럼 안내하지 않도록 한다.
 6. cloud example 버전을 갱신할 때는 코드, README, [tech-stack-version-inventory.md](./90.references/versions/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
+
+## Link Basis
+
+이 README의 링크 기준 위치는 `docs/`다.
+
+- stage 링크는 `./<stage>/README.md`를 사용한다.
+- root-level implementation 링크는 `../<path>/README.md`를 사용한다.
+- nested stage README는 이 hub의 링크를 복사하지 않고, 자기 폴더 기준으로 상대 경로를 다시 계산한다.
 
 ## Stage Usage Criteria
 

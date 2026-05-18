@@ -65,7 +65,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 
 ## Link Basis
 
-Stage README files: links start from the owning stage folder (`docs/04.execution/tasks/`).
+이 README의 링크 기준 위치는 `docs/04.execution/tasks/`다.
 
 - 같은 폴더의 Task 문서는 `./`로 시작하는 상대 경로를 사용한다.
 - sibling Plan stage는 `../plans/`로 연결한다.

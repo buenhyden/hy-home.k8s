@@ -1,5 +1,7 @@
 # 03.specs
 
+> PRD/ARD/ADR을 구현 가능한 기술 계약과 검증 기준으로 구체화하는 Spec stage다.
+
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
 
@@ -65,7 +67,7 @@ Spec은 실행 기준을 소유하는 문서다.
 
 ## Link Basis
 
-Stage README files: links start from the owning stage folder (`docs/03.specs/`).
+이 README의 링크 기준 위치는 `docs/03.specs/`다.
 
 - 상위 문서는 `../`로 시작하는 상대 경로를 사용한다.
 - 같은 stage의 spec은 `./<feature-id>/spec.md`로 연결한다.

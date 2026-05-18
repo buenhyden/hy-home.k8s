@@ -55,6 +55,14 @@ Postmortem은 “왜 허용됐고 무엇을 바꿀 것인가”를 기록한다.
 4. 비밀 값, 토큰, 개인 식별 정보는 사고 기록에 직접 남기지 않는다.
 5. 사고가 없는 상태에서는 README만 유지하고 빈 placeholder 파일을 만들지 않는다.
 
+## Link Basis
+
+이 README의 링크 기준 위치는 `docs/05.operations/incidents/`다.
+
+- Incident record는 `./YYYY/YYYY-MM-DD-<incident>.md` 경로를 사용한다.
+- Postmortem은 `./postmortems/YYYY/YYYY-MM-DD-<incident>.md` 경로를 사용한다.
+- sibling operations folder는 `../policies/`, `../runbooks/`, `../guides/`로 연결한다.
+
 ## Related Documents
 
 - [Operations README](../README.md)

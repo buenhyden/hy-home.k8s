@@ -1,5 +1,10 @@
 # 02.architecture
 
+> 요구사항을 아키텍처 요구와 결정 기록으로 연결하는 canonical architecture stage다.
+
+> [!NOTE]
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
+
 ## Overview
 
 `02.architecture/`는 요구사항을 시스템 구조와 의사결정으로 연결하는 아키텍처 허브다.
@@ -58,6 +63,14 @@
 4. 구현자가 따라야 할 상세 계약은 `../03.specs/`로 넘긴다.
 5. 운영 정책이나 복구 절차는 `../05.operations/`로 넘긴다.
 
+## Link Basis
+
+이 README의 링크 기준 위치는 `docs/02.architecture/`다.
+
+- 하위 아키텍처 폴더는 `./requirements/`, `./decisions/`로 연결한다.
+- 인접 stage는 `../01.requirements/`, `../03.specs/`, `../05.operations/`로 연결한다.
+- root-level 구현 경로는 `../../gitops/`, `../../infrastructure/`처럼 repository root 기준으로 올라간다.
+
 ## Related Documents
 
 - [Requirements README](../01.requirements/README.md)
@@ -66,3 +79,4 @@
 - [Specs README](../03.specs/README.md)
 - [Operations README](../05.operations/README.md)
 - [Document Stage Routing](../00.agent-governance/rules/document-stage-routing.md)
+- [Templates README](../99.templates/README.md)

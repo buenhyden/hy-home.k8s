@@ -108,6 +108,14 @@ docs/90.references/llm-wiki/
 3. Keep this directory reference-only; do not add embeddings, vector files, lockfiles, runtime config, package manifests, static-site output, or procedure copies.
 4. If a policy or runbook needs to change, edit its canonical owner and only update this link map if the owner path changes.
 
+## Link Basis
+
+이 README의 링크 기준 위치는 `docs/90.references/llm-wiki/`다.
+
+- 같은 폴더의 generated index는 `./wiki-index.md`로 연결한다.
+- reference sibling folder는 `../versions/`, `../agents/`, `../learning/`로 연결한다.
+- `examples/`, `gitops/`, `scripts/` 같은 root-level owner는 `../../../<path>`로 연결한다.
+
 ## Related Documents
 
 - [90.references README](../README.md)

@@ -2,6 +2,9 @@
 
 > GitOps 플랫폼 운영 정책과 통제 기준(허용/금지/예외/검증)을 관리한다.
 
+> [!NOTE]
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../00.agent-governance/README.md).
+
 ## Overview
 
 이 경로는 플랫폼 운영 정책의 단일 기준점이다.
@@ -63,6 +66,14 @@ docs/05.operations/policies/
 4. 문서 변경 후 이 README 인덱스를 동기화한다.
 5. 정책 README에는 실행 절차를 복제하지 않는다. 필요한 경우 소유 guide/runbook 링크로 연결한다.
 6. live cluster mutation, Vault write, kubeconfig 변경 예시는 human-approved, bootstrap-only, break-glass 문맥 없이는 추가하지 않는다.
+
+## Link Basis
+
+이 README의 링크 기준 위치는 `docs/05.operations/policies/`다.
+
+- 같은 폴더의 Policy 문서는 `./`로 시작한다.
+- sibling operations folder는 `../guides/`, `../runbooks/`, `../incidents/`로 연결한다.
+- upstream docs stage는 `../../02.architecture/`, `../../03.specs/`, `../../04.execution/`로 연결한다.
 
 ## Related Documents
 

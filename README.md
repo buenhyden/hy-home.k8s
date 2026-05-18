@@ -76,6 +76,14 @@ hy-home.k8s/
 9. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
 10. AWS/Azure 예시는 2026-05-09 공식 지원 스냅샷을 기준으로 관리하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
 
+## Link Basis
+
+이 README의 링크 기준 위치는 repository root다.
+
+- `docs/...` 링크는 canonical documentation taxonomy로 연결한다.
+- `gitops/`, `infrastructure/`, `examples/`, `scripts/`, `tests/`, `traefik/` 링크는 root-level implementation/support 영역으로 연결한다.
+- nested README 예시는 이 파일의 root-relative 링크를 복사하지 않고, 최종 README 위치에서 상대 경로를 다시 계산한다.
+
 ## Related Documents
 
 - [docs/README.md](docs/README.md)
@@ -83,6 +91,7 @@ hy-home.k8s/
 - [docs/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md](docs/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md)
 - [docs/03.specs/001-wsl-k3d-argocd-platform/spec.md](docs/03.specs/001-wsl-k3d-argocd-platform/spec.md)
 - [docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md](docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
+- [docs/90.references/README.md](docs/90.references/README.md)
 - [.github/ABOUT.md](.github/ABOUT.md)
 - [scripts/README.md](scripts/README.md)
 

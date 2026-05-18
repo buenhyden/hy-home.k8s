@@ -2,6 +2,9 @@
 
 > 반복 가능한 운영 작업을 즉시 실행할 수 있는 체크리스트/절차 문서를 관리한다.
 
+> [!NOTE]
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../00.agent-governance/README.md).
+
 ## Overview
 
 이 경로는 운영자가 장애 상황 또는 재구축 상황에서 바로 실행 가능한 절차를 제공한다.
@@ -67,6 +70,14 @@ docs/05.operations/runbooks/
 4. 복구 절차에는 롤백, 재동기화, 증적 수집 단계를 반드시 포함한다.
 5. 정책 통제 기준은 런북에 복제하지 말고 [policies](../policies/README.md)로 연결한다.
 6. live cluster mutation, Vault write, kubeconfig 변경 예시는 human-approved, bootstrap-only, break-glass 문맥을 유지한다.
+
+## Link Basis
+
+이 README의 링크 기준 위치는 `docs/05.operations/runbooks/`다.
+
+- 같은 폴더의 Runbook 문서는 `./`로 시작한다.
+- sibling operations folder는 `../guides/`, `../policies/`, `../incidents/`로 연결한다.
+- upstream docs stage는 `../../02.architecture/`, `../../03.specs/`, `../../04.execution/`로 연결한다.
 
 ## Related Documents
 

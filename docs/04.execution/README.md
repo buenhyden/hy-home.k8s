@@ -1,5 +1,7 @@
 # 04.execution
 
+> 승인된 요구사항과 명세를 실행 계획과 작업 증적으로 변환하는 execution stage다.
+
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
 
@@ -55,7 +57,7 @@
 
 ## Link Basis
 
-Stage README files: links start from the owning stage folder (`docs/04.execution/`).
+이 README의 링크 기준 위치는 `docs/04.execution/`다.
 
 - 상위 docs stage는 `../`로 시작하는 상대 경로를 사용한다.
 - 하위 실행 폴더는 `./plans/`, `./tasks/`로 연결한다.

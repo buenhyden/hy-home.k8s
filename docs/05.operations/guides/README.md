@@ -2,6 +2,9 @@
 
 > 운영자와 개발자가 k3d/GitOps 작업을 이해하고 재현할 수 있도록 how-to 중심 가이드를 관리한다.
 
+> [!NOTE]
+> All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../00.agent-governance/README.md).
+
 ## Overview
 
 이 경로는 안정 상태의 사용법, 온보딩 흐름, 배경 설명을 제공한다.
@@ -56,12 +59,20 @@ docs/05.operations/guides/
 
 ## How to Work in This Area
 
-1. 먼저 [spec.md](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)에서 현재 계약 값을 확인한다.
+1. 먼저 관련 Spec/Policy/Runbook을 확인한다. 기본 플랫폼 계약은 [WSL2 HA Spec](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)을 기준으로 삼는다.
 2. 새 가이드 추가/수정 시 [guide.template.md](../../99.templates/guide.template.md)를 기반으로 작성한다.
 3. 실행 명령은 복붙 가능한 형태로 유지하고, 시크릿 값은 절대 직접 기재하지 않는다.
 4. 문서 변경 시 이 README의 인덱스(상태/설명/수정일)를 함께 갱신한다.
 5. 명령 순서, 롤백, 복구가 핵심이면 가이드에 복제하지 말고 [runbooks](../runbooks/README.md)에 둔다.
 6. 허용/금지/예외 승인 기준은 가이드가 아니라 [policies](../policies/README.md)에 둔다.
+
+## Link Basis
+
+이 README의 링크 기준 위치는 `docs/05.operations/guides/`다.
+
+- 같은 폴더의 Guide 문서는 `./`로 시작한다.
+- sibling operations folder는 `../policies/`, `../runbooks/`, `../incidents/`로 연결한다.
+- upstream docs stage는 `../../01.requirements/`, `../../02.architecture/`, `../../03.specs/`, `../../04.execution/`로 연결한다.
 
 ## Related Documents
 

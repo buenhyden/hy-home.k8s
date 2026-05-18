@@ -1,4 +1,4 @@
-# 01. PRD (Product Requirements)
+# 01.requirements
 
 > hy-home.k8s 플랫폼의 제품 요구사항(PRD)을 보관하는 canonical stage다.
 
@@ -58,7 +58,7 @@
 
 ## Link Basis
 
-Stage README files: links start from the owning stage folder (`docs/01.requirements/`).
+이 README의 링크 기준 위치는 `docs/01.requirements/`다.
 
 - 상위 문서는 `../`로 시작하는 상대 경로를 사용한다.
 - 동일 stage 문서는 `./`로 시작하는 상대 경로를 사용한다.
