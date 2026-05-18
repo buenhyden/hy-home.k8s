@@ -5,6 +5,10 @@
 모든 README가 공유해야 하는 최소 구조(Base Structure)를 제공하고,
 경로의 목적에 따라 필요한 확장 섹션(Snippet)만 선택적으로 추가할 수 있도록 설계되었다.
 
+README 템플릿은 여러 Target 위치에서 재사용된다. 단일 `Target:` 주석을
+추가하지 말고, 아래 `Link Basis` 규칙에 따라 최종 README 위치에서
+상대 링크를 다시 계산한다.
+
 ## Selection Guide
 - Repository Root (`/`) -> `Base Structure` + `Root Snippet`
 - Implementation Layer (`web/`, `server/`, `app/`, `packages/`, `gitops/`, `infra/`, `infrastructure/`) -> `Base Structure` + `Implementation Snippet`
@@ -30,6 +34,8 @@
 2. `{}` 자리표시자를 실제 내용으로 교체한다.
 3. 현재 경로의 목적에 맞는 `Snippet`만 추가한다.
 4. 사용하지 않는 스니펫과 이 안내 주석은 최종 `README.md`에서 제거한다.
+5. 이 템플릿 파일 안의 안내 링크는 템플릿을 읽기 위한 링크다. 최종
+   README에 남길 링크는 최종 README 위치 기준으로 다시 작성한다.
 
 ## Writing Principles
 - README는 소개문이 아니라 이 경로의 진입 문서여야 한다.
@@ -91,11 +97,13 @@
 ## Link Basis
 
 README targets vary by folder depth. Recalculate every relative link from the
-final README location:
+final README location. Do not copy a relative link from this template unless it
+still resolves from that final location:
 
 - Root README: links start from repository root.
 - `docs/README.md`: links start from `docs/`.
 - Stage README files: links start from the owning stage folder.
+- Nested README files: links start from that nested folder.
 
 ## Related Documents
 

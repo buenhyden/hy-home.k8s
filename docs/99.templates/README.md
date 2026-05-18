@@ -117,6 +117,10 @@ OpenAPI, GraphQL, proto 같은 계약 파일은 관련 `docs/03.specs/<feature-i
 각 폴더 README도 반복적으로 재사용되는 문서 유형이므로 별도 README 템플릿을 함께 제공한다.
 `03.specs/<feature-id>/` 아래에서 반복적으로 사용하는 보조 설계 문서와 계약 파일용 템플릿을 함께 제공한다.
 
+- `readme.template.md`는 repository root, `docs/README.md`, stage README, nested README에서 재사용되는 multi-target 템플릿이다. 단일 `Target:` 주석을 강제하지 않고, 최종 README 위치에서 상대 링크를 다시 계산한다.
+- `memory.template.md`는 `docs/00.agent-governance/memory/<topic>.md` target family를 사용한다. 관련 progress 링크는 최종 memory 파일 위치 기준으로 계산한다.
+- `progress.template.md`는 `docs/00.agent-governance/memory/progress.md`에 append되는 entry 템플릿이다. entry 안의 링크는 `docs/00.agent-governance/memory/` 기준으로 계산한다.
+
 ## Related Documents
 
 - [Docs README](../README.md)

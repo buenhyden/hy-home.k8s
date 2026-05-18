@@ -6,8 +6,12 @@ updated, append the related progress entry to
 `docs/00.agent-governance/memory/progress.md` using
 `docs/99.templates/progress.template.md` in the same change.
 
+Target family: `docs/00.agent-governance/memory/<topic>.md`.
+
 Link basis: standalone memory files live beside `progress.md`, so related
-progress links should be calculated from `docs/00.agent-governance/memory/`.
+progress links should be calculated from `docs/00.agent-governance/memory/`,
+not from this template file. Keep optional or placeholder paths as code
+literals until the target file exists.
 
 - **Date**: YYYY-MM-DD
 - **Layer**: product | architecture | backend | frontend | infra | ops | security | qa | docs | meta

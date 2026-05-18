@@ -5,7 +5,9 @@ Append this entry under `## Work Entries` in
 
 Link basis: this is an appended section inside
 `docs/00.agent-governance/memory/progress.md`; links in entries should be
-relative to `docs/00.agent-governance/memory/`.
+relative to `docs/00.agent-governance/memory/`, not from this template file.
+Keep optional or placeholder paths as code literals until the target file
+exists.
 
 - **Date**: YYYY-MM-DD
 - **Layer**: product | architecture | backend | frontend | infra | ops | security | qa | docs | meta
