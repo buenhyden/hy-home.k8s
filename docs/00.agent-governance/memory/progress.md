@@ -8,6 +8,57 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-18 — docs template link-basis clarification
+
+- **Date**: 2026-05-18
+- **Layer**: docs, meta
+- **Status**: complete
+- **Tags**: #docs #templates #links #validation
+
+#### Progress
+
+- Clarified README template link-basis rules without forcing a single target for
+  the multi-target README template.
+- Clarified `memory.template.md` and `progress.template.md` link-basis wording
+  so generated links are calculated from their final authored memory location,
+  not from the template file.
+- Added a concise `docs/99.templates/README.md` note for the README, memory, and
+  progress template link-basis exceptions.
+- Left existing PRD, ARD, ADR, Spec, Plan, Task, Guide, Policy, Runbook, and
+  Reference documents unchanged because scans did not identify concrete broken
+  links, template residue, stale placeholders requiring correction, or README
+  inventory drift.
+
+#### Memory
+
+- `readme.template.md` is intentionally multi-target and should not receive a
+  single `Target:` comment.
+- `memory.template.md` uses a target family under
+  `docs/00.agent-governance/memory/<topic>.md`; `progress.template.md` is an
+  append-entry template for `docs/00.agent-governance/memory/progress.md`.
+- Target-relative placeholder scans are useful validation evidence, but
+  no-single-target helper templates must be treated as explicit exceptions.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `git diff --check` PASS.
+- Markdown link scan over root, agent gateway, `.claude/CLAUDE.md`, and
+  `docs/**/*.md`: `MISSING_LINKS: 0`.
+- Target-relative placeholder scan over target-bearing templates:
+  `TARGET_REL_LINK_ISSUES: 0`.
+- Authored docs template residue scan outside `docs/99.templates/**`: no matches.
+- Placeholder scan reviewed; matches were code literals, historical plans, or
+  command examples outside the scoped defect criteria.
+
+#### Handoff
+
+- No runtime API, Kubernetes manifest, GitOps desired state, live cluster state,
+  plaintext Secret, or external service action was changed.
+
+---
+
 ### 2026-05-18 — docs stage conformance follow-up
 
 - **Date**: 2026-05-18
