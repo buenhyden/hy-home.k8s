@@ -8,6 +8,63 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-19 — docs template enforcement hardening
+
+- **Date**: 2026-05-19
+- **Layer**: docs, meta
+- **Status**: complete
+- **Tags**: #docs #templates #validation #agents
+
+#### Progress
+
+- Clarified template enforcement in `rules/documentation-protocol.md`,
+  `rules/document-stage-routing.md`, and `rules/stage-authoring-matrix.md`.
+- Updated `docs-stage-routing` and the `doc-writer` Claude/Codex runtime
+  contracts so agents must confirm the template map, read the matching
+  template, preserve required headings, set new authored docs to draft, and
+  report validation evidence.
+- Aligned the harness catalog row for `doc-writer` with its broader
+  stage-document authoring role.
+- Added authored-stage documentation detection to the shared Claude/Codex
+  PreToolUse edit hook so template guidance is surfaced before document edits.
+- Added PostToolUse documentation template enforcement for authored stage docs
+  through `scripts/validate-repo-quality-gates.sh`.
+- Extended hook payload simulation so both Claude and Codex hook paths are
+  checked for documentation template warnings and post-edit enforcement output.
+- Added a local Hookify file-rule reminder for authored stage documentation and
+  ignored `.claude/*.local.md` so Hookify local rules stay out of shared Git
+  history.
+- Extended `scripts/validate-repo-quality-gates.sh` so `03.specs` helper docs
+  (`api-spec.md`, `agent-design.md`, `data-model.md`, and `tests.md`) are
+  checked against their matching templates.
+- Added regression phrase checks for the template enforcement contract across
+  governance, skill, and agent mirror surfaces.
+
+#### Memory
+
+- Template enforcement now spans policy, routing skill, doc-writer agent
+  contracts, Codex mirror, edit hooks, and repo quality gates. Keep these
+  surfaces aligned in the same change when the template contract changes.
+- Generated reference outputs such as `docs/90.references/llm-wiki/wiki-index.md`
+  stay under their generator contract rather than manual authoring.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `git diff --check` PASS.
+- Targeted `rg` scan for template enforcement references reviewed.
+- `bash -n .claude/hooks/k8s-pre-edit.sh .claude/hooks/post-validate.sh scripts/validate-repo-quality-gates.sh` PASS.
+- Claude docs PreToolUse payload simulation surfaced `docs/99.templates/api-spec.template.md`.
+- Claude docs PostToolUse payload simulation returned `[hook] PASS documentation template enforcement`.
+- Hookify local rule created at `.claude/hookify.require-doc-templates.local.md`
+  and kept untracked by `.gitignore`.
+
+#### Handoff
+
+- None.
+
+---
+
 ### 2026-05-19 — docs taxonomy and template alignment
 
 - **Date**: 2026-05-19

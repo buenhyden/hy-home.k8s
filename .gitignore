@@ -61,6 +61,7 @@ secrets/certs/*.p12
 !.opencode/skills/.gitkeep
 
 .claude/settings.local.json
+.claude/*.local.md
 .agent/
 .agents/
 kube-linter-linux.tar.gz

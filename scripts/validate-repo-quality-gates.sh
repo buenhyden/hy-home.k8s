@@ -462,6 +462,10 @@ required_stage_templates = [
     ("docs/02.architecture/requirements/*.md", "ard.template.md"),
     ("docs/02.architecture/decisions/*.md", "adr.template.md"),
     ("docs/03.specs/*/spec.md", "spec.template.md"),
+    ("docs/03.specs/*/api-spec.md", "api-spec.template.md"),
+    ("docs/03.specs/*/agent-design.md", "agent-design.template.md"),
+    ("docs/03.specs/*/data-model.md", "data-model.template.md"),
+    ("docs/03.specs/*/tests.md", "tests.template.md"),
     ("docs/04.execution/plans/*.md", "plan.template.md"),
     ("docs/04.execution/tasks/*.md", "task.template.md"),
     ("docs/05.operations/guides/*.md", "guide.template.md"),
@@ -500,6 +504,45 @@ for glob_pattern, template_name in required_stage_templates:
         for heading in required_headings:
             if heading not in document_headings:
                 fail(f"{rel(path)} missing required template heading from {template_name}: {heading}")
+
+template_enforcement_phrase_checks = {
+    root / "docs/00.agent-governance/rules/documentation-protocol.md": [
+        "docs/99.templates/README.md",
+        "status: draft",
+        "required template headings",
+        "template path used and the validation evidence",
+    ],
+    root / "docs/00.agent-governance/rules/document-stage-routing.md": [
+        "docs/99.templates/readme.template.md",
+        "required template headings",
+        "template path used and validation evidence",
+    ],
+    root / ".claude/skills/docs-stage-routing/skill.md": [
+        "docs/99.templates/README.md",
+        "status: draft",
+        "Required Template",
+        "validation evidence",
+    ],
+    root / ".claude/agents/doc-writer.md": [
+        "docs/99.templates/README.md",
+        "status: draft",
+        "required template headings",
+        "template path used",
+        "Validation evidence",
+    ],
+    root / ".codex/agents/doc-writer.toml": [
+        "docs/99.templates/README.md",
+        "status: draft",
+        "required template headings",
+        "template path used",
+        "Validation evidence",
+    ],
+}
+for path, phrases in template_enforcement_phrase_checks.items():
+    text = read_text(path)
+    for phrase in phrases:
+        if phrase not in text:
+            fail(f"{rel(path)} missing template enforcement phrase: {phrase}")
 
 llm_wiki_dir = root / "docs/90.references/llm-wiki"
 llm_wiki_readme = llm_wiki_dir / "README.md"
@@ -1333,6 +1376,9 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
     manifest_hook_payload = json.dumps(
         {"tool_input": {"file_path": "gitops/platform/headlamp/headlamp-ingress.yaml"}}
     )
+    docs_hook_payload = json.dumps(
+        {"tool_input": {"file_path": "docs/03.specs/example-feature/api-spec.md"}}
+    )
     pre_hook_path = root / ".claude/hooks/k8s-pre-edit.sh"
     pre_hook_result = subprocess.run(
         ["bash", str(pre_hook_path)],
@@ -1347,6 +1393,25 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
     for phrase in ["systemMessage", "GitOps-first", "PostToolUse hook"]:
         if phrase not in pre_hook_result.stdout:
             fail(f"{rel(pre_hook_path)} payload simulation missing output phrase: {phrase}")
+
+    docs_pre_hook_result = subprocess.run(
+        ["bash", str(pre_hook_path)],
+        cwd=root,
+        input=docs_hook_payload,
+        text=True,
+        capture_output=True,
+        env=hook_env,
+    )
+    if docs_pre_hook_result.returncode != 0:
+        fail(f"{rel(pre_hook_path)} docs payload simulation failed: {docs_pre_hook_result.stderr.strip()}")
+    for phrase in [
+        "Template-First",
+        "docs/99.templates/README.md",
+        "docs/99.templates/api-spec.template.md",
+        "documentation template enforcement",
+    ]:
+        if phrase not in docs_pre_hook_result.stdout:
+            fail(f"{rel(pre_hook_path)} docs payload simulation missing output phrase: {phrase}")
 
     post_hook_path = root / ".claude/hooks/post-validate.sh"
     post_hook_result = subprocess.run(
@@ -1371,6 +1436,24 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
         if phrase not in post_hook_result.stdout:
             fail(f"{rel(post_hook_path)} manifest payload simulation missing output phrase: {phrase}")
 
+    docs_post_hook_result = subprocess.run(
+        ["bash", str(post_hook_path)],
+        cwd=root,
+        input=docs_hook_payload,
+        text=True,
+        capture_output=True,
+        env=hook_env,
+    )
+    if docs_post_hook_result.returncode != 0:
+        detail = "\n".join(
+            item
+            for item in [docs_post_hook_result.stdout.strip(), docs_post_hook_result.stderr.strip()]
+            if item
+        )
+        fail(f"{rel(post_hook_path)} docs payload simulation failed:\n{detail}")
+    if "[hook] PASS documentation template enforcement" not in docs_post_hook_result.stdout:
+        fail(f"{rel(post_hook_path)} docs payload simulation missing template enforcement output")
+
     codex_hook_env = {
         **os.environ,
         "CODEX_PROJECT_DIR": str(root),
@@ -1392,6 +1475,19 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
             fail(f"{rel(codex_hooks_path)} Codex PreToolUse payload simulation failed: {codex_pre_result.stderr.strip()}")
         if "GitOps-first" not in codex_pre_result.stdout:
             fail(f"{rel(codex_hooks_path)} Codex PreToolUse simulation missing GitOps warning")
+
+        codex_docs_pre_result = subprocess.run(
+            ["bash", "-lc", codex_pre_command],
+            cwd=root,
+            input=docs_hook_payload,
+            text=True,
+            capture_output=True,
+            env=codex_hook_env,
+        )
+        if codex_docs_pre_result.returncode != 0:
+            fail(f"{rel(codex_hooks_path)} Codex docs PreToolUse payload simulation failed: {codex_docs_pre_result.stderr.strip()}")
+        if "documentation template enforcement" not in codex_docs_pre_result.stdout:
+            fail(f"{rel(codex_hooks_path)} Codex docs PreToolUse simulation missing template enforcement warning")
 
     codex_post_command = hook_command(codex_hooks, "PostToolUse", "Write|Edit|MultiEdit", "post-validate.sh")
     if not codex_post_command:
@@ -1418,6 +1514,24 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
         ]:
             if phrase not in codex_post_result.stdout:
                 fail(f"{rel(codex_hooks_path)} Codex PostToolUse simulation missing output phrase: {phrase}")
+
+        codex_docs_post_result = subprocess.run(
+            ["bash", "-lc", codex_post_command],
+            cwd=root,
+            input=docs_hook_payload,
+            text=True,
+            capture_output=True,
+            env=codex_hook_env,
+        )
+        if codex_docs_post_result.returncode != 0:
+            detail = "\n".join(
+                item
+                for item in [codex_docs_post_result.stdout.strip(), codex_docs_post_result.stderr.strip()]
+                if item
+            )
+            fail(f"{rel(codex_hooks_path)} Codex docs PostToolUse payload simulation failed:\n{detail}")
+        if "[hook] PASS documentation template enforcement" not in codex_docs_post_result.stdout:
+            fail(f"{rel(codex_hooks_path)} Codex docs PostToolUse simulation missing template enforcement output")
 
 claude_agents_dir = root / ".claude/agents"
 codex_agents_dir = root / ".codex/agents"

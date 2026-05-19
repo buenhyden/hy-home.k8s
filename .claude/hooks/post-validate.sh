@@ -70,6 +70,7 @@ cd "$PROJECT_DIR"
 run_json=0
 run_shell=0
 run_manifest=0
+run_docs_template=0
 run_repo_quality=0
 
 for path in "${CHANGED_PATHS[@]}"; do
@@ -93,6 +94,15 @@ examples/*/gitops/*.yml|examples/*/gitops/*.yaml|\
 examples/*/kubernetes/*.yml|examples/*/kubernetes/*.yaml|\
 traefik/*.yml|traefik/*.yaml)
       run_manifest=1
+      ;;
+  esac
+
+  case "$path" in
+    docs/01.requirements/*.md|docs/02.architecture/*.md|\
+docs/03.specs/*.md|docs/04.execution/*.md|\
+docs/05.operations/*.md|docs/90.references/*.md)
+      run_docs_template=1
+      run_repo_quality=1
       ;;
   esac
 
@@ -136,7 +146,9 @@ if [[ "$run_manifest" -eq 1 ]]; then
   run_check "secret handling" bash scripts/check-secret-handling.sh .
 fi
 
-if [[ "$run_repo_quality" -eq 1 ]]; then
+if [[ "$run_docs_template" -eq 1 ]]; then
+  run_check "documentation template enforcement" env HY_HOME_K8S_SKIP_HOOK_SIMULATION=1 bash scripts/validate-repo-quality-gates.sh .
+elif [[ "$run_repo_quality" -eq 1 ]]; then
   run_check "repository quality gates" env HY_HOME_K8S_SKIP_HOOK_SIMULATION=1 bash scripts/validate-repo-quality-gates.sh .
 fi
 
