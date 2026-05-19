@@ -62,7 +62,7 @@ WSL2 개발 환경에서도 운영 수준의 재현성, 보안성, 복구 가능
 - **REQ-PRD-FUN-09**: CI는 정적 검증 중심으로 운영하고 CD는 ArgoCD pull reconciliation 모델을 유지해야 한다.
 - **REQ-PRD-FUN-10**: CI 필수 게이트는 `pre-commit`, `manifest-static`, `workflow-security`, `shell-static`를 포함해야 한다.
 
-## Success Criteria
+## Success / Acceptance Criteria
 
 - **REQ-PRD-MET-01**: 운영자가 Vault-backed secret sync 상태를 확인할 수 있다. Evidence: `vault-backend` ClusterSecretStore `Ready=True`.
 - **REQ-PRD-MET-02**: 운영자가 ArgoCD external Valkey secret sync 상태를 확인할 수 있다. Evidence: `argocd-external-valkey` ExternalSecret `Ready=True`.

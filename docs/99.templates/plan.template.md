@@ -16,6 +16,7 @@ updated: YYYY-MM-DD
 >
 > - Every active plan must include explicit verification criteria.
 > - Plan explains execution order, risk control, and rollout strategy.
+> - Use relative links only, calculated from the final authored document location.
 
 ---
 
@@ -80,3 +81,4 @@ Target-relative examples below assume the authored file will be created at
 - **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
 - **Spec**: `[../../03.specs/<feature-id>/spec.md]`
 - **ADR**: `[../../02.architecture/decisions/####-<short-title>.md]`
+- **Tasks**: `[../tasks/YYYY-MM-DD-<feature-or-stream>.md]`

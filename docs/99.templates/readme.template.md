@@ -7,7 +7,8 @@
 
 README 템플릿은 여러 Target 위치에서 재사용된다. 단일 `Target:` 주석을
 추가하지 말고, 아래 `Link Basis` 규칙에 따라 최종 README 위치에서
-상대 링크를 다시 계산한다.
+상대 링크를 다시 계산한다. 템플릿 안의 예시 링크는 template reader를 위한
+링크이며, 최종 README에 그대로 복사하지 않는다.
 
 ## Selection Guide
 - Repository Root (`/`) -> `Base Structure` + `Root Snippet`
@@ -27,7 +28,7 @@ README 템플릿은 여러 Target 위치에서 재사용된다. 단일 `Target:`
 - [05.operations/policies](../05.operations/policies/README.md): 시스템 운영 정책 및 거버넌스
 - [05.operations/runbooks](../05.operations/runbooks/README.md): 반복적 운영 작업의 실행 지침 (Step-by-step)
 - [05.operations/incidents](../05.operations/incidents/README.md): 발생한 사고의 사실 기록 (Timeline, Mitigation)
-- [05.operations/incidents/postmortems](../05.operations/incidents/README.md): 사고 구조 분석 및 재발 방지 대책
+- [05.operations/incidents/postmortems](../05.operations/incidents/README.md): 첫 postmortem 생성 전에는 incidents README에서 경로와 생성 조건을 안내한다.
 
 ## Assembly Rules
 1. 아래의 `Base Structure`를 먼저 복사한다.
@@ -36,6 +37,7 @@ README 템플릿은 여러 Target 위치에서 재사용된다. 단일 `Target:`
 4. 사용하지 않는 스니펫과 이 안내 주석은 최종 `README.md`에서 제거한다.
 5. 이 템플릿 파일 안의 안내 링크는 템플릿을 읽기 위한 링크다. 최종
    README에 남길 링크는 최종 README 위치 기준으로 다시 작성한다.
+6. placeholder 경로나 optional 문서가 아직 없으면 Markdown 링크가 아니라 code literal로 남긴다.
 
 ## Writing Principles
 - README는 소개문이 아니라 이 경로의 진입 문서여야 한다.
@@ -229,7 +231,7 @@ SNIPPET: DOCS & GOVERNANCE
 
 ## Template Usage
 
-- 새 문서를 만들 때는 `{template-path}` 또는 `templates/` 아래의 적절한 템플릿을 사용한다.
+- 새 문서를 만들 때는 `{template-path}` 또는 `docs/99.templates/` 아래의 적절한 템플릿을 사용한다.
 - 템플릿 없이 새 형식을 임의로 추가하기 전에 기존 문서 체계를 먼저 검토한다.
 - 동일 목적의 문서가 이미 존재하면 새 문서를 만들기보다 기존 문서를 확장하는 방식을 우선한다.
 

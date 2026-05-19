@@ -17,6 +17,7 @@ updated: YYYY-MM-DD
 > - Every active spec must declare PRD and ARD references or make the absence explicit.
 > - Verification is mandatory.
 > - If this feature exposes an external API, link a dedicated API Spec.
+> - Use relative links only, calculated from the final authored document location.
 > - Keep one `Overview (KR)` summary near the top.
 > - This document is the parent design doc; API contracts live in `api-spec.md` under the same feature directory.
 
@@ -33,6 +34,8 @@ updated: YYYY-MM-DD
 [What this spec owns, and what it does not.]
 
 ## Related Inputs
+
+Use this section for upstream requirement, architecture, and decision inputs.
 
 - **PRD**: `[../../01.requirements/YYYY-MM-DD-<feature-or-system>.md]`
 - **ARD**: `[../../02.architecture/requirements/####-<system-or-domain-name>.md]`
@@ -127,7 +130,7 @@ Contract-first 원칙: 이 기능이 외부 API를 제공하는 경우, 상세 A
 - **Fallback**:
 - **Human Escalation**:
 
-## Verification
+## Verification Commands
 
 List the required commands, manual checks, or evidence capture steps.
 
@@ -147,6 +150,8 @@ python evals/run_[feature]_eval.py
 
 Target-relative examples below assume the authored file will be created at
 `docs/03.specs/<feature-id>/spec.md`.
+
+Use this section for downstream or peer documents created from this spec.
 
 - **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
 - **Tasks**: `[../../04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md]`

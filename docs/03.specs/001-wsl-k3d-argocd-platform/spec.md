@@ -143,7 +143,7 @@ externalServices:
 - **Fallback**: manual sync + 이전 리비전 rollback
 - **Human Escalation**: platform owner 승인 후 정책 조정
 
-## Verification
+## Verification Commands
 
 ```bash
 k3d cluster list

@@ -16,6 +16,7 @@ updated: YYYY-MM-DD
 >
 > - Keep ARD architectural.
 > - File-level implementation detail belongs in the Spec.
+> - Use relative links only, calculated from the final authored document location.
 > - Use one `Overview (KR)` summary near the top.
 
 ---

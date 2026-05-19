@@ -36,14 +36,6 @@ Argo Rollouts는 ArgoCD와 동일 생태계(argoproj)에서 기본 통합을 제
 - 멀티클러스터 Rollouts
 - 커스텀 Analysis metric 정의 (초기 설치 범위 외)
 
-## Alternatives
-
-| 옵션          | 평가                                                         |
-| ------------- | ------------------------------------------------------------ |
-| Argo Rollouts | ArgoCD 네이티브 통합, Prometheus 분석, Rollouts Dashboard UI |
-| Flagger       | Flagger는 Istio/Nginx 컨트롤러 의존성 강하여 추가 복잡도     |
-| 수동 배포     | 안전하지만 자동화 없음                                       |
-
 ## Consequences
 
 - `argo-rollouts` namespace 추가
@@ -51,6 +43,14 @@ Argo Rollouts는 ArgoCD와 동일 생태계(argoproj)에서 기본 통합을 제
 - AppProject clusterResourceWhitelist에 `Rollout`, `AnalysisTemplate`, `ClusterAnalysisTemplate`, `AnalysisRun` 추가
 - 외부 Traefik artifact `rollouts-k3d.yaml` 필요
 - 앱 팀은 `Deployment` → `Rollout` manifest 변환 필요 (apps namespace에서)
+
+## Alternatives
+
+| 옵션          | 평가                                                         |
+| ------------- | ------------------------------------------------------------ |
+| Argo Rollouts | ArgoCD 네이티브 통합, Prometheus 분석, Rollouts Dashboard UI |
+| Flagger       | Flagger는 Istio/Nginx 컨트롤러 의존성 강하여 추가 복잡도     |
+| 수동 배포     | 안전하지만 자동화 없음                                       |
 
 ## Status
 

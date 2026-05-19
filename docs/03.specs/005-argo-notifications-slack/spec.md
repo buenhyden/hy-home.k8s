@@ -151,7 +151,7 @@ The interface contract is ArgoCD Notifications ConfigMap syntax, ESO remote refe
   - **Fallback**: verify ExternalSecret readiness and controller logs without printing token values.
   - **Human Escalation**: Vault token bootstrap and Slack permission repair require a human.
 
-## Verification
+## Verification Commands
 
 ```bash
 bash scripts/check-secret-handling.sh .

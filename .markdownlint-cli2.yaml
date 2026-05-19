@@ -24,6 +24,8 @@ config:
       - policy-or-standard
       - system-or-domain-name
       - feature-or-stream
+      - incident-title
+      - subdomain
   MD024: false
 ignores:
   - ".agent/"

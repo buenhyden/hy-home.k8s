@@ -16,7 +16,7 @@
 | 허용/금지/예외 승인 기준을 확인해야 함 | [policies](./policies/README.md) | [operation.template.md](../99.templates/operation.template.md) |
 | 정해진 순서로 실행, 검증, 복구해야 함 | [runbooks](./runbooks/README.md) | [runbook.template.md](../99.templates/runbook.template.md) |
 | 실제 사고 사실, 타임라인을 기록해야 함 | [incidents](./incidents/README.md) | [incident.template.md](../99.templates/incident.template.md) |
-| 사고 후 원인과 재발 방지를 분석해야 함 | [incidents/postmortems](./incidents/README.md) | [postmortem.template.md](../99.templates/postmortem.template.md) |
+| 사고 후 원인과 재발 방지를 분석해야 함 | [incidents README](./incidents/README.md)에서 postmortem 경로 생성 조건 확인 | [postmortem.template.md](../99.templates/postmortem.template.md) |
 
 ## Audience
 
@@ -55,7 +55,7 @@
 ## How to Work in This Area
 
 1. 안정 상태 설명은 `guides/`, 준수해야 할 경계는 `policies/`, 실행 절차는 `runbooks/`, 사고 기록은 `incidents/`로 분리한다.
-2. 사고가 없으면 `incidents/`는 README만 유지한다.
+2. 사고가 없으면 `incidents/`는 README만 유지하고, 첫 postmortem이 생길 때만 `incidents/postmortems/` 하위 문서를 추가한다.
 3. live cluster mutation 예시는 승인 조건, bootstrap-only 예외, break-glass 문맥 없이 추가하지 않는다.
 4. 운영 문서가 현재 `bootstrap-local.sh`, `gitops/platform/external-services`, 정적 검증 계약과 충돌하지 않게 유지한다.
 

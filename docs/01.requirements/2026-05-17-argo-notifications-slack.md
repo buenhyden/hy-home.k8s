@@ -48,7 +48,7 @@ ArgoCD Notifications values, ConfigMap, ExternalSecret, 운영 문서는 이미 
 - **REQ-PRD-FUN-05**: 앱별 opt-in은 annotation `notifications.argoproj.io/subscribe.on-deployed.slack: <channel>`로 설정 가능해야 한다.
 - **REQ-PRD-FUN-06**: 알림 credential bootstrap은 human-approved 외부 작업으로만 수행되어야 한다.
 
-## Success Criteria
+## Success / Acceptance Criteria
 
 - **REQ-PRD-MET-01**: 운영자가 Notifications controller 상태를 확인할 수 있다. Evidence: `argocd-notifications-controller` Pod `Running`.
 - **REQ-PRD-MET-02**: 운영자가 Vault-backed notification credential sync 상태를 확인할 수 있다. Evidence: `argocd-notifications-secret` ExternalSecret `Ready=True`.

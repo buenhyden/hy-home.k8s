@@ -138,7 +138,7 @@ This section preserves historical design evidence only. It is not a deployment i
 | Kiali cannot reach observability | Check service DNS, `172.18.x` EndpointSlices, and `allow-kiali-egress-to-observability`. | External observability endpoint changes require docs and static test updates. |
 | Static contract mismatch | Treat the mismatch as a repo contract drift. | Patch manifests, docs, and tests together in one reviewable change. |
 
-## Verification
+## Verification Commands
 
 Static validation:
 

@@ -56,6 +56,20 @@ hy-home.k8s/
 └── README.md              # This file
 ```
 
+## Documentation Map
+
+`docs/`는 stage별 책임이 분리된 문서 SSoT다. 새 문서나 변경 증적은 아래 책임에 맞는 위치와 템플릿에서 시작한다.
+
+| Area | Responsibility | Template |
+| --- | --- | --- |
+| [`docs/01.requirements`](docs/01.requirements/README.md) | 제품 요구사항, 사용자 문제, 범위, 성공/수용 기준 | [`prd.template.md`](docs/99.templates/prd.template.md) |
+| [`docs/02.architecture`](docs/02.architecture/README.md) | 아키텍처 요구사항, 참조 구조, 의사결정 | [`ard.template.md`](docs/99.templates/ard.template.md), [`adr.template.md`](docs/99.templates/adr.template.md) |
+| [`docs/03.specs`](docs/03.specs/README.md) | 기능/워크플로우/시스템 구현 명세와 계약 | [`spec.template.md`](docs/99.templates/spec.template.md) |
+| [`docs/04.execution`](docs/04.execution/README.md) | 실행 계획, 작업 분해, 검증 증적 | [`plan.template.md`](docs/99.templates/plan.template.md), [`task.template.md`](docs/99.templates/task.template.md) |
+| [`docs/05.operations`](docs/05.operations/README.md) | 운영 가이드, 정책, 런북, 사고 기록 | [`guide.template.md`](docs/99.templates/guide.template.md), [`operation.template.md`](docs/99.templates/operation.template.md), [`runbook.template.md`](docs/99.templates/runbook.template.md) |
+| [`docs/90.references`](docs/90.references/README.md) | 참조 자료, 용어, 버전 인벤토리, lookup material | [`reference.template.md`](docs/99.templates/reference.template.md) |
+| [`docs/99.templates`](docs/99.templates/README.md) | canonical document templates와 target-relative link 규칙 | README의 template mapping 참조 |
+
 ## 현재 구현 경계
 
 - `gitops/`는 로컬 k3d 클러스터의 desired state 정본이다. 현재 구현은 `clusters/local`의 bootstrap/AppProject/ApplicationSet, `apps/root`의 App-of-Apps 선언, `platform/*` 공통 컴포넌트, `workloads/adminer` 참조 워크로드를 포함한다.
@@ -75,6 +89,16 @@ hy-home.k8s/
 8. `.github` 자동화나 QA gate를 바꿀 때는 [`.github/ABOUT.md`](.github/ABOUT.md)와 PR template의 검증 체크리스트를 함께 확인한다.
 9. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
 10. AWS/Azure 예시는 2026-05-09 공식 지원 스냅샷을 기준으로 관리하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
+
+## Common Workflows
+
+| Workflow | Start Here | Expected Follow-up |
+| --- | --- | --- |
+| 요구사항 변경 | [`docs/01.requirements`](docs/01.requirements/README.md) | 관련 ARD/ADR, Spec, Plan 링크를 갱신한다. |
+| 아키텍처 결정 | [`docs/02.architecture`](docs/02.architecture/README.md) | 결정의 결과를 Spec, 운영 정책, runbook에 반영한다. |
+| 기능 구현 | [`docs/03.specs`](docs/03.specs/README.md) | Plan/Task를 만들고 검증 증적을 남긴다. |
+| 운영 절차 변경 | [`docs/05.operations`](docs/05.operations/README.md) | guide, policy, runbook 중 하나로 분류하고 GitOps-first 경계를 유지한다. |
+| 참조값 갱신 | [`docs/90.references`](docs/90.references/README.md) | 스냅샷 기준일과 관련 active stage 문서 영향을 함께 확인한다. |
 
 ## Link Basis
 

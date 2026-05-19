@@ -18,6 +18,7 @@ updated: YYYY-MM-DD
 > - Core behavior should default to TDD.
 > - Agent work must include eval tasks where applicable.
 > - This is the canonical execution-tracking location; feature-local task notes under `03.specs/` are secondary.
+> - Use relative links only, calculated from the final authored document location.
 
 ---
 

@@ -72,25 +72,35 @@
 8. 템플릿의 placeholder 또는 code-literal cross-link는 최종 authored Target 위치 기준으로 계산한다.
    실제 Markdown 링크는 이 템플릿 파일 위치에서도 깨지지 않아야 한다.
 
+## Link Basis
+
+이 README의 링크 기준 위치는 `docs/99.templates/`다.
+
+- 템플릿 안의 실제 Markdown 링크는 `docs/99.templates/` 기준으로도 resolve되어야 한다.
+- 최종 authored 문서 예시 경로는 해당 Target 위치 기준의 code literal로 작성한다.
+- 아직 존재하지 않는 optional 문서, placeholder 경로, target-relative 예시는 Markdown 링크가 아니라 backtick code literal로 남긴다.
+- 생성 문서에 템플릿 안내 주석, placeholder, `Target:` 주석, `Use this template` 문구를 남기지 않는다.
+
 ## Template-Folder Mapping
 
-| Folder | Template |
-| --- | --- |
-| `01.requirements/` | `prd.template.md` |
-| `02.architecture/requirements/` | `ard.template.md` |
-| `02.architecture/decisions/` | `adr.template.md` |
-| `03.specs/` | `spec.template.md` |
-| `03.specs/<feature-id>/api-spec.md` | `api-spec.template.md` |
-| `04.execution/plans/` | `plan.template.md` |
-| `04.execution/tasks/` | `task.template.md` |
-| `05.operations/guides/` | `guide.template.md` |
-| `05.operations/policies/` | `operation.template.md` |
-| `05.operations/runbooks/` | `runbook.template.md` |
-| `05.operations/incidents/` | `incident.template.md` |
-| `05.operations/incidents/postmortems/` | `postmortem.template.md` |
-| `90.references/<category>/` | `reference.template.md` |
-| `00.agent-governance/memory/` | `memory.template.md` |
-| `00.agent-governance/memory/progress.md` | `progress.template.md` |
+| Target Pattern | Template | Responsibility |
+| --- | --- | --- |
+| `README.md`, `docs/**/README.md`, `.claude/README.md`, `.codex/README.md` | `readme.template.md` | Entry point, scope, structure, workflow, link basis |
+| `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md` | `prd.template.md` | Product requirements, users, scope, success / acceptance criteria |
+| `docs/02.architecture/requirements/####-<system-or-domain>.md` | `ard.template.md` | Architecture requirements, quality attributes, reference model |
+| `docs/02.architecture/decisions/####-<short-title>.md` | `adr.template.md` | One architecture decision, context, consequences, alternatives |
+| `docs/03.specs/<feature-id>/spec.md` | `spec.template.md` | Implementation contract, interfaces, verification |
+| `docs/03.specs/<feature-id>/api-spec.md` | `api-spec.template.md` | Feature-local API contract |
+| `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `plan.template.md` | Execution order, risk control, rollout, verification |
+| `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `task.template.md` | Implementation and validation task evidence |
+| `docs/05.operations/guides/####-<topic>.md` | `guide.template.md` | Stable-state user, developer, or operator guidance |
+| `docs/05.operations/policies/####-<topic>.md` | `operation.template.md` | Operational policy, controls, boundaries |
+| `docs/05.operations/runbooks/####-<topic>.md` | `runbook.template.md` | Executable operational procedure and recovery path |
+| `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `incident.template.md` | Incident fact record and timeline |
+| `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `postmortem.template.md` | Incident analysis and prevention follow-up |
+| `docs/90.references/<category>/<topic>.md` | `reference.template.md` | Reference material, glossary, appendix, inventory |
+| `docs/00.agent-governance/memory/<topic>.md` | `memory.template.md` | Stable memory entry |
+| `docs/00.agent-governance/memory/progress.md` | `progress.template.md` | Repo-changing work progress entry |
 
 ## Contract Template Placement
 

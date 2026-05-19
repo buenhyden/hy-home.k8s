@@ -53,7 +53,7 @@ Create a reproducible, secure, and automation-first local platform that mirrors 
 - **REQ-PRD-FUN-08**: ArgoCD 백엔드는 외부 Valkey를 사용해야 한다.
 - **REQ-PRD-FUN-09**: 문서 체계는 `01.requirements`부터 `05.operations`까지의 산출물과 상호 상대링크를 제공해야 한다.
 
-## Success Criteria
+## Success / Acceptance Criteria
 
 - **REQ-PRD-MET-01**: Platform Engineer가 로컬 클러스터를 30분 이내 재구축할 수 있다. Evidence: 연결된 Plan/Task의 bootstrap 검증 기록.
 - **REQ-PRD-MET-02**: 운영자가 ArgoCD 동기화 상태를 안정적으로 확인할 수 있다. Evidence: 테스트 시나리오 기준 ArgoCD 동기화 성공률 99% 이상.

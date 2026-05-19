@@ -32,6 +32,13 @@ Headlamp는 CNCF 프로젝트로, 경량 단일 컨테이너 구성과 ServiceAc
 - 멀티클러스터 Headlamp 연결
 - OIDC 인증 (로컬 플랫폼은 ServiceAccount Token 방식)
 
+## Consequences
+
+- `kubernetes-dashboard` namespace 및 관련 RBAC 제거
+- AppProject `sourceRepos`에서 dashboard repo 제거, headlamp repo 추가
+- 외부 Traefik artifact `headlamp-k3d.yaml` 필요 (별도 Traefik 레포 적용)
+- Vault/ESO 시크릿 변경 없음
+
 ## Alternatives
 
 | 옵션                  | 평가                                                          |
@@ -39,13 +46,6 @@ Headlamp는 CNCF 프로젝트로, 경량 단일 컨테이너 구성과 ServiceAc
 | K8s Dashboard v3 유지 | chart repo 비활성화, Kong 의존성으로 리소스 과다, 유지 어려움 |
 | Headlamp              | CNCF 프로젝트, 경량, 단순 SA 토큰 인증, 플러그인 확장 가능    |
 | Octant                | 개발 중단됨                                                   |
-
-## Consequences
-
-- `kubernetes-dashboard` namespace 및 관련 RBAC 제거
-- AppProject `sourceRepos`에서 dashboard repo 제거, headlamp repo 추가
-- 외부 Traefik artifact `headlamp-k3d.yaml` 필요 (별도 Traefik 레포 적용)
-- Vault/ESO 시크릿 변경 없음
 
 ## Status
 

@@ -8,7 +8,7 @@
 ## Overview
 
 이 경로는 `hy-home.k8s` 플랫폼의 제품 요구사항(PRD)을 보관하는 canonical stage다.
-새 기능이나 플랫폼 변화가 어떤 사용자/운영자 가치와 성공 기준을 가져야 하는지 먼저 정의한다.
+새 기능이나 플랫폼 변화가 어떤 사용자/운영자 가치와 성공/수용 기준을 가져야 하는지 먼저 정의한다.
 모든 개발의 시작점이며, '무엇을(What)', '왜(Why)' 개발하는지 설명한다.
 
 ## Audience
@@ -52,9 +52,10 @@
 
 1. 새 요구사항을 작성하기 전에 같은 문제를 다루는 기존 PRD를 먼저 확인한다.
 2. 새 PRD는 `../99.templates/prd.template.md`에서 시작한다.
-3. 요구사항 변경 시 관련 `02.architecture/requirements/`, `03.specs/`, `04.execution/plans/` 링크를 함께 갱신한다.
-4. 구현 파일, manifest, 스크립트, 운영 명령 수준의 상세 설계는 PRD에 직접 확장하지 않고 후속 ARD/Spec/Plan 갭으로 남긴다.
-5. Agent 기능 요구에는 허용/금지 행동과 human-in-the-loop 기준을 포함한다.
+3. PRD는 문제, persona/use case, 기능 요구, `Success / Acceptance Criteria`, 범위/비범위를 분리한다.
+4. 요구사항 변경 시 관련 `02.architecture/requirements/`, `03.specs/`, `04.execution/plans/` 링크를 함께 갱신한다.
+5. 구현 파일, manifest, 스크립트, 운영 명령 수준의 상세 설계는 PRD에 직접 확장하지 않고 후속 ARD/Spec/Plan 갭으로 남긴다.
+6. Agent 기능 요구에는 허용/금지 행동과 human-in-the-loop 기준을 포함한다.
 
 ## Link Basis
 
@@ -100,7 +101,7 @@
 
 ## 예시
 
-신규 플랫폼 기능은 `2026-03-29-platform-expansion-dashboard-mesh.md`처럼 사용자 가치, 범위, 성공 기준을 먼저 기록한다.
+신규 플랫폼 기능은 `2026-03-29-platform-expansion-dashboard-mesh.md`처럼 사용자 가치, 범위, 성공/수용 기준을 먼저 기록한다.
 
 ## Related Documents
 

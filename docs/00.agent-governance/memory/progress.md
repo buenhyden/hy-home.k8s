@@ -8,6 +8,52 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-19 — docs taxonomy and template alignment
+
+- **Date**: 2026-05-19
+- **Layer**: docs, meta
+- **Status**: complete
+- **Tags**: #docs #templates #links #validation
+
+#### Progress
+
+- Clarified root and docs hub entrypoints with the documentation map,
+  lifecycle contract, template-to-folder mapping, stale-document rules, and
+  target-relative link expectations.
+- Hardened canonical PRD, ARD, ADR, Spec, Plan, Task, README, and Runbook
+  templates without adding new files.
+- Aligned safely identifiable generated documents with updated template
+  structure, including PRD acceptance criteria headings, Spec verification
+  command headings, selected ADR section order, and selected operations
+  document section placement.
+- Consolidated the completed template cross-link plan's stale unchecked task
+  detail section into historical execution notes and a migration note.
+
+#### Memory
+
+- Template heading changes affect quality-gate-required headings for generated
+  docs. Update the template and every authored document using that template in
+  the same change.
+- Keep optional or placeholder cross-link examples as code literals unless the
+  target exists and the link resolves from the current Markdown file.
+- Completed execution plans should not retain unchecked step-by-step execution
+  checklists unless they clearly describe historical evidence rather than future
+  work.
+
+#### Evidence
+
+- `git diff --check` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+
+#### Handoff
+
+- No files were deleted, moved, or renamed.
+- External version inventory values were not refreshed; this pass only aligned
+  documentation structure, templates, and local cross-link rules.
+
+---
+
 ### 2026-05-18 — docs stage README link-basis normalization
 
 - **Date**: 2026-05-18

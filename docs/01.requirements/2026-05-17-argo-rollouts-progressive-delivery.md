@@ -48,7 +48,7 @@ Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 
 - **REQ-PRD-FUN-05**: 기본 promotion 전략은 수동 승인(analysis-run 없이)을 사용해야 한다.
 - **REQ-PRD-FUN-06**: 표준 local route를 통해 `rollouts.127.0.0.1.nip.io` 접근을 제공해야 한다.
 
-## Success Criteria
+## Success / Acceptance Criteria
 
 - **REQ-PRD-MET-01**: 운영자가 Rollouts controller 상태를 확인할 수 있다. Evidence: `argo-rollouts-controller` Deployment `Available=True`.
 - **REQ-PRD-MET-02**: 운영자가 Dashboard에서 rollout 진행률을 확인할 수 있다. Evidence: `rollouts.127.0.0.1.nip.io` HTTPS 접근 성공.

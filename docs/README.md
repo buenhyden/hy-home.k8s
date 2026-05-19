@@ -90,6 +90,28 @@ docs/
 
 `01.requirements` (기획) -> `02.architecture/requirements` / `02.architecture/decisions` (설계와 결정) -> `03.specs` (상세 명세) -> `04.execution/plans` / `04.execution/tasks` (실행과 검증) -> `05.operations/guides` / `05.operations/policies` / `05.operations/runbooks` (운영 지식) -> `05.operations/incidents` (사고와 회고)
 
+## Documentation Contract
+
+이 저장소의 문서 변경은 stage 책임, 템플릿, 링크 기준을 함께 지켜야 한다.
+
+| Lifecycle Stage | Folder | Canonical Template | Required Responsibility |
+| --- | --- | --- | --- |
+| Requirement | [`01.requirements`](./01.requirements/README.md) | [`prd.template.md`](./99.templates/prd.template.md) | 사용자 문제, 범위, 기능 요구사항, 성공/수용 기준 |
+| Architecture Requirement | [`02.architecture/requirements`](./02.architecture/requirements/README.md) | [`ard.template.md`](./99.templates/ard.template.md) | 시스템 경계, 품질 속성, 참조 구조 |
+| Architecture Decision | [`02.architecture/decisions`](./02.architecture/decisions/README.md) | [`adr.template.md`](./99.templates/adr.template.md) | 하나의 결정, 맥락, 결과, 대안 |
+| Specification | [`03.specs`](./03.specs/README.md) | [`spec.template.md`](./99.templates/spec.template.md) | 구현 계약, 인터페이스, 검증 기준 |
+| Plan | [`04.execution/plans`](./04.execution/plans/README.md) | [`plan.template.md`](./99.templates/plan.template.md) | 실행 순서, 리스크, rollout, verification gate |
+| Task | [`04.execution/tasks`](./04.execution/tasks/README.md) | [`task.template.md`](./99.templates/task.template.md) | 작업 단위, evidence, 완료 상태 |
+| Operation | [`05.operations`](./05.operations/README.md) | guide/operation/runbook templates | 안정 상태 안내, 정책, 실행 절차 |
+| Reference | [`90.references`](./90.references/README.md) | [`reference.template.md`](./99.templates/reference.template.md) | lookup material, glossary, appendix, version snapshot |
+
+- README와 index 문서는 해당 폴더의 목적, scope, structure, workflow, link basis, related documents를 유지한다.
+- 모든 authored stage 문서는 `Related Documents`를 통해 upstream/downstream 문맥을 연결한다.
+- Markdown 링크는 최종 문서 위치 기준 상대 경로를 사용한다. 아직 존재하지 않는 optional 경로나 placeholder는 Markdown 링크가 아니라 code literal로 남긴다.
+- stale 문서는 먼저 갱신하거나 중복 내용을 병합한다. reference/archive 성격으로 옮기는 작업은 사전 reference search와 migration note가 있을 때만 수행한다.
+- 문서를 제거하는 일은 reference search, migration note, 리뷰 가능한 diff가 있을 때만 허용한다.
+- 문서 stage나 템플릿이 바뀌면 관련 stage README와 [`99.templates/README.md`](./99.templates/README.md)를 같은 변경에서 맞춘다.
+
 ## 구현 영역 연결
 
 - `gitops/`: 현재 로컬 플랫폼 desired state다. `clusters/local`, `apps/root`, `platform/*`, `workloads/adminer` 변경은 관련 Spec/Policy/Runbook 링크와 함께 추적한다.

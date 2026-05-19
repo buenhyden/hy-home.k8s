@@ -8,18 +8,16 @@ updated: 2026-05-09
 
 # 앱 GitOps 온보딩 정책
 
-## 문서 유형
-
-`운영 정책 — WSL2 k3d/k3s GitOps 앱 온보딩`
-
-## 목적
+## Overview (KR)
 
 이 문서는 `hy-home.k8s` 클러스터에 새로운 애플리케이션을 온보딩할 때 따라야 하는
 플랫폼 운영 정책을 정의한다.
 
-## Overview (KR)
-
 이 정책은 `gitops/workloads/<appname>/`에 새 앱을 추가할 때 필요한 배포 리소스, 네트워킹, 보안, GitOps 워크플로우 통제를 정의한다.
+
+## Purpose
+
+`운영 정책 — WSL2 k3d/k3s GitOps 앱 온보딩`
 
 ## Policy Scope
 

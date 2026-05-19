@@ -155,7 +155,7 @@ updated: 2026-05-18
   - **Fallback**: `verify-contracts-static.sh` 패턴 강화 + 회귀 테스트 추가
   - **Human Escalation**: 정적 계약 누락이 반복되면 관련 Operations policy를 갱신한다.
 
-## Verification
+## Verification Commands
 
 ### Static (CI/Local)
 

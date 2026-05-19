@@ -64,7 +64,7 @@ Kubernetes Dashboard와 `dashboard.127.0.0.1.nip.io` 노출 요구는 [ADR-0010]
 - **REQ-PRD-FUN-11**: 외부 Traefik route는 Headlamp/Kiali 접근을 지원해야 한다.
 - **REQ-PRD-FUN-12**: 정적 검증은 신규 서비스 계약 회귀를 탐지해야 한다.
 
-## Success Criteria
+## Success / Acceptance Criteria
 
 - **REQ-PRD-MET-01**: Platform Engineer가 current external service contract 회귀를 탐지할 수 있다. Evidence: 외부 서비스 연결 회귀 0건.
 - **REQ-PRD-MET-02**: 운영자가 cert-manager 발급 경로를 확인할 수 있다. Evidence: cert-manager `ClusterIssuer` Ready=True.

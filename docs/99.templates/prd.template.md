@@ -15,7 +15,7 @@ updated: YYYY-MM-DD
 > Rules:
 >
 > - Use exactly one meaningful H1.
-> - Use relative links only.
+> - Use relative links only, calculated from the final authored document location.
 > - Remove every placeholder before saving.
 > - Keep implementation detail out of the PRD.
 > - Keep one `Overview (KR)` summary near the top.
@@ -51,7 +51,7 @@ updated: YYYY-MM-DD
 - **REQ-PRD-FUN-01**: [Requirement]
 - **REQ-PRD-FUN-02**: [Requirement]
 
-## Success Criteria
+## Success / Acceptance Criteria
 
 - **REQ-PRD-MET-01**: [Metric and target]
 - **REQ-PRD-MET-02**: [Metric and target]

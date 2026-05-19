@@ -17,6 +17,7 @@ updated: YYYY-MM-DD
 > - One decision per ADR.
 > - Do not turn ADRs into implementation specs.
 > - Use global numbering.
+> - Use relative links only, calculated from the final authored document location.
 
 ---
 

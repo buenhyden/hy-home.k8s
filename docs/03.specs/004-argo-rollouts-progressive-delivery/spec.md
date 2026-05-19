@@ -150,7 +150,7 @@ The public contract is Kubernetes CRDs and dashboard/metrics endpoints.
   - **Fallback**: operator uses runbook rollback/undo path.
   - **Human Escalation**: production-like promotion policy change requires platform owner approval.
 
-## Verification
+## Verification Commands
 
 ```bash
 bash scripts/validate-gitops-structure.sh
