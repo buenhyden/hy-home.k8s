@@ -2,6 +2,11 @@
 
 Canonical authoring matrix for the current docs taxonomy.
 
+All authored stage documents must use the matching template from
+`docs/99.templates/README.md` before writing. New authored documents start with
+`status: draft`, keep the required template headings, and include
+`## Related Documents`. README entrypoints use `readme.template.md`.
+
 | Taxonomy Path | Purpose | Authoring Timing | Persona (Primary) | Input Documents | Output Documents | Template | Completion Criteria |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `00.agent-governance` | Agent governance and execution control | Before work starts and when governance changes | Governance Steward | Repository structure, policy context | Rules/scopes/providers/memory entries | `memory.template.md`, `progress.template.md` | JIT loading, language boundary, progress ledger, and checklist consistency are enforced |

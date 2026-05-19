@@ -15,6 +15,18 @@ This protocol defines how governance references authored docs and how language b
 - Do not create parallel authored trees such as `docs/superpowers/**`.
 - Do not place API contract docs under `docs/api/**`; keep them under `docs/03.specs/<feature-id>/`.
 
+## Template Enforcement Policy
+
+- All authored documents under `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/04.execution/`, `docs/05.operations/`, and `docs/90.references/` must start from the matching template listed in `docs/99.templates/README.md`.
+- README files must use `docs/99.templates/readme.template.md`.
+- PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook, Incident, Postmortem, and Reference documents must use their stage-specific templates from `docs/99.templates/`.
+- `docs/03.specs/<feature-id>/api-spec.md`, `agent-design.md`, `data-model.md`, and `tests.md` must use their matching helper templates.
+- New authored documents must keep `status: draft` until a human promotes the lifecycle state.
+- Authored documents must keep the required template headings and must include `## Related Documents`.
+- Agents must report the template path used and the validation evidence before handoff.
+- Generated exceptions, such as `docs/90.references/llm-wiki/wiki-index.md`, must keep their generator contract and must not be edited by hand.
+- Claude and Codex Write/Edit/MultiEdit hooks must surface Template-First guidance before authored stage doc edits and run post-edit documentation template enforcement.
+
 ## Language Boundary Rules
 
 - `docs/00.agent-governance/*`: English only.
@@ -43,7 +55,7 @@ This protocol defines how governance references authored docs and how language b
 
 ## Docs 3 Rules (HALT)
 
-**R1 — Template-First:** Read the matching template in `docs/99.templates/` before creating any document. Fill all required fields; set `status: draft`. k8s-specific triggers: new namespace → ARD required; RBAC change → ADR required; production change → OPER policy first.
+**R1 — Template-First:** Read `docs/99.templates/README.md`, then read the matching template in `docs/99.templates/` before creating any document. Fill all required fields and required template headings; set `status: draft`. k8s-specific triggers: new namespace → ARD required; RBAC change → ADR required; production change → OPER policy first.
 
 **R2 — README Sync:** Any folder-level change (add, move, remove files) requires the folder's `README.md` to be updated in the same PR. Work is **BLOCKED** until the README reflects the change.
 

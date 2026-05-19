@@ -14,8 +14,13 @@ Use the existing stage structure only.
 
 | Document Intent | Canonical Path | Required Template | Notes |
 | --- | --- | --- | --- |
+| README or folder index | `README.md`, `docs/**/README.md` | `docs/99.templates/readme.template.md` | Use for repository, stage, and nested folder entrypoints. |
+| Product requirement | `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md` | `docs/99.templates/prd.template.md` | Use for product intent, scope, success criteria, and acceptance criteria. |
+| Architecture requirement | `docs/02.architecture/requirements/####-<system-or-domain>.md` | `docs/99.templates/ard.template.md` | Use for architecture requirements and quality attributes. |
+| Architecture decision | `docs/02.architecture/decisions/####-<short-title>.md` | `docs/99.templates/adr.template.md` | Use for decision context, selected option, alternatives, and consequences. |
 | Technical specification | `docs/03.specs/<feature-id>/spec.md` | `docs/99.templates/spec.template.md` | Use for implementation contracts and detailed design. |
 | Implementation plan | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `docs/99.templates/plan.template.md` | Use for execution order, risks, gates, and rollout. |
+| Task record | `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `docs/99.templates/task.template.md` | Use for implementation status, validation evidence, and handoff. |
 | API contract | `docs/03.specs/<feature-id>/api-spec.md` | `docs/99.templates/api-spec.template.md` | Never route to `docs/api/**`. |
 | Agent design | `docs/03.specs/<feature-id>/agent-design.md` | `docs/99.templates/agent-design.template.md` | Use for role/tool/policy/memory design tied to one feature. |
 | Data model | `docs/03.specs/<feature-id>/data-model.md` | `docs/99.templates/data-model.template.md` | Use for schema and storage design tied to one feature. |
@@ -109,9 +114,13 @@ When a skill suggests one of these paths, reroute the output into the canonical 
 
 ## Authoring Guardrails
 
-- Read the matching template under `docs/99.templates/` before creating any stage document.
+- Read `docs/99.templates/README.md`, then read the matching template under `docs/99.templates/` before creating any stage document.
+- New authored documents must set `status: draft` until a human promotes the lifecycle state.
+- The required template headings are part of the document contract and must not be omitted.
 - New or moved authored documents must trigger a same-change update to the owning folder `README.md`.
 - Every newly created authored document must include `## Related Documents`.
+- Agents must return the template path used and validation evidence in the handoff.
+- Claude and Codex edit hooks must warn on authored stage doc paths and run post-edit template enforcement through the repository quality gate.
 - Governance docs remain English-only; human-facing READMEs remain Korean.
 - Root gateway files must stay thin and should link to rule docs instead of duplicating rule text.
 
