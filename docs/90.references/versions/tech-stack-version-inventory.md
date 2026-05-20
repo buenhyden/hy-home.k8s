@@ -114,7 +114,7 @@ helm_charts:
 github_actions:
   'actions/checkout': 'v6'
   'actions/first-interaction': 'v3'
-  'actions/labeler': 'v6.0.1'
+  'actions/labeler': 'v6.1.0'
   'actions/setup-python': 'v6'
   'actions/stale': 'v10'
   'actions/upload-artifact': 'v7'
