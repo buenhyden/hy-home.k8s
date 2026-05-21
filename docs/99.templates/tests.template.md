@@ -19,6 +19,7 @@ updated: YYYY-MM-DD
 > - Agent functionality must include both software tests and eval coverage when applicable.
 > - Execution-tracking remains in `04.execution/tasks/`.
 > - This document defines strategy and test inventory.
+> - Use relative links only, calculated from the final authored document location.
 
 ---
 

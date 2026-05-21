@@ -66,7 +66,7 @@ hy-home.k8s/
 | [`docs/02.architecture`](docs/02.architecture/README.md) | 아키텍처 요구사항, 참조 구조, 의사결정 | [`ard.template.md`](docs/99.templates/ard.template.md), [`adr.template.md`](docs/99.templates/adr.template.md) |
 | [`docs/03.specs`](docs/03.specs/README.md) | 기능/워크플로우/시스템 구현 명세와 계약 | [`spec.template.md`](docs/99.templates/spec.template.md) |
 | [`docs/04.execution`](docs/04.execution/README.md) | 실행 계획, 작업 분해, 검증 증적 | [`plan.template.md`](docs/99.templates/plan.template.md), [`task.template.md`](docs/99.templates/task.template.md) |
-| [`docs/05.operations`](docs/05.operations/README.md) | 운영 가이드, 정책, 런북, 사고 기록 | [`guide.template.md`](docs/99.templates/guide.template.md), [`operation.template.md`](docs/99.templates/operation.template.md), [`runbook.template.md`](docs/99.templates/runbook.template.md) |
+| [`docs/05.operations`](docs/05.operations/README.md) | 운영 가이드, 정책, 런북, 사고 기록 | [`guide.template.md`](docs/99.templates/guide.template.md), [`operation.template.md`](docs/99.templates/operation.template.md), [`runbook.template.md`](docs/99.templates/runbook.template.md), [`incident.template.md`](docs/99.templates/incident.template.md), [`postmortem.template.md`](docs/99.templates/postmortem.template.md) |
 | [`docs/90.references`](docs/90.references/README.md) | 참조 자료, 용어, 버전 인벤토리, lookup material | [`reference.template.md`](docs/99.templates/reference.template.md) |
 | [`docs/99.templates`](docs/99.templates/README.md) | canonical document templates와 target-relative link 규칙 | README의 template mapping 참조 |
 

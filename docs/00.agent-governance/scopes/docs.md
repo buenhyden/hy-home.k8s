@@ -25,6 +25,7 @@ Persona: Technical Writer
 | `docs/README.md`        | docs  | Docs index README (Korean)      |
 
 Docs scope does **not** own `docs/00.agent-governance/` (meta scope) or infra manifests.
+Stage README ownership follows the owning stage persona. Docs scope owns shared README and template standards, not every stage-specific README implementation detail.
 
 ## Subagent Bridge
 

@@ -17,6 +17,7 @@ updated: YYYY-MM-DD
 > - This document captures logical/physical data structures for the feature.
 > - Keep API surface details in `api-spec.md`.
 > - Keep migration execution steps in Plan or Runbook, not here.
+> - Use relative links only, calculated from the final authored document location.
 
 ---
 

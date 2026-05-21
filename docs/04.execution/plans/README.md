@@ -75,16 +75,16 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 
 | 문서                                                                                       | 설명                                                                            | 상태  | 최종 수정  |
 | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- | ----- | ---------- |
-| [`./2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md)         | WSL2 GitOps 플랫폼 단계별 실행 계획                                             | Draft | 2026-03-27 |
-| [`./2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | TLS/최소권한 유지 + 변경영역 기반 CI 정적 게이트 + 롤백 규칙을 포함한 실행 계획 | Draft | 2026-03-28 |
-| [`./2026-03-29-platform-expansion.md`](./2026-03-29-platform-expansion.md)                   | 2026-03-29 IP 수정 + cert-manager/Dashboard/Istio/Kiali 확장 계획, 현재 실행계약은 Headlamp/172.18.x 기준 | Done  | 2026-05-09 |
+| [`./2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md)         | WSL2 GitOps 플랫폼 단계별 실행 계획                                             | Draft | 2026-05-21 |
+| [`./2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | TLS/최소권한 유지 + 변경영역 기반 CI 정적 게이트 + 롤백 규칙을 포함한 실행 계획 | Draft | 2026-05-18 |
+| [`./2026-03-29-platform-expansion.md`](./2026-03-29-platform-expansion.md)                   | 2026-03-29 IP 수정 + cert-manager/Dashboard/Istio/Kiali 확장 계획, 현재 실행계약은 Headlamp/172.18.x 기준 | Done  | 2026-05-21 |
 | [`./2026-05-09-k3d-agent-first-remediation.md`](./2026-05-09-k3d-agent-first-remediation.md) | k3d 운영 문서와 Agent-first 실행 계약의 GitOps-first 충돌 보정 계획 | Done  | 2026-05-09 |
-| [`./2026-05-09-scripts-inventory-remediation.md`](./2026-05-09-scripts-inventory-remediation.md) | `scripts/` 인벤토리 조사와 README 실행 계약 보정 계획 | Done  | 2026-05-09 |
+| [`./2026-05-09-scripts-inventory-remediation.md`](./2026-05-09-scripts-inventory-remediation.md) | `scripts/` 인벤토리 조사와 README 실행 계약 보정 계획 | Done  | 2026-05-21 |
 | [`./2026-05-09-github-qa-ci-remediation.md`](./2026-05-09-github-qa-ci-remediation.md) | `.github` QA, CI, 브랜치 정책, PR intake 계약 보정 계획 | Done  | 2026-05-09 |
 | [`./2026-05-10-agent-first-harness-llm-wiki-hooks.md`](./2026-05-10-agent-first-harness-llm-wiki-hooks.md) | Agent-first harness, LLM Wiki, hook wiring 보정 계획 | Done  | 2026-05-10 |
-| [`./2026-05-17-template-crosslink-fix.md`](./2026-05-17-template-crosslink-fix.md) | 문서 템플릿 target-relative 링크와 생성 문서 표시 경로 정합화 계획 | Done  | 2026-05-17 |
-| [`./2026-05-18-argo-rollouts-progressive-delivery.md`](./2026-05-18-argo-rollouts-progressive-delivery.md) | Argo Rollouts current-contract backfill 실행 계획 | Done | 2026-05-18 |
-| [`./2026-05-18-argo-notifications-slack.md`](./2026-05-18-argo-notifications-slack.md) | ArgoCD Notifications Slack current-contract backfill 실행 계획 | Done | 2026-05-18 |
+| [`./2026-05-17-template-crosslink-fix.md`](./2026-05-17-template-crosslink-fix.md) | 문서 템플릿 target-relative 링크와 생성 문서 표시 경로 정합화 계획 | Done  | 2026-05-21 |
+| [`./2026-05-18-argo-rollouts-progressive-delivery.md`](./2026-05-18-argo-rollouts-progressive-delivery.md) | Argo Rollouts current-contract backfill 실행 계획 | Done | 2026-05-21 |
+| [`./2026-05-18-argo-notifications-slack.md`](./2026-05-18-argo-notifications-slack.md) | ArgoCD Notifications Slack current-contract backfill 실행 계획 | Done | 2026-05-21 |
 
 ## Related Documents
 

@@ -18,6 +18,7 @@ updated: YYYY-MM-DD
 > - Do not create a parallel `docs/api/` tree for this document.
 > - Use this for REST, GraphQL, or gRPC contracts.
 > - Link the parent Spec near the top.
+> - Use relative links only, calculated from the final authored document location.
 
 ---
 

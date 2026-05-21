@@ -206,9 +206,11 @@ fix: fix <appname> config             ← 설정 수정
 
 ---
 
-## 5. 온보딩 체크리스트
+## 5. 온보딩 통제 체크리스트
 
 새 앱 온보딩 전 아래 항목을 확인한다:
+
+실행 절차는 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)을 기준으로 수행한다.
 
 ```
 [ ] GitHub 레포에 CI workflow 추가 (ghcr.io push)

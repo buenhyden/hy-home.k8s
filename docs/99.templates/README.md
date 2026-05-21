@@ -71,7 +71,7 @@
 7. Agent 기능 문서는 Role, Tool, Guardrail, Eval, Fallback을 빠뜨리지 않는다.
 8. 템플릿의 placeholder 또는 code-literal cross-link는 최종 authored Target 위치 기준으로 계산한다.
    실제 Markdown 링크는 이 템플릿 파일 위치에서도 깨지지 않아야 한다.
-9. README 템플릿은 frontmatter를 요구하지 않는다. PRD/ARD/ADR/Spec/Plan/Task와 운영·참조 템플릿은 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
+9. README 템플릿은 frontmatter를 요구하지 않는다. PRD/ARD/ADR/Spec/Plan/Task, Spec helper Markdown 템플릿(`api-spec`, `agent-design`, `data-model`, `tests`), 운영·참조 템플릿은 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
 10. 템플릿 구조를 바꾸면 이미 생성된 문서에 안전하게 반영할 수 있는 heading, placeholder, Related Documents만 갱신하고 문서 고유 의도는 대량 재작성하지 않는다.
 
 ## Link Basis
@@ -93,6 +93,12 @@
 | `docs/02.architecture/decisions/####-<short-title>.md` | `adr.template.md` | One architecture decision, context, consequences, alternatives |
 | `docs/03.specs/<feature-id>/spec.md` | `spec.template.md` | Implementation contract, interfaces, verification |
 | `docs/03.specs/<feature-id>/api-spec.md` | `api-spec.template.md` | Feature-local API contract |
+| `docs/03.specs/<feature-id>/agent-design.md` | `agent-design.template.md` | Feature-local AI agent behavior, orchestration, safety, and eval design |
+| `docs/03.specs/<feature-id>/data-model.md` | `data-model.template.md` | Feature-local logical and physical data model |
+| `docs/03.specs/<feature-id>/tests.md` | `tests.template.md` | Feature-local test and evaluation strategy |
+| `docs/03.specs/<feature-id>/contracts/openapi.yaml` | `openapi.template.yaml` | Feature-local OpenAPI contract |
+| `docs/03.specs/<feature-id>/contracts/schema.graphql` | `schema.template.graphql` | Feature-local GraphQL schema contract |
+| `docs/03.specs/<feature-id>/contracts/service.proto` | `service.template.proto` | Feature-local gRPC/protobuf contract |
 | `docs/03.specs/<feature-id>/README.md` | `readme.template.md` | Optional feature-local index when a spec folder grows beyond `spec.md` |
 | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `plan.template.md` | Execution order, risk control, rollout, verification |
 | `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `task.template.md` | Implementation and validation task evidence |
@@ -132,6 +138,7 @@ OpenAPI, GraphQL, proto 같은 계약 파일은 관련 `docs/03.specs/<feature-i
 
 - `readme.template.md`는 repository root, `docs/README.md`, stage README, nested README에서 재사용되는 multi-target 템플릿이다. 단일 `Target:` 주석을 강제하지 않고, 최종 README 위치에서 상대 링크를 다시 계산한다.
 - `docs/03.specs/<feature-id>/README.md`는 필수가 아니다. 기본 인덱스는 `docs/03.specs/README.md`가 소유하며, feature-local README는 API/agent/data/test 보조 문서가 늘어날 때만 만든다.
+- `openapi.template.yaml`, `schema.template.graphql`, `service.template.proto`는 형식상 YAML/GraphQL/proto 파일이므로 frontmatter 없이 owner comments와 parent API spec 링크로 추적성을 유지한다.
 - `memory.template.md`는 `docs/00.agent-governance/memory/<topic>.md` target family를 사용한다. 관련 progress 링크는 최종 memory 파일 위치 기준으로 계산한다.
 - `progress.template.md`는 `docs/00.agent-governance/memory/progress.md`에 append되는 entry 템플릿이다. entry 안의 링크는 `docs/00.agent-governance/memory/` 기준으로 계산한다.
 

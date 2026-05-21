@@ -3,7 +3,7 @@ title: 'Platform Expansion Mesh Dashboard Architecture Reference Document'
 type: ard
 status: draft
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-21
 ---
 
 # Platform Expansion: Mesh, Dashboard, cert-manager Architecture Reference Document (ARD)
@@ -122,8 +122,9 @@ Host (Windows + WSL2)
 
 - **PRD**: [`../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md`](../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md)
 - **ADR**: [`../decisions/0006-cert-manager-mkcert-ca-issuer.md`](../decisions/0006-cert-manager-mkcert-ca-issuer.md)
-- **ADR**: [`../decisions/0007-kubernetes-dashboard-v3.md`](../decisions/0007-kubernetes-dashboard-v3.md)
+- **Historical/Superseded ADR**: [`../decisions/0007-kubernetes-dashboard-v3.md`](../decisions/0007-kubernetes-dashboard-v3.md)
 - **ADR**: [`../decisions/0008-istio-install-and-ingress-coexist.md`](../decisions/0008-istio-install-and-ingress-coexist.md)
 - **ADR**: [`../decisions/0009-kiali-external-observability.md`](../decisions/0009-kiali-external-observability.md)
+- **Current ADR**: [`../decisions/0010-headlamp-replaces-dashboard.md`](../decisions/0010-headlamp-replaces-dashboard.md)
 - **Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
 - **Plan**: [`../../04.execution/plans/2026-03-29-platform-expansion.md`](../../04.execution/plans/2026-03-29-platform-expansion.md)

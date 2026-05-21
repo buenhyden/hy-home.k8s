@@ -3,7 +3,7 @@ title: 'Platform Expansion Implementation Plan'
 type: plan
 status: complete
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-21
 ---
 
 # Platform Expansion Implementation Plan
@@ -27,7 +27,7 @@ updated: 2026-05-18
   - Kubernetes Dashboard v3 GitOps 설치 및 HTTPS 노출.
   - Istio v1.25.x(istiod) GitOps 설치.
   - Kiali v2.6.x GitOps 설치 및 외부 Observability 연동.
-  - 문서 체인(01~09) + README 동기화.
+  - 현재 문서 taxonomy 기반 문서 체인 + README 동기화.
 - **In Scope**:
   - `gitops/`, `infrastructure/`, `docs/` 변경
   - Traefik router config 명세 (외부 repo 적용은 별도)
@@ -62,7 +62,7 @@ updated: 2026-05-18
 | PLN-015 | kustomization.yaml 갱신 (namespaces, apps/root)          | `gitops/platform/namespaces/kustomization.yaml`, `gitops/apps/root/kustomization.yaml` | 전체          | ArgoCD App-of-Apps sync        |
 | PLN-016 | Traefik router config 명세 생성 (외부 repo용)            | `docs/03.specs/003-platform-expansion/spec.md` 참조                                    | REQ-FUN-11    | 별도 repo 적용 후 HTTPS 접근   |
 | PLN-017 | 문서 체인 갱신 (ADR-0001/0004/0005 IP 수정)              | `docs/02.architecture/decisions/0001,0004,0005-*.md`                                                      | 추적성        | 링크 정합성 확인               |
-| PLN-018 | README 인덱스 동기화 (01~09)                             | `docs/01~09/README.md`                                                                 | 거버넌스      | 인덱스 반영 확인               |
+| PLN-018 | README 인덱스 동기화 (current taxonomy)                  | `README.md`, `docs/README.md`, stage `README.md`                                        | 거버넌스      | 인덱스 반영 확인               |
 
 ## Verification Plan
 
@@ -105,4 +105,8 @@ updated: 2026-05-18
 - **ARD**: [`../../02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md`](../../02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md)
 - **Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
 - **ADR**: [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
+- **ADR**: [`../../02.architecture/decisions/0007-kubernetes-dashboard-v3.md`](../../02.architecture/decisions/0007-kubernetes-dashboard-v3.md) — historical/superseded Dashboard decision
+- **ADR**: [`../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md`](../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md)
+- **ADR**: [`../../02.architecture/decisions/0009-kiali-external-observability.md`](../../02.architecture/decisions/0009-kiali-external-observability.md)
+- **ADR**: [`../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md) — current UI decision
 - **Tasks**: [`../tasks/2026-03-29-platform-expansion.md`](../tasks/2026-03-29-platform-expansion.md)

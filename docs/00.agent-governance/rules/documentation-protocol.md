@@ -44,7 +44,8 @@ This protocol defines how governance references authored docs and how language b
 
 ## Template Link Policy
 
-- Example links inside templates must resolve relative to the template location.
+- Actual Markdown links inside templates must resolve relative to the template file location.
+- Placeholder, optional, or target-relative examples must be written as code literals or fenced snippets and calculated from the final authored document location.
 - Optional or project-specific files that may not exist (for example, `ARCHITECTURE.md`) should be shown as code literals, not Markdown links.
 - Placeholder paths should be expressed as placeholders (`{path}`) or fenced snippets to avoid false-positive broken-link checks.
 

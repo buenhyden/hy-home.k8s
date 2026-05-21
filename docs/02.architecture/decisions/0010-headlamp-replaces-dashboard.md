@@ -3,7 +3,7 @@ title: 'ADR-0010: Headlamp Replaces Kubernetes Dashboard'
 type: adr
 status: accepted
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-21
 ---
 
 # ADR-0010: Headlamp Replaces Kubernetes Dashboard
@@ -53,5 +53,9 @@ Accepted — 2026-03-30
 
 ## Related Documents
 
-- [ADR-0007](./0007-kubernetes-dashboard-v3.md) — 기존 Dashboard 결정 (superseded)
-- [Spec 003](../../03.specs/003-platform-expansion/spec.md)
+- **PRD**: [`../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md`](../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md)
+- **ARD**: [`../requirements/0003-platform-expansion-mesh-dashboard.md`](../requirements/0003-platform-expansion-mesh-dashboard.md)
+- **Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
+- **Plan**: [`../../04.execution/plans/2026-03-29-platform-expansion.md`](../../04.execution/plans/2026-03-29-platform-expansion.md)
+- **Task**: [`../../04.execution/tasks/2026-03-29-platform-expansion.md`](../../04.execution/tasks/2026-03-29-platform-expansion.md)
+- **Superseded ADR**: [`./0007-kubernetes-dashboard-v3.md`](./0007-kubernetes-dashboard-v3.md)

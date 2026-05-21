@@ -3,7 +3,7 @@ title: 'ADR-0007: Kubernetes Dashboard v3 Installation'
 type: adr
 status: superseded
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-21
 ---
 
 # ADR-0007: Kubernetes Dashboard v3 Installation
@@ -67,4 +67,5 @@ Superseded by [ADR-0010](./0010-headlamp-replaces-dashboard.md) — 2026-05-09
 - **PRD**: [`../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md`](../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md)
 - **ARD**: [`../requirements/0003-platform-expansion-mesh-dashboard.md`](../requirements/0003-platform-expansion-mesh-dashboard.md)
 - **Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
+- **Replacement ADR**: [`./0010-headlamp-replaces-dashboard.md`](./0010-headlamp-replaces-dashboard.md)
 - **Related ADR**: [`./0006-cert-manager-mkcert-ca-issuer.md`](./0006-cert-manager-mkcert-ca-issuer.md)

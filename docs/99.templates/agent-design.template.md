@@ -18,6 +18,7 @@ updated: YYYY-MM-DD
 > - Keep product intent in PRD and system-wide constraints in ARD.
 > - Keep implementation tasks in `04.execution/tasks/`.
 > - This document focuses on AI Agent behavior, orchestration, safety, and evaluation.
+> - Use relative links only, calculated from the final authored document location.
 
 ---
 

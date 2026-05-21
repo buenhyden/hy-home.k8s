@@ -115,7 +115,7 @@ still resolves from that final location:
 
 ---
 
-# SNIPPET LIBRARY
+## SNIPPET LIBRARY
 
 <!--
 ===============================================================================
@@ -261,8 +261,6 @@ type: {document-type}
 status: draft
 owner: {team-or-person}
 updated: YYYY-MM-DD
-links:
-  - {related-doc}
 ---
 ```
 

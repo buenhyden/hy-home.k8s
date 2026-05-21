@@ -100,7 +100,7 @@ docs/05.operations/runbooks/
 | [`./0003-platform-expansion-bootstrap-runbook.md`](./0003-platform-expansion-bootstrap-runbook.md)         | cert-manager/Headlamp/Istio/Kiali 부트스트랩 및 증상별 복구 런북  | Active | 2026-05-09 |
 | [`./0004-rollouts-notifications-headlamp-runbook.md`](./0004-rollouts-notifications-headlamp-runbook.md)   | Argo Rollouts/Notifications/Headlamp 설치 및 운영 런북            | Active | 2026-05-09 |
 | [`./0005-headlamp-keycloak-runbook.md`](./0005-headlamp-keycloak-runbook.md)                               | Headlamp ServiceAccount 토큰 로그인 및 Keycloak OIDC 전환 런북    | Active | 2026-05-09 |
-| [`./0006-new-app-onboarding-runbook.md`](./0006-new-app-onboarding-runbook.md)                             | 새 애플리케이션 GitOps 온보딩 체크리스트 및 트러블슈팅 런북       | Active | 2026-05-09 |
+| [`./0006-new-app-onboarding-runbook.md`](./0006-new-app-onboarding-runbook.md)                             | 새 애플리케이션 GitOps 온보딩 체크리스트 및 트러블슈팅 런북       | Superseded | 2026-05-21 |
 | [`./0007-kiali-observability-connectivity-runbook.md`](./0007-kiali-observability-connectivity-runbook.md) | Kiali 관측성 서비스 연결 장애 진단 및 복구 런북                   | Active | 2026-05-09 |
 | [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md)               | ArgoCD 메트릭 NodePort/Prometheus 수집 장애 진단 및 복구 런북     | Active | 2026-05-09 |
 | [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md)                               | kube-state-metrics/alloy/alert_rules/AppProject 장애 진단 런북    | Active | 2026-05-09 |

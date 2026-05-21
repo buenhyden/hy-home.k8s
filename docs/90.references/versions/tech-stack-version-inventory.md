@@ -1,9 +1,9 @@
 ---
 title: 'Reference: Tech Stack Version Inventory'
 type: reference
-status: draft
+status: active
 owner: 'platform'
-updated: 2026-05-17
+updated: 2026-05-21
 ---
 
 # Tech Stack Version Inventory

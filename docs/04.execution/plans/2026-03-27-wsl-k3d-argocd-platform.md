@@ -14,7 +14,7 @@ updated: 2026-05-21
 
 ## Context
 
-문서 기반 설계(01~04)를 실제 실행 가능한 작업(06)으로 연결하고 운영 문서(07~09)까지 일관되게 제공한다.
+문서 기반 요구사항/아키텍처/스펙 체계를 `04.execution`의 실행 계획·작업 증적으로 연결하고, 운영 문서는 `05.operations/{guides,policies,runbooks}`로 제공한다.
 
 ## Goals & In-Scope
 
@@ -22,7 +22,7 @@ updated: 2026-05-21
   - 멀티노드 k3d 클러스터 재현
   - ArgoCD GitOps 파이프라인 구축
   - ESO+Vault 및 외부 DB/Valkey 통합
-  - 01~09 문서 완성
+  - 현재 문서 taxonomy에 맞춘 요구사항, 아키텍처, 스펙, 실행, 운영 문서 완성
 - **In Scope**:
   - 선언형 매니페스트/헬름 값 설계
   - 보안 최소권한 및 네트워크 정책
@@ -42,14 +42,14 @@ updated: 2026-05-21
 | PLN-002 | k3d 클러스터 및 ingress 설계 확정 | `docs/03.specs/...` | REQ-PRD-FUN-01/02 | VAL-PLN-002 |
 | PLN-003 | ArgoCD Helm + App-of-Apps 설계 확정 | `docs/02.architecture/decisions/0002...` | REQ-PRD-FUN-03/04 | VAL-PLN-003 |
 | PLN-004 | ESO+Vault 및 외부 endpoint 계약 확정 | `docs/02.architecture/decisions/0003...`, `0004...` | REQ-PRD-FUN-05/06/07 | VAL-PLN-004 |
-| PLN-005 | 운영 가이드/정책/런북 작성 | `docs/07~09/...` | REQ-PRD-FUN-09 | VAL-PLN-005 |
+| PLN-005 | 운영 가이드/정책/런북 작성 | `docs/05.operations/{guides,policies,runbooks}/...` | REQ-PRD-FUN-09 | VAL-PLN-005 |
 
 ## Verification Plan
 
 | ID | Level | Description | Command / How to Run | Pass Criteria |
 | --- | --- | --- | --- | --- |
 | VAL-PLN-001 | Structural | 문서/버전 기준 확인 | `rg -n "v1.35.0\+k3s1\|v5.8.3\|9.0.1" docs` | 필수 버전 표기 존재 |
-| VAL-PLN-002 | Structural | 링크 무결성 점검 | `rg -n "\]\(\.\./" docs/0{1,2,3,4,5,6,7,8,9}*` | 상대 링크 누락 없음 |
+| VAL-PLN-002 | Structural | 링크 무결성 점검 | `rg -n "\]\(\.\./" docs/{01.requirements,02.architecture,03.specs,04.execution,05.operations,90.references,99.templates}` | 상대 링크 누락 없음 |
 | VAL-PLN-003 | Functional | Task 검증 항목 포함 여부 | `rg -n "Task-00\|VAL-" docs/04.execution/tasks/*.md` | TDD/검증 항목 존재 |
 
 ## Risks & Mitigations

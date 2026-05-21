@@ -1,7 +1,7 @@
 ---
 title: 'New App GitOps Onboarding Runbook'
 type: runbook
-status: active
+status: superseded
 owner: platform
 updated: 2026-05-21
 ---
