@@ -154,14 +154,6 @@ target-specific path guidance for root README, `docs/README.md`, and nested
 stage READMEs, or convert the instructional example links into code literal path
 tables so authors must recalculate final relative links for the target location.
 
-## Related Documents
-
-- **Templates**: [`../../99.templates/README.md`](../../99.templates/README.md)
-- **Documentation Protocol**: [`../../00.agent-governance/rules/documentation-protocol.md`](../../00.agent-governance/rules/documentation-protocol.md)
-- **Stage Authoring Matrix**: [`../../00.agent-governance/rules/stage-authoring-matrix.md`](../../00.agent-governance/rules/stage-authoring-matrix.md)
-
----
-
 ## Historical Execution Notes
 
 이 계획서는 2026-05-17에 템플릿 cross-link 정합화 작업을 완료한 이력 문서다. 기존 `Task Detail` 섹션에는 이미 완료된 T-01부터 T-17까지의 단계별 실행 지시가 unchecked checklist 형태로 남아 있어, `status: complete`와 충돌하고 후속 독자가 재실행 작업으로 오해할 수 있었다.
@@ -178,3 +170,9 @@ tables so authors must recalculate final relative links for the target location.
 - 파일 삭제, 이동, 이름 변경은 수행하지 않았다.
 - `rg` 기준으로 이 파일 외부에서 제거 대상 `Task Detail` heading이나 하위 task heading을 참조하는 링크는 없었다.
 - 상세 실행 지시는 완료 이력으로 통합하고, 현재 템플릿 링크 규칙의 정본은 `docs/99.templates/README.md`와 `docs/00.agent-governance/rules/documentation-protocol.md`에 둔다.
+
+## Related Documents
+
+- **Templates**: [`../../99.templates/README.md`](../../99.templates/README.md)
+- **Documentation Protocol**: [`../../00.agent-governance/rules/documentation-protocol.md`](../../00.agent-governance/rules/documentation-protocol.md)
+- **Stage Authoring Matrix**: [`../../00.agent-governance/rules/stage-authoring-matrix.md`](../../00.agent-governance/rules/stage-authoring-matrix.md)

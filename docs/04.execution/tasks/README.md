@@ -57,7 +57,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ## How to Work in This Area
 
 1. 작업의 Parent Spec 또는 Parent Plan을 먼저 확인한다.
-2. 새 Task 문서는 `../../99.templates/task.template.md`에서 시작한다.
+2. 새 Task 문서는 `../../99.templates/task.template.md`에서 시작하고, canonical target pattern은 `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md`다.
 3. 각 작업은 Task ID, Type, Parent Spec/Plan, Validation/Evidence, Owner, Status를 가진다.
 4. 권장 Type은 `impl`, `test`, `eval`, `doc`, `ops`다. Agent-specific 작업은 `prompt`, `tool`, `memory`, `guardrail`, `eval`, `observability`를 사용할 수 있다.
 5. 핵심 동작은 테스트 우선(TDD)을 기본값으로 하고, 문서-only 작업도 검증 evidence를 남긴다.
@@ -70,6 +70,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 - 같은 폴더의 Task 문서는 `./`로 시작하는 상대 경로를 사용한다.
 - sibling Plan stage는 `../plans/`로 연결한다.
 - upstream docs stage는 `../../03.specs/`, `../../02.architecture/`, `../../01.requirements/`처럼 `docs/` 기준으로 올라간다.
+- Task 안의 Plan/Spec 링크는 `docs/04.execution/tasks/`의 최종 Task 파일 위치 기준으로 다시 계산한다.
 
 ## 문서 인덱스
 

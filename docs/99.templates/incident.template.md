@@ -19,6 +19,8 @@ INC-YYYYMMDD-XXX / [Short Incident Title]
 > - Record facts, status, and response state.
 > - Separate confirmed facts from current hypotheses.
 > - Do not place the final root cause analysis here; move that to the Postmortem.
+> - Use relative links only, calculated from the final authored document location.
+> - Keep placeholder or optional target paths as code literals until the target exists.
 
 ---
 

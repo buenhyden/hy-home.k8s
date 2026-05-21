@@ -52,19 +52,6 @@ updated: 2026-05-18
 - `eval`
 - `observability`
 
-## Phase View (Optional)
-
-### Phase 1
-
-- [x] NOTIF-T-001 Add Notifications ARD.
-- [x] NOTIF-T-002 Add Notifications Spec.
-- [x] NOTIF-T-003 Add Notifications Plan and Task.
-
-### Phase 2
-
-- [x] NOTIF-T-004 Update upstream/downstream links.
-- [x] NOTIF-T-005 Run static validation gates.
-
 ## Verification Summary
 
 - **Test Commands**:

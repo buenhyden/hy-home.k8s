@@ -67,12 +67,13 @@
 3. 템플릿을 추가하거나 제거하면 이 README의 목록과 매핑을 함께 갱신한다.
 4. README 변경 시 `readme.template.md`의 base structure와 품질 게이트가 일치하는지 확인한다.
 5. 템플릿의 Target 경로와 실제 저장 위치를 맞추고, 상대 경로만 사용한다.
-6. PRD/ARD/ADR/Spec/Plan/Task의 추적성을 유지한다.
-7. Agent 기능 문서는 Role, Tool, Guardrail, Eval, Fallback을 빠뜨리지 않는다.
-8. 템플릿의 placeholder 또는 code-literal cross-link는 최종 authored Target 위치 기준으로 계산한다.
+6. stage README는 target file pattern을 장황하게 복제하지 말고 이 README의 Template-Folder Mapping을 canonical source로 연결한다.
+7. PRD/ARD/ADR/Spec/Plan/Task의 추적성을 유지한다.
+8. Agent 기능 문서는 Role, Tool, Guardrail, Eval, Fallback을 빠뜨리지 않는다.
+9. 템플릿의 placeholder 또는 code-literal cross-link는 최종 authored Target 위치 기준으로 계산한다.
    실제 Markdown 링크는 이 템플릿 파일 위치에서도 깨지지 않아야 한다.
-9. README 템플릿은 frontmatter를 요구하지 않는다. PRD/ARD/ADR/Spec/Plan/Task, Spec helper Markdown 템플릿(`api-spec`, `agent-design`, `data-model`, `tests`), 운영·참조 템플릿은 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
-10. 템플릿 구조를 바꾸면 이미 생성된 문서에 안전하게 반영할 수 있는 heading, placeholder, Related Documents만 갱신하고 문서 고유 의도는 대량 재작성하지 않는다.
+10. README 템플릿은 frontmatter를 요구하지 않는다. PRD/ARD/ADR/Spec/Plan/Task, Spec helper Markdown 템플릿(`api-spec`, `agent-design`, `data-model`, `tests`), 운영·참조 템플릿은 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
+11. 템플릿 구조를 바꾸면 이미 생성된 문서에 안전하게 반영할 수 있는 heading, placeholder, Related Documents만 갱신하고 문서 고유 의도는 대량 재작성하지 않는다.
 
 ## Link Basis
 

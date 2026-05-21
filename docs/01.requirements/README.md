@@ -51,7 +51,7 @@
 ## How to Work in This Area
 
 1. 새 요구사항을 작성하기 전에 같은 문제를 다루는 기존 PRD를 먼저 확인한다.
-2. 새 PRD는 `../99.templates/prd.template.md`에서 시작한다.
+2. 새 PRD는 `../99.templates/prd.template.md`에서 시작하고, canonical target pattern은 `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md`다.
 3. PRD는 문제, persona/use case, 기능 요구, `Success / Acceptance Criteria`, 범위/비범위를 분리한다.
 4. 요구사항 변경 시 관련 `02.architecture/requirements/`, `03.specs/`, `04.execution/plans/` 링크를 함께 갱신한다.
 5. 구현 파일, manifest, 스크립트, 운영 명령 수준의 상세 설계는 PRD에 직접 확장하지 않고 후속 ARD/Spec/Plan 갭으로 남긴다.
@@ -64,6 +64,7 @@
 - 상위 문서는 `../`로 시작하는 상대 경로를 사용한다.
 - 동일 stage 문서는 `./`로 시작하는 상대 경로를 사용한다.
 - 하위 stage 연결은 `../02.architecture/`, `../03.specs/` 등 인접 stage 경로를 사용한다.
+- 새 PRD의 실제 Markdown 링크는 최종 PRD 파일 위치 기준으로 다시 계산하고, 아직 없는 후속 문서는 code literal로 남긴다.
 
 ## 연결 규칙
 

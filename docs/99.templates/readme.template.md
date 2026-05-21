@@ -1,6 +1,6 @@
-<!--
 # README Template — Repository-wide Usage Guide
 
+<!--
 이 템플릿은 리포지토리 전반에서 공통으로 사용하는 README 원본 템플릿이다.
 모든 README가 공유해야 하는 최소 구조(Base Structure)를 제공하고,
 경로의 목적에 따라 필요한 확장 섹션(Snippet)만 선택적으로 추가할 수 있도록 설계되었다.
@@ -8,7 +8,9 @@
 README 템플릿은 여러 Target 위치에서 재사용된다. 단일 `Target:` 주석을
 추가하지 말고, 아래 `Link Basis` 규칙에 따라 최종 README 위치에서
 상대 링크를 다시 계산한다. 템플릿 안의 예시 링크는 template reader를 위한
-링크이며, 최종 README에 그대로 복사하지 않는다.
+링크이며, 최종 README에 그대로 복사하지 않는다. 새 README의 target 위치는
+`docs/99.templates/README.md`의 Template-Folder Mapping을 먼저 확인하고,
+그 위치에서 실제로 resolve되는 상대 링크만 Markdown 링크로 남긴다.
 
 ## Selection Guide
 - Repository Root (`/`) -> `Base Structure` + `Root Snippet`
@@ -38,6 +40,8 @@ README 템플릿은 여러 Target 위치에서 재사용된다. 단일 `Target:`
 5. 이 템플릿 파일 안의 안내 링크는 템플릿을 읽기 위한 링크다. 최종
    README에 남길 링크는 최종 README 위치 기준으로 다시 작성한다.
 6. placeholder 경로나 optional 문서가 아직 없으면 Markdown 링크가 아니라 code literal로 남긴다.
+7. stage README는 target file pattern을 장황하게 반복하지 말고
+   `docs/99.templates/README.md`의 mapping을 canonical source로 연결한다.
 
 ## Writing Principles
 - README는 소개문이 아니라 이 경로의 진입 문서여야 한다.
@@ -240,7 +244,8 @@ SNIPPET: DOCS & GOVERNANCE
 README 문서는 기본적으로 frontmatter를 요구하지 않는다. README가 경로의
 진입점, 책임 범위, 링크 허브 역할만 수행한다면 제목과 본문 구조로 충분하다.
 
-PRD, ARD, ADR, Spec, Plan, Task 같은 authored stage 문서는 README 템플릿이
+PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook,
+Incident, Postmortem, Reference 같은 authored stage 문서는 README 템플릿이
 아니라 해당 stage 템플릿을 사용하고 다음 메타데이터를 유지한다.
 
 - `title`

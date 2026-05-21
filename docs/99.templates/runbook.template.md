@@ -19,6 +19,7 @@ updated: YYYY-MM-DD
 > - This document is not a tutorial-first guide.
 > - If the main purpose is analysis after the event, write a Postmortem instead.
 > - Use relative links only, calculated from the final authored document location.
+> - Keep placeholder or optional target paths as code literals until the target exists.
 
 ---
 

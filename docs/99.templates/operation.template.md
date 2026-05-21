@@ -18,6 +18,8 @@ updated: YYYY-MM-DD
 > - This document is not a step-by-step recovery procedure.
 > - This document is not an onboarding or how-to guide.
 > - This document is not an incident timeline or a postmortem.
+> - Use relative links only, calculated from the final authored document location.
+> - Keep placeholder or optional target paths as code literals until the target exists.
 
 ---
 

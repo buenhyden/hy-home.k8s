@@ -60,8 +60,8 @@ Spec은 실행 기준을 소유하는 문서다.
 ## How to Work in This Area
 
 1. 관련 PRD, ARD, ADR 링크를 확인하고 Spec의 입력으로 고정한다.
-2. 새 Spec은 `../99.templates/spec.template.md`에서 시작한다.
-3. API/데이터/Agent 보조 문서는 기능 하위 폴더에 두고 상위 `spec.md`와 연결한다.
+2. 새 Spec은 `../99.templates/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<feature-id>/spec.md`다.
+3. API/데이터/Agent/Test 보조 문서는 같은 feature 하위 폴더에 두고 상위 `spec.md`와 연결한다.
 4. 구현 및 검증 추적은 `04.execution/tasks/`로 연결한다.
 5. historical/superseded 값은 삭제하지 않되, 현재 실행계약과 같은 문단에서 섞지 않는다.
 
@@ -72,6 +72,7 @@ Spec은 실행 기준을 소유하는 문서다.
 - 상위 문서는 `../`로 시작하는 상대 경로를 사용한다.
 - 같은 stage의 spec은 `./<feature-id>/spec.md`로 연결한다.
 - 실행 문서는 `../04.execution/`, 운영 문서는 `../05.operations/`로 연결한다.
+- feature-local helper 문서 링크는 `docs/03.specs/<feature-id>/` 안의 최종 파일 위치 기준으로 다시 계산한다.
 
 ## Spec Authoring Rules
 
@@ -93,6 +94,8 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./005-argo-notifications-slack/spec.md`](./005-argo-notifications-slack/spec.md) | ArgoCD Notifications Slack current-contract backfill 명세 | Active | ArgoCD Notifications, Vault/ESO credential boundary, template/trigger 계약을 현재 기준으로 정리한다. | 2026-05-18 |
 
 ## Helper Templates
+
+아래 템플릿은 `docs/03.specs/<feature-id>/` 아래에서 `spec.md`를 보조하는 계약 문서에만 사용한다.
 
 - `../99.templates/spec.template.md`
 - `../99.templates/api-spec.template.md`

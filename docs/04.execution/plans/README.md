@@ -57,7 +57,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ## How to Work in This Area
 
 1. 관련 PRD/ARD/ADR/Spec을 먼저 읽고 계획의 입력을 고정한다.
-2. 새 Plan은 `../../99.templates/plan.template.md`에서 시작한다.
+2. 새 Plan은 `../../99.templates/plan.template.md`에서 시작하고, canonical target pattern은 `docs/04.execution/plans/YYYY-MM-DD-<feature>.md`다.
 3. Plan은 언제, 누가, 어떤 순서로, 어떤 제약과 위험을 관리하며 작업을 진행하는지 정의한다.
 4. Plan 변경 시 관련 `../tasks/`의 Parent Plan/Phase 링크와 Task ID를 확인한다.
 5. 완료된 계획은 완료 기준, 검증 결과, 후속 문서 링크를 남기되 상세 evidence 정본은 Task 문서에 둔다.
@@ -70,6 +70,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 - 같은 폴더의 Plan 문서는 `./`로 시작하는 상대 경로를 사용한다.
 - sibling Task stage는 `../tasks/`로 연결한다.
 - upstream docs stage는 `../../01.requirements/`, `../../02.architecture/`, `../../03.specs/`처럼 `docs/` 기준으로 올라간다.
+- Plan 안의 Task 링크는 `docs/04.execution/plans/`의 최종 Plan 파일 위치 기준으로 다시 계산한다.
 
 ## 문서 인덱스
 
@@ -82,7 +83,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-05-09-scripts-inventory-remediation.md`](./2026-05-09-scripts-inventory-remediation.md) | `scripts/` 인벤토리 조사와 README 실행 계약 보정 계획 | Done  | 2026-05-21 |
 | [`./2026-05-09-github-qa-ci-remediation.md`](./2026-05-09-github-qa-ci-remediation.md) | `.github` QA, CI, 브랜치 정책, PR intake 계약 보정 계획 | Done  | 2026-05-09 |
 | [`./2026-05-10-agent-first-harness-llm-wiki-hooks.md`](./2026-05-10-agent-first-harness-llm-wiki-hooks.md) | Agent-first harness, LLM Wiki, hook wiring 보정 계획 | Done  | 2026-05-10 |
-| [`./2026-05-17-template-crosslink-fix.md`](./2026-05-17-template-crosslink-fix.md) | 문서 템플릿 target-relative 링크와 생성 문서 표시 경로 정합화 계획 | Done  | 2026-05-21 |
+| [`./2026-05-17-template-crosslink-fix.md`](./2026-05-17-template-crosslink-fix.md) | 문서 템플릿 target-relative 링크와 생성 문서 표시 경로 정합화 계획. 별도 Task record 없이 plan 내부 evidence와 migration note가 증적을 소유한다. | Done  | 2026-05-21 |
 | [`./2026-05-18-argo-rollouts-progressive-delivery.md`](./2026-05-18-argo-rollouts-progressive-delivery.md) | Argo Rollouts current-contract backfill 실행 계획 | Done | 2026-05-21 |
 | [`./2026-05-18-argo-notifications-slack.md`](./2026-05-18-argo-notifications-slack.md) | ArgoCD Notifications Slack current-contract backfill 실행 계획 | Done | 2026-05-21 |
 

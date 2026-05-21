@@ -18,6 +18,8 @@ updated: YYYY-MM-DD
 > - This document is not an operations policy.
 > - This document is not a real-time incident response procedure.
 > - If command order, rollback, or recovery is the primary purpose, write a Runbook instead.
+> - Use relative links only, calculated from the final authored document location.
+> - Keep placeholder or optional target paths as code literals until the target exists.
 
 ---
 

@@ -11,6 +11,13 @@ updated: YYYY-MM-DD
 # Postmortem: [Incident Title]
 
 > Use this template for `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md`.
+>
+> Rules:
+>
+> - Analyze root cause and prevention after the incident is stabilized.
+> - Keep factual incident chronology linked to the Incident document.
+> - Use relative links only, calculated from the final authored document location.
+> - Keep placeholder or optional target paths as code literals until the target exists.
 
 ---
 

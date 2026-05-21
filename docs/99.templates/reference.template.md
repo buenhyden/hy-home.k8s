@@ -11,6 +11,13 @@ updated: YYYY-MM-DD
 # Reference: [Item Name]
 
 > Use this template for `docs/90.references/<category>/<item>.md`.
+>
+> Rules:
+>
+> - Keep this document factual, slow-moving, and explicitly bounded.
+> - Do not duplicate active requirements, specs, plans, tasks, policies, or runbooks.
+> - Use relative links only, calculated from the final authored document location.
+> - Keep placeholder or optional target paths as code literals until the target exists.
 
 ---
 

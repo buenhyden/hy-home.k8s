@@ -64,7 +64,7 @@ hy-home.k8s/
 | --- | --- | --- |
 | [`docs/01.requirements`](docs/01.requirements/README.md) | 제품 요구사항, 사용자 문제, 범위, 성공/수용 기준 | [`prd.template.md`](docs/99.templates/prd.template.md) |
 | [`docs/02.architecture`](docs/02.architecture/README.md) | 아키텍처 요구사항, 참조 구조, 의사결정 | [`ard.template.md`](docs/99.templates/ard.template.md), [`adr.template.md`](docs/99.templates/adr.template.md) |
-| [`docs/03.specs`](docs/03.specs/README.md) | 기능/워크플로우/시스템 구현 명세와 계약 | [`spec.template.md`](docs/99.templates/spec.template.md) |
+| [`docs/03.specs`](docs/03.specs/README.md) | 기능/워크플로우/시스템 구현 명세와 feature-local API/Agent/Data/Test 계약 | [`spec.template.md`](docs/99.templates/spec.template.md), helper templates는 [`03.specs README`](docs/03.specs/README.md) 참조 |
 | [`docs/04.execution`](docs/04.execution/README.md) | 실행 계획, 작업 분해, 검증 증적 | [`plan.template.md`](docs/99.templates/plan.template.md), [`task.template.md`](docs/99.templates/task.template.md) |
 | [`docs/05.operations`](docs/05.operations/README.md) | 운영 가이드, 정책, 런북, 사고 기록 | [`guide.template.md`](docs/99.templates/guide.template.md), [`operation.template.md`](docs/99.templates/operation.template.md), [`runbook.template.md`](docs/99.templates/runbook.template.md), [`incident.template.md`](docs/99.templates/incident.template.md), [`postmortem.template.md`](docs/99.templates/postmortem.template.md) |
 | [`docs/90.references`](docs/90.references/README.md) | 참조 자료, 용어, 버전 인벤토리, lookup material | [`reference.template.md`](docs/99.templates/reference.template.md) |
@@ -84,7 +84,7 @@ hy-home.k8s/
 3. 새 README나 가이드는 [`docs/99.templates/readme.template.md`](docs/99.templates/readme.template.md) 같은 승인된 템플릿에서 시작한다.
 4. 문서 링크는 상대 경로를 사용하고, 사람 대상 README는 한국어를 유지한다.
 5. `docs/00.agent-governance/*`는 영어로 유지하며, 게이트웨이 파일에는 규칙을 중복 복사하지 않는다.
-6. README 파일은 기본적으로 frontmatter를 요구하지 않는다. PRD/ARD/ADR/Spec/Plan/Task 같은 authored stage 문서는 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
+6. README 파일은 기본적으로 frontmatter를 요구하지 않는다. PRD/ARD/ADR/Spec/Plan/Task/Guide/Operations Policy/Runbook/Incident/Postmortem/Reference 같은 authored stage 문서는 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
 7. 문서 체계나 템플릿을 바꾸면 [`docs/README.md`](docs/README.md), 해당 stage README, [`docs/99.templates/README.md`](docs/99.templates/README.md), 생성 문서 적용 범위를 같은 변경에서 점검한다.
 8. 브랜치 전략은 `main` 중심 PR flow를 기본으로 하며, 상세 규칙은 [`docs/00.agent-governance/rules/git-workflow.md`](docs/00.agent-governance/rules/git-workflow.md)를 따른다.
 9. 인프라 변경은 GitOps-first로 다룬다. 일반 변경에서 live cluster mutation, `kubectl apply`, 외부 Vault 조작을 도입하지 않는다.

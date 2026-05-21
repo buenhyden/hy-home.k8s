@@ -59,9 +59,10 @@
 
 1. 요구사항을 시스템 경계와 품질 속성으로 확장할 때는 `requirements/`를 갱신한다.
 2. 기술 선택이나 운영 모델 결정은 `decisions/`에 ADR로 기록한다.
-3. 기존 ARD/ADR 안의 역사적 값(`172.19.x`, Kubernetes Dashboard 등)은 bulk replace하지 않는다. 현재성은 README 인덱스와 current-contract note로 분리한다.
-4. 구현자가 따라야 할 상세 계약은 `../03.specs/`로 넘긴다.
-5. 운영 정책이나 복구 절차는 `../05.operations/`로 넘긴다.
+3. ARD target은 `docs/02.architecture/requirements/####-<system-or-domain>.md`, ADR target은 `docs/02.architecture/decisions/####-<short-title>.md`를 따른다.
+4. 기존 ARD/ADR 안의 역사적 값(`172.19.x`, Kubernetes Dashboard 등)은 bulk replace하지 않는다. 현재성은 README 인덱스와 current-contract note로 분리한다.
+5. 구현자가 따라야 할 상세 계약은 `../03.specs/`로 넘긴다.
+6. 운영 정책이나 복구 절차는 `../05.operations/`로 넘긴다.
 
 ## Link Basis
 
@@ -70,6 +71,7 @@
 - 하위 아키텍처 폴더는 `./requirements/`, `./decisions/`로 연결한다.
 - 인접 stage는 `../01.requirements/`, `../03.specs/`, `../05.operations/`로 연결한다.
 - root-level 구현 경로는 `../../gitops/`, `../../infrastructure/`처럼 repository root 기준으로 올라간다.
+- ARD/ADR 문서 안의 링크는 각 하위 폴더의 최종 문서 위치 기준으로 다시 계산한다.
 
 ## Related Documents
 
