@@ -237,14 +237,20 @@ SNIPPET: DOCS & GOVERNANCE
 
 ## Metadata Expectations
 
-필요한 경우 문서에는 다음 메타데이터를 포함한다.
+README 문서는 기본적으로 frontmatter를 요구하지 않는다. README가 경로의
+진입점, 책임 범위, 링크 허브 역할만 수행한다면 제목과 본문 구조로 충분하다.
+
+PRD, ARD, ADR, Spec, Plan, Task 같은 authored stage 문서는 README 템플릿이
+아니라 해당 stage 템플릿을 사용하고 다음 메타데이터를 유지한다.
 
 - `title`
 - `type`
 - `status`
 - `owner`
 - `updated`
-- `links` 또는 관련 상위/하위 문서 정보
+
+README에 frontmatter가 필요한 지역 규칙이 있다면 아래처럼 짧게 유지하고,
+추적성은 본문의 `Related Documents`에 상대 링크로 기록한다.
 
 예시:
 

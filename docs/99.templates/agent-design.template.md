@@ -28,9 +28,9 @@ updated: YYYY-MM-DD
 ## Parent Documents
 
 - **Spec**: `[./spec.md]`
-- **PRD**: `[../../01.requirements/YYYY-MM-DD-feature.md]`
-- **ARD**: `[../../02.architecture/requirements/0001-system.md]`
-- **Related ADRs**: `[../../02.architecture/decisions/0001-example.md]`
+- **PRD**: `[../../01.requirements/YYYY-MM-DD-<feature-or-system>.md]`
+- **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
+- **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
 
 ## Scope & Non-goals
 
@@ -93,7 +93,7 @@ updated: YYYY-MM-DD
 - **Offline Evals**:
 - **Online Signals**:
 - **Acceptance Thresholds**:
-- **Linked Task / Eval Docs**: `[../../04.execution/tasks/YYYY-MM-DD-feature.md]`
+- **Linked Task / Eval Docs**: `[../../04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md]`
 
 ## Observability
 
@@ -107,5 +107,5 @@ Target-relative examples below assume the authored file will be created at
 `docs/03.specs/<feature-id>/agent-design.md`.
 
 - **Tests**: `[./tests.md]`
-- **Operation**: `[../../05.operations/policies/<policy>.md]`
-- **Runbook**: `[../../05.operations/runbooks/<topic>.md]`
+- **Operation**: `[../../05.operations/policies/####-<policy-or-standard>.md]`
+- **Runbook**: `[../../05.operations/runbooks/####-<topic>.md]`

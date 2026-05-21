@@ -3,7 +3,7 @@ title: 'Argo Rollouts Progressive Delivery Backfill Plan'
 type: plan
 status: complete
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-21
 ---
 
 # Argo Rollouts Progressive Delivery Backfill Plan
@@ -89,3 +89,4 @@ updated: 2026-05-18
 - **ARD**: [`../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md`](../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md)
 - **Spec**: [`../../03.specs/004-argo-rollouts-progressive-delivery/spec.md`](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md)
 - **ADR**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
+- **Tasks**: [`../tasks/2026-05-18-argo-rollouts-progressive-delivery.md`](../tasks/2026-05-18-argo-rollouts-progressive-delivery.md)

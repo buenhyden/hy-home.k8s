@@ -64,8 +64,11 @@ docs/
 2. 새 문서는 [99.templates](./99.templates/README.md)의 승인된 템플릿에서 시작한다.
 3. 문서가 추가되거나 이동되면 해당 stage의 `README.md` 인덱스와 관련 링크를 같은 변경에서 갱신한다.
 4. 사람 대상 README와 개요 문서는 한국어를 유지하고, `00.agent-governance` 정책 문서는 영어를 유지한다.
-5. 일반 운영 변경은 GitOps-first 원칙을 따르며, 문서가 live `kubectl apply`나 외부 Vault 조작을 우회 절차처럼 안내하지 않도록 한다.
-6. cloud example 버전을 갱신할 때는 코드, README, [tech-stack-version-inventory.md](./90.references/versions/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
+5. README 파일은 frontmatter를 요구하지 않는다. README는 경로 목적, scope, structure, workflow, link basis, related documents를 설명하는 entrypoint다.
+6. PRD/ARD/ADR/Spec/Plan/Task와 운영·참조 authored 문서는 matching template의 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
+7. 템플릿이나 문서 lifecycle 규칙을 바꾸면 이 hub, 대상 stage README, [99.templates README](./99.templates/README.md), 이미 생성된 문서의 안전한 구조 반영 여부를 함께 점검한다.
+8. 일반 운영 변경은 GitOps-first 원칙을 따르며, 문서가 live `kubectl apply`나 외부 Vault 조작을 우회 절차처럼 안내하지 않도록 한다.
+9. cloud example 버전을 갱신할 때는 코드, README, [tech-stack-version-inventory.md](./90.references/versions/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
 
 ## Link Basis
 
@@ -82,6 +85,7 @@ docs/
 - 제품 요구나 사용자 시나리오가 바뀌면 `01.requirements`를 갱신한다.
 - 아키텍처 모델이나 품질 속성이 바뀌면 `02.architecture/requirements`를, 선택지와 결정 근거가 바뀌면 `02.architecture/decisions`을 갱신한다.
 - 구현 계약, manifest 구조, agent/tool contract처럼 구현자가 따라야 할 세부 설계는 `03.specs`에 둔다.
+- `03.specs/<feature-id>/` 하위 폴더는 기본적으로 별도 README를 요구하지 않는다. 중앙 인덱스와 현재성 판단은 `03.specs/README.md`가 소유하고, feature-local README는 하위 API/agent/data/test 보조 문서가 많아져 탐색 비용이 커질 때만 추가한다.
 - 수행 순서와 risk/verification gate는 `04.execution/plans`에, 실제 작업과 evidence는 `04.execution/tasks`에 둔다.
 - 운영 지식은 먼저 `05.operations/guides`, `05.operations/policies`, `05.operations/runbooks` 중 하나로 분류한다. guide는 안정 상태 안내, operation은 정책과 경계, runbook은 실행 가능한 절차와 복구 순서를 담당한다.
 - 사고가 없으면 `05.operations/incidents`는 README만 있는 상태가 정상이다. 실제 사고 기록과 postmortem이 생길 때만 하위 문서를 추가한다.
@@ -106,6 +110,7 @@ docs/
 | Reference | [`90.references`](./90.references/README.md) | [`reference.template.md`](./99.templates/reference.template.md) | lookup material, glossary, appendix, version snapshot |
 
 - README와 index 문서는 해당 폴더의 목적, scope, structure, workflow, link basis, related documents를 유지한다.
+- README와 index 문서는 frontmatter 없이 작성한다. 다른 authored stage 문서는 matching template의 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
 - 모든 authored stage 문서는 `Related Documents`를 통해 upstream/downstream 문맥을 연결한다.
 - Markdown 링크는 최종 문서 위치 기준 상대 경로를 사용한다. 아직 존재하지 않는 optional 경로나 placeholder는 Markdown 링크가 아니라 code literal로 남긴다.
 - stale 문서는 먼저 갱신하거나 중복 내용을 병합한다. reference/archive 성격으로 옮기는 작업은 사전 reference search와 migration note가 있을 때만 수행한다.

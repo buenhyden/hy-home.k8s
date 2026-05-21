@@ -8,7 +8,7 @@ updated: YYYY-MM-DD
 
 <!-- Target: docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md -->
 
-# Product Requirements Document
+# [Feature or System Name] Product Requirements
 
 > Use this template for `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md`.
 >
@@ -21,8 +21,6 @@ updated: YYYY-MM-DD
 > - Keep one `Overview (KR)` summary near the top.
 
 ---
-
-## [Feature or System Name] Product Requirements
 
 ## Overview (KR)
 
@@ -78,7 +76,7 @@ updated: YYYY-MM-DD
 Target-relative examples below assume the authored file will be created at
 `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md`.
 
-- **ARD**: `[../02.architecture/requirements/####-system-or-domain.md]`
+- **ARD**: `[../02.architecture/requirements/####-<system-or-domain>.md]`
 - **Spec**: `[../03.specs/<feature-id>/spec.md]`
 - **Plan**: `[../04.execution/plans/YYYY-MM-DD-<feature>.md]`
 - **ADR**: `[../02.architecture/decisions/####-<short-title>.md]`

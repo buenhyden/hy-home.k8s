@@ -3,7 +3,7 @@ title: 'Argo Notifications Slack Backfill Plan'
 type: plan
 status: complete
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-21
 ---
 
 # Argo Notifications Slack Backfill Plan
@@ -89,3 +89,4 @@ ArgoCD Notifications는 `infrastructure/argocd/values-local.yaml`에서 활성�
 - **ARD**: [`../../02.architecture/requirements/0005-argo-notifications-slack.md`](../../02.architecture/requirements/0005-argo-notifications-slack.md)
 - **Spec**: [`../../03.specs/005-argo-notifications-slack/spec.md`](../../03.specs/005-argo-notifications-slack/spec.md)
 - **ADR**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
+- **Tasks**: [`../tasks/2026-05-18-argo-notifications-slack.md`](../tasks/2026-05-18-argo-notifications-slack.md)

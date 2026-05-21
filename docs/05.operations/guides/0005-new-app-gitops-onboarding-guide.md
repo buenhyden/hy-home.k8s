@@ -3,7 +3,7 @@ title: 'New App GitOps Onboarding Guide'
 type: guide
 status: active
 owner: platform
-updated: 2026-05-09
+updated: 2026-05-21
 ---
 
 # New App GitOps Onboarding Guide
@@ -15,6 +15,15 @@ ArgoCD `apps` AppProject와 `apps-generator` ApplicationSet을 활용하여,
 앱 소스 레포에 GitOps 디렉토리를 추가하거나 이 레포의 `gitops/workloads/` 아래에 workload를 등록하면
 ArgoCD가 자동으로 감지하여 클러스터에 배포한다.
 필요에 따라 Vault 시크릿 연동(ESO)과 NetworkPolicy 제한도 추가할 수 있다.
+
+## Current Contract Note
+
+이 문서는 2026-05-09 기준의 범용 온보딩 가이드다. 현재 신규 GitHub 앱
+온보딩 기준은 [앱 GitOps 온보딩 정책](../policies/0007-app-gitops-onboarding-policy.md),
+[GitHub 앱 GitOps 온보딩 가이드](./0008-github-app-gitops-onboarding-guide.md),
+[GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)이 우선한다.
+이 문서 안의 `Deployment` 또는 `latest` 예시는 역사적 샘플로만 취급하고,
+신규 workload는 Rollout과 고정 이미지 태그 정책을 따라야 한다.
 
 ## Guide Type
 

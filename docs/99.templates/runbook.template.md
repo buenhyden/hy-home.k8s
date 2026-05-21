@@ -84,4 +84,4 @@ Target-relative examples below assume the authored file will be created at
 
 - **Incident examples**: `[../incidents/YYYY/YYYY-MM-DD-<incident-title>.md]`
 - **Postmortem examples**: `[../incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
-- **Operation**: `[../policies/<policy-or-standard>.md]`
+- **Operation**: `[../policies/####-<policy-or-standard>.md]`

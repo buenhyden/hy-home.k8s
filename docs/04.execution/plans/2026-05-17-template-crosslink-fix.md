@@ -3,7 +3,7 @@ title: 'Template Cross-link Fix Implementation Plan'
 type: plan
 status: complete
 owner: 'platform-team'
-updated: 2026-05-17
+updated: 2026-05-21
 ---
 
 # Template Cross-link Fix Implementation Plan
@@ -16,8 +16,6 @@ updated: 2026-05-17
 > or `superpowers:subagent-driven-development` to implement task-by-task.
 
 ---
-
-## Template Cross-link Fix Plan
 
 ## Overview (KR)
 

@@ -23,8 +23,6 @@ updated: YYYY-MM-DD
 
 ---
 
-## [Feature Name] Specification
-
 ## Overview (KR)
 
 이 문서는 [기능명]의 기술 설계와 구현 계약을 정의하는 명세서다. PRD 요구를 기술적으로 구체화하고, 구현과 검증의 직접 기준이 된다.
@@ -38,7 +36,7 @@ updated: YYYY-MM-DD
 Use this section for upstream requirement, architecture, and decision inputs.
 
 - **PRD**: `[../../01.requirements/YYYY-MM-DD-<feature-or-system>.md]`
-- **ARD**: `[../../02.architecture/requirements/####-<system-or-domain-name>.md]`
+- **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
 - **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
 
 ## Contracts
@@ -155,4 +153,4 @@ Use this section for downstream or peer documents created from this spec.
 
 - **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
 - **Tasks**: `[../../04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md]`
-- **Runbook**: `[../../05.operations/runbooks/<topic>.md]`
+- **Runbook**: `[../../05.operations/runbooks/####-<topic>.md]`

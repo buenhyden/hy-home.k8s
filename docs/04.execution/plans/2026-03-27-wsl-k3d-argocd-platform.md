@@ -3,7 +3,7 @@ title: 'WSL k3d/k3s ArgoCD Platform Plan'
 type: plan
 status: draft
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-21
 ---
 
 # WSL k3d/k3s ArgoCD Platform Plan
@@ -80,3 +80,4 @@ updated: 2026-05-18
 - **ARD**: [`../../02.architecture/requirements/0001-wsl-k3d-argocd-platform.md`](../../02.architecture/requirements/0001-wsl-k3d-argocd-platform.md)
 - **Spec**: [`../../03.specs/001-wsl-k3d-argocd-platform/spec.md`](../../03.specs/001-wsl-k3d-argocd-platform/spec.md)
 - **ADR**: [`../../02.architecture/decisions/0001-k3d-topology-and-network.md`](../../02.architecture/decisions/0001-k3d-topology-and-network.md), [`../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md), [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md), [`../../02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md`](../../02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md)
+- **Tasks**: [`../tasks/2026-03-27-wsl-k3d-argocd-platform.md`](../tasks/2026-03-27-wsl-k3d-argocd-platform.md)

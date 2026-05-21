@@ -3,7 +3,7 @@ title: '앱 GitOps 온보딩 정책'
 type: operation
 status: active
 owner: platform
-updated: 2026-05-09
+updated: 2026-05-21
 ---
 
 # 앱 GitOps 온보딩 정책
@@ -14,6 +14,15 @@ updated: 2026-05-09
 플랫폼 운영 정책을 정의한다.
 
 이 정책은 `gitops/workloads/<appname>/`에 새 앱을 추가할 때 필요한 배포 리소스, 네트워킹, 보안, GitOps 워크플로우 통제를 정의한다.
+
+## Current Contract Note
+
+이 정책은 현재 앱 온보딩의 기준 계약이다. 실행 절차는
+[GitHub 앱 GitOps 온보딩 가이드](../guides/0008-github-app-gitops-onboarding-guide.md)와
+[GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)이 담당한다.
+기존 범용 온보딩 문서인 [0005 가이드](../guides/0005-new-app-gitops-onboarding-guide.md)와
+[0006 런북](../runbooks/0006-new-app-onboarding-runbook.md)은 역사적 참고 문서이며,
+이 정책의 Rollout 및 고정 이미지 태그 기준을 대체하지 않는다.
 
 ## Purpose
 

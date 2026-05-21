@@ -84,11 +84,13 @@ hy-home.k8s/
 3. 새 README나 가이드는 [`docs/99.templates/readme.template.md`](docs/99.templates/readme.template.md) 같은 승인된 템플릿에서 시작한다.
 4. 문서 링크는 상대 경로를 사용하고, 사람 대상 README는 한국어를 유지한다.
 5. `docs/00.agent-governance/*`는 영어로 유지하며, 게이트웨이 파일에는 규칙을 중복 복사하지 않는다.
-6. 브랜치 전략은 `main` 중심 PR flow를 기본으로 하며, 상세 규칙은 [`docs/00.agent-governance/rules/git-workflow.md`](docs/00.agent-governance/rules/git-workflow.md)를 따른다.
-7. 인프라 변경은 GitOps-first로 다룬다. 일반 변경에서 live cluster mutation, `kubectl apply`, 외부 Vault 조작을 도입하지 않는다.
-8. `.github` 자동화나 QA gate를 바꿀 때는 [`.github/ABOUT.md`](.github/ABOUT.md)와 PR template의 검증 체크리스트를 함께 확인한다.
-9. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
-10. AWS/Azure 예시는 2026-05-09 공식 지원 스냅샷을 기준으로 관리하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
+6. README 파일은 기본적으로 frontmatter를 요구하지 않는다. PRD/ARD/ADR/Spec/Plan/Task 같은 authored stage 문서는 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
+7. 문서 체계나 템플릿을 바꾸면 [`docs/README.md`](docs/README.md), 해당 stage README, [`docs/99.templates/README.md`](docs/99.templates/README.md), 생성 문서 적용 범위를 같은 변경에서 점검한다.
+8. 브랜치 전략은 `main` 중심 PR flow를 기본으로 하며, 상세 규칙은 [`docs/00.agent-governance/rules/git-workflow.md`](docs/00.agent-governance/rules/git-workflow.md)를 따른다.
+9. 인프라 변경은 GitOps-first로 다룬다. 일반 변경에서 live cluster mutation, `kubectl apply`, 외부 Vault 조작을 도입하지 않는다.
+10. `.github` 자동화나 QA gate를 바꿀 때는 [`.github/ABOUT.md`](.github/ABOUT.md)와 PR template의 검증 체크리스트를 함께 확인한다.
+11. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
+12. AWS/Azure 예시는 2026-05-09 공식 지원 스냅샷을 기준으로 관리하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
 
 ## Common Workflows
 

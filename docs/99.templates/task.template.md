@@ -37,6 +37,7 @@ updated: YYYY-MM-DD
 - Every task must define evidence.
 - Documentation-only work still needs validation evidence.
 - If a feature-local `tasks.md` exists under `03.specs/`, this document remains the execution-tracking source of truth.
+- Remove optional boilerplate sections when they do not add task-specific evidence or execution clarity.
 
 ## Task Table
 

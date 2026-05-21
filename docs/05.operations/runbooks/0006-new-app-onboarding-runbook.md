@@ -3,7 +3,7 @@ title: 'New App GitOps Onboarding Runbook'
 type: runbook
 status: active
 owner: platform
-updated: 2026-05-09
+updated: 2026-05-21
 ---
 
 # New App GitOps Onboarding Runbook
@@ -18,6 +18,15 @@ updated: 2026-05-09
 단계별 운영 절차를 제공한다. `apps-generator` ApplicationSet 기반 자동 감지 방식(권장)과
 Application CR 수동 등록 방식을 모두 다룬다.
 Vault 시크릿 연동(ESO), 동기화 검증, 트러블슈팅 절차를 포함한다.
+
+## Current Contract Note
+
+이 문서는 2026-05-09 기준의 범용 온보딩 런북이다. 현재 신규 GitHub 앱
+온보딩 기준은 [앱 GitOps 온보딩 정책](../policies/0007-app-gitops-onboarding-policy.md),
+[GitHub 앱 GitOps 온보딩 가이드](../guides/0008-github-app-gitops-onboarding-guide.md),
+[GitHub 앱 GitOps 온보딩 런북](./0010-github-app-gitops-onboarding-runbook.md)이 우선한다.
+이 문서 안의 `Deployment` 또는 `latest` 예시는 역사적 샘플로만 취급하고,
+신규 workload는 Rollout과 고정 이미지 태그 정책을 따라야 한다.
 
 ## Purpose
 

@@ -3,7 +3,7 @@ title: 'Task: scripts Inventory Remediation'
 type: task
 status: done
 owner: 'platform'
-updated: 2026-05-17
+updated: 2026-05-21
 ---
 
 # Task: scripts Inventory Remediation
@@ -104,4 +104,4 @@ No Tier C-only, unused, or one-off deletion candidates are present as of 2026-05
 
 - **Plan**: [`../plans/2026-05-09-scripts-inventory-remediation.md`](../plans/2026-05-09-scripts-inventory-remediation.md)
 - **Scripts README**: [`../../../scripts/README.md`](../../../scripts/README.md)
-- **Root README**: [`../../README.md`](../../README.md)
+- **Root README**: [`../../../README.md`](../../../README.md)

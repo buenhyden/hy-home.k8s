@@ -3,7 +3,7 @@ title: 'ADR-0001: k3d Topology and External Network Baseline'
 type: adr
 status: accepted
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-21
 ---
 
 # ADR-0001: k3d Topology and External Network Baseline
@@ -73,7 +73,11 @@ updated: 2026-05-18
 
 ## Related Documents
 
-- **PRD**: [`../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
-- **ARD**: [`../requirements/0002-wsl2-k3d-argocd-ha-platform.md`](../requirements/0002-wsl2-k3d-argocd-ha-platform.md)
-- **Spec**: [`../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
+- **Initial PRD**: [`../../01.requirements/2026-03-27-wsl-k3d-argocd-platform.md`](../../01.requirements/2026-03-27-wsl-k3d-argocd-platform.md)
+- **Initial ARD**: [`../requirements/0001-wsl-k3d-argocd-platform.md`](../requirements/0001-wsl-k3d-argocd-platform.md)
+- **Initial Spec**: [`../../03.specs/001-wsl-k3d-argocd-platform/spec.md`](../../03.specs/001-wsl-k3d-argocd-platform/spec.md)
+- **Initial Plan**: [`../../04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md`](../../04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md)
+- **HA PRD**: [`../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- **HA ARD**: [`../requirements/0002-wsl2-k3d-argocd-ha-platform.md`](../requirements/0002-wsl2-k3d-argocd-ha-platform.md)
+- **HA Spec**: [`../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
 - **Related ADR**: [`./0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](./0005-wsl2-ha-baseline-and-external-endpoint-contract.md)
