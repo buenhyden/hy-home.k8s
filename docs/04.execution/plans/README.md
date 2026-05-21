@@ -83,7 +83,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-05-09-scripts-inventory-remediation.md`](./2026-05-09-scripts-inventory-remediation.md) | `scripts/` 인벤토리 조사와 README 실행 계약 보정 계획 | Done  | 2026-05-21 |
 | [`./2026-05-09-github-qa-ci-remediation.md`](./2026-05-09-github-qa-ci-remediation.md) | `.github` QA, CI, 브랜치 정책, PR intake 계약 보정 계획 | Done  | 2026-05-09 |
 | [`./2026-05-10-agent-first-harness-llm-wiki-hooks.md`](./2026-05-10-agent-first-harness-llm-wiki-hooks.md) | Agent-first harness, LLM Wiki, hook wiring 보정 계획 | Done  | 2026-05-10 |
-| [`./2026-05-17-template-crosslink-fix.md`](./2026-05-17-template-crosslink-fix.md) | 문서 템플릿 target-relative 링크와 생성 문서 표시 경로 정합화 계획. 별도 Task record 없이 plan 내부 evidence와 migration note가 증적을 소유한다. | Done  | 2026-05-21 |
+| [`./2026-05-17-template-crosslink-fix.md`](./2026-05-17-template-crosslink-fix.md) | 문서 템플릿 target-relative 링크와 생성 문서 표시 경로 정합화 완료 이력. Historical exception으로 별도 Task record 없이 plan 내부 evidence와 migration note가 증적을 소유한다. | Done  | 2026-05-21 |
 | [`./2026-05-18-argo-rollouts-progressive-delivery.md`](./2026-05-18-argo-rollouts-progressive-delivery.md) | Argo Rollouts current-contract backfill 실행 계획 | Done | 2026-05-21 |
 | [`./2026-05-18-argo-notifications-slack.md`](./2026-05-18-argo-notifications-slack.md) | ArgoCD Notifications Slack current-contract backfill 실행 계획 | Done | 2026-05-21 |
 

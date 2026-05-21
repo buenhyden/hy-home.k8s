@@ -3,7 +3,7 @@ title: 'WSL2 k3d/k3s ArgoCD HA Platform Technical Specification'
 type: spec
 status: draft
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-21
 ---
 
 # WSL2 k3d/k3s ArgoCD HA Platform Specification
@@ -181,6 +181,9 @@ CHECK_TRAEFIK_443=true ./infrastructure/tests/verify-ingress-tls.sh
 
 ## Related Documents
 
+- **PRD**: [`../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- **ARD**: [`../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md`](../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md)
+- **ADR**: [`../../02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](../../02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md)
 - **Plan**: [`../../04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
 - **Tasks**: [`../../04.execution/tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../04.execution/tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
 - **Guide**: [`../../05.operations/guides/0002-wsl2-k3d-argocd-ha-setup-guide.md`](../../05.operations/guides/0002-wsl2-k3d-argocd-ha-setup-guide.md)

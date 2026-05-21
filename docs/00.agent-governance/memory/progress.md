@@ -8,6 +8,59 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-21 — docs office-hours taxonomy follow-up
+
+- **Date**: 2026-05-21
+- **Layer**: docs, meta
+- **Status**: complete
+- **Tags**: #docs #templates #links #validation
+
+#### Progress
+
+- Inspected root README, docs hub, target stage READMEs, governance routing,
+  templates, and generated spec/plan documents for taxonomy and link alignment.
+- Clarified `spec.template.md` so `Related Documents` carries upstream and
+  downstream traceability, while `Related Inputs` remains an upstream summary.
+- Added the same upstream links to existing generated `docs/03.specs/*/spec.md`
+  documents without changing their implementation contracts.
+- Clarified `readme.template.md` snippet-library handling and the templates
+  README spec mapping.
+- Converted the completed template cross-link plan's active execution wording
+  into historical-record wording and marked its no-task-record case as a
+  historical exception in the plans index.
+
+#### Memory
+
+- Do not remove `Related Inputs` from specs; the repo quality gate derives
+  required headings from the template. Add traceability to `Related Documents`
+  when policy requires upstream links.
+- Completed execution plans should not retain active agent execution prompts.
+  Preserve migration context, but label completed exceptions as historical.
+
+#### Evidence
+
+- `git status --short` was clean before edits.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS before edits.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS before edits.
+- Read-only subagent link scan found 0 broken local Markdown links across
+  root README and `docs/**/*.md`.
+- `git diff --check` PASS after edits.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS after edits.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS after edits.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS after edits.
+- `bash scripts/validate-gitops-structure.sh` PASS after edits.
+- `bash scripts/validate-k8s-manifests.sh .` PASS for YAML syntax after edits;
+  optional `kube-linter` was skipped because it is not installed locally.
+- `bash scripts/check-secret-handling.sh .` PASS after edits.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +`
+  PASS after edits.
+
+#### Handoff
+
+- None.
+
+---
+
 ### 2026-05-19 — docs template enforcement hardening
 
 - **Date**: 2026-05-19

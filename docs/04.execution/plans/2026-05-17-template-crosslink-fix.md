@@ -8,12 +8,9 @@ updated: 2026-05-21
 
 # Template Cross-link Fix Implementation Plan
 
-> Use this plan to fix relative path placeholders in all `docs/99.templates/` files and
-> to synchronise the display text (backtick code) in every generated document with its
-> actual href.
->
-> **For agentic workers:** Execute each `- [ ]` step in order. Use `superpowers:executing-plans`
-> or `superpowers:subagent-driven-development` to implement task-by-task.
+> Historical execution record for the completed template cross-link remediation.
+> Do not re-execute this plan as a live task list; current template and link rules
+> are owned by `docs/99.templates/README.md` and the governance documents linked below.
 
 ---
 
@@ -148,11 +145,11 @@ rewritten by the author for the final README location.
 
 ## Template Improvement Plan
 
-`docs/99.templates/readme.template.md` is intentionally generic, but README
-targets vary by directory depth. A future template hardening pass should add
-target-specific path guidance for root README, `docs/README.md`, and nested
-stage READMEs, or convert the instructional example links into code literal path
-tables so authors must recalculate final relative links for the target location.
+`docs/99.templates/readme.template.md` is intentionally generic because README
+targets vary by directory depth. The 2026-05-21 follow-up clarified that its
+snippet library is optional assembly material and must not remain in final
+README files. Future hardening should stay limited to target-specific path
+guidance when a concrete README authoring failure is found.
 
 ## Historical Execution Notes
 
@@ -170,6 +167,7 @@ tables so authors must recalculate final relative links for the target location.
 - 파일 삭제, 이동, 이름 변경은 수행하지 않았다.
 - `rg` 기준으로 이 파일 외부에서 제거 대상 `Task Detail` heading이나 하위 task heading을 참조하는 링크는 없었다.
 - 상세 실행 지시는 완료 이력으로 통합하고, 현재 템플릿 링크 규칙의 정본은 `docs/99.templates/README.md`와 `docs/00.agent-governance/rules/documentation-protocol.md`에 둔다.
+- 2026-05-21 후속 정리에서는 완료된 계획의 active execution 문구를 historical record 문구로 바꾸고, 새로운 Task 문서는 만들지 않았다.
 
 ## Related Documents
 

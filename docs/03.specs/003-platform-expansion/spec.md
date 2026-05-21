@@ -3,7 +3,7 @@ title: 'Platform Expansion Technical Specification'
 type: spec
 status: active
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-21
 ---
 
 # Platform Expansion Specification
@@ -173,6 +173,13 @@ Agents may document these live checks as expected operator evidence, but must no
 
 ## Related Documents
 
+- **PRD**: [`../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md`](../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md)
+- **ARD**: [`../../02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md`](../../02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md)
+- **ADR-0006**: [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
+- **ADR-0007**: [`../../02.architecture/decisions/0007-kubernetes-dashboard-v3.md`](../../02.architecture/decisions/0007-kubernetes-dashboard-v3.md)
+- **ADR-0008**: [`../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md`](../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md)
+- **ADR-0009**: [`../../02.architecture/decisions/0009-kiali-external-observability.md`](../../02.architecture/decisions/0009-kiali-external-observability.md)
+- **ADR-0010**: [`../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md)
 - **Plan**: [`../../04.execution/plans/2026-03-29-platform-expansion.md`](../../04.execution/plans/2026-03-29-platform-expansion.md)
 - **Tasks**: [`../../04.execution/tasks/2026-03-29-platform-expansion.md`](../../04.execution/tasks/2026-03-29-platform-expansion.md)
 - **Guide**: [`../../05.operations/guides/0003-platform-expansion-bootstrap-guide.md`](../../05.operations/guides/0003-platform-expansion-bootstrap-guide.md)

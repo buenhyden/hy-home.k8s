@@ -82,16 +82,17 @@ Spec은 실행 기준을 소유하는 문서다.
 4. API가 있다면 API Spec 또는 계약 파일을 함께 둔다.
 5. Agent 설계가 있다면 Role, Tool, Policy, Memory, Guardrail, Evaluation, Fallback을 명시한다.
 6. feature-local `tasks.md` 또는 `tests.md`는 설계 보조 문서이며, 실행 추적 정본은 `../04.execution/tasks/`다.
+7. `Related Inputs`는 upstream 요약이고, `Related Documents`는 PRD/ARD/ADR와 Plan/Task/Operations 링크를 함께 담는다.
 
 ## Document Index
 
 | 문서 | 설명 | 상태 | 현재성 | 최종 수정 |
 | --- | --- | --- | --- | --- |
-| [`./001-wsl-k3d-argocd-platform/spec.md`](./001-wsl-k3d-argocd-platform/spec.md) | WSL2 k3d/k3s + ArgoCD + ESO/Vault + 외부 DB/Valkey 기술 명세 | Draft | Historical baseline. 현재 외부 서비스 실행계약은 `172.18.x` GitOps manifest와 static contract가 우선한다. | 2026-05-18 |
-| [`./002-wsl2-k3d-argocd-ha-platform/spec.md`](./002-wsl2-k3d-argocd-ha-platform/spec.md) | Valkey/TLS/최소권한 계약과 CI 정적 게이트 기술 명세 | Draft | Historical HA record. 현재 외부 서비스와 observability endpoint는 GitOps manifest와 operations policy를 함께 본다. | 2026-05-18 |
-| [`./003-platform-expansion/spec.md`](./003-platform-expansion/spec.md) | cert-manager, Headlamp, Istio, Kiali 확장 기술 명세 | Active | Current contract는 Headlamp/`172.18.x` 기준이다. Dashboard/`172.19.x` 문단은 historical/superseded로만 읽는다. | 2026-05-18 |
-| [`./004-argo-rollouts-progressive-delivery/spec.md`](./004-argo-rollouts-progressive-delivery/spec.md) | Argo Rollouts 점진적 배포 current-contract backfill 명세 | Active | `platform-rollouts` Application, dashboard, metrics, AppProject 권한을 현재 계약으로 정리한다. | 2026-05-18 |
-| [`./005-argo-notifications-slack/spec.md`](./005-argo-notifications-slack/spec.md) | ArgoCD Notifications Slack current-contract backfill 명세 | Active | ArgoCD Notifications, Vault/ESO credential boundary, template/trigger 계약을 현재 기준으로 정리한다. | 2026-05-18 |
+| [`./001-wsl-k3d-argocd-platform/spec.md`](./001-wsl-k3d-argocd-platform/spec.md) | WSL2 k3d/k3s + ArgoCD + ESO/Vault + 외부 DB/Valkey 기술 명세 | Draft | Historical baseline. 현재 외부 서비스 실행계약은 `172.18.x` GitOps manifest와 static contract가 우선한다. | 2026-05-21 |
+| [`./002-wsl2-k3d-argocd-ha-platform/spec.md`](./002-wsl2-k3d-argocd-ha-platform/spec.md) | Valkey/TLS/최소권한 계약과 CI 정적 게이트 기술 명세 | Draft | Historical HA record. 현재 외부 서비스와 observability endpoint는 GitOps manifest와 operations policy를 함께 본다. | 2026-05-21 |
+| [`./003-platform-expansion/spec.md`](./003-platform-expansion/spec.md) | cert-manager, Headlamp, Istio, Kiali 확장 기술 명세 | Active | Current contract는 Headlamp/`172.18.x` 기준이다. Dashboard/`172.19.x` 문단은 historical/superseded로만 읽는다. | 2026-05-21 |
+| [`./004-argo-rollouts-progressive-delivery/spec.md`](./004-argo-rollouts-progressive-delivery/spec.md) | Argo Rollouts 점진적 배포 current-contract backfill 명세 | Active | `platform-rollouts` Application, dashboard, metrics, AppProject 권한을 현재 계약으로 정리한다. | 2026-05-21 |
+| [`./005-argo-notifications-slack/spec.md`](./005-argo-notifications-slack/spec.md) | ArgoCD Notifications Slack current-contract backfill 명세 | Active | ArgoCD Notifications, Vault/ESO credential boundary, template/trigger 계약을 현재 기준으로 정리한다. | 2026-05-21 |
 
 ## Helper Templates
 

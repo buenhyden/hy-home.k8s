@@ -149,8 +149,13 @@ python evals/run_[feature]_eval.py
 Target-relative examples below assume the authored file will be created at
 `docs/03.specs/<feature-id>/spec.md`.
 
-Use this section for downstream or peer documents created from this spec.
+Use this section for both upstream traceability and downstream or peer documents
+created from this spec. `Related Inputs` may summarize the same upstream inputs,
+but it does not replace this required `Related Documents` traceability section.
 
+- **PRD**: `[../../01.requirements/YYYY-MM-DD-<feature-or-system>.md]`
+- **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
+- **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
 - **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
 - **Tasks**: `[../../04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md]`
 - **Runbook**: `[../../05.operations/runbooks/####-<topic>.md]`

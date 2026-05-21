@@ -3,7 +3,7 @@ title: 'WSL k3d/k3s ArgoCD Platform Technical Specification'
 type: spec
 status: draft
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-21
 ---
 
 # WSL k3d/k3s ArgoCD Platform Specification
@@ -164,6 +164,9 @@ kubectl -n external-secrets get externalsecret,secretstore,clustersecretstore
 
 ## Related Documents
 
+- **PRD**: [`../../01.requirements/2026-03-27-wsl-k3d-argocd-platform.md`](../../01.requirements/2026-03-27-wsl-k3d-argocd-platform.md)
+- **ARD**: [`../../02.architecture/requirements/0001-wsl-k3d-argocd-platform.md`](../../02.architecture/requirements/0001-wsl-k3d-argocd-platform.md)
+- **Related ADRs**: [`../../02.architecture/decisions/0001-k3d-topology-and-network.md`](../../02.architecture/decisions/0001-k3d-topology-and-network.md), [`../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md), [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md), [`../../02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md`](../../02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md)
 - **Plan**: [`../../04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md`](../../04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md)
 - **Tasks**: [`../../04.execution/tasks/2026-03-27-wsl-k3d-argocd-platform.md`](../../04.execution/tasks/2026-03-27-wsl-k3d-argocd-platform.md)
 - **Runbook**: [`../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md`](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)

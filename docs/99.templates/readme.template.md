@@ -122,6 +122,11 @@ still resolves from that final location:
 ## SNIPPET LIBRARY
 
 <!--
+The following sections are optional assembly snippets. Copy only the snippets
+that match the final README target, then delete this entire library and every
+unused snippet from the authored README. Do not leave `SNIPPET LIBRARY` in a
+final README.
+
 ===============================================================================
 SNIPPET: ROOT
 ===============================================================================

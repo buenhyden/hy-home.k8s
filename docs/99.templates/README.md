@@ -83,6 +83,8 @@
 - 최종 authored 문서 예시 경로는 해당 Target 위치 기준의 code literal로 작성한다.
 - 아직 존재하지 않는 optional 문서, placeholder 경로, target-relative 예시는 Markdown 링크가 아니라 backtick code literal로 남긴다.
 - 생성 문서에 템플릿 안내 주석, placeholder, `Target:` 주석, `Use this template` 문구를 남기지 않는다.
+- Spec 문서의 `Related Inputs`는 upstream 입력 요약이고, 필수
+  `Related Documents` 섹션은 upstream/downstream 추적 링크를 함께 유지한다.
 
 ## Template-Folder Mapping
 
@@ -92,7 +94,7 @@
 | `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md` | `prd.template.md` | Product requirements, users, scope, success / acceptance criteria |
 | `docs/02.architecture/requirements/####-<system-or-domain>.md` | `ard.template.md` | Architecture requirements, quality attributes, reference model |
 | `docs/02.architecture/decisions/####-<short-title>.md` | `adr.template.md` | One architecture decision, context, consequences, alternatives |
-| `docs/03.specs/<feature-id>/spec.md` | `spec.template.md` | Implementation contract, interfaces, verification |
+| `docs/03.specs/<feature-id>/spec.md` | `spec.template.md` | Parent implementation contract, interfaces, verification |
 | `docs/03.specs/<feature-id>/api-spec.md` | `api-spec.template.md` | Feature-local API contract |
 | `docs/03.specs/<feature-id>/agent-design.md` | `agent-design.template.md` | Feature-local AI agent behavior, orchestration, safety, and eval design |
 | `docs/03.specs/<feature-id>/data-model.md` | `data-model.template.md` | Feature-local logical and physical data model |

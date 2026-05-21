@@ -112,6 +112,8 @@ docs/
 - README와 index 문서는 해당 폴더의 목적, scope, structure, workflow, link basis, related documents를 유지한다.
 - README와 index 문서는 frontmatter 없이 작성한다. 다른 authored stage 문서는 matching template의 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
 - 모든 authored stage 문서는 `Related Documents`를 통해 upstream/downstream 문맥을 연결한다.
+- Spec의 `Related Inputs`는 upstream 입력 요약으로 사용할 수 있지만,
+  `Related Documents` 섹션의 upstream/downstream 링크를 대체하지 않는다.
 - Markdown 링크는 최종 문서 위치 기준 상대 경로를 사용한다. 아직 존재하지 않는 optional 경로나 placeholder는 Markdown 링크가 아니라 code literal로 남긴다.
 - stale 문서는 먼저 갱신하거나 중복 내용을 병합한다. reference/archive 성격으로 옮기는 작업은 사전 reference search와 migration note가 있을 때만 수행한다.
 - 문서를 제거하는 일은 reference search, migration note, 리뷰 가능한 diff가 있을 때만 허용한다.
