@@ -8,6 +8,52 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-21 — operations policy runbook boundary clarification
+
+- **Date**: 2026-05-21
+- **Layer**: docs, operations
+- **Status**: complete
+- **Tags**: #docs #operations #runbooks #validation
+
+#### Progress
+
+- Reviewed executable command and checklist blocks under
+  `docs/05.operations/policies/` against the owning operations runbooks.
+- Clarified that policies own controls, approval boundaries, and required
+  evidence, while runbooks own command order, recovery procedures, and
+  bootstrap/break-glass execution.
+- Converted duplicated policy verification command blocks into evidence tables
+  with runbook-owner links for GitOps platform, HA, Rollouts/Notifications/
+  Headlamp, observability platform, k8s observability, and app onboarding.
+- Routed remaining service-mesh/cert-manager procedural command literals to
+  the owning platform-expansion runbook while keeping policy contract values in
+  place.
+- Updated the operation template and policies index so future policy documents
+  keep procedural commands in the owning runbook.
+
+#### Memory
+
+- When an operations policy needs verification, prefer evidence descriptions
+  and runbook-owner links over executable command blocks. Keep command sequences
+  in runbooks unless the command literal is part of the policy contract itself.
+
+#### Evidence
+
+- `rg` scan confirmed no executable `bash` code blocks remain under
+  `docs/05.operations/policies/`; remaining command-like literals are policy
+  contract values, prohibitions, or runbook-owner references.
+- `git diff --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS, including repo-local
+  Markdown link target checks.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/check-secret-handling.sh .` PASS.
+
+#### Handoff
+
+- None.
+
+---
+
 ### 2026-05-21 — docs office-hours taxonomy follow-up
 
 - **Date**: 2026-05-21

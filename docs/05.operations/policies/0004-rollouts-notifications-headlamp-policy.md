@@ -3,7 +3,7 @@ title: 'Argo Rollouts, Notifications & Headlamp Operations Policy'
 type: operation
 status: active
 owner: platform
-updated: 2026-05-09
+updated: 2026-05-21
 ---
 
 # Argo Rollouts, Notifications & Headlamp Operations Policy
@@ -37,7 +37,7 @@ updated: 2026-05-09
   - CRD 설치: `installCRDs: true` 유지
   - Rollouts Dashboard는 `rollouts.127.0.0.1.nip.io` + ingress-nginx + TLS 유지
 - **Allowed**:
-  - 수동 `kubectl argo rollouts promote <rollout>` 실행
+  - 수동 Rollout promotion은 [Rollouts/Notifications/Headlamp 런북](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)의 승인/증적 절차로 실행
   - canary/blue-green 전략 선택
   - Prometheus AnalysisTemplate 정의 (외부 Prometheus `172.18.0.10:9090` 활용)
 - **Disallowed**:
@@ -86,22 +86,11 @@ updated: 2026-05-09
 
 ## Verification
 
-```bash
-# Rollouts 상태
-kubectl -n argo-rollouts get pods
-kubectl argo rollouts list rollouts --all-namespaces
-
-# Notifications 상태
-kubectl -n argocd get pods | grep notification
-kubectl -n argocd logs deploy/argocd-notifications-controller --tail=50 | grep -i 'slack\|error\|sent'
-
-# Headlamp 상태
-kubectl -n headlamp get pods,ingress
-
-# Traefik 라우팅 확인
-curl -ksS -o /dev/null -w '%{http_code}' https://headlamp.127.0.0.1.nip.io/
-curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
-```
+| Control Area | Required Evidence | Runbook Owner |
+| --- | --- | --- |
+| Argo Rollouts | Controller/dashboard pods are running and Rollout CRDs/list output is available | [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md) |
+| Argo Notifications | Controller is running, ESO-backed secret exists, and Slack send/error logs are reviewed without committing token values | [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md) |
+| Headlamp and Traefik | Headlamp pods/ingress/TLS are healthy and `headlamp`/`rollouts` hostnames return expected HTTP status through Traefik | [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md) |
 
 ## Review Cadence
 

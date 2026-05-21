@@ -18,6 +18,9 @@ updated: YYYY-MM-DD
 > - This document is not a step-by-step recovery procedure.
 > - This document is not an onboarding or how-to guide.
 > - This document is not an incident timeline or a postmortem.
+> - Keep executable command sequences, recovery steps, and operational checklists
+>   in the owning runbook. In this policy, describe the required evidence and
+>   link the runbook instead of duplicating the procedure.
 > - Use relative links only, calculated from the final authored document location.
 > - Keep placeholder or optional target paths as code literals until the target exists.
 
@@ -49,7 +52,8 @@ updated: YYYY-MM-DD
 
 ## Verification
 
-- [How compliance is checked]
+- [Evidence required to prove compliance]
+- [Owning runbook for command sequence or recovery procedure]
 
 ## Review Cadence
 

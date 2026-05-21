@@ -3,7 +3,7 @@ title: 'K8s GitOps Platform Operations Policy'
 type: operation
 status: active
 owner: platform
-updated: 2026-03-27
+updated: 2026-05-21
 ---
 
 # K8s GitOps Platform Operations Policy
@@ -65,23 +65,13 @@ updated: 2026-03-27
 
 ## Verification
 
-- 정책 준수 여부는 아래 검증 세트로 확인한다.
+- 정책 준수 여부는 아래 증적으로 확인한다.
 
-```bash
-# GitOps root 경로/브랜치 검증
-kubectl -n argocd get application root-platform -o yaml | \
-  rg 'path: gitops/apps/root|targetRevision: main'
-
-# External service 인터페이스 계약 검증
-kubectl -n platform get svc,endpointslice | \
-  rg 'postgres-(write|read)-external|15432|15433'
-kubectl -n platform get svc,endpointslice | \
-  rg 'valkey-external|172.18.0.9|6379'
-
-# Secret plane 검증
-kubectl -n external-secrets get pods
-kubectl -n argocd get externalsecret,secret argocd-external-valkey
-```
+| Control Area | Required Evidence | Runbook Owner |
+| --- | --- | --- |
+| GitOps root path/branch | `root-platform` Application source path와 `targetRevision`이 운영 계약과 일치함 | [`../runbooks/0001-argocd-platform-bootstrap-runbook.md`](../runbooks/0001-argocd-platform-bootstrap-runbook.md) |
+| External service contract | `platform` namespace Service/EndpointSlice가 PostgreSQL/Valkey 서비스명, IP, 포트 계약을 만족함 | [`../runbooks/0001-argocd-platform-bootstrap-runbook.md`](../runbooks/0001-argocd-platform-bootstrap-runbook.md) |
+| Secret plane | ESO와 ArgoCD external secret 동기화 상태가 정상이며 평문 secret manifest가 없음 | [`../runbooks/0001-argocd-platform-bootstrap-runbook.md`](../runbooks/0001-argocd-platform-bootstrap-runbook.md) |
 
 - 문서 검증 항목:
   - 템플릿 필수 섹션 누락 0건

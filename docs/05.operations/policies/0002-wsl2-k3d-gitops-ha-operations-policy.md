@@ -3,7 +3,7 @@ title: 'WSL2 k3d/k3s GitOps HA Operations Policy'
 type: operation
 status: active
 owner: platform
-updated: 2026-05-09
+updated: 2026-05-21
 ---
 
 # WSL2 k3d/k3s GitOps HA Operations Policy
@@ -43,10 +43,10 @@ updated: 2026-05-09
   - Vault Kubernetes auth `kubernetes_host`는 `https://172.18.0.2:6443`으로 고정한다
   - Vault Kubernetes auth `disable_local_ca_jwt: true` + `token_reviewer_jwt` 설정 필수
 - **Allowed**:
-  - 장애 시 수동 `EndpointSlice` 핫픽스
-  - `argocd --hard-refresh` 기반 상태 재평가
+  - 장애 시 수동 `EndpointSlice` 핫픽스는 human-approved break-glass와 런북 증적이 있을 때만 허용
+  - ArgoCD hard-refresh 기반 상태 재평가는 런북 절차와 증적 기록을 통해 수행
   - `CHECK_TRAEFIK_443=true` 기반 운영 TLS 점검
-  - Docker 재시작 후 `docker network connect k3d-hyhome vault` 수동 재연결
+  - Docker 재시작 후 Vault의 k3d-hyhome 네트워크 수동 재연결은 런북 절차로 수행
   - k3d 에이전트 노드 inotify 문제 시 순차 재시작(하나씩)
 - **Disallowed**:
   - 평문 시크릿 커밋
@@ -72,27 +72,11 @@ updated: 2026-05-09
 
 ## Verification
 
-### Static
-
-```bash
-./infrastructure/tests/verify-contracts-static.sh
-bash -n infrastructure/bootstrap-local.sh infrastructure/tests/*.sh
-```
-
-### Runtime
-
-```bash
-./infrastructure/tests/run-all.sh
-CHECK_TRAEFIK_443=true ./infrastructure/tests/verify-ingress-tls.sh
-```
-
-### Policy/Audit
-
-```bash
-kubectl -n argocd get app root-platform -o yaml | \
-  rg 'path: gitops/apps/root|targetRevision: main'
-rg -n 'group:\s*"\*"|kind:\s*"\*"' gitops/clusters/local/appproject-apps.yaml
-```
+| Control Area | Required Evidence | Runbook Owner |
+| --- | --- | --- |
+| Static contract | Contract test and shell syntax checks pass before platform changes merge | [`../runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md) |
+| Runtime recovery | HA/runtime smoke checks and TLS checks pass after bootstrap or recovery | [`../runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md) |
+| Policy audit | GitOps root path/branch and AppProject wildcard restrictions remain compliant | [`../runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md) |
 
 ## Review Cadence
 

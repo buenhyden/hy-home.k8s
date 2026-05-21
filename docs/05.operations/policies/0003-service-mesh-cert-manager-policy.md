@@ -3,7 +3,7 @@ title: 'Service Mesh & cert-manager Operations Policy'
 type: operation
 status: active
 owner: platform
-updated: 2026-05-09
+updated: 2026-05-21
 ---
 
 # Service Mesh & cert-manager Operations Policy
@@ -40,8 +40,8 @@ updated: 2026-05-09
   - `rootCA.pem`은 로컬 신뢰 저장소에 등록 후 HTTPS 접근
   - `secrets/certs/rootCA-key.pem` 파일을 평문 커밋 금지
 - **Allowed**:
-  - `kubectl -n cert-manager rollout restart deploy/cert-manager` 기반 컨트롤러 재시작
-  - ClusterIssuer 상태 확인: `kubectl get clusterissuer mkcert-ca-issuer`
+  - cert-manager controller 재시작은 운영자 승인 후 [플랫폼 확장 런북](../runbooks/0003-platform-expansion-bootstrap-runbook.md)의 절차로 수행
+  - ClusterIssuer 상태 확인은 [플랫폼 확장 런북](../runbooks/0003-platform-expansion-bootstrap-runbook.md)의 검증 절차로 수행
 - **Disallowed**:
   - `mkcert-root-ca` Secret 평문 커밋
   - ClusterIssuer 다중 운영 (이름 오염 위험)
@@ -91,7 +91,7 @@ updated: 2026-05-09
 ## CI Governance
 
 - `verify-contracts-static.sh` PASS가 모든 IP/endpoint 변경의 선행 조건이다.
-- `bash -n` 정적 문법 검증 후 bootstrap-local.sh 변경을 반영한다.
+- shell syntax 정적 검증 후 bootstrap-local.sh 변경을 반영한다.
 - cert-manager/Headlamp/Istio/Kiali GitOps 리소스는 AppProject `platform` 스코프 내에서만 배포된다.
 
 ## Exceptions
@@ -101,7 +101,7 @@ updated: 2026-05-09
 
 ## Verification
 
-- `bash infrastructure/tests/verify-contracts-static.sh`로 endpoint, TLS, Traefik 경계 계약을 확인한다.
+- endpoint, TLS, Traefik 경계 계약 검증 증적을 남긴다.
 - cert-manager/Istio/Kiali 변경 후 관련 GitOps manifest와 runbook의 계약 값이 일치하는지 확인한다.
 
 ## Review Cadence

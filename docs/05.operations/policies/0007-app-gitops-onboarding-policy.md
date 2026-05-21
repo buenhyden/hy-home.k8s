@@ -208,25 +208,16 @@ fix: fix <appname> config             ← 설정 수정
 
 ## 5. 온보딩 통제 체크리스트
 
-새 앱 온보딩 전 아래 항목을 확인한다:
+새 앱 온보딩은 아래 정책 게이트를 만족해야 한다. 실행 순서와 체크리스트는 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)이 소유한다.
 
-실행 절차는 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)을 기준으로 수행한다.
-
-```
-[ ] GitHub 레포에 CI workflow 추가 (ghcr.io push)
-[ ] ghcr.io 패키지를 Public으로 설정
-[ ] examples/sample-app/ 복사 후 플레이스홀더 교체
-[ ] rollout.yaml: 고정 이미지 태그, AnalysisTemplate 참조
-[ ] service.yaml: http- 포트 명명 규칙 준수
-[ ] ingress.yaml: ingressClassName=nginx, mkcert-ca-issuer
-[ ] analysis-template.yaml: <appname> 교체 완료
-[ ] Traefik dynamic config 추가 (hy-home.docker 레포)
-[ ] (선택) Vault 시크릿 등록 + 정책 갱신 + external-secret.yaml 활성화
-[ ] git commit & push
-[ ] ArgoCD Application Synced / Healthy 확인
-[ ] Pod 2/2 Running 확인 (Istio sidecar 주입)
-[ ] https://<appname>.127.0.0.1.nip.io 접속 확인
-```
+| Policy Gate | Required Evidence | Runbook Owner |
+| --- | --- | --- |
+| Repository/package | GitHub CI가 ghcr.io 이미지를 발행하고 패키지 가시성이 홈랩 계약에 맞음 | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
+| GitOps manifests | `rollout.yaml`, `service.yaml`, `ingress.yaml`, `analysis-template.yaml`, `kustomization.yaml`이 필수 계약을 만족함 | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
+| Network/TLS | `http-` port naming, `ingressClassName=nginx`, `mkcert-ca-issuer`, nip.io hostname이 적용됨 | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
+| External routing | 외부 Traefik dynamic config가 별도 Traefik repo에서 리뷰되고 k8s Ingress 계약과 일치함 | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
+| Secret handling | 필요한 경우 Vault/ESO를 사용하고 plaintext Kubernetes Secret manifest가 없음 | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
+| Runtime health | ArgoCD Application, Rollout, Pod readiness, Ingress/TLS 접근 증적이 남음 | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
 
 ---
 
@@ -237,10 +228,9 @@ fix: fix <appname> config             ← 설정 수정
 
 ## Verification
 
-- `bash scripts/validate-gitops-structure.sh`
-- `bash scripts/validate-k8s-manifests.sh .`
-- `bash scripts/check-secret-handling.sh .`
-- 온보딩 후 ArgoCD Application `Synced/Healthy`, Rollout `Healthy`, Pod `2/2 Running`, Ingress TLS 발급 상태를 확인한다.
+- 정적 검증 증적: GitOps 구조, k8s manifest, secret-handling 검증이 통과해야 한다.
+- 런타임 증적: 온보딩 후 ArgoCD Application `Synced/Healthy`, Rollout `Healthy`, Pod `2/2 Running`, Ingress TLS 발급 상태를 확인한다.
+- 실행 가능한 검증 명령과 실패 시 복구 절차는 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)을 따른다.
 
 ## Review Cadence
 
