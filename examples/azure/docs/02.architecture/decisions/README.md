@@ -46,7 +46,15 @@
 2. 각 문서 번호(####)는 프로젝트 전역에서 중복되지 않도록 순차적으로 부여한다.
 3. 결정의 배경(Context) 섹션에는 분석 단계에서의 비교 지표를 포함한다.
 
-## Related References
+## Link Basis
+
+이 README의 링크 기준 위치는 `examples/azure/docs/02.architecture/decisions/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Related Documents
 
 - **PARD**: [../01.requirements/2026-03-31-azure-migration.md](../../01.requirements/2026-03-31-azure-migration.md)
 - **AARD**: [../02.architecture/requirements/0001-azure-migration-architecture.md](../requirements/0001-azure-migration-architecture.md)

@@ -53,6 +53,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-05-17-template-crosslink-fix.md
 ├── 2026-05-18-argo-rollouts-progressive-delivery.md
 ├── 2026-05-18-argo-notifications-slack.md
+├── 2026-05-22-docs-governance-full-ab-hardening.md
 └── README.md
 ```
 
@@ -88,6 +89,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-05-17-template-crosslink-fix.md`](./2026-05-17-template-crosslink-fix.md) | 문서 템플릿 target-relative 링크와 생성 문서 표시 경로 정합화 완료 이력. Historical exception으로 별도 Task record 없이 plan 내부 evidence와 migration note가 증적을 소유한다. | Done  | 2026-05-21 |
 | [`./2026-05-18-argo-rollouts-progressive-delivery.md`](./2026-05-18-argo-rollouts-progressive-delivery.md) | Argo Rollouts current-contract backfill 실행 계획 | Done | 2026-05-21 |
 | [`./2026-05-18-argo-notifications-slack.md`](./2026-05-18-argo-notifications-slack.md) | ArgoCD Notifications Slack current-contract backfill 실행 계획 | Done | 2026-05-21 |
+| [`./2026-05-22-docs-governance-full-ab-hardening.md`](./2026-05-22-docs-governance-full-ab-hardening.md) | README, lifecycle docs, agent/runtime governance, hook 경계, repo-static gate 정합화 계획 | Done | 2026-05-22 |
 
 ## Related Documents
 

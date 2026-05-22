@@ -44,7 +44,15 @@ gitops/
 2. 매니페스트 변경은 반드시 GitOps 풀 모델(ArgoCD)을 통해 클러스터에 반영되어야 한다.
 3. [Spec](../docs/03.specs/azure-migration/spec.md)에 정의된 인터페이스 규격을 준수한다.
 
-## Related References
+## Link Basis
+
+이 README의 링크 기준 위치는 `examples/azure/gitops/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Related Documents
 
 - **Spec**: [../docs/03.specs/azure-migration/spec.md](../docs/03.specs/azure-migration/spec.md)
 - **Infrastructure**: [../infrastructure/README.md](../infrastructure/README.md)

@@ -71,7 +71,15 @@ examples/azure/docs/
 4. **Reference Boundary**: 실제 Azure 배포 전에는 provider 공식 지원 버전, 비용, RBAC, 네트워크 경계를 다시 확인한다.
 5. **Agent Guidance**: 에이전트는 작업 전 [04.execution/tasks](04.execution/tasks/README.md)를 확인하고 진행 상황을 업데이트한다.
 
-## Related References
+## Link Basis
+
+이 README의 링크 기준 위치는 `examples/azure/docs/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Related Documents
 
 - [Main Project README](../../../README.md)
 - [Local Infrastructure Specs](../../../infrastructure/README.md)

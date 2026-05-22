@@ -75,7 +75,7 @@
 9. 템플릿의 placeholder 또는 code-literal cross-link는 최종 authored Target 위치 기준으로 계산한다.
    실제 Markdown 링크는 이 템플릿 파일 위치에서도 깨지지 않아야 한다.
 10. README 템플릿은 frontmatter를 요구하지 않는다. PRD/ARD/ADR/Spec/Plan/Task, Spec helper Markdown 템플릿(`api-spec`, `agent-design`, `data-model`, `tests`), 운영·참조 템플릿은 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
-11. 템플릿 구조를 바꾸면 이미 생성된 문서에 안전하게 반영할 수 있는 heading, placeholder, Related Documents만 갱신하고 문서 고유 의도는 대량 재작성하지 않는다.
+11. 템플릿 구조를 바꾸면 이미 생성된 문서에 안전하게 반영할 수 있는 heading, placeholder, `Link Basis`, `Related Documents`만 갱신하고 문서 고유 의도는 대량 재작성하지 않는다.
 12. `Related Documents` 예시는 upstream PRD/ARD/ADR/Spec/Plan과 downstream Task/Operation/Runbook/Incident를 추적할 수 있어야 한다.
 13. `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references` 아래의 비-README Markdown은 정확히 하나의 Template-Folder Mapping 행에 매핑되어야 한다.
 14. 실행 전제가 바뀌면 active README/guide/runbook은 새 current contract로 갱신하고, historical PRD/ARD/Spec은 원문 의도를 보존하되 현재 실행계약 메모로 오해를 막는다.
@@ -100,12 +100,13 @@
 - 생성 문서에 템플릿 안내 주석, placeholder, `Target:` 주석, `Use this template` 문구를 남기지 않는다.
 - Spec 문서의 `Related Inputs`는 upstream 입력 요약이고, 필수
   `Related Documents` 섹션은 upstream/downstream 추적 링크를 함께 유지한다.
+- 모든 README는 `Link Basis`와 `Related Documents`를 사용한다. `Related References`는 legacy heading으로 새 README나 정리된 README에 남기지 않는다.
 
 ## Template-Folder Mapping
 
 | Target Pattern | Template | Responsibility |
 | --- | --- | --- |
-| `README.md`, `docs/**/README.md`, `.claude/README.md`, `.codex/README.md` | `readme.template.md` | Entry point, scope, structure, workflow, link basis |
+| `README.md`, `**/README.md`, `.claude/README.md`, `.codex/README.md` | `readme.template.md` | Entry point, scope, structure, workflow, link basis, related documents |
 | `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md` | `prd.template.md` | Product requirements, users, scope, success / acceptance criteria |
 | `docs/02.architecture/requirements/####-<system-or-domain>.md` | `ard.template.md` | Architecture requirements, quality attributes, reference model |
 | `docs/02.architecture/decisions/####-<short-title>.md` | `adr.template.md` | One architecture decision, context, consequences, alternatives |
@@ -166,6 +167,7 @@ OpenAPI, GraphQL, proto 같은 계약 파일은 관련 `docs/03.specs/<feature-i
 `03.specs/<feature-id>/` 아래에서 반복적으로 사용하는 보조 설계 문서와 계약 파일용 템플릿을 함께 제공한다.
 
 - `readme.template.md`는 repository root, `docs/README.md`, stage README, nested README에서 재사용되는 multi-target 템플릿이다. 단일 `Target:` 주석을 강제하지 않고, 최종 README 위치에서 상대 링크를 다시 계산한다.
+- 모든 README는 `Overview`, `Audience`, `Scope`, `Structure`, `How to Work in This Area`, `Link Basis`, `Related Documents`를 유지한다.
 - `docs/03.specs/<feature-id>/README.md`는 필수가 아니다. 기본 인덱스는 `docs/03.specs/README.md`가 소유하며, feature-local README는 API/agent/data/test 보조 문서가 늘어날 때만 만든다.
 - `openapi.template.yaml`, `schema.template.graphql`, `service.template.proto`는 형식상 YAML/GraphQL/proto 파일이므로 frontmatter 없이 owner comments와 parent API spec 링크로 추적성을 유지한다.
 - `memory.template.md`는 `docs/00.agent-governance/memory/<topic>.md` target family를 사용한다. 관련 progress 링크는 최종 memory 파일 위치 기준으로 계산한다.

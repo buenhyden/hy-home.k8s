@@ -43,7 +43,15 @@
 2. 새 작업 할당 시 [task.template.md](../../../../../docs/99.templates/task.template.md) 템플릿을 준수한다.
 3. 작업 완료 시 반드시 검증 증적(Evidence) 섹션을 갱신한다.
 
-## Related References
+## Link Basis
+
+이 README의 링크 기준 위치는 `examples/azure/docs/04.execution/tasks/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Related Documents
 
 - **Spec**: [../03.specs/azure-migration/spec.md](../../03.specs/azure-migration/spec.md)
 - **Plan**: [../04.execution/plans/2026-03-31-migration-strategy.md](../plans/2026-03-31-migration-strategy.md)

@@ -49,7 +49,15 @@ infrastructure/
    az deployment group what-if --resource-group <rg-name> --template-file main.bicep
    ```
 
-## Related References
+## Link Basis
+
+이 README의 링크 기준 위치는 `examples/azure/infrastructure/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Related Documents
 
 - **Spec**: [../docs/03.specs/azure-migration/spec.md](../docs/03.specs/azure-migration/spec.md)
 - **ADR**: [../docs/02.architecture/decisions/README.md](../docs/02.architecture/decisions/README.md)

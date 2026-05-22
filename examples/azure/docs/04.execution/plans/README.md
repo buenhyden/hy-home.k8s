@@ -43,7 +43,15 @@
 2. 모든 계획은 PRD와 Spec의 요구사항을 기반으로 수립한다.
 3. [2026-03-31-migration-strategy.md](2026-03-31-migration-strategy.md)는 프로젝트 실행의 기준이 된다.
 
-## Related References
+## Link Basis
+
+이 README의 링크 기준 위치는 `examples/azure/docs/04.execution/plans/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Related Documents
 
 - **PARD**: [../01.requirements/2026-03-31-azure-migration.md](../../01.requirements/2026-03-31-azure-migration.md)
 - **Spec**: [../03.specs/azure-migration/spec.md](../../03.specs/azure-migration/spec.md)

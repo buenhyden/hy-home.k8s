@@ -56,7 +56,15 @@
 3. 실제 AWS 배포 전에는 provider 공식 지원 버전, IAM/RBAC, 비용, 네트워크 경계를 다시 확인합니다.
 4. 문서 간에는 상대 경로 링크를 유지하여 추적성을 확보합니다.
 
-## Related References
+## Link Basis
+
+이 README의 링크 기준 위치는 `examples/aws/docs/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Related Documents
 
 - [Examples README](../../README.md)
 - [Tech Stack Version Inventory](../../../docs/90.references/versions/tech-stack-version-inventory.md)

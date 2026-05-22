@@ -54,7 +54,15 @@ workloads/
 3. `kustomization.yaml`에 모든 리소스가 포함되었는지 확인한다.
 4. 변경 후 `bash scripts/validate-gitops-structure.sh`와 `bash scripts/validate-k8s-manifests.sh .`를 실행한다.
 
-## Related References
+## Link Basis
+
+이 README의 링크 기준 위치는 `gitops/workloads/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Related Documents
 
 - [GitOps README](../README.md)
 - [App Onboarding Guide](../../docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md)

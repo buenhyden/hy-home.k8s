@@ -43,7 +43,15 @@
 2. 새 Plan은 `../../../../docs/99.templates/plan.template.md`를 기준으로 작성합니다.
 3. 실행 단위는 [04.execution/tasks](../tasks/README.md)에 연결합니다.
 
-## Related References
+## Link Basis
+
+이 README의 링크 기준 위치는 `examples/aws/docs/04.execution/plans/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Related Documents
 
 - [01.requirements](../../01.requirements/README.md) - 마이그레이션 목표
 - [03.specs](../../03.specs/README.md) - 인프라 명세

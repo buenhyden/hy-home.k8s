@@ -44,7 +44,15 @@
 2. 가이드 작성 시 [guide.template.md](../../../../../docs/99.templates/guide.template.md) 템플릿을 준수한다.
 3. 복잡한 명령어나 절차는 가독성을 위해 코드 블록을 적극 활용한다.
 
-## Related References
+## Link Basis
+
+이 README의 링크 기준 위치는 `examples/azure/docs/05.operations/guides/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Related Documents
 
 - **Spec**: [../03.specs/azure-migration/spec.md](../../03.specs/azure-migration/spec.md)
 - **Runbook**: [../05.operations/runbooks/README.md](../runbooks/README.md)

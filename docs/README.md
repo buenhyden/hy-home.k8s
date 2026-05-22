@@ -134,7 +134,7 @@ docs/
 문서 구조와 저장소 품질은 `bash scripts/validate-repo-quality-gates.sh .`로 검증한다. 이 게이트는 다음 계약을 확인한다.
 
 - 허용된 `docs/` top-level 폴더만 존재해야 한다.
-- 모든 허용 stage 폴더는 `README.md`를 가져야 하며, validator의 README base section인 `Overview`, `Audience`, `Scope`, `Structure`, `How to Work in This Area`, `Related Documents`를 유지해야 한다.
+- 모든 허용 stage 폴더는 `README.md`를 가져야 하며, validator의 README base section인 `Overview`, `Audience`, `Scope`, `Structure`, `How to Work in This Area`, `Link Basis`, `Related Documents`를 유지해야 한다.
 - 모든 템플릿은 `docs/99.templates/`에 있어야 하고 template inventory에 등록되어야 한다.
 - authored stage 문서는 템플릿의 필수 heading을 유지해야 한다. `If Applicable`과 `Optional` 섹션은 실제 필요가 있을 때만 작성한다.
 - Agent gateway, `.claude`, `.codex`, `docs/00.agent-governance`의 runtime mirror와 harness catalog가 일관되어야 한다.

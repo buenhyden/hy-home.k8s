@@ -42,7 +42,15 @@
 2. 새 Guide는 `../../../../docs/99.templates/guide.template.md`를 기준으로 작성합니다.
 3. 운영 정책과 복구 절차는 [05.operations/policies](../policies/README.md), [05.operations/runbooks](../runbooks/README.md)에 연결합니다.
 
-## Related References
+## Link Basis
+
+이 README의 링크 기준 위치는 `examples/aws/docs/05.operations/guides/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Related Documents
 
 - [02.architecture/requirements](../../02.architecture/requirements/README.md) - 아키텍처 참조 모델
 - [04.execution/tasks](../../04.execution/tasks/README.md) - 실행 작업 목록

@@ -45,7 +45,15 @@
 2. 모든 문서는 01~03번 산출물의 고유 아이디를 참조하여 추적성을 유지한다.
 3. [azure-migration/spec.md](azure-migration/spec.md)는 개발 단계에서 구현의 기준점이 된다.
 
-## Related References
+## Link Basis
+
+이 README의 링크 기준 위치는 `examples/azure/docs/03.specs/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Related Documents
 
 - **PARD**: [../01.requirements/2026-03-31-azure-migration.md](../01.requirements/2026-03-31-azure-migration.md)
 - **AARD**: [../02.architecture/requirements/0001-azure-migration-architecture.md](../02.architecture/requirements/0001-azure-migration-architecture.md)

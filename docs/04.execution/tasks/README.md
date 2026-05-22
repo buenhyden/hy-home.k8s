@@ -53,6 +53,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-05-10-agent-first-harness-llm-wiki-hooks.md
 ├── 2026-05-18-argo-rollouts-progressive-delivery.md
 ├── 2026-05-18-argo-notifications-slack.md
+├── 2026-05-22-docs-governance-full-ab-hardening.md
 └── README.md
 ```
 
@@ -87,6 +88,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-05-10-agent-first-harness-llm-wiki-hooks.md`](./2026-05-10-agent-first-harness-llm-wiki-hooks.md) | Agent-first harness, LLM Wiki, hook 계약 보정 Task | Done | 2026-05-10 |
 | [`./2026-05-18-argo-rollouts-progressive-delivery.md`](./2026-05-18-argo-rollouts-progressive-delivery.md) | Argo Rollouts current-contract backfill Task | Done | 2026-05-18 |
 | [`./2026-05-18-argo-notifications-slack.md`](./2026-05-18-argo-notifications-slack.md) | ArgoCD Notifications Slack current-contract backfill Task | Done | 2026-05-18 |
+| [`./2026-05-22-docs-governance-full-ab-hardening.md`](./2026-05-22-docs-governance-full-ab-hardening.md) | README, lifecycle docs, agent/runtime governance, hook 경계, repo-static gate 정합화 Task | Done | 2026-05-22 |
 
 ## Related Documents
 

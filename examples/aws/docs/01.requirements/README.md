@@ -42,7 +42,15 @@
 2. `../../../../docs/99.templates/prd.template.md`를 사용하여 새로운 요구사항을 추가합니다.
 3. 요구사항 변경 시 `04.execution/plans` 및 `04.execution/tasks`와의 정렬을 확인하십시오.
 
-## Related References
+## Link Basis
+
+이 README의 링크 기준 위치는 `examples/aws/docs/01.requirements/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Related Documents
 
 - [AWS Docs README](../README.md)
 - [02.architecture/requirements](../02.architecture/requirements/README.md) - 아키텍처 참조 모델

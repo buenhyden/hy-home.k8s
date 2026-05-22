@@ -53,7 +53,15 @@ examples/
 3. provider module, Kubernetes version, ingress/gateway 선택이 바뀌면 관련 README와 docs 예시를 같은 변경에서 갱신한다.
 4. 변경 후 `bash scripts/validate-repo-quality-gates.sh .`와 outdated marker scan을 실행한다.
 
-## Related References
+## Link Basis
+
+이 README의 링크 기준 위치는 `examples/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Related Documents
 
 - [Root README](../README.md)
 - [GitOps README](../gitops/README.md)

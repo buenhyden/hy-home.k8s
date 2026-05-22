@@ -43,7 +43,15 @@ kubernetes/
 2. 매니페스트 작성 전 [Spec](../docs/03.specs/azure-migration/spec.md)의 가이드와 통제 표준을 반드시 확인한다.
 3. 리소스 제한(Requests/Limits)은 실제 워크로드의 프로파일을 바탕으로 설정한다.
 
-## Related References
+## Link Basis
+
+이 README의 링크 기준 위치는 `examples/azure/kubernetes/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Related Documents
 
 - **Guide**: [../docs/05.operations/guides/0001-azure-onboarding-guide.md](../docs/05.operations/guides/0001-azure-onboarding-guide.md)
 - **GitOps**: [../gitops/README.md](../gitops/README.md)

@@ -74,7 +74,7 @@ scripts/
 
 | 스크립트 | 결정 | 보존 근거 | 명령·문서 표면 | 목적 |
 | --- | --- | --- | --- | --- |
-| `validate-repo-quality-gates.sh` | Keep | Tier A: CI `repo-quality-static`와 post-edit repository quality hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.github/ABOUT.md`, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, docs quality guidance | 문서 구조, README 섹션, structural template coverage, 템플릿 위치, workflow 중복, 스크립트 참조, obsolete 파일, version inventory drift, generated LLM Wiki freshness, agent mirror를 검증한다. |
+| `validate-repo-quality-gates.sh` | Keep | Tier A: CI `repo-quality-static`와 post-edit repository quality hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.github/ABOUT.md`, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, docs quality guidance | 문서 구조, README `Link Basis`/`Related Documents`, structural template coverage, 템플릿 위치, workflow 중복, 스크립트 참조, obsolete 파일, version inventory drift, generated LLM Wiki freshness, agent mirror, Hookify local rule frontmatter/ignore 상태를 검증한다. |
 | `validate-gitops-structure.sh` | Keep | Tier A: CI `manifest-static` job이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.claude/settings.json`, GitOps READMEs | ArgoCD root app, root app kind, GitOps kustomization structure, sibling manifest resource completeness를 검증한다. |
 | `validate-k8s-manifests.sh` | Keep | Tier A: CI `manifest-static`와 post-edit manifest hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, GitOps READMEs | manifest YAML syntax와 선택적 `kube-linter` 검증을 수행한다. |
 | `check-secret-handling.sh` | Keep | Tier A: CI `manifest-static`와 post-edit manifest hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, GitOps READMEs | GitOps, infrastructure, examples manifest의 plaintext secret pattern을 검사한다. |
@@ -121,7 +121,7 @@ scripts/
 | --- | --- | --- | --- |
 | `bash scripts/generate-llm-wiki-index.sh` | 인자를 받지 않는다. | `docs/90.references/llm-wiki/wiki-index.md`를 generator에 정의된 canonical owner 링크맵으로 재생성한다. | exit `0`은 generated Markdown index를 갱신했다는 뜻이다. |
 | `bash scripts/generate-llm-wiki-index.sh --check` | `--check`만 지원한다. | 현재 `wiki-index.md`가 generator output과 일치하는지 비교한다. | exit `0`은 generated index가 최신이라는 뜻이고, 불일치 또는 누락은 실패한다. |
-| `bash scripts/validate-repo-quality-gates.sh .` | 선택 인자는 repository root다. | 문서 taxonomy, structural template coverage, required template headings, workflow 계약, script 참조, runtime mirror inventory, version inventory를 검증한다. | `PASS`는 repository governance gate 통과를 뜻하고, `ERR`는 계약 drift를 뜻한다. |
+| `bash scripts/validate-repo-quality-gates.sh .` | 선택 인자는 repository root다. | 문서 taxonomy, README `Link Basis`/`Related Documents`, structural template coverage, required template headings, workflow 계약, script 참조, runtime mirror inventory, Hookify local rule shape, version inventory를 검증한다. | `PASS`는 repository governance gate 통과를 뜻하고, `ERR`는 계약 drift를 뜻한다. |
 | `bash scripts/validate-gitops-structure.sh` | 인자를 받지 않는다. 스크립트가 속한 repository에서 실행된다. | ArgoCD root app, root application kind, root app manifest, `gitops/**/kustomization.yaml` syntax, sibling manifest resource completeness를 검증한다. | exit `0`은 필요한 GitOps 구조가 있고 parse 가능하며 각 `kustomization.yaml`이 같은 폴더의 sibling YAML manifest를 빠짐없이 참조한다는 뜻이다. |
 | `bash scripts/validate-k8s-manifests.sh .` | 선택 인자는 arbitrary subpath가 아니라 repository root다. | `gitops/`, `infrastructure/`, `examples/sample-app/`, `examples/**/{gitops,kubernetes}/`, `traefik/` 아래 YAML을 검사하고, `kube-linter`가 있으면 함께 실행한다. | exit `0`은 YAML syntax가 통과했고 optional `kube-linter`도 실패하지 않았다는 뜻이다. `SKIP optional kube-linter`는 local YAML-only validation을 뜻한다. 잘못된 repo root 또는 YAML 0건은 실패한다. |
 | `bash scripts/check-secret-handling.sh .` | 선택 인자는 arbitrary subpath가 아니라 repository root다. | `gitops/`, `infrastructure/`, `examples/sample-app/`, `examples/**/{gitops,kubernetes}/` 아래 YAML에서 plaintext secret pattern을 검사하되 ExternalSecret-like resource는 제외한다. | exit `0`은 검사 대상 파일이 있고 plaintext secret pattern이 없다는 뜻이다. 잘못된 repo root, YAML 0건, finding은 실패한다. |
@@ -139,7 +139,15 @@ scripts/
 - `kube-linter`: `validate-k8s-manifests.sh`가 PATH에서 발견하면 실행한다. 없으면 해당 스크립트가 kube-linter 단계만 skip하고 YAML syntax는 계속 검증한다.
 - `graphify`: 선택적 지식 그래프 갱신 도구다. 없으면 직접 source inspection 결과를 기록한다.
 
-## Related References
+## Link Basis
+
+이 README의 링크 기준 위치는 `scripts/`다.
+
+- 같은 폴더의 파일과 하위 경로는 현재 README 위치 기준 상대 링크로 연결한다.
+- 상위 저장소 문서나 다른 stage 문서는 필요한 만큼 `../`로 올라가서 연결한다.
+- 다른 README의 상대 링크를 그대로 복사하지 말고, 이 파일 위치 기준으로 다시 계산한다.
+
+## Related Documents
 
 - [Root README](../README.md)
 - [GitHub CI Workflow](../.github/workflows/ci.yml)
