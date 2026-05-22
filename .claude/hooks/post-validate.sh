@@ -72,8 +72,31 @@ run_shell=0
 run_manifest=0
 run_docs_template=0
 run_repo_quality=0
+declare -a FORMAT_FILES=()
+declare -a SHELL_STYLE_FILES=()
+declare -a MARKDOWN_STYLE_FILES=()
+declare -a WORKFLOW_STYLE_FILES=()
+declare -a DOCKER_STYLE_FILES=()
 
 for path in "${CHANGED_PATHS[@]}"; do
+  if [[ -f "$path" ]]; then
+    FORMAT_FILES+=("$path")
+    case "$path" in
+      *.md)
+        MARKDOWN_STYLE_FILES+=("$path")
+        ;;
+      .claude/hooks/*.sh|scripts/*.sh|infrastructure/*.sh)
+        SHELL_STYLE_FILES+=("$path")
+        ;;
+      .github/workflows/*.yml|.github/workflows/*.yaml)
+        WORKFLOW_STYLE_FILES+=("$path")
+        ;;
+      Dockerfile|*/Dockerfile|Dockerfile.*|*/Dockerfile.*)
+        DOCKER_STYLE_FILES+=("$path")
+        ;;
+    esac
+  fi
+
   case "$path" in
     .claude/settings.json|.codex/hooks.json)
       run_json=1
@@ -131,6 +154,100 @@ run_check() {
   fi
   rm -f "$log_file"
 }
+
+run_pre_commit_hook() {
+  local hook_id="$1"
+  shift
+  [[ "$#" -gt 0 ]] || return 0
+
+  if command -v pre-commit >/dev/null 2>&1; then
+    PRE_COMMIT_HOME="${PRE_COMMIT_HOME:-$HOME/.cache/pre-commit}" pre-commit run "$hook_id" --files "$@"
+    return $?
+  fi
+
+  local pre_commit_python="${PRE_COMMIT_PYTHON:-$HOME/.local/share/uv/tools/pre-commit/bin/python}"
+  if [[ -x "$pre_commit_python" ]]; then
+    PRE_COMMIT_HOME="${PRE_COMMIT_HOME:-$HOME/.cache/pre-commit}" "$pre_commit_python" -mpre_commit run "$hook_id" --files "$@"
+    return $?
+  fi
+
+  return 127
+}
+
+run_format_hook() {
+  local label="$1"
+  local hook_id="$2"
+  shift 2
+  [[ "$#" -gt 0 ]] || return 0
+
+  local log_file rc
+  log_file="$(mktemp)"
+  if run_pre_commit_hook "$hook_id" "$@" >"$log_file" 2>&1; then
+    printf '[hook] PASS %s\n' "$label"
+  else
+    rc=$?
+    if [[ "$rc" -eq 127 ]]; then
+      printf '[hook] SKIP %s - pre-commit unavailable\n' "$label"
+    elif grep -Eiq 'files were modified by this hook|Fixing |Reformatted|would reformat|replacing' "$log_file"; then
+      printf '[hook] FORMAT %s applied changes\n' "$label"
+    else
+      printf '[hook] FAIL %s\n' "$label" >&2
+      cat "$log_file" >&2
+      failure=1
+    fi
+  fi
+  rm -f "$log_file"
+}
+
+run_style_check() {
+  local label="$1"
+  local hook_id="$2"
+  shift 2
+  [[ "$#" -gt 0 ]] || return 0
+
+  local log_file rc
+  log_file="$(mktemp)"
+  if run_pre_commit_hook "$hook_id" "$@" >"$log_file" 2>&1; then
+    printf '[hook] PASS %s\n' "$label"
+  else
+    rc=$?
+    if [[ "$rc" -eq 127 ]]; then
+      printf '[hook] SKIP %s - pre-commit unavailable\n' "$label"
+    else
+      printf '[hook] FAIL %s\n' "$label" >&2
+      cat "$log_file" >&2
+      failure=1
+    fi
+  fi
+  rm -f "$log_file"
+}
+
+if [[ "${#FORMAT_FILES[@]}" -gt 0 ]]; then
+  run_format_hook "format end-of-file" end-of-file-fixer "${FORMAT_FILES[@]}"
+  run_format_hook "format trailing whitespace" trailing-whitespace "${FORMAT_FILES[@]}"
+  run_format_hook "format mixed line endings" mixed-line-ending "${FORMAT_FILES[@]}"
+fi
+
+if [[ "${#SHELL_STYLE_FILES[@]}" -gt 0 ]]; then
+  run_format_hook "format shell style" shfmt "${SHELL_STYLE_FILES[@]}"
+fi
+
+if [[ "${#MARKDOWN_STYLE_FILES[@]}" -gt 0 ]]; then
+  run_style_check "Markdown style" markdownlint-cli2 "${MARKDOWN_STYLE_FILES[@]}"
+fi
+
+if [[ "${#SHELL_STYLE_FILES[@]}" -gt 0 ]]; then
+  run_style_check "shell style" shellcheck "${SHELL_STYLE_FILES[@]}"
+fi
+
+if [[ "${#WORKFLOW_STYLE_FILES[@]}" -gt 0 ]]; then
+  run_style_check "GitHub Actions style" actionlint "${WORKFLOW_STYLE_FILES[@]}"
+  run_style_check "GitHub Actions security style" zizmor "${WORKFLOW_STYLE_FILES[@]}"
+fi
+
+if [[ "${#DOCKER_STYLE_FILES[@]}" -gt 0 ]]; then
+  run_style_check "Dockerfile style" hadolint-docker "${DOCKER_STYLE_FILES[@]}"
+fi
 
 if [[ "$run_json" -eq 1 ]]; then
   run_check "runtime JSON parse" python3 -m json.tool .claude/settings.json

@@ -8,6 +8,61 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-22 — post-edit style and commit discipline hooks
+
+- **Date**: 2026-05-22
+- **Layer**: meta, docs
+- **Status**: complete
+- **Tags**: #hooks #style #formatting #commits #validation
+
+#### Progress
+
+- Committed the workspace-purpose alignment work in two logical units, merged
+  the development branch into local `main`, and deleted the development branch.
+- Updated the ignored local Hookify stop reminder so AI agents are reminded to
+  split repo-changing work into logical commits before final stop unless the
+  human explicitly asks not to commit.
+- Extended `.claude/hooks/post-validate.sh` so file edits run scoped
+  auto-format hooks before existing validation.
+- Added scoped style checks for Markdown, shell, GitHub Actions workflows, and
+  Dockerfiles through the existing pre-commit hook inventory.
+- Updated the runtime baseline and harness catalog to describe the new
+  PostToolUse auto-format/style validation responsibility.
+
+#### Memory
+
+- Keep the logical-commit reminder in ignored Hookify `.local.md` files unless a
+  human asks for a shared blocking policy. Shared repository enforcement should
+  remain deterministic and validation-focused.
+- Post-edit formatting should stay scoped to edited files. Avoid running a full
+  repository formatter from PostToolUse because that creates unrelated churn.
+- Use the repo's pre-commit hook inventory as the style source of truth instead
+  of inventing a parallel style toolchain.
+
+#### Evidence
+
+- `git log --oneline -3` showed logical commits:
+  `docs(governance): Record workspace purpose audit` and
+  `chore(agent): Harden direct command guardrails`.
+- Local `main` was fast-forward merged to `425a3f3`.
+- `codex/workspace-purpose-alignment` was deleted locally.
+- `bash -n .claude/hooks/post-validate.sh` PASS.
+- Synthetic PostToolUse payload for `.claude/hooks/post-validate.sh` PASS:
+  auto-format hooks, shell style, shell syntax, and repository quality gates.
+- Synthetic PostToolUse payload for runtime/governance docs PASS:
+  auto-format hooks, Markdown style, and repository quality gates.
+- Full static validation PASS:
+  repo quality gates, LLM wiki index check, GitOps structure, Kubernetes
+  manifest syntax, secret handling, static infrastructure contracts, runtime
+  JSON parse, shell syntax, and `git diff --check`.
+
+#### Handoff
+
+- The logical-commit Hookify reminder is local-only and ignored by Git. It is
+  active in this workspace but not part of the shared repository state.
+
+---
+
 ### 2026-05-22 — workspace purpose alignment audit
 
 - **Date**: 2026-05-22
