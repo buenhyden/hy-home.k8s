@@ -83,7 +83,7 @@ to close that gap.
 | Skills | `.claude/skills/*/skill.md` | Ready | GitOps, validation, docs routing, deployment, incident, RCA, risk, and security workflows are local |
 | Claude permissions/hooks | `.claude/settings.json`, `.claude/hooks/*.sh` | Ready | Claude runtime has allow/deny command policy plus SessionStart, PreToolUse, PostToolUse, Stop, SubagentStop, and PreCompact hooks; edit hooks warn on authored stage docs and run documentation template enforcement; lifecycle hooks run objective repo-state validation, while PreCompact is advisory |
 | Codex event hooks | `.codex/hooks.json` | Ready | Codex hook wiring reuses SessionStart, PreToolUse, PostToolUse, Stop, SubagentStop, PreCompact, graphify context, and authored-doc template enforcement where supported; it is not a permission gate equivalent and remains context/validation wiring |
-| Validation scripts | `scripts/*.sh`, `infrastructure/tests/*.sh` | Ready | Repo-backed gates cover quality, structural template coverage, GitOps structure, manifests, contracts, secret handling, shell syntax, lifecycle hook payload simulation, authored-doc template enforcement, gateway thinness, language boundaries, and hook-boundary clarity |
+| Validation scripts | `scripts/*.sh`, `infrastructure/tests/*.sh` | Ready | Repo-backed gates cover quality, README `Link Basis` / `Related Documents`, structural template coverage, GitOps structure, manifests, contracts, secret handling, shell syntax, lifecycle hook payload simulation, authored-doc template enforcement, gateway thinness, language boundaries, Hookify local-rule shape, and hook-boundary clarity |
 | Authored-doc command boundary | `scripts/validate-repo-quality-gates.sh`, staged docs | Ready | Risky command examples in authored docs require explicit human/operator boundary markers; authored docs block bare/main direct push and push examples without PR-flow context, while broader Markdown roots block bare/main direct push examples |
 | Memory | `docs/00.agent-governance/memory/` | Ready | Agent progress and reusable memory have a local template-backed home; current runtime truth stays in this catalog and current script inventory stays in `scripts/README.md` |
 | LLM Wiki curation | `.claude/agents/wiki-curator.md`, `.codex/agents/wiki-curator.toml`, `docs/90.references/llm-wiki/wiki-index.md`, `scripts/generate-llm-wiki-index.sh` | Ready | Runtime surface added for LLM Wiki curation with Markdown-only generated index and repo-quality freshness check |
@@ -100,7 +100,7 @@ to close that gap.
 | Skills | `.claude/skills/*/skill.md` | Ready | None | Keep cluster-specific workflows local and add new skills only when this matrix shows a concrete gap. |
 | Claude permissions/hooks | `.claude/settings.json`, `.claude/hooks/*.sh` | Ready | None | Keep allow/deny command policy plus SessionStart, PreToolUse, PostToolUse, Stop, SubagentStop, and PreCompact hooks; Stop/SubagentStop may block objective repo-state failures, while PreCompact remains advisory. |
 | Codex event hooks | `.codex/hooks.json` | Ready | None | Keep Codex hook scope limited to context and validation wiring; reuse the Claude hook scripts for authored-doc template enforcement and lifecycle validation; do not treat it as a Claude permission gate equivalent. |
-| Validation scripts | `scripts/*.sh`, `infrastructure/tests/*.sh` | Ready | None | Keep repo-backed validation as the default completion evidence before handoff, including structural template coverage and lifecycle hook payload simulation. |
+| Validation scripts | `scripts/*.sh`, `infrastructure/tests/*.sh` | Ready | None | Keep repo-backed validation as the default completion evidence before handoff, including README section contracts, structural template coverage, lifecycle hook payload simulation, and local Hookify ignore/frontmatter checks. |
 | Authored-doc command boundary | `scripts/validate-repo-quality-gates.sh`, staged docs | Ready | None | Keep `kubectl apply/patch`, `argocd app sync`, `vault kv put`, and push examples marked as human/operator-only or PR-flow work in authored docs, including operations policies; keep broader Markdown scans limited to bare/main direct push examples. |
 | Memory | `docs/00.agent-governance/memory/` | Ready | None | Keep progress and reusable memory in `memory/progress.md`, while current runtime truth stays in this catalog. |
 | LLM Wiki curation | `.claude/agents/wiki-curator.md`, `.codex/agents/wiki-curator.toml`, `docs/90.references/llm-wiki/wiki-index.md`, `scripts/generate-llm-wiki-index.sh` | Ready | None | Runtime surface added for LLM Wiki curation; keep it Markdown-only, generator-checked, and routed back to canonical owners. |
@@ -170,12 +170,19 @@ tracked `.claude/skills/<name>/skill.md`, the local copy must stay byte-for-byte
 aligned or be removed locally. The repository quality gate checks this only when
 the ignored `.agents/` directory exists in the local worktree.
 
+Workspace-local `.claude/*.local.md` files are ignored local warning layers.
+Hookify `.local.md` rules may guide an operator during local sessions, but shared
+enforcement must remain in tracked hooks, runtime settings, Codex hook wiring,
+and `scripts/validate-repo-quality-gates.sh`. Local Hookify rules must stay
+untracked, ignored, and frontmatter-shaped when they exist.
+
 ## Consistency Rules
 
 - `AGENTS.md` must route to this catalog instead of embedding a duplicate agent table.
 - Root `CLAUDE.md` and `GEMINI.md` must point to this catalog when describing runtime agents.
 - `.claude/CLAUDE.md` must remain the runtime baseline for local agent execution.
 - `.codex/agents/*.toml` mirrors must stay aligned with `.claude/agents/*.md` and pass the mirror checks in `scripts/validate-repo-quality-gates.sh`.
+- `.claude/*.local.md` files must stay ignored and untracked; Hookify local rules are advisory only and must not replace tracked validators.
 - Document-generation workflows must use `.claude/skills/docs-stage-routing/skill.md` before proposing new authored-document paths.
 - Any new local agent or skill must be added here in the same change set.
 

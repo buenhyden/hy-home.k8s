@@ -19,6 +19,7 @@ This protocol defines how governance references authored docs and how language b
 
 - All authored documents under `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/04.execution/`, `docs/05.operations/`, and `docs/90.references/` must start from the matching template listed in `docs/99.templates/README.md`.
 - README files must use `docs/99.templates/readme.template.md`.
+- README files must keep `## Link Basis` and `## Related Documents`; legacy `## Related References` headings are incomplete.
 - PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook, Incident, Postmortem, and Reference documents must use their stage-specific templates from `docs/99.templates/`.
 - `docs/03.specs/<feature-id>/api-spec.md`, `agent-design.md`, `data-model.md`, and `tests.md` must use their matching helper templates.
 - Every non-README authored Markdown file under stage roots must match exactly one structural template mapping in `docs/99.templates/README.md` and `scripts/validate-repo-quality-gates.sh`; an uncovered path is incomplete.
@@ -59,10 +60,10 @@ This protocol defines how governance references authored docs and how language b
 
 **R1 — Template-First:** Read `docs/99.templates/README.md`, then read the matching template in `docs/99.templates/` before creating any document. Confirm the target path has exactly one structural template mapping, fill all required fields and required template headings, and set `status: draft`. k8s-specific triggers: new namespace → ARD required; RBAC change → ADR required; production change → OPER policy first.
 
-**R2 — README Sync:** Any folder-level change (add, move, remove files) requires the folder's `README.md` to be updated in the same PR. Work is **BLOCKED** until the README reflects the change.
+**R2 — README Sync:** Any folder-level change (add, move, remove files) requires the folder's `README.md` to be updated in the same PR. Work is **BLOCKED** until the README reflects the change and keeps `## Link Basis` plus `## Related Documents`.
 
 **R3 — Related Documents:** Every authored document must include a `## Related Documents` section with upstream links. A document without this section is **INCOMPLETE**.
 
 **R4 — Memory Ledger Coupling:** Repo-changing work updates `memory/progress.md`. Standalone memory files use `memory.template.md` and link back to their related progress entry.
 
-**HALT conditions:** Missing template read → HALT. README not updated → HALT. Related Documents section absent → HALT. Memory entry without progress ledger update → HALT.
+**HALT conditions:** Missing template read → HALT. README not updated → HALT. README Link Basis absent → HALT. Related Documents section absent → HALT. Memory entry without progress ledger update → HALT.

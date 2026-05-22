@@ -64,6 +64,7 @@ Before changing gateway, runtime, hook, mirror, or governance-memory files:
 - Confirm no legacy source labels from prior external harness examples remain.
 - Confirm `.claude/agents/*.md` and `.codex/agents/*.toml` mirror parity stays intact.
 - Confirm provider-specific hook boundaries are described accurately: `.claude/settings.json` owns Claude permissions/hooks; `.codex/hooks.json` is Codex context/validation hook wiring, not an equivalent permission gate.
+- Confirm `.claude/*.local.md` files remain ignored local warning layers; Hookify local rules must not be treated as shared enforcement.
 - Confirm lifecycle hook semantics are described accurately: Stop/SubagentStop block only objective repo-state failures, and PreCompact remains advisory.
 - Confirm historical memory entries point to the current source of truth instead of presenting initial implementation snapshots as current inventory.
 

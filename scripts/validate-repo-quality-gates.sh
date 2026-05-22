@@ -215,12 +215,44 @@ except Exception as exc:
 for tracked_path in sorted(tracked):
     if tracked_path == ".agents" or tracked_path.startswith(".agents/"):
         fail(f"ignored local agent runtime path must not be tracked: {tracked_path}")
+    if re.fullmatch(r"\.claude/[^/]+\.local\.md", tracked_path):
+        fail(f"ignored local Claude/Hookify runtime rule must not be tracked: {tracked_path}")
 
 ignore_check = subprocess.run(["git", "check-ignore", "-q", ".agents/"], cwd=root)
 if ignore_check.returncode == 1:
     fail(".agents/ must remain ignored by Git")
 elif ignore_check.returncode not in {0, 1}:
     fail("git check-ignore failed while validating .agents/ ignore contract")
+
+claude_local_rule_paths = sorted((root / ".claude").glob("*.local.md"))
+for local_rule_path in claude_local_rule_paths:
+    local_rule_rel = rel(local_rule_path)
+    local_rule_ignore_check = subprocess.run(["git", "check-ignore", "-q", local_rule_rel], cwd=root)
+    if local_rule_ignore_check.returncode == 1:
+        fail(f"{local_rule_rel} must remain ignored by Git")
+    elif local_rule_ignore_check.returncode not in {0, 1}:
+        fail(f"git check-ignore failed while validating local rule ignore contract: {local_rule_rel}")
+
+    if local_rule_path.name.startswith("hookify."):
+        text = read_text(local_rule_path)
+        frontmatter = re.match(r"^---\n(.*?)\n---\n", text, re.DOTALL)
+        if not frontmatter:
+            fail(f"{local_rule_rel} missing Hookify YAML frontmatter")
+            continue
+        try:
+            metadata = yaml.load(frontmatter.group(1), Loader=DuplicateKeyLoader) or {}
+        except Exception as exc:
+            fail(f"{local_rule_rel} Hookify frontmatter parse failed: {exc}")
+            continue
+        for field in ["name", "enabled", "event"]:
+            if field not in metadata:
+                fail(f"{local_rule_rel} missing Hookify frontmatter field: {field}")
+        if metadata.get("event") not in {"bash", "file", "stop", "prompt", "all"}:
+            fail(f"{local_rule_rel} has unsupported Hookify event: {metadata.get('event')}")
+        if "action" in metadata and metadata.get("action") not in {"warn", "block"}:
+            fail(f"{local_rule_rel} has unsupported Hookify action: {metadata.get('action')}")
+        if "pattern" not in metadata and "conditions" not in metadata:
+            fail(f"{local_rule_rel} must define Hookify pattern or conditions")
 
 local_agents_dir = root / ".agents"
 local_agents_skills_dir = root / ".agents" / "skills"
@@ -335,7 +367,8 @@ readme_base_sections = {
     "Scope": re.compile(r"^##\s+Scope\b", re.MULTILINE),
     "Structure": re.compile(r"^##\s+Structure\b", re.MULTILINE),
     "How to Work in This Area": re.compile(r"^##\s+How to Work in This Area\b", re.MULTILINE),
-    "Related Documents": re.compile(r"^##\s+Related (Documents|References)\b", re.MULTILINE),
+    "Link Basis": re.compile(r"^##\s+Link Basis\b", re.MULTILINE),
+    "Related Documents": re.compile(r"^##\s+Related Documents\b", re.MULTILINE),
 }
 for name in sorted(required_doc_dirs):
     readme = docs_dir / name / "README.md"
@@ -348,22 +381,6 @@ for readme in sorted(root.rglob("README.md")):
     for section, pattern in readme_base_sections.items():
         if not pattern.search(text):
             fail(f"{rel(readme)} missing README base section: {section}")
-
-canonical_related_documents_readmes = [
-    root / "README.md",
-    root / "docs/README.md",
-    root / "docs/05.operations/README.md",
-    root / "docs/05.operations/guides/README.md",
-    root / "docs/05.operations/policies/README.md",
-    root / "docs/05.operations/runbooks/README.md",
-    root / "docs/05.operations/incidents/README.md",
-    root / "docs/99.templates/README.md",
-]
-canonical_related_documents_readmes.extend(
-    sorted((root / "docs/90.references").glob("**/README.md"))
-)
-for readme in canonical_related_documents_readmes:
-    text = read_text(readme)
     if not re.search(r"^##\s+Related Documents\b", text, re.MULTILINE):
         fail(f"{rel(readme)} missing canonical README section: Related Documents")
     if re.search(r"^##\s+Related References\b", text, re.MULTILINE):

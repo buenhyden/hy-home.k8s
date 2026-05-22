@@ -33,3 +33,4 @@ Claude-specific guidance for `hy-home.k8s`.
 - Keep governance control docs in English.
 - Use `docs/00.agent-governance/harness-catalog.md` as the canonical runtime roster.
 - Use `.claude/hooks/lifecycle-guard.sh` as the Claude lifecycle hook contract: Stop/SubagentStop may block objective repo-state failures; PreCompact is advisory and must not replace validation evidence.
+- Keep `.claude/*.local.md`, including Hookify rules, as ignored local warning files only. Shared Claude enforcement stays in `.claude/settings.json`, `.claude/hooks/*.sh`, and repository validators.
