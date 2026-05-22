@@ -74,7 +74,7 @@ scripts/
 
 | 스크립트 | 결정 | 보존 근거 | 명령·문서 표면 | 목적 |
 | --- | --- | --- | --- | --- |
-| `validate-repo-quality-gates.sh` | Keep | Tier A: CI `repo-quality-static`와 post-edit repository quality hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.github/ABOUT.md`, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, docs quality guidance | 문서 구조, README 섹션, 템플릿 위치, workflow 중복, 스크립트 참조, obsolete 파일, version inventory drift, generated LLM Wiki freshness, agent mirror를 검증한다. |
+| `validate-repo-quality-gates.sh` | Keep | Tier A: CI `repo-quality-static`와 post-edit repository quality hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.github/ABOUT.md`, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, docs quality guidance | 문서 구조, README 섹션, structural template coverage, 템플릿 위치, workflow 중복, 스크립트 참조, obsolete 파일, version inventory drift, generated LLM Wiki freshness, agent mirror를 검증한다. |
 | `validate-gitops-structure.sh` | Keep | Tier A: CI `manifest-static` job이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.claude/settings.json`, GitOps READMEs | ArgoCD root app, root app kind, GitOps kustomization structure, sibling manifest resource completeness를 검증한다. |
 | `validate-k8s-manifests.sh` | Keep | Tier A: CI `manifest-static`와 post-edit manifest hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, GitOps READMEs | manifest YAML syntax와 선택적 `kube-linter` 검증을 수행한다. |
 | `check-secret-handling.sh` | Keep | Tier A: CI `manifest-static`와 post-edit manifest hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, GitOps READMEs | GitOps, infrastructure, examples manifest의 plaintext secret pattern을 검사한다. |
@@ -104,6 +104,7 @@ scripts/
 | `.claude/settings.json` | Claude command allowlist 표면 |
 | `.claude/CLAUDE.md` | local runtime baseline의 generated-script ownership 참조 |
 | `.claude/hooks/post-validate.sh` | post-edit validation 실행 표면 |
+| `.claude/hooks/lifecycle-guard.sh` | Stop/SubagentStop/PreCompact lifecycle validation 실행 표면 |
 | `.codex/hooks.json` | Codex event hook wiring 표면 |
 | `docs/05.operations/guides/0009-llm-wiki-curation-guide.md` | LLM Wiki generator 운영 guide |
 | `docs/90.references/README.md` | references index와 generated-index maintenance note |
@@ -120,7 +121,7 @@ scripts/
 | --- | --- | --- | --- |
 | `bash scripts/generate-llm-wiki-index.sh` | 인자를 받지 않는다. | `docs/90.references/llm-wiki/wiki-index.md`를 generator에 정의된 canonical owner 링크맵으로 재생성한다. | exit `0`은 generated Markdown index를 갱신했다는 뜻이다. |
 | `bash scripts/generate-llm-wiki-index.sh --check` | `--check`만 지원한다. | 현재 `wiki-index.md`가 generator output과 일치하는지 비교한다. | exit `0`은 generated index가 최신이라는 뜻이고, 불일치 또는 누락은 실패한다. |
-| `bash scripts/validate-repo-quality-gates.sh .` | 선택 인자는 repository root다. | 문서 taxonomy, 템플릿, workflow 계약, script 참조, runtime mirror inventory, version inventory를 검증한다. | `PASS`는 repository governance gate 통과를 뜻하고, `ERR`는 계약 drift를 뜻한다. |
+| `bash scripts/validate-repo-quality-gates.sh .` | 선택 인자는 repository root다. | 문서 taxonomy, structural template coverage, required template headings, workflow 계약, script 참조, runtime mirror inventory, version inventory를 검증한다. | `PASS`는 repository governance gate 통과를 뜻하고, `ERR`는 계약 drift를 뜻한다. |
 | `bash scripts/validate-gitops-structure.sh` | 인자를 받지 않는다. 스크립트가 속한 repository에서 실행된다. | ArgoCD root app, root application kind, root app manifest, `gitops/**/kustomization.yaml` syntax, sibling manifest resource completeness를 검증한다. | exit `0`은 필요한 GitOps 구조가 있고 parse 가능하며 각 `kustomization.yaml`이 같은 폴더의 sibling YAML manifest를 빠짐없이 참조한다는 뜻이다. |
 | `bash scripts/validate-k8s-manifests.sh .` | 선택 인자는 arbitrary subpath가 아니라 repository root다. | `gitops/`, `infrastructure/`, `examples/sample-app/`, `examples/**/{gitops,kubernetes}/`, `traefik/` 아래 YAML을 검사하고, `kube-linter`가 있으면 함께 실행한다. | exit `0`은 YAML syntax가 통과했고 optional `kube-linter`도 실패하지 않았다는 뜻이다. `SKIP optional kube-linter`는 local YAML-only validation을 뜻한다. 잘못된 repo root 또는 YAML 0건은 실패한다. |
 | `bash scripts/check-secret-handling.sh .` | 선택 인자는 arbitrary subpath가 아니라 repository root다. | `gitops/`, `infrastructure/`, `examples/sample-app/`, `examples/**/{gitops,kubernetes}/` 아래 YAML에서 plaintext secret pattern을 검사하되 ExternalSecret-like resource는 제외한다. | exit `0`은 검사 대상 파일이 있고 plaintext secret pattern이 없다는 뜻이다. 잘못된 repo root, YAML 0건, finding은 실패한다. |

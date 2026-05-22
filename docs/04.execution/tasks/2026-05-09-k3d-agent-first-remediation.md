@@ -3,7 +3,7 @@ title: 'Task: k3d Workspace and Agent-first Remediation'
 type: task
 status: done
 owner: 'platform'
-updated: 2026-05-09
+updated: 2026-05-22
 ---
 
 # Task: k3d Workspace and Agent-first Remediation
@@ -20,6 +20,10 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 2026-05-09 command-boundary follow-up은 새 runtime surface 없이 기존 plan/task 문서에 누적한다. 목적은 authored docs의 위험 명령 예시가 Agent 기본 실행 경로로 해석되지 않도록 문서 문맥과 repo quality gate를 함께 고정하는 것이다.
 
 2026-05-09 hardening follow-up은 완료 상태를 뒤집지 않고 보강한다. 추가 조사에서 확인된 gap은 `docs/05.operations/policies` risky-command gate 누락, 대화 출력에 의존하는 완료 증거, matrix 검증 범위의 과장 가능성, direct push 차단 표현의 범위 불일치다. Final multi-agent disposition은 REVISE 후 승인 가능이며, 남은 보강은 readiness 의미 축소, matrix gap 표현 가능성, validator 범위 정합성, 검증 증거의 snapshot 성격으로 제한한다.
+
+2026-05-22 governance/docs/lifecycle follow-up은 `.agent-work/`를 제외한 tracked repository surface만 대상으로 한다. `docs/01~05` 검토 결과는 구조적 템플릿 coverage, lifecycle hook contract, governance/runtime 문서 정합성, repo-backed validation evidence로 이 문서에 누적한다.
+
+2026-05-22 추가 요청에 따라 구조적 템플릿 누락 방지를 우선 구현했다. 품질 게이트는 이제 canonical authored stage의 비-README Markdown이 정확히 하나의 structural template mapping에 포함되는지 확인하고, 해당 mapping이 실제 템플릿 파일을 가리키는지도 검증한다.
 
 ## Inputs
 
@@ -59,6 +63,13 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 | T-019 | Validate status/gap/remediation consistency | test | n/a | PLN-012 | quality gate allows Ready/Partial/Missing and requires concrete gaps for Partial/Missing rows | Platform | Done |
 | T-020 | Align push-scope and verification snapshot wording | doc | n/a | PLN-011, PLN-013 | README and task summary distinguish authored-doc PR-flow checks from broader Markdown direct-push checks and mark validation as a dated snapshot | Platform | Done |
 | T-021 | Keep provider hook enforcement semantics precise | guardrail | n/a | PLN-013 | agentic rule states Claude permissions/hooks and Codex context hook are not equivalent enforcement layers | Platform | Done |
+| T-022 | Add structural template coverage checks to repo quality gate | test | n/a | PLN-014 | every non-README authored Markdown under `docs/01~05` and `docs/90.references` matches exactly one structural template mapping | Platform | Done |
+| T-023 | Align template/governance/doc-writer guidance with structural template mapping | doc | n/a | PLN-014, PLN-017 | `docs/99.templates`, documentation rules, and doc-writer mirrors require exactly one mapping before authoring | Platform | Done |
+| T-024 | Add lifecycle guard script and executable mode | tool | n/a | PLN-015 | `.claude/hooks/lifecycle-guard.sh` parses Stop/SubagentStop/PreCompact payloads and passes shell syntax | Platform | Done |
+| T-025 | Wire lifecycle guard into Claude and Codex hook configs | guardrail | n/a | PLN-015 | `.claude/settings.json` and `.codex/hooks.json` include Stop, SubagentStop, and PreCompact lifecycle wiring | Platform | Done |
+| T-026 | Simulate lifecycle hook clean, failing, and advisory payloads in quality gate | test | n/a | PLN-016 | quality gate verifies Stop/SubagentStop block forced failures and PreCompact remains advisory | Platform | Done |
+| T-027 | Update governance/runtime documentation for lifecycle hook semantics | doc | n/a | PLN-017 | harness catalog, agentic rule, postflight checklist, provider notes, and runtime baseline describe lifecycle boundaries | Platform | Done |
+| T-028 | Run 2026-05-22 validation bundle and record limitations | test | n/a | PLN-018 | verification summary records repo-backed checks and skipped optional/live checks | Platform | Done |
 
 ## Suggested Types
 
@@ -105,6 +116,13 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 - [x] T-019 Validate status/gap/remediation consistency
 - [x] T-020 Align push-scope and verification snapshot wording
 - [x] T-021 Keep provider hook enforcement semantics precise
+- [x] T-022 Add structural template coverage checks
+- [x] T-023 Align template/governance/doc-writer guidance
+- [x] T-024 Add lifecycle guard script
+- [x] T-025 Wire Claude/Codex lifecycle hooks
+- [x] T-026 Simulate lifecycle hook payloads in quality gate
+- [x] T-027 Update lifecycle governance/runtime docs
+- [x] T-028 Run 2026-05-22 validation bundle
 
 ## Verification Summary
 
@@ -134,6 +152,22 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
   - Targeted matrix status review — PASS through `scripts/validate-repo-quality-gates.sh`; `Ready` rows require `Gap=None`, while future `Partial`/`Missing` rows require concrete `Gap` and `Remediation`.
   - Authored SSoT rewrite boundary — unchanged; rewriting `docs/01-10`, `docs/90.references`, or `docs/99.templates` outside the current command-boundary hardening scope requires separate human approval.
   - Targeted legacy external harness source-label scan — PASS; only validator sentinel definitions remain.
+- Latest 2026-05-22 follow-up scope:
+  - Structural template coverage was added to `scripts/validate-repo-quality-gates.sh`; canonical authored stage Markdown now fails if it is not covered by exactly one template mapping.
+  - Stop/SubagentStop/PreCompact lifecycle hook wiring was added to Claude and Codex runtime configs.
+  - `scripts/validate-repo-quality-gates.sh .` now simulates lifecycle clean/failing/advisory payloads.
+  - `bash scripts/validate-repo-quality-gates.sh .` — PASS, including structural template coverage and lifecycle hook payload simulation.
+  - `git diff --check` — PASS.
+  - `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+  - `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+  - `bash scripts/validate-gitops-structure.sh` — PASS.
+  - `bash scripts/validate-k8s-manifests.sh .` — PASS for YAML syntax; optional `kube-linter` was skipped because it is not installed locally.
+  - `bash scripts/check-secret-handling.sh .` — PASS.
+  - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` — PASS.
+  - `python3 -m json.tool .claude/settings.json` and `python3 -m json.tool .codex/hooks.json` — PASS.
+  - Direct lifecycle self-tests — clean Stop exited `0` with no block output; forced-failure Stop and SubagentStop emitted `decision=block`; PreCompact emitted `systemMessage` advisory and did not block.
+  - `command -v rtk` — not found; direct repo-backed commands were used.
+  - Live k3d/ArgoCD reconciliation, external Vault changes, plaintext secret creation, and GitHub settings/ruleset changes were not executed.
 
 ## Related Documents
 

@@ -33,6 +33,7 @@ It defines bootstrap, constraints, and routing pointers; it does not duplicate p
 - Root `CLAUDE.md` and `GEMINI.md` are provider-specific shims, not replacements for shared governance policy.
 - `.claude/CLAUDE.md` is the runtime baseline for local agent execution.
 - Claude runtime behavior and editor/tool hook implementations belong under `.claude/**`; Codex event wiring belongs in `.codex/hooks.json` and must reuse the repo-local hook contract instead of defining a separate policy layer.
+- Stop/SubagentStop lifecycle validation belongs to the repo-local hook contract; Codex mirror wiring remains context/validation wiring and is not a permission gate equivalent.
 - Durable policy and governance belong under `docs/00.agent-governance/**`.
 - This repository does **not** use GitHub-native instruction files such as `.github/copilot-instructions.md` or `.github/instructions/**/*.instructions.md`.
 - If GitHub tooling needs guidance, it must be routed through the existing gateway model instead of adding a parallel instruction hierarchy.

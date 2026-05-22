@@ -18,6 +18,7 @@ fi
 
 python3 - "$ROOT_DIR" <<'PY'
 import collections
+import fnmatch
 import json
 import os
 import pathlib
@@ -419,6 +420,13 @@ template_readme = read_text(root / "docs/99.templates/README.md")
 for template in sorted((root / "docs/99.templates").iterdir()):
     if template.is_file() and template.name != "README.md" and template.name not in template_readme:
         fail(f"template is not listed in docs/99.templates/README.md: {template.name}")
+for phrase in [
+    "## Structural Template Coverage",
+    "structural template mapping",
+    "exactly one mapping",
+]:
+    if phrase not in template_readme:
+        fail(f"{rel(root / 'docs/99.templates/README.md')} missing structural template coverage phrase: {phrase}")
 
 reference_template_path = root / "docs/99.templates/reference.template.md"
 reference_template_text = read_text(reference_template_path)
@@ -476,6 +484,37 @@ required_stage_templates = [
     ("docs/90.references/**/*.md", "reference.template.md"),
 ]
 
+for glob_pattern, template_name in required_stage_templates:
+    template_path = root / "docs/99.templates" / template_name
+    if not template_path.exists():
+        fail(f"structural template mapping points to missing template: {glob_pattern} -> {template_name}")
+
+structural_template_roots = [
+    root / "docs/01.requirements",
+    root / "docs/02.architecture",
+    root / "docs/03.specs",
+    root / "docs/04.execution",
+    root / "docs/05.operations",
+    root / "docs/90.references",
+]
+for scan_root in structural_template_roots:
+    for path in sorted(scan_root.rglob("*.md")):
+        if path.name == "README.md":
+            continue
+        relative_path = rel(path)
+        matching_templates = [
+            template_name
+            for glob_pattern, template_name in required_stage_templates
+            if fnmatch.fnmatchcase(relative_path, glob_pattern)
+        ]
+        if not matching_templates:
+            fail(f"{relative_path} is not covered by a structural template mapping")
+        elif len(matching_templates) > 1:
+            fail(
+                f"{relative_path} matches multiple structural template mappings: "
+                f"{', '.join(matching_templates)}"
+            )
+
 
 def required_headings_from_template(template_name: str) -> list[str]:
     headings: list[str] = []
@@ -509,11 +548,13 @@ template_enforcement_phrase_checks = {
     root / "docs/00.agent-governance/rules/documentation-protocol.md": [
         "docs/99.templates/README.md",
         "status: draft",
+        "structural template mapping",
         "required template headings",
         "template path used and the validation evidence",
     ],
     root / "docs/00.agent-governance/rules/document-stage-routing.md": [
         "docs/99.templates/readme.template.md",
+        "structural template mapping",
         "required template headings",
         "template path used and validation evidence",
     ],
@@ -527,6 +568,7 @@ template_enforcement_phrase_checks = {
         "docs/99.templates/README.md",
         "status: draft",
         "required template headings",
+        "structural template mapping",
         "template path used",
         "Validation evidence",
     ],
@@ -534,6 +576,7 @@ template_enforcement_phrase_checks = {
         "docs/99.templates/README.md",
         "status: draft",
         "required template headings",
+        "structural template mapping",
         "template path used",
         "Validation evidence",
     ],
@@ -1337,14 +1380,19 @@ for phrase in [
     ".claude/hooks/k8s-pre-edit.sh",
     ".claude/hooks/post-validate.sh",
     ".claude/hooks/session-start.sh",
+    ".claude/hooks/lifecycle-guard.sh",
+    '"Stop"',
+    '"SubagentStop"',
+    '"PreCompact"',
     '"timeout": 60',
+    '"timeout": 20',
 ]:
     if phrase not in post_validate_command and phrase not in read_text(root / ".claude/settings.json"):
         fail(f".claude/settings.json missing hook contract phrase: {phrase}")
 
 codex_hooks_path = root / ".codex/hooks.json"
 codex_hooks = load_json(codex_hooks_path).get("hooks", {})
-for event_name in ["SessionStart", "PreToolUse", "PostToolUse"]:
+for event_name in ["SessionStart", "PreToolUse", "PostToolUse", "Stop", "SubagentStop", "PreCompact"]:
     if event_name not in codex_hooks:
         fail(f"{rel(codex_hooks_path)} missing event hook: {event_name}")
 codex_hooks_text = read_text(codex_hooks_path)
@@ -1352,9 +1400,11 @@ for phrase in [
     ".claude/hooks/session-start.sh",
     ".claude/hooks/k8s-pre-edit.sh",
     ".claude/hooks/post-validate.sh",
+    ".claude/hooks/lifecycle-guard.sh",
     "CODEX_PROJECT_DIR",
     "Glob|Grep",
     '"timeout": 60',
+    '"timeout": 20',
 ]:
     if phrase not in codex_hooks_text:
         fail(f"{rel(codex_hooks_path)} missing Codex event hook phrase: {phrase}")
@@ -1454,6 +1504,73 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
     if "[hook] PASS documentation template enforcement" not in docs_post_hook_result.stdout:
         fail(f"{rel(post_hook_path)} docs payload simulation missing template enforcement output")
 
+    lifecycle_hook_path = root / ".claude/hooks/lifecycle-guard.sh"
+    lifecycle_selftest_env = {
+        **hook_env,
+        "HY_HOME_K8S_LIFECYCLE_GUARD_SELFTEST": "1",
+        "HY_HOME_K8S_CHANGED_PATHS": "docs/01.requirements/example.md",
+    }
+    clean_stop_result = subprocess.run(
+        ["bash", str(lifecycle_hook_path)],
+        cwd=root,
+        input=json.dumps({"hook_event_name": "Stop"}),
+        text=True,
+        capture_output=True,
+        env=lifecycle_selftest_env,
+    )
+    if clean_stop_result.returncode != 0:
+        fail(f"{rel(lifecycle_hook_path)} clean Stop payload simulation failed: {clean_stop_result.stderr.strip()}")
+    if "block" in clean_stop_result.stdout:
+        fail(f"{rel(lifecycle_hook_path)} clean Stop payload simulation unexpectedly blocked")
+
+    failing_stop_result = subprocess.run(
+        ["bash", str(lifecycle_hook_path)],
+        cwd=root,
+        input=json.dumps({"hook_event_name": "Stop"}),
+        text=True,
+        capture_output=True,
+        env={**lifecycle_selftest_env, "HY_HOME_K8S_FORCE_FAIL": "1"},
+    )
+    if failing_stop_result.returncode != 0:
+        fail(f"{rel(lifecycle_hook_path)} failing Stop payload simulation exited non-zero")
+    for phrase in ["decision", "block", "validation failed"]:
+        if phrase not in failing_stop_result.stdout:
+            fail(f"{rel(lifecycle_hook_path)} failing Stop payload simulation missing output phrase: {phrase}")
+
+    failing_subagent_result = subprocess.run(
+        ["bash", str(lifecycle_hook_path)],
+        cwd=root,
+        input=json.dumps({"hook_event_name": "SubagentStop"}),
+        text=True,
+        capture_output=True,
+        env={**lifecycle_selftest_env, "HY_HOME_K8S_FORCE_FAIL": "1"},
+    )
+    if failing_subagent_result.returncode != 0:
+        fail(f"{rel(lifecycle_hook_path)} failing SubagentStop payload simulation exited non-zero")
+    for phrase in ["decision", "block", "SubagentStop"]:
+        if phrase not in failing_subagent_result.stdout:
+            fail(f"{rel(lifecycle_hook_path)} failing SubagentStop payload simulation missing output phrase: {phrase}")
+
+    precompact_result = subprocess.run(
+        ["bash", str(lifecycle_hook_path)],
+        cwd=root,
+        input=json.dumps({"hook_event_name": "PreCompact", "trigger": "manual"}),
+        text=True,
+        capture_output=True,
+        env={
+            **hook_env,
+            "HY_HOME_K8S_LIFECYCLE_GUARD_SELFTEST": "1",
+            "HY_HOME_K8S_CHANGED_PATHS": ".claude/settings.json\n.codex/hooks.json",
+        },
+    )
+    if precompact_result.returncode != 0:
+        fail(f"{rel(lifecycle_hook_path)} PreCompact payload simulation failed: {precompact_result.stderr.strip()}")
+    for phrase in ["systemMessage", "Lifecycle guard", "Suggested validation"]:
+        if phrase not in precompact_result.stdout:
+            fail(f"{rel(lifecycle_hook_path)} PreCompact payload simulation missing output phrase: {phrase}")
+    if '"decision": "block"' in precompact_result.stdout:
+        fail(f"{rel(lifecycle_hook_path)} PreCompact payload simulation must not block")
+
     codex_hook_env = {
         **os.environ,
         "CODEX_PROJECT_DIR": str(root),
@@ -1533,6 +1650,32 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
         if "[hook] PASS documentation template enforcement" not in codex_docs_post_result.stdout:
             fail(f"{rel(codex_hooks_path)} Codex docs PostToolUse simulation missing template enforcement output")
 
+    for lifecycle_event, lifecycle_matcher in [
+        ("Stop", "*"),
+        ("SubagentStop", "*"),
+        ("PreCompact", "manual|auto"),
+    ]:
+        lifecycle_command = hook_command(codex_hooks, lifecycle_event, lifecycle_matcher, "lifecycle-guard.sh")
+        if not lifecycle_command:
+            fail(f"{rel(codex_hooks_path)} missing Codex {lifecycle_event} lifecycle hook command")
+            continue
+        codex_lifecycle_result = subprocess.run(
+            ["bash", "-lc", lifecycle_command],
+            cwd=root,
+            input=json.dumps({"hook_event_name": lifecycle_event}),
+            text=True,
+            capture_output=True,
+            env={
+                **codex_hook_env,
+                "HY_HOME_K8S_LIFECYCLE_GUARD_SELFTEST": "1",
+                "HY_HOME_K8S_CHANGED_PATHS": ".claude/settings.json",
+            },
+        )
+        if codex_lifecycle_result.returncode != 0:
+            fail(f"{rel(codex_hooks_path)} Codex {lifecycle_event} lifecycle simulation failed: {codex_lifecycle_result.stderr.strip()}")
+        if lifecycle_event == "PreCompact" and "Lifecycle guard" not in codex_lifecycle_result.stdout:
+            fail(f"{rel(codex_hooks_path)} Codex PreCompact lifecycle simulation missing advisory output")
+
 claude_agents_dir = root / ".claude/agents"
 codex_agents_dir = root / ".codex/agents"
 claude_agents = {path.stem: path for path in sorted(claude_agents_dir.glob("*.md"))}
@@ -1607,6 +1750,7 @@ script_command_contract_paths = [
     root / ".claude/settings.json",
     root / ".claude/CLAUDE.md",
     root / ".claude/hooks/post-validate.sh",
+    root / ".claude/hooks/lifecycle-guard.sh",
     root / ".codex/hooks.json",
     root / "docs/05.operations/guides/0009-llm-wiki-curation-guide.md",
     root / "docs/90.references/README.md",

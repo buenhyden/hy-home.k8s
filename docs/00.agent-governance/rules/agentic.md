@@ -18,7 +18,7 @@ Rules for AI Agent-first Engineering quality and safety.
 - Keep implementation GitOps-first: repository change -> review -> ArgoCD reconciliation.
 - Keep generated documents in the canonical docs taxonomy and route through `document-stage-routing.md`.
 - Keep `.claude/agents/*.md` and `.codex/agents/*.toml` aligned whenever runtime contracts change.
-- Treat completion and compaction safeguards as report, handoff, memory/progress, and postflight-checklist responsibilities unless a future approved plan adds Stop, SubagentStop, or PreCompact hooks.
+- Treat completion and compaction safeguards as layered controls: reports, handoffs, memory/progress, postflight checklist, and lifecycle hooks. Stop/SubagentStop hooks may block objective repo-state failures; PreCompact is advisory.
 - Report unavailable tools, skipped live checks, and CI-only validation honestly.
 
 ## Direct Mutation Boundary
@@ -46,7 +46,7 @@ Rules for AI Agent-first Engineering quality and safety.
 - Prefer in-place clarity, regression-gate hardening, or catalog updates when the matrix already marks the component `Ready`.
 - When a component is already `Ready`, prefer command-boundary regression gates over adding new runtime surfaces for documentation drift.
 - Keep `.claude/settings.json` as Claude permission and hook policy, and keep `.codex/hooks.json` as Codex context/validation hook wiring; do not describe them as equivalent enforcement layers.
-- Current lifecycle-hook coverage is partial: SessionStart, PreToolUse, and PostToolUse are wired, while Stop, SubagentStop, and PreCompact safeguards remain policy/report-driven.
+- Current lifecycle-hook coverage includes SessionStart, PreToolUse, PostToolUse, Stop, SubagentStop, and PreCompact. Stop/SubagentStop block only objective repo-state failures; PreCompact reports uncommitted tracked changes and suggested validation without blocking compaction.
 
 ## Context Hierarchy Defaults
 
@@ -64,6 +64,7 @@ Before changing gateway, runtime, hook, mirror, or governance-memory files:
 - Confirm no legacy source labels from prior external harness examples remain.
 - Confirm `.claude/agents/*.md` and `.codex/agents/*.toml` mirror parity stays intact.
 - Confirm provider-specific hook boundaries are described accurately: `.claude/settings.json` owns Claude permissions/hooks; `.codex/hooks.json` is Codex context/validation hook wiring, not an equivalent permission gate.
+- Confirm lifecycle hook semantics are described accurately: Stop/SubagentStop block only objective repo-state failures, and PreCompact remains advisory.
 - Confirm historical memory entries point to the current source of truth instead of presenting initial implementation snapshots as current inventory.
 
 ## Persona and Rule Enforcement

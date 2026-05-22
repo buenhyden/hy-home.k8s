@@ -34,6 +34,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Do not write plaintext Kubernetes secrets.
 - Treat `.codex/agents/*.toml` as Codex mirrors of `.claude/agents/*.md`; keep both sides aligned.
 - Treat `.codex/hooks.json` as Codex event wiring for repo-local context and validation hooks, not as an equivalent permission gate to `.claude/settings.json`.
+- Treat `.claude/hooks/lifecycle-guard.sh` as the lifecycle validation surface: Stop/SubagentStop may block objective repo-state failures, while PreCompact only reports uncommitted tracked changes and suggested validation.
 
 ## Runtime Roster
 
@@ -43,6 +44,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 ## Validation and Tooling
 
 - Use `.pre-commit-config.yaml`, `.github/workflows/ci.yml`, `scripts/*.sh`, and `infrastructure/tests/*.sh` as validation sources.
+- Keep `scripts/validate-repo-quality-gates.sh .` as the regression gate for structural template coverage, hook wiring, and lifecycle hook payload simulation.
 - Use `RTK.md` for shell-command guidance. If `rtk` is not on PATH, run the underlying command directly and report the limitation.
 - If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers. If graphify data or the `graphify` CLI is unavailable, use repo inspection and report the limitation.
 

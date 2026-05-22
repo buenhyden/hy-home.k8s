@@ -27,6 +27,10 @@ updated: 2026-05-22
 
 2026-05-09 follow-up review 결과, 기존 구현은 대체로 완료되어 있으나 `docs/05.operations/policies`가 risky-command marker gate에서 빠져 있고, 완료 증거가 대화 출력에 의존하며, matrix 검증과 direct push 차단 표현이 실제 검증 범위를 과장할 수 있는 gap이 확인되었다. 2026-05-09 final multi-agent disposition은 REVISE 후 승인 가능이며, 남은 objection은 readiness 의미 축소, matrix gap 표현 가능성, validator 범위 정합성, 검증 증거의 snapshot 성격이다. 이번 보강은 새 runtime surface 없이 기존 validator, catalog, Agent-first rule, plan/task evidence만 정밀화한다.
 
+2026-05-22 follow-up은 governance, docs, lifecycle hook hardening을 같은 remediation stream에 누적한다. 범위는 tracked repository surface로 제한하고 `.agent-work/`는 제외한다. `docs/01~05` 검토는 template compliance, status drift, downstream links, execution evidence, operations boundary wording을 중심으로 분류하되, 문서 삭제는 기본 조치로 삼지 않는다.
+
+2026-05-22 추가 요청에 따라 구조적 템플릿 누락 방지를 우선 반영한다. 품질 게이트는 이제 authored stage의 비-README Markdown이 정확히 하나의 structural template mapping에 포함되는지 확인하고, mapping이 가리키는 템플릿 파일 존재 여부와 required template headings를 함께 검증한다.
+
 ## Goals & In-Scope
 
 - **Goals**:
@@ -69,6 +73,11 @@ updated: 2026-05-22
 | PLN-011 | 완료 증거를 repo-discoverable snapshot summary로 보강 | `docs/04.execution/plans/`, `docs/04.execution/tasks/` | REQ-AI-006 | task verification summary records date, command results, skipped optional tools, and future handoff rerun requirement |
 | PLN-012 | Matrix status contract를 `Ready`/`Partial`/`Missing` enum으로 명시하고 gap consistency를 검증 | `docs/00.agent-governance/harness-catalog.md`, `scripts/validate-repo-quality-gates.sh` | REQ-AI-007 | Ready rows require `Gap=None`; Partial/Missing rows require concrete `Gap` and `Remediation` |
 | PLN-013 | `Gap=None`과 provider hook boundary 의미를 Agent-first 규칙에 정밀화 | `docs/00.agent-governance/rules/agentic.md` | REQ-AI-008 | explicit human request or concrete matrix gap is required before new runtime surface review; Claude permissions/hooks and Codex context hook are not equivalent enforcement layers |
+| PLN-014 | `docs/01~05` stage audit 결과를 구조적 템플릿 coverage와 lifecycle hardening 범위에 반영 | `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/04.execution/`, `docs/05.operations/`, `docs/99.templates/` | REQ-DOC-003 | every non-README authored stage Markdown matches exactly one structural template mapping |
+| PLN-015 | Stop/SubagentStop/PreCompact lifecycle guard 추가 및 Claude/Codex wiring 반영 | `.claude/hooks/lifecycle-guard.sh`, `.claude/settings.json`, `.codex/hooks.json` | REQ-AI-009 | Stop/SubagentStop block objective repo-state failures; PreCompact remains advisory |
+| PLN-016 | repo quality gate에 lifecycle hook wiring과 clean/failing/advisory payload simulation 추가 | `scripts/validate-repo-quality-gates.sh`, `scripts/README.md` | REQ-VAL-003 | quality gate simulates Stop, SubagentStop, and PreCompact payloads |
+| PLN-017 | governance/runtime 문서에 lifecycle hook contract와 structural template coverage 반영 | `docs/00.agent-governance/`, `.claude/CLAUDE.md`, `.claude/agents/doc-writer.md`, `.codex/agents/doc-writer.toml` | REQ-AI-010 | provider, catalog, postflight, and doc-writer contracts stay aligned |
+| PLN-018 | 변경 후 정적 검증 bundle 재실행 및 skipped live/optional checks 명시 | `scripts/`, `infrastructure/tests/`, `docs/04.execution/tasks/` | REQ-VAL-004 | all repo-backed checks PASS or limitations documented |
 
 ## Verification Plan
 
@@ -81,6 +90,8 @@ updated: 2026-05-22
 | VAL-PLN-005 | Security | plaintext secret scan | `bash scripts/check-secret-handling.sh .` | PASS |
 | VAL-PLN-006 | Static | shell syntax | `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | no syntax errors |
 | VAL-PLN-007 | Static | diff whitespace check | `git diff --check` | no whitespace errors |
+| VAL-PLN-008 | Static | runtime JSON parse | `python3 -m json.tool .claude/settings.json` and `python3 -m json.tool .codex/hooks.json` | both files parse |
+| VAL-PLN-009 | Static | lifecycle hook payload simulation | Stop, SubagentStop, and PreCompact self-test payloads through `scripts/validate-repo-quality-gates.sh` and targeted hook commands | Stop/SubagentStop block forced failures; PreCompact reports advisory output only |
 
 ## Risks & Mitigations
 
@@ -91,6 +102,8 @@ updated: 2026-05-22
 | Completed task evidence is not durable | Medium | Record current validation date, command outcomes, and skipped optional tools in the task verification summary |
 | Matrix gate is mistaken for semantic readiness proof | Medium | State that matrix checks are regression/structure guards and keep CI/toolchain/live k3d readiness in separate evidence lanes |
 | `Gap=None` is mistaken for a permanent ban on future runtime surfaces | Medium | Treat `Gap=None` as a current evidence snapshot; require an explicit human request or a matrix update to `Partial`/`Missing` before adding surfaces |
+| Structural template mapping misses a new authored-doc path | High | Fail repo quality gate when a non-README authored Markdown file under `docs/01~05` or `docs/90.references` does not match exactly one template mapping |
+| Lifecycle hook blocks for subjective or advisory conditions | Medium | Limit Stop/SubagentStop blocking to command exit failures from repo-backed validators; keep PreCompact advisory |
 | Historical docs are mistaken for current runtime contract | Medium | Keep historical content but add current-contract notes pointing to Headlamp and `172.18.x` manifests |
 | Documentation remediation expands into manifest changes | Medium | Keep Kubernetes manifests explicitly out of scope |
 | New documents drift from templates | Medium | Start from `plan.template.md` and `task.template.md`; update stage README indexes |
@@ -120,6 +133,10 @@ updated: 2026-05-22
 - [x] Push-example checks distinguish authored-doc PR-flow expectations from broader Markdown direct-push blocking
 - [x] Verification evidence is recorded as a 2026-05-09 repo-discoverable snapshot; future handoff claims require rerunning the validation bundle
 - [x] Rewriting authored SSoT docs outside the current command-boundary hardening scope remains separate human-approved work
+- [x] Structural template coverage prevents uncovered non-README authored Markdown under `docs/01~05` and `docs/90.references`
+- [x] Lifecycle hook script and Claude/Codex wiring cover Stop, SubagentStop, and PreCompact
+- [x] Repo quality gate simulates lifecycle clean/failing/advisory payloads
+- [x] Governance/runtime docs describe Stop/SubagentStop blocking and PreCompact advisory boundaries
 - [x] Required verification passed or limitations documented
 
 ## Related Documents

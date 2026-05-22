@@ -29,6 +29,7 @@ Run this checklist before finalizing a response.
 
 - [ ] Validation commands were executed (or limitations were stated).
 - [ ] Relevant outputs were reviewed.
+- [ ] Lifecycle hook guard ran or equivalent validation commands were executed; PreCompact advisory output is not treated as completion evidence.
 - [ ] Unresolved risks are explicitly documented.
 - [ ] No direct cluster mutation or plaintext Kubernetes secret was introduced.
 - [ ] Staged and unstaged changes were reviewed for scope.

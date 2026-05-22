@@ -8,6 +8,67 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-22 — governance docs lifecycle hook hardening
+
+- **Date**: 2026-05-22
+- **Layer**: docs, meta, runtime
+- **Status**: complete
+- **Tags**: #governance #templates #hooks #validation
+
+#### Progress
+
+- Added structural template coverage to `scripts/validate-repo-quality-gates.sh`
+  so every non-README authored Markdown file under `docs/01.requirements`,
+  `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`,
+  `docs/05.operations`, and `docs/90.references` must match exactly one
+  template mapping.
+- Documented the structural template mapping contract in `docs/99.templates`,
+  documentation governance rules, and doc-writer Claude/Codex mirrors.
+- Added `.claude/hooks/lifecycle-guard.sh` and wired Stop, SubagentStop, and
+  PreCompact in `.claude/settings.json` plus compatible Codex wiring in
+  `.codex/hooks.json`.
+- Extended the repo quality gate to verify lifecycle hook wiring and simulate
+  clean, failing, and advisory lifecycle payloads.
+- Updated the harness catalog, Agent-first rules, provider notes, postflight
+  checklist, runtime baseline, and execution task evidence to describe the new
+  lifecycle contract.
+
+#### Memory
+
+- Structural template enforcement must cover both document headings and path
+  coverage. A canonical docs path that is not mapped to exactly one template is
+  a governance drift, even if the document has plausible headings.
+- Lifecycle hooks should stay thin. Keep subjective policy in governance docs
+  and use Stop/SubagentStop only for objective repo-state validation failures;
+  keep PreCompact advisory.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS, including structural
+  template coverage and lifecycle hook payload simulation.
+- `git diff --check` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS for YAML syntax; optional
+  `kube-linter` was skipped because it is not installed locally.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+- `python3 -m json.tool .claude/settings.json` and
+  `python3 -m json.tool .codex/hooks.json` PASS.
+- Direct lifecycle self-tests confirmed clean Stop did not block,
+  forced-failure Stop/SubagentStop emitted `decision=block`, and PreCompact
+  emitted advisory `systemMessage` without blocking.
+- `command -v rtk` returned not found, so direct repo-backed commands were used.
+
+#### Handoff
+
+- Live k3d/ArgoCD reconciliation, external Vault changes, plaintext secret
+  creation, and GitHub settings/ruleset changes were intentionally not
+  executed.
+
+---
+
 ### 2026-05-22 — documentation system contract alignment
 
 - **Date**: 2026-05-22

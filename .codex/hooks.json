@@ -44,6 +44,42 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "PROJECT_DIR=\"${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/.claude/hooks/lifecycle-guard.sh\"",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "PROJECT_DIR=\"${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/.claude/hooks/lifecycle-guard.sh\"",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "manual|auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "PROJECT_DIR=\"${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/.claude/hooks/lifecycle-guard.sh\"",
+            "timeout": 20
+          }
+        ]
+      }
     ]
   }
 }
