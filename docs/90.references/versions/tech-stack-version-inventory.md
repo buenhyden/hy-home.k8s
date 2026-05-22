@@ -3,7 +3,7 @@ title: 'Reference: Tech Stack Version Inventory'
 type: reference
 status: active
 owner: 'platform'
-updated: 2026-05-21
+updated: 2026-05-22
 ---
 
 # Tech Stack Version Inventory
@@ -16,7 +16,7 @@ updated: 2026-05-21
 ## Reference Type
 
 - Type: version-contract-inventory / external-standard-snapshot
-- Source checked: 2026-05-09
+- Source checked: 2026-05-22
 - Refresh trigger: repo manifest/config version bump, GitHub Actions/pre-commit pin change, cloud example target update, or official provider support range change.
 
 ## Authority Boundary
@@ -45,7 +45,7 @@ updated: 2026-05-21
 ## Definitions / Facts
 
 - **Version Contracts**: 아래 YAML 블록의 값이며 repo manifest/config와 함께 검증되는 기준이다.
-- **Cloud Example Snapshot**: AWS/Azure 예시를 갱신할 때 확인한 2026-05-09 기준 공식 지원 상태다.
+- **Cloud Example Snapshot**: AWS/Azure 예시와 upstream Kubernetes awareness를 재확인한 2026-05-22 기준 공식 지원 상태다.
 - **Ingress NGINX boundary**: 로컬 k3d 계약은 유지하되 cloud target은 ALB/Gateway API/AGC 경로로 분리한다.
 
 ## Sources
@@ -56,22 +56,22 @@ updated: 2026-05-21
 ## Review and Freshness
 
 - Review cadence: on dependency bump, cloud example refresh, or official support-range change.
-- Last reviewed: 2026-05-09.
+- Last reviewed: 2026-05-22.
 - Next review trigger: a PR that changes `gitops/**`, `infrastructure/**`, `.github/workflows/**`, `.pre-commit-config.yaml`, `examples/aws/**`, or `examples/azure/**` version pins.
 
-## Cloud Example Snapshot: 2026-05-09
+## Cloud Example Snapshot: 2026-05-22
 
-이 섹션은 `examples/aws`와 `examples/azure`의 참조 구현을 갱신할 때 사용한 공식 기준이다. 로컬 k3d 실행 계약은 아래 `Version Contracts`의 `rancher/k3s:v1.35.0-k3s1`을 따른다.
+이 섹션은 `examples/aws`와 `examples/azure`의 참조 구현을 검토할 때 사용하는 공식 기준이다. 로컬 k3d 실행 계약은 아래 `Version Contracts`의 `rancher/k3s:v1.35.0-k3s1`을 따른다. 이 snapshot은 freshness 기록이며 자동 upgrade 지시가 아니다.
 
 | Area                        | Repo example target                              | Official basis                                                                                      | Note                                                                                  |
 | --------------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Kubernetes upstream         | 1.36 latest release awareness                    | [Kubernetes v1.36 release](https://kubernetes.io/blog/2026/04/22/kubernetes-v1-36-release/)         | 로컬 k3d와 cloud managed cluster target을 자동 변경하지 않는다.                       |
-| AWS EKS                     | 1.35 target, standard support set 1.35/1.34/1.33 | [AWS EKS versions](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html)       | `examples/aws/terraform`은 EKS 1.35 참조 구현으로 유지한다.                           |
-| Azure AKS                   | 1.35 target                                      | [AKS supported versions](https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions) | `examples/azure/infrastructure`의 기본 AKS version과 docs target을 맞춘다.            |
-| Terraform AWS provider      | `>= 6.28, < 7.0`                                 | [Terraform AWS provider](https://registry.terraform.io/providers/-/aws/latest)                      | provider major drift를 피하면서 6.x 최신 기준을 사용한다.                             |
-| Terraform EKS module        | `21.20.0`                                        | [EKS module](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest)            | EKS 1.35 target과 함께 갱신한다.                                                      |
-| Terraform VPC module        | `6.6.1`                                          | [VPC module](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws)                   | AWS network example 기준이다.                                                         |
-| Terraform RDS Aurora module | `10.2.0`                                         | [RDS Aurora module](https://registry.terraform.io/modules/terraform-aws-modules/rds-aurora/aws)     | Aurora Serverless v2 example 기준이다.                                                |
+| Kubernetes upstream         | 1.36 latest release awareness, 1.35 patch awareness | [Kubernetes releases](https://kubernetes.io/releases/)                                             | 2026-05-22 기준 active branches는 1.36/1.35/1.34이며, 최신 patch는 1.36.1과 1.35.5다. 로컬 k3d와 cloud managed cluster target을 자동 변경하지 않는다. |
+| AWS EKS                     | 1.35 target, standard support set 1.35/1.34/1.33 | [AWS EKS versions](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html)       | `examples/aws/terraform`은 EKS 1.35 참조 구현으로 유지한다. EKS 1.35 standard support는 2027-03-27까지다. |
+| Azure AKS                   | 1.35 target                                      | [AKS supported versions](https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions) | `examples/azure/infrastructure`의 기본 AKS version과 docs target을 맞춘다. AKS 1.36 availability는 awareness only다. |
+| Terraform AWS provider      | `>= 6.28, < 7.0`                                 | [Terraform AWS provider](https://registry.terraform.io/providers/hashicorp/aws/latest)              | 2026-05-22 기준 latest는 6.46.0이며 현재 constraint가 허용한다. provider major drift는 피한다. |
+| Terraform EKS module        | `21.20.0`                                        | [EKS module](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest)            | 2026-05-22 기준 latest와 일치한다. EKS 1.35 target은 유지한다.                        |
+| Terraform VPC module        | `6.6.1`                                          | [VPC module](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws)                   | 2026-05-22 기준 latest와 일치한다. AWS network example 기준이다.                       |
+| Terraform RDS Aurora module | `10.2.0`                                         | [RDS Aurora module](https://registry.terraform.io/modules/terraform-aws-modules/rds-aurora/aws)     | 2026-05-22 기준 latest와 일치한다. Aurora Serverless v2 example 기준이다.             |
 | Ingress NGINX               | Retired upstream since 2026-03-24                | [Ingress NGINX retirement](https://kubernetes.io/blog/2026/01/29/ingress-nginx-statement/)          | 로컬 k3d 계약은 문서상 경고로 유지하고 cloud target은 ALB/Gateway API/AGC로 분리한다. |
 
 ## Version Contracts

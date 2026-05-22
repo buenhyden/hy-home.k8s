@@ -8,6 +8,71 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-22 — workspace purpose alignment audit
+
+- **Date**: 2026-05-22
+- **Layer**: docs, meta, infra, ops
+- **Status**: complete
+- **Tags**: #governance #docs #gitops #hooks #versions #validation
+
+#### Progress
+
+- Re-audited the workspace against its full purpose: WSL2 native Docker, k3d,
+  ArgoCD GitOps, External Secrets/Vault, external PostgreSQL/Valkey contracts,
+  SDD document lifecycle, Agent governance, hooks, CI, validation scripts,
+  examples, README layers, and version references.
+- Confirmed the existing README/template/lifecycle/Agent governance baseline was
+  already covered by the repo quality gate and did not need broad rewrites.
+- Added Plan/Task evidence for this purpose-alignment workstream and indexed
+  both documents under `docs/04.execution/`.
+- Refreshed the tech stack version inventory from official Kubernetes, EKS,
+  AKS, and Terraform Registry sources without changing repo desired-state pins.
+- Expanded the shared Claude deny boundary for direct `kubectl`, `argocd app`,
+  and Vault write commands, and aligned local Hookify advisory wording with the
+  tracked allow/deny boundary.
+
+#### Memory
+
+- Version inventory refreshes should distinguish "official latest awareness"
+  from "repo desired-state upgrade." Do not change k3s, cloud example, or
+  Terraform pins unless the corresponding manifest/config changes in the same
+  work item.
+- Keep direct live commands behind human-approved bootstrap or break-glass
+  paths. The shared Claude permission gate should deny common mutation and live
+  access command families; local Hookify files remain ignored advisory rules.
+- When a broad purpose audit finds the baseline already valid, record that
+  outcome and avoid rewriting templates, README files, or historical lifecycle
+  documents just to create churn.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS for YAML syntax; optional
+  `kube-linter` was skipped because it is not installed locally.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `python3 -m json.tool .claude/settings.json` PASS.
+- `python3 -m json.tool .codex/hooks.json` PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+- `git diff --check` PASS.
+- Official source refresh performed on 2026-05-22 against Kubernetes releases,
+  AWS EKS versions, Azure AKS supported versions, and Terraform Registry provider
+  / module APIs.
+- `pre-commit`, `shellcheck`, `actionlint`, `zizmor`, `kube-linter`,
+  `graphify`, and `rtk` are not installed in this local environment.
+- Final validation evidence is recorded in
+  `../../04.execution/tasks/2026-05-22-workspace-purpose-alignment.md`.
+
+#### Handoff
+
+- Live k3d/ArgoCD reconciliation, direct cluster mutation, Vault writes, cloud
+  account changes, and plaintext Kubernetes secret authoring were intentionally
+  not executed.
+
+---
+
 ### 2026-05-22 — docs governance Full A+B hardening
 
 - **Date**: 2026-05-22

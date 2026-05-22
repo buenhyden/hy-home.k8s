@@ -1,0 +1,104 @@
+---
+title: 'Task: Workspace Purpose Alignment Audit'
+type: task
+status: done
+owner: 'platform'
+updated: 2026-05-22
+---
+
+# Task: Workspace Purpose Alignment Audit
+
+## Overview (KR)
+
+이 문서는 `hy-home.k8s`의 워크스페이스 목적 정합성 재감사와 보강 작업의 실행 증적이다.
+문서 lifecycle와 Agent governance뿐 아니라 GitOps, 인프라 계약, CI, 검증 스크립트, 예제,
+외부 버전 기준까지 같은 범위에서 확인한다.
+
+## Inputs
+
+- **Parent Spec**: N/A. This is a governance and documentation alignment workstream.
+- **Parent Plan**: [../plans/2026-05-22-workspace-purpose-alignment.md](../plans/2026-05-22-workspace-purpose-alignment.md)
+
+## Working Rules
+
+- Preserve the existing SSoT layout and avoid broad rewrites.
+- Update only drift confirmed by repo evidence or official external version sources.
+- Keep live mutation, secret writes, ArgoCD forced sync, and cloud account changes out of scope.
+- Documentation-only work still needs validation evidence.
+
+## Task Table
+
+| Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| T-001 | Re-audit docs lifecycle, template mapping, and README contract | doc | N/A | PLN-002 | `bash scripts/validate-repo-quality-gates.sh .` | Platform | Done |
+| T-002 | Re-audit Agent gateway, runtime baseline, Codex mirror, hook, and local-rule boundaries | guardrail | N/A | PLN-003 | quality gate, JSON parse, ignored local-rule checks | Platform | Done |
+| T-003 | Refresh external version inventory from official sources | doc | N/A | PLN-004 | `docs/90.references/versions/tech-stack-version-inventory.md` updated with 2026-05-22 source date | Platform | Done |
+| T-004 | Broaden shared direct-command deny boundary and align local Hookify wording | guardrail | N/A | PLN-005 | `.claude/settings.json` JSON parse and local Hookify frontmatter checks | Platform | Done |
+| T-005 | Preserve SDD execution evidence and update stage indexes | doc | N/A | PLN-001 | Plan/Task created from templates and indexed in README files | Platform | Done |
+| T-006 | Run repo-static validation suite and record limitations | test | N/A | PLN-006 | Verification Summary in this document | Platform | Done |
+
+## Suggested Types
+
+- `doc`
+- `guardrail`
+- `test`
+
+## Agent-specific Types (If Applicable)
+
+- `guardrail`
+- `eval`
+
+## Phase View (Optional)
+
+### Phase 1 - Audit
+
+- [x] T-001 Re-audit lifecycle docs, templates, and README layer.
+- [x] T-002 Re-audit Agent governance, mirror, and hook boundaries.
+
+### Phase 2 - Targeted remediation
+
+- [x] T-003 Refresh external version inventory.
+- [x] T-004 Align command deny and local Hookify advisory wording.
+- [x] T-005 Add execution evidence and README indexes.
+
+### Phase 3 - Verification
+
+- [x] T-006 Run validation suite and record skipped optional-tool limitations.
+
+## Verification Summary
+
+- **Test Commands**:
+  - `bash scripts/validate-repo-quality-gates.sh .` PASS.
+  - `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+  - `bash scripts/validate-gitops-structure.sh` PASS.
+  - `bash scripts/validate-k8s-manifests.sh .` PASS for YAML syntax; optional `kube-linter` was skipped because it is not installed locally.
+  - `bash scripts/check-secret-handling.sh .` PASS.
+  - `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+  - `python3 -m json.tool .claude/settings.json` PASS.
+  - `python3 -m json.tool .codex/hooks.json` PASS.
+  - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+  - `git diff --check` PASS.
+- **Eval Commands**: N/A. No model, prompt, or AI product behavior changed.
+- **Logs / Evidence Location**:
+  - This task document.
+  - [Progress ledger](../../00.agent-governance/memory/progress.md).
+  - [Version inventory](../../90.references/versions/tech-stack-version-inventory.md).
+- **Local Tool Limitations**:
+  - `pre-commit`, `shellcheck`, `actionlint`, `zizmor`, `kube-linter`, `graphify`, and `rtk` are not installed in this local environment.
+
+## Audit Result
+
+- `docs/01.requirements` through `docs/05.operations`, `docs/99.templates`, and README layers were already covered by the current repo quality gate. No template rewrite was needed.
+- Root `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` already satisfy the thin gateway/provider shim contract. No progressive-disclosure split was needed.
+- `.claude/CLAUDE.md`, `docs/00.agent-governance/harness-catalog.md`, and Codex mirrors already describe the current runtime ownership boundary. No new shared runtime surface was needed.
+- GitOps and static infrastructure contracts passed current validators. No Kubernetes desired-state manifest was changed.
+- External version freshness needed an update because official Kubernetes, EKS, AKS, and Terraform Registry sources changed after the previous snapshot date.
+- Local Hookify warning text needed alignment with the tracked Claude allow/deny boundary.
+
+## Related Documents
+
+- **Plan**: [../plans/2026-05-22-workspace-purpose-alignment.md](../plans/2026-05-22-workspace-purpose-alignment.md)
+- **Previous Task**: [./2026-05-22-docs-governance-full-ab-hardening.md](./2026-05-22-docs-governance-full-ab-hardening.md)
+- **Templates**: [../../99.templates/README.md](../../99.templates/README.md)
+- **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
+- **Version Inventory**: [../../90.references/versions/tech-stack-version-inventory.md](../../90.references/versions/tech-stack-version-inventory.md)

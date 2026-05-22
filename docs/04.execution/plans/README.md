@@ -54,6 +54,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-05-18-argo-rollouts-progressive-delivery.md
 ├── 2026-05-18-argo-notifications-slack.md
 ├── 2026-05-22-docs-governance-full-ab-hardening.md
+├── 2026-05-22-workspace-purpose-alignment.md
 └── README.md
 ```
 
@@ -90,6 +91,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-05-18-argo-rollouts-progressive-delivery.md`](./2026-05-18-argo-rollouts-progressive-delivery.md) | Argo Rollouts current-contract backfill 실행 계획 | Done | 2026-05-21 |
 | [`./2026-05-18-argo-notifications-slack.md`](./2026-05-18-argo-notifications-slack.md) | ArgoCD Notifications Slack current-contract backfill 실행 계획 | Done | 2026-05-21 |
 | [`./2026-05-22-docs-governance-full-ab-hardening.md`](./2026-05-22-docs-governance-full-ab-hardening.md) | README, lifecycle docs, agent/runtime governance, hook 경계, repo-static gate 정합화 계획 | Done | 2026-05-22 |
+| [`./2026-05-22-workspace-purpose-alignment.md`](./2026-05-22-workspace-purpose-alignment.md) | 워크스페이스 목적 전체 기준 재감사, 버전 freshness, hook command boundary 보강 계획 | Done | 2026-05-22 |
 
 ## Related Documents
 
