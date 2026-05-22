@@ -3,7 +3,7 @@ title: 'Argo Notifications Slack Technical Specification'
 type: spec
 status: active
 owner: platform-team
-updated: 2026-05-21
+updated: 2026-05-22
 ---
 
 # Argo Notifications Slack Specification
@@ -12,6 +12,18 @@ updated: 2026-05-21
 
 이 문서는 ArgoCD Notifications 기반 Slack 알림의 현재 repo-backed 기술 계약을 정의한다.
 ArgoCD Helm values, Notifications ConfigMap, Vault-backed ExternalSecret, default subscriptions, 앱별 opt-in annotation을 구현과 검증의 기준으로 고정한다.
+
+## Implementation Status
+
+이 Spec의 repo-backed 구현은 static contract 기준으로 완료되어 있다. Slack token bootstrap, Vault write, live Slack send 검증은 이 저장소 구현 범위가 아니라 human-approved external/runtime validation이다.
+
+| Area | Current implementation evidence | Verification boundary |
+| --- | --- | --- |
+| Notifications controller enablement | `infrastructure/argocd/values-local.yaml` | `verify-contracts-static.sh` `notifications.enabled: true` check |
+| Slack service/templates/triggers | `gitops/platform/argocd/argocd-notifications-cm.yaml` | static contract check for service, templates, triggers, and default triggers |
+| Vault-backed token reference | `gitops/platform/argocd/argocd-notifications-secret.yaml` | `bash scripts/check-secret-handling.sh .`, `verify-contracts-static.sh` remoteRef checks |
+| GitOps ownership | `gitops/platform/argocd/kustomization.yaml`, `gitops/apps/root/platform-argocd-config-app.yaml` | `bash scripts/validate-gitops-structure.sh` |
+| Operations linkage | `docs/05.operations/policies/0004-rollouts-notifications-headlamp-policy.md`, `docs/05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md` | document link and repo quality gates |
 
 ## Strategic Boundaries & Non-goals
 

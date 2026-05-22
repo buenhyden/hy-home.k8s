@@ -3,7 +3,7 @@ title: 'Argo Rollouts Progressive Delivery Technical Specification'
 type: spec
 status: active
 owner: platform-team
-updated: 2026-05-21
+updated: 2026-05-22
 ---
 
 # Argo Rollouts Progressive Delivery Specification
@@ -12,6 +12,18 @@ updated: 2026-05-21
 
 이 문서는 Argo Rollouts 기반 점진적 배포의 현재 repo-backed 기술 계약을 정의한다.
 `platform-rollouts` Application, AppProject 권한, dashboard route, metrics, workload consumption 경계를 구현과 검증의 기준으로 고정한다.
+
+## Implementation Status
+
+이 Spec의 repo-backed 구현은 현재 계약 기준으로 완료되어 있다. Rollout promotion, abort, undo 같은 live 운영 행위는 구현 증거가 아니라 human/operator 승인 경로의 runtime validation으로 분리한다.
+
+| Area | Current implementation evidence | Verification boundary |
+| --- | --- | --- |
+| Rollouts platform install | `gitops/apps/root/platform-rollouts-app.yaml`, `gitops/platform/namespaces/namespace-argo-rollouts.yaml` | `bash scripts/validate-gitops-structure.sh`, `bash infrastructure/tests/verify-contracts-static.sh` |
+| Dashboard/TLS route | `gitops/apps/root/platform-rollouts-app.yaml`, `traefik/rollouts-k3d.yaml` | static manifest validation; live HTTPS evidence through operations runbook |
+| AppProject permissions | `gitops/clusters/local/appproject-platform.yaml`, `gitops/clusters/local/appproject-apps.yaml` | `verify-contracts-static.sh` Rollout/Analysis allow-list checks |
+| Metrics exposure | `gitops/platform/monitoring/metrics-nodeports.yaml` | `verify-contracts-static.sh` NodePort contract checks |
+| Reference workload | `gitops/workloads/adminer/rollout.yaml`, `analysis-template.yaml`, canary/stable services, Istio routing manifests | `verify-contracts-static.sh` adminer workload contract checks |
 
 ## Strategic Boundaries & Non-goals
 

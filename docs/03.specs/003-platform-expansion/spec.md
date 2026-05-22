@@ -3,7 +3,7 @@ title: 'Platform Expansion Technical Specification'
 type: spec
 status: active
 owner: platform-team
-updated: 2026-05-21
+updated: 2026-05-22
 ---
 
 # Platform Expansion Specification
@@ -15,6 +15,18 @@ updated: 2026-05-21
 
 Dashboard와 `172.19.x` 값은 2026-03-29 설계 당시의 historical/superseded 기록으로만 보존한다.
 현재 UI 계약은 Headlamp이며, 현재 external service/observability endpoint 계약은 `172.18.x` 기준이다.
+
+## Implementation Status
+
+이 Spec의 repo-backed 구현은 현재 계약 기준으로 완료되어 있다. Live cluster readiness는 별도 운영 검증 증적이며, 이 문서의 구현 완료 판단은 GitOps desired state와 정적 계약 게이트를 기준으로 한다.
+
+| Area | Current implementation evidence | Verification boundary |
+| --- | --- | --- |
+| cert-manager and ClusterIssuer | `gitops/apps/root/platform-cert-manager-app.yaml`, `gitops/apps/root/platform-cert-manager-config-app.yaml`, `gitops/platform/cert-manager/cluster-issuer-mkcert.yaml` | `bash scripts/validate-gitops-structure.sh`, `bash infrastructure/tests/verify-contracts-static.sh` |
+| Headlamp UI | `gitops/apps/root/platform-headlamp-app.yaml`, `gitops/apps/root/platform-headlamp-config-app.yaml`, `gitops/platform/headlamp/headlamp-ingress.yaml`, `traefik/headlamp-k3d.yaml` | static manifest validation; live route evidence through operations runbook |
+| Istio and Kiali | `gitops/apps/root/platform-istio-base-app.yaml`, `gitops/apps/root/platform-istiod-app.yaml`, `gitops/apps/root/platform-kiali-app.yaml`, `gitops/platform/kiali/`, `gitops/platform/network-policies/kiali-egress-to-observability.yaml` | `verify-contracts-static.sh` Kiali egress checks and live Kiali checks when requested |
+| External service endpoints | `gitops/platform/external-services/`, `gitops/platform/network-policies/` | static contract tests for `172.18.x` values and live checks only in operator-controlled validation |
+| Operations linkage | `docs/05.operations/policies/0003-service-mesh-cert-manager-policy.md`, `docs/05.operations/policies/0004-rollouts-notifications-headlamp-policy.md`, related runbooks | document link and repo quality gates |
 
 ## Strategic Boundaries & Non-goals
 

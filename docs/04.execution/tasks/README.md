@@ -55,6 +55,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-05-18-argo-notifications-slack.md
 ├── 2026-05-22-docs-governance-full-ab-hardening.md
 ├── 2026-05-22-workspace-purpose-alignment.md
+├── 2026-05-22-spec-execution-implementation-audit.md
 └── README.md
 ```
 
@@ -91,6 +92,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-05-18-argo-notifications-slack.md`](./2026-05-18-argo-notifications-slack.md) | ArgoCD Notifications Slack current-contract backfill Task | Done | 2026-05-22 |
 | [`./2026-05-22-docs-governance-full-ab-hardening.md`](./2026-05-22-docs-governance-full-ab-hardening.md) | README, lifecycle docs, agent/runtime governance, hook 경계, repo-static gate 정합화 Task | Done | 2026-05-22 |
 | [`./2026-05-22-workspace-purpose-alignment.md`](./2026-05-22-workspace-purpose-alignment.md) | 워크스페이스 목적 전체 기준 재감사, 버전 freshness, hook command boundary 보강 Task | Done | 2026-05-22 |
+| [`./2026-05-22-spec-execution-implementation-audit.md`](./2026-05-22-spec-execution-implementation-audit.md) | `docs/03.specs`와 `docs/04.execution` 구현 evidence 재감사 및 Spec status 보정 Task | Done | 2026-05-22 |
 
 ## Related Documents
 
