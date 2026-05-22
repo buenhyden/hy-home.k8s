@@ -1,5 +1,7 @@
 # 99.templates
 
+> repo-authored 문서와 README가 시작해야 하는 canonical template stage다.
+
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
 
@@ -74,6 +76,16 @@
    실제 Markdown 링크는 이 템플릿 파일 위치에서도 깨지지 않아야 한다.
 10. README 템플릿은 frontmatter를 요구하지 않는다. PRD/ARD/ADR/Spec/Plan/Task, Spec helper Markdown 템플릿(`api-spec`, `agent-design`, `data-model`, `tests`), 운영·참조 템플릿은 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
 11. 템플릿 구조를 바꾸면 이미 생성된 문서에 안전하게 반영할 수 있는 heading, placeholder, Related Documents만 갱신하고 문서 고유 의도는 대량 재작성하지 않는다.
+12. `Related Documents` 예시는 upstream PRD/ARD/ADR/Spec/Plan과 downstream Task/Operation/Runbook/Incident를 추적할 수 있어야 한다.
+
+## Template Improvement Plan
+
+템플릿을 수정할 때는 먼저 이 README의 mapping과 link rules를 갱신 대상으로 확정한다.
+
+- target pattern, placeholder naming, target-relative examples를 mapping과 일치시킨다.
+- 실제 Markdown 링크는 `docs/99.templates/` 기준으로 resolve되게 유지하고, 아직 존재하지 않는 target-relative 예시는 code literal로 둔다.
+- core template 변경 후에는 기존 생성 문서에 안전하게 반영 가능한 heading, `Related Documents`, historical note만 갱신한다.
+- 운영 정책은 controls/evidence를 소유하고, 실행 명령 순서와 복구 절차는 guide/runbook template로 라우팅한다.
 
 ## Link Basis
 

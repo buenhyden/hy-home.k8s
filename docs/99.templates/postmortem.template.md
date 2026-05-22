@@ -6,11 +6,11 @@ owner: '{team-or-person}'
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md -->
+<!-- Target: docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md -->
 
 # Postmortem: [Incident Title]
 
-> Use this template for `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md`.
+> Use this template for `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md`.
 >
 > Rules:
 >
@@ -33,7 +33,7 @@ updated: YYYY-MM-DD
 | Incident Date     | `YYYY-MM-DD`                                               |
 | Analysis Date     | `YYYY-MM-DD`                                               |
 | Severity          | `SEV-1 / SEV-2 / SEV-3`                                    |
-| Incident Document | `[../../YYYY/YYYY-MM-DD-<incident-title>.md]` |
+| Incident Document | `[../../YYYY/YYYY-MM-DD-<incident>.md]` |
 
 ## Agent Metadata (If Applicable)
 
@@ -102,8 +102,10 @@ updated: YYYY-MM-DD
 ## Related Documents
 
 Target-relative examples below assume the authored file will be created at
-`docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident-title>.md`.
+`docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md`.
 
 - **Runbook**: `[../../../runbooks/####-<topic>.md]`
 - **Operation**: `[../../../policies/####-<policy-or-standard>.md]`
-- **Incident**: `[../../YYYY/YYYY-MM-DD-<incident-title>.md]`
+- **Incident**: `[../../YYYY/YYYY-MM-DD-<incident>.md]`
+- **Spec**: `[../../../../03.specs/<feature-id>/spec.md]`
+- **Related ADRs**: `[../../../../02.architecture/decisions/####-<short-title>.md]`

@@ -6,11 +6,11 @@ owner: '{team-or-person}'
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/90.references/<category>/<item>.md -->
+<!-- Target: docs/90.references/<category>/<topic>.md -->
 
 # Reference: [Item Name]
 
-> Use this template for `docs/90.references/<category>/<item>.md`.
+> Use this template for `docs/90.references/<category>/<topic>.md`.
 >
 > Rules:
 >
@@ -66,7 +66,7 @@ updated: YYYY-MM-DD
 ## Related Documents
 
 Target-relative examples below assume the authored file will be created at
-`docs/90.references/<category>/<item>.md`.
+`docs/90.references/<category>/<topic>.md`.
 
 - **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
 - **Spec**: `[../../03.specs/<feature-id>/spec.md]`

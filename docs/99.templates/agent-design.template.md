@@ -108,5 +108,9 @@ Target-relative examples below assume the authored file will be created at
 `docs/03.specs/<feature-id>/agent-design.md`.
 
 - **Tests**: `[./tests.md]`
+- **Spec**: `[./spec.md]`
+- **PRD**: `[../../01.requirements/YYYY-MM-DD-<feature-or-system>.md]`
+- **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
+- **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
 - **Operation**: `[../../05.operations/policies/####-<policy-or-standard>.md]`
 - **Runbook**: `[../../05.operations/runbooks/####-<topic>.md]`

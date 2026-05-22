@@ -6,13 +6,13 @@ owner: '{team-or-person}'
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident-title>.md -->
+<!-- Target: docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md -->
 
 # Incident: [Incident Title]
 
 INC-YYYYMMDD-XXX / [Short Incident Title]
 
-> Use this template for `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident-title>.md`.
+> Use this template for `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md`.
 >
 > Rules:
 >
@@ -82,8 +82,10 @@ INC-YYYYMMDD-XXX / [Short Incident Title]
 ## Related Documents
 
 Target-relative examples below assume the authored file will be created at
-`docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident-title>.md`.
+`docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md`.
 
-- **Postmortem**: `[../postmortems/YYYY/YYYY-MM-DD-<incident-title>.md]`
+- **Postmortem**: `[../postmortems/YYYY/YYYY-MM-DD-<incident>.md]`
+- **Spec**: `[../../../03.specs/<feature-id>/spec.md]`
+- **Related ADRs**: `[../../../02.architecture/decisions/####-<short-title>.md]`
 - **Runbook**: `[../../runbooks/####-<topic>.md]`
 - **Operation**: `[../../policies/####-<policy-or-standard>.md]`
