@@ -31,7 +31,7 @@ updated: 2026-05-21
 - 10개 템플릿은 `../`을 `../../`로 또는 형제 디렉터리 상대 경로로 수정 필요
 - 나머지 Target 주석이 있는 Markdown 템플릿 6개는 이미 target-relative placeholder를 사용함
 - 생성된 문서와 stage README 53개 파일의 표시 텍스트가 실제 href와 불일치 (링크 동작은 정상)
-- 각 Template의 `<!-- Target: ... -->` 주석이 올바른 Target 위치를 명시하고 있으므로 이를 기준으로 상대 경로 계산
+- 각 Template의 target-location HTML 주석이 올바른 최종 위치를 명시하고 있으므로 이를 기준으로 상대 경로 계산
 - 실제 Markdown 링크는 `docs/99.templates/` 파일 위치 기준으로 검증하고, backtick code literal placeholder는 Target 위치 기준으로 검증
 
 경로 계산 원칙:

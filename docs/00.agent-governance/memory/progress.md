@@ -8,6 +8,66 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-22 — docs governance Full A+B hardening
+
+- **Date**: 2026-05-22
+- **Layer**: docs, meta
+- **Status**: complete
+- **Tags**: #docs #templates #governance #hooks #validation
+
+#### Progress
+
+- Implemented the Full A+B documentation and governance alignment plan on
+  `codex/docs-governance-full-ab-hardening`.
+- Updated the README template contract so `Link Basis` and `Related Documents`
+  are required for README files, and normalized README files across root,
+  docs, GitOps, infrastructure, scripts, tests, traefik, and examples paths.
+- Preserved historical lifecycle document meaning while removing authored-doc
+  template residue from the template cross-link plan.
+- Clarified Claude/Codex hook ownership and Hookify `.local.md` boundaries in
+  the runtime baseline, harness catalog, provider notes, agentic rules,
+  documentation protocol, postflight checklist, and scripts README.
+- Hardened `scripts/validate-repo-quality-gates.sh` to reject README legacy
+  headings, missing README link bases, tracked `.claude/*.local.md` files, and
+  malformed local Hookify frontmatter.
+- Added and closed Plan/Task evidence records under `docs/04.execution/`.
+
+#### Memory
+
+- README changes must preserve `Link Basis` and `Related Documents`; `Related
+  References` is now a legacy heading that should not return.
+- Hookify `.local.md` files are local warning rules only. Keep shared
+  enforcement in tracked hooks, provider/Codex hook wiring, and validators.
+- For historical lifecycle docs, prefer narrow structure/link cleanup over
+  rewriting the past decision or evidence record as a current contract.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS for YAML syntax; optional
+  `kube-linter` was skipped because it is not installed locally.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+- `python3 -m json.tool .claude/settings.json` PASS.
+- `python3 -m json.tool .codex/hooks.json` PASS.
+- `git diff --check` PASS.
+- Targeted scans found no README `## Related References`, no README missing
+  `## Link Basis`, no authored lifecycle template residue, and no tracked
+  `.claude/*.local.md` files.
+- `git status --short --ignored .claude` confirmed Hookify local rule files are
+  ignored (`!!`) and not tracked.
+
+#### Handoff
+
+- Live k3d/ArgoCD reconciliation, direct cluster mutation, external Vault
+  writes, and plaintext Kubernetes secret authoring were intentionally not
+  executed.
+
+---
+
 ### 2026-05-22 — runtime premise and local skill mirror remediation
 
 - **Date**: 2026-05-22
