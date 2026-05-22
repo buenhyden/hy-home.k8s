@@ -88,8 +88,8 @@ Spec은 실행 기준을 소유하는 문서다.
 
 | 문서 | 설명 | 상태 | 현재성 | 최종 수정 |
 | --- | --- | --- | --- | --- |
-| [`./001-wsl-k3d-argocd-platform/spec.md`](./001-wsl-k3d-argocd-platform/spec.md) | WSL2 k3d/k3s + ArgoCD + ESO/Vault + 외부 DB/Valkey 기술 명세 | Draft | Historical baseline. 현재 런타임은 WSL-native Docker이며 외부 서비스 실행계약은 `172.18.x` GitOps manifest와 static contract가 우선한다. | 2026-05-22 |
-| [`./002-wsl2-k3d-argocd-ha-platform/spec.md`](./002-wsl2-k3d-argocd-ha-platform/spec.md) | Valkey/TLS/최소권한 계약과 CI 정적 게이트 기술 명세 | Draft | Historical HA record. 현재 외부 서비스와 observability endpoint는 GitOps manifest와 operations policy를 함께 본다. | 2026-05-21 |
+| [`./001-wsl-k3d-argocd-platform/spec.md`](./001-wsl-k3d-argocd-platform/spec.md) | WSL2 k3d/k3s + ArgoCD + ESO/Vault + 외부 DB/Valkey 초기 기술 명세 | Historical | 현재 런타임은 WSL-native Docker이며 외부 서비스 실행계약은 `172.18.x` GitOps manifest와 static contract가 우선한다. 구현 범위는 current-contract evidence로 흡수됐다. | 2026-05-22 |
+| [`./002-wsl2-k3d-argocd-ha-platform/spec.md`](./002-wsl2-k3d-argocd-ha-platform/spec.md) | Valkey/TLS/최소권한 계약과 CI 정적 게이트 기술 명세 | Historical | HA 설계 완료 이력. 현재 외부 서비스와 observability endpoint는 GitOps manifest와 operations policy를 함께 본다. | 2026-05-22 |
 | [`./003-platform-expansion/spec.md`](./003-platform-expansion/spec.md) | cert-manager, Headlamp, Istio, Kiali 확장 기술 명세 | Active | Current contract는 Headlamp/`172.18.x` 기준이다. Dashboard/`172.19.x` 문단은 historical/superseded로만 읽는다. | 2026-05-21 |
 | [`./004-argo-rollouts-progressive-delivery/spec.md`](./004-argo-rollouts-progressive-delivery/spec.md) | Argo Rollouts 점진적 배포 current-contract backfill 명세 | Active | `platform-rollouts` Application, dashboard, metrics, AppProject 권한을 현재 계약으로 정리한다. | 2026-05-21 |
 | [`./005-argo-notifications-slack/spec.md`](./005-argo-notifications-slack/spec.md) | ArgoCD Notifications Slack current-contract backfill 명세 | Active | ArgoCD Notifications, Vault/ESO credential boundary, template/trigger 계약을 현재 기준으로 정리한다. | 2026-05-21 |

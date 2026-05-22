@@ -80,15 +80,15 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 
 | 문서                                                                                       | 설명                                                                                 | 상태  | 최종 수정  |
 | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ----- | ---------- |
-| [`./2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md)         | TDD/검증 중심 실행 Task 목록과 증적 기준                                             | Draft | 2026-05-18 |
-| [`./2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | RED/GREEN/REFACTOR 기반 TLS/Ingress + CI static contract/workflow-security 작업 Task | Done | 2026-05-18 |
+| [`./2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md)         | 초기 GitOps 플랫폼 Task의 historical closure와 repo-static/live evidence boundary | Done | 2026-05-22 |
+| [`./2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | RED/GREEN/REFACTOR 기반 TLS/Ingress + CI static contract/workflow-security 작업 Task | Done | 2026-05-22 |
 | [`./2026-03-29-platform-expansion.md`](./2026-03-29-platform-expansion.md)                   | 2026-03-29 IP 수정 + cert-manager/Dashboard/Istio/Kiali 확장 Task, 현재 실행계약은 Headlamp/172.18.x 기준 | Done  | 2026-05-18 |
 | [`./2026-05-09-k3d-agent-first-remediation.md`](./2026-05-09-k3d-agent-first-remediation.md) | k3d 운영 문서, Agent-first 실행 계약, 구조적 템플릿 coverage, lifecycle hook hardening 보정 Task | Done  | 2026-05-22 |
 | [`./2026-05-09-scripts-inventory-remediation.md`](./2026-05-09-scripts-inventory-remediation.md) | `scripts/` 인벤토리 조사와 README 실행 계약 보정 Task | Done  | 2026-05-21 |
 | [`./2026-05-09-github-qa-ci-remediation.md`](./2026-05-09-github-qa-ci-remediation.md) | `.github` QA, CI, 브랜치 정책, PR intake 계약 보정 Task | Done  | 2026-05-09 |
 | [`./2026-05-10-agent-first-harness-llm-wiki-hooks.md`](./2026-05-10-agent-first-harness-llm-wiki-hooks.md) | Agent-first harness, LLM Wiki, hook 계약 보정 Task | Done | 2026-05-10 |
-| [`./2026-05-18-argo-rollouts-progressive-delivery.md`](./2026-05-18-argo-rollouts-progressive-delivery.md) | Argo Rollouts current-contract backfill Task | Done | 2026-05-18 |
-| [`./2026-05-18-argo-notifications-slack.md`](./2026-05-18-argo-notifications-slack.md) | ArgoCD Notifications Slack current-contract backfill Task | Done | 2026-05-18 |
+| [`./2026-05-18-argo-rollouts-progressive-delivery.md`](./2026-05-18-argo-rollouts-progressive-delivery.md) | Argo Rollouts current-contract backfill Task | Done | 2026-05-22 |
+| [`./2026-05-18-argo-notifications-slack.md`](./2026-05-18-argo-notifications-slack.md) | ArgoCD Notifications Slack current-contract backfill Task | Done | 2026-05-22 |
 | [`./2026-05-22-docs-governance-full-ab-hardening.md`](./2026-05-22-docs-governance-full-ab-hardening.md) | README, lifecycle docs, agent/runtime governance, hook 경계, repo-static gate 정합화 Task | Done | 2026-05-22 |
 | [`./2026-05-22-workspace-purpose-alignment.md`](./2026-05-22-workspace-purpose-alignment.md) | 워크스페이스 목적 전체 기준 재감사, 버전 freshness, hook command boundary 보강 Task | Done | 2026-05-22 |
 

@@ -1,7 +1,7 @@
 ---
 title: 'WSL k3d/k3s ArgoCD Platform Technical Specification'
 type: spec
-status: draft
+status: historical
 owner: platform-team
 updated: 2026-05-22
 ---
@@ -13,6 +13,18 @@ updated: 2026-05-22
 이 문서는 WSL2 기반 k3d(k3s) 플랫폼에서 ArgoCD GitOps, ESO+Vault, 외부 PostgreSQL/Valkey 연동을 구현하기 위한 기술 명세를 정의한다.
 
 > **현재 실행계약 메모 (2026-05-22)**: 이 Spec은 초기 플랫폼 설계 기록이다. 현재 기본 컨테이너 런타임 전제는 WSL-native Docker이며, 역사적 Docker Desktop 표현은 당시 실행 기준으로만 해석한다. 현재 repo-backed 외부 서비스 실행계약은 `gitops/platform/external-services/`, `gitops/platform/network-policies/`, `infrastructure/tests/verify-contracts-static.sh`의 `172.18.x` EndpointSlice/CIDR 값이 우선한다.
+
+## Implementation Status
+
+이 초기 baseline Spec의 구현 범위는 현재 repo-backed 계약으로 흡수되었다. 구현 여부 판단은 이 문서의 과거 값이 아니라 아래 current-contract evidence를 우선한다.
+
+| Area | Current implementation evidence | Verification boundary |
+| --- | --- | --- |
+| k3d 1+3 topology | `infrastructure/k3d/k3d-cluster.yaml` | Static review plus `infrastructure/tests/verify-cluster.sh` for live clusters |
+| ArgoCD App-of-Apps | `gitops/clusters/local/root-application.yaml`, `gitops/apps/root/kustomization.yaml` | `bash scripts/validate-gitops-structure.sh` |
+| ingress/TLS | `infrastructure/argocd/values-local.yaml`, `gitops/apps/root/platform-ingress-nginx-app.yaml` | `bash infrastructure/tests/verify-contracts-static.sh`; live TLS evidence via `verify-ingress-tls.sh` |
+| ESO/Vault/external data services | `gitops/platform/eso/`, `gitops/platform/external-services/`, `gitops/platform/network-policies/` | static contracts and live `verify-secrets.sh` / `verify-external-services.sh` |
+| docs lifecycle | `docs/04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md`, `docs/04.execution/tasks/2026-03-27-wsl-k3d-argocd-platform.md` | Historical closure record; current work uses later active specs and tasks |
 
 ## Strategic Boundaries & Non-goals
 
