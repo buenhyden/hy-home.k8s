@@ -150,7 +150,7 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
   - Targeted risky-command review — PASS through `scripts/validate-repo-quality-gates.sh`; `docs/05.operations/policies` is included in authored-doc scanning.
   - Targeted push-example review — PASS through `scripts/validate-repo-quality-gates.sh`; authored-doc feature-branch push examples carry nearby PR-flow context, authored docs reject bare/main direct push and push examples without PR-flow context, and broader Markdown roots reject bare/main direct push examples.
   - Targeted matrix status review — PASS through `scripts/validate-repo-quality-gates.sh`; `Ready` rows require `Gap=None`, while future `Partial`/`Missing` rows require concrete `Gap` and `Remediation`.
-  - Authored SSoT rewrite boundary — unchanged; rewriting `docs/01-10`, `docs/90.references`, or `docs/99.templates` outside the current command-boundary hardening scope requires separate human approval.
+  - Authored SSoT rewrite boundary — unchanged; rewriting `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, or `docs/99.templates` outside the current command-boundary hardening scope requires separate human approval.
   - Targeted legacy external harness source-label scan — PASS; only validator sentinel definitions remain.
 - Latest 2026-05-22 follow-up scope:
   - Structural template coverage was added to `scripts/validate-repo-quality-gates.sh`; canonical authored stage Markdown now fails if it is not covered by exactly one template mapping.

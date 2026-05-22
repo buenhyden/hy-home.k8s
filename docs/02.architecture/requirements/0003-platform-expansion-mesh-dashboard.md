@@ -3,7 +3,7 @@ title: 'Platform Expansion Mesh Dashboard Architecture Reference Document'
 type: ard
 status: draft
 owner: platform-team
-updated: 2026-05-21
+updated: 2026-05-22
 ---
 
 # Platform Expansion: Mesh, Dashboard, cert-manager Architecture Reference Document (ARD)
@@ -12,7 +12,7 @@ updated: 2026-05-21
 
 이 문서는 WSL2 k3d 플랫폼 확장의 참조 아키텍처를 정의한다. cert-manager(TLS 자동화), Kubernetes Dashboard(웹 UI), Istio(서비스메시), Kiali(메시 관측) 추가와 외부 서비스 IP 수정을 포함한다.
 
-> **현재 실행계약 메모 (2026-05-09)**: 이 ARD는 2026-03-29 플랫폼 확장 참조 아키텍처 기록이다. 현재 repo-backed 실행계약은 [ADR-0010](../decisions/0010-headlamp-replaces-dashboard.md)과 현재 `gitops/**` 매니페스트/정적 검증 스크립트가 우선한다. Kubernetes Dashboard는 Headlamp로 대체되었고, 외부 서비스 EndpointSlice/CIDR 계약은 `172.18.x` 기준이다.
+> **현재 실행계약 메모 (2026-05-22)**: 이 ARD는 2026-03-29 플랫폼 확장 참조 아키텍처 기록이다. 현재 기본 컨테이너 런타임 전제는 WSL-native Docker이며, 역사적 Docker Desktop 표현은 당시 실행 기준으로만 해석한다. 현재 repo-backed 실행계약은 [ADR-0010](../decisions/0010-headlamp-replaces-dashboard.md)과 현재 `gitops/**` 매니페스트/정적 검증 스크립트가 우선한다. Kubernetes Dashboard는 Headlamp로 대체되었고, 외부 서비스 EndpointSlice/CIDR 계약은 `172.18.x` 기준이다.
 
 ## Summary
 

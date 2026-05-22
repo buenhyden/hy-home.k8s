@@ -94,8 +94,8 @@
 
 | 문서 | 역할 | 현재성 | 추적성 / 후속 갭 | 최종 수정 |
 | --- | --- | --- | --- | --- |
-| [`./2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md) | 초기 WSL2 k3d/k3s + ArgoCD GitOps 플랫폼 PRD | Historical draft | ARD/Spec/Plan/ADR 연결 완료. 현재 외부 서비스 실행계약은 `172.18.x` repo-backed 계약이 우선. | 2026-05-17 |
-| [`./2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | HA 플랫폼, TLS, 최소권한, 정적 게이트 요구 PRD | Historical draft | ARD/Spec/Plan/ADR 연결 완료. `172.19.x` 값은 이력이며 현재 실행계약은 `172.18.x` 기준. | 2026-05-17 |
+| [`./2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md) | 초기 WSL2 k3d/k3s + ArgoCD GitOps 플랫폼 PRD | Historical draft | ARD/Spec/Plan/ADR 연결 완료. 현재 런타임은 WSL-native Docker이며 외부 서비스 실행계약은 `172.18.x` repo-backed 계약이 우선. | 2026-05-22 |
+| [`./2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | HA 플랫폼, TLS, 최소권한, 정적 게이트 요구 PRD | Historical draft | ARD/Spec/Plan/ADR 연결 완료. 현재 런타임은 WSL-native Docker이고 `172.19.x` 값은 이력이며 현재 실행계약은 `172.18.x` 기준. | 2026-05-22 |
 | [`./2026-03-29-platform-expansion-dashboard-mesh.md`](./2026-03-29-platform-expansion-dashboard-mesh.md) | cert-manager, Headlamp, Istio/Kiali 확장 PRD | Active with superseded items | ARD/Spec/Plan/ADR 연결 완료. Dashboard 요구는 ADR-0010에 의해 Headlamp로 대체. | 2026-05-17 |
 | [`./2026-05-17-argo-rollouts-progressive-delivery.md`](./2026-05-17-argo-rollouts-progressive-delivery.md) | Argo Rollouts canary/blue-green 점진적 배포 PRD | Active current-contract backfill | ARD/Spec/Plan/Task 연결 완료. 현재 GitOps 계약은 `platform-rollouts` Application과 Rollouts 운영 문서가 소유. | 2026-05-18 |
 | [`./2026-05-17-argo-notifications-slack.md`](./2026-05-17-argo-notifications-slack.md) | Argo Notifications Slack 알림 PRD | Active current-contract backfill | ARD/Spec/Plan/Task 연결 완료. 현재 Secret 경계는 Vault/ESO/ArgoCD Notifications 문서가 소유. | 2026-05-18 |

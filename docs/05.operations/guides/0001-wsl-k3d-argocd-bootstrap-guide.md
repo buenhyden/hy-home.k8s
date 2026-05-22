@@ -3,7 +3,7 @@ title: 'WSL k3d ArgoCD Bootstrap Guide'
 type: guide
 status: active
 owner: platform
-updated: 2026-03-27
+updated: 2026-05-22
 ---
 
 # WSL k3d ArgoCD Bootstrap Guide
@@ -30,7 +30,7 @@ updated: 2026-03-27
 ## Prerequisites
 
 - Windows 11 + WSL2 Ubuntu
-- Docker Desktop (WSL backend)
+- WSL-native Docker
 - `k3d`, `kubectl`, `helm`, `argocd`, `jq`, `curl`, `mkcert`
 - `VAULT_TOKEN` 환경 변수
 - 외부 서비스 런타임(별도 repo) 사전 기동 및 계약 충족:

@@ -3,7 +3,7 @@ title: 'WSL k3d/k3s ArgoCD Platform Architecture Reference Document'
 type: ard
 status: draft
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-22
 ---
 
 # WSL k3d/k3s ArgoCD Platform Architecture Reference Document (ARD)
@@ -11,6 +11,8 @@ updated: 2026-05-18
 ## Overview (KR)
 
 이 문서는 WSL2 환경에서 동작하는 k3d(k3s) 기반 Kubernetes 플랫폼의 참조 아키텍처를 정의한다. GitOps, 시크릿 관리, 외부 데이터 서비스 연결, 운영 통제 기준을 아키텍처 관점에서 명시한다.
+
+> **현재 실행계약 메모 (2026-05-22)**: 이 ARD는 초기 플랫폼 참조 아키텍처 기록이다. 현재 기본 컨테이너 런타임 전제는 WSL-native Docker이며, 역사적 Docker Desktop 표현은 당시 실행 기준으로만 해석한다.
 
 ## Summary
 

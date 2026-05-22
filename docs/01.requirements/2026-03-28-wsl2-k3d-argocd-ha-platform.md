@@ -3,7 +3,7 @@ title: 'WSL2 k3d/k3s ArgoCD HA Platform Product Requirements'
 type: prd
 status: draft
 owner: platform-team
-updated: 2026-05-17
+updated: 2026-05-22
 ---
 
 # WSL2 k3d/k3s ArgoCD HA Platform Product Requirements
@@ -89,7 +89,7 @@ WSL2 개발 환경에서도 운영 수준의 재현성, 보안성, 복구 가능
 
 ## Risks, Dependencies, and Assumptions
 
-- WSL2 + Docker Desktop 자원 제한으로 인한 성능 저하 가능성.
+- 당시 WSL2 + Docker Desktop 자원 제한으로 인한 성능 저하 가능성. 현재 기본 실행 전제는 WSL-native Docker이며, 리소스 검증은 연결된 가이드와 정적 게이트를 따른다.
 - AppProject allow-list 축소 시 신규 리소스 도입 때 화이트리스트 업데이트 필요.
 - 인증서 SAN이 공식 호스트(`argocd.127.0.0.1.nip.io`)를 포함하지 않으면 HTTPS 접속이 실패하므로 재발급 절차가 필요.
 - CI 정적 게이트 false-positive/false-negative는 정책 예외 승인/룰 개선 루프로 관리한다.

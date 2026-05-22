@@ -3,7 +3,7 @@ title: 'WSL2 k3d/k3s ArgoCD HA Setup Guide'
 type: guide
 status: active
 owner: platform
-updated: 2026-05-09
+updated: 2026-05-22
 ---
 
 # WSL2 k3d/k3s ArgoCD HA Setup Guide
@@ -30,7 +30,7 @@ updated: 2026-05-09
 ## Prerequisites
 
 - Windows + WSL2(Ubuntu)
-- Docker Desktop WSL integration enabled
+- WSL-native Docker available from the WSL shell
 - `kubectl`, `k3d`, `helm`, `argocd`, `rg` 설치
 - 외부 런타임(Vault/PostgreSQL/Valkey) 기동 상태
 - 인증서 파일 준비: `secrets/certs/cert.pem`, `secrets/certs/key.pem`, `secrets/certs/rootCA.pem`

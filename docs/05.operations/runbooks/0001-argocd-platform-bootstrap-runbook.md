@@ -3,7 +3,7 @@ title: 'ArgoCD Platform Bootstrap Runbook'
 type: runbook
 status: active
 owner: platform
-updated: 2026-03-27
+updated: 2026-05-22
 ---
 
 # ArgoCD Platform Bootstrap Runbook
@@ -38,7 +38,7 @@ updated: 2026-03-27
 
 ### Checklist
 
-- [ ] WSL2/Docker Desktop 정상 상태
+- [ ] WSL2/WSL-native Docker 정상 상태
 - [ ] CLI 도구(k3d/kubectl/helm/argocd) 설치
 - [ ] 외부 서비스 런타임은 별도 워크스페이스(repo)에서 기동됨 (`vault`, `vault-agent`, `mng-valkey`)
 - [ ] Valkey `172.18.0.9:6379` 접근 가능

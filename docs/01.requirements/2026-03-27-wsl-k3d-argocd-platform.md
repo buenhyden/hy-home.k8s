@@ -3,7 +3,7 @@ title: 'WSL2 k3s/k3d + ArgoCD GitOps Platform Product Requirements'
 type: prd
 status: draft
 owner: platform-team
-updated: 2026-05-17
+updated: 2026-05-22
 ---
 
 # WSL2 k3s/k3d + ArgoCD GitOps Platform Product Requirements
@@ -63,7 +63,7 @@ Create a reproducible, secure, and automation-first local platform that mirrors 
 ## Scope and Non-goals
 
 - **In Scope**:
-  - WSL2 + Docker Desktop 백엔드 기준 클러스터/배포/연동 설계
+  - 당시 WSL2 + Docker Desktop 백엔드 기준 클러스터/배포/연동 설계. 현재 기본 실행 전제는 WSL-native Docker다.
   - ArgoCD, ESO, 외부 Vault, 외부 PostgreSQL, 외부 Valkey 통합 아키텍처
   - 현재 docs taxonomy 문서화 및 추적성 정립
 - **Out of Scope**:
@@ -75,7 +75,7 @@ Create a reproducible, secure, and automation-first local platform that mirrors 
 
 ## Risks, Dependencies, and Assumptions
 
-- Docker Desktop/WSL 네트워크 설정이 조직 표준과 충돌할 수 있다.
+- 당시 Docker Desktop/WSL 네트워크 설정이 조직 표준과 충돌할 수 있었다. 현재 기본 실행 전제는 WSL-native Docker이며, 네트워크 계약은 repo-backed 검증을 따른다.
 - 외부 Valkey를 ArgoCD 백엔드로 사용할 때 Helm 값 스키마 차이가 발생할 수 있다.
 - 버전은 문서 작성 시점 기준 고정 후 Task-001에서 최신 Stable 재검증을 수행한다.
 

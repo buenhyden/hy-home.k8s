@@ -6,7 +6,7 @@
 
 `hy-home.k8s`는 단순한 로컬 Kubernetes 실험 저장소가 아니라, 사람과 AI가 같은 문서 구조를 공유하며 설계부터 운영까지 맥락을 추적하는 홈랩 프레임워크다. 모든 작업은 **Spec-Driven Development (SDD)**를 기준으로 진행되며, `docs/` 단계 체계를 통해 요구사항, 설계, 기술 결정, 실행 계획, 작업 증적, 운영 지식이 연결된다.
 
-이 저장소는 WSL2 + Docker Desktop 환경에서 `k3d` 멀티노드 클러스터를 부트스트랩하고, ArgoCD App-of-Apps 기반 GitOps, External Secrets + Vault 연동, 외부 PostgreSQL/Valkey 인터페이스 계약을 선언형으로 관리한다. 외부 런타임 자체를 포함하지 않고, 이 저장소는 로컬 플랫폼의 **문서 SSoT + GitOps 매니페스트 + 부트스트랩 자산**에 집중한다.
+이 저장소는 WSL2 + WSL-native Docker 환경에서 `k3d` 멀티노드 클러스터를 부트스트랩하고, ArgoCD App-of-Apps 기반 GitOps, External Secrets + Vault 연동, 외부 PostgreSQL/Valkey 인터페이스 계약을 선언형으로 관리한다. 외부 런타임 자체를 포함하지 않고, 이 저장소는 로컬 플랫폼의 **문서 SSoT + GitOps 매니페스트 + 부트스트랩 자산**에 집중한다.
 
 ## Audience
 
@@ -139,7 +139,7 @@ hy-home.k8s/
 | Category | Technology | Notes |
 | --- | --- | --- |
 | Language | Bash, Markdown, YAML | 부트스트랩/문서/매니페스트 중심 |
-| Platform | WSL2 Ubuntu, Docker Desktop | 로컬 실행 환경 기준 |
+| Platform | WSL2 Ubuntu, WSL-native Docker | 로컬 실행 환경 기준 |
 | Kubernetes | k3d, k3s, kubectl, Helm | 로컬 멀티노드 클러스터와 패키징 |
 | GitOps | ArgoCD, ApplicationSet | App-of-Apps 선언형 배포 |
 | Ingress | ingress-nginx, Traefik dynamic config | 로컬 k3d 유지. Ingress NGINX upstream retirement 이후 cloud target은 Gateway API/ALB/AGC로 분리 |

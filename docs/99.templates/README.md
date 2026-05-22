@@ -78,6 +78,7 @@
 11. 템플릿 구조를 바꾸면 이미 생성된 문서에 안전하게 반영할 수 있는 heading, placeholder, Related Documents만 갱신하고 문서 고유 의도는 대량 재작성하지 않는다.
 12. `Related Documents` 예시는 upstream PRD/ARD/ADR/Spec/Plan과 downstream Task/Operation/Runbook/Incident를 추적할 수 있어야 한다.
 13. `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references` 아래의 비-README Markdown은 정확히 하나의 Template-Folder Mapping 행에 매핑되어야 한다.
+14. 실행 전제가 바뀌면 active README/guide/runbook은 새 current contract로 갱신하고, historical PRD/ARD/Spec은 원문 의도를 보존하되 현재 실행계약 메모로 오해를 막는다.
 
 ## Template Improvement Plan
 
@@ -86,6 +87,7 @@
 - target pattern, placeholder naming, target-relative examples를 mapping과 일치시킨다.
 - 실제 Markdown 링크는 `docs/99.templates/` 기준으로 resolve되게 유지하고, 아직 존재하지 않는 target-relative 예시는 code literal로 둔다.
 - core template 변경 후에는 기존 생성 문서에 안전하게 반영 가능한 heading, `Related Documents`, historical note만 갱신한다.
+- runtime premise 변경은 current-contract note, README index, 검증 게이트 순서로 반영하고 historical 문서를 새 실행계약처럼 재작성하지 않는다.
 - 운영 정책은 controls/evidence를 소유하고, 실행 명령 순서와 복구 절차는 guide/runbook template로 라우팅한다.
 
 ## Link Basis
