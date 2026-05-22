@@ -8,6 +8,57 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-22 — documentation system contract alignment
+
+- **Date**: 2026-05-22
+- **Layer**: docs, meta
+- **Status**: complete
+- **Tags**: #docs #templates #links #validation
+
+#### Progress
+
+- Aligned root and docs README navigation with the canonical
+  `docs/99.templates` template-folder mapping and validator-backed README
+  section rules.
+- Clarified governance and memory README link bases without moving governance
+  policy or duplicating runtime rules.
+- Normalized stage README purpose lines for execution, incidents, references,
+  and templates while preserving existing folder ownership.
+- Strengthened template `Related Documents` upstream examples and placeholder
+  naming for operation, runbook, incident, postmortem, agent design, and
+  reference templates.
+- Converted stale or conflicting generated/operations documents to historical
+  or evidence-focused wording without deleting, moving, or renaming files.
+
+#### Memory
+
+- When template examples describe links from a future authored document, keep
+  them as code literals and calculate them from the final target location.
+- Superseded operations documents can preserve historical procedures, but the
+  active path must be called out explicitly and linked to the current policy,
+  guide, or runbook.
+
+#### Evidence
+
+- Local Markdown link scan over `README.md` and `docs/**/*.md` reported
+  `BROKEN=0`.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS for YAML syntax; optional
+  `kube-linter` was skipped by the script because it was not installed in the
+  command environment.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+- `git diff --check` PASS.
+
+#### Handoff
+
+- None.
+
+---
+
 ### 2026-05-21 — operations policy runbook boundary clarification
 
 - **Date**: 2026-05-21
