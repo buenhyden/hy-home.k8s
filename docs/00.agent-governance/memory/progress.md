@@ -8,6 +8,72 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-22 — runtime premise and local skill mirror remediation
+
+- **Date**: 2026-05-22
+- **Layer**: docs, meta, runtime
+- **Status**: complete
+- **Tags**: #governance #docs #runtime #skills #validation
+
+#### Progress
+
+- Aligned active entrypoints, guides, runbooks, and infrastructure README
+  wording with the current WSL2 + WSL-native Docker + k3d runtime premise.
+- Preserved historical Docker Desktop context in older PRD/ARD/Spec records
+  and added current-contract notes where readers could confuse historical
+  runtime assumptions with the active execution contract.
+- Updated README indexes and template guidance so runtime premise changes are
+  handled through current-contract notes, index freshness, and validation rather
+  than broad historical rewrites.
+- Clarified that `.claude/skills/**` is the repo-backed skill source of truth
+  and workspace-local `.agents/skills/**` files are ignored convenience mirrors.
+- Extended `scripts/validate-repo-quality-gates.sh` to verify `.agents/`
+  remains ignored and untracked, and to compare existing local skill mirrors
+  byte-for-byte against tracked `.claude/skills/<name>/skill.md` sources.
+- Synced the ignored local `.agents/skills/docs-stage-routing/skill.md` mirror
+  with `.claude/skills/docs-stage-routing/skill.md` and refined the ignored
+  local hookify mirror-parity rule.
+- Used sub agents for documentation, validation/hook, and security/GitOps
+  review, then applied the non-conflicting findings in this worktree.
+
+#### Memory
+
+- Current runtime truth for active docs is WSL2 + WSL-native Docker. Historical
+  Docker Desktop wording in PRD/ARD/Spec records can remain when paired with a
+  current-contract note.
+- Keep ignored `.agents/**` non-canonical. Quality gates may inspect local
+  mirrors when present, but canonical skill ownership stays in tracked
+  `.claude/skills/**`.
+- Avoid widening lifecycle Stop hooks to scan ignored local trees on every
+  completion; use explicit repo quality validation for local mirror drift.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS, including `.agents/`
+  ignore/untracked checks and local skill mirror parity.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS for YAML syntax; optional
+  `kube-linter` was skipped because it is not installed locally.
+- `bash -n scripts/validate-repo-quality-gates.sh .claude/hooks/post-validate.sh .claude/hooks/lifecycle-guard.sh` PASS.
+- `git diff --check` PASS.
+- `rg "Docker Desktop"` only returned historical mentions paired with
+  current-contract context.
+- `diff -u .claude/skills/docs-stage-routing/skill.md .agents/skills/docs-stage-routing/skill.md`
+  produced no output.
+- `git ls-files .agents/` produced no output, and `git check-ignore -v`
+  confirmed `.agents/` remains ignored.
+
+#### Handoff
+
+- Live k3d/ArgoCD reconciliation was intentionally not executed because this
+  task only changed documentation, governance, validation, and local ignored
+  mirror state.
+
+---
+
 ### 2026-05-22 — governance docs lifecycle hook hardening
 
 - **Date**: 2026-05-22
