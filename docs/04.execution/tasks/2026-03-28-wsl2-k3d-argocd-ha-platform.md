@@ -3,7 +3,7 @@ title: 'Task: WSL2 k3d/k3s ArgoCD HA Platform Execution'
 type: task
 status: complete
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-22
 ---
 
 # Task: WSL2 k3d/k3s ArgoCD HA Platform Execution
@@ -37,7 +37,7 @@ updated: 2026-05-18
 | T-008 | dependabot docker/pip 경로 정리 | impl | File-level Contract | Phase 2 | config lint/리뷰 | Done |
 | T-009 | PRD/ARD/ADR/SPEC 문서 업데이트 | doc | Traceability | Phase 3 | 상대 링크/계약 반영 | Done |
 | T-010 | PLAN/TASK/GUIDE/OPER/RUN 문서 업데이트 | doc | Traceability | Phase 3 | 절차/게이트 반영 | Done |
-| T-011 | 01~09 README 인덱스 동기화 | doc | Governance Contract | Phase 3 | 인덱스 설명/수정일 반영 | Done |
+| T-011 | canonical stage README 인덱스 동기화 | doc | Governance Contract | Phase 3 | 인덱스 설명/수정일 반영 | Done |
 
 ## Suggested Types
 

@@ -3,7 +3,7 @@ title: 'k8s Observability Operations Policy'
 type: operation
 status: active
 owner: platform
-updated: 2026-05-21
+updated: 2026-05-22
 ---
 
 # k8s Observability Operations Policy
@@ -187,7 +187,7 @@ istio-system, headlamp, argo-rollouts, metallb-system, monitoring
 
 정책 준수 여부는 아래 증적으로 확인한다. 실행 가능한 명령 순서, AppProject live 반영, Prometheus reload, 장애 복구 절차는 [k8s 관측성 런북](../runbooks/0009-k8s-observability-runbook.md)이 소유한다.
 
-## Audit / Verification
+### Evidence Matrix
 
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |

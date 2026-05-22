@@ -1,9 +1,9 @@
 ---
 title: 'WSL2 k3d/k3s ArgoCD HA Platform Plan'
 type: plan
-status: draft
+status: done
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-22
 ---
 
 # WSL2 k3d/k3s ArgoCD HA Platform Plan
@@ -14,14 +14,15 @@ updated: 2026-05-18
 
 ## Context
 
-이 계획은 2026-03-28 기준 HA 플랫폼 고도화 작업의 실행 순서와 검증 기준을 기록한다. 현재 repo-backed 실행계약과 다를 수 있는 런타임 값은 관련 Spec, Operations policy, 정적 검증 스크립트가 우선한다.
+이 계획은 2026-03-28 기준 HA 플랫폼 고도화 작업의 실행 순서와 검증 기준을 기록한 historical execution record다.
+연결된 Task 문서는 완료 상태이며, 현재 repo-backed 실행계약과 다를 수 있는 런타임 값은 관련 Spec, Operations policy, 정적 검증 스크립트가 우선한다.
 
 ## Goals & In-Scope
 
 - `argocd` egress 안정성 확보(Valkey + DNS + HTTPS)
 - AppProject `apps` 최소권한 allow-list 고정
 - CI 변경영역 기반 정적 게이트 구축
-- 2026-03-28 문서 체인(01~09) + README 인덱스 동기화
+- 2026-03-28 문서 체인을 현재 canonical docs taxonomy(`01.requirements`~`05.operations`, `90.references`, `99.templates`)와 README 인덱스에 맞춰 동기화
 
 ## Non-Goals & Out-of-Scope
 
@@ -57,7 +58,7 @@ updated: 2026-05-18
 
 ### Phase 3. 문서/인덱스 동기화
 
-- 01~09 기존 체인 문서 업데이트
+- canonical docs taxonomy의 기존 체인 문서 업데이트
 - 각 폴더 README 인덱스 설명/최종수정일 동기화
 
 ## Work Breakdown
@@ -69,8 +70,8 @@ updated: 2026-05-18
 | PLN-003 | 정적 계약 검증 스크립트 추가 | `infrastructure/tests/verify-contracts-static.sh` | standalone PASS |
 | PLN-004 | CI workflow 개편 | `.github/workflows/ci.yml` | 잡 분기/보안 게이트 확인 |
 | PLN-005 | Dependabot 경로 재정렬 | `.github/dependabot.yml` | 불필요 placeholder 제거 |
-| PLN-006 | 문서 체인 업데이트 | `docs/01~09` target docs | 링크/계약 반영 |
-| PLN-007 | README 인덱스 동기화 | `docs/01~09/README.md` | 설명/수정일 반영 |
+| PLN-006 | 문서 체인 업데이트 | `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations` | 링크/계약 반영 |
+| PLN-007 | README 인덱스 동기화 | canonical stage README files | 설명/수정일 반영 |
 
 ## Verification Plan
 
@@ -113,10 +114,12 @@ CHECK_TRAEFIK_443=true ./infrastructure/tests/verify-ingress-tls.sh
 
 ## Completion Criteria
 
-- [ ] 코드/문서 변경이 계약과 일치
-- [ ] 정적 검증 PASS
-- [ ] 런타임 검증 PASS
-- [ ] README 인덱스 동기화 완료
+- [x] 코드/문서 변경이 계약과 일치
+- [x] 정적 검증 PASS
+- [x] 런타임 검증 PASS
+- [x] README 인덱스 동기화 완료
+
+Historical completion evidence is owned by the linked Task document.
 
 ## Related Documents
 

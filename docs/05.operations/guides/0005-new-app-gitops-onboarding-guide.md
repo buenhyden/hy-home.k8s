@@ -3,7 +3,7 @@ title: 'New App GitOps Onboarding Guide'
 type: guide
 status: superseded
 owner: platform
-updated: 2026-05-21
+updated: 2026-05-22
 ---
 
 # New App GitOps Onboarding Guide
@@ -24,6 +24,10 @@ ArgoCD가 자동으로 감지하여 클러스터에 배포한다.
 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)이 우선한다.
 이 문서 안의 `Deployment` 또는 `latest` 예시는 역사적 샘플로만 취급하고,
 신규 workload는 Rollout과 고정 이미지 태그 정책을 따라야 한다.
+
+> [!WARNING]
+> 아래의 historical `Deployment`/`latest` 예시는 신규 작업에 실행하지 않는다.
+> 신규 앱은 위에 연결한 현재 policy, guide, runbook을 따른다.
 
 ## Guide Type
 
@@ -73,6 +77,9 @@ kubectl -n argocd get applicationset apps-generator
 - Vault가 접근 가능한 상태여야 한다 (`VAULT_ADDR`, `VAULT_TOKEN` 환경 변수 설정).
 
 ## Step-by-step Instructions
+
+이 섹션은 historical procedure archive다. 감사 맥락 보존용으로만 유지하며,
+신규 앱의 active onboarding path로 사용하지 않는다.
 
 ### Step 1: `gitops/workloads/` 에 앱 디렉토리 추가
 

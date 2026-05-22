@@ -3,7 +3,7 @@ title: 'k3d Workspace and Agent-first Remediation Implementation Plan'
 type: plan
 status: done
 owner: 'platform'
-updated: 2026-05-09
+updated: 2026-05-22
 ---
 
 # k3d Workspace and Agent-first Remediation Plan
@@ -58,7 +58,7 @@ updated: 2026-05-09
 | --- | --- | --- | --- | --- |
 | PLN-001 | 보정 작업 plan/task 문서 추가 및 README 인덱스 갱신 | `docs/04.execution/plans/`, `docs/04.execution/tasks/` | REQ-DOC-001 | repo quality gate PASS |
 | PLN-002 | 직접 cluster mutation 절차를 human-approved bootstrap/break-glass 경로로 격리 | `docs/05.operations/guides/`, `docs/05.operations/policies/`, `docs/05.operations/runbooks/` | REQ-OPS-001 | `kubectl apply/patch` 문맥 검토 |
-| PLN-003 | Dashboard/`172.19.x` 역사적 문맥과 현재 Headlamp/`172.18.x` 계약 분리 강화 | `docs/01-09` 관련 문서 중 보정 대상 | REQ-DOC-002 | stale contract gate PASS |
+| PLN-003 | Dashboard/`172.19.x` 역사적 문맥과 현재 Headlamp/`172.18.x` 계약 분리 강화 | canonical docs taxonomy 관련 문서 중 보정 대상 | REQ-DOC-002 | stale contract gate PASS |
 | PLN-004 | 하네스 readiness matrix와 Agent-first execution boundary 보강 | `docs/00.agent-governance/` | REQ-AI-001 | harness catalog mirror gate PASS |
 | PLN-005 | 최소 정적 검증 묶음 실행 | `scripts/`, `infrastructure/tests/` | REQ-VAL-001 | 모든 repo-backed command PASS 또는 제한 명시 |
 | PLN-006 | gateway/runtime audit 결과를 반영해 hook boundary와 historical memory current-source 문맥 보강 | `docs/00.agent-governance/` | REQ-AI-002 | repo quality gate PASS |

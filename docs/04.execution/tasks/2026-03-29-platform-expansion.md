@@ -3,7 +3,7 @@ title: 'Task: Platform Expansion Execution'
 type: task
 status: complete
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-22
 ---
 
 # Task: Platform Expansion Execution
@@ -55,7 +55,7 @@ TDD(RED/GREEN/REFACTOR) 중심으로 정적 계약 검증이 먼저 정의되고
 | T-023   | `gitops/apps/root/kustomization.yaml` 신규 앱 추가                  | impl | Spec / App-of-Apps      | PLN-015             | App-of-Apps root sync                            | Done   |
 | T-024   | `verify-contracts-static.sh` 신규 서비스 계약 검증 추가             | test | Spec / Verification     | PLN-004             | standalone PASS                                  | Done   |
 | T-025   | 문서 체인 ADR-0001/0004/0005 IP 갱신                                | doc  | 추적성                  | PLN-017             | 링크/IP 정합성 확인                              | Done   |
-| T-026   | README 인덱스 동기화 (01~09)                                        | doc  | 거버넌스                | PLN-018             | 인덱스 반영                                      | Done   |
+| T-026   | canonical stage README 인덱스 동기화                                 | doc  | 거버넌스                | PLN-018             | 인덱스 반영                                      | Done   |
 | T-027   | 관측성 외부 서비스 매니페스트 (prometheus/loki/tempo/alloy/grafana) | impl | Phase 4D / ExtSvc       | PLN-001             | `verify-contracts-static.sh` 관측성 섹션 PASS    | Done   |
 | T-028   | Kiali `external_services` URL → K8s DNS 이름으로 전환               | impl | Phase 4D / Kiali        | PLN-012             | `prometheus-external.platform.svc.cluster.local` | Done   |
 | T-029   | `bootstrap-local.sh` 관측성 warn-only 보완 (loki/alloy)             | impl | Phase 4D / bootstrap    | PLN-003             | `bash -n` 오류 없음                              | Done   |

@@ -3,7 +3,7 @@ title: 'Observability Platform Operations Policy'
 type: operation
 status: active
 owner: platform
-updated: 2026-05-21
+updated: 2026-05-22
 ---
 
 # Observability Platform Operations Policy
@@ -145,7 +145,7 @@ Prometheus(Docker)가 k8s 내부 ArgoCD 메트릭을 수집하기 위해 NodePor
 
 정책 준수 여부는 아래 증적으로 확인한다. 실행 가능한 명령 순서, break-glass 적용, Prometheus reload 절차는 소유 런북으로 이동한다.
 
-## Audit / Verification
+### Evidence Matrix
 
 | Control Area | Required Evidence | Runbook Owner |
 | --- | --- | --- |

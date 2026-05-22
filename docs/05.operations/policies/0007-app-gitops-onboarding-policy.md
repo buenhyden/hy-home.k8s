@@ -3,7 +3,7 @@ title: '앱 GitOps 온보딩 정책'
 type: operation
 status: active
 owner: platform
-updated: 2026-05-21
+updated: 2026-05-22
 ---
 
 # 앱 GitOps 온보딩 정책
@@ -43,36 +43,20 @@ updated: 2026-05-21
 ## Controls
 
 세부 통제는 아래 1-4장에 정의한다. 모든 신규 앱은 Rollout, AnalysisTemplate, 명시적 ingress/TLS, GitOps PR flow, secret/Vault 경계를 따라야 한다.
+구체적인 manifest 작성 순서와 검증 명령은 [GitHub 앱 GitOps 온보딩 가이드](../guides/0008-github-app-gitops-onboarding-guide.md)와 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)이 소유한다.
 
 ---
 
 ## 1. 배포 리소스 정책
 
-### 1-1. Rollout 필수 (Deployment 금지)
+### 1-1. Rollout 필수
 
 apps namespace의 모든 워크로드는 `argoproj.io/v1alpha1/Rollout`을 사용해야 한다.
 Deployment는 `appproject-apps` whitelist에 포함되어 있으나, 플랫폼 정책상 허용하지 않는다.
 
 **이유**: canary 전략으로 점진적 트래픽 전환과 자동 rollback을 보장하기 위함.
 
-```yaml
-# 올바른 패턴
-apiVersion: argoproj.io/v1alpha1
-kind: Rollout
-metadata:
-  name: <appname>
-  namespace: apps
-spec:
-  strategy:
-    canary:
-      steps:
-        - setWeight: 20
-        - analysis: ...
-        - pause: { duration: 30s }
-        - setWeight: 60
-        - pause: { duration: 30s }
-        - setWeight: 100
-```
+**Required evidence**: `gitops/workloads/<appname>/rollout.yaml`이 존재하고 고정 이미지 태그와 canary 전략을 사용한다.
 
 ### 1-2. AnalysisTemplate 필수
 
@@ -81,6 +65,7 @@ spec:
 - **Prometheus 주소**: `http://prometheus-external.platform.svc.cluster.local:9090`
 - **기본 측정 지표**: `kube_pod_container_status_restarts_total` (컨테이너 재시작 횟수)
 - **측정 주기**: 30s, failureLimit: 1
+- **Required evidence**: `analysis-template.yaml`이 Rollout canary 단계에서 참조된다.
 
 ### 1-3. 이미지 태그
 
@@ -98,34 +83,11 @@ spec:
 
 Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
-```yaml
-# 올바른 패턴
-ports:
-  - name: http-<appname>    # ← http- 접두사 필수
-    port: 8080
-
-# 잘못된 패턴
-ports:
-  - name: web               # ← Istio가 프로토콜을 감지하지 못함
-    port: 8080
-```
-
 **이유**: Istio가 HTTP 프로토콜로 자동 인식하여 올바른 메트릭과 트레이싱을 수집한다.
 
 ### 2-2. Ingress 설정
 
-```yaml
-# 필수 어노테이션
-annotations:
-  cert-manager.io/cluster-issuer: mkcert-ca-issuer
-  nginx.ingress.kubernetes.io/ssl-redirect: 'true'
-
-# 필수 설정
-spec:
-  ingressClassName: nginx # ← nginx 고정
-  rules:
-    - host: <appname>.127.0.0.1.nip.io # ← nip.io 패턴 고정
-```
+신규 앱 Ingress는 `ingressClassName: nginx`, `cert-manager.io/cluster-issuer: mkcert-ca-issuer`, `nginx.ingress.kubernetes.io/ssl-redirect: "true"`, `<appname>.127.0.0.1.nip.io` host 계약을 따라야 한다.
 
 ### 2-3. Traefik 연동 필수
 
@@ -133,6 +95,7 @@ spec:
 
 - **위치**: `hy-home.docker/infra/01-gateway/traefik/dynamic/<appname>-k3d.yaml`
 - **패턴**: `examples/sample-app/traefik-k3d.yaml.example` 참조
+- **Required evidence**: 별도 Traefik repo 변경이 리뷰되고 k8s Ingress host와 router rule이 일치한다.
 
 ---
 
@@ -170,15 +133,9 @@ spec:
 
 ### 4-1. 파일 배치 규칙
 
-```
-gitops/workloads/<appname>/          ← apps-generator 자동 감지
-├── kustomization.yaml               ← 진입점 (필수)
-├── rollout.yaml                     ← 배포 (필수)
-├── service.yaml                     ← 서비스 (필수)
-├── ingress.yaml                     ← 외부 접근 (필수)
-├── analysis-template.yaml           ← canary 분석 (필수)
-└── external-secret.yaml             ← Vault 연동 (선택)
-```
+`gitops/workloads/<appname>/`는 `apps-generator` 자동 감지 경로다.
+필수 파일은 `kustomization.yaml`, `rollout.yaml`, `service.yaml`, `ingress.yaml`, `analysis-template.yaml`이다.
+`external-secret.yaml`은 Vault/ESO 연동이 필요한 경우에만 추가한다.
 
 ### 4-2. 네이밍 규칙
 
@@ -189,15 +146,7 @@ gitops/workloads/<appname>/          ← apps-generator 자동 감지
 | TLS Secret  | `<appname>-tls`                | `my-api-tls`                |
 | Vault 경로  | `secret/apps/<appname>/config` | `secret/apps/my-api/config` |
 
-### 4-3. 커밋 메시지 규칙
-
-```
-feat: add <appname> to GitOps         ← 최초 온보딩
-chore: bump <appname> to v1.1.0       ← 이미지 업데이트
-fix: fix <appname> config             ← 설정 수정
-```
-
-### 4-4. 금지 사항
+### 4-3. 금지 사항
 
 - `kubectl apply`로 직접 클러스터 변경 (human-approved AppProject bootstrap/break-glass 제외)
 - `latest` 태그 이미지 사용
