@@ -115,6 +115,7 @@ When a skill suggests one of these paths, reroute the output into the canonical 
 ## Authoring Guardrails
 
 - Read `docs/99.templates/README.md`, then read the matching template under `docs/99.templates/` before creating any stage document.
+- Confirm the target path matches exactly one structural template mapping before authoring; uncovered stage paths are invalid even when they sit under an allowed docs folder.
 - New authored documents must set `status: draft` until a human promotes the lifecycle state.
 - The required template headings are part of the document contract and must not be omitted.
 - New or moved authored documents must trigger a same-change update to the owning folder `README.md`.

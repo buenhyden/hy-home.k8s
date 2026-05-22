@@ -41,6 +41,7 @@ Author stage documentation using the approved templates and language boundaries 
 
 - Resolve the canonical target path before writing.
 - Confirm the required template in `docs/99.templates/README.md`.
+- Confirm the target path matches exactly one structural template mapping.
 - Always read the matching template before authoring a new document.
 - Set new authored documents to `status: draft` until a human promotes the lifecycle state.
 - Preserve required template headings.

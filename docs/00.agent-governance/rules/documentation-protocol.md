@@ -21,6 +21,7 @@ This protocol defines how governance references authored docs and how language b
 - README files must use `docs/99.templates/readme.template.md`.
 - PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook, Incident, Postmortem, and Reference documents must use their stage-specific templates from `docs/99.templates/`.
 - `docs/03.specs/<feature-id>/api-spec.md`, `agent-design.md`, `data-model.md`, and `tests.md` must use their matching helper templates.
+- Every non-README authored Markdown file under stage roots must match exactly one structural template mapping in `docs/99.templates/README.md` and `scripts/validate-repo-quality-gates.sh`; an uncovered path is incomplete.
 - New authored documents must keep `status: draft` until a human promotes the lifecycle state.
 - Authored documents must keep the required template headings and must include `## Related Documents`.
 - Agents must report the template path used and the validation evidence before handoff.
@@ -56,7 +57,7 @@ This protocol defines how governance references authored docs and how language b
 
 ## Docs 3 Rules (HALT)
 
-**R1 — Template-First:** Read `docs/99.templates/README.md`, then read the matching template in `docs/99.templates/` before creating any document. Fill all required fields and required template headings; set `status: draft`. k8s-specific triggers: new namespace → ARD required; RBAC change → ADR required; production change → OPER policy first.
+**R1 — Template-First:** Read `docs/99.templates/README.md`, then read the matching template in `docs/99.templates/` before creating any document. Confirm the target path has exactly one structural template mapping, fill all required fields and required template headings, and set `status: draft`. k8s-specific triggers: new namespace → ARD required; RBAC change → ADR required; production change → OPER policy first.
 
 **R2 — README Sync:** Any folder-level change (add, move, remove files) requires the folder's `README.md` to be updated in the same PR. Work is **BLOCKED** until the README reflects the change.
 
