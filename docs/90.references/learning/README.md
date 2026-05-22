@@ -1,11 +1,9 @@
 # 90.references/learning
 
+> 구현 경험을 CS/CE 이론, 학습 로드맵, 장기 학습 프롬프트로 연결하는 reference 자료를 관리한다.
+
 > [!NOTE]
 > All AI agent interactions with this directory must comply with the [Agent Governance Hub](../../00.agent-governance/README.md).
-
-## 목적
-
-이 폴더는 `hy-home.k8s`의 구현 경험을 CS/CE 이론, 학습 로드맵, 장기 학습 프롬프트로 연결하는 reference 자료를 저장한다.
 
 ## Overview
 

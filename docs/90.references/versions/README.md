@@ -1,11 +1,9 @@
 # 90.references/versions
 
+> repo-backed 버전 계약, 외부 공식 지원 범위 스냅샷, cloud example version 기준을 관리한다.
+
 > [!NOTE]
 > All AI agent interactions with this directory must comply with the [Agent Governance Hub](../../00.agent-governance/README.md).
-
-## 목적
-
-이 폴더는 repo-backed 버전 계약, 외부 공식 지원 범위 스냅샷, cloud example version 기준을 관리한다.
 
 ## Overview
 

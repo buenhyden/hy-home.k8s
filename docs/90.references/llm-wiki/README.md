@@ -1,5 +1,7 @@
 # LLM WIKI Reference Index
 
+> LLM-readable navigation을 위한 reference-only canonical owner link map이다.
+
 > [!NOTE]
 > All AI agent interactions with this directory must comply with the [Agent Governance Hub](../../00.agent-governance/README.md).
 

@@ -55,6 +55,15 @@ memory/
 6. When a standalone memory file is added or updated, append a matching
    progress entry to `progress.md` in the same change.
 
+## Link Basis
+
+Links in this README are relative to `docs/00.agent-governance/memory/`.
+
+- Same-folder memory entries use `./<topic>.md`.
+- Governance rules use `../rules/<file>.md`.
+- Templates use `../../99.templates/<template>.md`.
+- Repository-root files use `../../../<path>`.
+
 ## Related Documents
 
 - [Agent Governance Hub](../README.md)

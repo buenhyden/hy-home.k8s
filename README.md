@@ -68,7 +68,7 @@ hy-home.k8s/
 | [`docs/04.execution`](docs/04.execution/README.md) | 실행 계획, 작업 분해, 검증 증적 | [`plan.template.md`](docs/99.templates/plan.template.md), [`task.template.md`](docs/99.templates/task.template.md) |
 | [`docs/05.operations`](docs/05.operations/README.md) | 운영 가이드, 정책, 런북, 사고 기록 | [`guide.template.md`](docs/99.templates/guide.template.md), [`operation.template.md`](docs/99.templates/operation.template.md), [`runbook.template.md`](docs/99.templates/runbook.template.md), [`incident.template.md`](docs/99.templates/incident.template.md), [`postmortem.template.md`](docs/99.templates/postmortem.template.md) |
 | [`docs/90.references`](docs/90.references/README.md) | 참조 자료, 용어, 버전 인벤토리, lookup material | [`reference.template.md`](docs/99.templates/reference.template.md) |
-| [`docs/99.templates`](docs/99.templates/README.md) | canonical document templates와 target-relative link 규칙 | README의 template mapping 참조 |
+| [`docs/99.templates`](docs/99.templates/README.md) | canonical document templates, target folder mapping, target-relative link 규칙 | [template-folder mapping](docs/99.templates/README.md#template-folder-mapping)을 기준으로 새 문서를 시작한다. |
 
 ## 현재 구현 경계
 
@@ -81,7 +81,7 @@ hy-home.k8s/
 
 1. 저장소를 처음 읽을 때는 `README.md -> docs/README.md -> AGENTS.md -> 관련 stage 문서` 순서로 진입한다.
 2. 설계/구현/운영 판단은 가능한 한 `docs/01.requirements`부터 `docs/05.operations/runbooks`까지의 문서 체인을 기준으로 추적한다.
-3. 새 README나 가이드는 [`docs/99.templates/readme.template.md`](docs/99.templates/readme.template.md) 같은 승인된 템플릿에서 시작한다.
+3. 새 README나 authored stage 문서는 [`docs/99.templates/README.md`](docs/99.templates/README.md)의 template-folder mapping을 확인한 뒤 승인된 템플릿에서 시작한다.
 4. 문서 링크는 상대 경로를 사용하고, 사람 대상 README는 한국어를 유지한다.
 5. `docs/00.agent-governance/*`는 영어로 유지하며, 게이트웨이 파일에는 규칙을 중복 복사하지 않는다.
 6. README 파일은 기본적으로 frontmatter를 요구하지 않는다. PRD/ARD/ADR/Spec/Plan/Task/Guide/Operations Policy/Runbook/Incident/Postmortem/Reference 같은 authored stage 문서는 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
@@ -101,6 +101,7 @@ hy-home.k8s/
 | 기능 구현 | [`docs/03.specs`](docs/03.specs/README.md) | Plan/Task를 만들고 검증 증적을 남긴다. |
 | 운영 절차 변경 | [`docs/05.operations`](docs/05.operations/README.md) | guide, policy, runbook 중 하나로 분류하고 GitOps-first 경계를 유지한다. |
 | 참조값 갱신 | [`docs/90.references`](docs/90.references/README.md) | 스냅샷 기준일과 관련 active stage 문서 영향을 함께 확인한다. |
+| 문서 체계 변경 | [`docs/99.templates`](docs/99.templates/README.md) | docs hub, 대상 stage README, 생성 문서의 안전한 구조 반영 여부를 함께 확인한다. |
 
 ## Link Basis
 

@@ -9,26 +9,6 @@ It keeps gateway files thin by hosting durable rules, execution checklists,
 scope routing, provider notes, reusable memory, and the canonical runtime
 catalog used by `.claude/**` and `.codex/**` mirrors.
 
-## Purpose
-
-This directory contains the durable governance policy for the local agent runtime.
-It defines execution rules, scope-specific constraints, provider notes, reusable
-operational memory, and the canonical runtime catalog that supports `.claude/**`.
-
-## Allowed Content
-
-- Governance rules and execution checklists
-- Scope-specific policy for agent work
-- Provider-specific notes for supported engines
-- Canonical runtime roster and subagent protocol
-- Reusable operational memory entries
-
-## Disallowed Content
-
-- Product, architecture, execution, and operations SSoT under `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, and `docs/05.operations`
-- Human-facing project onboarding outside this governance area
-- Runtime bridge files that belong under `.claude/**` or `.codex/**`
-
 ## Audience
 
 This README is primarily for:
@@ -73,6 +53,15 @@ docs/00.agent-governance/
 2. Follow the JIT loading order in `rules/bootstrap.md` and `rules/preflight-checklist.md`.
 3. Use `docs/99.templates/` when creating or restructuring governance documents.
 4. Update `harness-catalog.md` and this README in the same change set when the runtime roster changes.
+
+## Link Basis
+
+Links in this README are relative to `docs/00.agent-governance/`.
+
+- Governance rules use `rules/<file>.md`.
+- Scope and provider notes use `scopes/<file>.md` and `providers/<file>.md`.
+- Repository-root runtime files use `../../<path>`.
+- Template links use `../99.templates/<template>.md`.
 
 ## Governance Entry Points
 

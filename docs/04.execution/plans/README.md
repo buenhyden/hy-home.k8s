@@ -1,5 +1,7 @@
 # 04.execution/plans
 
+> 실행 순서, 리스크, 롤아웃, 검증 게이트를 정의하는 Plan stage다.
+
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../00.agent-governance/README.md).
 

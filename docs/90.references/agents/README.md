@@ -1,11 +1,9 @@
 # 90.references/agents
 
+> 저장소 전반에서 재사용되는 Agent 개념과 느리게 변하는 참고 지식을 관리한다.
+
 > [!NOTE]
 > All AI agent interactions with this directory must comply with the [Agent Governance Hub](../../00.agent-governance/README.md).
-
-## 목적
-
-이 폴더는 저장소 전반에서 재사용되는 Agent 개념 문서와 느리게 변하는 참고 지식을 저장한다.
 
 ## Overview
 

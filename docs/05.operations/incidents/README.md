@@ -1,5 +1,7 @@
 # 05.operations/incidents
 
+> 사고 사실 기록과 postmortem을 보관하는 incident stage다.
+
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../00.agent-governance/README.md).
 

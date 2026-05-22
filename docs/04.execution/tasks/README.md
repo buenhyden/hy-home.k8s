@@ -1,5 +1,7 @@
 # 04.execution/tasks
 
+> 구현 작업 단위, 검증 증적, 완료 상태를 추적하는 Task stage다.
+
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../../00.agent-governance/README.md).
 

@@ -1,9 +1,9 @@
 # 90.references
 
+> 느리게 변하는 기준 지식, 외부 공식 스냅샷, 버전 인벤토리, Agent 학습 자료를 관리한다.
+
 > [!NOTE]
 > All AI agent interactions with this stage must comply with the [Agent Governance Hub](../00.agent-governance/README.md).
-
-> 느리게 변하는 기준 지식, 외부 공식 스냅샷, 버전 인벤토리, Agent 학습 자료를 관리한다.
 
 ## Overview
 
