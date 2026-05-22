@@ -66,6 +66,10 @@ def read_text(path: pathlib.Path) -> str:
     return path.read_text(encoding="utf-8", errors="ignore")
 
 
+def read_bytes(path: pathlib.Path) -> bytes:
+    return path.read_bytes()
+
+
 def load_yaml(path: pathlib.Path):
     with path.open(encoding="utf-8") as handle:
         return yaml.load(handle, Loader=DuplicateKeyLoader) or {}
@@ -207,6 +211,38 @@ try:
     tracked = set(proc.stdout.splitlines())
 except Exception as exc:
     fail(f"git ls-files failed: {exc}")
+
+for tracked_path in sorted(tracked):
+    if tracked_path == ".agents" or tracked_path.startswith(".agents/"):
+        fail(f"ignored local agent runtime path must not be tracked: {tracked_path}")
+
+ignore_check = subprocess.run(["git", "check-ignore", "-q", ".agents/"], cwd=root)
+if ignore_check.returncode == 1:
+    fail(".agents/ must remain ignored by Git")
+elif ignore_check.returncode not in {0, 1}:
+    fail("git check-ignore failed while validating .agents/ ignore contract")
+
+local_agents_dir = root / ".agents"
+local_agents_skills_dir = root / ".agents" / "skills"
+if local_agents_dir.exists() and not local_agents_dir.is_dir():
+    fail(".agents must be an ignored local directory when present")
+if local_agents_skills_dir.exists() and not local_agents_skills_dir.is_dir():
+    fail(".agents/skills must be an ignored local directory when present")
+if local_agents_skills_dir.is_dir():
+    canonical_skill_paths = [
+        root / tracked_path
+        for tracked_path in sorted(tracked)
+        if re.fullmatch(r"\.claude/skills/[^/]+/skill\.md", tracked_path)
+    ]
+    for canonical_skill_path in canonical_skill_paths:
+        local_skill_path = local_agents_skills_dir / canonical_skill_path.parent.name / "skill.md"
+        if not local_skill_path.exists():
+            continue
+        if read_bytes(local_skill_path) != read_bytes(canonical_skill_path):
+            fail(
+                "local ignored skill mirror drift: "
+                f"{rel(local_skill_path)} differs from {rel(canonical_skill_path)}"
+            )
 
 allowed_top_level_docs = {
     "00.agent-governance",

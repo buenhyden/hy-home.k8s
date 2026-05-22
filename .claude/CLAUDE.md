@@ -34,6 +34,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Do not write plaintext Kubernetes secrets.
 - Treat `.codex/agents/*.toml` as Codex mirrors of `.claude/agents/*.md`; keep both sides aligned.
 - Treat `.codex/hooks.json` as Codex event wiring for repo-local context and validation hooks, not as an equivalent permission gate to `.claude/settings.json`.
+- Treat workspace-local `.agents/**` as ignored convenience mirrors only. `.claude/skills/**` remains the repo-backed skill source of truth; local `.agents/skills/**` must not drift when it mirrors a tracked skill.
 - Treat `.claude/hooks/lifecycle-guard.sh` as the lifecycle validation surface: Stop/SubagentStop may block objective repo-state failures, while PreCompact only reports uncommitted tracked changes and suggested validation.
 
 ## Runtime Roster

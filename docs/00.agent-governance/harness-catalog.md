@@ -164,6 +164,12 @@ across the `.claude` source and `.codex` mirror.
 | `.claude/skills/k8s-security-audit/skill.md`     | Structured security audit workflow: RBAC, NetworkPolicy, Secret handling, container security context, and image supply chain     | security audit, RBAC review, network policy audit, secret scanning, CIS benchmark   | security-audit                               |
 | `.claude/skills/vulnerability-patterns/skill.md` | Kubernetes manifest and Helm chart vulnerability pattern catalog with VULNERABLE/SAFE YAML examples and CIS benchmark mappings   | manifest hardening, YAML security review, Helm security, misconfiguration detection | security-audit, code-reviewer                |
 
+Workspace-local `.agents/skills/**` files are ignored convenience mirrors, not
+repo-backed runtime truth. If a local `.agents/skills/<name>/skill.md` mirrors a
+tracked `.claude/skills/<name>/skill.md`, the local copy must stay byte-for-byte
+aligned or be removed locally. The repository quality gate checks this only when
+the ignored `.agents/` directory exists in the local worktree.
+
 ## Consistency Rules
 
 - `AGENTS.md` must route to this catalog instead of embedding a duplicate agent table.
