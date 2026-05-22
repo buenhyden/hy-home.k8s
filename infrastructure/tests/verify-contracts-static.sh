@@ -19,6 +19,12 @@ require_pattern() {
   grep -Pq -- "$pattern" "$path" || fail "pattern not found in ${path}: ${pattern}"
 }
 
+require_multiline_pattern() {
+  local pattern="$1"
+  local path="$2"
+  grep -Pzoq -- "$pattern" "$path" || fail "multiline pattern not found in ${path}: ${pattern}"
+}
+
 echo "[INFO] static contract verification started"
 
 ROOT_APP="$ROOT_DIR/gitops/clusters/local/root-application.yaml"
@@ -30,9 +36,18 @@ INGRESS_APP="$ROOT_DIR/gitops/apps/root/platform-ingress-nginx-app.yaml"
 VAULT_POLICY="$ROOT_DIR/infrastructure/vault/policies/eso-read.hcl"
 APPPROJECT_APPS="$ROOT_DIR/gitops/clusters/local/appproject-apps.yaml"
 APPPROJECT_PLATFORM="$ROOT_DIR/gitops/clusters/local/appproject-platform.yaml"
+ROOT_KUSTOMIZATION="$ROOT_DIR/gitops/apps/root/kustomization.yaml"
+NAMESPACES_KUSTOMIZATION="$ROOT_DIR/gitops/platform/namespaces/kustomization.yaml"
+ROLLOUTS_APP="$ROOT_DIR/gitops/apps/root/platform-rollouts-app.yaml"
+ROLLOUTS_NAMESPACE="$ROOT_DIR/gitops/platform/namespaces/namespace-argo-rollouts.yaml"
+METRICS_NODEPORTS="$ROOT_DIR/gitops/platform/monitoring/metrics-nodeports.yaml"
+ARGOCD_NOTIFICATIONS_CM="$ROOT_DIR/gitops/platform/argocd/argocd-notifications-cm.yaml"
+ARGOCD_NOTIFICATIONS_SECRET="$ROOT_DIR/gitops/platform/argocd/argocd-notifications-secret.yaml"
+ARGOCD_KUSTOMIZATION="$ROOT_DIR/gitops/platform/argocd/kustomization.yaml"
 
 for file in \
   "$ROOT_APP" \
+  "$ROOT_KUSTOMIZATION" \
   "$POSTGRES_EXTERNAL" \
   "$VAULT_EXTERNAL" \
   "$VALKEY_EXTERNAL" \
@@ -40,7 +55,14 @@ for file in \
   "$INGRESS_APP" \
   "$VAULT_POLICY" \
   "$APPPROJECT_APPS" \
-  "$APPPROJECT_PLATFORM"; do
+  "$APPPROJECT_PLATFORM" \
+  "$NAMESPACES_KUSTOMIZATION" \
+  "$ROLLOUTS_APP" \
+  "$ROLLOUTS_NAMESPACE" \
+  "$METRICS_NODEPORTS" \
+  "$ARGOCD_NOTIFICATIONS_CM" \
+  "$ARGOCD_NOTIFICATIONS_SECRET" \
+  "$ARGOCD_KUSTOMIZATION"; do
   require_file "$file"
 done
 
@@ -113,9 +135,53 @@ require_pattern 'https://charts\.jetstack\.io' "$APPPROJECT_PLATFORM"
 require_pattern 'https://kubernetes-sigs\.github\.io/headlamp/' "$APPPROJECT_PLATFORM"
 require_pattern 'https://istio-release\.storage\.googleapis\.com/charts' "$APPPROJECT_PLATFORM"
 require_pattern 'https://kiali\.org/helm-charts' "$APPPROJECT_PLATFORM"
+require_pattern 'https://argoproj\.github\.io/argo-helm' "$APPPROJECT_PLATFORM"
 require_pattern 'namespace:\s*cert-manager' "$APPPROJECT_PLATFORM"
 require_pattern 'namespace:\s*istio-system' "$APPPROJECT_PLATFORM"
+require_pattern 'namespace:\s*argo-rollouts' "$APPPROJECT_PLATFORM"
 require_pattern 'kind:\s*ClusterIssuer' "$APPPROJECT_PLATFORM"
+
+echo "[INFO] verify Argo Rollouts platform contracts"
+require_pattern 'platform-rollouts-app\.yaml' "$ROOT_KUSTOMIZATION"
+require_pattern 'namespace-argo-rollouts\.yaml' "$NAMESPACES_KUSTOMIZATION"
+require_pattern 'name:\s*argo-rollouts' "$ROLLOUTS_NAMESPACE"
+require_pattern 'name:\s*platform-rollouts' "$ROLLOUTS_APP"
+require_pattern 'repoURL:\s*https://argoproj\.github\.io/argo-helm' "$ROLLOUTS_APP"
+require_pattern 'chart:\s*argo-rollouts' "$ROLLOUTS_APP"
+require_pattern 'targetRevision:\s*2\.40\.9' "$ROLLOUTS_APP"
+require_pattern 'namespace:\s*argo-rollouts' "$ROLLOUTS_APP"
+require_pattern 'rollouts\.127\.0\.0\.1\.nip\.io' "$ROLLOUTS_APP"
+require_pattern 'secretName:\s*rollouts-dashboard-tls' "$ROLLOUTS_APP"
+require_multiline_pattern 'notifications:\n([[:space:]].*\n)*[[:space:]]+enabled:\s*false' "$ROLLOUTS_APP"
+require_pattern 'kind:\s*Rollout' "$APPPROJECT_PLATFORM"
+require_pattern 'kind:\s*AnalysisTemplate' "$APPPROJECT_PLATFORM"
+require_pattern 'kind:\s*ClusterAnalysisTemplate' "$APPPROJECT_PLATFORM"
+require_pattern 'kind:\s*AnalysisRun' "$APPPROJECT_PLATFORM"
+require_pattern 'name:\s*argo-rollouts-metrics-np' "$METRICS_NODEPORTS"
+require_pattern 'namespace:\s*argo-rollouts' "$METRICS_NODEPORTS"
+require_pattern 'port:\s*8090' "$METRICS_NODEPORTS"
+require_pattern 'nodePort:\s*30092' "$METRICS_NODEPORTS"
+
+echo "[INFO] verify ArgoCD Notifications Slack contracts"
+require_multiline_pattern 'notifications:\n([[:space:]].*\n)*[[:space:]]+enabled:\s*true' "$ARGOCD_VALUES"
+require_pattern 'argocd-notifications-cm\.yaml' "$ARGOCD_KUSTOMIZATION"
+require_pattern 'argocd-notifications-secret\.yaml' "$ARGOCD_KUSTOMIZATION"
+require_pattern 'name:\s*argocd-notifications-cm' "$ARGOCD_NOTIFICATIONS_CM"
+require_pattern 'service\.slack:' "$ARGOCD_NOTIFICATIONS_CM"
+require_pattern "token:\\s*\\\$slack-token" "$ARGOCD_NOTIFICATIONS_CM"
+require_pattern 'template\.app-health-degraded:' "$ARGOCD_NOTIFICATIONS_CM"
+require_pattern 'template\.app-sync-failed:' "$ARGOCD_NOTIFICATIONS_CM"
+require_pattern 'template\.rollout-completed:' "$ARGOCD_NOTIFICATIONS_CM"
+require_pattern 'trigger\.on-health-degraded:' "$ARGOCD_NOTIFICATIONS_CM"
+require_pattern 'trigger\.on-sync-failed:' "$ARGOCD_NOTIFICATIONS_CM"
+require_pattern 'defaultTriggers:' "$ARGOCD_NOTIFICATIONS_CM"
+require_pattern 'kind:\s*ExternalSecret' "$ARGOCD_NOTIFICATIONS_SECRET"
+require_pattern 'kind:\s*ClusterSecretStore' "$ARGOCD_NOTIFICATIONS_SECRET"
+require_pattern 'name:\s*vault-backend' "$ARGOCD_NOTIFICATIONS_SECRET"
+require_pattern 'name:\s*argocd-notifications-secret' "$ARGOCD_NOTIFICATIONS_SECRET"
+require_pattern 'secretKey:\s*slack-token' "$ARGOCD_NOTIFICATIONS_SECRET"
+require_pattern 'key:\s*platform/notifications' "$ARGOCD_NOTIFICATIONS_SECRET"
+require_pattern 'property:\s*slack_token' "$ARGOCD_NOTIFICATIONS_SECRET"
 
 echo "[INFO] verify observability external service contracts"
 PROMETHEUS_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/prometheus-external.yaml"

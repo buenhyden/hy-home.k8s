@@ -3,7 +3,7 @@ title: 'Task: Argo Notifications Slack Backfill'
 type: task
 status: complete
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-22
 ---
 
 # Task: Argo Notifications Slack Backfill
@@ -64,6 +64,7 @@ updated: 2026-05-18
   - `rg -n "slack_token|slack-token|notifications.enabled" docs/03.specs/005-argo-notifications-slack/spec.md`
 - **Logs / Evidence Location**:
   - Conversation validation output and git diff for this backfill.
+  - 2026-05-22 follow-up: `verify-contracts-static.sh` now explicitly validates ArgoCD Notifications enablement, ConfigMap Slack service/templates/triggers/default triggers, and the Vault-backed ExternalSecret key/property boundary without checking secret values.
 
 ## Related Documents
 

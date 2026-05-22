@@ -3,7 +3,7 @@ title: 'Task: Argo Rollouts Progressive Delivery Backfill'
 type: task
 status: complete
 owner: platform-team
-updated: 2026-05-18
+updated: 2026-05-22
 ---
 
 # Task: Argo Rollouts Progressive Delivery Backfill
@@ -64,6 +64,7 @@ updated: 2026-05-18
   - `rg -n "notifications.enabled: false|notifications.enabled: true" docs/03.specs/004-argo-rollouts-progressive-delivery/spec.md docs/03.specs/005-argo-notifications-slack/spec.md`
 - **Logs / Evidence Location**:
   - Conversation validation output and git diff for this backfill.
+  - 2026-05-22 follow-up: `verify-contracts-static.sh` now explicitly validates the `platform-rollouts` Application, `argo-rollouts` namespace, AppProject permissions, dashboard TLS host/secret, chart notifications disabled boundary, and metrics NodePort contract.
 
 ## Related Documents
 
