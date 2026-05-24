@@ -175,6 +175,10 @@ git diff --check
 - **VAL-SPC-006-007**: Named additive review skills are recorded with applied,
   skipped, missing, or conflict status, and any design-only skill boundary is
   preserved in the linked plan/task.
+- **VAL-SPC-006-008**: `superpowers:brainstorming` is applied as a design lens
+  for initial-contract delta review, with alternatives, selected approach,
+  skipped default design-doc gate rationale, implementation plan, and
+  verification evidence preserved in canonical SDD artifacts.
 
 ## Related Documents
 

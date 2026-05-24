@@ -8,6 +8,67 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-24 — workspace harness brainstorming reflection follow-up
+
+- **Date**: 2026-05-24
+- **Layer**: docs, meta
+- **Status**: complete
+- **Tags**: #governance #skills #validation #harness #brainstorming
+
+#### Progress
+
+- Applied `superpowers:brainstorming` as a design-lens review to check whether
+  the Hybrid Refresh and Office-Hours follow-up still missed material items
+  from the initial broad task contract.
+- Recorded the brainstorming application boundary in the linked plan/task:
+  standalone design-doc and user-approval defaults were deferred because this
+  was an already-approved implementation objective and existing Spec 006 is the
+  canonical SDD artifact.
+- Added alternatives and selected design tables: strict Superpowers design-doc
+  flow was rejected for this task, no-change was rejected, and canonical SDD
+  delta recording was selected.
+- Updated `.claude/skills/workspace-harness-audit/skill.md` so future broad
+  audits prefer canonical spec/task/plan evidence over off-taxonomy design-doc
+  locations unless the human explicitly requests a separate design document.
+
+#### Memory
+
+- For broad `hy-home.k8s` workspace improvement follow-ups, use named review
+  skills as additive lenses and preserve the application boundary in canonical
+  SDD artifacts.
+- Do not create `docs/superpowers/specs/...` for this workflow unless the human
+  explicitly asks for a separate Superpowers design-doc cycle.
+- Keep P3 runtime, GitOps, Vault, CI/CD, and secret/env policy changes deferred
+  unless a separate approved task opens those boundaries.
+
+#### Evidence
+
+- `docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md`
+  contains the Superpowers Brainstorming Reflection Follow-up, alternatives,
+  selected design, implementation plan, and deferred items.
+- `docs/04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md`
+  tracks T-024 through T-026 and the Brainstorming follow-up verification
+  summary.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS for YAML syntax; optional
+  `kube-linter` skipped because it is not installed locally.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- Shell syntax, runtime JSON parse, `.env` key-name-only comparison,
+  brainstorming evidence search, plan H1 check, and `git diff --check` PASS.
+
+#### Handoff
+
+- No new runtime, GitOps, Vault, CI/CD, or secret/env policy changes were
+  implemented in this follow-up.
+- If a future task starts as a new unapproved design idea rather than a
+  continuation of this approved implementation objective, run the full
+  Superpowers brainstorming design-doc and user-review gate.
+
+---
+
 ### 2026-05-24 — workspace harness office-hours reflection follow-up
 
 - **Date**: 2026-05-24

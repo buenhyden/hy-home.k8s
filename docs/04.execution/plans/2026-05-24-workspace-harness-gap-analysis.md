@@ -57,6 +57,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | PLN-006 | Run verification and final checklist | scripts, docs, runtime JSON | REQ-VALIDATION | Commands pass or limitations recorded |
 | PLN-007 | Audit unreflected input tasks and close safe follow-up gaps | this plan, linked task, `harness-catalog.md`, `.claude/skills/workspace-harness-audit/skill.md` | REQ-INPUT-REFLECTION | Skill path check PASS and repo quality gate PASS |
 | PLN-008 | Apply `office-hours` reflection to initial-contract coverage | this plan, linked task, `workspace-harness-audit` skill, progress ledger | REQ-INPUT-REFLECTION | Office-hours boundary recorded and repo quality gate PASS |
+| PLN-009 | Apply `superpowers:brainstorming` design-lens review to remaining initial-contract coverage | this plan, linked task, `workspace-harness-audit` skill, progress ledger | REQ-INPUT-REFLECTION | Brainstorming alternatives, selected design, and verification recorded |
 
 ## Verification Plan
 
@@ -73,6 +74,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | VAL-PLN-009 | Env | Key-name-only env comparison | compare `.env.example` and `.env` keys without values | no differences |
 | VAL-PLN-010 | Git hygiene | Whitespace sanity | `git diff --check` | PASS |
 | VAL-PLN-011 | Named skill evidence | Office-hours/input-contract reflection and heading hygiene | `rg -n "^# " docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md` plus repo quality gate | only document title remains as H1; office-hours section present |
+| VAL-PLN-012 | Brainstorming evidence | Brainstorming design-lens section and canonical SDD routing | targeted `rg` check for Brainstorming section names plus repo quality gate | section and selected design present |
 
 ## Risks & Mitigations
 
@@ -84,6 +86,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | Optional tools are unavailable locally | Medium | Record skipped reason and CI follow-up |
 | Empty root app set passes validation | Medium | Add explicit non-kustomization root app manifest assertion |
 | Named design-only review skill conflicts with implementation request | Low | Use the skill as a review lens, record the boundary, and keep implementation governed by the direct task contract |
+| Named brainstorming skill defaults to off-taxonomy design docs | Low | Preserve the design review in existing SDD spec/task/plan artifacts unless the human explicitly requests a separate design document |
 
 ## Agent Rollout & Evaluation Gates (If Applicable)
 
@@ -357,6 +360,87 @@ step.
 | `.env.example` and `.env` key comparison | PASS; key names matched without printing values | linked task Office-Hours summary |
 | plan H1 heading check | PASS; only the document title remains as H1 | linked task Office-Hours summary |
 | `git diff --check` | PASS | linked task Office-Hours summary |
+
+## Superpowers Brainstorming Reflection Follow-up
+
+### Application Boundary
+
+`/home/hy/.codex/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/brainstorming/SKILL.md`
+was applied as a design-lens review for the remaining initial-contract delta.
+The skill's default hard gate requires a new design document under
+`docs/superpowers/specs/` and user approval before implementation. That default
+conflicts with this already-approved workspace improvement objective and the
+repo's canonical SDD stage artifacts, so this review is preserved in the
+existing Spec 006, linked plan, linked task, and progress ledger instead of
+creating an off-taxonomy design document.
+
+### Brainstorming Context Check
+
+| Checklist item | Repository evidence | Result |
+| --- | --- | --- |
+| Explore project context | Current plan/task/spec, recent commits, and `workspace-harness-audit` skill were inspected. | complete |
+| Visual companion | Not relevant; the task is textual governance/evidence review. | N/A |
+| Clarifying questions | Answered from repository evidence: this is a delta review, not a new runtime feature; P3 remains deferred; canonical SDD artifacts are the storage target. | complete |
+| Approaches | Alternatives are recorded below. | complete |
+| Design | Selected design is recorded below. | complete |
+| Separate design doc | Skipped because current repo contract requires updating existing spec/task/plan artifacts and avoiding file proliferation. | deferred by boundary |
+
+### Brainstorming Alternatives
+
+| Approach | Trade-off | Decision |
+| --- | --- | --- |
+| Strict Superpowers default: create `docs/superpowers/specs/...` and stop for user approval | Maximally follows the standalone skill, but duplicates canonical SDD artifacts and halts an already-approved implementation objective. | rejected for this task |
+| No additional change after Office-Hours | Avoids churn, but leaves `superpowers:brainstorming` unproven in durable evidence. | rejected |
+| Canonical SDD delta: record brainstorming alternatives, selected design, plan, verification, and progress in existing artifacts | Satisfies the named-skill review intent while preserving repo taxonomy and avoiding runtime changes. | selected |
+
+### Brainstorming Selected Design
+
+| Component | Design |
+| --- | --- |
+| Scope | Documentation and harness evidence only; no Kubernetes, ArgoCD, Vault, secret/env, CI/CD, or live runtime semantic changes. |
+| Data flow | Initial task contract -> current Hybrid/Office-Hours evidence -> brainstorming alternatives -> selected canonical SDD delta -> verification summary. |
+| Error handling | If repo validation fails, revert the P1 documentation hunk; if a future user requires strict Superpowers flow, create a separate design-doc task. |
+| Testing | Run repo quality gate, LLM wiki index check, targeted brainstorming evidence search, plan H1 check, and `git diff --check`. |
+
+### Brainstorming Delta Gap Analysis
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Skills/harness | `superpowers:brainstorming` named-skill application was not yet preserved in durable evidence. | this plan before this section; linked task before T-024 | Future audits could not prove the requested brainstorming review occurred. | Low | supplementation | P1 |
+| Documentation lifecycle | Standalone brainstorming default design-doc path conflicts with canonical SDD artifact update rule for this task. | brainstorming skill; `AGENTS.md`; this plan | File proliferation or approval deadlock risk. | Low | deferral | P1 |
+| Skills/harness | `workspace-harness-audit` did not explicitly prefer canonical SDD artifacts over off-taxonomy design-doc locations for named review skills. | `.claude/skills/workspace-harness-audit/skill.md` | Future broad audits could duplicate evidence locations. | Low | improvement | P1 |
+
+### Brainstorming Implementation Plan
+
+| Action type | Target | Change | Required skill | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| supplementation | linked plan/task/progress | Record brainstorming application boundary, alternatives, selected design, delta Gap analysis, verification, and handoff. | `superpowers:brainstorming`; `grill-with-docs`; `workspace-harness-audit`; `documentation-writer` | T-024, T-025, T-026 | repo quality gate; targeted evidence search; `git diff --check` | Revert this section and task/progress entries. |
+| improvement | `.claude/skills/workspace-harness-audit/skill.md` | Prefer canonical SDD artifacts over off-taxonomy design-doc locations for named review skills unless explicitly requested. | `workspace-harness-audit`; `skill-improver`; `writing-skills` | T-025 | repo quality gate | Revert skill hunk. |
+
+### Brainstorming Deferred Items
+
+| Target | Deferral reason | Required pre-check | Follow-up work |
+| --- | --- | --- | --- |
+| `docs/superpowers/specs/...` design document | Would duplicate existing canonical Spec 006 and conflict with in-place SDD update rules for this approved implementation task. | Explicit human request for a separate Superpowers design-doc workflow. | Create a separate design-doc task only if requested. |
+| User approval gate inside standalone brainstorming flow | Current human objective already directs implementation of this delta; stopping here would reduce the requested scope. | Future task that starts from an unapproved design idea. | Use the full Superpowers gate for new feature/design work. |
+| Live k3d/ArgoCD/Vault/ESO checks | High-risk/external runtime boundary remains unchanged. | Explicit read-only live-check approval. | Use the existing P3 live validation plan. |
+
+### Brainstorming Verification Results
+
+| Command or method | Result | Record location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | linked task Brainstorming summary |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | linked task Brainstorming summary |
+| `bash scripts/validate-gitops-structure.sh` | PASS | linked task Brainstorming summary |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS for YAML syntax; optional `kube-linter` skipped because it is not installed locally | linked task Brainstorming summary |
+| `bash scripts/check-secret-handling.sh .` | PASS | linked task Brainstorming summary |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | linked task Brainstorming summary |
+| shell syntax check | PASS | linked task Brainstorming summary |
+| runtime JSON parse | PASS for `.claude/settings.json` and `.codex/hooks.json` | linked task Brainstorming summary |
+| `.env.example` and `.env` key comparison | PASS; key names matched without printing values | linked task Brainstorming summary |
+| targeted brainstorming evidence search | PASS | linked task Brainstorming summary |
+| plan H1 heading check | PASS; only the document title remains as H1 | linked task Brainstorming summary |
+| `git diff --check` | PASS | linked task Brainstorming summary |
 
 ## Hybrid Refresh - 2026-05-24
 

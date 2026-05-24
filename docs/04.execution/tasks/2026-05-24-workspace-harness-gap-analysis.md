@@ -34,6 +34,10 @@ pre-check와 follow-up으로 남긴다.
 - Treat named review skills as additive. `office-hours` was used as a
   problem-framing lens for the input-contract delta, while the direct human
   implementation request and repository P1/P2/P3 safety rules controlled edits.
+- Treat `superpowers:brainstorming` as a design-lens review for this already
+  approved implementation objective. Its standalone design-doc/user-approval
+  default is recorded as a boundary rather than replacing the repository SDD
+  artifact flow.
 
 ## Task Table
 
@@ -62,6 +66,9 @@ pre-check와 follow-up으로 남긴다.
 | T-021 | Apply office-hours reflection to Hybrid Refresh omissions | doc | VAL-SPC-006-007 | Office-Hours Reflection | Office-Hours Reflection Evidence | Platform | Done |
 | T-022 | Update plan and repo-local Skill for named-skill boundary evidence | guardrail | VAL-SPC-006-007 | Office-Hours P1 | repo quality gate and heading check | Platform | Done |
 | T-023 | Run Office-Hours follow-up verification bundle | test | VAL-SPC-006-007 | Office-Hours Verification | Office-Hours Verification Summary | Platform | Done |
+| T-024 | Apply superpowers brainstorming reflection to remaining initial-contract omissions | doc | VAL-SPC-006-008 | Brainstorming Reflection | Brainstorming Reflection Evidence | Platform | Done |
+| T-025 | Update plan and repo-local Skill for canonical SDD routing of named review skills | guardrail | VAL-SPC-006-008 | Brainstorming P1 | repo quality gate and evidence search | Platform | Done |
+| T-026 | Run Brainstorming follow-up verification bundle | test | VAL-SPC-006-008 | Brainstorming Verification | Brainstorming Follow-up Verification Summary | Platform | Done |
 
 ## Suggested Types
 
@@ -118,6 +125,12 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-022 Update named-skill boundary evidence in plan and Skill.
 - [x] T-023 Run Office-Hours follow-up verification bundle.
 
+### Phase 7 - Superpowers Brainstorming Reflection Follow-up
+
+- [x] T-024 Apply superpowers brainstorming reflection to remaining initial-contract omissions.
+- [x] T-025 Update canonical SDD routing evidence for named review skills.
+- [x] T-026 Run Brainstorming follow-up verification bundle.
+
 ## Hybrid Refresh Evidence
 
 | Evidence item | Status | Location |
@@ -137,6 +150,16 @@ pre-check와 follow-up으로 남긴다.
 | Low/medium/high risk treatment | complete; existing P1/P2/P3 kept | linked plan `Office-Hours Delta Gap Analysis` and `Hybrid Implementation Plan` |
 | Template-change impact rule | complete; no `docs/99.templates/` changes made | linked plan `Initial Contract Delta Ledger` |
 | Named-skill future guardrail | complete | `.claude/skills/workspace-harness-audit/skill.md` |
+
+## Brainstorming Reflection Evidence
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `superpowers:brainstorming` application boundary | complete; used as design lens only | linked plan `Superpowers Brainstorming Reflection Follow-up` |
+| Alternatives and selected approach | complete | linked plan `Brainstorming Alternatives` and `Brainstorming Selected Design` |
+| Canonical SDD routing decision | complete | linked plan `Brainstorming Deferred Items`; `.claude/skills/workspace-harness-audit/skill.md` |
+| Low/medium/high risk treatment | complete; existing P1/P2/P3 kept | linked plan `Brainstorming Delta Gap Analysis` and `Hybrid Implementation Plan` |
+| Template-change impact rule | complete; no `docs/99.templates/` changes made | linked plan `Brainstorming Selected Design` |
 
 ## Hybrid Refresh Path-Level Skill Check
 
@@ -192,6 +215,35 @@ is stored in the linked plan to keep this task document concise.
     semantics were changed.
   - `workspace-harness-audit` now requires named-skill application boundary
     evidence for future broad audits.
+
+## Brainstorming Follow-up Verification Summary
+
+- **Test Commands**:
+  - `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+  - `bash scripts/generate-llm-wiki-index.sh --check` - PASS.
+  - `bash scripts/validate-gitops-structure.sh` - PASS.
+  - `bash scripts/validate-k8s-manifests.sh .` - PASS for YAML syntax; optional `kube-linter` skipped because it is not installed locally.
+  - `bash scripts/check-secret-handling.sh .` - PASS.
+  - `bash infrastructure/tests/verify-contracts-static.sh` - PASS.
+  - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` - PASS.
+  - `python3 -m json.tool .claude/settings.json` - PASS.
+  - `python3 -m json.tool .codex/hooks.json` - PASS.
+  - `.env.example` and `.env` key-name-only comparison - PASS without printing values.
+  - `rg -n "Superpowers Brainstorming Reflection Follow-up|Brainstorming Alternatives|Brainstorming Selected Design" docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md` - PASS.
+  - `rg -n "^# " docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md` - PASS; only the document title remains as an H1.
+  - `git diff --check` - PASS.
+- **Skipped / Deferred Verification**:
+  - Separate `docs/superpowers/specs/...` design document was not created
+    because it would duplicate canonical SDD artifacts for this approved
+    implementation objective.
+  - live k3d, ArgoCD, Vault, ESO, PostgreSQL, Valkey, TLS, and NetworkPolicy
+    checks remain deferred pending explicit approval.
+- **Implementation Decisions**:
+  - No new runtime, Kubernetes, ArgoCD, Vault, secret/env policy, or CI/CD
+    semantics were changed.
+  - `workspace-harness-audit` now prefers canonical SDD artifacts over
+    off-taxonomy design-doc locations for named review skills unless the human
+    explicitly requests a separate design document.
 
 ## Verification Summary
 

@@ -29,6 +29,9 @@ safe implementation in `hy-home.k8s`.
    each one was applied, skipped, missing, or in conflict with the active task
    contract. If a named skill is design-only but the human explicitly requests
    implementation, use it as a review lens and document that boundary.
+   Prefer this repository's canonical spec/task/plan stage over off-taxonomy
+   design-doc locations unless the human explicitly asks for a separate design
+   document.
 5. Map each task area to required repo-local and external `SKILL.md` paths.
    Check exact path existence and record missing paths as Gaps.
 6. Run or reuse up to six role-based subagent reviews only when evidence is
