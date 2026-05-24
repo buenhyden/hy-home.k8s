@@ -31,6 +31,9 @@ pre-check와 follow-up으로 남긴다.
   becomes stale. The 2026-05-24 Hybrid Refresh intentionally reran all six
   read-only role reviews for freshness and preserved the fresh tables in the
   linked plan.
+- Treat named review skills as additive. `office-hours` was used as a
+  problem-framing lens for the input-contract delta, while the direct human
+  implementation request and repository P1/P2/P3 safety rules controlled edits.
 
 ## Task Table
 
@@ -56,6 +59,9 @@ pre-check와 follow-up으로 남긴다.
 | T-018 | Refresh scripts/examples evidence wording without semantic changes | doc | VAL-SPC-006-006 | Hybrid P1 | repo quality gate | Platform | Done |
 | T-019 | Make SessionStart live probes opt-in and ignore scratch workspaces | guardrail | VAL-SPC-006-006 | Hybrid P2 | shell syntax and repo quality gate | Platform | Done |
 | T-020 | Run Hybrid Refresh repo-static verification bundle | test | VAL-SPC-006-006 | Hybrid Verification | Hybrid Refresh Verification Summary | Platform | Done |
+| T-021 | Apply office-hours reflection to Hybrid Refresh omissions | doc | VAL-SPC-006-007 | Office-Hours Reflection | Office-Hours Reflection Evidence | Platform | Done |
+| T-022 | Update plan and repo-local Skill for named-skill boundary evidence | guardrail | VAL-SPC-006-007 | Office-Hours P1 | repo quality gate and heading check | Platform | Done |
+| T-023 | Run Office-Hours follow-up verification bundle | test | VAL-SPC-006-007 | Office-Hours Verification | Office-Hours Verification Summary | Platform | Done |
 
 ## Suggested Types
 
@@ -106,6 +112,12 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-019 Gate live startup probes and ignore scratch workspaces.
 - [x] T-020 Run Hybrid Refresh verification bundle.
 
+### Phase 6 - Office-Hours Reflection Follow-up
+
+- [x] T-021 Apply office-hours reflection to Hybrid Refresh omissions.
+- [x] T-022 Update named-skill boundary evidence in plan and Skill.
+- [x] T-023 Run Office-Hours follow-up verification bundle.
+
 ## Hybrid Refresh Evidence
 
 | Evidence item | Status | Location |
@@ -115,6 +127,16 @@ pre-check와 follow-up으로 남긴다.
 | P1/P2 implementation mapping | complete | linked plan `Hybrid Implementation Plan` |
 | P3 deferred items | complete | linked plan `Hybrid Integrated Gap Analysis` and `Hybrid Implementation Plan` |
 | Fresh verification bundle | complete | this task `Hybrid Refresh Verification Summary` |
+
+## Office-Hours Reflection Evidence
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `office-hours` application boundary | complete; used as review lens only | linked plan `Office-Hours Reflection Follow-up` |
+| Initial-contract delta ledger | complete | linked plan `Initial Contract Delta Ledger` |
+| Low/medium/high risk treatment | complete; existing P1/P2/P3 kept | linked plan `Office-Hours Delta Gap Analysis` and `Hybrid Implementation Plan` |
+| Template-change impact rule | complete; no `docs/99.templates/` changes made | linked plan `Initial Contract Delta Ledger` |
+| Named-skill future guardrail | complete | `.claude/skills/workspace-harness-audit/skill.md` |
 
 ## Hybrid Refresh Path-Level Skill Check
 
@@ -144,6 +166,32 @@ is stored in the linked plan to keep this task document concise.
   - `SessionStart` live probes now require explicit `HY_HOME_K8S_ENABLE_SESSION_LIVE_PROBES=1`.
   - `_workspace/` and `_workspace_prev/` are ignored as scratch paths.
   - P3 GitOps, Vault, AppProject, bootstrap ownership, CI supply-chain, local settings precedence, graphify cleanup, and live validation items remain deferred.
+
+## Office-Hours Follow-up Verification Summary
+
+- **Test Commands**:
+  - `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+  - `bash scripts/generate-llm-wiki-index.sh --check` - PASS.
+  - `bash scripts/validate-gitops-structure.sh` - PASS.
+  - `bash scripts/validate-k8s-manifests.sh .` - PASS for YAML syntax; optional `kube-linter` skipped because it is not installed locally.
+  - `bash scripts/check-secret-handling.sh .` - PASS.
+  - `bash infrastructure/tests/verify-contracts-static.sh` - PASS.
+  - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` - PASS.
+  - `python3 -m json.tool .claude/settings.json` - PASS.
+  - `python3 -m json.tool .codex/hooks.json` - PASS.
+  - `.env.example` and `.env` key-name-only comparison - PASS without printing values.
+  - `rg -n "^# " docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md` - PASS; only the document title remains as an H1.
+  - `git diff --check` - PASS.
+- **Skipped / Deferred Verification**:
+  - `office-hours` preamble was not run because it writes to `~/.gstack`
+    outside the workspace and is unnecessary for this repository-static delta.
+  - live k3d, ArgoCD, Vault, ESO, PostgreSQL, Valkey, TLS, and NetworkPolicy
+    checks remain deferred pending explicit approval.
+- **Implementation Decisions**:
+  - No new runtime, Kubernetes, ArgoCD, Vault, secret/env policy, or CI/CD
+    semantics were changed.
+  - `workspace-harness-audit` now requires named-skill application boundary
+    evidence for future broad audits.
 
 ## Verification Summary
 

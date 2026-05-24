@@ -25,19 +25,23 @@ safe implementation in `hy-home.k8s`.
    `unknown`; do not mark unreviewed areas complete.
 3. Use `grill-with-docs` when the prompt requests plan stress-testing; answer
    questions from repository evidence before asking the human.
-4. Map each task area to required repo-local and external `SKILL.md` paths.
+4. When the prompt names additive review skills or frameworks, record whether
+   each one was applied, skipped, missing, or in conflict with the active task
+   contract. If a named skill is design-only but the human explicitly requests
+   implementation, use it as a review lens and document that boundary.
+5. Map each task area to required repo-local and external `SKILL.md` paths.
    Check exact path existence and record missing paths as Gaps.
-5. Run or reuse up to six role-based subagent reviews only when evidence is
+6. Run or reuse up to six role-based subagent reviews only when evidence is
    current. Preserve each role's Summary, Ledger, candidates, and Unknowns in
    the plan/task record.
-6. Create or update the Coverage Ledger, Integrated Gap Analysis, Implementation
+7. Create or update the Coverage Ledger, Integrated Gap Analysis, Implementation
    Plan, deletion/consolidation/deferred/unknown tables, verification results,
    checklist gate, and Final Report.
-7. Implement only linked P1/P2 items with clear verification and rollback.
+8. Implement only linked P1/P2 items with clear verification and rollback.
    Defer live cluster, Vault, ArgoCD, CI policy, and secret-boundary changes.
-8. Run repo-static verification and record skipped live checks with reason,
+9. Run repo-static verification and record skipped live checks with reason,
    alternative evidence, and follow-up.
-9. Before completion, audit every explicit input requirement against current
+10. Before completion, audit every explicit input requirement against current
    files and command output; unresolved or weak evidence stays in the plan.
 
 ## Expected Outputs
@@ -46,6 +50,8 @@ safe implementation in `hy-home.k8s`.
 - Task-to-skill path check results with present/missing status.
 - P1/P2 implementation evidence and P3 follow-up records.
 - Final report with skill/harness updates and verification evidence.
+- Named-skill application evidence, including any skill/task-contract boundary
+  decisions.
 
 ## Common Mistakes
 
@@ -56,3 +62,5 @@ safe implementation in `hy-home.k8s`.
 - Moving recurring rules into `AGENTS.md` instead of `harness-catalog.md` or a
   repo-local skill.
 - Treating static validation as proof of live k3d, ArgoCD, Vault, or ESO health.
+- Applying a named skill in chat without preserving the application boundary in
+  durable task or plan evidence.

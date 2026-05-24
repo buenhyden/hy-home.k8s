@@ -172,6 +172,9 @@ git diff --check
 - **VAL-SPC-006-006**: Hybrid refresh evidence preserves current role-based
   subagent results, path-level external skill checks, repo-static verification,
   and any new safe P1/P2 guardrail changes.
+- **VAL-SPC-006-007**: Named additive review skills are recorded with applied,
+  skipped, missing, or conflict status, and any design-only skill boundary is
+  preserved in the linked plan/task.
 
 ## Related Documents
 

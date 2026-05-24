@@ -8,6 +8,59 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-24 — workspace harness office-hours reflection follow-up
+
+- **Date**: 2026-05-24
+- **Layer**: docs, meta
+- **Status**: complete
+- **Tags**: #governance #skills #validation #harness #office-hours
+
+#### Progress
+
+- Applied `office-hours` as a problem-framing lens to check whether the Hybrid
+  Refresh plan still missed any material items from the initial broad task
+  contract.
+- Recorded the `office-hours` application boundary in the linked plan/task:
+  design-doc-only guidance was used for review, while implementation stayed
+  under the direct human request and repository P1/P2/P3 safety rules.
+- Added an Initial Contract Delta Ledger covering `grill-with-docs`, risk-tier
+  treatment, exact skill path checks, subagent evidence, template-change impact,
+  deletion/consolidation safeguards, and task-sized commit handling.
+- Demoted the remaining post-title `Input Reflection Follow-up` H1 to H2.
+- Updated `.claude/skills/workspace-harness-audit/skill.md` so future broad
+  audits preserve named-skill application status and conflict boundaries.
+
+#### Memory
+
+- When a broad workspace prompt names an additive review skill, record whether
+  it was applied, skipped, missing, or in conflict with the implementation
+  contract.
+- Design-only review skills can be used as a lens for repo-static planning, but
+  they must not override a direct human request to implement safe P1/P2 work.
+- Do not run `office-hours` preamble steps that write to `~/.gstack` unless the
+  human approves that external write or a design-doc workflow truly needs it.
+
+#### Evidence
+
+- `docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md`
+  contains the Office-Hours Reflection Follow-up, Initial Contract Delta Ledger,
+  and Office-Hours Implementation Plan.
+- `docs/04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md`
+  tracks T-021 through T-023 and the Office-Hours follow-up verification
+  summary.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- plan H1 heading check PASS; only the document title remains as H1.
+- `git diff --check` PASS.
+
+#### Handoff
+
+- No new P3 runtime, GitOps, Vault, CI/CD, or secret/env policy changes were
+  implemented in this follow-up.
+- Live checks and external `office-hours` preamble writes remain approval-gated.
+
+---
+
 ### 2026-05-24 — workspace harness hybrid refresh
 
 - **Date**: 2026-05-24

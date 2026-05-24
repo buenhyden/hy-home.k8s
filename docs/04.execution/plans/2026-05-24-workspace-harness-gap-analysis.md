@@ -56,6 +56,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | PLN-005 | Preserve high-risk Gap follow-up | This plan and linked task | REQ-RISK | P3 items have pre-checks and follow-up |
 | PLN-006 | Run verification and final checklist | scripts, docs, runtime JSON | REQ-VALIDATION | Commands pass or limitations recorded |
 | PLN-007 | Audit unreflected input tasks and close safe follow-up gaps | this plan, linked task, `harness-catalog.md`, `.claude/skills/workspace-harness-audit/skill.md` | REQ-INPUT-REFLECTION | Skill path check PASS and repo quality gate PASS |
+| PLN-008 | Apply `office-hours` reflection to initial-contract coverage | this plan, linked task, `workspace-harness-audit` skill, progress ledger | REQ-INPUT-REFLECTION | Office-hours boundary recorded and repo quality gate PASS |
 
 ## Verification Plan
 
@@ -71,6 +72,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | VAL-PLN-008 | Runtime JSON | Claude and Codex JSON parse | `python3 -m json.tool .claude/settings.json`; `python3 -m json.tool .codex/hooks.json` | PASS |
 | VAL-PLN-009 | Env | Key-name-only env comparison | compare `.env.example` and `.env` keys without values | no differences |
 | VAL-PLN-010 | Git hygiene | Whitespace sanity | `git diff --check` | PASS |
+| VAL-PLN-011 | Named skill evidence | Office-hours/input-contract reflection and heading hygiene | `rg -n "^# " docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md` plus repo quality gate | only document title remains as H1; office-hours section present |
 
 ## Risks & Mitigations
 
@@ -81,6 +83,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | Static checks are mistaken for live health | Medium | Label live checks as unknown/deferred |
 | Optional tools are unavailable locally | Medium | Record skipped reason and CI follow-up |
 | Empty root app set passes validation | Medium | Add explicit non-kustomization root app manifest assertion |
+| Named design-only review skill conflicts with implementation request | Low | Use the skill as a review lens, record the boundary, and keep implementation governed by the direct task contract |
 
 ## Agent Rollout & Evaluation Gates (If Applicable)
 
@@ -255,7 +258,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | deferral | Live checks | Requires approved runtime context | Human approval | `senior-devops`; `testing-qa`; `kubernetes-deployment` | Run live read-only tests |
 | deferral | Historical raw subagent ledgers | Original raw role outputs are not authoritative current-state files | Future subagent runs must persist raw Summary/Ledger tables into plan/task evidence | `subagent-driven-development`; `workspace-harness-audit` | Enforce through `workspace-harness-audit` skill |
 
-# Input Reflection Follow-up
+## Input Reflection Follow-up
 
 ## Unreflected or Weakly Reflected Input Tasks
 
@@ -282,6 +285,78 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | Kubernetes and infrastructure | PASS | none |
 | QA | PASS | none |
 | CI/CD | PASS | none |
+
+## Office-Hours Reflection Follow-up
+
+### Application Boundary
+
+`/home/hy/gstack/.agents/skills/gstack-office-hours/SKILL.md` was applied as a
+problem-framing and stress-test lens for this follow-up. Its design-doc-only
+hard gate conflicts with the active human request to implement the safe plan, so
+implementation remains governed by the direct task contract and this repository's
+P1/P2/P3 safety rules. The office-hours preamble was not run because it writes
+to `~/.gstack` outside the workspace; current repository evidence replaced that
+step.
+
+### Infra-Adapted Forcing Questions
+
+| Office-hours question | Repository-specific answer | Result |
+| --- | --- | --- |
+| Q2 Status quo | The workspace already has Spec 006, linked task/plan, Hybrid Refresh evidence, and static verification, but named `office-hours` application was not durably recorded. | Add plan/task/progress evidence. |
+| Q4 Narrowest wedge | The smallest safe implementation is documentation evidence plus skill guardrail updates; no runtime, GitOps, secret, or CI semantics need to change. | Implement P1 docs/skill updates only. |
+| Other questions | Product-demand and customer-persona questions are not material for this internal infra governance refresh. | Record as N/A rather than expanding scope. |
+
+### Initial Contract Delta Ledger
+
+| Initial or follow-up requirement | Current reflection | Gap judgment | Action |
+| --- | --- | --- | --- |
+| Review all entered matters with `grill-with-docs` | `grill-with-docs` was used for previous reflection and Hybrid Refresh, but no office-hours delta table existed. | weak reflection | Add this contract delta ledger and task evidence. |
+| Apply `office-hours` review to omissions in the Hybrid Refresh plan | No durable plan/task entry existed for `office-hours`. | gap | Record application boundary and forcing-question result. |
+| Consider medium and high risk, not only low risk | P1/P2/P3 tables already preserve low, medium, and high-risk treatment. | complete | Keep high-risk P3 deferrals unchanged. |
+| Preserve exact external `SKILL.md` path checks | Hybrid path-level ledger is present and all requested paths are marked present. | complete | No new path check required. |
+| Preserve fresh six-role subagent outputs | Hybrid section preserves current read-only role tables. | complete | No subagent rerun required for this delta. |
+| Handle template-change impact rules | No `docs/99.templates/` file changed in this implementation series. | N/A recorded | Keep explicit no-template-change note. |
+| Apply deletion/consolidation/legacy safeguards | No deletion or consolidation was implemented; candidates remain deferred. | complete | Keep deferred items. |
+| Create task-sized commits | Prior work used task-sized commits; this delta is isolated as its own verified commit unit. | complete | Keep this office-hours reflection as a separate commit. |
+
+### Office-Hours Delta Gap Analysis
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Skills/harness | Named `office-hours` review was applied in the conversation but not preserved in durable evidence. | this plan before this section; linked task before T-021 | Future refreshes could repeat the omission. | Low | supplementation | P1 |
+| Documentation lifecycle | `Input Reflection Follow-up` remained a post-title H1. | this plan | Heading hierarchy drift weakens template conformance. | Low | consolidation | P1 |
+| Skills/harness | `workspace-harness-audit` did not explicitly require named-skill application boundary evidence. | `.claude/skills/workspace-harness-audit/skill.md` | Future named-skill conflicts could stay implicit. | Low | improvement | P1 |
+
+### Office-Hours Implementation Plan
+
+| Action type | Target | Change | Required skill | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| supplementation | linked plan/task/progress | Record office-hours application boundary, initial-contract delta, verification, and handoff. | `office-hours`; `grill-with-docs`; `workspace-harness-audit`; `documentation-writer` | T-021, T-022, T-023 | repo quality gate; heading check; `git diff --check` | Revert this section and task/progress entries. |
+| consolidation | linked plan | Demote remaining post-title H1 to H2. | `workspace-harness-audit`; `documentation-writer` | T-022 | heading check | Revert heading line. |
+| improvement | `.claude/skills/workspace-harness-audit/skill.md` | Require durable named-skill application boundary evidence. | `workspace-harness-audit`; `skill-improver`; `writing-skills` | T-022 | repo quality gate | Revert skill hunk. |
+
+### Office-Hours Deferred Items
+
+| Target | Deferral reason | Required pre-check | Follow-up work |
+| --- | --- | --- | --- |
+| `office-hours` preamble writing to `~/.gstack` | Writes outside workspace and is not required for repository-static evidence. | Human approval for external write location. | Run only if a future design-doc workflow needs gstack project files. |
+| Live k3d/ArgoCD/Vault/ESO checks | High-risk/external runtime boundary remains unchanged. | Explicit read-only live-check approval. | Use the existing P3 live validation plan. |
+
+### Office-Hours Verification Results
+
+| Command or method | Result | Record location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | linked task Office-Hours summary |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | linked task Office-Hours summary |
+| `bash scripts/validate-gitops-structure.sh` | PASS | linked task Office-Hours summary |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS for YAML syntax; optional `kube-linter` skipped because it is not installed locally | linked task Office-Hours summary |
+| `bash scripts/check-secret-handling.sh .` | PASS | linked task Office-Hours summary |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | linked task Office-Hours summary |
+| shell syntax check | PASS | linked task Office-Hours summary |
+| runtime JSON parse | PASS for `.claude/settings.json` and `.codex/hooks.json` | linked task Office-Hours summary |
+| `.env.example` and `.env` key comparison | PASS; key names matched without printing values | linked task Office-Hours summary |
+| plan H1 heading check | PASS; only the document title remains as H1 | linked task Office-Hours summary |
+| `git diff --check` | PASS | linked task Office-Hours summary |
 
 ## Hybrid Refresh - 2026-05-24
 
