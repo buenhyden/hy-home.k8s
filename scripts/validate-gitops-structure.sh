@@ -45,16 +45,27 @@ fi
 echo ""
 echo "--- ArgoCD Application kind check ---"
 shopt -s nullglob
+ROOT_APP_MANIFEST_COUNT=0
 for f in "${PROJECT_DIR}/gitops/apps/root/"*.yaml; do
+  BASENAME="$(basename "$f")"
   KIND="$(yaml_kind "$f")"
+  if [[ "$BASENAME" != "kustomization.yaml" && "$KIND" =~ ^(Application|ApplicationSet|AppProject)$ ]]; then
+    ROOT_APP_MANIFEST_COUNT=$((ROOT_APP_MANIFEST_COUNT + 1))
+  fi
   if [[ "$KIND" =~ ^(Application|ApplicationSet|AppProject|Kustomization)$ ]]; then
-    echo "  OK  $KIND — $(basename "$f")"
+    echo "  OK  $KIND — $BASENAME"
   else
-    echo "  ERR unexpected kind '$KIND' in $(basename "$f")"
+    echo "  ERR unexpected kind '$KIND' in $BASENAME"
     EXIT_CODE=1
   fi
 done
 shopt -u nullglob
+if [[ "$ROOT_APP_MANIFEST_COUNT" -gt 0 ]]; then
+  echo "  OK  root app manifest count: $ROOT_APP_MANIFEST_COUNT"
+else
+  echo "  ERR no non-kustomization ArgoCD root app manifests found in gitops/apps/root"
+  EXIT_CODE=1
+fi
 
 # 3. All kustomization.yaml files must be parseable
 echo ""
