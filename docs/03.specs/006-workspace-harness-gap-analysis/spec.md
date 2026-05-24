@@ -206,6 +206,10 @@ git diff --check
   `skill-improver` are applied as skill-quality lenses for the repo-local
   `workspace-harness-audit` Skill, with not-applicable boundaries and skipped
   automated reviewer limits recorded.
+- **VAL-SPC-006-013**: repeated docs-stage conformance work found in current
+  task evidence and Codex memory is implemented as the repo-local
+  `docs-stage-conformance` Skill, registered in the harness catalog, and
+  verified without creating unrelated browser-skill artifacts.
 
 ## Related Documents
 
@@ -215,5 +219,6 @@ git diff --check
 - **P3 Tasks**: [../../04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md](../../04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Subagent Protocol**: [../../00.agent-governance/subagent-protocol.md](../../00.agent-governance/subagent-protocol.md)
+- **Docs Stage Conformance Skill**: [../../../.claude/skills/docs-stage-conformance/skill.md](../../../.claude/skills/docs-stage-conformance/skill.md)
 - **Workspace Harness Audit Skill**: [../../../.claude/skills/workspace-harness-audit/skill.md](../../../.claude/skills/workspace-harness-audit/skill.md)
 - **Scripts README**: [../../../scripts/README.md](../../../scripts/README.md)

@@ -19,8 +19,8 @@ safe implementation in `hy-home.k8s`.
 
 ## When NOT to Use
 
-- Narrow single-file doc edits with no workspace-wide coverage or governance
-  impact.
+- Narrow docs cleanup, template conformance, README/index drift, link drift, or
+  duplicate-H1 fixes; use `docs-stage-conformance`.
 - Live cluster incident response, unless the task is only planning or
   documenting approved read-only checks.
 - Generic Kubernetes manifest authoring when `gitops-workflow`,

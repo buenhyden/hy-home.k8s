@@ -8,6 +8,56 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-24 — docs-stage conformance skill creation
+
+- **Date**: 2026-05-24
+- **Layer**: docs, meta, skills
+- **Status**: complete
+- **Tags**: #governance #skills #docs #validation #memory
+
+#### Progress
+
+- Reviewed current task evidence and Codex memory for repeated workflow
+  candidates.
+- Selected the recurring docs-stage conformance workflow: audit templates and
+  READMEs first, narrow to concrete defects, apply in-place fixes, and verify
+  with repo quality gates plus wiki index checks.
+- Created `.claude/skills/docs-stage-conformance/skill.md` as a repo-local
+  workflow Skill.
+- Registered the Skill in `docs/00.agent-governance/harness-catalog.md` and
+  updated `workspace-harness-audit` to route narrow docs cleanup to the new
+  Skill.
+- Recorded `skillify` as not applicable because no successful `/scrape` flow
+  exists in this task.
+
+#### Memory
+
+- Use `docs-stage-conformance` for narrow authored-doc cleanup, template
+  conformance, README/index drift, duplicate-H1 cleanup, link drift, and docs
+  validation evidence.
+- Use `workspace-harness-audit` only when the prompt spans workspace-wide
+  GitOps, scripts, QA, CI/CD, SDD lifecycle, and agent governance coverage.
+
+#### Evidence
+
+- `.claude/skills/docs-stage-conformance/skill.md` contains the new workflow
+  Skill.
+- `docs/00.agent-governance/harness-catalog.md` registers the Skill and task
+  routing.
+- `docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md`
+  contains the Skill Creation Follow-up section.
+- `docs/04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md`
+  tracks T-039 through T-043.
+- `docs/03.specs/006-workspace-harness-gap-analysis/spec.md` includes
+  VAL-SPC-006-013.
+
+#### Handoff
+
+- Do not promote this repo-local Skill to a global Codex package unless the
+  human explicitly asks to package it outside `.claude/skills`.
+
+---
+
 ### 2026-05-24 — workspace harness skill quality follow-up
 
 - **Date**: 2026-05-24

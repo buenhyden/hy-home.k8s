@@ -61,6 +61,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | PLN-010 | Apply `gstack-plan-ceo-review` to current Hybrid coverage drift | this plan, linked task, Spec 006, `workspace-harness-audit` skill, progress ledger | REQ-INPUT-REFLECTION | CEO review findings, current-state overlay, and verification recorded |
 | PLN-011 | Execute the CEO review plan through `superpowers:executing-plans` | this plan, linked task, Spec 006, `workspace-harness-audit` skill, progress ledger | REQ-INPUT-REFLECTION | executing-plans review, task execution, verification, and finish boundary recorded |
 | PLN-012 | Improve the repo-local audit Skill with skill creation/improvement lenses | this plan, linked task, Spec 006, `workspace-harness-audit` skill, progress ledger | REQ-SKILL-QUALITY | skill creation/improvement review, boundaries, and validation recorded |
+| PLN-013 | Create a repo-local Skill from repeated docs-stage conformance work | `.claude/skills/docs-stage-conformance/skill.md`, `harness-catalog.md`, this plan, linked task, Spec 006, progress ledger | REQ-SKILL-CREATION | new Skill exists, routing is registered, and verification passes |
 
 ## Verification Plan
 
@@ -81,6 +82,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | VAL-PLN-013 | CEO review evidence | `gstack-plan-ceo-review` current-state overlay and initial-contract coverage ledger | targeted `rg` check for CEO review sections plus repo quality gate | sections, findings, and overlay present |
 | VAL-PLN-014 | Executing-plans evidence | `superpowers:executing-plans` execution record and finish boundary | targeted `rg` check for executing-plans sections plus repo quality gate | plan load/review/execute/verify/finish evidence present |
 | VAL-PLN-015 | Skill quality evidence | skill-creator, skillify, skill-developer, and skill-improver application boundary | targeted `rg` check, line count check, repo quality gate | skill quality section and `When NOT to Use` present |
+| VAL-PLN-016 | Skill creation evidence | `docs-stage-conformance` Skill, harness catalog route, and skill creation boundary | line count, targeted `rg`, repo quality gate, wiki check, `git diff --check` | new Skill and routing evidence present |
 
 ## Risks & Mitigations
 
@@ -98,6 +100,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | `superpowers:executing-plans` expects a development branch flow | Medium | Record that this repo task continued the existing human-approved task-unit commit flow on `main`; no separate worktree was created |
 | `skillify` is scrape-specific and not applicable to this docs Skill | Low | Record it as reviewed but not applicable instead of forcing a browser-skill workflow |
 | `skill-improver` expects `plugin-dev:skill-reviewer` | Medium | Apply its critical/major issue checklist manually and record that automated reviewer was unavailable in this repo harness |
+| New docs conformance Skill overlaps existing docs-stage-routing | Low | Keep `docs-stage-routing` for new artifact placement and `docs-stage-conformance` for in-place cleanup and validation drift |
 
 ## Agent Rollout & Evaluation Gates (If Applicable)
 
@@ -127,6 +130,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 - [x] CEO review follow-up completed.
 - [x] Executing-plans follow-up completed.
 - [x] Skill quality follow-up completed.
+- [x] Skill creation follow-up completed.
 
 ## Coverage Ledger
 
@@ -1297,10 +1301,60 @@ This was an update to an existing skill, not a new skill creation pass.
 | `bash scripts/generate-llm-wiki-index.sh --check` | PASS | linked task |
 | `git diff --check` | PASS | linked task |
 
+## Skill Creation Follow-up - 2026-05-24
+
+### Repeated Workflow Review
+
+| Source | Repeated workflow found | Evidence | Skill decision |
+| --- | --- | --- | --- |
+| Codex memory | Audit docs stages before editing, narrow to concrete defects, fix in place, validate with repo gates and wiki index | `/home/hy/.codex/memories/MEMORY.md`; `/home/hy/.codex/memories/skills/docs-stage-conformance/SKILL.md` | Create repo-local Skill so the workflow is available inside this checkout |
+| Current task evidence | Workspace harness work repeatedly recorded docs template, README/index, heading, link, and progress-ledger validation boundaries | this plan; linked task; `memory/progress.md` | Split narrow docs conformance from broad `workspace-harness-audit` |
+| Harness catalog | New local skills must be registered in the catalog in the same change set | `docs/00.agent-governance/harness-catalog.md` | Add Skill row and task-to-skill routing |
+| `skillify` | Skill is browser scrape codification and writes gstack runtime state | `/home/hy/gstack/.agents/skills/gstack-skillify/SKILL.md` | Do not create browser artifacts; record not applicable |
+
+### Created Skill Design
+
+| Field | Decision |
+| --- | --- |
+| Skill path | `.claude/skills/docs-stage-conformance/skill.md` |
+| Skill type | workflow |
+| Trigger surface | authored docs cleanup, template conformance, README/index drift, duplicate-H1 cleanup, link drift, docs validation evidence |
+| Explicit non-trigger | full workspace audit, new feature design/planning, live runtime validation, semantic rewrites |
+| Source basis | current task evidence plus Codex memory repeated workflow |
+| Packaging boundary | repo-local lowercase `skill.md`; no Codex package `SKILL.md` or `agents/openai.yaml` metadata |
+
+### Skill Creation Implementation Plan
+
+| Action type | Target | Change | Required skill | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| addition | `.claude/skills/docs-stage-conformance/skill.md` | Add repo-local workflow Skill for repeated docs-stage conformance work | `skill-creator`; `skill-developer`; `skill-improver` | T-039, T-040 | line count; targeted `rg`; repo quality gate | Delete new Skill file |
+| supplementation | `docs/00.agent-governance/harness-catalog.md` | Register the Skill and route docs writing tasks to routing vs conformance workflows | `skill-creator`; `agent-md-refactor` | T-041 | repo quality gate; targeted `rg` | Revert catalog rows |
+| improvement | `.claude/skills/workspace-harness-audit/skill.md` | Point narrow docs conformance work to the new Skill | `skill-improver` | T-041 | targeted `rg`; repo quality gate | Revert wording |
+| supplementation | Spec 006, linked task, this plan, progress ledger | Record repeated-workflow review, creation decision, verification, and boundaries | `skill-creator`; `skillify`; `skill-developer`; `skill-improver` | T-039, T-042 | repo quality gate; wiki check; `git diff --check` | Revert evidence sections |
+
+### Skill Creation Deferred Items
+
+| Target | Deferral reason | Required pre-check | Follow-up work |
+| --- | --- | --- | --- |
+| Browser-skill artifact from `skillify` | No successful `/scrape` flow exists in this task | Identify a repeated browser scrape workflow | Run `skillify` only for browser automation codification |
+| Codex package metadata | Repo-local `.claude/skills/*/skill.md` roster uses lowercase Skill files without `agents/openai.yaml` | Decide to promote repo skill outside Claude runtime | Generate package metadata only after that promotion decision |
+| Automated `plugin-dev:skill-reviewer` review | Reviewer agent is not exposed in the active harness | Enable plugin-dev reviewer surface | Rerun automated skill review; current pass uses manual critical/major checklist |
+
+### Skill Creation Verification Results
+
+| Command or method | Result | Record location |
+| --- | --- | --- |
+| `wc -l .claude/skills/docs-stage-conformance/skill.md` | PASS; 77 lines, under 500 lines | linked task |
+| targeted Skill creation evidence search | PASS | linked task |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | linked task |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | linked task |
+| `git diff --check` | PASS | linked task |
+
 ## Related Documents
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Tasks**: [../tasks/2026-05-24-workspace-harness-gap-analysis.md](../tasks/2026-05-24-workspace-harness-gap-analysis.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
+- **Docs Stage Conformance Skill**: [../../../.claude/skills/docs-stage-conformance/skill.md](../../../.claude/skills/docs-stage-conformance/skill.md)
 - **Workspace Harness Audit Skill**: [../../../.claude/skills/workspace-harness-audit/skill.md](../../../.claude/skills/workspace-harness-audit/skill.md)
 - **Scripts README**: [../../../scripts/README.md](../../../scripts/README.md)

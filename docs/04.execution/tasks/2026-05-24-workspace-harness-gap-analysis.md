@@ -47,6 +47,9 @@ pre-check와 follow-up으로 남긴다.
 - Treat skill creation/improvement prompts as requests to improve existing
   repo-local skills first. Record not-applicable skill boundaries rather than
   forcing unrelated skill workflows.
+- When the human explicitly asks for Skill creation after repeated-workflow
+  review, create the smallest repo-local Skill and register it in
+  `docs/00.agent-governance/harness-catalog.md` in the same change set.
 
 ## Task Table
 
@@ -90,6 +93,11 @@ pre-check와 follow-up으로 남긴다.
 | T-036 | Add `When NOT to Use` boundaries to workspace-harness-audit | guardrail | VAL-SPC-006-012 | Skill Quality P1 | line count and repo quality gate | Platform | Done |
 | T-037 | Record skill lens boundaries, deferred items, and progress memory | doc | VAL-SPC-006-012 | Skill Quality P1 | targeted evidence search | Platform | Done |
 | T-038 | Run skill quality follow-up verification bundle | test | VAL-SPC-006-012 | Skill Quality Verification | Skill Quality Verification Summary | Platform | Done |
+| T-039 | Review repeated work and memory for Skill creation candidates | doc | VAL-SPC-006-013 | Skill Creation Follow-up | repeated workflow review | Platform | Done |
+| T-040 | Create repo-local docs-stage-conformance Skill | guardrail | VAL-SPC-006-013 | Skill Creation P1 | new Skill file and line count | Platform | Done |
+| T-041 | Register new Skill and refine workspace-harness boundary | guardrail | VAL-SPC-006-013 | Skill Creation P1 | harness catalog and targeted evidence search | Platform | Done |
+| T-042 | Record skill creation evidence and progress memory | memory | VAL-SPC-006-013 | Skill Creation P1 | plan/task/spec/progress records | Platform | Done |
+| T-043 | Run skill creation verification bundle | test | VAL-SPC-006-013 | Skill Creation Verification | Skill Creation Verification Summary | Platform | Done |
 
 ## Suggested Types
 
@@ -173,6 +181,14 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-037 Record skill lens boundaries, deferred items, and progress memory.
 - [x] T-038 Run skill quality follow-up verification bundle.
 
+### Phase 11 - Skill Creation Follow-up
+
+- [x] T-039 Review repeated work and memory for Skill creation candidates.
+- [x] T-040 Create repo-local docs-stage-conformance Skill.
+- [x] T-041 Register new Skill and refine workspace-harness boundary.
+- [x] T-042 Record skill creation evidence and progress memory.
+- [x] T-043 Run skill creation verification bundle.
+
 ## Hybrid Refresh Evidence
 
 | Evidence item | Status | Location |
@@ -232,6 +248,17 @@ pre-check와 follow-up으로 남긴다.
 | `skill-developer` application boundary | complete; `When NOT to Use` and 500-line checks applied | linked plan `Skill Quality Findings` |
 | `skill-improver` application boundary | partial; manual critical/major checklist applied, automated reviewer unavailable | linked plan `Skill Quality Deferred Items` |
 | Skill implementation | complete | `.claude/skills/workspace-harness-audit/skill.md` |
+
+## Skill Creation Follow-up Evidence
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| Repeated workflow review | complete; docs-stage conformance selected from current task evidence and Codex memory | linked plan `Repeated Workflow Review` |
+| `skill-creator` application boundary | complete; new repo-local Skill created with frontmatter, concise body, and progressive disclosure | `.claude/skills/docs-stage-conformance/skill.md` |
+| `skillify` application boundary | complete; reviewed and not used because no `/scrape` flow exists | linked plan `Skill Creation Deferred Items` |
+| `skill-developer` application boundary | complete; trigger clarity, `When to Use`, `When NOT to Use`, and line-count checks applied | new Skill file |
+| `skill-improver` application boundary | partial; manual critical/major checklist applied, automated reviewer unavailable | linked plan `Skill Creation Deferred Items` |
+| Harness registration | complete | `docs/00.agent-governance/harness-catalog.md` |
 
 ## Hybrid Refresh Path-Level Skill Check
 
@@ -389,6 +416,27 @@ is stored in the linked plan to keep this task document concise.
   - `skillify` was not used to create scrape artifacts because this task did
     not include a successful browser scrape flow.
 
+## Skill Creation Follow-up Verification Summary
+
+- **Test Commands**:
+  - `wc -l .claude/skills/docs-stage-conformance/skill.md` - PASS; 77 lines, under 500 lines.
+  - Targeted skill creation evidence search - PASS.
+  - `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+  - `bash scripts/generate-llm-wiki-index.sh --check` - PASS.
+  - `git diff --check` - PASS.
+- **Skipped / Deferred Verification**:
+  - `skillify` browser artifact generation was not run because this task did
+    not include a successful `/scrape` flow.
+  - `skill-creator` package validation is not used for repo-local lowercase
+    `.claude/skills/*/skill.md` files.
+  - `skill-improver` automated `skill-reviewer` loop was not run because
+    `plugin-dev:skill-reviewer` is not part of this repository harness.
+- **Implementation Decisions**:
+  - Created `.claude/skills/docs-stage-conformance/skill.md` as a repo-local
+    workflow Skill, not a global Codex package.
+  - Registered the Skill in `harness-catalog.md` and routed narrow docs cleanup
+    away from `workspace-harness-audit`.
+
 ## Verification Summary
 
 - **Test Commands**:
@@ -410,6 +458,9 @@ is stored in the linked plan to keep this task document concise.
     and finish boundary are recorded.
   - Skill quality follow-up - PASS; named skill-maker paths, `When NOT to Use`,
     line count, and deferred reviewer boundaries are recorded.
+  - Skill creation follow-up - PASS after verification; repeated docs-stage
+    conformance work is implemented as a repo-local Skill and registered in the
+    harness catalog.
   - `git diff --check` - PASS.
 - **Eval Commands**: No live model or subagent pressure eval was run. The
   repo-local Skill addition was checked through repository quality gates,
@@ -428,6 +479,7 @@ is stored in the linked plan to keep this task document concise.
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Plan**: [../plans/2026-05-24-workspace-harness-gap-analysis.md](../plans/2026-05-24-workspace-harness-gap-analysis.md)
+- **Docs Stage Conformance Skill**: [../../../.claude/skills/docs-stage-conformance/skill.md](../../../.claude/skills/docs-stage-conformance/skill.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Workspace Harness Audit Skill**: [../../../.claude/skills/workspace-harness-audit/skill.md](../../../.claude/skills/workspace-harness-audit/skill.md)
 - **Scripts README**: [../../../scripts/README.md](../../../scripts/README.md)
