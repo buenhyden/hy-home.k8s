@@ -109,6 +109,8 @@ for path in "${CHANGED_PATHS[@]}"; do
       ;;
   esac
 
+  # Bash case patterns match "/" inside "*"; these root-prefixed globs cover
+  # nested manifest files and intentionally mirror the CI path-filter scope.
   case "$path" in
     gitops/*.yml|gitops/*.yaml|\
 infrastructure/*.yml|infrastructure/*.yaml|\
@@ -129,6 +131,8 @@ docs/05.operations/*.md|docs/90.references/*.md)
       ;;
   esac
 
+  # Keep this broad enough for docs/runtime mirrors while relying on the repo
+  # quality gate for precise contract checks.
   case "$path" in
     AGENTS.md|CLAUDE.md|GEMINI.md|README.md|docs/*|.github/*|\
 .claude/*|.codex/*|scripts/*|.pre-commit-config.yaml|\
