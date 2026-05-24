@@ -18,9 +18,15 @@ Delivery), AI Agent 협업 규칙을 일관되게 지탱하는지 감사하고 �
 ## Strategic Boundaries & Non-goals
 
 This spec owns the repository-static improvement contract for the workspace
-harness gap analysis. It does not approve live cluster mutation, direct ArgoCD
-sync, Vault writes, Kubernetes resource semantic changes, GitHub branch
-protection changes, or plaintext secret handling.
+harness gap analysis. The original pass did not approve live cluster mutation,
+direct ArgoCD sync, Vault writes, Kubernetes resource semantic changes, GitHub
+branch protection changes, or plaintext secret handling.
+
+On 2026-05-24 the human approved a separate P3 follow-up for ArgoCD, Vault,
+External Secrets, secret, and runtime remediation. That approval allows
+repository-backed desired-state changes and read-only runtime metadata checks
+under the linked P3 plan. Direct live mutation, secret value inspection, Vault
+KV writes, ArgoCD sync, and plaintext secret handling remain out of scope.
 
 ## Related Inputs
 
@@ -39,8 +45,9 @@ protection changes, or plaintext secret handling.
   execution evidence lives in `docs/03.specs/`, `docs/04.execution/plans/`,
   `docs/04.execution/tasks/`, and `docs/00.agent-governance/memory/progress.md`.
 - **Governance Contract**: all findings are classified as low, medium, or high
-  risk. High-risk runtime, secret, ArgoCD, and CI/CD policy items are deferred
-  with explicit pre-checks.
+  risk. High-risk runtime, secret, ArgoCD, and CI/CD policy items are either
+  deferred with explicit pre-checks or handled through a separate approved plan
+  with its own verification and rollback record.
 
 ## Core Design
 
@@ -88,7 +95,9 @@ Not applicable. This work does not expose an API.
 
 - **Tool List**: `rg`, `find`, `bash`, `python3`, repo validation scripts.
 - **Permission Boundary**: no live `kubectl`, ArgoCD, Vault, cloud, or secret
-  value inspection is performed without explicit approval.
+  value inspection is performed without explicit approval. Approved live checks
+  are limited to metadata/status reads unless a follow-up explicitly authorizes
+  mutation.
 - **Failure Handling**: if repo-static validation fails, fix the scoped change
   or roll back the affected file set.
 
@@ -97,7 +106,8 @@ Not applicable. This work does not expose an API.
 - **System / Instruction Contract**: `AGENTS.md` remains the thin gateway.
   Detailed workflow routing stays in governance docs.
 - **Policy Constraints**: do not reduce scope, omit high-risk gaps, bypass
-  safety gates, or implement high-risk runtime changes in this pass.
+  safety gates, or implement high-risk runtime changes without a linked approval
+  plan, verification method, and rollback path.
 - **Versioning Rule**: this is a dated repository-static snapshot for
   2026-05-24.
 
@@ -140,8 +150,9 @@ Not applicable. This work does not expose an API.
 
 - **Failure Mode**: high-risk GitOps or secret changes appear necessary.
 - **Fallback**: defer the change and record pre-checks in the plan.
-- **Human Escalation**: required for live k3d/ArgoCD/Vault validation or runtime
-  policy changes.
+- **Human Escalation**: required for live k3d/ArgoCD/Vault mutation or runtime
+  policy changes. The 2026-05-24 P3 follow-up approval covers repo-backed
+  ArgoCD/Vault/ESO desired-state changes and read-only metadata checks only.
 
 ## Verification Commands
 
@@ -179,11 +190,17 @@ git diff --check
   for initial-contract delta review, with alternatives, selected approach,
   skipped default design-doc gate rationale, implementation plan, and
   verification evidence preserved in canonical SDD artifacts.
+- **VAL-SPC-006-009**: approved P3 ArgoCD/Vault/ESO secret/runtime remediation
+  is implemented through repository desired-state changes, static contract
+  validation, and read-only runtime metadata checks with unavailable-live-state
+  results recorded instead of treated as passed.
 
 ## Related Documents
 
 - **Plan**: [../../04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md](../../04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md)
+- **P3 Plan**: [../../04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md](../../04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md)
 - **Tasks**: [../../04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md](../../04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md)
+- **P3 Tasks**: [../../04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md](../../04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Subagent Protocol**: [../../00.agent-governance/subagent-protocol.md](../../00.agent-governance/subagent-protocol.md)
 - **Workspace Harness Audit Skill**: [../../../.claude/skills/workspace-harness-audit/skill.md](../../../.claude/skills/workspace-harness-audit/skill.md)

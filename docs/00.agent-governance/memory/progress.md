@@ -8,6 +8,72 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-24 — approved P3 GitOps secret runtime remediation
+
+- **Date**: 2026-05-24
+- **Layer**: gitops, vault, eso, docs, qa
+- **Status**: complete
+- **Tags**: #gitops #argocd #vault #eso #secrets #validation #p3
+
+#### Progress
+
+- Used `grill-with-docs` and `workspace-harness-audit` as review lenses for the
+  approved P3 follow-up, answering repository-evident questions without
+  widening into direct runtime mutation.
+- Implemented repository-backed desired-state changes for ESO DNS/API egress,
+  Vault `platform/notifications` read policy, app `ExternalSecret` AppProject
+  permission, sample app `remoteRef.key` semantics, and ArgoCD-owned
+  cluster-local AppProject/ApplicationSet reconciliation.
+- Added static contract assertions for the approved P3 contracts in
+  `infrastructure/tests/verify-contracts-static.sh`.
+- Clarified operations docs so Vault CLI paths that include `secret/` are not
+  confused with ESO `remoteRef.key` values when the ClusterSecretStore path is
+  already `secret`.
+
+#### Memory
+
+- For this repository, `vault kv put secret/apps/<name>/config ...` corresponds
+  to ESO `remoteRef.key: apps/<name>/config` when the ClusterSecretStore path is
+  `secret`.
+- Approved P3 runtime work should remain GitOps-first: change repo desired
+  state, run static contracts, then perform metadata-only live checks. Do not
+  run `kubectl apply`, ArgoCD sync, Vault writes, or secret value reads unless
+  a human explicitly approves that separate operation.
+- `gitops/clusters/local/` now has a root child app path through
+  `gitops/apps/root/platform-cluster-config-app.yaml`; existing clusters may
+  need a bootstrap handoff if their live AppProject policy predates this commit.
+
+#### Evidence
+
+- `docs/04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md`
+  records implementation results, verification results, runtime unavailability,
+  and remaining follow-up.
+- `docs/04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md`
+  records task completion, implementation decisions, rollback, static checks,
+  and skipped/deferred live checks.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS with root app manifest
+  count 18 and cluster-local kustomization validation.
+- `bash scripts/validate-k8s-manifests.sh .` PASS for YAML syntax; optional
+  `kube-linter` skipped because it is not installed locally.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- Shell syntax, runtime JSON parse, `.env` key-name-only comparison, and
+  `git diff --check` PASS after final doc updates.
+- Read-only `kubectl get` runtime checks were attempted after human approval,
+  but `https://0.0.0.0:6550` refused connection. `docker ps` listed no running
+  containers and `k3d cluster list` returned no cluster rows.
+
+#### Handoff
+
+- Rerun read-only ArgoCD, ESO, Vault-status, AppProject, and ApplicationSet
+  metadata checks after starting `k3d-hyhome`.
+- Do not treat this commit as proof of live reconciliation; it proves repository
+  desired-state and static contracts only.
+
+---
+
 ### 2026-05-24 — workspace harness brainstorming reflection follow-up
 
 - **Date**: 2026-05-24

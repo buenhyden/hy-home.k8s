@@ -1,7 +1,7 @@
 ---
 title: 'P3 GitOps Secret Runtime Remediation Plan'
 type: plan
-status: active
+status: complete
 owner: platform
 updated: 2026-05-24
 ---
@@ -97,15 +97,58 @@ state와 정적 검증을 먼저 보강하고, live 상태는 read-only 명령�
 - **Rollback Trigger**: revert the P3 manifest/test/docs change set if static validation fails or live metadata checks reveal an incompatible ownership model.
 - **Prompt / Model Promotion Criteria**: not applicable.
 
+## Implementation Results
+
+| Work item | Result | Evidence path |
+| --- | --- | --- |
+| ESO NetworkPolicy egress | Added explicit DNS and Kubernetes API egress while preserving Vault egress | `gitops/platform/network-policies/external-secrets-egress-to-vault.yaml` |
+| Vault notifications policy | Added least-privilege `platform/notifications` data and metadata reads | `infrastructure/vault/policies/eso-read.hcl` |
+| AppProject and sample ExternalSecret contract | Allowed app `ExternalSecret` resources and corrected sample `remoteRef.key` semantics | `gitops/clusters/local/appproject-apps.yaml`, `examples/sample-app/external-secret.yaml` |
+| Cluster-local ownership | Added `platform-cluster-config` root child app and cluster-local kustomization for AppProject/ApplicationSet CRs | `gitops/apps/root/platform-cluster-config-app.yaml`, `gitops/clusters/local/kustomization.yaml` |
+| Static validation | Added static contract checks for all implemented P3 contracts | `infrastructure/tests/verify-contracts-static.sh` |
+| Operations docs | Clarified Vault CLI path versus ESO `remoteRef.key` behavior | `docs/05.operations/`, `examples/sample-app/README.md` |
+
+## Verification Results
+
+| ID | Result | Evidence / Note |
+| --- | --- | --- |
+| VAL-P3-001 | PASS | `bash scripts/validate-repo-quality-gates.sh .` passed |
+| VAL-P3-002 | PASS | `bash scripts/validate-gitops-structure.sh` passed; root app manifest count is 18 |
+| VAL-P3-003 | PASS with optional skip | `bash scripts/validate-k8s-manifests.sh .` passed YAML syntax; optional `kube-linter` is not installed locally |
+| VAL-P3-004 | PASS | `bash scripts/check-secret-handling.sh .` passed |
+| VAL-P3-005 | PASS | `bash infrastructure/tests/verify-contracts-static.sh` passed |
+| VAL-P3-006 | CURRENT-STATE FAIL | `kubectl -n external-secrets get ...` could not reach `https://0.0.0.0:6550`; API server refused connection |
+| VAL-P3-007 | CURRENT-STATE FAIL | ClusterSecretStore and ExternalSecret readiness metadata could not be read because the local cluster was not reachable |
+| VAL-P3-008 | CURRENT-STATE FAIL | ArgoCD Application, ApplicationSet, and AppProject metadata could not be read because the local cluster was not reachable |
+| VAL-P3-009 | PASS | `git diff --check` passed after final doc updates |
+
+## Runtime Check Interpretation
+
+The read-only live check was approved and attempted, but the current WSL runtime
+has no reachable `k3d-hyhome` API server: `kubectl config current-context`
+returned `k3d-hyhome`, while all resource reads failed against
+`https://0.0.0.0:6550` with connection refused. `docker ps` listed no running
+containers and `k3d cluster list` returned no cluster rows. This is recorded as
+a current-state runtime unavailability, not as live validation success.
+
 ## Completion Criteria
 
-- [ ] P3 plan/task evidence created and indexed.
-- [ ] ESO NetworkPolicy DNS/API egress committed.
-- [ ] Vault notifications path policy committed.
-- [ ] apps AppProject ExternalSecret and sample remoteRef contract aligned.
-- [ ] cluster-local AppProject/ApplicationSet steady-state ownership path added.
-- [ ] static validation passed.
-- [ ] approved read-only runtime validation attempted and recorded.
+- [x] P3 plan/task evidence created and indexed.
+- [x] ESO NetworkPolicy DNS/API egress committed.
+- [x] Vault notifications path policy committed.
+- [x] apps AppProject ExternalSecret and sample remoteRef contract aligned.
+- [x] cluster-local AppProject/ApplicationSet steady-state ownership path added.
+- [x] static validation passed.
+- [x] approved read-only runtime validation attempted and recorded.
+
+## Remaining Follow-up
+
+- Start `k3d-hyhome` and rerun metadata-only ESO, ArgoCD, AppProject, and
+  ApplicationSet checks after ArgoCD has reconciled the root app.
+- Confirm whether `platform-cluster-config` needs a one-time bootstrap handoff
+  on existing clusters where the current AppProject policy predates this commit.
+- Keep Vault KV writes, ArgoCD sync, and `kubectl apply` as explicit
+  human-approved operations outside this repository-only commit.
 
 ## Related Documents
 
