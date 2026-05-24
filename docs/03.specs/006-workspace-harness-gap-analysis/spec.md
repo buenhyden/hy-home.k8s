@@ -198,6 +198,10 @@ git diff --check
   current-state review for first-input coverage drift, with exact named skill
   path evidence, P3 supersession status, implementation plan, and verification
   preserved in canonical SDD artifacts.
+- **VAL-SPC-006-011**: `superpowers:executing-plans` is applied to the CEO
+  review plan delta, with plan load/review/execution, required sub-skill path
+  evidence, verification, and finish boundary preserved in canonical SDD
+  artifacts.
 
 ## Related Documents
 

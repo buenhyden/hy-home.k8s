@@ -8,6 +8,57 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-24 — superpowers executing-plans follow-up
+
+- **Date**: 2026-05-24
+- **Layer**: docs, meta, governance
+- **Status**: complete
+- **Tags**: #governance #superpowers #validation #harness #executing-plans
+
+#### Progress
+
+- Applied `superpowers:executing-plans` to the existing CEO Review Follow-up
+  plan delta, using canonical SDD artifacts rather than a separate off-taxonomy
+  plan file.
+- Recorded the plan load, critical review, execution tasks, verification, and
+  finish boundary in the linked plan and task.
+- Verified the exact executing-plans path and its required companion workflow
+  skill paths: `finishing-a-development-branch`, `using-git-worktrees`, and
+  `writing-plans`.
+- Recorded the branch/worktree boundary: this pass ran in a normal repo on
+  `main` under the existing human-requested task-unit commit flow; no separate
+  linked worktree existed.
+- Updated `workspace-harness-audit` so future prompts that name an execution
+  workflow require execution evidence, not just named-skill mention evidence.
+
+#### Memory
+
+- For `hy-home.k8s` harness follow-ups, if the human names an execution skill,
+  preserve the execution flow: plan load, critical review, task execution,
+  verification, and finish boundary.
+- Do not create duplicate off-taxonomy plan files when a canonical SDD plan
+  already owns the work, unless the human explicitly asks for that separate
+  workflow.
+
+#### Evidence
+
+- `docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md`
+  contains the Executing-Plans Follow-up section.
+- `docs/04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md`
+  tracks T-031 through T-034 and the Executing-Plans verification summary.
+- `docs/03.specs/006-workspace-harness-gap-analysis/spec.md` includes
+  VAL-SPC-006-011.
+- `.claude/skills/workspace-harness-audit/skill.md` now requires execution-skill
+  evidence when a prompt names an execution workflow.
+
+#### Handoff
+
+- Remaining unresolved items are unchanged: live runtime proof, GitHub Actions
+  SHA/ruleset policy, `.claude/settings.local.json` precedence, and ignored
+  graphify local cleanup.
+
+---
+
 ### 2026-05-24 — gstack plan CEO review follow-up
 
 - **Date**: 2026-05-24

@@ -41,6 +41,9 @@ pre-check와 follow-up으로 남긴다.
 - Treat `gstack-plan-ceo-review` as a HOLD SCOPE plan-quality lens for
   current-state drift. Its external-write preamble and telemetry steps are not
   run; canonical SDD artifacts remain the evidence target.
+- Treat `superpowers:executing-plans` as the execution workflow for the CEO
+  review plan delta. Record plan review, task execution, verification, and the
+  finish boundary in canonical SDD artifacts.
 
 ## Task Table
 
@@ -76,6 +79,10 @@ pre-check와 follow-up으로 남긴다.
 | T-028 | Add P3 current-state overlay and missing exact skill path evidence | doc | VAL-SPC-006-010 | CEO Review P1 | repo quality gate and targeted evidence search | Platform | Done |
 | T-029 | Update reusable audit Skill and progress ledger for stale-deferral overlays | guardrail | VAL-SPC-006-010 | CEO Review P1 | repo quality gate | Platform | Done |
 | T-030 | Run CEO follow-up verification bundle | test | VAL-SPC-006-010 | CEO Review Verification | CEO Review Verification Summary | Platform | Done |
+| T-031 | Apply superpowers executing-plans to the CEO review plan | doc | VAL-SPC-006-011 | Executing-Plans Follow-up | Executing-Plans Evidence | Platform | Done |
+| T-032 | Record executing-plans task execution and finish boundary | doc | VAL-SPC-006-011 | Executing-Plans P1 | targeted evidence search | Platform | Done |
+| T-033 | Update reusable audit Skill and progress ledger for named execution-skill evidence | guardrail | VAL-SPC-006-011 | Executing-Plans P1 | repo quality gate | Platform | Done |
+| T-034 | Run executing-plans follow-up verification bundle | test | VAL-SPC-006-011 | Executing-Plans Verification | Executing-Plans Verification Summary | Platform | Done |
 
 ## Suggested Types
 
@@ -145,6 +152,13 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-029 Update reusable audit Skill and progress ledger for stale-deferral overlays.
 - [x] T-030 Run CEO follow-up verification bundle.
 
+### Phase 9 - Superpowers Executing-Plans Follow-up
+
+- [x] T-031 Apply superpowers executing-plans to the CEO review plan.
+- [x] T-032 Record executing-plans task execution and finish boundary.
+- [x] T-033 Update reusable audit Skill and progress ledger for named execution-skill evidence.
+- [x] T-034 Run executing-plans follow-up verification bundle.
+
 ## Hybrid Refresh Evidence
 
 | Evidence item | Status | Location |
@@ -184,6 +198,16 @@ pre-check와 follow-up으로 남긴다.
 | Current `gstack-plan-ceo-review` path check | complete; path present | linked plan `Hybrid Path-Level External Skill Check` |
 | P3 current-state overlay | complete | linked plan `CEO P3 Current-State Overlay` |
 | Stale-deferral future guardrail | complete | `.claude/skills/workspace-harness-audit/skill.md` |
+
+## Executing-Plans Follow-up Evidence
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `superpowers:executing-plans` application boundary | complete; used to execute the CEO review plan delta | linked plan `Executing-Plans Follow-up` |
+| Plan critical review | complete; one branch/worktree concern recorded | linked plan `Executing-Plans Critical Review` |
+| Task execution table | complete | linked plan `Executing-Plans Task Execution` |
+| Finish boundary | complete; normal repo on `main`, no linked worktree | linked plan `Executing-Plans Verification Results` |
+| Reusable guardrail | complete | `.claude/skills/workspace-harness-audit/skill.md` |
 
 ## Hybrid Refresh Path-Level Skill Check
 
@@ -291,6 +315,32 @@ is stored in the linked plan to keep this task document concise.
   - Historical Hybrid rows remain as historical evidence; current state is
     recorded through the CEO P3 overlay.
 
+## Executing-Plans Follow-up Verification Summary
+
+- **Test Commands**:
+  - `test -f /home/hy/.codex/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/executing-plans/SKILL.md` - PASS.
+  - `test -f /home/hy/.codex/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/finishing-a-development-branch/SKILL.md` - PASS.
+  - `test -f /home/hy/.codex/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/using-git-worktrees/SKILL.md` - PASS.
+  - `test -f /home/hy/.codex/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/writing-plans/SKILL.md` - PASS.
+  - `git rev-parse --abbrev-ref HEAD` - `main`.
+  - `git rev-parse --git-dir` and `git rev-parse --git-common-dir` - both `.git`; normal repo.
+  - Targeted executing-plans evidence search - PASS after verification.
+  - `bash scripts/validate-repo-quality-gates.sh .` - PASS after verification.
+  - `bash scripts/generate-llm-wiki-index.sh --check` - PASS after verification.
+  - `bash scripts/validate-gitops-structure.sh` - PASS after verification;
+    root app manifest count is 18.
+  - `git diff --check` - PASS after verification.
+- **Skipped / Deferred Verification**:
+  - No separate development worktree was created because this task continues
+    the repository's existing human-requested task-unit commit flow on `main`.
+  - Live k3d/ArgoCD/Vault/ESO proof remains deferred until `k3d-hyhome` is
+    running and read-only metadata checks can connect to the API server.
+- **Implementation Decisions**:
+  - The executing-plans workflow executed the existing CEO review plan section
+    rather than creating a duplicate off-taxonomy plan file.
+  - The finishing boundary was recorded as a normal-repo finish check, not a
+    merge or PR flow, because no feature branch/worktree exists in this pass.
+
 ## Verification Summary
 
 - **Test Commands**:
@@ -308,6 +358,8 @@ is stored in the linked plan to keep this task document concise.
   - Implementation Plan row-level `Required skill` check - PASS; P1/P2/P3 rows carry skill evidence.
   - CEO review current-state overlay - PASS; resolved P3 items link to the P3
     plan/task and unresolved items remain deferred.
+  - Executing-plans follow-up - PASS; plan load/review/execution/verification
+    and finish boundary are recorded.
   - `git diff --check` - PASS.
 - **Eval Commands**: No live model or subagent pressure eval was run. The
   repo-local Skill addition was checked through repository quality gates,

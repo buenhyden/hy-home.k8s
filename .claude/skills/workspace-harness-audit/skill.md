@@ -49,6 +49,9 @@ safe implementation in `hy-home.k8s`.
 11. When follow-up work resolves or changes an item previously recorded as
     deferred, add a current-state overlay that links the new evidence instead
     of silently leaving the older plan as the only visible status.
+12. When the prompt names an execution workflow skill, record the plan load,
+    critical review, task execution, verification, and finish boundary instead
+    of only recording that the skill was mentioned.
 
 ## Expected Outputs
 
@@ -59,6 +62,8 @@ safe implementation in `hy-home.k8s`.
 - Named-skill application evidence, including any skill/task-contract boundary
   decisions.
 - Current-state overlays for stale deferrals after approved follow-up work.
+- Execution-skill evidence showing plan review, task execution, verification,
+  and finish boundary when requested by the human.
 
 ## Common Mistakes
 
@@ -73,3 +78,5 @@ safe implementation in `hy-home.k8s`.
   durable task or plan evidence.
 - Leaving older P3 deferral rows as the only visible status after a later
   approved plan implements part of that deferred work.
+- Treating a named execution skill as satisfied by a mention without recording
+  the actual plan execution flow.
