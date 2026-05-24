@@ -64,46 +64,106 @@ fi
 
 echo "Files  : ${#SECRET_SCAN_FILES[@]}"
 
-# Patterns that indicate plaintext secrets in k8s manifests
-# Excludes: {template}, <placeholder>, $variable (ArgoCD/Helm refs), empty values
-DANGEROUS_PATTERNS=(
-  'stringData:$'
-  'password: [^{<$"]'
-  'token: [^{<$"]'
-  'apiKey: [^{<$"]'
-  'privateKey: [^{<$"]'
-  'secret: [^{<$"]'
-)
-
 echo ""
 echo "--- scanning for plaintext secret patterns ---"
-FOUND=0
-for pat in "${DANGEROUS_PATTERNS[@]}"; do
-  while IFS= read -r match; do
-    # Skip ExternalSecret, SealedSecret, and comment lines
-    FILE="${match%%:*}"
-    REST="${match#*:}"
-    LINE_NO="${REST%%:*}"
-    MATCH_TEXT="${REST#*:}"
-    TRIMMED="${MATCH_TEXT#"${MATCH_TEXT%%[![:space:]]*}"}"
-    if [[ "$TRIMMED" == \#* ]]; then
-      continue
-    fi
-    KIND=$(python3 -c 'import sys, yaml
-docs = [d for d in yaml.safe_load_all(open(sys.argv[1])) if isinstance(d, dict)]
-print(docs[0].get("kind", "") if docs else "")' "$FILE" 2>/dev/null || echo "")
-    if [[ "$KIND" =~ ^(ExternalSecret|SealedSecret|SecretStore|ClusterSecretStore)$ ]]; then
-      continue
-    fi
-    KEY=$(printf '%s\n' "$MATCH_TEXT" | sed -E 's/^[[:space:]-]*([A-Za-z0-9_.-]+):.*/\1/')
-    if [[ "$KEY" == "$MATCH_TEXT" ]]; then
-      KEY="<unknown>"
-    fi
-    REL_FILE="${FILE#"$TARGET"/}"
-    echo "  WARN ${REL_FILE}:${LINE_NO} kind=${KIND:-Unknown} key=${KEY} value=<redacted>"
-    FOUND=1
-  done < <(grep -rn --include="*.yaml" --include="*.yml" -E "$pat" "${SECRET_SCAN_ROOTS[@]}" 2>/dev/null || true)
-done
+if SCAN_TARGET="$TARGET" python3 - "${SECRET_SCAN_FILES[@]}" <<'PY'
+import os
+import re
+import sys
+import yaml
+
+target = os.environ["SCAN_TARGET"]
+excluded_kinds = {"ExternalSecret", "SealedSecret", "SecretStore", "ClusterSecretStore"}
+sensitive_keys = {"password", "token", "apiKey", "privateKey", "secret"}
+key_line = re.compile(r"^\s*-?\s*([A-Za-z0-9_.-]+)\s*:\s*(.*)$")
+findings = []
+
+
+def load_kinds(path):
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            docs = [doc for doc in yaml.safe_load_all(handle) if isinstance(doc, dict)]
+    except Exception:
+        return []
+    return [str(doc.get("kind", "")) for doc in docs if doc.get("kind")]
+
+
+def unquote(value):
+    value = value.strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+        return value[1:-1].strip()
+    return value
+
+
+def strip_inline_comment(value):
+    in_single = False
+    in_double = False
+    for idx, char in enumerate(value):
+        if char == "'" and not in_double:
+            in_single = not in_single
+        elif char == '"' and not in_single:
+            in_double = not in_double
+        elif char == "#" and not in_single and not in_double:
+            return value[:idx].rstrip()
+    return value
+
+
+def allowed_placeholder(value):
+    normalized = unquote(value)
+    if not normalized or normalized.lower() in {"null", "~"}:
+        return True
+    if normalized in {"{}", "[]"}:
+        return True
+    return normalized.startswith(("{", "<", "$"))
+
+
+for path in sys.argv[1:]:
+    kinds = load_kinds(path)
+    if kinds and all(kind in excluded_kinds for kind in kinds):
+        continue
+
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            lines = handle.readlines()
+    except OSError:
+        continue
+
+    display_kind = ",".join(kinds) if kinds else "Unknown"
+    for line_no, line in enumerate(lines, start=1):
+        stripped = line.lstrip()
+        if not stripped or stripped.startswith("#"):
+            continue
+
+        match = key_line.match(line)
+        if not match:
+            continue
+
+        key, raw_value = match.groups()
+        if key == "stringData":
+            rel = os.path.relpath(path, target)
+            findings.append((rel, line_no, display_kind, key))
+            continue
+
+        if key not in sensitive_keys:
+            continue
+
+        raw_value = strip_inline_comment(raw_value.strip()).strip()
+        if raw_value.startswith("#") or allowed_placeholder(raw_value):
+            continue
+
+        rel = os.path.relpath(path, target)
+        findings.append((rel, line_no, display_kind, key))
+
+for rel, line_no, kind, key in findings:
+    print(f"  WARN {rel}:{line_no} kind={kind} key={key} value=<redacted>")
+
+sys.exit(1 if findings else 0)
+PY
+then
+  FOUND=0
+else
+  FOUND=1
+fi
 
 if [[ $FOUND -eq 0 ]]; then
   echo "  OK  no plaintext secret patterns found"
