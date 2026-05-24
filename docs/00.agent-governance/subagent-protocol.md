@@ -3,7 +3,7 @@ title: "Reference: Subagent Protocol"
 type: reference
 status: draft
 owner: "platform"
-updated: 2026-04-11
+updated: 2026-05-24
 ---
 
 # Reference: Subagent Protocol

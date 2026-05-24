@@ -28,6 +28,8 @@ coverage/
 .nyc_output/
 .pytest_cache/
 .vitest/
+_workspace/
+_workspace_prev/
 tests/.tmp_validate_docs/
 tests/.tmp*/
 tests/tmp*/

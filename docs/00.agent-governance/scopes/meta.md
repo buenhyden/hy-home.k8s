@@ -21,12 +21,21 @@ Persona: Governance Steward
 | `CLAUDE.md`                   | meta  | Claude provider overlay                         |
 | `GEMINI.md`                   | meta  | Gemini provider overlay                         |
 | `.claude/settings.json`       | meta  | Team settings (git tracked)                     |
+| `.claude/hooks/**`            | meta  | Shared runtime hook contracts                   |
+| `.claude/skills/**`           | meta  | Repo-backed skill source of truth               |
+| `.codex/**`                   | meta  | Codex mirrors and hook wiring                   |
 
-Meta scope does **not** own `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/04.execution/`, `docs/05.operations/`, `docs/90.references/`, `docs/99.templates/` (authored SSoT), or `.claude/agents/` runtime files.
+Meta scope owns `.claude/agents/**` roster and mirror contract shape through
+`harness-catalog.md` and `subagent-protocol.md`; imported scope files own the
+domain behavior for each worker.
+
+Meta scope does **not** own `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/04.execution/`, `docs/05.operations/`, `docs/90.references/`, or `docs/99.templates/` (authored SSoT).
 
 ## Subagent Bridge
 
-No dedicated subagent for meta scope. Governance steward operates directly.
+No dedicated worker subagent for meta scope. Governance steward operates
+directly, while `supervisor` imports `meta` only for routing and escalation
+control.
 
 Subagent dispatch: use Task tool only; never inline role definitions in prompts.
 
