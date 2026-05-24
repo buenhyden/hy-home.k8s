@@ -54,6 +54,8 @@ Spec은 실행 기준을 소유하는 문서다.
 │   └── spec.md
 ├── 005-argo-notifications-slack/
 │   └── spec.md
+├── 006-workspace-harness-gap-analysis/
+│   └── spec.md
 └── README.md
 ```
 
@@ -93,6 +95,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./003-platform-expansion/spec.md`](./003-platform-expansion/spec.md) | cert-manager, Headlamp, Istio, Kiali 확장 기술 명세 | Active | Current contract는 Headlamp/`172.18.x` 기준이다. Dashboard/`172.19.x` 문단은 historical/superseded로만 읽는다. 구현 evidence는 Spec의 Implementation Status를 따른다. | 2026-05-22 |
 | [`./004-argo-rollouts-progressive-delivery/spec.md`](./004-argo-rollouts-progressive-delivery/spec.md) | Argo Rollouts 점진적 배포 current-contract backfill 명세 | Active | `platform-rollouts` Application, dashboard, metrics, AppProject 권한을 현재 계약으로 정리한다. 구현 evidence는 Spec의 Implementation Status를 따른다. | 2026-05-22 |
 | [`./005-argo-notifications-slack/spec.md`](./005-argo-notifications-slack/spec.md) | ArgoCD Notifications Slack current-contract backfill 명세 | Active | ArgoCD Notifications, Vault/ESO credential boundary, template/trigger 계약을 현재 기준으로 정리한다. 구현 evidence는 Spec의 Implementation Status를 따른다. | 2026-05-22 |
+| [`./006-workspace-harness-gap-analysis/spec.md`](./006-workspace-harness-gap-analysis/spec.md) | Workspace harness Gap analysis와 제한 구현 계약 | Active | WSL2, WSL Linux native Docker, k3d, ArgoCD GitOps, SDD lifecycle, QA, CI/CD, Agent governance의 repo-static 개선 범위를 정의한다. P3 runtime/secret/CI policy 변경은 deferred item으로 남긴다. | 2026-05-24 |
 
 ## Helper Templates
 

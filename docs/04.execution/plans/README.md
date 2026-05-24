@@ -56,6 +56,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-05-22-docs-governance-full-ab-hardening.md
 ├── 2026-05-22-workspace-purpose-alignment.md
 ├── 2026-05-22-spec-execution-implementation-audit.md
+├── 2026-05-24-workspace-harness-gap-analysis.md
 └── README.md
 ```
 
@@ -94,6 +95,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-05-22-docs-governance-full-ab-hardening.md`](./2026-05-22-docs-governance-full-ab-hardening.md) | README, lifecycle docs, agent/runtime governance, hook 경계, repo-static gate 정합화 계획 | Done | 2026-05-22 |
 | [`./2026-05-22-workspace-purpose-alignment.md`](./2026-05-22-workspace-purpose-alignment.md) | 워크스페이스 목적 전체 기준 재감사, 버전 freshness, hook command boundary 보강 계획 | Done | 2026-05-22 |
 | [`./2026-05-22-spec-execution-implementation-audit.md`](./2026-05-22-spec-execution-implementation-audit.md) | `docs/03.specs`와 `docs/04.execution` 구현 evidence 재감사 및 드리프트 보정 계획 | Done | 2026-05-22 |
+| [`./2026-05-24-workspace-harness-gap-analysis.md`](./2026-05-24-workspace-harness-gap-analysis.md) | Workspace harness Gap analysis, skill routing, GitOps validator hardening, P3 deferral 기록 계획 | Done | 2026-05-24 |
 
 ## Related Documents
 

@@ -8,6 +8,78 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-24 — workspace harness gap analysis and limited implementation
+
+- **Date**: 2026-05-24
+- **Layer**: docs, meta, infra, qa
+- **Status**: complete
+- **Tags**: #governance #docs #gitops #validation #harness
+
+#### Progress
+
+- Created the workspace harness Gap analysis Spec, Plan, and Task records,
+  including Coverage Ledger, Integrated Gap Analysis, Implementation Plan,
+  deletion/consolidation/deferred/unknown tables, verification results,
+  checklist gate, and Final Report.
+- Preserved the six role-based subagent review findings as investigation input
+  and avoided rerunning subagents because the implementation plan already
+  treated them as current evidence.
+- Corrected docs and infra scope bridge drift by linking `wiki-curator` and
+  `gitops-reviewer` from the relevant governance scope files.
+- Clarified that `_workspace/` scratch directories are allowed only when a
+  checked-in skill explicitly defines them, and that durable outputs must move
+  to the canonical docs taxonomy.
+- Added task-to-skill routing and workflow/reference-pattern skill boundaries
+  to the harness catalog while keeping `AGENTS.md` as a thin gateway.
+- Hardened GitOps static validation so the root app directory must contain at
+  least one non-kustomization ArgoCD root app manifest.
+- Clarified that `HY_HOME_K8S_SKIP_HOOK_SIMULATION=1` is an internal hook
+  wrapper bypass, not the normal manual validation contract.
+- Deferred P3 runtime, secret policy, AppProject permission, bootstrap
+  ownership, CI supply-chain, local settings precedence, ignored graphify
+  cleanup, and live validation items for owner-approved follow-up.
+
+#### Memory
+
+- Keep `AGENTS.md` thin; recurring task-to-skill routing belongs in
+  `docs/00.agent-governance/harness-catalog.md`.
+- Treat medium-risk validation hardening as acceptable when it does not change
+  runtime manifests or execution semantics.
+- High-risk GitOps, Vault, CI policy, and live validation changes need a
+  separate plan, explicit pre-checks, and human approval where live systems or
+  secret boundaries are involved.
+- `HY_HOME_K8S_SKIP_HOOK_SIMULATION=1` is hook-wrapper internal plumbing only.
+  Maintainers should keep hook simulation enabled during manual validation.
+
+#### Evidence
+
+- Final verification evidence is recorded in
+  `../../04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md`.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS with root app manifest
+  count 17.
+- `bash scripts/validate-k8s-manifests.sh .` PASS for YAML syntax; optional
+  `kube-linter` was skipped because it is not installed locally.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+- `python3 -m json.tool .claude/settings.json` PASS.
+- `python3 -m json.tool .codex/hooks.json` PASS.
+- `.env.example` and `.env` key-name-only comparison PASS without printing
+  values.
+- `git diff --check` PASS.
+
+#### Handoff
+
+- P3 deferred items remain: ESO NetworkPolicy DNS/API egress, Vault
+  `platform/notifications` policy, app `ExternalSecret` AppProject permission,
+  `gitops/clusters/local` bootstrap CR ownership, GitHub Actions SHA pinning,
+  `.claude/settings.local.json` precedence, ignored graphify cleanup, and live
+  k3d/ArgoCD/Vault/ESO validation.
+
+---
+
 ### 2026-05-22 — post-edit style and commit discipline hooks
 
 - **Date**: 2026-05-22
