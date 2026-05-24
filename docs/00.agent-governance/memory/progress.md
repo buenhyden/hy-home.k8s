@@ -8,6 +8,56 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-25 — multi-area workspace improvement overlay
+
+- **Date**: 2026-05-25
+- **Layer**: docs, infra, qa, meta
+- **Status**: complete
+- **Tags**: #governance #docs #validation #gitops #qa
+
+#### Progress
+
+- Implemented the approved P1/P2 overlay against the existing
+  `006-workspace-harness-gap-analysis` Spec/Plan/Task artifacts.
+- Corrected Spec/Plan/Task README currentness drift so completed repo
+  desired-state P3 work is no longer shown as still active, while live runtime
+  proof remains follow-up.
+- Hardened `scripts/check-secret-handling.sh` so quoted literal sensitive
+  manifest values are detected and findings redact the value.
+- Clarified `.claude/hooks/post-validate.sh` and `.claude/hooks/lifecycle-guard.sh`
+  manifest path matching without changing hook behavior.
+- Recorded deletion, consolidation, and P3 semantic/runtime items as deferred;
+  no bulk deletion, live mutation, secret value inspection, or CI policy rewrite
+  was performed.
+
+#### Memory
+
+- For future `hy-home.k8s` refreshes, keep P3 historical rows honest by adding
+  current-state overlays instead of rewriting old evidence.
+- Secret scanning changes should include a negative fixture that proves quoted
+  literal values fail and quoted placeholders remain allowed.
+- Bash `case` globs in these hooks intentionally match nested paths through
+  `*`; do not narrow them without comparing CI path-filter scope.
+
+#### Evidence
+
+- `docs/03.specs/006-workspace-harness-gap-analysis/spec.md` includes
+  VAL-SPC-006-014.
+- `docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md`
+  includes the 2026-05-25 Multi-Area Workspace Improvement Overlay.
+- `docs/04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md`
+  tracks T-044 through T-048 and the overlay verification summary.
+- Verification bundle passed after final rerun; optional `kube-linter` remains
+  skipped by the manifest validator because it is not installed locally.
+
+#### Handoff
+
+- Remaining P3 work requires separate approval and prechecks: live runtime
+  proof, secret value review, CI rulesets/SHA-pinning policy, and Kubernetes or
+  Vault semantic changes.
+
+---
+
 ### 2026-05-24 — docs-stage conformance skill creation
 
 - **Date**: 2026-05-24

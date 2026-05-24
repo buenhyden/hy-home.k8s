@@ -3,7 +3,7 @@ title: 'Workspace Harness Gap Analysis Technical Specification'
 type: spec
 status: active
 owner: 'platform'
-updated: 2026-05-24
+updated: 2026-05-25
 ---
 
 # Workspace Harness Gap Analysis Technical Specification (Spec)
@@ -27,6 +27,13 @@ External Secrets, secret, and runtime remediation. That approval allows
 repository-backed desired-state changes and read-only runtime metadata checks
 under the linked P3 plan. Direct live mutation, secret value inspection, Vault
 KV writes, ArgoCD sync, and plaintext secret handling remain out of scope.
+
+On 2026-05-25 the human approved a multi-area improvement overlay for the
+workspace harness. That overlay allows low-risk README/status currentness fixes,
+medium-risk validator and hook coverage improvements, and P3 precheck-only
+records. Bulk deletion, live mutation, secret value inspection, CI ruleset
+rewrites, and Kubernetes resource semantic changes remain out of scope for this
+pass.
 
 ## Related Inputs
 
@@ -109,7 +116,7 @@ Not applicable. This work does not expose an API.
   safety gates, or implement high-risk runtime changes without a linked approval
   plan, verification method, and rollback path.
 - **Versioning Rule**: this is a dated repository-static snapshot for
-  2026-05-24.
+  2026-05-24 with a 2026-05-25 current-state overlay.
 
 ## Memory & Context Strategy (If Applicable)
 
@@ -136,13 +143,17 @@ Not applicable. This work does not expose an API.
 - **Metrics**: zero repo quality errors, generated LLM Wiki current, GitOps
   structure validation pass, manifest syntax pass, secret scan pass, static
   contract pass, shell syntax pass, diff whitespace pass.
-- **Datasets / Fixtures**: existing repository files and manifests.
+- **Datasets / Fixtures**: existing repository files and manifests, plus a
+  temporary `/tmp` negative fixture for quoted plaintext secret detection.
 - **How to Run**: use the verification commands in the linked plan.
 
 ## Edge Cases & Error Handling
 
 - **Empty root app set**: `scripts/validate-gitops-structure.sh` must fail when
   `gitops/apps/root` has no non-kustomization ArgoCD root app manifests.
+- **Quoted plaintext secrets**: `scripts/check-secret-handling.sh` must flag
+  quoted literal values for sensitive manifest keys while continuing to allow
+  quoted placeholders such as `${TOKEN}`.
 - **Local optional tools absent**: record skipped tools instead of treating them
   as passed.
 
@@ -210,6 +221,10 @@ git diff --check
   task evidence and Codex memory is implemented as the repo-local
   `docs-stage-conformance` Skill, registered in the harness catalog, and
   verified without creating unrelated browser-skill artifacts.
+- **VAL-SPC-006-014**: 2026-05-25 multi-area overlay records P1 README/status
+  currentness, P2 quoted plaintext secret scanning and hook manifest coverage
+  clarification, P3 precheck-only boundaries, verification results, and
+  cleanup/deletion deferrals in canonical SDD artifacts.
 
 ## Related Documents
 

@@ -3,7 +3,7 @@ title: 'Task: Workspace Harness Gap Analysis'
 type: task
 status: done
 owner: 'platform'
-updated: 2026-05-24
+updated: 2026-05-25
 ---
 
 # Task: Workspace Harness Gap Analysis
@@ -98,6 +98,11 @@ pre-check와 follow-up으로 남긴다.
 | T-041 | Register new Skill and refine workspace-harness boundary | guardrail | VAL-SPC-006-013 | Skill Creation P1 | harness catalog and targeted evidence search | Platform | Done |
 | T-042 | Record skill creation evidence and progress memory | memory | VAL-SPC-006-013 | Skill Creation P1 | plan/task/spec/progress records | Platform | Done |
 | T-043 | Run skill creation verification bundle | test | VAL-SPC-006-013 | Skill Creation Verification | Skill Creation Verification Summary | Platform | Done |
+| T-044 | Correct Spec/Plan/Task README currentness drift after P3 desired-state work | doc | VAL-SPC-006-014 | Multi-Area Overlay P1 | repo quality gate and wiki check | Platform | Done |
+| T-045 | Record 2026-05-25 multi-area overlay in canonical SDD artifacts | doc | VAL-SPC-006-014 | Multi-Area Overlay P1 | plan/task/spec overlay sections | Platform | Done |
+| T-046 | Harden plaintext secret scanner for quoted literal sensitive values | test | VAL-SPC-006-014 | Multi-Area Overlay P2 | secret scan and negative fixture | Platform | Done |
+| T-047 | Clarify hook manifest coverage without changing hook behavior | guardrail | VAL-SPC-006-014 | Multi-Area Overlay P2 | shell syntax and repo quality gate | Platform | Done |
+| T-048 | Record multi-area overlay progress and P3 precheck-only boundaries | memory | VAL-SPC-006-014 | Multi-Area Overlay P1 | progress entry and repo quality gate | Platform | Done |
 
 ## Suggested Types
 
@@ -188,6 +193,14 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-041 Register new Skill and refine workspace-harness boundary.
 - [x] T-042 Record skill creation evidence and progress memory.
 - [x] T-043 Run skill creation verification bundle.
+
+### Phase 12 - Multi-Area Workspace Improvement Overlay
+
+- [x] T-044 Correct README currentness drift.
+- [x] T-045 Record overlay scope, gap delta, and P3 precheck-only boundary.
+- [x] T-046 Harden quoted plaintext secret detection.
+- [x] T-047 Clarify recursive hook manifest matching.
+- [x] T-048 Append progress memory.
 
 ## Hybrid Refresh Evidence
 
@@ -437,12 +450,54 @@ is stored in the linked plan to keep this task document concise.
   - Registered the Skill in `harness-catalog.md` and routed narrow docs cleanup
     away from `workspace-harness-audit`.
 
+## Multi-Area Overlay Evidence
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| P1 README/status currentness | complete | `docs/03.specs/README.md`; `docs/04.execution/plans/README.md`; `docs/04.execution/tasks/README.md` |
+| P2 quoted plaintext secret detection | complete | `scripts/check-secret-handling.sh`; negative `/tmp` fixture run |
+| P2 hook manifest coverage clarification | complete | `.claude/hooks/post-validate.sh`; `.claude/hooks/lifecycle-guard.sh` |
+| P3 precheck-only boundaries | complete | linked plan `Overlay Deletion, Consolidation, and Deferral Delta` |
+| Cleanup/deletion candidates | complete; no deletion performed | linked plan overlay tables |
+| Progress ledger | complete | `../../00.agent-governance/memory/progress.md` |
+
+## Multi-Area Overlay Verification Summary
+
+- **Test Commands**:
+  - `bash -n scripts/check-secret-handling.sh .claude/hooks/post-validate.sh .claude/hooks/lifecycle-guard.sh` - PASS.
+  - `bash scripts/check-secret-handling.sh .` - PASS.
+  - temporary `/tmp` quoted-secret negative fixture - PASS; quoted literal
+    sensitive value failed with redacted output and quoted placeholder remained
+    clean.
+  - `bash scripts/validate-repo-quality-gates.sh .` - PASS after final rerun.
+  - `bash scripts/generate-llm-wiki-index.sh --check` - PASS after final rerun.
+  - `bash scripts/validate-gitops-structure.sh` - PASS after final rerun; root
+    app manifest count is 18.
+  - `bash scripts/validate-k8s-manifests.sh .` - PASS after final rerun; optional
+    `kube-linter` remains skipped because it is not installed locally.
+  - `bash infrastructure/tests/verify-contracts-static.sh` - PASS after final rerun.
+  - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` - PASS after final rerun.
+  - `python3 -m json.tool .claude/settings.json` - PASS after final rerun.
+  - `python3 -m json.tool .codex/hooks.json` - PASS after final rerun.
+  - `.env.example` and `.env` key-name-only comparison - PASS without printing values.
+  - `git diff --check` - PASS after final rerun.
+- **Skipped / Deferred Verification**:
+  - Live k3d, ArgoCD, Vault, ESO, PostgreSQL, Valkey, TLS, and NetworkPolicy
+    checks remain P3 precheck-only in this pass.
+  - Secret values in `.env` and Vault were not inspected.
+  - CI rulesets, branch protection, and SHA-pinning policy were not changed.
+- **Implementation Decisions**:
+  - No bulk deletion, live mutation, CI workflow structure rewrite, or
+    Kubernetes semantic change was performed.
+  - `AGENTS.md` remains a thin gateway; recurring routing stays in catalog and
+    repo-local skills.
+
 ## Verification Summary
 
 - **Test Commands**:
   - `bash scripts/validate-repo-quality-gates.sh .` - PASS.
   - `bash scripts/generate-llm-wiki-index.sh --check` - PASS.
-  - `bash scripts/validate-gitops-structure.sh` - PASS; root app manifest count: 17.
+  - `bash scripts/validate-gitops-structure.sh` - PASS; root app manifest count: 18.
   - `bash scripts/validate-k8s-manifests.sh .` - PASS for YAML syntax; optional `kube-linter` skipped because it is not installed locally.
   - `bash scripts/check-secret-handling.sh .` - PASS.
   - `bash infrastructure/tests/verify-contracts-static.sh` - PASS.
@@ -461,6 +516,9 @@ is stored in the linked plan to keep this task document concise.
   - Skill creation follow-up - PASS after verification; repeated docs-stage
     conformance work is implemented as a repo-local Skill and registered in the
     harness catalog.
+  - Multi-area overlay - PASS after verification; README currentness, quoted
+    secret detection, hook coverage clarification, and P3 precheck-only
+    boundaries are recorded.
   - `git diff --check` - PASS.
 - **Eval Commands**: No live model or subagent pressure eval was run. The
   repo-local Skill addition was checked through repository quality gates,

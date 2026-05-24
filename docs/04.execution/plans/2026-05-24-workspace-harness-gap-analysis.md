@@ -3,7 +3,7 @@ title: 'Workspace Harness Gap Analysis Implementation Plan'
 type: plan
 status: done
 owner: 'platform'
-updated: 2026-05-24
+updated: 2026-05-25
 ---
 
 # Workspace Harness Gap Analysis Implementation Plan
@@ -1349,6 +1349,85 @@ This was an update to an existing skill, not a new skill creation pass.
 | `bash scripts/validate-repo-quality-gates.sh .` | PASS | linked task |
 | `bash scripts/generate-llm-wiki-index.sh --check` | PASS | linked task |
 | `git diff --check` | PASS | linked task |
+
+## Multi-Area Workspace Improvement Overlay - 2026-05-25
+
+### Overlay Scope
+
+This overlay implements the human-approved multi-area design without creating a
+parallel documentation tree. It updates the existing Spec 006, this plan, the
+linked task, README indexes, script command contracts, and progress ledger.
+
+| Priority | Scope | Decision |
+| --- | --- | --- |
+| P1 | README/status currentness and revalidation ledger | Implemented in place |
+| P2 | Secret scanner and hook manifest coverage | Implemented with static verification |
+| P3 | live runtime, secret values, CI rulesets, AppProject/Vault/K8s semantic changes | Precheck-only and deferred |
+
+### Overlay Coverage Ledger
+
+| Lane | Investigation status | Key result | Evidence path | Next action |
+| --- | --- | --- | --- | --- |
+| Documentation lifecycle | complete | Spec/Plan/Task README status drift corrected; legacy docs retained | `docs/03.specs/README.md`; `docs/04.execution/*/README.md` | Keep currentness rows tied to execution evidence |
+| Scripts / QA | complete | `check-secret-handling.sh` now detects quoted literal sensitive values and redacts findings | `scripts/check-secret-handling.sh`; `/tmp` negative fixture | Keep fixture pattern in future validator changes |
+| GitOps / Infrastructure | partial | Static gates remain passing; no semantic resource changes in this pass | `gitops/`; `infrastructure/` | Use separate approved plan for semantic changes |
+| Environment | complete | `.env.example` and `.env` remain key-name-only checked; values uninspected | `.env.example`; `.env` | Human-only value review if required |
+| CI/CD | partial | Workflow structure unchanged; policy drift remains deferred | `.github/`; `.pre-commit-config.yaml` | Separate CI governance task for rulesets/SHA pinning |
+| Agent governance | partial | Gateway remains thin; hook coverage comments clarify recursive Bash `case` behavior | `.claude/hooks/*.sh` | Keep repeated routing in catalog/skills |
+| Cleanup | partial | No deletion performed; legacy/local candidates remain reference-check deferred | `.agents/`; `.claude/*.local.md`; legacy docs | Owner decision before delete/consolidate |
+
+### Overlay Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Documentation | P3 plan/task README rows were stale after repo desired-state work completed | `docs/04.execution/plans/README.md`; `docs/04.execution/tasks/README.md` | Reader may treat completed repo changes as still active | Low | improvement | P1 |
+| Documentation | Spec 006 README currentness row did not distinguish resolved repo desired-state work from still-deferred live/policy checks | `docs/03.specs/README.md` | Current-state ambiguity | Low | supplementation | P1 |
+| Scripts / QA | Plaintext secret scanner missed quoted literal values for sensitive keys | `scripts/check-secret-handling.sh` | Quoted secret literals could pass static scan | Medium | improvement | P2 |
+| Hooks | Manifest hook coverage could be misread as shallow because recursive behavior depends on Bash `case` semantics | `.claude/hooks/post-validate.sh`; `.claude/hooks/lifecycle-guard.sh` | Maintainer confusion and future drift | Low | supplementation | P2 |
+| CI/CD | `workflow-security` naming/pinning/ruleset policy remains outside repo-static implementation | `.github/`; `.pre-commit-config.yaml` | Supply-chain policy ambiguity | Medium | deferral | P3 |
+| Runtime | Live cluster and secret value checks remain unavailable by design | P3 task records; `.env` | Runtime health unknown | Medium | deferral | P3 |
+
+### Overlay Implementation Plan
+
+| Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- |
+| improvement | README indexes | Mark P3 repo desired-state work Done and preserve live follow-up boundary | T-044 | repo quality gate; wiki check | Revert README rows |
+| supplementation | Spec 006 and this plan | Add 2026-05-25 overlay scope, gap delta, and P3 precheck-only boundary | T-045 | repo quality gate | Revert overlay sections |
+| improvement | `scripts/check-secret-handling.sh` | Replace grep-only patterns with YAML-aware line scanner that flags quoted literals and redacts values | T-046 | secret scan; negative fixture; shell syntax | Revert script change |
+| supplementation | hook scripts | Document recursive manifest matching semantics without changing hook behavior | T-047 | shell syntax; repo quality gate | Revert comments |
+| supplementation | progress ledger | Record multi-area overlay results and deferred P3 boundaries | T-048 | repo quality gate | Revert progress entry |
+
+### Overlay Deletion, Consolidation, and Deferral Delta
+
+| Target | Type | Reason | Reference check | Recommended action |
+| --- | --- | --- | --- | --- |
+| `.agents/skills/**` | consolidation candidate | Local skill surfaces may duplicate governed `.claude/skills` routing | References not exhaustively cleared | Defer owner-reviewed consolidation |
+| `.claude/*.local.md` / local settings surfaces | deferral | Local provider precedence and permissions are user-specific | Shared docs cannot prove local precedence | Defer provider precedence review |
+| Legacy/superseded docs | deletion candidate | Some historical records have current replacements | References remain and history is useful | Retain; do not bulk delete |
+| CI `workflow-security` / SHA pinning policy | deferral | Requires governance decision and remote ruleset context | Worktree-only check is insufficient | Separate CI supply-chain task |
+| AppProject/Vault/ESO/NetworkPolicy semantics | deferral | Kubernetes and secret-access semantic changes need a scoped plan | Static gates cannot prove live effect | Separate approved GitOps/runtime plan |
+
+### Overlay Verification Results
+
+| Command or method | Result | Record location |
+| --- | --- | --- |
+| `bash -n scripts/check-secret-handling.sh .claude/hooks/post-validate.sh .claude/hooks/lifecycle-guard.sh` | PASS | current overlay |
+| `bash scripts/check-secret-handling.sh .` | PASS | current overlay |
+| temporary `/tmp` quoted-sensitive-value negative fixture | PASS; quoted literal sensitive value failed with redacted finding and quoted placeholder stayed clean | current overlay |
+| `.env.example` and `.env` key-name-only comparison | PASS; key names match without printing values | current overlay |
+| full verification bundle | PASS after final rerun; optional `kube-linter` remains skipped by `validate-k8s-manifests.sh` because it is not installed locally | linked task overlay summary |
+
+### Overlay Checklist Gate
+
+| Checklist item | Status | Evidence |
+| --- | --- | --- |
+| Is the goal clear in one sentence? | pass | Human-approved multi-area design implemented as P1/P2 with P3 precheck-only |
+| Are related files, logs, issues, or reproduction steps provided or discovered? | pass | Existing 006 SDD artifacts, README indexes, scripts, hooks, and validation commands inspected |
+| Are modification scope and forbidden scope separated? | pass | Overlay Scope and Non-goals preserve no live mutation, no secret value inspection, no bulk deletion |
+| Are existing patterns, compatibility, and dependency rules stated? | pass | Existing SDD artifacts updated in place; gateway remains thin |
+| Are test, lint, and type-check commands identified? | pass | Overlay Verification Results and linked task summary |
+| Are completion criteria measurable? | pass | VAL-SPC-006-014 and T-044 through T-048 |
+| Are recurring instructions moved or planned for `AGENTS.md` or Skills? | pass | `AGENTS.md` remains thin; routing stays in catalog/skills |
 
 ## Related Documents
 
