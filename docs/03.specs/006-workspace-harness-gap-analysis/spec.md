@@ -202,6 +202,10 @@ git diff --check
   review plan delta, with plan load/review/execution, required sub-skill path
   evidence, verification, and finish boundary preserved in canonical SDD
   artifacts.
+- **VAL-SPC-006-012**: `skill-creator`, `skillify`, `skill-developer`, and
+  `skill-improver` are applied as skill-quality lenses for the repo-local
+  `workspace-harness-audit` Skill, with not-applicable boundaries and skipped
+  automated reviewer limits recorded.
 
 ## Related Documents
 

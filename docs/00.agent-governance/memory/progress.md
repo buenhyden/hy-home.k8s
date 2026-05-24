@@ -8,6 +8,53 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-24 — workspace harness skill quality follow-up
+
+- **Date**: 2026-05-24
+- **Layer**: docs, meta, skills
+- **Status**: complete
+- **Tags**: #governance #skills #validation #harness #skill-quality
+
+#### Progress
+
+- Applied `skill-creator`, `skill-developer`, and `skill-improver` quality
+  guidance to `.claude/skills/workspace-harness-audit/skill.md`.
+- Reviewed `skillify` and recorded it as not applicable because this task did
+  not include a repeated browser scrape flow to codify.
+- Added a `When NOT to Use` section to the repo-local audit Skill so the trigger
+  boundary is explicit.
+- Recorded exact path checks and skill-quality findings in the linked plan and
+  task.
+- Ran `skill-creator` quick validation once; it failed as expected because this
+  repository's `.claude/skills` convention uses lowercase `skill.md` rather than
+  Codex package `SKILL.md`.
+
+#### Memory
+
+- For repo-local `.claude/skills/*/skill.md`, use the skill-creator quality
+  principles manually, but do not rename files to `SKILL.md` unless the repo
+  changes its tracked skill convention.
+- `skillify` should only produce permanent browser-skill artifacts after a real
+  successful scrape flow.
+
+#### Evidence
+
+- `docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md`
+  contains the Skill Quality Follow-up section.
+- `docs/04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md`
+  tracks T-035 through T-038 and the Skill Quality verification summary.
+- `docs/03.specs/006-workspace-harness-gap-analysis/spec.md` includes
+  VAL-SPC-006-012.
+- `.claude/skills/workspace-harness-audit/skill.md` includes a `When NOT to Use`
+  section and remains under the 500-line limit.
+
+#### Handoff
+
+- Automated `skill-improver` review remains deferred until a `plugin-dev`
+  `skill-reviewer` agent is available in the active harness.
+
+---
+
 ### 2026-05-24 — superpowers executing-plans follow-up
 
 - **Date**: 2026-05-24

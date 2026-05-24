@@ -60,6 +60,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | PLN-009 | Apply `superpowers:brainstorming` design-lens review to remaining initial-contract coverage | this plan, linked task, `workspace-harness-audit` skill, progress ledger | REQ-INPUT-REFLECTION | Brainstorming alternatives, selected design, and verification recorded |
 | PLN-010 | Apply `gstack-plan-ceo-review` to current Hybrid coverage drift | this plan, linked task, Spec 006, `workspace-harness-audit` skill, progress ledger | REQ-INPUT-REFLECTION | CEO review findings, current-state overlay, and verification recorded |
 | PLN-011 | Execute the CEO review plan through `superpowers:executing-plans` | this plan, linked task, Spec 006, `workspace-harness-audit` skill, progress ledger | REQ-INPUT-REFLECTION | executing-plans review, task execution, verification, and finish boundary recorded |
+| PLN-012 | Improve the repo-local audit Skill with skill creation/improvement lenses | this plan, linked task, Spec 006, `workspace-harness-audit` skill, progress ledger | REQ-SKILL-QUALITY | skill creation/improvement review, boundaries, and validation recorded |
 
 ## Verification Plan
 
@@ -79,6 +80,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | VAL-PLN-012 | Brainstorming evidence | Brainstorming design-lens section and canonical SDD routing | targeted `rg` check for Brainstorming section names plus repo quality gate | section and selected design present |
 | VAL-PLN-013 | CEO review evidence | `gstack-plan-ceo-review` current-state overlay and initial-contract coverage ledger | targeted `rg` check for CEO review sections plus repo quality gate | sections, findings, and overlay present |
 | VAL-PLN-014 | Executing-plans evidence | `superpowers:executing-plans` execution record and finish boundary | targeted `rg` check for executing-plans sections plus repo quality gate | plan load/review/execute/verify/finish evidence present |
+| VAL-PLN-015 | Skill quality evidence | skill-creator, skillify, skill-developer, and skill-improver application boundary | targeted `rg` check, line count check, repo quality gate | skill quality section and `When NOT to Use` present |
 
 ## Risks & Mitigations
 
@@ -94,6 +96,8 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | `gstack-plan-ceo-review` preamble writes outside the workspace | Medium | Use the review workflow as a repo-static lens and record that external-write preamble/telemetry steps were not run |
 | Earlier Hybrid P3 rows become stale after approved follow-up work | Medium | Add a current-state overlay that links resolved P3 items to the P3 plan instead of rewriting historical evidence |
 | `superpowers:executing-plans` expects a development branch flow | Medium | Record that this repo task continued the existing human-approved task-unit commit flow on `main`; no separate worktree was created |
+| `skillify` is scrape-specific and not applicable to this docs Skill | Low | Record it as reviewed but not applicable instead of forcing a browser-skill workflow |
+| `skill-improver` expects `plugin-dev:skill-reviewer` | Medium | Apply its critical/major issue checklist manually and record that automated reviewer was unavailable in this repo harness |
 
 ## Agent Rollout & Evaluation Gates (If Applicable)
 
@@ -122,6 +126,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 - [x] Input reflection follow-up completed.
 - [x] CEO review follow-up completed.
 - [x] Executing-plans follow-up completed.
+- [x] Skill quality follow-up completed.
 
 ## Coverage Ledger
 
@@ -543,6 +548,9 @@ creating an off-taxonomy design document.
 | `/home/hy/.agents/skills/grill-with-docs/SKILL.md` | present |
 | `/home/hy/.agents/skills/brainstorming/SKILL.md` | present |
 | `/home/hy/.agents/skills/gstack/plan-ceo-review/SKILL.md` | present |
+| `/home/hy/.codex/skills/.system/skill-creator/SKILL.md` | present |
+| `/home/hy/gstack/.agents/skills/gstack-skillify/SKILL.md` | present |
+| `/home/hy/.agents/skills/skill-developer/SKILL.md` | present |
 | `/home/hy/.codex/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/executing-plans/SKILL.md` | present |
 | `/home/hy/.codex/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/finishing-a-development-branch/SKILL.md` | present |
 | `/home/hy/.codex/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/using-git-worktrees/SKILL.md` | present |
@@ -1232,6 +1240,62 @@ feature plan.
 | `git rev-parse --abbrev-ref HEAD` | `main` | finish boundary |
 | `git rev-parse --git-dir` and `git rev-parse --git-common-dir` | both `.git`; normal repo, not a linked worktree | finish boundary |
 | targeted executing-plans evidence search | PASS | linked task |
+
+## Skill Quality Follow-up - 2026-05-24
+
+### Skill Quality Scope
+
+The named skill creation/improvement lenses were applied to the existing
+repo-local workflow skill `.claude/skills/workspace-harness-audit/skill.md`.
+This was an update to an existing skill, not a new skill creation pass.
+
+### Skill Lens Application
+
+| Skill | Application result | Evidence | Decision |
+| --- | --- | --- | --- |
+| `/home/hy/.codex/skills/.system/skill-creator/SKILL.md` | applied | frontmatter, concise body, progressive disclosure, line-count guidance | Keep one `skill.md` file because repo-local Claude skills use lowercase paths |
+| `/home/hy/gstack/.agents/skills/gstack-skillify/SKILL.md` | reviewed, not applicable | scrape codification workflow is browser-specific | Do not create browser script/test/fixture artifacts |
+| `/home/hy/.agents/skills/skill-developer/SKILL.md` | applied | 500-line rule, trigger clarity, `When NOT to Use` guidance | Add `When NOT to Use` section |
+| `/home/hy/.codex/trailofbits-skills/plugins/skill-improver/skills/skill-improver/SKILL.md` | applied manually | critical/major checklist; automated `skill-reviewer` not in repo harness | Fix missing `When NOT to Use`; keep manual review evidence |
+
+### Skill Quality Findings
+
+| ID | Finding | Evidence path | Impact | Risk | Action type | Priority | Decision |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| SKILL-Q-001 | `workspace-harness-audit` had `When to Use` but no `When NOT to Use` section | `.claude/skills/workspace-harness-audit/skill.md` | Trigger boundary less precise | Low | improvement | P1 | Added section |
+| SKILL-Q-002 | Current prompt named exact skill-maker paths not all present in the path-level ledger | this plan | Replayability weaker | Low | supplementation | P1 | Added exact path rows |
+| SKILL-Q-003 | `skillify` could be misapplied to non-scrape workflow work | `gstack-skillify` skill body | Would create irrelevant artifacts | Low | deferral | P3 | Recorded as not applicable |
+| SKILL-Q-004 | Automated `skill-reviewer` loop was unavailable in the current repo harness | `skill-improver` prerequisites | Cannot prove plugin-dev review loop | Medium | deferral | P3 | Manual critical/major review used |
+
+### Skill Quality Implementation Plan
+
+| Action type | Target | Change | Required skill | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| improvement | `.claude/skills/workspace-harness-audit/skill.md` | Add `When NOT to Use` boundaries | `skill-creator`; `skill-developer`; `skill-improver` | T-035, T-036 | line count; repo quality gate | Revert section |
+| supplementation | this plan | Record skill lens application, findings, and exact paths | `skill-creator`; `skillify`; `skill-developer`; `skill-improver` | T-035, T-037 | targeted `rg`; repo quality gate | Revert this section |
+| supplementation | linked task | Add skill quality task rows and verification summary | `skill-creator`; `skill-developer`; `skill-improver` | T-035, T-038 | repo quality gate | Revert task additions |
+| supplementation | Spec 006 | Add skill quality acceptance criterion | `skill-creator`; `skill-developer`; `skill-improver` | T-035 | repo quality gate | Revert criterion |
+| memory | `docs/00.agent-governance/memory/progress.md` | Record skill quality follow-up and unavailable automated review loop | `skill-creator`; `skill-improver` | T-037 | repo quality gate | Revert progress entry |
+
+### Skill Quality Deferred Items
+
+| Target | Deferral reason | Required pre-check | Follow-up work |
+| --- | --- | --- | --- |
+| `skillify` browser-skill artifacts | No successful browser scrape flow exists in this task | Identify a real repeated scrape workflow | Run `skillify` only for browser automation codification |
+| automated `skill-reviewer` loop | `plugin-dev:skill-reviewer` is not part of this repo harness | Enable plugin-dev or expose the reviewer agent | Rerun `skill-improver` automated loop if available |
+| `agents/openai.yaml` metadata | Repo-local `.claude/skills/*/skill.md` roster does not use Codex skill package layout | Decide whether to package this as a Codex skill | Generate metadata only if promoted outside `.claude/skills` |
+
+### Skill Quality Verification Results
+
+| Command or method | Result | Record location |
+| --- | --- | --- |
+| `wc -l .claude/skills/workspace-harness-audit/skill.md` | PASS; 92 lines, under 500 lines | linked task |
+| `rg -n "When NOT to Use" .claude/skills/workspace-harness-audit/skill.md` | PASS | linked task |
+| `python3 .../quick_validate.py .claude/skills/workspace-harness-audit` | EXPECTED FAIL; repo uses lowercase `skill.md`, validator expects `SKILL.md` | linked task |
+| targeted skill quality evidence search | PASS | linked task |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | linked task |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | linked task |
+| `git diff --check` | PASS | linked task |
 
 ## Related Documents
 

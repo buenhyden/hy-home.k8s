@@ -44,6 +44,9 @@ pre-check와 follow-up으로 남긴다.
 - Treat `superpowers:executing-plans` as the execution workflow for the CEO
   review plan delta. Record plan review, task execution, verification, and the
   finish boundary in canonical SDD artifacts.
+- Treat skill creation/improvement prompts as requests to improve existing
+  repo-local skills first. Record not-applicable skill boundaries rather than
+  forcing unrelated skill workflows.
 
 ## Task Table
 
@@ -83,6 +86,10 @@ pre-check와 follow-up으로 남긴다.
 | T-032 | Record executing-plans task execution and finish boundary | doc | VAL-SPC-006-011 | Executing-Plans P1 | targeted evidence search | Platform | Done |
 | T-033 | Update reusable audit Skill and progress ledger for named execution-skill evidence | guardrail | VAL-SPC-006-011 | Executing-Plans P1 | repo quality gate | Platform | Done |
 | T-034 | Run executing-plans follow-up verification bundle | test | VAL-SPC-006-011 | Executing-Plans Verification | Executing-Plans Verification Summary | Platform | Done |
+| T-035 | Apply skill creation/improvement lenses to the repo-local audit Skill | doc | VAL-SPC-006-012 | Skill Quality Follow-up | Skill Quality Evidence | Platform | Done |
+| T-036 | Add `When NOT to Use` boundaries to workspace-harness-audit | guardrail | VAL-SPC-006-012 | Skill Quality P1 | line count and repo quality gate | Platform | Done |
+| T-037 | Record skill lens boundaries, deferred items, and progress memory | doc | VAL-SPC-006-012 | Skill Quality P1 | targeted evidence search | Platform | Done |
+| T-038 | Run skill quality follow-up verification bundle | test | VAL-SPC-006-012 | Skill Quality Verification | Skill Quality Verification Summary | Platform | Done |
 
 ## Suggested Types
 
@@ -159,6 +166,13 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-033 Update reusable audit Skill and progress ledger for named execution-skill evidence.
 - [x] T-034 Run executing-plans follow-up verification bundle.
 
+### Phase 10 - Skill Quality Follow-up
+
+- [x] T-035 Apply skill creation/improvement lenses to the repo-local audit Skill.
+- [x] T-036 Add `When NOT to Use` boundaries to workspace-harness-audit.
+- [x] T-037 Record skill lens boundaries, deferred items, and progress memory.
+- [x] T-038 Run skill quality follow-up verification bundle.
+
 ## Hybrid Refresh Evidence
 
 | Evidence item | Status | Location |
@@ -208,6 +222,16 @@ pre-check와 follow-up으로 남긴다.
 | Task execution table | complete | linked plan `Executing-Plans Task Execution` |
 | Finish boundary | complete; normal repo on `main`, no linked worktree | linked plan `Executing-Plans Verification Results` |
 | Reusable guardrail | complete | `.claude/skills/workspace-harness-audit/skill.md` |
+
+## Skill Quality Follow-up Evidence
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `skill-creator` application boundary | complete; update existing skill, no new package | linked plan `Skill Lens Application` |
+| `skillify` application boundary | complete; reviewed and marked not applicable | linked plan `Skill Lens Application` |
+| `skill-developer` application boundary | complete; `When NOT to Use` and 500-line checks applied | linked plan `Skill Quality Findings` |
+| `skill-improver` application boundary | partial; manual critical/major checklist applied, automated reviewer unavailable | linked plan `Skill Quality Deferred Items` |
+| Skill implementation | complete | `.claude/skills/workspace-harness-audit/skill.md` |
 
 ## Hybrid Refresh Path-Level Skill Check
 
@@ -341,6 +365,30 @@ is stored in the linked plan to keep this task document concise.
   - The finishing boundary was recorded as a normal-repo finish check, not a
     merge or PR flow, because no feature branch/worktree exists in this pass.
 
+## Skill Quality Follow-up Verification Summary
+
+- **Test Commands**:
+  - `test -f /home/hy/.codex/skills/.system/skill-creator/SKILL.md` - PASS.
+  - `test -f /home/hy/gstack/.agents/skills/gstack-skillify/SKILL.md` - PASS.
+  - `test -f /home/hy/.agents/skills/skill-developer/SKILL.md` - PASS.
+  - `test -f /home/hy/.codex/trailofbits-skills/plugins/skill-improver/skills/skill-improver/SKILL.md` - PASS.
+  - `wc -l .claude/skills/workspace-harness-audit/skill.md` - PASS; 92 lines, under 500 lines.
+  - `rg -n "When NOT to Use" .claude/skills/workspace-harness-audit/skill.md` - PASS after verification.
+  - Targeted skill quality evidence search - PASS after verification.
+  - `bash scripts/validate-repo-quality-gates.sh .` - PASS after verification.
+  - `bash scripts/generate-llm-wiki-index.sh --check` - PASS after verification.
+  - `git diff --check` - PASS after verification.
+- **Skipped / Deferred Verification**:
+  - `skill-creator` `quick_validate.py` was run once and failed with
+    `SKILL.md not found`; this is expected for repo-local `.claude/skills`
+    because the tracked convention is lowercase `skill.md`.
+  - `skill-improver` automated `skill-reviewer` loop was not run because
+    `plugin-dev:skill-reviewer` is not part of this repository harness.
+- **Implementation Decisions**:
+  - No new Skill package or `agents/openai.yaml` was created.
+  - `skillify` was not used to create scrape artifacts because this task did
+    not include a successful browser scrape flow.
+
 ## Verification Summary
 
 - **Test Commands**:
@@ -360,6 +408,8 @@ is stored in the linked plan to keep this task document concise.
     plan/task and unresolved items remain deferred.
   - Executing-plans follow-up - PASS; plan load/review/execution/verification
     and finish boundary are recorded.
+  - Skill quality follow-up - PASS; named skill-maker paths, `When NOT to Use`,
+    line count, and deferred reviewer boundaries are recorded.
   - `git diff --check` - PASS.
 - **Eval Commands**: No live model or subagent pressure eval was run. The
   repo-local Skill addition was checked through repository quality gates,

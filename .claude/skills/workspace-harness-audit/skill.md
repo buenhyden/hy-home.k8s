@@ -17,6 +17,16 @@ safe implementation in `hy-home.k8s`.
 - Changes that span docs lifecycle, GitOps, scripts, QA, CI/CD, and agent
   governance.
 
+## When NOT to Use
+
+- Narrow single-file doc edits with no workspace-wide coverage or governance
+  impact.
+- Live cluster incident response, unless the task is only planning or
+  documenting approved read-only checks.
+- Generic Kubernetes manifest authoring when `gitops-workflow`,
+  `k8s-validate`, or `k8s-security-audit` is the narrower match.
+- Browser scrape codification or UI automation skill creation.
+
 ## Workflow Steps
 
 1. Read `AGENTS.md`, `.claude/CLAUDE.md`, governance rules, templates, and the
