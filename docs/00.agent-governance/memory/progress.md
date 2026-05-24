@@ -8,6 +8,78 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-24 — workspace harness hybrid refresh
+
+- **Date**: 2026-05-24
+- **Layer**: docs, meta, scripts, qa
+- **Status**: complete
+- **Tags**: #governance #skills #validation #harness #hybrid-refresh
+
+#### Progress
+
+- Reran six read-only role reviews for the workspace harness Hybrid Refresh:
+  Documentation Lifecycle, Agent Governance, Scripts, GitOps Infrastructure,
+  Environment Quality, and Skills & Harness.
+- Preserved the fresh role review tables in the linked plan and added a
+  path-level external `SKILL.md` presence ledger; all requested paths were
+  present in the current WSL environment.
+- Promoted Spec 006 from `draft` to `active` to match the stage README index and
+  added `VAL-SPC-006-006` for Hybrid Refresh evidence.
+- Made `.claude/hooks/session-start.sh` skip live `k3d`/`kubectl` probes unless
+  `HY_HOME_K8S_ENABLE_SESSION_LIVE_PROBES=1` is explicitly set.
+- Added `_workspace/` and `_workspace_prev/` to `.gitignore` as approved scratch
+  paths for checked-in skills that define temporary analysis workspaces.
+- Clarified meta ownership for tracked hook/skill/Codex runtime contract
+  surfaces and added per-skill workflow/reference-pattern contract type in the
+  harness catalog.
+- Refreshed scripts/examples evidence wording so inventory and cloud example
+  freshness point to the current 2026-05-24/Cloud Example Snapshot evidence.
+
+#### Memory
+
+- For no-live audit tasks, leave `HY_HOME_K8S_ENABLE_SESSION_LIVE_PROBES`
+  unset. Set it to `1` only when the human approves read-only live startup
+  probes.
+- Store external skill checks path-by-path when a prompt requires exact
+  `SKILL.md` path verification.
+- Treat `_workspace/` and `_workspace_prev/` as scratch-only; durable evidence
+  must move into the canonical docs taxonomy before completion.
+- Keep P3 GitOps, Vault, AppProject, bootstrap ownership, CI supply-chain,
+  local settings precedence, graphify cleanup, and live validation decisions in
+  separate reviewed tasks.
+
+#### Evidence
+
+- `docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md`
+  contains the Hybrid Refresh Coverage Ledger, Integrated Gap Analysis,
+  Implementation Plan, raw role review tables, path-level skill check,
+  verification results, checklist gate, and Hybrid Final Report.
+- `docs/04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md`
+  tracks T-014 through T-020 and the Hybrid Refresh verification summary.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS with root app manifest
+  count 17.
+- `bash scripts/validate-k8s-manifests.sh .` PASS for YAML syntax; optional
+  `kube-linter` skipped because it is not installed locally.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+- `python3 -m json.tool .claude/settings.json` PASS.
+- `python3 -m json.tool .codex/hooks.json` PASS.
+- `.env.example` and `.env` key-name-only comparison PASS after Bash rerun
+  without printing values.
+- `git diff --check` PASS.
+
+#### Handoff
+
+- Live k3d/ArgoCD/Vault/ESO state remains unknown by design; run only
+  explicitly approved read-only live checks.
+- `.claude/settings.local.json` precedence and ignored graphify cleanup remain
+  deferred owner decisions.
+
+---
+
 ### 2026-05-24 — workspace harness input reflection follow-up
 
 - **Date**: 2026-05-24

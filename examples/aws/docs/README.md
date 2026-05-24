@@ -4,7 +4,7 @@
 
 ## Overview
 
-이 디렉토리는 `hy-home.k8s` 인프라를 AWS EKS 1.35 target 및 Managed Services 환경으로 전환할 때 참고하는 설계, 계획, 운영 문서 예시를 포함합니다. 2026-05-09 공식 지원 스냅샷 기준으로 구축된 reference-only 영역이며, 현재 로컬 플랫폼의 active SSoT나 실제 AWS 배포 절차를 대체하지 않습니다.
+이 디렉토리는 `hy-home.k8s` 인프라를 AWS EKS 1.35 target 및 Managed Services 환경으로 전환할 때 참고하는 설계, 계획, 운영 문서 예시를 포함합니다. 버전 현재성은 [Tech Stack Version Inventory](../../../docs/90.references/versions/tech-stack-version-inventory.md)의 `Cloud Example Snapshot`을 기준으로 확인하며, 현재 로컬 플랫폼의 active SSoT나 실제 AWS 배포 절차를 대체하지 않습니다.
 
 ## Audience
 

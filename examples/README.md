@@ -4,7 +4,7 @@
 
 ## Overview
 
-이 경로는 실제 운영 manifest의 복제본이 아니라, 새 앱 또는 cloud target을 설계할 때 참고하는 예시를 담는다. `sample-app/`은 로컬 k3d GitOps 온보딩 템플릿이고, `aws/`, `azure/`는 2026-05-09 공식 지원 스냅샷 기준의 cloud migration 참조 자산이다.
+이 경로는 실제 운영 manifest의 복제본이 아니라, 새 앱 또는 cloud target을 설계할 때 참고하는 예시를 담는다. `sample-app/`은 로컬 k3d GitOps 온보딩 템플릿이고, `aws/`, `azure/`는 [Tech Stack Version Inventory](../docs/90.references/versions/tech-stack-version-inventory.md)의 `Cloud Example Snapshot` 기준을 따르는 cloud migration 참조 자산이다.
 
 AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 실제 배포 전에 각 provider의 최신 지원 버전, 비용, IAM/RBAC, 네트워크 경계를 다시 확인해야 한다.
 

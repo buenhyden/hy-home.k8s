@@ -5,7 +5,7 @@
 ## Overview
 
 `scripts/`는 k3d/GitOps 저장소를 live cluster mutation 없이 검증하기 위한 repo-backed 유틸리티를 보관한다.
-2026-05-17 기준 현재 `*.sh` 스크립트 5개는 모두 유지 대상이며, Tier C-only, unused, one-off 삭제 후보는 없다.
+2026-05-24 기준 현재 `*.sh` 스크립트 5개는 모두 유지 대상이며, Tier C-only, unused, one-off 삭제 후보는 없다.
 
 이 영역은 GitOps manifest 자체(`gitops/`)나 live runtime 점검(`infrastructure/tests/`)을 대체하지 않는다.
 대신 CI, post-edit hook, 필수 품질 게이트, 수동 검증 문서가 호출하거나 허용하는 반복 가능한 정적 검증 명령을 제공한다.
@@ -80,7 +80,7 @@ scripts/
 | `check-secret-handling.sh` | Keep | Tier A: CI `manifest-static`와 post-edit manifest hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, GitOps READMEs | GitOps, infrastructure, examples manifest의 plaintext secret pattern을 검사한다. |
 | `generate-llm-wiki-index.sh` | Keep | Tier B indirect: 필수 `validate-repo-quality-gates.sh`가 `--check`로 간접 실행하고 `docs/90.references/llm-wiki/wiki-index.md` generated artifact contract를 소유한다. | root README, `scripts/README.md`, `.claude/settings.json`, LLM Wiki guide, references README, generated wiki index, document stage routing | `docs/90.references/llm-wiki/wiki-index.md`를 Markdown-only canonical-owner link map으로 결정적으로 재생성하거나 검사한다. |
 
-2026-05-17 기준 Tier C-only, unused, one-off 삭제 후보는 없다.
+2026-05-24 기준 Tier C-only, unused, one-off 삭제 후보는 없다.
 
 ## 통합하지 않는 기준
 

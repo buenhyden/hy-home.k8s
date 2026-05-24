@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Harness Gap Analysis Technical Specification'
 type: spec
-status: draft
+status: active
 owner: 'platform'
 updated: 2026-05-24
 ---
@@ -169,6 +169,9 @@ git diff --check
   missing paths, if any, are recorded as Gaps.
 - **VAL-SPC-006-005**: Repeated broad workspace audit workflow is captured in a
   repo-local Skill or explicitly deferred with rationale.
+- **VAL-SPC-006-006**: Hybrid refresh evidence preserves current role-based
+  subagent results, path-level external skill checks, repo-static verification,
+  and any new safe P1/P2 guardrail changes.
 
 ## Related Documents
 

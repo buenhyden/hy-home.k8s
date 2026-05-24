@@ -27,8 +27,10 @@ pre-check와 follow-up으로 남긴다.
 - Keep human-facing README files in Korean.
 - Do not implement high-risk Kubernetes, ArgoCD, Vault, CI policy, or live
   runtime changes in this task.
-- Use previous subagent results as investigation evidence and do not rerun
-  subagents unless evidence becomes stale.
+- Use previous subagent results as investigation evidence unless evidence
+  becomes stale. The 2026-05-24 Hybrid Refresh intentionally reran all six
+  read-only role reviews for freshness and preserved the fresh tables in the
+  linked plan.
 
 ## Task Table
 
@@ -47,6 +49,13 @@ pre-check와 follow-up으로 남긴다.
 | T-011 | Verify exact required external `SKILL.md` paths | guardrail | VAL-SPC-006-004 | PLN-007 | skill path check | Platform | Done |
 | T-012 | Add repo-local workspace harness audit skill | guardrail | VAL-SPC-006-005 | PLN-007 | repo quality gate | Platform | Done |
 | T-013 | Add row-level required skill evidence to the Implementation Plan | doc | VAL-SPC-006-004 | PLN-007 | repo quality gate | Platform | Done |
+| T-014 | Rerun six read-only role reviews for Hybrid Refresh freshness | doc | VAL-SPC-006-006 | Hybrid Refresh | raw role tables in linked plan | Platform | Done |
+| T-015 | Record path-level external `SKILL.md` presence results | guardrail | VAL-SPC-006-006 | Hybrid Refresh | path-level ledger in linked plan/task | Platform | Done |
+| T-016 | Align Spec status, plan heading hierarchy, and governance metadata | doc | VAL-SPC-006-006 | Hybrid P1 | repo quality gate | Platform | Done |
+| T-017 | Clarify meta runtime ownership and per-skill contract type | guardrail | VAL-SPC-006-006 | Hybrid P1 | repo quality gate | Platform | Done |
+| T-018 | Refresh scripts/examples evidence wording without semantic changes | doc | VAL-SPC-006-006 | Hybrid P1 | repo quality gate | Platform | Done |
+| T-019 | Make SessionStart live probes opt-in and ignore scratch workspaces | guardrail | VAL-SPC-006-006 | Hybrid P2 | shell syntax and repo quality gate | Platform | Done |
+| T-020 | Run Hybrid Refresh repo-static verification bundle | test | VAL-SPC-006-006 | Hybrid Verification | Hybrid Refresh Verification Summary | Platform | Done |
 
 ## Suggested Types
 
@@ -86,6 +95,55 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-011 Verify exact required external `SKILL.md` paths.
 - [x] T-012 Add repo-local workspace harness audit skill.
 - [x] T-013 Add row-level required skill evidence to the Implementation Plan.
+
+### Phase 5 - Hybrid Refresh
+
+- [x] T-014 Rerun six read-only role reviews.
+- [x] T-015 Record path-level external `SKILL.md` results.
+- [x] T-016 Align lifecycle status, heading hierarchy, and metadata.
+- [x] T-017 Clarify runtime ownership and skill contract types.
+- [x] T-018 Refresh scripts/examples evidence wording.
+- [x] T-019 Gate live startup probes and ignore scratch workspaces.
+- [x] T-020 Run Hybrid Refresh verification bundle.
+
+## Hybrid Refresh Evidence
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| Six fresh read-only subagent reviews | complete | linked plan `Hybrid Raw Subagent Output Preservation` |
+| Path-level external `SKILL.md` check | complete; all paths present | linked plan `Hybrid Path-Level External Skill Check` |
+| P1/P2 implementation mapping | complete | linked plan `Hybrid Implementation Plan` |
+| P3 deferred items | complete | linked plan `Hybrid Integrated Gap Analysis` and `Hybrid Implementation Plan` |
+| Fresh verification bundle | complete | this task `Hybrid Refresh Verification Summary` |
+
+## Hybrid Refresh Path-Level Skill Check
+
+All external `SKILL.md` paths requested by the task contract were checked in the
+current WSL environment. Result: PASS; no missing paths. The path-by-path ledger
+is stored in the linked plan to keep this task document concise.
+
+## Hybrid Refresh Verification Summary
+
+- **Test Commands**:
+  - `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+  - `bash scripts/generate-llm-wiki-index.sh --check` - PASS.
+  - `bash scripts/validate-gitops-structure.sh` - PASS; root app manifest count: 17.
+  - `bash scripts/validate-k8s-manifests.sh .` - PASS for YAML syntax; optional `kube-linter` skipped because it is not installed locally.
+  - `bash scripts/check-secret-handling.sh .` - PASS.
+  - `bash infrastructure/tests/verify-contracts-static.sh` - PASS.
+  - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` - PASS.
+  - `python3 -m json.tool .claude/settings.json` - PASS.
+  - `python3 -m json.tool .codex/hooks.json` - PASS.
+  - `.env.example` and `.env` key-name-only comparison - PASS after Bash rerun; key names match without printing values.
+  - `git diff --check` - PASS.
+- **Skipped / Deferred Verification**:
+  - live k3d, ArgoCD, Vault, ESO, PostgreSQL, Valkey, TLS, and NetworkPolicy checks require explicit live validation approval.
+  - optional `kube-linter` is not installed locally; YAML syntax validation and static contract verification were used as local alternatives.
+  - remote GitHub Actions status, branch protection, and rulesets were not queried from the worktree.
+- **Implementation Decisions**:
+  - `SessionStart` live probes now require explicit `HY_HOME_K8S_ENABLE_SESSION_LIVE_PROBES=1`.
+  - `_workspace/` and `_workspace_prev/` are ignored as scratch paths.
+  - P3 GitOps, Vault, AppProject, bootstrap ownership, CI supply-chain, local settings precedence, graphify cleanup, and live validation items remain deferred.
 
 ## Verification Summary
 
