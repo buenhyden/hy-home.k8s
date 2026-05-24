@@ -194,6 +194,10 @@ git diff --check
   is implemented through repository desired-state changes, static contract
   validation, and read-only runtime metadata checks with unavailable-live-state
   results recorded instead of treated as passed.
+- **VAL-SPC-006-010**: `gstack-plan-ceo-review` is applied as a HOLD SCOPE
+  current-state review for first-input coverage drift, with exact named skill
+  path evidence, P3 supersession status, implementation plan, and verification
+  preserved in canonical SDD artifacts.
 
 ## Related Documents
 

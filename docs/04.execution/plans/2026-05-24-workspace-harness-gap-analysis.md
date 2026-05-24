@@ -58,6 +58,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | PLN-007 | Audit unreflected input tasks and close safe follow-up gaps | this plan, linked task, `harness-catalog.md`, `.claude/skills/workspace-harness-audit/skill.md` | REQ-INPUT-REFLECTION | Skill path check PASS and repo quality gate PASS |
 | PLN-008 | Apply `office-hours` reflection to initial-contract coverage | this plan, linked task, `workspace-harness-audit` skill, progress ledger | REQ-INPUT-REFLECTION | Office-hours boundary recorded and repo quality gate PASS |
 | PLN-009 | Apply `superpowers:brainstorming` design-lens review to remaining initial-contract coverage | this plan, linked task, `workspace-harness-audit` skill, progress ledger | REQ-INPUT-REFLECTION | Brainstorming alternatives, selected design, and verification recorded |
+| PLN-010 | Apply `gstack-plan-ceo-review` to current Hybrid coverage drift | this plan, linked task, Spec 006, `workspace-harness-audit` skill, progress ledger | REQ-INPUT-REFLECTION | CEO review findings, current-state overlay, and verification recorded |
 
 ## Verification Plan
 
@@ -75,6 +76,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | VAL-PLN-010 | Git hygiene | Whitespace sanity | `git diff --check` | PASS |
 | VAL-PLN-011 | Named skill evidence | Office-hours/input-contract reflection and heading hygiene | `rg -n "^# " docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md` plus repo quality gate | only document title remains as H1; office-hours section present |
 | VAL-PLN-012 | Brainstorming evidence | Brainstorming design-lens section and canonical SDD routing | targeted `rg` check for Brainstorming section names plus repo quality gate | section and selected design present |
+| VAL-PLN-013 | CEO review evidence | `gstack-plan-ceo-review` current-state overlay and initial-contract coverage ledger | targeted `rg` check for CEO review sections plus repo quality gate | sections, findings, and overlay present |
 
 ## Risks & Mitigations
 
@@ -87,6 +89,8 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | Empty root app set passes validation | Medium | Add explicit non-kustomization root app manifest assertion |
 | Named design-only review skill conflicts with implementation request | Low | Use the skill as a review lens, record the boundary, and keep implementation governed by the direct task contract |
 | Named brainstorming skill defaults to off-taxonomy design docs | Low | Preserve the design review in existing SDD spec/task/plan artifacts unless the human explicitly requests a separate design document |
+| `gstack-plan-ceo-review` preamble writes outside the workspace | Medium | Use the review workflow as a repo-static lens and record that external-write preamble/telemetry steps were not run |
+| Earlier Hybrid P3 rows become stale after approved follow-up work | Medium | Add a current-state overlay that links resolved P3 items to the P3 plan instead of rewriting historical evidence |
 
 ## Agent Rollout & Evaluation Gates (If Applicable)
 
@@ -113,6 +117,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 - [x] Checklist gate completed.
 - [x] Final Report created.
 - [x] Input reflection follow-up completed.
+- [x] CEO review follow-up completed.
 
 ## Coverage Ledger
 
@@ -532,6 +537,8 @@ creating an off-taxonomy design document.
 | Skill path | Result |
 | --- | --- |
 | `/home/hy/.agents/skills/grill-with-docs/SKILL.md` | present |
+| `/home/hy/.agents/skills/brainstorming/SKILL.md` | present |
+| `/home/hy/.agents/skills/gstack/plan-ceo-review/SKILL.md` | present |
 | `/home/hy/.agents/skills/documentation-writer/SKILL.md` | present |
 | `/home/hy/.agents/skills/humanizer/SKILL.md` | present |
 | `/home/hy/gstack/.agents/skills/gstack-document-release/SKILL.md` | present |
@@ -1059,6 +1066,113 @@ repository-relative paths where that improves readability.
 - Verify optional toolchain and GitHub rulesets outside this local static pass.
 - Do not reconstruct historical raw subagent output tables without authoritative
   source output; preserve them directly in future workspace harness audits.
+
+## CEO Review Follow-up - 2026-05-24
+
+### CEO Review Scope
+
+`/home/hy/.agents/skills/gstack/plan-ceo-review/SKILL.md` was applied in
+HOLD SCOPE mode. The goal was not to expand the platform, but to pressure-test
+whether the first user task contract still had weak or missing evidence in the
+Hybrid Refresh plan after the later P3 remediation commits.
+
+The skill preamble, design-doc persistence, and telemetry steps were not run
+because they write to `~/.gstack` outside the repository. The review was
+preserved in canonical SDD artifacts instead.
+
+### CEO System Audit
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Current branch | `main` | `git branch --show-current` |
+| Base branch | `origin/main` | `git symbolic-ref refs/remotes/origin/HEAD` |
+| Worktree before edits | clean | `git status --short` |
+| Recent history | P3 remediation and follow-up evidence are the latest commits | `git log --oneline -30` |
+| Stashes | none | `git stash list` |
+| TODO/FIXME scan | only template/example TODO-like references found | `rg -l "TODO\|FIXME\|HACK\|XXX"` |
+| Design doc | not used | canonical SDD plan/task/spec are the source of truth for this repository task |
+
+### CEO Mode and Alternatives
+
+| Approach | Summary | Effort | Risk | Pros | Cons | Reuses |
+| --- | --- | --- | --- | --- | --- | --- |
+| A. Minimal current-state overlay | Add only the missing skill-path evidence and a P3 supersession note. | S | Low | Small diff; fixes the stale claims | Does not improve future audit behavior much | Existing plan/task |
+| B. Canonical CEO follow-up | Add CEO review findings, coverage matrix, P3 current-state overlay, task/spec/progress evidence, and skill guardrail. | M | Low | Fixes the current gap and prevents the same drift later | More documentation rows | Existing Spec 006, plan/task, `workspace-harness-audit` |
+| C. New separate CEO plan | Create a standalone CEO review plan/task pair. | M | Medium | Isolates the review | File proliferation and weaker continuity | Existing templates |
+
+**Recommendation**: choose Approach B. It closes the real gaps without creating
+another parallel artifact tree.
+
+### CEO Initial-Contract Coverage Ledger
+
+| Initial input requirement | Current Hybrid evidence | CEO judgment | Action |
+| --- | --- | --- | --- |
+| Use `grill-with-docs` to review all entered matters | Plan/task record `grill-with-docs`, Office-Hours, and Brainstorming follow-ups | complete | Keep evidence |
+| Consider low, medium, and high risk | P1/P2/P3 tables exist and P3 follow-up has separate plan/task | complete | Add current-state overlay |
+| Check exact required `SKILL.md` paths | Hybrid path ledger exists, but it omitted the first prompt's `brainstorming` exact path | weak evidence | Add `/home/hy/.agents/skills/brainstorming/SKILL.md` |
+| Record current named `gstack-plan-ceo-review` usage | No prior durable evidence for this named skill | gap | Add this CEO Review Follow-up |
+| Keep `AGENTS.md` as thin gateway | Gateway remains thin; routing lives in governance docs | complete | No change |
+| Preserve P3 items and follow-up work | Historical Hybrid rows still say selected P3 items are deferred even after approved P3 remediation | stale evidence | Add P3 current-state overlay |
+| Run six role-based subagent reviews for Hybrid freshness | Fresh role tables are preserved in the plan | complete | No change |
+| Preserve raw Summary/Ledger/Candidates/Unknown shape | Hybrid plan preserves fresh tables; historical raw tables remain unavailable | partial but explicit | Keep limitation |
+| Run verification and checklist gates | Static gates recorded; live runtime remains unavailable | complete with limitation | Keep live limitation |
+| Commit by task unit | Recent commits are task-sized: plan, implementation, evidence | complete | Record in progress entry |
+
+### CEO Findings
+
+| ID | Finding | Evidence path | Impact | Risk | Action type | Priority | Decision |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| CEO-001 | First prompt's exact `brainstorming` skill path was not represented in the Hybrid path-level ledger | this plan `Hybrid Path-Level External Skill Check` | Missing-path replayability gap | Low | supplementation | P1 | Implemented in this plan |
+| CEO-002 | Current `gstack-plan-ceo-review` application was not durably recorded | current user request; this plan | Named-skill evidence gap | Low | supplementation | P1 | Implemented in this plan/task/spec/progress |
+| CEO-003 | Hybrid P3 deferred status became stale after approved P3 remediation | P3 plan/task; commits `c22a961`, `c184e57` | Readers may think resolved GitOps/Vault/ESO items are still only planned | Medium | supplementation | P1 | Add current-state overlay |
+| CEO-004 | Hybrid verification summaries still record root app count 17 from the pre-P3 state | P3 validation shows root app count 18 | Current-state confusion | Medium | supplementation | P1 | Add current-state verification note |
+| CEO-005 | `workspace-harness-audit` does not explicitly require stale-deferral overlays after follow-up work changes status | `.claude/skills/workspace-harness-audit/skill.md` | Future plans can drift after follow-up commits | Low | improvement | P1 | Update skill |
+
+### CEO P3 Current-State Overlay
+
+This overlay does not rewrite the historical Hybrid Refresh finding. It records
+the current state after the approved P3 remediation work.
+
+| Former Hybrid P3 item | Current state | Evidence | Remaining risk |
+| --- | --- | --- | --- |
+| ESO DNS/API egress | resolved in repo desired state | `gitops/platform/network-policies/external-secrets-egress-to-vault.yaml`; P3 plan/task; commit `c22a961` | Live ESO behavior still unverified because local cluster API was unavailable |
+| Vault `platform/notifications` policy | resolved in repo desired state | `infrastructure/vault/policies/eso-read.hcl`; P3 plan/task; commit `c22a961` | Vault KV values and live ESO readiness not inspected |
+| AppProject `ExternalSecret` permission and sample key format | resolved in repo desired state | `gitops/clusters/local/appproject-apps.yaml`; `examples/sample-app/external-secret.yaml`; commit `c22a961` | Live ArgoCD sync not verified |
+| `gitops/clusters/local` bootstrap CR ownership | resolved in repo desired state | `gitops/apps/root/platform-cluster-config-app.yaml`; `gitops/clusters/local/kustomization.yaml`; commit `c22a961` | Existing clusters may require bootstrap handoff |
+| GitHub Actions SHA pinning and ruleset policy | still deferred | `.github/zizmor.yml`; workflow review rows | Requires CI governance decision |
+| `.claude/settings.local.json` precedence | still deferred | local settings review rows | Requires provider precedence simulation or owner decision |
+| ignored graphify cleanup | still deferred | `.agents/rules/graphify.md`; `.agents/workflows/graphify.md` | Requires local owner decision |
+| live k3d/ArgoCD/Vault/ESO validation | attempted and current-state failed | P3 task runtime check results | Start `k3d-hyhome`, then rerun read-only metadata checks |
+
+### CEO Implementation Plan
+
+| Action type | Target | Change | Required skill | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| supplementation | this plan | Add CEO review coverage ledger, findings, and current-state overlay | `gstack-plan-ceo-review`; `workspace-harness-audit`; `documentation-writer` | T-027, T-028 | repo quality gate; targeted `rg` | Revert this section |
+| supplementation | linked task | Add CEO review task rows and verification summary | `gstack-plan-ceo-review`; `documentation-writer` | T-027, T-030 | repo quality gate | Revert task additions |
+| supplementation | Spec 006 | Add CEO review acceptance criterion | `gstack-plan-ceo-review`; `documentation-writer` | T-027 | repo quality gate | Revert criterion |
+| improvement | `.claude/skills/workspace-harness-audit/skill.md` | Require current-state overlays when follow-up work changes prior deferred status | `gstack-plan-ceo-review`; `skill-improver`; `agent-md-refactor` | T-029 | repo quality gate | Revert skill wording |
+| memory | `docs/00.agent-governance/memory/progress.md` | Record CEO review result and remaining risks | `gstack-plan-ceo-review`; `workspace-harness-audit` | T-029 | repo quality gate | Revert progress entry |
+
+### CEO Deferred Items
+
+| Target | Deferral reason | Required pre-check | Follow-up work |
+| --- | --- | --- | --- |
+| Live ArgoCD/Vault/ESO readiness proof | Local cluster API refused connection during approved P3 read-only checks | Start `k3d-hyhome`; wait for ArgoCD reconciliation | Rerun metadata-only checks from the P3 task |
+| GitHub Actions SHA pinning and ruleset policy | Remote governance decision, not a repo-static fix | Inspect current branch protection/rulesets and CI requirements | Separate CI supply-chain task |
+| `.claude/settings.local.json` precedence hardening | Local provider behavior can change runtime permissions | Non-destructive precedence simulation or provider documentation review | Separate local-runtime hardening task |
+| graphify local cleanup | Ignored local files may be user-specific | Owner decision whether to delete locally or promote to governed docs | Separate local cleanup task |
+
+### CEO Verification Results
+
+| Command or method | Result | Record location |
+| --- | --- | --- |
+| `test -f /home/hy/.agents/skills/brainstorming/SKILL.md` | PASS | this section |
+| `test -f /home/hy/.agents/skills/gstack/plan-ceo-review/SKILL.md` | PASS | this section |
+| `git diff origin/main --stat` before edits | clean | system audit |
+| `git stash list` | no stashes | system audit |
+| current root app count after P3 | PASS; root app manifest count is 18 | `bash scripts/validate-gitops-structure.sh` |
+| targeted CEO evidence search | PASS | linked task CEO summary |
 
 ## Related Documents
 

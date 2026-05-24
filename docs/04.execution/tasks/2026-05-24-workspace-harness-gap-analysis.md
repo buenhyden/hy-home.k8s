@@ -38,6 +38,9 @@ pre-check와 follow-up으로 남긴다.
   approved implementation objective. Its standalone design-doc/user-approval
   default is recorded as a boundary rather than replacing the repository SDD
   artifact flow.
+- Treat `gstack-plan-ceo-review` as a HOLD SCOPE plan-quality lens for
+  current-state drift. Its external-write preamble and telemetry steps are not
+  run; canonical SDD artifacts remain the evidence target.
 
 ## Task Table
 
@@ -69,6 +72,10 @@ pre-check와 follow-up으로 남긴다.
 | T-024 | Apply superpowers brainstorming reflection to remaining initial-contract omissions | doc | VAL-SPC-006-008 | Brainstorming Reflection | Brainstorming Reflection Evidence | Platform | Done |
 | T-025 | Update plan and repo-local Skill for canonical SDD routing of named review skills | guardrail | VAL-SPC-006-008 | Brainstorming P1 | repo quality gate and evidence search | Platform | Done |
 | T-026 | Run Brainstorming follow-up verification bundle | test | VAL-SPC-006-008 | Brainstorming Verification | Brainstorming Follow-up Verification Summary | Platform | Done |
+| T-027 | Apply gstack plan CEO review to initial-contract and Hybrid current-state drift | doc | VAL-SPC-006-010 | CEO Review Follow-up | CEO Review Evidence | Platform | Done |
+| T-028 | Add P3 current-state overlay and missing exact skill path evidence | doc | VAL-SPC-006-010 | CEO Review P1 | repo quality gate and targeted evidence search | Platform | Done |
+| T-029 | Update reusable audit Skill and progress ledger for stale-deferral overlays | guardrail | VAL-SPC-006-010 | CEO Review P1 | repo quality gate | Platform | Done |
+| T-030 | Run CEO follow-up verification bundle | test | VAL-SPC-006-010 | CEO Review Verification | CEO Review Verification Summary | Platform | Done |
 
 ## Suggested Types
 
@@ -131,6 +138,13 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-025 Update canonical SDD routing evidence for named review skills.
 - [x] T-026 Run Brainstorming follow-up verification bundle.
 
+### Phase 8 - GStack Plan CEO Review Follow-up
+
+- [x] T-027 Apply gstack plan CEO review to initial-contract and Hybrid current-state drift.
+- [x] T-028 Add P3 current-state overlay and missing exact skill path evidence.
+- [x] T-029 Update reusable audit Skill and progress ledger for stale-deferral overlays.
+- [x] T-030 Run CEO follow-up verification bundle.
+
 ## Hybrid Refresh Evidence
 
 | Evidence item | Status | Location |
@@ -160,6 +174,16 @@ pre-check와 follow-up으로 남긴다.
 | Canonical SDD routing decision | complete | linked plan `Brainstorming Deferred Items`; `.claude/skills/workspace-harness-audit/skill.md` |
 | Low/medium/high risk treatment | complete; existing P1/P2/P3 kept | linked plan `Brainstorming Delta Gap Analysis` and `Hybrid Implementation Plan` |
 | Template-change impact rule | complete; no `docs/99.templates/` changes made | linked plan `Brainstorming Selected Design` |
+
+## CEO Review Follow-up Evidence
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `gstack-plan-ceo-review` application boundary | complete; used as HOLD SCOPE review lens only | linked plan `CEO Review Follow-up` |
+| Missing exact `brainstorming` path check | complete; path present | linked plan `Hybrid Path-Level External Skill Check` |
+| Current `gstack-plan-ceo-review` path check | complete; path present | linked plan `Hybrid Path-Level External Skill Check` |
+| P3 current-state overlay | complete | linked plan `CEO P3 Current-State Overlay` |
+| Stale-deferral future guardrail | complete | `.claude/skills/workspace-harness-audit/skill.md` |
 
 ## Hybrid Refresh Path-Level Skill Check
 
@@ -245,6 +269,28 @@ is stored in the linked plan to keep this task document concise.
     off-taxonomy design-doc locations for named review skills unless the human
     explicitly requests a separate design document.
 
+## CEO Review Follow-up Verification Summary
+
+- **Test Commands**:
+  - `test -f /home/hy/.agents/skills/brainstorming/SKILL.md` - PASS.
+  - `test -f /home/hy/.agents/skills/gstack/plan-ceo-review/SKILL.md` - PASS.
+  - Targeted CEO evidence search - PASS after verification.
+  - `bash scripts/validate-repo-quality-gates.sh .` - PASS after verification.
+  - `bash scripts/generate-llm-wiki-index.sh --check` - PASS after verification.
+  - `bash scripts/validate-gitops-structure.sh` - PASS after verification;
+    root app manifest count is 18.
+  - `git diff --check` - PASS after verification.
+- **Skipped / Deferred Verification**:
+  - `gstack-plan-ceo-review` preamble, design-doc persistence, and telemetry
+    were not run because they write to `~/.gstack` outside the workspace.
+  - Live k3d/ArgoCD/Vault/ESO proof remains deferred until `k3d-hyhome` is
+    running and read-only metadata checks can connect to the API server.
+- **Implementation Decisions**:
+  - No new Kubernetes, Vault, CI, secret/env, or runtime semantic change was
+    made in this follow-up.
+  - Historical Hybrid rows remain as historical evidence; current state is
+    recorded through the CEO P3 overlay.
+
 ## Verification Summary
 
 - **Test Commands**:
@@ -260,6 +306,8 @@ is stored in the linked plan to keep this task document concise.
   - `.env.example` and `.env` key-name-only comparison - PASS; key names match without printing values.
   - required external `SKILL.md` path existence check - PASS; all listed paths present.
   - Implementation Plan row-level `Required skill` check - PASS; P1/P2/P3 rows carry skill evidence.
+  - CEO review current-state overlay - PASS; resolved P3 items link to the P3
+    plan/task and unresolved items remain deferred.
   - `git diff --check` - PASS.
 - **Eval Commands**: No live model or subagent pressure eval was run. The
   repo-local Skill addition was checked through repository quality gates,

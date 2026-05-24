@@ -8,6 +8,58 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-24 — gstack plan CEO review follow-up
+
+- **Date**: 2026-05-24
+- **Layer**: docs, meta, governance
+- **Status**: complete
+- **Tags**: #governance #gstack #validation #harness #ceo-review
+
+#### Progress
+
+- Applied `gstack-plan-ceo-review` in HOLD SCOPE mode to check whether the first
+  workspace improvement task contract still had weak or missing evidence in the
+  Hybrid Refresh plan after the approved P3 remediation work.
+- Recorded that the skill's external-write preamble, design-doc persistence, and
+  telemetry steps were not run because this repository keeps durable evidence in
+  canonical SDD artifacts and the preamble writes under `~/.gstack`.
+- Added missing exact path evidence for
+  `/home/hy/.agents/skills/brainstorming/SKILL.md` and
+  `/home/hy/.agents/skills/gstack/plan-ceo-review/SKILL.md`.
+- Added a current-state overlay so Hybrid P3 rows that were later implemented by
+  the approved P3 plan no longer read as the only active status.
+- Updated `workspace-harness-audit` so future follow-up work records stale
+  deferral overlays instead of leaving old P3 rows as the last visible truth.
+
+#### Memory
+
+- When a later approved task resolves a deferred item from a prior workspace
+  harness audit, do not rewrite historical evidence. Add a current-state overlay
+  linking the resolving plan/task/commit and leave remaining risk explicit.
+- Treat `gstack-plan-ceo-review` as a review lens for this repository unless the
+  human explicitly approves external `~/.gstack` writes or asks for gstack's
+  separate design-doc workflow.
+
+#### Evidence
+
+- `docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md`
+  contains the CEO Review Follow-up, initial-contract coverage ledger, P3
+  current-state overlay, implementation plan, and deferred items.
+- `docs/04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md`
+  tracks T-027 through T-030 and the CEO Review verification summary.
+- `docs/03.specs/006-workspace-harness-gap-analysis/spec.md` includes
+  VAL-SPC-006-010 for the CEO review follow-up.
+- `.claude/skills/workspace-harness-audit/skill.md` now requires current-state
+  overlays when follow-up work changes earlier deferred status.
+
+#### Handoff
+
+- Remaining unresolved items are live runtime proof, GitHub Actions SHA/ruleset
+  policy, `.claude/settings.local.json` precedence, and ignored graphify local
+  cleanup.
+
+---
+
 ### 2026-05-24 — approved P3 GitOps secret runtime remediation
 
 - **Date**: 2026-05-24

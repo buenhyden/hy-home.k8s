@@ -45,7 +45,10 @@ safe implementation in `hy-home.k8s`.
 9. Run repo-static verification and record skipped live checks with reason,
    alternative evidence, and follow-up.
 10. Before completion, audit every explicit input requirement against current
-   files and command output; unresolved or weak evidence stays in the plan.
+    files and command output; unresolved or weak evidence stays in the plan.
+11. When follow-up work resolves or changes an item previously recorded as
+    deferred, add a current-state overlay that links the new evidence instead
+    of silently leaving the older plan as the only visible status.
 
 ## Expected Outputs
 
@@ -55,6 +58,7 @@ safe implementation in `hy-home.k8s`.
 - Final report with skill/harness updates and verification evidence.
 - Named-skill application evidence, including any skill/task-contract boundary
   decisions.
+- Current-state overlays for stale deferrals after approved follow-up work.
 
 ## Common Mistakes
 
@@ -67,3 +71,5 @@ safe implementation in `hy-home.k8s`.
 - Treating static validation as proof of live k3d, ArgoCD, Vault, or ESO health.
 - Applying a named skill in chat without preserving the application boundary in
   durable task or plan evidence.
+- Leaving older P3 deferral rows as the only visible status after a later
+  approved plan implements part of that deferred work.
