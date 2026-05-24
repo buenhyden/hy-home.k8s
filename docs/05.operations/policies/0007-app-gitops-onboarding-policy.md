@@ -126,6 +126,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 | k8s Secret 생성 | ExternalSecret(ESO)만 사용, 직접 Secret 생성 금지    |
 | 환경변수        | `envFrom.secretRef` 사용 (개별 `env.valueFrom` 지양) |
 | Vault 경로 규칙 | `secret/apps/<appname>/config`                       |
+| ESO remoteRef   | `apps/<appname>/config` (`secret` mount prefix 제외) |
 
 ---
 
@@ -145,6 +146,7 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 | 도메인      | `<appname>.127.0.0.1.nip.io`   | `my-api.127.0.0.1.nip.io`   |
 | TLS Secret  | `<appname>-tls`                | `my-api-tls`                |
 | Vault 경로  | `secret/apps/<appname>/config` | `secret/apps/my-api/config` |
+| ESO key     | `apps/<appname>/config`        | `apps/my-api/config`        |
 
 ### 4-3. 금지 사항
 

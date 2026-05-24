@@ -271,6 +271,11 @@ resources:
   - external-secret.yaml # 주석 해제
 ```
 
+`vault-backend` ClusterSecretStore는 Vault mount path를 `secret`으로 고정하므로
+ExternalSecret의 `remoteRef.key`는 `apps/<appname>/config`처럼 mount prefix를
+제외한 값을 사용한다. Vault CLI/API 작업 경로는 계속
+`secret/apps/<appname>/config`다.
+
 `rollout.yaml` container spec에 시크릿 참조를 추가한다:
 
 ```yaml

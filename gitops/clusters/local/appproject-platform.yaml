@@ -100,6 +100,10 @@ spec:
       kind: ExternalSecret
     - group: argoproj.io
       kind: Application
+    - group: argoproj.io
+      kind: ApplicationSet
+    - group: argoproj.io
+      kind: AppProject
     - group: cert-manager.io
       kind: Certificate
     - group: cert-manager.io

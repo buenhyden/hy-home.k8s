@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - root-application.yaml
+  - appproject-platform.yaml
+  - appproject-apps.yaml
+  - applicationset-apps.yaml

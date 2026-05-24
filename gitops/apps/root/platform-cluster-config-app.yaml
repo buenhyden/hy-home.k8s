@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-cluster-config
+  namespace: argocd
+spec:
+  project: platform
+  source:
+    repoURL: https://github.com/buenhyden/hy-home.k8s.git
+    targetRevision: main
+    path: gitops/clusters/local
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

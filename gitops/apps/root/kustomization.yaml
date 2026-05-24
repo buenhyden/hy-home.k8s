@@ -7,6 +7,7 @@ resources:
   - platform-external-secrets-operator-app.yaml
   - platform-cert-manager-app.yaml
   - platform-istio-base-app.yaml
+  - platform-cluster-config-app.yaml
   - platform-eso-config-app.yaml
   - platform-ingress-nginx-app.yaml
   - platform-cert-manager-config-app.yaml

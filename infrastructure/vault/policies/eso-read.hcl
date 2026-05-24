@@ -14,3 +14,11 @@ path "secret/data/platform/postgres-app" {
 path "secret/metadata/platform/postgres-app" {
   capabilities = ["read", "list"]
 }
+
+path "secret/data/platform/notifications" {
+  capabilities = ["read", "list"]
+}
+
+path "secret/metadata/platform/notifications" {
+  capabilities = ["read", "list"]
+}

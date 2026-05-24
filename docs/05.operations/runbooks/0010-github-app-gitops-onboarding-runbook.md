@@ -236,6 +236,8 @@ vault policy write eso-read infrastructure/vault/policies/eso-read.hcl
 
 # 3. kustomization.yaml에서 external-secret.yaml 주석 해제 후 커밋
 # (rollout.yaml에 envFrom 추가도 필요)
+#    ExternalSecret remoteRef.key는 apps/${APP}/config 형식이다.
+#    Vault CLI 경로 secret/apps/${APP}/config에서 mount prefix secret/은 제외한다.
 
 # 4. ExternalSecret 동기화 확인
 kubectl get externalsecret -n apps ${APP}-secret

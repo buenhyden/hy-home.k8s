@@ -44,6 +44,10 @@ METRICS_NODEPORTS="$ROOT_DIR/gitops/platform/monitoring/metrics-nodeports.yaml"
 ARGOCD_NOTIFICATIONS_CM="$ROOT_DIR/gitops/platform/argocd/argocd-notifications-cm.yaml"
 ARGOCD_NOTIFICATIONS_SECRET="$ROOT_DIR/gitops/platform/argocd/argocd-notifications-secret.yaml"
 ARGOCD_KUSTOMIZATION="$ROOT_DIR/gitops/platform/argocd/kustomization.yaml"
+CLUSTER_LOCAL_KUSTOMIZATION="$ROOT_DIR/gitops/clusters/local/kustomization.yaml"
+PLATFORM_CLUSTER_CONFIG_APP="$ROOT_DIR/gitops/apps/root/platform-cluster-config-app.yaml"
+ESO_EGRESS_NP="$ROOT_DIR/gitops/platform/network-policies/external-secrets-egress-to-vault.yaml"
+SAMPLE_EXTERNAL_SECRET="$ROOT_DIR/examples/sample-app/external-secret.yaml"
 
 for file in \
   "$ROOT_APP" \
@@ -62,7 +66,11 @@ for file in \
   "$METRICS_NODEPORTS" \
   "$ARGOCD_NOTIFICATIONS_CM" \
   "$ARGOCD_NOTIFICATIONS_SECRET" \
-  "$ARGOCD_KUSTOMIZATION"; do
+  "$ARGOCD_KUSTOMIZATION" \
+  "$CLUSTER_LOCAL_KUSTOMIZATION" \
+  "$PLATFORM_CLUSTER_CONFIG_APP" \
+  "$ESO_EGRESS_NP" \
+  "$SAMPLE_EXTERNAL_SECRET"; do
   require_file "$file"
 done
 
@@ -96,6 +104,7 @@ require_pattern 'type:\s*LoadBalancer' "$INGRESS_APP"
 echo "[INFO] verify vault least-privilege contract"
 require_pattern 'path "secret/data/platform/argocd"' "$VAULT_POLICY"
 require_pattern 'path "secret/data/platform/postgres-app"' "$VAULT_POLICY"
+require_pattern 'path "secret/data/platform/notifications"' "$VAULT_POLICY"
 if grep -Pq 'secret/data/platform/\*' "$VAULT_POLICY"; then
   fail 'vault policy must not allow wildcard secret/data/platform/*'
 fi
@@ -118,10 +127,13 @@ require_pattern 'kind:\s*ServiceAccount' "$APPPROJECT_APPS"
 require_pattern 'kind:\s*Role' "$APPPROJECT_APPS"
 require_pattern 'kind:\s*RoleBinding' "$APPPROJECT_APPS"
 require_pattern 'kind:\s*NetworkPolicy' "$APPPROJECT_APPS"
+require_multiline_pattern 'group:\s*external-secrets\.io\n[[:space:]]+kind:\s*ExternalSecret' "$APPPROJECT_APPS"
 
 echo "[INFO] verify platform AppProject app-of-apps permission"
 require_pattern 'group:\s*argoproj\.io' "$APPPROJECT_PLATFORM"
 require_pattern 'kind:\s*Application' "$APPPROJECT_PLATFORM"
+require_pattern 'kind:\s*ApplicationSet' "$APPPROJECT_PLATFORM"
+require_pattern 'kind:\s*AppProject' "$APPPROJECT_PLATFORM"
 
 echo "[INFO] verify apps AppProject Rollout permission"
 APPPROJECT_APPS="$ROOT_DIR/gitops/clusters/local/appproject-apps.yaml"
@@ -129,6 +141,15 @@ require_pattern 'kind:\s*Rollout' "$APPPROJECT_APPS"
 
 echo "[INFO] verify platform AppProject apps namespace destination"
 require_pattern 'namespace:\s*apps' "$APPPROJECT_PLATFORM"
+
+echo "[INFO] verify cluster-local GitOps ownership contract"
+require_pattern 'platform-cluster-config-app\.yaml' "$ROOT_KUSTOMIZATION"
+require_pattern 'name:\s*platform-cluster-config' "$PLATFORM_CLUSTER_CONFIG_APP"
+require_pattern 'path:\s*gitops/clusters/local' "$PLATFORM_CLUSTER_CONFIG_APP"
+require_pattern 'root-application\.yaml' "$CLUSTER_LOCAL_KUSTOMIZATION"
+require_pattern 'appproject-platform\.yaml' "$CLUSTER_LOCAL_KUSTOMIZATION"
+require_pattern 'appproject-apps\.yaml' "$CLUSTER_LOCAL_KUSTOMIZATION"
+require_pattern 'applicationset-apps\.yaml' "$CLUSTER_LOCAL_KUSTOMIZATION"
 
 echo "[INFO] verify platform AppProject new component contracts"
 require_pattern 'https://charts\.jetstack\.io' "$APPPROJECT_PLATFORM"
@@ -269,5 +290,20 @@ MONITORING_NP="$ROOT_DIR/gitops/platform/network-policies/monitoring-egress.yaml
 require_file "$MONITORING_NP"
 require_pattern '172\.18\.0\.13/32' "$MONITORING_NP"
 require_pattern 'port:\s*3100' "$MONITORING_NP"
+
+echo "[INFO] verify external-secrets egress NetworkPolicy"
+require_pattern '172\.18\.0\.8/32' "$ESO_EGRESS_NP"
+require_pattern 'port:\s*8200' "$ESO_EGRESS_NP"
+require_multiline_pattern 'kubernetes\.io/metadata\.name:\s*kube-system\n([[:space:]].*\n)*[[:space:]]+k8s-app:\s*kube-dns' "$ESO_EGRESS_NP"
+require_pattern 'port:\s*53' "$ESO_EGRESS_NP"
+require_pattern '172\.18\.0\.0/24' "$ESO_EGRESS_NP"
+require_pattern 'port:\s*6443' "$ESO_EGRESS_NP"
+
+echo "[INFO] verify sample app ExternalSecret contract"
+require_pattern 'kind:\s*ExternalSecret' "$SAMPLE_EXTERNAL_SECRET"
+require_pattern 'key:\s*apps/<appname>/config' "$SAMPLE_EXTERNAL_SECRET"
+if grep -Pq 'key:\s*secret/apps/<appname>/config' "$SAMPLE_EXTERNAL_SECRET"; then
+  fail 'sample ExternalSecret remoteRef.key must omit ClusterSecretStore mount prefix'
+fi
 
 echo "[PASS] static contract verification passed"
