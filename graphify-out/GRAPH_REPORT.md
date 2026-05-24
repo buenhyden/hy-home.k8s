@@ -1,80 +1,85 @@
-# Graph Report - .  (2026-05-22)
+# Graph Report - .  (2026-05-25)
 
 ## Corpus Check
-- Large corpus: 234 files · ~104,607 words. Semantic extraction will be expensive (many Claude tokens). Consider running on a subfolder, or use --no-semantic to run AST-only.
+- Large corpus: 245 files · ~143,316 words. Semantic extraction will be expensive (many Claude tokens). Consider running on a subfolder, or use --no-semantic to run AST-only.
 
 ## Summary
-- 1194 nodes · 1603 edges · 66 communities detected
-- Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 105 edges (avg confidence: 0.87)
+- 1271 nodes · 1729 edges · 71 communities detected
+- Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 122 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_Platform Bootstrap Operations|Platform Bootstrap Operations]]
-- [[_COMMUNITY_App Onboarding GitOps|App Onboarding GitOps]]
-- [[_COMMUNITY_Architecture Decisions|Architecture Decisions]]
-- [[_COMMUNITY_Platform Requirements|Platform Requirements]]
-- [[_COMMUNITY_Core ADR Baseline|Core ADR Baseline]]
-- [[_COMMUNITY_Traefik Access Routes|Traefik Access Routes]]
-- [[_COMMUNITY_Document Templates|Document Templates]]
-- [[_COMMUNITY_Bootstrap Guides|Bootstrap Guides]]
-- [[_COMMUNITY_Governance Templates|Governance Templates]]
-- [[_COMMUNITY_GitOps Architecture Planes|GitOps Architecture Planes]]
-- [[_COMMUNITY_Adminer Workload Policy|Adminer Workload Policy]]
-- [[_COMMUNITY_Platform AppProject TLS|Platform AppProject TLS]]
-- [[_COMMUNITY_Agent Governance Rules|Agent Governance Rules]]
-- [[_COMMUNITY_Learning References|Learning References]]
-- [[_COMMUNITY_Rollouts Notifications|Rollouts Notifications]]
-- [[_COMMUNITY_HA Platform Controls|HA Platform Controls]]
-- [[_COMMUNITY_Alloy Logging Pipeline|Alloy Logging Pipeline]]
-- [[_COMMUNITY_GitOps Desired State|GitOps Desired State]]
-- [[_COMMUNITY_Monitoring Manifests|Monitoring Manifests]]
-- [[_COMMUNITY_Static Validation Scripts|Static Validation Scripts]]
-- [[_COMMUNITY_Agent First Remediation|Agent First Remediation]]
-- [[_COMMUNITY_README Template Standards|README Template Standards]]
-- [[_COMMUNITY_Spec Task Templates|Spec Task Templates]]
-- [[_COMMUNITY_Headlamp OIDC Operations|Headlamp OIDC Operations]]
-- [[_COMMUNITY_Governance Scope Policy|Governance Scope Policy]]
-- [[_COMMUNITY_ArgoCD Metrics Notifications|ArgoCD Metrics Notifications]]
-- [[_COMMUNITY_Notifications Rollouts Guides|Notifications Rollouts Guides]]
-- [[_COMMUNITY_WSL2 HA Hardening|WSL2 HA Hardening]]
-- [[_COMMUNITY_LLM Wiki Governance|LLM Wiki Governance]]
-- [[_COMMUNITY_Operations Stage READMEs|Operations Stage READMEs]]
-- [[_COMMUNITY_Theory Learning Concepts|Theory Learning Concepts]]
-- [[_COMMUNITY_Headlamp Kiali Ingress|Headlamp Kiali Ingress]]
-- [[_COMMUNITY_CI QA Remediation|CI QA Remediation]]
-- [[_COMMUNITY_Traefik Local Exposure|Traefik Local Exposure]]
-- [[_COMMUNITY_Platform Expansion Guide|Platform Expansion Guide]]
-- [[_COMMUNITY_Root Platform Apps|Root Platform Apps]]
-- [[_COMMUNITY_Workload ApplicationSet|Workload ApplicationSet]]
-- [[_COMMUNITY_Operations Routing|Operations Routing]]
-- [[_COMMUNITY_ArgoCD Health Alerts|ArgoCD Health Alerts]]
-- [[_COMMUNITY_Namespace Baselines|Namespace Baselines]]
-- [[_COMMUNITY_Bootstrap Secret Contracts|Bootstrap Secret Contracts]]
-- [[_COMMUNITY_WSL Bootstrap Spec|WSL Bootstrap Spec]]
-- [[_COMMUNITY_Wiki Script Remediation|Wiki Script Remediation]]
+- [[_COMMUNITY_05 Operations Runbooks|05 Operations Runbooks]]
+- [[_COMMUNITY_App Gitops Onboarding Policy|App Gitops Onboarding Policy]]
+- [[_COMMUNITY_003 Platform Expansion|003 Platform Expansion]]
+- [[_COMMUNITY_Agent Framework Contract|Agent Framework Contract]]
+- [[_COMMUNITY_Architecture Decision Records Stage|Architecture Decision Records Stage]]
+- [[_COMMUNITY_Requirements Stage|Requirements Stage]]
+- [[_COMMUNITY_Technical Specification|Technical Specification]]
+- [[_COMMUNITY_Canonical Template Stage|Canonical Template Stage]]
+- [[_COMMUNITY_Platform Expansion Bootstrap Guide|Platform Expansion Bootstrap Guide]]
+- [[_COMMUNITY_Platform Expansion Specification|Platform Expansion Specification]]
+- [[_COMMUNITY_Networkpolicy Allow Kiali Egress To|Networkpolicy Allow Kiali Egress To]]
+- [[_COMMUNITY_Appproject Platform|Appproject Platform]]
+- [[_COMMUNITY_Argo Rollouts Progressive Delivery Backfill|Argo Rollouts Progressive Delivery Backfill]]
+- [[_COMMUNITY_Local Argocd Values|Local Argocd Values]]
+- [[_COMMUNITY_Infrastructure To Theory Learning Roadmap|Infrastructure To Theory Learning Roadmap]]
+- [[_COMMUNITY_Argocd K3D Traefik Router|Argocd K3D Traefik Router]]
+- [[_COMMUNITY_External Services Kustomization|External Services Kustomization]]
+- [[_COMMUNITY_Wsl2 K3D K3S Argocd Ha|Wsl2 K3D K3S Argocd Ha]]
+- [[_COMMUNITY_Gitops|Gitops]]
+- [[_COMMUNITY_Deployment Kube State Metrics|Deployment Kube State Metrics]]
+- [[_COMMUNITY_K3D Workspace And Agent First|K3D Workspace And Agent First]]
+- [[_COMMUNITY_Repository Validation Model|Repository Validation Model]]
+- [[_COMMUNITY_Specs Stage|Specs Stage]]
+- [[_COMMUNITY_Tech Stack Version Inventory|Tech Stack Version Inventory]]
+- [[_COMMUNITY_Reference Document|Reference Document]]
+- [[_COMMUNITY_Test And Evaluation Strategy Template|Test And Evaluation Strategy Template]]
+- [[_COMMUNITY_New App Gitops Onboarding Guide|New App Gitops Onboarding Guide]]
+- [[_COMMUNITY_05 Operations Operations Hub|05 Operations Operations Hub]]
+- [[_COMMUNITY_Ai Agent Standards|Ai Agent Standards]]
+- [[_COMMUNITY_Argocd Metrics Nodeport Services|Argocd Metrics Nodeport Services]]
+- [[_COMMUNITY_Argo Rollouts Progressive Delivery Contract|Argo Rollouts Progressive Delivery Contract]]
+- [[_COMMUNITY_Agent First Harness Llm Wiki|Agent First Harness Llm Wiki]]
+- [[_COMMUNITY_Ingress Headlamp|Ingress Headlamp]]
+- [[_COMMUNITY_Wsl2 K3D Argocd Ha Setup|Wsl2 K3D Argocd Ha Setup]]
+- [[_COMMUNITY_Traefik Dynamic Config Examples|Traefik Dynamic Config Examples]]
+- [[_COMMUNITY_Platform Expansion Execution|Platform Expansion Execution]]
+- [[_COMMUNITY_Wsl2 K3D K3S Argocd Ha|Wsl2 K3D K3S Argocd Ha]]
+- [[_COMMUNITY_Canonical Template Stage|Canonical Template Stage]]
+- [[_COMMUNITY_Application Platform Cert Manager|Application Platform Cert Manager]]
+- [[_COMMUNITY_Appproject Apps|Appproject Apps]]
+- [[_COMMUNITY_Operations Document Routing|Operations Document Routing]]
+- [[_COMMUNITY_Defaulttriggers|Defaulttriggers]]
+- [[_COMMUNITY_Namespaces Kustomization|Namespaces Kustomization]]
+- [[_COMMUNITY_Vault Kv Secret Platform Argocd|Vault Kv Secret Platform Argocd]]
+- [[_COMMUNITY_Wsl K3D K3S Argocd Platform|Wsl K3D K3S Argocd Platform]]
+- [[_COMMUNITY_Llm Wiki Generated Index Contract|Llm Wiki Generated Index Contract]]
 - [[_COMMUNITY_Runbook Template|Runbook Template]]
-- [[_COMMUNITY_README Assembly|README Assembly]]
-- [[_COMMUNITY_ESO Secret Store|ESO Secret Store]]
-- [[_COMMUNITY_App Deployed Notification|App Deployed Notification]]
-- [[_COMMUNITY_Rollout Completed Notification|Rollout Completed Notification]]
-- [[_COMMUNITY_Rollout Aborted Notification|Rollout Aborted Notification]]
-- [[_COMMUNITY_Ingress Retirement|Ingress Retirement]]
-- [[_COMMUNITY_Verification Plan|Verification Plan]]
-- [[_COMMUNITY_Gateway Bootstrap|Gateway Bootstrap]]
-- [[_COMMUNITY_Gateway Routing|Gateway Routing]]
-- [[_COMMUNITY_CI Remediation Task|CI Remediation Task]]
-- [[_COMMUNITY_Platform Components|Platform Components]]
-- [[_COMMUNITY_External Service Contracts|External Service Contracts]]
+- [[_COMMUNITY_Usage Guide|Usage Guide]]
+- [[_COMMUNITY_Eso Kustomization|Eso Kustomization]]
+- [[_COMMUNITY_Reference Stage Index|Reference Stage Index]]
+- [[_COMMUNITY_Template App Deployed|Template App Deployed]]
+- [[_COMMUNITY_Trigger On Rollout Completed|Trigger On Rollout Completed]]
+- [[_COMMUNITY_Trigger On Rollout Aborted|Trigger On Rollout Aborted]]
+- [[_COMMUNITY_Cloud Native Ingress Paths|Cloud Native Ingress Paths]]
+- [[_COMMUNITY_Success Criteria And Verification|Success Criteria And Verification]]
+- [[_COMMUNITY_K3D Agent First Remediation|K3D Agent First Remediation]]
+- [[_COMMUNITY_Gateway Jit Bootstrap Order|Gateway Jit Bootstrap Order]]
+- [[_COMMUNITY_Gateway Routing Map|Gateway Routing Map]]
+- [[_COMMUNITY_Github Qa And Ci Remediation|Github Qa And Ci Remediation]]
+- [[_COMMUNITY_Gitops Platform Components|Gitops Platform Components]]
+- [[_COMMUNITY_External Services Contracts|External Services Contracts]]
 - [[_COMMUNITY_Network Egress Policies|Network Egress Policies]]
-- [[_COMMUNITY_Adminer Workload|Adminer Workload]]
-- [[_COMMUNITY_Validation Scripts|Validation Scripts]]
-- [[_COMMUNITY_ESO Vault Contract|ESO Vault Contract]]
-- [[_COMMUNITY_Headlamp Namespace|Headlamp Namespace]]
+- [[_COMMUNITY_Workloads Adminer Reference Workload|Workloads Adminer Reference Workload]]
+- [[_COMMUNITY_Gitops Validation Scripts|Gitops Validation Scripts]]
+- [[_COMMUNITY_External Secrets And Vault Contract|External Secrets And Vault Contract]]
+- [[_COMMUNITY_Namespace Headlamp|Namespace Headlamp]]
 - [[_COMMUNITY_Static Contract Validation|Static Contract Validation]]
 - [[_COMMUNITY_Live Cluster Validation|Live Cluster Validation]]
-- [[_COMMUNITY_Graphify Tooling|Graphify Tooling]]
-- [[_COMMUNITY_Progress Memory|Progress Memory]]
-- [[_COMMUNITY_MetalLB Traefik|MetalLB Traefik]]
+- [[_COMMUNITY_Optional Graphify Tool|Optional Graphify Tool]]
+- [[_COMMUNITY_Metallb And Traefik|Metallb And Traefik]]
+- [[_COMMUNITY_Execution Implementation Audit|Execution Implementation Audit]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `Canonical Template Stage README` - 21 edges
@@ -82,11 +87,11 @@
 3. `Agent Framework Contract` - 18 edges
 4. `Platform Expansion Specification` - 18 edges
 5. `Technical Specification` - 17 edges
-6. `App GitOps Onboarding Policy` - 16 edges
-7. `Local Harness Catalog` - 15 edges
-8. `Requirements Stage` - 13 edges
-9. `Product Requirements Document` - 13 edges
-10. `05.operations Runbooks README` - 13 edges
+6. `Local Harness Catalog` - 16 edges
+7. `App GitOps Onboarding Policy` - 16 edges
+8. `Local Harness Catalog` - 15 edges
+9. `Requirements Stage` - 13 edges
+10. `Product Requirements Document` - 13 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `External Vault PostgreSQL Valkey Runtime Contracts` --semantically_similar_to--> `External Services Service EndpointSlice Contract`  [INFERRED] [semantically similar]
@@ -100,347 +105,352 @@
 - `Repository Execution Constraints` --rationale_for--> `GitOps First Mutation Boundary`  [INFERRED]
   AGENTS.md → docs/00.agent-governance/rules/agentic.md
 
-## Hyperedges (group relationships)
-- **Documentation Stage Flow** — readme_docs_canonical_taxonomy, readme_documentation_flow, stage_authoring_matrix_stage_authoring_matrix, document_stage_routing_canonical_stage_taxonomy [EXTRACTED 1.00]
-- **Local Agent Runtime Contract** — readme_agent_governance_hub, harness_catalog_local_harness_catalog, harness_catalog_agent_roster, harness_catalog_codex_mirrors, harness_catalog_local_skills [EXTRACTED 1.00]
-- **External Service Contract Pattern** — 2026_03_27_wsl_k3d_argocd_platform_external_services_integration, 2026_03_28_wsl2_k3d_argocd_ha_platform_ha_platform_prd, 0004_external_services_endpoints_and_valkey_backend_service_endpoint_slice_pattern, 0005_wsl2_ha_baseline_and_external_endpoint_contract_external_endpoint_contract [INFERRED 0.95]
-- **Baseline GitOps Platform Planes** — 0001_wsl_k3d_argocd_platform_gitops_control_plane, 0001_wsl_k3d_argocd_platform_secret_plane, 0001_wsl_k3d_argocd_platform_external_data_services, 0002_wsl2_k3d_argocd_ha_platform_ci_static_gates [EXTRACTED 1.00]
-- **Platform Expansion Runtime Pattern** — 0006_cert_manager_mkcert_ca_issuer_tls_automation, 0010_headlamp_replaces_dashboard_headlamp, 0008_istio_install_and_ingress_coexist_istio_default_profile, 0009_kiali_external_observability_kiali, spec_current_172_18_external_endpoint_contract [EXTRACTED 1.00]
-- **Progressive Delivery Notification Pattern** — 0011_argo_rollouts_progressive_delivery_argo_rollouts, 0012_argo_notifications_slack_argo_notifications, 0012_argo_notifications_slack_vault_eso_notification_secret, spec_notifications_config_secret_contract [EXTRACTED 1.00]
-- **Execution Stage Plan Task Evidence Contract** — readme_plan_stage, readme_plan_task_evidence_boundary, readme_task_stage, readme_execution_evidence_contract [EXTRACTED 1.00]
-- **Progressive Delivery Notifications Control Set** — 2026_05_18_argo_rollouts_progressive_delivery_plan, 2026_05_18_argo_notifications_slack_plan, 0004_rollouts_notifications_headlamp_policy, 0004_rollouts_notifications_headlamp_policy_argo_rollouts_controls, 0004_rollouts_notifications_headlamp_policy_argo_notifications_slack_controls [EXTRACTED 1.00]
-- **Observability Operations Control Set** — 0003_service_mesh_cert_manager_policy_kiali_external_observability, 0005_observability_platform_operations_policy, 0005_observability_platform_operations_policy_argocd_metrics_nodeports, 0006_k8s_observability_operations_policy, 0006_k8s_observability_operations_policy_alloy_k8s_logs [EXTRACTED 1.00]
-- **App GitOps Onboarding Control Pattern** — 0007_app_gitops_onboarding_policy_app_gitops_onboarding_policy, 0007_app_gitops_onboarding_policy_rollout_required, 0007_app_gitops_onboarding_policy_analysis_template_required, 0007_app_gitops_onboarding_policy_vault_external_secret_boundary, 0007_app_gitops_onboarding_policy_policy_gate_checklist [EXTRACTED 1.00]
-- **ArgoCD Metrics Prometheus Recovery Flow** — 0008_argocd_metrics_prometheus_runbook_argocd_metrics_prometheus_recovery_runbook, 0008_argocd_metrics_prometheus_runbook_nodeport_metrics_exposure, 0008_argocd_metrics_prometheus_runbook_k3d_node_ip_drift_response, 0008_argocd_metrics_prometheus_runbook_prometheus_config_reload, 0008_argocd_metrics_prometheus_runbook_observability_evidence_sources [EXTRACTED 1.00]
-- **Reference Template Authority Pattern** — readme_reference_stage, readme_reference_authority_boundary, readme_reference_format_contract, readme_templates_reference_and_memory_rules, readme_versions_repo_backed_version_contract [EXTRACTED 1.00]
-- **Document Stage Traceability** — prd_template_product_requirements_document, spec_template_technical_specification, task_template_task_document, tests_template_test_evaluation_strategy, runbook_template_runbook_document, postmortem_template_postmortem_document [EXTRACTED 1.00]
-- **AI Agent Governance Pattern** — prd_template_ai_agent_requirements, postmortem_template_agent_metadata, spec_template_agent_role_io_contract, spec_template_tool_contract, spec_template_prompt_policy_contract, spec_template_memory_context_strategy, spec_template_guardrails, spec_template_evaluation, task_template_agent_specific_task_types, tests_template_agent_evals, runbook_template_agent_operations [INFERRED 0.95]
-- **Verification Evidence Pattern** — postmortem_template_prevention_verification, progress_template_validation_evidence, runbook_template_verification_steps, spec_template_verification_commands, spec_template_success_criteria_verification_plan, task_template_verification_summary, tests_template_evidence_reporting [INFERRED 0.95]
-
 ## Communities
 
-### Community 0 - "Platform Bootstrap Operations"
+### Community 0 - "05 Operations Runbooks"
 Cohesion: 0.03
-Nodes (103): ArgoCD Platform Bootstrap Runbook, WSL2 k3d GitOps Platform Bootstrap Procedure, K8s GitOps Platform Operations Policy, K8s GitOps Platform Operations Policy, External Service Port Contract, External Service Port Contracts, External Service Port Contract, GitOps Path and Branch Verification Gate (+95 more)
+Nodes (104): ArgoCD Platform Bootstrap Runbook, WSL2 k3d GitOps Platform Bootstrap Procedure, K8s GitOps Platform Operations Policy, K8s GitOps Platform Operations Policy, External Service Port Contract, External Service Port Contracts, External Service Port Contract, GitOps Path and Branch Verification Gate (+96 more)
 
-### Community 1 - "App Onboarding GitOps"
+### Community 1 - "App Gitops Onboarding Policy"
 Cohesion: 0.03
 Nodes (81): apps-generator ApplicationSet, External Repo Application CR, GitOps Sync Verification, New App GitOps Onboarding Runbook, Onboarding Troubleshooting, Superseded Generic Onboarding, Vault ESO Secret Setup, AnalysisTemplate Required (+73 more)
 
-### Community 2 - "Architecture Decisions"
-Cohesion: 0.04
-Nodes (69): ADR-0001 k3d Topology and External Network Baseline, servers=1 agents=3 k3d Topology, ADR-0002 ArgoCD Helm and GitOps Model, App-of-Apps and ApplicationSet, ADR-0003 ESO Vault Kubernetes Auth, Least Privilege Secret Sync, ADR-0004 External Services and Valkey Backend, ArgoCD External Valkey Backend (+61 more)
-
-### Community 3 - "Platform Requirements"
+### Community 2 - "003 Platform Expansion"
 Cohesion: 0.05
-Nodes (62): ARD-0001 WSL k3d/k3s ArgoCD Platform, External PostgreSQL and Valkey Services, ArgoCD GitOps Control Plane, ESO and Vault Secret Plane, WSL k3d/k3s ArgoCD Platform, ARD-0003 Platform Expansion Mesh Dashboard, Mesh Plane, Observability Access Plane (+54 more)
+Nodes (73): ARD-0001 WSL k3d/k3s ArgoCD Platform, External PostgreSQL and Valkey Services, ArgoCD GitOps Control Plane, ESO and Vault Secret Plane, WSL k3d/k3s ArgoCD Platform, External Traefik to k3d Ingress Access Plane, ARD-0002 WSL2 k3d/k3s ArgoCD HA Platform, CI Static Gates (+65 more)
 
-### Community 4 - "Core ADR Baseline"
+### Community 3 - "Agent Framework Contract"
+Cohesion: 0.07
+Nodes (62): AI Agent Governance Hub, Agentic Execution Rules, GitOps First Mutation Boundary, GitOps First Execution Boundary, Agent Framework Contract, AGENTS.md Provider Notes, Repository Execution Constraints, Agent Bootstrap Governance (+54 more)
+
+### Community 4 - "Architecture Decision Records Stage"
 Cohesion: 0.06
-Nodes (61): ADR-0001: k3d Topology and External Network Baseline, External Network Baseline, k3d 1 Server 3 Agents Topology, ADR-0001 k3d Topology and External Network Baseline, ADR-0002 ArgoCD Helm Install with App-of-Apps and ApplicationSet, ADR-0002: ArgoCD Helm Install with App-of-Apps and ApplicationSet, App-of-Apps and ApplicationSet Model, ArgoCD Helm Installation Model (+53 more)
+Nodes (59): ADR-0001: k3d Topology and External Network Baseline, External Network Baseline, k3d 1 Server 3 Agents Topology, ADR-0001 k3d Topology and External Network Baseline, ADR-0002 ArgoCD Helm Install with App-of-Apps and ApplicationSet, ADR-0002: ArgoCD Helm Install with App-of-Apps and ApplicationSet, App-of-Apps and ApplicationSet Model, ArgoCD Helm Installation Model (+51 more)
 
-### Community 5 - "Traefik Access Routes"
-Cohesion: 0.04
-Nodes (59): argocd host rule, argocd-k3d Traefik router, argocd-k3d Traefik service, argocd-k3d transport, k3d-hyhome-serverlb:443, websecure entryPoint, Headlamp service headlamp:4466, headlamp host rule (+51 more)
+### Community 5 - "Requirements Stage"
+Cohesion: 0.05
+Nodes (57): ADR-0001 k3d Topology and External Network Baseline, servers=1 agents=3 k3d Topology, ADR-0002 ArgoCD Helm and GitOps Model, App-of-Apps and ApplicationSet, ADR-0003 ESO Vault Kubernetes Auth, Least Privilege Secret Sync, ADR-0004 External Services and Valkey Backend, ArgoCD External Valkey Backend (+49 more)
 
-### Community 6 - "Document Templates"
+### Community 6 - "Technical Specification"
 Cohesion: 0.04
 Nodes (56): Action Items, Agent Metadata, Required Documentation Feedback Loop, Incident Document, Postmortem Document, Prevention and Verification, Root Cause Analysis, AI Agent Requirements (+48 more)
 
-### Community 7 - "Bootstrap Guides"
+### Community 7 - "Canonical Template Stage"
+Cohesion: 0.06
+Nodes (56): Architecture Decision Record Template, Agent Design Template, Agent Governance Hub, Agent Reference Area README, Feature Agent Design Location, Agent Runtime Truth Locations, API Specification Template, Architecture Reference Document Template (+48 more)
+
+### Community 8 - "Platform Expansion Bootstrap Guide"
 Cohesion: 0.04
 Nodes (53): ArgoCD root-platform Application, infrastructure/bootstrap-local.sh, WSL k3d ArgoCD Bootstrap Guide, External Secrets Operator Sync, External Services Contract, Vault Secret Contract, CI Static Validation, WSL2 k3d/k3s ArgoCD HA Setup Guide (+45 more)
 
-### Community 8 - "Governance Templates"
-Cohesion: 0.07
-Nodes (52): Architecture Decision Record Template, Agent Design Template, Agent Governance Hub, Agent Reference Area README, Feature Agent Design Location, Agent Runtime Truth Locations, API Specification Template, Architecture Reference Document Template (+44 more)
-
-### Community 9 - "GitOps Architecture Planes"
+### Community 9 - "Platform Expansion Specification"
 Cohesion: 0.07
 Nodes (51): ArgoCD App-of-Apps, ESO Vault Secret Plane, External PostgreSQL and Valkey Services, GitOps Platform, GitOps, Secret, and External Data Planes, WSL k3d/k3s ArgoCD Platform ARD, cert-manager TLS Plane, Istio Mesh Plane (+43 more)
 
-### Community 10 - "Adminer Workload Policy"
+### Community 10 - "Networkpolicy Allow Kiali Egress To"
 Cohesion: 0.07
 Nodes (47): AnalysisTemplate adminer-stability, kube_pod_container_status_restarts_total, NetworkPolicy allow-egress-apps, Namespace apps, In-cluster pod-to-pod traffic, Istiod control plane, kube-dns, PostgreSQL external services (+39 more)
 
-### Community 11 - "Platform AppProject TLS"
+### Community 11 - "Appproject Platform"
 Cohesion: 0.05
 Nodes (45): platform cluster resource whitelist, platform destination allowlist, platform namespace resource whitelist, AppProject platform, platform-readonly role, platform source repository allowlist, ClusterIssuer mkcert-ca-issuer, mkcert-root-ca secret reference (+37 more)
 
-### Community 12 - "Agent Governance Rules"
-Cohesion: 0.12
-Nodes (39): Agentic Execution Rules, GitOps First Mutation Boundary, Agent Framework Contract, AGENTS.md Provider Notes, Repository Execution Constraints, Agent Bootstrap Governance, Bootstrap JIT Loading Sequence, Claude Provider Notes (+31 more)
+### Community 12 - "Argo Rollouts Progressive Delivery Backfill"
+Cohesion: 0.07
+Nodes (39): Argo Rollouts Progressive Delivery ARD, platform-rollouts ArgoCD Application, Argo Rollouts Notifications and Headlamp Operations Policy, Argo Notifications Slack Controls, Argo Rollouts Controls, Traefik External Artifacts, Argo Notifications Slack ARD, ArgoCD Notifications Controller (+31 more)
 
-### Community 13 - "Learning References"
+### Community 13 - "Local Argocd Values"
+Cohesion: 0.07
+Nodes (33): argocd host rule, ArgoCD Helm values, GitOps and ArgoCD reconciliation, infrastructure directory, local k3d Kubernetes platform, MetalLB bootstrap manifests, IPAddressPool, 172.18.0.240-172.18.0.250 (+25 more)
+
+### Community 14 - "Infrastructure To Theory Learning Roadmap"
 Cohesion: 0.07
 Nodes (31): ArgoCD GitOps, k3d and Docker, Efficient Memory Management for LLM Serving with PagedAttention, Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks, Reconciliation Loop, Infrastructure to Theory Learning Roadmap, Attention Is All You Need, Vector Indexing (+23 more)
 
-### Community 14 - "Rollouts Notifications"
-Cohesion: 0.09
-Nodes (26): Argo Rollouts Progressive Delivery ARD, platform-rollouts ArgoCD Application, Argo Notifications Slack ARD, ArgoCD Notifications Controller, Argo Rollouts Progressive Delivery Specification, Rollout and Analysis CRDs, Rollouts Dashboard Route, Rollouts Controller Metrics (+18 more)
+### Community 15 - "Argocd K3D Traefik Router"
+Cohesion: 0.08
+Nodes (26): argocd-k3d Traefik router, argocd-k3d Traefik service, argocd-k3d transport, k3d-hyhome-serverlb:443, websecure entryPoint, Headlamp service headlamp:4466, headlamp host rule, headlamp-k3d Traefik router (+18 more)
 
-### Community 15 - "HA Platform Controls"
-Cohesion: 0.11
-Nodes (25): Access and TLS Contract, CI Control Plane, CI Static Gate, WSL2 k3d/k3s ArgoCD HA Platform ARD, External Endpoint Contract, ArgoCD Pull Reconciliation Model, AppProject and Vault Minimum Privilege Controls, Static Contract CI Gates (+17 more)
-
-### Community 16 - "Alloy Logging Pipeline"
+### Community 16 - "External Services Kustomization"
 Cohesion: 0.08
 Nodes (25): EndpointSlice alloy-external-1, Service alloy-external, Alloy discovery.kubernetes pods, Alloy discovery.relabel pod_logs, Alloy loki.process events_label, Alloy loki.source.kubernetes_events events, Alloy loki.source.kubernetes pods, Alloy loki.write external_loki (+17 more)
 
-### Community 17 - "GitOps Desired State"
+### Community 17 - "Wsl2 K3D K3S Argocd Ha"
+Cohesion: 0.11
+Nodes (25): Access and TLS Contract, CI Control Plane, CI Static Gate, WSL2 k3d/k3s ArgoCD HA Platform ARD, External Endpoint Contract, ArgoCD Pull Reconciliation Model, AppProject and Vault Minimum Privilege Controls, Static Contract CI Gates (+17 more)
+
+### Community 18 - "Gitops"
 Cohesion: 0.13
 Nodes (22): Adminer Reference Workload, ArgoCD App of Apps, clusters local Bootstrap Boundary, Local k3d GitOps Desired State, External Secrets and Vault Contract, GitOps README, Platform Components, GitOps Workloads (+14 more)
 
-### Community 18 - "Monitoring Manifests"
+### Community 19 - "Deployment Kube State Metrics"
 Cohesion: 0.13
 Nodes (19): ClusterRole alloy-k8s-logs, ClusterRoleBinding alloy-k8s-logs, ConfigMap alloy-k8s-logs-config, Deployment alloy-k8s-logs, In-cluster Kubernetes log collection, ServiceAccount alloy-k8s-logs, ClusterRole kube-state-metrics, ClusterRoleBinding kube-state-metrics (+11 more)
 
-### Community 19 - "Static Validation Scripts"
-Cohesion: 0.14
-Nodes (18): check-secret-handling.sh, generate-llm-wiki-index.sh, optional kube-linter, live cluster mutation exclusion, manifest-static CI job, Python PyYAML dependency, repo-backed static validation utilities, repo-quality-static CI job (+10 more)
-
-### Community 20 - "Agent First Remediation"
+### Community 20 - "K3D Workspace And Agent First"
 Cohesion: 0.14
 Nodes (18): Agent-first Execution Boundary, k3d Workspace and Agent-first Remediation Plan, Harness Readiness Matrix, Repository Quality Gate, k3d Workspace and Agent-first Remediation Task, scripts Inventory Remediation Plan, Repo-root Argument Contract, scripts Directory Inventory (+10 more)
 
-### Community 21 - "README Template Standards"
+### Community 21 - "Repository Validation Model"
+Cohesion: 0.14
+Nodes (18): check-secret-handling.sh, generate-llm-wiki-index.sh, optional kube-linter, live cluster mutation exclusion, manifest-static CI job, Python PyYAML dependency, repo-backed static validation utilities, repo-quality-static CI job (+10 more)
+
+### Community 22 - "Specs Stage"
+Cohesion: 0.17
+Nodes (18): WSL k3d ArgoCD Platform Plan, WSL2 k3d ArgoCD HA Platform Plan, Template Cross-link Fix Plan, Docs Governance Full AB Hardening Plan, Workspace Purpose Alignment Audit Plan, Workspace Harness Gap Analysis Plan, Architecture Requirements README, WSL k3d ArgoCD Platform Spec (+10 more)
+
+### Community 23 - "Tech Stack Version Inventory"
+Cohesion: 0.16
+Nodes (18): Apps AppProject Workload Permissions, Platform AppProject Permissions, Platform App-of-Apps Kustomization, Local Cluster ArgoCD Bootstrap Kustomization, GitOps Desired State Boundary, Bootstrap Infrastructure Boundary, LLM WIKI Reference Index, Platform Cluster Config Root Application (+10 more)
+
+### Community 24 - "Reference Document"
 Cohesion: 0.15
 Nodes (15): AI Agent Guidance, Base Structure, Documentation Standards, README Template, Snippet Library, SSoT Policy, Template Usage, Traceability Rules (+7 more)
 
-### Community 22 - "Spec Task Templates"
+### Community 25 - "Test And Evaluation Strategy Template"
 Cohesion: 0.17
 Nodes (15): Agent Role and IO Contract, API Spec, Guardrails, Parent Design Document, Technical Specification Template, Specification Verification Plan, Agent Specific Task Types, Task Evidence Requirement (+7 more)
 
-### Community 23 - "Headlamp OIDC Operations"
+### Community 26 - "New App Gitops Onboarding Guide"
+Cohesion: 0.22
+Nodes (14): ArgoCD Platform Bootstrap Runbook, WSL k3d ArgoCD Bootstrap Guide, WSL2 k3d ArgoCD HA Setup Guide, apps-generator ApplicationSet Onboarding, New App GitOps Onboarding Guide, Superseded by GitHub App Onboarding, New App Onboarding Runbook, App GitOps Onboarding Policy (+6 more)
+
+### Community 27 - "05 Operations Operations Hub"
 Cohesion: 0.18
 Nodes (13): Headlamp Authentication and OIDC Guide, Keycloak Groups to Kubernetes RBAC Mapping, 05.operations Guides Stage, 05.operations Incidents Stage, No Tracked Incidents State, GitOps-first Agent Execution Boundary, k3d Workspace and Agent-first Remediation, Risky Command Boundary Gate (+5 more)
 
-### Community 24 - "Governance Scope Policy"
+### Community 28 - "Ai Agent Standards"
 Cohesion: 0.17
 Nodes (12): Documentation Scope, Meta Scope, Stage Checklists, Execution Checklist Stage Taxonomy, AI Agent Standards, Documentation Boundary Policy, Just-in-Time Governance Loading Policy, Agent Language Policy (+4 more)
 
-### Community 25 - "ArgoCD Metrics Notifications"
+### Community 29 - "Argocd Metrics Nodeport Services"
 Cohesion: 0.17
 Nodes (12): Service argocd-application-controller-metrics-np, Service argocd-applicationset-controller-metrics-np, ArgoCD Metrics NodePort Services, Service argocd-notifications-controller-metrics-np, Docker Prometheus 172.18.0.10, Service argocd-repo-server-metrics-np, Service argocd-server-metrics-np, ConfigMap argocd-notifications-cm (+4 more)
 
-### Community 26 - "Notifications Rollouts Guides"
+### Community 30 - "Argo Rollouts Progressive Delivery Contract"
 Cohesion: 0.17
 Nodes (12): Notifications Slack Secret Boundary, Argo Notifications Slack Backfill, Argo Rollouts Progressive Delivery Contract, Argo Rollouts Progressive Delivery Backfill, ArgoCD Metrics NodePort Exposure, ArgoCD Prometheus Metrics and Grafana Guide, GitHub App GitOps Onboarding Guide, Rollout AnalysisTemplate Istio mTLS TLS Pattern (+4 more)
 
-### Community 27 - "WSL2 HA Hardening"
-Cohesion: 0.27
-Nodes (11): External Traefik to k3d Ingress Access Plane, ARD-0002 WSL2 k3d/k3s ArgoCD HA Platform, CI Static Gates, Namespace Egress Boundaries, WSL2 HA Platform, CI Optimization Phase, WSL2 HA Platform Hardening Plan, AppProject Least Privilege Contract (+3 more)
-
-### Community 28 - "LLM Wiki Governance"
+### Community 31 - "Agent First Harness Llm Wiki"
 Cohesion: 0.22
 Nodes (10): Canonical Owner Rule, LLM Wiki Curation Guide, Generated Markdown Link Map, wiki-curator Agent, Agent-first Harness, LLM Wiki, and Hook Contract Closure Plan, Hook Feedback Loop, Legacy Docs Path Migration Map, Repo-local LLM Wiki (+2 more)
 
-### Community 29 - "Operations Stage READMEs"
-Cohesion: 0.24
-Nodes (10): Operations Guides README, Guide Traceability Rule, Operations Incidents README, Incident and Postmortem Stage, Operations Policies README, Operations Control Stage, References Authority Boundary, References README (+2 more)
-
-### Community 30 - "Theory Learning Concepts"
-Cohesion: 0.31
-Nodes (9): ConfigMap Watcher Controller, Efficient Memory Management for LLM Serving with PagedAttention, Infrastructure to Theory Learning Roadmap, Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks, Reconciliation Loop, Attention Is All You Need, Vector Indexing, Virtual Memory Paging (+1 more)
-
-### Community 31 - "Headlamp Kiali Ingress"
+### Community 32 - "Ingress Headlamp"
 Cohesion: 0.22
 Nodes (9): Ingress headlamp, Headlamp kustomization, ClusterIssuer mkcert-ca-issuer, Service headlamp, TLS Secret headlamp-tls, Ingress kiali, Kiali kustomization, Service kiali (+1 more)
 
-### Community 32 - "CI QA Remediation"
+### Community 33 - "Wsl2 K3D Argocd Ha Setup"
 Cohesion: 0.25
 Nodes (9): Branch Policy Gate, Repo Quality Gate CI Contract Checks, .github QA and CI Remediation, CI Static Validation, Local Runtime Validation, WSL2 k3d ArgoCD HA Setup Guide, WSL2 k3d/k3s ArgoCD HA Platform Execution, Static Contract Verification (+1 more)
 
-### Community 33 - "Traefik Local Exposure"
+### Community 34 - "Traefik Dynamic Config Examples"
 Cohesion: 0.25
 Nodes (8): Argo Rollouts UI local exposure, ArgoCD UI local exposure, Traefik dynamic config examples, canonical GitOps and ArgoCD deployment path, Headlamp UI local exposure, hy-home.docker Traefik gateway, Kiali UI local exposure, traefik directory
 
-### Community 34 - "Platform Expansion Guide"
+### Community 35 - "Platform Expansion Execution"
 Cohesion: 0.33
 Nodes (7): Platform Expansion Bootstrap Guide, cert-manager Headlamp Istio Kiali Bootstrap Components, cert-manager Platform Component, Headlamp and 172.18.x Current Contract, Headlamp Platform UI, Istio and Kiali Platform Components, Platform Expansion Execution
 
-### Community 35 - "Root Platform Apps"
+### Community 36 - "Wsl2 K3D K3S Argocd Ha"
+Cohesion: 0.48
+Nodes (7): External Service Current Contract, Platform Expansion Mesh Dashboard Architecture Reference Document, Requirements Stage, WSL2 k3d k3s ArgoCD HA Platform Architecture Reference Document, WSL2 k3d k3s ArgoCD HA Platform Product Requirements, WSL k3d k3s ArgoCD Platform Architecture Reference Document, WSL2 k3s k3d ArgoCD Platform Product Requirements
+
+### Community 37 - "Canonical Template Stage"
+Cohesion: 0.57
+Nodes (7): Agent Design Template Contract, Incident Fact Record Template, Operations Policy Template Contract, Postmortem Analysis Template Contract, Reference Authority Boundary Template, Executable Runbook Template Contract, Canonical Template Stage
+
+### Community 38 - "Application Platform Cert Manager"
 Cohesion: 0.4
 Nodes (6): Application platform-argocd-config, Application platform-cert-manager, Application platform-cert-manager-config, Helm chart cert-manager v1.17.2, ArgoCD App-of-Apps, apps/root platform Kustomization
 
-### Community 36 - "Workload ApplicationSet"
+### Community 39 - "Appproject Apps"
 Cohesion: 0.33
 Nodes (6): ApplicationSet apps-generator, apps project application template, gitops/workloads/* directory generator, AppProject apps, apps-readonly role, apps workload resource whitelist
 
-### Community 37 - "Operations Routing"
+### Community 40 - "Operations Document Routing"
 Cohesion: 0.47
 Nodes (6): Guide Runbook Policy Boundary, Operations Guides Stage, Incidents Stage, No Placeholder Incident Contract, Operations Document Routing, Operations Stage
 
-### Community 38 - "ArgoCD Health Alerts"
+### Community 41 - "Defaulttriggers"
 Cohesion: 0.4
 Nodes (5): template.app-health-degraded, template.app-sync-failed, defaultTriggers, trigger.on-health-degraded, trigger.on-sync-failed
 
-### Community 39 - "Namespace Baselines"
+### Community 42 - "Namespaces Kustomization"
 Cohesion: 0.4
 Nodes (5): Namespace apps, Istio injection enabled, Namespace argo-rollouts, Namespace cert-manager, Namespaces kustomization
 
-### Community 40 - "Bootstrap Secret Contracts"
+### Community 43 - "Vault Kv Secret Platform Argocd"
 Cohesion: 0.4
 Nodes (5): bootstrap-local.sh, bootstrap-only kubectl apply exception, external Vault PostgreSQL Valkey services, valkey_password, Vault KV secret/platform/argocd
 
-### Community 41 - "WSL Bootstrap Spec"
+### Community 44 - "Wsl K3D K3S Argocd Platform"
 Cohesion: 0.4
 Nodes (5): WSL k3d ArgoCD Bootstrap Guide, Vault Valkey PostgreSQL External Services Contract, WSL k3d/k3s ArgoCD Platform Execution, ArgoCD Platform Bootstrap Runbook, 001 WSL k3d ArgoCD Platform Spec
 
-### Community 42 - "Wiki Script Remediation"
+### Community 45 - "Llm Wiki Generated Index Contract"
 Cohesion: 0.5
 Nodes (5): LLM Wiki Curation Guide, Deterministic Markdown Link Map, LLM Wiki Generated Index Contract, scripts Inventory Remediation, Tier A/B/C Script Retention Standard
 
-### Community 43 - "Runbook Template"
+### Community 46 - "Runbook Template"
 Cohesion: 0.4
 Nodes (5): Agent Operations Recovery, Immediate Execution Procedure, Operations Runbook, Runbook Template, Runbook Verification Steps
 
-### Community 44 - "README Assembly"
+### Community 47 - "Usage Guide"
 Cohesion: 0.5
 Nodes (4): README Assembly Rules, Link Basis Rules, README Usage Guide, README Selection Guide
 
-### Community 45 - "ESO Secret Store"
+### Community 48 - "Eso Kustomization"
 Cohesion: 0.67
 Nodes (3): ESO kustomization, postgres-app-secret.yaml, vault-secret-store.yaml
 
-### Community 46 - "App Deployed Notification"
+### Community 49 - "Reference Stage Index"
+Cohesion: 0.67
+Nodes (3): Agent References Stage Index, Learning References Stage Index, Reference Stage Index
+
+### Community 50 - "Template App Deployed"
 Cohesion: 1.0
 Nodes (2): template.app-deployed, trigger.on-deployed
 
-### Community 47 - "Rollout Completed Notification"
+### Community 51 - "Trigger On Rollout Completed"
 Cohesion: 1.0
 Nodes (2): trigger.on-rollout-completed, template.rollout-completed
 
-### Community 48 - "Rollout Aborted Notification"
+### Community 52 - "Trigger On Rollout Aborted"
 Cohesion: 1.0
 Nodes (2): trigger.on-rollout-aborted, template.rollout-aborted
 
-### Community 49 - "Ingress Retirement"
+### Community 53 - "Cloud Native Ingress Paths"
 Cohesion: 1.0
 Nodes (2): cloud-native ingress paths, Ingress NGINX upstream retired statement
 
-### Community 50 - "Verification Plan"
+### Community 54 - "Success Criteria And Verification"
 Cohesion: 1.0
 Nodes (2): Success Criteria and Verification Plan, Verification Commands
 
-### Community 51 - "Gateway Bootstrap"
+### Community 55 - "K3D Agent First Remediation"
+Cohesion: 1.0
+Nodes (2): k3d Agent-first Remediation Plan, k3d Agent-first Remediation Task
+
+### Community 56 - "Gateway Jit Bootstrap Order"
 Cohesion: 1.0
 Nodes (1): Gateway JIT Bootstrap Order
 
-### Community 52 - "Gateway Routing"
+### Community 57 - "Gateway Routing Map"
 Cohesion: 1.0
 Nodes (1): Gateway Routing Map
 
-### Community 53 - "CI Remediation Task"
+### Community 58 - "Github Qa And Ci Remediation"
 Cohesion: 1.0
 Nodes (1): .github QA and CI Remediation Task
 
-### Community 54 - "Platform Components"
+### Community 59 - "Gitops Platform Components"
 Cohesion: 1.0
 Nodes (1): GitOps platform components
 
-### Community 55 - "External Service Contracts"
+### Community 60 - "External Services Contracts"
 Cohesion: 1.0
 Nodes (1): External services contracts
 
-### Community 56 - "Network Egress Policies"
+### Community 61 - "Network Egress Policies"
 Cohesion: 1.0
 Nodes (1): Network egress policies
 
-### Community 57 - "Adminer Workload"
+### Community 62 - "Workloads Adminer Reference Workload"
 Cohesion: 1.0
 Nodes (1): workloads/adminer reference workload
 
-### Community 58 - "Validation Scripts"
+### Community 63 - "Gitops Validation Scripts"
 Cohesion: 1.0
 Nodes (1): GitOps validation scripts
 
-### Community 59 - "ESO Vault Contract"
+### Community 64 - "External Secrets And Vault Contract"
 Cohesion: 1.0
 Nodes (1): External Secrets and Vault contract
 
-### Community 60 - "Headlamp Namespace"
+### Community 65 - "Namespace Headlamp"
 Cohesion: 1.0
 Nodes (1): Namespace headlamp
 
-### Community 61 - "Static Contract Validation"
+### Community 66 - "Static Contract Validation"
 Cohesion: 1.0
 Nodes (1): static contract validation
 
-### Community 62 - "Live Cluster Validation"
+### Community 67 - "Live Cluster Validation"
 Cohesion: 1.0
 Nodes (1): live cluster validation
 
-### Community 63 - "Graphify Tooling"
+### Community 68 - "Optional Graphify Tool"
 Cohesion: 1.0
 Nodes (1): optional graphify tool
 
-### Community 64 - "Progress Memory"
-Cohesion: 1.0
-Nodes (1): Agent Progress and Memory Ledger
-
-### Community 65 - "MetalLB Traefik"
+### Community 69 - "Metallb And Traefik"
 Cohesion: 1.0
 Nodes (1): MetalLB and Traefik
 
+### Community 70 - "Execution Implementation Audit"
+Cohesion: 1.0
+Nodes (1): Spec Execution Implementation Audit Plan
+
 ## Knowledge Gaps
-- **426 isolated node(s):** `Gateway JIT Bootstrap Order`, `Repository Execution Constraints`, `Gateway Routing Map`, `Spec Driven Docs Taxonomy`, `Local Skill Roster` (+421 more)
+- **438 isolated node(s):** `Gateway JIT Bootstrap Order`, `Repository Execution Constraints`, `Gateway Routing Map`, `Spec Driven Docs Taxonomy`, `Local Skill Roster` (+433 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `App Deployed Notification`** (2 nodes): `template.app-deployed`, `trigger.on-deployed`
+- **Thin community `Template App Deployed`** (2 nodes): `template.app-deployed`, `trigger.on-deployed`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Rollout Completed Notification`** (2 nodes): `trigger.on-rollout-completed`, `template.rollout-completed`
+- **Thin community `Trigger On Rollout Completed`** (2 nodes): `trigger.on-rollout-completed`, `template.rollout-completed`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Rollout Aborted Notification`** (2 nodes): `trigger.on-rollout-aborted`, `template.rollout-aborted`
+- **Thin community `Trigger On Rollout Aborted`** (2 nodes): `trigger.on-rollout-aborted`, `template.rollout-aborted`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Ingress Retirement`** (2 nodes): `cloud-native ingress paths`, `Ingress NGINX upstream retired statement`
+- **Thin community `Cloud Native Ingress Paths`** (2 nodes): `cloud-native ingress paths`, `Ingress NGINX upstream retired statement`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Verification Plan`** (2 nodes): `Success Criteria and Verification Plan`, `Verification Commands`
+- **Thin community `Success Criteria And Verification`** (2 nodes): `Success Criteria and Verification Plan`, `Verification Commands`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Gateway Bootstrap`** (1 nodes): `Gateway JIT Bootstrap Order`
+- **Thin community `K3D Agent First Remediation`** (2 nodes): `k3d Agent-first Remediation Plan`, `k3d Agent-first Remediation Task`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Gateway Routing`** (1 nodes): `Gateway Routing Map`
+- **Thin community `Gateway Jit Bootstrap Order`** (1 nodes): `Gateway JIT Bootstrap Order`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `CI Remediation Task`** (1 nodes): `.github QA and CI Remediation Task`
+- **Thin community `Gateway Routing Map`** (1 nodes): `Gateway Routing Map`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Platform Components`** (1 nodes): `GitOps platform components`
+- **Thin community `Github Qa And Ci Remediation`** (1 nodes): `.github QA and CI Remediation Task`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `External Service Contracts`** (1 nodes): `External services contracts`
+- **Thin community `Gitops Platform Components`** (1 nodes): `GitOps platform components`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `External Services Contracts`** (1 nodes): `External services contracts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Network Egress Policies`** (1 nodes): `Network egress policies`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Adminer Workload`** (1 nodes): `workloads/adminer reference workload`
+- **Thin community `Workloads Adminer Reference Workload`** (1 nodes): `workloads/adminer reference workload`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Validation Scripts`** (1 nodes): `GitOps validation scripts`
+- **Thin community `Gitops Validation Scripts`** (1 nodes): `GitOps validation scripts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `ESO Vault Contract`** (1 nodes): `External Secrets and Vault contract`
+- **Thin community `External Secrets And Vault Contract`** (1 nodes): `External Secrets and Vault contract`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Headlamp Namespace`** (1 nodes): `Namespace headlamp`
+- **Thin community `Namespace Headlamp`** (1 nodes): `Namespace headlamp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Static Contract Validation`** (1 nodes): `static contract validation`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Live Cluster Validation`** (1 nodes): `live cluster validation`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Graphify Tooling`** (1 nodes): `optional graphify tool`
+- **Thin community `Optional Graphify Tool`** (1 nodes): `optional graphify tool`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Progress Memory`** (1 nodes): `Agent Progress and Memory Ledger`
+- **Thin community `Metallb And Traefik`** (1 nodes): `MetalLB and Traefik`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `MetalLB Traefik`** (1 nodes): `MetalLB and Traefik`
+- **Thin community `Execution Implementation Audit`** (1 nodes): `Spec Execution Implementation Audit Plan`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `LLM Wiki Reference Index` connect `Architecture Decisions` to `App Onboarding GitOps`?**
-  _High betweenness centrality (0.092) - this node is a cross-community bridge._
-- **Why does `App GitOps Onboarding Policy` connect `App Onboarding GitOps` to `Platform Bootstrap Operations`?**
-  _High betweenness centrality (0.084) - this node is a cross-community bridge._
-- **Why does `Canonical Owner Pointers` connect `App Onboarding GitOps` to `Architecture Decisions`?**
-  _High betweenness centrality (0.083) - this node is a cross-community bridge._
+- **Why does `LLM Wiki Reference Index` connect `Requirements Stage` to `App Gitops Onboarding Policy`?**
+  _High betweenness centrality (0.098) - this node is a cross-community bridge._
+- **Why does `App GitOps Onboarding Policy` connect `App Gitops Onboarding Policy` to `05 Operations Runbooks`?**
+  _High betweenness centrality (0.089) - this node is a cross-community bridge._
+- **Why does `Canonical Owner Pointers` connect `App Gitops Onboarding Policy` to `Requirements Stage`?**
+  _High betweenness centrality (0.088) - this node is a cross-community bridge._
 - **What connects `Gateway JIT Bootstrap Order`, `Repository Execution Constraints`, `Gateway Routing Map` to the rest of the system?**
-  _426 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Platform Bootstrap Operations` be split into smaller, more focused modules?**
+  _438 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `05 Operations Runbooks` be split into smaller, more focused modules?**
   _Cohesion score 0.03 - nodes in this community are weakly interconnected._
-- **Should `App Onboarding GitOps` be split into smaller, more focused modules?**
+- **Should `App Gitops Onboarding Policy` be split into smaller, more focused modules?**
   _Cohesion score 0.03 - nodes in this community are weakly interconnected._
-- **Should `Architecture Decisions` be split into smaller, more focused modules?**
-  _Cohesion score 0.04 - nodes in this community are weakly interconnected._
+- **Should `003 Platform Expansion` be split into smaller, more focused modules?**
+  _Cohesion score 0.05 - nodes in this community are weakly interconnected._
