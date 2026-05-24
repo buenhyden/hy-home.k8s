@@ -68,6 +68,11 @@ delegated work follows the same contract in Claude and Codex.
 - Use the Task tool for work assignment and status tracking.
 - Route all multi-agent decisions through `supervisor.md`.
 - Keep handoff artifacts in repository-approved locations only; do not create ad-hoc runtime folders unless a human requests them.
+- Scratch workspaces such as `_workspace/` are allowed only when a checked-in
+  skill explicitly defines them as temporary analysis space. Durable outputs
+  from scratch work must be moved into the canonical docs taxonomy, such as
+  `docs/04.execution/` for task evidence or `docs/05.operations/incidents/`
+  for incident records.
 
 ## Catalog Reference
 

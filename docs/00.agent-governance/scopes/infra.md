@@ -34,7 +34,8 @@ Infra scope does **not** own `docs/00.agent-governance/` (meta scope) or upstrea
 
 ## Subagent Bridge
 
-Agents that import this scope: `.claude/agents/k8s-implementer.md`, `.claude/agents/incident-responder.md`.
+Agents that import this scope: `.claude/agents/k8s-implementer.md`,
+`.claude/agents/gitops-reviewer.md`, `.claude/agents/incident-responder.md`.
 
 Subagents must read `.claude/agents/<name>.md` (which `@import`s this scope) before starting work.
 Subagent dispatch: use Task tool only; never inline role definitions in prompts.

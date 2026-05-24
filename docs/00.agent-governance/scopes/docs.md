@@ -29,7 +29,8 @@ Stage README ownership follows the owning stage persona. Docs scope owns shared 
 
 ## Subagent Bridge
 
-Agents that import this scope: `.claude/agents/doc-writer.md`.
+Agents that import this scope: `.claude/agents/doc-writer.md`,
+`.claude/agents/wiki-curator.md`.
 
 Subagent dispatch: use Task tool only; never inline role definitions in prompts.
 

@@ -37,7 +37,8 @@ that shape the runtime contract under `.claude/` and its Codex mirror under `.co
 - Task and worker agents use `sonnet`.
 - Agent files are thin runtime bridges and must not duplicate governance policy.
 - Codex mirror files are thin runtime bridges with the same contract as their `.claude` source.
-- Skill files are workflow contracts and must remain specific to this cluster.
+- Skill files are either workflow contracts or reference-pattern contracts and
+  must remain specific to this cluster.
 
 ## Readiness Evidence Boundary
 
@@ -163,6 +164,34 @@ across the `.claude` source and `.codex` mirror.
 | `.claude/skills/rca-methodology/skill.md`        | Structured RCA technique reference: 5 Whys, Fishbone, Fault Tree Analysis, Change Analysis, and cognitive bias prevention        | root cause analysis, 5 Whys, fishbone, FTA, change analysis                         | incident-postmortem                          |
 | `.claude/skills/k8s-security-audit/skill.md`     | Structured security audit workflow: RBAC, NetworkPolicy, Secret handling, container security context, and image supply chain     | security audit, RBAC review, network policy audit, secret scanning, CIS benchmark   | security-audit                               |
 | `.claude/skills/vulnerability-patterns/skill.md` | Kubernetes manifest and Helm chart vulnerability pattern catalog with VULNERABLE/SAFE YAML examples and CIS benchmark mappings   | manifest hardening, YAML security review, Helm security, misconfiguration detection | security-audit, code-reviewer                |
+
+Workflow skills define ordered execution behavior and expected outputs.
+Reference-pattern skills provide reusable judgment catalogs, examples, and
+review heuristics. Do not require every reference-pattern skill to carry the
+same checklist shape as a workflow skill; instead, keep its trigger,
+applicable review surface, and failure boundaries clear.
+
+## Task-to-Skill Routing
+
+Use the repo-local `.claude/skills/**` roster first for cluster-specific work.
+When a user prompt explicitly requires external `SKILL.md` paths, treat those
+paths as external requested skills for that task only. Missing external paths
+must be recorded as a Gap rather than silently replaced by a similar local
+skill.
+
+| Task Area | Repo-local or External Requested Skill Paths | Routing Notes |
+| --- | --- | --- |
+| Workspace investigation and analysis | external requested: `/home/hy/.agents/skills/grill-with-docs/SKILL.md` | Use with architecture, DevOps, QA, Kubernetes, and documentation review skills when a prompt requests full-workspace analysis. |
+| Documentation writing | external requested: `/home/hy/.agents/skills/documentation-writer/SKILL.md`; `/home/hy/.agents/skills/humanizer/SKILL.md`; `/home/hy/gstack/.agents/skills/gstack-document-release/SKILL.md`; `/home/hy/.agents/skills/technical-blog-writing/SKILL.md` | Use alongside repo templates and docs-stage routing. |
+| Documentation co-authoring and release | external requested: `/home/hy/.agents/skills/doc-coauthoring/SKILL.md`; `/home/hy/gstack/.agents/skills/gstack-document-release/SKILL.md`; `/home/hy/.agents/skills/humanizer/SKILL.md` | Use for review/release workflow, not for replacing template contracts. |
+| Repeated workflow and instruction skills | external requested: `/home/hy/.codex/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/writing-skills/SKILL.md`; `/home/hy/.codex/trailofbits-skills/plugins/skill-improver/skills/skill-improver/SKILL.md`; `/home/hy/.agents/skills/skill-creator/SKILL.md`; `/home/hy/.agents/skills/write-a-skill/SKILL.md` | Prefer updating existing repo-local skills or catalog entries before adding new surfaces. |
+| Subagent creation and subagent-driven work | external requested: `/home/hy/.codex/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/subagent-driven-development/SKILL.md` | Use only after an implementation plan has independent tasks and local subagent protocol constraints are satisfied. |
+| Hook work | external requested: `/home/hy/.agents/skills/hook-development/SKILL.md`; `/home/hy/.codex/plugins/cache/claude-plugins-official/hookify/local/skills/writing-rules/SKILL.md` | Keep shared enforcement in tracked hooks, settings, Codex hook wiring, and validators. |
+| Native instruction files and runtime governance | external requested: `/home/hy/.codex/plugins/cache/claude-plugins-official/claude-md-management/1.0.0/skills/claude-md-improver/SKILL.md`; `/home/hy/.agents/skills/claude-md-improver/SKILL.md`; `/home/hy/.agents/skills/agent-md-refactor/SKILL.md` | Keep `AGENTS.md`, root `CLAUDE.md`, and `GEMINI.md` as thin gateways. |
+| Scripts | external requested: `/home/hy/.agents/skills/bash-scripting/SKILL.md` | Keep scripts single-purpose, deterministic, and static unless a human approves live operations. |
+| Kubernetes and infrastructure | repo-local: `.claude/skills/gitops-workflow/skill.md`, `.claude/skills/k8s-validate/skill.md`; external requested: `/home/hy/.agents/skills/senior-devops/SKILL.md`; `/home/hy/.agents/skills/senior-architect/SKILL.md`; `/home/hy/.agents/skills/architect-review/SKILL.md`; `/home/hy/.agents/skills/architecture/SKILL.md`; `/home/hy/.agents/skills/kubernetes-specialist/SKILL.md`; `/home/hy/.agents/skills/kubernetes-architect/SKILL.md`; `/home/hy/.agents/skills/kubernetes-deployment/SKILL.md` | GitOps-first and no direct live mutation remain mandatory. |
+| QA | external requested: `/home/hy/.agents/skills/senior-qa/SKILL.md`; `/home/hy/.agents/skills/testing-qa/SKILL.md`; `/home/hy/.codex/trailofbits-skills/plugins/testing-handbook-skills/skills/coverage-analysis/SKILL.md` | Use repo-static validation first; live QA requires approved runtime context. |
+| CI/CD | external requested: `/home/hy/.agents/skills/senior-devops/SKILL.md`; `/home/hy/.agents/skills/devops-engineer/SKILL.md`; `/home/hy/.agents/skills/devops-troubleshooter/SKILL.md` | CI structure changes require separate review if they alter gates or dependencies. |
 
 Workspace-local `.agents/skills/**` files are ignored convenience mirrors, not
 repo-backed runtime truth. If a local `.agents/skills/<name>/skill.md` mirrors a
