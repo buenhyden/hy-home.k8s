@@ -223,36 +223,37 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 ## P1 Low risk / Immediate implementation
 
-| Action type | Target | Change | Linked task | Verification | Rollback |
-| --- | --- | --- | --- | --- | --- |
-| improvement | `docs/00.agent-governance/scopes/docs.md` | Add `wiki-curator` to Subagent Bridge | T-004 | repo quality gate | Revert line |
-| improvement | `docs/00.agent-governance/scopes/infra.md` | Add `gitops-reviewer` to Subagent Bridge | T-004 | repo quality gate | Revert line |
-| supplementation | `docs/00.agent-governance/subagent-protocol.md` | Clarify `_workspace/` scratch boundary | T-005 | repo quality gate | Revert paragraph |
-| addition | spec/task/plan docs | Create traceability docs and indexes | T-001 | repo quality gate and link checks | Remove added docs/index entries |
-| supplementation | this plan and linked task | Record input reflection audit and exact external skill path check result | T-010, T-011 | repo quality gate | Revert follow-up sections |
-| supplementation | Final Report section layout | Add explicit `Skill and Harness Updates` section | T-010 | repo quality gate | Revert report section edit |
+| Action type | Target | Change | Required skill | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| improvement | `docs/00.agent-governance/scopes/docs.md` | Add `wiki-curator` to Subagent Bridge | `grill-with-docs`; `agent-md-refactor`; `claude-md-improver` | T-004 | repo quality gate | Revert line |
+| improvement | `docs/00.agent-governance/scopes/infra.md` | Add `gitops-reviewer` to Subagent Bridge | `grill-with-docs`; `agent-md-refactor`; `claude-md-improver` | T-004 | repo quality gate | Revert line |
+| supplementation | `docs/00.agent-governance/subagent-protocol.md` | Clarify `_workspace/` scratch boundary | `grill-with-docs`; `subagent-driven-development`; `agent-md-refactor` | T-005 | repo quality gate | Revert paragraph |
+| addition | spec/task/plan docs | Create traceability docs and indexes | `grill-with-docs`; `documentation-writer`; `doc-coauthoring`; `gstack-document-release`; `humanizer` | T-001 | repo quality gate and link checks | Remove added docs/index entries |
+| supplementation | this plan and linked task | Record input reflection audit and exact external skill path check result | `grill-with-docs`; `workspace-harness-audit` | T-010, T-011 | repo quality gate | Revert follow-up sections |
+| supplementation | Final Report section layout | Add explicit `Skill and Harness Updates` section | `documentation-writer`; `humanizer`; `workspace-harness-audit` | T-010 | repo quality gate | Revert report section edit |
+| supplementation | Implementation Plan skill column | Add row-level `Required skill` evidence for P1/P2/P3 work | `grill-with-docs`; `workspace-harness-audit` | T-013 | repo quality gate | Revert table-column edit |
 
 ## P2 Medium risk / Limited implementation
 
-| Action type | Target | Change | Linked task | Verification | Rollback |
-| --- | --- | --- | --- | --- | --- |
-| improvement | `scripts/validate-gitops-structure.sh` | Fail when root app manifest count is zero | T-006 | `bash scripts/validate-gitops-structure.sh`; shell syntax | Revert script hunk |
-| supplementation | `scripts/README.md` | Document hook simulation bypass as internal | T-006 | repo quality gate | Revert README paragraph |
-| supplementation | `harness-catalog.md` | Add external requested skill routing and skill type boundary | T-005 | repo quality gate | Revert sections |
-| addition | `.claude/skills/workspace-harness-audit/skill.md` and `harness-catalog.md` | Capture repeated workspace-wide audit workflow as repo-local Skill | T-012 | repo quality gate | Remove skill and catalog row |
+| Action type | Target | Change | Required skill | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| improvement | `scripts/validate-gitops-structure.sh` | Fail when root app manifest count is zero | `bash-scripting`; `senior-devops`; `kubernetes-specialist`; repo-local `k8s-validate` | T-006 | `bash scripts/validate-gitops-structure.sh`; shell syntax | Revert script hunk |
+| supplementation | `scripts/README.md` | Document hook simulation bypass as internal | `bash-scripting`; `documentation-writer`; `humanizer` | T-006 | repo quality gate | Revert README paragraph |
+| supplementation | `harness-catalog.md` | Add external requested skill routing and skill type boundary | `grill-with-docs`; `agent-md-refactor`; `claude-md-improver` | T-005 | repo quality gate | Revert sections |
+| addition | `.claude/skills/workspace-harness-audit/skill.md` and `harness-catalog.md` | Capture repeated workspace-wide audit workflow as repo-local Skill | `writing-skills`; `skill-creator`; `write-a-skill`; `skill-improver` | T-012 | repo quality gate | Remove skill and catalog row |
 
 ## P3 High risk / Deferred
 
-| Action type | Target | Deferral reason | Pre-check | Follow-up work |
-| --- | --- | --- | --- | --- |
-| deferral | ESO NetworkPolicy | Kubernetes semantic behavior | Confirm DNS/API egress and live ESO needs | Separate GitOps manifest task |
-| deferral | Vault policy | Secret access policy | Confirm Vault runtime path and rollback | Add HCL plus static test |
-| deferral | AppProject app `ExternalSecret` | Permission model change | Confirm onboarding contract | Update AppProject/examples/docs |
-| deferral | Bootstrap CR ownership | ArgoCD ownership design | Decide managed owner model | Architecture and runbook update |
-| deferral | GitHub Actions SHA pinning | CI policy decision | Review supply-chain risk | Update workflows and inventory |
-| deferral | Local Claude settings | Ignored local runtime behavior | Verify precedence | Tighten local file if needed |
-| deferral | Live checks | Requires approved runtime context | Human approval | Run live read-only tests |
-| deferral | Historical raw subagent ledgers | Original raw role outputs are not authoritative current-state files | Future subagent runs must persist raw Summary/Ledger tables into plan/task evidence | Enforce through `workspace-harness-audit` skill |
+| Action type | Target | Deferral reason | Pre-check | Required skill | Follow-up work |
+| --- | --- | --- | --- | --- | --- |
+| deferral | ESO NetworkPolicy | Kubernetes semantic behavior | Confirm DNS/API egress and live ESO needs | `senior-devops`; `kubernetes-specialist`; `kubernetes-architect`; repo-local `k8s-security-audit` | Separate GitOps manifest task |
+| deferral | Vault policy | Secret access policy | Confirm Vault runtime path and rollback | `senior-devops`; `architect-review`; repo-local `k8s-security-audit` | Add HCL plus static test |
+| deferral | AppProject app `ExternalSecret` | Permission model change | Confirm onboarding contract | `senior-devops`; `kubernetes-specialist`; repo-local `gitops-workflow` | Update AppProject/examples/docs |
+| deferral | Bootstrap CR ownership | ArgoCD ownership design | Decide managed owner model | `senior-architect`; `architecture`; `kubernetes-architect`; repo-local `gitops-workflow` | Architecture and runbook update |
+| deferral | GitHub Actions SHA pinning | CI policy decision | Review supply-chain risk | `senior-devops`; `devops-engineer`; `devops-troubleshooter` | Update workflows and inventory |
+| deferral | Local Claude settings | Ignored local runtime behavior | Verify precedence | `claude-md-improver`; `agent-md-refactor`; `hook-development` | Tighten local file if needed |
+| deferral | Live checks | Requires approved runtime context | Human approval | `senior-devops`; `testing-qa`; `kubernetes-deployment` | Run live read-only tests |
+| deferral | Historical raw subagent ledgers | Original raw role outputs are not authoritative current-state files | Future subagent runs must persist raw Summary/Ledger tables into plan/task evidence | `subagent-driven-development`; `workspace-harness-audit` | Enforce through `workspace-harness-audit` skill |
 
 # Input Reflection Follow-up
 
@@ -264,6 +265,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | Create or improve reusable Skills for repeated workflows where appropriate | Repeated routing was consolidated into `harness-catalog.md` only | partial reflection | Added `.claude/skills/workspace-harness-audit/skill.md` and cataloged it |
 | Include `Skill and Harness Updates` in the Final Report | Final Report used the shorter later contract | weak reflection | Added the explicit section and kept the rest of the report intact |
 | Preserve subagent Summary and Ledger output format | Plan preserves summaries and integrated ledgers, not raw role output tables | partial reflection | Current raw outputs are not reconstructed; future runs must preserve raw role tables through the new Skill workflow |
+| Record chosen skill group before each implementation task | Skill routing existed, but implementation plan rows did not carry `Required skill` evidence | weak reflection | Added `Required skill` columns to P1/P2/P3 implementation rows |
 
 ## Required External Skill Path Check
 

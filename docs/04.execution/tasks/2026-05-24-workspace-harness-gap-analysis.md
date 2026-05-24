@@ -46,6 +46,7 @@ pre-check와 follow-up으로 남긴다.
 | T-010 | Audit unreflected input tasks | doc | VAL-SPC-006-004 | PLN-007 | Input Reflection Follow-up | Platform | Done |
 | T-011 | Verify exact required external `SKILL.md` paths | guardrail | VAL-SPC-006-004 | PLN-007 | skill path check | Platform | Done |
 | T-012 | Add repo-local workspace harness audit skill | guardrail | VAL-SPC-006-005 | PLN-007 | repo quality gate | Platform | Done |
+| T-013 | Add row-level required skill evidence to the Implementation Plan | doc | VAL-SPC-006-004 | PLN-007 | repo quality gate | Platform | Done |
 
 ## Suggested Types
 
@@ -84,6 +85,7 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-010 Audit unreflected input tasks.
 - [x] T-011 Verify exact required external `SKILL.md` paths.
 - [x] T-012 Add repo-local workspace harness audit skill.
+- [x] T-013 Add row-level required skill evidence to the Implementation Plan.
 
 ## Verification Summary
 
@@ -99,6 +101,7 @@ pre-check와 follow-up으로 남긴다.
   - `python3 -m json.tool .codex/hooks.json` - PASS.
   - `.env.example` and `.env` key-name-only comparison - PASS; key names match without printing values.
   - required external `SKILL.md` path existence check - PASS; all listed paths present.
+  - Implementation Plan row-level `Required skill` check - PASS; P1/P2/P3 rows carry skill evidence.
   - `git diff --check` - PASS.
 - **Eval Commands**: No live model or subagent pressure eval was run. The
   repo-local Skill addition was checked through repository quality gates,

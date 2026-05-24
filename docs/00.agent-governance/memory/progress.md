@@ -23,6 +23,8 @@ inventory stays in `scripts/README.md`.
   environment; all listed paths were present.
 - Added `.claude/skills/workspace-harness-audit/skill.md` for repeated
   workspace-wide Gap analysis and input-reflection audits.
+- Added row-level `Required skill` evidence to the Implementation Plan so each
+  implemented or deferred action carries the chosen skill group.
 - Updated the harness catalog with the new repo-local Skill and updated the
   plan/task/spec evidence with input reflection follow-up requirements.
 - Added an explicit `Skill and Harness Updates` Final Report section to cover
@@ -35,6 +37,9 @@ inventory stays in `scripts/README.md`.
   loading.
 - Exact external `SKILL.md` path checks must be recorded in plan/task evidence,
   not only implied by a routing table.
+- Broad implementation plans must keep a `Required skill` field on P1/P2/P3
+  rows when the task contract asks for task-to-skill mapping before
+  implementation.
 - Future subagent-driven workspace audits must persist raw role Summary/Ledger
   tables directly in durable plan/task evidence when those raw tables are part
   of the task contract.
