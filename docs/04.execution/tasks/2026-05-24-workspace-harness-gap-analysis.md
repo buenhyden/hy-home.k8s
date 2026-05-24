@@ -43,6 +43,9 @@ pre-check와 follow-up으로 남긴다.
 | T-007 | Record P3 high-risk deferrals | doc | Failure Modes | PLN-005 | plan deferred table | Platform | Done |
 | T-008 | Run verification bundle | test | Verification Commands | PLN-006 | Verification Summary | Platform | Done |
 | T-009 | Append progress memory | memory | Memory Strategy | PLN-001 | progress entry | Platform | Done |
+| T-010 | Audit unreflected input tasks | doc | VAL-SPC-006-004 | PLN-007 | Input Reflection Follow-up | Platform | Done |
+| T-011 | Verify exact required external `SKILL.md` paths | guardrail | VAL-SPC-006-004 | PLN-007 | skill path check | Platform | Done |
+| T-012 | Add repo-local workspace harness audit skill | guardrail | VAL-SPC-006-005 | PLN-007 | repo quality gate | Platform | Done |
 
 ## Suggested Types
 
@@ -76,6 +79,12 @@ pre-check와 follow-up으로 남긴다.
 
 - [x] T-008 Run verification bundle.
 
+### Phase 4 - Input Reflection Follow-up
+
+- [x] T-010 Audit unreflected input tasks.
+- [x] T-011 Verify exact required external `SKILL.md` paths.
+- [x] T-012 Add repo-local workspace harness audit skill.
+
 ## Verification Summary
 
 - **Test Commands**:
@@ -89,18 +98,25 @@ pre-check와 follow-up으로 남긴다.
   - `python3 -m json.tool .claude/settings.json` - PASS.
   - `python3 -m json.tool .codex/hooks.json` - PASS.
   - `.env.example` and `.env` key-name-only comparison - PASS; key names match without printing values.
+  - required external `SKILL.md` path existence check - PASS; all listed paths present.
   - `git diff --check` - PASS.
-- **Eval Commands**: N/A. No model, prompt, or runtime behavior changed.
+- **Eval Commands**: No live model or subagent pressure eval was run. The
+  repo-local Skill addition was checked through repository quality gates,
+  harness catalog inventory, and the skill authoring checklist from the loaded
+  skill-writing guidance.
 - **Logs / Evidence Location**: this document and the linked plan.
 - **Skipped / Deferred Verification**:
   - live k3d, ArgoCD, Vault, ESO, PostgreSQL, Valkey, TLS, and NetworkPolicy
     checks require explicit live validation approval.
   - optional `kube-linter` is not installed locally; YAML syntax validation and
     static contract verification were used as the local alternative.
+  - automated `skill-reviewer` loop was not run because the required plugin-dev
+    reviewer surface is not part of this repository's current harness.
 
 ## Related Documents
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Plan**: [../plans/2026-05-24-workspace-harness-gap-analysis.md](../plans/2026-05-24-workspace-harness-gap-analysis.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
+- **Workspace Harness Audit Skill**: [../../../.claude/skills/workspace-harness-audit/skill.md](../../../.claude/skills/workspace-harness-audit/skill.md)
 - **Scripts README**: [../../../scripts/README.md](../../../scripts/README.md)

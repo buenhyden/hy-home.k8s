@@ -8,6 +8,52 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-24 — workspace harness input reflection follow-up
+
+- **Date**: 2026-05-24
+- **Layer**: docs, meta
+- **Status**: complete
+- **Tags**: #governance #skills #validation #harness
+
+#### Progress
+
+- Re-audited the workspace harness implementation against the earlier broad
+  task contract to find weakly reflected input tasks.
+- Verified exact external required `SKILL.md` paths in the current WSL
+  environment; all listed paths were present.
+- Added `.claude/skills/workspace-harness-audit/skill.md` for repeated
+  workspace-wide Gap analysis and input-reflection audits.
+- Updated the harness catalog with the new repo-local Skill and updated the
+  plan/task/spec evidence with input reflection follow-up requirements.
+- Added an explicit `Skill and Harness Updates` Final Report section to cover
+  the broader original report contract.
+
+#### Memory
+
+- Broad workspace improvement prompts should use
+  `.claude/skills/workspace-harness-audit/skill.md` after baseline governance
+  loading.
+- Exact external `SKILL.md` path checks must be recorded in plan/task evidence,
+  not only implied by a routing table.
+- Future subagent-driven workspace audits must persist raw role Summary/Ledger
+  tables directly in durable plan/task evidence when those raw tables are part
+  of the task contract.
+
+#### Evidence
+
+- `docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md`
+  contains the Input Reflection Follow-up and skill path check result.
+- `docs/04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md`
+  tracks T-010 through T-012 for the follow-up work.
+- Final validation evidence is recorded in the linked task.
+
+#### Handoff
+
+- Historical raw subagent output tables were not reconstructed from chat
+  history; future runs must preserve them as first-class evidence when required.
+
+---
+
 ### 2026-05-24 — workspace harness gap analysis and limited implementation
 
 - **Date**: 2026-05-24

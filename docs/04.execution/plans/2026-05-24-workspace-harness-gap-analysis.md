@@ -55,6 +55,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | PLN-004 | Harden GitOps root app validation | `scripts/validate-gitops-structure.sh`, `scripts/README.md` | REQ-GITOPS-STATIC | GitOps structure check PASS |
 | PLN-005 | Preserve high-risk Gap follow-up | This plan and linked task | REQ-RISK | P3 items have pre-checks and follow-up |
 | PLN-006 | Run verification and final checklist | scripts, docs, runtime JSON | REQ-VALIDATION | Commands pass or limitations recorded |
+| PLN-007 | Audit unreflected input tasks and close safe follow-up gaps | this plan, linked task, `harness-catalog.md`, `.claude/skills/workspace-harness-audit/skill.md` | REQ-INPUT-REFLECTION | Skill path check PASS and repo quality gate PASS |
 
 ## Verification Plan
 
@@ -105,6 +106,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 - [x] Verification run and limitations recorded.
 - [x] Checklist gate completed.
 - [x] Final Report created.
+- [x] Input reflection follow-up completed.
 
 # Coverage Ledger
 
@@ -153,6 +155,10 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | Agent governance | Scratch `_workspace/` convention is skill-local only | `.claude/skills/incident-postmortem/skill.md`; `subagent-protocol.md` | Future ad-hoc runtime folders | Low | supplementation | P1 |
 | Agent governance | Prompt-level skill routing is not consolidated | user task contract; `harness-catalog.md` | Repeated task-to-skill rules can drift | Medium | supplementation | P2 |
 | Agent governance | Reference-pattern skills are described as uniform workflow contracts | `harness-catalog.md` Skills table | Skill expectations are ambiguous | Medium | supplementation | P2 |
+| Agent governance | Required external `SKILL.md` paths were listed but exact path-check evidence was not preserved | user task contract; `harness-catalog.md` | Missing-path Gap requirement lacked durable proof | Low | supplementation | P1 |
+| Agent governance | Repeated broad workspace audit workflow was cataloged but not captured as a repo-local Skill | `harness-catalog.md`; previous plan | Future broad audits can omit path checks or raw ledger preservation | Medium | addition | P2 |
+| Documentation | Initial Final Report contract included `Skill and Harness Updates`, but the report used the shorter later format | user task contract; this Final Report | Reporting format drift for harness work | Low | supplementation | P1 |
+| Agent governance | Raw subagent ledgers are summarized but not durably archived in original role output format | this plan `Subagent Summary` | Replayability weaker than prompt contract | Medium | deferral | P3 |
 | Scripts | GitOps root app validator does not fail on zero non-kustomization root app manifests | `scripts/validate-gitops-structure.sh` | Empty App-of-Apps root could partially pass | Medium | improvement | P2 |
 | Scripts | Hook simulation skip env is internal but undocumented | `.claude/hooks/post-validate.sh`; `scripts/validate-repo-quality-gates.sh` | Maintainers may misuse bypass | Low | supplementation | P2 |
 | GitOps | ESO egress policy may omit DNS/API egress | `gitops/platform/network-policies/external-secrets-egress-to-vault.yaml` | ESO reconciliation risk | High | deferral | P3 |
@@ -223,6 +229,8 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | improvement | `docs/00.agent-governance/scopes/infra.md` | Add `gitops-reviewer` to Subagent Bridge | T-004 | repo quality gate | Revert line |
 | supplementation | `docs/00.agent-governance/subagent-protocol.md` | Clarify `_workspace/` scratch boundary | T-005 | repo quality gate | Revert paragraph |
 | addition | spec/task/plan docs | Create traceability docs and indexes | T-001 | repo quality gate and link checks | Remove added docs/index entries |
+| supplementation | this plan and linked task | Record input reflection audit and exact external skill path check result | T-010, T-011 | repo quality gate | Revert follow-up sections |
+| supplementation | Final Report section layout | Add explicit `Skill and Harness Updates` section | T-010 | repo quality gate | Revert report section edit |
 
 ## P2 Medium risk / Limited implementation
 
@@ -231,6 +239,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | improvement | `scripts/validate-gitops-structure.sh` | Fail when root app manifest count is zero | T-006 | `bash scripts/validate-gitops-structure.sh`; shell syntax | Revert script hunk |
 | supplementation | `scripts/README.md` | Document hook simulation bypass as internal | T-006 | repo quality gate | Revert README paragraph |
 | supplementation | `harness-catalog.md` | Add external requested skill routing and skill type boundary | T-005 | repo quality gate | Revert sections |
+| addition | `.claude/skills/workspace-harness-audit/skill.md` and `harness-catalog.md` | Capture repeated workspace-wide audit workflow as repo-local Skill | T-012 | repo quality gate | Remove skill and catalog row |
 
 ## P3 High risk / Deferred
 
@@ -243,6 +252,34 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | deferral | GitHub Actions SHA pinning | CI policy decision | Review supply-chain risk | Update workflows and inventory |
 | deferral | Local Claude settings | Ignored local runtime behavior | Verify precedence | Tighten local file if needed |
 | deferral | Live checks | Requires approved runtime context | Human approval | Run live read-only tests |
+| deferral | Historical raw subagent ledgers | Original raw role outputs are not authoritative current-state files | Future subagent runs must persist raw Summary/Ledger tables into plan/task evidence | Enforce through `workspace-harness-audit` skill |
+
+# Input Reflection Follow-up
+
+## Unreflected or Weakly Reflected Input Tasks
+
+| Input task | Existing reflection | Gap judgment | Implementation |
+| --- | --- | --- | --- |
+| Verify exact required external `SKILL.md` paths and record missing paths as Gaps | Paths were listed in `harness-catalog.md`, but no durable path-check result was recorded | weak reflection | Added path-check result to this plan/task; all listed paths were present in the current WSL environment |
+| Create or improve reusable Skills for repeated workflows where appropriate | Repeated routing was consolidated into `harness-catalog.md` only | partial reflection | Added `.claude/skills/workspace-harness-audit/skill.md` and cataloged it |
+| Include `Skill and Harness Updates` in the Final Report | Final Report used the shorter later contract | weak reflection | Added the explicit section and kept the rest of the report intact |
+| Preserve subagent Summary and Ledger output format | Plan preserves summaries and integrated ledgers, not raw role output tables | partial reflection | Current raw outputs are not reconstructed; future runs must preserve raw role tables through the new Skill workflow |
+
+## Required External Skill Path Check
+
+| Area | Result | Missing paths |
+| --- | --- | --- |
+| Workspace investigation and analysis | PASS | none |
+| Documentation writing | PASS | none |
+| Documentation co-authoring and release | PASS | none |
+| Repeated workflow and instruction skills | PASS | none |
+| Subagent creation and subagent-driven work | PASS | none |
+| Hook work | PASS | none |
+| Native instruction files and runtime governance | PASS | none |
+| Scripts | PASS | none |
+| Kubernetes and infrastructure | PASS | none |
+| QA | PASS | none |
+| CI/CD | PASS | none |
 
 # Verification Results
 
@@ -257,6 +294,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | shell syntax check | PASS | linked task |
 | runtime JSON parse | PASS for `.claude/settings.json` and `.codex/hooks.json` | linked task |
 | `.env.example` and `.env` key comparison | PASS, key names match without printing values | linked task |
+| required external `SKILL.md` path check | PASS, all listed paths present | linked task |
 | `git diff --check` | PASS | linked task |
 
 # Checklist Gate
@@ -330,7 +368,15 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | stage README indexes | New entries | T-001 |
 | `memory/progress.md` | Progress and evidence entry | T-009 |
 
-## 6. Implementation Changes
+## 6. Skill and Harness Updates
+
+| Target | Action | Skill used | Reason |
+| --- | --- | --- | --- |
+| `.claude/skills/workspace-harness-audit/skill.md` | Added repo-local workflow Skill | `writing-skills`, `write-a-skill`, `skill-creator`, `skill-improver` guidance | Capture repeated broad workspace audit workflow and prevent future omission of skill path checks or raw ledger preservation |
+| `docs/00.agent-governance/harness-catalog.md` | Added skill inventory row and retained external requested skill routing | `grill-with-docs`, `agent-md-refactor` routing principles | Keep `AGENTS.md` thin while centralizing harness routing |
+| Required external `SKILL.md` paths | Verified exact paths | `grill-with-docs` plus task-specific skill routing | Satisfy missing-path Gap recording contract; no missing paths found |
+
+## 7. Implementation Changes
 
 | Target | Change | Reason | Linked task |
 | --- | --- | --- | --- |
@@ -340,8 +386,10 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | `harness-catalog.md` | Add task-to-skill routing and skill type note | Consolidate recurring workflow routing | T-005 |
 | `validate-gitops-structure.sh` | Add root app manifest count assertion | Close static validation gap | T-006 |
 | `scripts/README.md` | Clarify hook env bypass | Prevent manual misuse | T-006 |
+| `.claude/skills/workspace-harness-audit/skill.md` | Add reusable workspace audit workflow | Close repeated-workflow Skill gap | T-012 |
+| this plan and linked task | Add input reflection follow-up and skill path check evidence | Close weakly reflected original input tasks | T-010, T-011 |
 
-## 7. Deletion, Consolidation, and Deferred Items
+## 8. Deletion, Consolidation, and Deferred Items
 
 | Target | Type | Reason | Reference check | Recommended action |
 | --- | --- | --- | --- | --- |
@@ -350,14 +398,16 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | ESO NetworkPolicy | deferred | runtime semantic change | manifest review | separate task |
 | Vault policy | deferred | secret access policy | manifest/HCL review | separate task |
 | SHA pinning | deferred | CI policy | workflow/zizmor review | separate task |
+| historical raw subagent ledgers | deferred | original raw role output tables are not current-state files | current plan has integrated summaries | preserve raw Summary/Ledger tables in future runs through `workspace-harness-audit` |
 
-## 8. Verification
+## 9. Verification
 
 | Command or method | Result | Record location |
 | --- | --- | --- |
 | Full verification bundle | PASS; optional `kube-linter` unavailable and live checks deferred | task verification summary |
+| External required skill path check | PASS; no missing paths | input reflection follow-up |
 
-## 9. Checklist Gate
+## 10. Checklist Gate
 
 | Checklist item | Status | Evidence |
 | --- | --- | --- |
@@ -369,15 +419,18 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 | Criteria measurable | pass | completion criteria |
 | Recurring rules routed | pass | harness catalog |
 
-## 10. Remaining Risks and Next Work
+## 11. Remaining Risks and Next Work
 
 - Complete live runtime validation only with explicit approval.
 - Implement P3 GitOps and security-policy changes as separate reviewed tasks.
 - Verify optional toolchain and GitHub rulesets outside this local static pass.
+- Do not reconstruct historical raw subagent output tables without authoritative
+  source output; preserve them directly in future workspace harness audits.
 
 ## Related Documents
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Tasks**: [../tasks/2026-05-24-workspace-harness-gap-analysis.md](../tasks/2026-05-24-workspace-harness-gap-analysis.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
+- **Workspace Harness Audit Skill**: [../../../.claude/skills/workspace-harness-audit/skill.md](../../../.claude/skills/workspace-harness-audit/skill.md)
 - **Scripts README**: [../../../scripts/README.md](../../../scripts/README.md)

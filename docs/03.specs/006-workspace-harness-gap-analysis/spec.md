@@ -165,6 +165,10 @@ git diff --check
 - **VAL-SPC-006-002**: P1/P2 scoped changes pass repo-static validation.
 - **VAL-SPC-006-003**: P3 high-risk items are deferred with pre-checks and
   follow-up work.
+- **VAL-SPC-006-004**: Required external `SKILL.md` paths are checked and
+  missing paths, if any, are recorded as Gaps.
+- **VAL-SPC-006-005**: Repeated broad workspace audit workflow is captured in a
+  repo-local Skill or explicitly deferred with rationale.
 
 ## Related Documents
 
@@ -172,4 +176,5 @@ git diff --check
 - **Tasks**: [../../04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md](../../04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Subagent Protocol**: [../../00.agent-governance/subagent-protocol.md](../../00.agent-governance/subagent-protocol.md)
+- **Workspace Harness Audit Skill**: [../../../.claude/skills/workspace-harness-audit/skill.md](../../../.claude/skills/workspace-harness-audit/skill.md)
 - **Scripts README**: [../../../scripts/README.md](../../../scripts/README.md)
