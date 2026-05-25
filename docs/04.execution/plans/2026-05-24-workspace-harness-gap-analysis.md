@@ -1923,6 +1923,54 @@ or `kubectl patch`, rewrite public history, or bypass `main` branch protection.
 | Git diff whitespace | PASS | No whitespace errors |
 | PR checks | PASS | PR #39 passed `ci-summary`, `pre-commit`, `repo-quality-static`, `branch-policy`, `changes`, `label`, and GitGuardian checks; manifest/shell jobs skipped by path-filter design |
 
+## Post-Merge Completion Audit Overlay - 2026-05-25
+
+### Intent and Boundary
+
+This overlay records the current state after PR #39 was merged into `main`.
+It proves the repo-static portion on the merged default branch, cleans up the
+local merged feature branch, and performs no-secret-output bootstrap prechecks
+for the remaining live-runtime proof. It does not print secret values, write
+Vault data, force ArgoCD sync, or mutate Kubernetes because required external
+runtime dependencies are unavailable.
+
+### Current-State Audit
+
+| Area | Evidence | Current result | Decision |
+| --- | --- | --- | --- |
+| PR #39 | `gh pr view 39` | merged at `2026-05-25T04:28:51Z` with merge commit `780fb7601e51ec534a11bca9a4b645d86bf6e470` | PR blocker resolved |
+| Local `main` | `git pull --ff-only origin main`; `git status --short --branch` | local `main` fast-forwarded to `780fb76`; working tree clean | Use merged `main` as current SSoT |
+| Main CI | `gh run list --branch main` | merge commit CI completed with `success` | Remote repo-static gate passed |
+| Local static gates | repo quality, wiki index, GitOps, manifests, secret scan, contracts, shell syntax, JSON, workflow YAML, env key names, diff check | all passed on merged `main` | Repo-static portion complete |
+| Live runtime | `docker context show`; `docker ps`; `k3d cluster list`; `kubectl get nodes --request-timeout=5s` | Docker context is `default`; no running containers; no k3d clusters; Kubernetes API `https://0.0.0.0:6550` refused connection | Live proof unavailable |
+| Bootstrap prechecks | command presence, inotify, ports, certificate files, Vault health, PostgreSQL TCP, Valkey TCP | required commands, inotify, ports, and cert files are ready; Vault health is `000`; PostgreSQL write/read and Valkey are unreachable | Do not run bootstrap until external services are up |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | supplementation | Spec 006 | Add VAL-SPC-006-020 for post-merge completion audit | T-081 | repo quality gate | Revert criterion |
+| P1 | supplementation | 006 Plan/Task | Add this post-merge overlay and tasks | T-081, T-083 | repo quality gate; wiki check | Revert overlay sections |
+| P1 | cleanup | local Git branch | Delete merged local branch `codex/approval-bound-completion-audit` | T-082 | `git branch --merged main` and `git status` | Recreate branch from `4f87a9e` if needed |
+| P3 | deferral | live bootstrap/runtime proof | Keep bootstrap deferred until Vault, PostgreSQL, and Valkey are reachable | T-083 | no-secret-output prechecks | Start external services, then rerun bootstrap and live validation |
+
+### Verification Delta
+
+| Check | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | merged `main` |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | generated index current |
+| `bash scripts/validate-gitops-structure.sh` | PASS | root app and kustomization checks |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | kube-linter optional skip; YAML syntax passed |
+| `bash scripts/check-secret-handling.sh .` | PASS | no plaintext secret patterns |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | static contracts passed |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | shell syntax |
+| JSON parse | PASS | `.claude/settings.json`; `.codex/hooks.json` |
+| workflow YAML parse | PASS | `.github/workflows/*.yml` |
+| `.env.example` vs `.env` key-name-only compare | PASS | missing=0; extra=0 |
+| `git diff --check` | PASS | no whitespace errors |
+| live bootstrap precheck | BLOCKED | Vault, PostgreSQL, and Valkey unreachable |
+
 ## Related Documents
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)

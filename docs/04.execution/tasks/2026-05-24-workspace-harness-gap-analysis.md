@@ -135,6 +135,9 @@ pre-check와 follow-up으로 남긴다.
 | T-078 | Record remaining current-state limitations and replacement PR boundary | doc | VAL-SPC-006-019 | Approval-Bound Audit | progress ledger and PR evidence | Platform | Done |
 | T-079 | Run verification for the approval-bound audit branch and PR | test | VAL-SPC-006-019 | Approval-Bound Verification | Approval-Bound Completion Audit Summary | Platform | Done |
 | T-080 | Refresh PR #39 check evidence against the current GitHub check rollup | doc | VAL-SPC-006-019 | Approval-Bound Evidence Refresh | PR #39 check rollup and repo quality gate | Platform | Done |
+| T-081 | Record PR #39 merge completion and merged-main verification | doc | VAL-SPC-006-020 | Post-Merge Completion Audit | Post-Merge Completion Audit Summary | Platform | Done |
+| T-082 | Clean up the merged local PR branch without touching unrelated branches | chore | VAL-SPC-006-020 | Post-Merge Cleanup | git status and merged-branch evidence | Platform | Done |
+| T-083 | Run no-secret-output live bootstrap prechecks and record blocker state | eval | VAL-SPC-006-020 | Live Bootstrap Precheck | bootstrap precheck evidence | Platform | Done |
 
 ## Suggested Types
 
@@ -280,6 +283,14 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-078 Record remaining current-state limitations and PR boundary.
 - [x] T-079 Run verification for the audit branch and PR.
 - [x] T-080 Refresh PR #39 check evidence against the current GitHub check rollup.
+
+### Phase 18 - Post-Merge Completion Audit
+
+- [x] T-081 Record PR #39 merge completion and merged-main verification.
+- [x] T-082 Delete the merged local `codex/approval-bound-completion-audit`
+      branch and leave unrelated merged branches untouched.
+- [x] T-083 Run no-secret-output live bootstrap prechecks and record that live
+      bootstrap remains blocked by unreachable external services.
 
 ## Verification Evidence History Note
 
@@ -756,6 +767,41 @@ is stored in the linked plan to keep this task document concise.
     uninspected by the agent.
   - Direct main-branch bypass should not be repeated; this remediation is
     carried on a `codex/` branch and should enter `main` through PR review.
+
+## Post-Merge Completion Audit Summary
+
+- **Scope**: 2026-05-25 follow-up after PR #39 was merged into `main`.
+- **Merge Evidence**:
+  - `gh pr view 39` - PASS; PR #39 is merged.
+  - Merge commit - PASS; `780fb7601e51ec534a11bca9a4b645d86bf6e470`.
+  - `git pull --ff-only origin main` - PASS; local `main` fast-forwarded to
+    the merge commit.
+  - `git branch -d codex/approval-bound-completion-audit` - PASS; local merged
+    feature branch removed. Unrelated merged local branches were left alone.
+- **Static Verification Evidence**:
+  - `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+  - `bash scripts/generate-llm-wiki-index.sh --check` - PASS.
+  - `bash scripts/validate-gitops-structure.sh` - PASS.
+  - `bash scripts/validate-k8s-manifests.sh .` - PASS; optional kube-linter
+    skipped locally.
+  - `bash scripts/check-secret-handling.sh .` - PASS.
+  - `bash infrastructure/tests/verify-contracts-static.sh` - PASS.
+  - Shell syntax, JSON parse, workflow YAML parse, env key-name-only compare,
+    and `git diff --check` - PASS.
+- **Live Runtime Evidence**:
+  - Docker context - PASS; `default`.
+  - Docker containers - CURRENT-STATE INFO; no running containers.
+  - k3d clusters - CURRENT-STATE INFO; no cluster rows.
+  - Kubernetes API - CURRENT-STATE FAIL; `https://0.0.0.0:6550` refused
+    connection.
+  - Bootstrap prechecks - BLOCKED; `VAULT_TOKEN` is set and local commands,
+    inotify, ports, and certificate files are ready, but Vault health returns
+    `000`, PostgreSQL write/read endpoints are unreachable, and Valkey is
+    unreachable.
+- **Remaining Limitation**:
+  - Live bootstrap and `infrastructure/tests/run-all.sh` remain blocked until
+    the external Vault, PostgreSQL, and Valkey services are running and
+    reachable. No secret values were printed or manually inspected.
 
 ## Related Documents
 
