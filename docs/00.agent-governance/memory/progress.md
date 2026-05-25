@@ -8,6 +8,444 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-26 — Script classification matrix guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: scripts, validation, SDD
+- **Status**: partial
+- **Tags**: #scripts #validation #sdd
+
+#### Progress
+
+- Rechecked the `scripts/` deletion/consolidation review evidence against the
+  task-contract classification terms.
+- Found that the 006 plan recorded script classifications, but
+  `scripts/README.md` and the reusable repository quality gate did not enforce
+  those terms as the scripts SSoT.
+- Added a Script Classification Matrix covering every active `scripts/*.sh`
+  file with current deletion and consolidation candidate state.
+- Extended `scripts/validate-repo-quality-gates.sh` to validate the matrix
+  header, row coverage, allowed classification terms, expected current
+  classifications, and non-deletion/non-consolidation state.
+- Recorded `VAL-SPC-006-045` and `T-212` through `T-216` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Targeted script classification matrix check — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS; optional
+  `kube-linter` remained unavailable, so this was YAML syntax validation.
+- `bash scripts/check-secret-handling.sh .` — PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- `git diff --check` — PASS.
+
+#### Follow-up
+
+- Keep actual script deletion, rename, or consolidation deferred until a
+  separate task/plan proves reference checks, rollback, and replacement
+  command contracts.
+
+### 2026-05-26 — Docker network and RBAC create boundary guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: docs/05.operations, WSL2, Docker, Kubernetes RBAC, validation, SDD
+- **Status**: partial
+- **Tags**: #operations #wsl2 #docker #kubernetes #rbac #validation #sdd
+
+#### Progress
+
+- Rechecked operations command boundary coverage for Docker network mutation
+  and RBAC create examples.
+- Found that `docker network connect` and `kubectl create clusterrolebinding`
+  examples were not directly covered by the reusable command-boundary rule.
+- Marked the WSL2/Vault Docker network connection example as human-approved
+  bootstrap/break-glass work.
+- Synced the touched guide frontmatter date and Stage 05 guides README index
+  row to `2026-05-26`.
+- Extended `scripts/validate-repo-quality-gates.sh` so Docker network mutation
+  and `kubectl create clusterrolebinding` examples require approved context.
+- Updated `scripts/README.md` command contract wording.
+- Recorded `VAL-SPC-006-044` and `T-207` through `T-211` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- Targeted Docker network/RBAC create boundary check — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `git diff --check` — PASS.
+
+#### Follow-up
+
+- Keep actual Docker network changes, Kubernetes RBAC creation, and live
+  cluster validation deferred to a separately approved runtime/bootstrap pass.
+
+### 2026-05-26 — Vault policy write boundary guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: docs/05.operations, Vault, External Secrets, validation, SDD
+- **Status**: partial
+- **Tags**: #operations #vault #external-secrets #validation #sdd
+
+#### Progress
+
+- Rechecked operations command boundary coverage for live or external secret
+  mutation examples.
+- Found that `vault kv put` examples were guarded, but `vault policy write`
+  examples were not explicitly covered by the reusable command-boundary rule.
+- Marked active app onboarding guide/runbook `vault policy write` examples as
+  human-approved external secret policy changes.
+- Synced the touched guide/runbook frontmatter dates and Stage 05 README index
+  rows to `2026-05-26`.
+- Extended `scripts/validate-repo-quality-gates.sh` so `vault policy write`
+  examples require nearby external-secret, human-approved, operator-approved,
+  or break-glass context.
+- Updated `scripts/README.md` command contract wording.
+- Recorded `VAL-SPC-006-043` and `T-202` through `T-206` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- Targeted Vault policy write boundary check — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `git diff --check` — PASS.
+
+#### Follow-up
+
+- Keep actual Vault policy writes, Vault auth changes, secret values, and live
+  ESO/Vault validation deferred to a separately approved GitOps/secret-runtime
+  pass.
+
+### 2026-05-26 — App onboarding secret path contract guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: docs/05.operations, examples, GitOps, External Secrets, validation, SDD
+- **Status**: partial
+- **Tags**: #operations #gitops #external-secrets #vault #validation #sdd
+
+#### Progress
+
+- Rechecked whether active app onboarding operations docs, the sample
+  ExternalSecret, and GitOps secret responsibility docs consistently separate
+  the Vault CLI path from the ESO `remoteRef.key` value.
+- Clarified `gitops/README.md` sample app wording so `apps/<appname>/config`
+  is explicitly the ESO remoteRef key and `secret/apps/<appname>/config` is the
+  Vault CLI path.
+- Extended `scripts/validate-repo-quality-gates.sh` so the active guide,
+  policy, runbook, sample ExternalSecret, and GitOps README must preserve that
+  distinction.
+- Updated `scripts/README.md` command contract wording.
+- Recorded `VAL-SPC-006-042` and `T-197` through `T-201` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- Targeted app secret path contract check — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `git diff --check` — PASS.
+
+#### Follow-up
+
+- Keep AppProject `ExternalSecret` allow-list semantics, Vault policy changes,
+  secret values, and live ESO/Vault validation deferred to a separately
+  approved GitOps/secret-runtime pass.
+
+### 2026-05-26 — GitHub workflow responsibility matrix guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: GitHub Actions, QA, CI/CD, validation, SDD
+- **Status**: partial
+- **Tags**: #github-actions #qa #cicd #validation #sdd
+
+#### Progress
+
+- Rechecked whether `.github/` workflow roles had a guarded SSoT tied to the
+  actual workflow inventory.
+- Added Workflow Responsibility Matrix to `.github/ABOUT.md`.
+- Extended `scripts/validate-repo-quality-gates.sh` so every
+  `.github/workflows/*.yml` file has an ABOUT matrix row with role,
+  trigger/scope, evidence, and no-deploy/no-live-mutation boundary text.
+- Updated `scripts/README.md` command contract wording.
+- Recorded `VAL-SPC-006-041` and `T-192` through `T-196` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- Workflow YAML parse for `.github/workflows/*.yml` — PASS; 5 workflow files
+  parsed.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `git diff --check` — PASS.
+
+#### Follow-up
+
+- Keep workflow job topology, branch policy enforcement, publish behavior, and
+  GitHub remote ruleset changes deferred to a separately approved CI policy
+  pass.
+
+### 2026-05-26 — Bootstrap boundary matrix guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: infrastructure, bootstrap, GitOps, validation, SDD
+- **Status**: partial
+- **Tags**: #infrastructure #bootstrap #gitops #wsl2 #k3d #argocd #validation #sdd
+
+#### Progress
+
+- Rechecked whether k3d cluster creation, ArgoCD installation, root app
+  application, Vault connection, and PostgreSQL/Valkey connection boundaries
+  had a guarded SSoT.
+- Added Bootstrap Boundary Matrix to `infrastructure/README.md`.
+- Extended `scripts/validate-repo-quality-gates.sh` so bootstrap-only command
+  surfaces, operator/external ownership, repo responsibilities, verification
+  evidence, and fail-closed boundaries stay explicit.
+- Updated `scripts/README.md` command contract wording.
+- Recorded `VAL-SPC-006-040` and `T-187` through `T-191` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS; optional
+  `kube-linter` skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `git diff --check` — PASS.
+
+#### Follow-up
+
+- Keep cluster creation, ArgoCD installation, root app apply, Vault auth
+  refresh, external runtime startup, and kubeconfig TLS repair deferred to an
+  approved operator/runtime pass.
+
+### 2026-05-26 — Secret management responsibility matrix guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: GitOps, External Secrets, Vault, validation, SDD
+- **Status**: partial
+- **Tags**: #gitops #external-secrets #vault #secrets #validation #sdd
+
+#### Progress
+
+- Rechecked whether ESO, ClusterSecretStore, Vault auth, ExternalSecret target
+  naming, owner boundaries, value-handling rules, and sample app secret
+  enablement had a guarded SSoT.
+- Added Secret Management Responsibility Matrix to `gitops/README.md`.
+- Extended `scripts/validate-repo-quality-gates.sh` so the matrix protects
+  `vault-backend`, platform PostgreSQL secret wiring, ArgoCD Valkey and
+  notifications secrets, and the optional sample app ExternalSecret boundary.
+- Updated `scripts/README.md` command contract wording.
+- Recorded `VAL-SPC-006-039` and `T-182` through `T-186` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS; optional
+  `kube-linter` skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `git diff --check` — PASS.
+
+#### Follow-up
+
+- Keep Vault policy changes, secret value inspection, live Vault auth refresh,
+  and kubeconfig TLS repair deferred to an approved runtime/security pass.
+
+### 2026-05-26 — External service contract matrix guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: GitOps, infrastructure, external services, validation, SDD
+- **Status**: partial
+- **Tags**: #gitops #infrastructure #external-services #vault #postgresql #valkey #validation #sdd
+
+#### Progress
+
+- Rechecked whether PostgreSQL, Valkey, and Vault interface contracts had a
+  guarded SSoT for host/service, port, database or Vault path, secret keys,
+  TLS/CA responsibility, rotation owner, namespace convention, and validation.
+- Added External Service Contract Matrix to `gitops/README.md`.
+- Extended `scripts/validate-repo-quality-gates.sh` so the matrix stays aligned
+  with current static contract fields and ownership boundaries.
+- Updated `scripts/README.md` command contract wording.
+- Recorded `VAL-SPC-006-038` and `T-177` through `T-181` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS; optional
+  `kube-linter` skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `git diff --check` — PASS.
+
+#### Follow-up
+
+- Keep live PostgreSQL, Valkey, Vault, ESO, and kubeconfig TLS proof deferred
+  until an approved runtime pass repairs the current live validation blocker.
+
+### 2026-05-26 — WSL2 runtime prerequisite guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: infrastructure, WSL2, validation, SDD
+- **Status**: partial
+- **Tags**: #infrastructure #wsl2 #docker #k3d #validation #sdd
+
+#### Progress
+
+- Rechecked whether WSL2, WSL-native Docker, k3d, kubectl, kubeconfig/TLS,
+  local port, and WSL networking prerequisites had a single reusable SSoT.
+- Added WSL2 Runtime Prerequisite Matrix to `infrastructure/README.md`.
+- Extended `scripts/validate-repo-quality-gates.sh` so Docker context,
+  `k3d-hyhome`, `kubectl config current-context`, kubeconfig/TLS trust,
+  `x509: certificate signed by unknown authority`, current `172.18.x` service
+  contracts, and WSL networking/Traefik ownership boundaries are validated.
+- Kept the change repo-static. No Docker context, kubeconfig, k3d cluster,
+  local port binding, external service, GitOps manifest, secret, CI job, or
+  live runtime state was changed.
+- Documented the guardrail as VAL-SPC-006-037 and T-172 through T-176 in the
+  existing 006 SDD chain.
+
+#### Memory
+
+- Static WSL2 prerequisite checks should protect the documentation SSoT and
+  failure boundaries only. Docker context switching, kubeconfig CA trust repair,
+  Windows/WSL gateway state, and external service startup remain operator-owned
+  runtime actions.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS; optional `kube-linter`
+  skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+- JSON parse for `.claude/settings.json` and `.codex/hooks.json` PASS.
+- Workflow YAML parse for `.github/workflows/*.yml` PASS.
+- `.env.example` vs `.env` key-name-only comparison PASS; values were not
+  printed.
+- `git diff --check` PASS.
+
+### 2026-05-26 — examples role matrix guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: examples, validation, SDD
+- **Status**: partial
+- **Tags**: #examples #validation #sdd
+
+#### Progress
+
+- Rechecked whether `examples/README.md` and `examples/sample-app/README.md`
+  had reusable validation coverage for the intended examples boundary.
+- Added Example Role Matrix to keep `sample-app/` as the minimal local k3d
+  GitOps onboarding template and `aws/` plus `azure/` as Cloud Example Snapshot
+  references rather than provider-latest or live desired-state sources.
+- Extended `scripts/validate-repo-quality-gates.sh` so the examples role
+  matrix, sample-app minimal file set, sample-app/adminer reference boundary,
+  and richer adminer reference files are validated.
+- Kept the change repo-static. No sample manifest, cloud-reference manifest,
+  GitOps workload, provider contract, live cluster state, secret, or CI job
+  structure was changed.
+- Documented the guardrail as VAL-SPC-006-036 and T-167 through T-171 in the
+  existing 006 SDD chain.
+
+#### Memory
+
+- `examples/sample-app/` should stay a minimal copy-start template. Richer
+  workload behavior belongs in active GitOps references such as
+  `gitops/workloads/adminer/`, and cloud example folders should remain tied to
+  the version inventory snapshot unless a separate provider refresh is done.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS; optional `kube-linter`
+  skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+- JSON parse for `.claude/settings.json` and `.codex/hooks.json` PASS.
+- Workflow YAML parse for `.github/workflows/*.yml` PASS.
+- `.env.example` vs `.env` key-name-only comparison PASS; values were not
+  printed.
+- `git diff --check` PASS.
+
+### 2026-05-26 — scripts broad reference guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: scripts, validation, SDD
+- **Status**: partial
+- **Tags**: #scripts #validation #sdd
+
+#### Progress
+
+- Rechecked whether the `scripts/` deletion and rename precheck had reusable
+  validation coverage for broad `scripts/*.sh` references beyond the
+  command-contract allowlist.
+- Extended `scripts/validate-repo-quality-gates.sh` so tracked text references
+  matching `scripts/*.sh` must point to existing script files.
+- Updated `scripts/README.md` to keep three concepts separate: Tier A/B
+  retention evidence, Tier C command/documentation surfaces, and broad
+  dangling-reference safety checks.
+- Kept the change repo-static. No script was deleted, renamed, consolidated, or
+  reclassified; live cluster state, GitOps manifests, secrets, external service
+  state, and CI job structure were not changed.
+- Documented the guardrail as VAL-SPC-006-035 and T-162 through T-166 in the
+  existing 006 SDD chain.
+
+#### Memory
+
+- The command-contract allowlist identifies maintained execution surfaces. The
+  broad script-reference sweep is a deletion/rename safety net only; it should
+  prevent dangling references without treating every historical or explanatory
+  mention as Tier A/B retention evidence.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+- tracked script reference spot check PASS; 183 tracked `scripts/*.sh`
+  references resolved to existing files.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS; optional `kube-linter`
+  skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+- JSON parse for `.claude/settings.json` and `.codex/hooks.json` PASS.
+- Workflow YAML parse for `.github/workflows/*.yml` PASS.
+- `.env.example` vs `.env` key-name-only comparison PASS; values were not
+  printed.
+- `git diff --check` PASS.
+
 ### 2026-05-26 — operations incidents boundary guardrail follow-up
 
 - **Date**: 2026-05-26

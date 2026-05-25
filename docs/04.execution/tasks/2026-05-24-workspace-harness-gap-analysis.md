@@ -216,6 +216,61 @@ pre-check와 follow-up으로 남긴다.
 | T-159 | Extend repository quality gate for incident/postmortem path, template, creation, and no-incident state checks | test | VAL-SPC-006-034 | Operations Incidents Boundary Guardrail | repo quality gate | Platform | Done |
 | T-160 | Record operations incidents boundary guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-034 | Operations Incidents Boundary Guardrail | 006 chain check | Platform | Done |
 | T-161 | Append progress memory for the operations incidents boundary guardrail follow-up | memory | VAL-SPC-006-034 | Operations Incidents Boundary Guardrail | progress ledger entry | Platform | Done |
+| T-162 | Recheck scripts deletion/rename broad reference sweep validation strength | doc | VAL-SPC-006-035 | Scripts Broad Reference Guardrail | current script reference review | Platform | Done |
+| T-163 | Extend repository quality gate for tracked `scripts/*.sh` dangling-reference checks | test | VAL-SPC-006-035 | Scripts Broad Reference Guardrail | repo quality gate | Platform | Done |
+| T-164 | Update scripts README to separate broad reference sweep from retention evidence | doc | VAL-SPC-006-035 | Scripts Broad Reference Guardrail | README review | Platform | Done |
+| T-165 | Record scripts broad reference guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-035 | Scripts Broad Reference Guardrail | 006 chain check | Platform | Done |
+| T-166 | Append progress memory for the scripts broad reference guardrail follow-up | memory | VAL-SPC-006-035 | Scripts Broad Reference Guardrail | progress ledger entry | Platform | Done |
+| T-167 | Recheck examples role and sample-app/adminer reference validation strength | doc | VAL-SPC-006-036 | Examples Role Matrix Guardrail | current examples README review | Platform | Done |
+| T-168 | Add Example Role Matrix to `examples/README.md` | doc | VAL-SPC-006-036 | Examples Role Matrix Guardrail | README review | Platform | Done |
+| T-169 | Extend repository quality gate for examples role matrix and sample-app/adminer boundary checks | test | VAL-SPC-006-036 | Examples Role Matrix Guardrail | repo quality gate | Platform | Done |
+| T-170 | Record examples role matrix guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-036 | Examples Role Matrix Guardrail | 006 chain check | Platform | Done |
+| T-171 | Append progress memory for the examples role matrix guardrail follow-up | memory | VAL-SPC-006-036 | Examples Role Matrix Guardrail | progress ledger entry | Platform | Done |
+| T-172 | Recheck WSL2/Docker/k3d/kubectl prerequisite SSoT validation strength | doc | VAL-SPC-006-037 | WSL2 Runtime Prerequisite Guardrail | current infrastructure README review | Platform | Done |
+| T-173 | Add WSL2 Runtime Prerequisite Matrix to `infrastructure/README.md` | doc | VAL-SPC-006-037 | WSL2 Runtime Prerequisite Guardrail | README review | Platform | Done |
+| T-174 | Extend repository quality gate for WSL2 runtime prerequisite matrix checks | test | VAL-SPC-006-037 | WSL2 Runtime Prerequisite Guardrail | repo quality gate | Platform | Done |
+| T-175 | Record WSL2 runtime prerequisite guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-037 | WSL2 Runtime Prerequisite Guardrail | 006 chain check | Platform | Done |
+| T-176 | Append progress memory for the WSL2 runtime prerequisite guardrail follow-up | memory | VAL-SPC-006-037 | WSL2 Runtime Prerequisite Guardrail | progress ledger entry | Platform | Done |
+| T-177 | Recheck external service contract SSoT validation strength | doc | VAL-SPC-006-038 | External Service Contract Matrix Guardrail | current GitOps/external-services review | Platform | Done |
+| T-178 | Add External Service Contract Matrix to `gitops/README.md` | doc | VAL-SPC-006-038 | External Service Contract Matrix Guardrail | README review | Platform | Done |
+| T-179 | Extend repository quality gate for external service contract matrix checks | test | VAL-SPC-006-038 | External Service Contract Matrix Guardrail | repo quality gate | Platform | Done |
+| T-180 | Record external service contract guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-038 | External Service Contract Matrix Guardrail | 006 chain check | Platform | Done |
+| T-181 | Append progress memory for the external service contract guardrail follow-up | memory | VAL-SPC-006-038 | External Service Contract Matrix Guardrail | progress ledger entry | Platform | Done |
+| T-182 | Recheck secret-management responsibility SSoT validation strength | doc | VAL-SPC-006-039 | Secret Management Responsibility Matrix Guardrail | current ESO/Vault/ExternalSecret review | Platform | Done |
+| T-183 | Add Secret Management Responsibility Matrix to `gitops/README.md` | doc | VAL-SPC-006-039 | Secret Management Responsibility Matrix Guardrail | README review | Platform | Done |
+| T-184 | Extend repository quality gate for secret management responsibility matrix checks | test | VAL-SPC-006-039 | Secret Management Responsibility Matrix Guardrail | repo quality gate | Platform | Done |
+| T-185 | Record secret management responsibility guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-039 | Secret Management Responsibility Matrix Guardrail | 006 chain check | Platform | Done |
+| T-186 | Append progress memory for the secret management responsibility guardrail follow-up | memory | VAL-SPC-006-039 | Secret Management Responsibility Matrix Guardrail | progress ledger entry | Platform | Done |
+| T-187 | Recheck bootstrap boundary SSoT validation strength | doc | VAL-SPC-006-040 | Bootstrap Boundary Matrix Guardrail | current infrastructure/bootstrap review | Platform | Done |
+| T-188 | Add Bootstrap Boundary Matrix to `infrastructure/README.md` | doc | VAL-SPC-006-040 | Bootstrap Boundary Matrix Guardrail | README review | Platform | Done |
+| T-189 | Extend repository quality gate for bootstrap boundary matrix checks | test | VAL-SPC-006-040 | Bootstrap Boundary Matrix Guardrail | repo quality gate | Platform | Done |
+| T-190 | Record bootstrap boundary guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-040 | Bootstrap Boundary Matrix Guardrail | 006 chain check | Platform | Done |
+| T-191 | Append progress memory for the bootstrap boundary guardrail follow-up | memory | VAL-SPC-006-040 | Bootstrap Boundary Matrix Guardrail | progress ledger entry | Platform | Done |
+| T-192 | Recheck GitHub workflow responsibility SSoT validation strength | doc | VAL-SPC-006-041 | GitHub Workflow Responsibility Matrix Guardrail | current `.github` workflow review | Platform | Done |
+| T-193 | Add Workflow Responsibility Matrix to `.github/ABOUT.md` | doc | VAL-SPC-006-041 | GitHub Workflow Responsibility Matrix Guardrail | README review | Platform | Done |
+| T-194 | Extend repository quality gate for workflow responsibility matrix checks | test | VAL-SPC-006-041 | GitHub Workflow Responsibility Matrix Guardrail | repo quality gate | Platform | Done |
+| T-195 | Record workflow responsibility guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-041 | GitHub Workflow Responsibility Matrix Guardrail | 006 chain check | Platform | Done |
+| T-196 | Append progress memory for the workflow responsibility guardrail follow-up | memory | VAL-SPC-006-041 | GitHub Workflow Responsibility Matrix Guardrail | progress ledger entry | Platform | Done |
+| T-197 | Recheck app onboarding secret path SSoT across operations, examples, and GitOps docs | doc | VAL-SPC-006-042 | App Onboarding Secret Path Contract Guardrail | current onboarding secret review | Platform | Done |
+| T-198 | Clarify sample app ExternalSecret path wording in `gitops/README.md` | doc | VAL-SPC-006-042 | App Onboarding Secret Path Contract Guardrail | README review | Platform | Done |
+| T-199 | Extend repository quality gate for app onboarding secret path contract checks | test | VAL-SPC-006-042 | App Onboarding Secret Path Contract Guardrail | repo quality gate | Platform | Done |
+| T-200 | Record app onboarding secret path guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-042 | App Onboarding Secret Path Contract Guardrail | 006 chain check | Platform | Done |
+| T-201 | Append progress memory for the app onboarding secret path guardrail follow-up | memory | VAL-SPC-006-042 | App Onboarding Secret Path Contract Guardrail | progress ledger entry | Platform | Done |
+| T-202 | Recheck Vault policy write command boundary coverage in operations docs | doc | VAL-SPC-006-043 | Vault Policy Write Boundary Guardrail | current operations command review | Platform | Done |
+| T-203 | Mark active onboarding Vault policy write examples as human-approved external secret operations | doc | VAL-SPC-006-043 | Vault Policy Write Boundary Guardrail | operations guide/runbook review | Platform | Done |
+| T-204 | Extend repository quality gate for Vault policy write boundary checks | test | VAL-SPC-006-043 | Vault Policy Write Boundary Guardrail | repo quality gate | Platform | Done |
+| T-205 | Record Vault policy write boundary guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-043 | Vault Policy Write Boundary Guardrail | 006 chain check | Platform | Done |
+| T-206 | Append progress memory for the Vault policy write boundary guardrail follow-up | memory | VAL-SPC-006-043 | Vault Policy Write Boundary Guardrail | progress ledger entry | Platform | Done |
+| T-207 | Recheck Docker network and RBAC create command boundary coverage in operations docs | doc | VAL-SPC-006-044 | Docker Network and RBAC Create Boundary Guardrail | current operations command review | Platform | Done |
+| T-208 | Mark WSL2 Vault Docker network connect example as human-approved bootstrap/break-glass work | doc | VAL-SPC-006-044 | Docker Network and RBAC Create Boundary Guardrail | operations guide review | Platform | Done |
+| T-209 | Extend repository quality gate for Docker network and RBAC create boundary checks | test | VAL-SPC-006-044 | Docker Network and RBAC Create Boundary Guardrail | repo quality gate | Platform | Done |
+| T-210 | Record Docker network/RBAC boundary guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-044 | Docker Network and RBAC Create Boundary Guardrail | 006 chain check | Platform | Done |
+| T-211 | Append progress memory for Docker network/RBAC boundary guardrail follow-up | memory | VAL-SPC-006-044 | Docker Network and RBAC Create Boundary Guardrail | progress ledger entry | Platform | Done |
+| T-212 | Recheck script deletion/consolidation review evidence against task-contract classification terms | doc | VAL-SPC-006-045 | Script Classification Matrix Guardrail | current scripts review | Platform | Done |
+| T-213 | Add script classification matrix to `scripts/README.md` | doc | VAL-SPC-006-045 | Script Classification Matrix Guardrail | scripts README review | Platform | Done |
+| T-214 | Extend repository quality gate for script classification matrix checks | test | VAL-SPC-006-045 | Script Classification Matrix Guardrail | repo quality gate | Platform | Done |
+| T-215 | Record script classification guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-045 | Script Classification Matrix Guardrail | 006 chain check | Platform | Done |
+| T-216 | Append progress memory for script classification guardrail follow-up | memory | VAL-SPC-006-045 | Script Classification Matrix Guardrail | progress ledger entry | Platform | Done |
 
 ## Suggested Types
 
@@ -494,6 +549,252 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-159 Extend repository quality gate for incident/postmortem path, template, creation, and no-incident state checks.
 - [x] T-160 Record this follow-up in the 006 SDD chain.
 - [x] T-161 Append progress memory for this follow-up.
+
+### Phase 33 - Scripts Broad Reference Guardrail
+
+- [x] T-162 Recheck scripts deletion/rename broad reference sweep validation strength.
+- [x] T-163 Extend repository quality gate for tracked `scripts/*.sh` dangling-reference checks.
+- [x] T-164 Update scripts README to separate broad reference sweep from retention evidence.
+- [x] T-165 Record this follow-up in the 006 SDD chain.
+- [x] T-166 Append progress memory for this follow-up.
+
+### Phase 34 - Examples Role Matrix Guardrail
+
+- [x] T-167 Recheck examples role and sample-app/adminer reference validation strength.
+- [x] T-168 Add Example Role Matrix to `examples/README.md`.
+- [x] T-169 Extend repository quality gate for examples role matrix and sample-app/adminer boundary checks.
+- [x] T-170 Record this follow-up in the 006 SDD chain.
+- [x] T-171 Append progress memory for this follow-up.
+
+### Phase 35 - WSL2 Runtime Prerequisite Guardrail
+
+- [x] T-172 Recheck WSL2/Docker/k3d/kubectl prerequisite SSoT validation strength.
+- [x] T-173 Add WSL2 Runtime Prerequisite Matrix to `infrastructure/README.md`.
+- [x] T-174 Extend repository quality gate for WSL2 runtime prerequisite matrix checks.
+- [x] T-175 Record this follow-up in the 006 SDD chain.
+- [x] T-176 Append progress memory for this follow-up.
+
+### Phase 36 - External Service Contract Matrix Guardrail
+
+- [x] T-177 Recheck external service contract SSoT validation strength.
+- [x] T-178 Add External Service Contract Matrix to `gitops/README.md`.
+- [x] T-179 Extend repository quality gate for external service contract matrix checks.
+- [x] T-180 Record this follow-up in the 006 SDD chain.
+- [x] T-181 Append progress memory for this follow-up.
+
+### Phase 37 - Secret Management Responsibility Matrix Guardrail
+
+- [x] T-182 Recheck secret-management responsibility SSoT validation strength.
+- [x] T-183 Add Secret Management Responsibility Matrix to `gitops/README.md`.
+- [x] T-184 Extend repository quality gate for secret management responsibility matrix checks.
+- [x] T-185 Record this follow-up in the 006 SDD chain.
+- [x] T-186 Append progress memory for this follow-up.
+
+### Phase 38 - Bootstrap Boundary Matrix Guardrail
+
+- [x] T-187 Recheck bootstrap boundary SSoT validation strength.
+- [x] T-188 Add Bootstrap Boundary Matrix to `infrastructure/README.md`.
+- [x] T-189 Extend repository quality gate for bootstrap boundary matrix checks.
+- [x] T-190 Record this follow-up in the 006 SDD chain.
+- [x] T-191 Append progress memory for this follow-up.
+
+### Phase 39 - GitHub Workflow Responsibility Matrix Guardrail
+
+- [x] T-192 Recheck GitHub workflow responsibility SSoT validation strength.
+- [x] T-193 Add Workflow Responsibility Matrix to `.github/ABOUT.md`.
+- [x] T-194 Extend repository quality gate for workflow responsibility matrix checks.
+- [x] T-195 Record this follow-up in the 006 SDD chain.
+- [x] T-196 Append progress memory for this follow-up.
+
+### Phase 40 - App Onboarding Secret Path Contract Guardrail
+
+- [x] T-197 Recheck app onboarding secret path SSoT across operations, examples, and GitOps docs.
+- [x] T-198 Clarify sample app ExternalSecret path wording in `gitops/README.md`.
+- [x] T-199 Extend repository quality gate for app onboarding secret path contract checks.
+- [x] T-200 Record this follow-up in the 006 SDD chain.
+- [x] T-201 Append progress memory for this follow-up.
+
+### Phase 41 - Vault Policy Write Boundary Guardrail
+
+- [x] T-202 Recheck Vault policy write command boundary coverage in operations docs.
+- [x] T-203 Mark active onboarding Vault policy write examples as human-approved external secret operations.
+- [x] T-204 Extend repository quality gate for Vault policy write boundary checks.
+- [x] T-205 Record this follow-up in the 006 SDD chain.
+- [x] T-206 Append progress memory for this follow-up.
+
+### Phase 42 - Docker Network and RBAC Create Boundary Guardrail
+
+- [x] T-207 Recheck Docker network and RBAC create command boundary coverage in operations docs.
+- [x] T-208 Mark WSL2 Vault Docker network connect example as human-approved bootstrap/break-glass work.
+- [x] T-209 Extend repository quality gate for Docker network and RBAC create boundary checks.
+- [x] T-210 Record this follow-up in the 006 SDD chain.
+- [x] T-211 Append progress memory for this follow-up.
+
+## Docker Network and RBAC Create Boundary Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current Docker network/RBAC create boundary guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current Docker network/RBAC create boundary guardrail run |
+| targeted Docker network/RBAC create boundary check | PASS | current Docker network/RBAC create boundary guardrail run |
+| operations frontmatter/index sync check | PASS | current Docker network/RBAC create boundary guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current Docker network/RBAC create boundary guardrail run |
+| `git diff --check` | PASS | current Docker network/RBAC create boundary guardrail run |
+| Guardrail implementation | complete | `docs/05.operations/guides/0002-wsl2-k3d-argocd-ha-setup-guide.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` |
+
+### Phase 43 - Script Classification Matrix Guardrail
+
+- [x] T-212 Recheck script deletion/consolidation review evidence against task-contract classification terms.
+- [x] T-213 Add script classification matrix to `scripts/README.md`.
+- [x] T-214 Extend repository quality gate for script classification matrix checks.
+- [x] T-215 Record this follow-up in the 006 SDD chain.
+- [x] T-216 Append progress memory for this follow-up.
+
+## Script Classification Matrix Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current script classification guardrail run |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current script classification guardrail run |
+| targeted script classification matrix check | PASS | current script classification guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current script classification guardrail run |
+| `bash scripts/validate-gitops-structure.sh` | PASS | current script classification guardrail run |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | current script classification guardrail run |
+| `bash scripts/check-secret-handling.sh .` | PASS | current script classification guardrail run |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | current script classification guardrail run |
+| `git diff --check` | PASS | current script classification guardrail run |
+| Guardrail implementation | complete | `scripts/README.md`; `scripts/validate-repo-quality-gates.sh` |
+
+## Vault Policy Write Boundary Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current Vault policy write boundary guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current Vault policy write boundary guardrail run |
+| targeted Vault policy write boundary check | PASS | current Vault policy write boundary guardrail run |
+| operations frontmatter/index sync check | PASS | current Vault policy write boundary guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current Vault policy write boundary guardrail run |
+| `git diff --check` | PASS | current Vault policy write boundary guardrail run |
+| Guardrail implementation | complete | active onboarding guide/runbook, their README indexes, `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` |
+
+## App Onboarding Secret Path Contract Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current app onboarding secret path guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current app onboarding secret path guardrail run |
+| targeted app secret path contract check | PASS | current app onboarding secret path guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current app onboarding secret path guardrail run |
+| `git diff --check` | PASS | current app onboarding secret path guardrail run |
+| Guardrail implementation | complete | `gitops/README.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` |
+
+## GitHub Workflow Responsibility Matrix Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current workflow responsibility matrix guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current workflow responsibility matrix guardrail run |
+| workflow YAML parse for `.github/workflows/*.yml` | PASS; 5 workflow files parsed | current workflow responsibility matrix guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current workflow responsibility matrix guardrail run |
+| `git diff --check` | PASS | current workflow responsibility matrix guardrail run |
+| Guardrail implementation | complete | `.github/ABOUT.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` |
+
+## Bootstrap Boundary Matrix Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current bootstrap boundary matrix guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current bootstrap boundary matrix guardrail run |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | current bootstrap boundary matrix guardrail run |
+| `bash scripts/validate-gitops-structure.sh` | PASS | current bootstrap boundary matrix guardrail run |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional `kube-linter` skipped locally because it is not installed | current bootstrap boundary matrix guardrail run |
+| `bash scripts/check-secret-handling.sh .` | PASS | current bootstrap boundary matrix guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current bootstrap boundary matrix guardrail run |
+| `git diff --check` | PASS | current bootstrap boundary matrix guardrail run |
+| Guardrail implementation | complete | `infrastructure/README.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` |
+
+## Secret Management Responsibility Matrix Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current secret management responsibility guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current secret management responsibility guardrail run |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | current secret management responsibility guardrail run |
+| `bash scripts/validate-gitops-structure.sh` | PASS | current secret management responsibility guardrail run |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional `kube-linter` skipped locally because it is not installed | current secret management responsibility guardrail run |
+| `bash scripts/check-secret-handling.sh .` | PASS | current secret management responsibility guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current secret management responsibility guardrail run |
+| `git diff --check` | PASS | current secret management responsibility guardrail run |
+| Guardrail implementation | complete | `gitops/README.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` |
+
+## External Service Contract Matrix Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current external service contract matrix guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current external service contract matrix guardrail run |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | current external service contract matrix guardrail run |
+| `bash scripts/validate-gitops-structure.sh` | PASS | current external service contract matrix guardrail run |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional `kube-linter` skipped locally because it is not installed | current external service contract matrix guardrail run |
+| `bash scripts/check-secret-handling.sh .` | PASS | current external service contract matrix guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current external service contract matrix guardrail run |
+| `git diff --check` | PASS | current external service contract matrix guardrail run |
+| Guardrail implementation | complete | `gitops/README.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` |
+
+## WSL2 Runtime Prerequisite Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current WSL2 runtime prerequisite guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current WSL2 runtime prerequisite guardrail run |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | current WSL2 runtime prerequisite guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current WSL2 runtime prerequisite guardrail run |
+| `bash scripts/validate-gitops-structure.sh` | PASS | current WSL2 runtime prerequisite guardrail run |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional `kube-linter` skipped locally because it is not installed | current WSL2 runtime prerequisite guardrail run |
+| `bash scripts/check-secret-handling.sh .` | PASS | current WSL2 runtime prerequisite guardrail run |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | current WSL2 runtime prerequisite guardrail run |
+| JSON parse for `.claude/settings.json` and `.codex/hooks.json` | PASS | current WSL2 runtime prerequisite guardrail run |
+| workflow YAML parse for `.github/workflows/*.yml` | PASS; 5 workflow files parsed | current WSL2 runtime prerequisite guardrail run |
+| `.env.example` vs `.env` key-name-only comparison | PASS; 18 keys matched and values were not printed | current WSL2 runtime prerequisite guardrail run |
+| `git diff --check` | PASS | current WSL2 runtime prerequisite guardrail run |
+| Guardrail implementation | complete | `infrastructure/README.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` |
+
+## Examples Role Matrix Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current examples role matrix guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current examples role matrix guardrail run |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional `kube-linter` skipped locally because it is not installed | current examples role matrix guardrail run |
+| `bash scripts/check-secret-handling.sh .` | PASS | current examples role matrix guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current examples role matrix guardrail run |
+| `bash scripts/validate-gitops-structure.sh` | PASS | current examples role matrix guardrail run |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | current examples role matrix guardrail run |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | current examples role matrix guardrail run |
+| JSON parse for `.claude/settings.json` and `.codex/hooks.json` | PASS | current examples role matrix guardrail run |
+| workflow YAML parse for `.github/workflows/*.yml` | PASS; 5 workflow files parsed | current examples role matrix guardrail run |
+| `.env.example` vs `.env` key-name-only comparison | PASS; 18 keys matched and values were not printed | current examples role matrix guardrail run |
+| `git diff --check` | PASS | current examples role matrix guardrail run |
+| Guardrail implementation | complete | `examples/README.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` |
+
+## Scripts Broad Reference Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current scripts broad reference guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current scripts broad reference guardrail run |
+| tracked script reference spot check | PASS; 183 tracked `scripts/*.sh` references resolved | current scripts broad reference guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current scripts broad reference guardrail run |
+| `bash scripts/validate-gitops-structure.sh` | PASS | current scripts broad reference guardrail run |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional `kube-linter` skipped locally because it is not installed | current scripts broad reference guardrail run |
+| `bash scripts/check-secret-handling.sh .` | PASS | current scripts broad reference guardrail run |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | current scripts broad reference guardrail run |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | current scripts broad reference guardrail run |
+| JSON parse for `.claude/settings.json` and `.codex/hooks.json` | PASS | current scripts broad reference guardrail run |
+| workflow YAML parse for `.github/workflows/*.yml` | PASS; 5 workflow files parsed | current scripts broad reference guardrail run |
+| `.env.example` vs `.env` key-name-only comparison | PASS; 18 keys matched and values were not printed | current scripts broad reference guardrail run |
+| `git diff --check` | PASS | current scripts broad reference guardrail run |
+| Guardrail implementation | complete | `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` |
 
 ## Operations Incidents Boundary Guardrail Verification Summary
 

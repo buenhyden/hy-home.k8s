@@ -343,6 +343,68 @@ git diff --check
   `docs/05.operations/incidents/README.md` and the current no-incident state
   without creating placeholder incident directories, authored incident records,
   or postmortems.
+- **VAL-SPC-006-035**: 2026-05-26 scripts broad reference guardrail follow-up
+  strengthens the `scripts/` deletion/consolidation review by validating that
+  every tracked text reference matching `scripts/*.sh` points to an existing
+  script while keeping broad references separate from Tier A/B retention
+  evidence.
+- **VAL-SPC-006-036**: 2026-05-26 examples role matrix guardrail follow-up
+  strengthens `examples/` freshness by validating the `sample-app/`, `aws/`,
+  and `azure/` role matrix, keeping `sample-app/` as a minimal onboarding
+  template, and preserving `gitops/workloads/adminer/` as the fuller active
+  workload reference without changing sample manifests or provider contracts.
+- **VAL-SPC-006-037**: 2026-05-26 WSL2 runtime prerequisite guardrail
+  follow-up strengthens WSL2 + WSL Linux native Docker readiness by validating
+  a single infrastructure prerequisite matrix for Docker context, k3d/kubectl
+  context, kubeconfig/TLS trust, local port/network contracts, and WSL
+  networking constraints without switching contexts, repairing kubeconfig, or
+  mutating live runtime state.
+- **VAL-SPC-006-038**: 2026-05-26 external service contract matrix guardrail
+  follow-up strengthens PostgreSQL/Valkey/Vault interface SSoT by validating
+  host/service, port, database or Vault path, secret keys, TLS/CA ownership,
+  rotation responsibility, namespace convention, and static/live verification
+  pointers without changing EndpointSlices, secret policy, `.env` values, or
+  external runtime state.
+- **VAL-SPC-006-039**: 2026-05-26 secret management responsibility matrix
+  guardrail follow-up strengthens ESO/Vault responsibility by validating the
+  ClusterSecretStore, platform ExternalSecrets, ArgoCD target secrets, sample
+  app ExternalSecret naming, owner boundaries, value-handling rule, and
+  static/live verification pointers without reading secret values, changing
+  Vault policy, or mutating live Kubernetes/Vault state.
+- **VAL-SPC-006-040**: 2026-05-26 bootstrap boundary matrix guardrail
+  follow-up strengthens repository/operator responsibility separation by
+  validating k3d cluster creation, ArgoCD installation, root app application,
+  Vault connection, and PostgreSQL/Valkey connection boundaries without
+  creating clusters, installing ArgoCD, applying resources, reading secrets, or
+  mutating live external services.
+- **VAL-SPC-006-041**: 2026-05-26 GitHub workflow responsibility matrix
+  guardrail follow-up strengthens QA/CI-CD SSoT by validating that
+  `.github/ABOUT.md` lists every workflow, separates required QA gates from
+  release-evidence and maintenance automation, and preserves no-deploy/no-live
+  mutation boundaries without changing workflow job structure.
+- **VAL-SPC-006-042**: 2026-05-26 app onboarding secret path contract
+  guardrail follow-up strengthens `docs/05.operations`, `examples/sample-app`,
+  and `gitops/README.md` consistency by validating that active onboarding docs
+  distinguish the Vault CLI path `secret/apps/<appname>/config` from the ESO
+  `remoteRef.key` value `apps/<appname>/config`, without changing AppProject
+  permissions, Vault policy, secret values, or live Kubernetes state.
+- **VAL-SPC-006-043**: 2026-05-26 Vault policy write boundary guardrail
+  follow-up strengthens `docs/05.operations` command safety by validating that
+  `vault policy write` examples carry an external-secret, human-approved,
+  operator-approved, or break-glass marker, without applying Vault policy,
+  reading secret values, or mutating live Vault/Kubernetes state.
+- **VAL-SPC-006-044**: 2026-05-26 Docker network and RBAC create command
+  boundary guardrail follow-up strengthens operations command safety by
+  validating that `docker network connect` and `kubectl create
+  clusterrolebinding` examples carry human-approved, bootstrap, break-glass,
+  operator-approved, or dry-run context, without mutating Docker networks or
+  Kubernetes RBAC state.
+- **VAL-SPC-006-045**: 2026-05-26 script classification matrix guardrail
+  follow-up strengthens `scripts/` deletion and consolidation review evidence
+  by validating that every active script is classified with the task-contract
+  terms `one-off`, `reusable`, `operations-critical`, `development-helper`, or
+  `unknown`, and that current active scripts remain non-deletion and
+  non-consolidation candidates without deleting, renaming, or merging scripts.
 
 ## Related Documents
 

@@ -21,10 +21,21 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 유지하고, recurring workflow와 task-to-skill routing은 기존 runtime SSoT인
 `docs/00.agent-governance/harness-catalog.md`에 통합한다.
 
-## Current-State Navigation (2026-05-25)
+## Current-State Navigation (2026-05-26)
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| Script Classification Matrix Guardrail Overlay | Current guardrail follow-up for task-contract script classifications and deletion/consolidation candidate evidence in `scripts/README.md` | VAL-SPC-006-045; T-212 through T-216 | Current |
+| Docker Network and RBAC Create Boundary Guardrail Overlay | Current guardrail follow-up for Docker network mutation and RBAC create command safety markers in operations docs | VAL-SPC-006-044; T-207 through T-211 | Current |
+| Vault Policy Write Boundary Guardrail Overlay | Current guardrail follow-up for `vault policy write` command safety markers in operations docs | VAL-SPC-006-043; T-202 through T-206 | Current |
+| App Onboarding Secret Path Contract Guardrail Overlay | Current guardrail follow-up for Vault CLI path versus ESO `remoteRef.key` consistency across operations, sample app, and GitOps docs | VAL-SPC-006-042; T-197 through T-201 | Current |
+| GitHub Workflow Responsibility Matrix Guardrail Overlay | Current guardrail follow-up for QA gate, release-evidence, and maintenance workflow responsibility boundaries | VAL-SPC-006-041; T-192 through T-196 | Current |
+| Bootstrap Boundary Matrix Guardrail Overlay | Current guardrail follow-up for k3d creation, ArgoCD install, root app apply, Vault connection, and PostgreSQL/Valkey connection responsibility boundaries | VAL-SPC-006-040; T-187 through T-191 | Current |
+| Secret Management Responsibility Matrix Guardrail Overlay | Current guardrail follow-up for ESO, ClusterSecretStore, Vault auth, ExternalSecret naming, secret value handling, and verification responsibility SSoT | VAL-SPC-006-039; T-182 through T-186 | Current |
+| External Service Contract Matrix Guardrail Overlay | Current guardrail follow-up for PostgreSQL/Valkey/Vault host, port, secret key, TLS/CA, rotation, namespace, and verification contract SSoT | VAL-SPC-006-038; T-177 through T-181 | Current |
+| WSL2 Runtime Prerequisite Guardrail Overlay | Current guardrail follow-up for WSL2, WSL-native Docker, k3d, kubectl, kubeconfig/TLS, port, and WSL networking prerequisite SSoT | VAL-SPC-006-037; T-172 through T-176 | Current |
+| Examples Role Matrix Guardrail Overlay | Current guardrail follow-up for `examples/` onboarding/reference-only role boundaries and sample-app/adminer separation | VAL-SPC-006-036; T-167 through T-171 | Current |
+| Scripts Broad Reference Guardrail Overlay | Current guardrail follow-up for tracked `scripts/*.sh` reference safety during deletion or rename prechecks | VAL-SPC-006-035; T-162 through T-166 | Current |
 | Operations Incidents Boundary Guardrail Overlay | Current guardrail follow-up for `docs/05.operations/incidents/README.md` incident/postmortem routing and no-incident state | VAL-SPC-006-034; T-157 through T-161 | Current |
 | Infrastructure Coverage Matrix Guardrail Overlay | Current guardrail follow-up for `infrastructure/README.md` coverage matrix drift | VAL-SPC-006-033; T-152 through T-156 | Current |
 | GitOps Coverage Matrix Guardrail Overlay | Current guardrail follow-up for `gitops/README.md` and `gitops/workloads/README.md` coverage matrix drift | VAL-SPC-006-032; T-147 through T-151 | Current |
@@ -44,6 +55,140 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 Use the newest dated overlay for current state. Preserve older overlays as
 evidence snapshots unless a later overlay explicitly supersedes them.
+
+## Script Classification Matrix Guardrail Overlay
+
+This overlay follows the continuation audit for `scripts/` deletion and
+consolidation evidence. It keeps the change documentation/governance and
+repo-static: no script is deleted, renamed, consolidated, or removed from a
+command surface.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Script classification SSoT | The 006 plan recorded `operations-critical/reusable` and `development-helper/reusable` classifications, but `scripts/README.md` and the reusable repo-quality gate did not require the task-contract classification terms per active script | `scripts/README.md`; `scripts/validate-repo-quality-gates.sh`; 006 plan scripts reviewer ledger | Future deletion/consolidation reviews could keep Tier evidence while losing the explicit `one-off`, `reusable`, `operations-critical`, `development-helper`, `unknown` classification vocabulary requested by the task contract | Low | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | documentation | `scripts/README.md` | Add a Script Classification Matrix covering all active scripts, current deletion candidate state, current consolidation candidate state, and evidence | T-213 | targeted matrix check and repo quality | Revert classification matrix and command-contract wording |
+| P1 | guardrail | `scripts/validate-repo-quality-gates.sh` | Validate the Script Classification Matrix header, row coverage, allowed classification terms, expected current classifications, and no deletion/consolidation candidates | T-212, T-214 | shell syntax and repo quality | Revert validator block |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-045 and verification | T-215, T-216 | repo quality and diff check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after matrix guardrail edit |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New Script Classification Matrix guardrail |
+| targeted script classification matrix check | PASS | Active script rows use expected task-contract classifications |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index remained current |
+| `bash scripts/validate-gitops-structure.sh` | PASS | GitOps hierarchy still validates after documentation/guardrail change |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed; optional kube-linter remained unavailable |
+| `bash scripts/check-secret-handling.sh .` | PASS | No plaintext secret patterns found |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static infrastructure/GitOps contracts passed |
+| `git diff --check` | PASS | Whitespace check after verification record update |
+
+## Docker Network and RBAC Create Boundary Guardrail Overlay
+
+This overlay follows the continuation audit for `docs/05.operations` command
+safety. It keeps the change documentation/governance and repo-static: no Docker
+network is changed, no Kubernetes RBAC object is created, and no live cluster
+state is mutated.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Docker network mutation boundary | The reusable command boundary gate did not validate `docker network connect`, while WSL2/Vault recovery docs include that command for k3d network attachment | `scripts/validate-repo-quality-gates.sh`; `docs/05.operations/guides/0002-wsl2-k3d-argocd-ha-setup-guide.md`; `docs/05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md` | Agents or operators could treat Docker network mutation as a routine doc command rather than approval-bound bootstrap/break-glass work | Medium | improvement | P1 |
+| RBAC create boundary | The reusable command boundary gate covered `kubectl apply/patch` but not `kubectl create clusterrolebinding`, while Headlamp docs include RBAC creation examples | `docs/05.operations/guides/0004-headlamp-auth-oidc-guide.md`; `docs/05.operations/runbooks/0005-headlamp-keycloak-runbook.md` | RBAC escalation examples could lose explicit approval context while still passing repo quality | Medium | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | documentation | WSL2 HA guide | Mark Docker network connection as human-approved bootstrap/break-glass work | T-208 | targeted command-boundary check | Revert guide comment/date/index |
+| P1 | guardrail | `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Validate `docker network connect/disconnect/create/rm` and `kubectl create clusterrolebinding` examples carry approval/bootstrap/break-glass/dry-run context | T-207, T-209 | repo quality and shell syntax | Revert validator and README wording |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-044 and verification | T-210, T-211 | repo quality and wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New Docker network/RBAC create boundary guardrail passed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| targeted Docker network/RBAC create boundary check | PASS | Docker network and RBAC create examples carry approved context |
+| operations frontmatter/index sync check | PASS | Touched WSL2 HA guide frontmatter and Stage 05 guide index use `2026-05-26` |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `git diff --check` | PASS | No whitespace errors after verification record update |
+
+## Vault Policy Write Boundary Guardrail Overlay
+
+This overlay follows the continuation audit for `docs/05.operations` command
+safety. It keeps the change documentation/governance and repo-static: no Vault
+policy is applied, no secret value is read, and no live Vault or Kubernetes
+state is changed.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Vault policy write command boundary | The reusable command boundary gate covered `vault kv put` but did not cover `vault policy write`, while active app onboarding guide/runbook include policy application examples | `scripts/validate-repo-quality-gates.sh`; `docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md`; `docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md` | Agents or operators could treat Vault policy writes as ordinary copy/paste commands instead of approval-bound external secret operations | Medium | improvement | P1 |
+| Operations command safety SSoT | Active onboarding docs had Vault policy application commands with weaker inline boundary markers than neighboring secret-write commands | operations guide/runbook | Secret-management responsibility could drift from the documented approval model | Medium | supplementation | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | documentation | active onboarding guide/runbook | Add `external secret operation; human-approved policy change only` markers before `vault policy write` examples | T-203 | targeted boundary check | Revert comment lines |
+| P1 | guardrail | `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Validate `vault policy write` examples carry external-secret/human-approved/operator-approved/break-glass markers | T-202, T-204 | repo quality and shell syntax | Revert validator and README wording |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-043 and verification | T-205, T-206 | repo quality and wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New Vault policy write boundary guardrail passed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| targeted Vault policy write boundary check | PASS | Active `vault policy write` examples carry human-approved external secret operation markers |
+| operations frontmatter/index sync check | PASS | Touched guide/runbook frontmatter and Stage 05 indexes use `2026-05-26` |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `git diff --check` | PASS | No whitespace errors after verification record update |
+
+## App Onboarding Secret Path Contract Guardrail Overlay
+
+This overlay follows the continuation audit for `docs/05.operations`,
+`examples/sample-app`, and GitOps secret responsibility docs. It keeps the
+change documentation/governance and repo-static: no AppProject permission,
+Vault policy, secret value, ExternalSecret manifest semantics, or live
+Kubernetes state is changed.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| App onboarding secret path SSoT | Active onboarding docs and the sample ExternalSecret distinguish Vault CLI path from ESO `remoteRef.key`, but the reusable quality gate did not validate that distinction across operations, examples, and GitOps README summaries | `docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md`; `docs/05.operations/policies/0007-app-gitops-onboarding-policy.md`; `docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md`; `examples/sample-app/external-secret.yaml`; `gitops/README.md` | Future edits could reintroduce the old mount-prefix confusion and make copied onboarding examples fail at runtime | Medium | improvement | P1 |
+| GitOps sample secret wording | `gitops/README.md` described the sample app as reading Vault path `apps/<appname>/config`, which was accurate as an ESO remoteRef but ambiguous next to Vault CLI path `secret/apps/<appname>/config` | `gitops/README.md`; sample ExternalSecret | Operators could confuse Vault storage path with ESO remoteRef key | Low | supplementation | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | documentation | `gitops/README.md` | Clarify that sample app ESO uses remoteRef key `apps/<appname>/config` while Vault CLI writes to `secret/apps/<appname>/config` | T-198 | repo quality and targeted phrase check | Revert README row wording |
+| P1 | guardrail | `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Validate active guide, policy, runbook, sample ExternalSecret, and GitOps README path-language consistency | T-197, T-199 | repo quality, shell syntax, targeted app secret path check | Revert validator and README wording |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-042 and verification | T-200, T-201 | repo quality and wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New app onboarding secret path contract guardrail passed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| targeted app secret path contract check | PASS | Active guide/policy/runbook/sample/GitOps README distinguish Vault CLI path and ESO remoteRef key |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `git diff --check` | PASS | No whitespace errors after verification record update |
 
 ## Goals & In-Scope
 
@@ -2852,6 +2997,253 @@ changed.
 | `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static infrastructure/GitOps contracts passed |
 | `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
 | `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | Shell syntax for infrastructure, scripts, and hooks |
+| `git diff --check` | PASS | No whitespace errors |
+
+## WSL2 Runtime Prerequisite Guardrail Overlay
+
+This overlay follows the continuation audit for WSL2 and Docker prerequisites.
+It keeps the change documentation/governance and repo-static: no kubeconfig,
+Docker context, k3d cluster, port binding, external service, or live runtime
+state is changed in this pass.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| WSL2 prerequisite SSoT | WSL2, WSL-native Docker, k3d, kubectl, kubeconfig/TLS, port, and WSL networking prerequisites were spread across bootstrap docs and runtime notes without one reusable matrix guarded by repo-quality validation | `infrastructure/README.md`; `docs/05.operations/guides/0001-wsl-k3d-argocd-bootstrap-guide.md`; `docs/05.operations/guides/0002-wsl2-k3d-argocd-ha-setup-guide.md`; `docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md` | Operators could miss which checks are repo SSoT, which are live evidence, and which failures remain operator-owned | Medium | improvement | P1 |
+| TLS and networking failure boundary | The kubeconfig `x509` blocker and Windows/WSL networking ownership were documented in prose, but not validated as part of the infrastructure prerequisite contract | `infrastructure/README.md`; `scripts/validate-repo-quality-gates.sh` | Static success could be mistaken for live readiness or automatic kubeconfig/network repair | Medium | supplementation | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `infrastructure/README.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Add and validate WSL2 Runtime Prerequisite Matrix rows for Docker context, k3d/kubectl context, kubeconfig/TLS trust, port/network contracts, and WSL networking constraints | T-172 through T-174 | repo quality, static contracts, shell syntax, wiki check | Revert README and validator edits |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-037 and verification | T-175, T-176 | repo quality and wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New WSL2 Runtime Prerequisite Matrix guardrail passed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static infrastructure/GitOps contracts passed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `bash scripts/validate-gitops-structure.sh` | PASS | Root Application, apps ApplicationSet, root app manifest count, and Kustomize completeness checks passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed for 104 files; optional `kube-linter` skipped locally because it is not installed |
+| `bash scripts/check-secret-handling.sh .` | PASS | Plaintext secret scan passed |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | Shell syntax for infrastructure, scripts, and hooks |
+| JSON parse for `.claude/settings.json` and `.codex/hooks.json` | PASS | Agent runtime JSON parsed |
+| workflow YAML parse for `.github/workflows/*.yml` | PASS | Parsed 5 workflow files |
+| `.env.example` vs `.env` key-name-only comparison | PASS | 18 key names matched; values were not printed |
+| `git diff --check` | PASS | No whitespace errors |
+
+## Examples Role Matrix Guardrail Overlay
+
+This overlay follows the continuation audit for `examples/`. It keeps the
+change documentation/governance and repo-static: no sample manifest,
+cloud-reference manifest, GitOps workload, provider contract, or live runtime
+state is changed in this pass.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Examples role SSoT | `examples/README.md` described `sample-app/` as a minimal onboarding template and AWS/Azure as reference snapshots, but the reusable gate did not validate an explicit role matrix | `examples/README.md`; `scripts/validate-repo-quality-gates.sh` | Example directories could drift into active desired-state or provider-latest claims without repo-static failure | Medium | improvement | P1 |
+| Sample app vs active reference | `examples/sample-app/README.md` named `gitops/workloads/adminer/` as the fuller active reference, but no gate checked that the sample file set stayed minimal and adminer retained the richer reference files | `examples/sample-app/README.md`; `gitops/workloads/adminer/`; `scripts/validate-repo-quality-gates.sh` | Onboarding examples could accidentally look like the active workload SSoT or lose the active comparison path | Medium | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `examples/README.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Add and validate Example Role Matrix rows for `sample-app/`, `aws/`, and `azure/`, including reference-only/provider-snapshot boundaries and expected validation commands | T-167 through T-169 | repo quality, manifest syntax, secret scan, wiki check | Revert README and validator edits |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-036 and verification | T-170, T-171 | repo quality and wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New examples role matrix and sample-app/adminer boundary guardrail passed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed for 104 files; optional `kube-linter` skipped locally because it is not installed |
+| `bash scripts/check-secret-handling.sh .` | PASS | Plaintext secret scan passed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `bash scripts/validate-gitops-structure.sh` | PASS | Root Application, apps ApplicationSet, root app manifest count, and Kustomize completeness checks passed |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static infrastructure/GitOps contracts passed |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | Shell syntax for infrastructure, scripts, and hooks |
+| JSON parse for `.claude/settings.json` and `.codex/hooks.json` | PASS | Agent runtime JSON parsed |
+| workflow YAML parse for `.github/workflows/*.yml` | PASS | Parsed 5 workflow files |
+| `.env.example` vs `.env` key-name-only comparison | PASS | 18 key names matched; values were not printed |
+| `git diff --check` | PASS | No whitespace errors |
+
+## GitHub Workflow Responsibility Matrix Guardrail Overlay
+
+This overlay follows the continuation audit for QA/CI-CD governance. It keeps
+the change documentation/governance and repo-static: no workflow job structure,
+branch policy, deploy command, publish command, or GitHub remote setting is
+changed.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| GitHub workflow responsibility SSoT | `.github/ABOUT.md` described workflow roles in prose, but did not have a guarded matrix tied to the actual `.github/workflows/*.yml` inventory | `.github/ABOUT.md`; `.github/workflows/` | New workflow files could appear without clear QA/release/maintenance ownership and boundary text | Medium | improvement | P1 |
+| QA/CD boundary evidence | Repo quality parsed workflow YAML and CI jobs, but did not protect the human-facing no-deploy/no-live-mutation workflow role summary | `scripts/validate-repo-quality-gates.sh`; `.github/ABOUT.md` | Maintenance automation could be mistaken for QA gates or deploy CD if documentation drifts | Medium | supplementation | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `.github/ABOUT.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Add and validate Workflow Responsibility Matrix rows for `ci.yml`, `generate-changelog.yml`, `greetings.yml`, `labeler.yml`, and `stale.yml`, including role, trigger/scope, evidence, and no-deploy/no-live-mutation boundaries | T-192 through T-194 | repo quality, workflow YAML parse, shell syntax, wiki check | Revert ABOUT and validator edits |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-041 and verification | T-195, T-196 | repo quality and wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New Workflow Responsibility Matrix guardrail passed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| workflow YAML parse for `.github/workflows/*.yml` | PASS | Parsed 5 workflow files |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `git diff --check` | PASS | No whitespace errors |
+
+## Bootstrap Boundary Matrix Guardrail Overlay
+
+This overlay follows the continuation audit for P0-17 bootstrap boundaries. It
+keeps the change documentation/governance and repo-static: no cluster is
+created, no ArgoCD install is run, no root app is applied, no secret is read,
+and no external runtime state is changed.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Bootstrap boundary SSoT | k3d creation, ArgoCD installation, root app application, Vault connection, and PostgreSQL/Valkey connection boundaries were documented in prose across bootstrap docs, but not consolidated in a guarded matrix | `infrastructure/README.md`; `infrastructure/bootstrap-local.sh`; `docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md`; `gitops/README.md` | Operators and agents could confuse bootstrap-only exceptions with normal GitOps operation | Medium | improvement | P1 |
+| Verification coverage | Static gates checked contracts and GitOps structure, but repo-quality did not protect the human-facing bootstrap/operator responsibility matrix | `scripts/validate-repo-quality-gates.sh`; `infrastructure/README.md` | Future docs could weaken bootstrap/live mutation boundaries while static manifests still pass | Medium | supplementation | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `infrastructure/README.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Add and validate Bootstrap Boundary Matrix rows for k3d cluster creation, ArgoCD installation, root app application, Vault connection, and PostgreSQL/Valkey connection responsibility boundaries | T-187 through T-189 | repo quality, static contracts, GitOps structure, manifest syntax, secret scan, shell syntax | Revert README and validator edits |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-040 and verification | T-190, T-191 | repo quality and wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New Bootstrap Boundary Matrix guardrail passed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static external service, Vault, AppProject, and workload contracts passed |
+| `bash scripts/validate-gitops-structure.sh` | PASS | Root Application, apps ApplicationSet, root app manifest count, and Kustomize completeness checks passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed for 104 files; optional `kube-linter` skipped locally because it is not installed |
+| `bash scripts/check-secret-handling.sh .` | PASS | Plaintext secret scan passed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `git diff --check` | PASS | No whitespace errors |
+
+## Secret Management Responsibility Matrix Guardrail Overlay
+
+This overlay follows the continuation audit for P0-20 secret-management
+responsibility. It keeps the change documentation/governance and repo-static:
+no secret values are read, no Vault policy is changed, and no live
+Kubernetes/Vault state is mutated.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Secret-management responsibility SSoT | ESO/Vault resources existed, but ClusterSecretStore, platform ExternalSecrets, ArgoCD target secrets, sample app ExternalSecret naming, owner boundaries, and value-handling rules were not consolidated in a guarded matrix | `gitops/platform/eso/`; `gitops/platform/argocd/`; `examples/sample-app/external-secret.yaml`; `gitops/README.md` | Operators could miss who owns Vault auth, target Secret naming, rotation, and app-secret enablement boundaries | Medium | improvement | P1 |
+| Verification coverage | Static contracts and secret scans passed, but repo-quality did not protect the human-facing secret responsibility summary | `scripts/validate-repo-quality-gates.sh`; `scripts/check-secret-handling.sh`; `gitops/README.md` | Secret governance docs could drift while manifests still pass syntax and secret scans | Medium | supplementation | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `gitops/README.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Add and validate Secret Management Responsibility Matrix rows for `vault-backend`, platform PostgreSQL secret, ArgoCD Valkey secret, ArgoCD notifications secret, and optional sample app ExternalSecret | T-182 through T-184 | repo quality, static contracts, GitOps structure, manifest syntax, secret scan, shell syntax | Revert README and validator edits |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-039 and verification | T-185, T-186 | repo quality and wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New Secret Management Responsibility Matrix guardrail passed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static external service, Vault, AppProject, and workload contracts passed |
+| `bash scripts/validate-gitops-structure.sh` | PASS | Root Application, apps ApplicationSet, root app manifest count, and Kustomize completeness checks passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed for 104 files; optional `kube-linter` skipped locally because it is not installed |
+| `bash scripts/check-secret-handling.sh .` | PASS | Plaintext secret scan passed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `git diff --check` | PASS | No whitespace errors |
+
+## External Service Contract Matrix Guardrail Overlay
+
+This overlay follows the continuation audit for P0-21 external service
+contracts. It keeps the change documentation/governance and repo-static:
+EndpointSlices, services, ExternalSecrets, Vault policy, `.env` values, and
+external runtimes are not changed.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| External service contract SSoT | PostgreSQL, Valkey, and Vault static contracts existed across manifests and tests, but host/service, port, database or Vault path, secret keys, TLS/CA ownership, rotation responsibility, namespace convention, and static/live verification were not consolidated in a guarded matrix | `gitops/platform/external-services/`; `gitops/platform/eso/`; `gitops/platform/argocd/argocd-external-valkey-secret.yaml`; `infrastructure/tests/verify-contracts-static.sh`; `gitops/README.md` | Operators could miss which contract attributes are owned here versus external-service or secret-management owners | Medium | improvement | P1 <!-- pragma: allowlist secret --> |
+| Verification coverage | `verify-contracts-static.sh` checked concrete IP/port/secret contracts, but repo-quality did not protect the human-facing contract summary | `scripts/validate-repo-quality-gates.sh`; `gitops/README.md` | Future README drift could weaken documentation SSoT while static manifests still pass | Medium | supplementation | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `gitops/README.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Add and validate External Service Contract Matrix rows for Vault API, PostgreSQL write/read, and Valkey auth, covering host/service, port, database or Vault path, secret keys, TLS/CA responsibility, rotation owner, namespace convention, and verification command | T-177 through T-179 | repo quality, static contracts, GitOps structure, secret scan, shell syntax | Revert README and validator edits |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-038 and verification | T-180, T-181 | repo quality and wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New External Service Contract Matrix guardrail passed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static external service, Vault, AppProject, and workload contracts passed |
+| `bash scripts/validate-gitops-structure.sh` | PASS | Root Application, apps ApplicationSet, root app manifest count, and Kustomize completeness checks passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed for 104 files; optional `kube-linter` skipped locally because it is not installed |
+| `bash scripts/check-secret-handling.sh .` | PASS | Plaintext secret scan passed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `git diff --check` | PASS | No whitespace errors after verification record update |
+
+## Scripts Broad Reference Guardrail Overlay
+
+This overlay follows the continuation audit for `scripts/`. It keeps the
+change documentation/governance and repo-static: no script is deleted, renamed,
+or consolidated in this pass.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Script deletion precheck | `scripts/README.md` required a broad reference sweep before script deletion or rename, but the reusable gate only checked the command-contract allowlist for dangling `scripts/*.sh` references | `scripts/README.md`; `scripts/validate-repo-quality-gates.sh` | Script deletion or rename could leave active references in historical, governance, operations, GitOps, infrastructure, or example text without a reusable failure | Medium | improvement | P1 |
+| Retention evidence boundary | Broad references need to be checked for dangling links without turning every mention into Tier A/B retention evidence | `scripts/README.md` | Future cleanup could over-retain scripts because any reference is mistaken for preservation evidence | Low | supplementation | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Validate that every tracked text reference matching `scripts/*.sh` points to an existing script, while documenting that broad references are a deletion/rename safety net and not automatic Tier A/B retention evidence | T-162 through T-164 | repo quality, shell syntax, broad reference spot check | Revert validator and README wording |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-035 and verification | T-165, T-166 | repo quality and wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New tracked script reference sweep guardrail passed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| tracked script reference spot check | PASS | 183 tracked `scripts/*.sh` references resolved to existing files |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `bash scripts/validate-gitops-structure.sh` | PASS | Root Application, apps ApplicationSet, root app manifest count, and Kustomize completeness checks passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed for 104 files; optional `kube-linter` skipped locally because it is not installed |
+| `bash scripts/check-secret-handling.sh .` | PASS | Plaintext secret scan passed |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static infrastructure/GitOps contracts passed |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | Shell syntax for infrastructure, scripts, and hooks |
+| JSON parse for `.claude/settings.json` and `.codex/hooks.json` | PASS | Agent runtime JSON parsed |
+| workflow YAML parse for `.github/workflows/*.yml` | PASS | Parsed 5 workflow files |
+| `.env.example` vs `.env` key-name-only comparison | PASS | 18 key names matched; values were not printed |
 | `git diff --check` | PASS | No whitespace errors |
 
 ## Related Documents
