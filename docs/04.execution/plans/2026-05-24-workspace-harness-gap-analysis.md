@@ -25,6 +25,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| Traefik 443 Runtime Proof Overlay | Current approved runtime follow-up proving ingress-nginx fallback passes but external Traefik 443 is not reachable because no external gateway runtime is present | VAL-SPC-006-048; T-227 through T-230 | Current |
 | Default Kubeconfig TLS Repair Overlay | Current approved runtime follow-up proving default kubeconfig TLS trust repair and default `run-all.sh` live validation pass | VAL-SPC-006-047; T-222 through T-226 | Current |
 | Temporary Kubeconfig Live Validation Overlay | Current approved runtime follow-up proving read-only live validation passes with a k3d-generated temporary kubeconfig while default kubeconfig TLS trust remains unrepaired | VAL-SPC-006-046; T-217 through T-221 | Current |
 | Script Classification Matrix Guardrail Overlay | Current guardrail follow-up for task-contract script classifications and deletion/consolidation candidate evidence in `scripts/README.md` | VAL-SPC-006-045; T-212 through T-216 | Current |
@@ -57,6 +58,35 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 Use the newest dated overlay for current state. Preserve older overlays as
 evidence snapshots unless a later overlay explicitly supersedes them.
+
+## Traefik 443 Runtime Proof Overlay
+
+This overlay follows explicit approval for approval-gated items. It keeps the
+check read-only: no external Traefik gateway is started, no dynamic config is
+copied into `hy-home.docker`, no Kubernetes resource is mutated, and no Docker
+network is changed.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| External Traefik runtime proof | Default live ingress/TLS validation passes through ingress-nginx fallback, but `CHECK_TRAEFIK_443=true` fails because the external Traefik gateway endpoint is not reachable | `infrastructure/tests/verify-ingress-tls.sh`; `docker ps`; `traefik/README.md` | Operators could mistake a k3d GitOps success for full external gateway readiness | Medium | supplementation | P2 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P2 | live read-only validation | `infrastructure/tests/verify-ingress-tls.sh`; Docker runtime | Run `CHECK_TRAEFIK_443=true` and inspect Docker inventory for external gateway presence | T-227, T-228 | command output and exit status | N/A; read-only |
+| P1 | documentation | `traefik/README.md` | Clarify that Traefik 443 failure with no external gateway container is a `hy-home.docker` runtime/dynamic-config proof gap, not a k3d GitOps desired-state failure | T-229 | repo quality and manifest checks | Revert README note |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-048 and verification | T-229, T-230 | repo quality and diff check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh` | FAIL | `Traefik 443 endpoint is not reachable (argocd.127.0.0.1.nip.io:443)` |
+| `docker ps --format '{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'` | PASS | No external Traefik gateway container was present in the current Docker inventory |
+| `bash infrastructure/tests/run-all.sh` | PASS | k3d ingress/TLS fallback path passed with Traefik 443 enforcement skipped |
 
 ## Default Kubeconfig TLS Repair Overlay
 

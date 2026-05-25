@@ -418,6 +418,12 @@ git diff --check
   `infrastructure/tests/run-all.sh` pass without changing repository manifests,
   Kubernetes resources, Docker networks, Vault policy, secret values, or `.env`
   values.
+- **VAL-SPC-006-048**: 2026-05-26 approved Traefik 443 runtime proof follow-up
+  strengthens Traefik boundary evidence by running
+  `CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh`,
+  recording the failure when no external Traefik gateway container is running,
+  and keeping external gateway startup or dynamic-config application outside
+  this repository's GitOps desired-state ownership.
 
 ## Related Documents
 

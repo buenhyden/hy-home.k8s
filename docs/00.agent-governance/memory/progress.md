@@ -8,6 +8,44 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-26 — Traefik 443 runtime proof follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: Traefik, Docker, ingress, TLS, validation, SDD
+- **Status**: partial
+- **Tags**: #traefik #docker #ingress #tls #validation #sdd
+
+#### Progress
+
+- Used the explicit approval for approval-gated items to run the optional
+  Traefik 443 live proof.
+- Confirmed default `run-all.sh` passes through the ingress-nginx fallback path.
+- Ran `CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh`
+  and confirmed the external Traefik endpoint is not reachable.
+- Inspected Docker runtime and found no external Traefik gateway container in
+  the current container inventory.
+- Added a `traefik/README.md` note that this failure is a `hy-home.docker`
+  gateway runtime/dynamic-config proof gap, not a k3d GitOps desired-state
+  failure.
+- Recorded `VAL-SPC-006-048` and `T-227` through `T-230` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh` —
+  FAIL: `Traefik 443 endpoint is not reachable (argocd.127.0.0.1.nip.io:443)`.
+- `docker ps --format '{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'` —
+  PASS for inventory capture; no external Traefik gateway container was
+  running.
+- `bash infrastructure/tests/run-all.sh` — PASS with Traefik 443 enforcement
+  skipped by default.
+
+#### Follow-up
+
+- External gateway startup and dynamic-config application belong to
+  `hy-home.docker` operations; do not create or mutate that runtime from this
+  repository without a separate gateway maintenance pass.
+
 ### 2026-05-26 — Default kubeconfig TLS repair follow-up
 
 - **Date**: 2026-05-26

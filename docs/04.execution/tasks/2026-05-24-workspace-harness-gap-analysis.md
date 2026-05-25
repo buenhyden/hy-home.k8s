@@ -281,6 +281,10 @@ pre-check와 follow-up으로 남긴다.
 | T-224 | Verify default kubeconfig reaches the API server and passes aggregate live validation | test | VAL-SPC-006-047 | Default Kubeconfig TLS Repair | `kubectl version`; `run-all.sh` | Platform | Done |
 | T-225 | Record default kubeconfig TLS repair in the 006 Plan/Spec/Task and infrastructure README | doc | VAL-SPC-006-047 | Default Kubeconfig TLS Repair | 006 chain check | Platform | Done |
 | T-226 | Append progress memory for default kubeconfig TLS repair | memory | VAL-SPC-006-047 | Default Kubeconfig TLS Repair | progress ledger entry | Platform | Done |
+| T-227 | Run approved Traefik 443 runtime proof check | test | VAL-SPC-006-048 | Traefik 443 Runtime Proof | `CHECK_TRAEFIK_443=true` check | Platform | Done |
+| T-228 | Inspect Docker runtime for external Traefik gateway presence | eval | VAL-SPC-006-048 | Traefik 443 Runtime Proof | Docker container inventory | Platform | Done |
+| T-229 | Record Traefik 443 failure boundary in Traefik README and 006 Plan/Spec/Task | doc | VAL-SPC-006-048 | Traefik 443 Runtime Proof | SDD chain check | Platform | Done |
+| T-230 | Append progress memory for Traefik 443 runtime proof follow-up | memory | VAL-SPC-006-048 | Traefik 443 Runtime Proof | progress ledger entry | Platform | Done |
 
 ## Suggested Types
 
@@ -715,6 +719,22 @@ pre-check와 follow-up으로 남긴다.
 | `kubectl version --request-timeout=5s` | PASS | API server reachable with default kubeconfig; client/server minor version-skew warning observed |
 | `bash infrastructure/tests/run-all.sh` | PASS | cluster, GitOps, ESO/Vault, external services, network policy, ingress/TLS checks passed; Traefik 443 enforcement skipped by default |
 | rollback | recorded | restore the backup file to `~/.kube/config` if the local default kubeconfig must be reverted |
+
+### Phase 46 - Traefik 443 Runtime Proof
+
+- [x] T-227 Run approved Traefik 443 runtime proof check.
+- [x] T-228 Inspect Docker runtime for external Traefik gateway presence.
+- [x] T-229 Record Traefik 443 failure boundary in Traefik README and the 006 SDD chain.
+- [x] T-230 Append progress memory for this follow-up.
+
+## Traefik 443 Runtime Proof Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh` | FAIL | `Traefik 443 endpoint is not reachable (argocd.127.0.0.1.nip.io:443)` |
+| `docker ps --format '{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'` | PASS | No external Traefik gateway container was running in the current Docker inventory |
+| ingress-nginx fallback path | PASS | Default `bash infrastructure/tests/run-all.sh` passes with Traefik 443 enforcement skipped |
+| boundary decision | recorded | Treat as `hy-home.docker` gateway runtime/dynamic-config proof gap, not k3d GitOps desired-state failure |
 
 ## Vault Policy Write Boundary Guardrail Verification Summary
 
