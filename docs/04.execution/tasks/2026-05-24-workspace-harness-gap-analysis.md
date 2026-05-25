@@ -134,6 +134,7 @@ pre-check와 follow-up으로 남긴다.
 | T-077 | Remediate discovered `actions/stale` workflow and version inventory drift | ci | VAL-SPC-006-019 | Approval-Bound P1 | repo quality gate and workflow parse | Platform | Done |
 | T-078 | Record remaining current-state limitations and replacement PR boundary | doc | VAL-SPC-006-019 | Approval-Bound Audit | progress ledger and PR evidence | Platform | Done |
 | T-079 | Run verification for the approval-bound audit branch and PR | test | VAL-SPC-006-019 | Approval-Bound Verification | Approval-Bound Completion Audit Summary | Platform | Done |
+| T-080 | Refresh PR #39 check evidence against the current GitHub check rollup | doc | VAL-SPC-006-019 | Approval-Bound Evidence Refresh | PR #39 check rollup and repo quality gate | Platform | Done |
 
 ## Suggested Types
 
@@ -278,6 +279,7 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-077 Align `actions/stale` workflow pin and version inventory.
 - [x] T-078 Record remaining current-state limitations and PR boundary.
 - [x] T-079 Run verification for the audit branch and PR.
+- [x] T-080 Refresh PR #39 check evidence against the current GitHub check rollup.
 
 ## Verification Evidence History Note
 
@@ -740,9 +742,9 @@ is stored in the linked plan to keep this task document concise.
     `docs/90.references/versions/tech-stack-version-inventory.md` and the PR
     was based on stale main state.
   - Replacement PR #39 - PASS; `ci-summary`, `pre-commit`,
-    `repo-quality-static`, `branch-policy`, `changes`, `greeting`, `label`, and
-    GitGuardian checks passed. `manifest-static` and `shell-static` skipped by
-    workflow path-filter design.
+    `repo-quality-static`, `branch-policy`, `changes`, `label`, and GitGuardian
+    checks passed. `manifest-static` and `shell-static` skipped by workflow
+    path-filter design.
 - **Repo Change**:
   - Updated `.github/workflows/stale.yml` and
     `docs/90.references/versions/tech-stack-version-inventory.md` together to

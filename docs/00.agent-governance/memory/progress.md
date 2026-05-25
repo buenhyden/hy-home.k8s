@@ -8,6 +8,39 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-25 — approval-bound evidence refresh
+
+- **Date**: 2026-05-25
+- **Layer**: ci, docs
+- **Status**: complete
+- **Tags**: #ci #github #validation #evidence
+
+#### Progress
+
+- Rechecked PR #39 after the approval-bound audit branch updates.
+- Confirmed PR #39 is open, mergeable, non-draft, and has passing checks for
+  `ci-summary`, `pre-commit`, `repo-quality-static`, `branch-policy`,
+  `changes`, `label`, and GitGuardian.
+- Corrected the 006 Plan/Task PR check evidence to remove the stale `greeting`
+  check name, which is not present in the current GitHub check rollup.
+
+#### Memory
+
+- Treat PR check evidence as current-state data. Re-run `gh pr view ...` before
+  copying check names into authored SSoT artifacts.
+
+#### Evidence
+
+- `gh pr view 39 --json number,state,isDraft,mergeable,statusCheckRollup` PASS.
+- 006 Task includes T-080 for this evidence refresh.
+
+#### Handoff
+
+- PR #39 still requires normal protected-branch handling before the branch can
+  become the `main` SSoT.
+
+---
+
 ### 2026-05-25 — approval-bound completion audit
 
 - **Date**: 2026-05-25
