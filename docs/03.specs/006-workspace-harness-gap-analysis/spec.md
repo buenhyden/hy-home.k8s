@@ -424,6 +424,12 @@ git diff --check
   recording the failure when no external Traefik gateway container is running,
   and keeping external gateway startup or dynamic-config application outside
   this repository's GitOps desired-state ownership.
+- **VAL-SPC-006-049**: 2026-05-26 targeted residual-area audit follow-up
+  rechecks `scripts/`, `gitops/`, `infrastructure/`, and `docs/05.operations/`
+  against the current worktree, confirms no deletion-ready scripts and no safe
+  GitOps/Kubernetes semantic changes in this pass, and strengthens the
+  operations high-risk command boundary SSoT without mutating live cluster,
+  external runtime, secret, `.env`, or Kubernetes desired-state semantics.
 
 ## Related Documents
 

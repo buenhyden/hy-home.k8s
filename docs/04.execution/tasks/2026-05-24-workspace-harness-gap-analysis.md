@@ -285,6 +285,12 @@ pre-check와 follow-up으로 남긴다.
 | T-228 | Inspect Docker runtime for external Traefik gateway presence | eval | VAL-SPC-006-048 | Traefik 443 Runtime Proof | Docker container inventory | Platform | Done |
 | T-229 | Record Traefik 443 failure boundary in Traefik README and 006 Plan/Spec/Task | doc | VAL-SPC-006-048 | Traefik 443 Runtime Proof | SDD chain check | Platform | Done |
 | T-230 | Append progress memory for Traefik 443 runtime proof follow-up | memory | VAL-SPC-006-048 | Traefik 443 Runtime Proof | progress ledger entry | Platform | Done |
+| T-231 | Re-audit `scripts/`, `gitops/`, `infrastructure/`, and `docs/05.operations/` for unreviewed residual gaps | eval | VAL-SPC-006-049 | Targeted Residual-Area Audit | current worktree inventory and targeted search | Platform | Done |
+| T-232 | Surface operations high-risk command boundary in `docs/05.operations/README.md` | doc | VAL-SPC-006-049 | Targeted Residual-Area Audit | repo quality gate | Platform | Done |
+| T-233 | Align script command contract wording with operations mutation-boundary checks | doc | VAL-SPC-006-049 | Targeted Residual-Area Audit | scripts README review | Platform | Done |
+| T-234 | Record GitOps and infrastructure external Traefik proof boundary in entrypoint READMEs | doc | VAL-SPC-006-049 | Targeted Residual-Area Audit | repo quality and static checks | Platform | Done |
+| T-235 | Record residual-area audit overlay in the 006 Spec/Plan/Task chain | doc | VAL-SPC-006-049 | Targeted Residual-Area Audit | SDD chain check | Platform | Done |
+| T-236 | Append progress memory for targeted residual-area audit | memory | VAL-SPC-006-049 | Targeted Residual-Area Audit | progress ledger entry | Platform | Done |
 
 ## Suggested Types
 
@@ -735,6 +741,35 @@ pre-check와 follow-up으로 남긴다.
 | `docker ps --format '{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'` | PASS | No external Traefik gateway container was running in the current Docker inventory |
 | ingress-nginx fallback path | PASS | Default `bash infrastructure/tests/run-all.sh` passes with Traefik 443 enforcement skipped |
 | boundary decision | recorded | Treat as `hy-home.docker` gateway runtime/dynamic-config proof gap, not k3d GitOps desired-state failure |
+
+### Phase 47 - Targeted Residual-Area Audit
+
+- [x] T-231 Re-audit `scripts/`, `gitops/`, `infrastructure/`, and `docs/05.operations/`.
+- [x] T-232 Surface operations high-risk command boundary in the operations stage entrypoint.
+- [x] T-233 Align script command contract wording with mutation-boundary checks.
+- [x] T-234 Record GitOps and infrastructure external Traefik proof boundary.
+- [x] T-235 Record the audit overlay in the 006 SDD chain.
+- [x] T-236 Append progress memory for this follow-up.
+
+## Targeted Residual-Area Audit Summary
+
+| Area | Status | Evidence |
+| --- | --- | --- |
+| `scripts/` deletion/consolidation | PASS | Five tracked scripts are inventoried, executable, classified, and not deletion/consolidation candidates. |
+| `gitops/` implemented infrastructure | PARTIAL | Static hierarchy and contracts pass; AppProject/namespace/image/workload-kind semantics remain deferred; external Traefik gateway proof is outside GitOps desired state. |
+| `infrastructure/` implemented infrastructure | PARTIAL | Static and default live aggregate checks pass; external Traefik 443 proof remains an external gateway runtime gap. |
+| `docs/05.operations/` normalization | PASS | Bucket/index/frontmatter and high-risk command boundary checks pass after entrypoint wording update. |
+
+| Verification item | Status | Evidence |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | Repository quality gates passed. |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated LLM Wiki index is current. |
+| `bash scripts/validate-gitops-structure.sh` | PASS | GitOps hierarchy and Kustomize completeness checks passed. |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static contracts passed. |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed; optional kube-linter skipped locally. |
+| `bash scripts/check-secret-handling.sh .` | PASS | Plaintext secret scan passed. |
+| `bash infrastructure/tests/run-all.sh` | PASS | Default live aggregate passed with Traefik 443 enforcement skipped. |
+| `CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh` | EXPECTED FAIL | External Traefik endpoint is not reachable; no separate external Traefik gateway container is present in Docker inventory. |
 
 ## Vault Policy Write Boundary Guardrail Verification Summary
 

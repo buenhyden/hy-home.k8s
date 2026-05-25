@@ -25,6 +25,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| Targeted Residual-Area Audit Overlay | Current continuation audit for `scripts/`, `gitops/`, `infrastructure/`, and `docs/05.operations`, including operations high-risk command boundary SSoT | VAL-SPC-006-049; T-231 through T-236 | Current |
 | Traefik 443 Runtime Proof Overlay | Current approved runtime follow-up proving ingress-nginx fallback passes but external Traefik 443 is not reachable because no external gateway runtime is present | VAL-SPC-006-048; T-227 through T-230 | Current |
 | Default Kubeconfig TLS Repair Overlay | Current approved runtime follow-up proving default kubeconfig TLS trust repair and default `run-all.sh` live validation pass | VAL-SPC-006-047; T-222 through T-226 | Current |
 | Temporary Kubeconfig Live Validation Overlay | Current approved runtime follow-up proving read-only live validation passes with a k3d-generated temporary kubeconfig while default kubeconfig TLS trust remains unrepaired | VAL-SPC-006-046; T-217 through T-221 | Current |
@@ -58,6 +59,56 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 Use the newest dated overlay for current state. Preserve older overlays as
 evidence snapshots unless a later overlay explicitly supersedes them.
+
+## Targeted Residual-Area Audit Overlay
+
+This overlay follows the continuation request to check whether any requested
+area remains unreviewed and proceed where safe. It changes only documentation
+and SDD evidence. It does not change Kubernetes manifests, ArgoCD semantics,
+AppProject permissions, Docker networks, external services, secret policy,
+`.env` values, live cluster state, or CI job structure.
+
+### Coverage Ledger Delta
+
+| Area | Current status | Evidence path | Gap decision | Next action |
+| --- | --- | --- | --- | --- |
+| `scripts/` deletion/consolidation | complete repo-static | `scripts/README.md`; `scripts/validate-repo-quality-gates.sh`; executable bits | No deletion-ready or consolidation-ready script; keep all five scripts | Keep deletion/rename precheck guardrails |
+| `gitops/` implemented infrastructure | partial | `gitops/README.md`; `scripts/validate-gitops-structure.sh`; `infrastructure/tests/verify-contracts-static.sh` | Static hierarchy/contracts pass; semantic hardening remains deferred | Keep AppProject, namespace ownership, image/workload-kind policy changes in P3 follow-up |
+| `infrastructure/` implemented infrastructure | partial | `infrastructure/README.md`; `infrastructure/tests/run-all.sh`; `CHECK_TRAEFIK_443=true` check | Default live aggregate passes; external Traefik 443 runtime proof remains outside this repo | Keep external gateway proof in `hy-home.docker` operations boundary |
+| `docs/05.operations/` structure | complete repo-static | `docs/05.operations/README.md`; operations subfolder READMEs; repo quality gate | Bucket routing, indexes, frontmatter, incident boundary, and high-risk command boundary are guarded | Keep new operation docs on the same routing/mutation-boundary contract |
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Operations mutation-boundary SSoT | The reusable gate already scans high-risk command examples, but the operations stage entrypoint did not name that gate-level command-boundary contract explicitly | `docs/05.operations/README.md`; `scripts/validate-repo-quality-gates.sh` | Operators and agents could miss that live mutation examples need nearby approved-context markers | Low | supplementation | P1 |
+| Script command contract wording | `scripts/README.md` described several specific boundary checks but under-reported the broader operations high-risk command boundary covered by the gate | `scripts/README.md`; `scripts/validate-repo-quality-gates.sh` | Script inventory and command-contract SSoT could lag validator behavior | Low | supplementation | P1 |
+| External Traefik proof boundary | GitOps and infrastructure entrypoints did not both point readers from k3d ingress fallback success to the external gateway runtime proof gap | `gitops/README.md`; `infrastructure/README.md`; `traefik/README.md` | Readers could confuse GitOps/live fallback success with external gateway readiness | Medium | supplementation | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | documentation | `docs/05.operations/README.md` | Add operations mutation-boundary SSoT for high-risk command examples and repo-quality enforcement | T-232 | repo quality gate | Revert README section |
+| P1 | documentation | `scripts/README.md` | Align `validate-repo-quality-gates.sh` contract wording with operations high-risk command boundary scans | T-233 | repo quality gate and diff check | Revert README wording |
+| P1 | documentation | `gitops/README.md`; `infrastructure/README.md` | Record external Traefik 443 proof as outside GitOps desired state and external to default live aggregate fallback proof | T-234 | GitOps/static/live checks | Revert README wording |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-049, residual audit status, verification, and remaining deferrals | T-235, T-236 | SDD chain check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| current worktree inventory and targeted search | PASS | No untracked unreviewed target files found in the four named areas; high-risk operations commands are covered by repo-quality boundary rules |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | Repository quality gates passed after operations/script/GitOps/infrastructure README updates |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated LLM Wiki index remained current |
+| `bash scripts/validate-gitops-structure.sh` | PASS | Root Application, ApplicationSet, hierarchy, and Kustomize completeness checks passed |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static GitOps, Vault, external service, AppProject, and workload contracts passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed; optional kube-linter skipped because it is not installed |
+| `bash scripts/check-secret-handling.sh .` | PASS | Plaintext secret scan passed |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | Shell syntax passed |
+| JSON/workflow/env metadata checks | PASS | `.claude/settings.json`, `.codex/hooks.json`, workflow YAML parse, and `.env.example`/`.env` key-name comparison passed |
+| `bash infrastructure/tests/run-all.sh` | PASS | Default live aggregate passed with Traefik 443 enforcement skipped |
+| `CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh` | EXPECTED FAIL | External Traefik endpoint is not reachable; Docker inventory shows no separate external Traefik gateway container |
 
 ## Traefik 443 Runtime Proof Overlay
 

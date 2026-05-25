@@ -20,6 +20,21 @@
 | 실제 사고 사실, 타임라인을 기록해야 함 | [incidents](./incidents/README.md) | [incident.template.md](../99.templates/incident.template.md) |
 | 사고 후 원인과 재발 방지를 분석해야 함 | [incidents README](./incidents/README.md)에서 postmortem 경로 생성 조건 확인 | [postmortem.template.md](../99.templates/postmortem.template.md) |
 
+## Operations Mutation Boundary
+
+운영 문서는 `kubectl apply/patch`, `argocd app sync`, `vault kv put`,
+`vault policy write`, `helm upgrade/install`, `docker network connect`,
+`kubectl config`처럼 live state나 외부 secret/runtime에 영향을 줄 수 있는
+명령을 포함할 수 있다. 이런 예시는 반드시 가까운 문맥에서
+`human-approved`, `operator-approved`, `bootstrap-only`, `break-glass`,
+`external secret operation`, `temporary kubeconfig` 같은 실행 경계를 밝혀야
+한다.
+
+`bash scripts/validate-repo-quality-gates.sh .`는 authored docs와 examples의
+high-risk command 예시를 스캔해 boundary marker가 없는 경우 실패한다. 이
+검사는 실행 권한을 부여하지 않으며, AI Agent는 기본적으로 Git 파일 수정,
+리뷰, ArgoCD reconciliation 계획, 증적 정리까지만 수행한다.
+
 ## Audience
 
 - GitOps Operators

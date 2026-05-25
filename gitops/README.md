@@ -121,6 +121,9 @@ semantics가 바뀌는 작업이라 별도 승인된 hardening pass에서 다룬
   `platform/namespaces`의 namespace 소유권 경계를 먼저 검증해야 한다.
 - image tag와 workload-kind 정책 스캔: 운영 정책과 CI failure mode를 먼저
   설계한 뒤 validator에 추가한다.
+- 외부 Traefik 443 runtime proof: ingress-nginx LoadBalancer fallback
+  검증은 이 저장소 live test가 담당하지만, 외부 gateway 컨테이너 기동과
+  dynamic config 반영 증명은 `hy-home.docker` 운영 경계에서 다룬다.
 
 ## Link Basis
 

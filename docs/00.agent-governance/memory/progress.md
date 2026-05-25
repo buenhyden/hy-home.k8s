@@ -8,6 +8,49 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-26 — Targeted residual-area audit follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: scripts, GitOps, infrastructure, operations, validation, SDD
+- **Status**: partial
+- **Tags**: #scripts #gitops #infrastructure #operations #validation #sdd
+
+#### Progress
+
+- Re-audited `scripts/`, `gitops/`, `infrastructure/`, and
+  `docs/05.operations/` from the current worktree.
+- Confirmed the remaining safe implementation is documentation/governance
+  SSoT hardening, not Kubernetes semantic changes or script deletion.
+- Added an operations mutation-boundary section to
+  `docs/05.operations/README.md`.
+- Aligned `scripts/README.md` with the broader high-risk command boundary
+  checks already enforced by `scripts/validate-repo-quality-gates.sh`.
+- Recorded external Traefik 443 proof as outside GitOps desired state and
+  outside default `run-all.sh` ingress-nginx fallback proof.
+- Recorded `VAL-SPC-006-049` and `T-231` through `T-236` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS; optional
+  `kube-linter` skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` — PASS.
+- `bash infrastructure/tests/run-all.sh` — PASS with Traefik 443 enforcement
+  skipped by default.
+- `CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh` —
+  EXPECTED FAIL: external Traefik endpoint is not reachable and Docker
+  inventory has no separate external Traefik gateway container.
+
+#### Follow-up
+
+- Keep AppProject allow-list tightening, namespace ownership changes,
+  image/workload-kind policy scans, OPA/Conftest, and external Traefik gateway
+  runtime proof as separate follow-up work.
+
 ### 2026-05-26 — Traefik 443 runtime proof follow-up
 
 - **Date**: 2026-05-26
