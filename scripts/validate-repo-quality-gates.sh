@@ -402,6 +402,170 @@ for provider in ["aws", "azure"]:
         if not (example_docs / name).is_dir():
             fail(f"required example docs taxonomy folder is missing: {rel(example_docs / name)}")
 
+examples_readme_path = root / "examples/README.md"
+examples_readme_text = read_text(examples_readme_path)
+example_role_rows = markdown_table_after_heading(examples_readme_text, "## Example Role Matrix")
+expected_example_role_header = [
+    "Example path",
+    "Role",
+    "Active source of truth",
+    "Validation",
+]
+expected_example_paths = ["sample-app/", "aws/", "azure/"]
+if len(example_role_rows) < 2:
+    fail("examples/README.md Example Role Matrix must contain a header and example rows")
+elif example_role_rows[0] != expected_example_role_header:
+    fail(
+        "examples/README.md Example Role Matrix header must be: "
+        + " | ".join(expected_example_role_header)
+    )
+else:
+    indexed_example_paths: list[str] = []
+    for row_number, row in enumerate(example_role_rows[1:], start=1):
+        if len(row) != len(expected_example_role_header):
+            fail(
+                "examples/README.md Example Role Matrix "
+                f"row {row_number} must have {len(expected_example_role_header)} columns"
+            )
+            continue
+        path_cell, role, source_of_truth, validation = row
+        match = re.fullmatch(r"`([^`]+/)`", path_cell)
+        if not match:
+            fail(
+                "examples/README.md Example Role Matrix "
+                f"row {row_number} must start with a backticked example directory"
+            )
+            continue
+        example_path = match.group(1)
+        indexed_example_paths.append(example_path)
+        if not (root / "examples" / example_path.rstrip("/")).is_dir():
+            fail(f"examples/README.md Example Role Matrix references missing directory: examples/{example_path}")
+        for label, value in [
+            ("Role", role),
+            ("Active source of truth", source_of_truth),
+            ("Validation", validation),
+        ]:
+            if not value:
+                fail(f"examples/README.md Example Role Matrix row {row_number} has empty {label}")
+        for command in [
+            "scripts/validate-repo-quality-gates.sh",
+            "scripts/validate-k8s-manifests.sh",
+            "scripts/check-secret-handling.sh",
+        ]:
+            if command not in validation:
+                fail(f"examples/README.md Example Role Matrix row {row_number} must cite {command}")
+        if example_path == "sample-app/":
+            if "Minimal local k3d GitOps onboarding template" not in role:
+                fail("examples/README.md sample-app role must identify the minimal local k3d onboarding template")
+            if "../gitops/workloads/adminer/" not in source_of_truth:
+                fail("examples/README.md sample-app source of truth must point to ../gitops/workloads/adminer/")
+        else:
+            if "Cloud Example Snapshot" not in source_of_truth:
+                fail(f"examples/README.md {example_path} source of truth must cite Cloud Example Snapshot")
+            if "not live provider-latest guidance" not in source_of_truth:
+                fail(f"examples/README.md {example_path} must not claim live provider-latest guidance")
+    if indexed_example_paths != expected_example_paths:
+        fail(
+            "examples/README.md Example Role Matrix row order must be: "
+            + ", ".join(expected_example_paths)
+        )
+
+sample_app_dir = root / "examples/sample-app"
+expected_sample_app_files = [
+    "README.md",
+    "analysis-template.yaml",
+    "external-secret.yaml",
+    "ingress.yaml",
+    "kustomization.yaml",
+    "rollout.yaml",
+    "service.yaml",
+    "traefik-k3d.yaml.example",
+]
+actual_sample_app_files = sorted(path.name for path in sample_app_dir.iterdir() if path.is_file())
+if actual_sample_app_files != expected_sample_app_files:
+    fail(
+        "examples/sample-app file set must stay minimal onboarding template: "
+        + ", ".join(expected_sample_app_files)
+    )
+
+sample_app_readme = read_text(sample_app_dir / "README.md")
+for phrase in [
+    "최소 GitOps 템플릿",
+    "fuller active reference",
+    "gitops/workloads/adminer/",
+    "feature branch + PR flow",
+]:
+    if phrase not in sample_app_readme:
+        fail(f"examples/sample-app/README.md missing onboarding boundary phrase: {phrase}")
+for active_reference_file in [
+    "service-stable.yaml",
+    "service-canary.yaml",
+    "virtual-service.yaml",
+    "destination-rule.yaml",
+    "peer-authentication.yaml",
+]:
+    if not (root / "gitops/workloads/adminer" / active_reference_file).is_file():
+        fail(f"gitops/workloads/adminer missing fuller active reference file: {active_reference_file}")
+
+sample_app_external_secret = read_text(sample_app_dir / "external-secret.yaml")
+for phrase in [
+    "secret/apps/<appname>/config",
+    "remoteRef.key",
+    "apps/<appname>/config",
+    "ClusterSecretStore path",
+]:
+    if phrase not in sample_app_external_secret:
+        fail(f"examples/sample-app/external-secret.yaml missing app secret path contract phrase: {phrase}")
+if "key: secret/apps/<appname>/config" in sample_app_external_secret:
+    fail("examples/sample-app/external-secret.yaml remoteRef.key must exclude the Vault mount prefix")
+
+active_app_secret_contracts = [
+    (
+        root / "docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md",
+        [
+            "secret/apps/<appname>/config",
+            "remoteRef.key",
+            "apps/<appname>/config",
+            "mount prefix",
+            "gitops/workloads/adminer/",
+        ],
+    ),
+    (
+        root / "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md",
+        [
+            "Vault 경로 규칙",
+            "secret/apps/<appname>/config",
+            "ESO remoteRef",
+            "apps/<appname>/config",
+            "mount prefix 제외",
+        ],
+    ),
+    (
+        root / "docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md",
+        [
+            "secret/apps/${APP}/config",
+            "ExternalSecret remoteRef.key",
+            "apps/${APP}/config",
+            "mount prefix secret/",
+        ],
+    ),
+    (
+        root / "gitops/README.md",
+        [
+            "Sample app ExternalSecret",
+            "ESO remoteRef key",
+            "apps/<appname>/config",
+            "Vault CLI path remains",
+            "secret/apps/<appname>/config",
+        ],
+    ),
+]
+for contract_path, phrases in active_app_secret_contracts:
+    contract_text = read_text(contract_path)
+    for phrase in phrases:
+        if phrase not in contract_text:
+            fail(f"{rel(contract_path)} missing app onboarding secret path contract phrase: {phrase}")
+
 readme_base_sections = {
     "Overview": re.compile(r"^##\s+Overview\b", re.MULTILINE),
     "Audience": re.compile(r"^##\s+Audience\b", re.MULTILINE),
@@ -1175,6 +1339,11 @@ command_boundary_rules = [
         ["human-approved", "break-glass", "bootstrap-only", "bootstrap only", "operator-approved", "dry-run"],
     ),
     (
+        "kubectl create clusterrolebinding",
+        re.compile(r"\bkubectl\b.*\bcreate\s+clusterrolebinding\b"),
+        ["human-approved", "break-glass", "bootstrap-only", "bootstrap only", "operator-approved", "dry-run"],
+    ),
+    (
         "kubectl get secret yaml/json",
         re.compile(r"\bkubectl\s+get\s+secret\b.*\b-o\s+(?:yaml|json)\b"),
         ["metadata-only", "status-only", "jsonpath", "no secret value", "redacted"],
@@ -1190,6 +1359,11 @@ command_boundary_rules = [
         ["external secret operation", "human-approved"],
     ),
     (
+        "vault policy write",
+        re.compile(r"\bvault\s+policy\s+write\b"),
+        ["external secret operation", "operator-approved", "human-approved", "break-glass"],
+    ),
+    (
         "terraform apply/destroy",
         re.compile(r"\bterraform\s+(?:apply|destroy)\b"),
         ["operator-approved", "break-glass", "human-approved", "approved DR change"],
@@ -1203,6 +1377,11 @@ command_boundary_rules = [
         "az deployment group create",
         re.compile(r"\baz\s+deployment\s+group\s+create\b"),
         ["operator-approved", "break-glass", "human-approved"],
+    ),
+    (
+        "docker network mutation",
+        re.compile(r"\bdocker\s+network\s+(?:connect|disconnect|create|rm)\b"),
+        ["human-approved", "break-glass", "bootstrap-only", "bootstrap only", "operator-approved"],
     ),
     (
         "kubeconfig mutation",
@@ -1707,6 +1886,123 @@ if about_prefix_count >= len(branch_prefixes):
         f"use {rel(git_workflow_path)} as the branch policy SSoT"
     )
 
+workflow_responsibility_rows = markdown_table_after_heading(
+    github_about_text,
+    "## Workflow Responsibility Matrix",
+)
+expected_workflow_responsibility_header = [
+    "Workflow",
+    "Role",
+    "Trigger / scope",
+    "Required evidence",
+    "Boundary",
+]
+expected_workflows = [path.name for path in sorted((root / ".github/workflows").glob("*.yml"))]
+if len(workflow_responsibility_rows) < 2:
+    fail(".github/ABOUT.md Workflow Responsibility Matrix must contain a header and workflow rows")
+elif workflow_responsibility_rows[0] != expected_workflow_responsibility_header:
+    fail(
+        ".github/ABOUT.md Workflow Responsibility Matrix header must be: "
+        + " | ".join(expected_workflow_responsibility_header)
+    )
+else:
+    indexed_workflows: list[str] = []
+    for row_number, row in enumerate(workflow_responsibility_rows[1:], start=1):
+        if len(row) != len(expected_workflow_responsibility_header):
+            fail(
+                ".github/ABOUT.md Workflow Responsibility Matrix "
+                f"row {row_number} must have {len(expected_workflow_responsibility_header)} columns"
+            )
+            continue
+        workflow_cell, role, trigger_scope, required_evidence, boundary = row
+        match = re.fullmatch(r"`([^`]+\.yml)`", workflow_cell)
+        if not match:
+            fail(
+                ".github/ABOUT.md Workflow Responsibility Matrix "
+                f"row {row_number} must start with a backticked workflow filename"
+            )
+            continue
+        workflow_name = match.group(1)
+        indexed_workflows.append(workflow_name)
+        if not (root / ".github/workflows" / workflow_name).is_file():
+            fail(f".github/ABOUT.md Workflow Responsibility Matrix references missing workflow: {workflow_name}")
+        for label, value in [
+            ("Role", role),
+            ("Trigger / scope", trigger_scope),
+            ("Required evidence", required_evidence),
+            ("Boundary", boundary),
+        ]:
+            if not value:
+                fail(f".github/ABOUT.md Workflow Responsibility Matrix row {row_number} has empty {label}")
+        if workflow_name == "ci.yml":
+            for phrase, value in [
+                ("Required QA gate", role),
+                ("repo-quality", role),
+                ("manifest", role),
+                ("secret", role),
+                ("shell", role),
+                ("push", trigger_scope),
+                ("pull_request", trigger_scope),
+                ("workflow_dispatch", trigger_scope),
+                ("ci-summary", required_evidence),
+                ("repo-quality-static", required_evidence),
+                ("manifest-static", required_evidence),
+                ("shell-static", required_evidence),
+                ("No deploy CD", boundary),
+                ("direct Kubernetes mutation", boundary),
+                ("external Vault mutation", boundary),
+            ]:
+                if phrase not in value:
+                    fail(f".github/ABOUT.md ci.yml responsibility row missing phrase: {phrase}")
+        elif workflow_name == "generate-changelog.yml":
+            for phrase, value in [
+                ("Release-evidence", role),
+                ("release tag", trigger_scope),
+                ("CHANGELOG.md", required_evidence),
+                ("Does not commit", boundary),
+                ("push", boundary),
+                ("publish", boundary),
+            ]:
+                if phrase not in value:
+                    fail(f".github/ABOUT.md generate-changelog.yml responsibility row missing phrase: {phrase}")
+        elif workflow_name == "greetings.yml":
+            for phrase, value in [
+                ("maintenance greeting", role),
+                ("issue or PR", trigger_scope),
+                ("onboarding guidance", required_evidence),
+                ("Not a QA gate", boundary),
+                ("deployment automation", boundary),
+            ]:
+                if phrase not in value:
+                    fail(f".github/ABOUT.md greetings.yml responsibility row missing phrase: {phrase}")
+        elif workflow_name == "labeler.yml":
+            for phrase, value in [
+                ("maintenance labeling", role),
+                ("pull request", trigger_scope),
+                (".github/labeler.yml", required_evidence),
+                ("Not a QA gate", boundary),
+                ("CODEOWNERS", boundary),
+                ("human review", boundary),
+            ]:
+                if phrase not in value:
+                    fail(f".github/ABOUT.md labeler.yml responsibility row missing phrase: {phrase}")
+        elif workflow_name == "stale.yml":
+            for phrase, value in [
+                ("maintenance stale-item", role),
+                ("scheduled", trigger_scope),
+                ("stale", required_evidence),
+                ("Not a QA gate", boundary),
+                ("not release evidence", boundary),
+                ("deployment automation", boundary),
+            ]:
+                if phrase not in value:
+                    fail(f".github/ABOUT.md stale.yml responsibility row missing phrase: {phrase}")
+    if indexed_workflows != expected_workflows:
+        fail(
+            ".github/ABOUT.md Workflow Responsibility Matrix row order must match actual workflows: "
+            + ", ".join(expected_workflows)
+        )
+
 labeler_path = root / ".github/labeler.yml"
 labeler_data = load_yaml(labeler_path)
 test_label_globs = set(collect_strings(labeler_data.get("area/tests") or []))
@@ -2182,6 +2478,84 @@ else:
     for script_name in sorted(set(indexed_scripts) - script_names):
         fail(f"scripts/README.md Script Inventory references missing script: {script_name}")
 
+script_classification_rows = markdown_table_after_heading(scripts_readme, "## Script Classification Matrix")
+expected_script_classification_header = ["스크립트", "분류", "삭제 후보", "통합 후보", "근거"]
+expected_script_classifications = {
+    "validate-repo-quality-gates.sh": "operations-critical/reusable",
+    "validate-gitops-structure.sh": "operations-critical/reusable",
+    "validate-k8s-manifests.sh": "operations-critical/reusable",
+    "check-secret-handling.sh": "operations-critical/reusable",
+    "generate-llm-wiki-index.sh": "development-helper/reusable",
+}
+allowed_script_classification_terms = {
+    "one-off",
+    "reusable",
+    "operations-critical",
+    "development-helper",
+    "unknown",
+}
+if len(script_classification_rows) < 2:
+    fail("scripts/README.md Script Classification Matrix must contain a header and script rows")
+elif script_classification_rows[0] != expected_script_classification_header:
+    fail(
+        "scripts/README.md Script Classification Matrix header must be: "
+        + " | ".join(expected_script_classification_header)
+    )
+else:
+    classified_scripts: dict[str, list[str]] = {}
+    for row_number, row in enumerate(script_classification_rows[1:], start=1):
+        if len(row) != len(expected_script_classification_header):
+            fail(
+                "scripts/README.md Script Classification Matrix "
+                f"row {row_number} must have {len(expected_script_classification_header)} columns"
+            )
+            continue
+        match = re.fullmatch(r"`([^`]+\.sh)`", row[0])
+        if not match:
+            fail(
+                "scripts/README.md Script Classification Matrix "
+                f"row {row_number} must start with a backticked script name"
+            )
+            continue
+        script_name = match.group(1)
+        if script_name in classified_scripts:
+            fail(f"scripts/README.md Script Classification Matrix duplicates script: {script_name}")
+        classified_scripts[script_name] = row
+
+        classification = row[1]
+        deletion_candidate = row[2]
+        consolidation_candidate = row[3]
+        evidence = row[4]
+        classification_terms = {part.strip() for part in classification.split("/") if part.strip()}
+        unsupported_terms = classification_terms - allowed_script_classification_terms
+        if unsupported_terms:
+            fail(
+                "scripts/README.md Script Classification Matrix "
+                f"row {row_number} has unsupported classification term(s): {', '.join(sorted(unsupported_terms))}"
+            )
+        expected_classification = expected_script_classifications.get(script_name)
+        if expected_classification and classification != expected_classification:
+            fail(
+                "scripts/README.md Script Classification Matrix "
+                f"{script_name} classification must be {expected_classification}"
+            )
+        for label, value in [
+            ("삭제 후보", deletion_candidate),
+            ("통합 후보", consolidation_candidate),
+            ("근거", evidence),
+        ]:
+            if not value:
+                fail(f"scripts/README.md Script Classification Matrix row {row_number} has empty {label}")
+        if deletion_candidate != "No":
+            fail(f"scripts/README.md Script Classification Matrix {script_name} deletion candidate must be No")
+        if consolidation_candidate != "No":
+            fail(f"scripts/README.md Script Classification Matrix {script_name} consolidation candidate must be No")
+
+    for script_name in sorted(script_names - set(classified_scripts)):
+        fail(f"scripts/README.md Script Classification Matrix missing script row: {script_name}")
+    for script_name in sorted(set(classified_scripts) - script_names):
+        fail(f"scripts/README.md Script Classification Matrix references missing script: {script_name}")
+
 gitops_dir = root / "gitops"
 gitops_readme_path = gitops_dir / "README.md"
 gitops_readme = read_text(gitops_readme_path)
@@ -2247,6 +2621,306 @@ else:
         fail(
             "gitops/README.md Service Coverage Matrix area order must match actual GitOps directories: "
             + ", ".join(expected_gitops_service_areas)
+        )
+
+expected_external_contract_header = [
+    "Contract",
+    "Host / service",
+    "Port",
+    "Database or Vault path",
+    "Secret keys",
+    "TLS / CA",
+    "Rotation responsibility",
+    "Namespace convention",
+    "Validation",
+]
+expected_external_contracts = [
+    "Vault API",
+    "PostgreSQL write",
+    "PostgreSQL read",
+    "Valkey auth",
+]
+external_contract_rows = markdown_table_after_heading(
+    gitops_readme,
+    "## External Service Contract Matrix",
+)
+if len(external_contract_rows) < 2:
+    fail("gitops/README.md External Service Contract Matrix must contain a header and contract rows")
+elif external_contract_rows[0] != expected_external_contract_header:
+    fail(
+        "gitops/README.md External Service Contract Matrix header must be: "
+        + " | ".join(expected_external_contract_header)
+    )
+else:
+    indexed_external_contracts: list[str] = []
+    for row_number, row in enumerate(external_contract_rows[1:], start=1):
+        if len(row) != len(expected_external_contract_header):
+            fail(
+                "gitops/README.md External Service Contract Matrix "
+                f"row {row_number} must have {len(expected_external_contract_header)} columns"
+            )
+            continue
+        contract_cell, host, port, database_or_path, secret_keys, tls_ca, rotation, namespace, validation = row
+        match = re.fullmatch(r"`([^`]+)`", contract_cell)
+        if not match:
+            fail(
+                "gitops/README.md External Service Contract Matrix "
+                f"row {row_number} must start with a backticked contract name"
+            )
+            continue
+        contract = match.group(1)
+        indexed_external_contracts.append(contract)
+        for label, value in [
+            ("Host / service", host),
+            ("Port", port),
+            ("Database or Vault path", database_or_path),
+            ("Secret keys", secret_keys),
+            ("TLS / CA", tls_ca),
+            ("Rotation responsibility", rotation),
+            ("Namespace convention", namespace),
+            ("Validation", validation),
+        ]:
+            if not value:
+                fail(f"gitops/README.md External Service Contract Matrix row {row_number} has empty {label}")
+        if "verify-contracts-static.sh" not in validation:
+            fail(
+                "gitops/README.md External Service Contract Matrix "
+                f"row {row_number} must cite infrastructure/tests/verify-contracts-static.sh"
+            )
+        if "platform" not in namespace:
+            fail(
+                "gitops/README.md External Service Contract Matrix "
+                f"row {row_number} must cite the platform namespace convention"
+            )
+        if "operator" not in rotation and "owner" not in rotation:
+            fail(
+                "gitops/README.md External Service Contract Matrix "
+                f"row {row_number} must name the rotation owner"
+            )
+        if "TLS" not in tls_ca or "CA" not in tls_ca:
+            fail(
+                "gitops/README.md External Service Contract Matrix "
+                f"row {row_number} must explicitly cover TLS/CA responsibility"
+            )
+        if contract == "Vault API":
+            for phrase, value in [
+                ("vault-external.platform.svc.cluster.local", host),
+                ("172.18.0.8", host),
+                ("8200", port),
+                ("ClusterSecretStore", database_or_path),
+                ("platform/argocd", database_or_path),
+                ("platform/postgres-app", database_or_path),
+                ("platform/notifications", database_or_path),
+                ("eso-read-platform", secret_keys),
+                ("http://", tls_ca),
+                ("external-secrets", namespace),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md Vault API contract row missing phrase: {phrase}")
+        elif contract == "PostgreSQL write":
+            for phrase, value in [
+                ("postgres-write-external.platform.svc.cluster.local", host),
+                ("172.18.0.15", host),
+                ("15432", port),
+                ("db_name", database_or_path),
+                ("platform/postgres-app", database_or_path),
+                ("postgres-app-secret", secret_keys),
+                ("username", secret_keys),
+                ("password", secret_keys),
+                ("external PostgreSQL service workspace", tls_ca),
+                ("ESO refreshes", rotation),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md PostgreSQL write contract row missing phrase: {phrase}")
+        elif contract == "PostgreSQL read":
+            for phrase, value in [
+                ("postgres-read-external.platform.svc.cluster.local", host),
+                ("172.18.0.15", host),
+                ("15433", port),
+                ("db_name", database_or_path),
+                ("postgres-app-secret", secret_keys),
+                ("read/write split", namespace),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md PostgreSQL read contract row missing phrase: {phrase}")
+        elif contract == "Valkey auth":
+            for phrase, value in [
+                ("valkey-external.platform.svc.cluster.local", host),
+                ("172.18.0.9", host),
+                ("6379", port),
+                ("platform/argocd", database_or_path),
+                ("valkey_password", database_or_path),
+                ("argocd-external-valkey", secret_keys),
+                ("redis-password", secret_keys),
+                ("external Valkey service workspace", tls_ca),
+                ("argocd", namespace),
+                ("verify-secrets.sh", validation),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md Valkey contract row missing phrase: {phrase}")
+    if indexed_external_contracts != expected_external_contracts:
+        fail(
+            "gitops/README.md External Service Contract Matrix row order must be: "
+            + ", ".join(expected_external_contracts)
+        )
+
+expected_secret_responsibility_header = [
+    "Responsibility",
+    "Source / auth contract",
+    "Destination / naming rule",
+    "Owner boundary",
+    "Value handling",
+    "Validation",
+]
+expected_secret_responsibilities = [
+    "ClusterSecretStore vault-backend",
+    "Platform postgres-app-secret",
+    "ArgoCD argocd-external-valkey",
+    "ArgoCD argocd-notifications-secret",
+    "Sample app ExternalSecret",
+]
+secret_responsibility_rows = markdown_table_after_heading(
+    gitops_readme,
+    "## Secret Management Responsibility Matrix",
+)
+if len(secret_responsibility_rows) < 2:
+    fail("gitops/README.md Secret Management Responsibility Matrix must contain a header and responsibility rows")
+elif secret_responsibility_rows[0] != expected_secret_responsibility_header:
+    fail(
+        "gitops/README.md Secret Management Responsibility Matrix header must be: "
+        + " | ".join(expected_secret_responsibility_header)
+    )
+else:
+    indexed_secret_responsibilities: list[str] = []
+    for row_number, row in enumerate(secret_responsibility_rows[1:], start=1):
+        if len(row) != len(expected_secret_responsibility_header):
+            fail(
+                "gitops/README.md Secret Management Responsibility Matrix "
+                f"row {row_number} must have {len(expected_secret_responsibility_header)} columns"
+            )
+            continue
+        responsibility_cell, source, destination, owner, value_handling, validation = row
+        match = re.fullmatch(r"`([^`]+)`", responsibility_cell)
+        if not match:
+            fail(
+                "gitops/README.md Secret Management Responsibility Matrix "
+                f"row {row_number} must start with a backticked responsibility name"
+            )
+            continue
+        responsibility = match.group(1)
+        indexed_secret_responsibilities.append(responsibility)
+        for label, value in [
+            ("Source / auth contract", source),
+            ("Destination / naming rule", destination),
+            ("Owner boundary", owner),
+            ("Value handling", value_handling),
+            ("Validation", validation),
+        ]:
+            if not value:
+                fail(f"gitops/README.md Secret Management Responsibility Matrix row {row_number} has empty {label}")
+        if "Vault" not in source or "vault-backend" not in source:
+            fail(
+                "gitops/README.md Secret Management Responsibility Matrix "
+                f"row {row_number} must cite Vault and vault-backend"
+            )
+        if "Secret" not in destination and "secret" not in destination:
+            fail(
+                "gitops/README.md Secret Management Responsibility Matrix "
+                f"row {row_number} must cite a Kubernetes secret naming rule"
+            )
+        if "owner" not in owner and "owns" not in owner:
+            fail(
+                "gitops/README.md Secret Management Responsibility Matrix "
+                f"row {row_number} must name ownership"
+            )
+        if "outside Git" not in value_handling and "value-free" not in value_handling:
+            fail(
+                "gitops/README.md Secret Management Responsibility Matrix "
+                f"row {row_number} must keep secret values outside Git"
+            )
+        if "check-secret-handling.sh" not in validation:
+            fail(
+                "gitops/README.md Secret Management Responsibility Matrix "
+                f"row {row_number} must cite scripts/check-secret-handling.sh"
+            )
+        if responsibility == "ClusterSecretStore vault-backend":
+            for phrase, value in [
+                ("External Secrets Operator", source),
+                ("eso-read-platform", source),
+                ("kubernetes", source),
+                ("secret", source),
+                ("external-secrets", destination),
+                ("external Vault operator", owner),
+                ("reviewer JWT", value_handling),
+                ("verify-contracts-static.sh", validation),
+                ("verify-secrets.sh", validation),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md ClusterSecretStore responsibility row missing phrase: {phrase}")
+        elif responsibility == "Platform postgres-app-secret":
+            for phrase, value in [
+                ("ExternalSecret", source),
+                ("platform/postgres-app", source),
+                ("db_name", source),
+                ("username", source),
+                ("password", source),
+                ("postgres-app-secret", destination),
+                ("platform", destination),
+                ("creationPolicy: Owner", destination),
+                ("external PostgreSQL owner", owner),
+                ("ESO refresh", value_handling),
+                ("verify-contracts-static.sh", validation),
+                ("verify-secrets.sh", validation),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md postgres secret responsibility row missing phrase: {phrase}")
+        elif responsibility == "ArgoCD argocd-external-valkey":
+            for phrase, value in [
+                ("ExternalSecret", source),
+                ("platform/argocd", source),
+                ("valkey_password", source),
+                ("argocd-external-valkey", destination),
+                ("argocd", destination),
+                ("redis-password", destination),
+                ("external Valkey owner", owner),
+                ("ESO refresh", value_handling),
+                ("verify-secrets.sh", validation),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md Valkey secret responsibility row missing phrase: {phrase}")
+        elif responsibility == "ArgoCD argocd-notifications-secret":
+            for phrase, value in [
+                ("ExternalSecret", source),
+                ("platform/notifications", source),
+                ("slack_token", source),
+                ("argocd-notifications-secret", destination),
+                ("argocd", destination),
+                ("slack-token", destination),
+                ("notification token owner", owner),
+                ("must not appear", value_handling),
+                ("verify-secrets.sh", validation),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md notifications secret responsibility row missing phrase: {phrase}")
+        elif responsibility == "Sample app ExternalSecret":
+            for phrase, value in [
+                ("apps/<appname>/config", source),
+                ("<appname>-secret", destination),
+                ("apps", destination),
+                ("db_password", destination),
+                ("api_key", destination),
+                ("App operator", owner),
+                ("Vault policy", owner),
+                ("value-free", value_handling),
+                ("examples/sample-app/kustomization.yaml", value_handling),
+                ("validate-k8s-manifests.sh", validation),
+            ]:
+                if phrase not in value:
+                    fail(f"gitops/README.md sample app secret responsibility row missing phrase: {phrase}")
+    if indexed_secret_responsibilities != expected_secret_responsibilities:
+        fail(
+            "gitops/README.md Secret Management Responsibility Matrix row order must be: "
+            + ", ".join(expected_secret_responsibilities)
         )
 
 workloads_readme_path = gitops_dir / "workloads/README.md"
@@ -2399,6 +3073,230 @@ else:
         fail(
             "infrastructure/README.md Infrastructure Coverage Matrix area order must match actual infrastructure entrypoints: "
             + ", ".join(expected_infrastructure_coverage_areas)
+        )
+
+wsl2_prerequisite_rows = markdown_table_after_heading(
+    infrastructure_readme,
+    "## WSL2 Runtime Prerequisite Matrix",
+)
+expected_wsl2_prerequisite_header = [
+    "Prerequisite",
+    "Repository SSoT",
+    "Owner / responsibility",
+    "Validation / evidence",
+    "Failure boundary",
+]
+expected_wsl2_prerequisites = [
+    "WSL2 shell and Docker context",
+    "kubectl and k3d context",
+    "kubeconfig and TLS trust",
+    "Port and network contracts",
+    "WSL networking constraints",
+]
+if len(wsl2_prerequisite_rows) < 2:
+    fail("infrastructure/README.md WSL2 Runtime Prerequisite Matrix must contain a header and prerequisite rows")
+elif wsl2_prerequisite_rows[0] != expected_wsl2_prerequisite_header:
+    fail(
+        "infrastructure/README.md WSL2 Runtime Prerequisite Matrix header must be: "
+        + " | ".join(expected_wsl2_prerequisite_header)
+    )
+else:
+    indexed_wsl2_prerequisites: list[str] = []
+    for row_number, row in enumerate(wsl2_prerequisite_rows[1:], start=1):
+        if len(row) != len(expected_wsl2_prerequisite_header):
+            fail(
+                "infrastructure/README.md WSL2 Runtime Prerequisite Matrix "
+                f"row {row_number} must have {len(expected_wsl2_prerequisite_header)} columns"
+            )
+            continue
+        prerequisite_cell, ssot, owner, validation, failure_boundary = row
+        match = re.fullmatch(r"`([^`]+)`", prerequisite_cell)
+        if not match:
+            fail(
+                "infrastructure/README.md WSL2 Runtime Prerequisite Matrix "
+                f"row {row_number} must start with a backticked prerequisite name"
+            )
+            continue
+        prerequisite = match.group(1)
+        indexed_wsl2_prerequisites.append(prerequisite)
+        for label, value in [
+            ("Repository SSoT", ssot),
+            ("Owner / responsibility", owner),
+            ("Validation / evidence", validation),
+            ("Failure boundary", failure_boundary),
+        ]:
+            if not value:
+                fail(f"infrastructure/README.md WSL2 Runtime Prerequisite Matrix row {row_number} has empty {label}")
+        if prerequisite == "WSL2 shell and Docker context":
+            if "WSL-native Docker" not in ssot or "docker context show" not in validation:
+                fail("infrastructure/README.md Docker prerequisite row must cite WSL-native Docker and docker context show")
+            if "does not switch contexts automatically" not in failure_boundary:
+                fail("infrastructure/README.md Docker prerequisite row must keep context switching operator-owned")
+        elif prerequisite == "kubectl and k3d context":
+            for phrase in ["k3d-hyhome", "k3d/k3d-cluster.yaml"]:
+                if phrase not in ssot:
+                    fail(f"infrastructure/README.md kubectl/k3d prerequisite row missing SSoT phrase: {phrase}")
+            for command in ["k3d cluster list", "kubectl config current-context"]:
+                if command not in validation:
+                    fail(f"infrastructure/README.md kubectl/k3d prerequisite row missing validation command: {command}")
+        elif prerequisite == "kubeconfig and TLS trust":
+            if "~/.kube/config" not in ssot or "KUBECONFIG" not in ssot:
+                fail("infrastructure/README.md kubeconfig prerequisite row must cite ~/.kube/config and KUBECONFIG")
+            if "x509: certificate signed by unknown authority" not in validation:
+                fail("infrastructure/README.md kubeconfig prerequisite row must cite the x509 TLS blocker")
+            if "not an automatic" not in failure_boundary:
+                fail("infrastructure/README.md kubeconfig prerequisite row must keep TLS repair operator-owned")
+        elif prerequisite == "Port and network contracts":
+            for phrase in ["172.18.0.240:443", "172.18.0.9:6379", "172.18.0.15:15432/15433"]:
+                if phrase not in ssot:
+                    fail(f"infrastructure/README.md port/network prerequisite row missing contract: {phrase}")
+            for command in ["verify-contracts-static.sh", "run-all.sh"]:
+                if command not in validation:
+                    fail(f"infrastructure/README.md port/network prerequisite row missing validation command: {command}")
+        elif prerequisite == "WSL networking constraints":
+            if "127.0.0.1.nip.io" not in ssot or "Traefik dynamic configs" not in ssot:
+                fail("infrastructure/README.md WSL networking row must cite nip.io and Traefik dynamic configs")
+            if "outside repo-static ownership" not in failure_boundary:
+                fail("infrastructure/README.md WSL networking row must keep Windows/WSL gateway state outside repo-static ownership")
+    if indexed_wsl2_prerequisites != expected_wsl2_prerequisites:
+        fail(
+            "infrastructure/README.md WSL2 Runtime Prerequisite Matrix row order must be: "
+            + ", ".join(expected_wsl2_prerequisites)
+        )
+
+bootstrap_boundary_rows = markdown_table_after_heading(
+    infrastructure_readme,
+    "## Bootstrap Boundary Matrix",
+)
+expected_bootstrap_boundary_header = [
+    "Boundary",
+    "Repository responsibility",
+    "Operator / external responsibility",
+    "Allowed command surface",
+    "Verification / evidence",
+    "Failure boundary",
+]
+expected_bootstrap_boundaries = [
+    "k3d cluster creation",
+    "ArgoCD installation",
+    "root app application",
+    "Vault connection contract",
+    "PostgreSQL and Valkey connection contract",
+]
+if len(bootstrap_boundary_rows) < 2:
+    fail("infrastructure/README.md Bootstrap Boundary Matrix must contain a header and boundary rows")
+elif bootstrap_boundary_rows[0] != expected_bootstrap_boundary_header:
+    fail(
+        "infrastructure/README.md Bootstrap Boundary Matrix header must be: "
+        + " | ".join(expected_bootstrap_boundary_header)
+    )
+else:
+    indexed_bootstrap_boundaries: list[str] = []
+    for row_number, row in enumerate(bootstrap_boundary_rows[1:], start=1):
+        if len(row) != len(expected_bootstrap_boundary_header):
+            fail(
+                "infrastructure/README.md Bootstrap Boundary Matrix "
+                f"row {row_number} must have {len(expected_bootstrap_boundary_header)} columns"
+            )
+            continue
+        boundary_cell, repo_resp, operator_resp, command_surface, verification, failure_boundary = row
+        match = re.fullmatch(r"`([^`]+)`", boundary_cell)
+        if not match:
+            fail(
+                "infrastructure/README.md Bootstrap Boundary Matrix "
+                f"row {row_number} must start with a backticked boundary name"
+            )
+            continue
+        boundary = match.group(1)
+        indexed_bootstrap_boundaries.append(boundary)
+        for label, value in [
+            ("Repository responsibility", repo_resp),
+            ("Operator / external responsibility", operator_resp),
+            ("Allowed command surface", command_surface),
+            ("Verification / evidence", verification),
+            ("Failure boundary", failure_boundary),
+        ]:
+            if not value:
+                fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} has empty {label}")
+        if "Owns" not in repo_resp:
+            fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must name repository ownership")
+        if not any(marker in operator_resp for marker in ["Operator owns", "External", "external"]):
+            fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must name operator or external ownership")
+        if "bootstrap" not in command_surface and "Bootstrap" not in command_surface:
+            fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must describe bootstrap command boundary")
+        if not any(command in verification for command in ["verify-", "validate-", "check-secret-handling.sh", "k3d cluster list", "kubectl config current-context"]):
+            fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must cite verification evidence")
+        if "Repo-static checks do not" not in failure_boundary and "Steady-state" not in failure_boundary and "Agents do not" not in failure_boundary:
+            fail(f"infrastructure/README.md Bootstrap Boundary Matrix row {row_number} must state a fail-closed boundary")
+        if boundary == "k3d cluster creation":
+            for phrase, value in [
+                ("k3d/k3d-cluster.yaml", repo_resp),
+                ("k3d-hyhome", repo_resp),
+                ("WSL-native Docker", operator_resp),
+                ("human-approved", operator_resp),
+                ("k3d cluster create", command_surface),
+                ("infrastructure/tests/verify-cluster.sh", verification),
+                ("do not create", failure_boundary),
+            ]:
+                if phrase not in value:
+                    fail(f"infrastructure/README.md k3d bootstrap boundary row missing phrase: {phrase}")
+        elif boundary == "ArgoCD installation":
+            for phrase, value in [
+                ("argocd/values-local.yaml", repo_resp),
+                ("ingress/TLS", repo_resp),
+                ("certificate inputs", operator_resp),
+                ("helm upgrade --install", command_surface),
+                ("verify-contracts-static.sh", verification),
+                ("infrastructure/tests/verify-gitops.sh", verification),
+                ("outside approved bootstrap/break-glass", failure_boundary),
+            ]:
+                if phrase not in value:
+                    fail(f"infrastructure/README.md ArgoCD bootstrap boundary row missing phrase: {phrase}")
+        elif boundary == "root app application":
+            for phrase, value in [
+                ("gitops/clusters/local/root-application.yaml", repo_resp),
+                ("gitops/apps/root", repo_resp),
+                ("first root app apply", operator_resp),
+                ("kubectl apply", command_surface),
+                ("bootstrap-only exception", command_surface),
+                ("scripts/validate-gitops-structure.sh", verification),
+                ("direct apply is not normal operation", failure_boundary),
+            ]:
+                if phrase not in value:
+                    fail(f"infrastructure/README.md root app bootstrap boundary row missing phrase: {phrase}")
+        elif boundary == "Vault connection contract":
+            for phrase, value in [
+                ("vault-external.yaml", repo_resp),
+                ("vault-secret-store.yaml", repo_resp),
+                ("no-secret static checks", repo_resp),
+                ("External Vault operator", operator_resp),
+                ("secret values are not printed or committed", command_surface),
+                ("check-secret-handling.sh", verification),
+                ("verify-secrets.sh", verification),
+                ("do not read secret values", failure_boundary),
+                ("refresh Vault auth", failure_boundary),
+            ]:
+                if phrase not in value:
+                    fail(f"infrastructure/README.md Vault bootstrap boundary row missing phrase: {phrase}")
+        elif boundary == "PostgreSQL and Valkey connection contract":
+            for phrase, value in [
+                ("Service/EndpointSlice", repo_resp),
+                ("ExternalSecret target naming", repo_resp),
+                ("PostgreSQL/Valkey runtime", operator_resp),
+                ("TLS/CA material", operator_resp),
+                ("TCP reachability prechecks", command_surface),
+                ("ArgoCD Valkey Secret", command_surface),
+                ("verify-external-services.sh", verification),
+                ("verify-secrets.sh", verification),
+                ("do not start external services", failure_boundary),
+                ("change `.env` values", failure_boundary),
+            ]:
+                if phrase not in value:
+                    fail(f"infrastructure/README.md PostgreSQL/Valkey bootstrap boundary row missing phrase: {phrase}")
+    if indexed_bootstrap_boundaries != expected_bootstrap_boundaries:
+        fail(
+            "infrastructure/README.md Bootstrap Boundary Matrix row order must be: "
+            + ", ".join(expected_bootstrap_boundaries)
         )
 
 infrastructure_shell_paths = sorted(
@@ -2640,6 +3538,25 @@ for path in script_command_contract_paths:
     for match in sorted(set(script_ref_pattern.findall(read_text(path)))):
         if not (root / match).exists():
             fail(f"script reference points to missing file in {rel(path)}: {match}")
+
+broad_script_reference_suffixes = {
+    ".md",
+    ".toml",
+    ".json",
+    ".yml",
+    ".yaml",
+    ".sh",
+    ".tf",
+    ".bicep",
+    ".txt",
+}
+for tracked_path in sorted(tracked):
+    path = root / tracked_path
+    if not path.is_file() or path.suffix not in broad_script_reference_suffixes:
+        continue
+    for match in sorted(set(script_ref_pattern.findall(read_text(path)))):
+        if not (root / match).is_file():
+            fail(f"tracked script reference points to missing file in {rel(path)}: {match}")
 
 secret_scanner_text = read_text(scripts_dir / "check-secret-handling.sh")
 for phrase in [

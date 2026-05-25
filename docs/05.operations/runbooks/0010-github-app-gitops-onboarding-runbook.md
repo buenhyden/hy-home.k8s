@@ -3,7 +3,7 @@ title: 'GitHub 앱 GitOps 온보딩 런북'
 type: runbook
 status: active
 owner: platform
-updated: 2026-05-25
+updated: 2026-05-26
 ---
 
 # GitHub 앱 GitOps 온보딩 런북
@@ -232,6 +232,7 @@ path "secret/data/apps/${APP}/*" {
   capabilities = ["read"]
 }
 EOF
+# external secret operation; human-approved policy change only
 vault policy write eso-read infrastructure/vault/policies/eso-read.hcl
 
 # 3. kustomization.yaml에서 external-secret.yaml 주석 해제 후 커밋

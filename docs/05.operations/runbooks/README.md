@@ -104,5 +104,5 @@ docs/05.operations/runbooks/
 | [`./0007-kiali-observability-connectivity-runbook.md`](./0007-kiali-observability-connectivity-runbook.md) | Kiali 관측성 서비스 연결 장애 진단 및 복구 런북                   | Active | 2026-05-09 |
 | [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md)               | ArgoCD 메트릭 NodePort/Prometheus 수집 장애 진단 및 복구 런북     | Active | 2026-05-09 |
 | [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md)                               | kube-state-metrics/alloy/alert_rules/AppProject 장애 진단 런북    | Active | 2026-05-09 |
-| [`./0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md)         | GitHub 레포 기반 앱 온보딩 절차 런북 (최소 템플릿 + adminer reference) | Active | 2026-05-25 |
+| [`./0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md)         | GitHub 레포 기반 앱 온보딩 절차 런북 (최소 템플릿 + adminer reference) | Active | 2026-05-26 |
 | [`./0011-reference-maintenance-runbook.md`](./0011-reference-maintenance-runbook.md)                       | `90.references` reference/version/LLM Wiki 유지보수 절차 런북     | Active | 2026-05-17 |

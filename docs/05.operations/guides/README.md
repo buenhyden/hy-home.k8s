@@ -94,11 +94,11 @@ docs/05.operations/guides/
 | 문서                                                                                         | 설명                                                                    | 상태   | 최종 수정  |
 | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------ | ---------- |
 | [`./0001-wsl-k3d-argocd-bootstrap-guide.md`](./0001-wsl-k3d-argocd-bootstrap-guide.md)         | 외부 서비스 분리 운영 + Vault 기반 부트스트랩/검증 가이드               | Active | 2026-05-22 |
-| [`./0002-wsl2-k3d-argocd-ha-setup-guide.md`](./0002-wsl2-k3d-argocd-ha-setup-guide.md)         | WSL2 멀티노드 HA + TLS + 런타임/CI 정적 검증 절차를 분리한 운영 가이드  | Active | 2026-05-22 |
+| [`./0002-wsl2-k3d-argocd-ha-setup-guide.md`](./0002-wsl2-k3d-argocd-ha-setup-guide.md)         | WSL2 멀티노드 HA + TLS + 런타임/CI 정적 검증 절차를 분리한 운영 가이드  | Active | 2026-05-26 |
 | [`./0003-platform-expansion-bootstrap-guide.md`](./0003-platform-expansion-bootstrap-guide.md) | cert-manager/Headlamp/Istio/Kiali 포함 확장 플랫폼 부트스트랩 가이드    | Active | 2026-05-09 |
 | [`./0004-headlamp-auth-oidc-guide.md`](./0004-headlamp-auth-oidc-guide.md)                     | Headlamp 인증/로그인 방식 및 Keycloak OIDC 연동 how-to 가이드           | Active | 2026-05-09 |
 | [`./0005-new-app-gitops-onboarding-guide.md`](./0005-new-app-gitops-onboarding-guide.md)       | Superseded: 새 애플리케이션 GitOps 온보딩 가이드는 [`./0008-github-app-gitops-onboarding-guide.md`](./0008-github-app-gitops-onboarding-guide.md)로 대체 | Superseded | 2026-05-22 |
 | [`./0006-argocd-prometheus-grafana-guide.md`](./0006-argocd-prometheus-grafana-guide.md)       | ArgoCD 메트릭 NodePort 수집 + Prometheus 설정 + Grafana 대시보드 가이드 | Active | 2026-05-09 |
 | [`./0007-k8s-observability-bootstrap-guide.md`](./0007-k8s-observability-bootstrap-guide.md)   | k3d 클러스터 메트릭/로그 수집 관측성 스택 부트스트랩 가이드             | Active | 2026-05-09 |
-| [`./0008-github-app-gitops-onboarding-guide.md`](./0008-github-app-gitops-onboarding-guide.md) | GitHub 레포 기반 앱 GitOps 온보딩 (최소 템플릿 + active reference 구분) | Active | 2026-05-25 |
+| [`./0008-github-app-gitops-onboarding-guide.md`](./0008-github-app-gitops-onboarding-guide.md) | GitHub 레포 기반 앱 GitOps 온보딩 (최소 템플릿 + active reference 구분) | Active | 2026-05-26 |
 | [`./0009-llm-wiki-curation-guide.md`](./0009-llm-wiki-curation-guide.md)                       | LLM Wiki generated index와 `wiki-curator` agent 사용 가이드             | Active | 2026-05-10 |

@@ -10,8 +10,9 @@
 이 영역은 GitOps manifest 자체(`gitops/`)나 live runtime 점검(`infrastructure/tests/`)을 대체하지 않는다.
 대신 CI, post-edit hook, 필수 품질 게이트, 수동 검증 문서가 호출하거나 허용하는 반복 가능한 정적 검증 명령을 제공한다.
 
-보존 근거(retention evidence)와 명령·문서 표면(command/documentation surface)은 분리해서 판단한다.
+보존 근거(retention evidence), 명령·문서 표면(command/documentation surface), broad reference sweep은 분리해서 판단한다.
 Tier A와 Tier B만 보존 근거이며, Tier C는 유지보수자가 갱신해야 하는 명령 계약 표면일 뿐 그 자체로 보존 근거가 아니다.
+tracked text의 `scripts/*.sh` 참조는 삭제·리네임 safety net으로 모두 실제 파일을 가리켜야 하지만, 참조가 있다는 사실만으로 보존 근거가 되지는 않는다.
 
 ## Audience
 
@@ -76,11 +77,26 @@ scripts/
 
 | 스크립트 | 결정 | 보존 근거 | 명령·문서 표면 | 목적 |
 | --- | --- | --- | --- | --- |
-| `validate-repo-quality-gates.sh` | Keep | Tier A: CI `repo-quality-static`와 post-edit repository quality hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.github/ABOUT.md`, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, docs quality guidance | 문서 구조, README `Link Basis`/`Related Documents`, structural template coverage, `docs/05.operations` 인덱스/frontmatter 동기화, incidents/postmortem boundary, `.env.example`/`.env` key-only parity, scripts inventory decision/Tier/executable contract, GitOps service/workload coverage matrix, infrastructure coverage/test inventory, 템플릿 위치, workflow 중복, 스크립트 참조, obsolete 파일, version inventory drift, generated LLM Wiki freshness, agent mirror, canonical JIT runtime contract, Hookify local rule frontmatter/ignore 상태를 검증한다. |
+| `validate-repo-quality-gates.sh` | Keep | Tier A: CI `repo-quality-static`와 post-edit repository quality hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.github/ABOUT.md`, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, docs quality guidance | 문서 구조, README `Link Basis`/`Related Documents`, structural template coverage, `docs/05.operations` 인덱스/frontmatter 동기화, incidents/postmortem boundary, `.env.example`/`.env` key-only parity, scripts inventory decision/Tier/classification/executable contract, tracked script reference sweep, examples role matrix와 sample-app/adminer reference boundary, app onboarding secret path contract, Vault policy write boundary, Docker network mutation boundary, RBAC create boundary, GitOps service/workload coverage matrix, external service contract matrix, secret management responsibility matrix, infrastructure coverage/test inventory, WSL2 runtime prerequisite matrix, bootstrap boundary matrix, GitHub workflow responsibility matrix, 템플릿 위치, workflow 중복, 스크립트 참조, obsolete 파일, version inventory drift, generated LLM Wiki freshness, agent mirror, canonical JIT runtime contract, Hookify local rule frontmatter/ignore 상태를 검증한다. |
 | `validate-gitops-structure.sh` | Keep | Tier A: CI `manifest-static` job이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.claude/settings.json`, GitOps READMEs | ArgoCD root app, root app kind, root app manifest count, root/platform/workload hierarchy boundary, GitOps kustomization structure, sibling manifest resource completeness를 검증한다. |
 | `validate-k8s-manifests.sh` | Keep | Tier A: CI `manifest-static`와 post-edit manifest hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, GitOps READMEs | manifest YAML syntax와 선택적 `kube-linter` 검증을 수행한다. |
 | `check-secret-handling.sh` | Keep | Tier A: CI `manifest-static`와 post-edit manifest hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, GitOps READMEs | GitOps, infrastructure, examples manifest의 plaintext secret pattern을 검사한다. |
 | `generate-llm-wiki-index.sh` | Keep | Tier B indirect: 필수 `validate-repo-quality-gates.sh`가 `--check`로 간접 실행하고 `docs/90.references/llm-wiki/wiki-index.md` generated artifact contract를 소유한다. | root README, `scripts/README.md`, `.claude/settings.json`, LLM Wiki guide, references README, generated wiki index, document stage routing | `docs/90.references/llm-wiki/wiki-index.md`를 Markdown-only canonical-owner link map으로 결정적으로 재생성하거나 검사한다. |
+
+## Script Classification Matrix
+
+이 표는 task contract의 script classification 용어를 `scripts/` SSoT에 직접
+남긴다. 현재 분류는 삭제나 통합을 승인하지 않으며, 새 스크립트가 추가되면
+`one-off`, `reusable`, `operations-critical`, `development-helper`, `unknown`
+중 하나 이상으로 분류하고 삭제·통합 후보 여부를 별도 task/plan에 연결한다.
+
+| 스크립트 | 분류 | 삭제 후보 | 통합 후보 | 근거 |
+| --- | --- | --- | --- | --- |
+| `validate-repo-quality-gates.sh` | operations-critical/reusable | No | No | Tier A governance gate이며 repository-wide docs, workflow, script, GitOps, infrastructure, examples, agent-runtime drift를 한 명령 계약으로 검증한다. |
+| `validate-gitops-structure.sh` | operations-critical/reusable | No | No | Tier A manifest-static gate이며 ArgoCD root app, ApplicationSet, hierarchy, kustomization completeness를 별도 실패 의미로 검증한다. |
+| `validate-k8s-manifests.sh` | operations-critical/reusable | No | No | Tier A manifest-static gate이며 YAML syntax와 선택적 kube-linter 검증을 담당한다. |
+| `check-secret-handling.sh` | operations-critical/reusable | No | No | Tier A manifest-static gate이며 plaintext secret pattern scan과 redacted finding 출력을 담당한다. |
+| `generate-llm-wiki-index.sh` | development-helper/reusable | No | No | Tier B indirect helper이며 generated LLM Wiki index 재생성과 `--check` freshness contract를 소유한다. |
 
 2026-05-25 broad reference sweep 기준 Tier C-only, unused, one-off 삭제 후보는 없다.
 
@@ -114,7 +130,9 @@ scripts/
 
 이 표가 command-contract allowlist maintenance surface다.
 `scripts/validate-repo-quality-gates.sh`는 아래 명시 파일에서 `scripts/<name>.sh` 형식의 활성 명령 계약 참조만 검사한다.
-새 스크립트를 추가·삭제·리네임할 때는 broad docs/runtime tree glob이 아니라 이 표면을 갱신하거나 확인한다.
+새 스크립트를 추가·삭제·리네임할 때는 이 표면을 갱신하거나 확인한다.
+별도로, 같은 gate는 tracked text 전체에서 `scripts/*.sh` 참조가 dangling 상태가 아닌지 확인한다.
+이 broad reference sweep은 삭제·리네임 안전장치이며, 모든 참조를 Tier A/B 보존 근거로 승격하지 않는다.
 
 | 표면 | 유지보수 이유 |
 | --- | --- |
@@ -143,7 +161,7 @@ scripts/
 | --- | --- | --- | --- |
 | `bash scripts/generate-llm-wiki-index.sh` | 인자를 받지 않는다. | `docs/90.references/llm-wiki/wiki-index.md`를 generator에 정의된 canonical owner 링크맵으로 재생성한다. | exit `0`은 generated Markdown index를 갱신했다는 뜻이다. |
 | `bash scripts/generate-llm-wiki-index.sh --check` | `--check`만 지원한다. | 현재 `wiki-index.md`가 generator output과 일치하는지 비교한다. | exit `0`은 generated index가 최신이라는 뜻이고, 불일치 또는 누락은 실패한다. |
-| `bash scripts/validate-repo-quality-gates.sh .` | 선택 인자는 repository root다. | 문서 taxonomy, README `Link Basis`/`Related Documents`, structural template coverage, required template headings, `docs/05.operations` 인덱스/frontmatter 동기화, incidents/postmortem boundary, `.env.example`/`.env` key-only parity, scripts inventory decision/Tier/executable contract, GitOps service/workload coverage matrix, infrastructure coverage/test inventory, workflow 계약, script 참조, runtime mirror inventory, Hookify local rule shape, version inventory를 검증한다. | `PASS`는 repository governance gate 통과를 뜻하고, `ERR`는 계약 drift를 뜻한다. |
+| `bash scripts/validate-repo-quality-gates.sh .` | 선택 인자는 repository root다. | 문서 taxonomy, README `Link Basis`/`Related Documents`, structural template coverage, required template headings, `docs/05.operations` 인덱스/frontmatter 동기화, incidents/postmortem boundary, `.env.example`/`.env` key-only parity, scripts inventory decision/Tier/classification/executable contract, tracked script reference sweep, examples role matrix와 sample-app/adminer reference boundary, app onboarding secret path contract, Vault policy write boundary, Docker network mutation boundary, RBAC create boundary, GitOps service/workload coverage matrix, infrastructure coverage/test inventory, WSL2 runtime prerequisite matrix, workflow 계약, script 참조, runtime mirror inventory, Hookify local rule shape, version inventory를 검증한다. | `PASS`는 repository governance gate 통과를 뜻하고, `ERR`는 계약 drift를 뜻한다. |
 | `bash scripts/validate-gitops-structure.sh` | 인자를 받지 않는다. 스크립트가 속한 repository에서 실행된다. | ArgoCD root app, root application kind, root app manifest, `clusters/local` root/ApplicationSet boundary, root app local source path boundary, `gitops/**/kustomization.yaml` syntax, sibling manifest resource completeness를 검증한다. | exit `0`은 필요한 GitOps 구조가 있고 parse 가능하며 root/platform/workload hierarchy와 각 `kustomization.yaml`의 sibling YAML manifest 참조가 유효하다는 뜻이다. |
 | `bash scripts/validate-k8s-manifests.sh .` | 선택 인자는 arbitrary subpath가 아니라 repository root다. | `gitops/`, `infrastructure/`, `examples/sample-app/`, `examples/**/{gitops,kubernetes}/`, `traefik/` 아래 YAML을 검사하고, `kube-linter`가 있으면 함께 실행한다. | exit `0`은 YAML syntax가 통과했고 optional `kube-linter`도 실패하지 않았다는 뜻이다. `SKIP optional kube-linter`는 local YAML-only validation을 뜻한다. 잘못된 repo root 또는 YAML 0건은 실패한다. |
 | `bash scripts/check-secret-handling.sh .` | 선택 인자는 arbitrary subpath가 아니라 repository root다. | `gitops/`, `infrastructure/`, `examples/sample-app/`, `examples/**/{gitops,kubernetes}/` 아래 YAML에서 quoted literal 값을 포함한 plaintext secret pattern을 검사하되 ExternalSecret-like resource는 제외한다. Finding 출력은 값을 `<redacted>`로 숨긴다. | exit `0`은 검사 대상 파일이 있고 plaintext secret pattern이 없다는 뜻이다. 잘못된 repo root, YAML 0건, finding은 실패한다. |

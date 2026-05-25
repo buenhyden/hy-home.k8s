@@ -76,6 +76,14 @@ examples/
 | [`aws`](aws) | EKS 1.35 target, Terraform AWS provider 6.x 기반 AWS migration 참조 예시 | [AWS docs](aws/docs/README.md) |
 | [`azure`](azure) | AKS 1.35 target, Bicep, AGC/Gateway API 기반 Azure migration 참조 예시 | [Azure docs](azure/docs/README.md) |
 
+## Example Role Matrix
+
+| Example path | Role | Active source of truth | Validation |
+| --- | --- | --- | --- |
+| `sample-app/` | Minimal local k3d GitOps onboarding template with placeholders. | Compare with `../gitops/workloads/adminer/` before copying patterns beyond Rollout, Service, Ingress, AnalysisTemplate, ExternalSecret, and Traefik dynamic config. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
+| `aws/` | Cloud migration reference snapshot for AWS. | `../docs/90.references/versions/tech-stack-version-inventory.md` `Cloud Example Snapshot`; not live provider-latest guidance. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
+| `azure/` | Cloud migration reference snapshot for Azure. | `../docs/90.references/versions/tech-stack-version-inventory.md` `Cloud Example Snapshot`; not live provider-latest guidance. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
+
 ## 사용 방법
 
 각 예시 디렉터리의 `README.md`를 참조한다. 새 앱 온보딩 시 `sample-app/`을 복사하여 플레이스홀더를 교체하는 것이 시작점이고, fuller active reference는 `gitops/workloads/adminer/`와 비교한다.

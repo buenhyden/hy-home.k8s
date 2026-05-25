@@ -27,6 +27,16 @@ It is a map and routing surface, not the policy source of truth.
 - `labeler.yml`, `greetings.yml`, and `stale.yml` are repository maintenance automations, not QA gates.
 - Defensive overlap between CI jobs is intentional QA coverage, not prose duplication.
 
+## Workflow Responsibility Matrix
+
+| Workflow | Role | Trigger / scope | Required evidence | Boundary |
+| --- | --- | --- | --- | --- |
+| `ci.yml` | Required QA gate for branch policy, repo-quality, manifest, secret, and shell checks. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` aggregates `branch-policy`, `changes`, `pre-commit`, `repo-quality-static`, `manifest-static`, and `shell-static`. | No deploy CD, direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
+| `generate-changelog.yml` | Release-evidence artifact generator. | Runs for release tag evidence and manual release support. | Produces `CHANGELOG.md` artifact for review. | Does not commit, push, publish, or mutate repository history. |
+| `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
+| `labeler.yml` | Repository maintenance labeling automation. | Runs on pull request path changes. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |
+| `stale.yml` | Repository maintenance stale-item automation. | Runs on scheduled issue or PR maintenance. | Marks or closes stale work according to workflow configuration. | Not a QA gate, not release evidence, and not deployment automation. |
+
 ## Boundaries
 
 - `.github` automation provides QA gates and release-evidence automation, not deploy CD.

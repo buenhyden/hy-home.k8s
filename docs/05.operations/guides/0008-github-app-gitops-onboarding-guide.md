@@ -3,7 +3,7 @@ title: 'GitHub 앱 GitOps 온보딩 가이드'
 type: guide
 status: active
 owner: platform
-updated: 2026-05-25
+updated: 2026-05-26
 ---
 
 # GitHub 앱 GitOps 온보딩 가이드
@@ -255,6 +255,7 @@ path "secret/data/apps/<appname>/*" {
 정책 적용:
 
 ```bash
+# external secret operation; human-approved policy change only
 vault policy write eso-read infrastructure/vault/policies/eso-read.hcl
 ```
 

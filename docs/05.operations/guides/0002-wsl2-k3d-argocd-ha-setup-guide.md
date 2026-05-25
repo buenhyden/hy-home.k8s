@@ -3,7 +3,7 @@ title: 'WSL2 k3d/k3s ArgoCD HA Setup Guide'
 type: guide
 status: active
 owner: platform
-updated: 2026-05-22
+updated: 2026-05-26
 ---
 
 # WSL2 k3d/k3s ArgoCD HA Setup Guide
@@ -61,7 +61,7 @@ k3d 노드는 infra_net(172.19.0.0/16)에 라우트가 없으므로, Vault가 in
 # vault가 k3d-hyhome 네트워크에 있는지 확인
 docker inspect vault --format '{{(index .NetworkSettings.Networks "k3d-hyhome").IPAddress}}'
 
-# 없는 경우 연결 (Docker 재시작 후 매번 필요)
+# 없는 경우 연결 (human-approved bootstrap/break-glass only)
 docker network connect k3d-hyhome vault
 ```
 
