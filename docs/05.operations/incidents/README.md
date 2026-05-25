@@ -17,6 +17,13 @@ Postmortem은 “왜 허용됐고 무엇을 바꿀 것인가”를 기록한다.
 현재 tracked incident record와 postmortem 문서는 없다.
 첫 사고 기록이 필요할 때만 `YYYY/` 또는 `postmortems/YYYY/` 하위 경로를 만든다.
 
+## Incident Boundary Matrix
+
+| Artifact | Path rule | Template | Creation rule | Current state |
+| --- | --- | --- | --- | --- |
+| `Incident Record` | `./YYYY/YYYY-MM-DD-<incident>.md` | [incident.template.md](../../99.templates/incident.template.md) | Create only for a real incident fact record. | No tracked incident records. |
+| `Postmortem` | `./postmortems/YYYY/YYYY-MM-DD-<incident>.md` | [postmortem.template.md](../../99.templates/postmortem.template.md) | Create only after incident stabilization when root cause/prevention analysis is needed. | No tracked postmortems. |
+
 ## Audience
 
 이 README의 주요 독자:

@@ -211,6 +211,11 @@ pre-check와 follow-up으로 남긴다.
 | T-154 | Update infrastructure and scripts README command contract wording for coverage matrix validation | doc | VAL-SPC-006-033 | Infrastructure Coverage Matrix Guardrail | README review | Platform | Done |
 | T-155 | Record infrastructure coverage matrix guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-033 | Infrastructure Coverage Matrix Guardrail | 006 chain check | Platform | Done |
 | T-156 | Append progress memory for the infrastructure coverage matrix guardrail follow-up | memory | VAL-SPC-006-033 | Infrastructure Coverage Matrix Guardrail | progress ledger entry | Platform | Done |
+| T-157 | Recheck operations incidents/postmortem boundary validation strength | doc | VAL-SPC-006-034 | Operations Incidents Boundary Guardrail | current incidents README review | Platform | Done |
+| T-158 | Add Incident Boundary Matrix to `docs/05.operations/incidents/README.md` | doc | VAL-SPC-006-034 | Operations Incidents Boundary Guardrail | README review | Platform | Done |
+| T-159 | Extend repository quality gate for incident/postmortem path, template, creation, and no-incident state checks | test | VAL-SPC-006-034 | Operations Incidents Boundary Guardrail | repo quality gate | Platform | Done |
+| T-160 | Record operations incidents boundary guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-034 | Operations Incidents Boundary Guardrail | 006 chain check | Platform | Done |
+| T-161 | Append progress memory for the operations incidents boundary guardrail follow-up | memory | VAL-SPC-006-034 | Operations Incidents Boundary Guardrail | progress ledger entry | Platform | Done |
 
 ## Suggested Types
 
@@ -481,6 +486,29 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-154 Update infrastructure and scripts README command contract wording for coverage matrix validation.
 - [x] T-155 Record this follow-up in the 006 SDD chain.
 - [x] T-156 Append progress memory for this follow-up.
+
+### Phase 32 - Operations Incidents Boundary Guardrail
+
+- [x] T-157 Recheck operations incidents/postmortem boundary validation strength.
+- [x] T-158 Add Incident Boundary Matrix to `docs/05.operations/incidents/README.md`.
+- [x] T-159 Extend repository quality gate for incident/postmortem path, template, creation, and no-incident state checks.
+- [x] T-160 Record this follow-up in the 006 SDD chain.
+- [x] T-161 Append progress memory for this follow-up.
+
+## Operations Incidents Boundary Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current operations incidents boundary guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current operations incidents boundary guardrail run |
+| `bash scripts/validate-gitops-structure.sh` | PASS | current operations incidents boundary guardrail run |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional `kube-linter` skipped locally because it is not installed | current operations incidents boundary guardrail run |
+| `bash scripts/check-secret-handling.sh .` | PASS | current operations incidents boundary guardrail run |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | current operations incidents boundary guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current operations incidents boundary guardrail run |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | current operations incidents boundary guardrail run |
+| `git diff --check` | PASS | current operations incidents boundary guardrail run |
+| Guardrail implementation | complete | `docs/05.operations/incidents/README.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` |
 
 ## Infrastructure Coverage Matrix Guardrail Verification Summary
 

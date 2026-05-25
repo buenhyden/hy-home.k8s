@@ -8,6 +8,50 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-26 — operations incidents boundary guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: operations docs, validation, SDD
+- **Status**: partial
+- **Tags**: #operations #incidents #validation #sdd
+
+#### Progress
+
+- Rechecked whether `docs/05.operations/incidents/README.md` had reusable
+  validation coverage for incident record and postmortem routing beyond the
+  stage-level Operations Routing Matrix.
+- Added Incident Boundary Matrix to make incident record and postmortem path,
+  template, creation, and current no-incident state explicit.
+- Extended `scripts/validate-repo-quality-gates.sh` so incident and postmortem
+  rows must match the canonical path rules and template links, creation rules
+  must identify their intended use, and the current no-incident state must not
+  accumulate placeholder directories.
+- Kept the change repo-static. No incident record, postmortem, placeholder
+  incident directory, live cluster state, GitOps manifest, secret policy,
+  external service state, or CI job structure was created or changed.
+- Documented the guardrail as VAL-SPC-006-034 and T-157 through T-161 in the
+  existing 006 SDD chain.
+
+#### Memory
+
+- Stage-level operations routing and incidents boundary validation catch
+  different drift classes. The stage matrix decides which bucket to use; the
+  incidents matrix protects path/template creation rules and the no-incident
+  placeholder boundary.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS; optional `kube-linter`
+  skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+- `git diff --check` PASS.
+
 ### 2026-05-26 — infrastructure coverage matrix guardrail follow-up
 
 - **Date**: 2026-05-26

@@ -337,6 +337,12 @@ git diff --check
   ownership plus validation or operation evidence without changing bootstrap
   behavior, live cluster state, kubeconfig TLS trust, or Kubernetes resource
   semantics.
+- **VAL-SPC-006-034**: 2026-05-26 operations incidents boundary guardrail
+  follow-up strengthens `docs/05.operations/` normalization by validating the
+  incident record and postmortem path/template/creation boundary in
+  `docs/05.operations/incidents/README.md` and the current no-incident state
+  without creating placeholder incident directories, authored incident records,
+  or postmortems.
 
 ## Related Documents
 

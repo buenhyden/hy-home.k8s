@@ -25,6 +25,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| Operations Incidents Boundary Guardrail Overlay | Current guardrail follow-up for `docs/05.operations/incidents/README.md` incident/postmortem routing and no-incident state | VAL-SPC-006-034; T-157 through T-161 | Current |
 | Infrastructure Coverage Matrix Guardrail Overlay | Current guardrail follow-up for `infrastructure/README.md` coverage matrix drift | VAL-SPC-006-033; T-152 through T-156 | Current |
 | GitOps Coverage Matrix Guardrail Overlay | Current guardrail follow-up for `gitops/README.md` and `gitops/workloads/README.md` coverage matrix drift | VAL-SPC-006-032; T-147 through T-151 | Current |
 | Operations Routing Matrix Guardrail Overlay | Current guardrail follow-up for `docs/05.operations/` stage bucket and template routing | VAL-SPC-006-031; T-142 through T-146 | Current |
@@ -2806,6 +2807,44 @@ structure are changed.
 | Command or method | Result | Notes |
 | --- | --- | --- |
 | `bash scripts/validate-repo-quality-gates.sh .` | PASS | New Infrastructure Coverage Matrix guardrail passed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| `bash scripts/validate-gitops-structure.sh` | PASS | Root Application, apps ApplicationSet, root app manifest count, and Kustomize completeness checks passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed for 104 files; optional `kube-linter` skipped locally because it is not installed |
+| `bash scripts/check-secret-handling.sh .` | PASS | Plaintext secret scan passed |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static infrastructure/GitOps contracts passed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | Shell syntax for infrastructure, scripts, and hooks |
+| `git diff --check` | PASS | No whitespace errors |
+
+## Operations Incidents Boundary Guardrail Overlay - 2026-05-26
+
+### Intent and Boundary
+
+This overlay follows the continuation audit for `docs/05.operations/`. It keeps
+the change documentation/governance and repo-static: no incident record,
+postmortem, placeholder incident directory, live cluster state, GitOps manifest,
+secret policy, external service state, or CI job structure is created or
+changed.
+
+### Gap Table
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Incident/postmortem routing | `docs/05.operations/incidents/README.md` described incident and postmortem paths, but the repo quality gate did not validate the path/template/creation boundary | `docs/05.operations/incidents/README.md`; `scripts/validate-repo-quality-gates.sh` | Future incident records or postmortems could be routed outside the intended stage shape | Medium | improvement | P1 |
+| No-incident state | The current no-incident state was documented but not reusable-gate enforced | `docs/05.operations/incidents/README.md`; `docs/05.operations/incidents/` | Placeholder incident directories or stale README state could appear without review | Low | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `docs/05.operations/incidents/README.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Add and validate Incident Boundary Matrix rows for incident records and postmortems, template links, creation rules, and current no-incident state | T-157 through T-159 | repo quality, wiki check, shell syntax | Revert README and validator edits |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-034 and verification | T-160, T-161 | repo quality and wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New operations incidents boundary guardrail passed |
 | `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
 | `bash scripts/validate-gitops-structure.sh` | PASS | Root Application, apps ApplicationSet, root app manifest count, and Kustomize completeness checks passed |
 | `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed for 104 files; optional `kube-linter` skipped locally because it is not installed |

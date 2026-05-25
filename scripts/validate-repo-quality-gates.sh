@@ -719,6 +719,137 @@ else:
             )
         )
 
+incidents_readme_path = operations_stage_path / "incidents/README.md"
+incidents_readme_text = read_text(incidents_readme_path)
+incident_boundary_rows = markdown_table_after_heading(
+    incidents_readme_text,
+    "## Incident Boundary Matrix",
+)
+expected_incident_boundary_header = [
+    "Artifact",
+    "Path rule",
+    "Template",
+    "Creation rule",
+    "Current state",
+]
+expected_incident_boundary = [
+    {
+        "artifact": "Incident Record",
+        "path_rule": "./YYYY/YYYY-MM-DD-<incident>.md",
+        "template": "../../99.templates/incident.template.md",
+        "creation_phrase": "real incident fact record",
+        "current_state": "No tracked incident records.",
+    },
+    {
+        "artifact": "Postmortem",
+        "path_rule": "./postmortems/YYYY/YYYY-MM-DD-<incident>.md",
+        "template": "../../99.templates/postmortem.template.md",
+        "creation_phrase": "root cause/prevention analysis",
+        "current_state": "No tracked postmortems.",
+    },
+]
+if len(incident_boundary_rows) < 2:
+    fail("docs/05.operations/incidents/README.md Incident Boundary Matrix must contain a header and boundary rows")
+elif incident_boundary_rows[0] != expected_incident_boundary_header:
+    fail(
+        "docs/05.operations/incidents/README.md Incident Boundary Matrix header must be: "
+        + " | ".join(expected_incident_boundary_header)
+    )
+else:
+    actual_incident_artifacts: list[str] = []
+    for row_number, (row, expected) in enumerate(
+        zip(incident_boundary_rows[1:], expected_incident_boundary),
+        start=1,
+    ):
+        if len(row) != len(expected_incident_boundary_header):
+            fail(
+                "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                f"row {row_number} must have {len(expected_incident_boundary_header)} columns"
+            )
+            continue
+        artifact_cell, path_rule_cell, template_cell, creation_rule, current_state = row
+        artifact_match = re.fullmatch(r"`([^`]+)`", artifact_cell)
+        path_rule_match = re.fullmatch(r"`([^`]+)`", path_rule_cell)
+        template_targets = list(iter_markdown_link_targets(template_cell))
+        if not artifact_match:
+            fail(
+                "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                f"row {row_number} must start with a backticked Artifact"
+            )
+            continue
+        if not path_rule_match:
+            fail(
+                "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                f"row {row_number} must use a backticked Path rule"
+            )
+            continue
+        artifact = artifact_match.group(1)
+        path_rule = path_rule_match.group(1)
+        actual_incident_artifacts.append(artifact)
+        if artifact != expected["artifact"]:
+            fail(
+                "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                f"row {row_number} Artifact must be {expected['artifact']!r}"
+            )
+        if path_rule != expected["path_rule"]:
+            fail(
+                "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                f"row {row_number} Path rule must be {expected['path_rule']!r}"
+            )
+        if len(template_targets) != 1:
+            fail(
+                "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                f"row {row_number} must have exactly one Template link"
+            )
+        else:
+            template_target = normalize_markdown_target(template_targets[0])
+            if template_target != expected["template"]:
+                fail(
+                    "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                    f"row {row_number} Template must be {expected['template']!r}"
+                )
+            if not (incidents_readme_path.parent / pathlib.Path(template_target)).exists():
+                fail(
+                    "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                    f"row {row_number} Template target is missing: {template_target}"
+                )
+        if expected["creation_phrase"] not in creation_rule:
+            fail(
+                "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                f"row {row_number} Creation rule must mention {expected['creation_phrase']!r}"
+            )
+        if current_state != expected["current_state"]:
+            fail(
+                "docs/05.operations/incidents/README.md Incident Boundary Matrix "
+                f"row {row_number} Current state must be {expected['current_state']!r}"
+            )
+    if actual_incident_artifacts != [item["artifact"] for item in expected_incident_boundary]:
+        fail("docs/05.operations/incidents/README.md Incident Boundary Matrix row order is invalid")
+
+tracked_incident_docs = [
+    path
+    for path in sorted((operations_stage_path / "incidents").rglob("*.md"))
+    if path.name != "README.md"
+]
+if not tracked_incident_docs:
+    for phrase in [
+        "현재 tracked incident record와 postmortem 문서는 없다.",
+        "No tracked incident records.",
+        "No tracked postmortems.",
+    ]:
+        if phrase not in incidents_readme_text:
+            fail(f"docs/05.operations/incidents/README.md missing no-incident state phrase: {phrase}")
+    unexpected_incident_dirs = [
+        path
+        for path in sorted((operations_stage_path / "incidents").iterdir())
+        if path.is_dir()
+    ]
+    if unexpected_incident_dirs:
+        fail(
+            "docs/05.operations/incidents has placeholder directory without tracked incident docs: "
+            + ", ".join(rel(path) for path in unexpected_incident_dirs)
+        )
+
 operations_index_roots = [
     root / "docs/05.operations/guides",
     root / "docs/05.operations/policies",
