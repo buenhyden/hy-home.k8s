@@ -8,6 +8,76 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-25 — GitOps hierarchy guardrail follow-up
+
+- **Date**: 2026-05-25
+- **Layer**: gitops, scripts, validation, SDD
+- **Status**: partial
+- **Tags**: #gitops #validation #sdd
+
+#### Progress
+
+- Rechecked whether `scripts/validate-gitops-structure.sh` protected the
+  current root Application, platform App-of-Apps, and workload ApplicationSet
+  responsibility split.
+- Extended `scripts/validate-gitops-structure.sh` so `root-platform` must own
+  `gitops/apps/root`, `apps-generator` must own `gitops/workloads/*`, required
+  `gitops/clusters/local` resources must remain present, root app manifests
+  must use the `platform` project, and local source paths must stay under
+  `gitops/platform/` or `gitops/clusters/local`.
+- Updated `gitops/README.md` and `scripts/README.md` so the executable command
+  contract names the hierarchy guardrail.
+- Documented the guardrail as VAL-SPC-006-028 and T-127 through T-131 in the
+  existing 006 SDD chain.
+
+#### Memory
+
+- GitOps hierarchy validation should check the concrete root/ApplicationSet
+  ownership contract, not only manifest kind and kustomization parseability.
+
+#### Evidence
+
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS; optional `kube-linter`
+  skipped locally because it is not installed.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash -n scripts/validate-gitops-structure.sh` PASS.
+- `git diff --check` PASS.
+
+### 2026-05-25 — environment key contract guardrail follow-up
+
+- **Date**: 2026-05-25
+- **Layer**: environment, scripts, validation, SDD
+- **Status**: partial
+- **Tags**: #env #validation #sdd
+
+#### Progress
+
+- Rechecked whether `.env.example` and local `.env` key-name-only comparison
+  had reusable validation coverage.
+- Extended `scripts/validate-repo-quality-gates.sh` so `.env` must remain
+  ignored and untracked, `.env.example` must exist with unique keys, and local
+  `.env` keys must match `.env.example` when `.env` exists.
+- Kept the check key-only. Values are not printed or recorded, and `.env`
+  absence in CI-capable contexts does not fail the gate.
+- Documented the guardrail as VAL-SPC-006-027 and T-122 through T-126 in the
+  existing 006 SDD chain.
+
+#### Memory
+
+- Environment validation can be promoted into repo quality only when it remains
+  key-name-only and preserves the ignored/untracked `.env` contract.
+
+#### Evidence
+
+- Env key-only guardrail targeted check PASS with `.env.example` keys=18 and
+  local `.env` keys=18.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+- `git diff --check` PASS.
+
 ### 2026-05-25 — scripts inventory guardrail follow-up
 
 - **Date**: 2026-05-25

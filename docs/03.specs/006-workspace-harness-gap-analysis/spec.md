@@ -289,6 +289,19 @@ git diff --check
   every tracked shell script is executable, uses the expected Bash shebang, has
   exactly one `scripts/README.md` inventory row, has an explicit decision, and
   cites Tier A or Tier B retention evidence when the decision is `Keep`.
+- **VAL-SPC-006-027**: 2026-05-25 environment key contract guardrail
+  follow-up strengthens `.env.example` and local `.env` role/key consistency by
+  validating that `.env` remains ignored/untracked, `.env.example` has unique
+  keys, and local `.env` key names match `.env.example` when `.env` exists,
+  without printing or recording values.
+- **VAL-SPC-006-028**: 2026-05-25 GitOps hierarchy guardrail follow-up
+  strengthens root Application, platform App-of-Apps, and workload
+  ApplicationSet separation by validating that `root-platform` owns
+  `gitops/apps/root`, `apps-generator` owns `gitops/workloads/*`, required
+  cluster overlay resources remain present, root app manifests use the
+  `platform` project, and local root app source paths stay under
+  `gitops/platform/` or `gitops/clusters/local` without changing Kubernetes
+  resource semantics or AppProject permissions.
 
 ## Related Documents
 

@@ -25,6 +25,8 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| GitOps Hierarchy Guardrail Overlay | Current guardrail follow-up for root app, platform app, and workload ApplicationSet hierarchy | VAL-SPC-006-028; T-127 through T-131 | Current |
+| Environment Key Contract Guardrail Overlay | Current guardrail follow-up for `.env.example` and local `.env` key-only consistency | VAL-SPC-006-027; T-122 through T-126 | Current |
 | Scripts Inventory Guardrail Overlay | Current guardrail follow-up for `scripts/` deletion/consolidation inventory evidence | VAL-SPC-006-026; T-117 through T-121 | Current |
 | Operations Index Guardrail Overlay | Current guardrail follow-up for `docs/05.operations` README index/frontmatter sync | VAL-SPC-006-025; T-112 through T-116 | Current |
 | Residual Objective Completion Audit Overlay | Current final continuation audit for remaining broad objective axes beyond the four named follow-up paths | VAL-SPC-006-024; T-107 through T-111 | Current |
@@ -2563,6 +2565,74 @@ wording. It does not delete, rename, consolidate, or change script behavior.
 | `bash scripts/validate-repo-quality-gates.sh .` | PASS | New scripts inventory guardrail passed |
 | `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
 | `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after scripts guardrail edit |
+| `git diff --check` | PASS | No whitespace errors |
+
+## Environment Key Contract Guardrail Overlay - 2026-05-25
+
+### Intent and Boundary
+
+This overlay follows the completion audit's weak-proof check for
+`.env.example` and local `.env` consistency. It makes the existing key-name-only
+comparison part of the repository quality gate while preserving the secret
+boundary: values are not printed or recorded, `.env` stays ignored/untracked,
+and CI-capable contexts without a local `.env` still validate `.env.example`.
+
+### Gap Table
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Environment key parity | Key-name-only comparison was recorded as ad hoc evidence, not enforced by a reusable repo gate | `.env.example`; `.env`; `scripts/validate-repo-quality-gates.sh` | Env role/key drift could recur silently | Low | improvement | P1 |
+| Secret boundary | `.env` must remain ignored/untracked while allowing key-only validation | `.gitignore`; `.env.example`; `.env` | Secret value exposure or accidental tracking risk | Medium | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Validate `.env` ignore/tracking contract, unique `.env.example` keys, duplicate local `.env` keys, and key parity when `.env` exists | T-122, T-123 | repo quality and targeted env key-only check | Revert validator and README wording |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-027 and verification | T-124 through T-126 | repo quality, shell syntax, wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| env key-only guardrail targeted check | PASS; `.env.example` keys=18, `.env` keys=18 | Key names only; values not printed |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New environment key contract guardrail passed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after env guardrail edit |
+| `git diff --check` | PASS | No whitespace errors |
+
+## GitOps Hierarchy Guardrail Overlay - 2026-05-25
+
+### Intent and Boundary
+
+This overlay follows the residual objective audit for GitOps hierarchy
+consistency. It keeps the change repo-static and guardrail-only: no Kubernetes
+resource semantics, AppProject permissions, ArgoCD ownership model, live cluster
+state, secret policy, CI job structure, or `.env` values are changed.
+
+### Gap Table
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| GitOps hierarchy | `validate-gitops-structure.sh` checked kind and kustomization shape but did not assert root Application, ApplicationSet, platform app, and workload source ownership boundaries | `scripts/validate-gitops-structure.sh`; `gitops/clusters/local/`; `gitops/apps/root/` | App-of-Apps and ApplicationSet responsibility drift could recur silently | Medium | improvement | P1 |
+| README command contract | `gitops/README.md` and `scripts/README.md` described hierarchy but did not identify the new executable boundary checks | `gitops/README.md`; `scripts/README.md` | Operators could miss which static gate protects the GitOps hierarchy | Low | supplementation | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `scripts/validate-gitops-structure.sh`; `gitops/README.md`; `scripts/README.md` | Validate `root-platform -> gitops/apps/root`, `apps-generator -> gitops/workloads/*`, required `clusters/local` resources, root app `platform` project, and local source path prefixes for root app manifests | T-127 through T-129 | GitOps structure, manifest syntax, repo quality, shell syntax, wiki check | Revert validator and README wording |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-028 and verification | T-130, T-131 | repo quality, GitOps structure, wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-gitops-structure.sh` | PASS | Root Application, apps ApplicationSet, cluster resources, root app project, and local source path boundaries passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed for 104 files; optional `kube-linter` skipped locally because it is not installed |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | Repository quality gates passed after GitOps guardrail edit |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `bash -n scripts/validate-gitops-structure.sh` | PASS | Validator shell syntax after hierarchy guardrail edit |
 | `git diff --check` | PASS | No whitespace errors |
 
 ## Related Documents

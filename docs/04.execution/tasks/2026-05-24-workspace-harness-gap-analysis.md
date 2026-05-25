@@ -176,6 +176,16 @@ pre-check와 follow-up으로 남긴다.
 | T-119 | Update scripts README command contract wording for the new guardrail | doc | VAL-SPC-006-026 | Scripts Inventory Guardrail | scripts README review | Platform | Done |
 | T-120 | Record scripts guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-026 | Scripts Inventory Guardrail | 006 chain check | Platform | Done |
 | T-121 | Append progress memory for the scripts guardrail follow-up | memory | VAL-SPC-006-026 | Scripts Inventory Guardrail | progress ledger entry | Platform | Done |
+| T-122 | Recheck `.env.example` and local `.env` key-only consistency guardrail strength | doc | VAL-SPC-006-027 | Environment Key Contract Guardrail | current env key-only review | Platform | Done |
+| T-123 | Extend repository quality gate for `.env` ignore/tracking and key-only parity checks | test | VAL-SPC-006-027 | Environment Key Contract Guardrail | repo quality gate and targeted check | Platform | Done |
+| T-124 | Update scripts README command contract wording for the env key guardrail | doc | VAL-SPC-006-027 | Environment Key Contract Guardrail | scripts README review | Platform | Done |
+| T-125 | Record env key guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-027 | Environment Key Contract Guardrail | 006 chain check | Platform | Done |
+| T-126 | Append progress memory for the env key guardrail follow-up | memory | VAL-SPC-006-027 | Environment Key Contract Guardrail | progress ledger entry | Platform | Done |
+| T-127 | Recheck GitOps hierarchy validator strength for root, platform, and workload ownership boundaries | doc | VAL-SPC-006-028 | GitOps Hierarchy Guardrail | current GitOps structure review | Platform | Done |
+| T-128 | Extend GitOps structure validator for root Application and workload ApplicationSet source boundaries | test | VAL-SPC-006-028 | GitOps Hierarchy Guardrail | GitOps structure gate | Platform | Done |
+| T-129 | Update GitOps and scripts README command contract wording for hierarchy validation | doc | VAL-SPC-006-028 | GitOps Hierarchy Guardrail | README review | Platform | Done |
+| T-130 | Record GitOps hierarchy guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-028 | GitOps Hierarchy Guardrail | 006 chain check | Platform | Done |
+| T-131 | Append progress memory for the GitOps hierarchy guardrail follow-up | memory | VAL-SPC-006-028 | GitOps Hierarchy Guardrail | progress ledger entry | Platform | Done |
 
 ## Suggested Types
 
@@ -390,6 +400,45 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-119 Update scripts README command contract wording.
 - [x] T-120 Record this follow-up in the 006 SDD chain.
 - [x] T-121 Append progress memory for this follow-up.
+
+### Phase 25 - Environment Key Contract Guardrail
+
+- [x] T-122 Recheck `.env.example` and local `.env` key-only consistency guardrail strength.
+- [x] T-123 Extend repository quality gate for `.env` ignore/tracking and key-only parity checks.
+- [x] T-124 Update scripts README command contract wording.
+- [x] T-125 Record this follow-up in the 006 SDD chain.
+- [x] T-126 Append progress memory for this follow-up.
+
+### Phase 26 - GitOps Hierarchy Guardrail
+
+- [x] T-127 Recheck GitOps hierarchy validator strength.
+- [x] T-128 Extend GitOps structure validator for root/ApplicationSet boundaries.
+- [x] T-129 Update GitOps and scripts README command contract wording.
+- [x] T-130 Record this follow-up in the 006 SDD chain.
+- [x] T-131 Append progress memory for this follow-up.
+
+## GitOps Hierarchy Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-gitops-structure.sh` | PASS | current hierarchy guardrail run |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional `kube-linter` skipped locally because it is not installed | current hierarchy guardrail run |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current hierarchy guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current hierarchy guardrail run |
+| `bash -n scripts/validate-gitops-structure.sh` | PASS | current hierarchy guardrail run |
+| `git diff --check` | PASS | current hierarchy guardrail run |
+| Guardrail implementation | complete | `scripts/validate-gitops-structure.sh`; `gitops/README.md`; `scripts/README.md` |
+
+## Environment Key Contract Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| Env key-only guardrail targeted check | PASS; `.env.example` keys=18, `.env` keys=18 | `.env.example`; `.env` |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current env guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current env guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current env guardrail run |
+| `git diff --check` | PASS | current env guardrail run |
+| Guardrail implementation | complete | `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` |
 
 ## Scripts Inventory Guardrail Verification Summary
 
