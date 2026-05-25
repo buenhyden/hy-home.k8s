@@ -1806,7 +1806,7 @@ rulesets, and it does not inspect secret values.
 | Deferred item | Repo-static change | Evidence path | Status after this overlay | Remaining non-static boundary |
 | --- | --- | --- | --- | --- |
 | EndpointSlice ownership ambiguity | Clarify that `gitops/platform/external-services/*.yaml` is the desired-state SSoT, while direct EndpointSlice patch/apply remains human-approved break-glass when ArgoCD resource exclusions or runtime drift prevent reconciliation | `gitops/README.md`; `docs/05.operations/policies/0002-wsl2-k3d-gitops-ha-operations-policy.md` | improved repo-static | live reconciliation proof and any direct cluster hotfix |
-| Traefik backend/fallback port wording drift | Separate external Traefik `websecure/443 -> k3d-hyhome-serverlb:443` from direct host fallback `ARGOCD_FALLBACK_PORT=8443` checks | `traefik/README.md`; operations policy | improved repo-static | live TLS reachability |
+| Traefik backend/fallback port wording drift | Superseded by VAL-SPC-006-021 live evidence: external Traefik backend should target ingress-nginx `LoadBalancer` IP `172.18.0.240:443`; direct host fallback remains explicit-only | `traefik/README.md`; operations policy; live closure overlay | improved with live correction | external Traefik gateway runtime proof |
 | `workflow-security` policy wording drift | Replace stale `workflow-security` job wording with current CI gate names: `branch-policy`, `pre-commit`, `repo-quality-static`, `manifest-static`, and `shell-static` | operations policy; `.github/workflows/ci.yml` | improved repo-static | GitHub branch protection/ruleset review |
 | OPA/Conftest feasibility undefined | Record that no OPA/Conftest gate is introduced until policy owner, bundle location, install path, and failure semantics are defined | operations policy; this plan | improved repo-static | separate policy-gate design task |
 | Vault endpoint role separation | Document host/browser `VAULT_ADDR`, in-cluster `vault-external` EndpointSlice, and Vault Kubernetes auth API endpoint roles separately | `.env.example`; operations policy | improved repo-static | live Vault/ESO readiness |
@@ -1970,6 +1970,48 @@ runtime dependencies are unavailable.
 | `.env.example` vs `.env` key-name-only compare | PASS | missing=0; extra=0 |
 | `git diff --check` | PASS | no whitespace errors |
 | live bootstrap precheck | BLOCKED | Vault, PostgreSQL, and Valkey unreachable |
+
+## Live Bootstrap Runtime Closure Overlay - 2026-05-25
+
+### Intent and Boundary
+
+This overlay records the human-approved live bootstrap follow-up after PR #40
+was merged. It continues to use the existing 006 SDD chain as the canonical
+SSoT. It does not inspect or print secret values, rewrite public Git history,
+force ArgoCD sync, or merge directly to `main`.
+
+### Runtime Closure Decisions
+
+| Area | Evidence | Decision | Follow-up |
+| --- | --- | --- | --- |
+| External dependencies | Vault, Valkey, PostgreSQL router, and k3d containers started locally; Vault health returned `200`; PostgreSQL write/read and Valkey TCP checks passed | Treat live bootstrap preconditions as satisfied for this approved run | Keep external service startup outside normal repo automation |
+| MetalLB bootstrap | MetalLB chart `0.16.0` rendered only after explicitly disabling the `frr-k8s` ServiceMonitor value; cold image pulls exceeded the previous 120s wait | Add explicit Helm value and extend MetalLB timeout to 300s | Revisit if chart defaults change again |
+| EndpointSlice boundary | ArgoCD excludes EndpointSlice resources, so only Services reconciled from `platform-external-services`; live Vault path failed until EndpointSlices were bootstrap-applied | Bootstrap applies all external-service `Service` and `EndpointSlice` resources before ESO/Vault validation | Keep Git desired state as SSoT and bootstrap as approved break-glass initializer |
+| Vault Kubernetes auth | Vault reached Kubernetes API, but login returned `403` until the current `external-secrets` serviceAccount had TokenReview permission and reviewer JWT/CA were refreshed | Add GitOps ClusterRoleBinding to `system:auth-delegator` and refresh Vault auth config during approved live recovery | Vault token reviewer refresh remains a human-approved live operation |
+| Traefik / TLS validation | Ingress `LoadBalancer` IP `172.18.0.240:443` with host/SNI resolve returned HTTP `200`; `127.0.0.1:443` is only valid when an external gateway is actually present | Make live TLS validation default to ingress-nginx LoadBalancer IP and keep external Traefik 443 as an optional check | External Traefik runtime proof remains separate from cluster bootstrap proof |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | supplementation | Spec 006 | Add VAL-SPC-006-021 for approved live runtime closure | T-084 | repo quality gate | Revert criterion |
+| P1 | supplementation | 006 Plan/Task | Add this overlay and T-084 through T-090 | T-084, T-090 | repo quality gate; wiki check | Revert overlay sections |
+| P2 | bootstrap | `infrastructure/bootstrap-local.sh` | Set MetalLB `frr-k8s.prometheus.serviceMonitor.enabled=false`, use 300s timeout, and apply all external-service endpoints during bootstrap | T-085, T-086 | bootstrap run and shell syntax | Revert script edits |
+| P2 | GitOps RBAC | `gitops/platform/eso/` | Add `external-secrets` TokenReview ClusterRoleBinding for Vault Kubernetes auth | T-087 | `kubectl auth can-i`; ESO/Vault live check | Remove binding manifest |
+| P2 | validation | `infrastructure/tests/` | Support current MetalLB deployment name and validate TLS via ingress-nginx LoadBalancer IP | T-088 | `infrastructure/tests/run-all.sh` | Revert validation edits |
+| P1 | Traefik docs/config | `traefik/`, `.env.example`, operations policy | Align external Traefik backend wording and config with ingress-nginx LoadBalancer IP | T-089 | targeted `rg`; YAML parse | Revert wording/config edits |
+| P1 | verification | validation bundle | Run live and repo-static checks without printing secret values | T-090 | Verification Summary | Re-run after rollback |
+
+### Verification Delta
+
+| Check | Result | Notes |
+| --- | --- | --- |
+| `infrastructure/bootstrap-local.sh` | PASS | Reused `k3d-hyhome`; installed MetalLB/ArgoCD; applied external-service EndpointSlices |
+| Vault Kubernetes auth login status | PASS | metadata-only check returned HTTP `200`; JWT and Vault token were not printed |
+| `kubectl auth can-i create tokenreviews...` | PASS | `external-secrets` serviceAccount can create TokenReviews |
+| `bash infrastructure/tests/verify-secrets.sh` | PASS | `vault-backend` and `argocd-external-valkey` Ready checks passed |
+| `bash infrastructure/tests/run-all.sh` | PASS | cluster, MetalLB, GitOps, ESO/Vault, external service, network policy, and ingress/TLS checks passed |
+| External Traefik 443 | DEFERRED | optional `CHECK_TRAEFIK_443=true` remains separate because no external gateway runtime proof was requested for this branch |
 
 ## Related Documents
 

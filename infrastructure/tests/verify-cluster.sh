@@ -26,8 +26,12 @@ fi
 echo "[PASS] cluster topology check passed (nodes=$node_count, ready=$ready_count)"
 
 echo "[INFO] Checking MetalLB readiness"
-metallb_ready="$(kubectl -n metallb-system get deploy controller \
+metallb_ready="$(kubectl -n metallb-system get deploy metallb-controller \
   -o jsonpath='{.status.readyReplicas}' 2>/dev/null || true)"
+if [ "${metallb_ready:-0}" -lt 1 ]; then
+  metallb_ready="$(kubectl -n metallb-system get deploy controller \
+    -o jsonpath='{.status.readyReplicas}' 2>/dev/null || true)"
+fi
 [ "${metallb_ready:-0}" -ge 1 ] || \
   fail "metallb controller is not ready (readyReplicas=${metallb_ready:-0})"
 

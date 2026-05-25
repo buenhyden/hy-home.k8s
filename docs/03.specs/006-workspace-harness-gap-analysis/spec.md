@@ -254,6 +254,11 @@ git diff --check
   merged into `main`, verifies the merge commit's CI and local static gates,
   and keeps live bootstrap/runtime proof deferred because approved prechecks
   show Vault, PostgreSQL, and Valkey are currently unreachable.
+- **VAL-SPC-006-021**: 2026-05-25 live bootstrap runtime closure records the
+  approved external-service startup, k3d bootstrap, Vault Kubernetes auth
+  repair, EndpointSlice bootstrap boundary correction, MetalLB/Traefik
+  validation fixes, and successful `infrastructure/tests/run-all.sh` evidence
+  without printing secret values or rewriting public history.
 
 ## Related Documents
 

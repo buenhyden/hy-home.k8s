@@ -147,7 +147,8 @@ kubectl -n argocd get app root-platform -o yaml | \
 - [ ] 포트/서비스 계약 회귀 없음
 - [ ] `argocd` egress(Valkey + DNS + HTTPS) 통과
 - [ ] ingress/TLS 계약(host=`argocd.127.0.0.1.nip.io`, secret=`argocd-local-tls`) 유지 # pragma: allowlist secret
-- [ ] Traefik 443 및 fallback 8443 HTTPS 응답 확인
+- [ ] ingress-nginx LoadBalancer IP 기반 HTTPS 응답 확인; 외부 Traefik 443
+      확인은 gateway 런타임이 준비된 경우에만 별도 수행
 - [ ] CI 정적 계약(`verify-contracts-static.sh`) 통과
 
 ## Observability and Evidence Sources

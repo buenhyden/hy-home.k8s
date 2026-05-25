@@ -8,6 +8,70 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-25 — live bootstrap runtime closure
+
+- **Date**: 2026-05-25
+- **Layer**: runtime, gitops, docs, qa
+- **Status**: complete
+- **Tags**: #runtime #bootstrap #gitops #vault #validation
+
+#### Progress
+
+- Continued after PR #40 was merged into `main` and created
+  `codex/live-bootstrap-runtime-closure` for forward-only follow-up work.
+- Started the approved local runtime dependencies for verification: k3d
+  `hyhome`, Vault, Valkey, PostgreSQL router, and required PostgreSQL cluster
+  dependencies. Secret values were not printed.
+- Fixed live bootstrap blockers found during the run:
+  - MetalLB `0.16.0` needed explicit
+    `frr-k8s.prometheus.serviceMonitor.enabled=false` and a 300s wait timeout
+    for cold image pulls.
+  - ArgoCD excludes EndpointSlice resources, so bootstrap must initialize all
+    external-service `Service` and `EndpointSlice` objects before ESO/Vault
+    validation.
+  - Vault Kubernetes auth needed the current k3d reviewer JWT/CA and a
+    GitOps-owned `system:auth-delegator` ClusterRoleBinding for the
+    `external-secrets` serviceAccount.
+  - Live TLS validation must use ingress-nginx `LoadBalancer` IP with
+    host/SNI resolve by default; external Traefik host 443 remains optional
+    runtime proof.
+- Updated the 006 Spec/Plan/Task chain with VAL-SPC-006-021 and T-084 through
+  T-090.
+
+#### Memory
+
+- For this repo's current k3d + MetalLB topology, external Traefik dynamic
+  config should target ingress-nginx `LoadBalancer` IP `172.18.0.240:443`,
+  not the k3d serverlb DNS backend.
+- EndpointSlice desired state remains in `gitops/platform/external-services/`,
+  but ArgoCD exclusion means bootstrap or human-approved break-glass must apply
+  those EndpointSlices in the live cluster.
+- Vault Kubernetes auth can show `token_reviewer_jwt_set=True` and still fail
+  after cluster recreation if the reviewer token/CA is stale or the reviewer
+  serviceAccount lacks TokenReview permission.
+
+#### Evidence
+
+- `infrastructure/bootstrap-local.sh` PASS.
+- Vault Kubernetes login metadata check returned HTTP `200`; tokens were not
+  printed.
+- `kubectl auth can-i create tokenreviews.authentication.k8s.io --as system:serviceaccount:external-secrets:external-secrets` PASS.
+- `bash infrastructure/tests/verify-secrets.sh` PASS.
+- `bash infrastructure/tests/run-all.sh` PASS.
+- Repo-static validation bundle PASS: repo quality gate, LLM Wiki check, GitOps
+  structure, Kubernetes manifest syntax, secret handling, static contracts,
+  shell syntax, JSON parse, workflow/Traefik YAML parse, env key-name-only
+  comparison, and `git diff --check`.
+- 006 Spec/Plan/Task include VAL-SPC-006-021 and T-084 through T-090.
+
+#### Handoff
+
+- External Traefik gateway runtime proof with `CHECK_TRAEFIK_443=true` remains a
+  separate approved run because this closure did not start or mutate the
+  external gateway service.
+
+---
+
 ### 2026-05-25 — post-merge completion audit
 
 - **Date**: 2026-05-25
@@ -243,8 +307,9 @@ inventory stays in `scripts/README.md`.
   T-063 through T-070 for deferred item repo-static improvements.
 - Clarified EndpointSlice desired-state ownership versus human-approved
   break-glass patch/apply boundaries.
-- Separated external Traefik `websecure/443 -> k3d-hyhome-serverlb:443` wording
-  from direct host fallback `ARGOCD_FALLBACK_PORT=8443` checks.
+- Separated external Traefik backend wording from direct host fallback checks.
+  VAL-SPC-006-021 later superseded the backend target with ingress-nginx
+  `LoadBalancer` IP evidence.
 - Aligned operations policy wording with current CI job names and recorded that
   OPA/Conftest remains deferred until owner, bundle, install path, and failure
   semantics exist.
@@ -259,9 +324,9 @@ inventory stays in `scripts/README.md`.
 
 - For deferred-item follow-ups, split repo-static wording fixes from live proof,
   remote ruleset review, secret value review, and actual deletion/consolidation.
-- Traefik backend port and direct fallback port are different contracts:
-  Docker-network backend stays `k3d-hyhome-serverlb:443`; direct fallback may be
-  `8443` when host 443 is unavailable.
+- Traefik backend port and direct fallback port are different contracts. This
+  entry is historical; current backend target is maintained by VAL-SPC-006-021
+  as ingress-nginx `LoadBalancer` IP `172.18.0.240:443`.
 - OPA/Conftest should not become a required gate without a named policy owner,
   policy bundle location, installation contract, and failure semantics.
 

@@ -12,13 +12,14 @@ Ingress NGINX는 2026-03-24 이후 upstream retired 상태이므로 cloud target
 
 ## Port Contract
 
-- 외부 Traefik은 `websecure/443`에서 요청을 받고 Docker 네트워크의
-  `k3d-hyhome-serverlb:443`으로 전달한다.
-- `infrastructure/bootstrap-local.sh`는 호스트 443 포트가 이미 사용 중이면
-  direct browser fallback을 위해 `K3D_HTTPS_PORT=8443`으로 전환할 수 있다.
-- `ARGOCD_FALLBACK_PORT=8443`은 direct host 접근 검증용 fallback 포트이며,
-  `traefik/*.yaml`의 backend URL(`https://k3d-hyhome-serverlb:443`)을 8443으로
-  바꾸라는 의미가 아니다.
+- 외부 Traefik은 `websecure/443`에서 요청을 받고 Docker 네트워크에서 접근
+  가능한 ingress-nginx `LoadBalancer` IP(`172.18.0.240:443`)로 전달한다.
+- `infrastructure/bootstrap-local.sh`의 k3d host port fallback은 k3d
+  serverlb host binding용이며, MetalLB가 할당한 ingress-nginx
+  `LoadBalancer` IP 검증 경로와 혼동하지 않는다.
+- `ARGOCD_FALLBACK_PORT`를 직접 지정하지 않으면 live TLS 검증은
+  ingress-nginx `LoadBalancer` IP와 host/SNI resolve를 사용한다. 직접
+  host port fallback을 검증할 때만 `ARGOCD_FALLBACK_PORT=8443`처럼 명시한다.
 - 이 디렉터리의 파일은 외부 Traefik dynamic config 참조 복사본이므로,
   live gateway 반영은 `hy-home.docker` 운영 절차에서 별도로 승인하고
   증적을 남긴다.

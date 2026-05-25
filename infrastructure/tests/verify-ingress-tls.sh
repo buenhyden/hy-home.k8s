@@ -3,7 +3,9 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ARGOCD_HOST="${ARGOCD_HOST:-argocd.127.0.0.1.nip.io}"
-ARGOCD_FALLBACK_PORT="${ARGOCD_FALLBACK_PORT:-8443}"
+ARGOCD_FALLBACK_PORT_WAS_SET="${ARGOCD_FALLBACK_PORT+x}"
+ARGOCD_FALLBACK_PORT="${ARGOCD_FALLBACK_PORT:-443}"
+ARGOCD_FALLBACK_IP="${ARGOCD_FALLBACK_IP:-}"
 CHECK_TRAEFIK_443="${CHECK_TRAEFIK_443:-false}"
 
 fail() {
@@ -19,6 +21,17 @@ kubectl version --request-timeout=5s >/dev/null 2>&1 || \
 svc_type="$(kubectl -n ingress-nginx get svc ingress-nginx-controller -o jsonpath='{.spec.type}' 2>/dev/null || true)"
 [ "$svc_type" = "LoadBalancer" ] || fail "ingress-nginx-controller type mismatch (actual=$svc_type)"
 
+ingress_lb_ip="$(kubectl -n ingress-nginx get svc ingress-nginx-controller \
+  -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || true)"
+if [ -z "$ARGOCD_FALLBACK_IP" ]; then
+  if [ -z "$ARGOCD_FALLBACK_PORT_WAS_SET" ]; then
+    ARGOCD_FALLBACK_IP="$ingress_lb_ip"
+  else
+    ARGOCD_FALLBACK_IP="127.0.0.1"
+  fi
+fi
+[ -n "$ARGOCD_FALLBACK_IP" ] || fail "ingress-nginx-controller LoadBalancer IP is empty"
+
 ing_host="$(kubectl -n argocd get ingress argocd-server -o jsonpath='{.spec.rules[0].host}' 2>/dev/null || true)"
 [ "$ing_host" = "$ARGOCD_HOST" ] || fail "argocd ingress host mismatch (actual=$ing_host)"
 
@@ -31,8 +44,10 @@ tls_secret="$(kubectl -n argocd get ingress argocd-server -o jsonpath='{.spec.tl
 secret_type="$(kubectl -n argocd get secret argocd-local-tls -o jsonpath='{.type}' 2>/dev/null || true)"
 [ "$secret_type" = "kubernetes.io/tls" ] || fail "argocd-local-tls type mismatch (actual=$secret_type)"
 
-curl -kIs --max-time 5 "https://${ARGOCD_HOST}:${ARGOCD_FALLBACK_PORT}" >/tmp/argocd-tls-fallback.txt 2>/dev/null || \
-  fail "https fallback endpoint is not reachable (${ARGOCD_HOST}:${ARGOCD_FALLBACK_PORT})"
+curl -kIs --max-time 5 \
+  --resolve "${ARGOCD_HOST}:${ARGOCD_FALLBACK_PORT}:${ARGOCD_FALLBACK_IP}" \
+  "https://${ARGOCD_HOST}:${ARGOCD_FALLBACK_PORT}" >/tmp/argocd-tls-fallback.txt 2>/dev/null || \
+  fail "https fallback endpoint is not reachable (${ARGOCD_HOST}:${ARGOCD_FALLBACK_PORT} via ${ARGOCD_FALLBACK_IP})"
 rg -q '^HTTP/' /tmp/argocd-tls-fallback.txt || \
   fail "https fallback endpoint did not return HTTP response"
 

@@ -138,6 +138,13 @@ pre-check와 follow-up으로 남긴다.
 | T-081 | Record PR #39 merge completion and merged-main verification | doc | VAL-SPC-006-020 | Post-Merge Completion Audit | Post-Merge Completion Audit Summary | Platform | Done |
 | T-082 | Clean up the merged local PR branch without touching unrelated branches | chore | VAL-SPC-006-020 | Post-Merge Cleanup | git status and merged-branch evidence | Platform | Done |
 | T-083 | Run no-secret-output live bootstrap prechecks and record blocker state | eval | VAL-SPC-006-020 | Live Bootstrap Precheck | bootstrap precheck evidence | Platform | Done |
+| T-084 | Record approved live bootstrap runtime closure in the existing 006 SDD chain | doc | VAL-SPC-006-021 | Live Bootstrap Runtime Closure | plan/task/spec/progress overlay | Platform | Done |
+| T-085 | Start required external runtime dependencies without printing secret values | ops | VAL-SPC-006-021 | Live Bootstrap Runtime Closure | Docker container health and TCP checks | Platform | Done |
+| T-086 | Harden bootstrap MetalLB and external-service EndpointSlice initialization | bootstrap | VAL-SPC-006-021 | Live Bootstrap Runtime Closure | bootstrap PASS and shell syntax | Platform | Done |
+| T-087 | Add Vault Kubernetes auth TokenReview desired-state binding and refresh live auth config | gitops | VAL-SPC-006-021 | Live Bootstrap Runtime Closure | `can-i` and Vault login HTTP 200 | Platform | Done |
+| T-088 | Align live validation scripts with current MetalLB and ingress-nginx LoadBalancer behavior | test | VAL-SPC-006-021 | Live Bootstrap Runtime Closure | `infrastructure/tests/run-all.sh` PASS | Platform | Done |
+| T-089 | Correct Traefik backend and fallback wording using live LoadBalancer evidence | doc | VAL-SPC-006-021 | Live Bootstrap Runtime Closure | targeted `rg` and YAML parse | Platform | Done |
+| T-090 | Run final live and repo-static verification for the runtime closure branch | test | VAL-SPC-006-021 | Live Bootstrap Runtime Closure | Live Bootstrap Runtime Closure Summary | Platform | Done |
 
 ## Suggested Types
 
@@ -291,6 +298,21 @@ pre-check와 follow-up으로 남긴다.
       branch and leave unrelated merged branches untouched.
 - [x] T-083 Run no-secret-output live bootstrap prechecks and record that live
       bootstrap remains blocked by unreachable external services.
+
+### Phase 19 - Live Bootstrap Runtime Closure
+
+- [x] T-084 Add VAL-SPC-006-021 and this live closure overlay.
+- [x] T-085 Start Vault, Valkey, PostgreSQL router, and k3d runtime dependencies
+      without printing secret values.
+- [x] T-086 Harden MetalLB chart values/timeouts and bootstrap all external
+      service EndpointSlices.
+- [x] T-087 Add the Vault TokenReview ClusterRoleBinding and refresh live Vault
+      Kubernetes auth metadata.
+- [x] T-088 Align live validation scripts with current MetalLB and ingress
+      LoadBalancer behavior.
+- [x] T-089 Correct Traefik backend/fallback wording and reference configs based
+      on live LoadBalancer evidence.
+- [x] T-090 Run live and repo-static verification for this branch.
 
 ## Verification Evidence History Note
 
@@ -802,6 +824,53 @@ is stored in the linked plan to keep this task document concise.
   - Live bootstrap and `infrastructure/tests/run-all.sh` remain blocked until
     the external Vault, PostgreSQL, and Valkey services are running and
     reachable. No secret values were printed or manually inspected.
+
+## Live Bootstrap Runtime Closure Summary
+
+- **Scope**: 2026-05-25 approved follow-up after PR #40 was merged into
+  `main`, covering live external dependency startup, k3d bootstrap, Vault
+  Kubernetes auth repair, and runtime validation closure.
+- **Runtime Changes**:
+  - External Vault, Valkey, PostgreSQL router, and k3d containers were started
+    locally for verification; no secret values were printed.
+  - `infrastructure/bootstrap-local.sh` now pins the MetalLB `frr-k8s`
+    ServiceMonitor value to disabled, waits up to 300s for MetalLB, and
+    bootstrap-applies all external-service `Service`/`EndpointSlice` resources
+    because ArgoCD excludes EndpointSlice resources.
+  - `gitops/platform/eso/vault-token-reviewer-binding.yaml` grants the
+    `external-secrets` serviceAccount `system:auth-delegator` via
+    ClusterRoleBinding so Vault Kubernetes auth can perform TokenReview.
+  - Vault Kubernetes auth reviewer JWT/CA were refreshed in the live Vault
+    instance through an approved metadata-only operation; tokens were not
+    printed.
+  - `infrastructure/tests/verify-cluster.sh` accepts the current
+    `metallb-controller` deployment name.
+  - `infrastructure/tests/verify-ingress-tls.sh` validates the default direct
+    runtime path through ingress-nginx `LoadBalancer` IP with host/SNI resolve
+    and keeps external Traefik host 443 as an optional check.
+  - `traefik/*.yaml`, `traefik/README.md`, `.env.example`, and the operations
+    policy now align the external Traefik backend with the ingress-nginx
+    `LoadBalancer` IP path.
+- **Live Verification Evidence**:
+  - `infrastructure/bootstrap-local.sh` - PASS.
+  - Vault Kubernetes login metadata check - PASS; HTTP `200`.
+  - `kubectl auth can-i create tokenreviews.authentication.k8s.io --as system:serviceaccount:external-secrets:external-secrets` - PASS.
+  - `bash infrastructure/tests/verify-secrets.sh` - PASS.
+  - `bash infrastructure/tests/run-all.sh` - PASS.
+- **Repo-Static Verification Evidence**:
+  - `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+  - `bash scripts/generate-llm-wiki-index.sh --check` - PASS.
+  - `bash scripts/validate-gitops-structure.sh` - PASS.
+  - `bash scripts/validate-k8s-manifests.sh .` - PASS.
+  - `bash scripts/check-secret-handling.sh .` - PASS.
+  - `bash infrastructure/tests/verify-contracts-static.sh` - PASS.
+  - shell syntax, JSON parse, workflow/Traefik YAML parse, env key-name-only
+    comparison, and `git diff --check` - PASS.
+- **Remaining Limitations**:
+  - External Traefik runtime proof with `CHECK_TRAEFIK_443=true` remains
+    separate because no external gateway container was started for this branch.
+  - Secret values, Vault KV values, and direct plaintext secret material were
+    not printed or manually inspected.
 
 ## Related Documents
 
