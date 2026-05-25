@@ -130,6 +130,10 @@ pre-check와 follow-up으로 남긴다.
 | T-073 | Strengthen lifecycle hook dirty-state guidance for multi-unit changes | guardrail | VAL-SPC-006-018 | Task-Unit Commit P1 | lifecycle hook self-test | Platform | Done |
 | T-074 | Extend repo-quality hook simulation to cover the stronger commit guidance | test | VAL-SPC-006-018 | Task-Unit Commit P1 | repo quality gate | Platform | Done |
 | T-075 | Run follow-up verification and create one forward-only corrective commit | test | VAL-SPC-006-018 | Task-Unit Commit Verification | Task-Unit Commit Follow-up Verification Summary | Platform | Done |
+| T-076 | Run approval-bound completion audit for live runtime and GitHub remote state | eval | VAL-SPC-006-019 | Approval-Bound Audit | Approval-Bound Completion Audit Summary | Platform | Done |
+| T-077 | Remediate discovered `actions/stale` workflow and version inventory drift | ci | VAL-SPC-006-019 | Approval-Bound P1 | repo quality gate and workflow parse | Platform | Done |
+| T-078 | Record remaining current-state limitations and replacement PR boundary | doc | VAL-SPC-006-019 | Approval-Bound Audit | progress ledger and PR evidence | Platform | Done |
+| T-079 | Run verification for the approval-bound audit branch and PR | test | VAL-SPC-006-019 | Approval-Bound Verification | Approval-Bound Completion Audit Summary | Platform | Done |
 
 ## Suggested Types
 
@@ -267,6 +271,13 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-073 Strengthen lifecycle hook dirty-state guidance.
 - [x] T-074 Cover the stronger advisory in repo-quality self-tests.
 - [x] T-075 Run verification and create one forward-only corrective commit.
+
+### Phase 17 - Approval-Bound Completion Audit
+
+- [x] T-076 Run read-only live runtime and GitHub remote state audit.
+- [x] T-077 Align `actions/stale` workflow pin and version inventory.
+- [x] T-078 Record remaining current-state limitations and PR boundary.
+- [x] T-079 Run verification for the audit branch and PR.
 
 ## Verification Evidence History Note
 
@@ -695,6 +706,49 @@ is stored in the linked plan to keep this task document concise.
   - Future human-requested commits must split dirty states that span multiple
     SDD overlays, runtime docs, hooks, validators, or env contracts before
     commit, stage only the files for the unit, and review `git diff --cached`.
+
+## Approval-Bound Completion Audit Summary
+
+- **Scope**: 2026-05-25 follow-up after the human approved approval-bound
+  review items. This audit covers read-only live/runtime checks, GitHub remote
+  policy/CI state, and CI version inventory drift discovered during that audit.
+- **Runtime Evidence**:
+  - `docker context show` - PASS; current context is `default`.
+  - `docker ps --format ...` - CURRENT-STATE INFO; no running containers.
+  - `k3d cluster list` - CURRENT-STATE INFO; no cluster rows.
+  - `kubectl config current-context` - PASS; current context is `k3d-hyhome`.
+  - `kubectl get nodes -o wide --request-timeout=5s` - CURRENT-STATE FAIL;
+    Kubernetes API `https://0.0.0.0:6550` refused connection.
+  - Read-only ArgoCD, ESO, ClusterSecretStore, ExternalSecret, AppProject, and
+    ApplicationSet metadata checks - CURRENT-STATE FAIL for the same
+    unavailable API server.
+- **GitHub Remote Evidence**:
+  - `gh repo view buenhyden/hy-home.k8s` - PASS; default branch is `main`,
+    repository is public, viewer permission is `ADMIN`.
+  - `gh api repos/buenhyden/hy-home.k8s/rulesets` - PASS; no repository
+    rulesets returned.
+  - `gh api repos/buenhyden/hy-home.k8s/branches/main/protection` - PASS;
+    branch protection requires `ci-summary`, pull request review settings exist
+    with zero required approvals, force-push and deletion are disabled, and
+    admin enforcement is disabled.
+  - Latest `d8b9c19` main CI run - PASS; `ci-summary`, `repo-quality-static`,
+    `pre-commit`, and `shell-static` passed; `manifest-static` and
+    `branch-policy` skipped by path/branch policy design.
+  - Open Dependabot PR #38 - FAIL; `repo-quality-static` and `ci-summary`
+    failed because `actions/stale` changed to `v10.2.0` without matching
+    `docs/90.references/versions/tech-stack-version-inventory.md` and the PR
+    was based on stale main state.
+- **Repo Change**:
+  - Updated `.github/workflows/stale.yml` and
+    `docs/90.references/versions/tech-stack-version-inventory.md` together to
+    `actions/stale@v10.2.0`.
+- **Remaining Limitations**:
+  - Live k3d/ArgoCD/ESO/Vault metadata cannot be proven until the local
+    `k3d-hyhome` cluster exists and the API server is reachable.
+  - Secret values and Vault KV values remain intentionally unprinted and
+    uninspected by the agent.
+  - Direct main-branch bypass should not be repeated; this remediation is
+    carried on a `codex/` branch and should enter `main` through PR review.
 
 ## Related Documents
 

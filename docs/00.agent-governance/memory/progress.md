@@ -8,6 +8,57 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-25 — approval-bound completion audit
+
+- **Date**: 2026-05-25
+- **Layer**: ci, qa, docs, runtime
+- **Status**: partial
+- **Tags**: #ci #github #runtime #validation #version-inventory
+
+#### Progress
+
+- Added VAL-SPC-006-019 plus T-076 through T-079 to the existing 006 SDD
+  chain for the approval-bound completion audit.
+- Re-ran approved read-only live checks. Docker context is `default`, no Docker
+  containers are running, no k3d clusters are listed, and the `k3d-hyhome`
+  Kubernetes API at `https://0.0.0.0:6550` refuses connection.
+- Queried GitHub remote state. The repository has no rulesets returned by the
+  rulesets API; main branch protection requires `ci-summary`, has PR review
+  settings with zero required approvals, disables force-push/deletion, and does
+  not enforce admins.
+- Confirmed latest main commit `d8b9c19` has successful CI, including
+  `ci-summary`.
+- Found open Dependabot PR #38 failing because `actions/stale` changed to
+  `v10.2.0` without the matching version inventory update.
+- Updated `.github/workflows/stale.yml` and
+  `docs/90.references/versions/tech-stack-version-inventory.md` together to
+  `actions/stale@v10.2.0` on a `codex/` branch instead of bypassing `main`.
+
+#### Memory
+
+- Branch protection, not repository rulesets, is the current remote policy SSoT
+  for `main`.
+- `ci-summary` is the required status check; direct pushes by admins can bypass
+  PR routing but should not be used for normal follow-up work.
+- Live runtime proof remains a current-state limitation when Docker has no
+  running containers and k3d has no cluster rows.
+
+#### Evidence
+
+- 006 Spec/Plan/Task include the approval-bound completion audit overlay.
+- `gh run view` for `d8b9c19` shows successful main CI.
+- `gh pr view 38` and `gh run view 26363778043 --job 77603867367 --log` show
+  the open Dependabot PR failure and `actions/stale` version drift.
+
+#### Handoff
+
+- This branch should be opened as a PR and merged through the normal protected
+  branch path after CI passes.
+- Do not inspect secret values, run Vault KV reads/writes, force ArgoCD sync, or
+  run cluster mutation commands as part of this audit.
+
+---
+
 ### 2026-05-25 — task-unit commit follow-up
 
 - **Date**: 2026-05-25
