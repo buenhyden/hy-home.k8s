@@ -1881,6 +1881,48 @@ Kubernetes mutation, ArgoCD sync, or Vault write is included.
 | Lifecycle hook self-test | PASS | Stop and PreCompact mention task-unit discipline, multi-unit dirty states, and `git diff --cached` |
 | Git status | clean and synced after push | No history rewrite |
 
+## Approval-Bound Completion Audit Overlay - 2026-05-25
+
+### Intent and Boundary
+
+This overlay implements the approved follow-up review for items that were
+previously blocked by approval or external state. It performs read-only live
+runtime checks and GitHub remote inspection, then remediates the repo-backed CI
+version inventory drift discovered from open PR evidence. It does not inspect
+secret values, run Vault KV reads/writes, force ArgoCD sync, run `kubectl apply`
+or `kubectl patch`, rewrite public history, or bypass `main` branch protection.
+
+### Current-State Audit
+
+| Area | Evidence | Current result | Decision |
+| --- | --- | --- | --- |
+| Docker/k3d | `docker context show`; `docker ps`; `k3d cluster list` | Docker context is `default`; no running containers; no k3d clusters listed | Live platform proof remains unavailable in current WSL state |
+| Kubernetes API | `kubectl config current-context`; read-only `kubectl get` | context is `k3d-hyhome`; API `https://0.0.0.0:6550` refuses connection | Record current-state fail; do not treat as live success |
+| ArgoCD/ESO metadata | read-only `kubectl get` only | same API refusal | Defer runtime metadata proof until cluster exists |
+| GitHub branch protection | `gh api .../branches/main/protection` | `ci-summary` required; PR review settings present with zero required approvals; admin enforcement disabled; force-push/deletion disabled | Avoid direct main bypass; use branch/PR for follow-up |
+| GitHub rulesets | `gh api .../rulesets` | no repository rulesets returned | Branch protection is the active remote policy evidence |
+| Main CI | `gh run view` and check-runs for `d8b9c19` | latest main CI completed successfully | Main branch repo-static state is green |
+| Dependabot PR #38 | `gh pr view`, failed repo-quality logs, and `gh pr close` | `actions/stale` drift to `v10.2.0` without version inventory update; closed as superseded by PR #39 | Keep replacement remediation in PR #39 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | supplementation | Spec 006 | Add VAL-SPC-006-019 for approval-bound completion audit | T-076 | repo quality gate | Revert criterion |
+| P1 | supplementation | 006 Plan/Task | Add this audit overlay and T-076 through T-079 | T-076, T-079 | repo quality gate; wiki check | Revert overlay sections |
+| P1 | CI/version inventory | `.github/workflows/stale.yml`; version inventory | Align `actions/stale` pin and SSoT inventory to `v10.2.0` | T-077 | repo quality gate; workflow parse | Revert both files together |
+| P1 | memory | progress ledger | Record live unavailable state, GitHub remote policy, and PR replacement boundary | T-078 | repo quality gate | Revert progress entry |
+
+### Verification Delta
+
+| Check | Expected result | Notes |
+| --- | --- | --- |
+| Repo quality gate | PASS | Version inventory must match workflow pin |
+| Workflow YAML parse | PASS | `.github/workflows/stale.yml` remains parseable |
+| LLM Wiki index | PASS | Generated index freshness |
+| Git diff whitespace | PASS | No whitespace errors |
+| PR checks | PASS | PR #39 passed `ci-summary`, `pre-commit`, `repo-quality-static`, `branch-policy`, `changes`, `label`, and GitGuardian checks; manifest/shell jobs skipped by path-filter design |
+
 ## Related Documents
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)

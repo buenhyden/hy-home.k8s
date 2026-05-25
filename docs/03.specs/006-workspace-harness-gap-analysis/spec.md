@@ -246,6 +246,10 @@ git diff --check
   lifecycle hook guidance for dirty states that span multiple logical units, and
   preserves task-unit staging and `git diff --cached` review as the required
   path for future human-requested commits without rewriting public history.
+- **VAL-SPC-006-019**: 2026-05-25 approval-bound completion audit records fresh
+  read-only runtime and GitHub remote evidence, keeps unavailable live k3d state
+  as a current-state limitation, and remediates the discovered CI version
+  inventory drift for `actions/stale` without direct main-branch bypass.
 
 ## Related Documents
 
