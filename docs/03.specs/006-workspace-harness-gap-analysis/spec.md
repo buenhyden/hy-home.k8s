@@ -302,6 +302,26 @@ git diff --check
   `platform` project, and local root app source paths stay under
   `gitops/platform/` or `gitops/clusters/local` without changing Kubernetes
   resource semantics or AppProject permissions.
+- **VAL-SPC-006-029**: 2026-05-25 infrastructure test inventory guardrail
+  follow-up strengthens `infrastructure/` review by adding an
+  `infrastructure/tests/*.sh` inventory to `infrastructure/README.md` and
+  validating executable bits, Bash shebangs, exact inventory coverage, nonempty
+  preconditions/result semantics/retention surfaces, and `run-all.sh` live-test
+  call parity without executing live cluster mutations or repairing kubeconfig
+  TLS state.
+- **VAL-SPC-006-030**: 2026-05-25 Traefik route inventory guardrail follow-up
+  strengthens `traefik/` review by adding a route inventory for each dynamic
+  config and validating README coverage, router host rules, `websecure`
+  entrypoints, TLS presence, service transport, backend URL
+  `https://172.18.0.240:443`, and stale backend absence in both active Traefik
+  configs and the sample app Traefik example without changing live gateway
+  state.
+- **VAL-SPC-006-031**: 2026-05-25 operations routing matrix guardrail
+  follow-up strengthens `docs/05.operations/` normalization by making the
+  stage-level routing table explicit and validating required operations buckets,
+  routing row order, target links, and template links for guides, policies,
+  runbooks, incident records, and postmortems without changing authored
+  operations content semantics.
 
 ## Related Documents
 

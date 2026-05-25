@@ -638,6 +638,87 @@ for glob_pattern, template_name in required_stage_templates:
             if heading not in document_headings:
                 fail(f"{rel(path)} missing required template heading from {template_name}: {heading}")
 
+operations_stage_path = root / "docs/05.operations"
+allowed_operations_buckets = {"guides", "policies", "runbooks", "incidents"}
+actual_operations_buckets = {
+    path.name
+    for path in operations_stage_path.iterdir()
+    if path.is_dir()
+}
+for name in sorted(allowed_operations_buckets - actual_operations_buckets):
+    fail(f"required operations bucket is missing: {rel(operations_stage_path / name)}")
+for name in sorted(actual_operations_buckets - allowed_operations_buckets):
+    fail(f"docs/05.operations contains unsupported bucket: {rel(operations_stage_path / name)}")
+
+operations_readme_path = operations_stage_path / "README.md"
+operations_readme_text = read_text(operations_readme_path)
+operations_routing_rows = markdown_table_after_heading(
+    operations_readme_text,
+    "## Operations Routing Matrix",
+)
+expected_operations_routing_header = ["필요 상황", "사용할 위치", "시작 템플릿"]
+expected_operations_routing_targets = [
+    ("./guides/README.md", "../99.templates/guide.template.md"),
+    ("./policies/README.md", "../99.templates/operation.template.md"),
+    ("./runbooks/README.md", "../99.templates/runbook.template.md"),
+    ("./incidents/README.md", "../99.templates/incident.template.md"),
+    ("./incidents/README.md", "../99.templates/postmortem.template.md"),
+]
+if len(operations_routing_rows) < 2:
+    fail("docs/05.operations/README.md Operations Routing Matrix must contain a header and routing rows")
+elif operations_routing_rows[0] != expected_operations_routing_header:
+    fail(
+        "docs/05.operations/README.md Operations Routing Matrix header must be: "
+        + " | ".join(expected_operations_routing_header)
+    )
+else:
+    actual_operations_routing_targets: list[tuple[str, str]] = []
+    for row_number, row in enumerate(operations_routing_rows[1:], start=1):
+        if len(row) != len(expected_operations_routing_header):
+            fail(
+                "docs/05.operations/README.md Operations Routing Matrix "
+                f"row {row_number} must have {len(expected_operations_routing_header)} columns"
+            )
+            continue
+        situation, location_cell, template_cell = row
+        if not situation:
+            fail(f"docs/05.operations/README.md Operations Routing Matrix row {row_number} has empty 필요 상황")
+        location_targets = list(iter_markdown_link_targets(location_cell))
+        template_targets = list(iter_markdown_link_targets(template_cell))
+        if len(location_targets) != 1:
+            fail(
+                "docs/05.operations/README.md Operations Routing Matrix "
+                f"row {row_number} must have exactly one location link"
+            )
+            continue
+        if len(template_targets) != 1:
+            fail(
+                "docs/05.operations/README.md Operations Routing Matrix "
+                f"row {row_number} must have exactly one template link"
+            )
+            continue
+        location_target = normalize_markdown_target(location_targets[0])
+        template_target = normalize_markdown_target(template_targets[0])
+        if not (operations_readme_path.parent / pathlib.Path(location_target)).exists():
+            fail(
+                "docs/05.operations/README.md Operations Routing Matrix "
+                f"row {row_number} location target is missing: {location_target}"
+            )
+        if not (operations_readme_path.parent / pathlib.Path(template_target)).exists():
+            fail(
+                "docs/05.operations/README.md Operations Routing Matrix "
+                f"row {row_number} template target is missing: {template_target}"
+            )
+        actual_operations_routing_targets.append((location_target, template_target))
+    if actual_operations_routing_targets != expected_operations_routing_targets:
+        fail(
+            "docs/05.operations/README.md Operations Routing Matrix target order must be: "
+            + ", ".join(
+                f"{location} -> {template}"
+                for location, template in expected_operations_routing_targets
+            )
+        )
+
 operations_index_roots = [
     root / "docs/05.operations/guides",
     root / "docs/05.operations/policies",
@@ -1969,6 +2050,221 @@ else:
         fail(f"scripts/README.md Script Inventory missing script row: {script_name}")
     for script_name in sorted(set(indexed_scripts) - script_names):
         fail(f"scripts/README.md Script Inventory references missing script: {script_name}")
+
+infrastructure_dir = root / "infrastructure"
+infrastructure_readme_path = infrastructure_dir / "README.md"
+infrastructure_readme = read_text(infrastructure_readme_path)
+infrastructure_shell_paths = sorted(
+    [infrastructure_dir / "bootstrap-local.sh"]
+    + list((infrastructure_dir / "tests").glob("*.sh"))
+)
+for script in infrastructure_shell_paths:
+    if not script.exists():
+        fail(f"infrastructure shell entrypoint is missing: {rel(script)}")
+        continue
+    if not os.access(script, os.X_OK):
+        fail(f"infrastructure shell entrypoint must be executable: {rel(script)}")
+    if not read_text(script).startswith("#!/usr/bin/env bash\n"):
+        fail(f"infrastructure shell entrypoint must start with bash shebang: {rel(script)}")
+
+infrastructure_test_rows = markdown_table_after_heading(
+    infrastructure_readme,
+    "## Infrastructure Test Inventory",
+)
+expected_infra_test_header = [
+    "Test script",
+    "Type",
+    "Preconditions",
+    "Result semantics",
+    "Retention / command surface",
+]
+allowed_infra_test_types = {"Static", "Live", "Live aggregate"}
+test_script_paths = sorted((infrastructure_dir / "tests").glob("*.sh"))
+test_script_names = {path.name for path in test_script_paths}
+if len(infrastructure_test_rows) < 2:
+    fail("infrastructure/README.md Infrastructure Test Inventory must contain a header and test rows")
+elif infrastructure_test_rows[0] != expected_infra_test_header:
+    fail(
+        "infrastructure/README.md Infrastructure Test Inventory header must be: "
+        + " | ".join(expected_infra_test_header)
+    )
+else:
+    indexed_test_scripts: dict[str, list[str]] = {}
+    live_test_scripts: set[str] = set()
+    for row_number, row in enumerate(infrastructure_test_rows[1:], start=1):
+        if len(row) != len(expected_infra_test_header):
+            fail(
+                "infrastructure/README.md Infrastructure Test Inventory "
+                f"row {row_number} must have {len(expected_infra_test_header)} columns"
+            )
+            continue
+        match = re.fullmatch(r"`([^`]+\.sh)`", row[0])
+        if not match:
+            fail(
+                "infrastructure/README.md Infrastructure Test Inventory "
+                f"row {row_number} must start with a backticked test script name"
+            )
+            continue
+        script_name = match.group(1)
+        if script_name in indexed_test_scripts:
+            fail(f"infrastructure/README.md Infrastructure Test Inventory duplicates test script: {script_name}")
+        indexed_test_scripts[script_name] = row
+
+        test_type = row[1]
+        preconditions = row[2]
+        result_semantics = row[3]
+        retention_surface = row[4]
+        if test_type not in allowed_infra_test_types:
+            fail(
+                "infrastructure/README.md Infrastructure Test Inventory "
+                f"row {row_number} has unsupported Type: {test_type}"
+            )
+        for label, value in [
+            ("Preconditions", preconditions),
+            ("Result semantics", result_semantics),
+            ("Retention / command surface", retention_surface),
+        ]:
+            if not value:
+                fail(
+                    "infrastructure/README.md Infrastructure Test Inventory "
+                    f"row {row_number} has empty {label}"
+                )
+        if "Tier" not in retention_surface:
+            fail(
+                "infrastructure/README.md Infrastructure Test Inventory "
+                f"row {row_number} must cite a retention or command-surface Tier"
+            )
+        if test_type == "Live":
+            live_test_scripts.add(script_name)
+
+    for script_name in sorted(test_script_names - set(indexed_test_scripts)):
+        fail(f"infrastructure/README.md Infrastructure Test Inventory missing test script row: {script_name}")
+    for script_name in sorted(set(indexed_test_scripts) - test_script_names):
+        fail(f"infrastructure/README.md Infrastructure Test Inventory references missing test script: {script_name}")
+
+    run_all_path = infrastructure_dir / "tests/run-all.sh"
+    if run_all_path.exists():
+        run_all_called = set(
+            re.findall(r'bash "\$script_dir/([^"]+\.sh)"', read_text(run_all_path))
+        )
+        missing_run_all_calls = sorted(live_test_scripts - run_all_called)
+        extra_run_all_calls = sorted(run_all_called - live_test_scripts)
+        if missing_run_all_calls:
+            fail(
+                "infrastructure/tests/run-all.sh is missing live test call(s): "
+                + ", ".join(missing_run_all_calls)
+            )
+        if extra_run_all_calls:
+            fail(
+                "infrastructure/tests/run-all.sh calls test(s) not marked Live in Infrastructure Test Inventory: "
+                + ", ".join(extra_run_all_calls)
+            )
+
+traefik_dir = root / "traefik"
+traefik_readme_path = traefik_dir / "README.md"
+traefik_readme = read_text(traefik_readme_path)
+traefik_rows = markdown_table_after_heading(traefik_readme, "## Traefik Route Inventory")
+expected_traefik_header = ["Config", "Router host", "Backend URL", "Boundary", "Validation"]
+traefik_configs = sorted(traefik_dir.glob("*.yaml"))
+traefik_config_names = {path.name for path in traefik_configs}
+if len(traefik_rows) < 2:
+    fail("traefik/README.md Traefik Route Inventory must contain a header and route rows")
+elif traefik_rows[0] != expected_traefik_header:
+    fail(
+        "traefik/README.md Traefik Route Inventory header must be: "
+        + " | ".join(expected_traefik_header)
+    )
+else:
+    indexed_traefik_configs: dict[str, list[str]] = {}
+    for row_number, row in enumerate(traefik_rows[1:], start=1):
+        if len(row) != len(expected_traefik_header):
+            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must have {len(expected_traefik_header)} columns")
+            continue
+        config_match = re.fullmatch(r"`([^`]+\.yaml)`", row[0])
+        host_match = re.fullmatch(r"`([^`]+)`", row[1])
+        backend_match = re.fullmatch(r"`([^`]+)`", row[2])
+        if not config_match:
+            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must start with a backticked config filename")
+            continue
+        if not host_match:
+            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must use a backticked Router host")
+            continue
+        if not backend_match:
+            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must use a backticked Backend URL")
+            continue
+        config_name = config_match.group(1)
+        host = host_match.group(1)
+        backend_url = backend_match.group(1)
+        boundary = row[3]
+        validation = row[4]
+        if config_name in indexed_traefik_configs:
+            fail(f"traefik/README.md Traefik Route Inventory duplicates config: {config_name}")
+        indexed_traefik_configs[config_name] = row
+        if not boundary or "Reference-only" not in boundary:
+            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must keep reference-only boundary")
+        if not validation or "validate-repo-quality-gates.sh" not in validation:
+            fail(f"traefik/README.md Traefik Route Inventory row {row_number} must cite repo quality validation")
+
+        config_path = traefik_dir / config_name
+        if not config_path.exists():
+            fail(f"traefik/README.md Traefik Route Inventory references missing config: {config_name}")
+            continue
+        try:
+            config = load_yaml(config_path)
+        except Exception as exc:
+            fail(f"Traefik config YAML parse failed for {rel(config_path)}: {exc}")
+            continue
+        http = config.get("http") if isinstance(config, dict) else {}
+        services = http.get("services") if isinstance(http, dict) else {}
+        routers = http.get("routers") if isinstance(http, dict) else {}
+        transports = http.get("serversTransports") if isinstance(http, dict) else {}
+        if not isinstance(services, dict) or len(services) != 1:
+            fail(f"{rel(config_path)} must define exactly one Traefik service")
+            continue
+        if not isinstance(routers, dict) or len(routers) != 1:
+            fail(f"{rel(config_path)} must define exactly one Traefik router")
+            continue
+        service_name, service = next(iter(services.items()))
+        router_name, router = next(iter(routers.items()))
+        load_balancer = service.get("loadBalancer") if isinstance(service, dict) else {}
+        servers = load_balancer.get("servers") if isinstance(load_balancer, dict) else []
+        urls = [
+            server.get("url")
+            for server in servers
+            if isinstance(server, dict) and server.get("url")
+        ]
+        if urls != [backend_url]:
+            fail(f"{rel(config_path)} backend URL must match README inventory: {backend_url}")
+        if load_balancer.get("passHostHeader") is not True:
+            fail(f"{rel(config_path)} loadBalancer.passHostHeader must be true")
+        transport_name = load_balancer.get("serversTransport")
+        if not transport_name or transport_name not in transports:
+            fail(f"{rel(config_path)} service must reference a defined serversTransport")
+        elif transports.get(transport_name, {}).get("insecureSkipVerify") is not True:
+            fail(f"{rel(config_path)} serversTransport must set insecureSkipVerify: true")
+        expected_rule = f"Host(`{host}`)"
+        if not isinstance(router, dict) or router.get("rule") != expected_rule:
+            fail(f"{rel(config_path)} router rule must match README inventory host: {expected_rule}")
+        entrypoints = router.get("entryPoints") if isinstance(router, dict) else []
+        if entrypoints != ["websecure"]:
+            fail(f"{rel(config_path)} router entryPoints must be exactly ['websecure']")
+        if router.get("service") != service_name:
+            fail(f"{rel(config_path)} router service must reference the defined service")
+        if "tls" not in router:
+            fail(f"{rel(config_path)} router must define tls")
+
+    for config_name in sorted(traefik_config_names - set(indexed_traefik_configs)):
+        fail(f"traefik/README.md Traefik Route Inventory missing config row: {config_name}")
+    for config_name in sorted(set(indexed_traefik_configs) - traefik_config_names):
+        fail(f"traefik/README.md Traefik Route Inventory references missing config: {config_name}")
+
+stale_traefik_backend_pattern = "k3d-hyhome-serverlb:443"
+for path in sorted([*traefik_configs, root / "examples/sample-app/traefik-k3d.yaml.example"]):
+    text = read_text(path)
+    if stale_traefik_backend_pattern in text:
+        fail(f"{rel(path)} contains stale Traefik backend: {stale_traefik_backend_pattern}")
+    if "https://172.18.0.240:443" not in text:
+        fail(f"{rel(path)} must reference ingress-nginx LoadBalancer backend https://172.18.0.240:443")
 
 script_ref_pattern = re.compile(r"scripts/[A-Za-z0-9_.-]+\.sh")
 script_command_contract_paths = [

@@ -25,6 +25,9 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| Operations Routing Matrix Guardrail Overlay | Current guardrail follow-up for `docs/05.operations/` stage bucket and template routing | VAL-SPC-006-031; T-142 through T-146 | Current |
+| Traefik Route Inventory Guardrail Overlay | Current guardrail follow-up for `traefik/*.yaml` route inventory and backend drift checks | VAL-SPC-006-030; T-137 through T-141 | Current |
+| Infrastructure Test Inventory Guardrail Overlay | Current guardrail follow-up for `infrastructure/tests/*.sh` inventory and `run-all.sh` live-test parity | VAL-SPC-006-029; T-132 through T-136 | Current |
 | GitOps Hierarchy Guardrail Overlay | Current guardrail follow-up for root app, platform app, and workload ApplicationSet hierarchy | VAL-SPC-006-028; T-127 through T-131 | Current |
 | Environment Key Contract Guardrail Overlay | Current guardrail follow-up for `.env.example` and local `.env` key-only consistency | VAL-SPC-006-027; T-122 through T-126 | Current |
 | Scripts Inventory Guardrail Overlay | Current guardrail follow-up for `scripts/` deletion/consolidation inventory evidence | VAL-SPC-006-026; T-117 through T-121 | Current |
@@ -2633,6 +2636,105 @@ state, secret policy, CI job structure, or `.env` values are changed.
 | `bash scripts/validate-repo-quality-gates.sh .` | PASS | Repository quality gates passed after GitOps guardrail edit |
 | `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
 | `bash -n scripts/validate-gitops-structure.sh` | PASS | Validator shell syntax after hierarchy guardrail edit |
+| `git diff --check` | PASS | No whitespace errors |
+
+## Infrastructure Test Inventory Guardrail Overlay - 2026-05-25
+
+### Intent and Boundary
+
+This overlay follows the continuation audit for `infrastructure/`. It keeps the
+change repo-static and documentation/governance-only: no live cluster command,
+Kubernetes resource semantics, AppProject permissions, secret policy, CI job
+structure, external service state, or kubeconfig TLS trust is changed.
+
+### Gap Table
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Infrastructure test inventory | `infrastructure/README.md` described static/live test categories but did not list each `infrastructure/tests/*.sh` command with preconditions, result semantics, and retention surface | `infrastructure/README.md`; `infrastructure/tests/` | Test deletion, rename, or consolidation drift could recur without an explicit owner-facing inventory | Low | improvement | P1 |
+| Live aggregate parity | `run-all.sh` called live tests, but the repo quality gate did not verify that the live-test inventory and aggregate call list stay in sync | `infrastructure/tests/run-all.sh`; `scripts/validate-repo-quality-gates.sh` | A live test could be added or removed without updating the aggregate entrypoint or README contract | Medium | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `infrastructure/README.md`; `scripts/validate-repo-quality-gates.sh` | Add Infrastructure Test Inventory and validate executable bits, Bash shebangs, exact test rows, nonempty preconditions/result semantics/retention surfaces, and `run-all.sh` live-test call parity | T-132 through T-134 | repo quality, shell syntax, static contracts, wiki check | Revert README and validator edits |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-029 and verification | T-135, T-136 | repo quality and wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New infrastructure test inventory and `run-all.sh` parity guardrail passed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | Shell syntax for infrastructure, scripts, and hooks |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static infrastructure contracts still pass |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `git diff --check` | PASS | No whitespace errors |
+
+## Traefik Route Inventory Guardrail Overlay - 2026-05-25
+
+### Intent and Boundary
+
+This overlay follows the continuation audit for `traefik/`. It keeps the change
+repo-static and reference-only: no external Traefik runtime, live gateway state,
+Kubernetes resource semantics, AppProject permissions, secret policy, CI job
+structure, or kubeconfig TLS trust is changed.
+
+### Gap Table
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Traefik route inventory | `traefik/README.md` described the backend contract but did not list each dynamic config with host/backend ownership | `traefik/README.md`; `traefik/*.yaml` | Route/backend drift could recur without a row-level owner-facing inventory | Low | improvement | P1 |
+| Backend drift guardrail | Stale backend checks were recorded as targeted evidence but not enforced by the repo quality gate | `scripts/validate-repo-quality-gates.sh`; `examples/sample-app/traefik-k3d.yaml.example` | Sample or active dynamic configs could silently regress to the old Docker DNS backend | Medium | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `traefik/README.md`; `scripts/validate-repo-quality-gates.sh` | Add Traefik Route Inventory and validate config coverage, router host, backend URL, `websecure`, TLS, service transport, and stale backend absence for active configs plus sample app example | T-137 through T-139 | repo quality, manifest validation, shell syntax, wiki check | Revert README and validator edits |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-030 and verification | T-140, T-141 | repo quality and wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New Traefik route inventory and backend drift guardrail passed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed for 104 files; optional `kube-linter` skipped locally because it is not installed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `git diff --check` | PASS | No whitespace errors |
+
+## Operations Routing Matrix Guardrail Overlay - 2026-05-25
+
+### Intent and Boundary
+
+This overlay follows the continuation audit for `docs/05.operations/`. It keeps
+the change structural and repo-static: no operations content semantics, live
+cluster state, secret policy, GitOps manifests, CI job structure, or runtime
+configuration are changed.
+
+### Gap Table
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Operations stage routing | The stage README routed guides, policies, runbooks, incidents, and postmortems, but the table had no explicit heading for targeted validation | `docs/05.operations/README.md` | Stage-level routing drift could recur outside the existing subfolder index guardrail | Low | supplementation | P1 |
+| Operations bucket/template validation | Repo quality enforced subfolder index/frontmatter parity but did not validate exact operations buckets or template-routing links from the stage README | `scripts/validate-repo-quality-gates.sh`; `docs/05.operations/README.md` | New or missing operations buckets or wrong template links could weaken SDD stage routing | Medium | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `docs/05.operations/README.md`; `scripts/validate-repo-quality-gates.sh` | Add `Operations Routing Matrix` heading and validate required buckets, routing row order, target links, and template links for guides, policies, runbooks, incidents, and postmortems | T-142 through T-144 | repo quality, wiki check, shell syntax | Revert README and validator edits |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-031 and verification | T-145, T-146 | repo quality and wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New operations routing matrix and bucket/template guardrail passed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
 | `git diff --check` | PASS | No whitespace errors |
 
 ## Related Documents

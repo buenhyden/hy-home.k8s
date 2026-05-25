@@ -10,6 +10,8 @@
 `05.operations/`는 안정 상태 운영 지식, 운영 정책, 실행 런북, 사고 기록을 묶는 운영 허브다.
 안내 문서는 `guides/`, 정책은 `policies/`, 절차는 `runbooks/`, 사고와 회고는 `incidents/`에 둔다.
 
+## Operations Routing Matrix
+
 | 필요 상황 | 사용할 위치 | 시작 템플릿 |
 | --- | --- | --- |
 | 시스템을 이해하거나 온보딩 절차를 따라야 함 | [guides](./guides/README.md) | [guide.template.md](../99.templates/guide.template.md) |

@@ -24,6 +24,19 @@ Ingress NGINX는 2026-03-24 이후 upstream retired 상태이므로 cloud target
   live gateway 반영은 `hy-home.docker` 운영 절차에서 별도로 승인하고
   증적을 남긴다.
 
+## Traefik Route Inventory
+
+이 표는 `traefik/*.yaml` dynamic config의 repo-static 계약이다. 모든 행은
+ingress-nginx `LoadBalancer` backend를 가리키며, live gateway 반영 여부는
+`hy-home.docker` 운영 절차에서 별도로 증명한다.
+
+| Config | Router host | Backend URL | Boundary | Validation |
+| --- | --- | --- | --- | --- |
+| `argocd-k3d.yaml` | `argocd.127.0.0.1.nip.io` | `https://172.18.0.240:443` | Reference-only external Traefik dynamic config for local ArgoCD UI. | `validate-repo-quality-gates.sh` checks host, backend, TLS, and `websecure`. |
+| `headlamp-k3d.yaml` | `headlamp.127.0.0.1.nip.io` | `https://172.18.0.240:443` | Reference-only external Traefik dynamic config for local Headlamp UI. | `validate-repo-quality-gates.sh` checks host, backend, TLS, and `websecure`. |
+| `kiali-k3d.yaml` | `kiali.127.0.0.1.nip.io` | `https://172.18.0.240:443` | Reference-only external Traefik dynamic config for local Kiali UI. | `validate-repo-quality-gates.sh` checks host, backend, TLS, and `websecure`. |
+| `rollouts-k3d.yaml` | `rollouts.127.0.0.1.nip.io` | `https://172.18.0.240:443` | Reference-only external Traefik dynamic config for local Argo Rollouts UI. | `validate-repo-quality-gates.sh` checks host, backend, TLS, and `websecure`. |
+
 ## Audience
 
 이 README의 주요 독자:

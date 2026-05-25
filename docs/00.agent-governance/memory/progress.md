@@ -8,6 +8,117 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-25 — operations routing matrix guardrail follow-up
+
+- **Date**: 2026-05-25
+- **Layer**: operations docs, validation, SDD
+- **Status**: partial
+- **Tags**: #operations #validation #sdd
+
+#### Progress
+
+- Rechecked whether `docs/05.operations/README.md` stage-level routing had a
+  reusable validation target beyond the existing subfolder index/frontmatter
+  guardrail.
+- Added an explicit Operations Routing Matrix heading to the stage README so
+  the routing table is targetable by the repository quality gate.
+- Extended `scripts/validate-repo-quality-gates.sh` so required operations
+  buckets, routing row order, target links, and template links are validated
+  for guides, policies, runbooks, incident records, and postmortems.
+- Kept the change structural. Authored operations content semantics, live
+  cluster state, GitOps manifests, secrets, and CI job structure were not
+  changed.
+- Documented the guardrail as VAL-SPC-006-031 and T-142 through T-146 in the
+  existing 006 SDD chain.
+
+#### Memory
+
+- `docs/05.operations` needs both subfolder index/frontmatter parity and
+  stage-level bucket/template routing validation. They catch different drift
+  classes.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `git diff --check` PASS.
+
+### 2026-05-25 — Traefik route inventory guardrail follow-up
+
+- **Date**: 2026-05-25
+- **Layer**: traefik, validation, SDD
+- **Status**: partial
+- **Tags**: #traefik #validation #sdd
+
+#### Progress
+
+- Rechecked whether `traefik/*.yaml` route and backend contracts had reusable
+  validation coverage beyond ad hoc stale-backend checks.
+- Added Traefik Route Inventory to `traefik/README.md` with config filename,
+  router host, backend URL, reference-only boundary, and validation surface.
+- Extended `scripts/validate-repo-quality-gates.sh` so each Traefik dynamic
+  config must match the README inventory for router host and backend URL, use
+  `websecure`, define TLS, preserve service transport, and avoid stale backend
+  references.
+- Included `examples/sample-app/traefik-k3d.yaml.example` in the stale backend
+  guardrail so onboarding examples stay aligned with the ingress-nginx
+  `LoadBalancer` backend.
+- Documented the guardrail as VAL-SPC-006-030 and T-137 through T-141 in the
+  existing 006 SDD chain.
+
+#### Memory
+
+- Traefik dynamic configs are reference-only, but their host/backend contracts
+  still need row-level repo-static validation because they bridge this GitOps
+  workspace with the external `hy-home.docker` gateway.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS; optional `kube-linter`
+  skipped locally because it is not installed.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `git diff --check` PASS.
+
+### 2026-05-25 — infrastructure test inventory guardrail follow-up
+
+- **Date**: 2026-05-25
+- **Layer**: infrastructure, validation, SDD
+- **Status**: partial
+- **Tags**: #infrastructure #validation #sdd
+
+#### Progress
+
+- Rechecked whether `infrastructure/tests/*.sh` had row-level inventory and
+  deletion/consolidation evidence comparable to the `scripts/` guardrail.
+- Added Infrastructure Test Inventory to `infrastructure/README.md` with test
+  type, preconditions, result semantics, and retention or command surface.
+- Extended `scripts/validate-repo-quality-gates.sh` so infrastructure shell
+  entrypoints must be executable, use the expected Bash shebang, and have exact
+  inventory coverage for `infrastructure/tests/*.sh`.
+- Added `run-all.sh` parity validation so every test marked `Live` in the
+  inventory is called by the live aggregate and the aggregate does not call
+  unlisted live tests.
+- Documented the guardrail as VAL-SPC-006-029 and T-132 through T-136 in the
+  existing 006 SDD chain.
+
+#### Memory
+
+- Infrastructure test review should preserve both static/live separation and
+  row-level command contracts. `run-all.sh` parity is the cheap repo-static
+  guardrail for live test inventory drift.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `git diff --check` PASS.
+
 ### 2026-05-25 — GitOps hierarchy guardrail follow-up
 
 - **Date**: 2026-05-25

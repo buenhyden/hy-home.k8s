@@ -186,6 +186,21 @@ pre-check와 follow-up으로 남긴다.
 | T-129 | Update GitOps and scripts README command contract wording for hierarchy validation | doc | VAL-SPC-006-028 | GitOps Hierarchy Guardrail | README review | Platform | Done |
 | T-130 | Record GitOps hierarchy guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-028 | GitOps Hierarchy Guardrail | 006 chain check | Platform | Done |
 | T-131 | Append progress memory for the GitOps hierarchy guardrail follow-up | memory | VAL-SPC-006-028 | GitOps Hierarchy Guardrail | progress ledger entry | Platform | Done |
+| T-132 | Recheck `infrastructure/tests/*.sh` inventory and live aggregate validation strength | doc | VAL-SPC-006-029 | Infrastructure Test Inventory Guardrail | current infrastructure test review | Platform | Done |
+| T-133 | Add Infrastructure Test Inventory to `infrastructure/README.md` | doc | VAL-SPC-006-029 | Infrastructure Test Inventory Guardrail | README review | Platform | Done |
+| T-134 | Extend repository quality gate for infrastructure test inventory and `run-all.sh` parity | test | VAL-SPC-006-029 | Infrastructure Test Inventory Guardrail | repo quality gate | Platform | Done |
+| T-135 | Record infrastructure test inventory guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-029 | Infrastructure Test Inventory Guardrail | 006 chain check | Platform | Done |
+| T-136 | Append progress memory for the infrastructure test inventory guardrail follow-up | memory | VAL-SPC-006-029 | Infrastructure Test Inventory Guardrail | progress ledger entry | Platform | Done |
+| T-137 | Recheck `traefik/*.yaml` route inventory and backend drift validation strength | doc | VAL-SPC-006-030 | Traefik Route Inventory Guardrail | current Traefik route review | Platform | Done |
+| T-138 | Add Traefik Route Inventory to `traefik/README.md` | doc | VAL-SPC-006-030 | Traefik Route Inventory Guardrail | README review | Platform | Done |
+| T-139 | Extend repository quality gate for Traefik route inventory and backend drift checks | test | VAL-SPC-006-030 | Traefik Route Inventory Guardrail | repo quality gate | Platform | Done |
+| T-140 | Record Traefik route inventory guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-030 | Traefik Route Inventory Guardrail | 006 chain check | Platform | Done |
+| T-141 | Append progress memory for the Traefik route inventory guardrail follow-up | memory | VAL-SPC-006-030 | Traefik Route Inventory Guardrail | progress ledger entry | Platform | Done |
+| T-142 | Recheck `docs/05.operations/` stage routing and bucket/template validation strength | doc | VAL-SPC-006-031 | Operations Routing Matrix Guardrail | current operations routing review | Platform | Done |
+| T-143 | Add explicit Operations Routing Matrix heading to `docs/05.operations/README.md` | doc | VAL-SPC-006-031 | Operations Routing Matrix Guardrail | README review | Platform | Done |
+| T-144 | Extend repository quality gate for operations bucket and template-routing checks | test | VAL-SPC-006-031 | Operations Routing Matrix Guardrail | repo quality gate | Platform | Done |
+| T-145 | Record operations routing matrix guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-031 | Operations Routing Matrix Guardrail | 006 chain check | Platform | Done |
+| T-146 | Append progress memory for the operations routing matrix guardrail follow-up | memory | VAL-SPC-006-031 | Operations Routing Matrix Guardrail | progress ledger entry | Platform | Done |
 
 ## Suggested Types
 
@@ -416,6 +431,63 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-129 Update GitOps and scripts README command contract wording.
 - [x] T-130 Record this follow-up in the 006 SDD chain.
 - [x] T-131 Append progress memory for this follow-up.
+
+### Phase 27 - Infrastructure Test Inventory Guardrail
+
+- [x] T-132 Recheck `infrastructure/tests/*.sh` inventory and live aggregate validation strength.
+- [x] T-133 Add Infrastructure Test Inventory to `infrastructure/README.md`.
+- [x] T-134 Extend repository quality gate for infrastructure test inventory and `run-all.sh` parity.
+- [x] T-135 Record this follow-up in the 006 SDD chain.
+- [x] T-136 Append progress memory for this follow-up.
+
+### Phase 28 - Traefik Route Inventory Guardrail
+
+- [x] T-137 Recheck `traefik/*.yaml` route inventory and backend drift validation strength.
+- [x] T-138 Add Traefik Route Inventory to `traefik/README.md`.
+- [x] T-139 Extend repository quality gate for Traefik route inventory and backend drift checks.
+- [x] T-140 Record this follow-up in the 006 SDD chain.
+- [x] T-141 Append progress memory for this follow-up.
+
+### Phase 29 - Operations Routing Matrix Guardrail
+
+- [x] T-142 Recheck `docs/05.operations/` stage routing and bucket/template validation strength.
+- [x] T-143 Add explicit Operations Routing Matrix heading to `docs/05.operations/README.md`.
+- [x] T-144 Extend repository quality gate for operations bucket and template-routing checks.
+- [x] T-145 Record this follow-up in the 006 SDD chain.
+- [x] T-146 Append progress memory for this follow-up.
+
+## Operations Routing Matrix Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current operations routing matrix guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current operations routing matrix guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current operations routing matrix guardrail run |
+| `git diff --check` | PASS | current operations routing matrix guardrail run |
+| Guardrail implementation | complete | `docs/05.operations/README.md`; `scripts/validate-repo-quality-gates.sh` |
+
+## Traefik Route Inventory Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current Traefik route inventory guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current Traefik route inventory guardrail run |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional `kube-linter` skipped locally because it is not installed | current Traefik route inventory guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current Traefik route inventory guardrail run |
+| `git diff --check` | PASS | current Traefik route inventory guardrail run |
+| Guardrail implementation | complete | `traefik/README.md`; `scripts/validate-repo-quality-gates.sh` |
+
+## Infrastructure Test Inventory Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current infrastructure test inventory guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current infrastructure test inventory guardrail run |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | current infrastructure test inventory guardrail run |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | current infrastructure test inventory guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current infrastructure test inventory guardrail run |
+| `git diff --check` | PASS | current infrastructure test inventory guardrail run |
+| Guardrail implementation | complete | `infrastructure/README.md`; `scripts/validate-repo-quality-gates.sh` |
 
 ## GitOps Hierarchy Guardrail Verification Summary
 
