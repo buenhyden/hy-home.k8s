@@ -8,6 +8,51 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-26 — Temporary kubeconfig live validation follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: WSL2, Docker, k3d, Kubernetes, ArgoCD, External Secrets, Vault, validation, SDD
+- **Status**: partial
+- **Tags**: #wsl2 #docker #k3d #kubernetes #argocd #external-secrets #vault #validation #sdd
+
+#### Progress
+
+- Used the explicit approval for approval-gated items to run read-only live
+  runtime checks.
+- Confirmed Docker context, running external-service containers, and the
+  `hyhome` k3d cluster are present.
+- Reproduced the default kubeconfig TLS blocker:
+  `x509: certificate signed by unknown authority`.
+- Generated a k3d kubeconfig under `/tmp` and used it only through the
+  `KUBECONFIG` environment variable, without modifying `~/.kube/config`.
+- Ran `infrastructure/tests/run-all.sh` with the temporary kubeconfig and
+  proved the live aggregate checks pass.
+- Recorded `VAL-SPC-006-046` and `T-217` through `T-221` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `docker context show` — PASS; context is `default`.
+- `docker ps --format '{{.Names}}\t{{.Status}}\t{{.Ports}}'` — PASS; PostgreSQL,
+  Vault, Valkey, and k3d containers were running.
+- `k3d cluster list` — PASS; `hyhome` reported `1/1` server and `3/3` agents.
+- `kubectl config current-context` — PASS; current context is `k3d-hyhome`.
+- `kubectl version --request-timeout=5s` — BLOCKED for default kubeconfig with
+  `x509: certificate signed by unknown authority`.
+- `k3d kubeconfig get hyhome > /tmp/hy-home-k8s-k3d-hyhome.kubeconfig` — PASS.
+- `KUBECONFIG=/tmp/hy-home-k8s-k3d-hyhome.kubeconfig kubectl version --request-timeout=5s` — PASS with a kubectl client/server version-skew warning.
+- `KUBECONFIG=/tmp/hy-home-k8s-k3d-hyhome.kubeconfig bash infrastructure/tests/run-all.sh` — PASS.
+- Temporary kubeconfig cleanup — PASS; `/tmp/hy-home-k8s-k3d-hyhome.kubeconfig`
+  was removed after validation.
+
+#### Follow-up
+
+- Default kubeconfig TLS trust repair remains an operator-owned local runtime
+  action; the temporary kubeconfig result proves live cluster health, not
+  default kubeconfig repair.
+- Traefik 443 enforcement remains optional because `run-all.sh` skips it unless
+  `CHECK_TRAEFIK_443=true` is set.
+
 ### 2026-05-26 — Script classification matrix guardrail follow-up
 
 - **Date**: 2026-05-26

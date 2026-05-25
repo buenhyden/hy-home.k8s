@@ -405,6 +405,12 @@ git diff --check
   terms `one-off`, `reusable`, `operations-critical`, `development-helper`, or
   `unknown`, and that current active scripts remain non-deletion and
   non-consolidation candidates without deleting, renaming, or merging scripts.
+- **VAL-SPC-006-046**: 2026-05-26 approved temporary-kubeconfig live validation
+  follow-up strengthens WSL2/k3d runtime evidence by recording that the default
+  kubeconfig still fails TLS trust, while a k3d-generated temporary kubeconfig
+  proves the read-only live aggregate `infrastructure/tests/run-all.sh` passes
+  without modifying `~/.kube/config`, Kubernetes resources, Docker networks, or
+  secret values.
 
 ## Related Documents
 

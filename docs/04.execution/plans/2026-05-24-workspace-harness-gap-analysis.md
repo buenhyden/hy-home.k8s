@@ -25,6 +25,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| Temporary Kubeconfig Live Validation Overlay | Current approved runtime follow-up proving read-only live validation passes with a k3d-generated temporary kubeconfig while default kubeconfig TLS trust remains unrepaired | VAL-SPC-006-046; T-217 through T-221 | Current |
 | Script Classification Matrix Guardrail Overlay | Current guardrail follow-up for task-contract script classifications and deletion/consolidation candidate evidence in `scripts/README.md` | VAL-SPC-006-045; T-212 through T-216 | Current |
 | Docker Network and RBAC Create Boundary Guardrail Overlay | Current guardrail follow-up for Docker network mutation and RBAC create command safety markers in operations docs | VAL-SPC-006-044; T-207 through T-211 | Current |
 | Vault Policy Write Boundary Guardrail Overlay | Current guardrail follow-up for `vault policy write` command safety markers in operations docs | VAL-SPC-006-043; T-202 through T-206 | Current |
@@ -55,6 +56,41 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 Use the newest dated overlay for current state. Preserve older overlays as
 evidence snapshots unless a later overlay explicitly supersedes them.
+
+## Temporary Kubeconfig Live Validation Overlay
+
+This overlay follows explicit approval to proceed on approval-gated items. It
+keeps the runtime action read-only: no Kubernetes resource, Docker network,
+Vault policy, secret value, `.env` value, or `~/.kube/config` file is changed.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Live runtime proof | Default kubeconfig still fails TLS trust even though Docker, k3d, and external-service containers are running | `kubectl version --request-timeout=5s`; `docker ps`; `k3d cluster list` | Static pass could still be mistaken for live readiness unless the kubeconfig failure mode is separated from cluster health | Medium | supplementation | P1 |
+| Kubeconfig diagnostic boundary | Existing docs said a temporary `KUBECONFIG` can be intentional, but did not record the approved temporary-kubeconfig live validation path and result | `infrastructure/README.md`; `infrastructure/tests/run-all.sh` | Operators could repair `~/.kube/config` unnecessarily before proving the live platform state | Low | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | live read-only validation | Docker, k3d, kubectl, `infrastructure/tests/run-all.sh` | Confirm default kubeconfig blocker, generate k3d temporary kubeconfig under `/tmp`, and run the aggregate live validation with `KUBECONFIG` set | T-217 through T-219 | command output and exit status | Remove temporary `/tmp` kubeconfig if desired; no repo rollback needed |
+| P1 | documentation | `infrastructure/README.md` | Document temporary-kubeconfig diagnostic boundary without claiming default kubeconfig repair | T-220 | repo quality and static checks | Revert README note |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-046 and verification | T-220, T-221 | repo quality and diff check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `docker context show` | PASS | Docker context is `default` |
+| `docker ps --format '{{.Names}}\t{{.Status}}\t{{.Ports}}'` | PASS | PostgreSQL, Vault, Valkey, and k3d containers were running |
+| `k3d cluster list` | PASS | `hyhome` showed `1/1` server, `3/3` agents, load balancer enabled |
+| `kubectl config current-context` | PASS | Current context is `k3d-hyhome` |
+| `kubectl version --request-timeout=5s` | BLOCKED | Default kubeconfig still fails TLS trust with `x509: certificate signed by unknown authority` |
+| `k3d kubeconfig get hyhome > /tmp/hy-home-k8s-k3d-hyhome.kubeconfig` | PASS | Temporary kubeconfig generated under `/tmp`; `~/.kube/config` not modified |
+| `KUBECONFIG=/tmp/hy-home-k8s-k3d-hyhome.kubeconfig kubectl version --request-timeout=5s` | PASS | API server reached; kubectl reported client/server minor version skew warning |
+| `KUBECONFIG=/tmp/hy-home-k8s-k3d-hyhome.kubeconfig bash infrastructure/tests/run-all.sh` | PASS | Cluster topology, MetalLB, GitOps, ESO/Vault, external services, network policy, and ingress/TLS checks passed; Traefik 443 enforcement stayed skipped by default |
+| temporary kubeconfig cleanup | PASS | `/tmp/hy-home-k8s-k3d-hyhome.kubeconfig` removed after validation |
 
 ## Script Classification Matrix Guardrail Overlay
 

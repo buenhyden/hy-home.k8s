@@ -271,6 +271,11 @@ pre-check와 follow-up으로 남긴다.
 | T-214 | Extend repository quality gate for script classification matrix checks | test | VAL-SPC-006-045 | Script Classification Matrix Guardrail | repo quality gate | Platform | Done |
 | T-215 | Record script classification guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-045 | Script Classification Matrix Guardrail | 006 chain check | Platform | Done |
 | T-216 | Append progress memory for script classification guardrail follow-up | memory | VAL-SPC-006-045 | Script Classification Matrix Guardrail | progress ledger entry | Platform | Done |
+| T-217 | Recheck approved live validation blocker with default kubeconfig | eval | VAL-SPC-006-046 | Temporary Kubeconfig Live Validation | current runtime check | Platform | Done |
+| T-218 | Generate temporary k3d kubeconfig under `/tmp` without modifying `~/.kube/config` | eval | VAL-SPC-006-046 | Temporary Kubeconfig Live Validation | temporary kubeconfig check | Platform | Done |
+| T-219 | Run read-only live aggregate validation with the temporary kubeconfig | test | VAL-SPC-006-046 | Temporary Kubeconfig Live Validation | `infrastructure/tests/run-all.sh` | Platform | Done |
+| T-220 | Record temporary-kubeconfig live validation in the 006 Plan/Spec/Task and infrastructure README | doc | VAL-SPC-006-046 | Temporary Kubeconfig Live Validation | 006 chain check | Platform | Done |
+| T-221 | Append progress memory for temporary-kubeconfig live validation | memory | VAL-SPC-006-046 | Temporary Kubeconfig Live Validation | progress ledger entry | Platform | Done |
 
 ## Suggested Types
 
@@ -664,6 +669,28 @@ pre-check와 follow-up으로 남긴다.
 | `bash infrastructure/tests/verify-contracts-static.sh` | PASS | current script classification guardrail run |
 | `git diff --check` | PASS | current script classification guardrail run |
 | Guardrail implementation | complete | `scripts/README.md`; `scripts/validate-repo-quality-gates.sh` |
+
+### Phase 44 - Temporary Kubeconfig Live Validation
+
+- [x] T-217 Recheck approved live validation blocker with default kubeconfig.
+- [x] T-218 Generate a temporary k3d kubeconfig under `/tmp` without modifying `~/.kube/config`.
+- [x] T-219 Run read-only live aggregate validation with the temporary kubeconfig.
+- [x] T-220 Record this follow-up in the 006 SDD chain and infrastructure README.
+- [x] T-221 Append progress memory for this follow-up.
+
+## Temporary Kubeconfig Live Validation Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `docker context show` | PASS | `default` |
+| `docker ps --format '{{.Names}}\t{{.Status}}\t{{.Ports}}'` | PASS | PostgreSQL, Vault, Valkey, and k3d containers running |
+| `k3d cluster list` | PASS | `hyhome` has `1/1` server and `3/3` agents |
+| `kubectl config current-context` | PASS | default context is `k3d-hyhome` |
+| `kubectl version --request-timeout=5s` | BLOCKED | default kubeconfig still fails TLS trust with `x509: certificate signed by unknown authority` |
+| `k3d kubeconfig get hyhome > /tmp/hy-home-k8s-k3d-hyhome.kubeconfig` | PASS | temporary kubeconfig generated under `/tmp`; no `~/.kube/config` mutation |
+| `KUBECONFIG=/tmp/hy-home-k8s-k3d-hyhome.kubeconfig kubectl version --request-timeout=5s` | PASS | API server reachable; client/server minor version skew warning observed |
+| `KUBECONFIG=/tmp/hy-home-k8s-k3d-hyhome.kubeconfig bash infrastructure/tests/run-all.sh` | PASS | cluster, GitOps, ESO/Vault, external services, network policy, ingress/TLS checks passed; Traefik 443 enforcement skipped by default |
+| temporary kubeconfig cleanup | PASS | `/tmp/hy-home-k8s-k3d-hyhome.kubeconfig` removed after validation |
 
 ## Vault Policy Write Boundary Guardrail Verification Summary
 
