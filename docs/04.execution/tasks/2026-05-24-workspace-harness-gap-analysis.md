@@ -734,8 +734,9 @@ is stored in the linked plan to keep this task document concise.
   - Latest `d8b9c19` main CI run - PASS; `ci-summary`, `repo-quality-static`,
     `pre-commit`, and `shell-static` passed; `manifest-static` and
     `branch-policy` skipped by path/branch policy design.
-  - Open Dependabot PR #38 - FAIL; `repo-quality-static` and `ci-summary`
-    failed because `actions/stale` changed to `v10.2.0` without matching
+  - Dependabot PR #38 - CLOSED as superseded by PR #39; before closure,
+    `repo-quality-static` and `ci-summary` failed because `actions/stale`
+    changed to `v10.2.0` without matching
     `docs/90.references/versions/tech-stack-version-inventory.md` and the PR
     was based on stale main state.
   - Replacement PR #39 - PASS; `ci-summary`, `pre-commit`,

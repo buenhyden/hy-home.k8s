@@ -28,13 +28,14 @@ inventory stays in `scripts/README.md`.
   not enforce admins.
 - Confirmed latest main commit `d8b9c19` has successful CI, including
   `ci-summary`.
-- Found open Dependabot PR #38 failing because `actions/stale` changed to
-  `v10.2.0` without the matching version inventory update.
+- Found Dependabot PR #38 failing because `actions/stale` changed to `v10.2.0`
+  without the matching version inventory update.
 - Updated `.github/workflows/stale.yml` and
   `docs/90.references/versions/tech-stack-version-inventory.md` together to
   `actions/stale@v10.2.0` on a `codex/` branch instead of bypassing `main`.
 - Opened replacement PR #39 and confirmed its remote CI passed, including
   `ci-summary`, `pre-commit`, `repo-quality-static`, and `branch-policy`.
+- Closed PR #38 as superseded by PR #39 to remove the stale failing duplicate.
 
 #### Memory
 

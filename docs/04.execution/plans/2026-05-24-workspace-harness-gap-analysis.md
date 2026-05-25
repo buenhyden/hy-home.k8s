@@ -1902,7 +1902,7 @@ or `kubectl patch`, rewrite public history, or bypass `main` branch protection.
 | GitHub branch protection | `gh api .../branches/main/protection` | `ci-summary` required; PR review settings present with zero required approvals; admin enforcement disabled; force-push/deletion disabled | Avoid direct main bypass; use branch/PR for follow-up |
 | GitHub rulesets | `gh api .../rulesets` | no repository rulesets returned | Branch protection is the active remote policy evidence |
 | Main CI | `gh run view` and check-runs for `d8b9c19` | latest main CI completed successfully | Main branch repo-static state is green |
-| Open PR #38 | `gh pr view` and failed repo-quality logs | `actions/stale` drift to `v10.2.0` without version inventory update | Create replacement remediation branch/PR |
+| Dependabot PR #38 | `gh pr view`, failed repo-quality logs, and `gh pr close` | `actions/stale` drift to `v10.2.0` without version inventory update; closed as superseded by PR #39 | Keep replacement remediation in PR #39 |
 
 ### Implementation Plan Delta
 
