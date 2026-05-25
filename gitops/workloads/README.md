@@ -43,6 +43,11 @@ workloads/
 
 ## Workload Coverage Matrix
 
+이 표는 ApplicationSet이 스캔하는 실제 workload 디렉터리와 검증 명령을
+연결한다. `validate-repo-quality-gates.sh`는 이 표가 `workloads/*`
+디렉터리와 동기화되어 있고, 각 workload가 GitOps 구조, manifest, secret
+handling 검증 명령을 명시하는지 확인한다.
+
 | Workload | Purpose and owner | Lifecycle and config | Dependencies, routes, secrets | Validation and operations |
 | --- | --- | --- | --- | --- |
 | `adminer` | Reference admin workload owned by platform maintainers and app operators. | Managed by the local apps ApplicationSet from `gitops/workloads/adminer/kustomization.yaml`; includes Rollout, services, ingress, Istio routing, PeerAuthentication, and AnalysisTemplate. | Depends on `apps` namespace, Argo Rollouts, ingress, Istio, and the PostgreSQL external service route. | Validate with `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, and `bash scripts/check-secret-handling.sh .`; live rollout and ingress checks require intentional cluster validation. |

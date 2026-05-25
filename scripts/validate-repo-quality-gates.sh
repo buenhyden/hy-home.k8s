@@ -2051,9 +2051,225 @@ else:
     for script_name in sorted(set(indexed_scripts) - script_names):
         fail(f"scripts/README.md Script Inventory references missing script: {script_name}")
 
+gitops_dir = root / "gitops"
+gitops_readme_path = gitops_dir / "README.md"
+gitops_readme = read_text(gitops_readme_path)
+expected_gitops_service_header = [
+    "Area",
+    "Purpose and owner",
+    "Lifecycle and config",
+    "Dependencies, routes, secrets",
+    "Validation and operations",
+]
+expected_gitops_service_areas = (
+    ["clusters/local", "apps/root"]
+    + [f"platform/{path.name}" for path in sorted((gitops_dir / "platform").iterdir()) if path.is_dir()]
+    + [f"workloads/{path.name}" for path in sorted((gitops_dir / "workloads").iterdir()) if path.is_dir()]
+)
+gitops_service_rows = markdown_table_after_heading(gitops_readme, "## Service Coverage Matrix")
+if len(gitops_service_rows) < 2:
+    fail("gitops/README.md Service Coverage Matrix must contain a header and service rows")
+elif gitops_service_rows[0] != expected_gitops_service_header:
+    fail(
+        "gitops/README.md Service Coverage Matrix header must be: "
+        + " | ".join(expected_gitops_service_header)
+    )
+else:
+    indexed_gitops_areas: list[str] = []
+    seen_gitops_areas: set[str] = set()
+    for row_number, row in enumerate(gitops_service_rows[1:], start=1):
+        if len(row) != len(expected_gitops_service_header):
+            fail(
+                "gitops/README.md Service Coverage Matrix "
+                f"row {row_number} must have {len(expected_gitops_service_header)} columns"
+            )
+            continue
+        area_cell, purpose, lifecycle, dependencies, validation = row
+        match = re.fullmatch(r"`([^`]+)`", area_cell)
+        if not match:
+            fail(
+                "gitops/README.md Service Coverage Matrix "
+                f"row {row_number} must start with a backticked area path"
+            )
+            continue
+        area = match.group(1)
+        if area in seen_gitops_areas:
+            fail(f"gitops/README.md Service Coverage Matrix duplicates area: {area}")
+        seen_gitops_areas.add(area)
+        indexed_gitops_areas.append(area)
+        area_path = gitops_dir / area
+        if not area_path.is_dir():
+            fail(f"gitops/README.md Service Coverage Matrix references missing directory: gitops/{area}")
+        for label, value in [
+            ("Purpose and owner", purpose),
+            ("Lifecycle and config", lifecycle),
+            ("Dependencies, routes, secrets", dependencies),
+            ("Validation and operations", validation),
+        ]:
+            if not value:
+                fail(f"gitops/README.md Service Coverage Matrix row {row_number} has empty {label}")
+        if "owned by" not in purpose:
+            fail(f"gitops/README.md Service Coverage Matrix row {row_number} must name ownership")
+        if not any(marker in validation for marker in ["`bash ", "Validate", "validate-", "verify-"]):
+            fail(f"gitops/README.md Service Coverage Matrix row {row_number} must cite a validation command")
+    if indexed_gitops_areas != expected_gitops_service_areas:
+        fail(
+            "gitops/README.md Service Coverage Matrix area order must match actual GitOps directories: "
+            + ", ".join(expected_gitops_service_areas)
+        )
+
+workloads_readme_path = gitops_dir / "workloads/README.md"
+workloads_readme = read_text(workloads_readme_path)
+expected_workload_header = [
+    "Workload",
+    "Purpose and owner",
+    "Lifecycle and config",
+    "Dependencies, routes, secrets",
+    "Validation and operations",
+]
+expected_workloads = [
+    path.name for path in sorted((gitops_dir / "workloads").iterdir()) if path.is_dir()
+]
+workload_rows = markdown_table_after_heading(workloads_readme, "## Workload Coverage Matrix")
+if len(workload_rows) < 2:
+    fail("gitops/workloads/README.md Workload Coverage Matrix must contain a header and workload rows")
+elif workload_rows[0] != expected_workload_header:
+    fail(
+        "gitops/workloads/README.md Workload Coverage Matrix header must be: "
+        + " | ".join(expected_workload_header)
+    )
+else:
+    indexed_workloads: list[str] = []
+    seen_workloads: set[str] = set()
+    for row_number, row in enumerate(workload_rows[1:], start=1):
+        if len(row) != len(expected_workload_header):
+            fail(
+                "gitops/workloads/README.md Workload Coverage Matrix "
+                f"row {row_number} must have {len(expected_workload_header)} columns"
+            )
+            continue
+        workload_cell, purpose, lifecycle, dependencies, validation = row
+        match = re.fullmatch(r"`([^`]+)`", workload_cell)
+        if not match:
+            fail(
+                "gitops/workloads/README.md Workload Coverage Matrix "
+                f"row {row_number} must start with a backticked workload directory"
+            )
+            continue
+        workload = match.group(1)
+        if workload in seen_workloads:
+            fail(f"gitops/workloads/README.md Workload Coverage Matrix duplicates workload: {workload}")
+        seen_workloads.add(workload)
+        indexed_workloads.append(workload)
+        if not (gitops_dir / "workloads" / workload).is_dir():
+            fail(f"gitops/workloads/README.md Workload Coverage Matrix references missing workload: {workload}")
+        for label, value in [
+            ("Purpose and owner", purpose),
+            ("Lifecycle and config", lifecycle),
+            ("Dependencies, routes, secrets", dependencies),
+            ("Validation and operations", validation),
+        ]:
+            if not value:
+                fail(f"gitops/workloads/README.md Workload Coverage Matrix row {row_number} has empty {label}")
+        for command in [
+            "scripts/validate-gitops-structure.sh",
+            "scripts/validate-k8s-manifests.sh",
+            "scripts/check-secret-handling.sh",
+        ]:
+            if command not in validation:
+                fail(
+                    "gitops/workloads/README.md Workload Coverage Matrix "
+                    f"row {row_number} must cite {command}"
+                )
+    if indexed_workloads != expected_workloads:
+        fail(
+            "gitops/workloads/README.md Workload Coverage Matrix row order must match actual workloads: "
+            + ", ".join(expected_workloads)
+        )
+
 infrastructure_dir = root / "infrastructure"
 infrastructure_readme_path = infrastructure_dir / "README.md"
 infrastructure_readme = read_text(infrastructure_readme_path)
+expected_infrastructure_coverage_header = [
+    "Area",
+    "Purpose and owner",
+    "Lifecycle and config",
+    "Dependencies, routes, secrets",
+    "Validation and operations",
+]
+expected_infrastructure_coverage_areas = [
+    "argocd/",
+    "k3d/",
+    "tests/",
+    "vault/",
+    "bootstrap-local.sh",
+    "ipaddresspool.yaml",
+    "l2advertisement.yaml",
+]
+infrastructure_coverage_rows = markdown_table_after_heading(
+    infrastructure_readme,
+    "## Infrastructure Coverage Matrix",
+)
+if len(infrastructure_coverage_rows) < 2:
+    fail("infrastructure/README.md Infrastructure Coverage Matrix must contain a header and coverage rows")
+elif infrastructure_coverage_rows[0] != expected_infrastructure_coverage_header:
+    fail(
+        "infrastructure/README.md Infrastructure Coverage Matrix header must be: "
+        + " | ".join(expected_infrastructure_coverage_header)
+    )
+else:
+    indexed_infrastructure_areas: list[str] = []
+    seen_infrastructure_areas: set[str] = set()
+    for row_number, row in enumerate(infrastructure_coverage_rows[1:], start=1):
+        if len(row) != len(expected_infrastructure_coverage_header):
+            fail(
+                "infrastructure/README.md Infrastructure Coverage Matrix "
+                f"row {row_number} must have {len(expected_infrastructure_coverage_header)} columns"
+            )
+            continue
+        area_cell, purpose, lifecycle, dependencies, validation = row
+        area_names = re.findall(r"`([^`]+)`", area_cell)
+        if not area_names:
+            fail(
+                "infrastructure/README.md Infrastructure Coverage Matrix "
+                f"row {row_number} must name at least one backticked area path"
+            )
+            continue
+        for area in area_names:
+            if area in seen_infrastructure_areas:
+                fail(f"infrastructure/README.md Infrastructure Coverage Matrix duplicates area: {area}")
+            seen_infrastructure_areas.add(area)
+            indexed_infrastructure_areas.append(area)
+            area_path = infrastructure_dir / area.rstrip("/")
+            if area.endswith("/"):
+                if not area_path.is_dir():
+                    fail(
+                        "infrastructure/README.md Infrastructure Coverage Matrix "
+                        f"references missing directory: infrastructure/{area}"
+                    )
+            elif not area_path.is_file():
+                fail(
+                    "infrastructure/README.md Infrastructure Coverage Matrix "
+                    f"references missing file: infrastructure/{area}"
+                )
+        for label, value in [
+            ("Purpose and owner", purpose),
+            ("Lifecycle and config", lifecycle),
+            ("Dependencies, routes, secrets", dependencies),
+            ("Validation and operations", validation),
+        ]:
+            if not value:
+                fail(f"infrastructure/README.md Infrastructure Coverage Matrix row {row_number} has empty {label}")
+        if "owned by" not in purpose:
+            fail(f"infrastructure/README.md Infrastructure Coverage Matrix row {row_number} must name ownership")
+        if not any(marker in validation for marker in ["`bash ", "Validate", "Run ", "verify-"]):
+            fail(f"infrastructure/README.md Infrastructure Coverage Matrix row {row_number} must cite validation or operation evidence")
+    if indexed_infrastructure_areas != expected_infrastructure_coverage_areas:
+        fail(
+            "infrastructure/README.md Infrastructure Coverage Matrix area order must match actual infrastructure entrypoints: "
+            + ", ".join(expected_infrastructure_coverage_areas)
+        )
+
 infrastructure_shell_paths = sorted(
     [infrastructure_dir / "bootstrap-local.sh"]
     + list((infrastructure_dir / "tests").glob("*.sh"))

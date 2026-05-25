@@ -3,7 +3,7 @@ title: 'Task: Workspace Harness Gap Analysis'
 type: task
 status: done
 owner: 'platform'
-updated: 2026-05-25
+updated: 2026-05-26
 ---
 
 # Task: Workspace Harness Gap Analysis
@@ -201,6 +201,16 @@ pre-check와 follow-up으로 남긴다.
 | T-144 | Extend repository quality gate for operations bucket and template-routing checks | test | VAL-SPC-006-031 | Operations Routing Matrix Guardrail | repo quality gate | Platform | Done |
 | T-145 | Record operations routing matrix guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-031 | Operations Routing Matrix Guardrail | 006 chain check | Platform | Done |
 | T-146 | Append progress memory for the operations routing matrix guardrail follow-up | memory | VAL-SPC-006-031 | Operations Routing Matrix Guardrail | progress ledger entry | Platform | Done |
+| T-147 | Recheck GitOps service/workload coverage matrix validation strength | doc | VAL-SPC-006-032 | GitOps Coverage Matrix Guardrail | current GitOps README review | Platform | Done |
+| T-148 | Extend repository quality gate for GitOps service/workload coverage matrices | test | VAL-SPC-006-032 | GitOps Coverage Matrix Guardrail | repo quality gate | Platform | Done |
+| T-149 | Update GitOps and scripts README command contract wording for coverage matrix validation | doc | VAL-SPC-006-032 | GitOps Coverage Matrix Guardrail | README review | Platform | Done |
+| T-150 | Record GitOps coverage matrix guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-032 | GitOps Coverage Matrix Guardrail | 006 chain check | Platform | Done |
+| T-151 | Append progress memory for the GitOps coverage matrix guardrail follow-up | memory | VAL-SPC-006-032 | GitOps Coverage Matrix Guardrail | progress ledger entry | Platform | Done |
+| T-152 | Recheck infrastructure coverage matrix validation strength | doc | VAL-SPC-006-033 | Infrastructure Coverage Matrix Guardrail | current infrastructure README review | Platform | Done |
+| T-153 | Extend repository quality gate for Infrastructure Coverage Matrix entrypoints | test | VAL-SPC-006-033 | Infrastructure Coverage Matrix Guardrail | repo quality gate | Platform | Done |
+| T-154 | Update infrastructure and scripts README command contract wording for coverage matrix validation | doc | VAL-SPC-006-033 | Infrastructure Coverage Matrix Guardrail | README review | Platform | Done |
+| T-155 | Record infrastructure coverage matrix guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-033 | Infrastructure Coverage Matrix Guardrail | 006 chain check | Platform | Done |
+| T-156 | Append progress memory for the infrastructure coverage matrix guardrail follow-up | memory | VAL-SPC-006-033 | Infrastructure Coverage Matrix Guardrail | progress ledger entry | Platform | Done |
 
 ## Suggested Types
 
@@ -455,6 +465,52 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-144 Extend repository quality gate for operations bucket and template-routing checks.
 - [x] T-145 Record this follow-up in the 006 SDD chain.
 - [x] T-146 Append progress memory for this follow-up.
+
+### Phase 30 - GitOps Coverage Matrix Guardrail
+
+- [x] T-147 Recheck GitOps service/workload coverage matrix validation strength.
+- [x] T-148 Extend repository quality gate for GitOps service/workload coverage matrices.
+- [x] T-149 Update GitOps and scripts README command contract wording for coverage matrix validation.
+- [x] T-150 Record this follow-up in the 006 SDD chain.
+- [x] T-151 Append progress memory for this follow-up.
+
+### Phase 31 - Infrastructure Coverage Matrix Guardrail
+
+- [x] T-152 Recheck infrastructure coverage matrix validation strength.
+- [x] T-153 Extend repository quality gate for Infrastructure Coverage Matrix entrypoints.
+- [x] T-154 Update infrastructure and scripts README command contract wording for coverage matrix validation.
+- [x] T-155 Record this follow-up in the 006 SDD chain.
+- [x] T-156 Append progress memory for this follow-up.
+
+## Infrastructure Coverage Matrix Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current infrastructure coverage matrix guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current infrastructure coverage matrix guardrail run |
+| `bash scripts/validate-gitops-structure.sh` | PASS | current infrastructure coverage matrix guardrail run |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional `kube-linter` skipped locally because it is not installed | current infrastructure coverage matrix guardrail run |
+| `bash scripts/check-secret-handling.sh .` | PASS | current infrastructure coverage matrix guardrail run |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | current infrastructure coverage matrix guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current infrastructure coverage matrix guardrail run |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | current infrastructure coverage matrix guardrail run |
+| `git diff --check` | PASS | current infrastructure coverage matrix guardrail run |
+| Guardrail implementation | complete | `infrastructure/README.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` |
+
+## GitOps Coverage Matrix Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current GitOps coverage matrix guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current GitOps coverage matrix guardrail run |
+| `bash scripts/validate-gitops-structure.sh` | PASS | current GitOps coverage matrix guardrail run |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional `kube-linter` skipped locally because it is not installed | current GitOps coverage matrix guardrail run |
+| `bash scripts/check-secret-handling.sh .` | PASS | current GitOps coverage matrix guardrail run |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | current GitOps coverage matrix guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current GitOps coverage matrix guardrail run |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | current GitOps coverage matrix guardrail run |
+| `git diff --check` | PASS | current GitOps coverage matrix guardrail run |
+| Guardrail implementation | complete | `gitops/README.md`; `gitops/workloads/README.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` |
 
 ## Operations Routing Matrix Guardrail Verification Summary
 

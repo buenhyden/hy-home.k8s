@@ -3,7 +3,7 @@ title: 'Workspace Harness Gap Analysis Implementation Plan'
 type: plan
 status: done
 owner: 'platform'
-updated: 2026-05-25
+updated: 2026-05-26
 ---
 
 # Workspace Harness Gap Analysis Implementation Plan
@@ -25,6 +25,8 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| Infrastructure Coverage Matrix Guardrail Overlay | Current guardrail follow-up for `infrastructure/README.md` coverage matrix drift | VAL-SPC-006-033; T-152 through T-156 | Current |
+| GitOps Coverage Matrix Guardrail Overlay | Current guardrail follow-up for `gitops/README.md` and `gitops/workloads/README.md` coverage matrix drift | VAL-SPC-006-032; T-147 through T-151 | Current |
 | Operations Routing Matrix Guardrail Overlay | Current guardrail follow-up for `docs/05.operations/` stage bucket and template routing | VAL-SPC-006-031; T-142 through T-146 | Current |
 | Traefik Route Inventory Guardrail Overlay | Current guardrail follow-up for `traefik/*.yaml` route inventory and backend drift checks | VAL-SPC-006-030; T-137 through T-141 | Current |
 | Infrastructure Test Inventory Guardrail Overlay | Current guardrail follow-up for `infrastructure/tests/*.sh` inventory and `run-all.sh` live-test parity | VAL-SPC-006-029; T-132 through T-136 | Current |
@@ -2735,6 +2737,82 @@ configuration are changed.
 | `bash scripts/validate-repo-quality-gates.sh .` | PASS | New operations routing matrix and bucket/template guardrail passed |
 | `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
 | `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `git diff --check` | PASS | No whitespace errors |
+
+## GitOps Coverage Matrix Guardrail Overlay - 2026-05-26
+
+### Intent and Boundary
+
+This overlay follows the continuation audit for implemented infrastructure
+under `gitops/`. It keeps the change documentation/governance and repo-static:
+no Kubernetes resource semantics, AppProject permissions, ApplicationSet
+behavior, ArgoCD sync state, live cluster state, secret policy, or CI job
+structure are changed.
+
+### Gap Table
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| GitOps coverage SSoT | `gitops/README.md` documented a Service Coverage Matrix, but the repo quality gate did not verify that rows match actual `clusters/local`, `apps/root`, `platform/*`, and `workloads/*` directories | `gitops/README.md`; `gitops/` | Platform component additions, removals, or renames could silently drift from the entrypoint README | Medium | improvement | P1 |
+| Workload coverage SSoT | `gitops/workloads/README.md` documented workload coverage, but the repo quality gate did not verify row coverage or expected validation commands | `gitops/workloads/README.md`; `gitops/workloads/` | ApplicationSet-scanned workload onboarding could miss README and validation command updates | Medium | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `gitops/README.md`; `gitops/workloads/README.md`; `scripts/validate-repo-quality-gates.sh` | Validate GitOps service/workload coverage matrix headers, exact row order, actual directory existence, ownership text, and expected validation command references | T-147 through T-149 | repo quality, GitOps structure, manifest checks, wiki check | Revert README and validator edits |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-032 and verification | T-150, T-151 | repo quality and wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New GitOps service/workload coverage matrix guardrail passed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| `bash scripts/validate-gitops-structure.sh` | PASS | Root Application, apps ApplicationSet, root app manifest count, and Kustomize completeness checks passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed for 104 files; optional `kube-linter` skipped locally because it is not installed |
+| `bash scripts/check-secret-handling.sh .` | PASS | Plaintext secret scan passed |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static infrastructure/GitOps contracts passed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | Shell syntax for infrastructure, scripts, and hooks |
+| `git diff --check` | PASS | No whitespace errors |
+
+## Infrastructure Coverage Matrix Guardrail Overlay - 2026-05-26
+
+### Intent and Boundary
+
+This overlay follows the continuation audit for implemented infrastructure
+under `infrastructure/`. It keeps the change documentation/governance and
+repo-static: no bootstrap behavior, Kubernetes resource semantics, live cluster
+state, kubeconfig TLS trust, secret policy, external service state, or CI job
+structure are changed.
+
+### Gap Table
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Infrastructure coverage SSoT | `infrastructure/README.md` documented an Infrastructure Coverage Matrix, but the repo quality gate did not verify that rows match actual bootstrap/runtime-support entrypoints | `infrastructure/README.md`; `infrastructure/` | Infrastructure entrypoint additions, removals, or renames could silently drift from the README | Medium | improvement | P1 |
+| Bootstrap/runtime-support boundary evidence | The coverage matrix named responsibilities, but the reusable gate did not require ownership and validation/operation evidence per row | `infrastructure/README.md`; `scripts/validate-repo-quality-gates.sh` | Bootstrap-only and live-runtime support boundaries could become less explicit over time | Medium | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `infrastructure/README.md`; `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Validate Infrastructure Coverage Matrix header, exact entrypoint order, file/directory existence, ownership text, and validation/operation evidence | T-152 through T-154 | repo quality, static contracts, shell syntax, wiki check | Revert README and validator edits |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-033 and verification | T-155, T-156 | repo quality and wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New Infrastructure Coverage Matrix guardrail passed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| `bash scripts/validate-gitops-structure.sh` | PASS | Root Application, apps ApplicationSet, root app manifest count, and Kustomize completeness checks passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed for 104 files; optional `kube-linter` skipped locally because it is not installed |
+| `bash scripts/check-secret-handling.sh .` | PASS | Plaintext secret scan passed |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static infrastructure/GitOps contracts passed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | Shell syntax for infrastructure, scripts, and hooks |
 | `git diff --check` | PASS | No whitespace errors |
 
 ## Related Documents

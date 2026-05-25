@@ -3,7 +3,7 @@ title: 'Workspace Harness Gap Analysis Technical Specification'
 type: spec
 status: active
 owner: 'platform'
-updated: 2026-05-25
+updated: 2026-05-26
 ---
 
 # Workspace Harness Gap Analysis Technical Specification (Spec)
@@ -322,6 +322,21 @@ git diff --check
   routing row order, target links, and template links for guides, policies,
   runbooks, incident records, and postmortems without changing authored
   operations content semantics.
+- **VAL-SPC-006-032**: 2026-05-26 GitOps coverage matrix guardrail follow-up
+  strengthens `gitops/` review by validating that `gitops/README.md` Service
+  Coverage Matrix and `gitops/workloads/README.md` Workload Coverage Matrix
+  stay synchronized with actual `clusters/local`, `apps/root`, `platform/*`,
+  and `workloads/*` directories and cite the expected validation commands
+  without changing Kubernetes resource semantics, AppProject permissions,
+  ApplicationSet behavior, or live cluster state.
+- **VAL-SPC-006-033**: 2026-05-26 infrastructure coverage matrix guardrail
+  follow-up strengthens `infrastructure/` review by validating that
+  `infrastructure/README.md` Infrastructure Coverage Matrix stays synchronized
+  with actual `argocd/`, `k3d/`, `tests/`, `vault/`, `bootstrap-local.sh`,
+  `ipaddresspool.yaml`, and `l2advertisement.yaml` entrypoints and names
+  ownership plus validation or operation evidence without changing bootstrap
+  behavior, live cluster state, kubeconfig TLS trust, or Kubernetes resource
+  semantics.
 
 ## Related Documents
 

@@ -55,6 +55,11 @@ gitops/
 
 ## Service Coverage Matrix
 
+이 표는 `gitops/`의 현재 구현 디렉터리와 운영 책임을 연결한다.
+`validate-repo-quality-gates.sh`는 이 표가 실제 `clusters/local`,
+`apps/root`, `platform/*`, `workloads/*` 디렉터리와 동기화되어 있는지
+검증한다.
+
 | Area | Purpose and owner | Lifecycle and config | Dependencies, routes, secrets | Validation and operations |
 | --- | --- | --- | --- | --- |
 | `clusters/local` | Local ArgoCD bootstrap entrypoint owned by platform maintainers. | Contains root Application, AppProjects, and workload ApplicationSet. | Depends on ArgoCD and the repository URL/target revision contract; no application secrets live here. | Validate root Application/ApplicationSet hierarchy with `bash scripts/validate-gitops-structure.sh` and static contracts with `bash infrastructure/tests/verify-contracts-static.sh`. |

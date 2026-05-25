@@ -8,6 +8,94 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-26 — infrastructure coverage matrix guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: infrastructure, validation, SDD
+- **Status**: partial
+- **Tags**: #infrastructure #validation #sdd
+
+#### Progress
+
+- Rechecked whether `infrastructure/README.md` Infrastructure Coverage Matrix
+  had reusable validation coverage beyond the infrastructure test inventory
+  guardrail.
+- Added README wording that identifies the matrix-to-entrypoint synchronization
+  contract for bootstrap and runtime-support infrastructure surfaces.
+- Extended `scripts/validate-repo-quality-gates.sh` so Infrastructure Coverage
+  Matrix rows must match actual `argocd/`, `k3d/`, `tests/`, `vault/`,
+  `bootstrap-local.sh`, `ipaddresspool.yaml`, and `l2advertisement.yaml`
+  entrypoints, name ownership, and cite validation or operation evidence.
+- Kept the change repo-static. Bootstrap behavior, live cluster state,
+  kubeconfig TLS trust, Kubernetes resource semantics, secrets, external
+  service state, and CI job structure were not changed.
+- Documented the guardrail as VAL-SPC-006-033 and T-152 through T-156 in the
+  existing 006 SDD chain.
+
+#### Memory
+
+- Infrastructure coverage matrix validation and infrastructure test inventory
+  validation catch different drift classes. The former protects entrypoint and
+  ownership coverage; the latter protects test command lifecycle and live
+  aggregate parity.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS; optional `kube-linter`
+  skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+- `git diff --check` PASS.
+
+### 2026-05-26 — GitOps coverage matrix guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: gitops, validation, SDD
+- **Status**: partial
+- **Tags**: #gitops #validation #sdd
+
+#### Progress
+
+- Rechecked whether `gitops/README.md` Service Coverage Matrix and
+  `gitops/workloads/README.md` Workload Coverage Matrix had reusable validation
+  coverage beyond the GitOps hierarchy validator.
+- Added README wording that identifies the matrix-to-directory synchronization
+  contract for platform and workload entrypoints.
+- Extended `scripts/validate-repo-quality-gates.sh` so GitOps coverage matrix
+  rows must match actual `clusters/local`, `apps/root`, `platform/*`, and
+  `workloads/*` directories, include ownership text, and cite expected
+  validation commands for workloads.
+- Kept the change repo-static. Kubernetes resource semantics, AppProject
+  permissions, ApplicationSet behavior, live cluster state, secrets, and CI job
+  structure were not changed.
+- Documented the guardrail as VAL-SPC-006-032 and T-147 through T-151 in the
+  existing 006 SDD chain.
+
+#### Memory
+
+- GitOps hierarchy validation and README coverage validation catch different
+  drift classes. The former protects ArgoCD ownership boundaries; the latter
+  keeps the human/agent entrypoint synchronized with actual platform and
+  workload directories.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS; optional `kube-linter`
+  skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+- `git diff --check` PASS.
+
 ### 2026-05-25 — operations routing matrix guardrail follow-up
 
 - **Date**: 2026-05-25

@@ -51,6 +51,12 @@ infrastructure/
 
 ## Infrastructure Coverage Matrix
 
+이 표는 `infrastructure/`의 현재 bootstrap/runtime-support entrypoint와
+운영 책임을 연결한다. `validate-repo-quality-gates.sh`는 이 표가 실제
+`argocd/`, `k3d/`, `tests/`, `vault/`, `bootstrap-local.sh`,
+`ipaddresspool.yaml`, `l2advertisement.yaml` 표면과 동기화되어 있는지
+검증한다.
+
 | Area | Purpose and owner | Lifecycle and config | Dependencies, routes, secrets | Validation and operations |
 | --- | --- | --- | --- | --- |
 | `argocd/` | Local ArgoCD Helm values owned by platform maintainers. | Bootstrap-time values for ingress, TLS, and external Valkey integration. | Depends on k3d, ingress, mkcert CA, external Valkey, and Vault-backed secret flow. | Validate with `bash infrastructure/tests/verify-contracts-static.sh`; live state requires ArgoCD and ingress/TLS checks. |
