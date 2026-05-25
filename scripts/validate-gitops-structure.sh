@@ -4,6 +4,12 @@
 # Usage: bash scripts/validate-gitops-structure.sh
 set -euo pipefail
 
+if [[ "$#" -ne 0 ]]; then
+  echo "ERR unexpected argument(s): $*" >&2
+  echo "Usage: bash scripts/validate-gitops-structure.sh" >&2
+  exit 2
+fi
+
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 EXIT_CODE=0
 
