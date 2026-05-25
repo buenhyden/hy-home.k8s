@@ -1921,7 +1921,7 @@ or `kubectl patch`, rewrite public history, or bypass `main` branch protection.
 | Workflow YAML parse | PASS | `.github/workflows/stale.yml` remains parseable |
 | LLM Wiki index | PASS | Generated index freshness |
 | Git diff whitespace | PASS | No whitespace errors |
-| PR checks | Pending until remote CI runs | This branch should avoid direct `main` bypass |
+| PR checks | PASS | PR #39 passed `ci-summary`, `pre-commit`, `repo-quality-static`, `branch-policy`, `changes`, `greeting`, `label`, and GitGuardian checks; manifest/shell jobs skipped by path-filter design |
 
 ## Related Documents
 

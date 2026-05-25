@@ -12,7 +12,7 @@ inventory stays in `scripts/README.md`.
 
 - **Date**: 2026-05-25
 - **Layer**: ci, qa, docs, runtime
-- **Status**: partial
+- **Status**: complete
 - **Tags**: #ci #github #runtime #validation #version-inventory
 
 #### Progress
@@ -33,6 +33,8 @@ inventory stays in `scripts/README.md`.
 - Updated `.github/workflows/stale.yml` and
   `docs/90.references/versions/tech-stack-version-inventory.md` together to
   `actions/stale@v10.2.0` on a `codex/` branch instead of bypassing `main`.
+- Opened replacement PR #39 and confirmed its remote CI passed, including
+  `ci-summary`, `pre-commit`, `repo-quality-static`, and `branch-policy`.
 
 #### Memory
 
@@ -52,8 +54,8 @@ inventory stays in `scripts/README.md`.
 
 #### Handoff
 
-- This branch should be opened as a PR and merged through the normal protected
-  branch path after CI passes.
+- PR #39 should be merged through the normal protected branch path; do not
+  repeat direct `main` bypass for this follow-up.
 - Do not inspect secret values, run Vault KV reads/writes, force ArgoCD sync, or
   run cluster mutation commands as part of this audit.
 

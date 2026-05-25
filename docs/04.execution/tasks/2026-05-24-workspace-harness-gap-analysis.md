@@ -738,6 +738,10 @@ is stored in the linked plan to keep this task document concise.
     failed because `actions/stale` changed to `v10.2.0` without matching
     `docs/90.references/versions/tech-stack-version-inventory.md` and the PR
     was based on stale main state.
+  - Replacement PR #39 - PASS; `ci-summary`, `pre-commit`,
+    `repo-quality-static`, `branch-policy`, `changes`, `greeting`, `label`, and
+    GitGuardian checks passed. `manifest-static` and `shell-static` skipped by
+    workflow path-filter design.
 - **Repo Change**:
   - Updated `.github/workflows/stale.yml` and
     `docs/90.references/versions/tech-stack-version-inventory.md` together to
