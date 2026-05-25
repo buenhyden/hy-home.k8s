@@ -10,6 +10,12 @@
 
 현재 구현 범위는 `clusters/local`의 bootstrap/AppProject/ApplicationSet, `apps/root`의 플랫폼 Application 선언, `platform/*`의 공통 컴포넌트, `workloads/adminer`의 앱 패턴 참조 구현이다.
 
+`platform/external-services`의 `Service`와 `EndpointSlice` 파일은 외부
+Vault/PostgreSQL/Valkey/Observability 연결의 Git desired state SSoT다.
+ArgoCD resource exclusion 또는 runtime drift 때문에 직접 EndpointSlice
+patch/apply가 필요한 경우에도 이는 human-approved break-glass 예외이며,
+실행 후 실제 endpoint 값을 Git과 운영 증적에 되돌려 맞춰야 한다.
+
 ## Audience
 
 이 README의 주요 독자:

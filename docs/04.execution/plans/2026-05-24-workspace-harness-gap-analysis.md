@@ -1695,10 +1695,154 @@ linked task, README indexes, script command contracts, and progress ledger.
 - CI policy hardening and SHA pinning need a separate supply-chain decision.
 - Deletion/consolidation candidates require reference checks and owner approval.
 
+## Authored SSoT Large-Scale Improvement Overlay - 2026-05-25
+
+### Intent and Boundary
+
+This overlay implements the approved "large-scale improvement execution"
+contract inside the existing 006 SDD chain. It does not create a parallel
+Spec/Plan/Task tree. The human-facing `P0-01` through `P0-22` identifiers are
+preserved as external traceability keys, while repo-local task IDs remain
+`T-058` through `T-062`.
+
+No Kubernetes, ArgoCD, Vault, CI ruleset, runtime, secret value, or live cluster
+change is included. All changes are repo-static authored SSoT updates, evidence
+normalization, and follow-up planning.
+
+### P0-01 Through P0-22 Crosswalk
+
+| External P0 ID | Requested workstream | Repo-local evidence | Current status | Gap / decision | Verification / follow-up |
+| --- | --- | --- | --- | --- | --- |
+| P0-01 | Workspace-purpose environment, system, and rules | `AGENTS.md`; `.claude/CLAUDE.md`; `docs/00.agent-governance/`; Spec 006 | partial | Rules exist; exact external P0 traceability was missing, now added here | repo quality gate; live/runtime rules remain deferred |
+| P0-02 | `docs/` lifecycle environment, system, and rules | stage READMEs; `docs/99.templates/`; Spec/Plan/Task 006 | complete repo-static | Existing lifecycle is connected; overlay records current SSoT traceability | wiki index check; no new docs tree |
+| P0-03 | `scripts/` deletion and consolidation review | `scripts/README.md`; validation scripts | complete repo-static | Scripts are reusable or operations-critical; no deletion-ready script found | shell syntax/executability; broad reference precheck remains required |
+| P0-04 | One-off script removal when safe | `scripts/README.md`; this plan | deferred | No script met deletion criteria after reference and rollback constraints | deletion requires a dedicated task and reference-clearing evidence |
+| P0-05 | Improve `gitops/` infrastructure | `gitops/`; GitOps validators; P3 remediation plan | partial | Static structure passes; EndpointSlice and semantic ownership remain P3 | GitOps/manifests checks; live ArgoCD proof deferred |
+| P0-06 | Normalize `gitops/README.md` with template | `gitops/README.md`; `docs/99.templates/readme.template.md` | complete repo-static | README already participates in the template-shaped index contract | repo quality/wiki checks |
+| P0-07 | Improve `infrastructure/` implementation | `infrastructure/`; `infrastructure/tests/verify-contracts-static.sh` | partial | Static contracts pass; live k3d/external-service proof remains separate | static contract test; live proof deferred |
+| P0-08 | Normalize `infrastructure/README.md` with template | `infrastructure/README.md`; template | complete repo-static | README current enough for this overlay | repo quality/wiki checks |
+| P0-09 | Improve `traefik/` implementation | `traefik/`; `traefik/README.md`; manifests | partial | Backend/fallback port wording drift needs a scoped docs fix | manifest validation; wording cleanup deferred |
+| P0-10 | Normalize `traefik/README.md` with template | `traefik/README.md`; template | partial | Template shape is acceptable; route wording drift remains | repo quality/wiki checks; follow-up wording task |
+| P0-11 | Normalize `docs/05.operations/` | `docs/05.operations/README.md`; runbooks/policies | partial | Structure is coherent; `workflow-security` wording and Vault endpoint role separation need updates | repo quality/wiki checks; scoped ops-doc follow-up |
+| P0-12 | `.env.example` and `.env` role/key consistency | `.env.example`; `.env` key-name-only comparison | complete key-only | Key names match; values intentionally not inspected | key-name-only diff; value review remains human-owned |
+| P0-13 | Relevant README freshness/template compliance | root/stage/area READMEs; 006 README rows | complete repo-static | Current overlay keeps freshness in the existing 006 chain | repo quality/wiki checks |
+| P0-14 | Safe workspace-purpose implementation | Spec/Plan/Task 006; progress ledger | complete for P1/P2 docs | Implemented only low-risk authored SSoT updates | validation bundle; runtime/semantic work deferred |
+| P0-15 | Implement docs lifecycle system for target folders | Spec 006; this plan; linked task | complete repo-static | Lifecycle traceability now includes external P0 IDs | repo quality/wiki checks |
+| P0-16 | Workspace-specific AI Agent skill set | `.claude/skills/`; `harness-catalog.md`; `.agents/` | partial | Existing skills cover most roles; seven new duplicate skills rejected/deferred | skill existence/routing check; `.agents` consolidation deferred |
+| P0-17 | Bootstrap boundaries | bootstrap docs; infrastructure contracts; GitOps root app docs | partial | Repo responsibility is documented; EndpointSlice/runtime handoff needs clarification | static checks; live boundary proof deferred |
+| P0-18 | WSL2 and Docker prerequisites | ops/docs, scripts, contracts, `.env.example` | complete repo-static | WSL Linux native Docker prerequisites are documented; no runtime probe added | repo quality gate; live Docker/k3d check deferred |
+| P0-19 | GitOps hierarchy | `gitops/root-app.yaml`; platform/shared app structure | complete repo-static | Root app/App-of-Apps/ApplicationSet split is static-checkable | GitOps validator and manifest validation |
+| P0-20 | Secret-management responsibility | ESO/Vault manifests; `scripts/check-secret-handling.sh`; P3 plan | partial | Declarative model exists; live Vault auth and values remain outside scope | secret scan and manifests check; live proof deferred |
+| P0-21 | External service contracts | `infrastructure/`; EndpointSlice/service manifests; `.env.example` | partial | PostgreSQL/Valkey contracts exist; EndpointSlice ownership ambiguity remains | static contract test; ownership clarification deferred |
+| P0-22 | Documentation SSoT consistency | Spec/Plan/Task 006; progress ledger; READMEs | complete for this overlay | Exact P0 crosswalk and subagent-derived gaps are now recorded | full static validation bundle |
+
+### Six Subagent Review Result Integration
+
+| Role | Integrated finding | Decision | Follow-up |
+| --- | --- | --- | --- |
+| Documentation Lifecycle Reviewer | 006 chain is canonical, but external `P0-01` through `P0-22` IDs were absent | Add this crosswalk and VAL-SPC-006-016 | Keep older summaries historical |
+| GitOps Infrastructure Reviewer | Static GitOps structure is coherent; EndpointSlice ownership and Traefik wording need owner review | Defer semantic desired-state changes | Use the P3 remediation chain or a new scoped follow-up |
+| Scripts and Env Reviewer | Scripts are not deletion-ready; env key names match without value inspection | No deletion; record broad reference precheck requirement | Add deletion only through a reference-clearing task |
+| QA CI/CD and Policy Reviewer | Static QA is strong; OPA/Conftest feasibility and `workflow-security` policy wording are undefined | Defer policy changes | Create a policy-gate feasibility task |
+| Agent Governance Reviewer | Gateway remains thin; exact external P0 traceability and `.agents` mirror status need explicit handling | Add crosswalk; keep `.claude/skills/**` canonical | Defer `.agents` consolidation |
+| Skills and Harness Reviewer | Existing skills cover most requested role agents; creating seven duplicate skills would add noise | Reject duplicate skill creation for this pass | Reassess only if a concrete repeated workflow is missing |
+
+### Subagent-Derived Authored SSoT Gap Table
+
+| Gap | Evidence path | Risk | Decision | Follow-up |
+| --- | --- | --- | --- | --- |
+| EndpointSlice ownership ambiguity for external services | `gitops/`; `infrastructure/`; P3 plan | Medium | Defer desired-state semantics | Clarify GitOps-owned vs break-glass ownership before changes |
+| Traefik backend/fallback port wording drift | `traefik/README.md`; Traefik manifests | Low | Defer wording-only cleanup | Update wording in a scoped operations/docs pass |
+| `workflow-security` policy wording drift from current CI jobs | `docs/05.operations/`; `.github/workflows/` | Medium | Defer CI policy wording | Align policy text with actual workflow structure |
+| OPA/Conftest feasibility undefined | QA/CI docs and scripts | Medium | Defer policy-gate design | Evaluate Conftest only after policy ownership is named |
+| Vault endpoint role separation note needed | `.env.example`; ops docs; infrastructure contracts | Medium | Defer ops-doc supplementation | Document host/browser vs Docker-network endpoint roles |
+| Script deletion broad-reference precheck needed | `scripts/README.md`; this plan | Medium | Defer deletion | Require `rg` reference sweep, rollback, and task linkage |
+| `.agents` mirror consolidation deferred | `.agents/`; `.claude/skills/`; harness catalog | Low | Keep `.claude/skills/**` canonical | Owner-reviewed consolidation only |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | supplementation | Spec 006 | Add VAL-SPC-006-016 for exact external P0 traceability | T-058 | repo quality gate | Revert criterion |
+| P1 | supplementation | 006 Plan | Add this P0-01 through P0-22 crosswalk and subagent gap integration | T-058, T-059 | repo quality gate; wiki check | Revert overlay section |
+| P1 | supplementation | 006 Task | Add phase/task rows and current verification summary | T-060, T-062 | repo quality gate | Revert task rows/summary |
+| P1 | supplementation | 006 Plan/Task links | Add reciprocal links to P3 GitOps Secret Runtime Remediation Plan/Task | T-061 | link/static checks | Revert link rows |
+| P1 | memory | progress ledger | Record authored SSoT large-scale overlay and deferred boundaries | T-062 | repo quality gate | Revert progress entry |
+| P3 | deferral | GitOps/runtime/CI/secrets/deletion | Do not implement high-risk or owner-dependent changes | T-059 | deferred-item tables | Separate approved follow-up |
+
+### Verification Delta
+
+The current task records the executable verification result. Live checks remain
+deferred because this overlay is repo-static and does not have approval to query
+or mutate k3d, Kubernetes, ArgoCD, Vault, PostgreSQL, Valkey, or CI rulesets.
+
+### Checklist Gate Delta
+
+| Checklist item | Status | Evidence |
+| --- | --- | --- |
+| Goal stated in one sentence | pass | Intent and Boundary section |
+| Related files discovered | pass | P0 crosswalk and subagent integration tables |
+| Scope and forbidden scope separated | pass | No runtime/secret/CI/Kubernetes semantic changes |
+| Existing patterns preserved | pass | Existing 006 chain reused; no parallel SDD tree |
+| Test/lint/check commands identified | pass | linked task Verification Summary |
+| Completion criteria measurable | pass | VAL-SPC-006-016 and T-058 through T-062 |
+| Recurring instructions handled through Skills/governance | pass | `.claude/skills/**` remains canonical |
+| All P0 workstreams represented | pass | P0-01 through P0-22 crosswalk |
+| Additional review items represented | pass | Crosswalk plus subagent-derived gap table |
+| Workspace-specific skills designed/updated/deferred | pass | P0-16 and Skills/Harness row |
+
+## Deferred Item Repo-Static Improvement Overlay - 2026-05-25
+
+### Intent and Boundary
+
+This overlay implements the approved repo-static follow-up for deferred items.
+It keeps the existing 006 SDD chain canonical and treats the authored SSoT
+large-scale overlay as the current base. It does not query live k3d, Kubernetes,
+Docker, ArgoCD, Vault, PostgreSQL, Valkey, Traefik runtime, or GitHub remote
+rulesets, and it does not inspect secret values.
+
+### Deferred Item Improvement Table
+
+| Deferred item | Repo-static change | Evidence path | Status after this overlay | Remaining non-static boundary |
+| --- | --- | --- | --- | --- |
+| EndpointSlice ownership ambiguity | Clarify that `gitops/platform/external-services/*.yaml` is the desired-state SSoT, while direct EndpointSlice patch/apply remains human-approved break-glass when ArgoCD resource exclusions or runtime drift prevent reconciliation | `gitops/README.md`; `docs/05.operations/policies/0002-wsl2-k3d-gitops-ha-operations-policy.md` | improved repo-static | live reconciliation proof and any direct cluster hotfix |
+| Traefik backend/fallback port wording drift | Separate external Traefik `websecure/443 -> k3d-hyhome-serverlb:443` from direct host fallback `ARGOCD_FALLBACK_PORT=8443` checks | `traefik/README.md`; operations policy | improved repo-static | live TLS reachability |
+| `workflow-security` policy wording drift | Replace stale `workflow-security` job wording with current CI gate names: `branch-policy`, `pre-commit`, `repo-quality-static`, `manifest-static`, and `shell-static` | operations policy; `.github/workflows/ci.yml` | improved repo-static | GitHub branch protection/ruleset review |
+| OPA/Conftest feasibility undefined | Record that no OPA/Conftest gate is introduced until policy owner, bundle location, install path, and failure semantics are defined | operations policy; this plan | improved repo-static | separate policy-gate design task |
+| Vault endpoint role separation | Document host/browser `VAULT_ADDR`, in-cluster `vault-external` EndpointSlice, and Vault Kubernetes auth API endpoint roles separately | `.env.example`; operations policy | improved repo-static | live Vault/ESO readiness |
+| Script deletion broad-reference precheck | Add explicit broad `rg` sweep, task linkage, rollback, and allowlist review before deleting or renaming scripts | `scripts/README.md` | improved repo-static | actual deletion remains separate owner-approved work |
+| `.agents` mirror consolidation | Keep `.claude/skills/**` canonical and `.agents/**` ignored local mirror; no file movement or deletion | this plan; `.claude/CLAUDE.md`; repo quality gate | improved repo-static | owner-reviewed consolidation only |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | supplementation | Spec 006 | Add VAL-SPC-006-017 for deferred item repo-static improvement | T-063 | repo quality gate | Revert criterion |
+| P1 | supplementation | 006 Plan/Task | Add current-state overlay, T-063 through T-070, and verification evidence | T-063, T-070 | repo quality gate; wiki check | Revert overlay sections |
+| P1 | improvement | GitOps and operations docs | Clarify EndpointSlice desired-state versus break-glass ownership | T-064 | repo quality gate; targeted `rg` | Revert wording |
+| P1 | improvement | Traefik README and operations policy | Clarify external Traefik 443 route versus direct fallback 8443 route | T-065 | targeted stale wording check | Revert wording |
+| P1 | improvement | Operations policy | Align CI gate names and record OPA/Conftest non-adoption boundary | T-066, T-067 | workflow YAML parse; targeted `rg` | Revert wording |
+| P1 | improvement | `.env.example` and operations policy | Add Vault endpoint role separation comments without key changes | T-068 | env key-name-only comparison | Revert comments |
+| P1 | improvement | `scripts/README.md` | Add deletion precheck and rollback contract | T-069 | repo quality gate; targeted `rg` | Revert section |
+| P1 | memory | progress ledger | Record resolved repo-static deferrals and remaining non-static work | T-070 | repo quality gate | Revert progress entry |
+
+### Verification Delta
+
+| Check | Expected result | Notes |
+| --- | --- | --- |
+| Required repo-static validation bundle | PASS | Same command set as linked task Verification Summary |
+| Stale `workflow-security` policy claim | no match in operations policy | CI workflow structure unchanged |
+| Stale external Traefik `443 -> k3d 8443` claim | no match in updated docs | Direct fallback `8443` remains allowed as fallback wording |
+| EndpointSlice ownership wording | present | GitOps desired-state and break-glass distinction recorded |
+| Vault endpoint role wording | present | `.env.example` key set unchanged |
+| `.agents` mirror state | ignored and untracked | no `.agents` movement or deletion |
+
 ## Related Documents
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Tasks**: [../tasks/2026-05-24-workspace-harness-gap-analysis.md](../tasks/2026-05-24-workspace-harness-gap-analysis.md)
+- **P3 Plan**: [../plans/2026-05-24-p3-gitops-secret-runtime-remediation.md](../plans/2026-05-24-p3-gitops-secret-runtime-remediation.md)
+- **P3 Task**: [../tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md](../tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Docs Stage Conformance Skill**: [../../../.claude/skills/docs-stage-conformance/skill.md](../../../.claude/skills/docs-stage-conformance/skill.md)
 - **Workspace Harness Audit Skill**: [../../../.claude/skills/workspace-harness-audit/skill.md](../../../.claude/skills/workspace-harness-audit/skill.md)

@@ -8,6 +8,146 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-25 — lifecycle hook task-unit commit advisory
+
+- **Date**: 2026-05-25
+- **Layer**: meta, qa
+- **Status**: complete
+- **Tags**: #hooks #git #validation #commit-discipline
+
+#### Progress
+
+- Added task-unit commit discipline guidance to `.claude/hooks/lifecycle-guard.sh`
+  for Stop/SubagentStop and PreCompact events.
+- Kept the hook non-mutating: it does not stage files, create commits, or bypass
+  human approval; it advises logical task/spec-unit commits when commits are
+  requested.
+- Extended `scripts/validate-repo-quality-gates.sh` lifecycle hook simulation so
+  the task-unit commit advisory remains covered by repo quality gates.
+- Updated `.claude/CLAUDE.md`, `docs/00.agent-governance/harness-catalog.md`,
+  and `docs/00.agent-governance/rules/git-workflow.md` to describe the shared
+  hook behavior.
+
+#### Memory
+
+- Shared hooks may remind agents to split commits by task unit, but they must
+  not auto-commit or stage files.
+- If repo-changing work intentionally remains uncommitted, the final response
+  should name the files and reason.
+
+#### Evidence
+
+- `.claude/hooks/lifecycle-guard.sh` emits task-unit commit discipline advisory
+  output for tracked dirty state.
+- `scripts/validate-repo-quality-gates.sh` checks the advisory phrase in Stop
+  and PreCompact payload simulations.
+
+#### Handoff
+
+- Actual commits remain explicit user-requested work and must follow the
+  repository's Conventional Commit and task-unit staging rules.
+
+---
+
+### 2026-05-25 — deferred item repo-static improvement overlay
+
+- **Date**: 2026-05-25
+- **Layer**: docs, ops, qa, meta
+- **Status**: complete
+- **Tags**: #docs #gitops #operations #validation #deferred
+
+#### Progress
+
+- Reused the existing 006 Spec/Plan/Task chain and added VAL-SPC-006-017 plus
+  T-063 through T-070 for deferred item repo-static improvements.
+- Clarified EndpointSlice desired-state ownership versus human-approved
+  break-glass patch/apply boundaries.
+- Separated external Traefik `websecure/443 -> k3d-hyhome-serverlb:443` wording
+  from direct host fallback `ARGOCD_FALLBACK_PORT=8443` checks.
+- Aligned operations policy wording with current CI job names and recorded that
+  OPA/Conftest remains deferred until owner, bundle, install path, and failure
+  semantics exist.
+- Documented Vault endpoint roles without adding or removing `.env.example`
+  keys.
+- Added script deletion precheck rules for broad reference sweep, task linkage,
+  and rollback evidence.
+- Kept `.claude/skills/**` canonical and `.agents/**` as ignored local mirror;
+  no skill file movement or deletion was performed.
+
+#### Memory
+
+- For deferred-item follow-ups, split repo-static wording fixes from live proof,
+  remote ruleset review, secret value review, and actual deletion/consolidation.
+- Traefik backend port and direct fallback port are different contracts:
+  Docker-network backend stays `k3d-hyhome-serverlb:443`; direct fallback may be
+  `8443` when host 443 is unavailable.
+- OPA/Conftest should not become a required gate without a named policy owner,
+  policy bundle location, installation contract, and failure semantics.
+
+#### Evidence
+
+- `docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md`
+  includes the deferred item repo-static improvement overlay.
+- `docs/04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md`
+  tracks T-063 through T-070.
+- `docs/05.operations/policies/0002-wsl2-k3d-gitops-ha-operations-policy.md`,
+  `gitops/README.md`, `traefik/README.md`, `.env.example`, and
+  `scripts/README.md` carry the repo-static wording updates.
+
+#### Handoff
+
+- Live runtime proof, secret value review, remote GitHub ruleset/SHA policy, and
+  actual script deletion or `.agents` consolidation remain separate
+  approval-bound work.
+
+---
+
+### 2026-05-25 — authored SSoT large-scale overlay
+
+- **Date**: 2026-05-25
+- **Layer**: docs, meta, qa
+- **Status**: complete
+- **Tags**: #docs #sdd #p0 #traceability
+
+#### Progress
+
+- Added exact `P0-01` through `P0-22` traceability to the existing 006 Plan
+  instead of creating a parallel SDD bundle.
+- Added VAL-SPC-006-016 and T-058 through T-062 for authored SSoT large-scale
+  overlay evidence.
+- Marked earlier overlapping verification evidence as historical and kept one
+  current verification summary in the 006 Task.
+- Added reciprocal P3 GitOps Secret Runtime Remediation links from the 006 Plan
+  and Task.
+- Recorded six subagent-derived SSoT gaps for future scoped work without
+  changing runtime, secret, CI ruleset, or GitOps semantics.
+
+#### Memory
+
+- For large workspace prompts, preserve the human-facing P0 IDs in the existing
+  006 chain even when repo-local task IDs already exist.
+- Treat `.claude/skills/**` as the skill SSoT; `.agents/**` remains local or
+  ignored until owner-reviewed consolidation.
+- Script deletion requires broad `rg` reference checks in addition to the
+  command-contract allowlist.
+
+#### Evidence
+
+- `docs/03.specs/006-workspace-harness-gap-analysis/spec.md` includes
+  VAL-SPC-006-016.
+- `docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md`
+  includes the authored SSoT large-scale overlay and P0 crosswalk.
+- `docs/04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md`
+  tracks T-058 through T-062.
+
+#### Handoff
+
+- Live runtime proof, secret value review, CI ruleset/SHA policy, EndpointSlice
+  ownership semantics, Traefik wording, Vault endpoint role notes,
+  OPA/Conftest feasibility, and `.agents` consolidation remain follow-up items.
+
+---
+
 ### 2026-05-25 — P0 mandatory workspace revalidation overlay
 
 - **Date**: 2026-05-25

@@ -229,6 +229,18 @@ git diff --check
   full target inventory, five fresh read-only subagent reviews, P0 coverage and
   gap decisions, T-049+ task linkage, safe P1/P2 implementation, P3 deferrals,
   verification results, and final report without creating a parallel docs tree.
+- **VAL-SPC-006-016**: 2026-05-25 authored SSoT large-scale overlay preserves
+  the external `P0-01` through `P0-22` identifiers in the existing 006 Plan and
+  Task, maps each ID to repo-local evidence and implementation or deferral
+  status, records six read-only subagent findings, and keeps live runtime,
+  secret value, CI ruleset, Kubernetes semantic, and bulk deletion work
+  deferred unless separately approved.
+- **VAL-SPC-006-017**: 2026-05-25 deferred item repo-static improvement overlay
+  resolves safe documentation and policy drift for EndpointSlice ownership,
+  Traefik port wording, CI gate naming, OPA/Conftest feasibility, Vault
+  endpoint role separation, script deletion prechecks, and `.agents` mirror
+  status without changing runtime interfaces, secrets, CI workflow structure, or
+  live cluster state.
 
 ## Related Documents
 

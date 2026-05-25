@@ -112,6 +112,19 @@ pre-check와 follow-up으로 남긴다.
 | T-055 | Clarify Codex provider resolution in shared AGENTS provider notes | guardrail | VAL-SPC-006-015 | P0 P1 | targeted evidence search and repo quality gate | Platform | Done |
 | T-056 | Restore executable mode for ingress TLS verification helper | test | VAL-SPC-006-015 | P0 P2 | script executability check | Platform | Done |
 | T-057 | Run P0 verification bundle and record final report/progress | test | VAL-SPC-006-015 | P0 Verification | P0 Verification Summary | Platform | Done |
+| T-058 | Add external `P0-01` through `P0-22` crosswalk to the existing 006 Plan | doc | VAL-SPC-006-016 | Authored SSoT Overlay | repo quality gate and wiki check | Platform | Done |
+| T-059 | Integrate six subagent-derived authored SSoT gaps without implementing high-risk changes | doc | VAL-SPC-006-016 | Authored SSoT Overlay | linked plan subagent gap table | Platform | Done |
+| T-060 | Mark older overlapping verification evidence as historical and keep one current dated summary | doc | VAL-SPC-006-016 | Authored SSoT Overlay | current verification summary | Platform | Done |
+| T-061 | Add reciprocal links from 006 Plan/Task to P3 GitOps Secret Runtime Remediation artifacts | doc | VAL-SPC-006-016 | Authored SSoT Overlay | link/static checks | Platform | Done |
+| T-062 | Run authored SSoT overlay verification and record progress ledger entry | test | VAL-SPC-006-016 | Authored SSoT Verification | Verification Summary | Platform | Done |
+| T-063 | Add deferred item repo-static overlay to existing 006 Plan and Spec | doc | VAL-SPC-006-017 | Deferred Item Overlay | repo quality gate and wiki check | Platform | Done |
+| T-064 | Clarify EndpointSlice desired-state and break-glass ownership boundary | doc | VAL-SPC-006-017 | Deferred Item P1 | targeted ownership wording check | Platform | Done |
+| T-065 | Clarify external Traefik 443 route versus direct fallback 8443 wording | doc | VAL-SPC-006-017 | Deferred Item P1 | targeted stale port wording check | Platform | Done |
+| T-066 | Align CI policy wording with current workflow job names | doc | VAL-SPC-006-017 | Deferred Item P1 | workflow YAML parse and targeted wording check | Platform | Done |
+| T-067 | Record OPA/Conftest feasibility as deferred until owner and policy bundle exist | doc | VAL-SPC-006-017 | Deferred Item P1 | repo quality gate | Platform | Done |
+| T-068 | Document Vault endpoint role separation without changing env keys | doc | VAL-SPC-006-017 | Deferred Item P1 | env key-name-only comparison | Platform | Done |
+| T-069 | Add script deletion broad-reference precheck and rollback contract | doc | VAL-SPC-006-017 | Deferred Item P1 | repo quality gate and targeted `rg` | Platform | Done |
+| T-070 | Run deferred item verification bundle and record progress ledger entry | test | VAL-SPC-006-017 | Deferred Item Verification | Verification Summary | Platform | Done |
 
 ## Suggested Types
 
@@ -222,6 +235,32 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-055 Clarify Codex provider resolution.
 - [x] T-056 Restore executable mode for ingress TLS verification helper.
 - [x] T-057 Run final P0 verification and close evidence.
+
+### Phase 14 - Authored SSoT Large-Scale Overlay
+
+- [x] T-058 Add exact external `P0-01` through `P0-22` traceability.
+- [x] T-059 Integrate six subagent-derived SSoT gaps and decisions.
+- [x] T-060 Normalize overlapping verification evidence into one current summary.
+- [x] T-061 Add reciprocal P3 remediation links.
+- [x] T-062 Run static verification and record progress.
+
+### Phase 15 - Deferred Item Repo-Static Improvement Overlay
+
+- [x] T-063 Add VAL-SPC-006-017 and deferred item overlay.
+- [x] T-064 Clarify EndpointSlice ownership boundary.
+- [x] T-065 Clarify Traefik 443 and fallback 8443 route wording.
+- [x] T-066 Align CI policy wording with current workflow jobs.
+- [x] T-067 Record OPA/Conftest feasibility boundary.
+- [x] T-068 Document Vault endpoint role separation.
+- [x] T-069 Add script deletion precheck contract.
+- [x] T-070 Run repo-static and targeted verification.
+
+## Verification Evidence History Note
+
+The evidence sections below preserve point-in-time verification from earlier
+006 overlays. The current verification result for the 2026-05-25 authored SSoT
+large-scale and deferred item repo-static overlays is recorded in
+`Verification Summary`.
 
 ## Hybrid Refresh Evidence
 
@@ -567,49 +606,65 @@ is stored in the linked plan to keep this task document concise.
 
 ## Verification Summary
 
+- **Scope**: 2026-05-25 authored SSoT large-scale overlay plus deferred item
+  repo-static improvement overlay for the existing 006 Spec/Plan/Task chain.
 - **Test Commands**:
   - `bash scripts/validate-repo-quality-gates.sh .` - PASS.
   - `bash scripts/generate-llm-wiki-index.sh --check` - PASS.
-  - `bash scripts/validate-gitops-structure.sh` - PASS; root app manifest count: 18.
-  - `bash scripts/validate-k8s-manifests.sh .` - PASS for YAML syntax; optional `kube-linter` skipped because it is not installed locally.
+  - `bash scripts/validate-gitops-structure.sh` - PASS; root app manifest count
+    remains 18.
+  - `bash scripts/validate-k8s-manifests.sh .` - PASS for YAML syntax; optional
+    kube-linter remains script-local optional tooling.
   - `bash scripts/check-secret-handling.sh .` - PASS.
   - `bash infrastructure/tests/verify-contracts-static.sh` - PASS.
   - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` - PASS.
+  - Shell script executability check - PASS; all checked shell scripts are
+    executable.
   - `python3 -m json.tool .claude/settings.json` - PASS.
   - `python3 -m json.tool .codex/hooks.json` - PASS.
-  - `.env.example` and `.env` key-name-only comparison - PASS; key names match without printing values.
-  - required external `SKILL.md` path existence check - PASS; all listed paths present.
-  - Implementation Plan row-level `Required skill` check - PASS; P1/P2/P3 rows carry skill evidence.
-  - CEO review current-state overlay - PASS; resolved P3 items link to the P3
-    plan/task and unresolved items remain deferred.
-  - Executing-plans follow-up - PASS; plan load/review/execution/verification
-    and finish boundary are recorded.
-  - Skill quality follow-up - PASS; named skill-maker paths, `When NOT to Use`,
-    line count, and deferred reviewer boundaries are recorded.
-  - Skill creation follow-up - PASS after verification; repeated docs-stage
-    conformance work is implemented as a repo-local Skill and registered in the
-    harness catalog.
-  - Multi-area overlay - PASS after verification; README currentness, quoted
-    secret detection, hook coverage clarification, and P3 precheck-only
-    boundaries are recorded.
+  - `.github/workflows/*.yml` syntax/job dependency inspection - PASS.
+  - `.env.example` and `.env` key-name-only comparison - PASS; values were not
+    printed or inspected.
+  - workspace-specific skill file existence and routing check - PASS; broad
+    audits continue to use `.claude/skills/workspace-harness-audit/skill.md`
+    and narrow docs cleanup continues to use
+    `.claude/skills/docs-stage-conformance/skill.md`.
+  - OPA/Conftest feasibility check - DEFERRED; no policy owner or policy bundle
+    is defined in this overlay.
+  - targeted stale `workflow-security` operations policy check - PASS.
+  - targeted stale external Traefik `443 -> k3d 8443` wording check - PASS.
+  - EndpointSlice ownership wording check - PASS.
+  - Vault host/browser versus Docker-network/in-cluster endpoint wording check -
+    PASS.
+  - `.agents` mirror state check - PASS; `.agents/` remains ignored and
+    untracked.
   - `git diff --check` - PASS.
-- **Eval Commands**: No live model or subagent pressure eval was run. The
-  repo-local Skill addition was checked through repository quality gates,
-  harness catalog inventory, and the skill authoring checklist from the loaded
-  skill-writing guidance.
-- **Logs / Evidence Location**: this document and the linked plan.
+- **Logs / Evidence Location**: this task, linked 006 Plan, Spec 006
+  VAL-SPC-006-016/017, and `docs/00.agent-governance/memory/progress.md`.
 - **Skipped / Deferred Verification**:
-  - live k3d, ArgoCD, Vault, ESO, PostgreSQL, Valkey, TLS, and NetworkPolicy
-    checks require explicit live validation approval.
-  - optional `kube-linter` is not installed locally; YAML syntax validation and
-    static contract verification were used as the local alternative.
-  - automated `skill-reviewer` loop was not run because the required plugin-dev
-    reviewer surface is not part of this repository's current harness.
+  - live k3d, ArgoCD, Vault, ESO, PostgreSQL, Valkey, Traefik, TLS, and
+    NetworkPolicy checks remain separate runtime proof work.
+  - secret values, Vault secret values, CI rulesets, branch protection, workflow
+    SHA policy, and Kubernetes semantic ownership are not inspected or changed.
+  - script deletion, `.agents` consolidation, live EndpointSlice reconciliation,
+    live Traefik reachability, live Vault/ESO readiness, and remote GitHub
+    ruleset/SHA policy remain follow-up items.
+- **Implementation Decisions**:
+  - Reused the existing 006 SDD chain as the only canonical target.
+  - Added exact external `P0-01` through `P0-22` traceability without creating a
+    parallel Spec/Plan/Task tree.
+  - Recorded six subagent-derived SSoT gaps and deferred all high-risk or
+    owner-dependent changes.
+  - Resolved repo-static portions of deferred items through documentation and
+    policy wording only; live runtime proof, secret values, remote GitHub
+    rulesets, and actual deletion/consolidation remain separate approval items.
 
 ## Related Documents
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Plan**: [../plans/2026-05-24-workspace-harness-gap-analysis.md](../plans/2026-05-24-workspace-harness-gap-analysis.md)
+- **P3 Plan**: [../plans/2026-05-24-p3-gitops-secret-runtime-remediation.md](../plans/2026-05-24-p3-gitops-secret-runtime-remediation.md)
+- **P3 Task**: [./2026-05-24-p3-gitops-secret-runtime-remediation.md](./2026-05-24-p3-gitops-secret-runtime-remediation.md)
 - **Docs Stage Conformance Skill**: [../../../.claude/skills/docs-stage-conformance/skill.md](../../../.claude/skills/docs-stage-conformance/skill.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Workspace Harness Audit Skill**: [../../../.claude/skills/workspace-harness-audit/skill.md](../../../.claude/skills/workspace-harness-audit/skill.md)

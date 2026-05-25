@@ -1575,6 +1575,9 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
         fail(f"{rel(lifecycle_hook_path)} clean Stop payload simulation failed: {clean_stop_result.stderr.strip()}")
     if "block" in clean_stop_result.stdout:
         fail(f"{rel(lifecycle_hook_path)} clean Stop payload simulation unexpectedly blocked")
+    for phrase in ["systemMessage", "Task-unit commit discipline", "git diff --cached"]:
+        if phrase not in clean_stop_result.stdout:
+            fail(f"{rel(lifecycle_hook_path)} clean Stop payload simulation missing task-unit commit phrase: {phrase}")
 
     failing_stop_result = subprocess.run(
         ["bash", str(lifecycle_hook_path)],
@@ -1618,7 +1621,7 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
     )
     if precompact_result.returncode != 0:
         fail(f"{rel(lifecycle_hook_path)} PreCompact payload simulation failed: {precompact_result.stderr.strip()}")
-    for phrase in ["systemMessage", "Lifecycle guard", "Suggested validation"]:
+    for phrase in ["systemMessage", "Lifecycle guard", "Suggested validation", "Task-unit commit discipline"]:
         if phrase not in precompact_result.stdout:
             fail(f"{rel(lifecycle_hook_path)} PreCompact payload simulation missing output phrase: {phrase}")
     if '"decision": "block"' in precompact_result.stdout:

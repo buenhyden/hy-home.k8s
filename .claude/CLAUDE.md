@@ -36,7 +36,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Treat `.codex/hooks.json` as Codex event wiring for repo-local context and validation hooks, not as an equivalent permission gate to `.claude/settings.json`.
 - Treat workspace-local `.agents/**` as ignored convenience mirrors only. `.claude/skills/**` remains the repo-backed skill source of truth; local `.agents/skills/**` must not drift when it mirrors a tracked skill.
 - Treat `.claude/*.local.md`, including Hookify rules, as ignored local warning files. Shared enforcement belongs in tracked hooks, `.claude/settings.json`, `.codex/hooks.json`, and repository validators.
-- Treat `.claude/hooks/lifecycle-guard.sh` as the lifecycle validation surface: Stop/SubagentStop may block objective repo-state failures, while PreCompact only reports uncommitted tracked changes and suggested validation.
+- Treat `.claude/hooks/lifecycle-guard.sh` as the lifecycle validation surface: Stop/SubagentStop may block objective repo-state failures and advise task-unit commit discipline for uncommitted tracked changes, while PreCompact reports uncommitted tracked changes, suggested validation, and the same commit discipline without blocking compaction.
 
 ## Runtime Roster
 

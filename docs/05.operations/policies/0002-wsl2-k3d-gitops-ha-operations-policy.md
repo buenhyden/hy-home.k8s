@@ -3,7 +3,7 @@ title: 'WSL2 k3d/k3s GitOps HA Operations Policy'
 type: operation
 status: active
 owner: platform
-updated: 2026-05-21
+updated: 2026-05-25
 ---
 
 # WSL2 k3d/k3s GitOps HA Operations Policy
@@ -30,18 +30,31 @@ updated: 2026-05-21
 - **Required**:
   - 인터페이스 계약 포트 고정(8200/15432/15433/6379)
   - Valkey는 `Service + EndpointSlice(172.18.0.9:6379)` 모델 사용
+  - `gitops/platform/external-services/*.yaml`은 외부 서비스 `Service`와
+    `EndpointSlice` desired state의 SSoT로 유지
   - Vault 경로 표준(`secret/platform/argocd`, `secret/platform/postgres-app`)
   - ArgoCD host=`argocd.127.0.0.1.nip.io`, TLS secret=`argocd-local-tls` # pragma: allowlist secret
   - `ingress-nginx-controller`는 `LoadBalancer` 타입 유지
-  - 외부 Traefik 443 -> k3d 8443 라우팅 계약 유지
+  - 외부 Traefik `websecure/443`은 Docker 네트워크의
+    `k3d-hyhome-serverlb:443`으로 라우팅
+  - direct fallback 검증은 호스트 포트 충돌 시
+    `ARGOCD_FALLBACK_PORT=8443` 경로를 사용할 수 있으며, 외부 Traefik
+    backend 포트와 혼동하지 않음
   - AppProject `apps` wildcard 금지 + 최소 allow-list 유지
   - `argocd` egress는 Valkey + DNS + HTTPS 허용
-  - CI 정적 게이트 필수화(`pre-commit`, `manifest-static`, `workflow-security`, `shell-static`)
+  - CI 정적 게이트 필수화(`branch-policy`, `pre-commit`,
+    `repo-quality-static`, `manifest-static`, `shell-static`)
   - `fs.inotify.max_user_instances >= 512` (권장 1024) — k3d 4노드 안정 기동 조건
   - Vault 컨테이너는 k3d-hyhome Docker 네트워크에 연결 상태를 유지해야 한다
   - `vault-external` EndpointSlice IP는 Vault의 k3d-hyhome 네트워크 IP(`172.18.0.8`)를 사용해야 한다
+  - 호스트/브라우저/CLI 접근은 `VAULT_ADDR=https://vault.127.0.0.1.nip.io`
+    경로를 사용하고, 클러스터 내부 ESO 접근은
+    `vault-external.platform.svc`와 EndpointSlice 경로를 사용
   - Vault Kubernetes auth `kubernetes_host`는 `https://172.18.0.2:6443`으로 고정한다
   - Vault Kubernetes auth `disable_local_ca_jwt: true` + `token_reviewer_jwt` 설정 필수
+  - OPA/Conftest는 아직 필수 게이트가 아니며, policy owner, policy bundle
+    위치, 설치 경로, failure semantics가 정해질 때까지 기존 bash 기반
+    정적 게이트를 SSoT로 사용
 - **Allowed**:
   - 장애 시 수동 `EndpointSlice` 핫픽스는 human-approved break-glass와 런북 증적이 있을 때만 허용
   - ArgoCD hard-refresh 기반 상태 재평가는 런북 절차와 증적 기록을 통해 수행
@@ -58,7 +71,9 @@ updated: 2026-05-21
 
 - CD는 ArgoCD pull 모델을 기준으로 유지한다.
 - GitHub Actions는 정적 검증 전용 게이트로 사용한다.
-- `.github/workflows/**` 변경은 workflow-security 잡을 반드시 통과해야 한다.
+- `.github/workflows/**` 변경은 현재 CI workflow의 `branch-policy`,
+  `pre-commit`, `repo-quality-static`, `manifest-static`, `shell-static`
+  구조와 `ci-summary` 집계를 유지해야 한다.
 
 ## Exceptions
 
@@ -83,13 +98,27 @@ updated: 2026-05-21
 - 운영 변경 시 즉시
 - 정기 분기 검토
 
+## EndpointSlice Ownership Boundary
+
+- 정상 경로: `gitops/platform/external-services/*.yaml`에 `Service`와
+  `EndpointSlice` desired state를 기록하고 PR review 후 ArgoCD
+  reconciliation에 맡긴다.
+- 예외 경로: ArgoCD resource exclusion, Docker network 재할당, 또는 runtime
+  drift 때문에 즉시 복구가 필요한 경우에만 human-approved break-glass로
+  직접 `EndpointSlice` patch/apply를 수행한다.
+- 예외 실행 후에는 실제 endpoint 값을 Git desired state와 런북 증적으로
+  되돌려 맞춰야 하며, 로컬 patch 상태만으로 완료를 선언하지 않는다.
+
 ## Audit Items
 
 - AppProject 권한 확장 여부
 - Vault 정책 wildcard 재도입 여부
 - `argocd` egress 정책에서 DNS/HTTPS 누락 여부
-- workflow-security 강제 실행 여부
-- 외부 Traefik 계약(`443 -> 8443`) 변경 이력
+- 현재 CI 정적 게이트(`branch-policy`, `pre-commit`, `repo-quality-static`,
+  `manifest-static`, `shell-static`) 유지 여부
+- 외부 Traefik 계약(`websecure/443 -> k3d-hyhome-serverlb:443`)과 direct
+  fallback 포트(`ARGOCD_FALLBACK_PORT`) 변경 이력
+- OPA/Conftest 도입 여부와 policy owner/bundle/install path 결정 상태
 
 ## Related Documents
 

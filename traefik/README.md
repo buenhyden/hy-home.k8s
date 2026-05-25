@@ -10,6 +10,19 @@ Ingress NGINX는 2026-03-24 이후 upstream retired 상태이므로 cloud target
 
 이 파일들은 ArgoCD가 동기화하는 Kubernetes manifest가 아니다. `hy-home.docker` Traefik dynamic config와 대조하거나 로컬 gateway에 반영할 때 쓰는 보조 참조로만 다룬다.
 
+## Port Contract
+
+- 외부 Traefik은 `websecure/443`에서 요청을 받고 Docker 네트워크의
+  `k3d-hyhome-serverlb:443`으로 전달한다.
+- `infrastructure/bootstrap-local.sh`는 호스트 443 포트가 이미 사용 중이면
+  direct browser fallback을 위해 `K3D_HTTPS_PORT=8443`으로 전환할 수 있다.
+- `ARGOCD_FALLBACK_PORT=8443`은 direct host 접근 검증용 fallback 포트이며,
+  `traefik/*.yaml`의 backend URL(`https://k3d-hyhome-serverlb:443`)을 8443으로
+  바꾸라는 의미가 아니다.
+- 이 디렉터리의 파일은 외부 Traefik dynamic config 참조 복사본이므로,
+  live gateway 반영은 `hy-home.docker` 운영 절차에서 별도로 승인하고
+  증적을 남긴다.
+
 ## Audience
 
 이 README의 주요 독자:

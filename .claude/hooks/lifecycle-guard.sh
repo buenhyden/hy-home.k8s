@@ -88,7 +88,7 @@ if [[ "$event_name" == "PreCompact" ]]; then
     emit_json advisory "Lifecycle guard: no uncommitted tracked changes detected. Suggested validation remains: git diff --check and bash scripts/validate-repo-quality-gates.sh . when repo files changed."
   else
     preview="$(printf '%s\n' "${TRACKED_CHANGED_PATHS[@]}" | head -n 12 | paste -sd ', ' -)"
-    emit_json advisory "Lifecycle guard: ${#TRACKED_CHANGED_PATHS[@]} uncommitted tracked path(s) before compaction: ${preview}. Suggested validation: git diff --check; bash scripts/validate-repo-quality-gates.sh .; run manifest/secret checks when GitOps or YAML paths changed."
+    emit_json advisory "Lifecycle guard: ${#TRACKED_CHANGED_PATHS[@]} uncommitted tracked path(s) before compaction: ${preview}. Suggested validation: git diff --check; bash scripts/validate-repo-quality-gates.sh .; run manifest/secret checks when GitOps or YAML paths changed. Task-unit commit discipline: do not auto-commit; when the human requested commits, split commits by logical task/spec IDs, stage only files for that unit, review git diff --cached, and use Conventional Commit messages."
   fi
   exit 0
 fi
@@ -186,6 +186,11 @@ fi
 if [[ "${#FAILURES[@]}" -ne 0 ]]; then
   reason="$(printf '%s; ' "${FAILURES[@]}")"
   emit_json block "Lifecycle guard blocked ${event_name} because validation failed: ${reason%'; '}. Run the listed validation category, fix the repo-state failure, then retry."
+fi
+
+if [[ "${#TRACKED_CHANGED_PATHS[@]}" -ne 0 ]]; then
+  preview="$(printf '%s\n' "${TRACKED_CHANGED_PATHS[@]}" | head -n 12 | paste -sd ', ' -)"
+  emit_json advisory "Lifecycle guard: validation passed with ${#TRACKED_CHANGED_PATHS[@]} uncommitted tracked path(s): ${preview}. Task-unit commit discipline: do not auto-commit; when the human requested commits, split commits by logical task/spec IDs, stage only files for that unit, review git diff --cached, and use Conventional Commit messages. If work intentionally remains uncommitted, the final response must name the files and reason."
 fi
 
 exit 0

@@ -25,6 +25,8 @@
 - Start hotfix work from `main`.
 - Use Conventional Commit messages.
 - Keep commits atomic and traceable to spec/task IDs.
+- When a human requests commits, split them by logical task unit; stage only the
+  files for that unit and review `git diff --cached` before each commit.
 - Do not force-push protected branches.
 - Every pull request targeting `main` must run the required CI and branch-policy checks with no bypass exceptions.
 - Keep local guidance aligned with the active GitHub branch protection or ruleset configuration. If repository defaults change, update this file in the same change window.

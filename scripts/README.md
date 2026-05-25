@@ -57,7 +57,9 @@ scripts/
 3. secret, credential, live cluster mutation, publish/deploy 동작은 이 폴더의 기본 경로에 추가하지 않는다.
 4. 스크립트를 추가·삭제·리네임하면 아래 command-contract allowlist의 파일을 함께 검토한다.
 5. 새 참조가 Tier A/B 보존 근거인지, Tier C 명령·문서 표면인지 분리해서 기록한다.
-6. 변경 후 최소한 `bash scripts/validate-repo-quality-gates.sh .`와 `git diff --check`를 실행한다.
+6. 스크립트 삭제 또는 리네임은 별도 task/plan에 연결하고, rollback 방법과
+   broad reference sweep 결과를 먼저 기록한다.
+7. 변경 후 최소한 `bash scripts/validate-repo-quality-gates.sh .`와 `git diff --check`를 실행한다.
 
 ## 보존 기준 (Tier A/B/C)
 
@@ -87,6 +89,26 @@ scripts/
 스크립트 통합은 같은 trigger, 같은 scan domain, 같은 failure semantics, 별도 command contract 없음이라는 네 조건을 모두 만족할 때만 검토한다.
 현재 스크립트는 repository governance, GitOps structure, Kubernetes manifest syntax, plaintext secret scan, generated LLM Wiki index라는 서로 다른 실패 의미와 명령 계약을 가진다.
 따라서 현재 스크립트는 삭제·통합·리네임하지 않고 분리 유지한다.
+
+## 삭제·리네임 precheck
+
+스크립트를 삭제하거나 이름을 바꾸려면 아래 precheck가 모두 통과해야 한다.
+현재 스크립트 5개는 이 기준을 통과한 삭제 후보가 아니므로 유지한다.
+
+1. linked Spec/Plan/Task가 삭제 또는 리네임 이유, 영향 범위, rollback 방법을
+   명시한다.
+2. command-contract allowlist 표면을 먼저 확인한다.
+3. broad reference sweep을 실행해 allowlist 밖의 활성 참조를 찾는다.
+
+   ```bash
+   rg -n "scripts/<name>\\.sh|<name>\\.sh" .
+   ```
+
+4. 결과를 Tier A/B 보존 근거, Tier C 명령 표면, historical/superseded
+   evidence로 분류한다.
+5. Tier A/B 참조가 남아 있거나 역할 대체가 검증되지 않았으면 삭제하지 않는다.
+6. 삭제 또는 리네임 후에는 README, CI, hook, docs, GitOps, operations 문서의
+   cross-link와 명령 예시를 함께 갱신한다.
 
 ## 명령 계약 허용 목록
 
