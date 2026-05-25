@@ -35,11 +35,11 @@ updated: 2026-05-25
   - Vault 경로 표준(`secret/platform/argocd`, `secret/platform/postgres-app`)
   - ArgoCD host=`argocd.127.0.0.1.nip.io`, TLS secret=`argocd-local-tls` # pragma: allowlist secret
   - `ingress-nginx-controller`는 `LoadBalancer` 타입 유지
-  - 외부 Traefik `websecure/443`은 Docker 네트워크의
-    `k3d-hyhome-serverlb:443`으로 라우팅
-  - direct fallback 검증은 호스트 포트 충돌 시
-    `ARGOCD_FALLBACK_PORT=8443` 경로를 사용할 수 있으며, 외부 Traefik
-    backend 포트와 혼동하지 않음
+  - 외부 Traefik `websecure/443`은 Docker 네트워크에서 접근 가능한
+    ingress-nginx `LoadBalancer` IP(`172.18.0.240:443`)로 라우팅
+  - direct runtime TLS 검증은 기본적으로 ingress-nginx `LoadBalancer` IP와
+    host/SNI resolve를 사용하며, 호스트 포트 충돌 검증 시에만
+    `ARGOCD_FALLBACK_PORT=8443` 경로를 명시
   - AppProject `apps` wildcard 금지 + 최소 allow-list 유지
   - `argocd` egress는 Valkey + DNS + HTTPS 허용
   - CI 정적 게이트 필수화(`branch-policy`, `pre-commit`,
@@ -116,8 +116,8 @@ updated: 2026-05-25
 - `argocd` egress 정책에서 DNS/HTTPS 누락 여부
 - 현재 CI 정적 게이트(`branch-policy`, `pre-commit`, `repo-quality-static`,
   `manifest-static`, `shell-static`) 유지 여부
-- 외부 Traefik 계약(`websecure/443 -> k3d-hyhome-serverlb:443`)과 direct
-  fallback 포트(`ARGOCD_FALLBACK_PORT`) 변경 이력
+- 외부 Traefik 계약(`websecure/443 -> ingress-nginx LoadBalancer IP:443`)과
+  direct fallback 포트(`ARGOCD_FALLBACK_PORT`) 변경 이력
 - OPA/Conftest 도입 여부와 policy owner/bundle/install path 결정 상태
 
 ## Related Documents

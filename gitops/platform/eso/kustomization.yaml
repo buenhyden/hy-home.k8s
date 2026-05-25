@@ -1,5 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+  - vault-token-reviewer-binding.yaml
   - vault-secret-store.yaml
   - postgres-app-secret.yaml

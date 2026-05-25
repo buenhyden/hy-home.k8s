@@ -205,7 +205,8 @@ helm repo add metallb https://metallb.github.io/metallb
 helm repo update metallb
 helm upgrade --install metallb metallb/metallb \
   -n metallb-system --create-namespace \
-  --wait --timeout=120s
+  --set frr-k8s.prometheus.serviceMonitor.enabled=false \
+  --wait --timeout=300s
 kubectl apply -f "$ROOT_DIR/infrastructure/ipaddresspool.yaml"
 kubectl apply -f "$ROOT_DIR/infrastructure/l2advertisement.yaml"
 
@@ -226,9 +227,9 @@ kubectl -n cert-manager create secret tls mkcert-root-ca \
   --key="$ROOT_CA_KEY_FILE" \
   --dry-run=client -o yaml | kubectl apply -f -
 
-echo "[7.5/11] Pre-create platform namespace and valkey-external service"
+echo "[7.5/11] Pre-create platform namespace and external service endpoints"
 kubectl create namespace platform --dry-run=client -o yaml | kubectl apply -f -
-kubectl apply -f "$ROOT_DIR/gitops/platform/external-services/valkey-external.yaml"
+kubectl apply -k "$ROOT_DIR/gitops/platform/external-services"
 
 echo "[8/11] Install ArgoCD via Helm"
 helm repo add argo https://argoproj.github.io/argo-helm
