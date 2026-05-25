@@ -25,6 +25,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| GitOps Image and Kind Policy Scan Guardrail Overlay | Current repo-static guardrail for active workload image tag policy, raw platform pod template image tags, and workload kind membership in the apps AppProject whitelist | VAL-SPC-006-050; T-237 through T-242 | Current |
 | Targeted Residual-Area Audit Overlay | Current continuation audit for `scripts/`, `gitops/`, `infrastructure/`, and `docs/05.operations`, including operations high-risk command boundary SSoT | VAL-SPC-006-049; T-231 through T-236 | Current |
 | Traefik 443 Runtime Proof Overlay | Current approved runtime follow-up proving ingress-nginx fallback passes but external Traefik 443 is not reachable because no external gateway runtime is present | VAL-SPC-006-048; T-227 through T-230 | Current |
 | Default Kubeconfig TLS Repair Overlay | Current approved runtime follow-up proving default kubeconfig TLS trust repair and default `run-all.sh` live validation pass | VAL-SPC-006-047; T-222 through T-226 | Current |
@@ -59,6 +60,39 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 Use the newest dated overlay for current state. Preserve older overlays as
 evidence snapshots unless a later overlay explicitly supersedes them.
+
+## GitOps Image and Kind Policy Scan Guardrail Overlay
+
+This overlay follows the active-goal review for a previously deferred GitOps
+hardening item. It keeps the change repo-static and documentation/governance:
+no Kubernetes manifests, AppProject permissions, ApplicationSet behavior,
+namespace ownership, live cluster state, CI job structure, secret policy, or
+`.env` values are changed.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| GitOps image tag policy scan | Active workload and raw platform pod-template images were documented by manifests but not protected by a reusable repo-quality guardrail against `latest` or untagged images | `gitops/workloads/adminer/rollout.yaml`; `gitops/platform/monitoring/`; `gitops/README.md` | A future active workload or platform pod template could introduce a mutable image tag while existing YAML syntax checks still pass | Medium | improvement | P1 |
+| Workload kind policy scan | The `apps` AppProject whitelist existed, but active workload manifest kinds were not checked against `namespaceResourceWhitelist` by the broad quality gate | `gitops/clusters/local/appproject-apps.yaml`; `gitops/workloads/adminer/` | App onboarding could add a kind outside the intended apps project boundary without an early repo-static failure | Medium | improvement | P1 |
+| Example placeholder boundary | `examples/sample-app` intentionally contains image placeholders, but that exception needed to stay separate from active ApplicationSet desired state | `examples/sample-app/rollout.yaml`; `gitops/README.md` | A template placeholder could be mistaken for an allowed active workload image pattern | Low | supplementation | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | documentation | `gitops/README.md` | Add Workload Image and Kind Policy Matrix for active workloads, raw platform pod templates, and sample-app placeholder boundaries | T-238 | repo quality and README review | Revert matrix and deferral wording |
+| P1 | guardrail | `scripts/validate-repo-quality-gates.sh` | Validate active workload images, raw platform pod-template images, workload kind membership in `apps` AppProject `namespaceResourceWhitelist`, and README evidence rows | T-239 | repo quality gate and shell syntax | Revert validator block |
+| P1 | documentation | `scripts/README.md` | Align command contract wording with the new GitOps image/workload-kind policy matrix guardrail | T-240 | scripts README review | Revert wording |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-050, implementation decisions, verification, and remaining semantic deferrals | T-241, T-242 | SDD chain check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| current manifest and AppProject inspection | PASS | Active workload image is `adminer:4.8.1`; active workload kinds are covered by the apps AppProject whitelist |
+| repo-static verification | PASS | `validate-repo-quality-gates.sh`, GitOps structure, manifest syntax, secret scan, static contracts, shell syntax, JSON parse, workflow YAML parse, env key-name comparison, wiki check, and diff check passed |
+| remaining deferrals | recorded | AppProject allow-list tightening, `CreateNamespace=true` ownership, CI failure-mode changes, OPA/Conftest, kube-linter enforcement, and live runtime mutation remain outside this pass |
 
 ## Targeted Residual-Area Audit Overlay
 

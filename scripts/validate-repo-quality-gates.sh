@@ -75,6 +75,11 @@ def load_yaml(path: pathlib.Path):
         return yaml.load(handle, Loader=DuplicateKeyLoader) or {}
 
 
+def load_yaml_documents(path: pathlib.Path) -> list:
+    with path.open(encoding="utf-8") as handle:
+        return [document or {} for document in yaml.load_all(handle, Loader=DuplicateKeyLoader)]
+
+
 def workflow_on(data):
     return data.get("on") if "on" in data else data.get(True, {})
 
@@ -2990,6 +2995,186 @@ else:
         fail(
             "gitops/workloads/README.md Workload Coverage Matrix row order must match actual workloads: "
             + ", ".join(expected_workloads)
+        )
+
+
+def gitops_yaml_documents_under(scope: pathlib.Path) -> list[tuple[pathlib.Path, dict]]:
+    documents: list[tuple[pathlib.Path, dict]] = []
+    yaml_paths = sorted(scope.rglob("*.yaml")) + sorted(scope.rglob("*.yml"))
+    for path in yaml_paths:
+        for document in load_yaml_documents(path):
+            if isinstance(document, dict):
+                documents.append((path, document))
+    return documents
+
+
+def collect_container_images(value) -> list[str]:
+    images: list[str] = []
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if key in {"containers", "initContainers", "ephemeralContainers"} and isinstance(item, list):
+                for container in item:
+                    if isinstance(container, dict) and "image" in container:
+                        image = container.get("image")
+                        images.append(image if isinstance(image, str) else "")
+            images.extend(collect_container_images(item))
+    elif isinstance(value, list):
+        for item in value:
+            images.extend(collect_container_images(item))
+    return images
+
+
+def image_has_explicit_version(image: str) -> bool:
+    if "@sha256:" in image:
+        return True
+    last_segment = image.rsplit("/", 1)[-1]
+    return ":" in last_segment and not last_segment.endswith(":")
+
+
+def image_uses_latest(image: str) -> bool:
+    last_segment = image.rsplit("/", 1)[-1]
+    tag_segment = last_segment.split("@", 1)[0]
+    return tag_segment.endswith(":latest")
+
+
+def collect_container_image_entries(scope: pathlib.Path) -> list[tuple[pathlib.Path, str]]:
+    entries: list[tuple[pathlib.Path, str]] = []
+    for path, document in gitops_yaml_documents_under(scope):
+        if path.name == "kustomization.yaml":
+            continue
+        for image in collect_container_images(document):
+            entries.append((path, image))
+    return entries
+
+
+workload_image_entries = collect_container_image_entries(gitops_dir / "workloads")
+platform_image_entries = collect_container_image_entries(gitops_dir / "platform")
+for scope_name, entries in [
+    ("gitops/workloads", workload_image_entries),
+    ("gitops/platform", platform_image_entries),
+]:
+    if scope_name == "gitops/workloads" and not entries:
+        fail("active gitops/workloads container image scan found no images")
+    for path, image in entries:
+        if not image:
+            fail(f"{rel(path)} contains a container image field that is not a nonempty string")
+            continue
+        if image_uses_latest(image):
+            fail(f"{rel(path)} must not use latest container image tag: {image}")
+        if not image_has_explicit_version(image):
+            fail(f"{rel(path)} container image must use an explicit tag or sha256 digest: {image}")
+
+workload_manifest_kinds: set[str] = set()
+for path, document in gitops_yaml_documents_under(gitops_dir / "workloads"):
+    if path.name == "kustomization.yaml":
+        continue
+    kind = document.get("kind")
+    if isinstance(kind, str) and kind:
+        workload_manifest_kinds.add(kind)
+
+apps_project_path = gitops_dir / "clusters/local/appproject-apps.yaml"
+apps_project = load_yaml(apps_project_path)
+apps_namespace_kind_whitelist = {
+    item.get("kind")
+    for item in apps_project.get("spec", {}).get("namespaceResourceWhitelist", [])
+    if isinstance(item, dict) and isinstance(item.get("kind"), str)
+}
+if not apps_namespace_kind_whitelist:
+    fail("gitops/clusters/local/appproject-apps.yaml namespaceResourceWhitelist must not be empty")
+for kind in sorted(workload_manifest_kinds - apps_namespace_kind_whitelist):
+    fail(f"gitops/workloads manifest kind is not allowed by apps AppProject namespaceResourceWhitelist: {kind}")
+
+expected_workload_policy_header = [
+    "Surface",
+    "Current image policy",
+    "Resource-kind policy",
+    "Current evidence",
+    "Deferred boundary",
+    "Validation",
+]
+expected_workload_policy_surfaces = [
+    "gitops/workloads/*",
+    "gitops/platform/*",
+    "examples/sample-app/*",
+]
+workload_policy_rows = markdown_table_after_heading(gitops_readme, "## Workload Image and Kind Policy Matrix")
+if len(workload_policy_rows) < 2:
+    fail("gitops/README.md Workload Image and Kind Policy Matrix must contain a header and policy rows")
+elif workload_policy_rows[0] != expected_workload_policy_header:
+    fail(
+        "gitops/README.md Workload Image and Kind Policy Matrix header must be: "
+        + " | ".join(expected_workload_policy_header)
+    )
+else:
+    indexed_policy_surfaces: list[str] = []
+    for row_number, row in enumerate(workload_policy_rows[1:], start=1):
+        if len(row) != len(expected_workload_policy_header):
+            fail(
+                "gitops/README.md Workload Image and Kind Policy Matrix "
+                f"row {row_number} must have {len(expected_workload_policy_header)} columns"
+            )
+            continue
+        surface_cell, image_policy, kind_policy, evidence, deferred_boundary, validation = row
+        match = re.fullmatch(r"`([^`]+)`", surface_cell)
+        if not match:
+            fail(
+                "gitops/README.md Workload Image and Kind Policy Matrix "
+                f"row {row_number} must start with a backticked surface"
+            )
+            continue
+        surface = match.group(1)
+        indexed_policy_surfaces.append(surface)
+        for label, value in [
+            ("Current image policy", image_policy),
+            ("Resource-kind policy", kind_policy),
+            ("Current evidence", evidence),
+            ("Deferred boundary", deferred_boundary),
+            ("Validation", validation),
+        ]:
+            if not value:
+                fail(f"gitops/README.md Workload Image and Kind Policy Matrix row {row_number} has empty {label}")
+        if "validate-repo-quality-gates.sh" not in validation:
+            fail(
+                "gitops/README.md Workload Image and Kind Policy Matrix "
+                f"row {row_number} must cite scripts/validate-repo-quality-gates.sh"
+            )
+        if surface == "gitops/workloads/*":
+            if "non-latest" not in image_policy or "tag or digest" not in image_policy:
+                fail("gitops/README.md workload policy row must require explicit non-latest tag or digest")
+            if "AppProject" not in kind_policy or "namespaceResourceWhitelist" not in kind_policy:
+                fail("gitops/README.md workload policy row must cite apps AppProject namespaceResourceWhitelist")
+            for image in sorted({image for _, image in workload_image_entries}):
+                if image not in evidence:
+                    fail(f"gitops/README.md workload policy row missing active image evidence: {image}")
+            for kind in sorted(workload_manifest_kinds):
+                if kind not in evidence:
+                    fail(f"gitops/README.md workload policy row missing active kind evidence: {kind}")
+            for phrase in ["CreateNamespace=true", "allow-list tightening"]:
+                if phrase not in deferred_boundary:
+                    fail(f"gitops/README.md workload policy row deferred boundary missing phrase: {phrase}")
+        elif surface == "gitops/platform/*":
+            if "non-latest" not in image_policy or "tag or digest" not in image_policy:
+                fail("gitops/README.md platform policy row must require explicit non-latest tag or digest")
+            if "platform AppProject" not in kind_policy:
+                fail("gitops/README.md platform policy row must cite platform AppProject")
+            for image in sorted({image for _, image in platform_image_entries}):
+                if image not in evidence:
+                    fail(f"gitops/README.md platform policy row missing platform image evidence: {image}")
+            if "AppProject permissions" not in deferred_boundary:
+                fail("gitops/README.md platform policy row must defer AppProject permission changes")
+        elif surface == "examples/sample-app/*":
+            if "placeholder" not in image_policy or "ghcr.io/<owner>/<appname>:<tag>" not in evidence:
+                fail("gitops/README.md sample policy row must document the placeholder image boundary")
+            if "not active desired state" not in kind_policy:
+                fail("gitops/README.md sample policy row must say examples are not active desired state")
+            if "gitops/workloads/<appname>" not in deferred_boundary:
+                fail("gitops/README.md sample policy row must require replacement before workload copy")
+        else:
+            fail(f"gitops/README.md Workload Image and Kind Policy Matrix unexpected surface: {surface}")
+    if indexed_policy_surfaces != expected_workload_policy_surfaces:
+        fail(
+            "gitops/README.md Workload Image and Kind Policy Matrix row order must be: "
+            + ", ".join(expected_workload_policy_surfaces)
         )
 
 infrastructure_dir = root / "infrastructure"

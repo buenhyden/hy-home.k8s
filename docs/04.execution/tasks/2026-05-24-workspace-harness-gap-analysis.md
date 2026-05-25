@@ -291,6 +291,12 @@ pre-check와 follow-up으로 남긴다.
 | T-234 | Record GitOps and infrastructure external Traefik proof boundary in entrypoint READMEs | doc | VAL-SPC-006-049 | Targeted Residual-Area Audit | repo quality and static checks | Platform | Done |
 | T-235 | Record residual-area audit overlay in the 006 Spec/Plan/Task chain | doc | VAL-SPC-006-049 | Targeted Residual-Area Audit | SDD chain check | Platform | Done |
 | T-236 | Append progress memory for targeted residual-area audit | memory | VAL-SPC-006-049 | Targeted Residual-Area Audit | progress ledger entry | Platform | Done |
+| T-237 | Recheck active GitOps image and workload-kind policy scan gap | eval | VAL-SPC-006-050 | GitOps Image and Kind Policy Scan Guardrail | current manifest and AppProject inspection | Platform | Done |
+| T-238 | Add GitOps image and workload-kind policy matrix to `gitops/README.md` | doc | VAL-SPC-006-050 | GitOps Image and Kind Policy Scan Guardrail | README review | Platform | Done |
+| T-239 | Extend repository quality gate for active workload image and kind policy checks | test | VAL-SPC-006-050 | GitOps Image and Kind Policy Scan Guardrail | repo quality gate | Platform | Done |
+| T-240 | Align scripts README command contract wording for the new GitOps policy scan | doc | VAL-SPC-006-050 | GitOps Image and Kind Policy Scan Guardrail | scripts README review | Platform | Done |
+| T-241 | Record GitOps image and workload-kind guardrail in the 006 Spec/Plan/Task chain | doc | VAL-SPC-006-050 | GitOps Image and Kind Policy Scan Guardrail | SDD chain check | Platform | Done |
+| T-242 | Append progress memory for the GitOps image and workload-kind policy scan guardrail | memory | VAL-SPC-006-050 | GitOps Image and Kind Policy Scan Guardrail | progress ledger entry | Platform | Done |
 
 ## Suggested Types
 
@@ -756,7 +762,7 @@ pre-check와 follow-up으로 남긴다.
 | Area | Status | Evidence |
 | --- | --- | --- |
 | `scripts/` deletion/consolidation | PASS | Five tracked scripts are inventoried, executable, classified, and not deletion/consolidation candidates. |
-| `gitops/` implemented infrastructure | PARTIAL | Static hierarchy and contracts pass; AppProject/namespace/image/workload-kind semantics remain deferred; external Traefik gateway proof is outside GitOps desired state. |
+| `gitops/` implemented infrastructure | PARTIAL | Static hierarchy and contracts pass; active image/workload-kind repo-static scan is now guarded; AppProject allow-list tightening, namespace ownership, and external Traefik gateway proof remain deferred or external. |
 | `infrastructure/` implemented infrastructure | PARTIAL | Static and default live aggregate checks pass; external Traefik 443 proof remains an external gateway runtime gap. |
 | `docs/05.operations/` normalization | PASS | Bucket/index/frontmatter and high-risk command boundary checks pass after entrypoint wording update. |
 
@@ -770,6 +776,32 @@ pre-check와 follow-up으로 남긴다.
 | `bash scripts/check-secret-handling.sh .` | PASS | Plaintext secret scan passed. |
 | `bash infrastructure/tests/run-all.sh` | PASS | Default live aggregate passed with Traefik 443 enforcement skipped. |
 | `CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh` | EXPECTED FAIL | External Traefik endpoint is not reachable; no separate external Traefik gateway container is present in Docker inventory. |
+
+### Phase 48 - GitOps Image and Kind Policy Scan Guardrail
+
+- [x] T-237 Recheck active GitOps image and workload-kind policy scan gap.
+- [x] T-238 Add GitOps image and workload-kind policy matrix to `gitops/README.md`.
+- [x] T-239 Extend repository quality gate for active workload image and kind policy checks.
+- [x] T-240 Align scripts README command contract wording for the new GitOps policy scan.
+- [x] T-241 Record the guardrail in the 006 SDD chain.
+- [x] T-242 Append progress memory for this follow-up.
+
+## GitOps Image and Kind Policy Scan Guardrail Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| active workload image scan | PASS | `gitops/workloads/adminer/rollout.yaml` uses `adminer:4.8.1`; no active `latest` or untagged workload image found |
+| platform raw pod template image scan | PASS | `gitops/platform/monitoring/` images use explicit non-latest tags |
+| workload kind allow-list check | PASS | Active workload kinds are covered by `gitops/clusters/local/appproject-apps.yaml` `namespaceResourceWhitelist` |
+| sample app placeholder boundary | PASS | `examples/sample-app` remains an onboarding template and is not scanned as active ApplicationSet desired state |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New image/workload-kind policy guardrail passed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated LLM Wiki index remained current |
+| `bash scripts/validate-gitops-structure.sh` | PASS | GitOps hierarchy and Kustomize completeness checks passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed for 104 files; optional kube-linter skipped locally |
+| `bash scripts/check-secret-handling.sh .` | PASS | Plaintext secret scan passed |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static contract verification passed |
+| shell syntax, JSON, workflow YAML, env key, and diff checks | PASS | Shell scripts parsed, runtime JSON parsed, 5 workflow YAML files parsed, 18 env keys matched, and `git diff --check` passed |
+| deferred semantic changes | recorded | AppProject allow-list tightening, `CreateNamespace=true` ownership, CI failure-mode changes, OPA/Conftest, and kube-linter enforcement remain separate follow-ups |
 
 ## Vault Policy Write Boundary Guardrail Verification Summary
 

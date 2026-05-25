@@ -75,6 +75,20 @@ gitops/
 | `platform/network-policies` | Network egress policy owned by platform/security maintainers. | Kustomize config for apps, monitoring, Kiali, ESO-to-Vault, and ArgoCD-to-Valkey egress. | Depends on namespace labels, external service addresses, Vault, Valkey, and observability endpoints. | Validate Kustomize completeness and manifests; live behavior requires `verify-network-policies.sh`. |
 | `workloads/adminer` | Reference workload owned by platform maintainers and app operators. | Kustomize config for Rollout, services, ingress, Istio routing, PeerAuthentication, and analysis. | Depends on apps namespace, ingress, Rollouts, Istio, and PostgreSQL external service route assumptions. | Validate manifests statically; live rollout and route checks require cluster validation. |
 
+## Workload Image and Kind Policy Matrix
+
+이 표는 현재 GitOps desired state에서 안전하게 자동 검증할 수 있는 image tag와
+workload kind 정책을 정리한다. `validate-repo-quality-gates.sh`는 active
+`gitops/workloads/*` container image가 명시적 non-latest tag 또는 digest를
+사용하는지 확인하고, workload manifest kind가 `apps` AppProject의
+`namespaceResourceWhitelist` 안에 있는지 검증한다.
+
+| Surface | Current image policy | Resource-kind policy | Current evidence | Deferred boundary | Validation |
+| --- | --- | --- | --- | --- | --- |
+| `gitops/workloads/*` | Container specs must use an explicit non-latest tag or digest. | Manifest kinds must remain within the `apps` AppProject `namespaceResourceWhitelist`. | Current active image: `adminer:4.8.1`; current kinds: `AnalysisTemplate`, `DestinationRule`, `Ingress`, `PeerAuthentication`, `Rollout`, `Service`, `VirtualService`. | AppProject allow-list tightening and `CreateNamespace=true` ownership changes remain separate semantic follow-ups. | `bash scripts/validate-repo-quality-gates.sh .`, `bash scripts/validate-gitops-structure.sh`, and `bash scripts/validate-k8s-manifests.sh .`. |
+| `gitops/platform/*` | Raw platform pod templates must use an explicit non-latest tag or digest. | Platform resources stay governed by the platform AppProject and component-specific manifests or charts. | Current raw platform images: `grafana/alloy:v1.13.1`, `registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.14.0`. | AppProject permissions and chart-managed resource-kind tightening remain separate semantic follow-ups. | `bash scripts/validate-repo-quality-gates.sh .`, `bash scripts/validate-gitops-structure.sh`, and `bash scripts/validate-k8s-manifests.sh .`. |
+| `examples/sample-app/*` | placeholder image values are allowed only in the onboarding template. | Example manifests are not active desired state until copied into `gitops/workloads/<appname>`. | Template image placeholder: `ghcr.io/<owner>/<appname>:<tag>`. | Replace placeholders and re-run active workload validation before committing a copied `gitops/workloads/<appname>` app. | `bash scripts/validate-repo-quality-gates.sh .` and `bash scripts/validate-k8s-manifests.sh .`. |
+
 ## External Service Contract Matrix
 
 이 표는 외부 런타임 자체가 아니라 Kubernetes interface contract만 정리한다.
@@ -119,8 +133,11 @@ semantics가 바뀌는 작업이라 별도 승인된 hardening pass에서 다룬
   resource-kind 기준을 먼저 확정해야 한다.
 - `CreateNamespace=true` ownership 정리: ApplicationSet과
   `platform/namespaces`의 namespace 소유권 경계를 먼저 검증해야 한다.
-- image tag와 workload-kind 정책 스캔: 운영 정책과 CI failure mode를 먼저
-  설계한 뒤 validator에 추가한다.
+- image tag와 workload-kind 정책 스캔: active `gitops/workloads/*`와 raw
+  `gitops/platform/*` pod template의 repo-static guardrail은 현재
+  `validate-repo-quality-gates.sh`에 포함한다. CI failure mode, kube-linter
+  enforcement, broader policy bundle, AppProject allow-list tightening은 별도
+  hardening pass에서 다룬다.
 - 외부 Traefik 443 runtime proof: ingress-nginx LoadBalancer fallback
   검증은 이 저장소 live test가 담당하지만, 외부 gateway 컨테이너 기동과
   dynamic config 반영 증명은 `hy-home.docker` 운영 경계에서 다룬다.

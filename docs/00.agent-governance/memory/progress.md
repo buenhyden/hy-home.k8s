@@ -8,6 +8,49 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-26 — GitOps image and workload-kind policy scan guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: GitOps, validation, SDD
+- **Status**: partial
+- **Tags**: #gitops #validation #sdd
+
+#### Progress
+
+- Rechecked the active image tag and workload-kind policy scan gap from the
+  current worktree.
+- Added `gitops/README.md` Workload Image and Kind Policy Matrix for active
+  `gitops/workloads/*`, raw `gitops/platform/*` pod templates, and
+  `examples/sample-app/*` placeholder boundaries.
+- Extended `scripts/validate-repo-quality-gates.sh` to reject active
+  workload/platform pod template images that use `latest` or lack an explicit
+  tag/digest.
+- Extended the same gate to compare active workload manifest kinds against the
+  `apps` AppProject `namespaceResourceWhitelist`.
+- Recorded `VAL-SPC-006-050` and `T-237` through `T-242` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS; optional
+  `kube-linter` skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` — PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` — PASS.
+- JSON parse for `.claude/settings.json` and `.codex/hooks.json` — PASS.
+- Workflow YAML parse for `.github/workflows/*.yml` — PASS for 5 files.
+- `.env.example` and `.env` key-name-only comparison — PASS for 18 keys.
+- `git diff --check` — PASS.
+
+#### Follow-up
+
+- Keep AppProject allow-list tightening, `CreateNamespace=true` ownership, CI
+  failure-mode changes, OPA/Conftest, kube-linter enforcement, and live runtime
+  mutation as separate follow-up work.
+
 ### 2026-05-26 — Targeted residual-area audit follow-up
 
 - **Date**: 2026-05-26

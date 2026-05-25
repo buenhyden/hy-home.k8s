@@ -430,6 +430,14 @@ git diff --check
   GitOps/Kubernetes semantic changes in this pass, and strengthens the
   operations high-risk command boundary SSoT without mutating live cluster,
   external runtime, secret, `.env`, or Kubernetes desired-state semantics.
+- **VAL-SPC-006-050**: 2026-05-26 GitOps image and workload-kind policy scan
+  guardrail follow-up strengthens the previously deferred image tag and
+  workload-kind scan by validating active `gitops/workloads/*` container images,
+  raw `gitops/platform/*` pod template images, and workload manifest kind
+  membership in the `apps` AppProject `namespaceResourceWhitelist`, while
+  keeping AppProject allow-list tightening, `CreateNamespace=true` ownership,
+  CI failure-mode changes, OPA/Conftest, kube-linter enforcement, live cluster
+  state, and Kubernetes desired-state semantics deferred.
 
 ## Related Documents
 
