@@ -145,6 +145,37 @@ pre-check와 follow-up으로 남긴다.
 | T-088 | Align live validation scripts with current MetalLB and ingress-nginx LoadBalancer behavior | test | VAL-SPC-006-021 | Live Bootstrap Runtime Closure | `infrastructure/tests/run-all.sh` PASS | Platform | Done |
 | T-089 | Correct Traefik backend and fallback wording using live LoadBalancer evidence | doc | VAL-SPC-006-021 | Live Bootstrap Runtime Closure | targeted `rg` and YAML parse | Platform | Done |
 | T-090 | Run final live and repo-static verification for the runtime closure branch | test | VAL-SPC-006-021 | Live Bootstrap Runtime Closure | Live Bootstrap Runtime Closure Summary | Platform | Done |
+| T-091 | Check baseline instructions and current target inventory for the documentation/governance-first pass | doc | VAL-SPC-006-022 | Documentation/Governance Overlay | Baseline Instruction Check and Coverage Ledger | Platform | Done |
+| T-092 | Record six fresh read-only subagent reviews as the current-state overlay | doc | VAL-SPC-006-022 | Documentation/Governance Overlay | Subagent Summary | Platform | Done |
+| T-093 | Record P0 coverage ledger, integrated gaps, implementation plan, checklist, and final report | doc | VAL-SPC-006-022 | Documentation/Governance Overlay | P0 tables in linked plan | Platform | Done |
+| T-094 | Normalize JIT shorthand, direct mutation boundaries, and `doc-writer` ownership wording | guardrail | VAL-SPC-006-022 | Documentation/Governance P1 | targeted JIT and doc-writer checks | Platform | Done |
+| T-095 | Refresh sample app, onboarding, Traefik example, and cloud snapshot wording without runtime changes | doc | VAL-SPC-006-022 | Documentation/Governance P1 | targeted stale backend and snapshot checks | Platform | Done |
+| T-096 | Update existing repo-local Skill descriptions and defer duplicate workspace-specific agents/skills | guardrail | VAL-SPC-006-022 | Documentation/Governance P1 | skill description and routing checks | Platform | Done |
+| T-097 | Record live kubeconfig TLS blocker and keep kubeconfig repair deferred | eval | VAL-SPC-006-022 | Documentation/Governance Verification | live check blocker entry | Platform | Done |
+| T-098 | Run repo-static verification bundle and targeted checks for this pass | test | VAL-SPC-006-022 | Documentation/Governance Verification | Documentation/Governance Verification Summary | Platform | Done |
+| T-099 | Append progress memory for the documentation/governance-first pass | memory | VAL-SPC-006-022 | Documentation/Governance Overlay | progress ledger entry | Platform | Done |
+| T-100 | Close checklist gate and final report for the approved plan | doc | VAL-SPC-006-022 | Documentation/Governance Overlay | Checklist Gate and Final Report | Platform | Done |
+| T-101 | Recheck unreviewed or weak-evidence areas for `scripts/`, `gitops/`, `infrastructure/`, and `docs/05.operations/` | doc | VAL-SPC-006-023 | Unreviewed-Area Follow-up | current file inventory and targeted source review | Platform | Done |
+| T-102 | Refresh script deletion/consolidation evidence and current inventory wording | doc | VAL-SPC-006-023 | Unreviewed-Area P1 | scripts README and broad reference sweep | Platform | Done |
+| T-103 | Surface GitOps semantic hardening deferrals in the GitOps entrypoint | doc | VAL-SPC-006-023 | Unreviewed-Area P1 | GitOps README and static structure check | Platform | Done |
+| T-104 | Improve infrastructure live-check TLS blocker diagnostics and docs | test | VAL-SPC-006-023 | Unreviewed-Area P1 | shell syntax and blocked live run output | Platform | Done |
+| T-105 | Align `docs/05.operations` modified guide/runbook frontmatter and indexes | doc | VAL-SPC-006-023 | Unreviewed-Area P1 | operations index targeted check | Platform | Done |
+| T-106 | Run verification-before-completion checks for the follow-up pass | test | VAL-SPC-006-023 | Unreviewed-Area Verification | Unreviewed-Area Verification Summary | Platform | Done |
+| T-107 | Recheck residual objective axes outside the four-path follow-up | doc | VAL-SPC-006-024 | Residual Objective Completion Audit | residual coverage matrix | Platform | Done |
+| T-108 | Record Traefik, examples, env, QA/CI, agent governance, skills, bootstrap, WSL2, secret, external-service, and SSoT decisions | doc | VAL-SPC-006-024 | Residual Objective Completion Audit | linked plan matrix | Platform | Done |
+| T-109 | Keep additional semantic implementation deferred and limit this pass to 006 evidence | guardrail | VAL-SPC-006-024 | Residual Objective Completion Audit | implementation delta | Platform | Done |
+| T-110 | Run fresh residual verification checks before reporting status | test | VAL-SPC-006-024 | Residual Objective Verification | Residual Objective Verification Summary | Platform | Done |
+| T-111 | Append progress memory for the residual objective completion audit | memory | VAL-SPC-006-024 | Residual Objective Completion Audit | progress ledger entry | Platform | Done |
+| T-112 | Recheck `docs/05.operations` README index/frontmatter parity | doc | VAL-SPC-006-025 | Operations Index Guardrail | targeted parity check | Platform | Done |
+| T-113 | Align stale operations guide, policy, and runbook README index dates | doc | VAL-SPC-006-025 | Operations Index Guardrail | operations index/frontmatter sync check | Platform | Done |
+| T-114 | Extend repository quality gate to enforce operations index/frontmatter sync | test | VAL-SPC-006-025 | Operations Index Guardrail | repo quality gate | Platform | Done |
+| T-115 | Record operations guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-025 | Operations Index Guardrail | 006 chain check | Platform | Done |
+| T-116 | Append progress memory for the operations guardrail follow-up | memory | VAL-SPC-006-025 | Operations Index Guardrail | progress ledger entry | Platform | Done |
+| T-117 | Recheck `scripts/` inventory deletion/consolidation validation strength | doc | VAL-SPC-006-026 | Scripts Inventory Guardrail | current scripts README and validator review | Platform | Done |
+| T-118 | Extend repository quality gate for script inventory row, decision, Tier, executable, and shebang checks | test | VAL-SPC-006-026 | Scripts Inventory Guardrail | repo quality gate and targeted check | Platform | Done |
+| T-119 | Update scripts README command contract wording for the new guardrail | doc | VAL-SPC-006-026 | Scripts Inventory Guardrail | scripts README review | Platform | Done |
+| T-120 | Record scripts guardrail follow-up in the 006 Plan/Spec/Task | doc | VAL-SPC-006-026 | Scripts Inventory Guardrail | 006 chain check | Platform | Done |
+| T-121 | Append progress memory for the scripts guardrail follow-up | memory | VAL-SPC-006-026 | Scripts Inventory Guardrail | progress ledger entry | Platform | Done |
 
 ## Suggested Types
 
@@ -314,12 +345,142 @@ pre-check와 follow-up으로 남긴다.
       on live LoadBalancer evidence.
 - [x] T-090 Run live and repo-static verification for this branch.
 
+### Phase 20 - Documentation/Governance-First Workspace Improvement
+
+- [x] T-091 Check baseline instructions and current target inventory.
+- [x] T-092 Record six read-only subagent reviews as the current overlay.
+- [x] T-093 Record P0 coverage, gaps, implementation plan, checklist, and final report.
+- [x] T-094 Normalize JIT shorthand, mutation boundary, and `doc-writer` wording.
+- [x] T-095 Refresh sample app, onboarding, Traefik example, and cloud snapshot wording.
+- [x] T-096 Update existing Skill descriptions and defer duplicate skill/agent creation.
+- [x] T-097 Record the live kubeconfig TLS blocker without repairing kubeconfig.
+- [x] T-098 Run repo-static and targeted verification for this pass.
+- [x] T-099 Append progress memory.
+- [x] T-100 Close the checklist gate and final report.
+
+### Phase 21 - Unreviewed-Area Follow-up
+
+- [x] T-101 Recheck `scripts/`, `gitops/`, `infrastructure/`, and `docs/05.operations/`.
+- [x] T-102 Refresh script deletion/consolidation evidence and inventory wording.
+- [x] T-103 Surface GitOps semantic hardening deferrals in `gitops/README.md`.
+- [x] T-104 Improve infrastructure live-check TLS blocker diagnostics and docs.
+- [x] T-105 Align operations guide/runbook frontmatter and indexes.
+- [x] T-106 Run verification-before-completion checks for this follow-up.
+
+### Phase 22 - Residual Objective Completion Audit
+
+- [x] T-107 Recheck residual objective axes outside the four-path follow-up.
+- [x] T-108 Record residual axis decisions in the linked plan matrix.
+- [x] T-109 Keep additional semantic implementation deferred.
+- [x] T-110 Run fresh residual verification checks.
+- [x] T-111 Append progress memory for this residual audit.
+
+### Phase 23 - Operations Index Guardrail
+
+- [x] T-112 Recheck operations README index/frontmatter parity.
+- [x] T-113 Align stale operations guide, policy, and runbook README index dates.
+- [x] T-114 Extend repository quality gate for operations index/frontmatter sync.
+- [x] T-115 Record this follow-up in the 006 SDD chain.
+- [x] T-116 Append progress memory for this follow-up.
+
+### Phase 24 - Scripts Inventory Guardrail
+
+- [x] T-117 Recheck scripts inventory deletion/consolidation validation strength.
+- [x] T-118 Extend repository quality gate for script inventory and entrypoint checks.
+- [x] T-119 Update scripts README command contract wording.
+- [x] T-120 Record this follow-up in the 006 SDD chain.
+- [x] T-121 Append progress memory for this follow-up.
+
+## Scripts Inventory Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| Scripts inventory guardrail targeted check | PASS | `scripts/README.md`; `scripts/*.sh` |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current scripts guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current scripts guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current scripts guardrail run |
+| `git diff --check` | PASS | current scripts guardrail run |
+| Guardrail implementation | complete | `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` |
+
+## Operations Index Guardrail Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| Operations index/frontmatter sync targeted check | PASS | `docs/05.operations/{guides,policies,runbooks}` |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current operations guardrail run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current operations guardrail run |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | current operations guardrail run |
+| `git diff --check` | PASS | current operations guardrail run |
+| Guardrail implementation | complete | `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` |
+| Index date alignment | complete | `docs/05.operations/guides/README.md`; `docs/05.operations/policies/README.md`; `docs/05.operations/runbooks/README.md` |
+
+## Residual Objective Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| Residual coverage matrix for broad objective axes | complete | linked plan `Residual Objective Completion Audit Overlay` |
+| Additional semantic implementation decision | complete | linked plan `Implementation Plan Delta` |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current residual run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current residual run |
+| `bash scripts/validate-gitops-structure.sh` | PASS | current residual run |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional kube-linter skipped locally | current residual run |
+| `bash scripts/check-secret-handling.sh .` | PASS | current residual run |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | current residual run |
+| Shell syntax for `infrastructure`, `scripts`, `.claude/hooks` | PASS | current residual run |
+| Workflow YAML parse for `.github/workflows/*.yml` | PASS; 5 files | current residual run |
+| `.env.example` vs `.env` key-name-only comparison | PASS; missing=0, extra=0, 18 keys each | current residual run; values not printed |
+| Targeted residual content checks | PASS | current residual run |
+| `git diff --check` | PASS | current residual run |
+| `bash infrastructure/tests/run-all.sh` | BLOCKED; kubeconfig TLS trust failure | current residual run |
+
+## Unreviewed-Area Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| Current target inventory for the four requested areas | complete | `scripts/`, `gitops/`, `infrastructure/`, `docs/05.operations/` file inventory |
+| `scripts/` deletion/consolidation review | complete | `scripts/README.md`; broad reference sweep showed active Tier A/B references for current scripts |
+| GitOps hardening deferrals | complete | `gitops/README.md` documents AppProject, `CreateNamespace=true`, and policy-scan deferrals |
+| Infrastructure TLS blocker diagnostic | complete | `infrastructure/tests/verify-cluster.sh`; `infrastructure/README.md` |
+| Operations index freshness | complete | `docs/05.operations/guides/README.md`; `docs/05.operations/runbooks/README.md` |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current follow-up run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current follow-up run |
+| `bash scripts/validate-gitops-structure.sh` | PASS | current follow-up run |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional kube-linter skipped locally | current follow-up run |
+| `bash scripts/check-secret-handling.sh .` | PASS | current follow-up run |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | current follow-up run |
+| Shell syntax for `infrastructure`, `scripts`, `.claude/hooks` | PASS | current follow-up run |
+| Targeted operations metadata/index and follow-up content checks | PASS | current follow-up run |
+| `git diff --check` | PASS | current follow-up run |
+| `bash infrastructure/tests/run-all.sh` | BLOCKED; now reports kubeconfig TLS trust failure explicitly | current follow-up run |
+
+## Documentation/Governance Verification Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| Baseline instruction check and six subagent results | complete | linked plan `Documentation/Governance-First Workspace Improvement Overlay` |
+| P0-01 through P0-22 coverage, gap analysis, implementation plan, checklist, and final report | complete | linked plan current overlay |
+| JIT shorthand, mutation boundary, and `doc-writer` wording | complete | `AGENTS.md`, `.claude/CLAUDE.md`, agent mirrors, governance rules |
+| Sample Traefik backend and onboarding currentness | complete | `examples/sample-app/`, operations guide/runbook |
+| Skill trigger-style descriptions and mirror parity | complete | `.claude/skills/**`, existing `.agents/skills/**` mirrors |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | current run |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | current run |
+| `bash scripts/validate-gitops-structure.sh` | PASS | current run |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional kube-linter skipped locally | current run |
+| `bash scripts/check-secret-handling.sh .` | PASS | current run |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | current run |
+| Shell syntax for `infrastructure`, `scripts`, `.claude/hooks` | PASS | current run |
+| JSON parse for `.claude/settings.json` and `.codex/hooks.json` | PASS | current run |
+| Workflow YAML parse for `.github/workflows/*.yml` | PASS | current run |
+| `.env.example` vs `.env` key-name-only comparison | PASS; missing=0, extra=0, 18 keys each | current run; values not printed |
+| Targeted stale backend, JIT, `doc-writer`, onboarding, and Skill checks | PASS | current run |
+| `bash infrastructure/tests/run-all.sh` | BLOCKED; `kubectl` cannot reach cluster due kubeconfig/TLS context | current run |
+
 ## Verification Evidence History Note
 
 The evidence sections below preserve point-in-time verification from earlier
-006 overlays. The current verification result for the 2026-05-25 authored SSoT
-large-scale and deferred item repo-static overlays is recorded in
-`Verification Summary`.
+006 overlays. The current verification result for this documentation/governance
+pass is recorded in `Documentation/Governance Verification Summary`; older
+sections remain historical snapshots.
 
 ## Hybrid Refresh Evidence
 

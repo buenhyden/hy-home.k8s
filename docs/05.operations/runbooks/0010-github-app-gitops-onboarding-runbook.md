@@ -3,7 +3,7 @@ title: 'GitHub 앱 GitOps 온보딩 런북'
 type: runbook
 status: active
 owner: platform
-updated: 2026-05-09
+updated: 2026-05-25
 ---
 
 # GitHub 앱 GitOps 온보딩 런북
@@ -15,8 +15,8 @@ updated: 2026-05-09
 ## Overview (KR)
 
 이 런북은 GitHub 레포 기반 애플리케이션을 `hy-home.k8s` 클러스터에 GitOps 방식으로 온보딩하는
-단계별 운영 절차를 제공한다. Argo Rollout canary 전략, AnalysisTemplate, Istio mTLS 등
-현재 플랫폼 패턴을 모두 적용한다.
+단계별 운영 절차를 제공한다. `examples/sample-app/`은 최소 온보딩 템플릿이고,
+`gitops/workloads/adminer/`는 stable/canary Service와 Istio routing까지 포함한 현재 active reference다.
 
 ## Purpose
 
@@ -26,8 +26,8 @@ updated: 2026-05-09
 
 - [`../guides/0008-github-app-gitops-onboarding-guide.md`](../guides/0008-github-app-gitops-onboarding-guide.md)
 - [`../policies/0007-app-gitops-onboarding-policy.md`](../policies/0007-app-gitops-onboarding-policy.md)
-- [`../../../gitops/workloads/adminer`](../../../gitops/workloads/adminer)
-- [`../../../examples/sample-app`](../../../examples/sample-app)
+- [`../../../gitops/workloads/adminer`](../../../gitops/workloads/adminer) — fuller active reference pattern
+- [`../../../examples/sample-app`](../../../examples/sample-app) — minimal onboarding template
 
 ## When to Use
 

@@ -1,6 +1,6 @@
 ---
 name: gitops-workflow
-description: GitOps workflow contract for onboarding, updating, and diagnosing workloads through the repository and ArgoCD path.
+description: Use when onboarding, updating, or diagnosing workloads through the repository-backed GitOps and ArgoCD path.
 ---
 
 # gitops-workflow

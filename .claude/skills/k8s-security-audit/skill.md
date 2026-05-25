@@ -1,6 +1,6 @@
 ---
 name: k8s-security-audit
-description: "Structured security audit workflow for Kubernetes clusters. Covers RBAC analysis, NetworkPolicy gaps, Secret handling, container security context, and image supply chain. Use for: 'security audit', 'RBAC review', 'network policy audit', 'secret scanning', 'container security review', 'cluster security posture', 'k8s security hardening', 'CIS benchmark check', and related cluster security tasks. Enhances security-auditor agent capabilities. Real-time intrusion detection and WAF configuration are outside this skill's scope."
+description: "Use when auditing Kubernetes RBAC, NetworkPolicy gaps, Secret handling, container security context, image supply chain, CIS benchmark posture, or related cluster security hardening. Real-time intrusion detection and WAF configuration are outside this skill's scope."
 ---
 
 # k8s Security Audit — Cluster Security Assessment Workflow

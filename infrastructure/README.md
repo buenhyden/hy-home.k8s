@@ -90,6 +90,11 @@ infrastructure/
 - **정적 검증 (CI 실행 가능)**: `verify-contracts-static.sh` — live cluster 없이 실행되며 CI `manifest-static` 잡에서 자동으로 실행된다.
 - **라이브 검증 (k3d 클러스터 필요)**: `verify-cluster.sh`, `verify-gitops.sh`, `verify-external-services.sh`, `verify-ingress-tls.sh`, `verify-network-policies.sh`, `verify-secrets.sh`, `run-all.sh` — 실행 전 k3d 클러스터가 부트스트랩되어 있어야 한다.
 
+`run-all.sh`가 첫 단계에서 `kubectl cannot reach cluster`로 실패하면
+클러스터가 없거나 kubeconfig/context/TLS trust가 맞지 않는 상태다. 특히
+`x509: certificate signed by unknown authority`는 kubeconfig CA trust repair가
+필요한 runtime blocker이며, 문서/정적 검증 pass에서 자동으로 고치지 않는다.
+
 ## Bootstrap Note
 
 - 실행 전 `VAULT_TOKEN`을 반드시 export 해야 한다.

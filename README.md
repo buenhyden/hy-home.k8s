@@ -90,7 +90,7 @@ hy-home.k8s/
 9. 인프라 변경은 GitOps-first로 다룬다. 일반 변경에서 live cluster mutation, `kubectl apply`, 외부 Vault 조작을 도입하지 않는다.
 10. `.github` 자동화나 QA gate를 바꿀 때는 [`.github/ABOUT.md`](.github/ABOUT.md)와 PR template의 검증 체크리스트를 함께 확인한다.
 11. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
-12. AWS/Azure 예시는 2026-05-09 공식 지원 스냅샷을 기준으로 관리하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
+12. AWS/Azure 예시는 [Tech Stack Version Inventory](./docs/90.references/versions/tech-stack-version-inventory.md)의 `Cloud Example Snapshot`을 기준으로 관리하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
 
 ## Common Workflows
 
@@ -145,7 +145,7 @@ hy-home.k8s/
 | Ingress | ingress-nginx, Traefik dynamic config | 로컬 k3d 유지. Ingress NGINX upstream retirement 이후 cloud target은 Gateway API/ALB/AGC로 분리 |
 | Secrets | External Secrets Operator, Vault | 외부 시크릿 동기화 계약 |
 | Data Services | External PostgreSQL, External Valkey | 저장소 외부 런타임을 Service 계약으로 연결 |
-| Cloud Examples | AWS EKS 1.35 target, AKS 1.35 target, Terraform AWS provider 6.x | 2026-05-09 공식 지원 스냅샷 기준 참조 구현 |
+| Cloud Examples | AWS EKS 1.35 target, AKS 1.35 target, Terraform AWS provider 6.x | `Cloud Example Snapshot` 기준 참조 구현 |
 | CI / Quality | GitHub Actions, pre-commit, markdownlint, shellcheck, kube-linter, hadolint, actionlint, zizmor | 정적 검증 및 정책 게이트 |
 
 ## Prerequisites

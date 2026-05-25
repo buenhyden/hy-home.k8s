@@ -4,9 +4,9 @@
 
 ## Overview
 
-이 경로는 실제 운영 manifest의 복제본이 아니라, 새 앱 또는 cloud target을 설계할 때 참고하는 예시를 담는다. `sample-app/`은 로컬 k3d GitOps 온보딩 템플릿이고, `aws/`, `azure/`는 [Tech Stack Version Inventory](../docs/90.references/versions/tech-stack-version-inventory.md)의 `Cloud Example Snapshot` 기준을 따르는 cloud migration 참조 자산이다.
+이 경로는 실제 운영 manifest의 복제본이 아니라, 새 앱 또는 cloud target을 설계할 때 참고하는 예시를 담는다. `sample-app/`은 로컬 k3d GitOps 최소 온보딩 템플릿이고, `aws/`, `azure/`는 [Tech Stack Version Inventory](../docs/90.references/versions/tech-stack-version-inventory.md)의 `Cloud Example Snapshot` 기준을 따르는 cloud migration 참조 자산이다.
 
-AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 실제 배포 전에 각 provider의 최신 지원 버전, 비용, IAM/RBAC, 네트워크 경계를 다시 확인해야 한다.
+AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 실제 배포를 계획할 때는 새 provider 검증 결과로 `Cloud Example Snapshot`을 갱신하고 비용, IAM/RBAC, 네트워크 경계를 다시 확인해야 한다.
 
 활성 desired state의 정본은 `gitops/`이며, `examples/`는 복사하거나 비교하기 위한 reference-only 영역이다.
 
@@ -72,13 +72,13 @@ examples/
 
 | 디렉토리 | 설명 | 관련 문서 |
 | --- | --- | --- |
-| [`sample-app`](sample-app) | Rollout + AnalysisTemplate + Ingress + ESO 패턴 앱 온보딩 예시 | [Guide](../docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md) · [Runbook](../docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md) · [Policy](../docs/05.operations/policies/0007-app-gitops-onboarding-policy.md) |
+| [`sample-app`](sample-app) | Rollout + AnalysisTemplate + Ingress + ESO 패턴 최소 앱 온보딩 템플릿 | [Guide](../docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md) · [Runbook](../docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md) · [Policy](../docs/05.operations/policies/0007-app-gitops-onboarding-policy.md) |
 | [`aws`](aws) | EKS 1.35 target, Terraform AWS provider 6.x 기반 AWS migration 참조 예시 | [AWS docs](aws/docs/README.md) |
 | [`azure`](azure) | AKS 1.35 target, Bicep, AGC/Gateway API 기반 Azure migration 참조 예시 | [Azure docs](azure/docs/README.md) |
 
 ## 사용 방법
 
-각 예시 디렉터리의 `README.md`를 참조한다. 새 앱 온보딩 시 `sample-app/`을 복사하여 플레이스홀더를 교체하는 것이 시작점이다.
+각 예시 디렉터리의 `README.md`를 참조한다. 새 앱 온보딩 시 `sample-app/`을 복사하여 플레이스홀더를 교체하는 것이 시작점이고, fuller active reference는 `gitops/workloads/adminer/`와 비교한다.
 
 ```bash
 cp -r examples/sample-app gitops/workloads/<appname>

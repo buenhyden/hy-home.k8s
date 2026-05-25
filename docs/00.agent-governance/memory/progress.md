@@ -8,6 +8,223 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-25 — scripts inventory guardrail follow-up
+
+- **Date**: 2026-05-25
+- **Layer**: scripts, validation, SDD
+- **Status**: partial
+- **Tags**: #scripts #validation #sdd
+
+#### Progress
+
+- Rechecked whether the `scripts/` deletion/consolidation review had
+  validation strong enough to prevent future drift.
+- Extended `scripts/validate-repo-quality-gates.sh` so each tracked shell
+  script must be executable, start with the expected Bash shebang, and have
+  exactly one `scripts/README.md` inventory row.
+- The scripts inventory row must now include an allowed decision and non-empty
+  retention evidence, command/documentation surface, and purpose. A `Keep`
+  decision must cite Tier A or Tier B retention evidence.
+- Documented the guardrail as VAL-SPC-006-026 and T-117 through T-121 in the
+  existing 006 SDD chain.
+
+#### Memory
+
+- For `scripts/`, checking that a filename appears somewhere in the README is
+  weaker than checking the inventory row and retention tier. Future script
+  deletion or consolidation work should preserve the row-level contract.
+
+#### Evidence
+
+- Scripts inventory guardrail targeted check PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+- `git diff --check` PASS.
+
+### 2026-05-25 — operations index guardrail follow-up
+
+- **Date**: 2026-05-25
+- **Layer**: operations docs, scripts, validation
+- **Status**: partial
+- **Tags**: #operations #validation #sdd
+
+#### Progress
+
+- Rechecked `docs/05.operations/{guides,policies,runbooks}` README index rows
+  against document frontmatter.
+- Aligned stale final-updated rows for superseded guide/runbook entries and
+  policy entries whose frontmatter had newer `updated` dates.
+- Extended `scripts/validate-repo-quality-gates.sh` so guides, policies, and
+  runbooks README indexes must cover all sibling documents, avoid stale links,
+  and match each document's `status` and `updated` frontmatter.
+- Documented the guardrail as VAL-SPC-006-025 and T-112 through T-116 in the
+  existing 006 SDD chain.
+
+#### Memory
+
+- `docs/05.operations` freshness is not just whether a file exists in an index.
+  The index status and final-updated cells must match the document frontmatter.
+
+#### Evidence
+
+- Operations index/frontmatter sync targeted check PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+- `git diff --check` PASS.
+
+### 2026-05-25 — residual objective completion audit
+
+- **Date**: 2026-05-25
+- **Layer**: docs, governance, examples, env, qa, ci, skills, runtime-boundary
+- **Status**: partial
+- **Tags**: #sdd #governance #verification #runtime-boundary
+
+#### Progress
+
+- Rechecked broad objective axes that were outside the explicit four-path
+  follow-up: `traefik/`, `examples/`, `.env` key parity, QA/CI, agent
+  governance, repo-local Skills, bootstrap, WSL2/Docker prerequisites,
+  secret-management responsibility, external-service contracts, and
+  documentation SSoT ownership.
+- Added VAL-SPC-006-024 and T-107 through T-111 to the existing 006 SDD chain
+  instead of creating a parallel task tree.
+- Kept this pass evidence-only. No Kubernetes resource semantics, AppProject
+  permissions, CI job structure, secret policy, live cluster state, or `.env`
+  values were changed.
+
+#### Memory
+
+- When a broad workspace objective has already been represented in a large
+  overlay, add a residual matrix only for genuinely weak proof areas; do not
+  restart the full audit or duplicate the task tree.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS for YAML syntax; optional
+  `kube-linter` skipped locally.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- Shell syntax for `infrastructure`, `scripts`, and `.claude/hooks` PASS.
+- Workflow YAML parse for `.github/workflows/*.yml` PASS for 5 files.
+- `.env.example` vs `.env` key-name-only comparison PASS with missing=0,
+  extra=0, and 18 keys each; values were not printed or inspected.
+- Targeted residual content checks PASS for Traefik backend, sample/adminer
+  wording, version inventory wording, JIT/progress routing, `doc-writer`, and
+  Skill descriptions.
+- `git diff --check` PASS.
+- `bash infrastructure/tests/run-all.sh` remains BLOCKED by kubeconfig TLS
+  trust: `x509: certificate signed by unknown authority`.
+
+### 2026-05-25 — unreviewed-area follow-up for scripts/gitops/infrastructure/operations
+
+- **Date**: 2026-05-25
+- **Layer**: scripts, gitops, infrastructure, operations docs, qa
+- **Status**: partial
+- **Tags**: #scripts #gitops #infrastructure #operations #validation
+
+#### Progress
+
+- Rechecked the objective for areas where the prior overlay could have been too
+  broad or weakly evidenced, focusing on `scripts/`, `gitops/`,
+  `infrastructure/`, and `docs/05.operations/`.
+- Updated `scripts/README.md` so the script inventory/deletion review reflects
+  the 2026-05-25 state and the repo quality gate's canonical JIT runtime
+  contract check.
+- Added a `gitops/README.md` current hardening deferrals section for AppProject
+  allow-list minimization, `CreateNamespace=true` ownership, and future
+  image/workload policy scans without changing manifests.
+- Improved `infrastructure/tests/verify-cluster.sh` so a kubeconfig TLS trust
+  failure reports the `x509: certificate signed by unknown authority` blocker
+  directly, and documented that boundary in `infrastructure/README.md`.
+- Updated the modified GitHub app onboarding guide/runbook `updated` metadata
+  and their `docs/05.operations` README index rows to `2026-05-25`.
+- Added VAL-SPC-006-023 and T-101 through T-106 to the existing 006 SDD chain.
+
+#### Memory
+
+- After content edits under `docs/05.operations`, check both document
+  frontmatter and the owning subfolder README index before claiming the
+  operations stage is aligned.
+- Live validation failure messages are part of the operator contract. If a
+  known blocker is TLS trust, prefer a precise diagnostic over a generic
+  kubeconfig/context message.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-gitops-structure.sh` PASS.
+- `bash scripts/validate-k8s-manifests.sh .` PASS for YAML syntax; optional
+  `kube-linter` skipped locally.
+- `bash scripts/check-secret-handling.sh .` PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` PASS.
+- Shell syntax for `infrastructure`, `scripts`, and `.claude/hooks` PASS.
+- Targeted operations metadata/index and follow-up content checks PASS.
+- `git diff --check` PASS.
+- `bash infrastructure/tests/run-all.sh` remains BLOCKED, now with explicit
+  kubeconfig TLS trust output: `x509: certificate signed by unknown authority`.
+
+### 2026-05-25 — documentation/governance-first workspace improvement
+
+- **Date**: 2026-05-25
+- **Layer**: docs, governance, examples, skills, qa
+- **Status**: partial
+- **Tags**: #sdd #governance #gitops #wsl2 #skills #validation
+
+#### Progress
+
+- Implemented the approved documentation/governance-first plan in the existing
+  006 SDD chain instead of creating a parallel task tree.
+- Added VAL-SPC-006-022 and T-091 through T-100 to record baseline instruction
+  review, six fresh read-only subagent results, P0-01 through P0-22 coverage,
+  Integrated Gap Analysis, Implementation Plan, Checklist Gate, and Final
+  Report.
+- Normalized JIT shorthand so agent/provider/rule docs include the
+  `progress.md` step.
+- Clarified that agents and subagents do not mutate live clusters by default;
+  human-approved bootstrap or break-glass actions are operator-bound and must
+  record scope, rollback, and verification evidence.
+- Narrowed `doc-writer` runtime wording to template/routing and delegated stage
+  document updates.
+- Aligned `examples/sample-app/traefik-k3d.yaml.example` with the current
+  ingress-nginx LoadBalancer backend `172.18.0.240:443`.
+- Reworded onboarding docs so `examples/sample-app` is a minimal onboarding
+  template and `gitops/workloads/adminer` is the fuller active reference
+  pattern.
+- Normalized cloud example wording to the current Tech Stack Version Inventory
+  `Cloud Example Snapshot` instead of asserting a refreshed latest-provider
+  claim.
+- Updated existing repo-local Skill frontmatter descriptions to trigger-style
+  `Use when...` wording and deferred the seven duplicate candidate
+  workspace-specific agents/skills.
+- Synced only the existing ignored `.agents/skills/**` mirrors for the Skill
+  files changed in this pass because the repo quality gate treats present local
+  mirrors as parity-checked convenience copies; broader `.agents` cleanup
+  remains deferred.
+
+#### Memory
+
+- For broad workspace improvement prompts, prefer extending the active 006 SDD
+  chain when the work is a current-state overlay for the same harness/system
+  objective.
+- Keep `.claude/skills/**` canonical. Do not create duplicate local agent or
+  Skill surfaces unless the harness matrix first records a concrete gap that an
+  existing surface cannot close.
+- Treat live `kubectl` TLS trust repair as runtime work, not a docs/governance
+  cleanup. Record the blocker and defer repair unless the human approves a live
+  runtime pass.
+
+#### Evidence
+
+- Verification is recorded in the linked 006 plan/task overlay.
+- Live `infrastructure/tests/run-all.sh` remains blocked in this pass by
+  kubeconfig TLS trust: `x509: certificate signed by unknown authority`.
+
 ### 2026-05-25 — live bootstrap runtime closure
 
 - **Date**: 2026-05-25

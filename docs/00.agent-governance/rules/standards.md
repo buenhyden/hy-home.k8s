@@ -14,7 +14,7 @@ Global standards for all agents in this repository.
 - Recommended max length for each root shim: 40 lines.
 - Avoid duplicated policy text across gateway files.
 - Do not embed long RTK, graphify, catalog, or role-separation blocks in root shims.
-- Use JIT loading via `bootstrap -> preflight -> persona -> scope -> provider -> postflight`.
+- Use JIT loading via `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
 - Keep the instruction hierarchy inside repository gateway files plus runtime governance assets only:
   - root shims: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`
   - runtime bridge: `.claude/**` and `.codex/**`

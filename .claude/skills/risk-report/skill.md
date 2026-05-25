@@ -1,6 +1,6 @@
 ---
 name: risk-report
-description: Risk register workflow for identifying, scoring, and reporting cluster-specific operational and security risks.
+description: Use when identifying, scoring, and reporting cluster-specific operational or security risks in a risk register.
 ---
 
 # risk-report

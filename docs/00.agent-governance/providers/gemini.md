@@ -26,7 +26,7 @@ Gemini-specific guidance for `hy-home.k8s`.
 
 ## Execution Expectations
 
-- Use JIT loading: bootstrap -> preflight -> persona -> scope -> provider -> postflight.
+- Use JIT loading: bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight.
 - Keep user-facing responses in Korean.
 - Keep governance and technical control docs in English.
 - Use `docs/00.agent-governance/harness-catalog.md` as the canonical runtime roster.

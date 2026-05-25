@@ -1,6 +1,6 @@
 ---
 name: rca-methodology
-description: "Structured Root Cause Analysis methodology guide. Provides 5 Whys, Fishbone diagrams, Fault Tree Analysis, change analysis techniques, and a cognitive bias prevention checklist. Use for: 'root cause analysis', 'RCA', '5 Whys', 'fishbone diagram', 'Fault Tree Analysis', 'change analysis', 'incident cause analysis'. Enhances incident-responder analysis depth. Timeline reconstruction and remediation planning are outside this skill's scope."
+description: "Use when performing root cause analysis with 5 Whys, Fishbone diagrams, Fault Tree Analysis, change analysis, incident cause analysis, or cognitive-bias checks. Timeline reconstruction and remediation planning are outside this skill's scope."
 ---
 
 # RCA Methodology — Root Cause Analysis Technique Reference

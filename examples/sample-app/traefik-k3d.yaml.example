@@ -4,7 +4,7 @@
 #   infra/01-gateway/traefik/dynamic/<appname>-k3d.yaml
 #
 # 트래픽 흐름:
-#   Browser → Traefik (websecure/443) → k3d-hyhome-serverlb:443
+#   Browser → Traefik (websecure/443) → ingress-nginx LoadBalancer 172.18.0.240:443
 #     → ingress-nginx → <appname> service (apps:<port>)
 #
 # Traefik은 dynamic config 디렉토리를 watch하므로 재시작 없이 자동 반영된다.
@@ -20,7 +20,7 @@ http:
         passHostHeader: true
         serversTransport: <appname>-k3d-transport
         servers:
-          - url: 'https://k3d-hyhome-serverlb:443'
+          - url: 'https://172.18.0.240:443'
 
   routers:
     <appname>-k3d:

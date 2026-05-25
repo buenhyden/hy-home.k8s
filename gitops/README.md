@@ -78,6 +78,18 @@ gitops/
 4. 매니페스트 변경 후 `bash scripts/validate-gitops-structure.sh`와 `bash scripts/validate-k8s-manifests.sh .`를 실행한다.
 5. secret 값은 매니페스트에 직접 쓰지 않고 External Secrets/Vault 계약으로 연결한다.
 
+## Current Hardening Deferrals
+
+현재 GitOps 구조는 정적 검증을 통과하지만, 아래 항목은 Kubernetes/ArgoCD
+semantics가 바뀌는 작업이라 별도 승인된 hardening pass에서 다룬다.
+
+- `apps` AppProject allow-list 최소화: 현재 워크로드 패턴을 깨지 않는
+  resource-kind 기준을 먼저 확정해야 한다.
+- `CreateNamespace=true` ownership 정리: ApplicationSet과
+  `platform/namespaces`의 namespace 소유권 경계를 먼저 검증해야 한다.
+- image tag와 workload-kind 정책 스캔: 운영 정책과 CI failure mode를 먼저
+  설계한 뒤 validator에 추가한다.
+
 ## Link Basis
 
 이 README의 링크 기준 위치는 `gitops/`다.

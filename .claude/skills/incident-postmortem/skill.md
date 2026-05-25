@@ -1,6 +1,6 @@
 ---
 name: incident-postmortem
-description: "Full pipeline for cluster incident post-analysis. Routes an agent team through timeline reconstruction, root cause analysis, impact assessment, and remediation planning to produce a structured postmortem document. Use for: 'write an incident postmortem', 'post-incident analysis', 'create an incident report', 'root cause analysis', 'RCA report', 'organize incident timeline', 'define remediation measures', and related cluster incident tasks. Real-time on-call response, monitoring system setup, and alert configuration are outside this skill's scope."
+description: "Use when writing a cluster incident postmortem or routing post-incident analysis through timeline reconstruction, root cause analysis, impact assessment, and remediation planning. Real-time on-call response, monitoring setup, and alert configuration are outside this skill's scope."
 ---
 
 # Incident Postmortem — Cluster Incident Post-Analysis Pipeline

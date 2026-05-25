@@ -1,6 +1,6 @@
 ---
 name: k8s-validate
-description: Validation workflow for Kubernetes manifests, GitOps structure, and secret-handling checks in this cluster repository.
+description: Use when validating Kubernetes manifests, GitOps structure, and secret-handling checks in this cluster repository.
 ---
 
 # k8s-validate

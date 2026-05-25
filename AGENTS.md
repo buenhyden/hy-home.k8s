@@ -23,7 +23,7 @@ Runtime baseline: [`.claude/CLAUDE.md`](.claude/CLAUDE.md)
 - Keep human-facing READMEs in Korean.
 - Treat `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, and `docs/99.templates` as authored SSoT; modify only when explicitly requested by a human.
 - Keep gateway files minimal and route detailed policy to governance docs.
-- GitOps-first: all infra changes go through repository review and ArgoCD reconciliation; never run direct cluster mutation such as `kubectl apply`.
+- GitOps-first: all infra changes go through repository review and ArgoCD reconciliation. Agents and subagents do not mutate live clusters; human-approved bootstrap or break-glass actions are operator-bound and must record scope, rollback, and verification evidence.
 - Secrets: never write plaintext Kubernetes secrets.
 - In-place refactor only; no file proliferation without explicit human request.
 

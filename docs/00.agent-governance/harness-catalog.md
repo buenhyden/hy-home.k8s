@@ -113,7 +113,7 @@ to close that gap.
 | --- | --- | --- | --- | --- |
 | Evidence-first intake | `rules/bootstrap.md`, `rules/preflight-checklist.md`, `rules/agentic.md` | Ready | None | Plan from repo evidence, current diffs, validators, and scoped source files before editing. |
 | Context hierarchy | `AGENTS.md`, `.claude/CLAUDE.md`, `docs/00.agent-governance/**` | Ready | None | Keep root context minimal, load governance just in time, and select task-specific docs instead of loading everything. |
-| JIT loading | `rules/bootstrap.md`, `.claude/CLAUDE.md` | Ready | None | Keep the bootstrap -> preflight -> persona -> scope -> provider -> postflight sequence canonical. |
+| JIT loading | `rules/bootstrap.md`, `.claude/CLAUDE.md` | Ready | None | Keep the bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight sequence canonical. |
 | Scope and persona routing | `rules/persona.md`, `scopes/*.md` | Ready | None | Resolve one primary layer before edits and transition explicitly when scope changes. |
 | GitOps-first execution | `rules/agentic.md`, `.claude/settings.json`, GitOps docs and validators | Ready | None | Keep infrastructure changes repo-backed and prevent direct cluster mutation by default. |
 | Documentation routing | `rules/document-stage-routing.md`, `rules/documentation-protocol.md`, `.claude/skills/docs-stage-routing/skill.md`, `.claude/hooks/*.sh`, `.codex/hooks.json` | Ready | None | Keep generated docs in the canonical stage tree, use templates before authoring, and keep Claude/Codex edit hooks enforcing the template contract. |
@@ -136,7 +136,7 @@ belongs to a human-approved bootstrap or break-glass path with explicit evidence
 | `.claude/agents/security-auditor.md`   | Kubernetes security review             | `sonnet` | `security`     | Review RBAC, network isolation, and secret handling                     | security-audit                               |
 | `.claude/agents/incident-responder.md` | Cluster incident analysis              | `sonnet` | `ops`, `infra` | Reconstruct timelines, assess impact, and define remediation            | incident-postmortem                          |
 | `.claude/agents/code-reviewer.md`      | YAML, Helm, and shell quality review   | `sonnet` | `architecture` | Review correctness, maintainability, and policy alignment               | code-reviewer                                |
-| `.claude/agents/doc-writer.md`         | Stage document authoring               | `sonnet` | `docs`         | Produce template-aligned stage documents                               | technical-writer                             |
+| `.claude/agents/doc-writer.md`         | Documentation routing and delegated drafting | `sonnet` | `docs`         | Support template/routing alignment and delegated stage document updates | technical-writer                             |
 | `.claude/agents/wiki-curator.md`       | LLM Wiki curation                      | `sonnet` | `docs`         | Maintain generated canonical-owner link maps and route stale links      | technical-writer, governance                 |
 
 ## Codex Mirrors

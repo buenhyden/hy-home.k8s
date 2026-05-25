@@ -3,7 +3,7 @@ title: 'GitHub 앱 GitOps 온보딩 가이드'
 type: guide
 status: active
 owner: platform
-updated: 2026-05-09
+updated: 2026-05-25
 ---
 
 # GitHub 앱 GitOps 온보딩 가이드
@@ -20,8 +20,8 @@ updated: 2026-05-09
 - **TLS**: cert-manager + mkcert-ca-issuer
 - **시크릿**: ExternalSecret → Vault (선택 사항)
 
-> **참조 구현**: `gitops/workloads/adminer/` — 현재 패턴이 적용된 실제 예시
-> **템플릿**: `examples/sample-app/` — 복사 & 수정용 완전한 예시
+> **참조 구현**: `gitops/workloads/adminer/` — stable/canary Service와 Istio routing까지 포함한 현재 active reference
+> **템플릿**: `examples/sample-app/` — 복사 & 수정용 최소 온보딩 템플릿
 
 ## Guide Type
 
@@ -130,7 +130,7 @@ jobs:
 
 ## Step 2: GitOps 매니페스트 생성
 
-`examples/sample-app/`을 복사하여 플레이스홀더를 교체한다.
+`examples/sample-app/`을 복사하여 플레이스홀더를 교체한다. 이 경로는 최소 온보딩 시작점이며, stable/canary Service나 Istio routing까지 필요한 경우 `gitops/workloads/adminer/` 패턴과 비교해 보강한다.
 
 ```bash
 # 1. 예시 복사

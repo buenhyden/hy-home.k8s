@@ -28,7 +28,7 @@ Claude-specific guidance for `hy-home.k8s`.
 
 ## Execution Expectations
 
-- Use JIT loading: bootstrap -> preflight -> persona -> scope -> provider -> postflight.
+- Use JIT loading: bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight.
 - Keep responses to users in Korean.
 - Keep governance control docs in English.
 - Use `docs/00.agent-governance/harness-catalog.md` as the canonical runtime roster.

@@ -259,6 +259,36 @@ git diff --check
   repair, EndpointSlice bootstrap boundary correction, MetalLB/Traefik
   validation fixes, and successful `infrastructure/tests/run-all.sh` evidence
   without printing secret values or rewriting public history.
+- **VAL-SPC-006-022**: 2026-05-25 documentation/governance-first overlay
+  records six fresh read-only subagent reviews, external `P0-01` through
+  `P0-22` coverage, Integrated Gap Analysis, Implementation Plan, Checklist
+  Gate, Final Report, safe P1 documentation/governance edits, duplicate skill
+  deferrals, and the live kubeconfig TLS blocker without changing Kubernetes
+  semantics, AppProject permissions, CI job structure, secret policy, live
+  cluster state, or `.env` values.
+- **VAL-SPC-006-023**: 2026-05-25 unreviewed-area follow-up rechecks
+  `scripts/`, `gitops/`, `infrastructure/`, and `docs/05.operations/` against
+  current files, strengthens weak evidence for script deletion/consolidation,
+  GitOps hardening deferrals, infrastructure live-check TLS diagnostics, and
+  operations index freshness, then verifies the resulting static and targeted
+  checks without changing GitOps semantics, live state, secrets, CI job
+  topology, or `.env` values.
+- **VAL-SPC-006-024**: 2026-05-25 residual objective completion audit rechecks
+  the remaining broad workspace axes: `traefik/`, `examples/`, `.env` key
+  parity, QA/CI files, agent governance, repo-local Skills, bootstrap and WSL2
+  boundaries, secret-management responsibility, external-service contracts, and
+  documentation SSoT ownership. It records that no additional safe semantic
+  implementation is introduced in this pass; current changes are limited to
+  evidence in the existing 006 SDD chain and fresh verification records.
+- **VAL-SPC-006-025**: 2026-05-25 operations index guardrail follow-up aligns
+  `docs/05.operations/{guides,policies,runbooks}/README.md` index status/date
+  rows with document frontmatter and extends `validate-repo-quality-gates.sh`
+  to fail on future operations index/frontmatter drift.
+- **VAL-SPC-006-026**: 2026-05-25 scripts inventory guardrail follow-up
+  strengthens the `scripts/` deletion/consolidation review by validating that
+  every tracked shell script is executable, uses the expected Bash shebang, has
+  exactly one `scripts/README.md` inventory row, has an explicit decision, and
+  cites Tier A or Tier B retention evidence when the decision is `Keep`.
 
 ## Related Documents
 

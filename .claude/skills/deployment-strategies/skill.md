@@ -1,6 +1,6 @@
 ---
 name: deployment-strategies
-description: "Kubernetes and ArgoCD deployment strategy catalog. Provides strategy comparison, Kubernetes Deployment/Rollout YAML patterns, health check probe design, rollback procedures, and DORA metrics. Use for: 'deployment strategy', 'Blue-Green', 'Canary', 'Rolling update', 'rollback', 'zero-downtime deployment', 'ArgoCD rollout', 'DORA metrics', 'progressive delivery', 'traffic splitting', 'probe configuration', 'maxUnavailable', 'maxSurge'. Enhances gitops-reviewer and k8s-implementer capabilities. Monitoring tool setup and actual CI pipeline configuration are outside this skill's scope."
+description: "Use when comparing or designing Kubernetes and ArgoCD deployment strategies, including Blue-Green, Canary, Rolling update, rollback, zero-downtime deployment, progressive delivery, probes, and DORA metrics. Monitoring tool setup and actual CI pipeline configuration are outside this skill's scope."
 ---
 
 # Deployment Strategies — Kubernetes & ArgoCD Deployment Strategy Catalog

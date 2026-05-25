@@ -1,10 +1,10 @@
 # sample-app
 
-> 새 애플리케이션을 `hy-home.k8s` GitOps 경로에 온보딩할 때 사용하는 참조 예시다.
+> 새 애플리케이션을 `hy-home.k8s` GitOps 경로에 온보딩할 때 사용하는 최소 템플릿 예시다.
 
 ## Overview
 
-이 디렉터리는 `hy-home.k8s` 클러스터에 새로운 앱을 온보딩할 때 참조하는 GitOps 예시다. Rollout, Service, Ingress, AnalysisTemplate, ExternalSecret, Traefik dynamic config 예시를 함께 제공해 앱별 manifest 세트를 빠르게 만들 수 있게 한다.
+이 디렉터리는 `hy-home.k8s` 클러스터에 새로운 앱을 온보딩할 때 참조하는 최소 GitOps 템플릿이다. Rollout, Service, Ingress, AnalysisTemplate, ExternalSecret, Traefik dynamic config 예시를 함께 제공해 앱별 manifest 세트를 빠르게 만들 수 있게 한다. stable/canary Service와 Istio routing까지 포함한 fuller active reference는 `gitops/workloads/adminer/`를 기준으로 확인한다.
 
 예시는 feature branch + PR flow를 전제로 한다. `main`에 직접 반영하는 흐름은 저장소 운영 정책과 quality gate에서 허용하지 않는다.
 

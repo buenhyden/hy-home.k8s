@@ -128,6 +128,18 @@ def format_branch_prefixes(prefixes: list[str]) -> str:
     return ", ".join(f"{prefix}/" for prefix in prefixes)
 
 
+def parse_env_keys(path: pathlib.Path) -> list[str]:
+    keys: list[str] = []
+    for raw_line in read_text(path).splitlines():
+        stripped = raw_line.strip()
+        if not stripped or stripped.startswith("#") or "=" not in stripped:
+            continue
+        key = stripped.split("=", 1)[0].strip()
+        if key:
+            keys.append(key)
+    return keys
+
+
 def extract_ci_branch_policy_prefixes(branch_policy_text: str) -> list[str]:
     match = re.search(r"allowed_branch_regex=['\"]\^\(([^)]+)\)/['\"]", branch_policy_text)
     if not match:
@@ -217,6 +229,35 @@ for tracked_path in sorted(tracked):
         fail(f"ignored local agent runtime path must not be tracked: {tracked_path}")
     if re.fullmatch(r"\.claude/[^/]+\.local\.md", tracked_path):
         fail(f"ignored local Claude/Hookify runtime rule must not be tracked: {tracked_path}")
+    if tracked_path == ".env":
+        fail(".env must remain untracked; commit .env.example only")
+
+env_ignore_check = subprocess.run(["git", "check-ignore", "-q", ".env"], cwd=root)
+if env_ignore_check.returncode == 1:
+    fail(".env must remain ignored by Git")
+elif env_ignore_check.returncode not in {0, 1}:
+    fail("git check-ignore failed while validating .env ignore contract")
+
+env_example_path = root / ".env.example"
+env_path = root / ".env"
+if not env_example_path.exists():
+    fail(".env.example is required as the tracked environment key contract")
+else:
+    env_example_keys = parse_env_keys(env_example_path)
+    duplicated_example_keys = sorted(key for key, count in collections.Counter(env_example_keys).items() if count > 1)
+    if duplicated_example_keys:
+        fail(".env.example contains duplicate keys: " + ", ".join(duplicated_example_keys))
+    if env_path.exists():
+        env_keys = parse_env_keys(env_path)
+        duplicated_env_keys = sorted(key for key, count in collections.Counter(env_keys).items() if count > 1)
+        if duplicated_env_keys:
+            fail(".env contains duplicate keys: " + ", ".join(duplicated_env_keys))
+        missing_env_keys = sorted(set(env_example_keys) - set(env_keys))
+        extra_env_keys = sorted(set(env_keys) - set(env_example_keys))
+        if missing_env_keys:
+            fail(".env is missing keys from .env.example: " + ", ".join(missing_env_keys))
+        if extra_env_keys:
+            fail(".env has keys not present in .env.example: " + ", ".join(extra_env_keys))
 
 ignore_check = subprocess.run(["git", "check-ignore", "-q", ".agents/"], cwd=root)
 if ignore_check.returncode == 1:
@@ -596,6 +637,74 @@ for glob_pattern, template_name in required_stage_templates:
         for heading in required_headings:
             if heading not in document_headings:
                 fail(f"{rel(path)} missing required template heading from {template_name}: {heading}")
+
+operations_index_roots = [
+    root / "docs/05.operations/guides",
+    root / "docs/05.operations/policies",
+    root / "docs/05.operations/runbooks",
+]
+for operations_root in operations_index_roots:
+    readme_path = operations_root / "README.md"
+    if not readme_path.exists():
+        fail(f"operations subfolder README is missing: {rel(readme_path)}")
+        continue
+
+    readme_text = read_text(readme_path)
+    rows = markdown_table_after_heading(readme_text, "## 문서 인덱스")
+    expected_header = ["문서", "설명", "상태", "최종 수정"]
+    if len(rows) < 2:
+        fail(f"{rel(readme_path)} 문서 인덱스 must contain a header and document rows")
+        continue
+    if rows[0] != expected_header:
+        fail(f"{rel(readme_path)} 문서 인덱스 header must be: {' | '.join(expected_header)}")
+
+    indexed_rows: dict[str, list[str]] = {}
+    for row_number, row in enumerate(rows[1:], start=1):
+        if len(row) != len(expected_header):
+            fail(f"{rel(readme_path)} 문서 인덱스 row {row_number} must have {len(expected_header)} columns")
+            continue
+        match = re.search(r"\]\(\./([^)]+\.md)\)", row[0])
+        if not match:
+            fail(f"{rel(readme_path)} 문서 인덱스 row {row_number} must link to ./<document>.md")
+            continue
+        target_name = match.group(1)
+        if target_name in indexed_rows:
+            fail(f"{rel(readme_path)} 문서 인덱스 duplicates document: {target_name}")
+        indexed_rows[target_name] = row
+
+    operation_docs = sorted(path for path in operations_root.glob("*.md") if path.name != "README.md")
+    operation_doc_names = {path.name for path in operation_docs}
+    for doc_name in sorted(operation_doc_names - set(indexed_rows)):
+        fail(f"{rel(readme_path)} 문서 인덱스 missing document: {doc_name}")
+    for doc_name in sorted(set(indexed_rows) - operation_doc_names):
+        fail(f"{rel(readme_path)} 문서 인덱스 links to missing document: {doc_name}")
+
+    for doc_path in operation_docs:
+        row = indexed_rows.get(doc_path.name)
+        if not row:
+            continue
+        doc_text = read_text(doc_path)
+        frontmatter = re.match(r"^---\n(.*?)\n---\n", doc_text, re.DOTALL)
+        if not frontmatter:
+            fail(f"{rel(doc_path)} missing YAML frontmatter for operations index validation")
+            continue
+        try:
+            metadata = yaml.load(frontmatter.group(1), Loader=DuplicateKeyLoader) or {}
+        except Exception as exc:
+            fail(f"{rel(doc_path)} frontmatter parse failed for operations index validation: {exc}")
+            continue
+        status = str(metadata.get("status", "")).strip()
+        updated = str(metadata.get("updated", "")).strip()
+        row_status = row[2].strip()
+        row_updated = row[3].strip()
+        if not status:
+            fail(f"{rel(doc_path)} missing status for operations index validation")
+        elif row_status.lower() != status.lower():
+            fail(f"{rel(readme_path)} status mismatch for {doc_path.name}: index={row_status}, frontmatter={status}")
+        if not updated:
+            fail(f"{rel(doc_path)} missing updated for operations index validation")
+        elif row_updated != updated:
+            fail(f"{rel(readme_path)} updated mismatch for {doc_path.name}: index={row_updated}, frontmatter={updated}")
 
 template_enforcement_phrase_checks = {
     root / "docs/00.agent-governance/rules/documentation-protocol.md": [
@@ -1756,7 +1865,7 @@ for stem in sorted(set(codex_agents) - set(claude_agents)):
 
 runtime_contract_phrases = [
     "## Runtime Bootstrap",
-    "bootstrap -> preflight -> persona -> scope -> provider -> postflight",
+    "bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight",
     "## Guardrails",
     "## Handoff / Escalation",
     "postflight-checklist.md",
@@ -1805,9 +1914,61 @@ for skill_path in sorted((root / ".claude/skills").glob("*/skill.md")):
 
 scripts_dir = root / "scripts"
 scripts_readme = read_text(scripts_dir / "README.md")
-for script in sorted(scripts_dir.glob("*.sh")):
+script_paths = sorted(scripts_dir.glob("*.sh"))
+script_names = {script.name for script in script_paths}
+for script in script_paths:
+    if not os.access(script, os.X_OK):
+        fail(f"script must be executable: {rel(script)}")
+    if not read_text(script).startswith("#!/usr/bin/env bash\n"):
+        fail(f"script must start with bash shebang: {rel(script)}")
     if script.name not in scripts_readme:
         fail(f"script missing from scripts/README.md inventory: {script.name}")
+
+script_inventory_rows = markdown_table_after_heading(scripts_readme, "## Script Inventory")
+expected_script_inventory_header = ["스크립트", "결정", "보존 근거", "명령·문서 표면", "목적"]
+allowed_script_decisions = {"Keep", "Delete candidate", "Consolidation candidate", "Deferred"}
+if len(script_inventory_rows) < 2:
+    fail("scripts/README.md Script Inventory must contain a header and script rows")
+elif script_inventory_rows[0] != expected_script_inventory_header:
+    fail(
+        "scripts/README.md Script Inventory header must be: "
+        + " | ".join(expected_script_inventory_header)
+    )
+else:
+    indexed_scripts: dict[str, list[str]] = {}
+    for row_number, row in enumerate(script_inventory_rows[1:], start=1):
+        if len(row) != len(expected_script_inventory_header):
+            fail(f"scripts/README.md Script Inventory row {row_number} must have {len(expected_script_inventory_header)} columns")
+            continue
+        match = re.fullmatch(r"`([^`]+\.sh)`", row[0])
+        if not match:
+            fail(f"scripts/README.md Script Inventory row {row_number} must start with a backticked script name")
+            continue
+        script_name = match.group(1)
+        if script_name in indexed_scripts:
+            fail(f"scripts/README.md Script Inventory duplicates script: {script_name}")
+        indexed_scripts[script_name] = row
+
+        decision = row[1]
+        retention_evidence = row[2]
+        command_surface = row[3]
+        purpose = row[4]
+        if decision not in allowed_script_decisions:
+            fail(f"scripts/README.md Script Inventory row {row_number} has unsupported decision: {decision}")
+        for label, value in [
+            ("보존 근거", retention_evidence),
+            ("명령·문서 표면", command_surface),
+            ("목적", purpose),
+        ]:
+            if not value:
+                fail(f"scripts/README.md Script Inventory row {row_number} has empty {label}")
+        if decision == "Keep" and not ("Tier A" in retention_evidence or "Tier B" in retention_evidence):
+            fail(f"scripts/README.md Script Inventory row {row_number} with Keep must cite Tier A or Tier B retention evidence")
+
+    for script_name in sorted(script_names - set(indexed_scripts)):
+        fail(f"scripts/README.md Script Inventory missing script row: {script_name}")
+    for script_name in sorted(set(indexed_scripts) - script_names):
+        fail(f"scripts/README.md Script Inventory references missing script: {script_name}")
 
 script_ref_pattern = re.compile(r"scripts/[A-Za-z0-9_.-]+\.sh")
 script_command_contract_paths = [

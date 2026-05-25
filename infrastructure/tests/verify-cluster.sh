@@ -8,8 +8,13 @@ fail() {
 
 echo "[INFO] Checking cluster node topology (1 master + 3 workers baseline)"
 
-kubectl version --request-timeout=5s >/dev/null 2>&1 || \
-  fail "kubectl cannot reach cluster (check kubeconfig/context)"
+kubectl_version_output="$(kubectl version --request-timeout=5s 2>&1 >/dev/null)" || {
+  if [[ "$kubectl_version_output" == *"x509: certificate signed by unknown authority"* ]]; then
+    fail "kubectl cannot reach cluster: kubeconfig TLS trust failed (x509: certificate signed by unknown authority)"
+  fi
+  kubectl_version_first_line="${kubectl_version_output%%$'\n'*}"
+  fail "kubectl cannot reach cluster (check kubeconfig/context): ${kubectl_version_first_line:-no kubectl error output}"
+}
 
 node_count="$(kubectl get nodes --no-headers | wc -l | tr -d ' ')"
 [ -n "$node_count" ] || fail "failed to get node count"

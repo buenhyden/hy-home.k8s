@@ -4,7 +4,7 @@ Run this checklist before finalizing a response.
 
 ## 1. Policy Consistency
 
-- [ ] JIT order is still consistent: bootstrap -> preflight -> persona -> scope -> provider -> postflight.
+- [ ] JIT order is still consistent: bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight.
 - [ ] No contradictory statements were introduced across rules/scopes/providers.
 - [ ] Gateway files remain thin and non-duplicative.
 

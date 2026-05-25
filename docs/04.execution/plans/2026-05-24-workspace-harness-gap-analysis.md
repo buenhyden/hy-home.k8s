@@ -21,6 +21,22 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 유지하고, recurring workflow와 task-to-skill routing은 기존 runtime SSoT인
 `docs/00.agent-governance/harness-catalog.md`에 통합한다.
 
+## Current-State Navigation (2026-05-25)
+
+| Current record | Use for | Evidence anchor | Status |
+| --- | --- | --- | --- |
+| Scripts Inventory Guardrail Overlay | Current guardrail follow-up for `scripts/` deletion/consolidation inventory evidence | VAL-SPC-006-026; T-117 through T-121 | Current |
+| Operations Index Guardrail Overlay | Current guardrail follow-up for `docs/05.operations` README index/frontmatter sync | VAL-SPC-006-025; T-112 through T-116 | Current |
+| Residual Objective Completion Audit Overlay | Current final continuation audit for remaining broad objective axes beyond the four named follow-up paths | VAL-SPC-006-024; T-107 through T-111 | Current |
+| Unreviewed-Area Follow-up Overlay | Current follow-up audit for weak or unreviewed evidence in `scripts/`, `gitops/`, `infrastructure/`, and `docs/05.operations` | VAL-SPC-006-023; T-101 through T-106 | Current |
+| Documentation/Governance-First Workspace Improvement Overlay | Current approved limited implementation for P0-01 through P0-22, fresh six-review overlay, P1 docs/governance edits, verification, checklist, and final report | VAL-SPC-006-022; T-091 through T-100 | Current |
+| Live Bootstrap Runtime Closure Overlay | Historical approved runtime closure with live bootstrap and full runtime validation evidence | VAL-SPC-006-021; T-084 through T-090 | Historical evidence |
+| Post-Merge Completion Audit Overlay | Historical PR #39 merged-main and static/liveness blocker snapshot | VAL-SPC-006-020; T-081 through T-083 | Historical evidence |
+| Earlier overlays in this file | Prior audit, skill, P0, deferred item, and task-unit evidence | VAL-SPC-006-001 through VAL-SPC-006-019 | Historical evidence |
+
+Use the newest dated overlay for current state. Preserve older overlays as
+evidence snapshots unless a later overlay explicitly supersedes them.
+
 ## Goals & In-Scope
 
 - **Goals**:
@@ -2012,6 +2028,542 @@ force ArgoCD sync, or merge directly to `main`.
 | `bash infrastructure/tests/verify-secrets.sh` | PASS | `vault-backend` and `argocd-external-valkey` Ready checks passed |
 | `bash infrastructure/tests/run-all.sh` | PASS | cluster, MetalLB, GitOps, ESO/Vault, external service, network policy, and ingress/TLS checks passed |
 | External Traefik 443 | DEFERRED | optional `CHECK_TRAEFIK_443=true` remains separate because no external gateway runtime proof was requested for this branch |
+
+## Documentation/Governance-First Workspace Improvement Overlay - 2026-05-25
+
+### Intent and Boundary
+
+This overlay implements the approved documentation/governance-first plan for
+the workspace improvement prompt. It records a fresh current-state review across
+P0-01 through P0-22 and applies only low-risk documentation, governance, README,
+example, and Skill metadata edits. It does not change Kubernetes semantics,
+AppProject permissions, CI job structure, secret policy, live cluster state, or
+`.env` values.
+
+### Baseline Instruction Check
+
+| Target | Checked | Key impact |
+| --- | --- | --- |
+| `AGENTS.md` | yes | Thin gateway, Korean user-facing responses, English governance/runtime docs, GitOps-first boundary |
+| `CLAUDE.md` | yes | Root runtime shim delegates to `.claude/CLAUDE.md` |
+| `.claude/CLAUDE.md` | yes | Runtime baseline, progress ledger, mirror parity, direct mutation boundary |
+| `GEMINI.md` | yes | Root runtime shim delegates to governance providers |
+| `docs/00.agent-governance/` | yes | Canonical JIT, scopes, provider notes, harness catalog, subagent protocol |
+| `docs/99.templates/` | yes | README/template routing retained; no template structure changed |
+| `.agent/`, `.agents/`, `.claude/`, `.codex/` | yes | `.claude` remains canonical; `.codex` mirrors updated; ignored `.agents` mirror cleanup deferred |
+
+### Subagent Summary
+
+| Role | Status | Key findings | Unknown |
+| --- | --- | --- | --- |
+| Documentation Lifecycle Reviewer | complete | 006 plan is canonical but needs current navigation; `examples/sample-app` was overstated as complete; cloud snapshot wording needed SSoT alignment | none |
+| GitOps Infrastructure Reviewer | complete | App-of-Apps structure is intact; AppProject allow-list and `CreateNamespace=true` hardening remain semantic deferrals | live reconciliation proof outside this pass |
+| Scripts and Env Reviewer | complete | Five active scripts remain keep; `.env.example` and `.env` key names match; `APP_STAGE` cleanup deferred | secret values intentionally unknown |
+| QA CI/CD and Policy Reviewer | complete | Static checks pass; optional policy tools absent; kube-linter/OPA hardening deferred | CI runner optional-tool state |
+| Agent Governance Reviewer | complete | JIT shorthand omitted `progress`; direct mutation and `doc-writer` ownership wording needed narrowing | none |
+| Skills and Harness Reviewer | complete | Do not create duplicate candidate agents/skills; improve existing Skill descriptions; keep `.claude/skills/**` canonical | ignored `.agents/**` mirror cleanup deferred |
+
+### Coverage Ledger
+
+| Area | Target path | P0 ID | Investigation status | Representative files read | Gap count | Deletion/consolidation/deferral/skill candidate count | Unknown items | Next action |
+| --- | --- | --- | --- | --- | ---: | ---: | --- | --- |
+| Baseline governance | `AGENTS.md`, `.claude/CLAUDE.md`, `docs/00.agent-governance/` | P0-01, P0-16, P0-17, P0-22 | complete | `agentic.md`, `harness-catalog.md`, provider notes, agent mirrors | 3 | 10 | none | P1 wording updates and P3 deferrals recorded |
+| Docs lifecycle | `docs/01.requirements` through `docs/99.templates` | P0-02, P0-11, P0-13, P0-15, P0-22 | complete | 006 spec/plan/task, operations guides/runbooks, README/template indexes | 4 | 3 | none | Current overlay and onboarding wording updated |
+| Scripts and env | `scripts/`, `.env.example`, `.env` | P0-03, P0-04, P0-12, P0-18 | complete | `scripts/README.md`, validators, env key comparison | 2 | 2 | secret values | No deletion; `APP_STAGE` deferred |
+| GitOps | `gitops/`, `gitops/README.md` | P0-05, P0-06, P0-17, P0-19, P0-20, P0-21 | complete | root app, AppProjects, platform apps, external-services, workloads/adminer | 5 | 6 | live ArgoCD sync | Semantic hardening deferred |
+| Infrastructure | `infrastructure/`, `infrastructure/README.md` | P0-07, P0-08, P0-17, P0-18, P0-20, P0-21 | complete | bootstrap scripts, tests, contract checks | 2 | 2 | kubeconfig TLS root cause | Live TLS repair deferred |
+| Traefik | `traefik/`, `traefik/README.md`, sample Traefik example | P0-09, P0-10 | complete | `traefik/*.yaml`, `examples/sample-app/traefik-k3d.yaml.example` | 1 | 1 | external gateway runtime proof | Sample backend aligned |
+| Examples and contracts | `examples/`, cloud examples, external service docs | P0-13, P0-17, P0-18, P0-21, P0-22 | complete | `examples/README.md`, sample app README, version inventory | 3 | 2 | provider latest support | Wording normalized to version inventory snapshot |
+| QA/CI/CD | `.github/`, `.pre-commit-config.yaml`, validators | P0-13, P0-14, P0-22 | complete | workflows, PR template, repo quality scripts | 3 | 5 | optional local tools | Optional-tool hardening deferred |
+
+### Integrated Gap Analysis
+
+#### Summary
+
+- Overall status: partial, with repo-static documentation/governance improvements complete and live kubeconfig TLS repair deferred.
+- P0 status: all P0-01 through P0-22 have current coverage, a gap decision, an implementation or deferral decision, verification coverage, and final-report status.
+- Largest Gap: live `kubectl` access is blocked by kubeconfig TLS trust (`x509: certificate signed by unknown authority`), so `infrastructure/tests/run-all.sh` cannot prove current runtime health.
+- Immediately implementable: JIT shorthand, direct mutation wording, `doc-writer` ownership wording, sample Traefik backend, onboarding/sample-app currentness, cloud snapshot wording, Skill descriptions, and 006 SDD evidence.
+- Needs deferral: AppProject allow-list, `CreateNamespace=true`, kube-linter enforcement, OPA/Conftest, `.env` `APP_STAGE`, `.agents` mirror cleanup, kubeconfig TLS repair, destructive Git permission hardening, image tag/workload-kind policy scans.
+- Unknown areas: secret values, live ArgoCD reconciliation state, external Traefik gateway runtime proof, provider latest support ranges.
+
+#### P0 Workstream Gap Table
+
+| P0 ID | Workstream | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| P0-01 | Workspace purpose environment/system/rules | Runtime rules existed but JIT and mutation wording were inconsistent | `AGENTS.md`; `.claude/CLAUDE.md`; `agentic.md` | Agent execution ambiguity | Medium | improvement | P1 |
+| P0-02 | `docs/` lifecycle rules | Current overlay needed explicit lifecycle traceability | this plan; linked spec/task | SDD traceability drift | Medium | supplementation | P1 |
+| P0-03 | `scripts/` deletion/consolidation review | No deletion-safe one-off scripts found; keep classification needed to remain explicit | `scripts/README.md` | Accidental deletion risk | Low | deferral | P3 |
+| P0-04 | Safe one-off script cleanup | Deletion criteria do not pass because scripts are referenced validators | `scripts/README.md`; CI docs | Broken validation path | Medium | deferral | P3 |
+| P0-05 | GitOps infrastructure | AppProject and namespace ownership hardening are semantic changes | `gitops/` | ArgoCD behavior change risk | High | deferral | P3 |
+| P0-06 | `gitops/README.md` normalization | No current P1 edit required after template review | `gitops/README.md`; template | Reader drift risk low | Low | supplementation | P1 |
+| P0-07 | Infrastructure | Live validation blocked by kubeconfig TLS trust | `infrastructure/tests/run-all.sh` | Runtime proof unavailable | High | deferral | P3 |
+| P0-08 | `infrastructure/README.md` normalization | No current P1 edit required after template review | `infrastructure/README.md`; template | Reader drift risk low | Low | supplementation | P1 |
+| P0-09 | Traefik infrastructure | Sample Traefik config still pointed at old Docker DNS backend | `examples/sample-app/traefik-k3d.yaml.example` | Onboarding route mismatch | Medium | improvement | P1 |
+| P0-10 | `traefik/README.md` normalization | Active README already documents LoadBalancer backend | `traefik/README.md` | None current | Low | supplementation | P1 |
+| P0-11 | `docs/05.operations/` structure | Onboarding docs overstated sample-app as complete | operations onboarding guide/runbook | Misleading operator guidance | Medium | improvement | P1 |
+| P0-12 | `.env.example` and `.env` key consistency | Key names match; `APP_STAGE` remains reserved/unused follow-up | env key-name-only compare | Contract cleanup deferred | Low | deferral | P3 |
+| P0-13 | README freshness/template compliance | Root/examples cloud snapshot wording needed SSoT alignment | `README.md`; `examples/README.md` | Stale snapshot claim | Medium | improvement | P1 |
+| P0-14 | Safe implementation | Only docs/governance P1 items are safe in this pass | approved plan | Scope control | Low | improvement | P1 |
+| P0-15 | Docs lifecycle system | Existing 006 chain needed current pass update | 006 spec/plan/task/progress | Evidence fragmentation | Medium | supplementation | P1 |
+| P0-16 | Workspace-specific AI Agent skills | Seven requested candidates duplicate existing harness surfaces; Skill descriptions not trigger-style | `.claude/skills/**`; `harness-catalog.md` | Skill routing drift | Medium | improvement | P1 |
+| P0-17 | Bootstrap boundaries | Subagent/operator mutation boundary needed clearer wording | `AGENTS.md`; `.claude/CLAUDE.md`; `agentic.md` | Live mutation confusion | High | improvement | P1 |
+| P0-18 | WSL2/Docker prerequisites | Docs SSoT exists; current live kubeconfig TLS trust blocks verification | `infrastructure/tests/run-all.sh`; kubeconfig metadata | Runtime proof unavailable | High | deferral | P3 |
+| P0-19 | GitOps hierarchy | Hierarchy is clear; AppProject/ApplicationSet hardening deferred | `gitops/` | Potential future privilege sprawl | Medium | deferral | P3 |
+| P0-20 | Secret responsibility | ESO/Vault model exists; policy changes and secret values out of scope | `gitops/platform/eso`; secret scan | Secret handling risk | High | deferral | P3 |
+| P0-21 | External service contracts | Contracts exist; live TLS blocker prevents runtime proof | `gitops/platform/external-services`; infra tests | Runtime contract proof unavailable | Medium | deferral | P3 |
+| P0-22 | Documentation SSoT consistency | Current-state overlay and sample/cloud wording needed synchronization | this plan; examples; README | Reader and agent drift | Medium | improvement | P1 |
+
+#### Additional Review Criteria
+
+| Review item | Current state | Gap | Evidence path | Required action |
+| --- | --- | --- | --- | --- |
+| Bootstrap boundary | GitOps-first and approved bootstrap/break-glass paths exist | Needed subagent/operator wording | `AGENTS.md`; `.claude/CLAUDE.md`; `agentic.md` | Implemented P1 wording; kubeconfig repair deferred |
+| WSL2 + Docker prerequisites | Docker/k3d prerequisites documented; Docker/k3d containers observed running in baseline | `kubectl` TLS trust blocks live validation | infra tests; baseline live check | Record blocker; defer repair |
+| GitOps hierarchy | Root app/platform/shared/workload split present | AppProject allow-list and namespace ownership hardening deferred | `gitops/` | P3 semantic follow-up |
+| Secret-management responsibility | ESO/Vault and ClusterSecretStore model present | Policy tightening and secret value checks out of scope | `gitops/platform/eso`; secret scan | Defer sensitive changes |
+| External service contracts | PostgreSQL/Valkey/Vault contracts documented and statically verified | Runtime proof blocked by kubeconfig TLS | `verify-contracts-static.sh`; live run-all blocker | Keep static proof; defer live repair |
+| Documentation SSoT consistency | 006 SDD chain remains canonical | Sample/cloud/JIT wording drift found | 006 plan; README; examples | Implement P1 wording and overlay |
+
+#### Deletion, Consolidation, Deferred, Skill, and Unknown Items
+
+| Target | Type | Reason | Reference check | Recommended action |
+| --- | --- | --- | --- | --- |
+| `scripts/` | deletion candidate rejected | Current scripts are validators or operational helpers | README, CI, docs, scripts checked | Keep; require broad reference check before future deletion |
+| `.agents/**` | deferred cleanup | Ignored mirror cleanup may affect local convenience state | `.claude/skills/**` canonical; `.agents` ignored | Defer until explicit mirror maintenance pass |
+| Seven candidate agents/skills | rejected/deferred | Duplicate existing harness/agent surfaces without a concrete matrix gap | `harness-catalog.md`; `.claude/skills/**` | Do not create; improve existing Skill descriptions |
+| AppProject allow-list | P3 deferred | Semantic ArgoCD permission change | `gitops/` | Plan separate GitOps hardening |
+| `CreateNamespace=true` ownership | P3 deferred | Reconciliation behavior change | `gitops/` | Plan separate namespace ownership pass |
+| kubeconfig TLS repair | P3 deferred | External live-state repair outside docs/governance scope | live `kubectl` TLS error | Repair in approved runtime pass |
+| OPA/Conftest policy gate | P3 deferred | Needs policy owner and bundle design | QA/CI review | Create follow-up before enforcement |
+| `.env` `APP_STAGE` | P3 deferred | Env policy cleanup could change local expectations | key-name-only compare | Handle in env contract pass |
+| Secret values | unknown | Values intentionally not read or printed | policy and task boundary | Keep unknown |
+| Provider latest support | unknown | No web refresh requested in this pass | version inventory | Use current inventory snapshot only |
+
+#### Workspace-Specific Skill Set
+
+| Skill | Status | Target path | Reason | Next action |
+| --- | --- | --- | --- | --- |
+| Compose Stack Agent | deferred/rejected as duplicate | existing harness/skills | Would duplicate repo-local governance without a concrete matrix gap | Reconsider only after matrix gap |
+| Requirements-to-Design Agent | deferred/rejected as duplicate | existing docs routing skills | Existing SDD docs routing already covers traceability | Improve existing docs skills |
+| Execution Plan Agent | deferred/rejected as duplicate | existing 006 chain and skills | Existing plan/task workflow is active | Keep using 006 chain |
+| Task Breakdown Agent | deferred/rejected as duplicate | existing task artifacts | Task rows and supervisor routing cover breakdown | No new skill |
+| Ops Runbook Agent | deferred/rejected as duplicate | existing docs/runbook skills | Would overlap doc-writer and operations docs | Use existing docs scope |
+| Knowledge Map Agent | deferred/rejected as duplicate | `harness-catalog.md`, wiki-curator | Existing catalog/wiki-curator owns maps | Keep current surfaces |
+| Policy Gate Agent | deferred/rejected as duplicate | validators/hooks | OPA/Conftest lacks owner and bundle | Defer policy design |
+| Existing repo-local skills | updated | `.claude/skills/*/skill.md`; local `.agents/skills/*/skill.md` mirrors | Descriptions needed trigger-style `Use when...` wording; repo quality gate enforces mirror parity when local mirrors exist | Keep `.claude/skills/**` canonical; leave broader `.agents` cleanup deferred |
+
+### Implementation Plan
+
+#### P0 Mandatory Workstreams
+
+| P0 ID | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P0-01 | improvement | Governance/runtime rules | JIT and mutation boundary wording plus repo-quality expected phrase | T-094 | targeted `rg`; repo quality | Revert wording/script phrase together |
+| P0-02 | supplementation | 006 SDD chain | Add VAL-SPC-006-022 overlay | T-093 | repo quality/wiki check | Revert overlay |
+| P0-03 | deferral | `scripts/` | Record no deletion-safe script | T-093 | script syntax/executability | N/A |
+| P0-04 | deferral | `scripts/` | Defer deletion | T-093 | reference checks | N/A |
+| P0-05 | deferral | `gitops/` | Keep semantic hardening deferred | T-093 | GitOps structure check | N/A |
+| P0-06 | supplementation | `gitops/README.md` | Record reviewed state | T-093 | README compliance review | N/A |
+| P0-07 | deferral | `infrastructure/` | Record kubeconfig TLS blocker | T-097 | live check blocked | N/A |
+| P0-08 | supplementation | `infrastructure/README.md` | Record reviewed state | T-093 | README compliance review | N/A |
+| P0-09 | improvement | Traefik sample | Align backend to `172.18.0.240:443` | T-095 | targeted stale backend check | Revert sample |
+| P0-10 | supplementation | `traefik/README.md` | Record reviewed state | T-093 | README compliance review | N/A |
+| P0-11 | improvement | operations onboarding | Mark sample minimal, adminer fuller reference | T-095 | targeted wording check | Revert wording |
+| P0-12 | deferral | env files | Record key parity and `APP_STAGE` deferral | T-093 | key-name-only compare | N/A |
+| P0-13 | improvement | root/examples README | Normalize cloud snapshot wording | T-095 | targeted snapshot check | Revert wording |
+| P0-14 | improvement | safe implementation | Limit implementation to P1 docs/governance | T-094..T-096 | verification bundle | Revert scoped edits |
+| P0-15 | supplementation | docs lifecycle | Link current pass to 006 spec/plan/task/progress | T-093, T-099 | repo quality | Revert overlay/progress |
+| P0-16 | improvement | repo-local skills | Update descriptions, sync existing local mirrors, and do not create duplicate skills | T-096 | trigger-style and mirror parity checks | Revert descriptions |
+| P0-17 | improvement | bootstrap boundary | Clarify subagent/operator mutation boundary | T-094 | targeted wording check | Revert wording |
+| P0-18 | deferral | WSL2/Docker prereqs | Record current TLS blocker and prerequisites state | T-097 | live check blocked | N/A |
+| P0-19 | deferral | GitOps hierarchy | Defer semantic hierarchy hardening | T-093 | GitOps structure check | N/A |
+| P0-20 | deferral | secret responsibility | Keep sensitive policy changes deferred | T-093 | secret scan | N/A |
+| P0-21 | deferral | external contracts | Keep static proof; live proof deferred | T-097 | contract static check | N/A |
+| P0-22 | improvement | docs SSoT | Align overlay, examples, README, JIT, Skill descriptions | T-093..T-096 | repo quality/wiki check | Revert scoped edits |
+
+#### P1 Low Risk / Immediate Implementation
+
+| Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- |
+| improvement | JIT shorthand | Add `progress` to provider, rule, agent, and Codex mirror shorthand | T-094 | no stale shorthand remains | Revert strings |
+| improvement | repo quality gate | Align JIT expected phrase with canonical `progress` step | T-094 | repo quality gate | Revert script phrase |
+| improvement | mutation boundary | Clarify subagents never mutate and approved bootstrap/break-glass is operator-bound | T-094 | targeted wording check | Revert wording |
+| improvement | `doc-writer` | Narrow from broad authorship to routing/drafting/delegated updates | T-094 | mirror parity and targeted wording | Revert wording |
+| improvement | sample Traefik | Use ingress-nginx LoadBalancer backend `172.18.0.240:443` | T-095 | stale backend check | Revert sample |
+| improvement | onboarding docs | Reframe sample as minimal template and adminer as fuller active reference | T-095 | targeted wording check | Revert wording |
+| improvement | README cloud wording | Point to current version inventory snapshot | T-095 | targeted snapshot check | Revert wording |
+| improvement | Skill descriptions | Convert safe existing descriptions to `Use when...` wording and sync existing local ignored mirrors required by the quality gate | T-096 | description and mirror parity checks | Revert frontmatter |
+
+#### P2 Medium Risk / Limited Implementation
+
+| Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- |
+| none | n/a | No P2 implementation selected in this pass | n/a | n/a | n/a |
+
+#### P3 High Risk / Deferred
+
+| Action type | Target | Deferral reason | Pre-check | Follow-up work |
+| --- | --- | --- | --- | --- |
+| deferral | AppProject allow-list | Permission semantics change | AppProject review | Separate GitOps hardening plan |
+| deferral | `CreateNamespace=true` | Namespace ownership semantics change | ApplicationSet review | Separate namespace ownership plan |
+| deferral | kube-linter enforcement | Tooling/CI hardening not scoped | optional-tool availability | Add CI/static policy plan |
+| deferral | OPA/Conftest | No policy owner/bundle yet | policy ownership decision | Create Policy Gate design |
+| deferral | `.env` `APP_STAGE` | Env contract cleanup may affect local flows | env role review | Env contract plan |
+| deferral | `.agents` mirror cleanup | Ignored local mirror maintenance | mirror inventory | Explicit mirror cleanup task |
+| deferral | kubeconfig TLS repair | Live runtime repair out of docs scope | no-secret live diagnostics | Approved runtime pass |
+| deferral | destructive Git permission hardening | Runtime permission policy change | tool permission review | Agent governance hardening pass |
+
+### Verification
+
+| Command or method | Result | Record location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | T-098 |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | T-098 |
+| `bash scripts/validate-gitops-structure.sh` | PASS | T-098 |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional kube-linter skipped locally | T-098 |
+| `bash scripts/check-secret-handling.sh .` | PASS | T-098 |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | T-098 |
+| Shell syntax for `infrastructure`, `scripts`, `.claude/hooks` | PASS | T-098 |
+| JSON parse for `.claude/settings.json` and `.codex/hooks.json` | PASS | T-098 |
+| Workflow YAML parse for `.github/workflows/*.yml` | PASS | T-098 |
+| `.env.example` vs `.env` key-name-only comparison | PASS baseline: missing=0, extra=0, 18 keys each | T-098 |
+| Targeted stale backend check | PASS; no active `k3d-hyhome-serverlb:443` in sample | T-095 |
+| JIT shorthand check | PASS; shorthand includes `progress` | T-094 |
+| Skill description check | PASS; repo-local descriptions use trigger-style wording | T-096 |
+| `bash infrastructure/tests/run-all.sh` | BLOCKED baseline: `kubectl` TLS `x509: certificate signed by unknown authority` | T-097 |
+
+#### P0 Verification Coverage
+
+| P0 ID | Verification coverage | Status |
+| --- | --- | --- |
+| P0-01 | targeted governance wording and repo quality | pass |
+| P0-02 | 006 chain update and repo quality | pass |
+| P0-03 | script syntax/executability and reference decision | pass |
+| P0-04 | deletion deferral recorded | pass |
+| P0-05 | GitOps structure static check | pass |
+| P0-06 | README template review | pass |
+| P0-07 | infra static check; live blocker recorded | partial |
+| P0-08 | README template review | pass |
+| P0-09 | stale backend targeted check | pass |
+| P0-10 | Traefik README review | pass |
+| P0-11 | operations wording targeted check | pass |
+| P0-12 | env key-name-only compare | pass |
+| P0-13 | README snapshot wording check | pass |
+| P0-14 | full repo-static verification bundle | pass |
+| P0-15 | 006 spec/plan/task/progress check | pass |
+| P0-16 | Skill description/routing check | pass |
+| P0-17 | bootstrap boundary wording check | pass |
+| P0-18 | prerequisite docs and live TLS blocker record | partial |
+| P0-19 | GitOps structure check and deferral record | pass |
+| P0-20 | secret scan and deferral record | pass |
+| P0-21 | static contract check and live blocker record | partial |
+| P0-22 | repo quality, wiki, and targeted SSoT checks | pass |
+
+### Checklist Gate
+
+| Checklist item | Status | Evidence |
+| --- | --- | --- |
+| Is the goal clear in one sentence? | pass | Documentation/governance-first limited implementation for WSL2/k3d/ArgoCD GitOps and SDD collaboration support |
+| Are related files, logs, issues, or reproduction steps provided or discovered? | pass | Baseline instructions, six subagent reviews, validators, live TLS blocker |
+| Are modification scope and forbidden scope separated? | pass | Intent and Boundary plus P3 deferred table |
+| Are existing patterns, compatibility, and dependency rules stated? | pass | 006 chain extension, `.claude` canonical skills, `.codex` mirrors |
+| Are test, lint, and type-check commands identified? | pass | Verification table |
+| Are completion criteria measurable? | pass | VAL-SPC-006-022 and T-091 through T-100 |
+| Are recurring instructions moved or planned for `AGENTS.md`, `CLAUDE.md`, governance docs, or Skills? | pass | JIT/mutation/doc-writer wording and Skill descriptions updated |
+| Are all P0 workstreams represented in Coverage Ledger, Gap Analysis, Implementation Plan, Verification, and Final Report? | pass | P0 tables in this overlay |
+| Are additional review items represented? | pass | Additional Review Criteria table |
+| Are workspace-specific AI Agent skills designed, updated, created, or deferred with reasons? | pass | Workspace-Specific Skill Set table |
+
+### Final Report
+
+#### 1. Baseline Instruction Check
+
+| Target | Checked | Key impact |
+| --- | --- | --- |
+| Baseline governance and runtime docs | yes | Scope locked to docs/governance P1 edits and P3 deferrals |
+
+#### 2. P0 Mandatory Workstream Status
+
+| P0 ID | Workstream | Status | Evidence | Next action |
+| --- | --- | --- | --- | --- |
+| P0-01 | Environment/system/rules | complete | governance wording updates | Verify and keep P3 runtime changes deferred |
+| P0-02 | `docs/` lifecycle | complete | VAL-SPC-006-022 | Keep 006 chain current |
+| P0-03 | scripts review | complete | no deletion-safe scripts | Keep scripts |
+| P0-04 | one-off cleanup | deferred | reference checks do not permit deletion | Separate cleanup only with proof |
+| P0-05 | GitOps infra | partial | static structure pass, semantic hardening deferred | Separate GitOps plan |
+| P0-06 | `gitops/README.md` | complete | reviewed | No P1 edit |
+| P0-07 | infrastructure | partial | static proof, live TLS blocker | Repair kubeconfig later |
+| P0-08 | `infrastructure/README.md` | complete | reviewed | No P1 edit |
+| P0-09 | Traefik infra | complete | sample backend update | Verify targeted check |
+| P0-10 | `traefik/README.md` | complete | reviewed | No P1 edit |
+| P0-11 | operations docs | complete | onboarding wording update | Verify targeted check |
+| P0-12 | env parity | complete | key names match | `APP_STAGE` deferred |
+| P0-13 | README freshness | complete | root/examples README updates | Verify targeted check |
+| P0-14 | safe implementation | complete | P1-only changes | Verify bundle |
+| P0-15 | docs lifecycle system | complete | spec/plan/task/progress | Keep current |
+| P0-16 | AI Agent skills | complete | descriptions updated; duplicates deferred | Revisit only with matrix gap |
+| P0-17 | bootstrap boundaries | complete | mutation boundary wording | Keep operator-bound exceptions |
+| P0-18 | WSL2/Docker prereqs | partial | prerequisite checks and TLS blocker | Runtime repair later |
+| P0-19 | GitOps hierarchy | partial | structure pass; semantic hardening deferred | Separate plan |
+| P0-20 | secret responsibility | partial | scan pass; policy changes deferred | Separate security plan |
+| P0-21 | external contracts | partial | static contracts pass; live proof blocked | Runtime repair later |
+| P0-22 | documentation SSoT | complete | overlay and wording updates | Verify bundle |
+
+#### 3. Additional Review Criteria Status
+
+| Review item | Status | Evidence | Next action |
+| --- | --- | --- | --- |
+| Bootstrap boundary | complete | governance wording | Keep live mutation operator-bound |
+| WSL2 + Docker prerequisites | partial | live TLS blocker | Repair kubeconfig later |
+| GitOps hierarchy | partial | static structure | Defer semantic hardening |
+| Secret responsibility | partial | secret scan and deferral | Separate security plan |
+| External service contracts | partial | static contracts | Live proof after TLS repair |
+| Documentation SSoT consistency | complete | 006 overlay and wording updates | Keep current overlay first |
+
+#### 4. Coverage Ledger Summary
+
+| Area | Investigation status | Gap count | Candidate count | Unknown |
+| --- | --- | ---: | ---: | --- |
+| Governance/docs/scripts/gitops/infra/traefik/examples/QA/skills | complete | 23 | 31 | secret values, provider latest support, live ArgoCD/runtime proof |
+
+#### 5. Subagent Summary
+
+| Role | Status | Key findings | Unknown |
+| --- | --- | --- | --- |
+| Six role reviewers | complete | JIT/doc-writer/sample/cloud/skill description P1 edits; semantic/runtime changes deferred | live runtime and secret values |
+
+#### 6. Integrated Gap Analysis Summary
+
+| Area | Key Gap | Risk | Action | Priority |
+| --- | --- | --- | --- | --- |
+| Governance/docs/examples/skills | currentness and routing drift | Medium | implemented P1 | P1 |
+| GitOps/infra/secrets/runtime | semantic/live-state hardening | High | deferred | P3 |
+
+#### 7. spec/task/plan Updates
+
+| Document | Change | Linked work |
+| --- | --- | --- |
+| Spec 006 | Added VAL-SPC-006-022 | P0 overlay |
+| Plan 006 | Added current-state navigation and this overlay | T-091 through T-100 |
+| Task 006 | Added T-091 through T-100 and Phase 20 | VAL-SPC-006-022 |
+| Progress ledger | Add 2026-05-25 documentation/governance entry after verification | T-099 |
+
+#### 8. Workspace-Specific AI Agent Skills
+
+| Skill | Status | Path or target path | Reason | Next action |
+| --- | --- | --- | --- | --- |
+| Existing repo-local skills | updated | `.claude/skills/**/skill.md` | Trigger-style descriptions | Verify descriptions |
+| Seven requested candidate agents/skills | deferred/rejected | existing harness surfaces | Duplicative without matrix gap | Revisit only with concrete gap |
+
+#### 9. Implementation Changes
+
+| Target | Change | Reason | Linked task |
+| --- | --- | --- | --- |
+| Governance/runtime docs and mirrors | JIT, mutation boundary, `doc-writer` wording, and matching quality-gate phrase | Agent boundary clarity | T-094 |
+| Examples/onboarding/README | sample backend/currentness/cloud wording | Documentation SSoT | T-095 |
+| `.claude/skills/**` and existing `.agents/skills/**` mirrors | Trigger-style descriptions with mirror parity | Skill routing clarity and quality-gate compatibility | T-096 |
+| 006 SDD chain | Current overlay | Evidence continuity | T-093 |
+
+#### 10. Deletion, Consolidation, and Deferred Items
+
+| Target | Type | Reason | Reference check | Recommended action |
+| --- | --- | --- | --- | --- |
+| `scripts/` | deletion deferred | referenced validators | pass | keep |
+| semantic GitOps/secret/CI/runtime changes | deferred | outside approved scope | recorded | separate plans |
+| `.agents/**` | cleanup deferred | ignored local mirror | recorded | explicit maintenance pass |
+
+#### 11. Verification
+
+| Command or method | Result | Record location |
+| --- | --- | --- |
+| Static and targeted checks | PASS | T-098 |
+| Live `run-all.sh` | BLOCKED by kubeconfig TLS trust | T-097 |
+
+#### 12. Checklist Gate
+
+| Checklist item | Status | Evidence |
+| --- | --- | --- |
+| All checklist items | pass or partial only where live runtime is blocked | Checklist Gate table |
+
+#### 13. Remaining Risks and Next Work
+
+- Repair kubeconfig TLS trust before rerunning `infrastructure/tests/run-all.sh`.
+- Plan semantic GitOps hardening separately for AppProject allow-list and namespace ownership.
+- Define an OPA/Conftest owner and bundle before enforcing policy gates.
+- Keep secret values uninspected unless a human explicitly requests a sensitive runtime operation.
+- Refresh cloud provider support separately before treating examples as deployable cloud guidance.
+
+## Unreviewed-Area Follow-up Overlay - 2026-05-25
+
+### Intent and Boundary
+
+This overlay answers the follow-up request to check whether any requested areas
+were not sufficiently reviewed. It narrows to the explicitly named focus areas:
+`scripts/`, `gitops/`, `infrastructure/`, and `docs/05.operations/`. Changes are
+P1 documentation or diagnostic clarity only. It does not change GitOps
+semantics, AppProject permissions, CI job topology, secret policy, live cluster
+state, or `.env` values.
+
+### Brainstorming Design Lens
+
+| Approach | Trade-off | Decision |
+| --- | --- | --- |
+| Re-run the whole workspace audit | Maximum coverage but high churn and duplicates the existing 006 chain | Rejected for this continuation |
+| Only run validators | Fast but too weak to prove review coverage | Rejected as insufficient |
+| Target weak evidence in the four named areas and update the 006 chain | Focused, evidence-driven, and keeps scope aligned with the active goal | Selected |
+
+### Follow-up Gap Table
+
+| Area | Weak or unreviewed evidence | Action | Risk | Verification |
+| --- | --- | --- | --- | --- |
+| `scripts/` | README still used the prior snapshot date and did not mention canonical JIT contract coverage after validator update | Updated script inventory wording and deletion/consolidation evidence date | Low | repo quality gate; broad reference sweep |
+| `gitops/` | Semantic hardening deferrals were only in the large 006 overlay, not visible from the GitOps entrypoint | Added current hardening deferrals for AppProject allow-list, `CreateNamespace=true`, and image/workload policy scans | Low | GitOps structure and manifest checks |
+| `infrastructure/` | Live `run-all.sh` blocker was recorded, but `verify-cluster.sh` hid the TLS trust cause behind a generic reachability message | Added TLS-specific diagnostic branch and README note | Low | shell syntax; live blocked output |
+| `docs/05.operations/` | Modified onboarding guide/runbook content had stale `updated` metadata and README index dates | Updated frontmatter and guide/runbook README index rows | Low | repo quality gate and targeted index checks |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | documentation | `scripts/README.md` | Refresh current inventory and deletion/consolidation evidence wording | T-102 | repo quality; reference sweep | Revert README wording |
+| P1 | documentation | `gitops/README.md` | Surface semantic hardening deferrals at entrypoint | T-103 | GitOps structure and manifest checks | Revert README section |
+| P1 | diagnostic | `infrastructure/tests/verify-cluster.sh`; `infrastructure/README.md` | Report kubeconfig TLS trust blocker explicitly | T-104 | shell syntax; live blocked run | Revert script/README wording |
+| P1 | documentation | `docs/05.operations` onboarding docs/indexes | Align `updated` metadata and index dates with current edits | T-105 | repo quality; targeted index check | Revert metadata/index rows |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-023 and T-101 through T-106 | T-101, T-106 | repo quality; wiki check | Revert overlay |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | Docs/governance and operations index checks |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `bash scripts/validate-gitops-structure.sh` | PASS | GitOps structure unaffected |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional `kube-linter` skipped locally | Manifest semantics unchanged |
+| `bash scripts/check-secret-handling.sh .` | PASS | Secret policy unchanged |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static contracts unchanged |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | Shell syntax after diagnostic edit |
+| `bash infrastructure/tests/run-all.sh` | BLOCKED; reports kubeconfig TLS trust failure explicitly | Live state intentionally not repaired |
+| targeted metadata/index checks | PASS | Operations guide/runbook dates match current edit |
+
+## Residual Objective Completion Audit Overlay - 2026-05-25
+
+### Intent and Boundary
+
+This overlay answers the continuation check for requested objective areas that
+were not part of the explicit four-path follow-up. It reviews the remaining
+workspace-purpose axes using current files and validators, then records the
+decision to avoid additional semantic implementation in this pass. It does not
+change Kubernetes resources, AppProject permissions, CI job structure, secret
+policy, live cluster state, or `.env` values.
+
+### Residual Coverage Matrix
+
+| Requirement axis | Current evidence | Status | Gap/decision | Verification |
+| --- | --- | --- | --- | --- |
+| Traefik local ingress | `traefik/README.md`; `traefik/*.yaml`; `examples/sample-app/traefik-k3d.yaml.example` | complete repo-static | Active sample and README use the ingress-nginx LoadBalancer backend; live route proof remains outside this docs/governance pass | targeted stale-backend check; manifest validation |
+| Examples and cloud references | `examples/README.md`; `examples/sample-app/README.md`; version inventory snapshot links | complete repo-static | `sample-app` is a minimal onboarding template; `gitops/workloads/adminer` remains the fuller active reference; provider latest support is not refreshed here | targeted wording check; wiki check |
+| Environment role/key parity | `.env.example`; `.env` key-name-only comparison | complete key-only | Keys match in the local checkout; values are intentionally uninspected and `APP_STAGE` cleanup stays deferred | key-name-only compare |
+| QA/CI and policy gates | `.github/workflows/*.yml`; `.pre-commit-config.yaml`; `.github/zizmor.yml`; PR template | partial | Static workflow/config parsing is enough for this pass; actionlint/zizmor/kube-linter/OPA enforcement remains P3 policy work | YAML parse; repo quality; manifest validation |
+| Agent governance | `AGENTS.md`; `.claude/CLAUDE.md`; `docs/00.agent-governance/**`; `.codex/agents/*.toml` | complete repo-static | Thin gateway and mirror contracts are represented; priority and destructive Git permission hardening remain deferred | repo quality gate |
+| Repo-local Skills | `.claude/skills/**`; ignored `.agents/skills/**` mirrors | complete repo-static | Existing Skills cover the requested roles well enough; seven duplicate candidate skills remain rejected/deferred | trigger-style description check; repo quality gate |
+| Bootstrap and WSL2/Docker prerequisites | `infrastructure/README.md`; `infrastructure/bootstrap-local.sh`; operations guides/runbooks | partial | Repo/static ownership is documented; live `run-all.sh` remains blocked by kubeconfig TLS trust repair | static contracts; blocked live check |
+| Secret-management responsibility | `gitops/platform/eso`; `infrastructure/vault`; secret scanner | partial | ESO/Vault responsibility is declarative; live Vault auth and secret value checks remain outside this pass | secret scan; static contracts |
+| External service contracts | `gitops/platform/external-services`; `infrastructure/tests/verify-contracts-static.sh`; `.env.example` | partial | PostgreSQL/Valkey contracts are static-checkable; live reachability remains blocked by the kubeconfig/runtime state | static contract test; blocked live check |
+| Documentation SSoT ownership | 006 Spec/Plan/Task/progress; docs stage READMEs; generated LLM wiki index | complete repo-static | Current-state overlays are preserved in the existing 006 chain instead of creating a parallel task tree | repo quality; wiki check |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record residual objective completion audit and verification evidence | T-107 through T-111 | repo quality, wiki check, targeted residual checks | Revert this overlay, task rows, spec validation item, and progress entry |
+| P3 | deferral | GitOps/CI/security/runtime semantics | Keep AppProject allow-list, `CreateNamespace=true`, image/workload policy scans, OPA/Conftest, `.env` policy cleanup, `.agents` mirror cleanup, destructive Git permission hardening, and kubeconfig TLS repair out of this pass | existing P3 rows | N/A for this pass | Separate approved follow-up |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | Repository governance and SDD chain after residual overlay |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `bash scripts/validate-gitops-structure.sh` | PASS | Root app, Application manifests, and kustomization completeness |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; optional `kube-linter` skipped locally | YAML syntax for 104 manifest files |
+| `bash scripts/check-secret-handling.sh .` | PASS | No plaintext secret patterns found in scanned manifests |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static external service, Vault, AppProject, and workload contracts |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | Shell syntax unchanged after this evidence-only overlay |
+| workflow YAML parse for `.github/workflows/*.yml` | PASS; 5 files | Parser-only workflow syntax check |
+| `.env.example` vs `.env` key-name-only comparison | PASS; missing=0, extra=0, 18 keys each | Values intentionally not printed or inspected |
+| targeted residual content checks | PASS | Traefik backend, sample/adminer wording, version inventory, JIT/progress routing, `doc-writer`, and Skill descriptions |
+| `git diff --check` | PASS | No whitespace errors |
+| `bash infrastructure/tests/run-all.sh` | BLOCKED | `kubectl` cannot reach cluster: kubeconfig TLS trust failed (`x509: certificate signed by unknown authority`) |
+
+## Operations Index Guardrail Overlay - 2026-05-25
+
+### Intent and Boundary
+
+This overlay follows the continuation audit's weak-proof check for
+`docs/05.operations`. It keeps the implementation low risk: README index rows
+and repository quality validation only. It does not change operations policy
+content, Kubernetes semantics, bootstrap behavior, live cluster state, or secret
+material.
+
+### Gap Table
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Operations guides index | Superseded guide frontmatter had `updated: 2026-05-22`, but README index showed `2026-05-21` | `docs/05.operations/guides/0005-new-app-gitops-onboarding-guide.md`; `docs/05.operations/guides/README.md` | Stage 05 freshness drift | Low | improvement | P1 |
+| Operations policies index | Four policy frontmatter dates were newer than README index dates | `docs/05.operations/policies/*.md`; `docs/05.operations/policies/README.md` | Stage 05 freshness drift | Low | improvement | P1 |
+| Operations runbooks index | Superseded runbook frontmatter had `updated: 2026-05-22`, but README index showed `2026-05-21` | `docs/05.operations/runbooks/0006-new-app-onboarding-runbook.md`; `docs/05.operations/runbooks/README.md` | Stage 05 freshness drift | Low | improvement | P1 |
+| Quality gate coverage | Repo quality gate did not enforce operations subfolder index/frontmatter parity | `scripts/validate-repo-quality-gates.sh` | Drift could recur silently | Low | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | documentation | `docs/05.operations/guides/README.md`; `docs/05.operations/policies/README.md`; `docs/05.operations/runbooks/README.md` | Align index `최종 수정` dates with document frontmatter | T-112, T-113 | operations index/frontmatter sync check | Revert README rows |
+| P1 | guardrail | `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Validate guides/policies/runbooks index coverage, stale links, status, and updated date parity | T-114 | repo quality gate | Revert validator and README wording |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-025 and verification | T-115, T-116 | repo quality and wiki checks | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| operations index/frontmatter sync targeted check | PASS | Guides, policies, and runbooks all match frontmatter status/date |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New operations index guardrail passed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after guardrail edit |
+| `git diff --check` | PASS | No whitespace errors |
+
+## Scripts Inventory Guardrail Overlay - 2026-05-25
+
+### Intent and Boundary
+
+This overlay follows the completion audit's weak-proof check for `scripts/`.
+The implementation is limited to repository-static validation and inventory
+wording. It does not delete, rename, consolidate, or change script behavior.
+
+### Gap Table
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Script inventory validation | Repo quality gate only checked that each script name appeared somewhere in `scripts/README.md` | `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Deletion/consolidation review could drift while still passing validation | Low | improvement | P1 |
+| Script entrypoint validation | Executable bit and Bash shebang were not part of the repo quality gate | `scripts/*.sh` | CI/manual command contracts could silently degrade | Low | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Validate script inventory rows, explicit decisions, Tier A/B retention for `Keep`, executable bit, and Bash shebang | T-117, T-118 | repo quality and targeted scripts inventory check | Revert validator and README wording |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-026 and verification | T-119 through T-121 | repo quality, shell syntax, wiki check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| scripts inventory guardrail targeted check | PASS | Five scripts have exact inventory rows, `Keep` decisions, Tier A/B retention evidence, executable bit, and Bash shebang |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New scripts inventory guardrail passed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated reference index unchanged |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Validator shell syntax after scripts guardrail edit |
+| `git diff --check` | PASS | No whitespace errors |
 
 ## Related Documents
 

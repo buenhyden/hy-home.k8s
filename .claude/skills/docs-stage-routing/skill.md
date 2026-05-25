@@ -1,6 +1,6 @@
 ---
 name: docs-stage-routing
-description: Route generated documents into the canonical docs stage tree for this repository and block parallel hierarchies such as docs/superpowers.
+description: Use when routing generated documents into the canonical docs stage tree for this repository or blocking parallel hierarchies such as docs/superpowers.
 ---
 
 # docs-stage-routing
