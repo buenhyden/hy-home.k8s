@@ -8,6 +8,56 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-25 — P0 mandatory workspace revalidation overlay
+
+- **Date**: 2026-05-25
+- **Layer**: docs, infra, qa, meta
+- **Status**: complete
+- **Tags**: #governance #docs #validation #gitops #p0
+
+#### Progress
+
+- Reused the existing `006-workspace-harness-gap-analysis` Spec/Plan/Task as
+  the canonical SDD artifact set.
+- Ran a fresh P0 baseline, full target inventory, and five read-only subagent
+  reviews across documentation lifecycle, agent governance, scripts, GitOps and
+  infrastructure, and environment/QA/CI.
+- Recorded P0 status, coverage, gap analysis, implementation plan, and final
+  report skeleton in the linked plan.
+- Implemented only safe P1/P2 items: 006 Plan/Task README currentness, preserved
+  Hybrid reviewer historical framing, GitOps validator no-arg contract, and
+  Codex provider resolution clarification.
+- Restored executable mode for `infrastructure/tests/verify-ingress-tls.sh`
+  after the required script executability gate found it non-executable.
+- Deferred live runtime proof, secret values, CI rulesets/SHA policy, semantic
+  Kubernetes/GitOps changes, and deletion/consolidation candidates.
+
+#### Memory
+
+- Future P0 refreshes should append current-state overlays to Spec 006 instead
+  of creating a parallel docs tree.
+- Keep `.env` reviews key-name-only unless a human explicitly approves secret
+  value inspection outside agent output.
+- Treat deletion and consolidation candidates as reference-check work, not as a
+  default cleanup action.
+
+#### Evidence
+
+- `docs/03.specs/006-workspace-harness-gap-analysis/spec.md` includes
+  VAL-SPC-006-015.
+- `docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md`
+  includes the 2026-05-25 P0 Mandatory Workstream Revalidation overlay.
+- `docs/04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md`
+  tracks T-049 through T-057.
+
+#### Handoff
+
+- Repo-static verification passed. Remaining work is P3: live runtime proof,
+  secret value review, CI ruleset/SHA policy, semantic GitOps changes, and
+  deletion/consolidation after reference checks.
+
+---
+
 ### 2026-05-25 — multi-area workspace improvement overlay
 
 - **Date**: 2026-05-25

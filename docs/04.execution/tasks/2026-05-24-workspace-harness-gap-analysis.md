@@ -103,6 +103,15 @@ pre-check와 follow-up으로 남긴다.
 | T-046 | Harden plaintext secret scanner for quoted literal sensitive values | test | VAL-SPC-006-014 | Multi-Area Overlay P2 | secret scan and negative fixture | Platform | Done |
 | T-047 | Clarify hook manifest coverage without changing hook behavior | guardrail | VAL-SPC-006-014 | Multi-Area Overlay P2 | shell syntax and repo quality gate | Platform | Done |
 | T-048 | Record multi-area overlay progress and P3 precheck-only boundaries | memory | VAL-SPC-006-014 | Multi-Area Overlay P1 | progress entry and repo quality gate | Platform | Done |
+| T-049 | Run fresh P0 baseline instruction check and full target inventory | doc | VAL-SPC-006-015 | P0 Revalidation | P0 Mandatory Workstream Status | Platform | Done |
+| T-050 | Collect five fresh read-only subagent review results | doc | VAL-SPC-006-015 | P0 Revalidation | Fresh Subagent Review Results | Platform | Done |
+| T-051 | Record P0 coverage ledger, integrated gap analysis, and implementation plan | doc | VAL-SPC-006-015 | P0 Revalidation | linked plan P0 overlay tables | Platform | Done |
+| T-052 | Refresh 006 Plan/Task README currentness rows | doc | VAL-SPC-006-015 | P0 P1 | repo quality gate and wiki check | Platform | Done |
+| T-053 | Mark preserved Hybrid reviewer output as historical evidence | doc | VAL-SPC-006-015 | P0 P1 | repo quality gate | Platform | Done |
+| T-054 | Enforce no-arg contract in GitOps structure validator | test | VAL-SPC-006-015 | P0 P2 | positive and negative validator checks | Platform | Done |
+| T-055 | Clarify Codex provider resolution in shared AGENTS provider notes | guardrail | VAL-SPC-006-015 | P0 P1 | targeted evidence search and repo quality gate | Platform | Done |
+| T-056 | Restore executable mode for ingress TLS verification helper | test | VAL-SPC-006-015 | P0 P2 | script executability check | Platform | Done |
+| T-057 | Run P0 verification bundle and record final report/progress | test | VAL-SPC-006-015 | P0 Verification | P0 Verification Summary | Platform | Done |
 
 ## Suggested Types
 
@@ -201,6 +210,18 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-046 Harden quoted plaintext secret detection.
 - [x] T-047 Clarify recursive hook manifest matching.
 - [x] T-048 Append progress memory.
+
+### Phase 13 - P0 Mandatory Workstream Revalidation
+
+- [x] T-049 Run baseline instruction check and target inventory.
+- [x] T-050 Collect five fresh read-only subagent reviews.
+- [x] T-051 Record P0 status, coverage, gaps, and implementation plan.
+- [x] T-052 Refresh 006 Plan/Task README rows.
+- [x] T-053 Mark preserved Hybrid reviewer output as historical evidence.
+- [x] T-054 Enforce `validate-gitops-structure.sh` no-arg contract.
+- [x] T-055 Clarify Codex provider resolution.
+- [x] T-056 Restore executable mode for ingress TLS verification helper.
+- [x] T-057 Run final P0 verification and close evidence.
 
 ## Hybrid Refresh Evidence
 
@@ -491,6 +512,58 @@ is stored in the linked plan to keep this task document concise.
     Kubernetes semantic change was performed.
   - `AGENTS.md` remains a thin gateway; recurring routing stays in catalog and
     repo-local skills.
+
+## P0 Mandatory Workstream Revalidation Evidence
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| P0 baseline instruction check | complete | linked plan `P0 Mandatory Workstream Revalidation - 2026-05-25` |
+| Full target inventory | complete | linked plan `P0 Coverage Ledger` |
+| Five fresh read-only subagent reviews | complete | linked plan `Fresh Subagent Review Results` |
+| Coverage Ledger and Integrated Gap Analysis | complete | linked plan `P0 Coverage Ledger`; `P0 Integrated Gap Analysis` |
+| Implementation Plan | complete | linked plan `P0 Implementation Plan` |
+| Safe P1/P2 implementation | complete | T-052 through T-055 |
+| Script executable mode restoration | complete | T-056 |
+| P3 deferred items | complete | linked plan `P0 Integrated Gap Analysis` and `P0 Implementation Plan` |
+| Final verification | complete | this task `P0 Verification Summary` |
+
+## P0 Verification Summary
+
+- **Test Commands**:
+  - `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+  - `bash scripts/generate-llm-wiki-index.sh --check` - PASS.
+  - `bash scripts/validate-gitops-structure.sh` - PASS; root app manifest count is 18.
+  - `bash scripts/validate-gitops-structure.sh unexpected` - PASS; expected exit 2.
+  - `bash scripts/validate-k8s-manifests.sh .` - PASS; YAML syntax for 103 files. Script-local kube-linter check skipped due PATH, and the separate direct kube-linter run passed.
+  - `bash scripts/check-secret-handling.sh .` - PASS.
+  - `bash infrastructure/tests/verify-contracts-static.sh` - PASS.
+  - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` - PASS.
+  - Shell script executability check - PASS; 18 shell scripts executable after restoring `verify-ingress-tls.sh`.
+  - `python3 -m json.tool .claude/settings.json` - PASS.
+  - `python3 -m json.tool .codex/hooks.json` - PASS.
+  - `.env.example` and `.env` key-name-only comparison - PASS; 18 key names match and values were not printed.
+  - `.github/workflows/*.yml` syntax/job dependency inspection - PASS; 5 workflows and 11 jobs inspected.
+  - `actionlint .github/workflows/*.yml` - PASS.
+  - `zizmor .github/workflows` - PASS; no findings, 16 suppressed.
+  - `kube-linter lint --config .kube-linter.yaml ...` - PASS; no lint errors found.
+  - `shellcheck scripts/*.sh infrastructure/tests/*.sh .claude/hooks/*.sh` - PASS.
+  - `pre-commit run --all-files --hook-stage manual` - PARTIAL; `end-of-file-fixer` failed on read-only `.codex` mirror files, while subsequent rerun with `SKIP=end-of-file-fixer` passed all remaining hooks.
+  - `git diff --check` - PASS.
+- **Skipped / Deferred Verification**:
+  - live k3d, ArgoCD, Vault, ESO, PostgreSQL, Valkey, TLS, and NetworkPolicy
+    checks remain P3 precheck-only unless separately approved.
+  - `.env` values and Vault secret values are not inspected.
+  - CI rulesets, branch protection, workflow structure rewrites, and SHA
+    pinning policy remain deferred.
+  - Direct broad `shfmt -i 2 -d` reported existing formatting diffs across
+    several shell files; the repo-configured pre-commit `shfmt` hook passed, so
+    broad shell formatting remains a separate cleanup decision.
+- **Implementation Decisions**:
+  - No bulk deletion, live mutation, Kubernetes semantic change, ArgoCD
+    App-of-Apps structure change, CI ruleset rewrite, or secret value
+    inspection was performed.
+  - Existing 006 SDD artifacts remain canonical; no parallel docs tree was
+    created.
 
 ## Verification Summary
 

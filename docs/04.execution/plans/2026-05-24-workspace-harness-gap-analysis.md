@@ -590,6 +590,11 @@ creating an off-taxonomy design document.
 
 ### Hybrid Raw Subagent Output Preservation
 
+> Historical note: the following Hybrid Refresh reviewer tables are preserved
+> as point-in-time evidence from 2026-05-24. Later CEO, multi-area, and P0
+> overlays supersede stale current-state claims without rewriting preserved raw
+> reviewer evidence.
+
 The six fresh role reviews were rerun in read-only mode and are preserved below
 in the requested table shape. The original subagent messages used absolute
 paths in several cells; this plan keeps the same evidence targets while using
@@ -1428,6 +1433,267 @@ linked task, README indexes, script command contracts, and progress ledger.
 | Are test, lint, and type-check commands identified? | pass | Overlay Verification Results and linked task summary |
 | Are completion criteria measurable? | pass | VAL-SPC-006-014 and T-044 through T-048 |
 | Are recurring instructions moved or planned for `AGENTS.md` or Skills? | pass | `AGENTS.md` remains thin; routing stays in catalog/skills |
+
+## P0 Mandatory Workstream Revalidation - 2026-05-25
+
+### P0 Mandatory Workstream Status
+
+| P0 ID | Workstream | Inventory status | Gap status | Plan status | Implementation status | Verification status | Evidence path |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| P0-1 | Environment, system, and rules for the workspace purpose | complete | gaps recorded | planned | P1/P2 docs and validator fixes implemented; high-risk runtime deferred | static verification run | this section; `AGENTS.md`; `.claude/CLAUDE.md`; `scripts/` |
+| P0-2 | `docs/` lifecycle across stages 01/02/03/04/05/90 | complete | gaps recorded | planned | README currentness fixed for 006 Plan/Task; legacy docs retained | repo quality and wiki checks | `docs/03.specs/`; `docs/04.execution/`; `docs/90.references/` |
+| P0-3 | `scripts/` cleanup/classification | complete | gaps recorded | planned | `validate-gitops-structure.sh` now rejects unexpected args; no deletion | shell syntax and GitOps validator checks | `scripts/README.md`; `scripts/validate-gitops-structure.sh` |
+| P0-4 | `gitops/` infrastructure | complete | gaps recorded | planned | semantic changes deferred | GitOps structure and manifest checks | `gitops/` |
+| P0-5 | `infrastructure/` reproducibility/contracts | complete | gaps recorded | planned | semantic changes deferred | static contract tests | `infrastructure/` |
+| P0-6 | `traefik/` routing and local platform alignment | complete | gaps recorded | planned | semantic changes deferred | manifest and static review | `traefik/` |
+| P0-7 | `examples/` operational/example separation | complete | gaps recorded | planned | cleanup candidates deferred | repo-static review | `examples/` |
+| P0-8 | `.env.example` and `.env` role/key consistency | complete | gaps recorded | planned | no value inspection; reserved-key review deferred | key-name-only comparison | `.env.example`; `.env` |
+
+### Fresh Subagent Review Results
+
+| Role | Status | Key findings | Unknown |
+| --- | --- | --- | --- |
+| Documentation Lifecycle Reviewer | complete | 006 Spec/Plan/Task chain remains connected; Plan/Task README 006 rows under-reported the 2026-05-25 overlay; preserved Hybrid raw tables need historical framing | live runtime, secret freshness, full-repo link proof |
+| Agent Governance Reviewer | complete | Gateway/provider shims stay thin; Codex provider resolution was implicit; broad governance priority changes should be deferred | local ignored provider files and remote permission state |
+| Scripts Reviewer | complete | Scripts are reusable, not deletion-ready; GitOps validator README says no args but script accepted extras | current pass/fail until verification rerun |
+| GitOps Infrastructure Reviewer | complete | Static desired-state structure is present; AppProject, Vault/ESO, Istio, Traefik, examples, and cloud semantics need separate prechecks | live ArgoCD, Vault, ESO, k3d, external service reachability |
+| Environment Quality Reviewer | complete | `.env.example` and `.env` key names match; `APP_STAGE` appears reserved/unused; CI structure is coherent, optional supply-chain tools are not guaranteed | secret values, GitHub rulesets, optional tool availability |
+
+### P0 Coverage Ledger
+
+| Area | Target path | Investigation status | Representative files read | Gap count | Deletion/deferral candidate count | Unknown items | Next action |
+| --- | --- | --- | --- | ---: | ---: | --- | --- |
+| Documentation governance | `docs/00.agent-governance/` | complete | `README.md`; provider/rule files; `memory/progress.md` | 1 | 2 | local ignored files | Clarify Codex provider resolution; defer priority rewrites |
+| Requirements | `docs/01.requirements/` | complete | `README.md`; stage inventory | 0 | 0 | none from static pass | Keep linked through Spec 006 and ARD references |
+| Architecture | `docs/02.architecture/` | complete | `README.md`; ARD/ADR indexes | 0 | 1 | live runtime fitness | Keep current-contract notes separate from historical docs |
+| Specs | `docs/03.specs/` | complete | `README.md`; `006-workspace-harness-gap-analysis/spec.md` | 1 | 0 | none | Add VAL-SPC-006-015 |
+| Execution plans | `docs/04.execution/plans/` | complete | `README.md`; 006 plan | 3 | 5 | live/runtime verification | Update 006 row; record P0 overlay |
+| Execution tasks | `docs/04.execution/tasks/` | complete | `README.md`; 006 task | 1 | 0 | none | Add T-049+ rows and verification evidence |
+| Operations | `docs/05.operations/` | complete | `README.md`; runbook/policy indexes | 0 | 1 | live operator proof | Defer runtime proof |
+| References/templates | `docs/90.references/`; `docs/99.templates/` | complete | README and template indexes | 0 | 1 | full link graph | No template change |
+| Scripts | `scripts/` | complete | `README.md`; validator scripts | 3 | 1 | optional tool parity | Reject unexpected GitOps validator args; restore executable mode; defer scanner expansion |
+| GitOps | `gitops/` | complete | root app and app manifests | 3 | 3 | live ArgoCD reconciliation | Keep semantic changes P3 |
+| Infrastructure | `infrastructure/` | complete | tests and k3d contracts | 2 | 2 | live k3d/DB/Valkey | Keep semantic changes P3 |
+| Traefik | `traefik/` | complete | README/manifests | 1 | 1 | external Traefik parity | Defer routing semantic changes |
+| Examples | `examples/` | complete | README/examples manifests | 2 | 3 | example runtime freshness | Defer consolidation |
+| Environment | `.env.example`; `.env` | complete | key-name-only comparison | 1 | 1 | values intentionally unknown | Keep values human-only |
+| QA and CI/CD | `.github/`; `.pre-commit-config.yaml` | complete | workflow and pre-commit config | 2 | 3 | rulesets/SHA policy | Defer CI policy changes |
+| Agent runtime | `AGENTS.md`; `CLAUDE.md`; `.claude/`; `.codex/`; `.agents/` | complete | gateway, provider, hook, catalog files | 2 | 4 | ignored local precedence | Clarify Codex provider resolution; defer consolidation |
+
+### P0 Integrated Gap Analysis
+
+#### Summary
+
+- Overall status: repo-static P0 revalidation is complete; live runtime and
+  policy-owner checks remain deferred.
+- Largest Gap: static repository evidence cannot prove live k3d, ArgoCD, Vault,
+  ESO, PostgreSQL, Valkey, Traefik, or NetworkPolicy behavior.
+- Immediately implementable: README currentness drift, historical reviewer
+  framing, Codex provider resolution, and GitOps validator argument contract.
+- Needs deferral: Kubernetes semantics, ArgoCD App-of-Apps structure, CI
+  policy/rulesets, secret values, bulk deletion, and ignored local files.
+- Unknown areas: live services, secret value freshness, remote GitHub rulesets,
+  optional security tool output, and user-local provider precedence.
+
+#### Gaps by Area
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Documentation | 006 Plan/Task README rows lagged the P0 overlay date and scope | `docs/04.execution/plans/README.md`; `docs/04.execution/tasks/README.md` | Readers may miss current evidence | Low | improvement | P1 |
+| Documentation | Historical Hybrid reviewer tables could be read as current | this plan | Stale claims can conflict with later overlays | Low | supplementation | P1 |
+| Specs/tasks | P0 revalidation lacked dedicated acceptance and T-049+ linkage | Spec 006; linked task | Traceability gap | Low | supplementation | P1 |
+| Scripts | GitOps validator accepted unexpected arguments despite no-arg contract | `scripts/README.md`; `scripts/validate-gitops-structure.sh` | Accidental path argument is ignored | Medium | improvement | P2 |
+| Scripts/QA | One infrastructure verification helper lacked executable mode | `infrastructure/tests/verify-ingress-tls.sh` | Direct script execution can fail even though `bash script.sh` works | Low | improvement | P2 |
+| Scripts/security | Secret scanner alias/field expansion needs fixtures before change | `scripts/check-secret-handling.sh` | Possible false negatives | Medium | deferral | P3 |
+| Governance | Codex provider resolution was implicit rather than explicit | `docs/00.agent-governance/providers/agents-md.md` | Provider ambiguity | Low | supplementation | P1 |
+| GitOps/infra | AppProject, Vault/ESO, Istio, Traefik, and example semantics need owner review | `gitops/`; `infrastructure/`; `traefik/`; `examples/` | Live behavior risk | High | deferral | P3 |
+| Environment | `APP_STAGE` appears reserved/unused in env key set | `.env.example`; `.env` | Potential confusion | Low | deferral | P3 |
+| CI/CD | Optional supply-chain tooling and SHA/ruleset policy are not enforced by this pass | `.github/`; `.pre-commit-config.yaml` | Policy ambiguity | Medium | deferral | P3 |
+
+#### Conflicts/Duplicates
+
+| Target | Description | Impact | Recommended action |
+| --- | --- | --- | --- |
+| Hybrid reviewer evidence | Preserved 2026-05-24 tables contain claims superseded by later overlays | Reader confusion | Keep as historical evidence with explicit note |
+| `status: complete` vs index `Done` | P3 plan/task and README use equivalent but different status vocabularies | Minor metadata drift | Defer vocabulary normalization to a docs metadata pass |
+| `.agents/skills/**` vs `.claude/skills/**` | Multiple skill surfaces exist | Routing confusion if treated as equal | Keep `.claude/skills/**` as runtime source; defer consolidation |
+
+#### Deletion Candidates
+
+| Target | Type | Candidate reason | Reference check | Impact | Recommended action |
+| --- | --- | --- | --- | --- | --- |
+| Legacy/superseded docs | historical reference | Current contracts now live in later specs/plans | References remain | Deleting would remove audit history | Retain |
+| `.agents/skills/**` | consolidation candidate | May duplicate governed `.claude/skills/**` routing | Not exhaustively clear | Could break local workflows | Defer owner-reviewed consolidation |
+| Example cloud secret/Terraform material | cleanup candidate | Example-only and policy-sensitive | References remain in examples/docs | Could remove useful reference | Defer with scoped example policy task |
+
+#### Deferred Items
+
+| Target | Deferral reason | Required pre-check | Follow-up work |
+| --- | --- | --- | --- |
+| k3d/ArgoCD/Vault/ESO/PostgreSQL/Valkey live state | Live access and mutation are outside this pass | Human approval and read-only command list | Run live metadata proof and record unavailable services |
+| AppProject/Vault/ESO/NetworkPolicy semantics | High-risk Kubernetes and secret-access changes | Dedicated GitOps/runtime plan and rollback | Implement repository desired-state changes only after approval |
+| CI rulesets/SHA pinning/workflow-security policy | Remote and supply-chain governance decision needed | Inspect rulesets and ownership policy | Create CI supply-chain plan |
+| `.env` values | Secret value inspection forbidden | Human-only value review | Compare values outside agent output if needed |
+| Bulk deletion or consolidation | References not exhaustively cleared | Link/reference search and owner approval | Delete only individual proven-unused files |
+
+#### Unknown
+
+| Item | Reason unknown | Follow-up check |
+| --- | --- | --- |
+| Live cluster health | No live validation approved | Read-only k3d/kubectl/argocd status plan |
+| Secret value freshness | Values intentionally not inspected | Human-owned value review |
+| GitHub branch protection/rulesets | Remote policy not queried in this pass | `gh`/repository settings review with approval |
+| Optional tools | Tool availability is environment-specific | Record command presence during verification |
+
+### P0 Implementation Plan
+
+#### P1 Low risk / Immediate implementation
+
+| Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- |
+| improvement | Plan/Task README indexes | Update 006 rows to 2026-05-25 P0 overlay scope | T-052 | repo quality gate; wiki check | Revert README rows |
+| supplementation | Spec 006 and linked task/plan | Add VAL-SPC-006-015 and T-049+ P0 evidence | T-049, T-050, T-051, T-057 | repo quality gate; targeted evidence search | Revert overlay sections |
+| supplementation | Historical Hybrid section | Add point-in-time evidence note | T-053 | repo quality gate | Revert note |
+| supplementation | `providers/agents-md.md` | Clarify Codex provider resolution without adding a new file | T-055 | repo quality gate; targeted evidence search | Revert section |
+| memory | `memory/progress.md` | Record P0 revalidation and deferred boundaries | T-057 | repo quality gate | Revert progress entry |
+
+#### P2 Medium risk / Limited implementation
+
+| Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- |
+| improvement | `scripts/validate-gitops-structure.sh` | Reject unexpected arguments with usage and exit 2 | T-054 | shell syntax; positive and negative validator checks | Revert argument check |
+| improvement | `infrastructure/tests/verify-ingress-tls.sh` | Restore executable mode for the verification helper | T-056 | script executability check; shell syntax | `chmod -x infrastructure/tests/verify-ingress-tls.sh` |
+
+#### P3 High risk / Deferred
+
+| Action type | Target | Deferral reason | Pre-check | Follow-up work |
+| --- | --- | --- | --- | --- |
+| deferral | live platform validation | Requires live services and approval | Read-only command list and owner approval | Validate k3d, ArgoCD, Vault, ESO, PostgreSQL, Valkey |
+| deferral | Kubernetes/GitOps semantic changes | Could change live desired state | Dedicated plan, rollback, static diff review | Update AppProject/Vault/ESO/NetworkPolicy only after approval |
+| deferral | CI policy/rulesets/SHA pinning | Remote policy and supply-chain decision | Ruleset inspection and CI ownership decision | Create CI policy hardening task |
+| deferral | `.env` values and secret material | Secret value inspection prohibited | Human-only value review | Record key/value policy without exposing values |
+| deletion candidate | legacy/local/example candidates | References not cleared and deletion would be nontrivial | Full reference check and owner approval | Delete or consolidate only one proven-safe item at a time |
+
+### P0 Verification Results
+
+| Command or method | Result | Record location |
+| --- | --- | --- |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | this section; linked task |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | this section; linked task |
+| `bash scripts/validate-gitops-structure.sh` | PASS; root app manifest count 18 | this section; linked task |
+| `bash scripts/validate-gitops-structure.sh unexpected` | PASS; expected exit 2 | this section; linked task |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; YAML syntax for 103 files; script-local optional kube-linter path check skipped, separate kube-linter run passed | this section; linked task |
+| `bash scripts/check-secret-handling.sh .` | PASS | this section; linked task |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | this section; linked task |
+| `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS | this section; linked task |
+| Shell script executability check | PASS; 18 shell scripts executable after restoring `verify-ingress-tls.sh` | this section; linked task |
+| JSON parse checks for `.claude/settings.json` and `.codex/hooks.json` | PASS | this section; linked task |
+| `.env.example` vs `.env` key-name-only comparison | PASS; 18 key names match and no values printed | this section; linked task |
+| CI workflow syntax/job dependency inspection | PASS; 5 workflows and 11 jobs inspected | this section; linked task |
+| `git diff --check` | PASS | this section; linked task |
+| Optional `actionlint` | PASS | this section; linked task |
+| Optional `zizmor` | PASS; no findings, 16 suppressed | this section; linked task |
+| Optional `kube-linter` | PASS; no lint errors found | this section; linked task |
+| Optional `shellcheck` | PASS | this section; linked task |
+| Optional `pre-commit run --all-files --hook-stage manual` | PARTIAL; configured hooks passed except `end-of-file-fixer`, which failed on read-only `.codex` mirror files; rerun with `SKIP=end-of-file-fixer` passed | this section; linked task |
+
+### P0 Final Report
+
+#### 1. Baseline Instruction Check
+
+| Target | Checked | Key impact |
+| --- | --- | --- |
+| `AGENTS.md` | yes | Thin gateway, Korean user responses, GitOps-first, no plaintext secrets, no file proliferation |
+| `CLAUDE.md`; `.claude/CLAUDE.md`; `GEMINI.md` | yes | Provider shims and runtime baseline checked; root shims do not replace shared governance |
+| `CLAUDE.local.md` | yes | Missing; no local override applied |
+| `docs/00.agent-governance/`; `.claude/`; `.codex/`; `.agents/` | yes | Runtime/policy docs inspected; Codex provider ambiguity clarified |
+| `docs/99.templates/` | yes | No template changes made |
+
+#### P0 Mandatory Workstream Status
+
+| P0 ID | Workstream | Inventory | Gap | Plan | Implementation/Deferral | Verification | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| P0-1 | Environment/system/rules | complete | recorded | planned | P1/P2 implemented; P3 deferred | PASS repo-static; live deferred | this section |
+| P0-2 | Docs lifecycle | complete | recorded | planned | README/currentness fixed | PASS repo quality/wiki | docs stage READMEs |
+| P0-3 | Scripts | complete | recorded | planned | no-arg validator guard and executable mode implemented | PASS syntax/executability/validator checks | `scripts/validate-gitops-structure.sh`; `infrastructure/tests/verify-ingress-tls.sh` |
+| P0-4 | `gitops/` | complete | recorded | planned | semantic changes deferred | PASS static GitOps checks | `gitops/` |
+| P0-5 | `infrastructure/` | complete | recorded | planned | semantic changes deferred | PASS static contracts | `infrastructure/` |
+| P0-6 | `traefik/` | complete | recorded | planned | semantic changes deferred | PASS manifest/static checks | `traefik/` |
+| P0-7 | `examples/` | complete | recorded | planned | cleanup deferred | PASS static review/gates | `examples/` |
+| P0-8 | env files | complete | recorded | planned | key-only check; values deferred | PASS key-name-only comparison | `.env.example`; `.env` |
+
+#### 2. Coverage Ledger Summary
+
+| Area | Investigation status | Gap count | Deletion/deferral candidate count | Unknown |
+| --- | --- | ---: | ---: | --- |
+| Documentation lifecycle | complete | 3 | 5 | live runtime proof |
+| Scripts/QA | complete | 3 | 2 | optional tool parity |
+| GitOps/infrastructure/Traefik/examples | complete | 8 | 9 | live service behavior |
+| Environment/CI/CD | complete | 3 | 4 | values and remote rulesets |
+| Agent governance | complete | 2 | 4 | ignored local precedence |
+
+#### 3. Subagent Summary
+
+| Role | Status | Key findings | Unknown |
+| --- | --- | --- | --- |
+| Documentation Lifecycle Reviewer | complete | 006 chain connected; Plan/Task README drift; historical Hybrid rows need framing | live/runtime and full link proof |
+| Agent Governance Reviewer | complete | Thin gateway intact; Codex provider path implicit | local ignored precedence |
+| Scripts Reviewer | complete | No deletion-ready scripts; GitOps validator arg contract gap | final command rerun |
+| GitOps Infrastructure Reviewer | complete | Static structure coherent; semantics require P3 plan | live ArgoCD/Vault/ESO |
+| Environment Quality Reviewer | complete | Env key names match; optional tooling/policy deferred | secret values and rulesets |
+
+#### 4. Integrated Gap Analysis Summary
+
+| Area | Key Gap | Risk | Action | Priority |
+| --- | --- | --- | --- | --- |
+| Documentation | README/currentness and historical evidence framing | Low | improvement | P1 |
+| Scripts | GitOps validator accepted unexpected args; one test helper lacked executable mode | Medium | improvement | P2 |
+| Governance | Codex provider resolution implicit | Low | supplementation | P1 |
+| GitOps/infra | Semantic/live behavior not proven by static checks | High | deferral | P3 |
+| CI/env/secrets | Values/rulesets/pinning not inspected or changed | Medium | deferral | P3 |
+
+#### 5. spec/task/plan Updates
+
+| Document | Change | Linked work |
+| --- | --- | --- |
+| Spec 006 | Added VAL-SPC-006-015 | T-049+ |
+| Linked Plan | Added P0 mandatory workstream revalidation overlay | T-049 through T-057 |
+| Linked Task | Added P0 task rows, phase, evidence, and verification summary | T-049 through T-057 |
+| Progress ledger | Added P0 revalidation memory entry | T-057 |
+
+#### 6. Implementation Changes
+
+| Target | Change | Reason | Linked task |
+| --- | --- | --- | --- |
+| Plan/Task README indexes | Updated 006 currentness rows to 2026-05-25 P0 overlay | Fresh drift finding | T-052 |
+| `scripts/validate-gitops-structure.sh` | Added no-arg contract guard | README/script contract mismatch | T-054 |
+| `infrastructure/tests/verify-ingress-tls.sh` | Restored executable bit | Script executability gate found one non-executable helper | T-056 |
+| `providers/agents-md.md` | Clarified Codex provider resolution | Provider ambiguity | T-055 |
+| linked plan/spec/task/progress | Recorded P0 status, gaps, implementation, deferrals, and verification | SDD traceability | T-049 through T-057 |
+
+#### 7. Deletion Candidates and Deferred Items
+
+| Target | Type | Reason | Reference check | Recommended action |
+| --- | --- | --- | --- | --- |
+| legacy docs | deletion candidate | superseded but historically useful | references remain | retain |
+| `.agents/skills/**` | consolidation candidate | possible duplicate skill surface | not clear | defer owner-reviewed consolidation |
+| AppProject/Vault/ESO/NetworkPolicy | deferral | high-risk desired-state semantics | static-only | separate approved plan |
+| `.env` values | deferral | secret value inspection prohibited | key names only | human-only review |
+| CI rulesets/SHA pinning | deferral | remote/policy context needed | local only | CI supply-chain task |
+
+#### 8. Verification
+
+| Command or method | Result | Record location |
+| --- | --- | --- |
+| Full requested verification bundle | PASS repo-static; live checks deferred | P0 Verification Results; linked task |
+| Optional tooling availability | PASS except pre-commit `end-of-file-fixer` blocked by read-only `.codex`; alternate `SKIP=end-of-file-fixer` run passed | P0 Verification Results; linked task |
+
+#### 9. Remaining Risks and Next Work
+
+- Live platform behavior remains unknown until an approved read-only runtime
+  validation pass runs.
+- CI policy hardening and SHA pinning need a separate supply-chain decision.
+- Deletion/consolidation candidates require reference checks and owner approval.
 
 ## Related Documents
 

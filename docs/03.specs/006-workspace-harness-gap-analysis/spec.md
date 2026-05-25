@@ -225,6 +225,10 @@ git diff --check
   currentness, P2 quoted plaintext secret scanning and hook manifest coverage
   clarification, P3 precheck-only boundaries, verification results, and
   cleanup/deletion deferrals in canonical SDD artifacts.
+- **VAL-SPC-006-015**: 2026-05-25 P0 mandatory workstream revalidation records
+  full target inventory, five fresh read-only subagent reviews, P0 coverage and
+  gap decisions, T-049+ task linkage, safe P1/P2 implementation, P3 deferrals,
+  verification results, and final report without creating a parallel docs tree.
 
 ## Related Documents
 
