@@ -250,6 +250,10 @@ git diff --check
   read-only runtime and GitHub remote evidence, keeps unavailable live k3d state
   as a current-state limitation, and remediates the discovered CI version
   inventory drift for `actions/stale` without direct main-branch bypass.
+- **VAL-SPC-006-020**: 2026-05-25 post-merge completion audit records PR #39
+  merged into `main`, verifies the merge commit's CI and local static gates,
+  and keeps live bootstrap/runtime proof deferred because approved prechecks
+  show Vault, PostgreSQL, and Valkey are currently unreachable.
 
 ## Related Documents
 

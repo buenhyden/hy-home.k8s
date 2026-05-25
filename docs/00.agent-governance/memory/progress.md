@@ -8,6 +8,53 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-25 — post-merge completion audit
+
+- **Date**: 2026-05-25
+- **Layer**: ci, docs, runtime
+- **Status**: partial
+- **Tags**: #ci #github #validation #runtime
+
+#### Progress
+
+- Confirmed PR #39 was merged into `main` at `2026-05-25T04:28:51Z` with merge
+  commit `780fb7601e51ec534a11bca9a4b645d86bf6e470`.
+- Fast-forwarded local `main` to the merge commit and deleted the merged local
+  branch `codex/approval-bound-completion-audit`.
+- Re-ran merged-main repo-static verification: repo quality gate, LLM Wiki
+  check, GitOps structure, Kubernetes manifest syntax, secret handling,
+  infrastructure static contracts, shell syntax, JSON parse, workflow YAML
+  parse, env key-name-only comparison, and diff whitespace checks passed.
+- Rechecked live runtime without printing secrets. Docker context is `default`,
+  but no Docker containers or k3d clusters are running and the `k3d-hyhome`
+  Kubernetes API still refuses connection.
+- Ran no-secret-output bootstrap prechecks. Required commands, inotify, ports,
+  and certificate files are ready, and `VAULT_TOKEN` is set. Vault health,
+  PostgreSQL write/read, and Valkey connectivity are currently unavailable.
+
+#### Memory
+
+- PR #39 is no longer a blocker; merged `main` is the repo-static SSoT.
+- Live bootstrap is not ready merely because `VAULT_TOKEN` is set. External
+  Vault, PostgreSQL, and Valkey connectivity must pass before running
+  `infrastructure/bootstrap-local.sh`.
+
+#### Evidence
+
+- `gh pr view 39` reports state `MERGED`.
+- `gh run list --branch main` reports success for merge commit `780fb76`.
+- `git status --short --branch` reports clean `main...origin/main`.
+- 006 Spec/Plan/Task include VAL-SPC-006-020 and T-081 through T-083.
+
+#### Handoff
+
+- Start the external service stack that owns Vault, PostgreSQL, and Valkey;
+  then rerun `infrastructure/bootstrap-local.sh` and
+  `infrastructure/tests/run-all.sh` for live proof.
+- Continue to avoid printing secret values in command output or reports.
+
+---
+
 ### 2026-05-25 — approval-bound evidence refresh
 
 - **Date**: 2026-05-25
