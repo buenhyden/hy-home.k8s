@@ -27,6 +27,15 @@ It defines bootstrap, constraints, and routing pointers; it does not duplicate p
 - All providers must honor GitOps-First and no-plaintext-secrets constraints (§2 Constraints).
 - Provider-specific tuning belongs in `providers/claude.md`, `providers/gemini.md`, etc.
 
+## Codex Provider Resolution
+
+Codex does not use a separate `providers/codex.md` file in this repository.
+Codex sessions consume the shared `AGENTS.md` gateway, this provider note,
+`.claude/CLAUDE.md`, `.codex/hooks.json`, and `.codex/agents/*.toml` mirror
+metadata. `.codex/hooks.json` remains event wiring for repo-local validation
+hooks; it is not a permission gate or replacement for the shared governance
+rules.
+
 ## Repository Instruction Model
 
 - `AGENTS.md` is the shared gateway contract for agent-capable tools in this repository.
