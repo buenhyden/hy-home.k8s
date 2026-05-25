@@ -8,6 +8,53 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-25 — task-unit commit follow-up
+
+- **Date**: 2026-05-25
+- **Layer**: meta, docs, qa
+- **Status**: complete
+- **Tags**: #git #governance #validation #commit-discipline
+
+#### Progress
+
+- Added VAL-SPC-006-018 plus T-071 through T-075 to the existing 006 SDD
+  chain for the task-unit commit follow-up.
+- Recorded published commit `870febd` as a forward-only historical exception:
+  it bundled authored SSoT overlay, deferred repo-static overlay, and lifecycle
+  hook work after reaching `origin/main`.
+- Preserved public history by avoiding reset, rebase, amend, and force-push.
+- Strengthened lifecycle hook guidance so future dirty states that span
+  multiple SDD overlays, runtime docs, hooks, validators, or env contracts are
+  split before commit.
+- Extended the repo quality gate to check the stronger Stop and PreCompact
+  task-unit commit guidance.
+
+#### Memory
+
+- If a broad commit is already published on a shared branch, do not rewrite it
+  for cleanup without explicit approval; record the exception and use a
+  forward-only corrective commit.
+- Future human-requested commits should stage only one logical task/spec unit at
+  a time and review `git diff --cached` before each commit.
+
+#### Evidence
+
+- Spec 006 includes VAL-SPC-006-018.
+- The linked 006 Plan includes the Task-Unit Commit Follow-up Overlay.
+- The linked 006 Task tracks T-071 through T-075.
+- `.claude/hooks/lifecycle-guard.sh` and
+  `scripts/validate-repo-quality-gates.sh` carry the stronger guidance and
+  self-test coverage.
+
+#### Handoff
+
+- This follow-up is one logical corrective task and should be committed as one
+  forward-only Conventional Commit.
+- No live runtime proof, secret value review, reset, rebase, amend, or
+  force-push is part of this work.
+
+---
+
 ### 2026-05-25 — lifecycle hook task-unit commit advisory
 
 - **Date**: 2026-05-25

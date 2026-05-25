@@ -125,6 +125,11 @@ pre-check와 follow-up으로 남긴다.
 | T-068 | Document Vault endpoint role separation without changing env keys | doc | VAL-SPC-006-017 | Deferred Item P1 | env key-name-only comparison | Platform | Done |
 | T-069 | Add script deletion broad-reference precheck and rollback contract | doc | VAL-SPC-006-017 | Deferred Item P1 | repo quality gate and targeted `rg` | Platform | Done |
 | T-070 | Run deferred item verification bundle and record progress ledger entry | test | VAL-SPC-006-017 | Deferred Item Verification | Verification Summary | Platform | Done |
+| T-071 | Record task-unit commit follow-up overlay in the existing 006 SDD chain | doc | VAL-SPC-006-018 | Task-Unit Commit Follow-up | repo quality gate and wiki check | Platform | Done |
+| T-072 | Record published broad commit `870febd` as a forward-only historical exception | doc | VAL-SPC-006-018 | Task-Unit Commit Follow-up | targeted git log/status evidence | Platform | Done |
+| T-073 | Strengthen lifecycle hook dirty-state guidance for multi-unit changes | guardrail | VAL-SPC-006-018 | Task-Unit Commit P1 | lifecycle hook self-test | Platform | Done |
+| T-074 | Extend repo-quality hook simulation to cover the stronger commit guidance | test | VAL-SPC-006-018 | Task-Unit Commit P1 | repo quality gate | Platform | Done |
+| T-075 | Run follow-up verification and create one forward-only corrective commit | test | VAL-SPC-006-018 | Task-Unit Commit Verification | Task-Unit Commit Follow-up Verification Summary | Platform | Done |
 
 ## Suggested Types
 
@@ -254,6 +259,14 @@ pre-check와 follow-up으로 남긴다.
 - [x] T-068 Document Vault endpoint role separation.
 - [x] T-069 Add script deletion precheck contract.
 - [x] T-070 Run repo-static and targeted verification.
+
+### Phase 16 - Task-Unit Commit Follow-up
+
+- [x] T-071 Add VAL-SPC-006-018 and follow-up overlay.
+- [x] T-072 Record `870febd` as a forward-only historical exception.
+- [x] T-073 Strengthen lifecycle hook dirty-state guidance.
+- [x] T-074 Cover the stronger advisory in repo-quality self-tests.
+- [x] T-075 Run verification and create one forward-only corrective commit.
 
 ## Verification Evidence History Note
 
@@ -658,6 +671,30 @@ is stored in the linked plan to keep this task document concise.
   - Resolved repo-static portions of deferred items through documentation and
     policy wording only; live runtime proof, secret values, remote GitHub
     rulesets, and actual deletion/consolidation remain separate approval items.
+
+## Task-Unit Commit Follow-up Verification Summary
+
+- **Scope**: 2026-05-25 forward-only corrective follow-up for published broad
+  commit `870febd`.
+- **Test Commands**:
+  - `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+  - `bash scripts/generate-llm-wiki-index.sh --check` - PASS.
+  - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` - PASS.
+  - `python3 -m json.tool .claude/settings.json` - PASS.
+  - `python3 -m json.tool .codex/hooks.json` - PASS.
+  - lifecycle hook Stop self-test for `Task-unit commit discipline`,
+    `dirty state spans multiple SDD overlays`, `forward-only exception`, and
+    `git diff --cached` - PASS.
+  - lifecycle hook PreCompact self-test for the same guidance - PASS.
+  - `git diff --check` - PASS.
+- **Implementation Decisions**:
+  - Do not rewrite `main`, rebase, reset, amend, or force-push the already
+    published `870febd` commit.
+  - Treat this follow-up as one logical corrective task and commit it as one
+    forward-only Conventional Commit.
+  - Future human-requested commits must split dirty states that span multiple
+    SDD overlays, runtime docs, hooks, validators, or env contracts before
+    commit, stage only the files for the unit, and review `git diff --cached`.
 
 ## Related Documents
 

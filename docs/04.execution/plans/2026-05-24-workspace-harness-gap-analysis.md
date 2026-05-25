@@ -1837,6 +1837,50 @@ rulesets, and it does not inspect secret values.
 | Vault endpoint role wording | present | `.env.example` key set unchanged |
 | `.agents` mirror state | ignored and untracked | no `.agents` movement or deletion |
 
+## Task-Unit Commit Follow-up Overlay - 2026-05-25
+
+### Intent and Boundary
+
+This overlay implements the approved forward-only follow-up for task-unit
+commit discipline. It records that `870febd` already reached `origin/main` as a
+single broad commit that bundled authored SSoT overlay work, deferred item
+repo-static work, and lifecycle hook changes. The repository will not rewrite
+that public history. The corrective action is to record the exception, improve
+future dirty-state guidance, and commit this follow-up as one logical unit.
+
+No reset, rebase, amend, force-push, live runtime command, secret value review,
+Kubernetes mutation, ArgoCD sync, or Vault write is included.
+
+### Current State Decision
+
+| Item | Current state | Decision | Follow-up rule |
+| --- | --- | --- | --- |
+| Published broad commit | `870febd` is on `main` and `origin/main` | Keep it as historical evidence | Do not rewrite published history for this cleanup |
+| Task-unit commit policy | Governance and hooks require logical task-unit staging and `git diff --cached` review | Preserve and strengthen | Future broad dirty states must be split before commit |
+| Corrective change | This overlay, hook wording, validator coverage, and progress entry are one work unit | Commit as one forward-only change | Use Conventional Commit with why/how body |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | supplementation | Spec 006 | Add VAL-SPC-006-018 for task-unit commit follow-up | T-071 | repo quality gate | Revert criterion |
+| P1 | supplementation | 006 Plan/Task | Add this overlay, T-071 through T-075, and verification summary | T-071, T-075 | repo quality gate; wiki check | Revert overlay sections |
+| P1 | supplementation | progress ledger | Record `870febd` as a forward-only exception and capture future rule | T-072 | repo quality gate | Revert progress entry |
+| P1 | guardrail | lifecycle hook and Git workflow rule | Strengthen dirty-state and published-history guidance | T-073 | hook self-test; shell syntax | Revert wording |
+| P1 | test | repo quality gate | Require the stronger hook advisory in Stop and PreCompact simulations | T-074 | repo quality gate | Revert self-test phrase checks |
+| P1 | commit | Git history | Create one forward-only corrective commit for this follow-up | T-075 | `git status --short --branch` | Revert commit with a normal revert if needed |
+
+### Verification Delta
+
+| Check | Expected result | Notes |
+| --- | --- | --- |
+| Repo quality gate | PASS | Covers hook self-test wording |
+| LLM Wiki index | PASS | Ensures generated index freshness |
+| Shell syntax | PASS | Covers `.claude/hooks/lifecycle-guard.sh` |
+| JSON parse | PASS | Confirms hook config files remain valid |
+| Lifecycle hook self-test | PASS | Stop and PreCompact mention task-unit discipline, multi-unit dirty states, and `git diff --cached` |
+| Git status | clean and synced after push | No history rewrite |
+
 ## Related Documents
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)

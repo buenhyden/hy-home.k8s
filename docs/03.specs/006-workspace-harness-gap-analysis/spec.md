@@ -241,6 +241,11 @@ git diff --check
   endpoint role separation, script deletion prechecks, and `.agents` mirror
   status without changing runtime interfaces, secrets, CI workflow structure, or
   live cluster state.
+- **VAL-SPC-006-018**: 2026-05-25 task-unit commit follow-up records published
+  broad commit `870febd` as a forward-only historical exception, strengthens
+  lifecycle hook guidance for dirty states that span multiple logical units, and
+  preserves task-unit staging and `git diff --cached` review as the required
+  path for future human-requested commits without rewriting public history.
 
 ## Related Documents
 
