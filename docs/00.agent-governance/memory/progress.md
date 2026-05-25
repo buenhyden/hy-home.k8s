@@ -8,6 +8,46 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-26 — GitOps namespace ownership guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: GitOps, validation, SDD
+- **Status**: partial
+- **Tags**: #gitops #validation #sdd
+
+#### Progress
+
+- Rechecked current `CreateNamespace=true` usage across root Application, apps
+  ApplicationSet, and platform root Applications.
+- Added `gitops/README.md` Namespace Ownership Matrix to connect current
+  namespace creation fallback behavior with namespace owner manifests.
+- Extended `scripts/validate-repo-quality-gates.sh` to compare
+  `CreateNamespace=true` surfaces against the README matrix and
+  `gitops/platform/namespaces` owner manifests.
+- Recorded `VAL-SPC-006-051` and `T-243` through `T-248` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS; optional
+  `kube-linter` skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` — PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` — PASS.
+- JSON parse for `.claude/settings.json` and `.codex/hooks.json` — PASS.
+- Workflow YAML parse for `.github/workflows/*.yml` — PASS for 5 files.
+- `.env.example` and `.env` key-name-only comparison — PASS for 18 keys.
+- `git diff --check` — PASS.
+
+#### Follow-up
+
+- Keep actual sync option removal, AppProject `Namespace` allow-list changes,
+  live reconciliation, bootstrap ordering changes, and Kubernetes desired-state
+  semantics as separate follow-up work.
+
 ### 2026-05-26 — GitOps image and workload-kind policy scan guardrail follow-up
 
 - **Date**: 2026-05-26

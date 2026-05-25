@@ -438,6 +438,13 @@ git diff --check
   keeping AppProject allow-list tightening, `CreateNamespace=true` ownership,
   CI failure-mode changes, OPA/Conftest, kube-linter enforcement, live cluster
   state, and Kubernetes desired-state semantics deferred.
+- **VAL-SPC-006-051**: 2026-05-26 GitOps namespace ownership guardrail
+  follow-up strengthens the previously deferred `CreateNamespace=true`
+  ownership review by validating current root Application, apps ApplicationSet,
+  and platform root Application namespace surfaces against
+  `gitops/platform/namespaces` owner manifests, while keeping actual sync option
+  removal, AppProject `Namespace` allow-list changes, live reconciliation,
+  bootstrap ordering changes, and Kubernetes desired-state semantics deferred.
 
 ## Related Documents
 

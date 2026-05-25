@@ -3177,6 +3177,172 @@ else:
             + ", ".join(expected_workload_policy_surfaces)
         )
 
+
+def has_sync_option(spec: dict, option: str) -> bool:
+    sync_options = ((spec.get("syncPolicy") or {}).get("syncOptions")) or []
+    return option in sync_options
+
+
+create_namespace_applications: list[tuple[pathlib.Path, str, str]] = []
+create_namespace_application_sets: list[tuple[pathlib.Path, str, str]] = []
+for path, document in gitops_yaml_documents_under(gitops_dir):
+    kind = document.get("kind")
+    metadata = document.get("metadata") or {}
+    name = metadata.get("name")
+    if not isinstance(name, str) or not name:
+        continue
+    if kind == "Application":
+        spec = document.get("spec") or {}
+        destination = spec.get("destination") or {}
+        namespace = destination.get("namespace")
+        if has_sync_option(spec, "CreateNamespace=true"):
+            create_namespace_applications.append((path, name, namespace if isinstance(namespace, str) else ""))
+    elif kind == "ApplicationSet":
+        template_spec = (((document.get("spec") or {}).get("template") or {}).get("spec")) or {}
+        destination = template_spec.get("destination") or {}
+        namespace = destination.get("namespace")
+        if has_sync_option(template_spec, "CreateNamespace=true"):
+            create_namespace_application_sets.append((path, name, namespace if isinstance(namespace, str) else ""))
+
+namespace_manifest_files: dict[str, str] = {}
+for path, document in gitops_yaml_documents_under(gitops_dir / "platform/namespaces"):
+    if document.get("kind") == "Namespace":
+        namespace_name = (document.get("metadata") or {}).get("name")
+        if isinstance(namespace_name, str) and namespace_name:
+            namespace_manifest_files[namespace_name] = rel(path)
+
+root_create_namespace_entries = sorted(
+    (name, namespace)
+    for path, name, namespace in create_namespace_applications
+    if rel(path) == "gitops/clusters/local/root-application.yaml"
+)
+apps_create_namespace_entries = sorted(
+    (name, namespace)
+    for path, name, namespace in create_namespace_application_sets
+    if rel(path) == "gitops/clusters/local/applicationset-apps.yaml"
+)
+platform_create_namespace_entries = sorted(
+    (name, namespace)
+    for path, name, namespace in create_namespace_applications
+    if rel(path).startswith("gitops/apps/root/")
+)
+
+if root_create_namespace_entries != [("root-platform", "argocd")]:
+    fail("gitops root Application CreateNamespace=true surface must be root-platform -> argocd")
+if apps_create_namespace_entries != [("apps-generator", "apps")]:
+    fail("gitops apps ApplicationSet CreateNamespace=true surface must be apps-generator -> apps")
+if not platform_create_namespace_entries:
+    fail("gitops platform root Applications must have an inventoried CreateNamespace=true surface")
+
+for name, namespace in apps_create_namespace_entries + platform_create_namespace_entries:
+    if namespace not in namespace_manifest_files:
+        fail(
+            f"CreateNamespace=true destination {name} -> {namespace} must have a "
+            "gitops/platform/namespaces Namespace manifest"
+        )
+
+expected_namespace_ownership_header = [
+    "Surface",
+    "CreateNamespace=true namespace surface",
+    "Declared namespace owner",
+    "Current behavior",
+    "Deferred boundary",
+    "Validation",
+]
+expected_namespace_ownership_surfaces = [
+    "root Application",
+    "apps ApplicationSet",
+    "platform root Applications",
+]
+namespace_ownership_rows = markdown_table_after_heading(gitops_readme, "## Namespace Ownership Matrix")
+if len(namespace_ownership_rows) < 2:
+    fail("gitops/README.md Namespace Ownership Matrix must contain a header and ownership rows")
+elif namespace_ownership_rows[0] != expected_namespace_ownership_header:
+    fail(
+        "gitops/README.md Namespace Ownership Matrix header must be: "
+        + " | ".join(expected_namespace_ownership_header)
+    )
+else:
+    indexed_namespace_surfaces: list[str] = []
+    expected_pairs = {
+        "root Application": root_create_namespace_entries,
+        "apps ApplicationSet": apps_create_namespace_entries,
+        "platform root Applications": platform_create_namespace_entries,
+    }
+    for row_number, row in enumerate(namespace_ownership_rows[1:], start=1):
+        if len(row) != len(expected_namespace_ownership_header):
+            fail(
+                "gitops/README.md Namespace Ownership Matrix "
+                f"row {row_number} must have {len(expected_namespace_ownership_header)} columns"
+            )
+            continue
+        surface_cell, namespace_surface, owner, behavior, deferred_boundary, validation = row
+        match = re.fullmatch(r"`([^`]+)`", surface_cell)
+        if not match:
+            fail(
+                "gitops/README.md Namespace Ownership Matrix "
+                f"row {row_number} must start with a backticked surface"
+            )
+            continue
+        surface = match.group(1)
+        indexed_namespace_surfaces.append(surface)
+        for label, value in [
+            ("CreateNamespace=true namespace surface", namespace_surface),
+            ("Declared namespace owner", owner),
+            ("Current behavior", behavior),
+            ("Deferred boundary", deferred_boundary),
+            ("Validation", validation),
+        ]:
+            if not value:
+                fail(f"gitops/README.md Namespace Ownership Matrix row {row_number} has empty {label}")
+        for command in [
+            "scripts/validate-repo-quality-gates.sh",
+            "scripts/validate-gitops-structure.sh",
+        ]:
+            if command not in validation:
+                fail(
+                    "gitops/README.md Namespace Ownership Matrix "
+                    f"row {row_number} must cite {command}"
+                )
+        for name, namespace in expected_pairs.get(surface, []):
+            pair = f"{name} -> {namespace}"
+            if pair not in namespace_surface:
+                fail(f"gitops/README.md Namespace Ownership Matrix {surface} row missing pair: {pair}")
+        if surface == "root Application":
+            for phrase in ["bootstrap/ArgoCD installation boundary", "not by `gitops/platform/namespaces`"]:
+                if phrase not in owner:
+                    fail(f"gitops/README.md root namespace ownership row missing phrase: {phrase}")
+            if "bootstrap compatibility" not in behavior:
+                fail("gitops/README.md root namespace ownership row must state bootstrap compatibility")
+            if "bootstrap/ArgoCD install ownership pass" not in deferred_boundary:
+                fail("gitops/README.md root namespace ownership row must defer bootstrap/ArgoCD install ownership")
+        elif surface == "apps ApplicationSet":
+            namespace_file = namespace_manifest_files.get("apps", "")
+            if namespace_file not in owner:
+                fail(f"gitops/README.md apps namespace ownership row missing owner file: {namespace_file}")
+            for phrase in ["ApplicationSet fallback", "Git SSoT"]:
+                if phrase not in behavior:
+                    fail(f"gitops/README.md apps namespace ownership row missing behavior phrase: {phrase}")
+            if "live reconciliation" not in deferred_boundary or "app onboarding impact review" not in deferred_boundary:
+                fail("gitops/README.md apps namespace ownership row must defer live reconciliation and onboarding review")
+        elif surface == "platform root Applications":
+            for _, namespace in platform_create_namespace_entries:
+                namespace_file = namespace_manifest_files.get(namespace, "")
+                if namespace_file not in owner:
+                    fail(f"gitops/README.md platform namespace ownership row missing owner file: {namespace_file}")
+            for phrase in ["component bootstrap fallback", "namespace manifests remain the Git SSoT"]:
+                if phrase not in behavior:
+                    fail(f"gitops/README.md platform namespace ownership row missing behavior phrase: {phrase}")
+            if "platform bootstrap ordering" not in deferred_boundary or "ArgoCD reconciliation review" not in deferred_boundary:
+                fail("gitops/README.md platform namespace ownership row must defer bootstrap ordering and reconciliation review")
+        else:
+            fail(f"gitops/README.md Namespace Ownership Matrix unexpected surface: {surface}")
+    if indexed_namespace_surfaces != expected_namespace_ownership_surfaces:
+        fail(
+            "gitops/README.md Namespace Ownership Matrix row order must be: "
+            + ", ".join(expected_namespace_ownership_surfaces)
+        )
+
 infrastructure_dir = root / "infrastructure"
 infrastructure_readme_path = infrastructure_dir / "README.md"
 infrastructure_readme = read_text(infrastructure_readme_path)

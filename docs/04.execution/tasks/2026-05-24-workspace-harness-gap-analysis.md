@@ -297,6 +297,12 @@ pre-check와 follow-up으로 남긴다.
 | T-240 | Align scripts README command contract wording for the new GitOps policy scan | doc | VAL-SPC-006-050 | GitOps Image and Kind Policy Scan Guardrail | scripts README review | Platform | Done |
 | T-241 | Record GitOps image and workload-kind guardrail in the 006 Spec/Plan/Task chain | doc | VAL-SPC-006-050 | GitOps Image and Kind Policy Scan Guardrail | SDD chain check | Platform | Done |
 | T-242 | Append progress memory for the GitOps image and workload-kind policy scan guardrail | memory | VAL-SPC-006-050 | GitOps Image and Kind Policy Scan Guardrail | progress ledger entry | Platform | Done |
+| T-243 | Recheck current `CreateNamespace=true` namespace ownership surfaces | eval | VAL-SPC-006-051 | GitOps Namespace Ownership Guardrail | current Application/ApplicationSet and namespace manifest inspection | Platform | Done |
+| T-244 | Add Namespace Ownership Matrix to `gitops/README.md` | doc | VAL-SPC-006-051 | GitOps Namespace Ownership Guardrail | README review | Platform | Done |
+| T-245 | Extend repository quality gate for namespace ownership matrix and manifest parity | test | VAL-SPC-006-051 | GitOps Namespace Ownership Guardrail | repo quality gate | Platform | Done |
+| T-246 | Align scripts README command contract wording for the namespace ownership guardrail | doc | VAL-SPC-006-051 | GitOps Namespace Ownership Guardrail | scripts README review | Platform | Done |
+| T-247 | Record GitOps namespace ownership guardrail in the 006 Spec/Plan/Task chain | doc | VAL-SPC-006-051 | GitOps Namespace Ownership Guardrail | SDD chain check | Platform | Done |
+| T-248 | Append progress memory for the GitOps namespace ownership guardrail | memory | VAL-SPC-006-051 | GitOps Namespace Ownership Guardrail | progress ledger entry | Platform | Done |
 
 ## Suggested Types
 
@@ -802,6 +808,31 @@ pre-check와 follow-up으로 남긴다.
 | `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static contract verification passed |
 | shell syntax, JSON, workflow YAML, env key, and diff checks | PASS | Shell scripts parsed, runtime JSON parsed, 5 workflow YAML files parsed, 18 env keys matched, and `git diff --check` passed |
 | deferred semantic changes | recorded | AppProject allow-list tightening, `CreateNamespace=true` ownership, CI failure-mode changes, OPA/Conftest, and kube-linter enforcement remain separate follow-ups |
+
+### Phase 49 - GitOps Namespace Ownership Guardrail
+
+- [x] T-243 Recheck current `CreateNamespace=true` namespace ownership surfaces.
+- [x] T-244 Add Namespace Ownership Matrix to `gitops/README.md`.
+- [x] T-245 Extend repository quality gate for namespace ownership matrix and manifest parity.
+- [x] T-246 Align scripts README command contract wording for the namespace ownership guardrail.
+- [x] T-247 Record the guardrail in the 006 SDD chain.
+- [x] T-248 Append progress memory for this follow-up.
+
+## GitOps Namespace Ownership Guardrail Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| root Application namespace surface | PASS | `root-platform -> argocd`; `argocd` is owned by bootstrap/ArgoCD installation, not `gitops/platform/namespaces` |
+| apps ApplicationSet namespace surface | PASS | `apps-generator -> apps`; `namespace-apps.yaml` owns the desired namespace manifest |
+| platform root Application namespace surfaces | PASS | `platform-cert-manager`, `platform-external-secrets-operator`, `platform-headlamp`, `platform-headlamp-config`, `platform-ingress-nginx`, `platform-istio-base`, and `platform-rollouts` map to declared `gitops/platform/namespaces` manifests |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New namespace ownership matrix guardrail passed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated LLM Wiki index remained current |
+| `bash scripts/validate-gitops-structure.sh` | PASS | GitOps hierarchy and Kustomize completeness checks passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed for 104 files; optional kube-linter skipped locally |
+| `bash scripts/check-secret-handling.sh .` | PASS | Plaintext secret scan passed |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static contract verification passed |
+| shell syntax, JSON, workflow YAML, env key, and diff checks | PASS | Shell scripts parsed, runtime JSON parsed, 5 workflow YAML files parsed, 18 env keys matched, and `git diff --check` passed |
+| semantic boundary | recorded | `CreateNamespace=true` removal, AppProject `Namespace` allow-list changes, live reconciliation, and bootstrap ordering changes remain separate follow-ups |
 
 ## Vault Policy Write Boundary Guardrail Verification Summary
 

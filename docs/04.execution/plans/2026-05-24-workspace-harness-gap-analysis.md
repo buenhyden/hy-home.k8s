@@ -25,6 +25,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| GitOps Namespace Ownership Guardrail Overlay | Current repo-static guardrail for `CreateNamespace=true` namespace surfaces and `gitops/platform/namespaces` owner-manifest parity | VAL-SPC-006-051; T-243 through T-248 | Current |
 | GitOps Image and Kind Policy Scan Guardrail Overlay | Current repo-static guardrail for active workload image tag policy, raw platform pod template image tags, and workload kind membership in the apps AppProject whitelist | VAL-SPC-006-050; T-237 through T-242 | Current |
 | Targeted Residual-Area Audit Overlay | Current continuation audit for `scripts/`, `gitops/`, `infrastructure/`, and `docs/05.operations`, including operations high-risk command boundary SSoT | VAL-SPC-006-049; T-231 through T-236 | Current |
 | Traefik 443 Runtime Proof Overlay | Current approved runtime follow-up proving ingress-nginx fallback passes but external Traefik 443 is not reachable because no external gateway runtime is present | VAL-SPC-006-048; T-227 through T-230 | Current |
@@ -60,6 +61,39 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 Use the newest dated overlay for current state. Preserve older overlays as
 evidence snapshots unless a later overlay explicitly supersedes them.
+
+## GitOps Namespace Ownership Guardrail Overlay
+
+This overlay follows the active-goal review for the previously deferred
+`CreateNamespace=true` ownership item. It does not remove sync options, change
+AppProject permissions, change Kubernetes manifests, mutate live state, or
+alter bootstrap ordering. It records and guards the current namespace ownership
+surface so a later hardening pass can make semantic changes from a stable
+baseline.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Namespace ownership SSoT | `CreateNamespace=true` usage was visible in Application YAML but not tied to a guarded ownership matrix that distinguishes bootstrap-owned `argocd` from `platform/namespaces` owned namespaces | `gitops/clusters/local/root-application.yaml`; `gitops/clusters/local/applicationset-apps.yaml`; `gitops/apps/root/`; `gitops/platform/namespaces/` | A later cleanup could remove or retain namespace creation options without a current baseline for owner and reconciliation risk | Medium | improvement | P1 |
+| Validation coverage | Repo-static checks validated hierarchy and manifests, but did not compare `CreateNamespace=true` destination namespaces against declared namespace owner manifests | `scripts/validate-repo-quality-gates.sh`; `gitops/README.md` | Namespace ownership documentation could drift while GitOps structure checks still pass | Medium | supplementation | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | documentation | `gitops/README.md` | Add Namespace Ownership Matrix covering root Application, apps ApplicationSet, and platform root Applications | T-244 | repo quality and README review | Revert matrix and deferral wording |
+| P1 | guardrail | `scripts/validate-repo-quality-gates.sh` | Validate `CreateNamespace=true` Application/ApplicationSet surfaces, owner namespace manifests, and README evidence rows | T-245 | repo quality gate and shell syntax | Revert validator block |
+| P1 | documentation | `scripts/README.md` | Align command contract wording with the new namespace ownership guardrail | T-246 | scripts README review | Revert wording |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-051, implementation decisions, verification, and remaining semantic deferrals | T-247, T-248 | SDD chain check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| current Application/ApplicationSet and namespace manifest inspection | PASS | `root-platform -> argocd`, `apps-generator -> apps`, and platform root app namespace surfaces were inventoried; non-`argocd` destinations have `gitops/platform/namespaces` manifests |
+| repo-static verification | PASS | `validate-repo-quality-gates.sh`, GitOps structure, manifest syntax, secret scan, static contracts, shell syntax, JSON parse, workflow YAML parse, env key-name comparison, wiki check, and diff check passed |
+| remaining deferrals | recorded | Sync option removal, AppProject `Namespace` allow-list changes, live reconciliation, bootstrap ordering changes, and Kubernetes desired-state semantics remain outside this pass |
 
 ## GitOps Image and Kind Policy Scan Guardrail Overlay
 

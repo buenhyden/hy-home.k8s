@@ -89,6 +89,19 @@ workload kind 정책을 정리한다. `validate-repo-quality-gates.sh`는 active
 | `gitops/platform/*` | Raw platform pod templates must use an explicit non-latest tag or digest. | Platform resources stay governed by the platform AppProject and component-specific manifests or charts. | Current raw platform images: `grafana/alloy:v1.13.1`, `registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.14.0`. | AppProject permissions and chart-managed resource-kind tightening remain separate semantic follow-ups. | `bash scripts/validate-repo-quality-gates.sh .`, `bash scripts/validate-gitops-structure.sh`, and `bash scripts/validate-k8s-manifests.sh .`. |
 | `examples/sample-app/*` | placeholder image values are allowed only in the onboarding template. | Example manifests are not active desired state until copied into `gitops/workloads/<appname>`. | Template image placeholder: `ghcr.io/<owner>/<appname>:<tag>`. | Replace placeholders and re-run active workload validation before committing a copied `gitops/workloads/<appname>` app. | `bash scripts/validate-repo-quality-gates.sh .` and `bash scripts/validate-k8s-manifests.sh .`. |
 
+## Namespace Ownership Matrix
+
+이 표는 현재 `CreateNamespace=true` 사용 위치와 namespace desired-state
+소유권을 연결한다. 이 pass는 namespace 생성 옵션을 제거하지 않고, 향후
+ownership 정리 전에 현재 reconciliation 표면이 문서와 manifest 사이에서
+드리프트하지 않도록 검증한다.
+
+| Surface | CreateNamespace=true namespace surface | Declared namespace owner | Current behavior | Deferred boundary | Validation |
+| --- | --- | --- | --- | --- | --- |
+| `root Application` | `root-platform -> argocd`. | ArgoCD namespace is created by the bootstrap/ArgoCD installation boundary, not by `gitops/platform/namespaces`. | `CreateNamespace=true` stays as bootstrap compatibility for the root app destination. | Removing the root-app namespace option requires a separate bootstrap/ArgoCD install ownership pass. | `bash scripts/validate-repo-quality-gates.sh .`, `bash scripts/validate-gitops-structure.sh`, and `bash infrastructure/tests/verify-contracts-static.sh`. |
+| `apps ApplicationSet` | `apps-generator -> apps`. | `gitops/platform/namespaces/namespace-apps.yaml` owns the desired namespace manifest. | `CreateNamespace=true` stays as ApplicationSet fallback while `platform/namespaces` remains the Git SSoT. | Removing the ApplicationSet namespace option requires live reconciliation and app onboarding impact review. | `bash scripts/validate-repo-quality-gates.sh .`, `bash scripts/validate-gitops-structure.sh`, and `bash scripts/validate-k8s-manifests.sh .`. |
+| `platform root Applications` | `platform-cert-manager -> cert-manager`; `platform-external-secrets-operator -> external-secrets`; `platform-headlamp -> headlamp`; `platform-headlamp-config -> headlamp`; `platform-ingress-nginx -> ingress-nginx`; `platform-istio-base -> istio-system`; `platform-rollouts -> argo-rollouts`. | `gitops/platform/namespaces/namespace-cert-manager.yaml`, `gitops/platform/namespaces/namespace-external-secrets.yaml`, `gitops/platform/namespaces/namespace-headlamp.yaml`, `gitops/platform/namespaces/namespace-ingress-nginx.yaml`, `gitops/platform/namespaces/namespace-istio-system.yaml`, and `gitops/platform/namespaces/namespace-argo-rollouts.yaml` own the desired namespace manifests. | `CreateNamespace=true` stays as component bootstrap fallback while namespace manifests remain the Git SSoT. | Removing platform app namespace options requires a separate platform bootstrap ordering and ArgoCD reconciliation review. | `bash scripts/validate-repo-quality-gates.sh .`, `bash scripts/validate-gitops-structure.sh`, and `bash scripts/validate-k8s-manifests.sh .`. <!-- pragma: allowlist secret --> |
+
 ## External Service Contract Matrix
 
 이 표는 외부 런타임 자체가 아니라 Kubernetes interface contract만 정리한다.
@@ -132,7 +145,9 @@ semantics가 바뀌는 작업이라 별도 승인된 hardening pass에서 다룬
 - `apps` AppProject allow-list 최소화: 현재 워크로드 패턴을 깨지 않는
   resource-kind 기준을 먼저 확정해야 한다.
 - `CreateNamespace=true` ownership 정리: ApplicationSet과
-  `platform/namespaces`의 namespace 소유권 경계를 먼저 검증해야 한다.
+  `platform/namespaces`의 현재 namespace 소유권 경계는 위 matrix와
+  `validate-repo-quality-gates.sh`로 검증한다. 실제 sync option 제거 또는
+  AppProject `Namespace` allow-list 변경은 별도 hardening pass에서 다룬다.
 - image tag와 workload-kind 정책 스캔: active `gitops/workloads/*`와 raw
   `gitops/platform/*` pod template의 repo-static guardrail은 현재
   `validate-repo-quality-gates.sh`에 포함한다. CI failure mode, kube-linter
