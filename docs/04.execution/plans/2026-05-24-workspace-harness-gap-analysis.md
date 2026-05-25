@@ -25,6 +25,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| Default Kubeconfig TLS Repair Overlay | Current approved runtime follow-up proving default kubeconfig TLS trust repair and default `run-all.sh` live validation pass | VAL-SPC-006-047; T-222 through T-226 | Current |
 | Temporary Kubeconfig Live Validation Overlay | Current approved runtime follow-up proving read-only live validation passes with a k3d-generated temporary kubeconfig while default kubeconfig TLS trust remains unrepaired | VAL-SPC-006-046; T-217 through T-221 | Current |
 | Script Classification Matrix Guardrail Overlay | Current guardrail follow-up for task-contract script classifications and deletion/consolidation candidate evidence in `scripts/README.md` | VAL-SPC-006-045; T-212 through T-216 | Current |
 | Docker Network and RBAC Create Boundary Guardrail Overlay | Current guardrail follow-up for Docker network mutation and RBAC create command safety markers in operations docs | VAL-SPC-006-044; T-207 through T-211 | Current |
@@ -56,6 +57,36 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 Use the newest dated overlay for current state. Preserve older overlays as
 evidence snapshots unless a later overlay explicitly supersedes them.
+
+## Default Kubeconfig TLS Repair Overlay
+
+This overlay follows explicit approval for approval-gated items. It changes
+only local kubeconfig state: no repository manifest, Kubernetes resource,
+Docker network, Vault policy, secret value, or `.env` value is changed.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Default kubeconfig TLS trust | Live platform health was proven through a temporary k3d kubeconfig, but default `~/.kube/config` still failed TLS verification | `kubectl version --request-timeout=5s`; `infrastructure/tests/run-all.sh`; `~/.kube/config` metadata | Routine local validation would still fail unless the operator remembered to set `KUBECONFIG` | Medium | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | local runtime repair | `~/.kube/config` | Back up default kubeconfig and merge k3d `hyhome` kubeconfig into the default kubeconfig | T-222, T-223 | `kubectl version`; `run-all.sh` | Restore `~/.kube/config.codex-backup-20260526T-k3d-hyhome-tls-repair` to `~/.kube/config` |
+| P1 | documentation | `infrastructure/README.md` | Document approved repair command, verification, and rollback boundary | T-225 | repo quality and static checks | Revert README note |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-047 and verification | T-225, T-226 | repo quality and diff check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| default kubeconfig backup | PASS | Backup exists at `~/.kube/config.codex-backup-20260526T-k3d-hyhome-tls-repair` |
+| `k3d kubeconfig merge hyhome --kubeconfig-merge-default --kubeconfig-switch-context` | PASS | Default kubeconfig updated by k3d |
+| `kubectl config current-context` | PASS | Current context is `k3d-hyhome` |
+| `kubectl version --request-timeout=5s` | PASS | API server reached with default kubeconfig; kubectl reported client/server minor version skew warning |
+| `bash infrastructure/tests/run-all.sh` | PASS | Cluster topology, MetalLB, GitOps, ESO/Vault, external services, network policy, and ingress/TLS checks passed; Traefik 443 enforcement stayed skipped by default |
 
 ## Temporary Kubeconfig Live Validation Overlay
 

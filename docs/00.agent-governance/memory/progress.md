@@ -8,6 +8,43 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-26 — Default kubeconfig TLS repair follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: WSL2, k3d, Kubernetes, kubeconfig, validation, SDD
+- **Status**: partial
+- **Tags**: #wsl2 #k3d #kubernetes #kubeconfig #validation #sdd
+
+#### Progress
+
+- Used the explicit approval for approval-gated items to repair the local
+  default kubeconfig TLS trust blocker.
+- Backed up `~/.kube/config` before repair.
+- Merged the k3d `hyhome` kubeconfig into the default kubeconfig and switched
+  context to `k3d-hyhome`.
+- Verified that default `kubectl` can now reach the API server.
+- Ran the aggregate live validation with the default kubeconfig and proved it
+  passes.
+- Recorded `VAL-SPC-006-047` and `T-222` through `T-226` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- Default kubeconfig backup — PASS:
+  `~/.kube/config.codex-backup-20260526T-k3d-hyhome-tls-repair`.
+- `k3d kubeconfig merge hyhome --kubeconfig-merge-default --kubeconfig-switch-context` — PASS.
+- `kubectl config current-context` — PASS; current context is `k3d-hyhome`.
+- `kubectl version --request-timeout=5s` — PASS with a kubectl
+  client/server version-skew warning.
+- `bash infrastructure/tests/run-all.sh` — PASS.
+
+#### Follow-up
+
+- Traefik 443 enforcement remains optional because `run-all.sh` skips it unless
+  `CHECK_TRAEFIK_443=true` is set.
+- Rollback is to restore the backup file to `~/.kube/config` if the local
+  default kubeconfig must be reverted.
+
 ### 2026-05-26 — Temporary kubeconfig live validation follow-up
 
 - **Date**: 2026-05-26

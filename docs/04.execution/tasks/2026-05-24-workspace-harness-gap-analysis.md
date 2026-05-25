@@ -276,6 +276,11 @@ pre-check와 follow-up으로 남긴다.
 | T-219 | Run read-only live aggregate validation with the temporary kubeconfig | test | VAL-SPC-006-046 | Temporary Kubeconfig Live Validation | `infrastructure/tests/run-all.sh` | Platform | Done |
 | T-220 | Record temporary-kubeconfig live validation in the 006 Plan/Spec/Task and infrastructure README | doc | VAL-SPC-006-046 | Temporary Kubeconfig Live Validation | 006 chain check | Platform | Done |
 | T-221 | Append progress memory for temporary-kubeconfig live validation | memory | VAL-SPC-006-046 | Temporary Kubeconfig Live Validation | progress ledger entry | Platform | Done |
+| T-222 | Back up default kubeconfig before approved TLS repair | eval | VAL-SPC-006-047 | Default Kubeconfig TLS Repair | backup evidence | Platform | Done |
+| T-223 | Merge k3d `hyhome` kubeconfig into default kubeconfig | eval | VAL-SPC-006-047 | Default Kubeconfig TLS Repair | k3d merge output | Platform | Done |
+| T-224 | Verify default kubeconfig reaches the API server and passes aggregate live validation | test | VAL-SPC-006-047 | Default Kubeconfig TLS Repair | `kubectl version`; `run-all.sh` | Platform | Done |
+| T-225 | Record default kubeconfig TLS repair in the 006 Plan/Spec/Task and infrastructure README | doc | VAL-SPC-006-047 | Default Kubeconfig TLS Repair | 006 chain check | Platform | Done |
+| T-226 | Append progress memory for default kubeconfig TLS repair | memory | VAL-SPC-006-047 | Default Kubeconfig TLS Repair | progress ledger entry | Platform | Done |
 
 ## Suggested Types
 
@@ -691,6 +696,25 @@ pre-check와 follow-up으로 남긴다.
 | `KUBECONFIG=/tmp/hy-home-k8s-k3d-hyhome.kubeconfig kubectl version --request-timeout=5s` | PASS | API server reachable; client/server minor version skew warning observed |
 | `KUBECONFIG=/tmp/hy-home-k8s-k3d-hyhome.kubeconfig bash infrastructure/tests/run-all.sh` | PASS | cluster, GitOps, ESO/Vault, external services, network policy, ingress/TLS checks passed; Traefik 443 enforcement skipped by default |
 | temporary kubeconfig cleanup | PASS | `/tmp/hy-home-k8s-k3d-hyhome.kubeconfig` removed after validation |
+
+### Phase 45 - Default Kubeconfig TLS Repair
+
+- [x] T-222 Back up default kubeconfig before approved TLS repair.
+- [x] T-223 Merge k3d `hyhome` kubeconfig into default kubeconfig.
+- [x] T-224 Verify default kubeconfig reaches the API server and passes aggregate live validation.
+- [x] T-225 Record this follow-up in the 006 SDD chain and infrastructure README.
+- [x] T-226 Append progress memory for this follow-up.
+
+## Default Kubeconfig TLS Repair Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| default kubeconfig backup | PASS | `~/.kube/config.codex-backup-20260526T-k3d-hyhome-tls-repair` |
+| `k3d kubeconfig merge hyhome --kubeconfig-merge-default --kubeconfig-switch-context` | PASS | default kubeconfig updated by k3d |
+| `kubectl config current-context` | PASS | `k3d-hyhome` |
+| `kubectl version --request-timeout=5s` | PASS | API server reachable with default kubeconfig; client/server minor version-skew warning observed |
+| `bash infrastructure/tests/run-all.sh` | PASS | cluster, GitOps, ESO/Vault, external services, network policy, ingress/TLS checks passed; Traefik 443 enforcement skipped by default |
+| rollback | recorded | restore the backup file to `~/.kube/config` if the local default kubeconfig must be reverted |
 
 ## Vault Policy Write Boundary Guardrail Verification Summary
 

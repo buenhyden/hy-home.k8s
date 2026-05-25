@@ -411,6 +411,13 @@ git diff --check
   proves the read-only live aggregate `infrastructure/tests/run-all.sh` passes
   without modifying `~/.kube/config`, Kubernetes resources, Docker networks, or
   secret values.
+- **VAL-SPC-006-047**: 2026-05-26 approved default kubeconfig TLS repair
+  follow-up strengthens WSL2/k3d runtime support by backing up `~/.kube/config`,
+  merging the k3d `hyhome` kubeconfig into the default kubeconfig, and proving
+  that default `kubectl version --request-timeout=5s` and
+  `infrastructure/tests/run-all.sh` pass without changing repository manifests,
+  Kubernetes resources, Docker networks, Vault policy, secret values, or `.env`
+  values.
 
 ## Related Documents
 
