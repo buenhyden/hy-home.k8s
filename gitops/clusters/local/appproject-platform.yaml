@@ -55,14 +55,8 @@ spec:
       kind: MutatingWebhookConfiguration
     - group: networking.k8s.io
       kind: IngressClass
-    - group: apiregistration.k8s.io
-      kind: APIService
     - group: cert-manager.io
       kind: ClusterIssuer
-    - group: metallb.io
-      kind: IPAddressPool
-    - group: metallb.io
-      kind: L2Advertisement
   namespaceResourceWhitelist:
     - group: ''
       kind: ServiceAccount
@@ -72,16 +66,10 @@ spec:
       kind: Secret
     - group: ''
       kind: Service
-    - group: ''
-      kind: Endpoints
     - group: discovery.k8s.io
       kind: EndpointSlice
     - group: apps
       kind: Deployment
-    - group: apps
-      kind: DaemonSet
-    - group: apps
-      kind: StatefulSet
     - group: batch
       kind: Job
     - group: policy
@@ -104,28 +92,6 @@ spec:
       kind: ApplicationSet
     - group: argoproj.io
       kind: AppProject
-    - group: cert-manager.io
-      kind: Certificate
-    - group: cert-manager.io
-      kind: Issuer
-    - group: cert-manager.io
-      kind: CertificateRequest
-    - group: networking.istio.io
-      kind: VirtualService
-    - group: networking.istio.io
-      kind: DestinationRule
-    - group: networking.istio.io
-      kind: Gateway
-    - group: install.istio.io
-      kind: IstioOperator
-    - group: argoproj.io
-      kind: Rollout
-    - group: argoproj.io
-      kind: AnalysisTemplate
-    - group: argoproj.io
-      kind: ClusterAnalysisTemplate
-    - group: argoproj.io
-      kind: AnalysisRun
     - group: kiali.io
       kind: Kiali
   roles:

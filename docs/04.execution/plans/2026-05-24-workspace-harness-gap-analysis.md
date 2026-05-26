@@ -25,6 +25,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| Platform Chart Render Review Overlay | Current platform Helm chart render review and platform AppProject allow-list tightening evidence | VAL-SPC-006-057; T-275 through T-281 | Current |
 | AppProject and Namespace Semantic Hardening Overlay | Current desired-state hardening for tightened `apps` AppProject grants and removed `CreateNamespace=true` sync options | VAL-SPC-006-056; T-269 through T-274 | Current |
 | AppProject Allow-list Rationale Guardrail Overlay | Current GitOps guardrail for `apps` AppProject active/reserved allow-list rationale and platform chart-managed tightening boundary | VAL-SPC-006-055; T-264 through T-268 | Current |
 | Destructive Git Permission Hardening Overlay | Current agent-governance hardening for shared Claude deny rules covering destructive/history-rewriting Git commands | VAL-SPC-006-054; T-259 through T-263 | Current |
@@ -66,6 +67,40 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 Use the newest dated overlay for current state. Preserve older overlays as
 evidence snapshots unless a later overlay explicitly supersedes them.
+
+## Platform Chart Render Review Overlay
+
+This overlay follows the explicit request to perform platform chart render
+review before closing the AppProject hardening gap. It adds a reusable helper
+that renders Helm chart Applications with temporary Helm cache/config/data under
+`/tmp`, compares rendered kinds against the platform AppProject allow-list, and
+records the review in GitOps and SDD documents.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Platform chart render review | Platform allow-list tightening previously depended on raw manifest scan only and did not have reproducible Helm chart kind evidence | `gitops/apps/root/*`; `gitops/clusters/local/appproject-platform.yaml`; `scripts/render-platform-chart-kinds.sh` | Over-tightening or over-retaining platform AppProject kinds could pass static checks without chart evidence | Medium | improvement | P1 |
+| Platform AppProject least privilege | Platform AppProject still allowed kinds not present in raw platform manifests or rendered chart output | `gitops/clusters/local/appproject-platform.yaml`; `gitops/README.md` | Extra resource-kind grants weakened the platform project boundary | Medium | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | tool | `scripts/render-platform-chart-kinds.sh`; `scripts/README.md` | Add reusable Helm chart render review helper and script inventory/command contract | T-276 | shell syntax and render command | Remove script and README rows |
+| P1 | guardrail | `gitops/clusters/local/appproject-platform.yaml` | Remove platform AppProject kinds not required by raw platform manifests or rendered chart output | T-277 | render helper, static contracts, manifest validation | Revert AppProject diff |
+| P1 | documentation | `gitops/README.md` | Add Platform Chart Render Review Matrix and update platform AppProject rationale | T-278 | repo quality and README review | Revert README section |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-057, verification, and remaining live reconciliation boundary | T-279 through T-281 | SDD chain check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `bash -n scripts/render-platform-chart-kinds.sh` | PASS | Render helper syntax passed |
+| `bash scripts/render-platform-chart-kinds.sh .` | PASS | Rendered platform chart kinds are covered by the tightened platform AppProject allow-lists |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | Repository quality gates passed after script and GitOps README updates |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static contracts passed after platform AppProject tightening |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed; optional kube-linter remains skipped when not installed |
 
 ## AppProject and Namespace Semantic Hardening Overlay
 

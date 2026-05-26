@@ -478,6 +478,11 @@ git diff --check
   `ExternalSecret`, removing `CreateNamespace=true` from GitOps
   Application/ApplicationSet manifests, and updating repo-static validators and
   SDD evidence while keeping live cluster mutation out of the agent path.
+- **VAL-SPC-006-057**: 2026-05-26 platform chart render review follow-up
+  creates a reusable Helm render helper for platform chart Applications,
+  records rendered chart kind evidence in `gitops/README.md`, tightens the
+  platform AppProject allow-list to raw platform manifests plus rendered chart
+  kinds, and validates coverage without changing live cluster state directly.
 
 ## Related Documents
 

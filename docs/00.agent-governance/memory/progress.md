@@ -8,6 +8,40 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-26 — Platform chart render review follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: GitOps, Helm, ArgoCD, validation, SDD
+- **Status**: partial
+- **Tags**: #gitops #helm #argocd #validation #sdd
+
+#### Progress
+
+- Added `scripts/render-platform-chart-kinds.sh` to render Helm chart
+  Applications under `gitops/apps/root` and compare rendered kinds with the
+  platform AppProject allow-list.
+- Updated `scripts/README.md` with the script inventory, classification, and
+  command contract.
+- Added `gitops/README.md` Platform Chart Render Review Matrix.
+- Tightened `gitops/clusters/local/appproject-platform.yaml` to remove unused
+  kind grants not supported by raw platform manifests or rendered chart output.
+- Recorded `VAL-SPC-006-057` and `T-275` through `T-281` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `bash -n scripts/render-platform-chart-kinds.sh` — PASS.
+- `bash scripts/render-platform-chart-kinds.sh .` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS; optional kube-linter remains
+  skipped when not installed.
+
+#### Follow-up
+
+- Confirm ArgoCD reconciliation after the committed desired state is available
+  to the cluster source revision.
+
 ### 2026-05-26 — AppProject and namespace semantic hardening follow-up
 
 - **Date**: 2026-05-26

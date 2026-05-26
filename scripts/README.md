@@ -82,6 +82,7 @@ scripts/
 | `validate-k8s-manifests.sh` | Keep | Tier A: CI `manifest-static`와 post-edit manifest hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, GitOps READMEs | manifest YAML syntax와 선택적 `kube-linter` 검증을 수행한다. |
 | `check-secret-handling.sh` | Keep | Tier A: CI `manifest-static`와 post-edit manifest hook이 직접 실행한다. | root README, `scripts/README.md`, PR template, `.claude/settings.json`, `.claude/hooks/post-validate.sh`, `.codex/hooks.json`, GitOps READMEs | GitOps, infrastructure, examples manifest의 plaintext secret pattern을 검사한다. |
 | `generate-llm-wiki-index.sh` | Keep | Tier B indirect: 필수 `validate-repo-quality-gates.sh`가 `--check`로 간접 실행하고 `docs/90.references/llm-wiki/wiki-index.md` generated artifact contract를 소유한다. | root README, `scripts/README.md`, `.claude/settings.json`, LLM Wiki guide, references README, generated wiki index, document stage routing | `docs/90.references/llm-wiki/wiki-index.md`를 Markdown-only canonical-owner link map으로 결정적으로 재생성하거나 검사한다. |
+| `render-platform-chart-kinds.sh` | Keep | Tier B indirect/manual: platform Helm chart render review와 AppProject allow-list 영향 검토에서 실행한다. | `scripts/README.md`, `gitops/README.md`, 006 SDD evidence | `gitops/apps/root`의 Helm chart Application을 `helm template --include-crds`로 렌더링하고, 렌더링된 kind가 platform AppProject allow-list에 포함되는지 확인한다. |
 
 ## Script Classification Matrix
 
@@ -97,6 +98,7 @@ scripts/
 | `validate-k8s-manifests.sh` | operations-critical/reusable | No | No | Tier A manifest-static gate이며 YAML syntax와 선택적 kube-linter 검증을 담당한다. |
 | `check-secret-handling.sh` | operations-critical/reusable | No | No | Tier A manifest-static gate이며 plaintext secret pattern scan과 redacted finding 출력을 담당한다. |
 | `generate-llm-wiki-index.sh` | development-helper/reusable | No | No | Tier B indirect helper이며 generated LLM Wiki index 재생성과 `--check` freshness contract를 소유한다. |
+| `render-platform-chart-kinds.sh` | development-helper/reusable | No | No | Tier C manual review helper이며 platform Helm chart render 결과와 AppProject allow-list coverage를 재현 가능하게 검토한다. |
 
 2026-05-25 broad reference sweep 기준 Tier C-only, unused, one-off 삭제 후보는 없다.
 
@@ -165,6 +167,7 @@ scripts/
 | `bash scripts/validate-gitops-structure.sh` | 인자를 받지 않는다. 스크립트가 속한 repository에서 실행된다. | ArgoCD root app, root application kind, root app manifest, `clusters/local` root/ApplicationSet boundary, root app local source path boundary, `gitops/**/kustomization.yaml` syntax, sibling manifest resource completeness를 검증한다. | exit `0`은 필요한 GitOps 구조가 있고 parse 가능하며 root/platform/workload hierarchy와 각 `kustomization.yaml`의 sibling YAML manifest 참조가 유효하다는 뜻이다. |
 | `bash scripts/validate-k8s-manifests.sh .` | 선택 인자는 arbitrary subpath가 아니라 repository root다. | `gitops/`, `infrastructure/`, `examples/sample-app/`, `examples/**/{gitops,kubernetes}/`, `traefik/` 아래 YAML을 검사하고, `kube-linter`가 있으면 함께 실행한다. | exit `0`은 YAML syntax가 통과했고 optional `kube-linter`도 실패하지 않았다는 뜻이다. `SKIP optional kube-linter`는 local YAML-only validation을 뜻한다. 잘못된 repo root 또는 YAML 0건은 실패한다. |
 | `bash scripts/check-secret-handling.sh .` | 선택 인자는 arbitrary subpath가 아니라 repository root다. | `gitops/`, `infrastructure/`, `examples/sample-app/`, `examples/**/{gitops,kubernetes}/` 아래 YAML에서 quoted literal 값을 포함한 plaintext secret pattern을 검사하되 ExternalSecret-like resource는 제외한다. Finding 출력은 값을 `<redacted>`로 숨긴다. | exit `0`은 검사 대상 파일이 있고 plaintext secret pattern이 없다는 뜻이다. 잘못된 repo root, YAML 0건, finding은 실패한다. |
+| `bash scripts/render-platform-chart-kinds.sh .` | 선택 인자는 repository root다. 생략하면 스크립트 위치 기준 repository root를 사용한다. | `gitops/apps/root`의 Helm chart Application을 렌더링하고 `gitops/clusters/local/appproject-platform.yaml` allow-list와 비교한다. | exit `0`은 모든 렌더링 kind가 platform AppProject allow-list에 포함된다는 뜻이다. Helm 렌더 실패 또는 누락 kind는 실패한다. |
 
 `HY_HOME_K8S_SKIP_HOOK_SIMULATION=1`은 `.claude/hooks/*` wrapper가
 `validate-repo-quality-gates.sh`를 재귀 호출하지 않도록 사용하는 internal bypass다.
@@ -176,6 +179,7 @@ hook simulation을 포함해야 한다.
 필수 도구:
 
 - `python3`
+- `helm` (manual platform chart render review)
 - Python `PyYAML`
 
 선택 도구:

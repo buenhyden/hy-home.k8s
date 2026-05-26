@@ -329,6 +329,13 @@ pre-check와 follow-up으로 남긴다.
 | T-272 | Update GitOps README matrices for tightened allow-list and namespace ownership | doc | VAL-SPC-006-056 | AppProject and Namespace Semantic Hardening | README review and repo quality | Platform | Done |
 | T-273 | Update repo-static validators for semantic hardening parity | test | VAL-SPC-006-056 | AppProject and Namespace Semantic Hardening | shell syntax, repo quality, static contracts | Platform | Done |
 | T-274 | Record AppProject and namespace semantic hardening in the 006 SDD chain and progress ledger | memory | VAL-SPC-006-056 | AppProject and Namespace Semantic Hardening | SDD chain and progress entry | Platform | Done |
+| T-275 | Recheck platform Helm chart Applications and current platform AppProject allow-list | eval | VAL-SPC-006-057 | Platform Chart Render Review | chart Application inventory | Platform | Done |
+| T-276 | Add reusable platform chart render review helper and script contract | tool | VAL-SPC-006-057 | Platform Chart Render Review | shell syntax and render command | Platform | Done |
+| T-277 | Tighten platform AppProject allow-list using raw manifest and rendered chart evidence | guardrail | VAL-SPC-006-057 | Platform Chart Render Review | render helper and static contracts | Platform | Done |
+| T-278 | Add Platform Chart Render Review Matrix to `gitops/README.md` | doc | VAL-SPC-006-057 | Platform Chart Render Review | README review and repo quality | Platform | Done |
+| T-279 | Validate platform chart render review and tightened AppProject desired state | test | VAL-SPC-006-057 | Platform Chart Render Review | render helper, repo quality, static contracts, manifest validation | Platform | Done |
+| T-280 | Record platform chart render review in the 006 SDD chain | doc | VAL-SPC-006-057 | Platform Chart Render Review | SDD chain check | Platform | Done |
+| T-281 | Append progress memory for platform chart render review | memory | VAL-SPC-006-057 | Platform Chart Render Review | progress ledger entry | Platform | Done |
 
 ## Suggested Types
 
@@ -979,6 +986,27 @@ pre-check와 follow-up으로 남긴다.
 | `kubectl diff -k gitops/clusters/local` | DIFF EXPECTED | Read-only diff shows pending AppProject and cluster-local sync-option changes |
 | `kubectl diff -k gitops/apps/root` | DIFF EXPECTED | Read-only diff shows pending platform root Application sync-option changes |
 | `argocd app diff --core --local ...` | NOT USABLE | ArgoCD CLI core local diff could not find `argocd-cm`; `kubectl diff` was used instead |
+
+### Phase 55 - Platform Chart Render Review
+
+- [x] T-275 Recheck platform Helm chart Applications and current platform AppProject allow-list.
+- [x] T-276 Add reusable platform chart render review helper and script contract.
+- [x] T-277 Tighten platform AppProject allow-list using raw manifest and rendered chart evidence.
+- [x] T-278 Add Platform Chart Render Review Matrix to `gitops/README.md`.
+- [x] T-279 Validate platform chart render review and tightened AppProject desired state.
+- [x] T-280 Record platform chart render review in the 006 SDD chain.
+- [x] T-281 Append progress memory for platform chart render review.
+
+## Platform Chart Render Review Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| chart render helper | PASS | `scripts/render-platform-chart-kinds.sh` renders platform chart Applications with temp Helm cache/config/data |
+| rendered kind coverage | PASS | Rendered chart kinds are covered by `gitops/clusters/local/appproject-platform.yaml` |
+| platform AppProject tightening | PASS | Unused platform AppProject kinds were removed after raw manifest and chart render review |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | Repository quality gates passed |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static contracts passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed; optional kube-linter remains skipped when not installed |
 
 ## Vault Policy Write Boundary Guardrail Verification Summary
 
