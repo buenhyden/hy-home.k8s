@@ -336,6 +336,13 @@ pre-check와 follow-up으로 남긴다.
 | T-279 | Validate platform chart render review and tightened AppProject desired state | test | VAL-SPC-006-057 | Platform Chart Render Review | render helper, repo quality, static contracts, manifest validation | Platform | Done |
 | T-280 | Record platform chart render review in the 006 SDD chain | doc | VAL-SPC-006-057 | Platform Chart Render Review | SDD chain check | Platform | Done |
 | T-281 | Append progress memory for platform chart render review | memory | VAL-SPC-006-057 | Platform Chart Render Review | progress ledger entry | Platform | Done |
+| T-282 | Recheck OPA/Conftest availability and policy gate ownership gap | eval | VAL-SPC-006-058 | OPA/Conftest Policy Gate | tool availability and policy inventory | Platform | Done |
+| T-283 | Add Rego policy bundle for core GitOps/Kubernetes gates | policy | VAL-SPC-006-058 | OPA/Conftest Policy Gate | policy gate command | Platform | Done |
+| T-284 | Add policy gate runner with Conftest and built-in fallback | tool | VAL-SPC-006-058 | OPA/Conftest Policy Gate | shell syntax and policy gate command | Platform | Done |
+| T-285 | Fix Azure sample `latest` image policy violation | example | VAL-SPC-006-058 | OPA/Conftest Policy Gate | policy gate and manifest validation | Platform | Done |
+| T-286 | Update GitOps and scripts README policy gate ownership wording | doc | VAL-SPC-006-058 | OPA/Conftest Policy Gate | repo quality | Platform | Done |
+| T-287 | Validate OPA/Conftest-style policy gate | test | VAL-SPC-006-058 | OPA/Conftest Policy Gate | policy gate command | Platform | Done |
+| T-288 | Record OPA/Conftest policy gate in the 006 SDD chain and progress ledger | memory | VAL-SPC-006-058 | OPA/Conftest Policy Gate | SDD chain and progress entry | Platform | Done |
 
 ## Suggested Types
 
@@ -1007,6 +1014,26 @@ pre-check와 follow-up으로 남긴다.
 | `bash scripts/validate-repo-quality-gates.sh .` | PASS | Repository quality gates passed |
 | `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static contracts passed |
 | `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed; optional kube-linter remains skipped when not installed |
+
+### Phase 56 - OPA/Conftest Policy Gate
+
+- [x] T-282 Recheck OPA/Conftest availability and policy gate ownership gap.
+- [x] T-283 Add Rego policy bundle for core GitOps/Kubernetes gates.
+- [x] T-284 Add policy gate runner with Conftest and built-in fallback.
+- [x] T-285 Fix Azure sample `latest` image policy violation.
+- [x] T-286 Update GitOps and scripts README policy gate ownership wording.
+- [x] T-287 Validate OPA/Conftest-style policy gate.
+- [x] T-288 Record OPA/Conftest policy gate in the 006 SDD chain and progress ledger.
+
+## OPA/Conftest Policy Gate Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| Conftest availability | NOT INSTALLED | `command -v conftest` returned no path |
+| Rego policy bundle | PASS | `policy/conftest/kubernetes.rego` |
+| policy runner | PASS | `scripts/validate-policy-gates.sh` runs Conftest when available and fallback otherwise |
+| policy drift found | FIXED | `examples/azure/kubernetes/sample-app.yaml` no longer uses `nginx:latest` |
+| `bash scripts/validate-policy-gates.sh .` | PASS | Built-in fallback passed |
 
 ## Vault Policy Write Boundary Guardrail Verification Summary
 

@@ -8,6 +8,37 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-26 — OPA/Conftest policy gate follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: policy, GitOps, Kubernetes, validation, SDD
+- **Status**: partial
+- **Tags**: #policy #opa #conftest #gitops #validation #sdd
+
+#### Progress
+
+- Added `policy/conftest/kubernetes.rego` for plaintext Secret,
+  `CreateNamespace=true`, AppProject wildcard, and `latest` image checks.
+- Added `scripts/validate-policy-gates.sh` to run Conftest when installed and a
+  built-in fallback otherwise.
+- Documented the policy gate script in `scripts/README.md` and routed
+  GitOps policy bundle ownership in `gitops/README.md`.
+- Fixed `examples/azure/kubernetes/sample-app.yaml` from `nginx:latest` to a
+  pinned image tag.
+- Recorded `VAL-SPC-006-058` and `T-282` through `T-288` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `command -v conftest` — NOT INSTALLED.
+- `bash -n scripts/validate-policy-gates.sh` — PASS.
+- `bash scripts/validate-policy-gates.sh .` — PASS via built-in fallback.
+
+#### Follow-up
+
+- Add CI installation/execution for Conftest if policy enforcement must move
+  from manual/repo-local validation into the required CI job graph.
+
 ### 2026-05-26 — Platform chart render review follow-up
 
 - **Date**: 2026-05-26

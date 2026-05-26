@@ -59,7 +59,7 @@ spec:
       serviceAccountName: hy-home-sa
       containers:
         - name: web
-          image: nginx:latest # Replace with your app image
+          image: nginx:1.27.4 # Replace with your app image
           ports:
             - containerPort: 80
           env:

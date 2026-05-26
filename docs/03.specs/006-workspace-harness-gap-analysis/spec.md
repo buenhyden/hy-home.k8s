@@ -483,6 +483,12 @@ git diff --check
   records rendered chart kind evidence in `gitops/README.md`, tightens the
   platform AppProject allow-list to raw platform manifests plus rendered chart
   kinds, and validates coverage without changing live cluster state directly.
+- **VAL-SPC-006-058**: 2026-05-26 OPA/Conftest-style policy gate follow-up adds
+  `policy/conftest/kubernetes.rego` and `scripts/validate-policy-gates.sh` for
+  plaintext Secret, `CreateNamespace=true`, AppProject wildcard, and `latest`
+  image policy checks, fixes the Azure sample image tag violation, and validates
+  the policy bundle through the built-in fallback when `conftest` is not
+  installed locally.
 
 ## Related Documents
 

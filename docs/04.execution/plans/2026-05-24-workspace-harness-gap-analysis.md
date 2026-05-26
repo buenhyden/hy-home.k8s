@@ -25,6 +25,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| OPA/Conftest Policy Gate Overlay | Current OPA/Conftest-style policy bundle and fallback validation for GitOps/Kubernetes guardrails | VAL-SPC-006-058; T-282 through T-288 | Current |
 | Platform Chart Render Review Overlay | Current platform Helm chart render review and platform AppProject allow-list tightening evidence | VAL-SPC-006-057; T-275 through T-281 | Current |
 | AppProject and Namespace Semantic Hardening Overlay | Current desired-state hardening for tightened `apps` AppProject grants and removed `CreateNamespace=true` sync options | VAL-SPC-006-056; T-269 through T-274 | Current |
 | AppProject Allow-list Rationale Guardrail Overlay | Current GitOps guardrail for `apps` AppProject active/reserved allow-list rationale and platform chart-managed tightening boundary | VAL-SPC-006-055; T-264 through T-268 | Current |
@@ -67,6 +68,39 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 Use the newest dated overlay for current state. Preserve older overlays as
 evidence snapshots unless a later overlay explicitly supersedes them.
+
+## OPA/Conftest Policy Gate Overlay
+
+This overlay follows the explicit request to proceed with OPA/Conftest policy
+gates. The repository now contains a Rego policy bundle and a validation script
+that runs `conftest` when available, then enforces the same core policies through
+a built-in fallback so local and CI environments without Conftest still get a
+deterministic gate.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| OPA/Conftest policy bundle | No repo-local Rego bundle or command existed for the previously deferred policy gate | `policy/conftest/kubernetes.rego`; `scripts/validate-policy-gates.sh` | Policy ownership stayed implicit and could not be reviewed or run consistently | Medium | addition | P1 |
+| Example image policy drift | Azure sample app still used `nginx:latest`, which violated the no-latest policy once a policy gate was added | `examples/azure/kubernetes/sample-app.yaml` | Example manifests could normalize an unsafe image tag pattern | Medium | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | policy | `policy/conftest/kubernetes.rego` | Add Rego denies for plaintext Secret manifests, `CreateNamespace=true`, AppProject wildcards, and `latest` images | T-283 | policy gate command | Remove policy file |
+| P1 | tool | `scripts/validate-policy-gates.sh`; `scripts/README.md` | Add Conftest runner with built-in fallback and document script contract | T-284 | shell syntax and policy gate command | Remove script and README rows |
+| P1 | example | `examples/azure/kubernetes/sample-app.yaml` | Replace `nginx:latest` with a pinned tag | T-285 | policy gate and manifest validation | Revert image tag |
+| P1 | documentation | `gitops/README.md` | Route OPA/Conftest-style policy bundle ownership to the policy gate command | T-286 | repo quality | Revert README wording |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-058 and verification | T-287 through T-288 | SDD chain check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `command -v conftest` | NOT INSTALLED | Local Conftest binary is unavailable, so the script used the built-in fallback |
+| `bash -n scripts/validate-policy-gates.sh` | PASS | Policy gate script syntax passed |
+| `bash scripts/validate-policy-gates.sh .` | PASS | Built-in fallback passed after fixing the Azure sample `latest` image |
 
 ## Platform Chart Render Review Overlay
 
