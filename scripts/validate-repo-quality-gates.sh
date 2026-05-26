@@ -3849,6 +3849,15 @@ else:
 traefik_dir = root / "traefik"
 traefik_readme_path = traefik_dir / "README.md"
 traefik_readme = read_text(traefik_readme_path)
+normalized_traefik_readme = re.sub(r"\s+", " ", traefik_readme)
+for phrase in [
+    "`k3d-hyhome-serverlb` is not the external Traefik gateway",
+    "hy-home.docker external gateway container",
+    "external Traefik dynamic config",
+    "not a k3d GitOps desired-state failure",
+]:
+    if phrase not in normalized_traefik_readme:
+        fail(f"traefik/README.md missing external gateway/serverlb boundary phrase: {phrase}")
 traefik_rows = markdown_table_after_heading(traefik_readme, "## Traefik Route Inventory")
 expected_traefik_header = ["Config", "Router host", "Backend URL", "Boundary", "Validation"]
 traefik_configs = sorted(traefik_dir.glob("*.yaml"))

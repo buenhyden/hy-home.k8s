@@ -308,6 +308,11 @@ pre-check와 follow-up으로 남긴다.
 | T-251 | Extend repository quality gate for kube-linter exclusion and README parity | test | VAL-SPC-006-052 | Kube-linter Optional Boundary Guardrail | repo quality gate | Platform | Done |
 | T-252 | Record kube-linter optional boundary guardrail in the 006 Spec/Plan/Task chain | doc | VAL-SPC-006-052 | Kube-linter Optional Boundary Guardrail | SDD chain check | Platform | Done |
 | T-253 | Append progress memory for the kube-linter optional boundary guardrail | memory | VAL-SPC-006-052 | Kube-linter Optional Boundary Guardrail | progress ledger entry | Platform | Done |
+| T-254 | Re-run current Traefik 443 proof after default kubeconfig repair | test | VAL-SPC-006-053 | Traefik Serverlb Boundary Guardrail | `CHECK_TRAEFIK_443=true` check | Platform | Done |
+| T-255 | Recheck Docker inventory for external Traefik gateway versus k3d serverlb | eval | VAL-SPC-006-053 | Traefik Serverlb Boundary Guardrail | Docker container inventory | Platform | Done |
+| T-256 | Clarify `k3d-hyhome-serverlb` boundary in Traefik and scripts READMEs | doc | VAL-SPC-006-053 | Traefik Serverlb Boundary Guardrail | README review | Platform | Done |
+| T-257 | Extend repository quality gate for Traefik serverlb boundary wording | test | VAL-SPC-006-053 | Traefik Serverlb Boundary Guardrail | repo quality gate | Platform | Done |
+| T-258 | Record Traefik serverlb boundary guardrail in the 006 SDD chain and progress ledger | memory | VAL-SPC-006-053 | Traefik Serverlb Boundary Guardrail | SDD chain and progress entry | Platform | Done |
 
 ## Suggested Types
 
@@ -862,6 +867,25 @@ pre-check와 follow-up으로 남긴다.
 | `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static contract verification passed |
 | shell syntax, JSON, workflow YAML, env key, and diff checks | PASS | Shell scripts parsed, runtime JSON parsed, 5 workflow YAML files parsed, 18 env keys matched, and `git diff --check` passed |
 | semantic boundary | recorded | kube-linter installation, mandatory local enforcement, CI failure-mode changes, and broader policy bundle work remain separate follow-ups |
+
+### Phase 51 - Traefik Serverlb Boundary Guardrail
+
+- [x] T-254 Re-run current Traefik 443 proof after default kubeconfig repair.
+- [x] T-255 Recheck Docker inventory for external Traefik gateway versus k3d serverlb.
+- [x] T-256 Clarify `k3d-hyhome-serverlb` boundary in Traefik and scripts READMEs.
+- [x] T-257 Extend repository quality gate for Traefik serverlb boundary wording.
+- [x] T-258 Record the guardrail in the 006 SDD chain and progress ledger.
+
+## Traefik Serverlb Boundary Guardrail Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `kubectl version --request-timeout=5s` | PASS | API server reachable with default kubeconfig; client/server minor version-skew warning observed |
+| `docker ps --format '{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'` | PASS | Docker shows `k3d-hyhome-serverlb` bound to host `:443`, but no separate external Traefik gateway container |
+| `CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh` | FAIL | `Traefik 443 endpoint is not reachable (argocd.127.0.0.1.nip.io:443)` |
+| `traefik/README.md` serverlb boundary | PASS | README now states that `k3d-hyhome-serverlb` is not the external Traefik gateway and does not prove `hy-home.docker` dynamic config |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New serverlb/external gateway boundary phrase checks passed |
+| semantic boundary | recorded | Starting external Traefik, copying dynamic config, or changing gateway runtime state remains outside this repository pass |
 
 ## Vault Policy Write Boundary Guardrail Verification Summary
 

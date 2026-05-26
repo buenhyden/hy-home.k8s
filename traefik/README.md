@@ -27,6 +27,12 @@ Ingress NGINX는 2026-03-24 이후 upstream retired 상태이므로 cloud target
   실패하고 Docker에 외부 Traefik gateway 컨테이너가 없다면, 이는 k3d
   GitOps desired state 실패가 아니라 `hy-home.docker` gateway runtime 또는
   dynamic config 반영이 아직 증명되지 않은 상태다.
+- Docker inventory의 `k3d-hyhome-serverlb` is not the external Traefik gateway.
+  이 컨테이너가 host `:443`을 바인딩하더라도
+  `hy-home.docker external gateway container`나 external Traefik dynamic
+  config 반영을 증명하지 않는다. 이 경우 `CHECK_TRAEFIK_443=true` 실패는
+  not a k3d GitOps desired-state failure로 기록하고, 외부 gateway 기동/반영
+  증거를 별도 운영 작업에서 남긴다.
 
 ## Traefik Route Inventory
 

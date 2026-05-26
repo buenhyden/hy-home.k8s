@@ -451,6 +451,13 @@ git diff --check
   Kube-linter Exclusion Matrix, while keeping kube-linter installation,
   mandatory local enforcement, CI failure-mode changes, and broader policy
   bundle work deferred.
+- **VAL-SPC-006-053**: 2026-05-26 Traefik serverlb boundary guardrail
+  follow-up rechecks the read-only Traefik 443 proof after default kubeconfig
+  repair, records that `CHECK_TRAEFIK_443=true` still fails while Docker only
+  shows `k3d-hyhome-serverlb` on host `:443`, and validates that
+  `traefik/README.md` distinguishes the k3d server load balancer from the
+  external `hy-home.docker` Traefik gateway without starting containers,
+  applying dynamic config, or changing GitOps desired state.
 
 ## Related Documents
 

@@ -25,6 +25,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| Traefik Serverlb Boundary Guardrail Overlay | Current repo-static guardrail and read-only recheck proving `k3d-hyhome-serverlb` host `:443` is not external Traefik gateway proof | VAL-SPC-006-053; T-254 through T-258 | Current |
 | Kube-linter Optional Boundary Guardrail Overlay | Current repo-static guardrail for `.kube-linter.yaml` exclusion rationale and `scripts/README.md` manifest lint boundary parity | VAL-SPC-006-052; T-249 through T-253 | Current |
 | GitOps Namespace Ownership Guardrail Overlay | Current repo-static guardrail for `CreateNamespace=true` namespace surfaces and `gitops/platform/namespaces` owner-manifest parity | VAL-SPC-006-051; T-243 through T-248 | Current |
 | GitOps Image and Kind Policy Scan Guardrail Overlay | Current repo-static guardrail for active workload image tag policy, raw platform pod template image tags, and workload kind membership in the apps AppProject whitelist | VAL-SPC-006-050; T-237 through T-242 | Current |
@@ -62,6 +63,39 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 Use the newest dated overlay for current state. Preserve older overlays as
 evidence snapshots unless a later overlay explicitly supersedes them.
+
+## Traefik Serverlb Boundary Guardrail Overlay
+
+This overlay rechecks the approved Traefik 443 runtime proof after the default
+kubeconfig repair. It is read-only: no external Traefik gateway is started, no
+dynamic config is copied into `hy-home.docker`, no Kubernetes resource is
+mutated, and no Docker network is changed.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| External gateway proof boundary | Docker can show `k3d-hyhome-serverlb` bound to host `:443`, but that container is the k3d server load balancer and not proof that the external `hy-home.docker` Traefik gateway or dynamic config is active | `docker ps`; `traefik/README.md`; `infrastructure/tests/verify-ingress-tls.sh` | Operators could mistake k3d serverlb host-port exposure for external Traefik gateway readiness | Medium | supplementation | P1 |
+| Validation coverage | The route inventory was guarded, but repo-quality did not explicitly require the `k3d-hyhome-serverlb` versus external Traefik gateway distinction | `scripts/validate-repo-quality-gates.sh`; `traefik/README.md` | Future wording could blur the repository boundary between k3d fallback and external gateway runtime | Medium | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P2 | live read-only validation | Docker runtime; `infrastructure/tests/verify-ingress-tls.sh` | Re-run Docker inventory, `kubectl version`, and `CHECK_TRAEFIK_443=true` proof without runtime mutation | T-254, T-255 | command output and exit status | N/A; read-only |
+| P1 | documentation | `traefik/README.md`; `scripts/README.md` | Clarify that `k3d-hyhome-serverlb` is not the external Traefik gateway and expose the new repo-quality boundary in the scripts contract | T-256 | README review and repo quality | Revert README wording |
+| P1 | guardrail | `scripts/validate-repo-quality-gates.sh` | Validate the Traefik serverlb/external gateway boundary phrases | T-257 | repo quality and shell syntax | Revert validator block |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-053, verification, and remaining external gateway deferral | T-258 | SDD chain check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `kubectl version --request-timeout=5s` | PASS | API server reachable with default kubeconfig; client/server minor version-skew warning observed |
+| `docker ps --format '{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'` | PASS | Current Docker inventory shows `k3d-hyhome-serverlb` bound to host `:443`, but no separate external Traefik gateway container |
+| `CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh` | FAIL | `Traefik 443 endpoint is not reachable (argocd.127.0.0.1.nip.io:443)` |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New Traefik serverlb/external gateway boundary guardrail passed |
+| remaining deferrals | recorded | Starting external Traefik, applying dynamic config to `hy-home.docker`, and changing gateway runtime state remain separate operator-owned follow-ups |
 
 ## Kube-linter Optional Boundary Guardrail Overlay
 
