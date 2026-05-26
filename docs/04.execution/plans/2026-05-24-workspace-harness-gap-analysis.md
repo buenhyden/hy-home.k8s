@@ -25,6 +25,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| AppProject and Namespace Semantic Hardening Overlay | Current desired-state hardening for tightened `apps` AppProject grants and removed `CreateNamespace=true` sync options | VAL-SPC-006-056; T-269 through T-274 | Current |
 | AppProject Allow-list Rationale Guardrail Overlay | Current GitOps guardrail for `apps` AppProject active/reserved allow-list rationale and platform chart-managed tightening boundary | VAL-SPC-006-055; T-264 through T-268 | Current |
 | Destructive Git Permission Hardening Overlay | Current agent-governance hardening for shared Claude deny rules covering destructive/history-rewriting Git commands | VAL-SPC-006-054; T-259 through T-263 | Current |
 | Traefik Serverlb Boundary Guardrail Overlay | Current repo-static guardrail and read-only recheck proving `k3d-hyhome-serverlb` host `:443` is not external Traefik gateway proof | VAL-SPC-006-053; T-254 through T-258 | Current |
@@ -65,6 +66,49 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 Use the newest dated overlay for current state. Preserve older overlays as
 evidence snapshots unless a later overlay explicitly supersedes them.
+
+## AppProject and Namespace Semantic Hardening Overlay
+
+This overlay follows the explicit request to proceed beyond deferral for actual
+AppProject kind removal and `CreateNamespace=true` cleanup. It changes GitOps
+desired state only. It does not run `kubectl apply`, `kubectl patch`, `argocd
+app sync`, or any direct live-cluster mutation.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| `apps` AppProject least privilege | `apps` still allowed a cluster-scoped `Namespace` grant and unused workload kinds after the rationale matrix established active versus optional kind boundaries | `gitops/clusters/local/appproject-apps.yaml`; `gitops/workloads/adminer`; `docs/05.operations/policies/0007-app-gitops-onboarding-policy.md` | Workloads could request resource kinds outside the current Rollout/Ingress/Istio/ESO onboarding contract | Medium | improvement | P1 |
+| Namespace creation ownership | GitOps Applications and the apps ApplicationSet still used `CreateNamespace=true` even though namespace manifests and bootstrap ownership were documented | `gitops/clusters/local/root-application.yaml`; `gitops/clusters/local/applicationset-apps.yaml`; `gitops/apps/root/*.yaml`; `gitops/platform/namespaces/*.yaml` | Namespace ownership could drift between ArgoCD sync options and Git-owned namespace manifests | Medium | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | guardrail | `gitops/clusters/local/appproject-apps.yaml` | Remove cluster `Namespace` grant and unused namespace kind grants; keep active workload kinds plus policy-optional `ExternalSecret` | T-270 | repo quality, static contracts, manifest validation | Revert AppProject diff |
+| P1 | guardrail | `gitops/clusters/local/*.yaml`; `gitops/apps/root/*.yaml` | Remove `CreateNamespace=true` sync options after confirming namespace manifests and live namespaces exist | T-271 | repo quality, GitOps structure, manifest validation, live read-only namespace/status check | Revert sync option removals |
+| P1 | documentation | `gitops/README.md` | Update AppProject allow-list and Namespace Ownership matrices to current desired state | T-272 | repo quality and README review | Revert matrix wording |
+| P1 | test | `scripts/validate-repo-quality-gates.sh`; `infrastructure/tests/verify-contracts-static.sh` | Enforce empty `apps` cluster allow-list, exact `apps` namespace kind set, no GitOps `CreateNamespace=true`, and namespace owner parity | T-273 | shell syntax, repo quality, static contracts | Revert validator changes |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-056, verification, and remaining live reconciliation boundary | T-274 | SDD chain check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| live namespace inspection | PASS | `argocd`, `apps`, and platform namespaces already exist in the current cluster before sync option removal |
+| live ArgoCD status inspection | PASS with caveat | Platform apps are Synced/Healthy; `adminer` is Synced/Degraded and remains an application health issue outside this semantic cleanup |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Repository quality gate script syntax passed |
+| `bash -n infrastructure/tests/verify-contracts-static.sh` | PASS | Static contract script syntax passed |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | Tightened AppProject and namespace ownership guardrails passed |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static contracts passed with no `CreateNamespace=true` in GitOps YAML |
+| `bash scripts/validate-gitops-structure.sh` | PASS | GitOps hierarchy and kustomization checks passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed; optional kube-linter remains skipped when not installed |
+| `bash scripts/check-secret-handling.sh .` | PASS | No plaintext secret pattern findings |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated LLM Wiki index remains current |
+| `bash infrastructure/tests/run-all.sh` | PASS | Default kubeconfig live validation passed; Traefik 443 enforcement remains skipped unless `CHECK_TRAEFIK_443=true` is set |
+| `kubectl diff -k gitops/clusters/local` | DIFF EXPECTED | Read-only diff shows pending AppProject and root/ApplicationSet `CreateNamespace=true` desired-state changes |
+| `kubectl diff -k gitops/apps/root` | DIFF EXPECTED | Read-only diff shows pending platform root Application `CreateNamespace=true` removals |
+| `argocd app diff --core --local ...` | NOT USABLE | Local ArgoCD CLI core diff could not find `argocd-cm`; `kubectl diff` was used as the read-only alternative |
 
 ## AppProject Allow-list Rationale Guardrail Overlay
 

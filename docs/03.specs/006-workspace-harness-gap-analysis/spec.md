@@ -471,6 +471,13 @@ git diff --check
   `gitops/clusters/local/appproject-apps.yaml`, and keeping actual kind removal
   or platform chart-managed allow-list tightening deferred until app onboarding,
   chart render, and ArgoCD sync impact reviews are complete.
+- **VAL-SPC-006-056**: 2026-05-26 AppProject and namespace semantic hardening
+  follow-up applies the approved desired-state change by removing the `apps`
+  AppProject cluster `Namespace` grant, trimming unused reserved `apps`
+  namespace kinds down to active workload kinds plus policy-optional
+  `ExternalSecret`, removing `CreateNamespace=true` from GitOps
+  Application/ApplicationSet manifests, and updating repo-static validators and
+  SDD evidence while keeping live cluster mutation out of the agent path.
 
 ## Related Documents
 

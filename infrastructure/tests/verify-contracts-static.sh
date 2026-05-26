@@ -113,21 +113,20 @@ echo "[INFO] verify AppProject wildcard ban and allow-list"
 if grep -Pq 'group:\s*"\*"|kind:\s*"\*"' "$APPPROJECT_APPS"; then
   fail 'appproject apps must not contain wildcard namespaceResourceWhitelist'
 fi
+if grep -Pq 'kind:\s*Namespace' "$APPPROJECT_APPS"; then
+  fail 'appproject apps must not allow cluster-scoped Namespace resources'
+fi
 
-require_pattern 'kind:\s*Deployment' "$APPPROJECT_APPS"
-require_pattern 'kind:\s*StatefulSet' "$APPPROJECT_APPS"
-require_pattern 'kind:\s*DaemonSet' "$APPPROJECT_APPS"
 require_pattern 'kind:\s*Service' "$APPPROJECT_APPS"
-require_pattern 'kind:\s*ConfigMap' "$APPPROJECT_APPS"
-require_pattern 'kind:\s*Secret' "$APPPROJECT_APPS"
 require_pattern 'kind:\s*Ingress' "$APPPROJECT_APPS"
-require_pattern 'kind:\s*HorizontalPodAutoscaler' "$APPPROJECT_APPS"
-require_pattern 'kind:\s*PodDisruptionBudget' "$APPPROJECT_APPS"
-require_pattern 'kind:\s*ServiceAccount' "$APPPROJECT_APPS"
-require_pattern 'kind:\s*Role' "$APPPROJECT_APPS"
-require_pattern 'kind:\s*RoleBinding' "$APPPROJECT_APPS"
-require_pattern 'kind:\s*NetworkPolicy' "$APPPROJECT_APPS"
 require_multiline_pattern 'group:\s*external-secrets\.io\n[[:space:]]+kind:\s*ExternalSecret' "$APPPROJECT_APPS"
+for forbidden_apps_kind in \
+  Deployment StatefulSet DaemonSet ConfigMap Secret HorizontalPodAutoscaler \
+  PodDisruptionBudget ServiceAccount Role RoleBinding NetworkPolicy AnalysisRun; do
+  if grep -Pq "kind:\\s*${forbidden_apps_kind}$" "$APPPROJECT_APPS"; then
+    fail "appproject apps must not allow unused kind ${forbidden_apps_kind}"
+  fi
+done
 
 echo "[INFO] verify platform AppProject app-of-apps permission"
 require_pattern 'group:\s*argoproj\.io' "$APPPROJECT_PLATFORM"
@@ -143,6 +142,10 @@ echo "[INFO] verify platform AppProject apps namespace destination"
 require_pattern 'namespace:\s*apps' "$APPPROJECT_PLATFORM"
 
 echo "[INFO] verify cluster-local GitOps ownership contract"
+CREATE_NAMESPACE_FINDINGS="$(find "$ROOT_DIR/gitops" -type f -name '*.yaml' -exec grep -H 'CreateNamespace=true' {} + || true)"
+if [[ -n "$CREATE_NAMESPACE_FINDINGS" ]]; then
+  fail 'GitOps YAML must not use CreateNamespace=true after namespace ownership hardening'
+fi
 require_pattern 'platform-cluster-config-app\.yaml' "$ROOT_KUSTOMIZATION"
 require_pattern 'name:\s*platform-cluster-config' "$PLATFORM_CLUSTER_CONFIG_APP"
 require_pattern 'path:\s*gitops/clusters/local' "$PLATFORM_CLUSTER_CONFIG_APP"

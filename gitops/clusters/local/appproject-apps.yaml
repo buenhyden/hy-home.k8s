@@ -10,44 +10,18 @@ spec:
   destinations:
     - namespace: apps
       server: https://kubernetes.default.svc
-  clusterResourceWhitelist:
-    - group: ''
-      kind: Namespace
+  clusterResourceWhitelist: []
   namespaceResourceWhitelist:
     - group: ''
-      kind: ServiceAccount
-    - group: ''
-      kind: ConfigMap
-    - group: ''
-      kind: Secret
-    - group: ''
       kind: Service
-    - group: apps
-      kind: Deployment
-    - group: apps
-      kind: StatefulSet
-    - group: apps
-      kind: DaemonSet
     - group: networking.k8s.io
       kind: Ingress
-    - group: autoscaling
-      kind: HorizontalPodAutoscaler
-    - group: policy
-      kind: PodDisruptionBudget
-    - group: rbac.authorization.k8s.io
-      kind: Role
-    - group: rbac.authorization.k8s.io
-      kind: RoleBinding
-    - group: networking.k8s.io
-      kind: NetworkPolicy
     - group: external-secrets.io
       kind: ExternalSecret
     - group: argoproj.io
       kind: Rollout
     - group: argoproj.io
       kind: AnalysisTemplate
-    - group: argoproj.io
-      kind: AnalysisRun
     - group: security.istio.io
       kind: PeerAuthentication
     - group: networking.istio.io

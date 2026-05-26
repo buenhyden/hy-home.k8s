@@ -8,6 +8,55 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-26 — AppProject and namespace semantic hardening follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: GitOps, ArgoCD, validation, SDD
+- **Status**: partial
+- **Tags**: #gitops #argocd #validation #sdd
+
+#### Progress
+
+- Removed the `apps` AppProject cluster-scoped `Namespace` grant.
+- Trimmed the `apps` AppProject namespace allow-list to active workload kinds
+  plus policy-optional `ExternalSecret`.
+- Removed `CreateNamespace=true` from GitOps Application/ApplicationSet YAML.
+- Updated `gitops/README.md` AppProject and Namespace Ownership matrices.
+- Updated `scripts/validate-repo-quality-gates.sh` and
+  `infrastructure/tests/verify-contracts-static.sh` to enforce the tightened
+  desired state.
+- Recorded `VAL-SPC-006-056` and `T-269` through `T-274` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- Live namespace inspection — PASS; required namespaces already exist.
+- Live ArgoCD status inspection — PASS with caveat; platform apps are
+  Synced/Healthy and `adminer` remains Synced/Degraded outside this cleanup.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash -n infrastructure/tests/verify-contracts-static.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS; optional kube-linter remains
+  skipped when not installed.
+- `bash scripts/check-secret-handling.sh .` — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `bash infrastructure/tests/run-all.sh` — PASS; Traefik 443 enforcement remains
+  opt-in through `CHECK_TRAEFIK_443=true`.
+- `kubectl diff -k gitops/clusters/local` — DIFF EXPECTED; pending AppProject
+  and root/ApplicationSet desired-state changes were shown.
+- `kubectl diff -k gitops/apps/root` — DIFF EXPECTED; pending platform root
+  Application sync-option changes were shown.
+- `argocd app diff --core --local ...` — NOT USABLE; local ArgoCD CLI core
+  diff could not find `argocd-cm`, so `kubectl diff` was used as the read-only
+  alternative.
+
+#### Follow-up
+
+- Confirm ArgoCD reconciliation after the committed desired state is available
+  to the cluster source revision.
+
 ### 2026-05-26 — AppProject allow-list rationale guardrail follow-up
 
 - **Date**: 2026-05-26

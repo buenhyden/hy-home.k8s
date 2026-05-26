@@ -3210,14 +3210,21 @@ apps_namespace_kind_whitelist = {
     for item in apps_project.get("spec", {}).get("namespaceResourceWhitelist", [])
     if isinstance(item, dict) and isinstance(item.get("kind"), str)
 }
-if apps_cluster_kind_whitelist != {"Namespace"}:
-    fail("gitops/clusters/local/appproject-apps.yaml clusterResourceWhitelist must be limited to Namespace")
+if apps_cluster_kind_whitelist:
+    fail("gitops/clusters/local/appproject-apps.yaml clusterResourceWhitelist must be empty")
 if not apps_namespace_kind_whitelist:
     fail("gitops/clusters/local/appproject-apps.yaml namespaceResourceWhitelist must not be empty")
 for kind in sorted(workload_manifest_kinds - apps_namespace_kind_whitelist):
     fail(f"gitops/workloads manifest kind is not allowed by apps AppProject namespaceResourceWhitelist: {kind}")
 
-reserved_apps_namespace_kinds = apps_namespace_kind_whitelist - workload_manifest_kinds
+policy_apps_namespace_kinds = {"ExternalSecret"}
+expected_apps_namespace_kind_whitelist = workload_manifest_kinds | policy_apps_namespace_kinds
+if apps_namespace_kind_whitelist != expected_apps_namespace_kind_whitelist:
+    fail(
+        "gitops/clusters/local/appproject-apps.yaml namespaceResourceWhitelist must equal "
+        "active workload kinds plus policy-optional ExternalSecret: "
+        + ", ".join(sorted(expected_apps_namespace_kind_whitelist))
+    )
 expected_allowlist_header = [
     "Project",
     "Allow-list surface",
@@ -3229,7 +3236,7 @@ expected_allowlist_header = [
 expected_allowlist_surfaces = [
     "apps|clusterResourceWhitelist",
     "apps|active namespaceResourceWhitelist",
-    "apps|reserved namespaceResourceWhitelist",
+    "apps|policy namespaceResourceWhitelist",
     "platform|platform AppProject allow-lists",
 ]
 allowlist_rows = markdown_table_after_heading(gitops_readme, "## AppProject Allow-list Rationale Matrix")
@@ -3276,12 +3283,13 @@ else:
             )
         documented_kinds = set(re.findall(r"`([^`]+)`", kinds_cell))
         if surface_key == "apps|clusterResourceWhitelist":
-            if documented_kinds != apps_cluster_kind_whitelist:
-                fail(
-                    "gitops/README.md apps clusterResourceWhitelist rationale row must match actual kinds: "
-                    + ", ".join(sorted(apps_cluster_kind_whitelist))
-                )
-            for phrase in ["CreateNamespace=true", "Namespace Ownership Matrix"]:
+            if documented_kinds:
+                fail("gitops/README.md apps clusterResourceWhitelist rationale row must document no kinds")
+            for phrase in [
+                "Workloads own no cluster-scoped resources",
+                "app-owned cluster resource design",
+                "live reconciliation impact review",
+            ]:
                 if phrase not in evidence + " " + boundary:
                     fail(f"gitops/README.md apps cluster allow-list row missing phrase: {phrase}")
         elif surface_key == "apps|active namespaceResourceWhitelist":
@@ -3292,15 +3300,15 @@ else:
                 )
             if "gitops/workloads/adminer" not in evidence:
                 fail("gitops/README.md active apps allow-list row must cite gitops/workloads/adminer")
-        elif surface_key == "apps|reserved namespaceResourceWhitelist":
-            if documented_kinds != reserved_apps_namespace_kinds:
+        elif surface_key == "apps|policy namespaceResourceWhitelist":
+            if documented_kinds != policy_apps_namespace_kinds:
                 fail(
-                    "gitops/README.md reserved apps namespaceResourceWhitelist rationale row must match reserved kinds: "
-                    + ", ".join(sorted(reserved_apps_namespace_kinds))
+                    "gitops/README.md policy apps namespaceResourceWhitelist rationale row must match policy kinds: "
+                    + ", ".join(sorted(policy_apps_namespace_kinds))
                 )
-            for phrase in ["app onboarding model decision", "secret-backed workloads"]:
+            for phrase in ["0007-app-gitops-onboarding-policy.md", "ESO", "app onboarding policy"]:
                 if phrase not in evidence + " " + boundary:
-                    fail(f"gitops/README.md reserved apps allow-list row missing phrase: {phrase}")
+                    fail(f"gitops/README.md policy apps allow-list row missing phrase: {phrase}")
         elif surface_key == "platform|platform AppProject allow-lists":
             for phrase in ["Helm charts", "raw manifest scan", "chart render review", "ArgoCD sync impact review"]:
                 if phrase not in evidence + " " + boundary:
@@ -3378,7 +3386,7 @@ else:
             for kind in sorted(workload_manifest_kinds):
                 if kind not in evidence:
                     fail(f"gitops/README.md workload policy row missing active kind evidence: {kind}")
-            for phrase in ["CreateNamespace=true", "allow-list tightening"]:
+            for phrase in ["app onboarding policy decision", "AppProject"]:
                 if phrase not in deferred_boundary:
                     fail(f"gitops/README.md workload policy row deferred boundary missing phrase: {phrase}")
         elif surface == "gitops/platform/*":
@@ -3440,42 +3448,60 @@ for path, document in gitops_yaml_documents_under(gitops_dir / "platform/namespa
         if isinstance(namespace_name, str) and namespace_name:
             namespace_manifest_files[namespace_name] = rel(path)
 
-root_create_namespace_entries = sorted(
-    (name, namespace)
-    for path, name, namespace in create_namespace_applications
-    if rel(path) == "gitops/clusters/local/root-application.yaml"
-)
-apps_create_namespace_entries = sorted(
-    (name, namespace)
-    for path, name, namespace in create_namespace_application_sets
-    if rel(path) == "gitops/clusters/local/applicationset-apps.yaml"
-)
-platform_create_namespace_entries = sorted(
-    (name, namespace)
-    for path, name, namespace in create_namespace_applications
-    if rel(path).startswith("gitops/apps/root/")
-)
+if create_namespace_applications or create_namespace_application_sets:
+    for _, name, namespace in create_namespace_applications + create_namespace_application_sets:
+        fail(f"GitOps Application/ApplicationSet must not use CreateNamespace=true: {name} -> {namespace}")
 
-if root_create_namespace_entries != [("root-platform", "argocd")]:
-    fail("gitops root Application CreateNamespace=true surface must be root-platform -> argocd")
-if apps_create_namespace_entries != [("apps-generator", "apps")]:
-    fail("gitops apps ApplicationSet CreateNamespace=true surface must be apps-generator -> apps")
-if not platform_create_namespace_entries:
-    fail("gitops platform root Applications must have an inventoried CreateNamespace=true surface")
+root_namespace_entries: list[tuple[str, str]] = []
+apps_namespace_entries: list[tuple[str, str]] = []
+platform_namespace_entries: list[tuple[str, str]] = []
+for path, document in gitops_yaml_documents_under(gitops_dir):
+    kind = document.get("kind")
+    metadata = document.get("metadata") or {}
+    name = metadata.get("name")
+    if not isinstance(name, str) or not name:
+        continue
+    if kind == "Application":
+        spec = document.get("spec") or {}
+        destination = spec.get("destination") or {}
+        namespace = destination.get("namespace")
+        if not isinstance(namespace, str) or not namespace:
+            continue
+        if rel(path) == "gitops/clusters/local/root-application.yaml":
+            root_namespace_entries.append((name, namespace))
+        elif rel(path).startswith("gitops/apps/root/") and namespace != "argocd":
+            platform_namespace_entries.append((name, namespace))
+    elif kind == "ApplicationSet":
+        template_spec = (((document.get("spec") or {}).get("template") or {}).get("spec")) or {}
+        destination = template_spec.get("destination") or {}
+        namespace = destination.get("namespace")
+        if rel(path) == "gitops/clusters/local/applicationset-apps.yaml" and isinstance(namespace, str) and namespace:
+            apps_namespace_entries.append((name, namespace))
 
-for name, namespace in apps_create_namespace_entries + platform_create_namespace_entries:
+root_namespace_entries = sorted(root_namespace_entries)
+apps_namespace_entries = sorted(apps_namespace_entries)
+platform_namespace_entries = sorted(platform_namespace_entries)
+
+if root_namespace_entries != [("root-platform", "argocd")]:
+    fail("gitops root Application namespace surface must be root-platform -> argocd")
+if apps_namespace_entries != [("apps-generator", "apps")]:
+    fail("gitops apps ApplicationSet namespace surface must be apps-generator -> apps")
+if not platform_namespace_entries:
+    fail("gitops platform root Applications must have inventoried namespace surfaces")
+
+for name, namespace in apps_namespace_entries + platform_namespace_entries:
     if namespace not in namespace_manifest_files:
         fail(
-            f"CreateNamespace=true destination {name} -> {namespace} must have a "
+            f"GitOps destination {name} -> {namespace} must have a "
             "gitops/platform/namespaces Namespace manifest"
         )
 
 expected_namespace_ownership_header = [
     "Surface",
-    "CreateNamespace=true namespace surface",
+    "Namespace surface",
     "Declared namespace owner",
     "Current behavior",
-    "Deferred boundary",
+    "Remaining boundary",
     "Validation",
 ]
 expected_namespace_ownership_surfaces = [
@@ -3494,9 +3520,9 @@ elif namespace_ownership_rows[0] != expected_namespace_ownership_header:
 else:
     indexed_namespace_surfaces: list[str] = []
     expected_pairs = {
-        "root Application": root_create_namespace_entries,
-        "apps ApplicationSet": apps_create_namespace_entries,
-        "platform root Applications": platform_create_namespace_entries,
+        "root Application": root_namespace_entries,
+        "apps ApplicationSet": apps_namespace_entries,
+        "platform root Applications": platform_namespace_entries,
     }
     for row_number, row in enumerate(namespace_ownership_rows[1:], start=1):
         if len(row) != len(expected_namespace_ownership_header):
@@ -3516,10 +3542,10 @@ else:
         surface = match.group(1)
         indexed_namespace_surfaces.append(surface)
         for label, value in [
-            ("CreateNamespace=true namespace surface", namespace_surface),
+            ("Namespace surface", namespace_surface),
             ("Declared namespace owner", owner),
             ("Current behavior", behavior),
-            ("Deferred boundary", deferred_boundary),
+            ("Remaining boundary", deferred_boundary),
             ("Validation", validation),
         ]:
             if not value:
@@ -3541,29 +3567,30 @@ else:
             for phrase in ["bootstrap/ArgoCD installation boundary", "not by `gitops/platform/namespaces`"]:
                 if phrase not in owner:
                     fail(f"gitops/README.md root namespace ownership row missing phrase: {phrase}")
-            if "bootstrap compatibility" not in behavior:
-                fail("gitops/README.md root namespace ownership row must state bootstrap compatibility")
+            for phrase in ["no longer uses `CreateNamespace=true`", "bootstrap must create `argocd`"]:
+                if phrase not in behavior:
+                    fail(f"gitops/README.md root namespace ownership row missing behavior phrase: {phrase}")
             if "bootstrap/ArgoCD install ownership pass" not in deferred_boundary:
-                fail("gitops/README.md root namespace ownership row must defer bootstrap/ArgoCD install ownership")
+                fail("gitops/README.md root namespace ownership row must retain bootstrap/ArgoCD install ownership boundary")
         elif surface == "apps ApplicationSet":
             namespace_file = namespace_manifest_files.get("apps", "")
             if namespace_file not in owner:
                 fail(f"gitops/README.md apps namespace ownership row missing owner file: {namespace_file}")
-            for phrase in ["ApplicationSet fallback", "Git SSoT"]:
+            for phrase in ["no longer uses `CreateNamespace=true`", "`platform/namespaces` is the Git SSoT"]:
                 if phrase not in behavior:
                     fail(f"gitops/README.md apps namespace ownership row missing behavior phrase: {phrase}")
-            if "live reconciliation" not in deferred_boundary or "app onboarding impact review" not in deferred_boundary:
-                fail("gitops/README.md apps namespace ownership row must defer live reconciliation and onboarding review")
+            if "namespace owner manifests before onboarding" not in deferred_boundary:
+                fail("gitops/README.md apps namespace ownership row must require namespace owner manifests before onboarding")
         elif surface == "platform root Applications":
-            for _, namespace in platform_create_namespace_entries:
+            for _, namespace in platform_namespace_entries:
                 namespace_file = namespace_manifest_files.get(namespace, "")
                 if namespace_file not in owner:
                     fail(f"gitops/README.md platform namespace ownership row missing owner file: {namespace_file}")
-            for phrase in ["component bootstrap fallback", "namespace manifests remain the Git SSoT"]:
+            for phrase in ["no longer use `CreateNamespace=true`", "namespace manifests remain the Git SSoT"]:
                 if phrase not in behavior:
                     fail(f"gitops/README.md platform namespace ownership row missing behavior phrase: {phrase}")
-            if "platform bootstrap ordering" not in deferred_boundary or "ArgoCD reconciliation review" not in deferred_boundary:
-                fail("gitops/README.md platform namespace ownership row must defer bootstrap ordering and reconciliation review")
+            if "platform AppProject destinations first" not in deferred_boundary:
+                fail("gitops/README.md platform namespace ownership row must require platform AppProject destinations first")
         else:
             fail(f"gitops/README.md Namespace Ownership Matrix unexpected surface: {surface}")
     if indexed_namespace_surfaces != expected_namespace_ownership_surfaces:

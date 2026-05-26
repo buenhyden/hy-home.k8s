@@ -323,6 +323,12 @@ pre-check와 follow-up으로 남긴다.
 | T-266 | Extend repository quality gate for AppProject allow-list rationale parity | test | VAL-SPC-006-055 | AppProject Allow-list Rationale Guardrail | repo quality gate | Platform | Done |
 | T-267 | Align scripts README command contract wording for the allow-list rationale guardrail | doc | VAL-SPC-006-055 | AppProject Allow-list Rationale Guardrail | scripts README review | Platform | Done |
 | T-268 | Record AppProject allow-list rationale guardrail in the 006 SDD chain and progress ledger | memory | VAL-SPC-006-055 | AppProject Allow-list Rationale Guardrail | SDD chain and progress entry | Platform | Done |
+| T-269 | Recheck approved AppProject and namespace semantic hardening scope | eval | VAL-SPC-006-056 | AppProject and Namespace Semantic Hardening | current manifests and live namespace/status inspection | Platform | Done |
+| T-270 | Remove unused `apps` AppProject cluster and namespace kind grants | guardrail | VAL-SPC-006-056 | AppProject and Namespace Semantic Hardening | repo quality and static contracts | Platform | Done |
+| T-271 | Remove `CreateNamespace=true` from GitOps Application/ApplicationSet manifests | guardrail | VAL-SPC-006-056 | AppProject and Namespace Semantic Hardening | repo quality, GitOps structure, manifest validation | Platform | Done |
+| T-272 | Update GitOps README matrices for tightened allow-list and namespace ownership | doc | VAL-SPC-006-056 | AppProject and Namespace Semantic Hardening | README review and repo quality | Platform | Done |
+| T-273 | Update repo-static validators for semantic hardening parity | test | VAL-SPC-006-056 | AppProject and Namespace Semantic Hardening | shell syntax, repo quality, static contracts | Platform | Done |
+| T-274 | Record AppProject and namespace semantic hardening in the 006 SDD chain and progress ledger | memory | VAL-SPC-006-056 | AppProject and Namespace Semantic Hardening | SDD chain and progress entry | Platform | Done |
 
 ## Suggested Types
 
@@ -948,6 +954,31 @@ pre-check와 follow-up으로 남긴다.
 | `git diff --check` | PASS | No whitespace errors |
 | `bash infrastructure/tests/run-all.sh` | BLOCKED | Live check remains blocked by the previously recorded kubeconfig TLS `x509: certificate signed by unknown authority` issue |
 | semantic boundary | recorded | Actual kind removal, AppProject permission tightening, `Namespace` removal, chart-render review, and live ArgoCD sync impact remain separate follow-ups |
+
+### Phase 54 - AppProject and Namespace Semantic Hardening
+
+- [x] T-269 Recheck approved AppProject and namespace semantic hardening scope.
+- [x] T-270 Remove unused `apps` AppProject cluster and namespace kind grants.
+- [x] T-271 Remove `CreateNamespace=true` from GitOps Application/ApplicationSet manifests.
+- [x] T-272 Update GitOps README matrices for tightened allow-list and namespace ownership.
+- [x] T-273 Update repo-static validators for semantic hardening parity.
+- [x] T-274 Record the semantic hardening in the 006 SDD chain and progress ledger.
+
+## AppProject and Namespace Semantic Hardening Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `apps` cluster allow-list | PASS | `gitops/clusters/local/appproject-apps.yaml` now uses `clusterResourceWhitelist: []` |
+| `apps` namespace allow-list | PASS | Allow-list is active workload kinds plus policy-optional `ExternalSecret` |
+| `CreateNamespace=true` desired state | PASS | No GitOps YAML under `gitops/` uses `CreateNamespace=true` |
+| live namespace inspection | PASS | Required namespaces already exist in the current cluster |
+| live ArgoCD status inspection | PASS with caveat | Platform apps are Synced/Healthy; `adminer` remains Synced/Degraded outside this cleanup |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | Tightened repo-quality guardrails passed |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static contracts passed |
+| `bash infrastructure/tests/run-all.sh` | PASS | Default kubeconfig live validation passed; Traefik 443 enforcement remains opt-in |
+| `kubectl diff -k gitops/clusters/local` | DIFF EXPECTED | Read-only diff shows pending AppProject and cluster-local sync-option changes |
+| `kubectl diff -k gitops/apps/root` | DIFF EXPECTED | Read-only diff shows pending platform root Application sync-option changes |
+| `argocd app diff --core --local ...` | NOT USABLE | ArgoCD CLI core local diff could not find `argocd-cm`; `kubectl diff` was used instead |
 
 ## Vault Policy Write Boundary Guardrail Verification Summary
 
