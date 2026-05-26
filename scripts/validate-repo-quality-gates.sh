@@ -2561,6 +2561,96 @@ else:
     for script_name in sorted(set(classified_scripts) - script_names):
         fail(f"scripts/README.md Script Classification Matrix references missing script: {script_name}")
 
+kube_linter_config_path = root / ".kube-linter.yaml"
+kube_linter_config = load_yaml(kube_linter_config_path)
+expected_kube_linter_exclusions = [
+    "no-read-only-root-fs",
+    "no-anti-affinity",
+    "unset-cpu-requirements",
+    "unset-memory-requirements",
+    "run-as-non-root",
+    "latest-tag",
+    "dangling-service",
+]
+kube_linter_exclusions = (
+    (kube_linter_config.get("checks") or {}).get("exclude") or []
+)
+if kube_linter_exclusions != expected_kube_linter_exclusions:
+    fail(
+        ".kube-linter.yaml checks.exclude must match the documented exclusion order: "
+        + ", ".join(expected_kube_linter_exclusions)
+    )
+
+kube_linter_text = read_text(kube_linter_config_path)
+for exclusion in expected_kube_linter_exclusions:
+    match = re.search(rf'^\s*-\s+"{re.escape(exclusion)}"\s+#\s*(.+)$', kube_linter_text, re.MULTILINE)
+    if not match:
+        fail(f".kube-linter.yaml exclusion must have an inline rationale comment: {exclusion}")
+        continue
+    rationale = match.group(1).strip()
+    if len(rationale) < 12 or "TODO" in rationale or "TBD" in rationale:
+        fail(f".kube-linter.yaml exclusion rationale is too weak: {exclusion}")
+
+kube_linter_rows = markdown_table_after_heading(scripts_readme, "## Kube-linter Exclusion Matrix")
+expected_kube_linter_header = ["Excluded check", "Current rationale", "Boundary", "Follow-up"]
+if len(kube_linter_rows) < 2:
+    fail("scripts/README.md Kube-linter Exclusion Matrix must contain a header and exclusion rows")
+elif kube_linter_rows[0] != expected_kube_linter_header:
+    fail(
+        "scripts/README.md Kube-linter Exclusion Matrix header must be: "
+        + " | ".join(expected_kube_linter_header)
+    )
+else:
+    indexed_kube_linter_exclusions: list[str] = []
+    for row_number, row in enumerate(kube_linter_rows[1:], start=1):
+        if len(row) != len(expected_kube_linter_header):
+            fail(
+                "scripts/README.md Kube-linter Exclusion Matrix "
+                f"row {row_number} must have {len(expected_kube_linter_header)} columns"
+            )
+            continue
+        excluded_cell, rationale, boundary, follow_up = row
+        match = re.fullmatch(r"`([^`]+)`", excluded_cell)
+        if not match:
+            fail(
+                "scripts/README.md Kube-linter Exclusion Matrix "
+                f"row {row_number} must start with a backticked excluded check"
+            )
+            continue
+        exclusion = match.group(1)
+        indexed_kube_linter_exclusions.append(exclusion)
+        for label, value in [
+            ("Current rationale", rationale),
+            ("Boundary", boundary),
+            ("Follow-up", follow_up),
+        ]:
+            if not value:
+                fail(f"scripts/README.md Kube-linter Exclusion Matrix row {row_number} has empty {label}")
+        if ".kube-linter.yaml" not in boundary:
+            fail(
+                "scripts/README.md Kube-linter Exclusion Matrix "
+                f"row {row_number} must cite .kube-linter.yaml in Boundary"
+            )
+        if "Revisit" not in follow_up:
+            fail(
+                "scripts/README.md Kube-linter Exclusion Matrix "
+                f"row {row_number} must include a Revisit follow-up"
+            )
+        if exclusion == "latest-tag":
+            for phrase in ["active GitOps image tag policy", "validate-repo-quality-gates.sh"]:
+                if phrase not in boundary:
+                    fail(
+                        "scripts/README.md latest-tag kube-linter row "
+                        f"must cite the repo-quality image policy boundary: {phrase}"
+                    )
+        if exclusion == "dangling-service" and "Argo Rollouts" not in rationale:
+            fail("scripts/README.md dangling-service kube-linter row must cite Argo Rollouts")
+    if indexed_kube_linter_exclusions != expected_kube_linter_exclusions:
+        fail(
+            "scripts/README.md Kube-linter Exclusion Matrix row order must match .kube-linter.yaml: "
+            + ", ".join(expected_kube_linter_exclusions)
+        )
+
 gitops_dir = root / "gitops"
 gitops_readme_path = gitops_dir / "README.md"
 gitops_readme = read_text(gitops_readme_path)

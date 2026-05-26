@@ -445,6 +445,12 @@ git diff --check
   `gitops/platform/namespaces` owner manifests, while keeping actual sync option
   removal, AppProject `Namespace` allow-list changes, live reconciliation,
   bootstrap ordering changes, and Kubernetes desired-state semantics deferred.
+- **VAL-SPC-006-052**: 2026-05-26 kube-linter optional boundary guardrail
+  follow-up strengthens manifest QA SSoT by validating `.kube-linter.yaml`
+  exclusion order, inline rationale comments, and the `scripts/README.md`
+  Kube-linter Exclusion Matrix, while keeping kube-linter installation,
+  mandatory local enforcement, CI failure-mode changes, and broader policy
+  bundle work deferred.
 
 ## Related Documents
 

@@ -25,6 +25,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| Kube-linter Optional Boundary Guardrail Overlay | Current repo-static guardrail for `.kube-linter.yaml` exclusion rationale and `scripts/README.md` manifest lint boundary parity | VAL-SPC-006-052; T-249 through T-253 | Current |
 | GitOps Namespace Ownership Guardrail Overlay | Current repo-static guardrail for `CreateNamespace=true` namespace surfaces and `gitops/platform/namespaces` owner-manifest parity | VAL-SPC-006-051; T-243 through T-248 | Current |
 | GitOps Image and Kind Policy Scan Guardrail Overlay | Current repo-static guardrail for active workload image tag policy, raw platform pod template image tags, and workload kind membership in the apps AppProject whitelist | VAL-SPC-006-050; T-237 through T-242 | Current |
 | Targeted Residual-Area Audit Overlay | Current continuation audit for `scripts/`, `gitops/`, `infrastructure/`, and `docs/05.operations`, including operations high-risk command boundary SSoT | VAL-SPC-006-049; T-231 through T-236 | Current |
@@ -61,6 +62,37 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 Use the newest dated overlay for current state. Preserve older overlays as
 evidence snapshots unless a later overlay explicitly supersedes them.
+
+## Kube-linter Optional Boundary Guardrail Overlay
+
+This overlay follows the active-goal review for the previously deferred
+kube-linter enforcement item. It does not install kube-linter, make it a
+mandatory local tool, change CI job structure, change manifest semantics, or
+introduce a policy bundle. It guards the current optional-tool contract and
+the rationale for each `.kube-linter.yaml` exclusion.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Manifest lint SSoT | `.kube-linter.yaml` had inline comments, but the excluded checks were not represented in a guarded README matrix with boundaries and follow-up criteria | `.kube-linter.yaml`; `scripts/README.md` | Future exclusion changes could weaken manifest QA without a documented reason or review path | Medium | supplementation | P1 |
+| Validation coverage | Repo-quality mentioned optional kube-linter availability but did not verify exclusion order, inline rationale, or README parity | `scripts/validate-repo-quality-gates.sh`; `scripts/README.md` | Optional-tool drift could pass while manifest YAML checks still succeed | Medium | improvement | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | documentation | `scripts/README.md` | Add Kube-linter Exclusion Matrix with rationale, boundary, and follow-up rows for each `.kube-linter.yaml` exclusion | T-250 | repo quality and README review | Revert matrix and command-contract wording |
+| P1 | guardrail | `scripts/validate-repo-quality-gates.sh` | Validate `.kube-linter.yaml` exclusion order, inline rationale comments, README row order, and key boundary phrases | T-251 | repo quality gate and shell syntax | Revert validator block |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-052, verification, and remaining enforcement deferrals | T-252, T-253 | SDD chain check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `.kube-linter.yaml` and script command contract inspection | PASS | Current exclusions and optional-tool behavior were inspected before edits |
+| repo-static verification | PASS | `validate-repo-quality-gates.sh`, GitOps structure, manifest syntax, secret scan, static contracts, shell syntax, JSON parse, workflow YAML parse, env key-name comparison, wiki check, and diff check passed; kube-linter remained optional and skipped locally because it is not installed |
+| remaining deferrals | recorded | kube-linter installation, mandatory local enforcement, CI failure-mode changes, and broader OPA/Conftest-style policy bundle work remain outside this pass |
 
 ## GitOps Namespace Ownership Guardrail Overlay
 

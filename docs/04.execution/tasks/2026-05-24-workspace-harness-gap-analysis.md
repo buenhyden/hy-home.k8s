@@ -303,6 +303,11 @@ pre-check와 follow-up으로 남긴다.
 | T-246 | Align scripts README command contract wording for the namespace ownership guardrail | doc | VAL-SPC-006-051 | GitOps Namespace Ownership Guardrail | scripts README review | Platform | Done |
 | T-247 | Record GitOps namespace ownership guardrail in the 006 Spec/Plan/Task chain | doc | VAL-SPC-006-051 | GitOps Namespace Ownership Guardrail | SDD chain check | Platform | Done |
 | T-248 | Append progress memory for the GitOps namespace ownership guardrail | memory | VAL-SPC-006-051 | GitOps Namespace Ownership Guardrail | progress ledger entry | Platform | Done |
+| T-249 | Recheck current kube-linter optional boundary and exclusion rationale | eval | VAL-SPC-006-052 | Kube-linter Optional Boundary Guardrail | `.kube-linter.yaml` and script command contract inspection | Platform | Done |
+| T-250 | Add Kube-linter Exclusion Matrix to `scripts/README.md` | doc | VAL-SPC-006-052 | Kube-linter Optional Boundary Guardrail | scripts README review | Platform | Done |
+| T-251 | Extend repository quality gate for kube-linter exclusion and README parity | test | VAL-SPC-006-052 | Kube-linter Optional Boundary Guardrail | repo quality gate | Platform | Done |
+| T-252 | Record kube-linter optional boundary guardrail in the 006 Spec/Plan/Task chain | doc | VAL-SPC-006-052 | Kube-linter Optional Boundary Guardrail | SDD chain check | Platform | Done |
+| T-253 | Append progress memory for the kube-linter optional boundary guardrail | memory | VAL-SPC-006-052 | Kube-linter Optional Boundary Guardrail | progress ledger entry | Platform | Done |
 
 ## Suggested Types
 
@@ -833,6 +838,30 @@ pre-check와 follow-up으로 남긴다.
 | `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static contract verification passed |
 | shell syntax, JSON, workflow YAML, env key, and diff checks | PASS | Shell scripts parsed, runtime JSON parsed, 5 workflow YAML files parsed, 18 env keys matched, and `git diff --check` passed |
 | semantic boundary | recorded | `CreateNamespace=true` removal, AppProject `Namespace` allow-list changes, live reconciliation, and bootstrap ordering changes remain separate follow-ups |
+
+### Phase 50 - Kube-linter Optional Boundary Guardrail
+
+- [x] T-249 Recheck current kube-linter optional boundary and exclusion rationale.
+- [x] T-250 Add Kube-linter Exclusion Matrix to `scripts/README.md`.
+- [x] T-251 Extend repository quality gate for kube-linter exclusion and README parity.
+- [x] T-252 Record the guardrail in the 006 SDD chain.
+- [x] T-253 Append progress memory for this follow-up.
+
+## Kube-linter Optional Boundary Guardrail Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `.kube-linter.yaml` exclusion order and inline rationale | PASS | Seven exclusions have inline rationale comments and are now checked against `scripts/README.md` |
+| `scripts/README.md` Kube-linter Exclusion Matrix | PASS | Matrix records rationale, boundary, and follow-up for each excluded check |
+| optional-tool boundary | recorded | `validate-k8s-manifests.sh` still runs kube-linter when present and records an optional skip when absent |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New kube-linter exclusion matrix guardrail passed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated LLM Wiki index remained current |
+| `bash scripts/validate-gitops-structure.sh` | PASS | GitOps hierarchy and Kustomize completeness checks passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed for 104 files; optional kube-linter skipped locally |
+| `bash scripts/check-secret-handling.sh .` | PASS | Plaintext secret scan passed |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static contract verification passed |
+| shell syntax, JSON, workflow YAML, env key, and diff checks | PASS | Shell scripts parsed, runtime JSON parsed, 5 workflow YAML files parsed, 18 env keys matched, and `git diff --check` passed |
+| semantic boundary | recorded | kube-linter installation, mandatory local enforcement, CI failure-mode changes, and broader policy bundle work remain separate follow-ups |
 
 ## Vault Policy Write Boundary Guardrail Verification Summary
 

@@ -8,6 +8,45 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-26 — Kube-linter optional boundary guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: scripts, manifests, QA, validation, SDD
+- **Status**: partial
+- **Tags**: #scripts #manifests #qa #validation #sdd
+
+#### Progress
+
+- Rechecked current kube-linter behavior in `scripts/validate-k8s-manifests.sh`
+  and `.kube-linter.yaml`.
+- Added `scripts/README.md` Kube-linter Exclusion Matrix to record rationale,
+  boundary, and follow-up for each excluded check.
+- Extended `scripts/validate-repo-quality-gates.sh` to compare
+  `.kube-linter.yaml` exclusions, inline rationale comments, and README matrix
+  rows.
+- Recorded `VAL-SPC-006-052` and `T-249` through `T-253` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS; optional
+  `kube-linter` skipped locally because it is not installed.
+- `bash scripts/check-secret-handling.sh .` — PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` — PASS.
+- JSON parse for `.claude/settings.json` and `.codex/hooks.json` — PASS.
+- Workflow YAML parse for `.github/workflows/*.yml` — PASS for 5 files.
+- `.env.example` and `.env` key-name-only comparison — PASS for 18 keys.
+- `git diff --check` — PASS.
+
+#### Follow-up
+
+- Keep kube-linter installation, mandatory local enforcement, CI failure-mode
+  changes, and broader policy bundle work as separate follow-up work.
+
 ### 2026-05-26 — GitOps namespace ownership guardrail follow-up
 
 - **Date**: 2026-05-26
