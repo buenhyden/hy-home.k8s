@@ -458,6 +458,12 @@ git diff --check
   `traefik/README.md` distinguishes the k3d server load balancer from the
   external `hy-home.docker` Traefik gateway without starting containers,
   applying dynamic config, or changing GitOps desired state.
+- **VAL-SPC-006-054**: 2026-05-26 destructive Git permission hardening
+  follow-up closes the agent-governance deferred item by adding shared Claude
+  deny rules for destructive or history-rewriting Git commands, documenting the
+  human-approved recovery exception path in `git-workflow.md`, and validating
+  the deny list through `scripts/validate-repo-quality-gates.sh` without
+  running destructive Git commands or changing GitHub branch protection.
 
 ## Related Documents
 

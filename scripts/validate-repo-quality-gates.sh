@@ -1516,6 +1516,7 @@ for phrase in [
     "## Matrix Status Contract",
     "`Ready`, `Partial`, and `Missing`",
     "A `Ready` row is not semantic proof",
+    "destructive Git deny list",
     "regression and structure guard",
     "Authored-doc command boundary",
     "command examples in authored docs require",
@@ -1679,6 +1680,20 @@ if not branch_prefixes:
     fail(f"{rel(git_workflow_path)} must define branch types as the branch prefix policy SSoT")
 for phrase in [
     "Every pull request targeting `main` must run the required CI and branch-policy checks with no bypass exceptions.",
+    "Do not run destructive or history-rewriting Git commands from the default",
+    "Shared Claude permissions deny",
+    "git reset --hard",
+    "git checkout --",
+    "git restore",
+    "git clean",
+    "git rebase",
+    "git commit --amend",
+    "git branch -D",
+    "git push --force",
+    "git push -f",
+    "git push --delete",
+    "git push --mirror",
+    "record the approval scope, target branch, rollback or backup expectation",
     "Draft or WIP PRs",
     "90% coverage",
     "validation-matrix coverage",
@@ -2050,6 +2065,27 @@ for json_path in [root / ".claude/settings.json", root / ".codex/hooks.json"]:
         fail(f"agent runtime JSON parse failed for {rel(json_path)}: {exc}")
 
 claude_settings = load_json(root / ".claude/settings.json")
+claude_permissions = claude_settings.get("permissions") or {}
+claude_allow = set(claude_permissions.get("allow") or [])
+claude_deny = set(claude_permissions.get("deny") or [])
+if "Bash(git:*)" not in claude_allow:
+    fail(".claude/settings.json must keep broad Git routing explicit before deny hardening")
+expected_destructive_git_denies = [
+    "Bash(git reset --hard:*)",
+    "Bash(git checkout --:*)",
+    "Bash(git restore:*)",
+    "Bash(git clean:*)",
+    "Bash(git rebase:*)",
+    "Bash(git commit --amend:*)",
+    "Bash(git branch -D:*)",
+    "Bash(git push --force:*)",
+    "Bash(git push -f:*)",
+    "Bash(git push --delete:*)",
+    "Bash(git push --mirror:*)",
+]
+for deny_rule in expected_destructive_git_denies:
+    if deny_rule not in claude_deny:
+        fail(f".claude/settings.json missing destructive Git deny rule: {deny_rule}")
 post_validate_command = json.dumps(claude_settings.get("hooks", {}))
 for phrase in [
     ".claude/hooks/k8s-pre-edit.sh",

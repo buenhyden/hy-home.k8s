@@ -46,6 +46,17 @@
       "Bash(vault kv put:*)",
       "Bash(vault kv patch:*)",
       "Bash(vault write:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git checkout --:*)",
+      "Bash(git restore:*)",
+      "Bash(git clean:*)",
+      "Bash(git rebase:*)",
+      "Bash(git commit --amend:*)",
+      "Bash(git branch -D:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git push --delete:*)",
+      "Bash(git push --mirror:*)",
       "Bash(rm -rf:*)",
       "Bash(k3d cluster delete:*)"
     ]

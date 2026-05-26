@@ -25,6 +25,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| Destructive Git Permission Hardening Overlay | Current agent-governance hardening for shared Claude deny rules covering destructive/history-rewriting Git commands | VAL-SPC-006-054; T-259 through T-263 | Current |
 | Traefik Serverlb Boundary Guardrail Overlay | Current repo-static guardrail and read-only recheck proving `k3d-hyhome-serverlb` host `:443` is not external Traefik gateway proof | VAL-SPC-006-053; T-254 through T-258 | Current |
 | Kube-linter Optional Boundary Guardrail Overlay | Current repo-static guardrail for `.kube-linter.yaml` exclusion rationale and `scripts/README.md` manifest lint boundary parity | VAL-SPC-006-052; T-249 through T-253 | Current |
 | GitOps Namespace Ownership Guardrail Overlay | Current repo-static guardrail for `CreateNamespace=true` namespace surfaces and `gitops/platform/namespaces` owner-manifest parity | VAL-SPC-006-051; T-243 through T-248 | Current |
@@ -63,6 +64,39 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 Use the newest dated overlay for current state. Preserve older overlays as
 evidence snapshots unless a later overlay explicitly supersedes them.
+
+## Destructive Git Permission Hardening Overlay
+
+This overlay follows the active-goal review for the previously deferred
+destructive Git permission hardening item. It changes only repository-local
+agent governance files: no destructive Git command is executed, no GitHub
+branch protection or ruleset is changed, and no published history is rewritten.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| Claude Git permission boundary | `.claude/settings.json` broadly allowed `Bash(git:*)` but did not deny common destructive or history-rewriting Git commands | `.claude/settings.json`; `docs/00.agent-governance/rules/git-workflow.md` | Agent sessions could treat reset, clean, rebase, amend, branch deletion, or destructive push classes as ordinary Git actions | High | improvement | P2 |
+| Validation coverage | Repo-quality parsed runtime JSON but did not prove the destructive Git deny list remained present | `scripts/validate-repo-quality-gates.sh` | Future settings edits could remove the deny rules while governance docs still claimed conservative Git behavior | Medium | supplementation | P1 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P2 | governance hardening | `.claude/settings.json` | Add shared deny rules for `git reset --hard`, `git checkout --`, `git restore`, `git clean`, `git rebase`, `git commit --amend`, `git branch -D`, and destructive push classes | T-260 | JSON parse and repo quality | Revert deny entries |
+| P1 | documentation | `docs/00.agent-governance/rules/git-workflow.md`; `docs/00.agent-governance/harness-catalog.md`; `scripts/README.md` | Document the deny list and human-approved recovery exception evidence path | T-261 | repo quality and README review | Revert wording |
+| P1 | guardrail | `scripts/validate-repo-quality-gates.sh` | Validate the destructive Git deny rules and related Git workflow phrases | T-262 | repo quality and shell syntax | Revert validator block |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-054, verification, and remaining boundaries | T-263 | SDD chain check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| `python3 -m json.tool .claude/settings.json >/dev/null` | PASS | Claude settings remain valid JSON |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Repository quality gate script syntax passed |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New destructive Git deny-list guardrail passed |
+| `git diff --check` | PASS | No whitespace errors |
+| destructive Git commands | NOT RUN | This pass hardens policy only; it does not execute reset, clean, rebase, amend, branch deletion, or destructive push commands |
 
 ## Traefik Serverlb Boundary Guardrail Overlay
 

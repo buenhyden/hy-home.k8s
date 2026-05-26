@@ -31,6 +31,14 @@
   rewrite it for cleanup without explicit approval. Record the exception in the
   active SDD task/plan and use a forward-only corrective commit instead.
 - Do not force-push protected branches.
+- Do not run destructive or history-rewriting Git commands from the default
+  agent path. Shared Claude permissions deny `git reset --hard`,
+  `git checkout --`, `git restore`, `git clean`, `git rebase`,
+  `git commit --amend`, `git branch -D`, `git push --force`, `git push -f`,
+  `git push --delete`, and `git push --mirror`.
+- If a human explicitly approves one of those command classes for recovery,
+  record the approval scope, target branch, rollback or backup expectation,
+  and verification evidence in the active SDD task/plan before taking action.
 - Every pull request targeting `main` must run the required CI and branch-policy checks with no bypass exceptions.
 - Keep local guidance aligned with the active GitHub branch protection or ruleset configuration. If repository defaults change, update this file in the same change window.
 - Do not bypass the commit-msg hook with `--no-verify`. Commitizen enforces Conventional Commit format; bypassing it leaves malformed messages in the permanent history.

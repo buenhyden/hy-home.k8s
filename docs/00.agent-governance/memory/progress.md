@@ -8,6 +8,40 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-26 — Destructive Git permission hardening follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: agent governance, Git workflow, validation, SDD
+- **Status**: partial
+- **Tags**: #agent-governance #git #validation #sdd
+
+#### Progress
+
+- Rechecked `.claude/settings.json`, `git-workflow.md`, harness catalog, and
+  repository quality coverage for destructive Git command boundaries.
+- Added shared Claude deny rules for destructive or history-rewriting Git
+  command classes.
+- Documented the human-approved recovery exception path in
+  `docs/00.agent-governance/rules/git-workflow.md`.
+- Extended `scripts/validate-repo-quality-gates.sh` to validate the deny list
+  and related Git workflow phrases.
+- Recorded `VAL-SPC-006-054` and `T-259` through `T-263` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `python3 -m json.tool .claude/settings.json >/dev/null` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `git diff --check` — PASS.
+- Destructive Git commands — NOT RUN.
+
+#### Follow-up
+
+- Keep GitHub branch protection/ruleset changes and any actual destructive Git
+  recovery command outside normal agent execution unless explicitly approved
+  with scope, branch, rollback/backup, and verification evidence.
+
 ### 2026-05-26 — Traefik serverlb boundary guardrail follow-up
 
 - **Date**: 2026-05-26

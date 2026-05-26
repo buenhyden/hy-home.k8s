@@ -313,6 +313,11 @@ pre-check와 follow-up으로 남긴다.
 | T-256 | Clarify `k3d-hyhome-serverlb` boundary in Traefik and scripts READMEs | doc | VAL-SPC-006-053 | Traefik Serverlb Boundary Guardrail | README review | Platform | Done |
 | T-257 | Extend repository quality gate for Traefik serverlb boundary wording | test | VAL-SPC-006-053 | Traefik Serverlb Boundary Guardrail | repo quality gate | Platform | Done |
 | T-258 | Record Traefik serverlb boundary guardrail in the 006 SDD chain and progress ledger | memory | VAL-SPC-006-053 | Traefik Serverlb Boundary Guardrail | SDD chain and progress entry | Platform | Done |
+| T-259 | Recheck destructive Git command boundary across settings, workflow docs, and validator coverage | eval | VAL-SPC-006-054 | Destructive Git Permission Hardening | current governance inspection | Platform | Done |
+| T-260 | Add shared Claude deny rules for destructive and history-rewriting Git commands | guardrail | VAL-SPC-006-054 | Destructive Git Permission Hardening | JSON parse | Platform | Done |
+| T-261 | Document deny-list and human-approved recovery exception path | doc | VAL-SPC-006-054 | Destructive Git Permission Hardening | governance doc review | Platform | Done |
+| T-262 | Extend repository quality gate for destructive Git deny-list parity | test | VAL-SPC-006-054 | Destructive Git Permission Hardening | repo quality gate | Platform | Done |
+| T-263 | Record destructive Git permission hardening in the 006 SDD chain and progress ledger | memory | VAL-SPC-006-054 | Destructive Git Permission Hardening | SDD chain and progress entry | Platform | Done |
 
 ## Suggested Types
 
@@ -886,6 +891,27 @@ pre-check와 follow-up으로 남긴다.
 | `traefik/README.md` serverlb boundary | PASS | README now states that `k3d-hyhome-serverlb` is not the external Traefik gateway and does not prove `hy-home.docker` dynamic config |
 | `bash scripts/validate-repo-quality-gates.sh .` | PASS | New serverlb/external gateway boundary phrase checks passed |
 | semantic boundary | recorded | Starting external Traefik, copying dynamic config, or changing gateway runtime state remains outside this repository pass |
+
+### Phase 52 - Destructive Git Permission Hardening
+
+- [x] T-259 Recheck destructive Git command boundary across settings, workflow docs, and validator coverage.
+- [x] T-260 Add shared Claude deny rules for destructive and history-rewriting Git commands.
+- [x] T-261 Document deny-list and human-approved recovery exception path.
+- [x] T-262 Extend repository quality gate for destructive Git deny-list parity.
+- [x] T-263 Record the hardening in the 006 SDD chain and progress ledger.
+
+## Destructive Git Permission Hardening Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `.claude/settings.json` destructive Git deny list | PASS | Denies reset/restore/clean/rebase/amend/branch-delete/destructive-push command classes |
+| `docs/00.agent-governance/rules/git-workflow.md` exception path | PASS | Human-approved recovery requires approval scope, target branch, rollback/backup expectation, and verification evidence |
+| `scripts/validate-repo-quality-gates.sh` deny-list guardrail | PASS | Validator checks every required deny rule and Git workflow phrase |
+| `python3 -m json.tool .claude/settings.json >/dev/null` | PASS | Claude settings JSON parsed |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Repository quality gate script parsed |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New destructive Git permission guardrail passed |
+| `git diff --check` | PASS | No whitespace errors |
+| destructive Git commands | NOT RUN | No reset, checkout/restore discard, clean, rebase, amend, branch deletion, force/delete/mirror push, or GitHub branch-policy mutation was executed |
 
 ## Vault Policy Write Boundary Guardrail Verification Summary
 
