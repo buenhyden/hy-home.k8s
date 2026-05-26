@@ -396,7 +396,7 @@ git diff --check
 - **VAL-SPC-006-044**: 2026-05-26 Docker network and RBAC create command
   boundary guardrail follow-up strengthens operations command safety by
   validating that `docker network connect` and `kubectl create
-  clusterrolebinding` examples carry human-approved, bootstrap, break-glass,
+clusterrolebinding` examples carry human-approved, bootstrap, break-glass,
   operator-approved, or dry-run context, without mutating Docker networks or
   Kubernetes RBAC state.
 - **VAL-SPC-006-045**: 2026-05-26 script classification matrix guardrail
@@ -489,6 +489,16 @@ git diff --check
   image policy checks, fixes the Azure sample image tag violation, and validates
   the policy bundle through the built-in fallback when `conftest` is not
   installed locally.
+- **VAL-SPC-006-059**: 2026-05-26 Workspace-wide P0 audit overlay confirms that
+  VAL-SPC-006-001 through VAL-SPC-006-058 already address all 22 P0 workstreams
+  and 6 additional review criteria from the workspace improvement prompt. Fixes
+  `.agents/skills/` mirror parity by adding `docs-stage-conformance` and
+  `workspace-harness-audit` mirrors. Re-evaluates 7 workspace-specific AI Agent
+  skill candidates: 5 rejected (Compose Stack, Requirements-to-Design, Execution
+  Plan, Task Breakdown, Knowledge Map) as already covered by existing agents and
+  skills; Ops Runbook assessed for gap; Policy Gate consolidated into
+  `workspace-harness-audit` skill extension. P3 deferrals recorded: OPA/Conftest
+  CI enforcement, Traefik 443 live proof, ArgoCD live reconciliation.
 
 ## Related Documents
 

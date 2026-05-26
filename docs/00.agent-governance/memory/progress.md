@@ -8,6 +8,48 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-26 — Workspace-wide P0 audit overlay (VAL-SPC-006-059)
+
+- **Date**: 2026-05-26
+- **Layer**: meta, governance, docs, infra, GitOps, validation
+- **Status**: complete
+- **Tags**: #governance #sdd #harness #skills #p0-audit
+
+#### Progress
+
+- Confirmed VAL-SPC-006-001 through VAL-SPC-006-058 already address all 22 P0
+  workstreams and 6 additional review criteria from the workspace improvement
+  prompt.
+- Fixed `.agents/skills/` mirror parity: added `docs-stage-conformance` and
+  `workspace-harness-audit` mirrors (2 skills; `risk-report` was already
+  present).
+- Re-evaluated 7 workspace-specific AI Agent skill candidates:
+  - 5 rejected (Compose Stack, Requirements-to-Design, Execution Plan, Task
+    Breakdown, Knowledge Map) — covered by existing agents, skills, and
+    templates.
+  - Ops Runbook: no gap found; `doc-writer.md` + `runbook.template.md` +
+    11 existing runbooks provide sufficient coverage.
+  - Policy Gate: consolidated into `workspace-harness-audit` skill scope; no
+    separate skill needed.
+- Recorded VAL-SPC-006-059 overlay in
+  `docs/03.specs/006-workspace-harness-gap-analysis/spec.md`.
+- P3 deferrals carried forward: OPA/Conftest CI enforcement, Traefik 443 live
+  proof, ArgoCD live reconciliation.
+
+#### Verification
+
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS (post-implementation)
+- `bash scripts/generate-llm-wiki-index.sh --check` — run after progress.md
+  update
+
+#### Follow-up
+
+- P3-01: Install conftest and add CI step for `validate-policy-gates.sh`.
+- P3-02: Start hy-home.docker gateway, then rerun `verify-ingress-tls.sh`
+  with `CHECK_TRAEFIK_443=true`.
+- P3-03: After human approval, run `kubectl diff -k gitops/clusters/local`
+  and ArgoCD sync to confirm AppProject desired-state.
+
 ### 2026-05-26 — OPA/Conftest policy gate follow-up
 
 - **Date**: 2026-05-26
@@ -230,7 +272,7 @@ inventory stays in `scripts/README.md`.
   PASS; no separate external Traefik gateway container was present.
 - `CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh` —
   FAIL as boundary evidence: `Traefik 443 endpoint is not reachable
-  (argocd.127.0.0.1.nip.io:443)`.
+(argocd.127.0.0.1.nip.io:443)`.
 - `bash scripts/validate-repo-quality-gates.sh .` — PASS.
 - `git diff --check` — PASS.
 
@@ -2700,7 +2742,7 @@ inventory stays in `scripts/README.md`.
 #### Memory
 
 - README changes must preserve `Link Basis` and `Related Documents`; `Related
-  References` is now a legacy heading that should not return.
+References` is now a legacy heading that should not return.
 - Hookify `.local.md` files are local warning rules only. Keep shared
   enforcement in tracked hooks, provider/Codex hook wiring, and validators.
 - For historical lifecycle docs, prefer narrow structure/link cleanup over
