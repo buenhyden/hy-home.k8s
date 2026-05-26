@@ -25,6 +25,7 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 | Current record | Use for | Evidence anchor | Status |
 | --- | --- | --- | --- |
+| AppProject Allow-list Rationale Guardrail Overlay | Current GitOps guardrail for `apps` AppProject active/reserved allow-list rationale and platform chart-managed tightening boundary | VAL-SPC-006-055; T-264 through T-268 | Current |
 | Destructive Git Permission Hardening Overlay | Current agent-governance hardening for shared Claude deny rules covering destructive/history-rewriting Git commands | VAL-SPC-006-054; T-259 through T-263 | Current |
 | Traefik Serverlb Boundary Guardrail Overlay | Current repo-static guardrail and read-only recheck proving `k3d-hyhome-serverlb` host `:443` is not external Traefik gateway proof | VAL-SPC-006-053; T-254 through T-258 | Current |
 | Kube-linter Optional Boundary Guardrail Overlay | Current repo-static guardrail for `.kube-linter.yaml` exclusion rationale and `scripts/README.md` manifest lint boundary parity | VAL-SPC-006-052; T-249 through T-253 | Current |
@@ -64,6 +65,51 @@ External Secrets, Vault, PostgreSQL, Valkey, SDD, QA, CI/CD, AI Agent 협업
 
 Use the newest dated overlay for current state. Preserve older overlays as
 evidence snapshots unless a later overlay explicitly supersedes them.
+
+## AppProject Allow-list Rationale Guardrail Overlay
+
+This overlay follows the active-goal review for the GitOps AppProject allow-list
+tightening deferral. It does not remove allow-list entries, change ArgoCD
+AppProject permission semantics, mutate live state, or render Helm charts. It
+guards the current rationale so later tightening can remove only entries with
+reviewed onboarding, chart-render, and sync impact evidence.
+
+### Gap Delta
+
+| Area | Gap | Evidence path | Impact | Risk | Action type | Priority |
+| --- | --- | --- | --- | --- | --- | --- |
+| AppProject allow-list rationale | `apps` AppProject allow-list entries were present, but active workload kinds, reserved onboarding kinds, and the `Namespace` cluster allow-list boundary were not represented in a row-level rationale matrix | `gitops/clusters/local/appproject-apps.yaml`; `gitops/workloads/adminer`; `gitops/README.md` | A future kind addition or removal could pass broad manifest checks without explaining whether it is active, reserved, or a removal candidate | Medium | improvement | P1 |
+| Platform allow-list tightening boundary | Platform AppProject includes chart-managed resources, but raw manifest scans alone do not prove which chart-rendered kinds are safe to remove | `gitops/apps/root`; `gitops/clusters/local/appproject-platform.yaml` | Over-tightening could break ArgoCD sync for Helm chart components | High | deferral | P2 |
+
+### Implementation Plan Delta
+
+| Priority | Action type | Target | Change | Linked task | Verification | Rollback |
+| --- | --- | --- | --- | --- | --- | --- |
+| P1 | documentation | `gitops/README.md` | Add AppProject Allow-list Rationale Matrix for `apps` cluster, active workload, reserved onboarding, and platform chart-managed boundaries | T-265 | repo quality and README review | Revert matrix wording |
+| P1 | guardrail | `scripts/validate-repo-quality-gates.sh` | Validate `apps` cluster allow-list, active workload kinds, reserved namespace kinds, and platform boundary phrases against current manifests | T-266 | repo quality and shell syntax | Revert validator block |
+| P1 | documentation | `scripts/README.md` | Expose the AppProject allow-list rationale matrix in the repo-quality command contract | T-267 | scripts README review | Revert wording |
+| P1 | evidence | 006 Spec/Plan/Task/progress | Record VAL-SPC-006-055, verification, and remaining semantic deferrals | T-268 | SDD chain check | Revert overlay entries |
+
+### Verification Result
+
+| Command or method | Result | Notes |
+| --- | --- | --- |
+| current AppProject and workload inspection | PASS | `apps` cluster allow-list is limited to `Namespace`; active workload kinds are derived from `gitops/workloads/adminer`; reserved kinds are computed from the remaining `apps` namespace whitelist |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Repository quality gate script syntax passed |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New AppProject allow-list rationale guardrail passed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated LLM Wiki index remains current |
+| `bash scripts/validate-gitops-structure.sh` | PASS | GitOps hierarchy and kustomization checks passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed; optional kube-linter remains skipped when not installed |
+| `bash scripts/check-secret-handling.sh .` | PASS | No plaintext secret pattern findings |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static contracts passed |
+| shell syntax sweep | PASS | `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` passed |
+| JSON parse | PASS | `.claude/settings.json` and `.codex/hooks.json` parsed |
+| workflow YAML parse | PASS | `.github/workflows/*.yml` parsed |
+| `.env.example` vs `.env` key-name parity | PASS | Key names matched; values were not printed |
+| stale sample backend check | PASS | No active `k3d-hyhome-serverlb:443` reference remains in `examples/sample-app` |
+| `git diff --check` | PASS | No whitespace errors |
+| `bash infrastructure/tests/run-all.sh` | BLOCKED | Not rerun in this pass; live kubeconfig TLS trust remains blocked by the previously recorded `x509: certificate signed by unknown authority` failure |
+| remaining deferrals | recorded | Actual `apps` kind removal, `Namespace` removal, platform chart-managed tightening, and live ArgoCD sync impact remain separate follow-ups |
 
 ## Destructive Git Permission Hardening Overlay
 

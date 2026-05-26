@@ -318,6 +318,11 @@ pre-check와 follow-up으로 남긴다.
 | T-261 | Document deny-list and human-approved recovery exception path | doc | VAL-SPC-006-054 | Destructive Git Permission Hardening | governance doc review | Platform | Done |
 | T-262 | Extend repository quality gate for destructive Git deny-list parity | test | VAL-SPC-006-054 | Destructive Git Permission Hardening | repo quality gate | Platform | Done |
 | T-263 | Record destructive Git permission hardening in the 006 SDD chain and progress ledger | memory | VAL-SPC-006-054 | Destructive Git Permission Hardening | SDD chain and progress entry | Platform | Done |
+| T-264 | Recheck AppProject allow-list surfaces against active workload and platform chart boundaries | eval | VAL-SPC-006-055 | AppProject Allow-list Rationale Guardrail | current AppProject and workload inspection | Platform | Done |
+| T-265 | Add AppProject Allow-list Rationale Matrix to `gitops/README.md` | doc | VAL-SPC-006-055 | AppProject Allow-list Rationale Guardrail | README review | Platform | Done |
+| T-266 | Extend repository quality gate for AppProject allow-list rationale parity | test | VAL-SPC-006-055 | AppProject Allow-list Rationale Guardrail | repo quality gate | Platform | Done |
+| T-267 | Align scripts README command contract wording for the allow-list rationale guardrail | doc | VAL-SPC-006-055 | AppProject Allow-list Rationale Guardrail | scripts README review | Platform | Done |
+| T-268 | Record AppProject allow-list rationale guardrail in the 006 SDD chain and progress ledger | memory | VAL-SPC-006-055 | AppProject Allow-list Rationale Guardrail | SDD chain and progress entry | Platform | Done |
 
 ## Suggested Types
 
@@ -912,6 +917,37 @@ pre-check와 follow-up으로 남긴다.
 | `bash scripts/validate-repo-quality-gates.sh .` | PASS | New destructive Git permission guardrail passed |
 | `git diff --check` | PASS | No whitespace errors |
 | destructive Git commands | NOT RUN | No reset, checkout/restore discard, clean, rebase, amend, branch deletion, force/delete/mirror push, or GitHub branch-policy mutation was executed |
+
+### Phase 53 - AppProject Allow-list Rationale Guardrail
+
+- [x] T-264 Recheck AppProject allow-list surfaces against active workload and platform chart boundaries.
+- [x] T-265 Add AppProject Allow-list Rationale Matrix to `gitops/README.md`.
+- [x] T-266 Extend repository quality gate for AppProject allow-list rationale parity.
+- [x] T-267 Align scripts README command contract wording for the allow-list rationale guardrail.
+- [x] T-268 Record the guardrail in the 006 SDD chain and progress ledger.
+
+## AppProject Allow-list Rationale Guardrail Summary
+
+| Evidence item | Status | Location |
+| --- | --- | --- |
+| `apps` cluster allow-list | PASS | Current cluster allow-list is limited to `Namespace`, tied to `CreateNamespace=true` ownership follow-up |
+| active `apps` namespace allow-list | PASS | Active kinds match `gitops/workloads/adminer` manifests: `AnalysisTemplate`, `DestinationRule`, `Ingress`, `PeerAuthentication`, `Rollout`, `Service`, `VirtualService` |
+| reserved `apps` namespace allow-list | PASS | Reserved kinds are explicitly documented for app onboarding, secret-backed workloads, and common app shapes |
+| platform AppProject boundary | PASS | Platform tightening remains blocked on chart render review and ArgoCD sync impact review, not raw manifest scan alone |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS | Repository quality gate script parsed |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS | New AppProject allow-list rationale guardrail passed |
+| `bash scripts/generate-llm-wiki-index.sh --check` | PASS | Generated LLM Wiki index is current |
+| `bash scripts/validate-gitops-structure.sh` | PASS | GitOps hierarchy and kustomization checks passed |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS | YAML syntax passed; optional kube-linter remains skipped when not installed |
+| `bash scripts/check-secret-handling.sh .` | PASS | No plaintext secret pattern findings |
+| `bash infrastructure/tests/verify-contracts-static.sh` | PASS | Static contract verification passed |
+| shell syntax sweep | PASS | `infrastructure`, `scripts`, and `.claude/hooks` shell files parsed |
+| JSON and workflow parse | PASS | `.claude/settings.json`, `.codex/hooks.json`, and `.github/workflows/*.yml` parsed |
+| `.env.example` vs `.env` key-name parity | PASS | Key names matched; values were not printed |
+| stale sample backend check | PASS | No active `k3d-hyhome-serverlb:443` reference remains in `examples/sample-app` |
+| `git diff --check` | PASS | No whitespace errors |
+| `bash infrastructure/tests/run-all.sh` | BLOCKED | Live check remains blocked by the previously recorded kubeconfig TLS `x509: certificate signed by unknown authority` issue |
+| semantic boundary | recorded | Actual kind removal, AppProject permission tightening, `Namespace` removal, chart-render review, and live ArgoCD sync impact remain separate follow-ups |
 
 ## Vault Policy Write Boundary Guardrail Verification Summary
 

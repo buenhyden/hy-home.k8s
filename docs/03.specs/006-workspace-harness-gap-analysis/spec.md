@@ -464,6 +464,13 @@ git diff --check
   human-approved recovery exception path in `git-workflow.md`, and validating
   the deny list through `scripts/validate-repo-quality-gates.sh` without
   running destructive Git commands or changing GitHub branch protection.
+- **VAL-SPC-006-055**: 2026-05-26 AppProject allow-list rationale guardrail
+  follow-up advances the GitOps allow-list tightening deferral by documenting
+  `apps` AppProject cluster, active workload, and reserved onboarding allow-list
+  surfaces, validating those rows against live repository manifests and
+  `gitops/clusters/local/appproject-apps.yaml`, and keeping actual kind removal
+  or platform chart-managed allow-list tightening deferred until app onboarding,
+  chart render, and ArgoCD sync impact reviews are complete.
 
 ## Related Documents
 

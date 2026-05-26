@@ -8,6 +8,53 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-26 — AppProject allow-list rationale guardrail follow-up
+
+- **Date**: 2026-05-26
+- **Layer**: GitOps, ArgoCD, validation, SDD
+- **Status**: partial
+- **Tags**: #gitops #argocd #validation #sdd
+
+#### Progress
+
+- Rechecked `apps` and `platform` AppProject allow-list surfaces against active
+  workload manifests and chart-managed platform boundaries.
+- Added `gitops/README.md` AppProject Allow-list Rationale Matrix.
+- Extended `scripts/validate-repo-quality-gates.sh` to compare the `apps`
+  cluster allow-list, active workload kinds, reserved namespace kinds, and
+  platform chart-managed boundary wording against current manifests.
+- Updated `scripts/README.md` command-contract wording.
+- Recorded `VAL-SPC-006-055` and `T-264` through `T-268` in the existing 006
+  Spec/Plan/Task chain.
+
+#### Verification
+
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS; optional kube-linter remains
+  skipped when not installed.
+- `bash scripts/check-secret-handling.sh .` — PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- Shell syntax sweep for `infrastructure`, `scripts`, and `.claude/hooks` — PASS.
+- JSON parse for `.claude/settings.json` and `.codex/hooks.json` — PASS.
+- Workflow YAML parse for `.github/workflows/*.yml` — PASS.
+- `.env.example` vs `.env` key-name-only comparison — PASS; values were not
+  printed.
+- Targeted sample backend check — PASS; no active `k3d-hyhome-serverlb:443`
+  reference remains in `examples/sample-app`.
+- `git diff --check` — PASS.
+- `bash infrastructure/tests/run-all.sh` — BLOCKED; not rerun in this pass
+  because live kubeconfig TLS trust remains blocked by the previously recorded
+  `x509: certificate signed by unknown authority` failure.
+
+#### Follow-up
+
+- Keep actual allow-list kind removal, AppProject permission tightening,
+  `Namespace` removal, platform chart-render review, and live ArgoCD sync impact
+  as separate follow-up work.
+
 ### 2026-05-26 — Destructive Git permission hardening follow-up
 
 - **Date**: 2026-05-26

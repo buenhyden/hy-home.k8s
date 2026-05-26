@@ -3200,15 +3200,118 @@ for path, document in gitops_yaml_documents_under(gitops_dir / "workloads"):
 
 apps_project_path = gitops_dir / "clusters/local/appproject-apps.yaml"
 apps_project = load_yaml(apps_project_path)
+apps_cluster_kind_whitelist = {
+    item.get("kind")
+    for item in apps_project.get("spec", {}).get("clusterResourceWhitelist", [])
+    if isinstance(item, dict) and isinstance(item.get("kind"), str)
+}
 apps_namespace_kind_whitelist = {
     item.get("kind")
     for item in apps_project.get("spec", {}).get("namespaceResourceWhitelist", [])
     if isinstance(item, dict) and isinstance(item.get("kind"), str)
 }
+if apps_cluster_kind_whitelist != {"Namespace"}:
+    fail("gitops/clusters/local/appproject-apps.yaml clusterResourceWhitelist must be limited to Namespace")
 if not apps_namespace_kind_whitelist:
     fail("gitops/clusters/local/appproject-apps.yaml namespaceResourceWhitelist must not be empty")
 for kind in sorted(workload_manifest_kinds - apps_namespace_kind_whitelist):
     fail(f"gitops/workloads manifest kind is not allowed by apps AppProject namespaceResourceWhitelist: {kind}")
+
+reserved_apps_namespace_kinds = apps_namespace_kind_whitelist - workload_manifest_kinds
+expected_allowlist_header = [
+    "Project",
+    "Allow-list surface",
+    "Current allowed kinds",
+    "Evidence class",
+    "Tightening boundary",
+    "Validation",
+]
+expected_allowlist_surfaces = [
+    "apps|clusterResourceWhitelist",
+    "apps|active namespaceResourceWhitelist",
+    "apps|reserved namespaceResourceWhitelist",
+    "platform|platform AppProject allow-lists",
+]
+allowlist_rows = markdown_table_after_heading(gitops_readme, "## AppProject Allow-list Rationale Matrix")
+if len(allowlist_rows) < 2:
+    fail("gitops/README.md AppProject Allow-list Rationale Matrix must contain a header and allow-list rows")
+elif allowlist_rows[0] != expected_allowlist_header:
+    fail(
+        "gitops/README.md AppProject Allow-list Rationale Matrix header must be: "
+        + " | ".join(expected_allowlist_header)
+    )
+else:
+    indexed_allowlist_surfaces: list[str] = []
+    for row_number, row in enumerate(allowlist_rows[1:], start=1):
+        if len(row) != len(expected_allowlist_header):
+            fail(
+                "gitops/README.md AppProject Allow-list Rationale Matrix "
+                f"row {row_number} must have {len(expected_allowlist_header)} columns"
+            )
+            continue
+        project_cell, surface_cell, kinds_cell, evidence, boundary, validation = row
+        project_match = re.fullmatch(r"`([^`]+)`", project_cell)
+        surface_match = re.search(r"`([^`]+)`", surface_cell)
+        if not project_match or not surface_match:
+            fail(
+                "gitops/README.md AppProject Allow-list Rationale Matrix "
+                f"row {row_number} must start with backticked project and surface"
+            )
+            continue
+        project = project_match.group(1)
+        surface = surface_match.group(1)
+        surface_key = f"{project}|{surface}"
+        indexed_allowlist_surfaces.append(surface_key)
+        for label, value in [
+            ("Evidence class", evidence),
+            ("Tightening boundary", boundary),
+            ("Validation", validation),
+        ]:
+            if not value:
+                fail(f"gitops/README.md AppProject Allow-list Rationale Matrix row {row_number} has empty {label}")
+        if "scripts/validate-repo-quality-gates.sh" not in validation:
+            fail(
+                "gitops/README.md AppProject Allow-list Rationale Matrix "
+                f"row {row_number} must cite scripts/validate-repo-quality-gates.sh"
+            )
+        documented_kinds = set(re.findall(r"`([^`]+)`", kinds_cell))
+        if surface_key == "apps|clusterResourceWhitelist":
+            if documented_kinds != apps_cluster_kind_whitelist:
+                fail(
+                    "gitops/README.md apps clusterResourceWhitelist rationale row must match actual kinds: "
+                    + ", ".join(sorted(apps_cluster_kind_whitelist))
+                )
+            for phrase in ["CreateNamespace=true", "Namespace Ownership Matrix"]:
+                if phrase not in evidence + " " + boundary:
+                    fail(f"gitops/README.md apps cluster allow-list row missing phrase: {phrase}")
+        elif surface_key == "apps|active namespaceResourceWhitelist":
+            if documented_kinds != workload_manifest_kinds:
+                fail(
+                    "gitops/README.md active apps namespaceResourceWhitelist rationale row must match active workload kinds: "
+                    + ", ".join(sorted(workload_manifest_kinds))
+                )
+            if "gitops/workloads/adminer" not in evidence:
+                fail("gitops/README.md active apps allow-list row must cite gitops/workloads/adminer")
+        elif surface_key == "apps|reserved namespaceResourceWhitelist":
+            if documented_kinds != reserved_apps_namespace_kinds:
+                fail(
+                    "gitops/README.md reserved apps namespaceResourceWhitelist rationale row must match reserved kinds: "
+                    + ", ".join(sorted(reserved_apps_namespace_kinds))
+                )
+            for phrase in ["app onboarding model decision", "secret-backed workloads"]:
+                if phrase not in evidence + " " + boundary:
+                    fail(f"gitops/README.md reserved apps allow-list row missing phrase: {phrase}")
+        elif surface_key == "platform|platform AppProject allow-lists":
+            for phrase in ["Helm charts", "raw manifest scan", "chart render review", "ArgoCD sync impact review"]:
+                if phrase not in evidence + " " + boundary:
+                    fail(f"gitops/README.md platform allow-list row missing phrase: {phrase}")
+        else:
+            fail(f"gitops/README.md AppProject Allow-list Rationale Matrix unexpected row: {surface_key}")
+    if indexed_allowlist_surfaces != expected_allowlist_surfaces:
+        fail(
+            "gitops/README.md AppProject Allow-list Rationale Matrix row order must be: "
+            + ", ".join(expected_allowlist_surfaces)
+        )
 
 expected_workload_policy_header = [
     "Surface",
