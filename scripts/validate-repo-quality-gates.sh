@@ -1506,6 +1506,10 @@ for tracked_path in sorted(tracked):
 
 harness_catalog_path = root / "docs/00.agent-governance/harness-catalog.md"
 harness_catalog_text = read_text(harness_catalog_path)
+# Normalize pipe-table whitespace so markdown formatters that pad column widths
+# do not break substring checks for table header phrases.
+import re as _re
+harness_catalog_normalized = _re.sub(r"\| +", "| ", _re.sub(r" +\|", " |", harness_catalog_text))
 for phrase in [
     "Claude permissions/hooks",
     "Codex event hooks",
@@ -1522,10 +1526,11 @@ for phrase in [
     "command examples in authored docs require",
     "## Harness Engineering Matrix",
     "## Agent-first Engineering Matrix",
-    "| Required Component | Current Surface | Status | Gap | Remediation |",
 ]:
     if phrase not in harness_catalog_text:
         fail(f"{rel(harness_catalog_path)} missing runtime readiness boundary phrase: {phrase}")
+if "| Required Component | Current Surface | Status | Gap | Remediation |" not in harness_catalog_normalized:
+    fail(f"{rel(harness_catalog_path)} missing runtime readiness boundary phrase: | Required Component | Current Surface | Status | Gap | Remediation |")
 validate_component_matrix(harness_catalog_text, "## Harness Engineering Matrix")
 validate_component_matrix(harness_catalog_text, "## Agent-first Engineering Matrix")
 for phrase in [

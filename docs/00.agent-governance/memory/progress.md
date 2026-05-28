@@ -8,6 +8,43 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-28 — Workspace skill expansion P0-16 (5 new repo-local skills)
+
+- **Date**: 2026-05-28
+- **Layer**: governance, skills, docs, validation
+- **Status**: complete
+- **Tags**: #governance #skills #sdd #harness #p0-16
+
+#### Progress
+
+- Created 5 new repo-local skills under `.claude/skills/`:
+  - `requirements-to-design/skill.md` — PRD→ARD/ADR traceability and coverage matrix
+  - `execution-plan/skill.md` — design artifact to plan transformation
+  - `task-breakdown/skill.md` — plan to agent-executable task unit decomposition
+  - `ops-runbook/skill.md` — bootstrap, recovery, deployment, and incident runbooks
+  - `knowledge-map/skill.md` — governance index maintenance and stale-link detection
+- Updated `docs/00.agent-governance/harness-catalog.md` Skills table with 5 new entries.
+- Updated `docs/00.agent-governance/harness-catalog.md` Task-to-Skill Routing table
+  with 3 new SDD lifecycle rows (SDD lifecycle traceability, Operations runbook authoring,
+  Governance index maintenance).
+- Fixed `scripts/validate-repo-quality-gates.sh` pipe-table normalization to handle
+  markdownlint auto-padded table headers (prevents future whitespace-induced false failures).
+- Created plan artifact: `docs/04.execution/plans/2026-05-28-workspace-skill-expansion.md`
+- Created task artifact: `docs/04.execution/tasks/2026-05-28-workspace-skill-expansion.md`
+- Deferred: Compose Stack Agent (Docker Compose scope belongs to external-services workspace),
+  Policy Gate Agent (consolidated into workspace-harness-audit; OPA/Conftest P3).
+
+#### Verification
+
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS
+- All 5 skill files exist on disk.
+
+#### Follow-up
+
+- P3-01: Install conftest; enable CI enforcement for `validate-policy-gates.sh`.
+- P3-02: Start hy-home.docker gateway, rerun `verify-ingress-tls.sh` with `CHECK_TRAEFIK_443=true`.
+- P3-03: After human approval, run `kubectl diff -k gitops/clusters/local` and ArgoCD sync.
+
 ### 2026-05-26 — Workspace-wide P0 audit overlay (VAL-SPC-006-059)
 
 - **Date**: 2026-05-26
