@@ -40,13 +40,8 @@ If yes, please describe the impact and migration path.
 
 Describe the manual verification or automated tests conducted.
 
-- [ ] Relevant `pre-commit` hooks passed
-- [ ] `bash scripts/validate-repo-quality-gates.sh .` successful (if docs, workflows, scripts, or governance changed)
-- [ ] `bash infrastructure/tests/verify-contracts-static.sh` successful (if GitOps contracts or manifests changed)
-- [ ] `bash scripts/validate-gitops-structure.sh` successful (if GitOps assets changed)
-- [ ] `bash scripts/validate-k8s-manifests.sh .` successful (if manifests changed)
-- [ ] `bash scripts/check-secret-handling.sh .` successful (if manifests or secret wiring changed)
-- [ ] `bash scripts/validate-policy-gates.sh .` successful (if GitOps policies or OPA rules changed)
+- [ ] Relevant `pre-commit` hooks passed locally
+- [ ] GitHub CI quality gates (`branch-policy`, `repo-quality-static`, `manifest-static`) passed
 - [ ] ArgoCD/GitOps impact reviewed (if applicable)
 - [ ] Workflow path filters and job ownership reviewed (if `.github` automation changed)
 - [ ] Coverage policy reviewed: 90% target for future testable application code where applicable, or validation-matrix coverage for Bash/YAML/Markdown infrastructure changes

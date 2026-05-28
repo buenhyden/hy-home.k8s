@@ -43,8 +43,8 @@ CI 실패를 사전에 예방할 수 있다.
 
 ### 1. 로컬 실행 — 커밋 전 필수 검증
 
-다음 명령들은 로컬에서 완전히 재현 가능하며, GitHub Actions의 `pre-commit`,
-`repo-quality-static`, `manifest-static`, `shell-static` job과 동일한 검사를 수행한다.
+로컬 개발 환경에서는 **빠른 피드백**을 위해 `pre-commit` 기반의 린트와 문법 검사만을 필수로 수행한다.
+구조 검증, 의존성 점검 등의 무거운 검사는 GitHub Actions CI가 전담하여 중복 실행을 방지한다.
 
 #### 1-1. pre-commit 전체 실행
 
@@ -61,57 +61,16 @@ check-dependabot, shellcheck, shfmt, actionlint, kube-linter, hadolint, check-js
 pre-commit run --files <path/to/file>
 ```
 
-#### 1-2. 저장소 품질 게이트
+#### 1-2. 디버깅 및 CI 스크립트 (선택 사항)
+
+무거운 구조/매니페스트 검사는 GitHub Actions CI에서 수행된다. 로컬에서 CI 실패를 디버깅하거나 명시적으로 검증이 필요할 때만 아래의 스크립트들을 활용한다.
 
 ```bash
 bash scripts/validate-repo-quality-gates.sh .
-```
-
-검사 항목: 문서 템플릿 준수, README Link Basis/Related Documents, 훅 배선,
-scripts 인벤토리, LLM Wiki 인덱스 최신성
-
-#### 1-3. GitOps 구조 검증
-
-```bash
 bash scripts/validate-gitops-structure.sh
-```
-
-검사 항목: ArgoCD 루트 앱, Kustomization 구조, 리소스 완성도
-
-#### 1-4. Kubernetes 매니페스트 문법 검증
-
-```bash
 bash scripts/validate-k8s-manifests.sh .
-```
-
-검사 항목: gitops/, infrastructure/, examples/, traefik/ YAML 문법
-
-#### 1-5. 시크릿 핸들링 검증
-
-```bash
 bash scripts/check-secret-handling.sh .
-```
-
-검사 항목: plaintext Kubernetes Secret 패턴 스캔
-
-#### 1-6. 정책 게이트 검증
-
-```bash
 bash scripts/validate-policy-gates.sh .
-```
-
-검사 항목: Conftest/OPA 정책 또는 built-in fallback 검증
-
-#### 1-7. LLM Wiki 인덱스 최신성 확인
-
-```bash
-bash scripts/generate-llm-wiki-index.sh --check
-```
-
-인덱스 재생성 (변경 시):
-
-```bash
-bash scripts/generate-llm-wiki-index.sh
 ```
 
 #### 1-8. Shell 문법 검사 (단일 파일)
@@ -181,33 +140,15 @@ bash scripts/check-secret-handling.sh .
 bash scripts/validate-policy-gates.sh .
 ```
 
-### 4. 권장 커밋 전 체크리스트
+### 4. 커밋 전 로컬 체크리스트
 
-문서 변경 시:
-
-```bash
-pre-commit run --all-files
-bash scripts/validate-repo-quality-gates.sh .
-```
-
-GitOps/인프라 변경 시:
+모든 변경 사항 발생 시:
 
 ```bash
 pre-commit run --all-files
-bash scripts/validate-repo-quality-gates.sh .
-bash scripts/validate-gitops-structure.sh
-bash scripts/validate-k8s-manifests.sh .
-bash scripts/check-secret-handling.sh .
-bash scripts/validate-policy-gates.sh .
-bash scripts/render-platform-chart-kinds.sh .
 ```
 
-Shell 스크립트 변경 시:
-
-```bash
-bash -n <변경된 .sh 파일>
-pre-commit run --files <변경된 .sh 파일>
-```
+로컬에서는 `pre-commit`만 통과하면 PR을 생성할 수 있으며, 통합 및 정책 게이트 검증은 GitHub CI에 위임한다.
 
 ## Common Pitfalls
 

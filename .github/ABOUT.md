@@ -25,13 +25,13 @@ It is a map and routing surface, not the policy source of truth.
 - `ci.yml` is the required QA gate for pushes and pull requests targeting the repository's canonical integration branch, with manual reruns through `workflow_dispatch`.
 - `generate-changelog.yml` creates release-evidence artifacts for version tags. It does not commit, push, or publish.
 - `labeler.yml`, `greetings.yml`, and `stale.yml` are repository maintenance automations, not QA gates.
-- Defensive overlap between CI jobs is intentional QA coverage, not prose duplication.
+- Clear separation of concerns is maintained: Local environment handles fast pre-commit linting and formatting, while GitHub CI handles heavy structural validation, template rendering, and policy gates. Redundant execution is avoided where possible.
 
 ## Workflow Responsibility Matrix
 
 | Workflow | Role | Trigger / scope | Required evidence | Boundary |
 | --- | --- | --- | --- | --- |
-| `ci.yml` | Required QA gate for branch policy, repo-quality, manifest, secret, and shell checks. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` aggregates `branch-policy`, `changes`, `pre-commit`, `repo-quality-static`, `manifest-static`, and `shell-static`. | No deploy CD, direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
+| `ci.yml` | Required QA gate for branch policy, repo-quality, manifest, secret checks. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` aggregates `branch-policy`, `changes`, `pre-commit`, `repo-quality-static`, and `manifest-static`. | No deploy CD, direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
 | `generate-changelog.yml` | Release-evidence artifact generator. | Runs for release tag evidence and manual release support. | Produces `CHANGELOG.md` artifact for review. | Does not commit, push, publish, or mutate repository history. |
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
 | `labeler.yml` | Repository maintenance labeling automation. | Runs on pull request path changes. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |

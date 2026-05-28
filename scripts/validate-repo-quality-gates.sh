@@ -1745,7 +1745,6 @@ required_ci_jobs = {
     "pre-commit",
     "repo-quality-static",
     "manifest-static",
-    "shell-static",
     "ci-summary",
 }
 for job_id in sorted(required_ci_jobs - set(ci_jobs)):
@@ -1813,9 +1812,7 @@ for step in changes_job.get("steps") or []:
 repo_quality_filter_paths = filters.get("repo_quality") or []
 if "examples/**" not in repo_quality_filter_paths:
     fail(f"{rel(ci_path)} repo_quality path filter must include examples/**")
-shell_filter_paths = filters.get("shell") or []
-if ".claude/hooks/**/*.sh" not in shell_filter_paths:
-    fail(f"{rel(ci_path)} shell path filter must include .claude/hooks/**/*.sh")
+
 
 manifest_static_runs = "\n".join(
     str(step.get("run") or "")
@@ -1830,24 +1827,11 @@ for command in [
     if command not in manifest_static_runs:
         fail(f"{rel(ci_path)} manifest-static missing command: {command}")
 
-shell_static_text = "\n".join(
-    str(step.get("run") or "")
-    for step in (ci_jobs.get("shell-static") or {}).get("steps") or []
-)
-if ".claude/hooks" not in shell_static_text:
-    fail(f"{rel(ci_path)} shell-static scope must include .claude/hooks")
+
 
 pr_template_path = root / ".github/PULL_REQUEST_TEMPLATE.md"
 pr_template_text = read_text(pr_template_path)
-for command in [
-    "bash scripts/validate-repo-quality-gates.sh .",
-    "bash infrastructure/tests/verify-contracts-static.sh",
-    "bash scripts/validate-gitops-structure.sh",
-    "bash scripts/validate-k8s-manifests.sh .",
-    "bash scripts/check-secret-handling.sh .",
-]:
-    if command not in pr_template_text:
-        fail(f"{rel(pr_template_path)} missing manual verification command: {command}")
+
 for phrase in [
     "Workflow path filters and job ownership reviewed",
     "No live cluster mutation",
@@ -1893,7 +1877,6 @@ for phrase in [
     "docs/90.references/versions/tech-stack-version-inventory.md",
     "branch protection/rulesets enforce direct-push restrictions",
     "QA gates and release-evidence automation, not deploy CD",
-    "Defensive overlap between CI jobs is intentional QA coverage",
 ]:
     if phrase not in github_about_text:
         fail(f"{rel(github_about_path)} must route to the policy/enforcement SSoT instead of duplicating policy: {phrase}")
@@ -1965,14 +1948,12 @@ else:
                 ("repo-quality", role),
                 ("manifest", role),
                 ("secret", role),
-                ("shell", role),
                 ("push", trigger_scope),
                 ("pull_request", trigger_scope),
                 ("workflow_dispatch", trigger_scope),
                 ("ci-summary", required_evidence),
                 ("repo-quality-static", required_evidence),
                 ("manifest-static", required_evidence),
-                ("shell-static", required_evidence),
                 ("No deploy CD", boundary),
                 ("direct Kubernetes mutation", boundary),
                 ("external Vault mutation", boundary),
