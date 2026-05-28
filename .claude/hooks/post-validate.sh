@@ -79,6 +79,8 @@ declare -a WORKFLOW_STYLE_FILES=()
 declare -a DOCKER_STYLE_FILES=()
 
 for path in "${CHANGED_PATHS[@]}"; do
+  # Skip files outside the workspace root (absolute paths not under PROJECT_DIR)
+  [[ "$path" = /* && "$path" != "$PROJECT_DIR/"* ]] && continue
   if [[ -f "$path" ]]; then
     FORMAT_FILES+=("$path")
     case "$path" in

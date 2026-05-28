@@ -4349,6 +4349,19 @@ Harness layers L1–L6 were incomplete: no `settings.json`, no agent files, no h
 - Model policy standardized: agents use sonnet; supervisor uses opus.
 - Legacy source-directory references removed from gateway and protocol files.
 
+**P5 (complete, 2026-05-29) — Docs Governance Consistency (spec-007):**
+
+- Template: `docs/99.templates/runbook.template.md` — added `## Runbook Type` section.
+- Legacy removed: `guides/0005-new-app-gitops-onboarding-guide.md`, `runbooks/0006-new-app-onboarding-runbook.md`, `plans/2026-05-24-workspace-harness-gap-analysis.md`, `tasks/2026-05-24-workspace-harness-gap-analysis.md`.
+- Reference moved: `docs/90.references/audits/2026-05-24-workspace-harness-gap-analysis.md` created as thin reference wrapper.
+- Policies 7/7: `## AI Agent Policy Section (If Applicable)` added to all 7 ops policy files.
+- Runbooks 10/10: `## Runbook Type` standardized + `## Agent Operations (If Applicable)` added to all 10 active runbooks.
+- Guides: H2 orphan sections demoted to H3 under `## Step-by-step Instructions` in 0002, 0006, 0007, 0008.
+- Execution: `status: complete` → `status: done` in 12 files; `## Agent Rollout & Evaluation Gates` added to 4 plans.
+- CI: `bash scripts/validate-policy-gates.sh .` added to `manifest-static` job.
+- Hook: `.claude/hooks/post-validate.sh` scoped to workspace-local files only (skips absolute paths outside PROJECT_DIR).
+- Spec/Plan/Task: `docs/03.specs/007-docs-governance-consistency/spec.md`, `docs/04.execution/plans/2026-05-28-docs-governance-consistency.md`, `docs/04.execution/tasks/2026-05-28-docs-governance-consistency.md` created.
+
 ### Prevention
 
 - Run `postflight-checklist.md §6 Docs 3 Rules` before every PR.
