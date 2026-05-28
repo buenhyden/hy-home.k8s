@@ -112,6 +112,10 @@ CHECK_TRAEFIK_443=true ./infrastructure/tests/verify-ingress-tls.sh
   4. `verify-contracts-static.sh` 기준 재평가
 - false positive는 예외 승인 로그를 남기고, false negative는 즉시 패치 배포
 
+## Agent Rollout & Evaluation Gates (If Applicable)
+
+N/A — 이 계획은 인프라 및 문서 작업을 다루며 AI Agent 모델/프롬프트 배포에 해당하지 않는다.
+
 ## Completion Criteria
 
 - [x] 코드/문서 변경이 계약과 일치

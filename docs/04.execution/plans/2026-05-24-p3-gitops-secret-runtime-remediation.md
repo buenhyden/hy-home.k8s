@@ -1,7 +1,7 @@
 ---
 title: 'P3 GitOps Secret Runtime Remediation Plan'
 type: plan
-status: complete
+status: done
 owner: platform
 updated: 2026-05-24
 ---

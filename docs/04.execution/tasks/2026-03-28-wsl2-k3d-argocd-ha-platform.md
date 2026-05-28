@@ -1,7 +1,7 @@
 ---
 title: 'Task: WSL2 k3d/k3s ArgoCD HA Platform Execution'
 type: task
-status: complete
+status: done
 owner: platform-team
 updated: 2026-05-22
 ---

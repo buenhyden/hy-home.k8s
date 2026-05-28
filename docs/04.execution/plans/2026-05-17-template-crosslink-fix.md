@@ -1,7 +1,7 @@
 ---
 title: 'Template Cross-link Fix Implementation Plan'
 type: plan
-status: complete
+status: done
 owner: 'platform-team'
 updated: 2026-05-21
 ---
@@ -133,6 +133,10 @@ rewritten by the author for the final README location.
 | 표시 텍스트 수정 중 href 실수로 변경 | High   | Edit 도구의 old_string/new_string을 표시 텍스트만 정확히 타겟팅 |
 | 파일 수가 많아 일부 누락             | Medium | Task 17 통합 검증 스캔으로 전수 확인                            |
 | hook이 다른 품질 게이트 위반 감지    | Low    | 각 Task 완료 후 즉시 검증 명령 실행                             |
+
+## Agent Rollout & Evaluation Gates (If Applicable)
+
+N/A — 이 계획은 인프라 및 문서 작업을 다루며 AI Agent 모델/프롬프트 배포에 해당하지 않는다.
 
 ## Completion Criteria
 

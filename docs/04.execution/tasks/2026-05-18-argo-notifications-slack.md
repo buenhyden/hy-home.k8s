@@ -1,7 +1,7 @@
 ---
 title: 'Task: Argo Notifications Slack Backfill'
 type: task
-status: complete
+status: done
 owner: platform-team
 updated: 2026-05-22
 ---

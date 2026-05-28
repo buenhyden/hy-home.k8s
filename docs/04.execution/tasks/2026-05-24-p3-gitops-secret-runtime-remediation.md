@@ -1,7 +1,7 @@
 ---
 title: 'Task: P3 GitOps Secret Runtime Remediation'
 type: task
-status: complete
+status: done
 owner: platform
 updated: 2026-05-24
 ---

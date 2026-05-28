@@ -1,7 +1,7 @@
 ---
 title: 'Argo Rollouts Progressive Delivery Backfill Plan'
 type: plan
-status: complete
+status: done
 owner: platform-team
 updated: 2026-05-21
 ---

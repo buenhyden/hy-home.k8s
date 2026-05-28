@@ -1,7 +1,7 @@
 ---
 title: 'Platform Expansion Implementation Plan'
 type: plan
-status: complete
+status: done
 owner: platform-team
 updated: 2026-05-21
 ---
@@ -86,6 +86,10 @@ updated: 2026-05-21
 | rootCA Key 파일 경로 불일치           | Medium | bootstrap에서 `require_file` 검증 추가             |
 | Kiali Prometheus 연결 실패            | Medium | egress NetworkPolicy cidr 및 infra_net 가용성 확인 |
 | Dashboard cluster-admin 권한 과다     | Low    | 로컬 전용 명시, 프로덕션 배포 금지 문서화          |
+
+## Agent Rollout & Evaluation Gates (If Applicable)
+
+N/A — 이 계획은 인프라 및 문서 작업을 다루며 AI Agent 모델/프롬프트 배포에 해당하지 않는다.
 
 ## Completion Criteria
 

@@ -78,6 +78,10 @@ ls .claude/skills/ops-runbook/skill.md
 ls .claude/skills/knowledge-map/skill.md
 ```
 
+## Agent Rollout & Evaluation Gates (If Applicable)
+
+N/A — 이 계획은 인프라 및 문서 작업을 다루며 AI Agent 모델/프롬프트 배포에 해당하지 않는다.
+
 ## Completion Criteria
 
 - 5개 스킬 파일이 `.claude/skills/` 아래 각각 `skill.md`로 존재한다.
