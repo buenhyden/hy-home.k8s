@@ -53,7 +53,7 @@ pre-commit run --all-files
 ```
 
 포함 훅: commitizen, gitleaks, detect-secrets, markdownlint-cli2,
-shellcheck, shfmt, actionlint, kube-linter, hadolint, check-jsonschema
+check-dependabot, shellcheck, shfmt, actionlint, kube-linter, hadolint, check-jsonschema
 
 단일 파일 격리 실행 (오류 발생 시):
 
@@ -136,7 +136,7 @@ bash -n .claude/hooks/<hook-name>.sh
 #### 2-2. generate-changelog (`.github/workflows/generate-changelog.yml`)
 
 - **트리거**: `v*.*.*` 태그 푸시 시
-- **역할**: git-cliff로 CHANGELOG 자동 생성 및 커밋
+- **역할**: git-cliff로 CHANGELOG 자동 생성 및 아티팩트 업로드
 - **로컬 대안**: `git cliff --output CHANGELOG.md` (git-cliff 설치 시 로컬 미리보기 가능)
 
 #### 2-3. labeler (`.github/workflows/labeler.yml`)
@@ -148,7 +148,7 @@ bash -n .claude/hooks/<hook-name>.sh
 #### 2-4. stale (`.github/workflows/stale.yml`)
 
 - **트리거**: 매일 01:30 UTC (cron)
-- **역할**: 90일 이상 비활성 이슈/PR에 `stale` 라벨, 14일 후 자동 닫기
+- **역할**: 30일(이슈)/45일(PR) 비활성 시 `stale` 라벨 부착, 이후 5일(이슈)/10일(PR) 경과 시 자동 닫기
 - **로컬 대안**: 없음 (GitHub API 필요)
 
 #### 2-5. greetings (`.github/workflows/greetings.yml`)
@@ -199,6 +199,7 @@ bash scripts/validate-gitops-structure.sh
 bash scripts/validate-k8s-manifests.sh .
 bash scripts/check-secret-handling.sh .
 bash scripts/validate-policy-gates.sh .
+bash scripts/render-platform-chart-kinds.sh .
 ```
 
 Shell 스크립트 변경 시:
