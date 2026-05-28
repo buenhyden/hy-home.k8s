@@ -1716,6 +1716,24 @@ for phrase in [
     if phrase not in quality_standards_text:
         fail(f"{rel(quality_standards_path)} missing coverage applicability phrase: {phrase}")
 
+qa_scope_path = root / "docs/00.agent-governance/scopes/qa.md"
+qa_scope_text = read_text(qa_scope_path)
+for phrase in [
+    "90% coverage",
+    "validation-matrix coverage",
+]:
+    if phrase not in qa_scope_text:
+        fail(f"{rel(qa_scope_path)} missing coverage applicability phrase: {phrase}")
+
+ci_cd_qa_guide_path = root / "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md"
+ci_cd_qa_guide_text = read_text(ci_cd_qa_guide_path)
+for phrase in [
+    "90% coverage",
+    "validation-matrix",
+]:
+    if phrase not in ci_cd_qa_guide_text:
+        fail(f"{rel(ci_cd_qa_guide_path)} missing coverage applicability phrase: {phrase}")
+
 ci_path = root / ".github/workflows/ci.yml"
 try:
     ci_data = load_yaml(ci_path)

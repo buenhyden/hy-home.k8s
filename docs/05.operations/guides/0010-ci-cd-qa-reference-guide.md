@@ -149,6 +149,7 @@ pre-commit run --all-files
 ```
 
 로컬에서는 `pre-commit`만 통과하면 PR을 생성할 수 있으며, 통합 및 정책 게이트 검증은 GitHub CI에 위임한다.
+또한 신규 애플리케이션 코드는 90% coverage 유지를, 인프라 변경 시에는 validation-matrix 커버리지를 준수해야 한다.
 
 ## Common Pitfalls
 
