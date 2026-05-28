@@ -2,7 +2,7 @@
 title: 'Platform Expansion: cert-manager, Headlamp, Istio/Kiali Product Requirements'
 type: prd
 status: active
-owner: platform-team
+owner: platform
 updated: 2026-05-17
 ---
 

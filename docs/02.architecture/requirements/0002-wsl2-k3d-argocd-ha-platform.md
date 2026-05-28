@@ -2,7 +2,7 @@
 title: 'WSL2 k3d/k3s ArgoCD HA Platform Architecture Reference Document'
 type: ard
 status: draft
-owner: platform-team
+owner: platform
 updated: 2026-05-22
 ---
 

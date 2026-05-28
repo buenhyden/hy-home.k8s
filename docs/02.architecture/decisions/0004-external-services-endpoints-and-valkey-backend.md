@@ -2,7 +2,7 @@
 title: 'ADR-0004: External Service Access Model and ArgoCD Valkey Backend'
 type: adr
 status: accepted
-owner: platform-team
+owner: platform
 updated: 2026-05-18
 ---
 

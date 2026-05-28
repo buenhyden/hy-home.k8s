@@ -2,7 +2,7 @@
 title: 'ADR-0010: Headlamp Replaces Kubernetes Dashboard'
 type: adr
 status: accepted
-owner: platform-team
+owner: platform
 updated: 2026-05-21
 ---
 

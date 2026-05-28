@@ -2,7 +2,7 @@
 title: 'Platform Expansion Technical Specification'
 type: spec
 status: active
-owner: platform-team
+owner: platform
 updated: 2026-05-22
 ---
 

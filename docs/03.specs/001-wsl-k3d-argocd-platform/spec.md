@@ -2,7 +2,7 @@
 title: 'WSL k3d/k3s ArgoCD Platform Technical Specification'
 type: spec
 status: historical
-owner: platform-team
+owner: platform
 updated: 2026-05-22
 ---
 

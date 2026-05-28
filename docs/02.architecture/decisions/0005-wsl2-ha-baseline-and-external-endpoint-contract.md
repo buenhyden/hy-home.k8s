@@ -2,7 +2,7 @@
 title: 'ADR-0005: WSL2 HA Baseline and External Endpoint Contract'
 type: adr
 status: accepted
-owner: platform-team
+owner: platform
 updated: 2026-05-18
 ---
 

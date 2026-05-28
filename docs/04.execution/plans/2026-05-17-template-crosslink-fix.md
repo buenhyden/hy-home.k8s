@@ -2,7 +2,7 @@
 title: 'Template Cross-link Fix Implementation Plan'
 type: plan
 status: done
-owner: 'platform-team'
+owner: platform
 updated: 2026-05-21
 ---
 
@@ -94,24 +94,24 @@ updated: 2026-05-21
 
 ## Template Coverage Matrix
 
-| Template | Target scope | Result |
-| --- | --- | --- |
-| `prd.template.md` | `docs/01.requirements/` | Already target-relative |
-| `ard.template.md` | `docs/02.architecture/requirements/` | Fixed before final integration |
-| `adr.template.md` | `docs/02.architecture/decisions/` | Fixed before final integration |
-| `spec.template.md` | `docs/03.specs/<feature-id>/` | Already target-relative |
-| `api-spec.template.md` | `docs/03.specs/<feature-id>/` | Already target-relative |
-| `agent-design.template.md` | `docs/03.specs/<feature-id>/` | Already target-relative |
-| `data-model.template.md` | `docs/03.specs/<feature-id>/` | Already target-relative |
-| `tests.template.md` | `docs/03.specs/<feature-id>/` | Already target-relative |
-| `plan.template.md` | `docs/04.execution/plans/` | Fixed before final integration |
-| `task.template.md` | `docs/04.execution/tasks/` | Fixed before final integration |
-| `guide.template.md` | `docs/05.operations/guides/` | Fixed before final integration |
-| `operation.template.md` | `docs/05.operations/policies/` | Fixed in final integration |
-| `runbook.template.md` | `docs/05.operations/runbooks/` | Fixed before final integration |
-| `incident.template.md` | `docs/05.operations/incidents/YYYY/` | Fixed in final integration |
-| `postmortem.template.md` | `docs/05.operations/incidents/postmortems/YYYY/` | Fixed in final integration |
-| `reference.template.md` | `docs/90.references/<category>/` | Fixed in final integration |
+| Template                   | Target scope                                     | Result                         |
+| -------------------------- | ------------------------------------------------ | ------------------------------ |
+| `prd.template.md`          | `docs/01.requirements/`                          | Already target-relative        |
+| `ard.template.md`          | `docs/02.architecture/requirements/`             | Fixed before final integration |
+| `adr.template.md`          | `docs/02.architecture/decisions/`                | Fixed before final integration |
+| `spec.template.md`         | `docs/03.specs/<feature-id>/`                    | Already target-relative        |
+| `api-spec.template.md`     | `docs/03.specs/<feature-id>/`                    | Already target-relative        |
+| `agent-design.template.md` | `docs/03.specs/<feature-id>/`                    | Already target-relative        |
+| `data-model.template.md`   | `docs/03.specs/<feature-id>/`                    | Already target-relative        |
+| `tests.template.md`        | `docs/03.specs/<feature-id>/`                    | Already target-relative        |
+| `plan.template.md`         | `docs/04.execution/plans/`                       | Fixed before final integration |
+| `task.template.md`         | `docs/04.execution/tasks/`                       | Fixed before final integration |
+| `guide.template.md`        | `docs/05.operations/guides/`                     | Fixed before final integration |
+| `operation.template.md`    | `docs/05.operations/policies/`                   | Fixed in final integration     |
+| `runbook.template.md`      | `docs/05.operations/runbooks/`                   | Fixed before final integration |
+| `incident.template.md`     | `docs/05.operations/incidents/YYYY/`             | Fixed in final integration     |
+| `postmortem.template.md`   | `docs/05.operations/incidents/postmortems/YYYY/` | Fixed in final integration     |
+| `reference.template.md`    | `docs/90.references/<category>/`                 | Fixed in final integration     |
 
 `readme.template.md` has no fixed Target because README files live at multiple
 depths. Its example links must either resolve relative to the template file or be
@@ -119,12 +119,12 @@ rewritten by the author for the final README location.
 
 ## Verification Plan
 
-| ID          | Level      | Description                       | Command / How to Run                                                                                                     | Pass Criteria                                                                                |
-| ----------- | ---------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
-| VAL-PLN-001 | Structural | 템플릿 경로 패턴 확인             | `grep -n "Related Documents" -A 6 docs/99.templates/adr.template.md`                                                     | `../../01.requirements/`, `../requirements/`, `../../03.specs/`, `../../04.execution/plans/` |
-| VAL-PLN-002 | Structural | 생성 파일 불일치 스캔             | fenced code block을 제외하고 backtick code label과 href를 직접 비교                                                     | mismatch 0건                                                                                 |
-| VAL-PLN-003 | Structural | 내부 Markdown 링크 존재 확인      | fenced code block을 제외하고 `README.md`와 `docs/**/*.md`의 상대 Markdown 링크 target을 확인                              | missing target 0건                                                                           |
-| VAL-PLN-004 | Content    | 실제 파일 존재 확인               | `ls docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md docs/03.specs/001-wsl-k3d-argocd-platform/spec.md` | 두 파일 모두 존재                                                                            |
+| ID          | Level      | Description                  | Command / How to Run                                                                                                     | Pass Criteria                                                                                |
+| ----------- | ---------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| VAL-PLN-001 | Structural | 템플릿 경로 패턴 확인        | `grep -n "Related Documents" -A 6 docs/99.templates/adr.template.md`                                                     | `../../01.requirements/`, `../requirements/`, `../../03.specs/`, `../../04.execution/plans/` |
+| VAL-PLN-002 | Structural | 생성 파일 불일치 스캔        | fenced code block을 제외하고 backtick code label과 href를 직접 비교                                                      | mismatch 0건                                                                                 |
+| VAL-PLN-003 | Structural | 내부 Markdown 링크 존재 확인 | fenced code block을 제외하고 `README.md`와 `docs/**/*.md`의 상대 Markdown 링크 target을 확인                             | missing target 0건                                                                           |
+| VAL-PLN-004 | Content    | 실제 파일 존재 확인          | `ls docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md docs/03.specs/001-wsl-k3d-argocd-platform/spec.md` | 두 파일 모두 존재                                                                            |
 
 ## Risks & Mitigations
 

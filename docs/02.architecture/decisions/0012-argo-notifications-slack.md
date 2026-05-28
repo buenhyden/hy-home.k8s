@@ -2,7 +2,7 @@
 title: 'ADR-0012: Argo Notifications with Slack Webhook'
 type: adr
 status: accepted
-owner: platform-team
+owner: platform
 updated: 2026-05-18
 ---
 

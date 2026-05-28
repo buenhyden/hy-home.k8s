@@ -8,6 +8,32 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-29 — Docs governance consistency residual fix (owner normalization, CI/CD guide, template audit)
+
+- **Date**: 2026-05-29
+- **Layer**: docs, governance, ci
+- **Status**: complete
+- **Tags**: #governance #docs #consistency #ci-cd
+
+#### Progress
+
+- Normalized `owner: platform-team` → `owner: platform` across 37 files in stages 01–04 (`docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`).
+- Fixed one-off `owner: 'platform-team'` (quoted) in `docs/04.execution/plans/2026-05-17-template-crosslink-fix.md`.
+- Created missing task file: `docs/04.execution/tasks/2026-05-17-template-crosslink-fix.md` (retrospective; the plan was done 2026-05-21).
+- Audited all 23 `docs/99.templates/*.md` files: all structural templates have 5-field frontmatter + `## Related Documents`; `memory.template.md` and `progress.template.md` intentionally use append-style without frontmatter — no changes needed.
+- Created `docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md` — CI/CD local-vs-GitHub Actions boundary reference guide.
+- Updated `docs/05.operations/guides/README.md` structure tree and document index table.
+- Updated `docs/00.agent-governance/rules/documentation-protocol.md` with canonical `owner: platform` rule.
+
+#### Verification
+
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS
+- `grep -r "^owner: platform-team" docs/ | wc -l` → 0
+
+#### Follow-up
+
+- None. PLN-G final validation pass completes this work.
+
 ### 2026-05-28 — Workspace skill expansion P0-16 (5 new repo-local skills)
 
 - **Date**: 2026-05-28

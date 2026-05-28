@@ -2,7 +2,7 @@
 title: 'ADR-0011: Argo Rollouts for Progressive Delivery'
 type: adr
 status: accepted
-owner: platform-team
+owner: platform
 updated: 2026-05-18
 ---
 

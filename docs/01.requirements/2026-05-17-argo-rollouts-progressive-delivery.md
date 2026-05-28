@@ -2,7 +2,7 @@
 title: 'Argo Rollouts Progressive Delivery Product Requirements'
 type: prd
 status: active
-owner: platform-team
+owner: platform
 updated: 2026-05-18
 ---
 

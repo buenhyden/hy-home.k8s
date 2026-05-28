@@ -53,6 +53,7 @@ docs/05.operations/guides/
 ├── 0007-k8s-observability-bootstrap-guide.md       # 관측성 스택 부트스트랩 가이드
 ├── 0008-github-app-gitops-onboarding-guide.md      # GitHub 앱 GitOps 온보딩 가이드
 ├── 0009-llm-wiki-curation-guide.md                 # LLM Wiki curation 가이드
+├── 0010-ci-cd-qa-reference-guide.md                # CI/CD & QA 로컬-vs-GitHub 참조 가이드
 └── README.md                                       # This file
 ```
 
@@ -100,3 +101,4 @@ docs/05.operations/guides/
 | [`./0007-k8s-observability-bootstrap-guide.md`](./0007-k8s-observability-bootstrap-guide.md)   | k3d 클러스터 메트릭/로그 수집 관측성 스택 부트스트랩 가이드             | Active | 2026-05-09 |
 | [`./0008-github-app-gitops-onboarding-guide.md`](./0008-github-app-gitops-onboarding-guide.md) | GitHub 레포 기반 앱 GitOps 온보딩 (최소 템플릿 + active reference 구분) | Active | 2026-05-26 |
 | [`./0009-llm-wiki-curation-guide.md`](./0009-llm-wiki-curation-guide.md)                       | LLM Wiki generated index와 `wiki-curator` agent 사용 가이드             | Active | 2026-05-10 |
+| [`./0010-ci-cd-qa-reference-guide.md`](./0010-ci-cd-qa-reference-guide.md)                     | CI/CD QA 검증 로컬-vs-GitHub Actions 경계 참조 가이드                   | Active | 2026-05-29 |

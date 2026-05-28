@@ -2,7 +2,7 @@
 title: 'Argo Notifications Slack Backfill Plan'
 type: plan
 status: done
-owner: platform-team
+owner: platform
 updated: 2026-05-21
 ---
 
