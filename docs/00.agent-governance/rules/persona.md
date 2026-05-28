@@ -23,7 +23,7 @@ Persona routing for layer-based execution.
 | Infra Engineer | infra | `docs/05.operations/policies/`, `docs/05.operations/runbooks/` |
 | Operations Engineer | ops | `docs/05.operations/policies/`, `docs/05.operations/incidents/` |
 | Security Engineer | security | `docs/03.specs/`, `docs/05.operations/incidents/` |
-| QA Engineer | qa | `docs/04.execution/plans/`, `docs/04.execution/tasks/` |
+| QA Engineer | qa | `docs/04.execution/plans/`, `docs/04.execution/tasks/`, `docs/05.operations/incidents/` |
 | Technical Writer | docs | `docs/05.operations/guides/`, `docs/90.references/` |
 | Governance Steward | meta | `docs/00.agent-governance/` |
 

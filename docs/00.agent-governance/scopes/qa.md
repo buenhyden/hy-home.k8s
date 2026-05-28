@@ -13,6 +13,9 @@ Persona: QA Engineer
 - Define and execute verification paths for planned work.
 - Keep test evidence and defect records traceable.
 - Validate that delivered behavior matches stage artifacts.
+- Monitor and maintain QA/CI reference guides under `docs/05.operations/guides/`.
+- Reference `scripts/validate-*.sh` and `scripts/check-*.sh` as the primary repo-static QA execution surface.
+- Enforce `quality-standards.md` coverage policy when reviewing verification evidence.
 
 ## File Ownership
 
@@ -22,6 +25,7 @@ Persona: QA Engineer
 | `docs/04.execution/tasks/**`        | qa    | Task tracking artifacts                                |
 | `docs/05.operations/incidents/**`    | qa    | Defect and incident records (shared with security/ops) |
 | `infrastructure/tests/**` | qa    | Cluster verification test scripts (shared with ops)    |
+| `scripts/validate-*.sh`, `scripts/check-*.sh` | qa | Repo-static QA gate scripts (shared with ops/infra) |
 
 QA scope does **not** own `gitops/` manifests or `docs/00.agent-governance/` (meta scope).
 
@@ -36,3 +40,10 @@ Subagent dispatch: use Task tool only; never inline role definitions in prompts.
 - Test strategy is aligned to plan and task artifacts.
 - Regression coverage is explicitly documented.
 - Defects are recorded in the proper incident/task channels.
+
+## Related Documents
+
+- [Quality Standards](../rules/quality-standards.md)
+- [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
+- [Stage Authoring Matrix](../rules/stage-authoring-matrix.md)
+- [Persona Protocol](../rules/persona.md)

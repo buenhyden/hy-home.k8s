@@ -32,11 +32,13 @@ Execution-focused checklist index by taxonomy path.
 
 - [ ] Phases, risks, gates, and rollback strategy are documented.
 - [ ] Plan links to source specs and tasks.
+- [ ] Verification plan defines validation commands and pass criteria.
 
 ## `04.execution/tasks`
 
 - [ ] Each task references parent plan/spec.
 - [ ] Validation commands and evidence are attached.
+- [ ] Verification summary separates local, CI-only, and skipped evidence lanes.
 
 ## `05.operations/guides`
 
