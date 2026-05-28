@@ -10,7 +10,7 @@ updated: 2026-05-09
 
 ## Runbook Type
 
-`WSL2 k3d/k3s 운영 핫픽스 및 복구`
+`troubleshooting`
 
 ## Overview (KR)
 
@@ -369,6 +369,11 @@ argocd app set platform-external-services \
 - EndpointSlice or NetworkPolicy changes should be reverted through GitOps if the new IP mapping is wrong.
 - Docker-side Grafana auth changes must be reflected in the owning Docker repo before treating the fix as persistent.
 - Direct EndpointSlice apply/patch remains human-approved break-glass only and must be reconciled back into Git.
+
+## Agent Operations (If Applicable)
+
+이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
+단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
 
 ## Related Documents
 

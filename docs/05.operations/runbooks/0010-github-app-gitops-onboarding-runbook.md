@@ -10,7 +10,7 @@ updated: 2026-05-26
 
 ## Runbook Type
 
-`WSL2 k3d/k3s GitOps 앱 온보딩 (Rollout 패턴)`
+`onboarding`
 
 ## Overview (KR)
 

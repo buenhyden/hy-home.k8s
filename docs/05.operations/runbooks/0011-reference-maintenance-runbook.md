@@ -10,7 +10,7 @@ updated: 2026-05-17
 
 ## Runbook Type
 
-`documentation reference maintenance`
+`maintenance`
 
 ## Overview (KR)
 
@@ -142,6 +142,11 @@ git diff --check
 - [ ] If `wiki-index.md` is stale, update the generator or canonical owner links, then regenerate with `bash scripts/generate-llm-wiki-index.sh`.
 - [ ] If a README heading fails the touched-scope canonical check, rename the heading to `## Related Documents` and rerun validation.
 - [ ] If a version inventory value drifts from repo files, either correct the inventory or correct the repo-backed manifest/config in the same change.
+
+## Agent Operations (If Applicable)
+
+이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
+단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
 
 ## Related Documents
 

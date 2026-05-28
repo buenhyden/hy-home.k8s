@@ -10,7 +10,7 @@ updated: 2026-05-09
 
 ## Runbook Type
 
-`WSL2 k3d/k3s 운영 핫픽스 및 복구`
+`bootstrap`
 
 ## Overview (KR)
 
@@ -356,6 +356,11 @@ curl -s -G "http://172.18.0.13:3100/loki/api/v1/query" \
 | NodePort HTTP 000 (timeout)                | 파드 미기동 또는 k3d 재시작 중                     | 파드 Ready 대기 후 재시도                         |
 
 ---
+
+## Agent Operations (If Applicable)
+
+이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
+단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
 
 ## Related Documents
 

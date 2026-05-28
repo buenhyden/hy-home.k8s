@@ -10,7 +10,7 @@ updated: 2026-05-09
 
 ## Runbook Type
 
-`WSL2 k3d/k3s 운영 핫픽스`
+`recovery`
 
 ## Overview (KR)
 
@@ -180,6 +180,11 @@ kubectl -n platform delete endpointslice vault-external-1
 
 - 롤백 후 `verify-contracts-static.sh`와 `run-all.sh`를 재실행한다.
 - 동일 증상이 반복되면 Operations 예외 승인 절차를 따른다.
+
+## Agent Operations (If Applicable)
+
+이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
+단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
 
 ## Related Documents
 

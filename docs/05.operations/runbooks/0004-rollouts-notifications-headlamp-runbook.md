@@ -10,7 +10,7 @@ updated: 2026-05-09
 
 ## Runbook Type
 
-`WSL2 k3d/k3s 운영 핫픽스 및 부트스트랩`
+`bootstrap`
 
 ## Overview (KR)
 
@@ -188,6 +188,11 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 - Headlamp 404 → ingress-nginx 미시작 또는 TLS secret 미발급
 - Rollouts `CRD not found` → `installCRDs: true` 확인 또는 ArgoCD sync wave 순서 문제
 - Rollouts Dashboard 502 → dashboard Pod 미기동, service port 3100 확인
+
+## Agent Operations (If Applicable)
+
+이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
+단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
 
 ## Related Documents
 
