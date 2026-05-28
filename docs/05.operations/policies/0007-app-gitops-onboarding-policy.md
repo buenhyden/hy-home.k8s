@@ -20,9 +20,9 @@ updated: 2026-05-22
 이 정책은 현재 앱 온보딩의 기준 계약이다. 실행 절차는
 [GitHub 앱 GitOps 온보딩 가이드](../guides/0008-github-app-gitops-onboarding-guide.md)와
 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)이 담당한다.
-기존 범용 온보딩 문서인 [0005 가이드](../guides/0005-new-app-gitops-onboarding-guide.md)와
-[0006 런북](../runbooks/0006-new-app-onboarding-runbook.md)은 역사적 참고 문서이며,
-이 정책의 Rollout 및 고정 이미지 태그 기준을 대체하지 않는다.
+기존 범용 온보딩 문서(0005 가이드, 0006 런북)는 삭제됐으며
+[0008 가이드](../guides/0008-github-app-gitops-onboarding-guide.md)와
+[0010 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)으로 대체됐다.
 
 ## Purpose
 
@@ -161,14 +161,14 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 
 새 앱 온보딩은 아래 정책 게이트를 만족해야 한다. 실행 순서와 체크리스트는 [GitHub 앱 GitOps 온보딩 런북](../runbooks/0010-github-app-gitops-onboarding-runbook.md)이 소유한다.
 
-| Policy Gate | Required Evidence | Runbook Owner |
-| --- | --- | --- |
-| Repository/package | GitHub CI가 ghcr.io 이미지를 발행하고 패키지 가시성이 홈랩 계약에 맞음 | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
-| GitOps manifests | `rollout.yaml`, `service.yaml`, `ingress.yaml`, `analysis-template.yaml`, `kustomization.yaml`이 필수 계약을 만족함 | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
-| Network/TLS | `http-` port naming, `ingressClassName=nginx`, `mkcert-ca-issuer`, nip.io hostname이 적용됨 | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
-| External routing | 외부 Traefik dynamic config가 별도 Traefik repo에서 리뷰되고 k8s Ingress 계약과 일치함 | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
-| Secret handling | 필요한 경우 Vault/ESO를 사용하고 plaintext Kubernetes Secret manifest가 없음 | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
-| Runtime health | ArgoCD Application, Rollout, Pod readiness, Ingress/TLS 접근 증적이 남음 | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
+| Policy Gate        | Required Evidence                                                                                                   | Runbook Owner                                                                                                          |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Repository/package | GitHub CI가 ghcr.io 이미지를 발행하고 패키지 가시성이 홈랩 계약에 맞음                                              | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
+| GitOps manifests   | `rollout.yaml`, `service.yaml`, `ingress.yaml`, `analysis-template.yaml`, `kustomization.yaml`이 필수 계약을 만족함 | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
+| Network/TLS        | `http-` port naming, `ingressClassName=nginx`, `mkcert-ca-issuer`, nip.io hostname이 적용됨                         | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
+| External routing   | 외부 Traefik dynamic config가 별도 Traefik repo에서 리뷰되고 k8s Ingress 계약과 일치함                              | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
+| Secret handling    | 필요한 경우 Vault/ESO를 사용하고 plaintext Kubernetes Secret manifest가 없음                                        | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
+| Runtime health     | ArgoCD Application, Rollout, Pod readiness, Ingress/TLS 접근 증적이 남음                                            | [`../runbooks/0010-github-app-gitops-onboarding-runbook.md`](../runbooks/0010-github-app-gitops-onboarding-runbook.md) |
 
 ---
 

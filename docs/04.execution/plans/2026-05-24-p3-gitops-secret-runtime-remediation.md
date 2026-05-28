@@ -56,38 +56,38 @@ state와 정적 검증을 먼저 보강하고, live 상태는 read-only 명령�
 
 ## Work Breakdown
 
-| Task | Description | Files / Docs Affected | Target REQ | Validation Criteria |
-| --- | --- | --- | --- | --- |
-| P3-PLN-001 | Record approved P3 execution plan and task evidence | this plan, linked task, README indexes | REQ-P3-TRACE | repo quality gate PASS |
-| P3-PLN-002 | Add ESO DNS/API egress to NetworkPolicy | `external-secrets-egress-to-vault.yaml`, static tests | REQ-P3-ESO-EGRESS | manifest validation and static contract PASS |
-| P3-PLN-003 | Add Vault notifications path to ESO read policy | `eso-read.hcl`, static tests | REQ-P3-VAULT-NOTIF | no wildcard policy and static contract PASS |
-| P3-PLN-004 | Align apps AppProject and sample ExternalSecret contract | `appproject-apps.yaml`, `examples/sample-app/external-secret.yaml`, static tests | REQ-P3-APP-ESO | AppProject allow-list and sample key checks PASS |
-| P3-PLN-005 | Add ArgoCD-owned cluster config app path | `gitops/apps/root`, `gitops/clusters/local`, static tests | REQ-P3-ARGO-OWNERSHIP | GitOps structure and contract checks PASS |
-| P3-PLN-006 | Run approved repo-static and read-only runtime checks | validation scripts, `kubectl get`/`describe` only | REQ-P3-VERIFY | results recorded without secret values |
+| Task       | Description                                              | Files / Docs Affected                                                            | Target REQ            | Validation Criteria                              |
+| ---------- | -------------------------------------------------------- | -------------------------------------------------------------------------------- | --------------------- | ------------------------------------------------ |
+| P3-PLN-001 | Record approved P3 execution plan and task evidence      | this plan, linked task, README indexes                                           | REQ-P3-TRACE          | repo quality gate PASS                           |
+| P3-PLN-002 | Add ESO DNS/API egress to NetworkPolicy                  | `external-secrets-egress-to-vault.yaml`, static tests                            | REQ-P3-ESO-EGRESS     | manifest validation and static contract PASS     |
+| P3-PLN-003 | Add Vault notifications path to ESO read policy          | `eso-read.hcl`, static tests                                                     | REQ-P3-VAULT-NOTIF    | no wildcard policy and static contract PASS      |
+| P3-PLN-004 | Align apps AppProject and sample ExternalSecret contract | `appproject-apps.yaml`, `examples/sample-app/external-secret.yaml`, static tests | REQ-P3-APP-ESO        | AppProject allow-list and sample key checks PASS |
+| P3-PLN-005 | Add ArgoCD-owned cluster config app path                 | `gitops/apps/root`, `gitops/clusters/local`, static tests                        | REQ-P3-ARGO-OWNERSHIP | GitOps structure and contract checks PASS        |
+| P3-PLN-006 | Run approved repo-static and read-only runtime checks    | validation scripts, `kubectl get`/`describe` only                                | REQ-P3-VERIFY         | results recorded without secret values           |
 
 ## Verification Plan
 
-| ID | Level | Description | Command / How to Run | Pass Criteria |
-| --- | --- | --- | --- | --- |
-| VAL-P3-001 | Docs | Repository quality and docs governance | `bash scripts/validate-repo-quality-gates.sh .` | PASS |
-| VAL-P3-002 | GitOps | Root apps and Kustomize structure | `bash scripts/validate-gitops-structure.sh` | PASS |
-| VAL-P3-003 | Manifests | YAML syntax and optional kube-linter | `bash scripts/validate-k8s-manifests.sh .` | PASS or optional-tool skip recorded |
-| VAL-P3-004 | Secrets | Plaintext secret pattern scan | `bash scripts/check-secret-handling.sh .` | PASS |
-| VAL-P3-005 | Static contract | Platform static contracts | `bash infrastructure/tests/verify-contracts-static.sh` | PASS |
-| VAL-P3-006 | NetworkPolicy live | ESO NetworkPolicy exists and controller Pods are visible | read-only `kubectl get`/`describe` | no secret values; result recorded |
-| VAL-P3-007 | ESO/Vault live | ClusterSecretStore and ExternalSecret readiness metadata | read-only `kubectl get` jsonpath | no Secret data output; result recorded |
-| VAL-P3-008 | ArgoCD live | Root/platform apps, AppProjects, and ApplicationSet metadata | read-only `kubectl get` | no sync/mutation; result recorded |
-| VAL-P3-009 | Hygiene | Whitespace sanity | `git diff --check` | PASS |
+| ID         | Level              | Description                                                  | Command / How to Run                                   | Pass Criteria                          |
+| ---------- | ------------------ | ------------------------------------------------------------ | ------------------------------------------------------ | -------------------------------------- |
+| VAL-P3-001 | Docs               | Repository quality and docs governance                       | `bash scripts/validate-repo-quality-gates.sh .`        | PASS                                   |
+| VAL-P3-002 | GitOps             | Root apps and Kustomize structure                            | `bash scripts/validate-gitops-structure.sh`            | PASS                                   |
+| VAL-P3-003 | Manifests          | YAML syntax and optional kube-linter                         | `bash scripts/validate-k8s-manifests.sh .`             | PASS or optional-tool skip recorded    |
+| VAL-P3-004 | Secrets            | Plaintext secret pattern scan                                | `bash scripts/check-secret-handling.sh .`              | PASS                                   |
+| VAL-P3-005 | Static contract    | Platform static contracts                                    | `bash infrastructure/tests/verify-contracts-static.sh` | PASS                                   |
+| VAL-P3-006 | NetworkPolicy live | ESO NetworkPolicy exists and controller Pods are visible     | read-only `kubectl get`/`describe`                     | no secret values; result recorded      |
+| VAL-P3-007 | ESO/Vault live     | ClusterSecretStore and ExternalSecret readiness metadata     | read-only `kubectl get` jsonpath                       | no Secret data output; result recorded |
+| VAL-P3-008 | ArgoCD live        | Root/platform apps, AppProjects, and ApplicationSet metadata | read-only `kubectl get`                                | no sync/mutation; result recorded      |
+| VAL-P3-009 | Hygiene            | Whitespace sanity                                            | `git diff --check`                                     | PASS                                   |
 
 ## Risks & Mitigations
 
-| Risk | Impact | Mitigation |
-| --- | --- | --- |
-| AppProject self-management can block first reconciliation | High | Keep bootstrap-local initial AppProject apply as break-glass/bootstrap exception; add root child app for steady-state ownership |
-| Vault policy widening grants too much access | High | Add only `platform/notifications` data/metadata paths; reject wildcards in static test |
-| ExternalSecret app examples expose secret values | Critical | Keep examples reference-only and run secret scanner |
-| Live checks leak secret values | Critical | Use only status/metadata commands; never print Kubernetes Secret data or Vault KV values |
-| Local cluster is not running | Medium | Record live checks as skipped/failed-current-state and keep repo-static validation authoritative for the commit |
+| Risk                                                      | Impact   | Mitigation                                                                                                                      |
+| --------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| AppProject self-management can block first reconciliation | High     | Keep bootstrap-local initial AppProject apply as break-glass/bootstrap exception; add root child app for steady-state ownership |
+| Vault policy widening grants too much access              | High     | Add only `platform/notifications` data/metadata paths; reject wildcards in static test                                          |
+| ExternalSecret app examples expose secret values          | Critical | Keep examples reference-only and run secret scanner                                                                             |
+| Live checks leak secret values                            | Critical | Use only status/metadata commands; never print Kubernetes Secret data or Vault KV values                                        |
+| Local cluster is not running                              | Medium   | Record live checks as skipped/failed-current-state and keep repo-static validation authoritative for the commit                 |
 
 ## Agent Rollout & Evaluation Gates (If Applicable)
 
@@ -99,28 +99,28 @@ state와 정적 검증을 먼저 보강하고, live 상태는 read-only 명령�
 
 ## Implementation Results
 
-| Work item | Result | Evidence path |
-| --- | --- | --- |
-| ESO NetworkPolicy egress | Added explicit DNS and Kubernetes API egress while preserving Vault egress | `gitops/platform/network-policies/external-secrets-egress-to-vault.yaml` |
-| Vault notifications policy | Added least-privilege `platform/notifications` data and metadata reads | `infrastructure/vault/policies/eso-read.hcl` |
-| AppProject and sample ExternalSecret contract | Allowed app `ExternalSecret` resources and corrected sample `remoteRef.key` semantics | `gitops/clusters/local/appproject-apps.yaml`, `examples/sample-app/external-secret.yaml` |
-| Cluster-local ownership | Added `platform-cluster-config` root child app and cluster-local kustomization for AppProject/ApplicationSet CRs | `gitops/apps/root/platform-cluster-config-app.yaml`, `gitops/clusters/local/kustomization.yaml` |
-| Static validation | Added static contract checks for all implemented P3 contracts | `infrastructure/tests/verify-contracts-static.sh` |
-| Operations docs | Clarified Vault CLI path versus ESO `remoteRef.key` behavior | `docs/05.operations/`, `examples/sample-app/README.md` |
+| Work item                                     | Result                                                                                                           | Evidence path                                                                                   |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| ESO NetworkPolicy egress                      | Added explicit DNS and Kubernetes API egress while preserving Vault egress                                       | `gitops/platform/network-policies/external-secrets-egress-to-vault.yaml`                        |
+| Vault notifications policy                    | Added least-privilege `platform/notifications` data and metadata reads                                           | `infrastructure/vault/policies/eso-read.hcl`                                                    |
+| AppProject and sample ExternalSecret contract | Allowed app `ExternalSecret` resources and corrected sample `remoteRef.key` semantics                            | `gitops/clusters/local/appproject-apps.yaml`, `examples/sample-app/external-secret.yaml`        |
+| Cluster-local ownership                       | Added `platform-cluster-config` root child app and cluster-local kustomization for AppProject/ApplicationSet CRs | `gitops/apps/root/platform-cluster-config-app.yaml`, `gitops/clusters/local/kustomization.yaml` |
+| Static validation                             | Added static contract checks for all implemented P3 contracts                                                    | `infrastructure/tests/verify-contracts-static.sh`                                               |
+| Operations docs                               | Clarified Vault CLI path versus ESO `remoteRef.key` behavior                                                     | `docs/05.operations/`, `examples/sample-app/README.md`                                          |
 
 ## Verification Results
 
-| ID | Result | Evidence / Note |
-| --- | --- | --- |
-| VAL-P3-001 | PASS | `bash scripts/validate-repo-quality-gates.sh .` passed |
-| VAL-P3-002 | PASS | `bash scripts/validate-gitops-structure.sh` passed; root app manifest count is 18 |
-| VAL-P3-003 | PASS with optional skip | `bash scripts/validate-k8s-manifests.sh .` passed YAML syntax; optional `kube-linter` is not installed locally |
-| VAL-P3-004 | PASS | `bash scripts/check-secret-handling.sh .` passed |
-| VAL-P3-005 | PASS | `bash infrastructure/tests/verify-contracts-static.sh` passed |
-| VAL-P3-006 | CURRENT-STATE FAIL | `kubectl -n external-secrets get ...` could not reach `https://0.0.0.0:6550`; API server refused connection |
-| VAL-P3-007 | CURRENT-STATE FAIL | ClusterSecretStore and ExternalSecret readiness metadata could not be read because the local cluster was not reachable |
-| VAL-P3-008 | CURRENT-STATE FAIL | ArgoCD Application, ApplicationSet, and AppProject metadata could not be read because the local cluster was not reachable |
-| VAL-P3-009 | PASS | `git diff --check` passed after final doc updates |
+| ID         | Result                  | Evidence / Note                                                                                                           |
+| ---------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| VAL-P3-001 | PASS                    | `bash scripts/validate-repo-quality-gates.sh .` passed                                                                    |
+| VAL-P3-002 | PASS                    | `bash scripts/validate-gitops-structure.sh` passed; root app manifest count is 18                                         |
+| VAL-P3-003 | PASS with optional skip | `bash scripts/validate-k8s-manifests.sh .` passed YAML syntax; optional `kube-linter` is not installed locally            |
+| VAL-P3-004 | PASS                    | `bash scripts/check-secret-handling.sh .` passed                                                                          |
+| VAL-P3-005 | PASS                    | `bash infrastructure/tests/verify-contracts-static.sh` passed                                                             |
+| VAL-P3-006 | CURRENT-STATE FAIL      | `kubectl -n external-secrets get ...` could not reach `https://0.0.0.0:6550`; API server refused connection               |
+| VAL-P3-007 | CURRENT-STATE FAIL      | ClusterSecretStore and ExternalSecret readiness metadata could not be read because the local cluster was not reachable    |
+| VAL-P3-008 | CURRENT-STATE FAIL      | ArgoCD Application, ApplicationSet, and AppProject metadata could not be read because the local cluster was not reachable |
+| VAL-P3-009 | PASS                    | `git diff --check` passed after final doc updates                                                                         |
 
 ## Runtime Check Interpretation
 
@@ -153,7 +153,7 @@ a current-state runtime unavailability, not as live validation success.
 ## Related Documents
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
-- **Source Plan**: [./2026-05-24-workspace-harness-gap-analysis.md](./2026-05-24-workspace-harness-gap-analysis.md)
+- **Audit Reference**: [../../90.references/audits/2026-05-24-workspace-harness-gap-analysis.md](../../90.references/audits/2026-05-24-workspace-harness-gap-analysis.md)
 - **Tasks**: [../tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md](../tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md)
 - **Policy**: [../../05.operations/policies/0007-app-gitops-onboarding-policy.md](../../05.operations/policies/0007-app-gitops-onboarding-policy.md)
 - **Runbook**: [../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md](../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md)

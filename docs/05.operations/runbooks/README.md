@@ -13,12 +13,12 @@
 런북은 “정해진 순서로 실행하고, 증적을 남기고, 실패 시 복구하는 문서”다.
 배경 설명과 온보딩은 [guides](../guides/README.md), 허용/금지/예외 기준은 [policies](../policies/README.md), 실제 사고 기록은 [incidents](../incidents/README.md)로 보낸다.
 
-| 필요 상황 | 문서 유형 |
-| --- | --- |
-| 명령 순서, 검증 기준, 복구 경로가 필요함 | Runbook |
-| 장애 시그니처를 보고 대응해야 함 | Runbook |
-| 정책의 허용/금지 기준을 확인해야 함 | Policy로 이동 |
-| 작업 배경과 선행 지식을 익혀야 함 | Guide로 이동 |
+| 필요 상황                                | 문서 유형     |
+| ---------------------------------------- | ------------- |
+| 명령 순서, 검증 기준, 복구 경로가 필요함 | Runbook       |
+| 장애 시그니처를 보고 대응해야 함         | Runbook       |
+| 정책의 허용/금지 기준을 확인해야 함      | Policy로 이동 |
+| 작업 배경과 선행 지식을 익혀야 함        | Guide로 이동  |
 
 ## Audience
 
@@ -53,7 +53,6 @@ docs/05.operations/runbooks/
 ├── 0003-platform-expansion-bootstrap-runbook.md             # cert-manager/Headlamp/Istio/Kiali 부트스트랩
 ├── 0004-rollouts-notifications-headlamp-runbook.md          # Rollouts/Notifications/Headlamp 운영
 ├── 0005-headlamp-keycloak-runbook.md                        # Headlamp token/OIDC 전환 운영
-├── 0006-new-app-onboarding-runbook.md                       # 신규 앱 온보딩 절차
 ├── 0007-kiali-observability-connectivity-runbook.md         # Kiali 관측성 연결 복구
 ├── 0008-argocd-metrics-prometheus-runbook.md                # ArgoCD metrics/Prometheus 복구
 ├── 0009-k8s-observability-runbook.md                        # 관측성 스택 장애 진단
@@ -93,16 +92,15 @@ docs/05.operations/runbooks/
 
 ## 문서 인덱스
 
-| 문서                                                                                                     | 설명                                                              | 상태   | 최종 수정  |
-| -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------ | ---------- |
-| [`./0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)               | 검증 커맨드 기반 부트스트랩/트러블슈팅/복구 런북                  | Active | 2026-05-22 |
-| [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)               | Vault-ESO 복구 + TLS/Ingress + CI 정적 계약 회귀/증적 검증 런북   | Active | 2026-05-09 |
-| [`./0003-platform-expansion-bootstrap-runbook.md`](./0003-platform-expansion-bootstrap-runbook.md)         | cert-manager/Headlamp/Istio/Kiali 부트스트랩 및 증상별 복구 런북  | Active | 2026-05-09 |
-| [`./0004-rollouts-notifications-headlamp-runbook.md`](./0004-rollouts-notifications-headlamp-runbook.md)   | Argo Rollouts/Notifications/Headlamp 설치 및 운영 런북            | Active | 2026-05-09 |
-| [`./0005-headlamp-keycloak-runbook.md`](./0005-headlamp-keycloak-runbook.md)                               | Headlamp ServiceAccount 토큰 로그인 및 Keycloak OIDC 전환 런북    | Active | 2026-05-09 |
-| [`./0006-new-app-onboarding-runbook.md`](./0006-new-app-onboarding-runbook.md)                             | Superseded: 새 앱 온보딩 런북은 [`./0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md)와 [`../policies/0007-app-gitops-onboarding-policy.md`](../policies/0007-app-gitops-onboarding-policy.md)로 대체 | Superseded | 2026-05-22 |
-| [`./0007-kiali-observability-connectivity-runbook.md`](./0007-kiali-observability-connectivity-runbook.md) | Kiali 관측성 서비스 연결 장애 진단 및 복구 런북                   | Active | 2026-05-09 |
-| [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md)               | ArgoCD 메트릭 NodePort/Prometheus 수집 장애 진단 및 복구 런북     | Active | 2026-05-09 |
-| [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md)                               | kube-state-metrics/alloy/alert_rules/AppProject 장애 진단 런북    | Active | 2026-05-09 |
+| 문서                                                                                                       | 설명                                                                   | 상태   | 최종 수정  |
+| ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------ | ---------- |
+| [`./0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)               | 검증 커맨드 기반 부트스트랩/트러블슈팅/복구 런북                       | Active | 2026-05-22 |
+| [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)               | Vault-ESO 복구 + TLS/Ingress + CI 정적 계약 회귀/증적 검증 런북        | Active | 2026-05-09 |
+| [`./0003-platform-expansion-bootstrap-runbook.md`](./0003-platform-expansion-bootstrap-runbook.md)         | cert-manager/Headlamp/Istio/Kiali 부트스트랩 및 증상별 복구 런북       | Active | 2026-05-09 |
+| [`./0004-rollouts-notifications-headlamp-runbook.md`](./0004-rollouts-notifications-headlamp-runbook.md)   | Argo Rollouts/Notifications/Headlamp 설치 및 운영 런북                 | Active | 2026-05-09 |
+| [`./0005-headlamp-keycloak-runbook.md`](./0005-headlamp-keycloak-runbook.md)                               | Headlamp ServiceAccount 토큰 로그인 및 Keycloak OIDC 전환 런북         | Active | 2026-05-09 |
+| [`./0007-kiali-observability-connectivity-runbook.md`](./0007-kiali-observability-connectivity-runbook.md) | Kiali 관측성 서비스 연결 장애 진단 및 복구 런북                        | Active | 2026-05-09 |
+| [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md)               | ArgoCD 메트릭 NodePort/Prometheus 수집 장애 진단 및 복구 런북          | Active | 2026-05-09 |
+| [`./0009-k8s-observability-runbook.md`](./0009-k8s-observability-runbook.md)                               | kube-state-metrics/alloy/alert_rules/AppProject 장애 진단 런북         | Active | 2026-05-09 |
 | [`./0010-github-app-gitops-onboarding-runbook.md`](./0010-github-app-gitops-onboarding-runbook.md)         | GitHub 레포 기반 앱 온보딩 절차 런북 (최소 템플릿 + adminer reference) | Active | 2026-05-26 |
-| [`./0011-reference-maintenance-runbook.md`](./0011-reference-maintenance-runbook.md)                       | `90.references` reference/version/LLM Wiki 유지보수 절차 런북     | Active | 2026-05-17 |
+| [`./0011-reference-maintenance-runbook.md`](./0011-reference-maintenance-runbook.md)                       | `90.references` reference/version/LLM Wiki 유지보수 절차 런북          | Active | 2026-05-17 |

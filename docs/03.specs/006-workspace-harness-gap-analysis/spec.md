@@ -502,9 +502,8 @@ clusterrolebinding` examples carry human-approved, bootstrap, break-glass,
 
 ## Related Documents
 
-- **Plan**: [../../04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md](../../04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md)
+- **Audit Reference**: [../../90.references/audits/2026-05-24-workspace-harness-gap-analysis.md](../../90.references/audits/2026-05-24-workspace-harness-gap-analysis.md)
 - **P3 Plan**: [../../04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md](../../04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md)
-- **Tasks**: [../../04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md](../../04.execution/tasks/2026-05-24-workspace-harness-gap-analysis.md)
 - **P3 Tasks**: [../../04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md](../../04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Subagent Protocol**: [../../00.agent-governance/subagent-protocol.md](../../00.agent-governance/subagent-protocol.md)
