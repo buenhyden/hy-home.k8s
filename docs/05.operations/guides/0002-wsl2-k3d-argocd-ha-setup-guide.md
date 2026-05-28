@@ -231,30 +231,30 @@ curl -ksS -X POST \
   https://vault.127.0.0.1.nip.io/v1/auth/kubernetes/config
 ```
 
-## Local Runtime Validation vs CI Static Validation
+## Common Pitfalls
 
-### Local Runtime Validation (cluster required)
+### Local vs CI Validation
+
+#### Local Runtime Validation (cluster required)
 
 ```bash
 ./infrastructure/tests/run-all.sh
 CHECK_TRAEFIK_443=true ./infrastructure/tests/verify-ingress-tls.sh
 ```
 
-### CI Static Validation (cluster not required)
+#### CI Static Validation (cluster not required)
 
 ```bash
 ./infrastructure/tests/verify-contracts-static.sh
 bash -n infrastructure/bootstrap-local.sh infrastructure/tests/*.sh
 ```
 
-### Workflow Security Validation
+#### Workflow Security Validation
 
 `.github/workflows/**` 변경 시 CI에서 자동 수행:
 
 - `actionlint`
 - `zizmor`
-
-## Common Pitfalls
 
 - `fs.inotify.max_user_instances < 512` → k3d 에이전트 노드 NotReady, kubelet `too many open files`
 - Docker 재시작 후 vault가 k3d-hyhome 네트워크에서 분리됨 → `vault-backend context deadline exceeded`

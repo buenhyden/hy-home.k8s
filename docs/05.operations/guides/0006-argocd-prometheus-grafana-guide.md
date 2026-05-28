@@ -64,7 +64,7 @@ kubectl get pod -n argocd -l app.kubernetes.io/name=argocd-server \
 
 아래 절차는 ArgoCD metric NodePort 노출, Prometheus scrape 설정, Grafana 대시보드 확인 순서로 진행한다.
 
-## Procedure 1: NodePort 서비스 배포
+### Procedure 1: NodePort 서비스 배포
 
 `gitops/platform/argocd/argocd-metrics-nodeport.yaml`에 5개 NodePort 서비스를 정의하고 배포한다.
 
@@ -104,7 +104,7 @@ curl -s http://172.18.0.2:30082/metrics | grep "^argocd_app_info" | head -3
 
 ---
 
-## Procedure 2: Prometheus Scrape 설정 추가
+### Procedure 2: Prometheus Scrape 설정 추가
 
 `hy-home.docker/infra/06-observability/prometheus/config/prometheus.yml`의 `KUBERNETES / GITOPS` 섹션에 아래 5개 job을 추가한다.
 
@@ -158,7 +158,7 @@ curl -s -X POST http://172.18.0.10:9090/-/reload && echo "Reloaded"
 
 ---
 
-## Procedure 3: Grafana 대시보드 확인
+### Procedure 3: Grafana 대시보드 확인
 
 대시보드 파일이 이미 provisioning 디렉토리에 존재한다.
 
