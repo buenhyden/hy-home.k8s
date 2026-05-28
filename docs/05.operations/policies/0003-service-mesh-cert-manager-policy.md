@@ -109,6 +109,11 @@ updated: 2026-05-21
 - 플랫폼 컴포넌트 버전 변경 시마다 검토한다.
 - cert-manager, Istio, Kiali, Headlamp 관련 ADR/Spec 변경 시 같은 PR에서 검토한다.
 
+## AI Agent Policy Section (If Applicable)
+
+이 정책은 인프라 리소스를 직접 관리하며 AI Agent 모델/프롬프트/평가 정책이 별도 적용되지 않는다.
+단, Agent가 이 정책 범위의 리소스를 조작할 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
+
 ## Related Documents
 
 - **Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)

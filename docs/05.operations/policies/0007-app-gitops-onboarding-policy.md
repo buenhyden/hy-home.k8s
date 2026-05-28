@@ -188,6 +188,11 @@ Service의 port 이름은 반드시 `http-` 접두사를 포함해야 한다.
 - 새 앱 온보딩 또는 `examples/sample-app/` 변경 시마다 검토한다.
 - Rollouts, Istio, cert-manager, Vault/ESO 계약 변경 시 관련 guide/runbook과 함께 검토한다.
 
+## AI Agent Policy Section (If Applicable)
+
+이 정책은 인프라 리소스를 직접 관리하며 AI Agent 모델/프롬프트/평가 정책이 별도 적용되지 않는다.
+단, Agent가 이 정책 범위의 리소스를 조작할 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
+
 ## Related Documents
 
 - **Guide**: [`../guides/0008-github-app-gitops-onboarding-guide.md`](../guides/0008-github-app-gitops-onboarding-guide.md)

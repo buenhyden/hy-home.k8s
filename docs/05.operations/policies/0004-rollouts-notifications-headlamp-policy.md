@@ -97,6 +97,11 @@ updated: 2026-05-21
 - 운영 변경 시 즉시
 - 정기 분기 검토
 
+## AI Agent Policy Section (If Applicable)
+
+이 정책은 인프라 리소스를 직접 관리하며 AI Agent 모델/프롬프트/평가 정책이 별도 적용되지 않는다.
+단, Agent가 이 정책 범위의 리소스를 조작할 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
+
 ## Related Documents
 
 - **ADR-0010**: [`../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md)

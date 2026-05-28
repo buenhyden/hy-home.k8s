@@ -204,6 +204,11 @@ istio-system, headlamp, argo-rollouts, metallb-system, monitoring
 - monitoring namespace, NodePort, alert_rules, Alloy 설정 변경 시마다 검토한다.
 - k3d/k3s 버전 또는 observability backend 주소가 바뀌면 관련 Spec/Runbook과 함께 검토한다.
 
+## AI Agent Policy Section (If Applicable)
+
+이 정책은 인프라 리소스를 직접 관리하며 AI Agent 모델/프롬프트/평가 정책이 별도 적용되지 않는다.
+단, Agent가 이 정책 범위의 리소스를 조작할 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
+
 ## Related Documents
 
 - [k8s 관측성 부트스트랩 가이드](../guides/0007-k8s-observability-bootstrap-guide.md)

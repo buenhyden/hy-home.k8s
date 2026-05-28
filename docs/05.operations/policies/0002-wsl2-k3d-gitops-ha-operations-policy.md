@@ -120,6 +120,11 @@ updated: 2026-05-25
   direct fallback 포트(`ARGOCD_FALLBACK_PORT`) 변경 이력
 - OPA/Conftest 도입 여부와 policy owner/bundle/install path 결정 상태
 
+## AI Agent Policy Section (If Applicable)
+
+이 정책은 인프라 리소스를 직접 관리하며 AI Agent 모델/프롬프트/평가 정책이 별도 적용되지 않는다.
+단, Agent가 이 정책 범위의 리소스를 조작할 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
+
 ## Related Documents
 
 - **ARD**: [`../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md`](../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md)
