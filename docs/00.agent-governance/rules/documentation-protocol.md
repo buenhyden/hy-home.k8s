@@ -61,7 +61,7 @@ This protocol defines how governance references authored docs and how language b
 
 **R1 — Template-First:** Read `docs/99.templates/README.md`, then read the matching template in `docs/99.templates/` before creating any document. Confirm the target path has exactly one structural template mapping, fill all required fields and required template headings, and set `status: draft`. k8s-specific triggers: new namespace → ARD required; RBAC change → ADR required; production change → OPER policy first.
 
-**R2 — README Sync:** Any folder-level change (add, move, remove files) requires the folder's `README.md` to be updated in the same PR. Work is **BLOCKED** until the README reflects the change and keeps `## Link Basis` plus `## Related Documents`.
+**R2 — README Sync:** Any folder-level change (add, move, remove files) **or content modification to an existing document** requires the folder's `README.md` to be reviewed and updated in the same PR if its summary, link table, or description is now stale. Work is **BLOCKED** until the README reflects the current state and keeps `## Link Basis` plus `## Related Documents`.
 
 **R3 — Related Documents:** Every authored document must include a `## Related Documents` section with upstream links. A document without this section is **INCOMPLETE**.
 
