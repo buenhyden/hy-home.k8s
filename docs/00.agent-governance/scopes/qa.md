@@ -15,7 +15,7 @@ Persona: QA Engineer
 - Validate that delivered behavior matches stage artifacts.
 - Monitor and maintain QA/CI reference guides under `docs/05.operations/guides/`.
 - Reference `scripts/validate-*.sh` and `scripts/check-*.sh` as the primary repo-static QA execution surface.
-- Enforce `quality-standards.md` coverage policy when reviewing verification evidence.
+- Enforce 90% coverage policy for testable application code (or validation-matrix coverage for infrastructure) when reviewing verification evidence.
 
 ## File Ownership
 
@@ -39,6 +39,7 @@ Subagent dispatch: use Task tool only; never inline role definitions in prompts.
 
 - Test strategy is aligned to plan and task artifacts.
 - Regression coverage is explicitly documented.
+- 90% coverage target is maintained for testable application code, or validation-matrix coverage is verified for infrastructure changes.
 - Defects are recorded in the proper incident/task channels.
 
 ## Related Documents
