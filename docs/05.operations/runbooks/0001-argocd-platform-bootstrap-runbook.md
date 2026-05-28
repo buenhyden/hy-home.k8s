@@ -8,7 +8,9 @@ updated: 2026-05-22
 
 # ArgoCD Platform Bootstrap Runbook
 
-: WSL k3d/k3s GitOps Bootstrap
+## Runbook Type
+
+`bootstrap`
 
 ## Overview (KR)
 
