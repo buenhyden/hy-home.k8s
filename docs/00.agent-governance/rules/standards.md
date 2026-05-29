@@ -17,7 +17,8 @@ Global standards for all agents in this repository.
 - Use JIT loading via `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
 - Keep the instruction hierarchy inside repository gateway files plus runtime governance assets only:
   - root shims: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`
-  - runtime bridge: `.claude/**` and `.codex/**`
+  - runtime bridge: `.claude/**`, `.codex/**`, and `.agents/**`
+  - local baselines: `.claude/CLAUDE.md`, `.codex/CODEX.md`, `.agents/GEMINI.md`
   - policy SSoT: `docs/00.agent-governance/**`
 - Do not introduce GitHub-native instruction files such as `.github/copilot-instructions.md` or `.github/instructions/**/*.instructions.md` in this repository.
 - RTK guidance belongs in `RTK.md`, not in root shim bodies.
@@ -50,5 +51,6 @@ Infrastructure assumptions must match current workspace assets:
 - `tests/`
 - `.claude/`
 - `.codex/`
+- `.agents/`
 
-`.codex/agents/*.toml` files are Codex mirrors of `.claude/agents/*.md` and must keep the same role, scope imports, guardrails, and postflight requirements.
+`.codex/agents/*.toml` and `.agents/agents/*.md` files are mirrors of `.claude/agents/*.md` and must keep the same role, scope imports, guardrails, and postflight requirements.

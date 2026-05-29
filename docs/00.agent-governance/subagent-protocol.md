@@ -27,7 +27,7 @@ coordinated in `hy-home.k8s`.
 ## Dispatch Rules
 
 - Dispatch subagents via the **Task tool only**. Never embed role definitions inline in prompts.
-- Each delegated agent must read its `.claude/agents/<name>.md` file before starting work.
+- Each delegated agent must read its provider-specific local agent file (e.g., `.claude/agents/<name>.md`, `.agents/agents/<name>.md`) before starting work.
 - Codex delegated agents must use the corresponding `.codex/agents/<name>.toml` mirror with the same scope and guardrails.
 - Each agent file must `@import` one or more matching scope files from `scopes/`.
 - `supervisor.md` is the only supervising agent and owns routing and escalation decisions.
@@ -41,9 +41,7 @@ Every delegated agent must have a corresponding file in `.claude/agents/`. Each 
 3. A thin runtime contract: Role, When to use, Inputs, Outputs, Guardrails, Handoff / Escalation, Postflight.
 4. No embedded policy text that belongs in `rules/`, `scopes/`, or `providers/`.
 
-Every `.claude/agents/<name>.md` file must have a `.codex/agents/<name>.toml`
-mirror for Codex execution. Mirrors must preserve the same role, scope imports,
-guardrails, and postflight requirements.
+Every `.claude/agents/<name>.md` file must have a `.codex/agents/<name>.toml` mirror for Codex execution and an `.agents/agents/<name>.md` reference index for Gemini execution. All mirrors must preserve the same role, scope imports, guardrails, and postflight requirements.
 
 The mirror relationship is validated by `scripts/validate-repo-quality-gates.sh`.
 Runtime files must keep matching file stems, matching scope imports, Runtime
@@ -83,6 +81,5 @@ catalog, including Codex mirrors.
 ## Related Documents
 
 - [AGENTS.md](../../AGENTS.md)
-- [Runtime Baseline](../../.claude/CLAUDE.md)
+- [Local Runtime Baselines](../../.claude/CLAUDE.md)
 - [Local Harness Catalog](./harness-catalog.md)
-- [Claude Provider Notes](./providers/claude.md)

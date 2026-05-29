@@ -1,10 +1,14 @@
-description = "Worker agent for auditing Kubernetes RBAC, network isolation, and secret-handling safety."
-developer_instructions = """
+---
+name: security-auditor
+description: Worker agent for auditing Kubernetes RBAC, network isolation, and secret-handling safety.
+model: sonnet
+---
+
 # security-auditor
 
 ## Runtime Bootstrap
 
-- Load `AGENTS.md`, `.codex/CODEX.md`, and this agent's imported scope before work.
+- Load `AGENTS.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.
 - Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
 
 @import docs/00.agent-governance/scopes/security.md
@@ -46,5 +50,4 @@ Audit Kubernetes security posture across RBAC, NetworkPolicy, and secret-handlin
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."""
-name = "security-auditor"
+Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.

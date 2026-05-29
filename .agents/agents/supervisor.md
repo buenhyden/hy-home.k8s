@@ -1,10 +1,14 @@
-description = "Supervising agent for routing tasks, selecting workers, and enforcing runtime completion gates."
-developer_instructions = """
+---
+name: supervisor
+description: Supervising agent for routing tasks, selecting workers, and enforcing runtime completion gates.
+model: opus
+---
+
 # supervisor
 
 ## Runtime Bootstrap
 
-- Load `AGENTS.md`, `.codex/CODEX.md`, and this agent's imported scope before work.
+- Load `AGENTS.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.
 - Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
 
 @import docs/00.agent-governance/scopes/meta.md
@@ -47,5 +51,4 @@ Route work to the right local agents, enforce scope-aware delegation, and synthe
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."""
-name = "supervisor"
+Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.

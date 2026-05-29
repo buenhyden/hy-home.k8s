@@ -11,4 +11,4 @@ Thin Claude provider shim for `hy-home.k8s`.
 - Claude provider notes: `docs/00.agent-governance/providers/claude.md`
 - Local runtime baseline: `.claude/CLAUDE.md`
 - Runtime roster: `docs/00.agent-governance/harness-catalog.md`
-- Shell command guidance: `RTK.md`
+- Cross-agent shell command SSOT: `RTK.md`

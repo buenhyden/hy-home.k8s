@@ -1,10 +1,14 @@
-description = "Worker agent for curating LLM Wiki entrypoints, canonical-owner link maps, and stale-link routing."
-developer_instructions = """
+---
+name: wiki-curator
+description: Worker agent for curating LLM Wiki entrypoints, canonical-owner link maps, and stale-link routing.
+model: sonnet
+---
+
 # wiki-curator
 
 ## Runtime Bootstrap
 
-- Load `AGENTS.md`, `.codex/CODEX.md`, and this agent's imported scope before work.
+- Load `AGENTS.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.
 - Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
 
 @import docs/00.agent-governance/scopes/docs.md
@@ -47,5 +51,4 @@ Curate the repo-local LLM Wiki Markdown entrypoints so agents and humans can fin
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."""
-name = "wiki-curator"
+Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.

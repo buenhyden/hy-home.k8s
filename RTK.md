@@ -1,4 +1,4 @@
-# RTK - Rust Token Killer (Codex CLI)
+# RTK - Rust Token Killer (Cross-Agent SSOT)
 
 **Usage**: Token-optimized CLI proxy for shell commands.
 

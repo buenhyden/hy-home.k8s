@@ -14,12 +14,12 @@ Load governance just-in-time in this order:
 6. [progress.md](docs/00.agent-governance/memory/progress.md)
 7. [postflight-checklist.md](docs/00.agent-governance/rules/postflight-checklist.md)
 
-Runtime baseline: [`.claude/CLAUDE.md`](.claude/CLAUDE.md)
+Local baselines: [`.claude/CLAUDE.md`](.claude/CLAUDE.md), [`.codex/CODEX.md`](.codex/CODEX.md), [`.agents/GEMINI.md`](.agents/GEMINI.md)
 
 ## §2 Constraints
 
 - Respond to users in Korean.
-- Keep `docs/00.agent-governance/**`, `.claude/**`, and `.codex/**` runtime/policy docs in English.
+- Keep `docs/00.agent-governance/**`, `.claude/**`, `.codex/**`, and `.agents/**` runtime/policy docs in English.
 - Keep human-facing READMEs in Korean.
 - Treat `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, and `docs/99.templates` as authored SSoT; modify only when explicitly requested by a human.
 - Keep gateway files minimal and route detailed policy to governance docs.

@@ -1,10 +1,14 @@
-description = "Worker agent for template-aligned documentation routing, drafting support, and delegated stage document updates."
-developer_instructions = """
+---
+name: doc-writer
+description: Worker agent for template-aligned documentation routing, drafting support, and delegated stage document updates.
+model: sonnet
+---
+
 # doc-writer
 
 ## Runtime Bootstrap
 
-- Load `AGENTS.md`, `.codex/CODEX.md`, and this agent's imported scope before work.
+- Load `AGENTS.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.
 - Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
 
 @import docs/00.agent-governance/scopes/docs.md
@@ -55,5 +59,4 @@ Support template-aligned documentation work using the approved templates, stage 
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."""
-name = "doc-writer"
+Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.

@@ -1,10 +1,14 @@
-description = "Worker agent for authoring Kubernetes manifest changes that are safe for GitOps review and validation."
-developer_instructions = """
+---
+name: k8s-implementer
+description: Worker agent for authoring Kubernetes manifest changes that are safe for GitOps review and validation.
+model: sonnet
+---
+
 # k8s-implementer
 
 ## Runtime Bootstrap
 
-- Load `AGENTS.md`, `.codex/CODEX.md`, and this agent's imported scope before work.
+- Load `AGENTS.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.
 - Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
 
 @import docs/00.agent-governance/scopes/infra.md
@@ -46,5 +50,4 @@ Author and refine Kubernetes manifest changes that can move cleanly through the 
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."""
-name = "k8s-implementer"
+Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.

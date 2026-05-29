@@ -15,7 +15,7 @@ Universal entry point for all agents in `hy-home.k8s`.
 - Complete [Postflight Checklist](postflight-checklist.md) before final response.
 - GitOps-first is mandatory: do not mutate the live cluster directly unless a human explicitly approves an emergency path.
 - Define validation evidence before editing, and report unavailable tools or skipped live checks.
-- `.codex/agents/*.toml` mirrors `.claude/agents/*.md`; keep both runtime surfaces aligned.
+- `.codex/agents/*.toml` and `.agents/agents/*.md` mirror `.claude/agents/*.md`; keep all runtime surfaces aligned. The `.agents/` folder is a git-tracked shared surface and moderate-shim for Gemini.
 - **In-place refactor only.** Modify existing files rather than creating new ones unless explicitly requested by a human.
 
 ## JIT Loading Sequence

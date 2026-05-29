@@ -1,10 +1,14 @@
-description = "Worker agent for cluster incident analysis, timeline reconstruction, impact assessment, and remediation planning."
-developer_instructions = """
+---
+name: incident-responder
+description: Worker agent for cluster incident analysis, timeline reconstruction, impact assessment, and remediation planning.
+model: sonnet
+---
+
 # incident-responder
 
 ## Runtime Bootstrap
 
-- Load `AGENTS.md`, `.codex/CODEX.md`, and this agent's imported scope before work.
+- Load `AGENTS.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.
 - Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
 
 @import docs/00.agent-governance/scopes/ops.md
@@ -48,5 +52,4 @@ Analyze cluster incidents, reconstruct timelines, assess impact, and define reme
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."""
-name = "incident-responder"
+Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.

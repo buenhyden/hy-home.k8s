@@ -230,8 +230,6 @@ except Exception as exc:
     fail(f"git ls-files failed: {exc}")
 
 for tracked_path in sorted(tracked):
-    if tracked_path == ".agents" or tracked_path.startswith(".agents/"):
-        fail(f"ignored local agent runtime path must not be tracked: {tracked_path}")
     if re.fullmatch(r"\.claude/[^/]+\.local\.md", tracked_path):
         fail(f"ignored local Claude/Hookify runtime rule must not be tracked: {tracked_path}")
     if tracked_path == ".env":
@@ -264,11 +262,7 @@ else:
         if extra_env_keys:
             fail(".env has keys not present in .env.example: " + ", ".join(extra_env_keys))
 
-ignore_check = subprocess.run(["git", "check-ignore", "-q", ".agents/"], cwd=root)
-if ignore_check.returncode == 1:
-    fail(".agents/ must remain ignored by Git")
-elif ignore_check.returncode not in {0, 1}:
-    fail("git check-ignore failed while validating .agents/ ignore contract")
+
 
 claude_local_rule_paths = sorted((root / ".claude").glob("*.local.md"))
 for local_rule_path in claude_local_rule_paths:
@@ -303,9 +297,9 @@ for local_rule_path in claude_local_rule_paths:
 local_agents_dir = root / ".agents"
 local_agents_skills_dir = root / ".agents" / "skills"
 if local_agents_dir.exists() and not local_agents_dir.is_dir():
-    fail(".agents must be an ignored local directory when present")
+    fail(".agents must be a directory when present")
 if local_agents_skills_dir.exists() and not local_agents_skills_dir.is_dir():
-    fail(".agents/skills must be an ignored local directory when present")
+    fail(".agents/skills must be a directory when present")
 if local_agents_skills_dir.is_dir():
     canonical_skill_paths = [
         root / tracked_path
@@ -318,7 +312,7 @@ if local_agents_skills_dir.is_dir():
             continue
         if read_bytes(local_skill_path) != read_bytes(canonical_skill_path):
             fail(
-                "local ignored skill mirror drift: "
+                "shared skill mirror drift: "
                 f"{rel(local_skill_path)} differs from {rel(canonical_skill_path)}"
             )
 
@@ -1511,7 +1505,7 @@ harness_catalog_text = read_text(harness_catalog_path)
 import re as _re
 harness_catalog_normalized = _re.sub(r"\| +", "| ", _re.sub(r" +\|", " |", harness_catalog_text))
 for phrase in [
-    "Claude permissions/hooks",
+    "Permissions and hooks",
     "Codex event hooks",
     "not a permission gate equivalent",
     ".claude/settings.json",
@@ -1536,8 +1530,8 @@ validate_component_matrix(harness_catalog_text, "## Agent-first Engineering Matr
 for phrase in [
     "Thin gateway",
     "Runtime baseline",
-    "Agent roster",
-    "Codex mirrors",
+    "Local Agents",
+    "Agent Mirrors",
     "Evidence-first intake",
     "Context hierarchy",
     "JIT loading",
@@ -2409,12 +2403,18 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
 
 claude_agents_dir = root / ".claude/agents"
 codex_agents_dir = root / ".codex/agents"
+gemini_agents_dir = root / ".agents/agents"
 claude_agents = {path.stem: path for path in sorted(claude_agents_dir.glob("*.md"))}
 codex_agents = {path.stem: path for path in sorted(codex_agents_dir.glob("*.toml"))}
+gemini_agents = {path.stem: path for path in sorted(gemini_agents_dir.glob("*.md"))}
 for stem in sorted(set(claude_agents) - set(codex_agents)):
     fail(f"missing Codex agent mirror for .claude/agents/{stem}.md")
 for stem in sorted(set(codex_agents) - set(claude_agents)):
     fail(f"Codex agent mirror has no .claude source: .codex/agents/{stem}.toml")
+for stem in sorted(set(claude_agents) - set(gemini_agents)):
+    fail(f"missing Gemini agent mirror for .claude/agents/{stem}.md")
+for stem in sorted(set(gemini_agents) - set(claude_agents)):
+    fail(f"Gemini agent mirror has no .claude source: .agents/agents/{stem}.md")
 
 runtime_contract_phrases = [
     "## Runtime Bootstrap",

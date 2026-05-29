@@ -1,10 +1,14 @@
-description = "Worker agent for reviewing YAML, Helm, and shell changes for correctness, maintainability, and policy alignment."
-developer_instructions = """
+---
+name: code-reviewer
+description: Worker agent for reviewing YAML, Helm, and shell changes for correctness, maintainability, and policy alignment.
+model: sonnet
+---
+
 # code-reviewer
 
 ## Runtime Bootstrap
 
-- Load `AGENTS.md`, `.codex/CODEX.md`, and this agent's imported scope before work.
+- Load `AGENTS.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.
 - Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
 
 @import docs/00.agent-governance/scopes/architecture.md
@@ -46,5 +50,4 @@ Review infrastructure-facing text artifacts for correctness, consistency, and al
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."""
-name = "code-reviewer"
+Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.

@@ -29,12 +29,8 @@ It defines bootstrap, constraints, and routing pointers; it does not duplicate p
 
 ## Codex Provider Resolution
 
-Codex does not use a separate `providers/codex.md` file in this repository.
-Codex sessions consume the shared `AGENTS.md` gateway, this provider note,
-`.claude/CLAUDE.md`, `.codex/hooks.json`, and `.codex/agents/*.toml` mirror
-metadata. `.codex/hooks.json` remains event wiring for repo-local validation
-hooks; it is not a permission gate or replacement for the shared governance
-rules.
+Codex provider policies have been separated into `docs/00.agent-governance/providers/codex.md` to maintain 3-provider symmetry.
+Codex sessions consume the shared `AGENTS.md` gateway and the local `.codex/CODEX.md` baseline.
 
 ## Repository Instruction Model
 

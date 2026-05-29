@@ -1,10 +1,14 @@
-description = "Worker agent for reviewing GitOps structure, ArgoCD targeting, and release safety in repository-backed changes."
-developer_instructions = """
+---
+name: gitops-reviewer
+description: Worker agent for reviewing GitOps structure, ArgoCD targeting, and release safety in repository-backed changes.
+model: sonnet
+---
+
 # gitops-reviewer
 
 ## Runtime Bootstrap
 
-- Load `AGENTS.md`, `.codex/CODEX.md`, and this agent's imported scope before work.
+- Load `AGENTS.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.
 - Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
 
 @import docs/00.agent-governance/scopes/infra.md
@@ -46,5 +50,4 @@ Review GitOps changes for target correctness, Kustomize structure, and ArgoCD-sa
 
 ## Postflight
 
-Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."""
-name = "gitops-reviewer"
+Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results.
