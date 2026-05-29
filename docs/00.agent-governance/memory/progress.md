@@ -4341,6 +4341,63 @@ References` is now a legacy heading that should not return.
 
 - None.
 
+### 2026-05-29 — Claude-first governance reframing (v2)
+
+- **Date**: 2026-05-29
+- **Layer**: meta
+- **Status**: complete
+- **Tags**: #governance #docs #validation
+
+#### Progress
+
+- Reconciled baseline declaration-vs-reality gaps under the Claude-canonical + governance-mapping decision: corrected `.claude/CLAUDE.md`, `.agents/GEMINI.md`, `.codex/CODEX.md` so mirror claims match disk (only `.agents/skills` is a real mirror; `.codex/skills`, `.agents/output-styles`, `.claude/workflows` are not physical dirs and are consumed via mapping or marked Gap). `.agents/hooks.json` (`{}`) documented as a placeholder.
+- Verified latest model identifiers via WebSearch (2026-05-29) and corrected unverified names: GPT worker `gpt-5.4-mini`/`gpt-5.4-nano` → `GPT-5.3-Codex` (`gpt-5.3-codex` in `.codex/agents/*.toml`); confirmed Opus 4.8 / Sonnet 4.6, Gemini 3.1 Pro / 3.5 Flash, GPT-5.5. Gemini agent mirrors set to Gemini 3.1 Pro / 3.5 Flash.
+- Completed the ten-dimension capability set in `harness-catalog.md`: added QA and CI/CD dimensions, a Model Selection Policy, a Support / Deferred Capabilities list, a Memory Scope Mapping, and Output-style placement criteria.
+- Added a deferred-fields note to `subagent-protocol.md` (`permissionMode`/`memory`/`effort` pending schema verification).
+
+#### Memory
+
+- Claude-first means `.claude/` is canonical; `.agents/` and `.codex/` are adapters mapped via `docs/00.agent-governance/**`, not physical full mirrors.
+- Verified model set (2026-05-29): top = Opus 4.8 / Gemini 3.1 Pro / GPT-5.5; worker = Sonnet 4.6 / Gemini 3.5 Flash / gpt-5.3-codex. Avoid unverified `gpt-5.4-*` names.
+- When a baseline declares a surface, confirm it exists on disk or mark it Gap/deferred — declaration-reality drift is a recurring failure.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS after Phase A and Phases B–C.
+- `grep` scan: zero residual unverified model names outside the progress ledger.
+- All `.codex/agents/*.toml` parse via `tomllib`.
+
+#### Handoff
+
+- None.
+
+### 2026-05-30 — Hybrid SSoT reconciliation (symlinks + per-provider agents)
+
+- **Date**: 2026-05-30
+- **Layer**: meta
+- **Status**: complete
+- **Tags**: #governance #docs #validation
+
+#### Progress
+
+- A concurrent commit (`475116b`) made `.agents/` the SSoT via symlinks for `.claude/{agents,skills,workflows,output-styles}` and `.codex/{skills,workflows,output-styles}`. This broke Claude subagents (the `.claude/agents` symlink served Gemini model frontmatter and no `tools:`). Reconciled to the user-approved hybrid: shared content (`skills/`, `workflows/`, `output-styles/`) stays symlinked to the `.agents/` SSoT; `agents/` are per-provider real files.
+- Restored `.claude/agents/` as a real directory with Claude frontmatter (`opus`/`sonnet`, `.claude/CLAUDE.md` pointer, least-privilege `tools:`). `.agents/agents/*.md` (Gemini) and `.codex/agents/*.toml` (GPT) remain per-provider real files.
+- Updated baselines and `harness-catalog.md` so SSoT/symlink statements match disk (skills SSoT = `.agents/skills`; `.claude`/`.codex` symlink to it).
+
+#### Memory
+
+- Symlinked trees share inodes: `sed -i` through a symlinked path edits the SSoT target. Verify the real target before in-place edits in this repo (hit and reverted via `git checkout` once).
+- Single shared agent files cannot carry per-provider model frontmatter; keep `agents/` per-provider real, share only model-neutral content via symlink.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS after reconciliation.
+- Structure verified: `.claude/agents` real (opus/sonnet+tools), `.claude/skills|workflows|output-styles` and `.codex/skills` symlinks to `.agents/`.
+
+#### Handoff
+
+- Commit pending user confirmation (repo is being co-edited; avoid racing concurrent commits).
+
 ## Historical Entries
 
 ### Harness Implementation Progress

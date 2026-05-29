@@ -48,4 +48,4 @@ Review infrastructure-facing text artifacts for correctness, consistency, and al
 
 Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."""
 name = "code-reviewer"
-model = "gpt-5.4-mini"
+model = "gpt-5.3-codex"

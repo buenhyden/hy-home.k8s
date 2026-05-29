@@ -32,10 +32,10 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Treat `docs/90.references/llm-wiki/wiki-index.md` as generated Markdown maintained by `scripts/generate-llm-wiki-index.sh`; route policy and procedure changes to canonical owner files.
 - Keep infrastructure changes repo-backed. Agents and subagents do not mutate live clusters by default; human-approved bootstrap or break-glass actions are operator-bound and must record scope, rollback, and verification evidence.
 - Do not write plaintext Kubernetes secrets.
-- Treat `.codex/agents/*.toml` as Codex mirrors of `.agents/agents/*.md`; keep both sides aligned.
+- Treat `.codex/agents/*.toml` as Codex mirrors of `.claude/agents/*.md`; keep both sides aligned.
 - Treat `.codex/hooks.json` as Codex event wiring for repo-local context and validation hooks, not as an equivalent permission gate to `.claude/settings.json`.
-- Treat git-tracked `.agents/**` as the canonical SSoT for skills, workflows, output-styles, and agent markdown definitions (Antigravity baseline). `.claude/` and `.codex/` serve as mirrors or symlinks to `.agents/` to maintain parity (enforced by `scripts/validate-repo-quality-gates.sh`).
-- Workspace Structures: Utilize `.claude/workflows/`, `docs/00.agent-governance/rules/`, `.claude/output-styles/`, and `.claude/hooks/` consistently across all tasks.
+- `.agents/` is the single source of truth for provider-neutral shared content (`skills/`, `workflows/`, `output-styles/`); `.claude/skills`, `.claude/workflows`, and `.claude/output-styles` are symlinks to it so every provider stays byte-identical. Provider-specific agents are real files per provider: `.claude/agents/*.md` (Claude models + `tools:`), `.agents/agents/*.md` (Gemini), `.codex/agents/*.toml` (GPT).
+- Workspace Structures: Use `.claude/skills/`, `.claude/agents/`, `.claude/workflows/`, `.claude/output-styles/`, `.claude/hooks/`, and `docs/00.agent-governance/rules/` consistently; shared structures resolve to the `.agents/` SSoT via symlinks.
 - Verification: Implement explicit QA and CI/CD validation phases prior to task completion.
 - Treat `.claude/*.local.md`, including Hookify rules, as ignored local warning files. Shared enforcement belongs in tracked hooks, `.claude/settings.json`, `.codex/hooks.json`, and repository validators.
 - Treat `.claude/hooks/lifecycle-guard.sh` as the lifecycle validation surface: Stop/SubagentStop may block objective repo-state failures and advise task-unit commit discipline for uncommitted tracked changes, while PreCompact reports uncommitted tracked changes, suggested validation, and the same commit discipline without blocking compaction.
@@ -55,7 +55,8 @@ Start from the repository gateway files, then follow the governance JIT sequence
 
 ## Model Hierarchy
 
-- Please refer to `docs/00.agent-governance/model-policy.md` for the canonical model tier definitions across Claude, Gemini, and Codex.
+- `supervisor.md` uses `opus 4.8`
+- All worker agents, including `wiki-curator.md`, use `sonnet 4.6`
 
 ## Relationship to Gateway Files
 

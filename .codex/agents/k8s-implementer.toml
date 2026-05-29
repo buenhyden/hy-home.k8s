@@ -48,4 +48,4 @@ Author and refine Kubernetes manifest changes that can move cleanly through the 
 
 Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."""
 name = "k8s-implementer"
-model = "gpt-5.4-mini"
+model = "gpt-5.3-codex"
