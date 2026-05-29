@@ -31,20 +31,19 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers.
 - Treat `.codex/agents/*.toml` as Codex mirrors of the primary agent definitions; keep them aligned.
 - Treat `.codex/hooks.json` as Codex event wiring for repo-local context and validation hooks, not as an equivalent permission gate to Claude's `settings.json`.
-- The `.codex/` folder mirrors `.claude/` structure for `skills/`, `rules/`, `workflows/`, and `output-styles/`.
+- The `.codex/` folder mirrors `.agents/` structure (the Antigravity SSoT) for `skills/`, `rules/`, `workflows/`, and `output-styles/`.
 - Use `RTK.md` as cross-agent SSOT for shell commands.
 - Verification: Codex MUST implement explicit QA and CI/CD validation phases prior to task completion, mirroring Gemini and Claude.
 
 ## Codex/GPT Capabilities & Constraints
 
-- **Skill routing**: Use the repo-local `.codex/skills/**` (mirrored from `.claude/skills/**`) via the Task-to-Skill routing in `docs/00.agent-governance/harness-catalog.md`.
-- **Hook behavior**: `.codex/hooks.json` reuses the shared `.claude/hooks/*.sh` scripts for context and validation wiring, enforcing Template Routing and CI/CD checks via `customInstructions`.
+- **Skill routing**: Use the repo-local `.codex/skills/**` (mirrored from `.agents/skills/**`) via the Task-to-Skill routing in `docs/00.agent-governance/harness-catalog.md`.
+- **Hook behavior**: `.codex/hooks.json` reuses the shared `docs/00.agent-governance/hooks/*.sh` scripts for context and validation wiring, enforcing Template Routing and CI/CD checks via `customInstructions`.
 - **Provider tuning**: Keep Codex/GPT-specific tuning in `docs/00.agent-governance/providers/codex.md`; do not introduce policy here.
 
 ## Model Hierarchy
 
-- `top` tier (`supervisor`) uses `gpt-5.5`; `worker` tier agents use `gpt-5.4-mini`.
-- The canonical cross-provider mapping is the Model Tier Mapping table in `docs/00.agent-governance/harness-catalog.md`.
+- Please refer to `docs/00.agent-governance/model-policy.md` for the canonical model tier definitions across Claude, Gemini, and Codex.
 
 ## Validation and Tooling
 
