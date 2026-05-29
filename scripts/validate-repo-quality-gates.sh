@@ -1434,22 +1434,19 @@ for scan_root in markdown_direct_push_roots:
 
 gateway_contracts = {
     "AGENTS.md": {
-        "max_lines": 40,
+        "max_lines": 25,
         "required": [
-            "docs/00.agent-governance/rules/bootstrap.md",
-            "docs/00.agent-governance/rules/preflight-checklist.md",
-            "docs/00.agent-governance/rules/persona.md",
-            ".claude/CLAUDE.md",
+            "@docs/00.agent-governance/rules/bootstrap.md",
+            "@docs/00.agent-governance/providers/codex.md",
+            "@.codex/CODEX.md",
+            "@RTK.md",
             "docs/00.agent-governance/harness-catalog.md",
-            "docs/00.agent-governance/rules/agentic.md",
-            "docs/00.agent-governance/rules/document-stage-routing.md",
-            "docs/00.agent-governance/rules/git-workflow.md",
         ],
     },
     "CLAUDE.md": {
-        "max_lines": 30,
+        "max_lines": 25,
         "required": [
-            "@AGENTS.md",
+            "@docs/00.agent-governance/rules/bootstrap.md",
             "@docs/00.agent-governance/providers/claude.md",
             "@.claude/CLAUDE.md",
             "@RTK.md",
@@ -1459,7 +1456,7 @@ gateway_contracts = {
     "GEMINI.md": {
         "max_lines": 25,
         "required": [
-            "@AGENTS.md",
+            "@docs/00.agent-governance/rules/bootstrap.md",
             "@docs/00.agent-governance/providers/gemini.md",
             "@.agents/GEMINI.md",
             "@RTK.md",
