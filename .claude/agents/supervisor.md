@@ -1,7 +1,8 @@
 ---
 name: supervisor
 description: Supervising agent for routing tasks, selecting workers, and enforcing runtime completion gates.
-model: opus
+model: opus 4.8
+tools: Read, Grep, Glob, Bash, Edit, Write, Task
 ---
 
 # supervisor

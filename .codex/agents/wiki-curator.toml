@@ -49,3 +49,4 @@ Curate the repo-local LLM Wiki Markdown entrypoints so agents and humans can fin
 
 Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."""
 name = "wiki-curator"
+model = "gpt-5.4-mini"

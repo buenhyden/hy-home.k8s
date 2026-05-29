@@ -1,8 +1,8 @@
 ---
-title: "Reference: Subagent Protocol"
+title: 'Reference: Subagent Protocol'
 type: reference
 status: draft
-owner: "platform"
+owner: 'platform'
 updated: 2026-05-24
 ---
 
@@ -36,7 +36,7 @@ coordinated in `hy-home.k8s`.
 
 Every delegated agent must have a corresponding file in `.claude/agents/`. Each file must contain:
 
-1. Frontmatter with `name`, `description`, and `model`.
+1. Frontmatter with `name`, `description`, `model`, and a least-privilege `tools` set (see Tool Scoping).
 2. One or more `@import` scope references.
 3. A thin runtime contract: Role, When to use, Inputs, Outputs, Guardrails, Handoff / Escalation, Postflight.
 4. No embedded policy text that belongs in `rules/`, `scopes/`, or `providers/`.
@@ -48,11 +48,22 @@ Runtime files must keep matching file stems, matching scope imports, Runtime
 Bootstrap text, Guardrails, Handoff / Escalation, and Postflight requirements so
 delegated work follows the same contract in Claude and Codex.
 
+## Tool Scoping
+
+Each agent declares a least-privilege tool set matched to its responsibility. The
+canonical mapping below is implemented natively in `.claude/agents/*.md` `tools:`
+frontmatter; Gemini (`.agents/agents/*.md`) and Codex (`.codex/agents/*.toml`) mirrors
+honor the same boundary within their native capabilities.
+
+- `supervisor`: full toolset (orchestration and delegation).
+- Read-only review agents (`code-reviewer`, `gitops-reviewer`, `security-auditor`, `incident-responder`): `Read`, `Grep`, `Glob`, `Bash` (read-only command policy still applies).
+- Authoring agents (`k8s-implementer`, `doc-writer`, `wiki-curator`): `Read`, `Write`, `Edit`, `Grep`, `Glob`, `Bash`.
+- Tool scoping never overrides the destructive-command deny list or the no-direct-cluster-mutation boundary.
+
 ## Model Hierarchy
 
-- `supervisor.md` uses `opus`.
-- All worker agents use `sonnet`.
-- Model allocation is canonical in `docs/00.agent-governance/harness-catalog.md`.
+- `supervisor.md` uses the `top` model tier; all worker agents use the `worker` tier.
+- Per-provider concrete model identifiers are canonical in the Model Tier Mapping table in `docs/00.agent-governance/harness-catalog.md`.
 
 ## Execution Boundaries
 

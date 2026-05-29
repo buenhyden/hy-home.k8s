@@ -1,7 +1,8 @@
 ---
 name: incident-responder
 description: Worker agent for cluster incident analysis, timeline reconstruction, impact assessment, and remediation planning.
-model: sonnet
+model: sonnet 4.6
+tools: Read, Grep, Glob, Bash
 ---
 
 # incident-responder

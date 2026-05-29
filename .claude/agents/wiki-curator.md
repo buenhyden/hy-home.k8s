@@ -1,7 +1,8 @@
 ---
 name: wiki-curator
 description: Worker agent for curating LLM Wiki entrypoints, canonical-owner link maps, and stale-link routing.
-model: sonnet
+model: sonnet 4.6
+tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
 # wiki-curator

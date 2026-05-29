@@ -1,7 +1,7 @@
 ---
 name: k8s-implementer
 description: Worker agent for authoring Kubernetes manifest changes that are safe for GitOps review and validation.
-model: sonnet
+model: Gemini 3.5 Flash
 ---
 
 # k8s-implementer

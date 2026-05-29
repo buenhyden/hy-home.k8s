@@ -28,7 +28,7 @@ This protocol defines how governance references authored docs and how language b
 - Authored documents must keep the required template headings and must include `## Related Documents`.
 - Agents must report the template path used and the validation evidence before handoff.
 - Generated exceptions, such as `docs/90.references/llm-wiki/wiki-index.md`, must keep their generator contract and must not be edited by hand.
-- Claude and Codex Write/Edit/MultiEdit hooks must surface Template-First guidance before authored stage doc edits and run post-edit documentation template enforcement.
+- Claude and Codex Write/Edit/MultiEdit hooks must surface Template-First guidance before authored stage doc edits and run post-edit documentation template enforcement. Gemini has no native hook file and must honor the same Template-First behavior contract for authored stage docs.
 
 ## Language Boundary Rules
 

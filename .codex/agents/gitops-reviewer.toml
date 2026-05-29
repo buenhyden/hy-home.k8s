@@ -48,3 +48,4 @@ Review GitOps changes for target correctness, Kustomize structure, and ArgoCD-sa
 
 Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."""
 name = "gitops-reviewer"
+model = "gpt-5.4-mini"

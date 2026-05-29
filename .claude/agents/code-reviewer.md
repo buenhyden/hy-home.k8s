@@ -1,7 +1,8 @@
 ---
 name: code-reviewer
 description: Worker agent for reviewing YAML, Helm, and shell changes for correctness, maintainability, and policy alignment.
-model: sonnet
+model: sonnet 4.6
+tools: Read, Grep, Glob, Bash
 ---
 
 # code-reviewer

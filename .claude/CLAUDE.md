@@ -34,7 +34,9 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Do not write plaintext Kubernetes secrets.
 - Treat `.codex/agents/*.toml` as Codex mirrors of `.claude/agents/*.md`; keep both sides aligned.
 - Treat `.codex/hooks.json` as Codex event wiring for repo-local context and validation hooks, not as an equivalent permission gate to `.claude/settings.json`.
-- Treat workspace-local `.agents/**` as ignored convenience mirrors only. `.claude/skills/**` remains the repo-backed skill source of truth; local `.agents/skills/**` must not drift when it mirrors a tracked skill.
+- Treat git-tracked `.agents/**` as the Gemini provider surface and a peer of `.codex/**`. `.claude/skills/**` remains the canonical skill source of truth; tracked `.agents/skills/**` and `.codex/skills/**` mirrors must stay byte-for-byte aligned with it (enforced by `scripts/validate-repo-quality-gates.sh`).
+- Workspace Structures: Utilize `.claude/workflows/`, `docs/00.agent-governance/rules/`, `.claude/output-styles/`, and `.claude/hooks/` consistently across all tasks.
+- Verification: Implement explicit QA and CI/CD validation phases prior to task completion.
 - Treat `.claude/*.local.md`, including Hookify rules, as ignored local warning files. Shared enforcement belongs in tracked hooks, `.claude/settings.json`, `.codex/hooks.json`, and repository validators.
 - Treat `.claude/hooks/lifecycle-guard.sh` as the lifecycle validation surface: Stop/SubagentStop may block objective repo-state failures and advise task-unit commit discipline for uncommitted tracked changes, while PreCompact reports uncommitted tracked changes, suggested validation, and the same commit discipline without blocking compaction.
 
@@ -53,8 +55,8 @@ Start from the repository gateway files, then follow the governance JIT sequence
 
 ## Model Hierarchy
 
-- `supervisor.md` uses `opus`
-- All worker agents, including `wiki-curator.md`, use `sonnet`
+- `supervisor.md` uses `opus 4.8`
+- All worker agents, including `wiki-curator.md`, use `sonnet 4.6`
 
 ## Relationship to Gateway Files
 

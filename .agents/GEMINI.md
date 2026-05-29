@@ -27,16 +27,29 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Plan and implement from repo evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
 - Record repo-changing work progress and reusable memory in `docs/00.agent-governance/memory/progress.md`.
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
-- The `.agents/` folder is a git-tracked shared surface and moderate-shim for Gemini.
+- Author stage documents Template-First: read `docs/99.templates/README.md` and the matching template before writing into `docs/01.requirements`–`docs/05.operations` and `docs/99.templates`, per `docs/00.agent-governance/rules/documentation-protocol.md` and `rules/document-stage-routing.md`.
+- If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers; see `.agents/rules/graphify.md` for the full graphify contract.
+- The `.agents/` folder is a git-tracked shared surface and moderate-shim for Gemini. It mirrors `.claude/` structure for `skills/`, `rules/`, `workflows/`, and `output-styles/`.
 - The `.agents/agents/*.md` files serve as Gemini agent reference indexes.
-- Gemini operates under equivalent behavior contracts to Claude hooks (e.g., preflight, postflight, validation hooks).
+- Gemini operates under equivalent behavior contracts to Claude hooks via `.agents/hooks.json` and custom instructions (e.g., preflight, QA, CI/CD validation, postflight).
 - Use `RTK.md` as cross-agent SSOT for shell commands.
 
 ## Gemini Capabilities & Constraints
 
-- **System Context**: Gemini automatically leverages artifact creation and background task scheduling capabilities.
-- **Skill Usage**: Rely on `/imp-using-superpowers` guidelines to invoke tools explicitly rather than depending on passive prompt context.
-- **Visual Design**: When UI work is requested, prefer interactive component generation and rich aesthetics.
+- **Skill routing**: Use the repo-local `.claude/skills/**` roster (tracked mirror under `.agents/skills/**`) via the Task-to-Skill routing in `docs/00.agent-governance/harness-catalog.md`; do not rely on user-global skills for cluster work.
+- **Hook behavior**: Gemini has no native hook file equivalent to Claude `settings.json`; honor the same behavior contract (preflight, Template-First edits, post-edit validation, postflight) defined in governance and the shared `.claude/hooks/*.sh` scripts.
+- **Provider tuning**: Keep Gemini-specific tuning in `docs/00.agent-governance/providers/gemini.md`; do not introduce policy here.
+
+## Model Hierarchy
+
+- `top` tier (`supervisor`) uses `Gemini 3.1 Pro`; `worker` tier agents use `Gemini 3.5 Flash`.
+- The canonical cross-provider mapping is the Model Tier Mapping table in `docs/00.agent-governance/harness-catalog.md`.
+
+## Validation and Tooling
+
+- Use `.pre-commit-config.yaml`, `.github/workflows/ci.yml`, `scripts/*.sh`, and `infrastructure/tests/*.sh` as validation sources.
+- Run `scripts/validate-repo-quality-gates.sh .` as the repo-backed regression gate before handoff.
+- Use `RTK.md` for shell-command guidance; if `rtk` is not on PATH, run the underlying command directly and report the limitation.
 
 ## Runtime Roster
 

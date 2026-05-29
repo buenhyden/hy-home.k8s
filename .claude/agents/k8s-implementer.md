@@ -1,7 +1,8 @@
 ---
 name: k8s-implementer
 description: Worker agent for authoring Kubernetes manifest changes that are safe for GitOps review and validation.
-model: sonnet
+model: sonnet 4.6
+tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
 # k8s-implementer

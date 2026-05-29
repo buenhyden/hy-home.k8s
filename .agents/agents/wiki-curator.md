@@ -1,7 +1,7 @@
 ---
 name: wiki-curator
 description: Worker agent for curating LLM Wiki entrypoints, canonical-owner link maps, and stale-link routing.
-model: sonnet
+model: Gemini 3.5 Flash
 ---
 
 # wiki-curator

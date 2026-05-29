@@ -1,7 +1,7 @@
 ---
 name: supervisor
 description: Supervising agent for routing tasks, selecting workers, and enforcing runtime completion gates.
-model: opus
+model: Gemini 3.1 Pro
 ---
 
 # supervisor

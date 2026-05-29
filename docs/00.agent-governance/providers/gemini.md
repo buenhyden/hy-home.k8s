@@ -4,9 +4,9 @@ Gemini-specific guidance for `hy-home.k8s`.
 
 ## Loading Model
 
-- Keep root `GEMINI.md` thin and import shared policy from `@AGENTS.md`.
+- Keep root `GEMINI.md` thin; it imports `@docs/00.agent-governance/rules/bootstrap.md` (shared governance), `@docs/00.agent-governance/providers/gemini.md`, `@.agents/GEMINI.md`, and `@RTK.md`. It must not import `@AGENTS.md`, which is the GPT/Codex provider shim.
 - Root `GEMINI.md` must load the existing hierarchy; it must not copy RTK, graphify, catalog, or governance policy blocks inline.
-- Use `.claude/CLAUDE.md` as the runtime baseline when agent roster or model hierarchy is needed.
+- Use `.agents/GEMINI.md` as the local runtime baseline; resolve the agent roster and model tier mapping from `docs/00.agent-governance/harness-catalog.md`.
 - Use governance files under `docs/00.agent-governance/rules/*` as canonical policy.
 - Keep provider-specific details here; avoid policy duplication.
 - Keep Gemini-specific runtime wiring under the existing gateway hierarchy; do not create a parallel `.github/**` instruction layer for this repository.

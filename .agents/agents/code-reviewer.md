@@ -1,7 +1,7 @@
 ---
 name: code-reviewer
 description: Worker agent for reviewing YAML, Helm, and shell changes for correctness, maintainability, and policy alignment.
-model: sonnet
+model: Gemini 3.5 Flash
 ---
 
 # code-reviewer

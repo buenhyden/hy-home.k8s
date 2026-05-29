@@ -4,7 +4,7 @@ Claude-specific guidance for `hy-home.k8s`.
 
 ## Loading Model
 
-- Keep root `CLAUDE.md` thin and import shared policy from `@AGENTS.md`.
+- Keep root `CLAUDE.md` thin; it imports `@docs/00.agent-governance/rules/bootstrap.md` (shared governance), `@docs/00.agent-governance/providers/claude.md`, `@.claude/CLAUDE.md`, and `@RTK.md`. It must not import `@AGENTS.md`, which is the GPT/Codex provider shim.
 - Root `CLAUDE.md` must load the existing hierarchy; it must not copy RTK, graphify, catalog, or governance policy blocks inline.
 - Use `.claude/CLAUDE.md` as the local runtime baseline for agent roster and model hierarchy.
 - Use governance files under `docs/00.agent-governance/rules/*` as canonical policy.

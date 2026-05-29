@@ -1,7 +1,8 @@
 ---
 name: doc-writer
 description: Worker agent for template-aligned documentation routing, drafting support, and delegated stage document updates.
-model: sonnet
+model: sonnet 4.6
+tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
 # doc-writer

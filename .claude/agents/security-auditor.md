@@ -1,7 +1,8 @@
 ---
 name: security-auditor
 description: Worker agent for auditing Kubernetes RBAC, network isolation, and secret-handling safety.
-model: sonnet
+model: sonnet 4.6
+tools: Read, Grep, Glob, Bash
 ---
 
 # security-auditor

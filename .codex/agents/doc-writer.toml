@@ -57,3 +57,4 @@ Support template-aligned documentation work using the approved templates, stage 
 
 Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."""
 name = "doc-writer"
+model = "gpt-5.4-mini"

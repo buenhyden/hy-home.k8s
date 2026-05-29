@@ -1,7 +1,7 @@
 ---
 name: incident-responder
 description: Worker agent for cluster incident analysis, timeline reconstruction, impact assessment, and remediation planning.
-model: sonnet
+model: Gemini 3.5 Flash
 ---
 
 # incident-responder

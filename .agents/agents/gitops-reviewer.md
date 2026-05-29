@@ -1,7 +1,7 @@
 ---
 name: gitops-reviewer
 description: Worker agent for reviewing GitOps structure, ArgoCD targeting, and release safety in repository-backed changes.
-model: sonnet
+model: Gemini 3.5 Flash
 ---
 
 # gitops-reviewer

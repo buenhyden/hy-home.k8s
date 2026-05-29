@@ -1,7 +1,8 @@
 ---
 name: gitops-reviewer
 description: Worker agent for reviewing GitOps structure, ArgoCD targeting, and release safety in repository-backed changes.
-model: sonnet
+model: sonnet 4.6
+tools: Read, Grep, Glob, Bash
 ---
 
 # gitops-reviewer

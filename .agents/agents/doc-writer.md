@@ -1,7 +1,7 @@
 ---
 name: doc-writer
 description: Worker agent for template-aligned documentation routing, drafting support, and delegated stage document updates.
-model: sonnet
+model: Gemini 3.5 Flash
 ---
 
 # doc-writer

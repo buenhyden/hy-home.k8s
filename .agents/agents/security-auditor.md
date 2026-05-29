@@ -1,7 +1,7 @@
 ---
 name: security-auditor
 description: Worker agent for auditing Kubernetes RBAC, network isolation, and secret-handling safety.
-model: sonnet
+model: Gemini 3.5 Flash
 ---
 
 # security-auditor
