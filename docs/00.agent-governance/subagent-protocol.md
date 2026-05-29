@@ -59,6 +59,7 @@ honor the same boundary within their native capabilities.
 - Read-only review agents (`code-reviewer`, `gitops-reviewer`, `security-auditor`, `incident-responder`): `Read`, `Grep`, `Glob`, `Bash` (read-only command policy still applies).
 - Authoring agents (`k8s-implementer`, `doc-writer`, `wiki-curator`): `Read`, `Write`, `Edit`, `Grep`, `Glob`, `Bash`.
 - Tool scoping never overrides the destructive-command deny list or the no-direct-cluster-mutation boundary.
+- Additional Claude agent frontmatter fields (`permissionMode`, `memory`, `effort`) are deferred until verified against the current Claude Code agent schema; add them only when confirmed supported, otherwise keep the boundary in this contract.
 
 ## Model Hierarchy
 

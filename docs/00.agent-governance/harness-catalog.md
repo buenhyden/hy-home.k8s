@@ -47,14 +47,23 @@ concrete model level. The `top` tier serves planning and supervising roles; the
 the per-provider model identifiers consumed by `.claude/agents/*.md`,
 `.agents/agents/*.md`, and `.codex/agents/*.toml`.
 
-| Tier     | Role               | Claude                      | Gemini                      | GPT (Codex)                           |
-| -------- | ------------------ | --------------------------- | --------------------------- | ------------------------------------- |
-| `top`    | plan / supervisor  | `opus 4.8`                  | `Gemini 3.1 Pro (High)`     | `gpt-5.5`                             |
-| `worker` | delegated subagent | `sonnet 4.6` or `haiku 4.5` | `Gemini 3.5 Flash (Medium)` | `gpt-5.4-mini` or `gpt-5.4-nano`      |
+| Tier     | Role               | Claude                      | Gemini                      | GPT (Codex)                      |
+| -------- | ------------------ | --------------------------- | --------------------------- | -------------------------------- |
+| `top`    | plan / supervisor  | `opus 4.8`                  | `Gemini 3.1 Pro (High)`     | `gpt-5.5`                        |
+| `worker` | delegated subagent | `sonnet 4.6` or `haiku 4.5` | `Gemini 3.5 Flash (Medium)` | `GPT-5.3-Codex` (agentic coding) |
 
 - `supervisor` is the only `top`-tier agent; all other local agents are `worker` tier.
 - Each provider's agent files must declare the concrete model for their tier from this table.
 - Concrete identifiers may be updated here in one place when a provider promotes a new top or worker model.
+
+### Model Selection Policy
+
+Select a model tier by task profile, then map to the provider-specific identifier above.
+
+- Use `top` for planning, governance review, architecture, security review, and non-trivial refactors (high difficulty/risk, accuracy critical).
+- Use `worker` for repetitive edits, structuring, format conversion, classification, and summarization (speed and cost favored, bounded risk).
+- Escalate a `worker` task to `top` when it changes governance, security posture, or cluster-affecting manifests.
+- This table is the single source consumed by all provider agent files; keep the verified identifier set current here.
 
 ## Readiness Evidence Boundary
 
@@ -219,11 +228,12 @@ skill.
 | Operations runbook authoring                    | repo-local: `.claude/skills/ops-runbook/skill.md`                                                                                                                                                                                                                                                                                                                                                                                                                                                           | Use for authoring and reviewing bootstrap, recovery, deployment, and incident runbooks in docs/05.operations/runbooks/.                               |
 | Governance index maintenance                    | repo-local: `.claude/skills/knowledge-map/skill.md`                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Use for maintaining AGENTS.md indexes, detecting stale documents, and auditing cross-links across docs/00.agent-governance/ and docs/ stage READMEs.  |
 
-Git-tracked `.agents/skills/**` files are the Gemini mirror surface, a peer of
-`.codex/**`, and must stay aligned with the canonical `.claude/skills/**` source of
-truth. If `.agents/skills/<name>/skill.md` mirrors a tracked
-`.claude/skills/<name>/skill.md`, the mirror must stay byte-for-byte aligned. The
-repository quality gate enforces this alignment for the tracked `.agents/` surface.
+`.agents/skills/**` is the git-tracked single source of truth for skills.
+`.claude/skills` and `.codex/skills` are symlinks to it, so all three providers
+resolve byte-identical skill content with no duplication. The repository quality
+gate verifies that any tracked `.agents/skills/<name>/skill.md` and its
+`.claude/skills/<name>/skill.md` view stay byte-for-byte aligned (trivially true
+through the symlink).
 
 Workspace-local `.claude/*.local.md` files are ignored local warning layers.
 Hookify `.local.md` rules may guide an operator during local sessions, but shared
@@ -242,7 +252,7 @@ symmetry for the local runtime.
 | Dimension          | Common Contract (governance)                                                                          | Claude native                                  | Gemini native                                     | Codex native                                  | Status / Gap                                                        |
 | ------------------ | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------- |
 | Model tiers        | Model Tier Mapping (this file)                                                                        | `.claude/agents/*.md` model                    | `.agents/agents/*.md` model                       | `.codex/agents/*.toml` model                  | Ready                                                               |
-| Skills             | Skills table + Task-to-Skill Routing (this file)                                                      | `.claude/skills/**`                            | `.agents/skills/**` (tracked mirror)              | shared `.claude/skills/**` via routing        | Ready; Codex has no separate skills dir by design                   |
+| Skills             | Skills table + Task-to-Skill Routing (this file)                                                      | `.claude/skills` → `.agents/skills` (symlink)  | `.agents/skills/**` (SSoT)                        | `.codex/skills` → `.agents/skills` (symlink)  | Ready; `.agents/skills` is the SSoT, others symlink to it           |
 | Rules              | `rules/**` + provider notes                                                                           | `rules/**` + global graphify skill             | `.agents/rules/graphify.md`                       | shared `rules/**` + `graphify-out` convention | Ready                                                               |
 | Hooks              | Lifecycle/edit hook contract (`rules/bootstrap.md`, `rules/documentation-protocol.md`)                | `.claude/settings.json` + `.claude/hooks/*.sh` | behavior contract (no native hook file)           | `.codex/hooks.json` reusing shared scripts    | Partial (Gemini): no native hook file; behavioral honor required    |
 | Subagents + tools  | `subagent-protocol.md` least-privilege tool sets                                                      | `.claude/agents/*.md` `tools:` frontmatter     | `.agents/agents/*.md` reference index             | `.codex/agents/*.toml` mirror                 | Ready (Claude); Gemini/Codex honor the contract via aligned mirrors |
@@ -250,6 +260,13 @@ symmetry for the local runtime.
 | Workflows          | Workflow-type skills (Skills table) + provider workflow surfaces                                      | workflow-type `.claude/skills/**`              | `.agents/workflows/graphify.md` + workflow skills | shared workflow skills via routing            | Ready                                                               |
 | Memory             | `memory/progress.md` + `memory.template.md` (R4 coupling)                                             | governance memory ledger                       | governance memory ledger                          | governance memory ledger                      | Ready                                                               |
 | Template authoring | `rules/documentation-protocol.md` + `rules/document-stage-routing.md` + `docs/99.templates/README.md` | edit hooks + docs-stage-routing skill          | behavior contract + docs-stage-routing skill      | edit hooks + docs-stage-routing skill         | Ready                                                               |
+
+### QA and CI/CD Dimensions
+
+These two dimensions complete the ten-dimension capability set and are provider-agnostic.
+
+- **QA**: Common contract = `rules/quality-standards.md` + repo validators (`scripts/*.sh`, `infrastructure/tests/*.sh`). Claude runs them via the PostToolUse hook and `scripts/validate-repo-quality-gates.sh`; Codex reuses the same scripts through `.codex/hooks.json`; Gemini honors the same gate behaviorally. Status: Ready.
+- **CI/CD**: Common contract = `.github/workflows/ci.yml` (branch-policy, pre-commit, repo-quality-static, manifest-static gates). CI is provider-agnostic and runs on every PR regardless of which harness authored the change. Status: Ready.
 
 ### Output-style Contract
 
@@ -259,12 +276,28 @@ mutation), and report validation evidence or skipped checks honestly. Claude imp
 this as `.claude/output-styles/*.md`; Gemini approximates it through `GEMINI.md` tone and
 Codex through `developer_instructions` tone, since neither has a native output-style file.
 
+Placement: global response/behavior rules belong in `.claude/output-styles/`; a skill's
+output format belongs in that skill's instructions; a subagent's report format belongs in
+its agent prompt. Do not duplicate the same rule across all three layers.
+
 ### Provider-Specific Surfaces
 
 - Gemini: `.agents/rules/graphify.md` (graphify rule) and `.agents/workflows/graphify.md`
   (graphify workflow) are tracked Gemini surfaces; Claude consumes the same behavior via
   the global graphify skill and the shared `graphify-out/` convention, and Codex via the
   `graphify-out/` convention plus `.codex/hooks.json` Glob/Grep context wiring.
+
+### Support / Deferred Capabilities
+
+- **Supported natively (Claude)**: Agent, Skill, Rule, Hook (`settings.json` + `hooks/*.sh`), Subagent (`tools:`), Output style (`output-styles/`), Memory ledger, Template authoring, QA/CI-CD gates.
+- **Supported (Codex)**: Agent mirror (`.toml`), Hook wiring (`hooks.json` reusing shared scripts), shared Skill/Rule via mapping, Memory ledger, Template authoring.
+- **Behavioral-only / Deferred (Gemini)**: native hook file (`.agents/hooks.json` is a placeholder) and native output-style file are honored behaviorally; revisit if the Gemini CLI adds native support.
+- **Shared via symlink to the `.agents/` SSoT**: `.claude/{skills,workflows,output-styles}` and `.codex/{skills,workflows,output-styles}` are symlinks to `.agents/`, so shared content stays byte-identical without duplication. Agents remain per-provider real files because model frontmatter differs (Claude opus/sonnet + `tools:`, Gemini, GPT).
+
+### Memory Scope Mapping
+
+- `project` scope = repository governance memory: `docs/00.agent-governance/memory/progress.md` (append-only) plus standalone files via `memory.template.md` (R4 coupling). This is the shared, tracked memory all providers use.
+- `user` / `local` scope = per-operator, untracked (`.claude/*.local.md` and similar); advisory only and never a substitute for the tracked project ledger.
 
 ## Consistency Rules
 
