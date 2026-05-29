@@ -1,5 +1,5 @@
 {
-  "customInstructions": "Enforce template routing: prd -> docs/01.requirements, adr -> docs/02.architecture/decisions, ard -> docs/02.architecture/requirements, spec -> docs/03.specs, plan -> docs/04.execution/plans, task -> docs/04.execution/tasks, policy -> docs/05.operations/policies, guide -> docs/05.operations/guides, runbook -> docs/05.operations/runbooks, postmortem/incident -> docs/05.operations/incidents. Implement explicit QA and CI/CD validation phases before considering any implementation complete. MUST utilize workspace structured directories: skills/, rules/, hooks/, output-styles/, and workflows/. Consult docs/00.agent-governance/memory/.",
+  "customInstructions": "Enforce template routing: prd -> docs/01.requirements/, adr -> docs/02.architecture/decisions/, ard -> docs/02.architecture/requirements/, spec -> docs/03.specs/, plan -> docs/04.execution/plans/, task -> docs/04.execution/tasks/, policy -> docs/05.operations/policies/, guide -> docs/05.operations/guides/, runbook -> docs/05.operations/runbooks/, postmortem/incident -> docs/05.operations/incidents/. Implement explicit QA and CI/CD validation phases before considering any implementation complete. MUST utilize workspace structured directories. Consult docs/00.agent-governance/memory/.",
   "hooks": {
     "SessionStart": [
       {
@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "PROJECT_DIR=\"${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/.claude/hooks/session-start.sh\"",
+            "command": "PROJECT_DIR=\"${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/session-start.sh\"",
             "timeout": 20
           }
         ]
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "PROJECT_DIR=\"${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/.claude/hooks/k8s-pre-edit.sh\"",
+            "command": "PROJECT_DIR=\"${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/k8s-pre-edit.sh\"",
             "timeout": 10
           }
         ]
@@ -40,7 +40,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "PROJECT_DIR=\"${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/.claude/hooks/post-validate.sh\"",
+            "command": "PROJECT_DIR=\"${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/post-validate.sh\"",
             "timeout": 60
           }
         ]
@@ -52,7 +52,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "PROJECT_DIR=\"${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/.claude/hooks/lifecycle-guard.sh\"",
+            "command": "PROJECT_DIR=\"${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh\"",
             "timeout": 60
           }
         ]
@@ -64,7 +64,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "PROJECT_DIR=\"${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/.claude/hooks/lifecycle-guard.sh\"",
+            "command": "PROJECT_DIR=\"${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh\"",
             "timeout": 60
           }
         ]
@@ -76,7 +76,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "PROJECT_DIR=\"${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/.claude/hooks/lifecycle-guard.sh\"",
+            "command": "PROJECT_DIR=\"${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh\"",
             "timeout": 20
           }
         ]
