@@ -18,14 +18,14 @@ Local baselines: [`.claude/CLAUDE.md`](.claude/CLAUDE.md), [`.codex/CODEX.md`](.
 
 ## §2 Constraints
 
-- Respond to users in Korean.
-- Keep `docs/00.agent-governance/**`, `.claude/**`, `.codex/**`, and `.agents/**` runtime/policy docs in English.
-- Keep human-facing READMEs in Korean.
-- Treat `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, and `docs/99.templates` as authored SSoT; modify only when explicitly requested by a human.
-- Keep gateway files minimal and route detailed policy to governance docs.
-- GitOps-first: all infra changes go through repository review and ArgoCD reconciliation. Agents and subagents do not mutate live clusters; human-approved bootstrap or break-glass actions are operator-bound and must record scope, rollback, and verification evidence.
-- Secrets: never write plaintext Kubernetes secrets.
-- In-place refactor only; no file proliferation without explicit human request.
+All detailed constraints, including Language Policy, GitOps-first execution, Secret handling, and In-place refactoring rules, are documented in:
+- [Agent Standards](docs/00.agent-governance/rules/standards.md)
+- [Agentic Rules](docs/00.agent-governance/rules/agentic.md)
+
+**Core Rules:**
+- Follow `docs/00.agent-governance/` for agent policy, retaining it in English.
+- User-facing responses and READMEs must be in Korean.
+- Route detailed policy changes to governance docs instead of bloating gateway files.
 
 ## §3 Routing
 

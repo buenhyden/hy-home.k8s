@@ -30,9 +30,13 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - The `.agents/` folder is a git-tracked shared surface and moderate-shim for Gemini.
 - The `.agents/agents/*.md` files serve as Gemini agent reference indexes.
 - Gemini operates under equivalent behavior contracts to Claude hooks (e.g., preflight, postflight, validation hooks).
-- Keep infrastructure changes repo-backed. Agents and subagents do not mutate live clusters by default; human-approved bootstrap or break-glass actions are operator-bound and must record scope, rollback, and verification evidence.
-- Do not write plaintext Kubernetes secrets.
 - Use `RTK.md` as cross-agent SSOT for shell commands.
+
+## Gemini Capabilities & Constraints
+
+- **System Context**: Gemini automatically leverages artifact creation and background task scheduling capabilities.
+- **Skill Usage**: Rely on `/imp-using-superpowers` guidelines to invoke tools explicitly rather than depending on passive prompt context.
+- **Visual Design**: When UI work is requested, prefer interactive component generation and rich aesthetics.
 
 ## Runtime Roster
 

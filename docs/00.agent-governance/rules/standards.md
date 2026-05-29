@@ -38,6 +38,12 @@ Global standards for all agents in this repository.
   - `rules/stage-authoring-matrix.md`
   - `rules/stage-checklists.md`
 - Keep scope and provider docs action-oriented and non-duplicative.
+- In-place refactor only; no file proliferation without explicit human request.
+
+## Security & Infrastructure Policy
+
+- GitOps-first: all infra changes go through repository review and ArgoCD reconciliation. Agents and subagents do not mutate live clusters; human-approved bootstrap or break-glass actions are operator-bound and must record scope, rollback, and verification evidence.
+- Secrets: never write plaintext Kubernetes secrets.
 
 ## Workspace Alignment
 

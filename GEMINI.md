@@ -1,7 +1,7 @@
 @AGENTS.md
 @docs/00.agent-governance/providers/gemini.md
-@.claude/CLAUDE.md
-
+@.agents/GEMINI.md
+@RTK.md
 # GEMINI.md
 
 Thin Gemini provider shim for `hy-home.k8s`.

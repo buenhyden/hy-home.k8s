@@ -27,11 +27,15 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Plan and implement from repo evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
 - Record repo-changing work progress and reusable memory in `docs/00.agent-governance/memory/progress.md`.
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
-- Keep infrastructure changes repo-backed. Agents and subagents do not mutate live clusters by default; human-approved bootstrap or break-glass actions are operator-bound and must record scope, rollback, and verification evidence.
-- Do not write plaintext Kubernetes secrets.
 - Treat `.codex/agents/*.toml` as Codex mirrors of the primary agent definitions; keep them aligned.
 - Treat `.codex/hooks.json` as Codex event wiring for repo-local context and validation hooks, not as an equivalent permission gate to Claude's `settings.json`.
 - Use `RTK.md` as cross-agent SSOT for shell commands.
+
+## Codex/GPT Capabilities & Constraints
+
+- **System Context**: Codex heavily utilizes `.toml` for configuration and function mapping.
+- **Skill Usage**: Ensure `/imp` style prompts are mapped internally to Codex tool execution behaviors if native tool mapping is not present.
+- **Code Assistance**: Prioritize inline completions and context-aware suggestions during coding tasks.
 
 ## Runtime Roster
 

@@ -1461,7 +1461,8 @@ gateway_contracts = {
         "required": [
             "@AGENTS.md",
             "@docs/00.agent-governance/providers/gemini.md",
-            "@.claude/CLAUDE.md",
+            "@.agents/GEMINI.md",
+            "@RTK.md",
             "docs/00.agent-governance/harness-catalog.md",
         ],
     },
