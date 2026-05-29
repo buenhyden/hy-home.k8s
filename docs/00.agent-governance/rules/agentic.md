@@ -17,7 +17,11 @@ Rules for AI Agent-first Engineering quality and safety.
 - Convert user intent into explicit success criteria, affected paths, validation commands, and known limitations.
 - Keep implementation GitOps-first: repository change -> review -> ArgoCD reconciliation.
 - Keep generated documents in the canonical docs taxonomy and route through `document-stage-routing.md`.
-- Keep `.claude/agents/*.md` and `.codex/agents/*.toml` aligned whenever runtime contracts change.
+- Enforce template routing: `prd` -> `docs/01.requirements/`, `adr` -> `docs/02.architecture/decisions/`, `ard` -> `docs/02.architecture/requirements/`, `spec` -> `docs/03.specs/`, `plan` -> `docs/04.execution/plans/`, `task` -> `docs/04.execution/tasks/`, `policy` -> `docs/05.operations/policies/`, `guide` -> `docs/05.operations/guides/`, `runbook` -> `docs/05.operations/runbooks/`, `postmortem/incident` -> `docs/05.operations/incidents/`.
+- Implement explicit QA and CI/CD validation phases (e.g., pre-commit checks, GitOps dry-runs, structural template coverage) before considering any implementation complete.
+- All AI Agents (Gemini, Claude, GPT) MUST enforce and utilize workspace-specific structured directories: `skills/` for tasks, `rules/` for guidelines, `hooks.json` or `hooks/` for automated event wiring, `output-styles/` for formatting, and `workflows/` for orchestrated steps.
+- Maintain and consult historical/contextual state using `docs/00.agent-governance/memory`.
+- Keep `.claude/agents/*.md`, `.agents/agents/*.md`, and `.codex/agents/*.toml` aligned whenever runtime contracts change.
 - Treat completion and compaction safeguards as layered controls: reports, handoffs, memory/progress, postflight checklist, and lifecycle hooks. Stop/SubagentStop hooks may block objective repo-state failures; PreCompact is advisory.
 - Report unavailable tools, skipped live checks, and CI-only validation honestly.
 

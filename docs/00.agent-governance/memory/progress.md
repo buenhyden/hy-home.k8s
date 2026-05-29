@@ -4309,6 +4309,38 @@ References` is now a legacy heading that should not return.
 
 - None.
 
+### 2026-05-29 — 3-provider governance parity and capability symmetry
+
+- **Date**: 2026-05-29
+- **Layer**: meta
+- **Status**: complete
+- **Tags**: #governance #docs #validation
+
+#### Progress
+
+- Reconciled the `.agents/` framing: corrected `.claude/CLAUDE.md` and `harness-catalog.md` to treat `.agents/**` as a git-tracked Gemini provider surface (peer of `.codex/**`), matching `bootstrap.md` and the actual tracked state. Prior "ignored convenience mirror" wording was stale.
+- Fixed provider-note pointers: `providers/claude.md` and `providers/gemini.md` no longer claim root shims import `@AGENTS.md` (they import `@bootstrap.md` + provider note + local baseline + `@RTK.md`); `providers/gemini.md` baseline pointer corrected to `.agents/GEMINI.md`.
+- Added a canonical Model Tier Mapping (`top`/`worker`) to `harness-catalog.md` with per-provider IDs (Claude opus/sonnet, Gemini `Gemini 3 Pro`/`Gemini 2.5 Flash`, Codex `gpt-5-codex`/`GPT-5.1-mini`); generalized `subagent-protocol.md` Model Hierarchy and added Model Hierarchy + Validation and Tooling sections to `.agents/GEMINI.md` and `.codex/CODEX.md`.
+- Reflected provider models: `.agents/agents/*.md` frontmatter set to Gemini tiers; `.codex/agents/*.toml` gained `model` keys.
+- Replaced speculative `/imp-*` capability text in `.agents/GEMINI.md` and `.codex/CODEX.md` with repo-backed skill-routing, hook-behavior, and provider-tuning bullets; added Template-First and graphify pointers to both baselines.
+- Added a Provider Capability Parity Matrix (9 dimensions) + Output-style Contract + Provider-Specific Surfaces note to `harness-catalog.md`; included Gemini in the Template-First clause of `documentation-protocol.md`.
+- Added a Tool Scoping contract to `subagent-protocol.md` and least-privilege `tools:` frontmatter to the eight `.claude/agents/*.md`; created `.claude/output-styles/hy-home-k8s.md`.
+
+#### Memory
+
+- `.agents/` is git-tracked (27 files) and is the Gemini provider surface; do not describe it as ignored.
+- The quality gate compares agent mirrors by stem, scope imports, and runtime-contract phrases only — `model` is not compared, so per-provider model IDs are safe to diverge.
+- Gemini has no native hook/output-style file; it honors those contracts behaviorally — recorded as Partial/Gap in the parity matrix rather than as fabricated files.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS (after each phase).
+- `python3 tomllib` parse of all `.codex/agents/*.toml` OK after adding model keys.
+
+#### Handoff
+
+- None.
+
 ## Historical Entries
 
 ### Harness Implementation Progress
