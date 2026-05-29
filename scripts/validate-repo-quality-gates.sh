@@ -2084,10 +2084,10 @@ for deny_rule in expected_destructive_git_denies:
         fail(f".claude/settings.json missing destructive Git deny rule: {deny_rule}")
 post_validate_command = json.dumps(claude_settings.get("hooks", {}))
 for phrase in [
-    ".claude/hooks/k8s-pre-edit.sh",
-    ".claude/hooks/post-validate.sh",
-    ".claude/hooks/session-start.sh",
-    ".claude/hooks/lifecycle-guard.sh",
+    "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
+    "docs/00.agent-governance/hooks/post-validate.sh",
+    "docs/00.agent-governance/hooks/session-start.sh",
+    "docs/00.agent-governance/hooks/lifecycle-guard.sh",
     '"Stop"',
     '"SubagentStop"',
     '"PreCompact"',
@@ -2104,10 +2104,10 @@ for event_name in ["SessionStart", "PreToolUse", "PostToolUse", "Stop", "Subagen
         fail(f"{rel(codex_hooks_path)} missing event hook: {event_name}")
 codex_hooks_text = read_text(codex_hooks_path)
 for phrase in [
-    ".claude/hooks/session-start.sh",
-    ".claude/hooks/k8s-pre-edit.sh",
-    ".claude/hooks/post-validate.sh",
-    ".claude/hooks/lifecycle-guard.sh",
+    "docs/00.agent-governance/hooks/session-start.sh",
+    "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
+    "docs/00.agent-governance/hooks/post-validate.sh",
+    "docs/00.agent-governance/hooks/lifecycle-guard.sh",
     "CODEX_PROJECT_DIR",
     "Glob|Grep",
     '"timeout": 60',
@@ -2136,7 +2136,7 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
     docs_hook_payload = json.dumps(
         {"tool_input": {"file_path": "docs/03.specs/example-feature/api-spec.md"}}
     )
-    pre_hook_path = root / ".claude/hooks/k8s-pre-edit.sh"
+    pre_hook_path = root / "docs/00.agent-governance/hooks/k8s-pre-edit.sh"
     pre_hook_result = subprocess.run(
         ["bash", str(pre_hook_path)],
         cwd=root,
@@ -2170,7 +2170,7 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
         if phrase not in docs_pre_hook_result.stdout:
             fail(f"{rel(pre_hook_path)} docs payload simulation missing output phrase: {phrase}")
 
-    post_hook_path = root / ".claude/hooks/post-validate.sh"
+    post_hook_path = root / "docs/00.agent-governance/hooks/post-validate.sh"
     post_hook_result = subprocess.run(
         ["bash", str(post_hook_path)],
         cwd=root,
@@ -2211,7 +2211,7 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
     if "[hook] PASS documentation template enforcement" not in docs_post_hook_result.stdout:
         fail(f"{rel(post_hook_path)} docs payload simulation missing template enforcement output")
 
-    lifecycle_hook_path = root / ".claude/hooks/lifecycle-guard.sh"
+    lifecycle_hook_path = root / "docs/00.agent-governance/hooks/lifecycle-guard.sh"
     lifecycle_selftest_env = {
         **hook_env,
         "HY_HOME_K8S_LIFECYCLE_GUARD_SELFTEST": "1",
@@ -4138,8 +4138,8 @@ script_command_contract_paths = [
     root / ".github/ABOUT.md",
     root / ".claude/settings.json",
     root / ".claude/CLAUDE.md",
-    root / ".claude/hooks/post-validate.sh",
-    root / ".claude/hooks/lifecycle-guard.sh",
+    root / "docs/00.agent-governance/hooks/post-validate.sh",
+    root / "docs/00.agent-governance/hooks/lifecycle-guard.sh",
     root / ".codex/hooks.json",
     root / "docs/05.operations/guides/0009-llm-wiki-curation-guide.md",
     root / "docs/90.references/README.md",

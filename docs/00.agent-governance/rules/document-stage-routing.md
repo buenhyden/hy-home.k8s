@@ -29,7 +29,7 @@ Use the existing stage structure only.
 | Operations policy | `docs/05.operations/policies/<doc>.md` | `docs/99.templates/operation.template.md` | Required for release and operational controls. |
 | Runbook | `docs/05.operations/runbooks/<doc>.md` | `docs/99.templates/runbook.template.md` | Use for executable operational procedures. |
 | Incident record | `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/incident.template.md` | Use for facts, timelines, mitigations, and active incident evidence. |
-| Postmortem | `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/postmortem.template.md` | Use for RCA, prevention actions, and post-incident learning. |
+| Postmortem | `docs/05.operations/incidents/YYYY-MM-DD-<incident>-postmortem.md` | `docs/99.templates/postmortem.template.md` | Use for RCA, prevention actions, and post-incident learning. |
 | Durable reference | `docs/90.references/<category>/<topic>.md` | `docs/99.templates/reference.template.md` | Use for slow-moving concepts, glossaries, standards, and reusable agent knowledge. |
 | LLM Wiki generated index | `docs/90.references/llm-wiki/wiki-index.md` | `docs/99.templates/reference.template.md` through `scripts/generate-llm-wiki-index.sh` | Use only as a generated canonical-owner link map. |
 | Governance memory | `docs/00.agent-governance/memory/<topic>.md` | `docs/99.templates/memory.template.md` | Use for reusable agent governance lessons. |
