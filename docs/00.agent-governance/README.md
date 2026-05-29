@@ -65,6 +65,7 @@ Links in this README are relative to `docs/00.agent-governance/`.
 
 ## Governance Entry Points
 
+- [Common Governance & Mappings](common-governance.md)
 - [Preflight Checklist](rules/preflight-checklist.md)
 - [Postflight Checklist](rules/postflight-checklist.md)
 - [Document Stage Routing Rules](rules/document-stage-routing.md)
