@@ -3702,7 +3702,7 @@ References` is now a legacy heading that should not return.
   `docs/05.operations` README entrypoints; older `## Related References` headings
   remain temporarily allowed only outside this touched scope.
 - Operations policy documents keep `type: operation` to match
-  `operation.template.md` and the stage authoring matrix.
+  `policy.template.md` and the stage authoring matrix.
 - Frontmatter `updated` values for the 26 operations documents came from the
   owning README document index. No fallback date was used.
 
@@ -3734,7 +3734,7 @@ References` is now a legacy heading that should not return.
 #### Progress
 
 - Completed the remaining target-relative placeholders in `incident.template.md`,
-  `postmortem.template.md`, `operation.template.md`, and `reference.template.md`.
+  `postmortem.template.md`, `policy.template.md`, and `reference.template.md`.
 - Aligned generated `docs/**` Markdown code-link labels with their actual
   relative hrefs so rendered paths match the file location that owns the link.
 - Aligned root, docs stage, and examples README code-link labels with their

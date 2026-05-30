@@ -1,6 +1,6 @@
 ---
 title: '{Policy or Standard Name} Operations Policy'
-type: operation
+type: policy
 status: draft
 owner: '{team-or-person}'
 updated: YYYY-MM-DD

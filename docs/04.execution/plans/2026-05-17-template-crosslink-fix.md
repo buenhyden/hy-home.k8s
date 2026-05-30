@@ -82,7 +82,7 @@ updated: 2026-05-21
 | T-06 | runbook.template.md 경로 수정      | `docs/99.templates/runbook.template.md`          | REQ-TMP-001 | Canonical References 4개 + Related Documents 3개 수정                     |
 | T-07 | incident.template.md 경로 수정     | `docs/99.templates/incident.template.md`         | REQ-TMP-001 | Runbook Link 셀 + Related Documents 2개 수정                              |
 | T-08 | postmortem.template.md 경로 수정   | `docs/99.templates/postmortem.template.md`       | REQ-TMP-001 | Incident Document 셀 + Related Documents 3개 수정                         |
-| T-09 | operation.template.md 경로 수정    | `docs/99.templates/operation.template.md`        | REQ-TMP-001 | Related Documents 3개 수정                                                |
+| T-09 | policy.template.md 경로 수정    | `docs/99.templates/policy.template.md`        | REQ-TMP-001 | Related Documents 3개 수정                                                |
 | T-10 | reference.template.md 경로 수정    | `docs/99.templates/reference.template.md`        | REQ-TMP-001 | Related Documents 2개 수정                                                |
 | T-11 | ADR 생성 파일 표시 텍스트 수정     | `docs/02.architecture/decisions/000{1-9}*.md`    | REQ-GEN-001 | backtick 표시 텍스트가 href와 일치                                        |
 | T-12 | ARD 생성 파일 표시 텍스트 수정     | `docs/02.architecture/requirements/000{1-3}*.md` | REQ-GEN-001 | backtick 표시 텍스트가 href와 일치                                        |
@@ -107,7 +107,7 @@ updated: 2026-05-21
 | `plan.template.md`         | `docs/04.execution/plans/`                       | Fixed before final integration |
 | `task.template.md`         | `docs/04.execution/tasks/`                       | Fixed before final integration |
 | `guide.template.md`        | `docs/05.operations/guides/`                     | Fixed before final integration |
-| `operation.template.md`    | `docs/05.operations/policies/`                   | Fixed in final integration     |
+| `policy.template.md`    | `docs/05.operations/policies/`                   | Fixed in final integration     |
 | `runbook.template.md`      | `docs/05.operations/runbooks/`                   | Fixed before final integration |
 | `incident.template.md`     | `docs/05.operations/incidents/YYYY/`             | Fixed in final integration     |
 | `postmortem.template.md`   | `docs/05.operations/incidents/postmortems/YYYY/` | Fixed in final integration     |

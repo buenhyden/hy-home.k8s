@@ -39,7 +39,7 @@ updated: 2026-05-21
 | T-006   | runbook.template.md — Canonical References + Related 경로 수정 | doc  | T-06        | 7개 경로 수정 완료                                     | platform | Done   |
 | T-007   | incident.template.md — Runbook Link + Related 경로 수정        | doc  | T-07        | 3개 경로 수정 완료                                     | platform | Done   |
 | T-008   | postmortem.template.md — Incident Document + Related 수정      | doc  | T-08        | 4개 경로 수정 완료                                     | platform | Done   |
-| T-009   | operation.template.md — Related Documents 경로 수정            | doc  | T-09        | 3개 경로 수정 완료                                     | platform | Done   |
+| T-009   | policy.template.md — Related Documents 경로 수정            | doc  | T-09        | 3개 경로 수정 완료                                     | platform | Done   |
 | T-010   | reference.template.md — Related Documents 경로 수정            | doc  | T-10        | 2개 경로 수정 완료                                     | platform | Done   |
 | T-011   | ADR 생성 파일 표시 텍스트 수정 (9개)                           | doc  | T-11        | backtick label = href 일치 확인                        | platform | Done   |
 | T-012   | ARD 생성 파일 표시 텍스트 수정 (3개)                           | doc  | T-12        | backtick label = href 일치 확인                        | platform | Done   |
@@ -66,7 +66,7 @@ updated: 2026-05-21
 - [x] T-006 runbook.template.md 경로 수정
 - [x] T-007 incident.template.md 경로 수정
 - [x] T-008 postmortem.template.md 경로 수정
-- [x] T-009 operation.template.md 경로 수정
+- [x] T-009 policy.template.md 경로 수정
 - [x] T-010 reference.template.md 경로 수정
 
 ### Phase 2 — Generated Document Label Fix (T-011~T-016)

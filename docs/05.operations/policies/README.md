@@ -63,7 +63,7 @@ docs/05.operations/policies/
 ## How to Work in This Area
 
 1. 정책 수정 전에 관련 Spec/Runbook을 확인한다.
-2. [operation.template.md](../../99.templates/operation.template.md)를 기준으로 섹션을 유지한다.
+2. [policy.template.md](../../99.templates/policy.template.md)를 기준으로 섹션을 유지한다.
 3. 통제 변경 시 검증 명령과 예외 승인 흐름을 함께 갱신한다.
 4. 문서 변경 후 이 README 인덱스를 동기화한다.
 5. 정책 문서에는 실행 절차를 복제하지 않는다. 검증은 필요한 증적과 성공 기준만 남기고, 실행 가능한 명령 순서와 체크리스트는 소유 runbook 링크로 연결한다.
@@ -86,7 +86,7 @@ docs/05.operations/policies/
 - [ARD](../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md)
 - [Spec](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
 - [Runbook](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
-- [Operation Template](../../99.templates/operation.template.md)
+- [Operation Template](../../99.templates/policy.template.md)
 - [README Template](../../99.templates/readme.template.md)
 
 ## 문서 인덱스

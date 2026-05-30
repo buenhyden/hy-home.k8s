@@ -26,7 +26,7 @@ Use the existing stage structure only.
 | Data model | `docs/03.specs/<feature-id>/data-model.md` | `docs/99.templates/data-model.template.md` | Use for schema and storage design tied to one feature. |
 | Test design | `docs/03.specs/<feature-id>/tests.md` | `docs/99.templates/tests.template.md` | Use for verification strategy tied to one feature. |
 | User or operator guide | `docs/05.operations/guides/<doc>.md` | `docs/99.templates/guide.template.md` | Use after the relevant spec is stable. |
-| Operations policy | `docs/05.operations/policies/<doc>.md` | `docs/99.templates/operation.template.md` | Required for release and operational controls. |
+| Operations policy | `docs/05.operations/policies/<doc>.md` | `docs/99.templates/policy.template.md` | Required for release and operational controls. |
 | Runbook | `docs/05.operations/runbooks/<doc>.md` | `docs/99.templates/runbook.template.md` | Use for executable operational procedures. |
 | Incident record | `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/incident.template.md` | Use for facts, timelines, mitigations, and active incident evidence. |
 | Postmortem | `docs/05.operations/incidents/YYYY-MM-DD-<incident>-postmortem.md` | `docs/99.templates/postmortem.template.md` | Use for RCA, prevention actions, and post-incident learning. |

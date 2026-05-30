@@ -734,7 +734,7 @@ required_stage_templates = [
     ("docs/04.execution/plans/*.md", "plan.template.md"),
     ("docs/04.execution/tasks/*.md", "task.template.md"),
     ("docs/05.operations/guides/*.md", "guide.template.md"),
-    ("docs/05.operations/policies/*.md", "operation.template.md"),
+    ("docs/05.operations/policies/*.md", "policy.template.md"),
     ("docs/05.operations/runbooks/*.md", "runbook.template.md"),
     ("docs/05.operations/incidents/[0-9][0-9][0-9][0-9]/*.md", "incident.template.md"),
     ("docs/05.operations/incidents/postmortems/**/*.md", "postmortem.template.md"),
@@ -822,7 +822,7 @@ operations_routing_rows = markdown_table_after_heading(
 expected_operations_routing_header = ["필요 상황", "사용할 위치", "시작 템플릿"]
 expected_operations_routing_targets = [
     ("./guides/README.md", "../99.templates/guide.template.md"),
-    ("./policies/README.md", "../99.templates/operation.template.md"),
+    ("./policies/README.md", "../99.templates/policy.template.md"),
     ("./runbooks/README.md", "../99.templates/runbook.template.md"),
     ("./incidents/README.md", "../99.templates/incident.template.md"),
     ("./incidents/README.md", "../99.templates/postmortem.template.md"),
@@ -1095,21 +1095,13 @@ template_enforcement_phrase_checks = {
         "required template headings",
         "template path used and validation evidence",
     ],
-    root / ".claude/skills/docs-stage-routing/skill.md": [
+    root / ".agents/skills/docs-stage-routing/skill.md": [
         "docs/99.templates/README.md",
         "status: draft",
         "Required Template",
         "validation evidence",
     ],
-    root / ".claude/agents/doc-writer.md": [
-        "docs/99.templates/README.md",
-        "status: draft",
-        "required template headings",
-        "structural template mapping",
-        "template path used",
-        "Validation evidence",
-    ],
-    root / ".codex/agents/doc-writer.toml": [
+    root / ".agents/agents/doc-writer.md": [
         "docs/99.templates/README.md",
         "status: draft",
         "required template headings",

@@ -114,5 +114,5 @@ pre-commit run --all-files
 - **Plan**: `[../../04.execution/plans/2026-05-28-docs-governance-consistency.md]`
 - **Tasks**: `[../../04.execution/tasks/2026-05-28-docs-governance-consistency.md]`
 - **Runbook Template**: `[../../05.operations/../99.templates/runbook.template.md]`
-- **Policy Template**: `[../../05.operations/../99.templates/operation.template.md]`
+- **Policy Template**: `[../../05.operations/../99.templates/policy.template.md]`
 - **Guide Template**: `[../../05.operations/../99.templates/guide.template.md]`

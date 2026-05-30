@@ -46,8 +46,8 @@
 ├── incident.template.md
 ├── memory.template.md
 ├── openapi.template.yaml
-├── operation.template.md
 ├── plan.template.md
+├── policy.template.md
 ├── postmortem.template.md
 ├── progress.template.md
 ├── prd.template.md
@@ -122,7 +122,7 @@
 | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `plan.template.md` | Execution order, risk control, rollout, verification |
 | `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `task.template.md` | Implementation and validation task evidence |
 | `docs/05.operations/guides/####-<topic>.md` | `guide.template.md` | Stable-state user, developer, or operator guidance |
-| `docs/05.operations/policies/####-<policy-or-standard>.md` | `operation.template.md` | Operational policy, controls, boundaries |
+| `docs/05.operations/policies/####-<policy-or-standard>.md` | `policy.template.md` | Operational policy, controls, boundaries |
 | `docs/05.operations/runbooks/####-<topic>.md` | `runbook.template.md` | Executable operational procedure and recovery path |
 | `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `incident.template.md` | Incident fact record and timeline |
 | `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `postmortem.template.md` | Incident analysis and prevention follow-up |
