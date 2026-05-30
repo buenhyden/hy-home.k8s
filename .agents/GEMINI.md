@@ -31,8 +31,9 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers; see `.agents/rules/graphify.md` for the full graphify contract.
 - The `.agents/` folder is the git-tracked single source of truth for provider-neutral shared content (`skills/`, `workflows/`, `output-styles/`); `.claude/` and `.codex/` symlink to it. `.agents/agents/*.md` are the Gemini-tier agent files.
 - The `.agents/agents/*.md` files serve as Gemini agent reference indexes.
-- Gemini operates under equivalent behavior contracts to Claude hooks: `.agents/hooks.json` is a placeholder, and Gemini honors the shared `.claude/hooks/*.sh` behavior contract via custom instructions (preflight, QA, CI/CD validation, postflight).
+- Gemini operates under equivalent behavior contracts to Claude hooks: `.agents/hooks.json` enforces Template-First routing and pre/post-edit QA/CI/CD validation.
 - Use `RTK.md` as cross-agent SSOT for shell commands.
+- See `.agents/rules/workspace-rules.md` for Gemini-specific workspace rules and `.agents/workflows/qa-cicd-workflow.md` for QA/CI/CD workflows.
 
 ## Gemini Capabilities & Constraints
 
@@ -42,7 +43,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 
 ## Model Hierarchy
 
-- `top` tier (`supervisor`) uses `Gemini 3.1 Pro`; `worker` tier agents use `Gemini 3.5 Flash`.
+- See `docs/00.agent-governance/model-policy.md` for the canonical model tier policy (e.g., `Gemini 3.1 Pro` for `top`, `Gemini 3.5 Flash` for `worker`).
 - The canonical cross-provider mapping is the Model Tier Mapping table in `docs/00.agent-governance/harness-catalog.md`.
 
 ## Validation and Tooling

@@ -43,7 +43,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 
 ## Model Hierarchy
 
-- `top` tier (`supervisor`) uses `GPT-5.5`; `worker` tier agents use `GPT-5.3-Codex`.
+- See `docs/00.agent-governance/model-policy.md` for the canonical model tier policy (e.g., `GPT-5.5` for `top`, `GPT-5.4-mini` for `worker`).
 - The canonical cross-provider mapping is the Model Tier Mapping table in `docs/00.agent-governance/harness-catalog.md`.
 
 ## Validation and Tooling

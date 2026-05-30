@@ -11,6 +11,21 @@ Gemini-specific guidance for `hy-home.k8s`.
 - Keep provider-specific details here; avoid policy duplication.
 - Keep Gemini-specific runtime wiring under the existing gateway hierarchy; do not create a parallel `.github/**` instruction layer for this repository.
 
+## Antigravity Harness Structure (`.agents/`)
+
+The `.agents/` directory is the canonical Antigravity harness for Gemini.
+
+- **Rules (`.agents/rules/`)**: Contains Gemini-specific workflow and behavior rules (e.g., `workspace-rules.md`).
+- **Workflows (`.agents/workflows/`)**: Defines orchestrated workflows (e.g., `qa-cicd-workflow.md` for pre/post-edit validation).
+- **Skills (`.agents/skills/`)**: Houses Gemini skill definitions that respect the model tiers defined in `model-policy.md`.
+- **Hooks (`.agents/hooks.json`)**: Configures PreToolUse/PostToolUse behavior. Must enforce Template-First routing to `docs/99.templates/` and QA/CI/CD validation.
+
+## Model Policy (Gemini)
+
+- Refer to `docs/00.agent-governance/model-policy.md` for canonical tiers.
+- **Planning / Supervisor**: `Gemini 3.1 Pro` must be used for architecture, planning, and governance review.
+- **Worker / Subagent**: `Gemini 3.5 Flash` must be used for routine file edits, summaries, and repetitive validation.
+
 ## Context Strategy
 
 - Gemini CLI supports hierarchical context loading (global, ancestors, subdirectories).

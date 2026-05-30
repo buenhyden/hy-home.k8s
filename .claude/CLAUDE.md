@@ -55,8 +55,8 @@ Start from the repository gateway files, then follow the governance JIT sequence
 
 ## Model Hierarchy
 
-- `supervisor.md` uses `opus 4.8`
-- All worker agents, including `wiki-curator.md`, use `sonnet 4.6`
+- See `docs/00.agent-governance/model-policy.md` for the canonical model tier policy (e.g., `opus 4.8` for supervisor, `sonnet 4.6` for workers).
+- The detailed cross-provider catalog is in `docs/00.agent-governance/harness-catalog.md`.
 
 ## Relationship to Gateway Files
 
