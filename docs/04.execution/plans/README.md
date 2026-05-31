@@ -58,6 +58,10 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-05-22-spec-execution-implementation-audit.md
 ├── 2026-05-24-p3-gitops-secret-runtime-remediation.md
 ├── 2026-05-28-docs-governance-consistency.md
+├── 2026-05-28-workspace-skill-expansion.md
+├── 2026-05-30-antigravity-governance.md
+├── 2026-05-30-common-agent-governance-refactoring.md
+├── 2026-05-31-codex-governance-harness-alignment.md
 └── README.md
 ```
 
@@ -98,6 +102,10 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-05-22-spec-execution-implementation-audit.md`](./2026-05-22-spec-execution-implementation-audit.md)   | `docs/03.specs`와 `docs/04.execution` 구현 evidence 재감사 및 드리프트 보정 계획                                                                                               | Done | 2026-05-22 |
 | [`./2026-05-24-p3-gitops-secret-runtime-remediation.md`](./2026-05-24-p3-gitops-secret-runtime-remediation.md) | 승인된 P3 ArgoCD/Vault/ESO/secret runtime remediation 실행 계획. Repo desired-state 보완은 완료됐고 live runtime 검증은 별도 follow-up이다.                                    | Done | 2026-05-25 |
 | [`./2026-05-28-docs-governance-consistency.md`](./2026-05-28-docs-governance-consistency.md)                   | 문서 거버넌스 일관성 정비 — templates, policies, runbooks, guides, plans/tasks 준수율 향상 및 레거시 파일 제거 계획                                                            | Done | 2026-05-29 |
+| [`./2026-05-28-workspace-skill-expansion.md`](./2026-05-28-workspace-skill-expansion.md)                       | repo-local skill expansion과 harness catalog routing 보강 계획                                                                                                                | Done | 2026-05-28 |
+| [`./2026-05-30-antigravity-governance.md`](./2026-05-30-antigravity-governance.md)                             | Gemini/Antigravity 하네스와 공통 Stage 00 거버넌스 정합화 계획                                                                                                                | Active | 2026-05-30 |
+| [`./2026-05-30-common-agent-governance-refactoring.md`](./2026-05-30-common-agent-governance-refactoring.md)   | 공통 AI Agent governance, template contract, model policy refactoring 계획                                                                                                    | Active | 2026-05-30 |
+| [`./2026-05-31-codex-governance-harness-alignment.md`](./2026-05-31-codex-governance-harness-alignment.md)     | Codex/GPT 하네스, Model Policy, Template Contract drift 정합화 계획                                                                                                           | Done | 2026-05-31 |
 
 ## Related Documents
 

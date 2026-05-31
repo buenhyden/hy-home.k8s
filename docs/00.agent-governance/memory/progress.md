@@ -8,6 +8,59 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-05-31 — Codex governance harness alignment
+
+- **Date**: 2026-05-31
+- **Layer**: meta, docs, qa
+- **Status**: complete
+- **Tags**: #governance #codex #model-policy #template-contract #validation
+
+#### Progress
+
+- Created the approved Phase 2/3 traceability pair:
+  - [Plan](../../04.execution/plans/2026-05-31-codex-governance-harness-alignment.md)
+  - [Task](../../04.execution/tasks/2026-05-31-codex-governance-harness-alignment.md)
+- Updated Stage 00 model policy and harness catalog so Codex worker tier stays
+  `gpt-5.3-codex`, with explicit Codex `model_reasoning_effort` expectations.
+- Added `model_reasoning_effort` to all eight `.codex/agents/*.toml` mirrors:
+  `xhigh` for `supervisor`, `high` for implementation/review/security/incident
+  workers, and `medium` for docs/wiki workers.
+- Clarified `AGENTS.md` and provider docs so `AGENTS.md` is the Codex/GPT
+  gateway while Claude and Gemini use their provider shims.
+- Normalized active policy template routing from the nonexistent
+  `operation.template.md` to `policy.template.md`.
+- Normalized all seven `docs/05.operations/policies/*.md` files from
+  `type: operation` to `type: policy`.
+- Extended `scripts/validate-repo-quality-gates.sh` to catch Codex TOML
+  model/effort drift, active `operation.template.md` routing drift, and
+  operations policy frontmatter type drift.
+
+#### Memory
+
+- `gpt-5.3-codex` is the Codex worker model for this repository's local agent
+  roster; do not reintroduce `gpt-5.4-mini` as the worker baseline unless the
+  Stage 00 Model Policy and harness catalog are deliberately updated together.
+- Active operations policy routing uses `docs/99.templates/policy.template.md`.
+  `operation.template.md` is not a valid template in this repository.
+- `AGENTS.md` is the Codex/GPT gateway. Root `CLAUDE.md` and `GEMINI.md` remain
+  provider shims for their runtimes.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS
+- `rg -n "GPT-5.4-mini|gpt-5.4-mini" docs/00.agent-governance .codex AGENTS.md -g '!docs/00.agent-governance/memory/**'` — no output
+- `rg -n "model_reasoning_effort" .codex/agents` — eight TOML entries found
+- `rg -n "^type: operation$" docs/05.operations/policies` — no output
+- `rg -n "operation\\.template\\.md" .agents docs/00.agent-governance .codex -g '!docs/00.agent-governance/memory/**'` — no output
+- `bash -n docs/00.agent-governance/hooks/k8s-pre-edit.sh scripts/validate-repo-quality-gates.sh` — PASS
+- `git diff --check` — PASS
+
+#### Handoff
+
+- None. The approved repo-static Phase 3 scope is complete; no live cluster,
+  ArgoCD, Vault, or secret-value action was performed.
+
 ### 2026-05-29 — Docs governance consistency residual fix (owner normalization, CI/CD guide, template audit)
 
 - **Date**: 2026-05-29
