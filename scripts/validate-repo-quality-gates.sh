@@ -1116,6 +1116,27 @@ for path, phrases in template_enforcement_phrase_checks.items():
         if phrase not in text:
             fail(f"{rel(path)} missing template enforcement phrase: {phrase}")
 
+active_policy_template_routes = [
+    root / ".agents/skills/docs-stage-routing/skill.md",
+    root / "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
+    root / "docs/00.agent-governance/rules/document-stage-routing.md",
+]
+for path in active_policy_template_routes:
+    text = read_text(path)
+    if "operation.template.md" in text:
+        fail(f"{rel(path)} must route operations policy docs to policy.template.md, not operation.template.md")
+    if "policy.template.md" not in text:
+        fail(f"{rel(path)} missing operations policy template route: policy.template.md")
+
+for policy_doc in sorted((root / "docs/05.operations/policies").glob("*.md")):
+    if policy_doc.name == "README.md":
+        continue
+    text = read_text(policy_doc)
+    if re.search(r"^type:\s*operation\s*$", text, re.MULTILINE):
+        fail(f"{rel(policy_doc)} must use frontmatter type: policy, not operation")
+    if not re.search(r"^type:\s*policy\s*$", text, re.MULTILINE):
+        fail(f"{rel(policy_doc)} missing frontmatter type: policy")
+
 llm_wiki_dir = root / "docs/90.references/llm-wiki"
 llm_wiki_readme = llm_wiki_dir / "README.md"
 llm_wiki_index = llm_wiki_dir / "wiki-index.md"
@@ -2413,6 +2434,16 @@ runtime_contract_phrases = [
     "## Handoff / Escalation",
     "postflight-checklist.md",
 ]
+expected_codex_agent_models = {
+    "supervisor": ("gpt-5.5", "xhigh"),
+    "code-reviewer": ("gpt-5.3-codex", "high"),
+    "doc-writer": ("gpt-5.3-codex", "medium"),
+    "gitops-reviewer": ("gpt-5.3-codex", "high"),
+    "incident-responder": ("gpt-5.3-codex", "high"),
+    "k8s-implementer": ("gpt-5.3-codex", "high"),
+    "security-auditor": ("gpt-5.3-codex", "high"),
+    "wiki-curator": ("gpt-5.3-codex", "medium"),
+}
 for stem, claude_path in sorted(claude_agents.items()):
     claude_text = read_text(claude_path)
     for phrase in runtime_contract_phrases:
@@ -2430,6 +2461,13 @@ for stem, claude_path in sorted(claude_agents.items()):
         codex_data = {}
     if codex_data.get("name") != stem:
         fail(f"{rel(codex_path)} name must match file stem: {stem}")
+    expected_model_effort = expected_codex_agent_models.get(stem)
+    if expected_model_effort:
+        expected_model, expected_effort = expected_model_effort
+        if codex_data.get("model") != expected_model:
+            fail(f"{rel(codex_path)} model must be {expected_model!r}")
+        if codex_data.get("model_reasoning_effort") != expected_effort:
+            fail(f"{rel(codex_path)} model_reasoning_effort must be {expected_effort!r}")
     for phrase in runtime_contract_phrases:
         if phrase not in codex_text:
             fail(f"{rel(codex_path)} missing runtime contract phrase: {phrase}")
