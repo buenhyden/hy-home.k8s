@@ -1,6 +1,6 @@
 ---
 title: 'K8s GitOps Platform Operations Policy'
-type: operation
+type: policy
 status: active
 owner: platform
 updated: 2026-05-21

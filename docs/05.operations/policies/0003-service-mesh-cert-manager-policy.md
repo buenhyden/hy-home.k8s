@@ -1,6 +1,6 @@
 ---
 title: 'Service Mesh & cert-manager Operations Policy'
-type: operation
+type: policy
 status: active
 owner: platform
 updated: 2026-05-21

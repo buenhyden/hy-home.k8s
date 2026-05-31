@@ -50,7 +50,7 @@ Define the repository-local routing contract for document-generation workflows.
 | Data model | `docs/03.specs/<feature-id>/data-model.md` | `docs/99.templates/data-model.template.md` |
 | Test design | `docs/03.specs/<feature-id>/tests.md` | `docs/99.templates/tests.template.md` |
 | Guide | `docs/05.operations/guides/<doc>.md` | `docs/99.templates/guide.template.md` |
-| Operations policy | `docs/05.operations/policies/<doc>.md` | `docs/99.templates/operation.template.md` |
+| Operations policy | `docs/05.operations/policies/<doc>.md` | `docs/99.templates/policy.template.md` |
 | Runbook | `docs/05.operations/runbooks/<doc>.md` | `docs/99.templates/runbook.template.md` |
 | Incident record | `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/incident.template.md` |
 | Postmortem | `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/postmortem.template.md` |

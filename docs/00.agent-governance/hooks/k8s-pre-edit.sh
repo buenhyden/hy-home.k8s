@@ -96,7 +96,7 @@ def authored_doc_template(path: str) -> str:
         if path.startswith("docs/05.operations/guides/"):
             return "docs/99.templates/guide.template.md"
         if path.startswith("docs/05.operations/policies/"):
-            return "docs/99.templates/operation.template.md"
+            return "docs/99.templates/policy.template.md"
         if path.startswith("docs/05.operations/runbooks/"):
             return "docs/99.templates/runbook.template.md"
         if path.startswith("docs/05.operations/incidents/postmortems/"):
