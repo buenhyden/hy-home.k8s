@@ -1,15 +1,16 @@
 # AGENTS.md Provider Notes
 
-Guidance for consuming the `AGENTS.md` gateway contract.
+Guidance for consuming the `AGENTS.md` Codex/GPT gateway contract.
 
 ## Role
 
-`AGENTS.md` is the thin gateway contract for all agent providers (Claude, Gemini, Codex, etc.).
-It defines bootstrap, constraints, and routing pointers; it does not duplicate policy text from `rules/`, `scopes/`, or provider files.
+`AGENTS.md` is the thin gateway contract for Codex/GPT sessions in this repository.
+Claude and Gemini use their root provider shims (`CLAUDE.md`, `GEMINI.md`) and must not import `AGENTS.md`.
+`AGENTS.md` defines bootstrap and routing pointers for Codex/GPT; it does not duplicate policy text from `rules/`, `scopes/`, or provider files.
 
 ## Loading Model
 
-- Load `AGENTS.md` as the first context anchor.
+- Codex/GPT sessions load `AGENTS.md` as the first context anchor.
 - Follow §1 Bootstrap to resolve the full JIT sequence.
 - Do not cache or skip any step in the JIT sequence between sessions.
 
@@ -22,19 +23,19 @@ It defines bootstrap, constraints, and routing pointers; it does not duplicate p
 
 ## Cross-Provider Consistency
 
-- All providers must produce Korean user responses (§2 Constraints).
-- All providers must run preflight and postflight (§1 Bootstrap).
-- All providers must honor GitOps-First and no-plaintext-secrets constraints (§2 Constraints).
+- Codex/GPT sessions must produce Korean user responses through the Codex gateway contract.
+- Codex/GPT sessions must run preflight and postflight through the shared JIT sequence.
+- Codex/GPT sessions must honor GitOps-First and no-plaintext-secrets constraints.
 - Provider-specific tuning belongs in `providers/claude.md`, `providers/gemini.md`, etc.
 
 ## Codex Provider Resolution
 
 Codex provider policies have been separated into `docs/00.agent-governance/providers/codex.md` to maintain 3-provider symmetry.
-Codex sessions consume the shared `AGENTS.md` gateway and the local `.codex/CODEX.md` baseline.
+Codex sessions consume the `AGENTS.md` gateway and the local `.codex/CODEX.md` baseline.
 
 ## Repository Instruction Model
 
-- `AGENTS.md` is the shared gateway contract for agent-capable tools in this repository.
+- `AGENTS.md` is the Codex/GPT gateway contract for this repository.
 - Root `CLAUDE.md` and `GEMINI.md` are provider-specific shims, not replacements for shared governance policy.
 - `.claude/CLAUDE.md` is the runtime baseline for local agent execution.
 - Claude runtime behavior and editor/tool hook implementations belong under `.claude/**`; Codex event wiring belongs in `.codex/hooks.json` and must reuse the repo-local hook contract instead of defining a separate policy layer.

@@ -49,3 +49,4 @@ Audit Kubernetes security posture across RBAC, NetworkPolicy, and secret-handlin
 Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."""
 name = "security-auditor"
 model = "gpt-5.3-codex"
+model_reasoning_effort = "high"

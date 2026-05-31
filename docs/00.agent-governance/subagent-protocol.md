@@ -34,14 +34,17 @@ coordinated in `hy-home.k8s`.
 
 ## Agent File Requirement
 
-Every delegated agent must have a corresponding file in `.claude/agents/`. Each file must contain:
+Every delegated agent must have corresponding provider files in `.agents/agents/`,
+`.claude/agents/`, and `.codex/agents/`. Markdown agent files must contain:
 
 1. Frontmatter with `name`, `description`, `model`, and a least-privilege `tools` set (see Tool Scoping).
 2. One or more `@import` scope references.
 3. A thin runtime contract: Role, When to use, Inputs, Outputs, Guardrails, Handoff / Escalation, Postflight.
 4. No embedded policy text that belongs in `rules/`, `scopes/`, or `providers/`.
 
-Every `.claude/agents/<name>.md` file must have a `.codex/agents/<name>.toml` mirror for Codex execution and an `.agents/agents/<name>.md` reference index for Gemini execution. All mirrors must preserve the same role, scope imports, guardrails, and postflight requirements.
+Every `.agents/agents/<name>.md` / `.claude/agents/<name>.md` file must have a
+`.codex/agents/<name>.toml` mirror for Codex execution. All mirrors must preserve
+the same role, scope imports, guardrails, and postflight requirements.
 
 The mirror relationship is validated by `scripts/validate-repo-quality-gates.sh`.
 Runtime files must keep matching file stems, matching scope imports, Runtime

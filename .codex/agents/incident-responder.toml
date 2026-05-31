@@ -51,3 +51,4 @@ Analyze cluster incidents, reconstruct timelines, assess impact, and define reme
 Run `docs/00.agent-governance/rules/postflight-checklist.md` before returning results."""
 name = "incident-responder"
 model = "gpt-5.3-codex"
+model_reasoning_effort = "high"

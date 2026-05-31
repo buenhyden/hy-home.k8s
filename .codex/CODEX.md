@@ -38,12 +38,12 @@ Start from the repository gateway files, then follow the governance JIT sequence
 ## Codex/GPT Capabilities & Constraints
 
 - **Skill routing**: Use the `.codex/skills/**` roster (a symlink to the `.agents/` SSoT) via the Task-to-Skill routing in `docs/00.agent-governance/harness-catalog.md`.
-- **Hook behavior**: `.codex/hooks.json` reuses the shared `.claude/hooks/*.sh` scripts for context and validation wiring, enforcing Template Routing and CI/CD checks via `customInstructions`.
+- **Hook behavior**: `.codex/hooks.json` reuses the shared `docs/00.agent-governance/hooks/*.sh` scripts for context and validation wiring, enforcing Template Routing and CI/CD checks via `customInstructions`.
 - **Provider tuning**: Keep Codex/GPT-specific tuning in `docs/00.agent-governance/providers/codex.md`; do not introduce policy here.
 
 ## Model Hierarchy
 
-- See `docs/00.agent-governance/model-policy.md` for the canonical model tier policy (e.g., `GPT-5.5` for `top`, `GPT-5.4-mini` for `worker`).
+- See `docs/00.agent-governance/model-policy.md` for the canonical model tier policy (e.g., `gpt-5.5` for `top`, `gpt-5.3-codex` for `worker`).
 - The canonical cross-provider mapping is the Model Tier Mapping table in `docs/00.agent-governance/harness-catalog.md`.
 
 ## Validation and Tooling
@@ -58,5 +58,5 @@ Start from the repository gateway files, then follow the governance JIT sequence
 
 ## Relationship to Gateway Files
 
-- `AGENTS.md` is the shared gateway contract.
+- `AGENTS.md` is the Codex/GPT gateway contract.
 - This file is the local runtime baseline for Codex, not a replacement for shared governance policy.

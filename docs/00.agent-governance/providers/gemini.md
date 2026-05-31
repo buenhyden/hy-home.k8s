@@ -31,7 +31,7 @@ The `.agents/` directory is the canonical Antigravity harness for Gemini.
 - Gemini CLI supports hierarchical context loading (global, ancestors, subdirectories).
 - Prefer modular imports for large context sets.
 - Keep instructions concise and non-duplicative across hierarchy.
-- Avoid introducing provider-specific guidance outside the existing `AGENTS.md` + `.claude/**` + `docs/00.agent-governance/**` hierarchy.
+- Avoid introducing provider-specific guidance outside the existing `GEMINI.md` + `.agents/**` + `docs/00.agent-governance/**` hierarchy.
 
 ## File Name Compatibility
 

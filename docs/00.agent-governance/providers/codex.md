@@ -8,13 +8,13 @@ Codex sessions act as a peer provider to Claude and Gemini. This document define
 
 ## Loading Model
 
-- Start with the shared gateway: `AGENTS.md`
+- Start with the Codex/GPT gateway: `AGENTS.md`
 - Follow the JIT loading sequence defined in `docs/00.agent-governance/rules/bootstrap.md`
 - Load the local Codex runtime baseline: `.codex/CODEX.md`
 
 ## Context Strategy
 
-- Codex uses `.codex/agents/*.toml` as mirrors for the primary agent definitions.
+- Codex uses `.codex/agents/*.toml` as provider-native mirrors for the local agent roster.
 - Hook wiring is defined in `.codex/hooks.json`, which points to the repository's shared lifecycle hook implementations.
 - `.codex/hooks.json` is strictly for event wiring (context and validation) and is **not** a permission gate.
 

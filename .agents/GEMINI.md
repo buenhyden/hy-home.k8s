@@ -11,9 +11,9 @@ WSL2+k3d cluster repository managed through ArgoCD GitOps.
 
 ## Loading Order
 
-Start from the repository gateway files, then follow the governance JIT sequence:
+Start from the root Gemini provider shim, then follow the governance JIT sequence:
 
-1. `AGENTS.md`
+1. `GEMINI.md`
 2. `docs/00.agent-governance/rules/bootstrap.md`
 3. `docs/00.agent-governance/rules/preflight-checklist.md`
 4. `docs/00.agent-governance/rules/persona.md`
@@ -38,7 +38,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 ## Gemini Capabilities & Constraints
 
 - **Skill routing**: Use the repo-local `.claude/skills/**` roster (tracked mirror under `.agents/skills/**`) via the Task-to-Skill routing in `docs/00.agent-governance/harness-catalog.md`; do not rely on user-global skills for cluster work.
-- **Hook behavior**: Gemini has no native hook file equivalent to Claude `settings.json`; honor the same behavior contract (preflight, Template-First edits, post-edit validation, postflight) defined in governance and the shared `.claude/hooks/*.sh` scripts.
+- **Hook behavior**: Gemini has no native permission-gate equivalent to Claude `settings.json`; honor the same behavior contract (preflight, Template-First edits, post-edit validation, postflight) defined in governance and wired through the shared `docs/00.agent-governance/hooks/*.sh` scripts.
 - **Provider tuning**: Keep Gemini-specific tuning in `docs/00.agent-governance/providers/gemini.md`; do not introduce policy here.
 
 ## Model Hierarchy
@@ -58,6 +58,6 @@ Start from the repository gateway files, then follow the governance JIT sequence
 
 ## Relationship to Gateway Files
 
-- `AGENTS.md` is the shared gateway contract.
-- Root `GEMINI.md` is a thin provider shim pointing here.
+- Root `GEMINI.md` is the Gemini provider shim pointing here.
+- `AGENTS.md` is the Codex/GPT gateway contract and is not part of the Gemini loading path.
 - This file is the local runtime baseline for Gemini, not a replacement for shared governance policy.
