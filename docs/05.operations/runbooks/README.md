@@ -70,6 +70,26 @@ docs/05.operations/runbooks/
 5. 정책 통제 기준은 런북에 복제하지 말고 [policies](../policies/README.md)로 연결한다.
 6. live cluster mutation, Vault write, kubeconfig 변경 예시는 human-approved, bootstrap-only, break-glass 문맥을 유지한다.
 
+## Usage Instructions
+
+이 영역은 운영자가 정해진 순서대로 실행할 절차가 필요할 때 사용한다.
+
+1. 관련 Policy와 Spec에서 허용 범위와 계약값을 확인한다.
+2. Runbook의 `When to Use`와 `Procedure or Checklist`를 따라 실행한다.
+3. 실행 후 `Verification Steps`와 `Observability and Evidence Sources`에 맞춰 증적을 남긴다.
+
+## Verification and Monitoring
+
+- Runbook 문서 구조 검증은 [runbook.template.md](../../99.templates/runbook.template.md)와 `scripts/validate-repo-quality-gates.sh`를 기준으로 한다.
+- 작업 증적은 명령 출력, GitOps diff, ArgoCD sync 상태, dashboard/log snapshot, CI 결과 중 해당 Runbook이 요구하는 항목으로 남긴다.
+- live cluster, Vault, Kubernetes mutation은 human-approved bootstrap 또는 break-glass 작업에서만 실행한다.
+
+## Incident and Recovery Links
+
+- Policies: [05.operations/policies](../policies/README.md)
+- Incident Records: [05.operations/incidents](../incidents/README.md)
+- Postmortems: `../incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md`
+
 ## Link Basis
 
 이 README의 링크 기준 위치는 `docs/05.operations/runbooks/`다.

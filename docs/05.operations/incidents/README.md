@@ -64,6 +64,32 @@ Postmortem은 “왜 허용됐고 무엇을 바꿀 것인가”를 기록한다.
 4. 비밀 값, 토큰, 개인 식별 정보는 사고 기록에 직접 남기지 않는다.
 5. 사고가 없는 상태에서는 README만 유지하고 빈 placeholder 파일을 만들지 않는다.
 
+## Record Purpose
+
+이 영역은 운영 중 학습과 대응 기록을 저장한다.
+
+- Incident Record는 장애 또는 이상 상황에서 무엇이 발생했는지, 영향 범위가 무엇인지, 즉시 어떤 대응을 했는지 기록한다.
+- Postmortem은 사건 이후 근본 원인, 기여 요인, 재발 방지 조치, 학습 내용을 정리한다.
+
+## Expected Record Shape
+
+기록 문서는 가능한 경우 다음 항목을 포함한다.
+
+- Summary
+- Impact
+- Affected Systems / Routes
+- Timeline
+- Root Cause 또는 Current Hypothesis
+- Immediate Remediation
+- Follow-up Actions
+- Related Specs / ADRs / Runbooks / Policies
+
+## Review Expectations
+
+- Incident는 사실 기록과 대응 경위를 빠르게 복원할 수 있어야 한다.
+- Postmortem은 비난보다 학습과 재발 방지에 초점을 맞춘다.
+- 후속 조치는 Plan 또는 Task와 연결하고, 관련 Policy/Runbook 갱신 필요 여부를 확인한다.
+
 ## Link Basis
 
 이 README의 링크 기준 위치는 `docs/05.operations/incidents/`다.
