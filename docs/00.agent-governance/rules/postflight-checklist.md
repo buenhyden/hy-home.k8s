@@ -46,3 +46,13 @@ Run this checklist before finalizing a response.
 - [ ] R3: Every new authored document includes `## Related Documents` section.
 - [ ] R4: Memory ledger coupling is satisfied for repo-changing work and standalone memory files.
 - [ ] No HALT condition is unresolved before PR submission.
+
+## 7. Branch Completion Boundary
+
+- [ ] Relevant local verification passed before offering merge/PR/keep/discard options.
+- [ ] Workspace state was identified as normal checkout, linked worktree, or detached HEAD.
+- [ ] Base branch was determined from repository evidence; default is `main`.
+- [ ] Finish options were presented explicitly instead of assumed.
+- [ ] No merge, push, branch deletion, reset, clean, or worktree removal was performed without human selection.
+- [ ] Any destructive discard required exact typed confirmation and recorded affected branch, commits, and worktree path.
+- [ ] PR handoff preserves the branch/worktree for review iteration.

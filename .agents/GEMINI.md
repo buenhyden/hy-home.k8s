@@ -38,7 +38,7 @@ Start from the root Gemini provider shim, then follow the governance JIT sequenc
 ## Gemini Capabilities & Constraints
 
 - **Skill routing**: Use the repo-local `.claude/skills/**` roster (tracked mirror under `.agents/skills/**`) via the Task-to-Skill routing in `docs/00.agent-governance/harness-catalog.md`; do not rely on user-global skills for cluster work.
-- **Hook behavior**: Gemini has no native permission-gate equivalent to Claude `settings.json`; honor the same behavior contract (preflight, Template-First edits, post-edit validation, postflight) defined in governance and wired through the shared `docs/00.agent-governance/hooks/*.sh` scripts.
+- **Hook behavior**: Gemini has no native permission-gate equivalent to Claude `settings.json`; honor the same behavior contract (preflight, Template-First edits, post-edit validation, postflight) defined in governance and wired through `.agents/hooks.json` plus the shared `docs/00.agent-governance/hooks/*.sh` scripts where supported.
 - **Provider tuning**: Keep Gemini-specific tuning in `docs/00.agent-governance/providers/gemini.md`; do not introduce policy here.
 
 ## Model Hierarchy
@@ -50,7 +50,7 @@ Start from the root Gemini provider shim, then follow the governance JIT sequenc
 
 - Use `.pre-commit-config.yaml`, `.github/workflows/ci.yml`, `scripts/*.sh`, and `infrastructure/tests/*.sh` as validation sources.
 - Run `scripts/validate-repo-quality-gates.sh .` as the repo-backed regression gate before handoff.
-- Use `RTK.md` for shell-command guidance; if `rtk` is not on PATH, run the underlying command directly and report the limitation.
+- Use `RTK.md` for shell-command guidance; if `rtk` is not on PATH, check `/home/hy/.local/bin/rtk --version`. If that works but `rtk gain` cannot initialize its tracking database, run the underlying command directly and report the PATH/DB limitation.
 
 ## Runtime Roster
 

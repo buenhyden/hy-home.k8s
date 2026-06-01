@@ -51,3 +51,28 @@
 - Require verification evidence before merge (tests, checks, or runbook validation).
 - Required checks must match the active GitHub branch protection or ruleset, not stale local assumptions.
 - Keep PR scope aligned to one plan/task slice where possible.
+
+## Branch Completion Strategy
+
+Use this sequence before presenting merge, PR, keep, or discard options.
+
+1. Verify the relevant local checks for the changed scope. At minimum, run
+   `git diff --check` and `bash scripts/validate-repo-quality-gates.sh .` for
+   governance/docs/runtime changes.
+2. Detect whether the workspace is a normal checkout, linked worktree, or
+   detached HEAD before deciding cleanup behavior.
+3. Determine the base branch from repository evidence. The default base is
+   `main` unless the active task/plan explicitly states otherwise.
+4. Present explicit finish options:
+   - merge locally to the base branch,
+   - push and create a pull request,
+   - keep the branch as-is,
+   - discard the work.
+5. Do not merge, push, delete, reset, clean, or remove a worktree unless the
+   human explicitly selects that option.
+6. Discard is destructive. Before any discard action, list the branch, commits,
+   and affected worktree path, then require exact typed confirmation such as
+   `discard`.
+7. For PR creation, preserve the working branch/worktree for review iteration.
+8. For local merge or discard, clean only worktrees created and owned by the
+   active workflow; do not remove host-managed workspaces.
