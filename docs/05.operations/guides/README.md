@@ -66,6 +66,22 @@ docs/05.operations/guides/
 5. 명령 순서, 롤백, 복구가 핵심이면 가이드에 복제하지 말고 [runbooks](../runbooks/README.md)에 둔다.
 6. 허용/금지/예외 승인 기준은 가이드가 아니라 [policies](../policies/README.md)에 둔다.
 
+## Documentation Standards
+
+이 영역의 가이드는 안정 상태의 사용법과 이해를 돕는 문서로 유지한다.
+
+- 모든 Guide 문서는 [guide.template.md](../../99.templates/guide.template.md)의 frontmatter와 필수 섹션을 유지한다.
+- 기존 Spec, Policy, Runbook이 소유하는 계약을 중복 정의하지 않고 상대 링크로 연결한다.
+- 실행 예시는 재현 가능한 형태로 작성하되, live cluster mutation이나 secret 값 노출은 승인된 bootstrap/break-glass 문맥으로 제한한다.
+
+## Traceability Rules
+
+Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
+
+- upstream 요구사항/아키텍처/스펙: PRD, ARD, ADR, Spec, Plan
+- sibling 운영 문서: 관련 Policy, Runbook, Incident 경로
+- 하위 실행 증적: Task 또는 validation guide
+
 ## Link Basis
 
 이 README의 링크 기준 위치는 `docs/05.operations/guides/`다.
