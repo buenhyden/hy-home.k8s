@@ -2,7 +2,7 @@
 title: '{API Name} Specification'
 type: api-spec
 status: draft
-owner: '{team-or-person}'
+owner: platform
 updated: YYYY-MM-DD
 ---
 

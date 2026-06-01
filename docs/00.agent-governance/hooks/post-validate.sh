@@ -87,7 +87,7 @@ for path in "${CHANGED_PATHS[@]}"; do
       *.md)
         MARKDOWN_STYLE_FILES+=("$path")
         ;;
-      .claude/hooks/*.sh|scripts/*.sh|infrastructure/*.sh)
+      docs/00.agent-governance/hooks/*.sh|scripts/*.sh|infrastructure/*.sh)
         SHELL_STYLE_FILES+=("$path")
         ;;
       .github/workflows/*.yml|.github/workflows/*.yaml)
@@ -106,7 +106,7 @@ for path in "${CHANGED_PATHS[@]}"; do
   esac
 
   case "$path" in
-    .claude/hooks/*.sh|scripts/*.sh|infrastructure/*.sh)
+    docs/00.agent-governance/hooks/*.sh|scripts/*.sh|infrastructure/*.sh)
       run_shell=1
       ;;
   esac
@@ -261,7 +261,7 @@ if [[ "$run_json" -eq 1 ]]; then
 fi
 
 if [[ "$run_shell" -eq 1 ]]; then
-  run_check "shell syntax" bash -c 'find infrastructure scripts .claude/hooks -type f -name "*.sh" -exec bash -n {} +'
+  run_check "shell syntax" bash -c 'find infrastructure scripts docs/00.agent-governance/hooks -type f -name "*.sh" -exec bash -n {} +'
 fi
 
 if [[ "$run_manifest" -eq 1 ]]; then

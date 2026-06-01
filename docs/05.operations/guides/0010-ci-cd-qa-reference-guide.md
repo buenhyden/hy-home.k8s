@@ -3,7 +3,7 @@ title: 'CI/CD & QA 로컬-vs-GitHub 참조 가이드'
 type: guide
 status: active
 owner: platform
-updated: 2026-05-29
+updated: 2026-06-01
 ---
 
 # CI/CD & QA 로컬-vs-GitHub 참조 가이드
@@ -77,7 +77,7 @@ bash scripts/validate-policy-gates.sh .
 
 ```bash
 bash -n scripts/<script-name>.sh
-bash -n .claude/hooks/<hook-name>.sh
+bash -n docs/00.agent-governance/hooks/<hook-name>.sh
 ```
 
 ### 2. GitHub Actions 전용 — 로컬 재현 불가
@@ -118,7 +118,7 @@ bash -n .claude/hooks/<hook-name>.sh
 
 ### 3. CI Job 구조 (`.github/workflows/ci.yml`)
 
-CI 파이프라인은 6개 검사 job과 1개 집계 job(`ci-summary`)으로 구성된다:
+CI 파이프라인은 5개 검사 job과 1개 집계 job(`ci-summary`)으로 구성된다:
 
 | Job                   | 트리거 조건                             | 로컬 재현 명령                                  |
 | --------------------- | --------------------------------------- | ----------------------------------------------- |
@@ -127,7 +127,6 @@ CI 파이프라인은 6개 검사 job과 1개 집계 job(`ci-summary`)으로 구
 | `pre-commit`          | 모든 파일 변경                          | `pre-commit run --all-files`                    |
 | `repo-quality-static` | docs, .github, .claude, scripts 등 변경 | `bash scripts/validate-repo-quality-gates.sh .` |
 | `manifest-static`     | gitops, infrastructure YAML 변경        | 아래 참조                                       |
-| `shell-static`        | .sh 파일 변경                           | `bash -n <file>`                                |
 | `ci-summary`          | 항상 실행 (집계)                        | 없음                                            |
 
 `manifest-static` 로컬 재현:

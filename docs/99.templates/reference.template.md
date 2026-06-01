@@ -2,7 +2,7 @@
 title: 'Reference: {Item Name}'
 type: reference
 status: draft
-owner: '{team-or-person}'
+owner: platform
 updated: YYYY-MM-DD
 ---
 

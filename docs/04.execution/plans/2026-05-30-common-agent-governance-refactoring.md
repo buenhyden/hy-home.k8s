@@ -1,9 +1,9 @@
 ---
 title: 'Common Agent Governance Refactoring Plan'
 type: plan
-status: active
+status: superseded
 owner: 'platform'
-updated: 2026-05-30
+updated: 2026-06-01
 ---
 
 
@@ -25,6 +25,14 @@ updated: 2026-05-30
 ## Context
 
 각 에이전트(Claude, GPT, Gemini) 플랫폼의 구조가 파편화되는 것을 방지하고, 템플릿과 실제 산출물 간의 불일치를 해소하기 위함이다.
+
+2026-06-01 update: this plan is superseded by
+[2026-06-01-stage-00-canonical-adapter-redesign.md](./2026-06-01-stage-00-canonical-adapter-redesign.md).
+The newer plan preserves the remaining intent but splits the work into
+canonical ownership, provider adapter, hook/QA, model policy, template
+lifecycle, branch completion, local toolchain, and traceability change units.
+Historical evidence remains here; do not use this plan as the current execution
+contract.
 
 ## Goals & In-Scope
 
@@ -72,7 +80,9 @@ updated: 2026-05-30
 - [ ] Scoped work completed
 - [ ] Verification passed
 - [ ] Required docs updated
+- [x] Superseded by the 2026-06-01 canonical adapter redesign plan.
 
 ## Related Documents
 
-- **Tasks**: `[../tasks/2026-05-30-governance-refactoring.md]`
+- **Tasks**: [../tasks/2026-05-30-governance-refactoring.md](../tasks/2026-05-30-governance-refactoring.md)
+- **Superseding Plan**: [./2026-06-01-stage-00-canonical-adapter-redesign.md](./2026-06-01-stage-00-canonical-adapter-redesign.md)

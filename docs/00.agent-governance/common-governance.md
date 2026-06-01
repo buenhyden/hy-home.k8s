@@ -6,7 +6,11 @@
 
 ## Overview
 
-This document defines the common governance concepts, cross-platform mappings, Memory/QA/CI/CD policies, and support matrix for AI agents (Gemini, Claude, Codex) operating in `hy-home.k8s`. Shared skills, workflows, and output-style content use `.agents/` as their Single Source of Truth (SSoT), while provider-native agent files remain aligned mirrors.
+This document defines the common governance concepts, cross-platform mappings,
+Memory/QA/CI/CD policies, and support matrix for AI agents (Gemini, Claude,
+Codex) operating in `hy-home.k8s`. Shared skills, workflows, and output-style
+content use `.agents/` as their Single Source of Truth (SSoT), while
+provider-native agent files remain aligned adapters or mirrors.
 
 ## Purpose
 
@@ -26,6 +30,8 @@ To provide a unified understanding of agent concepts and their implementation ac
   - High-level QA, Memory, and CI/CD policies
 - **Not authoritative for**:
   - Technical implementation of specific skills or hooks (see `docs/00.agent-governance/hooks/`)
+  - Concrete model IDs and reasoning-effort values (see `harness-catalog.md` and `model-policy.md`)
+  - Stage-to-template mapping details (see `rules/document-stage-routing.md` and `docs/99.templates/README.md`)
 
 ## Scope
 
@@ -52,11 +58,22 @@ To provide a unified understanding of agent concepts and their implementation ac
 | **Shared Content SSoT** | `.agents/` (Primary) | `.claude/{skills,workflows,output-styles}` symlinks | `.codex/{skills,workflows,output-styles}` symlinks |
 | **Agent Definition** | `.agents/agents/*.md` | `.claude/agents/*.md` | `.codex/agents/*.toml` |
 | **Skills** | `.agents/skills/` | `.claude/skills/` | `.codex/skills/` |
-| **Rules** | `.agents/rules/` | `.claude/rules/` | `.codex/rules/` |
+| **Rules** | `.agents/rules/` plus Stage 00 rules | Stage 00 `rules/**` plus provider imports | Stage 00 `rules/**` plus `.codex/rules/` placeholder/mirror surface |
 | **Hooks Config** | `.agents/hooks.json` | `.claude/settings.json` | `.codex/hooks.json` |
 | **Hooks Scripts** | `docs/00.agent-governance/hooks/*.sh` | `docs/00.agent-governance/hooks/*.sh` | `docs/00.agent-governance/hooks/*.sh` |
 | **Workflows** | `.agents/workflows/` | `.claude/workflows/` | `.codex/workflows/` |
 | **Output Styles** | `.agents/output-styles/` | `.claude/output-styles/` | `.codex/output-styles/` |
+
+## Canonical Adapter Ownership
+
+| Layer | Canonical Owner | Provider Adapter Rule |
+| --- | --- | --- |
+| Governance rules, checklists, documentation routing | `docs/00.agent-governance/rules/**` | Provider files import or point here instead of copying durable policy. |
+| Model/tier vocabulary | `harness-catalog.md` and `model-policy.md` | Provider agent files declare concrete models from the catalog and do not create separate tier names. |
+| Shared skills, workflows, and output-style content | `.agents/{skills,workflows,output-styles}/` | `.claude/**` and `.codex/**` expose symlinked views where supported. |
+| Provider-native agents | `.claude/agents/*.md`, `.agents/agents/*.md`, `.codex/agents/*.toml` | Agent roles stay aligned, while model/tool syntax remains provider-specific. |
+| Hook scripts | `docs/00.agent-governance/hooks/*.sh` | `.claude/settings.json`, `.agents/hooks.json`, and `.codex/hooks.json` are event wiring surfaces. |
+| Execution evidence | `docs/04.execution/tasks/**` and `docs/00.agent-governance/memory/progress.md` | Provider handoff text links to evidence rather than embedding separate ledgers. |
 
 ## Policies
 
@@ -71,8 +88,8 @@ To provide a unified understanding of agent concepts and their implementation ac
 | Feature | Gemini (Antigravity) | Claude | Codex | Status |
 | --- | --- | --- | --- | --- |
 | **Rules / Skills / Workflows** | ✅ Supported | ✅ Supported | ✅ Supported | Supported via `.agents/` shared content plus provider shims |
-| **Centralized Hooks (Pre/Post)** | ⚠️ Wiring/behavioral (`hooks.json`) | ✅ Native (`settings.json`) | ⚠️ Wiring/behavioral (`hooks.json`) | Supported via `docs/00.agent-governance/hooks/`; only Claude has a native permission gate |
-| **Subagent Protocol** | ⚠️ Partial (Prompt-reliant) | ✅ Fully Supported | ⚠️ Partial | Pending |
+| **Centralized Hooks (Pre/Post)** | ⚠️ Wired/behavioral (`hooks.json`) | ✅ Native permission + event wiring (`settings.json`) | ⚠️ Wired/behavioral (`hooks.json`) | Shared scripts live in `docs/00.agent-governance/hooks/`; only Claude has a native permission gate |
+| **Subagent Protocol** | ⚠️ Mirror/behavioral | ✅ Native tools frontmatter | ⚠️ Mirror/config-based | Ready when provider mirrors pass repository validation; native tool enforcement differs by provider |
 | **Cross-Platform Memory DB** | ❌ Unsupported | ❌ Unsupported | ❌ Unsupported | Unsupported (Fallback to Markdown) |
 | **Output Style Enforcement** | ⚠️ Tone/behavioral | ✅ Native output-style files | ⚠️ Tone/behavioral | Shared style content exists; native enforcement differs by provider |
 

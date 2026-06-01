@@ -50,7 +50,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 
 - Use `.pre-commit-config.yaml`, `.github/workflows/ci.yml`, `scripts/*.sh`, and `infrastructure/tests/*.sh` as validation sources.
 - Run `scripts/validate-repo-quality-gates.sh .` as the repo-backed regression gate before handoff.
-- Use `RTK.md` for shell-command guidance; if `rtk` is not on PATH, run the underlying command directly and report the limitation.
+- Use `RTK.md` for shell-command guidance; if `rtk` is not on PATH, check `/home/hy/.local/bin/rtk --version`. If the binary exists but `rtk gain` cannot initialize its tracking database, do not read private runtime state; run the underlying command directly and record the PATH/DB limitation.
 
 ## Runtime Roster
 

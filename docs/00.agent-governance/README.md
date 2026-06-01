@@ -6,8 +6,9 @@
 
 This directory is the policy SSoT for local agent execution in `hy-home.k8s`.
 It keeps gateway files thin by hosting durable rules, execution checklists,
-scope routing, provider notes, reusable memory, and the canonical runtime
-catalog used by `.claude/**` and `.codex/**` mirrors.
+scope routing, provider notes, reusable memory, shared hook scripts, model
+policy, and the canonical runtime catalog used by `.claude/**`, `.codex/**`,
+and `.agents/**` provider adapters.
 
 ## Audience
 
@@ -41,8 +42,11 @@ docs/00.agent-governance/
 ├── rules/              # Global policy, checklists, and documentation protocol
 ├── scopes/             # Layer-specific execution rules
 ├── providers/          # Provider-specific notes for Claude, Gemini, and gateways
+├── hooks/              # Shared lifecycle/edit hook scripts reused by providers
 ├── memory/             # Reusable lessons and operational findings
+├── common-governance.md
 ├── harness-catalog.md  # Canonical runtime roster for local agents and skills
+├── model-policy.md     # Cross-provider model tier and effort policy
 ├── subagent-protocol.md
 └── README.md           # This file
 ```
@@ -66,6 +70,7 @@ Links in this README are relative to `docs/00.agent-governance/`.
 ## Governance Entry Points
 
 - [Common Governance & Mappings](common-governance.md)
+- [Model Policy](model-policy.md)
 - [Preflight Checklist](rules/preflight-checklist.md)
 - [Postflight Checklist](rules/postflight-checklist.md)
 - [Document Stage Routing Rules](rules/document-stage-routing.md)
@@ -73,12 +78,15 @@ Links in this README are relative to `docs/00.agent-governance/`.
 - [Stage Checklists](rules/stage-checklists.md)
 - [Local Harness Catalog](harness-catalog.md)
 - [Subagent Protocol](subagent-protocol.md)
+- [Codex Provider Notes](providers/codex.md)
 
 ## Related Documents
 
 - [AGENTS.md](../../AGENTS.md)
 - [Runtime Baseline](../../.claude/CLAUDE.md)
+- [Codex Runtime Baseline](../../.codex/CODEX.md)
 - [Claude Provider Notes](providers/claude.md)
+- [Codex Provider Notes](providers/codex.md)
 - [Gemini Provider Notes](providers/gemini.md)
 
 ## Related Folders
@@ -86,6 +94,7 @@ Links in this README are relative to `docs/00.agent-governance/`.
 - `rules/`: global policy, checklists, and documentation protocol
 - `scopes/`: layer-specific execution rules
 - `providers/`: provider-specific notes
+- `hooks/`: shared lifecycle/edit hook scripts invoked by provider wiring
 - `memory/`: agent progress ledger and reusable operational lessons
 
 ## Examples

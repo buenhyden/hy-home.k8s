@@ -116,7 +116,7 @@ for path in "${CHANGED_PATHS[@]}"; do
   esac
 
   case "$path" in
-    .claude/hooks/*.sh|scripts/*.sh|infrastructure/*.sh)
+    docs/00.agent-governance/hooks/*.sh|scripts/*.sh|infrastructure/*.sh)
       run_shell=1
       run_repo_quality=1
       ;;
@@ -170,7 +170,7 @@ else
   fi
 
   if [[ "$run_shell" -eq 1 ]]; then
-    run_check "shell syntax" bash -c 'find infrastructure scripts .claude/hooks -type f -name "*.sh" -exec bash -n {} +'
+    run_check "shell syntax" bash -c 'find infrastructure scripts docs/00.agent-governance/hooks -type f -name "*.sh" -exec bash -n {} +'
   fi
 
   if [[ "$run_manifest" -eq 1 ]]; then

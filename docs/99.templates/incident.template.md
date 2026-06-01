@@ -2,7 +2,7 @@
 title: 'Incident: {Incident Title}'
 type: incident
 status: draft
-owner: '{team-or-person}'
+owner: platform
 updated: YYYY-MM-DD
 ---
 

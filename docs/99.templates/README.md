@@ -75,6 +75,7 @@
 9. 템플릿의 placeholder 또는 code-literal cross-link는 최종 authored Target 위치 기준으로 계산한다.
    실제 Markdown 링크는 이 템플릿 파일 위치에서도 깨지지 않아야 한다.
 10. README 템플릿은 frontmatter를 요구하지 않는다. PRD/ARD/ADR/Spec/Plan/Task, Spec helper Markdown 템플릿(`api-spec`, `agent-design`, `data-model`, `tests`), 운영·참조 템플릿은 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
+    새 authored 문서의 기본 `status`는 `draft`, 기본 `owner`는 `platform`이다. Status promotion은 owning Plan/Task evidence 또는 human review 후에만 수행한다.
 11. 템플릿 구조를 바꾸면 이미 생성된 문서에 안전하게 반영할 수 있는 heading, placeholder, `Link Basis`, `Related Documents`만 갱신하고 문서 고유 의도는 대량 재작성하지 않는다.
 12. `Related Documents` 예시는 upstream PRD/ARD/ADR/Spec/Plan과 downstream Task/Operation/Runbook/Incident를 추적할 수 있어야 한다.
 13. `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references` 아래의 비-README Markdown은 정확히 하나의 Template-Folder Mapping 행에 매핑되어야 한다.
@@ -89,6 +90,7 @@
 - core template 변경 후에는 기존 생성 문서에 안전하게 반영 가능한 heading, `Related Documents`, historical note만 갱신한다.
 - runtime premise 변경은 current-contract note, README index, 검증 게이트 순서로 반영하고 historical 문서를 새 실행계약처럼 재작성하지 않는다.
 - 운영 정책은 controls/evidence를 소유하고, 실행 명령 순서와 복구 절차는 guide/runbook template로 라우팅한다.
+- stage-specific lifecycle 보강은 required headings, status/currentness notes, verification, handoff/limitations, rollout/rollback/follow-up, troubleshooting signatures처럼 기존 문서에 안전하게 추가 가능한 섹션을 우선한다.
 
 ## Link Basis
 

@@ -18,7 +18,7 @@ The `.agents/` directory is the canonical Antigravity harness for Gemini.
 - **Rules (`.agents/rules/`)**: Contains Gemini-specific workflow and behavior rules (e.g., `workspace-rules.md`).
 - **Workflows (`.agents/workflows/`)**: Defines orchestrated workflows (e.g., `qa-cicd-workflow.md` for pre/post-edit validation).
 - **Skills (`.agents/skills/`)**: Houses Gemini skill definitions that respect the model tiers defined in `model-policy.md`.
-- **Hooks (`.agents/hooks.json`)**: Configures PreToolUse/PostToolUse behavior. Must enforce Template-First routing to `docs/99.templates/` and QA/CI/CD validation.
+- **Hooks (`.agents/hooks.json`)**: Configures event wiring for PreToolUse/PostToolUse-style behavior where the runtime honors it. It invokes shared `docs/00.agent-governance/hooks/*.sh` scripts for Template-First routing and QA/CI/CD validation, but it is not a Claude-style permission gate.
 
 ## Model Policy (Gemini)
 

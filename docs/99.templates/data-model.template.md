@@ -2,7 +2,7 @@
 title: '{Feature Name} Data Model'
 type: data-model
 status: draft
-owner: '{team-or-person}'
+owner: platform
 updated: YYYY-MM-DD
 ---
 

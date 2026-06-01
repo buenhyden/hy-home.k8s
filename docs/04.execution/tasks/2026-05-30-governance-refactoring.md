@@ -1,9 +1,9 @@
 ---
 title: 'Governance Refactoring Task'
 type: task
-status: active
+status: superseded
 owner: 'platform'
-updated: 2026-05-30
+updated: 2026-06-01
 ---
 
 
@@ -15,9 +15,19 @@ updated: 2026-05-30
 
 [2026-05-30-common-agent-governance-refactoring.md](../plans/2026-05-30-common-agent-governance-refactoring.md) 계획에 따른 실제 실행 추적.
 
+## Inputs
+
+- **Parent Spec**: N/A. Historical governance refactoring slice.
+- **Parent Plan**: [../plans/2026-05-30-common-agent-governance-refactoring.md](../plans/2026-05-30-common-agent-governance-refactoring.md)
+
 ## Context
 
 Stage 00 기반 거버넌스의 파편화를 방지하고, 템플릿 계약 준수를 위함.
+
+2026-06-01 update: this task is superseded by
+[2026-06-01-stage-00-canonical-adapter-redesign.md](./2026-06-01-stage-00-canonical-adapter-redesign.md).
+The remaining work is tracked there with task-level validation evidence. This
+document remains as historical context for the original 2026-05-30 slice.
 
 ## Objective
 
@@ -35,6 +45,18 @@ Stage 00 기반 거버넌스의 파편화를 방지하고, 템플릿 계약 준�
 - `[ ]` TSK-005: `docs/00.agent-governance/model-policy.md` 내용 수정.
 - `[ ]` TSK-006: `.agents/GEMINI.md`, `.claude/CLAUDE.md`, `.codex/CODEX.md` 텍스트 슬림화/어댑터화.
 
+## Suggested Types
+
+- `doc`
+- `guardrail`
+- `test`
+
+## Working Rules
+
+- Historical evidence is preserved here.
+- Current execution continues in the superseding 2026-06-01 canonical adapter task.
+- Do not use this task as the active implementation contract.
+
 ## Verification Summary
 
 | TSK | Code / Output | Notes |
@@ -43,28 +65,5 @@ Stage 00 기반 거버넌스의 파편화를 방지하고, 템플릿 계약 준�
 
 ## Related Documents
 
-- **Plan**: `[../plans/2026-05-30-common-agent-governance-refactoring.md]`
-
-## Overview (KR)
-
-- N/A
-
-## Inputs
-
-- N/A
-
-## Working Rules
-
-- N/A
-
-## Task Table
-
-- N/A
-
-## Suggested Types
-
-- N/A
-
-## Verification Summary
-
-- N/A
+- **Plan**: [../plans/2026-05-30-common-agent-governance-refactoring.md](../plans/2026-05-30-common-agent-governance-refactoring.md)
+- **Superseding Task**: [./2026-06-01-stage-00-canonical-adapter-redesign.md](./2026-06-01-stage-00-canonical-adapter-redesign.md)

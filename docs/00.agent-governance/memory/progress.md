@@ -4451,6 +4451,79 @@ References` is now a legacy heading that should not return.
 
 - Commit pending user confirmation (repo is being co-edited; avoid racing concurrent commits).
 
+### 2026-06-01 — Claude agent surface restoration Phase 2/3
+
+- **Date**: 2026-06-01
+- **Layer**: meta
+- **Status**: complete
+- **Tags**: #governance #claude #validation
+
+#### Progress
+
+- Added and completed Phase 2/3 artifacts for restoring `.claude/agents` as real Claude-specific agent files:
+  - [Plan](../../04.execution/plans/2026-06-01-claude-agent-surface-restoration.md)
+  - [Task](../../04.execution/tasks/2026-06-01-claude-agent-surface-restoration.md)
+- Pre-remediation inspection contradicted the older 2026-05-30 memory entry: `.claude/agents` was again a symlink to `../.agents/agents`, so prior memory was not treated as current runtime truth.
+- Replaced the `.claude/agents` symlink with real Claude agent files carrying Claude `model` and least-privilege `tools:` frontmatter.
+- Hardened `scripts/validate-repo-quality-gates.sh` to fail if `.claude/agents` is a symlink or if Claude agent model/tool frontmatter drifts.
+
+#### Memory
+
+- Before this remediation, `scripts/validate-repo-quality-gates.sh .` could pass while `.claude/agents` was a symlink, because the mirror check followed the symlink and verified stems/scope text rather than provider-specific model/tool semantics.
+- Future remediation must preserve explicit checks for `test ! -L .claude/agents`, Claude `model:` tiers, and least-privilege `tools:` frontmatter.
+
+#### Evidence
+
+- `ls -l .claude/agents .agents/agents .codex/agents` showed `.claude/agents -> ../.agents/agents`.
+- Phase 2 planning files were routed through `docs/99.templates/plan.template.md` and `docs/99.templates/task.template.md`.
+- `test -d .claude/agents && test ! -L .claude/agents` PASS after restoration.
+- `find .claude/agents -maxdepth 1 -type f -name '*.md' | sort` lists eight Claude agent files.
+- `rg -n "model: Gemini|Gemini 3\\." .claude/agents` returned no matches.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS after validator hardening.
+- Negative validator smoke in `/tmp` confirmed symlink regression fails with `.claude/agents must be a real Claude-specific directory, not a symlink`.
+- Negative validator smoke in `/tmp` confirmed reduced Claude `tools:` frontmatter fails with `.claude/agents/code-reviewer.md tools must be 'Read, Grep, Glob, Bash'`.
+
+#### Handoff
+
+- None.
+
+### Stage 00 Canonical Adapter Redesign
+
+- **Date**: 2026-06-01
+- **Layer**: meta
+- **Status**: complete
+- **Tags**: #governance #codex #claude #gemini #validation
+
+#### Progress
+
+- Completed Phase 3 for [Stage 00 Canonical Adapter Redesign](../../04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md) with task evidence in [2026-06-01-stage-00-canonical-adapter-redesign.md](../../04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md).
+- Added the Stage 00 canonical adapter ownership model to the governance hub, common governance mapping, harness catalog, and provider/runtime baselines.
+- Normalized active shared hook path references to `docs/00.agent-governance/hooks/*.sh` and expanded validator coverage for `.agents/hooks.json`, shared hook shell coverage, pre-commit shellcheck/shfmt scope, and stale `shell-static` guide drift.
+- Set authored-document template owner defaults to `platform` and recorded status/owner lifecycle expectations in the template README without turning additive lifecycle suggestions into required headings for all historical docs.
+- Added branch completion strategy to `git-workflow.md` and `postflight-checklist.md`.
+- Marked the older 2026-05-30 common governance plan/task as superseded, with dated links to the canonical adapter stream.
+
+#### Memory
+
+- Template H2 changes are broad contract changes in this repository: `validate-repo-quality-gates.sh` treats template H2 headings as required for all mapped authored documents. Additive lifecycle guidance should be documented as optional or safely backfilled before adding new required H2 headings.
+- `.agents/hooks.json` is an active event-wiring surface, not a placeholder. It should be validated alongside `.codex/hooks.json`, while permission-gate claims remain Claude-specific.
+- RTK may exist at `/home/hy/.local/bin/rtk` even when `rtk` is absent from PATH. If `rtk gain` cannot initialize its tracking database, do not inspect private DB/auth state; record the limitation and run underlying commands directly.
+
+#### Evidence
+
+- `command -v rtk` exited 1 in this shell.
+- `/home/hy/.local/bin/rtk --version` returned `rtk 0.34.3`.
+- `/home/hy/.local/bin/rtk gain` failed with `Failed to initialize tracking database: unable to open database file`.
+- `git diff --check` PASS.
+- `bash -n docs/00.agent-governance/hooks/post-validate.sh docs/00.agent-governance/hooks/lifecycle-guard.sh scripts/validate-repo-quality-gates.sh` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+
+#### Handoff
+
+- No live k3d, ArgoCD, Vault, external service, or deployment action was performed.
+- Existing staged Claude agent restoration changes remain in the worktree and should be reviewed as a separate task unit if committing.
+
 ## Historical Entries
 
 ### Harness Implementation Progress

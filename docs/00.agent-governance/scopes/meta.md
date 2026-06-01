@@ -21,7 +21,7 @@ Persona: Governance Steward
 | `CLAUDE.md`                   | meta  | Claude provider overlay                         |
 | `GEMINI.md`                   | meta  | Gemini provider overlay                         |
 | `.claude/settings.json`       | meta  | Team settings (git tracked)                     |
-| `.claude/hooks/**`            | meta  | Shared runtime hook contracts                   |
+| `docs/00.agent-governance/hooks/**` | meta  | Shared runtime hook contracts                   |
 | `.claude/skills/**`           | meta  | Repo-backed skill source of truth               |
 | `.codex/**`                   | meta  | Codex mirrors and hook wiring                   |
 

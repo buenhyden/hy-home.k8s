@@ -2,7 +2,7 @@
 title: '{Topic Name} Runbook'
 type: runbook
 status: draft
-owner: '{team-or-person}'
+owner: platform
 updated: YYYY-MM-DD
 ---
 
