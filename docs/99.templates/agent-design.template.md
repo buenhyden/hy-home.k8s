@@ -2,7 +2,7 @@
 title: '{Feature Name} Agent Design'
 type: agent-design
 status: draft
-owner: '{team-or-person}'
+owner: platform
 updated: YYYY-MM-DD
 ---
 

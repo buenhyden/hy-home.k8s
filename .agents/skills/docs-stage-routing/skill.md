@@ -28,7 +28,7 @@ Define the repository-local routing contract for document-generation workflows.
 3. Confirm the required template in `docs/99.templates/README.md`.
 4. Read the matching template in `docs/99.templates/` before creating any authored stage document.
 5. Use the canonical path for the selected document type.
-6. Set new authored documents to `status: draft` and keep all required template headings.
+6. Set new authored documents to `status: draft`, use `owner: platform`, and keep all required template headings.
 7. Update the owning folder `README.md` in the same change if files are added, moved, or removed.
 8. Ensure each newly created authored document includes `## Related Documents`.
 9. Expect Claude and Codex edit hooks to warn before authored stage doc edits and run post-edit documentation template enforcement.

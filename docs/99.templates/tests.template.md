@@ -2,7 +2,7 @@
 title: '{Feature Name} Test & Evaluation Strategy'
 type: tests
 status: draft
-owner: '{team-or-person}'
+owner: platform
 updated: YYYY-MM-DD
 ---
 

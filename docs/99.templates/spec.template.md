@@ -2,7 +2,7 @@
 title: '{Feature Name} Technical Specification'
 type: spec
 status: draft
-owner: '{team-or-person}'
+owner: platform
 updated: YYYY-MM-DD
 ---
 

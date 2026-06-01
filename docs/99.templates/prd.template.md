@@ -2,7 +2,7 @@
 title: '{Feature or System Name} Product Requirements'
 type: prd
 status: draft
-owner: '{team-or-person}'
+owner: platform
 updated: YYYY-MM-DD
 ---
 

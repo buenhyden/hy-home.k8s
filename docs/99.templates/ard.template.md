@@ -2,7 +2,7 @@
 title: '{System or Domain Name} Architecture Reference Document'
 type: ard
 status: draft
-owner: '{team-or-person}'
+owner: platform
 updated: YYYY-MM-DD
 ---
 

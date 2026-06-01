@@ -2,7 +2,7 @@
 title: '{Policy or Standard Name} Operations Policy'
 type: policy
 status: draft
-owner: '{team-or-person}'
+owner: platform
 updated: YYYY-MM-DD
 ---
 
