@@ -116,7 +116,7 @@ github_actions:
   'actions/first-interaction': 'v3'
   'actions/labeler': 'v6.1.0'
   'actions/setup-python': 'v6'
-  'actions/stale': 'v10.2.0'
+  'actions/stale': 'v10.3.0'
   'actions/upload-artifact': 'v7'
   'dorny/paths-filter': 'v4.0.1'
   'orhun/git-cliff-action': 'v4'
