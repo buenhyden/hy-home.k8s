@@ -64,6 +64,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-05-31-codex-governance-harness-alignment.md
 ├── 2026-06-01-claude-agent-surface-restoration.md
 ├── 2026-06-01-stage-00-canonical-adapter-redesign.md
+├── 2026-06-02-stage-00-codex-harness-coverage-reconciliation.md
 └── README.md
 ```
 
@@ -109,6 +110,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-05-31-codex-governance-harness-alignment.md`](./2026-05-31-codex-governance-harness-alignment.md)     | Codex/GPT 하네스, Model Policy, Template Contract drift 정합화 Task                                                                   | Done | 2026-05-31 |
 | [`./2026-06-01-claude-agent-surface-restoration.md`](./2026-06-01-claude-agent-surface-restoration.md)         | `.claude/agents`를 실제 Claude 전용 agent 파일 디렉터리로 복원하고 검증 게이트를 강화한 작업 추적                                    | Done | 2026-06-01 |
 | [`./2026-06-01-stage-00-canonical-adapter-redesign.md`](./2026-06-01-stage-00-canonical-adapter-redesign.md)   | Stage 00 canonical adapter 모델로 governance, provider adapter, template, hook, model policy, QA/CI 정합화를 완료 추적한 Task        | Done | 2026-06-01 |
+| [`./2026-06-02-stage-00-codex-harness-coverage-reconciliation.md`](./2026-06-02-stage-00-codex-harness-coverage-reconciliation.md) | Phase 1 follow-up plan의 축소 범위와 Stage 00/Codex harness 누락 항목을 기존 완료 증적에 연결한 보정 Task | Done | 2026-06-02 |
 
 ## Related Documents
 

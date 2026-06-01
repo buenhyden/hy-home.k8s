@@ -8,6 +8,52 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-06-02 — Stage 00 Codex harness coverage reconciliation
+
+- **Date**: 2026-06-02
+- **Layer**: docs, governance, codex, qa
+- **Status**: complete
+- **Tags**: #governance #codex #docs #traceability #validation
+
+#### Progress
+
+- Created the corrective traceability pair:
+  - [Plan](../../04.execution/plans/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md)
+  - [Task](../../04.execution/tasks/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md)
+- Preserved the completed
+  [Phase 1 Decision Follow-up Plan](../../04.execution/plans/2026-06-02-phase-1-decision-follow-up.md)
+  and added a current-state coverage reconciliation note without reopening its
+  `status: done`.
+- Mapped the original attachment's broader Stage 00/Codex harness requirements
+  to existing completed evidence from the 2026-05-31 Codex harness alignment
+  and 2026-06-01 Stage 00 canonical adapter workstreams.
+- Updated Plans and Tasks README indexes so the corrective Plan/Task artifacts
+  are discoverable from the execution stage.
+
+#### Memory
+
+- Treat the 2026-06-02 coverage reconciliation as a traceability correction, not
+  a new Stage 00 redesign.
+- Before changing Stage 00, Codex TOML, CI workflow, or Kubernetes manifests for
+  this topic, first verify that the claimed gap is not already covered by the
+  2026-05-31 or 2026-06-01 completed Plan/Task evidence.
+- Keep live k3d, ArgoCD, Vault, Kubernetes mutation, secret inspection, and CI
+  topology changes out of this reconciliation unless a human approves a new
+  implementation scope.
+
+#### Evidence
+
+- Targeted Plan/Task frontmatter and heading scan — PASS
+- Targeted Plans/Tasks README index scan — PASS
+- `git diff --check` — PASS
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS
+
+#### Handoff
+
+- No live k3d, ArgoCD, Vault, Kubernetes mutation, secret inspection, CI
+  topology change, or provider configuration change was performed.
+
 ### 2026-06-02 — Operations documentation template conformance
 
 - **Date**: 2026-06-02

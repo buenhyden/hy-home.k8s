@@ -1,0 +1,116 @@
+---
+title: 'Stage 00 Codex Harness Coverage Reconciliation Plan'
+type: plan
+status: done
+owner: platform
+updated: 2026-06-02
+---
+
+# Stage 00 Codex Harness Coverage Reconciliation Plan
+
+---
+
+## Overview (KR)
+
+이 문서는 2026-06-02 Phase 1 decision follow-up plan에서 축소 반영된
+Stage 00/Codex harness 요구사항을 보정하는 실행 계획이다. 목적은 완료된
+follow-up plan을 재작성하지 않고, 누락 항목과 기존 완료 증적을 연결해
+문서 추적성을 완성하는 것이다.
+
+## Context
+
+[Phase 1 Decision Follow-up Plan](./2026-06-02-phase-1-decision-follow-up.md)은
+Stage 00 canonical adapter 모델을 유지하고 남은 QA skill/PATH/RTK gap을
+분리하는 좁은 후속 계획이었다. 이후 첨부 원문과 비교한 결과, Stage 00
+전수 조사, Codex harness alignment, Model Policy, QA/CI/CD, template
+contract, skill routing, branch completion 같은 항목이 해당 plan 자체에는
+세부 실행 항목으로 들어가지 않았음이 확인됐다.
+
+이 보정 작업은 그 항목을 새로 재구현하지 않는다. 이미 완료된
+[Codex Governance Harness Alignment Plan](./2026-05-31-codex-governance-harness-alignment.md)과
+[Stage 00 Canonical Adapter Redesign Plan](./2026-06-01-stage-00-canonical-adapter-redesign.md)의
+증적을 연결하고, 실제로 남은 범위를 문서 추적성 보정으로 한정한다.
+
+## Goals & In-Scope
+
+- **Goals**:
+  - Phase 1 follow-up plan의 축소 범위와 누락처럼 보이는 항목을 명확히 기록한다.
+  - 누락 항목별 기존 완료 증적과 남은 조치 여부를 Task record로 추적한다.
+  - Plan/Task README와 progress ledger를 갱신해 후속 작업자가 같은 gap을 다시 조사하지 않게 한다.
+- **In Scope**:
+  - New Plan and Task records under `docs/04.execution/`.
+  - A short current-state note in the completed Phase 1 follow-up plan.
+  - Plans/Tasks README index updates.
+  - Progress ledger evidence and validation commands.
+
+## Non-Goals & Out-of-Scope
+
+- **Non-goals**:
+  - Reopen or rewrite the completed Phase 1 follow-up plan status.
+  - Re-implement the completed Stage 00 canonical adapter or Codex harness work.
+  - Promote HADS into the canonical template contract.
+- **Out of Scope**:
+  - Stage 00 policy edits, Codex TOML edits, CI workflow edits, or Kubernetes manifest changes unless a new concrete drift is found.
+  - Live k3d, ArgoCD, Vault, Kubernetes mutation, secret inspection, or external service actions.
+  - Destructive git operations or history rewriting.
+
+## Work Breakdown
+
+| Task | Description | Files / Docs Affected | Target REQ | Validation Criteria |
+| --- | --- | --- | --- | --- |
+| REC-001 | Create the corrective Plan artifact | `docs/04.execution/plans/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md` | TRACE-001 | Plan follows `plan.template.md` and links the prior evidence chain. |
+| REC-002 | Create the corrective Task artifact with coverage matrix | `docs/04.execution/tasks/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md` | TRACE-002 | Task follows `task.template.md` and maps omitted items to evidence or no-op boundaries. |
+| REC-003 | Add a current-state scope note to the completed follow-up plan | `docs/04.execution/plans/2026-06-02-phase-1-decision-follow-up.md` | TRACE-003 | The note preserves `status: done` and points to this corrective plan. |
+| REC-004 | Update execution stage indexes | `docs/04.execution/plans/README.md`, `docs/04.execution/tasks/README.md` | TRACE-004 | Both README tables and structures include the new artifacts. |
+| REC-005 | Record progress and verification evidence | `docs/00.agent-governance/memory/progress.md` | TRACE-005 | Progress entry records checks, limitations, and no-live-infra boundary. |
+
+## Verification Plan
+
+| ID | Level | Description | Command / How to Run | Pass Criteria |
+| --- | --- | --- | --- | --- |
+| VAL-REC-001 | Structural | New Plan keeps required template metadata and headings | Targeted heading/frontmatter scan | PASS |
+| VAL-REC-002 | Structural | New Task keeps required template metadata and headings | Targeted heading/frontmatter scan | PASS |
+| VAL-REC-003 | Index | Plans/Tasks README include the new artifacts | Targeted `rg` check | Both README files report the new path. |
+| VAL-REC-004 | Diff hygiene | Check whitespace and conflict markers | `git diff --check` | Exit 0. |
+| VAL-REC-005 | Wiki index | Confirm generated LLM Wiki index remains current | `bash scripts/generate-llm-wiki-index.sh --check` | PASS. |
+| VAL-REC-006 | Repository quality | Run repository governance, template, hook, and static quality gates | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
+| VAL-REC-007 | Scope review | Confirm changed files match the documentation-only reconciliation | `git status --short --branch` | Only Plan/Task docs, execution READMEs, and progress ledger are changed. |
+
+## Risks & Mitigations
+
+| Risk | Impact | Mitigation |
+| --- | --- | --- |
+| Reconciliation is mistaken for a new Stage 00 redesign | Medium | State that prior Stage 00 and Codex harness implementation evidence remains canonical. |
+| Completed plan history is rewritten | Medium | Keep the old plan `status: done` and add only a current-state note. |
+| Existing evidence links become stale | Medium | Link directly to Plan/Task records that own the completed work. |
+| Documentation-only work triggers live infrastructure action | High | Keep live k3d, ArgoCD, Vault, Kubernetes mutation, and secret inspection out of scope. |
+
+## Agent Rollout & Evaluation Gates (If Applicable)
+
+- **Offline Eval Gate**: Run targeted template scans, `git diff --check`,
+  `bash scripts/generate-llm-wiki-index.sh --check`, and
+  `bash scripts/validate-repo-quality-gates.sh .`.
+- **Sandbox / Canary Rollout**: Not applicable. This is documentation-only traceability work.
+- **Human Approval Gate**: Required before changing Stage 00 policy, Codex TOML, CI workflow, Kubernetes manifests, or live infrastructure.
+- **Rollback Trigger**: If this reconciliation introduces broken links, template drift, or validator failure, revert only this corrective Plan/Task/README/progress change set.
+- **Prompt / Model Promotion Criteria**: Not applicable. No model policy or provider agent configuration changes are planned.
+
+## Completion Criteria
+
+- [x] Corrective Plan artifact exists and follows `plan.template.md`.
+- [x] Corrective Task artifact exists and follows `task.template.md`.
+- [x] Completed Phase 1 follow-up plan links to this reconciliation without changing its done status.
+- [x] Plans and Tasks README indexes include the new artifacts.
+- [x] Progress ledger records this reconciliation and verification evidence.
+- [x] Required static validation commands pass.
+- [x] No live cluster, secret, deployment, CI topology, or provider configuration change is performed.
+
+## Related Documents
+
+- **Original Follow-up Plan**: [./2026-06-02-phase-1-decision-follow-up.md](./2026-06-02-phase-1-decision-follow-up.md)
+- **Task**: [../tasks/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md](../tasks/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md)
+- **Codex Harness Plan**: [./2026-05-31-codex-governance-harness-alignment.md](./2026-05-31-codex-governance-harness-alignment.md)
+- **Codex Harness Task**: [../tasks/2026-05-31-codex-governance-harness-alignment.md](../tasks/2026-05-31-codex-governance-harness-alignment.md)
+- **Stage 00 Canonical Adapter Plan**: [./2026-06-01-stage-00-canonical-adapter-redesign.md](./2026-06-01-stage-00-canonical-adapter-redesign.md)
+- **Stage 00 Canonical Adapter Task**: [../tasks/2026-06-01-stage-00-canonical-adapter-redesign.md](../tasks/2026-06-01-stage-00-canonical-adapter-redesign.md)
+- **Template README**: [../../99.templates/README.md](../../99.templates/README.md)
