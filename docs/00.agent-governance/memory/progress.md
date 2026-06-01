@@ -8,6 +8,59 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-06-02 — Operations documentation template conformance
+
+- **Date**: 2026-06-02
+- **Layer**: docs, operations, qa
+- **Status**: complete
+- **Tags**: #docs #operations #templates #readme #validation
+
+#### Progress
+
+- Audited authored Guide, Policy, and Runbook documents under
+  [05.operations](../../05.operations/README.md) against their required
+  templates:
+  [guide.template.md](../../99.templates/guide.template.md),
+  [policy.template.md](../../99.templates/policy.template.md), and
+  [runbook.template.md](../../99.templates/runbook.template.md).
+- Confirmed the existing non-README Guide, Policy, and Runbook documents keep
+  the required frontmatter, `owner: platform`, `type`, and required template
+  headings.
+- Added README template snippet alignment to:
+  - [Guides README](../../05.operations/guides/README.md)
+  - [Policies README](../../05.operations/policies/README.md)
+  - [Runbooks README](../../05.operations/runbooks/README.md)
+  - [Incidents README](../../05.operations/incidents/README.md)
+- Confirmed there are no tracked authored Incident Record or Postmortem files
+  under `docs/05.operations/incidents/` yet, so no placeholder incident or
+  postmortem document was created.
+
+#### Memory
+
+- `docs/05.operations/incidents/` stays README-only until a real incident
+  record or postmortem is needed. Use `incident.template.md` and
+  `postmortem.template.md` only when recording a real event or stabilized
+  post-incident analysis.
+- README template alignment for operations folders should use only the snippets
+  that match the folder responsibility; do not paste the full snippet library
+  into authored READMEs.
+- Code fences in operational docs contain shell comments beginning with `#`;
+  heading checks should ignore fenced code before treating them as duplicate
+  H1s.
+
+#### Evidence
+
+- Targeted README heading scan — PASS
+- Targeted Guide/Policy/Runbook frontmatter and required heading scan — PASS
+- `git diff --check` — PASS
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS
+
+#### Handoff
+
+- No live k3d, ArgoCD, Vault, Kubernetes mutation, or external service action
+  was performed.
+
 ### 2026-06-02 — Phase 1 decision follow-up plan
 
 - **Date**: 2026-06-02
