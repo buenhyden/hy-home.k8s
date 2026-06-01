@@ -56,14 +56,14 @@ repos:
     rev: v0.11.0.1
     hooks:
       - id: shellcheck
-        files: '^((scripts|infrastructure)/.*\.sh|\.claude/hooks/.*\.sh)$'
+        files: '^((scripts|infrastructure)/.*\.sh|docs/00\.agent-governance/hooks/.*\.sh)$'
 
   - repo: https://github.com/scop/pre-commit-shfmt
     rev: v3.13.1-1
     hooks:
       - id: shfmt
         args: [-i, '2'] # Indent 2 spaces
-        files: '^((scripts|infrastructure)/.*\.sh|\.claude/hooks/.*\.sh)$'
+        files: '^((scripts|infrastructure)/.*\.sh|docs/00\.agent-governance/hooks/.*\.sh)$'
 
   # --- 5. 인프라 및 도커 검사 (Infrastructure) ---
   - repo: https://github.com/zizmorcore/zizmor-pre-commit

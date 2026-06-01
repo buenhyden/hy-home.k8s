@@ -96,6 +96,27 @@ def load_toml(path: pathlib.Path):
         return tomllib.load(handle)
 
 
+def load_markdown_frontmatter(path: pathlib.Path) -> dict:
+    text = read_text(path)
+    frontmatter = re.match(r"^---\n(.*?)\n---\n", text, re.DOTALL)
+    if not frontmatter:
+        fail(f"{rel(path)} missing YAML frontmatter")
+        return {}
+    try:
+        return yaml.load(frontmatter.group(1), Loader=DuplicateKeyLoader) or {}
+    except Exception as exc:
+        fail(f"{rel(path)} frontmatter parse failed: {exc}")
+        return {}
+
+
+def normalize_tools(value) -> str:
+    if isinstance(value, str):
+        return ", ".join(part.strip() for part in value.split(",") if part.strip())
+    if isinstance(value, list):
+        return ", ".join(str(part).strip() for part in value if str(part).strip())
+    return ""
+
+
 def extract_scope_imports(text: str) -> list[str]:
     return sorted(re.findall(r"@import\s+(docs/00\.agent-governance/scopes/[A-Za-z0-9_.-]+\.md)", text))
 
@@ -2067,7 +2088,7 @@ for workflow in sorted((root / ".github/workflows").glob("*.yml")):
             if re.search(r"\$\{\{\s*needs(?:\.|\[)[^}]*\.result\s*\}\}", run_block):
                 fail(f"{rel(workflow)} job {job_id} run block expands needs.*.result directly")
 
-for json_path in [root / ".claude/settings.json", root / ".codex/hooks.json"]:
+for json_path in [root / ".claude/settings.json", root / ".agents/hooks.json", root / ".codex/hooks.json"]:
     try:
         load_json(json_path)
     except Exception as exc:
@@ -2128,6 +2149,25 @@ for phrase in [
 ]:
     if phrase not in codex_hooks_text:
         fail(f"{rel(codex_hooks_path)} missing Codex event hook phrase: {phrase}")
+
+gemini_hooks_path = root / ".agents/hooks.json"
+gemini_hooks = load_json(gemini_hooks_path).get("hooks", {})
+for event_name in ["SessionStart", "PreToolUse", "PostToolUse", "Stop", "SubagentStop", "PreCompact"]:
+    if event_name not in gemini_hooks:
+        fail(f"{rel(gemini_hooks_path)} missing event hook: {event_name}")
+gemini_hooks_text = read_text(gemini_hooks_path)
+for phrase in [
+    "docs/00.agent-governance/hooks/session-start.sh",
+    "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
+    "docs/00.agent-governance/hooks/post-validate.sh",
+    "docs/00.agent-governance/hooks/lifecycle-guard.sh",
+    "GEMINI_PROJECT_DIR",
+    "Glob|Grep",
+    '"timeout": 60',
+    '"timeout": 20',
+]:
+    if phrase not in gemini_hooks_text:
+        fail(f"{rel(gemini_hooks_path)} missing Gemini event hook phrase: {phrase}")
 
 
 def hook_command(data: dict, event_name: str, matcher: str, script_name: str) -> str:
@@ -2415,6 +2455,10 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
 claude_agents_dir = root / ".claude/agents"
 codex_agents_dir = root / ".codex/agents"
 gemini_agents_dir = root / ".agents/agents"
+if claude_agents_dir.is_symlink():
+    fail(".claude/agents must be a real Claude-specific directory, not a symlink")
+elif not claude_agents_dir.is_dir():
+    fail(".claude/agents must be a real Claude-specific directory")
 claude_agents = {path.stem: path for path in sorted(claude_agents_dir.glob("*.md"))}
 codex_agents = {path.stem: path for path in sorted(codex_agents_dir.glob("*.toml"))}
 gemini_agents = {path.stem: path for path in sorted(gemini_agents_dir.glob("*.md"))}
@@ -2444,8 +2488,37 @@ expected_codex_agent_models = {
     "security-auditor": ("gpt-5.3-codex", "high"),
     "wiki-curator": ("gpt-5.3-codex", "medium"),
 }
+expected_claude_agent_models = {
+    "supervisor": "opus 4.8",
+    "code-reviewer": "sonnet 4.6",
+    "doc-writer": "sonnet 4.6",
+    "gitops-reviewer": "sonnet 4.6",
+    "incident-responder": "sonnet 4.6",
+    "k8s-implementer": "sonnet 4.6",
+    "security-auditor": "sonnet 4.6",
+    "wiki-curator": "sonnet 4.6",
+}
+expected_claude_agent_tools = {
+    "supervisor": "Read, Grep, Glob, Bash, Edit, Write, Task",
+    "code-reviewer": "Read, Grep, Glob, Bash",
+    "doc-writer": "Read, Write, Edit, Grep, Glob, Bash",
+    "gitops-reviewer": "Read, Grep, Glob, Bash",
+    "incident-responder": "Read, Grep, Glob, Bash",
+    "k8s-implementer": "Read, Write, Edit, Grep, Glob, Bash",
+    "security-auditor": "Read, Grep, Glob, Bash",
+    "wiki-curator": "Read, Write, Edit, Grep, Glob, Bash",
+}
 for stem, claude_path in sorted(claude_agents.items()):
     claude_text = read_text(claude_path)
+    claude_metadata = load_markdown_frontmatter(claude_path)
+    if claude_metadata.get("name") != stem:
+        fail(f"{rel(claude_path)} name must match file stem: {stem}")
+    expected_claude_model = expected_claude_agent_models.get(stem)
+    if expected_claude_model and claude_metadata.get("model") != expected_claude_model:
+        fail(f"{rel(claude_path)} model must be {expected_claude_model!r}")
+    expected_claude_tools = expected_claude_agent_tools.get(stem)
+    if expected_claude_tools and normalize_tools(claude_metadata.get("tools")) != expected_claude_tools:
+        fail(f"{rel(claude_path)} tools must be {expected_claude_tools!r}")
     for phrase in runtime_contract_phrases:
         if phrase not in claude_text:
             fail(f"{rel(claude_path)} missing runtime contract phrase: {phrase}")
@@ -4292,6 +4365,34 @@ for repo_url, expected in sorted(expected_pre_commit.items()):
         fail(f"pre-commit version drift for {repo_url}: inventory={expected} actual={actual}")
 for repo_url in sorted(set(actual_pre_commit) - set(expected_pre_commit)):
     fail(f"pre-commit repo missing from inventory: {repo_url}")
+
+pre_commit_text = read_text(root / ".pre-commit-config.yaml")
+for hook_id in ["shellcheck", "shfmt"]:
+    if "docs/00\\.agent-governance/hooks/.*\\.sh" not in pre_commit_text:
+        fail(f".pre-commit-config.yaml {hook_id} must include docs/00.agent-governance/hooks/*.sh coverage")
+    if "\\.claude/hooks/.*\\.sh" in pre_commit_text:
+        fail(f".pre-commit-config.yaml {hook_id} must not use stale .claude/hooks/*.sh coverage")
+
+active_hook_reference_files = [
+    root / ".claude/CLAUDE.md",
+    root / "docs/00.agent-governance/providers/claude.md",
+    root / "docs/00.agent-governance/scopes/meta.md",
+    root / "scripts/README.md",
+    root / "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md",
+    root / "docs/00.agent-governance/hooks/post-validate.sh",
+    root / "docs/00.agent-governance/hooks/lifecycle-guard.sh",
+]
+for path in active_hook_reference_files:
+    text = read_text(path)
+    if ".claude/hooks" in text:
+        fail(f"{rel(path)} contains stale active hook path .claude/hooks; use docs/00.agent-governance/hooks")
+    if "docs/00.agent-governance/hooks" not in text:
+        fail(f"{rel(path)} missing shared hook path docs/00.agent-governance/hooks")
+
+ci_qa_guide_path = root / "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md"
+ci_qa_guide_text = read_text(ci_qa_guide_path)
+if "`shell-static`" in ci_qa_guide_text:
+    fail(f"{rel(ci_qa_guide_path)} must not list stale shell-static as an active CI job")
 
 if failures:
     print("=== validate-repo-quality-gates ===")
