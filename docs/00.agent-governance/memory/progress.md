@@ -4844,3 +4844,57 @@ canonical adapter architecture, or skill-axis routing requirements.
   ARD/ADR when the work establishes durable workspace behavior.
 - Historical `Parent Spec: N/A` task lines may remain, but current upstream
   ownership must be documented through a dated overlay when later backfilled.
+
+---
+
+## 2026-06-02 — Stage 00 Codex Harness Coverage Reconciliation
+
+### Metadata
+
+- **Date**: 2026-06-02
+- **Layer**: governance, codex, skills, qa
+- **Tags**: #phase1 #stage00 #codex #coverage #qa
+- **Record type**: corrective traceability and approved protected-surface follow-up.
+
+### Problem
+
+The Phase 1 decision follow-up plan intentionally kept a narrow scope, but the
+original request also named broader Stage 00/Codex harness coverage areas. The
+first reconciliation linked those omitted areas to existing completed evidence,
+while the QA routing row still carried the 2026-06-01 finding that the exact
+`qa(ouroboros-qa)` path was absent.
+
+### Resolution
+
+- Added
+  `docs/04.execution/plans/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md`.
+- Added
+  `docs/04.execution/tasks/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md`.
+- Added a coverage reconciliation note to
+  `docs/04.execution/plans/2026-06-02-phase-1-decision-follow-up.md`.
+- Updated `docs/04.execution/plans/README.md` and
+  `docs/04.execution/tasks/README.md` indexes for the new artifacts.
+- After explicit human approval for protected-surface edits, confirmed
+  `/home/hy/.codex/skills/ouroboros-qa/SKILL.md` exists and updated
+  `docs/00.agent-governance/harness-catalog.md` so the QA row records the
+  Codex-local path.
+
+### Evidence
+
+- `/home/hy/.codex/skills/ouroboros-qa/SKILL.md` existence check PASS.
+- `/home/hy/.local/bin/node`, `/home/hy/.local/bin/npm`, and
+  `/home/hy/.local/bin/rtk` path check PASS.
+- `git diff --check` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- Protected-surface diff review PASS: no model policy, Codex TOML, CI workflow,
+  Kubernetes manifest, secret, credential, live k3d, ArgoCD, Vault, or
+  Kubernetes runtime mutation was performed.
+
+### Prevention
+
+- Treat `harness-catalog.md` as the durable source for named skill availability
+  and update the exact routing row when a previously missing skill path appears.
+- Human approval for protected-surface edits allows repo-tracked governance
+  evidence updates, but live infrastructure and secret-bearing state still need
+  separate concrete scope and validation evidence.

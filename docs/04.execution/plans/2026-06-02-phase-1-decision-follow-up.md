@@ -34,6 +34,16 @@ and its paired
 [Task record](../tasks/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md).
 This note does not reopen or change this plan's `status: done`.
 
+### Protected Surface Follow-up Note (2026-06-02)
+
+After the completed reconciliation, the human operator approved
+protected-surface edits for items that still needed approval. A targeted
+follow-up confirmed `/home/hy/.codex/skills/ouroboros-qa/SKILL.md` now exists
+locally and updated the canonical `harness-catalog.md` QA routing row. This
+closes DEC-004 for the Codex-local path without installing a new skill or
+changing model policy, Codex TOML, CI workflow, Kubernetes manifests, secrets,
+or live infrastructure.
+
 ## Goals & In-Scope
 
 - **Goals**:

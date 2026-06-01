@@ -30,6 +30,19 @@ updated: 2026-06-02
 - Do not mutate live k3d, ArgoCD, Vault, Kubernetes resources, CI topology, or secret-bearing state.
 - Record validation evidence before handoff.
 
+## Approved Protected Surface Follow-up (2026-06-02)
+
+The human operator approved protected-surface edits for items that still needed
+approval. The only concrete drift found during the follow-up was the
+`qa(ouroboros-qa)` roster state: `/home/hy/.codex/skills/ouroboros-qa/SKILL.md`
+now exists locally, while the catalog still recorded it as absent from the
+2026-06-01 audit. The implementation updates the canonical Task-to-Skill
+Routing row and this evidence trail only.
+
+No model policy, Codex TOML, CI workflow, Kubernetes manifest, secret,
+credential, live k3d, ArgoCD, Vault, or Kubernetes runtime mutation is part of
+this follow-up.
+
 ## Coverage Matrix
 
 | Original Requested Area | Follow-up Plan Coverage | Existing Evidence / Resolution | Result |
@@ -39,7 +52,7 @@ updated: 2026-06-02
 | Model Policy and `model_reasoning_effort` verification | Only referenced as not changing provider config | Existing Codex and Stage 00 plans record `gpt-5.5` supervisor, `gpt-5.3-codex` workers, and TOML `model_reasoning_effort` validation. | Covered by prior evidence. |
 | QA/CI/CD checks and Codex-visible commands | Follow-up plan only ran static validation commands | `scripts/validate-repo-quality-gates.sh .`, LLM Wiki index checks, hook syntax checks, and progress entries are recorded in prior Task evidence. | Covered; this task records the evidence chain. |
 | Template Contract and document conformance | HADS/template boundary only | Stage 00 canonical adapter evidence and later operations documentation conformance work record template routing and authored-doc validation. | Covered; no new template migration. |
-| Skill routing and named Superpowers/DevOps/Kubernetes/QA axes | Follow-up plan recognized `harness-catalog.md` as canonical | `harness-catalog.md` Task-to-Skill Routing and Stage 00 Task phase audit record the strategy-lens mapping and `qa(ouroboros-qa)` roster gap. | Covered with one known gap retained. |
+| Skill routing and named Superpowers/DevOps/Kubernetes/QA axes | Follow-up plan recognized `harness-catalog.md` as canonical | `harness-catalog.md` Task-to-Skill Routing and Stage 00 Task phase audit record the strategy-lens mapping. A 2026-06-02 approved protected-surface follow-up confirmed `/home/hy/.codex/skills/ouroboros-qa/SKILL.md` and updated the QA routing row. | Covered; the prior QA roster gap is closed for the Codex-local path. |
 | Branch completion and code review process | Not a work item in the narrow follow-up plan | Stage 00 canonical adapter Task records git/postflight branch completion integration and review workflow routing. | Covered by prior evidence. |
 | PATH/RTK local runtime limitation | Included as a remaining boundary | Follow-up plan and progress ledger record direct `/home/hy/.local/bin` usage and private DB/credential boundary. | Covered; retained as runtime limitation. |
 | Plan/Task traceability for the omission itself | Missing before this reconciliation | This Plan/Task pair, README indexes, and progress ledger provide the corrective traceability artifact. | Completed by this task. |
@@ -54,6 +67,7 @@ updated: 2026-06-02
 | T-004 | Update Plans and Tasks README indexes | doc | N/A | REC-004 | Both READMEs include the new artifact rows | platform | Done |
 | T-005 | Record progress and final verification evidence | memory | N/A | REC-005 | `progress.md` records checks and no-live-infra limitation | platform | Done |
 | T-006 | Run static validation | test | N/A | Verification Plan | Required validation commands pass | platform | Done |
+| T-007 | Apply approved protected-surface follow-up for QA routing | guardrail | N/A | REC-006 | `harness-catalog.md` records `/home/hy/.codex/skills/ouroboros-qa/SKILL.md`; no model, Codex TOML, CI, Kubernetes, secret, or live infra files changed | platform | Done |
 
 ## Suggested Types
 
@@ -76,6 +90,7 @@ updated: 2026-06-02
 - [x] T-004 Update Plans and Tasks README indexes.
 - [x] T-005 Record progress and final verification evidence.
 - [x] T-006 Run static validation.
+- [x] T-007 Apply approved protected-surface follow-up for QA routing.
 
 ## Verification Summary
 
@@ -89,6 +104,9 @@ updated: 2026-06-02
 - **Eval Commands**:
   - Targeted Plan/Task frontmatter and heading scan — PASS
   - Targeted Plans/Tasks README index scan — PASS
+  - Targeted `/home/hy/.codex/skills/ouroboros-qa/SKILL.md` existence check — PASS
+  - Targeted protected-surface diff review — PASS; changed files are limited
+    to governance/catalog evidence, Plan/Task traceability, and progress memory.
 - **Logs / Evidence Location**:
   - This task document.
   - [Progress Ledger](../../00.agent-governance/memory/progress.md)
