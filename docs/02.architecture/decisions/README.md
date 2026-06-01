@@ -41,6 +41,7 @@
 ├── 0002-argocd-helm-and-gitops-model.md
 ├── ...
 ├── 0012-argo-notifications-slack.md
+├── 0013-stage-00-canonical-adapter-model.md
 └── README.md
 ```
 
@@ -77,6 +78,7 @@
 | [`./0010-headlamp-replaces-dashboard.md`](./0010-headlamp-replaces-dashboard.md) | K8s Dashboard v3 제거와 Headlamp 교체 결정 | Accepted | Current cluster UI contract. |
 | [`./0011-argo-rollouts-progressive-delivery.md`](./0011-argo-rollouts-progressive-delivery.md) | Argo Rollouts 도입과 Rollouts Dashboard 결정 | Accepted | Current progressive delivery contract. |
 | [`./0012-argo-notifications-slack.md`](./0012-argo-notifications-slack.md) | Argo Notifications Slack webhook 도입 결정 | Accepted | Current GitOps notification pattern. |
+| [`./0013-stage-00-canonical-adapter-model.md`](./0013-stage-00-canonical-adapter-model.md) | Stage 00 canonical core, provider adapter, validation evidence ownership 결정 | Accepted | Current workspace AI Agent governance contract. |
 
 ## Related Documents
 

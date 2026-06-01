@@ -4610,3 +4610,103 @@ Harness layers L1–L6 were incomplete: no `settings.json`, no agent files, no h
 - Runtime catalog entries in `docs/00.agent-governance/harness-catalog.md` must
   stay in sync with `.claude/agents/`, `.codex/agents/`, `.claude/skills/`,
   and the hook boundary between `.claude/settings.json` and `.codex/hooks.json`.
+
+---
+
+## 2026-06-01 — Phase 1 Skill-Axis Governance Audit Overlay
+
+### Metadata
+
+- **Date**: 2026-06-01
+- **Layer**: governance, skills, qa, ci, gitops
+- **Tags**: #phase1 #governance #skills #canonical-adapter #validation
+- **Record type**: current-state overlay for the Stage 00 canonical adapter workstream.
+
+### Problem
+
+The Phase 1 objective named external process, documentation, QA, DevOps,
+CI/CD, security, and Kubernetes skills that should be reflected in governance
+and process guidance. The existing Stage 00 canonical adapter workstream proved
+the broad model, but the named skill axes were not all explicit in the
+Task-to-Skill Routing table.
+
+### Resolution
+
+- Updated `docs/00.agent-governance/harness-catalog.md` to add explicit routing
+  for Phase 1 process/branch governance, development quality workflow, code
+  review workflow, documentation format/readability, QA, CI/CD, and Kubernetes
+  strategy lenses.
+- Updated
+  `docs/04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md`
+  with a `Phase 1 Skill-Axis Completion Audit` overlay.
+- Recorded that `qa(ouroboros-qa)` was not present by exact local skill name;
+  available alternatives are `gstack-qa`, `gstack-qa-only`, and
+  `imp-qa-test-planner`.
+
+### Evidence
+
+- `git status --short --branch` showed a clean branch before this overlay.
+- Exact named external skill paths were checked from local skill directories.
+- `git diff --check` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- `/home/hy/.local/bin/node --version` PASS (`v24.14.0`).
+- `/home/hy/.local/bin/rtk --version` PASS (`rtk 0.34.3`).
+- `command -v node; command -v npm; command -v rtk` produced no paths in the
+  current tool shell; `/home/hy/.local/bin/npm --version` failed because the
+  wrapper calls `env node` and `node` was not on PATH.
+
+### Prevention
+
+- Future broad workspace improvement prompts that name external skills should
+  update `harness-catalog.md` routing when the skill should become a durable
+  strategy lens.
+- Do not migrate Stage 00 templates to HADS without a separate template-policy
+  plan and validation scope.
+
+---
+
+## 2026-06-01 — Workspace Agent Governance PRD/ARD Traceability Backfill
+
+### Metadata
+
+- **Date**: 2026-06-01
+- **Layer**: requirements, architecture, governance, sdd
+- **Tags**: #phase2 #requirements #architecture #stage00 #traceability
+- **Record type**: current-state SDD traceability backfill.
+
+### Problem
+
+The Stage 00 canonical adapter plan and task existed and were completed, but the
+upstream `docs/01.requirements` and `docs/02.architecture` stages did not have a
+PRD/ARD/ADR that explicitly owned workspace AI Agent governance, Stage 00
+canonical adapter architecture, or skill-axis routing requirements.
+
+### Resolution
+
+- Added `docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md`.
+- Added `docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md`.
+- Added `docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md`.
+- Updated the `docs/01.requirements`, `docs/02.architecture/requirements`, and
+  `docs/02.architecture/decisions` README indexes.
+- Added current upstream traceability overlays and Related Documents links to
+  the existing Stage 00 canonical adapter plan/task without rewriting historical
+  evidence.
+
+### Evidence
+
+- `git diff --check` PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS.
+- Targeted traceability scan found the new PRD/ARD/ADR links in
+  `docs/01.requirements`, `docs/02.architecture`, and the Stage 00 plan/task.
+- The remaining `Parent Spec: N/A` string is explicitly marked as historical
+  task evidence in the task overlay.
+
+### Prevention
+
+- Future governance workstreams that start directly in `docs/04.execution`
+  should add or link a `docs/01.requirements` PRD and `docs/02.architecture`
+  ARD/ADR when the work establishes durable workspace behavior.
+- Historical `Parent Spec: N/A` task lines may remain, but current upstream
+  ownership must be documented through a dated overlay when later backfilled.

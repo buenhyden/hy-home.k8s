@@ -24,6 +24,29 @@ Live cluster, secret, deployment, destructive git action은 이 작업 범위 �
 - **Parent Spec**: N/A. This is a governance and harness alignment workstream.
 - **Parent Plan**: [../plans/2026-06-01-stage-00-canonical-adapter-redesign.md](../plans/2026-06-01-stage-00-canonical-adapter-redesign.md)
 
+### Current Upstream Traceability (2026-06-01)
+
+The original `Parent Spec: N/A` line is preserved as historical task evidence.
+Current upstream ownership for the workspace agent governance platform now lives
+in the PRD, ARD, and ADR linked below:
+
+- **PRD**: [../../01.requirements/2026-06-01-workspace-agent-governance-platform.md](../../01.requirements/2026-06-01-workspace-agent-governance-platform.md)
+- **ARD**: [../../02.architecture/requirements/0006-workspace-agent-governance-platform.md](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- **ADR**: [../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
+
+## Phase 2 Traceability Backfill Evidence
+
+This current-state overlay records the upstream SDD traceability backfill for
+the completed Stage 00 canonical adapter workstream.
+
+- Added the workspace agent governance PRD under `docs/01.requirements/`.
+- Added the workspace agent governance ARD under `docs/02.architecture/requirements/`.
+- Added ADR-0013 under `docs/02.architecture/decisions/`.
+- Updated the three owning README indexes.
+- Linked this task and its parent plan to the new PRD, ARD, and ADR without
+  changing the historical completion evidence.
+- Verification for this backfill: `git diff --check`, `bash scripts/generate-llm-wiki-index.sh --check`, and `bash scripts/validate-repo-quality-gates.sh .` passed.
+
 ## Working Rules
 
 - Preserve existing staged work unless it directly conflicts with this task.
@@ -119,6 +142,9 @@ process, and routing.
 
 ## Related Documents
 
+- **PRD**: [../../01.requirements/2026-06-01-workspace-agent-governance-platform.md](../../01.requirements/2026-06-01-workspace-agent-governance-platform.md)
+- **ARD**: [../../02.architecture/requirements/0006-workspace-agent-governance-platform.md](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
+- **ADR**: [../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 - **Plan**: [../plans/2026-06-01-stage-00-canonical-adapter-redesign.md](../plans/2026-06-01-stage-00-canonical-adapter-redesign.md)
 - **Prior Active Plan**: [../plans/2026-05-30-common-agent-governance-refactoring.md](../plans/2026-05-30-common-agent-governance-refactoring.md)
 - **Prior Active Task**: [./2026-05-30-governance-refactoring.md](./2026-05-30-governance-refactoring.md)

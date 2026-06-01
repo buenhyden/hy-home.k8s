@@ -45,6 +45,7 @@
 ├── 2026-03-29-platform-expansion-dashboard-mesh.md
 ├── 2026-05-17-argo-rollouts-progressive-delivery.md
 ├── 2026-05-17-argo-notifications-slack.md
+├── 2026-06-01-workspace-agent-governance-platform.md
 └── README.md
 ```
 
@@ -99,6 +100,7 @@
 | [`./2026-03-29-platform-expansion-dashboard-mesh.md`](./2026-03-29-platform-expansion-dashboard-mesh.md) | cert-manager, Headlamp, Istio/Kiali 확장 PRD | Active with superseded items | ARD/Spec/Plan/ADR 연결 완료. Dashboard 요구는 ADR-0010에 의해 Headlamp로 대체. | 2026-05-17 |
 | [`./2026-05-17-argo-rollouts-progressive-delivery.md`](./2026-05-17-argo-rollouts-progressive-delivery.md) | Argo Rollouts canary/blue-green 점진적 배포 PRD | Active current-contract backfill | ARD/Spec/Plan/Task 연결 완료. 현재 GitOps 계약은 `platform-rollouts` Application과 Rollouts 운영 문서가 소유. | 2026-05-18 |
 | [`./2026-05-17-argo-notifications-slack.md`](./2026-05-17-argo-notifications-slack.md) | Argo Notifications Slack 알림 PRD | Active current-contract backfill | ARD/Spec/Plan/Task 연결 완료. 현재 Secret 경계는 Vault/ESO/ArgoCD Notifications 문서가 소유. | 2026-05-18 |
+| [`./2026-06-01-workspace-agent-governance-platform.md`](./2026-06-01-workspace-agent-governance-platform.md) | Workspace AI Agent governance, Stage 00 canonical adapter, skill-axis routing PRD | Active current-contract backfill | ARD-0006, ADR-0013, Spec 006, Stage 00 canonical adapter Plan/Task 연결 완료. | 2026-06-01 |
 
 ## 예시
 
