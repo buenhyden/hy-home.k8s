@@ -69,6 +69,26 @@ docs/05.operations/policies/
 5. 정책 문서에는 실행 절차를 복제하지 않는다. 검증은 필요한 증적과 성공 기준만 남기고, 실행 가능한 명령 순서와 체크리스트는 소유 runbook 링크로 연결한다.
 6. live cluster mutation, Vault write, kubeconfig 변경 예시는 human-approved, bootstrap-only, break-glass 문맥 없이는 추가하지 않는다.
 
+## Usage Instructions
+
+이 영역은 운영 통제 기준을 확인하고 변경 영향 범위를 판단할 때 사용한다.
+
+1. 변경 대상 시스템의 Policy 문서를 먼저 확인한다.
+2. 필요한 증적과 예외 승인 경로를 확인한다.
+3. 실제 명령 순서나 복구 절차가 필요하면 연결된 Runbook으로 이동한다.
+
+## Verification and Monitoring
+
+- 정책 문서 구조 검증은 [policy.template.md](../../99.templates/policy.template.md)와 `scripts/validate-repo-quality-gates.sh`를 기준으로 한다.
+- 정책 준수 증적은 연결된 Runbook의 verification output, CI 결과, GitOps diff, review evidence로 남긴다.
+- live cluster, Vault, Kubernetes mutation 증적은 human-approved bootstrap 또는 break-glass 작업에서만 수집한다.
+
+## Incident and Recovery Links
+
+- Runbooks: [05.operations/runbooks](../runbooks/README.md)
+- Incident Records: [05.operations/incidents](../incidents/README.md)
+- Postmortems: `../incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md`
+
 ## Link Basis
 
 이 README의 링크 기준 위치는 `docs/05.operations/policies/`다.
