@@ -8,6 +8,41 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-06-02 — Phase 1 decision follow-up plan
+
+- **Date**: 2026-06-02
+- **Layer**: docs, meta, qa
+- **Status**: complete
+- **Tags**: #governance #docs #phase-1 #planning #validation
+
+#### Progress
+
+- Created [Phase 1 Decision Follow-up Plan](../../04.execution/plans/2026-06-02-phase-1-decision-follow-up.md)
+  as a Phase 2 planning artifact for the 2026-06-02 Phase 1 continuation decisions.
+- Updated [Plans README](../../04.execution/plans/README.md) so the new plan is indexed in the stage structure and document table.
+- Implemented the plan by promoting it to `status: done` and checking its completion criteria after static validation.
+- Kept the scope documentation-only: no Stage 00 policy edits, Codex TOML edits, CI workflow edits, Kubernetes manifests, ArgoCD, Vault, or live cluster changes.
+
+#### Memory
+
+- Phase 1 decision follow-up should preserve the completed Stage 00 canonical adapter model unless a future task finds a concrete drift.
+- HADS remains an optional documentation-structure lens; `docs/99.templates` remains the canonical authored-document contract.
+- The exact `qa(ouroboros-qa)` skill path is still a local roster gap. Do not invent a path; update `harness-catalog.md` only if the exact skill becomes available.
+- When `node`, `npm`, or `rtk` are missing from the current shell PATH, use `/home/hy/.local/bin` direct calls or an explicit PATH prefix. Do not inspect private RTK databases or credentials when `rtk gain` fails.
+
+#### Evidence
+
+- `git diff --check` — PASS
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS
+- `git status --short --branch` — changed files limited to the new plan,
+  plans README, and progress ledger.
+
+#### Handoff
+
+- None for this documentation-only planning artifact. Live k3d, ArgoCD, Vault,
+  Kubernetes mutation, and external service actions remain out of scope unless explicitly approved.
+
 ### 2026-05-31 — Codex governance harness alignment
 
 - **Date**: 2026-05-31

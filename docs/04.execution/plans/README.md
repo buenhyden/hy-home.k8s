@@ -64,6 +64,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-05-31-codex-governance-harness-alignment.md
 ├── 2026-06-01-claude-agent-surface-restoration.md
 ├── 2026-06-01-stage-00-canonical-adapter-redesign.md
+├── 2026-06-02-phase-1-decision-follow-up.md
 └── README.md
 ```
 
@@ -110,6 +111,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-05-31-codex-governance-harness-alignment.md`](./2026-05-31-codex-governance-harness-alignment.md)     | Codex/GPT 하네스, Model Policy, Template Contract drift 정합화 계획                                                                                                           | Done | 2026-05-31 |
 | [`./2026-06-01-claude-agent-surface-restoration.md`](./2026-06-01-claude-agent-surface-restoration.md)         | `.claude/agents`를 실제 Claude 전용 agent 파일 디렉터리로 복원하고 검증 게이트를 강화한 실행 계획                                                                             | Done | 2026-06-01 |
 | [`./2026-06-01-stage-00-canonical-adapter-redesign.md`](./2026-06-01-stage-00-canonical-adapter-redesign.md)   | Stage 00 canonical adapter 모델로 공통 governance, provider adapter, template, hook, model policy, QA/CI gap을 변경 단위별로 정합화한 계획                                  | Done | 2026-06-01 |
+| [`./2026-06-02-phase-1-decision-follow-up.md`](./2026-06-02-phase-1-decision-follow-up.md)                     | Phase 1 결정 항목을 후속 Phase 2 planning artifact로 고정하고 남은 QA skill/PATH/RTK gap boundary를 분리한 계획                                                              | Done | 2026-06-02 |
 
 ## Related Documents
 
