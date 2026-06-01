@@ -62,6 +62,8 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-05-30-antigravity-governance.md
 ├── 2026-05-30-governance-refactoring.md
 ├── 2026-05-31-codex-governance-harness-alignment.md
+├── 2026-06-01-claude-agent-surface-restoration.md
+├── 2026-06-01-stage-00-canonical-adapter-redesign.md
 └── README.md
 ```
 
@@ -103,8 +105,10 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-05-28-docs-governance-consistency.md`](./2026-05-28-docs-governance-consistency.md)                   | 문서 거버넌스 일관성 정비 Task — templates, policies, runbooks, guides, plans/tasks 준수율 향상 및 레거시 파일 제거                    | Done | 2026-05-29 |
 | [`./2026-05-28-workspace-skill-expansion.md`](./2026-05-28-workspace-skill-expansion.md)                       | repo-local skill expansion과 harness catalog routing 보강 Task                                                                        | Done | 2026-05-28 |
 | [`./2026-05-30-antigravity-governance.md`](./2026-05-30-antigravity-governance.md)                             | Gemini/Antigravity 하네스와 공통 Stage 00 거버넌스 정합화 Task                                                                        | Active | 2026-05-30 |
-| [`./2026-05-30-governance-refactoring.md`](./2026-05-30-governance-refactoring.md)                             | 공통 AI Agent governance, template contract, model policy refactoring Task                                                            | Active | 2026-05-30 |
+| [`./2026-05-30-governance-refactoring.md`](./2026-05-30-governance-refactoring.md)                             | 공통 AI Agent governance, template contract, model policy refactoring Task. 2026-06-01 canonical adapter Task로 superseded             | Superseded | 2026-06-01 |
 | [`./2026-05-31-codex-governance-harness-alignment.md`](./2026-05-31-codex-governance-harness-alignment.md)     | Codex/GPT 하네스, Model Policy, Template Contract drift 정합화 Task                                                                   | Done | 2026-05-31 |
+| [`./2026-06-01-claude-agent-surface-restoration.md`](./2026-06-01-claude-agent-surface-restoration.md)         | `.claude/agents`를 실제 Claude 전용 agent 파일 디렉터리로 복원하고 검증 게이트를 강화한 작업 추적                                    | Done | 2026-06-01 |
+| [`./2026-06-01-stage-00-canonical-adapter-redesign.md`](./2026-06-01-stage-00-canonical-adapter-redesign.md)   | Stage 00 canonical adapter 모델로 governance, provider adapter, template, hook, model policy, QA/CI 정합화를 완료 추적한 Task        | Done | 2026-06-01 |
 
 ## Related Documents
 
