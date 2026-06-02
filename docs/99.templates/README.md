@@ -24,6 +24,7 @@
 ### In Scope
 
 - 문서 stage별 Markdown 템플릿
+- 중앙 archive Tombstone 템플릿
 - API/OpenAPI, GraphQL, proto 계약 템플릿
 - README와 governance memory 항목 템플릿
 
@@ -40,6 +41,7 @@
 ├── adr.template.md
 ├── agent-design.template.md
 ├── api-spec.template.md
+├── archive-tombstone.template.md
 ├── ard.template.md
 ├── data-model.template.md
 ├── guide.template.md
@@ -78,8 +80,8 @@
     새 authored 문서의 기본 `status`는 `draft`, 기본 `owner`는 `platform`이다. Status promotion은 owning Plan/Task evidence 또는 human review 후에만 수행한다.
 11. 템플릿 구조를 바꾸면 이미 생성된 문서에 안전하게 반영할 수 있는 heading, placeholder, `Link Basis`, `Related Documents`만 갱신하고 문서 고유 의도는 대량 재작성하지 않는다.
 12. `Related Documents` 예시는 upstream PRD/ARD/ADR/Spec/Plan과 downstream Task/Operation/Runbook/Incident를 추적할 수 있어야 한다.
-13. `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references` 아래의 비-README Markdown은 정확히 하나의 Template-Folder Mapping 행에 매핑되어야 한다.
-14. 실행 전제가 바뀌면 active README/guide/runbook은 새 current contract로 갱신하고, historical PRD/ARD/Spec은 원문 의도를 보존하되 현재 실행계약 메모로 오해를 막는다.
+13. `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/98.archive` 아래의 비-README Markdown은 정확히 하나의 Template-Folder Mapping 행에 매핑되어야 한다.
+14. 실행 전제가 바뀌면 active README/guide/runbook은 새 current contract로 갱신하고, 현재 구현과 상충하는 old PRD/ARD/ADR/Spec/Plan/Task는 `docs/98.archive` Tombstone으로 이동한다.
 
 ## Template Improvement Plan
 
@@ -87,8 +89,8 @@
 
 - target pattern, placeholder naming, target-relative examples를 mapping과 일치시킨다.
 - 실제 Markdown 링크는 `docs/99.templates/` 기준으로 resolve되게 유지하고, 아직 존재하지 않는 target-relative 예시는 code literal로 둔다.
-- core template 변경 후에는 기존 생성 문서에 안전하게 반영 가능한 heading, `Related Documents`, historical note만 갱신한다.
-- runtime premise 변경은 current-contract note, README index, 검증 게이트 순서로 반영하고 historical 문서를 새 실행계약처럼 재작성하지 않는다.
+- core template 변경 후에는 기존 생성 문서에 안전하게 반영 가능한 heading, `Related Documents`, archive routing note만 갱신한다.
+- runtime premise 변경은 current replacement 문서, README index, archive Tombstone, 검증 게이트 순서로 반영하고 old 문서를 활성 실행계약처럼 보존하지 않는다.
 - 운영 정책은 controls/evidence를 소유하고, 실행 명령 순서와 복구 절차는 guide/runbook template로 라우팅한다.
 - stage-specific lifecycle 보강은 required headings, status/currentness notes, verification, handoff/limitations, rollout/rollback/follow-up, troubleshooting signatures처럼 기존 문서에 안전하게 추가 가능한 섹션을 우선한다.
 
@@ -129,6 +131,7 @@
 | `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `incident.template.md` | Incident fact record and timeline |
 | `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `postmortem.template.md` | Incident analysis and prevention follow-up |
 | `docs/90.references/<category>/<topic>.md` | `reference.template.md` | Reference material, glossary, appendix, inventory |
+| `docs/98.archive/**/*.md` | `archive-tombstone.template.md` | Tombstone metadata for old docs moved out of active stages |
 | `docs/00.agent-governance/memory/<topic>.md` | `memory.template.md` | Stable memory entry |
 | `docs/00.agent-governance/memory/progress.md` | `progress.template.md` | Repo-changing work progress entry |
 
@@ -162,6 +165,14 @@ OpenAPI, GraphQL, proto 같은 계약 파일은 관련 `docs/03.specs/<feature-i
 - repo-changing agent work의 진행 상황은 `progress.template.md` 구조로 `00.agent-governance/memory/progress.md`에 작성한다.
 - `00.agent-governance/memory/`에 standalone memory 파일을 만들거나 갱신할 때는 `memory.template.md`를 사용한다.
 - standalone memory 파일 변경은 같은 변경 단위에서 `progress.md` entry를 함께 남긴다.
+
+## Archive Tombstone Rules
+
+`archive-tombstone.template.md`는 `98.archive/` 문서의 metadata-only 본문을 강제한다.
+
+- archive 경로는 원래 `docs/` 하위 경로를 `docs/98.archive/<original-docs-subpath>`로 mirror한다.
+- Tombstone 본문은 원문을 보존하지 않고 original path, archived date, reason, replacement, implementation evidence, archive index link만 남긴다.
+- 활성 문서는 Tombstone에 직접 연결하지 않고 [`../98.archive/README.md`](../98.archive/README.md)를 통해서만 archive를 노출한다.
 
 ## README and Spec Helper Templates
 

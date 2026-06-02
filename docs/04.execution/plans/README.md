@@ -43,11 +43,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 
 ```text
 04.execution/plans/
-├── 2026-03-27-wsl-k3d-argocd-platform.md
-├── 2026-03-28-wsl2-k3d-argocd-ha-platform.md
-├── 2026-03-29-platform-expansion.md
 ├── 2026-05-09-github-qa-ci-remediation.md
-├── 2026-05-09-k3d-agent-first-remediation.md
 ├── 2026-05-09-scripts-inventory-remediation.md
 ├── 2026-05-10-agent-first-harness-llm-wiki-hooks.md
 ├── 2026-05-17-template-crosslink-fix.md
@@ -55,15 +51,14 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-05-18-argo-notifications-slack.md
 ├── 2026-05-22-docs-governance-full-ab-hardening.md
 ├── 2026-05-22-workspace-purpose-alignment.md
-├── 2026-05-22-spec-execution-implementation-audit.md
 ├── 2026-05-24-p3-gitops-secret-runtime-remediation.md
 ├── 2026-05-28-docs-governance-consistency.md
 ├── 2026-05-28-workspace-skill-expansion.md
 ├── 2026-05-30-antigravity-governance.md
-├── 2026-05-30-common-agent-governance-refactoring.md
 ├── 2026-05-31-codex-governance-harness-alignment.md
 ├── 2026-06-01-claude-agent-surface-restoration.md
 ├── 2026-06-01-stage-00-canonical-adapter-redesign.md
+├── 2026-06-02-current-implementation-docs-alignment.md
 ├── 2026-06-02-phase-1-decision-follow-up.md
 ├── 2026-06-02-stage-00-codex-harness-coverage-reconciliation.md
 └── README.md
@@ -77,6 +72,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 4. Plan 변경 시 관련 `../tasks/`의 Parent Plan/Phase 링크와 Task ID를 확인한다.
 5. 완료된 계획은 완료 기준, 검증 결과, 후속 문서 링크를 남기되 상세 evidence 정본은 Task 문서에 둔다.
 6. live rollout, direct cluster mutation, secret write, external service action은 human approval gate와 rollback trigger를 명시한다.
+7. 현재 구현과 상충하거나 superseded-only인 old Plan은 `../../98.archive/README.md`에만 인덱싱하고, 활성 Plan에서 Tombstone에 직접 연결하지 않는다.
 
 ## Link Basis
 
@@ -91,10 +87,6 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 
 | 문서                                                                                                           | 설명                                                                                                                                                                           | 상태 | 최종 수정  |
 | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---- | ---------- |
-| [`./2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md)                           | WSL2 GitOps 플랫폼 초기 실행 계획의 historical closure와 current-contract evidence mapping                                                                                     | Done | 2026-05-22 |
-| [`./2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md)                   | TLS/최소권한 유지 + 변경영역 기반 CI 정적 게이트 + 롤백 규칙을 포함한 실행 계획                                                                                                | Done | 2026-05-22 |
-| [`./2026-03-29-platform-expansion.md`](./2026-03-29-platform-expansion.md)                                     | 2026-03-29 IP 수정 + cert-manager/Dashboard/Istio/Kiali 확장 계획, 현재 실행계약은 Headlamp/172.18.x 기준                                                                      | Done | 2026-05-21 |
-| [`./2026-05-09-k3d-agent-first-remediation.md`](./2026-05-09-k3d-agent-first-remediation.md)                   | k3d 운영 문서, Agent-first 실행 계약, 구조적 템플릿 coverage, lifecycle hook hardening 보정 계획                                                                               | Done | 2026-05-22 |
 | [`./2026-05-09-scripts-inventory-remediation.md`](./2026-05-09-scripts-inventory-remediation.md)               | `scripts/` 인벤토리 조사와 README 실행 계약 보정 계획                                                                                                                          | Done | 2026-05-21 |
 | [`./2026-05-09-github-qa-ci-remediation.md`](./2026-05-09-github-qa-ci-remediation.md)                         | `.github` QA, CI, 브랜치 정책, PR intake 계약 보정 계획                                                                                                                        | Done | 2026-05-09 |
 | [`./2026-05-10-agent-first-harness-llm-wiki-hooks.md`](./2026-05-10-agent-first-harness-llm-wiki-hooks.md)     | Agent-first harness, LLM Wiki, hook wiring 보정 계획                                                                                                                           | Done | 2026-05-10 |
@@ -103,15 +95,14 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-05-18-argo-notifications-slack.md`](./2026-05-18-argo-notifications-slack.md)                         | ArgoCD Notifications Slack current-contract backfill 실행 계획                                                                                                                 | Done | 2026-05-21 |
 | [`./2026-05-22-docs-governance-full-ab-hardening.md`](./2026-05-22-docs-governance-full-ab-hardening.md)       | README, lifecycle docs, agent/runtime governance, hook 경계, repo-static gate 정합화 계획                                                                                      | Done | 2026-05-22 |
 | [`./2026-05-22-workspace-purpose-alignment.md`](./2026-05-22-workspace-purpose-alignment.md)                   | 워크스페이스 목적 전체 기준 재감사, 버전 freshness, hook command boundary 보강 계획                                                                                            | Done | 2026-05-22 |
-| [`./2026-05-22-spec-execution-implementation-audit.md`](./2026-05-22-spec-execution-implementation-audit.md)   | `docs/03.specs`와 `docs/04.execution` 구현 evidence 재감사 및 드리프트 보정 계획                                                                                               | Done | 2026-05-22 |
 | [`./2026-05-24-p3-gitops-secret-runtime-remediation.md`](./2026-05-24-p3-gitops-secret-runtime-remediation.md) | 승인된 P3 ArgoCD/Vault/ESO/secret runtime remediation 실행 계획. Repo desired-state 보완은 완료됐고 live runtime 검증은 별도 follow-up이다.                                    | Done | 2026-05-25 |
 | [`./2026-05-28-docs-governance-consistency.md`](./2026-05-28-docs-governance-consistency.md)                   | 문서 거버넌스 일관성 정비 — templates, policies, runbooks, guides, plans/tasks 준수율 향상 및 레거시 파일 제거 계획                                                            | Done | 2026-05-29 |
 | [`./2026-05-28-workspace-skill-expansion.md`](./2026-05-28-workspace-skill-expansion.md)                       | repo-local skill expansion과 harness catalog routing 보강 계획                                                                                                                | Done | 2026-05-28 |
 | [`./2026-05-30-antigravity-governance.md`](./2026-05-30-antigravity-governance.md)                             | Gemini/Antigravity 하네스와 공통 Stage 00 거버넌스 정합화 계획                                                                                                                | Active | 2026-05-30 |
-| [`./2026-05-30-common-agent-governance-refactoring.md`](./2026-05-30-common-agent-governance-refactoring.md)   | 공통 AI Agent governance, template contract, model policy refactoring 계획. 2026-06-01 canonical adapter 재설계 계획으로 superseded                                            | Superseded | 2026-06-01 |
 | [`./2026-05-31-codex-governance-harness-alignment.md`](./2026-05-31-codex-governance-harness-alignment.md)     | Codex/GPT 하네스, Model Policy, Template Contract drift 정합화 계획                                                                                                           | Done | 2026-05-31 |
 | [`./2026-06-01-claude-agent-surface-restoration.md`](./2026-06-01-claude-agent-surface-restoration.md)         | `.claude/agents`를 실제 Claude 전용 agent 파일 디렉터리로 복원하고 검증 게이트를 강화한 실행 계획                                                                             | Done | 2026-06-01 |
 | [`./2026-06-01-stage-00-canonical-adapter-redesign.md`](./2026-06-01-stage-00-canonical-adapter-redesign.md)   | Stage 00 canonical adapter 모델로 공통 governance, provider adapter, template, hook, model policy, QA/CI gap을 변경 단위별로 정합화한 계획                                  | Done | 2026-06-01 |
+| [`./2026-06-02-current-implementation-docs-alignment.md`](./2026-06-02-current-implementation-docs-alignment.md) | 현재 구현 기준으로 01-04 문서를 정렬하고 old 문서를 중앙 archive Tombstone으로 이동하는 실행 계획 | Done | 2026-06-02 |
 | [`./2026-06-02-phase-1-decision-follow-up.md`](./2026-06-02-phase-1-decision-follow-up.md)                     | Phase 1 결정 항목을 후속 Phase 2 planning artifact로 고정하고 남은 QA skill/PATH/RTK gap boundary를 분리한 계획                                                              | Done | 2026-06-02 |
 | [`./2026-06-02-stage-00-codex-harness-coverage-reconciliation.md`](./2026-06-02-stage-00-codex-harness-coverage-reconciliation.md) | Phase 1 follow-up plan의 축소 범위를 보정하고 Stage 00/Codex harness 누락 항목을 기존 완료 증적에 연결한 계획 | Done | 2026-06-02 |
 
@@ -123,3 +114,4 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 - [04.execution/tasks](../tasks/README.md)
 - [05.operations/policies](../../05.operations/policies/README.md)
 - [Plan Template](../../99.templates/plan.template.md)
+- [Archive Index](../../98.archive/README.md)

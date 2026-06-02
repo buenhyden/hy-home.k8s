@@ -15,10 +15,8 @@ updated: 2026-05-18
 ## Context
 
 Istio 서비스메시의 트래픽 토폴로지와 메트릭을 시각화하기 위해 Kiali가 필요하다.
-Prometheus, Grafana, Tempo는 이미 Docker infra_net(`172.19.0.x`)에서 운영 중이며, K8s 내부에 별도 설치 없이 외부 엔드포인트로 연동한다.
+Prometheus, Grafana, Tempo는 Docker-hosted 외부 관측성 스택으로 운영 중이며, K8s 내부에 별도 설치 없이 GitOps Service/EndpointSlice로 연동한다.
 Docker Traefik은 `kiali.127.0.0.1.nip.io`를 k3d ingress로 프록시한다.
-
-> **현재 실행계약 메모 (2026-05-09)**: 아래 `172.19.x` observability 주소는 2026-03-29 기준의 역사적 `infra_net` 계약이다. 현재 repo-backed 실행계약은 `gitops/platform/external-services/`, `gitops/platform/network-policies/`, `infrastructure/tests/verify-contracts-static.sh`의 `172.18.x` EndpointSlice/CIDR 값이 우선한다.
 
 ## Decision
 
@@ -26,14 +24,14 @@ Docker Traefik은 `kiali.127.0.0.1.nip.io`를 k3d ingress로 프록시한다.
   - 별도 Kiali Operator 없이 단일 인스턴스로 운영.
 - Kiali 버전: v2.6.x
 - 외부 Observability 연동:
-  - Prometheus: `http://172.19.0.20:9090`
-  - Grafana: `http://172.19.0.24:3000`
-  - Tracing (Tempo): `http://172.19.0.22:3200`
+  - Prometheus: `http://172.18.0.10:9090`
+  - Grafana: `http://172.18.0.14:3000`
+  - Tracing (Tempo): `http://172.18.0.12:3200`
 - 인그레스: `ingress-nginx`, hostname `kiali.127.0.0.1.nip.io`.
 - TLS: cert-manager `ClusterIssuer`(mkcert CA)로 발급.
 - 인증: anonymous (로컬 환경 전용).
 - 외부 노출: Docker Traefik router `kiali-k3d` 추가 (별도 Traefik repo 관리).
-- Kiali egress NetworkPolicy: `172.19.0.20~24` 범위 허용.
+- Kiali egress NetworkPolicy: Prometheus/Grafana/Tempo EndpointSlice 주소와 필수 Kubernetes/DNS/Istio control-plane egress만 허용.
 
 ## Explicit Non-goals
 
@@ -49,7 +47,7 @@ Docker Traefik은 `kiali.127.0.0.1.nip.io`를 k3d ingress로 프록시한다.
   - 기존 외부 Observability 스택 재활용으로 K8s 내 자원 절약.
   - cert-manager TLS로 HTTPS 자동화.
 - **Trade-offs**:
-  - 외부 Prometheus/Grafana/Tempo와의 네트워크 경로(infra_net → k3d egress) 유지 필요.
+  - 외부 Prometheus/Grafana/Tempo와의 네트워크 경로 유지 필요.
   - Kiali egress NetworkPolicy에 observability 범위 명시 필요.
   - Istio 설치가 선행되어야 함.
 
@@ -72,8 +70,8 @@ Docker Traefik은 `kiali.127.0.0.1.nip.io`를 k3d ingress로 프록시한다.
 
 ## Related Documents
 
-- **PRD**: [`../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md`](../../01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md)
-- **ARD**: [`../requirements/0003-platform-expansion-mesh-dashboard.md`](../requirements/0003-platform-expansion-mesh-dashboard.md)
-- **Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
+- **PRD**: [`../../01.requirements/2026-06-02-current-local-gitops-platform.md`](../../01.requirements/2026-06-02-current-local-gitops-platform.md)
+- **ARD**: [`../requirements/0007-current-local-gitops-platform.md`](../requirements/0007-current-local-gitops-platform.md)
+- **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Related ADR**: [`./0008-istio-install-and-ingress-coexist.md`](./0008-istio-install-and-ingress-coexist.md)
-- **Related ADR**: [`./0001-k3d-topology-and-network.md`](./0001-k3d-topology-and-network.md)
+- **Related ADR**: [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md)

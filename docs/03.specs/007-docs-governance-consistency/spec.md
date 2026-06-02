@@ -38,8 +38,8 @@ updated: 2026-05-28
 
 ## Related Inputs
 
-- **ARD**: `[../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md]`
-- **ADR**: `[../../02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md]`
+- **ARD**: [../../02.architecture/requirements/0007-current-local-gitops-platform.md](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
+- **ADR**: [../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 
 ## Contracts
 

@@ -75,7 +75,7 @@ Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 
 - AppProject allow-list 업데이트 누락 시 ArgoCD sync 실패.
   - **Mitigation**: 후속 Spec/Plan에서 AppProject 변경과 검증 순서를 명시.
 - Rollouts Dashboard 접근을 위해 외부 Traefik route 계약이 필요하다.
-- cert-manager `mkcert-ca-issuer`가 이미 설치된 상태를 전제한다 (PRD `2026-03-29` 의존).
+- cert-manager `mkcert-ca-issuer`가 이미 설치된 상태를 전제한다 (현재 baseline PRD 의존).
 
 ## AI Agent Requirements (If Applicable)
 
@@ -92,4 +92,4 @@ Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 
 - **Task**: [`../04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md`](../04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md)
 - **ADR**: [`../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
 - **ADR**: [`../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
-- **PRD**: [`./2026-03-29-platform-expansion-dashboard-mesh.md`](./2026-03-29-platform-expansion-dashboard-mesh.md) — cert-manager 의존
+- **PRD**: [`./2026-06-02-current-local-gitops-platform.md`](./2026-06-02-current-local-gitops-platform.md) — cert-manager 의존

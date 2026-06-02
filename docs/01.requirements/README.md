@@ -40,12 +40,10 @@
 
 ```text
 01.requirements/
-├── 2026-03-27-wsl-k3d-argocd-platform.md
-├── 2026-03-28-wsl2-k3d-argocd-ha-platform.md
-├── 2026-03-29-platform-expansion-dashboard-mesh.md
 ├── 2026-05-17-argo-rollouts-progressive-delivery.md
 ├── 2026-05-17-argo-notifications-slack.md
 ├── 2026-06-01-workspace-agent-governance-platform.md
+├── 2026-06-02-current-local-gitops-platform.md
 └── README.md
 ```
 
@@ -57,6 +55,7 @@
 4. 요구사항 변경 시 관련 `02.architecture/requirements/`, `03.specs/`, `04.execution/plans/` 링크를 함께 갱신한다.
 5. 구현 파일, manifest, 스크립트, 운영 명령 수준의 상세 설계는 PRD에 직접 확장하지 않고 후속 ARD/Spec/Plan 갭으로 남긴다.
 6. Agent 기능 요구에는 허용/금지 행동과 human-in-the-loop 기준을 포함한다.
+7. 현재 구현과 상충하는 old/superseded PRD는 `../98.archive/README.md`에만 인덱싱하고, 활성 PRD는 archive Tombstone에 직접 연결하지 않는다.
 
 ## Link Basis
 
@@ -73,14 +72,14 @@
 - Spec은 PRD 요구 ID를 추적한다.
 - Agent 기능인 경우 사용 시나리오, 허용/금지 행동, human-in-the-loop 요구를 포함한다.
 - 후속 ARD/Spec/Plan이 아직 없으면 없는 링크를 만들지 않고, 문서 인덱스와 PRD의 `Related Documents`에 후속 갭으로 표시한다.
-- 오래된 실행계약은 삭제하지 않는다. 대신 historical/superseded/current contract를 분리해 현재 작업 기준을 오해하지 않게 한다.
+- 현재 구현과 맞지 않는 old 실행계약은 활성 PRD에 보존하지 않고 중앙 archive Tombstone으로 이동한다.
 
 ## 요구사항 읽는 순서
 
-1. 현재 플랫폼 기준은 최신 `current contract` 메모와 `gitops/**`, 검증 스크립트가 소유한다.
-2. 날짜가 오래된 PRD는 요구사항 이력과 결정 배경을 설명한다. 현재 구현 기준으로 사용하기 전에 상단 메모와 관련 ADR을 확인한다.
-3. `Active` 문서는 현재 작업 기준으로 사용할 수 있지만, 대체된 항목은 PRD 안의 superseded 표시와 관련 ADR을 따른다.
-4. `Draft` 문서는 후속 ARD/Spec/Plan이 완성되기 전의 제품 의도다. 구현은 별도 downstream 문서와 승인된 계획이 있어야 시작한다.
+1. 현재 로컬 GitOps 플랫폼 기준은 [`2026-06-02-current-local-gitops-platform.md`](./2026-06-02-current-local-gitops-platform.md)와 `gitops/**`, `infrastructure/**`, `scripts/**` 정적 검증 증적이 소유한다.
+2. `Active` 문서는 현재 작업 기준으로 사용할 수 있지만, downstream ARD/ADR/Spec/Plan과 구현 증적을 함께 확인한다.
+3. `Draft` 문서는 후속 ARD/Spec/Plan이 완성되기 전의 제품 의도다. 구현은 별도 downstream 문서와 승인된 계획이 있어야 시작한다.
+4. 과거 문서가 필요한 경우 활성 문서에서 Tombstone으로 직접 이동하지 않고 [`../98.archive/README.md`](../98.archive/README.md)의 중앙 인덱스를 통해서만 확인한다.
 
 ## 상태 해석
 
@@ -88,23 +87,20 @@
 | --- | --- | --- |
 | Active | 현재 제품 의도를 설명하는 PRD | 관련 ADR/Spec/Plan과 current contract 메모를 함께 확인한다. |
 | Draft | 요구사항 초안 또는 후속 설계 대기 상태 | 구현 시작 전 ARD/Spec/Plan 후속 갭을 해소한다. |
-| Historical | 초기 요구사항 또는 이전 실행계약 기록 | 배경 자료로 보존하며 현재 실행계약으로 해석하지 않는다. |
-| Superseded | 다른 문서나 ADR이 대체한 요구사항 | 대체 문서가 현재 기준을 소유한다. |
+| Archived | 현재 구현과 상충하거나 대체된 요구사항 기록 | 활성 stage에는 본문을 두지 않고 [`../98.archive/README.md`](../98.archive/README.md)에 Tombstone으로만 인덱싱한다. |
 
 ## 문서 인덱스
 
 | 문서 | 역할 | 현재성 | 추적성 / 후속 갭 | 최종 수정 |
 | --- | --- | --- | --- | --- |
-| [`./2026-03-27-wsl-k3d-argocd-platform.md`](./2026-03-27-wsl-k3d-argocd-platform.md) | 초기 WSL2 k3d/k3s + ArgoCD GitOps 플랫폼 PRD | Historical draft | ARD/Spec/Plan/ADR 연결 완료. 현재 런타임은 WSL-native Docker이며 외부 서비스 실행계약은 `172.18.x` repo-backed 계약이 우선. | 2026-05-22 |
-| [`./2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./2026-03-28-wsl2-k3d-argocd-ha-platform.md) | HA 플랫폼, TLS, 최소권한, 정적 게이트 요구 PRD | Historical draft | ARD/Spec/Plan/ADR 연결 완료. 현재 런타임은 WSL-native Docker이고 `172.19.x` 값은 이력이며 현재 실행계약은 `172.18.x` 기준. | 2026-05-22 |
-| [`./2026-03-29-platform-expansion-dashboard-mesh.md`](./2026-03-29-platform-expansion-dashboard-mesh.md) | cert-manager, Headlamp, Istio/Kiali 확장 PRD | Active with superseded items | ARD/Spec/Plan/ADR 연결 완료. Dashboard 요구는 ADR-0010에 의해 Headlamp로 대체. | 2026-05-17 |
 | [`./2026-05-17-argo-rollouts-progressive-delivery.md`](./2026-05-17-argo-rollouts-progressive-delivery.md) | Argo Rollouts canary/blue-green 점진적 배포 PRD | Active current-contract backfill | ARD/Spec/Plan/Task 연결 완료. 현재 GitOps 계약은 `platform-rollouts` Application과 Rollouts 운영 문서가 소유. | 2026-05-18 |
 | [`./2026-05-17-argo-notifications-slack.md`](./2026-05-17-argo-notifications-slack.md) | Argo Notifications Slack 알림 PRD | Active current-contract backfill | ARD/Spec/Plan/Task 연결 완료. 현재 Secret 경계는 Vault/ESO/ArgoCD Notifications 문서가 소유. | 2026-05-18 |
 | [`./2026-06-01-workspace-agent-governance-platform.md`](./2026-06-01-workspace-agent-governance-platform.md) | Workspace AI Agent governance, Stage 00 canonical adapter, skill-axis routing PRD | Active current-contract backfill | ARD-0006, ADR-0013, Spec 006, Stage 00 canonical adapter Plan/Task 연결 완료. | 2026-06-01 |
+| [`./2026-06-02-current-local-gitops-platform.md`](./2026-06-02-current-local-gitops-platform.md) | 현재 repo-backed local GitOps 플랫폼 baseline PRD | Active | ARD-0007, ADR-0014, Spec 008, docs alignment Plan/Task 연결 완료. | 2026-06-02 |
 
 ## 예시
 
-신규 플랫폼 기능은 `2026-03-29-platform-expansion-dashboard-mesh.md`처럼 사용자 가치, 범위, 성공/수용 기준을 먼저 기록한다.
+신규 플랫폼 기능은 [`2026-06-02-current-local-gitops-platform.md`](./2026-06-02-current-local-gitops-platform.md)처럼 사용자 가치, 범위, 성공/수용 기준을 현재 구현 증적과 함께 기록한다.
 
 ## Related Documents
 
@@ -112,3 +108,4 @@
 - [02.architecture/requirements](../02.architecture/requirements/README.md)
 - [03.specs](../03.specs/README.md)
 - [04.execution/plans](../04.execution/plans/README.md)
+- [Archive Index](../98.archive/README.md)

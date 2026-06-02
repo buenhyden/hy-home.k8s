@@ -124,7 +124,7 @@ rewritten by the author for the final README location.
 | VAL-PLN-001 | Structural | 템플릿 경로 패턴 확인        | `grep -n "Related Documents" -A 6 docs/99.templates/adr.template.md`                                                     | `../../01.requirements/`, `../requirements/`, `../../03.specs/`, `../../04.execution/plans/` |
 | VAL-PLN-002 | Structural | 생성 파일 불일치 스캔        | fenced code block을 제외하고 backtick code label과 href를 직접 비교                                                      | mismatch 0건                                                                                 |
 | VAL-PLN-003 | Structural | 내부 Markdown 링크 존재 확인 | fenced code block을 제외하고 `README.md`와 `docs/**/*.md`의 상대 Markdown 링크 target을 확인                             | missing target 0건                                                                           |
-| VAL-PLN-004 | Content    | 실제 파일 존재 확인          | `ls docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md docs/03.specs/001-wsl-k3d-argocd-platform/spec.md` | 두 파일 모두 존재                                                                            |
+| VAL-PLN-004 | Content    | 실제 파일 존재 확인          | `ls docs/02.architecture/requirements/0007-current-local-gitops-platform.md docs/03.specs/008-current-local-gitops-platform/spec.md` | 두 파일 모두 존재                                                                            |
 
 ## Risks & Mitigations
 

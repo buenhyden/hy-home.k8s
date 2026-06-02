@@ -10,9 +10,9 @@
 `02.architecture/`는 요구사항을 시스템 구조와 의사결정으로 연결하는 아키텍처 허브다.
 아키텍처 요구사항은 `requirements/`에, 결정 기록은 `decisions/`에 둔다.
 
-이 stage는 현재 실행계약과 역사적 결정 기록을 함께 보존한다. 현재 repo-backed 실행계약은
+이 stage는 현재 실행계약을 보존한다. 현재 repo-backed 실행계약은
 [`gitops/`](../../gitops/README.md), [`infrastructure/tests/verify-contracts-static.sh`](../../infrastructure/tests/verify-contracts-static.sh),
-정적 검증 스크립트가 우선한다. `Accepted` ADR은 결정 기록이 보존된다는 뜻이지, 본문에 있는 모든 런타임 값이 현재값이라는 뜻은 아니다.
+정적 검증 스크립트가 우선한다. 현재 구현과 상충하는 old decision/requirement 문서는 활성 stage에 보존하지 않고 [`../98.archive/README.md`](../98.archive/README.md)의 Tombstone 인덱스로만 연결한다.
 
 ## Reader Route
 
@@ -20,7 +20,7 @@
 | --- | --- | --- |
 | 현재 외부 서비스, Headlamp, `172.18.x` 계약 | [`gitops/platform/external-services/`](../../gitops/platform/external-services/), [`gitops/platform/network-policies/`](../../gitops/platform/network-policies/), [`verify-contracts-static.sh`](../../infrastructure/tests/verify-contracts-static.sh) | 현재 desired state와 정적 계약 검증이 우선한다. |
 | 시스템 경계와 품질 속성 | [`requirements/`](./requirements/README.md) | ARD는 PRD를 아키텍처 요구와 참조 구조로 확장한다. |
-| 기술 선택과 대체 이력 | [`decisions/`](./decisions/README.md) | ADR은 결정, 대안, 결과, superseded 관계를 보존한다. |
+| 기술 선택과 현재 decision record | [`decisions/`](./decisions/README.md) | ADR은 현재 구현 기준의 결정, 대안, 결과를 보존한다. |
 | 구현자가 따라야 할 계약 | [`../03.specs/`](../03.specs/README.md) | 파일/manifest/API 수준 상세 설계는 Spec stage가 소유한다. |
 | 운영 정책과 복구 절차 | [`../05.operations/`](../05.operations/README.md) | 실행 절차, 정책, runbook은 Operations stage가 소유한다. |
 
@@ -60,7 +60,7 @@
 1. 요구사항을 시스템 경계와 품질 속성으로 확장할 때는 `requirements/`를 갱신한다.
 2. 기술 선택이나 운영 모델 결정은 `decisions/`에 ADR로 기록한다.
 3. ARD target은 `docs/02.architecture/requirements/####-<system-or-domain>.md`, ADR target은 `docs/02.architecture/decisions/####-<short-title>.md`를 따른다.
-4. 기존 ARD/ADR 안의 역사적 값(`172.19.x`, Kubernetes Dashboard 등)은 bulk replace하지 않는다. 현재성은 README 인덱스와 current-contract note로 분리한다.
+4. 현재 구현과 상충하는 old ARD/ADR은 bulk note로 보존하지 않고 중앙 archive Tombstone으로 이동한다.
 5. 구현자가 따라야 할 상세 계약은 `../03.specs/`로 넘긴다.
 6. 운영 정책이나 복구 절차는 `../05.operations/`로 넘긴다.
 
@@ -82,3 +82,4 @@
 - [Operations README](../05.operations/README.md)
 - [Document Stage Routing](../00.agent-governance/rules/document-stage-routing.md)
 - [Templates README](../99.templates/README.md)
+- [Archive Index](../98.archive/README.md)

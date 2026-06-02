@@ -113,7 +113,7 @@ Phase 1 조사에서 확인한 핵심 gap은 다음과 같다.
 | PLN-009 | Update template lifecycle and required metadata contract | `docs/99.templates/*.template.md`, `docs/99.templates/README.md`, `docs/00.agent-governance/rules/stage-checklists.md`, `docs/00.agent-governance/rules/stage-authoring-matrix.md` | REQ-CAN-009 | Templates use consistent owner/status vocabulary and each stage documents required vs optional headings. |
 | PLN-010 | Integrate branch completion strategy into Stage 00 workflow | `docs/00.agent-governance/rules/git-workflow.md`, `docs/00.agent-governance/rules/postflight-checklist.md`, provider docs, relevant local skills/workflows if needed | REQ-CAN-010 | Completion flow includes verification, base branch detection, PR/merge/keep/discard options, cleanup boundaries, and typed destructive confirmation. |
 | PLN-011 | Investigate local runtime PATH and RTK availability | `.codex/CODEX.md`, `RTK.md`, provider runtime docs, task evidence | REQ-CAN-011 | Phase 3 records `command -v rtk`, `/home/hy/.local/bin/rtk --version`, PATH expectations, and the `rtk gain` DB failure cause or limitation. |
-| PLN-012 | Reconcile active/stale plans and tasks without rewriting history | `docs/04.execution/plans/2026-05-30-common-agent-governance-refactoring.md`, `docs/04.execution/tasks/2026-05-30-governance-refactoring.md`, README indexes | REQ-CAN-012 | Existing active items are either left active with a clear remaining scope or marked superseded/done with dated evidence in Phase 3. |
+| PLN-012 | Reconcile active/stale plans and tasks without rewriting old bodies | `docs/98.archive/README.md`, README indexes | REQ-CAN-012 | Old superseded items are discoverable through the central archive index; active items keep clear remaining scope or dated completion evidence. |
 | PLN-013 | Update traceability records after implementation | `docs/04.execution/plans/README.md`, `docs/04.execution/tasks/README.md`, `docs/00.agent-governance/memory/progress.md` | REQ-CAN-013 | README indexes and progress ledger identify files changed, checks run, limitations, and no-live-cluster boundary. |
 
 ## Change Unit Split
@@ -187,7 +187,7 @@ Phase 1 조사에서 확인한 핵심 gap은 다음과 같다.
 - **ARD**: [../../02.architecture/requirements/0006-workspace-agent-governance-platform.md](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
 - **ADR**: [../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 - **Task**: [../tasks/2026-06-01-stage-00-canonical-adapter-redesign.md](../tasks/2026-06-01-stage-00-canonical-adapter-redesign.md)
-- **Prior Active Plan**: [./2026-05-30-common-agent-governance-refactoring.md](./2026-05-30-common-agent-governance-refactoring.md)
+- **Prior Archive Index**: [../../98.archive/README.md](../../98.archive/README.md)
 - **Codex Follow-up Plan**: [./2026-05-31-codex-governance-harness-alignment.md](./2026-05-31-codex-governance-harness-alignment.md)
 - **Claude Surface Plan**: [./2026-06-01-claude-agent-surface-restoration.md](./2026-06-01-claude-agent-surface-restoration.md)
 - **Governance Hub**: [../../00.agent-governance/README.md](../../00.agent-governance/README.md)

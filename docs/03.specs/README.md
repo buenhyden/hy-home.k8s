@@ -11,7 +11,7 @@
 서비스, API, 데이터 모델, Agent 설계, 검증 기준은 이곳에서 하위 구현과 추적 가능해야 한다.
 
 Spec은 실행 기준을 소유하는 문서다.
-역사적 설계 값이 남아 있는 경우 current-contract note와 문서 인덱스의 현재성을 먼저 확인한다.
+활성 Spec은 현재 repo-backed 구현과 일치해야 하며, 구현과 상충하는 old Spec은 중앙 archive Tombstone으로 이동한다.
 
 ## Audience
 
@@ -44,17 +44,15 @@ Spec은 실행 기준을 소유하는 문서다.
 
 ```text
 03.specs/
-├── 001-wsl-k3d-argocd-platform/
-│   └── spec.md
-├── 002-wsl2-k3d-argocd-ha-platform/
-│   └── spec.md
-├── 003-platform-expansion/
-│   └── spec.md
 ├── 004-argo-rollouts-progressive-delivery/
 │   └── spec.md
 ├── 005-argo-notifications-slack/
 │   └── spec.md
 ├── 006-workspace-harness-gap-analysis/
+│   └── spec.md
+├── 007-docs-governance-consistency/
+│   └── spec.md
+├── 008-current-local-gitops-platform/
 │   └── spec.md
 └── README.md
 ```
@@ -65,7 +63,7 @@ Spec은 실행 기준을 소유하는 문서다.
 2. 새 Spec은 `../99.templates/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<feature-id>/spec.md`다.
 3. API/데이터/Agent/Test 보조 문서는 같은 feature 하위 폴더에 두고 상위 `spec.md`와 연결한다.
 4. 구현 및 검증 추적은 `04.execution/tasks/`로 연결한다.
-5. historical/superseded 값은 삭제하지 않되, 현재 실행계약과 같은 문단에서 섞지 않는다.
+5. 현재 구현과 상충하는 historical/superseded 값은 활성 Spec에 보존하지 않고 `../98.archive/README.md`의 Tombstone 인덱스로 분리한다.
 
 ## Link Basis
 
@@ -90,12 +88,11 @@ Spec은 실행 기준을 소유하는 문서다.
 
 | 문서 | 설명 | 상태 | 현재성 | 최종 수정 |
 | --- | --- | --- | --- | --- |
-| [`./001-wsl-k3d-argocd-platform/spec.md`](./001-wsl-k3d-argocd-platform/spec.md) | WSL2 k3d/k3s + ArgoCD + ESO/Vault + 외부 DB/Valkey 초기 기술 명세 | Historical | 현재 런타임은 WSL-native Docker이며 외부 서비스 실행계약은 `172.18.x` GitOps manifest와 static contract가 우선한다. 구현 범위는 current-contract evidence로 흡수됐다. | 2026-05-22 |
-| [`./002-wsl2-k3d-argocd-ha-platform/spec.md`](./002-wsl2-k3d-argocd-ha-platform/spec.md) | Valkey/TLS/최소권한 계약과 CI 정적 게이트 기술 명세 | Historical | HA 설계 완료 이력. 현재 외부 서비스와 observability endpoint는 GitOps manifest와 operations policy를 함께 본다. | 2026-05-22 |
-| [`./003-platform-expansion/spec.md`](./003-platform-expansion/spec.md) | cert-manager, Headlamp, Istio, Kiali 확장 기술 명세 | Active | Current contract는 Headlamp/`172.18.x` 기준이다. Dashboard/`172.19.x` 문단은 historical/superseded로만 읽는다. 구현 evidence는 Spec의 Implementation Status를 따른다. | 2026-05-22 |
 | [`./004-argo-rollouts-progressive-delivery/spec.md`](./004-argo-rollouts-progressive-delivery/spec.md) | Argo Rollouts 점진적 배포 current-contract backfill 명세 | Active | `platform-rollouts` Application, dashboard, metrics, AppProject 권한을 현재 계약으로 정리한다. 구현 evidence는 Spec의 Implementation Status를 따른다. | 2026-05-22 |
 | [`./005-argo-notifications-slack/spec.md`](./005-argo-notifications-slack/spec.md) | ArgoCD Notifications Slack current-contract backfill 명세 | Active | ArgoCD Notifications, Vault/ESO credential boundary, template/trigger 계약을 현재 기준으로 정리한다. 구현 evidence는 Spec의 Implementation Status를 따른다. | 2026-05-22 |
 | [`./006-workspace-harness-gap-analysis/spec.md`](./006-workspace-harness-gap-analysis/spec.md) | Workspace harness Gap analysis와 제한 구현 계약 | Active | WSL2, WSL Linux native Docker, k3d, ArgoCD GitOps, SDD lifecycle, QA, CI/CD, Agent governance의 repo-static 개선 범위를 정의한다. P3 repo desired-state 보완은 별도 실행 증적에 반영됐고, live runtime 검증·secret value 확인·CI ruleset/pinning 정책은 deferred item으로 남긴다. | 2026-05-25 |
+| [`./007-docs-governance-consistency/spec.md`](./007-docs-governance-consistency/spec.md) | 문서 거버넌스 일관성 보강 Spec | Active | Template routing, README contract, QA/CI documentation consistency를 소유한다. | 2026-05-29 |
+| [`./008-current-local-gitops-platform/spec.md`](./008-current-local-gitops-platform/spec.md) | 현재 local GitOps platform baseline Spec | Active | Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer 구현 증적을 소유한다. | 2026-06-02 |
 
 ## Helper Templates
 
@@ -119,3 +116,4 @@ Spec은 실행 기준을 소유하는 문서다.
 - [04.execution/plans](../04.execution/plans/README.md)
 - [04.execution/tasks](../04.execution/tasks/README.md)
 - [05.operations/runbooks](../05.operations/runbooks/README.md)
+- [Archive Index](../98.archive/README.md)

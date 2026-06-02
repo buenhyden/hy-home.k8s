@@ -38,11 +38,11 @@ pass.
 ## Related Inputs
 
 - **PRD**: N/A. This is a workspace governance and validation improvement.
-- **ARD**: [../02.architecture/requirements/0001-wsl-k3d-argocd-platform.md](../../02.architecture/requirements/0001-wsl-k3d-argocd-platform.md)
+- **ARD**: [../02.architecture/requirements/0007-current-local-gitops-platform.md](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
 - **Related ADRs**:
   [ADR-0002](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md),
   [ADR-0003](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md),
-  [ADR-0004](../../02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md)
+  [ADR-0014](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 
 ## Contracts
 

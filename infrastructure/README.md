@@ -131,8 +131,8 @@ boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자�
 
 ## Related Documents
 
-- [PRD](../docs/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md)
-- [Spec](../docs/03.specs/001-wsl-k3d-argocd-platform/spec.md)
+- [PRD](../docs/01.requirements/2026-06-02-current-local-gitops-platform.md)
+- [Spec](../docs/03.specs/008-current-local-gitops-platform/spec.md)
 - [Runbook](../docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - [GitOps README](../gitops/README.md)
 - [Tech Stack Version Inventory](../docs/90.references/versions/tech-stack-version-inventory.md)

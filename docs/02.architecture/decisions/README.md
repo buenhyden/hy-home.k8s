@@ -37,11 +37,15 @@
 
 ```text
 02.architecture/decisions/
-├── 0001-k3d-topology-and-network.md
 ├── 0002-argocd-helm-and-gitops-model.md
-├── ...
+├── 0003-eso-vault-k8s-auth.md
+├── 0006-cert-manager-mkcert-ca-issuer.md
+├── 0008-istio-install-and-ingress-coexist.md
+├── 0009-kiali-external-observability.md
+├── 0011-argo-rollouts-progressive-delivery.md
 ├── 0012-argo-notifications-slack.md
 ├── 0013-stage-00-canonical-adapter-model.md
+├── 0014-current-local-gitops-platform-contract.md
 └── README.md
 ```
 
@@ -49,8 +53,8 @@
 
 1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `02.architecture/requirements/`에서 확인한다.
 2. 새 ADR은 `../../99.templates/adr.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/decisions/####-<short-title>.md`다.
-3. superseded 결정은 삭제하지 않고 상태와 대체 ADR/운영 기준을 명시한다.
-4. `Accepted`는 결정 기록이 보존된다는 뜻이다. 현재 런타임 값은 README 인덱스의 `현재성/후속 기준`, GitOps manifest, 정적 검증 스크립트로 확인한다.
+3. 현재 구현과 상충하는 superseded/deprecated-only 결정은 `../../98.archive/README.md`에 Tombstone으로 이동한다.
+4. `Accepted` ADR의 현재 런타임 값은 GitOps manifest, 정적 검증 스크립트, current baseline ADR과 일치해야 한다.
 5. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
 
 ## Link Basis
@@ -66,19 +70,15 @@
 
 | 문서 | 설명 | 상태 | 현재성/후속 기준 |
 | --- | --- | --- | --- |
-| [`./0001-k3d-topology-and-network.md`](./0001-k3d-topology-and-network.md) | k3d 토폴로지와 외부 네트워크 기준 결정 | Accepted | Historical `172.19.x` 기록 포함. 현재 repo-backed 외부 서비스 계약은 `172.18.x` GitOps manifest와 `verify-contracts-static.sh`가 우선한다. |
 | [`./0002-argocd-helm-and-gitops-model.md`](./0002-argocd-helm-and-gitops-model.md) | ArgoCD Helm 설치와 GitOps 모델 결정 | Accepted | Current GitOps ownership model. |
 | [`./0003-eso-vault-k8s-auth.md`](./0003-eso-vault-k8s-auth.md) | ESO + Vault Kubernetes Auth 시크릿 패턴 결정 | Accepted | Current secret synchronization pattern. |
-| [`./0004-external-services-endpoints-and-valkey-backend.md`](./0004-external-services-endpoints-and-valkey-backend.md) | 외부 서비스 접근 모델과 ArgoCD Valkey 백엔드 결정 | Accepted | Historical `172.19.x` 기록 포함. 현재 Service+EndpointSlice 값은 `gitops/platform/external-services/`가 우선한다. |
-| [`./0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](./0005-wsl2-ha-baseline-and-external-endpoint-contract.md) | Valkey/TLS/최소권한 계약과 CI 정적 게이트 강화 + CD pull 모델 유지 결정 | Accepted | Historical `172.19.x` 기록 포함. 현재 static contract test는 `172.18.x` 계약을 검증한다. |
-| [`./0006-cert-manager-mkcert-ca-issuer.md`](./0006-cert-manager-mkcert-ca-issuer.md) | cert-manager + mkcert rootCA ClusterIssuer 도입 결정 | Accepted | Current TLS automation pattern. Dashboard 언급은 역사적 플랫폼 확장 문맥으로 읽는다. |
-| [`./0007-kubernetes-dashboard-v3.md`](./0007-kubernetes-dashboard-v3.md) | Kubernetes Dashboard v3 Helm 설치 및 노출 결정 | Superseded | Superseded by [`./0010-headlamp-replaces-dashboard.md`](./0010-headlamp-replaces-dashboard.md). Dashboard 기록은 삭제하지 않는다. |
+| [`./0006-cert-manager-mkcert-ca-issuer.md`](./0006-cert-manager-mkcert-ca-issuer.md) | cert-manager + mkcert rootCA ClusterIssuer 도입 결정 | Accepted | Current TLS automation pattern for Headlamp, Kiali, and local ingress endpoints. |
 | [`./0008-istio-install-and-ingress-coexist.md`](./0008-istio-install-and-ingress-coexist.md) | Istio 설치와 ingress-nginx 공존 결정 | Accepted | Current mesh installation boundary. |
-| [`./0009-kiali-external-observability.md`](./0009-kiali-external-observability.md) | Kiali + 외부 Prometheus/Grafana/Tempo 연동 결정 | Accepted | Historical `172.19.x` observability 주소 포함. 현재 observability EndpointSlice/CIDR는 GitOps manifest가 우선한다. |
-| [`./0010-headlamp-replaces-dashboard.md`](./0010-headlamp-replaces-dashboard.md) | K8s Dashboard v3 제거와 Headlamp 교체 결정 | Accepted | Current cluster UI contract. |
+| [`./0009-kiali-external-observability.md`](./0009-kiali-external-observability.md) | Kiali + 외부 Prometheus/Grafana/Tempo 연동 결정 | Accepted | Current external observability contract through GitOps Service/EndpointSlice and NetworkPolicy. |
 | [`./0011-argo-rollouts-progressive-delivery.md`](./0011-argo-rollouts-progressive-delivery.md) | Argo Rollouts 도입과 Rollouts Dashboard 결정 | Accepted | Current progressive delivery contract. |
 | [`./0012-argo-notifications-slack.md`](./0012-argo-notifications-slack.md) | Argo Notifications Slack webhook 도입 결정 | Accepted | Current GitOps notification pattern. |
 | [`./0013-stage-00-canonical-adapter-model.md`](./0013-stage-00-canonical-adapter-model.md) | Stage 00 canonical core, provider adapter, validation evidence ownership 결정 | Accepted | Current workspace AI Agent governance contract. |
+| [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md) | Current local GitOps platform baseline and archive replacement decision | Accepted | Current Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer contract. |
 
 ## Related Documents
 
@@ -87,3 +87,4 @@
 - [03.specs](../../03.specs/README.md)
 - [05.operations/policies](../../05.operations/policies/README.md)
 - [99.templates ADR Template](../../99.templates/adr.template.md)
+- [Archive Index](../../98.archive/README.md)
