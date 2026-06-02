@@ -1,9 +1,9 @@
 ---
 title: 'Antigravity Governance Implementation Plan'
 type: plan
-status: active
-owner: 'Antigravity'
-updated: 2026-05-30
+status: done
+owner: platform
+updated: 2026-06-02
 ---
 
 # Antigravity Governance Implementation Plan
@@ -48,6 +48,12 @@ Gemini (Antigravity) 에이전트가 `hy-home.k8s` 리포지토리에서 워크�
 - [x] Scoped work completed
 - [x] Verification passed
 - [x] Required docs updated
+
+### Current-State Closure (2026-06-02)
+
+This plan is closed as done. Its scoped Gemini/Antigravity files exist, and
+the current workspace-wide adapter contract is owned by ADR-0013 and the Stage
+00 canonical adapter workstream. No remaining redesign scope is carried here.
 
 ## Related Documents
 

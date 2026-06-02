@@ -1,9 +1,9 @@
 ---
 title: 'Task: Antigravity Governance'
 type: task
-status: active
-owner: 'Antigravity'
-updated: 2026-05-30
+status: done
+owner: platform
+updated: 2026-06-02
 ---
 
 # Task: Antigravity Governance
@@ -35,7 +35,11 @@ updated: 2026-05-30
 
 ## Verification Summary
 
-- **Logs / Evidence Location**: `docs/00.agent-governance/memory/progress.md` (예정)
+- **Logs / Evidence Location**: `docs/00.agent-governance/memory/progress.md`
+- **Current-State Closure (2026-06-02)**: This task is closed as done. The
+  current workspace-wide adapter contract is owned by ADR-0013 and the Stage
+  00 canonical adapter workstream; no remaining Antigravity-specific execution
+  scope is carried here.
 
 ## Related Documents
 

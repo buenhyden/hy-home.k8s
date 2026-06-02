@@ -8,6 +8,228 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-06-02 — Phase 4 ESO Vault runtime diagnosis
+
+- **Date**: 2026-06-02
+- **Layer**: ops, infra, security, qa
+- **Status**: complete
+- **Tags**: #phase-4 #eso #vault #runtime #runbook #validation
+
+#### Progress
+
+- Created the Phase 4 ESO/Vault runtime diagnosis pair:
+  - [Plan](../../04.execution/plans/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md)
+  - [Task](../../04.execution/tasks/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md)
+- Performed read-only diagnosis of the Phase 3 live validation failure.
+- Confirmed `vault-external` Service, `vault-external-1` EndpointSlice,
+  `vault-backend` ClusterSecretStore, `external-secrets` ServiceAccount, and
+  token reviewer binding match the repo desired-state contract.
+- Updated [ArgoCD ESO Vault Recovery Runbook](../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md)
+  so it distinguishes Vault sealed state from EndpointSlice/network drift and
+  marks Vault unseal as operator-bound.
+- Updated the Runbooks README index row and linked Phase 4 from Phase 3
+  downstream evidence.
+
+#### Memory
+
+- Root cause class: Vault is reachable at `172.18.0.8:8200`, but it is sealed.
+  ESO Kubernetes auth login fails with HTTP 503 and `Vault is sealed`.
+- `ClusterSecretStore/vault-backend Ready=False` and dependent
+  `ExternalSecret` `SecretSyncedError` are downstream symptoms when Vault is
+  sealed.
+- Do not patch EndpointSlice for this signature. EndpointSlice hotfix is for
+  unreachable/refused endpoint drift, not for sealed Vault.
+- Do not request, read, paste, log, or commit Vault unseal keys, root tokens,
+  Vault tokens, or secret values. Vault unseal remains operator-bound.
+
+#### Evidence
+
+- `kubectl get clustersecretstore vault-backend -o yaml` — live spec matches
+  repo contract and reports `Ready=False`, reason `InvalidProviderConfig`.
+- `kubectl -n argocd get externalsecret argocd-external-valkey -o yaml` —
+  reports `Ready=False`, reason `SecretSyncedError`.
+- `kubectl -n platform get svc vault-external -o yaml` and
+  `kubectl -n platform get endpointslice vault-external-1 -o yaml` — live
+  service/endpoint match repo values.
+- `curl -sS --max-time 5 http://172.18.0.8:8200/v1/sys/health` — PASS command
+  exit 0; response reports `sealed:true`.
+- `kubectl -n external-secrets logs deploy/external-secrets --since=2h --tail=80`
+  — PASS command exit 0; logs show `Vault is sealed`.
+- `docker ps --format ...` — PASS; `vault` container is running and attached to
+  `k3d-hyhome`.
+
+#### Handoff
+
+- Static repo remediation for this diagnosis is complete.
+- Live readiness remains blocked until a Vault operator unseals Vault using
+  secret-bearing key material outside the agent/chat/repo surfaces.
+- After unseal, rerun `bash infrastructure/tests/run-all.sh` and update the
+  Phase 4 task/progress evidence if live readiness changes.
+
+### 2026-06-02 — Phase 3 protected surface hardening
+
+- **Date**: 2026-06-02
+- **Layer**: meta, docs, qa, ci, runtime
+- **Status**: complete
+- **Tags**: #governance #phase-3 #ci #runtime #validation
+
+#### Progress
+
+- Created the Phase 3 protected-surface traceability pair:
+  - [Plan](../../04.execution/plans/2026-06-02-phase-3-protected-surface-hardening.md)
+  - [Task](../../04.execution/tasks/2026-06-02-phase-3-protected-surface-hardening.md)
+- Added `.agents/**` to the GitHub Actions `repo_quality` path filter so shared
+  asset SSoT changes trigger repository quality validation.
+- Hardened shared post/lifecycle hooks so `.agents/*` changes trigger
+  repository quality gates and `.agents/hooks.json` is parsed with the other
+  runtime hook JSON files.
+- Clarified SessionStart live probes as read-only runtime evidence, not
+  repo-static readiness proof.
+- Added non-structural Plan/Task template guidance for human approval and live
+  runtime readiness boundaries.
+- Updated Phase 2 downstream links, Plans/Tasks README indexes, governance
+  quality guidance, the CI/QA guide, `.github` workflow evidence, and the
+  harness catalog.
+
+#### Memory
+
+- Approval was granted for policy, runtime hook, CI, template, CI topology,
+  model policy, provider config, GitOps manifest, and live validation scope.
+- Approval does not require speculative edits. Model policy, provider config,
+  and GitOps manifest surfaces were reviewed as no-op because no concrete drift
+  was found in this Phase 3 scope.
+- Treat repo-static validation, CI/toolchain validation, and live runtime
+  validation as separate evidence lanes.
+- Current approved read-only live validation shows live ESO/Vault readiness is
+  not clean: `ClusterSecretStore/vault-backend` is `Ready=False` with
+  `InvalidProviderConfig`, and `argocd-external-valkey` is `Ready=False` with
+  `SecretSyncedError`.
+
+#### Evidence
+
+- `bash -n docs/00.agent-governance/hooks/post-validate.sh docs/00.agent-governance/hooks/lifecycle-guard.sh docs/00.agent-governance/hooks/session-start.sh scripts/validate-repo-quality-gates.sh` — PASS.
+- `git diff --check` — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Targeted `.agents/**` and `.agents/hooks.json` trigger scan — PASS.
+- Targeted Phase 3 index/frontmatter/related-documents scans — PASS.
+- Protected-surface no-op diff review for model policy, provider config, and
+  GitOps manifests — PASS; no diff under `docs/00.agent-governance/model-policy.md`,
+  `.codex/agents`, `.claude/agents`, `.agents/agents`, `gitops`, or
+  `infrastructure`.
+- `HY_HOME_K8S_ENABLE_SESSION_LIVE_PROBES=1 bash docs/00.agent-governance/hooks/session-start.sh` — PASS command exit 0; reported k3d `hyhome`, three Terminating pods, and Degraded `adminer`, `platform-argocd-config`, and `platform-eso-config` ArgoCD apps.
+- `bash infrastructure/tests/run-all.sh` — FAIL at ESO/Vault integration:
+  `vault-backend Ready is not True (actual=False)`.
+- `bash infrastructure/tests/verify-external-services.sh` — PASS.
+- `bash infrastructure/tests/verify-network-policies.sh` — PASS.
+- `bash infrastructure/tests/verify-ingress-tls.sh` — PASS with warning that
+  Kiali ingress TLS secret was not found or mismatched.
+
+#### Handoff
+
+- Phase 3 static guardrail implementation is complete and validated.
+- Live runtime readiness is not complete. Follow-up should diagnose
+  `vault-backend` `InvalidProviderConfig`, `argocd-external-valkey`
+  `SecretSyncedError`, Terminating pods, and Degraded ArgoCD apps without
+  inspecting secret values or mutating the cluster unless the next task
+  explicitly scopes that remediation.
+
+### 2026-06-02 — Phase 2 governance alignment planning artifact
+
+- **Date**: 2026-06-02
+- **Layer**: meta, docs, qa
+- **Status**: complete
+- **Tags**: #governance #phase-2 #planning #traceability #validation
+
+#### Progress
+
+- Created the Phase 2 planning pair:
+  - [Plan](../../04.execution/plans/2026-06-02-phase-2-governance-alignment.md)
+  - [Task](../../04.execution/tasks/2026-06-02-phase-2-governance-alignment.md)
+- Routed Phase 2 through the canonical `docs/04.execution` stage instead of
+  creating off-taxonomy `docs/superpowers/**` artifacts.
+- Updated Plans and Tasks README indexes so the Phase 2 artifacts are
+  discoverable.
+- Added downstream Phase 2 links to the Phase 1 governance alignment audit task.
+
+#### Memory
+
+- Phase 2 governance alignment is a docs-only planning artifact that preserves
+  ADR-0013 and the Phase 1 audit decisions.
+- Do not treat Phase 2 static checks as live runtime readiness. k3d, ArgoCD,
+  Vault, ESO, deployment, external service, and secret inspection remain
+  deferred unless a human approves a separate runtime validation task.
+- Do not change model policy, provider TOML, hook scripts, CI workflow, GitOps
+  manifests, or Kubernetes desired state for this Phase 2 artifact.
+
+#### Evidence
+
+- `git diff --check` — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Targeted Phase 2 index scan — PASS.
+- Targeted Phase 2 frontmatter and related-documents scan — PASS.
+
+#### Handoff
+
+- No live k3d, ArgoCD, Vault, ESO, Kubernetes mutation, deployment, external
+  service, secret inspection, private RTK database, model policy, provider
+  config, hook script, CI workflow, or GitOps manifest action was performed.
+
+### 2026-06-02 — Phase 1 governance alignment audit
+
+- **Date**: 2026-06-02
+- **Layer**: meta, docs, qa, infra
+- **Status**: complete
+- **Tags**: #governance #phase-1 #adapter #gitops #validation
+
+#### Progress
+
+- Created [Phase 1 Governance Alignment Audit Task](../../04.execution/tasks/2026-06-02-phase-1-governance-alignment-audit.md)
+  as repo-static evidence for the user-provided audit plan.
+- Re-audited Stage 00 canonical governance, provider adapters, docs lifecycle,
+  QA/CI/CD gates, and GitOps boundaries against current repository evidence.
+- Confirmed ADR-0013 remains the accepted adapter architecture: Stage 00 owns
+  durable governance, `.agents/**` owns shared assets, and `.claude/**` plus
+  `.codex/**` expose provider adapters.
+- Corrected the stale 2026-05-30 Antigravity plan/task lifecycle from `active`
+  to `done` after confirming its scoped tasks were already complete and current
+  adapter ownership is covered by the Stage 00 canonical adapter workstream.
+
+#### Memory
+
+- Treat the Phase 1 governance alignment audit as current-state evidence, not
+  a new Stage 00 redesign.
+- Historical `.claude/hooks/*.sh` mentions in older progress entries are not
+  active hook contracts. Current provider hook wiring points to
+  `docs/00.agent-governance/hooks/*.sh`.
+- Static repository gates do not prove live k3d, ArgoCD, Vault, ESO,
+  deployment, or external service health. Live checks require a separate
+  human-approved runtime validation scope.
+
+#### Evidence
+
+- Root shim line count and import scan — PASS.
+- Shared asset symlink and provider agent roster scan — PASS.
+- Hook config/path existence scan — PASS.
+- Prohibited docs path scan — PASS.
+- Stale execution status scan found the 2026-05-30 Antigravity `active` status
+  and this change remediated it in place.
+- `git diff --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS after adding the
+  required `## Suggested Types` heading caught by the first run.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS for YAML syntax and
+  kustomization coverage; optional `kube-linter` was not installed and was
+  skipped by the script.
+- `bash scripts/check-secret-handling.sh .` — PASS.
+
+#### Handoff
+
+- No live k3d, ArgoCD, Vault, ESO, Kubernetes mutation, deployment, external
+  service, secret inspection, or private RTK database action was performed.
+- Optional `kube-linter` was unavailable during manifest validation.
+
 ### 2026-06-02 — Stage 00 Codex harness coverage reconciliation
 
 - **Date**: 2026-06-02
