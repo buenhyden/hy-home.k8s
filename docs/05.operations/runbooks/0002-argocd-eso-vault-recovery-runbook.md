@@ -3,7 +3,7 @@ title: 'ArgoCD ESO Vault Recovery Runbook'
 type: runbook
 status: active
 owner: platform
-updated: 2026-05-09
+updated: 2026-06-02
 ---
 
 # ArgoCD ESO Vault Recovery Runbook
@@ -14,7 +14,7 @@ updated: 2026-05-09
 
 ## Overview (KR)
 
-이 런북은 `ClusterSecretStore/vault-backend Ready=False` 상황에서 수동 EndpointSlice 핫픽스로 연동을 복구하고, ArgoCD/ESO 상태를 정상화한 뒤 TLS/CI 계약 회귀를 점검하는 절차를 제공한다.
+이 런북은 `ClusterSecretStore/vault-backend Ready=False` 상황에서 Vault sealed 상태, EndpointSlice drift, Kubernetes auth drift를 구분하고, ArgoCD/ESO 상태를 정상화한 뒤 TLS/CI 계약 회귀를 점검하는 절차를 제공한다.
 
 > **현재 실행계약 메모 (2026-06-02)**: 현재 `gitops/platform/external-services/`와 정적 검증 스크립트는 외부 서비스 EndpointSlice/CIDR을 `172.18.x` 기준으로 고정한다. 이 런북은 old endpoint 값을 보존하지 않고 현재 repo-backed 계약만 사용한다.
 >
@@ -22,7 +22,7 @@ updated: 2026-05-09
 
 ## Purpose
 
-`vault-external` endpoint 부재 또는 연결 거부로 발생하는 ESO/Vault 연동 장애를 빠르게 복구하고, 계약 회귀를 방지한다.
+`vault-external` endpoint 부재, 연결 거부, Vault sealed 상태, 또는 Kubernetes auth drift로 발생하는 ESO/Vault 연동 장애를 빠르게 분류하고, operator-bound 복구 절차와 계약 회귀 검증을 연결한다.
 
 ## Canonical References
 
@@ -35,6 +35,7 @@ updated: 2026-05-09
 
 - `vault-backend`가 `Ready=False`
 - ESO 로그에 `connection refused`, `InvalidProviderConfig`, 또는 `context deadline exceeded` 반복
+- ESO 로그에 `Vault is sealed`가 반복
 - `argocd-external-valkey`가 `SecretSyncedError`
 - 복구 후 ArgoCD HTTPS 진입점(`argocd.127.0.0.1.nip.io`) 회귀가 의심될 때
 - Docker 재시작 후 vault 컨테이너가 k3d 네트워크에서 분리된 경우
@@ -56,10 +57,46 @@ kubectl -n external-secrets get clustersecretstore vault-backend -o yaml
 kubectl -n argocd get externalsecret argocd-external-valkey -o yaml
 kubectl -n argocd get app platform-eso-config platform-argocd-config -o wide
 kubectl -n external-secrets logs deploy/external-secrets --tail=200 | \
-  rg -i 'vault|clustersecretstore|error|connection refused'
+  rg -i 'vault|clustersecretstore|error|connection refused|sealed'
 ```
 
-1. Vault 컨테이너를 k3d 네트워크에 연결하고 `EndpointSlice` 핫픽스를 적용한다. 이 단계는 human-approved break-glass 전용이다.
+1. Vault sealed 상태와 endpoint drift를 먼저 분류한다.
+
+```bash
+kubectl -n platform get svc vault-external -o yaml
+kubectl -n platform get endpointslice vault-external-1 -o yaml
+curl -sS --max-time 5 http://172.18.0.8:8200/v1/sys/health
+kubectl -n external-secrets logs deploy/external-secrets --since=2h --tail=80 | \
+  rg -i 'Vault is sealed|connection refused|context deadline|permission denied|invalid'
+```
+
+판정 기준:
+
+- `sys/health`가 `sealed:true`이고 ESO 로그가 `Vault is sealed`를 보이면 EndpointSlice를 수정하지 않는다. Vault unseal이 먼저다.
+- `sys/health`가 응답하지 않거나 `connection refused`가 반복되면 endpoint/network 절차로 이동한다.
+- `sys/health`가 `sealed:false`인데 Kubernetes auth login이 실패하면 Vault auth mount, role, TokenReview reviewer 설정을 operator-bound로 재검토한다.
+
+1. Vault가 sealed 상태면 operator-bound unseal 절차를 수행한다. Agent는 unseal key, root token, Vault token, secret value를 요청하거나 출력하지 않는다.
+
+```bash
+# <!-- OPERATOR-BOUND -->
+# Vault operator only. Do not paste keys into chat, Git, logs, or PR text.
+vault status
+vault operator unseal <unseal-key-share-1>
+vault operator unseal <unseal-key-share-2>
+vault operator unseal <unseal-key-share-3>
+vault status
+```
+
+unseal 후에는 secret 값을 조회하지 말고 readiness metadata만 확인한다.
+
+```bash
+curl -sS --max-time 5 http://172.18.0.8:8200/v1/sys/health
+kubectl -n external-secrets get clustersecretstore vault-backend
+kubectl -n argocd get externalsecret argocd-external-valkey
+```
+
+1. Vault endpoint/network drift가 확인된 경우에만 Vault 컨테이너를 k3d 네트워크에 연결하고 `EndpointSlice` 핫픽스를 적용한다. 이 단계는 human-approved break-glass 전용이다.
 
 ```bash
 # Vault가 k3d-hyhome 네트워크에 연결되어 있는지 확인
@@ -171,6 +208,15 @@ openssl x509 -in secrets/certs/cert.pem -noout -ext subjectAltName | \
 # 미포함 시 인증서 재발급 후 bootstrap 재실행
 ./infrastructure/bootstrap-local.sh
 ```
+
+### Vault sealed remediation
+
+`curl http://172.18.0.8:8200/v1/sys/health`가 `sealed:true`를 반환하거나 ESO 로그에 `Vault is sealed`가 반복되면 GitOps manifest를 변경하지 않는다.
+
+- Vault operator가 unseal key shares를 사용해 Vault를 unseal한다.
+- Agent는 unseal key, root token, Vault token, secret value를 조회하거나 기록하지 않는다.
+- Unseal 후 `ClusterSecretStore/vault-backend`와 dependent `ExternalSecret` readiness metadata만 재검증한다.
+- Unseal 후에도 `InvalidProviderConfig`가 지속되면 Kubernetes auth mount/role configuration drift를 별도 operator-bound task로 분리한다.
 
 ## Safe Rollback or Recovery Procedure
 
