@@ -345,6 +345,7 @@ allowed_top_level_docs = {
     "04.execution",
     "05.operations",
     "90.references",
+    "98.archive",
     "99.templates",
 }
 required_doc_dirs = {
@@ -363,6 +364,7 @@ required_doc_dirs = {
     "05.operations/runbooks",
     "05.operations/incidents",
     "90.references",
+    "98.archive",
     "99.templates",
 }
 old_top_level_docs = {
@@ -693,6 +695,19 @@ for scan_root in markdown_link_roots:
                 continue
             if not (markdown.parent / target_path).exists():
                 fail(f"{rel(markdown)} has broken Markdown link target: {target}")
+                continue
+            resolved_target = (markdown.parent / target_path).resolve()
+            archive_root = root / "docs/98.archive"
+            archive_index = archive_root / "README.md"
+            if (
+                resolved_target.is_relative_to(archive_root)
+                and resolved_target != archive_index.resolve()
+                and not markdown.is_relative_to(archive_root)
+            ):
+                fail(
+                    f"{rel(markdown)} must link archive content through "
+                    f"docs/98.archive/README.md, not directly to {target}"
+                )
 
 template_readme = read_text(root / "docs/99.templates/README.md")
 for template in sorted((root / "docs/99.templates").iterdir()):
@@ -708,6 +723,8 @@ for phrase in [
 
 reference_template_path = root / "docs/99.templates/reference.template.md"
 reference_template_text = read_text(reference_template_path)
+if re.search(r"archive", reference_template_text, re.IGNORECASE):
+    fail(f"{rel(reference_template_path)} must not contain archive wording")
 reference_template_target_parent = root / "docs/90.references/example-category"
 reference_template_target_relative_links = {
     "../../05.operations/runbooks/0011-reference-maintenance-runbook.md": root
@@ -760,6 +777,7 @@ required_stage_templates = [
     ("docs/05.operations/incidents/[0-9][0-9][0-9][0-9]/*.md", "incident.template.md"),
     ("docs/05.operations/incidents/postmortems/**/*.md", "postmortem.template.md"),
     ("docs/90.references/**/*.md", "reference.template.md"),
+    ("docs/98.archive/**/*.md", "archive-tombstone.template.md"),
 ]
 
 for glob_pattern, template_name in required_stage_templates:
@@ -774,6 +792,7 @@ structural_template_roots = [
     root / "docs/04.execution",
     root / "docs/05.operations",
     root / "docs/90.references",
+    root / "docs/98.archive",
 ]
 for scan_root in structural_template_roots:
     for path in sorted(scan_root.rglob("*.md")):
@@ -821,6 +840,39 @@ for glob_pattern, template_name in required_stage_templates:
         for heading in required_headings:
             if heading not in document_headings:
                 fail(f"{rel(path)} missing required template heading from {template_name}: {heading}")
+
+archive_root = root / "docs/98.archive"
+archive_required_phrases = [
+    "type: archive-tombstone",
+    "status: archived",
+    "Original path:",
+    "Archived on:",
+    "Currentness rule:",
+    "Current owner document:",
+    "Current Implementation Evidence",
+    "Archive README",
+]
+for tombstone in sorted(archive_root.rglob("*.md")):
+    if tombstone.name == "README.md":
+        continue
+    text = read_text(tombstone)
+    for phrase in archive_required_phrases:
+        if phrase not in text:
+            fail(f"{rel(tombstone)} missing archive Tombstone phrase: {phrase}")
+    if len(text.splitlines()) > 90:
+        fail(f"{rel(tombstone)} must be metadata-only Tombstone, not a preserved old body")
+    old_body_headings = [
+        "## Requirements",
+        "## Functional Requirements",
+        "## Non-Functional Requirements",
+        "## Work Breakdown",
+        "## Tasks",
+        "## Implementation Status",
+        "## Verification",
+    ]
+    for heading in old_body_headings:
+        if heading in text and heading not in {"## Verification"}:
+            fail(f"{rel(tombstone)} appears to preserve old body heading: {heading}")
 
 operations_stage_path = root / "docs/05.operations"
 allowed_operations_buckets = {"guides", "policies", "runbooks", "incidents"}
@@ -1325,6 +1377,37 @@ for scan_root in scan_roots:
         for pattern in legacy_contract_patterns:
             if pattern in text and not any(marker in text for marker in legacy_contract_markers):
                 fail(f"legacy runtime contract reference lacks historical/superseded note in {rel(path)}: {pattern}")
+
+active_stale_contract_roots = [
+    root / "docs/01.requirements",
+    root / "docs/02.architecture",
+    root / "docs/03.specs",
+    root / "docs/04.execution",
+    root / "docs/05.operations",
+]
+active_stale_contract_patterns = [
+    "172.19",
+    "172.30",
+    "kubernetes-dashboard",
+    "Kubernetes Dashboard",
+    "k8s-dashboard",
+    "K8s Dashboard",
+    "platform-dashboard",
+    "dashboard-admin",
+]
+for scan_root in active_stale_contract_roots:
+    for path in sorted(scan_root.rglob("*.md")):
+        if path.name == "validate-repo-quality-gates.sh":
+            continue
+        if path.is_relative_to(root / "docs/98.archive"):
+            continue
+        text = read_text(path)
+        for pattern in active_stale_contract_patterns:
+            if pattern in text:
+                fail(
+                    f"active authored docs must not retain stale implementation "
+                    f"contract in {rel(path)}: {pattern}"
+                )
 
 authored_command_roots = [
     root / "docs/02.architecture/decisions",

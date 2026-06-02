@@ -127,7 +127,7 @@ traefik/*.yml|traefik/*.yaml)
   case "$path" in
     docs/01.requirements/*.md|docs/02.architecture/*.md|\
 docs/03.specs/*.md|docs/04.execution/*.md|\
-docs/05.operations/*.md|docs/90.references/*.md)
+docs/05.operations/*.md|docs/90.references/*.md|docs/98.archive/*.md)
       run_docs_template=1
       run_repo_quality=1
       ;;

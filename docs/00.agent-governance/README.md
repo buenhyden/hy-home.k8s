@@ -31,7 +31,7 @@ This README is primarily for:
 
 ### Out of Scope
 
-- Product, architecture, execution, and operations SSoT under `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, and `docs/99.templates`
+- Product, architecture, execution, operations, reference, archive, and template SSoT under `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/98.archive`, and `docs/99.templates`
 - Runtime bridge content under `.claude/**`
 - Human-facing project onboarding outside this governance area
 

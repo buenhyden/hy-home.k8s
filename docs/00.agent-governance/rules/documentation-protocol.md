@@ -5,7 +5,7 @@ This protocol defines how governance references authored docs and how language b
 ## Core Requirements
 
 - Governance policy belongs in `docs/00.agent-governance/`.
-- Product and delivery truth remains in `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, and `docs/99.templates`.
+- Product and delivery truth remains in `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/98.archive`, and `docs/99.templates`.
 - Governance files must reference authored docs and must not duplicate stage content.
 
 ## Document Output Routing
@@ -17,10 +17,10 @@ This protocol defines how governance references authored docs and how language b
 
 ## Template Enforcement Policy
 
-- All authored documents under `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/04.execution/`, `docs/05.operations/`, and `docs/90.references/` must start from the matching template listed in `docs/99.templates/README.md`.
+- All authored documents under `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/04.execution/`, `docs/05.operations/`, `docs/90.references/`, and `docs/98.archive/` must start from the matching template listed in `docs/99.templates/README.md`.
 - README files must use `docs/99.templates/readme.template.md`.
 - README files must keep `## Link Basis` and `## Related Documents`; legacy `## Related References` headings are incomplete.
-- PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook, Incident, Postmortem, and Reference documents must use their stage-specific templates from `docs/99.templates/`.
+- PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook, Incident, Postmortem, Reference, and Archive Tombstone documents must use their stage-specific templates from `docs/99.templates/`.
 - `docs/03.specs/<feature-id>/api-spec.md`, `agent-design.md`, `data-model.md`, and `tests.md` must use their matching helper templates.
 - Every non-README authored Markdown file under stage roots must match exactly one structural template mapping in `docs/99.templates/README.md` and `scripts/validate-repo-quality-gates.sh`; an uncovered path is incomplete.
 - New authored documents must keep `status: draft` until a human promotes the lifecycle state.
@@ -28,6 +28,8 @@ This protocol defines how governance references authored docs and how language b
 - Authored documents must keep the required template headings and must include `## Related Documents`.
 - Agents must report the template path used and the validation evidence before handoff.
 - Generated exceptions, such as `docs/90.references/llm-wiki/wiki-index.md`, must keep their generator contract and must not be edited by hand.
+- `docs/98.archive` documents must be metadata-only Tombstones and must not preserve old full bodies.
+- `docs/99.templates/reference.template.md` must not own archive policy or contain archive wording; archive policy belongs in routing/governance docs and `archive-tombstone.template.md`.
 - Claude and Codex Write/Edit/MultiEdit hooks must surface Template-First guidance before authored stage doc edits and run post-edit documentation template enforcement. Gemini has no native hook file and must honor the same Template-First behavior contract for authored stage docs.
 
 ## Language Boundary Rules
@@ -38,7 +40,8 @@ This protocol defines how governance references authored docs and how language b
 
 ## Traceability Rules
 
-- Every governance change should keep clear links to the canonical docs taxonomy (`01.requirements`, `02.architecture`, `03.specs`, `04.execution`, `05.operations`, `90.references`, `99.templates`).
+- Every governance change should keep clear links to the canonical docs taxonomy (`01.requirements`, `02.architecture`, `03.specs`, `04.execution`, `05.operations`, `90.references`, `98.archive`, `99.templates`).
+- Active documents must link old archived content only through `docs/98.archive/README.md`; direct links to Tombstones belong only in the archive index.
 - Postmortems belong under `docs/05.operations/incidents/postmortems/`, not a separate top-level docs stage.
 - Persona and scope instructions must state which stage folders are authoritative.
 - Stage expectations must map to [stage-authoring-matrix.md](stage-authoring-matrix.md).
@@ -67,4 +70,6 @@ This protocol defines how governance references authored docs and how language b
 
 **R4 — Memory Ledger Coupling:** Repo-changing work updates `memory/progress.md`. Standalone memory files use `memory.template.md` and link back to their related progress entry.
 
-**HALT conditions:** Missing template read → HALT. README not updated → HALT. README Link Basis absent → HALT. Related Documents section absent → HALT. Memory entry without progress ledger update → HALT.
+**R5 — Archive Separation:** Current implementation conflicts cannot be hidden with historical or superseded markers in active docs. Move the old document to `docs/98.archive` as a Tombstone and link it from the archive index only.
+
+**HALT conditions:** Missing template read → HALT. README not updated → HALT. README Link Basis absent → HALT. Related Documents section absent → HALT. Memory entry without progress ledger update → HALT. Active doc retaining stale implementation contract → HALT.

@@ -32,6 +32,7 @@ Use the existing stage structure only.
 | Postmortem | `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/postmortem.template.md` | Use for RCA, prevention actions, and post-incident learning. |
 | Durable reference | `docs/90.references/<category>/<topic>.md` | `docs/99.templates/reference.template.md` | Use for slow-moving concepts, glossaries, standards, and reusable agent knowledge. |
 | LLM Wiki generated index | `docs/90.references/llm-wiki/wiki-index.md` | `docs/99.templates/reference.template.md` through `scripts/generate-llm-wiki-index.sh` | Use only as a generated canonical-owner link map. |
+| Archive Tombstone | `docs/98.archive/<original-docs-subpath>.md` | `docs/99.templates/archive-tombstone.template.md` | Use only for metadata-only Tombstones of old docs moved out of active stages. |
 | Governance memory | `docs/00.agent-governance/memory/<topic>.md` | `docs/99.templates/memory.template.md` | Use for reusable agent governance lessons. |
 
 ## Legacy Path Migration Map
@@ -53,6 +54,7 @@ old top-level 13-folder model.
 | `docs/10.incidents/` | `docs/05.operations/incidents/` |
 | `docs/00.agent-governance/` | `docs/00.agent-governance/` |
 | `docs/90.references/` | `docs/90.references/` |
+| `docs/98.archive/` | `docs/98.archive/` |
 | `docs/99.templates/` | `docs/99.templates/` |
 
 ## Prohibited Paths
@@ -93,6 +95,14 @@ When a skill suggests one of these paths, reroute the output into the canonical 
 - Use `docs/90.references/` when the content is a durable reference, glossary, external standard summary, or dated version snapshot.
 - Do not duplicate the same operational content across guide, policy, and runbook stages. Link to the canonical owner instead.
 
+### Archive Routing
+
+- Use `docs/98.archive/` only when an old active-stage document conflicts with current repo-backed implementation, is deprecated-only, or is superseded-only.
+- Mirror the original docs subpath under `docs/98.archive/<original-docs-subpath>`.
+- Replace the moved document body with a Tombstone created from `docs/99.templates/archive-tombstone.template.md`; do not preserve the old body text.
+- Active docs may link archive content only through `docs/98.archive/README.md`.
+- Current replacement coverage must exist before moving a document that owned still-current scope.
+
 ### Named Skill Handling
 
 #### `agent-memory-systems`
@@ -120,6 +130,7 @@ When a skill suggests one of these paths, reroute the output into the canonical 
 - The required template headings are part of the document contract and must not be omitted.
 - New or moved authored documents must trigger a same-change update to the owning folder `README.md`.
 - Every newly created authored document must include `## Related Documents`.
+- Old active-stage docs cannot remain current merely by adding historical, superseded, or current-contract notes when their body conflicts with the implementation.
 - Agents must return the template path used and validation evidence in the handoff.
 - Claude and Codex edit hooks must warn on authored stage doc paths and run post-edit template enforcement through the repository quality gate.
 - Governance docs remain English-only; human-facing READMEs remain Korean.

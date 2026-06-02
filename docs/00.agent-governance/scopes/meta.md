@@ -29,7 +29,7 @@ Meta scope owns `.claude/agents/**` roster and mirror contract shape through
 `harness-catalog.md` and `subagent-protocol.md`; imported scope files own the
 domain behavior for each worker.
 
-Meta scope does **not** own `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/04.execution/`, `docs/05.operations/`, `docs/90.references/`, or `docs/99.templates/` (authored SSoT).
+Meta scope does **not** own `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/04.execution/`, `docs/05.operations/`, `docs/90.references/`, `docs/98.archive/`, or `docs/99.templates/` (authored SSoT).
 
 ## Subagent Bridge
 

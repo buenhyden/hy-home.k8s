@@ -4898,3 +4898,66 @@ while the QA routing row still carried the 2026-06-01 finding that the exact
 - Human approval for protected-surface edits allows repo-tracked governance
   evidence updates, but live infrastructure and secret-bearing state still need
   separate concrete scope and validation evidence.
+
+---
+
+## 2026-06-02 — Current Implementation Docs Alignment And Archive Cleanup
+
+### Metadata
+
+- **Date**: 2026-06-02
+- **Layer**: docs, architecture, qa, governance
+- **Tags**: #docs #archive #current-contract #qa #gitops
+- **Record type**: implementation-alignment and archive governance update.
+
+### Problem
+
+Active `01.requirements`, `02.architecture`, `03.specs`, and `04.execution`
+documents still carried old implementation contracts or superseded-only chains
+that no longer matched repo-backed desired state. Link-only or historical-marker
+validation was not enough because the requested standard was comparison against
+current implementation evidence.
+
+### Resolution
+
+- Added a current local GitOps platform PRD/ARD/ADR/Spec chain for the repo-backed
+  baseline: Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external
+  services, Kiali/Istio, Rollouts, Notifications, monitoring, and adminer.
+- Added `docs/98.archive/README.md` and
+  `docs/99.templates/archive-tombstone.template.md`.
+- Moved old conflicting 01-04 documents into `docs/98.archive/` with original
+  path mirroring and metadata-only Tombstone bodies.
+- Updated active README indexes and related-document links so active docs use
+  current replacements and expose archived material only through the archive
+  index.
+- Updated AI Agent governance, QA/CI documentation, PR checklist, hooks, and
+  `scripts/validate-repo-quality-gates.sh` to enforce archive Tombstones,
+  reject active stale runtime contracts, and keep `reference.template.md` free
+  of archive policy.
+
+### Evidence
+
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash -n docs/00.agent-governance/hooks/k8s-pre-edit.sh` — PASS.
+- `bash -n docs/00.agent-governance/hooks/post-validate.sh` — PASS.
+- `git diff --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS.
+- `bash scripts/check-secret-handling.sh .` — PASS.
+- `bash scripts/validate-policy-gates.sh .` — PASS.
+- Active stale runtime scan over `docs/01-05` returned no stale endpoint or old
+  cluster UI contract matches.
+- `docs/99.templates/reference.template.md` archive-wording scan returned no
+  matches.
+
+### Prevention
+
+- Current implementation conflicts must be resolved by updating active docs or
+  moving old docs to `docs/98.archive` Tombstones; historical or superseded
+  markers are not sufficient for active docs.
+- Active documents should link archived material only through
+  `docs/98.archive/README.md`.
+- Any future archive movement must include current replacement coverage and pass
+  the repository quality gate before handoff.

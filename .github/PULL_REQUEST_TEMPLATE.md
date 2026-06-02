@@ -44,6 +44,7 @@ Describe the manual verification or automated tests conducted.
 - [ ] GitHub CI quality gates (`branch-policy`, `repo-quality-static`, `manifest-static`) passed
 - [ ] ArgoCD/GitOps impact reviewed (if applicable)
 - [ ] Workflow path filters and job ownership reviewed (if `.github` automation changed)
+- [ ] Documentation changes preserve current implementation contracts; obsolete or conflicting 01-04 docs are routed through `docs/98.archive/README.md` only.
 - [ ] Coverage policy reviewed: 90% target for future testable application code where applicable, or validation-matrix coverage for Bash/YAML/Markdown infrastructure changes
 - [ ] No live cluster mutation, `kubectl apply`, or external Vault mutation was introduced
 - [ ] Tracked changelog updates were merged by PR before tagging (if release-facing)

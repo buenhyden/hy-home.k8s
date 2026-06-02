@@ -60,3 +60,10 @@ Execution-focused checklist index by taxonomy path.
 - [ ] Timeline, impact, evidence, and mitigations are recorded.
 - [ ] Related runbook links are attached.
 - [ ] Postmortem RCA, preventive actions, and follow-up links are recorded under `docs/05.operations/incidents/postmortems/` when needed.
+
+## `98.archive`
+
+- [ ] Original docs subpath is mirrored under `docs/98.archive/`.
+- [ ] Tombstone body contains metadata only and no old full body text.
+- [ ] Current replacement and implementation evidence are linked.
+- [ ] Active docs link archive content only through `docs/98.archive/README.md`.

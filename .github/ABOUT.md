@@ -16,6 +16,7 @@ It is a map and routing surface, not the policy source of truth.
 
 - Branch strategy policy lives in `docs/00.agent-governance/rules/git-workflow.md`.
 - CI enforcement lives in `workflows/ci.yml` and `scripts/validate-repo-quality-gates.sh`.
+- `repo-quality-static` also enforces `docs/98.archive` Tombstone structure and active-doc stale runtime contract rejection.
 - `ci.yml` validates pull request shape; GitHub branch protection/rulesets enforce direct-push restrictions outside repo-local files.
 - PR author and reviewer prompts live in `PULL_REQUEST_TEMPLATE.md`.
 - Version inventory and action tag policy live in `docs/90.references/versions/tech-stack-version-inventory.md`.
@@ -31,7 +32,7 @@ It is a map and routing surface, not the policy source of truth.
 
 | Workflow | Role | Trigger / scope | Required evidence | Boundary |
 | --- | --- | --- | --- | --- |
-| `ci.yml` | Required QA gate for branch policy, repo-quality, manifest, secret checks. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` aggregates `branch-policy`, `changes`, `pre-commit`, `repo-quality-static`, and `manifest-static`. | No deploy CD, direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
+| `ci.yml` | Required QA gate for branch policy, repo-quality, manifest, secret checks. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` aggregates `branch-policy`, `changes`, `pre-commit`, `repo-quality-static`, and `manifest-static`; repo-quality includes archive Tombstone/currentness checks. | No deploy CD, direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
 | `generate-changelog.yml` | Release-evidence artifact generator. | Runs for release tag evidence and manual release support. | Produces `CHANGELOG.md` artifact for review. | Does not commit, push, publish, or mutate repository history. |
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
 | `labeler.yml` | Repository maintenance labeling automation. | Runs on pull request path changes. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |
