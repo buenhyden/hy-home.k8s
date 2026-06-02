@@ -13,8 +13,8 @@ updated: 2026-05-09
 이 문서는 cert-manager, Headlamp, Istio, Kiali가 추가된 확장 플랫폼을 WSL2에서 부트스트랩하는 방법을 설명한다.
 기존 `bootstrap-local.sh` 기반 흐름을 확장하며, 신규 컴포넌트의 사전 조건과 검증 절차를 포함한다.
 
-> 현재 클러스터 UI 계약은 ADR-0010에 따라 Kubernetes Dashboard가 아니라 Headlamp다.
-> 오래된 Dashboard 절차는 현재 실행 기준이 아니며, Headlamp 상세 인증 절차는 `0004-headlamp-auth-oidc-guide.md`를 따른다.
+> 현재 클러스터 UI 계약은 ADR-0014에 따라 Headlamp다.
+> 대체된 UI 절차는 현재 실행 기준이 아니며, Headlamp 상세 인증 절차는 `0004-headlamp-auth-oidc-guide.md`를 따른다.
 
 ## Guide Type
 
@@ -234,8 +234,8 @@ kubectl -n headlamp create token headlamp-admin --duration=1h
 
 ## Related Documents
 
-- **Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
+- **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Operation**: [`../policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md)
 - **Runbook**: [`../runbooks/0003-platform-expansion-bootstrap-runbook.md`](../runbooks/0003-platform-expansion-bootstrap-runbook.md)
-- **ADR-0010**: [`../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md)
+- **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **Previous Guide**: [`./0002-wsl2-k3d-argocd-ha-setup-guide.md`](./0002-wsl2-k3d-argocd-ha-setup-guide.md)

@@ -69,7 +69,7 @@ updated: 2026-05-21
   - ServiceAccount Token 방식 인증 (로컬 플랫폼 기본)
   - Headlamp 플러그인 설치 (검토 후)
 - **Disallowed**:
-  - K8s Dashboard 재설치 (ADR-0010에 의해 교체됨)
+  - 대체된 클러스터 UI 재설치 (ADR-0014의 Headlamp 계약과 충돌)
 
 ## Exceptions
 
@@ -104,7 +104,7 @@ updated: 2026-05-21
 
 ## Related Documents
 
-- **ADR-0010**: [`../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md)
+- **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **ADR-0011**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
 - **ADR-0012**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
 - **Rollouts Spec**: [`../../03.specs/004-argo-rollouts-progressive-delivery/spec.md`](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md)

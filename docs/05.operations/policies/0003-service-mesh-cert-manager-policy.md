@@ -13,8 +13,8 @@ updated: 2026-05-21
 이 문서는 cert-manager(TLS 자동화), Istio(서비스메시), Kiali(메시 관측) 운영 통제 기준을 정의한다.
 플랫폼 확장 컴포넌트의 보안 정책, 갱신 제약, 허용/금지 작업을 명시한다.
 
-> 현재 클러스터 UI 계약은 ADR-0010에 따라 Kubernetes Dashboard가 아니라 Headlamp다.
-> Dashboard 관련 과거 설계는 역사적 맥락으로만 남기고, 운영 기준은 `0004-rollouts-notifications-headlamp-policy.md`를 따른다.
+> 현재 클러스터 UI 계약은 [ADR-0014](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)에 따라 Headlamp다.
+> 대체된 UI 설계는 운영 기준으로 사용하지 않으며, 운영 기준은 `0004-rollouts-notifications-headlamp-policy.md`를 따른다.
 
 ## Policy Scope
 
@@ -50,7 +50,7 @@ updated: 2026-05-21
 
 - **Required**:
   - Headlamp 운영 기준은 [`./0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md)를 따른다.
-  - Kubernetes Dashboard 재설치는 ADR-0010에 의해 금지한다.
+  - 대체된 클러스터 UI 재설치는 ADR-0014의 현재 Headlamp 계약에 의해 금지한다.
 
 ### Istio / Service Mesh
 
@@ -116,12 +116,11 @@ updated: 2026-05-21
 
 ## Related Documents
 
-- **Spec**: [`../../03.specs/003-platform-expansion/spec.md`](../../03.specs/003-platform-expansion/spec.md)
+- **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Runbook**: [`../runbooks/0003-platform-expansion-bootstrap-runbook.md`](../runbooks/0003-platform-expansion-bootstrap-runbook.md)
 - **Guide**: [`../guides/0003-platform-expansion-bootstrap-guide.md`](../guides/0003-platform-expansion-bootstrap-guide.md)
 - **ADR-0006**: [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
-- **ADR-0007**: [`../../02.architecture/decisions/0007-kubernetes-dashboard-v3.md`](../../02.architecture/decisions/0007-kubernetes-dashboard-v3.md)
 - **ADR-0008**: [`../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md`](../../02.architecture/decisions/0008-istio-install-and-ingress-coexist.md)
 - **ADR-0009**: [`../../02.architecture/decisions/0009-kiali-external-observability.md`](../../02.architecture/decisions/0009-kiali-external-observability.md)
-- **ADR-0010**: [`../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md)
+- **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **Previous Policy**: [`./0002-wsl2-k3d-gitops-ha-operations-policy.md`](./0002-wsl2-k3d-gitops-ha-operations-policy.md)

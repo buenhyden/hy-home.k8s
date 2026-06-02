@@ -12,7 +12,7 @@ updated: 2026-05-26
 
 이 문서는 WSL2 환경에서 멀티노드 k3d 클러스터와 ArgoCD/ESO/Vault/외부 서비스 계약을 설정하고 검증하는 방법을 설명한다.
 
-> **현재 실행계약 메모 (2026-05-09)**: 현재 `gitops/platform/external-services/`와 정적 검증 스크립트는 외부 서비스 EndpointSlice/CIDR을 `172.18.x` 기준으로 고정한다. 이 문서의 `172.19.x` 언급은 k3d 네트워크 경로 문제를 설명하는 역사적 `infra_net` 맥락으로만 해석한다.
+> **현재 실행계약 메모 (2026-06-02)**: 현재 `gitops/platform/external-services/`와 정적 검증 스크립트는 외부 서비스 EndpointSlice/CIDR을 `172.18.x` 기준으로 고정한다. 이 문서는 old endpoint 값을 보존하지 않고 현재 repo-backed 계약만 사용한다.
 
 ## Guide Type
 
@@ -54,8 +54,7 @@ echo 'fs.inotify.max_user_instances=1024' | sudo tee /etc/sysctl.d/99-k3d.conf
 ### Vault Docker 네트워크 연결 확인
 
 Vault 컨테이너는 k3d-hyhome Docker 네트워크에 연결되어 있어야 한다.
-k3d 노드는 infra_net(172.19.0.0/16)에 라우트가 없으므로, Vault가 infra_net에만 있으면
-`vault-external` EndpointSlice를 통한 k3d → Vault 연결이 불가능하다.
+`vault-external` EndpointSlice는 `gitops/platform/external-services/vault-external.yaml`의 현재 k3d-reachable 주소와 일치해야 한다.
 
 ```bash
 # vault가 k3d-hyhome 네트워크에 있는지 확인
@@ -194,7 +193,7 @@ YAML
 ```
 
 > **이유**: `vault-external.platform.svc.cluster.local`은 k8s 내부 Service DNS → EndpointSlice IP로 라우팅된다.
-> k3d 노드는 Vault의 infra_net IP(172.19.0.9)로 패킷을 전달할 수 없으므로, k3d-hyhome 네트워크 IP를 사용해야 한다.
+> EndpointSlice 주소는 k3d-hyhome 네트워크에서 접근 가능한 현재 Vault 주소여야 한다.
 
 1. Vault Kubernetes auth 설정이 올바른지 확인한다.
 
@@ -258,7 +257,7 @@ bash -n infrastructure/bootstrap-local.sh infrastructure/tests/*.sh
 
 - `fs.inotify.max_user_instances < 512` → k3d 에이전트 노드 NotReady, kubelet `too many open files`
 - Docker 재시작 후 vault가 k3d-hyhome 네트워크에서 분리됨 → `vault-backend context deadline exceeded`
-- `vault-external` EndpointSlice IP가 infra_net(172.19.0.9) → k3d 노드에서 Connection refused
+- `vault-external` EndpointSlice IP가 현재 k3d-reachable Vault 주소와 불일치 → k3d 노드에서 Connection refused
 - Vault Kubernetes auth `kubernetes_host`가 `kubernetes.default.svc`(k8s 내부 DNS) → DNS 미해석으로 timeout
 - `token_reviewer_jwt` 미설정 시 `disable_local_ca_jwt: true` 조합에서 Vault가 token review 불가
 - AppProject wildcard 복원으로 과권한 상태 재발
@@ -269,6 +268,6 @@ bash -n infrastructure/bootstrap-local.sh infrastructure/tests/*.sh
 
 ## Related Documents
 
-- **Spec**: [`../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
+- **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Operation**: [`../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md`](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md)
 - **Runbook**: [`../runbooks/0002-argocd-eso-vault-recovery-runbook.md`](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)

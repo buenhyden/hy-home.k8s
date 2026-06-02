@@ -16,7 +16,7 @@ updated: 2026-05-09
 
 이 런북은 `ClusterSecretStore/vault-backend Ready=False` 상황에서 수동 EndpointSlice 핫픽스로 연동을 복구하고, ArgoCD/ESO 상태를 정상화한 뒤 TLS/CI 계약 회귀를 점검하는 절차를 제공한다.
 
-> **현재 실행계약 메모 (2026-05-09)**: 현재 `gitops/platform/external-services/`와 정적 검증 스크립트는 외부 서비스 EndpointSlice/CIDR을 `172.18.x` 기준으로 고정한다. 이 런북의 `172.19.x` 언급은 k3d 네트워크 경로 문제를 설명하는 역사적 `infra_net` 맥락으로만 해석한다.
+> **현재 실행계약 메모 (2026-06-02)**: 현재 `gitops/platform/external-services/`와 정적 검증 스크립트는 외부 서비스 EndpointSlice/CIDR을 `172.18.x` 기준으로 고정한다. 이 런북은 old endpoint 값을 보존하지 않고 현재 repo-backed 계약만 사용한다.
 >
 > **Agent execution boundary**: EndpointSlice hotfix와 Docker network mutation은 human-approved break-glass 전용이다. Agent는 기본적으로 사전 스냅샷, Git 파일 보정안, 검증 계획, 후속 증적 정리까지만 수행한다.
 
@@ -26,10 +26,10 @@ updated: 2026-05-09
 
 ## Canonical References
 
-- [`../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md`](../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md)
-- [`../../02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md`](../../02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md)
-- [`../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md`](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
-- [`../../04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](../../04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- [`../../02.architecture/requirements/0007-current-local-gitops-platform.md`](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
+- [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
+- [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
+- [`../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md)
 
 ## When to Use
 
@@ -93,8 +93,8 @@ endpoints:
 YAML
 ```
 
-> **참고**: vault-external EndpointSlice는 `172.19.0.9`(infra_net)가 아니라 vault의 k3d-hyhome IP를 사용해야 한다.
-> k3d 노드는 infra_net(172.19.0.0/16)으로의 라우트가 없고, Docker network isolation이 두 네트워크 간 FORWARD를 차단하기 때문이다.
+> **참고**: vault-external EndpointSlice는 `gitops/platform/external-services/vault-external.yaml`의 현재 k3d-reachable Vault 주소와 일치해야 한다.
+> k3d 노드는 k3d-hyhome 네트워크에서 접근 가능한 Vault 주소만 안정적으로 사용할 수 있다.
 > Vault Kubernetes auth `kubernetes_host`는 `https://172.18.0.2:6443`으로 설정되어야 한다(k3d-hyhome 경유).
 
 1. Store/ExternalSecret/ArgoCD 상태를 재평가한다.

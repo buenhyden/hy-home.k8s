@@ -28,7 +28,7 @@ Headlamp 인증 방식을 ServiceAccount token 또는 Keycloak OIDC로 운영하
 
 - [`../guides/0004-headlamp-auth-oidc-guide.md`](../guides/0004-headlamp-auth-oidc-guide.md)
 - [`../policies/0004-rollouts-notifications-headlamp-policy.md`](../policies/0004-rollouts-notifications-headlamp-policy.md)
-- [`../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md)
+- [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 
 ## When to Use
 
@@ -405,5 +405,5 @@ kubectl -n headlamp rollout restart deployment headlamp
 
 - **Guide**: [`../guides/0004-headlamp-auth-oidc-guide.md`](../guides/0004-headlamp-auth-oidc-guide.md)
 - **Operations**: [`../policies/0004-rollouts-notifications-headlamp-policy.md`](../policies/0004-rollouts-notifications-headlamp-policy.md)
-- **ADR-0010**: [`../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md`](../../02.architecture/decisions/0010-headlamp-replaces-dashboard.md)
+- **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **Bootstrap Runbook**: [`0004-rollouts-notifications-headlamp-runbook.md`](0004-rollouts-notifications-headlamp-runbook.md)

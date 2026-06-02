@@ -59,7 +59,7 @@ docs/05.operations/guides/
 
 ## How to Work in This Area
 
-1. 먼저 관련 Spec/Policy/Runbook을 확인한다. 기본 플랫폼 계약은 [WSL2 HA Spec](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)을 기준으로 삼는다.
+1. 먼저 관련 Spec/Policy/Runbook을 확인한다. 기본 플랫폼 계약은 [Current Local GitOps Platform Spec](../../03.specs/008-current-local-gitops-platform/spec.md)을 기준으로 삼는다.
 2. 새 가이드 추가/수정 시 [guide.template.md](../../99.templates/guide.template.md)를 기반으로 작성한다.
 3. 실행 명령은 복붙 가능한 형태로 유지하고, 시크릿 값은 절대 직접 기재하지 않는다.
 4. 문서 변경 시 이 README의 인덱스(상태/설명/수정일)를 함께 갱신한다.
@@ -97,11 +97,11 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - [05.operations/policies](../policies/README.md)
 - [05.operations/runbooks](../runbooks/README.md)
 - [05.operations/incidents](../incidents/README.md)
-- [PRD](../../01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
-- [ARD](../../02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md)
-- [Spec](../../03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md)
-- [Plan](../../04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
-- [Task](../../04.execution/tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md)
+- [PRD](../../01.requirements/2026-06-02-current-local-gitops-platform.md)
+- [ARD](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
+- [Spec](../../03.specs/008-current-local-gitops-platform/spec.md)
+- [Plan](../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md)
+- [Task](../../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md)
 - [Guide Template](../../99.templates/guide.template.md)
 - [README Template](../../99.templates/readme.template.md)
 
@@ -117,4 +117,4 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 | [`./0007-k8s-observability-bootstrap-guide.md`](./0007-k8s-observability-bootstrap-guide.md)   | k3d 클러스터 메트릭/로그 수집 관측성 스택 부트스트랩 가이드             | Active | 2026-05-09 |
 | [`./0008-github-app-gitops-onboarding-guide.md`](./0008-github-app-gitops-onboarding-guide.md) | GitHub 레포 기반 앱 GitOps 온보딩 (최소 템플릿 + active reference 구분) | Active | 2026-05-26 |
 | [`./0009-llm-wiki-curation-guide.md`](./0009-llm-wiki-curation-guide.md)                       | LLM Wiki generated index와 `wiki-curator` agent 사용 가이드             | Active | 2026-05-10 |
-| [`./0010-ci-cd-qa-reference-guide.md`](./0010-ci-cd-qa-reference-guide.md)                     | CI/CD QA 검증 로컬-vs-GitHub Actions 경계와 shared hook script 경로 참조 가이드 | Active | 2026-06-01 |
+| [`./0010-ci-cd-qa-reference-guide.md`](./0010-ci-cd-qa-reference-guide.md)                     | CI/CD QA 검증 로컬-vs-GitHub Actions 경계와 shared hook script 경로 참조 가이드 | Active | 2026-06-02 |

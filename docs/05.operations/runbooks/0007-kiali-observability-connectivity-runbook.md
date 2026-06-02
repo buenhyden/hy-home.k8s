@@ -16,11 +16,11 @@ updated: 2026-05-09
 
 이 런북은 Kiali에서 Grafana, Prometheus, Tempo 등 외부 관측성 서비스가 Unreachable로 표시되는 장애를 진단하고 복구하는 절차를 제공한다.
 
-> **현재 실행계약 메모 (2026-05-09)**: 현재 `gitops/platform/external-services/`와 정적 검증 스크립트는 외부 Observability EndpointSlice/CIDR을 `172.18.x` 기준으로 고정한다. 이 런북의 `172.19.x` 언급은 과거 Grafana URL을 현재 `172.18.x` 계약으로 바꾸는 예시로만 해석한다.
+> **현재 실행계약 메모 (2026-06-02)**: 현재 `gitops/platform/external-services/`와 정적 검증 스크립트는 외부 Observability EndpointSlice/CIDR을 `172.18.x` 기준으로 고정한다. 이 런북은 old endpoint 값을 보존하지 않고 현재 repo-backed 계약만 사용한다.
 
 주된 원인은 세 가지다:
 
-1. **Docker 네트워크 재할당**: k3d-hyhome 네트워크가 재시작되면 외부 컨테이너(infra-grafana 등)의 IP가 변경된다. `gitops/platform/external-services/` 아래의 EndpointSlice YAML과 Kiali ConfigMap의 Grafana URL이 구 IP를 가리키게 되어 연결이 끊긴다.
+1. **Docker 네트워크 재할당**: k3d-hyhome 네트워크가 재시작되면 외부 컨테이너(infra-grafana 등)의 IP가 변경된다. `gitops/platform/external-services/` 아래의 EndpointSlice YAML과 Kiali ConfigMap의 Grafana URL이 현재 할당 IP와 달라져 연결이 끊긴다.
 2. **ArgoCD EndpointSlice 제외**: ArgoCD는 `discovery.k8s.io/EndpointSlice` 리소스를 기본 resource.exclusions에 포함하여 직접 관리하지 않을 수 있다. 따라서 YAML을 수정하고 커밋해도 EndpointSlice가 자동으로 클러스터에 동기화되지 않을 수 있다. 직접 `kubectl apply`/`kubectl patch`는 운영자가 승인한 break-glass 복구에서만 사용한다.
 3. **Grafana OAuth 전용 설정**: Grafana가 `GF_AUTH_DISABLE_LOGIN_FORM=true`, `GF_AUTH_OAUTH_AUTO_LOGIN=true`로 설정된 경우 `/api/frontend/settings` 등 API 엔드포인트가 401을 반환한다. Kiali는 이 엔드포인트로 Grafana 버전을 확인하므로 Unreachable로 표시된다. 해결책: Grafana에 Anonymous Viewer 접근 활성화.
 
@@ -69,7 +69,7 @@ Kiali에서 외부 observability service가 unreachable로 표시될 때 Endpoin
 kubectl get endpointslice -n platform
 ```
 
-출력 예시에서 `ENDPOINTS` 컬럼이 비어있거나 구 IP를 가리키면 문제 있음.
+출력 예시에서 `ENDPOINTS` 컬럼이 비어있거나 현재 할당 IP와 다르면 문제 있음.
 
 ### 1-2. 컨테이너 실제 IP 확인 (WSL2 호스트에서)
 
@@ -202,14 +202,13 @@ kubectl get app platform-kiali-app -n argocd -o jsonpath='{.spec.source.helm.val
 grep -i grafana gitops/apps/root/platform-kiali-app.yaml
 ```
 
-### 4-2. URL이 구 IP를 가리키는 경우
+### 4-2. URL이 현재 할당 IP와 다른 경우
 
 `gitops/apps/root/platform-kiali-app.yaml`에서 Grafana URL을 현재 IP로 수정한다.
 
 ```yaml
-# 예시: 구 IP → 신 IP
-# 수정 전: http://172.19.0.24:3000
-# 수정 후: http://172.18.0.14:3000
+# 예시: 현재 GitOps 계약
+grafana_url: http://172.18.0.14:3000
 ```
 
 수정 후 커밋하고 ArgoCD Sync를 실행한다:
