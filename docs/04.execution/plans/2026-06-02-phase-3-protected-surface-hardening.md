@@ -1,7 +1,7 @@
 ---
 title: 'Phase 3 Protected Surface Hardening Plan'
 type: plan
-status: draft
+status: done
 owner: platform
 updated: 2026-06-02
 ---
@@ -73,7 +73,7 @@ Phase 3는 이 승인 범위 안에서 concrete drift가 있는 보호 표면만
 | PLN-002 | Harden runtime hook trigger and JSON parse lanes | `docs/00.agent-governance/hooks/post-validate.sh`, `docs/00.agent-governance/hooks/lifecycle-guard.sh` | REQ-P3-002, REQ-P3-003 | Hooks include `.agents/*` repo-quality matching and parse `.agents/hooks.json`. |
 | PLN-003 | Clarify SessionStart live-readiness boundary | `docs/00.agent-governance/hooks/session-start.sh` | REQ-P3-004 | SessionStart states live probes are read-only and not repo-static readiness proof. |
 | PLN-004 | Update template and governance guidance | `docs/99.templates/plan.template.md`, `docs/99.templates/task.template.md`, governance/reference docs | REQ-P3-005 | Template guidance changes do not add required headings and quality gates pass. |
-| PLN-005 | Record Phase 3 execution evidence | Phase 3 Plan/Task, README indexes, Phase 2 links, progress ledger | REQ-P3-007 | New artifacts are indexed and linked with `status: draft`, `owner: platform`, and related docs. |
+| PLN-005 | Record Phase 3 execution evidence | Phase 3 Plan/Task, README indexes, Phase 2 links, progress ledger | REQ-P3-007 | Artifacts are indexed and linked with `status: done`, `owner: platform`, and related docs. |
 | PLN-006 | Run approved read-only live validation | `docs/00.agent-governance/hooks/session-start.sh`, `infrastructure/tests/run-all.sh` | REQ-P3-008 | Live checks pass, or blockers are recorded as live validation limitations. |
 
 ## Verification Plan

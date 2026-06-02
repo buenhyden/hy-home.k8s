@@ -90,7 +90,7 @@ No Tier C-only, unused, or one-off deletion candidates are present as of 2026-05
   - `bash scripts/validate-repo-quality-gates.sh .`
   - `bash scripts/generate-llm-wiki-index.sh --check`
   - `git diff --check`
-  - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +`
+  - `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +`
   - `bash infrastructure/tests/verify-contracts-static.sh`
   - `bash scripts/validate-gitops-structure.sh`
   - `bash scripts/validate-k8s-manifests.sh .`

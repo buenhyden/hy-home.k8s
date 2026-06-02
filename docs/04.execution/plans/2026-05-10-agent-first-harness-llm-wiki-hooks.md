@@ -55,7 +55,7 @@ updated: 2026-05-10
 | --- | --- | --- | --- | --- |
 | PLN-001 | Reconfirm harness and Agent-first readiness from current repo evidence | `docs/00.agent-governance/harness-catalog.md`, `.claude/**`, `.codex/**` | REQ-AI-001 | repo quality gate PASS |
 | PLN-002 | Keep LLM Wiki as generated Markdown owner map with a real `wiki-curator` role | `.claude/agents/wiki-curator.md`, `.codex/agents/wiki-curator.toml`, `docs/90.references/llm-wiki/**`, `scripts/generate-llm-wiki-index.sh` | REQ-AI-002 | generated index check PASS |
-| PLN-003 | Wire hook feedback loops through Claude implementations and Codex event wiring | `.claude/hooks/*.sh`, `.claude/settings.json`, `.codex/hooks.json` | REQ-AI-003 | JSON, shell, payload simulation PASS |
+| PLN-003 | Wire hook feedback loops through shared hook scripts and provider event wiring | `docs/00.agent-governance/hooks/*.sh`, `.agents/hooks.json`, `.claude/settings.json`, `.codex/hooks.json` | REQ-AI-003 | JSON, shell, payload simulation PASS |
 | PLN-004 | Record reduced docs taxonomy and legacy path mapping | `document-stage-routing.md`, `docs/README.md`, validator | REQ-DOC-001 | old folder and mapping guard PASS |
 | PLN-005 | Add plan/task evidence and update README indexes | `docs/04.execution/plans/`, `docs/04.execution/tasks/` | REQ-DOC-002 | template heading checks PASS |
 
@@ -65,7 +65,7 @@ updated: 2026-05-10
 | --- | --- | --- | --- | --- |
 | VAL-PLN-001 | Static | Generated LLM Wiki freshness | `bash scripts/generate-llm-wiki-index.sh --check` | PASS |
 | VAL-PLN-002 | Static | Runtime JSON parse | `python3 -m json.tool .claude/settings.json` and `python3 -m json.tool .codex/hooks.json` | PASS |
-| VAL-PLN-003 | Static | Hook and script syntax | `bash -n .claude/hooks/k8s-pre-edit.sh .claude/hooks/post-validate.sh .claude/hooks/session-start.sh scripts/validate-repo-quality-gates.sh scripts/generate-llm-wiki-index.sh` | no syntax errors |
+| VAL-PLN-003 | Static | Hook and script syntax | `bash -n docs/00.agent-governance/hooks/k8s-pre-edit.sh docs/00.agent-governance/hooks/post-validate.sh docs/00.agent-governance/hooks/session-start.sh scripts/validate-repo-quality-gates.sh scripts/generate-llm-wiki-index.sh` | no syntax errors |
 | VAL-PLN-004 | Structural | Repo quality gate | `bash scripts/validate-repo-quality-gates.sh .` | PASS |
 | VAL-PLN-005 | Static | Legacy docs path scan | `rg -n "docs/(01\\.prd\|02\\.ard\|03\\.adr\|04\\.specs\|05\\.plans\|06\\.tasks\|07\\.guides\|08\\.operations\|09\\.runbooks\|10\\.incidents)" docs .claude .codex AGENTS.md CLAUDE.md GEMINI.md README.md` | only validator sentinel or migration-map context |
 

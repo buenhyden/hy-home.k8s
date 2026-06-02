@@ -3,7 +3,7 @@ title: 'Workspace Harness Gap Analysis Technical Specification'
 type: spec
 status: active
 owner: 'platform'
-updated: 2026-05-26
+updated: 2026-06-02
 ---
 
 # Workspace Harness Gap Analysis Technical Specification (Spec)
@@ -174,9 +174,10 @@ bash scripts/validate-gitops-structure.sh
 bash scripts/validate-k8s-manifests.sh .
 bash scripts/check-secret-handling.sh .
 bash infrastructure/tests/verify-contracts-static.sh
-find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +
+find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +
 python3 -m json.tool .claude/settings.json
 python3 -m json.tool .codex/hooks.json
+python3 -m json.tool .agents/hooks.json
 git diff --check
 ```
 

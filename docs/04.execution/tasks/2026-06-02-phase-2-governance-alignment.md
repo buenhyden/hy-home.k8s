@@ -1,7 +1,7 @@
 ---
 title: 'Task: Phase 2 Governance Alignment'
 type: task
-status: draft
+status: done
 owner: platform
 updated: 2026-06-02
 ---
@@ -33,8 +33,8 @@ Create Phase 2 planning evidence that turns the Phase 1 audit decisions into exe
 
 ## Acceptance Criteria
 
-- [x] Phase 2 Plan exists, uses `status: draft`, and is indexed from Plans README.
-- [x] Phase 2 Task exists, uses `status: draft`, and is indexed from Tasks README.
+- [x] Phase 2 Plan exists, uses `status: done`, and is indexed from Plans README.
+- [x] Phase 2 Task exists, uses `status: done`, and is indexed from Tasks README.
 - [x] Phase 1 audit task links to Phase 2 Plan/Task.
 - [x] Progress ledger records Phase 2 scope, evidence, and skipped live checks.
 - [x] Static verification commands pass or limitations are documented.
@@ -45,7 +45,7 @@ Create Phase 2 planning evidence that turns the Phase 1 audit decisions into exe
 - `bash scripts/generate-llm-wiki-index.sh --check`
 - `bash scripts/validate-repo-quality-gates.sh .`
 - `rg -n "phase-2-governance-alignment" docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md docs/04.execution/tasks/2026-06-02-phase-2-governance-alignment.md`
-- `rg -n "status: draft|owner: platform|## Related Documents" docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md docs/04.execution/tasks/2026-06-02-phase-2-governance-alignment.md`
+- `rg -n "status: done|owner: platform|## Related Documents" docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md docs/04.execution/tasks/2026-06-02-phase-2-governance-alignment.md`
 
 ## Rollback
 

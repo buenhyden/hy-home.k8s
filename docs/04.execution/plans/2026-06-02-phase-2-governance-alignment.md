@@ -1,7 +1,7 @@
 ---
 title: 'Phase 2 Governance Alignment Plan'
 type: plan
-status: draft
+status: done
 owner: platform
 updated: 2026-06-02
 ---
@@ -55,9 +55,9 @@ decisions where no drift exists, and runs only approved read-only live validatio
 
 | Requirement | Acceptance Criteria |
 | --- | --- |
-| REQ-P2-001 | Phase 2 Plan exists under `docs/04.execution/plans/`, uses `status: draft`, `owner: platform`, and includes required template headings. |
-| REQ-P2-002 | Phase 2 Task exists under `docs/04.execution/tasks/`, uses `status: draft`, `owner: platform`, and records binary evidence requirements. |
-| REQ-P2-003 | Plans and Tasks README indexes include the Phase 2 artifacts with `Draft` status and 2026-06-02 date. |
+| REQ-P2-001 | Phase 2 Plan exists under `docs/04.execution/plans/`, uses `status: done`, `owner: platform`, and includes required template headings. |
+| REQ-P2-002 | Phase 2 Task exists under `docs/04.execution/tasks/`, uses `status: done`, `owner: platform`, and records binary evidence requirements. |
+| REQ-P2-003 | Plans and Tasks README indexes include the Phase 2 artifacts with `Done` status and 2026-06-02 date. |
 | REQ-P2-004 | Phase 1 audit task links to Phase 2 Plan/Task as downstream planning evidence. |
 | REQ-P2-005 | Progress ledger records Phase 2 scope, evidence, and skipped live validation boundary. |
 | REQ-P2-006 | Static verification passes, or any limitation is recorded without claiming live runtime readiness. |
@@ -66,7 +66,7 @@ decisions where no drift exists, and runs only approved read-only live validatio
 
 | Task | Description | Files / Docs Affected | Target REQ | Validation Criteria |
 | --- | --- | --- | --- | --- |
-| PLN-001 | Create the Phase 2 execution plan | `docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md` | REQ-P2-001 | Plan has required headings, `status: draft`, `owner: platform`, and related links. |
+| PLN-001 | Create the Phase 2 execution plan | `docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md` | REQ-P2-001 | Plan has required headings, `status: done`, `owner: platform`, and related links. |
 | PLN-002 | Create the Phase 2 task record | `docs/04.execution/tasks/2026-06-02-phase-2-governance-alignment.md` | REQ-P2-002 | Task has required headings, acceptance criteria, evidence, rollback, and related links. |
 | PLN-003 | Sync execution stage indexes and upstream links | `docs/04.execution/plans/README.md`, `docs/04.execution/tasks/README.md`, Phase 1 audit task | REQ-P2-003, REQ-P2-004 | README rows and Phase 1 related links point to the new Phase 2 artifacts. |
 | PLN-004 | Record progress and deferred live-validation boundary | `docs/00.agent-governance/memory/progress.md` | REQ-P2-005 | Progress entry states docs-only scope and skipped live checks. |
@@ -80,7 +80,7 @@ decisions where no drift exists, and runs only approved read-only live validatio
 | VAL-P2-002 | Wiki index | Confirm generated LLM Wiki index remains current | `bash scripts/generate-llm-wiki-index.sh --check` | PASS. |
 | VAL-P2-003 | Repository quality | Run repository governance, template, hook, and static quality gates | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
 | VAL-P2-004 | Index coverage | Confirm Phase 2 artifacts are indexed | `rg -n "phase-2-governance-alignment" docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md docs/04.execution/tasks/2026-06-02-phase-2-governance-alignment.md` | All four paths report matches. |
-| VAL-P2-005 | Frontmatter and related links | Confirm draft lifecycle and related docs are present | `rg -n "status: draft\|owner: platform\|## Related Documents" docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md docs/04.execution/tasks/2026-06-02-phase-2-governance-alignment.md` | Both documents expose draft lifecycle and related-document sections. |
+| VAL-P2-005 | Frontmatter and related links | Confirm done lifecycle and related docs are present | `rg -n "status: done\|owner: platform\|## Related Documents" docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md docs/04.execution/tasks/2026-06-02-phase-2-governance-alignment.md` | Both documents expose done lifecycle and related-document sections. |
 
 ## Risks & Mitigations
 

@@ -1,7 +1,7 @@
 ---
 title: 'Task: Phase 4 ESO Vault Runtime Diagnosis'
 type: task
-status: draft
+status: done
 owner: platform
 updated: 2026-06-02
 ---

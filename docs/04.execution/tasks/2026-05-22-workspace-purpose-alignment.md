@@ -76,7 +76,7 @@ updated: 2026-05-22
   - `bash infrastructure/tests/verify-contracts-static.sh` PASS.
   - `python3 -m json.tool .claude/settings.json` PASS.
   - `python3 -m json.tool .codex/hooks.json` PASS.
-  - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
+  - `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +` PASS.
   - `git diff --check` PASS.
 - **Eval Commands**: N/A. No model, prompt, or AI product behavior changed.
 - **Logs / Evidence Location**:

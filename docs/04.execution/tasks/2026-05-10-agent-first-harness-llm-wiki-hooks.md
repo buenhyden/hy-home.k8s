@@ -76,7 +76,7 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
   - `bash scripts/generate-llm-wiki-index.sh --check`
   - `python3 -m json.tool .claude/settings.json`
   - `python3 -m json.tool .codex/hooks.json`
-  - `bash -n .claude/hooks/k8s-pre-edit.sh .claude/hooks/post-validate.sh .claude/hooks/session-start.sh scripts/validate-repo-quality-gates.sh scripts/generate-llm-wiki-index.sh`
+  - `bash -n docs/00.agent-governance/hooks/k8s-pre-edit.sh docs/00.agent-governance/hooks/post-validate.sh docs/00.agent-governance/hooks/session-start.sh scripts/validate-repo-quality-gates.sh scripts/generate-llm-wiki-index.sh`
   - `bash scripts/validate-repo-quality-gates.sh .`
 - **Eval Commands**: not applicable; no prompt/model change is included.
 - **Logs / Evidence Location**: this task document and `docs/00.agent-governance/memory/progress.md`. Evidence is repo/static and dated 2026-05-10; rerun the commands before using it for future handoff.

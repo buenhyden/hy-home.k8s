@@ -97,8 +97,9 @@ When a skill suggests one of these paths, reroute the output into the canonical 
 
 ### Archive Routing
 
-- Use `docs/98.archive/` only when an old active-stage document conflicts with current repo-backed implementation, is deprecated-only, or is superseded-only.
+- Use `docs/98.archive/` only when an old active-stage document under `docs/01.requirements` through `docs/05.operations` conflicts with current repo-backed implementation, is deprecated-only, or is superseded-only.
 - Mirror the original docs subpath under `docs/98.archive/<original-docs-subpath>`.
+- For `docs/05.operations`, preserve the operations bucket mirror under `docs/98.archive/05.operations/{guides,policies,runbooks,incidents}`.
 - Replace the moved document body with a Tombstone created from `docs/99.templates/archive-tombstone.template.md`; do not preserve the old body text.
 - Active docs may link archive content only through `docs/98.archive/README.md`.
 - Current replacement coverage must exist before moving a document that owned still-current scope.

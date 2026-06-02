@@ -75,7 +75,7 @@ deny 경계의 명시성이다.
 | VAL-PLN-005 | Static | Secret handling | `bash scripts/check-secret-handling.sh .` | PASS |
 | VAL-PLN-006 | Static | Static infrastructure contracts | `bash infrastructure/tests/verify-contracts-static.sh` | PASS |
 | VAL-PLN-007 | Static | Runtime hook JSON parse | `python3 -m json.tool .claude/settings.json` and `python3 -m json.tool .codex/hooks.json` | PASS |
-| VAL-PLN-008 | Static | Shell syntax | `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS |
+| VAL-PLN-008 | Static | Shell syntax | `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +` | PASS |
 | VAL-PLN-009 | Static | Diff whitespace sanity | `git diff --check` | PASS |
 
 ## Risks & Mitigations

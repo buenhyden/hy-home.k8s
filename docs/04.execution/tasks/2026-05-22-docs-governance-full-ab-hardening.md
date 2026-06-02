@@ -86,7 +86,7 @@ repo-static 검증 게이트 정합화 작업의 구현·검증 작업 목록이
   - `bash scripts/validate-gitops-structure.sh`
   - `bash scripts/validate-k8s-manifests.sh .`
   - `bash scripts/check-secret-handling.sh .`
-  - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +`
+  - `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +`
   - `python3 -m json.tool .claude/settings.json`
   - `python3 -m json.tool .codex/hooks.json`
   - `git diff --check`

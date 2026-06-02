@@ -5183,3 +5183,63 @@ current implementation evidence.
   `docs/98.archive/README.md`.
 - Any future archive movement must include current replacement coverage and pass
   the repository quality gate before handoff.
+
+---
+
+## 2026-06-02 — Docs 01-05 Current Implementation Alignment
+
+### Metadata
+
+- **Date**: 2026-06-02
+- **Layer**: docs, operations, qa, governance
+- **Tags**: #docs #operations #archive #currentness #qa #ci
+- **Record type**: implementation-alignment follow-up.
+
+### Problem
+
+Active `docs/05.operations` still exposed Headlamp OIDC/Keycloak guide and
+runbook contracts that did not exist in the current GitOps desired state. Some
+active execution docs also retained stale provider-local hook command examples
+or stale CI job wording, and completed Phase 1-4 evidence still used draft
+lifecycle state.
+
+### Resolution
+
+- Moved the Headlamp OIDC guide and Keycloak runbook to
+  `docs/98.archive/05.operations/**` metadata-only Tombstones.
+- Moved the superseded docs governance consistency Spec/Plan/Task snapshot to
+  `docs/98.archive/**` and removed it from active Specs/Plans/Tasks indexes.
+- Added `docs/04.execution/plans/2026-06-02-docs-01-05-current-implementation-alignment.md`
+  and `docs/04.execution/tasks/2026-06-02-docs-01-05-current-implementation-alignment.md`.
+- Extended `docs/98.archive/README.md` with 01-05 stage sections and the
+  `05.operations/{guides,policies,runbooks,incidents}` mirror boundary.
+- Updated active operations docs to point at current Headlamp chart/ingress/TLS
+  operations and clarified HA as the local `servers: 1`, `agents: 3`
+  multi-node validation baseline, not production HA.
+- Hardened `scripts/validate-repo-quality-gates.sh` and QA/CI docs so active
+  docs cannot reintroduce archived Headlamp OIDC, stale hook path, stale CI job,
+  or missing Headlamp desired-state file contracts.
+
+### Evidence
+
+- `git diff --check` — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS; optional kube-linter was
+  not installed, so YAML syntax validation ran.
+- `bash scripts/check-secret-handling.sh .` — PASS.
+- `bash scripts/validate-policy-gates.sh .` — PASS through built-in fallback;
+  optional conftest was not installed.
+- Targeted active stale scan for archived Headlamp OIDC docs, moved governance
+  consistency docs, stale provider hook path, stale CI job wording, and missing
+  Headlamp desired-state file references returned no active hits.
+
+### Prevention
+
+- Treat repo desired state, scripts, CI workflow, provider/agent governance, and
+  validation scripts as the currentness evidence basis for active `docs/01-05`.
+- Move old or missing-contract operations docs to `docs/98.archive` Tombstones
+  rather than preserving them as active operational guidance.
+- Keep `reference.template.md` free of archive policy and enforce archive
+  behavior through routing docs, archive Tombstones, and repo-quality gates.

@@ -38,7 +38,7 @@ updated: 2026-05-28
 
 ## Scope
 
-- **Covered**: docs/01.requirements, 02.architecture, 03.specs, 04.execution, 05.operations, 99.templates, scripts/, .github/workflows/, .claude/hooks/
+- **Covered**: docs/01.requirements, 02.architecture, 03.specs, 04.execution, 05.operations, 99.templates, scripts/, .github/workflows/, shared governance hooks
 - **Not covered**: gitops/ 매니페스트, infrastructure/ 스크립트 구현 내용
 
 ## Definitions / Facts
@@ -69,5 +69,5 @@ updated: 2026-05-28
 
 - **Gap Analysis Spec**: `[../../03.specs/006-workspace-harness-gap-analysis/spec.md]`
 - **Remediation Plan (P3)**: `[../../04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md]`
-- **Governance Consistency Spec**: `[../../03.specs/007-docs-governance-consistency/spec.md]`
+- **Archive Index**: `[../../98.archive/README.md]`
 - **Reference maintenance runbook**: `[../../05.operations/runbooks/0011-reference-maintenance-runbook.md]`

@@ -52,13 +52,13 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-05-22-docs-governance-full-ab-hardening.md
 ├── 2026-05-22-workspace-purpose-alignment.md
 ├── 2026-05-24-p3-gitops-secret-runtime-remediation.md
-├── 2026-05-28-docs-governance-consistency.md
 ├── 2026-05-28-workspace-skill-expansion.md
 ├── 2026-05-30-antigravity-governance.md
 ├── 2026-05-31-codex-governance-harness-alignment.md
 ├── 2026-06-01-claude-agent-surface-restoration.md
 ├── 2026-06-01-stage-00-canonical-adapter-redesign.md
 ├── 2026-06-02-current-implementation-docs-alignment.md
+├── 2026-06-02-docs-01-05-current-implementation-alignment.md
 ├── 2026-06-02-phase-1-decision-follow-up.md
 ├── 2026-06-02-phase-2-governance-alignment.md
 ├── 2026-06-02-phase-3-protected-surface-hardening.md
@@ -99,17 +99,17 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-05-22-docs-governance-full-ab-hardening.md`](./2026-05-22-docs-governance-full-ab-hardening.md)       | README, lifecycle docs, agent/runtime governance, hook 경계, repo-static gate 정합화 계획                                                                                      | Done | 2026-05-22 |
 | [`./2026-05-22-workspace-purpose-alignment.md`](./2026-05-22-workspace-purpose-alignment.md)                   | 워크스페이스 목적 전체 기준 재감사, 버전 freshness, hook command boundary 보강 계획                                                                                            | Done | 2026-05-22 |
 | [`./2026-05-24-p3-gitops-secret-runtime-remediation.md`](./2026-05-24-p3-gitops-secret-runtime-remediation.md) | 승인된 P3 ArgoCD/Vault/ESO/secret runtime remediation 실행 계획. Repo desired-state 보완은 완료됐고 live runtime 검증은 별도 follow-up이다.                                    | Done | 2026-05-25 |
-| [`./2026-05-28-docs-governance-consistency.md`](./2026-05-28-docs-governance-consistency.md)                   | 문서 거버넌스 일관성 정비 — templates, policies, runbooks, guides, plans/tasks 준수율 향상 및 레거시 파일 제거 계획                                                            | Done | 2026-05-29 |
 | [`./2026-05-28-workspace-skill-expansion.md`](./2026-05-28-workspace-skill-expansion.md)                       | repo-local skill expansion과 harness catalog routing 보강 계획                                                                                                                | Done | 2026-05-28 |
 | [`./2026-05-30-antigravity-governance.md`](./2026-05-30-antigravity-governance.md)                             | Gemini/Antigravity 하네스와 공통 Stage 00 거버넌스 정합화 계획                                                                                                                | Done | 2026-06-02 |
 | [`./2026-05-31-codex-governance-harness-alignment.md`](./2026-05-31-codex-governance-harness-alignment.md)     | Codex/GPT 하네스, Model Policy, Template Contract drift 정합화 계획                                                                                                           | Done | 2026-05-31 |
 | [`./2026-06-01-claude-agent-surface-restoration.md`](./2026-06-01-claude-agent-surface-restoration.md)         | `.claude/agents`를 실제 Claude 전용 agent 파일 디렉터리로 복원하고 검증 게이트를 강화한 실행 계획                                                                             | Done | 2026-06-01 |
 | [`./2026-06-01-stage-00-canonical-adapter-redesign.md`](./2026-06-01-stage-00-canonical-adapter-redesign.md)   | Stage 00 canonical adapter 모델로 공통 governance, provider adapter, template, hook, model policy, QA/CI gap을 변경 단위별로 정합화한 계획                                  | Done | 2026-06-01 |
 | [`./2026-06-02-current-implementation-docs-alignment.md`](./2026-06-02-current-implementation-docs-alignment.md) | 현재 구현 기준으로 01-04 문서를 정렬하고 old 문서를 중앙 archive Tombstone으로 이동하는 실행 계획 | Done | 2026-06-02 |
+| [`./2026-06-02-docs-01-05-current-implementation-alignment.md`](./2026-06-02-docs-01-05-current-implementation-alignment.md) | 현재 repo-backed 구현 기준으로 01-05 active 문서, 05.operations archive mirror, stale currentness gate를 정리한 실행 계획 | Done | 2026-06-02 |
 | [`./2026-06-02-phase-1-decision-follow-up.md`](./2026-06-02-phase-1-decision-follow-up.md)                     | Phase 1 결정 항목을 후속 Phase 2 planning artifact로 고정하고 남은 QA skill/PATH/RTK gap boundary를 분리한 계획                                                              | Done | 2026-06-02 |
-| [`./2026-06-02-phase-2-governance-alignment.md`](./2026-06-02-phase-2-governance-alignment.md) | Phase 1 governance alignment audit 결과를 Phase 2 Plan/Task 추적성으로 고정하고 live validation boundary를 분리한 계획 | Draft | 2026-06-02 |
-| [`./2026-06-02-phase-3-protected-surface-hardening.md`](./2026-06-02-phase-3-protected-surface-hardening.md) | 승인된 policy/runtime/CI/template/live validation 범위에서 `.agents/**` shared asset trigger와 runtime readiness boundary를 보강한 계획 | Draft | 2026-06-02 |
-| [`./2026-06-02-phase-4-eso-vault-runtime-diagnosis.md`](./2026-06-02-phase-4-eso-vault-runtime-diagnosis.md) | Phase 3 live validation 실패를 Vault sealed runtime prerequisite로 분류하고 operator-bound 복구 경계를 고정한 계획 | Draft | 2026-06-02 |
+| [`./2026-06-02-phase-2-governance-alignment.md`](./2026-06-02-phase-2-governance-alignment.md) | Phase 1 governance alignment audit 결과를 Phase 2 Plan/Task 추적성으로 고정하고 live validation boundary를 분리한 계획 | Done | 2026-06-02 |
+| [`./2026-06-02-phase-3-protected-surface-hardening.md`](./2026-06-02-phase-3-protected-surface-hardening.md) | 승인된 policy/runtime/CI/template/live validation 범위에서 `.agents/**` shared asset trigger와 runtime readiness boundary를 보강한 계획 | Done | 2026-06-02 |
+| [`./2026-06-02-phase-4-eso-vault-runtime-diagnosis.md`](./2026-06-02-phase-4-eso-vault-runtime-diagnosis.md) | Phase 3 live validation 실패를 Vault sealed runtime prerequisite로 분류하고 operator-bound 복구 경계를 고정한 계획 | Done | 2026-06-02 |
 | [`./2026-06-02-stage-00-codex-harness-coverage-reconciliation.md`](./2026-06-02-stage-00-codex-harness-coverage-reconciliation.md) | Phase 1 follow-up plan의 축소 범위를 보정하고 Stage 00/Codex harness 누락 항목을 기존 완료 증적에 연결한 계획 | Done | 2026-06-02 |
 
 ## Related Documents

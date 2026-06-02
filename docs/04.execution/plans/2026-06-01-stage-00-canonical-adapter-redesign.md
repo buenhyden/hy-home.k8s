@@ -42,7 +42,7 @@ Phase 1 조사에서 확인한 핵심 gap은 다음과 같다.
 | --- | --- | --- |
 | GAP-001 | `common-governance.md`, `harness-catalog.md`, `model-policy.md`, documentation rules가 Stage 00 ownership을 반복 설명한다. | Stage 00 canonical adapter ownership map을 만들고 문서별 책임을 단일화한다. |
 | GAP-002 | Template routing, documentation protocol, hook guidance가 서로 다른 위치에서 반복된다. | Template Contract 정본과 provider/hook adapter 책임을 분리한다. |
-| GAP-003 | 실제 shared hook scripts는 `docs/00.agent-governance/hooks/*.sh`인데 일부 docs는 `.claude/hooks/*.sh`를 참조한다. | shared hook path와 provider event wiring을 명확히 나눈다. |
+| GAP-003 | 실제 shared hook scripts는 `docs/00.agent-governance/hooks/*.sh`인데 일부 docs는 legacy provider-local hook script paths를 참조했다. | shared hook path와 provider event wiring을 명확히 나눈다. |
 | GAP-004 | `.agents/hooks.json`의 실제 역할과 문서상 placeholder/behavioral 표현이 어긋난다. | Gemini/Antigravity adapter의 실제 hook support 상태를 disk evidence 기준으로 정리한다. |
 | GAP-005 | Subagent readiness가 `common-governance.md`와 `harness-catalog.md`에서 다르게 표현된다. | provider-specific native support, mirror support, behavioral support를 별도 status로 표현한다. |
 | GAP-006 | `.agents/skills` SSoT와 `.claude/skills` symlink/mirror 표현이 문서마다 다르다. | shared asset SSoT와 provider adapter mount를 canonical schema에 포함한다. |
@@ -141,7 +141,7 @@ Phase 1 조사에서 확인한 핵심 gap은 다음과 같다.
 | VAL-PLN-003 | Plan routing | New plan is discoverable from Plan README | `rg -n "stage-00-canonical-adapter-redesign" docs/04.execution/plans/README.md docs/04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md` | Both README and plan file are reported. |
 | VAL-PLN-004 | Wiki index | LLM Wiki generated index remains fresh if doc references require it | `bash scripts/generate-llm-wiki-index.sh --check` | PASS or documented as not affected. |
 | VAL-CAN-001 | Official model source | Provider model IDs and effort/tier claims are verified before Phase 3 edits | Official provider docs review plus local config scan | No model policy change is made from stale memory alone. |
-| VAL-CAN-002 | Hook path drift | Shared hook path is the only active script path in docs/config after Phase 3 | `rg -n "\\.claude/hooks\|docs/00.agent-governance/hooks" docs .codex .agents .claude` | `.claude/hooks` appears only as historical/negative context, if at all. |
+| VAL-CAN-002 | Hook path drift | Shared hook path is the only active script path in docs/config after Phase 3 | `rg -n "docs/00.agent-governance/hooks" docs .codex .agents .claude` | Active docs/config expose the shared hook path. |
 | VAL-CAN-003 | Template drift | Active routing has one template target per stage | `rg -n "operation\\.template\\.md\|policy\\.template\\.md\|plan\\.template\\.md" docs/00.agent-governance .agents .codex .claude docs/99.templates` | No stale active routing target remains. |
 | VAL-CAN-004 | QA/CI drift | Local static gates cover shared hooks and CI docs match actual job names | `bash scripts/validate-repo-quality-gates.sh .` | Gate catches path/job drift or docs explain intentional exceptions. |
 | VAL-CAN-005 | Local runtime | RTK and local toolchain availability are reproducibly documented | `command -v rtk`; `/home/hy/.local/bin/rtk --version`; `/home/hy/.local/bin/rtk gain` | PATH status, version, and DB result are recorded without exposing secrets. |

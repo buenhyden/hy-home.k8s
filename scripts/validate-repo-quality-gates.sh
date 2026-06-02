@@ -874,6 +874,22 @@ for tombstone in sorted(archive_root.rglob("*.md")):
         if heading in text and heading not in {"## Verification"}:
             fail(f"{rel(tombstone)} appears to preserve old body heading: {heading}")
 
+archive_readme_text = read_text(archive_root / "README.md")
+for phrase in [
+    "docs/01-05",
+    "### 01.requirements",
+    "### 02.architecture",
+    "### 03.specs",
+    "### 04.execution",
+    "### 05.operations",
+    "05.operations/guides",
+    "05.operations/policies",
+    "05.operations/runbooks",
+    "05.operations/incidents",
+]:
+    if phrase not in archive_readme_text:
+        fail(f"docs/98.archive/README.md missing archive index phrase: {phrase}")
+
 operations_stage_path = root / "docs/05.operations"
 allowed_operations_buckets = {"guides", "policies", "runbooks", "incidents"}
 actual_operations_buckets = {
@@ -1406,6 +1422,45 @@ for scan_root in active_stale_contract_roots:
             if pattern in text:
                 fail(
                     f"active authored docs must not retain stale implementation "
+                    f"contract in {rel(path)}: {pattern}"
+                )
+
+active_currentness_roots = [
+    root / "docs/01.requirements",
+    root / "docs/02.architecture",
+    root / "docs/03.specs",
+    root / "docs/04.execution",
+    root / "docs/05.operations",
+    root / "docs/90.references",
+]
+stale_provider_hook_path = "." + "claude/hooks"
+stale_shell_job_name = "shell" + "-static"
+stale_headlamp_oidc_patterns = [
+    "0004-" + "headlamp-auth-oidc-guide.md",
+    "0005-" + "headlamp-keycloak-runbook.md",
+    "headlamp-" + "oidc-secret",
+    "externalsecret-" + "oidc.yaml",
+    "gitops/platform/headlamp/" + "values.yaml",
+]
+for scan_root in active_currentness_roots:
+    for path in sorted(scan_root.rglob("*.md")):
+        if path.is_relative_to(root / "docs/98.archive"):
+            continue
+        text = read_text(path)
+        if stale_provider_hook_path in text:
+            fail(
+                f"active authored docs must not retain stale provider-local hook path "
+                f"in {rel(path)}"
+            )
+        if stale_shell_job_name in text:
+            fail(
+                f"active authored docs must not list stale CI job name "
+                f"in {rel(path)}"
+            )
+        for pattern in stale_headlamp_oidc_patterns:
+            if pattern in text:
+                fail(
+                    f"active authored docs must not retain archived Headlamp OIDC "
                     f"contract in {rel(path)}: {pattern}"
                 )
 
@@ -4451,11 +4506,12 @@ for repo_url in sorted(set(actual_pre_commit) - set(expected_pre_commit)):
     fail(f"pre-commit repo missing from inventory: {repo_url}")
 
 pre_commit_text = read_text(root / ".pre-commit-config.yaml")
+stale_pre_commit_hook_regex = "\\." + "claude/hooks/.*\\.sh"
 for hook_id in ["shellcheck", "shfmt"]:
     if "docs/00\\.agent-governance/hooks/.*\\.sh" not in pre_commit_text:
         fail(f".pre-commit-config.yaml {hook_id} must include docs/00.agent-governance/hooks/*.sh coverage")
-    if "\\.claude/hooks/.*\\.sh" in pre_commit_text:
-        fail(f".pre-commit-config.yaml {hook_id} must not use stale .claude/hooks/*.sh coverage")
+    if stale_pre_commit_hook_regex in pre_commit_text:
+        fail(f".pre-commit-config.yaml {hook_id} must not use stale provider-local hook coverage")
 
 active_hook_reference_files = [
     root / ".claude/CLAUDE.md",
@@ -4468,8 +4524,8 @@ active_hook_reference_files = [
 ]
 for path in active_hook_reference_files:
     text = read_text(path)
-    if ".claude/hooks" in text:
-        fail(f"{rel(path)} contains stale active hook path .claude/hooks; use docs/00.agent-governance/hooks")
+    if stale_provider_hook_path in text:
+        fail(f"{rel(path)} contains stale active hook path; use docs/00.agent-governance/hooks")
     if "docs/00.agent-governance/hooks" not in text:
         fail(f"{rel(path)} missing shared hook path docs/00.agent-governance/hooks")
 
@@ -4485,8 +4541,9 @@ for hook_path in [
 
 ci_qa_guide_path = root / "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md"
 ci_qa_guide_text = read_text(ci_qa_guide_path)
-if "`shell-static`" in ci_qa_guide_text:
-    fail(f"{rel(ci_qa_guide_path)} must not list stale shell-static as an active CI job")
+stale_shell_job = "`" + "shell" + "-static" + "`"
+if stale_shell_job in ci_qa_guide_text:
+    fail(f"{rel(ci_qa_guide_path)} must not list stale shell static job as an active CI job")
 
 if failures:
     print("=== validate-repo-quality-gates ===")

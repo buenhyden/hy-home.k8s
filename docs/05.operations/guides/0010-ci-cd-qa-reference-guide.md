@@ -76,7 +76,10 @@ bash scripts/validate-policy-gates.sh .
 `validate-repo-quality-gates.sh`는 문서 변경 시 다음 archive/currentness 계약도 함께 검증한다.
 
 - `docs/98.archive`는 허용된 canonical docs stage이며 모든 Tombstone은 `archive-tombstone.template.md` 구조를 따른다.
+- `docs/98.archive/README.md`는 01-05 stage별 Archive Index를 소유하며, `05.operations/{guides,policies,runbooks,incidents}` mirror 구조를 포함해야 한다.
 - active `docs/01-05` 문서는 오래된 UI/endpoint runtime contract를 historical 또는 superseded 메모만으로 보존할 수 없다.
+- active 문서는 archived Headlamp OIDC/Keycloak guide/runbook, removed OIDC secret contract, removed OIDC ExternalSecret filename, or missing Headlamp values-file contract를 current 운영 기준처럼 참조할 수 없다.
+- active 문서는 provider-local hook path나 현재 CI에 없는 stale job 이름을 active verification command로 노출할 수 없다.
 - archive Tombstone은 old full body를 보존하지 않고 metadata-only 본문을 유지한다.
 - `docs/99.templates/reference.template.md`는 archive 정책이나 archive wording을 포함하지 않는다.
 
@@ -163,7 +166,7 @@ repo-static 및 CI 검증은 live k3d, ArgoCD, Vault, ESO, deployment readiness 
 - **markdownlint auto-fix**: `pre-commit run --all-files` 첫 실행 시 파일이 자동 수정됨 → 수정된 파일을 스테이징 후 재실행
 - **validate-repo-quality-gates.sh 실패**: LLM Wiki 인덱스 미동기화가 원인인 경우가 많음 → `bash scripts/generate-llm-wiki-index.sh` 실행 후 재시도
 - **archive Tombstone 실패**: old 문서 본문을 보존했거나 `docs/98.archive/README.md` 외부에서 Tombstone을 직접 링크한 경우 발생 → Tombstone metadata와 활성 문서 링크를 정리
-- **active docs stale contract 실패**: `docs/01-05` 활성 문서에 old UI/endpoint runtime claim이 남은 경우 발생 → current replacement 문서로 갱신하거나 archive로 이동
+- **active docs stale contract 실패**: `docs/01-05` 활성 문서에 old UI/endpoint runtime claim, archived Headlamp OIDC contract, stale hook path, stale CI job name이 남은 경우 발생 → current replacement 문서로 갱신하거나 archive로 이동
 - **branch-policy 실패**: PR source branch 접두사 오류 → branch를 재생성하거나 GitHub에서 PR base를 확인
 - **validate-policy-gates.sh conftest 미설치**: conftest 바이너리 없을 경우 스크립트가 graceful exit 0으로 종료함 (정책 게이트 미적용 상태) → conftest 설치 권장
 

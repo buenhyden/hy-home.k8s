@@ -1,7 +1,7 @@
 ---
 title: 'Task: Phase 3 Protected Surface Hardening'
 type: task
-status: draft
+status: done
 owner: platform
 updated: 2026-06-02
 ---

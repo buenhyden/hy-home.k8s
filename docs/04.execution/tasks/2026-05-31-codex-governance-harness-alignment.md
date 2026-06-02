@@ -35,7 +35,7 @@ updated: 2026-05-31
 | T-002 | Stage 00 Model Policy and harness catalog 정합화 | doc | N/A | PLN-002 | Targeted model checks and repo quality gate | platform | Done |
 | T-003 | Codex agent TOML model reasoning effort 명시 | guardrail | N/A | PLN-003 | `rg -n "model_reasoning_effort" .codex/agents` | platform | Done |
 | T-004 | `AGENTS.md` Codex/GPT shim 역할과 provider docs 정리 | doc | N/A | PLN-004 | Link check and repo quality gate | platform | Done |
-| T-005 | Shared hook script path references 정규화 | doc | N/A | PLN-005 | No stale `.claude/hooks/*.sh` runtime-script claims remain in active Codex/Gemini docs | platform | Done |
+| T-005 | Shared hook script path references 정규화 | doc | N/A | PLN-005 | No stale provider-local runtime-script claims remain in active Codex/Gemini docs | platform | Done |
 | T-006 | Policy template routing을 `policy.template.md`로 정규화 | doc | N/A | PLN-006 | No active `operation.template.md` routing references remain | platform | Done |
 | T-007 | Operations policy frontmatter `type: policy` 정규화 | doc | N/A | PLN-007 | `rg -n "^type: operation$" docs/05.operations/policies` has no output | platform | Done |
 | T-008 | Recurring drift를 repo quality gate로 보강 | test | N/A | PLN-008 | `bash scripts/validate-repo-quality-gates.sh .` | platform | Done |

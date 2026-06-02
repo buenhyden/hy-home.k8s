@@ -220,7 +220,7 @@ cd hy-home.k8s
 - [`./.github/workflows/ci.yml`](./.github/workflows/ci.yml)
 - [`./.github/ABOUT.md`](./.github/ABOUT.md)
 
-repo-backed 정적 검증을 로컬에서 확인할 때는 아래 순서로 실행한다. 이 묶음은 CI의 `repo-quality-static`, `manifest-static`, `shell-static` 책임과 맞춰져 있다.
+repo-backed 정적 검증을 로컬에서 확인할 때는 아래 순서로 실행한다. 이 묶음은 CI의 `repo-quality-static`와 `manifest-static` 책임에 맞춰져 있고, shell syntax coverage는 pre-commit과 repo-static/manual checks가 담당한다.
 
 ```bash
 bash scripts/generate-llm-wiki-index.sh --check
@@ -229,7 +229,7 @@ bash infrastructure/tests/verify-contracts-static.sh
 bash scripts/validate-gitops-structure.sh
 bash scripts/validate-k8s-manifests.sh .
 bash scripts/check-secret-handling.sh .
-find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +
+find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +
 ```
 
 `validate-repo-quality-gates.sh`는 authored docs에서 bare/main direct push 예시와 PR-flow 문맥 없는 push 예시 회귀를 차단하고, README/examples 등 broader Markdown roots에서는 bare/main direct push 예시를 차단한다. 또한 `generate-llm-wiki-index.sh --check`로 LLM WIKI generated index freshness를 확인한다. `pre-commit`, `kube-linter`, `zizmor`, `actionlint`, `shellcheck`는 로컬에 있으면 사용한다. 로컬 `PATH`에 없을 때는 위의 repo-backed 검증을 먼저 실행하고, 전체 hook/tool matrix는 GitHub Actions에서 확인한다.

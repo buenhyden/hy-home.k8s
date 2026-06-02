@@ -10,7 +10,8 @@ updated: 2026-06-02
 
 ## Overview (KR)
 
-이 문서는 `docs/01-04`를 현재 repo-backed 구현과 맞추고, old 문서를 `98.archive` Tombstone으로 이동하는 실행 계획서다.
+이 문서는 `docs/01-04`를 현재 repo-backed 구현과 맞추고, old 문서를 `98.archive` Tombstone으로 이동한 초기 실행 계획서다.
+`docs/05.operations`까지 확장한 후속 currentness pass는 [Docs 01-05 Current Implementation Alignment Plan](./2026-06-02-docs-01-05-current-implementation-alignment.md)이 소유한다.
 
 ## Context
 
@@ -89,4 +90,5 @@ Old active-stage documents contained conflicting implementation contracts, so th
 - **Spec**: [../../03.specs/008-current-local-gitops-platform/spec.md](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **ADR**: [../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **Tasks**: [../tasks/2026-06-02-current-implementation-docs-alignment.md](../tasks/2026-06-02-current-implementation-docs-alignment.md)
+- **Follow-up Plan**: [./2026-06-02-docs-01-05-current-implementation-alignment.md](./2026-06-02-docs-01-05-current-implementation-alignment.md)
 - **Archive Index**: [../../98.archive/README.md](../../98.archive/README.md)

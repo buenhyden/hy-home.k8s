@@ -12,6 +12,7 @@ updated: 2026-06-02
 
 이 문서는 current implementation docs alignment 작업의 구현·검증 작업 목록이다.
 작업 증거는 active docs cleanup, archive Tombstone 생성, validator hardening, regression checks로 구성된다.
+`docs/05.operations`까지 확장한 후속 currentness pass는 [Docs 01-05 Current Implementation Alignment Task](./2026-06-02-docs-01-05-current-implementation-alignment.md)가 소유한다.
 
 ## Inputs
 
@@ -82,4 +83,5 @@ updated: 2026-06-02
 
 - **Spec**: [../../03.specs/008-current-local-gitops-platform/spec.md](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Plan**: [../plans/2026-06-02-current-implementation-docs-alignment.md](../plans/2026-06-02-current-implementation-docs-alignment.md)
+- **Follow-up Task**: [./2026-06-02-docs-01-05-current-implementation-alignment.md](./2026-06-02-docs-01-05-current-implementation-alignment.md)
 - **Archive Index**: [../../98.archive/README.md](../../98.archive/README.md)

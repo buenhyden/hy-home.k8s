@@ -81,7 +81,7 @@ Tier C는 README, PR template, docs, allowlist, manual command reference 같은 
 | --- | --- | --- | --- | --- |
 | VAL-PLN-001 | Structural | repo governance quality gate | `bash scripts/validate-repo-quality-gates.sh .` | PASS |
 | VAL-PLN-002 | Static | whitespace and patch hygiene | `git diff --check` | no output |
-| VAL-PLN-003 | Static | shell syntax | `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` | no syntax errors |
+| VAL-PLN-003 | Static | shell syntax | `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +` | no syntax errors |
 | VAL-PLN-004 | Static | k3d/GitOps static contracts | `bash infrastructure/tests/verify-contracts-static.sh` | PASS |
 | VAL-PLN-005 | Static | GitOps structure | `bash scripts/validate-gitops-structure.sh` | PASS |
 | VAL-PLN-006 | Static | YAML syntax and optional kube-linter | `bash scripts/validate-k8s-manifests.sh .` | PASS or tool limitation stated |

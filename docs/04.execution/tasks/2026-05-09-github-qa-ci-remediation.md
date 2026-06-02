@@ -23,7 +23,7 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
 ## Working Rules
 
 - Documentation-only and workflow-only changes still need validation evidence.
-- Keep CI role separation intact: `pre-commit`, `repo-quality-static`, `manifest-static`, and `shell-static`.
+- Keep CI role separation intact: `pre-commit`, `repo-quality-static`, and `manifest-static`. Shell syntax coverage is handled by pre-commit and repo-static/manual verification commands, not by a separate active CI job.
 - Do not add deployment, direct cluster mutation, or publishing commands to GitHub Actions.
 - Do not modify GitHub branch protection/ruleset settings in this work item.
 - Treat `.github/ABOUT.md` as a routing hub, not the branch policy source of truth.
@@ -95,7 +95,7 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
   - `bash scripts/validate-gitops-structure.sh`
   - `bash scripts/validate-k8s-manifests.sh .`
   - `bash scripts/check-secret-handling.sh .`
-  - `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +`
+  - `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +`
 - **Eval Commands**: not applicable; no prompt/model behavior is changed.
 - **Logs / Evidence Location**: repo-discoverable summary in this section. Latest follow-up validation is split by evidence lane:
   - Local PASS: `bash scripts/validate-repo-quality-gates.sh .`
@@ -104,7 +104,7 @@ Plan에서 파생된 작업을 추적 가능하게 기록한다.
   - Local PASS: `bash scripts/validate-gitops-structure.sh`
   - Local PASS with optional-tool skip: `bash scripts/validate-k8s-manifests.sh .` passes YAML syntax; `kube-linter` is skipped when unavailable on PATH.
   - Local PASS: `bash scripts/check-secret-handling.sh .`
-  - Local PASS: `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +`
+  - Local PASS: `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +`
   - CI-only / optional local tools: full `pre-commit`, `actionlint`, `zizmor`, and `kube-linter` coverage is expected in CI or a fully provisioned local toolchain.
   - Skipped / unavailable locally: current local PATH does not provide `pre-commit`, `actionlint`, `zizmor`, or `kube-linter`; do not report those as locally passed unless rerun in a toolchain that has them.
 
