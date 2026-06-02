@@ -50,8 +50,6 @@ Spec은 실행 기준을 소유하는 문서다.
 │   └── spec.md
 ├── 006-workspace-harness-gap-analysis/
 │   └── spec.md
-├── 007-docs-governance-consistency/
-│   └── spec.md
 ├── 008-current-local-gitops-platform/
 │   └── spec.md
 └── README.md
@@ -90,8 +88,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | --- | --- | --- | --- | --- |
 | [`./004-argo-rollouts-progressive-delivery/spec.md`](./004-argo-rollouts-progressive-delivery/spec.md) | Argo Rollouts 점진적 배포 current-contract backfill 명세 | Active | `platform-rollouts` Application, dashboard, metrics, AppProject 권한을 현재 계약으로 정리한다. 구현 evidence는 Spec의 Implementation Status를 따른다. | 2026-05-22 |
 | [`./005-argo-notifications-slack/spec.md`](./005-argo-notifications-slack/spec.md) | ArgoCD Notifications Slack current-contract backfill 명세 | Active | ArgoCD Notifications, Vault/ESO credential boundary, template/trigger 계약을 현재 기준으로 정리한다. 구현 evidence는 Spec의 Implementation Status를 따른다. | 2026-05-22 |
-| [`./006-workspace-harness-gap-analysis/spec.md`](./006-workspace-harness-gap-analysis/spec.md) | Workspace harness Gap analysis와 제한 구현 계약 | Active | WSL2, WSL Linux native Docker, k3d, ArgoCD GitOps, SDD lifecycle, QA, CI/CD, Agent governance의 repo-static 개선 범위를 정의한다. P3 repo desired-state 보완은 별도 실행 증적에 반영됐고, live runtime 검증·secret value 확인·CI ruleset/pinning 정책은 deferred item으로 남긴다. | 2026-05-25 |
-| [`./007-docs-governance-consistency/spec.md`](./007-docs-governance-consistency/spec.md) | 문서 거버넌스 일관성 보강 Spec | Active | Template routing, README contract, QA/CI documentation consistency를 소유한다. | 2026-05-29 |
+| [`./006-workspace-harness-gap-analysis/spec.md`](./006-workspace-harness-gap-analysis/spec.md) | Workspace harness Gap analysis와 제한 구현 계약 | Active | WSL2, WSL Linux native Docker, k3d, ArgoCD GitOps, SDD lifecycle, QA, CI/CD, Agent governance의 repo-static 개선 범위를 정의한다. P3 repo desired-state 보완은 별도 실행 증적에 반영됐고, live runtime 검증·secret value 확인·CI ruleset/pinning 정책은 deferred item으로 남긴다. | 2026-06-02 |
 | [`./008-current-local-gitops-platform/spec.md`](./008-current-local-gitops-platform/spec.md) | 현재 local GitOps platform baseline Spec | Active | Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer 구현 증적을 소유한다. | 2026-06-02 |
 
 ## Helper Templates

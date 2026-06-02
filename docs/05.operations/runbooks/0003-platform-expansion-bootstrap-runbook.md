@@ -3,7 +3,7 @@ title: 'Platform Expansion Bootstrap Runbook'
 type: runbook
 status: active
 owner: platform
-updated: 2026-05-09
+updated: 2026-06-02
 ---
 
 # Platform Expansion Bootstrap Runbook
@@ -17,7 +17,8 @@ updated: 2026-05-09
 이 런북은 cert-manager, Headlamp, Istio, Kiali가 추가된 확장 플랫폼을 부트스트랩하거나 복구하기 위한 즉시 실행 가능한 체크리스트와 증상별 복구 절차를 제공한다.
 
 > 현재 클러스터 UI 계약은 ADR-0014에 따라 Headlamp다.
-> 대체된 UI 절차는 현재 실행 기준이 아니며, Headlamp 상세 인증 절차는 `0005-headlamp-keycloak-runbook.md`를 따른다.
+> Headlamp current runtime은 chart 0.41.0, ingress, TLS route가 repo SSoT이며,
+> 미구현 OIDC 전환 절차는 active runbook 기준으로 사용하지 않는다.
 
 ## Purpose
 

@@ -3,14 +3,14 @@ title: 'WSL2 k3d/k3s GitOps HA Operations Policy'
 type: policy
 status: active
 owner: platform
-updated: 2026-05-25
+updated: 2026-06-02
 ---
 
 # WSL2 k3d/k3s GitOps HA Operations Policy
 
 ## Overview (KR)
 
-이 문서는 WSL2 기반 플랫폼의 운영 통제 기준을 정의한다. 외부 서비스 계약, 보안 최소권한, CI 정적 게이트, 복구 절차 준수 기준을 포함한다.
+이 문서는 WSL2 기반 플랫폼의 운영 통제 기준을 정의한다. 외부 서비스 계약, 보안 최소권한, CI 정적 게이트, 복구 절차 준수 기준을 포함한다. 여기서 HA는 production HA가 아니라 현재 `infrastructure/k3d/k3d-cluster.yaml`의 `servers: 1`, `agents: 3` 로컬 multi-node validation baseline을 의미한다.
 
 ## Policy Scope
 
@@ -43,7 +43,7 @@ updated: 2026-05-25
   - AppProject `apps` wildcard 금지 + 최소 allow-list 유지
   - `argocd` egress는 Valkey + DNS + HTTPS 허용
   - CI 정적 게이트 필수화(`branch-policy`, `pre-commit`,
-    `repo-quality-static`, `manifest-static`, `shell-static`)
+    `repo-quality-static`, `manifest-static`)
   - `fs.inotify.max_user_instances >= 512` (권장 1024) — k3d 4노드 안정 기동 조건
   - Vault 컨테이너는 k3d-hyhome Docker 네트워크에 연결 상태를 유지해야 한다
   - `vault-external` EndpointSlice IP는 Vault의 k3d-hyhome 네트워크 IP(`172.18.0.8`)를 사용해야 한다
@@ -72,7 +72,7 @@ updated: 2026-05-25
 - CD는 ArgoCD pull 모델을 기준으로 유지한다.
 - GitHub Actions는 정적 검증 전용 게이트로 사용한다.
 - `.github/workflows/**` 변경은 현재 CI workflow의 `branch-policy`,
-  `pre-commit`, `repo-quality-static`, `manifest-static`, `shell-static`
+  `pre-commit`, `repo-quality-static`, `manifest-static`
   구조와 `ci-summary` 집계를 유지해야 한다.
 
 ## Exceptions
@@ -115,7 +115,7 @@ updated: 2026-05-25
 - Vault 정책 wildcard 재도입 여부
 - `argocd` egress 정책에서 DNS/HTTPS 누락 여부
 - 현재 CI 정적 게이트(`branch-policy`, `pre-commit`, `repo-quality-static`,
-  `manifest-static`, `shell-static`) 유지 여부
+  `manifest-static`) 유지 여부
 - 외부 Traefik 계약(`websecure/443 -> ingress-nginx LoadBalancer IP:443`)과
   direct fallback 포트(`ARGOCD_FALLBACK_PORT`) 변경 이력
 - OPA/Conftest 도입 여부와 policy owner/bundle/install path 결정 상태

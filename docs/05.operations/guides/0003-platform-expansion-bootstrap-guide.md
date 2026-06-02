@@ -3,7 +3,7 @@ title: 'Platform Expansion Bootstrap Guide'
 type: guide
 status: active
 owner: platform
-updated: 2026-05-09
+updated: 2026-06-02
 ---
 
 # Platform Expansion Bootstrap Guide
@@ -14,7 +14,8 @@ updated: 2026-05-09
 기존 `bootstrap-local.sh` 기반 흐름을 확장하며, 신규 컴포넌트의 사전 조건과 검증 절차를 포함한다.
 
 > 현재 클러스터 UI 계약은 ADR-0014에 따라 Headlamp다.
-> 대체된 UI 절차는 현재 실행 기준이 아니며, Headlamp 상세 인증 절차는 `0004-headlamp-auth-oidc-guide.md`를 따른다.
+> Headlamp current runtime은 chart 0.41.0, ingress, TLS route가 repo SSoT이며,
+> 미구현 OIDC 전환 절차는 active guide 기준으로 사용하지 않는다.
 
 ## Guide Type
 
@@ -150,7 +151,8 @@ kubectl -n headlamp get secret headlamp-tls
 curl -ksS -o /dev/null -w '%{http_code}' https://headlamp.127.0.0.1.nip.io/
 ```
 
-로그인 토큰 절차는 [`./0004-headlamp-auth-oidc-guide.md`](./0004-headlamp-auth-oidc-guide.md)를 따른다.
+Headlamp 운영 기준은 [`../runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../runbooks/0004-rollouts-notifications-headlamp-runbook.md)와
+[`../policies/0004-rollouts-notifications-headlamp-policy.md`](../policies/0004-rollouts-notifications-headlamp-policy.md)를 따른다.
 
 ### 4. Istio 설치 검증
 

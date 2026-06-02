@@ -3,14 +3,14 @@ title: 'WSL2 k3d/k3s ArgoCD HA Setup Guide'
 type: guide
 status: active
 owner: platform
-updated: 2026-05-26
+updated: 2026-06-02
 ---
 
 # WSL2 k3d/k3s ArgoCD HA Setup Guide
 
 ## Overview (KR)
 
-이 문서는 WSL2 환경에서 멀티노드 k3d 클러스터와 ArgoCD/ESO/Vault/외부 서비스 계약을 설정하고 검증하는 방법을 설명한다.
+이 문서는 WSL2 환경에서 멀티노드 k3d 클러스터와 ArgoCD/ESO/Vault/외부 서비스 계약을 설정하고 검증하는 방법을 설명한다. 현재 HA 표현은 production HA가 아니라 `infrastructure/k3d/k3d-cluster.yaml`의 `servers: 1`, `agents: 3` 로컬 multi-node validation baseline을 뜻한다.
 
 > **현재 실행계약 메모 (2026-06-02)**: 현재 `gitops/platform/external-services/`와 정적 검증 스크립트는 외부 서비스 EndpointSlice/CIDR을 `172.18.x` 기준으로 고정한다. 이 문서는 old endpoint 값을 보존하지 않고 현재 repo-backed 계약만 사용한다.
 
