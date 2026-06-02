@@ -109,7 +109,7 @@ run_repo_quality=0
 
 for path in "${CHANGED_PATHS[@]}"; do
   case "$path" in
-    .claude/settings.json|.codex/hooks.json)
+    .claude/settings.json|.agents/hooks.json|.codex/hooks.json)
       run_json=1
       run_repo_quality=1
       ;;
@@ -139,7 +139,7 @@ traefik/*.yml|traefik/*.yaml)
   # quality gate for precise contract checks.
   case "$path" in
     AGENTS.md|CLAUDE.md|GEMINI.md|README.md|docs/*|.github/*|\
-.claude/*|.codex/*|scripts/*|.pre-commit-config.yaml|\
+.agents/*|.claude/*|.codex/*|scripts/*|.pre-commit-config.yaml|\
 infrastructure/k3d/k3d-cluster.yaml|gitops/apps/root/*|examples/*)
       run_repo_quality=1
       ;;
@@ -166,6 +166,7 @@ else
 
   if [[ "$run_json" -eq 1 ]]; then
     run_check "Claude settings JSON parse" python3 -m json.tool .claude/settings.json
+    run_check "Gemini hooks JSON parse" python3 -m json.tool .agents/hooks.json
     run_check "Codex hooks JSON parse" python3 -m json.tool .codex/hooks.json
   fi
 

@@ -36,6 +36,7 @@ updated: YYYY-MM-DD
 - Write failing tests first for core behavior.
 - Every task must define evidence.
 - Documentation-only work still needs validation evidence.
+- Repo-static validation must not be reported as live runtime readiness unless a separate live check was approved and run.
 - If a feature-local `tasks.md` exists under `03.specs/`, this document remains the execution-tracking source of truth.
 - Remove optional boilerplate sections when they do not add task-specific evidence or execution clarity.
 

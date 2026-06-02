@@ -60,7 +60,7 @@ updated: YYYY-MM-DD
 
 - **Offline Eval Gate**:
 - **Sandbox / Canary Rollout**:
-- **Human Approval Gate**:
+- **Human Approval Gate**: [State whether live runtime validation, CI topology, provider config, model policy, GitOps manifest, secret, or template changes are in scope.]
 - **Rollback Trigger**:
 - **Prompt / Model Promotion Criteria**:
 

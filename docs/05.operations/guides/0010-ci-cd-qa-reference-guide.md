@@ -132,7 +132,7 @@ CI 파이프라인은 5개 검사 job과 1개 집계 job(`ci-summary`)으로 구
 | `branch-policy`       | PR 이벤트 전용                          | 없음                                            |
 | `changes`             | 항상 실행 (path filter)                 | 없음                                            |
 | `pre-commit`          | 모든 파일 변경                          | `pre-commit run --all-files`                    |
-| `repo-quality-static` | docs, .github, .claude, scripts 등 변경 | `bash scripts/validate-repo-quality-gates.sh .` |
+| `repo-quality-static` | docs, .github, .agents, .claude, .codex, scripts 등 변경 | `bash scripts/validate-repo-quality-gates.sh .` |
 | `manifest-static`     | gitops, infrastructure YAML 변경        | 아래 참조                                       |
 | `ci-summary`          | 항상 실행 (집계)                        | 없음                                            |
 
@@ -156,6 +156,7 @@ pre-commit run --all-files
 
 로컬에서는 `pre-commit`만 통과하면 PR을 생성할 수 있으며, 통합 및 정책 게이트 검증은 GitHub CI에 위임한다.
 또한 신규 애플리케이션 코드는 90% coverage 유지를, 인프라 변경 시에는 validation-matrix 커버리지를 준수해야 한다.
+repo-static 및 CI 검증은 live k3d, ArgoCD, Vault, ESO, deployment readiness 증거가 아니다. live runtime 증거는 별도 승인된 read-only 검증 또는 operator-owned runbook 결과로만 기록한다.
 
 ## Common Pitfalls
 

@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
-# session-start.sh - optional k3d state + unhealthy pods + ArgoCD health check
+# session-start.sh - optional read-only k3d state + unhealthy pods + ArgoCD health check
 # Runs at SessionStart. Exits 0 always (non-blocking informational output).
+# These probes are runtime evidence only; repo-static validation is a separate lane.
 set -euo pipefail
 
 echo "=== hy-home.k8s session start ==="
 
 if [[ "${HY_HOME_K8S_ENABLE_SESSION_LIVE_PROBES:-0}" != "1" ]]; then
   echo "(live session probes skipped; set HY_HOME_K8S_ENABLE_SESSION_LIVE_PROBES=1 for read-only k3d/kubectl checks)"
+  echo "(repo-static checks do not prove live k3d, ArgoCD, Vault, ESO, or deployment readiness)"
   echo "==================================="
   exit 0
 fi
+
+echo "(read-only live probes enabled; no cluster mutation or secret inspection)"
 
 # k3d cluster list
 if command -v k3d &>/dev/null; then

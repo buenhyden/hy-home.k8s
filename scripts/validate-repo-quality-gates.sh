@@ -1937,8 +1937,9 @@ for step in changes_job.get("steps") or []:
             fail(f"{rel(ci_path)} changes filter YAML parse failed: {exc}")
         break
 repo_quality_filter_paths = filters.get("repo_quality") or []
-if "examples/**" not in repo_quality_filter_paths:
-    fail(f"{rel(ci_path)} repo_quality path filter must include examples/**")
+for required_repo_quality_path in ["examples/**", ".agents/**"]:
+    if required_repo_quality_path not in repo_quality_filter_paths:
+        fail(f"{rel(ci_path)} repo_quality path filter must include {required_repo_quality_path}")
 
 
 manifest_static_runs = "\n".join(
@@ -4471,6 +4472,16 @@ for path in active_hook_reference_files:
         fail(f"{rel(path)} contains stale active hook path .claude/hooks; use docs/00.agent-governance/hooks")
     if "docs/00.agent-governance/hooks" not in text:
         fail(f"{rel(path)} missing shared hook path docs/00.agent-governance/hooks")
+
+for hook_path in [
+    root / "docs/00.agent-governance/hooks/post-validate.sh",
+    root / "docs/00.agent-governance/hooks/lifecycle-guard.sh",
+]:
+    hook_text = read_text(hook_path)
+    if ".agents/*" not in hook_text:
+        fail(f"{rel(hook_path)} must trigger repository quality gates for .agents/** shared asset changes")
+    if ".agents/hooks.json" not in hook_text:
+        fail(f"{rel(hook_path)} must parse .agents/hooks.json with other runtime hook JSON files")
 
 ci_qa_guide_path = root / "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md"
 ci_qa_guide_text = read_text(ci_qa_guide_path)

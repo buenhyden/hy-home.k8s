@@ -64,6 +64,7 @@ jobs:
               - 'cliff.toml'
               - 'docs/**'
               - '.github/**'
+              - '.agents/**'
               - '.claude/**'
               - '.codex/**'
               - 'scripts/**'

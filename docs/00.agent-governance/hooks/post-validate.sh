@@ -100,7 +100,7 @@ for path in "${CHANGED_PATHS[@]}"; do
   fi
 
   case "$path" in
-    .claude/settings.json|.codex/hooks.json)
+    .claude/settings.json|.agents/hooks.json|.codex/hooks.json)
       run_json=1
       ;;
   esac
@@ -137,7 +137,7 @@ docs/05.operations/*.md|docs/90.references/*.md|docs/98.archive/*.md)
   # quality gate for precise contract checks.
   case "$path" in
     AGENTS.md|CLAUDE.md|GEMINI.md|README.md|docs/*|.github/*|\
-.claude/*|.codex/*|scripts/*|.pre-commit-config.yaml|\
+.agents/*|.claude/*|.codex/*|scripts/*|.pre-commit-config.yaml|\
 infrastructure/k3d/k3d-cluster.yaml|gitops/apps/root/*|examples/*)
       run_repo_quality=1
       ;;
@@ -257,6 +257,7 @@ fi
 
 if [[ "$run_json" -eq 1 ]]; then
   run_check "runtime JSON parse" python3 -m json.tool .claude/settings.json
+  run_check "Gemini hooks JSON parse" python3 -m json.tool .agents/hooks.json
   run_check "Codex hooks JSON parse" python3 -m json.tool .codex/hooks.json
 fi
 
