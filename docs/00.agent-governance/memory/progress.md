@@ -8,6 +8,148 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-06-04 — Scripts QA and CI/CD alignment
+
+- **Date**: 2026-06-04
+- **Layer**: qa, ci, docs, meta
+- **Status**: complete
+- **Tags**: #scripts #qa #ci #validation #governance
+
+#### Progress
+
+- Re-audited the current `scripts/*.sh` inventory and confirmed there are seven
+  tracked executable Bash scripts.
+- Updated [scripts README](../../../scripts/README.md) so the inventory,
+  structure, retention decision, local tool availability, deletion precheck,
+  and command contracts match the current scripts and CI usage.
+- Clarified `render-platform-chart-kinds.sh` as a retained manual chart-render
+  review helper, not a default local/remote QA gate, because it may fetch remote
+  Helm chart indexes.
+- Promoted `validate-policy-gates.sh` to the documented Tier A
+  `manifest-static` CI script and aligned local QA guidance, GitHub routing, and
+  Claude command allow-list with that current contract.
+- Hardened `render-platform-chart-kinds.sh` and `validate-policy-gates.sh` with
+  explicit usage output, repo-root validation, Python/PyYAML checks, and
+  deterministic policy target ordering.
+- Extended `validate-repo-quality-gates.sh` so CI must keep
+  `validate-policy-gates.sh` in `manifest-static`, Claude must allow the local
+  QA script bundle, every current script has a fixed classification, and scripts
+  reject hardcoded absolute machine paths.
+
+#### Memory
+
+- Current scripts inventory is seven files:
+  `check-secret-handling.sh`, `generate-llm-wiki-index.sh`,
+  `render-platform-chart-kinds.sh`, `validate-gitops-structure.sh`,
+  `validate-k8s-manifests.sh`, `validate-policy-gates.sh`, and
+  `validate-repo-quality-gates.sh`.
+- Local fast feedback remains `pre-commit` when available. Local repo-static
+  scripts reproduce CI/debug evidence; GitHub CI remains the required remote
+  verdict for `branch-policy`, `pre-commit`, `repo-quality-static`, and
+  `manifest-static`.
+- `conftest` and `kube-linter` are optional locally; their scripts continue
+  with built-in fallback or YAML-only validation when the binaries are missing.
+- `render-platform-chart-kinds.sh` should be run for platform Helm chart or
+  platform AppProject allow-list changes, but it is intentionally excluded from
+  default CI because remote chart index fetches can vary.
+
+#### Evidence
+
+- `find scripts -maxdepth 1 -type f -name '*.sh'` — seven scripts found.
+- Script reference sweep showed no unused or one-off deletion candidates; the
+  only Tier C script is the retained chart render review helper.
+- `command -v pre-commit` — not installed locally; pre-commit was not run.
+- `bash -n scripts/*.sh docs/00.agent-governance/hooks/*.sh infrastructure/*.sh infrastructure/tests/*.sh` — PASS.
+- `python3 -m json.tool .claude/settings.json` — PASS.
+- `git diff --check` — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS with optional
+  `kube-linter` skip because it is not installed locally.
+- `bash scripts/check-secret-handling.sh .` — PASS.
+- `bash scripts/validate-policy-gates.sh .` — PASS with built-in fallback
+  because optional `conftest` is not installed locally.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- `bash scripts/render-platform-chart-kinds.sh .` — PASS after approved network
+  access for Helm chart index fetches.
+- Negative repo-root checks for `validate-k8s-manifests.sh gitops`,
+  `check-secret-handling.sh gitops`, `validate-policy-gates.sh gitops`, and
+  `render-platform-chart-kinds.sh gitops` failed clearly with usage output.
+- Targeted stale/hardcode scans found no remaining stale five-script inventory,
+  conftest no-op wording, Tier drift wording, or hardcoded absolute machine path
+  in `scripts/*.sh`.
+
+#### Handoff
+
+- None.
+
+### 2026-06-04 — Docs 01-05 current implementation alignment
+
+- **Date**: 2026-06-04
+- **Layer**: docs, architecture, ops, qa, meta
+- **Status**: complete
+- **Tags**: #docs #currentness #archive #validation #governance
+
+#### Progress
+
+- Re-audited active `docs/01.requirements`, `docs/02.architecture`,
+  `docs/03.specs`, `docs/04.execution`, and `docs/05.operations` against
+  repo-backed implementation evidence in `gitops/**`, `infrastructure/**`,
+  `examples/**`, `traefik/**`, and `scripts/**`.
+- Confirmed the existing central archive model in
+  [Archive Index](../../98.archive/README.md) already matches the required
+  `docs/98.archive` Tombstone and Index Only structure; no new active document
+  required archival in this pass.
+- Updated Rollouts PRD/ARD/ADR/Spec language so current Prometheus
+  `AnalysisTemplate` usage is not described as future-only or analysis-free.
+- Corrected the app onboarding policy to match the current `apps` AppProject
+  allow-list, where `Deployment` is not included and new app workloads use
+  `Rollout`.
+- Repointed the P3 remediation plan from a removed active plan path to the
+  current audit reference.
+- Hardened the repository quality gate and CI/QA guide so these currentness
+  drift classes are rejected in future edits.
+
+#### Memory
+
+- Current app workload evidence is `gitops/workloads/adminer/rollout.yaml` plus
+  `gitops/workloads/adminer/analysis-template.yaml`; sample onboarding evidence
+  is `examples/sample-app/analysis-template.yaml`.
+- Current `apps` AppProject evidence is
+  `gitops/clusters/local/appproject-apps.yaml`; it allows `Rollout` and
+  `AnalysisTemplate`, not `Deployment`.
+- `traefik/` is a current reference-only external Traefik dynamic-config
+  surface, not a stale docs-only artifact.
+- RTK is not available on PATH in this session, and direct
+  `/home/hy/.local/bin/rtk gain` failed to initialize its tracking database.
+  Commands were run directly without inspecting private RTK databases.
+
+#### Evidence
+
+- Static implementation evidence read from `gitops/clusters/local/appproject-apps.yaml`,
+  `gitops/workloads/adminer/rollout.yaml`,
+  `gitops/workloads/adminer/analysis-template.yaml`, and
+  `examples/sample-app/analysis-template.yaml`.
+- Targeted active stale scans covered legacy/deprecated/archive wording,
+  Rollouts analysis-provider drift, removed plan references, and apps
+  AppProject Deployment claims.
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS with optional
+  `kube-linter` skip because it is not installed locally.
+- `bash scripts/check-secret-handling.sh .` — PASS.
+- `bash scripts/validate-policy-gates.sh .` — PASS with built-in fallback
+  because optional `conftest` is not installed locally.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+
+#### Handoff
+
+- None.
+
 ### 2026-06-02 — Phase 4 ESO Vault runtime diagnosis
 
 - **Date**: 2026-06-02
