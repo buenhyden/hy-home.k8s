@@ -1,0 +1,48 @@
+{
+  "runs": [
+    {
+      "date": "2026-05-17T00:08:49.403485+00:00",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "files": 298,
+      "mode": "codex-deterministic-doc-yaml-extraction"
+    },
+    {
+      "date": "2026-05-17T00:30:51.726549+00:00",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "files": 298,
+      "mode": "codex-deterministic-doc-yaml-update",
+      "updated_files": [
+        "AGENTS.md",
+        "CLAUDE.md"
+      ]
+    },
+    {
+      "date": "2026-05-17T01:39:42.272841+00:00",
+      "input_tokens": 95281,
+      "output_tokens": 128301,
+      "files": 298
+    },
+    {
+      "date": "2026-05-18T01:00:01.688529+00:00",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "files": 119
+    },
+    {
+      "date": "2026-05-21T15:06:21.863962+00:00",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "files": 234
+    },
+    {
+      "date": "2026-05-24T22:42:13.808468+00:00",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "files": 245
+    }
+  ],
+  "total_input_tokens": 95281,
+  "total_output_tokens": 128301
+}

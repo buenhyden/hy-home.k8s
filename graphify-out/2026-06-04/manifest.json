@@ -1,0 +1,1542 @@
+{
+  "/home/hy/project-infra/hy-home.k8s/GEMINI.md": {
+    "mtime": 1780028155.4929802,
+    "ast_hash": "b179e9ec06e9b0a97d624ef1c56e02ec",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/CLAUDE.md": {
+    "mtime": 1780028154.7929406,
+    "ast_hash": "3a7968cc9bcf77b32a789d39d1f74443",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/AGENTS.md": {
+    "mtime": 1780278960.8620927,
+    "ast_hash": "75647590ba5aa6b636b3f9f316feccb8",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/RTK.md": {
+    "mtime": 1780278960.8620927,
+    "ast_hash": "106135c01efe955d7e4589df6567c784",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/README.md": {
+    "mtime": 1780550532.60147,
+    "ast_hash": "a00ee2bc0da4a67bf09f5762b67b9bbc",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/scripts/README.md": {
+    "mtime": 1780550532.605621,
+    "ast_hash": "e6c3f28edb3b0ee6e597706d2a785b21",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/tests/README.md": {
+    "mtime": 1779419073.792035,
+    "ast_hash": "13ab77ea5474589d5f19d248197706c8",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/README.md": {
+    "mtime": 1780371352.939172,
+    "ast_hash": "8effc0a63aa5df9f4cbd81fd9eae07a3",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/03.specs/README.md": {
+    "mtime": 1780549079.5325272,
+    "ast_hash": "7960d5de51346aade4783a85aa52d0fd",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/03.specs/004-argo-rollouts-progressive-delivery/spec.md": {
+    "mtime": 1780549079.3127906,
+    "ast_hash": "2d43c7b2594205162b3dc3beeb878116",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/03.specs/005-argo-notifications-slack/spec.md": {
+    "mtime": 1780006756.2667763,
+    "ast_hash": "248c9533b1171414be2d2ac0fd6f1c65",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/03.specs/006-workspace-harness-gap-analysis/spec.md": {
+    "mtime": 1780399574.4412959,
+    "ast_hash": "778d0880ea7677b4146b29bff37eb0a4",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/02.architecture/README.md": {
+    "mtime": 1780371084.73523,
+    "ast_hash": "5d5fbd611078454db717e24f2e36708e",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md": {
+    "mtime": 1780549078.8608794,
+    "ast_hash": "7817a6933473c9112d4d30f53b15d462",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/02.architecture/requirements/README.md": {
+    "mtime": 1780370843.7631912,
+    "ast_hash": "516d98201df099cb887f33851bb47fa9",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/02.architecture/requirements/0005-argo-notifications-slack.md": {
+    "mtime": 1780006756.2667763,
+    "ast_hash": "5503fc5de3528af259111cc200702ee8",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/02.architecture/decisions/0003-eso-vault-k8s-auth.md": {
+    "mtime": 1780371036.8352182,
+    "ast_hash": "b9270b64df1477dff52d86aeee564635",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/02.architecture/decisions/0012-argo-notifications-slack.md": {
+    "mtime": 1780006756.2667763,
+    "ast_hash": "ae70d43e8e4ce9c9eb2ed142e60f6037",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md": {
+    "mtime": 1780549079.080616,
+    "ast_hash": "96f35ef1653587fe9a3dd4b9819e530b",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md": {
+    "mtime": 1780371036.647218,
+    "ast_hash": "6e3d16198730ff4c9a5dc83dcd5e4411",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/02.architecture/decisions/0009-kiali-external-observability.md": {
+    "mtime": 1780371037.42722,
+    "ast_hash": "f963c52f30445f0b799ba370334c0db3",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md": {
+    "mtime": 1780371037.0232189,
+    "ast_hash": "b27aaf8fe2196dcaa11faa49944211fd",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/02.architecture/decisions/README.md": {
+    "mtime": 1780370843.967191,
+    "ast_hash": "9cd919c087c8e5fe4be4bc00edabc806",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/02.architecture/decisions/0008-istio-install-and-ingress-coexist.md": {
+    "mtime": 1780371037.2192194,
+    "ast_hash": "69ff98b670a34338fa2e08d0d807a7d4",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md": {
+    "mtime": 1780549078.4172604,
+    "ast_hash": "bf7ec2b3af0c153cecb7834ad8eddf98",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/01.requirements/2026-05-17-argo-notifications-slack.md": {
+    "mtime": 1780371084.95123,
+    "ast_hash": "bbec01ca363b8e2bc01e3ac21ee6be87",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/01.requirements/README.md": {
+    "mtime": 1780549078.6494348,
+    "ast_hash": "2e1c2e7f85e3dd8d1d5c69068cbc8e8f",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/90.references/README.md": {
+    "mtime": 1779408537.314309,
+    "ast_hash": "e55782994f736097ef5cd4c6f1f12e98",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/90.references/llm-wiki/README.md": {
+    "mtime": 1779408537.318319,
+    "ast_hash": "8e39520875689b9802068cb30e82a240",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/90.references/llm-wiki/wiki-index.md": {
+    "mtime": 1778391348.8919473,
+    "ast_hash": "8259e68f6b16c6710e966b2ba6dc792f",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/90.references/versions/tech-stack-version-inventory.md": {
+    "mtime": 1780279031.9084685,
+    "ast_hash": "d6442014a39024e2022eefae0932a46d",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/90.references/versions/README.md": {
+    "mtime": 1779408537.318319,
+    "ast_hash": "9806ea0c322c2868a61175ebc5729bae",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/90.references/learning/README.md": {
+    "mtime": 1779408537.318319,
+    "ast_hash": "17618e1bb3f7b2a7f08f70f28cdd6ff9",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/90.references/learning/infrastructure-to-theory-roadmap.md": {
+    "mtime": 1779064495.2906966,
+    "ast_hash": "8da8965085748fb14e5a910efda79f87",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/90.references/agents/README.md": {
+    "mtime": 1779408537.318319,
+    "ast_hash": "82f2106329d0061d1b6abbce80b3c8c1",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/README.md": {
+    "mtime": 1780399574.449555,
+    "ast_hash": "d29d6cfc651490db8433006fb58f1015",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/incidents/README.md": {
+    "mtime": 1780327909.581006,
+    "ast_hash": "a6a50ac0b2d0d5c7b35802c27966b507",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/guides/0009-llm-wiki-curation-guide.md": {
+    "mtime": 1779012465.794414,
+    "ast_hash": "13a2bc73b31c7d0aa6ac6fe5d84d9f67",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/guides/0007-k8s-observability-bootstrap-guide.md": {
+    "mtime": 1779973546.3904655,
+    "ast_hash": "5812136af22068697e51b5a9b0bac123",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/guides/0006-argocd-prometheus-grafana-guide.md": {
+    "mtime": 1779973546.3904655,
+    "ast_hash": "c66f3b6d193949334947ca4a6b18bf8f",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/guides/0001-wsl-k3d-argocd-bootstrap-guide.md": {
+    "mtime": 1780381778.5355673,
+    "ast_hash": "520fc803f297348ebef2b34f5a5ec367",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/guides/0003-platform-expansion-bootstrap-guide.md": {
+    "mtime": 1780399574.449555,
+    "ast_hash": "eb3a75d4afaa6b559f51be74a0bdec7d",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/guides/README.md": {
+    "mtime": 1780550532.60147,
+    "ast_hash": "0f547f22f30d24e11735ccbd0e62ac6c",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/guides/0002-wsl2-k3d-argocd-ha-setup-guide.md": {
+    "mtime": 1780399574.449555,
+    "ast_hash": "cfc80f82f9d0cbd7a874086ef31b983c",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md": {
+    "mtime": 1779973546.3904655,
+    "ast_hash": "356df836e4f9831439592cb0ed387a68",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md": {
+    "mtime": 1780385813.8125975,
+    "ast_hash": "05086b24b124c6d361008cbe29f5dad1",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md": {
+    "mtime": 1780381778.5355673,
+    "ast_hash": "29319bdf76fc6ff3683f006306230a92",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/runbooks/0003-platform-expansion-bootstrap-runbook.md": {
+    "mtime": 1780399574.4536846,
+    "ast_hash": "bbb9aeefabc0b64aac9bdd98194867a5",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/runbooks/0011-reference-maintenance-runbook.md": {
+    "mtime": 1779973438.9147077,
+    "ast_hash": "2bf53fa292d8c22397f7a6a56d7419f7",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md": {
+    "mtime": 1780381778.5355673,
+    "ast_hash": "018867e1e909d8ea96854cab2ed54d54",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/runbooks/README.md": {
+    "mtime": 1780399574.4536846,
+    "ast_hash": "f274ad3087eceef6f0628323475f29ff",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/runbooks/0007-kiali-observability-connectivity-runbook.md": {
+    "mtime": 1780381778.5355673,
+    "ast_hash": "31761dc504b9deaaed8353dfcae3c3fd",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/runbooks/0009-k8s-observability-runbook.md": {
+    "mtime": 1779973438.9147077,
+    "ast_hash": "28bd43b41e2793e9c81e6af1f343e535",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md": {
+    "mtime": 1779973438.9147077,
+    "ast_hash": "900c84f2ceccea3aa56cd4631b7cfc8f",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/runbooks/0008-argocd-metrics-prometheus-runbook.md": {
+    "mtime": 1779973438.9147077,
+    "ast_hash": "4756ec4a7a6f51dd864afc382b7e0fe0",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/policies/0001-k8s-gitops-operations-policy.md": {
+    "mtime": 1780381778.5355673,
+    "ast_hash": "1ef23ed7d93b0ae36a8ae28c5b60d761",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/policies/0004-rollouts-notifications-headlamp-policy.md": {
+    "mtime": 1780381778.5355673,
+    "ast_hash": "a309fd76c701c9e931463c31a948f242",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/policies/0006-k8s-observability-operations-policy.md": {
+    "mtime": 1780224350.208601,
+    "ast_hash": "96c9119b5305ba7f11239107322b145a",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/policies/0005-observability-platform-operations-policy.md": {
+    "mtime": 1780224350.208601,
+    "ast_hash": "824ca91e229f70e1188a97ba049f8a12",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/policies/0002-wsl2-k3d-gitops-ha-operations-policy.md": {
+    "mtime": 1780399574.449555,
+    "ast_hash": "52e28b5f597eedf302f04cc49dd94f42",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/policies/0007-app-gitops-onboarding-policy.md": {
+    "mtime": 1780549080.1792989,
+    "ast_hash": "63ffb4621256e0fdeb349e2b961445ea",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/policies/README.md": {
+    "mtime": 1780549080.3948894,
+    "ast_hash": "5b4e51c937b7a981cfbf347f15f4b69e",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/policies/0003-service-mesh-cert-manager-policy.md": {
+    "mtime": 1780381778.5355673,
+    "ast_hash": "4f0a42ed5fd827240460fbe7042d6eb6",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/memory.template.md": {
+    "mtime": 1780273603.855557,
+    "ast_hash": "ed44a392d2cb914e85bf84d3e06310f2",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/tests.template.md": {
+    "mtime": 1780278960.8700926,
+    "ast_hash": "d8f2f3c17c084e4361c3a45495d2618a",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/postmortem.template.md": {
+    "mtime": 1780278960.8700926,
+    "ast_hash": "1f448b77031579a0600c22d7ed5ec64e",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/data-model.template.md": {
+    "mtime": 1780278960.8700926,
+    "ast_hash": "4751afa0c674ca60132ec94c70e571b2",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/ard.template.md": {
+    "mtime": 1780278960.8700926,
+    "ast_hash": "0e559108ca1ed09430af833083c8d7e5",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/api-spec.template.md": {
+    "mtime": 1780278960.8660927,
+    "ast_hash": "429bc0ae620b1a8e336fc601afeb457c",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/reference.template.md": {
+    "mtime": 1780278960.8700926,
+    "ast_hash": "a4fb623bf43bcdee8ba1a85af14e255c",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/progress.template.md": {
+    "mtime": 1780273603.855557,
+    "ast_hash": "436a61b46e03d9de7b9f680dcb388e25",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/incident.template.md": {
+    "mtime": 1780278960.8700926,
+    "ast_hash": "d52caf9860851604e3023f12a42ece4a",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/readme.template.md": {
+    "mtime": 1780278960.8700926,
+    "ast_hash": "8bec4309d1270816561e418091488706",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/task.template.md": {
+    "mtime": 1780385813.8166547,
+    "ast_hash": "31f723f494354be62d4166fd0704bd2a",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/prd.template.md": {
+    "mtime": 1780278960.8700926,
+    "ast_hash": "fa198340d965930a9d2b3e17c8caeeea",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/README.md": {
+    "mtime": 1780371352.7391748,
+    "ast_hash": "f20fa46843858930d0c7b18c79453062",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/runbook.template.md": {
+    "mtime": 1780278960.8700926,
+    "ast_hash": "7b0df72506fa65dda6ab2e820f0c4269",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/openapi.template.yaml": {
+    "mtime": 1779015173.627877,
+    "ast_hash": "ceb962b08aa7a251aedcc0af7d3d450d",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/spec.template.md": {
+    "mtime": 1780278960.8700926,
+    "ast_hash": "5b45ee5f142468be1c46b10d345f01ff",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/agent-design.template.md": {
+    "mtime": 1780278960.8660927,
+    "ast_hash": "e9efec3fcae68c0370e6f753e4f656db",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/plan.template.md": {
+    "mtime": 1780385813.8166547,
+    "ast_hash": "d003dc3a91cadd347d2d3801a9b81bd8",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/adr.template.md": {
+    "mtime": 1780278960.8660927,
+    "ast_hash": "fab3ed4a1d72fa9fe4274c0a2d8ff6e4",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/guide.template.md": {
+    "mtime": 1780278960.8700926,
+    "ast_hash": "5a4c0f65c82619ed120bc01ecce45202",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/README.md": {
+    "mtime": 1780381822.0679452,
+    "ast_hash": "382acc75c52398598a890d444369bb38",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/harness-catalog.md": {
+    "mtime": 1780385813.8085403,
+    "ast_hash": "06213e871c357fd018a08279ca489d57",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/subagent-protocol.md": {
+    "mtime": 1780223638.1389506,
+    "ast_hash": "64b0ca8f289e89ab9ab3a879861c27bd",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/scopes/ops.md": {
+    "mtime": 1778378301.9640315,
+    "ast_hash": "3c13c852a9b1deecb4cbe8d6f0851798",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/scopes/security.md": {
+    "mtime": 1778378301.9640315,
+    "ast_hash": "ea72f526b047ea0789bbcf356033f3c5",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/scopes/product.md": {
+    "mtime": 1778378301.9640315,
+    "ast_hash": "4035ad8636c7d740d78764b41649ae42",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/scopes/infra.md": {
+    "mtime": 1779604605.2331758,
+    "ast_hash": "d3d3cf2890aad6abc66d20bf147904ab",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/scopes/qa.md": {
+    "mtime": 1780010350.1359618,
+    "ast_hash": "19c4ddfd97f64fdfa1f1e2c61be32e59",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/scopes/frontend.md": {
+    "mtime": 1778378301.9640315,
+    "ast_hash": "dbb7ca5d6ef59515ed0cd32df22477d5",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/scopes/meta.md": {
+    "mtime": 1780381822.0679452,
+    "ast_hash": "622621bdb4c6800ed0d688b0702accde",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/scopes/backend.md": {
+    "mtime": 1778378301.9640315,
+    "ast_hash": "8da7e42a91a4605a906f201a80fda8ff",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/scopes/architecture.md": {
+    "mtime": 1778378301.9640315,
+    "ast_hash": "dd8d0b467d8b2ce82e861488c9a69c23",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/scopes/docs.md": {
+    "mtime": 1780381822.0679452,
+    "ast_hash": "8575f2225afbfde1177e1b73178bac39",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/rules/quality-standards.md": {
+    "mtime": 1780385813.8125975,
+    "ast_hash": "a9a7f1d561718512d5aa4fb1d24747f0",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/rules/agentic.md": {
+    "mtime": 1780381822.0679452,
+    "ast_hash": "f0663c3a703fef5a4aa0d71fd9596677",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/rules/git-workflow.md": {
+    "mtime": 1780278960.8660927,
+    "ast_hash": "d23eb47dde1ea7d7f631520791fe1875",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/rules/stage-authoring-matrix.md": {
+    "mtime": 1780381822.0679452,
+    "ast_hash": "14117891474b8fa2cdf2b32e9bd9f7cd",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/rules/preflight-checklist.md": {
+    "mtime": 1778380530.7226691,
+    "ast_hash": "0fbc35c52808e51f41792743d4e1eb1a",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/rules/stage-checklists.md": {
+    "mtime": 1780381822.0679452,
+    "ast_hash": "209672c12db159d6f6d08f3c1de40d09",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/rules/document-stage-routing.md": {
+    "mtime": 1780399574.4412959,
+    "ast_hash": "3eafffb09a369abe7ccedbadb2a1dfc9",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/rules/postflight-checklist.md": {
+    "mtime": 1780278960.8660927,
+    "ast_hash": "822ce87d171308159d7ca9b87532b40a",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/rules/persona.md": {
+    "mtime": 1780008043.0743492,
+    "ast_hash": "f9955ca5ffe46c237312f8f08ff58287",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/rules/documentation-protocol.md": {
+    "mtime": 1780381822.0679452,
+    "ast_hash": "5f05846fd47da772a1e58f6f928e92e6",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/rules/bootstrap.md": {
+    "mtime": 1780381822.0679452,
+    "ast_hash": "18c107aa13dd79ba39f59d459c248229",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/rules/standards.md": {
+    "mtime": 1780381822.0679452,
+    "ast_hash": "cc5f65bc9a723bdab08e2549051e3a82",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/providers/gemini.md": {
+    "mtime": 1780278960.8660927,
+    "ast_hash": "410176b52f22c7711fabbf668dd341dc",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/providers/agents-md.md": {
+    "mtime": 1780223172.7951348,
+    "ast_hash": "8d608f500b2f2ae441e28ce8d51d2a07",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/providers/claude.md": {
+    "mtime": 1780278960.8660927,
+    "ast_hash": "d6cfa88bd826bf3e602b7833987f86f5",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/memory/README.md": {
+    "mtime": 1779408537.314309,
+    "ast_hash": "b26c2b0b77eb59ea7be663a175996327",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/memory/progress.md": {
+    "mtime": 1780550620.8075314,
+    "ast_hash": "f823d91e2a7773c077af4159e011d2a9",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/README.md": {
+    "mtime": 1779075467.2814953,
+    "ast_hash": "600daa7d4057dca74304a29346614a57",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-05-18-argo-notifications-slack.md": {
+    "mtime": 1780006756.2745178,
+    "ast_hash": "eaa01e2b6c8651c861bbcb1fc1c516ad",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md": {
+    "mtime": 1780006756.2745178,
+    "ast_hash": "86f537d432044c9ec37e5e5ed8f0c4e8",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-05-10-agent-first-harness-llm-wiki-hooks.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "8549bdaf94cac45051a8743ccbbb53be",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/README.md": {
+    "mtime": 1780399574.449555,
+    "ast_hash": "bf13468616b3cfdce287c0bd4212264f",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-05-22-docs-governance-full-ab-hardening.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "af7f5d642dc07de5006509c0a608035f",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-05-22-workspace-purpose-alignment.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "79192cbdef43ec6add03caea8142445b",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-05-09-scripts-inventory-remediation.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "9089a3b849c013307d8475a23b7cb97f",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-05-09-github-qa-ci-remediation.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "5a12839f35e96ae4896c812b5d4941d4",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-05-18-argo-notifications-slack.md": {
+    "mtime": 1780006756.2745178,
+    "ast_hash": "eed7b081a37b1de9688ef399e7fb125e",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md": {
+    "mtime": 1780006756.2745178,
+    "ast_hash": "ea835c65236b4b56fa50a49197044af4",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-05-10-agent-first-harness-llm-wiki-hooks.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "ff2cd84173ebbf252702ad8d70d4671c",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/README.md": {
+    "mtime": 1780549079.9678543,
+    "ast_hash": "2c9a85d1a1329b234678b73a9dd39b36",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-05-22-docs-governance-full-ab-hardening.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "490ab578b42a44da5bc853117dd961e1",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-05-22-workspace-purpose-alignment.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "a085d34ab2b69f6937038b7fecd6deec",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-05-09-scripts-inventory-remediation.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "c7993c5f72ee7ab3a372cf304fd79429",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-05-17-template-crosslink-fix.md": {
+    "mtime": 1780371281.5792527,
+    "ast_hash": "1fde729af0d06f0cc63d5afec953ffe3",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-05-09-github-qa-ci-remediation.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "983cde065b835fcfed94b54e31eb83a6",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/infrastructure/README.md": {
+    "mtime": 1780371758.7593193,
+    "ast_hash": "730669e5cc555741a1717de1b780c3b4",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/infrastructure/ipaddresspool.yaml": {
+    "mtime": 1774775245.0678937,
+    "ast_hash": "a4ccdf6f49f93dfcb5899fcd55151e15",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/infrastructure/l2advertisement.yaml": {
+    "mtime": 1774775588.1718674,
+    "ast_hash": "d6ca2790f70c0392ad1db40f8c0f8e6d",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/infrastructure/argocd/values-local.yaml": {
+    "mtime": 1774948184.1544855,
+    "ast_hash": "f8385f46c733a56b9395004226eee528",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/infrastructure/k3d/k3d-cluster.yaml": {
+    "mtime": 1774775581.6998668,
+    "ast_hash": "f4dbf0cc8e80b7a51812e96faab5e6e8",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/README.md": {
+    "mtime": 1780371758.9553194,
+    "ast_hash": "2c8e979fe0858c3716cbf9f2166225cd",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/clusters/local/applicationset-apps.yaml": {
+    "mtime": 1779756290.2871363,
+    "ast_hash": "3adb90ee5bb6bee5e835e4348fdaa8b3",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/clusters/local/kustomization.yaml": {
+    "mtime": 1779616719.7743032,
+    "ast_hash": "2b19aa4ffb69a98d16629c1ad6901898",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/clusters/local/root-application.yaml": {
+    "mtime": 1779756290.4825766,
+    "ast_hash": "c8d2d0511572c394b484199762338650",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/clusters/local/appproject-platform.yaml": {
+    "mtime": 1779757088.0450804,
+    "ast_hash": "78e8a80e000a9e5ebdaff9483e3340c2",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/clusters/local/appproject-apps.yaml": {
+    "mtime": 1779756290.0916939,
+    "ast_hash": "0833d05c01630b6552d6aa3cf2765188",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-headlamp-app.yaml": {
+    "mtime": 1779756291.0887942,
+    "ast_hash": "a48af06427a03d84f42e20c987244429",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-ingress-nginx-app.yaml": {
+    "mtime": 1779756291.5088127,
+    "ast_hash": "65f218c7da7e1006e52a09ff725a6d5d",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-eso-config-app.yaml": {
+    "mtime": 1774587042.3337107,
+    "ast_hash": "f18cb566ac58f2e748c152d5ae71c0d9",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-istiod-app.yaml": {
+    "mtime": 1774881152.564206,
+    "ast_hash": "33b5c80f61c05c55f5f559bc40637720",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-namespaces-app.yaml": {
+    "mtime": 1774586896.6324148,
+    "ast_hash": "5a21568f096a3f6faa44adc87331a22b",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-cluster-config-app.yaml": {
+    "mtime": 1779616661.0368752,
+    "ast_hash": "b99c16120ac4db8db72a83cab85691c0",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-argocd-config-app.yaml": {
+    "mtime": 1774587055.2463918,
+    "ast_hash": "c93b0474a2b6735564fa3598db338a71",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/kustomization.yaml": {
+    "mtime": 1779616661.1846447,
+    "ast_hash": "a26c6ee6c930b4b635a9a5186ac3fd90",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-kiali-app.yaml": {
+    "mtime": 1774864784.0394652,
+    "ast_hash": "919a3571c3a479e91fc8124f06a7792f",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-cert-manager-config-app.yaml": {
+    "mtime": 1774776324.292028,
+    "ast_hash": "809b0e4a8e425309aa847223cb442b5d",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-kiali-config-app.yaml": {
+    "mtime": 1774776872.1597764,
+    "ast_hash": "777635630fea1029b65068c83f09304d",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-monitoring-app.yaml": {
+    "mtime": 1774914969.975337,
+    "ast_hash": "4ae9d16fea77fb28211e39d277b0f665",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-cert-manager-app.yaml": {
+    "mtime": 1779756290.6897435,
+    "ast_hash": "914a6f881c1201d2b2bf1e8cc4590ebc",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-istio-base-app.yaml": {
+    "mtime": 1779756291.7247102,
+    "ast_hash": "aa7f749a8a68e899eca7491235f2af47",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-external-services-app.yaml": {
+    "mtime": 1774586896.640219,
+    "ast_hash": "a65a86e6934db84273e05e93236d8911",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-headlamp-config-app.yaml": {
+    "mtime": 1779756291.2968407,
+    "ast_hash": "e32ac8755b03bec36b87a2579241bbe3",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-rollouts-app.yaml": {
+    "mtime": 1779756291.9209805,
+    "ast_hash": "027dfc0892a5a74d0400731f5575e280",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/apps/root/platform-network-policies-app.yaml": {
+    "mtime": 1774586896.6363168,
+    "ast_hash": "428bc8abbf47c65e3beec51a0d1a95fd",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/headlamp/kustomization.yaml": {
+    "mtime": 1774844492.0882678,
+    "ast_hash": "67c88fab0c8cb2f7f74c9530a0a0b39d",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/headlamp/headlamp-ingress.yaml": {
+    "mtime": 1774928626.4372268,
+    "ast_hash": "997b0b652f1dd0e9289bef7ae92bf1ca",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/eso/kustomization.yaml": {
+    "mtime": 1779698997.874352,
+    "ast_hash": "cd7d7bc9242c7c73b660c9773ef26af5",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/namespaces/namespace-platform.yaml": {
+    "mtime": 1774586652.406906,
+    "ast_hash": "2be9f7e7c328c9d1c9d9f581f09b19a4",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/namespaces/kustomization.yaml": {
+    "mtime": 1774915027.3081996,
+    "ast_hash": "ef30d6cb665e7c76b6ab77bb5a6844f2",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/namespaces/namespace-istio-system.yaml": {
+    "mtime": 1774775707.7438545,
+    "ast_hash": "1acbe0fab2011dc0888a5e5d5021f24b",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/namespaces/namespace-ingress-nginx.yaml": {
+    "mtime": 1774933459.063135,
+    "ast_hash": "05bc7b4ca4d6023a74953ba4783f31e8",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/namespaces/namespace-cert-manager.yaml": {
+    "mtime": 1774775639.2478623,
+    "ast_hash": "a6dacb05c89db1ecf35e3a5f5b51ff39",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/namespaces/namespace-argo-rollouts.yaml": {
+    "mtime": 1774844555.808082,
+    "ast_hash": "47042a6a808be9dd5c5d00bb54e8fdb7",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/namespaces/namespace-apps.yaml": {
+    "mtime": 1774930035.098366,
+    "ast_hash": "961549dafe11f110420cbe6249396777",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/namespaces/namespace-monitoring.yaml": {
+    "mtime": 1774914890.2014577,
+    "ast_hash": "45df12c1ee1746bd87a8ec135a41f19a",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/namespaces/namespace-headlamp.yaml": {
+    "mtime": 1774844497.8838046,
+    "ast_hash": "d9998d11bf1ceeaa849fe0ae0f4576f4",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/kiali/kiali-ingress.yaml": {
+    "mtime": 1774928575.3268518,
+    "ast_hash": "d66e3105a73d6f20b733876435fa979c",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/kiali/kustomization.yaml": {
+    "mtime": 1774776891.2517762,
+    "ast_hash": "074316946323b53b89d2a1d2b78dc08a",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/network-policies/apps-egress.yaml": {
+    "mtime": 1774933301.671229,
+    "ast_hash": "722b79fb23d45021ef0f7dff16bbcbbb",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/network-policies/egress-to-external-services.yaml": {
+    "mtime": 1774863469.718494,
+    "ast_hash": "353169d68e0a703b1a3b81b99c2d2b65",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/network-policies/kustomization.yaml": {
+    "mtime": 1778860971.2690046,
+    "ast_hash": "bbd9a381ef83d80a5914d732996d3450",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/network-policies/argocd-egress-to-external-valkey.yaml": {
+    "mtime": 1774862472.5148416,
+    "ast_hash": "5465b82d3a15592ad984f36cd3f965ee",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/network-policies/monitoring-egress.yaml": {
+    "mtime": 1774933326.561001,
+    "ast_hash": "c8e555aeaba0181c12f529517f48234e",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/network-policies/kiali-egress-to-observability.yaml": {
+    "mtime": 1774864746.2580874,
+    "ast_hash": "c2a621ac8264b33841abb42a4b6ea2fb",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/argocd/argocd-notifications-cm.yaml": {
+    "mtime": 1774844622.3295105,
+    "ast_hash": "7fa73cb4e027f48efef77d2f27677f3c",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/argocd/kustomization.yaml": {
+    "mtime": 1774913023.0396678,
+    "ast_hash": "a44f428a37a248b817afc0f2753c6316",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/argocd/argocd-metrics-nodeport.yaml": {
+    "mtime": 1774912936.6306193,
+    "ast_hash": "7c1ccf2cc8f824723d672dd0ebd1badb",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/external-services/valkey-external.yaml": {
+    "mtime": 1774912549.1521666,
+    "ast_hash": "e6f03a7688eeeb69f1a147a57c4e032d",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/external-services/kustomization.yaml": {
+    "mtime": 1774777530.185787,
+    "ast_hash": "3e465e05d18676a035f3376b018dc1b3",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/external-services/vault-external.yaml": {
+    "mtime": 1774864788.6808794,
+    "ast_hash": "e4e1bf818fd513ca369df57a893d9929",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/external-services/prometheus-external.yaml": {
+    "mtime": 1774848096.8683681,
+    "ast_hash": "07cc51d0246f5ecc093a199bb84d7a16",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/external-services/loki-external.yaml": {
+    "mtime": 1774864733.1291177,
+    "ast_hash": "be020fbdb7c8406a910bbeb4be1f7792",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/external-services/alloy-external.yaml": {
+    "mtime": 1774912503.5094354,
+    "ast_hash": "99a0d23235ed2512571e362dd0eb0a23",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/external-services/tempo-external.yaml": {
+    "mtime": 1774848096.8726616,
+    "ast_hash": "42af921bd25e3416b9d983f9b83c78d7",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/external-services/postgres-external.yaml": {
+    "mtime": 1774912557.661527,
+    "ast_hash": "9f908222e9fda01c9c799c8d567054b9",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/external-services/grafana-external.yaml": {
+    "mtime": 1774864728.6301072,
+    "ast_hash": "741441c92eec039f900f19c7b9c1cfc8",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/cert-manager/kustomization.yaml": {
+    "mtime": 1774776735.3958156,
+    "ast_hash": "7c3569094f26c0673fc2c01fea279f60",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/cert-manager/cluster-issuer-mkcert.yaml": {
+    "mtime": 1774928553.986309,
+    "ast_hash": "95d88bbc8cab1cf2c6171ef7c9338c9d",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/monitoring/kustomization.yaml": {
+    "mtime": 1774914893.1187775,
+    "ast_hash": "0c7a9c164ff58ee8dcf6a6b0120384e7",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/monitoring/kube-state-metrics.yaml": {
+    "mtime": 1774914921.4571702,
+    "ast_hash": "ef6635b00eaa532a634ff8a6458d58ff",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/monitoring/alloy-k8s-logs.yaml": {
+    "mtime": 1774927564.9108262,
+    "ast_hash": "62323852b82c16ee963df2b8a20e25bf",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/platform/monitoring/metrics-nodeports.yaml": {
+    "mtime": 1774914930.1939867,
+    "ast_hash": "d111510a80ff70dda3e15b06b8c2f1b4",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/workloads/README.md": {
+    "mtime": 1779721748.2791846,
+    "ast_hash": "9ba67508fd507b7bc3d32a5cd3d079db",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/workloads/adminer/ingress.yaml": {
+    "mtime": 1774930288.918806,
+    "ast_hash": "387cd67f708de58e2870a51d0d912518",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/workloads/adminer/analysis-template.yaml": {
+    "mtime": 1774933557.6126394,
+    "ast_hash": "b42cfed4bfa0545766251e5649550ac8",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/workloads/adminer/service-stable.yaml": {
+    "mtime": 1774948194.7276063,
+    "ast_hash": "56383330345ec2d1f6ef4282667934f6",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/workloads/adminer/peer-authentication.yaml": {
+    "mtime": 1774933516.239939,
+    "ast_hash": "e1f992880c018bd7612b25dadece0e21",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/workloads/adminer/destination-rule.yaml": {
+    "mtime": 1774948208.609558,
+    "ast_hash": "c4c50a330747c9d2f8de8ff90172f565",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/workloads/adminer/kustomization.yaml": {
+    "mtime": 1774948232.459183,
+    "ast_hash": "40eaebd0570138fa1c238eb310cd8f50",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/workloads/adminer/rollout.yaml": {
+    "mtime": 1774948222.5957987,
+    "ast_hash": "ab034c8e266c17d285314d4377ad798c",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/workloads/adminer/service-canary.yaml": {
+    "mtime": 1774948196.7355042,
+    "ast_hash": "082a3c7f1f1bc66e3d0fde5d61221521",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/workloads/adminer/service.yaml": {
+    "mtime": 1774930279.8289578,
+    "ast_hash": "71fab2c6ee7d9cfbad4a99fe23c4954e",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/gitops/workloads/adminer/virtual-service.yaml": {
+    "mtime": 1774948206.343558,
+    "ast_hash": "4e51d3636e13dc87622993f4f5f9aebc",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/traefik/argocd-k3d.yaml": {
+    "mtime": 1779698997.874352,
+    "ast_hash": "b65eb231aef9a3d8048f70018fe42133",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/traefik/README.md": {
+    "mtime": 1779754843.724013,
+    "ast_hash": "ed8a27708fd2debd660128201fc6a9bf",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/traefik/rollouts-k3d.yaml": {
+    "mtime": 1779698997.874352,
+    "ast_hash": "1ee86cf0710607de67e49e0fbcda6e69",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/traefik/headlamp-k3d.yaml": {
+    "mtime": 1779698997.874352,
+    "ast_hash": "62eb3477150ebc3feff88bb2d2fad8cc",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/traefik/kiali-k3d.yaml": {
+    "mtime": 1779698997.874352,
+    "ast_hash": "ceda3bd5b77acb7e912249a04af167c7",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/.prettierrc.json": {
+    "mtime": 1771840694.3665297,
+    "ast_hash": "691d09a25ee35e38aa4cb3d6ec3741a3",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/hooks/k8s-pre-edit.sh": {
+    "mtime": 1780381822.0679452,
+    "ast_hash": "a7035f79c00c274400f15541087d9f49",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/hooks/lifecycle-guard.sh": {
+    "mtime": 1780385813.8085403,
+    "ast_hash": "316e2cdc408bd0a2afba353a458eba56",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/hooks/post-validate.sh": {
+    "mtime": 1780385813.8085403,
+    "ast_hash": "177235890346d87dac7392479d43e6d0",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/hooks/session-start.sh": {
+    "mtime": 1780385813.8085403,
+    "ast_hash": "b37a9778fc2d65597d3213cf1cfdecca",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/infrastructure/bootstrap-local.sh": {
+    "mtime": 1779698997.874352,
+    "ast_hash": "3171d5b13872d95d988152a519e73317",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/infrastructure/tests/run-all.sh": {
+    "mtime": 1774664051.0481882,
+    "ast_hash": "2968950f6b4c45f40f6908b501ef83ab",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/infrastructure/tests/verify-cluster.sh": {
+    "mtime": 1779702893.6700926,
+    "ast_hash": "5e9bbc5a4f0bf0aef059a8859580a1a9",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/infrastructure/tests/verify-contracts-static.sh": {
+    "mtime": 1779757162.2889657,
+    "ast_hash": "c15457405a4fe098ce9f46889e53586b",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/infrastructure/tests/verify-external-services.sh": {
+    "mtime": 1778260778.809054,
+    "ast_hash": "d1d398eac4a2c517878094955b99f90c",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/infrastructure/tests/verify-gitops.sh": {
+    "mtime": 1778260778.325054,
+    "ast_hash": "57759921485ca101b08ff0edb222cbe3",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/infrastructure/tests/verify-ingress-tls.sh": {
+    "mtime": 1779698997.874352,
+    "ast_hash": "fadc786df31c7061202e22a5b3c304e6",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/infrastructure/tests/verify-network-policies.sh": {
+    "mtime": 1778260778.949854,
+    "ast_hash": "4cf08de14acf6615d67b1b243ceb5639",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/scripts/generate-llm-wiki-index.sh": {
+    "mtime": 1778391339.8633645,
+    "ast_hash": "f34d1baea0af77c432bcd5763c6d39bd",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/scripts/render-platform-chart-kinds.sh": {
+    "mtime": 1780550592.6583982,
+    "ast_hash": "f2e9cf33c2f57c29cd5aa22fc6769696",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/scripts/validate-gitops-structure.sh": {
+    "mtime": 1779705524.0580897,
+    "ast_hash": "c635b7fbc04d300d72a39a37ad099f91",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/scripts/validate-k8s-manifests.sh": {
+    "mtime": 1778314814.2621562,
+    "ast_hash": "8d4de2ded8768edbb098463a7c45c83b",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/scripts/validate-policy-gates.sh": {
+    "mtime": 1780550592.899341,
+    "ast_hash": "39f38e0b286758a2dc5393534cb2b078",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/scripts/validate-repo-quality-gates.sh": {
+    "mtime": 1780550532.605621,
+    "ast_hash": "34596bbeb8739de1b85fe4c14bf93cbe",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/.hadolint.yaml": {
+    "mtime": 1775716211.319754,
+    "ast_hash": "8f8b576f97d1904e42db73137918d3fe",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/.kube-linter.yaml": {
+    "mtime": 1775718302.8529859,
+    "ast_hash": "5e1bdeee2f4e1d7ef194390a6a10a0d2",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/.markdownlint-cli2.yaml": {
+    "mtime": 1779165444.5237887,
+    "ast_hash": "8d4995c8129c8b3ac215286ed1da6b08",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/.pre-commit-config.yaml": {
+    "mtime": 1780278960.8620927,
+    "ast_hash": "46e53571fae0593efb4aab82165f864f",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/common-governance.md": {
+    "mtime": 1780278960.8660927,
+    "ast_hash": "434c2b943d53bc560df9e481341a6df8",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/model-policy.md": {
+    "mtime": 1780278960.8660927,
+    "ast_hash": "90a70f01bdb493479aaaa27b9a0e9e41",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/00.agent-governance/providers/codex.md": {
+    "mtime": 1780278960.8660927,
+    "ast_hash": "a514c5ef6205a5938df63213c21f920c",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md": {
+    "mtime": 1780286234.347354,
+    "ast_hash": "741c7c0a74772df850ec9d20f91bd5b1",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/01.requirements/2026-06-02-current-local-gitops-platform.md": {
+    "mtime": 1780370387.059095,
+    "ast_hash": "a2d2ad4f4ed173b6ca8562c0eae01f09",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md": {
+    "mtime": 1780286235.0276873,
+    "ast_hash": "5e242d13beb84f3ea32a9eb3e0e7c2fb",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md": {
+    "mtime": 1780370387.4790928,
+    "ast_hash": "41ddece2378d69b040c5f2c1d6f6f9cd",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md": {
+    "mtime": 1780286234.7546873,
+    "ast_hash": "4e03230362ff90c570381d155f86dacd",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/02.architecture/requirements/0007-current-local-gitops-platform.md": {
+    "mtime": 1780370387.2710938,
+    "ast_hash": "e88a605d556b47d05d83d157cc3517f7",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/03.specs/008-current-local-gitops-platform/spec.md": {
+    "mtime": 1780370387.8230913,
+    "ast_hash": "13ac4db0dff4d9a5fa21284531a1a1ad",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-05-28-workspace-skill-expansion.md": {
+    "mtime": 1780004382.077757,
+    "ast_hash": "5f3ca45fff01c2ccf12bae64e8e69440",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-05-30-antigravity-governance.md": {
+    "mtime": 1780385813.8125975,
+    "ast_hash": "c2b4c9469516237780444a90b2d63e09",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-05-31-codex-governance-harness-alignment.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "70e46f90bcc9e15be5aebe392d9cc35e",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-06-01-claude-agent-surface-restoration.md": {
+    "mtime": 1780278960.8660927,
+    "ast_hash": "ced1eac23be3a27f291f8890cef0fb2d",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "81cf25a294fc0f28fac8719dac5588ab",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "fb59ccf4e23e24787091cbcee034c489",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-06-02-docs-01-05-current-implementation-alignment.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "2cdfa7261ff259fce340c0d6d2757b03",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-06-02-phase-1-decision-follow-up.md": {
+    "mtime": 1780330371.4629009,
+    "ast_hash": "7d376b005c28f13fa3cc65fada347ae0",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "1e906b8932cd946cb3dc445b15dc18af",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-06-02-phase-3-protected-surface-hardening.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "71f2590f1875faee0ed1a5c433756b98",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md": {
+    "mtime": 1780399574.4454255,
+    "ast_hash": "e729742c73b5ace240667a1dcb95596b",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/plans/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md": {
+    "mtime": 1780330371.4629009,
+    "ast_hash": "bb0194e1166f0f5613f2fb950d2fdafe",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-05-17-template-crosslink-fix.md": {
+    "mtime": 1780113143.5798745,
+    "ast_hash": "b77bf09f3c8d27d121c6e844e90553ba",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-05-28-workspace-skill-expansion.md": {
+    "mtime": 1779954832.6689954,
+    "ast_hash": "fbe00e6a683f18e25dc8fdeccd6ef785",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-05-30-antigravity-governance.md": {
+    "mtime": 1780385813.8125975,
+    "ast_hash": "7bfd68c5943605478def36f3dd7d57bc",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-05-31-codex-governance-harness-alignment.md": {
+    "mtime": 1780399574.449555,
+    "ast_hash": "d758764452095daf8480053139a7ff63",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-06-01-claude-agent-surface-restoration.md": {
+    "mtime": 1780278960.8660927,
+    "ast_hash": "c09de8fe6ad9dc46bda44e584f5a91e0",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md": {
+    "mtime": 1780399574.449555,
+    "ast_hash": "98233ba6e19d818faaf61485ce465658",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md": {
+    "mtime": 1780399574.449555,
+    "ast_hash": "077efa7702b0c0584071abeedbca0d8a",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-06-02-docs-01-05-current-implementation-alignment.md": {
+    "mtime": 1780399574.449555,
+    "ast_hash": "3ae3e762c1f09c09cb308c936b5f77b4",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-06-02-phase-1-governance-alignment-audit.md": {
+    "mtime": 1780399574.449555,
+    "ast_hash": "17dce00d9e4390843de3083f9052a26b",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-06-02-phase-2-governance-alignment.md": {
+    "mtime": 1780399574.449555,
+    "ast_hash": "d1e9a66b7e85574965741e3699bdbf1b",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-06-02-phase-3-protected-surface-hardening.md": {
+    "mtime": 1780399574.449555,
+    "ast_hash": "bfa1d5da6b9d735ee0dbef79c807040e",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md": {
+    "mtime": 1780399574.449555,
+    "ast_hash": "2a19aa22499a0bdbcc949d3aaa37f337",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/04.execution/tasks/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md": {
+    "mtime": 1780330371.4629009,
+    "ast_hash": "b72ed4ea3b25f685221bd4ca18755187",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md": {
+    "mtime": 1780550532.60147,
+    "ast_hash": "3a45249f46af9da9a7859078ce991740",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/90.references/audits/2026-05-24-workspace-harness-gap-analysis.md": {
+    "mtime": 1780399574.4536846,
+    "ast_hash": "9c4c981a1bf4dac79703ea5bb74a66f8",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md": {
+    "mtime": 1780370532.9111304,
+    "ast_hash": "e185c3148748eac254e7eb43fc1b3c25",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md": {
+    "mtime": 1780370532.9151304,
+    "ast_hash": "4625c58ca896d660e700feb627ba86de",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md": {
+    "mtime": 1780370532.9191303,
+    "ast_hash": "41bf2945fa6d9952b5224af84e8092e4",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/02.architecture/decisions/0001-k3d-topology-and-network.md": {
+    "mtime": 1780370532.9391305,
+    "ast_hash": "243cbbf83f02be0ba48739da86bc45d0",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md": {
+    "mtime": 1780370532.9431305,
+    "ast_hash": "90c171b8d99857c4c41b2a6a217f6787",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md": {
+    "mtime": 1780370532.9471304,
+    "ast_hash": "57faff85e536e10335c1e3c928cc433c",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/02.architecture/decisions/0007-kubernetes-dashboard-v3.md": {
+    "mtime": 1780370532.9471304,
+    "ast_hash": "4b632fe966f2fcd0261c15dab45d83a4",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/02.architecture/decisions/0010-headlamp-replaces-dashboard.md": {
+    "mtime": 1780370532.9511304,
+    "ast_hash": "29324dc347312721bcff7ea8cf95debf",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md": {
+    "mtime": 1780370532.9231305,
+    "ast_hash": "83307ae2a05127c09703ea46c48bfca8",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/02.architecture/requirements/0002-wsl2-k3d-argocd-ha-platform.md": {
+    "mtime": 1780370532.9311304,
+    "ast_hash": "23d7bdc6bb591e823be8e89dfbe612e0",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/02.architecture/requirements/0003-platform-expansion-mesh-dashboard.md": {
+    "mtime": 1780370532.9351304,
+    "ast_hash": "2e0f62e857bf9b14cbc7b8eba55241f9",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/03.specs/001-wsl-k3d-argocd-platform/spec.md": {
+    "mtime": 1780370532.9551306,
+    "ast_hash": "2d05d2b91864ebac38252a2dd3a2d926",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md": {
+    "mtime": 1780370532.9591305,
+    "ast_hash": "97800da42f4401c57c81de61fbd6fef6",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/03.specs/003-platform-expansion/spec.md": {
+    "mtime": 1780370532.9631305,
+    "ast_hash": "6626f3deea66aa8d09a72bf88f0b82d6",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/03.specs/007-docs-governance-consistency/spec.md": {
+    "mtime": 1780399574.4536846,
+    "ast_hash": "44ba3eccc3b3d07d4d76c413b4c33c11",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md": {
+    "mtime": 1780370532.9671304,
+    "ast_hash": "a32d88e1d45a4db5dcddf23d384fa9b8",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/04.execution/plans/2026-03-28-wsl2-k3d-argocd-ha-platform.md": {
+    "mtime": 1780370532.9711306,
+    "ast_hash": "9a64de163ef49c6d2cce24c007925ca1",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/04.execution/plans/2026-03-29-platform-expansion.md": {
+    "mtime": 1780370532.9751306,
+    "ast_hash": "2de769a7d0ec380bf9b58101d4988c83",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/04.execution/plans/2026-05-09-k3d-agent-first-remediation.md": {
+    "mtime": 1780370532.9831305,
+    "ast_hash": "3842103b56dffa3f21d4ff3132497fa9",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/04.execution/plans/2026-05-22-spec-execution-implementation-audit.md": {
+    "mtime": 1780370532.9871306,
+    "ast_hash": "a88bd0602dce655e37385cea593918bb",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/04.execution/plans/2026-05-28-docs-governance-consistency.md": {
+    "mtime": 1780399574.4536846,
+    "ast_hash": "3419e3d97f84349d819ca514f9183100",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/04.execution/plans/2026-05-30-common-agent-governance-refactoring.md": {
+    "mtime": 1780370532.9911306,
+    "ast_hash": "82fd69b6c575ab7a7a9b7621880dd29a",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/04.execution/tasks/2026-03-27-wsl-k3d-argocd-platform.md": {
+    "mtime": 1780370532.9951305,
+    "ast_hash": "336706755684e4848e1deb4d54415067",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/04.execution/tasks/2026-03-28-wsl2-k3d-argocd-ha-platform.md": {
+    "mtime": 1780370532.9991305,
+    "ast_hash": "90711cc407646c6565da7526c93c84bd",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/04.execution/tasks/2026-03-29-platform-expansion.md": {
+    "mtime": 1780370533.0031307,
+    "ast_hash": "16b9f7f32ac71e9b95cb6df65a0cd7d3",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/04.execution/tasks/2026-05-09-k3d-agent-first-remediation.md": {
+    "mtime": 1780370533.0071306,
+    "ast_hash": "0714fade8ac87727c74b1a4b8ad3c7bd",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/04.execution/tasks/2026-05-22-spec-execution-implementation-audit.md": {
+    "mtime": 1780370533.0111306,
+    "ast_hash": "3b939577b14df4338051116d272a0222",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/04.execution/tasks/2026-05-28-docs-governance-consistency.md": {
+    "mtime": 1780399574.4536846,
+    "ast_hash": "8327df2a3bb46f6680ea4cb999cdddbd",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/04.execution/tasks/2026-05-30-governance-refactoring.md": {
+    "mtime": 1780370533.0151305,
+    "ast_hash": "393e3da15f10c6a22b3e7d0f0bf1e2e9",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/05.operations/guides/0004-headlamp-auth-oidc-guide.md": {
+    "mtime": 1780399574.4536846,
+    "ast_hash": "5d8715c6f2443ec4476317b3f8174c8e",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/05.operations/runbooks/0005-headlamp-keycloak-runbook.md": {
+    "mtime": 1780399574.4536846,
+    "ast_hash": "535f04a804bc66edfd978f09a3f947d6",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/98.archive/README.md": {
+    "mtime": 1780399574.4536846,
+    "ast_hash": "7f0287f8e9bc725368491e48053b90cd",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/archive-tombstone.template.md": {
+    "mtime": 1780371529.7192945,
+    "ast_hash": "0c64c46ea9ce21ace7b788b56973c90f",
+    "semantic_hash": ""
+  },
+  "/home/hy/project-infra/hy-home.k8s/docs/99.templates/policy.template.md": {
+    "mtime": 1780278960.8700926,
+    "ast_hash": "04872ae168255ccb8a70f3d1daedc49a",
+    "semantic_hash": ""
+  }
+}
