@@ -3,7 +3,7 @@ title: 'CI/CD & QA 로컬-vs-GitHub 참조 가이드'
 type: guide
 status: active
 owner: platform
-updated: 2026-06-02
+updated: 2026-06-04
 ---
 
 # CI/CD & QA 로컬-vs-GitHub 참조 가이드
@@ -43,8 +43,8 @@ CI 실패를 사전에 예방할 수 있다.
 
 ### 1. 로컬 실행 — 커밋 전 필수 검증
 
-로컬 개발 환경에서는 **빠른 피드백**을 위해 `pre-commit` 기반의 린트와 문법 검사만을 필수로 수행한다.
-구조 검증, 의존성 점검 등의 무거운 검사는 GitHub Actions CI가 전담하여 중복 실행을 방지한다.
+로컬 개발 환경에서는 **빠른 피드백**을 위해 `pre-commit` 기반의 린트와 문법 검사를 우선 수행한다.
+PR 전 기본 기준은 pre-commit이며, CI 실패 디버깅이나 scripts/GitOps/docs 변경의 full 재현이 필요할 때 repo-static bundle을 로컬에서 실행한다.
 
 #### 1-1. pre-commit 전체 실행
 
@@ -63,7 +63,7 @@ pre-commit run --files <path/to/file>
 
 #### 1-2. 디버깅 및 CI 스크립트 (선택 사항)
 
-무거운 구조/매니페스트 검사는 GitHub Actions CI에서 수행된다. 로컬에서 CI 실패를 디버깅하거나 명시적으로 검증이 필요할 때만 아래의 스크립트들을 활용한다.
+무거운 구조/매니페스트 검사는 GitHub Actions CI에서 항상 수행된다. 로컬에서 CI 실패를 디버깅하거나 scripts/GitOps/docs 변경을 명시적으로 검증할 때 아래의 스크립트들을 활용한다.
 
 ```bash
 bash scripts/validate-repo-quality-gates.sh .
@@ -80,6 +80,8 @@ bash scripts/validate-policy-gates.sh .
 - active `docs/01-05` 문서는 오래된 UI/endpoint runtime contract를 historical 또는 superseded 메모만으로 보존할 수 없다.
 - active 문서는 archived Headlamp OIDC/Keycloak guide/runbook, removed OIDC secret contract, removed OIDC ExternalSecret filename, or missing Headlamp values-file contract를 current 운영 기준처럼 참조할 수 없다.
 - active 문서는 provider-local hook path나 현재 CI에 없는 stale job 이름을 active verification command로 노출할 수 없다.
+- active Rollouts 문서는 현재 adminer/sample-app AnalysisTemplate 구현을 future-only 또는 analysis-free 기본 계약처럼 설명할 수 없다.
+- active app onboarding 문서는 Deployment가 apps AppProject allow-list에 이미 들어있다고 설명할 수 없다.
 - archive Tombstone은 old full body를 보존하지 않고 metadata-only 본문을 유지한다.
 - `docs/99.templates/reference.template.md`는 archive 정책이나 archive wording을 포함하지 않는다.
 
@@ -157,7 +159,7 @@ bash scripts/validate-policy-gates.sh .
 pre-commit run --all-files
 ```
 
-로컬에서는 `pre-commit`만 통과하면 PR을 생성할 수 있으며, 통합 및 정책 게이트 검증은 GitHub CI에 위임한다.
+로컬에서는 `pre-commit` 통과를 빠른 PR 생성 기준으로 삼을 수 있으며, 통합 및 정책 게이트 검증은 GitHub CI가 최종 판정한다. 다만 scripts, GitOps, QA/CI 문서, policy bundle 변경은 위의 `repo-quality-static`/`manifest-static` 재현 명령을 로컬에서도 실행해 evidence를 남긴다.
 또한 신규 애플리케이션 코드는 90% coverage 유지를, 인프라 변경 시에는 validation-matrix 커버리지를 준수해야 한다.
 repo-static 및 CI 검증은 live k3d, ArgoCD, Vault, ESO, deployment readiness 증거가 아니다. live runtime 증거는 별도 승인된 read-only 검증 또는 operator-owned runbook 결과로만 기록한다.
 
@@ -168,7 +170,7 @@ repo-static 및 CI 검증은 live k3d, ArgoCD, Vault, ESO, deployment readiness 
 - **archive Tombstone 실패**: old 문서 본문을 보존했거나 `docs/98.archive/README.md` 외부에서 Tombstone을 직접 링크한 경우 발생 → Tombstone metadata와 활성 문서 링크를 정리
 - **active docs stale contract 실패**: `docs/01-05` 활성 문서에 old UI/endpoint runtime claim, archived Headlamp OIDC contract, stale hook path, stale CI job name이 남은 경우 발생 → current replacement 문서로 갱신하거나 archive로 이동
 - **branch-policy 실패**: PR source branch 접두사 오류 → branch를 재생성하거나 GitHub에서 PR base를 확인
-- **validate-policy-gates.sh conftest 미설치**: conftest 바이너리 없을 경우 스크립트가 graceful exit 0으로 종료함 (정책 게이트 미적용 상태) → conftest 설치 권장
+- **validate-policy-gates.sh conftest 미설치**: conftest 바이너리가 없으면 스크립트가 built-in fallback으로 plaintext Secret, `CreateNamespace=true`, AppProject wildcard, `latest` image 정책을 계속 검사한다. Conftest 설치 시 Rego bundle도 함께 검증된다.
 
 ## Related Documents
 

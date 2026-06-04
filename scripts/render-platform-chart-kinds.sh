@@ -1,7 +1,58 @@
 #!/usr/bin/env bash
+# render-platform-chart-kinds.sh — render platform Helm Applications and compare kinds with AppProject allow-lists
+# Usage: bash scripts/render-platform-chart-kinds.sh [repo-root]
 set -euo pipefail
 
-ROOT_DIR="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DEFAULT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+usage() {
+  printf 'Usage: bash scripts/render-platform-chart-kinds.sh [repo-root]\n'
+}
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+  usage
+  exit 0
+fi
+
+if [[ "$#" -gt 1 ]]; then
+  echo "ERR unexpected argument(s): $*" >&2
+  usage >&2
+  exit 2
+fi
+
+ROOT_INPUT="${1:-$DEFAULT_ROOT}"
+if [[ ! -d "$ROOT_INPUT" ]]; then
+  echo "ERR repo root does not exist: $ROOT_INPUT" >&2
+  exit 1
+fi
+ROOT_DIR="$(cd "$ROOT_INPUT" && pwd)"
+
+for required_path in \
+  "$ROOT_DIR/gitops/apps/root" \
+  "$ROOT_DIR/gitops/clusters/local/appproject-platform.yaml"; do
+  if [[ ! -e "$required_path" ]]; then
+    echo "ERR expected repo root at $ROOT_INPUT; missing ${required_path#"$ROOT_DIR"/}" >&2
+    usage >&2
+    exit 1
+  fi
+done
+
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "ERR python3 is required for Helm render review" >&2
+  exit 1
+fi
+
+if ! python3 -c 'import yaml' >/dev/null 2>&1; then
+  echo "ERR python3 PyYAML package is required for Helm render review" >&2
+  exit 1
+fi
+
+if ! command -v helm >/dev/null 2>&1; then
+  echo "ERR helm is required to render platform chart Applications" >&2
+  exit 1
+fi
+
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 

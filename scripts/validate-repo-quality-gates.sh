@@ -1442,6 +1442,22 @@ stale_headlamp_oidc_patterns = [
     "externalsecret-" + "oidc.yaml",
     "gitops/platform/headlamp/" + "values.yaml",
 ]
+stale_rollouts_currentness_patterns = [
+    (
+        "analysis-run 없이",
+        "stale Rollouts analysis-free promotion contract",
+    ),
+    (
+        "Prometheus analysis provider 연동 (후속 Phase)",
+        "stale Rollouts Prometheus analysis future-only contract",
+    ),
+]
+stale_app_onboarding_currentness_patterns = [
+    (
+        "Deployment는 `appproject-apps` whitelist에 포함",
+        "stale apps AppProject Deployment whitelist claim",
+    ),
+]
 for scan_root in active_currentness_roots:
     for path in sorted(scan_root.rglob("*.md")):
         if path.is_relative_to(root / "docs/98.archive"):
@@ -1462,6 +1478,15 @@ for scan_root in active_currentness_roots:
                 fail(
                     f"active authored docs must not retain archived Headlamp OIDC "
                     f"contract in {rel(path)}: {pattern}"
+                )
+        for pattern, description in [
+            *stale_rollouts_currentness_patterns,
+            *stale_app_onboarding_currentness_patterns,
+        ]:
+            if pattern in text:
+                fail(
+                    f"active authored docs must not retain {description} "
+                    f"in {rel(path)}: {pattern}"
                 )
 
 authored_command_roots = [
@@ -2006,6 +2031,7 @@ for command in [
     "bash scripts/validate-gitops-structure.sh",
     "bash scripts/validate-k8s-manifests.sh .",
     "bash scripts/check-secret-handling.sh .",
+    "bash scripts/validate-policy-gates.sh .",
 ]:
     if command not in manifest_static_runs:
         fail(f"{rel(ci_path)} manifest-static missing command: {command}")
@@ -2239,6 +2265,15 @@ claude_allow = set(claude_permissions.get("allow") or [])
 claude_deny = set(claude_permissions.get("deny") or [])
 if "Bash(git:*)" not in claude_allow:
     fail(".claude/settings.json must keep broad Git routing explicit before deny hardening")
+for allow_rule in [
+    "Bash(bash scripts/validate-repo-quality-gates.sh:*)",
+    "Bash(bash scripts/validate-k8s-manifests.sh:*)",
+    "Bash(bash scripts/validate-gitops-structure.sh:*)",
+    "Bash(bash scripts/check-secret-handling.sh:*)",
+    "Bash(bash scripts/validate-policy-gates.sh:*)",
+]:
+    if allow_rule not in claude_allow:
+        fail(f".claude/settings.json missing local QA allow rule: {allow_rule}")
 expected_destructive_git_denies = [
     "Bash(git reset --hard:*)",
     "Bash(git checkout --:*)",
@@ -2709,13 +2744,21 @@ scripts_dir = root / "scripts"
 scripts_readme = read_text(scripts_dir / "README.md")
 script_paths = sorted(scripts_dir.glob("*.sh"))
 script_names = {script.name for script in script_paths}
+disallowed_script_absolute_path_patterns = [
+    re.compile(r"(?<![A-Za-z0-9_.-])/(?:home|Users|var|opt)/[A-Za-z0-9_.-]"),
+    re.compile(r"\b[A-Z]:\\\\"),
+]
 for script in script_paths:
+    script_text = read_text(script)
     if not os.access(script, os.X_OK):
         fail(f"script must be executable: {rel(script)}")
-    if not read_text(script).startswith("#!/usr/bin/env bash\n"):
+    if not script_text.startswith("#!/usr/bin/env bash\n"):
         fail(f"script must start with bash shebang: {rel(script)}")
     if script.name not in scripts_readme:
         fail(f"script missing from scripts/README.md inventory: {script.name}")
+    for pattern in disallowed_script_absolute_path_patterns:
+        if pattern.search(script_text):
+            fail(f"{rel(script)} contains a hardcoded absolute machine path")
 
 script_inventory_rows = markdown_table_after_heading(scripts_readme, "## Script Inventory")
 expected_script_inventory_header = ["스크립트", "결정", "보존 근거", "명령·문서 표면", "목적"]
@@ -2771,6 +2814,8 @@ expected_script_classifications = {
     "validate-k8s-manifests.sh": "operations-critical/reusable",
     "check-secret-handling.sh": "operations-critical/reusable",
     "generate-llm-wiki-index.sh": "development-helper/reusable",
+    "render-platform-chart-kinds.sh": "development-helper/reusable",
+    "validate-policy-gates.sh": "operations-critical/reusable",
 }
 allowed_script_classification_terms = {
     "one-off",

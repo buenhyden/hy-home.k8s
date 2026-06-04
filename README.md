@@ -229,6 +229,7 @@ bash infrastructure/tests/verify-contracts-static.sh
 bash scripts/validate-gitops-structure.sh
 bash scripts/validate-k8s-manifests.sh .
 bash scripts/check-secret-handling.sh .
+bash scripts/validate-policy-gates.sh .
 find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +
 ```
 

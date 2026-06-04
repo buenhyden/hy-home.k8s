@@ -16,7 +16,8 @@
       "Bash(bash scripts/generate-llm-wiki-index.sh:*)",
       "Bash(bash scripts/validate-k8s-manifests.sh:*)",
       "Bash(bash scripts/validate-gitops-structure.sh:*)",
-      "Bash(bash scripts/check-secret-handling.sh:*)"
+      "Bash(bash scripts/check-secret-handling.sh:*)",
+      "Bash(bash scripts/validate-policy-gates.sh:*)"
     ],
     "deny": [
       "Bash(kubectl delete:*)",

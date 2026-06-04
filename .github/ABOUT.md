@@ -15,7 +15,7 @@ It is a map and routing surface, not the policy source of truth.
 ## Policy Routing
 
 - Branch strategy policy lives in `docs/00.agent-governance/rules/git-workflow.md`.
-- CI enforcement lives in `workflows/ci.yml` and `scripts/validate-repo-quality-gates.sh`.
+- CI enforcement lives in `workflows/ci.yml`, `scripts/validate-repo-quality-gates.sh`, and the `manifest-static` script bundle.
 - `repo-quality-static` also enforces `docs/98.archive` stage-indexed Tombstone structure, `05.operations` archive mirror coverage, and active-doc stale runtime/OIDC/hook/CI currentness rejection.
 - `ci.yml` validates pull request shape; GitHub branch protection/rulesets enforce direct-push restrictions outside repo-local files.
 - PR author and reviewer prompts live in `PULL_REQUEST_TEMPLATE.md`.
@@ -26,13 +26,13 @@ It is a map and routing surface, not the policy source of truth.
 - `ci.yml` is the required QA gate for pushes and pull requests targeting the repository's canonical integration branch, with manual reruns through `workflow_dispatch`.
 - `generate-changelog.yml` creates release-evidence artifacts for version tags. It does not commit, push, or publish.
 - `labeler.yml`, `greetings.yml`, and `stale.yml` are repository maintenance automations, not QA gates.
-- Clear separation of concerns is maintained: Local environment handles fast pre-commit linting and formatting, while GitHub CI handles heavy structural validation, template rendering, and policy gates. Redundant execution is avoided where possible.
+- Clear separation of concerns is maintained: local pre-commit handles fast linting and formatting, local repo-static scripts reproduce CI/debug evidence when needed, and GitHub CI performs the required remote gate verdict. Helm chart rendering remains a manual review helper for platform AppProject allow-list changes.
 
 ## Workflow Responsibility Matrix
 
 | Workflow | Role | Trigger / scope | Required evidence | Boundary |
 | --- | --- | --- | --- | --- |
-| `ci.yml` | Required QA gate for branch policy, repo-quality, manifest, secret checks. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` aggregates `branch-policy`, `changes`, `pre-commit`, `repo-quality-static`, and `manifest-static`; repo-quality includes `.agents/**` shared asset changes, archive Tombstone/currentness checks, Headlamp OIDC stale-contract rejection, and template enforcement. | No deploy CD, direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
+| `ci.yml` | Required QA gate for branch policy, repo-quality, manifest, secret, and policy checks. | Runs on `push`, `pull_request`, and `workflow_dispatch` for `main`-centered integration. | `ci-summary` aggregates `branch-policy`, `changes`, `pre-commit`, `repo-quality-static`, and `manifest-static`; repo-quality includes `.agents/**` shared asset changes, archive Tombstone/currentness checks, Headlamp OIDC stale-contract rejection, and template enforcement; manifest-static runs GitOps, manifest, secret, and policy scripts. | No deploy CD, direct Kubernetes mutation, external Vault mutation, container publish, or commit push. |
 | `generate-changelog.yml` | Release-evidence artifact generator. | Runs for release tag evidence and manual release support. | Produces `CHANGELOG.md` artifact for review. | Does not commit, push, publish, or mutate repository history. |
 | `greetings.yml` | Repository maintenance greeting automation. | Runs on issue or PR intake events. | Posts onboarding guidance only. | Not a QA gate, not a reviewer approval, and not deployment automation. |
 | `labeler.yml` | Repository maintenance labeling automation. | Runs on pull request path changes. | Applies labels from `.github/labeler.yml`. | Not a QA gate and must not replace CODEOWNERS or human review. |

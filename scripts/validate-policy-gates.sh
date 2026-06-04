@@ -1,11 +1,54 @@
 #!/usr/bin/env bash
+# validate-policy-gates.sh — run Conftest policy checks or built-in fallback
+# Usage: bash scripts/validate-policy-gates.sh [repo-root]
 set -euo pipefail
 
-ROOT_DIR="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DEFAULT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+usage() {
+  printf 'Usage: bash scripts/validate-policy-gates.sh [repo-root]\n'
+}
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+  usage
+  exit 0
+fi
+
+if [[ "$#" -gt 1 ]]; then
+  echo "ERR unexpected argument(s): $*" >&2
+  usage >&2
+  exit 2
+fi
+
+ROOT_INPUT="${1:-$DEFAULT_ROOT}"
+if [[ ! -d "$ROOT_INPUT" ]]; then
+  echo "ERR repo root does not exist: $ROOT_INPUT" >&2
+  exit 1
+fi
+ROOT_DIR="$(cd "$ROOT_INPUT" && pwd)"
 POLICY_DIR="$ROOT_DIR/policy/conftest"
 
-if [[ ! -d "$POLICY_DIR" ]]; then
-  echo "ERR policy directory missing: $POLICY_DIR" >&2
+for required_path in \
+  "$ROOT_DIR/gitops" \
+  "$ROOT_DIR/infrastructure" \
+  "$ROOT_DIR/examples" \
+  "$ROOT_DIR/traefik" \
+  "$POLICY_DIR"; do
+  if [[ ! -e "$required_path" ]]; then
+    echo "ERR expected repo root at $ROOT_INPUT; missing ${required_path#"$ROOT_DIR"/}" >&2
+    usage >&2
+    exit 1
+  fi
+done
+
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "ERR python3 is required for built-in policy fallback" >&2
+  exit 1
+fi
+
+if ! python3 -c 'import yaml' >/dev/null 2>&1; then
+  echo "ERR python3 PyYAML package is required for built-in policy fallback" >&2
   exit 1
 fi
 
@@ -15,7 +58,8 @@ mapfile -d '' POLICY_TARGETS < <(
     "$ROOT_DIR/infrastructure" \
     "$ROOT_DIR/examples" \
     "$ROOT_DIR/traefik" \
-    -type f \( -name '*.yaml' -o -name '*.yml' \) -print0
+    -type f \( -name '*.yaml' -o -name '*.yml' \) -print0 \
+    | sort -z
 )
 
 if ((${#POLICY_TARGETS[@]} == 0)); then
@@ -23,12 +67,22 @@ if ((${#POLICY_TARGETS[@]} == 0)); then
   exit 1
 fi
 
+echo "=== validate-policy-gates ==="
+echo "Target : $ROOT_DIR"
+echo "Policy : $POLICY_DIR"
+echo "Files  : ${#POLICY_TARGETS[@]}"
+echo ""
+
 if command -v conftest >/dev/null 2>&1; then
+  echo "--- conftest ---"
   conftest test --policy "$POLICY_DIR" "${POLICY_TARGETS[@]}"
 else
+  echo "--- conftest ---"
   echo "SKIP optional conftest not installed — running built-in policy fallback"
 fi
 
+echo ""
+echo "--- built-in policy fallback ---"
 python3 - "$ROOT_DIR" "${POLICY_TARGETS[@]}" <<'PY'
 import pathlib
 import sys
@@ -107,3 +161,6 @@ if failures:
 
 print("[PASS] built-in policy fallback passed")
 PY
+
+echo ""
+echo "=== done (exit: 0) ==="
