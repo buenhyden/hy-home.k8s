@@ -2,13 +2,13 @@
 
 ## Corpus Check
 
-- 224 files · ~188,912 words
+- 224 files · ~187,379 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 
-- 4511 nodes · 4793 edges · 454 communities (422 shown, 32 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 122 edges (avg confidence: 0.87)
+- 4902 nodes · 5203 edges · 446 communities (414 shown, 32 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 122 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
@@ -395,7 +395,6 @@
 - [[_COMMUNITY_Community 373|Community 373]]
 - [[_COMMUNITY_Community 374|Community 374]]
 - [[_COMMUNITY_Community 375|Community 375]]
-- [[_COMMUNITY_Community 376|Community 376]]
 - [[_COMMUNITY_Community 377|Community 377]]
 - [[_COMMUNITY_Community 378|Community 378]]
 - [[_COMMUNITY_Community 379|Community 379]]
@@ -404,12 +403,10 @@
 - [[_COMMUNITY_Community 382|Community 382]]
 - [[_COMMUNITY_Community 383|Community 383]]
 - [[_COMMUNITY_Community 384|Community 384]]
-- [[_COMMUNITY_Community 385|Community 385]]
 - [[_COMMUNITY_Community 386|Community 386]]
 - [[_COMMUNITY_Community 387|Community 387]]
 - [[_COMMUNITY_Community 388|Community 388]]
 - [[_COMMUNITY_Community 389|Community 389]]
-- [[_COMMUNITY_Community 390|Community 390]]
 - [[_COMMUNITY_Community 391|Community 391]]
 - [[_COMMUNITY_Community 392|Community 392]]
 - [[_COMMUNITY_Community 393|Community 393]]
@@ -426,7 +423,6 @@
 - [[_COMMUNITY_Community 404|Community 404]]
 - [[_COMMUNITY_Community 405|Community 405]]
 - [[_COMMUNITY_Community 406|Community 406]]
-- [[_COMMUNITY_Community 407|Community 407]]
 - [[_COMMUNITY_Community 408|Community 408]]
 - [[_COMMUNITY_Community 409|Community 409]]
 - [[_COMMUNITY_Community 410|Community 410]]
@@ -436,7 +432,6 @@
 - [[_COMMUNITY_Community 414|Community 414]]
 - [[_COMMUNITY_Community 415|Community 415]]
 - [[_COMMUNITY_Community 416|Community 416]]
-- [[_COMMUNITY_Community 417|Community 417]]
 - [[_COMMUNITY_Community 418|Community 418]]
 - [[_COMMUNITY_Community 419|Community 419]]
 - [[_COMMUNITY_Community 420|Community 420]]
@@ -451,11 +446,8 @@
 - [[_COMMUNITY_Community 429|Community 429]]
 - [[_COMMUNITY_Community 430|Community 430]]
 - [[_COMMUNITY_Community 431|Community 431]]
-- [[_COMMUNITY_Community 432|Community 432]]
 - [[_COMMUNITY_Community 433|Community 433]]
-- [[_COMMUNITY_Community 434|Community 434]]
 - [[_COMMUNITY_Community 435|Community 435]]
-- [[_COMMUNITY_Community 436|Community 436]]
 - [[_COMMUNITY_Community 437|Community 437]]
 - [[_COMMUNITY_Community 438|Community 438]]
 - [[_COMMUNITY_Community 439|Community 439]]
@@ -492,26 +484,26 @@
   README.md → docs/02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md
 - `Canonical Owner Link Map` --semantically_similar_to--> `Canonical Template Stage README`  [INFERRED] [semantically similar]
   docs/90.references/llm-wiki/README.md → docs/99.templates/README.md
-- `External Runtime Boundary` --conceptually_related_to--> `External Endpoint Contract`  [INFERRED]
-  README.md → docs/02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md
-- `hy-home.k8s` --references--> `Documentation Hub`  [EXTRACTED]
+- `ArgoCD App-of-Apps GitOps` --implements--> `ADR-0002 ArgoCD Helm Install with App-of-Apps and ApplicationSet`  [EXTRACTED]
+  README.md → docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md
+- `Spec-Driven Documentation SSoT` --references--> `Docs Canonical Taxonomy`  [EXTRACTED]
   README.md → docs/README.md
 
 ## Import Cycles
 
 - None detected.
 
-## Communities (454 total, 32 thin omitted)
+## Communities (446 total, 32 thin omitted)
 
 ### Community 0 - "05 Operations Runbooks"
 
-Cohesion: 0.21
-Nodes (17): Platform Expansion Bootstrap Runbook, cert-manager Headlamp Istio Kiali Bootstrap, cert-manager mkcert ClusterIssuer, Service Mesh and cert-manager Operations Policy, Istio Opt In Sidecar Injection, Istio Sidecar Opt-in Policy, Kiali External Observability Contract, Observability Platform Operations Policy (+9 more)
+Cohesion: 0.24
+Nodes (12): Human Approved Break Glass Boundary, Platform Expansion Bootstrap Runbook, cert-manager Headlamp Istio Kiali Bootstrap, cert-manager mkcert ClusterIssuer, Service Mesh and cert-manager Operations Policy, Istio Opt In Sidecar Injection, Istio Sidecar Opt-in Policy, Kiali External Observability Contract (+4 more)
 
 ### Community 1 - "App Gitops Onboarding Policy"
 
-Cohesion: 0.15
-Nodes (14): Architecture Decision Record Template, Decision Context Consequences Alternatives, API Contract Compatibility Verification, API Specification Template, Architecture Reference Document Template, Quality Attributes Boundary, Data Integrity Privacy Migration, Data Model Template (+6 more)
+Cohesion: 0.13
+Nodes (16): Architecture Decision Record Template, Decision Context Consequences Alternatives, API Contract Compatibility Verification, API Specification Template, Architecture Reference Document Template, Quality Attributes Boundary, Data Integrity Privacy Migration, Data Model Template (+8 more)
 
 ### Community 2 - "003 Platform Expansion"
 
@@ -525,13 +517,13 @@ Nodes (72): AI Agent Governance Hub, Agentic Execution Rules, GitOps First Mutat
 
 ### Community 4 - "Architecture Decision Records Stage"
 
-Cohesion: 0.16
-Nodes (15): ADR-0001: k3d Topology and External Network Baseline, External Network Baseline, k3d 1 Server 3 Agents Topology, ADR-0002: ArgoCD Helm Install with App-of-Apps and ApplicationSet, App-of-Apps and ApplicationSet Model, ArgoCD Helm Installation Model, ADR-0004: External Service Access Model and ArgoCD Valkey Backend, ArgoCD External Valkey Backend (+7 more)
+Cohesion: 0.14
+Nodes (18): ADR-0001: k3d Topology and External Network Baseline, External Network Baseline, k3d 1 Server 3 Agents Topology, ADR-0002: ArgoCD Helm Install with App-of-Apps and ApplicationSet, App-of-Apps and ApplicationSet Model, ArgoCD Helm Installation Model, ADR-0004: External Service Access Model and ArgoCD Valkey Backend, ArgoCD External Valkey Backend (+10 more)
 
 ### Community 5 - "Requirements Stage"
 
-Cohesion: 0.13
-Nodes (18): Documentation Scope, Canonical Stage Taxonomy, Prohibited Parallel Documentation Trees, Template Enforcement Policy, Operations Policy Runbook Boundary, Docs Canonical Taxonomy, docs Project Documentation Hub, Documentation Flow (+10 more)
+Cohesion: 0.16
+Nodes (14): Documentation Scope, Canonical Stage Taxonomy, Prohibited Parallel Documentation Trees, Template Enforcement Policy, Operations Policy Runbook Boundary, Docs Canonical Taxonomy, docs Project Documentation Hub, Documentation Flow (+6 more)
 
 ### Community 6 - "Technical Specification"
 
@@ -575,8 +567,8 @@ Nodes (15): argocd host rule, ArgoCD Helm values, argocd.127.0.0.1.nip.io, argoc
 
 ### Community 14 - "Infrastructure To Theory Learning Roadmap"
 
-Cohesion: 0.18
-Nodes (11): AKS Supported Versions, AWS EKS Versions, Cloud Example Snapshot 2026-05-09, GitHub Actions Version Contracts, Helm Chart Version Contracts, Ingress NGINX Boundary, rancher/k3s:v1.35.0-k3s1, Kubernetes v1.36 Release (+3 more)
+Cohesion: 0.07
+Nodes (31): ArgoCD GitOps, k3d and Docker, Efficient Memory Management for LLM Serving with PagedAttention, Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks, Reconciliation Loop, Infrastructure to Theory Learning Roadmap, Attention Is All You Need, Vector Indexing (+23 more)
 
 ### Community 15 - "Argocd K3D Traefik Router"
 
@@ -765,8 +757,8 @@ Nodes (38): 1-1. 현재 EndpointSlice IP 확인, 1-2. 컨테이너 실제 IP 확
 
 ### Community 73 - "Community 73"
 
-Cohesion: 0.05
-Nodes (37): 2026-06-01 — Phase 1 Skill-Axis Governance Audit Overlay, 2026-06-01 — Workspace Agent Governance PRD/ARD Traceability Backfill, 2026-06-02 — Current Implementation Docs Alignment And Archive Cleanup, 2026-06-02 — Docs 01-05 Current Implementation Alignment, 2026-06-02 — Stage 00 Codex Harness Coverage Reconciliation, Agent Progress and Memory Ledger, Context, Evidence (+29 more)
+Cohesion: 0.18
+Nodes (11): 2026-06-01 — Workspace Agent Governance PRD/ARD Traceability Backfill, Evidence, Evidence, Metadata, Metadata, Prevention, Prevention, Problem (+3 more)
 
 ### Community 74 - "Community 74"
 
@@ -840,8 +832,8 @@ Nodes (20): CI Static Validation (cluster not required), Common Pitfalls, Guide 
 
 ### Community 88 - "Community 88"
 
-Cohesion: 0.10
-Nodes (21): 2026-05-16 — Cycle 2 implementation: local toolchain setup documentation, 2026-05-25 — GitOps hierarchy guardrail follow-up, 2026-05-25 — operations routing matrix guardrail follow-up, 2026-05-26 — Kube-linter optional boundary guardrail follow-up, 2026-05-26 — Traefik 443 runtime proof follow-up, Evidence, Evidence, Evidence (+13 more)
+Cohesion: 0.29
+Nodes (7): 2026-05-16 — Cycle 2 implementation: local toolchain setup documentation, Evidence, Evidence, Memory, Memory, Progress, Progress
 
 ### Community 89 - "Community 89"
 
@@ -865,8 +857,8 @@ Nodes (17): 99.templates, Archive Tombstone Rules, Audience, Contract Template P
 
 ### Community 93 - "Community 93"
 
-Cohesion: 0.11
-Nodes (17): Architecture Stage, Audience, docs: 프로젝트 문서 허브, docs Documentation SSoT, Documentation Contract, Documentation Flow, How to Work in This Area, In Scope (+9 more)
+Cohesion: 0.13
+Nodes (14): Audience, docs: 프로젝트 문서 허브, Documentation Contract, How to Work in This Area, In Scope, Link Basis, Out of Scope, Overview (+6 more)
 
 ### Community 94 - "Community 94"
 
@@ -880,8 +872,8 @@ Nodes (17): Agent Operations (If Applicable), ArgoCD ESO Vault Recovery Runbook,
 
 ### Community 96 - "Community 96"
 
-Cohesion: 0.18
-Nodes (17): ADR-0001 k3d Topology and External Network Baseline, servers=1 agents=3 k3d Topology, ADR-0002 ArgoCD Helm and GitOps Model, App-of-Apps and ApplicationSet, ADR-0003 ESO Vault Kubernetes Auth, Least Privilege Secret Sync, ADR-0004 External Services and Valkey Backend, ArgoCD External Valkey Backend (+9 more)
+Cohesion: 0.11
+Nodes (28): ADR-0001 k3d Topology and External Network Baseline, servers=1 agents=3 k3d Topology, ADR-0002 ArgoCD Helm and GitOps Model, App-of-Apps and ApplicationSet, ADR-0003 ESO Vault Kubernetes Auth, Least Privilege Secret Sync, ADR-0004 External Services and Valkey Backend, ArgoCD External Valkey Backend (+20 more)
 
 ### Community 97 - "Community 97"
 
@@ -915,8 +907,8 @@ Nodes (16): Agent Operations (If Applicable), Canonical References, Observabilit
 
 ### Community 103 - "Community 103"
 
-Cohesion: 0.19
-Nodes (16): Human Approved Break Glass Boundary, ArgoCD ESO Vault Recovery Runbook, ApplicationSet Workload Onboarding, apps-generator Onboarding Procedure, New App GitOps Onboarding Runbook, App Vault and ExternalSecret Boundary, apps-generator Workload Layout, App GitOps Onboarding Policy (+8 more)
+Cohesion: 0.23
+Nodes (14): ArgoCD ESO Vault Recovery Runbook, ApplicationSet Workload Onboarding, apps-generator Onboarding Procedure, New App GitOps Onboarding Runbook, App Vault and ExternalSecret Boundary, apps-generator Workload Layout, App GitOps Onboarding Policy, Apps Namespace Istio mTLS (+6 more)
 
 ### Community 104 - "Community 104"
 
@@ -1115,8 +1107,8 @@ Nodes (13): AI Agent Policy Section (If Applicable), Applies To, Audit Items, CI
 
 ### Community 143 - "Community 143"
 
-Cohesion: 0.15
-Nodes (14): Learning Canonical Stage Boundary, Infrastructure Theory Roadmap, Learning Reference Stage, Reference Authority Boundary, External Support Snapshot, Live Upgrade Boundary, Versions Reference Stage, Repo Backed Version Contract (+6 more)
+Cohesion: 0.18
+Nodes (13): Ingress TLS Contract, Traefik Dynamic Routing, External Support Snapshot, Live Upgrade Boundary, Versions Reference Stage, Repo Backed Version Contract, Cloud Example Snapshot 2026-05-09, GitHub Actions Version Pins (+5 more)
 
 ### Community 144 - "Community 144"
 
@@ -1140,13 +1132,13 @@ Nodes (13): Agent-specific Types (If Applicable), Approved Protected Surface Fol
 
 ### Community 148 - "Community 148"
 
-Cohesion: 0.21
-Nodes (13): ADR-0001 k3d Topology and External Network Baseline, ADR-0002 ArgoCD Helm Install with App-of-Apps and ApplicationSet, ADR-0004 External Service Access Model and ArgoCD Valkey Backend, ADR-0005 WSL2 HA Baseline and External Endpoint Contract, External Vault PostgreSQL Valkey Integration Requirement, Reproducible WSL2 k3d ArgoCD GitOps Platform, WSL2 k3s k3d ArgoCD GitOps Platform PRD, External Services Service EndpointSlice Contract (+5 more)
+Cohesion: 0.28
+Nodes (9): ADR-0001 k3d Topology and External Network Baseline, ADR-0004 External Service Access Model and ArgoCD Valkey Backend, ADR-0005 WSL2 HA Baseline and External Endpoint Contract, External Services Service EndpointSlice Contract, k3d Multi-node Topology, GitOps Pull Reconciliation Rationale, ArgoCD App-of-Apps GitOps, External Vault PostgreSQL Valkey Runtime Contracts (+1 more)
 
 ### Community 149 - "Community 149"
 
-Cohesion: 0.26
-Nodes (13): ADR-0003 ESO Vault Kubernetes Auth for Runtime Secrets, ADR-0011 Argo Rollouts for Progressive Delivery, ADR-0012 Argo Notifications with Slack Webhook, Argo Notifications Slack Webhook PRD, Argo Rollouts Progressive Delivery PRD, Argo Notifications Slack Events, Argo Rollouts Progressive Delivery, Vault ESO Secret Synchronization (+5 more)
+Cohesion: 0.20
+Nodes (18): ADR-0002 ArgoCD Helm Install with App-of-Apps and ApplicationSet, ADR-0003 ESO Vault Kubernetes Auth for Runtime Secrets, ADR-0011 Argo Rollouts for Progressive Delivery, ADR-0012 Argo Notifications with Slack Webhook, Argo Notifications Slack Webhook PRD, Argo Rollouts Progressive Delivery PRD, Architecture Stage, Argo Notifications Slack Events (+10 more)
 
 ### Community 150 - "Community 150"
 
@@ -1250,8 +1242,8 @@ Nodes (12): cert-manager and mkcert ClusterIssuer, Platform Expansion Bootstrap 
 
 ### Community 170 - "Community 170"
 
-Cohesion: 0.21
-Nodes (12): Superseded Generic Onboarding, App GitOps Onboarding Policy, GitHub App GitOps Onboarding Guide, GitHub App GitOps Onboarding Runbook, Ingress TLS Contract, Istio HTTP Port Naming, Istio mTLS STRICT, NetworkPolicy Egress (+4 more)
+Cohesion: 0.16
+Nodes (18): apps-generator ApplicationSet, External Repo Application CR, GitOps Sync Verification, New App GitOps Onboarding Runbook, Onboarding Troubleshooting, Superseded Generic Onboarding, Vault ESO Secret Setup, App GitOps Onboarding Policy (+10 more)
 
 ### Community 171 - "Community 171"
 
@@ -1410,13 +1402,13 @@ Nodes (11): Service Mesh and cert-manager Operations Policy, Headlamp Replaces K
 
 ### Community 202 - "Community 202"
 
-Cohesion: 0.20
-Nodes (11): ArgoCD Pull Reconciliation, External Endpoint Contract, HA Platform PRD, Static CI Gates, Kustomize Resource Completeness, External Runtime Boundary, GitOps Desired State, GitOps Manifests and Bootstrap Assets (+3 more)
+Cohesion: 0.18
+Nodes (12): ArgoCD Pull Reconciliation, External Endpoint Contract, HA Platform PRD, Static CI Gates, Kustomize Resource Completeness, External Runtime Boundary, GitOps Desired State, GitOps Manifests and Bootstrap Assets (+4 more)
 
 ### Community 203 - "Community 203"
 
-Cohesion: 0.35
-Nodes (11): ADR-0006 cert-manager with mkcert CA as ClusterIssuer, ADR-0007 Kubernetes Dashboard v3 Installation, ADR-0008 Istio Default Profile with ingress-nginx Coexistence, ADR-0009 Kiali with External Observability Stack, Dashboard cert-manager Istio Kiali Platform Components, Platform Expansion Headlamp cert-manager Istio Kiali PRD, cert-manager mkcert TLS Automation, Headlamp Cluster UI (+3 more)
+Cohesion: 0.33
+Nodes (10): ADR-0006 cert-manager with mkcert CA as ClusterIssuer, ADR-0007 Kubernetes Dashboard v3 Installation, ADR-0008 Istio Default Profile with ingress-nginx Coexistence, ADR-0009 Kiali with External Observability Stack, Dashboard cert-manager Istio Kiali Platform Components, Platform Expansion Headlamp cert-manager Istio Kiali PRD, cert-manager mkcert TLS Automation, Headlamp Cluster UI (+2 more)
 
 ### Community 204 - "Community 204"
 
@@ -1425,8 +1417,8 @@ Nodes (10): 04.execution, Audience, How to Work in This Area, In Scope, Link Bas
 
 ### Community 205 - "Community 205"
 
-Cohesion: 0.24
-Nodes (11): Headlamp cert-manager Istio Kiali, Platform Expansion PRD, Argo Notifications Slack PRD, Argo Rollouts PRD, Canary Blue-Green Delivery, Backend Scope, Frontend Scope, Product Scope (+3 more)
+Cohesion: 0.18
+Nodes (11): 2026-06-02 — Current Implementation Docs Alignment And Archive Cleanup, Evidence, Evidence, Metadata, Metadata, Prevention, Prevention, Problem (+3 more)
 
 ### Community 206 - "Community 206"
 
@@ -1445,8 +1437,8 @@ Nodes (10): Authority Boundary, Definitions / Facts, Overview (KR), Purpose, Ref
 
 ### Community 209 - "Community 209"
 
-Cohesion: 0.18
-Nodes (11): Agent Design Template, Agent Safety Evaluation Contract, Agent Governance Memory Template, Progress Entry Coupling, Agents Feature Design Routing, Agents Reference Boundary, Agents Runtime Truth Boundary, Canonical Owner Pointers (+3 more)
+Cohesion: 0.17
+Nodes (13): Agent Governance Memory Template, Progress Entry Coupling, Learning Canonical Stage Boundary, Infrastructure Theory Roadmap, Learning Reference Stage, Canonical Owner Pointers, Deterministic Link Map, Generated LLM WIKI Index (+5 more)
 
 ### Community 210 - "Community 210"
 
@@ -1545,13 +1537,13 @@ Nodes (8): bootstrap-local.sh script, check_tcp_dependency(), fail(), port_in_us
 
 ### Community 229 - "Community 229"
 
-Cohesion: 0.20
-Nodes (10): ArgoCD GitOps, k3d and Docker, Efficient Memory Management for LLM Serving with PagedAttention, Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks, Reconciliation Loop, Infrastructure to Theory Learning Roadmap, Attention Is All You Need, Vector Indexing (+2 more)
+Cohesion: 0.18
+Nodes (11): 2026-06-02 — Docs 01-05 Current Implementation Alignment, Evidence, Evidence, Metadata, Metadata, Prevention, Prevention, Problem (+3 more)
 
 ### Community 230 - "Community 230"
 
 Cohesion: 0.20
-Nodes (10): Agentic Execution Rule, Document Stage Routing Rules, Harness Catalog, Learning References, LLM Wiki Curation Guide, LLM WIKI Reference Index, Reference Maintenance Runbook, Reference Template (+2 more)
+Nodes (10): 2026-06-01 — Phase 1 Skill-Axis Governance Audit Overlay, Evidence, Evidence, Metadata, Prevention, Prevention, Problem, Problem (+2 more)
 
 ### Community 231 - "Community 231"
 
@@ -1580,8 +1572,8 @@ Nodes (9): ArgoCD root-platform Application, infrastructure/bootstrap-local.sh, 
 
 ### Community 236 - "Community 236"
 
-Cohesion: 0.36
-Nodes (9): ARD-0001 WSL k3d/k3s ArgoCD Platform, External PostgreSQL and Valkey Services, ArgoCD GitOps Control Plane, ESO and Vault Secret Plane, WSL k3d/k3s ArgoCD Platform, Initial WSL k3d ArgoCD Platform Plan, Architecture Requirements Stage, External Runtime Integration Contract (+1 more)
+Cohesion: 0.33
+Nodes (10): ARD-0001 WSL k3d/k3s ArgoCD Platform, External PostgreSQL and Valkey Services, ArgoCD GitOps Control Plane, ESO and Vault Secret Plane, WSL k3d/k3s ArgoCD Platform, Initial WSL k3d ArgoCD Platform Plan, Architecture Requirements Stage, External Runtime Integration Contract (+2 more)
 
 ### Community 237 - "Community 237"
 
@@ -1595,23 +1587,23 @@ Nodes (9): ArgoCD Metrics NodePorts, Grafana ArgoCD Dashboard, Prometheus ArgoCD
 
 ### Community 239 - "Community 239"
 
-Cohesion: 0.47
-Nodes (9): k8s Observability Operations Policy, Alloy k8s Log Collection, AppProject Destinations Management, k8s Observability Operations Policy, k8s Metrics NodePort Reservations, Prometheus Alert Rules Load Pattern, k8s Observability Recovery Runbook, k8s Observability Recovery Procedure (+1 more)
+Cohesion: 0.26
+Nodes (16): Observability Platform Operations Policy, ArgoCD Metrics NodePort Reservations, Observability Platform Operations Policy, Istio Service Port Naming Contract, k8s Observability Operations Policy, Alloy k8s Log Collection, AppProject Destinations Management, k8s Observability Operations Policy (+8 more)
 
 ### Community 240 - "Community 240"
 
-Cohesion: 0.28
-Nodes (9): apps-generator ApplicationSet, External Repo Application CR, GitOps Sync Verification, New App GitOps Onboarding Runbook, Onboarding Troubleshooting, Vault ESO Secret Setup, AppProject Apps, GitOps Workload Layout (+1 more)
+Cohesion: 0.25
+Nodes (7): 2026-06-02 — Stage 00 Codex Harness Coverage Reconciliation, Agent Progress and Memory Ledger, Evidence, Metadata, Prevention, Problem, Resolution
 
 ### Community 241 - "Community 241"
 
-Cohesion: 0.28
-Nodes (9): ADR-0011 Argo Rollouts for Progressive Delivery, Argo Rollouts, Manual Promotion Strategy, Rollouts Dashboard, Architecture Decision Record Stage, Spec 004 Argo Rollouts Progressive Delivery, platform-rollouts Application Contract, Rollouts Agent Permission Boundary (+1 more)
+Cohesion: 0.17
+Nodes (17): ADR-0011 Argo Rollouts for Progressive Delivery, Argo Rollouts, Manual Promotion Strategy, Rollouts Dashboard, ADR-0012 Argo Notifications with Slack Webhook, ArgoCD Notifications, Default and App Opt-in Notification Subscriptions, Slack Webhook Destination (+9 more)
 
 ### Community 242 - "Community 242"
 
-Cohesion: 0.31
-Nodes (9): ADR-0012 Argo Notifications with Slack Webhook, ArgoCD Notifications, Default and App Opt-in Notification Subscriptions, Slack Webhook Destination, Vault to ESO Notification Secret, Spec 005 Argo Notifications Slack, Plaintext Secrets Blocked Guardrail, Notifications Config and Secret Contract (+1 more)
+Cohesion: 0.29
+Nodes (7): 2026-05-25 — GitOps hierarchy guardrail follow-up, Evidence, Evidence, Memory, Memory, Progress, Progress
 
 ### Community 243 - "Community 243"
 
@@ -1785,13 +1777,13 @@ Nodes (8): Archive Decision, Archive Index, Archive Tombstone: Governance Refact
 
 ### Community 277 - "Community 277"
 
-Cohesion: 0.39
-Nodes (8): AnalysisTemplate Required, ArgoCD Metrics Prometheus Recovery Runbook, Error Signature Matrix, k3d Node IP Drift Response, NodePort Metrics Exposure, NodePort Redeploy Recovery, Prometheus Config Reload, Prometheus Scrape Target Drift
+Cohesion: 0.27
+Nodes (11): AnalysisTemplate Required, ArgoCD Metrics Prometheus Recovery Runbook, Error Signature Matrix, k3d Node IP Drift Response, NodePort Metrics Exposure, NodePort Redeploy Recovery, Observability Evidence Sources, Prometheus Config Reload (+3 more)
 
 ### Community 278 - "Community 278"
 
-Cohesion: 0.25
-Nodes (8): Observability Evidence Sources, Guide vs Runbook Boundary, Operations Guide Template, Implementation Plan Template, Verification Risk Rollout Contract, Operations Runbook Stage, Runbook Policy Guide Incident Routing, Runbook Recovery Evidence Contract
+Cohesion: 0.29
+Nodes (7): 2026-05-25 — operations routing matrix guardrail follow-up, Evidence, Evidence, Memory, Memory, Progress, Progress
 
 ### Community 279 - "Community 279"
 
@@ -2020,348 +2012,333 @@ Nodes (4): verify-external-services.sh script, check_obs_ep(), check_obs_port(),
 
 ### Community 324 - "Community 324"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-10 — 90.references learning and version inventory routing, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-10 — 90.references learning and version inventory routing, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 325 - "Community 325"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-10 — 90.references role and format contract, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-10 — 90.references role and format contract, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 326 - "Community 326"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-10 — Docs taxonomy and progress memory contract, Evidence, Handoff, Memory, Progress
+Cohesion: 0.12
+Nodes (17): 2026-05-10 — Docs taxonomy and progress memory contract, 2026-05-10 — Hook payload and post-edit validation hardening, Evidence, Evidence, Evidence, Evidence, Handoff, Handoff (+9 more)
 
 ### Community 327 - "Community 327"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-10 — Examples docs and LLM WIKI reference guardrails, Evidence, Handoff, Memory, Progress
+Cohesion: 0.12
+Nodes (17): 2026-05-10 — Examples docs and LLM WIKI reference guardrails, 2026-05-15 — Workspace audit pipeline: housekeeping and quality-gate alignment, Evidence, Evidence, Evidence, Evidence, Handoff, Handoff (+9 more)
 
 ### Community 328 - "Community 328"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-10 — Hook payload and post-edit validation hardening, Evidence, Handoff, Memory, Progress
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — Kube-linter optional boundary guardrail follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 329 - "Community 329"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-10 — Memory template and progress ledger enforcement, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-10 — Memory template and progress ledger enforcement, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 330 - "Community 330"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-10 — Runtime wiki-curator and generated LLM Wiki index, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-10 — Runtime wiki-curator and generated LLM Wiki index, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 331 - "Community 331"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-15 — Workspace audit pipeline: housekeeping and quality-gate alignment, Evidence, Handoff, Memory, Progress
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — Traefik 443 runtime proof follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 332 - "Community 332"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-16 — Prompt-kit implementation executor pass, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-16 — Prompt-kit implementation executor pass, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 333 - "Community 333"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-17 — 01.requirements PRD currentness remediation, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-17 — 01.requirements PRD currentness remediation, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 334 - "Community 334"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-17 — 05.operations metadata and template alignment, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-17 — 05.operations metadata and template alignment, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 335 - "Community 335"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-17 — 90.references operations maintenance runbook, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-17 — 90.references operations maintenance runbook, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 336 - "Community 336"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-17 — 90.references template hardening, Evidence, Handoff, Memory, Progress
+Cohesion: 0.13
+Nodes (16): 2026-05-17 — 90.references template hardening, 2026-05-17 — template cross-link completion, Evidence, Evidence, Evidence, Evidence, Handoff, Handoff (+8 more)
 
 ### Community 337 - "Community 337"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-17 — scripts cleanup retention evidence refresh, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-17 — scripts cleanup retention evidence refresh, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 338 - "Community 338"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-17 — template cross-link completion, Evidence, Handoff, Memory, Progress
+Cohesion: 0.33
+Nodes (6): 2026-06-02 — Stage 00 Codex Harness Coverage Reconciliation, Evidence, Metadata, Prevention, Problem, Resolution
 
 ### Community 339 - "Community 339"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-18 — 03.specs traceability backfill, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-18 — 03.specs traceability backfill, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 340 - "Community 340"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-18 — 04.execution README normalization, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-18 — 04.execution README normalization, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 341 - "Community 341"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-18 — 05.operations README routing cleanup, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-18 — 05.operations README routing cleanup, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 342 - "Community 342"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-18 — 90.references learning roadmap boundary clarification, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-18 — 90.references learning roadmap boundary clarification, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 343 - "Community 343"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-18 — docs stage conformance follow-up, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-18 — docs stage conformance follow-up, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 344 - "Community 344"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-18 — docs stage README link-basis normalization, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-18 — docs stage README link-basis normalization, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 345 - "Community 345"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-18 — docs template conformance pass, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-18 — docs template conformance pass, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 346 - "Community 346"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-18 — docs template link-basis clarification, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-18 — docs template link-basis clarification, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 347 - "Community 347"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-19 — docs taxonomy and template alignment, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-19 — docs taxonomy and template alignment, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 348 - "Community 348"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-19 — docs template enforcement hardening, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-19 — docs template enforcement hardening, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 349 - "Community 349"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-21 — docs office-hours taxonomy follow-up, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-21 — docs office-hours taxonomy follow-up, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 350 - "Community 350"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-21 — operations policy runbook boundary clarification, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-21 — operations policy runbook boundary clarification, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 351 - "Community 351"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-22 — docs governance Full A+B hardening, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-22 — docs governance Full A+B hardening, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 352 - "Community 352"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-22 — documentation system contract alignment, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-22 — documentation system contract alignment, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 353 - "Community 353"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-22 — governance docs lifecycle hook hardening, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-22 — governance docs lifecycle hook hardening, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 354 - "Community 354"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-22 — post-edit style and commit discipline hooks, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-22 — post-edit style and commit discipline hooks, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 355 - "Community 355"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-22 — runtime premise and local skill mirror remediation, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-22 — runtime premise and local skill mirror remediation, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 356 - "Community 356"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-22 — workspace purpose alignment audit, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-22 — workspace purpose alignment audit, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 357 - "Community 357"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-24 — approved P3 GitOps secret runtime remediation, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-24 — approved P3 GitOps secret runtime remediation, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 358 - "Community 358"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-24 — docs-stage conformance skill creation, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-24 — docs-stage conformance skill creation, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 359 - "Community 359"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-24 — gstack plan CEO review follow-up, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-24 — gstack plan CEO review follow-up, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 360 - "Community 360"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-24 — superpowers executing-plans follow-up, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-24 — superpowers executing-plans follow-up, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 361 - "Community 361"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-24 — workspace harness brainstorming reflection follow-up, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-24 — workspace harness brainstorming reflection follow-up, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 362 - "Community 362"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-24 — workspace harness gap analysis and limited implementation, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-24 — workspace harness gap analysis and limited implementation, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 363 - "Community 363"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-24 — workspace harness hybrid refresh, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-24 — workspace harness hybrid refresh, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 364 - "Community 364"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-24 — workspace harness input reflection follow-up, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-24 — workspace harness input reflection follow-up, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 365 - "Community 365"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-24 — workspace harness office-hours reflection follow-up, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-24 — workspace harness office-hours reflection follow-up, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 366 - "Community 366"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-24 — workspace harness skill quality follow-up, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-24 — workspace harness skill quality follow-up, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 367 - "Community 367"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-25 — approval-bound completion audit, Evidence, Handoff, Memory, Progress
+Cohesion: 0.12
+Nodes (17): 2026-05-25 — approval-bound completion audit, 2026-05-25 — deferred item repo-static improvement overlay, Evidence, Evidence, Evidence, Evidence, Handoff, Handoff (+9 more)
 
 ### Community 368 - "Community 368"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-25 — approval-bound evidence refresh, Evidence, Handoff, Memory, Progress
+Cohesion: 0.12
+Nodes (17): 2026-05-25 — approval-bound evidence refresh, 2026-05-25 — lifecycle hook task-unit commit advisory, Evidence, Evidence, Evidence, Evidence, Handoff, Handoff (+9 more)
 
 ### Community 369 - "Community 369"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-25 — authored SSoT large-scale overlay, Evidence, Handoff, Memory, Progress
+Cohesion: 0.15
+Nodes (15): 2026-05-25 — authored SSoT large-scale overlay, 2026-05-25 — task-unit commit follow-up, Evidence, Evidence, Evidence, Handoff, Handoff, Handoff (+7 more)
 
 ### Community 370 - "Community 370"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-25 — deferred item repo-static improvement overlay, Evidence, Handoff, Memory, Progress
+Cohesion: 0.33
+Nodes (6): Context, Harness Implementation Progress, Historical Entries, Prevention, Problem, Resolution
 
 ### Community 371 - "Community 371"
 
 Cohesion: 0.40
-Nodes (5): 2026-05-25 — lifecycle hook task-unit commit advisory, Evidence, Handoff, Memory, Progress
+Nodes (5): Agent Design Template, Agent Safety Evaluation Contract, Agents Feature Design Routing, Agents Reference Boundary, Agents Runtime Truth Boundary
 
 ### Community 372 - "Community 372"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-25 — live bootstrap runtime closure, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-25 — live bootstrap runtime closure, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 373 - "Community 373"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-25 — multi-area workspace improvement overlay, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-25 — multi-area workspace improvement overlay, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 374 - "Community 374"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-25 — P0 mandatory workspace revalidation overlay, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-25 — P0 mandatory workspace revalidation overlay, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 375 - "Community 375"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-25 — post-merge completion audit, Evidence, Handoff, Memory, Progress
-
-### Community 376 - "Community 376"
-
-Cohesion: 0.40
-Nodes (5): 2026-05-25 — task-unit commit follow-up, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-25 — post-merge completion audit, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 377 - "Community 377"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-29 — 3-provider governance parity and capability symmetry, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-29 — 3-provider governance parity and capability symmetry, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 378 - "Community 378"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-29 — Claude-first governance reframing (v2), Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-29 — Claude-first governance reframing (v2), Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 379 - "Community 379"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-30 — Hybrid SSoT reconciliation (symlinks + per-provider agents), Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-30 — Hybrid SSoT reconciliation (symlinks + per-provider agents), Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 380 - "Community 380"
 
-Cohesion: 0.40
-Nodes (5): 2026-05-31 — Codex governance harness alignment, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-05-31 — Codex governance harness alignment, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 381 - "Community 381"
 
-Cohesion: 0.40
-Nodes (5): 2026-06-01 — Claude agent surface restoration Phase 2/3, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-06-01 — Claude agent surface restoration Phase 2/3, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 382 - "Community 382"
 
-Cohesion: 0.40
-Nodes (5): 2026-06-02 — Operations documentation template conformance, Evidence, Handoff, Memory, Progress
+Cohesion: 0.12
+Nodes (17): 2026-06-02 — Operations documentation template conformance, 2026-06-02 — Phase 2 governance alignment planning artifact, Evidence, Evidence, Evidence, Evidence, Handoff, Handoff (+9 more)
 
 ### Community 383 - "Community 383"
 
-Cohesion: 0.40
-Nodes (5): 2026-06-02 — Phase 1 decision follow-up plan, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-06-02 — Phase 1 decision follow-up plan, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 384 - "Community 384"
 
-Cohesion: 0.40
-Nodes (5): 2026-06-02 — Phase 1 governance alignment audit, Evidence, Handoff, Memory, Progress
-
-### Community 385 - "Community 385"
-
-Cohesion: 0.40
-Nodes (5): 2026-06-02 — Phase 2 governance alignment planning artifact, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-06-02 — Phase 1 governance alignment audit, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 386 - "Community 386"
 
-Cohesion: 0.40
-Nodes (5): 2026-06-02 — Phase 3 protected surface hardening, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-06-02 — Phase 3 protected surface hardening, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 387 - "Community 387"
 
-Cohesion: 0.40
-Nodes (5): 2026-06-02 — Phase 4 ESO Vault runtime diagnosis, Evidence, Handoff, Memory, Progress
+Cohesion: 0.27
+Nodes (10): 2026-06-02 — Phase 4 ESO Vault runtime diagnosis, 2026-06-04 — Scripts QA and CI/CD alignment, Evidence, Evidence, Handoff, Handoff, Memory, Memory (+2 more)
 
 ### Community 388 - "Community 388"
 
-Cohesion: 0.40
-Nodes (5): 2026-06-02 — Stage 00 Codex harness coverage reconciliation, Evidence, Handoff, Memory, Progress
+Cohesion: 0.22
+Nodes (9): 2026-06-02 — Stage 00 Codex harness coverage reconciliation, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
 
 ### Community 389 - "Community 389"
 
-Cohesion: 0.40
-Nodes (5): 2026-06-04 — Docs 01-05 current implementation alignment, Evidence, Handoff, Memory, Progress
-
-### Community 390 - "Community 390"
-
-Cohesion: 0.40
-Nodes (5): 2026-06-04 — Scripts QA and CI/CD alignment, Evidence, Handoff, Memory, Progress
+Cohesion: 0.18
+Nodes (11): 2026-05-29 — Docs governance consistency residual fix (owner normalization, CI/CD guide, template audit), 2026-06-04 — Docs 01-05 current implementation alignment, Evidence, Follow-up, Handoff, Memory, Progress, Progress (+3 more)
 
 ### Community 391 - "Community 391"
 
-Cohesion: 0.40
-Nodes (5): Evidence, Handoff, Memory, Progress, Stage 00 Canonical Adapter Redesign
+Cohesion: 0.22
+Nodes (9): Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress, Progress (+1 more)
 
 ### Community 392 - "Community 392"
 
-Cohesion: 0.50
-Nodes (5): Operations Policy Template, Policy Evidence Runbook Boundary, Operations Policy Stage, Policy Document Controls, Policy Runbook Guide Incident Routing
+Cohesion: 0.29
+Nodes (8): Guide vs Runbook Boundary, Operations Guide Template, Operations Policy Template, Policy Evidence Runbook Boundary, Operations Policy Stage, Policy Document Controls, Policy Runbook Guide Incident Routing, Runbook Policy Guide Incident Routing
 
 ### Community 393 - "Community 393"
 
@@ -2405,183 +2382,158 @@ Nodes (3): generate-llm-wiki-index.sh script, generate_index(), usage()
 
 ### Community 401 - "Community 401"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-25 — documentation/governance-first workspace improvement, Evidence, Memory, Progress
+Cohesion: 0.29
+Nodes (7): 2026-05-25 — documentation/governance-first workspace improvement, Evidence, Evidence, Memory, Memory, Progress, Progress
 
 ### Community 402 - "Community 402"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-25 — environment key contract guardrail follow-up, Evidence, Memory, Progress
+Cohesion: 0.29
+Nodes (7): 2026-05-25 — environment key contract guardrail follow-up, Evidence, Evidence, Memory, Memory, Progress, Progress
 
 ### Community 403 - "Community 403"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-25 — infrastructure test inventory guardrail follow-up, Evidence, Memory, Progress
+Cohesion: 0.29
+Nodes (7): 2026-05-25 — infrastructure test inventory guardrail follow-up, Evidence, Evidence, Memory, Memory, Progress, Progress
 
 ### Community 404 - "Community 404"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-25 — operations index guardrail follow-up, Evidence, Memory, Progress
+Cohesion: 0.29
+Nodes (7): 2026-05-25 — operations index guardrail follow-up, Evidence, Evidence, Memory, Memory, Progress, Progress
 
 ### Community 405 - "Community 405"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-25 — residual objective completion audit, Evidence, Memory, Progress
+Cohesion: 0.29
+Nodes (7): 2026-05-25 — residual objective completion audit, Evidence, Evidence, Memory, Memory, Progress, Progress
 
 ### Community 406 - "Community 406"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-25 — scripts inventory guardrail follow-up, Evidence, Memory, Progress
-
-### Community 407 - "Community 407"
-
-Cohesion: 0.50
-Nodes (4): 2026-05-25 — Traefik route inventory guardrail follow-up, Evidence, Memory, Progress
+Cohesion: 0.18
+Nodes (12): 2026-05-25 — scripts inventory guardrail follow-up, 2026-05-25 — Traefik route inventory guardrail follow-up, Evidence, Evidence, Evidence, Memory, Memory, Memory (+4 more)
 
 ### Community 408 - "Community 408"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-25 — unreviewed-area follow-up for scripts/gitops/infrastructure/operations, Evidence, Memory, Progress
+Cohesion: 0.29
+Nodes (7): 2026-05-25 — unreviewed-area follow-up for scripts/gitops/infrastructure/operations, Evidence, Evidence, Memory, Memory, Progress, Progress
 
 ### Community 409 - "Community 409"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — App onboarding secret path contract guardrail follow-up, Follow-up, Progress, Verification
+Cohesion: 0.15
+Nodes (13): 2026-05-26 — App onboarding secret path contract guardrail follow-up, 2026-05-26 — External service contract matrix guardrail follow-up, Follow-up, Follow-up, Follow-up, Follow-up, Progress, Progress (+5 more)
 
 ### Community 410 - "Community 410"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — AppProject allow-list rationale guardrail follow-up, Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — AppProject allow-list rationale guardrail follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 411 - "Community 411"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — AppProject and namespace semantic hardening follow-up, Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — AppProject and namespace semantic hardening follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 412 - "Community 412"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — Bootstrap boundary matrix guardrail follow-up, Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — Bootstrap boundary matrix guardrail follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 413 - "Community 413"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — Default kubeconfig TLS repair follow-up, Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — Default kubeconfig TLS repair follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 414 - "Community 414"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — Destructive Git permission hardening follow-up, Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — Destructive Git permission hardening follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 415 - "Community 415"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — Docker network and RBAC create boundary guardrail follow-up, Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — Docker network and RBAC create boundary guardrail follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 416 - "Community 416"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — examples role matrix guardrail follow-up, Evidence, Memory, Progress
-
-### Community 417 - "Community 417"
-
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — External service contract matrix guardrail follow-up, Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — examples role matrix guardrail follow-up, Evidence, Evidence, Memory, Memory, Progress, Progress
 
 ### Community 418 - "Community 418"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — GitHub workflow responsibility matrix guardrail follow-up, Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — GitHub workflow responsibility matrix guardrail follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 419 - "Community 419"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — GitOps coverage matrix guardrail follow-up, Evidence, Memory, Progress
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — GitOps coverage matrix guardrail follow-up, Evidence, Evidence, Memory, Memory, Progress, Progress
 
 ### Community 420 - "Community 420"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — GitOps image and workload-kind policy scan guardrail follow-up, Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — GitOps image and workload-kind policy scan guardrail follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 421 - "Community 421"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — GitOps namespace ownership guardrail follow-up, Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — GitOps namespace ownership guardrail follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 422 - "Community 422"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — infrastructure coverage matrix guardrail follow-up, Evidence, Memory, Progress
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — infrastructure coverage matrix guardrail follow-up, Evidence, Evidence, Memory, Memory, Progress, Progress
 
 ### Community 423 - "Community 423"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — OPA/Conftest policy gate follow-up, Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — OPA/Conftest policy gate follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 424 - "Community 424"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — operations incidents boundary guardrail follow-up, Evidence, Memory, Progress
+Cohesion: 0.15
+Nodes (13): 2026-05-26 — operations incidents boundary guardrail follow-up, 2026-05-26 — WSL2 runtime prerequisite guardrail follow-up, Evidence, Evidence, Evidence, Evidence, Memory, Memory (+5 more)
 
 ### Community 425 - "Community 425"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — Platform chart render review follow-up, Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — Platform chart render review follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 426 - "Community 426"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — Script classification matrix guardrail follow-up, Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — Script classification matrix guardrail follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 427 - "Community 427"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — scripts broad reference guardrail follow-up, Evidence, Memory, Progress
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — scripts broad reference guardrail follow-up, Evidence, Evidence, Memory, Memory, Progress, Progress
 
 ### Community 428 - "Community 428"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — Secret management responsibility matrix guardrail follow-up, Follow-up, Progress, Verification
+Cohesion: 0.15
+Nodes (13): 2026-05-26 — Secret management responsibility matrix guardrail follow-up, 2026-05-26 — Vault policy write boundary guardrail follow-up, Follow-up, Follow-up, Follow-up, Follow-up, Progress, Progress (+5 more)
 
 ### Community 429 - "Community 429"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — Targeted residual-area audit follow-up, Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — Targeted residual-area audit follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 430 - "Community 430"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — Temporary kubeconfig live validation follow-up, Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — Temporary kubeconfig live validation follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 431 - "Community 431"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — Traefik serverlb boundary guardrail follow-up, Follow-up, Progress, Verification
-
-### Community 432 - "Community 432"
-
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — Vault policy write boundary guardrail follow-up, Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — Traefik serverlb boundary guardrail follow-up, Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 433 - "Community 433"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — Workspace-wide P0 audit overlay (VAL-SPC-006-059), Follow-up, Progress, Verification
-
-### Community 434 - "Community 434"
-
-Cohesion: 0.50
-Nodes (4): 2026-05-26 — WSL2 runtime prerequisite guardrail follow-up, Evidence, Memory, Progress
+Cohesion: 0.29
+Nodes (7): 2026-05-26 — Workspace-wide P0 audit overlay (VAL-SPC-006-059), Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 435 - "Community 435"
 
-Cohesion: 0.50
-Nodes (4): 2026-05-28 — Workspace skill expansion P0-16 (5 new repo-local skills), Follow-up, Progress, Verification
-
-### Community 436 - "Community 436"
-
-Cohesion: 0.50
-Nodes (4): 2026-05-29 — Docs governance consistency residual fix (owner normalization, CI/CD guide, template audit), Follow-up, Progress, Verification
+Cohesion: 0.29
+Nodes (7): 2026-05-28 — Workspace skill expansion P0-16 (5 new repo-local skills), Follow-up, Follow-up, Progress, Progress, Verification, Verification
 
 ### Community 437 - "Community 437"
 
@@ -2600,7 +2552,7 @@ Nodes (3): Guardrails, Memory and Context Strategy, Prompt and Policy Contract
 
 ## Knowledge Gaps
 
-- **2933 isolated node(s):** `printWidth`, `singleQuote`, `semi`, `trailingComma`, `arrowParens` (+2928 more)
+- **3304 isolated node(s):** `printWidth`, `singleQuote`, `semi`, `trailingComma`, `arrowParens` (+3299 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **32 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -2608,17 +2560,17 @@ Nodes (3): Guardrails, Memory and Context Strategy, Prompt and Policy Contract
 
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Work Entries` connect `Community 88` to `Community 73`, `Community 324`, `Community 325`, `Community 326`, `Community 327`, `Community 328`, `Community 329`, `Community 330`, `Community 331`, `Community 332`, `Community 333`, `Community 334`, `Community 335`, `Community 336`, `Community 337`, `Community 338`, `Community 339`, `Community 340`, `Community 341`, `Community 342`, `Community 343`, `Community 344`, `Community 345`, `Community 346`, `Community 347`, `Community 348`, `Community 349`, `Community 350`, `Community 351`, `Community 352`, `Community 353`, `Community 354`, `Community 355`, `Community 356`, `Community 357`, `Community 358`, `Community 359`, `Community 360`, `Community 361`, `Community 362`, `Community 363`, `Community 364`, `Community 365`, `Community 366`, `Community 367`, `Community 368`, `Community 369`, `Community 370`, `Community 371`, `Community 372`, `Community 373`, `Community 374`, `Community 375`, `Community 376`, `Community 377`, `Community 378`, `Community 379`, `Community 380`, `Community 381`, `Community 382`, `Community 383`, `Community 384`, `Community 385`, `Community 386`, `Community 387`, `Community 388`, `Community 389`, `Community 390`, `Community 391`, `Community 401`, `Community 402`, `Community 403`, `Community 404`, `Community 405`, `Community 406`, `Community 407`, `Community 408`, `Community 409`, `Community 410`, `Community 411`, `Community 412`, `Community 413`, `Community 414`, `Community 415`, `Community 416`, `Community 417`, `Community 418`, `Community 419`, `Community 420`, `Community 421`, `Community 422`, `Community 423`, `Community 424`, `Community 425`, `Community 426`, `Community 427`, `Community 428`, `Community 429`, `Community 430`, `Community 431`, `Community 432`, `Community 433`, `Community 434`, `Community 435`, `Community 436`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
-- **Why does `AI Agent Governance Hub` connect `Agent Framework Contract` to `Requirements Stage`, `Community 230`?**
-  _High betweenness centrality (0.008) - this node is a cross-community bridge._
-- **Why does `LLM Wiki Reference Index` connect `Requirements Stage` to `Community 209`, `Community 202`, `Community 143`?**
-  _High betweenness centrality (0.008) - this node is a cross-community bridge._
+- **Why does `Work Entries` connect `Community 389` to `Community 88`, `Community 240`, `Community 242`, `Community 278`, `Community 324`, `Community 325`, `Community 326`, `Community 327`, `Community 328`, `Community 329`, `Community 330`, `Community 331`, `Community 332`, `Community 333`, `Community 334`, `Community 335`, `Community 336`, `Community 337`, `Community 339`, `Community 340`, `Community 341`, `Community 342`, `Community 343`, `Community 344`, `Community 345`, `Community 346`, `Community 347`, `Community 348`, `Community 349`, `Community 350`, `Community 351`, `Community 352`, `Community 353`, `Community 354`, `Community 355`, `Community 356`, `Community 357`, `Community 358`, `Community 359`, `Community 360`, `Community 361`, `Community 362`, `Community 363`, `Community 364`, `Community 365`, `Community 366`, `Community 367`, `Community 368`, `Community 369`, `Community 372`, `Community 373`, `Community 374`, `Community 375`, `Community 377`, `Community 378`, `Community 379`, `Community 380`, `Community 381`, `Community 382`, `Community 383`, `Community 384`, `Community 386`, `Community 387`, `Community 388`, `Community 391`, `Community 401`, `Community 402`, `Community 403`, `Community 404`, `Community 405`, `Community 406`, `Community 408`, `Community 409`, `Community 410`, `Community 411`, `Community 412`, `Community 413`, `Community 414`, `Community 415`, `Community 416`, `Community 418`, `Community 419`, `Community 420`, `Community 421`, `Community 422`, `Community 423`, `Community 424`, `Community 425`, `Community 426`, `Community 427`, `Community 428`, `Community 429`, `Community 430`, `Community 431`, `Community 433`, `Community 435`?**
+  _High betweenness centrality (0.036) - this node is a cross-community bridge._
+- **Why does `Canonical Owner Pointers` connect `Community 209` to `Community 371`, `Community 143`?**
+  _High betweenness centrality (0.010) - this node is a cross-community bridge._
+- **Why does `LLM Wiki Reference Index` connect `Community 209` to `Community 202`, `Requirements Stage`?**
+  _High betweenness centrality (0.010) - this node is a cross-community bridge._
 - **What connects `printWidth`, `singleQuote`, `semi` to the rest of the system?**
-  _2967 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _3338 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `App Gitops Onboarding Policy` be split into smaller, more focused modules?**
+  _Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected._
 - **Should `Agent Framework Contract` be split into smaller, more focused modules?**
   _Cohesion score 0.05136986301369863 - nodes in this community are weakly interconnected._
-- **Should `Requirements Stage` be split into smaller, more focused modules?**
-  _Cohesion score 0.13071895424836602 - nodes in this community are weakly interconnected._
-- **Should `Technical Specification` be split into smaller, more focused modules?**
-  _Cohesion score 0.10507246376811594 - nodes in this community are weakly interconnected._
+- **Should `Architecture Decision Records Stage` be split into smaller, more focused modules?**
+  _Cohesion score 0.1437908496732026 - nodes in this community are weakly interconnected._

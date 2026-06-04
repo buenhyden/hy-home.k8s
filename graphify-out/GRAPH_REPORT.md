@@ -1,16 +1,16 @@
 # Graph Report - hy-home.k8s  (2026-06-04)
 
 ## Corpus Check
-- 224 files · ~187,379 words
+- 224 files · ~188,912 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4902 nodes · 5203 edges · 446 communities (414 shown, 32 thin omitted)
+- 4902 nodes · 5203 edges · 448 communities (416 shown, 32 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 122 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fd22fa24`
+- Built from commit: `e8a99671`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -391,6 +391,7 @@
 - [[_COMMUNITY_Community 373|Community 373]]
 - [[_COMMUNITY_Community 374|Community 374]]
 - [[_COMMUNITY_Community 375|Community 375]]
+- [[_COMMUNITY_Community 376|Community 376]]
 - [[_COMMUNITY_Community 377|Community 377]]
 - [[_COMMUNITY_Community 378|Community 378]]
 - [[_COMMUNITY_Community 379|Community 379]]
@@ -399,6 +400,7 @@
 - [[_COMMUNITY_Community 382|Community 382]]
 - [[_COMMUNITY_Community 383|Community 383]]
 - [[_COMMUNITY_Community 384|Community 384]]
+- [[_COMMUNITY_Community 385|Community 385]]
 - [[_COMMUNITY_Community 386|Community 386]]
 - [[_COMMUNITY_Community 387|Community 387]]
 - [[_COMMUNITY_Community 388|Community 388]]
@@ -486,11 +488,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (446 total, 32 thin omitted)
+## Communities (448 total, 32 thin omitted)
 
 ### Community 0 - "05 Operations Runbooks"
-Cohesion: 0.24
-Nodes (12): Human Approved Break Glass Boundary, Platform Expansion Bootstrap Runbook, cert-manager Headlamp Istio Kiali Bootstrap, cert-manager mkcert ClusterIssuer, Service Mesh and cert-manager Operations Policy, Istio Opt In Sidecar Injection, Istio Sidecar Opt-in Policy, Kiali External Observability Contract (+4 more)
+Cohesion: 0.21
+Nodes (17): Platform Expansion Bootstrap Runbook, cert-manager Headlamp Istio Kiali Bootstrap, cert-manager mkcert ClusterIssuer, Service Mesh and cert-manager Operations Policy, Istio Opt In Sidecar Injection, Istio Sidecar Opt-in Policy, Kiali External Observability Contract, Observability Platform Operations Policy (+9 more)
 
 ### Community 1 - "App Gitops Onboarding Policy"
 Cohesion: 0.13
@@ -509,8 +511,8 @@ Cohesion: 0.14
 Nodes (18): ADR-0001: k3d Topology and External Network Baseline, External Network Baseline, k3d 1 Server 3 Agents Topology, ADR-0002: ArgoCD Helm Install with App-of-Apps and ApplicationSet, App-of-Apps and ApplicationSet Model, ArgoCD Helm Installation Model, ADR-0004: External Service Access Model and ArgoCD Valkey Backend, ArgoCD External Valkey Backend (+10 more)
 
 ### Community 5 - "Requirements Stage"
-Cohesion: 0.16
-Nodes (14): Documentation Scope, Canonical Stage Taxonomy, Prohibited Parallel Documentation Trees, Template Enforcement Policy, Operations Policy Runbook Boundary, Docs Canonical Taxonomy, docs Project Documentation Hub, Documentation Flow (+6 more)
+Cohesion: 0.14
+Nodes (17): Documentation Scope, Canonical Stage Taxonomy, Prohibited Parallel Documentation Trees, Template Enforcement Policy, Operations Policy Runbook Boundary, Docs Canonical Taxonomy, docs Project Documentation Hub, Documentation Flow (+9 more)
 
 ### Community 6 - "Technical Specification"
 Cohesion: 0.11
@@ -525,8 +527,8 @@ Cohesion: 0.18
 Nodes (13): External Repository Application CR, apps AppProject, apps-generator ApplicationSet, New App GitOps Onboarding Guide, gitops/workloads Application Directory, ArgoCD Prometheus Metrics and Grafana Dashboard Guide, Prometheus AnalysisTemplate, Argo Rollout Canary Strategy (+5 more)
 
 ### Community 9 - "Platform Expansion Specification"
-Cohesion: 0.17
-Nodes (19): Platform Expansion Mesh Dashboard ARD, TLS, Mesh, and Observability Planes, ADR-0006 cert-manager with mkcert CA as ClusterIssuer, cert-manager TLS Automation, mkcert CA ClusterIssuer, ingress-nginx and Istio Coexistence, Istio Default Sidecar Mesh, ADR-0008 Istio Default Profile with ingress-nginx Coexistence (+11 more)
+Cohesion: 0.18
+Nodes (23): Platform Expansion Mesh Dashboard ARD, TLS, Mesh, and Observability Planes, ADR-0006 cert-manager with mkcert CA as ClusterIssuer, cert-manager TLS Automation, mkcert CA ClusterIssuer, ADR-0007 Kubernetes Dashboard v3 Installation, Kubernetes Dashboard v3 Installation, ingress-nginx and Istio Coexistence (+15 more)
 
 ### Community 10 - "Networkpolicy Allow Kiali Egress To"
 Cohesion: 0.07
@@ -817,12 +819,12 @@ Cohesion: 0.12
 Nodes (16): Agent Operations (If Applicable), Canonical References, Observability and Evidence Sources, Overview (KR), Procedure or Checklist, Purpose, Reference Maintenance Runbook, Related Documents (+8 more)
 
 ### Community 103 - "Community 103"
-Cohesion: 0.23
-Nodes (14): ArgoCD ESO Vault Recovery Runbook, ApplicationSet Workload Onboarding, apps-generator Onboarding Procedure, New App GitOps Onboarding Runbook, App Vault and ExternalSecret Boundary, apps-generator Workload Layout, App GitOps Onboarding Policy, Apps Namespace Istio mTLS (+6 more)
+Cohesion: 0.19
+Nodes (16): Human Approved Break Glass Boundary, ArgoCD ESO Vault Recovery Runbook, ApplicationSet Workload Onboarding, apps-generator Onboarding Procedure, New App GitOps Onboarding Runbook, App Vault and ExternalSecret Boundary, apps-generator Workload Layout, App GitOps Onboarding Policy (+8 more)
 
 ### Community 104 - "Community 104"
-Cohesion: 0.17
-Nodes (15): cert-manager TLS Plane, Istio Mesh Plane, Platform Expansion Mesh Dashboard ARD, ADR-0007 Kubernetes Dashboard v3 Installation, Kubernetes Dashboard v3 Installation, Headlamp Replacement for Kubernetes Dashboard, ADR-0010 Headlamp Replaces Kubernetes Dashboard, Current 172.18.x Endpoint Contract (+7 more)
+Cohesion: 0.40
+Nodes (5): Current 172.18.x Endpoint Contract, Kubernetes Dashboard Superseded UI Contract, Headlamp Current UI Contract, Superseded 172.19.x Endpoint Contract, Platform Expansion Implementation Plan
 
 ### Community 105 - "Community 105"
 Cohesion: 0.12
@@ -1241,8 +1243,8 @@ Cohesion: 0.18
 Nodes (10): Authority Boundary, Definitions / Facts, Overview (KR), Purpose, Reference: [Item Name], Reference Type, Related Documents, Review and Freshness (+2 more)
 
 ### Community 209 - "Community 209"
-Cohesion: 0.17
-Nodes (13): Agent Governance Memory Template, Progress Entry Coupling, Learning Canonical Stage Boundary, Infrastructure Theory Roadmap, Learning Reference Stage, Canonical Owner Pointers, Deterministic Link Map, Generated LLM WIKI Index (+5 more)
+Cohesion: 0.22
+Nodes (9): Agent Governance Memory Template, Progress Entry Coupling, Learning Canonical Stage Boundary, Infrastructure Theory Roadmap, Learning Reference Stage, Reference Authority Boundary, Reference Format Contract, Reference Stage (+1 more)
 
 ### Community 210 - "Community 210"
 Cohesion: 0.18
@@ -1341,16 +1343,16 @@ Cohesion: 0.20
 Nodes (9): Agent-specific Types (If Applicable), Inputs, Overview (KR), Related Documents, Suggested Types, Task: Argo Rollouts Progressive Delivery Backfill, Task Table, Verification Summary (+1 more)
 
 ### Community 234 - "Community 234"
-Cohesion: 0.28
-Nodes (8): ArgoCD App-of-Apps, ESO Vault Secret Plane, External PostgreSQL and Valkey Services, GitOps Platform, WSL k3d/k3s ArgoCD Platform ARD, External Runtime Integration Contract, WSL k3d/k3s ArgoCD Platform Plan, WSL k3d/k3s ArgoCD Platform Plan
+Cohesion: 0.21
+Nodes (11): ArgoCD App-of-Apps, ESO Vault Secret Plane, External PostgreSQL and Valkey Services, GitOps Platform, WSL k3d/k3s ArgoCD Platform ARD, External Runtime Integration Contract, WSL k3d/k3s ArgoCD Platform Plan, WSL k3d/k3s ArgoCD Platform Plan (+3 more)
 
 ### Community 235 - "Community 235"
 Cohesion: 0.25
 Nodes (9): ArgoCD root-platform Application, infrastructure/bootstrap-local.sh, WSL k3d ArgoCD Bootstrap Guide, External Secrets Operator Sync, External Services Contract, Vault Secret Contract, Vault k3d-hyhome Network Attachment, App Vault ExternalSecret (+1 more)
 
 ### Community 236 - "Community 236"
-Cohesion: 0.33
-Nodes (10): ARD-0001 WSL k3d/k3s ArgoCD Platform, External PostgreSQL and Valkey Services, ArgoCD GitOps Control Plane, ESO and Vault Secret Plane, WSL k3d/k3s ArgoCD Platform, Initial WSL k3d ArgoCD Platform Plan, Architecture Requirements Stage, External Runtime Integration Contract (+2 more)
+Cohesion: 0.36
+Nodes (9): ARD-0001 WSL k3d/k3s ArgoCD Platform, External PostgreSQL and Valkey Services, ArgoCD GitOps Control Plane, ESO and Vault Secret Plane, WSL k3d/k3s ArgoCD Platform, Initial WSL k3d ArgoCD Platform Plan, Architecture Requirements Stage, External Runtime Integration Contract (+1 more)
 
 ### Community 237 - "Community 237"
 Cohesion: 0.25
@@ -1361,16 +1363,16 @@ Cohesion: 0.22
 Nodes (9): ArgoCD Metrics NodePorts, Grafana ArgoCD Dashboard, Prometheus ArgoCD Scrape Jobs, Alloy k8s Logs Collector, k3d/k3s Cluster Observability Bootstrap Guide, Kubernetes NodePort Metrics, kube-state-metrics NodePort, Loki Kubernetes Log Collection (+1 more)
 
 ### Community 239 - "Community 239"
-Cohesion: 0.26
-Nodes (16): Observability Platform Operations Policy, ArgoCD Metrics NodePort Reservations, Observability Platform Operations Policy, Istio Service Port Naming Contract, k8s Observability Operations Policy, Alloy k8s Log Collection, AppProject Destinations Management, k8s Observability Operations Policy (+8 more)
+Cohesion: 0.47
+Nodes (9): k8s Observability Operations Policy, Alloy k8s Log Collection, AppProject Destinations Management, k8s Observability Operations Policy, k8s Metrics NodePort Reservations, Prometheus Alert Rules Load Pattern, k8s Observability Recovery Runbook, k8s Observability Recovery Procedure (+1 more)
 
 ### Community 240 - "Community 240"
 Cohesion: 0.25
 Nodes (7): 2026-06-02 — Stage 00 Codex Harness Coverage Reconciliation, Agent Progress and Memory Ledger, Evidence, Metadata, Prevention, Problem, Resolution
 
 ### Community 241 - "Community 241"
-Cohesion: 0.17
-Nodes (17): ADR-0011 Argo Rollouts for Progressive Delivery, Argo Rollouts, Manual Promotion Strategy, Rollouts Dashboard, ADR-0012 Argo Notifications with Slack Webhook, ArgoCD Notifications, Default and App Opt-in Notification Subscriptions, Slack Webhook Destination (+9 more)
+Cohesion: 0.28
+Nodes (9): ADR-0011 Argo Rollouts for Progressive Delivery, Argo Rollouts, Manual Promotion Strategy, Rollouts Dashboard, Architecture Decision Record Stage, Spec 004 Argo Rollouts Progressive Delivery, platform-rollouts Application Contract, Rollouts Agent Permission Boundary (+1 more)
 
 ### Community 242 - "Community 242"
 Cohesion: 0.29
@@ -1889,8 +1891,8 @@ Cohesion: 0.33
 Nodes (6): Context, Harness Implementation Progress, Historical Entries, Prevention, Problem, Resolution
 
 ### Community 371 - "Community 371"
-Cohesion: 0.40
-Nodes (5): Agent Design Template, Agent Safety Evaluation Contract, Agents Feature Design Routing, Agents Reference Boundary, Agents Runtime Truth Boundary
+Cohesion: 0.33
+Nodes (6): Agent Design Template, Agent Safety Evaluation Contract, Agents Feature Design Routing, Agents Reference Boundary, Agents Runtime Truth Boundary, Canonical Owner Pointers
 
 ### Community 372 - "Community 372"
 Cohesion: 0.22
@@ -1907,6 +1909,10 @@ Nodes (9): 2026-05-25 — P0 mandatory workspace revalidation overlay, Evidence,
 ### Community 375 - "Community 375"
 Cohesion: 0.22
 Nodes (9): 2026-05-25 — post-merge completion audit, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
+
+### Community 376 - "Community 376"
+Cohesion: 0.31
+Nodes (9): ADR-0012 Argo Notifications with Slack Webhook, ArgoCD Notifications, Default and App Opt-in Notification Subscriptions, Slack Webhook Destination, Vault to ESO Notification Secret, Spec 005 Argo Notifications Slack, Plaintext Secrets Blocked Guardrail, Notifications Config and Secret Contract (+1 more)
 
 ### Community 377 - "Community 377"
 Cohesion: 0.22
@@ -1939,6 +1945,10 @@ Nodes (9): 2026-06-02 — Phase 1 decision follow-up plan, Evidence, Evidence, H
 ### Community 384 - "Community 384"
 Cohesion: 0.22
 Nodes (9): 2026-06-02 — Phase 1 governance alignment audit, Evidence, Evidence, Handoff, Handoff, Memory, Memory, Progress (+1 more)
+
+### Community 385 - "Community 385"
+Cohesion: 0.67
+Nodes (3): cert-manager TLS Plane, Istio Mesh Plane, Platform Expansion Mesh Dashboard ARD
 
 ### Community 386 - "Community 386"
 Cohesion: 0.22
@@ -2141,10 +2151,10 @@ Nodes (3): Guardrails, Memory and Context Strategy, Prompt and Policy Contract
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Work Entries` connect `Community 389` to `Community 88`, `Community 240`, `Community 242`, `Community 278`, `Community 324`, `Community 325`, `Community 326`, `Community 327`, `Community 328`, `Community 329`, `Community 330`, `Community 331`, `Community 332`, `Community 333`, `Community 334`, `Community 335`, `Community 336`, `Community 337`, `Community 339`, `Community 340`, `Community 341`, `Community 342`, `Community 343`, `Community 344`, `Community 345`, `Community 346`, `Community 347`, `Community 348`, `Community 349`, `Community 350`, `Community 351`, `Community 352`, `Community 353`, `Community 354`, `Community 355`, `Community 356`, `Community 357`, `Community 358`, `Community 359`, `Community 360`, `Community 361`, `Community 362`, `Community 363`, `Community 364`, `Community 365`, `Community 366`, `Community 367`, `Community 368`, `Community 369`, `Community 372`, `Community 373`, `Community 374`, `Community 375`, `Community 377`, `Community 378`, `Community 379`, `Community 380`, `Community 381`, `Community 382`, `Community 383`, `Community 384`, `Community 386`, `Community 387`, `Community 388`, `Community 391`, `Community 401`, `Community 402`, `Community 403`, `Community 404`, `Community 405`, `Community 406`, `Community 408`, `Community 409`, `Community 410`, `Community 411`, `Community 412`, `Community 413`, `Community 414`, `Community 415`, `Community 416`, `Community 418`, `Community 419`, `Community 420`, `Community 421`, `Community 422`, `Community 423`, `Community 424`, `Community 425`, `Community 426`, `Community 427`, `Community 428`, `Community 429`, `Community 430`, `Community 431`, `Community 433`, `Community 435`?**
-  _High betweenness centrality (0.036) - this node is a cross-community bridge._
-- **Why does `Canonical Owner Pointers` connect `Community 209` to `Community 371`, `Community 143`?**
+  _High betweenness centrality (0.034) - this node is a cross-community bridge._
+- **Why does `Canonical Owner Pointers` connect `Community 371` to `Community 209`, `Requirements Stage`, `Community 143`?**
   _High betweenness centrality (0.010) - this node is a cross-community bridge._
-- **Why does `LLM Wiki Reference Index` connect `Community 209` to `Community 202`, `Requirements Stage`?**
+- **Why does `LLM Wiki Reference Index` connect `Requirements Stage` to `Community 209`, `Community 202`, `Community 371`?**
   _High betweenness centrality (0.010) - this node is a cross-community bridge._
 - **What connects `printWidth`, `singleQuote`, `semi` to the rest of the system?**
   _3338 weakly-connected nodes found - possible documentation gaps or missing edges._
