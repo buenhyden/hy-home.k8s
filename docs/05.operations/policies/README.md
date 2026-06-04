@@ -119,4 +119,4 @@ docs/05.operations/policies/
 | [`./0004-rollouts-notifications-headlamp-policy.md`](./0004-rollouts-notifications-headlamp-policy.md)     | Argo Rollouts/Notifications(Slack)/Headlamp 운영 통제 정책                              | Active | 2026-05-21 |
 | [`./0005-observability-platform-operations-policy.md`](./0005-observability-platform-operations-policy.md) | Istio 포트 네이밍/Grafana Anonymous Access/ArgoCD NodePort 예약 정책                    | Active | 2026-05-22 |
 | [`./0006-k8s-observability-operations-policy.md`](./0006-k8s-observability-operations-policy.md)           | k8s 메트릭 NodePort 예약/in-cluster Alloy/alert_rules 로드 패턴 정책                    | Active | 2026-05-22 |
-| [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md)                         | 앱 온보딩 운영 정책 (Rollout 필수/이미지 태그/Istio 포트 명명/Traefik/Vault 규칙)       | Active | 2026-05-22 |
+| [`./0007-app-gitops-onboarding-policy.md`](./0007-app-gitops-onboarding-policy.md)                         | 앱 온보딩 운영 정책 (Rollout 필수/AnalysisTemplate/이미지 태그/Istio 포트 명명/Traefik/Vault 규칙)       | Active | 2026-06-04 |

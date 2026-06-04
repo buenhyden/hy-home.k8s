@@ -3,7 +3,7 @@ title: '앱 GitOps 온보딩 정책'
 type: policy
 status: active
 owner: platform
-updated: 2026-05-22
+updated: 2026-06-04
 ---
 
 # 앱 GitOps 온보딩 정책
@@ -52,7 +52,7 @@ updated: 2026-05-22
 ### 1-1. Rollout 필수
 
 apps namespace의 모든 워크로드는 `argoproj.io/v1alpha1/Rollout`을 사용해야 한다.
-Deployment는 `appproject-apps` whitelist에 포함되어 있으나, 플랫폼 정책상 허용하지 않는다.
+Deployment는 현재 `appproject-apps` namespaceResourceWhitelist에 포함되지 않으며, 플랫폼 정책상 신규 앱은 Rollout을 사용한다.
 
 **이유**: canary 전략으로 점진적 트래픽 전환과 자동 rollback을 보장하기 위함.
 

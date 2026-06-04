@@ -3,7 +3,7 @@ title: 'Argo Rollouts Progressive Delivery Technical Specification'
 type: spec
 status: active
 owner: platform
-updated: 2026-05-22
+updated: 2026-06-04
 ---
 
 # Argo Rollouts Progressive Delivery Specification
@@ -56,6 +56,7 @@ updated: 2026-05-22
 - **Governance Contract**:
   - AppProject `platform` owns controller/dashboard deployment.
   - AppProject `apps` owns application workload consumption of Rollout resources.
+  - Current app onboarding requires `AnalysisTemplate` safety checks for canary steps; runtime `AnalysisRun` objects are created by the Rollouts controller.
   - Promotion, abort, and undo commands are operator actions documented in runbooks, not automated agent actions.
 
 ## Core Design

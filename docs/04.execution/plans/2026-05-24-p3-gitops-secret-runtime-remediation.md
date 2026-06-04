@@ -3,7 +3,7 @@ title: 'P3 GitOps Secret Runtime Remediation Plan'
 type: plan
 status: done
 owner: platform
-updated: 2026-05-24
+updated: 2026-06-04
 ---
 
 # P3 GitOps Secret Runtime Remediation Plan
@@ -18,9 +18,10 @@ External Secrets, secret/runtime 경계 항목 중 사용자가 승인한 범위
 
 ## Context
 
-승인 전 P3 항목은 `docs/04.execution/plans/2026-05-24-workspace-harness-gap-analysis.md`에
-deferred 상태로 남아 있었다. 승인 후에도 안전 경계는 유지한다: repository desired
-state와 정적 검증을 먼저 보강하고, live 상태는 read-only 명령으로만 확인한다.
+승인 전 P3 항목은 [`../../90.references/audits/2026-05-24-workspace-harness-gap-analysis.md`](../../90.references/audits/2026-05-24-workspace-harness-gap-analysis.md)
+감사 reference에 보존되어 있다. 승인 후에도 안전 경계는 유지한다:
+repository desired state와 정적 검증을 먼저 보강하고, live 상태는 read-only
+명령으로만 확인한다.
 
 ## Goals & In-Scope
 

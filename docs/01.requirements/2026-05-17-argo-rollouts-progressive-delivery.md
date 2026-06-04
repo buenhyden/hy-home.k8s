@@ -3,14 +3,14 @@ title: 'Argo Rollouts Progressive Delivery Product Requirements'
 type: prd
 status: active
 owner: platform
-updated: 2026-05-18
+updated: 2026-06-04
 ---
 
 # Argo Rollouts Progressive Delivery Product Requirements
 
 ## Overview (KR)
 
-이 문서는 `hy-home.k8s` 플랫폼에 Argo Rollouts를 도입하여 canary/blue-green 점진적 배포 전략과 Prometheus 메트릭 기반 자동 promotion/abort를 지원하기 위한 제품 요구사항을 정의한다.
+이 문서는 `hy-home.k8s` 플랫폼에 Argo Rollouts를 도입하여 canary/blue-green 점진적 배포 전략과 Prometheus 메트릭 기반 AnalysisRun 안전 점검, 실패 시 자동 abort/rollback을 지원하기 위한 제품 요구사항을 정의한다.
 
 ## Requirement Status
 
@@ -24,13 +24,13 @@ Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 
 
 ## Problem Statement
 
-현재 플랫폼은 ArgoCD의 기본 `Deployment` 기반 배포만 지원한다. 한 번에 전체를 교체하는 방식은 결함 있는 릴리스가 배포될 경우 즉각적인 서비스 영향을 초래한다. 점진적 배포(canary, blue-green)와 Prometheus 메트릭 기반 자동 promotion/abort를 통해 배포 안전성을 높여야 한다.
+현재 플랫폼은 ArgoCD의 기본 `Deployment` 기반 배포만으로는 결함 있는 릴리스가 배포될 경우 즉각적인 서비스 영향을 초래할 수 있다. 점진적 배포(canary, blue-green), 수동 promotion 기본 경계, Prometheus 메트릭 기반 AnalysisRun abort/rollback을 통해 배포 안전성을 높여야 한다.
 
 ## Personas
 
 - **Platform Engineer**: Rollouts 컨트롤러를 GitOps로 관리하고, 대시보드 UI로 롤아웃 상태를 시각적으로 확인하고 싶다.
 - **Application Team**: `Deployment`를 `Rollout` 리소스로 전환하여 canary/blue-green 전략을 적용하고 싶다.
-- **DevOps Engineer**: Prometheus 메트릭 기반 자동 promotion/abort로 배포 안정성을 보장하고 싶다.
+- **DevOps Engineer**: Prometheus 메트릭 기반 AnalysisRun과 실패 시 자동 rollback 경계로 배포 안정성을 보장하고 싶다.
 
 ## Key Use Cases
 
@@ -45,7 +45,7 @@ Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 
 - **REQ-PRD-FUN-02**: Rollouts Dashboard UI를 `rollouts.127.0.0.1.nip.io`(ingress-nginx + cert-manager TLS)로 노출해야 한다.
 - **REQ-PRD-FUN-03**: Controller metrics는 운영자가 rollout 상태와 실패 신호를 관찰할 수 있도록 수집 가능해야 한다.
 - **REQ-PRD-FUN-04**: ArgoCD는 Rollouts 관련 리소스를 GitOps sync 상태로 추적할 수 있어야 한다. 구체 AppProject 허용 목록은 downstream Spec이 소유한다.
-- **REQ-PRD-FUN-05**: 기본 promotion 전략은 수동 승인(analysis-run 없이)을 사용해야 한다.
+- **REQ-PRD-FUN-05**: 기본 promotion 정책은 자동 promotion을 강제하지 않아야 하며, 앱별 Rollout은 승인된 AnalysisTemplate으로 실패 시 자동 abort/rollback을 수행할 수 있어야 한다.
 - **REQ-PRD-FUN-06**: 표준 local route를 통해 `rollouts.127.0.0.1.nip.io` 접근을 제공해야 한다.
 
 ## Success / Acceptance Criteria
@@ -60,15 +60,15 @@ Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 
 - **In Scope**:
   - Argo Rollouts 컨트롤러 및 Rollouts Dashboard 제공 요구
   - ArgoCD가 Rollouts 리소스를 추적하기 위한 권한/범위 요구
+  - Prometheus 기반 AnalysisTemplate 안전 점검 요구
   - 표준 local route 접근 요구
   - 문서 체인 동기화
 - **Out of Scope**:
   - 개별 애플리케이션의 `Deployment` → `Rollout` 전환 (앱 팀 담당)
   - 멀티클러스터 Rollouts
 - **Non-goals**:
-  - 자동 promotion (수동 승인이 기본)
-  - 커스텀 Analysis metric 정의 (초기 설치 범위 외)
-  - Prometheus analysis provider 연동 (후속 Phase)
+  - 자동 promotion 강제 (수동 승인이 기본)
+  - 플랫폼-wide 커스텀 Analysis metric 표준화
 
 ## Risks, Dependencies, and Assumptions
 
