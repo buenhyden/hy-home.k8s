@@ -26,6 +26,7 @@
 - 문서 stage별 Markdown 템플릿
 - 중앙 archive Tombstone 템플릿
 - API/OpenAPI, GraphQL, proto 계약 템플릿
+- 하네스 표면 변경용 task contract 템플릿
 - README와 governance memory 항목 템플릿
 
 ### Out of Scope
@@ -45,6 +46,7 @@
 ├── ard.template.md
 ├── data-model.template.md
 ├── guide.template.md
+├── harness-task-contract.template.md
 ├── incident.template.md
 ├── memory.template.md
 ├── openapi.template.yaml
@@ -108,32 +110,41 @@
 
 ## Template-Folder Mapping
 
-| Target Pattern | Template | Responsibility |
-| --- | --- | --- |
-| `README.md`, `**/README.md`, `.claude/README.md`, `.codex/README.md` | `readme.template.md` | Entry point, scope, structure, workflow, link basis, related documents |
-| `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md` | `prd.template.md` | Product requirements, users, scope, success / acceptance criteria |
-| `docs/02.architecture/requirements/####-<system-or-domain>.md` | `ard.template.md` | Architecture requirements, quality attributes, reference model |
-| `docs/02.architecture/decisions/####-<short-title>.md` | `adr.template.md` | One architecture decision, context, consequences, alternatives |
-| `docs/03.specs/<feature-id>/spec.md` | `spec.template.md` | Parent implementation contract, interfaces, verification |
-| `docs/03.specs/<feature-id>/api-spec.md` | `api-spec.template.md` | Feature-local API contract |
-| `docs/03.specs/<feature-id>/agent-design.md` | `agent-design.template.md` | Feature-local AI agent behavior, orchestration, safety, and eval design |
-| `docs/03.specs/<feature-id>/data-model.md` | `data-model.template.md` | Feature-local logical and physical data model |
-| `docs/03.specs/<feature-id>/tests.md` | `tests.template.md` | Feature-local test and evaluation strategy |
-| `docs/03.specs/<feature-id>/contracts/openapi.yaml` | `openapi.template.yaml` | Feature-local OpenAPI contract |
-| `docs/03.specs/<feature-id>/contracts/schema.graphql` | `schema.template.graphql` | Feature-local GraphQL schema contract |
-| `docs/03.specs/<feature-id>/contracts/service.proto` | `service.template.proto` | Feature-local gRPC/protobuf contract |
-| `docs/03.specs/<feature-id>/README.md` | `readme.template.md` | Optional feature-local index when a spec folder grows beyond `spec.md` |
-| `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `plan.template.md` | Execution order, risk control, rollout, verification |
-| `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `task.template.md` | Implementation and validation task evidence |
-| `docs/05.operations/guides/####-<topic>.md` | `guide.template.md` | Stable-state user, developer, or operator guidance |
-| `docs/05.operations/policies/####-<policy-or-standard>.md` | `policy.template.md` | Operational policy, controls, boundaries |
-| `docs/05.operations/runbooks/####-<topic>.md` | `runbook.template.md` | Executable operational procedure and recovery path |
-| `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `incident.template.md` | Incident fact record and timeline |
-| `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `postmortem.template.md` | Incident analysis and prevention follow-up |
-| `docs/90.references/<category>/<topic>.md` | `reference.template.md` | Reference material, glossary, appendix, inventory |
-| `docs/98.archive/**/*.md` | `archive-tombstone.template.md` | Tombstone metadata for old docs moved out of active stages |
-| `docs/00.agent-governance/memory/<topic>.md` | `memory.template.md` | Stable memory entry |
-| `docs/00.agent-governance/memory/progress.md` | `progress.template.md` | Repo-changing work progress entry |
+| Target Pattern                                                           | Template                        | Responsibility                                                          |
+| ------------------------------------------------------------------------ | ------------------------------- | ----------------------------------------------------------------------- |
+| `README.md`, `**/README.md`, `.claude/README.md`, `.codex/README.md`     | `readme.template.md`            | Entry point, scope, structure, workflow, link basis, related documents  |
+| `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md`                 | `prd.template.md`               | Product requirements, users, scope, success / acceptance criteria       |
+| `docs/02.architecture/requirements/####-<system-or-domain>.md`           | `ard.template.md`               | Architecture requirements, quality attributes, reference model          |
+| `docs/02.architecture/decisions/####-<short-title>.md`                   | `adr.template.md`               | One architecture decision, context, consequences, alternatives          |
+| `docs/03.specs/<feature-id>/spec.md`                                     | `spec.template.md`              | Parent implementation contract, interfaces, verification                |
+| `docs/03.specs/<feature-id>/api-spec.md`                                 | `api-spec.template.md`          | Feature-local API contract                                              |
+| `docs/03.specs/<feature-id>/agent-design.md`                             | `agent-design.template.md`      | Feature-local AI agent behavior, orchestration, safety, and eval design |
+| `docs/03.specs/<feature-id>/data-model.md`                               | `data-model.template.md`        | Feature-local logical and physical data model                           |
+| `docs/03.specs/<feature-id>/tests.md`                                    | `tests.template.md`             | Feature-local test and evaluation strategy                              |
+| `docs/03.specs/<feature-id>/contracts/openapi.yaml`                      | `openapi.template.yaml`         | Feature-local OpenAPI contract                                          |
+| `docs/03.specs/<feature-id>/contracts/schema.graphql`                    | `schema.template.graphql`       | Feature-local GraphQL schema contract                                   |
+| `docs/03.specs/<feature-id>/contracts/service.proto`                     | `service.template.proto`        | Feature-local gRPC/protobuf contract                                    |
+| `docs/03.specs/<feature-id>/README.md`                                   | `readme.template.md`            | Optional feature-local index when a spec folder grows beyond `spec.md`  |
+| `docs/04.execution/plans/YYYY-MM-DD-<feature>.md`                        | `plan.template.md`              | Execution order, risk control, rollout, verification                    |
+| `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md`              | `task.template.md`              | Implementation and validation task evidence                             |
+| `docs/05.operations/guides/####-<topic>.md`                              | `guide.template.md`             | Stable-state user, developer, or operator guidance                      |
+| `docs/05.operations/policies/####-<policy-or-standard>.md`               | `policy.template.md`            | Operational policy, controls, boundaries                                |
+| `docs/05.operations/runbooks/####-<topic>.md`                            | `runbook.template.md`           | Executable operational procedure and recovery path                      |
+| `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md`             | `incident.template.md`          | Incident fact record and timeline                                       |
+| `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `postmortem.template.md`        | Incident analysis and prevention follow-up                              |
+| `docs/90.references/<category>/<topic>.md`                               | `reference.template.md`         | Reference material, glossary, appendix, inventory                       |
+| `docs/98.archive/**/*.md`                                                | `archive-tombstone.template.md` | Tombstone metadata for old docs moved out of active stages              |
+| `docs/00.agent-governance/memory/<topic>.md`                             | `memory.template.md`            | Stable memory entry                                                     |
+| `docs/00.agent-governance/memory/progress.md`                            | `progress.template.md`          | Repo-changing work progress entry                                       |
+
+## Harness Task Contract Template
+
+`harness-task-contract.template.md` is a specialized starter for
+`docs/04.execution/tasks/YYYY-MM-DD-<harness-task>.md` when a task changes
+harness surfaces such as governance, GitOps, infrastructure, validation
+scripts, CI, secrets, or operations. It supplements `task.template.md` with
+approval boundaries and static-vs-live evidence fields; it does not create a
+new document stage or a second task location.
 
 ## Contract Template Placement
 

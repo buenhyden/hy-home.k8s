@@ -55,3 +55,36 @@ Describe the manual verification or automated tests conducted.
 - [ ] I have updated the documentation accordingly.
 - [ ] My commit messages follow Conventional Commits.
 - [ ] I did not introduce plaintext secrets. Secret-related changes use GitOps-approved patterns only.
+
+## 8. Harness Impact
+
+- [ ] No harness surface changed
+- [ ] `gitops/**` changed
+- [ ] `infrastructure/**` changed
+- [ ] `scripts/**` validation, hook, or policy gate changed
+- [ ] `.github/workflows/**` changed
+- [ ] `docs/00.agent-governance/**` changed
+- [ ] `docs/05.operations/**` changed
+- [ ] Secret, Vault, ExternalSecret, SecretStore, or ClusterSecretStore contract changed
+- [ ] Bootstrap-only behavior changed
+- [ ] Live runtime evidence is required
+
+If any harness surface changed, record exact static validation evidence:
+
+```bash
+bash scripts/validate-harness.sh
+bash infrastructure/tests/verify-contracts-static.sh
+```
+
+Live checks, only when explicitly approved:
+
+```bash
+bash infrastructure/tests/run-all.sh
+```
+
+Secret handling:
+
+- [ ] No secret values, Vault tokens, private keys, or credential material are included
+- [ ] Secret-related changes record only path, key, property, mount, and redacted evidence
+
+See [Approval Boundaries](../docs/00.agent-governance/rules/approval-boundaries.md) and the [Harness Implementation Map](../docs/00.agent-governance/harness-implementation-map.md).
