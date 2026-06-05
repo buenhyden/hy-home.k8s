@@ -2205,6 +2205,35 @@ for phrase in [
     if phrase not in pr_template_text:
         fail(f"{rel(pr_template_path)} missing branch-policy clarification: {phrase}")
 
+# Harness implementation surfaces: existence and cross-reference contracts only.
+# Wrapper script and task-contract template existence are already enforced by the
+# scripts inventory and templates README checks, so they are not re-validated here.
+harness_map_path = root / "docs/00.agent-governance/harness-implementation-map.md"
+if not harness_map_path.exists():
+    fail(f"required harness surface is missing: {rel(harness_map_path)}")
+approval_boundaries_path = root / "docs/00.agent-governance/rules/approval-boundaries.md"
+if not approval_boundaries_path.exists():
+    fail(f"required harness surface is missing: {rel(approval_boundaries_path)}")
+if "## 8. Harness Impact" not in pr_template_text:
+    fail(f"{rel(pr_template_path)} missing Harness Impact section heading: ## 8. Harness Impact")
+harness_catalog_map_text = read_text(root / "docs/00.agent-governance/harness-catalog.md")
+if (
+    "harness-implementation-map.md" not in harness_catalog_map_text
+    and "approval-boundaries.md" not in harness_catalog_map_text
+):
+    fail(
+        "docs/00.agent-governance/harness-catalog.md must reference the harness "
+        "implementation map or approval boundaries"
+    )
+harness_templates_readme_text = read_text(root / "docs/99.templates/README.md")
+for phrase in [
+    "## Harness Task Contract Template",
+    "`harness-task-contract.template.md` is a specialized starter",
+    "approval boundaries and static-vs-live evidence fields",
+]:
+    if phrase not in harness_templates_readme_text:
+        fail(f"docs/99.templates/README.md missing harness task template registration phrase: {phrase}")
+
 pr_branch_prefixes = extract_pr_template_prefixes(pr_template_text)
 if pr_branch_prefixes != branch_prefixes:
     fail(

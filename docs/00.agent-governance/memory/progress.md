@@ -5549,3 +5549,65 @@ lifecycle state.
   rather than preserving them as active operational guidance.
 - Keep `reference.template.md` free of archive policy and enforce archive
   behavior through routing docs, archive Tombstones, and repo-quality gates.
+
+## 2026-06-05 — Harness Engineering Connective Layer
+
+### Metadata
+
+- **Date**: 2026-06-05
+- **Layer**: governance, infra, qa
+- **Tags**: #harness #governance #approval-boundaries #ci #validation
+- **Record type**: harness implementation map, approval boundaries, task
+  contract template, validation wrapper, and PR/gate wiring.
+
+### Problem
+
+Harness engineering surfaces (governance, GitOps, validation scripts, CI,
+secrets, operations) were already mature but spread across many files. There was
+no single navigation map from surface to source/role/validation/evidence, no
+single approval-boundary matrix, no harness-specific task contract template, no
+one-command repo-static validation entry point, and no PR-level Harness Impact
+section separating static from live evidence.
+
+### Resolution
+
+- Added `docs/00.agent-governance/harness-implementation-map.md` as a
+  navigation map (not policy) linking each harness surface to its canonical
+  owner, required repo-static validation, and evidence location.
+- Added `docs/00.agent-governance/rules/approval-boundaries.md` as the single
+  approval matrix: default state, approval triggers, validation, evidence, and
+  rollback per surface, plus mandatory live-mutation and secret-handling policy.
+- Added `docs/99.templates/harness-task-contract.template.md` and registered it
+  in `docs/99.templates/README.md`.
+- Added `scripts/validate-harness.sh` as a repo-static wrapper over the existing
+  gates (no new validation logic, no live checks) and registered it in the
+  `scripts/README.md` Structure, Inventory, Classification, and Command Contract
+  surfaces.
+- Added a `## 8. Harness Impact` section to `.github/PULL_REQUEST_TEMPLATE.md`
+  separating static evidence from operator-approved live evidence.
+- Extended `scripts/validate-repo-quality-gates.sh` with existence and
+  cross-reference checks for the new surfaces only (no duplication of the
+  existing inventory or template checks).
+- Linked the new surfaces from `harness-catalog.md`, root `README.md`, and
+  `docs/05.operations/README.md`.
+
+### Evidence
+
+- `bash scripts/validate-harness.sh` — PASS (repo-quality, GitOps structure,
+  k8s manifests, secret handling, policy gates via built-in fallback, static
+  infrastructure contracts, `git diff --check`).
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Optional `conftest` and `kube-linter` were not installed; policy and manifest
+  checks ran through their documented fallbacks.
+- No live k3d / ArgoCD / Vault / ESO validation was run; live runtime evidence
+  is operator-approved only and was intentionally skipped.
+
+### Prevention
+
+- Treat new harness surfaces as a connective-layer change: update the
+  implementation map, approval boundaries, and the relevant README/inventory in
+  the same change set.
+- Keep `validate-harness.sh` a wrapper only; add new validation logic to the
+  owning validator, not to the wrapper.
+- Keep `Ready` scoped to repo-static readiness; never present static PASS as
+  live ArgoCD, Vault, ESO, or deployment readiness.
