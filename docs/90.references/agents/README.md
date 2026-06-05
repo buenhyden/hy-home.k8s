@@ -66,6 +66,14 @@ agents/
 - `docs/03.specs/<feature-id>/agent-design.md`는 기능별 Agent 설계를 보관한다.
 - `docs/00.agent-governance/memory/progress.md`는 repo-changing work의 progress와 reusable memory ledger를 보관한다.
 
+## Language Boundary
+
+Agent concept summaries may use Korean when they explain reusable ideas for
+human readers. Runtime policy, provider behavior, hook permissions, model
+routing, and execution rules must remain in English under
+`docs/00.agent-governance/**`; this folder links to those owners instead of
+redefining them.
+
 ## Related Documents
 
 - [90.references README](../README.md)

@@ -92,6 +92,18 @@ hy-home.k8s/
 11. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
 12. AWS/Azure 예시는 [Tech Stack Version Inventory](./docs/90.references/versions/tech-stack-version-inventory.md)의 `Cloud Example Snapshot`을 기준으로 관리하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
 
+## Language Policy
+
+이 README와 stage README처럼 사람이 먼저 읽는 진입점은 한국어를 기본으로 한다.
+반대로 AI Agent가 실행 기준으로 삼는 governance, policy, prompt/tool contract,
+검증 계약은 영어를 우선한다.
+
+- `docs/00.agent-governance/**`: Agent 실행 정책과 provider/runtime 계약이므로 영어를 유지한다.
+- `docs/03.specs/**/spec.md`: 구현 명세이므로 영어로 작성한다.
+- `docs/04.execution/plans/*.md`, `docs/04.execution/tasks/*.md`: 실행 계획, 검증 증적, handoff 기록이므로 영어로 작성한다.
+- `docs/05.operations/{guides,policies,runbooks,incidents}`: 운영자가 읽는 본문은 한국어를 사용할 수 있고, AI Agent 실행 지시나 tool/prompt contract는 영어로 분리한다.
+- `docs/90.references/**`: 사람용 overview와 lookup 설명은 한국어를 사용할 수 있고, `Authority Boundary`, `Sources`, `Review and Freshness`, version support boundary, generated-index contract는 영어를 우선한다.
+
 ## Common Workflows
 
 | Workflow       | Start Here                                               | Expected Follow-up                                                              |

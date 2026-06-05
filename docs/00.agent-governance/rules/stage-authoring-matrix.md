@@ -8,10 +8,13 @@ All authored stage documents must use the matching template from
 `## Related Documents`. README entrypoints use `readme.template.md`.
 
 Human-facing README and overview prose should prefer Korean. Agent governance,
-provider adapters, hook contracts, prompt/tool contracts, and explicit
-AI-agent-facing sections such as `AI Agent Requirements` should prefer English.
-When a stage document mixes human and agent audiences, keep the reader-facing
-context in Korean and keep the AI-agent execution requirements in English.
+provider adapters, hook contracts, prompt/tool contracts, technical specs,
+execution plans, task evidence, and explicit AI-agent-facing sections such as
+`AI Agent Requirements` should prefer English. `docs/03.specs/**/spec.md`,
+`docs/04.execution/plans/*.md`, and `docs/04.execution/tasks/*.md` are
+English-first execution artifacts. When a stage document mixes human and agent
+audiences, keep the reader-facing context in Korean and keep the AI-agent
+execution requirements in English.
 
 | Taxonomy Path | Purpose | Authoring Timing | Persona (Primary) | Input Documents | Output Documents | Template | Completion Criteria |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -26,6 +29,6 @@ context in Korean and keep the AI-agent execution requirements in English.
 | `05.operations/policies` | Operational policy | Before release and when policy changes | Operations Engineer | Spec, security/compliance requirements | Operation policy docs | `policy.template.md` | Control, retention, and promotion criteria are explicit |
 | `05.operations/runbooks` | Executable run procedures | When operations tasks are standardized | Operations Engineer | Operation policy | Runbooks | `runbook.template.md` | Steps are executable with validation and recovery paths |
 | `05.operations/incidents` | Incident fact records and post-incident learning | During incident handling and after incident closure | Operations/Security Engineer | Runtime evidence, runbooks | Incident records and `postmortems/` entries | `incident.template.md`, `postmortem.template.md` | Timeline, impact, mitigations, RCA, and prevention actions are linked back to the system |
-| `90.references` | Durable reference material | When knowledge should be reused across features or operations | Technical Writer/Governance Steward | Stable facts, inventories, learning material | Reference documents | `reference.template.md` | Reference material is factual, slow-moving, and linked from relevant stages |
+| `90.references` | Durable reference material | When knowledge should be reused across features or operations | Technical Writer/Governance Steward | Stable facts, inventories, learning material | Reference documents | `reference.template.md` | Reference material is factual, slow-moving, linked from relevant stages, and keeps authority/source/freshness fields English-first |
 | `98.archive` | Metadata-only old document Tombstones | When an old active-stage document conflicts with current implementation or is deprecated-only/superseded-only | Governance Steward | Current replacement docs, implementation evidence | Tombstone documents and archive index rows | `archive-tombstone.template.md` | Original path is mirrored, old body is removed, active docs link only to the archive index |
 | `99.templates` | Reusable document templates | Before authoring or restructuring docs | Technical Writer/Governance Steward | Taxonomy requirements | Templates | n/a | Templates match canonical paths and stay referenced by README files |

@@ -20,6 +20,24 @@
 | 실제 사고 사실, 타임라인을 기록해야 함      | [incidents](./incidents/README.md)                                           | [incident.template.md](../99.templates/incident.template.md)     |
 | 사고 후 원인과 재발 방지를 분석해야 함      | [incidents README](./incidents/README.md)에서 postmortem 경로 생성 조건 확인 | [postmortem.template.md](../99.templates/postmortem.template.md) |
 
+## Operations Folder Roles
+
+`05.operations`는 운영 지식을 한곳에 모으되, 문서가 맡는 일을 섞지 않는다.
+
+- `guides/`: 안정 상태에서 시스템을 이해하고 온보딩하거나 설정 흐름을 따라가기 위한 안내다.
+- `policies/`: 허용/금지/예외 승인, 검증 증적, 운영 통제 기준을 정의한다.
+- `runbooks/`: 정해진 순서로 실행하고, 검증하고, 실패 시 복구하는 절차다.
+- `incidents/`: 실제 사고의 사실 기록과 postmortem을 보관한다.
+
+## Language Boundary
+
+운영 문서는 사람이 읽고 실행하는 문서이므로 한국어를 기본으로 한다. 다만
+자동화가 직접 따라야 하는 `AI Agent Requirements`, `Agent Execution Notes`,
+tool/prompt contract, hook/validator contract 같은 섹션은 영어로 둔다. live
+cluster, Vault, secret, ArgoCD 같은 고위험 명령은 언어와 무관하게
+human-approved, operator-approved, bootstrap-only, break-glass 같은 실행
+경계를 가까운 문맥에 남긴다.
+
 ## Operations Mutation Boundary
 
 운영 문서는 `kubectl apply/patch`, `argocd app sync`, `vault kv put`,

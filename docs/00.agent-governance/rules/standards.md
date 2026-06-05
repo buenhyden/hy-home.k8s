@@ -7,6 +7,16 @@ Global standards for all agents in this repository.
 - `docs/00.agent-governance/*`: English only.
 - User-facing responses: Korean only.
 - Human-facing top-level docs (`README.md`, `docs/README.md`, stage READMEs): Korean.
+- Technical specs under `docs/03.specs/**/spec.md`: English.
+- Execution plans under `docs/04.execution/plans/*.md`: English.
+- Task records under `docs/04.execution/tasks/*.md`: English.
+- Operations guides, policies, runbooks, and incident records may use Korean
+  for human readers, but AI-agent execution sections and tool/prompt contracts
+  inside them must remain English.
+- Reference documents may use Korean for human-facing overview and lookup
+  explanation, but authority boundaries, source/freshness metadata, generated
+  index contracts, version support boundaries, and AI-agent routing notes
+  should remain English-first.
 
 ## Token and Context Policy
 

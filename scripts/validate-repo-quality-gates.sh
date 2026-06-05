@@ -846,6 +846,20 @@ for glob_pattern, template_name in required_stage_templates:
             if heading not in document_headings:
                 fail(f"{rel(path)} missing required template heading from {template_name}: {heading}")
 
+english_first_stage_globs = [
+    "docs/03.specs/*/spec.md",
+    "docs/04.execution/plans/*.md",
+    "docs/04.execution/tasks/*.md",
+]
+hangul_pattern = re.compile(r"[\uac00-\ud7a3]")
+for glob_pattern in english_first_stage_globs:
+    for path in sorted(root.glob(glob_pattern)):
+        if path.name == "README.md":
+            continue
+        for line_number, line in enumerate(read_text(path).splitlines(), start=1):
+            if hangul_pattern.search(line):
+                fail(f"{rel(path)}:{line_number} contains Korean text in an English-first Stage 03/04 artifact")
+
 archive_root = root / "docs/98.archive"
 archive_required_phrases = [
     "type: archive-tombstone",

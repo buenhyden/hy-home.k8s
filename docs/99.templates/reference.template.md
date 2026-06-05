@@ -16,12 +16,13 @@ updated: YYYY-MM-DD
 >
 > - Keep this document factual, slow-moving, and explicitly bounded.
 > - Do not duplicate active requirements, specs, plans, tasks, policies, or runbooks.
+> - Human-facing overview and explanatory notes may be Korean; authority, source, freshness, and AI-agent boundary fields should stay English-first.
 > - Use relative links only, calculated from the final authored document location.
 > - Keep placeholder or optional target paths as code literals until the target exists.
 
 ---
 
-## Overview (KR)
+## Overview
 
 이 문서는 [주제]에 대한 참고 문서다. 느리게 변하는 기준 정보, 용어, 외부 표준 요약을 정리한다.
 

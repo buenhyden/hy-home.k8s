@@ -98,13 +98,38 @@ docs/90.references/
 - `90.references/versions/tech-stack-version-inventory.md`의 버전 값은 실제 repo manifest/config와 함께 유지될 때만 기준값으로 취급한다.
 - 외부 기준은 시간에 따라 바뀌므로 `Source checked`, `Last reviewed`, refresh trigger를 남긴다.
 
+## Reference Folder Roles
+
+`90.references` 하위 폴더의 목적은 다음처럼 나눈다.
+
+| Folder | Role | Language Boundary |
+| --- | --- | --- |
+| `agents/` | 기능 하나에 종속되지 않는 Agent 개념, 메모리/컨텍스트/오케스트레이션 참고 지식 | 사람용 설명은 한국어 가능, runtime policy와 execution rule은 `00.agent-governance` 영어 계약으로 링크 |
+| `learning/` | 구현 경험을 CS/CE 이론과 장기 학습 로드맵으로 연결하는 자료 | 학습 맥락은 한국어 가능, authoritative boundary와 freshness rule은 영어로 유지 |
+| `llm-wiki/` | LLM-readable canonical owner link map과 generated index | 링크맵 설명은 혼합 가능, generated content와 canonical owner boundary는 영어-first |
+| `versions/` | repo-backed 버전 계약, 외부 공식 지원 범위, cloud example snapshot | 사람용 설명은 한국어 가능, `Source checked`, provider support, refresh trigger는 영어-first |
+
+## Language Boundary
+
+`90.references`는 사람이 먼저 읽는 reference hub이므로 README와 개요 문장은
+한국어를 사용할 수 있다. 다만 reference 문서가 AI Agent나 자동화가 판단 기준으로
+읽는 `Reference Type`, `Authority Boundary`, `Sources`, `Review and Freshness`,
+generated-index contract, version support boundary를 포함할 때는 해당 필드를
+영어-first로 유지한다.
+
+Reference 문서는 정책, 실행 절차, 배포 승인, runtime permission을 새로 정의하지
+않는다. 그런 내용이 필요하면 `00.agent-governance`, `03.specs`,
+`04.execution`, `05.operations/policies`, `05.operations/runbooks` 중 canonical
+owner로 이동하고, `90.references`에는 dated source, lookup fact, freshness
+trigger만 남긴다.
+
 ## Required Reference Format
 
 새 reference 문서는 [reference.template.md](../99.templates/reference.template.md)의 필수 heading을 유지한다.
 `README.md` 인덱스 파일은 탐색 진입점이므로 전체 reference 템플릿을 복제하지 않고 필요한 필드의 요약만 둘 수 있다.
 README 인덱스는 frontmatter를 요구하지 않지만, authored reference 문서는 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
 
-- `Overview (KR)`: 이 reference가 무엇을 설명하는지 한국어로 요약
+- `Overview`: 이 reference가 무엇을 설명하는지 한국어로 요약. AI-agent-only reference라면 `Overview`로 영어 작성 가능.
 - `Purpose`: 이 reference가 존재하는 이유
 - `Reference Type`: version-contract-inventory, external-standard-snapshot, durable-concept, learning-roadmap, glossary, faq 중 하나
 - `Authority Boundary`: authoritative for / not authoritative for

@@ -60,6 +60,13 @@ learning/
 - sibling reference folder는 `../agents/`, `../llm-wiki/`, `../versions/`로 연결한다.
 - operational owner docs는 `../../05.operations/`, governance owner docs는 `../../00.agent-governance/`로 연결한다.
 
+## Language Boundary
+
+Learning roadmaps and explanatory context may use Korean for human study flow.
+Authority boundaries, source metadata, review cadence, and AI-agent routing
+notes should stay English-first so automated readers can distinguish learning
+material from execution policy.
+
 ## Related Documents
 
 - [90.references README](../README.md)

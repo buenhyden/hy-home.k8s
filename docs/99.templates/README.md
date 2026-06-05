@@ -85,6 +85,14 @@
 13. `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/98.archive` 아래의 비-README Markdown은 정확히 하나의 Template-Folder Mapping 행에 매핑되어야 한다.
 14. 실행 전제가 바뀌면 active README/guide/runbook은 새 current contract로 갱신하고, 현재 구현과 상충하는 old PRD/ARD/ADR/Spec/Plan/Task는 `docs/98.archive` Tombstone으로 이동한다.
 
+## Language Policy
+
+- `spec.template.md`로 만드는 `docs/03.specs/**/spec.md` 문서는 영어로 작성한다.
+- `plan.template.md`로 만드는 `docs/04.execution/plans/*.md` 문서는 영어로 작성한다.
+- `task.template.md`와 `harness-task-contract.template.md`로 만드는 `docs/04.execution/tasks/*.md` 문서는 영어로 작성한다.
+- `guide`, `policy`, `runbook`, `incident`, `postmortem` 문서는 운영자가 읽는 본문은 한국어를 기본으로 하되, AI Agent 실행 지시나 tool/prompt contract는 영어로 분리한다.
+- `reference.template.md`로 만드는 `docs/90.references/**/*.md` 문서는 사람용 overview와 설명에는 한국어를 사용할 수 있지만, `Reference Type`, `Authority Boundary`, `Sources`, `Review and Freshness`, version support boundary, generated-index contract는 영어를 우선한다.
+
 ## Template Improvement Plan
 
 템플릿을 수정할 때는 먼저 이 README의 mapping과 link rules를 갱신 대상으로 확정한다.

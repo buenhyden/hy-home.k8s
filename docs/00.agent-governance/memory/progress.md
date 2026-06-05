@@ -5611,3 +5611,101 @@ section separating static from live evidence.
   owning validator, not to the wrapper.
 - Keep `Ready` scoped to repo-static readiness; never present static PASS as
   live ArgoCD, Vault, ESO, or deployment readiness.
+
+## 2026-06-05 — Harness Connective Layer Risk Closure
+
+### Metadata
+
+- **Date**: 2026-06-05
+- **Layer**: governance, qa, evidence
+- **Tags**: #harness #risk-closure #follow-up #validation
+- **Record type**: Remaining Risk and Follow-up Task closure.
+
+### Resolution
+
+- Added
+  [Harness Connective Layer Risk Closure](../../04.execution/tasks/2026-06-05-harness-connective-layer-risk-closure.md)
+  as the durable task evidence for closing the connective-layer Remaining Risk
+  and Follow-up Tasks.
+- Classified optional `kube-linter` absence as a closed local-tool boundary
+  because `validate-k8s-manifests.sh` documents and passes the YAML syntax
+  fallback path.
+- Classified optional `conftest` absence as a closed local-tool boundary
+  because `validate-policy-gates.sh` documents and passes the built-in policy
+  fallback path.
+- Classified skipped live k3d / ArgoCD / Vault / ESO validation as an explicit
+  operator-approved boundary, not as incomplete repo-static harness work.
+- Confirmed the follow-up to commit logical units was completed by local
+  commits `db9df84` and `9019c92`.
+
+### Evidence
+
+- `bash scripts/validate-harness.sh` — PASS.
+- `git diff --check` — PASS.
+- `git status --short` — clean at intake before closure edits.
+- No live cluster, ArgoCD, Vault, ESO, Kubernetes mutation, secret value read,
+  or external service action was performed.
+
+### Handoff
+
+- No active repo-static Remaining Risk or Follow-up Task remains for the harness
+  connective-layer work.
+- Future live runtime evidence remains a separate operator-approved runbook or
+  incident workflow.
+
+## 2026-06-05 — Language Boundary Alignment
+
+### Metadata
+
+- **Date**: 2026-06-05
+- **Layer**: docs, governance, operations
+- **Tags**: #language-policy #document-release #humanize-korean #stage-03 #stage-04
+- **Record type**: language boundary audit, remediation, and validation.
+
+### Progress
+
+- Applied the requested document-release and humanize-korean skills as
+  documentation synchronization and Korean-prose quality lenses.
+- Audited the current language boundary across Stage 03 specs, Stage 04 plans,
+  Stage 04 tasks, and Stage 05 operations documents.
+- Strengthened the canonical language policy so `docs/03.specs/**/spec.md`,
+  `docs/04.execution/plans/*.md`, and `docs/04.execution/tasks/*.md` are
+  explicit English-first artifacts.
+- Updated `spec.template.md`, `plan.template.md`, and `task.template.md` so
+  newly authored specs, plans, and task records no longer ask for Korean
+  overviews.
+- Reinforced the operations hub with folder roles and the Korean human-facing /
+  English AI-agent execution boundary.
+- Converted the newly added harness connective-layer risk closure task to
+  English.
+- Translated legacy `docs/03.specs/**/spec.md`, `docs/04.execution/plans/*.md`,
+  and `docs/04.execution/tasks/*.md` English-first artifacts to remove Korean
+  body text.
+- Reinforced `docs/90.references` root and subfolder READMEs with reference
+  roles and the Korean human-facing / English authority-source-freshness
+  boundary.
+- Updated root `README.md` and `docs/README.md` so the language policy is
+  visible from the primary human-facing entrypoints.
+- Hardened `scripts/validate-repo-quality-gates.sh` to reject Korean syllables
+  in Stage 03/04 English-first artifacts.
+- Added
+  [Language Boundary Alignment](../../04.execution/tasks/2026-06-05-language-boundary-alignment.md)
+  as the current task record for this broader objective.
+
+### Evidence
+
+- A ripgrep scan for Korean syllables in `docs/03.specs/**/spec.md` returns no
+  matches.
+- A ripgrep scan for Korean syllables in `docs/04.execution/plans/*.md`
+  excluding the human-facing README index returns no matches.
+- A ripgrep scan for Korean syllables in `docs/04.execution/tasks/*.md`
+  excluding the human-facing README index returns no matches.
+- `scripts/validate-repo-quality-gates.sh` now includes a deterministic
+  English-first Stage 03/04 language gate.
+
+### Handoff
+
+- Stage 03 specs, Stage 04 plans, and Stage 04 task records are now aligned
+  with the English-first policy.
+- Human-facing README, operations, and reference areas retain Korean where
+  appropriate, with AI-agent and factual-contract fields kept English-first.

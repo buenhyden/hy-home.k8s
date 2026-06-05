@@ -13,7 +13,7 @@ It may contain generated Markdown indexes produced by `scripts/generate-llm-wiki
 
 This README does not define policy or procedure. It points agents and humans to the canonical owner for each domain and records the freshness trigger for the link map.
 
-## Overview (KR)
+## Overview
 
 이 문서는 `hy-home.k8s`의 LLM-readable index다. root `docs/`, Agent governance, examples, GitOps, scripts, version references를 빠르게 찾기 위한 링크맵만 제공한다.
 
@@ -47,6 +47,13 @@ LLM과 사람이 저장소의 문서 경계를 빠르게 찾도록 돕는다. �
   - Freshness criteria for this index.
 - **Not authoritative for**:
   - Requirements, architecture decisions, implementation contracts, execution plans, tasks, policies, runbooks, incidents, release gates, runtime permissions, hooks, model routing, cluster mutation, secret handling, or deployment approval.
+
+## Language Boundary
+
+This directory is LLM-readable by design. Canonical owner links, generated-index
+contracts, authority boundaries, and freshness triggers should stay
+English-first. Short Korean summaries are allowed only as human-facing context
+and must not replace the canonical owner links or generated index contract.
 
 ## Scope
 

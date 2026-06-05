@@ -112,6 +112,16 @@ docs/
 상대하면 사람용 맥락은 한국어로, `AI Agent Requirements` 같은 에이전트용
 요구사항 섹션은 영어로 작성한다.
 
+실행 계약에 가까운 문서는 영어를 기본값으로 둔다. `docs/03.specs/**/spec.md`
+는 구현 명세이므로 영어로 작성하고, `docs/04.execution/plans/*.md`와
+`docs/04.execution/tasks/*.md`도 계획·검증·handoff 증적이므로 영어로
+작성한다. 반대로 README와 운영 안내처럼 사람이 먼저 읽는 문서는 한국어로
+두되, 그 안에 들어가는 AI Agent 실행 지시나 도구 계약은 영어로 분리한다.
+`docs/90.references`의 reference 문서는 사람용 개요와 lookup 설명에는 한국어를
+쓸 수 있지만, `Authority Boundary`, `Sources`, `Review and Freshness`,
+version support boundary, generated-index contract처럼 사실 계약으로 소비되는
+필드는 영어를 우선한다.
+
 각 stage의 역할은 아래와 같이 분리한다.
 
 | Lifecycle Stage | Folder | Canonical Template | Required Responsibility |
@@ -122,8 +132,8 @@ docs/
 | Specification | [`03.specs`](./03.specs/README.md) | [`spec.template.md`](./99.templates/spec.template.md) | 구현 계약, 인터페이스, 검증 기준 |
 | Plan | [`04.execution/plans`](./04.execution/plans/README.md) | [`plan.template.md`](./99.templates/plan.template.md) | 실행 순서, 리스크, rollout, verification gate |
 | Task | [`04.execution/tasks`](./04.execution/tasks/README.md) | [`task.template.md`](./99.templates/task.template.md) | 작업 단위, evidence, 완료 상태 |
-| Operation | [`05.operations`](./05.operations/README.md) | guide/operation/runbook templates | 안정 상태 안내, 정책, 실행 절차 |
-| Reference | [`90.references`](./90.references/README.md) | [`reference.template.md`](./99.templates/reference.template.md) | lookup material, glossary, appendix, version snapshot |
+| Operation | [`05.operations`](./05.operations/README.md) | guide/policy/runbook templates | 안정 상태 안내, 정책, 실행 절차 |
+| Reference | [`90.references`](./90.references/README.md) | [`reference.template.md`](./99.templates/reference.template.md) | lookup material, glossary, appendix, version snapshot, dated source/freshness boundary |
 | Archive | [`98.archive`](./98.archive/README.md) | [`archive-tombstone.template.md`](./99.templates/archive-tombstone.template.md) | old 문서의 original-path mirror와 metadata-only Tombstone |
 
 - README와 index 문서는 해당 폴더의 목적, scope, structure, workflow, link basis, related documents를 유지한다.

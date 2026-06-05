@@ -57,12 +57,30 @@ This protocol defines how governance references authored docs and how language b
 - `docs/00.agent-governance/*`: English only.
 - Human-facing README files: Korean (`README.md`, `docs/README.md`, and stage READMEs).
 - Agent execution control documents under governance must be written in English.
+- Technical specifications under `docs/03.specs/**/spec.md` must be written in
+  English. Feature-local API, agent, data, and test contracts under
+  `docs/03.specs/**` should also prefer English because they are implementation
+  contracts.
+- Implementation plans under `docs/04.execution/plans/*.md` must be written in
+  English.
+- Task records under `docs/04.execution/tasks/*.md` must be written in English
+  because they are execution evidence, validation records, and agent handoff
+  artifacts. The folder README may remain Korean as a human-facing index.
 - Human-facing authored documents should prefer Korean for reader-facing
   overview, audience, and operational explanation. Sections whose explicit
   audience is an AI agent, including headings such as `AI Agent Requirements`,
   `Agent Execution Notes`, `Agent Harness Requirements`, or tool/prompt
   contracts, should be written in English even inside otherwise Korean
   documents.
+- Operations documents under `docs/05.operations/**` may use Korean for
+  human-facing guidance, policies, runbooks, and incident records, while any
+  AI-agent execution notes, prompt/tool contracts, or automation guardrails
+  inside those documents must remain English.
+- Reference documents under `docs/90.references/**` may use Korean for
+  human-facing overview and explanatory lookup context. `Reference Type`,
+  `Authority Boundary`, `Sources`, `Review and Freshness`, generated-index
+  contracts, version support boundaries, and AI-agent routing notes should
+  remain English-first because they are consumed as factual contracts.
 
 ## Drift Garbage Collection
 

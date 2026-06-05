@@ -53,6 +53,13 @@ versions/
 5. 새 파일을 추가하거나 이동하면 이 README, 상위 [90.references README](../README.md), 관련 consumer README를 함께 갱신한다.
 6. `/latest` 형식의 외부 URL은 frozen permalink가 아니라 source-checked URL로 해석한다. 고정 release URL이 있으면 `tech-stack-version-inventory.md`의 source나 note에 함께 남긴다.
 
+## Language Boundary
+
+Version context and operator-facing summaries may use Korean. Version values,
+provider support statements, `Source checked`, `Last reviewed`, and refresh
+triggers should stay English-first because they are consumed as factual
+contracts by docs, validators, and AI agents.
+
 ## Link Basis
 
 이 README의 링크 기준 위치는 `docs/90.references/versions/`다.
