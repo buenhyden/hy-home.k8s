@@ -10,10 +10,12 @@ updated: 2026-05-31
 
 ---
 
-## Overview (KR)
+## Overview
 
-이 문서는 Codex/GPT 하네스, Stage 00 Model Policy, Template Contract drift 정합화 작업의 구현·검증 증적을 기록한다.
-작업은 승인된 Phase 3 범위 안에서만 수행하며, live cluster mutation이나 secret value 접근은 포함하지 않는다.
+This document records implementation and verification evidence for aligning
+the Codex/GPT harness, Stage 00 Model Policy, and Template Contract drift. The
+work is limited to the approved Phase 3 scope and does not include live cluster
+mutation or secret-value access.
 
 ## Inputs
 
@@ -21,26 +23,26 @@ updated: 2026-05-31
 
 ## Working Rules
 
-- 승인된 Plan의 `PLN-001`부터 `PLN-010` 범위만 구현한다.
-- Governance와 provider/harness 문서는 English로 유지한다.
-- Human-facing README와 Task/Plan 개요는 Korean을 유지한다.
-- Kubernetes manifests, ArgoCD live sync, Vault writes, secret value inspection은 수행하지 않는다.
-- 문서-only 변경도 validation evidence를 남긴다.
+- Implement only the approved Plan scope from `PLN-001` through `PLN-010`.
+- Keep governance and provider/harness documents in English.
+- Keep human-facing README files in Korean; Stage 04 Plan and Task records are now English-first under the language policy.
+- Do not perform Kubernetes manifest changes, ArgoCD live sync, Vault writes, or secret-value inspection.
+- Documentation-only changes still need validation evidence.
 
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-001 | Phase 3 Task record and Task README index 작성 | doc | N/A | PLN-001 | Task file and `docs/04.execution/tasks/README.md` updated | platform | Done |
-| T-002 | Stage 00 Model Policy and harness catalog 정합화 | doc | N/A | PLN-002 | Targeted model checks and repo quality gate | platform | Done |
-| T-003 | Codex agent TOML model reasoning effort 명시 | guardrail | N/A | PLN-003 | `rg -n "model_reasoning_effort" .codex/agents` | platform | Done |
-| T-004 | `AGENTS.md` Codex/GPT shim 역할과 provider docs 정리 | doc | N/A | PLN-004 | Link check and repo quality gate | platform | Done |
-| T-005 | Shared hook script path references 정규화 | doc | N/A | PLN-005 | No stale provider-local runtime-script claims remain in active Codex/Gemini docs | platform | Done |
-| T-006 | Policy template routing을 `policy.template.md`로 정규화 | doc | N/A | PLN-006 | No active `operation.template.md` routing references remain | platform | Done |
-| T-007 | Operations policy frontmatter `type: policy` 정규화 | doc | N/A | PLN-007 | `rg -n "^type: operation$" docs/05.operations/policies` has no output | platform | Done |
-| T-008 | Recurring drift를 repo quality gate로 보강 | test | N/A | PLN-008 | `bash scripts/validate-repo-quality-gates.sh .` | platform | Done |
-| T-009 | README indexes and memory ledger 갱신 | memory | N/A | PLN-009 | README indexes current; progress entry appended | platform | Done |
-| T-010 | 최종 검증 실행과 결과 기록 | test | N/A | PLN-010 | Verification Summary commands pass or limitations recorded | platform | Done |
+| T-001 | Write the Phase 3 Task record and Task README index | doc | N/A | PLN-001 | Task file and `docs/04.execution/tasks/README.md` updated | platform | Done |
+| T-002 | Align the Stage 00 Model Policy and harness catalog | doc | N/A | PLN-002 | Targeted model checks and repo quality gate | platform | Done |
+| T-003 | Declare Codex agent TOML model reasoning effort | guardrail | N/A | PLN-003 | `rg -n "model_reasoning_effort" .codex/agents` | platform | Done |
+| T-004 | Clarify the `AGENTS.md` Codex/GPT shim role and provider docs | doc | N/A | PLN-004 | Link check and repo quality gate | platform | Done |
+| T-005 | Normalize shared hook script path references | doc | N/A | PLN-005 | No stale provider-local runtime-script claims remain in active Codex/Gemini docs | platform | Done |
+| T-006 | Normalize policy template routing to `policy.template.md` | doc | N/A | PLN-006 | No active `operation.template.md` routing references remain | platform | Done |
+| T-007 | Normalize operations policy frontmatter to `type: policy` | doc | N/A | PLN-007 | `rg -n "^type: operation$" docs/05.operations/policies` has no output | platform | Done |
+| T-008 | Harden repo quality gates against recurring drift | test | N/A | PLN-008 | `bash scripts/validate-repo-quality-gates.sh .` | platform | Done |
+| T-009 | Update README indexes and the memory ledger | memory | N/A | PLN-009 | README indexes current; progress entry appended | platform | Done |
+| T-010 | Run final verification and record results | test | N/A | PLN-010 | Verification Summary commands pass or limitations recorded | platform | Done |
 
 ## Suggested Types
 
@@ -59,16 +61,16 @@ updated: 2026-05-31
 
 ### Phase 3
 
-- [x] T-001 Phase 3 Task record and Task README index 작성
-- [x] T-002 Stage 00 Model Policy and harness catalog 정합화
-- [x] T-003 Codex agent TOML model reasoning effort 명시
-- [x] T-004 `AGENTS.md` Codex/GPT shim 역할과 provider docs 정리
-- [x] T-005 Shared hook script path references 정규화
-- [x] T-006 Policy template routing을 `policy.template.md`로 정규화
-- [x] T-007 Operations policy frontmatter `type: policy` 정규화
-- [x] T-008 Recurring drift를 repo quality gate로 보강
-- [x] T-009 README indexes and memory ledger 갱신
-- [x] T-010 최종 검증 실행과 결과 기록
+- [x] T-001 Write the Phase 3 Task record and Task README index.
+- [x] T-002 Align the Stage 00 Model Policy and harness catalog.
+- [x] T-003 Declare Codex agent TOML model reasoning effort.
+- [x] T-004 Clarify the `AGENTS.md` Codex/GPT shim role and provider docs.
+- [x] T-005 Normalize shared hook script path references.
+- [x] T-006 Normalize policy template routing to `policy.template.md`.
+- [x] T-007 Normalize operations policy frontmatter to `type: policy`.
+- [x] T-008 Harden repo quality gates against recurring drift.
+- [x] T-009 Update README indexes and the memory ledger.
+- [x] T-010 Run final verification and record results.
 
 ## Verification Summary
 

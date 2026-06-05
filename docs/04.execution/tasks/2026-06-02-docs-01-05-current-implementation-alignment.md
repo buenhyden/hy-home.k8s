@@ -8,10 +8,12 @@ updated: 2026-06-02
 
 # Task: Docs 01-05 Current Implementation Alignment
 
-## Overview (KR)
+## Overview
 
-이 문서는 `docs/01-05` current implementation alignment 작업의 작업 단위와 검증 증거를 추적한다.
-작업은 current repo SSoT와 충돌하는 active 문서의 제거/archive, active contract 보정, QA/CI stale gate 강화로 구성된다.
+This document tracks work units and verification evidence for `docs/01-05`
+current implementation alignment. The work removes or archives active
+documents that conflict with the current repo SSoT, adjusts active contracts,
+and hardens QA/CI stale gates.
 
 ## Inputs
 

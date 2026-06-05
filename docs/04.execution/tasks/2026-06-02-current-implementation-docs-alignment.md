@@ -8,11 +8,13 @@ updated: 2026-06-02
 
 # Task: Current Implementation Docs Alignment
 
-## Overview (KR)
+## Overview
 
-이 문서는 current implementation docs alignment 작업의 구현·검증 작업 목록이다.
-작업 증거는 active docs cleanup, archive Tombstone 생성, validator hardening, regression checks로 구성된다.
-`docs/05.operations`까지 확장한 후속 currentness pass는 [Docs 01-05 Current Implementation Alignment Task](./2026-06-02-docs-01-05-current-implementation-alignment.md)가 소유한다.
+This document tracks implementation and verification tasks for current
+implementation docs alignment. The evidence covers active docs cleanup,
+archive Tombstone creation, validator hardening, and regression checks. The
+follow-up currentness pass extended through `docs/05.operations` is owned by
+the [Docs 01-05 Current Implementation Alignment Task](./2026-06-02-docs-01-05-current-implementation-alignment.md).
 
 ## Inputs
 

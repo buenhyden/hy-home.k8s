@@ -8,12 +8,16 @@ updated: 2026-05-09
 
 # Task: .github QA and CI Remediation
 
-## Overview (KR)
+## Overview
 
-이 문서는 `.github/` QA, CI, 브랜치 정책 보정 작업의 구현·검증 작업 목록이다.
-Plan에서 파생된 작업을 추적 가능하게 기록한다.
+This document tracks implementation and verification tasks for `.github/` QA,
+CI, and branch-policy remediation. It records tasks derived from the Plan in a
+traceable form.
 
-2026-05-09 follow-up은 기존 완료 상태를 뒤집지 않고 `.github` policy SSoT와 실행 미러의 경계를 보강한다. 중복 제거 기준은 `policy SSoT + minimal executable/checklist mirrors`이며, CI job 간 방어적 중복은 의도된 QA coverage로 유지한다.
+The 2026-05-09 follow-up reinforces the boundary between the `.github` policy
+SSoT and executable mirrors without reversing the prior completed state. The
+deduplication rule is `policy SSoT + minimal executable/checklist mirrors`;
+defensive overlap between CI jobs remains intentional QA coverage.
 
 ## Inputs
 

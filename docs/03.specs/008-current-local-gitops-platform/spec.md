@@ -8,10 +8,12 @@ updated: 2026-06-02
 
 # Current Local GitOps Platform Technical Specification (Spec)
 
-## Overview (KR)
+## Overview
 
-이 문서는 현재 repo-backed local GitOps platform의 구현 계약을 정의한다.
-old platform specs are archived as Tombstones, and this spec is the active technical contract for current manifests, scripts, and validation evidence.
+This document defines the implementation contract for the current repo-backed
+local GitOps platform. Old platform specs are archived as Tombstones, and this
+spec is the active technical contract for current manifests, scripts, and
+validation evidence.
 
 ## Strategic Boundaries & Non-goals
 

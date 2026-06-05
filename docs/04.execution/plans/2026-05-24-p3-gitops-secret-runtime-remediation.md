@@ -8,30 +8,31 @@ updated: 2026-06-04
 
 # P3 GitOps Secret Runtime Remediation Plan
 
-## Overview (KR)
+## Overview
 
-이 문서는 Workspace Harness Gap Analysis에서 P3로 보류했던 ArgoCD, Vault,
-External Secrets, secret/runtime 경계 항목 중 사용자가 승인한 범위의 실행 계획이다.
-변경은 GitOps-first repo-backed 방식으로 제한하며, plaintext secret 값 출력이나
-직접 `kubectl apply`, `argocd app sync`, `vault write`는 이 계획의 자동 실행 범위가
-아니다.
+This document is the implementation plan for the user-approved subset of P3
+ArgoCD, Vault, External Secrets, and secret/runtime boundary items deferred by
+the Workspace Harness Gap Analysis. Changes are limited to a GitOps-first,
+repo-backed approach; plaintext secret value output and direct `kubectl apply`,
+`argocd app sync`, or `vault write` are not in the automatic execution scope of
+this plan.
 
 ## Context
 
-승인 전 P3 항목은 [`../../90.references/audits/2026-05-24-workspace-harness-gap-analysis.md`](../../90.references/audits/2026-05-24-workspace-harness-gap-analysis.md)
-감사 reference에 보존되어 있다. 승인 후에도 안전 경계는 유지한다:
-repository desired state와 정적 검증을 먼저 보강하고, live 상태는 read-only
-명령으로만 확인한다.
+The pre-approval P3 items are preserved in the
+[`../../90.references/audits/2026-05-24-workspace-harness-gap-analysis.md`](../../90.references/audits/2026-05-24-workspace-harness-gap-analysis.md)
+audit reference. Safety boundaries remain after approval: improve repository
+desired state and static validation first, and inspect live state only through
+read-only commands.
 
 ## Goals & In-Scope
 
 - **Goals**:
-  - ESO controller egress policy에 DNS와 Kubernetes API egress를 명시한다.
-  - Vault ESO read policy에 ArgoCD Notifications 경로를 least-privilege로 추가한다.
-  - apps AppProject와 sample app ExternalSecret 계약을 일치시킨다.
-  - bootstrap-applied AppProject/ApplicationSet CR의 ArgoCD reconciliation 경로를
-    repository-backed root App-of-Apps 하위 앱으로 보강한다.
-  - static validation과 승인된 read-only live validation 결과를 기록한다.
+  - Explicitly add DNS and Kubernetes API egress to the ESO controller egress policy.
+  - Add the ArgoCD Notifications path to the Vault ESO read policy with least privilege.
+  - Align the apps AppProject and sample app ExternalSecret contracts.
+  - Add repository-backed root App-of-Apps child application paths for ArgoCD reconciliation of bootstrap-applied AppProject/ApplicationSet CRs.
+  - Record static validation and approved read-only live validation results.
 - **In Scope**:
   - `gitops/platform/network-policies/`
   - `infrastructure/vault/policies/`
@@ -39,19 +40,19 @@ repository desired state와 정적 검증을 먼저 보강하고, live 상태는
   - `gitops/apps/root/`
   - `examples/sample-app/`
   - `infrastructure/tests/`
-  - 관련 execution Plan/Task/README/progress evidence
+  - Related execution Plan/Task/README/progress evidence
 
 ## Non-Goals & Out-of-Scope
 
 - **Non-goals**:
-  - secret 값 조회 또는 출력
-  - Vault KV 값 생성/수정
+  - Reading or outputting secret values
+  - Creating or modifying Vault KV values
   - direct cluster mutation
-  - ArgoCD sync 강제 실행
-  - CI/CD policy 변경
+  - Forcing ArgoCD sync
+  - Changing CI/CD policy
 - **Out of Scope**:
-  - Slack token 발급/교체
-  - PostgreSQL/Valkey/Vault 데이터 플레인 변경
+  - Issuing or rotating Slack tokens
+  - Changing the PostgreSQL/Valkey/Vault data plane
   - GitHub Actions SHA pinning follow-up
   - `.claude/settings.local.json` precedence hardening
 

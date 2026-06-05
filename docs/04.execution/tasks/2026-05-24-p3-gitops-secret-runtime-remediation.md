@@ -8,11 +8,12 @@ updated: 2026-05-24
 
 # Task: P3 GitOps Secret Runtime Remediation
 
-## Overview (KR)
+## Overview
 
-이 문서는 승인된 P3 ArgoCD, Vault, ESO, secret/runtime remediation의 구현·검증
-작업 목록이다. 작업은 GitOps repository desired state와 read-only runtime metadata
-검증으로 제한하며, secret 값 출력과 live mutation은 금지한다.
+This document tracks implementation and verification tasks for the approved P3
+ArgoCD, Vault, ESO, and secret/runtime remediation. The work is limited to the
+GitOps repository desired state and read-only runtime metadata validation;
+secret value output and live mutation are prohibited.
 
 ## Inputs
 

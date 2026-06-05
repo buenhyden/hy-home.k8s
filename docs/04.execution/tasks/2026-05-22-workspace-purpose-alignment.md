@@ -8,11 +8,12 @@ updated: 2026-05-22
 
 # Task: Workspace Purpose Alignment Audit
 
-## Overview (KR)
+## Overview
 
-이 문서는 `hy-home.k8s`의 워크스페이스 목적 정합성 재감사와 보강 작업의 실행 증적이다.
-문서 lifecycle와 Agent governance뿐 아니라 GitOps, 인프라 계약, CI, 검증 스크립트, 예제,
-외부 버전 기준까지 같은 범위에서 확인한다.
+This document records execution evidence for the `hy-home.k8s` workspace
+purpose realignment re-audit and hardening work. The same scope covers the
+documentation lifecycle, Agent governance, GitOps, infrastructure contracts,
+CI, validation scripts, examples, and external version baselines.
 
 ## Inputs
 

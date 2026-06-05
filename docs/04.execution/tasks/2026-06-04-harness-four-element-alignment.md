@@ -8,11 +8,12 @@ updated: 2026-06-04
 
 # Task: Harness Four-Element Alignment
 
-## Overview (KR)
+## Overview
 
-이 문서는 하네스 네 요소의 현재 워크스페이스 구현 상태를 Codex/Claude
-provider surface까지 추적하고, 공통 카탈로그·runtime baseline·감사 스킬·검증
-게이트 보강 작업의 evidence를 기록한다.
+This document tracks the current workspace implementation state of the four
+harness elements through the Codex and Claude provider surfaces. It records
+evidence for hardening the shared catalog, runtime baseline, audit skills, and
+validation gates.
 
 ## Inputs
 

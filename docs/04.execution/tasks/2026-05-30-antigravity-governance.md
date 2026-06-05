@@ -10,9 +10,10 @@ updated: 2026-06-02
 
 ---
 
-## Overview (KR)
+## Overview
 
-이 문서는 Antigravity Governance 정비의 구현·검증 작업 목록이다. Spec과 Plan에서 파생된 작업을 추적 가능하게 기록한다.
+This document tracks implementation and verification work for Antigravity
+Governance remediation. It records tasks derived from the Spec and Plan.
 
 ## Inputs
 
@@ -28,10 +29,10 @@ updated: 2026-06-02
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner  | Status |
 | ------- | ----------- | ---- | --------------------- | ------------------- | --------------------- | ------ | ------ |
-| T-001   | `docs/00.agent-governance/providers/gemini.md` 수정 | doc  | - | Phase 3 | 파일 갱신 및 내용 확인 | Antigravity | Done |
-| T-002   | `.agents/GEMINI.md` 수정 | doc  | - | Phase 3 | 파일 갱신 및 내용 확인 | Antigravity | Done |
-| T-003   | `.agents/rules/workspace-rules.md` 신규 생성 | doc  | - | Phase 3 | 파일 생성 | Antigravity | Done |
-| T-004   | `.agents/workflows/qa-cicd-workflow.md` 신규 생성 | doc  | - | Phase 3 | 파일 생성 | Antigravity | Done |
+| T-001   | Update `docs/00.agent-governance/providers/gemini.md` | doc  | - | Phase 3 | File updated and content checked | Antigravity | Done |
+| T-002   | Update `.agents/GEMINI.md` | doc  | - | Phase 3 | File updated and content checked | Antigravity | Done |
+| T-003   | Create `.agents/rules/workspace-rules.md` | doc  | - | Phase 3 | File created | Antigravity | Done |
+| T-004   | Create `.agents/workflows/qa-cicd-workflow.md` | doc  | - | Phase 3 | File created | Antigravity | Done |
 
 ## Verification Summary
 

@@ -10,75 +10,75 @@ updated: 2026-05-31
 
 ---
 
-## Overview (KR)
+## Overview
 
-이 문서는 Stage 00 공통 에이전트 거버넌스와 Codex/GPT 하네스를 정합화하기 위한 실행 계획이다.
-Phase 1 조사에서 확인한 모델 정책 충돌, Template Contract drift, Codex TOML reasoning-effort 누락,
-operations policy frontmatter drift를 Phase 3에서 안전하게 고치는 순서와 검증 기준을 정의한다.
+This document is the implementation plan for aligning Stage 00 common agent
+governance with the Codex/GPT harness. It defines the safe Phase 3 remediation
+order and validation criteria for model-policy conflicts, Template Contract
+drift, missing Codex TOML reasoning-effort fields, and operations policy
+frontmatter drift found during Phase 1 investigation.
 
 ## Context
 
-첨부 작업 지시는 3단계 파이프라인을 요구했다.
+The attached work instructions required a three-phase pipeline.
 
-- Phase 1: 읽기 전용 조사와 분석.
-- Phase 2: 계획 문서 작성만 수행.
-- Phase 3: 승인된 계획에 따라 governance, template, config, validation surface를 구현.
+- Phase 1: read-only investigation and analysis.
+- Phase 2: plan document creation only.
+- Phase 3: implementation of governance, template, config, and validation surfaces according to the approved plan.
 
-Phase 1에서 확인한 주요 사실은 다음과 같다.
+The key facts confirmed in Phase 1 were:
 
-- `docs/00.agent-governance/model-policy.md`는 Codex worker를 `GPT-5.4-mini`로 설명하지만,
-  `docs/00.agent-governance/harness-catalog.md`와 `.codex/agents/*.toml`은 `gpt-5.3-codex`를 사용한다.
-- 사용자는 Codex worker 표준을 `gpt-5.3-codex`로 유지하도록 결정했다.
-- `.codex/agents/*.toml`은 `model`만 선언하고 `model_reasoning_effort`를 선언하지 않는다.
-- 사용자는 Codex TOML에 `model_reasoning_effort`를 명시하도록 결정했다.
-- `AGENTS.md`는 실제로 Codex/GPT provider shim으로 쓰인다.
-- 사용자는 `AGENTS.md`를 Codex/GPT 전용 shim으로 정리하도록 결정했다.
-- `docs/05.operations/policies/*.md`는 `type: operation`을 사용하지만
-  `docs/99.templates/policy.template.md`는 `type: policy`를 요구한다.
-- 사용자는 operations policy 문서 frontmatter를 `type: policy`로 정규화하도록 결정했다.
-- OpenAI 공식 모델 문서는 `gpt-5.5`, `gpt-5.4-mini`, `gpt-5.3-codex` 모델 ID와 reasoning effort 지원 범위를 현재 문서화한다.
+- `docs/00.agent-governance/model-policy.md` described the Codex worker as `GPT-5.4-mini`, while `docs/00.agent-governance/harness-catalog.md` and `.codex/agents/*.toml` used `gpt-5.3-codex`.
+- The user decided to keep `gpt-5.3-codex` as the Codex worker standard.
+- `.codex/agents/*.toml` declared only `model` and did not declare `model_reasoning_effort`.
+- The user decided to declare `model_reasoning_effort` in Codex TOML.
+- `AGENTS.md` is actually used as a Codex/GPT provider shim.
+- The user decided to clarify `AGENTS.md` as the Codex/GPT-specific shim.
+- `docs/05.operations/policies/*.md` used `type: operation`, while `docs/99.templates/policy.template.md` requires `type: policy`.
+- The user decided to normalize operations policy document frontmatter to `type: policy`.
+- Official OpenAI model docs currently document the `gpt-5.5`, `gpt-5.4-mini`, and `gpt-5.3-codex` model IDs and the supported reasoning effort range.
 
 ## Goals & In-Scope
 
 - **Goals**:
-  - Stage 00이 하나의 공유 governance, QA/CI/CD policy, Template Contract, Model Policy를 갖도록 정리한다.
-  - Codex 하네스가 별도 governance를 만들지 않고 Stage 00을 구현하는 adapter임을 명확히 한다.
-  - Codex agent TOML의 `model`과 `model_reasoning_effort`가 Stage 00 Model Policy와 검증 스크립트로 추적되게 한다.
-  - Policy template, routing skill, edit hook, authored policy 문서의 타입과 경로 명칭을 일관되게 정리한다.
-  - Phase 3 변경과 QA/CI/CD 실행 결과를 Plan/Task 문서로 추적 가능하게 만든다.
+  - Ensure Stage 00 has one shared governance surface, QA/CI/CD policy, Template Contract, and Model Policy.
+  - Clarify that the Codex harness is an adapter implementing Stage 00, not a separate governance system.
+  - Make the `model` and `model_reasoning_effort` fields in Codex agent TOML traceable through the Stage 00 Model Policy and validation scripts.
+  - Align the type and path naming for the policy template, routing skill, edit hook, and authored policy documents.
+  - Make Phase 3 changes and QA/CI/CD execution results traceable through Plan/Task documents.
 - **In Scope**:
-  - `docs/00.agent-governance/**` governance, provider, hook-routing 문서 정합화.
-  - `.codex/CODEX.md`, `.codex/agents/*.toml`, `AGENTS.md` Codex harness 정합화.
-  - `.agents/skills/docs-stage-routing/skill.md` policy template routing 보정.
-  - `docs/00.agent-governance/hooks/k8s-pre-edit.sh` authored-doc template hint 보정.
-  - `docs/05.operations/policies/*.md` frontmatter `type` 정규화.
-  - `scripts/validate-repo-quality-gates.sh`에 필요한 static validation 보강.
-  - Phase 3 task record와 `docs/00.agent-governance/memory/progress.md` 기록.
+  - Align governance, provider, and hook-routing docs under `docs/00.agent-governance/**`.
+  - Align the Codex harness in `.codex/CODEX.md`, `.codex/agents/*.toml`, and `AGENTS.md`.
+  - Remediate policy template routing in `.agents/skills/docs-stage-routing/skill.md`.
+  - Remediate authored-doc template hints in `docs/00.agent-governance/hooks/k8s-pre-edit.sh`.
+  - Normalize `type` frontmatter in `docs/05.operations/policies/*.md`.
+  - Add the required static validation to `scripts/validate-repo-quality-gates.sh`.
+  - Record the Phase 3 task record and `docs/00.agent-governance/memory/progress.md` entry.
 
 ## Non-Goals & Out-of-Scope
 
 - **Non-goals**:
-  - Kubernetes manifests, ArgoCD applications, Vault, ESO, live cluster state 변경.
-  - 새 runtime agent, 새 skill, 새 docs taxonomy stage 추가.
-  - 정책 문서의 운영 의미를 재작성하는 대규모 내용 변경.
-  - GitHub Actions job topology 변경.
+  - Changing Kubernetes manifests, ArgoCD applications, Vault, ESO, or live cluster state.
+  - Adding new runtime agents, new skills, or new docs taxonomy stages.
+  - Large content changes that rewrite the operational meaning of policy documents.
+  - Changing GitHub Actions job topology.
 - **Out of Scope**:
-  - 직접 `kubectl apply`, `kubectl patch`, `argocd app sync`, Vault write 실행.
-  - secret value 읽기 또는 출력.
-  - 기존 완료 계획의 historical evidence 재작성.
+  - Directly running `kubectl apply`, `kubectl patch`, `argocd app sync`, or Vault writes.
+  - Reading or outputting secret values.
+  - Rewriting historical evidence in existing completed plans.
 
 ## Concept Alignment Plan
 
 | Concept | Current State | Desired State | Planned Action |
 | --- | --- | --- | --- |
-| Agent | `.agents/` SSoT와 `.claude/agents` primary 표현이 혼재한다. | `.agents/`는 shared content SSoT, provider agent files는 runtime mirrors로 표현한다. | `common-governance.md`, `harness-catalog.md`, `subagent-protocol.md` 용어를 정리한다. |
-| Skill | `.codex/skills` symlink와 `.claude/skills` reference가 혼재하고, docs-stage-routing은 `operation.template.md`를 가리킨다. | `.agents/skills` SSoT와 provider symlink 관계를 명확히 하고 policy template을 `policy.template.md`로 통일한다. | `.agents/skills/docs-stage-routing/skill.md`와 catalog routing 문구를 보정한다. |
-| Rule | JIT, GitOps-first, Template-first 규칙은 존재하나 AGENTS gateway 설명이 provider 범위와 충돌한다. | 공통 규칙은 Stage 00에 두고 `AGENTS.md`는 Codex/GPT shim으로만 둔다. | `providers/agents-md.md`, `providers/codex.md`, `AGENTS.md` 포인터를 정리한다. |
-| Hook | `.codex/hooks.json`은 `docs/00.agent-governance/hooks/*.sh`를 호출하지만 일부 문서는 legacy provider-local hook script paths로 설명했다. | shared hook scripts는 `docs/00.agent-governance/hooks/*.sh`, provider configs는 event wiring으로 표현한다. | `.codex/CODEX.md`, provider docs, hook boundary text를 보정한다. |
-| Sub-agent | Codex TOML mirrors exist, but no explicit reasoning-effort policy exists. | `supervisor` and workers declare model and reasoning effort according to Model Policy. | `.codex/agents/*.toml`와 validator를 업데이트한다. |
-| Output Style | Common governance says fully supported; catalog says Codex/Gemini are tone-only. | Native support vs behavioral/tone-only support를 분리한다. | `common-governance.md`와 `harness-catalog.md` support matrix를 맞춘다. |
-| Workflow | QA/CI/CD workflow exists, but model/config drift is not fully checked. | Phase 3 workflow includes static gates for model and template drift. | `scripts/validate-repo-quality-gates.sh` checks를 추가한다. |
-| Memory | `progress.md` ledger exists and is required for repo-changing work. | Phase 3 implementation writes a concise progress entry with evidence. | Task implementation에 `progress.md` update를 포함한다. |
+| Agent | `.agents/` SSoT wording and `.claude/agents` primary wording are mixed. | Describe `.agents/` as the shared content SSoT and provider agent files as runtime mirrors. | Clean up terminology in `common-governance.md`, `harness-catalog.md`, and `subagent-protocol.md`. |
+| Skill | `.codex/skills` symlink wording and `.claude/skills` references are mixed, and docs-stage-routing points to `operation.template.md`. | Clarify the `.agents/skills` SSoT and provider symlink relationship, and standardize on `policy.template.md`. | Remediate `.agents/skills/docs-stage-routing/skill.md` and catalog routing wording. |
+| Rule | JIT, GitOps-first, and Template-first rules exist, but AGENTS gateway wording conflicts with provider scope. | Keep common rules in Stage 00 and keep `AGENTS.md` as only the Codex/GPT shim. | Clean up pointers in `providers/agents-md.md`, `providers/codex.md`, and `AGENTS.md`. |
+| Hook | `.codex/hooks.json` calls `docs/00.agent-governance/hooks/*.sh`, but some docs described legacy provider-local hook script paths. | Describe shared hook scripts as `docs/00.agent-governance/hooks/*.sh` and provider configs as event wiring. | Remediate `.codex/CODEX.md`, provider docs, and hook boundary text. |
+| Sub-agent | Codex TOML mirrors exist, but no explicit reasoning-effort policy exists. | `supervisor` and workers declare model and reasoning effort according to Model Policy. | Update `.codex/agents/*.toml` and the validator. |
+| Output Style | Common governance says fully supported; catalog says Codex/Gemini are tone-only. | Separate native support from behavioral/tone-only support. | Align the support matrix in `common-governance.md` and `harness-catalog.md`. |
+| Workflow | QA/CI/CD workflow exists, but model/config drift is not fully checked. | Phase 3 workflow includes static gates for model and template drift. | Add checks to `scripts/validate-repo-quality-gates.sh`. |
+| Memory | `progress.md` ledger exists and is required for repo-changing work. | Phase 3 implementation writes a concise progress entry with evidence. | Include the `progress.md` update in task implementation. |
 | QA | Repo quality gate passes, but semantic drift is not fully covered. | Validator catches Codex model effort, policy type, and template route drift. | Add focused static checks in quality gate. |
 | CI/CD | GitHub Actions runs repo gates; no topology change is needed. | Existing CI inherits strengthened repo quality gate. | No workflow topology change; rely on script hardening. |
 | Model Policy | `model-policy.md` conflicts with `harness-catalog.md`. | Top: `gpt-5.5`; Codex worker: `gpt-5.3-codex`; allowed efforts documented. | Update model policy and catalog as one source-aligned pair. |

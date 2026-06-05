@@ -8,10 +8,11 @@ updated: 2026-05-21
 
 # Task: scripts Inventory Remediation
 
-## Overview (KR)
+## Overview
 
-이 문서는 `scripts/` 폴더의 사용 여부 조사와 인벤토리 보정 작업의 구현·검증 작업 목록이다.
-Plan에서 파생된 작업을 추적 가능하게 기록한다.
+This document tracks implementation and verification tasks for the `scripts/`
+usage audit and inventory remediation. It records tasks derived from the Plan
+in a traceable form.
 
 ## Inputs
 

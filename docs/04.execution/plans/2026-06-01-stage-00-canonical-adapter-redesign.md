@@ -10,82 +10,86 @@ updated: 2026-06-01
 
 ---
 
-## Overview (KR)
+## Overview
 
-이 문서는 Stage 00 agent governance를 canonical adapter 모델로 재설계하기 위한 실행 계획서다.
-Phase 1 조사에서 확인한 governance, provider harness, hook, template, model policy, QA/CI,
-skill/workflow, local runtime drift를 변경 단위별로 분리하고, Phase 3에서 어떤 순서와 검증
-기준으로 보정할지 정의한다.
+This document is the implementation plan for redesigning Stage 00 agent
+governance as a canonical adapter model. It separates governance, provider
+harness, hook, template, model policy, QA/CI, skill/workflow, and local runtime
+drift found during Phase 1 investigation into change units, then defines the
+Phase 3 remediation order and validation criteria.
 
-Phase 2의 산출물은 이 계획과 Plan stage 인덱스 갱신이다. 실제 governance, template,
-provider config, hook, validator 변경은 Phase 3에서 별도 task record를 만든 뒤 수행한다.
+Phase 2 deliverables are this plan and the Plan stage index update. Actual
+governance, template, provider config, hook, and validator changes are
+performed in Phase 3 after creating a separate task record.
 
 ## Context
 
-현재 Stage 00은 이미 공통 governance와 provider별 adapter 구조를 갖고 있지만, "무엇이 정본이고
-무엇이 adapter mirror인가"를 한 장의 canonical contract로 설명하지 못한다. 그 결과 같은 규칙이
-여러 문서에 반복되고, 일부 문서가 과거 경로나 provider-specific 표현을 active contract처럼
-노출한다.
+Stage 00 already has common governance and provider-specific adapter structure,
+but it does not explain in one canonical contract what is authoritative and
+what is an adapter mirror. As a result, the same rules are repeated across
+multiple documents, and some documents expose historical paths or
+provider-specific wording as if they were active contracts.
 
 ### Upstream Traceability Overlay (2026-06-01)
 
-이 계획은 처음 작성될 때 Phase 1 조사 결과를 직접 입력으로 삼은 governance plan이었다.
-현재 upstream SDD 추적성은
+When first written, this plan was a governance plan that directly used Phase 1
+investigation results as input. Current upstream SDD traceability is owned by
 [Workspace Agent Governance Platform PRD](../../01.requirements/2026-06-01-workspace-agent-governance-platform.md),
 [Workspace Agent Governance Platform ARD](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md),
-and [ADR-0013](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)이 소유한다.
-이 overlay는 기존 Phase 2/Phase 3 증적을 소급 재작성하지 않고 현재 요구/아키텍처 링크만 보강한다.
+and [ADR-0013](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md).
+This overlay only adds current requirement/architecture links and does not
+retroactively rewrite existing Phase 2/Phase 3 evidence.
 
-Phase 1 조사에서 확인한 핵심 gap은 다음과 같다.
+The core gaps confirmed during Phase 1 investigation were:
 
 | Gap ID | Finding | Desired Direction |
 | --- | --- | --- |
-| GAP-001 | `common-governance.md`, `harness-catalog.md`, `model-policy.md`, documentation rules가 Stage 00 ownership을 반복 설명한다. | Stage 00 canonical adapter ownership map을 만들고 문서별 책임을 단일화한다. |
-| GAP-002 | Template routing, documentation protocol, hook guidance가 서로 다른 위치에서 반복된다. | Template Contract 정본과 provider/hook adapter 책임을 분리한다. |
-| GAP-003 | 실제 shared hook scripts는 `docs/00.agent-governance/hooks/*.sh`인데 일부 docs는 legacy provider-local hook script paths를 참조했다. | shared hook path와 provider event wiring을 명확히 나눈다. |
-| GAP-004 | `.agents/hooks.json`의 실제 역할과 문서상 placeholder/behavioral 표현이 어긋난다. | Gemini/Antigravity adapter의 실제 hook support 상태를 disk evidence 기준으로 정리한다. |
-| GAP-005 | Subagent readiness가 `common-governance.md`와 `harness-catalog.md`에서 다르게 표현된다. | provider-specific native support, mirror support, behavioral support를 별도 status로 표현한다. |
-| GAP-006 | `.agents/skills` SSoT와 `.claude/skills` symlink/mirror 표현이 문서마다 다르다. | shared asset SSoT와 provider adapter mount를 canonical schema에 포함한다. |
-| GAP-007 | Model policy가 `model-policy.md`, `harness-catalog.md`, provider config에 중복된다. | concrete model ID 정본과 provider config verification 위치를 분리한다. |
-| GAP-008 | Model tier 용어에서 `top`, `supervisor`, `worker`, review/security usage가 혼재한다. | tier vocabulary와 exception rule을 한곳에 고정한다. |
-| GAP-009 | `docs/00.agent-governance/README.md`가 hooks, model policy, common governance, Codex provider entry를 빠뜨린다. | Stage 00 README를 canonical entry map으로 보강한다. |
-| GAP-010 | `.codex/rules/`는 placeholder이고 shared rules는 `.agents/rules`와 Stage 00에 있다. | Codex adapter가 shared rules를 어떻게 로드하는지 명확히 한다. |
-| GAP-011 | `.agents/workflows/qa-cicd-workflow.md`가 Gemini/Antigravity 중심 표현으로 Codex에도 노출된다. | workflow body를 provider-neutral로 만들거나 adapter boundary를 명시한다. |
-| GAP-012 | `workspace-harness-audit` skill은 현재 task에 맞지만 catalog routing은 외부 skill만 노출한다. | repo-local skill routing과 external skill availability ledger를 보강한다. |
-| GAP-013 | pre-commit, post-validate, CI guide가 실제 shared hook path와 GitHub Actions job name을 완전히 따라가지 못한다. | validator, pre-commit coverage, CI documentation을 같은 QA contract로 묶는다. |
-| GAP-014 | Templates의 owner/status/lifecycle/headings가 authored docs와 일부 어긋난다. | template defaults와 lifecycle vocabulary를 문서 stage별로 정리한다. |
-| GAP-015 | branch completion workflow가 Stage 00 git/postflight strategy로 정리되어 있지 않다. | finishing-a-development-branch strategy를 git/postflight workflow에 통합한다. |
-| GAP-016 | `/home/hy/.local/bin/{node,npm,rtk}`는 존재하지만 `rtk`가 PATH에 없고 `rtk gain` DB 초기화가 실패한다. | local runtime discovery, PATH, RTK DB failure를 Codex/runtime baseline에서 재현 가능한 점검으로 남긴다. |
-| GAP-017 | 2026-05-30 active plans/tasks와 2026-05-31/2026-06-01 completed follow-up이 일부 중첩된다. | 새 canonical adapter plan으로 변경 단위를 재분류하고, 기존 active 계획은 Phase 3에서 close/supersede 여부를 판단한다. |
+| GAP-001 | `common-governance.md`, `harness-catalog.md`, `model-policy.md`, and documentation rules repeat Stage 00 ownership explanations. | Create a Stage 00 canonical adapter ownership map and make each document responsibility non-overlapping. |
+| GAP-002 | Template routing, documentation protocol, and hook guidance are repeated in different locations. | Separate the Template Contract source of truth from provider/hook adapter responsibilities. |
+| GAP-003 | Actual shared hook scripts are `docs/00.agent-governance/hooks/*.sh`, but some docs referenced legacy provider-local hook script paths. | Clearly separate the shared hook path from provider event wiring. |
+| GAP-004 | The actual role of `.agents/hooks.json` differs from placeholder/behavioral wording in docs. | Document Gemini/Antigravity adapter hook support from disk evidence. |
+| GAP-005 | Subagent readiness is described differently in `common-governance.md` and `harness-catalog.md`. | Represent provider-specific native support, mirror support, and behavioral support as separate statuses. |
+| GAP-006 | `.agents/skills` SSoT wording and `.claude/skills` symlink/mirror wording differ across docs. | Include shared asset SSoT and provider adapter mounts in the canonical schema. |
+| GAP-007 | Model policy is duplicated across `model-policy.md`, `harness-catalog.md`, and provider config. | Separate the concrete model ID source of truth from provider config verification location. |
+| GAP-008 | Model tier vocabulary mixes `top`, `supervisor`, `worker`, and review/security usage. | Fix tier vocabulary and exception rules in one location. |
+| GAP-009 | `docs/00.agent-governance/README.md` omits hooks, model policy, common governance, and the Codex provider entry. | Harden the Stage 00 README as the canonical entry map. |
+| GAP-010 | `.codex/rules/` is a placeholder, while shared rules live in `.agents/rules` and Stage 00. | Clarify how the Codex adapter loads shared rules. |
+| GAP-011 | `.agents/workflows/qa-cicd-workflow.md` uses Gemini/Antigravity-centered wording but is also exposed to Codex. | Make the workflow body provider-neutral or state the adapter boundary. |
+| GAP-012 | The `workspace-harness-audit` skill fits the current task, but catalog routing exposes only external skills. | Harden repo-local skill routing and the external skill availability ledger. |
+| GAP-013 | pre-commit, post-validate, and CI guide wording do not fully follow the actual shared hook path and GitHub Actions job name. | Bind validator, pre-commit coverage, and CI documentation into the same QA contract. |
+| GAP-014 | Template owner/status/lifecycle/headings partially drift from authored docs. | Align template defaults and lifecycle vocabulary by document stage. |
+| GAP-015 | Branch completion workflow is not organized as a Stage 00 git/postflight strategy. | Integrate finishing-a-development-branch strategy into git/postflight workflow. |
+| GAP-016 | `/home/hy/.local/bin/{node,npm,rtk}` exists, but `rtk` is not on PATH and `rtk gain` DB initialization fails. | Record reproducible checks for local runtime discovery, PATH, and RTK DB failure in the Codex/runtime baseline. |
+| GAP-017 | 2026-05-30 active plans/tasks partially overlap with 2026-05-31/2026-06-01 completed follow-up work. | Reclassify change units through the new canonical adapter plan and decide close/supersede status for existing active plans in Phase 3. |
 
 ## Goals & In-Scope
 
 - **Goals**:
-  - Stage 00을 `canonical core + provider adapter + validation evidence` 모델로 재정의한다.
-  - 공통 규칙, template contract, model policy, skill/workflow routing, hook/QA contract의 정본 위치를 분리한다.
-  - Claude, Codex/GPT, Gemini/Antigravity가 같은 Stage 00 contract를 각 runtime 특성에 맞게 수행하도록 adapter 책임을 명시한다.
-  - Phase 1 gap을 변경 단위별로 쪼개서 Phase 3 구현 순서와 검증 기준을 만든다.
-  - 기존 active/stale 계획과 task를 무단 재작성하지 않고, supersede/close 판단을 Phase 3 task evidence로 남긴다.
+  - Redefine Stage 00 as a `canonical core + provider adapter + validation evidence` model.
+  - Separate the source-of-truth locations for common rules, Template Contract, Model Policy, skill/workflow routing, and hook/QA contract.
+  - State adapter responsibilities so Claude, Codex/GPT, and Gemini/Antigravity implement the same Stage 00 contract according to each runtime's characteristics.
+  - Split Phase 1 gaps into change units that define Phase 3 implementation order and validation criteria.
+  - Do not rewrite existing active/stale plans and tasks without approval; leave supersede/close decisions as Phase 3 task evidence.
 - **In Scope**:
-  - `docs/00.agent-governance/**` canonical ownership, provider notes, rules, hook, model, catalog 문서 정합화 계획.
-  - `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.codex/CODEX.md`, `.claude/CLAUDE.md`, `.agents/GEMINI.md` adapter boundary 정합화 계획.
-  - `.agents/skills`, `.agents/workflows`, provider skill/workflow mirrors의 SSoT/mirror 관계 정리 계획.
-  - `docs/99.templates/**` template lifecycle, owner/status, heading contract 보강 계획.
-  - `scripts/validate-repo-quality-gates.sh`, `.pre-commit-config.yaml`, hook scripts, CI docs의 static validation 보강 계획.
-  - `/home/hy/.local/bin` runtime tool discovery와 `rtk` availability failure 조사 계획.
+  - Planning alignment for canonical ownership, provider notes, rules, hooks, models, and catalog docs under `docs/00.agent-governance/**`.
+  - Planning alignment for adapter boundaries in `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.codex/CODEX.md`, `.claude/CLAUDE.md`, and `.agents/GEMINI.md`.
+  - Planning cleanup for SSoT/mirror relationships across `.agents/skills`, `.agents/workflows`, and provider skill/workflow mirrors.
+  - Planning hardening for `docs/99.templates/**` template lifecycle, owner/status, and heading contracts.
+  - Planning static validation hardening for `scripts/validate-repo-quality-gates.sh`, `.pre-commit-config.yaml`, hook scripts, and CI docs.
+  - Planning investigation for `/home/hy/.local/bin` runtime tool discovery and the `rtk` availability failure.
 
 ## Non-Goals & Out-of-Scope
 
 - **Non-goals**:
-  - Phase 2에서 governance, template, provider config, hook, validation script를 직접 수정하지 않는다.
-  - 새 docs taxonomy stage, 새 runtime provider, 새 agent role을 추가하지 않는다.
-  - 기존 historical plan/task evidence를 소급 편집하지 않는다.
-  - 모델 정책을 비공식 추정으로 갱신하지 않는다.
+  - Do not directly modify governance, templates, provider config, hooks, or validation scripts in Phase 2.
+  - Do not add new docs taxonomy stages, new runtime providers, or new agent roles.
+  - Do not retroactively edit existing historical plan/task evidence.
+  - Do not update model policy from unofficial assumptions.
 - **Out of Scope**:
-  - Kubernetes manifest, ArgoCD application, Vault, External Secrets, live cluster state 변경.
-  - secret value 읽기, 출력, commit, PR description 포함.
-  - GitHub Actions topology 변경이나 deployment/publish action.
-  - Phase 3 승인 전 destructive git operation, rebase, reset, force-push, merge.
+  - Changing Kubernetes manifests, ArgoCD applications, Vault, External Secrets, or live cluster state.
+  - Reading, outputting, committing, or including secret values in PR descriptions.
+  - Changing GitHub Actions topology or deployment/publish actions.
+  - Destructive Git operations, rebase, reset, force-push, or merge before Phase 3 approval.
 
 ## Canonical Adapter Model
 

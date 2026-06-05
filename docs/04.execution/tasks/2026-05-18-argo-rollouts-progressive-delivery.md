@@ -8,10 +8,11 @@ updated: 2026-05-22
 
 # Task: Argo Rollouts Progressive Delivery Backfill
 
-## Overview (KR)
+## Overview
 
-이 문서는 Argo Rollouts current contract backfill의 구현·검증 작업 목록이다.
-작업 대상은 문서 추적성 보강이며, live cluster 변경은 포함하지 않는다.
+This document tracks implementation and verification tasks for the Argo
+Rollouts current-contract backfill. The work is limited to document
+traceability hardening; live cluster changes are out of scope.
 
 ## Inputs
 
@@ -60,7 +61,7 @@ updated: 2026-05-22
   - `bash scripts/validate-k8s-manifests.sh .`
   - `bash infrastructure/tests/verify-contracts-static.sh`
 - **Eval Commands**:
-  - `rg -n "Follow-up Gap|이번 PRD 정비에서 생성하지 않음" docs/01.requirements`
+  - `rg -n "Follow-up Gap|not created during this PRD remediation" docs/01.requirements`
   - `rg -n "notifications.enabled: false|notifications.enabled: true" docs/03.specs/004-argo-rollouts-progressive-delivery/spec.md docs/03.specs/005-argo-notifications-slack/spec.md`
 - **Logs / Evidence Location**:
   - Conversation validation output and git diff for this backfill.

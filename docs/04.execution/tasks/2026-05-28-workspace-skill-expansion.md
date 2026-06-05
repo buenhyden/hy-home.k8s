@@ -8,10 +8,11 @@ updated: 2026-05-28
 
 # Task: Workspace Skill Expansion (P0-16)
 
-## Overview (KR)
+## Overview
 
-이 문서는 P0-16 워크스페이스 전용 AI Agent 스킬 5개 생성 작업의 구현 및 검증 기록이다.
-`docs/04.execution/plans/2026-05-28-workspace-skill-expansion.md` 계획에서 파생된 작업을 추적한다.
+This document records implementation and verification for creating five
+workspace-specific AI Agent skills for P0-16. It tracks tasks derived from
+`docs/04.execution/plans/2026-05-28-workspace-skill-expansion.md`.
 
 ## Inputs
 

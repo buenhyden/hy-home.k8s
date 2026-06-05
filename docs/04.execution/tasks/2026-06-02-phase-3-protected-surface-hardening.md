@@ -8,11 +8,14 @@ updated: 2026-06-02
 
 # Task: Phase 3 Protected Surface Hardening
 
-## Overview (KR)
+## Overview
 
-이 문서는 Phase 3 protected surface hardening의 작업 단위와 검증 증거를 추적한다.
-작업 범위는 승인된 policy, runtime hook, CI, template, CI topology, model policy, provider config, GitOps manifest, live validation 범위를 검토·적용하는 것이다.
-Concrete drift가 없는 model policy, provider config, GitOps manifest는 no-op으로 기록하며, live cluster mutation이나 secret-value inspection은 포함하지 않는다.
+This document tracks work units and verification evidence for Phase 3
+protected-surface hardening. The scope reviews and applies the approved policy,
+runtime hook, CI, template, CI topology, model policy, provider config, GitOps
+manifest, and live validation boundaries. Model policy, provider config, and
+GitOps manifest areas without concrete drift are recorded as no-ops; live
+cluster mutation and secret-value inspection are out of scope.
 
 ## Inputs
 

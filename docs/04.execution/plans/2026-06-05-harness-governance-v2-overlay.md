@@ -8,11 +8,13 @@ updated: 2026-06-05
 
 # Harness Governance V2 Overlay Implementation Plan
 
-## Overview (KR)
+## Overview
 
-이 문서는 이미 구현된 하네스 4요소 계약 위에 ECC DAILY/LIBRARY 분류,
-workflow skill 품질 기준, Hookify local advisory 경계, deterministic eval
-완료 계약, `progress.md` 단일화 규칙을 덧붙이는 실행 계획이다.
+This document is the implementation plan for layering ECC DAILY/LIBRARY
+classification, workflow skill quality criteria, Hookify local advisory
+boundaries, deterministic eval completion contracts, and `progress.md`
+single-source rules on top of the already-implemented four-element harness
+contract.
 
 ## Context
 

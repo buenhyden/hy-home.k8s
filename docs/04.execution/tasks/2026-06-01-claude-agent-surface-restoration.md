@@ -8,9 +8,11 @@ updated: 2026-06-01
 
 # Task: Claude Agent Surface Restoration
 
-## Overview (KR)
+## Overview
 
-이 문서는 `.claude/agents`를 실제 Claude 전용 agent 파일 디렉터리로 복원하기 위한 작업 단위와 검증 증거를 추적한다. Phase 2 계획 수립 후 Phase 3 복원과 검증 강화를 완료했다.
+This document tracks the work units and validation evidence for restoring
+`.claude/agents` as the real Claude-specific agent file directory. Phase 3
+restoration and validation hardening were completed after Phase 2 planning.
 
 ## Inputs
 

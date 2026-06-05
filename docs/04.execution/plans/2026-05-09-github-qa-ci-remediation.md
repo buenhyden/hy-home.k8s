@@ -8,67 +8,82 @@ updated: 2026-05-09
 
 # .github QA and CI Remediation Plan
 
-## Overview (KR)
+## Overview
 
-이 문서는 `.github/` 폴더의 QA, CI, 브랜치 정책, PR intake 계약을 현재 `hy-home.k8s` 워크스페이스에 맞게 보정하기 위한 실행 계획서다.
-중복 제거보다 현재 CI 구조를 유지하면서 branch-policy 차단 게이트와 작은 운영 품질 보강을 추가하는 데 초점을 둔다.
+This document is the implementation plan for aligning `.github/` QA, CI,
+branch policy, and PR intake contracts with the current `hy-home.k8s`
+workspace. It focuses on preserving the current CI structure while adding a
+branch-policy blocking gate and small operational-quality hardening, rather
+than on broad deduplication.
 
 ## Context
 
-현재 `.github/`의 repo-tracked 파일에는 중복 workflow 이름, 중복 step label, action version drift, 금지된 live mutation 명령이 발견되지 않았다.
-CI는 `pre-commit`, `repo-quality-static`, `manifest-static`으로 역할이 나뉘어 있고, `main` 대상 push/PR 중심 전략과 맞는다. Shell syntax coverage는 pre-commit과 repo-static/manual verification command에서 처리하며 별도 active CI job이 아니다.
+No duplicate workflow names, duplicate step labels, action version drift, or
+forbidden live-mutation commands were found in repo-tracked `.github/` files.
+CI responsibilities are split across `pre-commit`, `repo-quality-static`, and
+`manifest-static`, which matches the `main`-targeted push/PR strategy. Shell
+syntax coverage is handled by pre-commit and repo-static/manual verification
+commands, not by a separate active CI job.
 
-이번 보정은 새 배포/CD를 추가하지 않는다. GitHub Actions workflow는 `.github/workflows`에 두고, event/job/step 구조, explicit timeout, concurrency, `GITHUB_TOKEN` 권한을 repository QA 계약으로 관리한다.
+This remediation does not add new deployment/CD behavior. GitHub Actions
+workflows remain under `.github/workflows`, and event/job/step structure,
+explicit timeouts, concurrency, and `GITHUB_TOKEN` permissions are managed as
+part of the repository QA contract.
 
-2026-05-09 follow-up은 중복 제거의 기준을 `policy SSoT + minimal executable/checklist mirrors`로 고정한다. `git-workflow.md`가 branch policy SSoT이고, `ci.yml`과 `validate-repo-quality-gates.sh`는 enforcement mirror, PR template은 reviewer checklist, `.github/ABOUT.md`는 routing hub다. CI job 간 방어적 중복은 의도된 QA coverage이며 prose duplication으로 제거하지 않는다.
+The 2026-05-09 follow-up fixes the deduplication rule as `policy SSoT +
+minimal executable/checklist mirrors`. `git-workflow.md` is the branch policy
+SSoT, `ci.yml` and `validate-repo-quality-gates.sh` are enforcement mirrors,
+the PR template is the reviewer checklist, and `.github/ABOUT.md` is the
+routing hub. Defensive overlap between CI jobs is intentional QA coverage and
+is not removed as prose duplication.
 
 ## Goals & In-Scope
 
 - **Goals**:
-  - PR base와 source branch prefix를 CI에서 차단 가능한 정책으로 만든다.
-  - CI를 수동으로 재실행할 수 있도록 `workflow_dispatch`를 추가한다.
-  - CI 및 maintenance workflow job에 explicit timeout을 둔다.
-  - overlapping 가능성이 있는 maintenance workflow에 concurrency를 둔다.
-  - `.github` 문서, PR 템플릿, git workflow governance, repo quality gate를 새 CI 계약과 일치시킨다.
-  - `.github/ABOUT.md`가 policy body를 중복하지 않고 SSoT 위치만 가리키도록 정리한다.
-  - branch prefix parity를 `git-workflow.md` 기준으로 CI와 PR template에서 검증한다.
+  - Make the PR base and source branch prefix a CI-blockable policy.
+  - Add `workflow_dispatch` so CI can be rerun manually.
+  - Add explicit timeouts to CI and maintenance workflow jobs.
+  - Add concurrency to maintenance workflows that can overlap.
+  - Align `.github` docs, the PR template, git workflow governance, and the repo quality gate with the new CI contract.
+  - Reduce `.github/ABOUT.md` so it points to SSoT locations instead of duplicating policy body text.
+  - Validate branch prefix parity between CI and the PR template against `git-workflow.md`.
 - **In Scope**:
-  - `.github/workflows/*.yml` 보정
-  - `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md` 보정
-  - `docs/00.agent-governance/rules/git-workflow.md` branch prefix 목록 보정
-  - `scripts/validate-repo-quality-gates.sh` 품질 게이트 확장
-  - `docs/04.execution/plans`, `docs/04.execution/tasks` 보정 작업 추적 문서 추가
-  - `docs/04.execution/plans/README.md`, `docs/04.execution/tasks/README.md` 인덱스 갱신
+  - Remediate `.github/workflows/*.yml`
+  - Remediate `.github/ABOUT.md` and `.github/PULL_REQUEST_TEMPLATE.md`
+  - Adjust the branch prefix list in `docs/00.agent-governance/rules/git-workflow.md`
+  - Extend the quality gate in `scripts/validate-repo-quality-gates.sh`
+  - Add remediation tracking documents under `docs/04.execution/plans` and `docs/04.execution/tasks`
+  - Update `docs/04.execution/plans/README.md` and `docs/04.execution/tasks/README.md` indexes
 
 ## Non-Goals & Out-of-Scope
 
 - **Non-goals**:
-  - 새 CD/deploy workflow 추가
-  - GitHub branch protection 또는 ruleset API 변경
-  - GitHub-native instruction 계층 추가
-  - `.github/gates/` 추적 파일 추가
-  - Kubernetes manifest 변경
+  - Adding new CD/deploy workflows
+  - Changing GitHub branch protection or ruleset APIs
+  - Adding GitHub-native instruction layers
+  - Adding `.github/gates/` tracking files
+  - Changing Kubernetes manifests
 - **Out of Scope**:
-  - `kubectl apply`, `kubectl patch`, `argocd app sync`, `vault kv`, `docker push`, `git push`를 workflow에 추가하는 변경
-  - live cluster 검증 또는 직접 cluster mutation
-  - 외부 GitHub repository setting 변경
+  - Adding `kubectl apply`, `kubectl patch`, `argocd app sync`, `vault kv`, `docker push`, or `git push` to workflows
+  - Live cluster validation or direct cluster mutation
+  - Changing external GitHub repository settings
 
 ## Work Breakdown
 
 | Task | Description | Files / Docs Affected | Target REQ | Validation Criteria |
 | --- | --- | --- | --- | --- |
-| PLN-001 | `ci.yml`에 PR-only `branch-policy` job과 `workflow_dispatch` 추가 | `.github/workflows/ci.yml` | REQ-CI-001 | repo quality gate validates branch-policy and manual dispatch |
-| PLN-002 | CI 및 maintenance workflow job timeout, maintenance concurrency 보강 | `.github/workflows/*.yml` | REQ-CI-002 | repo quality gate validates job timeouts and required concurrency |
-| PLN-003 | `.github` 문서와 PR 템플릿을 새 branch/QA 계약과 정렬 | `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md` | REQ-DOC-001 | repo quality gate validates PR branch wording |
-| PLN-004 | governance branch rules에 `ci/*`, `codex/*`, `dependabot/*` 추가 | `docs/00.agent-governance/rules/git-workflow.md` | REQ-GOV-001 | manual review plus repo quality gate |
-| PLN-005 | repo quality gate가 새 CI 계약을 강제하도록 확장 | `scripts/validate-repo-quality-gates.sh` | REQ-VAL-001 | quality gate fails on missing branch-policy, summary linkage, timeout, or workflow_dispatch |
-| PLN-006 | 보정 작업 plan/task 문서 추가 및 stage README 인덱스 갱신 | `docs/04.execution/plans/`, `docs/04.execution/tasks/` | REQ-DOC-002 | stage README indexes include new docs |
-| PLN-007 | repo-backed validation bundle 실행 | `scripts/`, `infrastructure/tests/` | REQ-VAL-002 | validation commands PASS or limitation documented |
-| PLN-008 | `.github/ABOUT.md`를 policy router로 축소 | `.github/ABOUT.md` | REQ-DOC-003 | ABOUT links to policy/enforcement SSoTs and does not mirror full branch prefix policy |
-| PLN-009 | PR template branch wording 정밀화 | `.github/PULL_REQUEST_TEMPLATE.md` | REQ-DOC-004 | `main` exception requires matching CI/governance change and `infra` is marked as change type, not prefix |
-| PLN-010 | greeting workflow least-privilege 보정 | `.github/workflows/greetings.yml` | REQ-SEC-001 | unnecessary `contents: read` permission removed |
-| PLN-011 | branch prefix parity와 ABOUT drift gate 추가 | `scripts/validate-repo-quality-gates.sh` | REQ-VAL-003 | gate parses `git-workflow.md` and compares CI regex/message plus PR template prefix list |
-| PLN-012 | follow-up evidence를 local/CI-only/skipped로 분리해 기록 | `docs/04.execution/plans/`, `docs/04.execution/tasks/` | REQ-EVIDENCE-001 | verification summary distinguishes local PASS from optional unavailable tooling |
+| PLN-001 | Add PR-only `branch-policy` job and `workflow_dispatch` to `ci.yml` | `.github/workflows/ci.yml` | REQ-CI-001 | repo quality gate validates branch-policy and manual dispatch |
+| PLN-002 | Harden CI and maintenance workflow job timeouts and maintenance concurrency | `.github/workflows/*.yml` | REQ-CI-002 | repo quality gate validates job timeouts and required concurrency |
+| PLN-003 | Align `.github` docs and the PR template with the new branch/QA contract | `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md` | REQ-DOC-001 | repo quality gate validates PR branch wording |
+| PLN-004 | Add `ci/*`, `codex/*`, and `dependabot/*` to governance branch rules | `docs/00.agent-governance/rules/git-workflow.md` | REQ-GOV-001 | manual review plus repo quality gate |
+| PLN-005 | Extend the repo quality gate to enforce the new CI contract | `scripts/validate-repo-quality-gates.sh` | REQ-VAL-001 | quality gate fails on missing branch-policy, summary linkage, timeout, or workflow_dispatch |
+| PLN-006 | Add remediation plan/task docs and update stage README indexes | `docs/04.execution/plans/`, `docs/04.execution/tasks/` | REQ-DOC-002 | stage README indexes include new docs |
+| PLN-007 | Run the repo-backed validation bundle | `scripts/`, `infrastructure/tests/` | REQ-VAL-002 | validation commands PASS or limitation documented |
+| PLN-008 | Reduce `.github/ABOUT.md` to a policy router | `.github/ABOUT.md` | REQ-DOC-003 | ABOUT links to policy/enforcement SSoTs and does not mirror full branch prefix policy |
+| PLN-009 | Refine PR template branch wording | `.github/PULL_REQUEST_TEMPLATE.md` | REQ-DOC-004 | `main` exception requires matching CI/governance change and `infra` is marked as change type, not prefix |
+| PLN-010 | Apply least-privilege remediation to the greeting workflow | `.github/workflows/greetings.yml` | REQ-SEC-001 | unnecessary `contents: read` permission removed |
+| PLN-011 | Add branch prefix parity and ABOUT drift gates | `scripts/validate-repo-quality-gates.sh` | REQ-VAL-003 | gate parses `git-workflow.md` and compares CI regex/message plus PR template prefix list |
+| PLN-012 | Record follow-up evidence by local/CI-only/skipped lane | `docs/04.execution/plans/`, `docs/04.execution/tasks/` | REQ-EVIDENCE-001 | verification summary distinguishes local PASS from optional unavailable tooling |
 
 ## Verification Plan
 

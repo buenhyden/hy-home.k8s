@@ -10,12 +10,13 @@ updated: 2026-06-02
 
 ---
 
-## Overview (KR)
+## Overview
 
-이 문서는 Stage 00/Codex harness 누락 항목 보정 작업의 구현·검증 증적을
-기록한다. 작업의 핵심은 완료된 follow-up plan을 보존하면서, 첨부 원문에
-있었으나 해당 plan에 세부 항목으로 들어가지 않은 요구사항을 기존 완료 증적과
-연결하는 것이다.
+This document records implementation and verification evidence for reconciling
+the missing Stage 00/Codex harness coverage items. The core intent is to
+preserve the completed follow-up plan while linking requirements from the
+attached source text that were not decomposed in that plan to existing
+completion evidence.
 
 ## Inputs
 

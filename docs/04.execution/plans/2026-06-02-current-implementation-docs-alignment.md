@@ -8,10 +8,13 @@ updated: 2026-06-02
 
 # Current Implementation Docs Alignment Plan
 
-## Overview (KR)
+## Overview
 
-이 문서는 `docs/01-04`를 현재 repo-backed 구현과 맞추고, old 문서를 `98.archive` Tombstone으로 이동한 초기 실행 계획서다.
-`docs/05.operations`까지 확장한 후속 currentness pass는 [Docs 01-05 Current Implementation Alignment Plan](./2026-06-02-docs-01-05-current-implementation-alignment.md)이 소유한다.
+This document is the initial implementation plan that aligned `docs/01-04`
+with the current repo-backed implementation and moved old documents to
+`98.archive` Tombstones. The follow-up currentness pass extended through
+`docs/05.operations` is owned by the
+[Docs 01-05 Current Implementation Alignment Plan](./2026-06-02-docs-01-05-current-implementation-alignment.md).
 
 ## Context
 

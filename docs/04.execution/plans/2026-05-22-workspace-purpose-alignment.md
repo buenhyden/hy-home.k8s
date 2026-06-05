@@ -8,30 +8,34 @@ updated: 2026-05-22
 
 # Workspace Purpose Alignment Audit Plan
 
-## Overview (KR)
+## Overview
 
-이 문서는 `hy-home.k8s`가 WSL2 native Docker, k3d, ArgoCD GitOps, External Secrets/Vault,
-외부 PostgreSQL/Valkey 계약, SDD 문서 생명주기, AI Agent governance를 실제로 지탱하는지
-전면 재감사하고 확인된 격차만 보강하기 위한 실행 계획서다.
+This document is the implementation plan for fully re-auditing whether
+`hy-home.k8s` actually supports WSL2 native Docker, k3d, ArgoCD GitOps,
+External Secrets/Vault, external PostgreSQL/Valkey contracts, the SDD document
+lifecycle, and AI Agent governance, then hardening only the confirmed gaps.
 
 ## Context
 
-이전 `docs governance Full A+B hardening` 작업으로 README 구조, lifecycle 문서 템플릿,
-Agent runtime mirror, Hookify local boundary, repo quality gate는 이미 정리되어 있었다.
-이번 작업은 그 결과를 다시 기준선으로 삼되, 범위를 문서와 Agent 규칙에 한정하지 않고
-GitOps, 인프라 계약, CI, 검증 스크립트, 예제, 외부 버전 기준까지 전체 목적과 대조한다.
+The earlier `docs governance Full A+B hardening` work had already cleaned up
+README structure, lifecycle document templates, Agent runtime mirrors, the
+Hookify local boundary, and the repo quality gate. This work uses that result
+as the baseline again, but does not limit the scope to docs and Agent rules; it
+compares the full workspace purpose against GitOps, infrastructure contracts,
+CI, validation scripts, examples, and external version baselines.
 
-기준선 감사에서 repo quality, LLM Wiki freshness, GitOps structure, static infrastructure
-contract 검증은 통과했다. 확인된 보강 대상은 외부 버전 인벤토리 freshness와 live command
-deny 경계의 명시성이다.
+The baseline audit passed repo quality, LLM Wiki freshness, GitOps structure,
+and static infrastructure contract validation. The confirmed hardening targets
+are external version inventory freshness and explicit live-command deny
+boundaries.
 
 ## Goals & In-Scope
 
 - **Goals**:
-  - docs lifecycle, templates, README, Agent governance, hooks, CI, GitOps, infra contracts를 워크스페이스 목적 기준으로 재감사한다.
-  - 확인된 drift만 작게 수정하고 기존 SSoT 구조를 유지한다.
-  - 외부 버전 snapshot의 검토일과 공식 기준을 2026-05-22 기준으로 갱신한다.
-  - Claude/Hookify command boundary가 direct cluster mutation과 direct reconciliation을 더 명확히 차단하도록 보강한다.
+  - Re-audit docs lifecycle, templates, READMEs, Agent governance, hooks, CI, GitOps, and infrastructure contracts against the workspace purpose.
+  - Make only small fixes for confirmed drift and preserve the existing SSoT structure.
+  - Update the review date and official baseline for the external version snapshot to 2026-05-22.
+  - Harden the Claude/Hookify command boundary so it more clearly blocks direct cluster mutation and direct reconciliation.
 - **In Scope**:
   - `docs/01.requirements` through `docs/05.operations`
   - `docs/90.references/versions`
@@ -44,11 +48,11 @@ deny 경계의 명시성이다.
 
 - **Non-goals**:
   - live k3d bootstrap, ArgoCD sync, Vault write, PostgreSQL/Valkey runtime mutation
-  - Kubernetes manifest desired-state contract 변경
-  - cloud example version target 자동 업그레이드
-  - historical PRD/ARD/Spec/Plan/Task 의미 재작성
+  - Changing the Kubernetes manifest desired-state contract
+  - Automatically upgrading cloud example version targets
+  - Rewriting the meaning of historical PRD/ARD/Spec/Plan/Task documents
 - **Out of Scope**:
-  - AWS/Azure 실제 계정 배포
+  - Deploying real AWS/Azure accounts
   - plaintext Kubernetes secret authoring
   - new top-level documentation tree
   - new shared runtime surface without a concrete matrix gap

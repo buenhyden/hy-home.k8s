@@ -8,11 +8,12 @@ updated: 2026-06-05
 
 # Task: Harness Governance V2 Overlay
 
-## Overview (KR)
+## Overview
 
-이 문서는 Stage 00 하네스 4요소 계약 위에 DAILY/LIBRARY 분류, workflow
-skill phase 기준, Hookify local advisory 경계, deterministic eval 완료 계약,
-canonical `progress.md` 단일화 규칙을 추가한 작업 증적이다.
+This document records evidence for adding DAILY/LIBRARY classification,
+workflow skill phase criteria, Hookify local advisory boundaries,
+deterministic eval completion contracts, and canonical `progress.md`
+single-source rules on top of the Stage 00 four-element harness contract.
 
 ## Inputs
 

@@ -8,16 +8,22 @@ updated: 2026-06-02
 
 # Phase 2 Governance Alignment Plan
 
-## Overview (KR)
+## Overview
 
-이 문서는 Phase 1 Governance Alignment Audit 결과를 Phase 2 planning artifact로 고정하는 실행 계획서다.
-Phase 2는 새 구조 구현이 아니라, 이미 확인된 Stage 00 canonical adapter 결정, gap ledger, deferred live-validation boundary를 `docs/04.execution`에서 추적 가능한 Plan/Task 계약으로 정리한다.
+This document is the implementation plan for fixing Phase 1 Governance
+Alignment Audit results into a Phase 2 planning artifact. Phase 2 does not
+implement a new structure; it records the already-confirmed Stage 00 canonical
+adapter decisions, gap ledger, and deferred live-validation boundary as a
+traceable Plan/Task contract under `docs/04.execution`.
 
 ## Context
 
-Phase 1 감사는 ADR-0013의 Stage 00 canonical adapter 모델을 유지하는 것이 맞다고 확인했다.
-감사에서 확인된 실제 drift는 2026-05-30 Antigravity plan/task의 stale `active` lifecycle 표시였고, 이는 Phase 1 변경에서 in-place doc correction으로 정리되었다.
-남은 위험은 repo-static validation을 live k3d, ArgoCD, Vault, ESO, deployment health로 오해하는 것이다.
+The Phase 1 audit confirmed that ADR-0013's Stage 00 canonical adapter model
+should remain in place. The actual drift found by the audit was the stale
+`active` lifecycle marker on the 2026-05-30 Antigravity plan/task, which was
+resolved in Phase 1 through an in-place docs correction. The remaining risk is
+mistaking repo-static validation for live k3d, ArgoCD, Vault, ESO, or
+deployment health readiness.
 
 ### Phase 3 Follow-up Note (2026-06-02)
 
@@ -30,9 +36,9 @@ decisions where no drift exists, and runs only approved read-only live validatio
 ## Goals & In-Scope
 
 - **Goals**:
-  - Phase 1 감사 결과를 실행 가능한 Phase 2 Plan/Task 산출물로 고정한다.
-  - ADR-0013, Phase 1 audit task, execution README indexes, progress ledger 사이의 추적성을 보강한다.
-  - live runtime validation은 별도 승인 follow-up으로 분리한다.
+  - Fix Phase 1 audit results into executable Phase 2 Plan/Task artifacts.
+  - Strengthen traceability between ADR-0013, the Phase 1 audit task, execution README indexes, and the progress ledger.
+  - Split live runtime validation into a separately approved follow-up.
 - **In Scope**:
   - Plan document creation under `docs/04.execution/plans/`.
   - Task document creation under `docs/04.execution/tasks/`.

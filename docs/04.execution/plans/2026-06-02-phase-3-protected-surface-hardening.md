@@ -8,32 +8,41 @@ updated: 2026-06-02
 
 # Phase 3 Protected Surface Hardening Plan
 
-## Overview (KR)
+## Overview
 
-이 문서는 Phase 2 governance alignment 계획을 기반으로 승인된 보호 표면 변경을 실행하는 Phase 3 계획이다.
-Phase 3는 Stage 00 canonical adapter 모델을 재설계하지 않고, Phase 1/2에서 deferred boundary로 남긴
-repo-static vs live-runtime readiness 경계를 CI, hook runtime, template guidance, governance evidence에서 더 명확하게 강제한다.
+This document is the Phase 3 plan for executing approved protected-surface
+changes based on the Phase 2 governance alignment plan. Phase 3 does not
+redesign the Stage 00 canonical adapter model; it more clearly enforces the
+repo-static versus live-runtime readiness boundary left as a deferred boundary
+in Phase 1/2 across CI, hook runtime, template guidance, and governance
+evidence.
 
 ## Context
 
-Phase 1 감사는 ADR-0013의 Stage 00 canonical adapter 모델을 유지한다고 결론냈다.
-Phase 2는 이 결론과 live validation deferred boundary를 Plan/Task 추적성으로 고정했다.
-이후 human operator가 승인되지 않았던 policy, runtime, CI, template 변경을 승인했고,
-추가로 CI topology, model policy, provider config, GitOps manifest, live validation 범위도 승인했다.
-Phase 3는 이 승인 범위 안에서 concrete drift가 있는 보호 표면만 보강하고, concrete drift가 없는 protected surface는 no-op으로 기록한다.
+The Phase 1 audit concluded that ADR-0013's Stage 00 canonical adapter model
+should remain. Phase 2 fixed that conclusion and the deferred live-validation
+boundary into Plan/Task traceability. The human operator then approved the
+previously unapproved policy, runtime, CI, and template changes, and also
+approved the CI topology, model policy, provider config, GitOps manifest, and
+live validation scope. Within that approved scope, Phase 3 hardens only
+protected surfaces with concrete drift and records protected surfaces with no
+concrete drift as no-ops.
 
-확인된 좁은 drift는 `.agents/**`가 shared asset SSoT인데도 CI path filter와 lifecycle/post hooks의 repo-quality trigger surface에 명시적으로 포함되지 않았다는 점이다.
-또한 repo-static checks가 live k3d, ArgoCD, Vault, ESO, deployment readiness로 오해되지 않도록 template/runtime wording을 강화한다.
+The narrow confirmed drift is that `.agents/**` is the shared asset SSoT but
+was not explicitly included in the CI path filter and lifecycle/post-hook
+repo-quality trigger surface. The work also strengthens template/runtime
+wording so repo-static checks are not confused with live k3d, ArgoCD, Vault,
+ESO, or deployment readiness.
 
 ## Goals & In-Scope
 
 - **Goals**:
-  - `.agents/**` shared asset changes가 CI와 lifecycle/post hooks에서 repository quality gates를 트리거하도록 보강한다.
-  - `.agents/hooks.json`도 provider hook JSON parse lane에 포함한다.
-  - SessionStart live probes를 read-only runtime evidence로 명시하고, repo-static readiness와 구분한다.
-  - Future Plan/Task templates가 live runtime evidence boundary를 명시하도록 안내한다.
-  - Approved read-only live validation을 실행하고 결과 또는 limitation을 기록한다.
-  - Phase 3 implementation evidence를 `docs/04.execution`과 progress ledger에 기록한다.
+  - Ensure `.agents/**` shared asset changes trigger repository quality gates in CI and lifecycle/post hooks.
+  - Include `.agents/hooks.json` in the provider hook JSON parse lane.
+  - Describe SessionStart live probes as read-only runtime evidence and distinguish them from repo-static readiness.
+  - Guide future Plan/Task templates to state the live runtime evidence boundary.
+  - Run approved read-only live validation and record results or limitations.
+  - Record Phase 3 implementation evidence in `docs/04.execution` and the progress ledger.
 - **In Scope**:
   - `.github/workflows/ci.yml` path filter hardening.
   - Shared runtime hook scripts under `docs/00.agent-governance/hooks/`.

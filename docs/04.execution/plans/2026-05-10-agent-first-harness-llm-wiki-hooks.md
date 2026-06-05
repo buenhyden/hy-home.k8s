@@ -8,26 +8,37 @@ updated: 2026-05-10
 
 # Agent-first Harness, LLM Wiki, and Hook Contract Closure Plan
 
-## Overview (KR)
+## Overview
 
-이 문서는 `hy-home.k8s`의 Harness Engineering, Agent-first Engineering, repo-local LLM Wiki, hook/feedback loop, memory ledger 보강을 재검증하고 닫기 위한 실행 계획서다.
-작업 분해, 검증, 위험 관리, 완료 기준을 정의한다.
+This document is the implementation plan for revalidating and closing the
+Harness Engineering, Agent-first Engineering, repo-local LLM Wiki,
+hook/feedback loop, and memory ledger hardening for `hy-home.k8s`. It defines
+work breakdown, verification, risk management, and completion criteria.
 
 ## Context
 
-현재 저장소는 이미 thin gateway, `.claude` runtime baseline, `.codex` mirrors, local agents/skills, matrix-first harness catalog, generated LLM Wiki index, and scoped hook validation을 갖추고 있다.
+The current repository already has thin gateways, a `.claude` runtime baseline,
+`.codex` mirrors, local agents/skills, a matrix-first harness catalog, a
+generated LLM Wiki index, and scoped hook validation.
 
-이번 작업의 핵심은 새 runtime surface를 더 늘리는 것이 아니라, “이미 완료된 구현을 신뢰할 수 있는지”를 재검증하고 남은 gap, excess, duplication을 최소 보강으로 닫는 것이다.
+The point of this work is not to add more runtime surface. It revalidates
+whether the already-completed implementation can be trusted and closes the
+remaining gaps, excess, and duplication with minimal hardening.
 
-문서 taxonomy도 기존 13-folder model에서 `01.requirements`, `02.architecture`, `03.specs`, `04.execution`, `05.operations`, `90.references`, `99.templates` 중심의 축소 모델로 hard-migrated 상태다. 남은 보강은 legacy path mapping을 governance rule과 repo quality gate가 함께 설명하고 검증하도록 만드는 것이다.
+The documentation taxonomy has also been hard-migrated from the prior
+13-folder model to the reduced model centered on `01.requirements`,
+`02.architecture`, `03.specs`, `04.execution`, `05.operations`,
+`90.references`, and `99.templates`. The remaining hardening ensures legacy
+path mapping is both explained by governance rules and validated by the repo
+quality gate.
 
 ## Goals & In-Scope
 
 - **Goals**:
-  - Harness Engineering과 Agent-first Engineering readiness를 현재 repo evidence로 재확인한다.
-  - Guardrails/Rules, Hooks/Feedback Loop, Memory, LLM Wiki curation surface가 실제 agent runtime에서 찾을 수 있게 한다.
-  - Legacy docs path가 다시 생기거나 문서 라우팅이 옛 모델로 회귀하지 않도록 한다.
-  - Plan/Task/README 인덱스에 2026-05-10 보강 증거를 남긴다.
+  - Reconfirm Harness Engineering and Agent-first Engineering readiness using current repo evidence.
+  - Make Guardrails/Rules, Hooks/Feedback Loop, Memory, and LLM Wiki curation surfaces discoverable from the actual agent runtime.
+  - Prevent legacy docs paths from returning and prevent documentation routing from regressing to the old model.
+  - Record 2026-05-10 hardening evidence in the Plan, Task, and README indexes.
 - **In Scope**:
   - `docs/00.agent-governance/rules/document-stage-routing.md`
   - `.claude/CLAUDE.md`
@@ -40,9 +51,9 @@ updated: 2026-05-10
 ## Non-Goals & Out-of-Scope
 
 - **Non-goals**:
-  - 새 Kubernetes manifest, cluster mutation, or live ArgoCD reconciliation
-  - 새 provider-native instruction layer
-  - 새 agent/skill 추가 beyond the existing `wiki-curator`
+  - New Kubernetes manifests, cluster mutation, or live ArgoCD reconciliation
+  - New provider-native instruction layers
+  - New agents or skills beyond the existing `wiki-curator`
   - Vector store, retrieval service, static wiki site, or cache runtime for LLM Wiki
 - **Out of Scope**:
   - Cloud example version changes

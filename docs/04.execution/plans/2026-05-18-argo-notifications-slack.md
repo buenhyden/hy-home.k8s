@@ -8,47 +8,52 @@ updated: 2026-05-21
 
 # Argo Notifications Slack Backfill Plan
 
-## Overview (KR)
+## Overview
 
-이 문서는 이미 저장소에 존재하는 ArgoCD Notifications Slack 실행계약을 PRD/ARD/ADR/Spec/Task 체인에 연결하기 위한 backfill 실행 계획서다.
-런타임 변경 없이 문서 추적성, Secret 경계, 검증 기준을 보완한다.
+This document is the backfill implementation plan for connecting the existing
+ArgoCD Notifications Slack execution contract to the PRD/ARD/ADR/Spec/Task
+chain. It improves document traceability, Secret boundaries, and validation
+criteria without runtime changes.
 
 ## Context
 
-ArgoCD Notifications는 `infrastructure/argocd/values-local.yaml`에서 활성화되어 있고, ConfigMap과 ExternalSecret은 `gitops/platform/argocd/`에서 GitOps로 관리된다.
-하지만 Notifications PRD와 ADR을 잇는 ARD/Spec/Plan/Task 문서가 없어 credential boundary와 검증 경로가 `03.specs`에서 추적되지 않는다.
+ArgoCD Notifications is enabled in `infrastructure/argocd/values-local.yaml`,
+and the ConfigMap and ExternalSecret are managed through GitOps under
+`gitops/platform/argocd/`. However, the ARD/Spec/Plan/Task documents linking
+the Notifications PRD and ADR were missing, so the credential boundary and
+validation path were not traceable from `03.specs`.
 
 ## Goals & In-Scope
 
 - **Goals**:
-  - Notifications current contract를 ARD/Spec/Plan/Task 체인으로 보강한다.
-  - Slack token의 Vault/ESO 보안 경계를 명확히 한다.
-  - ArgoCD Notifications와 Rollouts chart notifications를 분리한다.
+  - Backfill the Notifications current contract into the ARD/Spec/Plan/Task chain.
+  - Clarify the Vault/ESO security boundary for the Slack token.
+  - Separate ArgoCD Notifications from Rollouts chart notifications.
 - **In Scope**:
-  - 문서 backfill과 README index 갱신
-  - Notifications ConfigMap/ExternalSecret current contract 설명
-  - 정적 검증과 live Slack validation boundary 명시
+  - Document backfill and README index updates
+  - Description of the Notifications ConfigMap/ExternalSecret current contract
+  - Static validation and live Slack validation boundary
 
 ## Non-Goals & Out-of-Scope
 
 - **Non-goals**:
-  - Slack token 발급 또는 Vault write
-  - 새 알림 채널 추가
-  - Rollouts chart notifications 활성화
+  - Issuing a Slack token or writing to Vault
+  - Adding a new notification channel
+  - Enabling Rollouts chart notifications
 - **Out of Scope**:
   - live Slack notification test
-  - Slack workspace/channel 운영
+  - Slack workspace/channel operation
   - Alertmanager/PagerDuty/Email integration
 
 ## Work Breakdown
 
 | Task | Description | Files / Docs Affected | Target REQ | Validation Criteria |
 | --- | --- | --- | --- | --- |
-| PLN-001 | Notifications ARD 작성 | `docs/02.architecture/requirements/0005-argo-notifications-slack.md` | REQ-PRD-FUN-01..06 | ARD가 PRD/ADR/Spec/Plan 링크를 포함 |
-| PLN-002 | Notifications Spec 작성 | `docs/03.specs/005-argo-notifications-slack/spec.md` | REQ-PRD-FUN-01..06 | Spec heading/template gate 통과 |
-| PLN-003 | Notifications Task 작성 | `docs/04.execution/tasks/2026-05-18-argo-notifications-slack.md` | REQ-PRD-MET-01..05 | Task가 validation evidence를 정의 |
-| PLN-004 | 역링크와 README index 갱신 | PRD, ADR, README, operations docs | REQ-PRD-FUN-02 | stale gap text 없음 |
-| PLN-005 | 검증 실행 | validation scripts | REQ-PRD-MET-02 | secret scan과 static contract PASS |
+| PLN-001 | Write Notifications ARD | `docs/02.architecture/requirements/0005-argo-notifications-slack.md` | REQ-PRD-FUN-01..06 | ARD includes PRD/ADR/Spec/Plan links |
+| PLN-002 | Write Notifications Spec | `docs/03.specs/005-argo-notifications-slack/spec.md` | REQ-PRD-FUN-01..06 | Spec heading/template gate passes |
+| PLN-003 | Write Notifications Task | `docs/04.execution/tasks/2026-05-18-argo-notifications-slack.md` | REQ-PRD-MET-01..05 | Task defines validation evidence |
+| PLN-004 | Update backlinks and README indexes | PRD, ADR, README, operations docs | REQ-PRD-FUN-02 | No stale gap text remains |
+| PLN-005 | Run validation | validation scripts | REQ-PRD-MET-02 | Secret scan and static contract pass |
 
 ## Verification Plan
 
@@ -58,15 +63,15 @@ ArgoCD Notifications는 `infrastructure/argocd/values-local.yaml`에서 활성�
 | VAL-PLN-002 | Secret | plaintext secret scan | `bash scripts/check-secret-handling.sh .` | PASS |
 | VAL-PLN-003 | Contract | static notification contract | `bash infrastructure/tests/verify-contracts-static.sh` | PASS |
 | VAL-PLN-004 | Manifest | Kubernetes YAML syntax | `bash scripts/validate-k8s-manifests.sh .` | PASS |
-| VAL-PLN-005 | Semantic | stale planned-gap text removed | `rg -n "Follow-up Gap\|이번 PRD 정비에서 생성하지 않음" docs/01.requirements` | no matches |
+| VAL-PLN-005 | Semantic | stale planned-gap text removed | `rg -n "Follow-up Gap\|not created during this PRD remediation" docs/01.requirements` | no matches |
 
 ## Risks & Mitigations
 
 | Risk | Impact | Mitigation |
 | --- | --- | --- |
-| Slack token 노출 | High | docs/manifests only reference Vault/ESO keys; run secret scan |
-| Rollouts chart notifications와 혼동 | High | Spec에서 `rolloutsChartNotifications.enabled: false`를 명시 |
-| Live Slack test를 자동 검증으로 오해 | Medium | live validation은 human-approved secret 준비 후 runbook에서만 수행 |
+| Slack token exposure | High | docs/manifests only reference Vault/ESO keys; run secret scan |
+| Confusion with Rollouts chart notifications | High | State `rolloutsChartNotifications.enabled: false` in the Spec |
+| Live Slack test mistaken for automatic validation | Medium | Run live validation only from the runbook after human-approved secret preparation |
 
 ## Agent Rollout & Evaluation Gates (If Applicable)
 

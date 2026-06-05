@@ -8,11 +8,12 @@ updated: 2026-06-04
 
 # Harness Four-Element Alignment Plan
 
-## Overview (KR)
+## Overview
 
-이 문서는 `hy-home.k8s` AI Agent 하네스를 네 요소인 지시 문서, 아키텍처
-제약, 피드백 루프, 지식 저장소 관점으로 재감사하고 Codex/Claude provider
-surface에 같은 관계 모델을 고정하는 실행 계획이다.
+This document is the implementation plan for re-auditing the `hy-home.k8s` AI
+Agent harness through four elements: instruction documents, architectural
+constraints, feedback loops, and knowledge stores. It fixes the same
+relationship model into the Codex and Claude provider surfaces.
 
 ## Context
 

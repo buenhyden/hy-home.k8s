@@ -8,30 +8,36 @@ updated: 2026-06-02
 
 # Phase 4 ESO Vault Runtime Diagnosis Plan
 
-## Overview (KR)
+## Overview
 
-이 문서는 Phase 3 live validation에서 발견된 ESO/Vault runtime readiness 실패를 root cause 기준으로 분류하고, repo-backed 후속 증적과 operator-bound 복구 경계를 고정하는 계획이다.
-Phase 4는 GitOps desired-state를 추측으로 변경하지 않고, `vault-backend Ready=False`의 실제 원인을 live metadata와 existing runbook evidence로 확인한다.
+This document is the plan for classifying the ESO/Vault runtime readiness
+failure found during Phase 3 live validation by root cause, then fixing
+repo-backed follow-up evidence and operator-bound recovery boundaries. Phase 4
+does not change GitOps desired state by guesswork; it confirms the actual cause
+of `vault-backend Ready=False` using live metadata and existing runbook
+evidence.
 
 ## Context
 
-Phase 3 read-only live validation에서 `bash infrastructure/tests/run-all.sh`가 ESO/Vault integration 단계에서 실패했다.
-`ClusterSecretStore/vault-backend`는 `Ready=False`, reason `InvalidProviderConfig`였고, dependent `ExternalSecret`들은 `SecretSyncedError`를 보고했다.
+During Phase 3 read-only live validation, `bash infrastructure/tests/run-all.sh`
+failed at the ESO/Vault integration step. `ClusterSecretStore/vault-backend`
+reported `Ready=False` with reason `InvalidProviderConfig`, and dependent
+`ExternalSecret` resources reported `SecretSyncedError`.
 
-추가 read-only 진단은 다음을 확인했다.
+Additional read-only diagnosis confirmed the following.
 
-- `vault-external` Service와 EndpointSlice는 repo desired-state와 일치한다.
-- Vault endpoint `http://172.18.0.8:8200/v1/sys/health`는 응답하지만 `sealed:true`를 반환한다.
+- The `vault-external` Service and EndpointSlice match repo desired state.
+- The Vault endpoint `http://172.18.0.8:8200/v1/sys/health` responds but returns `sealed:true`.
 - ESO controller logs show Kubernetes auth login fails with HTTP 503 and `Vault is sealed`.
 - External services, network policies, ingress/TLS static/live checks mostly pass, with Kiali TLS warning tracked separately.
 
 ## Goals & In-Scope
 
 - **Goals**:
-  - ESO/Vault failure를 endpoint drift가 아니라 Vault sealed runtime prerequisite failure로 분류한다.
-  - Existing recovery runbook에 sealed Vault 분기와 operator-bound unseal boundary를 추가한다.
-  - Secret values, Vault tokens, unseal keys, root tokens를 조회하지 않는다.
-  - Phase 4 diagnosis evidence를 Plan/Task/README/progress ledger로 추적 가능하게 남긴다.
+  - Classify the ESO/Vault failure as a sealed Vault runtime prerequisite failure, not endpoint drift.
+  - Add a sealed Vault branch and operator-bound unseal boundary to the existing recovery runbook.
+  - Do not inspect secret values, Vault tokens, unseal keys, or root tokens.
+  - Leave Phase 4 diagnosis evidence traceable through the Plan, Task, README, and progress ledger.
 - **In Scope**:
   - Read-only Kubernetes metadata and controller log diagnosis.
   - Read-only Vault unauthenticated health endpoint check.

@@ -8,10 +8,11 @@ updated: 2026-06-02
 
 # Task: Phase 2 Governance Alignment
 
-## Overview (KR)
+## Overview
 
-이 문서는 Phase 2 Governance Alignment 계획 산출물의 작업 단위와 검증 증거를 추적한다.
-작업 범위는 Phase 1 감사 결과를 Plan/Task/README/progress 추적성으로 고정하는 docs-only 변경이다.
+This document tracks work units and verification evidence for the Phase 2
+Governance Alignment planning artifact. The scope is a docs-only change that
+fixes Phase 1 audit results into Plan, Task, README, and progress traceability.
 
 ## Inputs
 

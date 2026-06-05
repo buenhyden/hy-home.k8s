@@ -8,14 +8,19 @@ updated: 2026-06-04
 
 # Argo Rollouts Progressive Delivery Specification
 
-## Overview (KR)
+## Overview
 
-이 문서는 Argo Rollouts 기반 점진적 배포의 현재 repo-backed 기술 계약을 정의한다.
-`platform-rollouts` Application, AppProject 권한, dashboard route, metrics, workload consumption 경계를 구현과 검증의 기준으로 고정한다.
+This document defines the current repo-backed technical contract for Argo
+Rollouts progressive delivery. It fixes the `platform-rollouts` Application,
+AppProject permissions, dashboard route, metrics, and workload consumption
+boundaries as the basis for implementation and validation.
 
 ## Implementation Status
 
-이 Spec의 repo-backed 구현은 현재 계약 기준으로 완료되어 있다. Rollout promotion, abort, undo 같은 live 운영 행위는 구현 증거가 아니라 human/operator 승인 경로의 runtime validation으로 분리한다.
+The repo-backed implementation for this spec is complete against the current
+contract. Live operational actions such as rollout promotion, abort, and undo
+are runtime validation under a human/operator-approved path, not implementation
+evidence.
 
 | Area | Current implementation evidence | Verification boundary |
 | --- | --- | --- |
@@ -27,9 +32,12 @@ updated: 2026-06-04
 
 ## Strategic Boundaries & Non-goals
 
-- **Owns**: Rollouts chart 설치, namespace, dashboard, metrics, AppProject 권한, validation evidence.
-- **Does Not Own**: 개별 애플리케이션 rollout 전략, Slack credential, ArgoCD Notifications template.
-- **Non-goals**: 기본 자동 promotion, 멀티클러스터 delivery, Rollouts chart notifications 활성화.
+- **Owns**: Rollouts chart installation, namespace, dashboard, metrics,
+  AppProject permissions, and validation evidence.
+- **Does Not Own**: per-application rollout strategy, Slack credentials, or
+  ArgoCD Notifications templates.
+- **Non-goals**: default automatic promotion, multi-cluster delivery, and
+  enabling Rollouts chart notifications.
 
 ## Related Inputs
 
@@ -112,10 +120,13 @@ The public contract is Kubernetes CRDs and dashboard/metrics endpoints.
 
 ## Agent Role & IO Contract (If Applicable)
 
-- **Agent Role**: 유지보수 보조자는 repo-backed manifests/docs를 정적 검증하고, live promotion은 수행하지 않는다.
+- **Agent Role**: maintenance agents statically validate repo-backed manifests
+  and docs, and do not perform live promotion.
 - **Inputs**: PRD/ARD/ADR, GitOps manifests, operations policy/runbook.
-- **Outputs**: 문서 정합화, manifest diff, validation evidence.
-- **Success Definition**: Rollouts 계약이 PRD -> ARD -> Spec -> Plan -> Task -> Operations로 추적된다.
+- **Outputs**: documentation alignment, manifest diffs, and validation
+  evidence.
+- **Success Definition**: the Rollouts contract is traceable from PRD -> ARD ->
+  Spec -> Plan -> Task -> Operations.
 
 ## Tools & Tool Contract (If Applicable)
 

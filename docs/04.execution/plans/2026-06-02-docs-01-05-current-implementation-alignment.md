@@ -8,35 +8,41 @@ updated: 2026-06-02
 
 # Docs 01-05 Current Implementation Alignment Plan
 
-## Overview (KR)
+## Overview
 
-이 문서는 `docs/01.requirements`부터 `docs/05.operations`까지 active 문서를 현재 repo-backed 구현과 대조해 정리하는 실행 계획서다.
-판정 기준은 링크 검증 통과 여부가 아니라 `gitops/`, `infrastructure/`, `scripts/`, `.github/`, provider/agent governance, validation scripts의 현재 SSoT다.
+This document is the implementation plan for comparing and cleaning up active
+documents from `docs/01.requirements` through `docs/05.operations` against the
+current repo-backed implementation. The decision basis is the current SSoT in
+`gitops/`, `infrastructure/`, `scripts/`, `.github/`, provider/agent
+governance, and validation scripts, not merely whether link validation passes.
 
 ## Context
 
-기존 current implementation alignment는 `docs/01-04` 중심으로 old contract를 `docs/98.archive` Tombstone으로 이동했다.
-이번 작업은 범위를 축소하지 않고 `docs/05.operations`까지 포함해 Headlamp OIDC 미구현 계약, stale hook path, stale CI job wording, completed-but-draft Phase evidence를 현재 구현 기준으로 정리한다.
+The prior current implementation alignment focused on `docs/01-04` and moved
+old contracts to `docs/98.archive` Tombstones. This work does not narrow the
+scope; it includes `docs/05.operations` and cleans up unimplemented Headlamp
+OIDC contracts, stale hook paths, stale CI job wording, and completed-but-draft
+Phase evidence against the current implementation.
 
 ## Goals & In-Scope
 
 - **Goals**:
-  - Active `docs/01-05`가 현재 repo-backed 구현과 상충하지 않게 한다.
-  - 미구현 Headlamp OIDC/Keycloak 문서는 `docs/98.archive` metadata-only Tombstone으로 이동한다.
-  - Completed Phase 1-4 evidence와 README indexes를 `done` 상태로 정리한다.
-  - `repo-quality-static`이 active stale currentness drift를 잡도록 validator와 QA 문서를 보강한다.
+  - Ensure active `docs/01-05` does not conflict with the current repo-backed implementation.
+  - Move unimplemented Headlamp OIDC/Keycloak documents to `docs/98.archive` metadata-only Tombstones.
+  - Set completed Phase 1-4 evidence and README indexes to `done`.
+  - Harden the validator and QA docs so `repo-quality-static` catches active stale currentness drift.
 - **In Scope**:
-  - `docs/03.specs`, `docs/04.execution`, `docs/05.operations` active 문서 보정.
-  - `docs/98.archive` 05.operations mirror와 stage별 Archive Index 확장.
-  - Plans/Tasks README, progress ledger, governance routing, QA/CI guide, scripts README, GitHub ABOUT 보정.
+  - Adjust active documents in `docs/03.specs`, `docs/04.execution`, and `docs/05.operations`.
+  - Extend the `docs/98.archive` 05.operations mirror and stage-level Archive Indexes.
+  - Adjust Plans/Tasks READMEs, the progress ledger, governance routing, the QA/CI guide, scripts README, and GitHub ABOUT.
   - Local static validation and targeted semantic scans.
 
 ## Non-Goals & Out-of-Scope
 
 - **Non-goals**:
   - New Headlamp OIDC, Keycloak, Vault, ESO, ArgoCD, Kubernetes, provider, model, or CI topology implementation.
-  - Live runtime state를 archive 판정 기준으로 사용.
-  - `docs/99.templates/reference.template.md`에 archive policy 추가.
+  - Using live runtime state as the archive decision basis.
+  - Adding archive policy to `docs/99.templates/reference.template.md`.
 - **Out of Scope**:
   - live k3d mutation, ArgoCD sync, Vault unseal/write, ESO secret sync repair, deployment action, external network operation, or secret-value inspection.
   - Private RTK DB, credentials, tokens, private keys, or shell history inspection.

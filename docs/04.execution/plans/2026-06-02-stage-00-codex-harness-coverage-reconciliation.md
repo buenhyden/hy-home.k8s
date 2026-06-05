@@ -10,26 +10,29 @@ updated: 2026-06-02
 
 ---
 
-## Overview (KR)
+## Overview
 
-이 문서는 2026-06-02 Phase 1 decision follow-up plan에서 축소 반영된
-Stage 00/Codex harness 요구사항을 보정하는 실행 계획이다. 목적은 완료된
-follow-up plan을 재작성하지 않고, 누락 항목과 기존 완료 증적을 연결해
-문서 추적성을 완성하는 것이다.
+This document is the implementation plan for reconciling Stage 00/Codex
+harness requirements that were narrowed in the 2026-06-02 Phase 1 decision
+follow-up plan. The purpose is to complete document traceability by linking
+omitted items to existing completion evidence without rewriting the completed
+follow-up plan.
 
 ## Context
 
-[Phase 1 Decision Follow-up Plan](./2026-06-02-phase-1-decision-follow-up.md)은
-Stage 00 canonical adapter 모델을 유지하고 남은 QA skill/PATH/RTK gap을
-분리하는 좁은 후속 계획이었다. 이후 첨부 원문과 비교한 결과, Stage 00
-전수 조사, Codex harness alignment, Model Policy, QA/CI/CD, template
-contract, skill routing, branch completion 같은 항목이 해당 plan 자체에는
-세부 실행 항목으로 들어가지 않았음이 확인됐다.
+[Phase 1 Decision Follow-up Plan](./2026-06-02-phase-1-decision-follow-up.md)
+was a narrow follow-up plan that preserved the Stage 00 canonical adapter model
+and separated the remaining QA skill/PATH/RTK gap. Later comparison with the
+attached source text confirmed that items such as full Stage 00 investigation,
+Codex harness alignment, Model Policy, QA/CI/CD, Template Contract, skill
+routing, and branch completion were not decomposed as detailed work items in
+that plan itself.
 
-이 보정 작업은 그 항목을 새로 재구현하지 않는다. 이미 완료된
-[Codex Governance Harness Alignment Plan](./2026-05-31-codex-governance-harness-alignment.md)과
-[Stage 00 Canonical Adapter Redesign Plan](./2026-06-01-stage-00-canonical-adapter-redesign.md)의
-증적을 연결하고, 실제로 남은 범위를 문서 추적성 보정으로 한정한다.
+This remediation does not reimplement those items. It links evidence from the
+already-completed
+[Codex Governance Harness Alignment Plan](./2026-05-31-codex-governance-harness-alignment.md)
+and [Stage 00 Canonical Adapter Redesign Plan](./2026-06-01-stage-00-canonical-adapter-redesign.md),
+and limits the actual remaining scope to document traceability remediation.
 
 ### Approved Protected Surface Follow-up (2026-06-02)
 
@@ -44,9 +47,9 @@ live infrastructure.
 ## Goals & In-Scope
 
 - **Goals**:
-  - Phase 1 follow-up plan의 축소 범위와 누락처럼 보이는 항목을 명확히 기록한다.
-  - 누락 항목별 기존 완료 증적과 남은 조치 여부를 Task record로 추적한다.
-  - Plan/Task README와 progress ledger를 갱신해 후속 작업자가 같은 gap을 다시 조사하지 않게 한다.
+  - Clearly record the narrowed scope of the Phase 1 follow-up plan and the items that could appear omitted.
+  - Track existing completion evidence and remaining action status for each omitted item in the Task record.
+  - Update the Plan/Task READMEs and progress ledger so later workers do not re-investigate the same gap.
 - **In Scope**:
   - New Plan and Task records under `docs/04.execution/`.
   - A short current-state note in the completed Phase 1 follow-up plan.

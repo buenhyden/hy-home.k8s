@@ -8,10 +8,12 @@ updated: 2026-06-02
 
 # Task: Phase 4 ESO Vault Runtime Diagnosis
 
-## Overview (KR)
+## Overview
 
-이 문서는 Phase 3 live validation 실패 이후 수행한 ESO/Vault runtime diagnosis와 repo-backed runbook 보강 증거를 추적한다.
-작업은 read-only live evidence와 documentation update로 제한하며, Vault unseal이나 secret inspection은 수행하지 않는다.
+This document tracks evidence for the ESO/Vault runtime diagnosis and
+repo-backed runbook hardening performed after Phase 3 live validation failed.
+The work is limited to read-only live evidence and documentation updates; Vault
+unseal and secret inspection are not performed.
 
 ## Inputs
 

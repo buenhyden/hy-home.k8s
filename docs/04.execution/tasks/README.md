@@ -65,7 +65,9 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-06-02-phase-4-eso-vault-runtime-diagnosis.md
 ├── 2026-06-02-stage-00-codex-harness-coverage-reconciliation.md
 ├── 2026-06-04-harness-four-element-alignment.md
+├── 2026-06-05-harness-connective-layer-risk-closure.md
 ├── 2026-06-05-harness-governance-v2-overlay.md
+├── 2026-06-05-language-boundary-alignment.md
 └── README.md
 ```
 
@@ -113,7 +115,9 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-06-02-phase-4-eso-vault-runtime-diagnosis.md`](./2026-06-02-phase-4-eso-vault-runtime-diagnosis.md) | ESO/Vault live readiness 실패를 Vault sealed 상태로 분류하고 runbook/operator-bound 복구 경계를 보강한 Task | Done | 2026-06-02 |
 | [`./2026-06-02-stage-00-codex-harness-coverage-reconciliation.md`](./2026-06-02-stage-00-codex-harness-coverage-reconciliation.md) | Phase 1 follow-up plan의 축소 범위와 Stage 00/Codex harness 누락 항목을 기존 완료 증적에 연결한 보정 Task | Done | 2026-06-02 |
 | [`./2026-06-04-harness-four-element-alignment.md`](./2026-06-04-harness-four-element-alignment.md) | 하네스 네 요소와 Codex/Claude 보강, 문서 언어/템플릿/드리프트 GC 검증 evidence를 추적한 Task | Done | 2026-06-04 |
+| [`./2026-06-05-harness-connective-layer-risk-closure.md`](./2026-06-05-harness-connective-layer-risk-closure.md) | 하네스 연결 레이어의 Remaining Risk와 Follow-up Tasks를 repo-static evidence 및 승인 경계 기준으로 닫은 Task | Done | 2026-06-05 |
 | [`./2026-06-05-harness-governance-v2-overlay.md`](./2026-06-05-harness-governance-v2-overlay.md) | DAILY/LIBRARY 분류, workflow skill phase 기준, Hookify local advisory, deterministic eval, progress 단일화 검증 evidence를 추적한 Task | Done | 2026-06-05 |
+| [`./2026-06-05-language-boundary-alignment.md`](./2026-06-05-language-boundary-alignment.md) | AI Agent 문서와 사람용 문서의 언어 경계를 조사하고 Stage 03/04 영어-first 정책과 operations 역할을 보강한 Task | Draft | 2026-06-05 |
 
 ## Related Documents
 

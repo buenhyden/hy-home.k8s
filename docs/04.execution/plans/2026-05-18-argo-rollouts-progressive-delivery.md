@@ -8,47 +8,52 @@ updated: 2026-05-21
 
 # Argo Rollouts Progressive Delivery Backfill Plan
 
-## Overview (KR)
+## Overview
 
-이 문서는 이미 저장소에 존재하는 Argo Rollouts 실행계약을 PRD/ARD/ADR/Spec/Task 체인에 연결하기 위한 backfill 실행 계획서다.
-런타임 변경 없이 문서 추적성과 정적 검증 기준을 보완한다.
+This document is the backfill implementation plan for connecting the existing
+Argo Rollouts execution contract to the PRD/ARD/ADR/Spec/Task chain. It
+improves document traceability and static validation criteria without runtime
+changes.
 
 ## Context
 
-`platform-rollouts` Application, AppProject 권한, Rollouts Dashboard route, metrics NodePort, reference workload는 이미 GitOps 문서와 manifest에 존재한다.
-하지만 Rollouts PRD와 ADR을 잇는 ARD/Spec/Plan/Task 문서가 없어서 `03.specs` 단계에서 구현 계약을 찾기 어렵다.
+The `platform-rollouts` Application, AppProject permissions, Rollouts Dashboard
+route, metrics NodePort, and reference workload already exist in GitOps docs
+and manifests. However, the ARD/Spec/Plan/Task documents linking the Rollouts
+PRD and ADR were missing, making the implementation contract hard to find from
+the `03.specs` stage.
 
 ## Goals & In-Scope
 
 - **Goals**:
-  - Rollouts current contract를 ARD/Spec/Plan/Task 체인으로 보강한다.
-  - Rollouts chart notifications와 ArgoCD Notifications의 소유권을 분리한다.
-  - 검증 명령과 운영 문서 링크를 한 경로에서 추적 가능하게 만든다.
+  - Backfill the Rollouts current contract into the ARD/Spec/Plan/Task chain.
+  - Separate ownership for Rollouts chart notifications and ArgoCD Notifications.
+  - Make validation commands and operations document links traceable through one path.
 - **In Scope**:
-  - 문서 backfill과 README index 갱신
-  - `platform-rollouts` current contract 설명
-  - 정적 검증과 live validation boundary 명시
+  - Document backfill and README index updates
+  - Description of the `platform-rollouts` current contract
+  - Static validation and live validation boundary
 
 ## Non-Goals & Out-of-Scope
 
 - **Non-goals**:
-  - 신규 Rollouts 기능 추가
-  - 자동 promotion 정책 변경
-  - Rollouts chart notifications 활성화
+  - Adding new Rollouts functionality
+  - Changing automatic promotion policy
+  - Enabling Rollouts chart notifications
 - **Out of Scope**:
   - live cluster mutation
-  - workload별 Rollout migration
+  - Per-workload Rollout migration
   - Slack credential bootstrap
 
 ## Work Breakdown
 
 | Task | Description | Files / Docs Affected | Target REQ | Validation Criteria |
 | --- | --- | --- | --- | --- |
-| PLN-001 | Rollouts ARD 작성 | `docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md` | REQ-PRD-FUN-01 | ARD가 PRD/ADR/Spec/Plan 링크를 포함 |
-| PLN-002 | Rollouts Spec 작성 | `docs/03.specs/004-argo-rollouts-progressive-delivery/spec.md` | REQ-PRD-FUN-01..06 | Spec heading/template gate 통과 |
-| PLN-003 | Rollouts Task 작성 | `docs/04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md` | REQ-PRD-MET-01..04 | Task가 validation evidence를 정의 |
-| PLN-004 | 역링크와 README index 갱신 | PRD, ADR, README, operations docs | REQ-PRD-FUN-04 | stale gap text 없음 |
-| PLN-005 | 검증 실행 | validation scripts | REQ-PRD-MET-04 | 모든 정적 검증 PASS |
+| PLN-001 | Write Rollouts ARD | `docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md` | REQ-PRD-FUN-01 | ARD includes PRD/ADR/Spec/Plan links |
+| PLN-002 | Write Rollouts Spec | `docs/03.specs/004-argo-rollouts-progressive-delivery/spec.md` | REQ-PRD-FUN-01..06 | Spec heading/template gate passes |
+| PLN-003 | Write Rollouts Task | `docs/04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md` | REQ-PRD-MET-01..04 | Task defines validation evidence |
+| PLN-004 | Update backlinks and README indexes | PRD, ADR, README, operations docs | REQ-PRD-FUN-04 | No stale gap text remains |
+| PLN-005 | Run validation | validation scripts | REQ-PRD-MET-04 | All static validation passes |
 
 ## Verification Plan
 
@@ -58,15 +63,15 @@ updated: 2026-05-21
 | VAL-PLN-002 | GitOps | Rollouts Application and kustomization structure | `bash scripts/validate-gitops-structure.sh` | PASS |
 | VAL-PLN-003 | Manifest | Kubernetes YAML syntax | `bash scripts/validate-k8s-manifests.sh .` | PASS |
 | VAL-PLN-004 | Contract | platform static contracts | `bash infrastructure/tests/verify-contracts-static.sh` | PASS |
-| VAL-PLN-005 | Semantic | stale planned-gap text removed | `rg -n "Follow-up Gap\|이번 PRD 정비에서 생성하지 않음" docs/01.requirements` | no matches |
+| VAL-PLN-005 | Semantic | stale planned-gap text removed | `rg -n "Follow-up Gap\|not created during this PRD remediation" docs/01.requirements` | no matches |
 
 ## Risks & Mitigations
 
 | Risk | Impact | Mitigation |
 | --- | --- | --- |
-| Backfill 문서가 future implementation으로 오해됨 | High | status를 active로 두고 current-contract backfill 문구를 상단에 명시 |
-| Rollouts chart notifications를 잘못 활성화 | High | Spec에서 chart notifications disabled와 ArgoCD Notifications ownership을 분리 |
-| Live validation이 정적 검증처럼 실행됨 | Medium | live `kubectl`/`curl`은 runbook evidence로 분리 |
+| Backfill document mistaken for future implementation | High | Keep status active and state current-contract backfill at the top |
+| Rollouts chart notifications are enabled by mistake | High | Separate chart notifications disabled state and ArgoCD Notifications ownership in the Spec |
+| Live validation runs as if it were static validation | Medium | Separate live `kubectl`/`curl` evidence into runbook evidence |
 
 ## Agent Rollout & Evaluation Gates (If Applicable)
 

@@ -8,72 +8,87 @@ updated: 2026-05-21
 
 # scripts Inventory Remediation Plan
 
-## Overview (KR)
+## Overview
 
-이 문서는 `scripts/` 폴더의 스크립트 사용 여부 조사 결과를 바탕으로, 불필요한 삭제 없이 현재 실행 계약을 명확히 하기 위한 실행 계획서다.
-작업 분해, 검증, 위험 관리, 완료 기준을 정의한다.
+This document is the implementation plan for clarifying the current execution
+contract based on the `scripts/` usage audit, without unnecessary deletion. It
+defines work breakdown, verification, risk management, and completion criteria.
 
 ## Context
 
-2026-05-09 초기 조사 시점의 `scripts/`에는 `*.sh` 스크립트 4개와 `README.md`만 있었다.
-`validate-repo-quality-gates.sh`, `validate-gitops-structure.sh`, `validate-k8s-manifests.sh`, `check-secret-handling.sh`는 CI, PR 템플릿, root README, `.claude/settings.json`, `scripts/README.md` 중 하나 이상에서 호출되거나 허용된다.
+At the initial 2026-05-09 investigation point, `scripts/` contained only four
+`*.sh` scripts and `README.md`. `validate-repo-quality-gates.sh`,
+`validate-gitops-structure.sh`, `validate-k8s-manifests.sh`, and
+`check-secret-handling.sh` are invoked or allowed by at least one of CI, the PR
+template, the root README, `.claude/settings.json`, or `scripts/README.md`.
 
-따라서 이번 보정의 핵심은 삭제가 아니라 `scripts/README.md`를 README 템플릿과 한국어 사용자 문서 규칙에 맞추고, 조사 결과를 plan/task 문서로 추적 가능하게 남기는 것이다.
+Therefore, the core remediation is not deletion. It aligns `scripts/README.md`
+with the README template and Korean user-document rules, then leaves the audit
+results traceable through plan/task documents.
 
-2026-05-09 follow-up은 스크립트 존폐가 아니라 선택 인자 계약 보정이다.
-`validate-k8s-manifests.sh`와 `check-secret-handling.sh`의 선택 인자는 임의 subpath가 아니라 repo root로 고정한다.
-잘못된 root 또는 검사 대상 0건은 false-negative를 막기 위해 실패해야 한다.
+The 2026-05-09 follow-up remediates optional argument contracts, not script
+existence. The optional arguments for `validate-k8s-manifests.sh` and
+`check-secret-handling.sh` are fixed to the repo root, not arbitrary subpaths.
+An invalid root or zero inspected targets must fail to prevent false negatives.
 
 ## 2026-05-17 Evidence Refresh
 
-2026-05-17 현재 인벤토리는 `scripts/README.md`가 소유하며, `scripts/`에는 `*.sh` 스크립트 5개가 있다.
-2026-05-09 문맥의 "네 스크립트" 표현은 당시 snapshot을 뜻하며 현재 인벤토리 주장이 아니다.
+As of 2026-05-17, `scripts/README.md` owns the inventory, and `scripts/`
+contains five `*.sh` scripts. The phrase "four scripts" in the 2026-05-09
+context refers to that historical snapshot and is not a current inventory
+claim.
 
-현재 보존 기준은 Tier A/B/C로 분리한다.
-Tier A는 CI job 또는 post-edit hook이 직접 실행하는 자동 실행 게이트이며 보존 근거다.
-Tier B는 필수 품질 게이트가 간접 실행하고 generated artifact 또는 check contract를 소유하는 필수 간접 품질 게이트이며 보존 근거지만 indirect로 표시한다.
-Tier C는 README, PR template, docs, allowlist, manual command reference 같은 문서·수동·허용 목록 표면이며 그 자체로는 보존 근거가 아니다.
+The current retention standard is split into Tier A/B/C. Tier A is an
+automated execution gate run directly by a CI job or post-edit hook and is a
+retention basis. Tier B is an required indirect quality gate run by a required
+quality gate and owning a generated artifact or check contract; it is also a
+retention basis but is marked indirect. Tier C covers docs/manual/allowlist
+surfaces such as README files, PR templates, docs, allowlists, and manual
+command references; it is not a retention basis by itself.
 
-`generate-llm-wiki-index.sh`는 `validate-repo-quality-gates.sh`가 `--check`로 간접 실행하고 `docs/90.references/llm-wiki/wiki-index.md`의 generated artifact contract를 소유하므로 Tier B indirect 품질 게이트 dependency다.
-2026-05-17 기준 Tier C-only, unused, one-off 삭제 후보는 없다.
+`generate-llm-wiki-index.sh` is a Tier B indirect quality-gate dependency
+because `validate-repo-quality-gates.sh` indirectly runs it with `--check` and
+it owns the generated artifact contract for
+`docs/90.references/llm-wiki/wiki-index.md`. As of 2026-05-17, there are no
+Tier C-only, unused, or one-off deletion candidates.
 
 ## Goals & In-Scope
 
 - **Goals**:
-  - `scripts/`의 현재 인벤토리와 유지 결정을 명확히 기록한다.
-  - `scripts/README.md`를 `docs/99.templates/readme.template.md` 구조에 맞춘다.
-  - CI, PR 템플릿, `.claude/settings.json`, root README와의 실행 계약을 문서화한다.
-  - 이번 조사와 보정 작업을 plan/task 문서로 추적 가능하게 남긴다.
+  - Clearly record the current `scripts/` inventory and retention decisions.
+  - Align `scripts/README.md` with the structure in `docs/99.templates/readme.template.md`.
+  - Document execution contracts with CI, the PR template, `.claude/settings.json`, and the root README.
+  - Leave this audit and remediation work traceable through plan/task documents.
 - **In Scope**:
-  - `docs/04.execution/plans`, `docs/04.execution/tasks`에 보정 작업 추적 문서 추가
-  - `docs/04.execution/plans/README.md`, `docs/04.execution/tasks/README.md` 인덱스 갱신
-  - `scripts/README.md` 재작성
-  - 필요 시 historical memory note 보강
-  - `validate-k8s-manifests.sh`, `check-secret-handling.sh`의 repo-root 인자 계약 명확화
+  - Add remediation tracking documents under `docs/04.execution/plans` and `docs/04.execution/tasks`
+  - Update `docs/04.execution/plans/README.md` and `docs/04.execution/tasks/README.md` indexes
+  - Rewrite `scripts/README.md`
+  - Harden the historical memory note if needed
+  - Clarify the repo-root argument contract for `validate-k8s-manifests.sh` and `check-secret-handling.sh`
 
 ## Non-Goals & Out-of-Scope
 
 - **Non-goals**:
-  - 스크립트 삭제, 통합, 리네임
-  - 새 스크립트 또는 새 CLI 옵션 추가
-  - 임의 subpath scan 모드 추가
-  - 새 CI job 또는 pre-commit hook 추가
-  - live cluster 확인 또는 직접 cluster mutation 수행
+  - Deleting, merging, or renaming scripts
+  - Adding new scripts or new CLI options
+  - Adding arbitrary subpath scan mode
+  - Adding new CI jobs or pre-commit hooks
+  - Checking live clusters or performing direct cluster mutation
 - **Out of Scope**:
-  - Kubernetes manifest 변경
-  - 외부 Vault, ArgoCD, k3d 런타임 변경
-  - README 템플릿 자체 변경
+  - Changing Kubernetes manifests
+  - Changing external Vault, ArgoCD, or k3d runtimes
+  - Changing the README template itself
 
 ## Work Breakdown
 
 | Task | Description | Files / Docs Affected | Target REQ | Validation Criteria |
 | --- | --- | --- | --- | --- |
-| PLN-001 | scripts 조사 결과를 plan/task 문서로 기록 | `docs/04.execution/plans/`, `docs/04.execution/tasks/` | REQ-DOC-001 | stage README index updated |
-| PLN-002 | `scripts/README.md`를 템플릿 구조와 한국어 사용자 문서 규칙에 맞게 재작성 | `scripts/README.md` | REQ-DOC-002 | README contains required template sections |
-| PLN-003 | 2026-05-09 당시 네 스크립트의 `Keep` 결정을 명시하고, 2026-05-17 refresh에서 현재 5개 스크립트를 Tier A/B 기준으로 재분류 | `scripts/README.md` | REQ-SCRIPT-001 | all current scripts are listed with `Keep` status |
-| PLN-004 | historical memory note의 과거 인벤토리 표현을 현재 README 기준으로 보강 | `docs/00.agent-governance/memory/progress.md` | REQ-GOV-001 | repo quality gate PASS |
-| PLN-005 | repo-backed validation bundle 실행 | `scripts/`, `infrastructure/tests/` | REQ-VAL-001 | verification commands PASS or limitation documented |
-| PLN-006 | manifest/secret 검증 스크립트의 선택 인자를 repo root로 명확화하고 잘못된 root를 실패 처리 | `scripts/validate-k8s-manifests.sh`, `scripts/check-secret-handling.sh`, `scripts/README.md` | REQ-SCRIPT-002 | subpath false-negative check fails clearly |
+| PLN-001 | Record scripts audit results in plan/task documents | `docs/04.execution/plans/`, `docs/04.execution/tasks/` | REQ-DOC-001 | stage README index updated |
+| PLN-002 | Rewrite `scripts/README.md` to match the template structure and Korean user-document rules | `scripts/README.md` | REQ-DOC-002 | README contains required template sections |
+| PLN-003 | State the 2026-05-09 `Keep` decisions for the four scripts and reclassify the current five scripts by Tier A/B in the 2026-05-17 refresh | `scripts/README.md` | REQ-SCRIPT-001 | all current scripts are listed with `Keep` status |
+| PLN-004 | Harden historical inventory wording in the memory note against the current README | `docs/00.agent-governance/memory/progress.md` | REQ-GOV-001 | repo quality gate PASS |
+| PLN-005 | Run the repo-backed validation bundle | `scripts/`, `infrastructure/tests/` | REQ-VAL-001 | verification commands PASS or limitation documented |
+| PLN-006 | Clarify repo-root optional arguments for manifest/secret validation scripts and fail invalid roots | `scripts/validate-k8s-manifests.sh`, `scripts/check-secret-handling.sh`, `scripts/README.md` | REQ-SCRIPT-002 | subpath false-negative check fails clearly |
 
 ## Verification Plan
 

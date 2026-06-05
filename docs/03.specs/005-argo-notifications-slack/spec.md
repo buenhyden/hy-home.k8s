@@ -8,14 +8,20 @@ updated: 2026-05-22
 
 # Argo Notifications Slack Specification
 
-## Overview (KR)
+## Overview
 
-이 문서는 ArgoCD Notifications 기반 Slack 알림의 현재 repo-backed 기술 계약을 정의한다.
-ArgoCD Helm values, Notifications ConfigMap, Vault-backed ExternalSecret, default subscriptions, 앱별 opt-in annotation을 구현과 검증의 기준으로 고정한다.
+This document defines the current repo-backed technical contract for Slack
+notifications through ArgoCD Notifications. It fixes ArgoCD Helm values, the
+Notifications ConfigMap, Vault-backed ExternalSecret, default subscriptions,
+and per-application opt-in annotations as the basis for implementation and
+validation.
 
 ## Implementation Status
 
-이 Spec의 repo-backed 구현은 static contract 기준으로 완료되어 있다. Slack token bootstrap, Vault write, live Slack send 검증은 이 저장소 구현 범위가 아니라 human-approved external/runtime validation이다.
+The repo-backed implementation for this spec is complete against the static
+contract. Slack token bootstrap, Vault writes, and live Slack send validation
+are human-approved external/runtime validation, not repository implementation
+scope.
 
 | Area | Current implementation evidence | Verification boundary |
 | --- | --- | --- |
@@ -27,9 +33,12 @@ ArgoCD Helm values, Notifications ConfigMap, Vault-backed ExternalSecret, defaul
 
 ## Strategic Boundaries & Non-goals
 
-- **Owns**: ArgoCD Notifications 활성화, Slack service template, triggers, Vault/ESO credential reference, validation evidence.
-- **Does Not Own**: Slack workspace/channel 관리, Rollouts chart notifications, PagerDuty/Email/Alertmanager integration.
-- **Non-goals**: 평문 credential bootstrap, per-app 자동 channel routing, live Slack test without human-approved secret.
+- **Owns**: ArgoCD Notifications enablement, Slack service templates, triggers,
+  Vault/ESO credential references, and validation evidence.
+- **Does Not Own**: Slack workspace/channel administration, Rollouts chart
+  notifications, or PagerDuty/Email/Alertmanager integration.
+- **Non-goals**: plaintext credential bootstrap, automatic per-app channel
+  routing, and live Slack tests without a human-approved secret.
 
 ## Related Inputs
 
@@ -111,7 +120,8 @@ The interface contract is ArgoCD Notifications ConfigMap syntax, ESO remote refe
 
 ## Agent Role & IO Contract (If Applicable)
 
-- **Agent Role**: 문서/manifest 유지보수 보조자는 notification wiring을 검증하되 credential material을 조회하거나 출력하지 않는다.
+- **Agent Role**: documentation and manifest maintenance agents validate
+  notification wiring without reading or printing credential material.
 - **Inputs**: PRD/ARD/ADR, ArgoCD values, ConfigMap, ExternalSecret, operations policy/runbook.
 - **Outputs**: documentation, non-secret manifest diffs, validation evidence.
 - **Success Definition**: Slack notification contract is traceable without exposing credentials.

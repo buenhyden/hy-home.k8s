@@ -8,12 +8,13 @@ updated: 2026-06-02
 
 # Task: Phase 1 Governance Alignment Audit
 
-## Overview (KR)
+## Overview
 
-이 문서는 Phase 1 Governance Alignment Audit의 실행·검증 증적이다.
-감사 목적은 Stage 00 canonical adapter 모델을 다시 설계하는 것이 아니라,
-현재 governance, provider adapter, docs lifecycle, QA/CI/CD, GitOps 경계가
-repo-backed 구현과 정합적인지 확인하고 gap ledger를 남기는 것이다.
+This document records execution and verification evidence for the Phase 1
+Governance Alignment Audit. The audit does not redesign the Stage 00 canonical
+adapter model; it verifies whether current governance, provider adapters, the
+docs lifecycle, QA/CI/CD, and GitOps boundaries align with repo-backed
+implementation, then records the gap ledger.
 
 ## Inputs
 

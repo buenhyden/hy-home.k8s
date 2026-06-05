@@ -10,18 +10,21 @@ updated: 2026-06-02
 
 ---
 
-## Overview (KR)
+## Overview
 
-이 문서는 2026-06-02 Phase 1 조사 결과에서 확정한 결정 항목을 Phase 2 planning artifact로 고정한다.
-작업의 목적은 Stage 00 canonical adapter 모델을 다시 재설계하지 않고, 이미 확인된 결정과 남은 작은 gap을
-후속 실행 단위로 분리하는 것이다.
+This document fixes the decisions confirmed by the 2026-06-02 Phase 1
+investigation into a Phase 2 planning artifact. The work separates confirmed
+decisions and remaining small gaps into follow-up execution units without
+redesigning the Stage 00 canonical adapter model again.
 
 ## Context
 
-2026-06-01 Stage 00 canonical adapter workstream은 공통 governance, provider adapter, template contract,
-hook/QA contract, model policy, skill/workflow routing, local runtime evidence를 이미 정합화했다.
-2026-06-02 Phase 1 continuation audit는 이 완료 상태를 다시 확인했고, 새 구조 재설계보다 현재 결정 항목을
-얇은 후속 계획으로 기록하는 것이 적절하다고 판단했다.
+The 2026-06-01 Stage 00 canonical adapter workstream already aligned common
+governance, provider adapters, template contracts, hook/QA contracts, model
+policy, skill/workflow routing, and local runtime evidence. The 2026-06-02
+Phase 1 continuation audit reconfirmed that completed state and concluded that
+a thin follow-up plan for current decisions was more appropriate than a new
+structure redesign.
 
 ### Coverage Reconciliation Note (2026-06-02)
 
@@ -47,9 +50,9 @@ or live infrastructure.
 ## Goals & In-Scope
 
 - **Goals**:
-  - Phase 1 decision outcomes를 실행 가능한 Phase 2 plan으로 기록한다.
-  - Stage 00 canonical adapter 모델과 `harness-catalog.md` Task-to-Skill Routing을 현행 정본으로 유지한다.
-  - HADS, QA skill gap, and local PATH/RTK limitation을 후속 boundary로 명확히 남긴다.
+  - Record Phase 1 decision outcomes as an executable Phase 2 plan.
+  - Keep the Stage 00 canonical adapter model and `harness-catalog.md` Task-to-Skill Routing as the current source of truth.
+  - Leave HADS, the QA skill gap, and the local PATH/RTK limitation as explicit follow-up boundaries.
 - **In Scope**:
   - Plan document creation under `docs/04.execution/plans/`.
   - Plan README index update.

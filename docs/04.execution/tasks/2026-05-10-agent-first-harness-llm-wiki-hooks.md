@@ -8,10 +8,12 @@ updated: 2026-05-10
 
 # Task: Agent-first Harness, LLM Wiki, and Hook Contract Closure
 
-## Overview (KR)
+## Overview
 
-이 문서는 Harness Engineering, Agent-first Engineering, repo-local LLM Wiki, hook feedback loop, memory ledger 보강 작업의 구현·검증 작업 목록이다.
-Plan에서 파생된 작업을 추적 가능하게 기록한다.
+This document tracks implementation and verification tasks for Harness
+Engineering, Agent-first Engineering, the repo-local LLM Wiki, the hook
+feedback loop, and memory ledger hardening. It records tasks derived from the
+Plan in a traceable form.
 
 ## Inputs
 

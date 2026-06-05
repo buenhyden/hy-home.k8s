@@ -10,14 +10,16 @@ updated: 2026-06-01
 
 ---
 
-## Overview (KR)
+## Overview
 
-이 문서는 Stage 00 canonical adapter 재설계 Phase 3의 구현·검증 증적을 추적한다.
-작업 범위는 공통 governance, provider adapter, template contract, hook/QA contract,
-model policy, skill/workflow routing, local runtime evidence를 같은 canonical adapter
-모델로 정합화하는 것이다.
+This document tracks implementation and verification evidence for Phase 3 of
+the Stage 00 canonical adapter redesign. The scope aligns common governance,
+provider adapters, template contracts, hook/QA contracts, model policy,
+skill/workflow routing, and local runtime evidence under one canonical adapter
+model.
 
-Live cluster, secret, deployment, destructive git action은 이 작업 범위 밖이다.
+Live cluster, secret, deployment, and destructive Git actions are out of scope
+for this work.
 
 ## Inputs
 

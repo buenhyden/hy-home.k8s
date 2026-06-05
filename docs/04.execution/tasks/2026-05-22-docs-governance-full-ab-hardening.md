@@ -8,10 +8,11 @@ updated: 2026-05-22
 
 # Task: Docs Governance Full A+B Hardening
 
-## Overview (KR)
+## Overview
 
-이 문서는 문서 lifecycle, README 템플릿 준수, agent/runtime governance, hook 경계,
-repo-static 검증 게이트 정합화 작업의 구현·검증 작업 목록이다.
+This document tracks implementation and verification tasks for aligning the
+documentation lifecycle, README template conformance, agent/runtime governance,
+hook boundaries, and repo-static validation gates.
 
 ## Inputs
 

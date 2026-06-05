@@ -8,24 +8,36 @@ updated: 2026-06-01
 
 # Claude Agent Surface Restoration Implementation Plan
 
-## Overview (KR)
+## Overview
 
-이 문서는 `.claude/agents`를 실제 Claude 전용 agent 파일 디렉터리로 복원하기 위한 실행 계획과 완료 증적이다. Phase 1 조사에서 확인된 provider surface drift를 바탕으로, 복원 순서와 완료 판단 검증을 정의하고 실행 결과를 기록한다.
+This document records the implementation plan and completion evidence for
+restoring `.claude/agents` as the real Claude-specific agent file directory.
+Based on the provider surface drift found during Phase 1 investigation, it
+defines the restoration order, completion validation, and execution results.
 
 ## Context
 
-Phase 1 조사 시점의 `.claude/agents`는 `../.agents/agents`를 가리키는 symlink였다. 이 때문에 Claude agent surface가 Gemini frontmatter(`Gemini 3.1 Pro`, `Gemini 3.5 Flash`)를 노출하고, `docs/00.agent-governance/subagent-protocol.md`가 요구하는 Claude-native `tools:` frontmatter도 제공하지 않았다.
+At the Phase 1 investigation point, `.claude/agents` was a symlink to
+`../.agents/agents`. As a result, the Claude agent surface exposed Gemini
+frontmatter (`Gemini 3.1 Pro`, `Gemini 3.5 Flash`) and did not provide the
+Claude-native `tools:` frontmatter required by
+`docs/00.agent-governance/subagent-protocol.md`.
 
-이 상태는 `.claude/CLAUDE.md`, `docs/00.agent-governance/harness-catalog.md`, `docs/00.agent-governance/subagent-protocol.md`의 provider-specific agent contract와 충돌했다. 기존 `scripts/validate-repo-quality-gates.sh .`는 PASS할 수 있었지만, 검증 범위가 `.claude/agents` symlink 여부와 Claude model/tool frontmatter 존재를 증명하지 못했다.
+That state conflicted with the provider-specific agent contract in
+`.claude/CLAUDE.md`, `docs/00.agent-governance/harness-catalog.md`, and
+`docs/00.agent-governance/subagent-protocol.md`. The existing
+`scripts/validate-repo-quality-gates.sh .` could still pass because its scope
+did not prove whether `.claude/agents` was a symlink or whether Claude
+model/tool frontmatter existed.
 
 ## Goals & In-Scope
 
 - **Goals**:
-  - `.claude/agents`를 symlink가 아닌 실제 디렉터리로 복원한다.
-  - 여덟 개 Claude agent 파일이 `name`, `description`, `model`, `tools` frontmatter를 갖도록 한다.
-  - Claude supervisor는 `opus 4.8`, worker agents는 `sonnet 4.6` tier를 사용하도록 한다.
-  - `.agents/agents/*.md`는 Gemini 전용 reference index로 유지하고, `.codex/agents/*.toml`은 GPT/Codex mirror로 유지한다.
-  - repo quality gate가 `.claude/agents` symlink 회귀와 Claude frontmatter drift를 잡도록 강화한다.
+  - Restore `.claude/agents` as a real directory instead of a symlink.
+  - Ensure the eight Claude agent files have `name`, `description`, `model`, and `tools` frontmatter.
+  - Use the `opus 4.8` tier for the Claude supervisor and the `sonnet 4.6` tier for worker agents.
+  - Keep `.agents/agents/*.md` as the Gemini-specific reference index, and keep `.codex/agents/*.toml` as GPT/Codex mirrors.
+  - Harden the repo quality gate so it catches `.claude/agents` symlink regression and Claude frontmatter drift.
 - **In Scope**:
   - `.claude/agents/*.md`
   - `scripts/validate-repo-quality-gates.sh`
@@ -37,13 +49,13 @@ Phase 1 조사 시점의 `.claude/agents`는 `../.agents/agents`를 가리키는
 ## Non-Goals & Out-of-Scope
 
 - **Non-goals**:
-  - `.agents/skills`, `.agents/workflows`, `.agents/output-styles` symlink 구조 변경
-  - Kubernetes manifest, live cluster, ArgoCD, Vault, or External Secrets 변경
-  - 외부 `/home/hy/.agents/skills/*` 설치 경로 정리
+  - Changing `.agents/skills`, `.agents/workflows`, or `.agents/output-styles` symlink structure
+  - Changing Kubernetes manifests, live clusters, ArgoCD, Vault, or External Secrets
+  - Cleaning up external `/home/hy/.agents/skills/*` installation paths
 - **Out of Scope**:
   - direct cluster mutation
-  - model policy baseline 변경
-  - root `AGENTS.md`, root `CLAUDE.md`, root `GEMINI.md`의 광범위한 재작성
+  - Changing the model policy baseline
+  - Broad rewrites of root `AGENTS.md`, root `CLAUDE.md`, or root `GEMINI.md`
 
 ## Work Breakdown
 

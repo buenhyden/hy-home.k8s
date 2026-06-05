@@ -8,10 +8,12 @@ updated: 2026-05-22
 
 # Task: Argo Notifications Slack Backfill
 
-## Overview (KR)
+## Overview
 
-이 문서는 ArgoCD Notifications Slack current contract backfill의 구현·검증 작업 목록이다.
-작업 대상은 문서 추적성과 Secret 경계 보강이며, live Slack 전송 또는 Vault write는 포함하지 않는다.
+This document tracks implementation and verification tasks for the ArgoCD
+Notifications Slack current-contract backfill. The work is limited to document
+traceability and Secret-boundary hardening; live Slack delivery and Vault
+writes are out of scope.
 
 ## Inputs
 
@@ -60,7 +62,7 @@ updated: 2026-05-22
   - `bash scripts/validate-k8s-manifests.sh .`
   - `bash infrastructure/tests/verify-contracts-static.sh`
 - **Eval Commands**:
-  - `rg -n "Follow-up Gap|이번 PRD 정비에서 생성하지 않음" docs/01.requirements`
+  - `rg -n "Follow-up Gap|not created during this PRD remediation" docs/01.requirements`
   - `rg -n "slack_token|slack-token|notifications.enabled" docs/03.specs/005-argo-notifications-slack/spec.md`
 - **Logs / Evidence Location**:
   - Conversation validation output and git diff for this backfill.

@@ -8,12 +8,13 @@ updated: 2026-06-02
 
 # Workspace Harness Gap Analysis Technical Specification (Spec)
 
-## Overview (KR)
+## Overview
 
-이 문서는 `hy-home.k8s` 워크스페이스가 WSL2, WSL Linux native Docker, k3d,
-ArgoCD GitOps, External Secrets, Vault, PostgreSQL, Valkey, SDD(Spec-Driven
-Development), QA(Quality Assurance), CI/CD(Continuous Integration/Continuous
-Delivery), AI Agent 협업 규칙을 일관되게 지탱하는지 감사하고 보강하는 기술 계약이다.
+This document defines the technical contract for auditing and strengthening
+whether the `hy-home.k8s` workspace consistently supports WSL2, WSL Linux
+native Docker, k3d, ArgoCD GitOps, External Secrets, Vault, PostgreSQL, Valkey,
+SDD (Spec-Driven Development), QA (Quality Assurance), CI/CD (Continuous
+Integration/Continuous Delivery), and AI Agent collaboration rules.
 
 ## Strategic Boundaries & Non-goals
 
