@@ -8,7 +8,7 @@ updated: 2026-05-21
 
 # Service Mesh & cert-manager Operations Policy
 
-## Overview (KR)
+## Overview
 
 이 문서는 cert-manager(TLS 자동화), Istio(서비스메시), Kiali(메시 관측) 운영 통제 기준을 정의한다.
 플랫폼 확장 컴포넌트의 보안 정책, 갱신 제약, 허용/금지 작업을 명시한다.

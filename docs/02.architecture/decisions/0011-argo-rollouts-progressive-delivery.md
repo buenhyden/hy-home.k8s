@@ -8,7 +8,7 @@ updated: 2026-06-04
 
 # ADR-0011: Argo Rollouts for Progressive Delivery
 
-## Overview (KR)
+## Overview
 
 Argo Rollouts를 플랫폼에 도입하여 canary/blue-green 배포 전략을 지원한다.
 Rollouts Dashboard UI를 함께 설치하여 시각적 롤아웃 상태 관리를 제공한다.

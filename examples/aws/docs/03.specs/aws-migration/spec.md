@@ -1,6 +1,6 @@
 # AWS Migration Technical Specification (Spec)
 
-## Overview (KR)
+## Overview
 
 이 문서는 hy-home.k8s 로컬 환경을 AWS로 마이그레이션하기 위한 세부 기술 명세를 정의한다. VPC 네트워크 설계, EKS 클러스터 구성, 관리형 서비스(RDS, ElastiCache)의 스펙 및 보안 정책을 구체화한다.
 

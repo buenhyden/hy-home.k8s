@@ -8,7 +8,7 @@ updated: 2026-05-22
 
 # WSL k3d ArgoCD Bootstrap Guide
 
-## Overview (KR)
+## Overview
 
 이 문서는 WSL2 환경에서 k3d(k3s) + ArgoCD GitOps 플랫폼을 부트스트랩할 때 필요한 사전 조건, 실행 순서, 검증 포인트를 정리한다.
 외부 서비스(Vault/Valkey/PostgreSQL)는 이 저장소가 아닌 별도 워크스페이스(repo)에서 운영하며, 이 저장소는 Kubernetes 연동 계약만 관리한다.

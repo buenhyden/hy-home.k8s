@@ -1,6 +1,6 @@
 # AWS Migration Operations Policy
 
-## Overview (KR)
+## Overview
 
 이 문서는 hy-home.k8s AWS 인프라의 운영 정책을 정의한다. 리소스 관리의 일관성을 유지하고, 비용을 최적화하며, 보안 규정을 준수하기 위한 통제 기준을 제공한다.
 

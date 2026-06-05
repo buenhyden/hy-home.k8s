@@ -1,6 +1,6 @@
 # AWS Migration Implementation Plan (Roadmap)
 
-## Overview (KR)
+## Overview
 
 이 문서는 hy-home.k8s 로컬 K3s 환경을 AWS 클라우드로 전이하기 위한 단계별 실행 계획을 정의한다. 인프라 기반 구축, 데이터 전이, 워크로드 배포 및 서비스 전환의 과정을 포함한다.
 

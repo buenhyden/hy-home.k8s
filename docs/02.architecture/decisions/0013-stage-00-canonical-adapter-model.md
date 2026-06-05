@@ -8,7 +8,7 @@ updated: 2026-06-01
 
 # ADR-0013: Stage 00 Canonical Adapter Model
 
-## Overview (KR)
+## Overview
 
 이 ADR은 `hy-home.k8s`의 AI Agent governance를 Stage 00 단일 공통 governance로 유지하고,
 provider별 파일은 native adapter 또는 symlink/mirror view로 유지한다는 결정을 기록한다.

@@ -23,7 +23,7 @@ updated: YYYY-MM-DD
 
 ---
 
-## Overview (KR)
+## Overview
 
 단위, 통합, 계약, 성능 테스트 및 Agent Eval 기준을 정리한다.
 

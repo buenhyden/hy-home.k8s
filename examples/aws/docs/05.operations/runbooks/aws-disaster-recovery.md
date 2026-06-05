@@ -2,7 +2,7 @@
 
 : AWS Migration and Operations
 
-## Overview (KR)
+## Overview
 
 이 런북은 hy-home.k8s AWS 인프라의 장애 상황(클러스터 파손, 데이터 손실 등)에서 시스템을 신속하게 복구하기 위한 절차를 정의한다. 운영자가 패닉 없이 즉시 따라 할 수 있는 실행 단계를 제공한다.
 

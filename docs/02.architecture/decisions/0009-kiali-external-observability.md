@@ -8,7 +8,7 @@ updated: 2026-05-18
 
 # ADR-0009: Kiali with External Observability Stack
 
-## Overview (KR)
+## Overview
 
 이 ADR은 Kiali를 `kiali-server` Helm chart 기반으로 설치하고, 외부 Docker 호스팅 Observability 스택(Prometheus/Grafana/Tempo)과 연동하는 결정을 기록한다.
 

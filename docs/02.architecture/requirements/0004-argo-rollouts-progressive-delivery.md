@@ -8,7 +8,7 @@ updated: 2026-06-04
 
 # Argo Rollouts Progressive Delivery Architecture Reference Document
 
-## Overview (KR)
+## Overview
 
 이 문서는 Argo Rollouts 기반 점진적 배포의 참조 아키텍처와 품질 속성을 정의한다.
 현재 GitOps 리소스는 이미 저장소에 존재하므로, 이 ARD는 미래 구현 계획이 아니라 repo-backed 실행계약을 추적 가능한 아키텍처 입력으로 정리하는 backfill 문서다.

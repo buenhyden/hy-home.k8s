@@ -8,7 +8,7 @@ updated: 2026-05-21
 
 # Argo Rollouts, Notifications & Headlamp Operations Policy
 
-## Overview (KR)
+## Overview
 
 이 문서는 Argo Rollouts(점진적 배포), Argo Notifications(Slack 알림), Headlamp(클러스터 UI) 운영 통제 기준을 정의한다.
 

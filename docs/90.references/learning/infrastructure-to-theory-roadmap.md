@@ -8,7 +8,7 @@ updated: 2026-05-17
 
 # Infrastructure to Theory: 2026 Learning Roadmap
 
-## Overview (KR)
+## Overview
 
 이 가이드는 `hy-home.k8s` 인프라 구축 경험을 바탕으로, 실무 기술이 어떤 컴퓨터 과학(CS) 및 공학(CE) 이론에 뿌리를 두고 있는지 연결합니다. 단순히 도구를 사용하는 법을 넘어, **"왜 이렇게 동작하는가?"**에 대한 해답을 찾는 여정입니다.
 

@@ -1,6 +1,6 @@
 # AWS EKS Setup and Access Guide
 
-## Overview (KR)
+## Overview
 
 이 문서는 hy-home.k8s 마이그레이션 후 AWS EKS 클러스터에 접속하고 로컬 개발 환경을 설정하는 가이드다. 운영자와 개발자가 클러스터 리소스에 안전하게 접근하고 관리하는 방법을 제공한다.
 

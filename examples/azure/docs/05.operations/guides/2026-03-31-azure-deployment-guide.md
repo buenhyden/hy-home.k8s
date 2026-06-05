@@ -1,6 +1,6 @@
 # Azure AKS Deployment & Onboarding Guide
 
-## Overview (KR)
+## Overview
 
 이 문서는 로컬 K3s 환경에서 Azure AKS로 인프라를 이전한 후, 관리자가 클러스터를 배포하고 운영 환경에 온보딩하기 위한 가이드를 제공한다.
 

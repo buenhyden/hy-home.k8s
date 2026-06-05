@@ -12,7 +12,7 @@ updated: 2026-05-22
 
 `bootstrap`
 
-## Overview (KR)
+## Overview
 
 이 런북은 WSL2 기반 GitOps 플랫폼을 즉시 실행 가능한 체크리스트 순서로 부트스트랩하고, 오류 시그니처별 복구 절차를 제공한다.
 

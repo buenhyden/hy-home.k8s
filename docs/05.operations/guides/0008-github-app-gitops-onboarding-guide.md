@@ -8,7 +8,7 @@ updated: 2026-05-26
 
 # GitHub 앱 GitOps 온보딩 가이드
 
-## Overview (KR)
+## Overview
 
 이 문서는 GitHub에 소스 코드가 있는 애플리케이션을 `hy-home.k8s` 클러스터에 GitOps 방식으로 온보딩하는 방법을 설명한다.
 

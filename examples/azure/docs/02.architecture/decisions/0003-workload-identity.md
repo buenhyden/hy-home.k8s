@@ -1,6 +1,6 @@
 # ADR-0003: Azure Workload Identity for Passwordless Auth
 
-## Overview (KR)
+## Overview
 
 이 문서는 AKS 기반 애플리케이션의 인증 체계로 Azure Workload Identity를 전격 도입한 기록이다.
 

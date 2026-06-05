@@ -8,7 +8,7 @@ updated: 2026-06-04
 
 # Argo Rollouts Progressive Delivery Product Requirements
 
-## Overview (KR)
+## Overview
 
 이 문서는 `hy-home.k8s` 플랫폼에 Argo Rollouts를 도입하여 canary/blue-green 점진적 배포 전략과 Prometheus 메트릭 기반 AnalysisRun 안전 점검, 실패 시 자동 abort/rollback을 지원하기 위한 제품 요구사항을 정의한다.
 

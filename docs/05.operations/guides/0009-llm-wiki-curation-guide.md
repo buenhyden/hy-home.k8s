@@ -8,7 +8,7 @@ updated: 2026-05-10
 
 # LLM Wiki Curation Guide
 
-## Overview (KR)
+## Overview
 
 이 문서는 `hy-home.k8s`의 repo-local LLM Wiki를 관리하는 방법을 설명한다. LLM Wiki는 vector store, retrieval service, static wiki site가 아니라 canonical owner를 찾기 위한 deterministic Markdown link map이다.
 

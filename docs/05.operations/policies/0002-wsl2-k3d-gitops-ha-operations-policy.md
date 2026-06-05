@@ -8,7 +8,7 @@ updated: 2026-06-02
 
 # WSL2 k3d/k3s GitOps HA Operations Policy
 
-## Overview (KR)
+## Overview
 
 이 문서는 WSL2 기반 플랫폼의 운영 통제 기준을 정의한다. 외부 서비스 계약, 보안 최소권한, CI 정적 게이트, 복구 절차 준수 기준을 포함한다. 여기서 HA는 production HA가 아니라 현재 `infrastructure/k3d/k3d-cluster.yaml`의 `servers: 1`, `agents: 3` 로컬 multi-node validation baseline을 의미한다.
 

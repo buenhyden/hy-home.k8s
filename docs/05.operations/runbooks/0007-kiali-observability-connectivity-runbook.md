@@ -12,7 +12,7 @@ updated: 2026-05-09
 
 `troubleshooting`
 
-## Overview (KR)
+## Overview
 
 이 런북은 Kiali에서 Grafana, Prometheus, Tempo 등 외부 관측성 서비스가 Unreachable로 표시되는 장애를 진단하고 복구하는 절차를 제공한다.
 

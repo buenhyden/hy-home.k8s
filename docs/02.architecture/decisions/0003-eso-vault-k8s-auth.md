@@ -8,7 +8,7 @@ updated: 2026-05-18
 
 # ADR-0003: ESO + Vault Kubernetes Auth for Runtime Secrets
 
-## Overview (KR)
+## Overview
 
 이 ADR은 런타임 시크릿 전달 패턴으로 External Secrets Operator와 Vault Kubernetes Auth를 채택한다.
 

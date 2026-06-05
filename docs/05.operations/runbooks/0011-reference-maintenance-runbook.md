@@ -12,7 +12,7 @@ updated: 2026-05-17
 
 `maintenance`
 
-## Overview (KR)
+## Overview
 
 이 런북은 `docs/90.references`의 reference 문서, 버전 인벤토리, LLM Wiki 링크맵을 변경할 때 따라야 하는 반복 유지보수 절차를 정의한다.
 

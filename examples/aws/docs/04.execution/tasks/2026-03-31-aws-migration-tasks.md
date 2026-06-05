@@ -1,6 +1,6 @@
 # Task: AWS Migration Execution List
 
-## Overview (KR)
+## Overview
 
 이 문서는 hy-home.k8s 시스템의 AWS 마이그레이션을 위한 세부 실행 태스크 목록이다. Spec 및 Plan에서 정의된 단계별 작업을 구체적인 실행 단위로 분해하여 추적한다.
 

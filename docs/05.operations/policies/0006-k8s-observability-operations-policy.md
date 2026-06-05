@@ -8,7 +8,7 @@ updated: 2026-05-22
 
 # k8s Observability Operations Policy
 
-## Overview (KR)
+## Overview
 
 이 문서는 k3d/k3s 클러스터(k3d-hyhome)의 메트릭/로그 수집 관련 운영 통제 기준을 정의한다.
 kube-state-metrics NodePort 예약, in-cluster Alloy 로그 수집, Prometheus alert_rules 로드 패턴, k8s NodePort 예약 범위를 포함한다.

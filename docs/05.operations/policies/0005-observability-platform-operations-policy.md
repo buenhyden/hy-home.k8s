@@ -8,7 +8,7 @@ updated: 2026-05-22
 
 # Observability Platform Operations Policy
 
-## Overview (KR)
+## Overview
 
 이 문서는 Prometheus/Grafana/Kiali 기반 관측성 플랫폼의 운영 통제 기준을 정의한다.
 Istio 서비스 포트 네이밍 규칙, Grafana 인증 정책, ArgoCD 메트릭 수집 NodePort 할당을 포함한다.

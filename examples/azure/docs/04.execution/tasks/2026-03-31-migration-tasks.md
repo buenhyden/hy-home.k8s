@@ -1,6 +1,6 @@
 # Task: Azure Migration Implementation
 
-## Overview (KR)
+## Overview
 
 이 문서는 `hy-home.k8s` 인프라의 Azure 마이그레이션 구현 및 검증 작업 목록이다. 설계 명세(Spec)와 마이그레이션 전략(Plan)에서 도출된 세부 태스크를 추적한다.
 

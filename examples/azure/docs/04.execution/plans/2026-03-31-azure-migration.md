@@ -1,6 +1,6 @@
 # Azure Migration Implementation Plan
 
-## Overview (KR)
+## Overview
 
 이 문서는 로컬 k3s 인프라를 Azure 클라우드로 이식하기 위한 단계별 실행 계획과 마일스톤을 정의한다.
 

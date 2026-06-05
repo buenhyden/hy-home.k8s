@@ -8,7 +8,7 @@ updated: 2026-05-18
 
 # ADR-0006: cert-manager with mkcert CA as ClusterIssuer
 
-## Overview (KR)
+## Overview
 
 이 ADR은 cert-manager를 플랫폼 TLS 인증서 관리 컴포넌트로 도입하고, mkcert가 생성한 rootCA를 cert-manager `ClusterIssuer`(CA 타입)로 등록하는 결정을 기록한다.
 

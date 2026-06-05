@@ -8,7 +8,7 @@ updated: 2026-06-01
 
 # Workspace Agent Governance Platform Architecture Reference Document (ARD)
 
-## Overview (KR)
+## Overview
 
 이 문서는 `hy-home.k8s`의 workspace agent governance platform 참조 아키텍처를 정의한다.
 Stage 00을 canonical core로 두고, `.agents` shared assets와 `.claude`, `.codex`, `.agents`

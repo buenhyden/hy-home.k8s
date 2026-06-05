@@ -16,13 +16,16 @@ updated: YYYY-MM-DD
 >
 > - Every active plan must include explicit verification criteria.
 > - Plan explains execution order, risk control, and rollout strategy.
+> - Write this plan in English.
 > - Use relative links only, calculated from the final authored document location.
 
 ---
 
-## Overview (KR)
+## Overview
 
-이 문서는 [기능 또는 컴포넌트명]의 실행 계획서다. 작업 분해, 검증, 롤아웃, 위험 관리, 완료 기준을 정의한다.
+This document defines the implementation plan for [Feature or Component Name].
+It records work breakdown, verification, rollout, risk management, and
+completion criteria.
 
 ## Context
 

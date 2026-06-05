@@ -1,6 +1,6 @@
 # ADR-0002: Azure Application Gateway for Containers (AGC) with Gateway API
 
-## Overview (KR)
+## Overview
 
 이 문서는 AKS의 L7 부하 분산 및 Ingress 솔루션으로 Azure Application Gateway for Containers(AGC)와 Kubernetes Gateway API를 선택한 기록이다.
 

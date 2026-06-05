@@ -1,6 +1,6 @@
 # Azure Disaster Recovery Runbook
 
-## Overview (KR)
+## Overview
 
 Azure(AKS) 환경으로 마이그레이션된 `hy-home.k8s` 인프라에서 발생 가능한 중대 장애 및 재해 발생 시 서비스 복구 절차를 정의한다. 본 런북은 2026-05-09 공식 지원 스냅샷 기준 Azure 복구 기술 및 서비스 수준 목표(SLO)를 기반으로 작성되었다.
 

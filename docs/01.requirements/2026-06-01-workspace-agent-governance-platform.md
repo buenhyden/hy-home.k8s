@@ -8,7 +8,7 @@ updated: 2026-06-01
 
 # Workspace Agent Governance Platform Product Requirements
 
-## Overview (KR)
+## Overview
 
 이 문서는 `hy-home.k8s` 워크스페이스의 AI Agent 거버넌스 플랫폼 요구사항을 정의한다.
 Stage 00을 워크스페이스 전체의 공통 governance SSoT로 두고, Claude, Codex, Gemini가 각

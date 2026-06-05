@@ -12,7 +12,7 @@ updated: 2026-05-09
 
 `bootstrap`
 
-## Overview (KR)
+## Overview
 
 이 런북은 k3d/k3s 클러스터의 메트릭/로그 수집 스택(kube-state-metrics, in-cluster Alloy, Prometheus alert_rules)에 장애가 발생했을 때 즉시 진단하고 복구하는 절차를 제공한다.
 

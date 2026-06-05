@@ -12,7 +12,7 @@ updated: 2026-05-26
 
 `onboarding`
 
-## Overview (KR)
+## Overview
 
 이 런북은 GitHub 레포 기반 애플리케이션을 `hy-home.k8s` 클러스터에 GitOps 방식으로 온보딩하는
 단계별 운영 절차를 제공한다. `examples/sample-app/`은 최소 온보딩 템플릿이고,

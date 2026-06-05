@@ -8,7 +8,7 @@ updated: 2026-05-18
 
 # Argo Notifications Slack Webhook Product Requirements
 
-## Overview (KR)
+## Overview
 
 이 문서는 ArgoCD Notifications 컨트롤러를 활성화하고 Slack webhook을 알림 destination으로 사용하여 GitOps 이벤트(sync 실패, health 저하, 배포 완료)와 Rollouts 이벤트(완료, abort)를 운영자에게 자동 전달하기 위한 제품 요구사항을 정의한다.
 

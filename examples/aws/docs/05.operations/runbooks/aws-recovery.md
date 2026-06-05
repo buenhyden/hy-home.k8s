@@ -2,7 +2,7 @@
 
 : AWS EKS, RDS, ElastiCache Recovery
 
-## Overview (KR)
+## Overview
 
 이 런북은 AWS 클라우드 인프라 장애 또는 오설정 발생 시 즉각적으로 서비스를 복구하기 위한 단계별 실행 절차를 정의한다. 운영자가 비상 상황에서 판단을 최소화하고 매뉴얼에 따라 빠르게 대응할 수 있도록 한다.
 

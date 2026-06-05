@@ -8,7 +8,7 @@ updated: 2026-06-04
 
 # 앱 GitOps 온보딩 정책
 
-## Overview (KR)
+## Overview
 
 이 문서는 `hy-home.k8s` 클러스터에 새로운 애플리케이션을 온보딩할 때 따라야 하는
 플랫폼 운영 정책을 정의한다.

@@ -12,7 +12,7 @@ updated: 2026-06-02
 
 `bootstrap`
 
-## Overview (KR)
+## Overview
 
 이 런북은 cert-manager, Headlamp, Istio, Kiali가 추가된 확장 플랫폼을 부트스트랩하거나 복구하기 위한 즉시 실행 가능한 체크리스트와 증상별 복구 절차를 제공한다.
 

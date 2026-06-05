@@ -8,7 +8,7 @@ updated: 2026-05-18
 
 # Argo Notifications Slack Architecture Reference Document
 
-## Overview (KR)
+## Overview
 
 이 문서는 ArgoCD Notifications 기반 Slack 알림의 참조 아키텍처와 품질 속성을 정의한다.
 현재 ArgoCD values, Notifications ConfigMap, ExternalSecret이 이미 저장소에 존재하므로, 이 ARD는 repo-backed 실행계약을 추적 가능한 아키텍처 입력으로 정리하는 backfill 문서다.

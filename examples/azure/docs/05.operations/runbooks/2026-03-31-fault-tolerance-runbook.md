@@ -2,7 +2,7 @@
 
 : Azure Cluster & Managed Services
 
-## Overview (KR)
+## Overview
 
 이 런북은 Azure AKS 및 관리형 서비스(PostgreSQL, AGC)에서 발생할 수 있는 주요 장애 시나리오에 대한 즉각적인 실행 절차를 정의한다. 운영자가 즉시 따라 할 수 있는 단계와 검증 기준을 제공한다.
 

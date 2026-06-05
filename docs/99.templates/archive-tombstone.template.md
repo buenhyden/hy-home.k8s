@@ -21,7 +21,7 @@ updated: YYYY-MM-DD
 
 ---
 
-## Overview (KR)
+## Overview
 
 이 문서는 현재 구현과 맞지 않는 old 문서를 `98.archive`로 이동했음을 기록하는 Tombstone이다.
 

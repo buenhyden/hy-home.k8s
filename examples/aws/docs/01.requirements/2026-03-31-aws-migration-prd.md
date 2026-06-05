@@ -1,6 +1,6 @@
 # AWS Migration Product Requirements Document
 
-## Overview (KR)
+## Overview
 
 이 문서는 로컬 K3s/k3d 기반의 Kubernetes 인프라를 2026-05-09 공식 지원 스냅샷 기준의 AWS 클라우드 환경으로 이식하기 위한 제품 요구사항을 정의한다. 이를 통해 시스템의 확장성, 가용성, 보안성을 강화하고 관리형 서비스를 통해 운영 부담을 최소화하는 것을 목표로 한다.
 

@@ -12,7 +12,7 @@ updated: 2026-06-02
 
 `recovery`
 
-## Overview (KR)
+## Overview
 
 이 런북은 `ClusterSecretStore/vault-backend Ready=False` 상황에서 Vault sealed 상태, EndpointSlice drift, Kubernetes auth drift를 구분하고, ArgoCD/ESO 상태를 정상화한 뒤 TLS/CI 계약 회귀를 점검하는 절차를 제공한다.
 

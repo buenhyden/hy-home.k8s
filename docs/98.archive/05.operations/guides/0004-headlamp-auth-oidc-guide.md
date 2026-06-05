@@ -8,7 +8,7 @@ updated: 2026-06-02
 
 # Archive Tombstone: Headlamp Auth OIDC Guide
 
-## Overview (KR)
+## Overview
 
 이 문서는 현재 repo-backed Headlamp 구현과 맞지 않는 old OIDC guide를
 `98.archive`로 이동했음을 기록하는 Tombstone이다.

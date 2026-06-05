@@ -8,7 +8,7 @@ updated: 2026-06-02
 
 # ADR-0014: Current Local GitOps Platform Contract
 
-## Overview (KR)
+## Overview
 
 이 ADR은 현재 구현된 local GitOps platform contract를 하나의 active architecture decision으로 고정한다.
 old topology, endpoint, and cluster UI decisions are archived as Tombstones and no longer serve as active implementation input.

@@ -2,7 +2,7 @@
 
 ## Azure Kubernetes Service Architecture Reference Document
 
-## Overview (KR)
+## Overview
 
 이 문서는 `hy-home.k8s` 인프라를 Azure AKS로 이전하기 위한 참조 아키텍처와 주요 품질 속성을 정의한다. 클러스터 네트워킹, 게이트웨이 전략, 관리형 서비스 연동 및 클라우드 네이티브 보안 모델을 포함한다.
 

@@ -8,7 +8,7 @@ updated: 2026-06-02
 
 # Current Local GitOps Platform Product Requirements
 
-## Overview (KR)
+## Overview
 
 이 문서는 현재 repo-backed 구현을 기준으로 로컬 GitOps 플랫폼 요구사항을 정의한다.
 old 요구사항 문서는 `98.archive` Tombstone으로 격리하고, 이 문서가 현재 플랫폼 범위의 PRD 입력을 소유한다.

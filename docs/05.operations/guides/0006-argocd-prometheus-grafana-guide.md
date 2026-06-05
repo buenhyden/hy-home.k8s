@@ -8,7 +8,7 @@ updated: 2026-05-09
 
 # ArgoCD Prometheus 메트릭 수집 및 Grafana 대시보드 가이드
 
-## Overview (KR)
+## Overview
 
 이 문서는 k3d 클러스터 외부에서 실행 중인 Prometheus(Docker)가 클러스터 내부 ArgoCD 메트릭을 수집하도록 설정하는 방법을 설명한다.
 

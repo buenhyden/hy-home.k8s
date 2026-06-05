@@ -8,7 +8,7 @@ updated: 2026-05-09
 
 # k3d/k3s 클러스터 관측성 부트스트랩 가이드
 
-## Overview (KR)
+## Overview
 
 이 문서는 k3d 클러스터(k3d-hyhome)의 메트릭과 로그를 외부 관측성 스택(Prometheus/Loki/Grafana)에서 수집하도록 설정하는 방법을 설명한다.
 

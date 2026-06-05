@@ -10,7 +10,7 @@ updated: 2026-06-04
 
 ---
 
-## Overview (KR)
+## Overview
 
 이 가이드는 `hy-home.k8s` 워크스페이스의 QA/CI 검증 체계를 설명한다.
 로컬 개발 환경에서 실행 가능한 검증 명령과 GitHub Actions에서만 실행되는 작업을

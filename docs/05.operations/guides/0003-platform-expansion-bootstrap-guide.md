@@ -8,7 +8,7 @@ updated: 2026-06-02
 
 # Platform Expansion Bootstrap Guide
 
-## Overview (KR)
+## Overview
 
 이 문서는 cert-manager, Headlamp, Istio, Kiali가 추가된 확장 플랫폼을 WSL2에서 부트스트랩하는 방법을 설명한다.
 기존 `bootstrap-local.sh` 기반 흐름을 확장하며, 신규 컴포넌트의 사전 조건과 검증 절차를 포함한다.

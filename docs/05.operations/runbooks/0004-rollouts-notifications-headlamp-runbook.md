@@ -12,7 +12,7 @@ updated: 2026-05-09
 
 `bootstrap`
 
-## Overview (KR)
+## Overview
 
 이 런북은 Argo Rollouts, Argo Notifications(Slack), Headlamp의 초기 부트스트랩, 복구, 검증 절차를 제공한다.
 

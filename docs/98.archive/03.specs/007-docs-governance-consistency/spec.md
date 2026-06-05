@@ -8,7 +8,7 @@ updated: 2026-06-02
 
 # Archive Tombstone: Documentation Governance Consistency Spec
 
-## Overview (KR)
+## Overview
 
 이 문서는 완료된 docs governance cleanup snapshot을 current active Spec에서
 제외하고 `98.archive`로 이동했음을 기록하는 Tombstone이다.

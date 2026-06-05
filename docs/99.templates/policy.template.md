@@ -26,7 +26,7 @@ updated: YYYY-MM-DD
 
 ---
 
-## Overview (KR)
+## Overview
 
 이 문서는 [정책명] 운영 정책을 정의한다. 적용 범위, 통제 기준, 예외, 검증 방법을 규정한다.
 

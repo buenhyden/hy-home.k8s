@@ -2,7 +2,7 @@
 
 ## Azure Migration Specification
 
-## Overview (KR)
+## Overview
 
 이 문서는 Azure 마이그레이션을 위한 기술 설계와 리소스 구현 명세를 정의한다. Bicep으로 구현될 인프라의 상세 파라미터, 네트워크 대역, SKU 및 구성 계약을 포함한다.
 

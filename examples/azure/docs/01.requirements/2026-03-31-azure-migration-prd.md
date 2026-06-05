@@ -2,7 +2,7 @@
 
 ## Azure Migration Product Requirements
 
-## Overview (KR)
+## Overview
 
 이 문서는 `hy-home.k8s` 로컬 인프라를 Azure 클라우드로 마이그레이션하기 위한 제품 요구사항을 정의한다. 로컬 환경의 물리적 제약을 극복하고, 2026년 기준 최신 Azure 관리형 서비스를 활용하여 엔터프라이즈급의 확장성, 보안성 및 가동성을 확보하는 것을 목표로 한다.
 

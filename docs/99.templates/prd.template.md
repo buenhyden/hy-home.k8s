@@ -18,11 +18,11 @@ updated: YYYY-MM-DD
 > - Use relative links only, calculated from the final authored document location.
 > - Remove every placeholder before saving.
 > - Keep implementation detail out of the PRD.
-> - Keep one `Overview (KR)` summary near the top.
+> - Keep one `Overview` summary near the top.
 
 ---
 
-## Overview (KR)
+## Overview
 
 이 문서는 [기능 또는 시스템명]의 제품 요구사항을 정의한다. 사용자 가치, 문제 정의, 성공 기준을 명확히 하여 후속 설계와 구현의 기준으로 사용한다.
 

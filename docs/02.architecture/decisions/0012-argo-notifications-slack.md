@@ -8,7 +8,7 @@ updated: 2026-05-18
 
 # ADR-0012: Argo Notifications with Slack Webhook
 
-## Overview (KR)
+## Overview
 
 Argo Notifications를 ArgoCD 컨트롤러로 활성화하고 Slack webhook을 알림 destination으로 사용한다.
 ArgoCD 앱 이벤트(sync 실패, health 저하, 배포 완료)와 Rollouts 이벤트(완료, abort)를 Slack으로 전달한다.

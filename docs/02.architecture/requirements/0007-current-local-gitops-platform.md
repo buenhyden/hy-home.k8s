@@ -8,7 +8,7 @@ updated: 2026-06-02
 
 # Current Local GitOps Platform Architecture Reference Document (ARD)
 
-## Overview (KR)
+## Overview
 
 이 문서는 현재 구현된 local GitOps platform의 참조 아키텍처를 정의한다.
 old endpoint와 제거된 UI 계약은 archive Tombstone으로 분리하고, 현재 구조는 GitOps desired state와 static contract evidence를 기준으로 설명한다.

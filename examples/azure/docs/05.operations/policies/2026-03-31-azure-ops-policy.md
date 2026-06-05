@@ -1,6 +1,6 @@
 # Azure Infrastructure Operations Policy
 
-## Overview (KR)
+## Overview
 
 이 문서는 Azure AKS 환경으로 이전된 `hy-home.k8s` 인프라의 운영 정책을 정의한다. 보안 통제, 리소스 관리 기준, 그리고 정책 준수 여부 검증 방법을 규정한다.
 

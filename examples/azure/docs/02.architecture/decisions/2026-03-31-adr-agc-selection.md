@@ -1,6 +1,6 @@
 # ADR-0001: Selection of Azure Application Gateway for Containers (AGC)
 
-## Overview (KR)
+## Overview
 
 이 문서는 `hy-home.k8s` 인프라의 Azure 마이그레이션 시, L7 부하 분산 장치 및 인프라 게이트웨이로 Application Gateway for Containers (AGC)를 선택한 아키텍처 결정을 기록한다.
 

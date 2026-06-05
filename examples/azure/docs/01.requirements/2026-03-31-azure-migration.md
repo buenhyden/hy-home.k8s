@@ -1,6 +1,6 @@
 # Azure Migration PRD (Product Requirements Document)
 
-## Overview (KR)
+## Overview
 
 본 문서는 로컬 k3s/k3d 환경의 `hy-home.k8s` 인프라를 2026-05-09 공식 지원 스냅샷 기준 Azure(AKS) 환경으로 마이그레이션하기 위한 요구사항을 정의한다. 로컬 환경의 관리 복잡성과 가용성 한계를 해결하고, 클라우드 네이티브 관리형 서비스(AGC, Managed Identity, PostgreSQL Flexible)를 통해 엔터프라이즈급 안정성을 확보하는 것이 목표다.
 

@@ -12,7 +12,7 @@ updated: 2026-05-09
 
 `maintenance`
 
-## Overview (KR)
+## Overview
 
 이 런북은 Prometheus(Docker)가 ArgoCD 메트릭을 정상적으로 수집하지 못할 때 진단하고 복구하는 절차를 제공한다.
 

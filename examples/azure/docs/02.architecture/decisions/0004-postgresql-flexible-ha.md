@@ -2,7 +2,7 @@
 
 : PostgreSQL High Availability Strategy
 
-## Overview (KR)
+## Overview
 
 로컬의 Patroni/etcd 기반 PostgreSQL HA 구성을 Azure의 관리형 서비스인 **Azure Database for PostgreSQL Flexible Server**로 대체하고, 리전 수준의 가용성을 확보하기 위해 **Zone-redundant HA** 구성을 채택한다.
 

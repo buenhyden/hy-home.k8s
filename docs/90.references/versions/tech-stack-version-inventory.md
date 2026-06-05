@@ -31,7 +31,7 @@ updated: 2026-05-22
   - Product requirements, architecture decisions, implementation plans, or runbooks.
   - Dependency updates that were not applied to the corresponding repo files.
 
-## Overview (KR)
+## Overview
 
 이 문서는 일반 참고 링크 모음이 아니라 검증 대상 버전 계약 인벤토리다. repo-backed manifest, GitHub Actions, pre-commit hook, cloud example snapshot의 기준 값을 한곳에서 추적한다.
 

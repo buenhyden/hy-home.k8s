@@ -8,7 +8,7 @@ updated: 2026-05-18
 
 # ADR-0002: ArgoCD Helm Install with App-of-Apps and ApplicationSet
 
-## Overview (KR)
+## Overview
 
 이 ADR은 ArgoCD 설치 방식을 Helm 기반으로 확정하고, App-of-Apps + ApplicationSet + AppProject 스코핑 모델을 채택한다.
 

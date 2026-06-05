@@ -1,6 +1,6 @@
 # AWS Infrastructure Migration Architecture Reference Document (ARD)
 
-## Overview (KR)
+## Overview
 
 이 문서는 로컬 K3s/k3d 환경에서 AWS 환경으로 전환되는 시스템의 아키텍처 원칙과 표준을 정의한다. 고가용성, 확장성, 보안성이 강화된 클라우드 네이티브 참조 모델을 제공하여 구현의 정합성을 보장한다.
 

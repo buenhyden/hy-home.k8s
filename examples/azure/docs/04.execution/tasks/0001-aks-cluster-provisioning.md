@@ -1,6 +1,6 @@
 # Task: AKS Cluster Provisioning
 
-## Overview (KR)
+## Overview
 
 이 작업은 `main.bicep` 인프라 코드를 실행하여 Azure에 기본적인 쿠버네티스 서비스(AKS) 및 관련 VNet 리소스를 구축하는 것을 목표로 한다.
 

@@ -8,7 +8,7 @@ updated: 2026-05-18
 
 # ADR-0008: Istio Default Profile with ingress-nginx Coexistence
 
-## Overview (KR)
+## Overview
 
 이 ADR은 Istio를 `default` 프로필로 Helm 기반 설치하고, 기존 ingress-nginx와 공존하는 전략을 확정한다.
 
