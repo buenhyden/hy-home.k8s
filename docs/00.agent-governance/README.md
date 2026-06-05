@@ -28,6 +28,7 @@ This README is primarily for:
 - Provider-specific notes for supported engines
 - Canonical runtime roster and subagent protocol
 - Reusable operational memory entries
+- Documentation language, template routing, and drift garbage-collection policy
 
 ### Out of Scope
 
@@ -56,7 +57,12 @@ docs/00.agent-governance/
 1. Start from repository gateway files: `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md`.
 2. Follow the JIT loading order in `rules/bootstrap.md` and `rules/preflight-checklist.md`.
 3. Use `docs/99.templates/` when creating or restructuring governance documents.
-4. Update `harness-catalog.md` and this README in the same change set when the runtime roster changes.
+4. Use `rules/documentation-protocol.md` and `rules/document-stage-routing.md`
+   for folder responsibilities, language boundaries, and template routing.
+5. Treat repeated agent failures as harness feedback: update the smallest
+   relevant rule, prompt/skill, hook, validator, template, README index, or
+   memory entry.
+6. Update `harness-catalog.md` and this README in the same change set when the runtime roster changes.
 
 ## Link Basis
 
@@ -74,6 +80,7 @@ Links in this README are relative to `docs/00.agent-governance/`.
 - [Preflight Checklist](rules/preflight-checklist.md)
 - [Postflight Checklist](rules/postflight-checklist.md)
 - [Document Stage Routing Rules](rules/document-stage-routing.md)
+- [Documentation Protocol](rules/documentation-protocol.md)
 - [Stage Authoring Matrix](rules/stage-authoring-matrix.md)
 - [Stage Checklists](rules/stage-checklists.md)
 - [Local Harness Catalog](harness-catalog.md)

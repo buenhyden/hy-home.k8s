@@ -40,6 +40,31 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Treat `.claude/*.local.md`, including Hookify rules, as ignored local warning files. Shared enforcement belongs in tracked hooks, `.claude/settings.json`, `.codex/hooks.json`, and repository validators.
 - Treat `docs/00.agent-governance/hooks/lifecycle-guard.sh` as the shared lifecycle validation surface wired by `.claude/settings.json`: Stop/SubagentStop may block objective repo-state failures and advise task-unit commit discipline for uncommitted tracked changes, while PreCompact reports uncommitted tracked changes, suggested validation, and the same commit discipline without blocking compaction.
 
+## Harness Four-Element Runtime Contract
+
+Claude implements the shared four-element harness model from
+`docs/00.agent-governance/harness-catalog.md` as follows:
+
+1. **Instruction and settings documents**: load `CLAUDE.md`,
+   `docs/00.agent-governance/rules/bootstrap.md`, provider notes, this runtime
+   baseline, and the relevant scope before substantial work.
+2. **Architecture constraints**: use the native allow/deny policy in
+   `.claude/settings.json`, least-privilege `.claude/agents/*.md` `tools:`,
+   GitOps boundaries, template routing, and shared hooks to block unsafe live
+   mutation, secret handling, model drift, and off-taxonomy documents.
+3. **Feedback loops**: treat PostToolUse and lifecycle hooks plus
+   `scripts/*.sh`, `infrastructure/tests/*.sh`, and CI as completion evidence;
+   report skipped live checks separately from repo-static validation. If a
+   repeated error appears, update the smallest shared harness surface that
+   would have prevented it instead of treating the failure as only an agent
+   mistake.
+4. **Knowledge stores**: read and update
+   `docs/00.agent-governance/memory/progress.md` for repo-changing work, use
+   `harness-catalog.md` as current runtime truth, and route generated wiki or
+   graphify findings back to canonical owner files. Preserve compact durable
+   lessons there, while keeping current policy in Stage 00 and current
+   implementation truth in the owning docs, scripts, and manifests.
+
 ## Runtime Roster
 
 - Agents: see `docs/00.agent-governance/harness-catalog.md`

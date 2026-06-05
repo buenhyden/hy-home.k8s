@@ -35,6 +35,31 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Use `RTK.md` as cross-agent SSOT for shell commands.
 - Verification: Codex MUST implement explicit QA and CI/CD validation phases prior to task completion, mirroring Gemini and Claude.
 
+## Harness Four-Element Runtime Contract
+
+Codex implements the shared four-element harness model from
+`docs/00.agent-governance/harness-catalog.md` as follows:
+
+1. **Instruction and settings documents**: load `AGENTS.md`,
+   `docs/00.agent-governance/rules/bootstrap.md`, provider notes, this runtime
+   baseline, and the relevant scope before substantial work.
+2. **Architecture constraints**: honor Codex filesystem/network sandboxing,
+   escalation approvals, GitOps-first boundaries, template routing, and
+   `.codex/agents/*.toml` mirrors. `.codex/hooks.json` supplies context and
+   validation wiring, not a Claude-style permission gate.
+3. **Feedback loops**: run explicit repo-static validation commands before
+   handoff and use `.codex/hooks.json` shared script wiring as additional
+   feedback where the runtime supports it. Do not infer live k3d, ArgoCD,
+   Vault, ESO, or deployment readiness from static checks. If a repeated error
+   appears, update the smallest shared harness surface that would have
+   prevented it instead of treating the failure as only an agent mistake.
+4. **Knowledge stores**: read and update
+   `docs/00.agent-governance/memory/progress.md` for repo-changing work, use
+   `harness-catalog.md` as current runtime truth, and record RTK PATH/database
+   limitations without inspecting private runtime state. Preserve compact
+   durable lessons there, while keeping current policy in Stage 00 and current
+   implementation truth in the owning docs, scripts, and manifests.
+
 ## Codex/GPT Capabilities & Constraints
 
 - **Skill routing**: Use the `.codex/skills/**` roster (a symlink to the `.agents/` SSoT) via the Task-to-Skill routing in `docs/00.agent-governance/harness-catalog.md`.
