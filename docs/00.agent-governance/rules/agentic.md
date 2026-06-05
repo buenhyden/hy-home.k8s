@@ -23,6 +23,9 @@ Rules for AI Agent-first Engineering quality and safety.
 - Maintain and consult historical/contextual state using `docs/00.agent-governance/memory`.
 - Keep `.claude/agents/*.md`, `.agents/agents/*.md`, and `.codex/agents/*.toml` aligned whenever runtime contracts change.
 - Treat completion and compaction safeguards as layered controls: reports, handoffs, memory/progress, postflight checklist, and lifecycle hooks. Stop/SubagentStop hooks may block objective repo-state failures; PreCompact is advisory.
+- When an agent output fails validation or repeats a mistake, repair the harness
+  surface that allowed the failure. Prefer updating a rule, prompt/skill, hook,
+  validator, template, README index, or memory entry over blaming the agent.
 - Report unavailable tools, skipped live checks, and CI-only validation honestly.
 
 ## Direct Mutation Boundary
@@ -52,6 +55,20 @@ Rules for AI Agent-first Engineering quality and safety.
 - When a component is already `Ready`, prefer command-boundary regression gates over adding new runtime surfaces for documentation drift.
 - Keep `.claude/settings.json` as Claude permission and hook policy, and keep `.codex/hooks.json` as Codex context/validation hook wiring; do not describe them as equivalent enforcement layers.
 - Current lifecycle-hook coverage includes SessionStart, PreToolUse, PostToolUse, Stop, SubagentStop, and PreCompact. Stop/SubagentStop block only objective repo-state failures; PreCompact reports uncommitted tracked changes and suggested validation without blocking compaction.
+
+## Drift Garbage Collection Defaults
+
+- Code drift, document drift, and structure drift must be closed through
+  current repo evidence, not by preserving contradictory active contracts.
+- Remove temporary files, debug-only code, unused imports, and disallowed
+  scratch naming (`temp_`, `_new`, `_old`, `_backup`) before handoff.
+- Use `docs/98.archive` Tombstones for obsolete active-stage documents only
+  after a current replacement and index path exist.
+- Add deterministic validator coverage for recurring drift classes whenever the
+  check can be expressed without live cluster mutation or secret inspection.
+- Record reusable drift lessons in `memory/progress.md`; current runtime truth
+  remains in `harness-catalog.md` and current implementation truth remains in
+  the owning stage docs, scripts, and manifests.
 
 ## Context Hierarchy Defaults
 

@@ -7,6 +7,12 @@ All authored stage documents must use the matching template from
 `status: draft`, keep the required template headings, and include
 `## Related Documents`. README entrypoints use `readme.template.md`.
 
+Human-facing README and overview prose should prefer Korean. Agent governance,
+provider adapters, hook contracts, prompt/tool contracts, and explicit
+AI-agent-facing sections such as `AI Agent Requirements` should prefer English.
+When a stage document mixes human and agent audiences, keep the reader-facing
+context in Korean and keep the AI-agent execution requirements in English.
+
 | Taxonomy Path | Purpose | Authoring Timing | Persona (Primary) | Input Documents | Output Documents | Template | Completion Criteria |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `00.agent-governance` | Agent governance and execution control | Before work starts and when governance changes | Governance Steward | Repository structure, policy context | Rules/scopes/providers/memory entries | `memory.template.md`, `progress.template.md` | JIT loading, language boundary, progress ledger, and checklist consistency are enforced |

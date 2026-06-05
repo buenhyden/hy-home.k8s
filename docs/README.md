@@ -69,12 +69,13 @@ docs/
 2. 새 문서는 [99.templates](./99.templates/README.md)의 승인된 템플릿에서 시작한다.
 3. 문서가 추가되거나 이동되면 해당 stage의 `README.md` 인덱스와 관련 링크를 같은 변경에서 갱신한다.
 4. 사람 대상 README와 개요 문서는 한국어를 유지하고, `00.agent-governance` 정책 문서는 영어를 유지한다.
-5. README 파일은 frontmatter를 요구하지 않는다. README는 경로 목적, scope, structure, workflow, link basis, related documents를 설명하는 entrypoint다.
-6. PRD/ARD/ADR/Spec/Plan/Task와 운영·참조 authored 문서는 matching template의 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
-7. 템플릿이나 문서 lifecycle 규칙을 바꾸면 이 hub, 대상 stage README, [99.templates README](./99.templates/README.md), 이미 생성된 문서의 안전한 구조 반영 여부를 함께 점검한다.
-8. 일반 운영 변경은 GitOps-first 원칙을 따르며, 문서가 live `kubectl apply`나 외부 Vault 조작을 우회 절차처럼 안내하지 않도록 한다.
-9. cloud example 버전을 갱신할 때는 코드, README, [tech-stack-version-inventory.md](./90.references/versions/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
-10. 현재 구현과 상충하는 old 문서는 [`98.archive`](./98.archive/README.md)로 이동하고, 활성 문서는 archive index에만 연결한다.
+5. 사람 대상 문서 안에서도 `AI Agent Requirements`, `Agent Execution Notes`, tool/prompt contract처럼 AI Agent가 직접 따라야 하는 섹션은 영어를 우선한다.
+6. README 파일은 frontmatter를 요구하지 않는다. README는 경로 목적, scope, structure, workflow, link basis, related documents를 설명하는 entrypoint다.
+7. PRD/ARD/ADR/Spec/Plan/Task와 운영·참조 authored 문서는 matching template의 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
+8. 템플릿이나 문서 lifecycle 규칙을 바꾸면 이 hub, 대상 stage README, [99.templates README](./99.templates/README.md), 이미 생성된 문서의 안전한 구조 반영 여부를 함께 점검한다.
+9. 일반 운영 변경은 GitOps-first 원칙을 따르며, 문서가 live `kubectl apply`나 외부 Vault 조작을 우회 절차처럼 안내하지 않도록 한다.
+10. cloud example 버전을 갱신할 때는 코드, README, [tech-stack-version-inventory.md](./90.references/versions/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
+11. 현재 구현과 상충하는 old 문서는 [`98.archive`](./98.archive/README.md)로 이동하고, 활성 문서는 archive index에만 연결한다.
 
 ## Link Basis
 
@@ -103,6 +104,15 @@ docs/
 ## Documentation Contract
 
 이 저장소의 문서 변경은 stage 책임, 템플릿, 링크 기준을 함께 지켜야 한다.
+
+## 문서 역할과 언어 계약
+
+사람이 읽는 안내와 요약은 한국어를 우선하고, AI Agent가 실행 기준으로 삼는
+정책·프롬프트·도구·검증 계약은 영어를 우선한다. 한 문서가 두 독자를 함께
+상대하면 사람용 맥락은 한국어로, `AI Agent Requirements` 같은 에이전트용
+요구사항 섹션은 영어로 작성한다.
+
+각 stage의 역할은 아래와 같이 분리한다.
 
 | Lifecycle Stage | Folder | Canonical Template | Required Responsibility |
 | --- | --- | --- | --- |

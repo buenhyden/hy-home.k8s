@@ -79,10 +79,10 @@ ArgoCD Notifications values, ConfigMap, ExternalSecret, 운영 문서는 이미 
 
 ## AI Agent Requirements (If Applicable)
 
-- **Allowed Actions**: PRD/문서 갱신, 비파괴 정적 검증, 상태 수집.
-- **Disallowed Actions**: Slack credential 평문 저장, 승인 없는 Vault 경로 조작, manifest 변경.
-- **Human-in-the-loop Requirement**: notification credential 초기 등록 또는 Slack channel permission 변경 시 승인 필수.
-- **Evaluation Expectation**: 컨트롤러 상태, ExternalSecret Ready, Slack 알림 수신을 후속 검증 단계에서 확인.
+- **Allowed Actions**: Update PRD/documentation, run non-destructive static validation, and collect read-only status evidence.
+- **Disallowed Actions**: Store Slack credentials in plaintext, modify Vault paths without approval, or change manifests outside an approved downstream stage.
+- **Human-in-the-loop Requirement**: Required before initial notification credential registration or Slack channel permission changes.
+- **Evaluation Expectation**: Verify controller status, ExternalSecret readiness, and Slack notification receipt in a downstream validation stage.
 
 ## Related Documents
 

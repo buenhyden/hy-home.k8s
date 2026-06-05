@@ -79,10 +79,10 @@ Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 
 
 ## AI Agent Requirements (If Applicable)
 
-- **Allowed Actions**: PRD/문서 갱신, 비파괴 정적 검증, 상태 수집.
-- **Disallowed Actions**: 승인 없는 AppProject 권한 확장, 직접 클러스터 조작, manifest 변경.
-- **Human-in-the-loop Requirement**: AppProject cluster resource 허용 목록 또는 rollout promotion 정책 변경 시 승인 필요.
-- **Evaluation Expectation**: 컨트롤러 상태, Dashboard 접근, ArgoCD sync 추적을 후속 검증 단계에서 확인.
+- **Allowed Actions**: Update PRD/documentation, run non-destructive static validation, and collect read-only status evidence.
+- **Disallowed Actions**: Expand AppProject permissions without approval, mutate the live cluster directly, or change manifests outside an approved downstream stage.
+- **Human-in-the-loop Requirement**: Required before AppProject cluster resource allow-list changes or rollout promotion policy changes.
+- **Evaluation Expectation**: Verify controller status, Dashboard access, and ArgoCD sync traceability in a downstream validation stage.
 
 ## Related Documents
 

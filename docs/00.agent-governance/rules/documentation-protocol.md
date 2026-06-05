@@ -7,6 +7,10 @@ This protocol defines how governance references authored docs and how language b
 - Governance policy belongs in `docs/00.agent-governance/`.
 - Product and delivery truth remains in `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/98.archive`, and `docs/99.templates`.
 - Governance files must reference authored docs and must not duplicate stage content.
+- Folder responsibilities are defined by `stage-authoring-matrix.md`; exact
+  path-to-template routing is owned by `document-stage-routing.md` and
+  `docs/99.templates/README.md`. Provider adapters must point to those owners
+  instead of carrying their own template maps.
 
 ## Document Output Routing
 
@@ -18,6 +22,22 @@ This protocol defines how governance references authored docs and how language b
 ## Template Enforcement Policy
 
 - All authored documents under `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/04.execution/`, `docs/05.operations/`, `docs/90.references/`, and `docs/98.archive/` must start from the matching template listed in `docs/99.templates/README.md`.
+- The canonical template map includes `README.md` -> `readme.template.md`,
+  `docs/01.requirements/` -> `prd.template.md`,
+  `docs/02.architecture/requirements/` -> `ard.template.md`,
+  `docs/02.architecture/decisions/` -> `adr.template.md`,
+  `docs/03.specs/` -> `spec.template.md` plus feature-local helper templates,
+  `docs/04.execution/plans/` -> `plan.template.md`,
+  `docs/04.execution/tasks/` -> `task.template.md`,
+  `docs/05.operations/guides/` -> `guide.template.md`,
+  `docs/05.operations/policies/` -> `policy.template.md`,
+  `docs/05.operations/runbooks/` -> `runbook.template.md`,
+  `docs/05.operations/incidents/` -> `incident.template.md` and
+  `postmortem.template.md`, `docs/90.references/` ->
+  `reference.template.md`, and `docs/98.archive/` ->
+  `archive-tombstone.template.md`. If this summary diverges from
+  `docs/99.templates/README.md`, the template README and routing rule are the
+  sources to fix first.
 - README files must use `docs/99.templates/readme.template.md`.
 - README files must keep `## Link Basis` and `## Related Documents`; legacy `## Related References` headings are incomplete.
 - PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook, Incident, Postmortem, Reference, and Archive Tombstone documents must use their stage-specific templates from `docs/99.templates/`.
@@ -37,6 +57,31 @@ This protocol defines how governance references authored docs and how language b
 - `docs/00.agent-governance/*`: English only.
 - Human-facing README files: Korean (`README.md`, `docs/README.md`, and stage READMEs).
 - Agent execution control documents under governance must be written in English.
+- Human-facing authored documents should prefer Korean for reader-facing
+  overview, audience, and operational explanation. Sections whose explicit
+  audience is an AI agent, including headings such as `AI Agent Requirements`,
+  `Agent Execution Notes`, `Agent Harness Requirements`, or tool/prompt
+  contracts, should be written in English even inside otherwise Korean
+  documents.
+
+## Drift Garbage Collection
+
+- Treat code drift, document drift, and structure drift as harness defects, not
+  agent blame. When a repeated or material error is found, update the smallest
+  durable harness surface that would have prevented it: rule, prompt/skill,
+  hook, validator, template, README index, or memory entry.
+- Code drift is closed by aligning implementation, examples, generated indexes,
+  and validation scripts with the current repo-backed contract.
+- Document drift is closed by updating, consolidating, or archiving active docs;
+  do not keep conflicting current contracts in active stages.
+- Structure drift is closed by restoring canonical stage paths, provider mirror
+  parity, shared skill/workflow/output-style ownership, and template coverage.
+- Temporary files, debug-only code, unused imports, and files named with
+  `temp_`, `_new`, `_old`, or `_backup` are cleanup failures unless a
+  repository policy explicitly permits them.
+- Record durable drift lessons in `memory/progress.md` when recurrence risk
+  exists, and add regression-gate coverage when the failure can be checked
+  deterministically.
 
 ## Traceability Rules
 
