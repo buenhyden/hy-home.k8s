@@ -255,6 +255,9 @@ for tracked_path in sorted(tracked):
         fail(f"ignored local Claude/Hookify runtime rule must not be tracked: {tracked_path}")
     if tracked_path == ".env":
         fail(".env must remain untracked; commit .env.example only")
+    tracked_name = pathlib.Path(tracked_path).name
+    if re.search(r"(^temp_|_(new|old|backup)(\.|$))", tracked_name):
+        fail(f"tracked temporary or backup-style file name is not allowed: {tracked_path}")
 
 env_ignore_check = subprocess.run(["git", "check-ignore", "-q", ".env"], cwd=root)
 if env_ignore_check.returncode == 1:
@@ -1693,6 +1696,30 @@ for tracked_path in sorted(tracked):
     if re.search(r"[가-힣]", read_text(path)):
         fail(f"tracked governance/runtime file must remain English-only: {tracked_path}")
 
+agent_section_headings = [
+    "AI Agent Requirements",
+    "Agent Execution Notes",
+    "Agent Harness Requirements",
+]
+for tracked_path in sorted(tracked):
+    if not tracked_path.startswith("docs/") or not tracked_path.endswith(".md"):
+        continue
+    if tracked_path.startswith("docs/00.agent-governance/"):
+        continue
+    path = root / tracked_path
+    if not path.is_file():
+        continue
+    text = read_text(path)
+    for heading in agent_section_headings:
+        match = re.search(rf"^## {re.escape(heading)}(?:\s|\(|$).*?$", text, re.MULTILINE)
+        if not match:
+            continue
+        section_start = match.end()
+        next_heading = re.search(r"^##\s+", text[section_start:], re.MULTILINE)
+        section = text[section_start : section_start + next_heading.start()] if next_heading else text[section_start:]
+        if re.search(r"[가-힣]", section):
+            fail(f"{tracked_path} {heading} section must remain English for AI-agent execution requirements")
+
 harness_catalog_path = root / "docs/00.agent-governance/harness-catalog.md"
 harness_catalog_text = read_text(harness_catalog_path)
 # Normalize pipe-table whitespace so markdown formatters that pad column widths
@@ -1700,6 +1727,19 @@ harness_catalog_text = read_text(harness_catalog_path)
 import re as _re
 harness_catalog_normalized = _re.sub(r"\| +", "| ", _re.sub(r" +\|", " |", harness_catalog_text))
 for phrase in [
+    "## Harness Four-Element Control Model",
+    "Instruction and settings documents -> Architecture constraints -> Feedback loops -> Knowledge stores",
+    "Architecture constraints",
+    "Feedback loops",
+    "Knowledge stores",
+    "Domain definition",
+    "Data governance",
+    "Observability",
+    "Continuous evaluation",
+    "Documentation language and template routing",
+    "Drift garbage collection",
+    "AI Agent Requirements",
+    "Repeated mistakes must update the harness surface",
     "Permissions and hooks",
     "Codex event hooks",
     "not a permission gate equivalent",
@@ -1725,6 +1765,13 @@ validate_component_matrix(harness_catalog_text, "## Agent-first Engineering Matr
 for phrase in [
     "Thin gateway",
     "Runtime baseline",
+    "Four-element control model",
+    "Domain definition",
+    "Data governance",
+    "Observability",
+    "Continuous evaluation",
+    "Documentation language and template routing",
+    "Drift garbage collection",
     "Local Agents",
     "Agent Mirrors",
     "Evidence-first intake",
@@ -1740,9 +1787,53 @@ for phrase in [
     if phrase not in harness_catalog_text:
         fail(f"{rel(harness_catalog_path)} missing component audit matrix entry: {phrase}")
 
+baseline_four_element_checks = {
+    root / ".claude/CLAUDE.md": [
+        "## Harness Four-Element Runtime Contract",
+        "Instruction and settings documents",
+        "Architecture constraints",
+        "Feedback loops",
+        "Knowledge stores",
+        "native allow/deny policy",
+        "harness-catalog.md",
+    ],
+    root / ".codex/CODEX.md": [
+        "## Harness Four-Element Runtime Contract",
+        "Instruction and settings documents",
+        "Architecture constraints",
+        "Feedback loops",
+        "Knowledge stores",
+        "sandboxing",
+        "not a Claude-style permission gate",
+        "harness-catalog.md",
+    ],
+}
+for path, phrases in baseline_four_element_checks.items():
+    text = read_text(path)
+    for phrase in phrases:
+        if phrase not in text:
+            fail(f"{rel(path)} missing four-element runtime contract phrase: {phrase}")
+
+workspace_harness_skill_path = root / ".agents/skills/workspace-harness-audit/skill.md"
+workspace_harness_skill_text = read_text(workspace_harness_skill_path)
+for phrase in [
+    "four harness elements",
+    "instruction and settings documents",
+    "architecture constraints",
+    "feedback loops",
+    "knowledge stores",
+    "instructions -> constraints -> feedback ->",
+]:
+    if phrase not in workspace_harness_skill_text:
+        fail(f"{rel(workspace_harness_skill_path)} missing four-element audit phrase: {phrase}")
+
 agentic_path = root / "docs/00.agent-governance/rules/agentic.md"
 agentic_text = read_text(agentic_path)
 for phrase in [
+    "When an agent output fails validation or repeats a mistake",
+    "## Drift Garbage Collection Defaults",
+    "temp_",
+    "_backup",
     "## Matrix-first Change Rule",
     "Harness Engineering Matrix",
     "Agent-first Engineering Matrix",
@@ -1760,6 +1851,28 @@ for phrase in [
 ]:
     if phrase not in agentic_text:
         fail(f"{rel(agentic_path)} missing Agent-first matrix/context rule phrase: {phrase}")
+
+documentation_protocol_path = root / "docs/00.agent-governance/rules/documentation-protocol.md"
+documentation_protocol_text = read_text(documentation_protocol_path)
+for phrase in [
+    "Folder responsibilities are defined by `stage-authoring-matrix.md`",
+    "The canonical template map includes `README.md` -> `readme.template.md`",
+    "AI Agent Requirements",
+    "## Drift Garbage Collection",
+    "code drift, document drift, and structure drift",
+]:
+    if phrase not in documentation_protocol_text:
+        fail(f"{rel(documentation_protocol_path)} missing documentation harness phrase: {phrase}")
+
+docs_readme_path = root / "docs/README.md"
+docs_readme_text = read_text(docs_readme_path)
+for phrase in [
+    "## 문서 역할과 언어 계약",
+    "AI Agent Requirements",
+    "사람이 읽는 안내와 요약은 한국어를 우선",
+]:
+    if phrase not in docs_readme_text:
+        fail(f"{rel(docs_readme_path)} missing docs language/template contract phrase: {phrase}")
 
 memory_progress_path = root / "docs/00.agent-governance/memory/progress.md"
 memory_progress_text = read_text(memory_progress_path)

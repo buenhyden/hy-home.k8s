@@ -8,6 +8,94 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-06-04 — Harness four-element alignment
+
+- **Date**: 2026-06-04
+- **Layer**: meta, qa, docs
+- **Status**: complete
+- **Tags**: #harness #governance #codex #claude #validation
+
+#### Progress
+
+- Audited the current workspace harness against the four required elements:
+  instruction and settings documents, architecture constraints, feedback loops,
+  and knowledge stores.
+- Added the canonical four-element control model to
+  [Harness Catalog](../harness-catalog.md), including the relationship
+  `instructions -> constraints -> feedback -> knowledge -> next-session instructions`.
+- Updated [Claude Runtime Baseline](../../../.claude/CLAUDE.md) and
+  [Codex Runtime Baseline](../../../.codex/CODEX.md) with provider-specific
+  four-element runtime contracts.
+- Added common governance for documentation folder responsibilities, canonical
+  template-routing ownership, AI-agent-facing English sections, and drift
+  garbage collection across code, documents, and structure.
+- Updated the repo-local
+  [workspace-harness-audit skill](../../../.agents/skills/workspace-harness-audit/skill.md)
+  so future broad audits must preserve the four-element relationship model,
+  language/template boundary evidence, drift cleanup evidence, and named-skill
+  boundary evidence.
+- Added regression checks to
+  [repository quality gates](../../../scripts/validate-repo-quality-gates.sh)
+  so the common model, provider runtime contracts, audit skill phrases,
+  AI-agent-facing English sections, and drift cleanup contract cannot be
+  removed silently.
+- Recorded the implementation plan and task evidence:
+  - [Plan](../../04.execution/plans/2026-06-04-harness-four-element-alignment.md)
+  - [Task](../../04.execution/tasks/2026-06-04-harness-four-element-alignment.md)
+
+#### Memory
+
+- The harness is now documented as a control loop rather than a static file
+  inventory: instructions load first, constraints block unsafe/off-domain work,
+  feedback validates outputs, and knowledge stores feed the next session.
+- Claude and Codex share Stage 00 governance, skills, hooks, validators, and
+  memory, but they do not have identical enforcement mechanics: Claude has a
+  native `.claude/settings.json` permission gate; Codex uses sandbox/approval
+  boundaries plus `.codex/hooks.json` context and validation wiring.
+- Repo-static validation remains mandatory completion evidence. Live k3d,
+  ArgoCD, Vault, ESO, or deployment readiness must be proven separately with
+  approved read-only runtime checks.
+- Human-facing README and overview prose should remain Korean, while explicit
+  AI-agent-facing sections such as `AI Agent Requirements` should remain
+  English even inside otherwise Korean authored docs.
+- Repeated code drift, document drift, or structure drift should update the
+  harness surface that would prevent recurrence: rule, skill/prompt, hook,
+  validator, template, README index, archive Tombstone, or memory entry.
+- The direct RTK binary works (`/home/hy/.local/bin/rtk --version` reports
+  `rtk 0.34.3`), but `/home/hy/.local/bin/rtk gain` cannot initialize its
+  tracking database; commands were run through RTK where practical without
+  inspecting private RTK state.
+
+#### Evidence
+
+- `git diff --check` — PASS.
+- `python3 -m json.tool .claude/settings.json` — PASS.
+- `python3 -m json.tool .codex/hooks.json` — PASS.
+- `python3 -m json.tool .agents/hooks.json` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +` — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS with optional
+  `kube-linter` skip because it is not installed locally.
+- `bash scripts/check-secret-handling.sh .` — PASS.
+- `bash scripts/validate-policy-gates.sh .` — PASS with built-in fallback
+  because optional `conftest` is not installed locally.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- `zsh -lc 'command -v pre-commit'` — PASS,
+  `/home/hy/.local/bin/pre-commit`.
+- `/home/hy/.local/bin/pre-commit run --files <changed files>` — PASS after
+  approved outside-sandbox execution.
+- `/home/hy/.local/bin/pre-commit run --all-files` — FAILED in sandbox because
+  EOF fixer could not open some `.agents/**` / `.codex/**` files and
+  `detect-secrets` reported existing `graphify-out/**` generated-output false
+  positives; changed-file pre-commit passed.
+
+#### Handoff
+
+- None.
+
 ### 2026-06-04 — Scripts QA and CI/CD alignment
 
 - **Date**: 2026-06-04
