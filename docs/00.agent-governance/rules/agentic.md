@@ -21,8 +21,10 @@ Rules for AI Agent-first Engineering quality and safety.
 - Implement explicit QA and CI/CD validation phases (e.g., pre-commit checks, GitOps dry-runs, structural template coverage) before considering any implementation complete.
 - All AI Agents (Gemini, Claude, GPT) MUST enforce and utilize workspace-specific structured directories: `skills/` for tasks, `rules/` for guidelines, `hooks.json` or `hooks/` for automated event wiring, `output-styles/` for formatting, and `workflows/` for orchestrated steps.
 - Maintain and consult historical/contextual state using `docs/00.agent-governance/memory`.
+- Use `docs/00.agent-governance/memory/progress.md` as the canonical progress ledger and the only tracked progress.md. Repo-changing agent work must record progress there, while standalone memory files remain allowed only under the memory template contract with a related progress entry.
 - Keep `.claude/agents/*.md`, `.agents/agents/*.md`, and `.codex/agents/*.toml` aligned whenever runtime contracts change.
 - Treat completion and compaction safeguards as layered controls: reports, handoffs, memory/progress, postflight checklist, and lifecycle hooks. Stop/SubagentStop hooks may block objective repo-state failures; PreCompact is advisory.
+- Agent eval completion must be based on explicit deterministic command evidence or recorded human/operator approval. Do not report eval PASS from intention, file presence, or inferred live k3d, ArgoCD, Vault, ESO, secret, or deployment readiness.
 - When an agent output fails validation or repeats a mistake, repair the harness
   surface that allowed the failure. Prefer updating a rule, prompt/skill, hook,
   validator, template, README index, or memory entry over blaming the agent.

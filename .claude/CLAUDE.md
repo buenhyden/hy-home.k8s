@@ -27,6 +27,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 
 - Plan and implement from repo evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
 - Record repo-changing work progress and reusable memory in `docs/00.agent-governance/memory/progress.md`.
+- Treat `docs/00.agent-governance/memory/progress.md` as the canonical progress ledger and the only tracked `progress.md`; standalone memory files may exist only under the memory template contract with a related progress entry.
 - Use `docs/99.templates/memory.template.md` for standalone files under `docs/00.agent-governance/memory/`, and update the related `progress.md` entry in the same change.
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
 - Treat `docs/90.references/llm-wiki/wiki-index.md` as generated Markdown maintained by `scripts/generate-llm-wiki-index.sh`; route policy and procedure changes to canonical owner files.
@@ -37,7 +38,8 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - `.agents/` is the single source of truth for provider-neutral shared content (`skills/`, `workflows/`, `output-styles/`); `.claude/skills`, `.claude/workflows`, and `.claude/output-styles` are symlinks to it so every provider stays byte-identical. Provider-specific agents are real files per provider: `.claude/agents/*.md` (Claude models + `tools:`), `.agents/agents/*.md` (Gemini), `.codex/agents/*.toml` (GPT).
 - Workspace Structures: Use `.claude/skills/`, `.claude/agents/`, `.claude/workflows/`, `.claude/output-styles/`, `docs/00.agent-governance/hooks/`, and `docs/00.agent-governance/rules/` consistently; shared structures resolve to the `.agents/` SSoT via symlinks where applicable.
 - Verification: Implement explicit QA and CI/CD validation phases prior to task completion.
-- Treat `.claude/*.local.md`, including Hookify rules, as ignored local warning files. Shared enforcement belongs in tracked hooks, `.claude/settings.json`, `.codex/hooks.json`, and repository validators.
+- Agent eval completion is explicit command evidence from repo-static gates, changed-file checks, or recorded human/operator approval; do not infer live runtime readiness from static validation.
+- Treat `.claude/*.local.md`, including Hookify rules, as ignored local warning files. Claude hooks/settings are shared enforcement when tracked through `.claude/settings.json`, shared scripts, `.codex/hooks.json`, `.agents/hooks.json`, and repository validators; Hookify local advisory files are not shared policy.
 - Treat `docs/00.agent-governance/hooks/lifecycle-guard.sh` as the shared lifecycle validation surface wired by `.claude/settings.json`: Stop/SubagentStop may block objective repo-state failures and advise task-unit commit discipline for uncommitted tracked changes, while PreCompact reports uncommitted tracked changes, suggested validation, and the same commit discipline without blocking compaction.
 
 ## Harness Four-Element Runtime Contract

@@ -65,6 +65,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-06-02-phase-4-eso-vault-runtime-diagnosis.md
 ├── 2026-06-02-stage-00-codex-harness-coverage-reconciliation.md
 ├── 2026-06-04-harness-four-element-alignment.md
+├── 2026-06-05-harness-governance-v2-overlay.md
 └── README.md
 ```
 
@@ -113,6 +114,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-06-02-phase-4-eso-vault-runtime-diagnosis.md`](./2026-06-02-phase-4-eso-vault-runtime-diagnosis.md) | Phase 3 live validation 실패를 Vault sealed runtime prerequisite로 분류하고 operator-bound 복구 경계를 고정한 계획 | Done | 2026-06-02 |
 | [`./2026-06-02-stage-00-codex-harness-coverage-reconciliation.md`](./2026-06-02-stage-00-codex-harness-coverage-reconciliation.md) | Phase 1 follow-up plan의 축소 범위를 보정하고 Stage 00/Codex harness 누락 항목을 기존 완료 증적에 연결한 계획 | Done | 2026-06-02 |
 | [`./2026-06-04-harness-four-element-alignment.md`](./2026-06-04-harness-four-element-alignment.md) | 하네스 네 요소를 공통 Stage 00, Codex, Claude runtime surface에 연결하고 문서 언어/템플릿/드리프트 GC 검증 게이트를 보강한 계획 | Done | 2026-06-04 |
+| [`./2026-06-05-harness-governance-v2-overlay.md`](./2026-06-05-harness-governance-v2-overlay.md) | DAILY/LIBRARY 분류, workflow skill phase 기준, Hookify/eval/progress 단일화 계약을 기존 Stage 00 하네스 위에 덧붙인 계획 | Done | 2026-06-05 |
 
 ## Related Documents
 

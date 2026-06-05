@@ -8,6 +8,82 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-06-05 — Harness governance V2 overlay
+
+- **Date**: 2026-06-05
+- **Layer**: meta, qa, docs
+- **Status**: complete
+- **Tags**: #harness #governance #codex #claude #eval #hookify #memory
+
+#### Progress
+
+- Extended the Stage 00
+  [Harness Catalog](../harness-catalog.md) with the ECC DAILY/LIBRARY Surface
+  and the Agent Eval Completion Contract.
+- Classified repo-local gateway/runtime baselines, Stage 00 rules, shared
+  hooks, local agents, GitOps/K8s/docs skills, and validators as `DAILY`
+  surfaces; classified explicitly requested external skills such as
+  `agent-sort`, `skill-creator`, `workflow-skill-design`, `eval-harness`,
+  `harness-writing`, `enhance-prompt`, Hookify rule writing, and Claude MD
+  improvement lenses as `LIBRARY` surfaces.
+- Updated
+  [workspace-harness-audit](../../../.agents/skills/workspace-harness-audit/skill.md)
+  with numbered workflow phases, Entry Criteria, Exit Criteria, Verification
+  Criteria, and named-skill boundaries.
+- Added Codex/Claude adapter pointers for canonical progress ledger uniqueness,
+  deterministic eval completion evidence, and Hookify local advisory vs shared
+  enforcement boundaries.
+- Added common Stage 00 rules requiring
+  `docs/00.agent-governance/memory/progress.md` to be the only tracked
+  `progress.md`, while standalone memory files remain allowed under the memory
+  template contract.
+- Extended
+  [repository quality gates](../../../scripts/validate-repo-quality-gates.sh)
+  to fail on non-canonical tracked `progress.md`, missing DAILY/LIBRARY,
+  missing eval contract, missing Hookify advisory boundary, and missing
+  workflow-skill phase criteria.
+- Recorded the implementation plan and task evidence:
+  - [Plan](../../04.execution/plans/2026-06-05-harness-governance-v2-overlay.md)
+  - [Task](../../04.execution/tasks/2026-06-05-harness-governance-v2-overlay.md)
+
+#### Memory
+
+- `progress.md` is now a singleton filename in tracked files. The canonical
+  progress ledger is `docs/00.agent-governance/memory/progress.md`.
+- DAILY/LIBRARY classification is a routing contract, not a new install system;
+  no `skill-library` router exists because `.agents/skills` remains the shared
+  SSoT and `harness-catalog.md` is the catalog router.
+- Hookify `.claude/hookify.*.local.md` files are ignored local advisory files.
+  Shared enforcement belongs in tracked hooks, settings, hook JSON, scripts,
+  and validators.
+- Agent eval completion must be explicit deterministic command evidence or
+  recorded human/operator approval. Static repo gates do not prove live k3d,
+  ArgoCD, Vault, ESO, secret, or deployment readiness.
+- `enhance-prompt` is a named-skill near-miss for this task because the work is
+  not a UI/Stitch prompt task.
+
+#### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `python3 -m json.tool .claude/settings.json` — PASS.
+- `python3 -m json.tool .codex/hooks.json` — PASS.
+- `python3 -m json.tool .agents/hooks.json` — PASS.
+- `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +` — PASS.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS.
+- `rg --files | rg '(^|/)progress\.md$'` — PASS, returned only
+  `docs/00.agent-governance/memory/progress.md`.
+- `git check-ignore -v .claude/hookify.postflight-reminder.local.md` — PASS,
+  `.gitignore:66:.claude/*.local.md`.
+- `/home/hy/.local/bin/pre-commit run --files <changed files>` — PASS after
+  approved outside-sandbox execution. The first sandbox run failed because EOF
+  fixer could not open `.agents/**` and `.codex/**` files.
+
+#### Handoff
+
+- None.
+
 ### 2026-06-04 — Harness four-element alignment
 
 - **Date**: 2026-06-04

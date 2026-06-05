@@ -256,6 +256,8 @@ for tracked_path in sorted(tracked):
     if tracked_path == ".env":
         fail(".env must remain untracked; commit .env.example only")
     tracked_name = pathlib.Path(tracked_path).name
+    if tracked_name == "progress.md" and tracked_path != "docs/00.agent-governance/memory/progress.md":
+        fail(f"tracked progress.md must live only at docs/00.agent-governance/memory/progress.md: {tracked_path}")
     if re.search(r"(^temp_|_(new|old|backup)(\.|$))", tracked_name):
         fail(f"tracked temporary or backup-style file name is not allowed: {tracked_path}")
 
@@ -1738,6 +1740,12 @@ for phrase in [
     "Continuous evaluation",
     "Documentation language and template routing",
     "Drift garbage collection",
+    "## ECC DAILY/LIBRARY Surface",
+    "DAILY",
+    "LIBRARY",
+    "skill-library router is not created",
+    "## Agent Eval Completion Contract",
+    "Hookify local advisory",
     "AI Agent Requirements",
     "Repeated mistakes must update the harness surface",
     "Permissions and hooks",
@@ -1795,6 +1803,9 @@ baseline_four_element_checks = {
         "Feedback loops",
         "Knowledge stores",
         "native allow/deny policy",
+        "canonical progress ledger",
+        "Agent eval completion",
+        "Hookify local advisory",
         "harness-catalog.md",
     ],
     root / ".codex/CODEX.md": [
@@ -1805,6 +1816,9 @@ baseline_four_element_checks = {
         "Knowledge stores",
         "sandboxing",
         "not a Claude-style permission gate",
+        "canonical progress ledger",
+        "Agent eval completion",
+        "context/validation wiring",
         "harness-catalog.md",
     ],
 }
@@ -1817,6 +1831,16 @@ for path, phrases in baseline_four_element_checks.items():
 workspace_harness_skill_path = root / ".agents/skills/workspace-harness-audit/skill.md"
 workspace_harness_skill_text = read_text(workspace_harness_skill_path)
 for phrase in [
+    "## Workflow Phases",
+    "### Phase 1 - Intake and Evidence Boundary",
+    "Entry Criteria",
+    "Exit Criteria",
+    "Verification Criteria",
+    "agent-sort",
+    "eval-harness",
+    "enhance-prompt",
+    "DAILY",
+    "LIBRARY",
     "four harness elements",
     "instruction and settings documents",
     "architecture constraints",
@@ -1831,6 +1855,9 @@ agentic_path = root / "docs/00.agent-governance/rules/agentic.md"
 agentic_text = read_text(agentic_path)
 for phrase in [
     "When an agent output fails validation or repeats a mistake",
+    "canonical progress ledger",
+    "only tracked progress.md",
+    "Agent eval completion",
     "## Drift Garbage Collection Defaults",
     "temp_",
     "_backup",
@@ -1858,6 +1885,9 @@ for phrase in [
     "Folder responsibilities are defined by `stage-authoring-matrix.md`",
     "The canonical template map includes `README.md` -> `readme.template.md`",
     "AI Agent Requirements",
+    "canonical progress ledger",
+    "only tracked `progress.md`",
+    "Agent eval completion",
     "## Drift Garbage Collection",
     "code drift, document drift, and structure drift",
 ]:

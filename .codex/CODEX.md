@@ -26,6 +26,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 
 - Plan and implement from repo evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
 - Record repo-changing work progress and reusable memory in `docs/00.agent-governance/memory/progress.md`.
+- Treat `docs/00.agent-governance/memory/progress.md` as the canonical progress ledger and the only tracked `progress.md`; standalone memory files may exist only under the memory template contract with a related progress entry.
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
 - Author stage documents Template-First: read `docs/99.templates/README.md` and the matching template before writing into `docs/01.requirements`–`docs/05.operations` and `docs/99.templates`, per `docs/00.agent-governance/rules/documentation-protocol.md` and `rules/document-stage-routing.md`.
 - If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers.
@@ -34,6 +35,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - `.codex/` carries Codex-native real files (`agents/*.toml`, `hooks.json`); its `skills/`, `workflows/`, and `output-styles/` are symlinks to the `.agents/` SSoT for byte-identical shared content.
 - Use `RTK.md` as cross-agent SSOT for shell commands.
 - Verification: Codex MUST implement explicit QA and CI/CD validation phases prior to task completion, mirroring Gemini and Claude.
+- Agent eval completion must be proven with explicit command evidence from repo-static gates, changed-file checks, or recorded human/operator approval; Codex hooks are context/validation wiring, and static checks do not imply live k3d, ArgoCD, Vault, ESO, or secret readiness.
 
 ## Harness Four-Element Runtime Contract
 

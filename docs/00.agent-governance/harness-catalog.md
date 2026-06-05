@@ -159,6 +159,63 @@ Instruction and settings documents -> Architecture constraints -> Feedback loops
   Remove temporary files, debug-only code, unused imports, and disallowed
   scratch naming (`temp_`, `_new`, `_old`, `_backup`) before handoff.
 
+## ECC DAILY/LIBRARY Surface
+
+This repository uses the `agent-sort` evidence model to classify ECC surfaces
+into two buckets only. The classification is routing guidance, not a second
+install system: the skill-library router is not created because
+`.agents/skills` remains the shared skill SSoT and this catalog already routes
+searchable library skills.
+
+### DAILY
+
+`DAILY` surfaces are loaded or checked during normal repository work because
+the current codebase, documentation taxonomy, hook wiring, and GitOps operating
+model depend on them.
+
+| Surface | Repo Evidence | Why DAILY |
+| --- | --- | --- |
+| Repository gateway and runtime baselines | `AGENTS.md`, root `CLAUDE.md`, root `GEMINI.md`, `.claude/CLAUDE.md`, `.codex/CODEX.md`, `.agents/GEMINI.md` | Every provider session needs the Stage 00 gateway, provider adapter, loading order, and GitOps-first boundary. |
+| Stage 00 rules, hooks, and memory | `docs/00.agent-governance/rules/**`, `docs/00.agent-governance/hooks/*.sh`, `docs/00.agent-governance/memory/progress.md` | These files define how agents act, what blocks unsafe work, how lifecycle validation runs, and what compact context feeds the next session. |
+| Eight local agents and mirrors | `.claude/agents/*.md`, `.codex/agents/*.toml`, `.agents/agents/*.md` | The repo has a fixed local roster for orchestration, Kubernetes, GitOps, security, incident, code review, docs, and wiki curation. |
+| GitOps, Kubernetes, docs, and harness skills | `.agents/skills/gitops-workflow/skill.md`, `.agents/skills/k8s-validate/skill.md`, `.agents/skills/k8s-security-audit/skill.md`, `.agents/skills/docs-stage-routing/skill.md`, `.agents/skills/docs-stage-conformance/skill.md`, `.agents/skills/workspace-harness-audit/skill.md`, `.agents/skills/knowledge-map/skill.md`, `.agents/skills/execution-plan/skill.md`, `.agents/skills/task-breakdown/skill.md` | The active repo is WSL2+k3d, ArgoCD GitOps, and stage-doc governed, so these skills match recurring daily work. |
+| Shared enforcement and quality gates | `.claude/settings.json`, `.codex/hooks.json`, `.agents/hooks.json`, `scripts/validate-*.sh`, `infrastructure/tests/*.sh`, `.github/workflows/ci.yml` | Completion depends on deterministic validation, hook wiring, sensitive-data checks, template routing, and static GitOps evidence. |
+
+### LIBRARY
+
+`LIBRARY` surfaces are useful when explicitly requested or when a task matches
+their narrow trigger. They remain reachable through skill discovery and catalog
+routing, but they are not always-loaded daily context.
+
+| Surface | Repo Evidence | Why LIBRARY |
+| --- | --- | --- |
+| `agent-sort` | External ECC skill explicitly requested for this overlay | Use as the ECC DAILY/LIBRARY classification lens when the repo surface needs evidence-backed trimming. |
+| `skill-creator` and `workflow-skill-design` | External skills explicitly requested for skill update quality | Use when creating or refactoring skills; do not create new skills unless the Harness Engineering Matrix shows a concrete gap or a human asks. |
+| `imp-agent-md-refactor` and Claude MD improvement lenses | External skills explicitly requested for runtime document quality | Use as progressive-disclosure and provider-baseline improvement lenses; Stage 00 remains the policy owner. |
+| `Hook Development` and Hookify rule writing | External skills explicitly requested for hook and local warning rule design | Shared enforcement belongs in tracked hooks, settings, hook JSON, and validators. Hookify local advisory files such as `.claude/hookify.*.local.md` are ignored local warning layers, not shared policy. |
+| `eval-harness` and `harness-writing` | External skills explicitly requested for evaluation quality | Use as deterministic eval and reproducible validation lenses. No fuzz target or provider-local `.claude/evals` tree is created by default. |
+| `enhance-prompt` | External UI/Stitch prompt skill explicitly named | Treat as a near-miss no-op unless the active task is a UI prompt generation or prompt refinement task. |
+
+## Agent Eval Completion Contract
+
+Agent eval completion in this repository is deterministic and repo-static by
+default. Capability evals are expressed as explicit acceptance criteria in the
+Plan/Task record, and regression evals are expressed as commands or validators
+that can be rerun from the repository checkout.
+
+- **Capability eval**: the Task record states the intended agent behavior,
+  affected paths, input boundaries, and expected evidence before handoff.
+- **Regression eval**: `scripts/validate-repo-quality-gates.sh .`,
+  `git diff --check`, JSON parsing, shell syntax, generated-index freshness,
+  and changed-file pre-commit checks protect the durable harness contract.
+- **Completion rule**: an agent may report eval completion only from explicit
+  command evidence or recorded human/operator approval. Static checks never
+  imply live k3d, ArgoCD, Vault, ESO, secret, or deployment readiness.
+- **Provider boundary**: `.claude/evals` or provider-local eval directories are
+  not created unless a future human request asks for that provider-local
+  surface; common eval contracts live in Stage 00, Plan/Task evidence, and
+  repository validators.
+
 ## Readiness Matrix
 
 | Layer                         | Implemented Surface                                                                                                                                    | Status | Readiness Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
