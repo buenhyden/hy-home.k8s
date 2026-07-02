@@ -69,6 +69,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-07-02-workspace-harness-implementation-audit-pack.md
 ├── 2026-07-02-workspace-harness-research-pack.md
 ├── 2026-07-03-template-contract-governance-migration.md
+├── 2026-07-03-template-governance-audit-enhancement.md
 └── README.md
 ```
 
@@ -121,6 +122,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-07-02-workspace-harness-implementation-audit-pack.md`](./2026-07-02-workspace-harness-implementation-audit-pack.md) | `docs/90.references/audits/` 아래 workspace harness 구현 현황 감사 팩을 작성하고 research benchmark와 repo-backed evidence를 대조하는 실행 계획 | Done | 2026-07-03 |
 | [`./2026-07-02-workspace-harness-research-pack.md`](./2026-07-02-workspace-harness-research-pack.md) | `docs/90.references/research/` 통합 연구 팩 작성, 공식 외부 소스 우선 조사, market scan, implementation checklist, 검증 증적을 묶는 실행 계획 | Done | 2026-07-02 |
 | [`./2026-07-03-template-contract-governance-migration.md`](./2026-07-03-template-contract-governance-migration.md) | `docs/99.templates/`를 template forms와 support contracts로 분리하고 validator, hook, governance, authored docs 적용을 추적하는 실행 계획 | Draft | 2026-07-03 |
+| [`./2026-07-03-template-governance-audit-enhancement.md`](./2026-07-03-template-governance-audit-enhancement.md) | `docs/99.templates/**` 후속 감사, support contract drift 정리, validator guardrail 보강, 최종 검증 증적을 묶는 실행 계획 | Draft | 2026-07-03 |
 
 ## Related Documents
 

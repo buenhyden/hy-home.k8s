@@ -8,6 +8,46 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-03 — Template governance audit enhancement plan
+
+- **Date**: 2026-07-03
+- **Layer**: docs, meta, qa
+- **Status**: in-progress
+- **Tags**: #templates #governance #audit #validation
+
+#### Progress
+
+- Created the Stage 04
+  [implementation plan](../../04.execution/plans/2026-07-03-template-governance-audit-enhancement.md)
+  and
+  [task record](../../04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md)
+  for the approved follow-up audit and targeted enhancement pass over
+  `docs/99.templates/**`.
+- Registered the new Plan and Task in the Stage 04 README indexes.
+- Seeded the task finding ledger with current support-contract and validator
+  improvement candidates: migration-phase wording, harness task route
+  ambiguity, deterministic validator guardrail, and authored-doc audit
+  evidence.
+
+#### Memory
+
+- `harness-task-contract.template.md` should remain a supplemental starter for
+  high-risk Stage 04 Task records, not a second structural route that competes
+  with `task.template.md`.
+- Active support contracts should describe the current steady-state template
+  model; completed migration phase wording belongs in completed plan/task
+  evidence, not current support rules.
+
+#### Evidence
+
+- `git diff --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+
+#### Handoff
+
+- Next action: execute the baseline audit and support-contract remediation
+  tasks from the linked plan.
+
 ### 2026-07-03 — Template governance migration final sync
 
 - **Date**: 2026-07-03
