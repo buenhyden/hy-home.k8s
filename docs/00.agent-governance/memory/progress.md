@@ -8,6 +8,46 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-02 — Workspace harness research pack
+
+- **Date**: 2026-07-02
+- **Layer**: docs, meta, qa
+- **Status**: in-progress
+- **Tags**: #research #harness #loop-engineering #sdlc #validation
+
+#### Progress
+
+- Started a repo-first integrated research pack for
+  `docs/90.references/research/` by writing the parent
+  [Spec](../../03.specs/009-workspace-harness-research-pack/spec.md).
+- The approved pack structure is one README plus four reference documents:
+  workspace governance baseline, harness and loop engineering,
+  provider implementation status, and spec/SDLC/CI/QA/formatting.
+- The source strategy is repo-first plus official external sources, with
+  bounded market scan findings and implementation checklist sections included
+  in each relevant reference document.
+
+#### Memory
+
+- The research pack must remain durable reference material. It may summarize
+  candidate improvements, but active policy changes belong in Stage 00,
+  operations policy, plans, tasks, scripts, or templates.
+- Current provider implementation claims for Claude, Codex/OpenAI, and
+  Gemini/Google must be verified through current external sources before they
+  are written into `docs/90.references/research/`.
+
+#### Evidence
+
+- `git status --short` was clean before starting the branch.
+- `/home/hy/.local/bin/rtk --version` returned `rtk 0.34.3`; `rtk` is not on
+  PATH and `rtk gain` cannot initialize its tracking database, so underlying
+  commands are used directly.
+
+#### Handoff
+
+- Next step: review and approve the spec, then create the execution plan and
+  task record before writing the research pack.
+
 ### 2026-06-05 — Harness governance V2 overlay
 
 - **Date**: 2026-06-05

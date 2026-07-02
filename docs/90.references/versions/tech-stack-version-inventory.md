@@ -3,7 +3,7 @@ title: 'Reference: Tech Stack Version Inventory'
 type: reference
 status: active
 owner: 'platform'
-updated: 2026-05-22
+updated: 2026-07-02
 ---
 
 # Tech Stack Version Inventory
@@ -16,7 +16,7 @@ updated: 2026-05-22
 ## Reference Type
 
 - Type: version-contract-inventory / external-standard-snapshot
-- Source checked: 2026-05-22
+- Source checked: 2026-07-02
 - Refresh trigger: repo manifest/config version bump, GitHub Actions/pre-commit pin change, cloud example target update, or official provider support range change.
 
 ## Authority Boundary
@@ -56,7 +56,7 @@ updated: 2026-05-22
 ## Review and Freshness
 
 - Review cadence: on dependency bump, cloud example refresh, or official support-range change.
-- Last reviewed: 2026-05-22.
+- Last reviewed: 2026-07-02.
 - Next review trigger: a PR that changes `gitops/**`, `infrastructure/**`, `.github/workflows/**`, `.pre-commit-config.yaml`, `examples/aws/**`, or `examples/azure/**` version pins.
 
 ## Cloud Example Snapshot: 2026-05-22
@@ -112,10 +112,10 @@ helm_charts:
     chart: 'argo-rollouts'
     targetRevision: '2.40.9'
 github_actions:
-  'actions/checkout': 'v6'
+  'actions/checkout': 'v7.0.0'
   'actions/first-interaction': 'v3'
   'actions/labeler': 'v6.1.0'
-  'actions/setup-python': 'v6'
+  'actions/setup-python': 'v6.2.0'
   'actions/stale': 'v10.3.0'
   'actions/upload-artifact': 'v7'
   'dorny/paths-filter': 'v4.0.1'
