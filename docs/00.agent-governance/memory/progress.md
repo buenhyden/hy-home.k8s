@@ -8,6 +8,44 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-02 — Workspace harness implementation audit pack
+
+- **Date**: 2026-07-02
+- **Layer**: docs, meta, qa
+- **Status**: in-progress
+- **Tags**: #audit #harness #loop-engineering #sdlc #validation
+
+#### Progress
+
+- Started the follow-up audit pack design for
+  [docs/90.references/audits/](../../90.references/audits/) using the completed
+  [research pack](../../90.references/research/) as the benchmark model.
+- Wrote the parent
+  [Spec](../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md)
+  for four audit reports plus an audits README: governance implementation,
+  harness/loop implementation, provider harness/loop implementation, and
+  SDLC/delivery practices implementation.
+
+#### Memory
+
+- The approved audit output structure is four dated audit reports plus
+  `docs/90.references/audits/README.md`.
+- Audit reports must compare research benchmark items against repo-backed
+  evidence, not upstream capability alone.
+- Audit outputs may identify automation opportunities and checklist follow-up
+  routes, but active policy or runtime changes belong in a future Spec, Plan,
+  Task, operations policy, script, or provider adapter change.
+
+#### Evidence
+
+- `git status --short` was clean before starting the audit pack branch.
+- User approved the four audit reports plus audits README design.
+
+#### Handoff
+
+- Next step: write and review the implementation plan after the user approves
+  this Spec.
+
 ### 2026-07-02 — Workspace harness research pack
 
 - **Date**: 2026-07-02

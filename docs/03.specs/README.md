@@ -54,6 +54,8 @@ Spec은 실행 기준을 소유하는 문서다.
 │   └── spec.md
 ├── 009-workspace-harness-research-pack/
 │   └── spec.md
+├── 010-workspace-harness-implementation-audit-pack/
+│   └── spec.md
 └── README.md
 ```
 
@@ -93,6 +95,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./006-workspace-harness-gap-analysis/spec.md`](./006-workspace-harness-gap-analysis/spec.md) | Workspace harness Gap analysis와 제한 구현 계약 | Active | WSL2, WSL Linux native Docker, k3d, ArgoCD GitOps, SDD lifecycle, QA, CI/CD, Agent governance의 repo-static 개선 범위를 정의한다. P3 repo desired-state 보완은 별도 실행 증적에 반영됐고, live runtime 검증·secret value 확인·CI ruleset/pinning 정책은 deferred item으로 남긴다. | 2026-06-02 |
 | [`./008-current-local-gitops-platform/spec.md`](./008-current-local-gitops-platform/spec.md) | 현재 local GitOps platform baseline Spec | Active | Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer 구현 증적을 소유한다. | 2026-06-02 |
 | [`./009-workspace-harness-research-pack/spec.md`](./009-workspace-harness-research-pack/spec.md) | Workspace harness/loop engineering research pack 명세 | Draft | `docs/90.references/research/` 아래 통합 연구 팩의 구조, 공식 외부 소스 우선순위, market scan 경계, implementation checklist 포함 방식, 검증 기준을 정의한다. | 2026-07-02 |
+| [`./010-workspace-harness-implementation-audit-pack/spec.md`](./010-workspace-harness-implementation-audit-pack/spec.md) | Workspace harness/loop implementation audit pack 명세 | Draft | `docs/90.references/research/` 기준 모델과 repo-backed evidence를 대조해 `docs/90.references/audits/` 아래 4개 구현 현황 감사 보고서와 README를 작성하는 계약을 정의한다. | 2026-07-02 |
 
 ## Helper Templates
 
