@@ -1,9 +1,9 @@
 ---
 title: 'Workspace Harness Implementation Audit Pack Implementation Plan'
 type: plan
-status: draft
+status: done
 owner: platform
-updated: 2026-07-02
+updated: 2026-07-03
 ---
 
 # Workspace Harness Implementation Audit Pack Implementation Plan
@@ -123,7 +123,7 @@ Use these source groups during implementation:
 - Modify: `docs/90.references/README.md`
 - Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md`
 
-- [ ] **Step 1: Read templates and existing audit precedent**
+- [x] **Step 1: Read templates and existing audit precedent**
 
 Run:
 
@@ -137,7 +137,7 @@ sed -n '1,240p' docs/90.references/README.md
 Expected: commands print README/reference template rules, the existing audit
 precedent, and current reference hub structure.
 
-- [ ] **Step 2: Create audits README**
+- [x] **Step 2: Create audits README**
 
 Create `docs/90.references/audits/README.md` with these sections exactly:
 
@@ -162,7 +162,7 @@ The README must state:
   status.
 - Repo-static validation does not imply live runtime readiness.
 
-- [ ] **Step 3: Update parent references README**
+- [x] **Step 3: Update parent references README**
 
 Update `docs/90.references/README.md`:
 
@@ -171,7 +171,7 @@ Update `docs/90.references/README.md`:
 - Add `audits/` to Reference Folder Roles.
 - Add the audits README to Related Documents.
 
-- [ ] **Step 4: Update task evidence**
+- [x] **Step 4: Update task evidence**
 
 In the task record:
 
@@ -180,7 +180,7 @@ In the task record:
 - Add evidence rows for manual README/template review, `git diff --check`, and
   `bash scripts/validate-repo-quality-gates.sh .`.
 
-- [ ] **Step 5: Validate and commit**
+- [x] **Step 5: Validate and commit**
 
 Run:
 
@@ -211,7 +211,7 @@ git commit -m "docs(audit): Scaffold workspace harness audit references"
 - Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
-- [ ] **Step 1: Gather benchmark and repo evidence**
+- [x] **Step 1: Gather benchmark and repo evidence**
 
 Run:
 
@@ -227,7 +227,7 @@ sed -n '1,220p' docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md
 Expected: commands print the governance benchmark and current implementation
 evidence for rules, adapters, scripts, templates, validation, and QA/CI lanes.
 
-- [ ] **Step 2: Write the governance audit report**
+- [x] **Step 2: Write the governance audit report**
 
 Create the report from `docs/99.templates/reference.template.md` with:
 
@@ -261,14 +261,14 @@ The implementation matrix must include rows for:
 - Operating contract and approval boundaries
 - Automation opportunities
 
-- [ ] **Step 3: Update indexes and evidence**
+- [x] **Step 3: Update indexes and evidence**
 
 Update `docs/90.references/audits/README.md` to mark the governance audit as
 `Current`. Update T-002 to `Done` with manual review and validation evidence.
 Append progress memory noting that the governance audit is complete and that
 it is documentation-only.
 
-- [ ] **Step 4: Validate and commit**
+- [x] **Step 4: Validate and commit**
 
 Run:
 
@@ -294,7 +294,7 @@ git commit -m "docs(audit): Assess workspace governance implementation"
 - Modify: `docs/90.references/audits/README.md`
 - Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md`
 
-- [ ] **Step 1: Gather benchmark and repo evidence**
+- [x] **Step 1: Gather benchmark and repo evidence**
 
 Run:
 
@@ -310,7 +310,7 @@ sed -n '1,220p' docs/00.agent-governance/memory/README.md
 Expected: commands print benchmark model and evidence for four-element
 harness, feedback loops, subagent protocol, validation loops, and memory.
 
-- [ ] **Step 2: Write the harness/loop audit report**
+- [x] **Step 2: Write the harness/loop audit report**
 
 Create the report from `reference.template.md` with the same audit subsections
 as Task 2.
@@ -327,12 +327,12 @@ The implementation matrix must include rows for:
 - MCP/tool boundary implications
 - Automation opportunities
 
-- [ ] **Step 3: Update index and evidence**
+- [x] **Step 3: Update index and evidence**
 
 Update `docs/90.references/audits/README.md` to mark the harness/loop audit as
 `Current`. Update T-003 to `Done` with manual review and validation evidence.
 
-- [ ] **Step 4: Validate and commit**
+- [x] **Step 4: Validate and commit**
 
 Run:
 
@@ -358,7 +358,7 @@ git commit -m "docs(audit): Assess harness and loop implementation"
 - Modify: `docs/90.references/audits/README.md`
 - Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md`
 
-- [ ] **Step 1: Gather benchmark and repo evidence**
+- [x] **Step 1: Gather benchmark and repo evidence**
 
 Run:
 
@@ -375,7 +375,7 @@ Expected: commands print provider benchmark and current local provider adapter
 evidence. If a file is missing, record the absence as evidence instead of
 inferring status.
 
-- [ ] **Step 2: Write the provider audit report**
+- [x] **Step 2: Write the provider audit report**
 
 Create the report from `reference.template.md` with the same audit subsections
 as Task 2.
@@ -393,12 +393,12 @@ parity:
 - Known non-parity boundaries
 - Automation opportunities
 
-- [ ] **Step 3: Update index and evidence**
+- [x] **Step 3: Update index and evidence**
 
 Update `docs/90.references/audits/README.md` to mark the provider audit as
 `Current`. Update T-004 to `Done` with manual review and validation evidence.
 
-- [ ] **Step 4: Validate and commit**
+- [x] **Step 4: Validate and commit**
 
 Run:
 
@@ -424,7 +424,7 @@ git commit -m "docs(audit): Assess provider harness implementation"
 - Modify: `docs/90.references/audits/README.md`
 - Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md`
 
-- [ ] **Step 1: Gather benchmark and repo evidence**
+- [x] **Step 1: Gather benchmark and repo evidence**
 
 Run:
 
@@ -441,7 +441,7 @@ sed -n '1,220p' .pre-commit-config.yaml
 Expected: commands print benchmark model and repo evidence for spec-driven
 development, SDLC, CI/CD, QA, formatting, and pre-commit.
 
-- [ ] **Step 2: Write the SDLC/delivery audit report**
+- [x] **Step 2: Write the SDLC/delivery audit report**
 
 Create the report from `reference.template.md` with the same audit subsections
 as Task 2.
@@ -458,12 +458,12 @@ The implementation matrix must include rows for:
 - Static-vs-live readiness boundary
 - Automation opportunities
 
-- [ ] **Step 3: Update index and evidence**
+- [x] **Step 3: Update index and evidence**
 
 Update `docs/90.references/audits/README.md` to mark the SDLC/delivery audit as
 `Current`. Update T-005 to `Done` with manual review and validation evidence.
 
-- [ ] **Step 4: Validate and commit**
+- [x] **Step 4: Validate and commit**
 
 Run:
 
@@ -491,7 +491,7 @@ git commit -m "docs(audit): Assess SDLC delivery implementation"
 - Modify: `docs/04.execution/tasks/README.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
-- [ ] **Step 1: Align plan/task completion state**
+- [x] **Step 1: Align plan/task completion state**
 
 Update this plan and the task record:
 
@@ -501,7 +501,7 @@ Update this plan and the task record:
 - Mark T-006 as `Done`.
 - Check T-006 in Phase View.
 
-- [ ] **Step 2: Update indexes and progress memory**
+- [x] **Step 2: Update indexes and progress memory**
 
 Update:
 
@@ -511,7 +511,7 @@ Update:
   `complete`, summarize created audit reports, record final validation
   evidence, and state that no live runtime readiness check was run.
 
-- [ ] **Step 3: Run final validation**
+- [x] **Step 3: Run final validation**
 
 Run:
 
@@ -520,7 +520,8 @@ git diff --check
 bash scripts/generate-llm-wiki-index.sh --check
 bash scripts/validate-repo-quality-gates.sh .
 rg --files | rg '(^|/)progress\.md$'
-rg -n '^status: draft|\\| .*Draft|^- \\[ \\]' docs/04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md docs/04.execution/plans/README.md docs/04.execution/tasks/README.md
+rg -n '^status: draft|^- \\[ \\]' docs/04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md
+rg -n 'workspace-harness-implementation-audit-pack.*\\| Draft \\|' docs/04.execution/plans/README.md docs/04.execution/tasks/README.md
 ```
 
 Expected:
@@ -531,7 +532,7 @@ Expected:
 - Progress singleton: only `docs/00.agent-governance/memory/progress.md`.
 - Stale-marker scan: no rows for the audit pack remain `Draft` or unchecked.
 
-- [ ] **Step 4: Commit final integration**
+- [x] **Step 4: Commit final integration**
 
 Commit:
 
@@ -548,7 +549,7 @@ git commit -m "docs(audit): Finalize workspace harness implementation audit pack
 | VAL-PLN-002 | Generated index | LLM wiki index freshness | `bash scripts/generate-llm-wiki-index.sh --check` | Prints `[PASS] LLM WIKI generated index is current`. |
 | VAL-PLN-003 | Repo quality | Repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` | Prints `[PASS] repository quality gates passed`. |
 | VAL-PLN-004 | Progress singleton | Canonical progress ledger uniqueness | `rg --files \| rg '(^\|/)progress\.md$'` | Prints only `docs/00.agent-governance/memory/progress.md`. |
-| VAL-PLN-005 | Status alignment | No stale audit-pack draft/checklist markers | Targeted `rg` from Task 6 Step 3 | No audit-pack rows remain `Draft` or unchecked. |
+| VAL-PLN-005 | Status alignment | No stale audit-pack draft/checklist markers | Targeted `rg` commands from Task 6 Step 3 | No audit-pack frontmatter remains `draft`, no audit-pack checklist remains unchecked, and no audit-pack README row remains `Draft`. |
 
 ## Risks & Mitigations
 
@@ -576,17 +577,17 @@ git commit -m "docs(audit): Finalize workspace harness implementation audit pack
 
 ## Completion Criteria
 
-- [ ] `docs/90.references/audits/README.md` exists and indexes all audit
+- [x] `docs/90.references/audits/README.md` exists and indexes all audit
   reports.
-- [ ] Four new dated audit reports exist and follow the reference template plus
+- [x] Four new dated audit reports exist and follow the reference template plus
   audit subsections.
-- [ ] Parent `docs/90.references/README.md` indexes `audits/`.
-- [ ] Audit matrices cover all requested categories from the parent Spec.
-- [ ] Automation opportunities and implementation checklists are present in
+- [x] Parent `docs/90.references/README.md` indexes `audits/`.
+- [x] Audit matrices cover all requested categories from the parent Spec.
+- [x] Automation opportunities and implementation checklists are present in
   each report.
-- [ ] Task evidence and progress memory are updated.
-- [ ] Final validation commands pass.
-- [ ] Work is committed by logical unit.
+- [x] Task evidence and progress memory are updated.
+- [x] Final validation commands pass.
+- [x] Work is committed by logical unit.
 
 ## Related Documents
 

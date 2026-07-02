@@ -1,9 +1,9 @@
 ---
 title: 'Task: Workspace Harness Implementation Audit Pack'
 type: task
-status: draft
+status: done
 owner: platform
-updated: 2026-07-02
+updated: 2026-07-03
 ---
 
 # Task: Workspace Harness Implementation Audit Pack
@@ -45,7 +45,7 @@ secret checks are out of scope unless separately approved by a human.
 | T-003 | Write harness and loop implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-003 | Audit matrix review; repo quality gate | Codex | Done |
 | T-004 | Write provider harness and loop implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-004 | Provider evidence review; repo quality gate | Codex | Done |
 | T-005 | Write SDLC delivery practices implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-005 | Delivery-practice matrix review; repo quality gate | Codex | Done |
-| T-006 | Final integration, validation, memory, and handoff | doc | VAL-SPC-006 | PLN-006 | Final validation bundle | Codex | Todo |
+| T-006 | Final integration, validation, memory, and handoff | doc | VAL-SPC-006 | PLN-006 | Final validation bundle | Codex | Done |
 
 ## Suggested Types
 
@@ -75,7 +75,7 @@ secret checks are out of scope unless separately approved by a human.
 
 ### Phase 3
 
-- [ ] T-006 Final integration, validation, memory, and handoff.
+- [x] T-006 Final integration, validation, memory, and handoff.
 
 ## Verification Summary
 
@@ -126,6 +126,12 @@ secret checks are out of scope unless separately approved by a human.
 | 2026-07-03 | T-005 quality review fix | Manual wording remediation | PASS; replaced stale in-progress audit README wording with completed-pack language while preserving future planned-report link-basis guidance |
 | 2026-07-03 | T-005 quality review fix | `git diff --check` | PASS; no output |
 | 2026-07-03 | T-005 quality review fix | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-03 | T-006 | Manual final integration review | PASS; marked plan/task complete, updated Stage 04 indexes to `Done`, verified all four 2026-07-02 audit reports are linked as `Current`, and refreshed progress memory |
+| 2026-07-03 | T-006 | `git diff --check` | PASS; no output |
+| 2026-07-03 | T-006 | `bash scripts/generate-llm-wiki-index.sh --check` | PASS; `[PASS] LLM WIKI generated index is current` |
+| 2026-07-03 | T-006 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-03 | T-006 | `rg --files \| rg '(^\|/)progress\.md$'` | PASS; returned only `docs/00.agent-governance/memory/progress.md` |
+| 2026-07-03 | T-006 | Targeted audit-pack stale-marker scans | PASS; no audit-pack frontmatter remained `draft`, no audit-pack checklist remained unchecked, and no audit-pack README row remained `Draft` |
 
 ## Related Documents
 

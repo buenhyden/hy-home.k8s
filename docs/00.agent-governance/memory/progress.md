@@ -11,29 +11,33 @@ inventory stays in `scripts/README.md`.
 ### 2026-07-02 — Workspace harness implementation audit pack
 
 - **Date**: 2026-07-02
+- **Completed**: 2026-07-03
 - **Layer**: docs, meta, qa
-- **Status**: in-progress
+- **Status**: complete
 - **Tags**: #audit #harness #loop-engineering #sdlc #validation
 
 #### Progress
 
-- Started the follow-up audit pack design for
+- Completed the follow-up audit pack under
   [docs/90.references/audits/](../../90.references/audits/) using the completed
   [research pack](../../90.references/research/) as the benchmark model.
-- Wrote the parent
-  [Spec](../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md)
-  for four audit reports plus an audits README: governance implementation,
-  harness/loop implementation, provider harness/loop implementation, and
-  SDLC/delivery practices implementation.
-- Added the implementation
-  [Plan](../../04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md)
+- Created the
+  [audits README](../../90.references/audits/README.md) and four dated audit
+  reports:
+  [workspace governance](../../90.references/audits/2026-07-02-workspace-governance-implementation-audit.md),
+  [harness/loop](../../90.references/audits/2026-07-02-harness-loop-implementation-audit.md),
+  [provider harness/loop](../../90.references/audits/2026-07-02-provider-harness-loop-implementation-audit.md),
+  and
+  [SDLC delivery practices](../../90.references/audits/2026-07-02-sdlc-delivery-practices-implementation-audit.md).
+- Finalized the parent
+  [Spec](../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md),
+  [Plan](../../04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md),
   and
   [Task](../../04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md)
-  to track six logical work units, validation evidence, and final status
-  alignment.
-- Completed the workspace governance implementation audit report at
-  [2026-07-02-workspace-governance-implementation-audit.md](../../90.references/audits/2026-07-02-workspace-governance-implementation-audit.md)
-  and updated the audits README to mark it `Current`.
+  traceability by setting plan/task status and Stage 04 indexes to `Done`.
+- Updated the parent
+  [references README](../../90.references/README.md), audits README, Stage 04
+  indexes, task evidence, and this progress entry for final handoff.
 
 #### Memory
 
@@ -44,9 +48,15 @@ inventory stays in `scripts/README.md`.
 - Audit outputs may identify automation opportunities and checklist follow-up
   routes, but active policy or runtime changes belong in a future Spec, Plan,
   Task, operations policy, script, or provider adapter change.
-- Governance audit implementation claims should cite repo-backed evidence for
-  every `Implemented` and `Partial` status; live readiness remains separate
-  approved evidence.
+- Implementation audit statuses use only `Implemented`, `Partial`, `Gap`, and
+  `Not in scope`.
+- Every `Implemented` and `Partial` status should cite repo-backed evidence.
+  Upstream provider capability, external SDLC standards, or market-scan
+  context do not prove local implementation without a tracked repository
+  surface.
+- Static repository validation, generated-index freshness, task evidence, and
+  local file review are not live k3d, ArgoCD, Vault, ESO, Kubernetes, cloud,
+  provider runtime, GitHub CI run, paid-job, deployment, or secret readiness.
 
 #### Evidence
 
@@ -66,11 +76,26 @@ inventory stays in `scripts/README.md`.
   `/home/hy/.local/bin/rtk --version` reported `rtk 0.34.3`; `rtk gain` could
   not initialize its tracking database, so required task commands were run
   directly where exact command evidence was needed.
+- T-003 through T-005 audit reports were completed and reviewed with
+  subagent-assisted spec and quality checks. The T-003 section-contract issue
+  and T-005 stale README wording issue were remediated and re-reviewed.
+- Final T-006 validation: `git diff --check` — PASS; `bash
+  scripts/generate-llm-wiki-index.sh --check` — PASS; `bash
+  scripts/validate-repo-quality-gates.sh .` — PASS.
+- Progress singleton validation: `rg --files | rg '(^|/)progress\.md$'` —
+  PASS; returned only `docs/00.agent-governance/memory/progress.md`.
+- Audit-pack status alignment scans — PASS; no audit-pack frontmatter remained
+  `draft`, no audit-pack checklist remained unchecked, and no audit-pack README
+  row remained `Draft`.
 
 #### Handoff
 
-- Next step: continue the audit pack with T-003, the harness and loop
-  implementation audit. No live runtime checks were requested or run for T-002.
+- No remaining audit-pack task handoff. Future automation or remediation
+  opportunities identified by the reports should start from a new scoped Spec,
+  Plan, Task, script, CI, template, provider-adapter, or operations change.
+- No live k3d, ArgoCD, Vault, ESO, Kubernetes, cloud, provider runtime, GitHub
+  CI run-history, paid-job, deployment, external-service, or secret readiness
+  checks were requested or run for this audit pack.
 
 ### 2026-07-02 — Workspace harness research pack
 
