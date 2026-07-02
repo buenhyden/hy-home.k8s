@@ -41,7 +41,7 @@
 ## How to Work in This Area
 
 1. [azure-maintenance-policy.md](azure-maintenance-policy.md)를 통해 기본 운영 정책을 숙지한다.
-2. 정책 수립 시 [policy.template.md](../../../../../docs/99.templates/policy.template.md) 템플릿을 준수한다.
+2. 정책 수립 시 [policy.template.md](../../../../../docs/99.templates/templates/sdlc/operations/policy.template.md) 템플릿을 준수한다.
 3. 모든 정책은 실제 인프라 환경과 컴플라이언스 기준(SOC2, HIPAA 등)에 맞게 정기적으로 갱신해야 한다.
 
 ## Link Basis

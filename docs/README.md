@@ -126,15 +126,15 @@ version support boundary, generated-index contract처럼 사실 계약으로 소
 
 | Lifecycle Stage | Folder | Canonical Template | Required Responsibility |
 | --- | --- | --- | --- |
-| Requirement | [`01.requirements`](./01.requirements/README.md) | [`prd.template.md`](./99.templates/prd.template.md) | 사용자 문제, 범위, 기능 요구사항, 성공/수용 기준 |
-| Architecture Requirement | [`02.architecture/requirements`](./02.architecture/requirements/README.md) | [`ard.template.md`](./99.templates/ard.template.md) | 시스템 경계, 품질 속성, 참조 구조 |
-| Architecture Decision | [`02.architecture/decisions`](./02.architecture/decisions/README.md) | [`adr.template.md`](./99.templates/adr.template.md) | 하나의 결정, 맥락, 결과, 대안 |
-| Specification | [`03.specs`](./03.specs/README.md) | [`spec.template.md`](./99.templates/spec.template.md) | 구현 계약, 인터페이스, 검증 기준 |
-| Plan | [`04.execution/plans`](./04.execution/plans/README.md) | [`plan.template.md`](./99.templates/plan.template.md) | 실행 순서, 리스크, rollout, verification gate |
-| Task | [`04.execution/tasks`](./04.execution/tasks/README.md) | [`task.template.md`](./99.templates/task.template.md) | 작업 단위, evidence, 완료 상태 |
+| Requirement | [`01.requirements`](./01.requirements/README.md) | [`prd.template.md`](./99.templates/templates/sdlc/requirements/prd.template.md) | 사용자 문제, 범위, 기능 요구사항, 성공/수용 기준 |
+| Architecture Requirement | [`02.architecture/requirements`](./02.architecture/requirements/README.md) | [`ard.template.md`](./99.templates/templates/sdlc/architecture/ard.template.md) | 시스템 경계, 품질 속성, 참조 구조 |
+| Architecture Decision | [`02.architecture/decisions`](./02.architecture/decisions/README.md) | [`adr.template.md`](./99.templates/templates/sdlc/architecture/adr.template.md) | 하나의 결정, 맥락, 결과, 대안 |
+| Specification | [`03.specs`](./03.specs/README.md) | [`spec.template.md`](./99.templates/templates/sdlc/specs/spec.template.md) | 구현 계약, 인터페이스, 검증 기준 |
+| Plan | [`04.execution/plans`](./04.execution/plans/README.md) | [`plan.template.md`](./99.templates/templates/sdlc/execution/plan.template.md) | 실행 순서, 리스크, rollout, verification gate |
+| Task | [`04.execution/tasks`](./04.execution/tasks/README.md) | [`task.template.md`](./99.templates/templates/sdlc/execution/task.template.md) | 작업 단위, evidence, 완료 상태 |
 | Operation | [`05.operations`](./05.operations/README.md) | guide/policy/runbook templates | 안정 상태 안내, 정책, 실행 절차 |
-| Reference | [`90.references`](./90.references/README.md) | [`reference.template.md`](./99.templates/reference.template.md) | lookup material, glossary, appendix, version snapshot, dated source/freshness boundary |
-| Archive | [`98.archive`](./98.archive/README.md) | [`archive-tombstone.template.md`](./99.templates/archive-tombstone.template.md) | old 문서의 original-path mirror와 metadata-only Tombstone |
+| Reference | [`90.references`](./90.references/README.md) | [`reference.template.md`](./99.templates/templates/common/reference.template.md) | lookup material, glossary, appendix, version snapshot, dated source/freshness boundary |
+| Archive | [`98.archive`](./98.archive/README.md) | [`archive-tombstone.template.md`](./99.templates/templates/common/archive-tombstone.template.md) | old 문서의 original-path mirror와 metadata-only Tombstone |
 
 - README와 index 문서는 해당 폴더의 목적, scope, structure, workflow, link basis, related documents를 유지한다.
 - README와 index 문서는 frontmatter 없이 작성한다. 다른 authored stage 문서는 matching template의 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.

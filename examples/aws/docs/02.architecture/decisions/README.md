@@ -40,7 +40,7 @@
 ## How to Work in This Area
 
 1. 결정의 상위 맥락을 [02.architecture/requirements](../requirements/README.md)에서 확인합니다.
-2. 새 ADR은 `../../../../docs/99.templates/adr.template.md`를 기준으로 작성합니다.
+2. 새 ADR은 `../../../../docs/99.templates/templates/sdlc/architecture/adr.template.md`를 기준으로 작성합니다.
 3. 결정이 구현 계약을 바꾸면 [03.specs](../../03.specs/README.md)를 함께 갱신합니다.
 
 ## Link Basis

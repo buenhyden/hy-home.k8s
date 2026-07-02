@@ -14,11 +14,11 @@
 
 | 필요 상황                                   | 사용할 위치                                                                  | 시작 템플릿                                                      |
 | ------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| 시스템을 이해하거나 온보딩 절차를 따라야 함 | [guides](./guides/README.md)                                                 | [guide.template.md](../99.templates/guide.template.md)           |
-| 허용/금지/예외 승인 기준을 확인해야 함      | [policies](./policies/README.md)                                             | [policy.template.md](../99.templates/policy.template.md)         |
-| 정해진 순서로 실행, 검증, 복구해야 함       | [runbooks](./runbooks/README.md)                                             | [runbook.template.md](../99.templates/runbook.template.md)       |
-| 실제 사고 사실, 타임라인을 기록해야 함      | [incidents](./incidents/README.md)                                           | [incident.template.md](../99.templates/incident.template.md)     |
-| 사고 후 원인과 재발 방지를 분석해야 함      | [incidents README](./incidents/README.md)에서 postmortem 경로 생성 조건 확인 | [postmortem.template.md](../99.templates/postmortem.template.md) |
+| 시스템을 이해하거나 온보딩 절차를 따라야 함 | [guides](./guides/README.md)                                                 | [guide.template.md](../99.templates/templates/sdlc/operations/guide.template.md)           |
+| 허용/금지/예외 승인 기준을 확인해야 함      | [policies](./policies/README.md)                                             | [policy.template.md](../99.templates/templates/sdlc/operations/policy.template.md)         |
+| 정해진 순서로 실행, 검증, 복구해야 함       | [runbooks](./runbooks/README.md)                                             | [runbook.template.md](../99.templates/templates/sdlc/operations/runbook.template.md)       |
+| 실제 사고 사실, 타임라인을 기록해야 함      | [incidents](./incidents/README.md)                                           | [incident.template.md](../99.templates/templates/sdlc/operations/incident.template.md)     |
+| 사고 후 원인과 재발 방지를 분석해야 함      | [incidents README](./incidents/README.md)에서 postmortem 경로 생성 조건 확인 | [postmortem.template.md](../99.templates/templates/sdlc/operations/postmortem.template.md) |
 
 ## Operations Folder Roles
 

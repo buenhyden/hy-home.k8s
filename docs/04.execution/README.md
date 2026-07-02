@@ -50,7 +50,7 @@
 
 1. 실행 순서와 검증 기준은 먼저 `plans/`에 정리한다.
 2. 실행 가능한 작업 단위, 상태, evidence는 `tasks/`에 기록한다.
-3. 새 Plan은 `../99.templates/plan.template.md`, 새 Task는 `../99.templates/task.template.md`에서 시작한다.
+3. 새 Plan은 `../99.templates/templates/sdlc/execution/plan.template.md`, 새 Task는 `../99.templates/templates/sdlc/execution/task.template.md`에서 시작한다.
 4. 문서만 갱신하더라도 관련 stage README와 upstream/downstream 링크를 같은 변경에서 맞춘다.
 5. live mutation이 필요한 절차는 실행 지시로 남기지 않고 human approval 조건과 GitOps 경계를 명시한다.
 6. 완료를 주장하기 전에 repo-backed validation과 남은 제한 사항을 Task evidence에 남긴다.

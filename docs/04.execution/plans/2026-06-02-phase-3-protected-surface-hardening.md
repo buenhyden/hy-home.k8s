@@ -81,7 +81,7 @@ ESO, or deployment readiness.
 | PLN-001 | Harden CI shared asset trigger | `.github/workflows/ci.yml`, `scripts/validate-repo-quality-gates.sh` | REQ-P3-001, REQ-P3-006 | Quality gate fails if `.agents/**` is absent from the CI repo-quality filter. |
 | PLN-002 | Harden runtime hook trigger and JSON parse lanes | `docs/00.agent-governance/hooks/post-validate.sh`, `docs/00.agent-governance/hooks/lifecycle-guard.sh` | REQ-P3-002, REQ-P3-003 | Hooks include `.agents/*` repo-quality matching and parse `.agents/hooks.json`. |
 | PLN-003 | Clarify SessionStart live-readiness boundary | `docs/00.agent-governance/hooks/session-start.sh` | REQ-P3-004 | SessionStart states live probes are read-only and not repo-static readiness proof. |
-| PLN-004 | Update template and governance guidance | `docs/99.templates/plan.template.md`, `docs/99.templates/task.template.md`, governance/reference docs | REQ-P3-005 | Template guidance changes do not add required headings and quality gates pass. |
+| PLN-004 | Update template and governance guidance | `docs/99.templates/templates/sdlc/execution/plan.template.md`, `docs/99.templates/templates/sdlc/execution/task.template.md`, governance/reference docs | REQ-P3-005 | Template guidance changes do not add required headings and quality gates pass. |
 | PLN-005 | Record Phase 3 execution evidence | Phase 3 Plan/Task, README indexes, Phase 2 links, progress ledger | REQ-P3-007 | Artifacts are indexed and linked with `status: done`, `owner: platform`, and related docs. |
 | PLN-006 | Run approved read-only live validation | `docs/00.agent-governance/hooks/session-start.sh`, `infrastructure/tests/run-all.sh` | REQ-P3-008 | Live checks pass, or blockers are recorded as live validation limitations. |
 
@@ -143,4 +143,4 @@ ESO, or deployment readiness.
 - **Phase 4 Plan**: [./2026-06-02-phase-4-eso-vault-runtime-diagnosis.md](./2026-06-02-phase-4-eso-vault-runtime-diagnosis.md)
 - **Phase 4 Task**: [../tasks/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md](../tasks/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
-- **Plan Template**: [../../99.templates/plan.template.md](../../99.templates/plan.template.md)
+- **Plan Template**: [../../99.templates/templates/sdlc/execution/plan.template.md](../../99.templates/templates/sdlc/execution/plan.template.md)

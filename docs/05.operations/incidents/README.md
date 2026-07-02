@@ -21,8 +21,8 @@ Postmortem은 “왜 허용됐고 무엇을 바꿀 것인가”를 기록한다.
 
 | Artifact | Path rule | Template | Creation rule | Current state |
 | --- | --- | --- | --- | --- |
-| `Incident Record` | `./YYYY/YYYY-MM-DD-<incident>.md` | [incident.template.md](../../99.templates/incident.template.md) | Create only for a real incident fact record. | No tracked incident records. |
-| `Postmortem` | `./postmortems/YYYY/YYYY-MM-DD-<incident>.md` | [postmortem.template.md](../../99.templates/postmortem.template.md) | Create only after incident stabilization when root cause/prevention analysis is needed. | No tracked postmortems. |
+| `Incident Record` | `./YYYY/YYYY-MM-DD-<incident>.md` | [incident.template.md](../../99.templates/templates/sdlc/operations/incident.template.md) | Create only for a real incident fact record. | No tracked incident records. |
+| `Postmortem` | `./postmortems/YYYY/YYYY-MM-DD-<incident>.md` | [postmortem.template.md](../../99.templates/templates/sdlc/operations/postmortem.template.md) | Create only after incident stabilization when root cause/prevention analysis is needed. | No tracked postmortems. |
 
 ## Audience
 
@@ -58,8 +58,8 @@ Postmortem은 “왜 허용됐고 무엇을 바꿀 것인가”를 기록한다.
 
 ## How to Work in This Area
 
-1. 대응 중에는 [incident.template.md](../../99.templates/incident.template.md)로 사실 기록을 시작한다.
-2. 사고 종료 후 구조 분석이 필요하면 [postmortem.template.md](../../99.templates/postmortem.template.md)를 사용한다.
+1. 대응 중에는 [incident.template.md](../../99.templates/templates/sdlc/operations/incident.template.md)로 사실 기록을 시작한다.
+2. 사고 종료 후 구조 분석이 필요하면 [postmortem.template.md](../../99.templates/templates/sdlc/operations/postmortem.template.md)를 사용한다.
 3. Runbook/Operations/ADR/Spec 링크를 남겨 재발 방지 액션을 추적한다.
 4. 비밀 값, 토큰, 개인 식별 정보는 사고 기록에 직접 남기지 않는다.
 5. 사고가 없는 상태에서는 README만 유지하고 빈 placeholder 파일을 만들지 않는다.
@@ -104,5 +104,5 @@ Postmortem은 “왜 허용됐고 무엇을 바꿀 것인가”를 기록한다.
 - [05.operations/policies](../policies/README.md)
 - [05.operations/runbooks](../runbooks/README.md)
 - [99.templates](../../99.templates/README.md)
-- [Incident Template](../../99.templates/incident.template.md)
-- [Postmortem Template](../../99.templates/postmortem.template.md)
+- [Incident Template](../../99.templates/templates/sdlc/operations/incident.template.md)
+- [Postmortem Template](../../99.templates/templates/sdlc/operations/postmortem.template.md)

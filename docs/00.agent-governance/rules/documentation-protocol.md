@@ -38,7 +38,7 @@ This protocol defines how governance references authored docs and how language b
   `archive-tombstone.template.md`. If this summary diverges from
   `docs/99.templates/README.md`, the template README and routing rule are the
   sources to fix first.
-- README files must use `docs/99.templates/readme.template.md`.
+- README files must use `docs/99.templates/templates/common/readme.template.md`.
 - README files must keep `## Link Basis` and `## Related Documents`; legacy `## Related References` headings are incomplete.
 - PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook, Incident, Postmortem, Reference, and Archive Tombstone documents must use their stage-specific templates from `docs/99.templates/`.
 - `docs/03.specs/<feature-id>/api-spec.md`, `agent-design.md`, `data-model.md`, and `tests.md` must use their matching helper templates.
@@ -49,7 +49,7 @@ This protocol defines how governance references authored docs and how language b
 - Agents must report the template path used and the validation evidence before handoff.
 - Generated exceptions, such as `docs/90.references/llm-wiki/wiki-index.md`, must keep their generator contract and must not be edited by hand.
 - `docs/98.archive` documents must be metadata-only Tombstones and must not preserve old full bodies.
-- `docs/99.templates/reference.template.md` must not own archive policy or contain archive wording; archive policy belongs in routing/governance docs and `archive-tombstone.template.md`.
+- `docs/99.templates/templates/common/reference.template.md` must not own archive policy or contain archive wording; archive policy belongs in routing/governance docs and `archive-tombstone.template.md`.
 - Claude and Codex Write/Edit/MultiEdit hooks must surface Template-First guidance before authored stage doc edits and run post-edit documentation template enforcement. Gemini has no native hook file and must honor the same Template-First behavior contract for authored stage docs.
 
 ## Language Boundary Rules
@@ -108,10 +108,10 @@ This protocol defines how governance references authored docs and how language b
 - Postmortems belong under `docs/05.operations/incidents/postmortems/`, not a separate top-level docs stage.
 - Persona and scope instructions must state which stage folders are authoritative.
 - Stage expectations must map to [stage-authoring-matrix.md](stage-authoring-matrix.md).
-- Repo-changing agent work must append progress and reusable memory to `docs/00.agent-governance/memory/progress.md` using `docs/99.templates/progress.template.md`.
+- Repo-changing agent work must append progress and reusable memory to `docs/00.agent-governance/memory/progress.md` using `docs/99.templates/templates/common/progress.template.md`.
 - `docs/00.agent-governance/memory/progress.md` is the canonical progress ledger and the only tracked `progress.md`. Standalone memory files are allowed, but the filename `progress.md` is forbidden outside the canonical path.
 - Agent eval completion evidence belongs in the relevant Stage 04 Task record and the canonical progress ledger. Eval PASS must come from deterministic command evidence or recorded human/operator approval, not inferred file presence or unverified live runtime readiness.
-- Standalone files under `docs/00.agent-governance/memory/` must use `docs/99.templates/memory.template.md` and must be accompanied by a related `progress.md` entry in the same change.
+- Standalone files under `docs/00.agent-governance/memory/` must use `docs/99.templates/templates/common/memory.template.md` and must be accompanied by a related `progress.md` entry in the same change.
 
 ## Template Link Policy
 

@@ -14,7 +14,7 @@ updated: 2026-07-03
 
 **Architecture:** The work creates one audits README and four dated audit reports. Each report uses the research pack as the benchmark model, compares it to repository evidence, and records status, evidence, gaps, automation opportunities, and follow-up routes without redefining active policy.
 
-**Tech Stack:** Markdown, `docs/99.templates/readme.template.md`, `docs/99.templates/reference.template.md`, Stage 04 task evidence, `rg`, `sed`, repository validation scripts, and Git commits by logical unit.
+**Tech Stack:** Markdown, `docs/99.templates/templates/common/readme.template.md`, `docs/99.templates/templates/common/reference.template.md`, Stage 04 task evidence, `rg`, `sed`, repository validation scripts, and Git commits by logical unit.
 
 ---
 
@@ -128,8 +128,8 @@ Use these source groups during implementation:
 Run:
 
 ```bash
-sed -n '1,220p' docs/99.templates/readme.template.md
-sed -n '1,220p' docs/99.templates/reference.template.md
+sed -n '1,220p' docs/99.templates/templates/common/readme.template.md
+sed -n '1,220p' docs/99.templates/templates/common/reference.template.md
 sed -n '1,220p' docs/90.references/audits/2026-05-24-workspace-harness-gap-analysis.md
 sed -n '1,240p' docs/90.references/README.md
 ```
@@ -229,7 +229,7 @@ evidence for rules, adapters, scripts, templates, validation, and QA/CI lanes.
 
 - [x] **Step 2: Write the governance audit report**
 
-Create the report from `docs/99.templates/reference.template.md` with:
+Create the report from `docs/99.templates/templates/common/reference.template.md` with:
 
 - `title: 'Reference: Workspace Governance Implementation Audit'`
 - `type: reference`

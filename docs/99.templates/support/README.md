@@ -65,8 +65,8 @@ support/
 
 1. Update support contracts before changing template form paths or
    frontmatter profiles.
-2. Keep template form instructions in `docs/99.templates/*.template.*` until
-   Phase 2 moves those files under `templates/**`.
+2. Keep template form instructions in `docs/99.templates/templates/**` and
+   keep contract rules in this `support/` folder.
 3. Keep detailed contract text here, not in `docs/99.templates/README.md`.
 4. When a support rule changes route behavior, update Stage 00 governance,
    hook hints, validators, and affected authored docs in the matching
@@ -91,7 +91,7 @@ This README is located at `docs/99.templates/support/`.
 | [SDLC Governance](./sdlc-governance.md) | Defines SDLC lifecycle template responsibilities. |
 | [Common Documentation Governance](./common-documentation-governance.md) | Defines README, reference, archive, memory, and progress template responsibilities. |
 | [Frontmatter Schema](./frontmatter-schema.md) | Defines current and target frontmatter profile rules. |
-| [Template Routing](./template-routing.md) | Defines current flat routing and the approved target route map. |
+| [Template Routing](./template-routing.md) | Defines the current `templates/**` route map. |
 | [Legacy Cleanup Rules](./legacy-cleanup-rules.md) | Defines active legacy keys, values, sections, and routes to remove. |
 
 ## Related Documents

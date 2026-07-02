@@ -45,7 +45,7 @@ agents/
 
 ## How to Work in This Area
 
-1. 새 문서를 만들기 전에 `docs/99.templates/reference.template.md`를 먼저 확인한다.
+1. 새 문서를 만들기 전에 `docs/99.templates/templates/common/reference.template.md`를 먼저 확인한다.
 2. 기능 범위에 묶인 내용이면 `docs/03.specs/<feature-id>/agent-design.md`로 보낸다.
 3. 실행 순서나 롤아웃이 핵심이면 `docs/04.execution/plans/`로 보낸다.
 4. 새 문서를 추가하면 이 README와 상위 `docs/90.references/README.md`의 구조 설명이 계속 맞는지 확인한다.

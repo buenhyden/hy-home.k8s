@@ -87,4 +87,4 @@ unseal and secret inspection are not performed.
 - [Phase 3 Protected Surface Hardening Plan](../plans/2026-06-02-phase-3-protected-surface-hardening.md)
 - [Phase 3 Protected Surface Hardening Task](./2026-06-02-phase-3-protected-surface-hardening.md)
 - [ArgoCD ESO Vault Recovery Runbook](../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md)
-- [Task Template](../../99.templates/task.template.md)
+- [Task Template](../../99.templates/templates/sdlc/execution/task.template.md)

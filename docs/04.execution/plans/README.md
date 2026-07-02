@@ -75,7 +75,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ## How to Work in This Area
 
 1. 관련 PRD/ARD/ADR/Spec을 먼저 읽고 계획의 입력을 고정한다.
-2. 새 Plan은 `../../99.templates/plan.template.md`에서 시작하고, canonical target pattern은 `docs/04.execution/plans/YYYY-MM-DD-<feature>.md`다.
+2. 새 Plan은 `../../99.templates/templates/sdlc/execution/plan.template.md`에서 시작하고, canonical target pattern은 `docs/04.execution/plans/YYYY-MM-DD-<feature>.md`다.
 3. Plan은 언제, 누가, 어떤 순서로, 어떤 제약과 위험을 관리하며 작업을 진행하는지 정의한다.
 4. Plan 변경 시 관련 `../tasks/`의 Parent Plan/Phase 링크와 Task ID를 확인한다.
 5. 완료된 계획은 완료 기준, 검증 결과, 후속 문서 링크를 남기되 상세 evidence 정본은 Task 문서에 둔다.
@@ -129,5 +129,5 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 - [03.specs](../../03.specs/README.md)
 - [04.execution/tasks](../tasks/README.md)
 - [05.operations/policies](../../05.operations/policies/README.md)
-- [Plan Template](../../99.templates/plan.template.md)
+- [Plan Template](../../99.templates/templates/sdlc/execution/plan.template.md)
 - [Archive Index](../../98.archive/README.md)

@@ -71,7 +71,7 @@ Links in this README are relative to `docs/00.agent-governance/`.
 - Governance rules use `rules/<file>.md`.
 - Scope and provider notes use `scopes/<file>.md` and `providers/<file>.md`.
 - Repository-root runtime files use `../../<path>`.
-- Template links use `../99.templates/<template>.md`.
+- Template links use `../99.templates/templates/**/<template>`.
 
 ## Governance Entry Points
 
@@ -108,4 +108,4 @@ Links in this README are relative to `docs/00.agent-governance/`.
 
 - Add a new execution rule under `rules/`.
 - Add a provider note under `providers/`.
-- Add work progress and reusable memory under `memory/progress.md` using `docs/99.templates/progress.template.md`.
+- Add work progress and reusable memory under `memory/progress.md` using `docs/99.templates/templates/common/progress.template.md`.

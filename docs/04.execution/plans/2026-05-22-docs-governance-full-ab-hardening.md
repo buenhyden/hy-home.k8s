@@ -31,7 +31,7 @@ the shared enforcement boundary for Hookify local rules in docs and validation.
 ## Goals & In-Scope
 
 - **Goals**:
-  - Align every README with the base structure in `docs/99.templates/readme.template.md`.
+  - Align every README with the base structure in `docs/99.templates/templates/common/readme.template.md`.
   - Align lifecycle documents from `docs/01.requirements` through `docs/05.operations` with template rules and cross-link criteria.
   - Reflect Agent gateway and runtime hook/mirror boundaries in the latest governance docs and validation gates.
   - Keep Hookify `.local.md` as an ignored local warning layer, while tracked hooks and the quality gate own shared enforcement.

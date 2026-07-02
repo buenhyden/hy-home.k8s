@@ -34,7 +34,7 @@ The key facts confirmed in Phase 1 were:
 - The user decided to declare `model_reasoning_effort` in Codex TOML.
 - `AGENTS.md` is actually used as a Codex/GPT provider shim.
 - The user decided to clarify `AGENTS.md` as the Codex/GPT-specific shim.
-- `docs/05.operations/policies/*.md` used `type: operation`, while `docs/99.templates/policy.template.md` requires `type: policy`.
+- `docs/05.operations/policies/*.md` used `type: operation`, while `docs/99.templates/templates/sdlc/operations/policy.template.md` requires `type: policy`.
 - The user decided to normalize operations policy document frontmatter to `type: policy`.
 - Official OpenAI model docs currently document the `gpt-5.5`, `gpt-5.4-mini`, and `gpt-5.3-codex` model IDs and the supported reasoning effort range.
 
@@ -106,7 +106,7 @@ The key facts confirmed in Phase 1 were:
 | PLN-003 | Align Codex harness model config | `.codex/agents/*.toml`, `.codex/CODEX.md` | G3, Codex config correctness | Every TOML declares allowed `model` and `model_reasoning_effort`. |
 | PLN-004 | Clarify `AGENTS.md` provider role | `AGENTS.md`, `docs/00.agent-governance/providers/agents-md.md`, `docs/00.agent-governance/providers/codex.md` | G3, Single governance | `AGENTS.md` is Codex/GPT shim and points to shared Stage 00 without duplicating policy. |
 | PLN-005 | Normalize hook and provider script references | `.codex/CODEX.md`, `docs/00.agent-governance/providers/*.md`, `docs/00.agent-governance/common-governance.md`, `docs/00.agent-governance/harness-catalog.md` | G3, Hook boundary | Docs consistently describe shared scripts under `docs/00.agent-governance/hooks/*.sh`. |
-| PLN-006 | Normalize Template Contract policy naming | `.agents/skills/docs-stage-routing/skill.md`, `docs/00.agent-governance/hooks/k8s-pre-edit.sh`, `docs/00.agent-governance/rules/document-stage-routing.md` | G3, Template Contract | Policy routing uses `docs/99.templates/policy.template.md`; no `operation.template.md` references remain in active routing. |
+| PLN-006 | Normalize Template Contract policy naming | `.agents/skills/docs-stage-routing/skill.md`, `docs/00.agent-governance/hooks/k8s-pre-edit.sh`, `docs/00.agent-governance/rules/document-stage-routing.md` | G3, Template Contract | Policy routing uses `docs/99.templates/templates/sdlc/operations/policy.template.md`; no `operation.template.md` references remain in active routing. |
 | PLN-007 | Normalize authored policy frontmatter | `docs/05.operations/policies/*.md` | G3, Template compliance | All policy docs use `type: policy`; no `^type: operation$` remains under policies. |
 | PLN-008 | Strengthen repo quality gates for recurring drift | `scripts/validate-repo-quality-gates.sh` | G3, QA and CI/CD | Gate fails on Codex TOML model/effort drift, policy type drift, and active `operation.template.md` routing drift. |
 | PLN-009 | Update required indexes and memory | `docs/04.execution/plans/README.md`, `docs/04.execution/tasks/README.md`, `docs/00.agent-governance/memory/progress.md` | Traceability | README indexes are current and progress entry records files changed and verification evidence. |
@@ -163,7 +163,7 @@ The key facts confirmed in Phase 1 were:
 - [Codex Provider Notes](../../00.agent-governance/providers/codex.md)
 - [Codex Runtime Baseline](../../../.codex/CODEX.md)
 - [Template README](../../99.templates/README.md)
-- [Plan Template](../../99.templates/plan.template.md)
+- [Plan Template](../../99.templates/templates/sdlc/execution/plan.template.md)
 - [OpenAI Models](https://developers.openai.com/api/docs/models)
 - [GPT-5.5 Model](https://developers.openai.com/api/docs/models/gpt-5.5)
 - [GPT-5.3-Codex Model](https://developers.openai.com/api/docs/models/gpt-5.3-codex)

@@ -52,7 +52,7 @@
 ## How to Work in This Area
 
 1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `02.architecture/requirements/`에서 확인한다.
-2. 새 ADR은 `../../99.templates/adr.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/decisions/####-<short-title>.md`다.
+2. 새 ADR은 `../../99.templates/templates/sdlc/architecture/adr.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/decisions/####-<short-title>.md`다.
 3. 현재 구현과 상충하는 superseded/deprecated-only 결정은 `../../98.archive/README.md`에 Tombstone으로 이동한다.
 4. `Accepted` ADR의 현재 런타임 값은 GitOps manifest, 정적 검증 스크립트, current baseline ADR과 일치해야 한다.
 5. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
@@ -86,5 +86,5 @@
 - [02.architecture/requirements](../requirements/README.md)
 - [03.specs](../../03.specs/README.md)
 - [05.operations/policies](../../05.operations/policies/README.md)
-- [99.templates ADR Template](../../99.templates/adr.template.md)
+- [99.templates ADR Template](../../99.templates/templates/sdlc/architecture/adr.template.md)
 - [Archive Index](../../98.archive/README.md)

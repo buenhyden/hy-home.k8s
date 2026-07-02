@@ -104,5 +104,5 @@ explicitly with their reason.
 - [Local Harness Catalog](harness-catalog.md)
 - [Approval Boundaries](rules/approval-boundaries.md)
 - [Bootstrap Governance](rules/bootstrap.md)
-- [Harness Task Contract Template](../99.templates/harness-task-contract.template.md)
+- [Harness Task Contract Template](../99.templates/templates/sdlc/specs/harness-task-contract.template.md)
 - [Operations Hub](../05.operations/README.md)

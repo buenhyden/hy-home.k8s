@@ -84,7 +84,7 @@ Follow-up route: hook behavior changes belong in the shared hook scripts, provid
 
 ### Templates and formatting
 
-Authored documents under the active stage taxonomy must use the canonical template mapping in [docs/99.templates/README.md](../../99.templates/README.md) and routing rules in [document-stage-routing.md](../../00.agent-governance/rules/document-stage-routing.md). Reference documents under `docs/90.references/**` use [reference.template.md](../../99.templates/reference.template.md).
+Authored documents under the active stage taxonomy must use the canonical template mapping in [docs/99.templates/README.md](../../99.templates/README.md) and routing rules in [document-stage-routing.md](../../00.agent-governance/rules/document-stage-routing.md). Reference documents under `docs/90.references/**` use [reference.template.md](../../99.templates/templates/common/reference.template.md).
 
 Language boundaries are stage-specific:
 
@@ -161,7 +161,7 @@ Follow-up route: repeated code, document, or structure drift should update the s
 - [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
 - [Scripts README](../../../scripts/README.md)
 - [GitHub CI Workflow](../../../.github/workflows/ci.yml)
-- [Reference Template](../../99.templates/reference.template.md)
+- [Reference Template](../../99.templates/templates/common/reference.template.md)
 
 ## Review and Freshness
 

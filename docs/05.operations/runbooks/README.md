@@ -63,7 +63,7 @@ docs/05.operations/runbooks/
 ## How to Work in This Area
 
 1. 관련 Spec/Operations를 먼저 확인해 계약값을 고정한다.
-2. [runbook.template.md](../../99.templates/runbook.template.md)를 기반으로 작성한다.
+2. [runbook.template.md](../../99.templates/templates/sdlc/operations/runbook.template.md)를 기반으로 작성한다.
 3. 절차는 명령 실행 순서와 검증 기준을 함께 제시한다.
 4. 복구 절차에는 롤백, 재동기화, 증적 수집 단계를 반드시 포함한다.
 5. 정책 통제 기준은 런북에 복제하지 말고 [policies](../policies/README.md)로 연결한다.
@@ -79,7 +79,7 @@ docs/05.operations/runbooks/
 
 ## Verification and Monitoring
 
-- Runbook 문서 구조 검증은 [runbook.template.md](../../99.templates/runbook.template.md)와 `scripts/validate-repo-quality-gates.sh`를 기준으로 한다.
+- Runbook 문서 구조 검증은 [runbook.template.md](../../99.templates/templates/sdlc/operations/runbook.template.md)와 `scripts/validate-repo-quality-gates.sh`를 기준으로 한다.
 - 작업 증적은 명령 출력, GitOps diff, ArgoCD sync 상태, dashboard/log snapshot, CI 결과 중 해당 Runbook이 요구하는 항목으로 남긴다.
 - live cluster, Vault, Kubernetes mutation은 human-approved bootstrap 또는 break-glass 작업에서만 실행한다.
 
@@ -106,8 +106,8 @@ docs/05.operations/runbooks/
 - [ADR](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - [Spec](../../03.specs/008-current-local-gitops-platform/spec.md)
 - [Operations Policy](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md)
-- [Runbook Template](../../99.templates/runbook.template.md)
-- [README Template](../../99.templates/readme.template.md)
+- [Runbook Template](../../99.templates/templates/sdlc/operations/runbook.template.md)
+- [README Template](../../99.templates/templates/common/readme.template.md)
 
 ## 문서 인덱스
 

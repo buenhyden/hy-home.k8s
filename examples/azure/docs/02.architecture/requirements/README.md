@@ -40,7 +40,7 @@
 
 ## How to Work in This Area
 
-1. 아키텍처 모델 변경 시 [ard.template.md](../../../../../docs/99.templates/ard.template.md) 템플릿을 사용하여 새 문서를 생성한다.
+1. 아키텍처 모델 변경 시 [ard.template.md](../../../../../docs/99.templates/templates/sdlc/architecture/ard.template.md) 템플릿을 사용하여 새 문서를 생성한다.
 2. 모든 아키텍처 다이어그램은 Mermaid 형식을 사용하며 코드 블록에 포함한다.
 3. [0001-azure-migration-architecture.md](0001-azure-migration-architecture.md)는 프로젝트의 기술적 가이드라인으로 유지한다.
 

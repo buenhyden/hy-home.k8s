@@ -36,7 +36,7 @@ evidence before editing. Remove guidance comments in the authored copy.
 ## Approval Required
 
 - Resolve each affected surface against the approval matrix in
-  [`../00.agent-governance/rules/approval-boundaries.md`](../00.agent-governance/rules/approval-boundaries.md).
+  [`../../../../00.agent-governance/rules/approval-boundaries.md`](../../../../00.agent-governance/rules/approval-boundaries.md).
 
 ## GitOps Impact
 
@@ -73,5 +73,5 @@ evidence before editing. Remove guidance comments in the authored copy.
 
 ## Related Documents
 
-- [Harness Implementation Map](../00.agent-governance/harness-implementation-map.md)
-- [Local Harness Catalog](../00.agent-governance/harness-catalog.md)
+- [Harness Implementation Map](../../../../00.agent-governance/harness-implementation-map.md)
+- [Local Harness Catalog](../../../../00.agent-governance/harness-catalog.md)

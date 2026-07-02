@@ -241,7 +241,7 @@ contracts, or canonical repository owners.
   and [Stage 04 tasks](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md).
 - Route template or document-structure changes to
   [Templates README](../../99.templates/README.md),
-  [reference.template.md](../../99.templates/reference.template.md),
+  [reference.template.md](../../99.templates/templates/common/reference.template.md),
   [document-stage-routing.md](../../00.agent-governance/rules/document-stage-routing.md),
   and `scripts/validate-repo-quality-gates.sh`.
 - Route CI job or branch-policy changes to

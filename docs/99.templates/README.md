@@ -47,30 +47,39 @@
 │   ├── legacy-cleanup-rules.md
 │   ├── sdlc-governance.md
 │   └── template-routing.md
-├── adr.template.md
-├── agent-design.template.md
-├── api-spec.template.md
-├── archive-tombstone.template.md
-├── ard.template.md
-├── data-model.template.md
-├── guide.template.md
-├── harness-task-contract.template.md
-├── incident.template.md
-├── memory.template.md
-├── openapi.template.yaml
-├── plan.template.md
-├── policy.template.md
-├── postmortem.template.md
-├── progress.template.md
-├── prd.template.md
-├── readme.template.md
-├── reference.template.md
-├── runbook.template.md
-├── schema.template.graphql
-├── service.template.proto
-├── spec.template.md
-├── task.template.md
-├── tests.template.md
+├── templates/
+│   ├── README.md
+│   ├── common/
+│   │   ├── archive-tombstone.template.md
+│   │   ├── memory.template.md
+│   │   ├── progress.template.md
+│   │   ├── readme.template.md
+│   │   └── reference.template.md
+│   └── sdlc/
+│       ├── architecture/
+│       │   ├── adr.template.md
+│       │   └── ard.template.md
+│       ├── execution/
+│       │   ├── plan.template.md
+│       │   └── task.template.md
+│       ├── operations/
+│       │   ├── guide.template.md
+│       │   ├── incident.template.md
+│       │   ├── policy.template.md
+│       │   ├── postmortem.template.md
+│       │   └── runbook.template.md
+│       ├── requirements/
+│       │   └── prd.template.md
+│       └── specs/
+│           ├── agent-design.template.md
+│           ├── api-spec.template.md
+│           ├── data-model.template.md
+│           ├── harness-task-contract.template.md
+│           ├── openapi.template.yaml
+│           ├── schema.template.graphql
+│           ├── service.template.proto
+│           ├── spec.template.md
+│           └── tests.template.md
 └── README.md
 ```
 
@@ -125,7 +134,7 @@ governance, routing, frontmatter schema, legacy cleanup rule을 소유한다.
 | [SDLC Governance](./support/sdlc-governance.md) | PRD부터 postmortem까지 SDLC template family의 역할과 검증 경계를 정의한다. |
 | [Common Documentation Governance](./support/common-documentation-governance.md) | README, Reference, Archive, Memory, Progress template family의 역할을 정의한다. |
 | [Frontmatter Schema](./support/frontmatter-schema.md) | 현재 frontmatter baseline과 Phase 3 target profile model을 정의한다. |
-| [Template Routing](./support/template-routing.md) | 현재 flat route와 Phase 2 target folder family를 정의한다. |
+| [Template Routing](./support/template-routing.md) | 현재 `templates/**` route와 folder family를 정의한다. |
 | [Legacy Cleanup Rules](./support/legacy-cleanup-rules.md) | active legacy template, key, value, section, route cleanup 대상을 정의한다. |
 
 ## Link Basis
@@ -142,32 +151,32 @@ governance, routing, frontmatter schema, legacy cleanup rule을 소유한다.
 
 ## Template-Folder Mapping
 
-| Target Pattern                                                           | Template                        | Responsibility                                                          |
-| ------------------------------------------------------------------------ | ------------------------------- | ----------------------------------------------------------------------- |
-| `README.md`, `**/README.md`, `.claude/README.md`, `.codex/README.md`     | `readme.template.md`            | Entry point, scope, structure, workflow, link basis, related documents  |
-| `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md`                 | `prd.template.md`               | Product requirements, users, scope, success / acceptance criteria       |
-| `docs/02.architecture/requirements/####-<system-or-domain>.md`           | `ard.template.md`               | Architecture requirements, quality attributes, reference model          |
-| `docs/02.architecture/decisions/####-<short-title>.md`                   | `adr.template.md`               | One architecture decision, context, consequences, alternatives          |
-| `docs/03.specs/<feature-id>/spec.md`                                     | `spec.template.md`              | Parent implementation contract, interfaces, verification                |
-| `docs/03.specs/<feature-id>/api-spec.md`                                 | `api-spec.template.md`          | Feature-local API contract                                              |
-| `docs/03.specs/<feature-id>/agent-design.md`                             | `agent-design.template.md`      | Feature-local AI agent behavior, orchestration, safety, and eval design |
-| `docs/03.specs/<feature-id>/data-model.md`                               | `data-model.template.md`        | Feature-local logical and physical data model                           |
-| `docs/03.specs/<feature-id>/tests.md`                                    | `tests.template.md`             | Feature-local test and evaluation strategy                              |
-| `docs/03.specs/<feature-id>/contracts/openapi.yaml`                      | `openapi.template.yaml`         | Feature-local OpenAPI contract                                          |
-| `docs/03.specs/<feature-id>/contracts/schema.graphql`                    | `schema.template.graphql`       | Feature-local GraphQL schema contract                                   |
-| `docs/03.specs/<feature-id>/contracts/service.proto`                     | `service.template.proto`        | Feature-local gRPC/protobuf contract                                    |
-| `docs/03.specs/<feature-id>/README.md`                                   | `readme.template.md`            | Optional feature-local index when a spec folder grows beyond `spec.md`  |
-| `docs/04.execution/plans/YYYY-MM-DD-<feature>.md`                        | `plan.template.md`              | Execution order, risk control, rollout, verification                    |
-| `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md`              | `task.template.md`              | Implementation and validation task evidence                             |
-| `docs/05.operations/guides/####-<topic>.md`                              | `guide.template.md`             | Stable-state user, developer, or operator guidance                      |
-| `docs/05.operations/policies/####-<policy-or-standard>.md`               | `policy.template.md`            | Operational policy, controls, boundaries                                |
-| `docs/05.operations/runbooks/####-<topic>.md`                            | `runbook.template.md`           | Executable operational procedure and recovery path                      |
-| `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md`             | `incident.template.md`          | Incident fact record and timeline                                       |
-| `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `postmortem.template.md`        | Incident analysis and prevention follow-up                              |
-| `docs/90.references/<category>/<topic>.md`                               | `reference.template.md`         | Reference material, glossary, appendix, inventory                       |
-| `docs/98.archive/**/*.md`                                                | `archive-tombstone.template.md` | Tombstone metadata for old docs moved out of active stages              |
-| `docs/00.agent-governance/memory/<topic>.md`                             | `memory.template.md`            | Stable memory entry                                                     |
-| `docs/00.agent-governance/memory/progress.md`                            | `progress.template.md`          | Repo-changing work progress entry                                       |
+| Target Pattern                                                           | Template Path                                                              | Responsibility                                                          |
+| ------------------------------------------------------------------------ | -------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `README.md`, `**/README.md`, `.claude/README.md`, `.codex/README.md`     | `templates/common/readme.template.md`                                      | Entry point, scope, structure, workflow, link basis, related documents  |
+| `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md`                 | `templates/sdlc/requirements/prd.template.md`                              | Product requirements, users, scope, success / acceptance criteria       |
+| `docs/02.architecture/requirements/####-<system-or-domain>.md`           | `templates/sdlc/architecture/ard.template.md`                              | Architecture requirements, quality attributes, reference model          |
+| `docs/02.architecture/decisions/####-<short-title>.md`                   | `templates/sdlc/architecture/adr.template.md`                              | One architecture decision, context, consequences, alternatives          |
+| `docs/03.specs/<feature-id>/spec.md`                                     | `templates/sdlc/specs/spec.template.md`                                    | Parent implementation contract, interfaces, verification                |
+| `docs/03.specs/<feature-id>/api-spec.md`                                 | `templates/sdlc/specs/api-spec.template.md`                                | Feature-local API contract                                              |
+| `docs/03.specs/<feature-id>/agent-design.md`                             | `templates/sdlc/specs/agent-design.template.md`                            | Feature-local AI agent behavior, orchestration, safety, and eval design |
+| `docs/03.specs/<feature-id>/data-model.md`                               | `templates/sdlc/specs/data-model.template.md`                              | Feature-local logical and physical data model                           |
+| `docs/03.specs/<feature-id>/tests.md`                                    | `templates/sdlc/specs/tests.template.md`                                   | Feature-local test and evaluation strategy                              |
+| `docs/03.specs/<feature-id>/contracts/openapi.yaml`                      | `templates/sdlc/specs/openapi.template.yaml`                               | Feature-local OpenAPI contract                                          |
+| `docs/03.specs/<feature-id>/contracts/schema.graphql`                    | `templates/sdlc/specs/schema.template.graphql`                             | Feature-local GraphQL schema contract                                   |
+| `docs/03.specs/<feature-id>/contracts/service.proto`                     | `templates/sdlc/specs/service.template.proto`                              | Feature-local gRPC/protobuf contract                                    |
+| `docs/03.specs/<feature-id>/README.md`                                   | `templates/common/readme.template.md`                                      | Optional feature-local index when a spec folder grows beyond `spec.md`  |
+| `docs/04.execution/plans/YYYY-MM-DD-<feature>.md`                        | `templates/sdlc/execution/plan.template.md`                                | Execution order, risk control, rollout, verification                    |
+| `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md`              | `templates/sdlc/execution/task.template.md`                                | Implementation and validation task evidence                             |
+| `docs/05.operations/guides/####-<topic>.md`                              | `templates/sdlc/operations/guide.template.md`                              | Stable-state user, developer, or operator guidance                      |
+| `docs/05.operations/policies/####-<policy-or-standard>.md`               | `templates/sdlc/operations/policy.template.md`                             | Operational policy, controls, boundaries                                |
+| `docs/05.operations/runbooks/####-<topic>.md`                            | `templates/sdlc/operations/runbook.template.md`                            | Executable operational procedure and recovery path                      |
+| `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md`             | `templates/sdlc/operations/incident.template.md`                           | Incident fact record and timeline                                       |
+| `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `templates/sdlc/operations/postmortem.template.md`                         | Incident analysis and prevention follow-up                              |
+| `docs/90.references/<category>/<topic>.md`                               | `templates/common/reference.template.md`                                   | Reference material, glossary, appendix, inventory                       |
+| `docs/98.archive/**/*.md`                                                | `templates/common/archive-tombstone.template.md`                           | Tombstone metadata for old docs moved out of active stages              |
+| `docs/00.agent-governance/memory/<topic>.md`                             | `templates/common/memory.template.md`                                      | Stable memory entry                                                     |
+| `docs/00.agent-governance/memory/progress.md`                            | `templates/common/progress.template.md`                                    | Repo-changing work progress entry                                       |
 
 ## Harness Task Contract Template
 

@@ -59,7 +59,7 @@ mirror는 operations bucket 구조를 그대로 보존한다.
 ## How to Work in This Area
 
 1. active 문서가 현재 구현과 상충하고 본문 재작성보다 제거가 맞으면 원래 docs 하위 경로를 `98.archive/` 아래에 mirror한다.
-2. archive로 이동한 문서는 `../99.templates/archive-tombstone.template.md` 구조의 Tombstone으로 교체한다.
+2. archive로 이동한 문서는 `../99.templates/templates/common/archive-tombstone.template.md` 구조의 Tombstone으로 교체한다.
 3. Tombstone에는 원문 본문을 남기지 않는다.
 4. active 문서와 README는 이 archive README만 Index Only로 연결하고, 개별 Tombstone을 직접 current input으로 사용하지 않는다.
 5. 현재 구현 범위가 줄어들지 않도록 대체 PRD/ARD/ADR/Spec/Plan/Task 또는 현재 구현 README를 먼저 확정한다.
@@ -135,4 +135,4 @@ mirror는 operations bucket 구조를 그대로 보존한다.
 - [Docs README](../README.md)
 - [Document Stage Routing](../00.agent-governance/rules/document-stage-routing.md)
 - [Templates README](../99.templates/README.md)
-- [Archive Tombstone Template](../99.templates/archive-tombstone.template.md)
+- [Archive Tombstone Template](../99.templates/templates/common/archive-tombstone.template.md)

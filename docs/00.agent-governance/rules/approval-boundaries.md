@@ -57,4 +57,4 @@ otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
 - [Harness Implementation Map](../harness-implementation-map.md)
 - [Local Harness Catalog](../harness-catalog.md)
 - [Bootstrap Governance](bootstrap.md)
-- [Harness Task Contract Template](../../99.templates/harness-task-contract.template.md)
+- [Harness Task Contract Template](../../99.templates/templates/sdlc/specs/harness-task-contract.template.md)

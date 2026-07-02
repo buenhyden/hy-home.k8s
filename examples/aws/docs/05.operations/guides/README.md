@@ -39,7 +39,7 @@
 ## How to Work in This Area
 
 1. [03.specs](../../03.specs/README.md)의 기술 계약을 먼저 확인합니다.
-2. 새 Guide는 `../../../../docs/99.templates/guide.template.md`를 기준으로 작성합니다.
+2. 새 Guide는 `../../../../docs/99.templates/templates/sdlc/operations/guide.template.md`를 기준으로 작성합니다.
 3. 운영 정책과 복구 절차는 [05.operations/policies](../policies/README.md), [05.operations/runbooks](../runbooks/README.md)에 연결합니다.
 
 ## Link Basis

@@ -46,7 +46,7 @@ learning/
 
 ## How to Work in This Area
 
-1. 새 learning reference는 [reference template](../../99.templates/reference.template.md)을 기반으로 작성한다.
+1. 새 learning reference는 [reference template](../../99.templates/templates/common/reference.template.md)을 기반으로 작성한다.
 2. 문서가 운영 절차를 안내하면 `docs/05.operations/runbooks/` 또는 `docs/05.operations/guides/`로 라우팅한다.
 3. 문서가 버전 기준이나 외부 공식 지원 범위를 고정하면 `docs/90.references/versions/`로 라우팅한다.
 4. 학습 자료에는 `Reference Type`, `Authority Boundary`, `Review and Freshness`를 유지한다.

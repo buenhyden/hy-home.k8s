@@ -36,8 +36,8 @@ spec and plan while preserving logical commit boundaries.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-001 | Create Stage 04 plan/task tracking for the migration | doc | Related Documents | PLN-006 | `git diff --check` PASS; repo quality gate PASS; English-first scan PASS | platform | Done |
 | T-002 | Create support contract baseline under `docs/99.templates/support/**` | doc | VAL-SPC-001, VAL-SPC-003 | PLN-001 | Support docs exist; `git diff --check` PASS; repo quality gate PASS | platform | Done |
-| T-003 | Move template forms into `docs/99.templates/templates/**` | doc | VAL-SPC-002, VAL-SPC-008 | PLN-002 | `git mv`; template tree review; quality gate | platform | Todo |
-| T-004 | Update routing, hook, validator, and governance references | impl | VAL-SPC-004, VAL-SPC-005, VAL-SPC-006 | PLN-003 | Legacy path searches; quality gate | platform | Todo |
+| T-003 | Move template forms into `docs/99.templates/templates/**` | doc | VAL-SPC-002, VAL-SPC-008 | PLN-002 | `git mv`; template tree review; `git diff --check` PASS; repo quality gate PASS | platform | Done |
+| T-004 | Update routing, hook, validator, and governance references | impl | VAL-SPC-004, VAL-SPC-005, VAL-SPC-006 | PLN-003 | Active legacy path search PASS; `git diff --check` PASS; repo quality gate PASS | platform | Done |
 | T-005 | Normalize frontmatter profiles and remove active legacy values | doc | VAL-SPC-005, VAL-SPC-007 | PLN-004 | Schema review; legacy value searches; quality gate | platform | Todo |
 | T-006 | Apply new template links/contracts to authored docs and indexes | doc | VAL-SPC-007, VAL-SPC-008 | PLN-005 | Stage README/doc diff review; quality gate | platform | Todo |
 | T-007 | Final validation and handoff sync | qa | VAL-SPC-009 | PLN-006 | Final validation commands and progress ledger evidence | platform | Todo |
@@ -66,8 +66,8 @@ spec and plan while preserving logical commit boundaries.
 
 ### Phase 2: Template Path Migration
 
-- [ ] T-003 Move template forms into `docs/99.templates/templates/**`.
-- [ ] T-004 Update routing, hook, validator, and governance references.
+- [x] T-003 Move template forms into `docs/99.templates/templates/**`.
+- [x] T-004 Update routing, hook, validator, and governance references.
 
 ### Phase 3: Frontmatter and Legacy Cleanup
 
@@ -90,8 +90,8 @@ spec and plan while preserving logical commit boundaries.
 - **Eval Commands**: Not applicable; this is a static documentation and
   validation migration.
 - **Logs / Evidence Location**: This task record, the progress ledger, and
-  commit history. T-001 validation passed before the planning logical-unit
-  commit.
+  commit history. T-001, T-002, T-003, and T-004 validation passed before
+  their logical-unit commits.
 
 ## Related Documents
 

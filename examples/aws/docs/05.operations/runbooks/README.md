@@ -40,7 +40,7 @@
 ## How to Work in This Area
 
 1. [05.operations/policies](../policies/README.md)의 운영 정책을 먼저 확인합니다.
-2. 새 Runbook은 `../../../../docs/99.templates/runbook.template.md`를 기준으로 작성합니다.
+2. 새 Runbook은 `../../../../docs/99.templates/templates/sdlc/operations/runbook.template.md`를 기준으로 작성합니다.
 3. 사고 사실 기록이나 회고는 root [05.operations/incidents](../../../../../docs/05.operations/incidents/README.md)에 연결합니다.
 
 ## Link Basis

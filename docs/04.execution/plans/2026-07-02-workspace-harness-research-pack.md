@@ -14,7 +14,7 @@ updated: 2026-07-02
 
 **Architecture:** The work creates one research folder README and four focused reference documents. Each document follows the existing reference template, keeps official sources authoritative, labels market scan findings as non-authoritative, and maps implementation checklist items back to canonical repo owners instead of redefining policy.
 
-**Tech Stack:** Markdown, `docs/99.templates/reference.template.md`, `docs/99.templates/readme.template.md`, repository quality gates, web-sourced official documentation, and bounded market scan sources.
+**Tech Stack:** Markdown, `docs/99.templates/templates/common/reference.template.md`, `docs/99.templates/templates/common/readme.template.md`, repository quality gates, web-sourced official documentation, and bounded market scan sources.
 
 ---
 
@@ -156,8 +156,8 @@ Market scan and comparative sources:
 Run:
 
 ```bash
-sed -n '1,220p' docs/99.templates/readme.template.md
-sed -n '1,220p' docs/99.templates/reference.template.md
+sed -n '1,220p' docs/99.templates/templates/common/readme.template.md
+sed -n '1,220p' docs/99.templates/templates/common/reference.template.md
 sed -n '1,260p' docs/90.references/README.md
 ```
 
@@ -230,7 +230,7 @@ CI/QA, and scripts evidence.
 
 - [x] **Step 2: Write the baseline document**
 
-Create the document from `docs/99.templates/reference.template.md` with:
+Create the document from `docs/99.templates/templates/common/reference.template.md` with:
 
 - `title: 'Reference: Workspace Governance Baseline Research'`
 - `type: reference`

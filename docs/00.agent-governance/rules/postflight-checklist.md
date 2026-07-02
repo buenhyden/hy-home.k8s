@@ -37,7 +37,7 @@ Run this checklist before finalizing a response.
 - [ ] Staged and unstaged changes were reviewed for scope.
 - [ ] Unavailable tools, skipped live validation, or CI-only checks were stated.
 - [ ] `memory/progress.md` was updated with progress, reusable memory, evidence, and handoff for repo-changing work.
-- [ ] Standalone memory files, if any, used `docs/99.templates/memory.template.md` and link back to a related `progress.md` entry.
+- [ ] Standalone memory files, if any, used `docs/99.templates/templates/common/memory.template.md` and link back to a related `progress.md` entry.
 
 ## 6. Docs 3 Rules Compliance
 

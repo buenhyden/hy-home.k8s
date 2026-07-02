@@ -38,23 +38,23 @@ Define the repository-local routing contract for document-generation workflows.
 
 | Requested Output | Route To | Required Template |
 | --- | --- | --- |
-| README or folder index | `README.md`, `docs/**/README.md` | `docs/99.templates/readme.template.md` |
-| PRD | `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md` | `docs/99.templates/prd.template.md` |
-| ARD | `docs/02.architecture/requirements/####-<system-or-domain>.md` | `docs/99.templates/ard.template.md` |
-| ADR | `docs/02.architecture/decisions/####-<short-title>.md` | `docs/99.templates/adr.template.md` |
-| Spec | `docs/03.specs/<feature-id>/spec.md` | `docs/99.templates/spec.template.md` |
-| Plan | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `docs/99.templates/plan.template.md` |
-| Task record | `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `docs/99.templates/task.template.md` |
-| API spec | `docs/03.specs/<feature-id>/api-spec.md` | `docs/99.templates/api-spec.template.md` |
-| Agent design | `docs/03.specs/<feature-id>/agent-design.md` | `docs/99.templates/agent-design.template.md` |
-| Data model | `docs/03.specs/<feature-id>/data-model.md` | `docs/99.templates/data-model.template.md` |
-| Test design | `docs/03.specs/<feature-id>/tests.md` | `docs/99.templates/tests.template.md` |
-| Guide | `docs/05.operations/guides/<doc>.md` | `docs/99.templates/guide.template.md` |
-| Operations policy | `docs/05.operations/policies/<doc>.md` | `docs/99.templates/policy.template.md` |
-| Runbook | `docs/05.operations/runbooks/<doc>.md` | `docs/99.templates/runbook.template.md` |
-| Incident record | `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/incident.template.md` |
-| Postmortem | `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/postmortem.template.md` |
-| Durable agent/reference doc | `docs/90.references/<category>/<topic>.md` | `docs/99.templates/reference.template.md` |
+| README or folder index | `README.md`, `docs/**/README.md` | `docs/99.templates/templates/common/readme.template.md` |
+| PRD | `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md` | `docs/99.templates/templates/sdlc/requirements/prd.template.md` |
+| ARD | `docs/02.architecture/requirements/####-<system-or-domain>.md` | `docs/99.templates/templates/sdlc/architecture/ard.template.md` |
+| ADR | `docs/02.architecture/decisions/####-<short-title>.md` | `docs/99.templates/templates/sdlc/architecture/adr.template.md` |
+| Spec | `docs/03.specs/<feature-id>/spec.md` | `docs/99.templates/templates/sdlc/specs/spec.template.md` |
+| Plan | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `docs/99.templates/templates/sdlc/execution/plan.template.md` |
+| Task record | `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `docs/99.templates/templates/sdlc/execution/task.template.md` |
+| API spec | `docs/03.specs/<feature-id>/api-spec.md` | `docs/99.templates/templates/sdlc/specs/api-spec.template.md` |
+| Agent design | `docs/03.specs/<feature-id>/agent-design.md` | `docs/99.templates/templates/sdlc/specs/agent-design.template.md` |
+| Data model | `docs/03.specs/<feature-id>/data-model.md` | `docs/99.templates/templates/sdlc/specs/data-model.template.md` |
+| Test design | `docs/03.specs/<feature-id>/tests.md` | `docs/99.templates/templates/sdlc/specs/tests.template.md` |
+| Guide | `docs/05.operations/guides/<doc>.md` | `docs/99.templates/templates/sdlc/operations/guide.template.md` |
+| Operations policy | `docs/05.operations/policies/<doc>.md` | `docs/99.templates/templates/sdlc/operations/policy.template.md` |
+| Runbook | `docs/05.operations/runbooks/<doc>.md` | `docs/99.templates/templates/sdlc/operations/runbook.template.md` |
+| Incident record | `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/templates/sdlc/operations/incident.template.md` |
+| Postmortem | `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/templates/sdlc/operations/postmortem.template.md` |
+| Durable agent/reference doc | `docs/90.references/<category>/<topic>.md` | `docs/99.templates/templates/common/reference.template.md` |
 
 ## Named Skill Routing
 

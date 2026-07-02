@@ -128,7 +128,7 @@ runtime readiness.
 
 ### Implementation Checklist
 
-- [x] Used `docs/99.templates/reference.template.md` as the authoring base.
+- [x] Used `docs/99.templates/templates/common/reference.template.md` as the authoring base.
 - [x] Included the required reference-template sections.
 - [x] Included the required audit subsections under `Definitions / Facts`.
 - [x] Covered instruction/settings surfaces, architecture constraints,
@@ -175,7 +175,7 @@ runtime readiness.
 - [Memory README](../../00.agent-governance/memory/README.md)
 - [Scripts README](../../../scripts/README.md)
 - [GitHub CI Workflow](../../../.github/workflows/ci.yml)
-- [Reference Template](../../99.templates/reference.template.md)
+- [Reference Template](../../99.templates/templates/common/reference.template.md)
 
 ## Review and Freshness
 

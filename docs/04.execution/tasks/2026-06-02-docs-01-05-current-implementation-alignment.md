@@ -26,7 +26,7 @@ and hardens QA/CI stale gates.
 - Compare active docs against repo-backed implementation evidence, not only link/template pass status.
 - Archive old documents through `docs/98.archive` Tombstones when their body conflicts with current implementation or is superseded-only.
 - Active docs must link archived material only through `docs/98.archive/README.md`.
-- Do not add archive wording to `docs/99.templates/reference.template.md`.
+- Do not add archive wording to `docs/99.templates/templates/common/reference.template.md`.
 - Do not inspect secrets, credentials, tokens, private keys, private RTK DBs, or shell history.
 - Repo-static validation must not be reported as live runtime readiness.
 
@@ -92,4 +92,4 @@ and hardens QA/CI stale gates.
 - [Harness Spec](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - [Archive Index](../../98.archive/README.md)
 - [CI/CD & QA Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
-- [Task Template](../../99.templates/task.template.md)
+- [Task Template](../../99.templates/templates/sdlc/execution/task.template.md)

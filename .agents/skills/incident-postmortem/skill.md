@@ -186,7 +186,7 @@ Root Cause: [Conclusion]
 - Intermediate files may be written to `_workspace/` under repository root as scratch analysis only.
 - Durable final reports go to `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-[incident-slug].md` when a postmortem record is requested.
 - Durable incident records go to `docs/05.operations/incidents/` when an incident log is requested.
-- Use `docs/99.templates/postmortem.template.md` as the structural baseline
+- Use `docs/99.templates/templates/sdlc/operations/postmortem.template.md` as the structural baseline
 
 ## Error Handling
 

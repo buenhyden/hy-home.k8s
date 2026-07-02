@@ -72,7 +72,7 @@ docs/90.references/
 1. 새 참고 자료가 정책/계약/절차를 정의하는지 확인한다. 그렇다면 `00.agent-governance`, `03.specs`, `05.operations/policies`, `05.operations/runbooks`로 라우팅한다.
 2. 버전 기준을 갱신할 때는 실제 manifest/config/example code와 [tech-stack-version-inventory.md](./versions/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
 3. 외부 공식 기준은 확인일을 명시하고 링크를 남긴다.
-4. 새 파일을 만들 경우 [reference template](../99.templates/reference.template.md)을 사용하고 이 README 인덱스를 갱신한다. canonical target pattern은 `docs/90.references/<category>/<topic>.md`다. `llm-wiki/wiki-index.md`는 `scripts/generate-llm-wiki-index.sh`로만 갱신한다.
+4. 새 파일을 만들 경우 [reference template](../99.templates/templates/common/reference.template.md)을 사용하고 이 README 인덱스를 갱신한다. canonical target pattern은 `docs/90.references/<category>/<topic>.md`다. `llm-wiki/wiki-index.md`는 `scripts/generate-llm-wiki-index.sh`로만 갱신한다.
 5. 모든 reference 문서는 `Reference Type`, `Authority Boundary`, `Review and Freshness`를 포함해야 한다.
 
 ## Link Basis
@@ -133,7 +133,7 @@ trigger만 남긴다.
 
 ## Required Reference Format
 
-새 reference 문서는 [reference.template.md](../99.templates/reference.template.md)의 필수 heading을 유지한다.
+새 reference 문서는 [reference.template.md](../99.templates/templates/common/reference.template.md)의 필수 heading을 유지한다.
 `README.md` 인덱스 파일은 탐색 진입점이므로 전체 reference 템플릿을 복제하지 않고 필요한 필드의 요약만 둘 수 있다.
 README 인덱스는 frontmatter를 요구하지 않지만, authored reference 문서는 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
 

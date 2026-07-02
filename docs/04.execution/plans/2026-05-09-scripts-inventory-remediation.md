@@ -56,7 +56,7 @@ Tier C-only, unused, or one-off deletion candidates.
 
 - **Goals**:
   - Clearly record the current `scripts/` inventory and retention decisions.
-  - Align `scripts/README.md` with the structure in `docs/99.templates/readme.template.md`.
+  - Align `scripts/README.md` with the structure in `docs/99.templates/templates/common/readme.template.md`.
   - Document execution contracts with CI, the PR template, `.claude/settings.json`, and the root README.
   - Leave this audit and remediation work traceable through plan/task documents.
 - **In Scope**:

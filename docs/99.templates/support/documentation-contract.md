@@ -21,7 +21,7 @@ The template system has four separate surfaces:
 
 | Surface | Canonical Owner | Responsibility |
 | --- | --- | --- |
-| Template forms | `docs/99.templates/*.template.*` before Phase 2, then `docs/99.templates/templates/**` | Starter forms authors copy from. |
+| Template forms | `docs/99.templates/templates/**` | Starter forms authors copy from. |
 | Template support contracts | `docs/99.templates/support/**` | Template-specific routing, schema, governance, and cleanup rules. |
 | Agent governance | `docs/00.agent-governance/**` | Agent-facing execution policy, stage routing policy, hooks, and protected-surface rules. |
 | Authored documents | `docs/01.requirements` through `docs/05.operations`, `docs/90.references`, `docs/98.archive` | Repository facts, lifecycle records, and evidence. |

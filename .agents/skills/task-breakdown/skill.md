@@ -42,7 +42,7 @@ following the SDD lifecycle contract in this repository.
    single verification check). If not, split further.
 3. Assign a task ID (`TASK-NNN`) and map it to the plan's REQ ID.
 4. Write the task file under `docs/04.execution/tasks/YYYY-MM-DD-<slug>-<id>.md` using
-   `docs/99.templates/task.template.md` as the base.
+   `docs/99.templates/templates/sdlc/execution/task.template.md` as the base.
 5. Each task file must include: goal, acceptance criteria (binary), evidence (command or
    artifact path), rollback, and a `## Related Documents` link to the parent plan.
 6. Update the parent plan's `## Work Breakdown` table to reference the task file paths.

@@ -95,16 +95,16 @@ are out of scope unless separately approved by a human.
 | --- | --- | --- | --- |
 | 2026-07-02 | T-001 | `git diff --check` | PASS; no output |
 | 2026-07-02 | T-001 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
-| 2026-07-02 | T-002 | Manual template/source review | PASS; created `../../90.references/research/workspace-governance-baseline.md` from `../../99.templates/reference.template.md` using repo-backed governance, CI, scripts, template, and adapter evidence |
+| 2026-07-02 | T-002 | Manual template/source review | PASS; created `../../90.references/research/workspace-governance-baseline.md` from `../../99.templates/templates/common/reference.template.md` using repo-backed governance, CI, scripts, template, and adapter evidence |
 | 2026-07-02 | T-002 | `git diff --check` | PASS; no output |
 | 2026-07-02 | T-002 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
-| 2026-07-02 | T-003 | Manual template/source review | PASS; created `../../90.references/research/harness-and-loop-engineering.md` from `../../99.templates/reference.template.md` using required OpenAI, Anthropic, MCP, repo-backed, and non-authoritative market-scan sources checked on 2026-07-02 |
+| 2026-07-02 | T-003 | Manual template/source review | PASS; created `../../90.references/research/harness-and-loop-engineering.md` from `../../99.templates/templates/common/reference.template.md` using required OpenAI, Anthropic, MCP, repo-backed, and non-authoritative market-scan sources checked on 2026-07-02 |
 | 2026-07-02 | T-003 | `git diff --check` | PASS; no output |
 | 2026-07-02 | T-003 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
-| 2026-07-02 | T-004 | Manual template/source review | PASS; created `../../90.references/research/provider-implementation-status.md` from `../../99.templates/reference.template.md` using required Claude Code, Claude Code release notes, Codex/OpenAI docs, OpenAI Codex agent-loop article, Gemini CLI, Gemini Code Assist agent mode, Google ADK, and repo-backed provider sources checked on 2026-07-02 |
+| 2026-07-02 | T-004 | Manual template/source review | PASS; created `../../90.references/research/provider-implementation-status.md` from `../../99.templates/templates/common/reference.template.md` using required Claude Code, Claude Code release notes, Codex/OpenAI docs, OpenAI Codex agent-loop article, Gemini CLI, Gemini Code Assist agent mode, Google ADK, and repo-backed provider sources checked on 2026-07-02 |
 | 2026-07-02 | T-004 | `git diff --check` | PASS; no output |
 | 2026-07-02 | T-004 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
-| 2026-07-02 | T-005 | Manual template/source review | PASS; created `../../90.references/research/spec-sdlc-ci-qa-formatting.md` from `../../99.templates/reference.template.md` using required NIST SSDF, NIST SP 800-204D, GitHub Actions, GitHub Actions secure-use, pre-commit, GitHub Spec Kit, Martin Fowler CI, repo-backed validation, and non-authoritative market-scan sources checked on 2026-07-02 |
+| 2026-07-02 | T-005 | Manual template/source review | PASS; created `../../90.references/research/spec-sdlc-ci-qa-formatting.md` from `../../99.templates/templates/common/reference.template.md` using required NIST SSDF, NIST SP 800-204D, GitHub Actions, GitHub Actions secure-use, pre-commit, GitHub Spec Kit, Martin Fowler CI, repo-backed validation, and non-authoritative market-scan sources checked on 2026-07-02 |
 | 2026-07-02 | T-005 | `git diff --check` | PASS; no output |
 | 2026-07-02 | T-005 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
 | 2026-07-02 | T-006 | `git diff --check` | PASS; no output |

@@ -1,12 +1,54 @@
 # Agent Progress and Memory Ledger
 
 This file is the repo-local progress and reusable memory ledger for AI agent
-work in `hy-home.k8s`. Use `docs/99.templates/progress.template.md` for new
+work in `hy-home.k8s`. Use `docs/99.templates/templates/common/progress.template.md` for new
 entries. Memory here supports future task intake, but current runtime truth
 stays in `docs/00.agent-governance/harness-catalog.md` and current script
 inventory stays in `scripts/README.md`.
 
 ## Work Entries
+
+### 2026-07-03 — Template path migration
+
+- **Date**: 2026-07-03
+- **Layer**: docs, meta, qa
+- **Status**: complete
+- **Tags**: #templates #routing #governance #validation
+
+#### Progress
+
+- Moved active template forms from the flat `docs/99.templates/` root into the
+  categorized `docs/99.templates/templates/**` tree using `git mv`.
+- Added `docs/99.templates/templates/README.md` as the template-form index.
+- Updated Stage 00 routing docs, hook hints, support contracts, README indexes,
+  local skills, examples, and the repository quality gate to resolve template
+  routes through the categorized template tree.
+- Marked T-003 and T-004 in the migration task record as complete.
+
+#### Memory
+
+- `docs/99.templates/README.md` remains the public inventory and entrypoint for
+  the template system.
+- `docs/99.templates/templates/**` now owns reusable document forms; support
+  rules, contracts, routing, and schema guidance remain under
+  `docs/99.templates/support/**`.
+- Generated or archived snapshots can retain historical flat-path text only
+  when active repository routing and quality gates do not consume those paths.
+
+#### Evidence
+
+- `git mv` preserved history for moved template files.
+- `find docs/99.templates -maxdepth 5 -type f -print | sort` confirmed the
+  categorized template tree.
+- Active legacy path scan across README, docs, scripts, `.codex`, `.agents`,
+  `.github`, and examples returned no actionable flat template references.
+- `git diff --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+
+#### Handoff
+
+- Next action: start Phase 3 frontmatter profile normalization and legacy
+  cleanup.
 
 ### 2026-07-03 — Template support contract baseline
 
@@ -858,9 +900,9 @@ inventory stays in `scripts/README.md`.
 - Audited authored Guide, Policy, and Runbook documents under
   [05.operations](../../05.operations/README.md) against their required
   templates:
-  [guide.template.md](../../99.templates/guide.template.md),
-  [policy.template.md](../../99.templates/policy.template.md), and
-  [runbook.template.md](../../99.templates/runbook.template.md).
+  [guide.template.md](../../99.templates/templates/sdlc/operations/guide.template.md),
+  [policy.template.md](../../99.templates/templates/sdlc/operations/policy.template.md), and
+  [runbook.template.md](../../99.templates/templates/sdlc/operations/runbook.template.md).
 - Confirmed the existing non-README Guide, Policy, and Runbook documents keep
   the required frontmatter, `owner: platform`, `type`, and required template
   headings.
@@ -966,7 +1008,7 @@ inventory stays in `scripts/README.md`.
 - `gpt-5.3-codex` is the Codex worker model for this repository's local agent
   roster; do not reintroduce `gpt-5.4-mini` as the worker baseline unless the
   Stage 00 Model Policy and harness catalog are deliberately updated together.
-- Active operations policy routing uses `docs/99.templates/policy.template.md`.
+- Active operations policy routing uses `docs/99.templates/templates/sdlc/operations/policy.template.md`.
   `operation.template.md` is not a valid template in this repository.
 - `AGENTS.md` is the Codex/GPT gateway. Root `CLAUDE.md` and `GEMINI.md` remain
   provider shims for their runtimes.
@@ -4140,7 +4182,7 @@ References` is now a legacy heading that should not return.
 - `git diff --check` PASS.
 - Targeted `rg` scan for template enforcement references reviewed.
 - `bash -n .claude/hooks/k8s-pre-edit.sh .claude/hooks/post-validate.sh scripts/validate-repo-quality-gates.sh` PASS.
-- Claude docs PreToolUse payload simulation surfaced `docs/99.templates/api-spec.template.md`.
+- Claude docs PreToolUse payload simulation surfaced `docs/99.templates/templates/sdlc/specs/api-spec.template.md`.
 - Claude docs PostToolUse payload simulation returned `[hook] PASS documentation template enforcement`.
 - Hookify local rule created at `.claude/hookify.require-doc-templates.local.md`
   and kept untracked by `.gitignore`.
@@ -4625,7 +4667,7 @@ References` is now a legacy heading that should not return.
   `docs/99.templates/README.md` related-link heading to
   `## Related Documents`.
 - Added target-relative reference maintenance links to
-  `docs/99.templates/reference.template.md` and a touched-scope validation check
+  `docs/99.templates/templates/common/reference.template.md` and a touched-scope validation check
   in `scripts/validate-repo-quality-gates.sh`.
 
 #### Memory
@@ -5041,7 +5083,7 @@ References` is now a legacy heading that should not return.
 - Migrated the canonical docs taxonomy from the old stage folders to
   `01.requirements`, `02.architecture`, `03.specs`, `04.execution`, and
   `05.operations`.
-- Added `docs/99.templates/progress.template.md` as the template for this
+- Added `docs/99.templates/templates/common/progress.template.md` as the template for this
   `progress.md` ledger.
 - Updated bootstrap, preflight, postflight, documentation protocol, runtime
   baseline, and memory README guidance so AI agents read and write this ledger
@@ -5051,9 +5093,9 @@ References` is now a legacy heading that should not return.
 
 - `docs/00.agent-governance/memory/progress.md` is the mandatory local ledger
   for repo-changing agent progress, reusable memory, evidence, and handoff.
-- Standalone memory notes may still use `docs/99.templates/memory.template.md`,
+- Standalone memory notes may still use `docs/99.templates/templates/common/memory.template.md`,
   but normal agent work should append to this file using
-  `docs/99.templates/progress.template.md`.
+  `docs/99.templates/templates/common/progress.template.md`.
 
 #### Evidence
 
@@ -5074,7 +5116,7 @@ References` is now a legacy heading that should not return.
 #### Progress
 
 - Audited `docs/90.references/README.md`, `docs/90.references/agents/README.md`,
-  current reference documents, `docs/99.templates/reference.template.md`, and
+  current reference documents, `docs/99.templates/templates/common/reference.template.md`, and
   document routing rules.
 - Clarified that `90.references` owns durable lookup facts, dated external
   snapshots, version inventories, and learning references, but not requirements,
@@ -5154,8 +5196,8 @@ References` is now a legacy heading that should not return.
 #### Progress
 
 - Strengthened `docs/00.agent-governance/memory/README.md` so agents must use
-  `docs/99.templates/progress.template.md` for `progress.md` updates and
-  `docs/99.templates/memory.template.md` for standalone memory files.
+  `docs/99.templates/templates/common/progress.template.md` for `progress.md` updates and
+  `docs/99.templates/templates/common/memory.template.md` for standalone memory files.
 - Updated bootstrap, documentation protocol, preflight, postflight, and the
   local runtime baseline so repo-changing agent work plans and records
   `memory/progress.md` updates.
@@ -5167,7 +5209,7 @@ References` is now a legacy heading that should not return.
 - `docs/00.agent-governance/memory/progress.md` is the mandatory progress
   ledger for repo-changing agent work.
 - Standalone files under `docs/00.agent-governance/memory/` must use
-  `docs/99.templates/memory.template.md` and include a `Related Progress`
+  `docs/99.templates/templates/common/memory.template.md` and include a `Related Progress`
   section.
 - Standalone memory file changes must be accompanied by a related
   `progress.md` entry in the same change.
@@ -5401,7 +5443,7 @@ References` is now a legacy heading that should not return.
 #### Evidence
 
 - `ls -l .claude/agents .agents/agents .codex/agents` showed `.claude/agents -> ../.agents/agents`.
-- Phase 2 planning files were routed through `docs/99.templates/plan.template.md` and `docs/99.templates/task.template.md`.
+- Phase 2 planning files were routed through `docs/99.templates/templates/sdlc/execution/plan.template.md` and `docs/99.templates/templates/sdlc/execution/task.template.md`.
 - `test -d .claude/agents && test ! -L .claude/agents` PASS after restoration.
 - `find .claude/agents -maxdepth 1 -type f -name '*.md' | sort` lists eight Claude agent files.
 - `rg -n "model: Gemini|Gemini 3\\." .claude/agents` returned no matches.
@@ -5518,7 +5560,7 @@ Harness layers L1–L6 were incomplete: no `settings.json`, no agent files, no h
 
 **P5 (complete, 2026-05-29) — Docs Governance Consistency (spec-007):**
 
-- Template: `docs/99.templates/runbook.template.md` — added `## Runbook Type` section.
+- Template: `docs/99.templates/templates/sdlc/operations/runbook.template.md` — added `## Runbook Type` section.
 - Legacy removed: `guides/0005-new-app-gitops-onboarding-guide.md`, `runbooks/0006-new-app-onboarding-runbook.md`, `plans/2026-05-24-workspace-harness-gap-analysis.md`, `tasks/2026-05-24-workspace-harness-gap-analysis.md`.
 - Reference moved: `docs/90.references/audits/2026-05-24-workspace-harness-gap-analysis.md` created as thin reference wrapper.
 - Policies 7/7: `## AI Agent Policy Section (If Applicable)` added to all 7 ops policy files.
@@ -5716,7 +5758,7 @@ current implementation evidence.
   baseline: Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external
   services, Kiali/Istio, Rollouts, Notifications, monitoring, and adminer.
 - Added `docs/98.archive/README.md` and
-  `docs/99.templates/archive-tombstone.template.md`.
+  `docs/99.templates/templates/common/archive-tombstone.template.md`.
 - Moved old conflicting 01-04 documents into `docs/98.archive/` with original
   path mirroring and metadata-only Tombstone bodies.
 - Updated active README indexes and related-document links so active docs use
@@ -5741,7 +5783,7 @@ current implementation evidence.
 - `bash scripts/validate-policy-gates.sh .` — PASS.
 - Active stale runtime scan over `docs/01-05` returned no stale endpoint or old
   cluster UI contract matches.
-- `docs/99.templates/reference.template.md` archive-wording scan returned no
+- `docs/99.templates/templates/common/reference.template.md` archive-wording scan returned no
   matches.
 
 ### Prevention
@@ -5841,7 +5883,7 @@ section separating static from live evidence.
 - Added `docs/00.agent-governance/rules/approval-boundaries.md` as the single
   approval matrix: default state, approval triggers, validation, evidence, and
   rollback per surface, plus mandatory live-mutation and secret-handling policy.
-- Added `docs/99.templates/harness-task-contract.template.md` and registered it
+- Added `docs/99.templates/templates/sdlc/specs/harness-task-contract.template.md` and registered it
   in `docs/99.templates/README.md`.
 - Added `scripts/validate-harness.sh` as a repo-static wrapper over the existing
   gates (no new validation logic, no live checks) and registered it in the

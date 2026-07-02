@@ -24,7 +24,7 @@ fixes Phase 1 audit results into Plan, Task, README, and progress traceability.
 
 - Keep Phase 2 docs-only and traceability-first.
 - Preserve ADR-0013 as the accepted Stage 00 canonical adapter architecture.
-- Use `docs/99.templates/plan.template.md` and `docs/99.templates/task.template.md`; do not create off-taxonomy docs.
+- Use `docs/99.templates/templates/sdlc/execution/plan.template.md` and `docs/99.templates/templates/sdlc/execution/task.template.md`; do not create off-taxonomy docs.
 - Do not run live k3d, ArgoCD, Vault, ESO, deployment, external service, secret inspection, or private RTK database checks.
 - Documentation-only work still needs validation evidence.
 
@@ -106,4 +106,4 @@ Remove the Phase 2 Plan/Task files, their README index rows, the Phase 1 audit r
 - [Phase 1 Governance Alignment Audit Task](./2026-06-02-phase-1-governance-alignment-audit.md)
 - [ADR-0013: Stage 00 Canonical Adapter Model](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 - [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
-- [Task Template](../../99.templates/task.template.md)
+- [Task Template](../../99.templates/templates/sdlc/execution/task.template.md)

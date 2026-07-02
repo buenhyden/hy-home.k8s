@@ -120,4 +120,4 @@ this follow-up.
 - **Codex Harness Task**: [./2026-05-31-codex-governance-harness-alignment.md](./2026-05-31-codex-governance-harness-alignment.md)
 - **Stage 00 Canonical Adapter Plan**: [../plans/2026-06-01-stage-00-canonical-adapter-redesign.md](../plans/2026-06-01-stage-00-canonical-adapter-redesign.md)
 - **Stage 00 Canonical Adapter Task**: [./2026-06-01-stage-00-canonical-adapter-redesign.md](./2026-06-01-stage-00-canonical-adapter-redesign.md)
-- **Task Template**: [../../99.templates/task.template.md](../../99.templates/task.template.md)
+- **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)

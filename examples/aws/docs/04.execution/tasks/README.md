@@ -40,7 +40,7 @@
 ## How to Work in This Area
 
 1. [04.execution/plans](../plans/README.md)의 단계와 연결된 작업만 추가합니다.
-2. 새 Task 문서는 `../../../../docs/99.templates/task.template.md`를 기준으로 작성합니다.
+2. 새 Task 문서는 `../../../../docs/99.templates/templates/sdlc/execution/task.template.md`를 기준으로 작성합니다.
 3. 검증 명령, 증거 위치, 상태를 함께 기록합니다.
 
 ## Link Basis

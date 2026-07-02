@@ -101,4 +101,4 @@ cluster mutation and secret-value inspection are out of scope.
 - [Phase 2 Governance Alignment Task](./2026-06-02-phase-2-governance-alignment.md)
 - [Phase 1 Governance Alignment Audit Task](./2026-06-02-phase-1-governance-alignment-audit.md)
 - [ADR-0013: Stage 00 Canonical Adapter Model](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
-- [Task Template](../../99.templates/task.template.md)
+- [Task Template](../../99.templates/templates/sdlc/execution/task.template.md)

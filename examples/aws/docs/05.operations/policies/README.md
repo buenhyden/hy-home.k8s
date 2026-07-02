@@ -40,7 +40,7 @@
 ## How to Work in This Area
 
 1. [03.specs](../../03.specs/README.md)의 기술 계약과 현재 운영 기준을 비교합니다.
-2. 새 Operation 문서는 `../../../../docs/99.templates/policy.template.md`를 기준으로 작성합니다.
+2. 새 Operation 문서는 `../../../../docs/99.templates/templates/sdlc/operations/policy.template.md`를 기준으로 작성합니다.
 3. 반복 실행 절차는 [05.operations/runbooks](../runbooks/README.md)에 분리합니다.
 
 ## Link Basis

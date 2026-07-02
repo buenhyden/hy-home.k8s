@@ -64,7 +64,7 @@ Spec은 실행 기준을 소유하는 문서다.
 ## How to Work in This Area
 
 1. 관련 PRD, ARD, ADR 링크를 확인하고 Spec의 입력으로 고정한다.
-2. 새 Spec은 `../99.templates/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<feature-id>/spec.md`다.
+2. 새 Spec은 `../99.templates/templates/sdlc/specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<feature-id>/spec.md`다.
 3. API/데이터/Agent/Test 보조 문서는 같은 feature 하위 폴더에 두고 상위 `spec.md`와 연결한다.
 4. 구현 및 검증 추적은 `04.execution/tasks/`로 연결한다.
 5. 현재 구현과 상충하는 historical/superseded 값은 활성 Spec에 보존하지 않고 `../98.archive/README.md`의 Tombstone 인덱스로 분리한다.
@@ -104,14 +104,14 @@ Spec은 실행 기준을 소유하는 문서다.
 
 아래 템플릿은 `docs/03.specs/<feature-id>/` 아래에서 `spec.md`를 보조하는 계약 문서에만 사용한다.
 
-- `../99.templates/spec.template.md`
-- `../99.templates/api-spec.template.md`
-- `../99.templates/agent-design.template.md`
-- `../99.templates/data-model.template.md`
-- `../99.templates/tests.template.md`
-- `../99.templates/openapi.template.yaml`
-- `../99.templates/service.template.proto`
-- `../99.templates/schema.template.graphql`
+- `../99.templates/templates/sdlc/specs/spec.template.md`
+- `../99.templates/templates/sdlc/specs/api-spec.template.md`
+- `../99.templates/templates/sdlc/specs/agent-design.template.md`
+- `../99.templates/templates/sdlc/specs/data-model.template.md`
+- `../99.templates/templates/sdlc/specs/tests.template.md`
+- `../99.templates/templates/sdlc/specs/openapi.template.yaml`
+- `../99.templates/templates/sdlc/specs/service.template.proto`
+- `../99.templates/templates/sdlc/specs/schema.template.graphql`
 
 ## Related Documents
 

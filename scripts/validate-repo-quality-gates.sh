@@ -715,9 +715,45 @@ for scan_root in markdown_link_roots:
                 )
 
 template_readme = read_text(root / "docs/99.templates/README.md")
-for template in sorted((root / "docs/99.templates").iterdir()):
-    if template.is_file() and template.name != "README.md" and template.name not in template_readme:
-        fail(f"template is not listed in docs/99.templates/README.md: {template.name}")
+template_locations = {
+    "readme.template.md": "templates/common/readme.template.md",
+    "reference.template.md": "templates/common/reference.template.md",
+    "archive-tombstone.template.md": "templates/common/archive-tombstone.template.md",
+    "memory.template.md": "templates/common/memory.template.md",
+    "progress.template.md": "templates/common/progress.template.md",
+    "prd.template.md": "templates/sdlc/requirements/prd.template.md",
+    "ard.template.md": "templates/sdlc/architecture/ard.template.md",
+    "adr.template.md": "templates/sdlc/architecture/adr.template.md",
+    "spec.template.md": "templates/sdlc/specs/spec.template.md",
+    "api-spec.template.md": "templates/sdlc/specs/api-spec.template.md",
+    "agent-design.template.md": "templates/sdlc/specs/agent-design.template.md",
+    "data-model.template.md": "templates/sdlc/specs/data-model.template.md",
+    "tests.template.md": "templates/sdlc/specs/tests.template.md",
+    "harness-task-contract.template.md": "templates/sdlc/specs/harness-task-contract.template.md",
+    "openapi.template.yaml": "templates/sdlc/specs/openapi.template.yaml",
+    "schema.template.graphql": "templates/sdlc/specs/schema.template.graphql",
+    "service.template.proto": "templates/sdlc/specs/service.template.proto",
+    "plan.template.md": "templates/sdlc/execution/plan.template.md",
+    "task.template.md": "templates/sdlc/execution/task.template.md",
+    "guide.template.md": "templates/sdlc/operations/guide.template.md",
+    "policy.template.md": "templates/sdlc/operations/policy.template.md",
+    "runbook.template.md": "templates/sdlc/operations/runbook.template.md",
+    "incident.template.md": "templates/sdlc/operations/incident.template.md",
+    "postmortem.template.md": "templates/sdlc/operations/postmortem.template.md",
+}
+
+
+def template_path(template_name: str) -> pathlib.Path:
+    location = template_locations.get(template_name)
+    if not location:
+        fail(f"template mapping points to an unknown template: {template_name}")
+    return root / "docs/99.templates" / location
+
+
+template_root = root / "docs/99.templates/templates"
+for template in sorted(template_root.rglob("*")):
+    if template.is_file() and template.name not in template_readme:
+        fail(f"template is not listed in docs/99.templates/README.md: {rel(template)}")
 for phrase in [
     "## Structural Template Coverage",
     "structural template mapping",
@@ -726,7 +762,7 @@ for phrase in [
     if phrase not in template_readme:
         fail(f"{rel(root / 'docs/99.templates/README.md')} missing structural template coverage phrase: {phrase}")
 
-reference_template_path = root / "docs/99.templates/reference.template.md"
+reference_template_path = template_path("reference.template.md")
 reference_template_text = read_text(reference_template_path)
 if re.search(r"archive", reference_template_text, re.IGNORECASE):
     fail(f"{rel(reference_template_path)} must not contain archive wording")
@@ -786,8 +822,8 @@ required_stage_templates = [
 ]
 
 for glob_pattern, template_name in required_stage_templates:
-    template_path = root / "docs/99.templates" / template_name
-    if not template_path.exists():
+    resolved_template_path = template_path(template_name)
+    if not resolved_template_path.exists():
         fail(f"structural template mapping points to missing template: {glob_pattern} -> {template_name}")
 
 structural_template_roots = [
@@ -820,7 +856,7 @@ for scan_root in structural_template_roots:
 
 def required_headings_from_template(template_name: str) -> list[str]:
     headings: list[str] = []
-    for line in read_text(root / "docs/99.templates" / template_name).splitlines():
+    for line in read_text(template_path(template_name)).splitlines():
         if not line.startswith("## "):
             continue
         heading = line.strip()
@@ -929,11 +965,11 @@ operations_routing_rows = markdown_table_after_heading(
 )
 expected_operations_routing_header = ["필요 상황", "사용할 위치", "시작 템플릿"]
 expected_operations_routing_targets = [
-    ("./guides/README.md", "../99.templates/guide.template.md"),
-    ("./policies/README.md", "../99.templates/policy.template.md"),
-    ("./runbooks/README.md", "../99.templates/runbook.template.md"),
-    ("./incidents/README.md", "../99.templates/incident.template.md"),
-    ("./incidents/README.md", "../99.templates/postmortem.template.md"),
+    ("./guides/README.md", "../99.templates/templates/sdlc/operations/guide.template.md"),
+    ("./policies/README.md", "../99.templates/templates/sdlc/operations/policy.template.md"),
+    ("./runbooks/README.md", "../99.templates/templates/sdlc/operations/runbook.template.md"),
+    ("./incidents/README.md", "../99.templates/templates/sdlc/operations/incident.template.md"),
+    ("./incidents/README.md", "../99.templates/templates/sdlc/operations/postmortem.template.md"),
 ]
 if len(operations_routing_rows) < 2:
     fail("docs/05.operations/README.md Operations Routing Matrix must contain a header and routing rows")
@@ -1007,14 +1043,14 @@ expected_incident_boundary = [
     {
         "artifact": "Incident Record",
         "path_rule": "./YYYY/YYYY-MM-DD-<incident>.md",
-        "template": "../../99.templates/incident.template.md",
+        "template": "../../99.templates/templates/sdlc/operations/incident.template.md",
         "creation_phrase": "real incident fact record",
         "current_state": "No tracked incident records.",
     },
     {
         "artifact": "Postmortem",
         "path_rule": "./postmortems/YYYY/YYYY-MM-DD-<incident>.md",
-        "template": "../../99.templates/postmortem.template.md",
+        "template": "../../99.templates/templates/sdlc/operations/postmortem.template.md",
         "creation_phrase": "root cause/prevention analysis",
         "current_state": "No tracked postmortems.",
     },
@@ -1198,7 +1234,7 @@ template_enforcement_phrase_checks = {
         "template path used and the validation evidence",
     ],
     root / "docs/00.agent-governance/rules/document-stage-routing.md": [
-        "docs/99.templates/readme.template.md",
+        "docs/99.templates/templates/common/readme.template.md",
         "structural template mapping",
         "required template headings",
         "template path used and validation evidence",
@@ -1921,7 +1957,7 @@ for phrase in [
 memory_progress_path = root / "docs/00.agent-governance/memory/progress.md"
 memory_progress_text = read_text(memory_progress_path)
 for phrase in [
-    "docs/99.templates/progress.template.md",
+    "docs/99.templates/templates/common/progress.template.md",
     "## Work Entries",
     "#### Progress",
     "#### Memory",
@@ -1938,16 +1974,16 @@ for phrase in [
         fail(f"{rel(memory_progress_path)} missing historical/current-source phrase: {phrase}")
 
 memory_dir = root / "docs/00.agent-governance/memory"
-memory_template_path = root / "docs/99.templates/memory.template.md"
-progress_template_path = root / "docs/99.templates/progress.template.md"
+memory_template_path = root / "docs/99.templates/templates/common/memory.template.md"
+progress_template_path = root / "docs/99.templates/templates/common/progress.template.md"
 for path in [memory_dir / "README.md", memory_progress_path, memory_template_path, progress_template_path]:
     if not path.exists():
         fail(f"required memory contract file is missing: {rel(path)}")
 
 memory_readme_text = read_text(memory_dir / "README.md")
 for phrase in [
-    "docs/99.templates/memory.template.md",
-    "docs/99.templates/progress.template.md",
+    "docs/99.templates/templates/common/memory.template.md",
+    "docs/99.templates/templates/common/progress.template.md",
     "Standalone files under this folder must use",
     "Related Progress",
     "`progress.md` work entry",
@@ -1957,7 +1993,7 @@ for phrase in [
 
 for phrase in [
     "docs/00.agent-governance/memory/progress.md",
-    "docs/99.templates/progress.template.md",
+    "docs/99.templates/templates/common/progress.template.md",
     "## Related Progress",
 ]:
     if phrase not in read_text(memory_template_path):
@@ -2577,7 +2613,7 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
     for phrase in [
         "Template-First",
         "docs/99.templates/README.md",
-        "docs/99.templates/api-spec.template.md",
+        "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
         "documentation template enforcement",
     ]:
         if phrase not in docs_pre_hook_result.stdout:

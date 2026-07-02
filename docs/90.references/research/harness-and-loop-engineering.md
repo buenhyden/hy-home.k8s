@@ -261,7 +261,7 @@ these requirements:
   `docs/00.agent-governance/rules/approval-boundaries.md`.
 - Route template or reference-format changes to
   [Templates README](../../99.templates/README.md),
-  [reference.template.md](../../99.templates/reference.template.md), and the
+  [reference.template.md](../../99.templates/templates/common/reference.template.md), and the
   repository quality gate when applicable.
 - Route validation-loop or repo-static evidence changes to `scripts/**`,
   `.github/workflows/ci.yml`, Stage 04 task evidence, and the CI/CD QA guide.

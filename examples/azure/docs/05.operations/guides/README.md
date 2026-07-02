@@ -41,7 +41,7 @@
 ## How to Work in This Area
 
 1. [0001-azure-onboarding-guide.md](0001-azure-onboarding-guide.md)를 통해 기본 환경 설정을 완료한다.
-2. 가이드 작성 시 [guide.template.md](../../../../../docs/99.templates/guide.template.md) 템플릿을 준수한다.
+2. 가이드 작성 시 [guide.template.md](../../../../../docs/99.templates/templates/sdlc/operations/guide.template.md) 템플릿을 준수한다.
 3. 복잡한 명령어나 절차는 가독성을 위해 코드 블록을 적극 활용한다.
 
 ## Link Basis

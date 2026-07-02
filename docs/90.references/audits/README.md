@@ -47,7 +47,7 @@ literals until their files exist.
 ## How to Work in This Area
 
 1. Start from the parent Spec, Plan, task record, and current research pack.
-2. Use `docs/99.templates/reference.template.md` for authored audit reports.
+2. Use `docs/99.templates/templates/common/reference.template.md` for authored audit reports.
 3. Treat research references as the benchmark model and repository files as
    local implementation evidence.
 4. Keep audit findings factual, dated, and explicitly bounded to the checked
@@ -107,5 +107,5 @@ values.
 - [Workspace Harness Implementation Audit Pack Plan](../../04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md)
 - [Workspace Harness Implementation Audit Pack Task](../../04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md)
 - [Workspace Harness Research Pack README](../research/README.md)
-- [Reference Template](../../99.templates/reference.template.md)
-- [README Template](../../99.templates/readme.template.md)
+- [Reference Template](../../99.templates/templates/common/reference.template.md)
+- [README Template](../../99.templates/templates/common/readme.template.md)

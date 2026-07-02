@@ -11,9 +11,9 @@ updated: 2026-07-03
 ## Overview
 
 This document defines the canonical route contract between authored document
-target patterns and template forms. Phase 1 records both the current flat route
-and the approved Phase 2 target route. Phase 2 updates files, validators, hooks,
-and references.
+target patterns and template forms. Template forms now live under
+`docs/99.templates/templates/**`; support contracts live under
+`docs/99.templates/support/**`.
 
 ## Purpose
 
@@ -21,41 +21,7 @@ Each authored document path must map to exactly one template. Route ambiguity
 creates broken validation, duplicated contracts, and inconsistent authored
 documents.
 
-## Current Route Map
-
-The current route map uses flat template files directly under
-`docs/99.templates/`. This remains active until Phase 2.
-
-| Target Pattern | Current Template |
-| --- | --- |
-| `README.md`, `**/README.md`, `.claude/README.md`, `.codex/README.md` | `readme.template.md` |
-| `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md` | `prd.template.md` |
-| `docs/02.architecture/requirements/####-<system-or-domain>.md` | `ard.template.md` |
-| `docs/02.architecture/decisions/####-<short-title>.md` | `adr.template.md` |
-| `docs/03.specs/<feature-id>/spec.md` | `spec.template.md` |
-| `docs/03.specs/<feature-id>/api-spec.md` | `api-spec.template.md` |
-| `docs/03.specs/<feature-id>/agent-design.md` | `agent-design.template.md` |
-| `docs/03.specs/<feature-id>/data-model.md` | `data-model.template.md` |
-| `docs/03.specs/<feature-id>/tests.md` | `tests.template.md` |
-| `docs/03.specs/<feature-id>/contracts/openapi.yaml` | `openapi.template.yaml` |
-| `docs/03.specs/<feature-id>/contracts/schema.graphql` | `schema.template.graphql` |
-| `docs/03.specs/<feature-id>/contracts/service.proto` | `service.template.proto` |
-| `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `plan.template.md` |
-| `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `task.template.md` |
-| `docs/04.execution/tasks/YYYY-MM-DD-<harness-task>.md` | `harness-task-contract.template.md` |
-| `docs/05.operations/guides/####-<topic>.md` | `guide.template.md` |
-| `docs/05.operations/policies/####-<policy-or-standard>.md` | `policy.template.md` |
-| `docs/05.operations/runbooks/####-<topic>.md` | `runbook.template.md` |
-| `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `incident.template.md` |
-| `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `postmortem.template.md` |
-| `docs/90.references/<category>/<topic>.md` | `reference.template.md` |
-| `docs/98.archive/**/*.md` | `archive-tombstone.template.md` |
-| `docs/00.agent-governance/memory/<topic>.md` | `memory.template.md` |
-| `docs/00.agent-governance/memory/progress.md` | `progress.template.md` |
-
-## Target Route Families
-
-Phase 2 moves template forms to these families:
+## Route Families
 
 | Family | Target Folder | Ownership |
 | --- | --- | --- |
@@ -65,6 +31,35 @@ Phase 2 moves template forms to these families:
 | Execution | `templates/sdlc/execution/` | Plans and task evidence. |
 | Operations | `templates/sdlc/operations/` | Guides, policies, runbooks, incidents, postmortems. |
 | Common | `templates/common/` | README, reference, archive, memory, progress. |
+
+## Current Route Map
+
+| Target Pattern | Template Path |
+| --- | --- |
+| `README.md`, `**/README.md`, `.claude/README.md`, `.codex/README.md` | `templates/common/readme.template.md` |
+| `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md` | `templates/sdlc/requirements/prd.template.md` |
+| `docs/02.architecture/requirements/####-<system-or-domain>.md` | `templates/sdlc/architecture/ard.template.md` |
+| `docs/02.architecture/decisions/####-<short-title>.md` | `templates/sdlc/architecture/adr.template.md` |
+| `docs/03.specs/<feature-id>/spec.md` | `templates/sdlc/specs/spec.template.md` |
+| `docs/03.specs/<feature-id>/api-spec.md` | `templates/sdlc/specs/api-spec.template.md` |
+| `docs/03.specs/<feature-id>/agent-design.md` | `templates/sdlc/specs/agent-design.template.md` |
+| `docs/03.specs/<feature-id>/data-model.md` | `templates/sdlc/specs/data-model.template.md` |
+| `docs/03.specs/<feature-id>/tests.md` | `templates/sdlc/specs/tests.template.md` |
+| `docs/03.specs/<feature-id>/contracts/openapi.yaml` | `templates/sdlc/specs/openapi.template.yaml` |
+| `docs/03.specs/<feature-id>/contracts/schema.graphql` | `templates/sdlc/specs/schema.template.graphql` |
+| `docs/03.specs/<feature-id>/contracts/service.proto` | `templates/sdlc/specs/service.template.proto` |
+| `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `templates/sdlc/execution/plan.template.md` |
+| `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `templates/sdlc/execution/task.template.md` |
+| `docs/04.execution/tasks/YYYY-MM-DD-<harness-task>.md` | `templates/sdlc/specs/harness-task-contract.template.md` |
+| `docs/05.operations/guides/####-<topic>.md` | `templates/sdlc/operations/guide.template.md` |
+| `docs/05.operations/policies/####-<policy-or-standard>.md` | `templates/sdlc/operations/policy.template.md` |
+| `docs/05.operations/runbooks/####-<topic>.md` | `templates/sdlc/operations/runbook.template.md` |
+| `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `templates/sdlc/operations/incident.template.md` |
+| `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `templates/sdlc/operations/postmortem.template.md` |
+| `docs/90.references/<category>/<topic>.md` | `templates/common/reference.template.md` |
+| `docs/98.archive/**/*.md` | `templates/common/archive-tombstone.template.md` |
+| `docs/00.agent-governance/memory/<topic>.md` | `templates/common/memory.template.md` |
+| `docs/00.agent-governance/memory/progress.md` | `templates/common/progress.template.md` |
 
 ## Enforcement Surfaces
 
@@ -88,8 +83,7 @@ rg -n "docs/99\\.templates/[a-z0-9-]+\\.template\\.(md|yaml|graphql|proto)" docs
 find docs/99.templates -maxdepth 5 -type f -print | sort
 ```
 
-The flat-path search is expected to return active matches before Phase 2. After
-Phase 2, active route references should point to `docs/99.templates/templates/**`.
+The flat-path search should not return active route references after Phase 2.
 Historical progress entries may require an explicit allow-list.
 
 ## Related Documents

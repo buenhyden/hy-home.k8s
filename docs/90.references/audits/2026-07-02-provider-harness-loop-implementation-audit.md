@@ -158,7 +158,7 @@ may inform the benchmark, but it does not prove local implementation.
 
 ### Implementation Checklist
 
-- [x] Used `docs/99.templates/reference.template.md` as the authoring base.
+- [x] Used `docs/99.templates/templates/common/reference.template.md` as the authoring base.
 - [x] Included the required reference-template sections.
 - [x] Included the required audit subsections under `Definitions / Facts`.
 - [x] Covered Claude instruction/settings, subagents/agents,
@@ -220,7 +220,7 @@ may inform the benchmark, but it does not prove local implementation.
 - [Local Harness Catalog](../../00.agent-governance/harness-catalog.md)
 - [Harness Implementation Map](../../00.agent-governance/harness-implementation-map.md)
 - [Subagent Protocol](../../00.agent-governance/subagent-protocol.md)
-- [Reference Template](../../99.templates/reference.template.md)
+- [Reference Template](../../99.templates/templates/common/reference.template.md)
 - [Workspace Harness Implementation Audit Pack Task](../../04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md)
 
 ## Review and Freshness

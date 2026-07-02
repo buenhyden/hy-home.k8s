@@ -48,7 +48,7 @@ versions/
 
 1. 버전 기준을 갱신할 때는 실제 manifest/config/example code와 해당 version reference를 같은 변경에서 맞춘다.
 2. 외부 공식 기준은 확인일과 공식 링크를 남긴다.
-3. 새 version reference는 [reference template](../../99.templates/reference.template.md)을 기반으로 작성한다.
+3. 새 version reference는 [reference template](../../99.templates/templates/common/reference.template.md)을 기반으로 작성한다.
 4. live upgrade 순서나 장애 대응 절차가 필요하면 `docs/05.operations/runbooks/`로 라우팅한다.
 5. 새 파일을 추가하거나 이동하면 이 README, 상위 [90.references README](../README.md), 관련 consumer README를 함께 갱신한다.
 6. `/latest` 형식의 외부 URL은 frozen permalink가 아니라 source-checked URL로 해석한다. 고정 release URL이 있으면 `tech-stack-version-inventory.md`의 source나 note에 함께 남긴다.

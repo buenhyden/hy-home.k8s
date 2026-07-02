@@ -202,7 +202,7 @@ The core gaps confirmed during Phase 1 investigation were:
 - **Postflight Checklist**: [../../00.agent-governance/rules/postflight-checklist.md](../../00.agent-governance/rules/postflight-checklist.md)
 - **Git Workflow**: [../../00.agent-governance/rules/git-workflow.md](../../00.agent-governance/rules/git-workflow.md)
 - **Template README**: [../../99.templates/README.md](../../99.templates/README.md)
-- **Plan Template**: [../../99.templates/plan.template.md](../../99.templates/plan.template.md)
+- **Plan Template**: [../../99.templates/templates/sdlc/execution/plan.template.md](../../99.templates/templates/sdlc/execution/plan.template.md)
 - **RTK Runtime Notes**: [../../../RTK.md](../../../RTK.md)
 - **Codex Runtime Baseline**: [../../../.codex/CODEX.md](../../../.codex/CODEX.md)
 - **OpenAI Models**: [https://developers.openai.com/api/docs/models](https://developers.openai.com/api/docs/models)

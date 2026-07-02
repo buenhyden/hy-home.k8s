@@ -42,7 +42,7 @@
 
 ## How to Work in This Area
 
-1. 기술적 대안 검토가 필요한 새로운 중대 결정이 발생하면 [adr.template.md](../../../../../docs/99.templates/adr.template.md) 템플릿을 사용하여 새 문서를 생성한다.
+1. 기술적 대안 검토가 필요한 새로운 중대 결정이 발생하면 [adr.template.md](../../../../../docs/99.templates/templates/sdlc/architecture/adr.template.md) 템플릿을 사용하여 새 문서를 생성한다.
 2. 각 문서 번호(####)는 프로젝트 전역에서 중복되지 않도록 순차적으로 부여한다.
 3. 결정의 배경(Context) 섹션에는 분석 단계에서의 비교 지표를 포함한다.
 

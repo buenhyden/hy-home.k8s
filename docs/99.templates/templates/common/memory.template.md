@@ -4,7 +4,7 @@ Use this template for standalone files under
 `docs/00.agent-governance/memory/`. When a standalone memory file is created or
 updated, append the related progress entry to
 `docs/00.agent-governance/memory/progress.md` using
-`docs/99.templates/progress.template.md` in the same change.
+`docs/99.templates/templates/common/progress.template.md` in the same change.
 
 Target family: `docs/00.agent-governance/memory/<topic>.md`.
 

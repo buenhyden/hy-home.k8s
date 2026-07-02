@@ -40,7 +40,7 @@
 ## How to Work in This Area
 
 1. [03.specs](../../03.specs/README.md)의 구현 계약을 먼저 확인합니다.
-2. 새 Plan은 `../../../../docs/99.templates/plan.template.md`를 기준으로 작성합니다.
+2. 새 Plan은 `../../../../docs/99.templates/templates/sdlc/execution/plan.template.md`를 기준으로 작성합니다.
 3. 실행 단위는 [04.execution/tasks](../tasks/README.md)에 연결합니다.
 
 ## Link Basis

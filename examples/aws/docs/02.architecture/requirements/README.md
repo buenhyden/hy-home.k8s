@@ -40,7 +40,7 @@
 ## How to Work in This Area
 
 1. [01.requirements](../../01.requirements/README.md)의 요구사항을 먼저 확인합니다.
-2. 새 ARD는 `../../../../docs/99.templates/ard.template.md`를 기준으로 작성합니다.
+2. 새 ARD는 `../../../../docs/99.templates/templates/sdlc/architecture/ard.template.md`를 기준으로 작성합니다.
 3. 아키텍처 결정은 [02.architecture/decisions](../decisions/README.md)에 별도 기록합니다.
 4. 구현 계약은 [03.specs](../../03.specs/README.md)와 연결합니다.
 

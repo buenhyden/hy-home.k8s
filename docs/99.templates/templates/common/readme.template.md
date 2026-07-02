@@ -20,17 +20,17 @@ README 템플릿은 여러 Target 위치에서 재사용된다. 단일 `Target:`
 - Incident Learning (`docs/05.operations/incidents/`, `docs/05.operations/incidents/postmortems/`) -> `Base Structure` + `Incident / Postmortem Snippet`
 
 ## docs 디렉터리 상세 역할
-- [01.requirements](../01.requirements/README.md): 제품 요구사항 정의 (Vision, Use Case, Requirements)
-- [02.architecture/requirements](../02.architecture/requirements/README.md): 아키텍처 참조 모델 및 품질 속성 정의
-- [02.architecture/decisions](../02.architecture/decisions/README.md): 기술적 의사결정 기록 (Decision, Status, Context, Consequence)
-- [03.specs](../03.specs/README.md): 컴포넌트/기능별 상세 설계 명세 (Data, API, Logic, Agent-Design)
-- [04.execution/plans](../04.execution/plans/README.md): 실행 계획 및 마일스톤 (Work Breakdown, Risks)
-- [04.execution/tasks](../04.execution/tasks/README.md): 실제 구현 및 검증 작업 단위 (Task Table, Evidence)
-- [05.operations/guides](../05.operations/guides/README.md): 사용자/개발자/운영자 대상 안정 상태 안내
-- [05.operations/policies](../05.operations/policies/README.md): 시스템 운영 정책 및 거버넌스
-- [05.operations/runbooks](../05.operations/runbooks/README.md): 반복적 운영 작업의 실행 지침 (Step-by-step)
-- [05.operations/incidents](../05.operations/incidents/README.md): 발생한 사고의 사실 기록 (Timeline, Mitigation)
-- [05.operations/incidents/postmortems](../05.operations/incidents/README.md): 첫 postmortem 생성 전에는 incidents README에서 경로와 생성 조건을 안내한다.
+- [01.requirements](../../../01.requirements/README.md): 제품 요구사항 정의 (Vision, Use Case, Requirements)
+- [02.architecture/requirements](../../../02.architecture/requirements/README.md): 아키텍처 참조 모델 및 품질 속성 정의
+- [02.architecture/decisions](../../../02.architecture/decisions/README.md): 기술적 의사결정 기록 (Decision, Status, Context, Consequence)
+- [03.specs](../../../03.specs/README.md): 컴포넌트/기능별 상세 설계 명세 (Data, API, Logic, Agent-Design)
+- [04.execution/plans](../../../04.execution/plans/README.md): 실행 계획 및 마일스톤 (Work Breakdown, Risks)
+- [04.execution/tasks](../../../04.execution/tasks/README.md): 실제 구현 및 검증 작업 단위 (Task Table, Evidence)
+- [05.operations/guides](../../../05.operations/guides/README.md): 사용자/개발자/운영자 대상 안정 상태 안내
+- [05.operations/policies](../../../05.operations/policies/README.md): 시스템 운영 정책 및 거버넌스
+- [05.operations/runbooks](../../../05.operations/runbooks/README.md): 반복적 운영 작업의 실행 지침 (Step-by-step)
+- [05.operations/incidents](../../../05.operations/incidents/README.md): 발생한 사고의 사실 기록 (Timeline, Mitigation)
+- [05.operations/incidents/postmortems](../../../05.operations/incidents/README.md): 첫 postmortem 생성 전에는 incidents README에서 경로와 생성 조건을 안내한다.
 
 ## Assembly Rules
 1. 아래의 `Base Structure`를 먼저 복사한다.

@@ -40,7 +40,7 @@
 ## How to Work in This Area
 
 1. [02.architecture/requirements](../02.architecture/requirements/README.md)와 [02.architecture/decisions](../02.architecture/decisions/README.md)를 먼저 확인합니다.
-2. 새 Spec은 `../../../../docs/99.templates/spec.template.md`를 기준으로 작성합니다.
+2. 새 Spec은 `../../../../docs/99.templates/templates/sdlc/specs/spec.template.md`를 기준으로 작성합니다.
 3. 실행 계획과 검증 작업은 [04.execution/plans](../04.execution/plans/README.md), [04.execution/tasks](../04.execution/tasks/README.md)에 연결합니다.
 
 ## Link Basis

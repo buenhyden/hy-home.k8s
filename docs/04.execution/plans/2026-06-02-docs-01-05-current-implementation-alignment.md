@@ -42,7 +42,7 @@ Phase evidence against the current implementation.
 - **Non-goals**:
   - New Headlamp OIDC, Keycloak, Vault, ESO, ArgoCD, Kubernetes, provider, model, or CI topology implementation.
   - Using live runtime state as the archive decision basis.
-  - Adding archive policy to `docs/99.templates/reference.template.md`.
+  - Adding archive policy to `docs/99.templates/templates/common/reference.template.md`.
 - **Out of Scope**:
   - live k3d mutation, ArgoCD sync, Vault unseal/write, ESO secret sync repair, deployment action, external network operation, or secret-value inspection.
   - Private RTK DB, credentials, tokens, private keys, or shell history inspection.
@@ -106,4 +106,4 @@ Phase evidence against the current implementation.
 - **Tasks**: [../tasks/2026-06-02-docs-01-05-current-implementation-alignment.md](../tasks/2026-06-02-docs-01-05-current-implementation-alignment.md)
 - **Archive Index**: [../../98.archive/README.md](../../98.archive/README.md)
 - **Document Stage Routing**: [../../00.agent-governance/rules/document-stage-routing.md](../../00.agent-governance/rules/document-stage-routing.md)
-- **Plan Template**: [../../99.templates/plan.template.md](../../99.templates/plan.template.md)
+- **Plan Template**: [../../99.templates/templates/sdlc/execution/plan.template.md](../../99.templates/templates/sdlc/execution/plan.template.md)

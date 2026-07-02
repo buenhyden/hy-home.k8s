@@ -14,26 +14,26 @@ Use the existing stage structure only.
 
 | Document Intent | Canonical Path | Required Template | Notes |
 | --- | --- | --- | --- |
-| README or folder index | `README.md`, `docs/**/README.md` | `docs/99.templates/readme.template.md` | Use for repository, stage, and nested folder entrypoints. |
-| Product requirement | `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md` | `docs/99.templates/prd.template.md` | Use for product intent, scope, success criteria, and acceptance criteria. |
-| Architecture requirement | `docs/02.architecture/requirements/####-<system-or-domain>.md` | `docs/99.templates/ard.template.md` | Use for architecture requirements and quality attributes. |
-| Architecture decision | `docs/02.architecture/decisions/####-<short-title>.md` | `docs/99.templates/adr.template.md` | Use for decision context, selected option, alternatives, and consequences. |
-| Technical specification | `docs/03.specs/<feature-id>/spec.md` | `docs/99.templates/spec.template.md` | Use for implementation contracts and detailed design. |
-| Implementation plan | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `docs/99.templates/plan.template.md` | Use for execution order, risks, gates, and rollout. |
-| Task record | `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `docs/99.templates/task.template.md` | Use for implementation status, validation evidence, and handoff. |
-| API contract | `docs/03.specs/<feature-id>/api-spec.md` | `docs/99.templates/api-spec.template.md` | Never route to `docs/api/**`. |
-| Agent design | `docs/03.specs/<feature-id>/agent-design.md` | `docs/99.templates/agent-design.template.md` | Use for role/tool/policy/memory design tied to one feature. |
-| Data model | `docs/03.specs/<feature-id>/data-model.md` | `docs/99.templates/data-model.template.md` | Use for schema and storage design tied to one feature. |
-| Test design | `docs/03.specs/<feature-id>/tests.md` | `docs/99.templates/tests.template.md` | Use for verification strategy tied to one feature. |
-| User or operator guide | `docs/05.operations/guides/<doc>.md` | `docs/99.templates/guide.template.md` | Use after the relevant spec is stable. |
-| Operations policy | `docs/05.operations/policies/<doc>.md` | `docs/99.templates/policy.template.md` | Required for release and operational controls. |
-| Runbook | `docs/05.operations/runbooks/<doc>.md` | `docs/99.templates/runbook.template.md` | Use for executable operational procedures. |
-| Incident record | `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/incident.template.md` | Use for facts, timelines, mitigations, and active incident evidence. |
-| Postmortem | `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/postmortem.template.md` | Use for RCA, prevention actions, and post-incident learning. |
-| Durable reference | `docs/90.references/<category>/<topic>.md` | `docs/99.templates/reference.template.md` | Use for slow-moving concepts, glossaries, standards, and reusable agent knowledge. |
-| LLM Wiki generated index | `docs/90.references/llm-wiki/wiki-index.md` | `docs/99.templates/reference.template.md` through `scripts/generate-llm-wiki-index.sh` | Use only as a generated canonical-owner link map. |
-| Archive Tombstone | `docs/98.archive/<original-docs-subpath>.md` | `docs/99.templates/archive-tombstone.template.md` | Use only for metadata-only Tombstones of old docs moved out of active stages. |
-| Governance memory | `docs/00.agent-governance/memory/<topic>.md` | `docs/99.templates/memory.template.md` | Use for reusable agent governance lessons. |
+| README or folder index | `README.md`, `docs/**/README.md` | `docs/99.templates/templates/common/readme.template.md` | Use for repository, stage, and nested folder entrypoints. |
+| Product requirement | `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md` | `docs/99.templates/templates/sdlc/requirements/prd.template.md` | Use for product intent, scope, success criteria, and acceptance criteria. |
+| Architecture requirement | `docs/02.architecture/requirements/####-<system-or-domain>.md` | `docs/99.templates/templates/sdlc/architecture/ard.template.md` | Use for architecture requirements and quality attributes. |
+| Architecture decision | `docs/02.architecture/decisions/####-<short-title>.md` | `docs/99.templates/templates/sdlc/architecture/adr.template.md` | Use for decision context, selected option, alternatives, and consequences. |
+| Technical specification | `docs/03.specs/<feature-id>/spec.md` | `docs/99.templates/templates/sdlc/specs/spec.template.md` | Use for implementation contracts and detailed design. |
+| Implementation plan | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `docs/99.templates/templates/sdlc/execution/plan.template.md` | Use for execution order, risks, gates, and rollout. |
+| Task record | `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `docs/99.templates/templates/sdlc/execution/task.template.md` | Use for implementation status, validation evidence, and handoff. |
+| API contract | `docs/03.specs/<feature-id>/api-spec.md` | `docs/99.templates/templates/sdlc/specs/api-spec.template.md` | Never route to `docs/api/**`. |
+| Agent design | `docs/03.specs/<feature-id>/agent-design.md` | `docs/99.templates/templates/sdlc/specs/agent-design.template.md` | Use for role/tool/policy/memory design tied to one feature. |
+| Data model | `docs/03.specs/<feature-id>/data-model.md` | `docs/99.templates/templates/sdlc/specs/data-model.template.md` | Use for schema and storage design tied to one feature. |
+| Test design | `docs/03.specs/<feature-id>/tests.md` | `docs/99.templates/templates/sdlc/specs/tests.template.md` | Use for verification strategy tied to one feature. |
+| User or operator guide | `docs/05.operations/guides/<doc>.md` | `docs/99.templates/templates/sdlc/operations/guide.template.md` | Use after the relevant spec is stable. |
+| Operations policy | `docs/05.operations/policies/<doc>.md` | `docs/99.templates/templates/sdlc/operations/policy.template.md` | Required for release and operational controls. |
+| Runbook | `docs/05.operations/runbooks/<doc>.md` | `docs/99.templates/templates/sdlc/operations/runbook.template.md` | Use for executable operational procedures. |
+| Incident record | `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/templates/sdlc/operations/incident.template.md` | Use for facts, timelines, mitigations, and active incident evidence. |
+| Postmortem | `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/templates/sdlc/operations/postmortem.template.md` | Use for RCA, prevention actions, and post-incident learning. |
+| Durable reference | `docs/90.references/<category>/<topic>.md` | `docs/99.templates/templates/common/reference.template.md` | Use for slow-moving concepts, glossaries, standards, and reusable agent knowledge. |
+| LLM Wiki generated index | `docs/90.references/llm-wiki/wiki-index.md` | `docs/99.templates/templates/common/reference.template.md` through `scripts/generate-llm-wiki-index.sh` | Use only as a generated canonical-owner link map. |
+| Archive Tombstone | `docs/98.archive/<original-docs-subpath>.md` | `docs/99.templates/templates/common/archive-tombstone.template.md` | Use only for metadata-only Tombstones of old docs moved out of active stages. |
+| Governance memory | `docs/00.agent-governance/memory/<topic>.md` | `docs/99.templates/templates/common/memory.template.md` | Use for reusable agent governance lessons. |
 
 ## Legacy Path Migration Map
 
@@ -100,7 +100,7 @@ When a skill suggests one of these paths, reroute the output into the canonical 
 - Use `docs/98.archive/` only when an old active-stage document under `docs/01.requirements` through `docs/05.operations` conflicts with current repo-backed implementation, is deprecated-only, or is superseded-only.
 - Mirror the original docs subpath under `docs/98.archive/<original-docs-subpath>`.
 - For `docs/05.operations`, preserve the operations bucket mirror under `docs/98.archive/05.operations/{guides,policies,runbooks,incidents}`.
-- Replace the moved document body with a Tombstone created from `docs/99.templates/archive-tombstone.template.md`; do not preserve the old body text.
+- Replace the moved document body with a Tombstone created from `docs/99.templates/templates/common/archive-tombstone.template.md`; do not preserve the old body text.
 - Active docs may link archive content only through `docs/98.archive/README.md`.
 - Current replacement coverage must exist before moving a document that owned still-current scope.
 

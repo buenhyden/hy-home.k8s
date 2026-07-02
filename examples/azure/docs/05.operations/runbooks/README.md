@@ -41,7 +41,7 @@
 ## How to Work in This Area
 
 1. [0001-disaster-recovery.md](0001-disaster-recovery.md)를 통해 긴급 상황 대응 절차를 숙지한다.
-2. 런북 작성 시 [runbook.template.md](../../../../../docs/99.templates/runbook.template.md) 템플릿을 준수한다.
+2. 런북 작성 시 [runbook.template.md](../../../../../docs/99.templates/templates/sdlc/operations/runbook.template.md) 템플릿을 준수한다.
 3. 모든 단계는 명령어를 포함하여 즉시 실행 가능해야 하며, 실행 결과의 기댓값을 명시한다.
 
 ## Link Basis

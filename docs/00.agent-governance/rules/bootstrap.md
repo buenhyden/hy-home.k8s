@@ -9,7 +9,7 @@ Universal entry point for all agents in `hy-home.k8s`.
 - Use [Agentic Execution Rules](agentic.md) as the Agent-first Engineering contract for non-trivial work.
 - Use spec-driven execution anchored to `docs/01.requirements/` and `docs/03.specs/`.
 - Use `docs/00.agent-governance/memory/progress.md` as the agent progress and reusable memory ledger for repo-changing work.
-- Use `docs/99.templates/memory.template.md` for standalone files under `docs/00.agent-governance/memory/`, and update `progress.md` in the same change.
+- Use `docs/99.templates/templates/common/memory.template.md` for standalone files under `docs/00.agent-governance/memory/`, and update `progress.md` in the same change.
 - Load governance just-in-time, not full-repository-first.
 - Complete [Preflight Checklist](preflight-checklist.md) before substantial work.
 - Complete [Postflight Checklist](postflight-checklist.md) before final response.
@@ -38,7 +38,7 @@ Use [stage-authoring-matrix.md](stage-authoring-matrix.md) as the canonical auth
 - `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` remain thin gateways.
 - English-only policy is preserved under `docs/00.agent-governance/`.
 - References to checklist and matrix docs remain valid.
-- Repo-changing work has a `memory/progress.md` entry, and standalone memory files use `docs/99.templates/memory.template.md`.
+- Repo-changing work has a `memory/progress.md` entry, and standalone memory files use `docs/99.templates/templates/common/memory.template.md`.
 - GitOps-first and no-direct-cluster-mutation constraints remain visible.
 - Validation evidence or limitations are reported.
 - No new files created without explicit human request.

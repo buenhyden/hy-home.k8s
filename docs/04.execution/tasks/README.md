@@ -77,7 +77,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ## How to Work in This Area
 
 1. 작업의 Parent Spec 또는 Parent Plan을 먼저 확인한다.
-2. 새 Task 문서는 `../../99.templates/task.template.md`에서 시작하고, canonical target pattern은 `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md`다.
+2. 새 Task 문서는 `../../99.templates/templates/sdlc/execution/task.template.md`에서 시작하고, canonical target pattern은 `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md`다.
 3. 각 작업은 Task ID, Type, Parent Spec/Plan, Validation/Evidence, Owner, Status를 가진다.
 4. 권장 Type은 `impl`, `test`, `eval`, `doc`, `ops`다. Agent-specific 작업은 `prompt`, `tool`, `memory`, `guardrail`, `eval`, `observability`를 사용할 수 있다.
 5. 핵심 동작은 테스트 우선(TDD)을 기본값으로 하고, 문서-only 작업도 검증 evidence를 남긴다.
@@ -132,5 +132,5 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 - [03.specs](../../03.specs/README.md)
 - [04.execution/plans](../plans/README.md)
 - [05.operations/incidents](../../05.operations/incidents/README.md)
-- [Task Template](../../99.templates/task.template.md)
+- [Task Template](../../99.templates/templates/sdlc/execution/task.template.md)
 - [Archive Index](../../98.archive/README.md)

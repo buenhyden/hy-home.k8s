@@ -130,4 +130,4 @@ implementation, then records the gap ledger.
 - [Harness Catalog](../../00.agent-governance/harness-catalog.md)
 - [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
 - [Git Workflow Rules](../../00.agent-governance/rules/git-workflow.md)
-- [Task Template](../../99.templates/task.template.md)
+- [Task Template](../../99.templates/templates/sdlc/execution/task.template.md)

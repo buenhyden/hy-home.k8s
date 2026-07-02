@@ -30,7 +30,7 @@ Reference 추가, 이동, 버전 snapshot 갱신, LLM Wiki owner/link 변경이 
 - [Tech Stack Version Inventory](../../90.references/versions/tech-stack-version-inventory.md)
 - [LLM WIKI README](../../90.references/llm-wiki/README.md)
 - [LLM Wiki Curation Guide](../guides/0009-llm-wiki-curation-guide.md)
-- [Reference Template](../../99.templates/reference.template.md)
+- [Reference Template](../../99.templates/templates/common/reference.template.md)
 - [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
 
 ## When to Use
@@ -48,7 +48,7 @@ Reference 추가, 이동, 버전 snapshot 갱신, LLM Wiki owner/link 변경이 
    - 사실, 버전 snapshot, learning roadmap, glossary, FAQ이면 `docs/90.references`에 둔다.
    - 실행 순서, 복구, rollback, 승인 절차이면 `docs/05.operations/runbooks`로 보낸다.
    - 운영 정책, 통제, 예외 승인 기준이면 `docs/05.operations/policies`로 보낸다.
-2. 새 authored reference 문서는 [Reference Template](../../99.templates/reference.template.md)의 필수 heading을 유지한다.
+2. 새 authored reference 문서는 [Reference Template](../../99.templates/templates/common/reference.template.md)의 필수 heading을 유지한다.
 3. 해당 category README와 [90.references README](../../90.references/README.md)의 Structure, Reference Index, freshness 기준을 함께 갱신한다.
 4. reference 문서의 `Related Documents`는 consumer stage와 이 런북을 연결하되, 절차 본문을 reference 쪽에 복제하지 않는다.
 5. 문서 링크를 확인한다.
@@ -154,4 +154,4 @@ git diff --check
 - **Reference**: [Tech Stack Version Inventory](../../90.references/versions/tech-stack-version-inventory.md)
 - **Reference**: [LLM WIKI README](../../90.references/llm-wiki/README.md)
 - **Guide**: [LLM Wiki Curation Guide](../guides/0009-llm-wiki-curation-guide.md)
-- **Template**: [Reference Template](../../99.templates/reference.template.md)
+- **Template**: [Reference Template](../../99.templates/templates/common/reference.template.md)

@@ -78,16 +78,16 @@ Path calculation principles:
 
 | Task | Description                        | Files / Docs Affected                            | Target REQ  | Validation Criteria                                                       |
 | ---- | ---------------------------------- | ------------------------------------------------ | ----------- | ------------------------------------------------------------------------- |
-| T-01 | Fix `adr.template.md` paths | `docs/99.templates/adr.template.md` | REQ-TMP-001 | Four Related Documents paths use `../../` or `../requirements/` patterns |
-| T-02 | Fix `ard.template.md` paths | `docs/99.templates/ard.template.md` | REQ-TMP-001 | Four Related Documents paths fixed |
-| T-03 | Fix `plan.template.md` paths | `docs/99.templates/plan.template.md` | REQ-TMP-001 | Four Related Documents paths fixed |
-| T-04 | Fix `task.template.md` paths | `docs/99.templates/task.template.md` | REQ-TMP-001 | Five Inputs and Related Documents paths fixed |
-| T-05 | Fix `guide.template.md` paths | `docs/99.templates/guide.template.md` | REQ-TMP-001 | Three Related Documents paths fixed |
-| T-06 | Fix `runbook.template.md` paths | `docs/99.templates/runbook.template.md` | REQ-TMP-001 | Four Canonical References paths and three Related Documents paths fixed |
-| T-07 | Fix `incident.template.md` paths | `docs/99.templates/incident.template.md` | REQ-TMP-001 | Runbook Link cell and two Related Documents paths fixed |
-| T-08 | Fix `postmortem.template.md` paths | `docs/99.templates/postmortem.template.md` | REQ-TMP-001 | Incident Document cell and three Related Documents paths fixed |
-| T-09 | Fix `policy.template.md` paths | `docs/99.templates/policy.template.md` | REQ-TMP-001 | Three Related Documents paths fixed |
-| T-10 | Fix `reference.template.md` paths | `docs/99.templates/reference.template.md` | REQ-TMP-001 | Two Related Documents paths fixed |
+| T-01 | Fix `adr.template.md` paths | `docs/99.templates/templates/sdlc/architecture/adr.template.md` | REQ-TMP-001 | Four Related Documents paths use `../../` or `../requirements/` patterns |
+| T-02 | Fix `ard.template.md` paths | `docs/99.templates/templates/sdlc/architecture/ard.template.md` | REQ-TMP-001 | Four Related Documents paths fixed |
+| T-03 | Fix `plan.template.md` paths | `docs/99.templates/templates/sdlc/execution/plan.template.md` | REQ-TMP-001 | Four Related Documents paths fixed |
+| T-04 | Fix `task.template.md` paths | `docs/99.templates/templates/sdlc/execution/task.template.md` | REQ-TMP-001 | Five Inputs and Related Documents paths fixed |
+| T-05 | Fix `guide.template.md` paths | `docs/99.templates/templates/sdlc/operations/guide.template.md` | REQ-TMP-001 | Three Related Documents paths fixed |
+| T-06 | Fix `runbook.template.md` paths | `docs/99.templates/templates/sdlc/operations/runbook.template.md` | REQ-TMP-001 | Four Canonical References paths and three Related Documents paths fixed |
+| T-07 | Fix `incident.template.md` paths | `docs/99.templates/templates/sdlc/operations/incident.template.md` | REQ-TMP-001 | Runbook Link cell and two Related Documents paths fixed |
+| T-08 | Fix `postmortem.template.md` paths | `docs/99.templates/templates/sdlc/operations/postmortem.template.md` | REQ-TMP-001 | Incident Document cell and three Related Documents paths fixed |
+| T-09 | Fix `policy.template.md` paths | `docs/99.templates/templates/sdlc/operations/policy.template.md` | REQ-TMP-001 | Three Related Documents paths fixed |
+| T-10 | Fix `reference.template.md` paths | `docs/99.templates/templates/common/reference.template.md` | REQ-TMP-001 | Two Related Documents paths fixed |
 | T-11 | Fix ADR generated-file display text | `docs/02.architecture/decisions/000{1-9}*.md` | REQ-GEN-001 | backtick display text matches href |
 | T-12 | Fix ARD generated-file display text | `docs/02.architecture/requirements/000{1-3}*.md` | REQ-GEN-001 | backtick display text matches href |
 | T-13 | Fix Plan generated-file display text | `docs/04.execution/plans/2026-*.md` (six files) | REQ-GEN-001 | backtick display text matches href |
@@ -125,7 +125,7 @@ rewritten by the author for the final README location.
 
 | ID          | Level      | Description                  | Command / How to Run                                                                                                     | Pass Criteria                                                                                |
 | ----------- | ---------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
-| VAL-PLN-001 | Structural | Check template path patterns | `grep -n "Related Documents" -A 6 docs/99.templates/adr.template.md` | `../../01.requirements/`, `../requirements/`, `../../03.specs/`, `../../04.execution/plans/` |
+| VAL-PLN-001 | Structural | Check template path patterns | `grep -n "Related Documents" -A 6 docs/99.templates/templates/sdlc/architecture/adr.template.md` | `../../01.requirements/`, `../requirements/`, `../../03.specs/`, `../../04.execution/plans/` |
 | VAL-PLN-002 | Structural | Scan generated-file mismatches | Compare backtick code labels and href values excluding fenced code blocks | 0 mismatches |
 | VAL-PLN-003 | Structural | Check internal Markdown link existence | Check relative Markdown link targets in `README.md` and `docs/**/*.md` excluding fenced code blocks | 0 missing targets |
 | VAL-PLN-004 | Content | Check actual file existence | `ls docs/02.architecture/requirements/0007-current-local-gitops-platform.md docs/03.specs/008-current-local-gitops-platform/spec.md` | Both files exist |
@@ -154,7 +154,7 @@ deploy AI Agent models or prompts.
 
 ## Template Improvement Plan
 
-`docs/99.templates/readme.template.md` is intentionally generic because README
+`docs/99.templates/templates/common/readme.template.md` is intentionally generic because README
 targets vary by directory depth. The 2026-05-21 follow-up clarified that its
 snippet library is optional assembly material and must not remain in final
 README files. Future hardening should stay limited to target-specific path

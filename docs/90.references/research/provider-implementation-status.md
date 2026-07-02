@@ -290,7 +290,7 @@ families, but the safe local rule remains conservative:
   appropriate.
 - For template and documentation-routing changes, update
   [docs/99.templates/README.md](../../99.templates/README.md),
-  [reference.template.md](../../99.templates/reference.template.md), and Stage
+  [reference.template.md](../../99.templates/templates/common/reference.template.md), and Stage
   00 documentation routing rules.
 - For MCP additions or mutations, create an explicit task/plan and obtain
   human approval if the change can mutate external resources, credentials, or
@@ -347,7 +347,7 @@ Repo sources checked on 2026-07-02:
 - [Gemini Runtime Baseline](../../../.agents/GEMINI.md)
 - [Codex Hooks](../../../.codex/hooks.json)
 - [Gemini/Agents Hooks](../../../.agents/hooks.json)
-- [Reference Template](../../99.templates/reference.template.md)
+- [Reference Template](../../99.templates/templates/common/reference.template.md)
 - [Research README](./README.md)
 - [Workspace Harness Research Pack Task](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
 
