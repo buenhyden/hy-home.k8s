@@ -35,7 +35,7 @@ spec and plan while preserving logical commit boundaries.
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-001 | Create Stage 04 plan/task tracking for the migration | doc | Related Documents | PLN-006 | `git diff --check` PASS; repo quality gate PASS; English-first scan PASS | platform | Done |
-| T-002 | Create support contract baseline under `docs/99.templates/support/**` | doc | VAL-SPC-001, VAL-SPC-003 | PLN-001 | Support docs exist and quality gate passes | platform | Todo |
+| T-002 | Create support contract baseline under `docs/99.templates/support/**` | doc | VAL-SPC-001, VAL-SPC-003 | PLN-001 | Support docs exist; `git diff --check` PASS; repo quality gate PASS | platform | Done |
 | T-003 | Move template forms into `docs/99.templates/templates/**` | doc | VAL-SPC-002, VAL-SPC-008 | PLN-002 | `git mv`; template tree review; quality gate | platform | Todo |
 | T-004 | Update routing, hook, validator, and governance references | impl | VAL-SPC-004, VAL-SPC-005, VAL-SPC-006 | PLN-003 | Legacy path searches; quality gate | platform | Todo |
 | T-005 | Normalize frontmatter profiles and remove active legacy values | doc | VAL-SPC-005, VAL-SPC-007 | PLN-004 | Schema review; legacy value searches; quality gate | platform | Todo |
@@ -62,7 +62,7 @@ spec and plan while preserving logical commit boundaries.
 
 ### Phase 1: Support Contract Baseline
 
-- [ ] T-002 Create support contract baseline under `docs/99.templates/support/**`.
+- [x] T-002 Create support contract baseline under `docs/99.templates/support/**`.
 
 ### Phase 2: Template Path Migration
 

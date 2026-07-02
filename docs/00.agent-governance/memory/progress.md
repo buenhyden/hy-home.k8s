@@ -8,6 +8,41 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-03 — Template support contract baseline
+
+- **Date**: 2026-07-03
+- **Layer**: docs, meta, qa
+- **Status**: complete
+- **Tags**: #templates #governance #frontmatter #sdlc #validation
+
+#### Progress
+
+- Added the initial `docs/99.templates/support/` contract layer for template
+  documentation contract, SDLC governance, common documentation governance,
+  frontmatter schema, template routing, and legacy cleanup rules.
+- Updated `docs/99.templates/README.md` with the support directory inventory
+  and support contract index while preserving current flat template routes for
+  Phase 1 compatibility.
+- Marked T-002 in the migration task record as in progress.
+
+#### Memory
+
+- Phase 1 must not move flat template files yet because current validators,
+  hooks, and Stage 00 route docs still depend on flat template paths.
+- Support docs can introduce the target contract before validators enforce it,
+  as long as current route enforcement still passes.
+
+#### Evidence
+
+- `git diff --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `find docs/99.templates/support -maxdepth 1 -type f -print | sort`
+  confirmed the support contract file set.
+
+#### Handoff
+
+- Next action: start Phase 2 template path migration.
+
 ### 2026-07-03 — Template contract and governance migration execution plan
 
 - **Date**: 2026-07-03
