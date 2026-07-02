@@ -33,7 +33,7 @@ CI, validation scripts, examples, and external version baselines.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-001 | Re-audit docs lifecycle, template mapping, and README contract | doc | N/A | PLN-002 | `bash scripts/validate-repo-quality-gates.sh .` | Platform | Done |
 | T-002 | Re-audit Agent gateway, runtime baseline, Codex mirror, hook, and local-rule boundaries | guardrail | N/A | PLN-003 | quality gate, JSON parse, ignored local-rule checks | Platform | Done |
-| T-003 | Refresh external version inventory from official sources | doc | N/A | PLN-004 | `docs/90.references/versions/tech-stack-version-inventory.md` updated with 2026-05-22 source date | Platform | Done |
+| T-003 | Refresh external version inventory from official sources | doc | N/A | PLN-004 | `docs/90.references/data/tech-stack-version-inventory.md` updated with 2026-05-22 source date | Platform | Done |
 | T-004 | Broaden shared direct-command deny boundary and align local Hookify wording | guardrail | N/A | PLN-005 | `.claude/settings.json` JSON parse and local Hookify frontmatter checks | Platform | Done |
 | T-005 | Preserve SDD execution evidence and update stage indexes | doc | N/A | PLN-001 | Plan/Task created from templates and indexed in README files | Platform | Done |
 | T-006 | Run repo-static validation suite and record limitations | test | N/A | PLN-006 | Verification Summary in this document | Platform | Done |
@@ -83,7 +83,7 @@ CI, validation scripts, examples, and external version baselines.
 - **Logs / Evidence Location**:
   - This task document.
   - [Progress ledger](../../00.agent-governance/memory/progress.md).
-  - [Version inventory](../../90.references/versions/tech-stack-version-inventory.md).
+  - [Version inventory](../../90.references/data/tech-stack-version-inventory.md).
 - **Local Tool Limitations**:
   - `pre-commit`, `shellcheck`, `actionlint`, `zizmor`, `kube-linter`, `graphify`, and `rtk` are not installed in this local environment.
 
@@ -102,4 +102,4 @@ CI, validation scripts, examples, and external version baselines.
 - **Previous Task**: [./2026-05-22-docs-governance-full-ab-hardening.md](./2026-05-22-docs-governance-full-ab-hardening.md)
 - **Templates**: [../../99.templates/README.md](../../99.templates/README.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
-- **Version Inventory**: [../../90.references/versions/tech-stack-version-inventory.md](../../90.references/versions/tech-stack-version-inventory.md)
+- **Version Inventory**: [../../90.references/data/tech-stack-version-inventory.md](../../90.references/data/tech-stack-version-inventory.md)

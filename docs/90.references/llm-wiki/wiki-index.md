@@ -65,7 +65,7 @@ updated: 2026-05-10
 | Operations runbooks | [05.operations/runbooks README](../../05.operations/runbooks/README.md) | Owns executable operations procedure index | Runbook additions, moves, or status changes |
 | Operations incidents | [05.operations/incidents README](../../05.operations/incidents/README.md) | Owns incident and postmortem index | Incident additions or postmortem changes |
 | Reference inventory | [90.references README](../README.md) | Owns durable reference category index | Reference category additions or moves |
-| Version snapshots | [Tech Stack Version Inventory](../versions/tech-stack-version-inventory.md) | Owns repo-backed version facts | Manifest, config, example, or provider support changes |
+| Version snapshots | [Tech Stack Version Inventory](../data/tech-stack-version-inventory.md) | Owns repo-backed version facts | Manifest, config, example, or provider support changes |
 | Templates | [Templates README](../../99.templates/README.md) | Owns documentation template inventory | Template additions or required heading changes |
 | Script inventory | [scripts README](../../../scripts/README.md) | Owns script lifecycle and command contracts | Script additions, removals, or command contract changes |
 | GitOps desired state | [gitops README](../../../gitops/README.md) | Owns desired-state layout and GitOps boundary | GitOps root app or platform layout changes |

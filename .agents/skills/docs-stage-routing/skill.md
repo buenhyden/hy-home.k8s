@@ -61,7 +61,7 @@ Define the repository-local routing contract for document-generation workflows.
 ### `agent-memory-systems`
 
 - Feature-specific memory strategy goes to `docs/03.specs/<feature-id>/agent-design.md`.
-- Durable reusable memory concepts go to `docs/90.references/agents/<topic>.md`.
+- Durable reusable memory concepts go to `docs/90.references/data/<topic>.md`.
 
 ### `agent-md-refactor`
 

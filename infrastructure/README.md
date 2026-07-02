@@ -135,7 +135,7 @@ boundary를 확인하지만, kubeconfig repair나 live cluster mutation을 자�
 - [Spec](../docs/03.specs/008-current-local-gitops-platform/spec.md)
 - [Runbook](../docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - [GitOps README](../gitops/README.md)
-- [Tech Stack Version Inventory](../docs/90.references/versions/tech-stack-version-inventory.md)
+- [Tech Stack Version Inventory](../docs/90.references/data/tech-stack-version-inventory.md)
 
 ## Validation Note
 

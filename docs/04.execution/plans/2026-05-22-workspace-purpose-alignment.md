@@ -38,7 +38,7 @@ boundaries.
   - Harden the Claude/Hookify command boundary so it more clearly blocks direct cluster mutation and direct reconciliation.
 - **In Scope**:
   - `docs/01.requirements` through `docs/05.operations`
-  - `docs/90.references/versions`
+  - `docs/90.references/data`
   - `docs/99.templates`
   - `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.claude/**`, `.codex/**`
   - root, docs, GitOps, infrastructure, scripts, tests, examples README layers
@@ -64,7 +64,7 @@ boundaries.
 | PLN-001 | Capture full-purpose audit plan and execution evidence | `docs/04.execution/plans`, `docs/04.execution/tasks` | REQ-SDD-001 | Plan/Task follow templates and are indexed |
 | PLN-002 | Re-audit docs lifecycle, templates, and README layer | `docs/01.requirements` through `docs/05.operations`, `docs/99.templates`, `**/README.md` | REQ-DOC-001 | Repo quality gate passes with no template drift |
 | PLN-003 | Re-audit Agent governance and runtime boundaries | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.claude/**`, `.codex/**`, `docs/00.agent-governance/**` | REQ-AI-001 | Gateway thinness, mirror, hook, and local-rule checks pass |
-| PLN-004 | Refresh external version basis without changing desired-state pins | `docs/90.references/versions/tech-stack-version-inventory.md` | REQ-REF-001 | Official source date and snapshot notes reflect 2026-05-22 |
+| PLN-004 | Refresh external version basis without changing desired-state pins | `docs/90.references/data/tech-stack-version-inventory.md` | REQ-REF-001 | Official source date and snapshot notes reflect 2026-05-22 |
 | PLN-005 | Harden shared and local advisory command boundaries | `.claude/settings.json`, `.claude/*.local.md` | REQ-HOOK-001 | JSON parse and quality gate pass; local rules remain ignored |
 | PLN-006 | Record memory and validation handoff | `docs/00.agent-governance/memory/progress.md` | REQ-MEM-001 | Progress entry includes evidence and limitations |
 
@@ -115,4 +115,4 @@ boundaries.
 - **Templates**: [../../99.templates/README.md](../../99.templates/README.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Agentic Rules**: [../../00.agent-governance/rules/agentic.md](../../00.agent-governance/rules/agentic.md)
-- **Version Inventory**: [../../90.references/versions/tech-stack-version-inventory.md](../../90.references/versions/tech-stack-version-inventory.md)
+- **Version Inventory**: [../../90.references/data/tech-stack-version-inventory.md](../../90.references/data/tech-stack-version-inventory.md)

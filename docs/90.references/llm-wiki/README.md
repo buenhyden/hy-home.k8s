@@ -89,7 +89,7 @@ docs/90.references/llm-wiki/
 | LLM Wiki operation | [0009-llm-wiki-curation-guide.md](../../05.operations/guides/0009-llm-wiki-curation-guide.md) | Points to refresh triggers and `wiki-curator` usage | Generator or `wiki-curator` contract changes |
 | Workspace documentation hub | [docs README](../../README.md) | Points to human-facing docs map | Docs top-level or README hub changes |
 | Reference inventory | [90.references README](../README.md) | Points to reference-only authority boundary | Reference category additions or moves |
-| Version snapshots | [tech-stack-version-inventory.md](../versions/tech-stack-version-inventory.md) | Points to repo-backed version facts | Manifest/config/example version changes or provider support changes |
+| Version snapshots | [tech-stack-version-inventory.md](../data/tech-stack-version-inventory.md) | Points to repo-backed version facts | Manifest/config/example version changes or provider support changes |
 | Cloud examples | [examples README](../../../examples/README.md) | Points to reference-only AWS/Azure examples | Example taxonomy, snapshot, or command-boundary changes |
 | GitOps state | [gitops README](../../../gitops/README.md) | Points to desired-state ownership | GitOps root app or platform layout changes |
 | Script inventory | [scripts README](../../../scripts/README.md) | Points to script lifecycle and validation contracts | Script additions, removals, or command contract changes |
@@ -122,13 +122,13 @@ docs/90.references/llm-wiki/
 이 README의 링크 기준 위치는 `docs/90.references/llm-wiki/`다.
 
 - 같은 폴더의 generated index는 `./wiki-index.md`로 연결한다.
-- reference sibling folder는 `../versions/`, `../agents/`, `../learning/`로 연결한다.
+- reference sibling folder는 `../audits/`, `../data/`, `../learning/`, `../research/`로 연결한다.
 - `examples/`, `gitops/`, `scripts/` 같은 root-level owner는 `../../../<path>`로 연결한다.
 
 ## Related Documents
 
 - [90.references README](../README.md)
-- [Tech Stack Version Inventory](../versions/tech-stack-version-inventory.md)
+- [Tech Stack Version Inventory](../data/tech-stack-version-inventory.md)
 - [Generated LLM WIKI Index](./wiki-index.md)
 - [LLM Wiki Curation Guide](../../05.operations/guides/0009-llm-wiki-curation-guide.md)
 - [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

@@ -19,7 +19,7 @@ It is a map and routing surface, not the policy source of truth.
 - `repo-quality-static` also enforces `docs/98.archive` stage-indexed Tombstone structure, `05.operations` archive mirror coverage, and active-doc stale runtime/OIDC/hook/CI currentness rejection.
 - `ci.yml` validates pull request shape; GitHub branch protection/rulesets enforce direct-push restrictions outside repo-local files.
 - PR author and reviewer prompts live in `PULL_REQUEST_TEMPLATE.md`.
-- Version inventory and action tag policy live in `docs/90.references/versions/tech-stack-version-inventory.md`.
+- Version inventory and action tag policy live in `docs/90.references/data/tech-stack-version-inventory.md`.
 
 ## Workflow Roles
 

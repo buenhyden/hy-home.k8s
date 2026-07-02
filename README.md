@@ -90,7 +90,7 @@ hy-home.k8s/
 9. 인프라 변경은 GitOps-first로 다룬다. 일반 변경에서 live cluster mutation, `kubectl apply`, 외부 Vault 조작을 도입하지 않는다.
 10. `.github` 자동화나 QA gate를 바꿀 때는 [`.github/ABOUT.md`](.github/ABOUT.md)와 PR template의 검증 체크리스트를 함께 확인한다.
 11. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
-12. AWS/Azure 예시는 [Tech Stack Version Inventory](./docs/90.references/versions/tech-stack-version-inventory.md)의 `Cloud Example Snapshot`을 기준으로 관리하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
+12. AWS/Azure 예시는 [Tech Stack Version Inventory](./docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot`을 기준으로 관리하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
 
 ## Language Policy
 
@@ -249,4 +249,4 @@ find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' 
 
 `validate-repo-quality-gates.sh`는 authored docs에서 bare/main direct push 예시와 PR-flow 문맥 없는 push 예시 회귀를 차단하고, README/examples 등 broader Markdown roots에서는 bare/main direct push 예시를 차단한다. 또한 `generate-llm-wiki-index.sh --check`로 LLM WIKI generated index freshness를 확인한다. `pre-commit`, `kube-linter`, `zizmor`, `actionlint`, `shellcheck`는 로컬에 있으면 사용한다. 로컬 `PATH`에 없을 때는 위의 repo-backed 검증을 먼저 실행하고, 전체 hook/tool matrix는 GitHub Actions에서 확인한다.
 
-Cloud 예시의 버전 기준은 [Tech Stack Version Inventory](./docs/90.references/versions/tech-stack-version-inventory.md)에 기록한다. 2026-03-24 이후 Ingress NGINX는 upstream retired 상태이므로 로컬 k3d 계약은 유지하되, AWS/Azure target은 ALB/Gateway API/AGC 계열로 분리한다.
+Cloud 예시의 버전 기준은 [Tech Stack Version Inventory](./docs/90.references/data/tech-stack-version-inventory.md)에 기록한다. 2026-03-24 이후 Ingress NGINX는 upstream retired 상태이므로 로컬 k3d 계약은 유지하되, AWS/Azure target은 ALB/Gateway API/AGC 계열로 분리한다.

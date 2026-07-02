@@ -2880,7 +2880,7 @@ inventory stays in `scripts/README.md`.
 - Found Dependabot PR #38 failing because `actions/stale` changed to `v10.2.0`
   without the matching version inventory update.
 - Updated `.github/workflows/stale.yml` and
-  `docs/90.references/versions/tech-stack-version-inventory.md` together to
+  `docs/90.references/data/tech-stack-version-inventory.md` together to
   `actions/stale@v10.2.0` on a `codex/` branch instead of bypassing `main`.
 - Opened replacement PR #39 and confirmed its remote CI passed, including
   `ci-summary`, `pre-commit`, `repo-quality-static`, and `branch-policy`.
@@ -4710,7 +4710,7 @@ References` is now a legacy heading that should not return.
 - Added template-aligned frontmatter to the two authored reference documents
   that were missing it:
   `docs/90.references/learning/infrastructure-to-theory-roadmap.md` and
-  `docs/90.references/versions/tech-stack-version-inventory.md`.
+  `docs/90.references/data/tech-stack-version-inventory.md`.
 - Strengthened their `## Related Documents` sections with the owning category
   README or reference maintenance runbook links.
 - Added target-relative link-basis guidance to fixed-target Markdown templates
@@ -4984,7 +4984,7 @@ References` is now a legacy heading that should not return.
 
 #### Progress
 
-- Updated `docs/90.references/versions/tech-stack-version-inventory.md` to match actual pinned versions in `.pre-commit-config.yaml` and `.github/workflows/`: commitizen, gitleaks, markdownlint-cli2, check-jsonschema, shfmt, zizmor, actionlint (pre-commit); actions/labeler, actions/upload-artifact (github_actions). Total: 9 version entries corrected.
+- Updated `docs/90.references/data/tech-stack-version-inventory.md` to match actual pinned versions in `.pre-commit-config.yaml` and `.github/workflows/`: commitizen, gitleaks, markdownlint-cli2, check-jsonschema, shfmt, zizmor, actionlint (pre-commit); actions/labeler, actions/upload-artifact (github_actions). Total: 9 version entries corrected.
 - Added `Validation Note` section to `infrastructure/README.md` to distinguish CI-runnable static test (`verify-contracts-static.sh`) from live-cluster-only tests.
 - Added `--no-verify` prohibition rule to `docs/00.agent-governance/rules/git-workflow.md`, referencing the commitizen commit-msg hook enforcement.
 - Aligned `.codex/hooks.json` PreToolUse graphify matcher from `Bash|Glob|Grep` to `Glob|Grep` to match `.claude/settings.json`.
@@ -5210,7 +5210,7 @@ References` is now a legacy heading that should not return.
 
 #### Progress
 
-- Audited `docs/90.references/README.md`, `docs/90.references/agents/README.md`,
+- Audited `docs/90.references/README.md`, `docs/90.references/data/README.md`,
   current reference documents, `docs/99.templates/templates/common/reference.template.md`, and
   document routing rules.
 - Clarified that `90.references` owns durable lookup facts, dated external
@@ -5251,9 +5251,9 @@ References` is now a legacy heading that should not return.
 - Added `docs/90.references/learning/README.md` to define the learning
   reference scope, authoring rules, routing boundaries, and related references.
 - Moved the root-level tech stack inventory into
-  `docs/90.references/versions/tech-stack-version-inventory.md` because it is a
+  `docs/90.references/data/tech-stack-version-inventory.md` because it is a
   version-contract inventory and dated external-standard snapshot.
-- Added `docs/90.references/versions/README.md` and updated root/docs/examples,
+- Added `docs/90.references/data/README.md` and updated root/docs/examples,
   infrastructure, Traefik, and repo-quality validator references to the new
   version inventory path.
 
@@ -5261,10 +5261,15 @@ References` is now a legacy heading that should not return.
 
 - Learning roadmaps and durable theory connections belong under
   `docs/90.references/learning/` and need a local README index.
-- Version inventories, cloud support snapshots, and repo-backed dependency
-  contract references belong under `docs/90.references/versions/`.
+- Version inventories, cloud support snapshots, durable Agent reference
+  catalogs, and repo-backed dependency contract references belong under
+  `docs/90.references/data/`.
 - `docs/90.references/README.md` should stay the routing hub, not a mixed
   document dump for every reference type.
+- In the 2026-07-03 Codex shell, `rtk` was not on PATH. The local binary at
+  `/home/hy/.local/bin/rtk` reported version `0.34.3`, but `rtk gain` failed to
+  initialize its tracking database, so validation ran with direct shell
+  commands without inspecting private runtime state.
 
 #### Evidence
 

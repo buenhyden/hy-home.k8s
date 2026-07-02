@@ -48,7 +48,7 @@ learning/
 
 1. 새 learning reference는 [reference template](../../99.templates/templates/common/reference.template.md)을 기반으로 작성한다.
 2. 문서가 운영 절차를 안내하면 `docs/05.operations/runbooks/` 또는 `docs/05.operations/guides/`로 라우팅한다.
-3. 문서가 버전 기준이나 외부 공식 지원 범위를 고정하면 `docs/90.references/versions/`로 라우팅한다.
+3. 문서가 버전 기준이나 외부 공식 지원 범위를 고정하면 `docs/90.references/data/`로 라우팅한다.
 4. 학습 자료에는 `Reference Type`, `Authority Boundary`, `Review and Freshness`를 유지한다.
 5. 새 learning 문서를 추가하거나 이동하면 이 README와 상위 [90.references README](../README.md)를 함께 갱신한다.
 
@@ -57,7 +57,7 @@ learning/
 이 README의 링크 기준 위치는 `docs/90.references/learning/`다.
 
 - 같은 폴더의 learning reference 문서는 `./`로 시작한다.
-- sibling reference folder는 `../agents/`, `../llm-wiki/`, `../versions/`로 연결한다.
+- sibling reference folder는 `../audits/`, `../data/`, `../llm-wiki/`, `../research/`로 연결한다.
 - operational owner docs는 `../../05.operations/`, governance owner docs는 `../../00.agent-governance/`로 연결한다.
 
 ## Language Boundary

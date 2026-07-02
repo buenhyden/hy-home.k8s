@@ -4,7 +4,7 @@
 
 ## Overview
 
-이 경로는 `hy-home.k8s` 프로젝트의 로컬 Kubernetes 환경을 Azure 클라우드로 마이그레이션할 때 참고하는 설계, 계획, 작업 및 운영 지식 예시를 관리한다. 버전 현재성은 [Tech Stack Version Inventory](../../../docs/90.references/versions/tech-stack-version-inventory.md)의 `Cloud Example Snapshot`을 기준으로 확인하며, 현재 로컬 플랫폼의 active SSoT나 실제 Azure 배포 절차를 대체하지 않는다.
+이 경로는 `hy-home.k8s` 프로젝트의 로컬 Kubernetes 환경을 Azure 클라우드로 마이그레이션할 때 참고하는 설계, 계획, 작업 및 운영 지식 예시를 관리한다. 버전 현재성은 [Tech Stack Version Inventory](../../../docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot`을 기준으로 확인하며, 현재 로컬 플랫폼의 active SSoT나 실제 Azure 배포 절차를 대체하지 않는다.
 
 ## Audience
 
@@ -54,7 +54,7 @@ examples/azure/docs/
 
 ## Tech Stack
 
-이 표의 기준 날짜와 지원 상태는 [Tech Stack Version Inventory](../../../docs/90.references/versions/tech-stack-version-inventory.md)의 `Cloud Example Snapshot`을 따른다.
+이 표의 기준 날짜와 지원 상태는 [Tech Stack Version Inventory](../../../docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot`을 따른다.
 
 | Category   | Technology                                | Notes                     |
 | ---------- | ----------------------------------------- | ------------------------- |

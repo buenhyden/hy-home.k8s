@@ -27,7 +27,7 @@ Reference 추가, 이동, 버전 snapshot 갱신, LLM Wiki owner/link 변경이 
 ## Canonical References
 
 - [90.references README](../../90.references/README.md)
-- [Tech Stack Version Inventory](../../90.references/versions/tech-stack-version-inventory.md)
+- [Tech Stack Version Inventory](../../90.references/data/tech-stack-version-inventory.md)
 - [LLM WIKI README](../../90.references/llm-wiki/README.md)
 - [LLM Wiki Curation Guide](../guides/0009-llm-wiki-curation-guide.md)
 - [Reference Template](../../99.templates/templates/common/reference.template.md)
@@ -60,7 +60,7 @@ Reference 추가, 이동, 버전 snapshot 갱신, LLM Wiki owner/link 변경이 
 ### Scenario B: Version inventory refresh
 
 1. 실제 repo manifest/config/example code 변경이 있는지 먼저 확인한다.
-2. [Tech Stack Version Inventory](../../90.references/versions/tech-stack-version-inventory.md)의 `Version Contracts`와 `Cloud Example Snapshot`을 실제 변경과 같은 변경 단위에서 맞춘다.
+2. [Tech Stack Version Inventory](../../90.references/data/tech-stack-version-inventory.md)의 `Version Contracts`와 `Cloud Example Snapshot`을 실제 변경과 같은 변경 단위에서 맞춘다.
 3. 외부 공식 기준을 확인했다면 `Source checked`, `Last reviewed`, refresh trigger를 갱신한다.
 4. live cluster upgrade, cloud account deployment, release approval 절차를 이 inventory에 추가하지 않는다. 그런 절차가 필요하면 별도 runbook이나 policy로 라우팅한다.
 5. version drift 품질 게이트를 실행한다.
@@ -151,7 +151,7 @@ git diff --check
 ## Related Documents
 
 - **Reference**: [90.references README](../../90.references/README.md)
-- **Reference**: [Tech Stack Version Inventory](../../90.references/versions/tech-stack-version-inventory.md)
+- **Reference**: [Tech Stack Version Inventory](../../90.references/data/tech-stack-version-inventory.md)
 - **Reference**: [LLM WIKI README](../../90.references/llm-wiki/README.md)
 - **Guide**: [LLM Wiki Curation Guide](../guides/0009-llm-wiki-curation-guide.md)
 - **Template**: [Reference Template](../../99.templates/templates/common/reference.template.md)

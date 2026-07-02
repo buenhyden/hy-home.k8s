@@ -10,7 +10,7 @@
 `docs/`는 `hy-home.k8s`의 요구사항, 아키텍처, 결정, 명세, 실행 계획, 작업 증적, 운영 절차, 사고 기록, 참조 자료, 템플릿을 연결하는 문서 SSoT다. 단순 기록 저장소가 아니라 k3d/GitOps 홈랩을 사람이 운영하고 AI Agent가 안전하게 협업하기 위한 추적 가능한 작업 체계다.
 
 문서는 Spec-First 흐름을 따른다. 기획의 맥락은 설계와 결정으로 이어지고, 상세 명세와 실행 계획을 거쳐 작업 증적, 운영 지침, 런북, 사고 기록으로 연결된다.
-AWS/Azure 예시와 외부 기술 버전 기준처럼 빠르게 변할 수 있는 참조값은 [90.references](./90.references/README.md)와 [tech-stack-version-inventory.md](./90.references/versions/tech-stack-version-inventory.md)에 스냅샷 기준일과 함께 기록한다. LLM-readable 탐색용 링크맵은 [LLM WIKI Reference Index](./90.references/llm-wiki/README.md)와 [generated wiki index](./90.references/llm-wiki/wiki-index.md)를 사용하되, 정책과 절차의 정본은 각 canonical stage에 둔다.
+AWS/Azure 예시와 외부 기술 버전 기준처럼 빠르게 변할 수 있는 참조값은 [90.references](./90.references/README.md)와 [tech-stack-version-inventory.md](./90.references/data/tech-stack-version-inventory.md)에 스냅샷 기준일과 함께 기록한다. LLM-readable 탐색용 링크맵은 [LLM WIKI Reference Index](./90.references/llm-wiki/README.md)와 [generated wiki index](./90.references/llm-wiki/wiki-index.md)를 사용하되, 정책과 절차의 정본은 각 canonical stage에 둔다.
 
 ## Audience
 
@@ -74,7 +74,7 @@ docs/
 7. PRD/ARD/ADR/Spec/Plan/Task와 운영·참조 authored 문서는 matching template의 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
 8. 템플릿이나 문서 lifecycle 규칙을 바꾸면 이 hub, 대상 stage README, [99.templates README](./99.templates/README.md), 이미 생성된 문서의 안전한 구조 반영 여부를 함께 점검한다.
 9. 일반 운영 변경은 GitOps-first 원칙을 따르며, 문서가 live `kubectl apply`나 외부 Vault 조작을 우회 절차처럼 안내하지 않도록 한다.
-10. cloud example 버전을 갱신할 때는 코드, README, [tech-stack-version-inventory.md](./90.references/versions/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
+10. cloud example 버전을 갱신할 때는 코드, README, [tech-stack-version-inventory.md](./90.references/data/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
 11. 현재 구현과 상충하는 old 문서는 [`98.archive`](./98.archive/README.md)로 이동하고, 활성 문서는 archive index에만 연결한다.
 
 ## Link Basis
@@ -151,7 +151,7 @@ version support boundary, generated-index contract처럼 사실 계약으로 소
 - `gitops/`: 현재 로컬 플랫폼 desired state다. `clusters/local`, `apps/root`, `platform/*`, `workloads/adminer` 변경은 관련 Spec/Policy/Runbook 링크와 함께 추적한다.
 - `infrastructure/`: bootstrap, k3d/ArgoCD values, MetalLB root manifest, static contract tests를 둔다. 정상 운영 변경의 정본은 GitOps 경로로 넘긴다.
 - `traefik/`: 로컬 플랫폼 UI 접근을 돕는 dynamic config reference다. cloud ingress target이나 ArgoCD canonical 배포 경로로 취급하지 않는다.
-- `examples/`: 앱 온보딩과 AWS/Azure migration reference-only 자산이다. 버전 스냅샷은 `90.references/versions/tech-stack-version-inventory.md`와 함께 관리한다.
+- `examples/`: 앱 온보딩과 AWS/Azure migration reference-only 자산이다. 버전 스냅샷은 `90.references/data/tech-stack-version-inventory.md`와 함께 관리한다.
 
 ## Quality Gates
 
@@ -180,6 +180,6 @@ version support boundary, generated-index contract처럼 사실 계약으로 소
 - [Archive Index](./98.archive/README.md)
 - [Scripts README](../scripts/README.md)
 - [Traefik README](../traefik/README.md)
-- [Tech Stack Version Inventory](./90.references/versions/tech-stack-version-inventory.md)
+- [Tech Stack Version Inventory](./90.references/data/tech-stack-version-inventory.md)
 - [LLM WIKI Reference Index](./90.references/llm-wiki/README.md)
 - [Generated LLM WIKI Index](./90.references/llm-wiki/wiki-index.md)

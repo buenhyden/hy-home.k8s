@@ -2435,7 +2435,7 @@ for phrase in [
     "workflows/ci.yml",
     "scripts/validate-repo-quality-gates.sh",
     "PULL_REQUEST_TEMPLATE.md",
-    "docs/90.references/versions/tech-stack-version-inventory.md",
+    "docs/90.references/data/tech-stack-version-inventory.md",
     "branch protection/rulesets enforce direct-push restrictions",
     "QA gates and release-evidence automation, not deploy CD",
 ]:
@@ -4832,7 +4832,7 @@ for tracked_path in tracked:
     if tracked_path.startswith("docs/" + legacy_postmortems + "/") or tracked_path.startswith("docs/" + legacy_learning + "/"):
         fail(f"obsolete tracked docs path remains: {tracked_path}")
 
-inventory_path = root / "docs/90.references/versions/tech-stack-version-inventory.md"
+inventory_path = root / "docs/90.references/data/tech-stack-version-inventory.md"
 inventory_text = read_text(inventory_path)
 match = re.search(r"```yaml\n(.*?)\n```", inventory_text, re.DOTALL)
 if not match:
