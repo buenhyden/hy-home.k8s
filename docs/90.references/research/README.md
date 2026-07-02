@@ -48,7 +48,7 @@ with their canonical owners in `docs/00.agent-governance/`, `docs/03.specs/`,
 
 ```text
 research/
-├── workspace-governance-baseline.md     # Planned durable governance baseline reference
+├── workspace-governance-baseline.md     # Current durable governance baseline reference
 ├── harness-and-loop-engineering.md      # Planned harness and feedback-loop engineering reference
 ├── provider-implementation-status.md    # Planned provider implementation status reference
 ├── spec-sdlc-ci-qa-formatting.md        # Planned spec, SDLC, CI, QA, and formatting reference
