@@ -13,9 +13,10 @@ The `incident-responder` agent leads timeline reconstruction → root cause anal
 
 ## Workspace Boundary
 
-`_workspace/` is scratch-only for intermediate analysis. Durable incident records
-belong under `docs/05.operations/incidents/`; durable postmortems belong under
-`docs/05.operations/incidents/postmortems/` using the approved templates.
+`_workspace/` is scratch-only for intermediate analysis. Durable incident bundles live under
+`docs/05.operations/incidents/YYYY/INC-###-<title>/`: the fact record is
+`INC-###-<title>.md`, and the postmortem is `postmortem.md` when needed,
+using the approved templates.
 
 ## Workflow
 
@@ -184,8 +185,8 @@ Root Cause: [Conclusion]
 ## Data Protocol
 
 - Intermediate files may be written to `_workspace/` under repository root as scratch analysis only.
-- Durable final reports go to `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-[incident-slug].md` when a postmortem record is requested.
-- Durable incident records go to `docs/05.operations/incidents/` when an incident log is requested.
+- Durable final reports go to `docs/05.operations/incidents/YYYY/INC-###-[incident-slug]/postmortem.md` when a postmortem record is requested.
+- Durable incident records go to `docs/05.operations/incidents/YYYY/INC-###-[incident-slug]/INC-###-[incident-slug].md` when an incident log is requested.
 - Use `docs/99.templates/templates/sdlc/operations/postmortem.template.md` as the structural baseline
 
 ## Error Handling

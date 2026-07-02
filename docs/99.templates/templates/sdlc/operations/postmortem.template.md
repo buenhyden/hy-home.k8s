@@ -6,11 +6,11 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md -->
+<!-- Target: docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md -->
 
 # Postmortem: [Incident Title]
 
-> Use this template for `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md`.
+> Use this template for `docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md`.
 >
 > Rules:
 >
@@ -29,11 +29,11 @@ updated: YYYY-MM-DD
 
 | Field             | Value                                                      |
 | ----------------- | ---------------------------------------------------------- |
-| Incident ID       | `INC-YYYYMMDD-XXX`                                         |
+| Incident ID       | `INC-###`                                                  |
 | Incident Date     | `YYYY-MM-DD`                                               |
 | Analysis Date     | `YYYY-MM-DD`                                               |
 | Severity          | `SEV-1 / SEV-2 / SEV-3`                                    |
-| Incident Document | `[../../YYYY/YYYY-MM-DD-<incident>.md]` |
+| Incident Document | `[INC-###-<title>.md]`                    |
 
 ## Agent Metadata (If Applicable)
 
@@ -102,10 +102,10 @@ updated: YYYY-MM-DD
 ## Related Documents
 
 Target-relative examples below assume the authored file will be created at
-`docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md`.
+`docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md`.
 
 - **Runbook**: `[../../../runbooks/####-<topic>.md]`
 - **Operation**: `[../../../policies/####-<policy-or-standard>.md]`
-- **Incident**: `[../../YYYY/YYYY-MM-DD-<incident>.md]`
+- **Incident**: `[INC-###-<title>.md]`
 - **Spec**: `[../../../../03.specs/<feature-id>/spec.md]`
 - **Related ADRs**: `[../../../../02.architecture/decisions/####-<short-title>.md]`

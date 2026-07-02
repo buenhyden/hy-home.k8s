@@ -99,9 +99,9 @@ def authored_doc_template(path: str) -> str:
             return "docs/99.templates/templates/sdlc/operations/policy.template.md"
         if path.startswith("docs/05.operations/runbooks/"):
             return "docs/99.templates/templates/sdlc/operations/runbook.template.md"
-        if path.startswith("docs/05.operations/incidents/postmortems/"):
+        if re.match(r"^docs/05\.operations/incidents/[0-9]{4}/INC-[0-9]{3}-[^/]+/postmortem\.md$", path):
             return "docs/99.templates/templates/sdlc/operations/postmortem.template.md"
-        if re.match(r"^docs/05\.operations/incidents/[0-9]{4}/", path):
+        if re.match(r"^docs/05\.operations/incidents/[0-9]{4}/INC-[0-9]{3}-[^/]+/INC-[0-9]{3}-[^/]+\.md$", path):
             return "docs/99.templates/templates/sdlc/operations/incident.template.md"
         if path.startswith("docs/90.references/"):
             return "docs/99.templates/templates/common/reference.template.md"

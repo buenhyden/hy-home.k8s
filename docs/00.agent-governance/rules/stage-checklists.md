@@ -59,7 +59,7 @@ Execution-focused checklist index by taxonomy path.
 
 - [ ] Timeline, impact, evidence, and mitigations are recorded.
 - [ ] Related runbook links are attached.
-- [ ] Postmortem RCA, preventive actions, and follow-up links are recorded under `docs/05.operations/incidents/postmortems/` when needed.
+- [ ] Postmortem RCA, preventive actions, and follow-up links are recorded as `docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md` when needed.
 
 ## `98.archive`
 

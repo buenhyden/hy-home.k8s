@@ -87,7 +87,7 @@ docs/05.operations/runbooks/
 
 - Policies: [05.operations/policies](../policies/README.md)
 - Incident Records: [05.operations/incidents](../incidents/README.md)
-- Postmortems: `../incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md`
+- Postmortems: `../incidents/YYYY/INC-###-<title>/postmortem.md`
 
 ## Link Basis
 

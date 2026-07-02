@@ -52,8 +52,8 @@ Define the repository-local routing contract for document-generation workflows.
 | Guide | `docs/05.operations/guides/<doc>.md` | `docs/99.templates/templates/sdlc/operations/guide.template.md` |
 | Operations policy | `docs/05.operations/policies/<doc>.md` | `docs/99.templates/templates/sdlc/operations/policy.template.md` |
 | Runbook | `docs/05.operations/runbooks/<doc>.md` | `docs/99.templates/templates/sdlc/operations/runbook.template.md` |
-| Incident record | `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/templates/sdlc/operations/incident.template.md` |
-| Postmortem | `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/templates/sdlc/operations/postmortem.template.md` |
+| Incident record | `docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md` | `docs/99.templates/templates/sdlc/operations/incident.template.md` |
+| Postmortem | `docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md` | `docs/99.templates/templates/sdlc/operations/postmortem.template.md` |
 | Durable agent/reference doc | `docs/90.references/<category>/<topic>.md` | `docs/99.templates/templates/common/reference.template.md` |
 
 ## Named Skill Routing

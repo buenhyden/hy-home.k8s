@@ -911,8 +911,8 @@ required_stage_templates = [
     ("docs/05.operations/guides/*.md", "guide.template.md"),
     ("docs/05.operations/policies/*.md", "policy.template.md"),
     ("docs/05.operations/runbooks/*.md", "runbook.template.md"),
-    ("docs/05.operations/incidents/[0-9][0-9][0-9][0-9]/*.md", "incident.template.md"),
-    ("docs/05.operations/incidents/postmortems/**/*.md", "postmortem.template.md"),
+    ("docs/05.operations/incidents/[0-9][0-9][0-9][0-9]/INC-[0-9][0-9][0-9]-*/INC-[0-9][0-9][0-9]-*.md", "incident.template.md"),
+    ("docs/05.operations/incidents/[0-9][0-9][0-9][0-9]/INC-[0-9][0-9][0-9]-*/postmortem.md", "postmortem.template.md"),
     ("docs/90.references/**/*.md", "reference.template.md"),
     ("docs/98.archive/**/*.md", "archive-tombstone.template.md"),
 ]
@@ -1144,14 +1144,14 @@ expected_incident_boundary_header = [
 expected_incident_boundary = [
     {
         "artifact": "Incident Record",
-        "path_rule": "./YYYY/YYYY-MM-DD-<incident>.md",
+        "path_rule": "./YYYY/INC-###-<title>/INC-###-<title>.md",
         "template": "../../99.templates/templates/sdlc/operations/incident.template.md",
         "creation_phrase": "real incident fact record",
         "current_state": "No tracked incident records.",
     },
     {
         "artifact": "Postmortem",
-        "path_rule": "./postmortems/YYYY/YYYY-MM-DD-<incident>.md",
+        "path_rule": "./YYYY/INC-###-<title>/postmortem.md",
         "template": "../../99.templates/templates/sdlc/operations/postmortem.template.md",
         "creation_phrase": "root cause/prevention analysis",
         "current_state": "No tracked postmortems.",
@@ -1240,6 +1240,26 @@ tracked_incident_docs = [
     for path in sorted((operations_stage_path / "incidents").rglob("*.md"))
     if path.name != "README.md"
 ]
+for path in tracked_incident_docs:
+    relative_incident_path = path.relative_to(operations_stage_path / "incidents")
+    parts = relative_incident_path.parts
+    if len(parts) != 3:
+        fail(
+            "docs/05.operations/incidents document must live at "
+            "YYYY/INC-###-<title>/INC-###-<title>.md or "
+            f"YYYY/INC-###-<title>/postmortem.md: {rel(path)}"
+        )
+        continue
+    year, incident_folder, filename = parts
+    if not re.fullmatch(r"[0-9]{4}", year):
+        fail(f"docs/05.operations/incidents document year folder must be YYYY: {rel(path)}")
+    if not re.fullmatch(r"INC-[0-9]{3}-[^/]+", incident_folder):
+        fail(f"docs/05.operations/incidents document folder must be INC-###-<title>: {rel(path)}")
+    if filename not in {f"{incident_folder}.md", "postmortem.md"}:
+        fail(
+            "docs/05.operations/incidents document filename must match the "
+            f"incident folder or be postmortem.md: {rel(path)}"
+        )
 if not tracked_incident_docs:
     for phrase in [
         "현재 tracked incident record와 postmortem 문서는 없다.",

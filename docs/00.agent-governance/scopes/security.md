@@ -6,7 +6,7 @@ Persona: Security Engineer
 
 - `docs/03.specs/`
 - `docs/05.operations/incidents/`
-- `docs/05.operations/incidents/postmortems/`
+- `docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md`
 
 ## Responsibilities
 
@@ -19,7 +19,7 @@ Persona: Security Engineer
 | Path                                  | Owner    | Notes                       |
 | ------------------------------------- | -------- | --------------------------- |
 | `docs/05.operations/incidents/**`                | security | Incident records            |
-| `docs/05.operations/incidents/postmortems/**`    | security | Postmortem documents        |
+| `docs/05.operations/incidents/*/INC-*/postmortem.md` | security | Postmortem documents        |
 | `gitops/platform/network-policies/**` | security | k8s NetworkPolicy manifests |
 | `infrastructure/vault/**`             | security | Vault policy definitions    |
 

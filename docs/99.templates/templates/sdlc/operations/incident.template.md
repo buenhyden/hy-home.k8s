@@ -6,13 +6,13 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md -->
+<!-- Target: docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md -->
 
 # Incident: [Incident Title]
 
-INC-YYYYMMDD-XXX / [Short Incident Title]
+INC-### / [Short Incident Title]
 
-> Use this template for `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md`.
+> Use this template for `docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md`.
 >
 > Rules:
 >
@@ -32,13 +32,13 @@ INC-YYYYMMDD-XXX / [Short Incident Title]
 
 | Field           | Value                                                                      |
 | --------------- | -------------------------------------------------------------------------- |
-| Incident ID     | `INC-YYYYMMDD-XXX`                                                         |
+| Incident ID     | `INC-###`                                                                  |
 | Severity        | `SEV-1 / SEV-2 / SEV-3`                                                    |
 | Status          | `Investigating / Identified / Mitigating / Monitoring / Resolved / Closed` |
 | Detection Time  | `YYYY-MM-DD HH:MM UTC`                                                     |
 | Primary Service | [Affected service]                                                         |
 | Evidence Source | [Log / dashboard / report]                                                 |
-| Runbook Link    | `[../../runbooks/####-<topic>.md]`                                         |
+| Runbook Link    | `[../../../runbooks/####-<topic>.md]`                                      |
 
 ## Agent Metadata (If Applicable)
 
@@ -82,10 +82,10 @@ INC-YYYYMMDD-XXX / [Short Incident Title]
 ## Related Documents
 
 Target-relative examples below assume the authored file will be created at
-`docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md`.
+`docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md`.
 
-- **Postmortem**: `[../postmortems/YYYY/YYYY-MM-DD-<incident>.md]`
-- **Spec**: `[../../../03.specs/<feature-id>/spec.md]`
-- **Related ADRs**: `[../../../02.architecture/decisions/####-<short-title>.md]`
-- **Runbook**: `[../../runbooks/####-<topic>.md]`
-- **Operation**: `[../../policies/####-<policy-or-standard>.md]`
+- **Postmortem**: `[postmortem.md]`
+- **Spec**: `[../../../../03.specs/<feature-id>/spec.md]`
+- **Related ADRs**: `[../../../../02.architecture/decisions/####-<short-title>.md]`
+- **Runbook**: `[../../../runbooks/####-<topic>.md]`
+- **Operation**: `[../../../policies/####-<policy-or-standard>.md]`

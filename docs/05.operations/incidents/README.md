@@ -15,14 +15,14 @@ Postmortem은 “왜 허용됐고 무엇을 바꿀 것인가”를 기록한다.
 일반 정책은 [policies](../policies/README.md), 실행 복구 절차는 [runbooks](../runbooks/README.md)에 둔다.
 
 현재 tracked incident record와 postmortem 문서는 없다.
-첫 사고 기록이 필요할 때만 `YYYY/` 또는 `postmortems/YYYY/` 하위 경로를 만든다.
+첫 사고 기록이 필요할 때만 `YYYY/INC-###-<title>/` 하위 경로를 만든다.
 
 ## Incident Boundary Matrix
 
 | Artifact | Path rule | Template | Creation rule | Current state |
 | --- | --- | --- | --- | --- |
-| `Incident Record` | `./YYYY/YYYY-MM-DD-<incident>.md` | [incident.template.md](../../99.templates/templates/sdlc/operations/incident.template.md) | Create only for a real incident fact record. | No tracked incident records. |
-| `Postmortem` | `./postmortems/YYYY/YYYY-MM-DD-<incident>.md` | [postmortem.template.md](../../99.templates/templates/sdlc/operations/postmortem.template.md) | Create only after incident stabilization when root cause/prevention analysis is needed. | No tracked postmortems. |
+| `Incident Record` | `./YYYY/INC-###-<title>/INC-###-<title>.md` | [incident.template.md](../../99.templates/templates/sdlc/operations/incident.template.md) | Create only for a real incident fact record. | No tracked incident records. |
+| `Postmortem` | `./YYYY/INC-###-<title>/postmortem.md` | [postmortem.template.md](../../99.templates/templates/sdlc/operations/postmortem.template.md) | Create only after incident stabilization when root cause/prevention analysis is needed. | No tracked postmortems. |
 
 ## Audience
 
@@ -51,9 +51,11 @@ Postmortem은 “왜 허용됐고 무엇을 바꿀 것인가”를 기록한다.
 
 ```text
 05.operations/incidents/
-├── YYYY/              # Incident records, created when the first incident is recorded
-├── postmortems/YYYY/  # Postmortems, created when the first postmortem is recorded
-└── README.md          # This file
+├── YYYY/
+│   └── INC-###-<title>/
+│       ├── INC-###-<title>.md  # Incident fact record
+│       └── postmortem.md       # Postmortem, created only when analysis is needed
+└── README.md                   # This file
 ```
 
 ## How to Work in This Area
@@ -94,8 +96,8 @@ Postmortem은 “왜 허용됐고 무엇을 바꿀 것인가”를 기록한다.
 
 이 README의 링크 기준 위치는 `docs/05.operations/incidents/`다.
 
-- Incident record는 `./YYYY/YYYY-MM-DD-<incident>.md` 경로를 사용한다.
-- Postmortem은 `./postmortems/YYYY/YYYY-MM-DD-<incident>.md` 경로를 사용한다.
+- Incident record는 `./YYYY/INC-###-<title>/INC-###-<title>.md` 경로를 사용한다.
+- Postmortem은 같은 incident 폴더의 `./YYYY/INC-###-<title>/postmortem.md` 경로를 사용한다.
 - sibling operations folder는 `../policies/`, `../runbooks/`, `../guides/`로 연결한다.
 
 ## Related Documents

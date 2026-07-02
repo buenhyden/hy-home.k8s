@@ -43,8 +43,8 @@ Path calculation principles:
 - `docs/02.architecture/decisions/` needs `../../` to reach the `docs/` root.
 - `docs/04.execution/tasks/` needs `../../` to reach the `docs/` root, and sibling `plans/` is `../plans/`.
 - `docs/05.operations/runbooks/` needs `../../` to reach the `docs/` root, and sibling `guides/` and `policies/` use `../`.
-- `docs/05.operations/incidents/YYYY/` needs `../../` to reach `05.operations/` and `../../../` to reach the `docs/` root.
-- `docs/05.operations/incidents/postmortems/YYYY/` needs `../../../` to reach `05.operations/`.
+- `docs/05.operations/incidents/YYYY/INC-###-<title>/` needs `../../../` to reach `05.operations/` and `../../../../` to reach the `docs/` root.
+- `docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md` links to the incident fact record in the same folder.
 
 ## Goals & In-Scope
 
@@ -113,8 +113,8 @@ Path calculation principles:
 | `guide.template.md`        | `docs/05.operations/guides/`                     | Fixed before final integration |
 | `policy.template.md`    | `docs/05.operations/policies/`                   | Fixed in final integration     |
 | `runbook.template.md`      | `docs/05.operations/runbooks/`                   | Fixed before final integration |
-| `incident.template.md`     | `docs/05.operations/incidents/YYYY/`             | Fixed in final integration     |
-| `postmortem.template.md`   | `docs/05.operations/incidents/postmortems/YYYY/` | Fixed in final integration     |
+| `incident.template.md`     | `docs/05.operations/incidents/YYYY/INC-###-<title>/` | Fixed in final integration     |
+| `postmortem.template.md`   | `docs/05.operations/incidents/YYYY/INC-###-<title>/` | Fixed in final integration     |
 | `reference.template.md`    | `docs/90.references/<category>/`                 | Fixed in final integration     |
 
 `readme.template.md` has no fixed Target because README files live at multiple

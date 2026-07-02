@@ -105,7 +105,7 @@ This protocol defines how governance references authored docs and how language b
 
 - Every governance change should keep clear links to the canonical docs taxonomy (`01.requirements`, `02.architecture`, `03.specs`, `04.execution`, `05.operations`, `90.references`, `98.archive`, `99.templates`).
 - Active documents must link old archived content only through `docs/98.archive/README.md`; direct links to Tombstones belong only in the archive index.
-- Postmortems belong under `docs/05.operations/incidents/postmortems/`, not a separate top-level docs stage.
+- Postmortems belong at `docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md`, not a separate top-level docs stage.
 - Persona and scope instructions must state which stage folders are authoritative.
 - Stage expectations must map to [stage-authoring-matrix.md](stage-authoring-matrix.md).
 - Repo-changing agent work must append progress and reusable memory to `docs/00.agent-governance/memory/progress.md` using `docs/99.templates/templates/common/progress.template.md`.

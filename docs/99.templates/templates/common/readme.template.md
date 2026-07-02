@@ -17,7 +17,7 @@ README 템플릿은 여러 Target 위치에서 재사용된다. 단일 `Target:`
 - Implementation Layer (`web/`, `server/`, `app/`, `packages/`, `gitops/`, `infra/`, `infrastructure/`) -> `Base Structure` + `Implementation Snippet`
 - Documentation & Governance (`docs/`, `docs/99.templates/`, `.claude/`, `.codex/`) -> `Base Structure` + `Docs & Governance Snippet`
 - Operations & Procedures (`docs/05.operations/policies/`, `docs/05.operations/runbooks/`, `scripts/`) -> `Base Structure` + `Ops & Utils Snippet`
-- Incident Learning (`docs/05.operations/incidents/`, `docs/05.operations/incidents/postmortems/`) -> `Base Structure` + `Incident / Postmortem Snippet`
+- Incident Learning (`docs/05.operations/incidents/`) -> `Base Structure` + `Incident / Postmortem Snippet`
 
 ## docs 디렉터리 상세 역할
 - [01.requirements](../../../01.requirements/README.md): 제품 요구사항 정의 (Vision, Use Case, Requirements)
@@ -30,7 +30,7 @@ README 템플릿은 여러 Target 위치에서 재사용된다. 단일 `Target:`
 - [05.operations/policies](../../../05.operations/policies/README.md): 시스템 운영 정책 및 거버넌스
 - [05.operations/runbooks](../../../05.operations/runbooks/README.md): 반복적 운영 작업의 실행 지침 (Step-by-step)
 - [05.operations/incidents](../../../05.operations/incidents/README.md): 발생한 사고의 사실 기록 (Timeline, Mitigation)
-- [05.operations/incidents/postmortems](../../../05.operations/incidents/README.md): 첫 postmortem 생성 전에는 incidents README에서 경로와 생성 조건을 안내한다.
+- [05.operations/incidents postmortem files](../../../05.operations/incidents/README.md): postmortem은 incident별 폴더의 `postmortem.md`로 생성한다.
 
 ## Assembly Rules
 1. 아래의 `Base Structure`를 먼저 복사한다.
@@ -313,8 +313,8 @@ SNIPPET: INCIDENT / POSTMORTEM
 
 이 영역은 운영 중 학습과 대응 기록을 저장한다.
 
-- `incidents/` 는 장애 또는 이상 상황에서 **무슨 일이 발생했는지**, **영향 범위가 무엇인지**, **즉시 어떤 대응을 했는지**를 기록한다.
-- `postmortems/` 는 사건 이후 **근본 원인**, **기여 요인**, **재발 방지 조치**, **학습 내용**을 정리한다.
+- `incidents/YYYY/INC-###-<title>/INC-###-<title>.md` 는 장애 또는 이상 상황에서 **무슨 일이 발생했는지**, **영향 범위가 무엇인지**, **즉시 어떤 대응을 했는지**를 기록한다.
+- `incidents/YYYY/INC-###-<title>/postmortem.md` 는 사건 이후 **근본 원인**, **기여 요인**, **재발 방지 조치**, **학습 내용**을 정리한다.
 
 ## Expected Record Shape
 

@@ -4864,12 +4864,12 @@ References` is now a legacy heading that should not return.
   template `Target` location, not from `docs/99.templates/`.
 - Actual Markdown links inside template files still resolve relative to the
   template file location, per the template link policy.
-- For `docs/05.operations/incidents/YYYY/`, links to runbooks and policies
-  resolve through `../../runbooks/` and `../../policies/`; postmortem links
-  resolve through `../postmortems/YYYY/`.
-- For `docs/05.operations/incidents/postmortems/YYYY/`, links back to incident
-  records resolve through `../../YYYY/`, and runbooks/policies through
-  `../../../`.
+- For `docs/05.operations/incidents/YYYY/INC-###-<title>/`, links to runbooks
+  and policies resolve through `../../../runbooks/` and `../../../policies/`;
+  postmortem links resolve to same-folder `postmortem.md`.
+- For `docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md`,
+  links back to incident records resolve to same-folder `INC-###-<title>.md`,
+  and runbooks/policies through `../../../runbooks/` and `../../../policies/`.
 
 #### Evidence
 
@@ -6115,3 +6115,60 @@ section separating static from live evidence.
   with the English-first policy.
 - Human-facing README, operations, and reference areas retain Korean where
   appropriate, with AI-agent and factual-contract fields kept English-first.
+
+## 2026-07-03 — Reference Taxonomy and Incident Layout Alignment
+
+### Metadata
+
+- **Date**: 2026-07-03
+- **Layer**: docs, governance, operations, templates
+- **Tags**: #references #incident-management #templates #quality-gates
+- **Record type**: reference taxonomy migration, incident routing contract, and validation.
+
+### Progress
+
+- Consolidated `docs/90.references` top-level categories to `audits`, `data`,
+  `research`, `learning`, and `llm-wiki`.
+- Moved repo-backed version inventory ownership into
+  `docs/90.references/data/tech-stack-version-inventory.md`.
+- Added `docs/90.references/data/README.md` and
+  `docs/90.references/data/agent-reference-index.md` as the data reference
+  category index and Agent reference boundary.
+- Created commit `4ec068e` for the references category migration.
+- Updated incident and postmortem routing so a real incident bundle lives at
+  `docs/05.operations/incidents/YYYY/INC-###-<title>/`, with the fact record at
+  `INC-###-<title>.md` and postmortem at `postmortem.md`.
+- Updated Stage 00 routing, Stage 05 incidents README, SDLC template support,
+  operation templates, hook hints, shared `.agents` skills, and
+  `scripts/validate-repo-quality-gates.sh` to enforce the new incident layout.
+
+### Memory
+
+- `docs/90.references/data/` now owns repo-backed inventories, durable
+  reference catalogs, and factual lookup data; do not recreate
+  `docs/90.references/agents/` or `docs/90.references/versions/`.
+- Incident fact records and postmortems are now same-folder siblings under an
+  incident bundle directory. Relative links from either file to runbooks and
+  policies use `../../../runbooks/` and `../../../policies/`.
+- The repository quality gate now checks tracked incident document path shape,
+  not only template heading coverage.
+- In this Codex shell, `rtk` was not on PATH; `/home/hy/.local/bin/rtk --version`
+  worked, but `rtk gain` could not initialize its database, so validation used
+  direct shell commands without inspecting private runtime state.
+
+### Evidence
+
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS after the
+  references migration.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS after the references
+  migration.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS after the incident
+  layout migration.
+- `git diff --check` — PASS after the incident layout migration.
+
+### Handoff
+
+- No tracked incident or postmortem documents were created; the incidents stage
+  remains README-only until a real event needs a record.
+- `graphify-out/**` remains a historical generated graph artifact and was not
+  regenerated in this pass.

@@ -28,8 +28,8 @@ Use the existing stage structure only.
 | User or operator guide | `docs/05.operations/guides/<doc>.md` | `docs/99.templates/templates/sdlc/operations/guide.template.md` | Use after the relevant spec is stable. |
 | Operations policy | `docs/05.operations/policies/<doc>.md` | `docs/99.templates/templates/sdlc/operations/policy.template.md` | Required for release and operational controls. |
 | Runbook | `docs/05.operations/runbooks/<doc>.md` | `docs/99.templates/templates/sdlc/operations/runbook.template.md` | Use for executable operational procedures. |
-| Incident record | `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/templates/sdlc/operations/incident.template.md` | Use for facts, timelines, mitigations, and active incident evidence. |
-| Postmortem | `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `docs/99.templates/templates/sdlc/operations/postmortem.template.md` | Use for RCA, prevention actions, and post-incident learning. |
+| Incident record | `docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md` | `docs/99.templates/templates/sdlc/operations/incident.template.md` | Use for facts, timelines, mitigations, and active incident evidence. |
+| Postmortem | `docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md` | `docs/99.templates/templates/sdlc/operations/postmortem.template.md` | Use for RCA, prevention actions, and post-incident learning. |
 | Durable reference | `docs/90.references/<category>/<topic>.md` | `docs/99.templates/templates/common/reference.template.md` | Use for slow-moving concepts, glossaries, standards, and reusable agent knowledge. |
 | LLM Wiki generated index | `docs/90.references/llm-wiki/wiki-index.md` | `docs/99.templates/templates/common/reference.template.md` through `scripts/generate-llm-wiki-index.sh` | Use only as a generated canonical-owner link map. |
 | Archive Tombstone | `docs/98.archive/<original-docs-subpath>.md` | `docs/99.templates/templates/common/archive-tombstone.template.md` | Use only for metadata-only Tombstones of old docs moved out of active stages. |

@@ -141,8 +141,9 @@ Investigate all changes in the window before the incident.
 ## Output Format
 
 Save scratch RCA output to `_workspace/02_root_cause.md` during analysis, then
-move durable incident or postmortem findings into `docs/05.operations/incidents/` or
-`docs/05.operations/incidents/postmortems/` when a record is required. Use this structure:
+move durable incident or postmortem findings into
+`docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md` or
+`docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md` when a record is required. Use this structure:
 
 ```markdown
 # Root Cause Analysis

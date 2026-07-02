@@ -41,8 +41,8 @@ one target path pattern, one template form, and one validation route.
 | Guide | `docs/05.operations/guides/####-<topic>.md` | `../templates/sdlc/operations/guide.template.md` |
 | Operations policy | `docs/05.operations/policies/####-<policy-or-standard>.md` | `../templates/sdlc/operations/policy.template.md` |
 | Runbook | `docs/05.operations/runbooks/####-<topic>.md` | `../templates/sdlc/operations/runbook.template.md` |
-| Incident record | `docs/05.operations/incidents/YYYY/YYYY-MM-DD-<incident>.md` | `../templates/sdlc/operations/incident.template.md` |
-| Postmortem | `docs/05.operations/incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md` | `../templates/sdlc/operations/postmortem.template.md` |
+| Incident record | `docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md` | `../templates/sdlc/operations/incident.template.md` |
+| Postmortem | `docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md` | `../templates/sdlc/operations/postmortem.template.md` |
 
 ## Governance Rules
 

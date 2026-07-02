@@ -87,8 +87,8 @@ updated: YYYY-MM-DD
 Target-relative examples below assume the authored file will be created at
 `docs/05.operations/runbooks/####-<topic>.md`.
 
-- **Incident examples**: `[../incidents/YYYY/YYYY-MM-DD-<incident>.md]`
-- **Postmortem examples**: `[../incidents/postmortems/YYYY/YYYY-MM-DD-<incident>.md]`
+- **Incident examples**: `[../incidents/YYYY/INC-###-<title>/INC-###-<title>.md]`
+- **Postmortem examples**: `[../incidents/YYYY/INC-###-<title>/postmortem.md]`
 - **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
 - **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
 - **Spec**: `[../../03.specs/<feature-id>/spec.md]`
