@@ -44,7 +44,7 @@ secret checks are out of scope unless separately approved by a human.
 | T-002 | Write workspace governance implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-002 | Audit matrix review; repo quality gate | Codex | Done |
 | T-003 | Write harness and loop implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-003 | Audit matrix review; repo quality gate | Codex | Done |
 | T-004 | Write provider harness and loop implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-004 | Provider evidence review; repo quality gate | Codex | Done |
-| T-005 | Write SDLC delivery practices implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-005 | Delivery-practice matrix review; repo quality gate | Codex | Todo |
+| T-005 | Write SDLC delivery practices implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-005 | Delivery-practice matrix review; repo quality gate | Codex | Done |
 | T-006 | Final integration, validation, memory, and handoff | doc | VAL-SPC-006 | PLN-006 | Final validation bundle | Codex | Todo |
 
 ## Suggested Types
@@ -71,7 +71,7 @@ secret checks are out of scope unless separately approved by a human.
 - [x] T-002 Write workspace governance implementation audit.
 - [x] T-003 Write harness and loop implementation audit.
 - [x] T-004 Write provider harness and loop implementation audit.
-- [ ] T-005 Write SDLC delivery practices implementation audit.
+- [x] T-005 Write SDLC delivery practices implementation audit.
 
 ### Phase 3
 
@@ -120,6 +120,9 @@ secret checks are out of scope unless separately approved by a human.
 | 2026-07-03 | T-004 | Manual provider audit matrix review | PASS; compared provider benchmark against repo-backed evidence for Claude, Codex, Gemini, common parity, known non-parity boundaries, automation opportunities, and absence evidence for untracked local provider settings or MCP config |
 | 2026-07-03 | T-004 | `git diff --check` | PASS; no output |
 | 2026-07-03 | T-004 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-03 | T-005 | Manual SDLC/delivery audit matrix review | PASS; compared SDLC benchmark against repo-backed evidence for spec-driven development, Stage 03 Spec lifecycle, Stage 04 Plan lifecycle, Stage 04 Task/evidence lifecycle, secure SDLC evidence lanes, CI/CD jobs, QA validation commands, formatting and pre-commit, static-vs-live readiness boundary, and automation opportunities |
+| 2026-07-03 | T-005 | `git diff --check` | PASS; no output |
+| 2026-07-03 | T-005 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
 
 ## Related Documents
 
