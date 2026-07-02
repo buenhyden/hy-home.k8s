@@ -86,7 +86,7 @@ docs/90.references/
 
 ## Role and Authority Boundary
 
-`90.references`의 역할은 다음 네 가지다.
+`90.references`의 역할은 다음 다섯 가지다.
 
 | 역할 | 설명 | 예시 | 소유하지 않는 것 |
 | --- | --- | --- | --- |
@@ -94,6 +94,7 @@ docs/90.references/
 | Version contract inventory | repo-backed manifest/config와 함께 검증되는 버전 기준을 모은다. | k3s image, Helm chart, GitHub Actions pin | 실제 upgrade 실행 절차 |
 | External standard snapshot | 특정 날짜에 확인한 외부 공식 지원 범위를 기록한다. | EKS/AKS 지원 버전, upstream retirement notice | cloud live deployment 지침 |
 | Learning/reference roadmap | 구현 경험을 이론 학습 자료와 연결한다. | infrastructure-to-theory roadmap | 운영 runbook, incident response |
+| Dated implementation audit snapshot | 특정 날짜의 local implementation status와 repo-backed evidence를 요약한다. | workspace harness implementation audit | active policy, plans, tasks, runbooks, CI semantics, live runtime readiness |
 
 권한 경계는 다음과 같다.
 
@@ -101,6 +102,7 @@ docs/90.references/
 - 제품 요구는 `01.requirements`, 아키텍처 요구/결정은 `02.architecture`, 구현 계약은 `03.specs`, 실행 계획/작업 증적은 `04.execution`, 운영 지식은 `05.operations`가 SSoT다.
 - `90.references/versions/tech-stack-version-inventory.md`의 버전 값은 실제 repo manifest/config와 함께 유지될 때만 기준값으로 취급한다.
 - 외부 기준은 시간에 따라 바뀌므로 `Source checked`, `Last reviewed`, refresh trigger를 남긴다.
+- Audit snapshot은 checked-date 기준 implementation evidence를 요약할 뿐이며 active policy, plans, tasks, runbooks, CI semantics, live runtime readiness를 소유하지 않는다.
 
 ## Reference Folder Roles
 
