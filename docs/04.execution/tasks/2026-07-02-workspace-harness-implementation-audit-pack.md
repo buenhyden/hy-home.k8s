@@ -41,7 +41,7 @@ secret checks are out of scope unless separately approved by a human.
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-001 | Create audits README and parent reference scaffold | doc | VAL-SPC-001, VAL-SPC-002 | PLN-001 | README/template review; `git diff --check`; repo quality gate | Codex | Done |
-| T-002 | Write workspace governance implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-002 | Audit matrix review; repo quality gate | Codex | Todo |
+| T-002 | Write workspace governance implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-002 | Audit matrix review; repo quality gate | Codex | Done |
 | T-003 | Write harness and loop implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-003 | Audit matrix review; repo quality gate | Codex | Todo |
 | T-004 | Write provider harness and loop implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-004 | Provider evidence review; repo quality gate | Codex | Todo |
 | T-005 | Write SDLC delivery practices implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-005 | Delivery-practice matrix review; repo quality gate | Codex | Todo |
@@ -68,7 +68,7 @@ secret checks are out of scope unless separately approved by a human.
 
 ### Phase 2
 
-- [ ] T-002 Write workspace governance implementation audit.
+- [x] T-002 Write workspace governance implementation audit.
 - [ ] T-003 Write harness and loop implementation audit.
 - [ ] T-004 Write provider harness and loop implementation audit.
 - [ ] T-005 Write SDLC delivery practices implementation audit.
@@ -105,6 +105,9 @@ secret checks are out of scope unless separately approved by a human.
 | 2026-07-02 | T-001 | `git diff --check` | PASS; no output |
 | 2026-07-02 | T-001 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
 | 2026-07-02 | T-001 | Manual quality-review remediation | PASS; added dated implementation audit snapshot as the fifth reference role and bounded audits away from active policy, plans, tasks, runbooks, CI semantics, and live runtime readiness |
+| 2026-07-02 | T-002 | Manual governance audit matrix review | PASS; compared workspace governance benchmark against repo-backed evidence for purpose, rules, provider adapters, templates, scripts, CI/CD QA lanes, approval boundaries, and automation opportunities |
+| 2026-07-02 | T-002 | `git diff --check` | PASS; no output |
+| 2026-07-02 | T-002 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
 
 ## Related Documents
 

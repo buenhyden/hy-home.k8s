@@ -39,9 +39,9 @@ docs/90.references/audits/
 └── README.md
 ```
 
-The 2026-07-02 audit reports are planned by the workspace harness
-implementation audit pack. Until each report exists, refer to the filename as a
-planned target rather than a resolved Markdown link.
+The 2026-07-02 audit reports are tracked by the workspace harness
+implementation audit pack. Until each remaining report exists, refer to the
+filename as a planned target rather than a resolved Markdown link.
 
 ## How to Work in This Area
 
@@ -68,7 +68,7 @@ This README is located at `docs/90.references/audits/`.
 | Report | Availability | Purpose |
 | --- | --- | --- |
 | [2026-05-24-workspace-harness-gap-analysis.md](./2026-05-24-workspace-harness-gap-analysis.md) | Existing snapshot | Historical workspace harness gap-analysis reference. |
-| `2026-07-02-workspace-governance-implementation-audit.md` | Planned in audit pack | Workspace rules, systems, environment, operating contracts, templates, scripts, shared provider structure, and automation opportunities. |
+| [2026-07-02-workspace-governance-implementation-audit.md](./2026-07-02-workspace-governance-implementation-audit.md) | Current | Workspace rules, systems, environment, operating contracts, templates, scripts, shared provider structure, and automation opportunities. |
 | `2026-07-02-harness-loop-implementation-audit.md` | Planned in audit pack | Harness engineering and loop engineering implementation status against the research benchmark. |
 | `2026-07-02-provider-harness-loop-implementation-audit.md` | Planned in audit pack | Claude, Codex, Gemini, and common provider harness/loop parity. |
 | `2026-07-02-sdlc-delivery-practices-implementation-audit.md` | Planned in audit pack | Spec-driven development, SDLC, CI/CD, QA, formatting, and validation evidence lanes. |

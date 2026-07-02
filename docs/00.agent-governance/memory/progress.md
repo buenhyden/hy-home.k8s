@@ -31,6 +31,9 @@ inventory stays in `scripts/README.md`.
   [Task](../../04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md)
   to track six logical work units, validation evidence, and final status
   alignment.
+- Completed the workspace governance implementation audit report at
+  [2026-07-02-workspace-governance-implementation-audit.md](../../90.references/audits/2026-07-02-workspace-governance-implementation-audit.md)
+  and updated the audits README to mark it `Current`.
 
 #### Memory
 
@@ -41,6 +44,9 @@ inventory stays in `scripts/README.md`.
 - Audit outputs may identify automation opportunities and checklist follow-up
   routes, but active policy or runtime changes belong in a future Spec, Plan,
   Task, operations policy, script, or provider adapter change.
+- Governance audit implementation claims should cite repo-backed evidence for
+  every `Implemented` and `Partial` status; live readiness remains separate
+  approved evidence.
 
 #### Evidence
 
@@ -51,11 +57,20 @@ inventory stays in `scripts/README.md`.
 - Plan creation validation: `git diff --check` — PASS; `bash
   scripts/generate-llm-wiki-index.sh --check` — PASS; `bash
   scripts/validate-repo-quality-gates.sh .` — PASS.
+- T-002 manual matrix review — PASS; compared the governance benchmark against
+  repo-backed evidence for purpose, rules, provider adapters, templates,
+  scripts, CI/CD QA lanes, approval boundaries, and automation opportunities.
+- T-002 validation: `git diff --check` — PASS; `bash
+  scripts/validate-repo-quality-gates.sh .` — PASS.
+- RTK limitation observed: `which rtk` did not find `rtk`; direct
+  `/home/hy/.local/bin/rtk --version` reported `rtk 0.34.3`; `rtk gain` could
+  not initialize its tracking database, so required task commands were run
+  directly where exact command evidence was needed.
 
 #### Handoff
 
-- Next step: write and review the implementation plan after the user approves
-  this Spec.
+- Next step: continue the audit pack with T-003, the harness and loop
+  implementation audit. No live runtime checks were requested or run for T-002.
 
 ### 2026-07-02 — Workspace harness research pack
 
