@@ -40,8 +40,9 @@ docs/90.references/audits/
 ```
 
 The 2026-07-02 audit reports are tracked by the workspace harness
-implementation audit pack. Until each remaining report exists, refer to the
-filename as a planned target rather than a resolved Markdown link.
+implementation audit pack and are listed as resolved Markdown links in the
+Audit Report Index once created. Future planned reports should stay as code
+literals until their files exist.
 
 ## How to Work in This Area
 
