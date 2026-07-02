@@ -40,7 +40,7 @@ are out of scope unless separately approved by a human.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-001 | Scaffold research folder README and parent reference index | doc | VAL-SPC-001 | PLN-001 | `git diff --check`; `bash scripts/validate-repo-quality-gates.sh .` | Codex | Done |
 | T-002 | Write workspace governance baseline reference | doc | VAL-SPC-003, VAL-SPC-005 | PLN-002 | Reference template check; repo quality gate | Codex | Done |
-| T-003 | Write harness and loop engineering reference | doc | VAL-SPC-004, VAL-SPC-005 | PLN-003 | Source attribution review; repo quality gate | Codex | Todo |
+| T-003 | Write harness and loop engineering reference | doc | VAL-SPC-004, VAL-SPC-005 | PLN-003 | Source attribution review; repo quality gate | Codex | Done |
 | T-004 | Write provider implementation status reference | doc | VAL-SPC-004, VAL-SPC-005 | PLN-004 | Current official-source review; repo quality gate | Codex | Todo |
 | T-005 | Write spec/SDLC/CI/QA/formatting reference | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-005 | Source attribution review; repo quality gate | Codex | Todo |
 | T-006 | Final integration, validation, memory, and handoff | doc | VAL-SPC-006 | PLN-006 | Final validation bundle | Codex | Todo |
@@ -67,7 +67,7 @@ are out of scope unless separately approved by a human.
 
 ### Phase 2
 
-- [ ] T-003 Write harness and loop engineering reference.
+- [x] T-003 Write harness and loop engineering reference.
 - [ ] T-004 Write provider implementation status reference.
 - [ ] T-005 Write spec/SDLC/CI/QA/formatting reference.
 
@@ -98,6 +98,9 @@ are out of scope unless separately approved by a human.
 | 2026-07-02 | T-002 | Manual template/source review | PASS; created `../../90.references/research/workspace-governance-baseline.md` from `../../99.templates/reference.template.md` using repo-backed governance, CI, scripts, template, and adapter evidence |
 | 2026-07-02 | T-002 | `git diff --check` | PASS; no output |
 | 2026-07-02 | T-002 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-02 | T-003 | Manual template/source review | PASS; created `../../90.references/research/harness-and-loop-engineering.md` from `../../99.templates/reference.template.md` using required OpenAI, Anthropic, MCP, repo-backed, and non-authoritative market-scan sources checked on 2026-07-02 |
+| 2026-07-02 | T-003 | `git diff --check` | PASS; no output |
+| 2026-07-02 | T-003 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
 
 ## Related Documents
 
