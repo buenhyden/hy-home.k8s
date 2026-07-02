@@ -20,6 +20,12 @@ inventory stays in `scripts/README.md`.
 - Started a repo-first integrated research pack for
   `docs/90.references/research/` by writing the parent
   [Spec](../../03.specs/009-workspace-harness-research-pack/spec.md).
+- Created the implementation
+  [Plan](../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md)
+  and
+  [Task](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
+  to track the research pack execution, validation evidence, and logical-unit
+  commits.
 - The approved pack structure is one README plus four reference documents:
   workspace governance baseline, harness and loop engineering,
   provider implementation status, and spec/SDLC/CI/QA/formatting.
@@ -42,11 +48,15 @@ inventory stays in `scripts/README.md`.
 - `/home/hy/.local/bin/rtk --version` returned `rtk 0.34.3`; `rtk` is not on
   PATH and `rtk gain` cannot initialize its tracking database, so underlying
   commands are used directly.
+- `git diff --check` — PASS for the parent Spec commit.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS for the parent Spec
+  commit.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS after aligning the
+  GitHub Actions version inventory with `.github/workflows/*.yml`.
 
 #### Handoff
 
-- Next step: review and approve the spec, then create the execution plan and
-  task record before writing the research pack.
+- Next step: execute the approved plan task-by-task and write the research pack.
 
 ### 2026-06-05 — Harness governance V2 overlay
 
