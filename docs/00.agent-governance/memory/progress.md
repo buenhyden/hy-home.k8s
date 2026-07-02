@@ -12,30 +12,22 @@ inventory stays in `scripts/README.md`.
 
 - **Date**: 2026-07-02
 - **Layer**: docs, meta, qa
-- **Status**: in-progress
+- **Status**: complete
 - **Tags**: #research #harness #loop-engineering #sdlc #validation
 
 #### Progress
 
-- Started a repo-first integrated research pack for
-  `docs/90.references/research/` by writing the parent
-  [Spec](../../03.specs/009-workspace-harness-research-pack/spec.md).
-- Created the implementation
-  [Plan](../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md)
-  and
-  [Task](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
-  to track the research pack execution, validation evidence, and logical-unit
-  commits.
-- The approved pack structure is one README plus four reference documents:
-  workspace governance baseline, harness and loop engineering,
-  provider implementation status, and spec/SDLC/CI/QA/formatting.
-- The source strategy is repo-first plus official external sources, with
-  bounded market scan findings and implementation checklist sections included
-  in each relevant reference document.
-- Completed Task 2 by creating the repo-backed
-  [Workspace Governance Baseline Research](../../90.references/research/workspace-governance-baseline.md)
-  reference, marking it current in the research folder README, and recording
-  T-002 evidence in the task record.
+- Completed the repo-first workspace harness research pack under
+  [docs/90.references/research/](../../90.references/research/): one README
+  plus four durable references covering governance baseline, harness/loop
+  engineering, provider implementation status, and spec/SDLC/CI/QA/formatting.
+- Finalized
+  [T-006](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
+  by marking the task and phase complete and recording the final repo-static
+  validation bundle.
+- Confirmed the pack remains documentation-only reference material. Static
+  repository gates were run; no live k3d, ArgoCD, Vault, ESO, Kubernetes,
+  cloud, provider runtime, or secret readiness checks were requested or run.
 
 #### Memory
 
@@ -48,28 +40,26 @@ inventory stays in `scripts/README.md`.
 - Workspace governance baseline summaries should name canonical owners and
   follow-up routes instead of restating or changing active Stage 00, CI,
   scripts, template, or provider-adapter policy.
+- Repo-static validation for this research pack is completion evidence for
+  Markdown structure, generated-index freshness, quality gates, and progress
+  ledger uniqueness only. It is not live cluster or runtime readiness.
 
 #### Evidence
 
-- `git status --short` was clean before starting the branch.
-- `/home/hy/.local/bin/rtk --version` returned `rtk 0.34.3`; `rtk` is not on
-  PATH and `rtk gain` cannot initialize its tracking database, so underlying
-  commands are used directly.
-- `git diff --check` — PASS for the parent Spec commit.
-- `bash scripts/generate-llm-wiki-index.sh --check` — PASS for the parent Spec
-  commit.
-- `bash scripts/validate-repo-quality-gates.sh .` — PASS after aligning the
-  GitHub Actions version inventory with `.github/workflows/*.yml`.
-- Task 2 source review covered `AGENTS.md`, `.codex/CODEX.md`, Stage 00
-  bootstrap/documentation/quality/approval rules, harness catalog,
-  implementation map, common governance, CI/CD QA guide, scripts README, and
-  `.github/workflows/ci.yml`.
-- Task 2 validation: `git diff --check` — PASS; `bash
-  scripts/validate-repo-quality-gates.sh .` — PASS.
+- `git diff --check` — PASS; no output.
+- `bash scripts/generate-llm-wiki-index.sh --check` — PASS;
+  `[PASS] LLM WIKI generated index is current`.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS;
+  `[PASS] repository quality gates passed`.
+- `rg --files | rg '(^|/)progress\.md$'` — PASS; returned only
+  `docs/00.agent-governance/memory/progress.md`.
+- Read-only index review confirmed the research README, parent references
+  README, plan README, and task README already index the research pack.
 
 #### Handoff
 
-- Next step: continue with Task 3, the harness and loop engineering reference.
+- None for the research pack itself. Future implementation of checklist items
+  should start from a new Spec or Plan owned by the relevant canonical stage.
 
 ### 2026-06-05 — Harness governance V2 overlay
 
