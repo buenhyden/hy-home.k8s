@@ -32,8 +32,8 @@ active governance, provider permissions, CI behavior, or live-runtime procedure.
 
 - Type: durable-concept / external-standard-snapshot
 - Source checked: 2026-07-02
-- Refresh trigger: Claude Code, Codex, Gemini CLI, Google ADK, MCP, provider
-  adapter, or local harness catalog changes.
+- Refresh trigger: Claude Code, Codex, Gemini CLI, Gemini Code Assist, Google
+  ADK, MCP, provider adapter, or local harness catalog changes.
 
 ## Authority Boundary
 
@@ -54,7 +54,8 @@ active governance, provider permissions, CI behavior, or live-runtime procedure.
 ## Scope
 
 - Covers official/provider capability surfaces for Claude Code, Codex/OpenAI,
-  Gemini CLI, Google ADK, and repo-backed adapter status in `hy-home.k8s`.
+  Gemini CLI, Gemini Code Assist, Google ADK, and repo-backed adapter status in
+  `hy-home.k8s`.
 - Covers settings/instructions, subagents/delegation, hooks/automation,
   skills/extensions, MCP/tooling, sandbox/permissions/approvals, eval or
   feedback-loop support, and local implementation status.
@@ -70,7 +71,7 @@ active governance, provider permissions, CI behavior, or live-runtime procedure.
 | Capability | Claude Code upstream capability | Codex/OpenAI upstream capability | Gemini/Google upstream capability | Current repo implementation status |
 | --- | --- | --- | --- | --- |
 | Instruction/settings | Native hierarchical Claude settings and context files, including managed, user, project, and local scopes; project settings are designed for team-shared permissions, hooks, and MCP configuration. | Codex reads `~/.codex/config.toml` and trusted project `.codex/config.toml`; project layers can include config, hooks, and rules, and `AGENTS.md` is part of the Codex rules surface. | Gemini CLI uses `GEMINI.md` context files and JSON settings such as user and workspace `settings.json`; workspace settings override user settings. | Stage 00 uses thin gateway files plus provider baselines: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.codex/CODEX.md`, and `.agents/GEMINI.md`. |
-| Subagents/delegation | Native subagents use Markdown/YAML frontmatter in `.claude/agents/` or user/managed/plugin scopes, with tool, model, permission mode, MCP, hook, and memory options. | Native Codex subagent workflows can spawn specialized agents and project-scoped custom TOML agents under `.codex/agents/`; subagents inherit the active sandbox policy. | Google ADK supports multi-agent systems and agent delegation as an application framework; Gemini CLI repo docs expose automation and custom context, but this check did not verify a Gemini CLI-native equivalent to Claude's subagent permission model. | The repo keeps provider-aligned agents in `.claude/agents/*.md`, `.agents/agents/*.md`, and `.codex/agents/*.toml`; mirror parity is a repo-static validation concern, not proof of identical native enforcement. |
+| Subagents/delegation | Native subagents use Markdown/YAML frontmatter in `.claude/agents/` or user/managed/plugin scopes, with tool, model, permission mode, MCP, hook, and memory options. | Native Codex subagent workflows can spawn specialized agents and project-scoped custom TOML agents under `.codex/agents/`; subagents inherit the active sandbox policy. | Google ADK supports multi-agent systems and agent delegation as an application framework; Gemini Code Assist agent mode supports IDE agent workflows; Gemini CLI repo docs expose automation and custom context, but this check did not verify a Gemini CLI-native equivalent to Claude's subagent permission model. | The repo keeps provider-aligned agents in `.claude/agents/*.md`, `.agents/agents/*.md`, and `.codex/agents/*.toml`; mirror parity is a repo-static validation concern, not proof of identical native enforcement. |
 | Hooks/automation | Native hooks can run deterministic shell commands at lifecycle events; exit-code and JSON behavior can block selected actions, permission requests, prompts, Stop, SubagentStop, and compaction events depending on event type. | Native Codex hooks are enabled by default, load from `hooks.json` or config tables, require trust review for non-managed command hooks, and run lifecycle scripts; Codex docs note concurrent matching hooks cannot prevent each other from starting. | Gemini CLI repo settings and this repo's `.agents/hooks.json` provide behavioral hook wiring where the runtime honors it; this check did not verify Claude-style native blocking-hook parity in Gemini CLI. | Claude has the strongest repo-backed native permission-gate story through `.claude/settings.json` as summarized by the harness catalog. Codex `.codex/hooks.json` and Gemini `.agents/hooks.json` are context/validation wiring and must not be treated as identical permission gates. |
 | Skills/extensions | Claude skills live in enterprise, personal, project, or plugin locations, with `SKILL.md` as the required entrypoint. | Codex skills are available in CLI, IDE extension, and app, use progressive disclosure, and are scanned from `.agents/skills` in repo scopes plus user/admin/system locations. | Gemini CLI supports tools/extensions and MCP integrations; Google ADK provides a broader framework with tools, graph workflows, and integrations. | Shared skills, workflows, and output styles are owned by `.agents/`; `.claude/**` and `.codex/**` expose provider-native or symlinked views where supported. |
 | MCP/tooling | Claude MCP supports local, project, user, plugin, and managed scopes; project-scoped servers are stored in `.mcp.json`; subagents can scope MCP servers to themselves. | Codex supports MCP in CLI and IDE extension, configured in `config.toml` at user or trusted project scope; it supports STDIO and streamable HTTP servers with authentication options. | Gemini CLI supports MCP through `mcpServers` settings and tool filtering; Google ADK supports a broader tool ecosystem. | ECC baseline enables common MCP servers through `.codex/config.toml` and shared config conventions. New or changed MCP servers require least-privilege review and human approval for mutation-capable external actions. |
@@ -153,9 +154,10 @@ not be described as a Claude permission-gate clone.
 
 ### Gemini/Google implementation status
 
-Gemini/Google needs two separate readings: Gemini CLI is the terminal provider
-surface used by this repository's mirror, while Google ADK is a broader
-framework/platform for building, evaluating, and deploying agents.
+Gemini/Google needs three separate readings: Gemini CLI is the terminal
+provider surface closest to this repository's mirror, Gemini Code Assist agent
+mode is an IDE product surface, and Google ADK is a broader framework/platform
+for building, evaluating, and deploying agents.
 
 - **Gemini CLI settings and context**: official Gemini CLI docs describe
   `settings.json` at user and workspace locations, with workspace settings
@@ -170,6 +172,16 @@ framework/platform for building, evaluating, and deploying agents.
   sandboxing by command flag, environment variable, or `settings.json`, and
   include OS/container sandbox methods. This is an upstream capability; it does
   not automatically mean this repo has native Claude-style permission parity.
+- **Gemini Code Assist agent mode**: official Google docs describe agent mode
+  in VS Code and IntelliJ as an IDE pair-programming surface that uses tools,
+  MCP servers, plans, approvals, and explicit permission for filesystem or
+  resource-mutating tool use. The companion usage page notes that agent mode is
+  in preview and has limitations compared with standard chat, including source
+  citation differences. The Gemini CLI page says Gemini CLI uses a ReAct loop
+  with built-in tools plus local or remote MCP servers, and that Gemini Code
+  Assist agent mode in VS Code is powered by Gemini CLI with a subset of CLI
+  functionality. These are Google product capabilities, not proof of this
+  repo's `.agents/**` mirror behavior.
 - **Google ADK and eval platform**: Google ADK is an open-source framework for
   building, debugging, deploying, and evaluating AI agents. Google Cloud docs
   describe multi-agent architectures, workflow agents, dynamic routing, tool
@@ -245,9 +257,9 @@ families, but the safe local rule remains conservative:
 - Claude Code has native settings/hooks/subagents/skills/MCP surfaces, but
   exact blocking behavior still depends on current hook event semantics,
   permission mode, managed policy, and project/user configuration.
-- Google ADK evaluation and multi-agent support is a framework/platform
-  capability, not evidence that the local `.agents` Gemini mirror implements
-  those platform features.
+- Gemini Code Assist agent mode and Google ADK capabilities are product or
+  framework/platform capabilities, not evidence that the local `.agents`
+  Gemini mirror implements those features.
 - The repo's `Ready` status in the harness catalog means repo/static surface
   readiness. It is not proof of live cluster readiness, provider runtime
   availability, CI success in the current session, or identical enforcement
@@ -295,6 +307,7 @@ Official/provider sources checked on 2026-07-02:
 - Claude Code skills: <https://docs.anthropic.com/en/docs/claude-code/skills>
 - Claude Code settings: <https://docs.anthropic.com/en/docs/claude-code/settings>
 - Claude Code MCP: <https://docs.anthropic.com/en/docs/claude-code/mcp>
+- Claude Code release notes: <https://docs.anthropic.com/en/release-notes/claude-code>
 - Codex CLI: <https://developers.openai.com/codex/cli>
 - Codex config reference: <https://developers.openai.com/codex/config-reference>
 - Codex config basics: <https://developers.openai.com/codex/config-basic>
@@ -306,11 +319,15 @@ Official/provider sources checked on 2026-07-02:
 - Codex rules: <https://developers.openai.com/codex/rules>
 - Codex skills: <https://developers.openai.com/codex/skills>
 - Codex subagents: <https://developers.openai.com/codex/subagents>
+- OpenAI Codex agent-loop article: <https://openai.com/index/unrolling-the-codex-agent-loop/>
 - Gemini CLI repository: <https://github.com/google-gemini/gemini-cli>
 - Gemini CLI MCP server docs: <https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/mcp-server.md>
 - Gemini CLI configuration docs: <https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/configuration.md>
 - Gemini CLI settings docs: <https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/settings.md>
 - Gemini CLI sandbox docs: <https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/sandbox.md>
+- Google Gemini Code Assist agent mode overview: <https://developers.google.com/gemini-code-assist/docs/agent-mode>
+- Google Gemini Code Assist agent mode usage: <https://developers.google.com/gemini-code-assist/docs/use-agentic-chat-pair-programmer>
+- Gemini Code Assist Gemini CLI page: <https://developers.google.com/gemini-code-assist/docs/gemini-cli>
 - Google Cloud ADK page: <https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/adk>
 - ADK site: <https://adk.dev/>
 - ADK eval codelab: <https://codelabs.developers.google.com/adk-eval/instructions>
@@ -340,9 +357,9 @@ Market scan:
 
 - Review cadence: on source change
 - Last reviewed: 2026-07-02
-- Next review trigger: Claude Code, Codex, Gemini CLI, Google ADK, MCP,
-  provider adapter, provider changelog, local harness catalog, subagent
-  protocol, hook wiring, or shared `.agents/**` changes.
+- Next review trigger: Claude Code, Codex, Gemini CLI, Gemini Code Assist,
+  Google ADK, MCP, provider adapter, provider changelog, local harness catalog,
+  subagent protocol, hook wiring, or shared `.agents/**` changes.
 
 ## Related Documents
 

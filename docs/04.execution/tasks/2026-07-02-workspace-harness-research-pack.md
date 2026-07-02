@@ -101,7 +101,7 @@ are out of scope unless separately approved by a human.
 | 2026-07-02 | T-003 | Manual template/source review | PASS; created `../../90.references/research/harness-and-loop-engineering.md` from `../../99.templates/reference.template.md` using required OpenAI, Anthropic, MCP, repo-backed, and non-authoritative market-scan sources checked on 2026-07-02 |
 | 2026-07-02 | T-003 | `git diff --check` | PASS; no output |
 | 2026-07-02 | T-003 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
-| 2026-07-02 | T-004 | Manual template/source review | PASS; created `../../90.references/research/provider-implementation-status.md` from `../../99.templates/reference.template.md` using required Claude Code, Codex/OpenAI, Gemini/Google, ADK, and repo-backed provider sources checked on 2026-07-02 |
+| 2026-07-02 | T-004 | Manual template/source review | PASS; created `../../90.references/research/provider-implementation-status.md` from `../../99.templates/reference.template.md` using required Claude Code, Claude Code release notes, Codex/OpenAI docs, OpenAI Codex agent-loop article, Gemini CLI, Gemini Code Assist agent mode, Google ADK, and repo-backed provider sources checked on 2026-07-02 |
 | 2026-07-02 | T-004 | `git diff --check` | PASS; no output |
 | 2026-07-02 | T-004 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
 
