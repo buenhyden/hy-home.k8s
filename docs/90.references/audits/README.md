@@ -69,7 +69,7 @@ This README is located at `docs/90.references/audits/`.
 | --- | --- | --- |
 | [2026-05-24-workspace-harness-gap-analysis.md](./2026-05-24-workspace-harness-gap-analysis.md) | Existing snapshot | Historical workspace harness gap-analysis reference. |
 | [2026-07-02-workspace-governance-implementation-audit.md](./2026-07-02-workspace-governance-implementation-audit.md) | Current | Workspace rules, systems, environment, operating contracts, templates, scripts, shared provider structure, and automation opportunities. |
-| `2026-07-02-harness-loop-implementation-audit.md` | Planned in audit pack | Harness engineering and loop engineering implementation status against the research benchmark. |
+| [2026-07-02-harness-loop-implementation-audit.md](./2026-07-02-harness-loop-implementation-audit.md) | Current | Harness engineering and loop engineering implementation status against the research benchmark. |
 | `2026-07-02-provider-harness-loop-implementation-audit.md` | Planned in audit pack | Claude, Codex, Gemini, and common provider harness/loop parity. |
 | `2026-07-02-sdlc-delivery-practices-implementation-audit.md` | Planned in audit pack | Spec-driven development, SDLC, CI/CD, QA, formatting, and validation evidence lanes. |
 
