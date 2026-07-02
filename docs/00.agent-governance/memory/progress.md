@@ -55,6 +55,8 @@ inventory stays in `scripts/README.md`.
   `docs/00.agent-governance/memory/progress.md`.
 - Read-only index review confirmed the research README, parent references
   README, plan README, and task README already index the research pack.
+- Final review remediation aligned the plan/task lifecycle status and checklist
+  markers to the completed task evidence.
 
 #### Handoff
 

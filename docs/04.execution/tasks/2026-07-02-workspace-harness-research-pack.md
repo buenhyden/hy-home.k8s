@@ -1,7 +1,7 @@
 ---
 title: 'Task: Workspace Harness Research Pack'
 type: task
-status: draft
+status: done
 owner: platform
 updated: 2026-07-02
 ---
@@ -111,6 +111,7 @@ are out of scope unless separately approved by a human.
 | 2026-07-02 | T-006 | `bash scripts/generate-llm-wiki-index.sh --check` | PASS; `[PASS] LLM WIKI generated index is current` |
 | 2026-07-02 | T-006 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
 | 2026-07-02 | T-006 | `rg --files \| rg '(^\|/)progress\.md$'` | PASS; returned only `docs/00.agent-governance/memory/progress.md` |
+| 2026-07-02 | T-006 | Final review remediation | PASS; aligned plan/task frontmatter, Stage 04 indexes, plan checkboxes, and completion criteria to `Done` |
 
 ## Related Documents
 

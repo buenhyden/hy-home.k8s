@@ -119,7 +119,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-06-05-harness-connective-layer-risk-closure.md`](./2026-06-05-harness-connective-layer-risk-closure.md) | 하네스 연결 레이어의 Remaining Risk와 Follow-up Tasks를 repo-static evidence 및 승인 경계 기준으로 닫은 Task | Done | 2026-06-05 |
 | [`./2026-06-05-harness-governance-v2-overlay.md`](./2026-06-05-harness-governance-v2-overlay.md) | DAILY/LIBRARY 분류, workflow skill phase 기준, Hookify local advisory, deterministic eval, progress 단일화 검증 evidence를 추적한 Task | Done | 2026-06-05 |
 | [`./2026-06-05-language-boundary-alignment.md`](./2026-06-05-language-boundary-alignment.md) | AI Agent 문서와 사람용 문서의 언어 경계를 조사하고 Stage 03/04 영어-first 정책과 operations 역할을 보강한 Task | Draft | 2026-06-05 |
-| [`./2026-07-02-workspace-harness-research-pack.md`](./2026-07-02-workspace-harness-research-pack.md) | `docs/90.references/research/` 통합 연구 팩의 작성, 소스 검증, market scan, implementation checklist, repo-static 검증 evidence 추적 | Draft | 2026-07-02 |
+| [`./2026-07-02-workspace-harness-research-pack.md`](./2026-07-02-workspace-harness-research-pack.md) | `docs/90.references/research/` 통합 연구 팩의 작성, 소스 검증, market scan, implementation checklist, repo-static 검증 evidence 추적 | Done | 2026-07-02 |
 
 ## Related Documents
 

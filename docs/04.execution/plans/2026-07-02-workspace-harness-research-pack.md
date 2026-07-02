@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Harness Research Pack Implementation Plan'
 type: plan
-status: draft
+status: done
 owner: platform
 updated: 2026-07-02
 ---
@@ -151,7 +151,7 @@ Market scan and comparative sources:
 - Modify: `docs/90.references/README.md`
 - Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md`
 
-- [ ] **Step 1: Read templates and parent README**
+- [x] **Step 1: Read templates and parent README**
 
 Run:
 
@@ -164,7 +164,7 @@ sed -n '1,260p' docs/90.references/README.md
 Expected: commands print the README/reference template contracts and current
 reference index.
 
-- [ ] **Step 2: Create `docs/90.references/research/README.md`**
+- [x] **Step 2: Create `docs/90.references/research/README.md`**
 
 Include these sections exactly: `# 90.references/research`, `## Overview`,
 `## Audience`, `## Scope`, `## Structure`, `## How to Work in This Area`,
@@ -173,13 +173,13 @@ Include these sections exactly: `# 90.references/research`, `## Overview`,
 The README must state that official and repo-backed sources outrank market scan
 sources, and that market findings are non-authoritative.
 
-- [ ] **Step 3: Update parent reference README**
+- [x] **Step 3: Update parent reference README**
 
 Add `research/` to the structure tree, Reference Index, Reference Folder Roles,
 and Related Documents in `docs/90.references/README.md`. Keep Korean
 human-facing prose and do not redefine governance policy.
 
-- [ ] **Step 4: Validate the scaffold**
+- [x] **Step 4: Validate the scaffold**
 
 Run:
 
@@ -191,7 +191,7 @@ bash scripts/validate-repo-quality-gates.sh .
 Expected: both commands pass. If `validate-repo-quality-gates.sh` fails on a
 new README/index issue, fix the README structure before continuing.
 
-- [ ] **Step 5: Commit scaffold**
+- [x] **Step 5: Commit scaffold**
 
 Run:
 
@@ -212,7 +212,7 @@ updates.
 - Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
-- [ ] **Step 1: Gather repo evidence**
+- [x] **Step 1: Gather repo evidence**
 
 Run:
 
@@ -228,7 +228,7 @@ sed -n '1,220p' scripts/README.md
 Expected: commands print the current workspace purpose, governance, harness,
 CI/QA, and scripts evidence.
 
-- [ ] **Step 2: Write the baseline document**
+- [x] **Step 2: Write the baseline document**
 
 Create the document from `docs/99.templates/reference.template.md` with:
 
@@ -254,12 +254,12 @@ The `Definitions / Facts` section must include subsections for:
 - Governance system and rules
 - Implementation checklist
 
-- [ ] **Step 3: Update indexes and task evidence**
+- [x] **Step 3: Update indexes and task evidence**
 
 Add the document to `docs/90.references/research/README.md` and update the task
 record status for this task to `Done` with evidence commands.
 
-- [ ] **Step 4: Validate and commit**
+- [x] **Step 4: Validate and commit**
 
 Run:
 
@@ -281,7 +281,7 @@ and evidence updates.
 - Modify: `docs/90.references/research/README.md`
 - Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md`
 
-- [ ] **Step 1: Gather official and market scan sources**
+- [x] **Step 1: Gather official and market scan sources**
 
 Browse or open current sources for OpenAI harness engineering, OpenAI Codex
 agent loop, OpenAI agent improvement loop, Anthropic building effective agents,
@@ -290,7 +290,7 @@ one or two current market-scan articles on loop engineering.
 
 Expected: record source URLs and source-checked date in the draft.
 
-- [ ] **Step 2: Write the harness/loop document**
+- [x] **Step 2: Write the harness/loop document**
 
 Create the document from `reference.template.md` with:
 
@@ -309,7 +309,7 @@ Create the document from `reference.template.md` with:
 
 Market scan findings must be labeled `Non-authoritative market scan`.
 
-- [ ] **Step 3: Update index, task evidence, validate, and commit**
+- [x] **Step 3: Update index, task evidence, validate, and commit**
 
 Run:
 
@@ -330,7 +330,7 @@ Expected: validation passes and the commit contains the harness/loop reference.
 - Modify: `docs/90.references/research/README.md`
 - Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md`
 
-- [ ] **Step 1: Gather provider sources**
+- [x] **Step 1: Gather provider sources**
 
 Browse or open current official sources for:
 
@@ -343,7 +343,7 @@ Browse or open current official sources for:
 Expected: record the source URLs and note any provider feature that cannot be
 verified from official docs.
 
-- [ ] **Step 2: Write the provider status document**
+- [x] **Step 2: Write the provider status document**
 
 Create the document from `reference.template.md` with sections for:
 
@@ -359,7 +359,7 @@ Create the document from `reference.template.md` with sections for:
 Each provider section must distinguish repo-local implementation from upstream
 provider capability.
 
-- [ ] **Step 3: Update index, task evidence, validate, and commit**
+- [x] **Step 3: Update index, task evidence, validate, and commit**
 
 Run:
 
@@ -380,7 +380,7 @@ Expected: validation passes and the commit contains the provider comparison.
 - Modify: `docs/90.references/research/README.md`
 - Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md`
 
-- [ ] **Step 1: Gather delivery-practice sources**
+- [x] **Step 1: Gather delivery-practice sources**
 
 Browse or open current sources for NIST SSDF, NIST SP 800-204D, GitHub Actions
 docs/security, GitHub Spec Kit, pre-commit docs, Martin Fowler Continuous
@@ -388,7 +388,7 @@ Integration, and repo-local CI/QA docs.
 
 Expected: record source URLs and source-checked date in the draft.
 
-- [ ] **Step 2: Write the delivery-practice document**
+- [x] **Step 2: Write the delivery-practice document**
 
 Create the document from `reference.template.md` with subsections for:
 
@@ -404,7 +404,7 @@ Create the document from `reference.template.md` with subsections for:
 The document must state that repo-static validation does not prove live runtime
 readiness.
 
-- [ ] **Step 3: Update index, task evidence, validate, and commit**
+- [x] **Step 3: Update index, task evidence, validate, and commit**
 
 Run:
 
@@ -429,18 +429,18 @@ reference.
 - Modify: `docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
-- [ ] **Step 1: Update plan and task indexes**
+- [x] **Step 1: Update plan and task indexes**
 
-Add this plan and task to their stage README index tables with `Draft` status
-and `2026-07-02` updated date.
+Add this plan and task to their stage README index tables with the current
+lifecycle status and `2026-07-02` updated date.
 
-- [ ] **Step 2: Complete task evidence and progress memory**
+- [x] **Step 2: Complete task evidence and progress memory**
 
 Update the task record with final validation command results and update the
 progress ledger status to `complete` only after all reference documents and
 checks are complete.
 
-- [ ] **Step 3: Run final validation**
+- [x] **Step 3: Run final validation**
 
 Run:
 
@@ -459,7 +459,7 @@ Expected:
 - `rg --files | rg '(^|/)progress\.md$'`: only
   `docs/00.agent-governance/memory/progress.md`.
 
-- [ ] **Step 4: Review final diff**
+- [x] **Step 4: Review final diff**
 
 Run:
 
@@ -471,7 +471,7 @@ git diff --stat
 Expected: only research pack, indexes, task evidence, and progress memory files
 are modified.
 
-- [ ] **Step 5: Commit integration**
+- [x] **Step 5: Commit integration**
 
 Run:
 
@@ -518,16 +518,16 @@ Expected: one final integration commit.
 
 ## Completion Criteria
 
-- [ ] `docs/90.references/research/README.md` exists and indexes all four
+- [x] `docs/90.references/research/README.md` exists and indexes all four
   reference documents.
-- [ ] Four reference documents exist and use the reference template structure.
-- [ ] Official source findings, market scan findings, and implementation
+- [x] Four reference documents exist and use the reference template structure.
+- [x] Official source findings, market scan findings, and implementation
   checklist sections are present where required.
-- [ ] Parent `docs/90.references/README.md` indexes the new folder.
-- [ ] Plan and task README indexes are updated.
-- [ ] Task evidence and progress memory are updated.
-- [ ] Final validation commands pass.
-- [ ] Work is committed by logical unit.
+- [x] Parent `docs/90.references/README.md` indexes the new folder.
+- [x] Plan and task README indexes are updated.
+- [x] Task evidence and progress memory are updated.
+- [x] Final validation commands pass.
+- [x] Work is committed by logical unit.
 
 ## Related Documents
 
