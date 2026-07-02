@@ -80,7 +80,7 @@ research/
 | Material | Status | Role | Authority Boundary |
 | --- | --- | --- | --- |
 | [README.md](./README.md) | Current | Research folder entry point and source-priority guide | Authoritative for folder routing only; not active policy |
-| `workspace-governance-baseline.md` | Planned | Durable workspace governance baseline reference | Summarizes canonical governance owners; does not replace them |
+| [workspace-governance-baseline.md](./workspace-governance-baseline.md) | Current | Durable workspace governance baseline reference | Summarizes canonical governance owners; does not replace them |
 | `harness-and-loop-engineering.md` | Planned | Harness and feedback-loop engineering reference | Summarizes source-backed patterns; does not define runtime procedure |
 | `provider-implementation-status.md` | Planned | Provider implementation status and source ledger | Official and repo-backed sources outrank market scan; market findings are non-authoritative |
 | `spec-sdlc-ci-qa-formatting.md` | Planned | Spec, SDLC, CI, QA, and formatting reference | Summarizes reference material; active gates stay with canonical owners |

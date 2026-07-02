@@ -32,6 +32,10 @@ inventory stays in `scripts/README.md`.
 - The source strategy is repo-first plus official external sources, with
   bounded market scan findings and implementation checklist sections included
   in each relevant reference document.
+- Completed Task 2 by creating the repo-backed
+  [Workspace Governance Baseline Research](../../90.references/research/workspace-governance-baseline.md)
+  reference, marking it current in the research folder README, and recording
+  T-002 evidence in the task record.
 
 #### Memory
 
@@ -41,6 +45,9 @@ inventory stays in `scripts/README.md`.
 - Current provider implementation claims for Claude, Codex/OpenAI, and
   Gemini/Google must be verified through current external sources before they
   are written into `docs/90.references/research/`.
+- Workspace governance baseline summaries should name canonical owners and
+  follow-up routes instead of restating or changing active Stage 00, CI,
+  scripts, template, or provider-adapter policy.
 
 #### Evidence
 
@@ -53,10 +60,16 @@ inventory stays in `scripts/README.md`.
   commit.
 - `bash scripts/validate-repo-quality-gates.sh .` — PASS after aligning the
   GitHub Actions version inventory with `.github/workflows/*.yml`.
+- Task 2 source review covered `AGENTS.md`, `.codex/CODEX.md`, Stage 00
+  bootstrap/documentation/quality/approval rules, harness catalog,
+  implementation map, common governance, CI/CD QA guide, scripts README, and
+  `.github/workflows/ci.yml`.
+- Task 2 validation: `git diff --check` — PASS; `bash
+  scripts/validate-repo-quality-gates.sh .` — PASS.
 
 #### Handoff
 
-- Next step: execute the approved plan task-by-task and write the research pack.
+- Next step: continue with Task 3, the harness and loop engineering reference.
 
 ### 2026-06-05 — Harness governance V2 overlay
 
