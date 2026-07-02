@@ -8,6 +8,52 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-03 — Template contract and governance migration spec
+
+- **Date**: 2026-07-03
+- **Layer**: docs, meta, qa
+- **Status**: complete
+- **Tags**: #templates #governance #frontmatter #sdlc #validation
+
+#### Progress
+
+- Created the Stage 03
+  [Template Contract and Governance Migration Spec](../../03.specs/011-template-contract-governance-migration/spec.md)
+  from the approved four-phase migration design.
+- Recorded the target `docs/99.templates/` model that separates template forms
+  under `templates/**` from support contracts under `support/**`.
+- Defined the first-pass frontmatter profile model, legacy cleanup boundaries,
+  validator/hook impact surfaces, and implementation phase commit boundaries.
+- Updated the Stage 03 README index so the migration spec is discoverable from
+  the canonical spec stage.
+
+#### Memory
+
+- Large template-system changes should start with a Stage 03 migration spec
+  before moving or deleting template files.
+- `docs/99.templates/README.md` should remain an inventory and entrypoint;
+  detailed contract, governance, schema, routing, and legacy cleanup rules
+  should live in `docs/99.templates/support/**` or Stage 00 governance.
+- Future migration work should preserve separate commits for support-contract
+  baseline, path migration, frontmatter and legacy cleanup, and authored docs
+  application.
+
+#### Evidence
+
+- User approved the A design: template forms under `templates/**`, support
+  contracts under `support/**`, and a four-phase migration.
+- External research basis was limited to official or durable documentation
+  sources for frontmatter metadata, documentation type taxonomy, style
+  consistency, lintable frontmatter, and machine-readable API contract shape.
+- `git diff --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Korean-syllable scan for the new English-first spec returned no matches.
+
+#### Handoff
+
+- Next action: create the implementation plan before any template file
+  migration.
+
 ### 2026-07-02 — Workspace harness implementation audit pack
 
 - **Date**: 2026-07-02
