@@ -55,9 +55,8 @@ one target path pattern, one template form, and one validation route.
   execution notes and tool or prompt contracts remain English-first.
 - Machine-readable OpenAPI, GraphQL, and protobuf templates stay native to
   their format and do not use Markdown frontmatter.
-- The operations policy template replaces legacy `deprecated operations-template route`
-  routing. Active contracts must use `policy.template.md` and `type: sdlc/policy`
-  until Phase 3 introduces namespaced type values.
+- The operations policy template owns policy routing. Active contracts must
+  use `policy.template.md` and `type: sdlc/policy`.
 
 ## Validation Rules
 

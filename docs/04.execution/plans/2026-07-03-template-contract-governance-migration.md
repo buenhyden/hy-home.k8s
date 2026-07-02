@@ -1,7 +1,7 @@
 ---
 title: 'Template Contract and Governance Migration Implementation Plan'
 type: sdlc/plan
-status: draft
+status: done
 owner: platform
 updated: 2026-07-03
 ---
@@ -106,13 +106,13 @@ to match.
 
 ## Completion Criteria
 
-- [ ] Support contract baseline completed.
-- [ ] Template forms moved to categorized folders.
-- [ ] Stage 00 routing, hooks, and validators updated.
-- [ ] Template frontmatter and contracts normalized.
-- [ ] Authored docs and README indexes updated.
-- [ ] Required validation commands pass.
-- [ ] Plan, task, and progress ledger record final evidence.
+- [x] Support contract baseline completed.
+- [x] Template forms moved to categorized folders.
+- [x] Stage 00 routing, hooks, and validators updated.
+- [x] Template frontmatter and contracts normalized.
+- [x] Authored docs and README indexes updated.
+- [x] Required validation commands pass.
+- [x] Plan, task, and progress ledger record final evidence.
 
 ## Related Documents
 

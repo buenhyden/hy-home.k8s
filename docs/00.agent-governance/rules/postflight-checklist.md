@@ -19,7 +19,7 @@ Run this checklist before finalizing a response.
 - [ ] All newly added links resolve correctly.
 - [ ] Relative paths in templates resolve from template location.
 - [ ] Optional placeholder paths are not emitted as broken Markdown links.
-- [ ] README files keep `## Link Basis` and `## Related Documents`; no new `## deprecated README heading` heading remains.
+- [ ] README files keep `## Link Basis` and `## Related Documents`; no deprecated related-document heading remains.
 
 ## 4. Stage Compliance
 

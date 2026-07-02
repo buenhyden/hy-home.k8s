@@ -133,7 +133,7 @@ governance, routing, frontmatter schema, legacy cleanup rule을 소유한다.
 | [Documentation Contract](./support/documentation-contract.md) | Template forms, support contracts, Stage 00 governance, authored docs의 소유 경계를 분리한다. |
 | [SDLC Governance](./support/sdlc-governance.md) | PRD부터 postmortem까지 SDLC template family의 역할과 검증 경계를 정의한다. |
 | [Common Documentation Governance](./support/common-documentation-governance.md) | README, Reference, Archive, Memory, Progress template family의 역할을 정의한다. |
-| [Frontmatter Schema](./support/frontmatter-schema.md) | 현재 frontmatter baseline과 Phase 3 target profile model을 정의한다. |
+| [Frontmatter Schema](./support/frontmatter-schema.md) | 현재 canonical frontmatter profile model을 정의한다. |
 | [Template Routing](./support/template-routing.md) | 현재 `templates/**` route와 folder family를 정의한다. |
 | [Legacy Cleanup Rules](./support/legacy-cleanup-rules.md) | active legacy template, key, value, section, route cleanup 대상을 정의한다. |
 
@@ -147,7 +147,7 @@ governance, routing, frontmatter schema, legacy cleanup rule을 소유한다.
 - 생성 문서에 템플릿 안내 주석, placeholder, `Target:` 주석, `Use this template` 문구를 남기지 않는다.
 - Spec 문서의 `Related Inputs`는 upstream 입력 요약이고, 필수
   `Related Documents` 섹션은 upstream/downstream 추적 링크를 함께 유지한다.
-- 모든 README는 `Link Basis`와 `Related Documents`를 사용한다. `deprecated README heading`는 legacy heading으로 새 README나 정리된 README에 남기지 않는다.
+- 모든 README는 `Link Basis`와 `Related Documents`를 사용한다. Deprecated related-document headings는 새 README나 정리된 README에 남기지 않는다.
 
 ## Template-Folder Mapping
 

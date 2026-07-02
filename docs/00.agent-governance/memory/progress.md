@@ -8,6 +8,53 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-03 — Template governance migration final sync
+
+- **Date**: 2026-07-03
+- **Layer**: docs, meta, qa
+- **Status**: complete
+- **Tags**: #templates #sdlc #governance #validation
+
+#### Progress
+
+- Reviewed active template support docs, Stage 00 documentation rules, the
+  migration spec, the migration plan, and the migration task for post-migration
+  wording that still described Phase 3 as future work.
+- Updated authored migration records so the plan and task now reflect completed
+  support contracts, categorized template routes, frontmatter profile
+  enforcement, authored-doc application, and final validation.
+- Confirmed authored docs no longer contain active flat template paths, old
+  legacy literals, simple frontmatter type values, quoted platform owners, or
+  generator-only frontmatter keys.
+- Marked T-006 and T-007 in the migration task record as complete.
+
+#### Memory
+
+- `docs/99.templates/support/frontmatter-schema.md` is now the canonical
+  profile source for Markdown frontmatter.
+- `scripts/validate-repo-quality-gates.sh` enforces the active template
+  routing, README frontmatter absence, frontmatter profile, and legacy literal
+  denylist contracts.
+- `docs/99.templates/templates/**` contains copy-ready forms only; contract,
+  governance, routing, schema, and cleanup rules stay under
+  `docs/99.templates/support/**`.
+
+#### Evidence
+
+- `git diff --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Active legacy literal scan across docs, scripts, `.codex`, `AGENTS.md`, and
+  `RTK.md` returned no matches.
+- Active flat template path scan across README, docs, scripts, `.codex`,
+  `.agents`, `.github`, and examples returned no matches.
+- Authored-doc template residue scan returned only template/support-owned
+  matches under `docs/99.templates/**`.
+
+#### Handoff
+
+- None. The approved template contract and governance migration is complete in
+  local commits.
+
 ### 2026-07-03 — Template frontmatter profile normalization
 
 - **Date**: 2026-07-03

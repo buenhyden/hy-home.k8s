@@ -1,7 +1,7 @@
 ---
 title: 'Task: Template Contract and Governance Migration'
 type: sdlc/task
-status: draft
+status: done
 owner: platform
 updated: 2026-07-03
 ---
@@ -39,8 +39,8 @@ spec and plan while preserving logical commit boundaries.
 | T-003 | Move template forms into `docs/99.templates/templates/**` | doc | VAL-SPC-002, VAL-SPC-008 | PLN-002 | `git mv`; template tree review; `git diff --check` PASS; repo quality gate PASS | platform | Done |
 | T-004 | Update routing, hook, validator, and governance references | impl | VAL-SPC-004, VAL-SPC-005, VAL-SPC-006 | PLN-003 | Active legacy path search PASS; `git diff --check` PASS; repo quality gate PASS | platform | Done |
 | T-005 | Normalize frontmatter profiles and remove active legacy values | doc | VAL-SPC-005, VAL-SPC-007 | PLN-004 | Schema review; legacy value searches PASS; `git diff --check` PASS; repo quality gate PASS | platform | Done |
-| T-006 | Apply new template links/contracts to authored docs and indexes | doc | VAL-SPC-007, VAL-SPC-008 | PLN-005 | Stage README/doc diff review; quality gate | platform | Todo |
-| T-007 | Final validation and handoff sync | qa | VAL-SPC-009 | PLN-006 | Final validation commands and progress ledger evidence | platform | Todo |
+| T-006 | Apply new template links/contracts to authored docs and indexes | doc | VAL-SPC-007, VAL-SPC-008 | PLN-005 | Authored docs and index review PASS; repo quality gate PASS | platform | Done |
+| T-007 | Final validation and handoff sync | qa | VAL-SPC-009 | PLN-006 | Final validation commands PASS; progress ledger evidence recorded | platform | Done |
 
 ## Suggested Types
 
@@ -75,8 +75,8 @@ spec and plan while preserving logical commit boundaries.
 
 ### Phase 4: Authored Docs Application and Final Sync
 
-- [ ] T-006 Apply new template links/contracts to authored docs and indexes.
-- [ ] T-007 Final validation and handoff sync.
+- [x] T-006 Apply new template links/contracts to authored docs and indexes.
+- [x] T-007 Final validation and handoff sync.
 
 ## Verification Summary
 
@@ -91,7 +91,7 @@ spec and plan while preserving logical commit boundaries.
 - **Eval Commands**: Not applicable; this is a static documentation and
   validation migration.
 - **Logs / Evidence Location**: This task record, the progress ledger, and
-  commit history. T-001 through T-005 validation passed before their
+  commit history. T-001 through T-007 validation passed before their
   logical-unit commits.
 
 ## Related Documents

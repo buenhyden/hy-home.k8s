@@ -96,9 +96,9 @@ against the old flat inventory before the path migration begins.
     sections that belong in `support/*contract*.md` or `support/*governance*.md`.
   - SDLC documentation contracts and common documentation contracts must be
     separate.
-  - Legacy template names, legacy path examples, `deprecated operations-template route`,
-    `deprecated owner value`, `deprecated README heading`, and obsolete copied template
-    boilerplate must be removed from active policy and authored documents.
+  - Deprecated template routes, owner values, related-document headings, and
+    obsolete copied template boilerplate must be removed from active policy and
+    authored documents.
   - Repo-changing work must update the progress ledger and validation evidence.
 
 ## Core Design
@@ -314,8 +314,8 @@ The final migration should record:
   - No final authored document may retain copied template instruction blocks
     when topic-specific content is required.
   - No active route may point to a deleted flat template path after Phase 2.
-  - No active frontmatter may keep `deprecated owner value`, `operation`, or duplicate
-    role keys after Phase 3.
+  - No active frontmatter may keep deprecated owner values, old operations
+    policy type values, or duplicate role keys after Phase 3.
   - README changes must not become a dumping ground for support-contract
     content.
 
@@ -341,8 +341,8 @@ The final migration should record:
 
 - **Metrics**:
   - Zero active references to removed flat template paths after Phase 2.
-  - Zero active references to `deprecated operations-template route`, `deprecated owner value`, and
-    `deprecated README heading` after Phase 3.
+  - Zero active references to deprecated template route, owner value, and
+    README related-document heading literals after Phase 3.
   - Every non-README authored Markdown document under active stages has exactly
     one route and the expected frontmatter profile.
   - Every template file is listed in the template inventory and categorized as
@@ -411,7 +411,6 @@ The final migration should record:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-rg -n "operation\\.template\\.md|deprecated owner value|deprecated README heading" docs scripts .codex AGENTS.md RTK.md
 rg -n "docs/99\\.templates/[a-z0-9-]+\\.template\\.(md|yaml|graphql|proto)" docs scripts .codex AGENTS.md RTK.md
 find docs/99.templates -maxdepth 4 -type f -print | sort
 ```

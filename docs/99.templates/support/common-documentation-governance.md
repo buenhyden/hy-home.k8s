@@ -38,7 +38,7 @@ knowledge consistent without forcing every common document into an SDLC phase.
   `How to Work in This Area`, `Link Basis`, and `Related Documents`.
 - README files may summarize contracts, but detailed contract bodies belong in
   support docs, Stage 00 governance, or the owning stage document.
-- README files must not keep legacy `deprecated README heading` headings.
+- README files must not keep deprecated related-document headings.
 
 ## Reference Governance
 

@@ -23,10 +23,10 @@ roles, or obsolete sections as current rules.
 
 | Legacy Item | Replacement | Cleanup Phase |
 | --- | --- | --- |
-| `deprecated operations-template route` | `policy.template.md`, then target Phase 3 policy profile | Phase 3 |
-| `type: operation` | `type: sdlc/policy`, then target Phase 3 namespaced value | Phase 3 |
-| `deprecated owner value` | `platform` | Phase 3 |
-| `deprecated README heading` | `Related Documents` | Phase 3 |
+| Deprecated operations-template route | `policy.template.md` and `type: sdlc/policy` | Phase 3 |
+| Deprecated operations policy frontmatter type | `type: sdlc/policy` | Phase 3 |
+| Deprecated team-owner value | `platform` | Phase 3 |
+| Deprecated README related-document heading | `Related Documents` | Phase 3 |
 | Flat template links in active route contracts | `docs/99.templates/templates/**` links | Phase 2 |
 | Copied `Target:` template comments in authored docs | Topic-specific content with correct `Related Documents` | Phase 4 |
 | Copied `Use this template` instructions in authored docs | Remove from authored docs | Phase 4 |
@@ -63,14 +63,14 @@ be mistaken for current instructions.
 ## Validation Commands
 
 ```bash
-rg -n "operation\\.template\\.md|deprecated owner value|deprecated README heading" docs scripts .codex AGENTS.md RTK.md
-rg -n "^type:\\s*operation\\s*$" docs
+bash scripts/validate-repo-quality-gates.sh .
 rg -n "Target: docs/|Use this template" docs
 ```
 
-Before the cleanup phases, these commands may return existing active and
-historical matches. After the migration closes, active matches should be zero
-or explicitly allow-listed as historical evidence.
+The repository quality gate owns the active legacy denylist and namespaced
+frontmatter profile checks. The template-residue scan may return template
+files under `docs/99.templates/templates/**`; authored docs must not retain
+those markers.
 
 ## Related Documents
 
