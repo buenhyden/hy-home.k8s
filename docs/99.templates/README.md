@@ -147,7 +147,7 @@ governance, routing, frontmatter schema, legacy cleanup rule을 소유한다.
 - 생성 문서에 템플릿 안내 주석, placeholder, `Target:` 주석, `Use this template` 문구를 남기지 않는다.
 - Spec 문서의 `Related Inputs`는 upstream 입력 요약이고, 필수
   `Related Documents` 섹션은 upstream/downstream 추적 링크를 함께 유지한다.
-- 모든 README는 `Link Basis`와 `Related Documents`를 사용한다. `Related References`는 legacy heading으로 새 README나 정리된 README에 남기지 않는다.
+- 모든 README는 `Link Basis`와 `Related Documents`를 사용한다. `deprecated README heading`는 legacy heading으로 새 README나 정리된 README에 남기지 않는다.
 
 ## Template-Folder Mapping
 

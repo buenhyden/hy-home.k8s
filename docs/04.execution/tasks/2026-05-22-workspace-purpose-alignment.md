@@ -1,8 +1,8 @@
 ---
 title: 'Task: Workspace Purpose Alignment Audit'
-type: task
+type: sdlc/task
 status: done
-owner: 'platform'
+owner: platform
 updated: 2026-05-22
 ---
 

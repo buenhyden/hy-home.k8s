@@ -1,6 +1,6 @@
 ---
 title: '{Policy or Standard Name} Operations Policy'
-type: policy
+type: sdlc/policy
 status: draft
 owner: platform
 updated: YYYY-MM-DD

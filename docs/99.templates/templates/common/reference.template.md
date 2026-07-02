@@ -1,6 +1,6 @@
 ---
 title: 'Reference: {Item Name}'
-type: reference
+type: content/reference
 status: draft
 owner: platform
 updated: YYYY-MM-DD

@@ -1,6 +1,6 @@
 ---
 title: 'Observability Platform Operations Policy'
-type: policy
+type: sdlc/policy
 status: active
 owner: platform
 updated: 2026-05-22

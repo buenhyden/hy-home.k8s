@@ -1,6 +1,6 @@
 ---
 title: 'Task: Template Cross-link Fix'
-type: task
+type: sdlc/task
 status: done
 owner: platform
 updated: 2026-05-21

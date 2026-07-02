@@ -1,6 +1,6 @@
 ---
 title: '{Feature Name} Implementation Plan'
-type: plan
+type: sdlc/plan
 status: draft
 owner: platform
 updated: YYYY-MM-DD

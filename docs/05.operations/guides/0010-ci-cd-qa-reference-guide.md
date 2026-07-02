@@ -1,6 +1,6 @@
 ---
 title: 'CI/CD & QA 로컬-vs-GitHub 참조 가이드'
-type: guide
+type: sdlc/guide
 status: active
 owner: platform
 updated: 2026-06-04

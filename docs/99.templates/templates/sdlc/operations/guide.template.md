@@ -1,6 +1,6 @@
 ---
 title: '{Topic Name} Guide'
-type: guide
+type: sdlc/guide
 status: draft
 owner: platform
 updated: YYYY-MM-DD

@@ -1,6 +1,6 @@
 ---
 title: 'ADR-0008: Istio Default Profile with ingress-nginx Coexistence'
-type: adr
+type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-05-18

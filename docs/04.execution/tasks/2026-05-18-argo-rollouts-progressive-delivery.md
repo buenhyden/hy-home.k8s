@@ -1,6 +1,6 @@
 ---
 title: 'Task: Argo Rollouts Progressive Delivery Backfill'
-type: task
+type: sdlc/task
 status: done
 owner: platform
 updated: 2026-05-22
@@ -30,11 +30,11 @@ traceability hardening; live cluster changes are out of scope.
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| ROL-T-001 | Add Rollouts ARD | doc | Related Inputs | PLN-001 | ARD exists and links PRD/ADR/Spec/Plan | platform-team | Done |
-| ROL-T-002 | Add Rollouts Spec | doc | Contracts | PLN-002 | `validate-repo-quality-gates.sh` template heading check | platform-team | Done |
-| ROL-T-003 | Add Rollouts Plan and Task | doc | Related Documents | PLN-003 | Plan/Task links resolve | platform-team | Done |
-| ROL-T-004 | Update upstream/downstream links | doc | Related Documents | PLN-004 | stale gap grep returns no matches | platform-team | Done |
-| ROL-T-005 | Run static validation gates | test | Verification | PLN-005 | validation commands PASS | platform-team | Done |
+| ROL-T-001 | Add Rollouts ARD | doc | Related Inputs | PLN-001 | ARD exists and links PRD/ADR/Spec/Plan | platform | Done |
+| ROL-T-002 | Add Rollouts Spec | doc | Contracts | PLN-002 | `validate-repo-quality-gates.sh` template heading check | platform | Done |
+| ROL-T-003 | Add Rollouts Plan and Task | doc | Related Documents | PLN-003 | Plan/Task links resolve | platform | Done |
+| ROL-T-004 | Update upstream/downstream links | doc | Related Documents | PLN-004 | stale gap grep returns no matches | platform | Done |
+| ROL-T-005 | Run static validation gates | test | Verification | PLN-005 | validation commands PASS | platform | Done |
 
 ## Suggested Types
 

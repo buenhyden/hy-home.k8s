@@ -1,8 +1,8 @@
 ---
 title: 'Reference: Tech Stack Version Inventory'
-type: reference
+type: content/reference
 status: active
-owner: 'platform'
+owner: platform
 updated: 2026-07-02
 ---
 

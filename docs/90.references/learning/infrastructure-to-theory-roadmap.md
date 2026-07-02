@@ -1,8 +1,8 @@
 ---
 title: 'Reference: Infrastructure to Theory Learning Roadmap'
-type: reference
+type: content/reference
 status: draft
-owner: 'platform'
+owner: platform
 updated: 2026-05-17
 ---
 

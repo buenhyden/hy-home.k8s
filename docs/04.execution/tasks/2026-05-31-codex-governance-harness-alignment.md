@@ -1,6 +1,6 @@
 ---
 title: 'Task: Codex Governance Harness Alignment'
-type: task
+type: sdlc/task
 status: done
 owner: platform
 updated: 2026-05-31
@@ -38,8 +38,8 @@ mutation or secret-value access.
 | T-003 | Declare Codex agent TOML model reasoning effort | guardrail | N/A | PLN-003 | `rg -n "model_reasoning_effort" .codex/agents` | platform | Done |
 | T-004 | Clarify the `AGENTS.md` Codex/GPT shim role and provider docs | doc | N/A | PLN-004 | Link check and repo quality gate | platform | Done |
 | T-005 | Normalize shared hook script path references | doc | N/A | PLN-005 | No stale provider-local runtime-script claims remain in active Codex/Gemini docs | platform | Done |
-| T-006 | Normalize policy template routing to `policy.template.md` | doc | N/A | PLN-006 | No active `operation.template.md` routing references remain | platform | Done |
-| T-007 | Normalize operations policy frontmatter to `type: policy` | doc | N/A | PLN-007 | `rg -n "^type: operation$" docs/05.operations/policies` has no output | platform | Done |
+| T-006 | Normalize policy template routing to `policy.template.md` | doc | N/A | PLN-006 | No active `deprecated operations-template route` routing references remain | platform | Done |
+| T-007 | Normalize operations policy frontmatter to `type: sdlc/policy` | doc | N/A | PLN-007 | `rg -n "^type: operation$" docs/05.operations/policies` has no output | platform | Done |
 | T-008 | Harden repo quality gates against recurring drift | test | N/A | PLN-008 | `bash scripts/validate-repo-quality-gates.sh .` | platform | Done |
 | T-009 | Update README indexes and the memory ledger | memory | N/A | PLN-009 | README indexes current; progress entry appended | platform | Done |
 | T-010 | Run final verification and record results | test | N/A | PLN-010 | Verification Summary commands pass or limitations recorded | platform | Done |
@@ -67,7 +67,7 @@ mutation or secret-value access.
 - [x] T-004 Clarify the `AGENTS.md` Codex/GPT shim role and provider docs.
 - [x] T-005 Normalize shared hook script path references.
 - [x] T-006 Normalize policy template routing to `policy.template.md`.
-- [x] T-007 Normalize operations policy frontmatter to `type: policy`.
+- [x] T-007 Normalize operations policy frontmatter to `type: sdlc/policy`.
 - [x] T-008 Harden repo quality gates against recurring drift.
 - [x] T-009 Update README indexes and the memory ledger.
 - [x] T-010 Run final verification and record results.

@@ -1,6 +1,6 @@
 ---
 title: 'ADR-0002: ArgoCD Helm Install with App-of-Apps and ApplicationSet'
-type: adr
+type: sdlc/adr
 status: accepted
 owner: platform
 updated: 2026-05-18

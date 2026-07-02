@@ -1,6 +1,6 @@
 ---
 title: 'Phase 3 Protected Surface Hardening Plan'
-type: plan
+type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-06-02

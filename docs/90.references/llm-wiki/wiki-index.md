@@ -1,11 +1,9 @@
 ---
 title: 'Reference: LLM WIKI Generated Index'
-type: reference
+type: content/reference
 status: draft
-owner: 'platform'
+owner: platform
 updated: 2026-05-10
-generated: true
-generator: scripts/generate-llm-wiki-index.sh
 ---
 
 # Reference: LLM WIKI Generated Index

@@ -1,6 +1,6 @@
 ---
 title: 'Archive Tombstone: ADR-0010: Headlamp Replaces Kubernetes Dashboard'
-type: archive-tombstone
+type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02

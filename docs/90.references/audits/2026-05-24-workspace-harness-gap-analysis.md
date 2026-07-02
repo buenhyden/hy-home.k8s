@@ -1,6 +1,6 @@
 ---
 title: 'Reference: Workspace Harness Gap Analysis'
-type: reference
+type: content/reference
 status: active
 owner: platform
 updated: 2026-05-28

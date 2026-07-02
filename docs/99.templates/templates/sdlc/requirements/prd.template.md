@@ -1,6 +1,6 @@
 ---
 title: '{Feature or System Name} Product Requirements'
-type: prd
+type: sdlc/prd
 status: draft
 owner: platform
 updated: YYYY-MM-DD

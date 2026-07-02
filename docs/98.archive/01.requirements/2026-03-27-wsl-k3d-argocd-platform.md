@@ -1,6 +1,6 @@
 ---
 title: 'Archive Tombstone: WSL2 k3s/k3d + ArgoCD GitOps Platform Product Requirements'
-type: archive-tombstone
+type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02

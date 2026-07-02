@@ -1,6 +1,6 @@
 ---
 title: 'Current Local GitOps Platform Product Requirements'
-type: prd
+type: sdlc/prd
 status: active
 owner: platform
 updated: 2026-06-02

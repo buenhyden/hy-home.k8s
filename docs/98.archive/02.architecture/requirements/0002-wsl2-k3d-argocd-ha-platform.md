@@ -1,6 +1,6 @@
 ---
 title: 'Archive Tombstone: WSL2 k3d/k3s ArgoCD HA Platform Architecture Reference Document'
-type: archive-tombstone
+type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02

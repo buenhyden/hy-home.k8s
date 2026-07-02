@@ -1,6 +1,6 @@
 ---
 title: 'Platform Expansion Bootstrap Guide'
-type: guide
+type: sdlc/guide
 status: active
 owner: platform
 updated: 2026-06-02

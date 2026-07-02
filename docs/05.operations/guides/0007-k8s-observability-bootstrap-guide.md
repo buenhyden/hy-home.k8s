@@ -1,6 +1,6 @@
 ---
 title: 'k3d/k3s 클러스터 관측성 부트스트랩 가이드'
-type: guide
+type: sdlc/guide
 status: active
 owner: platform
 updated: 2026-05-09

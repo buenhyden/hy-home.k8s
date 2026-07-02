@@ -1,8 +1,8 @@
 ---
 title: 'Task: scripts Inventory Remediation'
-type: task
+type: sdlc/task
 status: done
-owner: 'platform'
+owner: platform
 updated: 2026-05-21
 ---
 

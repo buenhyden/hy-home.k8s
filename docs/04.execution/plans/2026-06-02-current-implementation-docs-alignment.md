@@ -1,6 +1,6 @@
 ---
 title: 'Current Implementation Docs Alignment Plan'
-type: plan
+type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-06-02

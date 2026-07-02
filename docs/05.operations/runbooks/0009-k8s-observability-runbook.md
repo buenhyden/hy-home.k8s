@@ -1,6 +1,6 @@
 ---
 title: 'k8s Observability 복구 Runbook'
-type: runbook
+type: sdlc/runbook
 status: active
 owner: platform
 updated: 2026-05-09

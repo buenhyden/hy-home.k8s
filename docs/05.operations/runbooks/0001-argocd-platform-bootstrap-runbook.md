@@ -1,6 +1,6 @@
 ---
 title: 'ArgoCD Platform Bootstrap Runbook'
-type: runbook
+type: sdlc/runbook
 status: active
 owner: platform
 updated: 2026-05-22

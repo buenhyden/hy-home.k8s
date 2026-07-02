@@ -1,6 +1,6 @@
 ---
 title: 'Task: Phase 1 Governance Alignment Audit'
-type: task
+type: sdlc/task
 status: done
 owner: platform
 updated: 2026-06-02

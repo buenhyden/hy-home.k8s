@@ -1,6 +1,6 @@
 ---
 title: '앱 GitOps 온보딩 정책'
-type: policy
+type: sdlc/policy
 status: active
 owner: platform
 updated: 2026-06-04

@@ -1,6 +1,6 @@
 ---
 title: 'Archive Tombstone: Headlamp Keycloak OIDC Runbook'
-type: archive-tombstone
+type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02

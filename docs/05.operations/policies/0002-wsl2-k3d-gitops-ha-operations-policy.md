@@ -1,6 +1,6 @@
 ---
 title: 'WSL2 k3d/k3s GitOps HA Operations Policy'
-type: policy
+type: sdlc/policy
 status: active
 owner: platform
 updated: 2026-06-02

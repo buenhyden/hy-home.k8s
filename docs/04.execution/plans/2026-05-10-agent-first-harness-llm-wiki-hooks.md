@@ -1,8 +1,8 @@
 ---
 title: 'Agent-first Harness, LLM Wiki, and Hook Contract Closure Plan'
-type: plan
+type: sdlc/plan
 status: done
-owner: 'platform'
+owner: platform
 updated: 2026-05-10
 ---
 

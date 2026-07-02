@@ -1,6 +1,6 @@
 ---
 title: 'Argo Rollouts Progressive Delivery Technical Specification'
-type: spec
+type: sdlc/spec
 status: active
 owner: platform
 updated: 2026-06-04

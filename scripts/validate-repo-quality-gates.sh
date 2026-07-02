@@ -109,6 +109,11 @@ def load_markdown_frontmatter(path: pathlib.Path) -> dict:
         return {}
 
 
+def has_markdown_frontmatter(path: pathlib.Path, text: str | None = None) -> bool:
+    content = read_text(path) if text is None else text
+    return bool(re.match(r"^---\n.*?\n---\n", content, re.DOTALL))
+
+
 def normalize_tools(value) -> str:
     if isinstance(value, str):
         return ", ".join(part.strip() for part in value.split(",") if part.strip())
@@ -610,13 +615,16 @@ for readme in sorted(root.rglob("README.md")):
     if ".git" in readme.parts or ".agents" in readme.parts or ".agent-work" in readme.parts:
         continue
     text = read_text(readme)
+    if has_markdown_frontmatter(readme, text):
+        fail(f"{rel(readme)} must not use YAML frontmatter")
     for section, pattern in readme_base_sections.items():
         if not pattern.search(text):
             fail(f"{rel(readme)} missing README base section: {section}")
     if not re.search(r"^##\s+Related Documents\b", text, re.MULTILINE):
         fail(f"{rel(readme)} missing canonical README section: Related Documents")
-    if re.search(r"^##\s+Related References\b", text, re.MULTILINE):
-        fail(f"{rel(readme)} still uses legacy README section: Related References")
+    legacy_related_heading = "Related " + "References"
+    if re.search(rf"^##\s+{re.escape(legacy_related_heading)}\b", text, re.MULTILINE):
+        fail(f"{rel(readme)} still uses legacy README section: {legacy_related_heading}")
 
 reference_readme_path = root / "docs/90.references/README.md"
 reference_readme_text = read_text(reference_readme_path)
@@ -742,6 +750,65 @@ template_locations = {
     "postmortem.template.md": "templates/sdlc/operations/postmortem.template.md",
 }
 
+template_expected_types = {
+    "reference.template.md": "content/reference",
+    "archive-tombstone.template.md": "content/archive-tombstone",
+    "memory.template.md": "governance/memory",
+    "prd.template.md": "sdlc/prd",
+    "ard.template.md": "sdlc/ard",
+    "adr.template.md": "sdlc/adr",
+    "spec.template.md": "sdlc/spec",
+    "api-spec.template.md": "sdlc/api-spec",
+    "agent-design.template.md": "sdlc/agent-design",
+    "data-model.template.md": "sdlc/data-model",
+    "tests.template.md": "sdlc/tests",
+    "harness-task-contract.template.md": "sdlc/task",
+    "plan.template.md": "sdlc/plan",
+    "task.template.md": "sdlc/task",
+    "guide.template.md": "sdlc/guide",
+    "policy.template.md": "sdlc/policy",
+    "runbook.template.md": "sdlc/runbook",
+    "incident.template.md": "sdlc/incident",
+    "postmortem.template.md": "sdlc/postmortem",
+}
+
+frontmatter_required_keys = {"title", "type", "status", "owner", "updated"}
+frontmatter_allowed_statuses = {"draft", "active", "accepted", "done", "archived"}
+
+
+def validate_markdown_frontmatter_profile(
+    path: pathlib.Path,
+    expected_type: str,
+    *,
+    expected_status: str | None = None,
+) -> None:
+    metadata = load_markdown_frontmatter(path)
+    if not metadata:
+        return
+    keys = set(metadata)
+    missing_keys = frontmatter_required_keys - keys
+    extra_keys = keys - frontmatter_required_keys
+    if missing_keys:
+        fail(f"{rel(path)} missing frontmatter keys: {', '.join(sorted(missing_keys))}")
+    if extra_keys:
+        fail(f"{rel(path)} has unsupported frontmatter keys: {', '.join(sorted(extra_keys))}")
+    actual_type = str(metadata.get("type", "")).strip()
+    if actual_type != expected_type:
+        fail(f"{rel(path)} frontmatter type must be {expected_type}, found {actual_type or '<empty>'}")
+    owner = str(metadata.get("owner", "")).strip()
+    if owner != "platform":
+        fail(f"{rel(path)} frontmatter owner must be platform, found {owner or '<empty>'}")
+    status = str(metadata.get("status", "")).strip()
+    if status not in frontmatter_allowed_statuses:
+        fail(f"{rel(path)} frontmatter status is unsupported: {status or '<empty>'}")
+    if expected_status and status != expected_status:
+        fail(f"{rel(path)} frontmatter status must be {expected_status}, found {status or '<empty>'}")
+    if expected_type == "content/archive-tombstone" and status != "archived":
+        fail(f"{rel(path)} archive Tombstone must use status: archived")
+    updated = str(metadata.get("updated", "")).strip()
+    if not re.match(r"^\d{4}-\d{2}-\d{2}$|^YYYY-MM-DD$", updated):
+        fail(f"{rel(path)} frontmatter updated must be an ISO date or template placeholder")
+
 
 def template_path(template_name: str) -> pathlib.Path:
     location = template_locations.get(template_name)
@@ -754,6 +821,35 @@ template_root = root / "docs/99.templates/templates"
 for template in sorted(template_root.rglob("*")):
     if template.is_file() and template.name not in template_readme:
         fail(f"template is not listed in docs/99.templates/README.md: {rel(template)}")
+for template_name, expected_type in sorted(template_expected_types.items()):
+    expected_template_path = template_path(template_name)
+    if expected_template_path.suffix == ".md":
+        expected_status = "archived" if expected_type == "content/archive-tombstone" else "draft"
+        validate_markdown_frontmatter_profile(
+            expected_template_path,
+            expected_type,
+            expected_status=expected_status,
+        )
+for frontmatter_free_template_name in ["readme.template.md", "progress.template.md"]:
+    frontmatter_free_path = template_path(frontmatter_free_template_name)
+    if has_markdown_frontmatter(frontmatter_free_path):
+        fail(f"{rel(frontmatter_free_path)} must remain frontmatter-free")
+
+template_support_root = root / "docs/99.templates/support"
+for support_doc in sorted(template_support_root.glob("*.md")):
+    if support_doc.name == "README.md":
+        continue
+    validate_markdown_frontmatter_profile(
+        support_doc,
+        "governance/template-support",
+        expected_status="draft",
+    )
+
+for governance_reference in [
+    root / "docs/00.agent-governance/harness-catalog.md",
+    root / "docs/00.agent-governance/subagent-protocol.md",
+]:
+    validate_markdown_frontmatter_profile(governance_reference, "governance/reference")
 for phrase in [
     "## Structural Template Coverage",
     "structural template mapping",
@@ -852,6 +948,12 @@ for scan_root in structural_template_roots:
                 f"{relative_path} matches multiple structural template mappings: "
                 f"{', '.join(matching_templates)}"
             )
+        else:
+            expected_type = template_expected_types.get(matching_templates[0])
+            if not expected_type:
+                fail(f"{relative_path} matches a template without a frontmatter profile: {matching_templates[0]}")
+            else:
+                validate_markdown_frontmatter_profile(path, expected_type)
 
 
 def required_headings_from_template(template_name: str) -> list[str]:
@@ -898,7 +1000,7 @@ for glob_pattern in english_first_stage_globs:
 
 archive_root = root / "docs/98.archive"
 archive_required_phrases = [
-    "type: archive-tombstone",
+    "type: content/archive-tombstone",
     "status: archived",
     "Original path:",
     "Archived on:",
@@ -1267,19 +1369,47 @@ active_policy_template_routes = [
 ]
 for path in active_policy_template_routes:
     text = read_text(path)
-    if "operation.template.md" in text:
-        fail(f"{rel(path)} must route operations policy docs to policy.template.md, not operation.template.md")
+    legacy_operation_template = "operation" + ".template.md"
+    if legacy_operation_template in text:
+        fail(f"{rel(path)} must route operations policy docs to policy.template.md, not {legacy_operation_template}")
     if "policy.template.md" not in text:
         fail(f"{rel(path)} missing operations policy template route: policy.template.md")
+
+legacy_denylist_literals = {
+    "operation" + ".template.md": "deprecated operations-template route",
+    "platform" + "-" + "team": "deprecated owner value",
+    "Related " + "References": "deprecated README heading",
+}
+legacy_scan_roots = [
+    root / "docs",
+    root / "scripts",
+    root / ".codex",
+    root / "AGENTS.md",
+    root / "RTK.md",
+]
+legacy_scan_suffixes = {".md", ".sh", ".py", ".toml", ".yaml", ".yml", ".json"}
+for scan_root in legacy_scan_roots:
+    if not scan_root.exists():
+        continue
+    candidates = [scan_root] if scan_root.is_file() else sorted(scan_root.rglob("*"))
+    for candidate in candidates:
+        if not candidate.is_file():
+            continue
+        if candidate.suffix not in legacy_scan_suffixes and candidate.name not in {"AGENTS.md", "RTK.md"}:
+            continue
+        text = read_text(candidate)
+        for literal, replacement in legacy_denylist_literals.items():
+            if literal in text:
+                fail(f"{rel(candidate)} contains {replacement} literal: {literal}")
 
 for policy_doc in sorted((root / "docs/05.operations/policies").glob("*.md")):
     if policy_doc.name == "README.md":
         continue
     text = read_text(policy_doc)
     if re.search(r"^type:\s*operation\s*$", text, re.MULTILINE):
-        fail(f"{rel(policy_doc)} must use frontmatter type: policy, not operation")
-    if not re.search(r"^type:\s*policy\s*$", text, re.MULTILINE):
-        fail(f"{rel(policy_doc)} missing frontmatter type: policy")
+        fail(f"{rel(policy_doc)} must use frontmatter type: sdlc/policy, not operation")
+    if not re.search(r"^type:\s*sdlc/policy\s*$", text, re.MULTILINE):
+        fail(f"{rel(policy_doc)} missing frontmatter type: sdlc/policy")
 
 llm_wiki_dir = root / "docs/90.references/llm-wiki"
 llm_wiki_readme = llm_wiki_dir / "README.md"

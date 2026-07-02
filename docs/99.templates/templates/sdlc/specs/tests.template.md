@@ -1,6 +1,6 @@
 ---
 title: '{Feature Name} Test & Evaluation Strategy'
-type: tests
+type: sdlc/tests
 status: draft
 owner: platform
 updated: YYYY-MM-DD

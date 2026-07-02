@@ -1,6 +1,6 @@
 ---
 title: 'Argo Notifications Slack Webhook Product Requirements'
-type: prd
+type: sdlc/prd
 status: active
 owner: platform
 updated: 2026-05-18

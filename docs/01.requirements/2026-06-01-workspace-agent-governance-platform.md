@@ -1,6 +1,6 @@
 ---
 title: 'Workspace Agent Governance Platform Product Requirements'
-type: prd
+type: sdlc/prd
 status: active
 owner: platform
 updated: 2026-06-01

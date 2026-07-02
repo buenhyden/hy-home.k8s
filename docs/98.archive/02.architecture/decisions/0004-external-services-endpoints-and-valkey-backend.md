@@ -1,6 +1,6 @@
 ---
 title: 'Archive Tombstone: ADR-0004: External Service Access Model and ArgoCD Valkey Backend'
-type: archive-tombstone
+type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02

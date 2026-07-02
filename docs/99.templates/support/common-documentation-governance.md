@@ -1,6 +1,6 @@
 ---
 title: 'Common Documentation Template Governance'
-type: template-support
+type: governance/template-support
 status: draft
 owner: platform
 updated: 2026-07-03
@@ -38,7 +38,7 @@ knowledge consistent without forcing every common document into an SDLC phase.
   `How to Work in This Area`, `Link Basis`, and `Related Documents`.
 - README files may summarize contracts, but detailed contract bodies belong in
   support docs, Stage 00 governance, or the owning stage document.
-- README files must not keep legacy `Related References` headings.
+- README files must not keep legacy `deprecated README heading` headings.
 
 ## Reference Governance
 

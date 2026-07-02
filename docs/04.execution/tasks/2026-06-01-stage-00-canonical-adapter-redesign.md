@@ -1,6 +1,6 @@
 ---
 title: 'Task: Stage 00 Canonical Adapter Redesign'
-type: task
+type: sdlc/task
 status: done
 owner: platform
 updated: 2026-06-01

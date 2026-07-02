@@ -1,6 +1,6 @@
 ---
 title: 'Codex Governance Harness Alignment Plan'
-type: plan
+type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-05-31
@@ -34,8 +34,8 @@ The key facts confirmed in Phase 1 were:
 - The user decided to declare `model_reasoning_effort` in Codex TOML.
 - `AGENTS.md` is actually used as a Codex/GPT provider shim.
 - The user decided to clarify `AGENTS.md` as the Codex/GPT-specific shim.
-- `docs/05.operations/policies/*.md` used `type: operation`, while `docs/99.templates/templates/sdlc/operations/policy.template.md` requires `type: policy`.
-- The user decided to normalize operations policy document frontmatter to `type: policy`.
+- `docs/05.operations/policies/*.md` used `type: operation`, while `docs/99.templates/templates/sdlc/operations/policy.template.md` requires `type: sdlc/policy`.
+- The user decided to normalize operations policy document frontmatter to `type: sdlc/policy`.
 - Official OpenAI model docs currently document the `gpt-5.5`, `gpt-5.4-mini`, and `gpt-5.3-codex` model IDs and the supported reasoning effort range.
 
 ## Goals & In-Scope
@@ -72,7 +72,7 @@ The key facts confirmed in Phase 1 were:
 | Concept | Current State | Desired State | Planned Action |
 | --- | --- | --- | --- |
 | Agent | `.agents/` SSoT wording and `.claude/agents` primary wording are mixed. | Describe `.agents/` as the shared content SSoT and provider agent files as runtime mirrors. | Clean up terminology in `common-governance.md`, `harness-catalog.md`, and `subagent-protocol.md`. |
-| Skill | `.codex/skills` symlink wording and `.claude/skills` references are mixed, and docs-stage-routing points to `operation.template.md`. | Clarify the `.agents/skills` SSoT and provider symlink relationship, and standardize on `policy.template.md`. | Remediate `.agents/skills/docs-stage-routing/skill.md` and catalog routing wording. |
+| Skill | `.codex/skills` symlink wording and `.claude/skills` references are mixed, and docs-stage-routing points to `deprecated operations-template route`. | Clarify the `.agents/skills` SSoT and provider symlink relationship, and standardize on `policy.template.md`. | Remediate `.agents/skills/docs-stage-routing/skill.md` and catalog routing wording. |
 | Rule | JIT, GitOps-first, and Template-first rules exist, but AGENTS gateway wording conflicts with provider scope. | Keep common rules in Stage 00 and keep `AGENTS.md` as only the Codex/GPT shim. | Clean up pointers in `providers/agents-md.md`, `providers/codex.md`, and `AGENTS.md`. |
 | Hook | `.codex/hooks.json` calls `docs/00.agent-governance/hooks/*.sh`, but some docs described legacy provider-local hook script paths. | Describe shared hook scripts as `docs/00.agent-governance/hooks/*.sh` and provider configs as event wiring. | Remediate `.codex/CODEX.md`, provider docs, and hook boundary text. |
 | Sub-agent | Codex TOML mirrors exist, but no explicit reasoning-effort policy exists. | `supervisor` and workers declare model and reasoning effort according to Model Policy. | Update `.codex/agents/*.toml` and the validator. |
@@ -82,7 +82,7 @@ The key facts confirmed in Phase 1 were:
 | QA | Repo quality gate passes, but semantic drift is not fully covered. | Validator catches Codex model effort, policy type, and template route drift. | Add focused static checks in quality gate. |
 | CI/CD | GitHub Actions runs repo gates; no topology change is needed. | Existing CI inherits strengthened repo quality gate. | No workflow topology change; rely on script hardening. |
 | Model Policy | `model-policy.md` conflicts with `harness-catalog.md`. | Top: `gpt-5.5`; Codex worker: `gpt-5.3-codex`; allowed efforts documented. | Update model policy and catalog as one source-aligned pair. |
-| Template Contract | `operation.template.md` references remain, while actual template is `policy.template.md`. | Policy docs and routing use `policy.template.md` and `type: policy`. | Update routing skill, hook hint, policy docs, and validator. |
+| Template Contract | `deprecated operations-template route` references remain, while actual template is `policy.template.md`. | Policy docs and routing use `policy.template.md` and `type: sdlc/policy`. | Update routing skill, hook hint, policy docs, and validator. |
 
 ## Codex Model and Reasoning-Effort Assignment
 
@@ -106,9 +106,9 @@ The key facts confirmed in Phase 1 were:
 | PLN-003 | Align Codex harness model config | `.codex/agents/*.toml`, `.codex/CODEX.md` | G3, Codex config correctness | Every TOML declares allowed `model` and `model_reasoning_effort`. |
 | PLN-004 | Clarify `AGENTS.md` provider role | `AGENTS.md`, `docs/00.agent-governance/providers/agents-md.md`, `docs/00.agent-governance/providers/codex.md` | G3, Single governance | `AGENTS.md` is Codex/GPT shim and points to shared Stage 00 without duplicating policy. |
 | PLN-005 | Normalize hook and provider script references | `.codex/CODEX.md`, `docs/00.agent-governance/providers/*.md`, `docs/00.agent-governance/common-governance.md`, `docs/00.agent-governance/harness-catalog.md` | G3, Hook boundary | Docs consistently describe shared scripts under `docs/00.agent-governance/hooks/*.sh`. |
-| PLN-006 | Normalize Template Contract policy naming | `.agents/skills/docs-stage-routing/skill.md`, `docs/00.agent-governance/hooks/k8s-pre-edit.sh`, `docs/00.agent-governance/rules/document-stage-routing.md` | G3, Template Contract | Policy routing uses `docs/99.templates/templates/sdlc/operations/policy.template.md`; no `operation.template.md` references remain in active routing. |
-| PLN-007 | Normalize authored policy frontmatter | `docs/05.operations/policies/*.md` | G3, Template compliance | All policy docs use `type: policy`; no `^type: operation$` remains under policies. |
-| PLN-008 | Strengthen repo quality gates for recurring drift | `scripts/validate-repo-quality-gates.sh` | G3, QA and CI/CD | Gate fails on Codex TOML model/effort drift, policy type drift, and active `operation.template.md` routing drift. |
+| PLN-006 | Normalize Template Contract policy naming | `.agents/skills/docs-stage-routing/skill.md`, `docs/00.agent-governance/hooks/k8s-pre-edit.sh`, `docs/00.agent-governance/rules/document-stage-routing.md` | G3, Template Contract | Policy routing uses `docs/99.templates/templates/sdlc/operations/policy.template.md`; no `deprecated operations-template route` references remain in active routing. |
+| PLN-007 | Normalize authored policy frontmatter | `docs/05.operations/policies/*.md` | G3, Template compliance | All policy docs use `type: sdlc/policy`; no `^type: operation$` remains under policies. |
+| PLN-008 | Strengthen repo quality gates for recurring drift | `scripts/validate-repo-quality-gates.sh` | G3, QA and CI/CD | Gate fails on Codex TOML model/effort drift, policy type drift, and active `deprecated operations-template route` routing drift. |
 | PLN-009 | Update required indexes and memory | `docs/04.execution/plans/README.md`, `docs/04.execution/tasks/README.md`, `docs/00.agent-governance/memory/progress.md` | Traceability | README indexes are current and progress entry records files changed and verification evidence. |
 | PLN-010 | Run validation and record limitations | validation commands below | QA and CI/CD | Required repo-static checks pass or limitations are documented. |
 
@@ -150,7 +150,7 @@ The key facts confirmed in Phase 1 were:
 - [x] `.codex/agents/*.toml` declares allowed model and `model_reasoning_effort`.
 - [x] `AGENTS.md` is a Codex/GPT shim and does not duplicate shared governance.
 - [x] Template routing uses `policy.template.md` for operations policy documents.
-- [x] Policy authored docs use `type: policy`.
+- [x] Policy authored docs use `type: sdlc/policy`.
 - [x] Validator covers the recurring drift points.
 - [x] Required README and memory updates are complete.
 - [x] Verification commands pass or limitations are recorded.

@@ -1,6 +1,6 @@
 ---
 title: '{Feature Name} Technical Specification'
-type: spec
+type: sdlc/spec
 status: draft
 owner: platform
 updated: YYYY-MM-DD

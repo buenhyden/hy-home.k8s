@@ -1,6 +1,6 @@
 ---
 title: '{API Name} Specification'
-type: api-spec
+type: sdlc/api-spec
 status: draft
 owner: platform
 updated: YYYY-MM-DD

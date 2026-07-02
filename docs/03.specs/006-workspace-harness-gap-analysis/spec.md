@@ -1,8 +1,8 @@
 ---
 title: 'Workspace Harness Gap Analysis Technical Specification'
-type: spec
+type: sdlc/spec
 status: active
-owner: 'platform'
+owner: platform
 updated: 2026-06-02
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: '{Feature Name} Data Model'
-type: data-model
+type: sdlc/data-model
 status: draft
 owner: platform
 updated: YYYY-MM-DD

@@ -1,8 +1,8 @@
 ---
 title: 'Reference: Local Harness Catalog'
-type: reference
+type: governance/reference
 status: draft
-owner: 'platform'
+owner: platform
 updated: 2026-06-02
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: 'Template Contract and Governance Migration Implementation Plan'
-type: plan
+type: sdlc/plan
 status: draft
 owner: platform
 updated: 2026-07-03
@@ -75,7 +75,7 @@ to match.
 | --- | --- | --- | --- | --- |
 | VAL-PLN-001 | Static | Check whitespace and patch safety | `git diff --check` | No whitespace errors |
 | VAL-PLN-002 | Static | Run repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` | PASS |
-| VAL-PLN-003 | Static | Find legacy route references | `rg -n "operation\\.template\\.md|platform-team|Related References" docs scripts .codex AGENTS.md RTK.md` | No active contract references after Phase 3 |
+| VAL-PLN-003 | Static | Enforce legacy denylist | `bash scripts/validate-repo-quality-gates.sh .` | No active legacy template route, owner value, or README heading literals after Phase 3 |
 | VAL-PLN-004 | Static | Find flat template path references | `rg -n "docs/99\\.templates/[a-z0-9-]+\\.template\\.(md|yaml|graphql|proto)" docs scripts .codex AGENTS.md RTK.md` | No active flat-path routes after Phase 2 except documented historical evidence if allow-listed |
 | VAL-PLN-005 | Static | Inspect template tree | `find docs/99.templates -maxdepth 5 -type f -print | sort` | Templates and support docs are in approved folders |
 | VAL-PLN-006 | Review | Confirm README/support separation | Manual diff review | README links to contracts without duplicating detailed contract sections |

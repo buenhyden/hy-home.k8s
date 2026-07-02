@@ -1,6 +1,6 @@
 ---
 title: 'Archive Tombstone: Task: WSL k3d/k3s ArgoCD Platform Execution'
-type: archive-tombstone
+type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02

@@ -1,8 +1,8 @@
 ---
 title: 'Task: Claude Agent Surface Restoration'
-type: task
+type: sdlc/task
 status: done
-owner: 'platform'
+owner: platform
 updated: 2026-06-01
 ---
 

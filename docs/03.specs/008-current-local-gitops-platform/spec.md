@@ -1,6 +1,6 @@
 ---
 title: 'Current Local GitOps Platform Technical Specification'
-type: spec
+type: sdlc/spec
 status: active
 owner: platform
 updated: 2026-06-02

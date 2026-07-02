@@ -1,8 +1,8 @@
 ---
 title: 'Workspace Purpose Alignment Audit Plan'
-type: plan
+type: sdlc/plan
 status: done
-owner: 'platform'
+owner: platform
 updated: 2026-05-22
 ---
 

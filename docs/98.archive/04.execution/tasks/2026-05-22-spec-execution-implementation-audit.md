@@ -1,6 +1,6 @@
 ---
 title: 'Archive Tombstone: Task: Spec Execution Implementation Audit'
-type: archive-tombstone
+type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02

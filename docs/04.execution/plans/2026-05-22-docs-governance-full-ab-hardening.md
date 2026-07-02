@@ -1,8 +1,8 @@
 ---
 title: 'Docs Governance Full A+B Hardening Plan'
-type: plan
+type: sdlc/plan
 status: done
-owner: 'platform'
+owner: platform
 updated: 2026-05-22
 ---
 
@@ -24,7 +24,7 @@ same template rules and that the validation gate prevents recurrence.
 
 At the current baseline, repo quality, LLM Wiki freshness, static contract,
 GitOps structure, manifest syntax, and secret-handling checks passed. The
-detected drift is limited to legacy `Related References` headings in some
+detected drift is limited to legacy `deprecated README heading` headings in some
 README files, missing `Link Basis` sections, and insufficient clarity around
 the shared enforcement boundary for Hookify local rules in docs and validation.
 
@@ -60,7 +60,7 @@ the shared enforcement boundary for Hookify local rules in docs and validation.
 | --- | --- | --- | --- | --- |
 | PLN-001 | Capture audit snapshot and implementation evidence docs | `docs/04.execution/plans`, `docs/04.execution/tasks` | REQ-DOC-001 | Plan/Task created from templates |
 | PLN-002 | Tighten README template and template inventory guidance | `docs/99.templates/**` | REQ-TPL-001 | Template references and mapping remain valid |
-| PLN-003 | Normalize all README files to canonical heading and link-basis rules | `**/README.md` | REQ-DOC-002 | No `## Related References`; no README missing `## Link Basis` |
+| PLN-003 | Normalize all README files to canonical heading and link-basis rules | `**/README.md` | REQ-DOC-002 | No `## deprecated README heading`; no README missing `## Link Basis` |
 | PLN-004 | Align lifecycle docs with template headings and cross-links while preserving historical meaning | `docs/01.requirements` through `docs/05.operations` | REQ-DOC-003 | Required heading, residue, and link scans pass |
 | PLN-005 | Clarify agent/runtime and Hookify ownership boundaries | `docs/00.agent-governance/**`, `.claude/**`, `.codex/**` | REQ-AI-001 | Runtime mirror and hook boundary checks pass |
 | PLN-006 | Harden repo quality gate for README and Hookify rules | `scripts/validate-repo-quality-gates.sh` | REQ-VAL-001 | Quality gate fails on legacy README/hook drift and passes current tree |
@@ -79,7 +79,7 @@ the shared enforcement boundary for Hookify local rules in docs and validation.
 | VAL-PLN-007 | Static | Shell syntax | `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +` | No syntax errors |
 | VAL-PLN-008 | Static | Runtime JSON parse | `python3 -m json.tool .claude/settings.json` and `python3 -m json.tool .codex/hooks.json` | PASS |
 | VAL-PLN-009 | Static | Whitespace and patch sanity | `git diff --check` | PASS |
-| VAL-PLN-010 | Targeted | README heading migration | `rg -n "^## Related References$" -g "README.md"` and `rg --files-without-match "^## Link Basis$" -g "README.md"` | No output |
+| VAL-PLN-010 | Targeted | README heading migration | `rg -n "^## deprecated README heading$" -g "README.md"` and `rg --files-without-match "^## Link Basis$" -g "README.md"` | No output |
 
 ## Risks & Mitigations
 

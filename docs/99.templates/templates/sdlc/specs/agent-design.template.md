@@ -1,6 +1,6 @@
 ---
 title: '{Feature Name} Agent Design'
-type: agent-design
+type: sdlc/agent-design
 status: draft
 owner: platform
 updated: YYYY-MM-DD

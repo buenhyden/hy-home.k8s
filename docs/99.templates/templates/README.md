@@ -1,11 +1,3 @@
----
-title: 'Template Forms'
-type: template-support
-status: draft
-owner: platform
-updated: 2026-07-03
----
-
 # Template Forms
 
 > Copy-ready template forms for SDLC and common repository documentation.

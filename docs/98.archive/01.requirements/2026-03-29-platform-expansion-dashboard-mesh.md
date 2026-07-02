@@ -1,6 +1,6 @@
 ---
 title: 'Archive Tombstone: Platform Expansion: cert-manager, Headlamp, Istio/Kiali Product Requirements'
-type: archive-tombstone
+type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02

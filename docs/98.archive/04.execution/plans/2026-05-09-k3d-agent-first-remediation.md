@@ -1,6 +1,6 @@
 ---
 title: 'Archive Tombstone: k3d Workspace and Agent-first Remediation Implementation Plan'
-type: archive-tombstone
+type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02

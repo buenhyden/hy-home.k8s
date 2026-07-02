@@ -1,6 +1,6 @@
 ---
 title: 'GitHub 앱 GitOps 온보딩 가이드'
-type: guide
+type: sdlc/guide
 status: active
 owner: platform
 updated: 2026-05-26

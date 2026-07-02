@@ -1,6 +1,6 @@
 ---
 title: 'Task: {Task Name}'
-type: task
+type: sdlc/task
 status: draft
 owner: platform
 updated: YYYY-MM-DD

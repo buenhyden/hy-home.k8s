@@ -1,6 +1,6 @@
 ---
 title: 'Template Documentation Contract'
-type: template-support
+type: governance/template-support
 status: draft
 owner: platform
 updated: 2026-07-03

@@ -1,6 +1,6 @@
 ---
 title: 'Harness Governance V2 Overlay Implementation Plan'
-type: plan
+type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-06-05

@@ -1,8 +1,8 @@
 ---
 title: 'Task: Workspace Skill Expansion (P0-16)'
-type: task
+type: sdlc/task
 status: done
-owner: 'platform'
+owner: platform
 updated: 2026-05-28
 ---
 

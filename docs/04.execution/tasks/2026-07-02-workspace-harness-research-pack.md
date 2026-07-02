@@ -1,6 +1,6 @@
 ---
 title: 'Task: Workspace Harness Research Pack'
-type: task
+type: sdlc/task
 status: done
 owner: platform
 updated: 2026-07-02

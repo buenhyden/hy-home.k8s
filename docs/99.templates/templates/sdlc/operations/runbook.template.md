@@ -1,6 +1,6 @@
 ---
 title: '{Topic Name} Runbook'
-type: runbook
+type: sdlc/runbook
 status: draft
 owner: platform
 updated: YYYY-MM-DD

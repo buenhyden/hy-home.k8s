@@ -1,6 +1,6 @@
 ---
 title: 'Task: Antigravity Governance'
-type: task
+type: sdlc/task
 status: done
 owner: platform
 updated: 2026-06-02

@@ -1,6 +1,6 @@
 ---
 title: 'Reference: Workspace Governance Implementation Audit'
-type: reference
+type: content/reference
 status: draft
 owner: platform
 updated: 2026-07-02

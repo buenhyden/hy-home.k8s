@@ -1,6 +1,6 @@
 ---
 title: 'Task: Phase 2 Governance Alignment'
-type: task
+type: sdlc/task
 status: done
 owner: platform
 updated: 2026-06-02

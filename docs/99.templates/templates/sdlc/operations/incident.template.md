@@ -1,6 +1,6 @@
 ---
 title: 'Incident: {Incident Title}'
-type: incident
+type: sdlc/incident
 status: draft
 owner: platform
 updated: YYYY-MM-DD

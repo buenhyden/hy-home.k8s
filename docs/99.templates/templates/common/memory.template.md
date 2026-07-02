@@ -1,3 +1,11 @@
+---
+title: 'Memory: <short-title>'
+type: governance/memory
+status: draft
+owner: platform
+updated: YYYY-MM-DD
+---
+
 # Memory Template: \<short-title\>
 
 Use this template for standalone files under

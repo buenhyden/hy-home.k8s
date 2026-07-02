@@ -248,6 +248,7 @@ SNIPPET: DOCS & GOVERNANCE
 
 README 문서는 기본적으로 frontmatter를 요구하지 않는다. README가 경로의
 진입점, 책임 범위, 링크 허브 역할만 수행한다면 제목과 본문 구조로 충분하다.
+이 저장소의 README 파일에는 YAML frontmatter를 추가하지 않는다.
 
 PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook,
 Incident, Postmortem, Reference 같은 authored stage 문서는 README 템플릿이
@@ -259,20 +260,9 @@ Incident, Postmortem, Reference 같은 authored stage 문서는 README 템플릿
 - `owner`
 - `updated`
 
-README에 frontmatter가 필요한 지역 규칙이 있다면 아래처럼 짧게 유지하고,
-추적성은 본문의 `Related Documents`에 상대 링크로 기록한다.
-
-예시:
-
-```yaml
----
-title: {title}
-type: {document-type}
-status: draft
-owner: platform
-updated: YYYY-MM-DD
----
-```
+문서 `type` 값은 `docs/99.templates/support/frontmatter-schema.md`의
+profile family를 따른다. README의 추적성은 본문의 `Related Documents`에
+상대 링크로 기록한다.
 
 ## SSoT References
 

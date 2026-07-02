@@ -1,6 +1,6 @@
 ---
 title: 'Workspace Harness Research Pack Implementation Plan'
-type: plan
+type: sdlc/plan
 status: done
 owner: platform
 updated: 2026-07-02

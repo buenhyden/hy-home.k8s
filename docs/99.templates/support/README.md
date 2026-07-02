@@ -1,11 +1,3 @@
----
-title: 'Template Support Contracts'
-type: template-support
-status: draft
-owner: platform
-updated: 2026-07-03
----
-
 # Template Support Contracts
 
 > Template-specific contracts, governance, routing, frontmatter schema, and
@@ -78,7 +70,7 @@ support/
 
 This README is located at `docs/99.templates/support/`.
 
-- Link to template forms with `../<template-name>`.
+- Link to template forms with `../templates/**`.
 - Link to Stage 00 governance with `../../00.agent-governance/`.
 - Link to stage documents with `../../<stage>/`.
 - Keep optional future paths as code literals until the files exist.

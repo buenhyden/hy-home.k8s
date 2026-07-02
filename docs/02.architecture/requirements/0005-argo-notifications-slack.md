@@ -1,6 +1,6 @@
 ---
 title: 'Argo Notifications Slack Architecture Reference Document'
-type: ard
+type: sdlc/ard
 status: active
 owner: platform
 updated: 2026-05-18

@@ -1,6 +1,6 @@
 ---
 title: 'Template Legacy Cleanup Rules'
-type: template-support
+type: governance/template-support
 status: draft
 owner: platform
 updated: 2026-07-03
@@ -23,10 +23,10 @@ roles, or obsolete sections as current rules.
 
 | Legacy Item | Replacement | Cleanup Phase |
 | --- | --- | --- |
-| `operation.template.md` | `policy.template.md`, then target Phase 3 policy profile | Phase 3 |
-| `type: operation` | `type: policy`, then target Phase 3 namespaced value | Phase 3 |
-| `platform-team` | `platform` | Phase 3 |
-| `Related References` | `Related Documents` | Phase 3 |
+| `deprecated operations-template route` | `policy.template.md`, then target Phase 3 policy profile | Phase 3 |
+| `type: operation` | `type: sdlc/policy`, then target Phase 3 namespaced value | Phase 3 |
+| `deprecated owner value` | `platform` | Phase 3 |
+| `deprecated README heading` | `Related Documents` | Phase 3 |
 | Flat template links in active route contracts | `docs/99.templates/templates/**` links | Phase 2 |
 | Copied `Target:` template comments in authored docs | Topic-specific content with correct `Related Documents` | Phase 4 |
 | Copied `Use this template` instructions in authored docs | Remove from authored docs | Phase 4 |
@@ -63,7 +63,7 @@ be mistaken for current instructions.
 ## Validation Commands
 
 ```bash
-rg -n "operation\\.template\\.md|platform-team|Related References" docs scripts .codex AGENTS.md RTK.md
+rg -n "operation\\.template\\.md|deprecated owner value|deprecated README heading" docs scripts .codex AGENTS.md RTK.md
 rg -n "^type:\\s*operation\\s*$" docs
 rg -n "Target: docs/|Use this template" docs
 ```

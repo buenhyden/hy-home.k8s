@@ -8,6 +8,54 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-03 — Template frontmatter profile normalization
+
+- **Date**: 2026-07-03
+- **Layer**: docs, meta, qa
+- **Status**: complete
+- **Tags**: #templates #frontmatter #governance #validation
+
+#### Progress
+
+- Migrated active Markdown frontmatter `type` values from simple document
+  roles to namespaced profile values such as `sdlc/spec`,
+  `sdlc/policy`, `content/reference`, `content/archive-tombstone`,
+  `governance/reference`, and `governance/template-support`.
+- Normalized quoted platform owner values to `owner: platform`.
+- Removed YAML frontmatter from template README files and added the
+  `governance/memory` frontmatter profile to the standalone memory template.
+- Updated the LLM wiki generator so the generated index uses the canonical
+  `content/reference` profile without generator-only frontmatter keys.
+- Extended `scripts/validate-repo-quality-gates.sh` to enforce frontmatter
+  keys, namespaced `type` values, README frontmatter absence, archive
+  Tombstone status, support-doc profiles, Stage 00 governance profiles, and
+  the legacy literal denylist.
+- Marked T-005 in the migration task record as complete.
+
+#### Memory
+
+- README files remain frontmatter-free; README traceability belongs in
+  `Related Documents`.
+- Generated Markdown outputs must be regenerated from their scripts after
+  frontmatter schema changes, otherwise freshness checks will revert the old
+  schema.
+- Frontmatter validation now treats `docs/99.templates/support/**` as
+  governance support docs, Stage 90 references as content docs, and Stage 01
+  through Stage 05 lifecycle documents as SDLC docs.
+
+#### Evidence
+
+- `git diff --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Legacy literal scan across docs, scripts, `.codex`, `AGENTS.md`, and
+  `RTK.md` returned no matches.
+- Simple-type, quoted-owner, and generator-key scan across docs and scripts
+  returned no active schema violations.
+
+#### Handoff
+
+- Next action: start Phase 4 authored docs application and final sync.
+
 ### 2026-07-03 — Template path migration
 
 - **Date**: 2026-07-03
@@ -996,11 +1044,11 @@ inventory stays in `scripts/README.md`.
 - Clarified `AGENTS.md` and provider docs so `AGENTS.md` is the Codex/GPT
   gateway while Claude and Gemini use their provider shims.
 - Normalized active policy template routing from the nonexistent
-  `operation.template.md` to `policy.template.md`.
+  `deprecated operations-template route` to `policy.template.md`.
 - Normalized all seven `docs/05.operations/policies/*.md` files from
-  `type: operation` to `type: policy`.
+  `type: operation` to `type: sdlc/policy`.
 - Extended `scripts/validate-repo-quality-gates.sh` to catch Codex TOML
-  model/effort drift, active `operation.template.md` routing drift, and
+  model/effort drift, active `deprecated operations-template route` routing drift, and
   operations policy frontmatter type drift.
 
 #### Memory
@@ -1009,7 +1057,7 @@ inventory stays in `scripts/README.md`.
   roster; do not reintroduce `gpt-5.4-mini` as the worker baseline unless the
   Stage 00 Model Policy and harness catalog are deliberately updated together.
 - Active operations policy routing uses `docs/99.templates/templates/sdlc/operations/policy.template.md`.
-  `operation.template.md` is not a valid template in this repository.
+  `deprecated operations-template route` is not a valid template in this repository.
 - `AGENTS.md` is the Codex/GPT gateway. Root `CLAUDE.md` and `GEMINI.md` remain
   provider shims for their runtimes.
 
@@ -1038,8 +1086,8 @@ inventory stays in `scripts/README.md`.
 
 #### Progress
 
-- Normalized `owner: platform-team` → `owner: platform` across 37 files in stages 01–04 (`docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`).
-- Fixed one-off `owner: 'platform-team'` (quoted) in `docs/04.execution/plans/2026-05-17-template-crosslink-fix.md`.
+- Normalized `owner: deprecated owner value` → `owner: platform` across 37 files in stages 01–04 (`docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`).
+- Fixed one-off `owner: 'deprecated owner value'` (quoted) in `docs/04.execution/plans/2026-05-17-template-crosslink-fix.md`.
 - Created missing task file: `docs/04.execution/tasks/2026-05-17-template-crosslink-fix.md` (retrospective; the plan was done 2026-05-21).
 - Audited all 23 `docs/99.templates/*.md` files: all structural templates have 5-field frontmatter + `## Related Documents`; `memory.template.md` and `progress.template.md` intentionally use append-style without frontmatter — no changes needed.
 - Created `docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md` — CI/CD local-vs-GitHub Actions boundary reference guide.
@@ -1049,7 +1097,7 @@ inventory stays in `scripts/README.md`.
 #### Verification
 
 - `bash scripts/validate-repo-quality-gates.sh .` — PASS
-- `grep -r "^owner: platform-team" docs/ | wc -l` → 0
+- `grep -r "^owner: deprecated owner value" docs/ | wc -l` → 0
 
 #### Follow-up
 
@@ -3845,7 +3893,7 @@ References` is now a legacy heading that should not return.
 - `python3 -m json.tool .claude/settings.json` PASS.
 - `python3 -m json.tool .codex/hooks.json` PASS.
 - `git diff --check` PASS.
-- Targeted scans found no README `## Related References`, no README missing
+- Targeted scans found no README `## deprecated README heading`, no README missing
   `## Link Basis`, no authored lifecycle template residue, and no tracked
   `.claude/*.local.md` files.
 - `git status --short --ignored .claude` confirmed Hookify local rule files are
@@ -4416,7 +4464,7 @@ References` is now a legacy heading that should not return.
   that lacked it: ARD 0001-0003, ADR 0001-0012, the 2026-03-27/28/29 execution
   plans, and the 2026-03-27/28/29 execution tasks.
 - Normalized the governance README related-link heading from
-  `Related References` to `Related Documents` in the governance hub and memory
+  `deprecated README heading` to `Related Documents` in the governance hub and memory
   README without changing their English body content.
 
 #### Memory
@@ -4467,7 +4515,7 @@ References` is now a legacy heading that should not return.
   trees and document indexes.
 - Clarified the default routing split: plans own execution order, risk,
   gates, rollout, and rollback; tasks own executable work state and evidence.
-- Standardized the touched execution README headings from Related References to
+- Standardized the touched execution README headings from deprecated README heading to
   Related Documents.
 
 #### Memory
@@ -4478,7 +4526,7 @@ References` is now a legacy heading that should not return.
 - Existing Plan and Task artifact files were intentionally not normalized in
   this pass. Their historical status, date, and evidence fields remain owned by
   the artifact documents.
-- The repository quality gate still allows `Related References` in some README
+- The repository quality gate still allows `deprecated README heading` in some README
   surfaces, so touched-scope heading consistency needs a targeted check until
   the validator explicitly includes `docs/04.execution`.
 
@@ -4486,7 +4534,7 @@ References` is now a legacy heading that should not return.
 
 - Changed-file scope was limited to the three execution READMEs and this
   progress ledger entry.
-- Targeted `docs/04.execution` Related References scan: PASS.
+- Targeted `docs/04.execution` deprecated README heading scan: PASS.
 - Targeted execution README document-index scan: PASS.
 - Targeted duplicate legacy heading scan: PASS.
 - `git diff --check` PASS.
@@ -4720,7 +4768,7 @@ References` is now a legacy heading that should not return.
 #### Memory
 
 - `## Related Documents` is the canonical related-link heading for root/docs and
-  `docs/05.operations` README entrypoints; older `## Related References` headings
+  `docs/05.operations` README entrypoints; older `## deprecated README heading` headings
   remain temporarily allowed only outside this touched scope.
 - Operations policy documents keep `type: operation` to match
   `policy.template.md` and the stage authoring matrix.

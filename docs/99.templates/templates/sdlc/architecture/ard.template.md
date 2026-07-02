@@ -1,6 +1,6 @@
 ---
 title: '{System or Domain Name} Architecture Reference Document'
-type: ard
+type: sdlc/ard
 status: draft
 owner: platform
 updated: YYYY-MM-DD

@@ -1,6 +1,6 @@
 ---
 title: 'Workspace Harness Research Pack Technical Specification'
-type: spec
+type: sdlc/spec
 status: draft
 owner: platform
 updated: 2026-07-02

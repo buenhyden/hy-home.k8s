@@ -1,6 +1,6 @@
 ---
 title: 'LLM Wiki Curation Guide'
-type: guide
+type: sdlc/guide
 status: active
 owner: platform
 updated: 2026-05-10

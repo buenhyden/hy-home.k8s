@@ -1,6 +1,6 @@
 ---
 title: 'Archive Tombstone: ADR-0005: WSL2 HA Baseline and External Endpoint Contract'
-type: archive-tombstone
+type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02

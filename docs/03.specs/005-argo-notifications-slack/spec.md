@@ -1,6 +1,6 @@
 ---
 title: 'Argo Notifications Slack Technical Specification'
-type: spec
+type: sdlc/spec
 status: active
 owner: platform
 updated: 2026-05-22

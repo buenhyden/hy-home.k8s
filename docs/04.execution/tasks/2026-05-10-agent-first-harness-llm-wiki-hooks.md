@@ -1,8 +1,8 @@
 ---
 title: 'Task: Agent-first Harness, LLM Wiki, and Hook Contract Closure'
-type: task
+type: sdlc/task
 status: done
-owner: 'platform'
+owner: platform
 updated: 2026-05-10
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: 'Current Local GitOps Platform Architecture Reference Document'
-type: ard
+type: sdlc/ard
 status: active
 owner: platform
 updated: 2026-06-02

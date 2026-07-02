@@ -1,6 +1,6 @@
 ---
 title: 'Archive Tombstone: {Original Document Title}'
-type: archive-tombstone
+type: content/archive-tombstone
 status: archived
 owner: platform
 updated: YYYY-MM-DD
