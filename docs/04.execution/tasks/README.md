@@ -70,6 +70,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-06-05-language-boundary-alignment.md
 ├── 2026-07-02-workspace-harness-implementation-audit-pack.md
 ├── 2026-07-02-workspace-harness-research-pack.md
+├── 2026-07-03-template-contract-governance-migration.md
 └── README.md
 ```
 
@@ -122,6 +123,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-06-05-language-boundary-alignment.md`](./2026-06-05-language-boundary-alignment.md) | AI Agent 문서와 사람용 문서의 언어 경계를 조사하고 Stage 03/04 영어-first 정책과 operations 역할을 보강한 Task | Draft | 2026-06-05 |
 | [`./2026-07-02-workspace-harness-implementation-audit-pack.md`](./2026-07-02-workspace-harness-implementation-audit-pack.md) | `docs/90.references/audits/` 구현 현황 감사 팩의 작성, benchmark-to-evidence 비교, automation opportunity, repo-static 검증 evidence를 추적 | Done | 2026-07-03 |
 | [`./2026-07-02-workspace-harness-research-pack.md`](./2026-07-02-workspace-harness-research-pack.md) | `docs/90.references/research/` 통합 연구 팩의 작성, 소스 검증, market scan, implementation checklist, repo-static 검증 evidence 추적 | Done | 2026-07-02 |
+| [`./2026-07-03-template-contract-governance-migration.md`](./2026-07-03-template-contract-governance-migration.md) | template contract/governance migration의 support baseline, template path migration, frontmatter cleanup, authored docs 적용, final validation evidence를 추적 | Draft | 2026-07-03 |
 
 ## Related Documents
 

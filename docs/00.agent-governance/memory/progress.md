@@ -8,6 +8,45 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-03 — Template contract and governance migration execution plan
+
+- **Date**: 2026-07-03
+- **Layer**: docs, meta, qa
+- **Status**: complete
+- **Tags**: #templates #governance #frontmatter #sdlc #validation
+
+#### Progress
+
+- Created the Stage 04
+  [implementation plan](../../04.execution/plans/2026-07-03-template-contract-governance-migration.md)
+  and
+  [task record](../../04.execution/tasks/2026-07-03-template-contract-governance-migration.md)
+  for the approved template contract and governance migration.
+- Registered both execution documents in the Stage 04 plan and task README
+  indexes.
+- Preserved the four-phase commit boundary from the parent spec: support
+  baseline, path migration, frontmatter/legacy cleanup, and authored docs
+  application/final sync.
+
+#### Memory
+
+- Template path migration must update validator and hook routing in the same
+  logical unit as `git mv` changes, because the current repository gate assumes
+  flat template paths.
+- Frontmatter cleanup should be split by profile or stage if authored document
+  churn becomes too large for one reviewable commit.
+
+#### Evidence
+
+- `git diff --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Korean-syllable scan for the new English-first Stage 04 plan/task returned no
+  matches.
+
+#### Handoff
+
+- Next action: start Phase 1 support contract baseline.
+
 ### 2026-07-03 — Template contract and governance migration spec
 
 - **Date**: 2026-07-03
