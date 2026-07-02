@@ -111,9 +111,12 @@ secret checks are out of scope unless separately approved by a human.
 | 2026-07-02 | T-003 | Manual harness/loop audit matrix review | PASS; compared the harness and loop benchmark against repo-backed evidence for instruction/settings surfaces, architecture constraints, feedback loops, knowledge stores, observe/plan/act/verify/learn loop, eval/review loops, subagent/worktree/review-loop practices, MCP/tool boundaries, and automation opportunities |
 | 2026-07-02 | T-003 | `git diff --check` | PASS; no output |
 | 2026-07-02 | T-003 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
-| 2026-07-03 | T-003 review fix | Manual section-contract review | PASS; added required rendered top-level audit sections: `Overview`, `Scope`, `Sources`, `Definitions / Facts`, `Decisions / Rationale`, `Usage Guidance`, `Maintenance Notes`, and `Related References`; preserved matrix analysis and statuses |
+| 2026-07-03 | T-003 review fix | Manual section-contract review | SUPERSEDED; previous review prompt over-specified non-template headings and was replaced by the visible template-contract cleanup below |
 | 2026-07-03 | T-003 review fix | `git diff --check` | PASS; no output |
 | 2026-07-03 | T-003 review fix | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-03 | T-003 section-contract cleanup | Manual template-contract review | PASS; removed hidden compatibility markers and restored visible top-level sections from the parent Spec/reference template while preserving analysis content, matrix statuses, static-vs-live caveat, and evidence links |
+| 2026-07-03 | T-003 section-contract cleanup | `git diff --check` | PASS; no output |
+| 2026-07-03 | T-003 section-contract cleanup | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
 
 ## Related Documents
 

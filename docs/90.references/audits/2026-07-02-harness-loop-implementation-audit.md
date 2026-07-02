@@ -6,16 +6,6 @@ owner: platform
 updated: 2026-07-02
 ---
 
-<!--
-Reference-template compatibility markers for the current repo-static gate.
-Rendered audit section contract starts at # Reference below.
-## Purpose
-## Reference Type
-## Authority Boundary
-## Review and Freshness
-## Related Documents
--->
-
 # Reference: Harness and Loop Implementation Audit
 
 ## Overview
@@ -29,10 +19,37 @@ This audit does not change active governance policy, provider runtime behavior,
 CI semantics, scripts, templates, manifests, approval boundaries, or live
 cluster procedure.
 
-This report exists to record whether the researched harness and loop
-engineering model is implemented in current repository surfaces, separate
-benchmark expectations from repo-backed evidence, and provide bounded follow-up
-notes without claiming live runtime readiness.
+## Purpose
+
+- Record whether the researched harness and loop engineering model is
+  implemented in current repository surfaces.
+- Separate benchmark expectations, repo-backed evidence, gaps, automation
+  opportunities, and residual risks.
+- Provide a bounded follow-up checklist without redefining active policy or
+  claiming live runtime readiness.
+
+## Reference Type
+
+- Type: durable-concept / external-standard-snapshot
+- Source checked: 2026-07-02
+- Refresh trigger: harness catalog, implementation map, subagent protocol,
+  agentic rules, memory routing, validation-loop, MCP/tool-boundary, audit
+  benchmark, or audit-index changes.
+
+## Authority Boundary
+
+- **Authoritative for**:
+  - Harness and loop implementation audit findings as checked on 2026-07-02.
+  - Repo-backed evidence paths used for this dated comparison.
+  - Candidate follow-up routes for future specs, plans, tasks, validators,
+    provider adapters, or operations documents.
+- **Not authoritative for**:
+  - Active governance policy, provider runtime configuration, CI enforcement
+    semantics, approval boundaries, scripts, templates, or operations runbooks.
+  - Live k3d, ArgoCD, Vault, ESO, Kubernetes, cloud, deployment, secret, paid
+    job, or external-service readiness.
+  - New provider roles, hooks, validators, MCP servers, tool permissions, or
+    automation changes.
 
 ## Scope
 
@@ -45,24 +62,6 @@ notes without claiming live runtime readiness.
 - Excludes live environment checks, provider-runtime execution tests, secret
   reads, policy changes, script changes, workflow changes, runtime adapter
   changes, and MCP server installation or configuration.
-
-## Sources
-
-- [Harness and Loop Engineering Research](../research/harness-and-loop-engineering.md)
-- [Workspace Harness Implementation Audit Pack Spec](../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md)
-- [Workspace Harness Implementation Audit Pack Plan](../../04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md)
-- [AGENTS.md](../../../AGENTS.md)
-- [.codex/CODEX.md](../../../.codex/CODEX.md)
-- [.codex/hooks.json](../../../.codex/hooks.json)
-- [Local Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- [Harness Implementation Map](../../00.agent-governance/harness-implementation-map.md)
-- [Subagent Protocol](../../00.agent-governance/subagent-protocol.md)
-- [Agentic Execution Rules](../../00.agent-governance/rules/agentic.md)
-- [Approval Boundaries](../../00.agent-governance/rules/approval-boundaries.md)
-- [Memory README](../../00.agent-governance/memory/README.md)
-- [Scripts README](../../../scripts/README.md)
-- [GitHub CI Workflow](../../../.github/workflows/ci.yml)
-- [Reference Template](../../99.templates/reference.template.md)
 
 ## Definitions / Facts
 
@@ -160,33 +159,25 @@ runtime readiness.
 - Audit-specific automation remains future work; current assurance combines
   manual matrix review with broad repository quality gates.
 
-## Decisions / Rationale
+## Sources
 
-- Type: durable-concept / external-standard-snapshot.
-- Source checked: 2026-07-02.
-- The report keeps the existing audit status decisions because the review
-  finding concerns section-contract compliance, not the matrix evidence or
-  implementation statuses.
-- The report keeps evidence links on every `Implemented` and `Partial` claim so
-  the status vocabulary remains repo-backed.
-- Static validation evidence is treated as repository evidence only; it is not
-  used as live k3d, ArgoCD, Vault, ESO, Kubernetes, deployment, secret,
-  paid-job, or external-service readiness evidence.
+- [Harness and Loop Engineering Research](../research/harness-and-loop-engineering.md)
+- [Workspace Harness Implementation Audit Pack Spec](../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md)
+- [Workspace Harness Implementation Audit Pack Plan](../../04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md)
+- [AGENTS.md](../../../AGENTS.md)
+- [.codex/CODEX.md](../../../.codex/CODEX.md)
+- [.codex/hooks.json](../../../.codex/hooks.json)
+- [Local Harness Catalog](../../00.agent-governance/harness-catalog.md)
+- [Harness Implementation Map](../../00.agent-governance/harness-implementation-map.md)
+- [Subagent Protocol](../../00.agent-governance/subagent-protocol.md)
+- [Agentic Execution Rules](../../00.agent-governance/rules/agentic.md)
+- [Approval Boundaries](../../00.agent-governance/rules/approval-boundaries.md)
+- [Memory README](../../00.agent-governance/memory/README.md)
+- [Scripts README](../../../scripts/README.md)
+- [GitHub CI Workflow](../../../.github/workflows/ci.yml)
+- [Reference Template](../../99.templates/reference.template.md)
 
-## Usage Guidance
-
-- Use this report as a dated implementation audit snapshot for harness and loop
-  engineering evidence checked on 2026-07-02.
-- Treat it as authoritative for the audit findings, evidence paths, and
-  candidate follow-up routes recorded here.
-- Do not treat it as active governance policy, provider runtime configuration,
-  CI enforcement semantics, approval boundaries, scripts, templates, operations
-  procedure, or live-readiness evidence.
-- Route behavior changes to the owning Stage 00 governance, provider adapter,
-  Stage 04 execution, Stage 05 operations, script, CI, or template surface
-  through a future scoped task.
-
-## Maintenance Notes
+## Review and Freshness
 
 - Review cadence: on source change
 - Last reviewed: 2026-07-02
@@ -196,7 +187,7 @@ runtime readiness.
 - Refresh this report when the benchmark, repo-backed evidence, status
   vocabulary, audit index, or static-vs-live evidence boundary changes.
 
-## Related References
+## Related Documents
 
 - **Audits README**: [README.md](./README.md)
 - **Research benchmark**: [Harness and Loop Engineering Research](../research/harness-and-loop-engineering.md)
