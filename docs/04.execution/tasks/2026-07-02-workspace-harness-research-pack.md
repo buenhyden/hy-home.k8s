@@ -38,7 +38,7 @@ are out of scope unless separately approved by a human.
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-001 | Scaffold research folder README and parent reference index | doc | VAL-SPC-001 | PLN-001 | `git diff --check`; `bash scripts/validate-repo-quality-gates.sh .` | Codex | Todo |
+| T-001 | Scaffold research folder README and parent reference index | doc | VAL-SPC-001 | PLN-001 | `git diff --check`; `bash scripts/validate-repo-quality-gates.sh .` | Codex | Done |
 | T-002 | Write workspace governance baseline reference | doc | VAL-SPC-003, VAL-SPC-005 | PLN-002 | Reference template check; repo quality gate | Codex | Todo |
 | T-003 | Write harness and loop engineering reference | doc | VAL-SPC-004, VAL-SPC-005 | PLN-003 | Source attribution review; repo quality gate | Codex | Todo |
 | T-004 | Write provider implementation status reference | doc | VAL-SPC-004, VAL-SPC-005 | PLN-004 | Current official-source review; repo quality gate | Codex | Todo |
@@ -62,7 +62,7 @@ are out of scope unless separately approved by a human.
 
 ### Phase 1
 
-- [ ] T-001 Scaffold research folder README and parent reference index.
+- [x] T-001 Scaffold research folder README and parent reference index.
 - [ ] T-002 Write workspace governance baseline reference.
 
 ### Phase 2
@@ -88,6 +88,13 @@ are out of scope unless separately approved by a human.
 - **Logs / Evidence Location**:
   - This task record.
   - `../../00.agent-governance/memory/progress.md`.
+
+## Task Evidence
+
+| Date | Task ID | Command | Result |
+| --- | --- | --- | --- |
+| 2026-07-02 | T-001 | `git diff --check` | PASS; no output |
+| 2026-07-02 | T-001 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
 
 ## Related Documents
 
