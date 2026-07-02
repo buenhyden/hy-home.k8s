@@ -40,7 +40,7 @@ secret checks are out of scope unless separately approved by a human.
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-001 | Create audits README and parent reference scaffold | doc | VAL-SPC-001, VAL-SPC-002 | PLN-001 | README/template review; `git diff --check`; repo quality gate | Codex | Todo |
+| T-001 | Create audits README and parent reference scaffold | doc | VAL-SPC-001, VAL-SPC-002 | PLN-001 | README/template review; `git diff --check`; repo quality gate | Codex | Done |
 | T-002 | Write workspace governance implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-002 | Audit matrix review; repo quality gate | Codex | Todo |
 | T-003 | Write harness and loop implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-003 | Audit matrix review; repo quality gate | Codex | Todo |
 | T-004 | Write provider harness and loop implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-004 | Provider evidence review; repo quality gate | Codex | Todo |
@@ -64,7 +64,7 @@ secret checks are out of scope unless separately approved by a human.
 
 ### Phase 1
 
-- [ ] T-001 Create audits README and parent reference scaffold.
+- [x] T-001 Create audits README and parent reference scaffold.
 
 ### Phase 2
 
@@ -101,6 +101,9 @@ secret checks are out of scope unless separately approved by a human.
 | 2026-07-02 | Plan | `git diff --check` | PASS; no output |
 | 2026-07-02 | Plan | `bash scripts/generate-llm-wiki-index.sh --check` | PASS; `[PASS] LLM WIKI generated index is current` |
 | 2026-07-02 | Plan | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
+| 2026-07-02 | T-001 | Manual README/template review | PASS; reviewed parent Spec, parent Plan, README template, reference template, parent reference README, and existing audit precedent |
+| 2026-07-02 | T-001 | `git diff --check` | PASS; no output |
+| 2026-07-02 | T-001 | `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed` |
 
 ## Related Documents
 
