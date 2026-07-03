@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Document Contract Normalization Implementation Plan'
 type: sdlc/plan
-status: draft
+status: done
 owner: platform
 updated: 2026-07-04
 ---
@@ -668,7 +668,7 @@ Expected:
 - Modify: `docs/04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
-- [ ] **Step 1: Re-run final drift scans**
+- [x] **Step 1: Re-run final drift scans**
 
 Run:
 
@@ -684,7 +684,7 @@ Expected:
   explicitly historical evidence.
 - README frontmatter scan returns no active drift.
 
-- [ ] **Step 2: Add final deterministic validator checks**
+- [x] **Step 2: Add final deterministic validator checks**
 
 Only add checks proven deterministic by Tasks 1 through 5. Candidate checks:
 
@@ -701,7 +701,7 @@ Expected:
 - Failure messages name path and drift class.
 - Historical evidence is not falsely rejected after normalization.
 
-- [ ] **Step 3: Run full validation bundle**
+- [x] **Step 3: Run full validation bundle**
 
 Run:
 
@@ -729,7 +729,7 @@ Expected:
 - Required commands pass.
 - Optional tool skips are recorded as limitations.
 
-- [ ] **Step 4: Request final independent review**
+- [x] **Step 4: Request final independent review**
 
 Dispatch a read-only reviewer with this brief:
 
@@ -749,7 +749,7 @@ Expected:
 
 - Reviewer returns READY or all findings are fixed and re-reviewed.
 
-- [ ] **Step 5: Complete evidence and commit**
+- [x] **Step 5: Complete evidence and commit**
 
 Run:
 
@@ -798,15 +798,17 @@ Expected:
 
 ## Completion Criteria
 
-- [ ] Audit inventory completed and indexed.
-- [ ] Stage 99 support contracts and templates normalized.
-- [ ] Active SDLC documents normalized.
-- [ ] Historical evidence normalized and preserved.
-- [ ] References, CI/QA, and formatting guidance aligned.
-- [ ] Final validator gates reconciled.
-- [ ] Full local validation bundle passed.
-- [ ] Final independent review returned READY.
-- [ ] Finishing branch workflow completed according to user choice.
+- [x] Audit inventory completed and indexed.
+- [x] Stage 99 support contracts and templates normalized.
+- [x] Active SDLC documents normalized.
+- [x] Historical evidence normalized and preserved.
+- [x] References, CI/QA, and formatting guidance aligned.
+- [x] Final validator gates reconciled.
+- [x] Full local validation bundle passed.
+- [x] Final independent review returned no blocking findings after stale
+  tracking fix.
+- [x] Branch is ready for a separate finishing flow; no push, merge, or branch
+  cleanup was performed in this validation commit.
 
 ## Related Documents
 

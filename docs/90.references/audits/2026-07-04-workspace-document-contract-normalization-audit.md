@@ -145,8 +145,8 @@ active policy and dated evidence.
 ## Resolution Overlay
 
 This audit is the active tracking reference for the 2026-07-04 normalization
-stream. Completed items below are current as of their task commits; unresolved
-items remain routed to T-005 or T-006.
+stream. All tracked items are resolved as of T-006; the rows below preserve
+the task that closed each area.
 
 | Area | Current State | Evidence |
 | --- | --- | --- |
@@ -155,7 +155,7 @@ items remain routed to T-005 or T-006.
 | Prior audit historical evidence | Resolved in T-004. The 2026-07-03 audit now has a resolution overlay and resolved checklist statuses while preserving dated baseline facts. | `2026-07-03-workspace-document-governance-hardening-audit.md` and this checklist were updated. |
 | Archive evidence contract | Resolved in T-004. Archive entries remain Tombstones and must not be rehydrated into current guidance. | `docs/98.archive/README.md` now states the historical evidence contract explicitly. |
 | Scripts inventory and coverage wording | Resolved in T-005. | `scripts/README.md`, the CI/CD QA guide, `tests/README.md`, and the PR template now use the same inventory and coverage/validation-matrix boundary. |
-| Final validation parity | Pending T-006. | Requires the final full validation bundle and review. |
+| Final validation parity | Resolved in T-006. | Full repo-static validation bundle passed and the final independent reviewer found no blocking contract issues after stale tracking was fixed. |
 
 ## Implementation Checklist
 
@@ -171,7 +171,7 @@ items remain routed to T-005 or T-006.
 | Align scripts inventory count. | `scripts/README.md` | Reconcile shell-script count with the current inventory and deletion precheck wording. | Done in T-005. |
 | Align coverage wording. | CI/QA guide, tests README, PR template | Use the same future app-code coverage and infrastructure validation-matrix boundary. | Done in T-005. |
 | Reconcile CI/QA official-source basis. | `.github`, CI/QA guide, scripts/tests README, references | Compare repository claims to official GitHub Actions, Markdown, YAML, and spec-driven sources. | Done in T-005. |
-| Add final validator parity evidence. | Validator, task record, progress memory | Confirm all changed surfaces pass deterministic checks. | Pending T-006 |
+| Add final validator parity evidence. | Validator, task record, progress memory | Confirm all changed surfaces pass deterministic checks. | Done in T-006. |
 
 ## Sources
 
@@ -188,6 +188,15 @@ items remain routed to T-005 or T-006.
   inspection.
 - Official GitHub Actions workflow syntax and event documentation, CommonMark
   0.31.2, YAML 1.2.2, and pre-commit usage documentation refreshed for T-005.
+- Final T-006 validation bundle:
+  `git diff --check`, `bash -n scripts/validate-repo-quality-gates.sh`,
+  `bash scripts/validate-repo-quality-gates.sh .`,
+  `bash scripts/validate-harness.sh`,
+  `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json`, and
+  `bash infrastructure/tests/verify-contracts-static.sh`.
+- Final independent reviewer result:
+  no blocking correctness, security, scope-control, template-route,
+  frontmatter, or section-contract issues after stale tracking fix.
 - Read-only subagent cross-check for validator-blocking drift, active SDLC
   drift, historical evidence drift, and reference/CI-QA drift.
 
@@ -197,7 +206,7 @@ items remain routed to T-005 or T-006.
 - Last reviewed: 2026-07-04.
 - Next review trigger: frontmatter schema changes, template route changes,
   CI/QA workflow changes, official-source refresh, archive policy changes, or
-  final T-006 validation.
+  validator contract changes.
 
 ## Related Documents
 

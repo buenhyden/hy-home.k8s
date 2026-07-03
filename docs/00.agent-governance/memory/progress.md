@@ -6889,3 +6889,55 @@ section separating static from live evidence.
 
 - Continue with T-006: run the final validation bundle, reconcile any remaining
   governance tracking state, and close the task/plan evidence.
+
+## 2026-07-04 — Workspace Document Contract Normalization T-006 Final Validation
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: docs, validation, governance, evidence
+- **Status**: completed
+- **Tags**: #docs #validation #governance #review #handoff
+
+### Progress
+
+- Ran the final repo-static validation bundle after T-001 through T-005.
+- Confirmed no additional deterministic validator changes were needed; the
+  existing route/profile/currentness gates pass with the final document shape.
+- Reconciled stale final tracking in the task record, audit report, plan, and
+  Stage 04 README indexes.
+- Recorded branch finishing as ready for a separate flow; no push, merge, or
+  branch cleanup was performed in this validation commit.
+
+### Memory
+
+- The final broad drift scan is intentionally noisy because it covers older
+  Stage 04 evidence, progress ledger history, templates, generated validator
+  literals, and example migration plans. Treat repo-quality gate pass plus
+  explicit historical/template/generated classification as the governing
+  result.
+- Remote GitHub Actions run status was not inspected. This completion is
+  repo-static validation only.
+
+### Evidence
+
+- `git diff --check` passed.
+- `bash -n scripts/validate-repo-quality-gates.sh` passed.
+- `bash scripts/validate-repo-quality-gates.sh .` passed.
+- `bash scripts/validate-harness.sh` passed the repo-static bundle.
+- `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json`
+  passed.
+- `bash infrastructure/tests/verify-contracts-static.sh` passed.
+- README frontmatter scan returned no matches.
+- Optional local tooling limitation: `kube-linter` was not installed and was
+  skipped by the manifest validator; `conftest` was not installed and the
+  policy validator used the built-in fallback.
+- Final independent reviewer `019f2a3e-0dd4-7292-95cb-9da3038e30f3` found no
+  blocking correctness, security, scope-control, template-route,
+  frontmatter, or section-contract issue. Its stale T-006 tracking finding was
+  fixed in this final validation sync.
+
+### Handoff
+
+- The branch is ready for user-approved finishing flow: local main merge,
+  branch cleanup, push, or PR steps were not performed in this commit.

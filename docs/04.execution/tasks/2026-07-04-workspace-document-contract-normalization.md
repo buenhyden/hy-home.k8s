@@ -1,7 +1,7 @@
 ---
 title: 'Task: Workspace Document Contract Normalization'
 type: sdlc/task
-status: draft
+status: done
 owner: platform
 updated: 2026-07-04
 ---
@@ -42,7 +42,7 @@ traceable to the parent Spec and Plan.
 | T-003 | Apply active SDLC document profiles. | doc | VAL-SPC-002 | PLN-003 | Active docs scans, README checks, repo gate | platform | Done |
 | T-004 | Normalize historical evidence contracts. | doc | VAL-SPC-003 | PLN-004 | Historical evidence scans, archive/progress checks, repo gate | platform | Done |
 | T-005 | Align references, CI/QA, and formatting contracts. | doc | VAL-SPC-004, VAL-SPC-005 | PLN-005 | Official source review, workflow/doc comparison, repo gate | platform | Done |
-| T-006 | Reconcile final validator and governance gates. | test | VAL-SPC-006, VAL-SPC-007 | PLN-006 | Full validation bundle and final review | platform | Todo |
+| T-006 | Reconcile final validator and governance gates. | test | VAL-SPC-006, VAL-SPC-007 | PLN-006 | Full validation bundle and final review | platform | Done |
 
 ## Suggested Types
 
@@ -75,7 +75,7 @@ traceable to the parent Spec and Plan.
 
 ### Phase 6: Final Validation
 
-- [ ] T-006 Reconcile final validator and governance gates.
+- [x] T-006 Reconcile final validator and governance gates.
 
 ## Verification Summary
 
@@ -265,7 +265,42 @@ Validation:
 
 ### T-006 Reconcile Final Validator and Governance Gates
 
-Status: Todo.
+Status: Done.
+
+Evidence:
+
+- Re-ran the final validation bundle after T-001 through T-005 and confirmed
+  no additional deterministic validator changes were needed beyond the
+  contract/profile checks already added earlier in this branch.
+- `bash scripts/validate-harness.sh` passed the repo-static bundle:
+  repository quality gates, GitOps structure, Kubernetes manifest syntax,
+  secret handling, policy gates, static infrastructure contracts, and diff
+  hygiene.
+- Broad Task 6 drift scan still returns expected historical plans/tasks,
+  progress ledger evidence, template starter markers, generated validator
+  literals, and example migration phases; repo-quality gates pass and README
+  frontmatter scan returned no matches.
+- Final independent reviewer `019f2a3e-0dd4-7292-95cb-9da3038e30f3` reported
+  no blocking correctness, security, scope-control, template-route,
+  frontmatter, or section-contract issues. The reviewer found only stale T-006
+  completion tracking, which this entry and the companion audit/index updates
+  resolve.
+- Remote GitHub Actions run status was not inspected; this task records
+  repo-static validation only.
+
+Validation:
+
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash scripts/validate-harness.sh` — PASS.
+- `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json` —
+  PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- Task 6 README frontmatter scan — PASS with no matches.
+- Optional local tooling limitation: `kube-linter` was not installed and was
+  skipped by `validate-k8s-manifests.sh`; `conftest` was not installed and
+  `validate-policy-gates.sh` used the built-in fallback.
 
 ## Related Documents
 
