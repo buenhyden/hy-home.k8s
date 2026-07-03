@@ -71,6 +71,9 @@ inventory stays in `scripts/README.md`.
   `docs/99.templates/support/README.md`; README frontmatter exemption remains.
 - Final-review polish: the completed Plan's procedural checklist now matches
   the completed Task evidence and checked completion criteria.
+- Final-review polish: the completed Plan's validator snippet now mirrors
+  support README stale-wording coverage while preserving README's frontmatter
+  exemption.
 
 #### Handoff
 

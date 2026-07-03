@@ -336,7 +336,9 @@ git commit -m "docs(templates): Clarify current support contracts"
 
 - [x] **Step 1: Add support-doc stale wording validation**
 
-Add this check near the existing `template_support_root` validation block:
+Add this check near the existing `template_support_root` validation block. The
+support README participates in stale wording scans, but remains exempt from the
+support frontmatter profile:
 
 ```python
 support_stale_patterns = [
@@ -346,12 +348,17 @@ support_stale_patterns = [
     (re.compile(r"current and target frontmatter"), "current/target schema wording"),
 ]
 for support_doc in sorted(template_support_root.glob("*.md")):
-    if support_doc.name == "README.md":
-        continue
     support_text = read_text(support_doc)
     for pattern, label in support_stale_patterns:
         if pattern.search(support_text):
             fail(f"{rel(support_doc)} contains stale {label}")
+    if support_doc.name == "README.md":
+        continue
+    validate_markdown_frontmatter_profile(
+        support_doc,
+        "governance/template-support",
+        expected_status="draft",
+    )
 ```
 
 Expected: the current repo passes after Task 3 remediation.
