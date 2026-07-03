@@ -36,13 +36,13 @@ docs/90.references/audits/
 ├── 2026-07-02-harness-loop-implementation-audit.md
 ├── 2026-07-02-provider-harness-loop-implementation-audit.md
 ├── 2026-07-02-sdlc-delivery-practices-implementation-audit.md
+├── 2026-07-03-workspace-document-governance-hardening-audit.md
 └── README.md
 ```
 
-The 2026-07-02 audit reports are tracked by the workspace harness
-implementation audit pack and are listed as resolved Markdown links in the
-Audit Report Index once created. Future planned reports should stay as code
-literals until their files exist.
+The dated audit reports are listed as resolved Markdown links in the Audit
+Report Index once created. Future planned reports should stay as code literals
+until their files exist.
 
 ## How to Work in This Area
 
@@ -73,6 +73,7 @@ This README is located at `docs/90.references/audits/`.
 | [2026-07-02-harness-loop-implementation-audit.md](./2026-07-02-harness-loop-implementation-audit.md) | Current | Harness engineering and loop engineering implementation status against the research benchmark. |
 | [2026-07-02-provider-harness-loop-implementation-audit.md](./2026-07-02-provider-harness-loop-implementation-audit.md) | Current | Claude, Codex, Gemini, and common provider harness/loop parity. |
 | [2026-07-02-sdlc-delivery-practices-implementation-audit.md](./2026-07-02-sdlc-delivery-practices-implementation-audit.md) | Current | Spec-driven development, SDLC, CI/CD, QA, formatting, and validation evidence lanes. |
+| [2026-07-03-workspace-document-governance-hardening-audit.md](./2026-07-03-workspace-document-governance-hardening-audit.md) | Current | Baseline workspace document governance inventory, README drift classes, provider traceability, and CI/QA evidence routing. |
 
 ## Status Vocabulary
 

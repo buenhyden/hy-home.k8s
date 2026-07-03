@@ -8,6 +8,53 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-03 — Workspace document governance hardening Task 1 audit inventory
+
+- **Date**: 2026-07-03
+- **Layer**: docs, meta, qa
+- **Status**: complete
+- **Tags**: #docs #governance #audit #validation
+
+#### Progress
+
+- Completed Task 1 for the workspace document governance hardening plan:
+  baseline status, tracked file inventory, frontmatter/README scans, provider
+  scans, and CI/QA scans are recorded in the
+  [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
+- Created the Stage 90
+  [workspace document governance hardening audit](../../90.references/audits/2026-07-03-workspace-document-governance-hardening-audit.md)
+  because durable findings were found and should route to later tasks instead
+  of being fixed during the audit-only pass.
+- Registered the audit report in the Stage 90 audits README.
+
+#### Memory
+
+- Current Task 1 drift classes are README heading drift, README body delimiter
+  evidence that is not frontmatter, and active CI/QA shell syntax drift around
+  the legacy Claude provider-local hook directory versus
+  `docs/00.agent-governance/hooks`.
+- Provider and CI/QA claims should keep routing through root shims, Stage 00
+  provider notes, runtime overlays, `.github/ABOUT.md`,
+  `.github/workflows/ci.yml`, `scripts/README.md`, `tests/README.md`, and the
+  CI/CD QA guide.
+
+#### Evidence
+
+- `git status --short --branch` — PASS, on
+  `codex/template-governance-audit-enhancement`.
+- `git diff --check` — PASS, no output.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Inventory count: 480 tracked Markdown/YAML/YML/GraphQL/proto files and 358
+  tracked Markdown files.
+- Required frontmatter, README heading, provider, and CI/QA scans completed and
+  summarized in the Task record.
+
+#### Handoff
+
+- T-001 is complete. Continue with T-002/T-005 routing from the audit report;
+  no live cluster, Argo CD, Vault, cloud, provider runtime, or secret checks
+  were requested or run.
+
 ### 2026-07-03 — Workspace document governance hardening design
 
 - **Date**: 2026-07-03
