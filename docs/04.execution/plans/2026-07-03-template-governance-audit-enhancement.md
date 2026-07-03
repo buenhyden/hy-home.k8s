@@ -107,7 +107,7 @@ Current quick inspection shows three concrete improvement candidates:
 - Modify: `docs/04.execution/tasks/README.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
-- [ ] **Step 1: Confirm the branch and worktree**
+- [x] **Step 1: Confirm the branch and worktree**
 
 Run:
 
@@ -118,7 +118,7 @@ git status --short --branch
 Expected: branch `codex/template-governance-audit-enhancement` with only this
 planning unit changed before staging.
 
-- [ ] **Step 2: Create the Stage 04 Plan and Task record**
+- [x] **Step 2: Create the Stage 04 Plan and Task record**
 
 Use the current Plan and Task templates:
 
@@ -130,7 +130,7 @@ docs/99.templates/templates/sdlc/execution/task.template.md
 Expected: both authored files use `type: sdlc/*`, `owner: platform`,
 `status: draft`, `updated: 2026-07-03`, and English-only body text.
 
-- [ ] **Step 3: Register the new files in Stage 04 indexes**
+- [x] **Step 3: Register the new files in Stage 04 indexes**
 
 Update the plan and task README document indexes with these rows:
 
@@ -142,7 +142,7 @@ Update the plan and task README document indexes with these rows:
 Expected: the first row lands in `plans/README.md`; the second lands in
 `tasks/README.md`.
 
-- [ ] **Step 4: Record progress memory**
+- [x] **Step 4: Record progress memory**
 
 Append a progress entry titled
 `2026-07-03 — Template governance audit enhancement plan` to
@@ -151,7 +151,7 @@ Append a progress entry titled
 Expected: the entry links the Plan and Task record and names the next action as
 baseline audit execution.
 
-- [ ] **Step 5: Validate and commit the planning unit**
+- [x] **Step 5: Validate and commit the planning unit**
 
 Run:
 
@@ -178,7 +178,7 @@ git commit -m "docs(plan): Plan template governance audit enhancement"
 - Read: `docs/00.agent-governance/rules/documentation-protocol.md`
 - Read: `scripts/validate-repo-quality-gates.sh`
 
-- [ ] **Step 1: Run template inventory scan**
+- [x] **Step 1: Run template inventory scan**
 
 Run:
 
@@ -189,7 +189,7 @@ find docs/99.templates -maxdepth 5 -type f -print | sort
 Expected: files are only under `README.md`, `support/**`, and
 `templates/**`; no flat `docs/99.templates/*.template.*` files appear.
 
-- [ ] **Step 2: Run current drift candidate scan**
+- [x] **Step 2: Run current drift candidate scan**
 
 Run:
 
@@ -201,7 +201,7 @@ Expected: the scan identifies only bounded support/README references that map
 to FND-001, FND-002, or accepted historical context. It must not reveal active
 flat-template routes.
 
-- [ ] **Step 3: Run active residue scans**
+- [x] **Step 3: Run active residue scans**
 
 Run:
 
@@ -215,7 +215,7 @@ Expected: no active authored-doc residue or legacy route match is returned.
 Historical migration evidence may be recorded only when the surrounding text is
 dated and not a current contract.
 
-- [ ] **Step 4: Update the finding ledger**
+- [x] **Step 4: Update the finding ledger**
 
 Record findings using this shape in the Task record:
 
@@ -228,7 +228,7 @@ Record findings using this shape in the Task record:
 Expected: every finding has a concrete evidence path, expected contract,
 observed state, risk, action, validation command, and status.
 
-- [ ] **Step 5: Commit the baseline audit record**
+- [x] **Step 5: Commit the baseline audit record**
 
 Run:
 
@@ -252,7 +252,7 @@ Expected: both validation commands pass before commit.
 - Modify: `docs/99.templates/README.md`
 - Modify: `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
 
-- [ ] **Step 1: Convert migration-phase wording to current-contract wording**
+- [x] **Step 1: Convert migration-phase wording to current-contract wording**
 
 Apply these replacements:
 
@@ -276,7 +276,7 @@ The flat-path search should not return active route references after Phase 2.
 Expected: support docs no longer speak about completed migration phases as if
 they are the active operating model.
 
-- [ ] **Step 2: Clarify harness task contract placement**
+- [x] **Step 2: Clarify harness task contract placement**
 
 In `template-routing.md` and `sdlc-governance.md`, remove
 `docs/04.execution/tasks/YYYY-MM-DD-<harness-task>.md` from structural route
@@ -295,7 +295,7 @@ location.
 Expected: `task.template.md` remains the only structural mapping for
 `docs/04.execution/tasks/*.md`.
 
-- [ ] **Step 3: Update the Task finding statuses**
+- [x] **Step 3: Update the Task finding statuses**
 
 Set FND-001 and FND-002 to `Resolved` with validation commands:
 
@@ -309,7 +309,7 @@ returns no structural route rows; supplemental prose may mention both terms
 only when it explicitly says the harness starter is not a second structural
 route.
 
-- [ ] **Step 4: Validate and commit support contract remediation**
+- [x] **Step 4: Validate and commit support contract remediation**
 
 Run:
 
@@ -334,7 +334,7 @@ git commit -m "docs(templates): Clarify current support contracts"
 - Modify: `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
-- [ ] **Step 1: Add support-doc stale wording validation**
+- [x] **Step 1: Add support-doc stale wording validation**
 
 Add this check near the existing `template_support_root` validation block:
 
@@ -356,7 +356,7 @@ for support_doc in sorted(template_support_root.glob("*.md")):
 
 Expected: the current repo passes after Task 3 remediation.
 
-- [ ] **Step 2: Add harness route overlap validation**
+- [x] **Step 2: Add harness route overlap validation**
 
 Add this check after `template_routing.md` is available:
 
@@ -377,7 +377,7 @@ for route_row in template_routing_rows[1:]:
 
 Expected: the current route table passes and future overlap is rejected.
 
-- [ ] **Step 3: Run validator and focused scans**
+- [x] **Step 3: Run validator and focused scans**
 
 Run:
 
@@ -390,7 +390,7 @@ rg -n "Phase [1-4]|during the migration|after Phase|current and target" docs/99.
 Expected: `git diff --check` and the quality gate pass. The focused scan
 returns no active support-doc matches.
 
-- [ ] **Step 4: Commit validator guardrails**
+- [x] **Step 4: Commit validator guardrails**
 
 Run:
 
@@ -409,7 +409,7 @@ Expected: commit succeeds after validation evidence is recorded.
   document under `docs/00.agent-governance/**`, `docs/05.operations/**`,
   `docs/90.references/**`, or `docs/99.templates/**`
 
-- [ ] **Step 1: Run authored-document residue audit**
+- [x] **Step 1: Run authored-document residue audit**
 
 Run:
 
@@ -422,7 +422,7 @@ rg -n "owner: ['\"]platform['\"]" docs --glob "*.md"
 Expected: no active authored document contains template residue, simple legacy
 frontmatter type values, or quoted canonical owner values.
 
-- [ ] **Step 2: Run incident bundle path audit**
+- [x] **Step 2: Run incident bundle path audit**
 
 Run:
 
@@ -435,7 +435,7 @@ Expected: no active doc uses the old incident filename convention. Current
 rules point to `INC-###-<title>.md` and `postmortem.md` inside the incident
 folder.
 
-- [ ] **Step 3: Record no-change or remediation evidence**
+- [x] **Step 3: Record no-change or remediation evidence**
 
 If all scans pass, record `accepted/no-change` entries for authored documents
 in the Task record. If a scan reveals a concrete active contract mismatch,
@@ -444,7 +444,7 @@ patch only the affected document and rerun the scan that exposed it.
 Expected: no broad topic rewrites; each changed authored document has a
 specific finding ID and validation command.
 
-- [ ] **Step 4: Commit authored-document audit evidence**
+- [x] **Step 4: Commit authored-document audit evidence**
 
 Run:
 
@@ -468,7 +468,7 @@ creating an empty commit.
 - Modify: `docs/04.execution/tasks/README.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
-- [ ] **Step 1: Run final validation**
+- [x] **Step 1: Run final validation**
 
 Run:
 
@@ -484,7 +484,7 @@ Expected: diff and quality gate pass, template tree stays categorized, no flat
 template route appears in active contracts, and support docs contain no stale
 migration-phase wording.
 
-- [ ] **Step 2: Mark execution records complete**
+- [x] **Step 2: Mark execution records complete**
 
 Update statuses:
 
@@ -498,7 +498,7 @@ docs/00.agent-governance/memory/progress.md entry -> complete
 
 Expected: final evidence is recorded in the Task and progress ledger.
 
-- [ ] **Step 3: Commit final completion sync**
+- [x] **Step 3: Commit final completion sync**
 
 Run:
 

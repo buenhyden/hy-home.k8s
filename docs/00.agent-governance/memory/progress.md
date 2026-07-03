@@ -69,6 +69,8 @@ inventory stays in `scripts/README.md`.
   dated Stage 04 links.
 - Final-review remediation: stale support wording checks include
   `docs/99.templates/support/README.md`; README frontmatter exemption remains.
+- Final-review polish: the completed Plan's procedural checklist now matches
+  the completed Task evidence and checked completion criteria.
 
 #### Handoff
 
