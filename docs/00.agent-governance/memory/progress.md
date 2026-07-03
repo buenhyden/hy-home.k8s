@@ -6991,3 +6991,50 @@ section separating static from live evidence.
 
 - Next action: request user review of the committed spec before implementation
   planning.
+
+## 2026-07-04 — Agent Governance Contract Normalization Plan
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: meta, docs, qa, ci
+- **Status**: completed
+- **Tags**: #governance #agents #planning #qa #ci #validation
+
+### Progress
+
+- Wrote the implementation plan for the approved Agent Governance Contract
+  Normalization spec at
+  `docs/04.execution/plans/2026-07-04-agent-governance-contract-normalization.md`.
+- Routed the Superpowers default plan location into the canonical Stage 04 plan
+  path because `docs/superpowers/**` is prohibited by Stage 00 routing rules.
+- Updated `docs/04.execution/plans/README.md` so the plan is discoverable from
+  the Plan stage index.
+
+### Memory
+
+- Implementation should proceed contract-first: task evidence and baseline
+  drift inventory, then Stage 00 owner language, then provider adapters, then
+  GitHub/CI/QA enforcement, then final validation and branch handoff.
+- The plan intentionally treats provider parity as provider-native role parity,
+  not identical key parity.
+
+### Evidence
+
+- Read `docs/99.templates/templates/sdlc/execution/plan.template.md` before
+  authoring the plan.
+- Read `docs/03.specs/015-agent-governance-contract-normalization/spec.md`
+  before authoring the plan.
+- Read current target surfaces including Stage 00 rules/provider notes,
+  provider runtime baselines, hook JSON/settings, `.github` control files, and
+  `scripts/validate-repo-quality-gates.sh`.
+- Plan self-review found no unresolved placeholder residue in
+  `docs/04.execution/plans/2026-07-04-agent-governance-contract-normalization.md`.
+- `git diff --check` passed after the plan and index updates.
+- `bash scripts/validate-repo-quality-gates.sh .` passed after the plan and
+  index updates.
+
+### Handoff
+
+- Next action: commit the plan, then offer Subagent-Driven or Inline
+  Execution.
