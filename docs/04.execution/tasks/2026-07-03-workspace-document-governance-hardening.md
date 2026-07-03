@@ -39,7 +39,7 @@ and Plan.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-001 | Capture baseline document/provider/CI-QA audit inventory. | doc | Spec / Evaluation | Task 1 | Baseline scans, Stage 90 audit report, gate evidence | platform | Done |
 | T-002 | Harden core template, frontmatter, routing, Stage 00, and validator contracts. | doc | Spec / Contracts | Task 2 | Route/profile scans and validator pass | platform | Done |
-| T-003 | Harden provider entrypoint contracts for AGENTS, Claude, Codex, and Gemini surfaces. | doc | Spec / Agent Role & IO Contract | Task 3 | Provider topology scans and validator pass | platform | Open |
+| T-003 | Harden provider entrypoint contracts for AGENTS, Claude, Codex, and Gemini surfaces. | doc | Spec / Agent Role & IO Contract | Task 3 | Provider topology scans and validator pass | platform | Done |
 | T-004 | Apply document governance profiles to workspace README and authored documents. | doc | Spec / Guardrails | Task 4 | README/frontmatter/residue scans and validator pass | platform | Open |
 | T-005 | Finalize deterministic validator checks, CI/QA evidence, and final review. | test | Spec / Success Criteria | Task 5 | Full local validation and final sub-agent READY | platform | Open |
 
@@ -64,7 +64,7 @@ and Plan.
 
 ### Phase 3: Provider Entrypoints
 
-- [ ] T-003 Harden provider entrypoint contracts for AGENTS, Claude, Codex, and
+- [x] T-003 Harden provider entrypoint contracts for AGENTS, Claude, Codex, and
   Gemini surfaces.
 
 ### Phase 4: Workspace Application
@@ -333,6 +333,86 @@ and Plan.
 
 - T-002 is complete for core contract surfaces.
 - No live Kubernetes, Argo CD, Vault, cloud, provider runtime, publishing, or
+  secret-value checks were run.
+
+### T-003 Provider Entrypoint Hardening
+
+#### Provider and Shared Adapter Changes
+
+- Kept root `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` as thin provider shims
+  and clarified that `AGENTS.md` is the Codex/GPT gateway, not the Claude or
+  Gemini loading path.
+- Updated Claude and Gemini provider-native agent bootstrap lines so Claude
+  agents load `CLAUDE.md` and Gemini agents load `GEMINI.md`; Codex agent
+  mirrors continue to load `AGENTS.md`.
+- Aligned `.claude/CLAUDE.md`, `.codex/CODEX.md`, and `.agents/GEMINI.md` so
+  provider hook behavior is provider-specific: Claude settings are the native
+  permission and hook surface, while `.codex/hooks.json` and
+  `.agents/hooks.json` remain context/validation wiring.
+- Updated shared `.agents` rules, workflows, and docs skills to route exact
+  target-pattern/template decisions through
+  `docs/99.templates/support/template-routing.md` instead of carrying a
+  duplicate route matrix.
+- Clarified Stage 00 common governance, provider notes, harness catalog,
+  subagent protocol, and meta scope ownership so `.agents/skills`,
+  `.agents/workflows`, and `.agents/output-styles` remain the shared asset
+  source while provider-specific agent files remain per-provider.
+- Updated root `README.md` provider-entrypoint wording only. Broader README
+  heading cleanup remains routed to T-004/T-005.
+- Review remediation tightened the three cited active runtime/provider
+  references so `.agents/GEMINI.md`, `.codex/CODEX.md`, and
+  `docs/00.agent-governance/rules/document-stage-routing.md` now point
+  directly to `docs/99.templates/support/template-routing.md` for route
+  selection. `.agents/GEMINI.md` now describes only shared
+  skills/workflows/output-style symlink views and keeps provider-native files
+  as real adapter/runtime surfaces.
+
+#### Focused Scan Evidence
+
+- Required provider/hook scan was run against active provider and Stage 00
+  surfaces. Active matches were expected shared hook paths, provider hook JSON,
+  Claude settings, and hook-boundary prose. The stale strings
+  `CLAUDE.md + AGENTS.md`, `AGENTS.md only`, `Security Without Hooks`,
+  `Not yet supported`, `Key Differences`, and the old Claude/Gemini
+  `Load AGENTS.md` bootstrap forms returned no active matches.
+- Required template residue scan was run against active provider and Stage 00
+  surfaces. The only match was
+  `.claude/hookify.postflight-reminder.local.md`, an ignored local advisory
+  file; it was not edited or treated as shared policy.
+- `DESIGN.md` is absent in this checkout, so the required scans were rerun
+  against the existing requested surfaces and the absence is recorded here.
+- Runtime topology inspection confirmed `.claude/skills`,
+  `.claude/workflows`, `.claude/output-styles`, `.codex/skills`,
+  `.codex/workflows`, and `.codex/output-styles` are symlinks to `.agents/*`,
+  while `.claude/agents`, `.agents/agents`, and `.codex/agents` are
+  provider-specific agent surfaces.
+- RTK limitation repeated: `rtk` is not on PATH; `/home/hy/.local/bin/rtk
+  --version` reported `rtk 0.34.3`; `/home/hy/.local/bin/rtk gain` could not
+  initialize its tracking database. Required validation commands were run
+  directly.
+
+#### Verification Evidence
+
+- `git diff --check` — PASS, no output.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS, no output.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS:
+
+  ```text
+  [PASS] repository quality gates passed
+  ```
+
+- `bash scripts/validate-harness.sh` — PASS. Optional `kube-linter` and
+  `conftest` were not installed; the harness script used YAML syntax checks
+  and the built-in policy fallback.
+- Review remediation focused scans — PASS: the three cited files point to
+  `docs/99.templates/support/template-routing.md`, and `.agents/GEMINI.md` no
+  longer claims all of `.claude/` or `.codex/` symlink to `.agents/`.
+
+#### Handoff
+
+- T-003 is complete for provider entrypoint/profile alignment.
+- No Task 4 authored-document cleanup, Task 5 final reconciliation, live
+  Kubernetes, Argo CD, Vault, cloud, publishing, provider-runtime, or
   secret-value checks were run.
 
 ## Related Documents

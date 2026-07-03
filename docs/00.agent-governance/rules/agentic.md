@@ -19,7 +19,7 @@ Rules for AI Agent-first Engineering quality and safety.
 - Keep generated documents in the canonical docs taxonomy and route through `document-stage-routing.md`.
 - Enforce template routing: `prd` -> `docs/01.requirements/`, `adr` -> `docs/02.architecture/decisions/`, `ard` -> `docs/02.architecture/requirements/`, `spec` -> `docs/03.specs/`, `plan` -> `docs/04.execution/plans/`, `task` -> `docs/04.execution/tasks/`, `policy` -> `docs/05.operations/policies/`, `guide` -> `docs/05.operations/guides/`, `runbook` -> `docs/05.operations/runbooks/`, `postmortem/incident` -> `docs/05.operations/incidents/`, `archive-tombstone` -> `docs/98.archive/`.
 - Implement explicit QA and CI/CD validation phases (e.g., pre-commit checks, GitOps dry-runs, structural template coverage) before considering any implementation complete.
-- All AI Agents (Gemini, Claude, GPT) MUST enforce and utilize workspace-specific structured directories: `skills/` for tasks, `rules/` for guidelines, `hooks.json` or `hooks/` for automated event wiring, `output-styles/` for formatting, and `workflows/` for orchestrated steps.
+- All AI Agents (Gemini, Claude, GPT) must use the workspace-specific structured directories: `skills/` for tasks, `rules/` for guidelines, `hooks.json` or `hooks/` for provider event wiring, `output-styles/` for formatting, and `workflows/` for orchestrated steps. Provider-native enforcement differs; only Claude settings act as a native permission gate.
 - Maintain and consult historical/contextual state using `docs/00.agent-governance/memory`.
 - Use `docs/00.agent-governance/memory/progress.md` as the canonical progress ledger and the only tracked progress.md. Repo-changing agent work must record progress there, while standalone memory files remain allowed only under the memory template contract with a related progress entry.
 - Keep `.claude/agents/*.md`, `.agents/agents/*.md`, and `.codex/agents/*.toml` aligned whenever runtime contracts change.
@@ -87,7 +87,7 @@ Before changing gateway, runtime, hook, mirror, or governance-memory files:
 - Confirm tracked governance/runtime files under `docs/00.agent-governance/**`, `.claude/**`, and `.codex/**` remain English-only.
 - Confirm no legacy source labels from prior external harness examples remain.
 - Confirm `.claude/agents/*.md` and `.codex/agents/*.toml` mirror parity stays intact.
-- Confirm provider-specific hook boundaries are described accurately: `.claude/settings.json` owns Claude permissions/hooks; `.codex/hooks.json` is Codex context/validation hook wiring, not an equivalent permission gate.
+- Confirm provider-specific hook boundaries are described accurately: `.claude/settings.json` owns Claude permissions/hooks; `.codex/hooks.json` and `.agents/hooks.json` are context/validation hook wiring, not equivalent permission gates.
 - Confirm `.claude/*.local.md` files remain ignored local warning layers; Hookify local rules must not be treated as shared enforcement.
 - Confirm lifecycle hook semantics are described accurately: Stop/SubagentStop block only objective repo-state failures, and PreCompact remains advisory.
 - Confirm historical memory entries point to the current source of truth instead of presenting initial implementation snapshots as current inventory.

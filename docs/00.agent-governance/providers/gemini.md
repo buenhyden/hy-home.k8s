@@ -36,7 +36,9 @@ The `.agents/` directory is the canonical Antigravity harness for Gemini.
 ## File Name Compatibility
 
 - Default context file is `GEMINI.md`.
-- Configure settings to include `AGENTS.md` when needed.
+- In this repository, keep `AGENTS.md` out of the Gemini loading path unless a
+  future approved adapter change updates Stage 00; `AGENTS.md` is the Codex/GPT
+  gateway.
 - Prefer project-local settings under `.gemini/settings.json`.
 
 ## Execution Expectations

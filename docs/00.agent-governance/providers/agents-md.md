@@ -38,9 +38,9 @@ Codex sessions consume the `AGENTS.md` gateway and the local `.codex/CODEX.md` b
 - `AGENTS.md` is the Codex/GPT gateway contract for this repository.
 - Root `CLAUDE.md` and `GEMINI.md` are provider-specific shims, not replacements for shared governance policy.
 - `.claude/CLAUDE.md` is the runtime baseline for local agent execution.
-- Claude runtime behavior and editor/tool hook implementations belong under `.claude/**`; Codex event wiring belongs in `.codex/hooks.json` and must reuse the repo-local hook contract instead of defining a separate policy layer.
-- Stop/SubagentStop lifecycle validation belongs to the repo-local hook contract; Codex mirror wiring remains context/validation wiring and is not a permission gate equivalent.
-- `.claude/*.local.md` files are ignored local warning files. Hookify local rules may advise a local session, but shared enforcement belongs in tracked hooks, provider settings, Codex hook wiring, and validators.
+- Claude runtime behavior and editor/tool hook implementations belong under `.claude/**`; Codex event wiring belongs in `.codex/hooks.json` and Gemini event wiring belongs in `.agents/hooks.json`. Both hook JSON files must reuse the repo-local hook contract instead of defining separate policy layers.
+- Stop/SubagentStop lifecycle validation belongs to the repo-local hook contract; Codex and Gemini hook JSON wiring remains context/validation wiring and is not a permission gate equivalent.
+- `.claude/*.local.md` files are ignored local warning files. Hookify local rules may advise a local session, but shared enforcement belongs in tracked Claude settings, shared hook scripts, repository validators, and provider hook JSON only as context/validation wiring.
 - Durable policy and governance belong under `docs/00.agent-governance/**`.
 - This repository does **not** use GitHub-native instruction files such as `.github/copilot-instructions.md` or `.github/instructions/**/*.instructions.md`.
 - If GitHub tooling needs guidance, it must be routed through the existing gateway model instead of adding a parallel instruction hierarchy.

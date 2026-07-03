@@ -8,7 +8,7 @@ model: Gemini 3.5 Flash
 
 ## Runtime Bootstrap
 
-- Load `AGENTS.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.
+- Load `GEMINI.md`, `.agents/GEMINI.md`, and this agent's imported scope before work.
 - Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
 
 @import docs/00.agent-governance/scopes/architecture.md

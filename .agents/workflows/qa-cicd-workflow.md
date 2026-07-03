@@ -10,7 +10,7 @@ Before making changes to the codebase or documentation:
 
 - **State Gathering**: Use the provider's read/search tools to capture the current state of affected files.
 - **Evidence Baseline**: Document what the current state is and how the change will be verified (e.g., test command, lint command, manifest validation).
-- **Template Check**: If creating a new document, ensure the corresponding `docs/99.templates/` template is loaded into context first.
+- **Template Check**: If creating a new document, resolve the route through `docs/99.templates/support/template-routing.md` and load the matching template under `docs/99.templates/templates/` first.
 
 ## 2. Post-Edit QA
 

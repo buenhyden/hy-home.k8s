@@ -40,7 +40,8 @@ safe implementation in `hy-home.k8s`.
 
 **Actions**
 
-1. Read `AGENTS.md`, the relevant runtime baseline, Stage 00 governance rules,
+1. Read the appropriate root provider shim (`AGENTS.md`, `CLAUDE.md`, or
+   `GEMINI.md`), the relevant runtime baseline, Stage 00 governance rules,
    templates, and the current user task contract before editing.
 2. Inventory requested target paths and mark each `complete`, `partial`, or
    `unknown`; do not mark unreviewed areas complete.
@@ -128,9 +129,9 @@ safe implementation in `hy-home.k8s`.
    Remove temporary/debug artifacts and disallowed scratch naming, archive
    conflicting active docs only with Tombstones and replacement evidence, and
    add deterministic regression checks when possible.
-3. Keep shared enforcement in tracked hooks, settings, hook JSON, scripts, and
-   validators. Treat Hookify `.local.md` rules as ignored local advisory files,
-   not shared policy.
+3. Keep shared validation controls in tracked Claude settings, shared hooks,
+   provider hook JSON wiring, scripts, and validators. Treat Hookify
+   `.local.md` rules as ignored local advisory files, not shared policy.
 4. When the prompt names an execution workflow skill, record the plan load,
    critical review, task execution, verification, and finish boundary instead
    of only recording that the skill was mentioned.

@@ -15,7 +15,7 @@ Codex sessions act as a peer provider to Claude and Gemini. This document define
 ## Context Strategy
 
 - Codex uses `.codex/agents/*.toml` as provider-native mirrors for the local agent roster.
-- Hook wiring is defined in `.codex/hooks.json`, which points to the repository's shared lifecycle hook implementations.
+- Hook event wiring is defined in `.codex/hooks.json`, which points to the repository's shared lifecycle hook implementations where the runtime consumes that file.
 - `.codex/hooks.json` is strictly for event wiring (context and validation) and is **not** a permission gate.
 - Shared skills, workflows, and output styles resolve through `.codex/{skills,workflows,output-styles}` symlinks to the `.agents/` SSoT. Codex-specific rules stay in this provider note and Stage 00 rules; `.codex/rules/` is only a placeholder/mirror surface unless populated by a future approved adapter change.
 
@@ -27,7 +27,11 @@ Codex sessions act as a peer provider to Claude and Gemini. This document define
 
 ## Permission & Hook Boundary
 
-Unlike Claude's `settings.json` which governs tool permissions natively, Codex relies on the shared `.codex/hooks.json` to bridge validation logic. The hooks orchestrate validation (e.g., `pre-validate`, `post-validate`) but the agent must autonomously honor the constraints defined in the governance docs.
+Unlike Claude's `settings.json` which governs tool permissions natively,
+`.codex/hooks.json` is a context/validation bridge only. It can orchestrate
+validation events (e.g., `pre-validate`, `post-validate`) where supported, but
+the Codex agent must still honor governance constraints and run explicit
+repo-backed validation before handoff.
 
 ## Runtime Tooling Boundary
 

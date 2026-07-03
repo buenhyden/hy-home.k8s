@@ -8,6 +8,69 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-03 — Workspace document governance hardening Task 3 provider entrypoints
+
+- **Date**: 2026-07-03
+- **Layer**: docs, meta, governance, qa
+- **Status**: complete
+- **Tags**: #docs #governance #providers #validation
+
+#### Progress
+
+- Completed T-003 for the workspace document governance hardening plan and
+  updated the
+  [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
+- Kept root `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` thin while aligning their
+  provider roles: Codex/GPT starts from `AGENTS.md`, Claude starts from
+  `CLAUDE.md`, and Gemini starts from `GEMINI.md`.
+- Updated Claude and Gemini provider-native agent bootstrap lines to match
+  their root shims, while Codex TOML mirrors continue to load `AGENTS.md`.
+- Aligned shared `.agents` skills, rules, and workflows with the Stage 00
+  canonical adapter model and routed exact document-template mapping to
+  `docs/99.templates/support/template-routing.md`.
+- Review remediation tightened `.agents/GEMINI.md`, `.codex/CODEX.md`, and
+  `docs/00.agent-governance/rules/document-stage-routing.md` so active
+  provider/runtime guidance names
+  `docs/99.templates/support/template-routing.md` for route selection.
+
+#### Memory
+
+- `.agents/{skills,workflows,output-styles}` is the shared asset SSoT;
+  `.claude/{skills,workflows,output-styles}` and
+  `.codex/{skills,workflows,output-styles}` expose symlink views, while
+  provider-native files remain real adapter/runtime surfaces.
+- `.claude/settings.json` is the native Claude permission and hook surface.
+  `.codex/hooks.json` and `.agents/hooks.json` are context/validation wiring,
+  not Claude-style permission gates.
+- Root provider shims should stay as routing files. Durable rules belong in
+  Stage 00 governance, template support contracts, or shared `.agents` assets.
+
+#### Evidence
+
+- Required provider/hook and template-residue scans completed. Active hook
+  matches were expected provider wiring and shared hook references; the only
+  template-residue match was an ignored `.claude/*.local.md` advisory file.
+- `DESIGN.md` is absent in this checkout; scans were rerun against the existing
+  requested surfaces.
+- RTK limitation repeated: `rtk` is not on PATH; direct local binary version
+  check works, but `rtk gain` cannot initialize its tracking database, so
+  required exact validation commands were run directly.
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash scripts/validate-harness.sh` — PASS; optional `kube-linter` and
+  `conftest` were unavailable and covered by harness fallbacks.
+- Review remediation focused scans — PASS: cited provider/runtime route
+  guidance points to `docs/99.templates/support/template-routing.md`, and the
+  false broad provider-directory symlink claim is removed.
+
+#### Handoff
+
+- T-003 is complete. Continue with T-004 workspace README/authored-document
+  application and T-005 final reconciliation.
+- No live Kubernetes, Argo CD, Vault, cloud, publishing, provider-runtime, or
+  secret-value action was performed.
+
 ### 2026-07-03 — Workspace document governance hardening Task 2 core contracts
 
 - **Date**: 2026-07-03

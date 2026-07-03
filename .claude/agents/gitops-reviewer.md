@@ -9,7 +9,7 @@ tools: Read, Grep, Glob, Bash
 
 ## Runtime Bootstrap
 
-- Load `AGENTS.md`, `.claude/CLAUDE.md`, and this agent's imported scope before work.
+- Load `CLAUDE.md`, `.claude/CLAUDE.md`, and this agent's imported scope before work.
 - Follow `bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight`.
 
 @import docs/00.agent-governance/scopes/infra.md

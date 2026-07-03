@@ -12,14 +12,14 @@ WSL2+k3d cluster repository managed through ArgoCD GitOps.
 
 ## Loading Order
 
-Start from the repository gateway files, then follow the governance JIT sequence:
+Start from the root Claude provider shim, then follow the governance JIT sequence:
 
-1. `AGENTS.md`
+1. `CLAUDE.md`
 2. `docs/00.agent-governance/rules/bootstrap.md`
 3. `docs/00.agent-governance/rules/preflight-checklist.md`
 4. `docs/00.agent-governance/rules/persona.md`
 5. `docs/00.agent-governance/scopes/<layer>.md`
-6. `docs/00.agent-governance/providers/<provider>.md`
+6. `docs/00.agent-governance/providers/claude.md`
 7. `docs/00.agent-governance/memory/progress.md`
 8. `docs/00.agent-governance/rules/postflight-checklist.md`
 
@@ -28,7 +28,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Plan and implement from repo evidence: `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/99.templates`, `gitops/`, `infrastructure/`, `scripts/`, and current validators.
 - Record repo-changing work progress and reusable memory in `docs/00.agent-governance/memory/progress.md`.
 - Treat `docs/00.agent-governance/memory/progress.md` as the canonical progress ledger and the only tracked `progress.md`; standalone memory files may exist only under the memory template contract with a related progress entry.
-- Use `docs/99.templates/memory.template.md` for standalone files under `docs/00.agent-governance/memory/`, and update the related `progress.md` entry in the same change.
+- Use `docs/99.templates/templates/common/memory.template.md` for standalone files under `docs/00.agent-governance/memory/`, and update the related `progress.md` entry in the same change.
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
 - Treat `docs/90.references/llm-wiki/wiki-index.md` as generated Markdown maintained by `scripts/generate-llm-wiki-index.sh`; route policy and procedure changes to canonical owner files.
 - Keep infrastructure changes repo-backed. Agents and subagents do not mutate live clusters by default; human-approved bootstrap or break-glass actions are operator-bound and must record scope, rollback, and verification evidence.
@@ -39,7 +39,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Workspace Structures: Use `.claude/skills/`, `.claude/agents/`, `.claude/workflows/`, `.claude/output-styles/`, `docs/00.agent-governance/hooks/`, and `docs/00.agent-governance/rules/` consistently; shared structures resolve to the `.agents/` SSoT via symlinks where applicable.
 - Verification: Implement explicit QA and CI/CD validation phases prior to task completion.
 - Agent eval completion is explicit command evidence from repo-static gates, changed-file checks, or recorded human/operator approval; do not infer live runtime readiness from static validation.
-- Treat `.claude/*.local.md`, including Hookify rules, as ignored local warning files. Claude hooks/settings are shared enforcement when tracked through `.claude/settings.json`, shared scripts, `.codex/hooks.json`, `.agents/hooks.json`, and repository validators; Hookify local advisory files are not shared policy.
+- Treat `.claude/*.local.md`, including Hookify rules, as ignored local warning files. Claude enforcement stays in `.claude/settings.json`, shared scripts, and repository validators; Codex and Gemini hook JSON files are context/validation wiring, not Claude-style permission gates. Hookify local advisory files are not shared policy.
 - Treat `docs/00.agent-governance/hooks/lifecycle-guard.sh` as the shared lifecycle validation surface wired by `.claude/settings.json`: Stop/SubagentStop may block objective repo-state failures and advise task-unit commit discipline for uncommitted tracked changes, while PreCompact reports uncommitted tracked changes, suggested validation, and the same commit discipline without blocking compaction.
 
 ## Harness Four-Element Runtime Contract
@@ -87,6 +87,6 @@ Claude implements the shared four-element harness model from
 
 ## Relationship to Gateway Files
 
-- `AGENTS.md` is the shared gateway contract.
-- Root `CLAUDE.md` and `GEMINI.md` are thin provider shims.
+- Root `CLAUDE.md` is the Claude provider shim; `AGENTS.md` and `GEMINI.md`
+  are thin shims for Codex/GPT and Gemini respectively.
 - This file is the local runtime baseline, not a replacement for governance policy.

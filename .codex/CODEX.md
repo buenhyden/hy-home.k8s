@@ -28,7 +28,7 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Record repo-changing work progress and reusable memory in `docs/00.agent-governance/memory/progress.md`.
 - Treat `docs/00.agent-governance/memory/progress.md` as the canonical progress ledger and the only tracked `progress.md`; standalone memory files may exist only under the memory template contract with a related progress entry.
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
-- Author stage documents Template-First: read `docs/99.templates/README.md` and the matching template before writing into `docs/01.requirements`–`docs/05.operations` and `docs/99.templates`, per `docs/00.agent-governance/rules/documentation-protocol.md` and `rules/document-stage-routing.md`.
+- Author stage documents Template-First: use `docs/99.templates/support/template-routing.md` for route selection, then read the matching template under `docs/99.templates/templates/` before writing into `docs/01.requirements`–`docs/05.operations` and `docs/99.templates`; `docs/99.templates/README.md` is the index summary.
 - If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers.
 - Treat `.codex/agents/*.toml` as Codex mirrors of the primary agent definitions; keep them aligned.
 - Treat `.codex/hooks.json` as Codex event wiring for repo-local context and validation hooks, not as an equivalent permission gate to Claude's `settings.json`.
@@ -65,7 +65,7 @@ Codex implements the shared four-element harness model from
 ## Codex/GPT Capabilities & Constraints
 
 - **Skill routing**: Use the `.codex/skills/**` roster (a symlink to the `.agents/` SSoT) via the Task-to-Skill routing in `docs/00.agent-governance/harness-catalog.md`.
-- **Hook behavior**: `.codex/hooks.json` reuses the shared `docs/00.agent-governance/hooks/*.sh` scripts for context and validation wiring, enforcing Template Routing and CI/CD checks via `customInstructions`.
+- **Hook behavior**: `.codex/hooks.json` reuses the shared `docs/00.agent-governance/hooks/*.sh` scripts for context and validation wiring where supported. It can surface Template Routing and CI/CD checks through `customInstructions`, but explicit validation commands remain required before handoff.
 - **Provider tuning**: Keep Codex/GPT-specific tuning in `docs/00.agent-governance/providers/codex.md`; do not introduce policy here.
 
 ## Model Hierarchy

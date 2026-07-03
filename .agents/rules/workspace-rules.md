@@ -4,9 +4,13 @@ This file defines Gemini-specific workspace rules for `hy-home.k8s` that supplem
 
 ## 1. Template-First Enforcement
 
-- All architecture, requirement, spec, and operations documents MUST be created from their corresponding templates in `docs/99.templates/`.
+- All architecture, requirement, spec, and operations documents must follow the
+  route in `docs/99.templates/support/template-routing.md` and start from the
+  matching template under `docs/99.templates/templates/`.
 - Do not create ad-hoc markdown structures. If a template exists, use it.
-- **Routing**: `prd` -> `docs/01.requirements/`, `adr` -> `docs/02.architecture/decisions/`, `spec` -> `docs/03.specs/`, `plan` -> `docs/04.execution/plans/`, `task` -> `docs/04.execution/tasks/`.
+- **Routing**: use `docs/00.agent-governance/rules/document-stage-routing.md`
+  for stage selection and `docs/99.templates/support/template-routing.md` for
+  the exact target-pattern/template map.
 
 ## 2. GitOps Immutable Principle
 

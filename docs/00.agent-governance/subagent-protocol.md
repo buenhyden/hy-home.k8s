@@ -89,12 +89,15 @@ honor the same boundary within their native capabilities.
 
 ## Catalog Reference
 
-See `AGENTS.md` for the gateway routing pointer and
+Start from the appropriate root provider shim (`AGENTS.md`, `CLAUDE.md`, or
+`GEMINI.md`) for gateway routing and use
 `docs/00.agent-governance/harness-catalog.md` for the canonical local runtime
 catalog, including Codex mirrors.
 
 ## Related Documents
 
 - [AGENTS.md](../../AGENTS.md)
-- [Local Runtime Baselines](../../.claude/CLAUDE.md)
+- [CLAUDE.md](../../CLAUDE.md)
+- [GEMINI.md](../../GEMINI.md)
+- [Claude Runtime Baseline](../../.claude/CLAUDE.md)
 - [Local Harness Catalog](./harness-catalog.md)

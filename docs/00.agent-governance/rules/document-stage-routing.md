@@ -119,18 +119,21 @@ When a skill suggests one of these paths, reroute the output into the canonical 
 #### `agent-md-refactor`
 
 - `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` must remain thin gateways.
-- Detailed execution rules belong in `docs/00.agent-governance/**` or local `.claude/skills/**`.
+- Detailed execution rules belong in `docs/00.agent-governance/**` or shared `.agents/skills/**`.
 - Any new authored doc proposed by this skill must use the canonical stage path and template.
 
 #### `claude-md-improver`
 
 - Root `CLAUDE.md` remains a provider shim.
-- Project-specific runtime guidance belongs in `.claude/CLAUDE.md`, `docs/00.agent-governance/**`, or local `.claude/skills/**`, depending on ownership.
+- Project-specific runtime guidance belongs in `.claude/CLAUDE.md`, `docs/00.agent-governance/**`, or shared `.agents/skills/**`, depending on ownership.
 - Suggestions to create `docs/superpowers/specs`, `docs/superpowers/plans`, or similar parallel trees must be rejected and rerouted.
 
 ## Authoring Guardrails
 
-- Read `docs/99.templates/README.md`, then read the matching template under `docs/99.templates/` before creating any stage document.
+- Read `docs/99.templates/support/template-routing.md` to select the exact
+  target-pattern/template route, use `docs/99.templates/README.md` only as the
+  synchronized index summary, then read the matching template under
+  `docs/99.templates/templates/` before creating any stage document.
 - Confirm the target path matches exactly one structural template mapping before authoring; uncovered stage paths are invalid even when they sit under an allowed docs folder.
 - New authored documents must set `status: draft` until a human promotes the lifecycle state.
 - The required template headings are part of the document contract and must not be omitted.
@@ -138,7 +141,10 @@ When a skill suggests one of these paths, reroute the output into the canonical 
 - Every newly created authored document must include `## Related Documents`.
 - Old active-stage docs cannot remain current merely by adding historical, superseded, or current-contract notes when their body conflicts with the implementation.
 - Agents must return the template path used and validation evidence in the handoff.
-- Claude and Codex edit hooks must warn on authored stage doc paths and run post-edit template enforcement through the repository quality gate.
+- Provider event wiring must warn on authored stage doc paths where supported
+  and run post-edit template enforcement through the repository quality gate.
+  Claude uses native settings; Codex and Gemini hook JSON remain
+  context/validation wiring and do not replace explicit validation commands.
 - Governance docs remain English-only; human-facing READMEs remain Korean.
 - Root gateway files must stay thin and should link to rule docs instead of duplicating rule text.
 

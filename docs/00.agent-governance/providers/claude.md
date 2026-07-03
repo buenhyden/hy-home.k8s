@@ -18,7 +18,7 @@ Claude-specific guidance for `hy-home.k8s`.
 - For larger projects, split rules into `.claude/rules/` files.
 - Use path-scoped rules where applicable to reduce always-loaded context.
 - Keep conflicting instructions out of CLAUDE hierarchy.
-- Avoid introducing provider-specific guidance outside the existing `AGENTS.md` + `.claude/**` + `docs/00.agent-governance/**` hierarchy.
+- Avoid introducing provider-specific guidance outside the existing `CLAUDE.md` + `.claude/**` + `docs/00.agent-governance/**` hierarchy.
 
 ## Memory and Context
 

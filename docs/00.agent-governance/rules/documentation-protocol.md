@@ -38,7 +38,11 @@ This protocol defines how governance references authored docs and how language b
 - Generated exceptions, such as `docs/90.references/llm-wiki/wiki-index.md`, must keep their generator contract and must not be edited by hand.
 - `docs/98.archive` documents must be metadata-only Tombstones and must not preserve old full bodies.
 - `docs/99.templates/templates/common/reference.template.md` must not own archive policy or contain archive wording; archive policy belongs in routing/governance docs and `archive-tombstone.template.md`.
-- Claude and Codex Write/Edit/MultiEdit hooks must surface Template-First guidance before authored stage doc edits and run post-edit documentation template enforcement. Gemini has no native hook file and must honor the same Template-First behavior contract for authored stage docs.
+- Provider event wiring must surface Template-First guidance before authored
+  stage doc edits where the runtime supports it: Claude uses
+  `.claude/settings.json`, Codex uses `.codex/hooks.json` context/validation
+  wiring, and Gemini uses `.agents/hooks.json` behavioral wiring. Explicit
+  validation commands remain required before handoff.
 
 ## Language Boundary Rules
 

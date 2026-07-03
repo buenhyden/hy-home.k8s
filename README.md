@@ -50,7 +50,7 @@ hy-home.k8s/
 ├── traefik/               # k3d 로컬 노출 보조용 Traefik dynamic config
 ├── secrets/               # 로컬 인증서 등 민감 파일 저장 경로
 ├── .github/               # GitHub Actions, PR template, CODEOWNERS, labeler, zizmor
-├── AGENTS.md              # 공통 에이전트 진입 게이트웨이
+├── AGENTS.md              # Codex/GPT 전용 얇은 게이트웨이
 ├── CLAUDE.md              # Claude 전용 얇은 오버레이
 ├── GEMINI.md              # Gemini 전용 얇은 오버레이
 └── README.md              # This file
@@ -79,7 +79,7 @@ hy-home.k8s/
 
 ## How to Work in This Area
 
-1. 저장소를 처음 읽을 때는 `README.md -> docs/README.md -> AGENTS.md -> 관련 stage 문서` 순서로 진입한다.
+1. 저장소를 처음 읽을 때는 `README.md -> docs/README.md -> 해당 provider shim(AGENTS.md, CLAUDE.md, GEMINI.md) -> 관련 stage 문서` 순서로 진입한다.
 2. 설계/구현/운영 판단은 가능한 한 `docs/01.requirements`부터 `docs/05.operations/runbooks`까지의 문서 체인을 기준으로 추적한다.
 3. 새 README나 authored stage 문서는 [`docs/99.templates/README.md`](docs/99.templates/README.md)의 template-folder mapping을 확인한 뒤 승인된 템플릿에서 시작한다.
 4. 문서 링크는 상대 경로를 사용하고, 사람 대상 README는 한국어를 유지한다.
@@ -144,7 +144,7 @@ hy-home.k8s/
 - `scripts/` - 저장소 유지보수와 자동화 보조 스크립트
 - `graphify-out/` - 공유된 graphify 탐색 산출물. `GRAPH_REPORT.md`, `graph.json`, `graph.html`만 추적한다.
 - `.github/` - `main` PR flow용 CI, release evidence, PR/issue intake, CODEOWNERS, labeler, zizmor 설정
-- `.claude/`, `.codex/` - 에이전트 실행 규칙, 스킬, 워크플로 오버레이
+- `.agents/`, `.claude/`, `.codex/` - 공유 에이전트 자산과 provider별 런타임 오버레이
 
 ## Tech Stack
 
@@ -192,7 +192,7 @@ cd hy-home.k8s
 
 1. [README.md](./README.md) - 저장소 개요
 2. [docs/README.md](./docs/README.md) - 단계형 문서 체계 개요
-3. [AGENTS.md](./AGENTS.md) - 에이전트 공통 규칙
+3. [AGENTS.md](./AGENTS.md), [CLAUDE.md](./CLAUDE.md), [GEMINI.md](./GEMINI.md) - provider별 얇은 에이전트 게이트웨이
 4. [docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md](./docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md) - 실제 부트스트랩 절차
 
 ### 3. External Dependencies Readiness

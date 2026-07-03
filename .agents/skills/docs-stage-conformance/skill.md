@@ -30,9 +30,10 @@ stage templates and validation gates while avoiding broad semantic rewrites.
 
 ## Evidence to Gather First
 
-1. Read `AGENTS.md`, `.claude/CLAUDE.md`, `docs/00.agent-governance/rules/documentation-protocol.md`, and `docs/00.agent-governance/rules/document-stage-routing.md`.
-2. Read the relevant template in `docs/99.templates/` and the owning folder
-   `README.md` before editing.
+1. Read the appropriate root provider shim (`AGENTS.md`, `CLAUDE.md`, or `GEMINI.md`), the matching runtime baseline, `docs/00.agent-governance/rules/documentation-protocol.md`, and `docs/00.agent-governance/rules/document-stage-routing.md`.
+2. Resolve the route through `docs/99.templates/support/template-routing.md`,
+   then read the relevant template under `docs/99.templates/templates/` and the
+   owning folder `README.md` before editing.
 3. Check current repo state with `git status --short` and identify whether the
    task is an in-place cleanup or an explicitly requested new authored artifact.
 4. Prefer repo-native validators before custom scans.

@@ -31,7 +31,7 @@ To provide a unified understanding of agent concepts and their implementation ac
 - **Not authoritative for**:
   - Technical implementation of specific skills or hooks (see `docs/00.agent-governance/hooks/`)
   - Concrete model IDs and reasoning-effort values (see `harness-catalog.md` and `model-policy.md`)
-  - Stage-to-template mapping details (see `rules/document-stage-routing.md` and `docs/99.templates/README.md`)
+  - Stage-to-template mapping details (see `docs/99.templates/support/template-routing.md` and `rules/document-stage-routing.md`)
 
 ## Scope
 
@@ -79,9 +79,10 @@ To provide a unified understanding of agent concepts and their implementation ac
 
 - **Memory Policy**: Agents must log lessons learned and persistent context in `docs/00.agent-governance/memory/` and review them before initiating work.
 - **GitOps-First QA**: Agents cannot modify the production cluster directly (`no-kubectl-mutation`). All changes must go through PR and CI/CD validation.
-- **Hook Enforcement**:
-  - **Pre-flight/edit**: Enforce templates and structural rules.
+- **Hook and Validation Wiring**:
+  - **Pre-flight/edit**: Surface templates and structural rules where the provider runtime supports event wiring.
   - **Post-flight/validate**: Run `scripts/validate-repo-quality-gates.sh` to ensure compliance.
+  - Claude has the native permission gate; Gemini and Codex hook JSON files are context/validation wiring.
 
 ## Support Matrix
 
