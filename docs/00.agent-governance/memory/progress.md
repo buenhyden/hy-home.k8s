@@ -12,7 +12,7 @@ inventory stays in `scripts/README.md`.
 
 - **Date**: 2026-07-03
 - **Layer**: docs, meta, qa
-- **Status**: in-progress
+- **Status**: complete
 - **Tags**: #templates #governance #audit #validation
 
 #### Progress
@@ -30,6 +30,11 @@ inventory stays in `scripts/README.md`.
   evidence.
 - Added repository quality gate guardrails for stale support-doc wording and
   harness starter overlap in the structural route map.
+- Completed T-006 final validation and synchronized the Plan, Task, Stage 04
+  README indexes, and this progress entry to complete.
+- Recorded final scan evidence showing the categorized template tree remains
+  intact, active contracts contain no flat template routes, and support docs
+  contain no stale migration-phase wording.
 
 #### Memory
 
@@ -46,11 +51,22 @@ inventory stays in `scripts/README.md`.
 - `bash scripts/validate-repo-quality-gates.sh .` — PASS.
 - Task 4 focused support drift scan — PASS, no stale support-doc wording.
 - Task 4 harness route overlap scan — PASS, no structural route overlap.
+- RTK limitation observed: `which rtk` did not find `rtk`; direct
+  `/home/hy/.local/bin/rtk --version` reported `rtk 0.34.3`; direct
+  `/home/hy/.local/bin/rtk gain` could not initialize its tracking database,
+  so required exact validation commands were run directly.
+- Task 6 final `git diff --check` — PASS, no output.
+- Task 6 final `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Task 6 final template tree scan — PASS, files remain under
+  `docs/99.templates/README.md`, `support/**`, and `templates/**`.
+- Task 6 final flat template route scan — PASS, no matches and no
+  self-referential evidence exceptions.
+- Task 6 final support stale wording scan — PASS, no matches.
 
 #### Handoff
 
-- Next action: complete the authored-document verification and final evidence
-  tasks from the linked plan.
+- None. The template governance audit enhancement is complete in local
+  execution records.
 
 ### 2026-07-03 — Template governance migration final sync
 

@@ -1,7 +1,7 @@
 ---
 title: 'Template Governance Audit Enhancement Implementation Plan'
 type: sdlc/plan
-status: draft
+status: done
 owner: platform
 updated: 2026-07-03
 ---
@@ -548,13 +548,13 @@ Expected: commit succeeds after final validation evidence is recorded.
 
 ## Completion Criteria
 
-- [ ] Baseline audit findings recorded.
-- [ ] Current support contracts clarified.
-- [ ] Harness task contract documented as supplemental rather than structural.
-- [ ] Deterministic validator guardrails added where stable.
-- [ ] Authored document and incident route audits recorded.
-- [ ] Required validation commands pass.
-- [ ] Plan, Task, README indexes, and progress ledger are synchronized.
+- [x] Baseline audit findings recorded.
+- [x] Current support contracts clarified.
+- [x] Harness task contract documented as supplemental rather than structural.
+- [x] Deterministic validator guardrails added where stable.
+- [x] Authored document and incident route audits recorded.
+- [x] Required validation commands pass.
+- [x] Plan, Task, README indexes, and progress ledger are synchronized.
 
 ## Related Documents
 

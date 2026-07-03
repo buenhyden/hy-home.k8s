@@ -1,7 +1,7 @@
 ---
 title: 'Task: Template Governance Audit Enhancement'
 type: sdlc/task
-status: draft
+status: done
 owner: platform
 updated: 2026-07-03
 ---
@@ -47,7 +47,7 @@ approved Stage 03 spec and Stage 04 plan.
 | T-003 | Remediate current support contract drift and harness task route ambiguity | doc | Contracts / Core Design | PLN-003, PLN-004 | Focused support scan and quality gate | platform | Done |
 | T-004 | Add deterministic validator guardrails for stable support drift patterns | guardrail | Evaluation / Verification Commands | PLN-005 | Quality gate PASS and focused negative-risk review | platform | Done |
 | T-005 | Verify authored documents and template use after remediation | eval | Guardrails / Success Criteria | PLN-006 | Residue, flat-route, incident-route, and frontmatter scans | platform | Done |
-| T-006 | Record final validation evidence and mark Plan, Task, README indexes, and progress complete | doc | Success Criteria | PLN-006 | Final validation summary and completion commit | platform | Todo |
+| T-006 | Record final validation evidence and mark Plan, Task, README indexes, and progress complete | doc | Success Criteria | PLN-006 | Final validation summary and completion commit | platform | Done |
 
 ## Suggested Types
 
@@ -69,7 +69,7 @@ approved Stage 03 spec and Stage 04 plan.
 
 ### Phase 1: Planning Baseline
 
-- [ ] T-001 Create and validate planning artifacts.
+- [x] T-001 Create and validate planning artifacts.
 
 ### Phase 2: Audit Evidence
 
@@ -83,7 +83,7 @@ approved Stage 03 spec and Stage 04 plan.
 ### Phase 4: Verification And Handoff
 
 - [x] T-005 Verify authored document usage.
-- [ ] T-006 Complete final sync and evidence.
+- [x] T-006 Complete final sync and evidence.
 
 ## Verification Summary
 
@@ -155,8 +155,27 @@ approved Stage 03 spec and Stage 04 plan.
   - T-005 validation evidence: `git diff --check` passed.
   - T-005 validation evidence:
     `bash scripts/validate-repo-quality-gates.sh .` passed.
-  - Remediation and final evidence will be appended to this section during
-    T-006.
+  - T-006 final validation evidence: `git diff --check` passed with no output.
+  - T-006 final validation evidence:
+    `bash scripts/validate-repo-quality-gates.sh .` passed with
+    `[PASS] repository quality gates passed`.
+  - T-006 final template tree evidence:
+    `find docs/99.templates -maxdepth 5 -type f -print | sort` returned only
+    `docs/99.templates/README.md`, `docs/99.templates/support/**`, and
+    `docs/99.templates/templates/**`; no flat root template-form files were
+    present.
+  - T-006 final flat-route evidence:
+    `rg -n "docs/99\\.templates/[a-z0-9-]+\\.template\\.(md|yaml|graphql|proto)" docs scripts .codex .agents AGENTS.md RTK.md`
+    returned no matches, so no active current-route drift or self-referential
+    evidence exception was present.
+  - T-006 final support wording evidence:
+    `rg -n "Phase [1-4]|during the migration|after Phase|current and target" docs/99.templates/support`
+    returned no matches.
+  - T-006 runtime tooling note: `rtk` was not on PATH;
+    `/home/hy/.local/bin/rtk --version` returned `rtk 0.34.3`, but
+    `/home/hy/.local/bin/rtk gain` failed with a tracking database
+    initialization error, so the exact validation commands were run directly
+    per provider guidance.
 
 ## Related Documents
 
