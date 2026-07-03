@@ -7038,3 +7038,48 @@ section separating static from live evidence.
 
 - Next action: commit the plan, then offer Subagent-Driven or Inline
   Execution.
+
+## 2026-07-04 — Agent Governance Contract Normalization T-001
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: meta, docs, qa, ci
+- **Status**: completed
+- **Tags**: #governance #agents #tasks #drift-inventory #validation
+
+### Progress
+
+- Created the Stage 04 task record for Agent Governance Contract Normalization
+  at
+  `docs/04.execution/tasks/2026-07-04-agent-governance-contract-normalization.md`.
+- Captured the baseline drift inventory for root provider shims, provider
+  adapters, GitHub control surfaces, and Stage 00 governance files.
+- Indexed the task record in `docs/04.execution/tasks/README.md`.
+
+### Memory
+
+- Baseline drift evidence for this stream is summarized in the task record
+  instead of pasting raw `rg` output. The useful classes are `canonical owner`,
+  `adapter summary`, `enforcement`, and `historical evidence`.
+- The inventory confirmed provider-native role parity: Claude agent files carry
+  native `tools:` frontmatter, Gemini agent files carry Gemini model
+  frontmatter, and Codex TOML mirrors carry `model` plus
+  `model_reasoning_effort`.
+
+### Evidence
+
+- `rg --files AGENTS.md CLAUDE.md GEMINI.md .agents .claude .codex .github docs/00.agent-governance | sort`
+  returned 115 target files across root shims, provider adapters, GitHub
+  control surfaces, and Stage 00 governance.
+- `rg -n "^---$|^name:|^description:|^model:|^tools:|^model_reasoning_effort|^description =|^developer_instructions =|^name =" .claude/agents .agents/agents .codex/agents`
+  confirmed the provider metadata inventory for Claude, Gemini, and Codex
+  agent surfaces.
+- `rg -n "tools:|permission gate|hook wiring|provider-native|mirror|parity|Subagent|subagent|AGENTS.md|CLAUDE.md|GEMINI.md|QA|CI/CD|protected surface|frontmatter" docs/00.agent-governance AGENTS.md CLAUDE.md GEMINI.md .agents .claude .codex .github`
+  identified active surfaces for parity, hook behavior, QA/CI/CD,
+  protected-surface, and frontmatter contract follow-up.
+
+### Handoff
+
+- T-001 is complete after validation and commit. Next action is T-002: normalize
+  Stage 00 canonical contract wording.
