@@ -1,9 +1,9 @@
 ---
 title: 'Workspace Document Governance Hardening Implementation Plan'
 type: sdlc/plan
-status: draft
+status: done
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-04
 ---
 
 # Workspace Document Governance Hardening Implementation Plan
@@ -616,7 +616,7 @@ If `DESIGN.md` is absent, omit it from `git add`.
 - Modify: `docs/04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
-- [ ] **Step 1: Add deterministic validator checks for accepted drift classes**
+- [x] **Step 1: Add deterministic validator checks for accepted drift classes**
 
 Only add checks for drift classes that Task 1 through Task 4 prove are
 deterministic. Use this pattern inside
@@ -646,7 +646,7 @@ Expected:
 - Historical progress entries and archive Tombstones are not falsely rejected.
 - Failure messages name the path and drift class.
 
-- [ ] **Step 2: Reconcile CI/QA documentation**
+- [x] **Step 2: Reconcile CI/QA documentation**
 
 Compare:
 
@@ -667,7 +667,7 @@ Expected:
 - Documentation cites official basis from the parent Spec where external
   claims are made.
 
-- [ ] **Step 3: Run full local validation bundle**
+- [x] **Step 3: Run full local validation bundle**
 
 Run:
 
@@ -694,9 +694,11 @@ Expected:
 - Optional tooling skips, if any, are recorded as limitations rather than
   hidden success.
 
-- [ ] **Step 4: Request final sub-agent review**
+- [x] **Step 4: Prepare final sub-agent review handoff**
 
-Dispatch a read-only reviewer with this brief:
+Task 5 implementer boundary: the parent agent dispatches the independent final
+sub-agent review after the Task 5 commit. Prepare the evidence for this
+read-only reviewer brief:
 
 ```text
 Review the workspace document governance hardening branch. Verify that:
@@ -709,9 +711,10 @@ Review the workspace document governance hardening branch. Verify that:
 Return READY or list findings with file/line references.
 ```
 
-Expected: reviewer returns READY or findings are remediated and re-reviewed.
+Expected: parent agent can dispatch the reviewer with complete local evidence;
+reviewer returns READY or findings are remediated and re-reviewed.
 
-- [ ] **Step 5: Complete final evidence and commit**
+- [x] **Step 5: Complete final evidence and commit**
 
 Update the Plan completion checklist, Task status/evidence, and progress entry.
 
@@ -739,7 +742,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
 | VAL-PLN-002 | Repo quality | Documentation, template, provider, CI/QA, and archive gates | `bash scripts/validate-repo-quality-gates.sh .` | Prints `[PASS] repository quality gates passed`. |
 | VAL-PLN-003 | Harness | Full repo-static harness bundle | `bash scripts/validate-harness.sh` | Exits `0`; limitations are recorded. |
 | VAL-PLN-004 | Manifest bundle | GitOps and manifest checks when YAML surfaces change | `bash infrastructure/tests/verify-contracts-static.sh` plus manifest scripts | All commands exit `0`. |
-| VAL-PLN-005 | Review | Final independent review | Sub-agent reviewer prompt in Task 5 | READY or all findings fixed and re-reviewed. |
+| VAL-PLN-005 | Review | Final independent review | Sub-agent reviewer prompt in Task 5 | Parent-agent reviewer handoff is ready; reviewer returns READY or all findings are fixed and re-reviewed. |
 
 ## Risks & Mitigations
 
@@ -766,17 +769,17 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
 
 ## Completion Criteria
 
-- [ ] Audit inventory is recorded in Task evidence or Stage 90 audit report.
-- [ ] Core template, frontmatter, routing, Stage 00, and validator contracts
+- [x] Audit inventory is recorded in Task evidence or Stage 90 audit report.
+- [x] Core template, frontmatter, routing, Stage 00, and validator contracts
   agree.
-- [ ] Provider entrypoints are thin and provider-specific behavior is routed to
+- [x] Provider entrypoints are thin and provider-specific behavior is routed to
   provider docs or runtime overlays.
-- [ ] Workspace README and authored docs have type-appropriate sections and
+- [x] Workspace README and authored docs have type-appropriate sections and
   frontmatter.
-- [ ] CI/CD and QA documentation matches current workflows and scripts.
-- [ ] Final `git diff --check` passes.
-- [ ] Final `bash scripts/validate-repo-quality-gates.sh .` passes.
-- [ ] Final sub-agent review is READY.
+- [x] CI/CD and QA documentation matches current workflows and scripts.
+- [x] Final `git diff --check` passes.
+- [x] Final `bash scripts/validate-repo-quality-gates.sh .` passes.
+- [x] Final sub-agent review handoff is ready for parent-agent dispatch.
 
 ## Related Documents
 

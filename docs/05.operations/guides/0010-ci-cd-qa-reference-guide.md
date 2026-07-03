@@ -3,7 +3,7 @@ title: 'CI/CD & QA 로컬-vs-GitHub 참조 가이드'
 type: sdlc/guide
 status: active
 owner: platform
-updated: 2026-06-04
+updated: 2026-07-04
 ---
 
 # CI/CD & QA 로컬-vs-GitHub 참조 가이드
@@ -31,6 +31,11 @@ updated: 2026-06-04
 커밋 전 로컬에서 실행 가능한 검증 명령을 정의하고, GitHub Actions에서만 수행되는
 CI 게이트와의 경계를 명확히 한다. 이 가이드를 따르면 PR 제출 전 로컬에서
 CI 실패를 사전에 예방할 수 있다.
+
+## Source Basis
+
+- Parent Spec: [Workspace Document Governance Hardening Spec](../../03.specs/013-workspace-document-governance-hardening/spec.md)는 GitHub Actions documentation, supply-chain evidence, CommonMark/YAML formatting, GitOps boundary claims의 official-source basis를 소유한다.
+- 이 가이드의 GitHub Actions CI gate definitions는 `.github/workflows/ci.yml`, `.github/ABOUT.md`, `scripts/README.md`, `tests/README.md`의 tracked repository evidence와 대조해 유지한다.
 
 ## Prerequisites
 
@@ -175,6 +180,7 @@ repo-static 및 CI 검증은 live k3d, ArgoCD, Vault, ESO, deployment readiness 
 ## Related Documents
 
 - **CI 워크플로우**: [`.github/workflows/ci.yml`](../../../.github/workflows/ci.yml)
+- **Parent Spec**: [`../../03.specs/013-workspace-document-governance-hardening/spec.md`](../../03.specs/013-workspace-document-governance-hardening/spec.md)
 - **Scripts 인벤토리**: [`../../../scripts/README.md`](../../../scripts/README.md)
 - **K8s GitOps 정책**: [`../policies/0001-k8s-gitops-operations-policy.md`](../policies/0001-k8s-gitops-operations-policy.md)
 - **HA 플랫폼 가이드**: [`0002-wsl2-k3d-argocd-ha-setup-guide.md`](0002-wsl2-k3d-argocd-ha-setup-guide.md)

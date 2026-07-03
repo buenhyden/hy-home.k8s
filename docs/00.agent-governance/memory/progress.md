@@ -8,6 +8,60 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-04 — Workspace document governance hardening Task 5 final validation
+
+- **Date**: 2026-07-04
+- **Layer**: docs, qa, governance
+- **Status**: complete
+- **Tags**: #docs #governance #validation #ci-qa
+
+#### Progress
+
+- Completed T-005 for the workspace document governance hardening plan and
+  updated the
+  [Plan](../../04.execution/plans/2026-07-03-workspace-document-governance-hardening.md)
+  and
+  [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
+- Hardened `scripts/validate-repo-quality-gates.sh` with deterministic,
+  path-scoped checks for active README deprecated headings, active authored
+  template residue, active template-routing owner drift, shared hook path
+  drift, and CI/QA source-basis documentation.
+- Reconciled `.github/ABOUT.md` and the CI/CD QA guide so external
+  GitHub/tooling claims route back to the parent Spec's official-source basis.
+- Marked the Stage 04 Plan and Task indexes as done for this workstream.
+
+#### Memory
+
+- Active route-selection guidance should point exact target/template decisions
+  to `docs/99.templates/support/template-routing.md`; the Templates README is
+  an inventory summary.
+- Historical evidence paths such as the progress ledger, Stage 90 audit
+  reports, and archive Tombstones should not be used as broad currentness
+  denylist targets.
+- `ci.yml` is the required QA gate. `generate-changelog.yml` is release
+  evidence automation, while `labeler.yml`, `greetings.yml`, and `stale.yml`
+  are maintenance automations.
+
+#### Evidence
+
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash scripts/validate-harness.sh` — PASS.
+- Harness limitations: optional `kube-linter` was not installed and manifest
+  validation used YAML syntax checks; optional `conftest` was not installed
+  and policy validation used the built-in fallback. Both fallback paths passed.
+- RTK limitation repeated: `rtk` is not on PATH; `/home/hy/.local/bin/rtk
+  --version` works, but `/home/hy/.local/bin/rtk gain` cannot initialize its
+  tracking database, so required validation commands were run directly.
+
+#### Handoff
+
+- Task 5 implementation is complete and ready for the parent-dispatched final
+  independent review.
+- No live Kubernetes, Argo CD, Vault, cloud, publishing, provider-runtime,
+  push, merge, or secret-value action was performed.
+
 ### 2026-07-03 — Workspace document governance hardening Task 4 document cleanup
 
 - **Date**: 2026-07-03

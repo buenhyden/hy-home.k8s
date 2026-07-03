@@ -28,6 +28,11 @@ It is a map and routing surface, not the policy source of truth.
 - `labeler.yml`, `greetings.yml`, and `stale.yml` are repository maintenance automations, not QA gates.
 - Clear separation of concerns is maintained: local pre-commit handles fast linting and formatting, local repo-static scripts reproduce CI/debug evidence when needed, and GitHub CI performs the required remote gate verdict. Helm chart rendering remains a manual review helper for platform AppProject allow-list changes.
 
+## Source Basis
+
+- Parent Spec: [Workspace Document Governance Hardening Spec](../docs/03.specs/013-workspace-document-governance-hardening/spec.md) records the official-source basis for GitHub Actions documentation, release evidence, supply-chain concepts, and Markdown/YAML formatting claims.
+- Workflow role claims in this hub are reconciled against the tracked `.github/workflows/*.yml` files; external-tool currentness changes must update the Spec or a Stage 90 reference before this hub changes behavior.
+
 ## Workflow Responsibility Matrix
 
 | Workflow | Role | Trigger / scope | Required evidence | Boundary |

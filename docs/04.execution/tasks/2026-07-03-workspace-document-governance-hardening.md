@@ -1,9 +1,9 @@
 ---
 title: 'Task: Workspace Document Governance Hardening'
 type: sdlc/task
-status: draft
+status: done
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-04
 ---
 
 # Task: Workspace Document Governance Hardening
@@ -41,7 +41,7 @@ and Plan.
 | T-002 | Harden core template, frontmatter, routing, Stage 00, and validator contracts. | doc | Spec / Contracts | Task 2 | Route/profile scans and validator pass | platform | Done |
 | T-003 | Harden provider entrypoint contracts for AGENTS, Claude, Codex, and Gemini surfaces. | doc | Spec / Agent Role & IO Contract | Task 3 | Provider topology scans and validator pass | platform | Done |
 | T-004 | Apply document governance profiles to workspace README and authored documents. | doc | Spec / Guardrails | Task 4 | README/frontmatter/residue scans and validator pass | platform | Done |
-| T-005 | Finalize deterministic validator checks, CI/QA evidence, and final review. | test | Spec / Success Criteria | Task 5 | Full local validation and final sub-agent READY | platform | Open |
+| T-005 | Finalize deterministic validator checks, CI/QA evidence, and final review. | test | Spec / Success Criteria | Task 5 | Full local validation passed; final reviewer handoff ready | platform | Done |
 
 ## Suggested Types
 
@@ -74,7 +74,7 @@ and Plan.
 
 ### Phase 5: Final Validation
 
-- [ ] T-005 Finalize deterministic validator checks, CI/QA evidence, and final
+- [x] T-005 Finalize deterministic validator checks, CI/QA evidence, and final
   review.
 
 ## Verification Summary
@@ -500,6 +500,77 @@ and Plan.
   onboarding route-owner drift.
 - No live Kubernetes, Argo CD, Vault, cloud, publishing, provider-runtime, or
   secret-value checks were run.
+
+### T-005 Validator, CI/QA Evidence, and Final Review
+
+#### Validator Decisions
+
+- Added path-scoped deterministic checks for active README deprecated heading
+  families, including legacy related-reference, folder/file, generic link,
+  deprecation, and legacy headings.
+- Reworked active template-residue scanning to cover root shims, docs,
+  examples, GitOps, infrastructure, policy, scripts, tests, and Traefik
+  surfaces while skipping `docs/99.templates/templates/**`,
+  `docs/90.references/audits/**`, `docs/98.archive/**`, and the progress
+  ledger so historical evidence is not rejected.
+- Added deterministic route-owner checks for active onboarding, provider,
+  hook, workflow, and doc-writer surfaces that must point exact template
+  selection at `docs/99.templates/support/template-routing.md`.
+- Extended shared-hook path coverage to `tests/README.md`, preserving
+  `docs/00.agent-governance/hooks` as the active shell syntax owner.
+- Added CI/QA source-basis checks requiring `.github/ABOUT.md` and the CI/CD
+  QA guide to point external GitHub Actions/tooling claims back to the parent
+  Spec's official-source basis. No `.github/workflows/ci.yml` behavior was
+  changed.
+
+#### CI/QA Reconciliation
+
+- Compared `.github/workflows/ci.yml`, `.github/ABOUT.md`,
+  `docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md`,
+  `scripts/README.md`, and `tests/README.md`.
+- Confirmed `ci.yml` remains the required QA gate for branch policy,
+  pre-commit, repo-quality-static, manifest-static, and `ci-summary`.
+- Confirmed `generate-changelog.yml` is documented as release-evidence
+  automation, while `labeler.yml`, `greetings.yml`, and `stale.yml` are
+  repository maintenance automations, not QA gates.
+- Confirmed local equivalents remain accurate:
+  `repo-quality-static` maps to
+  `bash scripts/validate-repo-quality-gates.sh .`, and `manifest-static` maps
+  to `verify-contracts-static.sh`, GitOps structure, manifest syntax, secret
+  handling, and policy gates.
+- Added source-basis text to `.github/ABOUT.md` and the CI/CD QA guide, and
+  updated the operations guides README index for the guide date.
+
+#### Verification Evidence
+
+- `rtk` limitation repeated: `rtk` is not on PATH; `/home/hy/.local/bin/rtk
+  --version` works, but `/home/hy/.local/bin/rtk gain` cannot initialize its
+  tracking database. Required validation commands were run directly.
+- `git diff --check` — PASS, no output.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS, no output.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS:
+
+  ```text
+  [PASS] repository quality gates passed
+  ```
+
+- `bash scripts/validate-harness.sh` — PASS. The harness executed
+  repository quality gates, GitOps structure, Kubernetes manifest syntax,
+  secret handling, policy gates, static infrastructure contracts, and diff
+  hygiene.
+- Optional tooling limitations during harness execution:
+  `kube-linter` was not installed, so manifest validation used YAML syntax
+  checks only; `conftest` was not installed, so policy validation used the
+  built-in fallback. Both fallback paths passed.
+
+#### Review Boundary
+
+- A callable final-review subagent dispatcher was not used by the Task 5
+  implementer because the Task 5 assignment delegates the independent final
+  sub-agent review to the parent agent after this commit.
+- Handoff evidence is ready for that parent-dispatched reviewer. No live
+  Kubernetes, Argo CD, Vault, cloud, publishing, provider-runtime, push, merge,
+  or secret-value action was performed.
 
 ## Related Documents
 

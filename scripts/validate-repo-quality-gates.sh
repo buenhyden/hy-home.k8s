@@ -130,6 +130,14 @@ def rel(path: pathlib.Path) -> str:
     return str(path.relative_to(root))
 
 
+def is_historical_evidence_path(path: pathlib.Path) -> bool:
+    return (
+        path == root / "docs/00.agent-governance/memory/progress.md"
+        or path.is_relative_to(root / "docs/90.references/audits")
+        or path.is_relative_to(root / "docs/98.archive")
+    )
+
+
 def collect_strings(value) -> list[str]:
     if isinstance(value, str):
         return [value]
@@ -607,6 +615,16 @@ readme_base_sections = {
     "Link Basis": re.compile(r"^##\s+Link Basis\b", re.MULTILINE),
     "Related Documents": re.compile(r"^##\s+Related Documents\b", re.MULTILINE),
 }
+deprecated_readme_headings = [
+    "Related " + "References",
+    "Related " + "Folders",
+    "Related " + "Files",
+    "References",
+    "See " + "Also",
+    "Links",
+    "Deprecated",
+    "Legacy",
+]
 for name in sorted(required_doc_dirs):
     readme = docs_dir / name / "README.md"
     if not readme.exists():
@@ -622,9 +640,9 @@ for readme in sorted(root.rglob("README.md")):
             fail(f"{rel(readme)} missing README base section: {section}")
     if not re.search(r"^##\s+Related Documents\b", text, re.MULTILINE):
         fail(f"{rel(readme)} missing canonical README section: Related Documents")
-    legacy_related_heading = "Related " + "References"
-    if re.search(rf"^##\s+{re.escape(legacy_related_heading)}\b", text, re.MULTILINE):
-        fail(f"{rel(readme)} still uses legacy README section: {legacy_related_heading}")
+    for deprecated_heading in deprecated_readme_headings:
+        if re.search(rf"^##\s+{re.escape(deprecated_heading)}\b", text, re.MULTILINE):
+            fail(f"{rel(readme)} still uses deprecated README section: {deprecated_heading}")
 
 reference_readme_path = root / "docs/90.references/README.md"
 reference_readme_text = read_text(reference_readme_path)
@@ -937,13 +955,36 @@ for path in docs_dir.rglob("*"):
     if re.search(r"(^template\.md$|\.template\.|template\.)", path.name):
         fail(f"template-like docs file must live in docs/99.templates: {rel(path)}")
 
+active_doc_roots = [
+    root / "README.md",
+    root / "AGENTS.md",
+    root / "CLAUDE.md",
+    root / "GEMINI.md",
+    root / "docs",
+    root / "examples",
+    root / "gitops",
+    root / "infrastructure",
+    root / "policy",
+    root / "scripts",
+    root / "tests",
+    root / "traefik",
+]
+active_doc_suffixes = {".md", ".json", ".toml", ".yaml", ".yml", ".sh"}
 authored_template_residue = ("Target: " + "docs/", "Use this " + "template")
-for path in docs_dir.rglob("*.md"):
-    if path.is_relative_to(root / "docs/99.templates"):
+for scan_root in active_doc_roots:
+    if not scan_root.exists():
         continue
-    for line_number, line in enumerate(read_text(path).splitlines(), start=1):
-        if any(marker in line for marker in authored_template_residue):
-            fail(f"authored docs template residue in {rel(path)}:{line_number}")
+    candidates = [scan_root] if scan_root.is_file() else sorted(scan_root.rglob("*"))
+    for path in candidates:
+        if not path.is_file() or path.suffix not in active_doc_suffixes:
+            continue
+        if path.is_relative_to(root / "docs/99.templates/templates"):
+            continue
+        if is_historical_evidence_path(path):
+            continue
+        for line_number, line in enumerate(read_text(path).splitlines(), start=1):
+            if any(marker in line for marker in authored_template_residue):
+                fail(f"active document template residue in {rel(path)}:{line_number}")
 
 documented_stage_routes = [
     ("docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md", "prd.template.md"),
@@ -1538,6 +1579,29 @@ for path in active_policy_template_routes:
         fail(f"{rel(path)} must route operations policy docs to policy.template.md, not {legacy_operation_template}")
     if "policy.template.md" not in text:
         fail(f"{rel(path)} missing operations policy template route: policy.template.md")
+
+active_template_routing_reference_files = [
+    root / "README.md",
+    root / "docs/README.md",
+    root / ".agents/GEMINI.md",
+    root / ".codex/CODEX.md",
+    root / ".agents/hooks.json",
+    root / ".claude/settings.json",
+    root / ".codex/hooks.json",
+    root / ".agents/agents/doc-writer.md",
+    root / ".claude/agents/doc-writer.md",
+    root / ".codex/agents/doc-writer.toml",
+    root / ".agents/output-styles/hy-home-k8s.md",
+    root / ".agents/rules/workspace-rules.md",
+    root / ".agents/skills/docs-stage-conformance/skill.md",
+    root / ".agents/skills/docs-stage-routing/skill.md",
+    root / ".agents/workflows/qa-cicd-workflow.md",
+    root / "docs/00.agent-governance/hooks/k8s-pre-edit.sh",
+]
+for path in active_template_routing_reference_files:
+    text = read_text(path)
+    if "99.templates/support/template-routing.md" not in text:
+        fail(f"{rel(path)} must route exact template selection through docs/99.templates/support/template-routing.md")
 
 legacy_denylist_literals = {
     "operation" + ".template.md": "deprecated operations policy template route",
@@ -2602,6 +2666,9 @@ for phrase in [
     "docs/90.references/data/tech-stack-version-inventory.md",
     "branch protection/rulesets enforce direct-push restrictions",
     "QA gates and release-evidence automation, not deploy CD",
+    "Source Basis",
+    "Parent Spec",
+    "GitHub Actions documentation",
 ]:
     if phrase not in github_about_text:
         fail(f"{rel(github_about_path)} must route to the policy/enforcement SSoT instead of duplicating policy: {phrase}")
@@ -5079,6 +5146,7 @@ active_hook_reference_files = [
     root / "docs/00.agent-governance/providers/claude.md",
     root / "docs/00.agent-governance/scopes/meta.md",
     root / "scripts/README.md",
+    root / "tests/README.md",
     root / "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md",
     root / "docs/00.agent-governance/hooks/post-validate.sh",
     root / "docs/00.agent-governance/hooks/lifecycle-guard.sh",
@@ -5102,6 +5170,14 @@ for hook_path in [
 
 ci_qa_guide_path = root / "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md"
 ci_qa_guide_text = read_text(ci_qa_guide_path)
+for phrase in [
+    "## Source Basis",
+    "Parent Spec",
+    "GitHub Actions documentation",
+    "GitHub Actions CI gate definitions",
+]:
+    if phrase not in ci_qa_guide_text:
+        fail(f"{rel(ci_qa_guide_path)} missing CI/QA source basis phrase: {phrase}")
 stale_shell_job = "`" + "shell" + "-static" + "`"
 if stale_shell_job in ci_qa_guide_text:
     fail(f"{rel(ci_qa_guide_path)} must not list stale shell static job as an active CI job")
