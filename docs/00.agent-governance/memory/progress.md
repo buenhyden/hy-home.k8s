@@ -8,6 +8,47 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-03 — Workspace document governance hardening design
+
+- **Date**: 2026-07-03
+- **Layer**: docs, governance, qa, meta
+- **Status**: in-progress
+- **Tags**: #docs #governance #templates #providers #validation
+
+#### Progress
+
+- Created the Stage 03
+  [workspace document governance hardening spec](../../03.specs/013-workspace-document-governance-hardening/spec.md)
+  for the approved staged scope that combines audit inventory, core template
+  contract hardening, provider entrypoint hardening, workspace-wide application,
+  and final validation.
+- Registered the new Spec in the Stage 03 README index.
+- Preserved the existing docs taxonomy by routing the design into
+  `docs/03.specs/` instead of adding the Superpowers default
+  `docs/superpowers/` top-level folder, which the repository quality gate
+  rejects.
+
+#### Memory
+
+- Workspace-wide document hardening should proceed audit-first, then core
+  contracts, then provider entrypoints, then broad authored-document
+  application.
+- Planned Stage 04 artifacts should use
+  `docs/04.execution/plans/2026-07-03-workspace-document-governance-hardening.md`
+  and
+  `docs/04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md`.
+
+#### Evidence
+
+- `git diff --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Spec self-review placeholder scan — PASS, no incomplete markers.
+
+#### Handoff
+
+- Await user review of the Stage 03 Spec before writing the Stage 04
+  implementation plan.
+
 ### 2026-07-03 — Template governance audit enhancement plan
 
 - **Date**: 2026-07-03

@@ -60,6 +60,8 @@ Spec은 실행 기준을 소유하는 문서다.
 │   └── spec.md
 ├── 012-template-governance-audit-enhancement/
 │   └── spec.md
+├── 013-workspace-document-governance-hardening/
+│   └── spec.md
 └── README.md
 ```
 
@@ -102,6 +104,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./010-workspace-harness-implementation-audit-pack/spec.md`](./010-workspace-harness-implementation-audit-pack/spec.md) | Workspace harness/loop implementation audit pack 명세 | Draft | `docs/90.references/research/` 기준 모델과 repo-backed evidence를 대조해 `docs/90.references/audits/` 아래 4개 구현 현황 감사 보고서와 README를 작성하는 계약을 정의한다. | 2026-07-02 |
 | [`./011-template-contract-governance-migration/spec.md`](./011-template-contract-governance-migration/spec.md) | Template contract와 governance migration 명세 | Draft | `docs/99.templates/`를 template forms와 support contracts로 분리하고, frontmatter schema, validator, hook, governance, authored docs 적용을 4단계 migration으로 정의한다. | 2026-07-03 |
 | [`./012-template-governance-audit-enhancement/spec.md`](./012-template-governance-audit-enhancement/spec.md) | Template governance follow-up audit와 선택 보강 명세 | Draft | 이미 완료된 template contract migration 위에서 `docs/99.templates/**`, support contracts, Stage 00 routing, validator, authored docs 사용 상태를 audit-first로 검증하고 안정적인 보강 범위를 정의한다. | 2026-07-03 |
+| [`./013-workspace-document-governance-hardening/spec.md`](./013-workspace-document-governance-hardening/spec.md) | Workspace document type, provider entrypoint, CI/QA governance hardening 명세 | Draft | template/frontmatter contracts, provider shims, README scope, workspace-wide authored docs, and repo-static validation을 staged governance hardening 흐름으로 정렬한다. | 2026-07-03 |
 
 ## Helper Templates
 
