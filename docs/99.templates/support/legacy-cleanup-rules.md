@@ -11,7 +11,7 @@ updated: 2026-07-03
 ## Overview
 
 This document defines active legacy template names, frontmatter values,
-sections, and route references to remove during the migration. Historical
+sections, and route references rejected by current contracts. Historical
 evidence can remain only when it is clearly dated and not an active contract.
 
 ## Purpose
@@ -21,16 +21,16 @@ roles, or obsolete sections as current rules.
 
 ## Legacy Items to Remove from Active Contracts
 
-| Legacy Item | Replacement | Cleanup Phase |
+| Legacy Item | Replacement | Current Enforcement |
 | --- | --- | --- |
-| Deprecated operations-template route | `policy.template.md` and `type: sdlc/policy` | Phase 3 |
-| Deprecated operations policy frontmatter type | `type: sdlc/policy` | Phase 3 |
-| Deprecated team-owner value | `platform` | Phase 3 |
-| Deprecated README related-document heading | `Related Documents` | Phase 3 |
-| Flat template links in active route contracts | `docs/99.templates/templates/**` links | Phase 2 |
-| Copied `Target:` template comments in authored docs | Topic-specific content with correct `Related Documents` | Phase 4 |
-| Copied `Use this template` instructions in authored docs | Remove from authored docs | Phase 4 |
-| README contract bodies that duplicate support docs | Brief pointers to support docs | Phase 1 and Phase 4 |
+| Deprecated operations-template route | `policy.template.md` and `type: sdlc/policy` | Reject in active contracts |
+| Deprecated operations policy frontmatter type | `type: sdlc/policy` | Reject in active frontmatter |
+| Deprecated team-owner value | `platform` | Reject in active owner fields |
+| Deprecated README related-document heading | `Related Documents` | Reject in active README headings |
+| Flat template links in active route contracts | `docs/99.templates/templates/**` links | Reject in active route contracts |
+| Copied `Target:` template comments in authored docs | Topic-specific content with correct `Related Documents` | Reject in authored documents |
+| Copied `Use this template` instructions in authored docs | Remove from authored docs | Reject in authored documents |
+| README contract bodies that duplicate support docs | Brief pointers to support docs | Keep README entries concise |
 
 ## Active vs Historical References
 
@@ -52,13 +52,13 @@ Historical references include:
 Historical references may remain only when they are explicitly dated and cannot
 be mistaken for current instructions.
 
-## Cleanup Order
+## Current Review Order
 
-1. Create support contract baseline.
-2. Move template files and update route enforcement.
-3. Normalize frontmatter and remove active legacy values.
-4. Apply the contract to authored documents and indexes.
-5. Run final legacy searches and record evidence.
+1. Confirm support contracts describe the current steady-state model.
+2. Confirm template files and route enforcement use categorized paths.
+3. Confirm active frontmatter uses current profile values.
+4. Confirm authored documents and indexes follow the current contracts.
+5. Run legacy searches and record evidence for any accepted historical matches.
 
 ## Validation Commands
 

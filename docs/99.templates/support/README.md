@@ -12,7 +12,7 @@ documents.
 
 The support layer exists so `docs/99.templates/README.md` can remain an
 inventory and entrypoint instead of carrying every contract, governance rule,
-and migration rule inline.
+and legacy cleanup rule inline.
 
 ## Audience
 
@@ -62,7 +62,7 @@ support/
 3. Keep detailed contract text here, not in `docs/99.templates/README.md`.
 4. When a support rule changes route behavior, update Stage 00 governance,
    hook hints, validators, and affected authored docs in the matching
-   implementation phase.
+   implementation unit.
 5. Run `git diff --check` and `bash scripts/validate-repo-quality-gates.sh .`
    after support changes.
 
@@ -82,9 +82,9 @@ This README is located at `docs/99.templates/support/`.
 | [Documentation Contract](./documentation-contract.md) | Separates template forms, support contracts, Stage 00 governance, and authored docs. |
 | [SDLC Governance](./sdlc-governance.md) | Defines SDLC lifecycle template responsibilities. |
 | [Common Documentation Governance](./common-documentation-governance.md) | Defines README, reference, archive, memory, and progress template responsibilities. |
-| [Frontmatter Schema](./frontmatter-schema.md) | Defines current and target frontmatter profile rules. |
+| [Frontmatter Schema](./frontmatter-schema.md) | Defines current frontmatter profile rules. |
 | [Template Routing](./template-routing.md) | Defines the current `templates/**` route map. |
-| [Legacy Cleanup Rules](./legacy-cleanup-rules.md) | Defines active legacy keys, values, sections, and routes to remove. |
+| [Legacy Cleanup Rules](./legacy-cleanup-rules.md) | Defines active legacy keys, values, sections, and route references rejected by current contracts. |
 
 ## Related Documents
 

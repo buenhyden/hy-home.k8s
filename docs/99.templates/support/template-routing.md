@@ -50,7 +50,6 @@ documents.
 | `docs/03.specs/<feature-id>/contracts/service.proto` | `templates/sdlc/specs/service.template.proto` |
 | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `templates/sdlc/execution/plan.template.md` |
 | `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `templates/sdlc/execution/task.template.md` |
-| `docs/04.execution/tasks/YYYY-MM-DD-<harness-task>.md` | `templates/sdlc/specs/harness-task-contract.template.md` |
 | `docs/05.operations/guides/####-<topic>.md` | `templates/sdlc/operations/guide.template.md` |
 | `docs/05.operations/policies/####-<policy-or-standard>.md` | `templates/sdlc/operations/policy.template.md` |
 | `docs/05.operations/runbooks/####-<topic>.md` | `templates/sdlc/operations/runbook.template.md` |
@@ -61,9 +60,17 @@ documents.
 | `docs/00.agent-governance/memory/<topic>.md` | `templates/common/memory.template.md` |
 | `docs/00.agent-governance/memory/progress.md` | `templates/common/progress.template.md` |
 
+## Supplemental Task Starter
+
+`harness-task-contract.template.md` supplements
+`templates/sdlc/execution/task.template.md` for high-risk harness tasks. It
+does not create a second structural route for `docs/04.execution/tasks/*.md`;
+the authored Task record still uses `type: sdlc/task` and the Stage 04 Task
+location.
+
 ## Enforcement Surfaces
 
-Route-breaking changes must update these surfaces in the same logical phase:
+Route-breaking changes must update these surfaces in the same logical unit:
 
 - `docs/99.templates/README.md`
 - This support document.
@@ -83,7 +90,8 @@ rg -n "docs/99\\.templates/[a-z0-9-]+\\.template\\.(md|yaml|graphql|proto)" docs
 find docs/99.templates -maxdepth 5 -type f -print | sort
 ```
 
-The flat-path search should not return active route references after Phase 2.
+The flat-path search must not return active route references in current
+contracts.
 Historical progress entries may require an explicit allow-list.
 
 ## Related Documents

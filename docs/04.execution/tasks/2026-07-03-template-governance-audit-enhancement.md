@@ -44,7 +44,7 @@ approved Stage 03 spec and Stage 04 plan.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-001 | Create Stage 04 plan, task record, README index entries, and progress entry | doc | Contracts / Data Modeling | PLN-001 | `git diff --check`; `bash scripts/validate-repo-quality-gates.sh .` | platform | Done |
 | T-002 | Run baseline route, frontmatter, residue, support, and incident-path scans | eval | Audit Dimensions | PLN-002 | Finding ledger rows FND-001 through FND-004 | platform | Done |
-| T-003 | Remediate current support contract drift and harness task route ambiguity | doc | Contracts / Core Design | PLN-003, PLN-004 | Focused support scan and quality gate | platform | Todo |
+| T-003 | Remediate current support contract drift and harness task route ambiguity | doc | Contracts / Core Design | PLN-003, PLN-004 | Focused support scan and quality gate | platform | Done |
 | T-004 | Add deterministic validator guardrails for stable support drift patterns | guardrail | Evaluation / Verification Commands | PLN-005 | Quality gate PASS and focused negative-risk review | platform | Todo |
 | T-005 | Verify authored documents and template use after remediation | eval | Guardrails / Success Criteria | PLN-006 | Residue, flat-route, incident-route, and frontmatter scans | platform | Todo |
 | T-006 | Record final validation evidence and mark Plan, Task, README indexes, and progress complete | doc | Success Criteria | PLN-006 | Final validation summary and completion commit | platform | Todo |
@@ -60,8 +60,8 @@ approved Stage 03 spec and Stage 04 plan.
 
 | Finding ID | Scope | Evidence Path | Expected Contract | Observed State | Risk | Action | Validation | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| FND-001 | support | `docs/99.templates/support/frontmatter-schema.md`; `docs/99.templates/support/legacy-cleanup-rules.md`; `docs/99.templates/support/template-routing.md`; `docs/99.templates/support/README.md` | Active support docs describe current steady-state contracts | Drift scan found current support text that still uses migration-phase wording or current-vs-target language in active contracts. README harness references were bounded and not part of this finding. | Medium | doc-sync | `rg -n "Phase [1-4]\|during the migration\|after Phase\|current and target" docs/99.templates/support docs/99.templates/README.md docs/00.agent-governance/rules/document-stage-routing.md scripts/validate-repo-quality-gates.sh` | Open |
-| FND-002 | support | `docs/99.templates/README.md`; `docs/99.templates/support/template-routing.md`; `docs/99.templates/support/sdlc-governance.md`; `scripts/validate-repo-quality-gates.sh` | `task.template.md` is the only structural route for `docs/04.execution/tasks/*.md`; the harness task contract is supplemental | README text describes the harness task contract as supplemental, but support route tables still list a separate harness task target pattern. Validator references register the template path and type but do not resolve the route ambiguity. | Medium | doc-sync | `rg -n "YYYY-MM-DD-<harness-task>\|harness-task-contract" docs/99.templates/support docs/99.templates/README.md scripts/validate-repo-quality-gates.sh` | Open |
+| FND-001 | support | `docs/99.templates/support/frontmatter-schema.md`; `docs/99.templates/support/legacy-cleanup-rules.md`; `docs/99.templates/support/template-routing.md`; `docs/99.templates/support/README.md` | Active support docs describe current steady-state contracts | Support docs now describe current frontmatter, cleanup, and route enforcement contracts without completed migration-phase wording. | Medium | doc-sync | `rg -n "Phase [1-4]\|during the migration\|after Phase\|current and target" docs/99.templates/support` | Resolved |
+| FND-002 | support | `docs/99.templates/README.md`; `docs/99.templates/support/template-routing.md`; `docs/99.templates/support/sdlc-governance.md`; `scripts/validate-repo-quality-gates.sh` | `task.template.md` is the only structural route for `docs/04.execution/tasks/*.md`; the harness task contract is supplemental | Support route tables now keep only the Stage 04 Task structural mapping, while supplemental starter notes clarify the harness contract placement. | Medium | doc-sync | `rg -n "YYYY-MM-DD-<harness-task>.*harness-task-contract\|harness-task-contract.*YYYY-MM-DD-<harness-task>" docs/99.templates/support/template-routing.md docs/99.templates/support/sdlc-governance.md` | Resolved |
 | FND-003 | validator | `scripts/validate-repo-quality-gates.sh` | Stable support-contract drift should fail deterministically | The quality gate checks frontmatter, route coverage, authored-doc residue, flat template paths, and harness README registration, but does not fail stale migration-phase wording in active support docs. One Phase phrase in the validator belongs to workspace harness skill validation and should remain accepted context. | Low | validator-fix | `bash scripts/validate-repo-quality-gates.sh .` | Open |
 | FND-004 | authored-doc | `docs/**`; `.codex/**`; `.agents/**`; `AGENTS.md`; `RTK.md` | Authored docs retain no active template residue, flat template routes, or legacy incident path rules | Active authored-doc residue and flat-template route scans returned no matches. The legacy route scan now returns self-referential matches in this Task record, plus the plan evidence command and the Stage 00 prohibited-path contract; no active legacy route contract was found. | Low | no-change | `rg -n -e "Target: docs[/]" -e "Use this te[m]plate" docs --glob "*.md" --glob "!docs/99.templates/**"`<br>`rg -n "docs/99\\.templates/[a-z0-9-]+\\.template\\.(md\|yaml\|graphql\|proto)" docs scripts .codex .agents AGENTS.md RTK.md`<br>`rg -n "docs/10\\.incidents\|Legacy postmortem top-level\|Legacy learning top-level" docs scripts .codex .agents AGENTS.md RTK.md` | Accepted |
 
@@ -77,7 +77,7 @@ approved Stage 03 spec and Stage 04 plan.
 
 ### Phase 3: Targeted Remediation
 
-- [ ] T-003 Remediate support contract drift.
+- [x] T-003 Remediate support contract drift.
 - [ ] T-004 Add validator guardrails.
 
 ### Phase 4: Verification And Handoff
@@ -115,8 +115,16 @@ approved Stage 03 spec and Stage 04 plan.
     self-referential matches in this Task record, plus the plan evidence
     command and the Stage 00 prohibited-path contract; no active legacy route
     contract was found.
+  - T-003 remediation evidence: support drift scan returned no matches for
+    stale phase wording or current-vs-target wording in active support docs.
+  - T-003 remediation evidence: harness supplemental starter scan returned no
+    lines that combine the harness starter template with the old placeholder
+    task pattern in the support contracts.
+  - T-003 remediation evidence: `git diff --check` passed.
+  - T-003 remediation evidence:
+    `bash scripts/validate-repo-quality-gates.sh .` passed.
   - Remediation and final evidence will be appended to this section during
-    T-003 through T-006.
+    T-004 through T-006.
 
 ## Related Documents
 

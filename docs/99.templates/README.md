@@ -180,12 +180,11 @@ governance, routing, frontmatter schema, legacy cleanup rule을 소유한다.
 
 ## Harness Task Contract Template
 
-`harness-task-contract.template.md` is a specialized starter for
-`docs/04.execution/tasks/YYYY-MM-DD-<harness-task>.md` when a task changes
-harness surfaces such as governance, GitOps, infrastructure, validation
-scripts, CI, secrets, or operations. It supplements `task.template.md` with
-approval boundaries and static-vs-live evidence fields; it does not create a
-new document stage or a second task location.
+`harness-task-contract.template.md` is a specialized starter that supplements
+`templates/sdlc/execution/task.template.md` for high-risk harness tasks that
+change surfaces such as governance, GitOps, infrastructure, validation scripts,
+CI, secrets, or operations. It adds approval boundaries and static-vs-live evidence fields; it does not create a second structural route for
+`docs/04.execution/tasks/*.md`.
 
 ## Contract Template Placement
 

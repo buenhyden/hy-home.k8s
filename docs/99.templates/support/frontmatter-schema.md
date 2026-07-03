@@ -11,8 +11,8 @@ updated: 2026-07-03
 ## Overview
 
 This document defines the canonical frontmatter schema for Markdown template
-families and authored documents. Phase 3 applies this schema to template files,
-authored documents, and repository validation.
+families and authored documents. This schema applies to Markdown template
+files, authored documents, and repository validation.
 
 ## Purpose
 

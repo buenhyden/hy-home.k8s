@@ -37,12 +37,19 @@ one target path pattern, one template form, and one validation route.
 | Protobuf contract | `docs/03.specs/<feature-id>/contracts/service.proto` | `../templates/sdlc/specs/service.template.proto` |
 | Execution plan | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `../templates/sdlc/execution/plan.template.md` |
 | Execution task | `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `../templates/sdlc/execution/task.template.md` |
-| Harness task contract | `docs/04.execution/tasks/YYYY-MM-DD-<harness-task>.md` | `../templates/sdlc/specs/harness-task-contract.template.md` |
 | Guide | `docs/05.operations/guides/####-<topic>.md` | `../templates/sdlc/operations/guide.template.md` |
 | Operations policy | `docs/05.operations/policies/####-<policy-or-standard>.md` | `../templates/sdlc/operations/policy.template.md` |
 | Runbook | `docs/05.operations/runbooks/####-<topic>.md` | `../templates/sdlc/operations/runbook.template.md` |
 | Incident record | `docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md` | `../templates/sdlc/operations/incident.template.md` |
 | Postmortem | `docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md` | `../templates/sdlc/operations/postmortem.template.md` |
+
+## Supplemental Task Starter
+
+`harness-task-contract.template.md` supplements
+`templates/sdlc/execution/task.template.md` for high-risk harness tasks. It
+does not create a second structural route for `docs/04.execution/tasks/*.md`;
+the authored Task record still uses `type: sdlc/task` and the Stage 04 Task
+location.
 
 ## Governance Rules
 
