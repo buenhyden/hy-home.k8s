@@ -39,7 +39,7 @@ traceable to the parent Spec and Plan.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-001 | Audit and inventory document contract drift. | doc | VAL-SPC-001, VAL-SPC-006 | PLN-001 | Audit report, drift scans, repo gate | platform | Done |
 | T-002 | Normalize support contracts and template forms. | doc | Contracts, Core Design | PLN-002 | Route/profile parity scans, repo gate | platform | Done |
-| T-003 | Apply active SDLC document profiles. | doc | VAL-SPC-002 | PLN-003 | Active docs scans, README checks, repo gate | platform | Todo |
+| T-003 | Apply active SDLC document profiles. | doc | VAL-SPC-002 | PLN-003 | Active docs scans, README checks, repo gate | platform | Done |
 | T-004 | Normalize historical evidence contracts. | doc | VAL-SPC-003 | PLN-004 | Historical evidence scans, archive/progress checks, repo gate | platform | Todo |
 | T-005 | Align references, CI/QA, and formatting contracts. | doc | VAL-SPC-004, VAL-SPC-005 | PLN-005 | Official source review, workflow/doc comparison, repo gate | platform | Todo |
 | T-006 | Reconcile final validator and governance gates. | test | VAL-SPC-006, VAL-SPC-007 | PLN-006 | Full validation bundle and final review | platform | Todo |
@@ -63,7 +63,7 @@ traceable to the parent Spec and Plan.
 
 ### Phase 3: Active Documents
 
-- [ ] T-003 Apply active SDLC document profiles.
+- [x] T-003 Apply active SDLC document profiles.
 
 ### Phase 4: Historical Evidence
 
@@ -167,7 +167,32 @@ Validation:
 
 ### T-003 Apply Active SDLC Document Profiles
 
-Status: Todo.
+Status: Done.
+
+Evidence:
+
+- Updated the parent spec so active repository-control Markdown under
+  `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
+  `.github/SECURITY.md` is modeled as a frontmatter-free GitHub-native control
+  surface instead of a missing authored-document profile.
+- Added `repository-control` evidence and `control` validator scope to the
+  document contract profile model used by the spec.
+- Updated the Operations README and Incidents README so active authoring
+  guidance requires incident records to use
+  `docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md` and
+  postmortems to use `postmortem.md` in the same incident folder.
+- Confirmed the repository has no tracked incident record files that need live
+  path migration in this task.
+- Rechecked the official GitHub pull request template and security policy docs
+  while preserving `.github` control Markdown as frontmatter-free.
+
+Validation:
+
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Focused active-rule scan for GitHub-native control Markdown,
+  `repository-control`, and incident folder/file equality terms — PASS.
 
 ### T-004 Normalize Historical Evidence Contracts
 

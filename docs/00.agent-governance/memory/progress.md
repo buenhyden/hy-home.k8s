@@ -6745,3 +6745,46 @@ section separating static from live evidence.
 
 - Continue with T-003: apply active SDLC document profiles and section
   contracts using the normalized support/template baseline.
+
+## 2026-07-04 — Workspace Document Contract Normalization T-003 Active Profiles
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: docs, sdlc, operations, repository-control
+- **Status**: completed
+- **Tags**: #docs #sdlc #operations #github #validation
+
+### Progress
+
+- Updated the active spec contract to classify `.github/ABOUT.md`,
+  `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` as
+  frontmatter-free GitHub-native repository-control Markdown.
+- Added `repository-control` and `control` to the spec's document contract
+  profile model so active control files have an explicit contract category.
+- Updated Operations and Incidents READMEs to require incident folder/file ID
+  equality:
+  `docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md`.
+
+### Memory
+
+- GitHub-native control Markdown remains a control surface, not an authored
+  frontmatter document. Durable policy still belongs in Stage 00 governance,
+  Stage 05 operations, scripts, or workflow owners.
+- No tracked incident record files exist at this point, so T-003 updated
+  active authoring rules rather than migrating live incident documents.
+
+### Evidence
+
+- `git diff --check` passed before the T-003 commit.
+- `bash -n scripts/validate-repo-quality-gates.sh` passed before the T-003
+  commit.
+- `bash scripts/validate-repo-quality-gates.sh .` passed before the T-003
+  commit.
+- Official sources rechecked: GitHub pull request template documentation and
+  GitHub security policy documentation.
+
+### Handoff
+
+- Continue with T-004: normalize historical evidence contracts while keeping
+  old facts distinguishable from current operating guidance.

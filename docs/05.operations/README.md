@@ -90,7 +90,7 @@ high-risk command 예시를 스캔해 boundary marker가 없는 경우 실패한
 ## How to Work in This Area
 
 1. 안정 상태 설명은 `guides/`, 준수해야 할 경계는 `policies/`, 실행 절차는 `runbooks/`, 사고 기록은 `incidents/`로 분리한다.
-2. 사고가 없으면 `incidents/`는 README만 유지하고, 첫 사고 기록이 생길 때만 `incidents/YYYY/INC-###-<title>/` 폴더를 만들며 postmortem은 같은 폴더의 `postmortem.md`로 추가한다.
+2. 사고가 없으면 `incidents/`는 README만 유지하고, 첫 사고 기록이 생길 때만 `incidents/YYYY/INC-###-<title>/` 폴더를 만든다. Incident 파일명은 폴더명과 같은 `INC-###-<title>.md`이고, postmortem은 같은 폴더의 `postmortem.md`로 추가한다.
 3. live cluster mutation 예시는 승인 조건, bootstrap-only 예외, break-glass 문맥 없이 추가하지 않는다.
 4. 운영 문서가 현재 `bootstrap-local.sh`, `gitops/platform/external-services`, 정적 검증 계약과 충돌하지 않게 유지한다.
 5. 현재 구현과 충돌하거나 missing GitOps desired state를 active 운영 계약처럼 설명하는 old guide/runbook은 `../98.archive/README.md`에만 인덱싱되는 Tombstone으로 이동한다.

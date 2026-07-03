@@ -27,7 +27,7 @@ This spec owns repo-static documentation, template, governance, and validator
 normalization for these surfaces:
 
 - `_workspace`
-- `.github`
+- `.github` GitHub-native control Markdown and workflows
 - `docs/01.requirements`
 - `docs/02.architecture`
 - `docs/03.specs`
@@ -67,6 +67,10 @@ taxonomy outside the existing Stage 00 to Stage 99 model.
     [Template Routing Contract](../../99.templates/support/template-routing.md).
   - README files remain frontmatter-free unless a future support contract
     explicitly changes that rule.
+  - GitHub-native control Markdown under `.github/ABOUT.md`,
+    `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` remains
+    frontmatter-free and mirrors canonical owners instead of becoming authored
+    stage documentation.
   - Native machine contracts remain native: OpenAPI as YAML, GraphQL as SDL,
     and protobuf as `.proto`.
 - **Data / Interface Contract**:
@@ -90,7 +94,8 @@ taxonomy outside the existing Stage 00 to Stage 99 model.
   - Active SDLC documents hold current repository facts and delivery evidence.
   - Historical documents hold preserved past evidence in normalized sections.
   - `scripts/validate-repo-quality-gates.sh` enforces deterministic rules.
-  - `.github` and CI/QA docs describe actual automation behavior.
+  - `.github` and CI/QA docs describe actual automation behavior without
+    duplicating template contracts.
 - **Key Dependencies**:
   - Existing repository quality gates and harness validation.
   - Existing Stage 00 governance routing.
@@ -133,8 +138,8 @@ interface DocumentContractProfile {
   frontmatterType: string | null;
   requiredKeys: string[];
   requiredSections: string[];
-  evidenceClass: 'current' | 'historical' | 'superseded' | 'generated' | 'native-machine-contract';
-  validatorScope: 'active' | 'historical' | 'generated' | 'native';
+  evidenceClass: 'current' | 'historical' | 'superseded' | 'generated' | 'native-machine-contract' | 'repository-control';
+  validatorScope: 'active' | 'historical' | 'generated' | 'native' | 'control';
 }
 
 interface NormalizationFinding {
@@ -208,6 +213,8 @@ OpenAPI, GraphQL, and Protocol Buffers specifications.
   - Use official or primary sources for external claims.
   - Keep SDLC documents under `docs`.
   - Use logical-unit commits.
+  - Keep GitHub-native control Markdown frontmatter-free and route durable
+    policy to canonical owners.
   - Preserve user or prior-agent changes unless this spec explicitly requires
     normalization of the same surface.
 - **Versioning Rule**:
@@ -280,6 +287,9 @@ OpenAPI, GraphQL, and Protocol Buffers specifications.
 - **Progress ledger contains legacy strings**:
   - Preserve chronological evidence, but ensure current progress entries and
     validator rules distinguish old evidence from current instructions.
+- **GitHub-native control Markdown looks like a document**:
+  - Keep it frontmatter-free, validate it as a control surface, and route
+    durable policy to Stage 00, Stage 05, scripts, or workflow owners.
 - **Template support and validator disagree**:
   - Fix the support contract first, then template forms, then authored docs,
     then validator mappings.
