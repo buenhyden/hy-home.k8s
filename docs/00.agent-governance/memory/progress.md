@@ -6646,3 +6646,50 @@ section separating static from live evidence.
 
 - Run plan self-review, repository validation, and commit the Stage 04 planning
   artifacts. After user approval, execute with subagent-driven development.
+
+## 2026-07-04 — Workspace Document Contract Normalization T-001 Audit
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: docs, governance, templates, references
+- **Status**: in-progress
+- **Tags**: #docs #audit #frontmatter #templates #validation
+
+### Progress
+
+- Added the dated audit report
+  `docs/90.references/audits/2026-07-04-workspace-document-contract-normalization-audit.md`.
+- Registered the report in `docs/90.references/audits/README.md`.
+- Updated the Stage 04 task record to mark T-001 complete with command
+  evidence.
+- Captured the focused docs inventory: 206 Markdown files, 181 frontmatter
+  documents, 23 README files, 2 intentional common-template exceptions, and
+  32 archive Tombstones.
+
+### Memory
+
+- The current repo quality gate is green; remaining work is contract
+  normalization and evidence interpretation, not an active validator-blocking
+  repair.
+- `.github` Markdown files are active repository surfaces but are not
+  represented in the current frontmatter schema. T-002/T-005 should make that
+  exception explicit or add a dedicated route.
+- Second-pass review added three T-005/T-004 candidates: `scripts/README.md`
+  stale script-count wording, coverage wording boundary across CI/QA guide,
+  tests README, and PR template, and prior audit findings that now need
+  resolved historical framing.
+
+### Evidence
+
+- `git diff --check` passed before the T-001 commit.
+- `bash -n scripts/validate-repo-quality-gates.sh` passed before the T-001
+  commit.
+- `bash scripts/validate-repo-quality-gates.sh .` passed before the T-001
+  commit.
+
+### Handoff
+
+- Continue with T-002: normalize template support contracts, template forms,
+  route/profile parity, and validator surfaces before broad authored-document
+  edits.

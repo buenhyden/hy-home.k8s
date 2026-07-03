@@ -37,7 +37,7 @@ traceable to the parent Spec and Plan.
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-001 | Audit and inventory document contract drift. | doc | VAL-SPC-001, VAL-SPC-006 | PLN-001 | Audit report, drift scans, repo gate | platform | Todo |
+| T-001 | Audit and inventory document contract drift. | doc | VAL-SPC-001, VAL-SPC-006 | PLN-001 | Audit report, drift scans, repo gate | platform | Done |
 | T-002 | Normalize support contracts and template forms. | doc | Contracts, Core Design | PLN-002 | Route/profile parity scans, repo gate | platform | Todo |
 | T-003 | Apply active SDLC document profiles. | doc | VAL-SPC-002 | PLN-003 | Active docs scans, README checks, repo gate | platform | Todo |
 | T-004 | Normalize historical evidence contracts. | doc | VAL-SPC-003 | PLN-004 | Historical evidence scans, archive/progress checks, repo gate | platform | Todo |
@@ -55,7 +55,7 @@ traceable to the parent Spec and Plan.
 
 ### Phase 1: Audit
 
-- [ ] T-001 Audit and inventory document contract drift.
+- [x] T-001 Audit and inventory document contract drift.
 
 ### Phase 2: Contract Sources
 
@@ -99,7 +99,30 @@ traceable to the parent Spec and Plan.
 
 ### T-001 Audit and Inventory Document Contract Drift
 
-Status: Todo.
+Status: Done.
+
+Evidence:
+
+- Added the dated audit report:
+  [Workspace Document Contract Normalization Audit](../../90.references/audits/2026-07-04-workspace-document-contract-normalization-audit.md).
+- Updated the audit report index in
+  [Audit References README](../../90.references/audits/README.md).
+- Focused docs Markdown inventory counted 206 Markdown files, 181 authored
+  frontmatter documents, 23 README files, 2 intentional common-template
+  frontmatter-free exceptions, and 32 archive Tombstones.
+- `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
+  `.github/SECURITY.md` were recorded as active frontmatter-free repository
+  surfaces that need explicit contract treatment in T-002 or T-005.
+- Read-only subagent cross-check found no validator-blocking drift and added
+  three follow-up routes: scripts README count drift, coverage wording
+  boundary drift, and resolved prior-audit findings that need historical
+  framing.
+
+Validation:
+
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
 
 ### T-002 Normalize Support Contracts and Template Forms
 
