@@ -78,6 +78,9 @@ Official basis:
   to individual Tombstones.
 - Tombstones preserve original path, archived date, reason, replacement, and
   evidence. They must not preserve the old full body.
+- Tombstones and archive index rows are historical evidence, not current
+  operating guidance; the current replacement owns active requirements,
+  implementation contracts, and procedures.
 
 ## Memory and Progress Governance
 

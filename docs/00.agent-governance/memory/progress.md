@@ -6788,3 +6788,54 @@ section separating static from live evidence.
 
 - Continue with T-004: normalize historical evidence contracts while keeping
   old facts distinguishable from current operating guidance.
+
+## 2026-07-04 — Workspace Document Contract Normalization T-004 Historical Evidence
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: docs, audits, archive, template-support
+- **Status**: completed
+- **Tags**: #docs #audits #archive #historical-evidence #validation
+
+### Progress
+
+- Added a resolution overlay to the 2026-07-03 document governance hardening
+  audit so its dated drift findings remain baseline evidence rather than
+  current drift claims.
+- Updated the 2026-07-04 normalization audit with a resolution overlay that
+  separates completed T-002/T-003/T-004 items from pending T-005/T-006 work.
+- Marked the 2026-07-03 audit index entry as a resolved snapshot.
+- Clarified archive Tombstone interpretation in the archive README and common
+  documentation governance: Tombstones and archive index rows are historical
+  evidence; current replacements own active contracts.
+
+### Memory
+
+- Historical audit findings should be preserved with resolution overlays
+  instead of deleted when later repository state closes the finding.
+- Active scans for deprecated README related-heading drift and CI/QA
+  provider-local hook-path drift are clean; remaining hook-path mentions are
+  historical progress/audit evidence.
+- T-005 remains responsible for scripts inventory count, coverage wording, and
+  official-source-backed CI/CD, QA, and formatting alignment.
+
+### Evidence
+
+- `git diff --check` passed before the T-004 ledger update.
+- `bash -n scripts/validate-repo-quality-gates.sh` passed before the T-004
+  ledger update.
+- `bash scripts/validate-repo-quality-gates.sh .` passed before the T-004
+  ledger update.
+- Deprecated README related-heading scan across active surfaces returned no
+  matches.
+- Active CI/QA hook-path drift scan returned no matches for `tests/README.md`,
+  the CI/CD QA guide, and `scripts/README.md`.
+- Focused README metadata scan returned no matches.
+- Incident inventory under `docs/05.operations/incidents` found no tracked
+  incident records requiring migration.
+
+### Handoff
+
+- Continue with T-005: align scripts inventory count, CI/CD, QA, coverage, and
+  formatting wording against repository evidence and official sources.

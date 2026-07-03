@@ -142,6 +142,21 @@ active policy and dated evidence.
   now read like stale current-state claims. T-004 should preserve the dates and
   add resolved or historical framing instead of deleting evidence.
 
+## Resolution Overlay
+
+This audit is the active tracking reference for the 2026-07-04 normalization
+stream. Completed items below are current as of their task commits; unresolved
+items remain routed to T-005 or T-006.
+
+| Area | Current State | Evidence |
+| --- | --- | --- |
+| GitHub-native control Markdown | Resolved in T-002 and T-003. `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` are explicit frontmatter-free repository-control surfaces. | Template support contracts, Stage 00 routing rules, validator behavior, and the active spec were updated. |
+| Incident route contract | Resolved in T-002 and T-003. Incident records must use folder/file ID equality and postmortems remain `postmortem.md` in the same folder. | Template support, hook route notes, Operations README, and Incidents README were aligned. |
+| Prior audit historical evidence | Resolved in T-004. The 2026-07-03 audit now has a resolution overlay and resolved checklist statuses while preserving dated baseline facts. | `2026-07-03-workspace-document-governance-hardening-audit.md` and this checklist were updated. |
+| Archive evidence contract | Resolved in T-004. Archive entries remain Tombstones and must not be rehydrated into current guidance. | `docs/98.archive/README.md` now states the historical evidence contract explicitly. |
+| Scripts inventory and coverage wording | Pending T-005. | Requires the reference/CI-QA/formatting alignment pass. |
+| Final validation parity | Pending T-006. | Requires the final full validation bundle and review. |
+
 ## Implementation Checklist
 
 | Item | Owner Surface | Action | Status |
@@ -150,9 +165,9 @@ active policy and dated evidence.
 | Record validator status. | Audit report and task evidence | Store `git diff --check` and repository quality gate outcome. | Done |
 | Register audit report. | `docs/90.references/audits/README.md` | Add the dated report to the audit index and structure map. | Done |
 | Update Stage 04 task evidence. | Stage 04 task record | Mark T-001 done and record command evidence. | Done |
-| Decide `.github` Markdown contract. | Template support and CI/QA docs | Either document as common README-like exceptions or add a dedicated profile/route. | Pending T-002/T-005 |
-| Normalize historical Stage 04 evidence framing. | Stage 04 and archive docs | Preserve facts while marking superseded or historical execution notes. | Pending T-003/T-004 |
-| Reconcile prior audit resolved findings. | Stage 90 audit references | Preserve dated facts while preventing old pending findings from reading as current drift. | Pending T-004 |
+| Decide `.github` Markdown contract. | Template support and CI/QA docs | Either document as common README-like exceptions or add a dedicated profile/route. | Done in T-002/T-003; T-005 only owns broader CI/QA wording. |
+| Normalize historical Stage 04 evidence framing. | Stage 04 and archive docs | Preserve facts while marking superseded or historical execution notes. | Done in T-004. |
+| Reconcile prior audit resolved findings. | Stage 90 audit references | Preserve dated facts while preventing old pending findings from reading as current drift. | Done in T-004. |
 | Align scripts inventory count. | `scripts/README.md` | Reconcile shell-script count with the current inventory and deletion precheck wording. | Pending T-005 |
 | Align coverage wording. | CI/QA guide, tests README, PR template | Use the same future app-code coverage and infrastructure validation-matrix boundary. | Pending T-005 |
 | Reconcile CI/QA official-source basis. | `.github`, CI/QA guide, scripts/tests README, references | Compare repository claims to official GitHub Actions, Markdown, YAML, and spec-driven sources. | Pending T-005 |

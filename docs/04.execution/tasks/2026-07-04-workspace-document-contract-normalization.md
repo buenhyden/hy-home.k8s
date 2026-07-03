@@ -40,7 +40,7 @@ traceable to the parent Spec and Plan.
 | T-001 | Audit and inventory document contract drift. | doc | VAL-SPC-001, VAL-SPC-006 | PLN-001 | Audit report, drift scans, repo gate | platform | Done |
 | T-002 | Normalize support contracts and template forms. | doc | Contracts, Core Design | PLN-002 | Route/profile parity scans, repo gate | platform | Done |
 | T-003 | Apply active SDLC document profiles. | doc | VAL-SPC-002 | PLN-003 | Active docs scans, README checks, repo gate | platform | Done |
-| T-004 | Normalize historical evidence contracts. | doc | VAL-SPC-003 | PLN-004 | Historical evidence scans, archive/progress checks, repo gate | platform | Todo |
+| T-004 | Normalize historical evidence contracts. | doc | VAL-SPC-003 | PLN-004 | Historical evidence scans, archive/progress checks, repo gate | platform | Done |
 | T-005 | Align references, CI/QA, and formatting contracts. | doc | VAL-SPC-004, VAL-SPC-005 | PLN-005 | Official source review, workflow/doc comparison, repo gate | platform | Todo |
 | T-006 | Reconcile final validator and governance gates. | test | VAL-SPC-006, VAL-SPC-007 | PLN-006 | Full validation bundle and final review | platform | Todo |
 
@@ -67,7 +67,7 @@ traceable to the parent Spec and Plan.
 
 ### Phase 4: Historical Evidence
 
-- [ ] T-004 Normalize historical evidence contracts.
+- [x] T-004 Normalize historical evidence contracts.
 
 ### Phase 5: References and CI/QA
 
@@ -196,7 +196,38 @@ Validation:
 
 ### T-004 Normalize Historical Evidence Contracts
 
-Status: Todo.
+Status: Done.
+
+Evidence:
+
+- Added a resolution overlay to the 2026-07-03 workspace document governance
+  hardening audit so dated README heading, README delimiter, CI/QA hook-path,
+  and provider traceability findings remain preserved as baseline evidence
+  without reading as current drift.
+- Updated the 2026-07-03 audit checklist statuses from pending remediation
+  labels to resolved historical-item labels where current scans and later task
+  evidence show the drift is closed.
+- Updated the audit index to mark the 2026-07-03 audit as a resolved snapshot.
+- Added a resolution overlay to the 2026-07-04 normalization audit and marked
+  completed T-002/T-003/T-004 checklist items done while keeping T-005 and
+  T-006 pending.
+- Clarified archive Tombstone interpretation in the archive README and common
+  documentation governance: Tombstones and archive index rows are historical
+  evidence, while current replacements own active contracts.
+
+Validation:
+
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Deprecated README related-heading scan across active surfaces — PASS with no
+  matches.
+- Active CI/QA hook-path drift scan over `tests/README.md`, the CI/CD QA
+  guide, and `scripts/README.md` — PASS with no matches.
+- Focused README metadata scan over representative README files — PASS with no
+  matches.
+- Incident record inventory under `docs/05.operations/incidents` — no tracked
+  incident records requiring migration.
 
 ### T-005 Align References, CI/QA, and Formatting Contracts
 

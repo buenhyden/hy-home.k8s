@@ -9,6 +9,8 @@
 
 `98.archive/`는 active 문서 stage에서 제거된 old 문서의 Tombstone만 보관한다.
 원문 본문은 보존하지 않고, 원래 경로, archive 사유, 현재 대체 문서, 구현 증거만 남긴다.
+Archive Reason과 Tombstone 링크는 historical evidence이며, 현재 운영 계약은
+Current Replacement 문서가 소유한다.
 `docs/98.archive/05.operations/guides`, `docs/98.archive/05.operations/policies`,
 `docs/98.archive/05.operations/runbooks`, `docs/98.archive/05.operations/incidents`
 mirror는 operations bucket 구조를 그대로 보존한다.
@@ -29,6 +31,7 @@ mirror는 operations bucket 구조를 그대로 보존한다.
 - `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`에서 제거된 old 문서 Tombstone
 - 원래 docs 하위 경로를 보존하는 mirror layout
 - active 문서가 archive를 직접 참조하지 않도록 하는 Index Only 연결
+- Tombstone을 현재 desired-state 입력이 아닌 historical evidence로 해석하는 경계
 
 ### Out of Scope
 
