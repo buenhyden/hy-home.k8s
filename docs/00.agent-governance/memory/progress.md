@@ -27,27 +27,33 @@ inventory stays in `scripts/README.md`.
   `docs/03.specs/` instead of adding the Superpowers default
   `docs/superpowers/` top-level folder, which the repository quality gate
   rejects.
+- Created the Stage 04
+  [implementation plan](../../04.execution/plans/2026-07-03-workspace-document-governance-hardening.md)
+  and
+  [task record](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md)
+  after user approval of the Stage 03 Spec.
+- Registered the new Plan and Task in the Stage 04 README indexes.
 
 #### Memory
 
 - Workspace-wide document hardening should proceed audit-first, then core
   contracts, then provider entrypoints, then broad authored-document
   application.
-- Planned Stage 04 artifacts should use
-  `docs/04.execution/plans/2026-07-03-workspace-document-governance-hardening.md`
-  and
-  `docs/04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md`.
+- The Stage 04 Plan decomposes execution into audit inventory, core contract
+  hardening, provider entrypoint hardening, workspace application, and final
+  validation.
 
 #### Evidence
 
 - `git diff --check` — PASS.
 - `bash scripts/validate-repo-quality-gates.sh .` — PASS.
 - Spec self-review placeholder scan — PASS, no incomplete markers.
+- Plan self-review links the approved Spec to executable Stage 04 Plan/Task
+  records.
 
 #### Handoff
 
-- Await user review of the Stage 03 Spec before writing the Stage 04
-  implementation plan.
+- Await user choice of subagent-driven or inline plan execution.
 
 ### 2026-07-03 — Template governance audit enhancement plan
 

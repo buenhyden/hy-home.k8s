@@ -396,7 +396,5 @@ freshness when claims depend on external tooling behavior:
 - [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
 - [Scripts README](../../../scripts/README.md)
 - [GitHub Configuration Hub](../../../.github/ABOUT.md)
-- Planned Stage 04 Plan:
-  `../../04.execution/plans/2026-07-03-workspace-document-governance-hardening.md`
-- Planned Stage 04 Task:
-  `../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md`
+- [Plan](../../04.execution/plans/2026-07-03-workspace-document-governance-hardening.md)
+- [Task](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md)
