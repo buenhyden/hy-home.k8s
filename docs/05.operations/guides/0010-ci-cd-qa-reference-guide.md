@@ -35,6 +35,7 @@ CI 실패를 사전에 예방할 수 있다.
 ## Source Basis
 
 - Parent Spec: [Workspace Document Governance Hardening Spec](../../03.specs/013-workspace-document-governance-hardening/spec.md)는 GitHub Actions documentation, supply-chain evidence, CommonMark/YAML formatting, GitOps boundary claims의 official-source basis를 소유한다.
+- Reference: [Spec SDLC CI QA Formatting Research](../../90.references/research/spec-sdlc-ci-qa-formatting.md)는 GitHub Actions workflow syntax/events, CommonMark, YAML 1.2.2, and pre-commit sources를 dated snapshot으로 유지한다.
 - 이 가이드의 GitHub Actions CI gate definitions는 `.github/workflows/ci.yml`, `.github/ABOUT.md`, `scripts/README.md`, `tests/README.md`의 tracked repository evidence와 대조해 유지한다.
 
 ## Prerequisites
@@ -165,7 +166,7 @@ pre-commit run --all-files
 ```
 
 로컬에서는 `pre-commit` 통과를 빠른 PR 생성 기준으로 삼을 수 있으며, 통합 및 정책 게이트 검증은 GitHub CI가 최종 판정한다. 다만 scripts, GitOps, QA/CI 문서, policy bundle 변경은 위의 `repo-quality-static`/`manifest-static` 재현 명령을 로컬에서도 실행해 evidence를 남긴다.
-또한 신규 애플리케이션 코드는 90% coverage 유지를, 인프라 변경 시에는 validation-matrix 커버리지를 준수해야 한다.
+신규 testable application/source code가 추가되는 변경은 해당 application test surface에서 90% coverage target을 검토하고 유지한다. Bash/YAML/Markdown infrastructure 변경은 application coverage claim 대신 validation-matrix evidence를 남긴다.
 repo-static 및 CI 검증은 live k3d, ArgoCD, Vault, ESO, deployment readiness 증거가 아니다. live runtime 증거는 별도 승인된 read-only 검증 또는 operator-owned runbook 결과로만 기록한다.
 
 ## Common Pitfalls

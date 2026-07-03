@@ -154,7 +154,7 @@ items remain routed to T-005 or T-006.
 | Incident route contract | Resolved in T-002 and T-003. Incident records must use folder/file ID equality and postmortems remain `postmortem.md` in the same folder. | Template support, hook route notes, Operations README, and Incidents README were aligned. |
 | Prior audit historical evidence | Resolved in T-004. The 2026-07-03 audit now has a resolution overlay and resolved checklist statuses while preserving dated baseline facts. | `2026-07-03-workspace-document-governance-hardening-audit.md` and this checklist were updated. |
 | Archive evidence contract | Resolved in T-004. Archive entries remain Tombstones and must not be rehydrated into current guidance. | `docs/98.archive/README.md` now states the historical evidence contract explicitly. |
-| Scripts inventory and coverage wording | Pending T-005. | Requires the reference/CI-QA/formatting alignment pass. |
+| Scripts inventory and coverage wording | Resolved in T-005. | `scripts/README.md`, the CI/CD QA guide, `tests/README.md`, and the PR template now use the same inventory and coverage/validation-matrix boundary. |
 | Final validation parity | Pending T-006. | Requires the final full validation bundle and review. |
 
 ## Implementation Checklist
@@ -168,9 +168,9 @@ items remain routed to T-005 or T-006.
 | Decide `.github` Markdown contract. | Template support and CI/QA docs | Either document as common README-like exceptions or add a dedicated profile/route. | Done in T-002/T-003; T-005 only owns broader CI/QA wording. |
 | Normalize historical Stage 04 evidence framing. | Stage 04 and archive docs | Preserve facts while marking superseded or historical execution notes. | Done in T-004. |
 | Reconcile prior audit resolved findings. | Stage 90 audit references | Preserve dated facts while preventing old pending findings from reading as current drift. | Done in T-004. |
-| Align scripts inventory count. | `scripts/README.md` | Reconcile shell-script count with the current inventory and deletion precheck wording. | Pending T-005 |
-| Align coverage wording. | CI/QA guide, tests README, PR template | Use the same future app-code coverage and infrastructure validation-matrix boundary. | Pending T-005 |
-| Reconcile CI/QA official-source basis. | `.github`, CI/QA guide, scripts/tests README, references | Compare repository claims to official GitHub Actions, Markdown, YAML, and spec-driven sources. | Pending T-005 |
+| Align scripts inventory count. | `scripts/README.md` | Reconcile shell-script count with the current inventory and deletion precheck wording. | Done in T-005. |
+| Align coverage wording. | CI/QA guide, tests README, PR template | Use the same future app-code coverage and infrastructure validation-matrix boundary. | Done in T-005. |
+| Reconcile CI/QA official-source basis. | `.github`, CI/QA guide, scripts/tests README, references | Compare repository claims to official GitHub Actions, Markdown, YAML, and spec-driven sources. | Done in T-005. |
 | Add final validator parity evidence. | Validator, task record, progress memory | Confirm all changed surfaces pass deterministic checks. | Pending T-006 |
 
 ## Sources
@@ -186,6 +186,8 @@ items remain routed to T-005 or T-006.
 - `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`,
   `.github/SECURITY.md`, `scripts/README.md`, and `tests/README.md`
   inspection.
+- Official GitHub Actions workflow syntax and event documentation, CommonMark
+  0.31.2, YAML 1.2.2, and pre-commit usage documentation refreshed for T-005.
 - Read-only subagent cross-check for validator-blocking drift, active SDLC
   drift, historical evidence drift, and reference/CI-QA drift.
 

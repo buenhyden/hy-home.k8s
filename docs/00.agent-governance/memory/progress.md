@@ -6839,3 +6839,53 @@ section separating static from live evidence.
 
 - Continue with T-005: align scripts inventory count, CI/CD, QA, coverage, and
   formatting wording against repository evidence and official sources.
+
+## 2026-07-04 — Workspace Document Contract Normalization T-005 CI QA Formatting
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: docs, references, ci, qa, formatting
+- **Status**: completed
+- **Tags**: #docs #ci #qa #formatting #references #validation
+
+### Progress
+
+- Reconciled `scripts/README.md` with the current inventory of eight tracked
+  shell scripts, including `validate-harness.sh`.
+- Aligned coverage wording across the CI/CD QA guide, `tests/README.md`, and
+  `.github/PULL_REQUEST_TEMPLATE.md`: future testable application code keeps
+  the 90% target where applicable; Bash/YAML/Markdown infrastructure changes
+  use validation-matrix evidence instead of application coverage claims.
+- Refreshed the Stage 90 spec/SDLC/CI/QA/formatting research reference with
+  official GitHub Actions workflow syntax/events, CommonMark 0.31.2, YAML
+  1.2.2, and pre-commit sources checked on 2026-07-04.
+- Updated the research README index and 2026-07-04 normalization audit to mark
+  T-005 reference/CI-QA/formatting alignment done.
+
+### Memory
+
+- The repository quality gate expects the PR template to retain the exact
+  phrase `90% target for future testable application code`; preserve that
+  phrase when editing the coverage checklist.
+- T-006 remains responsible for final validator parity, full validation bundle,
+  and final review/handoff evidence.
+
+### Evidence
+
+- `git diff --check` passed before the T-005 ledger update.
+- `bash -n scripts/validate-repo-quality-gates.sh` passed before the T-005
+  ledger update.
+- `bash scripts/validate-repo-quality-gates.sh .` passed before the T-005
+  ledger update.
+- Script inventory scan found eight tracked `scripts/*.sh` files.
+- Focused stale scan for old seven-script wording, old coverage wording, and
+  the old pending T-005 marker returned no matches.
+- Official sources rechecked: GitHub Actions workflow syntax, GitHub Actions
+  events that trigger workflows, CommonMark 0.31.2, YAML 1.2.2, and
+  pre-commit usage documentation.
+
+### Handoff
+
+- Continue with T-006: run the final validation bundle, reconcile any remaining
+  governance tracking state, and close the task/plan evidence.

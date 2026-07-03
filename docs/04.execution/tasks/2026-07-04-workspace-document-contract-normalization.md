@@ -41,7 +41,7 @@ traceable to the parent Spec and Plan.
 | T-002 | Normalize support contracts and template forms. | doc | Contracts, Core Design | PLN-002 | Route/profile parity scans, repo gate | platform | Done |
 | T-003 | Apply active SDLC document profiles. | doc | VAL-SPC-002 | PLN-003 | Active docs scans, README checks, repo gate | platform | Done |
 | T-004 | Normalize historical evidence contracts. | doc | VAL-SPC-003 | PLN-004 | Historical evidence scans, archive/progress checks, repo gate | platform | Done |
-| T-005 | Align references, CI/QA, and formatting contracts. | doc | VAL-SPC-004, VAL-SPC-005 | PLN-005 | Official source review, workflow/doc comparison, repo gate | platform | Todo |
+| T-005 | Align references, CI/QA, and formatting contracts. | doc | VAL-SPC-004, VAL-SPC-005 | PLN-005 | Official source review, workflow/doc comparison, repo gate | platform | Done |
 | T-006 | Reconcile final validator and governance gates. | test | VAL-SPC-006, VAL-SPC-007 | PLN-006 | Full validation bundle and final review | platform | Todo |
 
 ## Suggested Types
@@ -71,7 +71,7 @@ traceable to the parent Spec and Plan.
 
 ### Phase 5: References and CI/QA
 
-- [ ] T-005 Align references, CI/QA, and formatting contracts.
+- [x] T-005 Align references, CI/QA, and formatting contracts.
 
 ### Phase 6: Final Validation
 
@@ -231,7 +231,37 @@ Validation:
 
 ### T-005 Align References, CI/QA, and Formatting Contracts
 
-Status: Todo.
+Status: Done.
+
+Evidence:
+
+- Reconciled `scripts/README.md` with the current tracked script inventory:
+  eight `scripts/*.sh` files, including `validate-harness.sh`, are present and
+  retained.
+- Aligned coverage wording across the CI/CD QA guide, `tests/README.md`, and
+  `.github/PULL_REQUEST_TEMPLATE.md`: future testable application code keeps
+  the 90% target where applicable, while Bash/YAML/Markdown infrastructure
+  changes use validation-matrix evidence instead of application coverage
+  claims.
+- Refreshed the Stage 90 spec/SDLC/CI/QA/formatting research reference with
+  official GitHub Actions workflow syntax/events, CommonMark 0.31.2, YAML
+  1.2.2, and pre-commit sources checked on 2026-07-04.
+- Updated the research README index to show the refreshed CI/formatting source
+  basis.
+- Updated the 2026-07-04 normalization audit so scripts inventory, coverage
+  wording, and CI/QA official-source alignment are marked done in T-005.
+
+Validation:
+
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Script inventory scan found eight tracked `scripts/*.sh` files.
+- Focused stale scan for the old seven-script wording, old coverage wording,
+  and old pending T-005 marker — PASS with no matches.
+- Focused source/coverage scan confirmed GitHub Actions workflow syntax,
+  CommonMark 0.31.2, YAML 1.2.2, pre-commit, and coverage boundary terms are
+  present on the intended reference and CI/QA surfaces.
 
 ### T-006 Reconcile Final Validator and Governance Gates
 

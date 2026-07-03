@@ -3,7 +3,7 @@ title: 'Reference: Spec SDLC CI QA Formatting Research'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-02
+updated: 2026-07-04
 ---
 
 # Reference: Spec SDLC CI QA Formatting Research
@@ -12,9 +12,10 @@ updated: 2026-07-02
 
 이 문서는 spec-driven development, SDLC/secure SDLC, CI/CD, QA evidence,
 formatting, and pre-commit practice를 durable reference로 정리한다. It maps
-official and repo-backed sources checked on 2026-07-02 back to the local
-`hy-home.k8s` Stage 03/04 lifecycle, CI jobs, validation scripts, and
-formatting gates.
+official and repo-backed sources to the local `hy-home.k8s` Stage 03/04
+lifecycle, CI jobs, validation scripts, and formatting gates. The broader
+SDLC/supply-chain snapshot was checked on 2026-07-02, and CI/formatting
+sources were refreshed on 2026-07-04.
 
 This is descriptive reference material. It does not redefine active governance,
 CI semantics, release approval, live runtime procedure, or provider behavior.
@@ -32,7 +33,9 @@ CI semantics, release approval, live runtime procedure, or provider behavior.
 ## Reference Type
 
 - Type: durable-concept / external-standard-snapshot
-- Source checked: 2026-07-02
+- Source checked: 2026-07-04 for GitHub Actions workflow syntax/events,
+  CommonMark, YAML 1.2.2, and pre-commit; 2026-07-02 for the broader
+  SDLC/supply-chain research snapshot.
 - Refresh trigger: spec lifecycle, CI workflow, QA gate, formatting,
   pre-commit, template, or validation-script changes.
 
@@ -40,7 +43,8 @@ CI semantics, release approval, live runtime procedure, or provider behavior.
 
 - **Authoritative for**:
   - Source-attributed definitions and dated reference findings checked on
-    2026-07-02.
+    2026-07-04 for CI/formatting sources and 2026-07-02 for the broader
+    SDLC/supply-chain snapshot.
   - Lookup-level mapping from external SDD, SDLC, CI, QA, and formatting
     concepts to current repo-backed evidence surfaces.
   - Checklist-level follow-up routing to canonical repository owners.
@@ -268,7 +272,8 @@ contracts, or canonical repository owners.
 
 ## Sources
 
-Official and primary external sources, checked 2026-07-02:
+Official and primary external sources. CI/formatting sources were refreshed on
+2026-07-04; broader SDLC/supply-chain sources were checked on 2026-07-02:
 
 - NIST SSDF SP 800-218:
   <https://csrc.nist.gov/pubs/sp/800/218/final>
@@ -276,10 +281,18 @@ Official and primary external sources, checked 2026-07-02:
   <https://csrc.nist.gov/News/2024/nist-publishes-sp-800204d>
 - GitHub Actions docs:
   <https://docs.github.com/actions>
+- GitHub Actions workflow syntax:
+  <https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax>
+- GitHub Actions events that trigger workflows:
+  <https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows>
 - GitHub Actions secure use:
   <https://docs.github.com/en/actions/reference/security/secure-use>
 - pre-commit docs:
   <https://pre-commit.com/>
+- CommonMark 0.31.2:
+  <https://spec.commonmark.org/0.31.2/>
+- YAML 1.2.2:
+  <https://yaml.org/spec/1.2.2/>
 - GitHub Spec Kit docs:
   <https://github.github.com/spec-kit/>
 - GitHub Spec Kit repository:
@@ -309,7 +322,7 @@ Non-authoritative market scan source, checked 2026-07-02:
 ## Review and Freshness
 
 - Review cadence: on source change
-- Last reviewed: 2026-07-02
+- Last reviewed: 2026-07-04
 - Next review trigger: spec lifecycle, CI workflow, QA gate, formatting,
   pre-commit, template, validation-script, NIST SSDF/SP 800-204D,
   GitHub Actions, GitHub Spec Kit, or pre-commit source changes.

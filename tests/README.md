@@ -60,6 +60,10 @@ tests/
 ## Evidence Boundaries
 
 - Repo/static 검증 통과는 live k3d 운영 검증 완료를 의미하지 않는다.
+- `tests/`는 application coverage target의 canonical owner가 아니다. 신규
+  testable application/source code는 해당 application test surface에서 90%
+  coverage target을 검토하고, Bash/YAML/Markdown infrastructure 변경은
+  validation-matrix evidence로 검증한다.
 - `pre-commit`, `kube-linter`, `actionlint`, `zizmor`, `graphify`, `rtk` 같은 optional local tools가 없으면 통과로 간주하지 않고 제한사항으로 보고한다.
 - 외부 Vault, 실제 Kubernetes API, ArgoCD reconciliation 상태는 승인된 live check가 없으면 검증 범위 밖이다.
 

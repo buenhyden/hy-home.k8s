@@ -83,7 +83,7 @@ research/
 | [workspace-governance-baseline.md](./workspace-governance-baseline.md) | Current | Durable workspace governance baseline reference | Summarizes canonical governance owners; does not replace them |
 | [harness-and-loop-engineering.md](./harness-and-loop-engineering.md) | Current | Harness and feedback-loop engineering reference | Summarizes source-backed patterns; does not define runtime procedure |
 | [provider-implementation-status.md](./provider-implementation-status.md) | Current | Provider implementation status and source ledger | Official and repo-backed sources outrank market scan; market findings are non-authoritative |
-| [spec-sdlc-ci-qa-formatting.md](./spec-sdlc-ci-qa-formatting.md) | Current | Spec, SDLC, CI, QA, and formatting reference | Summarizes reference material; active gates stay with canonical owners |
+| [spec-sdlc-ci-qa-formatting.md](./spec-sdlc-ci-qa-formatting.md) | Current | Spec, SDLC, CI, QA, and formatting reference; CI/formatting sources refreshed 2026-07-04 | Summarizes reference material; active gates stay with canonical owners |
 
 ## Source Priority
 
