@@ -171,6 +171,11 @@ approved Stage 03 spec and Stage 04 plan.
   - T-006 final support wording evidence:
     `rg -n "Phase [1-4]|during the migration|after Phase|current and target" docs/99.templates/support`
     returned no matches.
+  - Final-review remediation evidence: the Spec Related Documents now link to
+    the dated Stage 04 Plan and Task records.
+  - Final-review remediation evidence: stale support wording validation now
+    includes `docs/99.templates/support/README.md`, while README frontmatter
+    remains exempt.
   - T-006 runtime tooling note: `rtk` was not on PATH;
     `/home/hy/.local/bin/rtk --version` returned `rtk 0.34.3`, but
     `/home/hy/.local/bin/rtk gain` failed with a tracking database

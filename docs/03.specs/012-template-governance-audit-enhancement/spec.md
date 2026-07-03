@@ -141,9 +141,9 @@ existing canonical stage, selected by its role:
 
 | Output | Canonical Location | Purpose |
 | --- | --- | --- |
-| Execution plan | `docs/04.execution/plans/YYYY-MM-DD-template-governance-audit-enhancement.md` | Work order, risks, and verification gates. |
-| Task evidence | `docs/04.execution/tasks/YYYY-MM-DD-template-governance-audit-enhancement.md` | Audit findings, changes, validation evidence, and handoff. |
-| Durable reference finding set | `docs/90.references/audits/YYYY-MM-DD-template-governance-audit-enhancement.md` | Optional dated snapshot if findings should persist as reference material. |
+| Execution plan | [`docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md`](../../04.execution/plans/2026-07-03-template-governance-audit-enhancement.md) | Work order, risks, and verification gates. |
+| Task evidence | [`docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`](../../04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md) | Audit findings, changes, validation evidence, and handoff. |
+| Durable reference finding set | `docs/90.references/audits/<date>-template-governance-audit-enhancement.md` | Optional dated snapshot if findings should persist as reference material. |
 
 The default output should be Stage 04 plan/task. A Stage 90 audit should be
 created only if the findings are useful as a durable reference beyond the
@@ -337,9 +337,9 @@ find docs/99.templates -maxdepth 5 -type f -print | sort
 - **Parent Template Migration Spec**:
   [../011-template-contract-governance-migration/spec.md](../011-template-contract-governance-migration/spec.md)
 - **Plan**:
-  `[../../04.execution/plans/YYYY-MM-DD-template-governance-audit-enhancement.md]`
-- **Tasks**:
-  `[../../04.execution/tasks/YYYY-MM-DD-template-governance-audit-enhancement.md]`
+  [../../04.execution/plans/2026-07-03-template-governance-audit-enhancement.md](../../04.execution/plans/2026-07-03-template-governance-audit-enhancement.md)
+- **Task**:
+  [../../04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md](../../04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md)
 - **Templates README**:
   [../../99.templates/README.md](../../99.templates/README.md)
 - **Template Routing Contract**:

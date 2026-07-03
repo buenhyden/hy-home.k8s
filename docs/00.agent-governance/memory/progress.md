@@ -35,6 +35,9 @@ inventory stays in `scripts/README.md`.
 - Recorded final scan evidence showing the categorized template tree remains
   intact, active contracts contain no flat template routes, and support docs
   contain no stale migration-phase wording.
+- Recorded final-review remediation: the Spec now links to the dated Stage 04
+  Plan and Task, and the support stale-wording validator includes the support
+  README while preserving its frontmatter exemption.
 
 #### Memory
 
@@ -62,6 +65,10 @@ inventory stays in `scripts/README.md`.
 - Task 6 final flat template route scan — PASS, no matches and no
   self-referential evidence exceptions.
 - Task 6 final support stale wording scan — PASS, no matches.
+- Final-review remediation: Spec Plan/Task placeholders were replaced with
+  dated Stage 04 links.
+- Final-review remediation: stale support wording checks include
+  `docs/99.templates/support/README.md`; README frontmatter exemption remains.
 
 #### Handoff
 

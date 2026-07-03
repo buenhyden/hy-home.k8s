@@ -843,17 +843,17 @@ support_stale_patterns = [
     (re.compile(r"current and target frontmatter"), "current/target schema wording"),
 ]
 for support_doc in sorted(template_support_root.glob("*.md")):
+    support_text = read_text(support_doc)
+    for pattern, label in support_stale_patterns:
+        if pattern.search(support_text):
+            fail(f"{rel(support_doc)} contains stale {label}")
     if support_doc.name == "README.md":
         continue
-    support_text = read_text(support_doc)
     validate_markdown_frontmatter_profile(
         support_doc,
         "governance/template-support",
         expected_status="draft",
     )
-    for pattern, label in support_stale_patterns:
-        if pattern.search(support_text):
-            fail(f"{rel(support_doc)} contains stale {label}")
 
 template_routing_path = template_support_root / "template-routing.md"
 template_routing_rows = markdown_table_after_heading(
