@@ -36,6 +36,8 @@ updated: YYYY-MM-DD
 Exceptions:
 
 - README files are frontmatter-free.
+- GitHub-native Markdown control files under `.github/` are
+  frontmatter-free because GitHub renders or consumes their body directly.
 - `progress.template.md` is an appendable ledger entry template.
 - OpenAPI, GraphQL, and protobuf templates must remain native to their format.
 
@@ -61,6 +63,7 @@ Exceptions:
 | `content` | Reference | `content/reference` | `title`, `type`, `status`, `owner`, `updated` | Durable reference material under Stage 90. |
 | `content` | Archive Tombstone | `content/archive-tombstone` | `title`, `type`, `status`, `owner`, `updated` | Archive Tombstones use `status: archived`. |
 | `content` | README | none | none | README files remain frontmatter-free. |
+| `repository-control` | GitHub-native Markdown | none | none | `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` remain frontmatter-free GitHub control surfaces. |
 | `governance` | Governance reference | `governance/reference` | `title`, `type`, `status`, `owner`, `updated` | Stage 00 governance reference documents with frontmatter. |
 | `governance` | Governance memory | `governance/memory` | `title`, `type`, `status`, `owner`, `updated` | Standalone governance memory. |
 | `governance` | Progress entry | none | none | Progress entries are appended sections, not whole documents. |
@@ -87,7 +90,8 @@ Exceptions:
 - Replace old simple `type` values with the namespaced values in this schema.
 - Remove keys that duplicate the same role as another key unless the target
   profile explicitly allows both.
-- Do not add frontmatter to README files or native machine-readable templates.
+- Do not add frontmatter to README files, GitHub-native Markdown control
+  files, or native machine-readable templates.
 
 ## Validation Contract
 
@@ -98,6 +102,7 @@ has exactly one frontmatter profile. The gate rejects:
 - Unsupported keys for the profile.
 - Unsupported `type`, `status`, or `owner` values.
 - Frontmatter on README files when not required.
+- Frontmatter on GitHub-native Markdown control files.
 - Markdown frontmatter in OpenAPI, GraphQL, or protobuf templates.
 
 ## Related Documents

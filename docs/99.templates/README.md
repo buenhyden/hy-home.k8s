@@ -99,6 +99,7 @@
    실제 Markdown 링크는 이 템플릿 파일 위치에서도 깨지지 않아야 한다.
 11. README 템플릿은 frontmatter를 요구하지 않는다. PRD/ARD/ADR/Spec/Plan/Task, Spec helper Markdown 템플릿(`api-spec`, `agent-design`, `data-model`, `tests`), 운영·참조 템플릿은 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
     새 authored 문서의 기본 `status`는 `draft`, 기본 `owner`는 `platform`이다. Status promotion은 owning Plan/Task evidence 또는 human review 후에만 수행한다.
+    `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/SECURITY.md`는 GitHub-native control Markdown이므로 frontmatter-free 예외로 유지한다.
 12. 템플릿 구조를 바꾸면 이미 생성된 문서에 안전하게 반영할 수 있는 heading, placeholder, `Link Basis`, `Related Documents`만 갱신하고 문서 고유 의도는 대량 재작성하지 않는다.
 13. `Related Documents` 예시는 upstream PRD/ARD/ADR/Spec/Plan과 downstream Task/Operation/Runbook/Incident를 추적할 수 있어야 한다.
 14. `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/98.archive` 아래의 비-README Markdown은 정확히 하나의 Template-Folder Mapping 행에 매핑되어야 한다.
@@ -177,6 +178,9 @@ governance, routing, frontmatter schema, legacy cleanup rule을 소유한다.
 | `docs/00.agent-governance/memory/<topic>.md`                             | `templates/common/memory.template.md`                                      | Stable memory entry                                                     |
 | `docs/00.agent-governance/memory/progress.md`                            | `templates/common/progress.template.md`                                    | Repo-changing work progress entry                                       |
 
+The memory `<topic>` placeholder excludes `progress`; `progress.md` is an
+exact reserved route owned by the progress template.
+
 ## Harness Task Contract Template
 
 `harness-task-contract.template.md` is a specialized starter that supplements
@@ -210,6 +214,10 @@ OpenAPI, GraphQL, proto 같은 계약 파일은 관련 `docs/03.specs/<feature-i
 `reference.template.md`는 `90.references/` 문서의 역할과 freshness를 강제한다.
 
 - 모든 reference 문서는 `Reference Type`을 명시한다.
+- Reference Type은 `version-contract-inventory`, `external-standard-snapshot`,
+  `durable-concept`, `data-catalog`, `source-ledger`, `learning-roadmap`,
+  `glossary`, `faq`, `dated-implementation-audit` 중 하나 또는 호환되는
+  조합으로 작성한다.
 - 모든 reference 문서는 `Authority Boundary`에서 소유하는 사실과 소유하지 않는 실행계약을 분리한다.
 - 외부 기준이나 버전 snapshot은 `Review and Freshness`에 검토일과 갱신 trigger를 남긴다.
 - repo-changing agent work의 진행 상황은 `progress.template.md` 구조로 `00.agent-governance/memory/progress.md`에 작성한다.
@@ -235,6 +243,9 @@ OpenAPI, GraphQL, proto 같은 계약 파일은 관련 `docs/03.specs/<feature-i
 - `openapi.template.yaml`, `schema.template.graphql`, `service.template.proto`는 형식상 YAML/GraphQL/proto 파일이므로 frontmatter 없이 owner comments와 parent API spec 링크로 추적성을 유지한다.
 - `memory.template.md`는 `docs/00.agent-governance/memory/<topic>.md` target family를 사용한다. 관련 progress 링크는 최종 memory 파일 위치 기준으로 계산한다.
 - `progress.template.md`는 `docs/00.agent-governance/memory/progress.md`에 append되는 entry 템플릿이다. entry 안의 링크는 `docs/00.agent-governance/memory/` 기준으로 계산한다.
+- Required template headings는 template 파일의 literal `## ` heading에서
+  계산하며, placeholder가 있거나 optional/if-applicable로 표시된 heading은
+  필수 heading에서 제외한다.
 
 ## Related Documents
 

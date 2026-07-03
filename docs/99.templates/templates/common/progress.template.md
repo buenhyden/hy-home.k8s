@@ -2,6 +2,8 @@
 
 Append this entry under `## Work Entries` in
 `docs/00.agent-governance/memory/progress.md` for repo-changing agent work.
+This file is the only tracked `progress.md`; standalone memory topics must use
+another filename under `docs/00.agent-governance/memory/`.
 
 Link basis: this is an appended section inside
 `docs/00.agent-governance/memory/progress.md`; links in entries should be

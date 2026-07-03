@@ -38,7 +38,7 @@ traceable to the parent Spec and Plan.
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-001 | Audit and inventory document contract drift. | doc | VAL-SPC-001, VAL-SPC-006 | PLN-001 | Audit report, drift scans, repo gate | platform | Done |
-| T-002 | Normalize support contracts and template forms. | doc | Contracts, Core Design | PLN-002 | Route/profile parity scans, repo gate | platform | Todo |
+| T-002 | Normalize support contracts and template forms. | doc | Contracts, Core Design | PLN-002 | Route/profile parity scans, repo gate | platform | Done |
 | T-003 | Apply active SDLC document profiles. | doc | VAL-SPC-002 | PLN-003 | Active docs scans, README checks, repo gate | platform | Todo |
 | T-004 | Normalize historical evidence contracts. | doc | VAL-SPC-003 | PLN-004 | Historical evidence scans, archive/progress checks, repo gate | platform | Todo |
 | T-005 | Align references, CI/QA, and formatting contracts. | doc | VAL-SPC-004, VAL-SPC-005 | PLN-005 | Official source review, workflow/doc comparison, repo gate | platform | Todo |
@@ -59,7 +59,7 @@ traceable to the parent Spec and Plan.
 
 ### Phase 2: Contract Sources
 
-- [ ] T-002 Normalize support contracts and template forms.
+- [x] T-002 Normalize support contracts and template forms.
 
 ### Phase 3: Active Documents
 
@@ -126,7 +126,44 @@ Validation:
 
 ### T-002 Normalize Support Contracts and Template Forms
 
-Status: Todo.
+Status: Done.
+
+Evidence:
+
+- Clarified `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
+  `.github/SECURITY.md` as frontmatter-free GitHub-native control Markdown in
+  template support contracts, Stage 00 routing rules, and the repository
+  quality gate.
+- Extended reference template/support vocabulary with
+  `dated-implementation-audit`, `data-catalog`, and `source-ledger` so new
+  Stage 90 reference documents match observed repository usage.
+- Clarified incident record routing: the incident file must live under
+  `docs/05.operations/incidents/YYYY/INC-###-<title>/` and its filename must
+  match the incident folder; `postmortem.md` remains in the same folder.
+- Clarified that `docs/00.agent-governance/memory/<topic>.md` excludes the
+  reserved `progress.md` route.
+- Documented the required-heading extraction algorithm: literal `## `
+  template headings are required unless they contain placeholders or are
+  marked optional or if-applicable.
+- Updated `docs/00.agent-governance/hooks/k8s-pre-edit.sh` so mismatched
+  incident folder/file IDs produce an early route note instead of a misleading
+  incident-template classification.
+- Added official GitHub source links for PR template and security policy
+  GitHub-native Markdown behavior.
+
+Validation:
+
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash -n docs/00.agent-governance/hooks/k8s-pre-edit.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Pre-edit hook simulation for
+  `docs/05.operations/incidents/2026/INC-001-demo/INC-002-other.md` emitted a
+  route note that the incident filename must match the folder.
+- Focused flat-template route scan — PASS.
+- Focused support stale migration wording scan — PASS.
+- Broad legacy residue scan found only historical Stage 04/progress evidence
+  and template starter markers, not current support-contract drift.
 
 ### T-003 Apply Active SDLC Document Profiles
 

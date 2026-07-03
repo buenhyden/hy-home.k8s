@@ -64,6 +64,24 @@ Feature-local indexes such as `docs/03.specs/<feature-id>/README.md` use the
 generic README route. Do not add a second structural README route for a nested
 README target.
 
+The memory `<topic>` placeholder excludes `progress`; `progress.md` is an
+exact reserved route owned by `templates/common/progress.template.md`.
+
+## Explicit Non-routed Markdown Exceptions
+
+The following Markdown files are active repository control surfaces but are not
+authored stage documents and are not copied from a structural template:
+
+| Target | Contract |
+| --- | --- |
+| `.github/ABOUT.md` | GitHub configuration hub; frontmatter-free; routes policy detail to Stage 00, Stage 05, scripts, and workflow owners. |
+| `.github/PULL_REQUEST_TEMPLATE.md` | GitHub PR body template; frontmatter-free; checklist mirrors canonical governance and CI/QA owners. |
+| `.github/SECURITY.md` | GitHub security policy surface; frontmatter-free; vulnerability reporting body must remain GitHub-renderable. |
+
+Validators may check these files for frontmatter bans and stale currentness
+claims, but they must not require stage frontmatter or required template
+headings.
+
 ## Supplemental Task Starter
 
 `harness-task-contract.template.md` supplements
@@ -84,6 +102,8 @@ Route-breaking changes must update these surfaces in the same logical unit:
 - `docs/00.agent-governance/hooks/k8s-pre-edit.sh`
 - `scripts/validate-repo-quality-gates.sh`
 - Stage README links and authored document template references.
+- GitHub-native Markdown control-surface exceptions when `.github` control
+  documents are added, removed, or repurposed.
 
 ## Validation Commands
 

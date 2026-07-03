@@ -6693,3 +6693,55 @@ section separating static from live evidence.
 - Continue with T-002: normalize template support contracts, template forms,
   route/profile parity, and validator surfaces before broad authored-document
   edits.
+
+## 2026-07-04 — Workspace Document Contract Normalization T-002 Contracts
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: docs, templates, governance, validation
+- **Status**: in-progress
+- **Tags**: #docs #templates #frontmatter #github #validation
+
+### Progress
+
+- Normalized support contracts for GitHub-native control Markdown,
+  reference-type vocabulary, incident file/folder equality, memory
+  `progress.md` reservation, and required-heading extraction.
+- Updated `reference.template.md`, `readme.template.md`, `memory.template.md`,
+  and `progress.template.md` where the template forms needed concise starter
+  guidance.
+- Updated Stage 00 routing/protocol/matrix docs so governance summaries match
+  the support contracts.
+- Updated `docs/00.agent-governance/hooks/k8s-pre-edit.sh` and
+  `scripts/validate-repo-quality-gates.sh` to enforce the new control-surface
+  and incident-route rules.
+
+### Memory
+
+- `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
+  `.github/SECURITY.md` should stay frontmatter-free because GitHub renders or
+  consumes those files directly. Durable policy belongs in Stage 00, Stage 05,
+  scripts, or workflow owners.
+- Required template headings are derived from literal `## ` headings in the
+  matched template. Placeholder and optional/if-applicable headings are not
+  required coverage.
+- The memory `<topic>` route excludes `progress`; `progress.md` is the
+  reserved append-only ledger.
+
+### Evidence
+
+- `git diff --check` passed before the T-002 commit.
+- `bash -n scripts/validate-repo-quality-gates.sh` passed before the T-002
+  commit.
+- `bash -n docs/00.agent-governance/hooks/k8s-pre-edit.sh` passed before the
+  T-002 commit.
+- `bash scripts/validate-repo-quality-gates.sh .` passed before the T-002
+  commit.
+- Official sources checked: GitHub pull request template documentation and
+  GitHub security policy documentation.
+
+### Handoff
+
+- Continue with T-003: apply active SDLC document profiles and section
+  contracts using the normalized support/template baseline.

@@ -644,6 +644,15 @@ for readme in sorted(root.rglob("README.md")):
         if re.search(rf"^##\s+{re.escape(deprecated_heading)}\b", text, re.MULTILINE):
             fail(f"{rel(readme)} still uses deprecated README section: {deprecated_heading}")
 
+github_native_markdown = [
+    root / ".github/ABOUT.md",
+    root / ".github/PULL_REQUEST_TEMPLATE.md",
+    root / ".github/SECURITY.md",
+]
+for github_doc in github_native_markdown:
+    if github_doc.exists() and has_markdown_frontmatter(github_doc):
+        fail(f"{rel(github_doc)} must remain frontmatter-free GitHub-native Markdown")
+
 reference_readme_path = root / "docs/90.references/README.md"
 reference_readme_text = read_text(reference_readme_path)
 for obsolete_heading in [

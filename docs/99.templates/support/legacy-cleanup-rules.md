@@ -31,6 +31,7 @@ roles, or obsolete sections as current rules.
 | Copied target-path template comments in authored docs | Topic-specific content with correct `Related Documents` | Reject in authored documents |
 | Copied template-use instructions in authored docs | Remove from authored docs | Reject in authored documents |
 | README contract bodies that duplicate support docs | Brief pointers to support docs | Keep README entries concise |
+| GitHub-native Markdown frontmatter | Frontmatter-free `.github` control body with canonical links | Reject on `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` |
 
 ## Active vs Historical References
 
@@ -50,7 +51,10 @@ Historical references include:
 - Archive Tombstones.
 
 Historical references may remain only when they are explicitly dated and cannot
-be mistaken for current instructions.
+be mistaken for current instructions. When a dated audit finding has been
+resolved, keep the original finding as historical evidence and add resolved
+context in the next audit or normalization task instead of rewriting it into a
+false current-state claim.
 
 ## Current Review Order
 

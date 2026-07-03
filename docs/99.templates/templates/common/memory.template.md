@@ -14,7 +14,9 @@ updated, append the related progress entry to
 `docs/00.agent-governance/memory/progress.md` using
 `docs/99.templates/templates/common/progress.template.md` in the same change.
 
-Target family: `docs/00.agent-governance/memory/<topic>.md`.
+Target family: `docs/00.agent-governance/memory/<topic>.md`. The `<topic>`
+placeholder excludes `progress`; `progress.md` is reserved for the canonical
+progress ledger.
 
 Link basis: standalone memory files live beside `progress.md`, so related
 progress links should be calculated from `docs/00.agent-governance/memory/`,

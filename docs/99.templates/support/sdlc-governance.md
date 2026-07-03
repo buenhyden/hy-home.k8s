@@ -43,6 +43,11 @@ one target path pattern, one template form, and one validation route.
 | Incident record | `docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md` | `../templates/sdlc/operations/incident.template.md` |
 | Postmortem | `docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md` | `../templates/sdlc/operations/postmortem.template.md` |
 
+Incident folders are created only for real incidents. The incident fact record
+uses a filename that matches the incident folder, and the postmortem is always
+`postmortem.md` in the same folder. Placeholder incident directories are not
+part of the steady-state structure.
+
 ## Supplemental Task Starter
 
 `harness-task-contract.template.md` supplements
@@ -64,10 +69,15 @@ location.
   their format and do not use Markdown frontmatter.
 - The operations policy template owns policy routing. Active contracts must
   use `policy.template.md` and `type: sdlc/policy`.
+- Incident records own factual chronology and response state. Postmortems own
+  root-cause analysis, prevention, and documentation feedback loops.
 
 ## Validation Rules
 
 - Required heading checks come from the matched template.
+- Required heading extraction uses literal `## ` headings from the template,
+  excluding headings that contain placeholders and headings marked optional or
+  if-applicable.
 - Route checks must reject uncovered SDLC Markdown paths.
 - Route checks must reject paths that match more than one template.
 - Route-breaking changes must update Stage 00 routing docs, hook hints, and

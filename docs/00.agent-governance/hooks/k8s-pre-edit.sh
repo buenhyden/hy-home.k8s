@@ -101,8 +101,16 @@ def authored_doc_template(path: str) -> str:
             return "docs/99.templates/templates/sdlc/operations/runbook.template.md"
         if re.match(r"^docs/05\.operations/incidents/[0-9]{4}/INC-[0-9]{3}-[^/]+/postmortem\.md$", path):
             return "docs/99.templates/templates/sdlc/operations/postmortem.template.md"
-        if re.match(r"^docs/05\.operations/incidents/[0-9]{4}/INC-[0-9]{3}-[^/]+/INC-[0-9]{3}-[^/]+\.md$", path):
-            return "docs/99.templates/templates/sdlc/operations/incident.template.md"
+        incident_match = re.match(
+            r"^docs/05\.operations/incidents/[0-9]{4}/(?P<folder>INC-[0-9]{3}-[^/]+)/(?P<filename>INC-[0-9]{3}-[^/]+\.md)$",
+            path,
+        )
+        if incident_match:
+            folder = incident_match.group("folder")
+            filename = incident_match.group("filename")
+            if filename == f"{folder}.md":
+                return "docs/99.templates/templates/sdlc/operations/incident.template.md"
+            return "classify via docs/99.templates/support/template-routing.md; incident filename must match the incident folder"
         if path.startswith("docs/90.references/"):
             return "docs/99.templates/templates/common/reference.template.md"
         if path.startswith("docs/98.archive/"):
@@ -148,12 +156,17 @@ for path in paths:
                 )
             )
         else:
+            route_line = (
+                f"- Required template: `{template}`."
+                if not template.startswith("classify via ")
+                else f"- Route note: `{template}`."
+            )
             messages.append(
                 "\n".join(
                     [
                         f"Editing authored documentation `{path}`.",
                         "- Template-First is mandatory: confirm the route in `docs/99.templates/support/template-routing.md`; use `docs/99.templates/README.md` as the inventory summary.",
-                        f"- Required template: `{template}`.",
+                        route_line,
                         "- New authored docs must keep `status: draft`, required template headings, and `## Related Documents`.",
                         "- Folder-level adds, moves, or removals require the owning `README.md` to be updated in the same change.",
                         "- The PostToolUse hook will run documentation template enforcement.",

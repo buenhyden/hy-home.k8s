@@ -25,6 +25,7 @@ The template system has four separate surfaces:
 | Template support contracts | `docs/99.templates/support/**` | Template-specific routing, schema, governance, and cleanup rules. |
 | Agent governance | `docs/00.agent-governance/**` | Agent-facing execution policy, stage routing policy, hooks, and protected-surface rules. |
 | Authored documents | `docs/01.requirements` through `docs/05.operations`, `docs/90.references`, `docs/98.archive` | Repository facts, lifecycle records, and evidence. |
+| GitHub-native control Markdown | `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/SECURITY.md` | GitHub-rendered repository control surfaces that remain frontmatter-free and mirror canonical owners. |
 
 ## Contract Rules
 
@@ -41,6 +42,9 @@ The template system has four separate surfaces:
 - Authored documents must contain topic-specific content. They must not retain
   template instructions, placeholders, or copied support-rule prose that is not
   specific to the document.
+- GitHub-native control Markdown must not be promoted into stage documents by
+  adding frontmatter. Keep those files frontmatter-free and route durable
+  policy to the owning governance, operations, script, or workflow surface.
 
 ## SDLC and Common Documentation Split
 

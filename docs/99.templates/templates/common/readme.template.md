@@ -16,6 +16,7 @@ README 템플릿은 여러 Target 위치에서 재사용된다. 단일 `Target:`
 - Repository Root (`/`) -> `Base Structure` + `Root Snippet`
 - Implementation Layer (`web/`, `server/`, `app/`, `packages/`, `gitops/`, `infra/`, `infrastructure/`) -> `Base Structure` + `Implementation Snippet`
 - Documentation & Governance (`docs/`, `docs/99.templates/`, `.claude/`, `.codex/`) -> `Base Structure` + `Docs & Governance Snippet`
+- GitHub-native control Markdown (`.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/SECURITY.md`) -> do not copy this template wholesale; keep GitHub control files frontmatter-free and route durable policy to canonical owners.
 - Operations & Procedures (`docs/05.operations/policies/`, `docs/05.operations/runbooks/`, `scripts/`) -> `Base Structure` + `Ops & Utils Snippet`
 - Incident Learning (`docs/05.operations/incidents/`) -> `Base Structure` + `Incident / Postmortem Snippet`
 
@@ -249,6 +250,8 @@ SNIPPET: DOCS & GOVERNANCE
 README 문서는 기본적으로 frontmatter를 요구하지 않는다. README가 경로의
 진입점, 책임 범위, 링크 허브 역할만 수행한다면 제목과 본문 구조로 충분하다.
 이 저장소의 README 파일에는 YAML frontmatter를 추가하지 않는다.
+GitHub-native control Markdown under `.github/` also remains frontmatter-free
+because GitHub renders or consumes those files directly.
 
 PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook,
 Incident, Postmortem, Reference 같은 authored stage 문서는 README 템플릿이

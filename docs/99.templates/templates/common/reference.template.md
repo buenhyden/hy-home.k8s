@@ -32,7 +32,7 @@ updated: YYYY-MM-DD
 
 ## Reference Type
 
-- Type: version-contract-inventory | external-standard-snapshot | durable-concept | learning-roadmap | glossary | faq
+- Type: version-contract-inventory | external-standard-snapshot | durable-concept | data-catalog | source-ledger | learning-roadmap | glossary | faq | dated-implementation-audit
 - Source checked: YYYY-MM-DD
 - Refresh trigger: [What event requires review.]
 

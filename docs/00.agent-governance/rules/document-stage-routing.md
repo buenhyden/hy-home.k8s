@@ -22,6 +22,11 @@ variants remain in the support route map.
 Operations policy documents use `policy.template.md` through the support route
 map.
 
+`.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
+`.github/SECURITY.md` are GitHub-native control Markdown files. They remain
+frontmatter-free and are not structural stage documents; durable policy must
+route back to Stage 00, Stage 05, scripts, or workflow owners.
+
 | Document Intent | Canonical Stage | Route Owner | Notes |
 | --- | --- | --- | --- |
 | README or folder index | Repository or folder-local `README.md` | Template Routing Contract | Use for repository, stage, and nested folder entrypoints. |
@@ -137,6 +142,9 @@ When a skill suggests one of these paths, reroute the output into the canonical 
 - Confirm the target path matches exactly one structural template mapping before authoring; uncovered stage paths are invalid even when they sit under an allowed docs folder.
 - New authored documents must set `status: draft` until a human promotes the lifecycle state.
 - The required template headings are part of the document contract and must not be omitted.
+- Required heading enforcement is derived from literal second-level headings
+  in the matched template. Headings containing placeholders or marked optional
+  are guidance, not required coverage.
 - New or moved authored documents must trigger a same-change update to the owning folder `README.md`.
 - Every newly created authored document must include `## Related Documents`.
 - Old active-stage docs cannot remain current merely by adding historical, superseded, or current-contract notes when their body conflicts with the implementation.

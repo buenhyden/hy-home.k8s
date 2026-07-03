@@ -40,10 +40,32 @@ knowledge consistent without forcing every common document into an SDLC phase.
   support docs, Stage 00 governance, or the owning stage document.
 - README files must not keep deprecated related-document headings.
 
+## GitHub-Native Control Markdown Governance
+
+`.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
+`.github/SECURITY.md` are active repository control surfaces, but they are not
+structural stage documents and must not receive YAML frontmatter. GitHub reads
+or renders these files directly, so metadata belongs in their body structure
+or in canonical owners such as Stage 00 governance, `.github/workflows/**`,
+and Stage 05 CI/QA guidance.
+
+These files may summarize current workflow, security, or PR expectations, but
+they must link to canonical policy owners instead of defining a parallel
+template contract.
+
+Official basis:
+
+- [GitHub pull request templates](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository) documents `.github` as a supported PR template location.
+- [GitHub security policy](https://docs.github.com/code-security/getting-started/adding-a-security-policy-to-your-repository) documents `SECURITY.md` as the repository security reporting surface.
+
 ## Reference Governance
 
 - Reference documents own durable lookup facts, source boundaries, freshness
   rules, and stable external-standard snapshots.
+- Reference type values may be combined with `/` when a document deliberately
+  spans compatible reference roles such as `durable-concept`,
+  `external-standard-snapshot`, `data-catalog`, `source-ledger`,
+  `learning-roadmap`, `faq`, and `dated-implementation-audit`.
 - Reference documents must not duplicate active requirements, decisions,
   specs, plans, tasks, policies, or runbooks.
 - `reference.template.md` must not contain archive policy wording. Archive
@@ -62,6 +84,8 @@ knowledge consistent without forcing every common document into an SDLC phase.
 - Standalone memory files under `docs/00.agent-governance/memory/` use the
   memory template and require a related progress ledger entry in the same
   change.
+- The memory `<topic>` route excludes `progress`; `progress.md` is reserved
+  for the canonical append-only progress ledger.
 - The canonical progress ledger is
   `docs/00.agent-governance/memory/progress.md`.
 - `progress.template.md` defines appendable entries, not a whole-document

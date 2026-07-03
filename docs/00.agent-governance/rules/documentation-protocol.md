@@ -36,6 +36,10 @@ This protocol defines how governance references authored docs and how language b
 - Authored documents must keep the required template headings and must include `## Related Documents`.
 - Agents must report the template path used and the validation evidence before handoff.
 - Generated exceptions, such as `docs/90.references/llm-wiki/wiki-index.md`, must keep their generator contract and must not be edited by hand.
+- GitHub-native control Markdown under `.github/ABOUT.md`,
+  `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` is
+  frontmatter-free and mirrors canonical owners instead of becoming authored
+  stage documentation.
 - `docs/98.archive` documents must be metadata-only Tombstones and must not preserve old full bodies.
 - `docs/99.templates/templates/common/reference.template.md` must not own archive policy or contain archive wording; archive policy belongs in routing/governance docs and `archive-tombstone.template.md`.
 - Provider event wiring must surface Template-First guidance before authored
@@ -103,7 +107,7 @@ This protocol defines how governance references authored docs and how language b
 - Repo-changing agent work must append progress and reusable memory to `docs/00.agent-governance/memory/progress.md` using `docs/99.templates/templates/common/progress.template.md`.
 - `docs/00.agent-governance/memory/progress.md` is the canonical progress ledger and the only tracked `progress.md`. Standalone memory files are allowed, but the filename `progress.md` is forbidden outside the canonical path.
 - Agent eval completion evidence belongs in the relevant Stage 04 Task record and the canonical progress ledger. Eval PASS must come from deterministic command evidence or recorded human/operator approval, not inferred file presence or unverified live runtime readiness.
-- Standalone files under `docs/00.agent-governance/memory/` must use `docs/99.templates/templates/common/memory.template.md` and must be accompanied by a related `progress.md` entry in the same change.
+- Standalone files under `docs/00.agent-governance/memory/` must use `docs/99.templates/templates/common/memory.template.md` and must be accompanied by a related `progress.md` entry in the same change. The memory `<topic>` route explicitly excludes the reserved `progress` filename.
 
 ## Template Link Policy
 
