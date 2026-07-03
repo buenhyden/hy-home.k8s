@@ -40,7 +40,7 @@ Support template-aligned documentation work using the approved templates, stage 
 ## Guardrails
 
 - Resolve the canonical target path before writing.
-- Confirm the required template in `docs/99.templates/README.md`.
+- Confirm the required template in `docs/99.templates/support/template-routing.md`; use `docs/99.templates/README.md` only as the inventory summary.
 - Confirm the target path matches exactly one structural template mapping.
 - Always read the matching template before drafting or updating a document.
 - Confirm that durable document authoring is delegated by the owning scope or supervisor before making stage content changes.

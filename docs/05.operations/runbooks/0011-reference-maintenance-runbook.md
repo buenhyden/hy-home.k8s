@@ -113,7 +113,7 @@ Reference 추가, 이동, 버전 snapshot 갱신, LLM Wiki owner/link 변경이 
 
 - [ ] `docs/90.references` facts/version values는 canonical reference 문서에만 남아 있다.
 - [ ] `docs/05.operations/runbooks/0011-reference-maintenance-runbook.md`는 실행 절차만 담고 있다.
-- [ ] touched README files use `## Related Documents` and do not use `## deprecated README heading`.
+- [ ] touched README files use `## Related Documents`; legacy related-document heading names are not retained.
 - [ ] LLM Wiki generated index is current.
 - [ ] Repository quality gate passes.
 - [ ] Diff whitespace check passes.

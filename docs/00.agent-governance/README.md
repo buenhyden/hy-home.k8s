@@ -38,6 +38,14 @@ This README is primarily for:
 
 ## Structure
 
+Key folders in this area:
+
+- `rules/`: global policy, checklists, and documentation protocol
+- `scopes/`: layer-specific execution rules
+- `providers/`: provider-specific notes
+- `hooks/`: shared lifecycle/edit hook scripts invoked by provider wiring
+- `memory/`: agent progress ledger and reusable operational lessons
+
 ```text
 docs/00.agent-governance/
 ├── rules/              # Global policy, checklists, and documentation protocol
@@ -95,14 +103,6 @@ Links in this README are relative to `docs/00.agent-governance/`.
 - [Claude Provider Notes](providers/claude.md)
 - [Codex Provider Notes](providers/codex.md)
 - [Gemini Provider Notes](providers/gemini.md)
-
-## Related Folders
-
-- `rules/`: global policy, checklists, and documentation protocol
-- `scopes/`: layer-specific execution rules
-- `providers/`: provider-specific notes
-- `hooks/`: shared lifecycle/edit hook scripts invoked by provider wiring
-- `memory/`: agent progress ledger and reusable operational lessons
 
 ## Examples
 

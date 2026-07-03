@@ -88,7 +88,7 @@ def authored_doc_template(path: str) -> str:
                 "data-model.md": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
                 "tests.md": "docs/99.templates/templates/sdlc/specs/tests.template.md",
             }
-            return spec_templates.get(basename, "classify via docs/99.templates/README.md before writing")
+            return spec_templates.get(basename, "classify via docs/99.templates/support/template-routing.md before writing")
         if path.startswith("docs/04.execution/plans/"):
             return "docs/99.templates/templates/sdlc/execution/plan.template.md"
         if path.startswith("docs/04.execution/tasks/"):
@@ -107,7 +107,7 @@ def authored_doc_template(path: str) -> str:
             return "docs/99.templates/templates/common/reference.template.md"
         if path.startswith("docs/98.archive/"):
             return "docs/99.templates/templates/common/archive-tombstone.template.md"
-        return "classify via docs/99.templates/README.md before writing"
+        return "classify via docs/99.templates/support/template-routing.md before writing"
     return ""
 
 
@@ -152,7 +152,7 @@ for path in paths:
                 "\n".join(
                     [
                         f"Editing authored documentation `{path}`.",
-                        "- Template-First is mandatory: confirm the mapping in `docs/99.templates/README.md`.",
+                        "- Template-First is mandatory: confirm the route in `docs/99.templates/support/template-routing.md`; use `docs/99.templates/README.md` as the inventory summary.",
                         f"- Required template: `{template}`.",
                         "- New authored docs must keep `status: draft`, required template headings, and `## Related Documents`.",
                         "- Folder-level adds, moves, or removals require the owning `README.md` to be updated in the same change.",

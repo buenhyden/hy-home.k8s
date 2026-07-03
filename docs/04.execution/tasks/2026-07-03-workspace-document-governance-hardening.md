@@ -40,7 +40,7 @@ and Plan.
 | T-001 | Capture baseline document/provider/CI-QA audit inventory. | doc | Spec / Evaluation | Task 1 | Baseline scans, Stage 90 audit report, gate evidence | platform | Done |
 | T-002 | Harden core template, frontmatter, routing, Stage 00, and validator contracts. | doc | Spec / Contracts | Task 2 | Route/profile scans and validator pass | platform | Done |
 | T-003 | Harden provider entrypoint contracts for AGENTS, Claude, Codex, and Gemini surfaces. | doc | Spec / Agent Role & IO Contract | Task 3 | Provider topology scans and validator pass | platform | Done |
-| T-004 | Apply document governance profiles to workspace README and authored documents. | doc | Spec / Guardrails | Task 4 | README/frontmatter/residue scans and validator pass | platform | Open |
+| T-004 | Apply document governance profiles to workspace README and authored documents. | doc | Spec / Guardrails | Task 4 | README/frontmatter/residue scans and validator pass | platform | Done |
 | T-005 | Finalize deterministic validator checks, CI/QA evidence, and final review. | test | Spec / Success Criteria | Task 5 | Full local validation and final sub-agent READY | platform | Open |
 
 ## Suggested Types
@@ -69,7 +69,7 @@ and Plan.
 
 ### Phase 4: Workspace Application
 
-- [ ] T-004 Apply document governance profiles to workspace README and authored
+- [x] T-004 Apply document governance profiles to workspace README and authored
   documents.
 
 ### Phase 5: Final Validation
@@ -413,6 +413,92 @@ and Plan.
 - T-003 is complete for provider entrypoint/profile alignment.
 - No Task 4 authored-document cleanup, Task 5 final reconciliation, live
   Kubernetes, Argo CD, Vault, cloud, publishing, provider-runtime, or
+  secret-value checks were run.
+
+### T-004 Workspace Document Application
+
+#### Document Cleanup Changes
+
+- Normalized `docs/00.agent-governance/README.md` by moving folder inventory
+  content into `## Structure` and removing the duplicate deprecated related
+  folder heading.
+- Removed the body delimiter after `## Related Documents` from
+  `examples/aws/docs/README.md` and kept the task-reference sentence inside
+  `## How to Work in This Area`.
+- Updated `tests/README.md` shell syntax guidance from the old provider-local
+  hook path to `docs/00.agent-governance/hooks`.
+- Reworded the active checklist item in
+  `docs/05.operations/runbooks/0011-reference-maintenance-runbook.md` so it
+  refers to current `## Related Documents` usage without preserving the legacy
+  heading literal as current guidance.
+- Updated root/docs README onboarding text and active doc-writer/output-style
+  guidance so exact target-pattern/template selection points to
+  `docs/99.templates/support/template-routing.md`; the Templates README remains
+  an inventory summary.
+- Replaced duplicated route lists in `.agents/hooks.json`,
+  `.claude/settings.json`, and `.codex/hooks.json` with support-contract
+  routing guidance.
+- Updated `docs/00.agent-governance/hooks/k8s-pre-edit.sh` advisory output to
+  name the support routing contract while preserving the Templates README as
+  inventory context required by the repository quality gate.
+
+#### Focused Scan Evidence
+
+- README deprecated related-heading scan:
+
+  ```text
+  rg -n '^## (Related Folders|Related Files|References|See Also|Links|Deprecated|Legacy)$' README.md .github docs examples gitops infrastructure policy scripts tests traefik .agents .claude .codex
+  ```
+
+  PASS, no matches.
+- README frontmatter scan:
+
+  ```text
+  rg -n '^---$|^title:|^type:|^status:|^owner:|^updated:' README.md $(git ls-files '*README.md')
+  ```
+
+  PASS, no matches.
+- Changed-surface residue scan checked the touched files for stale
+  provider-local hook path wording, body delimiter wording, legacy README
+  heading text, and old template-routing owner wording. PASS, no matches.
+- Support-routing confirmation scan returned the touched README, doc-writer,
+  output-style, hook, and provider custom-instruction surfaces pointing to
+  `docs/99.templates/support/template-routing.md`.
+- Broad high-risk command scan was reviewed. Remaining matches are unchanged
+  prohibited-boundary, bootstrap-only, operator-approved, or historical
+  evidence references; this Task 4 change introduced no new live mutation,
+  secret-value, push, publish, or external-system action.
+
+#### Verification Evidence
+
+- `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json` —
+  PASS, no output.
+- `bash -n docs/00.agent-governance/hooks/k8s-pre-edit.sh` — PASS, no output.
+- `git diff --check` — PASS, no output.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS, no output.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS:
+
+  ```text
+  [PASS] repository quality gates passed
+  ```
+
+#### Review Notes
+
+- A callable subagent dispatcher was not exposed in this Codex tool surface.
+  The Task 4 implementation therefore used the same staged discipline in this
+  session: implement, run focused spec-compliance scans, run focused quality
+  scans, and run the repo quality gate before commit.
+- RTK limitation repeated: `rtk` is not on PATH; `/home/hy/.local/bin/rtk
+  --version` works, but `/home/hy/.local/bin/rtk gain` cannot initialize its
+  tracking database. Required validation commands were run directly.
+
+#### Handoff
+
+- T-004 is complete for active README/authored-document cleanup.
+- T-005 should perform final reconciliation and decide whether additional
+  deterministic validator coverage is warranted for README heading/profile or
+  onboarding route-owner drift.
+- No live Kubernetes, Argo CD, Vault, cloud, publishing, provider-runtime, or
   secret-value checks were run.
 
 ## Related Documents

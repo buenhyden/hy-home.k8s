@@ -23,9 +23,10 @@ loaded from `docs/00.agent-governance/**`.
 
 - Follow the JIT loading sequence: bootstrap -> preflight -> persona -> scope -> provider
   -> progress -> postflight.
-- Author stage documents Template-First using `docs/99.templates/README.md` and the
-  matching template; route generated docs into the canonical `docs/01`–`docs/05`, `docs/90`,
-  `docs/99` tree only.
+- Author stage documents Template-First using `docs/99.templates/support/template-routing.md`
+  and the matching template; use `docs/99.templates/README.md` as the inventory summary
+  and route generated docs into the canonical `docs/01`–`docs/05`, `docs/90`, `docs/99`
+  tree only.
 - Define validation evidence before editing. Report skipped or unavailable local tools
   honestly (for example, when `rtk` is not on PATH).
 - Prefer existing skills, agents, and validators over new code; make surgical, in-place changes.

@@ -8,6 +8,61 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-03 — Workspace document governance hardening Task 4 document cleanup
+
+- **Date**: 2026-07-03
+- **Layer**: docs, meta, governance, qa
+- **Status**: complete
+- **Tags**: #docs #governance #readme #validation
+
+#### Progress
+
+- Completed T-004 for the workspace document governance hardening plan and
+  updated the
+  [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
+- Cleaned active README/profile drift in the governance hub, AWS example docs
+  README, tests README, root README, and docs hub.
+- Updated active onboarding guidance in provider doc-writer surfaces, shared
+  output style, provider hook custom instructions, and the Stage 00 pre-edit
+  advisory so exact template route selection points to
+  `docs/99.templates/support/template-routing.md`.
+- Kept the Templates README as an inventory summary and removed duplicated
+  route-list prose from provider custom instructions.
+
+#### Memory
+
+- README files should keep `## Related Documents`; folder inventories belong
+  in `## Structure` or other topic-specific sections, not as deprecated
+  related-document heading families.
+- Tests and onboarding guidance should reference shared hook scripts under
+  `docs/00.agent-governance/hooks`, not provider-local hook directories.
+- Exact target-pattern/template selection belongs in
+  `docs/99.templates/support/template-routing.md`; `docs/99.templates/README.md`
+  remains the synchronized inventory summary.
+
+#### Evidence
+
+- Focused README heading scan — PASS, no deprecated related-heading matches.
+- Focused README frontmatter scan — PASS, no README frontmatter matches.
+- Changed-surface residue scan — PASS, no stale hook, body delimiter, legacy
+  heading, or old template-routing owner matches.
+- JSON syntax check for `.agents/hooks.json`, `.claude/settings.json`, and
+  `.codex/hooks.json` — PASS.
+- `bash -n docs/00.agent-governance/hooks/k8s-pre-edit.sh` — PASS.
+- `git diff --check` — PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- RTK limitation repeated: `rtk` is not on PATH; direct local binary version
+  check works, but `rtk gain` cannot initialize its tracking database, so
+  required validation commands were run directly.
+
+#### Handoff
+
+- T-004 is complete. Continue with T-005 final reconciliation and any final
+  deterministic validator decisions.
+- No live Kubernetes, Argo CD, Vault, cloud, publishing, provider-runtime, or
+  secret-value action was performed.
+
 ### 2026-07-03 — Workspace document governance hardening Task 3 provider entrypoints
 
 - **Date**: 2026-07-03

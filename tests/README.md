@@ -55,7 +55,7 @@ tests/
 | GitOps structure | `bash scripts/validate-gitops-structure.sh` |
 | Kubernetes manifests | `bash scripts/validate-k8s-manifests.sh .` |
 | Secret handling | `bash scripts/check-secret-handling.sh .` |
-| Shell syntax | `find infrastructure scripts .claude/hooks -type f -name '*.sh' -exec bash -n {} +` |
+| Shell syntax | `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +` |
 
 ## Evidence Boundaries
 

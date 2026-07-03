@@ -65,14 +65,14 @@ docs/
 
 ## How to Work in This Area
 
-1. 새 문서를 만들기 전에 [document-stage-routing.md](./00.agent-governance/rules/document-stage-routing.md)에서 canonical path를 확인한다.
-2. 새 문서는 [99.templates](./99.templates/README.md)의 승인된 템플릿에서 시작한다.
+1. 새 문서를 만들기 전에 [Template Routing Contract](./99.templates/support/template-routing.md)에서 canonical target pattern과 template를 확인한다.
+2. 새 문서는 matching template에서 시작하고 [99.templates](./99.templates/README.md)는 inventory summary로 사용한다.
 3. 문서가 추가되거나 이동되면 해당 stage의 `README.md` 인덱스와 관련 링크를 같은 변경에서 갱신한다.
 4. 사람 대상 README와 개요 문서는 한국어를 유지하고, `00.agent-governance` 정책 문서는 영어를 유지한다.
 5. 사람 대상 문서 안에서도 `AI Agent Requirements`, `Agent Execution Notes`, tool/prompt contract처럼 AI Agent가 직접 따라야 하는 섹션은 영어를 우선한다.
 6. README 파일은 frontmatter를 요구하지 않는다. README는 경로 목적, scope, structure, workflow, link basis, related documents를 설명하는 entrypoint다.
 7. PRD/ARD/ADR/Spec/Plan/Task와 운영·참조 authored 문서는 matching template의 `title`, `type`, `status`, `owner`, `updated` metadata를 유지한다.
-8. 템플릿이나 문서 lifecycle 규칙을 바꾸면 이 hub, 대상 stage README, [99.templates README](./99.templates/README.md), 이미 생성된 문서의 안전한 구조 반영 여부를 함께 점검한다.
+8. 템플릿이나 문서 lifecycle 규칙을 바꾸면 이 hub, 대상 stage README, [Template Routing Contract](./99.templates/support/template-routing.md), [99.templates README](./99.templates/README.md), 이미 생성된 문서의 안전한 구조 반영 여부를 함께 점검한다.
 9. 일반 운영 변경은 GitOps-first 원칙을 따르며, 문서가 live `kubectl apply`나 외부 Vault 조작을 우회 절차처럼 안내하지 않도록 한다.
 10. cloud example 버전을 갱신할 때는 코드, README, [tech-stack-version-inventory.md](./90.references/data/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
 11. 현재 구현과 상충하는 old 문서는 [`98.archive`](./98.archive/README.md)로 이동하고, 활성 문서는 archive index에만 연결한다.
@@ -144,7 +144,7 @@ version support boundary, generated-index contract처럼 사실 계약으로 소
 - Markdown 링크는 최종 문서 위치 기준 상대 경로를 사용한다. 아직 존재하지 않는 optional 경로나 placeholder는 Markdown 링크가 아니라 code literal로 남긴다.
 - stale 문서는 현재 구현과 비교해 갱신, 병합, archive 중 하나로 정리한다. 현재 구현과 상충하는 old 문서는 [`98.archive`](./98.archive/README.md)에 Tombstone으로 이동하고 활성 문서에서는 archive index만 연결한다.
 - 문서를 제거하거나 archive로 이동하는 일은 관련 링크 갱신, current replacement 확인, 리뷰 가능한 diff가 있을 때만 허용한다.
-- 문서 stage나 템플릿이 바뀌면 관련 stage README와 [`99.templates/README.md`](./99.templates/README.md)를 같은 변경에서 맞춘다.
+- 문서 stage나 템플릿이 바뀌면 관련 stage README, [Template Routing Contract](./99.templates/support/template-routing.md), [`99.templates/README.md`](./99.templates/README.md)를 같은 변경에서 맞춘다.
 
 ## 구현 영역 연결
 
@@ -176,6 +176,7 @@ version support boundary, generated-index contract처럼 사실 계약으로 소
 - [Agent Governance Hub](./00.agent-governance/README.md)
 - [Document Stage Routing Rules](./00.agent-governance/rules/document-stage-routing.md)
 - [Stage Authoring Matrix](./00.agent-governance/rules/stage-authoring-matrix.md)
+- [Template Routing Contract](./99.templates/support/template-routing.md)
 - [Templates README](./99.templates/README.md)
 - [Archive Index](./98.archive/README.md)
 - [Scripts README](../scripts/README.md)
