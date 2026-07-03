@@ -7078,6 +7078,9 @@ section separating static from live evidence.
 - `rg -n "tools:|permission gate|hook wiring|provider-native|mirror|parity|Subagent|subagent|AGENTS.md|CLAUDE.md|GEMINI.md|QA|CI/CD|protected surface|frontmatter" docs/00.agent-governance AGENTS.md CLAUDE.md GEMINI.md .agents .claude .codex .github`
   identified active surfaces for parity, hook behavior, QA/CI/CD,
   protected-surface, and frontmatter contract follow-up.
+- `git diff --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS, including
+  `[PASS] repository quality gates passed`.
 
 ### Handoff
 

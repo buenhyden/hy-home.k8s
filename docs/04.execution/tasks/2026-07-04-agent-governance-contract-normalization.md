@@ -106,8 +106,9 @@ unit.
 
 - **Test Commands**:
   - `git status --short --branch`
-  - `git diff --check`
-  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `git diff --check` — PASS.
+  - `bash scripts/validate-repo-quality-gates.sh .` — PASS, including
+    `[PASS] repository quality gates passed`.
 - **Eval Commands**:
   - Baseline inventory scans listed in `Baseline Drift Inventory`.
 - **Logs / Evidence Location**:
