@@ -285,7 +285,7 @@ inventory stays in `scripts/README.md`.
 
 - **Date**: 2026-07-03
 - **Layer**: docs, governance, qa, meta
-- **Status**: in-progress
+- **Status**: completed
 - **Tags**: #docs #governance #templates #providers #validation
 
 #### Progress
@@ -6941,3 +6941,53 @@ section separating static from live evidence.
 
 - The branch is ready for user-approved finishing flow: local main merge,
   branch cleanup, push, or PR steps were not performed in this commit.
+
+## 2026-07-04 — Agent Governance Contract Normalization Spec
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: meta, docs, qa, ci
+- **Status**: in-progress
+- **Tags**: #governance #agents #harness #qa #ci #validation
+
+### Progress
+
+- Completed the approved brainstorming design for normalizing the root provider
+  shims, provider adapters, Stage 00 governance, GitHub control surfaces, and
+  QA/CI validation contract.
+- Routed the design away from the Superpowers default `docs/superpowers/**`
+  location into the canonical Stage 03 route
+  `docs/03.specs/015-agent-governance-contract-normalization/spec.md`.
+- Updated `docs/03.specs/README.md` so the new spec is discoverable from the
+  stage index.
+
+### Memory
+
+- Provider parity for this repository means same role, scope, guardrails,
+  handoff, and postflight behavior expressed in provider-native syntax. It
+  does not mean every provider adapter must carry the same metadata keys.
+- Claude native `tools:` frontmatter, Codex TOML `model_reasoning_effort`, and
+  Gemini `.agents/agents/*.md` reference metadata should be treated as
+  provider-specific projections of the same canonical Stage 00 contract.
+
+### Evidence
+
+- Read `docs/99.templates/support/template-routing.md` and
+  `docs/99.templates/templates/sdlc/specs/spec.template.md` before writing the
+  spec.
+- `bash scripts/validate-repo-quality-gates.sh .` passed before the spec file
+  was authored.
+- Official source basis reviewed for Codex `AGENTS.md` and subagents, Claude
+  settings/hooks/subagents, Gemini CLI hierarchical memory and agents command,
+  and GitHub Actions.
+- Spec self-review found no placeholder residue in
+  `docs/03.specs/015-agent-governance-contract-normalization/spec.md`.
+- `git diff --check` passed after the spec and index updates.
+- `bash scripts/validate-repo-quality-gates.sh .` passed after the spec and
+  index updates.
+
+### Handoff
+
+- Next action: request user review of the committed spec before implementation
+  planning.

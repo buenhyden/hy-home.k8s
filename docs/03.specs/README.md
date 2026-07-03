@@ -64,6 +64,8 @@ Spec은 실행 기준을 소유하는 문서다.
 │   └── spec.md
 ├── 014-workspace-document-contract-normalization/
 │   └── spec.md
+├── 015-agent-governance-contract-normalization/
+│   └── spec.md
 └── README.md
 ```
 
@@ -108,6 +110,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./012-template-governance-audit-enhancement/spec.md`](./012-template-governance-audit-enhancement/spec.md) | Template governance follow-up audit와 선택 보강 명세 | Draft | 이미 완료된 template contract migration 위에서 `docs/99.templates/**`, support contracts, Stage 00 routing, validator, authored docs 사용 상태를 audit-first로 검증하고 안정적인 보강 범위를 정의한다. | 2026-07-03 |
 | [`./013-workspace-document-governance-hardening/spec.md`](./013-workspace-document-governance-hardening/spec.md) | Workspace document type, provider entrypoint, CI/QA governance hardening 명세 | Draft | template/frontmatter contracts, provider shims, README scope, workspace-wide authored docs, and repo-static validation을 staged governance hardening 흐름으로 정렬한다. | 2026-07-03 |
 | [`./014-workspace-document-contract-normalization/spec.md`](./014-workspace-document-contract-normalization/spec.md) | Workspace document contract normalization 명세 | Draft | active 문서와 historical evidence까지 frontmatter, section, template 계약에 맞게 전면 정규화하고, 과거 증거는 current contract와 분리된 섹션으로 보존하는 후속 패스를 정의한다. | 2026-07-04 |
+| [`./015-agent-governance-contract-normalization/spec.md`](./015-agent-governance-contract-normalization/spec.md) | Agent governance contract normalization 명세 | Draft | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.agents/`, `.claude/`, `.codex/`, `.github/`, Stage 00 governance의 provider-aware contract, adapter parity, QA/CI validation 정규화 범위를 정의한다. | 2026-07-04 |
 
 ## Helper Templates
 
