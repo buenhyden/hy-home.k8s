@@ -73,6 +73,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-07-03-template-contract-governance-migration.md
 ├── 2026-07-03-template-governance-audit-enhancement.md
 ├── 2026-07-03-workspace-document-governance-hardening.md
+├── 2026-07-04-workspace-document-contract-normalization.md
 └── README.md
 ```
 
@@ -128,6 +129,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-07-03-template-contract-governance-migration.md`](./2026-07-03-template-contract-governance-migration.md) | template contract/governance migration의 support baseline, template path migration, frontmatter cleanup, authored docs 적용, final validation evidence를 추적 | Draft | 2026-07-03 |
 | [`./2026-07-03-template-governance-audit-enhancement.md`](./2026-07-03-template-governance-audit-enhancement.md) | template governance 후속 audit findings, support contract drift 정리, validator hardening, final validation evidence를 추적 | Done | 2026-07-03 |
 | [`./2026-07-03-workspace-document-governance-hardening.md`](./2026-07-03-workspace-document-governance-hardening.md) | workspace document governance hardening의 audit, core contract, provider entrypoint, workspace application, validation evidence를 추적 | Done | 2026-07-04 |
+| [`./2026-07-04-workspace-document-contract-normalization.md`](./2026-07-04-workspace-document-contract-normalization.md) | active 문서와 historical evidence의 frontmatter, section, template, reference, CI/QA, validator 정규화 작업과 검증 evidence를 추적 | Draft | 2026-07-04 |
 
 ## Related Documents
 

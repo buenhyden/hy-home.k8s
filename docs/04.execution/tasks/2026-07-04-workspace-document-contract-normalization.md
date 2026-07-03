@@ -1,0 +1,133 @@
+---
+title: 'Task: Workspace Document Contract Normalization'
+type: sdlc/task
+status: draft
+owner: platform
+updated: 2026-07-04
+---
+
+# Task: Workspace Document Contract Normalization
+
+## Overview
+
+This document tracks implementation and verification work for workspace
+document contract normalization. It keeps audit, contract, active document,
+historical evidence, reference, CI/QA, validator, and final review work
+traceable to the parent Spec and Plan.
+
+## Inputs
+
+- **Parent Spec**:
+  [Workspace Document Contract Normalization Spec](../../03.specs/014-workspace-document-contract-normalization/spec.md)
+- **Parent Plan**:
+  [Workspace Document Contract Normalization Plan](../plans/2026-07-04-workspace-document-contract-normalization.md)
+
+## Working Rules
+
+- Use subagent-driven development for implementation.
+- Each task gets one logical commit.
+- Each task receives spec compliance review before code quality review.
+- Documentation-only work still requires validation evidence.
+- Historical evidence is in scope for normalization, but old facts must remain
+  distinguishable from current operating guidance.
+- Repo-static validation must not be reported as live runtime readiness unless
+  a separate live check is approved and run.
+
+## Task Table
+
+| Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| T-001 | Audit and inventory document contract drift. | doc | VAL-SPC-001, VAL-SPC-006 | PLN-001 | Audit report, drift scans, repo gate | platform | Todo |
+| T-002 | Normalize support contracts and template forms. | doc | Contracts, Core Design | PLN-002 | Route/profile parity scans, repo gate | platform | Todo |
+| T-003 | Apply active SDLC document profiles. | doc | VAL-SPC-002 | PLN-003 | Active docs scans, README checks, repo gate | platform | Todo |
+| T-004 | Normalize historical evidence contracts. | doc | VAL-SPC-003 | PLN-004 | Historical evidence scans, archive/progress checks, repo gate | platform | Todo |
+| T-005 | Align references, CI/QA, and formatting contracts. | doc | VAL-SPC-004, VAL-SPC-005 | PLN-005 | Official source review, workflow/doc comparison, repo gate | platform | Todo |
+| T-006 | Reconcile final validator and governance gates. | test | VAL-SPC-006, VAL-SPC-007 | PLN-006 | Full validation bundle and final review | platform | Todo |
+
+## Suggested Types
+
+- `doc`
+- `test`
+- `guardrail`
+- `ops`
+
+## Phase View
+
+### Phase 1: Audit
+
+- [ ] T-001 Audit and inventory document contract drift.
+
+### Phase 2: Contract Sources
+
+- [ ] T-002 Normalize support contracts and template forms.
+
+### Phase 3: Active Documents
+
+- [ ] T-003 Apply active SDLC document profiles.
+
+### Phase 4: Historical Evidence
+
+- [ ] T-004 Normalize historical evidence contracts.
+
+### Phase 5: References and CI/QA
+
+- [ ] T-005 Align references, CI/QA, and formatting contracts.
+
+### Phase 6: Final Validation
+
+- [ ] T-006 Reconcile final validator and governance gates.
+
+## Verification Summary
+
+- **Required Commands**:
+  - `git diff --check`
+  - `bash -n scripts/validate-repo-quality-gates.sh`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `bash scripts/validate-harness.sh`
+- **Conditional Commands**:
+  - `bash infrastructure/tests/verify-contracts-static.sh`
+  - `bash scripts/validate-gitops-structure.sh`
+  - `bash scripts/validate-k8s-manifests.sh .`
+  - `bash scripts/check-secret-handling.sh .`
+  - `bash scripts/validate-policy-gates.sh .`
+- **Review Evidence**:
+  - Spec compliance reviewer result after each task.
+  - Code quality reviewer result after each task.
+  - Final independent reviewer result for the full branch.
+
+## Execution Evidence
+
+### T-001 Audit and Inventory Document Contract Drift
+
+Status: Todo.
+
+### T-002 Normalize Support Contracts and Template Forms
+
+Status: Todo.
+
+### T-003 Apply Active SDLC Document Profiles
+
+Status: Todo.
+
+### T-004 Normalize Historical Evidence Contracts
+
+Status: Todo.
+
+### T-005 Align References, CI/QA, and Formatting Contracts
+
+Status: Todo.
+
+### T-006 Reconcile Final Validator and Governance Gates
+
+Status: Todo.
+
+## Related Documents
+
+- **Spec**:
+  [Workspace Document Contract Normalization Spec](../../03.specs/014-workspace-document-contract-normalization/spec.md)
+- **Plan**:
+  [Workspace Document Contract Normalization Plan](../plans/2026-07-04-workspace-document-contract-normalization.md)
+- **Template Routing Contract**:
+  [Template Routing](../../99.templates/support/template-routing.md)
+- **Frontmatter Schema**:
+  [Frontmatter Schema](../../99.templates/support/frontmatter-schema.md)

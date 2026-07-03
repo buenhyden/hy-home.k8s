@@ -6606,3 +6606,43 @@ section separating static from live evidence.
 
 - Complete spec self-review, run repository validation, commit the spec, then
   ask for user review before creating the Stage 04 implementation plan.
+
+## 2026-07-04 — Workspace Document Contract Normalization Plan
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: docs, governance, templates, qa
+- **Status**: in-progress
+- **Tags**: #docs #governance #templates #plans #validation
+
+### Progress
+
+- Created the Stage 04 implementation plan:
+  [Workspace Document Contract Normalization Plan](../../04.execution/plans/2026-07-04-workspace-document-contract-normalization.md).
+- Created the Stage 04 task record:
+  [Workspace Document Contract Normalization Tasks](../../04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md).
+- Indexed the new Plan and Task in their stage README files.
+- Split execution into six logical commits: audit inventory, contract/template
+  normalization, active SDLC document application, historical evidence
+  normalization, references/CI-QA alignment, and final validator
+  reconciliation.
+
+### Memory
+
+- For broad document normalization, plan tasks should provide exact scan
+  commands, target files, expected outcomes, and commit messages so subagents
+  can execute without inheriting controller context.
+- Historical evidence normalization requires explicit evidence preservation
+  language in both the plan and task record.
+
+### Evidence
+
+- Read `plan.template.md` and `task.template.md` before authoring Stage 04
+  documents.
+- Confirmed Stage 04 README index structure and relative link basis.
+
+### Handoff
+
+- Run plan self-review, repository validation, and commit the Stage 04 planning
+  artifacts. After user approval, execute with subagent-driven development.
