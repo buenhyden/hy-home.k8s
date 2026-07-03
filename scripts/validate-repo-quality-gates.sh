@@ -836,14 +836,37 @@ for frontmatter_free_template_name in ["readme.template.md", "progress.template.
         fail(f"{rel(frontmatter_free_path)} must remain frontmatter-free")
 
 template_support_root = root / "docs/99.templates/support"
+support_stale_patterns = [
+    (re.compile(r"Phase [1-4]"), "migration phase wording"),
+    (re.compile(r"during the migration"), "migration-only wording"),
+    (re.compile(r"after Phase"), "migration phase ordering"),
+    (re.compile(r"current and target frontmatter"), "current/target schema wording"),
+]
 for support_doc in sorted(template_support_root.glob("*.md")):
     if support_doc.name == "README.md":
         continue
+    support_text = read_text(support_doc)
     validate_markdown_frontmatter_profile(
         support_doc,
         "governance/template-support",
         expected_status="draft",
     )
+    for pattern, label in support_stale_patterns:
+        if pattern.search(support_text):
+            fail(f"{rel(support_doc)} contains stale {label}")
+
+template_routing_path = template_support_root / "template-routing.md"
+template_routing_rows = markdown_table_after_heading(
+    read_text(template_routing_path),
+    "## Current Route Map",
+)
+for route_row in template_routing_rows[1:]:
+    route_text = " | ".join(route_row)
+    if "harness-task-contract.template.md" in route_text:
+        fail(
+            "docs/99.templates/support/template-routing.md Current Route Map "
+            "must not list harness-task-contract.template.md as a structural route"
+        )
 
 for governance_reference in [
     root / "docs/00.agent-governance/harness-catalog.md",

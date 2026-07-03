@@ -28,6 +28,8 @@ inventory stays in `scripts/README.md`.
   improvement candidates: migration-phase wording, harness task route
   ambiguity, deterministic validator guardrail, and authored-doc audit
   evidence.
+- Added repository quality gate guardrails for stale support-doc wording and
+  harness starter overlap in the structural route map.
 
 #### Memory
 
@@ -42,10 +44,12 @@ inventory stays in `scripts/README.md`.
 
 - `git diff --check` — PASS.
 - `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- Task 4 focused support drift scan — PASS, no stale support-doc wording.
+- Task 4 harness route overlap scan — PASS, no structural route overlap.
 
 #### Handoff
 
-- Next action: execute the baseline audit and support-contract remediation
+- Next action: complete the authored-document verification and final evidence
   tasks from the linked plan.
 
 ### 2026-07-03 — Template governance migration final sync
