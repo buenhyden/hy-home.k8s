@@ -46,7 +46,7 @@ approved Stage 03 spec and Stage 04 plan.
 | T-002 | Run baseline route, frontmatter, residue, support, and incident-path scans | eval | Audit Dimensions | PLN-002 | Finding ledger rows FND-001 through FND-004 | platform | Done |
 | T-003 | Remediate current support contract drift and harness task route ambiguity | doc | Contracts / Core Design | PLN-003, PLN-004 | Focused support scan and quality gate | platform | Done |
 | T-004 | Add deterministic validator guardrails for stable support drift patterns | guardrail | Evaluation / Verification Commands | PLN-005 | Quality gate PASS and focused negative-risk review | platform | Done |
-| T-005 | Verify authored documents and template use after remediation | eval | Guardrails / Success Criteria | PLN-006 | Residue, flat-route, incident-route, and frontmatter scans | platform | Todo |
+| T-005 | Verify authored documents and template use after remediation | eval | Guardrails / Success Criteria | PLN-006 | Residue, flat-route, incident-route, and frontmatter scans | platform | Done |
 | T-006 | Record final validation evidence and mark Plan, Task, README indexes, and progress complete | doc | Success Criteria | PLN-006 | Final validation summary and completion commit | platform | Todo |
 
 ## Suggested Types
@@ -63,7 +63,7 @@ approved Stage 03 spec and Stage 04 plan.
 | FND-001 | support | `docs/99.templates/support/frontmatter-schema.md`; `docs/99.templates/support/legacy-cleanup-rules.md`; `docs/99.templates/support/template-routing.md`; `docs/99.templates/support/README.md` | Active support docs describe current steady-state contracts | Support docs now describe current frontmatter, cleanup, and route enforcement contracts without completed migration-phase wording. | Medium | doc-sync | `rg -n "Phase [1-4]\|during the migration\|after Phase\|current and target" docs/99.templates/support` | Resolved |
 | FND-002 | support | `docs/99.templates/README.md`; `docs/99.templates/support/template-routing.md`; `docs/99.templates/support/sdlc-governance.md`; `scripts/validate-repo-quality-gates.sh` | `task.template.md` is the only structural route for `docs/04.execution/tasks/*.md`; the harness task contract is supplemental | Support route tables now keep only the Stage 04 Task structural mapping, while supplemental starter notes clarify the harness contract placement. | Medium | doc-sync | `rg -n "YYYY-MM-DD-<harness-task>.*harness-task-contract\|harness-task-contract.*YYYY-MM-DD-<harness-task>" docs/99.templates/support/template-routing.md docs/99.templates/support/sdlc-governance.md` | Resolved |
 | FND-003 | validator | `scripts/validate-repo-quality-gates.sh` | Stable support-contract drift should fail deterministically | The quality gate now rejects stale migration-phase wording in active support docs and prevents `harness-task-contract.template.md` from re-entering the Current Route Map as a structural route. | Low | validator-fix | `bash scripts/validate-repo-quality-gates.sh .` | Resolved |
-| FND-004 | authored-doc | `docs/**`; `.codex/**`; `.agents/**`; `AGENTS.md`; `RTK.md` | Authored docs retain no active template residue, flat template routes, or legacy incident path rules | Active authored-doc residue and flat-template route scans returned no matches. The legacy route scan now returns self-referential matches in this Task record, plus the plan evidence command and the Stage 00 prohibited-path contract; no active legacy route contract was found. | Low | no-change | `rg -n -e "Target: docs[/]" -e "Use this te[m]plate" docs --glob "*.md" --glob "!docs/99.templates/**"`<br>`rg -n "docs/99\\.templates/[a-z0-9-]+\\.template\\.(md\|yaml\|graphql\|proto)" docs scripts .codex .agents AGENTS.md RTK.md`<br>`rg -n "docs/10\\.incidents\|Legacy postmortem top-level\|Legacy learning top-level" docs scripts .codex .agents AGENTS.md RTK.md` | Accepted |
+| FND-004 | authored-doc | `docs/**`; `.codex/**`; `.agents/**`; `AGENTS.md`; `RTK.md` | Authored docs retain no active template residue, simple legacy frontmatter type values, quoted canonical owner values, flat template routes, or legacy incident path rules | Task 5 scans found no active authored-doc template residue. The simple type scan returned archive Tombstone `Original type:` metadata under `docs/98.archive/**`, not active frontmatter drift. The quoted owner scan returned TypeScript interface examples in Stage 03 specs, not YAML frontmatter. The incident path scan returned the Stage 00 legacy mapping and prohibited-path contract for `docs/10\\.incidents`, not an active old incident filename convention. No authored-doc remediation was needed. | Low | no-change | `rg -n -e "Target: docs[/]" -e "Use this te[m]plate" docs --glob "*.md" --glob "!docs/99.templates/**"`<br>`rg -n "type: (prd\|ard\|adr\|spec\|plan\|task\|policy\|guide\|runbook\|incident\|postmortem\|reference)$" docs --glob "*.md" --glob "!docs/99.templates/**"`<br>`rg -n "owner: ['\"]platform['\"]" docs --glob "*.md"`<br>`find docs/05.operations/incidents -mindepth 1 -maxdepth 4 -type f -print \| sort`<br>`rg -n "docs/05\\.operations/incidents/[0-9]{4}/INC-[0-9]{3}-[^/]+/(incident\|postmortem)\\.md\|docs/10\\.incidents" docs/99.templates docs/00.agent-governance docs/05.operations scripts` | Accepted |
 
 ## Phase View
 
@@ -82,7 +82,7 @@ approved Stage 03 spec and Stage 04 plan.
 
 ### Phase 4: Verification And Handoff
 
-- [ ] T-005 Verify authored document usage.
+- [x] T-005 Verify authored document usage.
 - [ ] T-006 Complete final sync and evidence.
 
 ## Verification Summary
@@ -94,8 +94,12 @@ approved Stage 03 spec and Stage 04 plan.
   - `find docs/99.templates -maxdepth 5 -type f -print | sort`
   - `rg -n "Phase [1-4]|during the migration|after Phase|current and target|YYYY-MM-DD-<harness-task>|harness-task-contract" docs/99.templates/support docs/99.templates/README.md docs/00.agent-governance/rules/document-stage-routing.md scripts/validate-repo-quality-gates.sh`
   - `rg -n -e "Target: docs[/]" -e "Use this te[m]plate" docs --glob "*.md" --glob "!docs/99.templates/**"`
+  - `rg -n "type: (prd|ard|adr|spec|plan|task|policy|guide|runbook|incident|postmortem|reference)$" docs --glob "*.md" --glob "!docs/99.templates/**"`
+  - `rg -n "owner: ['\"]platform['\"]" docs --glob "*.md"`
   - `rg -n "docs/99\\.templates/[a-z0-9-]+\\.template\\.(md|yaml|graphql|proto)" docs scripts .codex .agents AGENTS.md RTK.md`
   - `rg -n "docs/10\\.incidents|Legacy postmortem top-level|Legacy learning top-level" docs scripts .codex .agents AGENTS.md RTK.md`
+  - `find docs/05.operations/incidents -mindepth 1 -maxdepth 4 -type f -print | sort`
+  - `rg -n "docs/05\\.operations/incidents/[0-9]{4}/INC-[0-9]{3}-[^/]+/(incident|postmortem)\\.md|docs/10\\.incidents" docs/99.templates docs/00.agent-governance docs/05.operations scripts`
   - `rg -n "Phase [1-4]|during the migration|after Phase|current and target" docs/99.templates/support`
   - `rg -n "YYYY-MM-DD-<harness-task>.*harness-task-contract|harness-task-contract.*YYYY-MM-DD-<harness-task>" docs/99.templates/support/template-routing.md docs/99.templates/support/sdlc-governance.md`
 - **Logs / Evidence Location**:
@@ -132,8 +136,27 @@ approved Stage 03 spec and Stage 04 plan.
     `bash scripts/validate-repo-quality-gates.sh .` passed.
   - T-004 validation evidence: focused support drift scan returned no matches.
   - T-004 validation evidence: harness route overlap scan returned no matches.
+  - T-005 validation evidence: authored-doc template residue scan returned no
+    matches.
+  - T-005 validation evidence: simple legacy type scan returned only archive
+    Tombstone `Original type:` metadata under `docs/98.archive/**`; no active
+    frontmatter drift was found.
+  - T-005 validation evidence: quoted canonical owner scan returned only
+    TypeScript interface examples in Stage 03 specs; no quoted YAML owner
+    value was found in active frontmatter.
+  - T-005 validation evidence: incident bundle inventory returned only
+    `docs/05.operations/incidents/README.md`; no incident bundle files use the
+    old filename convention.
+  - T-005 validation evidence: incident path scan returned only the Stage 00
+    legacy migration map and prohibited-path contract for `docs/10\\.incidents`;
+    no active old incident filename route was found.
+  - T-005 remediation evidence: no authored-document or Stage README edits were
+    needed.
+  - T-005 validation evidence: `git diff --check` passed.
+  - T-005 validation evidence:
+    `bash scripts/validate-repo-quality-gates.sh .` passed.
   - Remediation and final evidence will be appended to this section during
-    T-005 through T-006.
+    T-006.
 
 ## Related Documents
 
