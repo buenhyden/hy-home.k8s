@@ -10,30 +10,35 @@ Route all generated documentation into the existing `docs/` stage taxonomy.
 
 ## Core Routing Policy
 
-Use the existing stage structure only.
+Use the existing stage structure only. The exact current route map is owned by
+the [Template Routing Contract](../../99.templates/support/template-routing.md)
+and summarized in [Templates README](../../99.templates/README.md). This Stage
+00 rule owns the decision policy for choosing the right stage; it must not carry
+a competing copy of the full template route table.
 
-| Document Intent | Canonical Path | Required Template | Notes |
+README entrypoints use
+`docs/99.templates/templates/common/readme.template.md`; exact README route
+variants remain in the support route map.
+Operations policy documents use `policy.template.md` through the support route
+map.
+
+| Document Intent | Canonical Stage | Route Owner | Notes |
 | --- | --- | --- | --- |
-| README or folder index | `README.md`, `docs/**/README.md` | `docs/99.templates/templates/common/readme.template.md` | Use for repository, stage, and nested folder entrypoints. |
-| Product requirement | `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md` | `docs/99.templates/templates/sdlc/requirements/prd.template.md` | Use for product intent, scope, success criteria, and acceptance criteria. |
-| Architecture requirement | `docs/02.architecture/requirements/####-<system-or-domain>.md` | `docs/99.templates/templates/sdlc/architecture/ard.template.md` | Use for architecture requirements and quality attributes. |
-| Architecture decision | `docs/02.architecture/decisions/####-<short-title>.md` | `docs/99.templates/templates/sdlc/architecture/adr.template.md` | Use for decision context, selected option, alternatives, and consequences. |
-| Technical specification | `docs/03.specs/<feature-id>/spec.md` | `docs/99.templates/templates/sdlc/specs/spec.template.md` | Use for implementation contracts and detailed design. |
-| Implementation plan | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `docs/99.templates/templates/sdlc/execution/plan.template.md` | Use for execution order, risks, gates, and rollout. |
-| Task record | `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `docs/99.templates/templates/sdlc/execution/task.template.md` | Use for implementation status, validation evidence, and handoff. |
-| API contract | `docs/03.specs/<feature-id>/api-spec.md` | `docs/99.templates/templates/sdlc/specs/api-spec.template.md` | Never route to `docs/api/**`. |
-| Agent design | `docs/03.specs/<feature-id>/agent-design.md` | `docs/99.templates/templates/sdlc/specs/agent-design.template.md` | Use for role/tool/policy/memory design tied to one feature. |
-| Data model | `docs/03.specs/<feature-id>/data-model.md` | `docs/99.templates/templates/sdlc/specs/data-model.template.md` | Use for schema and storage design tied to one feature. |
-| Test design | `docs/03.specs/<feature-id>/tests.md` | `docs/99.templates/templates/sdlc/specs/tests.template.md` | Use for verification strategy tied to one feature. |
-| User or operator guide | `docs/05.operations/guides/<doc>.md` | `docs/99.templates/templates/sdlc/operations/guide.template.md` | Use after the relevant spec is stable. |
-| Operations policy | `docs/05.operations/policies/<doc>.md` | `docs/99.templates/templates/sdlc/operations/policy.template.md` | Required for release and operational controls. |
-| Runbook | `docs/05.operations/runbooks/<doc>.md` | `docs/99.templates/templates/sdlc/operations/runbook.template.md` | Use for executable operational procedures. |
-| Incident record | `docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md` | `docs/99.templates/templates/sdlc/operations/incident.template.md` | Use for facts, timelines, mitigations, and active incident evidence. |
-| Postmortem | `docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md` | `docs/99.templates/templates/sdlc/operations/postmortem.template.md` | Use for RCA, prevention actions, and post-incident learning. |
-| Durable reference | `docs/90.references/<category>/<topic>.md` | `docs/99.templates/templates/common/reference.template.md` | Use for slow-moving concepts, glossaries, standards, and reusable agent knowledge. |
-| LLM Wiki generated index | `docs/90.references/llm-wiki/wiki-index.md` | `docs/99.templates/templates/common/reference.template.md` through `scripts/generate-llm-wiki-index.sh` | Use only as a generated canonical-owner link map. |
-| Archive Tombstone | `docs/98.archive/<original-docs-subpath>.md` | `docs/99.templates/templates/common/archive-tombstone.template.md` | Use only for metadata-only Tombstones of old docs moved out of active stages. |
-| Governance memory | `docs/00.agent-governance/memory/<topic>.md` | `docs/99.templates/templates/common/memory.template.md` | Use for reusable agent governance lessons. |
+| README or folder index | Repository or folder-local `README.md` | Template Routing Contract | Use for repository, stage, and nested folder entrypoints. |
+| Product requirement | `docs/01.requirements/` | Template Routing Contract | Use for product intent, scope, success criteria, and acceptance criteria. |
+| Architecture requirement | `docs/02.architecture/requirements/` | Template Routing Contract | Use for architecture requirements and quality attributes. |
+| Architecture decision | `docs/02.architecture/decisions/` | Template Routing Contract | Use for decision context, selected option, alternatives, and consequences. |
+| Technical specification and helper contracts | `docs/03.specs/` | Template Routing Contract | Use for implementation contracts, feature-local API, agent, data, test, OpenAPI, GraphQL, and protobuf contracts. |
+| Implementation plan | `docs/04.execution/plans/` | Template Routing Contract | Use for execution order, risks, gates, and rollout. |
+| Task record | `docs/04.execution/tasks/` | Template Routing Contract | Use for implementation status, validation evidence, and handoff. |
+| User or operator guide | `docs/05.operations/guides/` | Template Routing Contract | Use after the relevant spec is stable. |
+| Operations policy | `docs/05.operations/policies/` | Template Routing Contract | Required for release and operational controls. |
+| Runbook | `docs/05.operations/runbooks/` | Template Routing Contract | Use for executable operational procedures. |
+| Incident record and postmortem | `docs/05.operations/incidents/` | Template Routing Contract | Use for facts, timelines, mitigations, RCA, and post-incident learning. |
+| Durable reference | `docs/90.references/` | Template Routing Contract | Use for slow-moving concepts, glossaries, standards, and reusable agent knowledge. |
+| Generated LLM Wiki index | `docs/90.references/llm-wiki/wiki-index.md` | Generator contract and Template Routing Contract | Use only as a generated canonical-owner link map. |
+| Archive Tombstone | `docs/98.archive/` | Template Routing Contract | Use only for metadata-only Tombstones of old docs moved out of active stages. |
+| Governance memory | `docs/00.agent-governance/memory/` | Template Routing Contract | Use for reusable agent governance lessons and repo-changing progress entries. |
 
 ## Legacy Path Migration Map
 

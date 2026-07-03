@@ -856,11 +856,36 @@ for support_doc in sorted(template_support_root.glob("*.md")):
     )
 
 template_routing_path = template_support_root / "template-routing.md"
-template_routing_rows = markdown_table_after_heading(
-    read_text(template_routing_path),
+
+
+def template_route_pairs(path: pathlib.Path, heading: str) -> list[tuple[str, str]]:
+    rows = markdown_table_after_heading(read_text(path), heading)
+    if len(rows) < 2:
+        fail(f"{rel(path)} {heading} must contain a header and route rows")
+        return []
+    route_pairs: list[tuple[str, str]] = []
+    for row_number, row in enumerate(rows[1:], start=1):
+        if len(row) < 2:
+            fail(f"{rel(path)} {heading} row {row_number} must have target and template columns")
+            continue
+        route_pairs.append((row[0], row[1]))
+    return route_pairs
+
+
+template_readme_route_pairs = template_route_pairs(
+    root / "docs/99.templates/README.md",
+    "## Template-Folder Mapping",
+)
+template_routing_route_pairs = template_route_pairs(
+    template_routing_path,
     "## Current Route Map",
 )
-for route_row in template_routing_rows[1:]:
+if template_readme_route_pairs != template_routing_route_pairs:
+    fail(
+        "docs/99.templates/README.md Template-Folder Mapping must match "
+        "docs/99.templates/support/template-routing.md Current Route Map"
+    )
+for route_row in template_routing_route_pairs:
     route_text = " | ".join(route_row)
     if "harness-task-contract.template.md" in route_text:
         fail(
@@ -912,7 +937,7 @@ for path in docs_dir.rglob("*"):
     if re.search(r"(^template\.md$|\.template\.|template\.)", path.name):
         fail(f"template-like docs file must live in docs/99.templates: {rel(path)}")
 
-authored_template_residue = ("Target: docs/", "Use this template")
+authored_template_residue = ("Target: " + "docs/", "Use this " + "template")
 for path in docs_dir.rglob("*.md"):
     if path.is_relative_to(root / "docs/99.templates"):
         continue
@@ -920,25 +945,121 @@ for path in docs_dir.rglob("*.md"):
         if any(marker in line for marker in authored_template_residue):
             fail(f"authored docs template residue in {rel(path)}:{line_number}")
 
-required_stage_templates = [
-    ("docs/01.requirements/*.md", "prd.template.md"),
-    ("docs/02.architecture/requirements/*.md", "ard.template.md"),
-    ("docs/02.architecture/decisions/*.md", "adr.template.md"),
-    ("docs/03.specs/*/spec.md", "spec.template.md"),
-    ("docs/03.specs/*/api-spec.md", "api-spec.template.md"),
-    ("docs/03.specs/*/agent-design.md", "agent-design.template.md"),
-    ("docs/03.specs/*/data-model.md", "data-model.template.md"),
-    ("docs/03.specs/*/tests.md", "tests.template.md"),
-    ("docs/04.execution/plans/*.md", "plan.template.md"),
-    ("docs/04.execution/tasks/*.md", "task.template.md"),
-    ("docs/05.operations/guides/*.md", "guide.template.md"),
-    ("docs/05.operations/policies/*.md", "policy.template.md"),
-    ("docs/05.operations/runbooks/*.md", "runbook.template.md"),
-    ("docs/05.operations/incidents/[0-9][0-9][0-9][0-9]/INC-[0-9][0-9][0-9]-*/INC-[0-9][0-9][0-9]-*.md", "incident.template.md"),
-    ("docs/05.operations/incidents/[0-9][0-9][0-9][0-9]/INC-[0-9][0-9][0-9]-*/postmortem.md", "postmortem.template.md"),
-    ("docs/90.references/**/*.md", "reference.template.md"),
+documented_stage_routes = [
+    ("docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md", "prd.template.md"),
+    ("docs/02.architecture/requirements/####-<system-or-domain>.md", "ard.template.md"),
+    ("docs/02.architecture/decisions/####-<short-title>.md", "adr.template.md"),
+    ("docs/03.specs/<feature-id>/spec.md", "spec.template.md"),
+    ("docs/03.specs/<feature-id>/api-spec.md", "api-spec.template.md"),
+    ("docs/03.specs/<feature-id>/agent-design.md", "agent-design.template.md"),
+    ("docs/03.specs/<feature-id>/data-model.md", "data-model.template.md"),
+    ("docs/03.specs/<feature-id>/tests.md", "tests.template.md"),
+    ("docs/04.execution/plans/YYYY-MM-DD-<feature>.md", "plan.template.md"),
+    ("docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md", "task.template.md"),
+    ("docs/05.operations/guides/####-<topic>.md", "guide.template.md"),
+    ("docs/05.operations/policies/####-<policy-or-standard>.md", "policy.template.md"),
+    ("docs/05.operations/runbooks/####-<topic>.md", "runbook.template.md"),
+    ("docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md", "incident.template.md"),
+    ("docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md", "postmortem.template.md"),
+    ("docs/90.references/<category>/<topic>.md", "reference.template.md"),
     ("docs/98.archive/**/*.md", "archive-tombstone.template.md"),
 ]
+native_contract_routes = {
+    ("docs/03.specs/<feature-id>/contracts/openapi.yaml", "openapi.template.yaml"),
+    ("docs/03.specs/<feature-id>/contracts/schema.graphql", "schema.template.graphql"),
+    ("docs/03.specs/<feature-id>/contracts/service.proto", "service.template.proto"),
+}
+
+
+def documented_target_to_validator_glob(target_pattern: str) -> str:
+    if target_pattern == "docs/90.references/<category>/<topic>.md":
+        return "docs/90.references/**/*.md"
+    replacements = [
+        ("YYYY-MM-DD-<feature-or-system>", "*"),
+        ("YYYY-MM-DD-<feature-or-stream>", "*"),
+        ("YYYY-MM-DD-<feature>", "*"),
+        ("####-<policy-or-standard>", "*"),
+        ("####-<system-or-domain>", "*"),
+        ("####-<short-title>", "*"),
+        ("####-<topic>", "*"),
+        ("INC-###-<title>", "INC-[0-9][0-9][0-9]-*"),
+        ("YYYY", "[0-9][0-9][0-9][0-9]"),
+        ("<feature-id>", "*"),
+    ]
+    normalized = target_pattern
+    for old, new in replacements:
+        normalized = normalized.replace(old, new)
+    return normalized
+
+
+required_stage_templates = [
+    (documented_target_to_validator_glob(target_pattern), template_name)
+    for target_pattern, template_name in documented_stage_routes
+]
+expected_structural_route_pairs = set(required_stage_templates)
+actual_structural_route_pairs: set[tuple[str, str]] = set()
+actual_native_contract_routes: set[tuple[str, str]] = set()
+expected_readme_targets = ("README.md", "**/README.md", ".claude/README.md", ".codex/README.md")
+expected_memory_target = ("docs/00.agent-governance/memory/<topic>.md",)
+expected_progress_target = ("docs/00.agent-governance/memory/progress.md",)
+seen_readme_route = False
+seen_memory_route = False
+seen_progress_route = False
+
+for target_pattern, template_path_text in template_readme_route_pairs:
+    template_matches = re.findall(r"`([^`]+)`", template_path_text)
+    if not template_matches:
+        fail(f"template route has no backticked template path: {target_pattern} -> {template_path_text}")
+        continue
+    template_name = pathlib.Path(template_matches[0]).name
+    target_matches = tuple(re.findall(r"`([^`]+)`", target_pattern))
+    if template_name == "readme.template.md":
+        if target_matches != expected_readme_targets:
+            fail(f"README template route must target only the canonical README set: {target_pattern}")
+        seen_readme_route = True
+        continue
+    if template_name == "memory.template.md":
+        if target_matches != expected_memory_target:
+            fail(f"memory template route must use the canonical memory target: {target_pattern}")
+        seen_memory_route = True
+        continue
+    if template_name == "progress.template.md":
+        if target_matches != expected_progress_target:
+            fail(f"progress template route must use the canonical progress target: {target_pattern}")
+        seen_progress_route = True
+        continue
+    if len(target_matches) != 1:
+        fail(f"template route must have exactly one target pattern: {target_pattern}")
+        continue
+    route_pair = (target_matches[0], template_name)
+    if route_pair in native_contract_routes:
+        actual_native_contract_routes.add(route_pair)
+        continue
+    if template_name.endswith(".template.md"):
+        normalized_pair = (documented_target_to_validator_glob(target_matches[0]), template_name)
+        actual_structural_route_pairs.add(normalized_pair)
+        if normalized_pair not in expected_structural_route_pairs:
+            fail(
+                "documented Markdown route does not match structural validator mapping: "
+                f"{target_matches[0]} -> {template_name} normalizes to {normalized_pair[0]}"
+            )
+        continue
+    fail(f"template route is not covered by structural or native validator mapping: {target_pattern} -> {template_name}")
+
+if not seen_readme_route:
+    fail("Template-Folder Mapping missing canonical README route")
+if not seen_memory_route:
+    fail("Template-Folder Mapping missing canonical governance memory route")
+if not seen_progress_route:
+    fail("Template-Folder Mapping missing canonical progress ledger route")
+for missing_route in sorted(expected_structural_route_pairs - actual_structural_route_pairs):
+    fail(f"Template-Folder Mapping missing structural validator route: {missing_route[0]} -> {missing_route[1]}")
+for extra_route in sorted(actual_structural_route_pairs - expected_structural_route_pairs):
+    fail(f"Template-Folder Mapping has unsupported structural validator route: {extra_route[0]} -> {extra_route[1]}")
+for missing_route in sorted(native_contract_routes - actual_native_contract_routes):
+    fail(f"Template-Folder Mapping missing native contract route: {missing_route[0]} -> {missing_route[1]}")
+for extra_route in sorted(actual_native_contract_routes - native_contract_routes):
+    fail(f"Template-Folder Mapping has unsupported native contract route: {extra_route[0]} -> {extra_route[1]}")
 
 for glob_pattern, template_name in required_stage_templates:
     resolved_template_path = template_path(template_name)
@@ -1419,9 +1540,9 @@ for path in active_policy_template_routes:
         fail(f"{rel(path)} missing operations policy template route: policy.template.md")
 
 legacy_denylist_literals = {
-    "operation" + ".template.md": "deprecated operations-template route",
+    "operation" + ".template.md": "deprecated operations policy template route",
     "platform" + "-" + "team": "deprecated owner value",
-    "Related " + "References": "deprecated README heading",
+    "Related " + "References": "deprecated README related-document heading",
 }
 legacy_scan_roots = [
     root / "docs",
@@ -2106,7 +2227,7 @@ documentation_protocol_path = root / "docs/00.agent-governance/rules/documentati
 documentation_protocol_text = read_text(documentation_protocol_path)
 for phrase in [
     "Folder responsibilities are defined by `stage-authoring-matrix.md`",
-    "The canonical template map includes `README.md` -> `readme.template.md`",
+    "The canonical template map is the Template Routing Contract",
     "AI Agent Requirements",
     "canonical progress ledger",
     "only tracked `progress.md`",

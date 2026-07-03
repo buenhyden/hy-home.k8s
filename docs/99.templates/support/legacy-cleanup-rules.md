@@ -23,13 +23,13 @@ roles, or obsolete sections as current rules.
 
 | Legacy Item | Replacement | Current Enforcement |
 | --- | --- | --- |
-| Deprecated operations-template route | `policy.template.md` and `type: sdlc/policy` | Reject in active contracts |
+| Deprecated operations policy template route | `policy.template.md` and `type: sdlc/policy` | Reject in active contracts |
 | Deprecated operations policy frontmatter type | `type: sdlc/policy` | Reject in active frontmatter |
 | Deprecated team-owner value | `platform` | Reject in active owner fields |
-| Deprecated README related-document heading | `Related Documents` | Reject in active README headings |
+| Deprecated README related-link heading alternatives | Required active heading: `## Related Documents` | Reject only deprecated alternatives; do not reject or remove the required active heading |
 | Flat template links in active route contracts | `docs/99.templates/templates/**` links | Reject in active route contracts |
-| Copied `Target:` template comments in authored docs | Topic-specific content with correct `Related Documents` | Reject in authored documents |
-| Copied `Use this template` instructions in authored docs | Remove from authored docs | Reject in authored documents |
+| Copied target-path template comments in authored docs | Topic-specific content with correct `Related Documents` | Reject in authored documents |
+| Copied template-use instructions in authored docs | Remove from authored docs | Reject in authored documents |
 | README contract bodies that duplicate support docs | Brief pointers to support docs | Keep README entries concise |
 
 ## Active vs Historical References
@@ -64,13 +64,16 @@ be mistaken for current instructions.
 
 ```bash
 bash scripts/validate-repo-quality-gates.sh .
-rg -n "Target: docs/|Use this template" docs
+template_instruction='Use this'
+template_instruction="${template_instruction} template"
+target_comment='Target:'
+target_comment="${target_comment} docs/"
+rg -n "${target_comment}|${template_instruction}" docs/99.templates/templates
 ```
 
 The repository quality gate owns the active legacy denylist and namespaced
-frontmatter profile checks. The template-residue scan may return template
-files under `docs/99.templates/templates/**`; authored docs must not retain
-those markers.
+frontmatter profile checks. Template files may keep starter comments and
+template-use instructions; authored docs must not retain those markers.
 
 ## Related Documents
 

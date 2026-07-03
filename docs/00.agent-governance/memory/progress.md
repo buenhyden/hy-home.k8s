@@ -8,6 +8,60 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-03 — Workspace document governance hardening Task 2 core contracts
+
+- **Date**: 2026-07-03
+- **Layer**: docs, governance, templates, qa
+- **Status**: complete
+- **Tags**: #docs #governance #templates #validation
+
+#### Progress
+
+- Completed T-002 for the workspace document governance hardening plan and
+  updated the
+  [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
+- Kept exact target-pattern/template routing in
+  `docs/99.templates/support/template-routing.md`, with the Templates README as
+  a synchronized route inventory.
+- Removed the optional feature-local README row as a second structural mapping;
+  nested README files now rely on the generic README route only.
+- Updated Stage 00 routing, protocol, and authoring matrix docs to reference
+  the support route contract instead of carrying a full duplicate map.
+- Added deterministic route parity coverage to
+  `scripts/validate-repo-quality-gates.sh` so the Templates README route table,
+  support Current Route Map, and structural validator coverage drift together
+  fail closed.
+
+#### Memory
+
+- `harness-task-contract.template.md` remains a supplemental task starter and
+  must not become a second structural route for
+  `docs/04.execution/tasks/*.md`.
+- Feature-local README files under `docs/03.specs/<feature-id>/` are README
+  entrypoints, not a separate structural template family.
+- Active core-contract surfaces should avoid carrying exact legacy residue
+  literals as prose; use current contract wording and let the validator own
+  deterministic denylist enforcement.
+
+#### Evidence
+
+- Route/profile scans completed for Template-Folder Mapping, Current Route Map,
+  frontmatter profiles, template expected types, and validator mappings.
+- Focused flat template route scan — PASS, no matches.
+- Focused support migration-wording scan — PASS, no matches.
+- Focused residue scan returned only template starter markers, historical
+  completed Plan/Task/progress evidence, and one active authored runbook
+  negative-checklist phrase routed to T-004/T-005.
+- `git diff --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+
+#### Handoff
+
+- T-002 is complete. Continue with T-003 provider entrypoint hardening, then
+  T-004/T-005 cleanup and final reconciliation.
+- No live Kubernetes, Argo CD, Vault, cloud, publishing, provider-runtime, or
+  secret-value action was performed.
+
 ### 2026-07-03 — Workspace document governance hardening Task 1 audit inventory
 
 - **Date**: 2026-07-03

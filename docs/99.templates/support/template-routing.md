@@ -60,6 +60,10 @@ documents.
 | `docs/00.agent-governance/memory/<topic>.md` | `templates/common/memory.template.md` |
 | `docs/00.agent-governance/memory/progress.md` | `templates/common/progress.template.md` |
 
+Feature-local indexes such as `docs/03.specs/<feature-id>/README.md` use the
+generic README route. Do not add a second structural README route for a nested
+README target.
+
 ## Supplemental Task Starter
 
 `harness-task-contract.template.md` supplements

@@ -92,7 +92,7 @@
 4. 템플릿을 추가하거나 제거하면 이 README의 목록과 매핑을 함께 갱신한다.
 5. README 변경 시 `readme.template.md`의 base structure와 품질 게이트가 일치하는지 확인한다.
 6. 템플릿의 Target 경로와 실제 저장 위치를 맞추고, 상대 경로만 사용한다.
-7. stage README는 target file pattern을 장황하게 복제하지 말고 이 README의 Template-Folder Mapping을 canonical source로 연결한다.
+7. stage README는 target file pattern을 장황하게 복제하지 말고 `support/template-routing.md`와 이 README의 Template-Folder Mapping으로 연결한다.
 8. PRD/ARD/ADR/Spec/Plan/Task의 추적성을 유지한다.
 9. Agent 기능 문서는 Role, Tool, Guardrail, Eval, Fallback을 빠뜨리지 않는다.
 10. 템플릿의 placeholder 또는 code-literal cross-link는 최종 authored Target 위치 기준으로 계산한다.
@@ -114,7 +114,7 @@
 
 ## Template Improvement Plan
 
-템플릿을 수정할 때는 먼저 이 README의 mapping과 link rules를 갱신 대상으로 확정한다.
+템플릿을 수정할 때는 먼저 `support/template-routing.md`, 이 README의 mapping, link rules를 갱신 대상으로 확정한다.
 
 - target pattern, placeholder naming, target-relative examples를 mapping과 일치시킨다.
 - 실제 Markdown 링크는 `docs/99.templates/` 기준으로 resolve되게 유지하고, 아직 존재하지 않는 target-relative 예시는 code literal로 둔다.
@@ -144,7 +144,7 @@ governance, routing, frontmatter schema, legacy cleanup rule을 소유한다.
 - 템플릿 안의 실제 Markdown 링크는 `docs/99.templates/` 기준으로도 resolve되어야 한다.
 - 최종 authored 문서 예시 경로는 해당 Target 위치 기준의 code literal로 작성한다.
 - 아직 존재하지 않는 optional 문서, placeholder 경로, target-relative 예시는 Markdown 링크가 아니라 backtick code literal로 남긴다.
-- 생성 문서에 템플릿 안내 주석, placeholder, `Target:` 주석, `Use this template` 문구를 남기지 않는다.
+- 생성 문서에 템플릿 안내 주석, placeholder, target-path 주석, template-use 문구를 남기지 않는다.
 - Spec 문서의 `Related Inputs`는 upstream 입력 요약이고, 필수
   `Related Documents` 섹션은 upstream/downstream 추적 링크를 함께 유지한다.
 - 모든 README는 `Link Basis`와 `Related Documents`를 사용한다. Deprecated related-document headings는 새 README나 정리된 README에 남기지 않는다.
@@ -165,7 +165,6 @@ governance, routing, frontmatter schema, legacy cleanup rule을 소유한다.
 | `docs/03.specs/<feature-id>/contracts/openapi.yaml`                      | `templates/sdlc/specs/openapi.template.yaml`                               | Feature-local OpenAPI contract                                          |
 | `docs/03.specs/<feature-id>/contracts/schema.graphql`                    | `templates/sdlc/specs/schema.template.graphql`                             | Feature-local GraphQL schema contract                                   |
 | `docs/03.specs/<feature-id>/contracts/service.proto`                     | `templates/sdlc/specs/service.template.proto`                              | Feature-local gRPC/protobuf contract                                    |
-| `docs/03.specs/<feature-id>/README.md`                                   | `templates/common/readme.template.md`                                      | Optional feature-local index when a spec folder grows beyond `spec.md`  |
 | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md`                        | `templates/sdlc/execution/plan.template.md`                                | Execution order, risk control, rollout, verification                    |
 | `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md`              | `templates/sdlc/execution/task.template.md`                                | Implementation and validation task evidence                             |
 | `docs/05.operations/guides/####-<topic>.md`                              | `templates/sdlc/operations/guide.template.md`                              | Stable-state user, developer, or operator guidance                      |
@@ -200,7 +199,7 @@ OpenAPI, GraphQL, proto 같은 계약 파일은 관련 `docs/03.specs/<feature-i
 구조적 템플릿 누락은 문서가 canonical stage 아래에 있으나 어떤 템플릿 매핑에도 포함되지 않는 상태를 뜻한다.
 비-README authored Markdown은 아래 조건을 모두 만족해야 한다.
 
-- `docs/99.templates/README.md`의 Template-Folder Mapping에 target pattern과 template이 있어야 한다.
+- `docs/99.templates/support/template-routing.md`와 이 README의 Template-Folder Mapping에 target pattern과 template이 있어야 한다.
 - `scripts/validate-repo-quality-gates.sh`의 structural template mapping에 같은 target pattern과 template이 있어야 한다.
 - 한 문서는 정확히 하나의 mapping, 즉 exactly one mapping에만 매칭되어야 한다.
 - 매핑된 템플릿 파일은 `docs/99.templates/`에 존재해야 한다.

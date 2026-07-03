@@ -38,7 +38,7 @@ and Plan.
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-001 | Capture baseline document/provider/CI-QA audit inventory. | doc | Spec / Evaluation | Task 1 | Baseline scans, Stage 90 audit report, gate evidence | platform | Done |
-| T-002 | Harden core template, frontmatter, routing, Stage 00, and validator contracts. | doc | Spec / Contracts | Task 2 | Route/profile scans and validator pass | platform | Open |
+| T-002 | Harden core template, frontmatter, routing, Stage 00, and validator contracts. | doc | Spec / Contracts | Task 2 | Route/profile scans and validator pass | platform | Done |
 | T-003 | Harden provider entrypoint contracts for AGENTS, Claude, Codex, and Gemini surfaces. | doc | Spec / Agent Role & IO Contract | Task 3 | Provider topology scans and validator pass | platform | Open |
 | T-004 | Apply document governance profiles to workspace README and authored documents. | doc | Spec / Guardrails | Task 4 | README/frontmatter/residue scans and validator pass | platform | Open |
 | T-005 | Finalize deterministic validator checks, CI/QA evidence, and final review. | test | Spec / Success Criteria | Task 5 | Full local validation and final sub-agent READY | platform | Open |
@@ -59,7 +59,7 @@ and Plan.
 
 ### Phase 2: Core Contracts
 
-- [ ] T-002 Harden core template, frontmatter, routing, Stage 00, and validator
+- [x] T-002 Harden core template, frontmatter, routing, Stage 00, and validator
   contracts.
 
 ### Phase 3: Provider Entrypoints
@@ -268,6 +268,72 @@ and Plan.
 - Updated the audit index at `docs/90.references/audits/README.md`.
 - Task 1 stayed audit-only: no Task 2 core contract fixes, Task 3 provider
   fixes, Task 4 workspace cleanup, or Task 5 validator changes were applied.
+
+### T-002 Core Contract Hardening
+
+#### Contract Changes
+
+- Removed the feature-local README row as a second structural mapping from the
+  Templates README route table. Feature-local README files remain covered by
+  the generic README route.
+- Updated the Template Routing Contract to make nested README targets use the
+  generic README route and keep `harness-task-contract.template.md`
+  supplemental rather than structural.
+- Updated Stage 00 routing, documentation protocol, and authoring matrix docs
+  so exact target-pattern/template routing points to
+  `docs/99.templates/support/template-routing.md` instead of carrying a full
+  duplicate map.
+- Added deterministic validator coverage that compares the Templates README
+  route table with the support Current Route Map and checks documented Markdown
+  routes against README, memory/progress, or structural stage mapping coverage.
+- Reworded active core-contract denylist prose so focused residue scans do not
+  self-match on legacy strings outside templates and historical evidence.
+
+#### Verification Evidence
+
+- Route map scan:
+
+  ```text
+  rg -n "Template-Folder Mapping|Current Route Map|required_stage_templates|template_expected_types|template_locations" docs/99.templates/README.md docs/99.templates/support scripts/validate-repo-quality-gates.sh
+  ```
+
+  PASS. README mapping, support route map, and validator mappings are aligned.
+- Frontmatter profile scan:
+
+  ```text
+  rg -n "sdlc/prd|sdlc/ard|sdlc/adr|sdlc/spec|sdlc/plan|sdlc/task|sdlc/guide|sdlc/policy|sdlc/runbook|sdlc/incident|sdlc/postmortem|content/reference|content/archive-tombstone|governance/template-support|governance/reference|governance/memory" docs/99.templates/support/frontmatter-schema.md docs/99.templates/templates scripts/validate-repo-quality-gates.sh
+  ```
+
+  PASS. Markdown template frontmatter, support schema, and validator expected
+  types agree; README/progress templates remain frontmatter-free, and native
+  OpenAPI, GraphQL, and protobuf templates remain native.
+- Focused flat route scan:
+
+  ```text
+  rg -n "docs/99\\.templates/[a-z0-9-]+\\.template\\.(md|yaml|graphql|proto)" docs scripts .codex AGENTS.md RTK.md
+  ```
+
+  PASS, no matches.
+- Focused support stale-wording scan:
+
+  ```text
+  rg -n "Phase [1-4]|during the migration|after Phase|current and target" docs/99.templates/support
+  ```
+
+  PASS, no matches.
+- Focused legacy residue scan returned only template starter markers,
+  historical completed Plan/Task/progress evidence, and one active authored
+  runbook negative-checklist phrase in
+  `docs/05.operations/runbooks/0011-reference-maintenance-runbook.md`; the
+  authored runbook cleanup is outside T-002 and remains routed to T-004/T-005.
+- `git diff --check` — PASS, no output.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+
+#### Handoff
+
+- T-002 is complete for core contract surfaces.
+- No live Kubernetes, Argo CD, Vault, cloud, provider runtime, publishing, or
+  secret-value checks were run.
 
 ## Related Documents
 

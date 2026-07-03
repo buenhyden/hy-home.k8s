@@ -8,7 +8,8 @@ This protocol defines how governance references authored docs and how language b
 - Product and delivery truth remains in `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/98.archive`, and `docs/99.templates`.
 - Governance files must reference authored docs and must not duplicate stage content.
 - Folder responsibilities are defined by `stage-authoring-matrix.md`; exact
-  path-to-template routing is owned by `document-stage-routing.md` and
+  path-to-template routing is owned by
+  `docs/99.templates/support/template-routing.md` and summarized by
   `docs/99.templates/README.md`. Provider adapters must point to those owners
   instead of carrying their own template maps.
 
@@ -21,23 +22,10 @@ This protocol defines how governance references authored docs and how language b
 
 ## Template Enforcement Policy
 
-- All authored documents under `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/04.execution/`, `docs/05.operations/`, `docs/90.references/`, and `docs/98.archive/` must start from the matching template listed in `docs/99.templates/README.md`.
-- The canonical template map includes `README.md` -> `readme.template.md`,
-  `docs/01.requirements/` -> `prd.template.md`,
-  `docs/02.architecture/requirements/` -> `ard.template.md`,
-  `docs/02.architecture/decisions/` -> `adr.template.md`,
-  `docs/03.specs/` -> `spec.template.md` plus feature-local helper templates,
-  `docs/04.execution/plans/` -> `plan.template.md`,
-  `docs/04.execution/tasks/` -> `task.template.md`,
-  `docs/05.operations/guides/` -> `guide.template.md`,
-  `docs/05.operations/policies/` -> `policy.template.md`,
-  `docs/05.operations/runbooks/` -> `runbook.template.md`,
-  `docs/05.operations/incidents/` -> `incident.template.md` and
-  `postmortem.template.md`, `docs/90.references/` ->
-  `reference.template.md`, and `docs/98.archive/` ->
-  `archive-tombstone.template.md`. If this summary diverges from
-  `docs/99.templates/README.md`, the template README and routing rule are the
-  sources to fix first.
+- All authored documents under `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/04.execution/`, `docs/05.operations/`, `docs/90.references/`, and `docs/98.archive/` must start from the matching template listed in `docs/99.templates/support/template-routing.md`.
+- The canonical template map is the Template Routing Contract. If Stage 00
+  summaries, provider adapters, hooks, or validators diverge from that support
+  contract and `docs/99.templates/README.md`, fix the route owners first.
 - README files must use `docs/99.templates/templates/common/readme.template.md`.
 - README files must keep `## Link Basis` and `## Related Documents`; deprecated related-document headings are incomplete.
 - PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook, Incident, Postmortem, Reference, and Archive Tombstone documents must use their stage-specific templates from `docs/99.templates/`.
@@ -127,7 +115,7 @@ This protocol defines how governance references authored docs and how language b
 
 ## Docs 3 Rules (HALT)
 
-**R1 — Template-First:** Read `docs/99.templates/README.md`, then read the matching template in `docs/99.templates/` before creating any document. Confirm the target path has exactly one structural template mapping, fill all required fields and required template headings, and set `status: draft`. k8s-specific triggers: new namespace → ARD required; RBAC change → ADR required; production change → OPER policy first.
+**R1 — Template-First:** Read `docs/99.templates/README.md` and `docs/99.templates/support/template-routing.md`, then read the matching template in `docs/99.templates/templates/` before creating any document. Confirm the target path has exactly one structural template mapping, fill all required fields and required template headings, and set `status: draft`. k8s-specific triggers: new namespace → ARD required; RBAC change → ADR required; production change → operations policy first.
 
 **R2 — README Sync:** Any folder-level change (add, move, remove files) **or content modification to an existing document** requires the folder's `README.md` to be reviewed and updated in the same PR if its summary, link table, or description is now stale. Work is **BLOCKED** until the README reflects the current state and keeps `## Link Basis` plus `## Related Documents`.
 

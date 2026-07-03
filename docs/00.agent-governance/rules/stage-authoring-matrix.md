@@ -3,9 +3,12 @@
 Canonical authoring matrix for the current docs taxonomy.
 
 All authored stage documents must use the matching template from
-`docs/99.templates/README.md` before writing. New authored documents start with
-`status: draft`, keep the required template headings, and include
-`## Related Documents`. README entrypoints use `readme.template.md`.
+`docs/99.templates/support/template-routing.md` before writing. New authored
+documents start with `status: draft`, keep the required template headings, and
+include `## Related Documents`. README entrypoints use `readme.template.md`.
+This matrix summarizes stage responsibility and timing; exact target patterns
+and template paths remain owned by the template routing support contract and
+the Templates README.
 
 Human-facing README and overview prose should prefer Korean. Agent governance,
 provider adapters, hook contracts, prompt/tool contracts, technical specs,
