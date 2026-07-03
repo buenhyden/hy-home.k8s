@@ -6564,3 +6564,45 @@ section separating static from live evidence.
   remains README-only until a real event needs a record.
 - `graphify-out/**` remains a historical generated graph artifact and was not
   regenerated in this pass.
+
+## 2026-07-04 — Workspace Document Contract Normalization Spec
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: docs, governance, templates, qa
+- **Status**: in-progress
+- **Tags**: #docs #governance #templates #validation
+
+### Progress
+
+- Created the Stage 03 design spec for a follow-up workspace document contract
+  normalization pass:
+  [Workspace Document Contract Normalization Spec](../../03.specs/014-workspace-document-contract-normalization/spec.md).
+- Updated the Stage 03 README index to register the new spec.
+- Captured the approved scope decision: active documents and historical
+  evidence will both be normalized to the current frontmatter, section, and
+  template contracts, while historical facts remain preserved in explicit
+  historical or superseded sections.
+
+### Memory
+
+- For broad document-governance work, keep the repo-local Stage 03 spec in
+  `docs/03.specs/<feature-id>/spec.md` when the design affects the repository
+  SDLC system itself; use planned paths as code literals until Stage 04 plan and
+  task documents exist.
+- Historical evidence can be normalized aggressively when explicitly approved,
+  but old facts must remain distinguishable from current operating guidance.
+
+### Evidence
+
+- Read the current Stage 99 frontmatter, routing, documentation, and SDLC
+  governance support contracts before drafting the spec.
+- Checked official or primary references for GitHub Actions, SLSA, OpenSSF
+  Scorecard, CommonMark, YAML, OpenAPI, GraphQL, Protocol Buffers, GitHub Spec
+  Kit, OWASP SAMM, and SDLC terminology.
+
+### Handoff
+
+- Complete spec self-review, run repository validation, commit the spec, then
+  ask for user review before creating the Stage 04 implementation plan.
