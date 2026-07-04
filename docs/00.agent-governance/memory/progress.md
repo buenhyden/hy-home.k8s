@@ -7086,3 +7086,54 @@ section separating static from live evidence.
 
 - T-001 is complete after validation and commit. Next action is T-002: normalize
   Stage 00 canonical contract wording.
+
+## 2026-07-04 — Agent Governance Contract Normalization T-002
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: meta, docs, qa, ci
+- **Status**: completed
+- **Tags**: #governance #agents #provider-contracts #validation
+
+### Progress
+
+- Normalized Stage 00 governance language from agent mirror assumptions to
+  provider-native role adapters with shared role parity and validation evidence.
+- Recorded the official capability basis checked on 2026-07-04 for Codex
+  `AGENTS.md`, Codex subagents, Codex CLI/config/approval modes, Claude
+  settings/hooks/subagents, Gemini CLI commands and hierarchical memory, and
+  GitHub Actions.
+- Clarified that `.agents/` owns provider-neutral shared assets, while
+  `.agents/agents/*.md`, `.claude/agents/*.md`, and `.codex/agents/*.toml`
+  remain provider-native role adapters with different metadata keys.
+- Preserved the standing policies: root shims stay thin, governance docs stay
+  English, user-facing responses stay Korean, live cluster mutation is
+  forbidden by default, repo-static validation does not prove live runtime
+  readiness, and repo-changing work updates this progress ledger.
+
+### Memory
+
+- Provider parity means role parity plus evidence: the same role, scope imports,
+  guardrails, handoff, and postflight contract expressed through
+  provider-native syntax.
+- Claude has native settings/hooks/subagent/tool-scoping surfaces; Codex uses
+  official `AGENTS.md`, config, sandbox/approval modes, and explicit subagent
+  orchestration when requested by the user; Gemini uses `GEMINI.md`
+  hierarchical memory, agents command support where available, and the tracked
+  `.agents/**` adapter baseline.
+- `.agents/hooks.json` and `.codex/hooks.json` remain context/validation wiring
+  rather than native permission gates equivalent to Claude settings.
+
+### Evidence
+
+- Updated Stage 00 canonical contract files, provider notes, rule docs, harness
+  catalog/map, this progress ledger, and the Stage 04 task record.
+- Official URLs checked 2026-07-04 are listed in the harness catalog, provider
+  notes, and T-002 task evidence.
+- Validation bundle for this task: `git diff --check`, `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json`, Codex agent TOML parse loop with `tomllib`, and `bash scripts/validate-repo-quality-gates.sh .`.
+
+### Handoff
+
+- T-002 is complete after validation and commit. Next action is T-003: align
+  provider adapter surfaces.

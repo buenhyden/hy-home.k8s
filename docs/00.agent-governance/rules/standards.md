@@ -69,4 +69,4 @@ Infrastructure assumptions must match current workspace assets:
 - `.codex/`
 - `.agents/`
 
-`.codex/agents/*.toml` and `.agents/agents/*.md` files are mirrors of `.claude/agents/*.md` and must keep the same role, scope imports, guardrails, and postflight requirements.
+`.claude/agents/*.md`, `.agents/agents/*.md`, and `.codex/agents/*.toml` are provider-native role adapters. They must keep the same role, scope imports, guardrails, handoff, and postflight requirements while preserving provider-specific metadata, tool, and permission syntax.

@@ -2,6 +2,14 @@
 
 Claude-specific guidance for `hy-home.k8s`.
 
+## Official Source Basis
+
+Checked on 2026-07-04:
+
+- Claude Code settings: <https://code.claude.com/docs/en/settings>
+- Claude Code hooks: <https://code.claude.com/docs/en/hooks>
+- Claude Code subagents: <https://code.claude.com/docs/en/sub-agents>
+
 ## Loading Model
 
 - Keep root `CLAUDE.md` thin; it imports `@docs/00.agent-governance/rules/bootstrap.md` (shared governance), `@docs/00.agent-governance/providers/claude.md`, `@.claude/CLAUDE.md`, and `@RTK.md`. It must not import `@AGENTS.md`, which is the GPT/Codex provider shim.
@@ -25,6 +33,16 @@ Claude-specific guidance for `hy-home.k8s`.
 - Follow CLAUDE hierarchy: managed policy -> project -> user -> path-specific rules.
 - Use imports for modular instructions when needed.
 - Use auto memory for recurring lessons, but keep governance controls in docs.
+
+## Native Boundary
+
+- `.claude/settings.json` owns Claude native permissions and hook wiring.
+- `.claude/agents/*.md` owns Claude subagent metadata, including `name`,
+  `description`, `model`, and least-privilege `tools:`.
+- Claude hooks may block objective repo-state failures when wired through
+  settings; they do not prove live runtime readiness.
+- Claude native tools and permissions must not weaken the repository's
+  GitOps-first, no-live-mutation, and secret-handling boundaries.
 
 ## Execution Expectations
 

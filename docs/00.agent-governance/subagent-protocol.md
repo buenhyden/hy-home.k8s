@@ -3,7 +3,7 @@ title: 'Reference: Subagent Protocol'
 type: governance/reference
 status: draft
 owner: platform
-updated: 2026-05-24
+updated: 2026-07-04
 ---
 
 # Reference: Subagent Protocol
@@ -26,37 +26,42 @@ coordinated in `hy-home.k8s`.
 
 ## Dispatch Rules
 
-- Dispatch subagents via the **Task tool only**. Never embed role definitions inline in prompts.
-- Each delegated agent must read its provider-specific local agent file (e.g., `.claude/agents/<name>.md`, `.agents/agents/<name>.md`) before starting work.
-- Codex delegated agents must use the corresponding `.codex/agents/<name>.toml` mirror with the same scope and guardrails.
+- Dispatch subagents through the current runtime's provider-native delegated-agent mechanism. Claude uses the Task tool or explicit Agent invocation, Codex uses explicit subagent orchestration when requested by the user, and Gemini uses the available agent registry or project-local adapter workflow where supported.
+- Never embed full role definitions inline when a provider-local agent file exists.
+- Each delegated agent must read its provider-specific local agent file (e.g., `.claude/agents/<name>.md`, `.agents/agents/<name>.md`, `.codex/agents/<name>.toml`) before starting work.
 - Each agent file must `@import` one or more matching scope files from `scopes/`.
 - `supervisor.md` is the only supervising agent and owns routing and escalation decisions.
 
 ## Agent File Requirement
 
 Every delegated agent must have corresponding provider files in `.agents/agents/`,
-`.claude/agents/`, and `.codex/agents/`. Markdown agent files must contain:
+`.claude/agents/`, and `.codex/agents/`.
 
-1. Frontmatter with `name`, `description`, `model`, and a least-privilege `tools` set (see Tool Scoping).
-2. One or more `@import` scope references.
-3. A thin runtime contract: Role, When to use, Inputs, Outputs, Guardrails, Handoff / Escalation, Postflight.
-4. No embedded policy text that belongs in `rules/`, `scopes/`, or `providers/`.
+Claude Markdown agent files in `.claude/agents/*.md` must contain frontmatter
+with `name`, `description`, `model`, and a least-privilege `tools` set (see Tool
+Scoping).
 
-Every `.agents/agents/<name>.md` / `.claude/agents/<name>.md` file must have a
-`.codex/agents/<name>.toml` mirror for Codex execution. All mirrors must preserve
-the same role, scope imports, guardrails, and postflight requirements.
+Gemini Markdown agent files in `.agents/agents/*.md` must contain frontmatter
+with `name`, `description`, and `model`, and must preserve the same role, scope
+imports, guardrails, handoff, and postflight contract as the Claude source.
+Gemini files do not require Claude-style `tools:` frontmatter unless a future
+approved Gemini adapter change adds a verified native tool-scoping field.
 
-The mirror relationship is validated by `scripts/validate-repo-quality-gates.sh`.
-Runtime files must keep matching file stems, matching scope imports, Runtime
-Bootstrap text, Guardrails, Handoff / Escalation, and Postflight requirements so
-delegated work follows the same contract in Claude and Codex.
+Codex agent files in `.codex/agents/*.toml` must declare `name`,
+`description`, `developer_instructions`, `model`, and `model_reasoning_effort`.
+
+All provider-native role adapters must preserve role parity: matching file
+stems, scope imports, Runtime Bootstrap text, Guardrails, Handoff / Escalation,
+and Postflight requirements. Native metadata keys differ by provider. This
+parity relationship is validated by `scripts/validate-repo-quality-gates.sh`.
 
 ## Tool Scoping
 
 Each agent declares a least-privilege tool set matched to its responsibility. The
 canonical mapping below is implemented natively in `.claude/agents/*.md` `tools:`
-frontmatter; Gemini (`.agents/agents/*.md`) and Codex (`.codex/agents/*.toml`) mirrors
-honor the same boundary within their native capabilities.
+frontmatter; Gemini (`.agents/agents/*.md`) and Codex (`.codex/agents/*.toml`)
+honor the same boundary within their native capabilities and governance
+guardrails without requiring identical metadata keys.
 
 - `supervisor`: full toolset (orchestration and delegation).
 - Read-only review agents (`code-reviewer`, `gitops-reviewer`, `security-auditor`, `incident-responder`): `Read`, `Grep`, `Glob`, `Bash` (read-only command policy still applies).
@@ -78,7 +83,8 @@ honor the same boundary within their native capabilities.
 
 ## Coordination
 
-- Use the Task tool for work assignment and status tracking.
+- Use the provider-native delegated-agent mechanism for work assignment and
+  status tracking.
 - Route all multi-agent decisions through `supervisor.md`.
 - Keep handoff artifacts in repository-approved locations only; do not create ad-hoc runtime folders unless a human requests them.
 - Scratch workspaces such as `_workspace/` are allowed only when a checked-in
@@ -92,7 +98,7 @@ honor the same boundary within their native capabilities.
 Start from the appropriate root provider shim (`AGENTS.md`, `CLAUDE.md`, or
 `GEMINI.md`) for gateway routing and use
 `docs/00.agent-governance/harness-catalog.md` for the canonical local runtime
-catalog, including Codex mirrors.
+catalog, including provider-native role adapters.
 
 ## Related Documents
 

@@ -2,6 +2,12 @@
 
 Gemini-specific guidance for `hy-home.k8s`.
 
+## Official Source Basis
+
+Checked on 2026-07-04:
+
+- Gemini CLI commands and hierarchical memory: <https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/commands.md>
+
 ## Loading Model
 
 - Keep root `GEMINI.md` thin; it imports `@docs/00.agent-governance/rules/bootstrap.md` (shared governance), `@docs/00.agent-governance/providers/gemini.md`, `@.agents/GEMINI.md`, and `@RTK.md`. It must not import `@AGENTS.md`, which is the GPT/Codex provider shim.
@@ -13,12 +19,18 @@ Gemini-specific guidance for `hy-home.k8s`.
 
 ## Antigravity Harness Structure (`.agents/`)
 
-The `.agents/` directory is the canonical Antigravity harness for Gemini.
+The `.agents/` directory is the tracked Antigravity/Gemini adapter baseline for
+this repository and the provider-neutral owner for shared skills, workflows,
+and output styles.
 
 - **Rules (`.agents/rules/`)**: Contains Gemini-specific workflow and behavior rules (e.g., `workspace-rules.md`).
 - **Workflows (`.agents/workflows/`)**: Defines orchestrated workflows (e.g., `qa-cicd-workflow.md` for pre/post-edit validation).
 - **Skills (`.agents/skills/`)**: Houses Gemini skill definitions that respect the model tiers defined in `model-policy.md`.
 - **Hooks (`.agents/hooks.json`)**: Configures event wiring for PreToolUse/PostToolUse-style behavior where the runtime honors it. It invokes shared `docs/00.agent-governance/hooks/*.sh` scripts for Template-First routing and QA/CI/CD validation, but it is not a Claude-style permission gate.
+- **Agents (`.agents/agents/*.md`)**: Provider-native Gemini role adapters with
+  `name`, `description`, and `model` frontmatter. They preserve role parity
+  with Claude and Codex adapters without requiring Claude-style `tools:`
+  frontmatter.
 
 ## Model Policy (Gemini)
 
@@ -29,6 +41,9 @@ The `.agents/` directory is the canonical Antigravity harness for Gemini.
 ## Context Strategy
 
 - Gemini CLI supports hierarchical context loading (global, ancestors, subdirectories).
+- Gemini CLI command support includes an agents command/registry surface where
+  available; otherwise use the project-local adapter workflow defined by
+  Stage 00.
 - Prefer modular imports for large context sets.
 - Keep instructions concise and non-duplicative across hierarchy.
 - Avoid introducing provider-specific guidance outside the existing `GEMINI.md` + `.agents/**` + `docs/00.agent-governance/**` hierarchy.

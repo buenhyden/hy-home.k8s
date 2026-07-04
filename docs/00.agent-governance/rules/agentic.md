@@ -19,10 +19,10 @@ Rules for AI Agent-first Engineering quality and safety.
 - Keep generated documents in the canonical docs taxonomy and route through `document-stage-routing.md`.
 - Enforce template routing: `prd` -> `docs/01.requirements/`, `adr` -> `docs/02.architecture/decisions/`, `ard` -> `docs/02.architecture/requirements/`, `spec` -> `docs/03.specs/`, `plan` -> `docs/04.execution/plans/`, `task` -> `docs/04.execution/tasks/`, `policy` -> `docs/05.operations/policies/`, `guide` -> `docs/05.operations/guides/`, `runbook` -> `docs/05.operations/runbooks/`, `postmortem/incident` -> `docs/05.operations/incidents/`, `archive-tombstone` -> `docs/98.archive/`.
 - Implement explicit QA and CI/CD validation phases (e.g., pre-commit checks, GitOps dry-runs, structural template coverage) before considering any implementation complete.
-- All AI Agents (Gemini, Claude, GPT) must use the workspace-specific structured directories: `skills/` for tasks, `rules/` for guidelines, `hooks.json` or `hooks/` for provider event wiring, `output-styles/` for formatting, and `workflows/` for orchestrated steps. Provider-native enforcement differs; only Claude settings act as a native permission gate.
+- All AI Agents (Gemini, Claude, GPT) must use the workspace-specific structured directories: `.agents/{skills,workflows,output-styles}/` for provider-neutral shared assets; `.agents/agents/*.md`, `.claude/agents/*.md`, and `.codex/agents/*.toml` for provider-native role adapters; and `hooks.json` or settings/hooks for provider event wiring. Provider-native enforcement differs; only Claude settings act as a native permission gate.
 - Maintain and consult historical/contextual state using `docs/00.agent-governance/memory`.
 - Use `docs/00.agent-governance/memory/progress.md` as the canonical progress ledger and the only tracked progress.md. Repo-changing agent work must record progress there, while standalone memory files remain allowed only under the memory template contract with a related progress entry.
-- Keep `.claude/agents/*.md`, `.agents/agents/*.md`, and `.codex/agents/*.toml` aligned whenever runtime contracts change.
+- Keep `.claude/agents/*.md`, `.agents/agents/*.md`, and `.codex/agents/*.toml` aligned for role, scope imports, guardrails, handoff, and postflight whenever runtime contracts change; preserve provider-specific metadata keys.
 - Treat completion and compaction safeguards as layered controls: reports, handoffs, memory/progress, postflight checklist, and lifecycle hooks. Stop/SubagentStop hooks may block objective repo-state failures; PreCompact is advisory.
 - Agent eval completion must be based on explicit deterministic command evidence or recorded human/operator approval. Do not report eval PASS from intention, file presence, or inferred live k3d, ArgoCD, Vault, ESO, secret, or deployment readiness.
 - When an agent output fails validation or repeats a mistake, repair the harness
@@ -40,8 +40,8 @@ Rules for AI Agent-first Engineering quality and safety.
 
 ## Readiness Review Defaults
 
-- Check `harness-catalog.md` before changing agent, skill, hook, or mirror contracts.
-- Treat readiness as a matrix across gateways, runtime baseline, agents, mirrors, skills, hooks, validation scripts, memory, and escalation boundaries.
+- Check `harness-catalog.md` before changing agent, skill, hook, or role-adapter contracts.
+- Treat readiness as a matrix across gateways, runtime baseline, agents, role adapters, skills, hooks, validation scripts, memory, and escalation boundaries.
 - Do not add new runtime surfaces until a human explicitly requests one or the existing readiness matrix shows a concrete gap.
 - Keep direct `kubectl apply`, `kubectl patch`, external secret writes, and other live-cluster mutations outside the default Agent-first path.
 - If a runbook requires live mutation for bootstrap or emergency recovery, mark it as human-approved bootstrap or break-glass work and record the expected evidence.
@@ -51,7 +51,7 @@ Rules for AI Agent-first Engineering quality and safety.
 
 - Before changing harness or Agent-first execution behavior, inspect the Harness Engineering Matrix and Agent-first Engineering Matrix in `harness-catalog.md`.
 - Treat `Gap=None` as no currently tracked concrete gap in the latest repo/static evidence, not proof that future gaps cannot exist.
-- Add a new agent, skill, hook, mirror, or runtime surface only when a human explicitly requests it or when the matrix is first updated to record a concrete `Partial` or `Missing` gap that cannot be closed by an existing surface.
+- Add a new agent, skill, hook, role adapter, or runtime surface only when a human explicitly requests it or when the matrix is first updated to record a concrete `Partial` or `Missing` gap that cannot be closed by an existing surface.
 - If all affected matrix rows remain `Ready` with `Gap=None`, treat speculative new runtime surfaces as out of scope and harden the existing surface instead.
 - Prefer in-place clarity, regression-gate hardening, or catalog updates when the matrix already marks the component `Ready`.
 - When a component is already `Ready`, prefer command-boundary regression gates over adding new runtime surfaces for documentation drift.
@@ -81,12 +81,12 @@ Rules for AI Agent-first Engineering quality and safety.
 
 ## Gateway and Runtime Audit Checklist
 
-Before changing gateway, runtime, hook, mirror, or governance-memory files:
+Before changing gateway, runtime, hook, role-adapter, or governance-memory files:
 
 - Confirm root shims stay thin: `AGENTS.md`, root `CLAUDE.md`, and root `GEMINI.md` route to canonical governance/runtime files instead of embedding duplicate policy.
 - Confirm tracked governance/runtime files under `docs/00.agent-governance/**`, `.claude/**`, and `.codex/**` remain English-only.
 - Confirm no legacy source labels from prior external harness examples remain.
-- Confirm `.claude/agents/*.md` and `.codex/agents/*.toml` mirror parity stays intact.
+- Confirm `.claude/agents/*.md`, `.agents/agents/*.md`, and `.codex/agents/*.toml` role parity stays intact while native metadata keys remain provider-specific.
 - Confirm provider-specific hook boundaries are described accurately: `.claude/settings.json` owns Claude permissions/hooks; `.codex/hooks.json` and `.agents/hooks.json` are context/validation hook wiring, not equivalent permission gates.
 - Confirm `.claude/*.local.md` files remain ignored local warning layers; Hookify local rules must not be treated as shared enforcement.
 - Confirm lifecycle hook semantics are described accurately: Stop/SubagentStop block only objective repo-state failures, and PreCompact remains advisory.
@@ -96,7 +96,7 @@ Before changing gateway, runtime, hook, mirror, or governance-memory files:
 
 - Every non-trivial task must align to one persona in `rules/persona.md`.
 - If work spans layers, process one layer at a time and declare transitions.
-- If delegation is needed, use `subagent-protocol.md` and the local agent files instead of inline role definitions.
+- If delegation is needed, use `subagent-protocol.md`, the current runtime's provider-native delegated-agent mechanism, and the local agent files instead of inline role definitions.
 
 ## Escalation and Safety
 

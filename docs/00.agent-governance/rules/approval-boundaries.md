@@ -16,6 +16,10 @@ otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
   part of the default execution path.
 - Repo-static validation is the default completion evidence; it never proves
   live ArgoCD, Vault, ESO, or deployment readiness.
+- Provider hook/config surfaces are not interchangeable approval gates:
+  `.claude/settings.json` owns Claude native permissions, while
+  `.agents/hooks.json` and `.codex/hooks.json` provide context/validation
+  wiring where supported.
 
 ## Approval Matrix
 

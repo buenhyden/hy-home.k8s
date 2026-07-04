@@ -27,9 +27,9 @@ where is the evidence recorded?_
 
 | Surface             | Source                                                               | Role                               | Required Validation                          | Evidence             |
 | ------------------- | -------------------------------------------------------------------- | ---------------------------------- | -------------------------------------------- | -------------------- |
-| Runtime roster SSOT | [`harness-catalog.md`](harness-catalog.md)                           | Agents, skills, mirrors, matrices  | repo-quality-static (mirror + matrix checks) | `memory/progress.md` |
+| Runtime roster SSOT | [`harness-catalog.md`](harness-catalog.md)                           | Agents, skills, adapters, matrices | repo-quality-static (adapter + matrix checks) | `memory/progress.md` |
 | Model tier policy   | `model-policy.md`                                                    | Supervisor/worker model tiers      | repo-quality-static                          | catalog              |
-| Adapter parity      | `.claude/agents/*.md`, `.codex/agents/*.toml`, `.agents/agents/*.md` | Provider-native agents + mirrors   | agent mirror checks in repo-quality-static   | catalog              |
+| Adapter parity      | `.claude/agents/*.md`, `.codex/agents/*.toml`, `.agents/agents/*.md` | Provider-native role adapters      | agent adapter checks in repo-quality-static  | catalog              |
 | Shared assets       | `.agents/{skills,workflows,output-styles}`                           | Provider-neutral SSoT via symlinks | repo-quality-static                          | catalog              |
 
 ## GitOps Runtime

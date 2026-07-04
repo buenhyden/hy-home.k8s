@@ -38,7 +38,7 @@ unit.
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | ------- | ----------- | ---- | --------------------- | ------------------- | --------------------- | ----- | ------ |
 | T-001 | Create execution task record and capture baseline drift inventory | doc | Contracts, Evaluation | PLN-001 | Baseline inventory commands, `git diff --check`, repo quality gate | platform | Done |
-| T-002 | Normalize Stage 00 canonical contract wording | doc | Contracts, Core Design | PLN-002 | Focused owner/drift scans and repo quality gate | platform | Todo |
+| T-002 | Normalize Stage 00 canonical contract wording | doc | Contracts, Core Design | PLN-002 | Official source basis checked 2026-07-04, focused owner/drift scans, JSON/TOML parse checks, repo quality gate | platform | Done |
 | T-003 | Align provider adapter surfaces | doc | Data / Interface Contract, Governance Contract | PLN-003 | Provider metadata scans, JSON/TOML parse checks, repo quality gate | platform | Todo |
 | T-004 | Align GitHub, QA, CI/CD, and protected-surface enforcement | doc | Guardrails, Evaluation | PLN-004 | Frontmatter scans, workflow parse checks, gate/harness validation | platform | Todo |
 | T-005 | Complete final review, evidence closure, and branch-readiness handoff | doc | Evaluation, Memory & Context Strategy | PLN-005 | Full validation bundle and final review evidence | platform | Todo |
@@ -58,7 +58,7 @@ unit.
 
 ### PLN-002
 
-- [ ] T-002 Normalize Stage 00 canonical contract wording.
+- [x] T-002 Normalize Stage 00 canonical contract wording.
 
 ### PLN-003
 
@@ -114,6 +114,49 @@ unit.
 - **Logs / Evidence Location**:
   - This task record.
   - `../../00.agent-governance/memory/progress.md`
+
+## T-002 Evidence
+
+### Official Source Basis
+
+Checked on 2026-07-04:
+
+- Codex custom instructions with `AGENTS.md`: <https://developers.openai.com/codex/guides/agents-md>
+- Codex subagents: <https://developers.openai.com/codex/subagents>
+- Codex CLI/config/approval modes: <https://developers.openai.com/codex/cli>
+- Claude Code settings: <https://code.claude.com/docs/en/settings>
+- Claude Code hooks: <https://code.claude.com/docs/en/hooks>
+- Claude Code subagents: <https://code.claude.com/docs/en/sub-agents>
+- Gemini CLI commands and hierarchical memory: <https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/commands.md>
+- GitHub Actions: <https://docs.github.com/en/actions>
+
+### Files Changed
+
+- `docs/00.agent-governance/common-governance.md`
+- `docs/00.agent-governance/subagent-protocol.md`
+- `docs/00.agent-governance/harness-catalog.md`
+- `docs/00.agent-governance/harness-implementation-map.md`
+- `docs/00.agent-governance/rules/bootstrap.md`
+- `docs/00.agent-governance/rules/agentic.md`
+- `docs/00.agent-governance/rules/standards.md`
+- `docs/00.agent-governance/rules/quality-standards.md`
+- `docs/00.agent-governance/rules/approval-boundaries.md`
+- `docs/00.agent-governance/providers/claude.md`
+- `docs/00.agent-governance/providers/codex.md`
+- `docs/00.agent-governance/providers/gemini.md`
+- `docs/04.execution/tasks/2026-07-04-agent-governance-contract-normalization.md`
+- `docs/00.agent-governance/memory/progress.md`
+
+### Validation Commands
+
+- `git diff --check`
+- `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json`
+- `python3 - <<'PY' ... tomllib.loads(path.read_text()) ... PY`
+- `bash scripts/validate-repo-quality-gates.sh .`
+
+### Next
+
+- T-003 remains Todo.
 
 ## Related Documents
 
