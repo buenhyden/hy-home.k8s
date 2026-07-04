@@ -500,7 +500,7 @@ Summary:
 Command:
 
 ```bash
-rg -n "automation-pipeline-workflow-qa.md\\s+# Planned|Planned descriptive reference" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/README.md docs/90.references/research/README.md
+rg -n "automation-pipeline-workflow-qa.md[[:space:]]+# P[l]anned|P[l]anned descriptive reference" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/README.md docs/90.references/research/README.md
 ```
 
 Summary:
