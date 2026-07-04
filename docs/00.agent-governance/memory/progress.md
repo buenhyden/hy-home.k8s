@@ -8,6 +8,60 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-04 - Workspace engineering research pack WER-001 baseline
+
+- **Date**: 2026-07-04
+- **Layer**: qa, docs
+- **Status**: complete
+- **Tags**: #docs #research #validation #stage-04
+
+#### Progress
+
+- Completed WER-001 baseline task evidence for the
+  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+- Created the Stage 04 task record, indexed it in the tasks README, and kept
+  the work scoped to task evidence plus this progress ledger update.
+- Recorded the baseline branch/worktree check, task template intake, parent
+  Spec intake, current research inventory, current flat-reference links, and
+  repo-first evidence categories for later WER-002 through WER-007 work.
+
+#### Memory
+
+- The WER-001 baseline inventory intentionally captures flat research
+  references before moving them into the dated pack; later move tasks should
+  use this evidence to update current links or preserve historical links
+  deliberately.
+- The broad repo-first evidence scan returned 4,838 lines, so task evidence
+  should summarize counts and owners instead of embedding raw scan output.
+- `rtk` is not on PATH in this shell. `/home/hy/.local/bin/rtk --version`
+  works, but `/home/hy/.local/bin/rtk gain` cannot initialize its tracking
+  database; required validation commands were run directly.
+
+#### Evidence
+
+- `git status --short --branch` — PASS; current branch was
+  `codex/workspace-engineering-research-pack` and the worktree was clean at
+  intake.
+- `rg --files docs/90.references/research docs/90.references docs/03.specs docs/04.execution | sort` —
+  captured 108 rows and 103 unique paths, including the four current flat
+  research references and the WER parent Spec/Plan.
+- `rg -n "docs/90.references/research/(workspace-governance-baseline|harness-and-loop-engineering|provider-implementation-status|spec-sdlc-ci-qa-formatting)\\.md|research/(workspace-governance-baseline|harness-and-loop-engineering|provider-implementation-status|spec-sdlc-ci-qa-formatting)\\.md|\\./(workspace-governance-baseline|harness-and-loop-engineering|provider-implementation-status|spec-sdlc-ci-qa-formatting)\\.md" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts` —
+  captured 71 current flat-reference link matches for later move/link updates.
+- `rg -n "purpose|role|CI/CD|QA|Formatting|Linting|Automation|pipeline|workflow|operating contract|template|script|integration|SDLC|governance|Kubernetes|Infrastructure|Security|secret|policy" AGENTS.md CLAUDE.md GEMINI.md README.md .github docs/00.agent-governance docs/90.references docs/99.templates scripts tests gitops infrastructure policy traefik -g '*.md' -g '*.sh' -g '*.yml' -g '*.yaml'` —
+  captured 4,838 repo-first evidence lines across governance, scripts,
+  references, templates, GitOps, infrastructure, `.github`, tests, and gateway
+  files.
+- `git diff --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+
+#### Handoff
+
+- WER-001 is complete. Continue with WER-002 dated pack scaffold and existing
+  reference move in a later scoped change.
+- No live Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider runtime,
+  credential, secret-value, paid-job, publishing, merge, push, or third-party
+  mutation was performed.
+
 ### 2026-07-04 — Active control surface hardening ACS-005 final closure
 
 - **Date**: 2026-07-04

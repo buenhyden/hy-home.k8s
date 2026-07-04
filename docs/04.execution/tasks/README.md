@@ -76,6 +76,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-07-04-active-control-surface-governance-hardening.md
 ├── 2026-07-04-agent-governance-contract-normalization.md
 ├── 2026-07-04-workspace-document-contract-normalization.md
+├── 2026-07-04-workspace-engineering-research-pack.md
 └── README.md
 ```
 
@@ -134,6 +135,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-07-04-active-control-surface-governance-hardening.md`](./2026-07-04-active-control-surface-governance-hardening.md) | Active control surface governance hardening evidence for GitHub, CI/CD, QA, GitOps, infrastructure, policy, scripts, tests, Traefik, and sample-app snapshot boundaries. | Done | 2026-07-04 |
 | [`./2026-07-04-agent-governance-contract-normalization.md`](./2026-07-04-agent-governance-contract-normalization.md) | agent governance contract normalization evidence와 baseline drift inventory를 추적 | Done | 2026-07-04 |
 | [`./2026-07-04-workspace-document-contract-normalization.md`](./2026-07-04-workspace-document-contract-normalization.md) | active 문서와 historical evidence의 frontmatter, section, template, reference, CI/QA, validator 정규화 작업과 검증 evidence를 추적 | Done | 2026-07-04 |
+| [`./2026-07-04-workspace-engineering-research-pack.md`](./2026-07-04-workspace-engineering-research-pack.md) | Workspace engineering research pack evidence for dated Stage 90 research references, existing reference moves, external-source refresh, Kubernetes/infrastructure/security, automation/pipeline/workflow/QA, and validation closure. | Draft | 2026-07-04 |
 
 ## Related Documents
 
