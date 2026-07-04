@@ -4,8 +4,9 @@
 
 This dated pack collects repo-first workspace engineering research for
 `hy-home.k8s`. It moves the existing workspace harness research references
-under one dated folder and reserves planned slots for Kubernetes,
-infrastructure, security, automation, pipeline, workflow, and QA references.
+under one dated folder, includes the current Kubernetes/infrastructure/security
+reference, and reserves the planned automation, pipeline, workflow, and QA
+reference for WER-007.
 
 The pack is descriptive reference material. It does not define active
 governance policy, CI semantics, runtime permissions, runbooks, deployment
@@ -25,8 +26,8 @@ In scope:
 - Dated research-pack routing and file index
 - Repo-backed workspace governance, harness, provider, SDLC, CI, QA, and
   formatting references
-- Planned references for Kubernetes/infrastructure/security and
-  automation/pipeline/workflow/QA
+- Current Kubernetes/infrastructure/security reference and planned reference
+  for automation/pipeline/workflow/QA
 - Source priority, freshness, and authority-boundary reminders for later
   reference refresh work
 
@@ -48,7 +49,7 @@ Out of scope:
 |-- harness-and-loop-engineering.md         # Current
 |-- provider-implementation-status.md       # Current
 |-- spec-sdlc-ci-qa-formatting.md           # Current
-|-- kubernetes-infrastructure-security.md   # Planned
+|-- kubernetes-infrastructure-security.md   # Current
 `-- automation-pipeline-workflow-qa.md      # Planned
 ```
 
@@ -111,7 +112,7 @@ This README's link basis is
 | [harness-and-loop-engineering.md](harness-and-loop-engineering.md) | Current | Harness and feedback-loop engineering reference | Descriptive source snapshot only; does not define runtime procedure |
 | [provider-implementation-status.md](provider-implementation-status.md) | Current | Provider capability and local adapter status reference | Distinguishes provider capability from repo implementation; does not change provider config |
 | [spec-sdlc-ci-qa-formatting.md](spec-sdlc-ci-qa-formatting.md) | Current | Spec, SDLC, CI, QA, formatting, and validation reference | Descriptive reference only; active gates stay with canonical owners |
-| `kubernetes-infrastructure-security.md` | Planned | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security reference | Planned descriptive reference; no live checks or security policy changes |
+| [kubernetes-infrastructure-security.md](kubernetes-infrastructure-security.md) | Current | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security reference | Descriptive reference only; no live checks or active security policy changes |
 | `automation-pipeline-workflow-qa.md` | Planned | Automation, pipeline, workflow, CI job graph, validation-loop, and QA evidence reference | Planned descriptive reference; no CI workflow or runtime changes |
 
 ## Authority Boundary
@@ -130,7 +131,7 @@ adapter files instead of encoding active policy here.
 ## Review and Freshness
 
 - Review cadence: on source or structure change
-- Last reviewed: 2026-07-04
+- Last reviewed: 2026-07-05
 - Next review trigger: pack structure changes, reference status changes,
   source-priority changes, parent Spec/Plan changes, or validation evidence
   changes.

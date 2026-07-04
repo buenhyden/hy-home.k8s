@@ -49,7 +49,7 @@ runtimes, credentials, secret values, or third-party systems.
 | WER-003 | Refresh workspace governance baseline | doc | VAL-SPC-003, VAL-SPC-004 | Task 3 | Required reference sections and repo-first evidence coverage | platform | Done |
 | WER-004 | Refresh harness, loop, and provider references | doc | VAL-SPC-004, VAL-SPC-005 | Task 4 | Official or primary source checks and provider-boundary review | platform | Done |
 | WER-005 | Refresh SDLC/CI/QA/formatting/security reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 5 | SDLC, CI/CD, QA, formatting, security, supply-chain, and workflow coverage | platform | Done |
-| WER-006 | Add Kubernetes, infrastructure, and security reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 6 | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security coverage | platform | Todo |
+| WER-006 | Add Kubernetes, infrastructure, and security reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 6 | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security coverage | platform | Done |
 | WER-007 | Add automation, pipeline, workflow, and QA reference; close indexes and validation | doc | VAL-SPC-002, VAL-SPC-004, VAL-SPC-006, VAL-SPC-007 | Task 7 | Automation reference coverage, index closure, stale-link scans, final validation, and no-mutation handoff | platform | Todo |
 
 ## Suggested Types
@@ -80,7 +80,7 @@ runtimes, credentials, secret values, or third-party systems.
 - [x] WER-003 workspace governance baseline refresh.
 - [x] WER-004 harness, loop, and provider reference refresh.
 - [x] WER-005 SDLC/CI/QA/formatting/security reference refresh.
-- [ ] WER-006 Kubernetes, infrastructure, and security reference.
+- [x] WER-006 Kubernetes, infrastructure, and security reference.
 - [ ] WER-007 automation, pipeline, workflow, QA reference plus final index,
   evidence, progress, and validation closure.
 
@@ -406,6 +406,51 @@ Summary:
   findings, non-authoritative market/context language, and
   `Review and Freshness`.
 
+## WER-006 Evidence Summary
+
+### Kubernetes Infrastructure Security Reference
+
+- Added
+  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/kubernetes-infrastructure-security.md`
+  with `updated: 2026-07-05`, `Source checked: 2026-07-05`, and
+  `Review and Freshness` metadata for WER-006 source checks.
+- Preserved the reference as descriptive Stage 90 material. It does not define
+  active Kubernetes policy, GitOps policy, Argo CD sync procedure, Argo
+  Rollouts operation, External Secrets Operator procedure, Vault procedure,
+  NetworkPolicy procedure, RBAC procedure, live checks, release approval, or
+  secret handling.
+- Checked official/primary source coverage for Kubernetes Secrets,
+  Kubernetes NetworkPolicies, Kubernetes RBAC, Kubernetes
+  Kustomize/declarative management, OpenGitOps, Argo CD docs, Argo CD
+  declarative setup, Argo CD best practices, Argo Rollouts, External Secrets
+  Operator, ESO Vault provider, OPA Kubernetes admission, Conftest, HashiCorp
+  Vault policies, Vault Kubernetes auth, NIST SP 800-204D, and OpenSSF
+  Scorecard.
+- Added repo implementation comparison for desired-state surfaces, AppProject
+  allow-list boundaries, namespace ownership, image policy, ESO/Vault
+  boundaries, NetworkPolicy coverage, infrastructure static/live test
+  boundaries, and policy-as-code evidence.
+- Kept repo-static, CI/toolchain, and live-runtime evidence lanes separate.
+- Updated the dated pack README and parent research README so
+  `kubernetes-infrastructure-security.md` is current while
+  `automation-pipeline-workflow-qa.md` remains planned for WER-007.
+
+### WER-006 Validation Scan
+
+Command:
+
+```bash
+rg -n "Source checked: 2026-07-05|Kubernetes|GitOps|Argo CD|Argo Rollouts|External Secrets Operator|Vault|NetworkPolicy|RBAC|Kustomize|OPA|Conftest|NIST|OpenSSF|repo-static|live-runtime|non-authoritative|Review and Freshness" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/kubernetes-infrastructure-security.md
+```
+
+Summary:
+
+- PASS; command completed successfully.
+- The scan returned matching lines for the WER-006 source-checked date,
+  required Kubernetes/GitOps/security source families, repo-static and
+  live-runtime evidence-lane language, non-authoritative market/context
+  language, and `Review and Freshness`.
+
 ## Verification Summary
 
 | Date | Scope | Command | Result |
@@ -427,6 +472,9 @@ Summary:
 | 2026-07-05 | WER-005 reference scan | Required WER-005 `rg` scan listed above | PASS; WER-005 refreshed source date, official source families, supply-chain terms, formatting terms, non-authoritative language, and freshness heading were present. |
 | 2026-07-05 | WER-005 formatting | `git diff --check` | PASS. |
 | 2026-07-05 | WER-005 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
+| 2026-07-05 | WER-006 reference scan | Required WER-006 `rg` scan listed above | PASS; WER-006 source date, Kubernetes/GitOps/security terms, repo-static/live-runtime language, non-authoritative language, and freshness heading were present. |
+| 2026-07-05 | WER-006 formatting | `git diff --check` | PASS. |
+| 2026-07-05 | WER-006 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
 
 Tooling limitation:
 
@@ -446,6 +494,8 @@ Boundary statement:
 - WER-004 performed read-only official/primary web source checks, repository
   reads, documentation edits, and local validation only before commit.
 - WER-005 performed read-only official/primary web source checks, repository
+  reads, documentation edits, and local validation only before commit.
+- WER-006 performed read-only official/primary web source checks, repository
   reads, documentation edits, and local validation only before commit.
 - No live Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider runtime,
   credential, secret-value, paid-job, publishing, merge, push, or third-party

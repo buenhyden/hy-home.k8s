@@ -55,7 +55,7 @@ research/
 │   ├── harness-and-loop-engineering.md
 │   ├── provider-implementation-status.md
 │   ├── spec-sdlc-ci-qa-formatting.md
-│   ├── kubernetes-infrastructure-security.md   # Planned
+│   ├── kubernetes-infrastructure-security.md
 │   └── automation-pipeline-workflow-qa.md      # Planned
 └── README.md                            # This file
 ```
@@ -93,7 +93,7 @@ research/
 | [harness-and-loop-engineering.md](./2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md) | Current | Harness and feedback-loop engineering reference | Summarizes source-backed patterns; does not define runtime procedure |
 | [provider-implementation-status.md](./2026-07-04-workspace-engineering-research-pack/provider-implementation-status.md) | Current | Provider implementation status and source ledger | Official and repo-backed sources outrank market scan; market findings are non-authoritative |
 | [spec-sdlc-ci-qa-formatting.md](./2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md) | Current | Spec, SDLC, CI, QA, and formatting reference; CI/formatting sources refreshed 2026-07-04 | Summarizes reference material; active gates stay with canonical owners |
-| `./2026-07-04-workspace-engineering-research-pack/kubernetes-infrastructure-security.md` | Planned | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security reference | Planned descriptive reference; no live checks or active security policy changes |
+| [kubernetes-infrastructure-security.md](./2026-07-04-workspace-engineering-research-pack/kubernetes-infrastructure-security.md) | Current | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security reference | Descriptive reference only; no live checks or active security policy changes |
 | `./2026-07-04-workspace-engineering-research-pack/automation-pipeline-workflow-qa.md` | Planned | Automation, pipeline, workflow, CI job graph, validation-loop, and QA evidence reference | Planned descriptive reference; no CI workflow or runtime changes |
 
 ## Source Priority

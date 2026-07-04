@@ -8,6 +8,67 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-05 - Workspace engineering research pack WER-006 Kubernetes infrastructure security reference
+
+- **Date**: 2026-07-05
+- **Layer**: docs, research, infra, security, qa
+- **Status**: complete
+- **Tags**: #docs #research #kubernetes #gitops #security #validation #stage-90
+
+#### Progress
+
+- Completed WER-006 for the
+  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+- Added the dated
+  `kubernetes-infrastructure-security.md` reference with 2026-07-05 metadata,
+  source-checked date, authority boundary, repo-backed implementation
+  comparison, evidence-lane separation, source links, freshness triggers, and
+  owner-routed checklist items.
+- Updated the dated pack README and parent research README so
+  `kubernetes-infrastructure-security.md` is current while
+  `automation-pipeline-workflow-qa.md` remains planned for WER-007.
+- Preserved the WER-005 review fix: WER-007 owns the automation reference, and
+  SLSA is described as v1.2 current with v1.1 retained only as retired
+  historical context.
+
+#### Memory
+
+- Kubernetes/infrastructure/security references must keep repo-static,
+  CI/toolchain, and live-runtime evidence lanes separate.
+- Static validators such as GitOps structure, manifest syntax, secret
+  handling, Conftest/OPA-style policy gates, and infrastructure contract tests
+  are desired-state evidence only. They do not prove live k3d, Argo CD, Vault,
+  External Secrets Operator, NetworkPolicy, rollout, endpoint, or secret
+  readiness.
+- AppProject allow-lists, namespace ownership, image policy, ESO/Vault
+  boundaries, NetworkPolicy, and infrastructure tests should be compared as
+  repo implementation surfaces, but active changes belong to GitOps,
+  infrastructure, policy, scripts, CI/toolchain, or Stage 05 owners.
+
+#### Evidence
+
+- Official/primary WER-006 sources checked: Kubernetes Secrets,
+  NetworkPolicies, RBAC, and Kustomize/declarative management; OpenGitOps;
+  Argo CD docs, declarative setup, and best practices; Argo Rollouts; External
+  Secrets Operator and ESO Vault provider; OPA Kubernetes admission; Conftest;
+  HashiCorp Vault policies and Vault Kubernetes auth; NIST SP 800-204D; and
+  OpenSSF Scorecard.
+- Required WER-006 reference scan - PASS; the new reference includes
+  `Source checked: 2026-07-05`, required Kubernetes/GitOps/security terms,
+  repo-static and live-runtime evidence-lane language, non-authoritative
+  market/context language, and `Review and Freshness`.
+- `git diff --check` - PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+
+#### Handoff
+
+- WER-006 is complete and ready for WER-007 follow-up work on
+  `automation-pipeline-workflow-qa.md`, final index closure, stale-link scans,
+  task evidence, progress, and validation.
+- No live Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider runtime,
+  credential, secret-value, paid-job, publishing, merge, push, or third-party
+  mutation was performed.
+
 ### 2026-07-05 - Workspace engineering research pack WER-005 SDLC CI QA security refresh
 
 - **Date**: 2026-07-05
