@@ -141,6 +141,7 @@ Checked on 2026-07-04:
 - `docs/00.agent-governance/rules/standards.md`
 - `docs/00.agent-governance/rules/quality-standards.md`
 - `docs/00.agent-governance/rules/approval-boundaries.md`
+- `docs/00.agent-governance/scopes/*.md`
 - `docs/00.agent-governance/providers/claude.md`
 - `docs/00.agent-governance/providers/codex.md`
 - `docs/00.agent-governance/providers/gemini.md`
@@ -149,10 +150,19 @@ Checked on 2026-07-04:
 
 ### Validation Commands
 
-- `git diff --check`
-- `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json`
-- `python3 - <<'PY' ... tomllib.loads(path.read_text()) ... PY`
-- `bash scripts/validate-repo-quality-gates.sh .`
+- `git diff --check` — PASS.
+- `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json` —
+  PASS.
+- `python3 - <<'PY' ... tomllib.loads(path.read_text()) ... PY` — PASS for
+  all `.codex/agents/*.toml`.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS, including
+  `[PASS] repository quality gates passed`.
+
+### Local Review Follow-up
+
+- Local T-002 review found active `docs/00.agent-governance/scopes/*.md`
+  bridge text that still said `Task tool only`; scope bridge wording was
+  aligned to the provider-native delegated-agent contract.
 
 ### Next
 

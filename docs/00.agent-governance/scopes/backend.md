@@ -26,7 +26,9 @@ Backend scope does **not** own infra manifests (`gitops/`, `infrastructure/`) or
 
 No dedicated subagent for backend scope in this k8s-focused repo.
 
-Subagent dispatch: use Task tool only; never inline role definitions in prompts.
+Subagent dispatch: use the current runtime's provider-native delegated-agent
+mechanism; never inline full role definitions when a provider-local agent file
+exists.
 
 ## Definition of Done
 

@@ -38,7 +38,9 @@ Agents that import this scope: `.claude/agents/k8s-implementer.md`,
 `.claude/agents/gitops-reviewer.md`, `.claude/agents/incident-responder.md`.
 
 Subagents must read `.claude/agents/<name>.md` (which `@import`s this scope) before starting work.
-Subagent dispatch: use Task tool only; never inline role definitions in prompts.
+Subagent dispatch: use the current runtime's provider-native delegated-agent
+mechanism; never inline full role definitions when a provider-local agent file
+exists.
 
 ## Definition of Done
 

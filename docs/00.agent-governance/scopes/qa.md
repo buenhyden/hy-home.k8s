@@ -33,7 +33,9 @@ QA scope does **not** own `gitops/` manifests or `docs/00.agent-governance/` (me
 
 No dedicated subagent for QA scope in standard runs. QA verification steps are embedded in `k8s-implementer.md` postflight.
 
-Subagent dispatch: use Task tool only; never inline role definitions in prompts.
+Subagent dispatch: use the current runtime's provider-native delegated-agent
+mechanism; never inline full role definitions when a provider-local agent file
+exists.
 
 ## Definition of Done
 

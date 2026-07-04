@@ -7131,7 +7131,14 @@ section separating static from live evidence.
   catalog/map, this progress ledger, and the Stage 04 task record.
 - Official URLs checked 2026-07-04 are listed in the harness catalog, provider
   notes, and T-002 task evidence.
-- Validation bundle for this task: `git diff --check`, `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json`, Codex agent TOML parse loop with `tomllib`, and `bash scripts/validate-repo-quality-gates.sh .`.
+- Local T-002 review found active scope bridge text in
+  `docs/00.agent-governance/scopes/*.md` that still said `Task tool only`;
+  scope wording was aligned to the provider-native delegated-agent contract.
+- Validation bundle for this task: `git diff --check` PASS,
+  `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json` PASS,
+  Codex agent TOML parse loop with `tomllib` PASS, and
+  `bash scripts/validate-repo-quality-gates.sh .` PASS with
+  `[PASS] repository quality gates passed`.
 
 ### Handoff
 
