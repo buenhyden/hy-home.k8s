@@ -28,6 +28,9 @@ This protocol defines how governance references authored docs and how language b
   contract and `docs/99.templates/README.md`, fix the route owners first.
 - README files must use `docs/99.templates/templates/common/readme.template.md`.
 - README files must keep `## Link Basis` and `## Related Documents`; deprecated related-document headings are incomplete.
+- README files are entrypoints and must not hold duplicated policy bodies.
+  They route readers to the canonical support, governance, operations,
+  workflow, validator, GitOps, policy-as-code, or manifest owner.
 - PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook, Incident, Postmortem, Reference, and Archive Tombstone documents must use their stage-specific templates from `docs/99.templates/`.
 - `docs/03.specs/<feature-id>/api-spec.md`, `agent-design.md`, `data-model.md`, and `tests.md` must use their matching helper templates.
 - Every non-README authored Markdown file under stage roots must match exactly one structural template mapping in `docs/99.templates/README.md` and `scripts/validate-repo-quality-gates.sh`; an uncovered path is incomplete.

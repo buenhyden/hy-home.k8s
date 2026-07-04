@@ -27,6 +27,11 @@ map.
 frontmatter-free and are not structural stage documents; durable policy must
 route back to Stage 00, Stage 05, scripts, or workflow owners.
 
+Cloud Example Snapshot material under `examples/aws/docs/**` and
+`examples/azure/docs/**` is not an active SDLC route target for wholesale
+frontmatter migration. Future provider-refresh work must promote any scoped
+change through an approved spec and support contract update.
+
 | Document Intent | Canonical Stage | Route Owner | Notes |
 | --- | --- | --- | --- |
 | README or folder index | Repository or folder-local `README.md` | Template Routing Contract | Use for repository, stage, and nested folder entrypoints. |

@@ -7330,3 +7330,44 @@ section separating static from live evidence.
 - ACS-001 is complete: the task record was created, the Stage 04 tasks index
   was updated, baseline evidence was recorded, and the snapshot boundary is
   locked for follow-on ACS tasks.
+
+## 2026-07-04 - Active control surface contract ownership
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: governance, docs, qa
+- **Status**: completed
+- **Tags**: #governance #docs #validation #ci-qa
+
+### Progress
+
+- Normalized Stage 99 support contracts for active control surfaces,
+  GitHub-native Markdown, README routing, frontmatter-free exceptions, and
+  AWS/Azure Cloud Example Snapshot boundaries.
+- Normalized Stage 00 governance wording so README files remain entrypoints,
+  cloud snapshots are not wholesale SDLC frontmatter targets, CI/CD and QA
+  evidence distinguishes optional-tool skips, and live or external mutations
+  remain approval-bound.
+- Updated the Active Control Surface Governance Hardening task record to mark
+  ACS-002 complete with canonical ownership scan evidence.
+
+### Memory
+
+- Support and Stage 00 canonical ownership are now the active owners for
+  control-surface and snapshot-boundary rules. README and GitHub-native
+  Markdown surfaces should summarize and route to those owners instead of
+  carrying duplicated policy bodies.
+
+### Evidence
+
+- `rg -n "Cloud Example Snapshot|provider-latest|frontmatter-free|GitHub-native|README files are entrypoints|optional-tool skips|secret value" docs/99.templates/support docs/00.agent-governance/rules`
+  returned canonical support/governance matches for the required ownership
+  phrases.
+- `git diff --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS with
+  `[PASS] repository quality gates passed`.
+
+### Handoff
+
+- ACS-002 is complete; continue with ACS-003 in the next scoped task.

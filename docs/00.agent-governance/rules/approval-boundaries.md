@@ -16,6 +16,8 @@ otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
   part of the default execution path.
 - Repo-static validation is the default completion evidence; it never proves
   live ArgoCD, Vault, ESO, or deployment readiness.
+- Live cluster, Vault, cloud, GitHub publish/merge, and secret value work
+  require explicit human/operator approval before any action begins.
 - Provider hook/config surfaces are not interchangeable approval gates:
   `.claude/settings.json` owns Claude native permissions, while
   `.agents/hooks.json` and `.codex/hooks.json` provide context/validation
@@ -38,6 +40,8 @@ otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
 | Vault token                                                  | Forbidden                | Never read or record                                                        | n/a                                                                                                                 | n/a                       | n/a                                |
 | Secret values                                                | Forbidden                | Never read, commit, or record                                               | `scripts/check-secret-handling.sh .`                                                                                | redacted evidence only    | n/a                                |
 | Live cluster                                                 | Read-only by default     | Any mutation needs explicit human/operator approval                         | none (live checks are operator-bound)                                                                               | runbook / incident        | operator-approved recovery         |
+| Cloud resources                                              | Read-only by default     | Any cloud API mutation, paid job, publish, or provider refresh              | scoped plan/spec evidence and repo-static checks                                                                    | PR / runbook              | operator-approved recovery         |
+| GitHub publish / merge / remote dispatch                     | Local draft only         | Any PR creation, merge, release, publish, workflow dispatch, or remote push | `git diff --check`, `scripts/validate-repo-quality-gates.sh .`, and human review                                    | PR / handoff              | revert / close remote action       |
 
 ## Mandatory Policies
 
@@ -47,6 +51,8 @@ otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
 - `helm install` / `helm upgrade` / `helm uninstall` are allowed only on an
   approved bootstrap or recovery path.
 - Vault tokens and secret values must never be read or recorded.
+- Secret value handling remains approval-bound even on emergency paths; agents
+  must not display, commit, or record values.
 - ExternalSecret changes record only `remoteRef.key`, `property`, mount, and the
   `SecretStore` / `ClusterSecretStore` reference — never values.
 - GitHub Actions permission expansion is a protected surface.

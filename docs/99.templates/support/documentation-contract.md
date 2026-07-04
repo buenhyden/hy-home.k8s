@@ -3,7 +3,7 @@ title: 'Template Documentation Contract'
 type: governance/template-support
 status: draft
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-04
 ---
 
 # Template Documentation Contract
@@ -17,7 +17,7 @@ rules, hooks, and validators.
 
 ## Purpose
 
-The template system has four separate surfaces:
+The template system has separate surfaces:
 
 | Surface | Canonical Owner | Responsibility |
 | --- | --- | --- |
@@ -26,11 +26,12 @@ The template system has four separate surfaces:
 | Agent governance | `docs/00.agent-governance/**` | Agent-facing execution policy, stage routing policy, hooks, and protected-surface rules. |
 | Authored documents | `docs/01.requirements` through `docs/05.operations`, `docs/90.references`, `docs/98.archive` | Repository facts, lifecycle records, and evidence. |
 | GitHub-native control Markdown | `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/SECURITY.md` | GitHub-rendered repository control surfaces that remain frontmatter-free and mirror canonical owners. |
+| Active control surfaces | GitHub-native Markdown, `.github/workflows/**`, validators, GitOps desired state, policy-as-code, and route manifests | Repository behavior and protection surfaces that route detail to their canonical governance, operations, workflow, script, or manifest owners. |
 
 ## Contract Rules
 
 - README files are entrypoints and inventories. They should summarize where to
-  find rules, not duplicate full contract bodies.
+  find rules and route to canonical owners, not duplicate full contract bodies.
 - Template forms must contain only the sections and minimal guidance needed to
   create an authored document of that type.
 - Template support docs own reusable rules that apply across multiple template
@@ -45,6 +46,10 @@ The template system has four separate surfaces:
 - GitHub-native control Markdown must not be promoted into stage documents by
   adding frontmatter. Keep those files frontmatter-free and route durable
   policy to the owning governance, operations, script, or workflow surface.
+- Active control surfaces may be summarized in README or GitHub-native
+  Markdown, but their detailed rules belong to the owning support,
+  governance, operations, workflow, validator, GitOps, policy-as-code, or route
+  manifest surface.
 
 ## SDLC and Common Documentation Split
 

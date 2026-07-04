@@ -3,7 +3,7 @@ title: 'Common Documentation Template Governance'
 type: governance/template-support
 status: draft
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-04
 ---
 
 # Common Documentation Template Governance
@@ -36,8 +36,9 @@ knowledge consistent without forcing every common document into an SDLC phase.
   requires otherwise.
 - README files must keep `Overview`, `Audience`, `Scope`, `Structure`,
   `How to Work in This Area`, `Link Basis`, and `Related Documents`.
-- README files may summarize contracts, but detailed contract bodies belong in
-  support docs, Stage 00 governance, or the owning stage document.
+- README files may summarize active control boundaries through matrices and
+  links, but detailed rules belong to support, governance, operations, or
+  validator owners.
 - README files must not keep deprecated related-document headings.
 
 ## GitHub-Native Control Markdown Governance

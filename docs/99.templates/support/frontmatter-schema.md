@@ -3,7 +3,7 @@ title: 'Template Frontmatter Schema'
 type: governance/template-support
 status: draft
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-04
 ---
 
 # Template Frontmatter Schema
@@ -38,6 +38,9 @@ Exceptions:
 - README files are frontmatter-free.
 - GitHub-native Markdown control files under `.github/` are
   frontmatter-free because GitHub renders or consumes their body directly.
+- Cloud Example Snapshot docs under `examples/aws/docs/**` and
+  `examples/azure/docs/**` are not active SDLC frontmatter targets unless a
+  future support contract routes them.
 - `progress.template.md` is an appendable ledger entry template.
 - OpenAPI, GraphQL, and protobuf templates must remain native to their format.
 
@@ -91,7 +94,8 @@ Exceptions:
 - Remove keys that duplicate the same role as another key unless the target
   profile explicitly allows both.
 - Do not add frontmatter to README files, GitHub-native Markdown control
-  files, or native machine-readable templates.
+  files, Cloud Example Snapshot docs, or native machine-readable templates
+  unless a future support contract explicitly routes the target.
 
 ## Validation Contract
 
@@ -103,6 +107,8 @@ has exactly one frontmatter profile. The gate rejects:
 - Unsupported `type`, `status`, or `owner` values.
 - Frontmatter on README files when not required.
 - Frontmatter on GitHub-native Markdown control files.
+- SDLC frontmatter enforcement on Cloud Example Snapshot docs unless a future
+  support contract routes the target.
 - Markdown frontmatter in OpenAPI, GraphQL, or protobuf templates.
 
 ## Related Documents

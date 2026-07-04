@@ -3,7 +3,7 @@ title: 'Template Routing Contract'
 type: governance/template-support
 status: draft
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-04
 ---
 
 # Template Routing Contract
@@ -81,6 +81,13 @@ authored stage documents and are not copied from a structural template:
 Validators may check these files for frontmatter bans and stale currentness
 claims, but they must not require stage frontmatter or required template
 headings.
+
+## Cloud Example Snapshot Boundary
+
+AWS and Azure cloud example docs under `examples/aws/docs/**` and
+`examples/azure/docs/**` remain dated Cloud Example Snapshot material. They are
+not active SDLC route targets and are not provider-latest guidance unless a
+future approved spec promotes a scoped refresh.
 
 ## Supplemental Task Starter
 

@@ -42,7 +42,7 @@ examples as dated snapshots.
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | ------- | ----------- | ---- | --------------------- | ------------------- | --------------------- | ----- | ------ |
 | ACS-001 | Create task record and baseline active/snapshot inventory | doc | VAL-SPC-001, VAL-SPC-002 | Task 1 | Baseline scans, task record, tasks README, progress ledger, `git diff --check`, repo quality gate | platform | Done |
-| ACS-002 | Normalize Stage 99 and Stage 00 active-control contracts | doc | VAL-SPC-001, VAL-SPC-003 | Task 2 | README/GitHub-native/snapshot ownership rules canonical and non-duplicative | platform | Todo |
+| ACS-002 | Normalize Stage 99 and Stage 00 active-control contracts | doc | VAL-SPC-001, VAL-SPC-003 | Task 2 | README/GitHub-native/snapshot ownership scan, support/governance owner updates, progress ledger | platform | Done |
 | ACS-003 | Align GitHub, CI/CD, QA, and protected-surface control files | doc | VAL-SPC-001, VAL-SPC-003, VAL-SPC-004 | Task 3 | GitHub Markdown remains frontmatter-free, workflow YAML parses, repo quality gate | platform | Todo |
 | ACS-004 | Align GitOps, infrastructure, policy, scripts, tests, Traefik, and sample-app surfaces | doc | VAL-SPC-001, VAL-SPC-002, VAL-SPC-004 | Task 4 | Harness validation passes and optional tool skips remain explicit | platform | Todo |
 | ACS-005 | Close evidence, review, and branch readiness | doc | VAL-SPC-005 | Task 5 | Full validation bundle, updated plan/task evidence, final drift review | platform | Todo |
@@ -63,7 +63,7 @@ examples as dated snapshots.
 
 ### Task 2: Canonical Support and Governance Contracts
 
-- [ ] ACS-002 Normalize Stage 99 and Stage 00 active-control contracts.
+- [x] ACS-002 Normalize Stage 99 and Stage 00 active-control contracts.
 
 ### Task 3: GitHub, CI/CD, QA, and Protected Surfaces
 
@@ -158,6 +158,27 @@ promoted into active SDLC frontmatter or section enforcement by this task.
 Future cloud provider refresh work must create separate scoped evidence and
 validation.
 
+## ACS-002 Canonical Ownership Evidence
+
+### Commands
+
+- `rg -n "Cloud Example Snapshot|provider-latest|frontmatter-free|GitHub-native|README files are entrypoints|optional-tool skips|secret value" docs/99.templates/support docs/00.agent-governance/rules`
+
+### Findings
+
+- Stage 99 support contracts now own active control-surface boundaries for
+  README routing, GitHub-native Markdown, Cloud Example Snapshot material,
+  provider-latest cleanup, and frontmatter-free exceptions.
+- Stage 00 rules now own README entrypoint policy, Cloud Example Snapshot
+  routing exclusions, CI/CD and QA optional-tool skip evidence, and explicit
+  approval boundaries for live cluster, Vault, cloud, GitHub publish/merge,
+  and secret value work.
+- The scan returned canonical support/governance matches; no README file is
+  the only owner of a durable policy rule.
+- `git diff --check` passed with no output.
+- `bash scripts/validate-repo-quality-gates.sh .` passed with
+  `[PASS] repository quality gates passed`.
+
 ## Verification Summary
 
 - **Test Commands**:
@@ -169,6 +190,8 @@ validation.
 - **Eval Commands**:
   - Baseline inventory and contract-candidate scans listed in
     `Baseline Inventory Evidence`.
+  - ACS-002 canonical ownership scan listed in
+    `ACS-002 Canonical Ownership Evidence`.
 - **Logs / Evidence Location**:
   - This task record.
   - [../../00.agent-governance/memory/progress.md](../../00.agent-governance/memory/progress.md)
