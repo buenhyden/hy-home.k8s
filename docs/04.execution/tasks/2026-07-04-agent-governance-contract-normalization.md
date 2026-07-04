@@ -1,7 +1,7 @@
 ---
 title: 'Agent Governance Contract Normalization Task Record'
 type: sdlc/task
-status: draft
+status: done
 owner: platform
 updated: 2026-07-04
 ---
@@ -41,7 +41,7 @@ unit.
 | T-002 | Normalize Stage 00 canonical contract wording | doc | Contracts, Core Design | PLN-002 | Official source basis checked 2026-07-04, focused owner/drift scans, JSON/TOML parse checks, repo quality gate | platform | Done |
 | T-003 | Align provider adapter surfaces | doc | Data / Interface Contract, Governance Contract | PLN-003 | Root shim/runtime baseline checks, provider metadata scans, JSON/TOML parse checks, repo quality gate | platform | Done |
 | T-004 | Align GitHub, QA, CI/CD, and protected-surface enforcement | doc | Guardrails, Evaluation | PLN-004 | Frontmatter scans, workflow parse checks, validator status, repo quality gate | platform | Done |
-| T-005 | Complete final review, evidence closure, and branch-readiness handoff | doc | Evaluation, Memory & Context Strategy | PLN-005 | Full validation bundle and final review evidence | platform | Todo |
+| T-005 | Complete final review, evidence closure, and branch-readiness handoff | doc | Evaluation, Memory & Context Strategy | PLN-005 | Full validation bundle and final review evidence | platform | Done |
 
 ## Suggested Types
 
@@ -70,7 +70,7 @@ unit.
 
 ### PLN-005
 
-- [ ] T-005 Complete final review, evidence closure, and branch-readiness
+- [x] T-005 Complete final review, evidence closure, and branch-readiness
   handoff.
 
 ## Baseline Drift Inventory
@@ -238,7 +238,38 @@ Checked on 2026-07-04:
 
 ### Next
 
-- T-005 remains Todo.
+- T-005 is tracked below.
+
+## T-005 Evidence
+
+### Final Validation Bundle
+
+- `git diff --check` - PASS.
+- `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json` -
+  PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` - PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` - PASS, including
+  `[PASS] repository quality gates passed`.
+- `bash scripts/validate-harness.sh` - PASS, including
+  `PASS harness repo-static validation`.
+
+### Focused Final Scan
+
+- Focused scan command:
+  `rg -n "docs/superpowers|deprecated owner value|permission gate equivalent|Task tool only|must contain.*tools" AGENTS.md CLAUDE.md GEMINI.md .agents .claude .codex .github docs/00.agent-governance docs/04.execution/plans/2026-07-04-agent-governance-contract-normalization.md docs/04.execution/tasks/2026-07-04-agent-governance-contract-normalization.md`.
+- Matches were classified as allowed active guardrail text, negated
+  `permission gate equivalent` wording, or historical/plan/task evidence.
+- Active policy no longer claims that Codex/Gemini hook JSON is a Claude
+  permission gate equivalent or that every provider must use Claude-style
+  `tools:` frontmatter.
+
+### Review Result
+
+- Local final review completed because the reviewer subagent hit the current
+  account usage limit during T-002 review.
+- No blocking correctness, scope, safety, validation, or contract issue remains.
+- Repo-static validation remains distinct from live k3d, ArgoCD, Vault, ESO, or
+  deployment readiness.
 
 ## Related Documents
 

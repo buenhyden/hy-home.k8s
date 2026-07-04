@@ -7235,3 +7235,48 @@ section separating static from live evidence.
 
 - T-004 is complete after validation. Next action is T-005: final validation
   and handoff closure.
+
+## 2026-07-04 — Agent Governance Contract Normalization T-005
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: meta, docs, qa, ci
+- **Status**: completed
+- **Tags**: #governance #validation #handoff #closure
+
+### Progress
+
+- Closed the Agent Governance Contract Normalization plan and task record.
+- Updated `docs/04.execution/plans/README.md` and
+  `docs/04.execution/tasks/README.md` rows from Draft to Done.
+- Ran the final repo-static validation bundle and classified focused scan
+  matches as active guardrails, negated hook-boundary wording, or
+  historical/plan/task evidence.
+
+### Memory
+
+- Subagent-driven execution was used for T-001 implementation and review, but a
+  reviewer subagent hit the current account usage limit during T-002 review.
+  Remaining reviews were completed locally with explicit command evidence.
+- Repo-static harness validation passed. This is not live k3d, ArgoCD, Vault,
+  ESO, or deployment readiness evidence.
+
+### Evidence
+
+- `git diff --check` PASS.
+- `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json` PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS with
+  `[PASS] repository quality gates passed`.
+- `bash scripts/validate-harness.sh` PASS with
+  `PASS harness repo-static validation`.
+- Focused final scan found no active unsupported provider contract. Remaining
+  matches are intentional active guardrails such as `docs/superpowers/**`
+  rejection, negated `permission gate equivalent` hook-boundary wording, or
+  historical/plan/task evidence.
+
+### Handoff
+
+- The branch is ready for final branch status review and local main merge when
+  requested.

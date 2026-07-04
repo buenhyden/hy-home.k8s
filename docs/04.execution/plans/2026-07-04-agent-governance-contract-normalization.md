@@ -1,7 +1,7 @@
 ---
 title: 'Agent Governance Contract Normalization Implementation Plan'
 type: sdlc/plan
-status: draft
+status: done
 owner: platform
 updated: 2026-07-04
 ---
@@ -861,19 +861,19 @@ plan, task evidence, governance, adapters, CI/QA, and final validation.
 
 ## Completion Criteria
 
-- [ ] T-001 baseline task record and drift inventory completed
-- [ ] T-002 Stage 00 canonical contract normalization completed
-- [ ] T-003 provider adapter parity alignment completed
-- [ ] T-004 GitHub/QA/CI/protected-surface alignment completed
-- [ ] T-005 final validation and review closure completed
-- [ ] `git diff --check` passed
-- [ ] `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json`
+- [x] T-001 baseline task record and drift inventory completed
+- [x] T-002 Stage 00 canonical contract normalization completed
+- [x] T-003 provider adapter parity alignment completed
+- [x] T-004 GitHub/QA/CI/protected-surface alignment completed
+- [x] T-005 final validation and review closure completed
+- [x] `git diff --check` passed
+- [x] `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json`
   passed
-- [ ] `bash scripts/validate-repo-quality-gates.sh .` passed
-- [ ] `bash scripts/validate-harness.sh` passed or recorded a concrete
+- [x] `bash scripts/validate-repo-quality-gates.sh .` passed
+- [x] `bash scripts/validate-harness.sh` passed or recorded a concrete
   environment limitation
-- [ ] Progress ledger updated
-- [ ] Logical commits created for each task unit
+- [x] Progress ledger updated
+- [x] Logical commits created for each task unit
 
 ## Related Documents
 
