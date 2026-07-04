@@ -5,8 +5,8 @@
 This dated pack collects repo-first workspace engineering research for
 `hy-home.k8s`. It moves the existing workspace harness research references
 under one dated folder, includes the current Kubernetes/infrastructure/security
-reference, and reserves the planned automation, pipeline, workflow, and QA
-reference for WER-007.
+reference, and includes the current automation, pipeline, workflow, and QA
+reference added for WER-007.
 
 The pack is descriptive reference material. It does not define active
 governance policy, CI semantics, runtime permissions, runbooks, deployment
@@ -26,8 +26,8 @@ In scope:
 - Dated research-pack routing and file index
 - Repo-backed workspace governance, harness, provider, SDLC, CI, QA, and
   formatting references
-- Current Kubernetes/infrastructure/security reference and planned reference
-  for automation/pipeline/workflow/QA
+- Current Kubernetes/infrastructure/security reference and current
+  automation/pipeline/workflow/QA reference
 - Source priority, freshness, and authority-boundary reminders for later
   reference refresh work
 
@@ -50,7 +50,7 @@ Out of scope:
 |-- provider-implementation-status.md       # Current
 |-- spec-sdlc-ci-qa-formatting.md           # Current
 |-- kubernetes-infrastructure-security.md   # Current
-`-- automation-pipeline-workflow-qa.md      # Planned
+`-- automation-pipeline-workflow-qa.md      # Current
 ```
 
 ## Source Priority
@@ -98,7 +98,7 @@ This README's link basis is
 
 - Current same-pack references use bare filename links after the target exists.
 - Planned same-pack target names remain code literals until their files are
-  created.
+  created; this pack currently has no planned target literals.
 - The parent research README is `../README.md`.
 - The parent Stage 90 README is `../../README.md`.
 - Canonical docs stages use `../../../<stage>/`.
@@ -113,7 +113,7 @@ This README's link basis is
 | [provider-implementation-status.md](provider-implementation-status.md) | Current | Provider capability and local adapter status reference | Distinguishes provider capability from repo implementation; does not change provider config |
 | [spec-sdlc-ci-qa-formatting.md](spec-sdlc-ci-qa-formatting.md) | Current | Spec, SDLC, CI, QA, formatting, and validation reference | Descriptive reference only; active gates stay with canonical owners |
 | [kubernetes-infrastructure-security.md](kubernetes-infrastructure-security.md) | Current | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security reference | Descriptive reference only; no live checks or active security policy changes |
-| `automation-pipeline-workflow-qa.md` | Planned | Automation, pipeline, workflow, CI job graph, validation-loop, and QA evidence reference | Planned descriptive reference; no CI workflow or runtime changes |
+| [automation-pipeline-workflow-qa.md](automation-pipeline-workflow-qa.md) | Current | Automation, pipeline, workflow, CI job graph, validation-loop, and QA evidence reference | Descriptive reference only; no CI workflow or runtime changes |
 
 ## Authority Boundary
 

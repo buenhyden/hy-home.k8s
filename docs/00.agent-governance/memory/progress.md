@@ -8,6 +8,66 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-05 - Workspace engineering research pack WER-007 automation workflow QA reference
+
+- **Date**: 2026-07-05
+- **Layer**: docs, research, automation, ci, qa
+- **Status**: complete
+- **Tags**: #docs #research #automation #github-actions #qa #validation #stage-90
+
+#### Progress
+
+- Completed WER-007 for the
+  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+- Added the dated `automation-pipeline-workflow-qa.md` reference with
+  2026-07-05 metadata, source-checked date, authority boundary, repo-backed
+  implementation comparison, workflow graph summary, evidence-lane separation,
+  source links, freshness triggers, and owner-routed checklist items.
+- Updated the dated pack README and parent research README so
+  `automation-pipeline-workflow-qa.md` is current and no WER-007 planned target
+  literal remains in the pack indexes.
+
+#### Memory
+
+- Automation references must distinguish required QA gates from maintenance
+  automation. In this repo, `.github/workflows/ci.yml` is the required remote
+  QA gate; `generate-changelog.yml` is release-evidence automation; labeler,
+  greetings, stale, and Dependabot are maintenance or proposal flows.
+- Repo-static, CI/toolchain, artifact/release, maintenance automation,
+  market/context, and live-runtime evidence lanes should stay separate in
+  Stage 04 evidence. CI PASS and repo-static PASS do not prove live cluster,
+  Vault, ESO, deployment, endpoint, or secret readiness.
+- `.github/zizmor.yml` disables the `unpinned-uses` rule, so action pinning
+  policy cannot be inferred from Zizmor config alone. Version inventory and
+  action tag policy remain routed through
+  `docs/90.references/data/tech-stack-version-inventory.md`.
+
+#### Evidence
+
+- Official/primary WER-007 sources checked: GitHub Actions workflow syntax,
+  events, concurrency, reusable workflows, workflow commands, `GITHUB_TOKEN`,
+  secrets, workflow artifacts, dependency caching, secure use; Martin Fowler
+  Continuous Integration; DORA metrics; pre-commit; and OpenSSF Scorecard.
+- Required WER-007 reference scan - PASS; the new reference includes
+  `Source checked: 2026-07-05`, required workflow/automation/QA terms,
+  artifact/cache/token concepts, repo-static and CI/toolchain evidence-lane
+  language, live-runtime boundary language, non-authoritative market/context
+  language, and `Review and Freshness`.
+- Planned reference closure scan - PASS; no WER-007 planned literals remained
+  in the current pack README, parent research README, or task status.
+- `git diff --check` - PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+
+#### Handoff
+
+- The integrated research pack now contains the README plus six current
+  topic references: workspace governance baseline, harness/loop engineering,
+  provider implementation status, spec/SDLC/CI/QA/formatting, Kubernetes
+  infrastructure security, and automation/pipeline/workflow/QA.
+- No live Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider runtime,
+  credential, secret-value, paid-job, publishing, merge, push, or third-party
+  mutation was performed.
+
 ### 2026-07-05 - Workspace engineering research pack WER-006 Kubernetes infrastructure security reference
 
 - **Date**: 2026-07-05

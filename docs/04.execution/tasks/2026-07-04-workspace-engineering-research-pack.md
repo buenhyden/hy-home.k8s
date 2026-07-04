@@ -50,7 +50,7 @@ runtimes, credentials, secret values, or third-party systems.
 | WER-004 | Refresh harness, loop, and provider references | doc | VAL-SPC-004, VAL-SPC-005 | Task 4 | Official or primary source checks and provider-boundary review | platform | Done |
 | WER-005 | Refresh SDLC/CI/QA/formatting/security reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 5 | SDLC, CI/CD, QA, formatting, security, supply-chain, and workflow coverage | platform | Done |
 | WER-006 | Add Kubernetes, infrastructure, and security reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 6 | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security coverage | platform | Done |
-| WER-007 | Add automation, pipeline, workflow, and QA reference; close indexes and validation | doc | VAL-SPC-002, VAL-SPC-004, VAL-SPC-006, VAL-SPC-007 | Task 7 | Automation reference coverage, index closure, stale-link scans, final validation, and no-mutation handoff | platform | Todo |
+| WER-007 | Add automation, pipeline, workflow, and QA reference; close indexes and validation | doc | VAL-SPC-002, VAL-SPC-004, VAL-SPC-006, VAL-SPC-007 | Task 7 | Automation reference coverage, index closure, stale-link scans, final validation, and no-mutation handoff | platform | Done |
 
 ## Suggested Types
 
@@ -81,7 +81,7 @@ runtimes, credentials, secret values, or third-party systems.
 - [x] WER-004 harness, loop, and provider reference refresh.
 - [x] WER-005 SDLC/CI/QA/formatting/security reference refresh.
 - [x] WER-006 Kubernetes, infrastructure, and security reference.
-- [ ] WER-007 automation, pipeline, workflow, QA reference plus final index,
+- [x] WER-007 automation, pipeline, workflow, QA reference plus final index,
   evidence, progress, and validation closure.
 
 ## Baseline Evidence Summary
@@ -451,6 +451,64 @@ Summary:
   live-runtime evidence-lane language, non-authoritative market/context
   language, and `Review and Freshness`.
 
+## WER-007 Evidence Summary
+
+### Automation Pipeline Workflow QA Reference
+
+- Added
+  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/automation-pipeline-workflow-qa.md`
+  with `updated: 2026-07-05`, `Source checked: 2026-07-05`, and
+  `Review and Freshness` metadata for WER-007 source checks.
+- Preserved the reference as descriptive Stage 90 material. It does not define
+  active GitHub Actions semantics, branch protection, workflow permissions,
+  release approval, dependency-update policy, maintenance-bot policy,
+  deployment procedure, live checks, or secret handling.
+- Checked official/primary source coverage for GitHub Actions workflow syntax,
+  events, concurrency, reusable workflows, workflow commands, `GITHUB_TOKEN`,
+  secrets, workflow artifacts, dependency caching, secure use, Martin Fowler
+  Continuous Integration, DORA metrics, pre-commit, and OpenSSF Scorecard
+  context.
+- Added repo implementation comparison for `.github/workflows/ci.yml`,
+  `generate-changelog.yml`, maintenance workflows, Dependabot, Zizmor,
+  pre-commit, path filtering, branch policy, permissions, checkout credential
+  handling, artifacts, cache, reusable workflow status, and QA evidence lanes.
+- Kept repo-static, CI/toolchain, artifact/release, maintenance automation,
+  market/context, and live-runtime evidence lanes separate.
+- Updated the dated pack README and parent research README so
+  `automation-pipeline-workflow-qa.md` is current and the research pack has no
+  planned target literals.
+
+### WER-007 Validation Scan
+
+Command:
+
+```bash
+rg -n "Source checked: 2026-07-05|GitHub Actions|workflow|pipeline|automation|CI/CD|QA|pre-commit|DORA|Martin Fowler|artifact|cache|GITHUB_TOKEN|concurrency|repo-static|CI/toolchain|live-runtime|non-authoritative|Review and Freshness" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/automation-pipeline-workflow-qa.md
+```
+
+Summary:
+
+- PASS; command completed successfully.
+- The scan returned matching lines for the WER-007 source-checked date,
+  required workflow/automation/QA source families, artifact/cache/token
+  concepts, repo-static and CI/toolchain evidence-lane language,
+  live-runtime boundary language, non-authoritative market/context language,
+  and `Review and Freshness`.
+
+### Reference Closure Scan
+
+Command:
+
+```bash
+rg -n "automation-pipeline-workflow-qa.md\\s+# Planned|Planned descriptive reference" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/README.md docs/90.references/research/README.md
+```
+
+Summary:
+
+- PASS; no matches after WER-007 index closure.
+- WER-007 task table status and phase-view checkbox were updated to `Done`
+  and checked, respectively.
+
 ## Verification Summary
 
 | Date | Scope | Command | Result |
@@ -475,6 +533,10 @@ Summary:
 | 2026-07-05 | WER-006 reference scan | Required WER-006 `rg` scan listed above | PASS; WER-006 source date, Kubernetes/GitOps/security terms, repo-static/live-runtime language, non-authoritative language, and freshness heading were present. |
 | 2026-07-05 | WER-006 formatting | `git diff --check` | PASS. |
 | 2026-07-05 | WER-006 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
+| 2026-07-05 | WER-007 reference scan | Required WER-007 `rg` scan listed above | PASS; WER-007 source date, workflow/automation/QA terms, artifact/cache/token concepts, evidence-lane language, non-authoritative language, and freshness heading were present. |
+| 2026-07-05 | WER-007 planned-reference closure | Focused planned-reference `rg` scan listed above | PASS; no WER-007 planned literals remained in current pack indexes or task status. |
+| 2026-07-05 | WER-007 formatting | `git diff --check` | PASS. |
+| 2026-07-05 | WER-007 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
 
 Tooling limitation:
 
@@ -496,6 +558,8 @@ Boundary statement:
 - WER-005 performed read-only official/primary web source checks, repository
   reads, documentation edits, and local validation only before commit.
 - WER-006 performed read-only official/primary web source checks, repository
+  reads, documentation edits, and local validation only before commit.
+- WER-007 performed read-only official/primary web source checks, repository
   reads, documentation edits, and local validation only before commit.
 - No live Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider runtime,
   credential, secret-value, paid-job, publishing, merge, push, or third-party
