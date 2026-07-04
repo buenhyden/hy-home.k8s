@@ -107,9 +107,9 @@ providers for this repository's existing harness pattern:
 - **Repo-specific implementation distinction**: this repo's canonical sources
   treat Claude as the only provider with native permission plus event wiring
   through `.claude/settings.json`. That distinction is repo-backed in
-  [harness-catalog.md](../../00.agent-governance/harness-catalog.md),
-  [common-governance.md](../../00.agent-governance/common-governance.md), and
-  [providers/claude.md](../../00.agent-governance/providers/claude.md). This
+  [harness-catalog.md](../../../00.agent-governance/harness-catalog.md),
+  [common-governance.md](../../../00.agent-governance/common-governance.md), and
+  [providers/claude.md](../../../00.agent-governance/providers/claude.md). This
   reference does not assert that every Claude hook currently blocks every class
   of action; blocking depends on event type and configured hook behavior.
 
@@ -145,8 +145,8 @@ not be described as a Claude permission-gate clone.
   be STDIO or streamable HTTP, with auth support described by the Codex MCP
   docs.
 - **Repo-specific implementation distinction**: this repo uses
-  [AGENTS.md](../../../AGENTS.md), [.codex/CODEX.md](../../../.codex/CODEX.md),
-  [.codex/hooks.json](../../../.codex/hooks.json), and
+  [AGENTS.md](../../../../AGENTS.md), [.codex/CODEX.md](../../../../.codex/CODEX.md),
+  [.codex/hooks.json](../../../../.codex/hooks.json), and
   `.codex/agents/*.toml` as Codex runtime surfaces. The repo sources repeatedly
   state that `.codex/hooks.json` is context/validation wiring, not a
   Claude-style permission gate. Codex must still run explicit validation
@@ -189,8 +189,8 @@ for building, evaluating, and deploying agents.
   or GKE. The ADK eval codelab distinguishes trajectory/tool-use evaluation
   from final-response evaluation and uses eval sets plus metrics/thresholds.
 - **Repo-specific implementation distinction**: this repo uses
-  [GEMINI.md](../../../GEMINI.md), [.agents/GEMINI.md](../../../.agents/GEMINI.md),
-  [.agents/hooks.json](../../../.agents/hooks.json), and `.agents/**` as the
+  [GEMINI.md](../../../../GEMINI.md), [.agents/GEMINI.md](../../../../.agents/GEMINI.md),
+  [.agents/hooks.json](../../../../.agents/hooks.json), and `.agents/**` as the
   Gemini/Antigravity shared surface. The repo says Gemini operates under
   equivalent behavioral contracts, while also stating that `.agents/hooks.json`
   is not a Claude-style permission gate. Do not overclaim native permission
@@ -202,9 +202,9 @@ This repo builds shared provider behavior through the Stage 00 canonical
 adapter model rather than by copying the same policy into every provider file.
 
 - **Canonical core**: `docs/00.agent-governance/rules/**`,
-  [harness-catalog.md](../../00.agent-governance/harness-catalog.md),
-  [common-governance.md](../../00.agent-governance/common-governance.md), and
-  [subagent-protocol.md](../../00.agent-governance/subagent-protocol.md) own
+  [harness-catalog.md](../../../00.agent-governance/harness-catalog.md),
+  [common-governance.md](../../../00.agent-governance/common-governance.md), and
+  [subagent-protocol.md](../../../00.agent-governance/subagent-protocol.md) own
   durable governance concepts, runtime roster, mirror rules, subagent
   boundaries, model-tier routing, and evidence lanes.
 - **Provider adapters**: root gateway files and provider baselines route each
@@ -273,11 +273,11 @@ families, but the safe local rule remains conservative:
 ### Workspace implementation checklist
 
 - For runtime roster, model tier, adapter readiness, and provider-surface
-  changes, update [harness-catalog.md](../../00.agent-governance/harness-catalog.md)
+  changes, update [harness-catalog.md](../../../00.agent-governance/harness-catalog.md)
   and the relevant provider baseline.
 - For subagent dispatch, file ownership, tool scope, or mirror-contract
   changes, update
-  [subagent-protocol.md](../../00.agent-governance/subagent-protocol.md) and
+  [subagent-protocol.md](../../../00.agent-governance/subagent-protocol.md) and
   the provider agent files in the same logical unit.
 - For shared rule, approval-boundary, or no-live-mutation changes, route work
   to `docs/00.agent-governance/rules/**`; do not encode policy in this
@@ -289,14 +289,14 @@ families, but the safe local rule remains conservative:
   `.codex/hooks.json`, `.agents/hooks.json`, and validation evidence as
   appropriate.
 - For template and documentation-routing changes, update
-  [docs/99.templates/README.md](../../99.templates/README.md),
-  [reference.template.md](../../99.templates/templates/common/reference.template.md), and Stage
+  [docs/99.templates/README.md](../../../99.templates/README.md),
+  [reference.template.md](../../../99.templates/templates/common/reference.template.md), and Stage
   00 documentation routing rules.
 - For MCP additions or mutations, create an explicit task/plan and obtain
   human approval if the change can mutate external resources, credentials, or
   third-party state.
 - For validation evidence, record commands and results in
-  [the research pack task](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
+  [the research pack task](../../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
   and use `docs/00.agent-governance/memory/progress.md` only when the current
   task write scope allows it.
 
@@ -337,19 +337,19 @@ Official/provider sources checked on 2026-07-02:
 
 Repo sources checked on 2026-07-02:
 
-- [Local Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- [Common Governance & Mappings](../../00.agent-governance/common-governance.md)
-- [Subagent Protocol](../../00.agent-governance/subagent-protocol.md)
-- [Claude Provider Notes](../../00.agent-governance/providers/claude.md)
-- [Codex Provider Notes](../../00.agent-governance/providers/codex.md)
-- [Gemini Provider Notes](../../00.agent-governance/providers/gemini.md)
-- [Codex Runtime Baseline](../../../.codex/CODEX.md)
-- [Gemini Runtime Baseline](../../../.agents/GEMINI.md)
-- [Codex Hooks](../../../.codex/hooks.json)
-- [Gemini/Agents Hooks](../../../.agents/hooks.json)
-- [Reference Template](../../99.templates/templates/common/reference.template.md)
-- [Research README](./README.md)
-- [Workspace Harness Research Pack Task](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
+- [Local Harness Catalog](../../../00.agent-governance/harness-catalog.md)
+- [Common Governance & Mappings](../../../00.agent-governance/common-governance.md)
+- [Subagent Protocol](../../../00.agent-governance/subagent-protocol.md)
+- [Claude Provider Notes](../../../00.agent-governance/providers/claude.md)
+- [Codex Provider Notes](../../../00.agent-governance/providers/codex.md)
+- [Gemini Provider Notes](../../../00.agent-governance/providers/gemini.md)
+- [Codex Runtime Baseline](../../../../.codex/CODEX.md)
+- [Gemini Runtime Baseline](../../../../.agents/GEMINI.md)
+- [Codex Hooks](../../../../.codex/hooks.json)
+- [Gemini/Agents Hooks](../../../../.agents/hooks.json)
+- [Reference Template](../../../99.templates/templates/common/reference.template.md)
+- [Research README](../README.md)
+- [Workspace Harness Research Pack Task](../../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
 
 Market scan:
 
@@ -366,13 +366,13 @@ Market scan:
 
 ## Related Documents
 
-- **Parent research README**: [README.md](./README.md)
-- **Workspace baseline**: [Workspace Governance Baseline Research](./workspace-governance-baseline.md)
-- **Harness/loop reference**: [Harness and Loop Engineering Research](./harness-and-loop-engineering.md)
-- **Spec**: [Workspace Harness Research Pack Spec](../../03.specs/009-workspace-harness-research-pack/spec.md)
-- **Plan**: [Workspace Harness Research Pack Plan](../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md)
-- **Task**: [Workspace Harness Research Pack Task](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
-- **Harness catalog**: [Local Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- **Common governance**: [Common Governance & Mappings](../../00.agent-governance/common-governance.md)
-- **Subagent protocol**: [Subagent Protocol](../../00.agent-governance/subagent-protocol.md)
-- **Reference maintenance runbook**: [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
+- **Parent research README**: [README.md](../README.md)
+- **Workspace baseline**: [Workspace Governance Baseline Research](workspace-governance-baseline.md)
+- **Harness/loop reference**: [Harness and Loop Engineering Research](harness-and-loop-engineering.md)
+- **Spec**: [Workspace Harness Research Pack Spec](../../../03.specs/009-workspace-harness-research-pack/spec.md)
+- **Plan**: [Workspace Harness Research Pack Plan](../../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md)
+- **Task**: [Workspace Harness Research Pack Task](../../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
+- **Harness catalog**: [Local Harness Catalog](../../../00.agent-governance/harness-catalog.md)
+- **Common governance**: [Common Governance & Mappings](../../../00.agent-governance/common-governance.md)
+- **Subagent protocol**: [Subagent Protocol](../../../00.agent-governance/subagent-protocol.md)
+- **Reference maintenance runbook**: [Reference Maintenance Runbook](../../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

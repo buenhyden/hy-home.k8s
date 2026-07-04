@@ -8,6 +8,61 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-04 - Workspace engineering research pack WER-002 scaffold and move
+
+- **Date**: 2026-07-04
+- **Layer**: docs, qa
+- **Status**: complete
+- **Tags**: #docs #research #validation #stage-90
+
+#### Progress
+
+- Completed WER-002 for the
+  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+- Created the dated workspace engineering research pack README and updated the
+  research and parent Stage 90 indexes to route current moved references through
+  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/`.
+- Moved four existing references into the dated pack:
+  - `workspace-governance-baseline.md`
+  - `harness-and-loop-engineering.md`
+  - `provider-implementation-status.md`
+  - `spec-sdlc-ci-qa-formatting.md`
+
+#### Memory
+
+- The dated pack now owns the current path for the four moved references.
+  Future references should use the dated pack path, not the former flat
+  top-level research paths.
+- The pack index keeps `kubernetes-infrastructure-security.md` and
+  `automation-pipeline-workflow-qa.md` planned until later WER tasks create
+  them.
+- The focused stale-link scan found current research indexes and moved pack
+  paths clean after consumer links in Stage 03, Stage 05, and Stage 90 audits
+  were repaired to dated pack paths.
+
+#### Evidence
+
+- `git mv` preserved the four moved reference histories.
+- Pack README created with required WER-002 sections and a six-reference Pack
+  Index: four Current moved files and two Planned new files.
+- `docs/90.references/research/README.md` now shows the dated pack folder and
+  routes moved references through the dated pack.
+- `docs/90.references/README.md` now describes `research/` as the dated
+  workspace engineering research pack reference area.
+- Focused stale flat-link scan - PASS; remaining matches are historical
+  command strings, creation evidence, move evidence, or old plan/task path
+  literals that describe past execution.
+- `git diff --check` - PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+
+#### Handoff
+
+- WER-002 is complete after repairing current consumer broken links created by
+  the move.
+- No live Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider runtime,
+  credential, secret-value, paid-job, publishing, merge, push, or third-party
+  mutation was performed.
+
 ### 2026-07-04 - Workspace engineering research pack WER-001 baseline
 
 - **Date**: 2026-07-04

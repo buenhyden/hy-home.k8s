@@ -48,7 +48,7 @@ docs/90.references/
 ├── data/                                # Repo-backed inventories, durable catalogs, factual lookup data
 ├── learning/                            # 학습 로드맵과 이론 연결 자료
 ├── llm-wiki/                            # LLM-readable generated Markdown link map
-├── research/                            # Workspace harness research pack references and source ledgers
+├── research/                            # Dated workspace engineering research pack references and source ledgers
 └── README.md                            # This file
 ```
 
@@ -64,7 +64,7 @@ docs/90.references/
 | [learning/infrastructure-to-theory-roadmap.md](./learning/infrastructure-to-theory-roadmap.md) | learning-roadmap | 인프라 구현 경험과 CS/CE 이론 연결 | 학습 자료나 repo 구현 축이 크게 바뀔 때 |
 | [audits/README.md](./audits/README.md) | durable-concept index / audit snapshot index | dated implementation audit reports, status vocabulary, evidence rules, and static-vs-live boundary | audit report 추가/이동, status vocabulary 변경, evidence rule 변경 시 |
 | [learning/README.md](./learning/README.md) | learning-roadmap index | learning reference 하위 폴더의 범위와 라우팅 | learning reference 문서 추가/이동 시 |
-| [research/README.md](./research/README.md) | durable-concept index / source-ledger index | workspace harness research pack 하위 폴더의 범위, source priority, planned reference structure | research reference 문서 추가/이동, source priority 변경, parent spec/plan 변경 시 |
+| [research/README.md](./research/README.md) | durable-concept index / source-ledger index | dated workspace engineering research pack 하위 폴더의 범위, source priority, planned/current reference structure | research reference 문서 추가/이동, source priority 변경, parent spec/plan 변경 시 |
 
 ## How to Work in This Area
 
@@ -113,7 +113,7 @@ docs/90.references/
 | `data/` | repo-backed version contracts, durable Agent reference catalog boundaries, and factual lookup tables | 사람용 설명은 한국어 가능, source-checked values, freshness triggers, and canonical owner boundaries는 영어-first |
 | `learning/` | 구현 경험을 CS/CE 이론과 장기 학습 로드맵으로 연결하는 자료 | 학습 맥락은 한국어 가능, authoritative boundary와 freshness rule은 영어로 유지 |
 | `llm-wiki/` | LLM-readable canonical owner link map과 generated index | 링크맵 설명은 혼합 가능, generated content와 canonical owner boundary는 영어-first |
-| `research/` | Workspace harness research pack reference, source ledger, source priority를 관리하는 자료 | 사람용 설명은 한국어 가능, source authority와 non-authoritative market scan boundary는 영어-first |
+| `research/` | Dated workspace engineering research pack reference, source ledger, source priority를 관리하는 자료 | 사람용 설명은 한국어 가능, source authority와 non-authoritative market scan boundary는 영어-first |
 
 ## Language Boundary
 

@@ -7,10 +7,11 @@
 
 ## Overview
 
-`research/` stores durable reference material for the workspace harness research
-pack. It is a stable lookup area for source-backed findings, dated source
-checks, and synthesis that later plans, specs, guides, or tasks can cite without
-turning this folder into an active policy owner.
+`research/` stores durable reference material for workspace harness and
+workspace engineering research packs. It is a stable lookup area for
+source-backed findings, dated source checks, and synthesis that later plans,
+specs, guides, or tasks can cite without turning this folder into an active
+policy owner.
 
 This folder does not define active governance policy, runtime permissions,
 deployment procedure, live cluster readiness, or provider contracts. Those stay
@@ -48,10 +49,14 @@ with their canonical owners in `docs/00.agent-governance/`, `docs/03.specs/`,
 
 ```text
 research/
-├── workspace-governance-baseline.md     # Current durable governance baseline reference
-├── harness-and-loop-engineering.md      # Current harness and feedback-loop engineering reference
-├── provider-implementation-status.md    # Current provider implementation status reference
-├── spec-sdlc-ci-qa-formatting.md        # Current spec, SDLC, CI, QA, and formatting reference
+├── 2026-07-04-workspace-engineering-research-pack/
+│   ├── README.md
+│   ├── workspace-governance-baseline.md
+│   ├── harness-and-loop-engineering.md
+│   ├── provider-implementation-status.md
+│   ├── spec-sdlc-ci-qa-formatting.md
+│   ├── kubernetes-infrastructure-security.md   # Planned
+│   └── automation-pipeline-workflow-qa.md      # Planned
 └── README.md                            # This file
 ```
 
@@ -70,6 +75,9 @@ research/
 이 README의 링크 기준 위치는 `docs/90.references/research/`다.
 
 - Same-folder research references use `./` only after the target file exists.
+- Dated pack references use
+  `./2026-07-04-workspace-engineering-research-pack/<filename>.md` after the
+  target file exists.
 - Parent reference routing uses `../README.md`.
 - Canonical owner stages use `../../00.agent-governance/`, `../../03.specs/`, `../../04.execution/`, and `../../05.operations/`.
 - Root-level repository sources use `../../../<path>` from authored research reference files.
@@ -80,10 +88,13 @@ research/
 | Material | Status | Role | Authority Boundary |
 | --- | --- | --- | --- |
 | [README.md](./README.md) | Current | Research folder entry point and source-priority guide | Authoritative for folder routing only; not active policy |
-| [workspace-governance-baseline.md](./workspace-governance-baseline.md) | Current | Durable workspace governance baseline reference | Summarizes canonical governance owners; does not replace them |
-| [harness-and-loop-engineering.md](./harness-and-loop-engineering.md) | Current | Harness and feedback-loop engineering reference | Summarizes source-backed patterns; does not define runtime procedure |
-| [provider-implementation-status.md](./provider-implementation-status.md) | Current | Provider implementation status and source ledger | Official and repo-backed sources outrank market scan; market findings are non-authoritative |
-| [spec-sdlc-ci-qa-formatting.md](./spec-sdlc-ci-qa-formatting.md) | Current | Spec, SDLC, CI, QA, and formatting reference; CI/formatting sources refreshed 2026-07-04 | Summarizes reference material; active gates stay with canonical owners |
+| [2026-07-04-workspace-engineering-research-pack/README.md](./2026-07-04-workspace-engineering-research-pack/README.md) | Current | Dated workspace engineering research pack entry point | Authoritative for dated pack routing only; not active policy |
+| [workspace-governance-baseline.md](./2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md) | Current | Durable workspace governance baseline reference | Summarizes canonical governance owners; does not replace them |
+| [harness-and-loop-engineering.md](./2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md) | Current | Harness and feedback-loop engineering reference | Summarizes source-backed patterns; does not define runtime procedure |
+| [provider-implementation-status.md](./2026-07-04-workspace-engineering-research-pack/provider-implementation-status.md) | Current | Provider implementation status and source ledger | Official and repo-backed sources outrank market scan; market findings are non-authoritative |
+| [spec-sdlc-ci-qa-formatting.md](./2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md) | Current | Spec, SDLC, CI, QA, and formatting reference; CI/formatting sources refreshed 2026-07-04 | Summarizes reference material; active gates stay with canonical owners |
+| `./2026-07-04-workspace-engineering-research-pack/kubernetes-infrastructure-security.md` | Planned | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security reference | Planned descriptive reference; no live checks or active security policy changes |
+| `./2026-07-04-workspace-engineering-research-pack/automation-pipeline-workflow-qa.md` | Planned | Automation, pipeline, workflow, CI job graph, validation-loop, and QA evidence reference | Planned descriptive reference; no CI workflow or runtime changes |
 
 ## Source Priority
 
@@ -103,6 +114,10 @@ owners.
 ## Related Documents
 
 - [90.references README](../README.md)
+- [Workspace Engineering Research Pack](./2026-07-04-workspace-engineering-research-pack/README.md)
+- [Workspace Engineering Research Pack Spec](../../03.specs/017-workspace-engineering-research-pack/spec.md)
+- [Workspace Engineering Research Pack Plan](../../04.execution/plans/2026-07-04-workspace-engineering-research-pack.md)
+- [Workspace Engineering Research Pack Task](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md)
 - [Workspace Harness Research Pack Spec](../../03.specs/009-workspace-harness-research-pack/spec.md)
 - [Workspace Harness Research Pack Plan](../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md)
 - [Workspace Harness Research Pack Task](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)

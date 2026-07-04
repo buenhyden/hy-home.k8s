@@ -45,7 +45,7 @@ runtimes, credentials, secret values, or third-party systems.
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | ------- | ----------- | ---- | --------------------- | ------------------- | --------------------- | ----- | ------ |
 | WER-001 | Create Stage 04 task evidence and baseline inventory | doc | VAL-SPC-001, VAL-SPC-006, VAL-SPC-007 | Task 1 | Baseline scans recorded; `git diff --check`; `bash scripts/validate-repo-quality-gates.sh .` | platform | Done |
-| WER-002 | Scaffold dated pack and move existing flat references | doc | VAL-SPC-001, VAL-SPC-002 | Task 2 | `git mv` evidence, stale flat-link scan, repo-quality gate | platform | Todo |
+| WER-002 | Scaffold dated pack and move existing flat references | doc | VAL-SPC-001, VAL-SPC-002 | Task 2 | `git mv` evidence, stale flat-link scan, repo-quality gate | platform | Done |
 | WER-003 | Refresh workspace governance baseline | doc | VAL-SPC-003, VAL-SPC-004 | Task 3 | Required reference sections and repo-first evidence coverage | platform | Todo |
 | WER-004 | Refresh harness, loop, and provider references | doc | VAL-SPC-004, VAL-SPC-005 | Task 4 | Official or primary source checks and provider-boundary review | platform | Todo |
 | WER-005 | Refresh SDLC/CI/QA/formatting and add automation reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 5 | SDLC, CI/CD, QA, formatting, automation, pipeline, and workflow coverage | platform | Todo |
@@ -76,7 +76,7 @@ runtimes, credentials, secret values, or third-party systems.
 
 ### Remaining Research Pack Work
 
-- [ ] WER-002 move/scaffold commit.
+- [x] WER-002 move/scaffold commit.
 - [ ] WER-003 workspace governance baseline refresh.
 - [ ] WER-004 harness, loop, and provider reference refresh.
 - [ ] WER-005 SDLC/CI/QA/formatting refresh and automation reference.
@@ -173,6 +173,64 @@ Summary:
   `docs/99.templates/support/template-routing.md`, `gitops/README.md`,
   `infrastructure/README.md`, and repo-static validation scripts.
 
+## WER-002 Evidence Summary
+
+### Dated Pack Scaffold
+
+- Created
+  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/README.md`
+  with the required sections:
+  `Overview`, `Audience`, `Scope`, `Structure`, `Source Priority`,
+  `How to Work in This Pack`, `Link Basis`, `Pack Index`,
+  `Authority Boundary`, `Review and Freshness`, and `Related Documents`.
+- The Pack Index lists all six approved references:
+  - Current: `workspace-governance-baseline.md`
+  - Current: `harness-and-loop-engineering.md`
+  - Current: `provider-implementation-status.md`
+  - Current: `spec-sdlc-ci-qa-formatting.md`
+  - Planned: `kubernetes-infrastructure-security.md`
+  - Planned: `automation-pipeline-workflow-qa.md`
+
+### Move List
+
+Moved with `git mv`:
+
+| Source | Destination |
+| --- | --- |
+| `docs/90.references/research/workspace-governance-baseline.md` | `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md` |
+| `docs/90.references/research/harness-and-loop-engineering.md` | `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md` |
+| `docs/90.references/research/provider-implementation-status.md` | `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/provider-implementation-status.md` |
+| `docs/90.references/research/spec-sdlc-ci-qa-formatting.md` | `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md` |
+
+### Index Updates
+
+- Updated `docs/90.references/research/README.md` so the structure block shows
+  the dated pack folder.
+- Added the dated pack row to the research index.
+- Updated current moved-reference rows to point to
+  `./2026-07-04-workspace-engineering-research-pack/<filename>.md`.
+- Added the two planned reference slots as code literals until their files are
+  created by later WER tasks.
+- Updated `docs/90.references/README.md` so the research folder role mentions
+  the dated workspace engineering research pack.
+
+### Stale Flat-Link Scan
+
+Command:
+
+```bash
+rg -n "docs/90.references/research/(workspace-governance-baseline|harness-and-loop-engineering|provider-implementation-status|spec-sdlc-ci-qa-formatting)\\.md|research/(workspace-governance-baseline|harness-and-loop-engineering|provider-implementation-status|spec-sdlc-ci-qa-formatting)\\.md|\\./(workspace-governance-baseline|harness-and-loop-engineering|provider-implementation-status|spec-sdlc-ci-qa-formatting)\\.md" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
+```
+
+Summary:
+
+- Current research indexes and the moved dated pack do not present the former
+  flat reference paths as current top-level files.
+- Broken Markdown links in current Stage 03, Stage 05, and Stage 90 audit
+  consumers were repaired to point at the dated pack.
+- Remaining matches are historical command strings, creation evidence, move
+  evidence, or old plan/task path literals that describe past execution.
+
 ## Verification Summary
 
 | Date | Scope | Command | Result |
@@ -181,6 +239,9 @@ Summary:
 | 2026-07-04 | WER-001 inventory | Baseline scan commands listed above | PASS; inventory, stale flat-link candidates, and repo-first evidence categories captured. |
 | 2026-07-04 | WER-001 formatting | `git diff --check` | PASS. |
 | 2026-07-04 | WER-001 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
+| 2026-07-04 | WER-002 stale flat-link scan | Focused `rg` scan listed in WER-002 evidence | PASS; current consumer broken links were repaired, and remaining matches are historical-only command/path evidence. |
+| 2026-07-04 | WER-002 formatting | `git diff --check` | PASS. |
+| 2026-07-04 | WER-002 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
 
 Tooling limitation:
 
@@ -193,6 +254,8 @@ Boundary statement:
 
 - WER-001 performed repository reads, documentation edits, local validation,
   local staging, and a local commit only.
+- WER-002 performed repository reads, documentation edits, `git mv` file moves,
+  local validation, local staging, and a local commit only.
 - No live Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider runtime,
   credential, secret-value, paid-job, publishing, merge, push, or third-party
   mutation was performed.

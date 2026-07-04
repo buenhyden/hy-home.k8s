@@ -49,14 +49,14 @@ This reference is descriptive. It summarizes canonical owners and current reposi
 
 `hy-home.k8s` is a WSL2+k3d home-lab platform managed through ArgoCD GitOps. The default operating model is repo-backed desired state: agents plan and edit from repository evidence, run repo-static validation, and do not mutate the live cluster unless a human explicitly approves an emergency or operator path.
 
-Canonical purpose and intake routing live in [AGENTS.md](../../../AGENTS.md), [.codex/CODEX.md](../../../.codex/CODEX.md), and [bootstrap.md](../../00.agent-governance/rules/bootstrap.md). Work should be planned from the active stage taxonomy, GitOps manifests, infrastructure files, scripts, tests, and current validators.
+Canonical purpose and intake routing live in [AGENTS.md](../../../../AGENTS.md), [.codex/CODEX.md](../../../../.codex/CODEX.md), and [bootstrap.md](../../../00.agent-governance/rules/bootstrap.md). Work should be planned from the active stage taxonomy, GitOps manifests, infrastructure files, scripts, tests, and current validators.
 
 ### Roles and provider adapters
 
 The workspace uses a canonical-core plus provider-adapter model:
 
 - Governance rules and execution checklists are owned by `docs/00.agent-governance/rules/**`.
-- Runtime roster, model tiers, skills, mirror surfaces, and readiness language are cataloged in [harness-catalog.md](../../00.agent-governance/harness-catalog.md).
+- Runtime roster, model tiers, skills, mirror surfaces, and readiness language are cataloged in [harness-catalog.md](../../../00.agent-governance/harness-catalog.md).
 - Shared skills, workflows, and output styles come from `.agents/` as the shared SSoT, while `.claude/` and `.codex/` expose provider-native or symlinked adapter surfaces.
 - Codex uses `.codex/CODEX.md`, `.codex/hooks.json`, and `.codex/agents/*.toml` as local runtime/adaptor surfaces; `.codex/hooks.json` is context and validation wiring, not a Claude-style permission gate.
 
@@ -84,7 +84,7 @@ Follow-up route: hook behavior changes belong in the shared hook scripts, provid
 
 ### Templates and formatting
 
-Authored documents under the active stage taxonomy must use the canonical template mapping in [docs/99.templates/README.md](../../99.templates/README.md) and routing rules in [document-stage-routing.md](../../00.agent-governance/rules/document-stage-routing.md). Reference documents under `docs/90.references/**` use [reference.template.md](../../99.templates/templates/common/reference.template.md).
+Authored documents under the active stage taxonomy must use the canonical template mapping in [docs/99.templates/README.md](../../../99.templates/README.md) and routing rules in [document-stage-routing.md](../../../00.agent-governance/rules/document-stage-routing.md). Reference documents under `docs/90.references/**` use [reference.template.md](../../../99.templates/templates/common/reference.template.md).
 
 Language boundaries are stage-specific:
 
@@ -96,7 +96,7 @@ Follow-up route: template or routing drift should be fixed in `docs/99.templates
 
 ### Scripts and validation
 
-The current script inventory is maintained in [scripts/README.md](../../../scripts/README.md). It classifies validation scripts by retention tier and command contract. The core repo-quality gate validates documentation taxonomy, README `Link Basis` and `Related Documents`, structural template coverage, generated LLM Wiki freshness, script references, runtime mirror inventory, workflow contracts, and other repository-wide governance checks.
+The current script inventory is maintained in [scripts/README.md](../../../../scripts/README.md). It classifies validation scripts by retention tier and command contract. The core repo-quality gate validates documentation taxonomy, README `Link Basis` and `Related Documents`, structural template coverage, generated LLM Wiki freshness, script references, runtime mirror inventory, workflow contracts, and other repository-wide governance checks.
 
 The manual harness wrapper `bash scripts/validate-harness.sh` bundles repo-static gates and does not add live checks. The requested Task 2 verification uses:
 
@@ -111,7 +111,7 @@ The approval boundary matrix states the default: agents operate on repo-backed d
 
 External networked tools are read-only by default for research. Posting, publishing, pushing, merging, opening paid jobs, changing third-party resources, or modifying credentials requires explicit human approval.
 
-Follow-up route: approval-boundary changes belong in [approval-boundaries.md](../../00.agent-governance/rules/approval-boundaries.md) and must preserve validation evidence and rollback ownership.
+Follow-up route: approval-boundary changes belong in [approval-boundaries.md](../../../00.agent-governance/rules/approval-boundaries.md) and must preserve validation evidence and rollback ownership.
 
 ### Integration guides and SDLC position
 
@@ -148,20 +148,20 @@ Follow-up route: repeated code, document, or structure drift should update the s
 
 ## Sources
 
-- [AGENTS.md](../../../AGENTS.md)
-- [.codex/CODEX.md](../../../.codex/CODEX.md)
-- [Bootstrap Governance](../../00.agent-governance/rules/bootstrap.md)
-- [Documentation Protocol](../../00.agent-governance/rules/documentation-protocol.md)
-- [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
-- [Agent Quality Standards](../../00.agent-governance/rules/quality-standards.md)
-- [Harness Approval Boundaries](../../00.agent-governance/rules/approval-boundaries.md)
-- [Local Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- [Harness Implementation Map](../../00.agent-governance/harness-implementation-map.md)
-- [Common Governance & Mappings](../../00.agent-governance/common-governance.md)
-- [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
-- [Scripts README](../../../scripts/README.md)
-- [GitHub CI Workflow](../../../.github/workflows/ci.yml)
-- [Reference Template](../../99.templates/templates/common/reference.template.md)
+- [AGENTS.md](../../../../AGENTS.md)
+- [.codex/CODEX.md](../../../../.codex/CODEX.md)
+- [Bootstrap Governance](../../../00.agent-governance/rules/bootstrap.md)
+- [Documentation Protocol](../../../00.agent-governance/rules/documentation-protocol.md)
+- [Document Stage Routing Rules](../../../00.agent-governance/rules/document-stage-routing.md)
+- [Agent Quality Standards](../../../00.agent-governance/rules/quality-standards.md)
+- [Harness Approval Boundaries](../../../00.agent-governance/rules/approval-boundaries.md)
+- [Local Harness Catalog](../../../00.agent-governance/harness-catalog.md)
+- [Harness Implementation Map](../../../00.agent-governance/harness-implementation-map.md)
+- [Common Governance & Mappings](../../../00.agent-governance/common-governance.md)
+- [CI/CD & QA Reference Guide](../../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
+- [Scripts README](../../../../scripts/README.md)
+- [GitHub CI Workflow](../../../../.github/workflows/ci.yml)
+- [Reference Template](../../../99.templates/templates/common/reference.template.md)
 
 ## Review and Freshness
 
@@ -171,13 +171,13 @@ Follow-up route: repeated code, document, or structure drift should update the s
 
 ## Related Documents
 
-- **Parent research README**: [README.md](./README.md)
-- **Parent references README**: [90.references README](../README.md)
-- **Spec**: [Workspace Harness Research Pack Spec](../../03.specs/009-workspace-harness-research-pack/spec.md)
-- **Plan**: [Workspace Harness Research Pack Plan](../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md)
-- **Task**: [Workspace Harness Research Pack Task](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
-- **Harness catalog**: [Local Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- **Implementation map**: [Harness Implementation Map](../../00.agent-governance/harness-implementation-map.md)
-- **CI/CD QA guide**: [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
-- **Scripts README**: [Scripts README](../../../scripts/README.md)
-- **Reference maintenance runbook**: [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
+- **Parent research README**: [README.md](../README.md)
+- **Parent references README**: [90.references README](../../README.md)
+- **Spec**: [Workspace Harness Research Pack Spec](../../../03.specs/009-workspace-harness-research-pack/spec.md)
+- **Plan**: [Workspace Harness Research Pack Plan](../../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md)
+- **Task**: [Workspace Harness Research Pack Task](../../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
+- **Harness catalog**: [Local Harness Catalog](../../../00.agent-governance/harness-catalog.md)
+- **Implementation map**: [Harness Implementation Map](../../../00.agent-governance/harness-implementation-map.md)
+- **CI/CD QA guide**: [CI/CD & QA Reference Guide](../../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
+- **Scripts README**: [Scripts README](../../../../scripts/README.md)
+- **Reference maintenance runbook**: [Reference Maintenance Runbook](../../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

@@ -58,8 +58,8 @@ This spec does not own:
   - [Template Contract Governance Migration](../011-template-contract-governance-migration/spec.md)
   - [Template Governance Audit Enhancement](../012-template-governance-audit-enhancement/spec.md)
 - **Research and Audit Inputs**:
-  - [Workspace Governance Baseline Research](../../90.references/research/workspace-governance-baseline.md)
-  - [Spec SDLC CI QA Formatting Research](../../90.references/research/spec-sdlc-ci-qa-formatting.md)
+  - [Workspace Governance Baseline Research](../../90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md)
+  - [Spec SDLC CI QA Formatting Research](../../90.references/research/2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md)
   - [Workspace Governance Implementation Audit](../../90.references/audits/2026-07-02-workspace-governance-implementation-audit.md)
   - [SDLC Delivery Practices Implementation Audit](../../90.references/audits/2026-07-02-sdlc-delivery-practices-implementation-audit.md)
 

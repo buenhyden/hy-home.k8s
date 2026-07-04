@@ -79,7 +79,7 @@ the engineer's leverage moves from writing every line to designing
 environments, specifying intent, and building feedback loops.
 
 For this repository, harness engineering maps directly to the four-element
-model in [harness-catalog.md](../../00.agent-governance/harness-catalog.md):
+model in [harness-catalog.md](../../../00.agent-governance/harness-catalog.md):
 
 - **Instruction/settings**: gateway files, provider baselines, task prompts,
   templates, and scope docs that tell an agent how to act.
@@ -160,7 +160,7 @@ that pattern conservatively through its existing contracts:
 - **Task-by-task commits**: logical units should be committed separately, with
   the task record naming evidence for each unit.
 - **Subagent reviews**: delegated work and review should follow
-  [subagent-protocol.md](../../00.agent-governance/subagent-protocol.md) and the
+  [subagent-protocol.md](../../../00.agent-governance/subagent-protocol.md) and the
   local runtime roster. Subagents must remain scoped to their file ownership and
   tool boundary.
 - **Review loops**: agent or human feedback should produce targeted edits,
@@ -251,22 +251,22 @@ these requirements:
 ### Implementation checklist
 
 - Update harness model or runtime roster changes in
-  [harness-catalog.md](../../00.agent-governance/harness-catalog.md).
+  [harness-catalog.md](../../../00.agent-governance/harness-catalog.md).
 - Update source-of-truth routing, validation owners, and evidence locations in
-  [harness-implementation-map.md](../../00.agent-governance/harness-implementation-map.md).
+  [harness-implementation-map.md](../../../00.agent-governance/harness-implementation-map.md).
 - Route subagent dispatch, scope, tool, and mirror changes through
-  [subagent-protocol.md](../../00.agent-governance/subagent-protocol.md) and
+  [subagent-protocol.md](../../../00.agent-governance/subagent-protocol.md) and
   the provider agent files.
 - Route approval-boundary or external-action changes to
   `docs/00.agent-governance/rules/approval-boundaries.md`.
 - Route template or reference-format changes to
-  [Templates README](../../99.templates/README.md),
-  [reference.template.md](../../99.templates/templates/common/reference.template.md), and the
+  [Templates README](../../../99.templates/README.md),
+  [reference.template.md](../../../99.templates/templates/common/reference.template.md), and the
   repository quality gate when applicable.
 - Route validation-loop or repo-static evidence changes to `scripts/**`,
   `.github/workflows/ci.yml`, Stage 04 task evidence, and the CI/CD QA guide.
 - Route new research-pack status and validation evidence to
-  [Workspace Harness Research Pack Task](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md).
+  [Workspace Harness Research Pack Task](../../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md).
 - Route durable progress/memory updates to
   `docs/00.agent-governance/memory/progress.md` when the active task write
   scope includes that file.
@@ -288,13 +288,13 @@ Official and primary external sources, checked 2026-07-02:
 
 Repo-backed sources:
 
-- [Local Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- [Harness Implementation Map](../../00.agent-governance/harness-implementation-map.md)
-- [Subagent Protocol](../../00.agent-governance/subagent-protocol.md)
-- [Workspace Governance Baseline Research](./workspace-governance-baseline.md)
-- [Workspace Harness Research Pack Spec](../../03.specs/009-workspace-harness-research-pack/spec.md)
-- [Workspace Harness Research Pack Plan](../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md)
-- [Workspace Harness Research Pack Task](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
+- [Local Harness Catalog](../../../00.agent-governance/harness-catalog.md)
+- [Harness Implementation Map](../../../00.agent-governance/harness-implementation-map.md)
+- [Subagent Protocol](../../../00.agent-governance/subagent-protocol.md)
+- [Workspace Governance Baseline Research](workspace-governance-baseline.md)
+- [Workspace Harness Research Pack Spec](../../../03.specs/009-workspace-harness-research-pack/spec.md)
+- [Workspace Harness Research Pack Plan](../../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md)
+- [Workspace Harness Research Pack Task](../../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
 
 Non-authoritative market scan sources, checked 2026-07-02:
 
@@ -313,13 +313,13 @@ Non-authoritative market scan sources, checked 2026-07-02:
 
 ## Related Documents
 
-- **Parent research README**: [README.md](./README.md)
-- **Parent references README**: [90.references README](../README.md)
-- **Workspace baseline**: [Workspace Governance Baseline Research](./workspace-governance-baseline.md)
-- **Spec**: [Workspace Harness Research Pack Spec](../../03.specs/009-workspace-harness-research-pack/spec.md)
-- **Plan**: [Workspace Harness Research Pack Plan](../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md)
-- **Task**: [Workspace Harness Research Pack Task](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
-- **Harness catalog**: [Local Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- **Implementation map**: [Harness Implementation Map](../../00.agent-governance/harness-implementation-map.md)
-- **Subagent protocol**: [Subagent Protocol](../../00.agent-governance/subagent-protocol.md)
-- **Reference maintenance runbook**: [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
+- **Parent research README**: [README.md](../README.md)
+- **Parent references README**: [90.references README](../../README.md)
+- **Workspace baseline**: [Workspace Governance Baseline Research](workspace-governance-baseline.md)
+- **Spec**: [Workspace Harness Research Pack Spec](../../../03.specs/009-workspace-harness-research-pack/spec.md)
+- **Plan**: [Workspace Harness Research Pack Plan](../../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md)
+- **Task**: [Workspace Harness Research Pack Task](../../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
+- **Harness catalog**: [Local Harness Catalog](../../../00.agent-governance/harness-catalog.md)
+- **Implementation map**: [Harness Implementation Map](../../../00.agent-governance/harness-implementation-map.md)
+- **Subagent protocol**: [Subagent Protocol](../../../00.agent-governance/subagent-protocol.md)
+- **Reference maintenance runbook**: [Reference Maintenance Runbook](../../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

@@ -240,20 +240,20 @@ contracts, or canonical repository owners.
 ### Implementation checklist
 
 - Route spec lifecycle changes to
-  [Stage 03 specs](../../03.specs/009-workspace-harness-research-pack/spec.md),
-  [Stage 04 plans](../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md),
-  and [Stage 04 tasks](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md).
+  [Stage 03 specs](../../../03.specs/009-workspace-harness-research-pack/spec.md),
+  [Stage 04 plans](../../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md),
+  and [Stage 04 tasks](../../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md).
 - Route template or document-structure changes to
-  [Templates README](../../99.templates/README.md),
-  [reference.template.md](../../99.templates/templates/common/reference.template.md),
-  [document-stage-routing.md](../../00.agent-governance/rules/document-stage-routing.md),
+  [Templates README](../../../99.templates/README.md),
+  [reference.template.md](../../../99.templates/templates/common/reference.template.md),
+  [document-stage-routing.md](../../../00.agent-governance/rules/document-stage-routing.md),
   and `scripts/validate-repo-quality-gates.sh`.
 - Route CI job or branch-policy changes to
-  [.github/workflows/ci.yml](../../../.github/workflows/ci.yml) and the
-  [CI/CD QA guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md).
+  [.github/workflows/ci.yml](../../../../.github/workflows/ci.yml) and the
+  [CI/CD QA guide](../../../05.operations/guides/0010-ci-cd-qa-reference-guide.md).
 - Route pre-commit hook, formatting, or lint-scope changes to
-  [.pre-commit-config.yaml](../../../.pre-commit-config.yaml),
-  [scripts/README.md](../../../scripts/README.md), and the CI/CD QA guide.
+  [.pre-commit-config.yaml](../../../../.pre-commit-config.yaml),
+  [scripts/README.md](../../../../scripts/README.md), and the CI/CD QA guide.
 - Route validation-script changes to `scripts/**`, `scripts/README.md`, CI
   workflow path filters, and the relevant Stage 04 task evidence.
 - Route manifest, policy, secret-handling, or infrastructure static-contract
@@ -262,7 +262,7 @@ contracts, or canonical repository owners.
 - Route secure SDLC or approval-boundary changes to Stage 00 governance and
   operations policy/runbook owners; do not encode active policy in this
   reference.
-- Update [Research README](./README.md) and task evidence when this reference
+- Update [Research README](../README.md) and task evidence when this reference
   changes status, scope, sources, or validation results.
 - Record durable progress/memory only when the active task write scope includes
   `docs/00.agent-governance/memory/progress.md`.
@@ -302,17 +302,17 @@ Official and primary external sources. CI/formatting sources were refreshed on
 
 Repo-backed sources:
 
-- [Documentation Protocol](../../00.agent-governance/rules/documentation-protocol.md)
-- [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
-- [Stage Authoring Matrix](../../00.agent-governance/rules/stage-authoring-matrix.md)
-- [Agent Quality Standards](../../00.agent-governance/rules/quality-standards.md)
-- [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
-- [Templates README](../../99.templates/README.md)
-- [Scripts README](../../../scripts/README.md)
-- [GitHub CI Workflow](../../../.github/workflows/ci.yml)
-- [Pre-commit Config](../../../.pre-commit-config.yaml)
-- [Workspace Governance Baseline Research](./workspace-governance-baseline.md)
-- [Infrastructure Static Contract Verification](../../../infrastructure/tests/verify-contracts-static.sh)
+- [Documentation Protocol](../../../00.agent-governance/rules/documentation-protocol.md)
+- [Document Stage Routing Rules](../../../00.agent-governance/rules/document-stage-routing.md)
+- [Stage Authoring Matrix](../../../00.agent-governance/rules/stage-authoring-matrix.md)
+- [Agent Quality Standards](../../../00.agent-governance/rules/quality-standards.md)
+- [CI/CD & QA Reference Guide](../../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
+- [Templates README](../../../99.templates/README.md)
+- [Scripts README](../../../../scripts/README.md)
+- [GitHub CI Workflow](../../../../.github/workflows/ci.yml)
+- [Pre-commit Config](../../../../.pre-commit-config.yaml)
+- [Workspace Governance Baseline Research](workspace-governance-baseline.md)
+- [Infrastructure Static Contract Verification](../../../../infrastructure/tests/verify-contracts-static.sh)
 
 Non-authoritative market scan source, checked 2026-07-02:
 
@@ -329,15 +329,15 @@ Non-authoritative market scan source, checked 2026-07-02:
 
 ## Related Documents
 
-- **Parent research README**: [README.md](./README.md)
-- **Parent references README**: [90.references README](../README.md)
-- **Workspace baseline**: [Workspace Governance Baseline Research](./workspace-governance-baseline.md)
-- **Harness/loop reference**: [Harness and Loop Engineering Research](./harness-and-loop-engineering.md)
-- **Provider status**: [Provider Harness Implementation Status Research](./provider-implementation-status.md)
-- **Spec**: [Workspace Harness Research Pack Spec](../../03.specs/009-workspace-harness-research-pack/spec.md)
-- **Plan**: [Workspace Harness Research Pack Plan](../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md)
-- **Task**: [Workspace Harness Research Pack Task](../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
-- **CI/CD QA guide**: [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
-- **Scripts README**: [Scripts README](../../../scripts/README.md)
-- **Templates README**: [Templates README](../../99.templates/README.md)
-- **Reference maintenance runbook**: [Reference Maintenance Runbook](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
+- **Parent research README**: [README.md](../README.md)
+- **Parent references README**: [90.references README](../../README.md)
+- **Workspace baseline**: [Workspace Governance Baseline Research](workspace-governance-baseline.md)
+- **Harness/loop reference**: [Harness and Loop Engineering Research](harness-and-loop-engineering.md)
+- **Provider status**: [Provider Harness Implementation Status Research](provider-implementation-status.md)
+- **Spec**: [Workspace Harness Research Pack Spec](../../../03.specs/009-workspace-harness-research-pack/spec.md)
+- **Plan**: [Workspace Harness Research Pack Plan](../../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md)
+- **Task**: [Workspace Harness Research Pack Task](../../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
+- **CI/CD QA guide**: [CI/CD & QA Reference Guide](../../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
+- **Scripts README**: [Scripts README](../../../../scripts/README.md)
+- **Templates README**: [Templates README](../../../99.templates/README.md)
+- **Reference maintenance runbook**: [Reference Maintenance Runbook](../../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
