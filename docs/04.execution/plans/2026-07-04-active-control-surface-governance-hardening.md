@@ -1,7 +1,7 @@
 ---
 title: 'Active Control Surface Governance Hardening Implementation Plan'
 type: sdlc/plan
-status: draft
+status: done
 owner: platform
 updated: 2026-07-04
 ---
@@ -128,7 +128,7 @@ The current repository contract has several strong foundations:
 - Read: `docs/99.templates/templates/sdlc/execution/task.template.md`
 - Read: `docs/03.specs/016-active-control-surface-governance-hardening/spec.md`
 
-- [ ] **Step 1: Confirm branch and clean state**
+- [x] **Step 1: Confirm branch and clean state**
 
 Run:
 
@@ -140,7 +140,7 @@ Expected: current branch is
 `codex/active-control-surface-governance-hardening` and the worktree is clean
 after the plan commit.
 
-- [ ] **Step 2: Read the task template**
+- [x] **Step 2: Read the task template**
 
 Run:
 
@@ -151,7 +151,7 @@ sed -n '1,260p' docs/99.templates/templates/sdlc/execution/task.template.md
 Expected: output includes `type: sdlc/task`, `## Overview`,
 `## Validation Evidence`, and `## Related Documents`.
 
-- [ ] **Step 3: Capture active control-surface inventory**
+- [x] **Step 3: Capture active control-surface inventory**
 
 Run:
 
@@ -163,7 +163,7 @@ Expected: output lists GitHub control files, sample-app manifests, GitOps
 desired state, infrastructure contracts, policy files, validation scripts,
 tests README, and Traefik manifests.
 
-- [ ] **Step 4: Capture snapshot example document inventory**
+- [x] **Step 4: Capture snapshot example document inventory**
 
 Run:
 
@@ -175,7 +175,7 @@ Expected: output lists the AWS/Azure cloud example Markdown documents that
 remain snapshot-bounded and are not promoted into active SDLC frontmatter
 enforcement.
 
-- [ ] **Step 5: Capture active README and GitHub control headings**
+- [x] **Step 5: Capture active README and GitHub control headings**
 
 Run:
 
@@ -187,7 +187,7 @@ Expected: output shows `.github` control file headings and active README
 sections. Classify each file as `GitHub-native control`, `common README`,
 `sample onboarding template`, or `snapshot boundary index` in the task record.
 
-- [ ] **Step 6: Capture external-source-backed contract candidates**
+- [x] **Step 6: Capture external-source-backed contract candidates**
 
 Run:
 
@@ -198,7 +198,7 @@ rg -n "GitHub Actions|workflow|CI|QA|GitOps|Argo CD|Argo Rollouts|ExternalSecret
 Expected: output identifies active claims and snapshot boundary statements
 that may need canonical ownership or validator reinforcement.
 
-- [ ] **Step 7: Create the task record**
+- [x] **Step 7: Create the task record**
 
 Create `docs/04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md`
 from the task template with these values:
@@ -222,7 +222,7 @@ The task record must include:
 - Baseline inventory evidence from Steps 3 through 6.
 - The approved boundary: AWS/Azure cloud example docs remain dated snapshots.
 
-- [ ] **Step 8: Update the Stage 04 tasks README**
+- [x] **Step 8: Update the Stage 04 tasks README**
 
 Add the new task record to `docs/04.execution/tasks/README.md` with:
 
@@ -231,7 +231,7 @@ Add the new task record to `docs/04.execution/tasks/README.md` with:
 - Description:
   `Active control surface governance hardening evidence for GitHub, CI/CD, QA, GitOps, infrastructure, policy, scripts, tests, Traefik, and sample-app snapshot boundaries.`
 
-- [ ] **Step 9: Update progress ledger**
+- [x] **Step 9: Update progress ledger**
 
 Append an entry to `docs/00.agent-governance/memory/progress.md` with:
 
@@ -241,7 +241,7 @@ Append an entry to `docs/00.agent-governance/memory/progress.md` with:
 - Evidence commands from Steps 3 through 6.
 - Result: task record created and baseline scope locked.
 
-- [ ] **Step 10: Validate and commit ACS-001**
+- [x] **Step 10: Validate and commit ACS-001**
 
 Run:
 
@@ -273,7 +273,7 @@ record, tasks README, and progress ledger changes.
 - Modify: `docs/04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
-- [ ] **Step 1: Inspect current canonical wording**
+- [x] **Step 1: Inspect current canonical wording**
 
 Run:
 
@@ -284,7 +284,7 @@ rg -n "README|GitHub-native|frontmatter-free|Cloud Example Snapshot|provider-lat
 Expected: output shows where README, GitHub-native Markdown, snapshot, QA,
 CI/CD, and protected-surface rules currently live.
 
-- [ ] **Step 2: Normalize template support contract wording**
+- [x] **Step 2: Normalize template support contract wording**
 
 Edit the support files so they state these contract sentences in the owning
 documents without duplicating long bodies:
@@ -304,7 +304,7 @@ documents without duplicating long bodies:
 - `legacy-cleanup-rules.md`: Provider-latest claims in active cloud example
   indexes are legacy unless backed by a current approved provider refresh.
 
-- [ ] **Step 3: Normalize Stage 00 governance wording**
+- [x] **Step 3: Normalize Stage 00 governance wording**
 
 Edit Stage 00 rule files so they state these active-control rules:
 
@@ -317,7 +317,7 @@ Edit Stage 00 rule files so they state these active-control rules:
 - `approval-boundaries.md`: Live cluster, Vault, cloud, GitHub publish/merge,
   and secret value work require explicit approval.
 
-- [ ] **Step 4: Validate canonical ownership scan**
+- [x] **Step 4: Validate canonical ownership scan**
 
 Run:
 
@@ -328,17 +328,17 @@ rg -n "Cloud Example Snapshot|provider-latest|frontmatter-free|GitHub-native|REA
 Expected: output shows canonical support/governance owners for each phrase.
 No README file is the only owner of a durable policy rule.
 
-- [ ] **Step 5: Update task evidence**
+- [x] **Step 5: Update task evidence**
 
 In `docs/04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md`,
 mark `ACS-002` as `done` and add the Step 4 scan as validation evidence.
 
-- [ ] **Step 6: Update progress ledger**
+- [x] **Step 6: Update progress ledger**
 
 Append a progress entry stating that support and Stage 00 canonical ownership
 were normalized for active control surfaces and snapshot boundaries.
 
-- [ ] **Step 7: Validate and commit ACS-002**
+- [x] **Step 7: Validate and commit ACS-002**
 
 Run:
 
@@ -368,7 +368,7 @@ canonical contract, task, and progress evidence changes.
 - Modify: `docs/04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
-- [ ] **Step 1: Inspect GitHub control and workflow surfaces**
+- [x] **Step 1: Inspect GitHub control and workflow surfaces**
 
 Run:
 
@@ -379,7 +379,7 @@ rg -n "frontmatter|policy source of truth|branch-policy|repo-quality|manifest-st
 Expected: output identifies GitHub-native Markdown, workflow gates, protected
 actions, and validator checks.
 
-- [ ] **Step 2: Keep GitHub-native Markdown frontmatter-free**
+- [x] **Step 2: Keep GitHub-native Markdown frontmatter-free**
 
 Run:
 
@@ -390,7 +390,7 @@ rg -n "^---$" .github/ABOUT.md .github/PULL_REQUEST_TEMPLATE.md .github/SECURITY
 Expected: no matches. If matches appear, remove YAML frontmatter from those
 GitHub-native Markdown files and route metadata to the owning governance file.
 
-- [ ] **Step 3: Align `.github/ABOUT.md` routing language**
+- [x] **Step 3: Align `.github/ABOUT.md` routing language**
 
 Edit `.github/ABOUT.md` so it remains a routing hub and includes these
 boundaries without adding a new ad hoc section:
@@ -402,7 +402,7 @@ boundaries without adding a new ad hoc section:
 - It does not duplicate branch policy, protected surface, or provider-latest
   policy bodies.
 
-- [ ] **Step 4: Align PR template checks**
+- [x] **Step 4: Align PR template checks**
 
 Edit `.github/PULL_REQUEST_TEMPLATE.md` so checklist text routes durable
 policy to canonical owners and keeps these review prompts:
@@ -412,13 +412,13 @@ policy to canonical owners and keeps these review prompts:
 - Cloud example changes must preserve Cloud Example Snapshot boundaries unless
   an approved provider refresh spec exists.
 
-- [ ] **Step 5: Align security policy surface**
+- [x] **Step 5: Align security policy surface**
 
 Edit `.github/SECURITY.md` only if needed so it stays GitHub-renderable and
 frontmatter-free. It should report vulnerability handling boundaries without
 duplicating secret-handling or live-mutation governance from Stage 00.
 
-- [ ] **Step 6: Add deterministic GitHub validation if missing**
+- [x] **Step 6: Add deterministic GitHub validation if missing**
 
 Update `scripts/validate-repo-quality-gates.sh` only for deterministic checks.
 The acceptable additions are:
@@ -430,7 +430,7 @@ The acceptable additions are:
 - Workflow files do not contain live publish, push, or mutation commands
   outside approved workflow roles.
 
-- [ ] **Step 7: Validate GitHub and CI/CD surfaces**
+- [x] **Step 7: Validate GitHub and CI/CD surfaces**
 
 Run:
 
@@ -453,12 +453,12 @@ workflow yaml parse ok
 [PASS] repository quality gates passed
 ```
 
-- [ ] **Step 8: Update task and progress evidence**
+- [x] **Step 8: Update task and progress evidence**
 
 Mark `ACS-003` as `done` in the task record and append progress evidence with
 the commands from Step 7.
 
-- [ ] **Step 9: Commit ACS-003**
+- [x] **Step 9: Commit ACS-003**
 
 Run:
 
@@ -500,7 +500,7 @@ the final `git add` command before committing.
 - Modify: `docs/04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
-- [ ] **Step 1: Inspect active README matrices and validation references**
+- [x] **Step 1: Inspect active README matrices and validation references**
 
 Run:
 
@@ -511,7 +511,7 @@ rg -n "## |Validation|validate-|check-secret-handling|repo-quality|GitOps|Secret
 Expected: output shows active README sections, validation commands, secret
 boundaries, and snapshot boundary wording.
 
-- [ ] **Step 2: Keep README profile unchanged**
+- [x] **Step 2: Keep README profile unchanged**
 
 Run:
 
@@ -524,7 +524,7 @@ Expected: no YAML frontmatter and no deprecated README related-link headings.
 If matches appear, remove frontmatter and replace deprecated headings with the
 current `## Related Documents` section.
 
-- [ ] **Step 3: Align README routing and boundaries**
+- [x] **Step 3: Align README routing and boundaries**
 
 Edit active README files with these exact ownership outcomes:
 
@@ -550,7 +550,7 @@ Edit active README files with these exact ownership outcomes:
   copying into active GitOps desired state; sample secrets use ESO remoteRef
   key conventions without exposing secret values.
 
-- [ ] **Step 4: Add deterministic validator checks for active README drift**
+- [x] **Step 4: Add deterministic validator checks for active README drift**
 
 Update `scripts/validate-repo-quality-gates.sh` only for deterministic checks
 that can be enforced locally. Acceptable checks are:
@@ -567,7 +567,7 @@ that can be enforced locally. Acceptable checks are:
 - `infrastructure/README.md`, `tests/README.md`, and `traefik/README.md`
   distinguish repo-static checks from live/operator-owned checks.
 
-- [ ] **Step 5: Validate active control surfaces**
+- [x] **Step 5: Validate active control surfaces**
 
 Run:
 
@@ -592,12 +592,12 @@ Expected:
   with built-in fallback passing.
 - Static infrastructure contracts pass.
 
-- [ ] **Step 6: Update task and progress evidence**
+- [x] **Step 6: Update task and progress evidence**
 
 Mark `ACS-004` as `done` in the task record and append progress evidence with
 the commands from Step 5.
 
-- [ ] **Step 7: Commit ACS-004**
+- [x] **Step 7: Commit ACS-004**
 
 Run:
 
@@ -621,7 +621,7 @@ progress files. If optional scripts were not changed, omit them from the final
 - Modify: `docs/04.execution/tasks/README.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
-- [ ] **Step 1: Run final validation bundle**
+- [x] **Step 1: Run final validation bundle**
 
 Run:
 
@@ -637,7 +637,7 @@ Expected:
 - Repository quality gate prints `[PASS] repository quality gates passed`.
 - Harness validation ends with `PASS harness repo-static validation`.
 
-- [ ] **Step 2: Run focused final scans**
+- [x] **Step 2: Run focused final scans**
 
 Run:
 
@@ -656,7 +656,7 @@ Expected:
 - Third scan shows protected-surface, optional-tool, and repo-static wording in
   active owners.
 
-- [ ] **Step 3: Update plan and task statuses**
+- [x] **Step 3: Update plan and task statuses**
 
 Update:
 
@@ -666,7 +666,7 @@ Update:
 - `docs/04.execution/tasks/README.md` row for this task record to `Done`.
 - Task record `ACS-005` status to `done` with final validation evidence.
 
-- [ ] **Step 4: Update progress ledger**
+- [x] **Step 4: Update progress ledger**
 
 Append a final progress entry with:
 
@@ -676,7 +676,7 @@ Append a final progress entry with:
 - Final boundary summary: active control surfaces hardened, AWS/Azure examples
   remain snapshot-bounded, no live mutation performed.
 
-- [ ] **Step 5: Commit ACS-005**
+- [x] **Step 5: Commit ACS-005**
 
 Run:
 
@@ -727,14 +727,14 @@ Expected: one closure commit with plan/task/status/progress evidence only.
 
 ## Completion Criteria
 
-- [ ] Scoped active control-surface work completed.
-- [ ] AWS/Azure cloud examples remain snapshot-bounded.
-- [ ] README and GitHub-native Markdown files remain frontmatter-free.
-- [ ] Deterministic validator additions are aligned with canonical
+- [x] Scoped active control-surface work completed.
+- [x] AWS/Azure cloud examples remain snapshot-bounded.
+- [x] README and GitHub-native Markdown files remain frontmatter-free.
+- [x] Deterministic validator additions are aligned with canonical
   support/governance owners.
-- [ ] Required validation bundle passes.
-- [ ] Plan, task record, task README, and progress memory are updated.
-- [ ] Logical-unit commits exist for each completed task.
+- [x] Required validation bundle passes.
+- [x] Plan, task record, task README, and progress memory are updated.
+- [x] Logical-unit commits exist for each completed task.
 
 ## Related Documents
 

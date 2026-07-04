@@ -8,6 +8,59 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-04 — Active control surface hardening ACS-005 final closure
+
+- **Date**: 2026-07-04
+- **Layer**: governance, qa, docs
+- **Status**: complete
+- **Tags**: #governance #validation #ci-qa #gitops
+
+#### Progress
+
+- Completed ACS-005 for the active control surface governance hardening plan
+  and closed the
+  [Plan](../../04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md)
+  and
+  [Task evidence](../../04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md).
+- Marked the Stage 04 plan and task indexes as done for this workstream.
+- Confirmed active README, GitHub-native Markdown, snapshot-boundary,
+  protected-surface, and repo-static validation contracts have aligned
+  evidence after ACS-001 through ACS-004.
+
+#### Memory
+
+- Active control surfaces are hardened through repo-static governance,
+  validation, and README routing evidence; live runtime checks remain a
+  separately approved operator-owned path.
+- AWS/Azure cloud examples remain dated Cloud Example Snapshot material and
+  are not live provider-latest guidance.
+- Missing optional tools must stay visible as SKIP or fallback evidence:
+  `kube-linter` for manifest linting and `conftest` for Rego policy execution.
+
+#### Evidence
+
+- `git diff --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash scripts/validate-harness.sh` — PASS, ended with
+  `PASS harness repo-static validation`.
+- Focused README/GitHub-native frontmatter scan — PASS, no delimiter matches.
+- Focused Cloud Example Snapshot/provider-latest scan — PASS, boundary wording
+  remains in canonical owners and active routing surfaces.
+- Focused protected-surface scan — PASS, secret-value, live-mutation,
+  operator-owned, optional-tool, and repo-static wording remains in active
+  owners.
+- Harness limitation repeated: optional `kube-linter` was not installed and
+  manifest validation used YAML syntax checks; optional `conftest` was not
+  installed and policy validation used the built-in fallback. Both fallback
+  paths passed.
+
+#### Handoff
+
+- ACS-005 is complete and ready for final independent review and branch finish
+  handling.
+- No live Kubernetes, Argo CD, Vault, cloud, external Traefik, provider,
+  publishing, push, merge, or secret-value action was performed.
+
 ### 2026-07-04 — Active control surface hardening ACS-004 repo-static alignment
 
 - **Date**: 2026-07-04

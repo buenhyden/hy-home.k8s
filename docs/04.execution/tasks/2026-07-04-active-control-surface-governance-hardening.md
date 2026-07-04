@@ -1,7 +1,7 @@
 ---
 title: 'Active Control Surface Governance Hardening Task Record'
 type: sdlc/task
-status: draft
+status: done
 owner: platform
 updated: 2026-07-04
 ---
@@ -45,7 +45,7 @@ examples as dated snapshots.
 | ACS-002 | Normalize Stage 99 and Stage 00 active-control contracts | doc | VAL-SPC-001, VAL-SPC-003 | Task 2 | README/GitHub-native/snapshot ownership scan, support/governance owner updates, progress ledger | platform | Done |
 | ACS-003 | Align GitHub, CI/CD, QA, and protected-surface control files | doc | VAL-SPC-001, VAL-SPC-003, VAL-SPC-004 | Task 3 | GitHub Markdown remains frontmatter-free, workflow YAML parses, repo quality gate | platform | Done |
 | ACS-004 | Align GitOps, infrastructure, policy, scripts, tests, Traefik, and sample-app surfaces | doc | VAL-SPC-001, VAL-SPC-002, VAL-SPC-004 | Task 4 | Harness validation passes and optional tool skips remain explicit | platform | Done |
-| ACS-005 | Close evidence, review, and branch readiness | doc | VAL-SPC-005 | Task 5 | Full validation bundle, updated plan/task evidence, final drift review | platform | Todo |
+| ACS-005 | Close evidence, review, and branch readiness | doc | VAL-SPC-005 | Task 5 | Full validation bundle, updated plan/task evidence, final drift review | platform | Done |
 
 ## Suggested Types
 
@@ -76,7 +76,7 @@ examples as dated snapshots.
 
 ### Task 5: Evidence Closure
 
-- [ ] ACS-005 Close evidence, review, and branch readiness.
+- [x] ACS-005 Close evidence, review, and branch readiness.
 
 ## Baseline Inventory Evidence
 
@@ -271,6 +271,40 @@ PY
 - No live Kubernetes, Argo CD, Vault, cloud, external Traefik, provider,
   publish, push, merge, or secret-value action was performed.
 
+## ACS-005 Final Closure Evidence
+
+### Commands
+
+- `git diff --check`
+- `bash scripts/validate-repo-quality-gates.sh .`
+- `bash scripts/validate-harness.sh`
+- `rg -n "^---$" .github/ABOUT.md .github/PULL_REQUEST_TEMPLATE.md .github/SECURITY.md scripts/README.md gitops/README.md gitops/workloads/README.md infrastructure/README.md tests/README.md traefik/README.md examples/README.md examples/sample-app/README.md`
+- `rg -n "Cloud Example Snapshot|not live provider-latest guidance|provider-latest" examples/README.md docs/99.templates/support docs/00.agent-governance/rules scripts/validate-repo-quality-gates.sh`
+- `rg -n "secret values|live mutation|operator-owned|optional.*SKIP|repo-static" scripts/README.md gitops/README.md infrastructure/README.md tests/README.md traefik/README.md scripts/validate-repo-quality-gates.sh`
+
+### Findings
+
+- `git diff --check` passed with no output.
+- `bash scripts/validate-repo-quality-gates.sh .` passed with
+  `[PASS] repository quality gates passed`.
+- `bash scripts/validate-harness.sh` passed and ended with
+  `PASS harness repo-static validation`.
+- Harness validation also confirmed GitOps structure, Kubernetes manifest
+  syntax across 104 files, static secret handling, policy gates, and static
+  infrastructure contracts.
+- Optional `kube-linter` was unavailable and remained explicit SKIP evidence;
+  optional `conftest` was unavailable and the built-in policy fallback passed.
+- README and GitHub-native Markdown frontmatter delimiter scan returned no
+  matches.
+- Cloud Example Snapshot and provider-latest scans showed the boundary in
+  canonical owners and active routing surfaces: `examples/README.md`, Stage 99
+  support contracts, Stage 00 governance rules, and the repo quality gate.
+- Protected-surface scans showed secret-value, live-mutation, operator-owned,
+  optional-tool, and repo-static wording in active owners.
+- Plan and task indexes are marked `Done`, and this task record is closed.
+- No live Kubernetes, Argo CD, Vault, cloud, external Traefik, provider,
+  publish, push, merge, or secret-value action was performed.
+
 ## Verification Summary
 
 - **Test Commands**:
@@ -279,6 +313,8 @@ PY
   - `git diff --check` - PASS.
   - `bash scripts/validate-repo-quality-gates.sh .` - PASS, including
     `[PASS] repository quality gates passed`.
+  - `bash scripts/validate-harness.sh` - PASS, ended with
+    `PASS harness repo-static validation`.
   - GitHub workflow YAML parse - PASS, `workflow yaml parse ok`.
   - `bash scripts/validate-gitops-structure.sh` - PASS.
   - `bash scripts/validate-k8s-manifests.sh .` - PASS with optional
@@ -297,6 +333,8 @@ PY
   - ACS-004 active README matrix scan, README profile scan, and repo-static
     validation bundle listed in
     `ACS-004 GitOps and Repo-static Validation Evidence`.
+  - ACS-005 final frontmatter, snapshot-boundary, protected-surface, and
+    repo-static scans listed in `ACS-005 Final Closure Evidence`.
 - **Logs / Evidence Location**:
   - This task record.
   - [../../00.agent-governance/memory/progress.md](../../00.agent-governance/memory/progress.md)
