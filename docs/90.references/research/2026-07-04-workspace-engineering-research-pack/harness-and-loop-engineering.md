@@ -272,59 +272,63 @@ repo-backed contracts.
   enforcement. The local system should build a common contract, provider
   adapters, and repeatable evidence instead of asserting runtime equivalence.
 
-### Workspace application requirements
+### Workspace Application Routing Notes
 
-For `hy-home.k8s`, source-backed harness and loop engineering should preserve
-these requirements:
+For `hy-home.k8s`, the source-backed harness and loop findings map to these
+canonical owner routes. The bullets below describe where behavior changes are
+owned; they do not create new execution requirements from this reference.
 
-- Keep `docs/00.agent-governance/harness-catalog.md` as the canonical local
-  harness model and runtime roster.
-- Keep `docs/00.agent-governance/harness-implementation-map.md` as the
-  navigation map from harness surface to source of truth, validation, and
-  evidence location.
-- Keep task evidence in Stage 04 and progress/memory routing in the canonical
-  progress ledger when a task's write scope allows it.
-- Keep reference material descriptive and dated; route behavior changes to
-  Stage 00, Stage 03, Stage 04, Stage 05, scripts, templates, or provider
+- `docs/00.agent-governance/harness-catalog.md` is the canonical local harness
+  model and runtime roster.
+- `docs/00.agent-governance/harness-implementation-map.md` maps each harness
+  surface to its source of truth, validation, and evidence location.
+- Stage 04 task records own task evidence; the canonical progress ledger owns
+  progress/memory routing when a task's write scope includes it.
+- Reference material remains descriptive and dated. Behavior changes are routed
+  to Stage 00, Stage 03, Stage 04, Stage 05, scripts, templates, or provider
   adapters.
-- Keep the common provider environment as `canonical core + provider adapter +
-  validation evidence`: Stage 00 owns rules and harness contracts, root shims
-  route providers into that core, `.agents/**` owns shared assets, and
-  provider-native files express only the runtime-specific adapter syntax.
-- Keep external tools read-only by default unless the user approves a specific
-  external mutation, push, publish, merge, credential change, paid job, or
-  third-party resource change.
-- Keep market scan findings labeled non-authoritative.
-- Keep repo-static, CI/toolchain, and live-runtime evidence lanes separate.
-- Keep upstream provider capability claims separate from the repo's adapter
-  implementation status, especially when a provider documents a broad agent
-  framework but the local adapter only exposes a mirrored behavioral contract.
+- The common provider environment is represented as `canonical core + provider
+  adapter + validation evidence`: Stage 00 owns rules and harness contracts,
+  root shims route providers into that core, `.agents/**` owns shared assets,
+  and provider-native files express runtime-specific adapter syntax.
+- External-action approval boundaries are owned by Stage 00 rules, not by this
+  reference.
+- Market scan findings remain labeled non-authoritative.
+- Repo-static, CI/toolchain, and live-runtime evidence lanes remain separate in
+  canonical validation and operations owners.
+- Upstream provider capability claims are tracked separately from the repo's
+  adapter implementation status, especially when a provider documents a broad
+  agent framework but the local adapter only exposes a mirrored behavioral
+  contract.
 
-### Implementation checklist
+### Implementation Routing Checklist
 
-- Update harness model or runtime roster changes in
+- Harness model and runtime roster changes are owned by
   [harness-catalog.md](../../../00.agent-governance/harness-catalog.md).
-- Update source-of-truth routing, validation owners, and evidence locations in
+- Source-of-truth routing, validation owners, and evidence locations are owned
+  by
   [harness-implementation-map.md](../../../00.agent-governance/harness-implementation-map.md).
-- Route subagent dispatch, scope, tool, and mirror changes through
+- Subagent dispatch, scope, tool, and mirror changes are routed through
   [subagent-protocol.md](../../../00.agent-governance/subagent-protocol.md) and
-  the provider agent files.
-- Route approval-boundary or external-action changes to
+  provider agent files.
+- Approval-boundary or external-action changes are owned by
   `docs/00.agent-governance/rules/approval-boundaries.md`.
-- Route template or reference-format changes to
+- Template or reference-format changes are owned by
   [Templates README](../../../99.templates/README.md),
   [reference.template.md](../../../99.templates/templates/common/reference.template.md), and the
   repository quality gate when applicable.
-- Route validation-loop or repo-static evidence changes to `scripts/**`,
+- Validation-loop or repo-static evidence changes are owned by `scripts/**`,
   `.github/workflows/ci.yml`, Stage 04 task evidence, and the CI/CD QA guide.
-- Route new research-pack status and validation evidence to
+- Research-pack status and validation evidence are recorded in
   [Workspace Engineering Research Pack Task](../../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
-- Route durable progress/memory updates to
+- Durable progress/memory updates are recorded in
   `docs/00.agent-governance/memory/progress.md` when the active task write
   scope includes that file.
-- Before handoff, run `git diff --check` and
-  `bash scripts/validate-repo-quality-gates.sh .`, then record PASS/FAIL and
-  limitations in the task record.
+- Typical reference-maintenance evidence is recorded in Stage 04 task records
+  and commonly includes `git diff --check` plus
+  `bash scripts/validate-repo-quality-gates.sh .`; the executable validation
+  procedure remains owned by Stage 04 tasks, the reference-maintenance runbook,
+  and repository scripts.
 
 ## Sources
 

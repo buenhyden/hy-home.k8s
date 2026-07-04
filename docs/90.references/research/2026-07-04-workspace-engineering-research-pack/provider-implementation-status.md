@@ -315,35 +315,39 @@ families, but the safe local rule remains conservative:
 - This document does not install, configure, test, or mutate external provider
   tools. It records a dated source snapshot only.
 
-### Workspace implementation checklist
+### Workspace Implementation Routing Checklist
 
-- For runtime roster, model tier, adapter readiness, and provider-surface
-  changes, update [harness-catalog.md](../../../00.agent-governance/harness-catalog.md)
-  and the relevant provider baseline.
-- For subagent dispatch, file ownership, tool scope, or mirror-contract
-  changes, update
+This checklist is a descriptive routing map for future changes. It does not
+define provider runtime policy or grant permission to mutate external systems.
+
+- Runtime roster, model tier, adapter readiness, and provider-surface changes
+  are owned by
+  [harness-catalog.md](../../../00.agent-governance/harness-catalog.md) and the
+  relevant provider baseline.
+- Subagent dispatch, file ownership, tool scope, and mirror-contract changes
+  are owned by
   [subagent-protocol.md](../../../00.agent-governance/subagent-protocol.md) and
-  the provider agent files in the same logical unit.
-- For shared rule, approval-boundary, or no-live-mutation changes, route work
-  to `docs/00.agent-governance/rules/**`; do not encode policy in this
-  reference.
-- For shared skills, workflows, and output-style changes, update `.agents/**`
-  first and keep `.claude/**` / `.codex/**` adapter views aligned.
-- For hook script or provider hook wiring changes, update
+  provider agent files in the same logical unit.
+- Shared rule, approval-boundary, and no-live-mutation changes are owned by
+  `docs/00.agent-governance/rules/**`; this reference only points to that
+  owner.
+- Shared skills, workflows, and output-style changes are owned by `.agents/**`,
+  with `.claude/**` and `.codex/**` adapter views aligned by the relevant
+  provider owners.
+- Hook script or provider hook wiring changes are owned by
   `docs/00.agent-governance/hooks/*.sh`, `.claude/settings.json`,
-  `.codex/hooks.json`, `.agents/hooks.json`, and validation evidence as
-  appropriate.
-- For template and documentation-routing changes, update
+  `.codex/hooks.json`, `.agents/hooks.json`, and their validation evidence.
+- Template and documentation-routing changes are owned by
   [docs/99.templates/README.md](../../../99.templates/README.md),
-  [reference.template.md](../../../99.templates/templates/common/reference.template.md), and Stage
-  00 documentation routing rules.
-- For MCP additions or mutations, create an explicit task/plan and obtain
-  human approval if the change can mutate external resources, credentials, or
-  third-party state.
-- For validation evidence, record commands and results in
-  [the research pack task](../../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md)
-  and use `docs/00.agent-governance/memory/progress.md` only when the current
-  task write scope allows it.
+  [reference.template.md](../../../99.templates/templates/common/reference.template.md),
+  and Stage 00 documentation routing rules.
+- MCP additions or mutations require an explicit task/plan and human approval
+  when the change can mutate external resources, credentials, or third-party
+  state; the active approval boundary is owned by Stage 00 rules.
+- Validation evidence is recorded in
+  [the research pack task](../../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md);
+  `docs/00.agent-governance/memory/progress.md` is used only when the current
+  task write scope includes it.
 
 ## Sources
 

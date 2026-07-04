@@ -349,11 +349,15 @@ rg -n "Claude|Codex|Gemini|OpenAI|Anthropic|Google|ADK|MCP|non-authoritative|Sou
 Summary:
 
 - PASS; command completed successfully.
-- The scan returned 214 lines and confirmed both refreshed references include
-  `Source checked: 2026-07-04`, `Review and Freshness`, official provider
-  source group coverage, MCP coverage, Google/ADK coverage,
-  `non-authoritative` market-scan language, and provider-specific boundary
-  wording.
+- The scan returned 214 matching lines. This is keyword-presence evidence that
+  both refreshed references mention `Source checked: 2026-07-04`,
+  `Review and Freshness`, official provider source groups, MCP,
+  Google/ADK, `non-authoritative` market-scan language, and
+  provider-specific boundary wording.
+- Source support and claim correctness were reviewed separately by reading the
+  refreshed references and checking the cited official/primary source set; the
+  `rg` scan alone does not prove source freshness, link reachability, or claim
+  support.
 
 ## Verification Summary
 

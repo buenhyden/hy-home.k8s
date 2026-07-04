@@ -49,10 +49,12 @@ inventory stays in `scripts/README.md`.
   ADK and ADK site; MCP 2025-06-18 specification and MCP Security Best
   Practices.
 - Required WER-004 reference scan - PASS; 214 matching lines across the
-  refreshed harness/loop and provider references confirmed `Source checked:
-  2026-07-04`, `Review and Freshness`, official provider source coverage, MCP
-  coverage, Google/ADK coverage, `non-authoritative` market-scan language, and
-  provider-boundary wording.
+  refreshed harness/loop and provider references provided keyword-presence
+  evidence for `Source checked: 2026-07-04`, `Review and Freshness`, official
+  provider source groups, MCP coverage, Google/ADK coverage,
+  `non-authoritative` market-scan language, and provider-boundary wording. The
+  scan does not by itself prove source freshness, link reachability, or claim
+  support.
 - `git diff --check` - PASS.
 - `bash scripts/validate-repo-quality-gates.sh .` - PASS.
 
