@@ -7371,3 +7371,52 @@ section separating static from live evidence.
 ### Handoff
 
 - ACS-002 is complete; continue with ACS-003 in the next scoped task.
+
+## 2026-07-04 - Active GitHub control surface alignment
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: ci, qa, governance
+- **Status**: completed
+- **Tags**: #github #ci #qa #validation
+
+### Progress
+
+- Aligned the GitHub PR template with the active control-surface boundary by
+  adding a Cloud Example Snapshot preservation prompt for `examples/aws` and
+  `examples/azure` changes.
+- Added a deterministic repository quality gate so the PR template cannot drop
+  that snapshot-boundary prompt without failing validation.
+- Left `.github/ABOUT.md`, `.github/SECURITY.md`, workflow YAML, Dependabot,
+  and zizmor configuration unchanged because they already matched the
+  frontmatter-free routing and protected-surface ownership model.
+- Updated the Active Control Surface Governance Hardening task record to mark
+  ACS-003 complete with GitHub control and CI/CD validation evidence.
+
+### Memory
+
+- GitHub-native Markdown should stay frontmatter-free and route durable policy
+  to Stage 00, Stage 99, workflow files, or validators. The PR template is the
+  user-facing review prompt surface for preserving AWS/Azure Cloud Example
+  Snapshot boundaries.
+
+### Evidence
+
+- `rg -n "frontmatter|policy source of truth|branch-policy|repo-quality|manifest-static|secret|workflow_dispatch|pull_request_target|Dependabot|zizmor|publish|push|merge|Cloud Example Snapshot" .github scripts/validate-repo-quality-gates.sh`
+  identified the expected GitHub-native Markdown, workflow gates, protected
+  actions, and validator checks.
+- `rg -n "^---$" .github/ABOUT.md .github/PULL_REQUEST_TEMPLATE.md .github/SECURITY.md`
+  returned no matches.
+- `git diff --check` PASS.
+- GitHub workflow YAML parse PASS with `workflow yaml parse ok`.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS with
+  `[PASS] repository quality gates passed`.
+- RTK limitation repeated: `rtk` is not on PATH; `/home/hy/.local/bin/rtk
+  --version` works, but `/home/hy/.local/bin/rtk gain` cannot initialize its
+  tracking database, so validation commands were run directly.
+
+### Handoff
+
+- ACS-003 is complete; continue with ACS-004 GitOps and repo-static validation
+  surfaces in the next scoped task.

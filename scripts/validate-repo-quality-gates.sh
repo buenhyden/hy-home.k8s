@@ -190,6 +190,27 @@ def extract_pr_template_prefixes(text: str) -> list[str]:
     return [prefix.rstrip("/") for prefix in re.findall(r"`([a-z0-9-]+/)`", text)]
 
 
+def has_cloud_example_snapshot_preservation_prompt(text: str) -> bool:
+    required_terms = [
+        "examples/aws",
+        "examples/azure",
+        "cloud example snapshot",
+        "approved",
+        "provider",
+        "refresh",
+        "spec",
+    ]
+    for line in text.splitlines():
+        normalized = line.casefold()
+        if (
+            all(term in normalized for term in required_terms)
+            and "preserv" in normalized
+            and "boundar" in normalized
+        ):
+            return True
+    return False
+
+
 def markdown_table_after_heading(text: str, heading: str) -> list[list[str]]:
     lines = text.splitlines()
     try:
@@ -2621,6 +2642,11 @@ for phrase in [
 ]:
     if phrase not in pr_template_text:
         fail(f"{rel(pr_template_path)} missing branch-policy clarification: {phrase}")
+if not has_cloud_example_snapshot_preservation_prompt(pr_template_text):
+    fail(
+        f"{rel(pr_template_path)} missing Cloud Example Snapshot checklist line with "
+        "examples/aws, examples/azure, boundary preservation, and approved provider refresh spec terms"
+    )
 
 # Harness implementation surfaces: existence and cross-reference contracts only.
 # Wrapper script and task-contract template existence are already enforced by the

@@ -43,7 +43,7 @@ examples as dated snapshots.
 | ------- | ----------- | ---- | --------------------- | ------------------- | --------------------- | ----- | ------ |
 | ACS-001 | Create task record and baseline active/snapshot inventory | doc | VAL-SPC-001, VAL-SPC-002 | Task 1 | Baseline scans, task record, tasks README, progress ledger, `git diff --check`, repo quality gate | platform | Done |
 | ACS-002 | Normalize Stage 99 and Stage 00 active-control contracts | doc | VAL-SPC-001, VAL-SPC-003 | Task 2 | README/GitHub-native/snapshot ownership scan, support/governance owner updates, progress ledger | platform | Done |
-| ACS-003 | Align GitHub, CI/CD, QA, and protected-surface control files | doc | VAL-SPC-001, VAL-SPC-003, VAL-SPC-004 | Task 3 | GitHub Markdown remains frontmatter-free, workflow YAML parses, repo quality gate | platform | Todo |
+| ACS-003 | Align GitHub, CI/CD, QA, and protected-surface control files | doc | VAL-SPC-001, VAL-SPC-003, VAL-SPC-004 | Task 3 | GitHub Markdown remains frontmatter-free, workflow YAML parses, repo quality gate | platform | Done |
 | ACS-004 | Align GitOps, infrastructure, policy, scripts, tests, Traefik, and sample-app surfaces | doc | VAL-SPC-001, VAL-SPC-002, VAL-SPC-004 | Task 4 | Harness validation passes and optional tool skips remain explicit | platform | Todo |
 | ACS-005 | Close evidence, review, and branch readiness | doc | VAL-SPC-005 | Task 5 | Full validation bundle, updated plan/task evidence, final drift review | platform | Todo |
 
@@ -67,7 +67,7 @@ examples as dated snapshots.
 
 ### Task 3: GitHub, CI/CD, QA, and Protected Surfaces
 
-- [ ] ACS-003 Align GitHub, CI/CD, QA, and protected-surface control files.
+- [x] ACS-003 Align GitHub, CI/CD, QA, and protected-surface control files.
 
 ### Task 4: GitOps and Repo-static Validation Surfaces
 
@@ -179,6 +179,43 @@ validation.
 - `bash scripts/validate-repo-quality-gates.sh .` passed with
   `[PASS] repository quality gates passed`.
 
+## ACS-003 GitHub Control Evidence
+
+### Commands
+
+- `rg -n "frontmatter|policy source of truth|branch-policy|repo-quality|manifest-static|secret|workflow_dispatch|pull_request_target|Dependabot|zizmor|publish|push|merge|Cloud Example Snapshot" .github scripts/validate-repo-quality-gates.sh`
+- `rg -n "^---$" .github/ABOUT.md .github/PULL_REQUEST_TEMPLATE.md .github/SECURITY.md`
+- `git diff --check`
+- GitHub workflow YAML parse:
+
+```bash
+python3 - <<'PY'
+import pathlib, yaml
+for path in sorted(pathlib.Path('.github/workflows').glob('*.yml')):
+    with path.open(encoding='utf-8') as handle:
+        yaml.safe_load(handle)
+print('workflow yaml parse ok')
+PY
+```
+
+- `bash scripts/validate-repo-quality-gates.sh .`
+
+### Findings
+
+- `.github/ABOUT.md` and `.github/SECURITY.md` already matched the
+  frontmatter-free routing contract and did not need edits.
+- `.github/PULL_REQUEST_TEMPLATE.md` now prompts reviewers to preserve Cloud
+  Example Snapshot boundaries for `examples/aws` or `examples/azure` changes
+  unless an approved provider refresh spec exists.
+- `scripts/validate-repo-quality-gates.sh` now deterministically rejects PR
+  template drift if no PR-template line keeps the Cloud Example Snapshot paths,
+  boundary-preservation intent, and approved provider refresh spec terms
+  together.
+- GitHub workflow YAML parsed successfully with `workflow yaml parse ok`.
+- `git diff --check` passed with no output.
+- `bash scripts/validate-repo-quality-gates.sh .` passed with
+  `[PASS] repository quality gates passed`.
+
 ## Verification Summary
 
 - **Test Commands**:
@@ -187,11 +224,14 @@ validation.
   - `git diff --check` - PASS.
   - `bash scripts/validate-repo-quality-gates.sh .` - PASS, including
     `[PASS] repository quality gates passed`.
+  - GitHub workflow YAML parse - PASS, `workflow yaml parse ok`.
 - **Eval Commands**:
   - Baseline inventory and contract-candidate scans listed in
     `Baseline Inventory Evidence`.
   - ACS-002 canonical ownership scan listed in
     `ACS-002 Canonical Ownership Evidence`.
+  - ACS-003 GitHub control scan and frontmatter scan listed in
+    `ACS-003 GitHub Control Evidence`.
 - **Logs / Evidence Location**:
   - This task record.
   - [../../00.agent-governance/memory/progress.md](../../00.agent-governance/memory/progress.md)
