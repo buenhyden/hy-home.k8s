@@ -43,9 +43,10 @@ inventory stays in `scripts/README.md`.
 
 - Official/primary WER-005 sources checked: GitHub Actions workflow syntax and
   secure use; GitHub Code scanning/CodeQL; GitHub Dependency Review; GitHub
-  Spec Kit; NIST SSDF SP 800-218; NIST SP 800-204D; SLSA spec v1.1; OpenSSF
+  Spec Kit; NIST SSDF SP 800-218; NIST SP 800-204D; SLSA spec v1.2; OpenSSF
   Scorecard; Prettier; EditorConfig; CommonMark 0.31.2; YAML 1.2.2;
-  markdownlint; pre-commit.
+  markdownlint; pre-commit. SLSA v1.1 was checked only as a retired historical
+  page that points to v1.2 as the current version.
 - Required WER-005 reference scan - PASS; the refreshed reference includes
   `Source checked: 2026-07-05`, official source families, supply-chain terms,
   formatting terms, `non-authoritative` market/context language, and

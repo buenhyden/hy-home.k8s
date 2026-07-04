@@ -40,8 +40,10 @@ CI semantics, release approval, live runtime procedure, or provider behavior.
 - Source checked: 2026-07-05 for WER-005 refreshed sources: GitHub Actions
   workflow syntax, GitHub Actions secure use, GitHub Code scanning/CodeQL
   concepts, GitHub Dependency Review, GitHub Spec Kit, NIST SSDF SP 800-218,
-  NIST SP 800-204D, SLSA spec v1.1, OpenSSF Scorecard, Prettier, EditorConfig,
-  CommonMark 0.31.2, YAML 1.2.2, markdownlint, and pre-commit.
+  NIST SP 800-204D, SLSA spec v1.2, OpenSSF Scorecard, Prettier, EditorConfig,
+  CommonMark 0.31.2, YAML 1.2.2, markdownlint, and pre-commit. SLSA v1.1 was
+  checked only as a retired historical page because the official v1.1 page
+  points readers to v1.2 as the current version.
 - Historical source notes: 2026-07-04 CI/formatting refresh and 2026-07-02
   broader SDLC/supply-chain research remain part of this reference history.
 - Refresh trigger: spec lifecycle, CI workflow, QA gate, formatting,
@@ -201,9 +203,11 @@ descriptive reference material, not active policy changes.
   dependency-review action can enforce checks in GitHub Actions. The current CI
   workflow does not run dependency-review-action; the current pre-commit matrix
   validates Dependabot config but is not a Dependency Review replacement.
-- **SLSA provenance/attestation**: SLSA spec v1.1 describes levels for
-  improving supply-chain security and includes recommended attestation formats,
-  including provenance. The current CI workflow does not build or publish
+- **SLSA provenance/attestation**: SLSA spec v1.2 is the current official
+  specification for describing and incrementally improving supply-chain
+  security through levels, tracks, and recommended attestation formats,
+  including provenance. The v1.1 page is retired and retained here only as
+  historical context. The current CI workflow does not build or publish
   artifacts and does not emit SLSA provenance/attestation. Future build,
   container, chart, or release pipelines should route provenance decisions to
   the owning spec/plan/workflow and keep repo-static evidence separate from
@@ -382,7 +386,9 @@ SDLC/supply-chain source history is preserved above for continuity:
   <https://csrc.nist.gov/pubs/sp/800/218/final>
 - NIST SP 800-204D:
   <https://csrc.nist.gov/pubs/sp/800/204/d/final>
-- SLSA spec v1.1:
+- SLSA spec v1.2:
+  <https://slsa.dev/spec/v1.2/>
+- SLSA spec v1.1 retired historical page:
   <https://slsa.dev/spec/v1.1/>
 - OpenSSF Scorecard:
   <https://scorecard.dev/>

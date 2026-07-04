@@ -50,7 +50,7 @@ runtimes, credentials, secret values, or third-party systems.
 | WER-004 | Refresh harness, loop, and provider references | doc | VAL-SPC-004, VAL-SPC-005 | Task 4 | Official or primary source checks and provider-boundary review | platform | Done |
 | WER-005 | Refresh SDLC/CI/QA/formatting/security reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 5 | SDLC, CI/CD, QA, formatting, security, supply-chain, and workflow coverage | platform | Done |
 | WER-006 | Add Kubernetes, infrastructure, and security reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 6 | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security coverage | platform | Todo |
-| WER-007 | Close indexes, task evidence, progress, and validation | doc | VAL-SPC-002, VAL-SPC-006, VAL-SPC-007 | Task 7 | Index closure, stale-link scans, final validation, and no-mutation handoff | platform | Todo |
+| WER-007 | Add automation, pipeline, workflow, and QA reference; close indexes and validation | doc | VAL-SPC-002, VAL-SPC-004, VAL-SPC-006, VAL-SPC-007 | Task 7 | Automation reference coverage, index closure, stale-link scans, final validation, and no-mutation handoff | platform | Todo |
 
 ## Suggested Types
 
@@ -81,7 +81,8 @@ runtimes, credentials, secret values, or third-party systems.
 - [x] WER-004 harness, loop, and provider reference refresh.
 - [x] WER-005 SDLC/CI/QA/formatting/security reference refresh.
 - [ ] WER-006 Kubernetes, infrastructure, and security reference.
-- [ ] WER-007 final index, evidence, progress, and validation closure.
+- [ ] WER-007 automation, pipeline, workflow, QA reference plus final index,
+  evidence, progress, and validation closure.
 
 ## Baseline Evidence Summary
 
@@ -374,8 +375,9 @@ Summary:
 - Refreshed official/primary source coverage for GitHub Actions workflow
   syntax, GitHub Actions secure use, GitHub Code scanning/CodeQL concepts,
   GitHub Dependency Review, GitHub Spec Kit, NIST SSDF SP 800-218, NIST
-  SP 800-204D, SLSA spec v1.1, OpenSSF Scorecard, Prettier, EditorConfig,
-  CommonMark 0.31.2, YAML 1.2.2, markdownlint, and pre-commit.
+  SP 800-204D, SLSA spec v1.2, OpenSSF Scorecard, Prettier, EditorConfig,
+  CommonMark 0.31.2, YAML 1.2.2, markdownlint, and pre-commit. SLSA v1.1 was
+  checked as a retired historical page only.
 - Added security and supply-chain findings for least-privilege workflow
   permissions, the GitHub Actions secrets boundary, Dependency Review,
   CodeQL/code scanning, SLSA provenance/attestation, and OpenSSF Scorecard
