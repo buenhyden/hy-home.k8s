@@ -8,6 +8,62 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-04 - Workspace engineering research pack WER-004 harness loop provider refresh
+
+- **Date**: 2026-07-04
+- **Layer**: docs, research, governance, qa
+- **Status**: complete
+- **Tags**: #docs #research #harness #providers #validation #stage-90
+
+#### Progress
+
+- Completed WER-004 for the
+  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+- Refreshed the dated `harness-and-loop-engineering.md` reference with
+  2026-07-04 metadata, official/primary source groups, provider agent-loop
+  docs freshness triggers, common environment/rule-system construction,
+  workspace application requirements, MCP/tool-boundary implications, and
+  non-authoritative market-scan boundaries.
+- Refreshed the dated `provider-implementation-status.md` reference with
+  2026-07-04 metadata, Claude/Codex/Gemini implementation status, common
+  environment/rule/system construction, upstream capability versus repo
+  implementation status, and limitations where official sources do not prove
+  provider parity.
+
+#### Memory
+
+- WER provider comparisons must separate upstream capability from local adapter
+  implementation. Similar nouns such as hooks, skills, agents, rules, MCP, or
+  evals do not prove identical enforcement across Claude, Codex, and Gemini.
+- Gemini Code Assist remains a freshness trigger, but no fresh Code Assist
+  agent-mode parity claim should be made from this WER-004 source set.
+- `.codex/hooks.json` and `.agents/hooks.json` remain context/validation
+  wiring in this repo; they must not be described as Claude-style permission
+  gates.
+
+#### Evidence
+
+- Official/primary source groups checked: OpenAI/Codex docs and OpenAI
+  harness/agent-loop articles; Anthropic Claude Code settings, hooks,
+  subagents, skills, and MCP; Gemini CLI repository/docs tree; Google Cloud
+  ADK and ADK site; MCP 2025-06-18 specification and MCP Security Best
+  Practices.
+- Required WER-004 reference scan - PASS; 214 matching lines across the
+  refreshed harness/loop and provider references confirmed `Source checked:
+  2026-07-04`, `Review and Freshness`, official provider source coverage, MCP
+  coverage, Google/ADK coverage, `non-authoritative` market-scan language, and
+  provider-boundary wording.
+- `git diff --check` - PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+
+#### Handoff
+
+- WER-004 is complete and ready for WER-005 follow-up work on
+  SDLC/CI/QA/formatting and automation references.
+- No live Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider runtime,
+  credential, secret-value, paid-job, publishing, merge, push, or third-party
+  mutation was performed.
+
 ### 2026-07-04 - Workspace engineering research pack WER-003 governance baseline refresh
 
 - **Date**: 2026-07-04

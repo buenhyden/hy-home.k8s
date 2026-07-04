@@ -3,7 +3,7 @@ title: 'Reference: Harness and Loop Engineering Research'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-02
+updated: 2026-07-04
 ---
 
 # Reference: Harness and Loop Engineering Research
@@ -11,9 +11,10 @@ updated: 2026-07-02
 ## Overview
 
 This reference summarizes harness engineering and loop engineering patterns for
-agentic software work, using official OpenAI, Anthropic, MCP, and repo-backed
-sources checked on 2026-07-02. It maps those patterns back to the local
-`hy-home.k8s` four-element harness model without redefining active governance.
+agentic software work, using official OpenAI/Codex, Anthropic/Claude Code,
+Google/Gemini, MCP, and repo-backed sources checked on 2026-07-04. It maps
+those patterns back to the local `hy-home.k8s` four-element harness model
+without redefining active governance.
 
 This is durable reference material. It should help future agents and
 maintainers reason about instruction surfaces, constraints, feedback loops,
@@ -33,8 +34,8 @@ follow-up work in the canonical owner documents.
 ## Reference Type
 
 - Type: durable-concept / external-standard-snapshot
-- Source checked: 2026-07-02
-- Refresh trigger: provider agent-loop changes, MCP spec/security changes,
+- Source checked: 2026-07-04
+- Refresh trigger: provider agent-loop docs changes, MCP/security changes,
   harness catalog changes, validation-loop changes, or research pack structure
   changes.
 
@@ -42,7 +43,7 @@ follow-up work in the canonical owner documents.
 
 - **Authoritative for**:
   - Source-attributed definitions and dated reference findings checked on
-    2026-07-02.
+    2026-07-04.
   - Mapping external harness, loop, eval, and MCP concepts to the local
     repository's current reference model.
   - Checklist-level follow-up routing to canonical repo owners.
@@ -59,8 +60,9 @@ follow-up work in the canonical owner documents.
 
 - Covers harness engineering elements, loop engineering elements, feedback and
   eval loops, review-loop implications, MCP/tool boundary implications,
-  non-authoritative market scan findings, workspace application requirements,
-  and implementation checklist items.
+  common environment/rule-system construction, non-authoritative market scan
+  findings, workspace application requirements, and implementation checklist
+  items.
 - Excludes changes to Stage 00 governance, provider adapters, CI workflows,
   validation scripts, task workflow policy, live cluster procedure, and
   third-party resources.
@@ -95,8 +97,14 @@ model in [harness-catalog.md](../../../00.agent-governance/harness-catalog.md):
 OpenAI's harness engineering guidance emphasizes repo-local knowledge as the
 system of record, progressive disclosure instead of one giant instruction file,
 mechanical checks for architecture and documentation, and feedback-driven
-garbage collection when drift appears. Those points reinforce this workspace's
-thin-gateway, template-first, validation-backed model.
+garbage collection when drift appears. The 2026-07-04 official-source review
+adds provider-specific implementation surfaces to the same pattern: Codex
+documents `AGENTS.md`, rules, hooks, skills, subagents, sandboxing, approvals,
+and MCP; Claude Code documents settings, hooks, subagents, skills, and MCP;
+Gemini CLI documents `GEMINI.md`, tools, MCP, extensions, and terminal-agent
+automation; Google ADK documents a broader multi-agent/evaluation framework.
+Those points reinforce this workspace's thin-gateway, template-first,
+validation-backed model.
 
 ### Loop engineering elements
 
@@ -121,10 +129,25 @@ agents, the main output can be changed files or executed tool actions rather
 than only a chat response, so context-window management, tool-result handling,
 and termination criteria become loop responsibilities.
 
-OpenAI's agent improvement loop example adds a meta-loop: collect traces, attach
-human/model feedback, turn feedback into evals, and use the evidence to propose
-the next harness changes. In this repository, that meta-loop should route actual
-changes to canonical owners rather than embedding policy in this reference.
+The checked provider documentation adds concrete loop surfaces around that
+concept: Codex documents CLI execution, sandboxing, approvals, hooks, rules,
+skills, subagents, and MCP; Claude Code documents settings, hooks, subagents,
+skills, and MCP; Gemini CLI and Google ADK document terminal-agent, context,
+MCP, multi-agent, tool, workflow, deployment, and evaluation surfaces. Those
+surfaces are inputs to local loop design, not proof that each provider enforces
+the same runtime controls.
+
+A useful local meta-loop is to collect task evidence, attach human or model
+feedback, turn repeated feedback into deterministic checks or eval criteria,
+and use the evidence to propose the next harness changes. In this repository,
+that meta-loop should route actual changes to canonical owners rather than
+embedding policy in this reference.
+
+The cross-provider control cycle checked on 2026-07-04 is therefore not just
+`prompt -> answer`. It is `instruction context -> constrained tool action ->
+observable evidence -> review/repair -> durable memory or contract update`.
+For this workspace, a loop is incomplete until the task record and validation
+summary say what was checked and which evidence lane it belongs to.
 
 ### Feedback and eval loops
 
@@ -150,6 +173,14 @@ Local implications are already implemented as Stage 04 task evidence,
 separate live-runtime evidence boundaries in the harness catalog and
 implementation map.
 
+Provider-loop implication: Claude can express more native blocking behavior
+through settings and hook decision control; Codex can combine sandbox modes,
+approval policies, rules, hooks, skills, subagents, and MCP; Gemini CLI exposes
+terminal-agent tooling, MCP, context, and automation, while Google ADK provides
+multi-agent and evaluation primitives outside this repo's local CLI mirror.
+Local documentation must keep those capabilities separate from this checkout's
+implemented adapter wiring.
+
 ### Worktree/subagent/review-loop implications
 
 OpenAI's harness engineering post highlights isolated worktrees, local app
@@ -167,6 +198,9 @@ that pattern conservatively through its existing contracts:
   repeat validation, and record evidence rather than silently broadening scope.
 - **Static validation evidence**: repo-static gates, diff checks, and task
   evidence are required before handoff. They do not prove live operations.
+- **Provider parity limits**: upstream provider docs can identify available
+  loop surfaces, but local parity still requires repo-backed adapter evidence
+  and must preserve each provider's native permission and hook semantics.
 - **Garbage collection**: repeated drift should update the smallest durable
   harness surface that would prevent recurrence, such as a rule, prompt/skill,
   hook, validator, template, README index, archive Tombstone, or memory entry.
@@ -197,6 +231,10 @@ Workspace implications:
 - **Token and scope risk**: broad scopes increase blast radius and hide intent.
   Scope minimization, precise elevation prompts, down-scoping tolerance, and
   audit logs are safer defaults.
+- **Provider-local configuration risk**: provider MCP configuration belongs to
+  the relevant trusted provider layer or managed configuration route. This
+  reference does not infer active MCP servers from a provider's upstream
+  support alone.
 
 This reference does not authorize adding or changing MCP servers. New or
 modified tools belong in the provider/runtime adapter, approval-boundary,
@@ -205,27 +243,34 @@ implementation map.
 
 ### Non-authoritative market scan
 
-The following findings are non-authoritative market scan material. They may
-inform terminology and future investigation, but they do not override official
-provider documentation, MCP specifications, or repo-backed contracts.
+The following findings are non-authoritative market scan material. They are
+synthesized from official/primary source surfaces checked on 2026-07-04 and
+repo-backed evidence. They may inform terminology and future investigation, but
+they do not override official provider documentation, MCP specifications, or
+repo-backed contracts.
 
-- Agent-loop terminology in June/July 2026 increasingly separates a single
-  agent harness from the higher-level loop that schedules work, assigns agents,
-  verifies outputs, writes memory, and chooses the next task.
-- Vendor and practitioner material clusters around worktrees, skills,
-  connectors or MCP, subagents, durable memory, traces, evals, observability,
-  and explicit stop/verify criteria.
-- LangChain's harness article reports a common failure pattern: agents build,
-  reread their own work, and stop before running meaningful tests. Their
-  proposed repair pattern is plan, build, verify, fix, with middleware forcing a
-  pre-completion verification pass.
-- MLflow market material frames production agents as distributed systems work:
-  architecture, runtime governance, observability, security, tracing, evals, and
-  drift monitoring matter more than prompt quality alone.
-- MCP security researchers outside the official spec ecosystem highlight tool
-  poisoning, shadowing, and rug-pull risks where natural-language tool metadata
-  or later server updates steer an agent toward exfiltration or unauthorized
-  action. Treat these as threat-intel signals, not canonical protocol text.
+- The provider landscape is converging on five repeated harness primitives:
+  persistent instruction files, tool/MCP integrations, reusable skills or
+  commands, subagents or multi-agent delegation, and lifecycle feedback through
+  hooks, approvals, evals, or review loops.
+- OpenAI/Codex is market-positioned around repo-local harness engineering,
+  `AGENTS.md`, sandboxing, approvals, hooks, rules, skills, subagents, MCP,
+  worktrees, and explicit agent-loop termination criteria.
+- Anthropic/Claude Code is market-positioned around project/user/managed
+  settings, native hook decision control, subagent context isolation, skills,
+  MCP server scoping, and permission policy layers.
+- Google/Gemini is split across Gemini CLI as a terminal-first coding agent
+  with `GEMINI.md`, tools, MCP, automation, extensions, and ADK as a broader
+  framework for multi-agent orchestration, evaluation, deployment, and
+  enterprise-scale agent systems.
+- MCP has become the common integration vocabulary across all three provider
+  families, but the official MCP spec and security guidance emphasize consent,
+  untrusted tool metadata, explicit authorization, token audience separation,
+  and SSRF/local-server risks.
+- The practical market gap for this repository is provider parity illusion:
+  similar nouns such as hooks, skills, agents, or MCP do not mean identical
+  enforcement. The local system should build a common contract, provider
+  adapters, and repeatable evidence instead of asserting runtime equivalence.
 
 ### Workspace application requirements
 
@@ -242,11 +287,18 @@ these requirements:
 - Keep reference material descriptive and dated; route behavior changes to
   Stage 00, Stage 03, Stage 04, Stage 05, scripts, templates, or provider
   adapters.
+- Keep the common provider environment as `canonical core + provider adapter +
+  validation evidence`: Stage 00 owns rules and harness contracts, root shims
+  route providers into that core, `.agents/**` owns shared assets, and
+  provider-native files express only the runtime-specific adapter syntax.
 - Keep external tools read-only by default unless the user approves a specific
   external mutation, push, publish, merge, credential change, paid job, or
   third-party resource change.
 - Keep market scan findings labeled non-authoritative.
 - Keep repo-static, CI/toolchain, and live-runtime evidence lanes separate.
+- Keep upstream provider capability claims separate from the repo's adapter
+  implementation status, especially when a provider documents a broad agent
+  framework but the local adapter only exposes a mirrored behavioral contract.
 
 ### Implementation checklist
 
@@ -266,7 +318,7 @@ these requirements:
 - Route validation-loop or repo-static evidence changes to `scripts/**`,
   `.github/workflows/ci.yml`, Stage 04 task evidence, and the CI/CD QA guide.
 - Route new research-pack status and validation evidence to
-  [Workspace Harness Research Pack Task](../../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md).
+  [Workspace Engineering Research Pack Task](../../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
 - Route durable progress/memory updates to
   `docs/00.agent-governance/memory/progress.md` when the active task write
   scope includes that file.
@@ -276,13 +328,40 @@ these requirements:
 
 ## Sources
 
-Official and primary external sources, checked 2026-07-02:
+Official and primary external sources, checked 2026-07-04:
 
+OpenAI/Codex:
+
+- [Codex documentation home](https://developers.openai.com/codex/)
+- [Codex CLI](https://developers.openai.com/codex/cli/)
+- [Codex configuration reference](https://developers.openai.com/codex/config-reference/)
+- [Codex agent approvals and security](https://developers.openai.com/codex/agent-approvals-security/)
+- [Codex sandboxing](https://developers.openai.com/codex/concepts/sandboxing/)
+- [Codex MCP](https://developers.openai.com/codex/mcp/)
+- [Codex subagents](https://developers.openai.com/codex/subagents/)
+- [Codex hooks](https://developers.openai.com/codex/hooks/)
+- [Codex skills](https://developers.openai.com/codex/skills/)
+- [Codex rules](https://developers.openai.com/codex/rules/)
 - [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
 - [OpenAI: Unrolling the Codex agent loop](https://openai.com/index/unrolling-the-codex-agent-loop/)
-- [OpenAI Cookbook: Build an Agent Improvement Loop with Traces, Evals, and Codex](https://developers.openai.com/cookbook/examples/agents_sdk/agent_improvement_loop)
-- [Anthropic: Building Effective AI Agents](https://www.anthropic.com/research/building-effective-agents)
-- [Anthropic: Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)
+
+Anthropic Claude Code:
+
+- [Claude Code settings](https://code.claude.com/docs/en/settings)
+- [Claude Code hooks](https://code.claude.com/docs/en/hooks)
+- [Claude Code subagents](https://code.claude.com/docs/en/sub-agents)
+- [Claude Code skills](https://code.claude.com/docs/en/skills)
+- [Claude Code MCP](https://code.claude.com/docs/en/mcp)
+
+Google/Gemini/ADK:
+
+- [Gemini CLI repository](https://github.com/google-gemini/gemini-cli)
+- [Gemini CLI docs tree](https://github.com/google-gemini/gemini-cli/tree/main/docs)
+- [Google Cloud Agent Development Kit page](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/adk)
+- [ADK site](https://adk.dev/)
+
+MCP:
+
 - [Model Context Protocol Specification, version 2025-06-18](https://modelcontextprotocol.io/specification/2025-06-18)
 - [Model Context Protocol Security Best Practices](https://modelcontextprotocol.io/docs/tutorials/security/security_best_practices)
 
@@ -292,22 +371,21 @@ Repo-backed sources:
 - [Harness Implementation Map](../../../00.agent-governance/harness-implementation-map.md)
 - [Subagent Protocol](../../../00.agent-governance/subagent-protocol.md)
 - [Workspace Governance Baseline Research](workspace-governance-baseline.md)
-- [Workspace Harness Research Pack Spec](../../../03.specs/009-workspace-harness-research-pack/spec.md)
-- [Workspace Harness Research Pack Plan](../../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md)
-- [Workspace Harness Research Pack Task](../../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
+- [Workspace Engineering Research Pack Spec](../../../03.specs/017-workspace-engineering-research-pack/spec.md)
+- [Workspace Engineering Research Pack Plan](../../../04.execution/plans/2026-07-04-workspace-engineering-research-pack.md)
+- [Workspace Engineering Research Pack Task](../../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md)
 
-Non-authoritative market scan sources, checked 2026-07-02:
+Market scan:
 
-- [Addy Osmani: Loop Engineering](https://addyosmani.com/blog/loop-engineering/)
-- [LangChain: Improving Deep Agents with harness engineering](https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering)
-- [MLflow: Building Production-Ready AI Agents in 2026](https://mlflow.org/articles/building-production-ready-ai-agents-in-2026/)
-- [Invariant Labs: MCP Security Notification: Tool Poisoning Attacks](https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks)
+- None used as authority. The non-authoritative market scan above is a
+  synthesis of the official/provider and repo-backed source set checked on
+  2026-07-04.
 
 ## Review and Freshness
 
 - Review cadence: on source change
-- Last reviewed: 2026-07-02
-- Next review trigger: provider agent-loop changes, MCP spec/security changes,
+- Last reviewed: 2026-07-04
+- Next review trigger: provider agent-loop docs changes, MCP/security changes,
   harness catalog changes, validation-loop changes, research pack structure
   changes, or repeated drift in task/review/evidence loops.
 
@@ -316,9 +394,9 @@ Non-authoritative market scan sources, checked 2026-07-02:
 - **Parent research README**: [README.md](../README.md)
 - **Parent references README**: [90.references README](../../README.md)
 - **Workspace baseline**: [Workspace Governance Baseline Research](workspace-governance-baseline.md)
-- **Spec**: [Workspace Harness Research Pack Spec](../../../03.specs/009-workspace-harness-research-pack/spec.md)
-- **Plan**: [Workspace Harness Research Pack Plan](../../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md)
-- **Task**: [Workspace Harness Research Pack Task](../../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md)
+- **Spec**: [Workspace Engineering Research Pack Spec](../../../03.specs/017-workspace-engineering-research-pack/spec.md)
+- **Plan**: [Workspace Engineering Research Pack Plan](../../../04.execution/plans/2026-07-04-workspace-engineering-research-pack.md)
+- **Task**: [Workspace Engineering Research Pack Task](../../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md)
 - **Harness catalog**: [Local Harness Catalog](../../../00.agent-governance/harness-catalog.md)
 - **Implementation map**: [Harness Implementation Map](../../../00.agent-governance/harness-implementation-map.md)
 - **Subagent protocol**: [Subagent Protocol](../../../00.agent-governance/subagent-protocol.md)

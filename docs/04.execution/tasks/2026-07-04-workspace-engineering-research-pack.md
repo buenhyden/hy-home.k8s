@@ -47,7 +47,7 @@ runtimes, credentials, secret values, or third-party systems.
 | WER-001 | Create Stage 04 task evidence and baseline inventory | doc | VAL-SPC-001, VAL-SPC-006, VAL-SPC-007 | Task 1 | Baseline scans recorded; `git diff --check`; `bash scripts/validate-repo-quality-gates.sh .` | platform | Done |
 | WER-002 | Scaffold dated pack and move existing flat references | doc | VAL-SPC-001, VAL-SPC-002 | Task 2 | `git mv` evidence, stale flat-link scan, repo-quality gate | platform | Done |
 | WER-003 | Refresh workspace governance baseline | doc | VAL-SPC-003, VAL-SPC-004 | Task 3 | Required reference sections and repo-first evidence coverage | platform | Done |
-| WER-004 | Refresh harness, loop, and provider references | doc | VAL-SPC-004, VAL-SPC-005 | Task 4 | Official or primary source checks and provider-boundary review | platform | Todo |
+| WER-004 | Refresh harness, loop, and provider references | doc | VAL-SPC-004, VAL-SPC-005 | Task 4 | Official or primary source checks and provider-boundary review | platform | Done |
 | WER-005 | Refresh SDLC/CI/QA/formatting and add automation reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 5 | SDLC, CI/CD, QA, formatting, automation, pipeline, and workflow coverage | platform | Todo |
 | WER-006 | Add Kubernetes, infrastructure, and security reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 6 | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security coverage | platform | Todo |
 | WER-007 | Close indexes, task evidence, progress, and validation | doc | VAL-SPC-002, VAL-SPC-006, VAL-SPC-007 | Task 7 | Index closure, stale-link scans, final validation, and no-mutation handoff | platform | Todo |
@@ -78,7 +78,7 @@ runtimes, credentials, secret values, or third-party systems.
 
 - [x] WER-002 move/scaffold commit.
 - [x] WER-003 workspace governance baseline refresh.
-- [ ] WER-004 harness, loop, and provider reference refresh.
+- [x] WER-004 harness, loop, and provider reference refresh.
 - [ ] WER-005 SDLC/CI/QA/formatting refresh and automation reference.
 - [ ] WER-006 Kubernetes, infrastructure, and security reference.
 - [ ] WER-007 final index, evidence, progress, and validation closure.
@@ -288,6 +288,73 @@ Summary:
   `Definitions / Facts`, `Sources`, `Review and Freshness`, and
   `Related Documents`.
 
+## WER-004 Evidence Summary
+
+### Harness, Loop, and Provider Reference Refresh
+
+- Refreshed
+  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md`
+  with `updated: 2026-07-04`, `Source checked: 2026-07-04`, provider
+  agent-loop docs freshness triggers, workspace requirements, environment/rule
+  implications, MCP/tool boundaries, the non-authoritative market scan label,
+  and the implementation checklist routed to the current WER task.
+- Refreshed
+  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/provider-implementation-status.md`
+  with `updated: 2026-07-04`, `Source checked: 2026-07-04`, upstream
+  capability versus repo implementation status, common environment/rule/system
+  construction, provider-specific implementation status, and explicit unknowns
+  where official sources do not prove parity.
+- Preserved authority boundaries: these references remain descriptive Stage 90
+  material and do not redefine active governance, provider runtime
+  permissions, hook enforcement, CI semantics, subagent dispatch procedure, or
+  live operations.
+
+### Official and Primary Source Groups Checked
+
+- OpenAI/Codex: Codex docs home, CLI, config reference, agent approvals and
+  security, sandboxing, MCP, subagents, hooks, skills, rules, OpenAI harness
+  engineering article, and OpenAI Codex agent-loop article.
+- Anthropic Claude Code: settings, hooks, subagents, skills, and MCP.
+- Google/Gemini/ADK: Gemini CLI repository, Gemini CLI docs tree, Google Cloud
+  ADK page, and ADK site.
+- MCP: Model Context Protocol 2025-06-18 specification and MCP Security Best
+  Practices.
+- Repo-backed sources: Stage 00 harness catalog, harness implementation map,
+  provider notes, runtime baselines, hook wiring, reference template, research
+  README, and this task record.
+
+### Limitations
+
+- Gemini Code Assist is retained as a freshness trigger, but the WER-004
+  required source group did not include Code Assist agent-mode pages; no fresh
+  Code Assist parity claim is made.
+- Gemini CLI native hook/permission parity with Claude Code was not verified
+  from the required official sources.
+- Codex rules remain an upstream capability marked experimental in the checked
+  official docs; repo-local `.codex/hooks.json` remains context/validation
+  wiring, not a Claude-style permission gate.
+- `.codex/config.toml` is an upstream/trusted-project capability, but no
+  tracked `.codex/config.toml` exists in this checkout.
+- Static validation is repo correctness evidence only and does not prove live
+  Kubernetes, Vault, cloud, provider runtime, secret, or deployment readiness.
+
+### WER-004 Validation Scan
+
+Command:
+
+```bash
+rg -n "Claude|Codex|Gemini|OpenAI|Anthropic|Google|ADK|MCP|non-authoritative|Source checked: 2026-07-04|Review and Freshness" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md docs/90.references/research/2026-07-04-workspace-engineering-research-pack/provider-implementation-status.md
+```
+
+Summary:
+
+- PASS; command completed successfully.
+- The scan returned 214 lines and confirmed both refreshed references include
+  `Source checked: 2026-07-04`, `Review and Freshness`, official provider
+  source group coverage, MCP coverage, Google/ADK coverage,
+  `non-authoritative` market-scan language, and provider-specific boundary
+  wording.
+
 ## Verification Summary
 
 | Date | Scope | Command | Result |
@@ -303,6 +370,9 @@ Summary:
 | 2026-07-04 | WER-003 required heading scan | `rg -n "^## (Overview\|Purpose\|Reference Type\|Authority Boundary\|Scope\|Definitions / Facts\|Sources\|Review and Freshness\|Related Documents)$" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md` | PASS; all required reference headings present. |
 | 2026-07-04 | WER-003 formatting | `git diff --check` | PASS. |
 | 2026-07-04 | WER-003 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
+| 2026-07-04 | WER-004 reference scan | Required WER-004 `rg` scan listed above | PASS; 214 matching lines across the refreshed harness/loop and provider references. |
+| 2026-07-04 | WER-004 formatting | `git diff --check` | PASS. |
+| 2026-07-04 | WER-004 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
 
 Tooling limitation:
 
@@ -319,6 +389,8 @@ Boundary statement:
   local validation, local staging, and a local commit only.
 - WER-003 performed repository reads, documentation edits, local validation,
   local staging, and a local commit only.
+- WER-004 performed read-only official/primary web source checks, repository
+  reads, documentation edits, and local validation only before commit.
 - No live Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider runtime,
   credential, secret-value, paid-job, publishing, merge, push, or third-party
   mutation was performed.
