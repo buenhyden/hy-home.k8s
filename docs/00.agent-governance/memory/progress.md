@@ -7280,3 +7280,53 @@ section separating static from live evidence.
 
 - The branch is ready for final branch status review and local main merge when
   requested.
+
+## 2026-07-04 - Active control surface hardening baseline
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: governance, ci, qa, gitops, validation
+- **Status**: completed
+- **Tags**: #governance #ci #qa #gitops #validation
+
+### Progress
+
+- Created the Stage 04 task record for Active Control Surface Governance
+  Hardening and linked it to the approved parent plan and spec.
+- Captured baseline active control-surface inventory across `.github`,
+  `examples/sample-app`, `gitops`, `infrastructure`, `policy`, `scripts`,
+  `tests`, and `traefik`.
+- Captured AWS/Azure cloud example Markdown inventory as snapshot-bounded
+  evidence, not active provider-latest guidance.
+- Classified active GitHub-native controls, common README entrypoints,
+  `sample-app` onboarding template material, and the `examples/README.md`
+  snapshot boundary index.
+
+### Memory
+
+- AWS/Azure cloud example docs remain dated Cloud Example Snapshot material.
+  Active hardening work should update routing, validators, and support
+  contracts around those examples without promoting the snapshot docs into
+  live provider-latest guidance.
+
+### Evidence
+
+- `rg --files .github examples/sample-app gitops infrastructure policy scripts tests traefik | sort`
+  returned 135 active control-surface files.
+- `rg --files examples/aws/docs examples/azure/docs | rg '\.md$' | sort`
+  returned 59 snapshot Markdown files: 26 AWS and 33 Azure.
+- `rg -n "^# |^## " .github examples/README.md examples/sample-app/README.md gitops infrastructure scripts tests traefik -g '*.md'`
+  returned 118 heading-pattern matches across 11 Markdown files.
+- `rg -n "GitHub Actions|workflow|CI|QA|GitOps|Argo CD|Argo Rollouts|ExternalSecret|Secret|Kustomize|conftest|kube-linter|Cloud Example Snapshot|provider-latest|live provider" .github examples gitops infrastructure policy scripts tests traefik docs/99.templates/support docs/00.agent-governance/rules`
+  returned 523 contract-candidate matches across active controls,
+  governance/support owners, and snapshot examples.
+- `git diff --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS with
+  `[PASS] repository quality gates passed`.
+
+### Result
+
+- ACS-001 is complete: the task record was created, the Stage 04 tasks index
+  was updated, baseline evidence was recorded, and the snapshot boundary is
+  locked for follow-on ACS tasks.
