@@ -7192,3 +7192,46 @@ section separating static from live evidence.
 
 - T-003 is complete after validation. Next action is T-004: align GitHub, QA,
   CI/CD, and protected-surface enforcement.
+
+## 2026-07-04 — Agent Governance Contract Normalization T-004
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: meta, qa, ci, security
+- **Status**: completed
+- **Tags**: #governance #github #qa #ci #protected-surface #validation
+
+### Progress
+
+- Added concise protected-surface routing to `.github/SECURITY.md` so
+  vulnerability reports do not include secrets and route secret-handling
+  boundaries to `approval-boundaries.md`.
+- Clarified in `quality-standards.md` and `approval-boundaries.md` that GitHub
+  Actions is provider-agnostic QA/CI, not live deployment CD or proof of live
+  runtime readiness.
+- Left `.github/workflows/ci.yml` and `scripts/validate-repo-quality-gates.sh`
+  unchanged because existing deterministic coverage already checks
+  frontmatter-free GitHub Markdown, branch-prefix/coverage wording, workflow
+  YAML, and hook JSON boundaries.
+
+### Memory
+
+- Keep GitHub control files GitHub-native and frontmatter-free. Durable
+  protected-surface policy belongs in Stage 00, while `.github` files route to
+  that policy and CI validates repository-static evidence.
+
+### Evidence
+
+- `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
+  `.github/SECURITY.md` frontmatter-free check PASS.
+- GitHub workflow YAML parse PASS with `workflow-yaml-ok`.
+- `git diff --check` PASS.
+- `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS with
+  `[PASS] repository quality gates passed`.
+
+### Handoff
+
+- T-004 is complete after validation. Next action is T-005: final validation
+  and handoff closure.

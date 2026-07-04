@@ -17,4 +17,9 @@ If you discover a security vulnerability within this project, please follow thes
 2. Contact the maintainer directly through the repository owner profile or an existing private maintainer channel.
 3. Provide a detailed description of the vulnerability and steps to reproduce.
 
+Do not include secret values, Vault tokens, private keys, or credential
+material in reports. Secret-handling and protected-surface boundaries are
+routed through
+[`docs/00.agent-governance/rules/approval-boundaries.md`](../docs/00.agent-governance/rules/approval-boundaries.md).
+
 We will acknowledge receipt of your report within 48 hours and provide a timeline for resolution if the vulnerability is confirmed.

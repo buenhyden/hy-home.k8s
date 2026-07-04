@@ -40,7 +40,7 @@ unit.
 | T-001 | Create execution task record and capture baseline drift inventory | doc | Contracts, Evaluation | PLN-001 | Baseline inventory commands, `git diff --check`, repo quality gate | platform | Done |
 | T-002 | Normalize Stage 00 canonical contract wording | doc | Contracts, Core Design | PLN-002 | Official source basis checked 2026-07-04, focused owner/drift scans, JSON/TOML parse checks, repo quality gate | platform | Done |
 | T-003 | Align provider adapter surfaces | doc | Data / Interface Contract, Governance Contract | PLN-003 | Root shim/runtime baseline checks, provider metadata scans, JSON/TOML parse checks, repo quality gate | platform | Done |
-| T-004 | Align GitHub, QA, CI/CD, and protected-surface enforcement | doc | Guardrails, Evaluation | PLN-004 | Frontmatter scans, workflow parse checks, gate/harness validation | platform | Todo |
+| T-004 | Align GitHub, QA, CI/CD, and protected-surface enforcement | doc | Guardrails, Evaluation | PLN-004 | Frontmatter scans, workflow parse checks, validator status, repo quality gate | platform | Done |
 | T-005 | Complete final review, evidence closure, and branch-readiness handoff | doc | Evaluation, Memory & Context Strategy | PLN-005 | Full validation bundle and final review evidence | platform | Todo |
 
 ## Suggested Types
@@ -66,7 +66,7 @@ unit.
 
 ### PLN-004
 
-- [ ] T-004 Align GitHub, QA, CI/CD, and protected-surface enforcement.
+- [x] T-004 Align GitHub, QA, CI/CD, and protected-surface enforcement.
 
 ### PLN-005
 
@@ -203,7 +203,42 @@ Checked on 2026-07-04:
 
 ### Next
 
-- T-004 remains Todo.
+- T-004 is tracked below.
+
+## T-004 Evidence
+
+### Files Changed
+
+- `.github/SECURITY.md`
+- `docs/00.agent-governance/rules/quality-standards.md`
+- `docs/00.agent-governance/rules/approval-boundaries.md`
+- `docs/04.execution/tasks/2026-07-04-agent-governance-contract-normalization.md`
+- `docs/00.agent-governance/memory/progress.md`
+
+### Findings
+
+- `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
+  `.github/SECURITY.md` remain frontmatter-free GitHub-native Markdown.
+- `.github/workflows/*.yml` parsed successfully with PyYAML.
+- `.github/SECURITY.md` now routes secret-handling and protected-surface
+  boundaries to the canonical approval-boundaries rule.
+- `quality-standards.md` and `approval-boundaries.md` explicitly separate
+  provider-agnostic QA/CI from live deployment CD and live runtime readiness.
+- Validator logic unchanged; existing repository quality gate coverage used.
+
+### Validation Commands
+
+- GitHub Markdown frontmatter-free check — PASS.
+- GitHub workflow YAML parse — PASS with `workflow-yaml-ok`.
+- `git diff --check` — PASS.
+- `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json` —
+  PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS, including
+  `[PASS] repository quality gates passed`.
+
+### Next
+
+- T-005 remains Todo.
 
 ## Related Documents
 

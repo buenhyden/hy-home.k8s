@@ -50,6 +50,10 @@ otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
 - ExternalSecret changes record only `remoteRef.key`, `property`, mount, and the
   `SecretStore` / `ClusterSecretStore` reference — never values.
 - GitHub Actions permission expansion is a protected surface.
+- GitHub Actions is provider-agnostic QA/CI, not live deployment CD. Workflow
+  changes must not add direct Kubernetes mutation, external Vault mutation,
+  container publishing, or commit-push behavior without an explicit governance
+  update and approval path.
 - AppProject wildcard scopes and `CreateNamespace=true` are forbidden and gated
   by `scripts/validate-policy-gates.sh`.
 - Live runtime evidence is separated from repo-static validation and is produced

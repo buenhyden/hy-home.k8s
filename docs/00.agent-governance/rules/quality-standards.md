@@ -15,6 +15,9 @@ Quality gates for governance and execution alignment.
 - Current Bash/YAML/Markdown infrastructure work uses validation-matrix coverage instead of fake numeric code coverage.
 - The validation matrix for this repository includes repository quality gates, GitOps structure checks, Kubernetes manifest syntax, static infrastructure contracts, secret handling scans, shell syntax, CI workflow checks, README/template checks, and explicit live-check limitations.
 - Repo-static, CI/toolchain, and live runtime readiness are separate evidence lanes. Do not present repository or CI validation as proof of live k3d, ArgoCD, Vault, ESO, deployment, or external-service health unless the matching live check was approved and run.
+- GitHub Actions is the provider-agnostic remote QA gate for this repository; it
+  is not live deployment CD and must not be used as evidence of live runtime
+  readiness without an approved live check.
 - Provider parity is validated as role parity plus evidence, not identical
   metadata keys. Claude, Gemini, and Codex adapters must preserve role, scope,
   guardrails, handoff, and postflight while using native metadata and
