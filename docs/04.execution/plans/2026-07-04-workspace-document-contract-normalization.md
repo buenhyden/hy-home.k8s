@@ -109,6 +109,7 @@ by the user:
 ### Task 1: Audit and Inventory Document Contract Drift
 
 **Files:**
+
 - Create: `docs/90.references/audits/2026-07-04-workspace-document-contract-normalization-audit.md`
 - Modify: `docs/90.references/audits/README.md`
 - Modify: `docs/04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md`
@@ -249,6 +250,7 @@ Expected:
 ### Task 2: Contract and Template Normalization
 
 **Files:**
+
 - Modify: `docs/99.templates/support/documentation-contract.md`
 - Modify: `docs/99.templates/support/frontmatter-schema.md`
 - Modify: `docs/99.templates/support/template-routing.md`
@@ -356,6 +358,7 @@ Expected:
 ### Task 3: Active SDLC Document Application
 
 **Files:**
+
 - Modify: `docs/01.requirements/**`
 - Modify: `docs/02.architecture/**`
 - Modify: `docs/03.specs/**`
@@ -466,6 +469,7 @@ Expected:
 ### Task 4: Historical Evidence Normalization
 
 **Files:**
+
 - Modify: `docs/98.archive/**`
 - Modify: older `docs/04.execution/plans/**`
 - Modify: older `docs/04.execution/tasks/**`
@@ -563,6 +567,7 @@ Expected:
 ### Task 5: References, CI/QA, and Formatting Alignment
 
 **Files:**
+
 - Modify: `docs/90.references/research/**`
 - Modify: `docs/90.references/data/**`
 - Modify: `docs/90.references/llm-wiki/**`
@@ -661,6 +666,7 @@ Expected:
 ### Task 6: Final Validator and Governance Reconciliation
 
 **Files:**
+
 - Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify as needed: `docs/00.agent-governance/**`
 - Modify as needed: `docs/99.templates/**`

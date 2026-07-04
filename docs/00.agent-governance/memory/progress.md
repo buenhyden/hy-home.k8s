@@ -6723,7 +6723,7 @@ section separating static from live evidence.
   `.github/SECURITY.md` should stay frontmatter-free because GitHub renders or
   consumes those files directly. Durable policy belongs in Stage 00, Stage 05,
   scripts, or workflow owners.
-- Required template headings are derived from literal `## ` headings in the
+- Required template headings are derived from literal `##` headings in the
   matched template. Placeholder and optional/if-applicable headings are not
   required coverage.
 - The memory `<topic>` route excludes `progress`; `progress.md` is the

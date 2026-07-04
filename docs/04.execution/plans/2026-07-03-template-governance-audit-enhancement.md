@@ -101,6 +101,7 @@ Current quick inspection shows three concrete improvement candidates:
 ### Task 1: Planning And Task Baseline
 
 **Files:**
+
 - Create: `docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md`
 - Create: `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
 - Modify: `docs/04.execution/plans/README.md`
@@ -172,6 +173,7 @@ git commit -m "docs(plan): Plan template governance audit enhancement"
 ### Task 2: Baseline Audit And Finding Ledger
 
 **Files:**
+
 - Modify: `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
 - Read: `docs/99.templates/**`
 - Read: `docs/00.agent-governance/rules/document-stage-routing.md`
@@ -244,6 +246,7 @@ Expected: both validation commands pass before commit.
 ### Task 3: Support Contract Remediation
 
 **Files:**
+
 - Modify: `docs/99.templates/support/README.md`
 - Modify: `docs/99.templates/support/frontmatter-schema.md`
 - Modify: `docs/99.templates/support/legacy-cleanup-rules.md`
@@ -330,6 +333,7 @@ git commit -m "docs(templates): Clarify current support contracts"
 ### Task 4: Validator Guardrail Enhancement
 
 **Files:**
+
 - Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify: `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
@@ -411,6 +415,7 @@ Expected: commit succeeds after validation evidence is recorded.
 ### Task 5: Authored Document And Template Use Audit
 
 **Files:**
+
 - Modify: `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
 - Modify only if a concrete finding exists: affected Stage README or authored
   document under `docs/00.agent-governance/**`, `docs/05.operations/**`,
@@ -469,6 +474,7 @@ creating an empty commit.
 ### Task 6: Final Validation And Completion Sync
 
 **Files:**
+
 - Modify: `docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md`
 - Modify: `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
 - Modify: `docs/04.execution/plans/README.md`

@@ -243,7 +243,7 @@ OpenAPI, GraphQL, proto 같은 계약 파일은 관련 `docs/03.specs/<feature-i
 - `openapi.template.yaml`, `schema.template.graphql`, `service.template.proto`는 형식상 YAML/GraphQL/proto 파일이므로 frontmatter 없이 owner comments와 parent API spec 링크로 추적성을 유지한다.
 - `memory.template.md`는 `docs/00.agent-governance/memory/<topic>.md` target family를 사용한다. 관련 progress 링크는 최종 memory 파일 위치 기준으로 계산한다.
 - `progress.template.md`는 `docs/00.agent-governance/memory/progress.md`에 append되는 entry 템플릿이다. entry 안의 링크는 `docs/00.agent-governance/memory/` 기준으로 계산한다.
-- Required template headings는 template 파일의 literal `## ` heading에서
+- Required template headings는 template 파일의 literal `##` heading에서
   계산하며, placeholder가 있거나 optional/if-applicable로 표시된 heading은
   필수 heading에서 제외한다.
 

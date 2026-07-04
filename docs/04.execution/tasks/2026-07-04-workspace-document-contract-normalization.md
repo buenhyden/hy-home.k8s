@@ -142,7 +142,7 @@ Evidence:
   match the incident folder; `postmortem.md` remains in the same folder.
 - Clarified that `docs/00.agent-governance/memory/<topic>.md` excludes the
   reserved `progress.md` route.
-- Documented the required-heading extraction algorithm: literal `## `
+- Documented the required-heading extraction algorithm: literal `##`
   template headings are required unless they contain placeholders or are
   marked optional or if-applicable.
 - Updated `docs/00.agent-governance/hooks/k8s-pre-edit.sh` so mismatched

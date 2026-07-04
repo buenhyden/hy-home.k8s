@@ -75,7 +75,7 @@ location.
 ## Validation Rules
 
 - Required heading checks come from the matched template.
-- Required heading extraction uses literal `## ` headings from the template,
+- Required heading extraction uses literal `##` headings from the template,
   excluding headings that contain placeholders and headings marked optional or
   if-applicable.
 - Route checks must reject uncovered SDLC Markdown paths.
