@@ -6,7 +6,7 @@
 
 이 경로의 각 하위 디렉터리는 독립적인 앱 단위다. 일반적으로 Kustomize 기반 Kubernetes manifest, Argo Rollout, Service, Ingress, AnalysisTemplate을 함께 두며, secret-backed config가 필요한 앱만 ExternalSecret을 포함한다.
 
-새 앱은 [examples/sample-app](../../examples/sample-app/README.md)을 복사해 시작하고, placeholder를 실제 앱 값으로 바꾼 뒤 feature branch + PR flow로 반영한다.
+새 앱은 [examples/sample-app](../../examples/sample-app/README.md)을 복사해 시작한다. placeholder를 실제 앱 값으로 바꾼 뒤 `gitops/workloads/<appname>` 아래에서 GitOps/manifest/secret 검증을 통과해야 active GitOps desired state로 다룬다.
 
 ## Audience
 
@@ -57,7 +57,7 @@ handling 검증 명령을 명시하는지 확인한다.
 1. [examples/sample-app](../../examples/sample-app/README.md)의 파일 구성을 먼저 확인한다.
 2. 앱 이름, 이미지 태그, 포트, Vault 경로, ingress host를 실제 값으로 치환한다.
 3. `kustomization.yaml`에 모든 리소스가 포함되었는지 확인한다.
-4. 변경 후 `bash scripts/validate-gitops-structure.sh`와 `bash scripts/validate-k8s-manifests.sh .`를 실행한다.
+4. 변경 후 `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, `bash scripts/check-secret-handling.sh .`를 실행한다.
 
 ## Link Basis
 

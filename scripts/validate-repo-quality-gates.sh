@@ -520,6 +520,14 @@ else:
                 fail("examples/README.md sample-app role must identify the minimal local k3d onboarding template")
             if "../gitops/workloads/adminer/" not in source_of_truth:
                 fail("examples/README.md sample-app source of truth must point to ../gitops/workloads/adminer/")
+            for phrase in [
+                "../gitops/workloads/<appname>/",
+                "placeholder replacement",
+                "validation",
+                "active desired state",
+            ]:
+                if phrase not in source_of_truth:
+                    fail(f"examples/README.md sample-app source of truth missing activation phrase: {phrase}")
         else:
             if "Cloud Example Snapshot" not in source_of_truth:
                 fail(f"examples/README.md {example_path} source of truth must cite Cloud Example Snapshot")
@@ -555,6 +563,9 @@ for phrase in [
     "fuller active reference",
     "gitops/workloads/adminer/",
     "feature branch + PR flow",
+    "active GitOps desired state",
+    "remoteRef.key",
+    "secret values",
 ]:
     if phrase not in sample_app_readme:
         fail(f"examples/sample-app/README.md missing onboarding boundary phrase: {phrase}")
@@ -3963,6 +3974,14 @@ else:
 
 workloads_readme_path = gitops_dir / "workloads/README.md"
 workloads_readme = read_text(workloads_readme_path)
+for phrase in [
+    "examples/sample-app",
+    "gitops/workloads/<appname>",
+    "active GitOps desired state",
+    "check-secret-handling.sh",
+]:
+    if phrase not in workloads_readme:
+        fail(f"gitops/workloads/README.md missing onboarding activation phrase: {phrase}")
 expected_workload_header = [
     "Workload",
     "Purpose and owner",
@@ -4928,6 +4947,9 @@ for phrase in [
     "hy-home.docker external gateway container",
     "external Traefik dynamic config",
     "not a k3d GitOps desired-state failure",
+    "repo-static 검증은 route manifest 계약만 확인",
+    "live port availability",
+    "operator-owned runtime evidence",
 ]:
     if phrase not in normalized_traefik_readme:
         fail(f"traefik/README.md missing external gateway/serverlb boundary phrase: {phrase}")
@@ -5192,6 +5214,19 @@ for path in active_hook_reference_files:
         fail(f"{rel(path)} contains stale active hook path; use docs/00.agent-governance/hooks")
     if "docs/00.agent-governance/hooks" not in text:
         fail(f"{rel(path)} missing shared hook path docs/00.agent-governance/hooks")
+
+tests_readme_text = read_text(root / "tests/README.md")
+for phrase in [
+    "Repo-static",
+    "Optional tool",
+    "Live/operator-owned",
+    "SKIP",
+    "kube-linter",
+    "conftest",
+    "infrastructure/tests/run-all.sh",
+]:
+    if phrase not in tests_readme_text:
+        fail(f"tests/README.md missing validation evidence boundary phrase: {phrase}")
 
 for hook_path in [
     root / "docs/00.agent-governance/hooks/post-validate.sh",

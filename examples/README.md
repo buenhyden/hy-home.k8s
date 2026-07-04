@@ -80,13 +80,13 @@ examples/
 
 | Example path | Role | Active source of truth | Validation |
 | --- | --- | --- | --- |
-| `sample-app/` | Minimal local k3d GitOps onboarding template with placeholders. | Compare with `../gitops/workloads/adminer/` before copying patterns beyond Rollout, Service, Ingress, AnalysisTemplate, ExternalSecret, and Traefik dynamic config. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
+| `sample-app/` | Minimal local k3d GitOps onboarding template with placeholders. | Compare with `../gitops/workloads/adminer/` before copying patterns beyond Rollout, Service, Ingress, AnalysisTemplate, ExternalSecret, and Traefik dynamic config; it becomes active desired state only after copy to `../gitops/workloads/<appname>/`, placeholder replacement, and validation. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
 | `aws/` | Cloud migration reference snapshot for AWS. | `../docs/90.references/data/tech-stack-version-inventory.md` `Cloud Example Snapshot`; not live provider-latest guidance. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
 | `azure/` | Cloud migration reference snapshot for Azure. | `../docs/90.references/data/tech-stack-version-inventory.md` `Cloud Example Snapshot`; not live provider-latest guidance. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
 
 ## 사용 방법
 
-각 예시 디렉터리의 `README.md`를 참조한다. 새 앱 온보딩 시 `sample-app/`을 복사하여 플레이스홀더를 교체하는 것이 시작점이고, fuller active reference는 `gitops/workloads/adminer/`와 비교한다.
+각 예시 디렉터리의 `README.md`를 참조한다. 새 앱 온보딩 시 `sample-app/`은 active onboarding template으로 시작점 역할을 하며, 복사 후 플레이스홀더 교체와 검증을 마쳐야 `gitops/workloads/<appname>` active desired state로 다룬다. fuller active reference는 `gitops/workloads/adminer/`와 비교한다.
 
 ```bash
 cp -r examples/sample-app gitops/workloads/<appname>

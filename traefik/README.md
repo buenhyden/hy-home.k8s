@@ -23,6 +23,9 @@ Ingress NGINX는 2026-03-24 이후 upstream retired 상태이므로 cloud target
 - 이 디렉터리의 파일은 외부 Traefik dynamic config 참조 복사본이므로,
   live gateway 반영은 `hy-home.docker` 운영 절차에서 별도로 승인하고
   증적을 남긴다.
+- 이 저장소의 repo-static 검증은 route manifest 계약만 확인하며,
+  live port availability와 external gateway readiness는 operator-owned
+  runtime evidence로 분리한다.
 - `CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh`가
   실패하고 Docker에 외부 Traefik gateway 컨테이너가 없다면, 이는 k3d
   GitOps desired state 실패가 아니라 `hy-home.docker` gateway runtime 또는

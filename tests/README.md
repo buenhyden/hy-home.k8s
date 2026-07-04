@@ -48,18 +48,22 @@ tests/
 
 ## Validation Model
 
-| Area | Command |
-| --- | --- |
-| Repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` |
-| External service contracts | `bash infrastructure/tests/verify-contracts-static.sh` |
-| GitOps structure | `bash scripts/validate-gitops-structure.sh` |
-| Kubernetes manifests | `bash scripts/validate-k8s-manifests.sh .` |
-| Secret handling | `bash scripts/check-secret-handling.sh .` |
-| Shell syntax | `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +` |
+| Area | Command | Evidence class |
+| --- | --- | --- |
+| Repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` | Repo-static |
+| External service contracts | `bash infrastructure/tests/verify-contracts-static.sh` | Repo-static |
+| GitOps structure | `bash scripts/validate-gitops-structure.sh` | Repo-static |
+| Kubernetes manifests | `bash scripts/validate-k8s-manifests.sh .` | Repo-static with Optional tool `kube-linter` when installed |
+| Secret handling | `bash scripts/check-secret-handling.sh .` | Repo-static |
+| Policy gates | `bash scripts/validate-policy-gates.sh .` | Repo-static with Optional tool `conftest` when installed |
+| Shell syntax | `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +` | Repo-static |
+| Live runtime checks | `bash infrastructure/tests/run-all.sh` after approved bootstrap | Live/operator-owned |
 
 ## Evidence Boundaries
 
-- Repo/static 검증 통과는 live k3d 운영 검증 완료를 의미하지 않는다.
+- Repo-static 검증 통과는 live k3d 운영 검증 완료를 의미하지 않는다.
+- Optional tool 검증은 `kube-linter`나 `conftest`가 설치되어 실제 실행됐을 때만 해당 도구 coverage로 보고한다. 미설치 `SKIP`은 fallback 또는 syntax 검증 통과로 따로 기록한다.
+- Live/operator-owned 검증은 사람 승인 bootstrap 또는 break-glass 맥락에서만 실행하고, repo-static evidence와 섞어 보고하지 않는다.
 - `tests/`는 application coverage target의 canonical owner가 아니다. 신규
   testable application/source code는 해당 application test surface에서 90%
   coverage target을 검토하고, Bash/YAML/Markdown infrastructure 변경은

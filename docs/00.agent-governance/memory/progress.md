@@ -8,6 +8,63 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-04 — Active control surface hardening ACS-004 repo-static alignment
+
+- **Date**: 2026-07-04
+- **Layer**: qa, infra, docs
+- **Status**: complete
+- **Tags**: #governance #gitops #validation #readme #qa
+
+#### Progress
+
+- Completed ACS-004 for the active control surface governance hardening plan
+  and updated the
+  [Task evidence](../../04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md).
+- Aligned active README routing for scripts, GitOps, workloads, tests, Traefik,
+  examples, and sample-app onboarding while preserving the common README
+  profile and leaving AWS/Azure cloud example docs untouched.
+- Added small deterministic repo-quality invariants for sample-app activation,
+  workload onboarding, tests evidence-boundary wording, and Traefik live-port
+  boundary wording.
+
+#### Memory
+
+- Sample app material is an active onboarding template only until copied to
+  `gitops/workloads/<appname>`, placeholders are replaced, and repo-static
+  GitOps/manifest/secret validation passes.
+- Optional `kube-linter` and `conftest` absence must be reported as SKIP or
+  fallback evidence, not as full optional-tool coverage.
+- Traefik files in this repository are repo-static route manifest contracts;
+  live port availability and external gateway readiness remain operator-owned
+  runtime evidence.
+
+#### Evidence
+
+- Active README matrix/reference scan completed for scripts, GitOps,
+  workloads, infrastructure, tests, Traefik, examples, and sample-app.
+- README profile scan — PASS, no YAML frontmatter and no deprecated
+  related-heading variants.
+- `git diff --check` — PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `bash scripts/validate-gitops-structure.sh` — PASS.
+- `bash scripts/validate-k8s-manifests.sh .` — PASS; optional `kube-linter`
+  was not installed and YAML syntax validation passed.
+- `bash scripts/check-secret-handling.sh .` — PASS; no plaintext secret
+  patterns found.
+- `bash scripts/validate-policy-gates.sh .` — PASS; optional `conftest` was
+  not installed and the built-in policy fallback passed.
+- `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
+- RTK limitation repeated: `rtk` is not on PATH; `/home/hy/.local/bin/rtk
+  --version` works, but `/home/hy/.local/bin/rtk gain` cannot initialize its
+  tracking database, so required validation commands were run directly.
+
+#### Handoff
+
+- ACS-004 is complete. Continue with ACS-005 final evidence closure and branch
+  readiness review.
+- No live Kubernetes, Argo CD, Vault, cloud, external Traefik, publishing,
+  provider-runtime, push, merge, or secret-value action was performed.
+
 ### 2026-07-04 — Workspace document governance hardening Task 5 final validation
 
 - **Date**: 2026-07-04

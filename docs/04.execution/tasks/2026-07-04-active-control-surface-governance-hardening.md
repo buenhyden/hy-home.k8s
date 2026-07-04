@@ -44,7 +44,7 @@ examples as dated snapshots.
 | ACS-001 | Create task record and baseline active/snapshot inventory | doc | VAL-SPC-001, VAL-SPC-002 | Task 1 | Baseline scans, task record, tasks README, progress ledger, `git diff --check`, repo quality gate | platform | Done |
 | ACS-002 | Normalize Stage 99 and Stage 00 active-control contracts | doc | VAL-SPC-001, VAL-SPC-003 | Task 2 | README/GitHub-native/snapshot ownership scan, support/governance owner updates, progress ledger | platform | Done |
 | ACS-003 | Align GitHub, CI/CD, QA, and protected-surface control files | doc | VAL-SPC-001, VAL-SPC-003, VAL-SPC-004 | Task 3 | GitHub Markdown remains frontmatter-free, workflow YAML parses, repo quality gate | platform | Done |
-| ACS-004 | Align GitOps, infrastructure, policy, scripts, tests, Traefik, and sample-app surfaces | doc | VAL-SPC-001, VAL-SPC-002, VAL-SPC-004 | Task 4 | Harness validation passes and optional tool skips remain explicit | platform | Todo |
+| ACS-004 | Align GitOps, infrastructure, policy, scripts, tests, Traefik, and sample-app surfaces | doc | VAL-SPC-001, VAL-SPC-002, VAL-SPC-004 | Task 4 | Harness validation passes and optional tool skips remain explicit | platform | Done |
 | ACS-005 | Close evidence, review, and branch readiness | doc | VAL-SPC-005 | Task 5 | Full validation bundle, updated plan/task evidence, final drift review | platform | Todo |
 
 ## Suggested Types
@@ -71,7 +71,7 @@ examples as dated snapshots.
 
 ### Task 4: GitOps and Repo-static Validation Surfaces
 
-- [ ] ACS-004 Align GitOps, infrastructure, policy, scripts, tests, Traefik,
+- [x] ACS-004 Align GitOps, infrastructure, policy, scripts, tests, Traefik,
   and sample-app surfaces.
 
 ### Task 5: Evidence Closure
@@ -216,6 +216,61 @@ PY
 - `bash scripts/validate-repo-quality-gates.sh .` passed with
   `[PASS] repository quality gates passed`.
 
+## ACS-004 GitOps and Repo-static Validation Evidence
+
+### Commands
+
+- `rg -n "## |Validation|validate-|check-secret-handling|repo-quality|GitOps|Secret|ExternalSecret|Argo CD|Argo Rollouts|Kustomize|conftest|kube-linter|Cloud Example Snapshot|not live provider-latest|live mutation|secret values" scripts/README.md gitops/README.md gitops/workloads/README.md infrastructure/README.md tests/README.md traefik/README.md examples/README.md examples/sample-app/README.md`
+- `rg -n "^---$|^## Related (References|Folders)" scripts/README.md gitops/README.md gitops/workloads/README.md infrastructure/README.md tests/README.md traefik/README.md examples/README.md examples/sample-app/README.md`
+- `git diff --check`
+- `bash scripts/validate-repo-quality-gates.sh .`
+- `bash scripts/validate-gitops-structure.sh`
+- `bash scripts/validate-k8s-manifests.sh .`
+- `bash scripts/check-secret-handling.sh .`
+- `bash scripts/validate-policy-gates.sh .`
+- `bash infrastructure/tests/verify-contracts-static.sh`
+
+### Findings
+
+- Active README profile stayed unchanged: no README YAML frontmatter and no
+  deprecated related-heading variants.
+- `scripts/README.md` now states optional `kube-linter` and `conftest` skips
+  as SKIP/fallback evidence, not full optional-tool coverage.
+- `gitops/README.md`, `gitops/workloads/README.md`, `examples/README.md`, and
+  `examples/sample-app/README.md` now make the sample-app activation boundary
+  explicit: placeholders must be replaced and repo-static validation must pass
+  before copied manifests are treated as active GitOps desired state.
+- `tests/README.md` separates repo-static, optional-tool, and
+  live/operator-owned evidence, and `traefik/README.md` separates route
+  manifest contracts from live port availability.
+- `scripts/validate-repo-quality-gates.sh` now deterministically checks the
+  sample-app activation, workload onboarding, Traefik live-port boundary, and
+  tests README evidence-boundary phrases.
+- Optional wrapper and focused validator scripts were reviewed and left
+  untouched because their existing wording already documents repo-static,
+  SKIP/fallback, no-live-check, GitOps hierarchy, secret redaction, and static
+  contract boundaries.
+- `git diff --check` passed with no output.
+- `bash scripts/validate-repo-quality-gates.sh .` passed with
+  `[PASS] repository quality gates passed`.
+- `bash scripts/validate-gitops-structure.sh` passed with
+  `=== done (exit: 0) ===`.
+- `bash scripts/validate-k8s-manifests.sh .` passed with 104 YAML files; local
+  `kube-linter` was not installed and was reported as
+  `SKIP optional kube-linter not installed — YAML syntax validation only`.
+- `bash scripts/check-secret-handling.sh .` passed with 100 files and
+  `OK  no plaintext secret patterns found`.
+- `bash scripts/validate-policy-gates.sh .` passed; local `conftest` was not
+  installed and the built-in policy fallback reported
+  `[PASS] built-in policy fallback passed`.
+- `bash infrastructure/tests/verify-contracts-static.sh` passed with
+  `[PASS] static contract verification passed`.
+- RTK limitation repeated: `rtk` is not on PATH; `/home/hy/.local/bin/rtk
+  --version` works, but `/home/hy/.local/bin/rtk gain` cannot initialize its
+  tracking database, so required validation commands were run directly.
+- No live Kubernetes, Argo CD, Vault, cloud, external Traefik, provider,
+  publish, push, merge, or secret-value action was performed.
+
 ## Verification Summary
 
 - **Test Commands**:
@@ -225,6 +280,13 @@ PY
   - `bash scripts/validate-repo-quality-gates.sh .` - PASS, including
     `[PASS] repository quality gates passed`.
   - GitHub workflow YAML parse - PASS, `workflow yaml parse ok`.
+  - `bash scripts/validate-gitops-structure.sh` - PASS.
+  - `bash scripts/validate-k8s-manifests.sh .` - PASS with optional
+    `kube-linter` SKIP.
+  - `bash scripts/check-secret-handling.sh .` - PASS.
+  - `bash scripts/validate-policy-gates.sh .` - PASS with optional `conftest`
+    SKIP and built-in fallback pass.
+  - `bash infrastructure/tests/verify-contracts-static.sh` - PASS.
 - **Eval Commands**:
   - Baseline inventory and contract-candidate scans listed in
     `Baseline Inventory Evidence`.
@@ -232,6 +294,9 @@ PY
     `ACS-002 Canonical Ownership Evidence`.
   - ACS-003 GitHub control scan and frontmatter scan listed in
     `ACS-003 GitHub Control Evidence`.
+  - ACS-004 active README matrix scan, README profile scan, and repo-static
+    validation bundle listed in
+    `ACS-004 GitOps and Repo-static Validation Evidence`.
 - **Logs / Evidence Location**:
   - This task record.
   - [../../00.agent-governance/memory/progress.md](../../00.agent-governance/memory/progress.md)
