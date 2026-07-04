@@ -8,6 +8,60 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-05 - Workspace engineering research pack WER-005 SDLC CI QA security refresh
+
+- **Date**: 2026-07-05
+- **Layer**: docs, research, security, qa
+- **Status**: complete
+- **Tags**: #docs #research #sdlc #ci #security #validation #stage-90
+
+#### Progress
+
+- Completed WER-005 for the
+  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+- Refreshed the dated `spec-sdlc-ci-qa-formatting.md` reference with
+  2026-07-05 official/primary source coverage for GitHub Actions, NIST SSDF,
+  NIST SP 800-204D, CodeQL/code scanning, Dependency Review, SLSA,
+  OpenSSF Scorecard, Prettier, EditorConfig, CommonMark, YAML 1.2.2,
+  markdownlint, and pre-commit.
+- Added descriptive security and supply-chain findings for least-privilege
+  workflow permissions, secrets boundaries, dependency review, code scanning,
+  provenance/attestation, and non-authoritative Scorecard context.
+
+#### Memory
+
+- WER SDLC/CI/QA references must keep repo-static, CI/toolchain, artifact
+  attestation, market/context scan, and live-runtime evidence lanes separate.
+- CodeQL/code scanning, Dependency Review, SLSA provenance/attestation, and
+  OpenSSF Scorecard should be described as future routed gates unless the
+  active workflow or owning task has actually adopted them.
+- Formatting references should distinguish active local configuration
+  (`.editorconfig`, `.pre-commit-config.yaml`) from tools that are only
+  source-checked concepts, such as Prettier.
+
+#### Evidence
+
+- Official/primary WER-005 sources checked: GitHub Actions workflow syntax and
+  secure use; GitHub Code scanning/CodeQL; GitHub Dependency Review; GitHub
+  Spec Kit; NIST SSDF SP 800-218; NIST SP 800-204D; SLSA spec v1.1; OpenSSF
+  Scorecard; Prettier; EditorConfig; CommonMark 0.31.2; YAML 1.2.2;
+  markdownlint; pre-commit.
+- Required WER-005 reference scan - PASS; the refreshed reference includes
+  `Source checked: 2026-07-05`, official source families, supply-chain terms,
+  formatting terms, `non-authoritative` market/context language, and
+  `Review and Freshness`.
+- `git diff --check` - PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+
+#### Handoff
+
+- WER-005 is complete and ready for WER-006 follow-up work on Kubernetes,
+  infrastructure, GitOps, secrets, policy, supply-chain, and security
+  references.
+- No live Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider runtime,
+  credential, secret-value, paid-job, publishing, merge, push, or third-party
+  mutation was performed.
+
 ### 2026-07-04 - Workspace engineering research pack WER-004 harness loop provider refresh
 
 - **Date**: 2026-07-04

@@ -3,7 +3,7 @@ title: 'Workspace Engineering Research Pack Task Record'
 type: sdlc/task
 status: draft
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-05
 ---
 
 # Task: Workspace Engineering Research Pack Task Record
@@ -48,7 +48,7 @@ runtimes, credentials, secret values, or third-party systems.
 | WER-002 | Scaffold dated pack and move existing flat references | doc | VAL-SPC-001, VAL-SPC-002 | Task 2 | `git mv` evidence, stale flat-link scan, repo-quality gate | platform | Done |
 | WER-003 | Refresh workspace governance baseline | doc | VAL-SPC-003, VAL-SPC-004 | Task 3 | Required reference sections and repo-first evidence coverage | platform | Done |
 | WER-004 | Refresh harness, loop, and provider references | doc | VAL-SPC-004, VAL-SPC-005 | Task 4 | Official or primary source checks and provider-boundary review | platform | Done |
-| WER-005 | Refresh SDLC/CI/QA/formatting and add automation reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 5 | SDLC, CI/CD, QA, formatting, automation, pipeline, and workflow coverage | platform | Todo |
+| WER-005 | Refresh SDLC/CI/QA/formatting/security reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 5 | SDLC, CI/CD, QA, formatting, security, supply-chain, and workflow coverage | platform | Done |
 | WER-006 | Add Kubernetes, infrastructure, and security reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 6 | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security coverage | platform | Todo |
 | WER-007 | Close indexes, task evidence, progress, and validation | doc | VAL-SPC-002, VAL-SPC-006, VAL-SPC-007 | Task 7 | Index closure, stale-link scans, final validation, and no-mutation handoff | platform | Todo |
 
@@ -79,7 +79,7 @@ runtimes, credentials, secret values, or third-party systems.
 - [x] WER-002 move/scaffold commit.
 - [x] WER-003 workspace governance baseline refresh.
 - [x] WER-004 harness, loop, and provider reference refresh.
-- [ ] WER-005 SDLC/CI/QA/formatting refresh and automation reference.
+- [x] WER-005 SDLC/CI/QA/formatting/security reference refresh.
 - [ ] WER-006 Kubernetes, infrastructure, and security reference.
 - [ ] WER-007 final index, evidence, progress, and validation closure.
 
@@ -359,6 +359,51 @@ Summary:
   `rg` scan alone does not prove source freshness, link reachability, or claim
   support.
 
+## WER-005 Evidence Summary
+
+### SDLC CI QA Formatting Security Reference Refresh
+
+- Refreshed
+  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md`
+  with `updated: 2026-07-05` and `Source checked: 2026-07-05` for WER-005
+  refreshed sources.
+- Preserved the reference as descriptive Stage 90 material. It does not define
+  active policy for GitHub Actions, pre-commit, CodeQL/code scanning,
+  Dependency Review, SLSA provenance/attestation, OpenSSF Scorecard, live
+  runtime checks, release approval, or secret handling.
+- Refreshed official/primary source coverage for GitHub Actions workflow
+  syntax, GitHub Actions secure use, GitHub Code scanning/CodeQL concepts,
+  GitHub Dependency Review, GitHub Spec Kit, NIST SSDF SP 800-218, NIST
+  SP 800-204D, SLSA spec v1.1, OpenSSF Scorecard, Prettier, EditorConfig,
+  CommonMark 0.31.2, YAML 1.2.2, markdownlint, and pre-commit.
+- Added security and supply-chain findings for least-privilege workflow
+  permissions, the GitHub Actions secrets boundary, Dependency Review,
+  CodeQL/code scanning, SLSA provenance/attestation, and OpenSSF Scorecard
+  context.
+- Kept repo-static, CI/toolchain, artifact attestation, non-authoritative
+  market/context scan, and live-runtime evidence lanes separate.
+- Updated implementation checklist routing for GitHub Actions permissions,
+  secrets, CodeQL/code scanning, Dependency Review, SLSA provenance,
+  OpenSSF Scorecard, Prettier, EditorConfig, CommonMark, YAML 1.2.2,
+  markdownlint, pre-commit, scripts, Stage 00 governance, and Stage 04 task
+  evidence.
+
+### WER-005 Validation Scan
+
+Command:
+
+```bash
+rg -n "Source checked: 2026-07-05|GitHub Actions|NIST|SSDF|SLSA|OpenSSF|CodeQL|Dependency Review|Prettier|EditorConfig|CommonMark|YAML 1.2.2|pre-commit|non-authoritative|Review and Freshness" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md
+```
+
+Summary:
+
+- PASS; command completed successfully.
+- The scan returned matching lines for the WER-005 source-checked date,
+  official/primary source families, formatting references, supply-chain
+  findings, non-authoritative market/context language, and
+  `Review and Freshness`.
+
 ## Verification Summary
 
 | Date | Scope | Command | Result |
@@ -377,6 +422,9 @@ Summary:
 | 2026-07-04 | WER-004 reference scan | Required WER-004 `rg` scan listed above | PASS; 214 matching lines across the refreshed harness/loop and provider references. |
 | 2026-07-04 | WER-004 formatting | `git diff --check` | PASS. |
 | 2026-07-04 | WER-004 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
+| 2026-07-05 | WER-005 reference scan | Required WER-005 `rg` scan listed above | PASS; WER-005 refreshed source date, official source families, supply-chain terms, formatting terms, non-authoritative language, and freshness heading were present. |
+| 2026-07-05 | WER-005 formatting | `git diff --check` | PASS. |
+| 2026-07-05 | WER-005 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
 
 Tooling limitation:
 
@@ -394,6 +442,8 @@ Boundary statement:
 - WER-003 performed repository reads, documentation edits, local validation,
   local staging, and a local commit only.
 - WER-004 performed read-only official/primary web source checks, repository
+  reads, documentation edits, and local validation only before commit.
+- WER-005 performed read-only official/primary web source checks, repository
   reads, documentation edits, and local validation only before commit.
 - No live Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider runtime,
   credential, secret-value, paid-job, publishing, merge, push, or third-party
