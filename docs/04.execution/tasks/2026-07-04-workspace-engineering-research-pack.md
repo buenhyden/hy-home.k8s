@@ -46,7 +46,7 @@ runtimes, credentials, secret values, or third-party systems.
 | ------- | ----------- | ---- | --------------------- | ------------------- | --------------------- | ----- | ------ |
 | WER-001 | Create Stage 04 task evidence and baseline inventory | doc | VAL-SPC-001, VAL-SPC-006, VAL-SPC-007 | Task 1 | Baseline scans recorded; `git diff --check`; `bash scripts/validate-repo-quality-gates.sh .` | platform | Done |
 | WER-002 | Scaffold dated pack and move existing flat references | doc | VAL-SPC-001, VAL-SPC-002 | Task 2 | `git mv` evidence, stale flat-link scan, repo-quality gate | platform | Done |
-| WER-003 | Refresh workspace governance baseline | doc | VAL-SPC-003, VAL-SPC-004 | Task 3 | Required reference sections and repo-first evidence coverage | platform | Todo |
+| WER-003 | Refresh workspace governance baseline | doc | VAL-SPC-003, VAL-SPC-004 | Task 3 | Required reference sections and repo-first evidence coverage | platform | Done |
 | WER-004 | Refresh harness, loop, and provider references | doc | VAL-SPC-004, VAL-SPC-005 | Task 4 | Official or primary source checks and provider-boundary review | platform | Todo |
 | WER-005 | Refresh SDLC/CI/QA/formatting and add automation reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 5 | SDLC, CI/CD, QA, formatting, automation, pipeline, and workflow coverage | platform | Todo |
 | WER-006 | Add Kubernetes, infrastructure, and security reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 6 | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security coverage | platform | Todo |
@@ -77,7 +77,7 @@ runtimes, credentials, secret values, or third-party systems.
 ### Remaining Research Pack Work
 
 - [x] WER-002 move/scaffold commit.
-- [ ] WER-003 workspace governance baseline refresh.
+- [x] WER-003 workspace governance baseline refresh.
 - [ ] WER-004 harness, loop, and provider reference refresh.
 - [ ] WER-005 SDLC/CI/QA/formatting refresh and automation reference.
 - [ ] WER-006 Kubernetes, infrastructure, and security reference.
@@ -231,6 +231,63 @@ Summary:
 - Remaining matches are historical command strings, creation evidence, move
   evidence, or old plan/task path literals that describe past execution.
 
+## WER-003 Evidence Summary
+
+### Workspace Governance Baseline Refresh
+
+- Refreshed
+  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md`
+  as a dated, descriptive Stage 90 reference.
+- Updated frontmatter `updated: 2026-07-04`, `Source checked:
+  2026-07-04`, and freshness trigger language for governance, CI/CD, scripts,
+  templates, provider adapters, security, and research pack structure changes.
+- Preserved the authority boundary: the reference summarizes canonical owners
+  and does not redefine active governance policy, CI semantics, provider
+  runtime permissions, approval boundaries, runbooks, live checks, or secret
+  handling.
+- Refreshed `Definitions / Facts` coverage for workspace purpose and operating
+  model, roles and provider adapters, CI/CD and QA evidence lanes, formatting,
+  linting, syntax validation, automation, pipeline, workflow, templates,
+  integration guides, scripts, operating contract, SDLC position, governance
+  rules, and security boundary.
+- Added an owner-routed `Implementation checklist` for Stage 00, Stage 03,
+  Stage 04, Stage 05, `.github`, `scripts`, `docs/99.templates`, and
+  `docs/90.references`.
+
+### Repo Baseline Source Scan
+
+Command:
+
+```bash
+rg -n "purpose|role|operating contract|template|script|integration|SDLC|governance|rule|CI/CD|QA|Formatting|Linting|Automation|Security" AGENTS.md CLAUDE.md GEMINI.md README.md docs/00.agent-governance docs/99.templates scripts tests .github -g '*.md' -g '*.sh' -g '*.yml' -g '*.yaml'
+```
+
+Summary:
+
+- PASS; command completed successfully.
+- Terminal output was large and truncated for display after 3,208 returned
+  lines / 119,880 original tokens.
+- Follow-up focused inspection covered the root gateway files, root README,
+  `.codex/CODEX.md`, provider notes, bootstrap and approval-boundary rules,
+  quality standards, harness catalog, harness implementation map, template
+  routing, scripts inventory, GitHub CI workflow, CI/CD QA guide, and the dated
+  research pack README.
+
+### Required Heading Scan
+
+Command:
+
+```bash
+rg -n "^## (Overview|Purpose|Reference Type|Authority Boundary|Scope|Definitions / Facts|Sources|Review and Freshness|Related Documents)$" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md
+```
+
+Summary:
+
+- PASS; found all required top-level reference headings:
+  `Overview`, `Purpose`, `Reference Type`, `Authority Boundary`, `Scope`,
+  `Definitions / Facts`, `Sources`, `Review and Freshness`, and
+  `Related Documents`.
+
 ## Verification Summary
 
 | Date | Scope | Command | Result |
@@ -242,6 +299,10 @@ Summary:
 | 2026-07-04 | WER-002 stale flat-link scan | Focused `rg` scan listed in WER-002 evidence | PASS; current consumer broken links were repaired, and remaining matches are historical-only command/path evidence. |
 | 2026-07-04 | WER-002 formatting | `git diff --check` | PASS. |
 | 2026-07-04 | WER-002 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
+| 2026-07-04 | WER-003 repo baseline source scan | Required WER-003 `rg` scan listed above | PASS; large output completed successfully and was summarized from focused canonical source inspection. |
+| 2026-07-04 | WER-003 required heading scan | `rg -n "^## (Overview\|Purpose\|Reference Type\|Authority Boundary\|Scope\|Definitions / Facts\|Sources\|Review and Freshness\|Related Documents)$" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md` | PASS; all required reference headings present. |
+| 2026-07-04 | WER-003 formatting | `git diff --check` | PASS. |
+| 2026-07-04 | WER-003 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
 
 Tooling limitation:
 
@@ -256,6 +317,8 @@ Boundary statement:
   local staging, and a local commit only.
 - WER-002 performed repository reads, documentation edits, `git mv` file moves,
   local validation, local staging, and a local commit only.
+- WER-003 performed repository reads, documentation edits, local validation,
+  local staging, and a local commit only.
 - No live Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider runtime,
   credential, secret-value, paid-job, publishing, merge, push, or third-party
   mutation was performed.

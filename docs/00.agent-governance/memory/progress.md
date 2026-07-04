@@ -8,6 +8,55 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-04 - Workspace engineering research pack WER-003 governance baseline refresh
+
+- **Date**: 2026-07-04
+- **Layer**: docs, governance, qa
+- **Status**: complete
+- **Tags**: #docs #research #governance #validation #stage-90
+
+#### Progress
+
+- Completed WER-003 for the
+  [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
+- Refreshed the dated
+  `workspace-governance-baseline.md` reference with 2026-07-04 metadata,
+  source-checked date, freshness triggers, required `Definitions / Facts`
+  coverage, and an owner-routed implementation checklist.
+- Kept the reference descriptive: active governance, CI semantics, provider
+  runtime permissions, approval boundaries, runbooks, live checks, and secret
+  handling remain with canonical owners.
+
+#### Memory
+
+- Workspace governance baseline changes should summarize Stage 00, Stage 03,
+  Stage 04, Stage 05, `.github`, `scripts`, `docs/99.templates`, and
+  `docs/90.references` ownership instead of restating active policy.
+- CI/CD, QA, formatting, linting, syntax validation, automation, and security
+  boundary claims must preserve the repo-static vs CI/toolchain vs live-runtime
+  evidence split.
+- Stage 90 research references can route follow-up work to canonical owners,
+  but they must not grant live Kubernetes, Vault, cloud, GitHub remote,
+  provider runtime, credential, secret-value, paid-job, publishing, merge,
+  push, or third-party mutation authority.
+
+#### Evidence
+
+- Required repo baseline source scan - PASS; the broad `rg` command completed
+  successfully and was summarized after truncated terminal display.
+- Required heading scan - PASS; all nine top-level reference headings were
+  present in `workspace-governance-baseline.md`.
+- `git diff --check` - PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+
+#### Handoff
+
+- WER-003 is complete and ready for WER-004 follow-up work on harness, loop,
+  and provider references.
+- No live Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider runtime,
+  credential, secret-value, paid-job, publishing, merge, push, or third-party
+  mutation was performed.
+
 ### 2026-07-04 - Workspace engineering research pack WER-002 scaffold and move
 
 - **Date**: 2026-07-04
