@@ -71,6 +71,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-07-03-template-contract-governance-migration.md
 ├── 2026-07-03-template-governance-audit-enhancement.md
 ├── 2026-07-03-workspace-document-governance-hardening.md
+├── 2026-07-04-active-control-surface-governance-hardening.md
 ├── 2026-07-04-workspace-document-contract-normalization.md
 ├── 2026-07-04-agent-governance-contract-normalization.md
 └── README.md
@@ -127,6 +128,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-07-03-template-contract-governance-migration.md`](./2026-07-03-template-contract-governance-migration.md) | `docs/99.templates/`를 template forms와 support contracts로 분리하고 validator, hook, governance, authored docs 적용을 추적하는 실행 계획 | Draft | 2026-07-03 |
 | [`./2026-07-03-template-governance-audit-enhancement.md`](./2026-07-03-template-governance-audit-enhancement.md) | `docs/99.templates/**` 후속 감사, support contract drift 정리, validator guardrail 보강, 최종 검증 증적을 묶는 실행 계획 | Done | 2026-07-03 |
 | [`./2026-07-03-workspace-document-governance-hardening.md`](./2026-07-03-workspace-document-governance-hardening.md) | workspace document type, provider entrypoint, README boundary, CI/QA governance hardening 실행 계획 | Done | 2026-07-04 |
+| [`./2026-07-04-active-control-surface-governance-hardening.md`](./2026-07-04-active-control-surface-governance-hardening.md) | `.github`, `scripts`, `gitops`, `infrastructure`, `policy`, `tests`, `traefik`, `examples/sample-app`의 active 운영 표면을 보강하고 AWS/Azure cloud examples를 dated snapshot으로 유지하는 실행 계획 | Draft | 2026-07-04 |
 | [`./2026-07-04-workspace-document-contract-normalization.md`](./2026-07-04-workspace-document-contract-normalization.md) | active 문서와 historical evidence를 current frontmatter, section, template, CI/QA, validator 계약에 맞게 전면 정규화하는 실행 계획 | Done | 2026-07-04 |
 | [`./2026-07-04-agent-governance-contract-normalization.md`](./2026-07-04-agent-governance-contract-normalization.md) | Stage 00 agent governance, provider adapters, GitHub control surfaces, QA/CI validation gates를 provider-aware contract로 정규화하는 실행 계획 | Done | 2026-07-04 |
 
