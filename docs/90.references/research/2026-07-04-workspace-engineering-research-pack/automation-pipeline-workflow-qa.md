@@ -41,9 +41,9 @@ behavior.
   dated-implementation-audit
 - Source checked: 2026-07-05 for GitHub Actions workflow syntax, events,
   concurrency, reusable workflows, workflow commands, `GITHUB_TOKEN`, secrets,
-  workflow artifacts, dependency caching, workflow graph monitoring, Martin
-  Fowler Continuous Integration, DORA metrics, pre-commit, and OpenSSF
-  Scorecard context.
+  workflow artifacts, dependency caching, workflow visualization graph,
+  Martin Fowler Continuous Integration, DORA metrics, pre-commit, and
+  OpenSSF Scorecard context.
 - Refresh trigger: workflow, pre-commit, validation-script, release-evidence,
   maintenance automation, dependency-update automation, secret-handling,
   artifact, cache, branch-policy, CI/CD QA guide, or referenced external
@@ -189,7 +189,8 @@ The automation surfaces map to separate evidence lanes:
 Martin Fowler's Continuous Integration article is historical context for fast
 integration and automated build/test feedback. DORA's current metrics page
 frames software delivery performance around deployment frequency, lead time for
-changes, change failure rate, failed deployment recovery time, and reliability.
+changes, failed deployment recovery time, change fail rate, and deployment
+rework rate.
 
 Current repo implication:
 
@@ -197,7 +198,8 @@ Current repo implication:
   DORA metrics instrumentation in the current WER-007 source set.
 - Future metrics adoption should be scoped as a separate spec/plan/task and
   should distinguish CI duration, gate pass/fail, PR lead time, deployment
-  frequency, recovery time, and reliability evidence.
+  frequency, recovery time, change fail rate, deployment rework rate, and any
+  separately defined service-health signals.
 - For this pack, DORA and Fowler are non-authoritative market/context inputs;
   they do not redefine this repo's active QA gate or release process.
 
@@ -257,9 +259,10 @@ The following findings are non-authoritative market/context material:
   [scripts/README.md](../../../../scripts/README.md), and the CI/CD QA guide.
 - Route validation-script behavior changes to `scripts/**`,
   `infrastructure/tests/**`, `policy/**`, and matching Stage 04 task evidence.
-- Route DORA, CI duration, lead-time, reliability, artifact provenance,
-  Scorecard, CodeQL/code scanning, Dependency Review, or SLSA adoption to a new
-  scoped spec/plan/task before changing workflow behavior.
+- Route DORA, CI duration, lead-time, change-failure, recovery-time,
+  deployment-rework, artifact provenance, Scorecard, CodeQL/code scanning,
+  Dependency Review, SLSA adoption, or separately defined service-health
+  metrics to a new scoped spec/plan/task before changing workflow behavior.
 - Keep repo-static, CI/toolchain, artifact/release, maintenance,
   market/context, and live-runtime evidence lanes separate in task records.
 - Do not encode active policy or runbook procedure in this Stage 90 reference.
@@ -286,6 +289,8 @@ Official and primary external sources checked on 2026-07-05:
   <https://docs.github.com/en/actions/concepts/workflows-and-actions/workflow-artifacts>
 - GitHub Actions dependency caching:
   <https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching>
+- GitHub Actions visualization graph:
+  <https://docs.github.com/en/actions/how-tos/monitor-workflows/use-the-visualization-graph>
 - GitHub Actions secure use:
   <https://docs.github.com/en/actions/reference/security/secure-use>
 - Martin Fowler, Continuous Integration:

@@ -46,15 +46,17 @@ inventory stays in `scripts/README.md`.
 
 - Official/primary WER-007 sources checked: GitHub Actions workflow syntax,
   events, concurrency, reusable workflows, workflow commands, `GITHUB_TOKEN`,
-  secrets, workflow artifacts, dependency caching, secure use; Martin Fowler
-  Continuous Integration; DORA metrics; pre-commit; and OpenSSF Scorecard.
+  secrets, workflow artifacts, dependency caching, workflow visualization graph,
+  secure use; Martin Fowler Continuous Integration; DORA metrics; pre-commit;
+  and OpenSSF Scorecard.
 - Required WER-007 reference scan - PASS; the new reference includes
   `Source checked: 2026-07-05`, required workflow/automation/QA terms,
   artifact/cache/token concepts, repo-static and CI/toolchain evidence-lane
   language, live-runtime boundary language, non-authoritative market/context
   language, and `Review and Freshness`.
 - Planned reference closure scan - PASS; no WER-007 planned literals remained
-  in the current pack README, parent research README, or task status.
+  in the current pack README indexes; task status was separately updated to
+  Done.
 - `git diff --check` - PASS.
 - `bash scripts/validate-repo-quality-gates.sh .` - PASS.
 

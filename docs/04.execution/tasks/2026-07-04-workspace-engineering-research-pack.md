@@ -465,9 +465,9 @@ Summary:
   deployment procedure, live checks, or secret handling.
 - Checked official/primary source coverage for GitHub Actions workflow syntax,
   events, concurrency, reusable workflows, workflow commands, `GITHUB_TOKEN`,
-  secrets, workflow artifacts, dependency caching, secure use, Martin Fowler
-  Continuous Integration, DORA metrics, pre-commit, and OpenSSF Scorecard
-  context.
+  secrets, workflow artifacts, dependency caching, workflow visualization graph,
+  secure use, Martin Fowler Continuous Integration, DORA metrics, pre-commit,
+  and OpenSSF Scorecard context.
 - Added repo implementation comparison for `.github/workflows/ci.yml`,
   `generate-changelog.yml`, maintenance workflows, Dependabot, Zizmor,
   pre-commit, path filtering, branch policy, permissions, checkout credential
@@ -534,7 +534,7 @@ Summary:
 | 2026-07-05 | WER-006 formatting | `git diff --check` | PASS. |
 | 2026-07-05 | WER-006 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
 | 2026-07-05 | WER-007 reference scan | Required WER-007 `rg` scan listed above | PASS; WER-007 source date, workflow/automation/QA terms, artifact/cache/token concepts, evidence-lane language, non-authoritative language, and freshness heading were present. |
-| 2026-07-05 | WER-007 planned-reference closure | Focused planned-reference `rg` scan listed above | PASS; no WER-007 planned literals remained in current pack indexes or task status. |
+| 2026-07-05 | WER-007 planned-reference closure | Focused planned-reference `rg` scan listed above | PASS; README index scan found no stale planned reference literals; WER-007 status was separately updated to Done. |
 | 2026-07-05 | WER-007 formatting | `git diff --check` | PASS. |
 | 2026-07-05 | WER-007 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
 
