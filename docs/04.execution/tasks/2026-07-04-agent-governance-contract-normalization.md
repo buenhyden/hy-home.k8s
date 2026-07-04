@@ -39,7 +39,7 @@ unit.
 | ------- | ----------- | ---- | --------------------- | ------------------- | --------------------- | ----- | ------ |
 | T-001 | Create execution task record and capture baseline drift inventory | doc | Contracts, Evaluation | PLN-001 | Baseline inventory commands, `git diff --check`, repo quality gate | platform | Done |
 | T-002 | Normalize Stage 00 canonical contract wording | doc | Contracts, Core Design | PLN-002 | Official source basis checked 2026-07-04, focused owner/drift scans, JSON/TOML parse checks, repo quality gate | platform | Done |
-| T-003 | Align provider adapter surfaces | doc | Data / Interface Contract, Governance Contract | PLN-003 | Provider metadata scans, JSON/TOML parse checks, repo quality gate | platform | Todo |
+| T-003 | Align provider adapter surfaces | doc | Data / Interface Contract, Governance Contract | PLN-003 | Root shim/runtime baseline checks, provider metadata scans, JSON/TOML parse checks, repo quality gate | platform | Done |
 | T-004 | Align GitHub, QA, CI/CD, and protected-surface enforcement | doc | Guardrails, Evaluation | PLN-004 | Frontmatter scans, workflow parse checks, gate/harness validation | platform | Todo |
 | T-005 | Complete final review, evidence closure, and branch-readiness handoff | doc | Evaluation, Memory & Context Strategy | PLN-005 | Full validation bundle and final review evidence | platform | Todo |
 
@@ -62,7 +62,7 @@ unit.
 
 ### PLN-003
 
-- [ ] T-003 Align provider adapter surfaces.
+- [x] T-003 Align provider adapter surfaces.
 
 ### PLN-004
 
@@ -166,7 +166,44 @@ Checked on 2026-07-04:
 
 ### Next
 
-- T-003 remains Todo.
+- T-003 is tracked below.
+
+## T-003 Evidence
+
+### Files Changed
+
+- `AGENTS.md`
+- `CLAUDE.md`
+- `GEMINI.md`
+- `.claude/CLAUDE.md`
+- `.agents/GEMINI.md`
+- `docs/04.execution/tasks/2026-07-04-agent-governance-contract-normalization.md`
+- `docs/00.agent-governance/memory/progress.md`
+
+### Adapter Parity Findings
+
+- Root shims remain thin: `AGENTS.md` has 17 lines, `CLAUDE.md` has 16 lines,
+  and `GEMINI.md` has 16 lines.
+- Agent stem parity scan returned `claude_only= []`, `gemini_only= []`, and
+  `codex_only= []`.
+- Provider metadata scan confirmed Claude `model:` plus `tools:`, Gemini
+  `model:`, and Codex `model =` plus `model_reasoning_effort`.
+- Hook JSON files parsed successfully; no Claude-style permission keys were
+  added to Codex or Gemini hook JSON.
+
+### Validation Commands
+
+- `git diff --check` — PASS.
+- `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json` —
+  PASS.
+- `python3 - <<'PY' ... tomllib.loads(path.read_text()) ... PY` — PASS for
+  all `.codex/agents/*.toml`.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS, including
+  `[PASS] repository quality gates passed`.
+
+### Next
+
+- T-004 remains Todo.
 
 ## Related Documents
 

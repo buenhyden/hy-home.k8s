@@ -72,6 +72,18 @@ Claude implements the shared four-element harness model from
 - Agents: see `docs/00.agent-governance/harness-catalog.md`
 - Skills: see `docs/00.agent-governance/harness-catalog.md`
 
+## Claude Capabilities & Constraints
+
+- **Native settings and permissions**: `.claude/settings.json` owns Claude
+  allow/deny command policy and hook event wiring.
+- **Native subagents**: `.claude/agents/*.md` files carry Claude frontmatter,
+  including `model` and least-privilege `tools:`.
+- **Shared assets**: `.claude/skills`, `.claude/workflows`, and
+  `.claude/output-styles` are symlink views of the `.agents/` SSoT.
+- **Dispatch boundary**: use Claude's native delegated-agent mechanism and the
+  local agent files; keep durable policy in Stage 00 instead of inline role
+  definitions.
+
 ## Validation and Tooling
 
 - Use `.pre-commit-config.yaml`, `.github/workflows/ci.yml`, `scripts/*.sh`, and `infrastructure/tests/*.sh` as validation sources.

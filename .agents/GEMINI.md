@@ -35,6 +35,27 @@ Start from the root Gemini provider shim, then follow the governance JIT sequenc
 - Use `RTK.md` as cross-agent SSOT for shell commands.
 - See `.agents/rules/workspace-rules.md` for Gemini-specific workspace rules and `.agents/workflows/qa-cicd-workflow.md` for QA/CI/CD workflows.
 
+## Harness Four-Element Runtime Contract
+
+Gemini implements the shared four-element harness model from
+`docs/00.agent-governance/harness-catalog.md` as follows:
+
+1. **Instruction and settings documents**: load `GEMINI.md`,
+   `docs/00.agent-governance/rules/bootstrap.md`, provider notes, this runtime
+   baseline, and the relevant scope before substantial work.
+2. **Architecture constraints**: honor the tracked `.agents/**` adapter
+   baseline, GitOps-first boundaries, template routing, provider-native agent
+   files, and `.agents/hooks.json` context/validation wiring. Gemini hook JSON
+   is not a Claude-style permission gate.
+3. **Feedback loops**: run explicit repo-static validation commands before
+   handoff and use `.agents/hooks.json` shared script wiring as additional
+   feedback where the runtime supports it. Do not infer live k3d, ArgoCD,
+   Vault, ESO, or deployment readiness from static checks.
+4. **Knowledge stores**: read and update
+   `docs/00.agent-governance/memory/progress.md` for repo-changing work, use
+   `harness-catalog.md` as current runtime truth, and route generated wiki or
+   graphify findings back to canonical owner files.
+
 ## Gemini Capabilities & Constraints
 
 - **Skill routing**: Use the repo-local `.agents/skills/**` SSoT via the Task-to-Skill routing in `docs/00.agent-governance/harness-catalog.md`; provider symlink views under `.claude/skills` and `.codex/skills` must remain byte-identical. Do not rely on user-global skills for cluster work.

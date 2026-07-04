@@ -7144,3 +7144,51 @@ section separating static from live evidence.
 
 - T-002 is complete after validation and commit. Next action is T-003: align
   provider adapter surfaces.
+
+## 2026-07-04 — Agent Governance Contract Normalization T-003
+
+### Metadata
+
+- **Date**: 2026-07-04
+- **Layer**: meta, docs, qa, ci
+- **Status**: completed
+- **Tags**: #governance #agents #provider-adapters #validation
+
+### Progress
+
+- Aligned root provider shims so Codex, Claude, and Gemini all expose the same
+  concise gateway shape: bootstrap, provider notes, runtime baseline, runtime
+  roster, RTK, workspace assets, and verification.
+- Added the missing Claude and Gemini runtime baseline sections so the runtime
+  baselines share the same conceptual contract: Purpose, Loading Order,
+  Workspace Contract, Harness Four-Element Runtime Contract, Capabilities &
+  Constraints, Model Hierarchy, Validation and Tooling, and Relationship to
+  Gateway Files.
+- Confirmed agent roster parity across `.claude/agents/*.md`,
+  `.agents/agents/*.md`, and `.codex/agents/*.toml`; no provider agent file
+  content change was required.
+
+### Memory
+
+- Provider adapter alignment should not force identical metadata keys. The
+  desired invariant is thin root shims, provider-native runtime baselines,
+  matching agent stems, matching role contracts, and explicit validation
+  evidence.
+
+### Evidence
+
+- `wc -l AGENTS.md CLAUDE.md GEMINI.md` returned 17, 16, and 16 lines.
+- Agent stem parity returned `claude_only= []`, `gemini_only= []`, and
+  `codex_only= []`.
+- Provider metadata scan confirmed Claude `model:`/`tools:`, Gemini `model:`,
+  and Codex `model =`/`model_reasoning_effort`.
+- `git diff --check` PASS.
+- `jq empty .agents/hooks.json .claude/settings.json .codex/hooks.json` PASS.
+- Codex agent TOML parse loop with `tomllib` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS with
+  `[PASS] repository quality gates passed`.
+
+### Handoff
+
+- T-003 is complete after validation. Next action is T-004: align GitHub, QA,
+  CI/CD, and protected-surface enforcement.
