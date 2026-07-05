@@ -11,10 +11,12 @@ updated: 2026-07-05
 ## Overview
 
 This task record tracks implementation and verification evidence for the
-workspace contract governance normalization plan. Task 1 is evidence-first: it
-creates the Stage 04 task record, captures the requested baseline inventory,
-and updates the Task stage index before later tasks modify `_workspace`, Stage
-00, Stage 99, README, validator, or control-surface files.
+workspace contract governance normalization plan. WCGN-001 created the Stage
+04 evidence record and baseline inventory, WCGN-002 established the
+`_workspace` staging boundary, and WCGN-003 audited and remediated
+frontmatter, template, section, README, and cross-link drift. WCGN-004 and
+WCGN-005 remain planned for CI/CD and QA wording, validator coverage, closure
+evidence, and progress memory.
 
 No live Kubernetes, Argo CD, Vault, ESO, cloud, GitHub remote, credential,
 secret value, paid job, push, merge, pull request, or third-party mutation is
@@ -31,10 +33,12 @@ in scope for this task.
 
 ## Working Rules
 
-- Keep this task scoped to Stage 04 evidence and index maintenance.
-- Do not edit `.gitignore`, `_workspace/README.md`, Stage 00 governance, Stage
-  99 support docs, root README, scripts, or control-surface files in WCGN-001.
-- Keep the task record English-first and the Task stage README Korean.
+- Keep each WCGN change scoped to its task-specific write set and evidence
+  owner.
+- Modify shared governance, template, README, script, or control surfaces only
+  when the active task explicitly owns that surface.
+- Keep this task record English-first and keep human-facing README updates in
+  their existing Korean style.
 - Use summary evidence for large inventories; do not paste bulky raw command
   output into this task record.
 - Treat repository-static validation as static evidence only. It does not
@@ -107,7 +111,7 @@ Requested target inventory notes:
 | WCGN-AUD-007 | `docs`, root shims, `.github`, `scripts` | template / section | WCGN-003 template residue matches were limited to Stage 99 template files, scanner-command evidence, and explicit cleanup-rule or legacy-route headings. | No active authored template residue or deprecated related-document section needed removal. |
 | WCGN-AUD-008 | README entrypoints | README | README inventory returned repository, workspace, docs, examples, GitOps, infrastructure, scripts, tests, and Traefik README files. The literal README duplication scan reported missing `.codex/README.md` and `.claude/README.md` operands because those provider README files do not exist; a focused rerun over existing operands found concise owner pointers, not duplicated Stage 00 or Stage 99 policy bodies. | No README body rewrite required. Do not create provider README files without a future route need. |
 | WCGN-AUD-009 | `docs/90.references/data/agent-reference-index.md`, `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md` | route | Two active reference documents still used the old Stage 03 placeholder `docs/03.specs/<feature-id>/...` as current guidance. | Update both references to `docs/03.specs/<###-Numbering>-<feature-id>/...`. |
-| WCGN-AUD-010 | Stage 00 rules, Stage 99 templates, Stage 04 migration evidence, Stage 90 audits, progress memory | route / cross-link | Remaining route scan matches are current deny-route guardrails (`docs/superpowers/**`, `docs/api/**`), template examples that explicitly reject `docs/api/**`, scanner-command evidence, completed migration evidence for old PRD filenames, dated Stage 90 audit evidence, or dated progress memory. | Leave accepted historical and guardrail evidence in place; do not rewrite completed migration records into false current-state history. |
+| WCGN-AUD-010 | Stage 00 rules, active Stage 03 specs/guardrails, Stage 99 templates, Stage 04 migration evidence, Stage 90 audits, progress memory | route / cross-link | Remaining route scan matches are current deny-route guardrails (`docs/superpowers/**`, `docs/api/**`), active Stage 03 spec or guardrail references that reject off-taxonomy paths or record approved numbering contracts, template examples that explicitly reject `docs/api/**`, scanner-command evidence, completed migration evidence for old PRD filenames, dated Stage 90 audit evidence, or dated progress memory. | Leave accepted historical, active spec, and guardrail evidence in place; do not rewrite completed migration records into false current-state history. |
 
 ## Remediation Evidence
 
@@ -161,7 +165,10 @@ rg -n "^---$|^title:|^type:|^status:|^owner:|^updated:" docs/01.requirements doc
 rg -n "Target: d""ocs/|Use this ""template|SNIPPET LIBRARY|\\{Folder or Project Name\\}|\\[Feature Name\\]|command ""1|pytest ""tests|Example""Contract" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
 rg -n "^## (Deprecated|Legacy|Related Refer""ences|Related Fold""ers|Related Fi""les|References|See Also|Links)\\b" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
 find . -name README.md -not -path './.git/*' -not -path './.agents/*' -not -path './.agent-work/*' -print | sort
+# Initial README duplication probe; expected to exit 2 because provider README
+# operands do not exist in this repository.
 rg -n "must|forbidden|required|canonical owner|contract owner|approval boundary|protected surface" README.md docs/**/README.md .codex/README.md .claude/README.md
+# Focused existing-operand README duplication rerun.
 rg -n "must|forbidden|required|canonical owner|contract owner|approval boundary|protected surface" README.md docs/**/README.md
 rg -n "docs/superpowers|docs/api/|docs/01\\.requirements/YYYY-MM-DD-|docs/03\\.specs/<feature-id>" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
 rg -n "2026-05-17-argo-rollouts-progressive-delivery|2026-05-17-argo-notifications-slack|2026-06-01-workspace-agent-governance-platform|2026-06-02-current-local-gitops-platform" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
@@ -181,10 +188,11 @@ git commit -m "docs(governance): Normalize document contract drift"
   - `git diff --check`
   - `git diff --cached --check`
   - `bash scripts/validate-repo-quality-gates.sh .`
-- **Eval Commands**: Not applicable; WCGN-001 is documentation evidence and
-  baseline inventory work.
-- **Logs / Evidence Location**: This task record and the commit
-  `docs(tasks): Start workspace contract governance evidence`.
+- **Eval Commands**: Runtime evals are not applicable for WCGN-001 through
+  WCGN-003 because the completed work is documentation and governance evidence.
+  Verification used repository-static quality gates and focused scans only.
+- **Logs / Evidence Location**: This task record and the WCGN implementation
+  commits.
 
 ## Validation Evidence
 
