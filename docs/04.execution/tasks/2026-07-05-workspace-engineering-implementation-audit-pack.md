@@ -43,7 +43,7 @@ and closes validation through local static checks.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | WEA-001 | Create task evidence and baseline inventory | doc | VAL-SPC-007 | Task 1 | Baseline inventory, old-path candidate scan, task index row, `git diff --check`, repository quality gate | platform | Done |
 | WEA-002 | Folderize existing root audit reports | doc | VAL-SPC-001, VAL-SPC-006 | Task 2 | `git mv` history preservation, stale old-path scan, audit README updates, repository quality gate | platform | Done |
-| WEA-003 | Add dated audit pack README and governance/harness/provider report | doc | VAL-SPC-002, VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 3 | Required report files and evidence matrix rows present | platform | Todo |
+| WEA-003 | Add dated audit pack README and governance/harness/provider report | doc | VAL-SPC-002, VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 3 | Required report files and evidence matrix rows present | platform | Done |
 | WEA-004 | Add SDLC/CI/QA/formatting/automation report | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 4 | SDLC, CI/CD, QA, formatting, linting, automation, pipeline, and workflow rows present | platform | Todo |
 | WEA-005 | Add Kubernetes/infrastructure/security report | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 5 | Kubernetes, infrastructure, GitOps, secrets, policy, and security rows present | platform | Todo |
 | WEA-006 | Add roadmap and automation opportunities report | doc | VAL-SPC-004, VAL-SPC-005 | Task 6 | Cross-report roadmap and owner-routed automation opportunities present | platform | Todo |
@@ -69,7 +69,7 @@ and closes validation through local static checks.
 
 ### Phase 3: Part-Based Audit Reports
 
-- [ ] WEA-003 Add dated audit pack README and governance/harness/provider report
+- [x] WEA-003 Add dated audit pack README and governance/harness/provider report
 - [ ] WEA-004 Add SDLC/CI/QA/formatting/automation report
 - [ ] WEA-005 Add Kubernetes/infrastructure/security report
 - [ ] WEA-006 Add roadmap and automation opportunities report
@@ -173,6 +173,52 @@ and closes validation through local static checks.
     - `docs/90.references/audits/2026-07-03-workspace-document-governance-hardening-audit.md`
     - `docs/90.references/audits/2026-07-04-workspace-document-contract-normalization-audit.md`
 - **WEA-001 Validation Commands**:
+  - `git diff --check` passed.
+  - `bash scripts/validate-repo-quality-gates.sh .` passed with
+    `[PASS] repository quality gates passed`.
+- **WEA-003 Source Files Read**:
+  - `docs/04.execution/plans/2026-07-05-workspace-engineering-implementation-audit-pack.md` Task 3
+  - `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md`
+  - `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md`
+  - `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/provider-implementation-status.md`
+  - `docs/00.agent-governance/harness-catalog.md`
+  - `docs/00.agent-governance/harness-implementation-map.md`
+  - `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`
+  - `.claude/CLAUDE.md`, `.codex/CODEX.md`, `.agents/GEMINI.md`
+  - `.claude/settings.json`, `.codex/hooks.json`, `.agents/hooks.json`
+  - `docs/00.agent-governance/providers/claude.md`
+  - `docs/00.agent-governance/providers/codex.md`
+  - `docs/00.agent-governance/providers/gemini.md`
+  - `docs/00.agent-governance/providers/agents-md.md`
+  - `.claude/agents/`, `.codex/agents/`, `.agents/agents/`,
+    `.agents/skills/`, `.agents/workflows/`, and `.agents/output-styles/`
+- **WEA-003 Matrix Rows Recorded**:
+  - workspace purpose and operating model
+  - rules and governance system
+  - template and script routing
+  - harness instruction/settings surfaces
+  - harness architecture constraints
+  - harness feedback loops
+  - harness knowledge stores
+  - observe/plan/act/verify/learn loop
+  - eval/review loop
+  - Claude instruction/settings, agents, hooks/permissions,
+    skills/MCP/tooling, feedback loops
+  - Codex instruction/settings, agents, hooks/permissions,
+    skills/MCP/tooling, feedback loops
+  - Gemini instruction/settings, agents, hooks/permissions,
+    skills/MCP/tooling, feedback loops
+  - common provider environment/rule/system parity
+  - known non-parity boundaries
+- **WEA-003 Status Vocabulary Confirmation**:
+  - The audit pack uses only `Implemented`, `Partial`, `Gap`, and
+    `Not in scope`.
+  - Repo-backed evidence is used for implementation status; upstream provider
+    capability remains benchmark context.
+  - Static validation is recorded as repo-static evidence only, not
+    live-runtime, provider-runtime, Kubernetes, cloud, or secret readiness.
+- **WEA-003 Validation Commands**:
+  - Required `rg -n "workspace purpose|harness|loop|Claude|Codex|Gemini|common provider|Implemented|Partial|Gap|Not in scope|repo-static|live-runtime|Evidence|Follow-up route|Review and Freshness" docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/01-governance-harness-loop-providers.md` completed.
   - `git diff --check` passed.
   - `bash scripts/validate-repo-quality-gates.sh .` passed with
     `[PASS] repository quality gates passed`.

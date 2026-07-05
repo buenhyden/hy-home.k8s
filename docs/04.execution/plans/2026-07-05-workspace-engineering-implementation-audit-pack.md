@@ -405,7 +405,7 @@ with sections:
 - `Audience`
 - `Scope`
 - `Structure`
-- `How to Work in This Pack`
+- `How to Work in This Area`
 - `Link Basis`
 - `Report Index`
 - `Benchmark Sources`
