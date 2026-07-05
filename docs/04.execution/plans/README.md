@@ -134,6 +134,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-07-04-workspace-document-contract-normalization.md`](./2026-07-04-workspace-document-contract-normalization.md) | active 문서와 historical evidence를 current frontmatter, section, template, CI/QA, validator 계약에 맞게 전면 정규화하는 실행 계획 | Done | 2026-07-04 |
 | [`./2026-07-04-agent-governance-contract-normalization.md`](./2026-07-04-agent-governance-contract-normalization.md) | Stage 00 agent governance, provider adapters, GitHub control surfaces, QA/CI validation gates를 provider-aware contract로 정규화하는 실행 계획 | Done | 2026-07-04 |
 | [`./2026-07-05-workspace-engineering-implementation-audit-pack.md`](./2026-07-05-workspace-engineering-implementation-audit-pack.md) | `docs/90.references/audits/2026-07-05-wea/` 아래 part-based audit pack을 만들고 기존 audit 파일을 dated folder 구조로 정리하는 실행 계획 | Done | 2026-07-05 |
+| [`./2026-07-05-template-path-numbering-contract.md`](./2026-07-05-template-path-numbering-contract.md) | Template path numbering contract implementation plan for PRD numeric renames, Stage 03 numbered feature-folder routing, template/support/governance/validator updates, and validation closure. | Draft | 2026-07-05 |
 
 ## Related Documents
 
