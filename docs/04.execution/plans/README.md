@@ -76,6 +76,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-07-04-agent-governance-contract-normalization.md
 ├── 2026-07-05-workspace-engineering-implementation-audit-pack.md
 ├── 2026-07-05-workspace-contract-governance-normalization.md
+├── 2026-07-06-sdlc-lifecycle-contract.md
 └── README.md
 ```
 
@@ -137,6 +138,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-07-05-workspace-engineering-implementation-audit-pack.md`](./2026-07-05-workspace-engineering-implementation-audit-pack.md) | `docs/90.references/audits/2026-07-05-wea/` 아래 part-based audit pack을 만들고 기존 audit 파일을 dated folder 구조로 정리하는 실행 계획 | Done | 2026-07-05 |
 | [`./2026-07-05-template-path-numbering-contract.md`](./2026-07-05-template-path-numbering-contract.md) | Template path numbering contract implementation plan for PRD numeric renames, Stage 03 numbered feature-folder routing, template/support/governance/validator updates, and validation closure. | Done | 2026-07-05 |
 | [`./2026-07-05-workspace-contract-governance-normalization.md`](./2026-07-05-workspace-contract-governance-normalization.md) | Workspace contract governance normalization implementation plan for `_workspace` staging, frontmatter/template/section drift, CI/CD and QA control surfaces, validator coverage, and evidence closure. | Done | 2026-07-06 |
+| [`./2026-07-06-sdlc-lifecycle-contract.md`](./2026-07-06-sdlc-lifecycle-contract.md) | SDLC lifecycle contract implementation plan for status transitions, numeric lineage, handoff links, archive tombstone metadata, active-surface limits, `_workspace` staging, and validator gates. | Draft | 2026-07-06 |
 
 ## Related Documents
 
