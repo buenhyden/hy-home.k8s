@@ -69,7 +69,7 @@ This README is located at
 | --- | --- | --- |
 | [01-governance-harness-loop-providers.md](./01-governance-harness-loop-providers.md) | Current | Governance, harness, loop, Claude, Codex, Gemini, and common provider implementation audit. |
 | [02-sdlc-ci-qa-formatting-automation.md](./02-sdlc-ci-qa-formatting-automation.md) | Current | Spec-driven development, SDLC, CI/CD, QA, formatting, linting, automation, pipeline, and workflow audit. |
-| `03-kubernetes-infrastructure-security.md` | Planned | Kubernetes, infrastructure, GitOps, secrets, policy, network, supply-chain, and security audit. |
+| [03-kubernetes-infrastructure-security.md](./03-kubernetes-infrastructure-security.md) | Current | Kubernetes, infrastructure, GitOps, secrets, policy, network, supply-chain, and security audit. |
 | `04-implementation-roadmap-and-automation-opportunities.md` | Planned | Cross-report roadmap, priority matrix, automation candidates, and future task routing. |
 
 ## Benchmark Sources

@@ -45,7 +45,7 @@ and closes validation through local static checks.
 | WEA-002 | Folderize existing root audit reports | doc | VAL-SPC-001, VAL-SPC-006 | Task 2 | `git mv` history preservation, stale old-path scan, audit README updates, repository quality gate | platform | Done |
 | WEA-003 | Add dated audit pack README and governance/harness/provider report | doc | VAL-SPC-002, VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 3 | Required report files and evidence matrix rows present | platform | Done |
 | WEA-004 | Add SDLC/CI/QA/formatting/automation report | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 4 | SDLC, CI/CD, QA, formatting, linting, automation, pipeline, and workflow rows present | platform | Done |
-| WEA-005 | Add Kubernetes/infrastructure/security report | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 5 | Kubernetes, infrastructure, GitOps, secrets, policy, and security rows present | platform | Todo |
+| WEA-005 | Add Kubernetes/infrastructure/security report | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 5 | Kubernetes, infrastructure, GitOps, secrets, policy, and security rows present | platform | Done |
 | WEA-006 | Add roadmap and automation opportunities report | doc | VAL-SPC-004, VAL-SPC-005 | Task 6 | Cross-report roadmap and owner-routed automation opportunities present | platform | Todo |
 | WEA-007 | Close indexes, evidence, review, and validation | doc | VAL-SPC-006, VAL-SPC-007, VAL-SPC-008 | Task 7 | Final scans, quality gates, and mutation boundary check pass | platform | Todo |
 
@@ -71,7 +71,7 @@ and closes validation through local static checks.
 
 - [x] WEA-003 Add dated audit pack README and governance/harness/provider report
 - [x] WEA-004 Add SDLC/CI/QA/formatting/automation report
-- [ ] WEA-005 Add Kubernetes/infrastructure/security report
+- [x] WEA-005 Add Kubernetes/infrastructure/security report
 - [ ] WEA-006 Add roadmap and automation opportunities report
 
 ### Phase 4: Closure
@@ -270,6 +270,59 @@ and closes validation through local static checks.
     live-runtime, provider-runtime, Kubernetes, cloud, or secret readiness.
 - **WEA-004 Validation Commands**:
   - Required `rg -n "spec-driven|SDLC|CI/CD|QA|Formatting|Linting|pre-commit|markdownlint|YAML|actionlint|zizmor|artifact|Dependabot|pipeline|workflow|automation|DORA|Implemented|Partial|Gap|Not in scope|repo-static|CI/toolchain|live-runtime|Review and Freshness" docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/02-sdlc-ci-qa-formatting-automation.md` completed.
+  - `git diff --check` passed.
+  - `bash scripts/validate-repo-quality-gates.sh .` passed with
+    `[PASS] repository quality gates passed`.
+- **WEA-005 Source Files Read**:
+  - `docs/04.execution/plans/2026-07-05-workspace-engineering-implementation-audit-pack.md` Task 5
+  - `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/kubernetes-infrastructure-security.md`
+  - `gitops/README.md`
+  - `infrastructure/README.md`
+  - `scripts/README.md`
+  - `tests/README.md`
+  - `traefik/README.md`
+  - `docs/05.operations/policies/0001-k8s-gitops-operations-policy.md`
+  - `docs/05.operations/policies/0007-app-gitops-onboarding-policy.md`
+  - `policy/conftest/kubernetes.rego`
+  - `scripts/validate-policy-gates.sh`
+  - `scripts/validate-gitops-structure.sh`
+  - `scripts/validate-k8s-manifests.sh`
+  - `scripts/check-secret-handling.sh`
+  - `infrastructure/tests/verify-contracts-static.sh`
+  - representative GitOps and infrastructure evidence under
+    `gitops/clusters/local/`, `gitops/apps/root/`, `gitops/platform/eso/`,
+    `gitops/platform/network-policies/`, and `infrastructure/vault/`
+- **WEA-005 Matrix Rows Recorded**:
+  - Kubernetes desired-state surfaces
+  - GitOps repository layout
+  - Argo CD App-of-Apps/root app boundaries
+  - AppProject allow-list boundaries
+  - namespace ownership
+  - Kustomize/declarative management
+  - External Secrets Operator and Vault boundaries
+  - secret handling and no plaintext secret values
+  - RBAC and service account evidence
+  - NetworkPolicy coverage and gaps
+  - ingress/Traefik/static routing evidence
+  - policy-as-code with Conftest/OPA
+  - manifest validation and kube-linter path
+  - infrastructure static contract tests
+  - supply-chain and image policy boundaries
+  - live-runtime readiness boundary
+  - security automation opportunities
+- **WEA-005 Status Vocabulary Confirmation**:
+  - The audit pack uses only `Implemented`, `Partial`, `Gap`, and
+    `Not in scope`.
+  - Repo-backed evidence is used for implementation status; official
+    Kubernetes, Argo, Vault, OPA, NIST, OpenSSF, and related sources remain
+    benchmark context through the research pack.
+  - Policy-as-code evidence is repo-static/CI-toolchain evidence only, not
+    live admission control.
+  - Static validation is recorded as repo-static evidence only, not
+    live-runtime, Kubernetes, Argo CD, Vault, ESO, network, cloud, or secret
+    readiness.
+- **WEA-005 Validation Commands**:
+  - Required `rg -n "Kubernetes|Infrastructure|GitOps|Argo CD|AppProject|Kustomize|External Secrets|Vault|secret|RBAC|NetworkPolicy|Traefik|OPA|Conftest|kube-linter|supply-chain|security|Implemented|Partial|Gap|Not in scope|repo-static|live-runtime|Review and Freshness" docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/03-kubernetes-infrastructure-security.md` completed.
   - `git diff --check` passed.
   - `bash scripts/validate-repo-quality-gates.sh .` passed with
     `[PASS] repository quality gates passed`.
