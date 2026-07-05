@@ -218,8 +218,6 @@ git commit -m "docs(governance): Normalize document contract drift"
 
 ## Deferrals
 
-- WCGN-003 owns active frontmatter, template, section, README, and cross-link
-  remediation.
 - WCGN-004 owns CI/CD, QA, formatting, linting, syntax, automation, workflow,
   and security wording remediation.
 - WCGN-005 owns final validator coverage, final validation, and progress memory
