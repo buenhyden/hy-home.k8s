@@ -30,8 +30,8 @@ In scope:
 - Define status transition expectations for PRD, ARD, ADR, Spec, Plan, Task,
   operations, and archive tombstone documents.
 - Preserve the existing numeric route contracts for PRDs and specs:
-  `docs/01.requirements/<###>-<feature-or-system>.md` and
-  `docs/03.specs/<###>-<feature-id>/spec.md`.
+  `docs/01.requirements/<###-Numbering>-<feature-or-system>.md` and
+  `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.
 - Define feature lineage and handoff link expectations across PRD,
   architecture, spec, plan, task, operations, and archive documents.
 - Update archive rules so tombstones preserve original path, archive date,
@@ -101,8 +101,8 @@ Out of scope:
     operations contracts.
   - Archive tombstones always use `status: archived`.
 - **Numbering Contract**:
-  - Stage 01 PRDs use `docs/01.requirements/<###>-<feature-or-system>.md`.
-  - Stage 03 specs use `docs/03.specs/<###>-<feature-id>/spec.md`.
+  - Stage 01 PRDs use `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
+  - Stage 03 specs use `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.
   - A new numeric identifier is the highest active or archived identifier in
     the same routed family plus one.
   - Related PRD and spec identifiers should match when they describe the same

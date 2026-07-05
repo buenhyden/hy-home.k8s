@@ -130,8 +130,8 @@ Update `template-routing.md` and `documentation-contract.md` so they both
 state:
 
 ```text
-Stage 01 PRDs use docs/01.requirements/<###>-<feature-or-system>.md.
-Stage 03 specs use docs/03.specs/<###>-<feature-id>/spec.md.
+Stage 01 PRDs use docs/01.requirements/<###-Numbering>-<feature-or-system>.md.
+Stage 03 specs use docs/03.specs/<###-Numbering>-<feature-id>/spec.md.
 Stage 04 plans and tasks stay date-based execution records.
 README files route readers to lifecycle contract owners instead of carrying
 full governance bodies.
@@ -148,7 +148,7 @@ rule before editing documents.
 Run:
 
 ```bash
-rg -n "draft -> active|original_path|active-surface|<###>-<feature" docs/99.templates/support docs/00.agent-governance/rules
+rg -n "draft -> active|original_path|active-surface|<###-Numbering>-<feature" docs/99.templates/support docs/00.agent-governance/rules
 git diff --check
 ```
 
