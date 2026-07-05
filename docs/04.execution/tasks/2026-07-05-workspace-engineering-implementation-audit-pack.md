@@ -44,7 +44,7 @@ and closes validation through local static checks.
 | WEA-001 | Create task evidence and baseline inventory | doc | VAL-SPC-007 | Task 1 | Baseline inventory, old-path candidate scan, task index row, `git diff --check`, repository quality gate | platform | Done |
 | WEA-002 | Folderize existing root audit reports | doc | VAL-SPC-001, VAL-SPC-006 | Task 2 | `git mv` history preservation, stale old-path scan, audit README updates, repository quality gate | platform | Done |
 | WEA-003 | Add dated audit pack README and governance/harness/provider report | doc | VAL-SPC-002, VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 3 | Required report files and evidence matrix rows present | platform | Done |
-| WEA-004 | Add SDLC/CI/QA/formatting/automation report | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 4 | SDLC, CI/CD, QA, formatting, linting, automation, pipeline, and workflow rows present | platform | Todo |
+| WEA-004 | Add SDLC/CI/QA/formatting/automation report | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 4 | SDLC, CI/CD, QA, formatting, linting, automation, pipeline, and workflow rows present | platform | Done |
 | WEA-005 | Add Kubernetes/infrastructure/security report | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 5 | Kubernetes, infrastructure, GitOps, secrets, policy, and security rows present | platform | Todo |
 | WEA-006 | Add roadmap and automation opportunities report | doc | VAL-SPC-004, VAL-SPC-005 | Task 6 | Cross-report roadmap and owner-routed automation opportunities present | platform | Todo |
 | WEA-007 | Close indexes, evidence, review, and validation | doc | VAL-SPC-006, VAL-SPC-007, VAL-SPC-008 | Task 7 | Final scans, quality gates, and mutation boundary check pass | platform | Todo |
@@ -70,7 +70,7 @@ and closes validation through local static checks.
 ### Phase 3: Part-Based Audit Reports
 
 - [x] WEA-003 Add dated audit pack README and governance/harness/provider report
-- [ ] WEA-004 Add SDLC/CI/QA/formatting/automation report
+- [x] WEA-004 Add SDLC/CI/QA/formatting/automation report
 - [ ] WEA-005 Add Kubernetes/infrastructure/security report
 - [ ] WEA-006 Add roadmap and automation opportunities report
 
@@ -219,6 +219,57 @@ and closes validation through local static checks.
     live-runtime, provider-runtime, Kubernetes, cloud, or secret readiness.
 - **WEA-003 Validation Commands**:
   - Required `rg -n "workspace purpose|harness|loop|Claude|Codex|Gemini|common provider|Implemented|Partial|Gap|Not in scope|repo-static|live-runtime|Evidence|Follow-up route|Review and Freshness" docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/01-governance-harness-loop-providers.md` completed.
+  - `git diff --check` passed.
+  - `bash scripts/validate-repo-quality-gates.sh .` passed with
+    `[PASS] repository quality gates passed`.
+- **WEA-004 Source Files Read**:
+  - `docs/04.execution/plans/2026-07-05-workspace-engineering-implementation-audit-pack.md` Task 4
+  - `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md`
+  - `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/automation-pipeline-workflow-qa.md`
+  - `.github/ABOUT.md`
+  - `.github/workflows/ci.yml`
+  - `.github/workflows/generate-changelog.yml`
+  - `.github/workflows/labeler.yml`
+  - `.github/workflows/greetings.yml`
+  - `.github/workflows/stale.yml`
+  - `.github/dependabot.yml`
+  - `.github/labeler.yml`
+  - `.github/zizmor.yml`
+  - `.pre-commit-config.yaml`
+  - `.editorconfig`
+  - `docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md`
+  - `scripts/README.md`
+- **WEA-004 Matrix Rows Recorded**:
+  - spec-driven development lifecycle
+  - Stage 03 spec lifecycle
+  - Stage 04 plan lifecycle
+  - Stage 04 task/evidence lifecycle
+  - SDLC and secure SDLC evidence lanes
+  - CI/CD workflow graph
+  - branch policy and path filtering
+  - QA validation commands
+  - formatting and `.editorconfig`
+  - markdownlint/CommonMark
+  - YAML syntax and manifest checks
+  - linting with pre-commit, shellcheck, shfmt, actionlint, zizmor,
+    hadolint, kube-linter
+  - secret scanning with gitleaks, detect-secrets, and static secret handling
+  - release-evidence artifact workflow
+  - maintenance automation: Dependabot, labeler, greetings, stale
+  - automation, pipeline, workflow, artifact/cache/reusable-workflow gaps
+  - DORA/Fowler context as non-authoritative market/context scan
+- **WEA-004 Status Vocabulary Confirmation**:
+  - The audit pack uses only `Implemented`, `Partial`, `Gap`, and
+    `Not in scope`.
+  - Repo-backed evidence is used for implementation status; research,
+    DORA/Fowler, and external market/context material remain benchmark
+    context.
+  - Repo-static, CI/toolchain, artifact/release, maintenance,
+    market/context, and live-runtime evidence lanes are kept separate.
+  - Static validation is recorded as repo-static evidence only, not
+    live-runtime, provider-runtime, Kubernetes, cloud, or secret readiness.
+- **WEA-004 Validation Commands**:
+  - Required `rg -n "spec-driven|SDLC|CI/CD|QA|Formatting|Linting|pre-commit|markdownlint|YAML|actionlint|zizmor|artifact|Dependabot|pipeline|workflow|automation|DORA|Implemented|Partial|Gap|Not in scope|repo-static|CI/toolchain|live-runtime|Review and Freshness" docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/02-sdlc-ci-qa-formatting-automation.md` completed.
   - `git diff --check` passed.
   - `bash scripts/validate-repo-quality-gates.sh .` passed with
     `[PASS] repository quality gates passed`.
