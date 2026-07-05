@@ -115,6 +115,7 @@ Requested target inventory notes:
 | 2026-07-05 | WCGN-002 | Narrowed the `_workspace` ignore rule to ignore scratch while allowing the directory and `_workspace/README.md` to be tracked. | `git check-ignore -v _workspace/probe.log` returned `.gitignore:31:_workspace/*	_workspace/probe.log`; `git check-ignore -v _workspace/README.md` exited 1 with no output, recorded as NOT IGNORED. |
 | 2026-07-05 | WCGN-002 | Created `_workspace/README.md` as the frontmatter-free checked-in contract and added the root README structure entry. | `git ls-files _workspace` returned only `_workspace/README.md` after staging the README. |
 | 2026-07-05 | WCGN-002 | Aligned Stage 00 governance and Stage 99 support contracts with the `_workspace` staging boundary. | `git diff --check` returned no whitespace errors and `bash scripts/validate-repo-quality-gates.sh .` returned `[PASS] repository quality gates passed`. |
+| 2026-07-05 | WCGN-002 | Followed up on quality review by tightening dry-run scratch wording from logs to redacted, non-secret summaries. | `rg -n "Dry-run logs\|dry-run\|logs\|summaries" _workspace/README.md` no longer returns `Dry-run logs`; validation passed with `git diff --check` and `bash scripts/validate-repo-quality-gates.sh .`. |
 
 ## Verification Commands
 
@@ -140,6 +141,12 @@ git diff --cached --check
 git add .gitignore _workspace/README.md README.md docs/00.agent-governance/subagent-protocol.md docs/00.agent-governance/rules/documentation-protocol.md docs/00.agent-governance/rules/approval-boundaries.md docs/99.templates/support/documentation-contract.md docs/99.templates/support/frontmatter-schema.md docs/99.templates/support/legacy-cleanup-rules.md docs/04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md
 git diff --cached --check
 git commit -m "docs(governance): Define workspace staging boundary"
+rg -n "Dry-run logs|dry-run|logs|summaries" _workspace/README.md
+git diff --check
+bash scripts/validate-repo-quality-gates.sh .
+git add _workspace/README.md docs/04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md
+git diff --cached --check
+git commit -m "docs(governance): Clarify workspace dry-run boundary"
 ```
 
 ## Verification Summary
@@ -174,6 +181,9 @@ git commit -m "docs(governance): Define workspace staging boundary"
 | 2026-07-05 | `_workspace` tracked-file boundary | PASS; `git ls-files _workspace` returned only `_workspace/README.md`. |
 | 2026-07-05 | WCGN-002 working-tree whitespace check | PASS; `git diff --check` returned no whitespace errors. |
 | 2026-07-05 | WCGN-002 repository quality gate | PASS; `bash scripts/validate-repo-quality-gates.sh .` returned `[PASS] repository quality gates passed`. |
+| 2026-07-05 | WCGN-002 quality review follow-up scan | PASS; `_workspace/README.md` now says `Redacted, non-secret dry-run summaries.` and no longer says `Dry-run logs.`. Remaining `logs` mentions are the prohibited `Secret-bearing local logs` out-of-scope boundary. |
+| 2026-07-05 | WCGN-002 follow-up whitespace check | PASS; `git diff --check` returned no whitespace errors. |
+| 2026-07-05 | WCGN-002 follow-up repository quality gate | PASS; `bash scripts/validate-repo-quality-gates.sh .` returned `[PASS] repository quality gates passed`. |
 
 ## Deferrals
 

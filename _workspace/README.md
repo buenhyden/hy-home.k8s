@@ -25,7 +25,7 @@ This README is for:
 ### In Scope
 
 - Temporary audit scratch.
-- Dry-run logs.
+- Redacted, non-secret dry-run summaries.
 - Migration ledgers.
 - Route inventories.
 - Non-secret scan summaries.
