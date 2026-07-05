@@ -155,17 +155,17 @@ governance, routing, frontmatter schema, legacy cleanup rule을 소유한다.
 | Target Pattern                                                           | Template Path                                                              | Responsibility                                                          |
 | ------------------------------------------------------------------------ | -------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | `README.md`, `**/README.md`, `.claude/README.md`, `.codex/README.md`     | `templates/common/readme.template.md`                                      | Entry point, scope, structure, workflow, link basis, related documents  |
-| `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md`                 | `templates/sdlc/requirements/prd.template.md`                              | Product requirements, users, scope, success / acceptance criteria       |
+| `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`                 | `templates/sdlc/requirements/prd.template.md`                              | Product requirements, users, scope, success / acceptance criteria       |
 | `docs/02.architecture/requirements/####-<system-or-domain>.md`           | `templates/sdlc/architecture/ard.template.md`                              | Architecture requirements, quality attributes, reference model          |
 | `docs/02.architecture/decisions/####-<short-title>.md`                   | `templates/sdlc/architecture/adr.template.md`                              | One architecture decision, context, consequences, alternatives          |
-| `docs/03.specs/<feature-id>/spec.md`                                     | `templates/sdlc/specs/spec.template.md`                                    | Parent implementation contract, interfaces, verification                |
-| `docs/03.specs/<feature-id>/api-spec.md`                                 | `templates/sdlc/specs/api-spec.template.md`                                | Feature-local API contract                                              |
-| `docs/03.specs/<feature-id>/agent-design.md`                             | `templates/sdlc/specs/agent-design.template.md`                            | Feature-local AI agent behavior, orchestration, safety, and eval design |
-| `docs/03.specs/<feature-id>/data-model.md`                               | `templates/sdlc/specs/data-model.template.md`                              | Feature-local logical and physical data model                           |
-| `docs/03.specs/<feature-id>/tests.md`                                    | `templates/sdlc/specs/tests.template.md`                                   | Feature-local test and evaluation strategy                              |
-| `docs/03.specs/<feature-id>/contracts/openapi.yaml`                      | `templates/sdlc/specs/openapi.template.yaml`                               | Feature-local OpenAPI contract                                          |
-| `docs/03.specs/<feature-id>/contracts/schema.graphql`                    | `templates/sdlc/specs/schema.template.graphql`                             | Feature-local GraphQL schema contract                                   |
-| `docs/03.specs/<feature-id>/contracts/service.proto`                     | `templates/sdlc/specs/service.template.proto`                              | Feature-local gRPC/protobuf contract                                    |
+| `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`                                     | `templates/sdlc/specs/spec.template.md`                                    | Parent implementation contract, interfaces, verification                |
+| `docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md`                                 | `templates/sdlc/specs/api-spec.template.md`                                | Feature-local API contract                                              |
+| `docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md`                             | `templates/sdlc/specs/agent-design.template.md`                            | Feature-local AI agent behavior, orchestration, safety, and eval design |
+| `docs/03.specs/<###-Numbering>-<feature-id>/data-model.md`                               | `templates/sdlc/specs/data-model.template.md`                              | Feature-local logical and physical data model                           |
+| `docs/03.specs/<###-Numbering>-<feature-id>/tests.md`                                    | `templates/sdlc/specs/tests.template.md`                                   | Feature-local test and evaluation strategy                              |
+| `docs/03.specs/<###-Numbering>-<feature-id>/contracts/openapi.yaml`                      | `templates/sdlc/specs/openapi.template.yaml`                               | Feature-local OpenAPI contract                                          |
+| `docs/03.specs/<###-Numbering>-<feature-id>/contracts/schema.graphql`                    | `templates/sdlc/specs/schema.template.graphql`                             | Feature-local GraphQL schema contract                                   |
+| `docs/03.specs/<###-Numbering>-<feature-id>/contracts/service.proto`                     | `templates/sdlc/specs/service.template.proto`                              | Feature-local gRPC/protobuf contract                                    |
 | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md`                        | `templates/sdlc/execution/plan.template.md`                                | Execution order, risk control, rollout, verification                    |
 | `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md`              | `templates/sdlc/execution/task.template.md`                                | Implementation and validation task evidence                             |
 | `docs/05.operations/guides/####-<topic>.md`                              | `templates/sdlc/operations/guide.template.md`                              | Stable-state user, developer, or operator guidance                      |
@@ -193,10 +193,10 @@ CI, secrets, or operations. It adds approval boundaries and static-vs-live evide
 
 API 계약 문서는 별도 top-level docs 유형이 아니라 `03.specs/` 아래에서 사용하는 하위 템플릿이다.
 
-- 올바른 위치: `docs/03.specs/<feature-id>/api-spec.md`
+- 올바른 위치: `docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md`
 - 잘못된 패턴: `docs/api/...`
 
-OpenAPI, GraphQL, proto 같은 계약 파일은 관련 `docs/03.specs/<feature-id>/` 문맥에서 추적성을 유지한다.
+OpenAPI, GraphQL, proto 같은 계약 파일은 관련 `docs/03.specs/<###-Numbering>-<feature-id>/` 문맥에서 추적성을 유지한다.
 
 ## Structural Template Coverage
 
@@ -235,11 +235,11 @@ OpenAPI, GraphQL, proto 같은 계약 파일은 관련 `docs/03.specs/<feature-i
 ## README and Spec Helper Templates
 
 각 폴더 README도 반복적으로 재사용되는 문서 유형이므로 별도 README 템플릿을 함께 제공한다.
-`03.specs/<feature-id>/` 아래에서 반복적으로 사용하는 보조 설계 문서와 계약 파일용 템플릿을 함께 제공한다.
+`03.specs/<###-Numbering>-<feature-id>/` 아래에서 반복적으로 사용하는 보조 설계 문서와 계약 파일용 템플릿을 함께 제공한다.
 
 - `readme.template.md`는 repository root, `docs/README.md`, stage README, nested README에서 재사용되는 multi-target 템플릿이다. 단일 `Target:` 주석을 강제하지 않고, 최종 README 위치에서 상대 링크를 다시 계산한다.
 - 모든 README는 `Overview`, `Audience`, `Scope`, `Structure`, `How to Work in This Area`, `Link Basis`, `Related Documents`를 유지한다.
-- `docs/03.specs/<feature-id>/README.md`는 필수가 아니다. 기본 인덱스는 `docs/03.specs/README.md`가 소유하며, feature-local README는 API/agent/data/test 보조 문서가 늘어날 때만 만든다.
+- `docs/03.specs/<###-Numbering>-<feature-id>/README.md`는 필수가 아니다. 기본 인덱스는 `docs/03.specs/README.md`가 소유하며, feature-local README는 API/agent/data/test 보조 문서가 늘어날 때만 만든다.
 - `openapi.template.yaml`, `schema.template.graphql`, `service.template.proto`는 형식상 YAML/GraphQL/proto 파일이므로 frontmatter 없이 owner comments와 parent API spec 링크로 추적성을 유지한다.
 - `memory.template.md`는 `docs/00.agent-governance/memory/<topic>.md` target family를 사용한다. 관련 progress 링크는 최종 memory 파일 위치 기준으로 계산한다.
 - `progress.template.md`는 `docs/00.agent-governance/memory/progress.md`에 append되는 entry 템플릿이다. entry 안의 링크는 `docs/00.agent-governance/memory/` 기준으로 계산한다.

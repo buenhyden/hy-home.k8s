@@ -6,11 +6,11 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/03.specs/<feature-id>/tests.md -->
+<!-- Target: docs/03.specs/<###-Numbering>-<feature-id>/tests.md -->
 
 # [Feature Name] Test & Evaluation Strategy
 
-> Use this template for `docs/03.specs/<feature-id>/tests.md`.
+> Use this template for `docs/03.specs/<###-Numbering>-<feature-id>/tests.md`.
 >
 > Rules:
 >
@@ -90,7 +90,7 @@ python evals/run_feature_eval.py
 ## Related Documents
 
 Target-relative examples below assume the authored file will be created at
-`docs/03.specs/<feature-id>/tests.md`.
+`docs/03.specs/<###-Numbering>-<feature-id>/tests.md`.
 
 - **Spec**: `[./spec.md]`
 - **Agent Design**: `[./agent-design.md]`

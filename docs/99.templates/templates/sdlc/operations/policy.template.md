@@ -73,6 +73,6 @@ Target-relative examples below assume the authored file will be created at
 
 - **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
 - **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
-- **Spec**: `[../../03.specs/<feature-id>/spec.md]`
+- **Spec**: `[../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
 - **Runbook**: `[../runbooks/####-<topic>.md]`
 - **Postmortem**: `[../incidents/YYYY/INC-###-<title>/postmortem.md]`

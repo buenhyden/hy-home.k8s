@@ -68,8 +68,8 @@ updated: YYYY-MM-DD
 Target-relative examples below assume the authored file will be created at
 `docs/02.architecture/decisions/####-<short-title>.md`.
 
-- **PRD**: `[../../01.requirements/YYYY-MM-DD-<feature-or-system>.md]`
+- **PRD**: `[../../01.requirements/<###-Numbering>-<feature-or-system>.md]`
 - **ARD**: `[../requirements/####-<system-or-domain>.md]`
-- **Spec**: `[../../03.specs/<feature-id>/spec.md]`
+- **Spec**: `[../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
 - **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
 - **Related ADR**: `[./####-<related-decision>.md]`

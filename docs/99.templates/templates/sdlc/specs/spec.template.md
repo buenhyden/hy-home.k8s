@@ -6,11 +6,11 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/03.specs/<feature-id>/spec.md -->
+<!-- Target: docs/03.specs/<###-Numbering>-<feature-id>/spec.md -->
 
 # [Feature Name] Technical Specification (Spec)
 
-> Use this template for `docs/03.specs/<feature-id>/spec.md`.
+> Use this template for `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.
 >
 > Rules:
 >
@@ -37,7 +37,7 @@ verification criteria.
 
 Use this section for upstream requirement, architecture, and decision inputs.
 
-- **PRD**: `[../../01.requirements/YYYY-MM-DD-<feature-or-system>.md]`
+- **PRD**: `[../../01.requirements/<###-Numbering>-<feature-or-system>.md]`
 - **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
 - **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
 
@@ -151,13 +151,13 @@ python evals/run_[feature]_eval.py
 ## Related Documents
 
 Target-relative examples below assume the authored file will be created at
-`docs/03.specs/<feature-id>/spec.md`.
+`docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.
 
 Use this section for both upstream traceability and downstream or peer documents
 created from this spec. `Related Inputs` may summarize the same upstream inputs,
 but it does not replace this required `Related Documents` traceability section.
 
-- **PRD**: `[../../01.requirements/YYYY-MM-DD-<feature-or-system>.md]`
+- **PRD**: `[../../01.requirements/<###-Numbering>-<feature-or-system>.md]`
 - **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
 - **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
 - **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`

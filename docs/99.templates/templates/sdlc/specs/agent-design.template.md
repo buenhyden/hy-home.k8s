@@ -6,11 +6,11 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/03.specs/<feature-id>/agent-design.md -->
+<!-- Target: docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md -->
 
 # [Feature Name] Agent Design
 
-> Use this template for `docs/03.specs/<feature-id>/agent-design.md`.
+> Use this template for `docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md`.
 >
 > Rules:
 >
@@ -29,7 +29,7 @@ updated: YYYY-MM-DD
 ## Parent Documents
 
 - **Spec**: `[./spec.md]`
-- **PRD**: `[../../01.requirements/YYYY-MM-DD-<feature-or-system>.md]`
+- **PRD**: `[../../01.requirements/<###-Numbering>-<feature-or-system>.md]`
 - **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
 - **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
 
@@ -105,11 +105,11 @@ updated: YYYY-MM-DD
 ## Related Documents
 
 Target-relative examples below assume the authored file will be created at
-`docs/03.specs/<feature-id>/agent-design.md`.
+`docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md`.
 
 - **Tests**: `[./tests.md]`
 - **Spec**: `[./spec.md]`
-- **PRD**: `[../../01.requirements/YYYY-MM-DD-<feature-or-system>.md]`
+- **PRD**: `[../../01.requirements/<###-Numbering>-<feature-or-system>.md]`
 - **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
 - **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
 - **Operation**: `[../../05.operations/policies/####-<policy-or-standard>.md]`

@@ -24,17 +24,17 @@ one target path pattern, one template form, and one validation route.
 
 | Lifecycle Role | Target Pattern | Template Path |
 | --- | --- | --- |
-| Product requirement | `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md` | `../templates/sdlc/requirements/prd.template.md` |
+| Product requirement | `docs/01.requirements/<###-Numbering>-<feature-or-system>.md` | `../templates/sdlc/requirements/prd.template.md` |
 | Architecture requirement | `docs/02.architecture/requirements/####-<system-or-domain>.md` | `../templates/sdlc/architecture/ard.template.md` |
 | Architecture decision | `docs/02.architecture/decisions/####-<short-title>.md` | `../templates/sdlc/architecture/adr.template.md` |
-| Technical specification | `docs/03.specs/<feature-id>/spec.md` | `../templates/sdlc/specs/spec.template.md` |
-| API contract doc | `docs/03.specs/<feature-id>/api-spec.md` | `../templates/sdlc/specs/api-spec.template.md` |
-| Agent design | `docs/03.specs/<feature-id>/agent-design.md` | `../templates/sdlc/specs/agent-design.template.md` |
-| Data model | `docs/03.specs/<feature-id>/data-model.md` | `../templates/sdlc/specs/data-model.template.md` |
-| Test design | `docs/03.specs/<feature-id>/tests.md` | `../templates/sdlc/specs/tests.template.md` |
-| OpenAPI contract | `docs/03.specs/<feature-id>/contracts/openapi.yaml` | `../templates/sdlc/specs/openapi.template.yaml` |
-| GraphQL contract | `docs/03.specs/<feature-id>/contracts/schema.graphql` | `../templates/sdlc/specs/schema.template.graphql` |
-| Protobuf contract | `docs/03.specs/<feature-id>/contracts/service.proto` | `../templates/sdlc/specs/service.template.proto` |
+| Technical specification | `docs/03.specs/<###-Numbering>-<feature-id>/spec.md` | `../templates/sdlc/specs/spec.template.md` |
+| API contract doc | `docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md` | `../templates/sdlc/specs/api-spec.template.md` |
+| Agent design | `docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md` | `../templates/sdlc/specs/agent-design.template.md` |
+| Data model | `docs/03.specs/<###-Numbering>-<feature-id>/data-model.md` | `../templates/sdlc/specs/data-model.template.md` |
+| Test design | `docs/03.specs/<###-Numbering>-<feature-id>/tests.md` | `../templates/sdlc/specs/tests.template.md` |
+| OpenAPI contract | `docs/03.specs/<###-Numbering>-<feature-id>/contracts/openapi.yaml` | `../templates/sdlc/specs/openapi.template.yaml` |
+| GraphQL contract | `docs/03.specs/<###-Numbering>-<feature-id>/contracts/schema.graphql` | `../templates/sdlc/specs/schema.template.graphql` |
+| Protobuf contract | `docs/03.specs/<###-Numbering>-<feature-id>/contracts/service.proto` | `../templates/sdlc/specs/service.template.proto` |
 | Execution plan | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `../templates/sdlc/execution/plan.template.md` |
 | Execution task | `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `../templates/sdlc/execution/task.template.md` |
 | Guide | `docs/05.operations/guides/####-<topic>.md` | `../templates/sdlc/operations/guide.template.md` |

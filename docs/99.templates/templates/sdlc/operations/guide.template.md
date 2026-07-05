@@ -63,6 +63,6 @@ updated: YYYY-MM-DD
 Target-relative examples below assume the authored file will be created at
 `docs/05.operations/guides/####-<topic>.md`.
 
-- **Spec**: `[../../03.specs/<feature-id>/spec.md]`
+- **Spec**: `[../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
 - **Operations Policy**: `[../policies/####-<policy-or-standard>.md]`
 - **Runbook**: `[../runbooks/####-<topic>.md]`

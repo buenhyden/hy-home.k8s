@@ -70,6 +70,6 @@ Target-relative examples below assume the authored file will be created at
 `docs/90.references/<category>/<topic>.md`.
 
 - **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
-- **Spec**: `[../../03.specs/<feature-id>/spec.md]`
+- **Spec**: `[../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
 - **Reference maintenance runbook**: `../../05.operations/runbooks/0011-reference-maintenance-runbook.md`
 - **LLM Wiki curation guide**: `../../05.operations/guides/0009-llm-wiki-curation-guide.md`

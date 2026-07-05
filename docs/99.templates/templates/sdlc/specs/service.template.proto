@@ -1,4 +1,4 @@
-// Target: docs/03.specs/<feature-id>/contracts/service.proto
+// Target: docs/03.specs/<###-Numbering>-<feature-id>/contracts/service.proto
 // Owner docs from target directory:
 // - Parent spec: ../spec.md
 // - API spec: ../api-spec.md

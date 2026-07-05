@@ -6,11 +6,11 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/03.specs/<feature-id>/api-spec.md -->
+<!-- Target: docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md -->
 
 # [API Name] Specification
 
-> Use this template for `docs/03.specs/<feature-id>/api-spec.md`.
+> Use this template for `docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md`.
 >
 > Rules:
 >
@@ -107,7 +107,7 @@ updated: YYYY-MM-DD
 ## Related Documents
 
 Target-relative examples below assume the authored file will be created at
-`docs/03.specs/<feature-id>/api-spec.md`.
+`docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md`.
 
 - **Spec**: `[./spec.md]`
 - **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`

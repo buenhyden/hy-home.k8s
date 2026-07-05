@@ -42,7 +42,7 @@ configuration are changed in TPN-001.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | TPN-001 | Create task evidence and baseline scans | doc | VAL-SPC-019-007, VAL-SPC-019-008 | Task 1 | Baseline inventory, route-contract scan, old PRD link scan, `git diff --check`, quality gate | Codex | Done |
 | TPN-002 | Rename active PRD files and update direct PRD indexes | doc | VAL-SPC-019-001, VAL-SPC-019-005 | Task 2 | `git mv`, stale PRD active-link scan, quality gate | Codex | Done |
-| TPN-003 | Update template forms and support route contracts | doc | VAL-SPC-019-003, VAL-SPC-019-006 | Task 3 | route-map equality and old-route scan | Codex | Planned |
+| TPN-003 | Update template forms and support route contracts | doc | VAL-SPC-019-003, VAL-SPC-019-006 | Task 3 | route-map equality and old-route scan | Codex | Done |
 | TPN-004 | Update Stage 00 governance and validator mappings | qa | VAL-SPC-019-002, VAL-SPC-019-004 | Task 4 | validator route coverage and quality gate | Codex | Planned |
 | TPN-005 | Clean cross-links, close evidence, and validate | qa | VAL-SPC-019-005, VAL-SPC-019-008 | Task 5 | final stale scans, `git diff --check`, quality gate | Codex | Planned |
 
@@ -71,10 +71,11 @@ configuration are changed in TPN-001.
   `docs(tasks): Add template path numbering evidence` and
   `docs(requirements): Number active PRD files`, plus the review-fix commit
   `docs(requirements): Refresh PRD graph references`.
-- **Current Result**: PASS on 2026-07-05 after the graph artifact refresh;
-  the requested old-PRD-name scan has no `graphify-out` matches, `git diff
-  --check` returned no output, and `bash scripts/validate-repo-quality-gates.sh
-  .` reported `[PASS] repository quality gates passed`.
+- **Current Result**: PASS for TPN-003 route-contract scans and `git diff
+  --check` on 2026-07-05. `bash scripts/validate-repo-quality-gates.sh .`
+  currently fails because validator and Stage 00 route mappings still expect
+  the old template route patterns; those surfaces are assigned to TPN-004 and
+  are outside the TPN-003 write scope.
 
 ## Evidence Log
 
@@ -86,17 +87,17 @@ configuration are changed in TPN-001.
 | 2026-07-05 | TPN-001 | Validation | PASS; `git diff --check` and `bash scripts/validate-repo-quality-gates.sh .` completed successfully. |
 | 2026-07-05 | TPN-002 | PRD rename and old-name active-link scan | PASS; four PRDs renamed with `git mv`, Stage 01 README updated, and active old-name links removed, including the validation-discovered `infrastructure/README.md` PRD link. |
 | 2026-07-05 | TPN-002 review fix | Graph artifact refresh and old-name scan classification | PASS; tracked `graphify-out/**` artifacts were refreshed to the numbered PRD filenames. The requested scan now has no `graphify-out` matches; remaining matches are explicit historical/migration evidence in the TPN spec mapping and scan command, the TPN plan mapping, commands, and validation rows, this task record's baseline and review-fix evidence, and progress memory. Runtime tooling note: `rtk` is installed at `/home/hy/.local/bin/rtk` but not on this shell's `PATH`; `rtk gain` could not initialize its tracking database, so final validation commands ran directly. |
+| 2026-07-05 | TPN-003 | Template and support route contract update | PASS; template examples, Templates README, SDLC governance, and template routing contract use numbered Stage 01 and Stage 03 route patterns while preserving Stage 04 date-based routes |
 
 ## Handoff
 
-TPN-002 renames the four active PRD files with `git mv`, updates Stage 01
-README references, updates active links to the renamed PRDs, and refreshes
-tracked graph artifacts that contained current path literals for the removed
-PRD filenames.
+TPN-003 updates current template examples, the Templates README, SDLC
+governance, and the template routing contract to use numbered Stage 01 PRD and
+Stage 03 feature-folder route patterns while preserving Stage 04 date-based
+plan and task routes.
 
-Do not treat TPN-002 as full route migration completion. Template forms,
-support contracts, Stage 00 governance files, and validator logic are still
-assigned to TPN-003 and TPN-004.
+Do not treat TPN-003 as full route migration completion. Stage 00 governance
+files and validator logic are still assigned to TPN-004.
 
 ## Related Documents
 

@@ -107,5 +107,5 @@ Target-relative examples below assume the authored file will be created at
 - **Runbook**: `[../../../runbooks/####-<topic>.md]`
 - **Operation**: `[../../../policies/####-<policy-or-standard>.md]`
 - **Incident**: `[INC-###-<title>.md]`
-- **Spec**: `[../../../../03.specs/<feature-id>/spec.md]`
+- **Spec**: `[../../../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
 - **Related ADRs**: `[../../../../02.architecture/decisions/####-<short-title>.md]`

@@ -39,7 +39,7 @@ updated: YYYY-MM-DD
 
 - `[../../02.architecture/requirements/####-<system-or-domain>.md]`
 - `[../../02.architecture/decisions/####-<short-title>.md]`
-- `[../../03.specs/<feature-id>/spec.md]`
+- `[../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
 - `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
 
 ## When to Use
@@ -91,6 +91,6 @@ Target-relative examples below assume the authored file will be created at
 - **Postmortem examples**: `[../incidents/YYYY/INC-###-<title>/postmortem.md]`
 - **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
 - **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
-- **Spec**: `[../../03.specs/<feature-id>/spec.md]`
+- **Spec**: `[../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
 - **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
 - **Operation**: `[../policies/####-<policy-or-standard>.md]`

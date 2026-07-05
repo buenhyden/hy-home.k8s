@@ -6,11 +6,11 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/03.specs/<feature-id>/data-model.md -->
+<!-- Target: docs/03.specs/<###-Numbering>-<feature-id>/data-model.md -->
 
 # [Feature Name] Data Model
 
-> Use this template for `docs/03.specs/<feature-id>/data-model.md`.
+> Use this template for `docs/03.specs/<###-Numbering>-<feature-id>/data-model.md`.
 >
 > Rules:
 >
@@ -87,7 +87,7 @@ CREATE TABLE example (
 ## Related Documents
 
 Target-relative examples below assume the authored file will be created at
-`docs/03.specs/<feature-id>/data-model.md`.
+`docs/03.specs/<###-Numbering>-<feature-id>/data-model.md`.
 
 - **Spec**: `[./spec.md]`
 - **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`

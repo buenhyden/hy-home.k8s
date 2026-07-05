@@ -6,11 +6,11 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md -->
+<!-- Target: docs/01.requirements/<###-Numbering>-<feature-or-system>.md -->
 
 # [Feature or System Name] Product Requirements
 
-> Use this template for `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md`.
+> Use this template for `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
 >
 > Rules:
 >
@@ -74,9 +74,9 @@ updated: YYYY-MM-DD
 ## Related Documents
 
 Target-relative examples below assume the authored file will be created at
-`docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md`.
+`docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
 
 - **ARD**: `[../02.architecture/requirements/####-<system-or-domain>.md]`
-- **Spec**: `[../03.specs/<feature-id>/spec.md]`
+- **Spec**: `[../03.specs/<###-Numbering>-<feature-id>/spec.md]`
 - **Plan**: `[../04.execution/plans/YYYY-MM-DD-<feature>.md]`
 - **ADR**: `[../02.architecture/decisions/####-<short-title>.md]`

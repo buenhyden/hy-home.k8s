@@ -37,17 +37,17 @@ documents.
 | Target Pattern | Template Path |
 | --- | --- |
 | `README.md`, `**/README.md`, `.claude/README.md`, `.codex/README.md` | `templates/common/readme.template.md` |
-| `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md` | `templates/sdlc/requirements/prd.template.md` |
+| `docs/01.requirements/<###-Numbering>-<feature-or-system>.md` | `templates/sdlc/requirements/prd.template.md` |
 | `docs/02.architecture/requirements/####-<system-or-domain>.md` | `templates/sdlc/architecture/ard.template.md` |
 | `docs/02.architecture/decisions/####-<short-title>.md` | `templates/sdlc/architecture/adr.template.md` |
-| `docs/03.specs/<feature-id>/spec.md` | `templates/sdlc/specs/spec.template.md` |
-| `docs/03.specs/<feature-id>/api-spec.md` | `templates/sdlc/specs/api-spec.template.md` |
-| `docs/03.specs/<feature-id>/agent-design.md` | `templates/sdlc/specs/agent-design.template.md` |
-| `docs/03.specs/<feature-id>/data-model.md` | `templates/sdlc/specs/data-model.template.md` |
-| `docs/03.specs/<feature-id>/tests.md` | `templates/sdlc/specs/tests.template.md` |
-| `docs/03.specs/<feature-id>/contracts/openapi.yaml` | `templates/sdlc/specs/openapi.template.yaml` |
-| `docs/03.specs/<feature-id>/contracts/schema.graphql` | `templates/sdlc/specs/schema.template.graphql` |
-| `docs/03.specs/<feature-id>/contracts/service.proto` | `templates/sdlc/specs/service.template.proto` |
+| `docs/03.specs/<###-Numbering>-<feature-id>/spec.md` | `templates/sdlc/specs/spec.template.md` |
+| `docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md` | `templates/sdlc/specs/api-spec.template.md` |
+| `docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md` | `templates/sdlc/specs/agent-design.template.md` |
+| `docs/03.specs/<###-Numbering>-<feature-id>/data-model.md` | `templates/sdlc/specs/data-model.template.md` |
+| `docs/03.specs/<###-Numbering>-<feature-id>/tests.md` | `templates/sdlc/specs/tests.template.md` |
+| `docs/03.specs/<###-Numbering>-<feature-id>/contracts/openapi.yaml` | `templates/sdlc/specs/openapi.template.yaml` |
+| `docs/03.specs/<###-Numbering>-<feature-id>/contracts/schema.graphql` | `templates/sdlc/specs/schema.template.graphql` |
+| `docs/03.specs/<###-Numbering>-<feature-id>/contracts/service.proto` | `templates/sdlc/specs/service.template.proto` |
 | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `templates/sdlc/execution/plan.template.md` |
 | `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `templates/sdlc/execution/task.template.md` |
 | `docs/05.operations/guides/####-<topic>.md` | `templates/sdlc/operations/guide.template.md` |
@@ -60,7 +60,7 @@ documents.
 | `docs/00.agent-governance/memory/<topic>.md` | `templates/common/memory.template.md` |
 | `docs/00.agent-governance/memory/progress.md` | `templates/common/progress.template.md` |
 
-Feature-local indexes such as `docs/03.specs/<feature-id>/README.md` use the
+Feature-local indexes such as `docs/03.specs/<###-Numbering>-<feature-id>/README.md` use the
 generic README route. Do not add a second structural README route for a nested
 README target.
 
