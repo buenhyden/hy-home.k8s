@@ -46,7 +46,7 @@ in scope for this task.
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| WCGN-001 | Create task evidence and baseline inventory | doc | VAL-SPC-020-003, VAL-SPC-020-004, VAL-SPC-020-006, VAL-SPC-020-007 | Task 1 | Baseline inventory, `_workspace` baseline, frontmatter/template drift scans, task README index, staged whitespace check | platform | In Progress |
+| WCGN-001 | Create task evidence and baseline inventory | doc | VAL-SPC-020-003, VAL-SPC-020-004, VAL-SPC-020-006, VAL-SPC-020-007 | Task 1 | Baseline inventory, `_workspace` baseline, frontmatter/template drift scans, task README index, staged whitespace check, controller/spec/quality review follow-up | platform | Done |
 | WCGN-002 | Establish `_workspace` contract and ignore boundary | doc | VAL-SPC-020-001, VAL-SPC-020-002, VAL-SPC-020-005 | Task 2 | `_workspace/README.md` tracked, scratch files ignored, contract owners aligned, quality gate | platform | Planned |
 | WCGN-003 | Audit and remediate frontmatter, template, section, README, and cross-link drift | doc | VAL-SPC-020-003, VAL-SPC-020-004, VAL-SPC-020-005, VAL-SPC-020-007 | Task 3 | Focused scans classify active violations vs templates/historical evidence | platform | Planned |
 | WCGN-004 | Audit and remediate CI/CD, QA, formatting, linting, syntax, automation, workflow, and security drift | qa | VAL-SPC-020-006 | Task 4 | Control-surface descriptions match current scripts/workflows or recorded deferrals | platform | Planned |
@@ -109,8 +109,9 @@ Requested target inventory notes:
 | Date | Task | Change | Evidence |
 | --- | --- | --- | --- |
 | 2026-07-05 | WCGN-001 | Created this Stage 04 task evidence record from the canonical task template and parent spec/plan. | Frontmatter uses `type: sdlc/task`; required sections are present in the requested order. |
-| 2026-07-05 | WCGN-001 | Updated `docs/04.execution/tasks/README.md` with the new task structure entry and document index row. | README keeps `## Link Basis` and `## Related Documents`. |
+| 2026-07-05 | WCGN-001 | Updated `docs/04.execution/tasks/README.md` with the new WCGN document index row and structure block entries for WCGN plus two already-indexed 2026-07-05 task files that were missing from the structure block. | README keeps `## Link Basis` and `## Related Documents`. |
 | 2026-07-05 | WCGN-001 | Reviewed `docs/04.execution/plans/README.md`. | Existing plan structure and index already include `2026-07-05-workspace-contract-governance-normalization.md`; no edit was needed. |
+| 2026-07-05 | WCGN-001 | Completed controller/spec/quality review follow-up. | WCGN-001 status is `Done`; the verification command list now includes every command claimed by validation evidence. |
 
 ## Verification Commands
 
@@ -123,6 +124,8 @@ find _workspace -maxdepth 4 -type f -print | sort
 git check-ignore -v _workspace/probe.log
 rg -n "^type: (prd|ard|adr|spec|plan|task|guide|policy|runbook|incident|postmortem|reference)$" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
 rg -n "Target: d""ocs/|Use this ""template|SNIPPET LIBRARY|\\{Folder or Project Name\\}|\\[Feature Name\\]" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
+git diff --check
+bash scripts/validate-repo-quality-gates.sh .
 git add docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md
 git diff --cached --check
 ```
