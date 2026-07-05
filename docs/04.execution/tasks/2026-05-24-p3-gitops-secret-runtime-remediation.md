@@ -19,7 +19,7 @@ secret value output and live mutation are prohibited.
 
 - **Parent Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Parent Plan**: [../plans/2026-05-24-p3-gitops-secret-runtime-remediation.md](../plans/2026-05-24-p3-gitops-secret-runtime-remediation.md)
-- **Source Gap Plan**: [../../90.references/audits/2026-05-24-workspace-harness-gap-analysis.md](../../90.references/audits/2026-05-24-workspace-harness-gap-analysis.md)
+- **Source Gap Plan**: [../../90.references/audits/2026-05-24-workspace-harness-gap-analysis/workspace-harness-gap-analysis.md](../../90.references/audits/2026-05-24-workspace-harness-gap-analysis/workspace-harness-gap-analysis.md)
 
 ## Working Rules
 
@@ -117,6 +117,6 @@ secret value output and live mutation are prohibited.
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Plan**: [../plans/2026-05-24-p3-gitops-secret-runtime-remediation.md](../plans/2026-05-24-p3-gitops-secret-runtime-remediation.md)
-- **Source Plan**: [../../90.references/audits/2026-05-24-workspace-harness-gap-analysis.md](../../90.references/audits/2026-05-24-workspace-harness-gap-analysis.md)
+- **Source Plan**: [../../90.references/audits/2026-05-24-workspace-harness-gap-analysis/workspace-harness-gap-analysis.md](../../90.references/audits/2026-05-24-workspace-harness-gap-analysis/workspace-harness-gap-analysis.md)
 - **GitOps README**: [../../../gitops/README.md](../../../gitops/README.md)
 - **Vault Policy**: [../../../infrastructure/vault/policies/eso-read.hcl](../../../infrastructure/vault/policies/eso-read.hcl)

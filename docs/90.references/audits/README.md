@@ -31,13 +31,18 @@ their owning stages and may be linked here as evidence.
 
 ```text
 docs/90.references/audits/
-├── 2026-05-24-workspace-harness-gap-analysis.md
-├── 2026-07-02-workspace-governance-implementation-audit.md
-├── 2026-07-02-harness-loop-implementation-audit.md
-├── 2026-07-02-provider-harness-loop-implementation-audit.md
-├── 2026-07-02-sdlc-delivery-practices-implementation-audit.md
-├── 2026-07-03-workspace-document-governance-hardening-audit.md
-├── 2026-07-04-workspace-document-contract-normalization-audit.md
+├── 2026-05-24-workspace-harness-gap-analysis/
+│   └── workspace-harness-gap-analysis.md
+├── 2026-07-02-workspace-harness-implementation-audit-pack/
+│   ├── workspace-governance-implementation-audit.md
+│   ├── harness-loop-implementation-audit.md
+│   ├── provider-harness-loop-implementation-audit.md
+│   └── sdlc-delivery-practices-implementation-audit.md
+├── 2026-07-03-workspace-document-governance-hardening-audit/
+│   └── workspace-document-governance-hardening-audit.md
+├── 2026-07-04-workspace-document-contract-normalization-audit/
+│   └── workspace-document-contract-normalization-audit.md
+├── 2026-07-05-workspace-engineering-implementation-audit/
 └── README.md
 ```
 
@@ -63,19 +68,21 @@ This README is located at `docs/90.references/audits/`.
 - Parent reference hub links start with `../`.
 - Other docs stages use `../../<stage>/...`.
 - Repository-root files use `../../../<path>`.
+- Reports inside the same dated audit folder use folder-relative links.
 - Planned but missing reports should stay as code literals until created.
 
 ## Audit Report Index
 
 | Report | Availability | Purpose |
 | --- | --- | --- |
-| [2026-05-24-workspace-harness-gap-analysis.md](./2026-05-24-workspace-harness-gap-analysis.md) | Existing snapshot | Historical workspace harness gap-analysis reference. |
-| [2026-07-02-workspace-governance-implementation-audit.md](./2026-07-02-workspace-governance-implementation-audit.md) | Current | Workspace rules, systems, environment, operating contracts, templates, scripts, shared provider structure, and automation opportunities. |
-| [2026-07-02-harness-loop-implementation-audit.md](./2026-07-02-harness-loop-implementation-audit.md) | Current | Harness engineering and loop engineering implementation status against the research benchmark. |
-| [2026-07-02-provider-harness-loop-implementation-audit.md](./2026-07-02-provider-harness-loop-implementation-audit.md) | Current | Claude, Codex, Gemini, and common provider harness/loop parity. |
-| [2026-07-02-sdlc-delivery-practices-implementation-audit.md](./2026-07-02-sdlc-delivery-practices-implementation-audit.md) | Current | Spec-driven development, SDLC, CI/CD, QA, formatting, and validation evidence lanes. |
-| [2026-07-03-workspace-document-governance-hardening-audit.md](./2026-07-03-workspace-document-governance-hardening-audit.md) | Resolved snapshot | Baseline workspace document governance inventory, README drift classes, provider traceability, and CI/QA evidence routing with a 2026-07-04 resolution overlay. |
-| [2026-07-04-workspace-document-contract-normalization-audit.md](./2026-07-04-workspace-document-contract-normalization-audit.md) | Current | Frontmatter, section, template, reference, archive, CI/QA, and historical-evidence drift inventory for workspace document contract normalization. |
+| [2026-05-24-workspace-harness-gap-analysis/workspace-harness-gap-analysis.md](./2026-05-24-workspace-harness-gap-analysis/workspace-harness-gap-analysis.md) | Existing snapshot | Historical workspace harness gap-analysis reference. |
+| [2026-07-02-workspace-harness-implementation-audit-pack/workspace-governance-implementation-audit.md](./2026-07-02-workspace-harness-implementation-audit-pack/workspace-governance-implementation-audit.md) | Current | Workspace rules, systems, environment, operating contracts, templates, scripts, shared provider structure, and automation opportunities. |
+| [2026-07-02-workspace-harness-implementation-audit-pack/harness-loop-implementation-audit.md](./2026-07-02-workspace-harness-implementation-audit-pack/harness-loop-implementation-audit.md) | Current | Harness engineering and loop engineering implementation status against the research benchmark. |
+| [2026-07-02-workspace-harness-implementation-audit-pack/provider-harness-loop-implementation-audit.md](./2026-07-02-workspace-harness-implementation-audit-pack/provider-harness-loop-implementation-audit.md) | Current | Claude, Codex, Gemini, and common provider harness/loop parity. |
+| [2026-07-02-workspace-harness-implementation-audit-pack/sdlc-delivery-practices-implementation-audit.md](./2026-07-02-workspace-harness-implementation-audit-pack/sdlc-delivery-practices-implementation-audit.md) | Current | Spec-driven development, SDLC, CI/CD, QA, formatting, and validation evidence lanes. |
+| [2026-07-03-workspace-document-governance-hardening-audit/workspace-document-governance-hardening-audit.md](./2026-07-03-workspace-document-governance-hardening-audit/workspace-document-governance-hardening-audit.md) | Resolved snapshot | Baseline workspace document governance inventory, README drift classes, provider traceability, and CI/QA evidence routing with a 2026-07-04 resolution overlay. |
+| [2026-07-04-workspace-document-contract-normalization-audit/workspace-document-contract-normalization-audit.md](./2026-07-04-workspace-document-contract-normalization-audit/workspace-document-contract-normalization-audit.md) | Current | Frontmatter, section, template, reference, archive, CI/QA, and historical-evidence drift inventory for workspace document contract normalization. |
+| `2026-07-05-workspace-engineering-implementation-audit/` | Planned/current pack | Workspace engineering implementation audit pack folder reserved for WEA-003 through WEA-006 reports. |
 
 ## Status Vocabulary
 

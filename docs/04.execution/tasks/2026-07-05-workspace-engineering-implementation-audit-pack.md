@@ -42,7 +42,7 @@ and closes validation through local static checks.
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | WEA-001 | Create task evidence and baseline inventory | doc | VAL-SPC-007 | Task 1 | Baseline inventory, old-path candidate scan, task index row, `git diff --check`, repository quality gate | platform | Done |
-| WEA-002 | Folderize existing root audit reports | doc | VAL-SPC-001, VAL-SPC-006 | Task 2 | `git mv` history preservation, stale old-path scan, audit README updates | platform | Todo |
+| WEA-002 | Folderize existing root audit reports | doc | VAL-SPC-001, VAL-SPC-006 | Task 2 | `git mv` history preservation, stale old-path scan, audit README updates, repository quality gate | platform | Done |
 | WEA-003 | Add dated audit pack README and governance/harness/provider report | doc | VAL-SPC-002, VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 3 | Required report files and evidence matrix rows present | platform | Todo |
 | WEA-004 | Add SDLC/CI/QA/formatting/automation report | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 4 | SDLC, CI/CD, QA, formatting, linting, automation, pipeline, and workflow rows present | platform | Todo |
 | WEA-005 | Add Kubernetes/infrastructure/security report | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 5 | Kubernetes, infrastructure, GitOps, secrets, policy, and security rows present | platform | Todo |
@@ -65,7 +65,7 @@ and closes validation through local static checks.
 
 ### Phase 2: Audit Folderization
 
-- [ ] WEA-002 Folderize existing root audit reports
+- [x] WEA-002 Folderize existing root audit reports
 
 ### Phase 3: Part-Based Audit Reports
 
@@ -99,6 +99,61 @@ and closes validation through local static checks.
   Stage 04 plans/tasks, Stage 00 memory, and `docs/90.references/audits/README.md`.
   They include current navigational links that WEA-002 must update and
   historical command/path evidence that may remain if intentionally preserved.
+
+## WEA-002 Evidence Summary
+
+- `git status --short --branch` confirmed WEA-002 started from branch
+  `codex/workspace-engineering-audit-pack` with no uncommitted changes.
+- Folderized the seven existing root audit reports with `git mv`:
+  - `docs/90.references/audits/2026-05-24-workspace-harness-gap-analysis.md`
+    to
+    `docs/90.references/audits/2026-05-24-workspace-harness-gap-analysis/workspace-harness-gap-analysis.md`
+  - `docs/90.references/audits/2026-07-02-workspace-governance-implementation-audit.md`
+    to
+    `docs/90.references/audits/2026-07-02-workspace-harness-implementation-audit-pack/workspace-governance-implementation-audit.md`
+  - `docs/90.references/audits/2026-07-02-harness-loop-implementation-audit.md`
+    to
+    `docs/90.references/audits/2026-07-02-workspace-harness-implementation-audit-pack/harness-loop-implementation-audit.md`
+  - `docs/90.references/audits/2026-07-02-provider-harness-loop-implementation-audit.md`
+    to
+    `docs/90.references/audits/2026-07-02-workspace-harness-implementation-audit-pack/provider-harness-loop-implementation-audit.md`
+  - `docs/90.references/audits/2026-07-02-sdlc-delivery-practices-implementation-audit.md`
+    to
+    `docs/90.references/audits/2026-07-02-workspace-harness-implementation-audit-pack/sdlc-delivery-practices-implementation-audit.md`
+  - `docs/90.references/audits/2026-07-03-workspace-document-governance-hardening-audit.md`
+    to
+    `docs/90.references/audits/2026-07-03-workspace-document-governance-hardening-audit/workspace-document-governance-hardening-audit.md`
+  - `docs/90.references/audits/2026-07-04-workspace-document-contract-normalization-audit.md`
+    to
+    `docs/90.references/audits/2026-07-04-workspace-document-contract-normalization-audit/workspace-document-contract-normalization-audit.md`
+- Updated the Stage 90 audit index structure, links, Link Basis note, and
+  planned/current `2026-07-05-workspace-engineering-implementation-audit/`
+  directory entry in [../../90.references/audits/README.md](../../90.references/audits/README.md).
+- Updated current navigational links and moved-report relative links in:
+  - [../../00.agent-governance/memory/progress.md](../../00.agent-governance/memory/progress.md)
+  - [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
+  - [../../03.specs/009-workspace-harness-research-pack/spec.md](../../03.specs/009-workspace-harness-research-pack/spec.md)
+  - [../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md](../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md)
+  - [../../03.specs/013-workspace-document-governance-hardening/spec.md](../../03.specs/013-workspace-document-governance-hardening/spec.md)
+  - [../plans/2026-05-24-p3-gitops-secret-runtime-remediation.md](../plans/2026-05-24-p3-gitops-secret-runtime-remediation.md)
+  - [2026-05-24-p3-gitops-secret-runtime-remediation.md](2026-05-24-p3-gitops-secret-runtime-remediation.md)
+  - [2026-07-03-workspace-document-governance-hardening.md](2026-07-03-workspace-document-governance-hardening.md)
+  - [2026-07-04-workspace-document-contract-normalization.md](2026-07-04-workspace-document-contract-normalization.md)
+  - moved reports under `docs/90.references/audits/`
+- The required old-path scan still returns matches, all classified as
+  historical evidence:
+  - prior plan instructions and command examples in the 2026-07-02,
+    2026-07-03, 2026-07-04, and 2026-07-05 Stage 04 plans
+  - prior task evidence path literals in the 2026-07-03 and 2026-07-04
+    Stage 04 task records
+  - current WEA baseline scan evidence in this task record
+  - progress-memory historical path literals that are not Markdown links
+- WEA-002 validation results:
+  - Required old-path scan completed; remaining matches are classified above.
+  - `git diff --check` passed.
+  - First `bash scripts/validate-repo-quality-gates.sh .` run exposed broken
+    Markdown links caused by the folder moves; after repairing those links, the
+    final repository quality gate passed.
 
 ## Verification Summary
 

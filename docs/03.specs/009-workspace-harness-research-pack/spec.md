@@ -63,7 +63,7 @@ Out of scope:
 - **Harness catalog**: `../../00.agent-governance/harness-catalog.md`
 - **Harness implementation map**: `../../00.agent-governance/harness-implementation-map.md`
 - **CI/CD and QA guide**: `../../05.operations/guides/0010-ci-cd-qa-reference-guide.md`
-- **Prior harness audit reference**: `../../90.references/audits/2026-05-24-workspace-harness-gap-analysis.md`
+- **Prior harness audit reference**: `../../90.references/audits/2026-05-24-workspace-harness-gap-analysis/workspace-harness-gap-analysis.md`
 
 ## Contracts
 

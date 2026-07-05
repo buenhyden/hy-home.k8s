@@ -104,7 +104,7 @@ Status: Done.
 Evidence:
 
 - Added the dated audit report:
-  [Workspace Document Contract Normalization Audit](../../90.references/audits/2026-07-04-workspace-document-contract-normalization-audit.md).
+  [Workspace Document Contract Normalization Audit](../../90.references/audits/2026-07-04-workspace-document-contract-normalization-audit/workspace-document-contract-normalization-audit.md).
 - Updated the audit report index in
   [Audit References README](../../90.references/audits/README.md).
 - Focused docs Markdown inventory counted 206 Markdown files, 181 authored

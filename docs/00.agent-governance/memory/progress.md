@@ -752,7 +752,7 @@ inventory stays in `scripts/README.md`.
   scans, and CI/QA scans are recorded in the
   [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
 - Created the Stage 90
-  [workspace document governance hardening audit](../../90.references/audits/2026-07-03-workspace-document-governance-hardening-audit.md)
+  [workspace document governance hardening audit](../../90.references/audits/2026-07-03-workspace-document-governance-hardening-audit/workspace-document-governance-hardening-audit.md)
   because durable findings were found and should route to later tasks instead
   of being fixed during the audit-only pass.
 - Registered the audit report in the Stage 90 audits README.
@@ -1177,11 +1177,11 @@ inventory stays in `scripts/README.md`.
 - Created the
   [audits README](../../90.references/audits/README.md) and four dated audit
   reports:
-  [workspace governance](../../90.references/audits/2026-07-02-workspace-governance-implementation-audit.md),
-  [harness/loop](../../90.references/audits/2026-07-02-harness-loop-implementation-audit.md),
-  [provider harness/loop](../../90.references/audits/2026-07-02-provider-harness-loop-implementation-audit.md),
+  [workspace governance](../../90.references/audits/2026-07-02-workspace-harness-implementation-audit-pack/workspace-governance-implementation-audit.md),
+  [harness/loop](../../90.references/audits/2026-07-02-workspace-harness-implementation-audit-pack/harness-loop-implementation-audit.md),
+  [provider harness/loop](../../90.references/audits/2026-07-02-workspace-harness-implementation-audit-pack/provider-harness-loop-implementation-audit.md),
   and
-  [SDLC delivery practices](../../90.references/audits/2026-07-02-sdlc-delivery-practices-implementation-audit.md).
+  [SDLC delivery practices](../../90.references/audits/2026-07-02-workspace-harness-implementation-audit-pack/sdlc-delivery-practices-implementation-audit.md).
 - Finalized the parent
   [Spec](../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md),
   [Plan](../../04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md),

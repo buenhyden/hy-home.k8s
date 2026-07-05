@@ -116,7 +116,7 @@ active policy and dated evidence.
 | WDCN-AUD-008 | Reference folder roles | `docs/90.references/README.md` already separates `audits`, `data`, `research`, `learning`, and `llm-wiki`. Audit status vocabulary is defined in `audits/README.md`. | Reference structure is implemented. T-005 should add CI/QA and formatting alignment evidence without turning references into active policies. | T-005 |
 | WDCN-AUD-009 | Scripts README count | `scripts/README.md` describes 7 current shell scripts while the same README tree, inventory, classification matrix, and command contract list 8 scripts including `validate-harness.sh`. | Stale reference wording. Align scripts inventory counts and deletion precheck text during CI/QA/reference alignment. | T-005 |
 | WDCN-AUD-010 | Coverage wording boundary | `docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md` states new application code maintains 90% coverage, while `tests/README.md` says `tests/` does not own app test-pyramid or co-located unit-test rules. The PR template narrows the policy to future testable application code where applicable. | Boundary wording mismatch, not a validator failure. Make the QA guide, tests README, and PR template use one coverage/validation-matrix contract. | T-005 |
-| WDCN-AUD-011 | Prior audit historical evidence | `docs/90.references/audits/2026-07-03-workspace-document-governance-hardening-audit.md` records README heading and CI/QA hook-documentation findings that current files have since corrected. | Preserve the dated audit facts, but mark or contextualize them as resolved historical evidence so they are not mistaken for current drift. | T-004 |
+| WDCN-AUD-011 | Prior audit historical evidence | `docs/90.references/audits/2026-07-03-workspace-document-governance-hardening-audit/workspace-document-governance-hardening-audit.md` records README heading and CI/QA hook-documentation findings that current files have since corrected. | Preserve the dated audit facts, but mark or contextualize them as resolved historical evidence so they are not mistaken for current drift. | T-004 |
 
 ## Comparison Analysis
 
@@ -210,9 +210,9 @@ the task that closed each area.
 
 ## Related Documents
 
-- [Parent Spec](../../03.specs/014-workspace-document-contract-normalization/spec.md)
-- [Parent Plan](../../04.execution/plans/2026-07-04-workspace-document-contract-normalization.md)
-- [Task Evidence](../../04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md)
-- [Audit Index](./README.md)
-- [Template Routing Contract](../../99.templates/support/template-routing.md)
-- [Frontmatter Schema](../../99.templates/support/frontmatter-schema.md)
+- [Parent Spec](../../../03.specs/014-workspace-document-contract-normalization/spec.md)
+- [Parent Plan](../../../04.execution/plans/2026-07-04-workspace-document-contract-normalization.md)
+- [Task Evidence](../../../04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md)
+- [Audit Index](../README.md)
+- [Template Routing Contract](../../../99.templates/support/template-routing.md)
+- [Frontmatter Schema](../../../99.templates/support/frontmatter-schema.md)

@@ -108,7 +108,7 @@ guidance unless a fresh scan reproduces them.
 
 ## Related Documents
 
-- [Parent Spec](../../03.specs/013-workspace-document-governance-hardening/spec.md)
-- [Parent Plan](../../04.execution/plans/2026-07-03-workspace-document-governance-hardening.md)
-- [Task Evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md)
-- [Audit Index](./README.md)
+- [Parent Spec](../../../03.specs/013-workspace-document-governance-hardening/spec.md)
+- [Parent Plan](../../../04.execution/plans/2026-07-03-workspace-document-governance-hardening.md)
+- [Task Evidence](../../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md)
+- [Audit Index](../README.md)

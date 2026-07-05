@@ -108,7 +108,7 @@ Out of scope:
     `docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md`,
     `docs/99.templates/**`, `scripts/**`, and `.github/workflows/**`.
   - Existing audit precedent:
-    `../../90.references/audits/2026-05-24-workspace-harness-gap-analysis.md`.
+    `../../90.references/audits/2026-05-24-workspace-harness-gap-analysis/workspace-harness-gap-analysis.md`.
 - **Tech Stack**: Markdown, `docs/99.templates/templates/common/reference.template.md`,
   `docs/99.templates/templates/common/readme.template.md`, repository validation scripts, Git
   history, and read-only web/repo evidence as needed.
