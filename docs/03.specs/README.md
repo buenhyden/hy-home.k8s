@@ -74,6 +74,8 @@ Spec은 실행 기준을 소유하는 문서다.
 │   └── spec.md
 ├── 019-template-path-numbering-contract/
 │   └── spec.md
+├── 020-workspace-contract-governance-normalization/
+│   └── spec.md
 └── README.md
 ```
 
@@ -123,6 +125,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./017-workspace-engineering-research-pack/spec.md`](./017-workspace-engineering-research-pack/spec.md) | Workspace engineering research pack specification | Draft | `docs/90.references/research/2026-07-04-wer/` 아래 dated research pack을 만들고 기존 4개 research reference를 재배치하며 Kubernetes, infrastructure, security, automation, pipeline, workflow, QA 주제를 보강하는 계약을 정의한다. | 2026-07-04 |
 | [`./018-workspace-engineering-implementation-audit-pack/spec.md`](./018-workspace-engineering-implementation-audit-pack/spec.md) | Workspace engineering implementation audit pack specification | Draft | `docs/90.references/audits/2026-07-05-wea/` 아래 part-based audit pack을 만들고 기존 root audit 파일을 dated folder 구조로 정리하는 계약을 정의한다. | 2026-07-05 |
 | [`./019-template-path-numbering-contract/spec.md`](./019-template-path-numbering-contract/spec.md) | Template path numbering contract specification | Draft | `docs/01.requirements/` PRD numeric filename contract와 `docs/03.specs/` numbered feature-folder contract를 template/support/governance/validator surfaces에 맞춰 정규화하는 설계를 정의한다. | 2026-07-05 |
+| [`./020-workspace-contract-governance-normalization/spec.md`](./020-workspace-contract-governance-normalization/spec.md) | Workspace contract governance normalization specification | Draft | `_workspace` repo-support staging 계약과 repo-wide frontmatter, section, template, governance, CI/CD, QA, validation drift 감사 및 표적 정규화 설계를 정의한다. | 2026-07-05 |
 
 ## Helper Templates
 
