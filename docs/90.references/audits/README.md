@@ -44,7 +44,10 @@ docs/90.references/audits/
 │   └── workspace-document-contract-normalization-audit.md
 ├── 2026-07-05-workspace-engineering-implementation-audit/
 │   ├── README.md
-│   └── 01-governance-harness-loop-providers.md
+│   ├── 01-governance-harness-loop-providers.md
+│   ├── 02-sdlc-ci-qa-formatting-automation.md
+│   ├── 03-kubernetes-infrastructure-security.md
+│   └── 04-implementation-roadmap-and-automation-opportunities.md
 └── README.md
 ```
 
@@ -86,9 +89,9 @@ This README is located at `docs/90.references/audits/`.
 | [2026-07-04-workspace-document-contract-normalization-audit/workspace-document-contract-normalization-audit.md](./2026-07-04-workspace-document-contract-normalization-audit/workspace-document-contract-normalization-audit.md) | Current | Frontmatter, section, template, reference, archive, CI/QA, and historical-evidence drift inventory for workspace document contract normalization. |
 | [2026-07-05-workspace-engineering-implementation-audit/README.md](./2026-07-05-workspace-engineering-implementation-audit/README.md) | Current pack | Workspace engineering implementation audit pack entrypoint, status vocabulary, evidence rules, and report index. |
 | [2026-07-05-workspace-engineering-implementation-audit/01-governance-harness-loop-providers.md](./2026-07-05-workspace-engineering-implementation-audit/01-governance-harness-loop-providers.md) | Current | Governance, harness, loop, Claude, Codex, Gemini, and common provider implementation audit. |
-| `2026-07-05-workspace-engineering-implementation-audit/02-sdlc-ci-qa-formatting-automation.md` | Planned | Spec-driven development, SDLC, CI/CD, QA, formatting, linting, automation, pipeline, and workflow audit. |
-| `2026-07-05-workspace-engineering-implementation-audit/03-kubernetes-infrastructure-security.md` | Planned | Kubernetes, infrastructure, GitOps, secrets, policy, network, supply-chain, and security audit. |
-| `2026-07-05-workspace-engineering-implementation-audit/04-implementation-roadmap-and-automation-opportunities.md` | Planned | Cross-report roadmap, priority matrix, automation candidates, and future task routing. |
+| [2026-07-05-workspace-engineering-implementation-audit/02-sdlc-ci-qa-formatting-automation.md](./2026-07-05-workspace-engineering-implementation-audit/02-sdlc-ci-qa-formatting-automation.md) | Current | Spec-driven development, SDLC, CI/CD, QA, formatting, linting, automation, pipeline, and workflow audit. |
+| [2026-07-05-workspace-engineering-implementation-audit/03-kubernetes-infrastructure-security.md](./2026-07-05-workspace-engineering-implementation-audit/03-kubernetes-infrastructure-security.md) | Current | Kubernetes, infrastructure, GitOps, secrets, policy, network, supply-chain, and security audit. |
+| [2026-07-05-workspace-engineering-implementation-audit/04-implementation-roadmap-and-automation-opportunities.md](./2026-07-05-workspace-engineering-implementation-audit/04-implementation-roadmap-and-automation-opportunities.md) | Current | Cross-report roadmap, priority matrix, automation candidates, and future task routing. |
 
 ## Status Vocabulary
 

@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Engineering Implementation Audit Pack Task Record'
 type: sdlc/task
-status: draft
+status: done
 owner: platform
 updated: 2026-07-05
 ---
@@ -47,7 +47,7 @@ and closes validation through local static checks.
 | WEA-004 | Add SDLC/CI/QA/formatting/automation report | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 4 | SDLC, CI/CD, QA, formatting, linting, automation, pipeline, and workflow rows present | platform | Done |
 | WEA-005 | Add Kubernetes/infrastructure/security report | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 5 | Kubernetes, infrastructure, GitOps, secrets, policy, and security rows present | platform | Done |
 | WEA-006 | Add roadmap and automation opportunities report | doc | VAL-SPC-004, VAL-SPC-005 | Task 6 | Cross-report roadmap and owner-routed automation opportunities present | platform | Done |
-| WEA-007 | Close indexes, evidence, review, and validation | doc | VAL-SPC-006, VAL-SPC-007, VAL-SPC-008 | Task 7 | Final scans, quality gates, and mutation boundary check pass | platform | Todo |
+| WEA-007 | Close indexes, evidence, review, and validation | doc | VAL-SPC-006, VAL-SPC-007, VAL-SPC-008 | Task 7 | Final scans, quality gates, and mutation boundary check pass | platform | Done |
 
 ## Suggested Types
 
@@ -76,7 +76,7 @@ and closes validation through local static checks.
 
 ### Phase 4: Closure
 
-- [ ] WEA-007 Close indexes, evidence, review, and validation
+- [x] WEA-007 Close indexes, evidence, review, and validation
 
 ## Baseline Evidence Summary
 
@@ -361,14 +361,50 @@ and closes validation through local static checks.
   - `git diff --check` passed.
   - `bash scripts/validate-repo-quality-gates.sh .` passed with
     `[PASS] repository quality gates passed`.
+- **WEA-007 Index Closure**:
+  - Updated the parent audit index so the 2026-07-05 audit pack lists all
+    four reports as current Markdown links.
+  - Updated the Stage 04 plan/task frontmatter and indexes from Draft to Done
+    for this completed implementation audit pack.
+  - Confirmed `rg --files docs/90.references/audits | sort` shows only
+    `README.md` at the audit root plus dated audit folders and their reports.
+  - Confirmed the old root-audit-path scan has no unresolved current
+    navigational links; remaining matches are historical command/path evidence
+    in prior plans, prior tasks, and progress-memory history.
+- **WEA-007 Coverage Review**:
+  - Confirmed the dated audit pack includes README plus four reports:
+    governance/harness/provider, SDLC/CI/QA/formatting/automation,
+    Kubernetes/infrastructure/security, and implementation roadmap.
+  - Confirmed all four reports use the required reference sections, approved
+    status vocabulary, repo-backed evidence language, and repo-static versus
+    live-runtime boundary language.
+  - No unsupported active-policy change, live-readiness claim, secret-value
+    inspection, workflow mutation, manifest mutation, policy mutation, or
+    provider runtime mutation was found during local read-only review.
+  - A fresh subagent review was not available in this session after the prior
+    child-agent capacity failure, so final review was performed locally.
+- **WEA-007 Validation Commands**:
+  - `rg --files docs/90.references/audits | sort` completed.
+  - Required old root-audit-path scan over
+    `docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts`
+    completed; remaining matches are historical evidence only.
+  - Required report coverage scan over
+    `docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit`
+    completed.
+  - `git diff --check` passed.
+  - `bash scripts/validate-repo-quality-gates.sh .` passed with
+    `[PASS] repository quality gates passed`.
+  - `git status --short --branch` confirmed only intended closure edits before
+    the final WEA-007 commit.
 - **Evidence Location**:
   - This task record and [README.md](./README.md)
 
 ## Boundary Statement
 
-WEA-001 performed local documentation and repository inspection only. It did
-not perform live Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider
-runtime, credential, secret, paid job, publish, merge, push, or third-party
+This audit-pack implementation performed local documentation edits, repository
+inspection, local validation, and local commits only. It did not perform live
+Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider runtime,
+credential, secret-value, paid-job, publish, merge, push, or third-party
 mutation.
 
 ## Related Documents
