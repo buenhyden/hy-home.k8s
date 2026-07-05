@@ -12,7 +12,7 @@ updated: 2026-07-05
 
 This document tracks implementation and verification work for the dated
 workspace engineering research pack under
-`docs/90.references/research/2026-07-04-workspace-engineering-research-pack/`.
+`docs/90.references/research/2026-07-04-wer/`.
 It records task evidence for the parent Spec and Plan without mutating live
 Kubernetes, Argo CD, Vault, cloud resources, GitHub remote state, provider
 runtimes, credentials, secret values, or third-party systems.
@@ -179,7 +179,7 @@ Summary:
 ### Dated Pack Scaffold
 
 - Created
-  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/README.md`
+  `docs/90.references/research/2026-07-04-wer/README.md`
   with the required sections:
   `Overview`, `Audience`, `Scope`, `Structure`, `Source Priority`,
   `How to Work in This Pack`, `Link Basis`, `Pack Index`,
@@ -198,10 +198,10 @@ Moved with `git mv`:
 
 | Source | Destination |
 | --- | --- |
-| `docs/90.references/research/workspace-governance-baseline.md` | `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md` |
-| `docs/90.references/research/harness-and-loop-engineering.md` | `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md` |
-| `docs/90.references/research/provider-implementation-status.md` | `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/provider-implementation-status.md` |
-| `docs/90.references/research/spec-sdlc-ci-qa-formatting.md` | `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md` |
+| `docs/90.references/research/workspace-governance-baseline.md` | `docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md` |
+| `docs/90.references/research/harness-and-loop-engineering.md` | `docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md` |
+| `docs/90.references/research/provider-implementation-status.md` | `docs/90.references/research/2026-07-04-wer/provider-implementation-status.md` |
+| `docs/90.references/research/spec-sdlc-ci-qa-formatting.md` | `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md` |
 
 ### Index Updates
 
@@ -209,7 +209,7 @@ Moved with `git mv`:
   the dated pack folder.
 - Added the dated pack row to the research index.
 - Updated current moved-reference rows to point to
-  `./2026-07-04-workspace-engineering-research-pack/<filename>.md`.
+  `./2026-07-04-wer/<filename>.md`.
 - Added the two planned reference slots as code literals until their files are
   created by later WER tasks.
 - Updated `docs/90.references/README.md` so the research folder role mentions
@@ -237,7 +237,7 @@ Summary:
 ### Workspace Governance Baseline Refresh
 
 - Refreshed
-  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md`
+  `docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md`
   as a dated, descriptive Stage 90 reference.
 - Updated frontmatter `updated: 2026-07-04`, `Source checked:
   2026-07-04`, and freshness trigger language for governance, CI/CD, scripts,
@@ -279,7 +279,7 @@ Summary:
 Command:
 
 ```bash
-rg -n "^## (Overview|Purpose|Reference Type|Authority Boundary|Scope|Definitions / Facts|Sources|Review and Freshness|Related Documents)$" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md
+rg -n "^## (Overview|Purpose|Reference Type|Authority Boundary|Scope|Definitions / Facts|Sources|Review and Freshness|Related Documents)$" docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md
 ```
 
 Summary:
@@ -294,13 +294,13 @@ Summary:
 ### Harness, Loop, and Provider Reference Refresh
 
 - Refreshed
-  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md`
+  `docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md`
   with `updated: 2026-07-04`, `Source checked: 2026-07-04`, provider
   agent-loop docs freshness triggers, workspace requirements, environment/rule
   implications, MCP/tool boundaries, the non-authoritative market scan label,
   and the implementation checklist routed to the current WER task.
 - Refreshed
-  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/provider-implementation-status.md`
+  `docs/90.references/research/2026-07-04-wer/provider-implementation-status.md`
   with `updated: 2026-07-04`, `Source checked: 2026-07-04`, upstream
   capability versus repo implementation status, common environment/rule/system
   construction, provider-specific implementation status, and explicit unknowns
@@ -344,7 +344,7 @@ Summary:
 Command:
 
 ```bash
-rg -n "Claude|Codex|Gemini|OpenAI|Anthropic|Google|ADK|MCP|non-authoritative|Source checked: 2026-07-04|Review and Freshness" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md docs/90.references/research/2026-07-04-workspace-engineering-research-pack/provider-implementation-status.md
+rg -n "Claude|Codex|Gemini|OpenAI|Anthropic|Google|ADK|MCP|non-authoritative|Source checked: 2026-07-04|Review and Freshness" docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md docs/90.references/research/2026-07-04-wer/provider-implementation-status.md
 ```
 
 Summary:
@@ -365,7 +365,7 @@ Summary:
 ### SDLC CI QA Formatting Security Reference Refresh
 
 - Refreshed
-  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md`
+  `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md`
   with `updated: 2026-07-05` and `Source checked: 2026-07-05` for WER-005
   refreshed sources.
 - Preserved the reference as descriptive Stage 90 material. It does not define
@@ -395,7 +395,7 @@ Summary:
 Command:
 
 ```bash
-rg -n "Source checked: 2026-07-05|GitHub Actions|NIST|SSDF|SLSA|OpenSSF|CodeQL|Dependency Review|Prettier|EditorConfig|CommonMark|YAML 1.2.2|pre-commit|non-authoritative|Review and Freshness" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md
+rg -n "Source checked: 2026-07-05|GitHub Actions|NIST|SSDF|SLSA|OpenSSF|CodeQL|Dependency Review|Prettier|EditorConfig|CommonMark|YAML 1.2.2|pre-commit|non-authoritative|Review and Freshness" docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md
 ```
 
 Summary:
@@ -411,7 +411,7 @@ Summary:
 ### Kubernetes Infrastructure Security Reference
 
 - Added
-  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/kubernetes-infrastructure-security.md`
+  `docs/90.references/research/2026-07-04-wer/kubernetes-infrastructure-security.md`
   with `updated: 2026-07-05`, `Source checked: 2026-07-05`, and
   `Review and Freshness` metadata for WER-006 source checks.
 - Preserved the reference as descriptive Stage 90 material. It does not define
@@ -440,7 +440,7 @@ Summary:
 Command:
 
 ```bash
-rg -n "Source checked: 2026-07-05|Kubernetes|GitOps|Argo CD|Argo Rollouts|External Secrets Operator|Vault|NetworkPolicy|RBAC|Kustomize|OPA|Conftest|NIST|OpenSSF|repo-static|live-runtime|non-authoritative|Review and Freshness" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/kubernetes-infrastructure-security.md
+rg -n "Source checked: 2026-07-05|Kubernetes|GitOps|Argo CD|Argo Rollouts|External Secrets Operator|Vault|NetworkPolicy|RBAC|Kustomize|OPA|Conftest|NIST|OpenSSF|repo-static|live-runtime|non-authoritative|Review and Freshness" docs/90.references/research/2026-07-04-wer/kubernetes-infrastructure-security.md
 ```
 
 Summary:
@@ -456,7 +456,7 @@ Summary:
 ### Automation Pipeline Workflow QA Reference
 
 - Added
-  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/automation-pipeline-workflow-qa.md`
+  `docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md`
   with `updated: 2026-07-05`, `Source checked: 2026-07-05`, and
   `Review and Freshness` metadata for WER-007 source checks.
 - Preserved the reference as descriptive Stage 90 material. It does not define
@@ -483,7 +483,7 @@ Summary:
 Command:
 
 ```bash
-rg -n "Source checked: 2026-07-05|GitHub Actions|workflow|pipeline|automation|CI/CD|QA|pre-commit|DORA|Martin Fowler|artifact|cache|GITHUB_TOKEN|concurrency|repo-static|CI/toolchain|live-runtime|non-authoritative|Review and Freshness" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/automation-pipeline-workflow-qa.md
+rg -n "Source checked: 2026-07-05|GitHub Actions|workflow|pipeline|automation|CI/CD|QA|pre-commit|DORA|Martin Fowler|artifact|cache|GITHUB_TOKEN|concurrency|repo-static|CI/toolchain|live-runtime|non-authoritative|Review and Freshness" docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md
 ```
 
 Summary:
@@ -500,7 +500,7 @@ Summary:
 Command:
 
 ```bash
-rg -n "automation-pipeline-workflow-qa.md[[:space:]]+# P[l]anned|P[l]anned descriptive reference" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/README.md docs/90.references/research/README.md
+rg -n "automation-pipeline-workflow-qa.md[[:space:]]+# P[l]anned|P[l]anned descriptive reference" docs/90.references/research/2026-07-04-wer/README.md docs/90.references/research/README.md
 ```
 
 Summary:
@@ -521,7 +521,7 @@ Summary:
 | 2026-07-04 | WER-002 formatting | `git diff --check` | PASS. |
 | 2026-07-04 | WER-002 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
 | 2026-07-04 | WER-003 repo baseline source scan | Required WER-003 `rg` scan listed above | PASS; large output completed successfully and was summarized from focused canonical source inspection. |
-| 2026-07-04 | WER-003 required heading scan | `rg -n "^## (Overview\|Purpose\|Reference Type\|Authority Boundary\|Scope\|Definitions / Facts\|Sources\|Review and Freshness\|Related Documents)$" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md` | PASS; all required reference headings present. |
+| 2026-07-04 | WER-003 required heading scan | `rg -n "^## (Overview\|Purpose\|Reference Type\|Authority Boundary\|Scope\|Definitions / Facts\|Sources\|Review and Freshness\|Related Documents)$" docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md` | PASS; all required reference headings present. |
 | 2026-07-04 | WER-003 formatting | `git diff --check` | PASS. |
 | 2026-07-04 | WER-003 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
 | 2026-07-04 | WER-004 reference scan | Required WER-004 `rg` scan listed above | PASS; 214 matching lines across the refreshed harness/loop and provider references. |

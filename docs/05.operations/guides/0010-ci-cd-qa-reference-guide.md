@@ -35,7 +35,7 @@ CI 실패를 사전에 예방할 수 있다.
 ## Source Basis
 
 - Parent Spec: [Workspace Document Governance Hardening Spec](../../03.specs/013-workspace-document-governance-hardening/spec.md)는 GitHub Actions documentation, supply-chain evidence, CommonMark/YAML formatting, GitOps boundary claims의 official-source basis를 소유한다.
-- Reference: [Spec SDLC CI QA Formatting Research](../../90.references/research/2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md)는 GitHub Actions workflow syntax/events, CommonMark, YAML 1.2.2, and pre-commit sources를 dated snapshot으로 유지한다.
+- Reference: [Spec SDLC CI QA Formatting Research](../../90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md)는 GitHub Actions workflow syntax/events, CommonMark, YAML 1.2.2, and pre-commit sources를 dated snapshot으로 유지한다.
 - 이 가이드의 GitHub Actions CI gate definitions는 `.github/workflows/ci.yml`, `.github/ABOUT.md`, `scripts/README.md`, `tests/README.md`의 tracked repository evidence와 대조해 유지한다.
 
 ## Prerequisites

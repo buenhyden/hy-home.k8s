@@ -12,7 +12,7 @@ updated: 2026-07-04
 
 This document defines the implementation contract for a dated, repo-first
 research pack under
-`docs/90.references/research/2026-07-04-workspace-engineering-research-pack/`.
+`docs/90.references/research/2026-07-04-wer/`.
 The pack will synthesize the workspace purpose, roles, CI/CD, QA, formatting,
 linting, automation, pipelines, workflows, operating contracts, templates,
 scripts, integration guides, SDLC, governance, rules, Kubernetes,
@@ -83,7 +83,7 @@ Repository inputs:
   - No runtime configuration, provider adapter, workflow job, GitOps manifest,
     or secret file changes are required by this spec.
   - The research pack lives only under
-    `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/`.
+    `docs/90.references/research/2026-07-04-wer/`.
   - The former flat research files are moved, not duplicated, so there is one
     current path for each moved reference.
 - **Data / Interface Contract**:
@@ -158,7 +158,7 @@ Repository inputs:
 
 ```typescript
 interface WorkspaceEngineeringResearchPack {
-  root: "docs/90.references/research/2026-07-04-workspace-engineering-research-pack";
+  root: "docs/90.references/research/2026-07-04-wer";
   references: [
     "workspace-governance-baseline.md",
     "harness-and-loop-engineering.md",
@@ -332,7 +332,7 @@ Focused scans:
 
 ```bash
 rg -n "docs/90.references/research/(workspace-governance-baseline|harness-and-loop-engineering|provider-implementation-status|spec-sdlc-ci-qa-formatting)\\.md" docs .github AGENTS.md CLAUDE.md GEMINI.md README.md scripts
-rg -n "non-authoritative|market scan|Source checked|Review and Freshness" docs/90.references/research/2026-07-04-workspace-engineering-research-pack
+rg -n "non-authoritative|market scan|Source checked|Review and Freshness" docs/90.references/research/2026-07-04-wer
 ```
 
 ## Success Criteria & Verification Plan

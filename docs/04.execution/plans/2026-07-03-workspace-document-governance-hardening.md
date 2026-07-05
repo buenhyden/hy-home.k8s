@@ -50,7 +50,7 @@ Implementation must preserve that baseline after every logical commit.
 
 | Path | Responsibility in this plan |
 | --- | --- |
-| `docs/90.references/audits/2026-07-03-workspace-document-governance-hardening-audit.md` | Durable audit inventory for frontmatter, README, provider, CI/QA, and workspace-wide drift classes found during Task 1. |
+| `docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md` | Durable audit inventory for frontmatter, README, provider, CI/QA, and workspace-wide drift classes found during Task 1. |
 | `docs/90.references/audits/README.md` | Audit index registration for the new audit report if the report is created. |
 | `docs/99.templates/support/*.md` | Current template support contract, frontmatter schema, SDLC/common governance, routing, and legacy cleanup owner. |
 | `docs/99.templates/templates/**` | Template forms that must match support contracts without carrying long governance bodies. |
@@ -111,7 +111,7 @@ Implementation must preserve that baseline after every logical commit.
 
 **Files:**
 
-- Create if durable findings exist: `docs/90.references/audits/2026-07-03-workspace-document-governance-hardening-audit.md`
+- Create if durable findings exist: `docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md`
 - Modify if the audit report is created: `docs/90.references/audits/README.md`
 - Modify: `docs/04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
@@ -188,7 +188,7 @@ Expected:
 - [ ] **Step 5: Write audit evidence**
 
 If the scans find durable findings, create
-`docs/90.references/audits/2026-07-03-workspace-document-governance-hardening-audit.md`
+`docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md`
 with this frontmatter and section structure:
 
 ```markdown

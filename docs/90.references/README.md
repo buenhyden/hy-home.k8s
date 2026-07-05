@@ -71,7 +71,7 @@ docs/90.references/
 1. 새 참고 자료가 정책/계약/절차를 정의하는지 확인한다. 그렇다면 `00.agent-governance`, `03.specs`, `05.operations/policies`, `05.operations/runbooks`로 라우팅한다.
 2. 버전 기준을 갱신할 때는 실제 manifest/config/example code와 [tech-stack-version-inventory.md](./data/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
 3. 외부 공식 기준은 확인일을 명시하고 링크를 남긴다.
-4. 새 파일을 만들 경우 [reference template](../99.templates/templates/common/reference.template.md)을 사용하고 이 README 인덱스를 갱신한다. canonical target pattern은 `docs/90.references/<category>/<topic>.md`다. `llm-wiki/wiki-index.md`는 `scripts/generate-llm-wiki-index.sh`로만 갱신한다.
+4. 새 파일을 만들 경우 [reference template](../99.templates/templates/common/reference.template.md)을 사용하고 이 README 인덱스를 갱신한다. 일반 reference의 canonical target pattern은 `docs/90.references/<category>/<topic>.md`다. `audits/`와 `research/`의 dated pack은 `docs/90.references/<category>/<YYYY-MM-DD>-<sdlc_key>/<topic>.md`를 사용하고, part 순서를 표현해야 할 때도 `part-*.md`나 숫자 접두어 대신 의미 기반 파일명을 사용한다. `llm-wiki/wiki-index.md`는 `scripts/generate-llm-wiki-index.sh`로만 갱신한다.
 5. 모든 reference 문서는 `Reference Type`, `Authority Boundary`, `Review and Freshness`를 포함해야 한다.
 
 ## Link Basis
@@ -114,6 +114,21 @@ docs/90.references/
 | `learning/` | 구현 경험을 CS/CE 이론과 장기 학습 로드맵으로 연결하는 자료 | 학습 맥락은 한국어 가능, authoritative boundary와 freshness rule은 영어로 유지 |
 | `llm-wiki/` | LLM-readable canonical owner link map과 generated index | 링크맵 설명은 혼합 가능, generated content와 canonical owner boundary는 영어-first |
 | `research/` | Dated workspace engineering research pack reference, source ledger, source priority를 관리하는 자료 | 사람용 설명은 한국어 가능, source authority와 non-authoritative market scan boundary는 영어-first |
+
+## Dated Pack Naming
+
+`audits/`와 `research/`의 날짜별 묶음은 다음 규칙을 따른다.
+
+| Rule | Required Form |
+| --- | --- |
+| Pack folder | `docs/90.references/<audits-or-research>/<YYYY-MM-DD>-<sdlc_key>/` |
+| Pack README | dated pack entrypoint, index, status vocabulary, source/evidence rules |
+| Report filename | semantic topic filename such as `governance-harness-loop-providers.md` |
+| Disallowed report filename | `part-*.md`, `01-*.md`, `02-*.md`, or other order-only prefixes |
+
+The `sdlc_key` is a short stable key for cross-reference readability. Use the
+long human title inside the pack README and report title instead of repeating
+it in every folder name.
 
 ## Language Boundary
 

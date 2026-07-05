@@ -10,7 +10,7 @@ updated: 2026-07-04
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build a dated, repo-first workspace engineering research pack under `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/`.
+**Goal:** Build a dated, repo-first workspace engineering research pack under `docs/90.references/research/2026-07-04-wer/`.
 
 **Architecture:** The plan uses a source-first document migration sequence. First create Stage 04 evidence, then move the current four research references into the dated pack, then refresh existing references and add two focused references, and finally close validation evidence.
 
@@ -36,7 +36,7 @@ The approved structure is:
 
 ```text
 docs/90.references/research/
-`-- 2026-07-04-workspace-engineering-research-pack/
+`-- 2026-07-04-wer/
     |-- README.md
     |-- workspace-governance-baseline.md
     |-- harness-and-loop-engineering.md
@@ -99,13 +99,13 @@ only when labeled non-authoritative.
 | `docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md` | Execution evidence, task table, validation commands, source limitations, handoff. |
 | `docs/04.execution/tasks/README.md` | Task index entry for the research-pack work. |
 | `docs/90.references/research/README.md` | Research stage entrypoint and dated pack index. |
-| `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/README.md` | Dated pack entrypoint, reading order, source priority, and authority boundary. |
-| `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md` | Repo-first workspace purpose, roles, governance, contracts, templates, scripts, integration guides, and evidence lanes. |
-| `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md` | Harness engineering and loop engineering definitions, elements, workspace application requirements, and implementation checklist. |
-| `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/provider-implementation-status.md` | Claude, Codex, Gemini provider status and shared environment/rule/system construction analysis. |
-| `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md` | Spec-driven development, SDLC, CI/CD, QA, formatting, linting, syntax validation, and repo validation matrix. |
-| `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/kubernetes-infrastructure-security.md` | Kubernetes, infrastructure, GitOps, secrets, policy-as-code, supply-chain, and security reference. |
-| `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/automation-pipeline-workflow-qa.md` | Automation, pipeline, workflow, CI job graph, validation loops, and QA evidence lanes reference. |
+| `docs/90.references/research/2026-07-04-wer/README.md` | Dated pack entrypoint, reading order, source priority, and authority boundary. |
+| `docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md` | Repo-first workspace purpose, roles, governance, contracts, templates, scripts, integration guides, and evidence lanes. |
+| `docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md` | Harness engineering and loop engineering definitions, elements, workspace application requirements, and implementation checklist. |
+| `docs/90.references/research/2026-07-04-wer/provider-implementation-status.md` | Claude, Codex, Gemini provider status and shared environment/rule/system construction analysis. |
+| `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md` | Spec-driven development, SDLC, CI/CD, QA, formatting, linting, syntax validation, and repo validation matrix. |
+| `docs/90.references/research/2026-07-04-wer/kubernetes-infrastructure-security.md` | Kubernetes, infrastructure, GitOps, secrets, policy-as-code, supply-chain, and security reference. |
+| `docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md` | Automation, pipeline, workflow, CI job graph, validation loops, and QA evidence lanes reference. |
 | `docs/90.references/README.md` | Parent reference index update for the dated research pack. |
 | `docs/00.agent-governance/memory/progress.md` | Progress and reusable memory update after implementation stages. |
 
@@ -290,7 +290,7 @@ created.
 
 **Files:**
 
-- Create: `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/README.md`
+- Create: `docs/90.references/research/2026-07-04-wer/README.md`
 - Move: four current flat research references into the dated pack folder
 - Modify: `docs/90.references/research/README.md`
 - Modify: `docs/90.references/README.md`
@@ -301,7 +301,7 @@ created.
 Run:
 
 ```bash
-mkdir -p docs/90.references/research/2026-07-04-workspace-engineering-research-pack
+mkdir -p docs/90.references/research/2026-07-04-wer
 ```
 
 Expected: folder exists.
@@ -311,17 +311,17 @@ Expected: folder exists.
 Run:
 
 ```bash
-git mv docs/90.references/research/workspace-governance-baseline.md docs/90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md
-git mv docs/90.references/research/harness-and-loop-engineering.md docs/90.references/research/2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md
-git mv docs/90.references/research/provider-implementation-status.md docs/90.references/research/2026-07-04-workspace-engineering-research-pack/provider-implementation-status.md
-git mv docs/90.references/research/spec-sdlc-ci-qa-formatting.md docs/90.references/research/2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md
+git mv docs/90.references/research/workspace-governance-baseline.md docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md
+git mv docs/90.references/research/harness-and-loop-engineering.md docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md
+git mv docs/90.references/research/provider-implementation-status.md docs/90.references/research/2026-07-04-wer/provider-implementation-status.md
+git mv docs/90.references/research/spec-sdlc-ci-qa-formatting.md docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md
 ```
 
 Expected: `git status --short` shows four renames.
 
 - [ ] **Step 3: Create dated pack README**
 
-Create `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/README.md`
+Create `docs/90.references/research/2026-07-04-wer/README.md`
 with these sections: `# Workspace Engineering Research Pack`,
 `## Overview`, `## Audience`, `## Scope`, `## Structure`,
 `## Source Priority`, `## How to Work in This Pack`, `## Link Basis`,
@@ -338,7 +338,7 @@ Update `docs/90.references/research/README.md` so:
 - the structure block shows the dated pack folder,
 - the research index has a dated pack row,
 - moved references point to
-  `./2026-07-04-workspace-engineering-research-pack/<filename>.md`,
+  `./2026-07-04-wer/<filename>.md`,
 - flat reference rows are not presented as current top-level files.
 
 - [ ] **Step 5: Update parent reference README**
@@ -380,7 +380,7 @@ README, index updates, and WER-002 evidence.
 
 **Files:**
 
-- Modify: `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md`
+- Modify: `docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md`
 - Modify: task record and progress memory
 
 - [ ] **Step 1: Inspect repo baseline sources**
@@ -428,7 +428,7 @@ actions to canonical owners: Stage 00, Stage 03, Stage 04, Stage 05,
 Run:
 
 ```bash
-rg -n "^## (Overview|Purpose|Reference Type|Authority Boundary|Scope|Definitions / Facts|Sources|Review and Freshness|Related Documents)$" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md
+rg -n "^## (Overview|Purpose|Reference Type|Authority Boundary|Scope|Definitions / Facts|Sources|Review and Freshness|Related Documents)$" docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md
 ```
 
 Expected: all required headings are present.
@@ -444,7 +444,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md docs/00.agent-governance/memory/progress.md
+git add docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md docs/00.agent-governance/memory/progress.md
 git commit -m "docs(research): Refresh workspace governance baseline"
 ```
 
@@ -455,8 +455,8 @@ reference plus evidence updates.
 
 **Files:**
 
-- Modify: `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md`
-- Modify: `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/provider-implementation-status.md`
+- Modify: `docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md`
+- Modify: `docs/90.references/research/2026-07-04-wer/provider-implementation-status.md`
 - Modify: task record and progress memory
 
 - [ ] **Step 1: Verify official provider and loop sources with web research**
@@ -498,7 +498,7 @@ Use the source checked date `2026-07-04`.
 Run:
 
 ```bash
-rg -n "Claude|Codex|Gemini|OpenAI|Anthropic|Google|ADK|MCP|non-authoritative|Source checked: 2026-07-04|Review and Freshness" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md docs/90.references/research/2026-07-04-workspace-engineering-research-pack/provider-implementation-status.md
+rg -n "Claude|Codex|Gemini|OpenAI|Anthropic|Google|ADK|MCP|non-authoritative|Source checked: 2026-07-04|Review and Freshness" docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md docs/90.references/research/2026-07-04-wer/provider-implementation-status.md
 ```
 
 Expected: output shows provider coverage, source checked metadata, and market
@@ -516,7 +516,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/90.references/research/2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md docs/90.references/research/2026-07-04-workspace-engineering-research-pack/provider-implementation-status.md docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md docs/00.agent-governance/memory/progress.md
+git add docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md docs/90.references/research/2026-07-04-wer/provider-implementation-status.md docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md docs/00.agent-governance/memory/progress.md
 git commit -m "docs(research): Refresh harness loop and provider sources"
 ```
 
@@ -527,8 +527,8 @@ plus evidence updates.
 
 **Files:**
 
-- Modify: `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md`
-- Create: `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/automation-pipeline-workflow-qa.md`
+- Modify: `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md`
+- Create: `docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md`
 - Modify: dated pack README
 - Modify: task record and progress memory
 
@@ -589,7 +589,7 @@ pack index.
 Run:
 
 ```bash
-rg -n "spec-driven|SDLC|CI/CD|QA|formatting|linting|syntax|Automation|pipeline|workflow|non-authoritative|Source checked: 2026-07-04|Review and Freshness" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md docs/90.references/research/2026-07-04-workspace-engineering-research-pack/automation-pipeline-workflow-qa.md
+rg -n "spec-driven|SDLC|CI/CD|QA|formatting|linting|syntax|Automation|pipeline|workflow|non-authoritative|Source checked: 2026-07-04|Review and Freshness" docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md
 ```
 
 Expected: output shows all required topic terms and source/freshness metadata.
@@ -605,7 +605,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/90.references/research/2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md docs/90.references/research/2026-07-04-workspace-engineering-research-pack/automation-pipeline-workflow-qa.md docs/90.references/research/2026-07-04-workspace-engineering-research-pack/README.md docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md docs/00.agent-governance/memory/progress.md
+git add docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md docs/90.references/research/2026-07-04-wer/README.md docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md docs/00.agent-governance/memory/progress.md
 git commit -m "docs(research): Refresh delivery automation and QA sources"
 ```
 
@@ -616,7 +616,7 @@ automation reference, README index update, and evidence updates.
 
 **Files:**
 
-- Create: `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/kubernetes-infrastructure-security.md`
+- Create: `docs/90.references/research/2026-07-04-wer/kubernetes-infrastructure-security.md`
 - Modify: dated pack README
 - Modify: task record and progress memory
 
@@ -664,7 +664,7 @@ pack index.
 Run:
 
 ```bash
-rg -n "Kubernetes|Infrastructure|GitOps|Secret|External Secrets|policy-as-code|OPA|Conftest|supply-chain|security|SLSA|OpenSSF|non-authoritative|Source checked: 2026-07-04|Review and Freshness" docs/90.references/research/2026-07-04-workspace-engineering-research-pack/kubernetes-infrastructure-security.md
+rg -n "Kubernetes|Infrastructure|GitOps|Secret|External Secrets|policy-as-code|OPA|Conftest|supply-chain|security|SLSA|OpenSSF|non-authoritative|Source checked: 2026-07-04|Review and Freshness" docs/90.references/research/2026-07-04-wer/kubernetes-infrastructure-security.md
 ```
 
 Expected: output shows all required topic terms and source/freshness metadata.
@@ -680,7 +680,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/90.references/research/2026-07-04-workspace-engineering-research-pack/kubernetes-infrastructure-security.md docs/90.references/research/2026-07-04-workspace-engineering-research-pack/README.md docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md docs/00.agent-governance/memory/progress.md
+git add docs/90.references/research/2026-07-04-wer/kubernetes-infrastructure-security.md docs/90.references/research/2026-07-04-wer/README.md docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md docs/00.agent-governance/memory/progress.md
 git commit -m "docs(research): Add Kubernetes infrastructure security sources"
 ```
 
@@ -728,8 +728,8 @@ Run:
 
 ```bash
 rg -n "docs/90.references/research/(workspace-governance-baseline|harness-and-loop-engineering|provider-implementation-status|spec-sdlc-ci-qa-formatting)\\.md|research/(workspace-governance-baseline|harness-and-loop-engineering|provider-implementation-status|spec-sdlc-ci-qa-formatting)\\.md|\\./(workspace-governance-baseline|harness-and-loop-engineering|provider-implementation-status|spec-sdlc-ci-qa-formatting)\\.md" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
-rg -n "Source checked: 2026-07-04|Review and Freshness|non-authoritative|Authority Boundary" docs/90.references/research/2026-07-04-workspace-engineering-research-pack
-rg -n "Kubernetes|Infrastructure|Security|Automation|pipeline|workflow|QA|formatting|linting|syntax" docs/90.references/research/2026-07-04-workspace-engineering-research-pack
+rg -n "Source checked: 2026-07-04|Review and Freshness|non-authoritative|Authority Boundary" docs/90.references/research/2026-07-04-wer
+rg -n "Kubernetes|Infrastructure|Security|Automation|pipeline|workflow|QA|formatting|linting|syntax" docs/90.references/research/2026-07-04-wer
 ```
 
 Expected: stale flat-link scan has no current-path matches outside historical

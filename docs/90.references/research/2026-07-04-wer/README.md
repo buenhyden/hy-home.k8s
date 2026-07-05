@@ -43,7 +43,7 @@ Out of scope:
 ## Structure
 
 ```text
-2026-07-04-workspace-engineering-research-pack/
+2026-07-04-wer/
 |-- README.md
 |-- workspace-governance-baseline.md        # Current
 |-- harness-and-loop-engineering.md         # Current
@@ -94,7 +94,7 @@ same as `How to Work in This Pack`.
 ## Link Basis
 
 This README's link basis is
-`docs/90.references/research/2026-07-04-workspace-engineering-research-pack/`.
+`docs/90.references/research/2026-07-04-wer/`.
 
 - Current same-pack references use bare filename links after the target exists.
 - Planned same-pack target names remain code literals until their files are

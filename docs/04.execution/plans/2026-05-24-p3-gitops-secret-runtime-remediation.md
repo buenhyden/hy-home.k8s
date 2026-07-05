@@ -20,7 +20,7 @@ this plan.
 ## Context
 
 The pre-approval P3 items are preserved in the
-[`../../90.references/audits/2026-05-24-workspace-harness-gap-analysis/workspace-harness-gap-analysis.md`](../../90.references/audits/2026-05-24-workspace-harness-gap-analysis/workspace-harness-gap-analysis.md)
+[`../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md`](../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md)
 audit reference. Safety boundaries remain after approval: improve repository
 desired state and static validation first, and inspect live state only through
 read-only commands.
@@ -155,7 +155,7 @@ a current-state runtime unavailability, not as live validation success.
 ## Related Documents
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
-- **Audit Reference**: [../../90.references/audits/2026-05-24-workspace-harness-gap-analysis/workspace-harness-gap-analysis.md](../../90.references/audits/2026-05-24-workspace-harness-gap-analysis/workspace-harness-gap-analysis.md)
+- **Audit Reference**: [../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md](../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md)
 - **Tasks**: [../tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md](../tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md)
 - **Policy**: [../../05.operations/policies/0007-app-gitops-onboarding-policy.md](../../05.operations/policies/0007-app-gitops-onboarding-policy.md)
 - **Runbook**: [../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md](../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md)

@@ -161,7 +161,7 @@ runtime readiness.
 
 ## Sources
 
-- [Harness and Loop Engineering Research](../../research/2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md)
+- [Harness and Loop Engineering Research](../../research/2026-07-04-wer/harness-and-loop-engineering.md)
 - [Workspace Harness Implementation Audit Pack Spec](../../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md)
 - [Workspace Harness Implementation Audit Pack Plan](../../../04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md)
 - [AGENTS.md](../../../../AGENTS.md)
@@ -190,7 +190,7 @@ runtime readiness.
 ## Related Documents
 
 - **Audits README**: [README.md](../README.md)
-- **Research benchmark**: [Harness and Loop Engineering Research](../../research/2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md)
+- **Research benchmark**: [Harness and Loop Engineering Research](../../research/2026-07-04-wer/harness-and-loop-engineering.md)
 - **Parent Spec**: [Workspace Harness Implementation Audit Pack Spec](../../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md)
 - **Parent Plan**: [Workspace Harness Implementation Audit Pack Plan](../../../04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md)
 - **Task record**: [Workspace Harness Implementation Audit Pack Task](../../../04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md)

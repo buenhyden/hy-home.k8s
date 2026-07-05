@@ -11,7 +11,7 @@ updated: 2026-07-05
 ## Overview
 
 This document defines the implementation contract for a dated audit pack under
-`docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/`.
+`docs/90.references/audits/2026-07-05-wea/`.
 The audit pack compares the current workspace engineering research pack with
 repo-backed implementation evidence and records how much of each benchmark is
 implemented in `hy-home.k8s`.
@@ -34,12 +34,12 @@ In scope:
 
 - Create a new dated audit pack folder under `docs/90.references/audits/`.
 - Write a pack `README.md` and four part reports:
-  - `01-governance-harness-loop-providers.md`
-  - `02-sdlc-ci-qa-formatting-automation.md`
-  - `03-kubernetes-infrastructure-security.md`
-  - `04-implementation-roadmap-and-automation-opportunities.md`
+  - `governance-harness-loop-providers.md`
+  - `sdlc-ci-qa-formatting-automation.md`
+  - `kubernetes-infrastructure-security.md`
+  - `implementation-roadmap-and-automation-opportunities.md`
 - Use the current research pack under
-  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/`
+  `docs/90.references/research/2026-07-04-wer/`
   as the benchmark source.
 - Compare each benchmark against repo-backed implementation evidence.
 - Include implementation status for harness engineering, loop engineering,
@@ -77,7 +77,7 @@ Out of scope:
 Repository inputs:
 
 - [Audits README](../../90.references/audits/README.md)
-- [Research Pack README](../../90.references/research/2026-07-04-workspace-engineering-research-pack/README.md)
+- [Research Pack README](../../90.references/research/2026-07-04-wer/README.md)
 - [90.references README](../../90.references/README.md)
 - [Reference Template](../../99.templates/templates/common/reference.template.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
@@ -94,7 +94,7 @@ Repository inputs:
   - No runtime configuration, workflow, script, provider adapter, manifest,
     policy, or secret file changes are required.
   - New audit material lives under
-    `docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/`.
+    `docs/90.references/audits/2026-07-05-wea/`.
   - Existing root-level audit files are moved into dated folders with one
     current path per report.
 - **Data / Interface Contract**:
@@ -122,16 +122,16 @@ Repository inputs:
 - **Component Boundary**:
   - `README.md`: dated audit pack overview, report index, benchmark sources,
     status vocabulary, evidence rules, and reading order.
-  - `01-governance-harness-loop-providers.md`: implementation status for
+  - `governance-harness-loop-providers.md`: implementation status for
     workspace governance, harness engineering, loop engineering, Claude,
     Codex, Gemini, and common provider environment/rule/system parity.
-  - `02-sdlc-ci-qa-formatting-automation.md`: implementation status for
+  - `sdlc-ci-qa-formatting-automation.md`: implementation status for
     spec-driven development, SDLC, CI/CD, QA, formatting, linting, syntax
     checks, automation, pipeline, workflow, and artifact/maintenance lanes.
-  - `03-kubernetes-infrastructure-security.md`: implementation status for
+  - `kubernetes-infrastructure-security.md`: implementation status for
     Kubernetes, infrastructure, GitOps, secrets, policy-as-code, network
     boundaries, supply-chain, and security.
-  - `04-implementation-roadmap-and-automation-opportunities.md`: cross-report
+  - `implementation-roadmap-and-automation-opportunities.md`: cross-report
     priority matrix, automation candidates, protected-surface constraints, and
     future task routing.
   - Legacy audit folders: preserve previous dated snapshots while removing
@@ -161,10 +161,10 @@ Repository inputs:
 - **Migration / Transition Plan**:
   - Create the new dated audit pack folder.
   - Move existing root audit files into dated folders:
-    - `2026-05-24-workspace-harness-gap-analysis/`
-    - `2026-07-02-workspace-harness-implementation-audit-pack/`
-    - `2026-07-03-workspace-document-governance-hardening-audit/`
-    - `2026-07-04-workspace-document-contract-normalization-audit/`
+    - `2026-05-24-whga/`
+    - `2026-07-02-whia/`
+    - `2026-07-03-wdgh/`
+    - `2026-07-04-wdcn/`
   - Update `docs/90.references/audits/README.md` and any repo links that point
     to the old root-level audit file paths.
   - Add the new 2026-07-05 audit pack reports.
@@ -187,15 +187,15 @@ interface AuditMatrixRow {
 }
 
 interface WorkspaceEngineeringImplementationAuditPack {
-  root: "docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit";
+  root: "docs/90.references/audits/2026-07-05-wea";
   reports: [
     "README.md",
-    "01-governance-harness-loop-providers.md",
-    "02-sdlc-ci-qa-formatting-automation.md",
-    "03-kubernetes-infrastructure-security.md",
-    "04-implementation-roadmap-and-automation-opportunities.md",
+    "governance-harness-loop-providers.md",
+    "sdlc-ci-qa-formatting-automation.md",
+    "kubernetes-infrastructure-security.md",
+    "implementation-roadmap-and-automation-opportunities.md",
   ];
-  benchmarkRoot: "docs/90.references/research/2026-07-04-workspace-engineering-research-pack";
+  benchmarkRoot: "docs/90.references/research/2026-07-04-wer";
   evidenceBoundary: "repo-static only unless an approved live check is recorded";
 }
 ```
@@ -249,7 +249,7 @@ No external API is introduced.
     market/context, and live-runtime evidence lanes.
   - Do not promote audit recommendations into active policy.
 - **Versioning Rule**:
-  - Use the `2026-07-05-workspace-engineering-implementation-audit` folder as
+  - Use the `2026-07-05-wea` folder as
     the dated audit-pack boundary.
 
 ## Memory & Context Strategy (If Applicable)
@@ -341,8 +341,8 @@ No external API is introduced.
 ```bash
 git status --short --branch
 rg --files docs/90.references/audits | sort
-rg -n "docs/90.references/audits/(2026-05-24-workspace-harness-gap-analysis|2026-07-02-harness-loop-implementation-audit|2026-07-02-provider-harness-loop-implementation-audit|2026-07-02-sdlc-delivery-practices-implementation-audit|2026-07-02-workspace-governance-implementation-audit|2026-07-03-workspace-document-governance-hardening-audit|2026-07-04-workspace-document-contract-normalization-audit)\\.md" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
-rg -n "Implemented|Partial|Gap|Not in scope|repo-static|live-runtime|Source checked|Evidence|Follow-up route" docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit
+rg -n "docs/90.references/audits/(2026-05-24-whga|2026-07-02-harness-loop-implementation-audit|2026-07-02-provider-harness-loop-implementation-audit|2026-07-02-sdlc-delivery-practices-implementation-audit|2026-07-02-workspace-governance-implementation-audit|2026-07-03-wdgh|2026-07-04-wdcn)\\.md" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
+rg -n "Implemented|Partial|Gap|Not in scope|repo-static|live-runtime|Source checked|Evidence|Follow-up route" docs/90.references/audits/2026-07-05-wea
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
 ```
@@ -377,7 +377,7 @@ bash scripts/validate-repo-quality-gates.sh .
 - **Prior Audit Pack Spec**: [../010-workspace-harness-implementation-audit-pack/spec.md](../010-workspace-harness-implementation-audit-pack/spec.md)
 - **Plan**: `../../04.execution/plans/2026-07-05-workspace-engineering-implementation-audit-pack.md`
 - **Tasks**: `../../04.execution/tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md`
-- **Research Pack README**: [../../90.references/research/2026-07-04-workspace-engineering-research-pack/README.md](../../90.references/research/2026-07-04-workspace-engineering-research-pack/README.md)
+- **Research Pack README**: [../../90.references/research/2026-07-04-wer/README.md](../../90.references/research/2026-07-04-wer/README.md)
 - **Audits README**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
 - **Reference Template**: [../../99.templates/templates/common/reference.template.md](../../99.templates/templates/common/reference.template.md)
 - **CI/CD QA Guide**: [../../05.operations/guides/0010-ci-cd-qa-reference-guide.md](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)

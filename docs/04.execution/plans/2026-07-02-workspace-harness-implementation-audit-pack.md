@@ -100,7 +100,7 @@ Use these source groups during implementation:
   - `.github/workflows/**`
   - `.pre-commit-config.yaml`
 - Existing audit precedent:
-  - `docs/90.references/audits/2026-05-24-workspace-harness-gap-analysis.md`
+  - `docs/90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md`
 
 ## Work Breakdown
 
@@ -130,7 +130,7 @@ Run:
 ```bash
 sed -n '1,220p' docs/99.templates/templates/common/readme.template.md
 sed -n '1,220p' docs/99.templates/templates/common/reference.template.md
-sed -n '1,220p' docs/90.references/audits/2026-05-24-workspace-harness-gap-analysis.md
+sed -n '1,220p' docs/90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md
 sed -n '1,240p' docs/90.references/README.md
 ```
 

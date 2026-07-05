@@ -21,7 +21,7 @@ and closes validation through local static checks.
 - **Parent Spec**: [../../03.specs/018-workspace-engineering-implementation-audit-pack/spec.md](../../03.specs/018-workspace-engineering-implementation-audit-pack/spec.md)
 - **Parent Plan**: [../plans/2026-07-05-workspace-engineering-implementation-audit-pack.md](../plans/2026-07-05-workspace-engineering-implementation-audit-pack.md)
 - **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
-- **Research Pack**: [../../90.references/research/2026-07-04-workspace-engineering-research-pack/README.md](../../90.references/research/2026-07-04-workspace-engineering-research-pack/README.md)
+- **Research Pack**: [../../90.references/research/2026-07-04-wer/README.md](../../90.references/research/2026-07-04-wer/README.md)
 - **Audits Index**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
 
 ## Working Rules
@@ -105,29 +105,29 @@ and closes validation through local static checks.
 - `git status --short --branch` confirmed WEA-002 started from branch
   `codex/workspace-engineering-audit-pack` with no uncommitted changes.
 - Folderized the seven existing root audit reports with `git mv`:
-  - `docs/90.references/audits/2026-05-24-workspace-harness-gap-analysis.md`
+  - `docs/90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md`
     to
-    `docs/90.references/audits/2026-05-24-workspace-harness-gap-analysis/workspace-harness-gap-analysis.md`
+    `docs/90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md`
   - `docs/90.references/audits/2026-07-02-workspace-governance-implementation-audit.md`
     to
-    `docs/90.references/audits/2026-07-02-workspace-harness-implementation-audit-pack/workspace-governance-implementation-audit.md`
+    `docs/90.references/audits/2026-07-02-whia/workspace-governance-implementation-audit.md`
   - `docs/90.references/audits/2026-07-02-harness-loop-implementation-audit.md`
     to
-    `docs/90.references/audits/2026-07-02-workspace-harness-implementation-audit-pack/harness-loop-implementation-audit.md`
+    `docs/90.references/audits/2026-07-02-whia/harness-loop-implementation-audit.md`
   - `docs/90.references/audits/2026-07-02-provider-harness-loop-implementation-audit.md`
     to
-    `docs/90.references/audits/2026-07-02-workspace-harness-implementation-audit-pack/provider-harness-loop-implementation-audit.md`
+    `docs/90.references/audits/2026-07-02-whia/provider-harness-loop-implementation-audit.md`
   - `docs/90.references/audits/2026-07-02-sdlc-delivery-practices-implementation-audit.md`
     to
-    `docs/90.references/audits/2026-07-02-workspace-harness-implementation-audit-pack/sdlc-delivery-practices-implementation-audit.md`
-  - `docs/90.references/audits/2026-07-03-workspace-document-governance-hardening-audit.md`
+    `docs/90.references/audits/2026-07-02-whia/sdlc-delivery-practices-implementation-audit.md`
+  - `docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md`
     to
-    `docs/90.references/audits/2026-07-03-workspace-document-governance-hardening-audit/workspace-document-governance-hardening-audit.md`
-  - `docs/90.references/audits/2026-07-04-workspace-document-contract-normalization-audit.md`
+    `docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md`
+  - `docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md`
     to
-    `docs/90.references/audits/2026-07-04-workspace-document-contract-normalization-audit/workspace-document-contract-normalization-audit.md`
+    `docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md`
 - Updated the Stage 90 audit index structure, links, Link Basis note, and
-  planned/current `2026-07-05-workspace-engineering-implementation-audit/`
+  planned/current `2026-07-05-wea/`
   directory entry in [../../90.references/audits/README.md](../../90.references/audits/README.md).
 - Updated current navigational links and moved-report relative links in:
   - [../../00.agent-governance/memory/progress.md](../../00.agent-governance/memory/progress.md)
@@ -165,22 +165,22 @@ and closes validation through local static checks.
   - Full old-path candidate scan over
     `docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts` for these
     seven root audit paths:
-    - `docs/90.references/audits/2026-05-24-workspace-harness-gap-analysis.md`
+    - `docs/90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md`
     - `docs/90.references/audits/2026-07-02-workspace-governance-implementation-audit.md`
     - `docs/90.references/audits/2026-07-02-harness-loop-implementation-audit.md`
     - `docs/90.references/audits/2026-07-02-provider-harness-loop-implementation-audit.md`
     - `docs/90.references/audits/2026-07-02-sdlc-delivery-practices-implementation-audit.md`
-    - `docs/90.references/audits/2026-07-03-workspace-document-governance-hardening-audit.md`
-    - `docs/90.references/audits/2026-07-04-workspace-document-contract-normalization-audit.md`
+    - `docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md`
+    - `docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md`
 - **WEA-001 Validation Commands**:
   - `git diff --check` passed.
   - `bash scripts/validate-repo-quality-gates.sh .` passed with
     `[PASS] repository quality gates passed`.
 - **WEA-003 Source Files Read**:
   - `docs/04.execution/plans/2026-07-05-workspace-engineering-implementation-audit-pack.md` Task 3
-  - `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md`
-  - `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md`
-  - `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/provider-implementation-status.md`
+  - `docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md`
+  - `docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md`
+  - `docs/90.references/research/2026-07-04-wer/provider-implementation-status.md`
   - `docs/00.agent-governance/harness-catalog.md`
   - `docs/00.agent-governance/harness-implementation-map.md`
   - `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`
@@ -218,14 +218,14 @@ and closes validation through local static checks.
   - Static validation is recorded as repo-static evidence only, not
     live-runtime, provider-runtime, Kubernetes, cloud, or secret readiness.
 - **WEA-003 Validation Commands**:
-  - Required `rg -n "workspace purpose|harness|loop|Claude|Codex|Gemini|common provider|Implemented|Partial|Gap|Not in scope|repo-static|live-runtime|Evidence|Follow-up route|Review and Freshness" docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/01-governance-harness-loop-providers.md` completed.
+  - Required `rg -n "workspace purpose|harness|loop|Claude|Codex|Gemini|common provider|Implemented|Partial|Gap|Not in scope|repo-static|live-runtime|Evidence|Follow-up route|Review and Freshness" docs/90.references/audits/2026-07-05-wea/governance-harness-loop-providers.md` completed.
   - `git diff --check` passed.
   - `bash scripts/validate-repo-quality-gates.sh .` passed with
     `[PASS] repository quality gates passed`.
 - **WEA-004 Source Files Read**:
   - `docs/04.execution/plans/2026-07-05-workspace-engineering-implementation-audit-pack.md` Task 4
-  - `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md`
-  - `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/automation-pipeline-workflow-qa.md`
+  - `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md`
+  - `docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md`
   - `.github/ABOUT.md`
   - `.github/workflows/ci.yml`
   - `.github/workflows/generate-changelog.yml`
@@ -269,13 +269,13 @@ and closes validation through local static checks.
   - Static validation is recorded as repo-static evidence only, not
     live-runtime, provider-runtime, Kubernetes, cloud, or secret readiness.
 - **WEA-004 Validation Commands**:
-  - Required `rg -n "spec-driven|SDLC|CI/CD|QA|Formatting|Linting|pre-commit|markdownlint|YAML|actionlint|zizmor|artifact|Dependabot|pipeline|workflow|automation|DORA|Implemented|Partial|Gap|Not in scope|repo-static|CI/toolchain|live-runtime|Review and Freshness" docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/02-sdlc-ci-qa-formatting-automation.md` completed.
+  - Required `rg -n "spec-driven|SDLC|CI/CD|QA|Formatting|Linting|pre-commit|markdownlint|YAML|actionlint|zizmor|artifact|Dependabot|pipeline|workflow|automation|DORA|Implemented|Partial|Gap|Not in scope|repo-static|CI/toolchain|live-runtime|Review and Freshness" docs/90.references/audits/2026-07-05-wea/sdlc-ci-qa-formatting-automation.md` completed.
   - `git diff --check` passed.
   - `bash scripts/validate-repo-quality-gates.sh .` passed with
     `[PASS] repository quality gates passed`.
 - **WEA-005 Source Files Read**:
   - `docs/04.execution/plans/2026-07-05-workspace-engineering-implementation-audit-pack.md` Task 5
-  - `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/kubernetes-infrastructure-security.md`
+  - `docs/90.references/research/2026-07-04-wer/kubernetes-infrastructure-security.md`
   - `gitops/README.md`
   - `infrastructure/README.md`
   - `scripts/README.md`
@@ -322,15 +322,15 @@ and closes validation through local static checks.
     live-runtime, Kubernetes, Argo CD, Vault, ESO, network, cloud, or secret
     readiness.
 - **WEA-005 Validation Commands**:
-  - Required `rg -n "Kubernetes|Infrastructure|GitOps|Argo CD|AppProject|Kustomize|External Secrets|Vault|secret|RBAC|NetworkPolicy|Traefik|OPA|Conftest|kube-linter|supply-chain|security|Implemented|Partial|Gap|Not in scope|repo-static|live-runtime|Review and Freshness" docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/03-kubernetes-infrastructure-security.md` completed.
+  - Required `rg -n "Kubernetes|Infrastructure|GitOps|Argo CD|AppProject|Kustomize|External Secrets|Vault|secret|RBAC|NetworkPolicy|Traefik|OPA|Conftest|kube-linter|supply-chain|security|Implemented|Partial|Gap|Not in scope|repo-static|live-runtime|Review and Freshness" docs/90.references/audits/2026-07-05-wea/kubernetes-infrastructure-security.md` completed.
   - `git diff --check` passed.
   - `bash scripts/validate-repo-quality-gates.sh .` passed with
     `[PASS] repository quality gates passed`.
 - **WEA-006 Source Files Read**:
   - `docs/04.execution/plans/2026-07-05-workspace-engineering-implementation-audit-pack.md` Task 6
-  - `docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/01-governance-harness-loop-providers.md`
-  - `docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/02-sdlc-ci-qa-formatting-automation.md`
-  - `docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/03-kubernetes-infrastructure-security.md`
+  - `docs/90.references/audits/2026-07-05-wea/governance-harness-loop-providers.md`
+  - `docs/90.references/audits/2026-07-05-wea/sdlc-ci-qa-formatting-automation.md`
+  - `docs/90.references/audits/2026-07-05-wea/kubernetes-infrastructure-security.md`
 - **WEA-006 Sections Recorded**:
   - Cross-report Status Summary
   - Priority Matrix
@@ -357,7 +357,7 @@ and closes validation through local static checks.
   - Repo-static, CI/toolchain, market/context, and live-runtime evidence lanes
     are kept separate.
 - **WEA-006 Validation Commands**:
-  - Required `rg -n "Priority Matrix|Automation Opportunity|Protected Surface|Owner Routing|audit matrix|provider parity|workflow|GitOps|secret-handling|DORA|live-runtime|repo-static|Implemented|Partial|Gap|Not in scope|Review and Freshness" docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/04-implementation-roadmap-and-automation-opportunities.md` completed.
+  - Required `rg -n "Priority Matrix|Automation Opportunity|Protected Surface|Owner Routing|audit matrix|provider parity|workflow|GitOps|secret-handling|DORA|live-runtime|repo-static|Implemented|Partial|Gap|Not in scope|Review and Freshness" docs/90.references/audits/2026-07-05-wea/implementation-roadmap-and-automation-opportunities.md` completed.
   - `git diff --check` passed.
   - `bash scripts/validate-repo-quality-gates.sh .` passed with
     `[PASS] repository quality gates passed`.
@@ -389,7 +389,7 @@ and closes validation through local static checks.
     `docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts`
     completed; remaining matches are historical evidence only.
   - Required report coverage scan over
-    `docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit`
+    `docs/90.references/audits/2026-07-05-wea`
     completed.
   - `git diff --check` passed.
   - `bash scripts/validate-repo-quality-gates.sh .` passed with
@@ -411,6 +411,6 @@ mutation.
 
 - **Spec**: [../../03.specs/018-workspace-engineering-implementation-audit-pack/spec.md](../../03.specs/018-workspace-engineering-implementation-audit-pack/spec.md)
 - **Plan**: [../plans/2026-07-05-workspace-engineering-implementation-audit-pack.md](../plans/2026-07-05-workspace-engineering-implementation-audit-pack.md)
-- **Research Pack README**: [../../90.references/research/2026-07-04-workspace-engineering-research-pack/README.md](../../90.references/research/2026-07-04-workspace-engineering-research-pack/README.md)
+- **Research Pack README**: [../../90.references/research/2026-07-04-wer/README.md](../../90.references/research/2026-07-04-wer/README.md)
 - **Audits README**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
 - **Task Index**: [README.md](./README.md)

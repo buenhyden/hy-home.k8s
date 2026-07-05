@@ -110,7 +110,7 @@ by the user:
 
 **Files:**
 
-- Create: `docs/90.references/audits/2026-07-04-workspace-document-contract-normalization-audit.md`
+- Create: `docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md`
 - Modify: `docs/90.references/audits/README.md`
 - Modify: `docs/04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
@@ -187,7 +187,7 @@ Expected:
 
 - [ ] **Step 5: Write the audit report**
 
-Create `docs/90.references/audits/2026-07-04-workspace-document-contract-normalization-audit.md` with these sections:
+Create `docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md` with these sections:
 
 ```markdown
 ---
@@ -238,7 +238,7 @@ Run:
 ```bash
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
-git add docs/90.references/audits/2026-07-04-workspace-document-contract-normalization-audit.md docs/90.references/audits/README.md docs/04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md docs/00.agent-governance/memory/progress.md
+git add docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md docs/90.references/audits/README.md docs/04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md docs/00.agent-governance/memory/progress.md
 git commit -m "docs(audit): Inventory document contract drift"
 ```
 

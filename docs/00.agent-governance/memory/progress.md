@@ -8,6 +8,51 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-05 - Stage 90 reference key-folder normalization
+
+- **Date**: 2026-07-05
+- **Layer**: docs, references, audits, research
+- **Status**: complete
+- **Tags**: #docs #references #audits #research #stage-90 #validation
+
+#### Progress
+
+- Normalized `docs/90.references/audits/` and
+  `docs/90.references/research/` dated pack folders to
+  `<YYYY-MM-DD>-<sdlc_key>/`.
+- Renamed the 2026-07-05 workspace engineering audit reports from numeric
+  order-prefixed filenames to semantic report filenames.
+- Updated reference indexes and related Stage 03/04 links so current Stage 90
+  report paths resolve through the dated key folders.
+- Added the dated-pack naming rule to the parent reference README and the
+  audits/research README files.
+
+#### Memory
+
+- Use short stable `sdlc_key` folder names for dated Stage 90 packs, such as
+  `2026-07-05-wea/` or `2026-07-04-wer/`.
+- Keep long human-readable titles in pack README files, report titles, plans,
+  and task records instead of repeating the long title in every folder name.
+- Current reports inside dated packs use semantic filenames. Do not use
+  `part-*.md`, `01-*.md`, `02-*.md`, or other order-only prefixes.
+- Stage 04 plan/task filenames keep their long descriptive titles unless a
+  separate execution task explicitly changes that stage.
+
+#### Evidence
+
+- Stage 90 stale long-folder scan - PASS.
+- Stage 90 numeric/part report filename scan - PASS for actual files; remaining
+  `part-*.md` mentions are policy text that forbids the pattern.
+- `git diff --check` - PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+
+#### Handoff
+
+- This is a documentation-only structure normalization. It does not change
+  active policy, runtime behavior, CI execution semantics, manifests,
+  credentials, live infrastructure, provider runtime configuration, or external
+  services.
+
 ### 2026-07-05 - Workspace engineering implementation audit pack WEA-007 closure
 
 - **Date**: 2026-07-05
@@ -22,12 +67,12 @@ inventory stays in `scripts/README.md`.
 - Folderized existing root audit reports into dated folders under
   `docs/90.references/audits/`.
 - Added the dated
-  [2026-07-05 workspace engineering implementation audit pack](../../90.references/audits/2026-07-05-workspace-engineering-implementation-audit/README.md)
+  [2026-07-05 workspace engineering implementation audit pack](../../90.references/audits/2026-07-05-wea/README.md)
   with four current reports:
   governance/harness/provider, SDLC/CI/QA/formatting/automation,
   Kubernetes/infrastructure/security, and implementation roadmap/automation
   opportunities.
-- Updated the parent audit index so the current pack and all four part
+- Updated the parent audit index so the current pack and all four
   reports are resolved Markdown links.
 
 #### Memory
@@ -366,7 +411,7 @@ inventory stays in `scripts/README.md`.
   [Workspace Engineering Research Pack Task Record](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md).
 - Created the dated workspace engineering research pack README and updated the
   research and parent Stage 90 indexes to route current moved references through
-  `docs/90.references/research/2026-07-04-workspace-engineering-research-pack/`.
+  `docs/90.references/research/2026-07-04-wer/`.
 - Moved four existing references into the dated pack:
   - `workspace-governance-baseline.md`
   - `harness-and-loop-engineering.md`
@@ -812,7 +857,7 @@ inventory stays in `scripts/README.md`.
   scans, and CI/QA scans are recorded in the
   [Task evidence](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md).
 - Created the Stage 90
-  [workspace document governance hardening audit](../../90.references/audits/2026-07-03-workspace-document-governance-hardening-audit/workspace-document-governance-hardening-audit.md)
+  [workspace document governance hardening audit](../../90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md)
   because durable findings were found and should route to later tasks instead
   of being fixed during the audit-only pass.
 - Registered the audit report in the Stage 90 audits README.
@@ -1237,11 +1282,11 @@ inventory stays in `scripts/README.md`.
 - Created the
   [audits README](../../90.references/audits/README.md) and four dated audit
   reports:
-  [workspace governance](../../90.references/audits/2026-07-02-workspace-harness-implementation-audit-pack/workspace-governance-implementation-audit.md),
-  [harness/loop](../../90.references/audits/2026-07-02-workspace-harness-implementation-audit-pack/harness-loop-implementation-audit.md),
-  [provider harness/loop](../../90.references/audits/2026-07-02-workspace-harness-implementation-audit-pack/provider-harness-loop-implementation-audit.md),
+  [workspace governance](../../90.references/audits/2026-07-02-whia/workspace-governance-implementation-audit.md),
+  [harness/loop](../../90.references/audits/2026-07-02-whia/harness-loop-implementation-audit.md),
+  [provider harness/loop](../../90.references/audits/2026-07-02-whia/provider-harness-loop-implementation-audit.md),
   and
-  [SDLC delivery practices](../../90.references/audits/2026-07-02-workspace-harness-implementation-audit-pack/sdlc-delivery-practices-implementation-audit.md).
+  [SDLC delivery practices](../../90.references/audits/2026-07-02-whia/sdlc-delivery-practices-implementation-audit.md).
 - Finalized the parent
   [Spec](../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md),
   [Plan](../../04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md),
@@ -6618,7 +6663,7 @@ Harness layers L1–L6 were incomplete: no `settings.json`, no agent files, no h
 
 - Template: `docs/99.templates/templates/sdlc/operations/runbook.template.md` — added `## Runbook Type` section.
 - Legacy removed: `guides/0005-new-app-gitops-onboarding-guide.md`, `runbooks/0006-new-app-onboarding-runbook.md`, `plans/2026-05-24-workspace-harness-gap-analysis.md`, `tasks/2026-05-24-workspace-harness-gap-analysis.md`.
-- Reference moved: `docs/90.references/audits/2026-05-24-workspace-harness-gap-analysis.md` created as thin reference wrapper.
+- Reference moved: `docs/90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md` created as thin reference wrapper.
 - Policies 7/7: `## AI Agent Policy Section (If Applicable)` added to all 7 ops policy files.
 - Runbooks 10/10: `## Runbook Type` standardized + `## Agent Operations (If Applicable)` added to all 10 active runbooks.
 - Guides: H2 orphan sections demoted to H3 under `## Step-by-step Instructions` in 0002, 0006, 0007, 0008.
@@ -7223,7 +7268,7 @@ section separating static from live evidence.
 ### Progress
 
 - Added the dated audit report
-  `docs/90.references/audits/2026-07-04-workspace-document-contract-normalization-audit.md`.
+  `docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md`.
 - Registered the report in `docs/90.references/audits/README.md`.
 - Updated the Stage 04 task record to mark T-001 complete with command
   evidence.

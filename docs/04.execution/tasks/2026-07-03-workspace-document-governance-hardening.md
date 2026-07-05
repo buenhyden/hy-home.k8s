@@ -92,7 +92,7 @@ and Plan.
 - **Logs / Evidence Location**:
   - This task record.
   - `docs/00.agent-governance/memory/progress.md`.
-  - `docs/90.references/audits/2026-07-03-workspace-document-governance-hardening-audit.md`
+  - `docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md`
     if durable audit findings justify a separate Stage 90 report.
 
 ## Current Evidence
@@ -264,7 +264,7 @@ and Plan.
 #### Audit Report Decision
 
 - Created the Stage 90 audit report because durable findings exist:
-  [Workspace Document Governance Hardening Audit](../../90.references/audits/2026-07-03-workspace-document-governance-hardening-audit/workspace-document-governance-hardening-audit.md).
+  [Workspace Document Governance Hardening Audit](../../90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md).
 - Updated the audit index at `docs/90.references/audits/README.md`.
 - Task 1 stayed audit-only: no Task 2 core contract fixes, Task 3 provider
   fixes, Task 4 workspace cleanup, or Task 5 validator changes were applied.
@@ -581,4 +581,4 @@ and Plan.
 - [Template Routing Contract](../../99.templates/support/template-routing.md)
 - [Agent Governance Hub](../../00.agent-governance/README.md)
 - [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
-- [Workspace Document Governance Hardening Audit](../../90.references/audits/2026-07-03-workspace-document-governance-hardening-audit/workspace-document-governance-hardening-audit.md)
+- [Workspace Document Governance Hardening Audit](../../90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md)

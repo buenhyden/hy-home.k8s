@@ -33,12 +33,12 @@ Those evidence lanes require separately approved operations or runtime tasks.
 ## Structure
 
 ```text
-2026-07-05-workspace-engineering-implementation-audit/
+2026-07-05-wea/
 |-- README.md
-|-- 01-governance-harness-loop-providers.md
-|-- 02-sdlc-ci-qa-formatting-automation.md
-|-- 03-kubernetes-infrastructure-security.md
-`-- 04-implementation-roadmap-and-automation-opportunities.md
+|-- governance-harness-loop-providers.md
+|-- sdlc-ci-qa-formatting-automation.md
+|-- kubernetes-infrastructure-security.md
+`-- implementation-roadmap-and-automation-opportunities.md
 ```
 
 ## How to Work in This Area
@@ -54,7 +54,7 @@ Those evidence lanes require separately approved operations or runtime tasks.
 ## Link Basis
 
 This README is located at
-`docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/`.
+`docs/90.references/audits/2026-07-05-wea/`.
 
 - Same-pack report links use `./`.
 - The parent audits index uses `../README.md`.
@@ -67,19 +67,19 @@ This README is located at
 
 | Report | Availability | Purpose |
 | --- | --- | --- |
-| [01-governance-harness-loop-providers.md](./01-governance-harness-loop-providers.md) | Current | Governance, harness, loop, Claude, Codex, Gemini, and common provider implementation audit. |
-| [02-sdlc-ci-qa-formatting-automation.md](./02-sdlc-ci-qa-formatting-automation.md) | Current | Spec-driven development, SDLC, CI/CD, QA, formatting, linting, automation, pipeline, and workflow audit. |
-| [03-kubernetes-infrastructure-security.md](./03-kubernetes-infrastructure-security.md) | Current | Kubernetes, infrastructure, GitOps, secrets, policy, network, supply-chain, and security audit. |
-| [04-implementation-roadmap-and-automation-opportunities.md](./04-implementation-roadmap-and-automation-opportunities.md) | Current | Cross-report roadmap, priority matrix, automation candidates, and future task routing. |
+| [governance-harness-loop-providers.md](./governance-harness-loop-providers.md) | Current | Governance, harness, loop, Claude, Codex, Gemini, and common provider implementation audit. |
+| [sdlc-ci-qa-formatting-automation.md](./sdlc-ci-qa-formatting-automation.md) | Current | Spec-driven development, SDLC, CI/CD, QA, formatting, linting, automation, pipeline, and workflow audit. |
+| [kubernetes-infrastructure-security.md](./kubernetes-infrastructure-security.md) | Current | Kubernetes, infrastructure, GitOps, secrets, policy, network, supply-chain, and security audit. |
+| [implementation-roadmap-and-automation-opportunities.md](./implementation-roadmap-and-automation-opportunities.md) | Current | Cross-report roadmap, priority matrix, automation candidates, and future task routing. |
 
 ## Benchmark Sources
 
-- [Workspace Governance Baseline Research](../../research/2026-07-04-workspace-engineering-research-pack/workspace-governance-baseline.md)
-- [Harness and Loop Engineering Research](../../research/2026-07-04-workspace-engineering-research-pack/harness-and-loop-engineering.md)
-- [Provider Harness Implementation Status Research](../../research/2026-07-04-workspace-engineering-research-pack/provider-implementation-status.md)
-- [Spec, SDLC, CI, QA, and Formatting Research](../../research/2026-07-04-workspace-engineering-research-pack/spec-sdlc-ci-qa-formatting.md)
-- [Kubernetes Infrastructure Security Research](../../research/2026-07-04-workspace-engineering-research-pack/kubernetes-infrastructure-security.md)
-- [Automation Pipeline Workflow QA Research](../../research/2026-07-04-workspace-engineering-research-pack/automation-pipeline-workflow-qa.md)
+- [Workspace Governance Baseline Research](../../research/2026-07-04-wer/workspace-governance-baseline.md)
+- [Harness and Loop Engineering Research](../../research/2026-07-04-wer/harness-and-loop-engineering.md)
+- [Provider Harness Implementation Status Research](../../research/2026-07-04-wer/provider-implementation-status.md)
+- [Spec, SDLC, CI, QA, and Formatting Research](../../research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md)
+- [Kubernetes Infrastructure Security Research](../../research/2026-07-04-wer/kubernetes-infrastructure-security.md)
+- [Automation Pipeline Workflow QA Research](../../research/2026-07-04-wer/automation-pipeline-workflow-qa.md)
 
 ## Status Vocabulary
 
@@ -117,5 +117,5 @@ values in this pack.
 - [Audits README](../README.md)
 - [Workspace Engineering Implementation Audit Pack Plan](../../../04.execution/plans/2026-07-05-workspace-engineering-implementation-audit-pack.md)
 - [Workspace Engineering Implementation Audit Pack Task](../../../04.execution/tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md)
-- [Workspace Engineering Research Pack README](../../research/2026-07-04-workspace-engineering-research-pack/README.md)
+- [Workspace Engineering Research Pack README](../../research/2026-07-04-wer/README.md)
 - [Reference Template](../../../99.templates/templates/common/reference.template.md)
