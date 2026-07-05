@@ -48,7 +48,7 @@ in scope for this task.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | WCGN-001 | Create task evidence and baseline inventory | doc | VAL-SPC-020-003, VAL-SPC-020-004, VAL-SPC-020-006, VAL-SPC-020-007 | Task 1 | Baseline inventory, `_workspace` baseline, frontmatter/template drift scans, task README index, staged whitespace check, controller/spec/quality review follow-up | platform | Done |
 | WCGN-002 | Establish `_workspace` contract and ignore boundary | doc | VAL-SPC-020-001, VAL-SPC-020-002, VAL-SPC-020-005 | Task 2 | `_workspace/README.md` tracked, scratch files ignored, contract owners aligned, quality gate | platform | Done |
-| WCGN-003 | Audit and remediate frontmatter, template, section, README, and cross-link drift | doc | VAL-SPC-020-003, VAL-SPC-020-004, VAL-SPC-020-005, VAL-SPC-020-007 | Task 3 | Focused scans classify active violations vs templates/historical evidence | platform | Planned |
+| WCGN-003 | Audit and remediate frontmatter, template, section, README, and cross-link drift | doc | VAL-SPC-020-003, VAL-SPC-020-004, VAL-SPC-020-005, VAL-SPC-020-007 | Task 3 | Focused scans classify active violations vs templates/historical evidence | platform | Done |
 | WCGN-004 | Audit and remediate CI/CD, QA, formatting, linting, syntax, automation, workflow, and security drift | qa | VAL-SPC-020-006 | Task 4 | Control-surface descriptions match current scripts/workflows or recorded deferrals | platform | Planned |
 | WCGN-005 | Add validator coverage, close evidence, and record memory | qa | VAL-SPC-020-008, VAL-SPC-020-009, VAL-SPC-020-010 | Task 5 | `git diff --check`, repository quality gate, final evidence, progress memory | platform | Planned |
 
@@ -103,6 +103,11 @@ Requested target inventory notes:
 | WCGN-AUD-003 | `docs`, root shims, `.github`, `scripts` | frontmatter | Simple legacy `type` values returned no matches in the requested baseline scan. | Keep as baseline PASS for WCGN-003. |
 | WCGN-AUD-004 | `docs/99.templates/**`, Stage 04 plan | template | Template residue scan returned only template files and scanner-command evidence in the current plan before this task record was created. | Keep templates as allowed; future scans may classify task evidence command literals as scanner evidence. |
 | WCGN-AUD-005 | Stage 04 indexes | README | `docs/04.execution/tasks/README.md` did not yet list this task record before WCGN-001. | Update the Task stage structure and document index in WCGN-001. |
+| WCGN-AUD-006 | `docs`, root shims, `.github`, `scripts` | frontmatter | WCGN-003 frontmatter scan returned no simple un-namespaced `type` values. The broad metadata-key scan showed namespaced profiles and canonical key order across active routed frontmatter. | No frontmatter remediation required. |
+| WCGN-AUD-007 | `docs`, root shims, `.github`, `scripts` | template / section | WCGN-003 template residue matches were limited to Stage 99 template files, scanner-command evidence, and explicit cleanup-rule or legacy-route headings. | No active authored template residue or deprecated related-document section needed removal. |
+| WCGN-AUD-008 | README entrypoints | README | README inventory returned repository, workspace, docs, examples, GitOps, infrastructure, scripts, tests, and Traefik README files. The literal README duplication scan reported missing `.codex/README.md` and `.claude/README.md` operands because those provider README files do not exist; a focused rerun over existing operands found concise owner pointers, not duplicated Stage 00 or Stage 99 policy bodies. | No README body rewrite required. Do not create provider README files without a future route need. |
+| WCGN-AUD-009 | `docs/90.references/data/agent-reference-index.md`, `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md` | route | Two active reference documents still used the old Stage 03 placeholder `docs/03.specs/<feature-id>/...` as current guidance. | Update both references to `docs/03.specs/<###-Numbering>-<feature-id>/...`. |
+| WCGN-AUD-010 | Stage 00 rules, Stage 99 templates, Stage 04 migration evidence, Stage 90 audits, progress memory | route / cross-link | Remaining route scan matches are current deny-route guardrails (`docs/superpowers/**`, `docs/api/**`), template examples that explicitly reject `docs/api/**`, scanner-command evidence, completed migration evidence for old PRD filenames, dated Stage 90 audit evidence, or dated progress memory. | Leave accepted historical and guardrail evidence in place; do not rewrite completed migration records into false current-state history. |
 
 ## Remediation Evidence
 
@@ -116,6 +121,9 @@ Requested target inventory notes:
 | 2026-07-05 | WCGN-002 | Created `_workspace/README.md` as the frontmatter-free checked-in contract and added the root README structure entry. | `git ls-files _workspace` returned only `_workspace/README.md` after staging the README. |
 | 2026-07-05 | WCGN-002 | Aligned Stage 00 governance and Stage 99 support contracts with the `_workspace` staging boundary. | `git diff --check` returned no whitespace errors and `bash scripts/validate-repo-quality-gates.sh .` returned `[PASS] repository quality gates passed`. |
 | 2026-07-05 | WCGN-002 | Followed up on quality review by tightening dry-run scratch wording from logs to redacted, non-secret summaries. | `rg -n "Dry-run logs\|dry-run\|logs\|summaries" _workspace/README.md` no longer returns `Dry-run logs`; validation passed with `git diff --check` and `bash scripts/validate-repo-quality-gates.sh .`. |
+| 2026-07-05 | WCGN-003 | Updated active Stage 90 route guidance to the numbered Stage 03 placeholder. | `docs/90.references/data/agent-reference-index.md` now points feature-local Agent design to `docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md`; `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md` now points the Stage 03 spec lifecycle to `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`. |
+| 2026-07-05 | WCGN-003 | Reviewed folder README impact for the two Stage 90 reference edits. | `docs/90.references/data/README.md` and `docs/90.references/research/2026-07-04-wer/README.md` remain current because their index rows summarize document ownership and do not embed the old route placeholder. |
+| 2026-07-05 | WCGN-003 | Recorded frontmatter, template residue, legacy section, README duplication, and route/cross-link scan classifications. | WCGN-003 status is `Done`; remaining noisy matches are documented as templates, explicit route guardrails, scanner-command evidence, migration evidence, Stage 90 audits, or progress memory. |
 
 ## Verification Commands
 
@@ -147,6 +155,21 @@ bash scripts/validate-repo-quality-gates.sh .
 git add _workspace/README.md docs/04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md
 git diff --cached --check
 git commit -m "docs(governance): Clarify workspace dry-run boundary"
+bash scripts/validate-repo-quality-gates.sh .
+rg -n "^type: (prd|ard|adr|spec|plan|task|guide|policy|runbook|incident|postmortem|reference)$" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
+rg -n "^---$|^title:|^type:|^status:|^owner:|^updated:" docs/01.requirements docs/02.architecture docs/03.specs docs/04.execution docs/05.operations docs/90.references docs/98.archive docs/99.templates/support docs/00.agent-governance
+rg -n "Target: d""ocs/|Use this ""template|SNIPPET LIBRARY|\\{Folder or Project Name\\}|\\[Feature Name\\]|command ""1|pytest ""tests|Example""Contract" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
+rg -n "^## (Deprecated|Legacy|Related Refer""ences|Related Fold""ers|Related Fi""les|References|See Also|Links)\\b" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
+find . -name README.md -not -path './.git/*' -not -path './.agents/*' -not -path './.agent-work/*' -print | sort
+rg -n "must|forbidden|required|canonical owner|contract owner|approval boundary|protected surface" README.md docs/**/README.md .codex/README.md .claude/README.md
+rg -n "must|forbidden|required|canonical owner|contract owner|approval boundary|protected surface" README.md docs/**/README.md
+rg -n "docs/superpowers|docs/api/|docs/01\\.requirements/YYYY-MM-DD-|docs/03\\.specs/<feature-id>" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
+rg -n "2026-05-17-argo-rollouts-progressive-delivery|2026-05-17-argo-notifications-slack|2026-06-01-workspace-agent-governance-platform|2026-06-02-current-local-gitops-platform" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
+git diff --check
+bash scripts/validate-repo-quality-gates.sh .
+git add AGENTS.md CLAUDE.md GEMINI.md README.md .agents .claude .codex docs .github scripts docs/04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md
+git diff --cached --check
+git commit -m "docs(governance): Normalize document contract drift"
 ```
 
 ## Verification Summary
@@ -184,6 +207,14 @@ git commit -m "docs(governance): Clarify workspace dry-run boundary"
 | 2026-07-05 | WCGN-002 quality review follow-up scan | PASS; `_workspace/README.md` now says `Redacted, non-secret dry-run summaries.` and no longer says `Dry-run logs.`. Remaining `logs` mentions are the prohibited `Secret-bearing local logs` out-of-scope boundary. |
 | 2026-07-05 | WCGN-002 follow-up whitespace check | PASS; `git diff --check` returned no whitespace errors. |
 | 2026-07-05 | WCGN-002 follow-up repository quality gate | PASS; `bash scripts/validate-repo-quality-gates.sh .` returned `[PASS] repository quality gates passed`. |
+| 2026-07-05 | WCGN-003 initial repository quality gate | PASS; `bash scripts/validate-repo-quality-gates.sh .` returned `[PASS] repository quality gates passed` before WCGN-003 scans or edits. |
+| 2026-07-05 | WCGN-003 contract reads | PASS; read `frontmatter-schema.md`, `template-routing.md`, `documentation-contract.md`, and `legacy-cleanup-rules.md`; also read Stage 00 documentation protocol and route rules through the repo-local docs-stage-conformance workflow. |
+| 2026-07-05 | WCGN-003 frontmatter scans | PASS; simple legacy `type` scan returned no matches. The metadata-key scan was reviewed for routed frontmatter and showed namespaced profile values with key order `title`, `type`, `status`, `owner`, `updated`. |
+| 2026-07-05 | WCGN-003 template and section scans | PASS; matches were Stage 99 templates, scanner-command evidence, explicit cleanup rules, or legacy route headings. No active authored document retained template residue or deprecated related-document headings. |
+| 2026-07-05 | WCGN-003 README scans | PASS with noted literal-command limitation; sorted README inventory completed. The literal duplication scan exited 2 only because `.codex/README.md` and `.claude/README.md` do not exist; focused rerun over existing README operands found concise owner pointers rather than duplicated policy bodies. |
+| 2026-07-05 | WCGN-003 route and cross-link scans | PASS after remediation; active Stage 90 references were updated from `docs/03.specs/<feature-id>/...` to `docs/03.specs/<###-Numbering>-<feature-id>/...`. Remaining matches are current route-deny guardrails, templates, scanner-command evidence, completed migration evidence, Stage 90 audits, or progress memory. |
+| 2026-07-05 | WCGN-003 working-tree whitespace check | PASS; `git diff --check` returned no whitespace errors after WCGN-003 edits. |
+| 2026-07-05 | WCGN-003 repository quality gate | PASS; `bash scripts/validate-repo-quality-gates.sh .` returned `[PASS] repository quality gates passed` after WCGN-003 edits. |
 
 ## Deferrals
 

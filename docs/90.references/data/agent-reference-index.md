@@ -3,7 +3,7 @@ title: 'Reference: Agent Reference Index'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-05
 ---
 
 # Reference: Agent Reference Index
@@ -16,7 +16,7 @@ concept는 reference data로 관리할 수 있지만, runtime policy와 provider
 execution rule은 Stage 00 governance가 소유한다.
 
 기능 또는 서비스에 종속된 Agent 설계는 이 문서가 아니라
-`docs/03.specs/<feature-id>/agent-design.md`가 정본 위치다.
+`docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md`가 정본 위치다.
 
 ## Purpose
 
@@ -54,7 +54,7 @@ Stage 00 또는 Stage 03으로 라우팅해야 하는 Agent runtime contract를
 
 - **Runtime governance owner**: `docs/00.agent-governance/**`.
 - **Runtime roster owner**: `docs/00.agent-governance/harness-catalog.md`.
-- **Feature-local Agent design owner**: `docs/03.specs/<feature-id>/agent-design.md`.
+- **Feature-local Agent design owner**: `docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md`.
 - **Repo-changing progress owner**: `docs/00.agent-governance/memory/progress.md`.
 - **Reference data owner**: `docs/90.references/data/**` for durable lookup
   facts that do not redefine runtime behavior.

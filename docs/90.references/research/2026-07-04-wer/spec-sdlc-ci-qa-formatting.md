@@ -99,7 +99,7 @@ through the canonical docs taxonomy rather than through Spec Kit installation:
 
 | Concept | GitHub Spec Kit flow | `hy-home.k8s` repo lifecycle |
 | --- | --- | --- |
-| Define intent | Spec artifact describes what to build and why. | Stage 03 `docs/03.specs/<feature-id>/spec.md` owns implementation contract after upstream requirements and architecture inputs. |
+| Define intent | Spec artifact describes what to build and why. | Stage 03 `docs/03.specs/<###-Numbering>-<feature-id>/spec.md` owns implementation contract after upstream requirements and architecture inputs. |
 | Plan implementation | Plan artifact captures technical approach and constraints. | Stage 04 `docs/04.execution/plans/*.md` owns execution order, risks, gates, rollback, and verification. |
 | Break down work | Tasks artifact generates actionable units. | Stage 04 `docs/04.execution/tasks/*.md` owns task table, phase view, status, validation evidence, and handoff. |
 | Implement | Agent executes tasks against spec/plan/task context. | Agents edit only approved write scope, follow repo templates and governance, run validation, and record evidence before commit/handoff. |
