@@ -3,7 +3,7 @@ title: 'Template Routing Contract'
 type: governance/template-support
 status: draft
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-06
 ---
 
 # Template Routing Contract
@@ -31,6 +31,19 @@ documents.
 | Execution | `templates/sdlc/execution/` | Plans and task evidence. |
 | Operations | `templates/sdlc/operations/` | Guides, policies, runbooks, incidents, postmortems. |
 | Common | `templates/common/` | README, reference, archive, memory, progress. |
+
+## Lifecycle Route Summary
+
+- Stage 01 PRDs use `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
+- Stage 03 specs use `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.
+- Stage 04 plans and tasks stay date-based execution records.
+- README files route readers to lifecycle contract owners instead of carrying
+  full governance bodies.
+
+The SDLC lifecycle state table, numeric lineage rule, handoff links, and
+active-surface duplicate rule are owned by
+[SDLC Governance](./sdlc-governance.md). This document owns only the concrete
+path-to-template route map.
 
 ## Current Route Map
 

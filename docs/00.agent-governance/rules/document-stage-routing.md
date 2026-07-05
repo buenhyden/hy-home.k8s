@@ -32,6 +32,31 @@ Cloud Example Snapshot material under `examples/aws/docs/**` and
 frontmatter migration. Future provider-refresh work must promote any scoped
 change through an approved spec and support contract update.
 
+## Lifecycle Pre-Edit Contract
+
+Before editing or creating lifecycle documents, agents must align with the
+Stage 99 owners instead of copying full governance bodies into README files.
+
+| Document Family | Lifecycle Transition |
+| --- | --- |
+| PRD | `draft -> active -> done | archived` |
+| ARD/ADR | `draft -> active -> accepted | archived` |
+| Spec | `draft -> active -> done | archived` |
+| Plan/Task | `draft -> active -> done | archived` |
+| Operations | `draft -> active -> accepted | archived` |
+| Archive Tombstone | `archived` only |
+
+- Stage 01 PRDs use `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
+- Stage 03 specs use `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.
+- Stage 04 plans and tasks stay date-based execution records.
+- README files route readers to lifecycle contract owners instead of carrying
+  full governance bodies.
+- Handoff links must connect PRD, architecture, spec, plan, task, operations,
+  and archive records through `## Related Documents` or equivalent route-owned
+  link sections.
+- Active-surface duplicate rule: stages 01 through 04 must not keep multiple
+  active documents that own the same role, purpose, and feature lineage.
+
 | Document Intent | Canonical Stage | Route Owner | Notes |
 | --- | --- | --- | --- |
 | README or folder index | Repository or folder-local `README.md` | Template Routing Contract | Use for repository, stage, and nested folder entrypoints. |
@@ -116,6 +141,9 @@ When a skill suggests one of these paths, reroute the output into the canonical 
 - Mirror the original docs subpath under `docs/98.archive/<original-docs-subpath>`.
 - For `docs/05.operations`, preserve the operations bucket mirror under `docs/98.archive/05.operations/{guides,policies,runbooks,incidents}`.
 - Replace the moved document body with a Tombstone created from `docs/99.templates/templates/common/archive-tombstone.template.md`; do not preserve the old body text.
+- Tombstones must preserve archive traceability metadata defined by
+  `docs/99.templates/support/frontmatter-schema.md` and
+  `docs/99.templates/templates/common/archive-tombstone.template.md`.
 - Active docs may link archive content only through `docs/98.archive/README.md`.
 - Current replacement coverage must exist before moving a document that owned still-current scope.
 

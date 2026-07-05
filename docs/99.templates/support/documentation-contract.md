@@ -3,7 +3,7 @@ title: 'Template Documentation Contract'
 type: governance/template-support
 status: draft
 owner: platform
-updated: 2026-07-05
+updated: 2026-07-06
 ---
 
 # Template Documentation Contract
@@ -33,6 +33,8 @@ The template system has separate surfaces:
 
 - README files are entrypoints and inventories. They should summarize where to
   find rules and route to canonical owners, not duplicate full contract bodies.
+- README files route readers to lifecycle contract owners instead of carrying
+  full governance bodies.
 - Template forms must contain only the sections and minimal guidance needed to
   create an authored document of that type.
 - Template support docs own reusable rules that apply across multiple template
@@ -51,6 +53,22 @@ The template system has separate surfaces:
   Markdown, but their detailed rules belong to the owning support,
   governance, operations, workflow, validator, GitOps, policy-as-code, or route
   manifest surface.
+- Active-surface duplicate rule: stages 01 through 04 must not keep multiple
+  active documents that own the same role, purpose, and feature lineage.
+
+## Lifecycle Route Summary
+
+- Stage 01 PRDs use `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
+- Stage 03 specs use `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.
+- Stage 04 plans and tasks stay date-based execution records.
+- README files route readers to lifecycle contract owners instead of carrying
+  full governance bodies.
+
+The detailed lifecycle state table, PRD/Spec numbering lineage rule, handoff
+link expectations, and archive tombstone lifecycle rule are owned by
+[SDLC Governance](./sdlc-governance.md). Archive tombstone metadata keys such
+as `original_path` are owned by [Frontmatter Schema](./frontmatter-schema.md)
+and the archive tombstone template.
 
 ## SDLC and Common Documentation Split
 
