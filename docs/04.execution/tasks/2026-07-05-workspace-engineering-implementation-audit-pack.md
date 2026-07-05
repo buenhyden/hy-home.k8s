@@ -46,7 +46,7 @@ and closes validation through local static checks.
 | WEA-003 | Add dated audit pack README and governance/harness/provider report | doc | VAL-SPC-002, VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 3 | Required report files and evidence matrix rows present | platform | Done |
 | WEA-004 | Add SDLC/CI/QA/formatting/automation report | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 4 | SDLC, CI/CD, QA, formatting, linting, automation, pipeline, and workflow rows present | platform | Done |
 | WEA-005 | Add Kubernetes/infrastructure/security report | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Task 5 | Kubernetes, infrastructure, GitOps, secrets, policy, and security rows present | platform | Done |
-| WEA-006 | Add roadmap and automation opportunities report | doc | VAL-SPC-004, VAL-SPC-005 | Task 6 | Cross-report roadmap and owner-routed automation opportunities present | platform | Todo |
+| WEA-006 | Add roadmap and automation opportunities report | doc | VAL-SPC-004, VAL-SPC-005 | Task 6 | Cross-report roadmap and owner-routed automation opportunities present | platform | Done |
 | WEA-007 | Close indexes, evidence, review, and validation | doc | VAL-SPC-006, VAL-SPC-007, VAL-SPC-008 | Task 7 | Final scans, quality gates, and mutation boundary check pass | platform | Todo |
 
 ## Suggested Types
@@ -72,7 +72,7 @@ and closes validation through local static checks.
 - [x] WEA-003 Add dated audit pack README and governance/harness/provider report
 - [x] WEA-004 Add SDLC/CI/QA/formatting/automation report
 - [x] WEA-005 Add Kubernetes/infrastructure/security report
-- [ ] WEA-006 Add roadmap and automation opportunities report
+- [x] WEA-006 Add roadmap and automation opportunities report
 
 ### Phase 4: Closure
 
@@ -323,6 +323,41 @@ and closes validation through local static checks.
     readiness.
 - **WEA-005 Validation Commands**:
   - Required `rg -n "Kubernetes|Infrastructure|GitOps|Argo CD|AppProject|Kustomize|External Secrets|Vault|secret|RBAC|NetworkPolicy|Traefik|OPA|Conftest|kube-linter|supply-chain|security|Implemented|Partial|Gap|Not in scope|repo-static|live-runtime|Review and Freshness" docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/03-kubernetes-infrastructure-security.md` completed.
+  - `git diff --check` passed.
+  - `bash scripts/validate-repo-quality-gates.sh .` passed with
+    `[PASS] repository quality gates passed`.
+- **WEA-006 Source Files Read**:
+  - `docs/04.execution/plans/2026-07-05-workspace-engineering-implementation-audit-pack.md` Task 6
+  - `docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/01-governance-harness-loop-providers.md`
+  - `docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/02-sdlc-ci-qa-formatting-automation.md`
+  - `docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/03-kubernetes-infrastructure-security.md`
+- **WEA-006 Sections Recorded**:
+  - Cross-report Status Summary
+  - Priority Matrix
+  - Automation Opportunity Matrix
+  - Protected Surface Constraints
+  - Owner Routing
+  - Implementation Checklist
+  - Residual Risks
+- **WEA-006 Automation Opportunity Rows Recorded**:
+  - audit matrix validator
+  - README/index stale-link checker for audit folderization
+  - provider parity evidence checker
+  - workflow/QA evidence summarizer
+  - GitOps manifest and policy evidence aggregator
+  - secret-handling evidence summarizer
+  - DORA/CI metrics proposal route
+  - live-runtime readiness evidence route
+- **WEA-006 Status Vocabulary Confirmation**:
+  - The audit pack uses only `Implemented`, `Partial`, `Gap`, and
+    `Not in scope`.
+  - Each automation opportunity records owner route, required approval
+    boundary, evidence lane, and whether it is safe for future repo-static
+    automation.
+  - Repo-static, CI/toolchain, market/context, and live-runtime evidence lanes
+    are kept separate.
+- **WEA-006 Validation Commands**:
+  - Required `rg -n "Priority Matrix|Automation Opportunity|Protected Surface|Owner Routing|audit matrix|provider parity|workflow|GitOps|secret-handling|DORA|live-runtime|repo-static|Implemented|Partial|Gap|Not in scope|Review and Freshness" docs/90.references/audits/2026-07-05-workspace-engineering-implementation-audit/04-implementation-roadmap-and-automation-opportunities.md` completed.
   - `git diff --check` passed.
   - `bash scripts/validate-repo-quality-gates.sh .` passed with
     `[PASS] repository quality gates passed`.
