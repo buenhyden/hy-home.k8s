@@ -159,7 +159,7 @@ This feature exposes no external runtime API.
 
 - **API Spec**: Not applicable.
 - **Policy**: Machine-readable API contracts remain feature-local under
-  `docs/03.specs/<feature-id>/contracts/` when needed by future work.
+  `docs/03.specs/<###-Numbering>-<feature-id>/contracts/` when needed by future work.
 - **Machine-readable Contract**: Not applicable.
 
 ## Agent Role & IO Contract (If Applicable)

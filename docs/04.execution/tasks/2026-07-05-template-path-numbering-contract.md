@@ -1,7 +1,7 @@
 ---
 title: 'Task: Template Path Numbering Contract'
 type: sdlc/task
-status: draft
+status: done
 owner: platform
 updated: 2026-07-05
 ---
@@ -44,7 +44,7 @@ configuration are changed in TPN-001.
 | TPN-002 | Rename active PRD files and update direct PRD indexes | doc | VAL-SPC-019-001, VAL-SPC-019-005 | Task 2 | `git mv`, stale PRD active-link scan, quality gate | Codex | Done |
 | TPN-003 | Update template forms and support route contracts | doc | VAL-SPC-019-003, VAL-SPC-019-006 | Task 3 | route-map equality and old-route scan | Codex | Done |
 | TPN-004 | Update Stage 00 governance and validator mappings | qa | VAL-SPC-019-002, VAL-SPC-019-004 | Task 4 | validator route coverage and quality gate | Codex | Done |
-| TPN-005 | Clean cross-links, close evidence, and validate | qa | VAL-SPC-019-005, VAL-SPC-019-008 | Task 5 | final stale scans, `git diff --check`, quality gate | Codex | Planned |
+| TPN-005 | Clean cross-links, close evidence, and validate | qa | VAL-SPC-019-005, VAL-SPC-019-008 | Task 5 | final stale scans, `git diff --check`, quality gate | Codex | Done |
 
 ## Suggested Types
 
@@ -73,10 +73,10 @@ configuration are changed in TPN-001.
   `docs(requirements): Refresh PRD graph references`,
   `docs(templates): Number PRD and spec route contracts`, and
   `docs(governance): Enforce numbered document routes`.
-- **Current Result**: PASS on 2026-07-05 after TPN-004; validator route
-  normalization, Stage 00 route guidance, and Stage 03 README wording now match
-  the numbered PRD and numbered Stage 03 feature-folder contracts, and
-  `bash scripts/validate-repo-quality-gates.sh .` passes again.
+- **Current Result**: PASS on 2026-07-05 after TPN-005; final stale scans,
+  numeric PRD inventory, Stage 03 numeric feature-folder inventory,
+  `git diff --check`, and `bash scripts/validate-repo-quality-gates.sh .`
+  passed.
 
 ## Evidence Log
 
@@ -90,17 +90,13 @@ configuration are changed in TPN-001.
 | 2026-07-05 | TPN-002 review fix | Graph artifact refresh and old-name scan classification | PASS; tracked `graphify-out/**` artifacts were refreshed to the numbered PRD filenames. The requested scan now has no `graphify-out` matches; remaining matches are explicit historical/migration evidence in the TPN spec mapping and scan command, the TPN plan mapping, commands, and validation rows, this task record's baseline and review-fix evidence, and progress memory. Runtime tooling note: `rtk` is installed at `/home/hy/.local/bin/rtk` but not on this shell's `PATH`; `rtk gain` could not initialize its tracking database, so final validation commands ran directly. |
 | 2026-07-05 | TPN-003 | Template and support route contract update | PASS; template examples, Templates README, SDLC governance, and template routing contract use numbered Stage 01 and Stage 03 route patterns while preserving Stage 04 date-based routes |
 | 2026-07-05 | TPN-004 | Governance and validator route update | PASS; Stage 00 route guidance, Stage 03 README wording, and validator structural/native mappings enforce numbered PRD and Stage 03 feature-folder routes, restoring the repository quality gate after the expected TPN-003 route-map drift |
+| 2026-07-05 | TPN-005 | Final stale scans and repository quality gates | PASS; old current-route patterns were removed from active guidance, remaining matches are explicit TPN migration criteria or evidence, numeric PRD inventory was verified, and repository quality gates passed |
 
 ## Handoff
 
-TPN-004 restores governance and validator parity after the template/support
-route update. Stage 00 routing guidance, Stage 03 README wording, and
-`scripts/validate-repo-quality-gates.sh` now agree with the numbered Stage 01
-PRD and numbered Stage 03 feature-folder route contracts.
-
-TPN-005 should run final stale scans, refresh progress memory, and close this
-task record after confirming no active current-route references still use the
-old path forms.
+Template path numbering contract implementation is complete. No live runtime,
+credential, GitOps desired-state, provider runtime, external service, push,
+merge, or PR mutation was performed.
 
 ## Related Documents
 

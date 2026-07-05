@@ -8,6 +8,48 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-05 - Template path numbering contract implementation
+
+- **Date**: 2026-07-05
+- **Layer**: docs, templates, governance, validation
+- **Status**: complete
+- **Tags**: #docs #templates #sdlc #validation #stage-01 #stage-03
+
+#### Progress
+
+- Renamed the four active Stage 01 PRDs from date-based filenames to numeric
+  filenames.
+- Updated Stage 01 and Stage 03 route contracts across template forms, support
+  contracts, Stage README files, Stage 00 governance, and repository
+  validation.
+- Preserved Stage 04 plan and task date-based routes as execution evidence.
+- Closed active cross-links and validation evidence for the numbered route
+  migration.
+
+#### Memory
+
+- Stage 01 PRDs use `<###-Numbering>-<feature-or-system>.md`.
+- Stage 03 specs and helper contracts use
+  `<###-Numbering>-<feature-id>/`.
+- Stage 04 plans and tasks remain date-based because they are execution
+  evidence records.
+- Old PRD filenames may appear only as historical evidence, not as current
+  route guidance.
+
+#### Evidence
+
+- `git diff --check` - PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+- Old PRD active-link scan - PASS.
+- Old route-contract scan - PASS; remaining matches are explicit TPN migration
+  criteria or historical evidence, not current route guidance.
+
+#### Handoff
+
+- Documentation-only route normalization is complete. No live runtime,
+  credential, GitOps desired-state, provider runtime, external service, push,
+  merge, or PR mutation was performed.
+
 ### 2026-07-05 - TPN-002 PRD graph reference refresh
 
 - **Date**: 2026-07-05
@@ -862,7 +904,7 @@ inventory stays in `scripts/README.md`.
 - `harness-task-contract.template.md` remains a supplemental task starter and
   must not become a second structural route for
   `docs/04.execution/tasks/*.md`.
-- Feature-local README files under `docs/03.specs/<feature-id>/` are README
+- Feature-local README files under `docs/03.specs/<###-Numbering>-<feature-id>/` are README
   entrypoints, not a separate structural template family.
 - Active core-contract surfaces should avoid carrying exact legacy residue
   literals as prose; use current contract wording and let the validator own
@@ -7241,7 +7283,7 @@ section separating static from live evidence.
 ### Memory
 
 - For broad document-governance work, keep the repo-local Stage 03 spec in
-  `docs/03.specs/<feature-id>/spec.md` when the design affects the repository
+  `docs/03.specs/<###-Numbering>-<feature-id>/spec.md` when the design affects the repository
   SDLC system itself; use planned paths as code literals until Stage 04 plan and
   task documents exist.
 - Historical evidence can be normalized aggressively when explicitly approved,
