@@ -3,7 +3,7 @@ title: 'Template Frontmatter Schema'
 type: governance/template-support
 status: draft
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-05
 ---
 
 # Template Frontmatter Schema
@@ -36,6 +36,8 @@ updated: YYYY-MM-DD
 Exceptions:
 
 - README files are frontmatter-free.
+- `_workspace/README.md` is a frontmatter-free README. Ignored scratch files
+  under `_workspace/**` are not authored documents.
 - GitHub-native Markdown control files under `.github/` are
   frontmatter-free because GitHub renders or consumes their body directly.
 - Cloud Example Snapshot docs under `examples/aws/docs/**` and
@@ -93,9 +95,10 @@ Exceptions:
 - Replace old simple `type` values with the namespaced values in this schema.
 - Remove keys that duplicate the same role as another key unless the target
   profile explicitly allows both.
-- Do not add frontmatter to README files, GitHub-native Markdown control
-  files, Cloud Example Snapshot docs, or native machine-readable templates
-  unless a future support contract explicitly routes the target.
+- Do not add frontmatter to README files, ignored `_workspace/**` scratch,
+  GitHub-native Markdown control files, Cloud Example Snapshot docs, or native
+  machine-readable templates unless a future support contract explicitly
+  routes the target.
 
 ## Validation Contract
 
@@ -106,6 +109,8 @@ has exactly one frontmatter profile. The gate rejects:
 - Unsupported keys for the profile.
 - Unsupported `type`, `status`, or `owner` values.
 - Frontmatter on README files when not required.
+- Frontmatter or authored-document treatment for ignored `_workspace/**`
+  scratch files.
 - Frontmatter on GitHub-native Markdown control files.
 - SDLC frontmatter enforcement on Cloud Example Snapshot docs unless a future
   support contract routes the target.

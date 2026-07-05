@@ -47,6 +47,7 @@ hy-home.k8s/
 ├── examples/              # 앱 온보딩 및 AWS/Azure cloud target 참조 예시
 ├── scripts/               # 저장소 유틸리티 및 자동화 스크립트
 ├── tests/                 # 저장소 전역 테스트 기준 문서 및 교차 테스트 영역
+├── _workspace/            # Temporary non-secret analysis scratch boundary; README tracked only
 ├── traefik/               # k3d 로컬 노출 보조용 Traefik dynamic config
 ├── secrets/               # 로컬 인증서 등 민감 파일 저장 경로
 ├── .github/               # GitHub Actions, PR template, CODEOWNERS, labeler, zizmor

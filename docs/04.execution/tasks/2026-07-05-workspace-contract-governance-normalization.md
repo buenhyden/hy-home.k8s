@@ -47,7 +47,7 @@ in scope for this task.
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | WCGN-001 | Create task evidence and baseline inventory | doc | VAL-SPC-020-003, VAL-SPC-020-004, VAL-SPC-020-006, VAL-SPC-020-007 | Task 1 | Baseline inventory, `_workspace` baseline, frontmatter/template drift scans, task README index, staged whitespace check, controller/spec/quality review follow-up | platform | Done |
-| WCGN-002 | Establish `_workspace` contract and ignore boundary | doc | VAL-SPC-020-001, VAL-SPC-020-002, VAL-SPC-020-005 | Task 2 | `_workspace/README.md` tracked, scratch files ignored, contract owners aligned, quality gate | platform | Planned |
+| WCGN-002 | Establish `_workspace` contract and ignore boundary | doc | VAL-SPC-020-001, VAL-SPC-020-002, VAL-SPC-020-005 | Task 2 | `_workspace/README.md` tracked, scratch files ignored, contract owners aligned, quality gate | platform | Done |
 | WCGN-003 | Audit and remediate frontmatter, template, section, README, and cross-link drift | doc | VAL-SPC-020-003, VAL-SPC-020-004, VAL-SPC-020-005, VAL-SPC-020-007 | Task 3 | Focused scans classify active violations vs templates/historical evidence | platform | Planned |
 | WCGN-004 | Audit and remediate CI/CD, QA, formatting, linting, syntax, automation, workflow, and security drift | qa | VAL-SPC-020-006 | Task 4 | Control-surface descriptions match current scripts/workflows or recorded deferrals | platform | Planned |
 | WCGN-005 | Add validator coverage, close evidence, and record memory | qa | VAL-SPC-020-008, VAL-SPC-020-009, VAL-SPC-020-010 | Task 5 | `git diff --check`, repository quality gate, final evidence, progress memory | platform | Planned |
@@ -112,6 +112,9 @@ Requested target inventory notes:
 | 2026-07-05 | WCGN-001 | Updated `docs/04.execution/tasks/README.md` with the new WCGN document index row and structure block entries for WCGN plus two already-indexed 2026-07-05 task files that were missing from the structure block. | README keeps `## Link Basis` and `## Related Documents`. |
 | 2026-07-05 | WCGN-001 | Reviewed `docs/04.execution/plans/README.md`. | Existing plan structure and index already include `2026-07-05-workspace-contract-governance-normalization.md`; no edit was needed. |
 | 2026-07-05 | WCGN-001 | Completed controller/spec/quality review follow-up. | WCGN-001 status is `Done`; the verification command list now includes every command claimed by validation evidence. |
+| 2026-07-05 | WCGN-002 | Narrowed the `_workspace` ignore rule to ignore scratch while allowing the directory and `_workspace/README.md` to be tracked. | `git check-ignore -v _workspace/probe.log` returned `.gitignore:31:_workspace/*	_workspace/probe.log`; `git check-ignore -v _workspace/README.md` exited 1 with no output, recorded as NOT IGNORED. |
+| 2026-07-05 | WCGN-002 | Created `_workspace/README.md` as the frontmatter-free checked-in contract and added the root README structure entry. | `git ls-files _workspace` returned only `_workspace/README.md` after staging the README. |
+| 2026-07-05 | WCGN-002 | Aligned Stage 00 governance and Stage 99 support contracts with the `_workspace` staging boundary. | `git diff --check` returned no whitespace errors and `bash scripts/validate-repo-quality-gates.sh .` returned `[PASS] repository quality gates passed`. |
 
 ## Verification Commands
 
@@ -124,15 +127,27 @@ find _workspace -maxdepth 4 -type f -print | sort
 git check-ignore -v _workspace/probe.log
 rg -n "^type: (prd|ard|adr|spec|plan|task|guide|policy|runbook|incident|postmortem|reference)$" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
 rg -n "Target: d""ocs/|Use this ""template|SNIPPET LIBRARY|\\{Folder or Project Name\\}|\\[Feature Name\\]" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
+which rtk
+/home/hy/.local/bin/rtk --version
+/home/hy/.local/bin/rtk gain
+git check-ignore -v _workspace/probe.log
+git check-ignore -v _workspace/README.md
+git ls-files _workspace
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
 git add docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md
 git diff --cached --check
+git add .gitignore _workspace/README.md README.md docs/00.agent-governance/subagent-protocol.md docs/00.agent-governance/rules/documentation-protocol.md docs/00.agent-governance/rules/approval-boundaries.md docs/99.templates/support/documentation-contract.md docs/99.templates/support/frontmatter-schema.md docs/99.templates/support/legacy-cleanup-rules.md docs/04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md
+git diff --cached --check
+git commit -m "docs(governance): Define workspace staging boundary"
 ```
 
 ## Verification Summary
 
 - **Test Commands**:
+  - `git check-ignore -v _workspace/probe.log`
+  - `git check-ignore -v _workspace/README.md`
+  - `git ls-files _workspace`
   - `git diff --check`
   - `git diff --cached --check`
   - `bash scripts/validate-repo-quality-gates.sh .`
@@ -153,10 +168,15 @@ git diff --cached --check
 | 2026-07-05 | Working-tree whitespace check | PASS; `git diff --check` returned no whitespace errors. |
 | 2026-07-05 | Repository quality gate | PASS; `bash scripts/validate-repo-quality-gates.sh .` returned `[PASS] repository quality gates passed`. |
 | 2026-07-05 | Staged whitespace check | PASS; `git diff --cached --check` returned no whitespace errors after staging. |
+| 2026-07-05 | Runtime tooling note | PASS with limitation recorded; `which rtk` returned `rtk not found`, `/home/hy/.local/bin/rtk --version` returned `rtk 0.34.3`, and `/home/hy/.local/bin/rtk gain` failed to initialize its tracking database, so validation commands ran directly without inspecting private runtime state. |
+| 2026-07-05 | `_workspace` ignore probe | PASS; `git check-ignore -v _workspace/probe.log` returned `.gitignore:31:_workspace/*	_workspace/probe.log`. |
+| 2026-07-05 | `_workspace` README unignore probe | PASS; `git check-ignore -v _workspace/README.md` exited 1 with no output, recorded as NOT IGNORED. |
+| 2026-07-05 | `_workspace` tracked-file boundary | PASS; `git ls-files _workspace` returned only `_workspace/README.md`. |
+| 2026-07-05 | WCGN-002 working-tree whitespace check | PASS; `git diff --check` returned no whitespace errors. |
+| 2026-07-05 | WCGN-002 repository quality gate | PASS; `bash scripts/validate-repo-quality-gates.sh .` returned `[PASS] repository quality gates passed`. |
 
 ## Deferrals
 
-- WCGN-002 owns `_workspace` contract and ignore-boundary changes.
 - WCGN-003 owns active frontmatter, template, section, README, and cross-link
   remediation.
 - WCGN-004 owns CI/CD, QA, formatting, linting, syntax, automation, workflow,

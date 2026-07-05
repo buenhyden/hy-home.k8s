@@ -3,7 +3,7 @@ title: 'Template Legacy Cleanup Rules'
 type: governance/template-support
 status: draft
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-05
 ---
 
 # Template Legacy Cleanup Rules
@@ -33,6 +33,7 @@ roles, or obsolete sections as current rules.
 | README contract bodies that duplicate support docs | Brief pointers to support docs | Keep README entries concise |
 | GitHub-native Markdown frontmatter | Frontmatter-free `.github` control body with canonical links | Reject on `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` |
 | Provider-latest claims in active cloud example indexes | Dated Cloud Example Snapshot wording, or a current approved provider refresh | Treat provider-latest claims as legacy unless backed by approved refresh evidence |
+| Active tracked scratch residue named or classified as backup files, auth files, token caches, shell history, local diagnostics, or secret-bearing logs | Delete, ignore as temporary non-secret scratch, or promote non-secret durable findings to the canonical docs taxonomy | Reject as active tracked scratch residue |
 
 ## Active vs Historical References
 

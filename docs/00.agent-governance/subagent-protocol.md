@@ -3,7 +3,7 @@ title: 'Reference: Subagent Protocol'
 type: governance/reference
 status: draft
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-05
 ---
 
 # Reference: Subagent Protocol
@@ -87,11 +87,12 @@ guardrails without requiring identical metadata keys.
   status tracking.
 - Route all multi-agent decisions through `supervisor.md`.
 - Keep handoff artifacts in repository-approved locations only; do not create ad-hoc runtime folders unless a human requests them.
-- Scratch workspaces such as `_workspace/` are allowed only when a checked-in
-  skill explicitly defines them as temporary analysis space. Durable outputs
-  from scratch work must be moved into the canonical docs taxonomy, such as
-  `docs/04.execution/` for task evidence or `docs/05.operations/incidents/`
-  for incident records.
+- Scratch workspaces such as `_workspace/` are allowed only under the checked-in
+  contract at [`_workspace/README.md`](../../_workspace/README.md). Scratch
+  files must remain ignored by default, and durable outputs from scratch work
+  must be promoted into the canonical docs taxonomy, such as
+  `docs/04.execution/` for task evidence, `docs/90.references/audits/` for
+  durable audits, Stage 00 governance, or Stage 99 support contracts.
 
 ## Catalog Reference
 

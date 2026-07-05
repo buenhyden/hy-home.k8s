@@ -19,6 +19,9 @@ This protocol defines how governance references authored docs and how language b
 - Use [document-stage-routing.md](./document-stage-routing.md) for path selection and skill-specific rerouting rules.
 - Do not create parallel authored trees such as `docs/superpowers/**`.
 - Do not place API contract docs under `docs/api/**`; keep them under `docs/03.specs/<###-Numbering>-<feature-id>/`.
+- `_workspace/` is a temporary non-secret repo-support staging surface. Do not
+  treat it as durable documentation; promote durable findings into the
+  canonical docs taxonomy before closure.
 
 ## Template Enforcement Policy
 
