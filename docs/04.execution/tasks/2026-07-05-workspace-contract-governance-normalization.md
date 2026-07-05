@@ -1,7 +1,7 @@
 ---
 title: 'Task: Workspace Contract Governance Normalization'
 type: sdlc/task
-status: draft
+status: done
 owner: platform
 updated: 2026-07-06
 ---
@@ -15,8 +15,9 @@ workspace contract governance normalization plan. WCGN-001 created the Stage
 04 evidence record and baseline inventory, WCGN-002 established the
 `_workspace` staging boundary, WCGN-003 audited and remediated frontmatter,
 template, section, README, and cross-link drift, and WCGN-004 aligned the
-CI path-filter control surface with the documented QA gates. WCGN-005 remains
-planned for validator coverage, closure evidence, and progress memory.
+CI path-filter control surface with the documented QA gates. WCGN-005 added
+deterministic `_workspace` validator coverage, closed Stage 04 evidence, and
+recorded reusable progress memory.
 
 No live Kubernetes, Argo CD, Vault, ESO, cloud, GitHub remote, credential,
 secret value, paid job, push, merge, pull request, or third-party mutation is
@@ -54,7 +55,7 @@ in scope for this task.
 | WCGN-002 | Establish `_workspace` contract and ignore boundary | doc | VAL-SPC-020-001, VAL-SPC-020-002, VAL-SPC-020-005 | Task 2 | `_workspace/README.md` tracked, scratch files ignored, contract owners aligned, quality gate | platform | Done |
 | WCGN-003 | Audit and remediate frontmatter, template, section, README, and cross-link drift | doc | VAL-SPC-020-003, VAL-SPC-020-004, VAL-SPC-020-005, VAL-SPC-020-007 | Task 3 | Focused scans classify active violations vs templates/historical evidence | platform | Done |
 | WCGN-004 | Audit and remediate CI/CD, QA, formatting, linting, syntax, automation, workflow, and security drift | qa | VAL-SPC-020-006 | Task 4 | Requested control-surface scans, CI path-filter remediation, and repo-static validation evidence | platform | Done |
-| WCGN-005 | Add validator coverage, close evidence, and record memory | qa | VAL-SPC-020-008, VAL-SPC-020-009, VAL-SPC-020-010 | Task 5 | `git diff --check`, repository quality gate, final evidence, progress memory | platform | Planned |
+| WCGN-005 | Add validator coverage, close evidence, and record memory | qa | VAL-SPC-020-008, VAL-SPC-020-009, VAL-SPC-020-010 | Task 5 | `_workspace` validator checks, focused final scans, Stage 04 indexes, progress memory | platform | Done |
 
 ## Suggested Types
 
@@ -130,6 +131,7 @@ Requested target inventory notes:
 | 2026-07-05 | WCGN-003 | Reviewed folder README impact for the two Stage 90 reference edits. | `docs/90.references/data/README.md` and `docs/90.references/research/2026-07-04-wer/README.md` remain current because their index rows summarize document ownership and do not embed the old route placeholder. |
 | 2026-07-05 | WCGN-003 | Recorded frontmatter, template residue, legacy section, README duplication, and route/cross-link scan classifications. | WCGN-003 status is `Done`; remaining noisy matches are documented as templates, explicit route guardrails, scanner-command evidence, migration evidence, Stage 90 audits, or progress memory. |
 | 2026-07-06 | WCGN-004 | Aligned CI path filters with documented QA control surfaces. | `repo_quality` now runs for `tests/**`; `manifest-static` now runs for `scripts/validate-policy-gates.sh` and `policy/**`. The remaining requested scans classified `.github/ABOUT.md`, PR template, SECURITY, root README, scripts README, tests README, and CI/QA guide wording as aligned with the current workflow/script split. |
+| 2026-07-06 | WCGN-005 | Added deterministic `_workspace` coverage to the repository quality gate and closed Stage 04 indexes plus progress memory. | The gate now requires tracked `_workspace/README.md`, ignored `_workspace/*` scratch, an unignored README, no tracked `_workspace` file except README, and no prohibited secret-risk wording in tracked `_workspace` paths. |
 
 ## Verification Commands
 
@@ -189,6 +191,17 @@ rg -n "secret|credential|token|kubeconfig|SSH|auth|history|_workspace|protected 
 git diff --check
 bash scripts/validate-repo-quality-gates.sh .
 git diff --cached --check
+git diff --check
+bash scripts/validate-repo-quality-gates.sh .
+git ls-files _workspace
+git check-ignore -v _workspace/probe.log
+find _workspace -maxdepth 4 -type f | sort
+rg -n "(token|secret|credential|auth|history|kubeconfig|ssh|password|diagnostic|profile|cache)" _workspace
+rg -n "T""BD|TO""DO|\\{Feature ""Name\\}|\\[Feature ""Name\\]" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
+rg -n "docs/superpowers|docs/api/" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
+rg -n "^type: (prd|ard|adr|spec|plan|task|guide|policy|runbook|incident|postmortem|reference)$" docs
+git add scripts/validate-repo-quality-gates.sh docs/04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md docs/04.execution/tasks/README.md docs/04.execution/plans/README.md docs/00.agent-governance/memory/progress.md
+git diff --cached --check
 ```
 
 ## Verification Summary
@@ -201,8 +214,9 @@ git diff --cached --check
   - `git diff --cached --check`
   - `bash scripts/validate-repo-quality-gates.sh .`
 - **Eval Commands**: Runtime evals are not applicable for WCGN-001 through
-  WCGN-003 because the completed work is documentation and governance evidence.
-  Verification used repository-static quality gates and focused scans only.
+  WCGN-005 because the completed work is documentation, governance evidence,
+  CI path-filter alignment, and repository-static validation. Verification used
+  repository-static quality gates and focused scans only.
 - **Logs / Evidence Location**: This task record and the WCGN implementation
   commits.
 
@@ -242,12 +256,20 @@ git diff --cached --check
 | 2026-07-06 | WCGN-004 repository quality gate | PASS; `bash scripts/validate-repo-quality-gates.sh .` returned `[PASS] repository quality gates passed` after WCGN-004 edits. |
 | 2026-07-06 | WCGN-004 staged whitespace check | PASS; `git diff --cached --check` returned no whitespace errors after staging the WCGN-004 files. |
 | 2026-07-06 | WCGN-004 runtime tooling note | PASS with limitation recorded; `which rtk` returned `rtk not found`, `/home/hy/.local/bin/rtk --version` returned `rtk 0.34.3`, and `/home/hy/.local/bin/rtk gain` failed to initialize its tracking database, so validation commands ran directly without inspecting private runtime state. |
+| 2026-07-06 | WCGN-004 independent spec review | PASS; reviewer verified WCGN-004 status, commit scope, CI path-filter coverage, no validator edits, and no live/runtime or external mutation claims. |
+| 2026-07-06 | WCGN-005 validator coverage | PASS; `scripts/validate-repo-quality-gates.sh` now validates the `_workspace` README, scratch ignore, README unignore, tracked-file boundary, and prohibited tracked-path wording. |
+| 2026-07-06 | WCGN-005 validator behavior | PASS; `git diff --check` returned no whitespace errors, `bash scripts/validate-repo-quality-gates.sh .` returned `[PASS] repository quality gates passed`, `git ls-files _workspace` returned only `_workspace/README.md`, and `git check-ignore -v _workspace/probe.log` returned `.gitignore:31:_workspace/*	_workspace/probe.log`. |
+| 2026-07-06 | WCGN-005 focused `_workspace` scans | PASS with classification; `find _workspace -maxdepth 4 -type f` returned only `_workspace/README.md`. The prohibited-word scan matched only `_workspace/README.md` contract language, not tracked scratch artifacts. |
+| 2026-07-06 | WCGN-005 placeholder, route, and type scans | PASS with classification; placeholder matches are README explanatory text, validator rationale checks, Stage 99 templates, and scanner-command evidence. Route matches are active route-deny guardrails, explicit task/plan evidence, templates, Stage 90 policy text, or progress memory. Simple un-namespaced `type` values returned no active matches. |
 
 ## Deferrals
 
-- WCGN-005 owns final validator coverage, final validation, and progress memory
-  closure. Progress memory remains deferred to WCGN-005 under the plan's
-  ownership boundary for WCGN-001 through WCGN-004.
+- No WCGN implementation deferrals remain in repository-static scope.
+- Live GitHub Actions execution, optional installed-tool checks such as
+  `kube-linter`, `zizmor`, `actionlint`, or `conftest`, and live Kubernetes,
+  Argo CD, Vault, ESO, cloud, provider, credential, or secret-value validation
+  remain out of scope. Future work may trigger them only through the owning
+  CI/toolchain or operator-approved runtime workflow.
 
 ## Related Documents
 

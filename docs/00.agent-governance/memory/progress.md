@@ -8,6 +8,53 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-06 - Workspace contract governance normalization closure
+
+- **Date**: 2026-07-06
+- **Layer**: docs, governance, qa, validation
+- **Status**: complete
+- **Tags**: #docs #governance #workspace #validation #stage-04
+
+#### Progress
+
+- Completed the
+  [Workspace Contract Governance Normalization Task Record](../../04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md).
+- Introduced `_workspace/README.md` as the tracked contract for temporary,
+  non-secret repository-support staging.
+- Kept scratch files ignored by default; `git ls-files _workspace` must list
+  only `_workspace/README.md`.
+- Added repository quality-gate coverage for the `_workspace` tracked-file,
+  ignore, unignore, and prohibited tracked-path boundary.
+- Closed the Stage 04 plan and task indexes for this workstream.
+
+#### Memory
+
+- `_workspace/` is not durable documentation. Promote durable findings to
+  Stage 04 task evidence, Stage 90 audits, Stage 00 governance, Stage 99
+  support contracts, or delete the scratch before closure.
+- Do not track `_workspace` files other than `_workspace/README.md`.
+- `_workspace` tracked paths must not contain secret-risk words such as
+  token, secret, credential, auth, history, kubeconfig, ssh, password,
+  diagnostic, profile, or cache.
+- CI/CD, QA, formatting, linting, syntax, automation, workflow, and security
+  evidence remains repo-static unless a future approved live workflow runs it.
+
+#### Evidence
+
+- `git diff --check` - PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+- `git ls-files _workspace` - PASS; only `_workspace/README.md`.
+- `git check-ignore -v _workspace/probe.log` - PASS; `_workspace/*` scratch
+  remains ignored.
+- Focused placeholder, route, and simple frontmatter type scans - PASS with
+  documented classifications in the task record.
+
+#### Handoff
+
+- None for repository-static WCGN scope. No live Kubernetes, Argo CD, Vault,
+  cloud, GitHub remote, provider runtime, credential, secret-value, paid-job,
+  publishing, merge, push, or third-party mutation was performed.
+
 ### 2026-07-05 - Template path numbering contract implementation
 
 - **Date**: 2026-07-05
