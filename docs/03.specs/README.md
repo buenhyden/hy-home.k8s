@@ -76,6 +76,8 @@ Spec은 실행 기준을 소유하는 문서다.
 │   └── spec.md
 ├── 020-workspace-contract-governance-normalization/
 │   └── spec.md
+├── 021-sdlc-lifecycle-contract/
+│   └── spec.md
 └── README.md
 ```
 
@@ -126,6 +128,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./018-workspace-engineering-implementation-audit-pack/spec.md`](./018-workspace-engineering-implementation-audit-pack/spec.md) | Workspace engineering implementation audit pack specification | Draft | `docs/90.references/audits/2026-07-05-wea/` 아래 part-based audit pack을 만들고 기존 root audit 파일을 dated folder 구조로 정리하는 계약을 정의한다. | 2026-07-05 |
 | [`./019-template-path-numbering-contract/spec.md`](./019-template-path-numbering-contract/spec.md) | Template path numbering contract specification | Draft | `docs/01.requirements/` PRD numeric filename contract와 `docs/03.specs/` numbered feature-folder contract를 template/support/governance/validator surfaces에 맞춰 정규화하는 설계를 정의한다. | 2026-07-05 |
 | [`./020-workspace-contract-governance-normalization/spec.md`](./020-workspace-contract-governance-normalization/spec.md) | Workspace contract governance normalization specification | Draft | `_workspace` repo-support staging 계약과 repo-wide frontmatter, section, template, governance, CI/CD, QA, validation drift 감사 및 표적 정규화 설계를 정의한다. | 2026-07-05 |
+| [`./021-sdlc-lifecycle-contract/spec.md`](./021-sdlc-lifecycle-contract/spec.md) | SDLC lifecycle contract specification | Draft | `01.requirements -> 02.architecture -> 03.specs -> 04.execution` 흐름의 상태 전이, 번호, handoff, archive metadata, active-surface 제한, `_workspace` staging 경계를 하나의 검증 가능한 계약으로 정의한다. | 2026-07-06 |
 
 ## Helper Templates
 
