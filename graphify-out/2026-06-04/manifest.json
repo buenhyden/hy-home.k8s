@@ -119,12 +119,12 @@
     "ast_hash": "69ff98b670a34338fa2e08d0d807a7d4",
     "semantic_hash": ""
   },
-  "/home/hy/projects/hy-home.k8s/docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md": {
+  "/home/hy/projects/hy-home.k8s/docs/01.requirements/001-argo-rollouts-progressive-delivery.md": {
     "mtime": 1780550757.89536,
     "ast_hash": "801bcdf26f1753187840c00f213e53f6",
     "semantic_hash": ""
   },
-  "/home/hy/projects/hy-home.k8s/docs/01.requirements/2026-05-17-argo-notifications-slack.md": {
+  "/home/hy/projects/hy-home.k8s/docs/01.requirements/002-argo-notifications-slack.md": {
     "mtime": 1780371084.95123,
     "ast_hash": "bbec01ca363b8e2bc01e3ac21ee6be87",
     "semantic_hash": ""
@@ -1199,12 +1199,12 @@
     "ast_hash": "a514c5ef6205a5938df63213c21f920c",
     "semantic_hash": ""
   },
-  "/home/hy/projects/hy-home.k8s/docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md": {
+  "/home/hy/projects/hy-home.k8s/docs/01.requirements/003-workspace-agent-governance-platform.md": {
     "mtime": 1780286234.347354,
     "ast_hash": "741c7c0a74772df850ec9d20f91bd5b1",
     "semantic_hash": ""
   },
-  "/home/hy/projects/hy-home.k8s/docs/01.requirements/2026-06-02-current-local-gitops-platform.md": {
+  "/home/hy/projects/hy-home.k8s/docs/01.requirements/004-current-local-gitops-platform.md": {
     "mtime": 1780370387.059095,
     "ast_hash": "a2d2ad4f4ed173b6ca8562c0eae01f09",
     "semantic_hash": ""

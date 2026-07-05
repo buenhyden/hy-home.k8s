@@ -69,10 +69,12 @@ configuration are changed in TPN-001.
 - **Eval Commands**: Not applicable; this task is documentation evidence only.
 - **Logs / Evidence Location**: This task record and the Git commits for
   `docs(tasks): Add template path numbering evidence` and
-  `docs(requirements): Number active PRD files`.
-- **Current Result**: PASS on 2026-07-05; `git diff --check` returned no
-  output and `bash scripts/validate-repo-quality-gates.sh .` reported
-  `[PASS] repository quality gates passed`.
+  `docs(requirements): Number active PRD files`, plus the review-fix commit
+  `docs(requirements): Refresh PRD graph references`.
+- **Current Result**: PASS on 2026-07-05 after the graph artifact refresh;
+  the requested old-PRD-name scan has no `graphify-out` matches, `git diff
+  --check` returned no output, and `bash scripts/validate-repo-quality-gates.sh
+  .` reported `[PASS] repository quality gates passed`.
 
 ## Evidence Log
 
@@ -82,12 +84,15 @@ configuration are changed in TPN-001.
 | 2026-07-05 | TPN-001 | Route-contract baseline scan | PASS; old route placeholders remain in current contract surfaces before implementation tasks begin. |
 | 2026-07-05 | TPN-001 | Scope control | PASS; TPN-001 changes only this task evidence file and `docs/04.execution/tasks/README.md`. |
 | 2026-07-05 | TPN-001 | Validation | PASS; `git diff --check` and `bash scripts/validate-repo-quality-gates.sh .` completed successfully. |
-| 2026-07-05 | TPN-002 | PRD rename and old-name active-link scan | PASS; four PRDs renamed with `git mv`, Stage 01 README updated, and active old-name links removed, including the validation-discovered `infrastructure/README.md` PRD link. Remaining old-name matches are historical evidence in the TPN spec mapping table, the TPN plan command and mapping snippets, this task's baseline scan command, and `docs/00.agent-governance/memory/progress.md`. |
+| 2026-07-05 | TPN-002 | PRD rename and old-name active-link scan | PASS; four PRDs renamed with `git mv`, Stage 01 README updated, and active old-name links removed, including the validation-discovered `infrastructure/README.md` PRD link. |
+| 2026-07-05 | TPN-002 review fix | Graph artifact refresh and old-name scan classification | PASS; tracked `graphify-out/**` artifacts were refreshed to the numbered PRD filenames. The requested scan now has no `graphify-out` matches; remaining matches are explicit historical/migration evidence in the TPN spec mapping and scan command, the TPN plan mapping, commands, and validation rows, this task record's baseline and review-fix evidence, and progress memory. Runtime tooling note: `rtk` is installed at `/home/hy/.local/bin/rtk` but not on this shell's `PATH`; `rtk gain` could not initialize its tracking database, so final validation commands ran directly. |
 
 ## Handoff
 
 TPN-002 renames the four active PRD files with `git mv`, updates Stage 01
-README references, and updates active links to the renamed PRDs.
+README references, updates active links to the renamed PRDs, and refreshes
+tracked graph artifacts that contained current path literals for the removed
+PRD filenames.
 
 Do not treat TPN-002 as full route migration completion. Template forms,
 support contracts, Stage 00 governance files, and validator logic are still

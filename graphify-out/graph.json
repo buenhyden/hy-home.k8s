@@ -8932,18 +8932,18 @@
       "norm_label": "related documents"
     },
     {
-      "label": "2026-05-17-argo-notifications-slack.md",
+      "label": "002-argo-notifications-slack.md",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L1",
       "id": "01_requirements_2026_05_17_argo_notifications_slack",
       "community": 131,
-      "norm_label": "2026-05-17-argo-notifications-slack.md"
+      "norm_label": "002-argo-notifications-slack.md"
     },
     {
       "label": "Argo Notifications Slack Webhook Product Requirements",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L9",
       "id": "01_requirements_2026_05_17_argo_notifications_slack_argo_notifications_slack_webhook_product_requirements",
       "community": 131,
@@ -8952,7 +8952,7 @@
     {
       "label": "Overview (KR)",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L11",
       "id": "01_requirements_2026_05_17_argo_notifications_slack_overview_kr",
       "community": 131,
@@ -8961,7 +8961,7 @@
     {
       "label": "Requirement Status",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L15",
       "id": "01_requirements_2026_05_17_argo_notifications_slack_requirement_status",
       "community": 131,
@@ -8970,7 +8970,7 @@
     {
       "label": "Vision",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L21",
       "id": "01_requirements_2026_05_17_argo_notifications_slack_vision",
       "community": 131,
@@ -8979,7 +8979,7 @@
     {
       "label": "Problem Statement",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L25",
       "id": "01_requirements_2026_05_17_argo_notifications_slack_problem_statement",
       "community": 131,
@@ -8988,7 +8988,7 @@
     {
       "label": "Personas",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L29",
       "id": "01_requirements_2026_05_17_argo_notifications_slack_personas",
       "community": 131,
@@ -8997,7 +8997,7 @@
     {
       "label": "Key Use Cases",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L35",
       "id": "01_requirements_2026_05_17_argo_notifications_slack_key_use_cases",
       "community": 131,
@@ -9006,7 +9006,7 @@
     {
       "label": "Functional Requirements",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L42",
       "id": "01_requirements_2026_05_17_argo_notifications_slack_functional_requirements",
       "community": 131,
@@ -9015,7 +9015,7 @@
     {
       "label": "Success / Acceptance Criteria",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L51",
       "id": "01_requirements_2026_05_17_argo_notifications_slack_success_acceptance_criteria",
       "community": 131,
@@ -9024,7 +9024,7 @@
     {
       "label": "Scope and Non-goals",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L59",
       "id": "01_requirements_2026_05_17_argo_notifications_slack_scope_and_non_goals",
       "community": 131,
@@ -9033,7 +9033,7 @@
     {
       "label": "Risks, Dependencies, and Assumptions",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L73",
       "id": "01_requirements_2026_05_17_argo_notifications_slack_risks_dependencies_and_assumptions",
       "community": 131,
@@ -9042,7 +9042,7 @@
     {
       "label": "AI Agent Requirements (If Applicable)",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L80",
       "id": "01_requirements_2026_05_17_argo_notifications_slack_ai_agent_requirements_if_applicable",
       "community": 131,
@@ -9051,25 +9051,25 @@
     {
       "label": "Related Documents",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L87",
       "id": "01_requirements_2026_05_17_argo_notifications_slack_related_documents",
       "community": 131,
       "norm_label": "related documents"
     },
     {
-      "label": "2026-05-17-argo-rollouts-progressive-delivery.md",
+      "label": "001-argo-rollouts-progressive-delivery.md",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L1",
       "id": "01_requirements_2026_05_17_argo_rollouts_progressive_delivery",
       "community": 132,
-      "norm_label": "2026-05-17-argo-rollouts-progressive-delivery.md"
+      "norm_label": "001-argo-rollouts-progressive-delivery.md"
     },
     {
       "label": "Argo Rollouts Progressive Delivery Product Requirements",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L9",
       "id": "01_requirements_2026_05_17_argo_rollouts_progressive_delivery_argo_rollouts_progressive_delivery_product_requirements",
       "community": 132,
@@ -9078,7 +9078,7 @@
     {
       "label": "Overview (KR)",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L11",
       "id": "01_requirements_2026_05_17_argo_rollouts_progressive_delivery_overview_kr",
       "community": 132,
@@ -9087,7 +9087,7 @@
     {
       "label": "Requirement Status",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L15",
       "id": "01_requirements_2026_05_17_argo_rollouts_progressive_delivery_requirement_status",
       "community": 132,
@@ -9096,7 +9096,7 @@
     {
       "label": "Vision",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L21",
       "id": "01_requirements_2026_05_17_argo_rollouts_progressive_delivery_vision",
       "community": 132,
@@ -9105,7 +9105,7 @@
     {
       "label": "Problem Statement",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L25",
       "id": "01_requirements_2026_05_17_argo_rollouts_progressive_delivery_problem_statement",
       "community": 132,
@@ -9114,7 +9114,7 @@
     {
       "label": "Personas",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L29",
       "id": "01_requirements_2026_05_17_argo_rollouts_progressive_delivery_personas",
       "community": 132,
@@ -9123,7 +9123,7 @@
     {
       "label": "Key Use Cases",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L35",
       "id": "01_requirements_2026_05_17_argo_rollouts_progressive_delivery_key_use_cases",
       "community": 132,
@@ -9132,7 +9132,7 @@
     {
       "label": "Functional Requirements",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L42",
       "id": "01_requirements_2026_05_17_argo_rollouts_progressive_delivery_functional_requirements",
       "community": 132,
@@ -9141,7 +9141,7 @@
     {
       "label": "Success / Acceptance Criteria",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L51",
       "id": "01_requirements_2026_05_17_argo_rollouts_progressive_delivery_success_acceptance_criteria",
       "community": 132,
@@ -9150,7 +9150,7 @@
     {
       "label": "Scope and Non-goals",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L58",
       "id": "01_requirements_2026_05_17_argo_rollouts_progressive_delivery_scope_and_non_goals",
       "community": 132,
@@ -9159,7 +9159,7 @@
     {
       "label": "Risks, Dependencies, and Assumptions",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L73",
       "id": "01_requirements_2026_05_17_argo_rollouts_progressive_delivery_risks_dependencies_and_assumptions",
       "community": 132,
@@ -9168,7 +9168,7 @@
     {
       "label": "AI Agent Requirements (If Applicable)",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L80",
       "id": "01_requirements_2026_05_17_argo_rollouts_progressive_delivery_ai_agent_requirements_if_applicable",
       "community": 132,
@@ -9177,25 +9177,25 @@
     {
       "label": "Related Documents",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L87",
       "id": "01_requirements_2026_05_17_argo_rollouts_progressive_delivery_related_documents",
       "community": 132,
       "norm_label": "related documents"
     },
     {
-      "label": "2026-06-01-workspace-agent-governance-platform.md",
+      "label": "003-workspace-agent-governance-platform.md",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L1",
       "id": "01_requirements_2026_06_01_workspace_agent_governance_platform",
       "community": 151,
-      "norm_label": "2026-06-01-workspace-agent-governance-platform.md"
+      "norm_label": "003-workspace-agent-governance-platform.md"
     },
     {
       "label": "Workspace Agent Governance Platform Product Requirements",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L9",
       "id": "01_requirements_2026_06_01_workspace_agent_governance_platform_workspace_agent_governance_platform_product_requirements",
       "community": 151,
@@ -9204,7 +9204,7 @@
     {
       "label": "Overview (KR)",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L11",
       "id": "01_requirements_2026_06_01_workspace_agent_governance_platform_overview_kr",
       "community": 151,
@@ -9213,7 +9213,7 @@
     {
       "label": "Vision",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L18",
       "id": "01_requirements_2026_06_01_workspace_agent_governance_platform_vision",
       "community": 151,
@@ -9222,7 +9222,7 @@
     {
       "label": "Problem Statement",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L23",
       "id": "01_requirements_2026_06_01_workspace_agent_governance_platform_problem_statement",
       "community": 151,
@@ -9231,7 +9231,7 @@
     {
       "label": "Personas",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L30",
       "id": "01_requirements_2026_06_01_workspace_agent_governance_platform_personas",
       "community": 151,
@@ -9240,7 +9240,7 @@
     {
       "label": "Key Use Cases",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L37",
       "id": "01_requirements_2026_06_01_workspace_agent_governance_platform_key_use_cases",
       "community": 151,
@@ -9249,7 +9249,7 @@
     {
       "label": "Functional Requirements",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L45",
       "id": "01_requirements_2026_06_01_workspace_agent_governance_platform_functional_requirements",
       "community": 151,
@@ -9258,7 +9258,7 @@
     {
       "label": "Success / Acceptance Criteria",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L55",
       "id": "01_requirements_2026_06_01_workspace_agent_governance_platform_success_acceptance_criteria",
       "community": 151,
@@ -9267,7 +9267,7 @@
     {
       "label": "Scope and Non-goals",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L63",
       "id": "01_requirements_2026_06_01_workspace_agent_governance_platform_scope_and_non_goals",
       "community": 151,
@@ -9276,7 +9276,7 @@
     {
       "label": "Risks, Dependencies, and Assumptions",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L82",
       "id": "01_requirements_2026_06_01_workspace_agent_governance_platform_risks_dependencies_and_assumptions",
       "community": 151,
@@ -9285,7 +9285,7 @@
     {
       "label": "AI Agent Requirements (If Applicable)",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L89",
       "id": "01_requirements_2026_06_01_workspace_agent_governance_platform_ai_agent_requirements_if_applicable",
       "community": 151,
@@ -9294,25 +9294,25 @@
     {
       "label": "Related Documents",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L105",
       "id": "01_requirements_2026_06_01_workspace_agent_governance_platform_related_documents",
       "community": 151,
       "norm_label": "related documents"
     },
     {
-      "label": "2026-06-02-current-local-gitops-platform.md",
+      "label": "004-current-local-gitops-platform.md",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L1",
       "id": "01_requirements_2026_06_02_current_local_gitops_platform",
       "community": 152,
-      "norm_label": "2026-06-02-current-local-gitops-platform.md"
+      "norm_label": "004-current-local-gitops-platform.md"
     },
     {
       "label": "Current Local GitOps Platform Product Requirements",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L9",
       "id": "01_requirements_2026_06_02_current_local_gitops_platform_current_local_gitops_platform_product_requirements",
       "community": 152,
@@ -9321,7 +9321,7 @@
     {
       "label": "Overview (KR)",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L11",
       "id": "01_requirements_2026_06_02_current_local_gitops_platform_overview_kr",
       "community": 152,
@@ -9330,7 +9330,7 @@
     {
       "label": "Vision",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L16",
       "id": "01_requirements_2026_06_02_current_local_gitops_platform_vision",
       "community": 152,
@@ -9339,7 +9339,7 @@
     {
       "label": "Problem Statement",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L21",
       "id": "01_requirements_2026_06_02_current_local_gitops_platform_problem_statement",
       "community": 152,
@@ -9348,7 +9348,7 @@
     {
       "label": "Personas",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L26",
       "id": "01_requirements_2026_06_02_current_local_gitops_platform_personas",
       "community": 152,
@@ -9357,7 +9357,7 @@
     {
       "label": "Key Use Cases",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L32",
       "id": "01_requirements_2026_06_02_current_local_gitops_platform_key_use_cases",
       "community": 152,
@@ -9366,7 +9366,7 @@
     {
       "label": "Functional Requirements",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L39",
       "id": "01_requirements_2026_06_02_current_local_gitops_platform_functional_requirements",
       "community": 152,
@@ -9375,7 +9375,7 @@
     {
       "label": "Success / Acceptance Criteria",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L49",
       "id": "01_requirements_2026_06_02_current_local_gitops_platform_success_acceptance_criteria",
       "community": 152,
@@ -9384,7 +9384,7 @@
     {
       "label": "Scope and Non-goals",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L56",
       "id": "01_requirements_2026_06_02_current_local_gitops_platform_scope_and_non_goals",
       "community": 152,
@@ -9393,7 +9393,7 @@
     {
       "label": "Risks, Dependencies, and Assumptions",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L72",
       "id": "01_requirements_2026_06_02_current_local_gitops_platform_risks_dependencies_and_assumptions",
       "community": 152,
@@ -9402,7 +9402,7 @@
     {
       "label": "AI Agent Requirements (If Applicable)",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L79",
       "id": "01_requirements_2026_06_02_current_local_gitops_platform_ai_agent_requirements_if_applicable",
       "community": 152,
@@ -9411,7 +9411,7 @@
     {
       "label": "Related Documents",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L93",
       "id": "01_requirements_2026_06_02_current_local_gitops_platform_related_documents",
       "community": 152,
@@ -41629,7 +41629,7 @@
     {
       "label": "Argo Rollouts Progressive Delivery PRD",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -41642,7 +41642,7 @@
     {
       "label": "Argo Notifications Slack Webhook PRD",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45074,7 +45074,7 @@
     {
       "label": "Argo Rollouts PRD",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45087,7 +45087,7 @@
     {
       "label": "Canary Blue-Green Delivery",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45100,7 +45100,7 @@
     {
       "label": "Argo Notifications Slack PRD",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -45113,7 +45113,7 @@
     {
       "label": "Slack Credential Boundary",
       "file_type": "document",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
@@ -63078,7 +63078,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63088,7 +63088,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L80",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63098,7 +63098,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L42",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63108,7 +63108,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L35",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63118,7 +63118,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L11",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63128,7 +63128,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L29",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63138,7 +63138,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L25",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63148,7 +63148,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L87",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63158,7 +63158,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L15",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63168,7 +63168,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L73",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63178,7 +63178,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L59",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63188,7 +63188,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L51",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63198,7 +63198,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": "L21",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63208,7 +63208,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63218,7 +63218,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L80",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63228,7 +63228,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L42",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63238,7 +63238,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L35",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63248,7 +63248,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L11",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63258,7 +63258,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L29",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63268,7 +63268,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L25",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63278,7 +63278,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L87",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63288,7 +63288,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L15",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63298,7 +63298,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L73",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63308,7 +63308,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L58",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63318,7 +63318,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L51",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63328,7 +63328,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": "L21",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63338,7 +63338,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63348,7 +63348,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L89",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63358,7 +63358,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L45",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63368,7 +63368,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L37",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63378,7 +63378,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L11",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63388,7 +63388,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L30",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63398,7 +63398,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L23",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63408,7 +63408,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L105",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63418,7 +63418,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L82",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63428,7 +63428,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L63",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63438,7 +63438,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L55",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63448,7 +63448,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-01-workspace-agent-governance-platform.md",
+      "source_file": "docs/01.requirements/003-workspace-agent-governance-platform.md",
       "source_location": "L18",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63458,7 +63458,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63468,7 +63468,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L79",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63478,7 +63478,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L39",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63488,7 +63488,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L32",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63498,7 +63498,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L11",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63508,7 +63508,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L26",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63518,7 +63518,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L21",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63528,7 +63528,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L93",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63538,7 +63538,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L72",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63548,7 +63548,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L56",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63558,7 +63558,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L49",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -63568,7 +63568,7 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/01.requirements/2026-06-02-current-local-gitops-platform.md",
+      "source_file": "docs/01.requirements/004-current-local-gitops-platform.md",
       "source_location": "L16",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -86779,7 +86779,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": null,
       "weight": 1.0,
       "source": "0003_eso_vault_k8s_auth_adr",
@@ -94589,7 +94589,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": null,
       "weight": 1.0,
       "source": "2026_05_17_argo_rollouts_progressive_delivery_prd",
@@ -94599,7 +94599,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": null,
       "weight": 1.0,
       "source": "2026_05_17_argo_rollouts_progressive_delivery_prd",
@@ -94609,7 +94609,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": null,
       "weight": 1.0,
       "source": "2026_05_17_argo_rollouts_progressive_delivery_prd",
@@ -94619,7 +94619,7 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": null,
       "weight": 1.0,
       "source": "2026_05_17_argo_rollouts_progressive_delivery_prd",
@@ -94639,7 +94639,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": null,
       "weight": 1.0,
       "source": "2026_05_17_argo_notifications_slack_prd",
@@ -94649,7 +94649,7 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": null,
       "weight": 1.0,
       "source": "2026_05_17_argo_notifications_slack_prd",
@@ -97549,7 +97549,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": null,
       "weight": 1.0,
       "source": "2026_03_29_platform_expansion_dashboard_mesh_platform_expansion_prd",
@@ -97569,7 +97569,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": null,
       "weight": 1.0,
       "source": "2026_05_17_argo_rollouts_progressive_delivery_argo_rollouts_prd",
@@ -97579,7 +97579,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": null,
       "weight": 1.0,
       "source": "2026_05_17_argo_rollouts_progressive_delivery_argo_rollouts_prd",
@@ -97589,7 +97589,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md",
+      "source_file": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
       "source_location": null,
       "weight": 1.0,
       "source": "2026_05_17_argo_rollouts_progressive_delivery_argo_rollouts_prd",
@@ -97599,7 +97599,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": null,
       "weight": 1.0,
       "source": "2026_05_17_argo_notifications_slack_argo_notifications_slack_prd",
@@ -97609,7 +97609,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "docs/01.requirements/2026-05-17-argo-notifications-slack.md",
+      "source_file": "docs/01.requirements/002-argo-notifications-slack.md",
       "source_location": null,
       "weight": 1.0,
       "source": "2026_05_17_argo_notifications_slack_slack_credential_boundary",

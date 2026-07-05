@@ -8,6 +8,50 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-05 - TPN-002 PRD graph reference refresh
+
+- **Date**: 2026-07-05
+- **Layer**: qa, docs
+- **Status**: complete
+- **Tags**: #docs #requirements #graphify #validation #stage-04
+
+#### Progress
+
+- Refreshed tracked `graphify-out/**` artifacts so the four renamed active
+  PRDs resolve through their numbered filenames.
+- Updated the
+  [Template Path Numbering Contract task record](../../04.execution/tasks/2026-07-05-template-path-numbering-contract.md)
+  so TPN-002 evidence records the graph refresh and classifies remaining
+  old-name matches from the requested scan.
+- Preserved the requested boundaries: no `docs/99.templates/**` or
+  `scripts/validate-repo-quality-gates.sh` edits.
+
+#### Memory
+
+- Generated graph artifacts are current path evidence when they describe
+  active documents. After route renames, refresh tracked graph output literals
+  instead of treating stale generated paths as historical migration evidence.
+- Old PRD filename matches in specs, plans, task records, and progress memory
+  can be valid historical evidence, but scan evidence must explicitly exclude
+  generated graph artifacts unless those artifacts have also been refreshed.
+
+#### Evidence
+
+- Requested old-PRD-name scan - PASS; no `graphify-out` matches remain, and
+  remaining matches are historical/migration evidence in TPN spec, plan, task,
+  and progress-memory surfaces.
+- `git diff --check` - PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` - PASS.
+- Runtime tooling note: `rtk` is available at `/home/hy/.local/bin/rtk`, but
+  not on this shell's `PATH`; `rtk gain` failed to initialize its tracking
+  database, so final validation commands ran directly.
+
+#### Handoff
+
+- No follow-up remains for the TPN-002 review finding. This fix does not
+  change templates, validator scripts, GitOps manifests, live infrastructure,
+  credentials, or external services.
+
 ### 2026-07-05 - Stage 90 reference key-folder normalization
 
 - **Date**: 2026-07-05
