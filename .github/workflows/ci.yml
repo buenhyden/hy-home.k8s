@@ -68,6 +68,7 @@ jobs:
               - '.claude/**'
               - '.codex/**'
               - 'scripts/**'
+              - 'tests/**'
               - 'examples/**'
               - '.pre-commit-config.yaml'
               - 'infrastructure/k3d/k3d-cluster.yaml'
@@ -84,6 +85,8 @@ jobs:
               - 'scripts/validate-gitops-structure.sh'
               - 'scripts/validate-k8s-manifests.sh'
               - 'scripts/check-secret-handling.sh'
+              - 'scripts/validate-policy-gates.sh'
+              - 'policy/**'
               - 'traefik/**'
 
   pre-commit:

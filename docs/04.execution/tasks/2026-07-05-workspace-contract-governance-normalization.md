@@ -3,7 +3,7 @@ title: 'Task: Workspace Contract Governance Normalization'
 type: sdlc/task
 status: draft
 owner: platform
-updated: 2026-07-05
+updated: 2026-07-06
 ---
 
 # Task: Workspace Contract Governance Normalization
@@ -13,10 +13,10 @@ updated: 2026-07-05
 This task record tracks implementation and verification evidence for the
 workspace contract governance normalization plan. WCGN-001 created the Stage
 04 evidence record and baseline inventory, WCGN-002 established the
-`_workspace` staging boundary, and WCGN-003 audited and remediated
-frontmatter, template, section, README, and cross-link drift. WCGN-004 and
-WCGN-005 remain planned for CI/CD and QA wording, validator coverage, closure
-evidence, and progress memory.
+`_workspace` staging boundary, WCGN-003 audited and remediated frontmatter,
+template, section, README, and cross-link drift, and WCGN-004 aligned the
+CI path-filter control surface with the documented QA gates. WCGN-005 remains
+planned for validator coverage, closure evidence, and progress memory.
 
 No live Kubernetes, Argo CD, Vault, ESO, cloud, GitHub remote, credential,
 secret value, paid job, push, merge, pull request, or third-party mutation is
@@ -53,7 +53,7 @@ in scope for this task.
 | WCGN-001 | Create task evidence and baseline inventory | doc | VAL-SPC-020-003, VAL-SPC-020-004, VAL-SPC-020-006, VAL-SPC-020-007 | Task 1 | Baseline inventory, `_workspace` baseline, frontmatter/template drift scans, task README index, staged whitespace check, controller/spec/quality review follow-up | platform | Done |
 | WCGN-002 | Establish `_workspace` contract and ignore boundary | doc | VAL-SPC-020-001, VAL-SPC-020-002, VAL-SPC-020-005 | Task 2 | `_workspace/README.md` tracked, scratch files ignored, contract owners aligned, quality gate | platform | Done |
 | WCGN-003 | Audit and remediate frontmatter, template, section, README, and cross-link drift | doc | VAL-SPC-020-003, VAL-SPC-020-004, VAL-SPC-020-005, VAL-SPC-020-007 | Task 3 | Focused scans classify active violations vs templates/historical evidence | platform | Done |
-| WCGN-004 | Audit and remediate CI/CD, QA, formatting, linting, syntax, automation, workflow, and security drift | qa | VAL-SPC-020-006 | Task 4 | Control-surface descriptions match current scripts/workflows or recorded deferrals | platform | Planned |
+| WCGN-004 | Audit and remediate CI/CD, QA, formatting, linting, syntax, automation, workflow, and security drift | qa | VAL-SPC-020-006 | Task 4 | Requested control-surface scans, CI path-filter remediation, and repo-static validation evidence | platform | Done |
 | WCGN-005 | Add validator coverage, close evidence, and record memory | qa | VAL-SPC-020-008, VAL-SPC-020-009, VAL-SPC-020-010 | Task 5 | `git diff --check`, repository quality gate, final evidence, progress memory | platform | Planned |
 
 ## Suggested Types
@@ -112,6 +112,7 @@ Requested target inventory notes:
 | WCGN-AUD-008 | README entrypoints | README | README inventory returned repository, workspace, docs, examples, GitOps, infrastructure, scripts, tests, and Traefik README files. The literal README duplication scan reported missing `.codex/README.md` and `.claude/README.md` operands because those provider README files do not exist; a focused rerun over existing operands found concise owner pointers, not duplicated Stage 00 or Stage 99 policy bodies. | No README body rewrite required. Do not create provider README files without a future route need. |
 | WCGN-AUD-009 | `docs/90.references/data/agent-reference-index.md`, `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md` | route | Two active reference documents still used the old Stage 03 placeholder `docs/03.specs/<feature-id>/...` as current guidance. | Update both references to `docs/03.specs/<###-Numbering>-<feature-id>/...`. |
 | WCGN-AUD-010 | Stage 00 rules, active Stage 03 specs/guardrails, Stage 99 templates, Stage 04 migration evidence, Stage 90 audits, progress memory | route / cross-link | Remaining route scan matches are current deny-route guardrails (`docs/superpowers/**`, `docs/api/**`), active Stage 03 spec or guardrail references that reject off-taxonomy paths or record approved numbering contracts, template examples that explicitly reject `docs/api/**`, scanner-command evidence, completed migration evidence for old PRD filenames, dated Stage 90 audit evidence, or dated progress memory. | Leave accepted historical, active spec, and guardrail evidence in place; do not rewrite completed migration records into false current-state history. |
+| WCGN-AUD-011 | `.github/workflows/ci.yml`, `scripts/README.md`, `tests/README.md`, CI/QA guide | CI path filters | WCGN-004 scans showed the documented Tier A policy gate and tests README quality surface, but `changes.manifests` did not include `scripts/validate-policy-gates.sh` or `policy/**`, and `changes.repo_quality` did not include `tests/**`. | Add the missing path-filter patterns to `ci.yml`; no active `.github/ABOUT.md`, PR template, SECURITY, root README, scripts README, tests README, or CI/QA guide wording drift required remediation. |
 
 ## Remediation Evidence
 
@@ -128,6 +129,7 @@ Requested target inventory notes:
 | 2026-07-05 | WCGN-003 | Updated active Stage 90 route guidance to the numbered Stage 03 placeholder. | `docs/90.references/data/agent-reference-index.md` now points feature-local Agent design to `docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md`; `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md` now points the Stage 03 spec lifecycle to `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`. |
 | 2026-07-05 | WCGN-003 | Reviewed folder README impact for the two Stage 90 reference edits. | `docs/90.references/data/README.md` and `docs/90.references/research/2026-07-04-wer/README.md` remain current because their index rows summarize document ownership and do not embed the old route placeholder. |
 | 2026-07-05 | WCGN-003 | Recorded frontmatter, template residue, legacy section, README duplication, and route/cross-link scan classifications. | WCGN-003 status is `Done`; remaining noisy matches are documented as templates, explicit route guardrails, scanner-command evidence, migration evidence, Stage 90 audits, or progress memory. |
+| 2026-07-06 | WCGN-004 | Aligned CI path filters with documented QA control surfaces. | `repo_quality` now runs for `tests/**`; `manifest-static` now runs for `scripts/validate-policy-gates.sh` and `policy/**`. The remaining requested scans classified `.github/ABOUT.md`, PR template, SECURITY, root README, scripts README, tests README, and CI/QA guide wording as aligned with the current workflow/script split. |
 
 ## Verification Commands
 
@@ -177,6 +179,16 @@ bash scripts/validate-repo-quality-gates.sh .
 git add AGENTS.md CLAUDE.md GEMINI.md README.md .agents .claude .codex docs .github scripts docs/04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md
 git diff --cached --check
 git commit -m "docs(governance): Normalize document contract drift"
+find .github/workflows scripts tests -maxdepth 2 -type f | sort
+rg -n "validate-repo-quality-gates|validate-harness|check-secret-handling|validate-gitops-structure|validate-k8s-manifests|validate-policy-gates|git diff --check|kube-linter|zizmor" .github scripts tests docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md README.md
+sed -n '1,220p' .github/workflows/ci.yml
+sed -n '1,260p' docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md
+sed -n '1,240p' .github/ABOUT.md
+rg -n "format|formatting|lint|linting|syntax|typecheck|test|QA|quality gate" README.md docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md scripts/README.md tests/README.md .github/PULL_REQUEST_TEMPLATE.md
+rg -n "secret|credential|token|kubeconfig|SSH|auth|history|_workspace|protected surface|approval" README.md .github docs/00.agent-governance docs/05.operations scripts tests
+git diff --check
+bash scripts/validate-repo-quality-gates.sh .
+git diff --cached --check
 ```
 
 ## Verification Summary
@@ -223,11 +235,16 @@ git commit -m "docs(governance): Normalize document contract drift"
 | 2026-07-05 | WCGN-003 route and cross-link scans | PASS after remediation; active Stage 90 references were updated from `docs/03.specs/<feature-id>/...` to `docs/03.specs/<###-Numbering>-<feature-id>/...`. Remaining matches are current route-deny guardrails, templates, scanner-command evidence, completed migration evidence, Stage 90 audits, or progress memory. |
 | 2026-07-05 | WCGN-003 working-tree whitespace check | PASS; `git diff --check` returned no whitespace errors after WCGN-003 edits. |
 | 2026-07-05 | WCGN-003 repository quality gate | PASS; `bash scripts/validate-repo-quality-gates.sh .` returned `[PASS] repository quality gates passed` after WCGN-003 edits. |
+| 2026-07-06 | WCGN-004 requested scan inventory | PASS; scan found five GitHub workflow files, eight top-level shell scripts plus `scripts/README.md`, and `tests/README.md`. |
+| 2026-07-06 | WCGN-004 control-surface scans | PASS with one remediation; scan evidence found a CI path-filter gap for `validate-policy-gates.sh`/`policy/**` and `tests/**`. All other reviewed QA, formatting, linting, syntax, automation, workflow, and security wording matched the current script/workflow split or explicit live-runtime boundary. |
+| 2026-07-06 | WCGN-004 workflow remediation | PASS; `.github/workflows/ci.yml` now includes `tests/**` in `repo_quality` and `scripts/validate-policy-gates.sh` plus `policy/**` in `manifests`. |
+| 2026-07-06 | WCGN-004 working-tree whitespace check | PASS; `git diff --check` returned no whitespace errors after WCGN-004 edits. |
+| 2026-07-06 | WCGN-004 repository quality gate | PASS; `bash scripts/validate-repo-quality-gates.sh .` returned `[PASS] repository quality gates passed` after WCGN-004 edits. |
+| 2026-07-06 | WCGN-004 staged whitespace check | PASS; `git diff --cached --check` returned no whitespace errors after staging the WCGN-004 files. |
+| 2026-07-06 | WCGN-004 runtime tooling note | PASS with limitation recorded; `which rtk` returned `rtk not found`, `/home/hy/.local/bin/rtk --version` returned `rtk 0.34.3`, and `/home/hy/.local/bin/rtk gain` failed to initialize its tracking database, so validation commands ran directly without inspecting private runtime state. |
 
 ## Deferrals
 
-- WCGN-004 owns CI/CD, QA, formatting, linting, syntax, automation, workflow,
-  and security wording remediation.
 - WCGN-005 owns final validator coverage, final validation, and progress memory
   closure. Progress memory remains deferred to WCGN-005 under the plan's
   ownership boundary for WCGN-001 through WCGN-004.
