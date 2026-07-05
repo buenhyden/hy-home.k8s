@@ -27,8 +27,8 @@ updated: 2026-06-02
 
 ## Current Replacement
 
-- Current owner document: [docs/01.requirements/2026-06-02-current-local-gitops-platform.md](../../01.requirements/2026-06-02-current-local-gitops-platform.md)
-- Current active index: [01.requirements](../../01.requirements/2026-06-02-current-local-gitops-platform.md)
+- Current owner document: [docs/01.requirements/004-current-local-gitops-platform.md](../../01.requirements/004-current-local-gitops-platform.md)
+- Current active index: [01.requirements](../../01.requirements/004-current-local-gitops-platform.md)
 
 ## Current Implementation Evidence
 
@@ -43,4 +43,4 @@ updated: 2026-06-02
 
 ## Related Documents
 
-- [Current replacement](../../01.requirements/2026-06-02-current-local-gitops-platform.md)
+- [Current replacement](../../01.requirements/004-current-local-gitops-platform.md)

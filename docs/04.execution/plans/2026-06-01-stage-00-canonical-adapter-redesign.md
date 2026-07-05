@@ -34,7 +34,7 @@ provider-specific wording as if they were active contracts.
 
 When first written, this plan was a governance plan that directly used Phase 1
 investigation results as input. Current upstream SDD traceability is owned by
-[Workspace Agent Governance Platform PRD](../../01.requirements/2026-06-01-workspace-agent-governance-platform.md),
+[Workspace Agent Governance Platform PRD](../../01.requirements/003-workspace-agent-governance-platform.md),
 [Workspace Agent Governance Platform ARD](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md),
 and [ADR-0013](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md).
 This overlay only adds current requirement/architecture links and does not
@@ -187,7 +187,7 @@ The core gaps confirmed during Phase 1 investigation were:
 
 ## Related Documents
 
-- **PRD**: [../../01.requirements/2026-06-01-workspace-agent-governance-platform.md](../../01.requirements/2026-06-01-workspace-agent-governance-platform.md)
+- **PRD**: [../../01.requirements/003-workspace-agent-governance-platform.md](../../01.requirements/003-workspace-agent-governance-platform.md)
 - **ARD**: [../../02.architecture/requirements/0006-workspace-agent-governance-platform.md](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
 - **ADR**: [../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 - **Task**: [../tasks/2026-06-01-stage-00-canonical-adapter-redesign.md](../tasks/2026-06-01-stage-00-canonical-adapter-redesign.md)

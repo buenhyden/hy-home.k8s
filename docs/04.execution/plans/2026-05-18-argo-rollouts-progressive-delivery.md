@@ -90,7 +90,7 @@ the `03.specs` stage.
 
 ## Related Documents
 
-- **PRD**: [`../../01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md`](../../01.requirements/2026-05-17-argo-rollouts-progressive-delivery.md)
+- **PRD**: [`../../01.requirements/001-argo-rollouts-progressive-delivery.md`](../../01.requirements/001-argo-rollouts-progressive-delivery.md)
 - **ARD**: [`../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md`](../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md)
 - **Spec**: [`../../03.specs/004-argo-rollouts-progressive-delivery/spec.md`](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md)
 - **ADR**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)

@@ -40,17 +40,17 @@
 
 ```text
 01.requirements/
-├── 2026-05-17-argo-rollouts-progressive-delivery.md
-├── 2026-05-17-argo-notifications-slack.md
-├── 2026-06-01-workspace-agent-governance-platform.md
-├── 2026-06-02-current-local-gitops-platform.md
+├── 001-argo-rollouts-progressive-delivery.md
+├── 002-argo-notifications-slack.md
+├── 003-workspace-agent-governance-platform.md
+├── 004-current-local-gitops-platform.md
 └── README.md
 ```
 
 ## How to Work in This Area
 
 1. 새 요구사항을 작성하기 전에 같은 문제를 다루는 기존 PRD를 먼저 확인한다.
-2. 새 PRD는 `../99.templates/templates/sdlc/requirements/prd.template.md`에서 시작하고, canonical target pattern은 `docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md`다.
+2. 새 PRD는 `../99.templates/templates/sdlc/requirements/prd.template.md`에서 시작하고, canonical target pattern은 `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`다.
 3. PRD는 문제, persona/use case, 기능 요구, `Success / Acceptance Criteria`, 범위/비범위를 분리한다.
 4. 요구사항 변경 시 관련 `02.architecture/requirements/`, `03.specs/`, `04.execution/plans/` 링크를 함께 갱신한다.
 5. 구현 파일, manifest, 스크립트, 운영 명령 수준의 상세 설계는 PRD에 직접 확장하지 않고 후속 ARD/Spec/Plan 갭으로 남긴다.
@@ -76,7 +76,7 @@
 
 ## 요구사항 읽는 순서
 
-1. 현재 로컬 GitOps 플랫폼 기준은 [`2026-06-02-current-local-gitops-platform.md`](./2026-06-02-current-local-gitops-platform.md)와 `gitops/**`, `infrastructure/**`, `scripts/**` 정적 검증 증적이 소유한다.
+1. 현재 로컬 GitOps 플랫폼 기준은 [`004-current-local-gitops-platform.md`](./004-current-local-gitops-platform.md)와 `gitops/**`, `infrastructure/**`, `scripts/**` 정적 검증 증적이 소유한다.
 2. `Active` 문서는 현재 작업 기준으로 사용할 수 있지만, downstream ARD/ADR/Spec/Plan과 구현 증적을 함께 확인한다.
 3. `Draft` 문서는 후속 ARD/Spec/Plan이 완성되기 전의 제품 의도다. 구현은 별도 downstream 문서와 승인된 계획이 있어야 시작한다.
 4. 과거 문서가 필요한 경우 활성 문서에서 Tombstone으로 직접 이동하지 않고 [`../98.archive/README.md`](../98.archive/README.md)의 중앙 인덱스를 통해서만 확인한다.
@@ -93,14 +93,14 @@
 
 | 문서 | 역할 | 현재성 | 추적성 / 후속 갭 | 최종 수정 |
 | --- | --- | --- | --- | --- |
-| [`./2026-05-17-argo-rollouts-progressive-delivery.md`](./2026-05-17-argo-rollouts-progressive-delivery.md) | Argo Rollouts canary/blue-green 점진적 배포 PRD | Active current-contract backfill | ARD/Spec/Plan/Task 연결 완료. 현재 GitOps 계약은 `platform-rollouts` Application, Prometheus AnalysisTemplate workload pattern, Rollouts 운영 문서가 소유. | 2026-06-04 |
-| [`./2026-05-17-argo-notifications-slack.md`](./2026-05-17-argo-notifications-slack.md) | Argo Notifications Slack 알림 PRD | Active current-contract backfill | ARD/Spec/Plan/Task 연결 완료. 현재 Secret 경계는 Vault/ESO/ArgoCD Notifications 문서가 소유. | 2026-06-04 |
-| [`./2026-06-01-workspace-agent-governance-platform.md`](./2026-06-01-workspace-agent-governance-platform.md) | Workspace AI Agent governance, Stage 00 canonical adapter, skill-axis routing PRD | Active current-contract backfill | ARD-0006, ADR-0013, Spec 006, Stage 00 canonical adapter Plan/Task 연결 완료. | 2026-06-01 |
-| [`./2026-06-02-current-local-gitops-platform.md`](./2026-06-02-current-local-gitops-platform.md) | 현재 repo-backed local GitOps 플랫폼 baseline PRD | Active | ARD-0007, ADR-0014, Spec 008, docs alignment Plan/Task 연결 완료. | 2026-06-02 |
+| [`./001-argo-rollouts-progressive-delivery.md`](./001-argo-rollouts-progressive-delivery.md) | Argo Rollouts canary/blue-green 점진적 배포 PRD | Active current-contract backfill | ARD/Spec/Plan/Task 연결 완료. 현재 GitOps 계약은 `platform-rollouts` Application, Prometheus AnalysisTemplate workload pattern, Rollouts 운영 문서가 소유. | 2026-06-04 |
+| [`./002-argo-notifications-slack.md`](./002-argo-notifications-slack.md) | Argo Notifications Slack 알림 PRD | Active current-contract backfill | ARD/Spec/Plan/Task 연결 완료. 현재 Secret 경계는 Vault/ESO/ArgoCD Notifications 문서가 소유. | 2026-06-04 |
+| [`./003-workspace-agent-governance-platform.md`](./003-workspace-agent-governance-platform.md) | Workspace AI Agent governance, Stage 00 canonical adapter, skill-axis routing PRD | Active current-contract backfill | ARD-0006, ADR-0013, Spec 006, Stage 00 canonical adapter Plan/Task 연결 완료. | 2026-06-01 |
+| [`./004-current-local-gitops-platform.md`](./004-current-local-gitops-platform.md) | 현재 repo-backed local GitOps 플랫폼 baseline PRD | Active | ARD-0007, ADR-0014, Spec 008, docs alignment Plan/Task 연결 완료. | 2026-06-02 |
 
 ## 예시
 
-신규 플랫폼 기능은 [`2026-06-02-current-local-gitops-platform.md`](./2026-06-02-current-local-gitops-platform.md)처럼 사용자 가치, 범위, 성공/수용 기준을 현재 구현 증적과 함께 기록한다.
+신규 플랫폼 기능은 [`004-current-local-gitops-platform.md`](./004-current-local-gitops-platform.md)처럼 사용자 가치, 범위, 성공/수용 기준을 현재 구현 증적과 함께 기록한다.
 
 ## Related Documents
 

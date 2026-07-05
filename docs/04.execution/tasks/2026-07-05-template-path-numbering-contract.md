@@ -40,8 +40,8 @@ configuration are changed in TPN-001.
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| TPN-001 | Create task evidence and baseline scans | doc | VAL-SPC-019-007, VAL-SPC-019-008 | Task 1 | Baseline inventory, route-contract scan, old PRD link scan, `git diff --check`, quality gate | Codex | In Progress |
-| TPN-002 | Rename active PRD files and update direct PRD indexes | doc | VAL-SPC-019-001, VAL-SPC-019-005 | Task 2 | `git mv`, stale PRD active-link scan, quality gate | Codex | Planned |
+| TPN-001 | Create task evidence and baseline scans | doc | VAL-SPC-019-007, VAL-SPC-019-008 | Task 1 | Baseline inventory, route-contract scan, old PRD link scan, `git diff --check`, quality gate | Codex | Done |
+| TPN-002 | Rename active PRD files and update direct PRD indexes | doc | VAL-SPC-019-001, VAL-SPC-019-005 | Task 2 | `git mv`, stale PRD active-link scan, quality gate | Codex | Done |
 | TPN-003 | Update template forms and support route contracts | doc | VAL-SPC-019-003, VAL-SPC-019-006 | Task 3 | route-map equality and old-route scan | Codex | Planned |
 | TPN-004 | Update Stage 00 governance and validator mappings | qa | VAL-SPC-019-002, VAL-SPC-019-004 | Task 4 | validator route coverage and quality gate | Codex | Planned |
 | TPN-005 | Clean cross-links, close evidence, and validate | qa | VAL-SPC-019-005, VAL-SPC-019-008 | Task 5 | final stale scans, `git diff --check`, quality gate | Codex | Planned |
@@ -67,8 +67,9 @@ configuration are changed in TPN-001.
   - `git diff --check`
   - `bash scripts/validate-repo-quality-gates.sh .`
 - **Eval Commands**: Not applicable; this task is documentation evidence only.
-- **Logs / Evidence Location**: This task record and the Git commit for
-  `docs(tasks): Add template path numbering evidence`.
+- **Logs / Evidence Location**: This task record and the Git commits for
+  `docs(tasks): Add template path numbering evidence` and
+  `docs(requirements): Number active PRD files`.
 - **Current Result**: PASS on 2026-07-05; `git diff --check` returned no
   output and `bash scripts/validate-repo-quality-gates.sh .` reported
   `[PASS] repository quality gates passed`.
@@ -81,16 +82,16 @@ configuration are changed in TPN-001.
 | 2026-07-05 | TPN-001 | Route-contract baseline scan | PASS; old route placeholders remain in current contract surfaces before implementation tasks begin. |
 | 2026-07-05 | TPN-001 | Scope control | PASS; TPN-001 changes only this task evidence file and `docs/04.execution/tasks/README.md`. |
 | 2026-07-05 | TPN-001 | Validation | PASS; `git diff --check` and `bash scripts/validate-repo-quality-gates.sh .` completed successfully. |
+| 2026-07-05 | TPN-002 | PRD rename and old-name active-link scan | PASS; four PRDs renamed with `git mv`, Stage 01 README updated, and active old-name links removed, including the validation-discovered `infrastructure/README.md` PRD link. Remaining old-name matches are historical evidence in the TPN spec mapping table, the TPN plan command and mapping snippets, this task's baseline scan command, and `docs/00.agent-governance/memory/progress.md`. |
 
 ## Handoff
 
-TPN-001 leaves implementation work unmodified. The next task, TPN-002, should
-rename the four active PRD files with `git mv`, update direct PRD indexes and
-active links, then append evidence here.
+TPN-002 renames the four active PRD files with `git mv`, updates Stage 01
+README references, and updates active links to the renamed PRDs.
 
-Do not treat this evidence-only commit as route migration completion. Old route
-contracts and active old PRD links are intentionally still present after
-TPN-001 because they are assigned to TPN-002 through TPN-004.
+Do not treat TPN-002 as full route migration completion. Template forms,
+support contracts, Stage 00 governance files, and validator logic are still
+assigned to TPN-003 and TPN-004.
 
 ## Related Documents
 

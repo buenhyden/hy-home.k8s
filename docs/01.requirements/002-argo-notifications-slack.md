@@ -75,7 +75,7 @@ ArgoCD Notifications values, ConfigMap, ExternalSecret, 운영 문서는 이미 
 - Notification credential은 human-approved 외부 bootstrap 작업으로 준비되어야 한다.
 - Slack Bot token 발급 및 채널 권한 부여는 Slack workspace 관리자 협력이 필요하다.
 - ESO가 정상 동작 중인 상태를 전제한다 (현재 baseline PRD 의존).
-- Argo Rollouts가 설치된 상태에서 rollout-\* 이벤트가 동작한다 (PRD `2026-05-17-argo-rollouts-progressive-delivery.md` 의존).
+- Argo Rollouts가 설치된 상태에서 rollout-\* 이벤트가 동작한다 (PRD `001-argo-rollouts-progressive-delivery.md` 의존).
 
 ## AI Agent Requirements (If Applicable)
 
@@ -92,5 +92,5 @@ ArgoCD Notifications values, ConfigMap, ExternalSecret, 운영 문서는 이미 
 - **Task**: [`../04.execution/tasks/2026-05-18-argo-notifications-slack.md`](../04.execution/tasks/2026-05-18-argo-notifications-slack.md)
 - **ADR**: [`../02.architecture/decisions/0012-argo-notifications-slack.md`](../02.architecture/decisions/0012-argo-notifications-slack.md)
 - **ADR**: [`../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../02.architecture/decisions/0003-eso-vault-k8s-auth.md)
-- **PRD**: [`./2026-05-17-argo-rollouts-progressive-delivery.md`](./2026-05-17-argo-rollouts-progressive-delivery.md) — Rollouts 이벤트 소스
-- **PRD**: [`./2026-06-02-current-local-gitops-platform.md`](./2026-06-02-current-local-gitops-platform.md) — ESO/Vault 의존
+- **PRD**: [`./001-argo-rollouts-progressive-delivery.md`](./001-argo-rollouts-progressive-delivery.md) — Rollouts 이벤트 소스
+- **PRD**: [`./004-current-local-gitops-platform.md`](./004-current-local-gitops-platform.md) — ESO/Vault 의존

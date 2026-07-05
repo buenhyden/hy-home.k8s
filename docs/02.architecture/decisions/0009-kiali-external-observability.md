@@ -70,7 +70,7 @@ Docker Traefik은 `kiali.127.0.0.1.nip.io`를 k3d ingress로 프록시한다.
 
 ## Related Documents
 
-- **PRD**: [`../../01.requirements/2026-06-02-current-local-gitops-platform.md`](../../01.requirements/2026-06-02-current-local-gitops-platform.md)
+- **PRD**: [`../../01.requirements/004-current-local-gitops-platform.md`](../../01.requirements/004-current-local-gitops-platform.md)
 - **ARD**: [`../requirements/0007-current-local-gitops-platform.md`](../requirements/0007-current-local-gitops-platform.md)
 - **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Related ADR**: [`./0008-istio-install-and-ingress-coexist.md`](./0008-istio-install-and-ingress-coexist.md)

@@ -90,7 +90,7 @@ validation path were not traceable from `03.specs`.
 
 ## Related Documents
 
-- **PRD**: [`../../01.requirements/2026-05-17-argo-notifications-slack.md`](../../01.requirements/2026-05-17-argo-notifications-slack.md)
+- **PRD**: [`../../01.requirements/002-argo-notifications-slack.md`](../../01.requirements/002-argo-notifications-slack.md)
 - **ARD**: [`../../02.architecture/requirements/0005-argo-notifications-slack.md`](../../02.architecture/requirements/0005-argo-notifications-slack.md)
 - **Spec**: [`../../03.specs/005-argo-notifications-slack/spec.md`](../../03.specs/005-argo-notifications-slack/spec.md)
 - **ADR**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)

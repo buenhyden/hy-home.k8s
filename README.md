@@ -127,7 +127,7 @@ hy-home.k8s/
 
 - [docs/README.md](docs/README.md)
 - [AGENTS.md](AGENTS.md)
-- [docs/01.requirements/2026-06-02-current-local-gitops-platform.md](docs/01.requirements/2026-06-02-current-local-gitops-platform.md)
+- [docs/01.requirements/004-current-local-gitops-platform.md](docs/01.requirements/004-current-local-gitops-platform.md)
 - [docs/03.specs/008-current-local-gitops-platform/spec.md](docs/03.specs/008-current-local-gitops-platform/spec.md)
 - [docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md](docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
 - [docs/90.references/README.md](docs/90.references/README.md)

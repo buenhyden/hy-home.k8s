@@ -531,7 +531,7 @@ Expected: one final integration commit.
 
 ## Related Documents
 
-- **PRD**: `../../01.requirements/2026-06-01-workspace-agent-governance-platform.md`
+- **PRD**: `../../01.requirements/003-workspace-agent-governance-platform.md`
 - **ARD**: `../../02.architecture/requirements/0006-workspace-agent-governance-platform.md`
 - **Spec**: `../../03.specs/009-workspace-harness-research-pack/spec.md`
 - **ADR**: `../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md`

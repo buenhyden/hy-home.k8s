@@ -81,9 +81,9 @@ mirror는 operations bucket 구조를 그대로 보존한다.
 
 | Original Path | Tombstone | Current Replacement | Archive Reason |
 | --- | --- | --- | --- |
-| `docs/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md` | [`01.requirements/2026-03-27-wsl-k3d-argocd-platform.md`](./01.requirements/2026-03-27-wsl-k3d-argocd-platform.md) | [`../01.requirements/2026-06-02-current-local-gitops-platform.md`](../01.requirements/2026-06-02-current-local-gitops-platform.md) | Old baseline PRD replaced by current repo-backed platform baseline. |
-| `docs/01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md` | [`01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md) | [`../01.requirements/2026-06-02-current-local-gitops-platform.md`](../01.requirements/2026-06-02-current-local-gitops-platform.md) | Old endpoint/bootstrap requirement replaced by current `172.18.x` GitOps contract. |
-| `docs/01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md` | [`01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md`](./01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md) | [`../01.requirements/2026-06-02-current-local-gitops-platform.md`](../01.requirements/2026-06-02-current-local-gitops-platform.md) | Mixed current/old expansion PRD replaced by current platform baseline. |
+| `docs/01.requirements/2026-03-27-wsl-k3d-argocd-platform.md` | [`01.requirements/2026-03-27-wsl-k3d-argocd-platform.md`](./01.requirements/2026-03-27-wsl-k3d-argocd-platform.md) | [`../01.requirements/004-current-local-gitops-platform.md`](../01.requirements/004-current-local-gitops-platform.md) | Old baseline PRD replaced by current repo-backed platform baseline. |
+| `docs/01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md` | [`01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md`](./01.requirements/2026-03-28-wsl2-k3d-argocd-ha-platform.md) | [`../01.requirements/004-current-local-gitops-platform.md`](../01.requirements/004-current-local-gitops-platform.md) | Old endpoint/bootstrap requirement replaced by current `172.18.x` GitOps contract. |
+| `docs/01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md` | [`01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md`](./01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md) | [`../01.requirements/004-current-local-gitops-platform.md`](../01.requirements/004-current-local-gitops-platform.md) | Mixed current/old expansion PRD replaced by current platform baseline. |
 
 ### 02.architecture
 

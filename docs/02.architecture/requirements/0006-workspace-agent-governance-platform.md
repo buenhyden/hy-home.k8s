@@ -114,7 +114,7 @@ The governance architecture has five layers:
 
 ## Related Documents
 
-- **PRD**: [../../01.requirements/2026-06-01-workspace-agent-governance-platform.md](../../01.requirements/2026-06-01-workspace-agent-governance-platform.md)
+- **PRD**: [../../01.requirements/003-workspace-agent-governance-platform.md](../../01.requirements/003-workspace-agent-governance-platform.md)
 - **ADR**: [../decisions/0013-stage-00-canonical-adapter-model.md](../decisions/0013-stage-00-canonical-adapter-model.md)
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Plan**: [../../04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md](../../04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md)

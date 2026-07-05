@@ -42,7 +42,7 @@ scope.
 
 ## Related Inputs
 
-- **PRD**: [`../../01.requirements/2026-05-17-argo-notifications-slack.md`](../../01.requirements/2026-05-17-argo-notifications-slack.md)
+- **PRD**: [`../../01.requirements/002-argo-notifications-slack.md`](../../01.requirements/002-argo-notifications-slack.md)
 - **ARD**: [`../../02.architecture/requirements/0005-argo-notifications-slack.md`](../../02.architecture/requirements/0005-argo-notifications-slack.md)
 - **Related ADRs**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md), [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md)
 
@@ -193,7 +193,7 @@ kubectl -n argocd logs deploy/argocd-notifications-controller --tail=50 | grep -
 
 ## Related Documents
 
-- **PRD**: [`../../01.requirements/2026-05-17-argo-notifications-slack.md`](../../01.requirements/2026-05-17-argo-notifications-slack.md)
+- **PRD**: [`../../01.requirements/002-argo-notifications-slack.md`](../../01.requirements/002-argo-notifications-slack.md)
 - **ARD**: [`../../02.architecture/requirements/0005-argo-notifications-slack.md`](../../02.architecture/requirements/0005-argo-notifications-slack.md)
 - **Related ADRs**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md), [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md)
 - **Plan**: [`../../04.execution/plans/2026-05-18-argo-notifications-slack.md`](../../04.execution/plans/2026-05-18-argo-notifications-slack.md)
