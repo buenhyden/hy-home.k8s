@@ -123,7 +123,7 @@ When a skill suggests one of these paths, reroute the output into the canonical 
 
 #### `agent-memory-systems`
 
-- Feature-specific memory or context strategy belongs in `docs/03.specs/<feature-id>/agent-design.md`.
+- Feature-specific memory or context strategy belongs in `docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md`.
 - Reusable memory-system concepts belong in `docs/90.references/data/<topic>.md`.
 
 #### `agent-md-refactor`

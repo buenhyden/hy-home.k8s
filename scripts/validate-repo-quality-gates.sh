@@ -1028,14 +1028,14 @@ for scan_root in active_doc_roots:
                 fail(f"active document template residue in {rel(path)}:{line_number}")
 
 documented_stage_routes = [
-    ("docs/01.requirements/YYYY-MM-DD-<feature-or-system>.md", "prd.template.md"),
+    ("docs/01.requirements/<###-Numbering>-<feature-or-system>.md", "prd.template.md"),
     ("docs/02.architecture/requirements/####-<system-or-domain>.md", "ard.template.md"),
     ("docs/02.architecture/decisions/####-<short-title>.md", "adr.template.md"),
-    ("docs/03.specs/<feature-id>/spec.md", "spec.template.md"),
-    ("docs/03.specs/<feature-id>/api-spec.md", "api-spec.template.md"),
-    ("docs/03.specs/<feature-id>/agent-design.md", "agent-design.template.md"),
-    ("docs/03.specs/<feature-id>/data-model.md", "data-model.template.md"),
-    ("docs/03.specs/<feature-id>/tests.md", "tests.template.md"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/spec.md", "spec.template.md"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md", "api-spec.template.md"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md", "agent-design.template.md"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/data-model.md", "data-model.template.md"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/tests.md", "tests.template.md"),
     ("docs/04.execution/plans/YYYY-MM-DD-<feature>.md", "plan.template.md"),
     ("docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md", "task.template.md"),
     ("docs/05.operations/guides/####-<topic>.md", "guide.template.md"),
@@ -1047,9 +1047,9 @@ documented_stage_routes = [
     ("docs/98.archive/**/*.md", "archive-tombstone.template.md"),
 ]
 native_contract_routes = {
-    ("docs/03.specs/<feature-id>/contracts/openapi.yaml", "openapi.template.yaml"),
-    ("docs/03.specs/<feature-id>/contracts/schema.graphql", "schema.template.graphql"),
-    ("docs/03.specs/<feature-id>/contracts/service.proto", "service.template.proto"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/openapi.yaml", "openapi.template.yaml"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/schema.graphql", "schema.template.graphql"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/service.proto", "service.template.proto"),
 }
 
 
@@ -1057,7 +1057,8 @@ def documented_target_to_validator_glob(target_pattern: str) -> str:
     if target_pattern == "docs/90.references/<category>/<topic>.md":
         return "docs/90.references/**/*.md"
     replacements = [
-        ("YYYY-MM-DD-<feature-or-system>", "*"),
+        ("<###-Numbering>-<feature-or-system>", "[0-9][0-9][0-9]-*"),
+        ("<###-Numbering>-<feature-id>", "[0-9][0-9][0-9]-*"),
         ("YYYY-MM-DD-<feature-or-stream>", "*"),
         ("YYYY-MM-DD-<feature>", "*"),
         ("####-<policy-or-standard>", "*"),
@@ -1066,7 +1067,6 @@ def documented_target_to_validator_glob(target_pattern: str) -> str:
         ("####-<topic>", "*"),
         ("INC-###-<title>", "INC-[0-9][0-9][0-9]-*"),
         ("YYYY", "[0-9][0-9][0-9][0-9]"),
-        ("<feature-id>", "*"),
     ]
     normalized = target_pattern
     for old, new in replacements:

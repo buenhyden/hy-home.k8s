@@ -18,7 +18,7 @@ This protocol defines how governance references authored docs and how language b
 - Generated documents must use the canonical stage tree only.
 - Use [document-stage-routing.md](./document-stage-routing.md) for path selection and skill-specific rerouting rules.
 - Do not create parallel authored trees such as `docs/superpowers/**`.
-- Do not place API contract docs under `docs/api/**`; keep them under `docs/03.specs/<feature-id>/`.
+- Do not place API contract docs under `docs/api/**`; keep them under `docs/03.specs/<###-Numbering>-<feature-id>/`.
 
 ## Template Enforcement Policy
 
@@ -32,7 +32,7 @@ This protocol defines how governance references authored docs and how language b
   They route readers to the canonical support, governance, operations,
   workflow, validator, GitOps, policy-as-code, or manifest owner.
 - PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook, Incident, Postmortem, Reference, and Archive Tombstone documents must use their stage-specific templates from `docs/99.templates/`.
-- `docs/03.specs/<feature-id>/api-spec.md`, `agent-design.md`, `data-model.md`, and `tests.md` must use their matching helper templates.
+- `docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md`, `agent-design.md`, `data-model.md`, and `tests.md` must use their matching helper templates.
 - Every non-README authored Markdown file under stage roots must match exactly one structural template mapping in `docs/99.templates/README.md` and `scripts/validate-repo-quality-gates.sh`; an uncovered path is incomplete.
 - New authored documents must keep `status: draft` until a human promotes the lifecycle state.
 - The canonical `owner` value for all authored documents in this repository is `platform`. Do not use deprecated team-owner values.
