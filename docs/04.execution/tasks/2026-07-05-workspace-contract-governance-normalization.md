@@ -229,9 +229,8 @@ git commit -m "docs(governance): Normalize document contract drift"
 - WCGN-004 owns CI/CD, QA, formatting, linting, syntax, automation, workflow,
   and security wording remediation.
 - WCGN-005 owns final validator coverage, final validation, and progress memory
-  closure. WCGN-001 does not update
-  `docs/00.agent-governance/memory/progress.md` because the Task 1 write set
-  explicitly excludes Stage 00 files.
+  closure. Progress memory remains deferred to WCGN-005 under the plan's
+  ownership boundary for WCGN-001 through WCGN-004.
 
 ## Related Documents
 
