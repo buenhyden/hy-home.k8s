@@ -1,7 +1,7 @@
 ---
 title: 'Control Surface and Cloud Example Documentation Normalization Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-07-06
 ---
@@ -98,14 +98,14 @@ profile for `examples/aws/docs/**` and `examples/azure/docs/**`.
 
 ## Completion Criteria
 
-- [ ] Scoped work completed.
-- [ ] Example-local SDLC snapshot route documented and validated.
-- [ ] Control-surface README and GitHub-native Markdown frontmatter-free
+- [x] Scoped work completed.
+- [x] Example-local SDLC snapshot route documented and validated.
+- [x] Control-surface README and GitHub-native Markdown frontmatter-free
   boundary preserved.
-- [ ] AWS and Azure example docs normalized or explicitly deferred with
+- [x] AWS and Azure example docs normalized or explicitly deferred with
   evidence.
-- [ ] Required validation passed.
-- [ ] Task record and progress memory updated.
+- [x] Required validation passed.
+- [x] Task record and progress memory updated.
 
 ## Related Documents
 

@@ -1,7 +1,7 @@
 ---
 title: 'Task: Control Surface and Cloud Example Documentation Normalization'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-07-06
 ---
@@ -37,10 +37,10 @@ approved spec and plan traceable to concrete commits and validation evidence.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | CCDN-001 | Establish spec, plan, task, README indexes, and progress memory. | doc | Core Design | PLN-001 | Committed in `0837de5`; `git diff --check`; `bash scripts/validate-repo-quality-gates.sh .`. | platform | Done |
 | CCDN-002 | Update Stage 99, Stage 00, and validator route contracts for example-local SDLC snapshot docs. | doc/test | Contracts; Core Design | PLN-002 | Contract docs updated; validator now enforces example-local frontmatter, `Overview`, `Snapshot Boundary`, `Related Documents`, and stale duplicate heading bans; `git diff --check`; `bash -n scripts/validate-repo-quality-gates.sh`; `bash scripts/validate-repo-quality-gates.sh .`. | platform | Done |
-| CCDN-003 | Normalize active control-surface routing text while preserving frontmatter-free README/GitHub-native boundaries. | doc | Control-Surface Config Contract | PLN-003 | Pending README/GitHub-native scan and repo-quality gate. | platform | Todo |
+| CCDN-003 | Normalize active control-surface routing text while preserving frontmatter-free README/GitHub-native boundaries. | doc | Control-Surface Config Contract | PLN-003 | README/GitHub-native boundaries preserved and enforced by repo-quality; `.github/PULL_REQUEST_TEMPLATE.md`, `examples/README.md`, Stage 00, and Stage 99 route owners were aligned. | platform | Done |
 | CCDN-004 | Normalize AWS example-local SDLC snapshot docs. | doc | Example-Local SDLC Snapshot Contract | PLN-004 | AWS non-README docs now have role-appropriate frontmatter, `Snapshot Boundary`, `Related Documents`, and type-specific required sections; repo-quality now enforces the same route. | platform | Done |
 | CCDN-005 | Normalize Azure example-local SDLC snapshot docs. | doc | Example-Local SDLC Snapshot Contract | PLN-005 | Azure non-README docs now have role-appropriate frontmatter, `Snapshot Boundary`, `Related Documents`, and type-specific required sections; repo-quality now enforces the same route. | platform | Done |
-| CCDN-006 | Close validation and execution evidence. | test/doc | Verification Commands | PLN-006 | Pending final validation bundle and task/progress update. | platform | Todo |
+| CCDN-006 | Close validation and execution evidence. | test/doc | Verification Commands | PLN-006 | Final validation bundle passed: diff check, repo-quality, manifest syntax with optional kube-linter skip, secret scan, and policy fallback. | platform | Done |
 
 ## Suggested Types
 
@@ -64,13 +64,13 @@ approved spec and plan traceable to concrete commits and validation evidence.
 
 ### Phase 2
 
-- [ ] CCDN-003 Normalize active control-surface routing text.
+- [x] CCDN-003 Normalize active control-surface routing text.
 - [x] CCDN-004 Normalize AWS example-local docs.
 - [x] CCDN-005 Normalize Azure example-local docs.
 
 ### Phase 3
 
-- [ ] CCDN-006 Close validation and evidence.
+- [x] CCDN-006 Close validation and evidence.
 
 ## Verification Summary
 
@@ -89,11 +89,22 @@ approved spec and plan traceable to concrete commits and validation evidence.
   - `bash scripts/validate-repo-quality-gates.sh .`: pass,
     `[PASS] repository quality gates passed` after validator enforcement for
     example-local type-specific sections.
-  - Pending: `bash scripts/validate-k8s-manifests.sh .`
-  - Pending: `bash scripts/check-secret-handling.sh .`
-  - Pending: `bash scripts/validate-policy-gates.sh .`
+  - `git diff --check`: pass, no output for the final closure state.
+  - `bash -n scripts/validate-repo-quality-gates.sh`: pass, no output for the
+    final closure state.
+  - `bash scripts/validate-repo-quality-gates.sh .`: pass,
+    `[PASS] repository quality gates passed` for the final closure state.
+  - `bash scripts/validate-k8s-manifests.sh .`: pass; 104 YAML files parsed,
+    optional `kube-linter` not installed and explicitly skipped.
+  - `bash scripts/check-secret-handling.sh .`: pass; 100 files scanned with no
+    plaintext secret patterns found.
+  - `bash scripts/validate-policy-gates.sh .`: pass; optional `conftest` not
+    installed and built-in policy fallback passed.
 - **Eval Commands**:
-  - Pending self-review against the parent spec.
+  - Manual self-review against the parent spec: pass; README/GitHub-native
+    frontmatter-free boundaries, example-local SDLC snapshot routing,
+    type-specific sections, and repository-static validation evidence are
+    recorded.
 - **Logs / Evidence Location**:
   - This task record.
   - `docs/00.agent-governance/memory/progress.md`

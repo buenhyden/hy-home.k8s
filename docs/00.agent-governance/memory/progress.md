@@ -8223,7 +8223,7 @@ section separating static from live evidence.
 
 - **Date**: 2026-07-06
 - **Layer**: docs, qa, governance
-- **Status**: in-progress
+- **Status**: completed
 - **Tags**: #documentation #frontmatter #validation #cloud-examples
 
 ### Progress
@@ -8242,6 +8242,8 @@ section separating static from live evidence.
 - Strengthened `scripts/validate-repo-quality-gates.sh` so example-local
   snapshot docs must satisfy the routed `sdlc/*` type's required headings plus
   `Snapshot Boundary` and dated snapshot wording.
+- Closed the Stage 04 plan/task evidence after the final repo-static QA,
+  manifest, secret, and policy validation bundle.
 
 ### Memory
 
@@ -8274,8 +8276,20 @@ section separating static from live evidence.
   - `bash -n scripts/validate-repo-quality-gates.sh` PASS.
   - `bash scripts/validate-repo-quality-gates.sh .` PASS with
     `[PASS] repository quality gates passed`.
+- Final validation bundle:
+  - `git diff --check` PASS.
+  - `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+  - `bash scripts/validate-repo-quality-gates.sh .` PASS with
+    `[PASS] repository quality gates passed`.
+  - `bash scripts/validate-k8s-manifests.sh .` PASS; 104 YAML files parsed and
+    optional `kube-linter` was explicitly skipped because it is not installed.
+  - `bash scripts/check-secret-handling.sh .` PASS; 100 files scanned and no
+    plaintext secret patterns found.
+  - `bash scripts/validate-policy-gates.sh .` PASS; optional `conftest` was
+    not installed and the built-in policy fallback passed.
 
 ### Handoff
 
-- Continue with CCDN-003 control-surface closure and CCDN-006 final validation
-  bundle.
+- This scoped branch is complete. `docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`
+  and `sessions/` remain untracked pre-existing files and were intentionally
+  left untouched.
