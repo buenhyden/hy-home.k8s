@@ -1,7 +1,7 @@
 ---
 title: 'Stage 03/04 Repo-Static Gap Closure Implementation Plan'
 type: sdlc/plan
-status: draft
+status: done
 owner: platform
 updated: 2026-07-06
 ---
@@ -531,12 +531,12 @@ git commit -m "docs(tasks): Record Stage 03 04 repo-static gap closure"
 
 ## Completion Criteria
 
-- [ ] Stage 04 task record exists and is indexed.
-- [ ] Stage 03/04 gaps are classified by evidence lane.
-- [ ] WER repo-static lifecycle drift is closed.
-- [ ] Operator-approved follow-up is recorded separately.
-- [ ] Final validation bundle passes.
-- [ ] Progress memory records completion and untouched pre-existing files.
+- [x] Stage 04 task record exists and is indexed.
+- [x] Stage 03/04 gaps are classified by evidence lane.
+- [x] WER repo-static lifecycle drift is closed.
+- [x] Operator-approved follow-up is recorded separately.
+- [x] Final validation bundle passes.
+- [x] Progress memory records completion and untouched pre-existing files.
 
 ## Related Documents
 

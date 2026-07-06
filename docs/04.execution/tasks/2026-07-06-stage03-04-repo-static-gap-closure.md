@@ -1,7 +1,7 @@
 ---
 title: 'Task: Stage 03/04 Repo-Static Gap Closure'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-07-06
 ---
@@ -48,7 +48,7 @@ settings, or provider mutation.
 | S34-002 | Classify Stage 03/04 gaps by evidence lane. | eval | VAL-SPC-023-001, VAL-SPC-023-003 | S34-PLN-002 | Gap ledger separates repo-static and operator-approved work. | platform | Done |
 | S34-003 | Close WER repo-static lifecycle drift. | doc | VAL-SPC-023-002 | S34-PLN-003 | WER plan/task/index statuses and completion criteria align. | platform | Done |
 | S34-004 | Record operator-approved follow-up ledger. | ops | VAL-SPC-023-003 | S34-PLN-004 | Live/runtime and remote-required items are routed without mutation. | platform | Done |
-| S34-005 | Close validation and handoff evidence. | test | VAL-SPC-023-004, VAL-SPC-023-005 | S34-PLN-005 | Final validation bundle passes. | platform | Todo |
+| S34-005 | Close validation and handoff evidence. | test | VAL-SPC-023-004, VAL-SPC-023-005 | S34-PLN-005 | Final validation bundle passes. | platform | Done |
 
 ## Suggested Types
 
@@ -72,7 +72,7 @@ settings, or provider mutation.
 ### Phase 3: Follow-up Routing and Closure
 
 - [x] S34-004 Record operator-approved follow-up ledger.
-- [ ] S34-005 Close validation and handoff evidence.
+- [x] S34-005 Close validation and handoff evidence.
 
 ## Gap Classification Ledger
 
@@ -155,6 +155,22 @@ settings, or provider mutation.
 - No live cluster command, secret value inspection, remote GitHub settings
   change, provider mutation, push, publish, or merge action was performed.
 
+## Final Validation Bundle
+
+| Command | Result |
+| --- | --- |
+| `git diff --check` | PASS; no output. |
+| `bash -n scripts/validate-repo-quality-gates.sh` | PASS; no output. |
+| `bash scripts/validate-repo-quality-gates.sh .` | PASS; `[PASS] repository quality gates passed`. |
+| `bash scripts/validate-k8s-manifests.sh .` | PASS; 104 YAML files parsed and optional `kube-linter` was skipped because it is not installed. |
+| `bash scripts/check-secret-handling.sh .` | PASS; 100 files scanned and no plaintext secret patterns found. |
+| `bash scripts/validate-policy-gates.sh .` | PASS; optional `conftest` was not installed and the built-in policy fallback passed. |
+
+Final boundary: WER repo-static drift is closed, operator-approved follow-up is
+separate, and the pre-existing untracked
+`docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`
+and `sessions/` paths remain untouched.
+
 ## Verification Summary
 
 - **Test Commands**:
@@ -175,6 +191,16 @@ settings, or provider mutation.
   - S34-004 validation: `git diff --check` PASS.
   - S34-004 validation: `bash scripts/validate-repo-quality-gates.sh .` PASS
     with `[PASS] repository quality gates passed`.
+  - S34-005 final validation bundle PASS:
+    - `git diff --check`
+    - `bash -n scripts/validate-repo-quality-gates.sh`
+    - `bash scripts/validate-repo-quality-gates.sh .`
+    - `bash scripts/validate-k8s-manifests.sh .`
+    - `bash scripts/check-secret-handling.sh .`
+    - `bash scripts/validate-policy-gates.sh .`
+  - S34-005 closure validation after status/index updates PASS:
+    - `git diff --check`
+    - `bash scripts/validate-repo-quality-gates.sh .`
 - **Logs / Evidence Location**:
   - This task record, Stage 04 README index, and progress memory entry.
 

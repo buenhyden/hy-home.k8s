@@ -7313,7 +7313,7 @@ section separating static from live evidence.
 
 - **Date**: 2026-07-04
 - **Layer**: docs, governance, templates, qa
-- **Status**: in-progress
+- **Status**: completed
 - **Tags**: #docs #governance #templates #validation
 
 ### Progress
@@ -8314,6 +8314,10 @@ section separating static from live evidence.
 - Began the Stage 04 task record for classifying Stage 03/04 gaps and closing
   repository-local evidence drift.
 - Established the no-live/no-secret/no-remote boundary for this pass.
+- Closed WER repo-static lifecycle drift and left runtime/operator follow-up
+  explicitly outside implementation evidence.
+- Closed the Stage 04 plan/task records and README indexes after final
+  validation.
 
 ### Memory
 
@@ -8357,8 +8361,27 @@ section separating static from live evidence.
   - `git diff --check` PASS.
   - `bash scripts/validate-repo-quality-gates.sh .` PASS with
     `[PASS] repository quality gates passed`.
+- Final validation bundle passed:
+  - `git diff --check` PASS.
+  - `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+  - `bash scripts/validate-repo-quality-gates.sh .` PASS with
+    `[PASS] repository quality gates passed`.
+  - `bash scripts/validate-k8s-manifests.sh .` PASS; 104 YAML files parsed and
+    optional `kube-linter` was skipped because it is not installed.
+  - `bash scripts/check-secret-handling.sh .` PASS; 100 files scanned and no
+    plaintext secret patterns found.
+  - `bash scripts/validate-policy-gates.sh .` PASS; optional `conftest` was
+    not installed and the built-in policy fallback passed.
+- Pre-existing untracked
+  `docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`
+  and `sessions/` remained untouched.
+- Closure validation after status and README index updates passed:
+  - `git diff --check` PASS.
+  - `bash scripts/validate-repo-quality-gates.sh .` PASS with
+    `[PASS] repository quality gates passed`.
 
 ### Handoff
 
-- Continue with S34-002 classification, then close the WER lifecycle drift and
-  route runtime/operator-only items without external mutation.
+- This repo-static Stage 03/04 gap-closure pass is complete. Operator-approved
+  follow-up remains separate for live/runtime, secret, remote, and provider
+  actions.
