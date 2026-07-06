@@ -77,6 +77,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-07-05-workspace-engineering-implementation-audit-pack.md
 ├── 2026-07-05-workspace-contract-governance-normalization.md
 ├── 2026-07-06-sdlc-lifecycle-contract.md
+├── 2026-07-06-control-cloud-doc-normalization.md
 └── README.md
 ```
 
@@ -139,6 +140,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-07-05-template-path-numbering-contract.md`](./2026-07-05-template-path-numbering-contract.md) | Template path numbering contract implementation plan for PRD numeric renames, Stage 03 numbered feature-folder routing, template/support/governance/validator updates, and validation closure. | Done | 2026-07-05 |
 | [`./2026-07-05-workspace-contract-governance-normalization.md`](./2026-07-05-workspace-contract-governance-normalization.md) | Workspace contract governance normalization implementation plan for `_workspace` staging, frontmatter/template/section drift, CI/CD and QA control surfaces, validator coverage, and evidence closure. | Done | 2026-07-06 |
 | [`./2026-07-06-sdlc-lifecycle-contract.md`](./2026-07-06-sdlc-lifecycle-contract.md) | SDLC lifecycle contract implementation plan for status transitions, numeric lineage, handoff links, archive tombstone metadata, active-surface limits, `_workspace` staging, and validator gates. | Done | 2026-07-06 |
+| [`./2026-07-06-control-cloud-doc-normalization.md`](./2026-07-06-control-cloud-doc-normalization.md) | Control surface and cloud example documentation normalization implementation plan for frontmatter-free control surfaces, example-local SDLC snapshot routes, AWS/Azure doc normalization, and validation closure. | Active | 2026-07-06 |
 
 ## Related Documents
 

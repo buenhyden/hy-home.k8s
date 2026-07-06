@@ -8216,3 +8216,41 @@ section separating static from live evidence.
 - `docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`
   and `sessions/` were untracked before this task and were intentionally left
   untouched.
+
+## 2026-07-06 - Control surface and cloud example documentation normalization
+
+### Metadata
+
+- **Date**: 2026-07-06
+- **Layer**: docs, qa, governance
+- **Status**: in-progress
+- **Tags**: #documentation #frontmatter #validation #cloud-examples
+
+### Progress
+
+- Created the Stage 03 specification, Stage 04 implementation plan, and Stage
+  04 task record for the approved combined scope.
+- Fixed the design boundary before implementation: README and GitHub-native
+  Markdown remain frontmatter-free, while AWS/Azure cloud example docs are
+  promoted to an example-local SDLC snapshot route.
+- Recorded official external source basis for GitHub Actions, Kubernetes
+  Kustomize, Argo CD declarative setup, OPA/Conftest, and External Secrets
+  Operator.
+
+### Memory
+
+- Cloud example docs should not oscillate between unmanaged snapshots and main
+  `docs/01` through `docs/05` lifecycle documents. Keep them under
+  `examples/<provider>/docs/**` with explicit example-local SDLC snapshot
+  routing, frontmatter, and provider-freshness boundaries.
+- README and GitHub-native Markdown are still control and routing surfaces, not
+  metadata-bearing authored SDLC documents.
+
+### Evidence
+
+- Pending first validation after the initial design/tracking commit.
+
+### Handoff
+
+- Continue with CCDN-002: update Stage 99, Stage 00, and validator route
+  contracts for example-local SDLC snapshot docs.

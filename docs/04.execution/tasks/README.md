@@ -82,6 +82,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-07-05-workspace-contract-governance-normalization.md
 ├── 2026-07-05-workspace-engineering-implementation-audit-pack.md
 ├── 2026-07-06-sdlc-lifecycle-contract.md
+├── 2026-07-06-control-cloud-doc-normalization.md
 └── README.md
 ```
 
@@ -146,6 +147,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-07-05-workspace-contract-governance-normalization.md`](./2026-07-05-workspace-contract-governance-normalization.md) | `_workspace` staging, frontmatter/template drift, CI/CD와 QA control-surface baseline inventory를 추적하는 workspace contract governance normalization Task | Done | 2026-07-06 |
 | [`./2026-07-05-workspace-engineering-implementation-audit-pack.md`](./2026-07-05-workspace-engineering-implementation-audit-pack.md) | Workspace engineering implementation audit pack evidence for dated Stage 90 audit folderization, part-based implementation reports, automation opportunities, and validation closure. | Done | 2026-07-05 |
 | [`./2026-07-06-sdlc-lifecycle-contract.md`](./2026-07-06-sdlc-lifecycle-contract.md) | SDLC lifecycle, numbering, archive metadata, active-surface, `_workspace`, and deterministic validation contract implementation evidence. | Done | 2026-07-06 |
+| [`./2026-07-06-control-cloud-doc-normalization.md`](./2026-07-06-control-cloud-doc-normalization.md) | Control surface and cloud example documentation normalization evidence for frontmatter-free control surfaces, example-local SDLC snapshot routes, AWS/Azure docs, and repository-static validation. | Active | 2026-07-06 |
 
 ## Related Documents
 

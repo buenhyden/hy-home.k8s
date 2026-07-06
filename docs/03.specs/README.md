@@ -78,6 +78,8 @@ Spec은 실행 기준을 소유하는 문서다.
 │   └── spec.md
 ├── 021-sdlc-lifecycle-contract/
 │   └── spec.md
+├── 022-control-cloud-doc-normalization/
+│   └── spec.md
 └── README.md
 ```
 
@@ -129,6 +131,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./019-template-path-numbering-contract/spec.md`](./019-template-path-numbering-contract/spec.md) | Template path numbering contract specification | Draft | `docs/01.requirements/` PRD numeric filename contract와 `docs/03.specs/` numbered feature-folder contract를 template/support/governance/validator surfaces에 맞춰 정규화하는 설계를 정의한다. | 2026-07-05 |
 | [`./020-workspace-contract-governance-normalization/spec.md`](./020-workspace-contract-governance-normalization/spec.md) | Workspace contract governance normalization specification | Draft | `_workspace` repo-support staging 계약과 repo-wide frontmatter, section, template, governance, CI/CD, QA, validation drift 감사 및 표적 정규화 설계를 정의한다. | 2026-07-05 |
 | [`./021-sdlc-lifecycle-contract/spec.md`](./021-sdlc-lifecycle-contract/spec.md) | SDLC lifecycle contract specification | Draft | `01.requirements -> 02.architecture -> 03.specs -> 04.execution` 흐름의 상태 전이, 번호, handoff, archive metadata, active-surface 제한, `_workspace` staging 경계를 하나의 검증 가능한 계약으로 정의한다. | 2026-07-06 |
+| [`./022-control-cloud-doc-normalization/spec.md`](./022-control-cloud-doc-normalization/spec.md) | Control surface and cloud example documentation normalization specification | Draft | `.github`, `examples`, `gitops`, `infrastructure`, `policy`, `scripts`, `secrets`, `tests`, `traefik` control surface와 AWS/Azure example-local SDLC snapshot 문서의 route/frontmatter/section/validation 정규화 설계를 정의한다. | 2026-07-06 |
 
 ## Helper Templates
 
