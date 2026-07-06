@@ -50,7 +50,8 @@ Out of scope:
 |-- provider-implementation-status.md       # Current
 |-- spec-sdlc-ci-qa-formatting.md           # Current
 |-- kubernetes-infrastructure-security.md   # Current
-`-- automation-pipeline-workflow-qa.md      # Current
+|-- automation-pipeline-workflow-qa.md      # Current
+`-- ai-agents-roster-and-gap-analysis.md    # Current
 ```
 
 ## Source Priority
@@ -106,14 +107,15 @@ This README's link basis is
 
 ## Pack Index
 
-| Reference | Status | Role | Authority Boundary |
-| --- | --- | --- | --- |
-| [workspace-governance-baseline.md](workspace-governance-baseline.md) | Current | Repo-backed workspace governance baseline reference | Descriptive summary only; active governance remains in Stage 00 owners |
-| [harness-and-loop-engineering.md](harness-and-loop-engineering.md) | Current | Harness and feedback-loop engineering reference | Descriptive source snapshot only; does not define runtime procedure |
-| [provider-implementation-status.md](provider-implementation-status.md) | Current | Provider capability and local adapter status reference | Distinguishes provider capability from repo implementation; does not change provider config |
-| [spec-sdlc-ci-qa-formatting.md](spec-sdlc-ci-qa-formatting.md) | Current | Spec, SDLC, CI, QA, formatting, and validation reference | Descriptive reference only; active gates stay with canonical owners |
-| [kubernetes-infrastructure-security.md](kubernetes-infrastructure-security.md) | Current | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security reference | Descriptive reference only; no live checks or active security policy changes |
-| [automation-pipeline-workflow-qa.md](automation-pipeline-workflow-qa.md) | Current | Automation, pipeline, workflow, CI job graph, validation-loop, and QA evidence reference | Descriptive reference only; no CI workflow or runtime changes |
+| Reference                                                                      | Status  | Role                                                                                      | Authority Boundary                                                                          |
+| ------------------------------------------------------------------------------ | ------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| [workspace-governance-baseline.md](workspace-governance-baseline.md)           | Current | Repo-backed workspace governance baseline reference                                       | Descriptive summary only; active governance remains in Stage 00 owners                      |
+| [harness-and-loop-engineering.md](harness-and-loop-engineering.md)             | Current | Harness and feedback-loop engineering reference                                           | Descriptive source snapshot only; does not define runtime procedure                         |
+| [provider-implementation-status.md](provider-implementation-status.md)         | Current | Provider capability and local adapter status reference                                    | Distinguishes provider capability from repo implementation; does not change provider config |
+| [spec-sdlc-ci-qa-formatting.md](spec-sdlc-ci-qa-formatting.md)                 | Current | Spec, SDLC, CI, QA, formatting, and validation reference                                  | Descriptive reference only; active gates stay with canonical owners                         |
+| [kubernetes-infrastructure-security.md](kubernetes-infrastructure-security.md) | Current | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security reference | Descriptive reference only; no live checks or active security policy changes                |
+| [automation-pipeline-workflow-qa.md](automation-pipeline-workflow-qa.md)       | Current | Automation, pipeline, workflow, CI job graph, validation-loop, and QA evidence reference  | Descriptive reference only; no CI workflow or runtime changes                               |
+| [ai-agents-roster-and-gap-analysis.md](ai-agents-roster-and-gap-analysis.md)   | Current | Workspace agent roster snapshot, external agent-catalog market scan, and gap analysis     | Descriptive reference only; roster and tier policy stay with Stage 00 owners                |
 
 ## Authority Boundary
 
@@ -131,7 +133,7 @@ adapter files instead of encoding active policy here.
 ## Review and Freshness
 
 - Review cadence: on source or structure change
-- Last reviewed: 2026-07-05
+- Last reviewed: 2026-07-06
 - Next review trigger: pack structure changes, reference status changes,
   source-priority changes, parent Spec/Plan changes, or validation evidence
   changes.

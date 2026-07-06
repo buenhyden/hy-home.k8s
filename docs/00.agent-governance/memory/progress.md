@@ -8,6 +8,50 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-06 - AI agents roster and gap analysis research reference
+
+- **Date**: 2026-07-06
+- **Layer**: docs, governance-reference
+- **Status**: complete
+- **Tags**: #docs #research #agents #stage-90
+
+#### Progress
+
+- Added
+  `docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`
+  from the reference template: repo-backed workspace agent roster snapshot
+  (8 agents, two-tier model policy, triple provider adapters), a dated
+  non-authoritative market scan of `msitarzewski/agency-agents` (17
+  divisions, 230+ persona agents, no model/tools contract), an agent-file
+  contract comparison, and adopt/adapt/skip gap analysis.
+- Indexed the new reference in the dated pack README and the parent research
+  README (structure trees and index tables), and refreshed pack
+  `Last reviewed` to 2026-07-06.
+
+#### Memory
+
+- External agent catalogs cannot be imported as-is: local agents require
+  tier `model`, least-privilege `tools:`, scope `@import`, guardrails, and
+  postflight wiring; persona-memory blocks conflict with the progress-ledger
+  knowledge-store rule.
+- Addition candidates worth a future Stage 03 spec: observability (SRE/SLO)
+  worker and network (Traefik/ingress) worker; orchestration and
+  technical-writer catalog agents are covered by existing roster.
+
+#### Evidence
+
+- `git diff --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS with
+  `[PASS] repository quality gates passed`.
+- External source checks via GitHub API and raw fetches recorded with
+  `checked 2026-07-06` dates inside the reference `Sources` section.
+
+#### Handoff
+
+- Remaining scope for this research request: refresh confirmation for the
+  six existing WER references and any follow-up improvement edits flagged
+  during review.
+
 ### 2026-07-06 - Workspace contract governance normalization closure
 
 - **Date**: 2026-07-06
@@ -740,7 +784,7 @@ inventory stays in `scripts/README.md`.
   not installed and the built-in policy fallback passed.
 - `bash infrastructure/tests/verify-contracts-static.sh` — PASS.
 - RTK limitation repeated: `rtk` is not on PATH; `/home/hy/.local/bin/rtk
-  --version` works, but `/home/hy/.local/bin/rtk gain` cannot initialize its
+--version` works, but `/home/hy/.local/bin/rtk gain` cannot initialize its
   tracking database, so required validation commands were run directly.
 
 #### Handoff
@@ -794,7 +838,7 @@ inventory stays in `scripts/README.md`.
   validation used YAML syntax checks; optional `conftest` was not installed
   and policy validation used the built-in fallback. Both fallback paths passed.
 - RTK limitation repeated: `rtk` is not on PATH; `/home/hy/.local/bin/rtk
-  --version` works, but `/home/hy/.local/bin/rtk gain` cannot initialize its
+--version` works, but `/home/hy/.local/bin/rtk gain` cannot initialize its
   tracking database, so required validation commands were run directly.
 
 #### Handoff
@@ -1456,13 +1500,13 @@ inventory stays in `scripts/README.md`.
 - Plan/task self-review confirmed no placeholder markers and six independent
   logical units for subagent-driven execution.
 - Plan creation validation: `git diff --check` — PASS; `bash
-  scripts/generate-llm-wiki-index.sh --check` — PASS; `bash
-  scripts/validate-repo-quality-gates.sh .` — PASS.
+scripts/generate-llm-wiki-index.sh --check` — PASS; `bash
+scripts/validate-repo-quality-gates.sh .` — PASS.
 - T-002 manual matrix review — PASS; compared the governance benchmark against
   repo-backed evidence for purpose, rules, provider adapters, templates,
   scripts, CI/CD QA lanes, approval boundaries, and automation opportunities.
 - T-002 validation: `git diff --check` — PASS; `bash
-  scripts/validate-repo-quality-gates.sh .` — PASS.
+scripts/validate-repo-quality-gates.sh .` — PASS.
 - RTK limitation observed: `which rtk` did not find `rtk`; direct
   `/home/hy/.local/bin/rtk --version` reported `rtk 0.34.3`; `rtk gain` could
   not initialize its tracking database, so required task commands were run
@@ -1471,8 +1515,8 @@ inventory stays in `scripts/README.md`.
   subagent-assisted spec and quality checks. The T-003 section-contract issue
   and T-005 stale README wording issue were remediated and re-reviewed.
 - Final T-006 validation: `git diff --check` — PASS; `bash
-  scripts/generate-llm-wiki-index.sh --check` — PASS; `bash
-  scripts/validate-repo-quality-gates.sh .` — PASS.
+scripts/generate-llm-wiki-index.sh --check` — PASS; `bash
+scripts/validate-repo-quality-gates.sh .` — PASS.
 - Progress singleton validation: `rg --files | rg '(^|/)progress\.md$'` —
   PASS; returned only `docs/00.agent-governance/memory/progress.md`.
 - Audit-pack status alignment scans — PASS; no audit-pack frontmatter remained
@@ -8155,7 +8199,7 @@ section separating static from live evidence.
 - `bash scripts/validate-repo-quality-gates.sh .` PASS with
   `[PASS] repository quality gates passed`.
 - RTK limitation repeated: `rtk` is not on PATH; `/home/hy/.local/bin/rtk
-  --version` works, but `/home/hy/.local/bin/rtk gain` cannot initialize its
+--version` works, but `/home/hy/.local/bin/rtk gain` cannot initialize its
   tracking database, so validation commands were run directly.
 
 ### Handoff
