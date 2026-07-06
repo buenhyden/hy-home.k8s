@@ -136,9 +136,10 @@ decision:
   memory, core mission, critical rules, domain frameworks, success metrics).
   There is no `model` tier field and no least-privilege `tools:` field.
 - Distribution model: files are copied into `~/.claude/agents/` for Claude
-  Code; `scripts/convert.sh` and `scripts/install.sh` generate and install
-  per-tool variants (Cursor, OpenCode, Copilot, Aider, Windsurf) using
-  `tools.json` as the tool-to-path/format map.
+  Code; the external repo's own convert and install helper scripts generate
+  and install per-tool variants (Cursor, OpenCode, Copilot, Aider, Windsurf)
+  using its `tools.json` as the tool-to-path/format map. These helpers live in
+  the upstream repository, not in this workspace.
 - Orchestration appears as catalog agents (`agents-orchestrator` in
   specialized, `studio-producer` in project-management) rather than as an
   enforced supervisor/worker tier model.

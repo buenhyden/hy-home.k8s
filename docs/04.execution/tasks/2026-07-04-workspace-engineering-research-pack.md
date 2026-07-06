@@ -3,7 +3,7 @@ title: 'Workspace Engineering Research Pack Task Record'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-05
+updated: 2026-07-06
 ---
 
 # Task: Workspace Engineering Research Pack Task Record
@@ -42,15 +42,16 @@ runtimes, credentials, secret values, or third-party systems.
 
 ## Task Table
 
-| Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
-| ------- | ----------- | ---- | --------------------- | ------------------- | --------------------- | ----- | ------ |
-| WER-001 | Create Stage 04 task evidence and baseline inventory | doc | VAL-SPC-001, VAL-SPC-006, VAL-SPC-007 | Task 1 | Baseline scans recorded; `git diff --check`; `bash scripts/validate-repo-quality-gates.sh .` | platform | Done |
-| WER-002 | Scaffold dated pack and move existing flat references | doc | VAL-SPC-001, VAL-SPC-002 | Task 2 | `git mv` evidence, stale flat-link scan, repo-quality gate | platform | Done |
-| WER-003 | Refresh workspace governance baseline | doc | VAL-SPC-003, VAL-SPC-004 | Task 3 | Required reference sections and repo-first evidence coverage | platform | Done |
-| WER-004 | Refresh harness, loop, and provider references | doc | VAL-SPC-004, VAL-SPC-005 | Task 4 | Official or primary source checks and provider-boundary review | platform | Done |
-| WER-005 | Refresh SDLC/CI/QA/formatting/security reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 5 | SDLC, CI/CD, QA, formatting, security, supply-chain, and workflow coverage | platform | Done |
-| WER-006 | Add Kubernetes, infrastructure, and security reference | doc | VAL-SPC-004, VAL-SPC-005 | Task 6 | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security coverage | platform | Done |
-| WER-007 | Add automation, pipeline, workflow, and QA reference; close indexes and validation | doc | VAL-SPC-002, VAL-SPC-004, VAL-SPC-006, VAL-SPC-007 | Task 7 | Automation reference coverage, index closure, stale-link scans, final validation, and no-mutation handoff | platform | Done |
+| Task ID | Description                                                                            | Type | Parent Spec / Section                              | Parent Plan / Phase | Validation / Evidence                                                                                              | Owner    | Status |
+| ------- | -------------------------------------------------------------------------------------- | ---- | -------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------ | -------- | ------ |
+| WER-001 | Create Stage 04 task evidence and baseline inventory                                   | doc  | VAL-SPC-001, VAL-SPC-006, VAL-SPC-007              | Task 1              | Baseline scans recorded; `git diff --check`; `bash scripts/validate-repo-quality-gates.sh .`                       | platform | Done   |
+| WER-002 | Scaffold dated pack and move existing flat references                                  | doc  | VAL-SPC-001, VAL-SPC-002                           | Task 2              | `git mv` evidence, stale flat-link scan, repo-quality gate                                                         | platform | Done   |
+| WER-003 | Refresh workspace governance baseline                                                  | doc  | VAL-SPC-003, VAL-SPC-004                           | Task 3              | Required reference sections and repo-first evidence coverage                                                       | platform | Done   |
+| WER-004 | Refresh harness, loop, and provider references                                         | doc  | VAL-SPC-004, VAL-SPC-005                           | Task 4              | Official or primary source checks and provider-boundary review                                                     | platform | Done   |
+| WER-005 | Refresh SDLC/CI/QA/formatting/security reference                                       | doc  | VAL-SPC-004, VAL-SPC-005                           | Task 5              | SDLC, CI/CD, QA, formatting, security, supply-chain, and workflow coverage                                         | platform | Done   |
+| WER-006 | Add Kubernetes, infrastructure, and security reference                                 | doc  | VAL-SPC-004, VAL-SPC-005                           | Task 6              | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security coverage                           | platform | Done   |
+| WER-007 | Add automation, pipeline, workflow, and QA reference; close indexes and validation     | doc  | VAL-SPC-002, VAL-SPC-004, VAL-SPC-006, VAL-SPC-007 | Task 7              | Automation reference coverage, index closure, stale-link scans, final validation, and no-mutation handoff          | platform | Done   |
+| WER-008 | Add AI agents roster and gap-analysis reference; index closure and human-approved push | doc  | VAL-SPC-002, VAL-SPC-004, VAL-SPC-005              | Follow-up           | Roster snapshot, external market-scan gap analysis, index closure, repo-static validation, and human-approved push | platform | Done   |
 
 ## Suggested Types
 
@@ -63,15 +64,15 @@ runtimes, credentials, secret values, or third-party systems.
 ### WER-001 Baseline
 
 - [x] Confirmed branch with `git status --short --branch`: current branch is
-  `codex/workspace-engineering-research-pack`; no short-status entries were
-  present at intake.
+      `codex/workspace-engineering-research-pack`; no short-status entries were
+      present at intake.
 - [x] Read the task template and parent Spec.
 - [x] Captured current research inventory.
 - [x] Captured current links to flat research references.
 - [x] Captured repo-first evidence categories for later reference refresh
-  tasks.
+      tasks.
 - [x] Created this task record, updated the task index, and updated the
-  progress ledger.
+      progress ledger.
 - [x] Ran required repo-static validation and committed WER-001 evidence.
 
 ### Remaining Research Pack Work
@@ -82,16 +83,18 @@ runtimes, credentials, secret values, or third-party systems.
 - [x] WER-005 SDLC/CI/QA/formatting/security reference refresh.
 - [x] WER-006 Kubernetes, infrastructure, and security reference.
 - [x] WER-007 automation, pipeline, workflow, QA reference plus final index,
-  evidence, progress, and validation closure.
+      evidence, progress, and validation closure.
+- [x] WER-008 AI agents roster and gap-analysis reference plus index closure,
+      progress ledger entry, validation, and human-approved push.
 
 ## Baseline Evidence Summary
 
 ### Branch and Template Intake
 
-| Evidence | Result |
-| --- | --- |
-| `git status --short --branch` | `## codex/workspace-engineering-research-pack`; worktree clean at intake. |
-| `docs/99.templates/templates/sdlc/execution/task.template.md` | Read; task documents are traceability-first, English, and require validation evidence. |
+| Evidence                                                        | Result                                                                                                                                             |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `git status --short --branch`                                   | `## codex/workspace-engineering-research-pack`; worktree clean at intake.                                                                          |
+| `docs/99.templates/templates/sdlc/execution/task.template.md`   | Read; task documents are traceability-first, English, and require validation evidence.                                                             |
 | `docs/03.specs/017-workspace-engineering-research-pack/spec.md` | Read; confirms documentation-only pack, dated research folder, source-priority rules, validation criteria, and no live/external mutation boundary. |
 
 ### Research Inventory
@@ -196,12 +199,12 @@ Summary:
 
 Moved with `git mv`:
 
-| Source | Destination |
-| --- | --- |
-| `docs/90.references/research/workspace-governance-baseline.md` | `docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md` |
-| `docs/90.references/research/harness-and-loop-engineering.md` | `docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md` |
+| Source                                                          | Destination                                                                    |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `docs/90.references/research/workspace-governance-baseline.md`  | `docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md`  |
+| `docs/90.references/research/harness-and-loop-engineering.md`   | `docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md`   |
 | `docs/90.references/research/provider-implementation-status.md` | `docs/90.references/research/2026-07-04-wer/provider-implementation-status.md` |
-| `docs/90.references/research/spec-sdlc-ci-qa-formatting.md` | `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md` |
+| `docs/90.references/research/spec-sdlc-ci-qa-formatting.md`     | `docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md`     |
 
 ### Index Updates
 
@@ -240,7 +243,7 @@ Summary:
   `docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md`
   as a dated, descriptive Stage 90 reference.
 - Updated frontmatter `updated: 2026-07-04`, `Source checked:
-  2026-07-04`, and freshness trigger language for governance, CI/CD, scripts,
+2026-07-04`, and freshness trigger language for governance, CI/CD, scripts,
   templates, provider adapters, security, and research pack structure changes.
 - Preserved the authority boundary: the reference summarizes canonical owners
   and does not redefine active governance policy, CI semantics, provider
@@ -509,35 +512,67 @@ Summary:
 - WER-007 task table status and phase-view checkbox were updated to `Done`
   and checked, respectively.
 
+## WER-008 Evidence Summary
+
+### AI Agents Roster and Gap Analysis Reference
+
+- Added
+  `docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`
+  with `updated: 2026-07-06`, `Source checked: 2026-07-06`, and
+  `Review and Freshness` metadata.
+- Recorded the repo-backed workspace agent roster (8 agents, two-tier model
+  policy, triple provider adapters) and the local agent-file contract from
+  `docs/00.agent-governance/harness-catalog.md`,
+  `docs/00.agent-governance/model-policy.md`, and `.claude/agents/`.
+- Captured a dated, non-authoritative market scan of the external
+  `msitarzewski/agency-agents` catalog (17 divisions, 230+ persona agents,
+  no `model`/`tools` contract) via read-only GitHub API and raw file fetches.
+- Added an agent-file contract comparison and an adopt/adapt/skip gap
+  analysis, routing all addition candidates through Stage 03 specs first.
+- Updated the dated pack README and parent research README index tables and
+  structure trees, and refreshed pack `Last reviewed` to 2026-07-06.
+
+### WER-008 Push Boundary Exception
+
+- WER working rules default to no push. For WER-008 the human operator
+  explicitly approved pushing this documentation change to the GitHub remote.
+- Push scope is limited to committed Stage 04 task, Stage 90 reference, and
+  Stage 00 progress documentation. No live Kubernetes, Argo CD, Vault, cloud,
+  provider runtime, credential, secret-value, paid-job, publishing, or merge
+  action was performed.
+
 ## Verification Summary
 
-| Date | Scope | Command | Result |
-| --- | --- | --- | --- |
-| 2026-07-04 | WER-001 intake | `git status --short --branch` | PASS; current branch is `codex/workspace-engineering-research-pack`; worktree clean at intake. |
-| 2026-07-04 | WER-001 inventory | Baseline scan commands listed above | PASS; inventory, stale flat-link candidates, and repo-first evidence categories captured. |
-| 2026-07-04 | WER-001 formatting | `git diff --check` | PASS. |
-| 2026-07-04 | WER-001 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
-| 2026-07-04 | WER-002 stale flat-link scan | Focused `rg` scan listed in WER-002 evidence | PASS; current consumer broken links were repaired, and remaining matches are historical-only command/path evidence. |
-| 2026-07-04 | WER-002 formatting | `git diff --check` | PASS. |
-| 2026-07-04 | WER-002 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
-| 2026-07-04 | WER-003 repo baseline source scan | Required WER-003 `rg` scan listed above | PASS; large output completed successfully and was summarized from focused canonical source inspection. |
-| 2026-07-04 | WER-003 required heading scan | `rg -n "^## (Overview\|Purpose\|Reference Type\|Authority Boundary\|Scope\|Definitions / Facts\|Sources\|Review and Freshness\|Related Documents)$" docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md` | PASS; all required reference headings present. |
-| 2026-07-04 | WER-003 formatting | `git diff --check` | PASS. |
-| 2026-07-04 | WER-003 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
-| 2026-07-04 | WER-004 reference scan | Required WER-004 `rg` scan listed above | PASS; 214 matching lines across the refreshed harness/loop and provider references. |
-| 2026-07-04 | WER-004 formatting | `git diff --check` | PASS. |
-| 2026-07-04 | WER-004 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
-| 2026-07-05 | WER-005 reference scan | Required WER-005 `rg` scan listed above | PASS; WER-005 refreshed source date, official source families, supply-chain terms, formatting terms, non-authoritative language, and freshness heading were present. |
-| 2026-07-05 | WER-005 formatting | `git diff --check` | PASS. |
-| 2026-07-05 | WER-005 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
-| 2026-07-05 | WER-006 reference scan | Required WER-006 `rg` scan listed above | PASS; WER-006 source date, Kubernetes/GitOps/security terms, repo-static/live-runtime language, non-authoritative language, and freshness heading were present. |
-| 2026-07-05 | WER-006 formatting | `git diff --check` | PASS. |
-| 2026-07-05 | WER-006 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
-| 2026-07-05 | WER-007 reference scan | Required WER-007 `rg` scan listed above | PASS; WER-007 source date, workflow/automation/QA terms, artifact/cache/token concepts, evidence-lane language, non-authoritative language, and freshness heading were present. |
-| 2026-07-05 | WER-007 planned-reference closure | Focused planned-reference `rg` scan listed above | PASS; README index scan found no stale planned reference literals; WER-007 status was separately updated to Done. |
-| 2026-07-05 | WER-007 formatting | `git diff --check` | PASS. |
-| 2026-07-05 | WER-007 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
-| 2026-07-06 | Lifecycle drift closure | S34-GAP-001 in `2026-07-06-stage03-04-repo-static-gap-closure.md` | PASS; existing WER task evidence already recorded WER-001 through WER-007 as Done, so frontmatter and README lifecycle status were aligned without changing live/runtime state. |
+| Date       | Scope                             | Command                                                                                                                                                                                                                          | Result                                                                                                                                                                            |
+| ---------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-07-04 | WER-001 intake                    | `git status --short --branch`                                                                                                                                                                                                    | PASS; current branch is `codex/workspace-engineering-research-pack`; worktree clean at intake.                                                                                    |
+| 2026-07-04 | WER-001 inventory                 | Baseline scan commands listed above                                                                                                                                                                                              | PASS; inventory, stale flat-link candidates, and repo-first evidence categories captured.                                                                                         |
+| 2026-07-04 | WER-001 formatting                | `git diff --check`                                                                                                                                                                                                               | PASS.                                                                                                                                                                             |
+| 2026-07-04 | WER-001 repo quality              | `bash scripts/validate-repo-quality-gates.sh .`                                                                                                                                                                                  | PASS.                                                                                                                                                                             |
+| 2026-07-04 | WER-002 stale flat-link scan      | Focused `rg` scan listed in WER-002 evidence                                                                                                                                                                                     | PASS; current consumer broken links were repaired, and remaining matches are historical-only command/path evidence.                                                               |
+| 2026-07-04 | WER-002 formatting                | `git diff --check`                                                                                                                                                                                                               | PASS.                                                                                                                                                                             |
+| 2026-07-04 | WER-002 repo quality              | `bash scripts/validate-repo-quality-gates.sh .`                                                                                                                                                                                  | PASS.                                                                                                                                                                             |
+| 2026-07-04 | WER-003 repo baseline source scan | Required WER-003 `rg` scan listed above                                                                                                                                                                                          | PASS; large output completed successfully and was summarized from focused canonical source inspection.                                                                            |
+| 2026-07-04 | WER-003 required heading scan     | `rg -n "^## (Overview\|Purpose\|Reference Type\|Authority Boundary\|Scope\|Definitions / Facts\|Sources\|Review and Freshness\|Related Documents)$" docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md` | PASS; all required reference headings present.                                                                                                                                    |
+| 2026-07-04 | WER-003 formatting                | `git diff --check`                                                                                                                                                                                                               | PASS.                                                                                                                                                                             |
+| 2026-07-04 | WER-003 repo quality              | `bash scripts/validate-repo-quality-gates.sh .`                                                                                                                                                                                  | PASS.                                                                                                                                                                             |
+| 2026-07-04 | WER-004 reference scan            | Required WER-004 `rg` scan listed above                                                                                                                                                                                          | PASS; 214 matching lines across the refreshed harness/loop and provider references.                                                                                               |
+| 2026-07-04 | WER-004 formatting                | `git diff --check`                                                                                                                                                                                                               | PASS.                                                                                                                                                                             |
+| 2026-07-04 | WER-004 repo quality              | `bash scripts/validate-repo-quality-gates.sh .`                                                                                                                                                                                  | PASS.                                                                                                                                                                             |
+| 2026-07-05 | WER-005 reference scan            | Required WER-005 `rg` scan listed above                                                                                                                                                                                          | PASS; WER-005 refreshed source date, official source families, supply-chain terms, formatting terms, non-authoritative language, and freshness heading were present.              |
+| 2026-07-05 | WER-005 formatting                | `git diff --check`                                                                                                                                                                                                               | PASS.                                                                                                                                                                             |
+| 2026-07-05 | WER-005 repo quality              | `bash scripts/validate-repo-quality-gates.sh .`                                                                                                                                                                                  | PASS.                                                                                                                                                                             |
+| 2026-07-05 | WER-006 reference scan            | Required WER-006 `rg` scan listed above                                                                                                                                                                                          | PASS; WER-006 source date, Kubernetes/GitOps/security terms, repo-static/live-runtime language, non-authoritative language, and freshness heading were present.                   |
+| 2026-07-05 | WER-006 formatting                | `git diff --check`                                                                                                                                                                                                               | PASS.                                                                                                                                                                             |
+| 2026-07-05 | WER-006 repo quality              | `bash scripts/validate-repo-quality-gates.sh .`                                                                                                                                                                                  | PASS.                                                                                                                                                                             |
+| 2026-07-05 | WER-007 reference scan            | Required WER-007 `rg` scan listed above                                                                                                                                                                                          | PASS; WER-007 source date, workflow/automation/QA terms, artifact/cache/token concepts, evidence-lane language, non-authoritative language, and freshness heading were present.   |
+| 2026-07-05 | WER-007 planned-reference closure | Focused planned-reference `rg` scan listed above                                                                                                                                                                                 | PASS; README index scan found no stale planned reference literals; WER-007 status was separately updated to Done.                                                                 |
+| 2026-07-05 | WER-007 formatting                | `git diff --check`                                                                                                                                                                                                               | PASS.                                                                                                                                                                             |
+| 2026-07-05 | WER-007 repo quality              | `bash scripts/validate-repo-quality-gates.sh .`                                                                                                                                                                                  | PASS.                                                                                                                                                                             |
+| 2026-07-06 | Lifecycle drift closure           | S34-GAP-001 in `2026-07-06-stage03-04-repo-static-gap-closure.md`                                                                                                                                                                | PASS; existing WER task evidence already recorded WER-001 through WER-007 as Done, so frontmatter and README lifecycle status were aligned without changing live/runtime state.   |
+| 2026-07-06 | WER-008 external source check     | Read-only GitHub API and raw file fetches for `msitarzewski/agency-agents`                                                                                                                                                       | PASS; repo metadata, `divisions.json`, engineering/security/testing/project-management listings, and a sample agent file were captured and labeled non-authoritative market scan. |
+| 2026-07-06 | WER-008 formatting                | `git diff --check`                                                                                                                                                                                                               | PASS.                                                                                                                                                                             |
+| 2026-07-06 | WER-008 repo quality              | `bash scripts/validate-repo-quality-gates.sh .`                                                                                                                                                                                  | PASS.                                                                                                                                                                             |
 
 Tooling limitation:
 
@@ -562,9 +597,13 @@ Boundary statement:
   reads, documentation edits, and local validation only before commit.
 - WER-007 performed read-only official/primary web source checks, repository
   reads, documentation edits, and local validation only before commit.
-- No live Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider runtime,
-  credential, secret-value, paid-job, publishing, merge, push, or third-party
-  mutation was performed.
+- WER-008 performed read-only external GitHub API and raw file source checks,
+  repository reads, documentation edits, local validation, a local commit,
+  and a human-approved `git push` of documentation changes only.
+- Except for the WER-008 human-approved documentation push, no live
+  Kubernetes, Argo CD, Vault, cloud, provider runtime, credential,
+  secret-value, paid-job, publishing, merge, or third-party mutation was
+  performed across WER-001 through WER-008.
 
 ## Related Documents
 
