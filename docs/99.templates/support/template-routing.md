@@ -37,6 +37,8 @@ documents.
 - Stage 01 PRDs use `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
 - Stage 03 specs use `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.
 - Stage 04 plans and tasks stay date-based execution records.
+- AWS/Azure example-local SDLC snapshot docs reuse the matching SDLC template
+  family by document role while staying under `examples/<provider>/docs/**`.
 - README files route readers to lifecycle contract owners instead of carrying
   full governance bodies.
 
@@ -95,12 +97,33 @@ Validators may check these files for frontmatter bans and stale currentness
 claims, but they must not require stage frontmatter or required template
 headings.
 
-## Cloud Example Snapshot Boundary
+## Example-Local SDLC Snapshot Boundary
 
 AWS and Azure cloud example docs under `examples/aws/docs/**` and
-`examples/azure/docs/**` remain dated Cloud Example Snapshot material. They are
-not active SDLC route targets and are not provider-latest guidance unless a
-future approved spec promotes a scoped refresh.
+`examples/azure/docs/**` are dated Cloud Example Snapshot material and
+example-local SDLC snapshot documents. They are not provider-latest guidance
+and they do not move into the main active `docs/01` through `docs/05` stage
+tree. Non-README Markdown in those trees uses the matching SDLC frontmatter
+role and should align section names with the closest SDLC template without
+retaining template instructions or placeholders.
+
+Example-local mapping by path:
+
+| Target Pattern | Template Family |
+| --- | --- |
+| `examples/<provider>/docs/01.requirements/*.md` | `templates/sdlc/requirements/prd.template.md` |
+| `examples/<provider>/docs/02.architecture/requirements/*.md` | `templates/sdlc/architecture/ard.template.md` |
+| `examples/<provider>/docs/02.architecture/decisions/*.md` | `templates/sdlc/architecture/adr.template.md` |
+| `examples/<provider>/docs/03.specs/**/*.md` | `templates/sdlc/specs/spec.template.md` for parent specs unless a future feature-local helper route is documented. |
+| `examples/<provider>/docs/04.execution/plans/*.md` | `templates/sdlc/execution/plan.template.md` |
+| `examples/<provider>/docs/04.execution/tasks/*.md` | `templates/sdlc/execution/task.template.md` |
+| `examples/<provider>/docs/05.operations/guides/*.md` | `templates/sdlc/operations/guide.template.md` |
+| `examples/<provider>/docs/05.operations/policies/*.md` | `templates/sdlc/operations/policy.template.md` |
+| `examples/<provider>/docs/05.operations/runbooks/*.md` | `templates/sdlc/operations/runbook.template.md` |
+
+The `provider` placeholder is currently limited to `aws` and `azure`.
+README files under the example docs tree continue to use the generic README
+route and remain frontmatter-free.
 
 ## Supplemental Task Starter
 
@@ -122,6 +145,9 @@ Route-breaking changes must update these surfaces in the same logical unit:
 - `docs/00.agent-governance/hooks/k8s-pre-edit.sh`
 - `scripts/validate-repo-quality-gates.sh`
 - Stage README links and authored document template references.
+- Example-local cloud snapshot README indexes and cross-links when
+  `examples/aws/docs/**` or `examples/azure/docs/**` files are normalized,
+  renamed, consolidated, or archived.
 - GitHub-native Markdown control-surface exceptions when `.github` control
   documents are added, removed, or repurposed.
 

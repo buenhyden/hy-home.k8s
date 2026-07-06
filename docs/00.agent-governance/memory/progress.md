@@ -8248,9 +8248,13 @@ section separating static from live evidence.
 
 ### Evidence
 
-- Pending first validation after the initial design/tracking commit.
+- Initial design/tracking commit: `0837de5`.
+- CCDN-002 contract patch:
+  - `git diff --check` PASS.
+  - `bash scripts/validate-repo-quality-gates.sh .` PASS with
+    `[PASS] repository quality gates passed`.
 
 ### Handoff
 
-- Continue with CCDN-002: update Stage 99, Stage 00, and validator route
-  contracts for example-local SDLC snapshot docs.
+- Continue with CCDN-002 validator enforcement after AWS/Azure non-README
+  example docs receive role-appropriate frontmatter.

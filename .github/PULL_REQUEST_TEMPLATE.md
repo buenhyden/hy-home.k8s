@@ -45,7 +45,7 @@ Describe the manual verification or automated tests conducted.
 - [ ] ArgoCD/GitOps impact reviewed (if applicable)
 - [ ] Workflow path filters and job ownership reviewed (if `.github` automation changed)
 - [ ] Documentation changes preserve current implementation contracts; obsolete or conflicting 01-04 docs are routed through `docs/98.archive/README.md` only.
-- [ ] Cloud example changes under `examples/aws` or `examples/azure` preserve Cloud Example Snapshot boundaries unless an approved provider refresh spec exists.
+- [ ] Cloud example changes under `examples/aws` or `examples/azure` preserve Cloud Example Snapshot boundaries and example-local SDLC snapshot frontmatter unless an approved provider refresh spec exists.
 - [ ] Coverage policy reviewed: 90% target for future testable application code where applicable; source-code test surfaces own coverage evidence, while Bash/YAML/Markdown infrastructure changes use validation-matrix evidence instead of application coverage claims
 - [ ] No live cluster mutation, `kubectl apply`, or external Vault mutation was introduced
 - [ ] Tracked changelog updates were merged by PR before tagging (if release-facing)

@@ -4,9 +4,9 @@
 
 ## Overview
 
-이 경로는 실제 운영 manifest의 복제본이 아니라, 새 앱 또는 cloud target을 설계할 때 참고하는 예시를 담는다. `sample-app/`은 로컬 k3d GitOps 최소 온보딩 템플릿이고, `aws/`, `azure/`는 [Tech Stack Version Inventory](../docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot` 기준을 따르는 cloud migration 참조 자산이다.
+이 경로는 실제 운영 manifest의 복제본이 아니라, 새 앱 또는 cloud target을 설계할 때 참고하는 예시를 담는다. `sample-app/`은 로컬 k3d GitOps 최소 온보딩 템플릿이고, `aws/`, `azure/`는 [Tech Stack Version Inventory](../docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot` 기준을 따르는 example-local SDLC snapshot 참조 자산이다.
 
-AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 실제 배포를 계획할 때는 새 provider 검증 결과로 `Cloud Example Snapshot`을 갱신하고 비용, IAM/RBAC, 네트워크 경계를 다시 확인해야 한다.
+AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 비-README Markdown 문서는 `examples/<provider>/docs/**` 안에서 SDLC 역할별 frontmatter와 섹션 기대값을 따른다. 실제 배포를 계획할 때는 새 provider 검증 결과로 `Cloud Example Snapshot`을 갱신하고 비용, IAM/RBAC, 네트워크 경계를 다시 확인해야 한다.
 
 활성 desired state의 정본은 `gitops/`이며, `examples/`는 복사하거나 비교하기 위한 reference-only 영역이다.
 
@@ -49,7 +49,7 @@ examples/
 ## How to Work in This Area
 
 1. 로컬 앱 온보딩은 [sample-app](sample-app/README.md)을 복사해 시작한다.
-2. AWS/Azure 예시는 [Tech Stack Version Inventory](../docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot` 기준과 맞춰 수정한다.
+2. AWS/Azure 예시는 [Tech Stack Version Inventory](../docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot` 기준과 example-local SDLC snapshot route에 맞춰 수정한다.
 3. provider module, Kubernetes version, ingress/gateway 선택이 바뀌면 관련 README와 docs 예시를 같은 변경에서 갱신한다.
 4. 변경 후 `bash scripts/validate-repo-quality-gates.sh .`와 outdated marker scan을 실행한다.
 
@@ -81,8 +81,8 @@ examples/
 | Example path | Role | Active source of truth | Validation |
 | --- | --- | --- | --- |
 | `sample-app/` | Minimal local k3d GitOps onboarding template with placeholders. | Compare with `../gitops/workloads/adminer/` before copying patterns beyond Rollout, Service, Ingress, AnalysisTemplate, ExternalSecret, and Traefik dynamic config; it becomes active desired state only after copy to `../gitops/workloads/<appname>/`, placeholder replacement, and validation. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
-| `aws/` | Cloud migration reference snapshot for AWS. | `../docs/90.references/data/tech-stack-version-inventory.md` `Cloud Example Snapshot`; not live provider-latest guidance. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
-| `azure/` | Cloud migration reference snapshot for Azure. | `../docs/90.references/data/tech-stack-version-inventory.md` `Cloud Example Snapshot`; not live provider-latest guidance. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
+| `aws/` | Cloud migration reference snapshot for AWS. | `../docs/90.references/data/tech-stack-version-inventory.md` `Cloud Example Snapshot`; example-local SDLC snapshot route; not live provider-latest guidance. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
+| `azure/` | Cloud migration reference snapshot for Azure. | `../docs/90.references/data/tech-stack-version-inventory.md` `Cloud Example Snapshot`; example-local SDLC snapshot route; not live provider-latest guidance. | `bash scripts/validate-repo-quality-gates.sh .`; `bash scripts/validate-k8s-manifests.sh .`; `bash scripts/check-secret-handling.sh .` |
 
 ## 사용 방법
 

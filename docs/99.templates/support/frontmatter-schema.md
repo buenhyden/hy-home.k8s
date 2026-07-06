@@ -40,9 +40,10 @@ Exceptions:
   under `_workspace/**` are not authored documents.
 - GitHub-native Markdown control files under `.github/` are
   frontmatter-free because GitHub renders or consumes their body directly.
-- Cloud Example Snapshot docs under `examples/aws/docs/**` and
-  `examples/azure/docs/**` are not active SDLC frontmatter targets unless a
-  future support contract routes them.
+- Cloud example docs under `examples/aws/docs/**` and
+  `examples/azure/docs/**` are routed as example-local SDLC snapshot
+  documents. Non-README Markdown in those trees uses the matching `sdlc/*`
+  frontmatter type for its role, while README files remain frontmatter-free.
 - `progress.template.md` is an appendable ledger entry template.
 - OpenAPI, GraphQL, and protobuf templates must remain native to their format.
 
@@ -69,6 +70,7 @@ Exceptions:
 | `content` | Archive Tombstone | `content/archive-tombstone` | `title`, `type`, `status`, `owner`, `updated`, `original_path`, `archived_on`, `archive_reason`, `replacement` | Archive Tombstones use `status: archived` and preserve archive traceability metadata in frontmatter. |
 | `content` | README | none | none | README files remain frontmatter-free. |
 | `repository-control` | GitHub-native Markdown | none | none | `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` remain frontmatter-free GitHub control surfaces. |
+| `example-local-sdlc` | AWS/Azure PRD, ARD, ADR, Spec, Plan, Task, Guide, Policy, Runbook snapshot | matching `sdlc/*` role | `title`, `type`, `status`, `owner`, `updated` | Example-local cloud docs under `examples/aws/docs/**` and `examples/azure/docs/**` reuse SDLC role types while staying dated snapshots outside the main active stage tree. |
 | `governance` | Governance reference | `governance/reference` | `title`, `type`, `status`, `owner`, `updated` | Stage 00 governance reference documents with frontmatter. |
 | `governance` | Governance memory | `governance/memory` | `title`, `type`, `status`, `owner`, `updated` | Standalone governance memory. |
 | `governance` | Progress entry | none | none | Progress entries are appended sections, not whole documents. |
@@ -103,9 +105,10 @@ Exceptions:
 - Remove keys that duplicate the same role as another key unless the target
   profile explicitly allows both.
 - Do not add frontmatter to README files, ignored `_workspace/**` scratch,
-  GitHub-native Markdown control files, Cloud Example Snapshot docs, or native
-  machine-readable templates unless a future support contract explicitly
-  routes the target.
+  GitHub-native Markdown control files, or native machine-readable templates.
+- Add role-appropriate `sdlc/*` frontmatter to example-local cloud snapshot
+  documents under `examples/aws/docs/**` and `examples/azure/docs/**` when
+  they are non-README Markdown files.
 
 ## Validation Contract
 
@@ -120,8 +123,8 @@ has exactly one frontmatter profile. The gate rejects:
 - Frontmatter or authored-document treatment for ignored `_workspace/**`
   scratch files.
 - Frontmatter on GitHub-native Markdown control files.
-- SDLC frontmatter enforcement on Cloud Example Snapshot docs unless a future
-  support contract routes the target.
+- Missing, extra, or unsupported frontmatter on routed example-local cloud
+  snapshot documents.
 - Markdown frontmatter in OpenAPI, GraphQL, or protobuf templates.
 
 ## Related Documents

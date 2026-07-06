@@ -103,7 +103,8 @@
 12. 템플릿 구조를 바꾸면 이미 생성된 문서에 안전하게 반영할 수 있는 heading, placeholder, `Link Basis`, `Related Documents`만 갱신하고 문서 고유 의도는 대량 재작성하지 않는다.
 13. `Related Documents` 예시는 upstream PRD/ARD/ADR/Spec/Plan과 downstream Task/Operation/Runbook/Incident를 추적할 수 있어야 한다.
 14. `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/98.archive` 아래의 비-README Markdown은 정확히 하나의 Template-Folder Mapping 행에 매핑되어야 한다.
-15. 실행 전제가 바뀌면 active README/guide/runbook은 새 current contract로 갱신하고, 현재 구현과 상충하는 old PRD/ARD/ADR/Spec/Plan/Task는 `docs/98.archive` Tombstone으로 이동한다.
+15. `examples/aws/docs/**`와 `examples/azure/docs/**`의 비-README Markdown은 example-local SDLC snapshot route로 분류하고, 문서 역할에 맞는 SDLC frontmatter와 섹션 기대값을 적용한다.
+16. 실행 전제가 바뀌면 active README/guide/runbook은 새 current contract로 갱신하고, 현재 구현과 상충하는 old PRD/ARD/ADR/Spec/Plan/Task는 `docs/98.archive` Tombstone으로 이동한다.
 
 ## Language Policy
 

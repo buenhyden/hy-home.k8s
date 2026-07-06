@@ -27,6 +27,7 @@ The template system has separate surfaces:
 | Authored documents | `docs/01.requirements` through `docs/05.operations`, `docs/90.references`, `docs/98.archive` | Repository facts, lifecycle records, and evidence. |
 | GitHub-native control Markdown | `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/SECURITY.md` | GitHub-rendered repository control surfaces that remain frontmatter-free and mirror canonical owners. |
 | Active control surfaces | GitHub-native Markdown, `.github/workflows/**`, validators, GitOps desired state, policy-as-code, and route manifests | Repository behavior and protection surfaces that route detail to their canonical governance, operations, workflow, script, or manifest owners. |
+| Example-local SDLC snapshots | `examples/aws/docs/**`, `examples/azure/docs/**` | Dated cloud migration example documents that reuse SDLC role profiles without becoming main active stage documents or provider-latest guidance. |
 | Workspace scratch staging | `_workspace/README.md` plus ignored `_workspace/**` scratch | Temporary non-secret repo-support staging; durable findings promote to canonical docs. |
 
 ## Contract Rules
@@ -53,6 +54,10 @@ The template system has separate surfaces:
   Markdown, but their detailed rules belong to the owning support,
   governance, operations, workflow, validator, GitOps, policy-as-code, or route
   manifest surface.
+- Example-local cloud documents reuse SDLC frontmatter roles and section
+  expectations by document type while staying under `examples/<provider>/docs/**`.
+  Their body must preserve the dated snapshot boundary and must not claim live
+  provider-latest authority without an approved refresh spec.
 - Active-surface duplicate rule: stages 01 through 04 must not keep multiple
   active documents that own the same role, purpose, and feature lineage.
 
@@ -61,6 +66,8 @@ The template system has separate surfaces:
 - Stage 01 PRDs use `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
 - Stage 03 specs use `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.
 - Stage 04 plans and tasks stay date-based execution records.
+- AWS/Azure example-local SDLC snapshot docs stay under
+  `examples/<provider>/docs/**` and reuse the matching SDLC role profile.
 - README files route readers to lifecycle contract owners instead of carrying
   full governance bodies.
 

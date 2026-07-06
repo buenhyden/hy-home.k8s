@@ -40,6 +40,9 @@ knowledge consistent without forcing every common document into an SDLC phase.
   links, but detailed rules belong to support, governance, operations, or
   validator owners.
 - README files must not keep deprecated related-document headings.
+- README files under `examples/aws/docs/**` and `examples/azure/docs/**`
+  remain frontmatter-free indexes even though non-README Markdown siblings are
+  routed as example-local SDLC snapshot documents.
 
 ## GitHub-Native Control Markdown Governance
 

@@ -36,7 +36,7 @@ approved spec and plan traceable to concrete commits and validation evidence.
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | CCDN-001 | Establish spec, plan, task, README indexes, and progress memory. | doc | Core Design | PLN-001 | Pending first commit and `git diff --check`. | platform | In Progress |
-| CCDN-002 | Update Stage 99, Stage 00, and validator route contracts for example-local SDLC snapshot docs. | doc/test | Contracts; Core Design | PLN-002 | Pending contract diff and repo-quality gate. | platform | Todo |
+| CCDN-002 | Update Stage 99 and Stage 00 route contracts for example-local SDLC snapshot docs. | doc/test | Contracts; Core Design | PLN-002 | Contract docs updated; `git diff --check`; `bash scripts/validate-repo-quality-gates.sh .`. Validator frontmatter enforcement follows after provider docs receive frontmatter. | platform | In Progress |
 | CCDN-003 | Normalize active control-surface routing text while preserving frontmatter-free README/GitHub-native boundaries. | doc | Control-Surface Config Contract | PLN-003 | Pending README/GitHub-native scan and repo-quality gate. | platform | Todo |
 | CCDN-004 | Normalize AWS example-local SDLC snapshot docs. | doc | Example-Local SDLC Snapshot Contract | PLN-004 | Pending frontmatter/section/cross-link validation. | platform | Todo |
 | CCDN-005 | Normalize Azure example-local SDLC snapshot docs. | doc | Example-Local SDLC Snapshot Contract | PLN-005 | Pending frontmatter/section/cross-link validation. | platform | Todo |
@@ -75,9 +75,10 @@ approved spec and plan traceable to concrete commits and validation evidence.
 ## Verification Summary
 
 - **Test Commands**:
-  - Pending: `git diff --check`
+  - `git diff --check`: pass, no output for CCDN-002 contract patch.
   - Pending: `bash -n scripts/validate-repo-quality-gates.sh`
-  - Pending: `bash scripts/validate-repo-quality-gates.sh .`
+  - `bash scripts/validate-repo-quality-gates.sh .`: pass,
+    `[PASS] repository quality gates passed` for CCDN-002 contract patch.
   - Pending: `bash scripts/validate-k8s-manifests.sh .`
   - Pending: `bash scripts/check-secret-handling.sh .`
   - Pending: `bash scripts/validate-policy-gates.sh .`

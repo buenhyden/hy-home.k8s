@@ -28,9 +28,12 @@ frontmatter-free and are not structural stage documents; durable policy must
 route back to Stage 00, Stage 05, scripts, or workflow owners.
 
 Cloud Example Snapshot material under `examples/aws/docs/**` and
-`examples/azure/docs/**` is not an active SDLC route target for wholesale
-frontmatter migration. Future provider-refresh work must promote any scoped
-change through an approved spec and support contract update.
+`examples/azure/docs/**` is routed as example-local SDLC snapshot
+documentation. Non-README Markdown in those trees uses the matching SDLC role
+frontmatter and section expectations, but it remains outside the main active
+`docs/01` through `docs/05` stage tree and is not provider-latest guidance.
+Future provider-refresh work must promote any scoped currentness change
+through an approved spec and support contract update.
 
 ## Lifecycle Pre-Edit Contract
 
