@@ -8320,6 +8320,9 @@ section separating static from live evidence.
 - Repo-static gaps can be closed when local documents, indexes, validators, and
   task evidence are sufficient. Live runtime, secret, provider, or remote
   settings work belongs in an operator-approved follow-up ledger.
+- Do not mix runtime follow-up with implementation evidence. A repo-static task
+  can be complete while live validation remains explicitly `Not run` under an
+  operator approval boundary.
 
 ### Evidence
 
@@ -8342,6 +8345,15 @@ section separating static from live evidence.
 - No live/runtime, secret, remote, provider, or third-party action was
   performed for the WER lifecycle closure.
 - S34-003 validation passed:
+  - `git diff --check` PASS.
+  - `bash scripts/validate-repo-quality-gates.sh .` PASS with
+    `[PASS] repository quality gates passed`.
+- S34-004 recorded operator-approved follow-up rows for Argo Rollouts runtime
+  validation, ArgoCD Notifications Slack runtime validation, Vault/ESO/live
+  secret readiness, and remote GitHub ruleset or CI provider settings.
+- S34-004 did not perform live cluster checks, secret value inspection, remote
+  GitHub changes, provider mutation, push, publish, or merge actions.
+- S34-004 validation passed:
   - `git diff --check` PASS.
   - `bash scripts/validate-repo-quality-gates.sh .` PASS with
     `[PASS] repository quality gates passed`.

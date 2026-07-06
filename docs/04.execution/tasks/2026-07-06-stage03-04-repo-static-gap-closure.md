@@ -47,7 +47,7 @@ settings, or provider mutation.
 | S34-001 | Create task record and baseline gap audit. | doc | VAL-SPC-023-001 | S34-PLN-001 | Baseline inventory and repo-quality gate. | platform | Done |
 | S34-002 | Classify Stage 03/04 gaps by evidence lane. | eval | VAL-SPC-023-001, VAL-SPC-023-003 | S34-PLN-002 | Gap ledger separates repo-static and operator-approved work. | platform | Done |
 | S34-003 | Close WER repo-static lifecycle drift. | doc | VAL-SPC-023-002 | S34-PLN-003 | WER plan/task/index statuses and completion criteria align. | platform | Done |
-| S34-004 | Record operator-approved follow-up ledger. | ops | VAL-SPC-023-003 | S34-PLN-004 | Live/runtime and remote-required items are routed without mutation. | platform | Todo |
+| S34-004 | Record operator-approved follow-up ledger. | ops | VAL-SPC-023-003 | S34-PLN-004 | Live/runtime and remote-required items are routed without mutation. | platform | Done |
 | S34-005 | Close validation and handoff evidence. | test | VAL-SPC-023-004, VAL-SPC-023-005 | S34-PLN-005 | Final validation bundle passes. | platform | Todo |
 
 ## Suggested Types
@@ -71,7 +71,7 @@ settings, or provider mutation.
 
 ### Phase 3: Follow-up Routing and Closure
 
-- [ ] S34-004 Record operator-approved follow-up ledger.
+- [x] S34-004 Record operator-approved follow-up ledger.
 - [ ] S34-005 Close validation and handoff evidence.
 
 ## Gap Classification Ledger
@@ -86,7 +86,10 @@ settings, or provider mutation.
 
 | Follow-up ID | Topic | Source | Approval Boundary | Evidence Lane | Status |
 | --- | --- | --- | --- | --- | --- |
-| S34-OP-TBD | Runtime/operator follow-up | Stage 03/04 baseline scan | Initial follow-up routing pending. | operator-approved | Todo |
+| S34-OP-001 | Argo Rollouts runtime validation | `docs/03.specs/004-argo-rollouts-progressive-delivery/spec.md` | Requires live cluster and operator-approved runtime checks. | operator-approved | Not run in this repo-static pass. |
+| S34-OP-002 | ArgoCD Notifications Slack runtime validation | `docs/03.specs/005-argo-notifications-slack/spec.md` | Requires live controller state and Slack send/error evidence. | operator-approved | Not run in this repo-static pass. |
+| S34-OP-003 | Vault/ESO/live secret readiness | `docs/03.specs/006-workspace-harness-gap-analysis/spec.md`; `docs/03.specs/008-current-local-gitops-platform/spec.md` | Requires live runtime and must not inspect secret values. | operator-approved | Not run in this repo-static pass. |
+| S34-OP-004 | Remote GitHub ruleset or CI provider settings | Stage 03/04 deferred boundary mentions | Requires remote settings authority. | operator-approved | Not run in this repo-static pass. |
 
 ## Baseline Audit
 
@@ -142,6 +145,16 @@ settings, or provider mutation.
 - No live/runtime, secret, remote, provider, or third-party action was
   performed.
 
+## Operator-Approved Follow-up Evidence
+
+- Confirmed the referenced Stage 03 spec files exist for Rollouts,
+  Notifications, workspace harness gap analysis, and current local GitOps
+  platform.
+- Recorded four operator-approved follow-up rows for live/runtime, secret, and
+  remote authority work.
+- No live cluster command, secret value inspection, remote GitHub settings
+  change, provider mutation, push, publish, or merge action was performed.
+
 ## Verification Summary
 
 - **Test Commands**:
@@ -158,6 +171,9 @@ settings, or provider mutation.
     with `[PASS] repository quality gates passed`.
   - S34-003 validation: `git diff --check` PASS.
   - S34-003 validation: `bash scripts/validate-repo-quality-gates.sh .` PASS
+    with `[PASS] repository quality gates passed`.
+  - S34-004 validation: `git diff --check` PASS.
+  - S34-004 validation: `bash scripts/validate-repo-quality-gates.sh .` PASS
     with `[PASS] repository quality gates passed`.
 - **Logs / Evidence Location**:
   - This task record, Stage 04 README index, and progress memory entry.
