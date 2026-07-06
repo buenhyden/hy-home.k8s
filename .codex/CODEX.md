@@ -30,11 +30,11 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
 - Author stage documents Template-First: use `docs/99.templates/support/template-routing.md` for route selection, then read the matching template under `docs/99.templates/templates/` before writing into `docs/01.requirements`–`docs/05.operations` and `docs/99.templates`; `docs/99.templates/README.md` is the index summary.
 - If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers.
-- Treat `.codex/agents/*.toml` as Codex mirrors of the primary agent definitions; keep them aligned.
+- Treat `.codex/agents/*.toml`, `.agents/agents/*.md`, and `.claude/agents/*.md` as provider-native role adapters for the same local roster; keep role parity aligned without requiring identical metadata keys.
 - Treat `.codex/hooks.json` as Codex event wiring for repo-local context and validation hooks, not as an equivalent permission gate to Claude's `settings.json`.
 - `.codex/` carries Codex-native real files (`agents/*.toml`, `hooks.json`); its `skills/`, `workflows/`, and `output-styles/` are symlinks to the `.agents/` SSoT for byte-identical shared content.
 - Use `RTK.md` as cross-agent SSOT for shell commands.
-- Verification: Codex MUST implement explicit QA and CI/CD validation phases prior to task completion, mirroring Gemini and Claude.
+- Verification: Codex MUST implement explicit QA and CI/static validation phases prior to task completion, mirroring Gemini and Claude.
 - Agent eval completion must be proven with explicit command evidence from repo-static gates, changed-file checks, or recorded human/operator approval; Codex hooks are context/validation wiring, and static checks do not imply live k3d, ArgoCD, Vault, ESO, or secret readiness.
 
 ## Harness Four-Element Runtime Contract
@@ -47,7 +47,7 @@ Codex implements the shared four-element harness model from
    baseline, and the relevant scope before substantial work.
 2. **Architecture constraints**: honor Codex filesystem/network sandboxing,
    escalation approvals, GitOps-first boundaries, template routing, and
-   `.codex/agents/*.toml` mirrors. `.codex/hooks.json` supplies context and
+   `.codex/agents/*.toml` provider-native role adapters. `.codex/hooks.json` supplies context and
    validation wiring, not a Claude-style permission gate.
 3. **Feedback loops**: run explicit repo-static validation commands before
    handoff and use `.codex/hooks.json` shared script wiring as additional
@@ -65,7 +65,7 @@ Codex implements the shared four-element harness model from
 ## Codex/GPT Capabilities & Constraints
 
 - **Skill routing**: Use the `.codex/skills/**` roster (a symlink to the `.agents/` SSoT) via the Task-to-Skill routing in `docs/00.agent-governance/harness-catalog.md`.
-- **Hook behavior**: `.codex/hooks.json` reuses the shared `docs/00.agent-governance/hooks/*.sh` scripts for context and validation wiring where supported. It can surface Template Routing and CI/CD checks through `customInstructions`, but explicit validation commands remain required before handoff.
+- **Hook behavior**: `.codex/hooks.json` reuses the shared `docs/00.agent-governance/hooks/*.sh` scripts for context and validation wiring where supported. It can surface Template Routing and CI/static QA checks through `customInstructions`, but explicit validation commands remain required before handoff.
 - **Provider tuning**: Keep Codex/GPT-specific tuning in `docs/00.agent-governance/providers/codex.md`; do not introduce policy here.
 
 ## Model Hierarchy

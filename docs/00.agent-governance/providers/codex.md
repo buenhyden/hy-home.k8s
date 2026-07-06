@@ -1,10 +1,18 @@
+---
+title: 'Reference: Codex Provider Notes'
+type: governance/reference
+status: draft
+owner: platform
+updated: 2026-07-06
+---
+
 # Codex Provider Notes
 
 Guidance for Codex (GPT) execution in the `hy-home.k8s` repository.
 
 ## Official Source Basis
 
-Checked on 2026-07-04:
+Checked on 2026-07-06:
 
 - Codex custom instructions with `AGENTS.md`: <https://developers.openai.com/codex/guides/agents-md>
 - Codex subagents: <https://developers.openai.com/codex/subagents>

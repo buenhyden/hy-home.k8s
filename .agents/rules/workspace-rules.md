@@ -21,7 +21,7 @@ This file defines Gemini-specific workspace rules for `hy-home.k8s` that supplem
 ## 3. Tool and Validation Priority
 
 - Always define validation evidence before executing edits.
-- Use `QA/CI/CD Workflow` (`.agents/workflows/qa-cicd-workflow.md`) to verify changes.
+- Use the QA/CI workflow (`.agents/workflows/qa-cicd-workflow.md`) to verify changes.
 - Prioritize reading `graphify-out/GRAPH_REPORT.md` before performing deep codebase searches if the file exists.
 
 ## 4. Reasoning & Model Policy

@@ -1,4 +1,4 @@
-# QA & CI/CD Workflow
+# QA and CI Workflow
 
 This workflow defines the standard verification steps for local provider adapters
 when performing file edits, refactoring, or infrastructure mutations in
@@ -20,7 +20,7 @@ Immediately after executing file modifications:
 - **Local Testing**: Run the predetermined test/validation command (via `RTK.md` if available, or direct shell execution like `pytest`, `helm lint`).
 - **Log Review**: Review the outputs of the test/validation command. If failures occur, enter a debugging loop until the validation passes.
 
-## 3. CI/CD Pre-Commit Gate
+## 3. CI/static QA Pre-Commit Gate
 
 Before marking a task as `Done` and returning control to the user:
 
@@ -31,5 +31,5 @@ Before marking a task as `Done` and returning control to the user:
 
 If a task is delegated to a subagent:
 
-- The planning or supervising agent MUST include explicit instructions for the subagent to run this QA & CI/CD workflow before returning its result.
+- The planning or supervising agent MUST include explicit instructions for the subagent to run this QA and CI workflow before returning its result.
 - Use the provider-specific model tier from `docs/00.agent-governance/harness-catalog.md`; do not hard-code a Gemini-only model in this shared workflow.

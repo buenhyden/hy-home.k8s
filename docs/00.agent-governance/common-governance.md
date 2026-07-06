@@ -1,13 +1,19 @@
+---
+title: 'Reference: Common Governance & Mappings'
+type: governance/reference
+status: draft
+owner: platform
+updated: 2026-07-06
+---
+
 # Reference: Common Governance & Mappings
 
 > Use this document to understand the common governance structure across all AI agents operating in `hy-home.k8s`.
 
----
-
 ## Overview
 
 This document defines the common governance concepts, cross-platform mappings,
-Memory/QA/CI/CD policies, and support matrix for AI agents (Gemini, Claude,
+Memory, QA, and CI/static validation policies, and support matrix for AI agents (Gemini, Claude,
 Codex) operating in `hy-home.k8s`. Shared skills, workflows, and output-style
 content use `.agents/` as their provider-neutral Single Source of Truth (SSoT),
 while `.agents/agents/*.md`, `.claude/agents/*.md`, and
@@ -20,7 +26,7 @@ To provide a unified understanding of agent concepts and their implementation ac
 ## Reference Type
 
 - Type: durable-concept
-- Source checked: 2026-07-04
+- Source checked: 2026-07-06
 - Refresh trigger: On new platform addition or hook restructuring.
 
 ## Authority Boundary
@@ -28,7 +34,7 @@ To provide a unified understanding of agent concepts and their implementation ac
 - **Authoritative for**:
   - Agent terminology
   - Platform mapping rules
-  - High-level QA, Memory, and CI/CD policies
+  - High-level QA, Memory, and CI/static validation policies
 - **Not authoritative for**:
   - Technical implementation of specific skills or hooks (see `docs/00.agent-governance/hooks/`)
   - Concrete model IDs and reasoning-effort values (see `harness-catalog.md` and `model-policy.md`)
@@ -50,7 +56,7 @@ To provide a unified understanding of agent concepts and their implementation ac
 - **Output Style**: Formatting, tone, and markdown conventions for generating files.
 - **Workflow**: Procedural pipelines defining multi-step tasks or agent interactions.
 - **Memory**: Persistent storage (`docs/00.agent-governance/memory/`) for lessons learned and context.
-- **QA / CI/CD**: Automated pipelines enforcing code quality, templates, and Kubernetes manifest validity.
+- **QA / CI**: Automated pipelines enforcing code quality, templates, and Kubernetes manifest validity.
 
 ## Platform Mapping
 
@@ -79,7 +85,7 @@ To provide a unified understanding of agent concepts and their implementation ac
 ## Policies
 
 - **Memory Policy**: Agents must log lessons learned and persistent context in `docs/00.agent-governance/memory/` and review them before initiating work.
-- **GitOps-First QA**: Agents cannot modify the production cluster directly (`no-kubectl-mutation`). All changes must go through PR and CI/CD validation.
+- **GitOps-First QA**: Agents cannot modify the production cluster directly (`no-kubectl-mutation`). All changes must go through PR and CI/static validation.
 - **Hook and Validation Wiring**:
   - **Pre-flight/edit**: Surface templates and structural rules where the provider runtime supports event wiring.
   - **Post-flight/validate**: Run `scripts/validate-repo-quality-gates.sh` to ensure compliance.
@@ -97,15 +103,17 @@ To provide a unified understanding of agent concepts and their implementation ac
 
 ## Sources
 
-- Official capability basis checked on 2026-07-04: Codex `AGENTS.md`,
+- Official capability basis checked on 2026-07-06: Codex `AGENTS.md`,
   subagents, CLI/config/approval modes; Claude settings, hooks, subagents;
   Gemini CLI commands and hierarchical memory; GitHub Actions.
+- External agent-roster market scan checked on 2026-07-06:
+  <https://github.com/msitarzewski/agency-agents>.
 - Workspace analysis and current provider adapter files.
 
 ## Review and Freshness
 
 - Review cadence: on dependency bump or agent framework update
-- Last reviewed: 2026-07-04
+- Last reviewed: 2026-07-06
 - Next review trigger: Antigravity Subagent upgrade
 
 ## Related Documents

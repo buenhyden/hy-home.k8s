@@ -1,3 +1,11 @@
+---
+title: 'Reference: Model Selection Policy'
+type: governance/reference
+status: draft
+owner: platform
+updated: 2026-07-06
+---
+
 # Model Selection Policy
 
 This document defines the canonical model selection policy for agents running in `hy-home.k8s`, enforcing a standardized tier mapping across Gemini (Antigravity), Claude, and Codex environments.
@@ -10,14 +18,14 @@ This document defines the canonical model selection policy for agents running in
 
 ## Source Freshness
 
-- Last checked: 2026-06-01
-- Codex/GPT references checked against OpenAI official model docs for `gpt-5.5`
-  and `gpt-5.3-codex`.
+- Last checked: 2026-07-06
+- Provider capability references were reconciled with the official source basis
+  recorded in `harness-catalog.md`.
 - Claude and Gemini identifiers remain the repository-local provider baseline
   recorded in `harness-catalog.md`; verify against provider-native docs before
   changing those concrete IDs.
 
-## Model Tiers (June 2026 Baseline)
+## Model Tiers (July 2026 Local Baseline)
 
 | Provider / Environment | Planning / Supervisor Tier (High Difficulty) | Worker / Subagent Tier (Speed & Efficiency) | Reasoning / Effort Policy |
 | --- | --- | --- | --- |
@@ -28,20 +36,22 @@ This document defines the canonical model selection policy for agents running in
 The concrete provider identifiers consumed by local runtime files are recorded in
 the Model Tier Mapping table in `docs/00.agent-governance/harness-catalog.md`.
 That catalog is the canonical roster table; this file owns the tier vocabulary
-and reasoning/effort policy. Codex TOML mirrors must use lowercase model IDs and
-must declare `model_reasoning_effort` explicitly.
+and reasoning/effort policy. Codex TOML role adapters must use lowercase model
+IDs and must declare `model_reasoning_effort` explicitly.
 
 ## Enforcement
 
 - All `agent-design.md` specs must adhere to these tier definitions when assigning models to roles.
 - Platform configurations (`GEMINI.md`, `CLAUDE.md`, `CODEX.md`) should inherit this policy instead of re-defining model specs locally.
 - `.codex/agents/*.toml` must declare a model from this policy and an allowed `model_reasoning_effort` value.
-- *Note:* The models listed above are the canonical supported versions for the June 2026 runtime. Older models are considered legacy and should not be used for new tasks.
+- *Note:* The models listed above are the canonical supported versions for the
+  July 2026 local runtime. Older local baseline models are considered legacy and
+  should not be used for new tasks unless a provider-specific migration plan
+  records the exception.
 
 ## Related Documents
 
 - [Harness Catalog](harness-catalog.md)
 - [Codex Provider Notes](providers/codex.md)
-- [OpenAI Models](https://developers.openai.com/api/docs/models)
-- [GPT-5.5 Model](https://developers.openai.com/api/docs/models/gpt-5.5/)
-- [GPT-5.3-Codex Model](https://developers.openai.com/api/docs/models/gpt-5.3-codex)
+- [Codex Subagents](https://developers.openai.com/codex/subagents)
+- [Codex AGENTS.md](https://developers.openai.com/codex/guides/agents-md)

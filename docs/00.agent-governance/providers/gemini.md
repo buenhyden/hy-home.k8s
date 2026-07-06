@@ -1,10 +1,18 @@
+---
+title: 'Reference: Gemini Provider Notes'
+type: governance/reference
+status: draft
+owner: platform
+updated: 2026-07-06
+---
+
 # Gemini Provider Notes
 
 Gemini-specific guidance for `hy-home.k8s`.
 
 ## Official Source Basis
 
-Checked on 2026-07-04:
+Checked on 2026-07-06:
 
 - Gemini CLI commands and hierarchical memory: <https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/commands.md>
 
@@ -26,7 +34,7 @@ and output styles.
 - **Rules (`.agents/rules/`)**: Contains Gemini-specific workflow and behavior rules (e.g., `workspace-rules.md`).
 - **Workflows (`.agents/workflows/`)**: Defines orchestrated workflows (e.g., `qa-cicd-workflow.md` for pre/post-edit validation).
 - **Skills (`.agents/skills/`)**: Houses Gemini skill definitions that respect the model tiers defined in `model-policy.md`.
-- **Hooks (`.agents/hooks.json`)**: Configures event wiring for PreToolUse/PostToolUse-style behavior where the runtime honors it. It invokes shared `docs/00.agent-governance/hooks/*.sh` scripts for Template-First routing and QA/CI/CD validation, but it is not a Claude-style permission gate.
+- **Hooks (`.agents/hooks.json`)**: Configures event wiring for PreToolUse/PostToolUse-style behavior where the runtime honors it. It invokes shared `docs/00.agent-governance/hooks/*.sh` scripts for Template-First routing and QA/CI/static validation, but it is not a Claude-style permission gate.
 - **Agents (`.agents/agents/*.md`)**: Provider-native Gemini role adapters with
   `name`, `description`, and `model` frontmatter. They preserve role parity
   with Claude and Codex adapters without requiring Claude-style `tools:`

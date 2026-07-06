@@ -1,10 +1,18 @@
+---
+title: 'Reference: Claude Provider Notes'
+type: governance/reference
+status: draft
+owner: platform
+updated: 2026-07-06
+---
+
 # Claude Provider Notes
 
 Claude-specific guidance for `hy-home.k8s`.
 
 ## Official Source Basis
 
-Checked on 2026-07-04:
+Checked on 2026-07-06:
 
 - Claude Code settings: <https://code.claude.com/docs/en/settings>
 - Claude Code hooks: <https://code.claude.com/docs/en/hooks>

@@ -31,9 +31,9 @@ Start from the root Gemini provider shim, then follow the governance JIT sequenc
 - If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers; see `.agents/rules/graphify.md` for the full graphify contract.
 - The `.agents/` folder is the git-tracked single source of truth for provider-neutral shared content (`skills/`, `workflows/`, `output-styles/`). `.claude/skills`, `.claude/workflows`, `.claude/output-styles`, `.codex/skills`, `.codex/workflows`, and `.codex/output-styles` are symlink views; provider-native files such as `.claude/agents/*`, `.codex/agents/*`, `.claude/settings.json`, `.codex/hooks.json`, and `.agents/hooks.json` are real adapter/runtime surfaces. `.agents/agents/*.md` are the Gemini-tier agent files.
 - The `.agents/agents/*.md` files serve as Gemini agent reference indexes.
-- `.agents/hooks.json` provides Gemini event/context wiring where the runtime honors it. It routes to shared hook scripts for Template-First guidance and QA/CI/CD validation, but it is not a Claude-style permission gate and does not replace explicit validation commands.
+- `.agents/hooks.json` provides Gemini event/context wiring where the runtime honors it. It routes to shared hook scripts for Template-First guidance and QA/CI/static validation, but it is not a Claude-style permission gate and does not replace explicit validation commands.
 - Use `RTK.md` as cross-agent SSOT for shell commands.
-- See `.agents/rules/workspace-rules.md` for Gemini-specific workspace rules and `.agents/workflows/qa-cicd-workflow.md` for QA/CI/CD workflows.
+- See `.agents/rules/workspace-rules.md` for Gemini-specific workspace rules and `.agents/workflows/qa-cicd-workflow.md` for QA/CI workflow steps.
 
 ## Harness Four-Element Runtime Contract
 

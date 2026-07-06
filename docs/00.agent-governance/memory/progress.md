@@ -8162,3 +8162,57 @@ section separating static from live evidence.
 
 - ACS-003 is complete; continue with ACS-004 GitOps and repo-static validation
   surfaces in the next scoped task.
+
+## 2026-07-06 - Agent governance provider-adapter normalization
+
+### Metadata
+
+- **Date**: 2026-07-06
+- **Layer**: governance, qa, agent-runtime
+- **Status**: completed
+- **Tags**: #agent-governance #provider-adapters #ci-static #validation
+
+### Progress
+
+- Fast-forward merged the completed SDLC lifecycle contract branch into local
+  `main`, deleted the old development branch, and created
+  `codex/agent-governance-normalization` from the merged `main`.
+- Normalized active provider language from agent "mirror" assumptions to
+  provider-native role adapters with role parity and provider-specific
+  metadata.
+- Updated Stage 00 model and provider reference freshness to 2026-07-06 and
+  added frontmatter to the touched governance reference documents.
+- Reframed active validation wording from broad CI/CD claims to QA and
+  CI/static validation, while preserving the rule that deployment or live
+  runtime evidence requires explicit approval and separate proof.
+- Added the public Agency Agents repository as an external role-catalog gap
+  lens in the local harness catalog without adding broad general-purpose agents
+  to the runtime roster.
+
+### Memory
+
+- External role catalogs should be used as market-scan and gap-analysis input,
+  not as automatic local agent roster sources. Local agents remain
+  cluster/governance-specific until `harness-catalog.md` records a concrete
+  repo-backed gap or a human explicitly requests a new runtime role.
+- When terminology changes from "mirror" to "provider-native role adapter",
+  validators must be updated in the same change so hook payload simulations and
+  quality gates enforce the new contract.
+
+### Evidence
+
+- `git diff --check` PASS.
+- `jq empty .agents/hooks.json .codex/hooks.json .claude/settings.json` PASS.
+- `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+- `bash -n docs/00.agent-governance/hooks/session-start.sh` PASS.
+- `bash -n docs/00.agent-governance/hooks/k8s-pre-edit.sh` PASS.
+- `bash -n docs/00.agent-governance/hooks/post-validate.sh` PASS.
+- `bash -n docs/00.agent-governance/hooks/lifecycle-guard.sh` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS with
+  `[PASS] repository quality gates passed`.
+
+### Handoff
+
+- `docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`
+  and `sessions/` were untracked before this task and were intentionally left
+  untouched.

@@ -91,7 +91,7 @@ def load_json(path: pathlib.Path):
 
 def load_toml(path: pathlib.Path):
     if tomllib is None:
-        raise RuntimeError("python3 tomllib module is required to parse TOML agent mirrors")
+        raise RuntimeError("python3 tomllib module is required to parse TOML agent adapters")
     with path.open("rb") as handle:
         return tomllib.load(handle)
 
@@ -2410,7 +2410,7 @@ for phrase in [
     "Documentation language and template routing",
     "Drift garbage collection",
     "Local Agents",
-    "Agent Mirrors",
+    "Agent Adapters",
     "Evidence-first intake",
     "Context hierarchy",
     "JIT loading",
@@ -3446,13 +3446,13 @@ claude_agents = {path.stem: path for path in sorted(claude_agents_dir.glob("*.md
 codex_agents = {path.stem: path for path in sorted(codex_agents_dir.glob("*.toml"))}
 gemini_agents = {path.stem: path for path in sorted(gemini_agents_dir.glob("*.md"))}
 for stem in sorted(set(claude_agents) - set(codex_agents)):
-    fail(f"missing Codex agent mirror for .claude/agents/{stem}.md")
+    fail(f"missing Codex agent adapter for .claude/agents/{stem}.md")
 for stem in sorted(set(codex_agents) - set(claude_agents)):
-    fail(f"Codex agent mirror has no .claude source: .codex/agents/{stem}.toml")
+    fail(f"Codex agent adapter has no Claude peer: .codex/agents/{stem}.toml")
 for stem in sorted(set(claude_agents) - set(gemini_agents)):
-    fail(f"missing Gemini agent mirror for .claude/agents/{stem}.md")
+    fail(f"missing Gemini agent adapter for .claude/agents/{stem}.md")
 for stem in sorted(set(gemini_agents) - set(claude_agents)):
-    fail(f"Gemini agent mirror has no .claude source: .agents/agents/{stem}.md")
+    fail(f"Gemini agent adapter has no Claude peer: .agents/agents/{stem}.md")
 
 runtime_contract_phrases = [
     "## Runtime Bootstrap",

@@ -13,4 +13,4 @@ Thin Claude provider shim for `hy-home.k8s`.
 - Runtime roster: `docs/00.agent-governance/harness-catalog.md`
 - Cross-agent shell command SSOT: `RTK.md`
 - Workspace Assets: Claude sessions must respect the Stage 00 canonical adapter model: shared `skills/`, `workflows/`, and `output-styles` come from `.agents/`; Claude-native agents, settings, and hooks live under `.claude/`.
-- Verification: Claude sessions must run explicit QA, CI/CD validation, and template-routing checks from Stage 00 and `docs/99.templates/support` before handoff.
+- Verification: Claude sessions must run explicit QA, CI/static validation, and template-routing checks from Stage 00 and `docs/99.templates/support` before handoff.

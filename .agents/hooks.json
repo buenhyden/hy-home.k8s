@@ -1,5 +1,5 @@
 {
-  "customInstructions": "Enforce Template-First document routing through docs/99.templates/support/template-routing.md, then read the matching template under docs/99.templates/templates/. Implement explicit QA and CI/CD validation phases before considering any implementation complete. MUST utilize workspace structured directories. Consult docs/00.agent-governance/memory/.",
+  "customInstructions": "Enforce Template-First document routing through docs/99.templates/support/template-routing.md, then read the matching template under docs/99.templates/templates/. Implement explicit QA and CI/static validation phases before considering any implementation complete. MUST utilize workspace structured directories. Consult docs/00.agent-governance/memory/.",
   "hooks": {
     "SessionStart": [
       {
