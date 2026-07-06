@@ -8,6 +8,47 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-06 - Observability and network review agents roster addition
+
+- **Date**: 2026-07-06
+- **Layer**: governance, agents, docs
+- **Status**: complete
+- **Tags**: #agents #roster #governance #stage-03 #stage-04
+
+#### Progress
+
+- Added two worker-tier review agents to the runtime roster:
+  `observability-reviewer` (monitoring/SLO manifest review) and
+  `network-reviewer` (ingress/Traefik/NetworkPolicy/DNS/TLS manifest review).
+- Authored the Stage 03 spec and agent-design under
+  `docs/03.specs/024-observability-and-network-review-agents/`, plus the Stage
+  04 plan and task records and their index entries.
+- Created six provider adapters (three per agent) mirroring the
+  `gitops-reviewer` worker contract: `.claude/agents/*.md`,
+  `.agents/agents/*.md`, and `.codex/agents/*.toml`.
+- Added harness-catalog roster rows and updated the External Agency Catalog
+  Gap Lens DevOps/SRE coverage row.
+
+#### Memory
+
+- Both agents are repo-static, review-only, `infra`-scoped workers; they do not
+  scrape metrics or probe ingress, and defer RBAC/network-isolation/secret
+  findings to `security-auditor` and GitOps sync-structure to `gitops-reviewer`.
+- Roster additions require the full chain: Stage 03 spec + agent-design, Stage
+  04 plan + task, three provider adapters each, and harness-catalog rows, all
+  in one aligned change.
+
+#### Evidence
+
+- `git diff --check` PASS.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS, including
+  three-provider adapter parity and catalog inventory checks.
+
+#### Handoff
+
+- Roster addition complete and pushed with human approval; no live cluster or
+  provider-runtime change was made.
+
 ### 2026-07-06 - AI agents roster and gap analysis research reference
 
 - **Date**: 2026-07-06
