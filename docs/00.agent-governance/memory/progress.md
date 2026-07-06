@@ -8293,3 +8293,50 @@ section separating static from live evidence.
 - This scoped branch is complete. `docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`
   and `sessions/` remain untracked pre-existing files and were intentionally
   left untouched.
+
+## 2026-07-06 - Stage 03/04 repo-static gap closure
+
+### Metadata
+
+- **Date**: 2026-07-06
+- **Layer**: docs, qa, governance
+- **Status**: in-progress
+- **Tags**: #sdlc #repo-static #validation #operator-follow-up
+
+### Progress
+
+- Started `codex/stage03-04-repo-static-gap-closure` from the completed local
+  `main` baseline and preserved the pre-existing untracked
+  `docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`
+  and `sessions/` paths.
+- Created the Stage 03 spec and Stage 04 plan for the approved repo-static
+  first scope.
+- Began the Stage 04 task record for classifying Stage 03/04 gaps and closing
+  repository-local evidence drift.
+- Established the no-live/no-secret/no-remote boundary for this pass.
+
+### Memory
+
+- Repo-static gaps can be closed when local documents, indexes, validators, and
+  task evidence are sufficient. Live runtime, secret, provider, or remote
+  settings work belongs in an operator-approved follow-up ledger.
+
+### Evidence
+
+- `git status --short --branch` confirmed branch
+  `codex/stage03-04-repo-static-gap-closure` with only the expected
+  pre-existing untracked paths.
+- Stage 03/04 status inventory found WER Stage 04 plan/task documents as
+  `draft` while all WER task rows already show `Done`.
+- WER evidence scan found `WER-001` through `WER-007` completed task rows and
+  checked phase-view items, while WER plan/task frontmatter still says
+  `status: draft`.
+- S34-001 validation passed:
+  - `git diff --check` PASS.
+  - `bash scripts/validate-repo-quality-gates.sh .` PASS with
+    `[PASS] repository quality gates passed`.
+
+### Handoff
+
+- Continue with S34-002 classification, then close the WER lifecycle drift and
+  route runtime/operator-only items without external mutation.
