@@ -25,9 +25,9 @@ This README is for:
 ### In Scope
 
 - Temporary audit scratch.
-- Redacted, non-secret dry-run summaries.
+- Redacted, non-secret dry-run logs and summaries.
+- Generated route inventories.
 - Migration ledgers.
-- Route inventories.
 - Non-secret scan summaries.
 
 ### Out of Scope
@@ -40,7 +40,7 @@ This README is for:
 - SSH keys.
 - Browser profiles.
 - Provider caches.
-- Personal diagnostics.
+- Personal diagnostics that may contain local private state.
 - Secret-bearing local logs.
 
 ## Structure

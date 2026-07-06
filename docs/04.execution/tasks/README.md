@@ -80,6 +80,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-07-05-template-path-numbering-contract.md
 ├── 2026-07-05-workspace-contract-governance-normalization.md
 ├── 2026-07-05-workspace-engineering-implementation-audit-pack.md
+├── 2026-07-06-sdlc-lifecycle-contract.md
 └── README.md
 ```
 
@@ -142,6 +143,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-07-05-template-path-numbering-contract.md`](./2026-07-05-template-path-numbering-contract.md) | Template path numbering contract execution evidence for PRD numeric renames, Stage 03 numbered feature-folder routing, template/support/governance/validator updates, and validation closure. | Done | 2026-07-05 |
 | [`./2026-07-05-workspace-contract-governance-normalization.md`](./2026-07-05-workspace-contract-governance-normalization.md) | `_workspace` staging, frontmatter/template drift, CI/CD와 QA control-surface baseline inventory를 추적하는 workspace contract governance normalization Task | Done | 2026-07-06 |
 | [`./2026-07-05-workspace-engineering-implementation-audit-pack.md`](./2026-07-05-workspace-engineering-implementation-audit-pack.md) | Workspace engineering implementation audit pack evidence for dated Stage 90 audit folderization, part-based implementation reports, automation opportunities, and validation closure. | Done | 2026-07-05 |
+| [`./2026-07-06-sdlc-lifecycle-contract.md`](./2026-07-06-sdlc-lifecycle-contract.md) | SDLC lifecycle, numbering, archive metadata, active-surface, `_workspace`, and deterministic validation contract implementation evidence. | Draft | 2026-07-06 |
 
 ## Related Documents
 
