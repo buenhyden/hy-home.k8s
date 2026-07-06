@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Engineering Research Pack Implementation Plan'
 type: sdlc/plan
-status: draft
+status: done
 owner: platform
 updated: 2026-07-04
 ---
@@ -805,15 +805,15 @@ Expected: final closure commit exists and no unresolved drift remains.
 
 ## Completion Criteria
 
-- [ ] Dated research pack folder exists.
-- [ ] Four existing research references are moved into the dated pack.
-- [ ] Two new focused references exist.
-- [ ] Existing references are refreshed with 2026-07-04 source checked
+- [x] Dated research pack folder exists.
+- [x] Four existing research references are moved into the dated pack.
+- [x] Two new focused references exist.
+- [x] Existing references are refreshed with 2026-07-04 source checked
   metadata where claims are updated.
-- [ ] Root and parent indexes route to the dated pack.
-- [ ] Stage 04 task evidence and progress memory are complete.
-- [ ] Required validation passes.
-- [ ] Logical-unit commits exist for each completed task.
+- [x] Root and parent indexes route to the dated pack.
+- [x] Stage 04 task evidence and progress memory are complete.
+- [x] Required validation passes.
+- [x] Logical-unit commits exist for each completed task.
 
 ## Related Documents
 

@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Engineering Research Pack Task Record'
 type: sdlc/task
-status: draft
+status: done
 owner: platform
 updated: 2026-07-05
 ---
@@ -537,6 +537,7 @@ Summary:
 | 2026-07-05 | WER-007 planned-reference closure | Focused planned-reference `rg` scan listed above | PASS; README index scan found no stale planned reference literals; WER-007 status was separately updated to Done. |
 | 2026-07-05 | WER-007 formatting | `git diff --check` | PASS. |
 | 2026-07-05 | WER-007 repo quality | `bash scripts/validate-repo-quality-gates.sh .` | PASS. |
+| 2026-07-06 | Lifecycle drift closure | S34-GAP-001 in `2026-07-06-stage03-04-repo-static-gap-closure.md` | PASS; existing WER task evidence already recorded WER-001 through WER-007 as Done, so frontmatter and README lifecycle status were aligned without changing live/runtime state. |
 
 Tooling limitation:
 

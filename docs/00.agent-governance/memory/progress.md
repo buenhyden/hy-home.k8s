@@ -8335,6 +8335,16 @@ section separating static from live evidence.
   - `git diff --check` PASS.
   - `bash scripts/validate-repo-quality-gates.sh .` PASS with
     `[PASS] repository quality gates passed`.
+- S34-003 closed WER repo-static lifecycle drift by changing WER plan/task
+  frontmatter and Stage 04 README index rows from `Draft` to `Done`, and by
+  checking the WER plan completion criteria based on existing WER-001 through
+  WER-007 completion evidence.
+- No live/runtime, secret, remote, provider, or third-party action was
+  performed for the WER lifecycle closure.
+- S34-003 validation passed:
+  - `git diff --check` PASS.
+  - `bash scripts/validate-repo-quality-gates.sh .` PASS with
+    `[PASS] repository quality gates passed`.
 
 ### Handoff
 
