@@ -307,6 +307,8 @@ bash scripts/validate-policy-gates.sh .
 
 - **Spec**: [Workspace Engineering Research Pack](../017-workspace-engineering-research-pack/spec.md)
 - **Spec**: [SDLC Lifecycle Contract](../021-sdlc-lifecycle-contract/spec.md)
+- **Plan**: [../../04.execution/plans/2026-07-06-stage03-04-repo-static-gap-closure.md](../../04.execution/plans/2026-07-06-stage03-04-repo-static-gap-closure.md)
+- **Planned Tasks Path**: `../../04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`
 - **Plan**: [../../04.execution/plans/2026-07-04-workspace-engineering-research-pack.md](../../04.execution/plans/2026-07-04-workspace-engineering-research-pack.md)
 - **Tasks**: [../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md)
 - **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
