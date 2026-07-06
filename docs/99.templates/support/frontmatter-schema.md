@@ -3,7 +3,7 @@ title: 'Template Frontmatter Schema'
 type: governance/template-support
 status: draft
 owner: platform
-updated: 2026-07-05
+updated: 2026-07-06
 ---
 
 # Template Frontmatter Schema
@@ -66,7 +66,7 @@ Exceptions:
 | `sdlc` | Incident | `sdlc/incident` | `title`, `type`, `status`, `owner`, `updated` | Incident fact record. |
 | `sdlc` | Postmortem | `sdlc/postmortem` | `title`, `type`, `status`, `owner`, `updated` | Incident analysis and prevention follow-up. |
 | `content` | Reference | `content/reference` | `title`, `type`, `status`, `owner`, `updated` | Durable reference material under Stage 90. |
-| `content` | Archive Tombstone | `content/archive-tombstone` | `title`, `type`, `status`, `owner`, `updated` | Archive Tombstones use `status: archived`. |
+| `content` | Archive Tombstone | `content/archive-tombstone` | `title`, `type`, `status`, `owner`, `updated`, `original_path`, `archived_on`, `archive_reason`, `replacement` | Archive Tombstones use `status: archived` and preserve archive traceability metadata in frontmatter. |
 | `content` | README | none | none | README files remain frontmatter-free. |
 | `repository-control` | GitHub-native Markdown | none | none | `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` remain frontmatter-free GitHub control surfaces. |
 | `governance` | Governance reference | `governance/reference` | `title`, `type`, `status`, `owner`, `updated` | Stage 00 governance reference documents with frontmatter. |
@@ -87,6 +87,13 @@ Exceptions:
 - `owner` is `platform` for repository-authored documents.
 - `updated` uses an ISO calendar date.
 - Do not quote scalar `owner` values when the value is the canonical owner.
+- Archive Tombstones add `original_path`, `archived_on`, `archive_reason`, and
+  `replacement` because archive routing and replacement traceability are part
+  of the tombstone identity, not body prose.
+- `archive_reason` uses one of `superseded`, `duplicate`, `obsolete`,
+  `migrated`, or `historical-baseline`.
+- `replacement` is a repository path when a current owner exists, or `none`
+  when there is no direct replacement.
 
 ## Legacy Cleanup Rules
 
@@ -108,6 +115,7 @@ has exactly one frontmatter profile. The gate rejects:
 - Missing required keys.
 - Unsupported keys for the profile.
 - Unsupported `type`, `status`, or `owner` values.
+- Unsupported `archive_reason` values on Archive Tombstones.
 - Frontmatter on README files when not required.
 - Frontmatter or authored-document treatment for ignored `_workspace/**`
   scratch files.

@@ -4,6 +4,10 @@ type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02
+original_path: docs/02.architecture/decisions/0005-wsl2-ha-baseline-and-external-endpoint-contract.md
+archived_on: 2026-06-02
+archive_reason: superseded
+replacement: docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md
 ---
 
 # Archive Tombstone: ADR-0005: WSL2 HA Baseline and External Endpoint Contract

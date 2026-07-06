@@ -4,6 +4,10 @@ type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02
+original_path: docs/02.architecture/decisions/0007-kubernetes-dashboard-v3.md
+archived_on: 2026-06-02
+archive_reason: superseded
+replacement: docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md
 ---
 
 # Archive Tombstone: ADR-0007: Kubernetes Dashboard v3 Installation

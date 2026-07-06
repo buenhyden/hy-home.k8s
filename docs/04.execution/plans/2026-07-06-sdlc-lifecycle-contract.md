@@ -75,7 +75,7 @@ active-surface limits.
 | Task | Description | Files / Docs Affected | Target Requirement | Validation Criteria |
 | --- | --- | --- | --- | --- |
 | PLN-001 | Align SDLC lifecycle and handoff contracts | `docs/99.templates/support/sdlc-governance.md`, `docs/99.templates/support/template-routing.md`, `docs/99.templates/support/documentation-contract.md`, `docs/00.agent-governance/rules/document-stage-routing.md`, `docs/00.agent-governance/rules/stage-authoring-matrix.md` | VAL-SDLC-LC-001 | Contract surfaces describe the same lifecycle, numbering, handoff, and active-surface rules. |
-| PLN-002 | Extend archive tombstone metadata contract and current tombstones | `docs/99.templates/support/frontmatter-schema.md`, `docs/99.templates/templates/common/archive-tombstone.template.md`, `docs/98.archive/README.md`, `docs/98.archive/**/*.md` | VAL-SDLC-LC-003 | Archive tombstones contain `original_path`, `archived_on`, `archive_reason`, and `replacement`. |
+| PLN-002 | Extend archive tombstone metadata contract and current tombstones | `docs/99.templates/support/frontmatter-schema.md`, `docs/99.templates/templates/common/archive-tombstone.template.md`, `docs/98.archive/README.md`, `docs/98.archive/**/*.md`, `scripts/validate-repo-quality-gates.sh` | VAL-SDLC-LC-003 | Archive tombstones contain `original_path`, `archived_on`, `archive_reason`, and `replacement`, and the archive profile allows those keys. |
 | PLN-003 | Align active surface evidence and `_workspace` boundary | `_workspace/README.md`, `docs/01.requirements/README.md`, `docs/03.specs/README.md`, `docs/04.execution/tasks/2026-07-06-sdlc-lifecycle-contract.md`, `docs/04.execution/tasks/README.md` | VAL-SDLC-LC-002, VAL-SDLC-LC-004 | Active routes and workspace staging rules match the new contract; task evidence exists. |
 | PLN-004 | Add validator checks and close validation | `scripts/validate-repo-quality-gates.sh`, Stage 04 task evidence, progress memory when required | VAL-SDLC-LC-005 | `git diff --check`, shell syntax check, and repository quality gates pass. |
 
@@ -172,6 +172,7 @@ git commit -m "docs(governance): Align SDLC lifecycle contracts"
 - Modify: `docs/99.templates/templates/common/archive-tombstone.template.md`
 - Modify: `docs/98.archive/README.md`
 - Modify: `docs/98.archive/**/*.md`
+- Modify: `scripts/validate-repo-quality-gates.sh`
 
 - [ ] **Step 1: Inspect archive profile and tombstones**
 
@@ -202,6 +203,12 @@ Document allowed `archive_reason` values:
 ```text
 superseded, duplicate, obsolete, migrated, historical-baseline
 ```
+
+Update `scripts/validate-repo-quality-gates.sh` in the same logical unit so
+the `content/archive-tombstone` profile allows and validates those four
+archive-specific frontmatter keys. Later Task 4 may add broader route and
+closure checks, but this task keeps the repository quality gate passing while
+the archive schema changes.
 
 - [ ] **Step 3: Update archive template**
 
@@ -247,22 +254,21 @@ Use `replacement: none` when no replacement path exists.
 Run:
 
 ```bash
-rg -L "original_path:" docs/98.archive -g '*.md'
-rg -L "archived_on:" docs/98.archive -g '*.md'
-rg -L "archive_reason:" docs/98.archive -g '*.md'
-rg -L "replacement:" docs/98.archive -g '*.md'
+missing=0; for key in original_path archived_on archive_reason replacement; do while IFS= read -r f; do if ! rg -q "^${key}:" "$f"; then echo "$f missing $key"; missing=1; fi; done < <(find docs/98.archive -type f -name '*.md' ! -name README.md | sort); done; exit $missing
 git diff --check
+bash -n scripts/validate-repo-quality-gates.sh
+bash scripts/validate-repo-quality-gates.sh .
 ```
 
-Expected: each `rg -L` command prints no archive tombstone path and
-`git diff --check` prints no errors.
+Expected: the metadata loop prints no archive tombstone path and the diff,
+shell syntax, and repository quality gates pass.
 
 - [ ] **Step 7: Commit Task 2**
 
 Run:
 
 ```bash
-git add docs/99.templates/support/frontmatter-schema.md docs/99.templates/templates/common/archive-tombstone.template.md docs/98.archive
+git add docs/99.templates/support/frontmatter-schema.md docs/99.templates/templates/common/archive-tombstone.template.md docs/98.archive scripts/validate-repo-quality-gates.sh docs/04.execution/plans/2026-07-06-sdlc-lifecycle-contract.md
 git commit -m "docs(archive): Add archive tombstone metadata contract"
 ```
 
@@ -445,7 +451,7 @@ git commit -m "docs(validation): Enforce SDLC lifecycle contract gates"
 | VAL-PLN-002 | Syntax | Validator shell syntax | `bash -n scripts/validate-repo-quality-gates.sh` | Exit 0. |
 | VAL-PLN-003 | Repository Gate | Full repo quality gate | `bash scripts/validate-repo-quality-gates.sh .` | `[PASS] repository quality gates passed`. |
 | VAL-PLN-004 | Route Scan | Legacy active route scan | `rg -n "YYYY-MM-DD-<feature-or-system>|docs/03\\.specs/<feature-id>|docs/03\\.specs/[a-z][^/]+/spec\\.md" docs/00.agent-governance docs/99.templates docs/01.requirements docs/03.specs scripts` | No current-contract violations. |
-| VAL-PLN-005 | Archive Metadata | Archive tombstone field scan | `rg -L "original_path:" docs/98.archive -g '*.md'` plus sibling scans for `archived_on`, `archive_reason`, and `replacement` | No archive tombstone path is reported. |
+| VAL-PLN-005 | Archive Metadata | Archive tombstone field scan | `missing=0; for key in original_path archived_on archive_reason replacement; do while IFS= read -r f; do if ! rg -q "^${key}:" "$f"; then echo "$f missing $key"; missing=1; fi; done < <(find docs/98.archive -type f -name '*.md' ! -name README.md \| sort); done; exit $missing` | No archive tombstone path is reported. |
 
 ## Risks & Mitigations
 

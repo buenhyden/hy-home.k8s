@@ -4,6 +4,10 @@ type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02
+original_path: docs/02.architecture/requirements/0001-wsl-k3d-argocd-platform.md
+archived_on: 2026-06-02
+archive_reason: superseded
+replacement: docs/02.architecture/requirements/0007-current-local-gitops-platform.md
 ---
 
 # Archive Tombstone: WSL k3d/k3s ArgoCD Platform Architecture Reference Document

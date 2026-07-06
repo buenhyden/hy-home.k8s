@@ -4,6 +4,10 @@ type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02
+original_path: docs/04.execution/plans/2026-05-28-docs-governance-consistency.md
+archived_on: 2026-06-02
+archive_reason: superseded
+replacement: docs/04.execution/plans/2026-06-02-docs-01-05-current-implementation-alignment.md
 ---
 
 # Archive Tombstone: Documentation Governance Consistency Plan

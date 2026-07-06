@@ -4,6 +4,10 @@ type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02
+original_path: docs/03.specs/002-wsl2-k3d-argocd-ha-platform/spec.md
+archived_on: 2026-06-02
+archive_reason: superseded
+replacement: docs/03.specs/008-current-local-gitops-platform/spec.md
 ---
 
 # Archive Tombstone: WSL2 k3d/k3s ArgoCD HA Platform Technical Specification

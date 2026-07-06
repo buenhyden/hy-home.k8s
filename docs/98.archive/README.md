@@ -8,7 +8,7 @@
 ## Overview
 
 `98.archive/`는 active 문서 stage에서 제거된 old 문서의 Tombstone만 보관한다.
-원문 본문은 보존하지 않고, 원래 경로, archive 사유, 현재 대체 문서, 구현 증거만 남긴다.
+원문 본문은 보존하지 않고, 원래 경로, archive 날짜, archive 사유, 현재 대체 문서, 구현 증거만 남긴다.
 Archive Reason과 Tombstone 링크는 historical evidence이며, 현재 운영 계약은
 Current Replacement 문서가 소유한다.
 `docs/98.archive/05.operations/guides`, `docs/98.archive/05.operations/policies`,
@@ -30,6 +30,8 @@ mirror는 operations bucket 구조를 그대로 보존한다.
 
 - `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`에서 제거된 old 문서 Tombstone
 - 원래 docs 하위 경로를 보존하는 mirror layout
+- Tombstone frontmatter에 `original_path`, `archived_on`, `archive_reason`,
+  `replacement`를 남기는 traceability metadata
 - active 문서가 archive를 직접 참조하지 않도록 하는 Index Only 연결
 - Tombstone을 현재 desired-state 입력이 아닌 historical evidence로 해석하는 경계
 
@@ -63,9 +65,10 @@ mirror는 operations bucket 구조를 그대로 보존한다.
 
 1. active 문서가 현재 구현과 상충하고 본문 재작성보다 제거가 맞으면 원래 docs 하위 경로를 `98.archive/` 아래에 mirror한다.
 2. archive로 이동한 문서는 `../99.templates/templates/common/archive-tombstone.template.md` 구조의 Tombstone으로 교체한다.
-3. Tombstone에는 원문 본문을 남기지 않는다.
-4. active 문서와 README는 이 archive README만 Index Only로 연결하고, 개별 Tombstone을 직접 current input으로 사용하지 않는다.
-5. 현재 구현 범위가 줄어들지 않도록 대체 PRD/ARD/ADR/Spec/Plan/Task 또는 현재 구현 README를 먼저 확정한다.
+3. Tombstone frontmatter에는 원본 경로, archive 날짜, archive 사유, current replacement를 남긴다.
+4. Tombstone에는 원문 본문을 남기지 않는다. 전체 원문 snapshot은 별도 승인된 예외 규칙이 있을 때만 허용한다.
+5. active 문서와 README는 이 archive README만 Index Only로 연결하고, 개별 Tombstone을 직접 current input으로 사용하지 않는다.
+6. 현재 구현 범위가 줄어들지 않도록 대체 PRD/ARD/ADR/Spec/Plan/Task 또는 현재 구현 README를 먼저 확정한다.
 
 ## Link Basis
 

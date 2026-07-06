@@ -4,6 +4,10 @@ type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02
+original_path: docs/05.operations/guides/0004-headlamp-auth-oidc-guide.md
+archived_on: 2026-06-02
+archive_reason: superseded
+replacement: docs/05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md
 ---
 
 # Archive Tombstone: Headlamp Auth OIDC Guide

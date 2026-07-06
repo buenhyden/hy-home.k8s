@@ -4,6 +4,10 @@ type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02
+original_path: docs/04.execution/tasks/2026-05-22-spec-execution-implementation-audit.md
+archived_on: 2026-06-02
+archive_reason: superseded
+replacement: docs/04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md
 ---
 
 # Archive Tombstone: Task: Spec Execution Implementation Audit

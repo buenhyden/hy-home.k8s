@@ -4,6 +4,10 @@ type: content/archive-tombstone
 status: archived
 owner: platform
 updated: YYYY-MM-DD
+original_path: docs/<original-path>.md
+archived_on: YYYY-MM-DD
+archive_reason: superseded
+replacement: docs/<replacement-path>.md
 ---
 
 <!-- Target: docs/98.archive/<original-docs-subpath>.md -->
@@ -16,6 +20,8 @@ updated: YYYY-MM-DD
 >
 > - Do not preserve the old document body in the tombstone.
 > - Keep only routing, reason, replacement, and evidence metadata.
+> - Preserve `original_path`, `archived_on`, `archive_reason`, and
+>   `replacement` in frontmatter.
 > - Link active documents to the archive index only.
 > - Use relative links only, calculated from the final tombstone location.
 

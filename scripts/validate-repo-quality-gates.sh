@@ -871,7 +871,20 @@ template_expected_types = {
 }
 
 frontmatter_required_keys = {"title", "type", "status", "owner", "updated"}
+archive_frontmatter_required_keys = frontmatter_required_keys | {
+    "original_path",
+    "archived_on",
+    "archive_reason",
+    "replacement",
+}
 frontmatter_allowed_statuses = {"draft", "active", "accepted", "done", "archived"}
+archive_reason_allowed_values = {
+    "superseded",
+    "duplicate",
+    "obsolete",
+    "migrated",
+    "historical-baseline",
+}
 
 
 def validate_markdown_frontmatter_profile(
@@ -884,8 +897,13 @@ def validate_markdown_frontmatter_profile(
     if not metadata:
         return
     keys = set(metadata)
-    missing_keys = frontmatter_required_keys - keys
-    extra_keys = keys - frontmatter_required_keys
+    required_keys = (
+        archive_frontmatter_required_keys
+        if expected_type == "content/archive-tombstone"
+        else frontmatter_required_keys
+    )
+    missing_keys = required_keys - keys
+    extra_keys = keys - required_keys
     if missing_keys:
         fail(f"{rel(path)} missing frontmatter keys: {', '.join(sorted(missing_keys))}")
     if extra_keys:
@@ -903,6 +921,20 @@ def validate_markdown_frontmatter_profile(
         fail(f"{rel(path)} frontmatter status must be {expected_status}, found {status or '<empty>'}")
     if expected_type == "content/archive-tombstone" and status != "archived":
         fail(f"{rel(path)} archive Tombstone must use status: archived")
+    if expected_type == "content/archive-tombstone":
+        archive_reason = str(metadata.get("archive_reason", "")).strip()
+        archived_on = str(metadata.get("archived_on", "")).strip()
+        if archive_reason not in archive_reason_allowed_values:
+            fail(
+                f"{rel(path)} archive_reason is unsupported: "
+                f"{archive_reason or '<empty>'}"
+            )
+        if not re.match(r"^\d{4}-\d{2}-\d{2}$|^YYYY-MM-DD$", archived_on):
+            fail(f"{rel(path)} archived_on must be an ISO date or template placeholder")
+        for archive_key in ["original_path", "replacement"]:
+            value = str(metadata.get(archive_key, "")).strip()
+            if not value:
+                fail(f"{rel(path)} {archive_key} must be a non-empty string")
     updated = str(metadata.get("updated", "")).strip()
     if not re.match(r"^\d{4}-\d{2}-\d{2}$|^YYYY-MM-DD$", updated):
         fail(f"{rel(path)} frontmatter updated must be an ISO date or template placeholder")

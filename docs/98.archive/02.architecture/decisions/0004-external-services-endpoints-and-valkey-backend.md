@@ -4,6 +4,10 @@ type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02
+original_path: docs/02.architecture/decisions/0004-external-services-endpoints-and-valkey-backend.md
+archived_on: 2026-06-02
+archive_reason: superseded
+replacement: docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md
 ---
 
 # Archive Tombstone: ADR-0004: External Service Access Model and ArgoCD Valkey Backend

@@ -4,6 +4,10 @@ type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02
+original_path: docs/01.requirements/2026-03-29-platform-expansion-dashboard-mesh.md
+archived_on: 2026-06-02
+archive_reason: superseded
+replacement: docs/01.requirements/004-current-local-gitops-platform.md
 ---
 
 # Archive Tombstone: Platform Expansion: cert-manager, Headlamp, Istio/Kiali Product Requirements

@@ -4,6 +4,10 @@ type: content/archive-tombstone
 status: archived
 owner: platform
 updated: 2026-06-02
+original_path: docs/04.execution/plans/2026-03-27-wsl-k3d-argocd-platform.md
+archived_on: 2026-06-02
+archive_reason: superseded
+replacement: docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md
 ---
 
 # Archive Tombstone: WSL k3d/k3s ArgoCD Platform Plan
