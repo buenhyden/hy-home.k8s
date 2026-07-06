@@ -1,8 +1,20 @@
+---
+title: 'Azure Onboarding Guide'
+type: sdlc/guide
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # Azure Onboarding Guide
 
 ## Overview
 
 로컬 k3s에서 Azure AKS로 이전된 신규 인프라 환경(`hy-home.k8s`)에 대한 개발자 및 운영자 온보딩 가이드를 정의한다. 본 문서는 클러스터 접근, 시크릿 관리, 배포 워크플로우에 대한 표준 절차를 포함한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Prerequisites
 

@@ -1,8 +1,20 @@
+---
+title: 'AWS Cloud Native Reference Architecture (ARD)'
+type: sdlc/ard
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # AWS Cloud Native Reference Architecture (ARD)
 
 ## Overview
 
 이 문서는 hy-home.k8s 시스템의 AWS 마이그레이션을 위한 참조 아키텍처를 정의한다. 2026-05-09 공식 지원 스냅샷 기준의 AWS 관리형 서비스와 Kubernetes 에코시스템을 결합하여, 운영 복잡성을 낮추고 보안성과 확장성을 극대화한 설계를 지향한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Summary
 

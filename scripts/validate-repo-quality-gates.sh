@@ -1016,6 +1016,66 @@ for support_doc in sorted(template_support_root.glob("*.md")):
         expected_status="draft",
     )
 
+example_local_sdlc_routes = [
+    ("01.requirements/*.md", "sdlc/prd"),
+    ("02.architecture/requirements/*.md", "sdlc/ard"),
+    ("02.architecture/decisions/*.md", "sdlc/adr"),
+    ("03.specs/*.md", "sdlc/spec"),
+    ("03.specs/**/*.md", "sdlc/spec"),
+    ("04.execution/plans/*.md", "sdlc/plan"),
+    ("04.execution/tasks/*.md", "sdlc/task"),
+    ("05.operations/guides/*.md", "sdlc/guide"),
+    ("05.operations/policies/*.md", "sdlc/policy"),
+    ("05.operations/runbooks/*.md", "sdlc/runbook"),
+]
+
+
+def example_local_sdlc_type(path: pathlib.Path, docs_root: pathlib.Path) -> str | None:
+    relative_path = path.relative_to(docs_root).as_posix()
+    for glob_pattern, expected_type in example_local_sdlc_routes:
+        if fnmatch.fnmatchcase(relative_path, glob_pattern):
+            return expected_type
+    return None
+
+
+for provider in ["aws", "azure"]:
+    docs_root = root / "examples" / provider / "docs"
+    if not docs_root.exists():
+        continue
+    for example_doc in sorted(docs_root.rglob("*.md")):
+        text = read_text(example_doc)
+        if example_doc.name == "README.md":
+            if has_markdown_frontmatter(example_doc, text):
+                fail(f"{rel(example_doc)} must remain frontmatter-free README")
+            continue
+        expected_type = example_local_sdlc_type(example_doc, docs_root)
+        if not expected_type:
+            fail(f"{rel(example_doc)} is not covered by an example-local SDLC snapshot route")
+            continue
+        validate_markdown_frontmatter_profile(example_doc, expected_type)
+        for required_heading in [
+            "## Overview",
+            "## Snapshot Boundary",
+            "## Related Documents",
+        ]:
+            if required_heading not in text:
+                fail(f"{rel(example_doc)} missing example-local required heading: {required_heading}")
+        for required_phrase in [
+            "Cloud Example Snapshot",
+            "not live provider-latest guidance",
+        ]:
+            if required_phrase not in text:
+                fail(f"{rel(example_doc)} missing snapshot boundary phrase: {required_phrase}")
+        for stale_heading in [
+            "## Azure Migration Product Requirements",
+            "## Azure Migration Specification",
+            "## Azure Kubernetes Service Architecture Reference Document",
+        ]:
+            if stale_heading in text:
+                fail(f"{rel(example_doc)} contains duplicate stale heading: {stale_heading}")
+        if re.search(r"^##\s+[0-9]+\.\s+.*관련 문서", text, re.MULTILINE):
+            fail(f"{rel(example_doc)} must use canonical ## Related Documents heading")
+
 template_routing_path = template_support_root / "template-routing.md"
 
 

@@ -1,8 +1,20 @@
+---
+title: 'Task: Azure Migration Implementation'
+type: sdlc/task
+status: active
+owner: platform
+updated: 2026-07-06
+---
+
 # Task: Azure Migration Implementation
 
 ## Overview
 
 이 문서는 `hy-home.k8s` 인프라의 Azure 마이그레이션 구현 및 검증 작업 목록이다. 설계 명세(Spec)와 마이그레이션 전략(Plan)에서 도출된 세부 태스크를 추적한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Inputs
 
@@ -32,3 +44,7 @@
 
 - **Test Commands**: `az deployment group what-if`, `kubectl get gateway`, `kubectl get secretproviderclass`
 - **Logs / Evidence Location**: `examples/azure/logs/` (필요 시 생성)
+
+## Related Documents
+
+- [Azure Example Documentation Hub](../../README.md)

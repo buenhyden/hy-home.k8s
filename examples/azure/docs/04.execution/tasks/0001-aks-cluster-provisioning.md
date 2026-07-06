@@ -1,8 +1,20 @@
+---
+title: 'Task: AKS Cluster Provisioning'
+type: sdlc/task
+status: active
+owner: platform
+updated: 2026-07-06
+---
+
 # Task: AKS Cluster Provisioning
 
 ## Overview
 
 이 작업은 `main.bicep` 인프라 코드를 실행하여 Azure에 기본적인 쿠버네티스 서비스(AKS) 및 관련 VNet 리소스를 구축하는 것을 목표로 한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Task Table
 

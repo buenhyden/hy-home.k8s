@@ -1,8 +1,20 @@
+---
+title: 'AWS Migration Operations Policy'
+type: sdlc/policy
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # AWS Migration Operations Policy
 
 ## Overview
 
 이 문서는 hy-home.k8s AWS 인프라의 운영 정책을 정의한다. 리소스 관리의 일관성을 유지하고, 비용을 최적화하며, 보안 규정을 준수하기 위한 통제 기준을 제공한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Policy Scope
 

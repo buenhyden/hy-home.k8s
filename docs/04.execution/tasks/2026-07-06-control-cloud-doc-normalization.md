@@ -36,10 +36,10 @@ approved spec and plan traceable to concrete commits and validation evidence.
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | CCDN-001 | Establish spec, plan, task, README indexes, and progress memory. | doc | Core Design | PLN-001 | Pending first commit and `git diff --check`. | platform | In Progress |
-| CCDN-002 | Update Stage 99 and Stage 00 route contracts for example-local SDLC snapshot docs. | doc/test | Contracts; Core Design | PLN-002 | Contract docs updated; `git diff --check`; `bash scripts/validate-repo-quality-gates.sh .`. Validator frontmatter enforcement follows after provider docs receive frontmatter. | platform | In Progress |
+| CCDN-002 | Update Stage 99, Stage 00, and validator route contracts for example-local SDLC snapshot docs. | doc/test | Contracts; Core Design | PLN-002 | Contract docs updated; validator now enforces example-local frontmatter, `Overview`, `Snapshot Boundary`, `Related Documents`, and stale duplicate heading bans; `git diff --check`; `bash -n scripts/validate-repo-quality-gates.sh`; `bash scripts/validate-repo-quality-gates.sh .`. | platform | Done |
 | CCDN-003 | Normalize active control-surface routing text while preserving frontmatter-free README/GitHub-native boundaries. | doc | Control-Surface Config Contract | PLN-003 | Pending README/GitHub-native scan and repo-quality gate. | platform | Todo |
-| CCDN-004 | Normalize AWS example-local SDLC snapshot docs. | doc | Example-Local SDLC Snapshot Contract | PLN-004 | Pending frontmatter/section/cross-link validation. | platform | Todo |
-| CCDN-005 | Normalize Azure example-local SDLC snapshot docs. | doc | Example-Local SDLC Snapshot Contract | PLN-005 | Pending frontmatter/section/cross-link validation. | platform | Todo |
+| CCDN-004 | Normalize AWS example-local SDLC snapshot docs. | doc | Example-Local SDLC Snapshot Contract | PLN-004 | AWS non-README docs now have role-appropriate frontmatter, `Snapshot Boundary`, and `Related Documents`; deeper type-specific section review remains. | platform | In Progress |
+| CCDN-005 | Normalize Azure example-local SDLC snapshot docs. | doc | Example-Local SDLC Snapshot Contract | PLN-005 | Azure non-README docs now have role-appropriate frontmatter, `Snapshot Boundary`, and `Related Documents`; deeper type-specific section review remains. | platform | In Progress |
 | CCDN-006 | Close validation and execution evidence. | test/doc | Verification Commands | PLN-006 | Pending final validation bundle and task/progress update. | platform | Todo |
 
 ## Suggested Types
@@ -59,8 +59,8 @@ approved spec and plan traceable to concrete commits and validation evidence.
 
 ### Phase 1
 
-- [ ] CCDN-001 Establish design and execution tracking docs.
-- [ ] CCDN-002 Update route and validation contracts.
+- [x] CCDN-001 Establish design and execution tracking docs.
+- [x] CCDN-002 Update route and validation contracts.
 
 ### Phase 2
 
@@ -76,9 +76,11 @@ approved spec and plan traceable to concrete commits and validation evidence.
 
 - **Test Commands**:
   - `git diff --check`: pass, no output for CCDN-002 contract patch.
-  - Pending: `bash -n scripts/validate-repo-quality-gates.sh`
+  - `bash -n scripts/validate-repo-quality-gates.sh`: pass, no output after
+    example-local validator route addition.
   - `bash scripts/validate-repo-quality-gates.sh .`: pass,
-    `[PASS] repository quality gates passed` for CCDN-002 contract patch.
+    `[PASS] repository quality gates passed` for CCDN-002 contract patch and
+    example-local frontmatter enforcement.
   - Pending: `bash scripts/validate-k8s-manifests.sh .`
   - Pending: `bash scripts/check-secret-handling.sh .`
   - Pending: `bash scripts/validate-policy-gates.sh .`

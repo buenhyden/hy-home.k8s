@@ -1,8 +1,20 @@
+---
+title: 'ADR-0003: Azure Workload Identity for Passwordless Auth'
+type: sdlc/adr
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # ADR-0003: Azure Workload Identity for Passwordless Auth
 
 ## Overview
 
 이 문서는 AKS 기반 애플리케이션의 인증 체계로 Azure Workload Identity를 전격 도입한 기록이다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Context
 

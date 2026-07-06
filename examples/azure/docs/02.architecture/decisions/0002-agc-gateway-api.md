@@ -1,8 +1,20 @@
+---
+title: 'ADR-0002: Azure Application Gateway for Containers (AGC) with Gateway API'
+type: sdlc/adr
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # ADR-0002: Azure Application Gateway for Containers (AGC) with Gateway API
 
 ## Overview
 
 이 문서는 AKS의 L7 부하 분산 및 Ingress 솔루션으로 Azure Application Gateway for Containers(AGC)와 Kubernetes Gateway API를 선택한 기록이다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Context
 

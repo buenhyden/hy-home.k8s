@@ -1,8 +1,20 @@
+---
+title: 'Azure 비용 최적화 및 거버넌스 정책'
+type: sdlc/policy
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # Azure 비용 최적화 및 거버넌스 정책
 
 ## Overview
 
 이 문서는 Azure 클라우드 리소스 사용에 따른 비용 효율성을 극대화하고, 프로젝트 거버넌스를 유지하기 위한 운영 지침을 상술한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## 1. 노드 풀 및 컴퓨팅 최적화
 
@@ -39,7 +51,7 @@
 | **Env** | 운영 환경 | `prod`, `dev`, `test` |
 | **CostCenter** | 비용 정산 부서 | `platform-team` |
 
-## 4. 관련 문서 참조
+## Related Documents
 
 - **AARD**: [../02.architecture/requirements/0001-azure-migration-architecture.md](../../02.architecture/requirements/0001-azure-migration-architecture.md)
 - **Runbook**: [../05.operations/runbooks/aks-node-replacement.md](../runbooks/aks-node-replacement.md)

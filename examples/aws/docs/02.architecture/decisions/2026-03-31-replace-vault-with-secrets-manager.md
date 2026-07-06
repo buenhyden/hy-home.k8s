@@ -1,8 +1,20 @@
+---
+title: 'ADR-001: Replace Local Vault with AWS Secrets Manager for AWS Environment'
+type: sdlc/adr
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # ADR-001: Replace Local Vault with AWS Secrets Manager for AWS Environment
 
 ## Overview
 
 이 문서는 AWS 환경 이식 시 로컬에서 사용하던 HashiCorp Vault를 AWS Secrets Manager로 교체하기 위한 아키텍처 결정 기록이다. 관리 오버헤드 감소와 AWS 네이티브 통합을 주 목적으로 한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Context
 

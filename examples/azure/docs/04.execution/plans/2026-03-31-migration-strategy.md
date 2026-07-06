@@ -1,8 +1,20 @@
+---
+title: 'Azure Migration Strategy (Phase 1)'
+type: sdlc/plan
+status: active
+owner: platform
+updated: 2026-07-06
+---
+
 # Azure Migration Strategy (Phase 1)
 
 ## Overview
 
 로컬 `hy-home.k8s` 인프라를 2026-05-09 공식 지원 스냅샷 기준 Azure(AKS) 환경으로 안정적으로 이전하기 위한 전략적 로드맵을 정의한다. 본 계획은 인프라 기반 확보, 플랫폼 서비스 연동, 애플리케이션 워크로드 이전, 운영 안정화의 4단계로 구성된다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Migration Phases
 
@@ -36,7 +48,7 @@
   - Azure Monitor 통합 및 알람 설정.
   - 서비스 성능 검증 및 로컬 k3s 클러스터 완전 중단.
 
-## Success Criteria
+## Success / Acceptance Criteria
 
 1. **W-PLAN-001**: 모든 인프라가 코드로 관리(IaC)되며 자동 배포 성공.
 2. **W-PLAN-002**: 다운타임 최소화 (Phase 3 전환 시 1시간 이내).

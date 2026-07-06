@@ -1,8 +1,20 @@
+---
+title: 'AWS Migration Technical Specification (Spec)'
+type: sdlc/spec
+status: active
+owner: platform
+updated: 2026-07-06
+---
+
 # AWS Migration Technical Specification (Spec)
 
 ## Overview
 
 이 문서는 hy-home.k8s 로컬 환경을 AWS로 마이그레이션하기 위한 세부 기술 명세를 정의한다. VPC 네트워크 설계, EKS 클러스터 구성, 관리형 서비스(RDS, ElastiCache)의 스펙 및 보안 정책을 구체화한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Strategic Boundaries & Non-goals
 

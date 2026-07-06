@@ -1,10 +1,20 @@
-# Azure Migration Product Requirements Document
+---
+title: 'Azure Migration Product Requirements Document'
+type: sdlc/prd
+status: active
+owner: platform
+updated: 2026-07-06
+---
 
-## Azure Migration Product Requirements
+# Azure Migration Product Requirements Document
 
 ## Overview
 
 이 문서는 `hy-home.k8s` 로컬 인프라를 Azure 클라우드로 마이그레이션하기 위한 제품 요구사항을 정의한다. 로컬 환경의 물리적 제약을 극복하고, 2026년 기준 최신 Azure 관리형 서비스를 활용하여 엔터프라이즈급의 확장성, 보안성 및 가동성을 확보하는 것을 목표로 한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Vision
 
@@ -37,7 +47,7 @@
 - **REQ-PRD-FUN-03**: 데이터베이스 및 캐시는 Azure 관리형 서비스(PostgreSQL Flexible, Redis)로 대체되어야 한다.
 - **REQ-PRD-FUN-04**: 2026년 보안 표준인 Entra ID Workload Identity를 지원해야 한다.
 
-## Success Criteria
+## Success / Acceptance Criteria
 
 - **REQ-PRD-MET-01**: 인프라 배포 자동화율 100% (Bicep/IaC 기반).
 - **REQ-PRD-MET-02**: 애플리케이션 가동률(SLA) 99.9% 이상 확보.

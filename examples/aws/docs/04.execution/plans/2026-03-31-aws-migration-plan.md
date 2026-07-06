@@ -1,8 +1,20 @@
+---
+title: 'AWS Infrastructure Migration Implementation Plan'
+type: sdlc/plan
+status: active
+owner: platform
+updated: 2026-07-06
+---
+
 # AWS Infrastructure Migration Implementation Plan
 
 ## Overview
 
 이 문서는 로컬 K3s 인프라를 AWS EKS 환경으로 성공적으로 이식하기 위한 통합 실행 계획서다. 인프라 프로비저닝, 서비스 이전, 최종 검증까지의 전 과정을 단계별로 정의한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Context
 

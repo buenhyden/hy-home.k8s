@@ -1,3 +1,11 @@
+---
+title: 'ADR-0004: PostgreSQL Flexible Server HA'
+type: sdlc/adr
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # ADR-0004: PostgreSQL Flexible Server HA
 
 : PostgreSQL High Availability Strategy
@@ -5,6 +13,10 @@
 ## Overview
 
 로컬의 Patroni/etcd 기반 PostgreSQL HA 구성을 Azure의 관리형 서비스인 **Azure Database for PostgreSQL Flexible Server**로 대체하고, 리전 수준의 가용성을 확보하기 위해 **Zone-redundant HA** 구성을 채택한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Context
 

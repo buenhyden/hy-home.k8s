@@ -1,8 +1,20 @@
+---
+title: 'Azure AKS Deployment & Onboarding Guide'
+type: sdlc/guide
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # Azure AKS Deployment & Onboarding Guide
 
 ## Overview
 
 이 문서는 로컬 K3s 환경에서 Azure AKS로 인프라를 이전한 후, 관리자가 클러스터를 배포하고 운영 환경에 온보딩하기 위한 가이드를 제공한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Guide Type
 

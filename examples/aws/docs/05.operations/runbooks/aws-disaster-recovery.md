@@ -1,3 +1,11 @@
+---
+title: 'AWS Disaster Recovery Runbook'
+type: sdlc/runbook
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # AWS Disaster Recovery Runbook
 
 : AWS Migration and Operations
@@ -5,6 +13,10 @@
 ## Overview
 
 이 런북은 hy-home.k8s AWS 인프라의 장애 상황(클러스터 파손, 데이터 손실 등)에서 시스템을 신속하게 복구하기 위한 절차를 정의한다. 운영자가 패닉 없이 즉시 따라 할 수 있는 실행 단계를 제공한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Purpose
 
@@ -70,6 +82,6 @@ argocd app diff root-apps --refresh
 - 장애 복구 시도 중 실패할 경우, 최종 트래픽을 기존 로컬 K3s(만약 살아있다면)로 즉시 전환하거나 정적 점검 페이지로 롤백한다.
 - 모든 수동 변경 사항은 복구 후 즉시 Terraform 코드로 역추출하여 반영한다.
 
-## Related Operational Documents
+## Related Documents
 
 - **Policy**: [../05.operations/policies/aws-operations-policy.md](../policies/aws-operations-policy.md)

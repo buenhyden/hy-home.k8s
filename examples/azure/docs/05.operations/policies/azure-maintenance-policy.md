@@ -1,8 +1,20 @@
+---
+title: 'Azure Maintenance & Operations Policy'
+type: sdlc/policy
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # Azure Maintenance & Operations Policy
 
 ## Overview
 
 로컬 k3s에서 Azure(AKS)로 이전된 인프라의 장기적인 안정성과 가용성을 유지하기 위한 운영 및 점검 정책을 정의한다. 본 운영 가이드는 2026-05-09 공식 지원 스냅샷 기준 Azure 패치 관리 및 보안 준수를 기준으로 작성되었다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Maintenance Windows
 

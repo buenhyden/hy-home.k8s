@@ -8253,8 +8253,15 @@ section separating static from live evidence.
   - `git diff --check` PASS.
   - `bash scripts/validate-repo-quality-gates.sh .` PASS with
     `[PASS] repository quality gates passed`.
+- Example-local frontmatter and validator patch:
+  - 39 non-README AWS/Azure example docs received role-appropriate `sdlc/*`
+    frontmatter plus `Snapshot Boundary` and `Related Documents`.
+  - `git diff --check` PASS.
+  - `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+  - `bash scripts/validate-repo-quality-gates.sh .` PASS with
+    `[PASS] repository quality gates passed`.
 
 ### Handoff
 
-- Continue with CCDN-002 validator enforcement after AWS/Azure non-README
-  example docs receive role-appropriate frontmatter.
+- Continue with CCDN-003 and the deeper AWS/Azure type-specific section review
+  for CCDN-004 and CCDN-005.

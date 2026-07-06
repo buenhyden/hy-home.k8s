@@ -1,8 +1,20 @@
+---
+title: 'ADR-0001: Selection of Azure Application Gateway for Containers (AGC)'
+type: sdlc/adr
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # ADR-0001: Selection of Azure Application Gateway for Containers (AGC)
 
 ## Overview
 
 이 문서는 `hy-home.k8s` 인프라의 Azure 마이그레이션 시, L7 부하 분산 장치 및 인프라 게이트웨이로 Application Gateway for Containers (AGC)를 선택한 아키텍처 결정을 기록한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Context
 

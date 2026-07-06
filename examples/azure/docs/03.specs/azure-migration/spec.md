@@ -1,8 +1,20 @@
+---
+title: 'Azure Migration Technical Specification'
+type: sdlc/spec
+status: active
+owner: platform
+updated: 2026-07-06
+---
+
 # Azure Migration Technical Specification
 
 ## Overview
 
 로컬 k3s 환경을 Azure(AKS)로 이전하기 위한 엔지니어링 세부 규격을 정의한다. 본 명세는 Bicep 코드 구현 및 Kubernetes 매니페스트 작성의 기준이 되며, 2026-05-09 공식 지원 스냅샷 기준 Azure 기술 표준을 준수한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## System Specification
 

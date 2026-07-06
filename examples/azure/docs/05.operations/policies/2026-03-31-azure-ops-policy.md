@@ -1,8 +1,20 @@
+---
+title: 'Azure Infrastructure Operations Policy'
+type: sdlc/policy
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # Azure Infrastructure Operations Policy
 
 ## Overview
 
 이 문서는 Azure AKS 환경으로 이전된 `hy-home.k8s` 인프라의 운영 정책을 정의한다. 보안 통제, 리소스 관리 기준, 그리고 정책 준수 여부 검증 방법을 규정한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Policy Scope
 

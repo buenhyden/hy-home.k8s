@@ -1,8 +1,20 @@
+---
+title: 'AWS Infrastructure Migration Architecture Reference Document (ARD)'
+type: sdlc/ard
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # AWS Infrastructure Migration Architecture Reference Document (ARD)
 
 ## Overview
 
 이 문서는 로컬 K3s/k3d 환경에서 AWS 환경으로 전환되는 시스템의 아키텍처 원칙과 표준을 정의한다. 고가용성, 확장성, 보안성이 강화된 클라우드 네이티브 참조 모델을 제공하여 구현의 정합성을 보장한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Summary
 

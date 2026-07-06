@@ -1,8 +1,20 @@
+---
+title: 'Task: AWS Infrastructure Migration Implementation'
+type: sdlc/task
+status: active
+owner: platform
+updated: 2026-07-06
+---
+
 # Task: AWS Infrastructure Migration Implementation
 
 ## Overview
 
 이 문서는 로컬 K3s 인프라를 AWS 환경으로 이식하는 과정에서 발생하는 모든 세부 작업 목록이다. Spec과 Plan에서 정의된 마일스톤에 따라 실제 구현 및 검증 과정을 추적한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Inputs
 
@@ -51,3 +63,7 @@
 - **Infrastructure Check**: `terraform validate` (Draft checked)
 - **Manifest Check**: `kubectl diff` (Draft checked)
 - **Documentation Check**: Relative Link Integrity (Checked)
+
+## Related Documents
+
+- [AWS Example Documentation Hub](../../README.md)

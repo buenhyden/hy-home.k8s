@@ -1,3 +1,11 @@
+---
+title: 'AWS Infrastructure Recovery Runbook'
+type: sdlc/runbook
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # AWS Infrastructure Recovery Runbook
 
 : AWS EKS, RDS, ElastiCache Recovery
@@ -5,6 +13,10 @@
 ## Overview
 
 이 런북은 AWS 클라우드 인프라 장애 또는 오설정 발생 시 즉각적으로 서비스를 복구하기 위한 단계별 실행 절차를 정의한다. 운영자가 비상 상황에서 판단을 최소화하고 매뉴얼에 따라 빠르게 대응할 수 있도록 한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Purpose
 
@@ -53,7 +65,7 @@
 - [ ] [ ] **Snapshot Recovery**: `aws rds restore-db-instance-from-db-snapshot --db-instance-identifier restored-db --snapshot-identifier latest-snapshot` 실행.
 - [ ] [ ] **Git Rollback**: `git revert <commit-hash>` 실행 후 `terraform plan -out rollback.plan`으로 변경 범위를 검토한다.
 
-## Related Operational Documents
+## Related Documents
 
 - **Incident index**: [root incident README](../../../../../docs/05.operations/incidents/README.md)
 - **Operation**: [../05.operations/policies/aws-management.md](../policies/aws-management.md)

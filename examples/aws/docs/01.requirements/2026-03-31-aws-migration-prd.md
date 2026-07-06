@@ -1,8 +1,20 @@
+---
+title: 'AWS Migration Product Requirements Document'
+type: sdlc/prd
+status: active
+owner: platform
+updated: 2026-07-06
+---
+
 # AWS Migration Product Requirements Document
 
 ## Overview
 
 이 문서는 로컬 K3s/k3d 기반의 Kubernetes 인프라를 2026-05-09 공식 지원 스냅샷 기준의 AWS 클라우드 환경으로 이식하기 위한 제품 요구사항을 정의한다. 이를 통해 시스템의 확장성, 가용성, 보안성을 강화하고 관리형 서비스를 통해 운영 부담을 최소화하는 것을 목표로 한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Vision
 
@@ -33,7 +45,7 @@
 - **REQ-PRD-FUN-02**: 모든 데이터 저장 서비스(DB, Cache)는 AWS Managed Service로 대체되어 자동 백업 및 패치를 지원해야 한다.
 - **REQ-PRD-FUN-03**: 인프라는 Terraform(IaC)으로 정의되어 코드 기반으로 재현 및 관리 가능해야 한다.
 
-## Success Criteria
+## Success / Acceptance Criteria
 
 - **REQ-PRD-MET-01**: 인프라 구축 후 가용성 99.9% 이상 달성 (Service Level Objective).
 - **REQ-PRD-MET-02**: 수동 노드 관리 제로화 (Karpenter에 의한 100% 자동 스케일링).

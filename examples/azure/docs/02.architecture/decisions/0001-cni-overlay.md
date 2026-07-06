@@ -1,8 +1,20 @@
+---
+title: 'ADR-0001: Azure CNI Overlay for AKS Networking'
+type: sdlc/adr
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # ADR-0001: Azure CNI Overlay for AKS Networking
 
 ## Overview
 
 이 문서는 AKS 클러스터의 워크로드 네트워킹 플러그인으로 Azure CNI Overlay를 선택한 기록이다. 서비스 확장성과 IP 효율성을 극대화하기 위한 결정이다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Context
 

@@ -1,3 +1,11 @@
+---
+title: 'Azure Infrastructure Fault Tolerance Runbook'
+type: sdlc/runbook
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # Azure Infrastructure Fault Tolerance Runbook
 
 : Azure Cluster & Managed Services
@@ -5,6 +13,10 @@
 ## Overview
 
 이 런북은 Azure AKS 및 관리형 서비스(PostgreSQL, AGC)에서 발생할 수 있는 주요 장애 시나리오에 대한 즉각적인 실행 절차를 정의한다. 운영자가 즉시 따라 할 수 있는 단계와 검증 기준을 제공한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Purpose
 
@@ -70,7 +82,7 @@ HTTPRoute 또는 Gateway가 정상적으로 작동하지 않을 경우:
 - **GitOps Rollback**: `argocd app rollback hyhome-root` 기능을 사용하여 이전 정상 상태의 매니페스트로 복구.
 - **Bicep Redployment**: 마지막 성공한 deployment 버전을 사용하여 인프라 재배포.
 
-## Related Operational Documents
+## Related Documents
 
 - **Incident index**: [root incident README](../../../../../docs/05.operations/incidents/README.md)
 - **Postmortem examples**: 기록이 생기면 root incident/postmortem taxonomy에 맞춰 연결한다.

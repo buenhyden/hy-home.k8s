@@ -1,8 +1,20 @@
+---
+title: 'Azure Disaster Recovery Runbook'
+type: sdlc/runbook
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # Azure Disaster Recovery Runbook
 
 ## Overview
 
 Azure(AKS) 환경으로 마이그레이션된 `hy-home.k8s` 인프라에서 발생 가능한 중대 장애 및 재해 발생 시 서비스 복구 절차를 정의한다. 본 런북은 2026-05-09 공식 지원 스냅샷 기준 Azure 복구 기술 및 서비스 수준 목표(SLO)를 기반으로 작성되었다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Disaster Scenarios
 

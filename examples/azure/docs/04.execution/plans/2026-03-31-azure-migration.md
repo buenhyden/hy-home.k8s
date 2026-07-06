@@ -1,8 +1,20 @@
+---
+title: 'Azure Migration Implementation Plan'
+type: sdlc/plan
+status: active
+owner: platform
+updated: 2026-07-06
+---
+
 # Azure Migration Implementation Plan
 
 ## Overview
 
 이 문서는 로컬 k3s 인프라를 Azure 클라우드로 이식하기 위한 단계별 실행 계획과 마일스톤을 정의한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Milestones
 

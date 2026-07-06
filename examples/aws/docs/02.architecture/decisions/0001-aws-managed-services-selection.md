@@ -1,8 +1,20 @@
+---
+title: 'ADR-0001: AWS Managed Services and Compute Strategy Selection'
+type: sdlc/adr
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # ADR-0001: AWS Managed Services and Compute Strategy Selection
 
 ## Overview
 
 이 문서는 hy-home.k8s 시스템의 AWS 마이그레이션 과정에서 EKS 클러스터 구성 및 주요 관리형 서비스(RDS, ElastiCache)를 선택한 배경과 기술적 결정을 기록한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Context
 

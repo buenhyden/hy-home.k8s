@@ -1,8 +1,20 @@
+---
+title: 'Task: AWS Migration Execution List'
+type: sdlc/task
+status: active
+owner: platform
+updated: 2026-07-06
+---
+
 # Task: AWS Migration Execution List
 
 ## Overview
 
 이 문서는 hy-home.k8s 시스템의 AWS 마이그레이션을 위한 세부 실행 태스크 목록이다. Spec 및 Plan에서 정의된 단계별 작업을 구체적인 실행 단위로 분해하여 추적한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Inputs
 
@@ -29,3 +41,7 @@
 - **Logs / Evidence Location**:
   - `examples/aws/logs/` (if applicable)
   - CI/CD 파이프라인 빌드 로그
+
+## Related Documents
+
+- [AWS Example Documentation Hub](../../README.md)

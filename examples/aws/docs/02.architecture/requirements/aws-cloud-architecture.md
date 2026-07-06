@@ -1,8 +1,16 @@
+---
+title: 'AWS Cloud Architecture (Migration from K3s/k3d)'
+type: sdlc/ard
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # AWS Cloud Architecture (Migration from K3s/k3d)
 
 이 문서는 2026-05-09 공식 지원 스냅샷 기준 AWS 관리형 서비스를 활용하여 로컬 K3s 인프라를 AWS로 이식하기 위한 아키텍처를 정의합니다.
 
-## Architecture Overview
+## Overview
 
 로컬의 `k3d` 클러스터와 외부 Docker 서비스들을 AWS의 고가용성 관리형 서비스로 대체합니다.
 
@@ -20,6 +28,10 @@
 | **Registry** | Local Registry | **Amazon ECR** | Private Repository |
 
 ---
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Network Architecture
 
@@ -52,3 +64,7 @@ VPC는 3개의 Availability Zone(AZ)을 사용하며, 각 AZ마다 Public/Privat
 - **Spot Instances**: 비수행 작업(CI/CD Runner, Dev App)에 대해 Spot Instance를 활용하여 비용을 최대 90% 절감합니다.
 - **RDS Proxy**: DB 연결 효율성을 높이고 리소스 낭비를 방지합니다.
 - **S3 Intelligent-Tiering**: 로그 및 백업 데이터 스토리지 비용을 최적화합니다.
+
+## Related Documents
+
+- [AWS Example Documentation Hub](../../README.md)

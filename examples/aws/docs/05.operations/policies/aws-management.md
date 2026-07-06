@@ -1,8 +1,20 @@
+---
+title: 'AWS Infrastructure Operations Policy'
+type: sdlc/policy
+status: accepted
+owner: platform
+updated: 2026-07-06
+---
+
 # AWS Infrastructure Operations Policy
 
 ## Overview
 
 이 문서는 AWS 클라우드 기반 인프라의 운영 관리를 위한 정책과 표준을 정의한다. 리소스의 안정성, 보안성 및 비용 효율성을 유지하기 위한 통제 기준을 제공한다.
+
+## Snapshot Boundary
+
+This document is an example-local SDLC snapshot for cloud migration reference. It follows the repository's Cloud Example Snapshot boundary and is not live provider-latest guidance.
 
 ## Policy Scope
 
