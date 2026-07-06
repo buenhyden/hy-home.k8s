@@ -1,7 +1,7 @@
 ---
 title: 'Task: SDLC Lifecycle Contract'
 type: sdlc/task
-status: draft
+status: done
 owner: platform
 updated: 2026-07-06
 ---
@@ -38,7 +38,7 @@ repository-static validation evidence.
 | T-001 | Align lifecycle, numbering, handoff, archive, active-surface, and workspace staging contract surfaces. | doc | Contracts; Core Design | PLN-001 | Commit `c24c2b7`; follow-up placeholder correction commit `ec29174`; reviewed by subagents; `git diff --check`; `bash scripts/validate-repo-quality-gates.sh .`. | platform | Done |
 | T-002 | Add archive tombstone metadata contract, update current tombstones, and keep archive validator support passing. | doc/test | Archive Contract; Data Modeling & Storage Strategy | PLN-002 | Commit `b7eeac9`; amended after semantic archive reason review; `git diff --check`; `bash -n scripts/validate-repo-quality-gates.sh`; `bash scripts/validate-repo-quality-gates.sh .`. | platform | Done |
 | T-003 | Record active route evidence, `_workspace` boundary evidence, and this Stage 04 task record. | doc | Numbering Contract; Workspace Staging Contract | PLN-003 | Active route scans confirmed numeric Stage 01 PRDs and numeric Stage 03 spec folders; `_workspace/README.md` boundary wording; task README index update; `bash scripts/validate-repo-quality-gates.sh .`. | platform | Done |
-| T-004 | Add remaining deterministic lifecycle route gates and close final validation evidence. | test/doc | Core Design; Acceptance Criteria | PLN-004 | Pending final `git diff --check`, shell syntax check, full repository quality gate, and legacy route scan. | platform | Todo |
+| T-004 | Add remaining deterministic lifecycle route gates and close final validation evidence. | test/doc | Core Design; Acceptance Criteria | PLN-004 | Validator now rejects date-based active PRDs, nonnumeric active PRDs, nonnumeric active Spec folders, invalid archive tombstone metadata, and Stage 04 README index status/updated drift; final `git diff --check`, shell syntax check, full repository quality gate, and active route scans passed. | platform | Done |
 
 ## Suggested Types
 
@@ -56,7 +56,7 @@ or `ops` work.
 ### Phase 2
 
 - [x] T-003 Align active surface evidence and workspace boundary.
-- [ ] T-004 Add validation gates and close evidence.
+- [x] T-004 Add validation gates and close evidence.
 
 ## Verification Summary
 
@@ -67,11 +67,15 @@ or `ops` work.
     `[PASS] repository quality gates passed`.
   - `find docs/01.requirements -maxdepth 1 -type f -name '*.md' -printf '%f\n' | sort`: pass.
   - `find docs/03.specs -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | sort`: pass.
+  - `find docs/01.requirements -maxdepth 1 -type f -name '*.md' ! -name README.md -printf '%f\n' | awk '!/^[0-9][0-9][0-9]-.+\.md$/ { print; bad=1 } END { exit bad }'`: pass, no output.
+  - `find docs/03.specs -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | awk '!/^[0-9][0-9][0-9]-.+/ { print; bad=1 } END { exit bad }'`: pass, no output.
 - **Eval Commands**:
   - Subagent spec compliance review for Task 1.
   - Subagent quality review for Task 1.
   - Subagent spec compliance review for Task 2.
   - Subagent quality review for Task 2.
+  - Subagent spec compliance review for Task 3.
+  - Subagent quality review for Task 3, with follow-up evidence fix applied.
 - **Logs / Evidence Location**:
   - Git commits on branch `codex/sdlc-lifecycle-contract`.
   - This task record.

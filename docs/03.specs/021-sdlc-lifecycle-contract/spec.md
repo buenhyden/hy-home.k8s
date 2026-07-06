@@ -326,7 +326,8 @@ only when they are non-secret and task-scoped.
 git diff --check
 bash -n scripts/validate-repo-quality-gates.sh
 bash scripts/validate-repo-quality-gates.sh .
-rg -n "YYYY-MM-DD-<feature-or-system>|docs/03\\.specs/<feature-id>|docs/03\\.specs/[a-z][^/]+/spec\\.md" docs/00.agent-governance docs/99.templates docs/01.requirements docs/03.specs scripts
+find docs/01.requirements -maxdepth 1 -type f -name '*.md' ! -name README.md -printf '%f\n' | awk '!/^[0-9][0-9][0-9]-.+\.md$/ { print; bad=1 } END { exit bad }'
+find docs/03.specs -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | awk '!/^[0-9][0-9][0-9]-.+/ { print; bad=1 } END { exit bad }'
 find docs/01.requirements -maxdepth 1 -type f -name '*.md' -print | sort
 find docs/03.specs -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | sort
 ```

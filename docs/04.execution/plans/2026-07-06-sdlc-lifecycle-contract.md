@@ -1,7 +1,7 @@
 ---
 title: 'SDLC Lifecycle Contract Implementation Plan'
 type: sdlc/plan
-status: draft
+status: done
 owner: platform
 updated: 2026-07-06
 ---
@@ -361,6 +361,7 @@ git commit -m "docs(tasks): Record SDLC lifecycle contract execution"
 **Files:**
 
 - Modify: `scripts/validate-repo-quality-gates.sh`
+- Modify: `docs/03.specs/021-sdlc-lifecycle-contract/spec.md`
 - Modify: `docs/04.execution/tasks/2026-07-06-sdlc-lifecycle-contract.md`
 - Modify: `docs/04.execution/plans/2026-07-06-sdlc-lifecycle-contract.md`
 - Modify: `docs/04.execution/plans/README.md`
@@ -423,11 +424,12 @@ Run:
 git diff --check
 bash -n scripts/validate-repo-quality-gates.sh
 bash scripts/validate-repo-quality-gates.sh .
-rg -n "YYYY-MM-DD-<feature-or-system>|docs/03\\.specs/<feature-id>|docs/03\\.specs/[a-z][^/]+/spec\\.md" docs/00.agent-governance docs/99.templates docs/01.requirements docs/03.specs scripts
+find docs/01.requirements -maxdepth 1 -type f -name '*.md' ! -name README.md -printf '%f\n' | awk '!/^[0-9][0-9][0-9]-.+\.md$/ { print; bad=1 } END { exit bad }'
+find docs/03.specs -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | awk '!/^[0-9][0-9][0-9]-.+/ { print; bad=1 } END { exit bad }'
 ```
 
-Expected: the first three commands pass; the final scan returns no current
-contract violation.
+Expected: the first three commands pass; the active route scans print no
+violating path and exit 0.
 
 - [ ] **Step 6: Close task evidence and plan status**
 
@@ -450,7 +452,7 @@ git commit -m "docs(validation): Enforce SDLC lifecycle contract gates"
 | VAL-PLN-001 | Structural | Markdown patch whitespace | `git diff --check` | No output and exit 0. |
 | VAL-PLN-002 | Syntax | Validator shell syntax | `bash -n scripts/validate-repo-quality-gates.sh` | Exit 0. |
 | VAL-PLN-003 | Repository Gate | Full repo quality gate | `bash scripts/validate-repo-quality-gates.sh .` | `[PASS] repository quality gates passed`. |
-| VAL-PLN-004 | Route Scan | Legacy active route scan | `rg -n "YYYY-MM-DD-<feature-or-system>|docs/03\\.specs/<feature-id>|docs/03\\.specs/[a-z][^/]+/spec\\.md" docs/00.agent-governance docs/99.templates docs/01.requirements docs/03.specs scripts` | No current-contract violations. |
+| VAL-PLN-004 | Route Scan | Legacy active route scan | `find docs/01.requirements -maxdepth 1 -type f -name '*.md' ! -name README.md -printf '%f\n' \| awk '!/^[0-9][0-9][0-9]-.+\.md$/ { print; bad=1 } END { exit bad }'` and `find docs/03.specs -maxdepth 1 -mindepth 1 -type d -printf '%f\n' \| awk '!/^[0-9][0-9][0-9]-.+/ { print; bad=1 } END { exit bad }'` | No violating path is printed and both commands exit 0. |
 | VAL-PLN-005 | Archive Metadata | Archive tombstone field scan | `missing=0; for key in original_path archived_on archive_reason replacement; do while IFS= read -r f; do if ! rg -q "^${key}:" "$f"; then echo "$f missing $key"; missing=1; fi; done < <(find docs/98.archive -type f -name '*.md' ! -name README.md \| sort); done; exit $missing` | No archive tombstone path is reported. |
 
 ## Risks & Mitigations
@@ -474,13 +476,13 @@ git commit -m "docs(validation): Enforce SDLC lifecycle contract gates"
 
 ## Completion Criteria
 
-- [ ] Lifecycle contract surfaces aligned.
-- [ ] Archive tombstone metadata schema, template, README, and existing
+- [x] Lifecycle contract surfaces aligned.
+- [x] Archive tombstone metadata schema, template, README, and existing
   tombstones aligned.
-- [ ] Active route evidence and `_workspace` boundary aligned.
-- [ ] Validator enforces deterministic lifecycle and archive checks.
-- [ ] Stage 04 task evidence records validation results.
-- [ ] Required validation commands pass.
+- [x] Active route evidence and `_workspace` boundary aligned.
+- [x] Validator enforces deterministic lifecycle and archive checks.
+- [x] Stage 04 task evidence records validation results.
+- [x] Required validation commands pass.
 
 ## Related Documents
 

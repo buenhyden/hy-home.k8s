@@ -334,6 +334,37 @@ for tracked_path in workspace_tracked_paths:
     if workspace_prohibited_path_pattern.search(tracked_path):
         fail(f"_workspace tracked path contains prohibited secret-risk wording: {tracked_path}")
 
+requirements_stage = root / "docs/01.requirements"
+if requirements_stage.exists():
+    for requirement_doc in sorted(requirements_stage.glob("*.md")):
+        if requirement_doc.name == "README.md":
+            continue
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}-.+\.md", requirement_doc.name):
+            fail(
+                "active PRDs must use numeric route "
+                f"docs/01.requirements/<###-Numbering>-<feature-or-system>.md: {rel(requirement_doc)}"
+            )
+        if not re.fullmatch(r"\d{3}-.+\.md", requirement_doc.name):
+            fail(
+                "active PRD filename must start with a three-digit numeric prefix: "
+                f"{rel(requirement_doc)}"
+            )
+
+specs_stage = root / "docs/03.specs"
+if specs_stage.exists():
+    for spec_entry in sorted(specs_stage.iterdir()):
+        if spec_entry.name == "README.md":
+            continue
+        if spec_entry.is_dir():
+            if not re.fullmatch(r"\d{3}-.+", spec_entry.name):
+                fail(
+                    "active Spec folder must start with a three-digit numeric prefix: "
+                    f"{rel(spec_entry)}"
+                )
+            continue
+        if spec_entry.is_file():
+            fail(f"docs/03.specs may contain only README.md and numbered Spec folders: {rel(spec_entry)}")
+
 env_ignore_check = subprocess.run(["git", "check-ignore", "-q", ".env"], cwd=root)
 if env_ignore_check.returncode == 1:
     fail(".env must remain ignored by Git")
@@ -1309,6 +1340,23 @@ archive_required_phrases = [
 for tombstone in sorted(archive_root.rglob("*.md")):
     if tombstone.name == "README.md":
         continue
+    metadata = load_markdown_frontmatter(tombstone)
+    if str(metadata.get("type", "")).strip() != "content/archive-tombstone":
+        fail(f"{rel(tombstone)} archive metadata must use type: content/archive-tombstone")
+    if str(metadata.get("status", "")).strip() != "archived":
+        fail(f"{rel(tombstone)} archive metadata must use status: archived")
+    for archive_key in ["original_path", "archived_on", "archive_reason", "replacement"]:
+        if not str(metadata.get(archive_key, "")).strip():
+            fail(f"{rel(tombstone)} missing archive metadata key: {archive_key}")
+    archive_reason = str(metadata.get("archive_reason", "")).strip()
+    if archive_reason not in archive_reason_allowed_values:
+        fail(f"{rel(tombstone)} archive_reason is unsupported: {archive_reason or '<empty>'}")
+    original_path = str(metadata.get("original_path", "")).strip()
+    replacement = str(metadata.get("replacement", "")).strip()
+    if not original_path.startswith("docs/") or original_path.startswith("docs/98.archive/"):
+        fail(f"{rel(tombstone)} original_path must point to the original non-archive docs path")
+    if replacement != "none" and not replacement.startswith("docs/"):
+        fail(f"{rel(tombstone)} replacement must be docs/... or none")
     text = read_text(tombstone)
     for phrase in archive_required_phrases:
         if phrase not in text:
@@ -1643,6 +1691,67 @@ for operations_root in operations_index_roots:
             fail(f"{rel(doc_path)} missing updated for operations index validation")
         elif row_updated != updated:
             fail(f"{rel(readme_path)} updated mismatch for {doc_path.name}: index={row_updated}, frontmatter={updated}")
+
+
+def validate_stage04_index(stage_root: pathlib.Path) -> None:
+    readme_path = stage_root / "README.md"
+    if not readme_path.exists():
+        fail(f"Stage 04 README is missing: {rel(readme_path)}")
+        return
+
+    rows = markdown_table_after_heading(read_text(readme_path), "## 문서 인덱스")
+    expected_header = ["문서", "설명", "상태", "최종 수정"]
+    if len(rows) < 2:
+        fail(f"{rel(readme_path)} 문서 인덱스 must contain a header and document rows")
+        return
+    if rows[0] != expected_header:
+        fail(f"{rel(readme_path)} 문서 인덱스 header must be: {' | '.join(expected_header)}")
+
+    indexed_rows: dict[str, list[str]] = {}
+    for row_number, row in enumerate(rows[1:], start=1):
+        if len(row) != len(expected_header):
+            fail(f"{rel(readme_path)} 문서 인덱스 row {row_number} must have {len(expected_header)} columns")
+            continue
+        match = re.search(r"\]\(\./([^)]+\.md)\)", row[0])
+        if not match:
+            fail(f"{rel(readme_path)} 문서 인덱스 row {row_number} must link to ./<document>.md")
+            continue
+        target_name = match.group(1)
+        if target_name in indexed_rows:
+            fail(f"{rel(readme_path)} 문서 인덱스 duplicates document: {target_name}")
+        indexed_rows[target_name] = row
+
+    stage_docs = sorted(path for path in stage_root.glob("*.md") if path.name != "README.md")
+    stage_doc_names = {path.name for path in stage_docs}
+    for doc_name in sorted(stage_doc_names - set(indexed_rows)):
+        fail(f"{rel(readme_path)} 문서 인덱스 missing document: {doc_name}")
+    for doc_name in sorted(set(indexed_rows) - stage_doc_names):
+        fail(f"{rel(readme_path)} 문서 인덱스 links to missing document: {doc_name}")
+
+    for doc_path in stage_docs:
+        row = indexed_rows.get(doc_path.name)
+        if not row:
+            continue
+        metadata = load_markdown_frontmatter(doc_path)
+        status = str(metadata.get("status", "")).strip()
+        updated = str(metadata.get("updated", "")).strip()
+        row_status = row[2].strip()
+        row_updated = row[3].strip()
+        if not status:
+            fail(f"{rel(doc_path)} missing status for Stage 04 index validation")
+        elif row_status.lower() != status.lower():
+            fail(f"{rel(readme_path)} status mismatch for {doc_path.name}: index={row_status}, frontmatter={status}")
+        if not updated:
+            fail(f"{rel(doc_path)} missing updated for Stage 04 index validation")
+        elif row_updated != updated:
+            fail(f"{rel(readme_path)} updated mismatch for {doc_path.name}: index={row_updated}, frontmatter={updated}")
+
+
+for stage04_root in [
+    root / "docs/04.execution/plans",
+    root / "docs/04.execution/tasks",
+]:
+    validate_stage04_index(stage04_root)
 
 template_enforcement_phrase_checks = {
     root / "docs/00.agent-governance/rules/documentation-protocol.md": [
