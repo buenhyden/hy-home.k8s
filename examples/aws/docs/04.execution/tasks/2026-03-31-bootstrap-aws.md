@@ -64,6 +64,12 @@ This document is an example-local SDLC snapshot for cloud migration reference. I
 - **Manifest Check**: `kubectl diff` (Draft checked)
 - **Documentation Check**: Relative Link Integrity (Checked)
 
+## Suggested Types
+
+- `doc` for example documentation changes.
+- `test` for repository-static validation.
+- `ops` only after a separate approved live operations plan exists.
+
 ## Related Documents
 
 - [AWS Example Documentation Hub](../../README.md)

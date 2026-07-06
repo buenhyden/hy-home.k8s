@@ -32,6 +32,28 @@ This document is an example-local SDLC snapshot for cloud migration reference. I
 - **Connectivity**: AKS API 서버에 로컬 터미널에서 `kubectl get nodes` 명령이 즉시 가능해야 함.
 - **Security**: 기본 NSG 규칙이 SSH 노출을 허용하지 않아야 함.
 
+## Inputs
+
+- **Snapshot Docs**: Sibling Azure example-local SDLC documents.
+- **Repository Baseline**: Current local GitOps and validation contracts.
+
+## Working Rules
+
+- Treat this task record as example evidence only.
+- Do not execute cloud, cluster, or credential mutations without a separate approval.
+- Re-run repository-static checks after adapting any example.
+
+## Suggested Types
+
+- `doc` for example documentation changes.
+- `test` for repository-static validation.
+- `ops` only after a separate approved live operations plan exists.
+
+## Verification Summary
+
+- Repository-static validation is required after edits.
+- Live cloud validation is not implied by this snapshot.
+
 ## Related Documents
 
 - **Plan**: [../04.execution/plans/2026-03-31-azure-migration.md](../plans/2026-03-31-azure-migration.md)

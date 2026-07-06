@@ -54,6 +54,40 @@ This document is an example-local SDLC snapshot for cloud migration reference. I
 2. 외부 트래픽이 AGC를 통해 AKS 내부 서비스로 정상 라우팅됨 (200 OK).
 3. Pod 내부에서 패스워드 없이 DB 및 Key Vault에 접근 성공 (Workload Identity 검증).
 
+## Vision
+
+This snapshot frames Azure Migration PRD (Product Requirements Document) as a reusable Azure migration reference. It is meant to guide design comparison, not to authorize a live provider deployment.
+
+## Problem Statement
+
+The snapshot captures the migration pressure points around local-cluster limits, managed-service adoption, identity, networking, and operational validation for Azure.
+
+## Personas
+
+- **Platform Engineer**: Uses this snapshot to compare cloud infrastructure choices.
+- **Operator**: Uses this snapshot to identify validation and operational handoff needs before a real Azure rollout.
+
+## Key Use Cases
+
+- **SNAPSHOT-USE-01**: Compare local platform capabilities with the Azure migration reference.
+- **SNAPSHOT-USE-02**: Identify follow-up provider validation before live deployment.
+
+## Functional Requirements
+
+- The example must keep cloud resource, identity, network, and secret-management assumptions explicit.
+- The example must remain value-free and must not contain credentials or live environment mutations.
+
+## Scope and Non-goals
+
+- **In Scope**: Dated Azure migration reference requirements and validation cues.
+- **Out of Scope**: Live account changes, credential writes, and provider-latest certification.
+- **Non-goals**: Replacing the repository's active local GitOps platform contract.
+
+## Risks, Dependencies, and Assumptions
+
+- Provider APIs, SKUs, identity features, and pricing can drift after the snapshot date.
+- Any real deployment depends on fresh Azure documentation review, account permissions, cost review, and security approval.
+
 ## Related Documents
 
 - **AARD**: [../02.architecture/requirements/0001-azure-migration-architecture.md](../02.architecture/requirements/0001-azure-migration-architecture.md)

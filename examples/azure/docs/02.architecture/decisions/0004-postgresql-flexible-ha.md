@@ -50,6 +50,15 @@ This document is an example-local SDLC snapshot for cloud migration reference. I
 - `az postgres flexible-server show` 명령어로 `highAvailability.mode`가 `ZoneRedundant`인지 확인.
 - `kubectl` 내에서 `psql` 클라이언트를 통해 Entra ID 토큰으로 로그인 성공 여부 검증.
 
+## Decision
+
+This decision accepts the selected Azure design direction recorded in this ADR snapshot and keeps alternatives visible for future provider refresh work.
+
+## Explicit Non-goals
+
+- This ADR does not authorize live Azure resource changes.
+- This ADR does not certify current provider-latest behavior beyond the snapshot boundary.
+
 ## Related Documents
 
 - **Spec**: [../03.specs/azure-migration/spec.md](../../03.specs/azure-migration/spec.md)

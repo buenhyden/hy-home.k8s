@@ -57,6 +57,43 @@ This document is an example-local SDLC snapshot for cloud migration reference. I
 - **Secondary Contact**: Platform Security Lead.
 - **Tools**: Azure Service Health, Monitor Dashboards, ArgoCD UI.
 
+## Runbook Type
+
+Example-local cloud operations runbook.
+
+## Purpose
+
+The purpose of this snapshot is to show the intended operational flow while preserving the no-live-mutation boundary.
+
+## Canonical References
+
+- Cloud Example Snapshot inventory.
+- Sibling example-local SDLC documents under the same provider docs tree.
+
+## When to Use
+
+Use this runbook as a reference when planning an approved sandbox exercise for Azure; do not use it as a live production instruction without refresh.
+
+## Procedure or Checklist
+
+- Review existing procedure sections in this document.
+- Replace placeholders in a sandbox plan.
+- Capture validation evidence before promoting any live action.
+
+## Verification Steps
+
+- Confirm commands and resource names against current official provider docs.
+- Confirm no secrets or private values are recorded in the repository.
+
+## Observability and Evidence Sources
+
+- Provider portal or CLI output captured outside the repository when sensitive.
+- Repository task records for non-secret validation summaries.
+
+## Safe Rollback or Recovery Procedure
+
+Stop the exercise, preserve non-secret evidence, and revert any example edits if assumptions no longer match current provider behavior.
+
 ## Related Documents
 
 - **PARD**: [../01.requirements/2026-03-31-azure-migration.md](../../01.requirements/2026-03-31-azure-migration.md)

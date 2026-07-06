@@ -83,6 +83,28 @@ kubectl get pods -n azure-alb-system
 - **VAL-SPC-002**: `HTTPRoute` 생성 시 AGC에서 Public IP가 할당되고 외부 접속이 가능함.
 - **VAL-SPC-003**: Workload Identity를 통해 Pod가 Key Vault 시크릿을 성공적으로 읽어옴.
 
+## Interfaces & Data Structures
+
+Interfaces are represented by cloud resources, Kubernetes manifests, identity bindings, and secret references described in this snapshot.
+
+## Edge Cases & Error Handling
+
+- Provider feature availability or SKU names may differ from the snapshot.
+- Identity, network, and quota failures should be handled in a sandbox before production planning.
+
+## Failure Modes & Fallback / Human Escalation
+
+- **Failure Mode**: Provider behavior differs from the snapshot.
+- **Fallback**: Stop and refresh the provider-specific docs and cost/security assumptions.
+- **Human Escalation**: Required before live account, credential, or cluster mutation.
+
+## Verification Commands
+
+```bash
+# Run only in an approved provider sandbox after replacing placeholders.
+# Re-check official provider docs before executing cloud or cluster commands.
+```
+
 ## Related Documents
 
 - **Plan**: [../04.execution/plans/2026-03-31-migration-strategy.md](../04.execution/plans/2026-03-31-migration-strategy.md)

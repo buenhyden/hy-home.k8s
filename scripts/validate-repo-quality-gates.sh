@@ -1029,6 +1029,106 @@ example_local_sdlc_routes = [
     ("05.operations/runbooks/*.md", "sdlc/runbook"),
 ]
 
+example_local_required_headings = {
+    "sdlc/prd": [
+        "## Overview",
+        "## Vision",
+        "## Problem Statement",
+        "## Personas",
+        "## Key Use Cases",
+        "## Functional Requirements",
+        "## Success / Acceptance Criteria",
+        "## Scope and Non-goals",
+        "## Risks, Dependencies, and Assumptions",
+        "## Related Documents",
+    ],
+    "sdlc/ard": [
+        "## Overview",
+        "## Summary",
+        "## Boundaries & Non-goals",
+        "## Quality Attributes",
+        "## System Overview & Context",
+        "## Data Architecture",
+        "## Infrastructure & Deployment",
+        "## Related Documents",
+    ],
+    "sdlc/adr": [
+        "## Overview",
+        "## Context",
+        "## Decision",
+        "## Explicit Non-goals",
+        "## Consequences",
+        "## Alternatives",
+        "## Related Documents",
+    ],
+    "sdlc/spec": [
+        "## Overview",
+        "## Strategic Boundaries & Non-goals",
+        "## Related Inputs",
+        "## Contracts",
+        "## Core Design",
+        "## Data Modeling & Storage Strategy",
+        "## Interfaces & Data Structures",
+        "## Edge Cases & Error Handling",
+        "## Failure Modes & Fallback / Human Escalation",
+        "## Verification Commands",
+        "## Success Criteria & Verification Plan",
+        "## Related Documents",
+    ],
+    "sdlc/plan": [
+        "## Overview",
+        "## Context",
+        "## Goals & In-Scope",
+        "## Non-Goals & Out-of-Scope",
+        "## Work Breakdown",
+        "## Verification Plan",
+        "## Risks & Mitigations",
+        "## Completion Criteria",
+        "## Related Documents",
+    ],
+    "sdlc/task": [
+        "## Overview",
+        "## Inputs",
+        "## Working Rules",
+        "## Task Table",
+        "## Suggested Types",
+        "## Verification Summary",
+        "## Related Documents",
+    ],
+    "sdlc/guide": [
+        "## Overview",
+        "## Guide Type",
+        "## Target Audience",
+        "## Purpose",
+        "## Prerequisites",
+        "## Step-by-step Instructions",
+        "## Common Pitfalls",
+        "## Related Documents",
+    ],
+    "sdlc/policy": [
+        "## Overview",
+        "## Policy Scope",
+        "## Applies To",
+        "## Controls",
+        "## Exceptions",
+        "## Verification",
+        "## Review Cadence",
+        "## Related Documents",
+    ],
+    "sdlc/runbook": [
+        "## Runbook Type",
+        "## Overview",
+        "## Purpose",
+        "## Canonical References",
+        "## When to Use",
+        "## Procedure or Checklist",
+        "## Verification Steps",
+        "## Observability and Evidence Sources",
+        "## Safe Rollback or Recovery Procedure",
+        "## Related Documents",
+    ],
+}
+
 
 def example_local_sdlc_type(path: pathlib.Path, docs_root: pathlib.Path) -> str | None:
     relative_path = path.relative_to(docs_root).as_posix()
@@ -1053,13 +1153,11 @@ for provider in ["aws", "azure"]:
             fail(f"{rel(example_doc)} is not covered by an example-local SDLC snapshot route")
             continue
         validate_markdown_frontmatter_profile(example_doc, expected_type)
-        for required_heading in [
-            "## Overview",
-            "## Snapshot Boundary",
-            "## Related Documents",
-        ]:
+        for required_heading in example_local_required_headings[expected_type]:
             if required_heading not in text:
-                fail(f"{rel(example_doc)} missing example-local required heading: {required_heading}")
+                fail(f"{rel(example_doc)} missing example-local {expected_type} heading: {required_heading}")
+        if "## Snapshot Boundary" not in text:
+            fail(f"{rel(example_doc)} missing example-local snapshot heading: ## Snapshot Boundary")
         for required_phrase in [
             "Cloud Example Snapshot",
             "not live provider-latest guidance",

@@ -65,6 +65,35 @@ VPC는 3개의 Availability Zone(AZ)을 사용하며, 각 AZ마다 Public/Privat
 - **RDS Proxy**: DB 연결 효율성을 높이고 리소스 낭비를 방지합니다.
 - **S3 Intelligent-Tiering**: 로그 및 백업 데이터 스토리지 비용을 최적화합니다.
 
+## Summary
+
+This snapshot summarizes AWS Cloud Architecture (Migration from K3s/k3d) as an example AWS cloud architecture reference for migration planning.
+
+## Boundaries & Non-goals
+
+- **Owns**: Example architecture assumptions, resource mapping, and validation cues.
+- **Consumes**: The repository's local GitOps baseline and Cloud Example Snapshot inventory.
+- **Does Not Own**: Live provider configuration, credentials, or production readiness.
+- **Non-goals**: Claiming current provider-latest architecture guidance.
+
+## Quality Attributes
+
+- **Security**: Validate identity and secret-management assumptions before live use.
+- **Reliability**: Treat HA claims as snapshot guidance requiring provider-side verification.
+- **Operability**: Keep runbook and validation links explicit for follow-up planning.
+
+## System Overview & Context
+
+Use the existing mapping, network, security, and cost sections in this document as the system context for the AWS snapshot.
+
+## Data Architecture
+
+Data-service assumptions in this snapshot are reference-only. Database, cache, secret, backup, and retention choices require fresh provider validation before live deployment.
+
+## Infrastructure & Deployment
+
+Infrastructure and deployment details are represented by the resource mapping and provider-specific commands in this snapshot. Execute them only in an approved sandbox.
+
 ## Related Documents
 
 - [AWS Example Documentation Hub](../../README.md)

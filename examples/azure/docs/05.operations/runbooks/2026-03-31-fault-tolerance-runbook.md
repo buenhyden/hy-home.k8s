@@ -82,6 +82,10 @@ HTTPRoute 또는 Gateway가 정상적으로 작동하지 않을 경우:
 - **GitOps Rollback**: `argocd app rollback hyhome-root` 기능을 사용하여 이전 정상 상태의 매니페스트로 복구.
 - **Bicep Redployment**: 마지막 성공한 deployment 버전을 사용하여 인프라 재배포.
 
+## Runbook Type
+
+Example-local cloud operations runbook.
+
 ## Related Documents
 
 - **Incident index**: [root incident README](../../../../../docs/05.operations/incidents/README.md)

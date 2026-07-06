@@ -42,6 +42,18 @@ This document is an example-local SDLC snapshot for cloud migration reference. I
   - `examples/aws/logs/` (if applicable)
   - CI/CD 파이프라인 빌드 로그
 
+## Working Rules
+
+- Treat this task record as example evidence only.
+- Do not execute cloud, cluster, or credential mutations without a separate approval.
+- Re-run repository-static checks after adapting any example.
+
+## Suggested Types
+
+- `doc` for example documentation changes.
+- `test` for repository-static validation.
+- `ops` only after a separate approved live operations plan exists.
+
 ## Related Documents
 
 - [AWS Example Documentation Hub](../../README.md)

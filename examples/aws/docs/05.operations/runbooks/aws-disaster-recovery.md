@@ -82,6 +82,15 @@ argocd app diff root-apps --refresh
 - 장애 복구 시도 중 실패할 경우, 최종 트래픽을 기존 로컬 K3s(만약 살아있다면)로 즉시 전환하거나 정적 점검 페이지로 롤백한다.
 - 모든 수동 변경 사항은 복구 후 즉시 Terraform 코드로 역추출하여 반영한다.
 
+## Runbook Type
+
+Example-local cloud operations runbook.
+
+## Observability and Evidence Sources
+
+- Provider portal or CLI output captured outside the repository when sensitive.
+- Repository task records for non-secret validation summaries.
+
 ## Related Documents
 
 - **Policy**: [../05.operations/policies/aws-operations-policy.md](../policies/aws-operations-policy.md)

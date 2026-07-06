@@ -54,6 +54,47 @@ This document is an example-local SDLC snapshot for cloud migration reference. I
 2. **W-PLAN-002**: 다운타임 최소화 (Phase 3 전환 시 1시간 이내).
 3. **W-PLAN-003**: 2026년 보안 표준(Passwordless) 100% 준수.
 
+## Context
+
+This plan is a dated Azure migration snapshot. It organizes example work for planning and comparison, not live execution.
+
+## Goals & In-Scope
+
+- **Goals**: Show an example Azure migration flow and validation checkpoints.
+- **In Scope**: Reference planning, sequencing, and evidence expectations.
+
+## Non-Goals & Out-of-Scope
+
+- **Non-goals**: Live deployment, provider-latest certification, and credential changes.
+- **Out of Scope**: Production readiness without a fresh provider review.
+
+## Work Breakdown
+
+| Task | Description | Validation Criteria |
+| --- | --- | --- |
+| SNAP-001 | Review the existing phase or milestone content in this document. | Provider assumptions are still accurate for the intended sandbox. |
+| SNAP-002 | Re-run repository-static checks before copying example manifests. | Local validation commands pass. |
+
+## Verification Plan
+
+| ID | Level | Description | Pass Criteria |
+| --- | --- | --- | --- |
+| SNAP-VAL-001 | Static | Review links, commands, and provider assumptions. | No stale provider-latest claim remains. |
+| SNAP-VAL-002 | Sandbox | Optional provider sandbox dry run. | Human-approved evidence is recorded separately. |
+
+## Risks & Mitigations
+
+| Risk | Impact | Mitigation |
+| --- | --- | --- |
+| Provider drift after snapshot date | High | Refresh official docs before live use. |
+| Cost or IAM mismatch | High | Require human review and sandbox validation. |
+
+## Completion Criteria
+
+- [ ] Snapshot assumptions reviewed.
+- [ ] Repository-static validation completed after any copy or edit.
+- [ ] Live execution deferred to an approved provider plan.
+
 ## Related Documents
 
 - **PARD**: [../01.requirements/2026-03-31-azure-migration.md](../../01.requirements/2026-03-31-azure-migration.md)

@@ -54,6 +54,33 @@ This document is an example-local SDLC snapshot for cloud migration reference. I
 - **Response Time**: AGC 평균 지연 시간(Latency) 100ms 이내.
 - **Compliance**: 보안 취약점 0건 유지 (Critical 기준).
 
+## Policy Scope
+
+This policy snapshot applies only to the example-local Azure migration reference.
+
+## Applies To
+
+- Example cloud architecture and operations docs.
+- Sandbox-only planning unless a separate live plan is approved.
+
+## Controls
+
+- Preserve snapshot boundaries and value-free examples.
+- Require fresh provider review before live changes.
+- Keep validation evidence with the relevant task or plan.
+
+## Exceptions
+
+Exceptions require an approved provider refresh or operations plan with explicit rollback and evidence requirements.
+
+## Verification
+
+Verify that provider assumptions, commands, IAM/RBAC scope, costs, and secret boundaries are still accurate before use.
+
+## Review Cadence
+
+Review this snapshot before any reuse and whenever the Cloud Example Snapshot inventory changes.
+
 ## Related Documents
 
 - **PARD**: [../01.requirements/2026-03-31-azure-migration.md](../../01.requirements/2026-03-31-azure-migration.md)

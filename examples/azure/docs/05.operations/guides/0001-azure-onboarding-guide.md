@@ -62,6 +62,28 @@ KUBECONFIG="$TMP_KUBECONFIG" kubectl get nodes
 - **Pod ID Issues**: `kubectl get pod -o yaml`에서 `AZURE_FEDERATED_TOKEN_FILE` 환경 변수가 자동 주입되었는지 확인한다.
 - **AGC Routing**: `kubectl get gtw,httproute -n gateway-system`으로 게이트웨이 상태를 점검한다.
 
+## Guide Type
+
+Example-local cloud onboarding guide.
+
+## Target Audience
+
+- Platform engineers evaluating the Azure snapshot.
+- Operators preparing an approved sandbox validation.
+
+## Purpose
+
+The purpose of this snapshot is to show the intended operational flow while preserving the no-live-mutation boundary.
+
+## Step-by-step Instructions
+
+Use the existing procedure sections in this document as example steps. Replace placeholders and obtain approval before running provider or cluster commands.
+
+## Common Pitfalls
+
+- Treating snapshot commands as production-ready.
+- Running provider or cluster commands without fresh account, IAM/RBAC, cost, and network review.
+
 ## Related Documents
 
 - **PARD**: [../01.requirements/2026-03-31-azure-migration.md](../../01.requirements/2026-03-31-azure-migration.md)

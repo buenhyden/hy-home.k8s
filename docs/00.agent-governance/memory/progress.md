@@ -8236,6 +8236,12 @@ section separating static from live evidence.
 - Recorded official external source basis for GitHub Actions, Kubernetes
   Kustomize, Argo CD declarative setup, OPA/Conftest, and External Secrets
   Operator.
+- Aligned the remaining AWS/Azure example-local snapshot docs with their
+  routed SDLC template section contracts without adding template placeholder
+  prose.
+- Strengthened `scripts/validate-repo-quality-gates.sh` so example-local
+  snapshot docs must satisfy the routed `sdlc/*` type's required headings plus
+  `Snapshot Boundary` and dated snapshot wording.
 
 ### Memory
 
@@ -8260,8 +8266,16 @@ section separating static from live evidence.
   - `bash -n scripts/validate-repo-quality-gates.sh` PASS.
   - `bash scripts/validate-repo-quality-gates.sh .` PASS with
     `[PASS] repository quality gates passed`.
+- Example-local type-specific section alignment:
+  - 20 AWS/Azure docs received missing required sections for their routed
+    `sdlc/*` type.
+  - Type-specific heading audit PASS with no missing required headings.
+  - `git diff --check` PASS.
+  - `bash -n scripts/validate-repo-quality-gates.sh` PASS.
+  - `bash scripts/validate-repo-quality-gates.sh .` PASS with
+    `[PASS] repository quality gates passed`.
 
 ### Handoff
 
-- Continue with CCDN-003 and the deeper AWS/Azure type-specific section review
-  for CCDN-004 and CCDN-005.
+- Continue with CCDN-003 control-surface closure and CCDN-006 final validation
+  bundle.

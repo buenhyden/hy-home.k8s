@@ -35,11 +35,11 @@ approved spec and plan traceable to concrete commits and validation evidence.
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| CCDN-001 | Establish spec, plan, task, README indexes, and progress memory. | doc | Core Design | PLN-001 | Pending first commit and `git diff --check`. | platform | In Progress |
+| CCDN-001 | Establish spec, plan, task, README indexes, and progress memory. | doc | Core Design | PLN-001 | Committed in `0837de5`; `git diff --check`; `bash scripts/validate-repo-quality-gates.sh .`. | platform | Done |
 | CCDN-002 | Update Stage 99, Stage 00, and validator route contracts for example-local SDLC snapshot docs. | doc/test | Contracts; Core Design | PLN-002 | Contract docs updated; validator now enforces example-local frontmatter, `Overview`, `Snapshot Boundary`, `Related Documents`, and stale duplicate heading bans; `git diff --check`; `bash -n scripts/validate-repo-quality-gates.sh`; `bash scripts/validate-repo-quality-gates.sh .`. | platform | Done |
 | CCDN-003 | Normalize active control-surface routing text while preserving frontmatter-free README/GitHub-native boundaries. | doc | Control-Surface Config Contract | PLN-003 | Pending README/GitHub-native scan and repo-quality gate. | platform | Todo |
-| CCDN-004 | Normalize AWS example-local SDLC snapshot docs. | doc | Example-Local SDLC Snapshot Contract | PLN-004 | AWS non-README docs now have role-appropriate frontmatter, `Snapshot Boundary`, and `Related Documents`; deeper type-specific section review remains. | platform | In Progress |
-| CCDN-005 | Normalize Azure example-local SDLC snapshot docs. | doc | Example-Local SDLC Snapshot Contract | PLN-005 | Azure non-README docs now have role-appropriate frontmatter, `Snapshot Boundary`, and `Related Documents`; deeper type-specific section review remains. | platform | In Progress |
+| CCDN-004 | Normalize AWS example-local SDLC snapshot docs. | doc | Example-Local SDLC Snapshot Contract | PLN-004 | AWS non-README docs now have role-appropriate frontmatter, `Snapshot Boundary`, `Related Documents`, and type-specific required sections; repo-quality now enforces the same route. | platform | Done |
+| CCDN-005 | Normalize Azure example-local SDLC snapshot docs. | doc | Example-Local SDLC Snapshot Contract | PLN-005 | Azure non-README docs now have role-appropriate frontmatter, `Snapshot Boundary`, `Related Documents`, and type-specific required sections; repo-quality now enforces the same route. | platform | Done |
 | CCDN-006 | Close validation and execution evidence. | test/doc | Verification Commands | PLN-006 | Pending final validation bundle and task/progress update. | platform | Todo |
 
 ## Suggested Types
@@ -65,8 +65,8 @@ approved spec and plan traceable to concrete commits and validation evidence.
 ### Phase 2
 
 - [ ] CCDN-003 Normalize active control-surface routing text.
-- [ ] CCDN-004 Normalize AWS example-local docs.
-- [ ] CCDN-005 Normalize Azure example-local docs.
+- [x] CCDN-004 Normalize AWS example-local docs.
+- [x] CCDN-005 Normalize Azure example-local docs.
 
 ### Phase 3
 
@@ -81,6 +81,14 @@ approved spec and plan traceable to concrete commits and validation evidence.
   - `bash scripts/validate-repo-quality-gates.sh .`: pass,
     `[PASS] repository quality gates passed` for CCDN-002 contract patch and
     example-local frontmatter enforcement.
+  - Type-specific example-local section audit: pass, no missing required
+    headings across non-README AWS/Azure example docs.
+  - `git diff --check`: pass, no output after AWS/Azure section alignment.
+  - `bash -n scripts/validate-repo-quality-gates.sh`: pass, no output after
+    type-specific example-local heading enforcement.
+  - `bash scripts/validate-repo-quality-gates.sh .`: pass,
+    `[PASS] repository quality gates passed` after validator enforcement for
+    example-local type-specific sections.
   - Pending: `bash scripts/validate-k8s-manifests.sh .`
   - Pending: `bash scripts/check-secret-handling.sh .`
   - Pending: `bash scripts/validate-policy-gates.sh .`

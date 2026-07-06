@@ -45,6 +45,12 @@ This document is an example-local SDLC snapshot for cloud migration reference. I
 - **Test Commands**: `az deployment group what-if`, `kubectl get gateway`, `kubectl get secretproviderclass`
 - **Logs / Evidence Location**: `examples/azure/logs/` (필요 시 생성)
 
+## Suggested Types
+
+- `doc` for example documentation changes.
+- `test` for repository-static validation.
+- `ops` only after a separate approved live operations plan exists.
+
 ## Related Documents
 
 - [Azure Example Documentation Hub](../../README.md)

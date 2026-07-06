@@ -65,6 +65,10 @@ This document is an example-local SDLC snapshot for cloud migration reference. I
 - [ ] [ ] **Snapshot Recovery**: `aws rds restore-db-instance-from-db-snapshot --db-instance-identifier restored-db --snapshot-identifier latest-snapshot` 실행.
 - [ ] [ ] **Git Rollback**: `git revert <commit-hash>` 실행 후 `terraform plan -out rollback.plan`으로 변경 범위를 검토한다.
 
+## Runbook Type
+
+Example-local cloud operations runbook.
+
 ## Related Documents
 
 - **Incident index**: [root incident README](../../../../../docs/05.operations/incidents/README.md)

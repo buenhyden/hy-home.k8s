@@ -83,6 +83,28 @@ kubectl get externalsecrets -A
 - **VAL-SPC-001**: EKS 클러스터 내의 Pod가 IAM Pod Identity를 통해 Secrets Manager에 접근 가능한지 검증.
 - **VAL-SPC-002**: ALB Ingress를 통해 외부 트래픽이 애플리케이션 Pod로 정상 전달되는지 검증.
 
+## Interfaces & Data Structures
+
+Interfaces are represented by cloud resources, Kubernetes manifests, identity bindings, and secret references described in this snapshot.
+
+## Edge Cases & Error Handling
+
+- Provider feature availability or SKU names may differ from the snapshot.
+- Identity, network, and quota failures should be handled in a sandbox before production planning.
+
+## Failure Modes & Fallback / Human Escalation
+
+- **Failure Mode**: Provider behavior differs from the snapshot.
+- **Fallback**: Stop and refresh the provider-specific docs and cost/security assumptions.
+- **Human Escalation**: Required before live account, credential, or cluster mutation.
+
+## Verification Commands
+
+```bash
+# Run only in an approved provider sandbox after replacing placeholders.
+# Re-check official provider docs before executing cloud or cluster commands.
+```
+
 ## Related Documents
 
 - **Plan**: [../../04.execution/plans/2026-03-31-aws-migration-roadmap.md](../../04.execution/plans/2026-03-31-aws-migration-roadmap.md)
