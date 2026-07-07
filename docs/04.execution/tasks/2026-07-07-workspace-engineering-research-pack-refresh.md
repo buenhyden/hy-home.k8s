@@ -1,7 +1,7 @@
 ---
 title: 'Task: Workspace Engineering Research Pack Refresh Task Record'
 type: sdlc/task
-status: draft
+status: done
 owner: platform
 updated: 2026-07-07
 ---
@@ -31,7 +31,7 @@ This document tracks implementation and verification work for the refreshed work
 | PLN-002 | Scaffold and baseline copy | doc | VAL-SPC-001 | Phase 2 | `2026-07-07-wer/README.md` created | platform | Done |
 | PLN-003 | Update and enrich documents | doc | VAL-SPC-003, VAL-SPC-004 | Phase 3 | 7 reference files generated and enriched | platform | Done |
 | PLN-004 | Update indices and memory | doc | VAL-SPC-002 | Phase 4 | README index and progress.md updated | platform | Done |
-| PLN-005 | Quality gates validation | test | VAL-SPC-006 | Phase 5 | `validate-repo-quality-gates.sh` passes | platform | Draft |
+| PLN-005 | Quality gates validation | test | VAL-SPC-006 | Phase 5 | `validate-repo-quality-gates.sh` passes | platform | Done |
 
 ## Suggested Types
 
@@ -61,7 +61,7 @@ This document tracks implementation and verification work for the refreshed work
 
 ### Phase 5
 
-- [ ] PLN-005 Quality gates validation
+- [x] PLN-005 Quality gates validation
 
 ## Verification Summary
 

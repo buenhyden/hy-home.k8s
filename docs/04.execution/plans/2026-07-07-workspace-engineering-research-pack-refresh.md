@@ -1,7 +1,7 @@
 ---
 title: 'Workspace Engineering Research Pack Refresh Implementation Plan'
 type: sdlc/plan
-status: draft
+status: done
 owner: platform
 updated: 2026-07-07
 ---
