@@ -8,81 +8,63 @@ updated: 2026-07-07
 
 # Workspace Engineering Research Pack Refresh Implementation Plan
 
-This plan defines the implementation steps to refresh the workspace engineering research pack under `docs/90.references/research/2026-07-07-wer/` using the workspace template rules.
+## Overview
 
-## User Review Required
+This document defines the implementation plan for refreshing the dated workspace engineering research pack for 2026-07-07. It covers updating reference files to record local and upstream information.
 
-> [!IMPORTANT]
-> - All research documents will be created under `docs/90.references/research/2026-07-07-wer/` to capture the current state and analysis checked on 2026-07-07.
-> - The parent indexes `docs/90.references/research/README.md` and `docs/90.references/README.md` will be updated to point to the new dated pack.
-> - The files will be checked against the repository quality gates and pre-commit checks before completion.
+## Context
 
-## Proposed Changes
+This work ensures that the workspace engineering reference materials remain current, accurate, and aligned with recent developments (e.g. addition of observability-reviewer and network-reviewer agents).
 
-### Execution Phase
+## Goals & In-Scope
 
-#### [NEW] [2026-07-07-workspace-engineering-research-pack-refresh.md](file:///home/hy/projects/hy-home.k8s/docs/04.execution/plans/2026-07-07-workspace-engineering-research-pack-refresh.md)
-This plan.
+- **Goals**: Create dated research pack for 2026-07-07.
+- **In Scope**: Creation of 7 reference documents under `docs/90.references/research/2026-07-07-wer/`, index updates, and memory progress logging.
 
-#### [NEW] [2026-07-07-workspace-engineering-research-pack-refresh.md](file:///home/hy/projects/hy-home.k8s/docs/04.execution/tasks/2026-07-07-workspace-engineering-research-pack-refresh.md)
-The task evidence record.
+## Non-Goals & Out-of-Scope
 
-### Research Pack Phase
-
-#### [NEW] [README.md](file:///home/hy/projects/hy-home.k8s/docs/90.references/research/2026-07-07-wer/README.md)
-Research pack entry point.
-
-#### [NEW] [workspace-governance-baseline.md](file:///home/hy/projects/hy-home.k8s/docs/90.references/research/2026-07-07-wer/workspace-governance-baseline.md)
-Workspace purpose, role, operating contract, template, script, integration guide, SDLC, governance, system structure, rules, security, and AI agents overview.
-
-#### [NEW] [harness-and-loop-engineering.md](file:///home/hy/projects/hy-home.k8s/docs/90.references/research/2026-07-07-wer/harness-and-loop-engineering.md)
-Harness engineering and loop engineering elements, workspace environments, and application rules.
-
-#### [NEW] [provider-implementation-status.md](file:///home/hy/projects/hy-home.k8s/docs/90.references/research/2026-07-07-wer/provider-implementation-status.md)
-Claude, Codex, Gemini provider status and common environment/rule/system analysis.
-
-#### [NEW] [spec-sdlc-ci-qa-formatting.md](file:///home/hy/projects/hy-home.k8s/docs/90.references/research/2026-07-07-wer/spec-sdlc-ci-qa-formatting.md)
-Spec-driven development, SDLC, CI/CD, QA (formatting, linting, syntax error), formatting, and linting.
-
-#### [NEW] [kubernetes-infrastructure-security.md](file:///home/hy/projects/hy-home.k8s/docs/90.references/research/2026-07-07-wer/kubernetes-infrastructure-security.md)
-Kubernetes, infrastructure, GitOps, secrets, and security analysis.
-
-#### [NEW] [automation-pipeline-workflow-qa.md](file:///home/hy/projects/hy-home.k8s/docs/90.references/research/2026-07-07-wer/automation-pipeline-workflow-qa.md)
-Automation, pipeline, and workflow.
-
-#### [NEW] [ai-agents-roster-and-gap-analysis.md](file:///home/hy/projects/hy-home.k8s/docs/90.references/research/2026-07-07-wer/ai-agents-roster-and-gap-analysis.md)
-Workspace AI Agent roster comparison with `msitarzewski/agency-agents`, detailing modifications and addition candidates (e.g. SRE/observability, network engineer).
-
-### Workspace Indices and Memory
-
-#### [MODIFY] [README.md](file:///home/hy/projects/hy-home.k8s/docs/90.references/research/README.md)
-Add the 2026-07-07 research pack to the index.
-
-#### [MODIFY] [README.md](file:///home/hy/projects/hy-home.k8s/docs/90.references/README.md)
-Update parent index links.
-
-#### [MODIFY] [progress.md](file:///home/hy/projects/hy-home.k8s/docs/00.agent-governance/memory/progress.md)
-Record work progress.
-
----
+- **Non-goals**: Modify live Kubernetes, Vault, or ArgoCD runtime state.
+- **Out of Scope**: Direct cluster mutation or credentials manipulation.
 
 ## Work Breakdown
 
 | Task | Description | Files / Docs Affected | Target REQ | Validation Criteria |
 | --- | --- | --- | --- | --- |
-| PLN-001 | Plan & task creation | `docs/04.execution/plans/*`, `docs/04.execution/tasks/*` | SDD-001 | Files created and validated |
-| PLN-002 | Scaffold and baseline copy | `docs/90.references/research/2026-07-07-wer/*` | SDD-002 | Baseline files copied and initial markdown formatting verified |
-| PLN-003 | Update and enrich documents | `docs/90.references/research/2026-07-07-wer/*.md` | SDD-003 | All topics (harness, loop, provider implementations, spec-driven dev, SDLC, CI/CD, QA, Kubernetes, Infrastructure, Security, agency-agents comparison) fully updated |
-| PLN-004 | Update indices and memory | `docs/90.references/research/README.md`, `docs/90.references/README.md`, `docs/00.agent-governance/memory/progress.md` | SDD-004 | Indices and memory up to date |
-| PLN-005 | Quality gates validation | Workspace repository | SDD-005 | `validate-repo-quality-gates.sh` passes |
+| PLN-001 | Plan & task creation | `docs/04.execution/plans/*`, `docs/04.execution/tasks/*` | VAL-SPC-006 | Files created and validated |
+| PLN-002 | Scaffold and baseline copy | `docs/90.references/research/2026-07-07-wer/*` | VAL-SPC-001 | README and structure generated |
+| PLN-003 | Update and enrich documents | `docs/90.references/research/2026-07-07-wer/*.md` | VAL-SPC-003, VAL-SPC-004 | 7 files created and enriched |
+| PLN-004 | Update indices and memory | `docs/90.references/research/README.md`, `docs/00.agent-governance/memory/progress.md` | VAL-SPC-002 | Indices and progress updated |
+| PLN-005 | Quality gates validation | Workspace repository | VAL-SPC-006 | validation script passes |
 
 ## Verification Plan
 
-### Automated Tests
-- Run `git diff --check` to check for whitespace errors.
-- Run `bash scripts/validate-repo-quality-gates.sh .` to check for markdown and taxonomy conformance.
-- Run `pre-commit run --all-files` if pre-commit is locally available.
+| ID | Level | Description | Command / How to Run | Pass Criteria |
+| --- | --- | --- | --- | --- |
+| VAL-PLN-001 | Structural | Check files for layout and markdown guidelines | `bash scripts/validate-repo-quality-gates.sh .` | Validator exits with 0 |
+| VAL-PLN-002 | Formatting | Check for whitespace errors in diff | `git diff --check` | Diff checks pass |
 
-### Manual Verification
-- Verify that links between research documents are working and correct relative paths.
-- Ensure that the authority boundaries and non-authoritative labels are correctly applied in all documents.
+## Risks & Mitigations
+
+| Risk | Impact | Mitigation |
+| --- | --- | --- |
+| Stale links or path errors | Low | Run `validate-repo-quality-gates.sh` to ensure link integrity |
+
+## Agent Rollout & Evaluation Gates (If Applicable)
+
+- **Offline Eval Gate**: None.
+- **Sandbox / Canary Rollout**: None.
+- **Human Approval Gate**: Human approval of plan is required. No live runtime or credential modifications are in scope.
+- **Rollback Trigger**: Git reset of documentation commits.
+- **Prompt / Model Promotion Criteria**: None.
+
+## Completion Criteria
+
+- [x] Scoped work completed
+- [x] Verification passed
+- [x] Required docs updated
+
+## Related Documents
+
+- **PRD**: `[../../01.requirements/017-workspace-engineering-research-pack.md]`
+- **Spec**: `[../../03.specs/017-workspace-engineering-research-pack/spec.md]`
+- **Tasks**: `[../tasks/2026-07-07-workspace-engineering-research-pack-refresh.md]`
