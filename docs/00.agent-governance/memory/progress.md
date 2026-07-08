@@ -8597,3 +8597,51 @@ section separating static from live evidence.
 
 - Second supplement pass complete on `main`. Historical pack left untouched. No
   operator-approved live or remote follow-up required.
+
+## 2026-07-09 - Research pack external-source deepening and defect fixes
+
+### Metadata
+
+- **Date**: 2026-07-09
+- **Layer**: docs, research
+- **Status**: done
+- **Tags**: #wer #research #harness #mcp-security #external-source
+
+### Progress
+
+- Ran a defect sweep on the Current `2026-07-07-wer` pack: verified all
+  relative links resolve, and confirmed the ai-agents model-tier claims match
+  the canonical `model-policy.md` (no defect).
+- Fetched authoritative external sources (re-checked 2026-07-09): the official
+  MCP Security Best Practices page (full threat taxonomy) and OpenAI harness
+  engineering concepts via web search. The OpenAI page itself returned HTTP
+  403 to direct fetch, so its concepts were sourced via search result summary.
+- Deepened `harness-and-loop-engineering.md`: added OpenAI's
+  harness-as-full-contract definition to Section 1, and replaced the
+  three-item MCP note in Section 4 with the authoritative threat taxonomy
+  (Local Server Compromise, Token Passthrough, Confused Deputy, SSRF, Session
+  Hijacking, OAuth URL validation, Scope Minimization) carrying MUST/SHOULD
+  mitigations.
+- Fixed a spelling defect: `constained` -> `constrained` in the loop
+  control-cycle line.
+
+### Memory
+
+- The pack's already-listed sources can be mined for real depth; when a primary
+  page blocks direct fetch, a scoped web search against the same domain
+  recovers the concepts without inventing new uncited links.
+- Inline "re-verified <date>" notes record freshness without bumping the pack
+  frontmatter or README index dates, which avoids index-freshness gate churn.
+
+### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS with
+  `[PASS] repository quality gates passed`.
+- Commit `bf4c889` landed on top of `ac7800d`.
+- No live cluster, secret, remote, provider, or push/publish/merge action was
+  performed.
+
+### Handoff
+
+- External-source deepening pass complete on `main`. Historical pack untouched.
+  No operator-approved live or remote follow-up required.
