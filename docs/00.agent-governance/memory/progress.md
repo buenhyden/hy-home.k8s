@@ -8501,3 +8501,56 @@ section separating static from live evidence.
 - This repo-static Stage 03/04 gap-closure pass is complete. Operator-approved
   follow-up remains separate for live/runtime, secret, remote, and provider
   actions.
+
+## 2026-07-08 - Research pack SDLC taxonomy supplement and index status fix
+
+### Metadata
+
+- **Date**: 2026-07-08
+- **Layer**: docs, qa, research
+- **Status**: done
+- **Tags**: #wer #research #sdlc #repo-static #validation
+
+### Progress
+
+- Reviewed the existing `docs/90.references/research/` packs and confirmed the
+  numbered research task (survey, categorize, write to research folder) was
+  already implemented and committed across the `2026-07-04-wer` (Historical)
+  and `2026-07-07-wer` (Current) packs.
+- Analyzed the Current pack for improvement/supplement need and found one
+  concrete checklist gap: neither pack gave a dedicated treatment of the SDLC
+  document taxonomy (PRD, ARD, ADR, guide, incident, postmortem, policy,
+  release, runbook) role and purpose.
+- Added a repo-backed SDLC document taxonomy (role and purpose) section to the
+  Current pack `spec-sdlc-ci-qa-formatting.md`, grounded in the actual
+  `docs/99.templates/templates/sdlc/**` templates, with Incident-vs-Postmortem
+  and Guide-vs-Runbook distinctions and an honest note that Release has no
+  dedicated Stage template.
+- Fixed a pre-existing repo-quality-gate failure surfaced by the PostToolUse
+  hook: plan/task README index status was `Draft` while frontmatter was `done`
+  for `2026-07-07-workspace-engineering-research-pack-refresh`.
+- Committed as two logical units and left the Historical pack untouched.
+
+### Memory
+
+- When re-issued a large task after compaction, verify against git/working-tree
+  state first; the bulk was already committed and the real remaining work was
+  the explicit "analyze and act on improvement" directive.
+- The document taxonomy gap is verifiable against `99.templates/templates/sdlc/`
+  rather than external sources, so the supplement is repo-backed fact.
+- "Release" is a task-checklist item without a canonical Stage template; it is
+  currently handled via Conventional Commits and CHANGELOG conventions.
+
+### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS with
+  `[PASS] repository quality gates passed` after both edits.
+- `git log --oneline -3` showed commits `142a1ef` (README status fix) and
+  `3dfaf9d` (SDLC taxonomy supplement) on top of `4421da4`.
+- No live cluster, secret, remote, provider, or push/publish/merge action was
+  performed.
+
+### Handoff
+
+- Research pack improvement pass is complete and committed on `main`. No
+  operator-approved live or remote follow-up is required for this change.
