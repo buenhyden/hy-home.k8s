@@ -8554,3 +8554,46 @@ section separating static from live evidence.
 
 - Research pack improvement pass is complete and committed on `main`. No
   operator-approved live or remote follow-up is required for this change.
+
+## 2026-07-08 - Research pack second supplement pass
+
+### Metadata
+
+- **Date**: 2026-07-08
+- **Layer**: docs, research
+- **Status**: done
+- **Tags**: #wer #research #ai-agents #repo-static
+
+### Progress
+
+- Per operator direction to supplement the existing Current pack (not create a
+  new dated pack), reviewed all seven `2026-07-07-wer` files against the task
+  checklist.
+- Restored the new-agent addition-candidate verdict table into
+  `ai-agents-roster-and-gap-analysis.md`, which the Current pack had dropped;
+  updated it to post-closure state (SRE/observability and network marked
+  Closed, remaining agency-agents patterns kept as Adapt/Skip with repo-backed
+  routing, plus routing rules for any future new agent).
+- Fixed a factual defect in `provider-implementation-status.md`: the Codex
+  sandbox capability cell had a mangled token (a missing space and a
+  misspelling of "untrusted"), now corrected.
+
+### Memory
+
+- The Current pack's conciseness dropped some checklist-answering content that
+  existed in the Historical pack; supplement by porting the still-relevant
+  analysis forward in updated form rather than duplicating the whole pack.
+
+### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS with
+  `[PASS] repository quality gates passed` after both edits.
+- Commits `f31a0ba` (ai-agents addition candidates) and `ac7800d` (provider
+  typo fix) landed on top of `75ed838`.
+- No live cluster, secret, remote, provider, or push/publish/merge action was
+  performed.
+
+### Handoff
+
+- Second supplement pass complete on `main`. Historical pack left untouched. No
+  operator-approved live or remote follow-up required.
