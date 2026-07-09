@@ -3,7 +3,7 @@ title: 'Reference: Provider Harness Implementation Status Research'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-07
+updated: 2026-07-09
 ---
 
 # Reference: Provider Harness Implementation Status Research
@@ -47,14 +47,15 @@ updated: 2026-07-07
 
 ### 1. 프로바이더 기능 비교 및 분석 (Provider Capability Matrix)
 
-| 구분                          | Claude Code                                                                                                        | Codex/OpenAI                                                                                  | Gemini/Google CLI & ADK                                                                    |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| **지시 파일 & 설정**          | Hierarchical settings (`.claude.json`), project/user/local config 지원.                                            | `config.toml` 프로젝트/사용자 레이어, `AGENTS.md`를 포함한 규칙 로딩.                         | `GEMINI.md` 컨텍스트 파일 자동 탐색 및 비대화형 자동화 지원.                               |
-| **서브에이전트 (Delegation)** | `.claude/agents/*.md` 기반 specialized agents 구동, model/tool/permissions 위임 제어.                              | `.codex/agents/*.toml` 양식을 지닌 프로젝트 레벨 서브에이전트 구동 및 샌드박스 상속.          | Google ADK를 통한 멀티에이전트 그래프 구성. Gemini CLI는 단순 스크립트 비대화형 위임 지원. |
-| **훅 & 자동화 (Hooks)**       | SessionStart, PreToolUse, PostToolUse, Stop, SubagentStop, PreCompact 훅이 exit-code를 통해 모델 동작을 통제 가능. | `hooks.json`에 선언된 수명주기 쉘 명령 연동 및 샌드박스 가두기 지원.                          | `.agents/hooks.json` 기반 수명주기 이벤트 정의 및 쉘 트리거 연동.                          |
-| **스킬 & 확장 (Skills)**      | `SKILL.md` 구조의 project/plugin 스킬 로딩 지원.                                                                   | `.agents/skills/`를 통해 model-specific progressive disclosure 지원.                          | Google ADK 내 Graph Workflows 및 Custom Tools/Skills 연동 지원.                            |
-| **MCP & 툴 연동**             | Local/project-specific `.mcp.json` 연동 및 서브에이전트 전용 툴 매핑 지원.                                         | `config.toml` 내 STDIO/HTTP MCP 서버 연동 및 인증 연동 지원.                                  | Gemini CLI 내 외부 MCP 서버 연동 및 ADK 내 복합 툴 에코시스템 지원.                        |
-| **샌드박싱 & 권한**           | Filesystem/Network 제한 설정 및 CLI 툴 실행 시 동적 허용/차단.                                                     | `read-only`, `workspace-write`, `danger-full-access` 샌드박스 모드 및 untrusted command 차단. | 개발자가 설계한 도구 스펙(spec) 및 ADK 런타임 보안 정책 준수.                              |
+| 구분                          | Claude Code                                                                                                        | Codex/OpenAI                                                                                                       | Gemini/Google CLI & ADK                                                                    |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| **지시 파일 & 설정**          | Hierarchical settings (`.claude.json`), project/user/local config 지원.                                            | `config.toml` 프로젝트/사용자 레이어, `AGENTS.md`를 포함한 규칙 로딩.                                              | `GEMINI.md` 컨텍스트 파일 자동 탐색 및 비대화형 자동화 지원.                               |
+| **서브에이전트 (Delegation)** | `.claude/agents/*.md` 기반 specialized agents 구동, model/tool/permissions 위임 제어.                              | `.codex/agents/*.toml` 양식을 지닌 프로젝트 레벨 서브에이전트 구동 및 샌드박스 상속.                               | Google ADK를 통한 멀티에이전트 그래프 구성. Gemini CLI는 단순 스크립트 비대화형 위임 지원. |
+| **훅 & 자동화 (Hooks)**       | SessionStart, PreToolUse, PostToolUse, Stop, SubagentStop, PreCompact 훅이 exit-code를 통해 모델 동작을 통제 가능. | `hooks.json`에 선언된 수명주기 쉘 명령 연동 및 샌드박스 가두기 지원.                                               | `.agents/hooks.json` 기반 수명주기 이벤트 정의 및 쉘 트리거 연동.                          |
+| **스킬 & 확장 (Skills)**      | `SKILL.md` 구조의 project/plugin 스킬 로딩 지원.                                                                   | `.agents/skills/`를 통해 model-specific progressive disclosure 지원.                                               | Google ADK 내 Graph Workflows 및 Custom Tools/Skills 연동 지원.                            |
+| **MCP & 툴 연동**             | Local/project-specific `.mcp.json` 연동 및 서브에이전트 전용 툴 매핑 지원.                                         | `config.toml` 내 STDIO/HTTP MCP 서버 연동 및 인증 연동 지원.                                                       | Gemini CLI 내 외부 MCP 서버 연동 및 ADK 내 복합 툴 에코시스템 지원.                        |
+| **샌드박싱 & 권한**           | Filesystem/Network 제한 설정 및 CLI 툴 실행 시 동적 허용/차단.                                                     | `read-only`, `workspace-write`, `danger-full-access` 샌드박스 모드 및 untrusted command 차단.                      | 개발자가 설계한 도구 스펙(spec) 및 ADK 런타임 보안 정책 준수.                              |
+| **Reasoning / Effort 제어**   | 에이전트 frontmatter의 provider-native model tier 제어(`opus 4.8` / `sonnet 4.6` / `haiku 4.5`).                   | `model_reasoning_effort` 명시 선언(`gpt-5.5`: none/low/medium/high/xhigh, `gpt-5.3-codex`: low/medium/high/xhigh). | `harness-catalog.md`에 기록된 provider-native high/medium tier 라벨.                       |
 
 ### 2. Claude, Codex, Gemini 공통 환경 및 규칙 체계 구축 방안
 
@@ -94,7 +95,7 @@ updated: 2026-07-07
 ## Review and Freshness
 
 - Review cadence: 프로바이더 API/CLI 메이저 패치 혹은 리포지토리 어댑터 규칙 변경 시
-- Last reviewed: 2026-07-07
+- Last reviewed: 2026-07-09
 - Next review trigger: 프로바이더 버전 갱신, 에이전트 신규 배치 시
 
 ## Related Documents
@@ -103,4 +104,5 @@ updated: 2026-07-07
 - **References README**: [../../README.md](../../README.md)
 - **Workspace baseline**: [workspace-governance-baseline.md](workspace-governance-baseline.md)
 - **Harness reference**: [harness-and-loop-engineering.md](harness-and-loop-engineering.md)
+- **Model Policy**: [../../../00.agent-governance/model-policy.md](../../../00.agent-governance/model-policy.md)
 - **Harness Catalog**: [../../../00.agent-governance/harness-catalog.md](../../../00.agent-governance/harness-catalog.md)
