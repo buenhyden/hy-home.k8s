@@ -3,7 +3,7 @@ title: 'Reference: AI Agents Roster and Gap Analysis Research'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-07
+updated: 2026-07-09
 ---
 
 # Reference: AI Agents Roster and Gap Analysis Research
@@ -122,6 +122,31 @@ updated: 2026-07-07
 - 외부 페르소나 도입 시 persona-memory 블록을 제거하고 tier `model`, 최소 권한 `tools:`, scope `@import`, guardrails, postflight를 주입한다.
 - 도입/거절 결정은 `docs/00.agent-governance/memory/progress.md`에 기록한다.
 
+### 5. 작업 특성에 맞는 모델 설정 (Task-characteristic Model Configuration)
+
+에이전트에 모델을 배정하는 실제 지배 권한은 `model-policy.md`(tier 어휘 및 reasoning/effort 정책)와 `harness-catalog.md`(구체 provider ID)에 있다. 아래 내용은 그 정책을 로스터에 매핑해 이해를 돕는 요약이며, 새로운 모델 배정을 규정하지 않는다.
+
+#### 1) Escalation 원칙 (에이전트 재분류 없는 상향)
+
+`model-policy.md`는 tier를 에이전트 정체성으로 고정하지 않는다. worker 에이전트라도 **고위험 governance/보안/클러스터 영향 리뷰**를 수행하는 개별 작업에서는 top-tier 모델로 라우팅될 수 있으나, 이것이 해당 에이전트를 top-tier 에이전트로 재분류하지는 않는다. 즉 tier는 "작업 위험도"에 반응하는 것이지 "에이전트 직함"에 고정되는 것이 아니다.
+
+#### 2) 프로바이더별 Reasoning / Effort 정책 (model-policy.md 인용)
+
+| 프로바이더 | Planning/Supervisor tier | Worker/Subagent tier       | Reasoning / Effort 제어                                                                                                                                                |
+| ---------- | ------------------------ | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Claude** | `opus 4.8`               | `sonnet 4.6` / `haiku 4.5` | 에이전트 frontmatter의 provider-native model tier 제어를 사용.                                                                                                         |
+| **Codex**  | `gpt-5.5`                | `gpt-5.3-codex`            | `gpt-5.5`: `none`/`low`/`medium`/`high`/`xhigh`, `gpt-5.3-codex`: `low`/`medium`/`high`/`xhigh`. `.codex/agents/*.toml`은 `model_reasoning_effort`를 명시 선언해야 함. |
+| **Gemini** | `Gemini 3.1 Pro`         | `Gemini 3.5 Flash`         | `harness-catalog.md`에 기록된 provider-native high/medium tier 라벨 사용.                                                                                              |
+
+#### 3) 역할별 effort/escalation 매핑 (정책 적용 해석)
+
+아래는 §1 로스터에 Escalation 원칙을 적용한 해석이며, repo-fact가 아니라 정책 운용 가이드다. 실제 배정은 어댑터 파일과 위 정책이 지배한다.
+
+- **`supervisor`**: 상시 top-tier + 높은 effort. 계획 수립·다중 에이전트 라우팅·완료 조건 검증은 깊은 추론이 정당화되는 대표 작업이다.
+- **고위험 리뷰 worker (`security-auditor`, `gitops-reviewer`)**: 평상시 worker tier이나, RBAC/secret 노출·ArgoCD 동기화 안전성 등 클러스터 영향 리뷰에서는 개별 작업 단위로 top-tier/상위 effort로 escalate할 수 있다(에이전트 재분류 없음).
+- **결정적 검사 worker (`code-reviewer`, `network-reviewer`, `observability-reviewer`, `k8s-implementer`)**: 정적·규칙 기반 검사가 주력이므로 worker tier + low/medium effort가 비용 대비 적합하다.
+- **문서/큐레이션 worker (`doc-writer`, `wiki-curator`, `incident-responder`)**: 템플릿 정합성·링크 최신성·타임라인 정리 중심으로 worker tier + low effort가 기본이며, 근본 원인 종합이 필요한 사고 분석에 한해 상위 effort를 고려한다.
+
 ## Sources
 
 - msitarzewski/agency-agents repository (<https://github.com/msitarzewski/agency-agents>)
@@ -133,7 +158,7 @@ updated: 2026-07-07
 ## Review and Freshness
 
 - Review cadence: on agent roster or external standard change
-- Last reviewed: 2026-07-07
+- Last reviewed: 2026-07-09
 - Next review trigger: 에이전트 역할 개편, `agency-agents` 메이저 리팩토링 발생 시
 
 ## Related Documents
