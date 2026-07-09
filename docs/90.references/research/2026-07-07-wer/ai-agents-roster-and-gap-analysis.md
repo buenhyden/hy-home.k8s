@@ -65,7 +65,7 @@ updated: 2026-07-07
 
 ### 2. 외부 에이전트 분석: `msitarzewski/agency-agents` (External Catalog Scan)
 
-- **개요**: 147개 이상의 마크다운 정의 특화 AI 에이전트 페르소나를 12개 전문 분야(engineering, design, product 등)로 나누어 제공하는 오픈소스 라이브러리.
+- **개요**: 147개 이상의 마크다운 정의 특화 AI 에이전트 페르소나를 17개 전문 분야(engineering, design, product 등)로 나누어 제공하는 오픈소스 라이브러리.
 - **특징**: 특정 프롬프트 프레임워크에 종속되지 않고, Claude Code, Cursor, Aider, Copilot, Gemini CLI 등 다양한 도구로 내보내기(conversion)할 수 있는 쉘 툴과 설정 포맷(`divisions.json`, `tools.json`)을 내포한다.
 - **포맷 차이**:
   - **`agency-agents`**: 에이전트의 페르소나, Critical Rules, vibe 및 전달 방식 중심의 묘사 중심 텍스트. 모델 사양이나 사용 툴(Tools) 리스트가 선언되지 않음.
@@ -102,7 +102,7 @@ updated: 2026-07-07
 
 #### 3) 신규 에이전트 추가 후보 (Addition Candidates)
 
-`agency-agents` 12개 전문 분야를 WSL2+k3d ArgoCD GitOps 플랫폼 목적에 맞추어 평가한 신규 추가 후보 판정이다. `Closed`는 이미 구현 완료, `Adapt`는 기존 에이전트로 흡수, `Skip`은 워크스페이스 범위 밖을 의미한다. 외부 패턴 자체는 비권장 시장 분석(non-authoritative)이며, 라우팅 경로만 repo-backed 사실이다.
+`agency-agents` 17개 전문 분야를 WSL2+k3d ArgoCD GitOps 플랫폼 목적에 맞추어 평가한 신규 추가 후보 판정이다. `Closed`는 이미 구현 완료, `Adapt`는 기존 에이전트로 흡수, `Skip`은 워크스페이스 범위 밖을 의미한다. 외부 패턴 자체는 비권장 시장 분석(non-authoritative)이며, 라우팅 경로만 repo-backed 사실이다.
 
 | 외부 패턴                                               | 판정       | 근거 및 라우팅                                                                                                                                            |
 | ------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
