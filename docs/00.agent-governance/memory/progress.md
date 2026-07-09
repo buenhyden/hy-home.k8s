@@ -8697,3 +8697,60 @@ section separating static from live evidence.
   "AI Agent model configuration by task characteristics" is already covered by
   the ai-agents model-tier table and `model-policy.md`; deeper expansion can be
   a follow-up if requested.
+
+## 2026-07-09 - Research pack model-config and loop-termination deepening
+
+### Metadata
+
+- **Date**: 2026-07-09
+- **Layer**: docs, research
+- **Status**: done
+- **Tags**: #wer #research #model-policy #loop-engineering
+
+### Progress
+
+- Applied user-approved in-place improvements to three Current `2026-07-07-wer`
+  pack docs, one logical-unit commit each, after presenting an inline gap
+  analysis for approval (Stage 03 forbids `docs/superpowers/specs/` design
+  docs, so the design was proposed in-conversation rather than as a file).
+- ai-agents-roster-and-gap-analysis.md: added section 5 capturing
+  `model-policy.md`'s escalation principle and per-provider reasoning/effort
+  policy, plus a role-to-effort mapping labeled as policy interpretation (not
+  repo-fact). Cited model-policy.md/harness-catalog.md as governing owners to
+  respect the doc's Authority Boundary.
+- provider-implementation-status.md: added a Reasoning/Effort control row to
+  the provider capability matrix and linked model-policy.md.
+- harness-and-loop-engineering.md: added a Loop Termination & Safety Bounds
+  subsection tying the abstract loop to lifecycle-guard.sh (Stop/SubagentStop
+  may block on repo-state validation failure; PreCompact advisory only) and
+  the handoff boundary; linked the hook as a source.
+- Deliberately left the SDLC/spec-taxonomy doc unchanged: re-verified its
+  Release-template note is still accurate (no release template exists), so no
+  churn edit was made.
+
+### Memory
+
+- A research doc that carries an Authority Boundary must cite the canonical
+  owner (model-policy.md) instead of restating model assignments as if it owned
+  them; capture policy as a summary, not a redefinition.
+- Verifying "no drift" is a legitimate outcome of an improvement pass; not
+  editing a doc that is already accurate is the surgical-change discipline, not
+  a gap.
+
+### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS
+  (`[PASS] repository quality gates passed`) before each of the three commits.
+- Commits `1bc67e3` (model config), `3c75053` (reasoning/effort matrix row),
+  `f954d53` (loop termination), on `main`.
+- No live cluster, secret, remote, provider, or push/publish/merge action was
+  performed. RTK proxy filters are untrusted in this shell; underlying commands
+  ran directly and reported PASS.
+
+### Handoff
+
+- All four user-selected priorities addressed: harness/loop (loop-termination
+  subsection), provider 3-way (reasoning/effort matrix row), AI-agents roster
+  (task-characteristic model config), and SDLC/spec taxonomy (verified current,
+  no change needed). Historical pack untouched. Commits are unpushed on `main`;
+  pushing/publishing remains a separate human-approved action.
