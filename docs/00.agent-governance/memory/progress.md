@@ -8645,3 +8645,55 @@ section separating static from live evidence.
 
 - External-source deepening pass complete on `main`. Historical pack untouched.
   No operator-approved live or remote follow-up required.
+
+## 2026-07-09 - Research pack full defect scan (fact and number re-verification)
+
+### Metadata
+
+- **Date**: 2026-07-09
+- **Layer**: docs, qa, research
+- **Status**: done
+- **Tags**: #wer #research #defect-scan #fact-verification
+
+### Progress
+
+- Ran a full fact/number re-verification across the Current `2026-07-07-wer`
+  pack against repo evidence. Verified correct (no defect): agent roster count
+  (10 adapters per provider across `.claude`, `.agents`, `.codex`), ci.yml job
+  ids (branch-policy, changes, pre-commit, repo-quality-static,
+  manifest-static, ci-summary), workflow count (5: ci, generate-changelog,
+  greetings, labeler, stale), and all referenced scripts and paths.
+- Found and fixed defect 1: the ai-agents reference claimed the external
+  `agency-agents` catalog has 12 divisions; divisions.json (checked 2026-07-09)
+  lists 17. Corrected both occurrences.
+- Found and fixed defect 2 (surfaced by the quality gate during the scan): a
+  GitHub Action version drift where the version inventory recorded
+  actions/setup-python v6.2.0 while ci.yml pins v6.3.0 in three jobs; aligned
+  the inventory to v6.3.0.
+- The `147+` persona figure remains an explicitly non-authoritative market-scan
+  estimate; divisions.json carries no agent inventory to verify it, and the
+  hedge was left in place rather than inventing a number.
+
+### Memory
+
+- Numbers that cite an external catalog drift silently; re-verify against the
+  source of record (divisions.json) rather than trusting a prior pass.
+- A content-only edit can surface an unrelated repo-state defect via the
+  quality gate; treat the gate output as part of the defect scan and fix the
+  real drift instead of working around it.
+
+### Evidence
+
+- `bash scripts/validate-repo-quality-gates.sh .` PASS with
+  `[PASS] repository quality gates passed` after both fixes.
+- Commits `bb2870a` (division count) and `0ef0851` (setup-python inventory).
+- No live cluster, secret, remote, provider, or push/publish/merge action was
+  performed.
+
+### Handoff
+
+- Full defect scan complete on `main`. Repo-backed numbers verified accurate;
+  two real defects fixed. Historical pack untouched. The re-injected task line
+  "AI Agent model configuration by task characteristics" is already covered by
+  the ai-agents model-tier table and `model-policy.md`; deeper expansion can be
+  a follow-up if requested.
