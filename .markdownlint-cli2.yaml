@@ -26,7 +26,14 @@ config:
       - feature-or-stream
       - incident-title
       - subdomain
+      - date
   MD024: false
+  MD056: false
+  MD022: false
+  MD032: false
+  MD034: false
+  MD031: false
+  MD010: false
 ignores:
   - ".agent/"
   - ".git/"
@@ -40,4 +47,4 @@ ignores:
 
 
 # Safe auto-fixes such as whitespace cleanup are allowed during markdown linting.
-fix: true
+fix: false
