@@ -85,6 +85,8 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-07-06-control-cloud-doc-normalization.md
 ├── 2026-07-06-stage03-04-repo-static-gap-closure.md
 ├── 2026-07-06-observability-and-network-review-agents.md
+├── 2026-07-07-workspace-engineering-research-pack-refresh.md
+├── 2026-07-10-current-research-pack-fact-first-hardening.md
 └── README.md
 ```
 
