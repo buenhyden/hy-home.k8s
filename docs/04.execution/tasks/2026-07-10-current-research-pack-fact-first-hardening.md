@@ -150,7 +150,7 @@ as each task completes.
 | WERH-002 | Harden workspace governance baseline. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1 before editing; current repo counts (10 agent stems on each of three adapter surfaces, 5 workflows, 6 CI jobs), official OpenGitOps sources, owner/enforcement matrices, 7 evidence-backed follow-up rows, focused heading/date scan, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
 | WERH-003 | Harden spec-driven SDLC, CI, QA, and document taxonomy. | doc | Addendum: Coverage and Gap Classification | Phase 2 | RED heading assertion exited 1; 19 SDLC templates, no Release route/template, zero Incident/Postmortem records, Spec/Task state asymmetry, all 14 document families, all 9 QA lanes, 11 primary sources, and 6 routed gap rows are recorded below. | doc-writer | Important review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
 | WERH-004 | Harden harness and loop engineering. | doc | Addendum: Internal and External Research Contract | Phase 2 | RED heading assertion, exact six-column loop matrix, ownership/evidence boundaries, evaluation/recovery/termination design, 2025-11-25 MCP currentness, 8-category official MCP taxonomy, 7 routed findings, and focused/repository checks are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
-| WERH-005 | Harden provider implementation and current-model analysis. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; 30 adapters, three hook/settings JSON surfaces, 13 surface-specific model rows, six task-routing rows, 21 official URLs, eight routed findings, focused assertions, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
+| WERH-005 | Harden provider implementation and current-model analysis. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; exact 10-role/30-path adapter matrix, three hook/settings JSON surfaces, 17 surface-specific model rows, 13 one-to-one model evaluation/migration rows, six task-routing rows, 21 official URLs, eight routed findings, focused assertions, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Important review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
 | WERH-006 | Harden automation, pipeline, workflow, and QA topology. | doc | Addendum: Artifact and Ownership Design | Phase 2 | CI DAG, filters, GitOps boundary, feedback lanes, and delivery gaps match repo evidence. | doc-writer | Pending | Pending | Todo |
 | WERH-007 | Harden Kubernetes, infrastructure, and security analysis. | doc | Addendum: Artifact and Ownership Design | Phase 2 | Platform controls, external benchmarks, static/live limits, and prioritized gaps are explicit. | doc-writer | Pending | Pending | Todo |
 | WERH-008 | Harden AI-agent roster, upstream comparison, and model routing. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | Local roster, current upstream evidence, native adapter gaps, and task-model recommendations are source-backed. | doc-writer | Pending | Pending | Todo |
@@ -403,14 +403,17 @@ as each task completes.
   portions of `scripts/validate-repo-quality-gates.sh` were inspected. Exact
   counts are ten Claude Markdown, ten `.agents` Markdown, and ten Codex TOML
   adapters with identical stems.
-- **Adapter-field reconciliation**: all observability adapters import
-  `scopes/infra.md`; Claude settings binds the four shared scripts rather than
-  `validate-harness.sh`; only Claude adapters declare native `tools:`
-  frontmatter; and Codex declares `xhigh` for the supervisor, `high` for seven
-  implementation/review/security/incident workers, and `medium` for the two
-  docs/wiki workers. The validator proves stems and selected fields, but its
-  expected model/tool maps omit network/observability and it does not
-  semantically compare Gemini fields.
+- **Adapter-field reconciliation**: the provider reference now has ten exact
+  role rows naming all 30 adapter paths, every imported scope, every model
+  declaration, every Claude `tools:` allowlist, every Codex reasoning effort,
+  and the `.agents` frontmatter fields absent from every local adapter. All
+  observability adapters import `scopes/infra.md`; Claude settings binds the
+  four shared scripts rather than `validate-harness.sh`; Claude `tools:` is a
+  native field rather than a cross-provider parity requirement; and Codex
+  declares `xhigh` for the supervisor, `high` for seven implementation/review/
+  security/incident workers, and `medium` for docs/wiki. The validator proves
+  stems and selected fields, but its expected maps omit network/observability
+  and it does not semantically compare Gemini fields.
 - **Native-path reconciliation**: official Gemini CLI project agents and
   settings/hooks live at `.gemini/agents/*.md` and `.gemini/settings.json`.
   The tracked `.agents/agents/*.md` and `.agents/hooks.json` are therefore
@@ -418,12 +421,16 @@ as each task completes.
   Official Codex standalone `.codex/agents/*.toml` discovery does not require a
   tracked `.codex/config.toml`; its absence leaves documented agent defaults at
   six threads and depth one unless another config layer overrides them.
-- **Model surface result**: the exact cutoff matrix has 13 rows and separates
-  Claude Fable 5, Opus 4.8, Sonnet 5, and Haiku 4.5; Codex GPT-5.6 Sol/Terra/
-  Luna, GPT-5.5, GPT-5.4 Mini, and `gpt-5.3-codex`; and Gemini 3.1 Pro Preview,
-  3.5 Flash Stable, and 3.1 Flash-Lite Stable. API availability, coding-product
-  lifecycle, CLI/account/version behavior, local labels, and recommendations
-  remain distinct.
+- **Model surface result**: the exact cutoff matrix has 17 surface rows. Codex
+  product and OpenAI API catalog rows are separate for GPT-5.6 Sol, Terra, and
+  Luna; ChatGPT-sign-in deprecation and the published API model page are
+  separate rows for `gpt-5.3-codex`. Neither surface infers the other's
+  lifecycle or availability. An adjacent 13-row evaluation/migration matrix
+  provides one-to-one coverage for Claude Fable 5, Opus 4.8, Sonnet 5, Haiku
+  4.5; GPT-5.6 Sol/Terra/Luna, GPT-5.5, GPT-5.4 Mini, GPT-5.3-Codex; and Gemini
+  3.1 Pro Preview, 3.5 Flash, and 3.1 Flash-Lite. Each row names disposition,
+  supported effort/routing facts or a surface-specific unknown, required eval,
+  and an exact canonical non-mutating follow-up route.
 - **External sources**: 21 official URLs were checked read-only at exactly
   `2026-07-10 10:00 KST`: six Anthropic/Claude model, configuration, and
   subagent pages; six OpenAI API/Codex model, subagent, config, and hook pages;
@@ -440,8 +447,9 @@ as each task completes.
 - **Task-characteristic routing**: six rows express default, escalation, and
   fallback for architecture, routine implementation/review, security/incident,
   documentation/research, high-volume deterministic work, and an eventual
-  model migration. Every route names eval criteria; none reconfigures active
-  model policy or provider adapters.
+  model migration. Every route names eval criteria; `max` is recorded only as
+  additional single-model reasoning effort, never as subagent orchestration.
+  None reconfigures active model policy or provider adapters.
 - **Focused and optional validation**: the required heading/model/cutoff scan
   found all four headings and every required model including GPT-5.4 Mini. An
   exact-header scan found the four headings once; an exact required-URL loop
@@ -459,9 +467,12 @@ as each task completes.
   registry, model picker, resolved model, hook trust/consumption, inference,
   MCP connection, live Kubernetes/Argo CD/Vault/ESO, secret-value, remote
   GitHub/CI, publish, push, merge, or third-party mutation check ran.
-- **Review and commit evidence**: independent task-scoped review remains
-  pending. The WERH-005 commit field intentionally remains pending until
-  WERH-010 records the resulting SHA from `git log` after this commit exists.
+- **Review and commit evidence**: task review found Important issues in exact
+  adapter-field proof, one-to-one model evaluation coverage, OpenAI
+  product/API separation, and effort/orchestration wording. These findings were
+  corrected; independent re-review remains pending. The WERH-005 commit field
+  intentionally remains pending until WERH-010 records the actual SHA from
+  `git log` after the follow-up commit exists.
 
 - **RED command**:
   `rg -n '2026-07-10-current-research-pack-fact-first-hardening' docs/04.execution/tasks/README.md`
