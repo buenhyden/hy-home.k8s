@@ -152,7 +152,7 @@ as each task completes.
 | WERH-004 | Harden harness and loop engineering. | doc | Addendum: Internal and External Research Contract | Phase 2 | RED heading assertion, exact six-column loop matrix, ownership/evidence boundaries, evaluation/recovery/termination design, 2025-11-25 MCP currentness, 8-category official MCP taxonomy, 7 routed findings, and focused/repository checks are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
 | WERH-005 | Harden provider implementation and current-model analysis. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; exact 10-role/30-path adapter matrix, three hook/settings JSON surfaces, 17 surface-specific model rows, 13 one-to-one model evaluation/migration rows, six task-routing rows, 21 official URLs, eight routed findings, focused assertions, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Important review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
 | WERH-006 | Harden automation, pipeline, workflow, and QA topology. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1; 5 workflows, 6 CI jobs, 2 parallel roots, 3 `changes`-dependent conditional jobs, 8 official sources, 9 coverage rows, 7 routed gap rows, and the exact GitOps ownership boundary are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
-| WERH-007 | Harden Kubernetes, infrastructure, and security analysis. | doc | Addendum: Artifact and Ownership Design | Phase 2 | Platform controls, external benchmarks, static/live limits, and prioritized gaps are explicit. | doc-writer | Pending | Pending | Todo |
+| WERH-007 | Harden Kubernetes, infrastructure, and security analysis. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1; 15 primary sources, 12 control rows, 6 evidence lanes, 14 routed security gaps, AppProject/GitOps/NetworkPolicy/ESO-Vault controls, and supply-chain boundaries are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
 | WERH-008 | Harden AI-agent roster, upstream comparison, and model routing. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | Local roster, current upstream evidence, native adapter gaps, and task-model recommendations are source-backed. | doc-writer | Pending | Pending | Todo |
 | WERH-009 | Close pack coverage and cross-document integration. | doc | Addendum: Coverage and Related-Document Integration Rules | Phase 3 | Every requested topic has one primary owner; links, freshness, and repeated content are consistent. | supervisor | Pending | Pending | Todo |
 | WERH-010 | Run final validation and close execution records. | eval | Addendum: Verification and Acceptance | Phase 4 | Required static gates and final review pass; limitations and logical commits are recorded. | supervisor | Pending | Pending | Todo |
@@ -178,7 +178,7 @@ as each task completes.
 - [x] WERH-004 Harden harness and loop engineering.
 - [x] WERH-005 Harden provider implementation and current-model analysis.
 - [x] WERH-006 Harden automation, pipeline, workflow, and QA topology.
-- [ ] WERH-007 Harden Kubernetes, infrastructure, and security analysis.
+- [x] WERH-007 Harden Kubernetes, infrastructure, and security analysis.
 - [ ] WERH-008 Harden AI-agent roster, upstream comparison, and model routing.
 
 ### Phase 3: Pack Integration
@@ -540,6 +540,91 @@ as each task completes.
   available and reported no lint errors for the harness manifest targets.
 - **Review and commit evidence**: independent task-scoped review remains
   pending. The WERH-006 commit field intentionally remains pending until
+  WERH-010 records the resulting SHA from `git log` after this commit exists.
+
+### WERH-007 Kubernetes, Infrastructure, and Security Evidence
+
+- **RED assertion**:
+  `rg -n 'Platform Security Control Matrix|Static and Live Evidence Boundary|Supply-Chain Security Analysis|Security Gap Register' docs/90.references/research/2026-07-07-wer/kubernetes-infrastructure-security.md`
+  exited 1 with no matches before editing, proving the approved security-depth
+  structure was absent.
+- **GitOps and authorization recheck**: the root Application points to
+  `gitops/apps/root`; its Kustomize file lists 18 platform Applications. The
+  separate `apps-generator` ApplicationSet discovers `gitops/workloads/*` in
+  the `apps` project. The `apps` AppProject denies cluster kinds and allows
+  exactly eight namespaced kinds; the `platform` project enumerates sources,
+  destinations, and resource kinds without wildcards. Its `argocd`
+  destination is documented as the admin-equivalent high-trust boundary from
+  upstream guidance, while remote source write access and live RBAC remain
+  Unverified.
+- **Secrets, RBAC, and network recheck**: the ESO store names the Kubernetes
+  auth role, ServiceAccount, and namespace; the ServiceAccount has the
+  `system:auth-delegator` TokenReview binding; and the Vault HCL grants only
+  read/list on the data/metadata paths for three logical platform secrets.
+  Six egress NetworkPolicies cover six namespace/use-case surfaces with exact
+  service destinations where applicable. CNI packet enforcement, ingress
+  isolation, Vault role attachment, ESO sync, Secret RBAC, etcd encryption,
+  and version-sensitive Vault audience compatibility were not inferred.
+- **Validator and runtime-boundary recheck**: the CI `manifest-static` lane
+  declares five explicit scripts and installs PyYAML only. The policy script
+  runs Conftest when available and always runs its four-category Python
+  fallback; the manifest script skips kube-linter when unavailable.
+  `verify-contracts-static.sh` is regex-heavy; Kustomize structure validation
+  parses YAML and checks sibling references but does not fully render and
+  schema-validate every root. `verify-gitops.sh` accepts nonempty health and
+  does not assert sync. `verify-ingress-tls.sh` uses `curl -k`, makes Traefik
+  443 opt-in, and leaves Headlamp/Kiali mismatches warn-only.
+- **Transport and bootstrap recheck**: bootstrap defaults external Vault HTTPS
+  to skip certificate verification and expands a Vault token header and
+  `kubectl --from-literal` password into process arguments. The in-cluster ESO
+  store uses HTTP. These are recorded as recommendations only; no script,
+  manifest, credential, secret, or runtime changed.
+- **Supply-chain recheck**: the repository has scoped workflow permissions,
+  `persist-credentials: false` where checkout is used, weekly GitHub Actions
+  Dependabot updates, secret scanning, actionlint, Zizmor, and non-`latest`
+  policy. All checked Action references use version tags and Zizmor disables
+  `unpinned-uses`. No active tracked workflow provides CodeQL, dependency
+  review, SBOM, provenance/attestation, signature verification, or Scorecard.
+  No SLSA level is claimed.
+- **External sources**: the exact 15 required primary URLs were opened
+  read-only on 2026-07-10: four Kubernetes pages; OpenGitOps; two Argo CD
+  pages; ESO Vault provider; Vault policies and Kubernetes auth; OPA for
+  Kubernetes; Conftest; NIST SP 800-204D; SLSA v1.2; and OpenSSF Scorecard.
+  Argo CD `stable` and ESO `latest` are recorded as rolling URLs; the ESO page
+  displayed currentness/version ambiguity, so the exact checked URL, date,
+  and Vault-version-dependent audience wording are preserved without a fixed
+  release claim.
+- **Control and gap coverage**: the exact six-column control matrix has 12
+  rows; the static/live boundary has six distinct lanes; and the exact
+  five-column gap register has 14 findings. Each finding uses an approved
+  classification, includes severity and risk rationale, recommends no active
+  change in this workstream, and names one canonical follow-up route.
+- **Focused validation**: the required term/date scan found all four exact
+  headings and Kubernetes, Argo CD, RBAC, NetworkPolicy, External Secrets,
+  Vault, and SLSA coverage. Each exact heading appears once; all 15 required
+  URLs are present; exact row assertions found 12 control rows, six evidence
+  lanes, and 14 gap rows. `markdownlint-cli2` reported 0 errors and
+  `git diff --check` exited 0.
+- **Changed-file hooks**:
+  `pre-commit run --files docs/90.references/research/2026-07-07-wer/kubernetes-infrastructure-security.md docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md`
+  passed every applicable file-hygiene, secret, and Markdown hook;
+  non-applicable workflow, shell, and manifest hooks were skipped.
+- **Required repository validation**:
+  `bash scripts/validate-repo-quality-gates.sh .` returned
+  `[PASS] repository quality gates passed`. `bash scripts/validate-harness.sh`
+  returned `PASS harness repo-static validation`, including the 18-app GitOps
+  hierarchy, 104 YAML parses, Kube-linter with no lint errors, 100-file secret
+  scan, built-in policy fallback, static infrastructure contracts, and diff
+  hygiene.
+- **Limitations**: no live Kubernetes, Argo CD, Vault, ESO, CNI, endpoint,
+  ingress/TLS, secret-value, credential, remote GitHub Actions/ruleset/
+  required-check, artifact, release, publish, push, merge, or third-party
+  mutation check ran. `conftest` was not installed, so the harness reported
+  SKIP and the built-in policy fallback passed; this is not a Conftest pass.
+  Repo-static and external benchmark evidence do not prove enforcement or
+  readiness.
+- **Review and commit evidence**: independent task-scoped review remains
+  pending. The WERH-007 commit field intentionally remains pending until
   WERH-010 records the resulting SHA from `git log` after this commit exists.
 
 - **RED command**:
