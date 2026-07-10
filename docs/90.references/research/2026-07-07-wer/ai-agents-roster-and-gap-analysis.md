@@ -135,8 +135,8 @@ ran.
 
 | Claim | Verified value | Evidence | Authority limitation |
 | --- | --- | --- | --- |
-| Revision at cutoff | `9f3e401ccd09aa0ee0ef8e015226d0647908e01e`, committed `2026-07-10 05:32:59 KST`; last `main` commit before the cutoff | [Pinned commit](https://github.com/msitarzewski/agency-agents/commit/9f3e401ccd09aa0ee0ef8e015226d0647908e01e) | Later `main` changes are outside this snapshot. |
-| License and releases | MIT; repository tags `0`, releases `0` at check time | [Pinned LICENSE](https://raw.githubusercontent.com/msitarzewski/agency-agents/9f3e401ccd09aa0ee0ef8e015226d0647908e01e/LICENSE), GitHub tag/release APIs | No version tag exists to use as a semantic release baseline. |
+| Revision at cutoff | `9f3e401ccd09aa0ee0ef8e015226d0647908e01e`, committed `2026-07-10 05:32:59 KST`; last `main` commit before the cutoff | [Cutoff commit query](https://api.github.com/repos/msitarzewski/agency-agents/commits?sha=main&until=2026-07-10T01%3A00%3A00Z&per_page=1), [pinned commit](https://github.com/msitarzewski/agency-agents/commit/9f3e401ccd09aa0ee0ef8e015226d0647908e01e) | The query cutoff is `2026-07-10 01:00:00Z`, equivalent to `10:00 KST`; later `main` changes are outside this snapshot. |
+| License and releases | MIT; repository tags `0`, releases `0` at check time | [Pinned LICENSE](https://raw.githubusercontent.com/msitarzewski/agency-agents/9f3e401ccd09aa0ee0ef8e015226d0647908e01e/LICENSE), [tags API](https://api.github.com/repos/msitarzewski/agency-agents/tags?per_page=100), [releases API](https://api.github.com/repos/msitarzewski/agency-agents/releases?per_page=100) | The APIs returned empty arrays at the cutoff check; no version tag exists to use as a semantic release baseline. |
 | Division registry | 17: academic, design, engineering, finance, game-development, gis, healthcare, marketing, paid-media, product, project-management, sales, security, spatial-computing, specialized, support, testing | [Pinned `divisions.json`](https://raw.githubusercontent.com/msitarzewski/agency-agents/9f3e401ccd09aa0ee0ef8e015226d0647908e01e/divisions.json) | Top-level integrations, strategy, examples, and scripts are not divisions. |
 | Agent Markdown inventory | Recursive division count `254`; direct-child-only count `239`; 15 nested game-development files explain the difference | [Pinned recursive tree](https://api.github.com/repos/msitarzewski/agency-agents/git/trees/9f3e401ccd09aa0ee0ef8e015226d0647908e01e?recursive=1) | Counts include `.md` blobs only under the 17 registered divisions. The Git tree response was not truncated. |
 | Division counts | academic 6; design 9; engineering 49; finance 5; game-development 20; gis 13; healthcare 3; marketing 36; paid-media 7; product 5; project-management 7; sales 9; security 10; spatial-computing 6; specialized 54; support 6; testing 9 | Same pinned recursive tree grouped by the first path segment | A future tree or registry change requires a recount. |
@@ -169,17 +169,45 @@ this cutoff snapshot.
 | Provider packaging | Three hand-maintained role adapters with partial static parity checks | 15 install targets and 13 generated conversions | File conversion offers reach, not native behavioral parity. |
 | Evaluation | Repo gates plus recommended task-specific agent evals | Source linter checks required metadata and warns on sections | Neither source lint nor local static shape proves output quality. |
 
+### Pinned Upstream Role-Overlap Classification
+
+The classifications below compare the local role contract with standalone
+persona files present in the pinned recursive tree. `Direct overlap` means a
+standalone upstream persona has materially the same primary function; it does
+not mean identical name, tools, authority, or behavior. `Near/functional
+overlap` means one or more personas offer useful patterns but no single one
+matches the local contract. `No exact standalone upstream role` means the
+pinned tree has no dedicated persona for that local role even though adjacent
+personas may provide partial patterns. None of these labels establishes a
+local implementation gap or provider parity.
+
+| Local role | Upstream-overlap classification | Pinned upstream evidence | Contract boundary |
+| --- | --- | --- | --- |
+| `supervisor` | Direct overlap | `specialized/agents-orchestrator.md` | Both own decomposition and multi-agent coordination; the local role additionally owns repository governance, completion evidence, and bounded-loop termination. |
+| `code-reviewer` | Direct overlap | `engineering/engineering-code-reviewer.md` | Both center on code-review findings; the local role is constrained to repository evidence, read-only review, and local postflight. |
+| `doc-writer` | Near/functional overlap | `engineering/engineering-technical-writer.md`; `specialized/specialized-document-generator.md` | Upstream writing patterns are relevant, but neither standalone persona owns the local Stage taxonomy, templates, canonical links, and source ledger together. |
+| `gitops-reviewer` | No exact standalone upstream role | Nearby: `engineering/engineering-devops-automator.md`; `engineering/engineering-code-reviewer.md` | Automation and review patterns are partial; no pinned standalone persona owns Argo CD targeting, Kustomize structure, sync risk, and review-only GitOps evidence. |
+| `incident-responder` | Direct overlap | `security/security-incident-responder.md`; `engineering/engineering-incident-response-commander.md` | Incident triage and response overlap directly; the local role remains read-only and routes recovery or live action through explicit approval and handoff. |
+| `k8s-implementer` | No exact standalone upstream role | Nearby: `engineering/engineering-devops-automator.md`; `engineering/engineering-sre.md` | No pinned standalone Kubernetes implementer exists; DevOps/SRE provide partial operational patterns but not the local GitOps-only manifest-authoring contract. |
+| `network-reviewer` | Direct overlap | `engineering/engineering-network-engineer.md` | Network design and diagnostics overlap directly; the local role is narrower, review-only, manifest-static, and explicitly forbids live probes. |
+| `observability-reviewer` | No exact standalone upstream role | Nearby: `engineering/engineering-sre.md` | No pinned standalone observability reviewer exists; SRE supplies SLO/monitoring vocabulary but also carries broader operational responsibilities absent from the local static-review role. |
+| `security-auditor` | Near/functional overlap | `security/security-compliance-auditor.md`; `security/security-appsec-engineer.md`; `security/security-cloud-security-architect.md` | Several narrower security personas contribute patterns, but no single pinned persona matches the local cross-cutting RBAC, NetworkPolicy, secrets, and governance audit contract. |
+| `wiki-curator` | No exact standalone upstream role | Nearby: `engineering/engineering-codebase-onboarding-engineer.md`; `engineering/engineering-technical-writer.md` | No pinned standalone wiki curator exists; onboarding and technical-writing personas only partially cover canonical-owner, stale-link, and generated-index curation. |
+
 ### Role and Coverage Gap Register
 
 `Candidate` requires repeated local work plus a distinct scope, tools,
 deliverable, acceptance criteria, handoff, and postflight that cannot be safely
 absorbed by an existing role. No newly scanned upstream role meets that bar at
-this cutoff.
+this cutoff. In this register, `Closed` means the previously identified **local
+coverage gap** has an implemented local owner. It never means that the local
+role has an exact upstream standalone counterpart or that provider behavior is
+at parity.
 
 | External pattern | Local coverage | Decision | Rationale | Canonical follow-up route |
 | --- | --- | --- | --- | --- |
-| `engineering-sre` / observability | `observability-reviewer` now owns manifest/SLO review | Closed | The 2026-07-04 candidate was implemented across all three local surfaces on 2026-07-06. It remains manifest-static, not live SRE automation. | Preserve in [harness catalog](../../../00.agent-governance/harness-catalog.md); future behavior change requires an agent-design spec/task. |
-| `engineering-network-engineer` | `network-reviewer` owns ingress, Traefik, NetworkPolicy, DNS, and TLS manifest review | Closed | The earlier candidate was implemented across all three local surfaces. Native semantic field validation remains a separate gap. | Stage 00 validator owner via a bounded Stage 04 parity task. |
+| `engineering-sre` / observability | `observability-reviewer` now owns manifest/SLO review | Closed | The earlier **local coverage gap** was closed across all three local surfaces on 2026-07-06. This does not assert an exact upstream observability-reviewer role: pinned `engineering-sre` is only a near/functional pattern, and local coverage remains manifest-static rather than live SRE automation. | Preserve in [harness catalog](../../../00.agent-governance/harness-catalog.md); future behavior change requires an agent-design spec/task. |
+| `engineering-network-engineer` | `network-reviewer` owns ingress, Traefik, NetworkPolicy, DNS, and TLS manifest review | Closed | The earlier **local coverage gap** was closed across all three local surfaces. The upstream network engineer directly overlaps functionally, but native semantic-field validation and behavioral parity remain separate gaps. | Stage 00 validator owner via a bounded Stage 04 parity task. |
 | `engineering-sre` incident vocabulary | `incident-responder` plus `observability-reviewer` | Adapt | SLO, error-budget, and burn-rate framing can improve evidence and severity without granting live monitoring authority. | New Stage 03 agent-body spec, then coordinated three-adapter task and role eval. |
 | `engineering-code-reviewer` success metrics | `code-reviewer` and `gitops-reviewer` | Adapt | Evidence citations, finding precision, and false-negative targets are measurable improvements; a duplicate reviewer is not justified. | Agent-body/eval spec routed through catalog, adapter owners, and repo QA evidence. |
 | `engineering-devops-automator` | `supervisor`, `k8s-implementer`, `gitops-reviewer`, workflows, validators | Adapt | Automation responsibility is already separated by write/review/static-gate boundaries. A general mutation-capable agent would blur ownership. | Existing role scopes and [automation reference](automation-pipeline-workflow-qa.md); new task only for a repeated concrete gap. |
@@ -254,6 +282,12 @@ All external sources were checked read-only at `2026-07-10 10:00 KST`.
 
 - Pinned commit: <https://github.com/msitarzewski/agency-agents/commit/9f3e401ccd09aa0ee0ef8e015226d0647908e01e>
 - Pinned tree: <https://github.com/msitarzewski/agency-agents/tree/9f3e401ccd09aa0ee0ef8e015226d0647908e01e>
+- Cutoff commit query API:
+  <https://api.github.com/repos/msitarzewski/agency-agents/commits?sha=main&until=2026-07-10T01%3A00%3A00Z&per_page=1>
+- Tags API:
+  <https://api.github.com/repos/msitarzewski/agency-agents/tags?per_page=100>
+- Releases API:
+  <https://api.github.com/repos/msitarzewski/agency-agents/releases?per_page=100>
 - Recursive Git tree API: <https://api.github.com/repos/msitarzewski/agency-agents/git/trees/9f3e401ccd09aa0ee0ef8e015226d0647908e01e?recursive=1>
 - Division registry: <https://raw.githubusercontent.com/msitarzewski/agency-agents/9f3e401ccd09aa0ee0ef8e015226d0647908e01e/divisions.json>
 - Agent linter: <https://raw.githubusercontent.com/msitarzewski/agency-agents/9f3e401ccd09aa0ee0ef8e015226d0647908e01e/scripts%2Flint-agents.sh>

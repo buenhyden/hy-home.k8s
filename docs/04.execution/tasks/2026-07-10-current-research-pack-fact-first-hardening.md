@@ -153,7 +153,7 @@ as each task completes.
 | WERH-005 | Harden provider implementation and current-model analysis. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; exact 10-role/30-path adapter matrix, three hook/settings JSON surfaces, 17 surface-specific model rows, 13 one-to-one model evaluation/migration rows, six task-routing rows, 21 official URLs, eight routed findings, focused assertions, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Important review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
 | WERH-006 | Harden automation, pipeline, workflow, and QA topology. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1; 5 workflows, 6 CI jobs, 2 parallel roots, 3 `changes`-dependent conditional jobs, 8 official sources, 9 coverage rows, 7 routed gap rows, and the exact GitOps ownership boundary are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
 | WERH-007 | Harden Kubernetes, infrastructure, and security analysis. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1; 15 primary sources, 12 control rows, 6 evidence lanes, 14 routed security gaps, AppProject/GitOps/NetworkPolicy/ESO-Vault controls, and supply-chain boundaries are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
-| WERH-008 | Harden AI-agent roster, upstream comparison, and model routing. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; exact 10-role/30-adapter status, pinned 17-division/254-file upstream inventory, 15 install targets, 13 conversion targets, 13 routed pattern decisions, ten role-model routes, fixed-SHA sources, and static validation are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
+| WERH-008 | Harden AI-agent roster, upstream comparison, and model routing. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; exact 10-role/30-adapter status, ten pinned upstream-overlap classifications, pinned 17-division/254-file inventory, 15 install targets, 13 conversion targets, 13 routed pattern decisions, ten role-model routes, fixed-SHA/cutoff-state sources, and static validation are recorded below. | doc-writer | Important and Minor review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
 | WERH-009 | Close pack coverage and cross-document integration. | doc | Addendum: Coverage and Related-Document Integration Rules | Phase 3 | Every requested topic has one primary owner; links, freshness, and repeated content are consistent. | supervisor | Pending | Pending | Todo |
 | WERH-010 | Run final validation and close execution records. | eval | Addendum: Verification and Acceptance | Phase 4 | Required static gates and final review pass; limitations and logical commits are recorded. | supervisor | Pending | Pending | Todo |
 
@@ -668,6 +668,14 @@ as each task completes.
   the reproducible inventory. Upstream README `230+` is retained only as its
   non-authoritative self-description, and the old Current `147+` value is
   removed. The unpinned `main` page is discovery/currentness context only.
+- **Pinned role-overlap classification**: all ten local roles are classified
+  independently from the gap decisions. Supervisor, code review, incident
+  response, and network review have `Direct overlap`; documentation and
+  security have `Near/functional overlap`; Kubernetes implementation, GitOps
+  review, observability review, and wiki curation have `No exact standalone
+  upstream role` at the pinned SHA, with only nearby partial patterns. A
+  `Closed` gap decision means local coverage exists, never exact upstream-role
+  or provider-behavior parity.
 - **Gap and routing result**: 13 pattern rows use only `Closed`, `Adapt`, or
   `Skip`; no new `Candidate` meets the required repeated-work, distinct scope,
   tools, output, acceptance, handoff, and postflight bar. The ten-role routing
@@ -675,15 +683,19 @@ as each task completes.
   fallback routes, records actual Codex effort, preserves provider lifecycle
   and product/API/CLI distinctions, and attaches a role-specific eval gate.
   No active adapter or model migration was performed.
-- **Sources**: ten exact fixed-SHA upstream URLs cover commit, tree, recursive
-  API, registry, linter, converter, tools, sample, README, and license. Eight
-  official Claude, OpenAI/Codex, and Gemini model/subagent URLs support native
-  paths and routing. All were checked read-only at
+- **Sources**: ten exact pinned/fixed-SHA upstream URLs cover commit, tree,
+  recursive API, registry, linter, converter, tools, sample, README, and
+  license. The exact cutoff-commit, tags, and releases API URLs make selection
+  of the last pre-cutoff commit and the zero-tag/zero-release observations
+  reproducible. Eight official Claude, OpenAI/Codex, and Gemini model/subagent
+  URLs support native paths and routing. All were checked read-only at
   `2026-07-10 10:00 KST`.
 - **Focused and optional validation**: the exact four headings each appeared
   once; adapter counts were `10/10/10`; exact status and routing matrices each
-  had ten role rows; gap decisions matched the approved vocabulary; fixed SHA,
-  `254/239/15`, `15` install targets, and `13` conversions were found.
+  had ten role rows; the overlap table had ten role rows and explicitly found
+  the four no-exact-standalone roles; gap decisions matched the approved
+  vocabulary; the three cutoff-state API URLs, fixed SHA, `254/239/15`, `15`
+  install targets, and `13` conversions were found.
   `markdownlint-cli2` reported 0 errors and `git diff --check` exited 0.
 - **Required repository validation**: changed-file pre-commit passed every
   applicable file-hygiene, secret, and Markdown hook; non-applicable workflow,
@@ -704,9 +716,13 @@ as each task completes.
   provider-native behavior or model quality. `conftest` was unavailable; its
   optional lane was SKIP and the built-in fallback passed, which is not a
   Conftest pass.
-- **Review and commit evidence**: independent task-scoped review remains
-  pending. The WERH-008 commit field intentionally remains pending until
-  WERH-010 records the actual SHA from `git log` after this commit exists.
+- **Review and commit evidence**: task-scoped review found an Important
+  ambiguity between upstream role overlap and local gap closure, plus a Minor
+  reproducibility gap for the cutoff/tags/releases API URLs. The role-overlap
+  matrix, `Closed` semantics, exact API links, and their focused checks were
+  added; independent re-review remains pending. The WERH-008 commit field
+  intentionally remains pending until WERH-010 records the actual SHA from
+  `git log` after this follow-up commit exists.
 
 - **RED command**:
   `rg -n '2026-07-10-current-research-pack-fact-first-hardening' docs/04.execution/tasks/README.md`
