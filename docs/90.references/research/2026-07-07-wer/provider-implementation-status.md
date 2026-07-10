@@ -3,106 +3,289 @@ title: 'Reference: Provider Harness Implementation Status Research'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-09
+updated: 2026-07-10
 ---
 
 # Reference: Provider Harness Implementation Status Research
 
 ## Overview
 
-이 문서는 Claude Code, Codex/OpenAI, Gemini/Google의 AI 에이전트 하네스/루프 실행 기능(Upstream capability)과 `hy-home.k8s` 워크스페이스에 구현된 프로바이더 어댑터(Adapter) 상태를 비교 분석하여 정리한다.
+이 문서는 Claude Code, Codex, Gemini CLI와 각 공급자의 API 모델 표면을
+`hy-home.k8s`의 로컬 어댑터 선언과 비교한다. 공급자 기능, 제품/CLI 가용성,
+API 모델 수명주기, 로컬 표시 문자열, 실행 권고를 하나의 상태로 합치지 않는다.
 
-2026-07-07 기준의 최신 공식 문서와 리포지토리 실제 구성 상태를 바탕으로 작성되었으며, 특히 최근 spec-driven 설계 후 완료된 `observability-reviewer`와 `network-reviewer` 에이전트의 3대 프로바이더 어댑터 형상 동기화 상태를 상세 분석에 포함하였다.
-
-이 문서는 참고 자료이며, 실제 프로바이더의 런타임 제어 설정이나 워크스페이스 정책을 재정의하지 않는다.
+외부 소스 컷오프는 정확히 `2026-07-10 10:00 KST`다. 로컬 사실은 같은 시점의
+tracked checkout을 정적으로 검사한 결과다. 이 스냅샷은 프로바이더 로그인,
+계정별 entitlement, 설치된 CLI 버전, 실제 모델 해석, hook 소비, subagent 실행,
+MCP 연결 또는 live inference를 검증하지 않았다.
 
 ## Purpose
 
-- 프로바이더별 에이전트 구동 기능의 차이점과 공통점을 조사 및 분석하여 기술적 baseline 제공.
-- 각 프로바이더 고유 기능(Upstream features)과 본 워크스페이스에서 수용하는 실제 구현체(Local adapter status) 간의 경계를 식별.
-- 3대 프로바이더(Claude, Codex, Gemini)의 공통 환경 및 규칙 체계 구축 방안 제시.
+- 세 공급자의 공식 agent/subagent, model, hook, permission, settings 표면을
+  surface별로 비교한다.
+- 10개 역할의 3개 로컬 어댑터, 모델 문자열, scope, tool/effort, hook wiring과
+  validator coverage를 실제 파일에 맞춰 기록한다.
+- 모델 선택을 default/escalation/fallback과 eval 조건으로 제안하되 활성
+  `model-policy`, 어댑터 또는 런타임 설정은 변경하지 않는다.
+- 구현 공백은 위험 근거와 canonical 후속 경로를 가진 권고로만 남긴다.
 
 ## Reference Type
 
 - Type: durable-concept / external-standard-snapshot / dated-implementation-audit
-- Source checked: 2026-07-07
-- Refresh trigger: Claude Code, Codex/OpenAI, Gemini CLI, Google ADK/Enterprise Agent Platform 등의 업데이트 및 리포지토리 어댑터 변경.
+- Source checked: `2026-07-10 10:00 KST`
+- Repo evidence checked: `2026-07-10`
+- Refresh trigger: provider model catalog, lifecycle/deprecation, coding-product
+  authentication, CLI version/availability, native agent schema, hook semantics,
+  local adapter/model policy, or validator coverage changes.
 
 ## Authority Boundary
 
-- **Authoritative for**:
-  - 2026-07-07 기준 프로바이더별 업스트림 기능 비교 및 리포지토리 내 구현 상태 기술.
-  - 공통 거버넌스 코어와 프로바이더별 어댑터 매핑 정의.
-- **Not authoritative for**:
-  - 실제 에이전트 실행 및 툴 권한 제어.
-  - 프로바이더 설정 파일 직접 수정 권한.
+- **Authoritative for**: 이 컷오프의 공식 문서와 현재 checkout을 연결한 설명,
+  fact-defect 교정, 비교 및 비변경 권고.
+- **Not authoritative for**: active model tier, provider credential/entitlement,
+  CLI 설치 상태, native runtime registration, hook trust/consumption, MCP 연결,
+  inference 결과, live cluster/remote readiness 또는 배포 승인.
+- Local implementation claims are controlled by current repository evidence;
+  upstream capability and lifecycle claims are controlled by the linked official
+  surface. A label in an adapter is not proof that a provider accepted or ran it.
+- Active owners remain
+  [model-policy.md](../../../00.agent-governance/model-policy.md),
+  [harness-catalog.md](../../../00.agent-governance/harness-catalog.md), provider
+  notes/runtime files, provider-native settings, and repository validators. This
+  Stage 90 reference does not override them.
 
 ## Scope
 
-- Claude Code, Codex/OpenAI, Gemini CLI 및 Google ADK의 지시 파일, 서브에이전트, 훅 자동화, 스킬 확장, MCP 툴 연동, 샌드박싱/권한 제어 비교.
-- 3대 프로바이더 공통 체계 구축의 요소 및 현황.
-- 실제 런타임 클러스터 조작 및 Vault 비밀정보 갱신 제외.
+- Claude API/Claude Code, OpenAI API/Codex product and CLI, Gemini API/Gemini CLI.
+- Instructions/settings, custom agents, tools, hooks, sandbox/permissions, model
+  selection and local validation evidence.
+- The 30 tracked local role adapters and three tracked hook/settings JSON files.
+- No active script, hook, adapter, model policy, provider config, credential,
+  manifest, CI workflow, runtime, or third-party resource change.
 
 ## Definitions / Facts
 
-### 1. 프로바이더 기능 비교 및 분석 (Provider Capability Matrix)
+### Evidence and Surface Rules
 
-| 구분                          | Claude Code                                                                                                        | Codex/OpenAI                                                                                                       | Gemini/Google CLI & ADK                                                                    |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| **지시 파일 & 설정**          | Hierarchical settings (`.claude.json`), project/user/local config 지원.                                            | `config.toml` 프로젝트/사용자 레이어, `AGENTS.md`를 포함한 규칙 로딩.                                              | `GEMINI.md` 컨텍스트 파일 자동 탐색 및 비대화형 자동화 지원.                               |
-| **서브에이전트 (Delegation)** | `.claude/agents/*.md` 기반 specialized agents 구동, model/tool/permissions 위임 제어.                              | `.codex/agents/*.toml` 양식을 지닌 프로젝트 레벨 서브에이전트 구동 및 샌드박스 상속.                               | Google ADK를 통한 멀티에이전트 그래프 구성. Gemini CLI는 단순 스크립트 비대화형 위임 지원. |
-| **훅 & 자동화 (Hooks)**       | SessionStart, PreToolUse, PostToolUse, Stop, SubagentStop, PreCompact 훅이 exit-code를 통해 모델 동작을 통제 가능. | `hooks.json`에 선언된 수명주기 쉘 명령 연동 및 샌드박스 가두기 지원.                                               | `.agents/hooks.json` 기반 수명주기 이벤트 정의 및 쉘 트리거 연동.                          |
-| **스킬 & 확장 (Skills)**      | `SKILL.md` 구조의 project/plugin 스킬 로딩 지원.                                                                   | `.agents/skills/`를 통해 model-specific progressive disclosure 지원.                                               | Google ADK 내 Graph Workflows 및 Custom Tools/Skills 연동 지원.                            |
-| **MCP & 툴 연동**             | Local/project-specific `.mcp.json` 연동 및 서브에이전트 전용 툴 매핑 지원.                                         | `config.toml` 내 STDIO/HTTP MCP 서버 연동 및 인증 연동 지원.                                                       | Gemini CLI 내 외부 MCP 서버 연동 및 ADK 내 복합 툴 에코시스템 지원.                        |
-| **샌드박싱 & 권한**           | Filesystem/Network 제한 설정 및 CLI 툴 실행 시 동적 허용/차단.                                                     | `read-only`, `workspace-write`, `danger-full-access` 샌드박스 모드 및 untrusted command 차단.                      | 개발자가 설계한 도구 스펙(spec) 및 ADK 런타임 보안 정책 준수.                              |
-| **Reasoning / Effort 제어**   | 에이전트 frontmatter의 provider-native model tier 제어(`opus 4.8` / `sonnet 4.6` / `haiku 4.5`).                   | `model_reasoning_effort` 명시 선언(`gpt-5.5`: none/low/medium/high/xhigh, `gpt-5.3-codex`: low/medium/high/xhigh). | `harness-catalog.md`에 기록된 provider-native high/medium tier 라벨.                       |
+| Evidence class | Meaning in this reference | It does not prove |
+| --- | --- | --- |
+| Official API catalog | Model ID and lifecycle shown by the provider API documentation at the cutoff. | Coding-product access, account entitlement, CLI routing, or local use. |
+| Official coding-product/CLI documentation | Documented model selection, custom-agent, hook, config, sandbox, or command behavior for that product. | That the installed local version/account supports it or that this checkout activates it. |
+| Repo declaration | Tracked gateway, adapter, hook/settings JSON, model label, scope, tools, effort, or validator code. | Native registration, runtime interpretation, hook execution, live inference, or semantic output parity. |
+| Validator result | Parse, required phrase, stem, selected field, scope, and payload-simulation checks implemented by the current validator. | Complete provider schema conformance, every field's parity, provider consumption, or model availability. |
+| Recommendation | A proposed default/escalation/fallback route requiring evaluation before an active-owner change. | Approval to edit active provider/model/runtime files. |
 
-### 2. Claude, Codex, Gemini 공통 환경 및 규칙 체계 구축 방안
+### Local Provider Inventory — 2026-07-10
 
-리포지토리는 세 프로바이더의 기계적 구조(Markdown, TOML, JSON) 차이에도 불구하고, 거버넌스와 일관성 확보를 위해 **"Canonical Core + Provider Adapter + Validation Evidence"** 모델을 수립하여 공통 체계를 구축하였다.
+- The ten stems `code-reviewer`, `doc-writer`, `gitops-reviewer`,
+  `incident-responder`, `k8s-implementer`, `network-reviewer`,
+  `observability-reviewer`, `security-auditor`, `supervisor`, and `wiki-curator`
+  exist under each of `.claude/agents/*.md`, `.agents/agents/*.md`, and
+  `.codex/agents/*.toml`: 30 real adapter files in total.
+- All three `observability-reviewer` adapters import
+  `docs/00.agent-governance/scopes/infra.md`; no claim is made for a nonexistent
+  `scopes/observability.md`. `incident-responder` imports both `ops.md` and
+  `infra.md`; the other scopes match their tracked adapter text.
+- Claude adapters alone declare native `tools:` frontmatter. The supervisor has
+  `Read, Grep, Glob, Bash, Edit, Write, Task`; `doc-writer`, `k8s-implementer`,
+  and `wiki-curator` add write/edit tools; the other six workers are read/review
+  oriented. Gemini adapter Markdown has no `tools:` field. Codex TOML has no
+  `tools` field and no per-agent `sandbox_mode` declaration in this checkout.
+- Claude declares `opus 4.8` on the supervisor and `sonnet 4.6` on all nine
+  workers. Gemini declares the display labels `Gemini 3.1 Pro` and
+  `Gemini 3.5 Flash`. Codex declares `gpt-5.5`/`xhigh` on the supervisor;
+  `gpt-5.3-codex`/`high` on implementation, code/GitOps/network/observability/
+  security review, and incident roles; and `gpt-5.3-codex`/`medium` on
+  `doc-writer` and `wiki-curator`.
+- `.claude/settings.json`, `.codex/hooks.json`, and `.agents/hooks.json` are
+  tracked. `.codex/config.toml`, `.gemini/settings.json`, and `.mcp.json` are not
+  tracked in this checkout. The absence of `.codex/config.toml` does not prevent
+  official standalone `.codex/agents/*.toml` discovery; it leaves global agent
+  limits at documented defaults (`max_threads=6`, `max_depth=1`) unless another
+  active config layer overrides them.
+- `.claude/settings.json` binds shared `session-start.sh`, `k8s-pre-edit.sh`,
+  `post-validate.sh`, and `lifecycle-guard.sh`; it does not bind
+  `scripts/validate-harness.sh` directly. The Codex and `.agents` JSON files
+  reference the same shared scripts using provider-specific project-directory
+  fallbacks.
+- `scripts/validate-repo-quality-gates.sh` proves exact file-stem parity. It
+  validates selected Claude model/tools and Codex model/effort fields, compares
+  Claude/Codex scope imports, and parses all three JSON files. Its expected-field
+  maps omit `network-reviewer` and `observability-reviewer`, and it does not
+  semantically compare Gemini fields to the other adapters. Stem parity is
+  therefore stronger than complete provider-native field or behavior parity.
 
-#### 1) 공통 환경 구축의 4대 요소
+### Native Surface and Local Adapter Matrix
 
-- **SSoT Governance Core**: 모든 거버넌스 규칙과 체크리스트는 `docs/00.agent-governance/rules/` 아래에 단일 마크다운 소스로 작성되어, 프로바이더에 의해 로드되거나 static validator에 의해 검증된다.
-- **Shared local assets**: 에이전트 스킬, 워크플로우, 출력 스타일 양식 등은 프로바이더 중립적인 `.agents/{skills,workflows,output-styles}/`에 원본을 유지하고, Claude와 Codex는 이 경로를 symlink(혹은 provider-native view)로 바라보게 구성해 중복 작성을 원천 방지한다.
-- **Shared Hook Script Engine**: 프로바이더 고유의 hook trigger 포맷(`.claude/settings.json`, `.codex/hooks.json`, `.agents/hooks.json`)이 발생했을 때, 실제 동작하는 쉘 검증 로직은 `docs/00.agent-governance/hooks/*.sh`로 위임하여 단일한 검증 결과를 내도록 통일했다.
-- **Unified Validation Gate**: `validate-repo-quality-gates.sh`를 활용해 세 프로바이더의 어댑터 구조 정합성(Parity)을 상시 확인하며, 어느 어댑터를 통해 커밋되더라도 동일한 수준의 정적/보안 가드레일을 통과하도록 강제한다.
+| Capability | Claude official surface | Codex official surface | Gemini official surface | Local implementation | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| Instruction/settings | Team settings use `.claude/settings.json`; `~/.claude.json` is separate global/session/MCP state. | `AGENTS.md` and layered `config.toml`; project layers require trust. | `GEMINI.md` plus workspace `.gemini/settings.json`. | Thin root gateways route to Stage 00 and provider runtime baselines. Claude settings is tracked; Codex config and Gemini settings are absent. | **Needs strengthening**: gateway declarations exist, but native config coverage differs. |
+| Custom agents | Project agents are `.claude/agents/*.md`; YAML frontmatter supports model, tools, permission, MCP, hooks, effort, memory, and isolation. | Project agents are standalone `.codex/agents/*.toml`; model, effort, sandbox, MCP, and skills are supported. | Project agents are `.gemini/agents/*.md`, managed with `/agents` and `.gemini/settings.json`. | Ten Claude-native files, ten Codex-native files, and ten `.agents/agents/*.md` Antigravity/local adapters exist. No `.gemini/agents/` exists. | **Implementation gap** for Gemini CLI native registration; 30-file local stem parity is not three-runtime parity. |
+| Model selection | Alias (`fable`, `opus`, `sonnet`, `haiku`) or full ID; availability varies by provider, version, account, and allowlist. | `/model`, `--model`, config, or per-agent model/effort; product and API availability are separate. | CLI `/model` Auto/manual selection; API model IDs and lifecycle are a separate catalog. | Local labels/IDs are declarations. Claude strings with spaces and Gemini display labels are not the documented concrete IDs; Codex IDs are concrete but lifecycle-drifted. | **Fact defect corrected**: no local label is promoted to verified provider resolution. |
+| Tools and execution boundary | Agent `tools:` is an allowlist; project permissions and sandbox live in Claude settings. | Per-agent sandbox is supported; session sandbox/approval/config remains a separate control layer from hooks. | Agent `tools`/MCP fields and policy engine are native; settings govern approvals. | Claude has explicit tools and allow/deny rules. Codex relies on runtime sandbox outside the local agent TOML. `.agents` adapters omit native Gemini tools/policy fields. | **Needs strengthening**: shared prose is not identical least-privilege enforcement. |
+| Hooks | Project hooks are in Claude settings and can block supported lifecycle events. | Trusted `.codex/hooks.json`/config hooks can block supported events, while sandbox and approval remain independent controls. | Native hooks are in `.gemini/settings.json` and use events such as `BeforeTool`/`AfterTool`; exit 2 can block. | Three tracked JSON surfaces name six Claude-style events and shared scripts. `.agents/hooks.json` is not the Gemini CLI native location or event schema. | **Implementation gap** for Gemini CLI; Codex local contract intentionally treats hooks as validation wiring, not a sandbox substitute. |
+| Shared assets/MCP | Claude supports MCP and scoped subagent MCP; project servers use `.mcp.json`. | Codex supports per-agent and config-layer MCP. | Gemini agents support inline MCP and CLI MCP configuration. | `.agents/{skills,workflows,output-styles}` is the repo SSoT with Claude/Codex symlink views; no tracked `.mcp.json` or `.codex/config.toml`. | **Unverified** for active MCP connections; shared files prove repository reuse only. |
+| Validation/evaluation | Native surfaces expose configuration, but repository-specific completion evidence remains local. | Model docs advise task-based reasoning; subagents add parallelism and cost. | API/CLI lifecycle and routing differ; Preview must be handled explicitly. | Repo-quality checks stems and selected fields; harness/static gates run outside provider inference. | **Needs strengthening**: add task evals and native canaries before any active migration. |
 
-#### 2) 구현 현황 및 에이전트 형상 동기화 (Observability / Network)
+### Current Model Surface Matrix — 2026-07-10 10:00 KST
 
-최근 `observability-reviewer`와 `network-reviewer` 에이전트가 로스터에 추가되는 과정에서 공통 체계 구축 방안이 다음과 같이 증명되었다:
+The `Lifecycle` column is surface-specific. `Current/recommended` is not silently
+converted to GA/Stable when the official product page does not use that label.
 
-- **Harness Catalog**: `docs/00.agent-governance/harness-catalog.md`에 두 에이전트의 정의와 `worker` tier model mapping이 단일하게 수립되었다.
-- **Parity Adapters**: `.claude/agents/observability-reviewer.md`, `.agents/agents/observability-reviewer.md` (Gemini), `.codex/agents/observability-reviewer.toml` (Codex)이 동시에 생성되어 mirror-parity를 충족했다.
-- **Scope Alignment**: 세 파일은 각기 다른 런타임 문법을 지님에도 불구하고, `@import "docs/00.agent-governance/scopes/observability.md"`와 같이 단일한 영역 범위를 호출하도록 일관성 있게 정규화되었다.
+| Provider | Surface | Model/ID | Lifecycle | Role fit | Local assignment | Verdict | Source |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Claude | Claude API + Claude Code | Claude Fable 5 / `claude-fable-5`; Code alias `fable`/`best` when available | Most capable widely released; API GA since 2026-06-09; Code requires supported version/access and has domain/account fallback caveats | Long-running, ambiguous, highest-value investigation or architecture escalation | None | **Sufficient external fact; unverified local availability**. Use only as evaluated escalation, not an assumed default. | [Models overview](https://platform.claude.com/docs/en/about-claude/models/overview), [Claude Code model config](https://code.claude.com/docs/en/model-config) |
+| Claude | Claude API + Claude Code | Claude Opus 4.8 / `claude-opus-4-8`; Code alias `opus` | Current widely released; official starting point for complex agentic coding | Supervisor, complex implementation, security/incident decision | Supervisor declares `opus 4.8` | **Implementation gap**: role fit remains sound, but the local spaced string is neither documented alias nor full ID. Evaluate supported syntax before migration. | [Models overview](https://platform.claude.com/docs/en/about-claude/models/overview), [Subagents](https://code.claude.com/docs/en/sub-agents) |
+| Claude | Claude API + Claude Code | Claude Sonnet 5 / `claude-sonnet-5`; Code alias `sonnet` | Current widely released; balanced speed/intelligence | Default worker for coding, review, docs, and tool use | Nine workers declare `sonnet 4.6` | **Implementation gap**: local worker generation trails the current model. Benchmark Sonnet 5 before changing the active owner. | [Models overview](https://platform.claude.com/docs/en/about-claude/models/overview), [Model IDs](https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions) |
+| Claude | Claude API + Claude Code | Claude Haiku 4.5 / `claude-haiku-4-5-20251001`; alias `claude-haiku-4-5`/Code `haiku` | Current fastest tier | Simple/high-volume fallback and low-risk extraction | Allowed by model policy/catalog but assigned to no tracked adapter | **Needs strengthening**: fallback is policy text, not an exercised local assignment. | [Models overview](https://platform.claude.com/docs/en/about-claude/models/overview) |
+| OpenAI | Codex product + API catalog | GPT-5.6 Sol / `gpt-5.6-sol`; alias `gpt-5.6` | Current/recommended flagship | Complex coding, research, computer use, cybersecurity; supervisor/escalation | None | **Sufficient external fact; implementation gap locally**. Candidate only after account/auth/version and task evals. | [Codex models](https://developers.openai.com/codex/models), [API models](https://developers.openai.com/api/docs/models) |
+| OpenAI | Codex product + API catalog | GPT-5.6 Terra / `gpt-5.6-terra` | Current/recommended balanced tier | Everyday implementation/review; migration candidate from GPT-5.5 | None | **Needs strengthening**: recommended worker/default candidate, not active local state. | [Codex models](https://developers.openai.com/codex/models), [API models](https://developers.openai.com/api/docs/models) |
+| OpenAI | Codex product + API catalog | GPT-5.6 Luna / `gpt-5.6-luna` | Current/recommended efficient tier | Clear, repeatable, high-volume transformation/classification | None | **Needs strengthening**: cost/latency fallback candidate requiring quality thresholds. | [Codex models](https://developers.openai.com/codex/models), [API models](https://developers.openai.com/api/docs/models) |
+| OpenAI | Codex product | GPT-5.5 / `gpt-5.5` | Previous-generation | Existing supervisor; legacy complex work | Supervisor, `xhigh` | **Implementation gap**: locally coherent but no longer current recommended generation. Evaluate Sol before active migration. | [Codex models](https://developers.openai.com/codex/models) |
+| OpenAI | Codex product | GPT-5.4 Mini / `gpt-5.4-mini` | Other current model; not listed as deprecated | Responsive coding tasks and subagents | None | **Needs strengthening**: viable focused-worker candidate, but not the current local policy and not a replacement without eval. | [Codex models](https://developers.openai.com/codex/models), [Subagents](https://developers.openai.com/codex/subagents) |
+| OpenAI | ChatGPT-sign-in Codex vs OpenAI API | GPT-5.3-Codex / `gpt-5.3-codex` | Deprecated in Codex with ChatGPT sign-in; API page still exposes the model separately | Agentic coding on API-key surface while available | Nine workers; high for implementation/review/security/incident, medium for docs/wiki | **Implementation gap, surface-specific high risk**: resolve auth surface, then evaluate Terra/5.4 Mini/Sol routes. Do not call the API page proof of ChatGPT-sign-in support. | [Codex models](https://developers.openai.com/codex/models), [API model page](https://developers.openai.com/api/docs/models/gpt-5.3-codex) |
+| Gemini | Gemini API | Gemini 3.1 Pro Preview / `gemini-3.1-pro-preview` | Preview | Complex reasoning, software engineering, precise multi-step/tool-use escalation | Supervisor declares `Gemini 3.1 Pro` | **Implementation gap**: local display label omits exact ID/lifecycle and Preview is not a stable default claim. CLI access is unverified. | [Model page](https://ai.google.dev/gemini-api/docs/models/gemini-3.1-pro-preview), [API models](https://ai.google.dev/gemini-api/docs/models) |
+| Gemini | Gemini API | Gemini 3.5 Flash / `gemini-3.5-flash` | Stable/GA since 2026-05-19 | Sustained agentic/coding loops, default worker, everyday stable route | Nine workers declare `Gemini 3.5 Flash` | **Needs strengthening**: external role/lifecycle align, but local string and `.agents` adapter do not prove Gemini CLI resolution or registration. | [Model page](https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash), [Release notes](https://ai.google.dev/gemini-api/docs/changelog) |
+| Gemini | Gemini API | Gemini 3.1 Flash-Lite / `gemini-3.1-flash-lite` | Stable/GA since 2026-05-07 | Low-latency, high-volume extraction, classification, routing, and summarization fallback | None | **Needs strengthening**: evaluated fallback candidate only; no tracked adapter assignment or CLI availability evidence. | [Model page](https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-lite), [Release notes](https://ai.google.dev/gemini-api/docs/changelog) |
 
-### 3. Upstream Capability vs Local Adapter Status
+The official Gemini CLI model page still lists its Auto (Gemini 3) pool as
+`gemini-3-pro-preview` and `gemini-3-flash-preview`, while the API catalog at
+the cutoff lists newer lifecycle states. The CLI page also carries an
+account-tier notice that unpaid-tier and Google One users were scheduled to move
+to Antigravity CLI on 2026-06-18. This documentation divergence is why API
+stability is not used to claim a particular CLI/account model route; an approved
+native canary must record the installed version, auth/account surface without
+secrets, and the model actually resolved.
 
-- **Claude Code**: 업스트림은 매우 엄격한 native permission gating 및 동적 hook blocking을 지원한다. 로컬에서는 `.claude/settings.json`을 통해 파괴적인 git 명령어(push, reset 등)를 Deny-list로 설정하여 Native Layer에서 직접 차단하고, `validate-harness.sh`를 hooks에 바인딩해 검증 피드백을 제공한다.
-- **Codex/OpenAI**: 업스트림은 샌드박싱 모드(`read-only`, `workspace-write` 등)를 통해 쓰기 경로 자체를 봉쇄하고 network-outbound를 통제한다. 로컬 어댑터에서는 `.codex/hooks.json`이 차단 게이트웨이라기보다는 정적 검증 및 컨텍스트 피드백 연결용으로 배포되어 있으며, CLI validation 명령어가 커밋 직전에 explicit하게 가동된다.
-- **Gemini/Google CLI**: 업스트림은 컨텍스트 로더(`GEMINI.md`)와 간단한 도구 연동을 소유한다. 로컬 어댑터에서는 `.agents/agents/*.md` 양식을 통해 역할 및 postflight 체크리스트를 주입받아 거버넌스를 이행하며, `.agents/hooks.json`이 local validation pipeline을 연동해 동작 규칙을 준수하도록 유도한다.
+### Task-Characteristic Model Recommendation
+
+These are migration hypotheses, not active assignments. “Fallback” may mean a
+smaller model or deterministic tooling when correctness is better protected by
+schema/validator execution. Every route requires provider-auth/version checks and
+task-specific eval before changing Stage 00 owners or adapters.
+
+| Task profile | Claude default/escalation/fallback | Codex default/escalation/fallback | Gemini default/escalation/fallback | Effort/routing | Eval required |
+| --- | --- | --- | --- | --- | --- |
+| Ambiguous architecture or long-running multi-agent work | Opus 4.8 / Fable 5 / Sonnet 5 | Sol / Sol Max or eligible Ultra / Terra | Stable 3.5 Flash / 3.1 Pro Preview / 3.1 Flash-Lite for bounded preprocessing only | Begin at provider default/high for planning; use Fable/Max/Ultra/Preview only when task value and access justify it. | Golden architecture decisions, long-context retention, tool-call correctness, cost/latency, and fallback behavior. |
+| Routine implementation and code/GitOps review | Sonnet 5 / Opus 4.8 / Haiku 4.5 for simple scans | Terra / Sol / GPT-5.4 Mini or Luna by quality threshold | 3.5 Flash / 3.1 Pro Preview / 3.1 Flash-Lite | Use the lowest effort that passes build/static/review acceptance; separate write and independent review roles. | Representative edit/review tasks, false-negative review rate, patch correctness, token/time budget, and repo gates. |
+| Security, incident, or high-risk governance judgment | Opus 4.8 / Fable 5 where domain access permits / Sonnet 5 as second-pass worker | Sol High / Sol Max plus independent reviewer / Terra as evidence collector | 3.5 Flash stable / 3.1 Pro Preview with explicit lifecycle acceptance / Flash-Lite only for extraction | Never treat smaller fallback output as approval; use independent review and deterministic policy/security checks. | Severity calibration, missed-critical findings, evidence citation, refusal/fallback behavior, and human approval outcome. |
+| Documentation, research, taxonomy, and synthesis | Sonnet 5 / Opus 4.8 / Haiku 4.5 | Terra / Sol / Luna or GPT-5.4 Mini | 3.5 Flash / 3.1 Pro Preview / 3.1 Flash-Lite | Medium/default effort; escalate for conflicting sources or cross-document architecture, not volume alone. | Source fidelity, unsupported-claim rate, link accuracy, template conformance, Korean clarity, and cost. |
+| High-volume deterministic extraction/classification | Haiku 4.5 / Sonnet 5 / deterministic parser | Luna or GPT-5.4 Mini / Terra / deterministic parser | 3.1 Flash-Lite / 3.5 Flash / deterministic parser | Prefer schema-constrained output and validators; retry budget and human sample review must be explicit. | Exact-match/schema validity, sampled precision/recall, retry/termination rate, throughput, and cost ceiling. |
+| Active model-policy or adapter migration | Current active assignment / one evaluated candidate / rollback to current assignment | Current active assignment / one evaluated candidate / rollback to current assignment | Current active assignment / one exact-ID candidate / rollback to current assignment | Change canonical policy first, then all affected adapters/validators in one separately approved task; preserve auth-surface distinctions. | Native canary on supported CLI/account, adapter parse/load, representative tasks, regression comparison, rollback rehearsal, and reviewer approval. |
+
+### Provider Gap Register
+
+| Finding | Evidence | Risk | Recommendation | Canonical follow-up route |
+| --- | --- | --- | --- | --- |
+| **Fact defect — stale Current provider claims** | The prior Current text used `.claude.json` for project settings, reduced Gemini CLI to scripted delegation, named `.agents/hooks.json` as native Gemini wiring, claimed an observability scope that does not exist, and said Claude binds `validate-harness.sh` directly. | **High**: readers could edit the wrong surface or infer controls that are absent. This reference corrects the facts; active files remain unchanged. | Preserve the corrected native/local split and add these facts to future pack freshness assertions. | WERH-009 pack integration and [reference maintenance runbook](../../../05.operations/runbooks/0011-reference-maintenance-runbook.md). |
+| **Implementation gap — Claude adapter model syntax/currentness** | Official agent frontmatter accepts aliases or full IDs; local files use `opus 4.8`/`sonnet 4.6`. Sonnet 5 is current and Opus 4.8 remains recommended for complex agentic coding. | **High**: direct Claude Code resolution is unverified, and worker currentness has drifted. | In a separate approved model migration, canary exact alias/ID syntax and benchmark Sonnet 5 before changing policy and all adapters. | [model-policy.md](../../../00.agent-governance/model-policy.md), [harness-catalog.md](../../../00.agent-governance/harness-catalog.md), Claude provider/runtime owners. |
+| **Implementation gap — Codex lifecycle and auth-surface drift** | Local supervisor uses previous-generation GPT-5.5; all workers use `gpt-5.3-codex`, deprecated for ChatGPT-sign-in Codex but still exposed by the API page. | **High**: auth-dependent failure or silent fallback can invalidate routing and eval assumptions. | Inventory the intended authentication surface without reading credentials, then evaluate Sol/Terra/Luna and GPT-5.4 Mini per role before a coordinated migration. | [model-policy.md](../../../00.agent-governance/model-policy.md), Codex provider/runtime owners, and a new Stage 03/04 migration spec/task. |
+| **Implementation gap — Gemini CLI native adapter/settings mismatch** | Official custom agents live in `.gemini/agents/*.md`; native hooks/settings live in `.gemini/settings.json` with Gemini event names. The repo has `.agents/agents/*.md` and `.agents/hooks.json` only. | **High**: Antigravity/local files may be mistaken for Gemini CLI registration and blocking enforcement. | Decide whether Gemini CLI is an intended runtime; if yes, design the smallest native adapter/settings layer and native-schema validator in a separate approved task. | Gemini provider/runtime owners, [harness-catalog.md](../../../00.agent-governance/harness-catalog.md), and a new Stage 03/04 adapter spec/task. |
+| **Needs strengthening — Gemini model lifecycle declarations** | Local `Gemini 3.1 Pro` and `Gemini 3.5 Flash` omit exact IDs and Preview/Stable states; no Flash-Lite assignment exists. CLI model docs and API catalog are not lifecycle-identical. | **High** for a Preview supervisor default; account/version routing may differ from the API. | Keep 3.5 Flash as the stable evaluation baseline, treat 3.1 Pro Preview as explicit escalation, and test Flash-Lite as a bounded fallback. | [model-policy.md](../../../00.agent-governance/model-policy.md), Gemini provider notes, and Task 8 routing analysis. |
+| **Needs strengthening — semantic parity validator coverage** | Stem sets are exact, but expected model/tool maps omit two roles, Gemini fields are not semantically compared, and no native schema/load test runs. | **Medium-High**: field drift can pass while all 30 filenames remain present. | Extend coverage only in a separately approved validator task: all ten roles, provider-native required fields, exact scopes, and native canary evidence separated from static checks. | `scripts/validate-repo-quality-gates.sh`, [harness-catalog.md](../../../00.agent-governance/harness-catalog.md), and a Stage 04 validator task. |
+| **Needs strengthening — Codex global agent defaults are implicit** | Standalone `.codex/agents/*.toml` is official; tracked `.codex/config.toml` is absent, so documented defaults are 6 threads and depth 1 unless another layer overrides them. | **Medium**: concurrency/depth can vary via user/managed config and is not reproducible from the repo alone. | Record desired project limits only if a separate design finds reproducibility necessary; do not add config in this research task. | Codex provider/runtime owners and [subagent protocol](../../../00.agent-governance/subagent-protocol.md). |
+| **Unverified — native/runtime/account behavior** | No provider CLI version, login/account entitlement, hook trust panel, agent registry, model picker, inference, or MCP connection was inspected. | **Medium-High**: repo-static PASS cannot establish provider readiness or model execution. | Before any migration, run approved read-only native canaries that record version, auth mode without secrets, resolved model, agent discovery, hook trust/consumption, and rollback evidence. | A new Stage 04 provider canary task; evidence belongs in the task, not this reference. |
+
+## Interpretation
+
+The common environment is real at the repository contract level: thin gateways,
+Stage 00 governance, a shared `.agents` asset SSoT, shared hook scripts, task
+evidence, and repo-static validators. It is not a single provider-native runtime.
+Claude, Codex, and Gemini each require their own exact agent/settings schema,
+permission boundary, trust model, lifecycle interpretation, and canary evidence.
+
+The safe migration order is evidence-first: select representative task evals,
+verify the intended product/auth/account/CLI surface, test one candidate against
+the current assignment, update canonical model policy, update every affected
+adapter and validator together, then retain a rollback route. A new model name in
+an API catalog alone is insufficient migration evidence.
 
 ## Sources
 
-- Anthropic Claude Code settings and hooks reference (<https://code.claude.com/docs/>)
-- OpenAI Codex configuration reference and sandboxing (<https://developers.openai.com/codex/>)
-- Google Gemini CLI commands reference and Google ADK platform docs (<https://adk.dev/>)
-- MCP Specifications and Security tutorials (<https://modelcontextprotocol.io/>)
-- [Local Harness Catalog](../../../00.agent-governance/harness-catalog.md)
-- [Harness Implementation Map](../../../00.agent-governance/harness-implementation-map.md)
-- [Observability and Network Review Agents Task Record](../../../04.execution/tasks/2026-07-06-observability-and-network-review-agents.md)
+All external sources below were checked read-only at `2026-07-10 10:00 KST`.
+OpenAI's stable developer URLs currently redirect to ChatGPT Learn pages; the
+stable developer URLs and their page titles are retained. Web pages can change
+after the cutoff, so their current contents are a refresh trigger rather than a
+silent update to this snapshot.
+
+### Official Provider Sources
+
+Claude/Anthropic:
+
+- Models overview: <https://platform.claude.com/docs/en/about-claude/models/overview>
+- Model IDs and versioning: <https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions>
+- Model deprecations: <https://platform.claude.com/docs/en/about-claude/model-deprecations>
+- Claude Code model configuration: <https://code.claude.com/docs/en/model-config>
+- Claude Code subagents: <https://code.claude.com/docs/en/sub-agents>
+- Claude Code settings: <https://code.claude.com/docs/en/configuration>
+
+OpenAI/Codex:
+
+- Codex models: <https://developers.openai.com/codex/models>
+- Codex subagents: <https://developers.openai.com/codex/subagents>
+- Codex configuration reference: <https://developers.openai.com/codex/config-reference>
+- Codex hooks: <https://developers.openai.com/codex/hooks>
+- OpenAI API models: <https://developers.openai.com/api/docs/models>
+- GPT-5.3-Codex API model page: <https://developers.openai.com/api/docs/models/gpt-5.3-codex>
+
+Google/Gemini:
+
+- Gemini API models: <https://ai.google.dev/gemini-api/docs/models>
+- Gemini API release notes: <https://ai.google.dev/gemini-api/docs/changelog>
+- Gemini 3.1 Pro Preview: <https://ai.google.dev/gemini-api/docs/models/gemini-3.1-pro-preview>
+- Gemini 3.5 Flash: <https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash>
+- Gemini 3.1 Flash-Lite: <https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-lite>
+- Gemini CLI model selection: <https://geminicli.com/docs/cli/model/>
+- Gemini CLI subagents: <https://geminicli.com/docs/core/subagents/>
+- Gemini CLI hooks: <https://geminicli.com/docs/hooks/>
+- Gemini CLI settings: <https://geminicli.com/docs/cli/settings/>
+
+### Repo Sources
+
+- Root gateways: [AGENTS.md](../../../../AGENTS.md),
+  [CLAUDE.md](../../../../CLAUDE.md), and [GEMINI.md](../../../../GEMINI.md)
+- Runtime baselines: [Claude](../../../../.claude/CLAUDE.md),
+  [Codex](../../../../.codex/CODEX.md), and
+  [Gemini/Antigravity](../../../../.agents/GEMINI.md)
+- Provider notes: [Claude](../../../00.agent-governance/providers/claude.md),
+  [Codex](../../../00.agent-governance/providers/codex.md), and
+  [Gemini](../../../00.agent-governance/providers/gemini.md)
+- Active owners: [Model Policy](../../../00.agent-governance/model-policy.md),
+  [Harness Catalog](../../../00.agent-governance/harness-catalog.md), and
+  [Harness Implementation Map](../../../00.agent-governance/harness-implementation-map.md)
+- Tracked settings/hook wiring:
+  [.claude/settings.json](../../../../.claude/settings.json),
+  [.codex/hooks.json](../../../../.codex/hooks.json), and
+  [.agents/hooks.json](../../../../.agents/hooks.json)
+- Adapter sets: `.claude/agents/*.md`, `.codex/agents/*.toml`, and
+  `.agents/agents/*.md`
+- Validator: `scripts/validate-repo-quality-gates.sh`
+- Earlier dated synthesis integrated after re-verification:
+  [2026-07-04 provider reference](../2026-07-04-wer/provider-implementation-status.md)
+
+Market scan: none used as authority for provider capability, model lifecycle, or
+local implementation in this document.
 
 ## Review and Freshness
 
-- Review cadence: 프로바이더 API/CLI 메이저 패치 혹은 리포지토리 어댑터 규칙 변경 시
-- Last reviewed: 2026-07-09
-- Next review trigger: 프로바이더 버전 갱신, 에이전트 신규 배치 시
+- Review cadence: on provider model/lifecycle, coding-product auth, CLI/schema,
+  hook semantics, local adapter/model-policy, or validator change.
+- Last reviewed: `2026-07-10 10:00 KST`
+- Next review trigger: any official model catalog/deprecation update; Claude Code,
+  Codex, or Gemini CLI release affecting agent/model/hook/settings behavior; an
+  account/auth surface change; or any edit to the 30 adapters, three hook/settings
+  JSON files, model policy, harness catalog, or validator.
+- Refresh method: re-open the exact official URLs, record the new timestamp,
+  re-count and parse local files, preserve API/product/CLI/local separation, and
+  rerun approved static plus native-canary evidence lanes independently.
 
 ## Related Documents
 
-- **Parent research README**: [README.md](../README.md)
+- **Parent research README**: [README.md](README.md)
 - **References README**: [../../README.md](../../README.md)
 - **Workspace baseline**: [workspace-governance-baseline.md](workspace-governance-baseline.md)
 - **Harness reference**: [harness-and-loop-engineering.md](harness-and-loop-engineering.md)
+- **AI agent routing**: [ai-agents-roster-and-gap-analysis.md](ai-agents-roster-and-gap-analysis.md)
 - **Model Policy**: [../../../00.agent-governance/model-policy.md](../../../00.agent-governance/model-policy.md)
 - **Harness Catalog**: [../../../00.agent-governance/harness-catalog.md](../../../00.agent-governance/harness-catalog.md)
+- **Current hardening task**: [../../../04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md](../../../04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md)
