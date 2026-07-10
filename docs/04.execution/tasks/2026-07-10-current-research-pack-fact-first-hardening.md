@@ -148,7 +148,7 @@ as each task completes.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | WERH-001 | Create execution evidence and baseline audit ledger. | doc | Addendum: Internal and External Research Contract | Phase 1 | Task IDs, evidence lanes, inventories, boundaries, and limitations are explicit. | supervisor | Pending | Pending | Todo |
 | WERH-002 | Harden workspace governance baseline. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1 before editing; current repo counts (10 agent stems on each of three adapter surfaces, 5 workflows, 6 CI jobs), official OpenGitOps sources, owner/enforcement matrices, 7 evidence-backed follow-up rows, focused heading/date scan, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
-| WERH-003 | Harden spec-driven SDLC, CI, QA, and document taxonomy. | doc | Addendum: Coverage and Gap Classification | Phase 2 | Every SDLC document family and QA lane has a role, evidence, benchmark, and gap verdict. | doc-writer | Pending | Pending | Todo |
+| WERH-003 | Harden spec-driven SDLC, CI, QA, and document taxonomy. | doc | Addendum: Coverage and Gap Classification | Phase 2 | RED heading assertion exited 1; 19 SDLC templates, no Release route/template, zero Incident/Postmortem records, Spec/Task state asymmetry, all 14 document families, all 9 QA lanes, 11 primary sources, and 5 routed gap rows are recorded below. | doc-writer | Independent review pending. | Pending WERH-010 closure from `git log` | Done |
 | WERH-004 | Harden harness and loop engineering. | doc | Addendum: Internal and External Research Contract | Phase 2 | Harness/loop elements, termination, evaluation, recovery, and provider-neutral boundaries are source-backed. | doc-writer | Pending | Pending | Todo |
 | WERH-005 | Harden provider implementation and current-model analysis. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | Provider/API/product/CLI/local surfaces and model lifecycle states are separated. | doc-writer | Pending | Pending | Todo |
 | WERH-006 | Harden automation, pipeline, workflow, and QA topology. | doc | Addendum: Artifact and Ownership Design | Phase 2 | CI DAG, filters, GitOps boundary, feedback lanes, and delivery gaps match repo evidence. | doc-writer | Pending | Pending | Todo |
@@ -174,7 +174,7 @@ as each task completes.
 ### Phase 2: Topic Hardening
 
 - [x] WERH-002 Harden workspace governance baseline.
-- [ ] WERH-003 Harden spec-driven SDLC, CI, QA, and document taxonomy.
+- [x] WERH-003 Harden spec-driven SDLC, CI, QA, and document taxonomy.
 - [ ] WERH-004 Harden harness and loop engineering.
 - [ ] WERH-005 Harden provider implementation and current-model analysis.
 - [ ] WERH-006 Harden automation, pipeline, workflow, and QA topology.
@@ -241,6 +241,66 @@ as each task completes.
   `git diff --check`, `markdownlint-cli2`, changed-file `pre-commit`, and
   `bash scripts/validate-repo-quality-gates.sh .` passed. Independent re-review
   remains pending.
+
+### WERH-003 SDLC and QA Evidence
+
+- **RED assertion**:
+  `rg -n 'Lifecycle and Traceability Matrix|External SDLC Benchmark|QA Evidence Lane Matrix|Document Maturity Gap Register' docs/90.references/research/2026-07-07-wer/spec-sdlc-ci-qa-formatting.md`
+  exited 1 with no matches before editing, proving the approved structure was
+  absent.
+- **Repo-fact inventory**: all Stage 01-05 READMEs, Stage 00 authoring/routing
+  rules, Stage 99 SDLC support contracts, and all 19 files under
+  `docs/99.templates/templates/sdlc/` were inspected. No Release structural
+  template or route exists. `docs/05.operations/incidents/` contains only its
+  README and zero tracked `sdlc/incident` or `sdlc/postmortem` artifacts.
+- **Lifecycle and maturity recheck**: the canonical state contract ends
+  PRD/Spec/Plan/Task with `done`, ARD/ADR/Operations with `accepted`, and
+  Archive Tombstone with `archived`. Frontmatter scans found 20 Stage 03 parent
+  Specs: 16 `draft`, 4 `active`, and 0 `done`; Stage 04 contains 43 Task
+  records: 42 `done` and this current record `draft`.
+- **QA ownership recheck**: `.editorconfig`, `.pre-commit-config.yaml`, both
+  GitHub Actions workflows, the CI/CD QA guide, script inventory, repo-quality,
+  GitOps, manifest, secret, policy, harness, and infrastructure static-contract
+  validators were inspected. The reference now separates formatting, linting,
+  syntax/parse, repo-structural, manifest, secret, policy, artifact/release,
+  and live-runtime evidence into nine rows and records what each lane cannot
+  prove.
+- **External sources**: the eleven required primary sources were checked
+  read-only on 2026-07-10: GitHub Spec Kit; NIST SP 800-218 and SP 800-61 Rev.
+  3; Google SRE postmortem culture; Nygard/Cognitect ADR; GitHub Actions secure
+  use; pre-commit; EditorConfig; Prettier; CommonMark 0.31.2; and YAML 1.2.2.
+  The reference explicitly treats PRD/ARD as workspace/industry conventions,
+  ADR as a primary practice rather than a standard, and the remaining sources
+  according to standards-body, official-tool, or primary-practice authority.
+- **Focused validation**: the required term/date scan found every document
+  family and all four approved headings. Exact row assertions returned 14
+  lifecycle document rows and 9 QA evidence rows. An exact-URL scan found no
+  missing required source. `markdownlint-cli2` reported 0 errors and
+  `git diff --check` exited 0.
+- **Link and repository validation**:
+  `bash scripts/validate-repo-quality-gates.sh .` returned
+  `[PASS] repository quality gates passed`, including its Markdown relative-link
+  resolution and authored-document route checks.
+- **Changed-file hooks**:
+  `pre-commit run --files docs/90.references/research/2026-07-07-wer/spec-sdlc-ci-qa-formatting.md docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md`
+  passed every applicable file-hygiene, secret, and Markdown hook; non-applicable
+  code/workflow/manifest hooks were skipped.
+- **Harness validation**: `bash scripts/validate-harness.sh` returned
+  `PASS harness repo-static validation`; repo quality, GitOps structure, 104
+  YAML parses, kube-linter, secret scanning, built-in policy fallback, static
+  infrastructure contracts, and diff hygiene passed. `conftest` was not
+  installed, so its lane was skipped and is not reported as a Conftest pass.
+- **Gap routing**: five non-mutating findings record severity, risk rationale,
+  recommendation, and canonical follow-up for draft-Spec/done-Task asymmetry,
+  release readiness/provenance, incident exercise evidence, traceability
+  automation, and immutable Action pinning.
+- **Limitations**: no live Kubernetes/Argo CD/Vault/ESO, provider runtime,
+  credential, secret-value, remote GitHub/CI/ruleset, release, publish, push,
+  merge, or third-party mutation check ran. Repo-static PASS and external
+  benchmark findings do not establish live or remote readiness.
+- **Commit evidence**: the WERH-003 commit field intentionally remains pending
+  until WERH-010 records the resulting SHA from `git log` after this commit
+  exists. Independent task review remains pending.
 
 - **RED command**:
   `rg -n '2026-07-10-current-research-pack-fact-first-hardening' docs/04.execution/tasks/README.md`
