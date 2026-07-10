@@ -51,6 +51,7 @@ tests/_tmp_*
 *.tmp
 Thumbs.db
 .worktrees/
+.superpowers/
 
 # Project-specific
 uploads/

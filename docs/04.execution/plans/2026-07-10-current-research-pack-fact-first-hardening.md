@@ -48,6 +48,9 @@ validators, and Superpowers subagent task/review workflows.
 - Do not change scripts, templates, CI workflows, provider agent adapters,
   model policy, runtime configuration, GitOps manifests, infrastructure
   configuration, live environments, credentials, secrets, or remote state.
+- The approved isolated-worktree setup may add `.worktrees/` and
+  `.superpowers/` to `.gitignore`; these entries protect the worktree and the
+  durable SDD progress ledger and are not research implementation changes.
 - Do not infer live Kubernetes, Argo CD, Vault, ESO, provider-runtime, or
   remote readiness from repo-static evidence.
 - Use exact external URLs, source checked dates, refresh triggers, authority
@@ -78,6 +81,7 @@ validators, and Superpowers subagent task/review workflows.
 | `docs/04.execution/plans/README.md` | Plan discovery and lifecycle status. |
 | `docs/04.execution/tasks/README.md` | Task-record discovery and lifecycle status. |
 | `docs/00.agent-governance/memory/progress.md` | Final durable result, evidence, limitations, and reusable lessons. |
+| `.gitignore` | Ignore the approved `.worktrees/` isolation directory and `.superpowers/` SDD progress ledger. |
 
 ## Overview
 
@@ -1017,7 +1021,8 @@ mapping. The implementation must re-verify every finding before publication.
   ```
 
   Expected: changes are limited to the approved Spec 017 addendum, Stage 04
-  plan/task/index evidence, Current pack files, and progress memory; commits are
+  plan/task/index evidence, Current pack files, progress memory, and the
+  `.gitignore` entries required by the approved worktree/SDD setup; commits are
   separated by the logical units in this plan.
 
 - [ ] **Step 2: Run the final deterministic validation bundle**
