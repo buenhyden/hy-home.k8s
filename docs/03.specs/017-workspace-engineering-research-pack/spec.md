@@ -3,7 +3,7 @@ title: 'Workspace Engineering Research Pack Technical Specification'
 type: sdlc/spec
 status: draft
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-10
 ---
 
 # Workspace Engineering Research Pack Technical Specification (Spec)
@@ -355,6 +355,260 @@ rg -n "non-authoritative|market scan|Source checked|Review and Freshness" docs/9
   evidence records executed commands and limitations.
 - **VAL-SPC-007**: No live Kubernetes, Argo CD, Vault, cloud, GitHub remote,
   provider runtime, credential, or third-party mutation occurs.
+
+## 2026-07-10 Current Pack Fact-First Hardening Addendum
+
+### Purpose and Approved Scope
+
+This addendum defines the approved maintenance design for an in-place,
+fact-first audit of the Current research pack at
+`docs/90.references/research/2026-07-07-wer/`. It supplements the original
+dated-pack creation contract above without rewriting the historical work that
+contract describes.
+
+The maintenance pass must:
+
+- audit the Current pack README and all seven Current reference documents;
+- investigate the current workspace implementation and the corresponding
+  external benchmark for every requested topic;
+- correct factual drift, restore still-valid analysis lost during earlier
+  condensation, deepen weak source attribution, and add actionable follow-up
+  routes;
+- use `2026-07-10 10:00 KST` as the explicit provider-model source cutoff;
+- integrate still-valid content from earlier related research, audit, and
+  canonical owner documents into the matching Current reference;
+- preserve the `2026-07-04-wer` Historical pack as an unchanged dated
+  snapshot; and
+- record implementation gaps as recommendations only.
+
+The maintenance pass must not change active scripts, templates, CI workflows,
+provider agent adapters, model policy, runtime configuration, GitOps
+manifests, infrastructure configuration, live environments, credentials,
+secrets, or remote state.
+
+### Artifact and Ownership Design
+
+No new research-pack directory or additional topic reference is introduced.
+The Current pack retains this component boundary:
+
+| Current artifact | Maintenance responsibility |
+| --- | --- |
+| `README.md` | Coverage matrix, source cutoff, reading order, changed-document summary, authority boundary, and pack-wide freshness. |
+| `workspace-governance-baseline.md` | Workspace purpose, roles, overview, operating contract, governance, rules, templates, scripts, integration guides, owner/authority matrix, and follow-up routes. |
+| `harness-and-loop-engineering.md` | Four-element harness, Observe/Plan/Act/Verify/Learn loop, evaluation, recovery, termination, memory, and the workspace system/environment/rule requirements. |
+| `provider-implementation-status.md` | Claude, Codex, and Gemini upstream capabilities, native runtime surfaces, local adapters, hooks, permissions, subagents, model lifecycle, and local-currentness comparison. |
+| `spec-sdlc-ci-qa-formatting.md` | Spec-driven development, full SDLC, PRD/ARD/ADR/guide/incident/postmortem/policy/release/runbook roles, formatting, linting, syntax validation, and QA evidence lanes. |
+| `automation-pipeline-workflow-qa.md` | Actual GitHub Actions DAG, path filtering, pre-commit/hooks/CI/GitOps feedback topology, automation/pipeline/workflow distinction, and delivery measurement gaps. |
+| `kubernetes-infrastructure-security.md` | Kubernetes, Argo CD, infrastructure, RBAC, NetworkPolicy, ESO/Vault, policy-as-code, supply-chain security, and static/live evidence boundaries. |
+| `ai-agents-roster-and-gap-analysis.md` | Local agent roster, current `agency-agents` upstream evidence, Adopt/Adapt/Skip analysis, missing or overlapping roles, and task-characteristic model routing. |
+
+The design record stays in this existing Stage 03 spec. A new dated Stage 04
+plan and task record will own execution and validation evidence after the
+written spec is approved. `docs/00.agent-governance/memory/progress.md` will
+receive the final durable completion entry. These evidence records do not
+broaden the content-edit scope beyond the Current research pack.
+
+### Internal and External Research Contract
+
+Every material topic must use a three-part evidence record:
+
+1. **Workspace implementation**: current repository documents, configs,
+   scripts, workflows, manifests, adapters, templates, Git history, and
+   deterministic static validation output.
+2. **External benchmark**: official provider documentation, standards bodies,
+   and upstream project sources checked read-only.
+3. **Comparison**: external expectation, local implementation, evidence,
+   gap/risk, recommendation, and canonical follow-up owner.
+
+Local implementation claims are controlled by repository evidence. External
+product and model claims are controlled by the applicable official provider or
+upstream source. Market scans cannot establish local implementation or override
+official sources.
+
+External research must prioritize:
+
+1. OpenAI, Anthropic, Google/Gemini CLI, and MCP official documentation for
+   harness, loop, agent, subagent, model, tool, hook, permission, and runtime
+   claims.
+2. NIST, CISA, SLSA, and other primary standards sources for SDLC and security
+   benchmarks.
+3. Kubernetes, Argo CD, External Secrets Operator, HashiCorp Vault, OPA, and
+   tool-owner documentation for platform, GitOps, secret, policy, formatting,
+   linting, and validation claims.
+4. The `msitarzewski/agency-agents` repository itself for its roster, division,
+   conversion, and persona-format claims.
+
+Each Current reference must include exact URLs where practical, a source
+checked timestamp or date, a refresh trigger, and a clear distinction between
+repo fact, external fact, interpretation, and recommendation.
+
+### Coverage and Gap Classification
+
+The Current pack README must map every user-requested topic to one primary
+Current reference. The coverage set includes workspace purpose, roles,
+overview, operating contract, governance, system, rules, templates, scripts,
+integration guides, SDLC, security, Kubernetes, infrastructure, CI/CD, QA,
+formatting, linting, syntax validation, automation, pipeline, workflow,
+harness engineering, loop engineering, provider implementation, common
+provider environment, AI agents, `agency-agents`, task-characteristic model
+routing, and the role of each required SDLC document family.
+
+Each coverage row or corresponding document section must be classified as one
+of:
+
+- **Sufficient**: current content is accurate and adequately sourced;
+- **Needs strengthening**: accurate but shallow, weakly sourced, or missing
+  analysis;
+- **Fact defect**: contradicted by current repo or official evidence;
+- **Implementation gap**: missing or partial active behavior, recorded as a
+  recommendation and follow-up route only; or
+- **Unverified**: evidence is unavailable or ambiguous, so no implementation or
+  capability claim is made.
+
+### Related-Document Integration Rules
+
+Earlier related material includes the Historical `2026-07-04-wer` pack,
+workspace engineering audit packs, Stage 00 governance and provider references,
+Stage 03/04 execution records, Stage 05 guides/policies/runbooks, and Stage 99
+templates.
+
+Integration must follow these rules:
+
+- port only still-valid descriptive analysis into the matching Current
+  reference;
+- reconcile ported content against current repository evidence and current
+  official sources before use;
+- omit or correct stale facts rather than preserving them for completeness;
+- preserve Historical files unchanged and link to them only as dated context;
+- summarize active policy or procedure and link to its canonical owner instead
+  of copying normative bodies into Stage 90;
+- assign one Current reference as the primary owner of each repeated concept
+  and replace secondary duplication with a concise cross-link; and
+- retain source provenance so readers can distinguish original evidence,
+  current synthesis, and recommendations.
+
+### Provider and Model Freshness Design
+
+The provider comparison must not collapse API availability, coding-agent
+product availability, CLI configuration, and local adapter declarations into a
+single model status. Each model record must carry:
+
+- provider and product surface;
+- display name and exact model ID or supported alias;
+- lifecycle state such as Stable/GA, Preview, Limited, Deprecated, or
+  surface-specific;
+- role fit for supervisor, implementation, exploration, review/security,
+  documentation, and high-volume deterministic work;
+- default, escalation, and cost/latency fallback recommendation;
+- reasoning, effort, or routing controls supported by that surface;
+- current local assignment; and
+- audit verdict plus eval and canonical migration route.
+
+The source snapshot established during design, to be rechecked during
+implementation, is:
+
+| Provider | Official current-source baseline at the cutoff | Local audit question |
+| --- | --- | --- |
+| Claude | Claude Fable 5 is the highest-capability widely released model; Claude Opus 4.8 is recommended for complex agentic coding; Claude Sonnet 5 is the balanced coding/agent model; Claude Haiku 4.5 is the fastest current tier. | Determine whether local Opus 4.8 remains appropriate for supervision, whether Sonnet 4.6 worker assignments should be recommended for later migration to Sonnet 5, and whether local frontmatter uses supported aliases or full IDs. |
+| Codex | The Codex product model page recommends GPT-5.6 Sol, Terra, and Luna; describes GPT-5.5 as previous-generation; and marks `gpt-5.3-codex` deprecated for ChatGPT-sign-in Codex while the API catalog may still expose it. | Separate Codex product and API availability, classify local `gpt-5.5` and `gpt-5.3-codex` declarations by authentication surface, and recommend Sol/Terra/Luna or other current mappings only after task-specific evaluation. |
+| Gemini | Gemini 3.1 Pro is Preview; Gemini 3.5 Flash and Gemini 3.1 Flash-Lite are Stable. Gemini CLI documents native custom agents under `.gemini/agents/` and separate model-routing behavior. | Distinguish display labels from concrete IDs, record Preview risk for the supervisor tier, verify whether `.agents/agents/` is native or only a repository adapter, and compare stable worker/fallback options. |
+
+Primary provider sources for this snapshot include:
+
+- <https://platform.claude.com/docs/en/about-claude/models/overview>
+- <https://code.claude.com/docs/en/sub-agents>
+- <https://developers.openai.com/codex/models>
+- <https://developers.openai.com/codex/subagents>
+- <https://developers.openai.com/api/docs/models>
+- <https://ai.google.dev/gemini-api/docs/models>
+- <https://geminicli.com/docs/core/subagents/>
+- <https://geminicli.com/docs/cli/model/>
+
+The research documents may recommend later model-policy and adapter changes,
+but this maintenance pass must not apply those changes.
+
+### Data Flow, Conflict Handling, and Failure Semantics
+
+The audit data flow is:
+
+```text
+earlier research/audits + current repo evidence + official external sources
+                                |
+                                v
+                      claim and coverage ledger
+                                |
+                                v
+             fact correction + valid-content integration + gap verdict
+                                |
+                                v
+                    eight Current pack documents
+                                |
+                                v
+             cross-document consistency and repo-static validation
+```
+
+Conflict and error handling rules:
+
+- repo evidence controls claims about the local workspace;
+- current official provider documentation controls current provider behavior;
+- product-surface conflicts are preserved as separate surface-specific facts;
+- Preview or limited-access capability is not presented as a stable default;
+- inaccessible primary sources are not replaced by uncited recollection;
+- unresolved claims are marked Unverified or removed;
+- optional-tool absence is reported as SKIP or fallback evidence, not PASS;
+- static evidence must not be promoted to live/runtime readiness; and
+- a finding that requires an active-file change is recorded with severity,
+  rationale, canonical owner, and proposed follow-up only.
+
+### Execution, Commit, and Review Design
+
+Execution occurs on a dedicated feature branch. Logical commit units are:
+
+1. this approved design addendum;
+2. Stage 04 plan and task evidence scaffold;
+3. governance and SDLC research hardening;
+4. harness, loop, provider, and current-model hardening;
+5. CI/CD, QA, automation, pipeline, and workflow hardening;
+6. Kubernetes, infrastructure, and security hardening;
+7. AI agent, `agency-agents`, and task-model-routing hardening; and
+8. pack index, coverage matrix, progress memory, and final validation evidence.
+
+After the Stage 04 plan is approved, execution uses fresh implementer
+subagents per independent task, a task-scoped spec and quality review after
+each logical unit, and a whole-branch review before branch completion. The
+subagent-driven workflow supersedes the separate-session executing-plans path
+because subagents are available in the current session.
+
+### Verification and Acceptance
+
+Required deterministic checks:
+
+```bash
+git diff --check
+bash scripts/validate-harness.sh
+bash scripts/validate-repo-quality-gates.sh .
+```
+
+Run pre-commit and Markdown-specific checks when installed. Record missing
+optional tools and fallback behavior. Do not run live cluster, secret-value,
+provider-runtime, credential, or remote-state checks.
+
+This maintenance addendum is complete only when:
+
+- all eight Current pack documents have been audited;
+- the README coverage matrix maps every requested topic to a primary owner;
+- internal and external evidence exist for each material comparison;
+- related earlier content has been reconciled and integrated without changing
+  Historical snapshots or duplicating active policy;
+- the provider/model matrix reflects the `2026-07-10 10:00 KST` cutoff and
+  distinguishes API, coding-agent product, CLI, and local adapter surfaces;
+- factual defects are corrected and implementation gaps have actionable but
+  non-mutating follow-up routes;
+- cross-document links, authority boundaries, freshness metadata, and source
+  ledgers are consistent;
+- every logical task passes task-scoped review and the whole pack passes final
+  review; and
+- required repository validation passes with limitations recorded honestly.
 
 ## Related Documents
 
