@@ -317,7 +317,7 @@ local implementation in this document.
 
 ## Related Documents
 
-- **Parent research README**: [README.md](README.md)
+- **Current pack README**: [README.md](README.md)
 - **References README**: [../../README.md](../../README.md)
 - **Workspace baseline**: [workspace-governance-baseline.md](workspace-governance-baseline.md)
 - **Harness reference**: [harness-and-loop-engineering.md](harness-and-loop-engineering.md)

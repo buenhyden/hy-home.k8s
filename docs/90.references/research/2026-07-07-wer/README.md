@@ -164,7 +164,7 @@ named by that reference.
 | QA | [SDLC: QA evidence lanes](spec-sdlc-ci-qa-formatting.md#qa-evidence-lane-matrix) | Nine separate formatting, lint, parse, structural, manifest, secret, policy, artifact, and live lanes. | pre-commit, EditorConfig, Prettier, CommonMark, YAML, and GitHub guidance. | Sufficient lane map; each PASS is scope-limited. | Exact tool/config/CI owner for the affected lane. |
 | Formatting | [SDLC: formatting interpretation](spec-sdlc-ci-qa-formatting.md#formatting-linting-and-syntax-interpretation) | EditorConfig, Prettier config/ignore, file-hygiene hooks, shfmt, and diff check are distinguished. | EditorConfig and Prettier official guidance. | Needs strengthening: Prettier execution wiring was not found. | Formatting configs plus a scoped pre-commit/CI decision task. |
 | Linting | [SDLC: formatting interpretation](spec-sdlc-ci-qa-formatting.md#formatting-linting-and-syntax-interpretation) | Markdown, shell, Actions, Dockerfile, and Kubernetes linters have distinct scopes. | Official tool documentation and GitHub secure-use guidance. | Sufficient for configured tool/file scope. | Pre-commit and consuming config owner. |
-| Syntax validation | [SDLC: QA evidence lanes](spec-sdlc-ci-qa-formatting.md#qa-evidence-lane-matrix) | Data/manifest parsers are wired; shell `bash -n` is provider-hook/manual evidence, not a repo-quality command. | CommonMark and YAML specifications. | Sufficient with explicit shell-lane limitation. | CI/QA guide, shared hooks, and a scoped syntax-gate task if needed. |
+| Syntax validation | [SDLC: QA evidence lanes](spec-sdlc-ci-qa-formatting.md#qa-evidence-lane-matrix) | Data/manifest parsers are wired. Shell `bash -n` is explicit manual or consumed shared-hook evidence after matching edits, not a dedicated CI job or repo-quality/harness command; tracked provider wiring alone does not prove native consumption. | CommonMark and YAML specifications. | Sufficient with explicit shell-lane and provider-consumption limitations. | CI/QA guide, shared hooks, and a scoped syntax-gate task if needed. |
 | Automation | [Automation: inventory](automation-pipeline-workflow-qa.md#current-automation-inventory) | Actions, Dependabot, pre-commit, and provider-wired hooks have named triggers/evidence. | GitHub Actions and pre-commit official sources. | Sufficient inventory; specialist path/hook gaps remain. | Automation Gap Register in the primary owner. |
 | Pipeline | [Automation: CI DAG](automation-pipeline-workflow-qa.md#actual-ci-job-dag) | Two parallel roots, three conditional jobs, and one aggregate summary are exact. | GitHub workflow syntax and visualization graph. | Sufficient; previous serial-DAG defect corrected. | `.github/workflows/ci.yml` for any future change. |
 | Workflow | [Automation: inventory](automation-pipeline-workflow-qa.md#current-automation-inventory) | Five workflow files and their triggers, permissions, and outputs were inspected. | GitHub workflow syntax, permissions, concurrency, and secure-use guidance. | Needs strengthening: Actions use tags rather than immutable SHAs. | Separate Actions supply-chain hardening task. |
@@ -221,8 +221,10 @@ named by that reference.
 - **Hooks and QA**: Claude settings bind `session-start.sh`, `k8s-pre-edit.sh`,
   `post-validate.sh`, and `lifecycle-guard.sh`, not `validate-harness.sh`
   directly. Prettier is configured but not found wired into pre-commit/CI.
-  Shell `bash -n` evidence is provider-hook/manual, not a general repo-quality
-  command.
+  Shell `bash -n` evidence comes from an explicit manual run or a consumed
+  shared hook after matching edits; the tracked wiring does not prove native
+  provider consumption, and no dedicated CI, repo-quality, or harness command
+  owns it.
 - **MCP**: `2025-11-25` is Current and `2025-06-18` is historical Final.
 - **Evidence boundary**: repository and static PASS results never establish
   provider-native, remote GitHub, cluster, controller, secret, or live-runtime

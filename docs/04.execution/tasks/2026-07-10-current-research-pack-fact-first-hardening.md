@@ -154,7 +154,7 @@ as each task completes.
 | WERH-006 | Harden automation, pipeline, workflow, and QA topology. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1; 5 workflows, 6 CI jobs, 2 parallel roots, 3 `changes`-dependent conditional jobs, 8 official sources, 9 coverage rows, 7 routed gap rows, and the exact GitOps ownership boundary are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
 | WERH-007 | Harden Kubernetes, infrastructure, and security analysis. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1; 15 primary sources, 12 control rows, 6 evidence lanes, 14 routed security gaps, AppProject/GitOps/NetworkPolicy/ESO-Vault controls, and supply-chain boundaries are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
 | WERH-008 | Harden AI-agent roster, upstream comparison, and model routing. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; exact 10-role/30-adapter status, ten pinned upstream-overlap classifications, pinned 17-division/254-file inventory, 15 install targets, 13 conversion targets, 13 routed pattern decisions, ten role-model routes, fixed-SHA/cutoff-state sources, and static validation are recorded below. | doc-writer | Important and Minor review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
-| WERH-009 | Close pack coverage and cross-document integration. | doc | Addendum: Coverage and Related-Document Integration Rules | Phase 3 | RED README assertion exited 1; 48 exact six-column owner rows cover every requested family; 8 Current artifacts, 9 contradiction families, fixed cutoff/freshness, links, and static/live boundaries are integrated; focused scans, Markdown lint, pre-commit, diff check, harness, and repo-quality results are recorded below. | supervisor | Implementation self-review complete; independent review pending. | Pending WERH-010 closure from `git log` | Done |
+| WERH-009 | Close pack coverage and cross-document integration. | doc | Addendum: Coverage and Related-Document Integration Rules | Phase 3 | RED README assertion exited 1; 48 exact six-column owner rows cover every requested family; 8 Current artifacts, 9 contradiction families, fixed cutoff/freshness, links, and static/live boundaries are integrated; focused scans, Markdown lint, pre-commit, diff check, harness, and repo-quality results are recorded below. | supervisor | Important syntax-owner and Minor cross-reference findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
 | WERH-010 | Run final validation and close execution records. | eval | Addendum: Verification and Acceptance | Phase 4 | Required static gates and final review pass; limitations and logical commits are recorded. | supervisor | Pending | Pending | Todo |
 
 ## Suggested Types
@@ -266,8 +266,11 @@ as each task completes.
   and live-runtime evidence into nine rows and records what each lane cannot
   prove. Follow-up review also confirmed root `.prettierrc.json` and
   `.prettierignore`, no Prettier pre-commit/CI execution wiring, and that
-  `bash -n` is a CI/QA-guide manual single-file check rather than a
-  repo-quality or harness command.
+  `bash -n` is an explicit CI/QA-guide manual check and is also implemented by
+  shared `post-validate.sh`/`lifecycle-guard.sh` after matching shell edits when
+  invoked through the declared provider wiring. It is not a dedicated GitHub
+  CI job or a `validate-repo-quality-gates.sh`/`validate-harness.sh` command,
+  and tracked wiring does not prove provider-native consumption.
 - **External sources**: the eleven required primary sources were checked
   read-only on 2026-07-10: GitHub Spec Kit; NIST SP 800-218 and SP 800-61 Rev.
   3; Google SRE postmortem culture; Nygard/Cognitect ADR; GitHub Actions secure
@@ -304,7 +307,8 @@ as each task completes.
 - **Commit evidence**: the WERH-003 commit field intentionally remains pending
   until WERH-010 records the resulting SHA from `git log` after this commit
   exists. Important review findings for classification vocabulary, Prettier
-  inventory/wiring, and manual shell syntax ownership were corrected;
+  inventory/wiring, and explicit manual/shared-hook shell syntax ownership were
+  corrected;
   independent re-review remains pending.
 
 ### WERH-004 Harness and Loop Evidence
@@ -496,12 +500,15 @@ as each task completes.
   and the four manifest/policy validator scripts. The exact six-column matrix
   contains nine surface rows and distinguishes direct CI commands, provider
   hooks, pre-commit, and optional-tool behavior.
-- **Shell and hook boundary**: dedicated `bash -n` evidence is limited to the
-  shared PostToolUse/lifecycle hook scripts after a matching edit and explicit
-  manual commands in the CI/CD QA guide. CI uses pre-commit ShellCheck/shfmt;
-  `validate-repo-quality-gates.sh` is not reported as a general shell-syntax
-  gate. Post-edit/lifecycle manifest routing runs manifest syntax and secret
-  handling but not the full CI static-contract/GitOps-structure/policy bundle.
+- **Shell and hook boundary**: tracked provider JSON declares PostToolUse and
+  Stop/SubagentStop routing to shared scripts that run `bash -n` after matching
+  shell edits when invoked; the CI/CD QA guide also provides explicit manual
+  commands. Declared wiring does not prove provider-native consumption. CI uses
+  pre-commit ShellCheck/shfmt and has no dedicated `bash -n` job; neither
+  `validate-repo-quality-gates.sh` nor `validate-harness.sh` is reported as a
+  general shell-syntax gate. Post-edit/lifecycle manifest routing runs manifest
+  syntax and secret handling but not the full CI static-contract/GitOps-
+  structure/policy bundle.
 - **GitOps delivery boundary**: `root-platform` points to
   `gitops/apps/root`, whose kustomization lists 18 platform Application
   manifests. `apps-generator` discovers `gitops/workloads/*` under the `apps`
@@ -751,7 +758,8 @@ as each task completes.
   CI jobs; the fixed model cutoff and surface-specific lifecycle; Gemini CLI
   `.gemini/agents` versus local `.agents/agents`; root-platform versus
   apps-generator ownership; the four shared hook scripts; configured-but-
-  unwired Prettier and provider-hook/manual `bash -n`; MCP `2025-11-25`
+  unwired Prettier and explicit manual/consumed shared-hook `bash -n`, with
+  provider-native consumption Unverified; MCP `2025-11-25`
   Current versus `2025-06-18` Final; and static/live evidence separation.
   The only retained stale `Eight`/`eight` statements are quoted as a Stage 00
   catalog follow-up gap; they are not a Current-pack inventory claim.
@@ -761,22 +769,34 @@ as each task completes.
   pinned upstream SHA, post-cutoff refresh semantics, and the active-owner
   boundary. No post-cutoff research observation was introduced.
 - **Changed-document outcome**: all seven topic references are linked from one
-  changed-document summary. No secondary topic reference required a Task 9
-  factual edit because the reviewed Task 2-8 outputs already agree on the nine
-  contradiction families; Task 9 therefore changed only the README and this
-  execution evidence record.
-- **Focused validation**: exact heading/cutoff scans passed; the 48-row/zero-
+  changed-document summary. Task 9 review found that the primary syntax owner,
+  `spec-sdlc-ci-qa-formatting.md`, described `bash -n` as manual-only, while the
+  secondary `automation-pipeline-workflow-qa.md` documented the shared-hook
+  execution but overstated provider consumption. Both references and the README
+  summary were reconciled to the exact declared-wiring/manual/shared-hook/CI
+  boundary. Three same-directory README labels were also corrected in the
+  provider, Kubernetes/security, and AI-agent references.
+- **Initial focused validation**: exact heading/cutoff scans passed; the 48-row/zero-
   malformed assertion passed; pack-wide topic, count, model, path, GitOps,
   hook, formatter/syntax, MCP, date, and evidence-boundary scans found the
   expected primary-owner facts. `markdownlint-cli2` reported 0 errors for both
   modified files, and `git diff --check` exited 0.
-- **Repository validation**: changed-file `pre-commit run --files` passed every
+- **Initial repository validation**: changed-file `pre-commit run --files` passed every
   applicable file-hygiene, secret, and Markdown hook; non-applicable workflow,
   shell, and manifest hooks were skipped. `bash scripts/validate-harness.sh`
   returned `PASS harness repo-static validation`, and
   `bash scripts/validate-repo-quality-gates.sh .` returned
   `[PASS] repository quality gates passed`, including relative-link and
   authored-route checks.
+- **Review-remediation validation**: source-code assertions confirmed that
+  `post-validate.sh` and `lifecycle-guard.sh` each implement repository-wide
+  `bash -n` after matching shell edits. Focused scans found no manual-only
+  Current claim and no same-directory README mislabeled as a parent. All 46
+  README cross-document anchors resolved; `git diff --check` exited 0;
+  `markdownlint-cli2` reported 0 errors across the seven changed files;
+  changed-file pre-commit passed every applicable hook; direct repo-quality
+  returned `[PASS] repository quality gates passed`; and the final harness run
+  returned `PASS harness repo-static validation`.
 - **Limitations**: `conftest` was not installed; the harness reported SKIP and
   the built-in fallback passed, which is not a Conftest pass. No provider CLI,
   native agent/model/hook runtime, MCP connection, live Kubernetes/Argo CD/
@@ -784,10 +804,11 @@ as each task completes.
   artifact/release, publish, push, merge, or third-party mutation check ran.
   Repo-static PASS and external benchmarks do not establish live or remote
   readiness.
-- **Review and commit evidence**: implementation self-review is complete;
-  independent Task 9 review is pending. The WERH-009 commit field remains
-  pending until WERH-010 records the actual SHA from `git log` after this
-  commit exists.
+- **Review and commit evidence**: Task 9 review found one Important syntax-owner
+  contradiction and three Minor same-directory label defects. All findings are
+  corrected; independent re-review remains pending. The WERH-009 commit field
+  remains pending until WERH-010 records the actual SHAs from `git log` after
+  the remediation commit exists.
 
 - **RED command**:
   `rg -n '2026-07-10-current-research-pack-fact-first-hardening' docs/04.execution/tasks/README.md`

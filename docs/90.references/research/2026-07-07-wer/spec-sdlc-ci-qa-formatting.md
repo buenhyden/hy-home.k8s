@@ -164,7 +164,7 @@ section으로 이어져야 한다. 링크 존재는 semantic completeness를 자
 | --- | --- | --- | --- | --- |
 | Formatting | `.editorconfig`; `.prettierrc.json`; `.prettierignore`; `trailing-whitespace`, `end-of-file-fixer`, `mixed-line-ending`; `shfmt`; `git diff --check` | configured editor/Prettier policy와 ignore scope, hook이 실제 실행한 file hygiene, shell formatting, pending diff whitespace 상태 | Prettier config 존재만으로 Prettier 실행, semantic correctness, Markdown policy 전체, live readiness | Configured; Prettier의 pre-commit/CI 실행 wiring은 확인되지 않음 |
 | Linting | `markdownlint-cli2`, `shellcheck`, `actionlint`, `zizmor`, `hadolint`, `kube-linter` hooks | 각 도구 범위의 style/static anti-pattern | compiler/runtime 성공, 모든 security issue | Implemented; hook/file scope와 도구 가용성에 한정 |
-| Syntax / parse | Automated: `check-yaml`, `check-json`, `check-toml`, `validate-k8s-manifests.sh`의 PyYAML parse. Manual: CI/QA guide의 단일 파일 `bash -n <script>` | 자동 lane은 대상 data/manifest parser 통과를, 수동 `bash -n`은 실제 실행한 특정 shell 파일의 grammar 통과를 증명 | Kubernetes schema/admission, application behavior, 실행하지 않은 shell 파일 syntax | Data/manifest parse는 wired; shell syntax는 manual이며 repo-quality/harness가 실행하지 않음 |
+| Syntax / parse | Automated data/manifest: `check-yaml`, `check-json`, `check-toml`, `validate-k8s-manifests.sh`의 PyYAML parse. Shell: CI/QA guide의 수동 `bash -n <script>`와, matching shell edit 뒤 실행되도록 세 provider JSON에 선언된 shared `post-validate.sh`/`lifecycle-guard.sh`의 repository-wide `bash -n` | data/manifest parser 통과와, 실제 수동 또는 shared-hook 실행이 검사한 shell 파일의 grammar 통과 | Kubernetes schema/admission, application behavior, 실행하지 않은 shell syntax, 또는 tracked JSON만으로 provider host가 hook을 native consumption했다는 사실 | Data/manifest parse는 wired. Shell syntax는 explicit manual/shared-hook evidence이며 dedicated CI job, repo-quality, harness command가 아님; provider consumption은 Unverified |
 | Repo-structural | `bash scripts/validate-repo-quality-gates.sh .` | docs taxonomy, template route/headings, inventory, references와 repository contracts | remote CI/ruleset, runtime state | Implemented repo-static gate |
 | Manifest | `validate-gitops-structure.sh`; `validate-k8s-manifests.sh .`; `infrastructure/tests/verify-contracts-static.sh` | desired-state parse, GitOps hierarchy/resource references, static platform contracts | API-server admission, reconciliation, workload health | Implemented static lane; kube-linter는 설치 시 실행 |
 | Secret | pre-commit `gitleaks`, `detect-secrets`; `bash scripts/check-secret-handling.sh .` | configured scan 범위에서 secret pattern/plaintext manifest finding 부재 | 외부 Vault/ESO 값·권한·rotation readiness | Implemented static scan; secret 값 열람 권한 아님 |
@@ -186,9 +186,13 @@ section으로 이어져야 한다. 링크 존재는 semantic completeness를 자
   YAML 1.2.2는 언어 기준이며, local required heading이나 Kubernetes semantic
   validation을 자동으로 제공하지 않는다.
 - `actionlint`는 pre-commit/CI에 wired된 GitHub Actions workflow lint/parser
-  도구다. 반면 shell의 `bash -n`은 CI/CD QA guide가 제시한 수동 단일 파일
-  명령이며 `validate-repo-quality-gates.sh`나 `validate-harness.sh`가 실행하지
-  않는다. 수동 실행 기록이 없으면 automated shell syntax evidence로
+  도구다. Shell의 `bash -n`은 CI/CD QA guide에서 수동 단일 파일 명령으로
+  실행할 수 있고, tracked provider JSON은 matching shell edit 뒤 shared
+  `post-validate.sh` 또는 Stop/SubagentStop의 `lifecycle-guard.sh`가 호출될 때
+  repository-wide `bash -n`을 실행하도록 선언한다. 이는 dedicated GitHub CI
+  job이 아니며 `validate-repo-quality-gates.sh`나 `validate-harness.sh`의 command도
+  아니다. 수동 실행 또는 shared-hook 결과가 기록되지 않았거나 provider host의
+  wiring consumption이 확인되지 않으면 automated/native shell syntax evidence로
   승격하지 않는다.
 - `pre-commit run --all-files`는 hook matrix를 재현하지만 GitHub event context,
   branch policy, path-filter result, remote permission/ruleset을 재현하지 않는다.

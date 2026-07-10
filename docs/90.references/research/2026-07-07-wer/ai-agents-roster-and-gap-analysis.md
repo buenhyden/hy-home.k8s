@@ -342,7 +342,7 @@ All external sources were checked read-only at `2026-07-10 10:00 KST`.
 
 ## Related Documents
 
-- **Parent research README**: [README.md](README.md)
+- **Current pack README**: [README.md](README.md)
 - **Provider and model reference**: [provider-implementation-status.md](provider-implementation-status.md)
 - **Harness and loop reference**: [harness-and-loop-engineering.md](harness-and-loop-engineering.md)
 - **Automation and QA reference**: [automation-pipeline-workflow-qa.md](automation-pipeline-workflow-qa.md)

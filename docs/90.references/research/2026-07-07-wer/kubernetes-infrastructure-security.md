@@ -355,7 +355,7 @@ those sources when local controller or Vault versions change.
 
 ## Related Documents
 
-- **Parent research README**: [README.md](README.md)
+- **Current pack README**: [README.md](README.md)
 - **References README**: [../../README.md](../../README.md)
 - **Historical security reference**:
   [2026-07-04 Kubernetes Infrastructure Security](../2026-07-04-wer/kubernetes-infrastructure-security.md)
