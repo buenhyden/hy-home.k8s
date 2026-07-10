@@ -3,138 +3,328 @@ title: 'Reference: Harness and Loop Engineering Research'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-09
+updated: 2026-07-10
 ---
 
 # Reference: Harness and Loop Engineering Research
 
 ## Overview
 
-이 문서는 AI 에이전트가 소프트웨어 엔지니어로서 동작할 때 요구되는 하네스 엔지니어링(Harness Engineering) 및 루프 엔지니어링(Loop Engineering)의 핵심 개념과 요소를 분석한다. 또한 `hy-home.k8s` 워크스페이스에 이들을 실제로 이식하기 위해 필요한 구체적 체계, 환경, 규칙을 정적 참조로 기술한다.
+이 문서는 AI 에이전트가 소프트웨어 엔지니어링 작업을 수행할 때 필요한
+하네스 엔지니어링과 bounded control loop를 설명한다. 외부의 공식
+OpenAI/Codex, Anthropic Claude Code, Gemini CLI, Model Context Protocol(MCP)
+자료를 현재 리포지토리 증적과 비교하여, 무엇이 실제로 선언·검증되었고
+무엇이 아직 런타임에서 확인되지 않았는지를 구분한다.
 
-본 문서는 2026-07-07 기준 공식 OpenAI/Codex, Anthropic/Claude Code, Google/Gemini, MCP 명세 및 리포지토리 실제 증적을 분석한 최신 내용을 바탕으로 작성되었다.
-
-이 문서는 설명용 참고 문서로서, 실제 에이전트 런타임 제어권이나 리포지토리 실행 제약 조건 정책을 직접 규정하지 않는다.
+This is descriptive Stage 90 reference material. It does not create a retry
+policy, change provider permissions, enable MCP servers, or authorize live or
+remote actions.
 
 ## Purpose
 
-- 하네스 엔지니어링 및 루프 엔지니어링의 주요 학술/산업적 연구를 요약하고, 워크스페이스 적용 모델과의 매핑 제공.
-- 에이전트가 스스로의 행위 환경과 제어 루프를 깊이 이해하도록 lookup Context 역할 수행.
-- 에이전트 행위를 구속하는 환경적 요구 조건(WSL2, k3d, GitOps) 및 도구의 신뢰 범위 식별.
+- Define a provider-neutral four-element harness and bounded
+  Observe/Plan/Act/Verify/Learn control loop.
+- Reconcile the Current and Historical research with canonical Stage 00,
+  provider baseline, hook, validation, memory, and Stage 99 ownership.
+- Separate declared wiring, validator evidence, provider-native behavior, and
+  live/remote readiness.
+- Identify evaluation, recovery, termination, compaction, approval, and
+  knowledge-update requirements without implementing them from this reference.
+- Route provider-specific implementation detail to
+  [Provider Implementation Status](provider-implementation-status.md), which is
+  owned by WERH-005.
 
 ## Reference Type
 
 - Type: durable-concept / external-standard-snapshot
-- Source checked: 2026-07-07 (OpenAI harness engineering and MCP security sources re-verified 2026-07-09)
-- Refresh trigger: 프로바이더 하네스/루프 관련 아티클 릴리즈, MCP 보안 권고안 개정, 리포지토리 정적 검증 도구셋 변경.
+- Source checked: 2026-07-10
+- Refresh trigger: official provider harness or agent-loop behavior changes,
+  MCP revision/security guidance changes, Stage 00 harness ownership changes,
+  provider-native runtime evidence, or validation-loop changes.
 
 ## Authority Boundary
 
 - **Authoritative for**:
-  - 하네스 및 루프 엔지니어링 요소 정의와 조사 내용.
-  - 외부 하네스/루프 개념이 본 워크스페이스의 4요소 모델(Instruction, Constraints, Feedback, Knowledge)에 어떻게 이식되는지에 대한 설명.
+  - Source-attributed definitions and dated comparison findings checked on
+    2026-07-10.
+  - A provider-neutral interpretation of harness, loop, evaluation, recovery,
+    termination, compaction, approval, and knowledge-update concerns.
+  - Follow-up routing to the canonical repository owners.
 - **Not authoritative for**:
-  - 실제 에이전트 로스터 지정 (`harness-catalog.md`가 소유).
-  - 실제 실행 시 통제 제약 조건 (`rules/` 및 `.claude/settings.json` 등이 소유).
+  - Active governance, retry counts, provider permissions, provider runtime
+    configuration, hook failure semantics, subagent dispatch, CI behavior,
+    templates, task procedure, or operations runbooks.
+  - Claims that Codex or Gemini consumes the tracked hook JSON at runtime.
+  - Enabled MCP servers or live Claude, Codex, Gemini, k3d, Argo CD, Vault,
+    ESO, Kubernetes, GitHub, deployment, credential, or secret readiness.
+  - Provider-specific capability or model status; WERH-005 and
+    [Provider Implementation Status](provider-implementation-status.md) own
+    that analysis.
 
 ## Scope
 
-- 하네스 엔지니어링 요소 및 분석, 루프 엔지니어링 요소 및 분석, 워크스페이스 적용을 위한 체계/환경/규칙, MCP 도구 경계의 보안성 분석.
-- 실 클러스터 상의 동적 테스트나 런타임 인프라 상태 변경 제외.
+- Covers the four-element harness, provider-neutral control loop, retry and
+  escalation design, evaluation and recovery, termination, compaction,
+  approval, knowledge updates, MCP version/security implications, and routed
+  implementation gaps.
+- Uses repository files and deterministic static output for local facts and
+  official first-party sources for external facts.
+- Excludes edits to Historical research, Stage 00 policy, shared scripts,
+  hooks, provider adapters, runtime configuration, Stage 99 templates, CI,
+  manifests, infrastructure, live environments, credentials, and remote state.
 
 ## Definitions / Facts
 
-### 1. 하네스 엔지니어링(Harness Engineering)에 대한 요소 조사 및 분석
+### Harness Ownership Boundary
 
-하네스 엔지니어링은 AI 에이전트가 주도적으로 작업을 완료할 수 있도록 에이전트를 둘러싼 리포지토리 환경, 도구, 제약 조건, 지식 저장소 등을 에이전트 친화적으로 디자인하는 것을 의미한다. 엔지니어의 Leverage는 코드 개별 행을 직접 작성하는 데서 에이전트가 안전하고 정확하게 기동할 수 있는 '하네스(마구, 안전 벨트)'를 설계하는 데로 이동한다.
+**Repo fact.** The local harness is a `canonical core + provider adapter +
+validation evidence` system. The four linked elements are instruction/settings,
+architecture constraints, feedback loops, and knowledge stores. Their current
+owners are distributed; `.agents/` is not the owner of governance, memory, or
+templates.
 
-주요 하네스 구성 요소는 다음과 같다:
+| Contract area | Canonical owner | Local adapter or consumer | Evidence boundary |
+| --- | --- | --- | --- |
+| Governance, approval, execution, and checklist policy | `docs/00.agent-governance/rules/**`, `harness-catalog.md`, `subagent-protocol.md`, and `model-policy.md` | Root gateways and provider notes/baselines point into Stage 00 | Tracked text and repo-quality checks prove repository contracts, not that every host loaded or obeyed them. |
+| Shared skills, workflows, and output styles | `.agents/{skills,workflows,output-styles}/` | `.claude/**` and `.codex/**` symlink views | The repository quality gate checks shared-asset structure and mirrors. |
+| Gemini baseline and local Gemini adapters | `.agents/GEMINI.md`, `.agents/agents/**`, `.agents/rules/**`, and `.agents/hooks.json` | Gemini/Antigravity-facing local surfaces | File presence is adapter evidence; Gemini-native discovery or policy enforcement is not established by this checkout. |
+| Provider-native/local adapters | `.claude/**`, `.codex/**`, and `.agents/**` within each documented boundary | Provider hosts | Similar names do not imply identical permissions, hook semantics, or runtime consumption. |
+| Shared hook implementation | `docs/00.agent-governance/hooks/*.sh` | `.claude/settings.json`, `.codex/hooks.json`, and `.agents/hooks.json` declare event wiring | Script and payload simulation evidence does not prove every provider host invokes the wiring. |
+| Durable work evidence and memory | `docs/04.execution/tasks/**` and `docs/00.agent-governance/memory/progress.md` | Provider handoffs link or append when their approved scope includes those files | Stage 04 owns task evidence; Stage 00 owns memory. Neither belongs to `.agents/`. |
+| Document route and template contract | `docs/99.templates/support/template-routing.md` and `docs/99.templates/templates/**` | Routing skills, authored-doc hooks, and doc-writer adapters consume the contract | Stage 99 remains canonical; `.agents/` only owns the shared skill that may route to it. |
+| Dated research synthesis | `docs/90.references/research/2026-07-07-wer/**` | Agents and maintainers use it as lookup context | This reference describes controls and recommendations; it does not enforce them. |
 
-- **Instruction / Settings (지시 및 설정)**: 에이전트의 정체성, 행동 수칙, JIT 거버넌스 가이드라인 등을 담은 진입점 파일.
-- **Architecture Constraints (구조적 제약)**: 파일 쓰기가 허용되는 경로의 제한, plaintext secret 생성 금지, live cluster 직접 변경 제한 등의 안전 규정.
-- **Feedback Loops (피드백 루프)**: 린터, 구문 분석기, 정적 테스터 등을 활용해 변경 결과를 실시간으로 모델에 피드백해주는 정적/동적 검증 스크립트.
-- **Knowledge Stores (지식 저장소)**: 이전 세션에서의 수행 이력(progress ledger)이나, 컴포넌트별 spec, architecture 문서들의 중앙 저장소.
+The evidence lanes must remain separate:
 
-OpenAI의 harness engineering 논의(2026-07-09 확인)는 하네스를 "모델을 둘러싼 전체 계약(the full contract around the model)"으로 정의하며, 그 구성으로 **instructions, tools, routing, output requirements, validation checks**를 명시한다. 핵심 원칙은 "humans steer while agents execute"이며, 실패가 발생했을 때 해법은 "더 열심히 시도"가 아니라 "어떤 capability가 빠졌고 그것을 에이전트에게 어떻게 legible(가독)하고 enforceable(강제 가능)하게 만들 것인가"를 묻는 것이다. 본 워크스페이스의 4요소 모델(Instruction, Constraints, Feedback, Knowledge)은 이 계약을 리포지토리 정적 검증 가능한 형태로 이식한 구현이다.
+| Evidence lane | What this review establishes | What it does not establish |
+| --- | --- | --- |
+| Declared wiring | Tracked JSON points SessionStart, PreToolUse, PostToolUse, Stop, SubagentStop, and PreCompact events to shared scripts. | A provider host parsed, registered, or invoked those events. |
+| Validator evidence | `validate-repo-quality-gates.sh` parses hook JSON, checks required event/script phrases, and simulates hook payloads, including blocking Stop/SubagentStop output and advisory PreCompact output. | End-to-end provider UI behavior, managed/user configuration precedence, or permission enforcement. |
+| Runtime/native behavior | Official provider docs describe native subagent, hook, sandbox, approval, or policy-engine surfaces. Claude has tracked native settings/permissions in this repo. | That Codex/Gemini hook JSON is a native permission gate or that untracked provider settings exist. |
+| Live/remote readiness | No live or remote check ran for this documentation task. | Claude/Codex/Gemini sessions, MCP connections, cluster health, CI/rulesets, Vault/ESO, deployment, credentials, secrets, or third-party readiness. |
 
-### 2. 루프 엔지니어링(Loop Engineering)에 대한 요소 조사 및 분석
+**Fact defect corrected.** Earlier Current wording concentrated role definitions,
+the four-element model, progress memory, and shared templates in `.agents/`.
+Current canonical evidence limits `.agents/` ownership to shared skills,
+workflows, output styles, the Gemini baseline, and its local adapters. Stage 00
+owns governance and memory; Stage 99 owns templates; Stage 04 owns task
+evidence.
 
-루프 엔지니어링은 에이전트가 최초의 요구사항 분석(Intake)에서 시작하여 최종 검증 및 Handoff까지 안전하게 도달하도록 통제 사이클(Control Cycle)을 구조화하는 일이다.
-일반적인 에이전트 실행 루프는 다음과 같다:
+**External fact.** OpenAI's harness account treats repository knowledge as the
+system of record, uses a small entry-point map and progressive disclosure, and
+mechanically checks architecture and documentation. It also treats repeated
+failure as a signal to improve tools, guardrails, documentation, feedback, or
+recovery rather than merely retrying the same action.
 
-1. **Observe (관찰)**: 현재 워크스페이스 상태, Spec 문서, 이슈 레코드 및 Validator 실행 결과를 읽음.
-2. **Plan (계획)**: 변경할 최소 범위 식별, 성공 기준 수립, 위험 요인 도출 및 구현 계획서 작성.
-3. **Act (행위)**: least-privilege 도구를 사용하여 대상 경로의 파일 수정 및 신규 생성.
-4. **Verify (검증)**: static validator를 활용해 구문 오류, 린트 및 거버넌스 위반 여부를 즉각 평가.
-5. **Learn (학습/피드백)**: 발생한 오류 원인이나 compact progress 내용을 progress memory에 기록해 다음 세션으로 전달.
+**Interpretation.** The local four-element model is compatible with that
+benchmark, but compatibility is not runtime parity. A provider-neutral contract
+needs a stable owner for intent, constraints, feedback, and knowledge while
+each provider retains its native enforcement semantics.
 
-단순 `Prompt-Response`의 일회성 사이클이 아니라, `Observable evidence -> constrained execution -> verification -> meta-learning`의 피드백 제어 루프를 설계하는 것이 핵심이다.
+### Provider-Neutral Control Loop Matrix
 
-#### 루프 종료 조건 및 안전 경계 (Loop Termination & Safety Bounds)
+The matrix below is a **recommendation**, not active policy. It expresses the
+minimum information a future canonical loop contract should carry. A task must
+set its own retry budget and approval boundary; this reference does not invent
+a repository-wide number.
 
-제어 루프는 무한히 도는 것이 아니라 **bounded loop**여야 하며, 종료 조건과 안전 경계가 명시되어야 한다. 종료 조건이 없으면 루프는 검증 실패를 반복하거나(비수렴), 미완료 상태에서 Handoff되어 다음 세션에 위험을 전가한다. 본 워크스페이스는 이 경계를 `docs/00.agent-governance/hooks/lifecycle-guard.sh`가 wiring된 lifecycle 훅으로 구현한다.
+| Phase | Inputs | Allowed action | Feedback evidence | Termination condition | Knowledge update |
+| --- | --- | --- | --- | --- | --- |
+| Observe | User intent, approved Spec/Plan/Task, repo state, canonical owners, current diffs, tool output, external sources, and known limitations | Read and classify facts, unknowns, authority, risk, and evidence lanes; do not mutate live or external state | Evidence inventory with `Repo fact`, `External fact`, `Interpretation`, and `Recommendation` labels | Required owners and success evidence are known; otherwise stop for clarification or record `Unverified` | Add task-local observations and source provenance, not durable policy |
+| Plan | Observed facts, scope, acceptance criteria, approval boundary, failure classes, retry budget, and rollback/recovery route | Select the smallest authorized action, verifier, budget, escalation threshold, and handoff shape | Reviewable plan or task criteria tied to commands and expected results | Plan is testable and within authority; unresolved scope or required approval returns control to the human | Record decisions in the owning Spec/Plan/Task only |
+| Act | Approved plan, current state, least-privilege tools, remaining retry budget, and human approval state | Make only scoped changes; one recovery attempt consumes budget only after the failure is diagnosed and the input, hypothesis, or implementation changes | Tool result, changed-path inventory, diff, audit log, and approval record where applicable | Planned action completes, an unexpected boundary is reached, approval is required, or safe action is impossible | Preserve material decisions and deviations in task evidence |
+| Verify | Acceptance criteria, exact diff, deterministic checks, graders/review, and evidence-lane rules | Run the same defined verifier; classify failure as deterministic, transient, authority/approval, environment, or subjective-review failure | Command exit/output, test/static results, review findings, trace or transcript reference, and explicit skipped lanes | All required evidence passes; otherwise enter recovery while budget remains or escalate/terminate | Record pass/fail/skip honestly; static PASS never becomes live readiness |
+| Learn/Handoff | Final evidence, remaining risks, failure history, changed files, approvals, and unresolved unknowns | Summarize outcome, route durable learning to the smallest canonical owner, and return control to the human or next task | Task verification summary, commit/diff identity, review state, limitations, and next owner | Success is evidenced, or incomplete work has an explicit blocker, owner, and safe continuation point | Update Stage 04 evidence and, only when in approved scope, Stage 00 progress memory or another canonical owner |
+| Cross-phase: retry budget and failure escalation | Attempt count, repeated failure signature, elapsed/resource budget, and risk class | Retry only after diagnosis changes the next attempt; do not repeat identical tool calls or broaden authority | Attempt log with cause, changed hypothesis, and repeated-failure detection | Budget exhausted, the same blocking condition repeats, risk increases, or new authority is needed: stop and escalate | Store the failure class and next safe action in the task handoff |
+| Cross-phase: compaction | Context pressure, active plan, changed paths, verification state, approvals, and remaining budget | Create a compact checkpoint before continuing; never treat compaction as verification or permission | Checkpoint records goal, decisions, files, commands/results, risks, and next step | Continue only when critical state is recoverable; otherwise hand off or ask the human | Preserve durable facts in canonical task/memory owners, not only a generated summary |
+| Cross-phase: human approval | Planned mutation, affected system/data/people, privilege, rollback, and evidence requirement | Pause before approval-bound live, remote, credential, secret-value, publish, merge, push, paid, or protected-control action | Explicit approval scope or explicit denial/absence of approval | Approved action returns to Act; denial, timeout, or inability to surface approval terminates the branch safely | Record only approval scope and redacted evidence; never secret values |
 
-- **정상 종료 (Verify 통과 → Learn → Stop)**: static validator가 통과하고 progress ledger에 결과가 기록되면 루프는 정상 종료한다. 이것이 에이전트 완료의 최우선 기준(정적 검증 통과)이다.
-- **차단 종료 (Stop / SubagentStop = block)**: `lifecycle-guard.sh`는 Stop 및 SubagentStop 시점에서 **객관적 repo-state 검증 실패를 block**할 수 있고, 미커밋 tracked 변경에 대해 작업 단위 커밋 규율을 권고한다. 즉 검증 실패는 조용히 종료되지 않고 루프를 되돌린다.
-- **비차단 경계 (PreCompact = advisory)**: PreCompact 시점은 **advisory**이며 compaction을 막지 않는다. 미커밋 변경·권고 검증·커밋 규율을 보고할 뿐 검증 증적을 대체하지 않는다. 따라서 컨텍스트 압축이 검증을 우회하는 경로가 되지 않는다.
-- **Handoff 경계**: 루프가 미완료로 종료될 때는 남은 위험과 다음 단계를 progress memory에 기록해, 다음 세션이 Observe 단계에서 이를 복원하도록 한다. 이는 5단계 루프의 Learn을 세션 간 경계로 확장한 것이다.
+**External fact.** OpenAI describes a turn as repeated inference and tool calls
+until the model emits an assistant message, which is a loop termination state.
+It also documents automatic compaction after a context threshold. Claude Code
+and Gemini CLI document isolated subagent contexts, scoped tools, and explicit
+turn limits; Codex documents thread/depth/runtime controls and inherited
+sandbox/approval behavior. These are provider benchmarks, not proof of this
+workspace's local provider configuration. WERH-005 owns the surface-by-surface
+comparison.
 
-핵심은 "언제 멈추는가"를 모델의 재량이 아니라 **repo-state 기반 훅 계약**으로 못박아, 루프가 legible(가독)하고 enforceable(강제 가능)한 종료 경계를 갖도록 하는 것이다.
+**Repo fact.** The local `lifecycle-guard.sh` can emit structured block output
+for objective Stop/SubagentStop validation failures and emits advisory output
+for PreCompact. It does not maintain an attempt counter, set a retry budget,
+grade agent behavior, or write a compaction checkpoint. Its block output is
+validated by payload simulation. Whether a provider host consumes that output
+at runtime remains provider-specific evidence.
 
-### 3. 워크스페이스 적용을 위한 체계, 환경, 규칙 분석
+### Evaluation and Recovery Loop
 
-워크스페이스 `hy-home.k8s`에 하네스 및 루프 엔지니어링을 적용하기 위해서는 다음 3가지 핵심 축이 갖춰져야 한다.
+A reliable loop evaluates both the outcome and the path used to reach it.
+Provider-neutral evaluation should combine:
 
-#### 체계 (System)
+1. **Capability criteria**: the Task states the intended behavior, input and
+   authority boundaries, affected paths, required evidence, and termination
+   conditions before work starts.
+2. **Deterministic regression evidence**: rerunnable tests, linters, parsers,
+   static validators, diff checks, and artifact checks protect known contracts.
+3. **Traceability**: tool results, changed paths, attempt count, failure class,
+   grader/reviewer findings, approval state, and skipped evidence lanes remain
+   attributable to one task attempt.
+4. **Calibrated judgment**: a human or model reviewer may grade subjective
+   qualities, but the task must identify the rubric and cannot relabel that
+   judgment as deterministic PASS.
+5. **Evidence separation**: repo-static, CI/toolchain, provider-runtime, and
+   live/remote results remain independent.
 
-- **SDD Lifecycle 체계**: 모든 작업은 요구사항(01.requirements) -> 아키텍처(02.architecture) -> 명세(03.specs) -> 실행(04.execution) -> 운영(05.operations)의 흐름으로 물리적/논리적으로 분리 및 정렬된다.
-- **Canonical-Core & Adapter 체계**: provider가 Claude, Codex, Gemini로 나뉘더라도 Role 정의, 4요소 모델, progress memory, shared templates 등은 하나의 SSoT(`.agents/`)에 집중하고, 각 프로바이더는 thin adapter만 소유해 파편화를 방지한다.
+The recommended recovery state machine is:
 
-#### 환경 (Environment)
+```text
+Verify failure
+  -> preserve failing evidence
+  -> classify cause and authority
+  -> change hypothesis/input/implementation
+  -> consume one declared retry unit
+  -> rerun the same verifier
+  -> PASS: Learn/Handoff
+  -> budget/authority/risk boundary: Escalate or terminate safely
+```
 
-- **Local Dev Sandbox**: WSL2 Ubuntu 및 Docker, k3d 환경을 통해 로컬 클러스터를 격리한다.
-- **GitOps Desired State Boundary**: 리포지토리 내의 파일이 시스템의 '진실된 최종 목표 상태(Desired State)'이며, k3d 클러스터 내의 실제 상태는 이 파일 상태에 반응하는 종속자일 뿐이다. 따라서 정적 검증 통과가 에이전트 완료의 최우선 기준이 된다.
-- **Static Validation Engine**: `validate-repo-quality-gates.sh`를 포함한 스크립트 도구와 `.pre-commit-config.yaml` 환경이 자동 피드백을 실시간으로 제공한다.
+Recovery is not an identical retry. A new attempt is justified only when the
+failure evidence changes the next hypothesis, input, implementation, tool, or
+environment. The smallest owning surface should be repaired. Repeated harness
+drift routes to a rule, skill, hook, validator, template, index, or memory owner;
+product or infrastructure defects route to their implementation owners.
 
-#### 규칙 (Rules)
+Provider-neutral termination modes are:
 
-- **No Direct Live Mutation**: 에이전트가 직접 cluster에 리소스를 배포(`kubectl apply`)하거나 Vault에 비밀 정보를 밀어넣는 등의 stateful 변경 작업을 금지한다. 에이전트는 오직 PR-Ready 리포지토리 변경만을 생산한다.
-- **Template Routing Rule**: 생성되는 모든 문서는 [Template Routing Contract](../../../99.templates/support/template-routing.md)에 지정된 target pattern과 mapping template을 1:1로 일치시켜야 한다.
-- **Commit Discipline**: 작업 논리 단위별 개별 커밋(logical branch-commit flow)을 엄격히 준수한다.
+- **Success**: all required evidence passes and the handoff names limitations.
+- **Needs human approval**: safe progress stops before the approval-bound
+  action; no permission is inferred.
+- **Blocked/unverified**: required evidence or authority is unavailable and a
+  canonical follow-up owner is named.
+- **Budget exhausted or repeated failure**: stop recovery, preserve attempts,
+  and escalate without broadening scope.
+- **Cancelled/interrupted**: leave the checkout and external state safe, then
+  record the incomplete boundary.
+- **Compacted continuation**: continue only from a checkpoint that preserves
+  the active goal, decisions, evidence, approvals, and next verifier.
 
-### 4. MCP 및 도구 경계의 보안성 분석
+Current repository evaluation is repo-static by default: the harness catalog
+defines capability criteria in Task records and regression evidence through
+explicit commands/validators. There is no provider-neutral trial dataset,
+attempt schema, numeric retry budget, behavioral grader, or automatically
+verified compaction handoff. Those absences are recommendations for later
+canonical work, not defects repaired by this reference.
 
-Model Context Protocol(MCP)은 도구(Tools), 지식(Resources), 프롬프트(Prompts)를 모델에 제공하는 공통 규격이다. 공식 MCP Security Best Practices(2025-06-18 명세 계열, 2026-07-09 확인)가 명시한 주요 위협 분류와 규범적 완화책은 다음과 같다. 규범 강도(MUST/SHOULD)는 원문 표기를 따른다.
+### MCP Version and Security Boundary
 
-- **Local MCP Server Compromise (로컬 서버 침해)**: 로컬 실행 MCP server는 클라이언트 권한을 상속해 임의 명령을 실행할 수 있다. one-click 로컬 서버 구성은 실행 전 정확한 명령 전문을 표시하는 명시적 사용자 동의를 **MUST** 구현하고, 서버는 sandboxing(컨테이너/chroot)과 `stdio` transport로 접근을 제한(**SHOULD**)한다. 워크스페이스는 신뢰할 수 없는 MCP server 연동을 금지하고 sandboxed command execution + 디렉터리 경로 제약을 적용한다.
-- **Token Passthrough (토큰 통과 안티패턴)**: MCP server는 자신에게 발급되지 않은 토큰을 수락해 downstream API로 통과시켜서는 **MUST NOT** 안 된다. rate limiting·audience 검증 등 보안 통제를 우회시키기 때문이다.
-- **Confused Deputy (혼동된 대리자)**: static client ID + dynamic client registration + consent cookie 조합에서 동의 화면이 건너뛰어져 authorization code가 탈취될 수 있다. proxy server는 third-party 인가 이전에 per-client consent를 **MUST** 강제하고 `redirect_uri` 정확 일치 검증과 단회용 `state` 검증을 적용한다.
-- **SSRF (서버측 요청 위조)**: 악성 MCP server가 metadata URL로 내부 자원(`169.254.169.254` 클라우드 메타데이터, 사설 IP 대역)을 겨냥할 수 있다. 클라이언트는 OAuth URL에 HTTPS를 강제하고 사설/링크로컬 IP 대역(`10/8`, `172.16/12`, `192.168/16`, `169.254/16`)을 차단(**SHOULD**)하며 egress proxy 사용을 권장한다.
-- **Session Hijacking (세션 탈취)**: 서버는 인증에 세션을 사용해서는 **MUST NOT** 안 되고, 안전한 비결정적 세션 ID를 **MUST** 사용하며, 세션 데이터를 `<user_id>:<session_id>` 형태로 사용자 식별자에 바인딩(**SHOULD**)한다.
-- **OAuth Authorization URL Validation (인가 URL 검증)**: 악성 server가 제공한 `javascript:`·`data:`·`file:` scheme URL은 XSS/RCE로 이어질 수 있다. 클라이언트는 `http(s)` scheme만 허용(운영은 HTTPS)하고 위험 scheme을 거부(**MUST**)하며, URL 개방 시 셸 실행을 금지(**MUST NOT**)한다.
-- **Scope Minimization (스코프 최소화)**: 광범위 스코프(`*`, `full-access`) 선발급을 피하고, 최소 baseline 스코프로 시작해 권한 작업이 처음 시도될 때 `WWW-Authenticate` challenge로 점진 상향하는 least-privilege 모델을 적용한다. 이는 워크스페이스 도구/서브에이전트 `tools:`의 최소 권한 바인딩과 동일 원칙이다.
+**External fact.** The official MCP versioning page identifies `2025-11-25` as
+the Current protocol revision, ready for use. It labels past complete revisions
+Final. Therefore the plan's required `2025-06-18` source is retained as a
+historical Final revision; it is not the latest stable/current specification.
+The `2025-11-25` changelog records the changes since `2025-06-18`, including
+experimental durable Tasks and updated security guidance.
+
+The following threat names and mitigation summaries use only the official MCP
+Security Best Practices taxonomy checked on 2026-07-10:
+
+| Official threat category | Official mitigation direction | Workspace implication |
+| --- | --- | --- |
+| Confused Deputy Problem | MCP proxies must enforce per-client consent before third-party authorization, exact redirect-URI checks, and secure one-time state handling | Do not treat upstream authorization or a cached consent as workspace approval for a different client/action. |
+| Token Passthrough | MCP servers must not accept tokens that were not explicitly issued for that server | Never infer credential reuse or downstream authority from tool availability. |
+| Server-Side Request Forgery (SSRF) | Server-side clients must consider SSRF; production OAuth URLs should use HTTPS, private/link-local targets and unsafe redirects should be restricted, and egress controls should be considered | Remote MCP discovery requires a separate network/egress review; no local config is enabled by this reference. |
+| Session Hijacking | Authorized servers must verify inbound requests, must not use sessions as authentication, must use secure nondeterministic IDs, and should bind IDs to user identity | Session IDs are not approval or identity evidence; provider-runtime evidence must preserve user/action attribution. |
+| Local MCP Server Compromise | One-click configuration must show the exact command and obtain explicit consent; sandboxing, restricted filesystem/network access, and constrained transports are recommended | Treat local server installation as code execution and route it through provider configuration, sandbox, and approval owners. |
+| OAuth Authorization URL Validation | Clients must restrict URL schemes, reject dangerous schemes, avoid shell-based URL opening, and validate/sanitize URLs | Provider adapters must not pass authorization URLs through shell execution or weaken the host approval boundary. |
+| stdio Transport Security in Proxy Scenarios | Proxy designs should prevent enabling client-side vulnerabilities, sandbox spawned processes, restrict filesystem access, log use, and require extra authorization for dangerous commands | Direct `stdio` is not labeled inherently vulnerable; proxy process spawning requires its own least-privilege review. |
+| Scope Minimization | Start with minimal baseline scopes, elevate incrementally through precise challenges, accept reduced scopes, and log correlated elevation | Default to discovery/read scope and require targeted approval for privileged operations; avoid wildcard/full-access grants. |
+
+**Repo fact.** No tracked `.mcp.json`, `.codex/config.toml`, or
+`.gemini/settings.json` exists in this checkout, so enabled local MCP servers,
+their scopes, credentials, transports, and runtime behavior are Unverified.
+Provider-specific MCP configuration remains WERH-005 scope.
+
+### Harness and Loop Gap Register
+
+This register uses only the approved classification vocabulary. It records
+recommendations and canonical follow-up routes; it does not mutate the owners.
+
+| ID | Classification | Severity | Risk rationale | Recommendation | Canonical follow-up |
+| --- | --- | --- | --- | --- | --- |
+| HL-001 | Fact defect | High | Assigning governance, memory, the four-element contract, or Stage 99 templates to `.agents/` hides the real authority boundary and can send policy changes to the wrong surface. | Keep the corrected ownership boundary and check the rest of the Current pack for the stale broad `.agents/` claim. | WERH-009 cross-document integration in [the current Task record](../../../04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md). |
+| HL-002 | Implementation gap | High | The canonical loop requires validation but defines no task-level attempt schema, retry budget, repeated-failure threshold, or failure-escalation contract; identical retries can consume context and hide non-convergence. | In a separate approved change, define a bounded retry/escalation contract that every applicable Task must instantiate without imposing an arbitrary count from this reference. | [Agentic Execution Rules](../../../00.agent-governance/rules/agentic.md). |
+| HL-003 | Needs strengthening | Medium | Current capability/regression eval language is accurate, but there is no common record for trials, traces, graders/rubrics, failure classes, and attempt-to-attempt comparison, limiting behavioral regression analysis. | Add an optional provider-neutral eval/evidence block only after a Spec/Plan/Task defines the schema and validator impact. | [Harness Task Contract Template](../../../99.templates/templates/sdlc/specs/harness-task-contract.template.md). |
+| HL-004 | Implementation gap | Medium | PreCompact reports dirty paths and suggested validation but does not require a recoverable checkpoint containing goal, decisions, evidence, approval state, remaining budget, and next verifier. | Define a compact handoff/checkpoint contract in later canonical governance; keep compaction advisory unless a provider-specific design proves safe blocking semantics. | [Agentic Execution Rules](../../../00.agent-governance/rules/agentic.md). |
+| HL-005 | Unverified | High | Tracked Codex/Gemini hook JSON and payload simulations can be mistaken for native permission or runtime-consumption evidence, creating false provider parity. | Keep status at declared wiring plus validator evidence until provider-native canaries record actual discovery, event handling, permission behavior, and managed/user precedence. | WERH-005 in [Provider Implementation Status](provider-implementation-status.md). |
+| HL-006 | Unverified | High | Repo-static PASS or opt-in probe wiring can be promoted incorrectly to live provider, MCP, cluster, CI, credential, or remote readiness. | Preserve separate evidence lanes and require an explicitly approved operator/runtime check before any live/remote readiness claim. | [Harness Implementation Map: Live Runtime Evidence](../../../00.agent-governance/harness-implementation-map.md#live-runtime-evidence). |
+| HL-007 | Implementation gap | High | No tracked MCP configuration or inventory proves server trust, command visibility, transport, scope, token audience, or egress controls against the current official taxonomy. | Do not enable or describe MCP servers as ready; require a separate approved provider/security task to inventory each server against the eight official categories above. | WERH-005 in [Provider Implementation Status](provider-implementation-status.md). |
 
 ## Sources
 
-- OpenAI: Harness engineering: leveraging Codex in an agent-first world (<https://openai.com/index/harness-engineering/>)
-- OpenAI: Unrolling the Codex agent loop (<https://openai.com/index/unrolling-the-codex-agent-loop/>)
-- Anthropic Claude Code settings and hooks (<https://code.claude.com/docs/>)
-- Google Gemini CLI Reference and ADK framework (<https://adk.dev/>)
-- Model Context Protocol Specification v2025-06-18 (<https://modelcontextprotocol.io/specification/2025-06-18>)
-- MCP Security Best Practices (<https://modelcontextprotocol.io/docs/tutorials/security/security_best_practices>)
+Official external sources, Source checked 2026-07-10:
+
+| Source lane | Claim use | Exact URL |
+| --- | --- | --- |
+| OpenAI harness engineering | Repo legibility, progressive disclosure, mechanical constraints, feedback, recovery, human judgment, and garbage collection | <https://openai.com/index/harness-engineering/> |
+| OpenAI Codex agent loop | Tool-result iteration, assistant-message termination, context growth, and compaction | <https://openai.com/index/unrolling-the-codex-agent-loop/> |
+| Codex subagents | Thread orchestration, context isolation, concurrency/depth/runtime settings, and inherited sandbox/approval boundaries | <https://developers.openai.com/codex/subagents/> |
+| Claude Code subagents | Isolated contexts, tool/permission scopes, `maxTurns`, and handoff to the parent | <https://code.claude.com/docs/en/sub-agents> |
+| Claude Code hooks | Native event, block, Stop/SubagentStop, and PreCompact semantics | <https://code.claude.com/docs/en/hooks> |
+| Gemini CLI subagents | Native `.gemini/agents/` surface, isolated contexts/tools, recursion protection, turn/time bounds, and subagent policies | <https://geminicli.com/docs/core/subagents/> |
+| Gemini CLI policy engine | Native allow/deny/ask-user decisions, priority/approval modes, MCP/subagent targeting, and current workspace-tier limitation | <https://geminicli.com/docs/reference/policy-engine/> |
+| MCP 2025-06-18 specification | Required historical Final revision | <https://modelcontextprotocol.io/specification/2025-06-18> |
+| MCP Security Best Practices | Official attack and mitigation taxonomy used in this reference | <https://modelcontextprotocol.io/docs/tutorials/security/security_best_practices> |
+| MCP 2025-11-25 specification | Current/latest protocol revision | <https://modelcontextprotocol.io/specification/2025-11-25> |
+| MCP versioning | Current, Final, Draft revision vocabulary and current-version identification | <https://modelcontextprotocol.io/docs/learn/versioning> |
+| MCP 2025-11-25 changelog | Changes since 2025-06-18 and security-guidance update | <https://modelcontextprotocol.io/specification/2025-11-25/changelog> |
+
+Repo-backed sources, inspected 2026-07-10:
+
 - [Local Harness Catalog](../../../00.agent-governance/harness-catalog.md)
-- [Lifecycle Guard Hook](../../../00.agent-governance/hooks/lifecycle-guard.sh)
+- [Harness Implementation Map](../../../00.agent-governance/harness-implementation-map.md)
+- [Subagent Protocol](../../../00.agent-governance/subagent-protocol.md)
+- [Model Selection Policy](../../../00.agent-governance/model-policy.md)
+- [Agentic Execution Rules](../../../00.agent-governance/rules/agentic.md)
+- [Harness Approval Boundaries](../../../00.agent-governance/rules/approval-boundaries.md)
+- [Codex Provider Notes](../../../00.agent-governance/providers/codex.md)
+- [Claude Provider Notes](../../../00.agent-governance/providers/claude.md)
+- [Gemini Provider Notes](../../../00.agent-governance/providers/gemini.md)
+- [Shared Lifecycle Guard](../../../00.agent-governance/hooks/lifecycle-guard.sh)
+- [Codex Runtime Baseline](../../../../.codex/CODEX.md)
+- [Claude Runtime Baseline](../../../../.claude/CLAUDE.md)
+- [Gemini Runtime Baseline](../../../../.agents/GEMINI.md)
+- [Current Workspace Governance Baseline](workspace-governance-baseline.md)
+- [Historical Harness and Loop Research](../2026-07-04-wer/harness-and-loop-engineering.md)
+- [2026-07-05 Governance/Harness/Loop Audit](../../audits/2026-07-05-wea/governance-harness-loop-providers.md)
+- [2026-07-02 Harness/Loop Implementation Audit](../../audits/2026-07-02-whia/harness-loop-implementation-audit.md)
+- [2026-07-02 Provider Harness/Loop Audit](../../audits/2026-07-02-whia/provider-harness-loop-implementation-audit.md)
+- [Reference Template](../../../99.templates/templates/common/reference.template.md)
+- [Template Routing Contract](../../../99.templates/support/template-routing.md)
+
+No market-scan source is used as authority.
 
 ## Review and Freshness
 
-- Review cadence: on source or catalog change
-- Last reviewed: 2026-07-09
-- Next review trigger: MCP 보안 권고안 업데이트, 프로바이더 에이전트 루프 관련 아티클 릴리즈
+- Review cadence: on source or canonical-owner change
+- Last reviewed: 2026-07-10
+- Next review trigger: OpenAI harness/loop update, Claude/Codex/Gemini
+  subagent or permission/hook change, MCP Current revision or security taxonomy
+  change, tracked provider configuration, lifecycle/eval/retry contract change,
+  or provider-native/live evidence becoming available.
+- Cutoff limitation: sources reflect pages checked on 2026-07-10. Later page
+  changes require a new source check and must not be back-projected into this
+  snapshot.
+- Evidence limitation: no provider-native canary, live cluster, MCP connection,
+  credential, secret-value, GitHub remote/CI/ruleset, publish, push, merge, or
+  third-party mutation check ran.
 
 ## Related Documents
 
 - **Parent research README**: [README.md](../README.md)
 - **References README**: [../../README.md](../../README.md)
-- **Workspace baseline**: [workspace-governance-baseline.md](workspace-governance-baseline.md)
-- **Harness Catalog**: [../../../00.agent-governance/harness-catalog.md](../../../00.agent-governance/harness-catalog.md)
-- **Implementation Map**: [../../../00.agent-governance/harness-implementation-map.md](../../../00.agent-governance/harness-implementation-map.md)
+- **Workspace baseline**: [Workspace Governance Baseline](workspace-governance-baseline.md)
+- **Provider-specific owner**: [Provider Implementation Status](provider-implementation-status.md)
+- **Spec**: [Workspace Engineering Research Pack Spec](../../../03.specs/017-workspace-engineering-research-pack/spec.md)
+- **Current Plan**: [Current Research Pack Fact-First Hardening Plan](../../../04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md)
+- **Current Task**: [Current Research Pack Fact-First Hardening Task](../../../04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md)
+- **Harness catalog**: [Local Harness Catalog](../../../00.agent-governance/harness-catalog.md)
+- **Implementation map**: [Harness Implementation Map](../../../00.agent-governance/harness-implementation-map.md)
+- **Reference maintenance runbook**: [Reference Maintenance Runbook](../../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

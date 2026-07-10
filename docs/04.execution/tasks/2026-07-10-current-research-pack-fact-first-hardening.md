@@ -149,7 +149,7 @@ as each task completes.
 | WERH-001 | Create execution evidence and baseline audit ledger. | doc | Addendum: Internal and External Research Contract | Phase 1 | Task IDs, evidence lanes, inventories, boundaries, and limitations are explicit. | supervisor | Pending | Pending | Todo |
 | WERH-002 | Harden workspace governance baseline. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1 before editing; current repo counts (10 agent stems on each of three adapter surfaces, 5 workflows, 6 CI jobs), official OpenGitOps sources, owner/enforcement matrices, 7 evidence-backed follow-up rows, focused heading/date scan, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
 | WERH-003 | Harden spec-driven SDLC, CI, QA, and document taxonomy. | doc | Addendum: Coverage and Gap Classification | Phase 2 | RED heading assertion exited 1; 19 SDLC templates, no Release route/template, zero Incident/Postmortem records, Spec/Task state asymmetry, all 14 document families, all 9 QA lanes, 11 primary sources, and 6 routed gap rows are recorded below. | doc-writer | Important review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
-| WERH-004 | Harden harness and loop engineering. | doc | Addendum: Internal and External Research Contract | Phase 2 | Harness/loop elements, termination, evaluation, recovery, and provider-neutral boundaries are source-backed. | doc-writer | Pending | Pending | Todo |
+| WERH-004 | Harden harness and loop engineering. | doc | Addendum: Internal and External Research Contract | Phase 2 | RED heading assertion, exact six-column loop matrix, ownership/evidence boundaries, evaluation/recovery/termination design, 2025-11-25 MCP currentness, 8-category official MCP taxonomy, 7 routed findings, and focused/repository checks are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
 | WERH-005 | Harden provider implementation and current-model analysis. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | Provider/API/product/CLI/local surfaces and model lifecycle states are separated. | doc-writer | Pending | Pending | Todo |
 | WERH-006 | Harden automation, pipeline, workflow, and QA topology. | doc | Addendum: Artifact and Ownership Design | Phase 2 | CI DAG, filters, GitOps boundary, feedback lanes, and delivery gaps match repo evidence. | doc-writer | Pending | Pending | Todo |
 | WERH-007 | Harden Kubernetes, infrastructure, and security analysis. | doc | Addendum: Artifact and Ownership Design | Phase 2 | Platform controls, external benchmarks, static/live limits, and prioritized gaps are explicit. | doc-writer | Pending | Pending | Todo |
@@ -175,7 +175,7 @@ as each task completes.
 
 - [x] WERH-002 Harden workspace governance baseline.
 - [x] WERH-003 Harden spec-driven SDLC, CI, QA, and document taxonomy.
-- [ ] WERH-004 Harden harness and loop engineering.
+- [x] WERH-004 Harden harness and loop engineering.
 - [ ] WERH-005 Harden provider implementation and current-model analysis.
 - [ ] WERH-006 Harden automation, pipeline, workflow, and QA topology.
 - [ ] WERH-007 Harden Kubernetes, infrastructure, and security analysis.
@@ -306,6 +306,89 @@ as each task completes.
   exists. Important review findings for classification vocabulary, Prettier
   inventory/wiring, and manual shell syntax ownership were corrected;
   independent re-review remains pending.
+
+### WERH-004 Harness and Loop Evidence
+
+- **RED assertion**:
+  `rg -n 'Evaluation and Recovery Loop|Harness Ownership Boundary|Provider-Neutral Control Loop Matrix|Harness and Loop Gap Register' docs/90.references/research/2026-07-07-wer/harness-and-loop-engineering.md`
+  exited 1 with no matches before editing, proving the approved structure was
+  absent.
+- **Repo-fact reconciliation**: the Current and Historical harness references,
+  Stage 00 catalog/implementation map/subagent protocol/model policy/approval
+  and agentic rules, all three provider notes and runtime baselines, shared
+  hook scripts, three hook/settings JSON files, lifecycle payload validator,
+  progress memory, related dated audits, Stage 99 route/template contracts,
+  and reference-maintenance runbook were inspected. The reference now states
+  that `.agents/` owns shared skills, workflows, output styles, the Gemini
+  baseline, and local adapters only; Stage 00 retains governance/memory,
+  Stage 04 retains task evidence, and Stage 99 retains templates.
+- **Evidence boundary**: the reference separates declared JSON wiring,
+  validator parse/payload-simulation evidence, native/runtime behavior, and
+  live/remote readiness. Claude settings contain tracked native permissions;
+  Codex/Gemini hook JSON remains declared context/validation wiring, and no
+  provider-native consumption claim is made. No tracked `.mcp.json`,
+  `.codex/config.toml`, or `.gemini/settings.json` was found.
+- **External sources**: the nine required official pages were checked read-only
+  on 2026-07-10:
+  <https://openai.com/index/harness-engineering/>,
+  <https://openai.com/index/unrolling-the-codex-agent-loop/>,
+  <https://developers.openai.com/codex/subagents/>,
+  <https://code.claude.com/docs/en/sub-agents>,
+  <https://code.claude.com/docs/en/hooks>,
+  <https://geminicli.com/docs/core/subagents/>,
+  <https://geminicli.com/docs/reference/policy-engine/>,
+  <https://modelcontextprotocol.io/specification/2025-06-18>, and
+  <https://modelcontextprotocol.io/docs/tutorials/security/security_best_practices>.
+  MCP versioning and the latest specification were also checked at
+  <https://modelcontextprotocol.io/docs/learn/versioning> and
+  <https://modelcontextprotocol.io/specification/2025-11-25>.
+- **MCP currentness and security**: official versioning marks `2025-11-25` as
+  Current and ready for use, so `2025-06-18` is retained as a historical Final
+  revision rather than the latest stable/current source. Threat/mitigation
+  text uses only the official eight-category Security Best Practices taxonomy:
+  Confused Deputy, Token Passthrough, SSRF, Session Hijacking, Local MCP Server
+  Compromise, OAuth Authorization URL Validation, stdio Transport Security in
+  Proxy Scenarios, and Scope Minimization.
+- **Control-loop coverage**: the exact six-column matrix contains eight rows:
+  Observe, Plan, Act, Verify, Learn/Handoff, retry budget/failure escalation,
+  compaction, and human approval. The evaluation/recovery section adds
+  capability and regression evals, traceability, calibrated judgment, evidence
+  lanes, a recovery state machine, and six explicit termination modes.
+- **Gap routing**: seven rows use only `Fact defect`, `Implementation gap`,
+  `Needs strengthening`, or `Unverified` from the approved vocabulary. Each
+  records severity, risk rationale, a non-mutating recommendation, and one
+  canonical follow-up route. Provider-native implementation detail routes to
+  WERH-005 rather than being duplicated here.
+- **Focused and optional validation**: the required heading/phase/date scan
+  found all four headings, all five named phases, and the checked date. An
+  exact-header assertion found one matrix header with `Phase`, `Inputs`,
+  `Allowed action`, `Feedback evidence`, `Termination condition`, and
+  `Knowledge update`; the exact phase-row assertion found all five phase rows.
+  `markdownlint-cli2` reported 0 errors and `git diff --check` exited 0.
+- **Changed-file hooks**:
+  `pre-commit run --files docs/90.references/research/2026-07-07-wer/harness-and-loop-engineering.md docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md`
+  passed every applicable file-hygiene, secret, and Markdown hook;
+  non-applicable code, workflow, manifest, and container hooks were skipped.
+- **Required validation**: `bash scripts/validate-harness.sh` returned
+  `PASS harness repo-static validation`, including repository quality, GitOps
+  structure, 104 YAML parses, kube-linter, secret handling, built-in policy
+  fallback, static infrastructure contracts, and diff hygiene.
+  `bash scripts/validate-repo-quality-gates.sh .` separately returned
+  `[PASS] repository quality gates passed`, including Markdown link and route
+  checks.
+- **Tool limitations**: RTK 0.34.3 ran the commands but warned that project
+  filters are untrusted, so filters were not applied. `rtk find` did not
+  support the compound config-file predicate; the underlying read-only `find`
+  command was used. `conftest` was not installed; the harness reported SKIP
+  and the built-in policy fallback passed, which is not a Conftest pass.
+- **Readiness limitations**: no provider-native canary, live
+  Kubernetes/Argo CD/Vault/ESO, MCP connection, credential, secret-value,
+  remote GitHub/CI/ruleset, publish, push, merge, or third-party mutation check
+  ran. Repo-static PASS and official benchmarks do not establish live or
+  remote readiness.
+- **Review and commit evidence**: independent task-scoped review remains
+  pending. The WERH-004 commit field intentionally remains pending until
+  WERH-010 records the resulting SHA from `git log` after this commit exists.
 
 - **RED command**:
   `rg -n '2026-07-10-current-research-pack-fact-first-hardening' docs/04.execution/tasks/README.md`
