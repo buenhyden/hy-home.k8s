@@ -156,8 +156,11 @@ observed in this task.
 The tracked desired-state path is Vault -> ESO `ClusterSecretStore` ->
 `ExternalSecret` -> generated Kubernetes Secret. Current strengths are:
 
-- policy and secret scanners reject tracked plaintext Kubernetes `Secret`
-  manifests on their scanned YAML surfaces;
+- the secret scanner rejects configured plaintext-sensitive key/value patterns
+  and `stringData` on its scanned, non-exempt YAML surfaces;
+- the Rego policy and built-in fallback categorically reject parsed
+  `apiVersion: v1`, `kind: Secret` manifests across the policy gate's YAML
+  target set;
 - `vault-backend` names the Kubernetes auth mount, `eso-read-platform` role,
   `external-secrets` ServiceAccount, and its namespace;
 - `infrastructure/vault/policies/eso-read.hcl` lists only the data and metadata
