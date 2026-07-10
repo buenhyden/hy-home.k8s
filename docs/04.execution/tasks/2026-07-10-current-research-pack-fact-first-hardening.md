@@ -147,7 +147,7 @@ as each task completes.
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Review outcome | Commit | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | WERH-001 | Create execution evidence and baseline audit ledger. | doc | Addendum: Internal and External Research Contract | Phase 1 | Task IDs, evidence lanes, inventories, boundaries, and limitations are explicit. | supervisor | Pending | Pending | Todo |
-| WERH-002 | Harden workspace governance baseline. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1 before editing; current repo counts (10 agent stems on each of three adapter surfaces, 5 workflows, 6 CI jobs), official OpenGitOps sources, owner/enforcement matrices, 6 evidence-backed follow-up rows, focused heading/date scan, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Implementer self-review passed; independent task review pending. | Pending WERH-010 closure from `git log` | Done |
+| WERH-002 | Harden workspace governance baseline. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1 before editing; current repo counts (10 agent stems on each of three adapter surfaces, 5 workflows, 6 CI jobs), official OpenGitOps sources, owner/enforcement matrices, 7 evidence-backed follow-up rows, focused heading/date scan, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
 | WERH-003 | Harden spec-driven SDLC, CI, QA, and document taxonomy. | doc | Addendum: Coverage and Gap Classification | Phase 2 | Every SDLC document family and QA lane has a role, evidence, benchmark, and gap verdict. | doc-writer | Pending | Pending | Todo |
 | WERH-004 | Harden harness and loop engineering. | doc | Addendum: Internal and External Research Contract | Phase 2 | Harness/loop elements, termination, evaluation, recovery, and provider-neutral boundaries are source-backed. | doc-writer | Pending | Pending | Todo |
 | WERH-005 | Harden provider implementation and current-model analysis. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | Provider/API/product/CLI/local surfaces and model lifecycle states are separated. | doc-writer | Pending | Pending | Todo |
@@ -205,6 +205,8 @@ as each task completes.
 - **Gap rechecks**: Stage 99 contains no release template; lifecycle and route
   summaries repeat across `sdlc-governance.md`, `stage-authoring-matrix.md`,
   and `document-stage-routing.md`; semantic lineage remains link/review based;
+  actual adapter parity is ten stems per provider while canonical
+  `harness-catalog.md` readiness prose still says eight;
   the audit index has multiple `Current` dated snapshots; and
   `graphify-out/GRAPH_REPORT.md` was built from `e8a99671`, 199 commits behind
   the pre-edit `HEAD` according to `git rev-list --count e8a99671..HEAD`.
@@ -230,6 +232,15 @@ as each task completes.
 - **Commit evidence**: the WERH-002 commit field intentionally remains pending
   until WERH-010 records the resulting SHA from `git log` after this commit
   exists.
+- **Review follow-up**: review found that the owner matrix reported a clean
+  adapter inventory verdict while canonical `harness-catalog.md` prose still
+  said eight. The reference now records the dual fact (ten actual stems per
+  provider, stale canonical count), adds a seventh routed gap, and links all
+  provider notes plus the maintenance runbook explicitly. Focused `rg`
+  confirmed the three stale catalog phrases and ten files per provider;
+  `git diff --check`, `markdownlint-cli2`, changed-file `pre-commit`, and
+  `bash scripts/validate-repo-quality-gates.sh .` passed. Independent re-review
+  remains pending.
 
 - **RED command**:
   `rg -n '2026-07-10-current-research-pack-fact-first-hardening' docs/04.execution/tasks/README.md`
