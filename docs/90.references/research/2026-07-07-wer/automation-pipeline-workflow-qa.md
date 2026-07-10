@@ -3,99 +3,301 @@ title: 'Reference: Automation Pipeline Workflow QA Research'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-07
+updated: 2026-07-10
 ---
 
 # Reference: Automation Pipeline Workflow QA Research
 
 ## Overview
 
-이 문서는 워크스페이스 `hy-home.k8s` 내의 자동화(Automation), 파이프라인(Pipeline), 워크플로우(Workflow), 그리고 CI/CD와 연계된 QA 검증 루프(QA evidence loop)를 2026-07-07 기준의 리포지토리 실제 구성 상태와 업스트림 모범 사례를 기반으로 정리한다.
+이 문서는 `hy-home.k8s`의 automation, pipeline, workflow, CI/CD, QA
+feedback topology를 2026-07-10 현재 repository evidence와 공식 GitHub
+Actions, pre-commit, DORA, OpenGitOps 자료에 대조한다. Current pack의 짧은
+요약과 Historical pack의 유효한 조사 내용을 현재 파일·조건·소유권으로 다시
+검증해 이 문서에 통합했다.
 
-본 참조 자료는 설명용 참고 문서로서, 실제 워크플로우 쉘 명령, Actions 스케줄링, 혹은 의존성 린터 규칙 등을 물리적으로 수정하거나 직접 갱신하지 않는다.
+이 문서는 설명용 Stage 90 reference다. 활성 workflow, path filter, hook,
+validator, GitOps manifest, branch protection, remote Actions 설정 또는 live
+runtime을 정의하거나 변경하지 않는다.
 
 ## Purpose
 
-- 워크스페이스 내에 내장된 자동화 작업과 CI 잡 파이프라인 간의 위계와 의미 분석.
-- 피드백 루프의 핵심 측정 지표(DORA Metrics, Fowler CI)를 정적 가이드라인으로 정리.
-- 검증 툴과 Actions 파이프라인의 보안/운영 매핑lookup 제공.
+- 다섯 workflow와 여섯 CI job의 실제 trigger, dependency, condition, output
+  관계를 설명한다.
+- local hook/pre-commit, CI job, validator, optional dependency의 coverage를
+  변경 surface별로 연결한다.
+- CI의 static QA와 Argo CD의 pull-based delivery 경계를 분리한다.
+- 확인된 automation gap을 severity, risk rationale, recommendation, canonical
+  follow-up route가 있는 비변경 제안으로 기록한다.
 
 ## Reference Type
 
-- Type: durable-concept / external-standard-snapshot / dated-implementation-audit
-- Source checked: 2026-07-07
-- Refresh trigger: Actions 워크플로우 YAML 파일 수정, pre-commit 구성 훅 변경, DORA 메트릭스 또는 CI 철학 개정.
+- Type: durable-concept / external-standard-snapshot /
+  dated-implementation-audit
+- Source checked: 2026-07-10
+- Refresh trigger: GitHub workflow, path filter, Dependabot, pre-commit,
+  provider hook wiring, validator, GitOps root/ApplicationSet, CI/CD QA guide,
+  DORA metric definition, or OpenGitOps principle changes.
 
 ## Authority Boundary
 
 - **Authoritative for**:
-  - 2026-07-07 기준 리포지토리 내 자동화 및 파이프라인 구조 요약.
-  - 외부 파이프라인/QA 개념과 로컬 검증 매트릭스 간의 lookup 연결.
+  - 2026-07-10 repository snapshot에서 다시 도출한 workflow/job/filter/hook/
+    validator/GitOps ownership mapping.
+  - 아래 URL의 공식·primary 외부 자료와 local evidence의 dated comparison.
+  - 이후 scoped task로 보낼 automation 개선 권고.
 - **Not authoritative for**:
-  - Actions workflow permissions 및 secrets 접근 권한 부여.
-  - Dependabot 주기 또는 stale 봇 스케줄 직접 제어.
+  - 활성 Actions semantics, branch protection/ruleset, required-check 설정,
+    `GITHUB_TOKEN` 권한, hook enforcement, validator 동작 또는 GitOps 정책.
+  - remote GitHub run, live Kubernetes/Argo CD/Vault/ESO, credential, secret,
+    deployment, reconciliation 또는 service readiness.
+  - 외부 benchmark만으로 추론한 local implementation 상태.
 
 ## Scope
 
-- GitHub Actions 워크플로우 구조, 권한 통제, 비밀정보 취급 규칙, 의존성 캐싱 및 아티팩트 보존, 수명주기 피드백 루프, DORA 배포 메트릭스, 로컬 쉘 검증 루프.
-- 실 클러스터 상의 동적 릴리즈 배포 및 secret decryption 테스트 제외.
+- 포함: `.github/workflows/*.yml`, `.github/dependabot.yml`, labeler/Zizmor
+  설정, `.pre-commit-config.yaml`, shared hook scripts와 provider hook wiring,
+  repository/manifest/policy validators, infrastructure static/live tests,
+  GitOps root Application/ApplicationSet, QA guide, delivery-metric context.
+- 제외: 활성 파일 수정, workflow dispatch, remote setting 확인, live command,
+  credential/secret-value 검사, deployment, publish, push, merge, release 생성.
 
 ## Definitions / Facts
 
-### 1. 자동화, 워크플로우, 파이프라인 모델 (Automation, Workflow & Pipeline)
-- **자동화 (Automation)**: 워크스페이스 내 린팅, changelog 생성, stale issues 정리 등 기계가 정기적 혹은 이벤트 기반으로 실행하는 작업을 의미한다.
-- **워크플로우 (Workflow)**: `.github/workflows/` 하위의 개별 YAML 파일로 정의된 Actions 작업 명세.
-- **파이프라인 (Pipeline)**: 이벤트 트리거에서 출발하여 Job, Step, local validators, `$GITHUB_STEP_SUMMARY`를 거쳐 Task 기록에 수렴하는 전체 검증 및 증적 제출의 유기적 흐름.
-- **QA Gate (검증 게이트)**: 변경의 병합 가능 여부를 가리는 제어 장치. 본 리포지토리의 주 검증 게이트는 `ci.yml` 파일이다.
+### Automation, Workflow, Pipeline, CI, and CD
 
-### 2. GitHub Actions 워크플로우 구성 및 잡 그래프 (Workflow Graph)
-리포지토리는 아래의 5대 워크플로우를 가동하여 정형화된 파이프라인을 구축하고 있다.
-- **`ci.yml` (QA Gate)**: PR 생성 혹은 main push 시 실행되는 핵심 파이프라인. `branch-policy` -> `changes` (경로별 빌드 분기) -> `pre-commit` -> `repo-quality-static` & `manifest-static` -> `ci-summary` 순으로 전개된다.
-- **`generate-changelog.yml` (Release evidence)**: tag 생성 시 구동되어 `CHANGELOG.md` 아티팩트를 업로드하고 요약을 남겨 릴리즈 증적을 보존한다.
-- **`labeler.yml`, `greetings.yml`, `stale.yml` (Maintenance)**: PR 자동 라벨링, 신규 참여자 인사말 작성, 오랫동안 묵혀진 issue/PR Stale 경고 및 닫기 등의 저장소 위생 작업을 이행한다.
+- **Automation**은 event 또는 local action으로 실행되는 기계 작업이다. 현재
+  CI, changelog artifact 생성, PR labeling, first-interaction greeting, stale
+  maintenance, Dependabot update, pre-commit과 provider-wired validation hook이
+  여기에 해당한다.
+- **Workflow**는 `.github/workflows/` 아래 하나의 Actions YAML이다. 현재 다섯
+  파일이 있다.
+- **Pipeline**은 trigger에서 job/step/validator/summary/artifact/task evidence로
+  이어지는 ordered 또는 conditional evidence path다.
+- **CI**는 변경을 통합하기 전후에 정적 품질 evidence를 생성하는 현재
+  `ci.yml` QA gate다.
+- **CD**는 승인된 desired state가 target environment에 전달·조정되는 별도
+  delivery surface다. 이 저장소의 CI workflow에는 deploy job이 없고, Argo CD
+  manifests가 pull/reconcile 의도를 선언한다. Repo-static 선언은 실제 배포
+  또는 reconciliation proof가 아니다.
 
-### 3. Permissions 및 Token 보안 경계
-- **Least Privilege `GITHUB_TOKEN`**: `ci.yml`과 `generate-changelog.yml`은 최상단에 `permissions: contents: read`를 전역 선언하여 쓰기 권한이 탈취되는 위험을 최소화한다.
-- **Credential Isolation**: checkout 단계에서 `persist-credentials: false`를 지정하여 Actions 실행 도중 임의의 스크립트가 리포지토리 쓰기 자격 증명을 유출하는 시나리오를 무력화한다.
-- **Write Permissions Isolation**: 오직 `labeler`, `greetings`, `stale`과 같은 관리성 워크플로우만 해당하는 job 레벨에서 필요한 범위의 write 권한을 허용한다.
+### Current Automation Inventory
 
-### 4. CI 피드백 루프 및 delivery metrics
-마틴 파울러의 CI(Continuous Integration) 사상에 기반하여, 에이전트의 코딩 작업은 '커밋 시점의 완결성'을 지향해야 한다.
-DORA(DevOps Research and Assessment) 프레임워크에 따른 5대 핵심 인도 지표(Delivery Metrics)의 워크스페이스 컨텍스트는 다음과 같다.
-- **Deployment Frequency (배포 빈도)**: GitOps desired state 변경 PR이 병합되어 main branch로 수렴하는 빈도.
-- **Lead Time for Changes (변경 지연 시간)**: Plan 작성부터 main 병합 및 ArgoCD 자동 동기화 완료까지 걸리는 소요 시간.
-- **Change Failure Rate (변경 실패율)**: 배포 후 롤백 또는 장애 복구 작업이 필요해지는 변경 건수의 비율.
-- **Time to Restore Service (서비스 복구 시간)**: 실 장애 발생 시 ArgoCD 롤백 또는 break-glass operations를 수행해 정상화하기까지의 소요 시간.
-- **Deployment Rework Rate (재작업 비율)**: static validation 실패 혹은 코드 리뷰 거절로 인해 동일 작업에 재투입되는 비율.
+| Surface | Repo-backed role | Trigger | Produced evidence | Boundary |
+| --- | --- | --- | --- | --- |
+| `.github/workflows/ci.yml` | Static QA gate | `push` to `main`, `pull_request` targeting `main`, `workflow_dispatch` | Branch-policy, path-filter, pre-commit, repo-quality, manifest-static results and aggregate result | No deploy, publish, live mutation, or remote-setting evidence |
+| `.github/workflows/generate-changelog.yml` | Release-evidence generator | Tag push matching `v*.*.*` | Generated `CHANGELOG.md` run artifact and step summary | Does not commit, push, publish a release, or deploy |
+| `.github/workflows/labeler.yml` | PR maintenance | PR opened or synchronized | Labels from `.github/labeler.yml` | Not CODEOWNERS, approval, QA, or deployment |
+| `.github/workflows/greetings.yml` | Intake maintenance | First issue or PR opened | Greeting comment | Not QA or approval |
+| `.github/workflows/stale.yml` | Scheduled maintenance | `30 1 * * *` | Stale labels/comments and configured closure | Not QA, release, or deployment evidence |
+| `.github/dependabot.yml` | Dependency proposal automation | Weekly `github-actions` ecosystem scan | Grouped/cooldown Dependabot PRs | A proposal is not dependency safety proof |
+| `.pre-commit-config.yaml` | Local/CI toolchain | Git hook, manual command, and `pre-commit/action` | File hygiene, secret, Markdown, JSON/TOML/YAML, shell, workflow, Dockerfile, and manifest tool results | Tool result only; not live or delivery evidence |
+| Shared hook scripts | Provider-wired edit/lifecycle feedback | Provider event wiring in `.claude/settings.json`, `.agents/hooks.json`, `.codex/hooks.json` | Pre-edit warnings, scoped post-edit checks, lifecycle checks/advice | Wiring files do not prove every provider consumed or enforced the hook |
 
-에이전트는 이 5가지 지표를 최소화하도록 작은 변경 단위(Task-by-task commit)를 생성하고, 로컬 검증 피드백 루프를 반복 구동하여 재작업 비율을 0%에 수렴시켜야 한다.
+### Actual CI Job DAG
 
-### 5. 로컬 검증 루프의 유기적 흐름 (Local Validation Loop)
-에이전트는 리모트 Actions CI의 피드백을 기다리기 전, 로컬 쉘 환경에서 다음 스크립트들을 실행해 검증 루프를 완성한다.
-1. `validate-repo-quality-gates.sh .`: 마크다운 및 taxonomy 연결성 검사.
-2. `validate-gitops-structure.sh`: Kustomization 파일 의존 구조 및 ArgoCD 애플리케이션 연결 상태 확인.
-3. `validate-k8s-manifests.sh .`: YAML 구문 및 kube-linter 통과 여부 검사.
-4. `check-secret-handling.sh .` & `validate-policy-gates.sh .`: plaintext secrets 방지 및 Rego 컴플라이언스 만족 확인.
-5. `verify-contracts-static.sh`: 외부 Postgres/Valkey 서비스 연결 포트/네임 계약 만족 확인.
+The compact expression below is a mnemonic, not a serial `needs` chain:
+
+```text
+branch-policy || changes -> pre-commit/repo-quality-static/manifest-static -> ci-summary
+```
+
+Here `||` means **parallel roots**, not logical fallback. The exact DAG is:
+
+```text
+branch-policy (PR only) ------------------------------------------+
+                                                                |
+changes --------+--> pre-commit (precommit == true) ------------+--> ci-summary
+                +--> repo-quality-static (repo_quality == true) -+
+                +--> manifest-static (manifests == true) --------+
+```
+
+- `branch-policy` and `changes` declare no `needs`, so they begin independently.
+  `branch-policy` has `if: github.event_name == 'pull_request'`; it is skipped on
+  `push` and manual dispatch.
+- `changes` is the only dependency of `pre-commit`, `repo-quality-static`, and
+  `manifest-static`. It exports `precommit`, `repo_quality`, and `manifests`
+  from `dorny/paths-filter`.
+- `pre-commit` is selected by `precommit: '**'`, so an observed changed path
+  selects it. `repo-quality-static` and `manifest-static` use narrower filter
+  sets described below.
+- `ci-summary` directly `needs` all five preceding jobs and uses `if: always()`.
+  Its final step fails when any needed result contains `failure` or `cancelled`;
+  a conditionally `skipped` job is summarized but is not itself treated as a
+  failure.
+- Workflow concurrency is `ci-${{ github.ref }}` with
+  `cancel-in-progress: true`. Official GitHub documentation confirms that a
+  concurrency group limits simultaneous runs and may cancel the in-progress
+  member when configured this way.
+- All CI jobs are static or toolchain checks. No job calls `kubectl`, `argocd`,
+  a deployment API, a registry publish action, or a Git push command.
+
+The earlier Current summary described
+`branch-policy -> changes -> pre-commit -> ...` as a sequence. Current `needs`
+evidence contradicts that ordering, so this document classifies the old wording
+as a corrected **Fact defect**.
+
+### Path Filter and Gate Coverage Matrix
+
+| Changed surface | Local hook/pre-commit | CI job | Validator | Optional dependency | Coverage verdict |
+| --- | --- | --- | --- | --- | --- |
+| Any tracked changed path | Installed pre-commit runs staged files; manual `pre-commit run --all-files` runs the repository | `changes` then `pre-commit` because `precommit: '**'` | Full configured hook matrix, subject to each hook file selector/type | Local `pre-commit`; CI uses `pre-commit/action` and managed hook environments | **Sufficient** for configured toolchain scope; not full semantic or live proof |
+| Markdown, Stage documents, governance, templates, shared/provider agent assets | File-hygiene and Markdown hooks; provider PostToolUse routes matching docs/assets to repo-quality | `pre-commit`; `repo-quality-static` for `docs/**`, `.agents/**`, `.claude/**`, `.codex/**`, root gateways, scripts, tests, examples, and listed config | `validate-repo-quality-gates.sh .` | Python + PyYAML are required; Markdown/pre-commit tool availability varies locally | **Sufficient repo-static** for encoded contracts; semantic correctness still needs review |
+| GitHub workflows and `.github` config | `actionlint` and Zizmor target workflow YAML; `check-dependabot` targets Dependabot; provider PostToolUse selects workflow style only for workflow YAML | `pre-commit` and `repo-quality-static` because `.github/**` is included | Pre-commit tools plus repo workflow/config contracts | Hook environments; Zizmor `unpinned-uses` is locally disabled | **Needs strengthening** for immutable action provenance |
+| Shell under `scripts/**`, `infrastructure/**`, shared hooks | `shellcheck`/`shfmt`; provider PostToolUse and lifecycle guard run repository-wide `bash -n` after matching shell edits | `pre-commit`; `repo-quality-static` for `scripts/**` and shared hooks through `docs/**`; `manifest-static` for `infrastructure/tests/**/*.sh` | ShellCheck, shfmt; explicit `bash -n` exists in provider-wired hooks and the QA guide | Local pre-commit; CI has no separate `bash -n` step | **Needs strengthening**: CI pre-commit has shell static/style checks, but repo-quality itself does not provide Bash syntax evidence |
+| GitOps, infrastructure, examples, and Traefik YAML | Pre-commit kube-linter selector plus YAML/file hooks; provider PostToolUse runs manifest syntax and secret handling for matching YAML | `pre-commit` and `manifest-static`; `repo-quality-static` additionally selects only `gitops/apps/root/**` among GitOps paths | Static contracts, GitOps structure, YAML/PyYAML, kube-linter when present, secret handling, policy gate/fallback | `kube-linter` is optional inside `validate-k8s-manifests`; CI pre-commit has a managed kube-linter hook | **Needs strengthening**: manifest bundle is broad, while repo-quality filter coverage is narrower than contracts it can inspect |
+| Policy bundle and policy validator | No targeted PostToolUse policy-gate invocation; general pre-commit hooks may apply by file type | `pre-commit` and `manifest-static` for `policy/**` or validator changes | `validate-policy-gates.sh .`; Conftest if installed, then built-in fallback always | `conftest` optional; CI installs PyYAML but not Conftest, so fallback is the direct manifest-static evidence | **Implementation gap** in edit-hook parity; CI fallback coverage exists |
+| Static infrastructure contracts | Shell hooks apply when `infrastructure/tests/*.sh` changes | `pre-commit` and `manifest-static` | `infrastructure/tests/verify-contracts-static.sh` plus the full manifest-static bundle | GNU grep/Python/PyYAML and optional manifest tools | **Sufficient repo-static** for encoded patterns; regex contracts are not runtime proof |
+| Root lint/security configs such as `.kube-linter.yaml`, `.gitleaks.toml`, `.secrets.baseline`, Markdown/Hadolint configs | Their consuming pre-commit hooks can run, but provider PostToolUse routing is file-specific and not uniform for every root config | `pre-commit`; `.kube-linter.yaml` also selects `manifest-static`; several other root tool configs do not select `repo-quality-static` | The consuming hook/tool configuration | Individual tool environments | **Needs strengthening**: filter-to-validator dependency ownership is not complete or machine-checked |
+| Live test scripts and live cluster/runtime | Shell style/static checks only; no live execution in pre-commit or provider edit hook | No live CI job | `infrastructure/tests/run-all.sh` and component scripts are operator-run live surfaces | Reachable cluster, correct context, `kubectl`, network/TLS prerequisites | **Unverified** in this audit; repo-static/CI PASS cannot promote live readiness |
+
+Dedicated Bash parser evidence must be named precisely: shared PostToolUse and
+lifecycle scripts run `bash -n` after a matching shell edit, and the CI/CD QA
+guide documents direct manual `bash -n` commands. `ci.yml` does not declare a
+separate `bash -n` step, and `validate-repo-quality-gates.sh` is not itself a
+general shell syntax gate. CI shell evidence comes from the pre-commit
+ShellCheck/shfmt hooks unless a task separately records manual or provider-hook
+`bash -n` output.
+
+### Permissions and Workflow Security Boundary
+
+- `ci.yml` and `generate-changelog.yml` declare workflow-level
+  `permissions: contents: read`; their checkout steps set
+  `persist-credentials: false`.
+- Labeler grants `contents: read` and `pull-requests: write`; greeting and stale
+  grant only the issue/PR write scopes their maintenance actions use.
+- Official `GITHUB_TOKEN` guidance recommends the least access required at
+  workflow or job scope. The tracked permission declarations are repo evidence;
+  no remote default permission or ruleset was inspected.
+- All external Actions references in the five workflows use version tags such
+  as `@v7.0.0`, `@v4`, or `@v3`, not full commit SHAs. GitHub secure-use
+  guidance states that full-length commit SHA pinning is the immutable action
+  reference. `.github/zizmor.yml` explicitly disables `unpinned-uses`, so the
+  current tool configuration does not enforce that benchmark.
+
+### GitOps Delivery Boundary
+
+| Surface | Declared owner/path | Delivery behavior in tracked desired state | Evidence boundary |
+| --- | --- | --- | --- |
+| `root-platform` Application | `gitops/clusters/local/root-application.yaml` points to `gitops/apps/root` in `main` under project `platform` | Automated prune and self-heal are declared; `gitops/apps/root/kustomization.yaml` lists 18 platform Application manifests | Proves configuration and platform-app ownership, not a live sync or healthy controller |
+| `platform-cluster-config` child Application | Root kustomization includes an Application whose source is `gitops/clusters/local` | Makes cluster-local AppProjects, root/ApplicationSet declarations part of the platform desired-state tree | Static ownership only; actual creation order and convergence were not observed |
+| `apps-generator` ApplicationSet | `gitops/clusters/local/applicationset-apps.yaml` discovers `gitops/workloads/*` under project `apps` | Generates one application per workload directory, targeting namespace `apps`, with automated prune/self-heal | Proves workload-directory generator intent, not generated live Applications or health |
+| GitHub `ci.yml` | Repository QA workflow | Validates changed desired state and repository contracts | It does not push desired state or invoke Argo CD/Kubernetes; therefore it is CI/static QA, not deployment CD |
+
+OpenGitOps describes desired state as Declarative, Versioned and Immutable,
+Pulled Automatically, and Continuously Reconciled. The repository contains
+declarative, Git-versioned desired state plus pull/reconcile configuration.
+Immutability enforcement, automatic pull occurrence, and continuous convergence
+were not checked remotely or live and remain **Unverified**. The safe local
+boundary is therefore:
+
+```text
+repository change -> local/static QA -> GitHub CI verdict -> review/merge
+  -> Argo CD pull/reconcile intent (configured, not observed here)
+```
+
+### QA Feedback and Delivery Measurement
+
+The current feedback topology produces repository and workflow evidence close
+to a change: provider-wired edit feedback where consumed, pre-commit, conditional
+CI jobs, `ci-summary`, changelog artifacts, and Stage 04 task records. GitHub's
+visualization graph exposes job status and dependency lines, matching the need
+to distinguish root, conditional, skipped, and aggregate jobs.
+
+DORA's current model has five service/application-level software-delivery
+metrics: change lead time, deployment frequency, failed deployment recovery
+time, change fail rate, and deployment rework rate. Current repository searches
+found descriptive DORA references but no workflow/script/task automation that
+emits, stores, or dashboards these five measurements. They remain benchmark
+vocabulary, not local performance evidence.
+
+### Automation Gap Register
+
+Every row below is a **recommendation only**. This research pass does not change
+the named active files.
+
+| Classification | Severity | Finding | Current evidence | Risk rationale | Recommendation | Canonical follow-up route |
+| --- | --- | --- | --- | --- | --- | --- |
+| Implementation gap | Medium | Path-filter-to-validator dependencies are incomplete | `repo_quality` includes `gitops/apps/root/**` but omits other `gitops/**`, `policy/**`, most infrastructure, Traefik, and several root tool configs; `manifest-static` covers many of those paths, but does not execute repo-quality | A contract added to repo-quality for an omitted surface can be bypassed on a surface-only PR even though another static lane passes | Define an explicit validator-input inventory and regression-test each path filter against it before changing filters | `.github/workflows/ci.yml`, `.github/ABOUT.md`, CI/CD QA guide, and a new Stage 03/04 CI-filter hardening spec/task |
+| Implementation gap | Medium | Local provider edit hooks do not mirror the complete manifest-static policy bundle | `post-validate.sh` and `lifecycle-guard.sh` run manifest syntax and secret handling for manifest edits, but not static contracts, GitOps structure, or policy gates; `.rego` edits have no targeted PostToolUse policy run | Fast local feedback can be green while the later CI policy/static-contract lane fails | Design a bounded cost-aware hook matrix or explicit task checklist; retain CI as final authority | Shared hook scripts, three provider wiring files, `validate-harness.sh`, and a separately approved hook/validator task |
+| Implementation gap | Medium | Two live ingress/TLS findings are warn-only | `verify-ingress-tls.sh` emits `[WARN]` for missing/mismatched Headlamp and Kiali TLS secrets and continues; `run-all.sh` can therefore reach its final PASS | A broad live-run PASS can be read as stronger than the component assertions actually enforce | Classify required versus advisory endpoints, make the final summary report both, and change failure semantics only through an operations-approved task | `infrastructure/tests/verify-ingress-tls.sh`, `run-all.sh`, Stage 05 setup/maintenance runbooks, and a Stage 03/04 live-test contract task |
+| Implementation gap | High | Third-party Actions are tag-pinned rather than immutable-SHA-pinned | Every `uses:` entry in the five workflows uses a version tag; `.github/zizmor.yml` disables `unpinned-uses`; GitHub secure-use recommends full-length SHAs | Mutable upstream tags expand workflow supply-chain risk and make exact executed code less reproducible | Inventory each action, verify official repositories and SHAs, define update automation/rollback, then enable enforcement in one coordinated change | `.github/workflows/*.yml`, `.github/zizmor.yml`, version inventory, Dependabot policy, and a Stage 03/04 Actions-hardening task |
+| Implementation gap | High | No active CI supply-chain evidence lane for code scanning, dependency review, SBOM, provenance, or attestation | Focused scans of workflows, Dependabot, and pre-commit found no CodeQL, dependency-review, SBOM, provenance, attestation, Cosign, or SLSA automation; changelog artifact generation is not provenance | Static lint/secret checks do not establish dependency-change review or build/release provenance | Threat-model applicable artifacts first, then adopt only the controls that match this manifest/document repository and define retention/verification evidence | Security policy/ARD, `.github/workflows`, Stage 05 release/runbook owner, and a new Stage 03/04 supply-chain task |
+| Needs strengthening | Medium | Key static contracts rely heavily on textual/regex matching | `verify-contracts-static.sh` uses `grep -P`/`grep -Pz`; repo-quality and secret validators use extensive regex/text contracts alongside YAML parsing | Semantically equivalent YAML or document changes can cause false positives/negatives, while a text match may not prove object semantics | Classify contracts by schema/AST/text need, migrate high-risk checks to parsed structures, and add negative fixtures before removing proven sentinels | Validator scripts, `infrastructure/tests`, `tests`, scripts inventory, and a Stage 03/04 validator-quality task |
+| Needs strengthening | Medium | DORA telemetry is absent | DORA terms appear in research/task context, but no checked workflow, script, or operations automation emits/stores the current five metrics | Delivery-improvement claims cannot be measured consistently and repo CI duration is not deployment performance | Select one service and define event sources, ownership, privacy, baselines, and dashboard/retention before instrumenting | New Stage 03 measurement spec and Stage 04 task; then approved operations observability and workflow changes |
 
 ## Sources
 
-- Martin Fowler, Continuous Integration (<https://martinfowler.com/articles/continuousIntegration.html>)
-- DORA Metrics guide (<https://dora.dev/guides/dora-metrics/>)
-- GitHub Actions workflow syntax, permissions, and security guidance
-- [CI/CD & QA Reference Guide](../../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
-- [Scripts README](../../../../scripts/README.md)
+### Official and Primary External Sources
+
+All eight sources below were opened read-only and checked on 2026-07-10.
+
+- GitHub Actions workflow syntax (`jobs.<job_id>.needs`, conditions, filters,
+  permissions, workflow/job structure):
+  <https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax>
+- GitHub Actions visualization graph (job status and dependency lines):
+  <https://docs.github.com/en/actions/how-tos/monitor-workflows/use-the-visualization-graph>
+- GitHub Actions secure use (full-length action SHA benchmark):
+  <https://docs.github.com/en/actions/reference/security/secure-use>
+- GitHub `GITHUB_TOKEN` authentication and least-required permissions:
+  <https://docs.github.com/en/actions/tutorials/authenticate-with-github_token>
+- GitHub Actions concurrency groups and cancellation:
+  <https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency>
+- pre-commit installation and local/CI execution model:
+  <https://pre-commit.com/>
+- DORA's current five software-delivery performance metrics:
+  <https://dora.dev/guides/dora-metrics/>
+- OpenGitOps principles and pull/reconciliation benchmark:
+  <https://opengitops.dev/>
+
+These sources define external behavior or benchmark context. Current repository
+files, not the external sources, establish local implementation claims.
+
+### Repository Sources
+
+- [GitHub configuration hub](../../../../.github/ABOUT.md)
+- [CI workflow](../../../../.github/workflows/ci.yml)
+- [Generate changelog workflow](../../../../.github/workflows/generate-changelog.yml)
+- [Labeler workflow](../../../../.github/workflows/labeler.yml)
+- [Greeting workflow](../../../../.github/workflows/greetings.yml)
+- [Stale workflow](../../../../.github/workflows/stale.yml)
+- [Dependabot configuration](../../../../.github/dependabot.yml)
+- [Labeler configuration](../../../../.github/labeler.yml)
+- [Zizmor configuration](../../../../.github/zizmor.yml)
+- [Pre-commit configuration](../../../../.pre-commit-config.yaml)
+- [Shared post-edit validator](../../../00.agent-governance/hooks/post-validate.sh)
+- [Shared lifecycle guard](../../../00.agent-governance/hooks/lifecycle-guard.sh)
+- [Claude settings and hook wiring](../../../../.claude/settings.json)
+- [Codex hook wiring](../../../../.codex/hooks.json)
+- [Gemini/Antigravity hook wiring](../../../../.agents/hooks.json)
+- [Scripts inventory](../../../../scripts/README.md)
+- [CI/CD and QA guide](../../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
+- [GitOps root Application](../../../../gitops/clusters/local/root-application.yaml)
+- [Workload ApplicationSet](../../../../gitops/clusters/local/applicationset-apps.yaml)
+- [Root platform kustomization](../../../../gitops/apps/root/kustomization.yaml)
+- [Historical automation reference integrated after re-verification](../2026-07-04-wer/automation-pipeline-workflow-qa.md)
 
 ## Review and Freshness
 
-- Review cadence: Actions workflow YAML 파일 갱신 또는 로컬 검증 스크립트 수정 시
-- Last reviewed: 2026-07-07
-- Next review trigger: CI 빌드 잡 수정, DORA 지표 측정 체계 도입 시
+- Review cadence: on source change.
+- Last reviewed: 2026-07-10.
+- Next review trigger: any workflow/job/filter/action reference, Dependabot,
+  pre-commit, hook routing, validator, GitOps root/ApplicationSet, live-test
+  assertion, DORA metric, or OpenGitOps principle change.
+- Refresh method: re-open the exact external URLs; re-parse every workflow and
+  owning config; compare job `needs`/`if`/outputs and filter inputs; inventory
+  hooks/validators/optional tools; recheck GitOps paths; record live and remote
+  lanes as Unverified unless separately approved and observed.
 
 ## Related Documents
 
-- **Parent research README**: [README.md](../README.md)
-- **References README**: [../../README.md](../../README.md)
-- **Workspace baseline**: [workspace-governance-baseline.md](workspace-governance-baseline.md)
-- **Formatting reference**: [spec-sdlc-ci-qa-formatting.md](spec-sdlc-ci-qa-formatting.md)
-- **CI/CD QA guide**: [../../../05.operations/guides/0010-ci-cd-qa-reference-guide.md](../../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
+- **Current pack README**: [README.md](README.md)
+- **Parent research README**: [../README.md](../README.md)
+- **Parent references README**: [../../README.md](../../README.md)
+- **Workspace baseline**: [Workspace Governance Baseline](workspace-governance-baseline.md)
+- **SDLC/CI/QA reference**: [Spec SDLC CI QA Formatting](spec-sdlc-ci-qa-formatting.md)
+- **Kubernetes/security reference**: [Kubernetes Infrastructure Security](kubernetes-infrastructure-security.md)
+- **Current hardening spec**: [Workspace Engineering Research Pack Spec](../../../03.specs/017-workspace-engineering-research-pack/spec.md)
+- **Current hardening plan**: [Current Research Pack Fact-First Hardening Plan](../../../04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md)
+- **Current hardening task**: [Current Research Pack Fact-First Hardening Task](../../../04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md)
+- **Reference maintenance runbook**: [Reference Maintenance Runbook](../../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

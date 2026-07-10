@@ -151,7 +151,7 @@ as each task completes.
 | WERH-003 | Harden spec-driven SDLC, CI, QA, and document taxonomy. | doc | Addendum: Coverage and Gap Classification | Phase 2 | RED heading assertion exited 1; 19 SDLC templates, no Release route/template, zero Incident/Postmortem records, Spec/Task state asymmetry, all 14 document families, all 9 QA lanes, 11 primary sources, and 6 routed gap rows are recorded below. | doc-writer | Important review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
 | WERH-004 | Harden harness and loop engineering. | doc | Addendum: Internal and External Research Contract | Phase 2 | RED heading assertion, exact six-column loop matrix, ownership/evidence boundaries, evaluation/recovery/termination design, 2025-11-25 MCP currentness, 8-category official MCP taxonomy, 7 routed findings, and focused/repository checks are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
 | WERH-005 | Harden provider implementation and current-model analysis. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; exact 10-role/30-path adapter matrix, three hook/settings JSON surfaces, 17 surface-specific model rows, 13 one-to-one model evaluation/migration rows, six task-routing rows, 21 official URLs, eight routed findings, focused assertions, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Important review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
-| WERH-006 | Harden automation, pipeline, workflow, and QA topology. | doc | Addendum: Artifact and Ownership Design | Phase 2 | CI DAG, filters, GitOps boundary, feedback lanes, and delivery gaps match repo evidence. | doc-writer | Pending | Pending | Todo |
+| WERH-006 | Harden automation, pipeline, workflow, and QA topology. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1; 5 workflows, 6 CI jobs, 2 parallel roots, 3 `changes`-dependent conditional jobs, 8 official sources, 9 coverage rows, 7 routed gap rows, and the exact GitOps ownership boundary are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
 | WERH-007 | Harden Kubernetes, infrastructure, and security analysis. | doc | Addendum: Artifact and Ownership Design | Phase 2 | Platform controls, external benchmarks, static/live limits, and prioritized gaps are explicit. | doc-writer | Pending | Pending | Todo |
 | WERH-008 | Harden AI-agent roster, upstream comparison, and model routing. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | Local roster, current upstream evidence, native adapter gaps, and task-model recommendations are source-backed. | doc-writer | Pending | Pending | Todo |
 | WERH-009 | Close pack coverage and cross-document integration. | doc | Addendum: Coverage and Related-Document Integration Rules | Phase 3 | Every requested topic has one primary owner; links, freshness, and repeated content are consistent. | supervisor | Pending | Pending | Todo |
@@ -177,7 +177,7 @@ as each task completes.
 - [x] WERH-003 Harden spec-driven SDLC, CI, QA, and document taxonomy.
 - [x] WERH-004 Harden harness and loop engineering.
 - [x] WERH-005 Harden provider implementation and current-model analysis.
-- [ ] WERH-006 Harden automation, pipeline, workflow, and QA topology.
+- [x] WERH-006 Harden automation, pipeline, workflow, and QA topology.
 - [ ] WERH-007 Harden Kubernetes, infrastructure, and security analysis.
 - [ ] WERH-008 Harden AI-agent roster, upstream comparison, and model routing.
 
@@ -473,6 +473,74 @@ as each task completes.
   corrected; independent re-review remains pending. The WERH-005 commit field
   intentionally remains pending until WERH-010 records the actual SHA from
   `git log` after the follow-up commit exists.
+
+### WERH-006 Automation, Pipeline, Workflow, and QA Evidence
+
+- **RED assertion**:
+  `rg -n 'Actual CI Job DAG|Path Filter and Gate Coverage Matrix|GitOps Delivery Boundary|Automation Gap Register' docs/90.references/research/2026-07-07-wer/automation-pipeline-workflow-qa.md`
+  exited 1 with no matches before editing, proving that the approved topology
+  structures were absent.
+- **Workflow and DAG re-derivation**: all five workflow YAML files and their
+  owning `.github` configs were inspected. `ci.yml` has six jobs.
+  `branch-policy` and `changes` have no `needs` and are parallel roots;
+  `branch-policy` is PR-only. `pre-commit`, `repo-quality-static`, and
+  `manifest-static` each need only `changes` and use one corresponding filter
+  output. `ci-summary` directly needs all five jobs, runs with `always()`, and
+  fails for a needed `failure` or `cancelled` result while accepting a
+  conditional `skipped` result. This corrects the prior serial-DAG fact defect.
+- **Filter and validator evidence**: `precommit: '**'` selects the pre-commit
+  job for an observed changed path. The `repo_quality` list includes docs,
+  `.github`, all three adapter roots, scripts, tests, examples, and
+  `gitops/apps/root/**`; the broader `manifests` list includes `gitops/**`,
+  infrastructure YAML/tests, examples, policy, Traefik, Kube-linter config,
+  and the four manifest/policy validator scripts. The exact six-column matrix
+  contains nine surface rows and distinguishes direct CI commands, provider
+  hooks, pre-commit, and optional-tool behavior.
+- **Shell and hook boundary**: dedicated `bash -n` evidence is limited to the
+  shared PostToolUse/lifecycle hook scripts after a matching edit and explicit
+  manual commands in the CI/CD QA guide. CI uses pre-commit ShellCheck/shfmt;
+  `validate-repo-quality-gates.sh` is not reported as a general shell-syntax
+  gate. Post-edit/lifecycle manifest routing runs manifest syntax and secret
+  handling but not the full CI static-contract/GitOps-structure/policy bundle.
+- **GitOps delivery boundary**: `root-platform` points to
+  `gitops/apps/root`, whose kustomization lists 18 platform Application
+  manifests. `apps-generator` discovers `gitops/workloads/*` under the `apps`
+  project. Both tracked controllers declare automated prune/self-heal intent.
+  The CI workflow contains no deploy/live mutation job, so it is documented as
+  static QA rather than deployment CD; live pull, generated Applications,
+  health, sync, and convergence remain Unverified.
+- **External sources**: the eight required official/primary sources were
+  opened read-only on 2026-07-10: GitHub workflow syntax, visualization graph,
+  secure use, `GITHUB_TOKEN`, and concurrency; pre-commit; DORA metrics; and
+  OpenGitOps. External behavior and benchmarks are kept separate from local
+  implementation evidence.
+- **Gap rechecks**: seven non-mutating rows use the approved classification
+  vocabulary and record severity, current evidence, risk rationale,
+  recommendation, and canonical follow-up route. They cover path-filter
+  dependencies, local policy/hook coverage, warn-only Headlamp/Kiali live TLS
+  assertions, immutable Action SHA pinning, absent supply-chain evidence,
+  regex-heavy static contracts, and absent DORA telemetry.
+- **Focused and optional validation**: the four exact headings were each found
+  once; the exact coverage header was found; all eight required URLs were
+  present; the DAG/job/date scan found every required term; and
+  `markdownlint-cli2` reported 0 errors.
+- **Required validation**: `git diff --check` exited 0; changed-file
+  `pre-commit run --files` passed every applicable file-hygiene, secret, and
+  Markdown hook; and non-applicable workflow/shell/manifest hooks were skipped.
+  `bash scripts/validate-repo-quality-gates.sh .` returned
+  `[PASS] repository quality gates passed`. `bash scripts/validate-harness.sh`
+  returned `PASS harness repo-static validation`, including GitOps ownership,
+  104 YAML parses, Kube-linter, secret handling, built-in policy fallback,
+  static infrastructure contracts, and diff hygiene.
+- **Limitations**: no live Kubernetes/Argo CD/Vault/ESO, provider runtime,
+  credential, secret-value, remote GitHub Actions/ruleset/required-check,
+  workflow dispatch, release, publish, push, merge, or third-party mutation
+  check ran. `conftest` was not installed, so the harness reported SKIP and the
+  built-in policy fallback passed; this is not a Conftest pass. Kube-linter was
+  available and reported no lint errors for the harness manifest targets.
+- **Review and commit evidence**: independent task-scoped review remains
+  pending. The WERH-006 commit field intentionally remains pending until
+  WERH-010 records the resulting SHA from `git log` after this commit exists.
 
 - **RED command**:
   `rg -n '2026-07-10-current-research-pack-fact-first-hardening' docs/04.execution/tasks/README.md`
