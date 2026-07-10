@@ -153,7 +153,7 @@ as each task completes.
 | WERH-005 | Harden provider implementation and current-model analysis. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; exact 10-role/30-path adapter matrix, three hook/settings JSON surfaces, 17 surface-specific model rows, 13 one-to-one model evaluation/migration rows, six task-routing rows, 21 official URLs, eight routed findings, focused assertions, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Important review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
 | WERH-006 | Harden automation, pipeline, workflow, and QA topology. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1; 5 workflows, 6 CI jobs, 2 parallel roots, 3 `changes`-dependent conditional jobs, 8 official sources, 9 coverage rows, 7 routed gap rows, and the exact GitOps ownership boundary are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
 | WERH-007 | Harden Kubernetes, infrastructure, and security analysis. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1; 15 primary sources, 12 control rows, 6 evidence lanes, 14 routed security gaps, AppProject/GitOps/NetworkPolicy/ESO-Vault controls, and supply-chain boundaries are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
-| WERH-008 | Harden AI-agent roster, upstream comparison, and model routing. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | Local roster, current upstream evidence, native adapter gaps, and task-model recommendations are source-backed. | doc-writer | Pending | Pending | Todo |
+| WERH-008 | Harden AI-agent roster, upstream comparison, and model routing. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; exact 10-role/30-adapter status, pinned 17-division/254-file upstream inventory, 15 install targets, 13 conversion targets, 13 routed pattern decisions, ten role-model routes, fixed-SHA sources, and static validation are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
 | WERH-009 | Close pack coverage and cross-document integration. | doc | Addendum: Coverage and Related-Document Integration Rules | Phase 3 | Every requested topic has one primary owner; links, freshness, and repeated content are consistent. | supervisor | Pending | Pending | Todo |
 | WERH-010 | Run final validation and close execution records. | eval | Addendum: Verification and Acceptance | Phase 4 | Required static gates and final review pass; limitations and logical commits are recorded. | supervisor | Pending | Pending | Todo |
 
@@ -179,7 +179,7 @@ as each task completes.
 - [x] WERH-005 Harden provider implementation and current-model analysis.
 - [x] WERH-006 Harden automation, pipeline, workflow, and QA topology.
 - [x] WERH-007 Harden Kubernetes, infrastructure, and security analysis.
-- [ ] WERH-008 Harden AI-agent roster, upstream comparison, and model routing.
+- [x] WERH-008 Harden AI-agent roster, upstream comparison, and model routing.
 
 ### Phase 3: Pack Integration
 
@@ -626,6 +626,87 @@ as each task completes.
 - **Review and commit evidence**: independent task-scoped review remains
   pending. The WERH-007 commit field intentionally remains pending until
   WERH-010 records the resulting SHA from `git log` after this commit exists.
+
+### WERH-008 AI-Agent Roster and Routing Evidence
+
+- **RED assertion**:
+  `rg -n 'Provider-Native Adapter Status|Upstream Snapshot — 2026-07-10|Role and Coverage Gap Register|Default, Escalation, and Fallback Routing' docs/90.references/research/2026-07-07-wer/ai-agents-roster-and-gap-analysis.md`
+  exited 1 with no output before editing, proving that all four approved
+  analysis structures were absent.
+- **Local roster recheck**: each of `.claude/agents`, `.agents/agents`, and
+  `.codex/agents` contains the same ten stems, for 30 concrete files. All 30
+  were read for model, tools/effort/sandbox fields, scope imports, guardrails,
+  handoff, and postflight. The exact ten-row status matrix records every path,
+  local model, Claude tool boundary, Codex effort (`xhigh` supervisor, `high`
+  seven implementation/review/security/incident roles, `medium` docs/wiki),
+  and absent `.agents` tools/effort/sandbox fields.
+- **Native/local boundary**: Claude and Codex adapters use the documented
+  project-agent paths. Official Gemini CLI project agents use
+  `.gemini/agents/*.md`; local `.agents/agents/*.md` is an
+  Antigravity/repository adapter. Stem parity is not native registration or
+  behavioral parity.
+- **Validator boundary**: the repository validator checks exact stems,
+  Claude/Codex runtime phrases and scopes, selected Claude model/tools and
+  Codex model/effort values, and catalog references. Its expected-field maps
+  cover eight roles and omit network/observability; Gemini semantics are not
+  compared. Those gaps route to future Stage 00/04 work only.
+- **Pinned upstream result**: the last `agency-agents` `main` commit before the
+  cutoff is `9f3e401ccd09aa0ee0ef8e015226d0647908e01e` at
+  `2026-07-10 05:32:59 KST`. The pinned registry has 17 divisions. A recursive
+  Git-tree count restricted to those divisions returns 254 Markdown agents;
+  direct-child-only counting returns 239 and omits 15 nested game-development
+  agents. The tree API response was not truncated.
+- **Upstream contract result**: the pinned linter requires `name`,
+  `description`, and `color`; `emoji`/`vibe` are optional. There is no common
+  required model, effort, scope, minimum-tools, guardrail, handoff, or
+  postflight contract. `tools.json` registers 15 install targets (12 per-agent,
+  two roster, one plugin); `convert.sh` generates 13 targets because Claude
+  Code and Copilot use identity copies. Codex/Gemini conversion output omits
+  the local governance and model/tool/effort controls. The repository had no
+  tags or releases at check time and uses MIT.
+- **Count and marketing reconciliation**: the fixed-SHA tree count `254` is
+  the reproducible inventory. Upstream README `230+` is retained only as its
+  non-authoritative self-description, and the old Current `147+` value is
+  removed. The unpinned `main` page is discovery/currentness context only.
+- **Gap and routing result**: 13 pattern rows use only `Closed`, `Adapt`, or
+  `Skip`; no new `Candidate` meets the required repeated-work, distinct scope,
+  tools, output, acceptance, handoff, and postflight bar. The ten-role routing
+  matrix separates active declarations from proposed default/escalation/
+  fallback routes, records actual Codex effort, preserves provider lifecycle
+  and product/API/CLI distinctions, and attaches a role-specific eval gate.
+  No active adapter or model migration was performed.
+- **Sources**: ten exact fixed-SHA upstream URLs cover commit, tree, recursive
+  API, registry, linter, converter, tools, sample, README, and license. Eight
+  official Claude, OpenAI/Codex, and Gemini model/subagent URLs support native
+  paths and routing. All were checked read-only at
+  `2026-07-10 10:00 KST`.
+- **Focused and optional validation**: the exact four headings each appeared
+  once; adapter counts were `10/10/10`; exact status and routing matrices each
+  had ten role rows; gap decisions matched the approved vocabulary; fixed SHA,
+  `254/239/15`, `15` install targets, and `13` conversions were found.
+  `markdownlint-cli2` reported 0 errors and `git diff --check` exited 0.
+- **Required repository validation**: changed-file pre-commit passed every
+  applicable file-hygiene, secret, and Markdown hook; non-applicable workflow,
+  shell, and manifest hooks were skipped. The first harness run correctly
+  rejected two upstream URL paths as apparent missing local script references;
+  percent-encoding the URL path separators preserved exact reachable sources
+  without claiming local files. After that correction,
+  `bash scripts/validate-repo-quality-gates.sh .` returned
+  `[PASS] repository quality gates passed`, and
+  `bash scripts/validate-harness.sh` returned
+  `PASS harness repo-static validation`, including 104 YAML parses,
+  Kube-linter, the 100-file secret scan, built-in policy fallback, static
+  infrastructure contracts, and diff hygiene.
+- **Limitations**: no provider CLI/account/model entitlement, native agent
+  registry, schema load, inference, tool/hook enforcement, MCP, credential,
+  secret-value, live Kubernetes/Argo CD/Vault/ESO, remote GitHub/CI, publish,
+  push, merge, or third-party mutation check ran. Repo-static PASS cannot prove
+  provider-native behavior or model quality. `conftest` was unavailable; its
+  optional lane was SKIP and the built-in fallback passed, which is not a
+  Conftest pass.
+- **Review and commit evidence**: independent task-scoped review remains
+  pending. The WERH-008 commit field intentionally remains pending until
+  WERH-010 records the actual SHA from `git log` after this commit exists.
 
 - **RED command**:
   `rg -n '2026-07-10-current-research-pack-fact-first-hardening' docs/04.execution/tasks/README.md`
