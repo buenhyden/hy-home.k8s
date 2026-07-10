@@ -148,7 +148,7 @@ as each task completes.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | WERH-001 | Create execution evidence and baseline audit ledger. | doc | Addendum: Internal and External Research Contract | Phase 1 | Task IDs, evidence lanes, inventories, boundaries, and limitations are explicit. | supervisor | Pending | Pending | Todo |
 | WERH-002 | Harden workspace governance baseline. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1 before editing; current repo counts (10 agent stems on each of three adapter surfaces, 5 workflows, 6 CI jobs), official OpenGitOps sources, owner/enforcement matrices, 7 evidence-backed follow-up rows, focused heading/date scan, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
-| WERH-003 | Harden spec-driven SDLC, CI, QA, and document taxonomy. | doc | Addendum: Coverage and Gap Classification | Phase 2 | RED heading assertion exited 1; 19 SDLC templates, no Release route/template, zero Incident/Postmortem records, Spec/Task state asymmetry, all 14 document families, all 9 QA lanes, 11 primary sources, and 5 routed gap rows are recorded below. | doc-writer | Independent review pending. | Pending WERH-010 closure from `git log` | Done |
+| WERH-003 | Harden spec-driven SDLC, CI, QA, and document taxonomy. | doc | Addendum: Coverage and Gap Classification | Phase 2 | RED heading assertion exited 1; 19 SDLC templates, no Release route/template, zero Incident/Postmortem records, Spec/Task state asymmetry, all 14 document families, all 9 QA lanes, 11 primary sources, and 6 routed gap rows are recorded below. | doc-writer | Important review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
 | WERH-004 | Harden harness and loop engineering. | doc | Addendum: Internal and External Research Contract | Phase 2 | Harness/loop elements, termination, evaluation, recovery, and provider-neutral boundaries are source-backed. | doc-writer | Pending | Pending | Todo |
 | WERH-005 | Harden provider implementation and current-model analysis. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | Provider/API/product/CLI/local surfaces and model lifecycle states are separated. | doc-writer | Pending | Pending | Todo |
 | WERH-006 | Harden automation, pipeline, workflow, and QA topology. | doc | Addendum: Artifact and Ownership Design | Phase 2 | CI DAG, filters, GitOps boundary, feedback lanes, and delivery gaps match repo evidence. | doc-writer | Pending | Pending | Todo |
@@ -264,7 +264,10 @@ as each task completes.
   validators were inspected. The reference now separates formatting, linting,
   syntax/parse, repo-structural, manifest, secret, policy, artifact/release,
   and live-runtime evidence into nine rows and records what each lane cannot
-  prove.
+  prove. Follow-up review also confirmed root `.prettierrc.json` and
+  `.prettierignore`, no Prettier pre-commit/CI execution wiring, and that
+  `bash -n` is a CI/QA-guide manual single-file check rather than a
+  repo-quality or harness command.
 - **External sources**: the eleven required primary sources were checked
   read-only on 2026-07-10: GitHub Spec Kit; NIST SP 800-218 and SP 800-61 Rev.
   3; Google SRE postmortem culture; Nygard/Cognitect ADR; GitHub Actions secure
@@ -290,17 +293,19 @@ as each task completes.
   YAML parses, kube-linter, secret scanning, built-in policy fallback, static
   infrastructure contracts, and diff hygiene passed. `conftest` was not
   installed, so its lane was skipped and is not reported as a Conftest pass.
-- **Gap routing**: five non-mutating findings record severity, risk rationale,
+- **Gap routing**: six non-mutating findings record severity, risk rationale,
   recommendation, and canonical follow-up for draft-Spec/done-Task asymmetry,
   release readiness/provenance, incident exercise evidence, traceability
-  automation, and immutable Action pinning.
+  automation, immutable Action pinning, and configured-but-unwired Prettier.
 - **Limitations**: no live Kubernetes/Argo CD/Vault/ESO, provider runtime,
   credential, secret-value, remote GitHub/CI/ruleset, release, publish, push,
   merge, or third-party mutation check ran. Repo-static PASS and external
   benchmark findings do not establish live or remote readiness.
 - **Commit evidence**: the WERH-003 commit field intentionally remains pending
   until WERH-010 records the resulting SHA from `git log` after this commit
-  exists. Independent task review remains pending.
+  exists. Important review findings for classification vocabulary, Prettier
+  inventory/wiring, and manual shell syntax ownership were corrected;
+  independent re-review remains pending.
 
 - **RED command**:
   `rg -n '2026-07-10-current-research-pack-fact-first-hardening' docs/04.execution/tasks/README.md`
