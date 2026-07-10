@@ -3,123 +3,206 @@ title: 'Reference: Workspace Governance Baseline Research'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-07
+updated: 2026-07-10
 ---
 
 # Reference: Workspace Governance Baseline Research
 
 ## Overview
 
-이 문서는 `hy-home.k8s` 워크스페이스의 거버넌스 baseline을 2026-07-07 기준의 repo-backed evidence를 기반으로 요약하고 분석하여 정리한다. future agent와 maintainer가 워크스페이스의 목적, 역할, 운영 계약, 거버넌스 규칙, 템플릿, 스크립트, 통합 가이드, SDLC, CI/CD, QA, 보안 경계 및 AI 에이전트 체계를 신속하게 확인하도록 돕는 것이 목적이다.
+이 문서는 `hy-home.k8s` 워크스페이스의 거버넌스 baseline을 현재
+repository evidence와 공식 OpenGitOps 원칙에 대조해 설명한다. 워크스페이스는
+WSL2 + k3d 로컬 Kubernetes 홈랩, ArgoCD GitOps desired state, Stage 00~99
+문서 체계, 그리고 사람과 AI가 공유하는 Spec-Driven Development(SDD) 협업
+계약을 한 저장소에서 관리한다.
 
-특히, 2026-07-06에 spec-driven 개발을 거쳐 추가된 `observability-reviewer`와 `network-reviewer` 에이전트의 존재를 로스터에 반영하여 최신성을 확보하였다.
-
-이 문서는 설명용 참고 문서로서, 실제 실행 정책, CI 설정, 인프라 권한, 배포 승인 절차를 직접 정의하거나 변경하지 않는다.
+이 문서는 설명용 Stage 90 reference다. 활성 정책, CI semantics, provider
+runtime behavior, release 승인, live-cluster 절차를 정의하거나 변경하지 않는다.
 
 ## Purpose
 
-- 워크스페이스 엔지니어링 리서치 팩의 거버넌스 baseline 수립.
-- 워크스페이스 목적, 거버넌스, 자동화, 검증 및 문서 Stage 라우팅 체계 요약 보존.
-- canonical owner 및 후속 작업 경로를 추적하여 실제 정책 파일을 침범하지 않고 조회 가능하도록 구성.
+- 워크스페이스 목적과 GitOps-first operating contract를 current repo fact로
+  요약한다.
+- governance area별 canonical owner, local evidence, authority boundary를
+  연결한다.
+- instruction, preventive control, feedback evidence, knowledge store의 관계를
+  하나의 enforcement map으로 보존한다.
+- 현재 확인되는 governance gap을 severity와 canonical follow-up route가 있는
+  비변경 recommendation으로 기록한다.
 
 ## Reference Type
 
 - Type: durable-concept / source-ledger
-- Source checked: 2026-07-07
-- Refresh trigger: 거버넌스 규칙, CI/CD 설정, 템플릿 구성, 프로바이더 어댑터, 혹은 에이전트 로스터의 변경.
+- Source checked: 2026-07-10
+- Refresh trigger: workspace purpose, Stage routing/lifecycle contract, agent roster,
+  provider adapter, approval boundary, CI workflow, validation script, audit index,
+  release evidence, or Graphify snapshot changes.
 
 ## Authority Boundary
 
 - **Authoritative for**:
-  - 2026-07-07 기준 워크스페이스 거버넌스 baseline 요약 및 사실 기술.
-  - 거버넌스 개념과 리포지토리 내 실제 canonical owner 간의 매핑.
+  - Repo-backed governance baseline and owner/evidence mapping checked on
+    2026-07-10.
+  - Dated comparison between local evidence and the official OpenGitOps
+    benchmark.
+  - Evidence-backed follow-up recommendations for later scoped work.
 - **Not authoritative for**:
-  - 활성 거버넌스 정책 규정 (Stage 00이 소유).
-  - 실 클러스터(k3d/ArgoCD/Vault/ESO)의 배포 및 비밀정보 조작 권한.
+  - Active Stage 00/05 policy, Stage 99 template/routing contracts, CI workflow
+    semantics, provider-native permissions, or release procedure.
+  - Live k3d, Kubernetes, ArgoCD, Vault, ESO, credential, secret, provider-runtime,
+    remote GitHub, or deployment readiness.
+  - Proof that an external benchmark capability is implemented locally.
 
 ## Scope
 
-- 워크스페이스 목적, 운영 모델, 역할, 프로바이더 어댑터, CI/CD 및 QA 검증 레인, 포맷팅, 린팅, 구문 검증, 자동화, 파이프라인, 템플릿, 스크립트, 운영 계약, SDLC 내 위치, 거버넌스 체계 및 규칙, 보안 경계.
-- 실 클러스터 검증 및 런타임 갱신 조작은 포함하지 않음.
+- Covers workspace purpose, GitOps-first flow, persona/owner routing, provider
+  adapters, Stage taxonomy, approval boundaries, CI/static validation, evidence
+  stores, templates, scripts, integration guidance, and governance follow-up.
+- Excludes active control changes, live/remote checks, secret-value inspection,
+  provider-runtime inspection, Historical-pack edits, and implementation of the
+  recommendations below.
 
 ## Definitions / Facts
 
-### 워크스페이스 목적 및 운영 모델 (Workspace Purpose & Operating Model)
-`hy-home.k8s`는 WSL2 + k3d + ArgoCD GitOps 기반 로컬 Kubernetes 홈랩 플랫폼이자, 사람과 AI가 동일한 Spec-Driven Development(SDD) 단계별 문서를 공유하는 협업 프레임워크다.
-- **목적**: 설계부터 운영까지의 맥락을 추적 가능하도록 선언형 GitOps와 SDD 문서 체계를 동기화한다.
-- **운영 계약**: 모든 변경은 Git 리포지토리 변경 -> 코드 리뷰 -> ArgoCD 자동 동기화(Reconciliation) 구조를 기본으로 하며, 에이전트 단독으로 실 클러스터 리소스를 직접 변경(`kubectl apply` 등)하는 것은 금지된다.
+### Workspace Purpose and Operating Contract
 
-### 역할 및 프로바이더 어댑터 (Roles & Provider Adapters)
-거버넌스 규칙과 체크리스트는 `docs/00.agent-governance/rules/` 하위에 위치한다.
-- **프로바이더 어댑터 모델**: 공통 거버넌스 계약을 바탕으로 각 AI 어댑터가 프로바이더 고유의 설정을 소유한다. Claude는 `.claude/`, GPT/Codex는 `.codex/`, Gemini는 `.agents/` 디렉터리에 어댑터 설정을 지닌다.
-- **로스터에 반영된 AI Agents**: `supervisor`, `k8s-implementer`, `gitops-reviewer`, `code-reviewer`, `security-auditor`, `incident-responder`, `doc-writer`, `wiki-curator` 외에 최신 추가된 `observability-reviewer`, `network-reviewer`를 포함하여 총 10개의 전용 에이전트가 정의되어 거버넌스를 준수하도록 어댑터 매핑이 유지된다.
+- **Repo fact — purpose**: [Root README](../../../../README.md) defines this
+  repository as the document SSoT, GitOps manifest set, and bootstrap asset set
+  for a WSL2 + WSL-native Docker + k3d local platform. External Vault,
+  PostgreSQL, Valkey, and cloud runtimes remain outside the repository-owned
+  runtime boundary.
+- **Repo fact — execution contract**:
+  [Bootstrap Governance](../../../00.agent-governance/rules/bootstrap.md) and
+  [Agentic Execution Rules](../../../00.agent-governance/rules/agentic.md)
+  require repo-first planning, explicit validation, and the default desired-state
+  flow `repository change -> review -> ArgoCD reconciliation`. Direct live
+  mutation is not the normal agent path.
+- **Repo fact — reconciliation evidence**:
+  [`root-application.yaml`](../../../../gitops/clusters/local/root-application.yaml)
+  points ArgoCD at `gitops/apps/root`, while
+  [`applicationset-apps.yaml`](../../../../gitops/clusters/local/applicationset-apps.yaml)
+  discovers `gitops/workloads/*`; both declare automated pruning and self-healing.
+  This proves declarative configuration exists, not that a live controller
+  reconciled it in this review.
+- **Repo fact — people and agents**: persona-to-layer routing is owned by
+  [Persona Protocol](../../../00.agent-governance/rules/persona.md) and the
+  matching scopes. A 2026-07-10 file inventory found the same ten agent stems in
+  each of `.claude/agents/*.md`, `.agents/agents/*.md`, and
+  `.codex/agents/*.toml`. This proves file-stem parity only, not provider-native
+  registration or runtime behavior.
+- **Repo fact — CI inventory**: `.github/workflows/` contains exactly five YAML
+  workflows. [`ci.yml`](../../../../.github/workflows/ci.yml) declares six jobs:
+  `branch-policy`, `changes`, `pre-commit`, `repo-quality-static`,
+  `manifest-static`, and `ci-summary`. Local inspection did not verify remote
+  GitHub Actions runs or branch-protection/ruleset state.
 
-### CI/CD 및 QA 검증 레인 (CI/CD & QA Evidence Lanes)
-QA 및 검증은 다음과 같이 분리되어 운영된다.
-- **Repo-static lane (정적 검증)**: 커밋된 매니페스트, 템플릿 준수 여부, 정적 계약 일치 여부를 검증한다. `validate-repo-quality-gates.sh` 스크립트가 이를 총괄한다.
-- **CI/toolchain lane (CI 빌드)**: GitHub Actions에 정의된 워크플로우(`ci.yml`)를 통해 `branch-policy`, `pre-commit`, `repo-quality-static`, `manifest-static` 등의 잡을 순차 수행한다.
-- **Live runtime lane (실행 검증)**: 별도 승인된 운영 절차나 검증 스크립트(`run-all.sh`)를 운영자가 실행하는 환경으로, 정적/CI 검증 단계에서 임의로 실행 여부를 판단하지 않는다.
+### External Benchmark
 
-### 포맷팅, 린팅, 구문 검증 (Formatting, Linting & Syntax Validation)
-- **포맷팅**: `.editorconfig`가 전역 코딩 스타일을 규정하며, Prettier는 기본 셋에 포함되지 않고 Markdownlint 및 Git diff check로 포인트를 짚어낸다.
-- **린팅**: `markdownlint-cli2`가 마크다운 문서 품질을 제어하고, `shellcheck`와 `shfmt`가 쉘 스크립트를 검사하며, `actionlint` 및 `zizmor`가 GitHub Actions 보안/구조를 검증한다.
-- **구문 검증**: 쉘 스크립트의 경우 `bash -n`을 통해 기본 문법 오류를 local 및 CI 단계에서 원천 차단한다.
+**External fact**: OpenGitOps v1.0.0 defines four GitOps principles for desired
+state: Declarative, Versioned and Immutable, Pulled Automatically, and
+Continuously Reconciled. Sources were checked on 2026-07-10 at the
+[OpenGitOps official site](https://opengitops.dev/) and the
+[OpenGitOps official principles document](https://github.com/open-gitops/documents/blob/main/PRINCIPLES.md).
 
-### 자동화, 파이프라인, 워크플로우 (Automation, Pipeline & Workflow)
-- **자동화**: Dependabot을 통한 의존성 자동 업데이트, PR 생성 시 라벨링 자동화(`labeler.yml`), 인사말 댓글 작성(`greetings.yml`) 등 관리성 자동화가 적용되어 있다.
-- **파이프라인 및 워크플로우**: Actions CI 파이프라인은 최소 권한(`permissions: contents: read`)을 준수하며, lifecycle hook 스크립트(`docs/00.agent-governance/hooks/*.sh`)가 에이전트 동작 시 자동 포맷팅 및 거버넌스 규칙 준수 검증을 보조적으로 가동한다.
+| OpenGitOps benchmark context | Repo fact | Interpretation |
+| --- | --- | --- |
+| Declarative | Kubernetes/Argo CD desired state is stored under `gitops/**`; the root Application and workload ApplicationSet name repository paths explicitly. | Aligned for the tracked desired-state surface. The benchmark is context; the manifests are the local proof. |
+| Versioned and Immutable | Desired state is Git-tracked, and local history is available. This review did not inspect remote branch protection, signed commits, retention, or history-rewrite controls. | Versioning is evidenced; immutable-history enforcement is **Unverified** on the remote surface. |
+| Pulled Automatically | Argo CD Application/ApplicationSet manifests point to the Git repository and `main`. | Pull configuration is present repo-statically; a live pull was not observed. |
+| Continuously Reconciled | The same manifests configure `automated.prune: true` and `selfHeal: true`. | Reconciliation intent is present; controller health, sync status, and actual convergence were not checked. |
 
-### 템플릿 및 통합 가이드 (Templates & Integration Guides)
-- **템플릿**: `docs/99.templates/` 산하에 PRD, ARD, ADR, Spec, Plan, Task, Runbook, Reference 등의 표준 마크다운 템플릿이 정의되어 있다. 문서의 생성 위치와 템플릿 간의 맵은 [Template Routing Contract](../../../99.templates/support/template-routing.md)에 종속된다.
-- **통합 가이드**: `docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md` 등은 로컬 검증 및 CI 활용법을 상세히 안내하는 역할을 담당한다.
+**Recommendation boundary**: OpenGitOps does not establish any local
+implementation verdict by itself. Future live-convergence evidence must come from
+an operator-approved runbook, while remote immutability evidence requires a
+separate approved GitHub settings/ruleset review.
 
-### 스크립트 및 검증 (Scripts & Validation)
-`scripts/README.md`에 정의된 정적/동적 검증 스크립트가 플랫폼의 기본 가드레일을 이룬다.
-- `validate-repo-quality-gates.sh`: 문서의 단계별 연결성과 마크다운 헤더 준수, 깨진 링크 등을 종합 검증한다.
-- `validate-gitops-structure.sh`, `validate-k8s-manifests.sh`: GitOps Kustomize 구조 및 쿠버네티스 리소스 유효성을 평가한다.
-- `check-secret-handling.sh`, `validate-policy-gates.sh`: plaintext secrets 유출 및 정책(Namespace 임의 생성 불가 등) 준수 여부를 Conftest나 python fallback으로 감사한다.
+### Owner and Authority Matrix
 
-### 운영 계약 및 승인 경계 (Operating Contract & Approval Boundaries)
-에이전트와 운영자 간의 행위 한계를 정의한다.
-- **Default**: 리포지토리 desired state의 PR 작성 및 정적 검증 증적 제출만 수행.
-- **Exceptions (승인 필요)**: 실 클러스터 상태 수정, 비밀 정보 갱신, Actions 권한 확대, tag 릴리즈 푸시 등.
-- 외부 API 검색/조회는 무해하나, API를 통한 데이터 전송이나 외부 유료 작업 구동은 운영자 명시 승인이 동반되어야 한다.
+| Area | Canonical owner | Local implementation evidence | Authority boundary | Current verdict |
+| --- | --- | --- | --- | --- |
+| Workspace purpose and intake | [Root README](../../../../README.md), [Bootstrap Governance](../../../00.agent-governance/rules/bootstrap.md) | Repository scope, JIT loading order, repo-evidence sources, GitOps-first rule | This reference summarizes; it does not change workspace scope or intake policy. | Sufficient (repo-static) |
+| Persona and layer ownership | [Persona Protocol](../../../00.agent-governance/rules/persona.md), [Documentation Scope](../../../00.agent-governance/scopes/docs.md) | Technical Writer owns Stage 90 references; other persona scopes own their active stages | Stage 90 cannot grant another persona's implementation or operational authority. | Sufficient |
+| SDLC stage and template routing | [Stage Authoring Matrix](../../../00.agent-governance/rules/stage-authoring-matrix.md), [SDLC Governance](../../../99.templates/support/sdlc-governance.md), [Template Routing Contract](../../../99.templates/support/template-routing.md) | Numeric Stage 01/03 routes, date-based Stage 04 routes, one template per authored path | Active lifecycle/route changes belong to Stage 00/99 owners and validators, not this reference. | Needs strengthening; duplicate summaries remain |
+| Agent roster and provider adapters | [Local Harness Catalog](../../../00.agent-governance/harness-catalog.md), [Harness Implementation Map](../../../00.agent-governance/harness-implementation-map.md), provider notes | Ten matching agent stems across three adapter directories; shared assets under `.agents/**` with provider views | File parity is not native registration, permission enforcement, or live provider behavior. | Sufficient for inventory; runtime Unverified |
+| Approval and mutation boundary | [Harness Approval Boundaries](../../../00.agent-governance/rules/approval-boundaries.md) | Protected-surface matrix; live cluster, Vault/secret, cloud, GitHub publish/merge/dispatch boundaries | Only explicit human/operator approval can broaden the default read-only/live-mutation boundary. | Sufficient |
+| GitOps desired state | `gitops/**`, [Kubernetes GitOps operations policy](../../../05.operations/policies/0001-k8s-gitops-operations-policy.md) | Root Argo CD Application, workload ApplicationSet, Kustomize resources, automated prune/self-heal declarations | Repo evidence proves desired-state configuration, never live reconciliation or readiness. | Sufficient repo-static; live Unverified |
+| CI and validation lanes | [`ci.yml`](../../../../.github/workflows/ci.yml), [Scripts README](../../../../scripts/README.md), [CI/CD & QA guide](../../../05.operations/guides/0010-ci-cd-qa-reference-guide.md) | Five workflow files, six CI jobs, repo-quality and manifest-static command bundles | Local PASS cannot prove remote CI, optional-tool, or live-runtime PASS. | Sufficient repo-static; remote CI Unverified |
+| Execution evidence and durable memory | Stage 04 task records, [Progress Ledger](../../../00.agent-governance/memory/progress.md) | Task IDs, command evidence, limitations, handoff, reusable lessons | Task records prove recorded checks only; the harness catalog and active owners retain current truth. | Sufficient, with lifecycle asymmetry |
+| Research and audit currentness | [Research index](../README.md), [Audit index](../../audits/README.md), reference maintenance runbook | Dated Current/Historical research packs and dated audit snapshots | Stage 90 remains descriptive and must not label stale snapshots as active policy. | Needs strengthening; audit Current labels drift |
+| Release evidence | [GitHub automation hub](../../../../.github/ABOUT.md), [`generate-changelog.yml`](../../../../.github/workflows/generate-changelog.yml) | Version-tag workflow creates a review artifact and does not publish or mutate repository history | Artifact generation is not release approval, promotion policy, provenance, or deployment. | Partial; no dedicated release document contract |
 
-### SDLC 내 위치 (SDLC Position)
-이 연구 자료는 Stage 90 reference에 소속되어 향후 요구사항(Stage 01), 설계(Stage 02/03), 실행(Stage 04), 운영(Stage 05)을 수행하는 AI 에이전트와 사람이 근거 자료로 활용하는 정적 Lookup 공간이다. 이 참조 문서 자체로 배포 파이프라인에 변경을 줄 수 없다.
+### Enforcement and Evidence Map
 
-### 보안 경계 (Security Boundary)
-plaintext secrets의 리포지토리 커밋 금지, 최소 권한의 GITHUB_TOKEN 할당, gitleaks/detect-secrets를 활용한 secret leaks 방어, 외부 리소스 조작에 대한 휴먼 승인 등이 유기적으로 설계되어 동작한다.
+| Contract | Instruction | Preventive control | Feedback evidence | Knowledge store |
+| --- | --- | --- | --- | --- |
+| GitOps-first desired-state changes | Bootstrap and agentic rules require repository change, review, and reconciliation; direct mutation is exceptional. | Approval-boundary matrix plus provider-specific sandbox/permission controls; there is no claim of one identical provider gate. | GitOps structure, manifest, secret, and policy validators; Stage 04 task evidence | GitOps policy/runbooks, harness implementation map, progress ledger |
+| Authored document routing | Read template routing and the matching template before editing; keep Stage 90 descriptive. | Pre-edit documentation hooks where wired and deterministic structural/template checks in the repo-quality gate | `git diff --check`, Markdown checks, `validate-repo-quality-gates.sh` | Stage 00 routing, Stage 99 support contracts/templates, Stage README indexes |
+| Provider adapter parity | Keep role, scope import, guardrail, handoff, and postflight aligned while preserving native metadata. | Repository parity/inventory checks; Claude settings remain the native permission gate, while Codex/Gemini hook JSON is context/validation wiring | Harness/repo-quality validation and task-scoped adapter review | Harness catalog, provider notes, model policy |
+| Protected external/live action | Default external research is read-only; mutation, publish, push, merge, dispatch, paid jobs, secrets, and live changes require approval. | Runtime sandbox/approval plus the canonical approval matrix; secret values remain forbidden | Redacted secret scan, policy gates, explicit skipped-live limitations | Approval boundaries, operations runbooks/incidents, Stage 04 evidence |
+| CI/static quality lanes | Run local deterministic checks and keep repo-static, CI/toolchain, and live evidence separate. | CI path filters, read-only workflow permission, required workflow jobs, local script failure semantics | Five workflow definitions, six job results when remote CI runs, local script output | CI/CD QA guide, scripts inventory, task verification summaries |
+| SDD lifecycle and handoff | Route requirement, architecture, spec, plan, task, operations, and reference artifacts to their owning stages. | Route/frontmatter/index gates enforce deterministic shape; semantic lineage remains manual/link-based | Resolved-link checks, status/index checks, reviewer evidence | Stage documents, task records, progress ledger, archive tombstones |
+
+### Governance Gap Register
+
+The rows below are **recommendations**, not active changes. Severity is included
+inside `Risk`, and each row names the canonical route for a later scoped task.
+
+| Finding | Evidence | Risk | Recommendation | Canonical follow-up route |
+| --- | --- | --- | --- | --- |
+| Lifecycle draft/done asymmetry | A 2026-07-10 scan found 16 of 20 active `docs/03.specs/*/spec.md` files at `status: draft` and no Spec at `done`; for example, `021-sdlc-lifecycle-contract/spec.md` is draft while its Stage 04 plan and task are done. | **Medium** — completed execution can appear to depend on an unpromoted implementation contract, weakening lifecycle/currentness signals. | Define an explicit human promotion/closure review and deterministic evidence rule; do not auto-promote existing specs from this research pass. | New Stage 03 lifecycle-governance spec, then Stage 00 `documentation-protocol.md`/`stage-authoring-matrix.md`, Stage 03/04 indexes, templates, and repo-quality validation. |
+| Release document contract is absent | The Stage 99 route map has no release template. `.github/workflows/generate-changelog.yml` creates a changelog artifact, while `.github/ABOUT.md` states it does not publish, push, or deploy. | **Medium** — approval, promotion, retention, provenance, and rollback evidence can remain implicit even though a release-evidence artifact exists. | Decide whether a dedicated release record is needed and define its owner/route before adding a template or workflow gate. | New Stage 03 release-contract spec; if approved, Stage 05 policy/runbook plus Stage 99 route/template and `.github` release-evidence owner. |
+| Lifecycle and route summaries are duplicated | `sdlc-governance.md` says it owns lifecycle state, numeric lineage, handoff, and duplicate rules, but substantially similar summaries also appear in `stage-authoring-matrix.md` and `document-stage-routing.md`; `template-routing.md` already points to the canonical owner. | **Medium** — parallel normative summaries can diverge and make ownership ambiguous. | Keep one normative lifecycle body and convert secondary surfaces to concise role-specific pointers after a scoped cross-owner review. | Stage 00/99 governance-normalization spec and task covering `sdlc-governance.md`, stage routing/matrix, template routing, README indexes, and validator sentinels. |
+| Lifecycle lineage is link-only at the semantic layer | Templates and Stage READMEs require related-document links, and the quality gate checks deterministic routes/headings/links. The lifecycle implementation plan records that semantic duplicate lineage cannot be inferred safely; no stable lineage ID is enforced across PRD/ARD/ADR/Spec/Plan/Task. | **Medium** — links may resolve while representing incomplete or mismatched feature lineage, leaving reviewers to reconstruct traceability manually. | Evaluate a stable lineage identifier or a narrowly deterministic cross-stage validator before changing frontmatter or templates. | New Stage 03 traceability spec, followed by Stage 99 frontmatter/template support, Stage README contracts, and `scripts/validate-repo-quality-gates.sh`. |
+| Audit currentness labels drift | `docs/90.references/audits/README.md` labels several 2026-07-02/04 reports and the 2026-07-05 pack as `Current`; the 2026-07-05 audit pack still benchmarks the now-Historical `2026-07-04-wer` research pack, while `2026-07-07-wer` is the Current research pack. | **Medium** — readers can mistake multiple dated snapshots for one current implementation verdict and miss newer source evidence. | Establish one explicit current-audit pointer and label older packs as dated or resolved snapshots; refresh audits only against current canonical evidence. | Stage 90 audit index and reference-maintenance runbook through a Stage 03/04 audit-currentness task. |
+| Graphify snapshot is stale | `graphify-out/GRAPH_REPORT.md` is dated 2026-06-04 and says it was built from commit `e8a99671`; before this edit, `git rev-list --count e8a99671..HEAD` returned 199. | **Low** — optional graph navigation may omit newer governance and agent surfaces, but canonical repo files still control decisions. | Regenerate the tracked Graphify artifacts when the optional tool is intentionally available, review the diff, and record the source commit; never use the stale graph as current proof. | Graphify generated-artifact maintenance task with `graphify-out/**` review and Stage 04 evidence; no active-policy change. |
 
 ## Sources
 
-- [AGENTS.md](../../../../AGENTS.md)
+### Repository Sources
+
 - [Root README](../../../../README.md)
-- [.codex/CODEX.md](../../../../.codex/CODEX.md)
 - [Bootstrap Governance](../../../00.agent-governance/rules/bootstrap.md)
-- [Documentation Protocol](../../../00.agent-governance/rules/documentation-protocol.md)
-- [Document Stage Routing Rules](../../../00.agent-governance/rules/document-stage-routing.md)
-- [Agent Quality Standards](../../../00.agent-governance/rules/quality-standards.md)
+- [Agentic Execution Rules](../../../00.agent-governance/rules/agentic.md)
 - [Harness Approval Boundaries](../../../00.agent-governance/rules/approval-boundaries.md)
+- [Persona Protocol](../../../00.agent-governance/rules/persona.md)
+- [Documentation Scope](../../../00.agent-governance/scopes/docs.md)
 - [Local Harness Catalog](../../../00.agent-governance/harness-catalog.md)
 - [Harness Implementation Map](../../../00.agent-governance/harness-implementation-map.md)
-- [Common Governance & Mappings](../../../00.agent-governance/common-governance.md)
+- [Stage Authoring Matrix](../../../00.agent-governance/rules/stage-authoring-matrix.md)
+- [SDLC Governance](../../../99.templates/support/sdlc-governance.md)
+- [Template Routing Contract](../../../99.templates/support/template-routing.md)
+- [Reference Template](../../../99.templates/templates/common/reference.template.md)
 - [CI/CD & QA Reference Guide](../../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
 - [Scripts README](../../../../scripts/README.md)
 - [GitHub CI Workflow](../../../../.github/workflows/ci.yml)
-- [Template Routing Contract](../../../99.templates/support/template-routing.md)
+- [Argo CD root Application](../../../../gitops/clusters/local/root-application.yaml)
+- [Workload ApplicationSet](../../../../gitops/clusters/local/applicationset-apps.yaml)
+- [Audit index](../../audits/README.md)
+- [Graphify report](../../../../graphify-out/GRAPH_REPORT.md)
+- [Historical governance baseline](../2026-07-04-wer/workspace-governance-baseline.md)
+
+### External Sources
+
+- [OpenGitOps official site](https://opengitops.dev/) — Source checked:
+  2026-07-10; v1.0.0 principles and benchmark context.
+- [OpenGitOps official principles document](https://github.com/open-gitops/documents/blob/main/PRINCIPLES.md) —
+  Source checked: 2026-07-10; primary upstream text for the four principles.
 
 ## Review and Freshness
 
-- Review cadence: 거버넌스 변경 혹은 에이전트 로스터 수정 시
-- Last reviewed: 2026-07-07
-- Next review trigger: 거버넌스 규칙 변경, 어댑터 명세 수정, CI/CD 워크플로우 전면 개편
+- Review cadence: on source change
+- Last reviewed: 2026-07-10
+- Next review trigger: canonical governance, lifecycle/route ownership, agent
+  inventory, provider adapters, approval boundary, GitOps root/ApplicationSet,
+  CI workflow/job inventory, validation scripts, audit Current pointer, release
+  evidence, or Graphify source commit changes.
 
 ## Related Documents
 
-- **Parent research README**: [README.md](../README.md)
-- **References README**: [../../README.md](../../README.md)
-- **Harness Catalog**: [../../../00.agent-governance/harness-catalog.md](../../../00.agent-governance/harness-catalog.md)
-- **Spec**: [../../../03.specs/017-workspace-engineering-research-pack/spec.md](../../../03.specs/017-workspace-engineering-research-pack/spec.md)
-- **Plan**: [../../../04.execution/plans/2026-07-07-workspace-engineering-research-pack-refresh.md](../../../04.execution/plans/2026-07-07-workspace-engineering-research-pack-refresh.md)
-- **Task**: [../../../04.execution/tasks/2026-07-07-workspace-engineering-research-pack-refresh.md](../../../04.execution/tasks/2026-07-07-workspace-engineering-research-pack-refresh.md)
+- **Current pack README**: [README.md](./README.md)
+- **Parent research README**: [../README.md](../README.md)
+- **Parent references README**: [../../README.md](../../README.md)
+- **Spec**: [Workspace Engineering Research Pack Spec](../../../03.specs/017-workspace-engineering-research-pack/spec.md)
+- **Plan**: [Current Research Pack Fact-First Hardening Plan](../../../04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md)
+- **Task**: [Current Research Pack Fact-First Hardening Task](../../../04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md)
+- **Reference maintenance runbook**: [Reference Maintenance Runbook](../../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

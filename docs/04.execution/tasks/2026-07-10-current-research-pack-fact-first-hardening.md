@@ -147,7 +147,7 @@ as each task completes.
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Review outcome | Commit | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | WERH-001 | Create execution evidence and baseline audit ledger. | doc | Addendum: Internal and External Research Contract | Phase 1 | Task IDs, evidence lanes, inventories, boundaries, and limitations are explicit. | supervisor | Pending | Pending | Todo |
-| WERH-002 | Harden workspace governance baseline. | doc | Addendum: Artifact and Ownership Design | Phase 2 | Repo facts, external benchmark, owner matrix, and follow-up routes are present. | doc-writer | Pending | Pending | Todo |
+| WERH-002 | Harden workspace governance baseline. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1 before editing; current repo counts (10 agent stems on each of three adapter surfaces, 5 workflows, 6 CI jobs), official OpenGitOps sources, owner/enforcement matrices, 6 evidence-backed follow-up rows, focused heading/date scan, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Implementer self-review passed; independent task review pending. | Pending WERH-010 closure from `git log` | Done |
 | WERH-003 | Harden spec-driven SDLC, CI, QA, and document taxonomy. | doc | Addendum: Coverage and Gap Classification | Phase 2 | Every SDLC document family and QA lane has a role, evidence, benchmark, and gap verdict. | doc-writer | Pending | Pending | Todo |
 | WERH-004 | Harden harness and loop engineering. | doc | Addendum: Internal and External Research Contract | Phase 2 | Harness/loop elements, termination, evaluation, recovery, and provider-neutral boundaries are source-backed. | doc-writer | Pending | Pending | Todo |
 | WERH-005 | Harden provider implementation and current-model analysis. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | Provider/API/product/CLI/local surfaces and model lifecycle states are separated. | doc-writer | Pending | Pending | Todo |
@@ -173,7 +173,7 @@ as each task completes.
 
 ### Phase 2: Topic Hardening
 
-- [ ] WERH-002 Harden workspace governance baseline.
+- [x] WERH-002 Harden workspace governance baseline.
 - [ ] WERH-003 Harden spec-driven SDLC, CI, QA, and document taxonomy.
 - [ ] WERH-004 Harden harness and loop engineering.
 - [ ] WERH-005 Harden provider implementation and current-model analysis.
@@ -190,6 +190,46 @@ as each task completes.
 - [ ] WERH-010 Run final validation and close execution records.
 
 ## Verification Summary
+
+### WERH-002 Governance Baseline Evidence
+
+- **RED assertion**:
+  `rg -n 'Owner and Authority Matrix|Enforcement and Evidence Map|Governance Gap Register|External Benchmark' docs/90.references/research/2026-07-07-wer/workspace-governance-baseline.md`
+  exited 1 with no matches before the edit.
+- **Repo-fact inventory**: `find` counts confirmed ten agent files under each
+  of `.claude/agents`, `.agents/agents`, and `.codex/agents`; five workflow
+  files under `.github/workflows`; and a job-ID scan of `ci.yml` found six jobs.
+  A lifecycle scan found 20 active `spec.md` files, 16 with `status: draft`
+  and none with `status: done`; the completed 021 lifecycle plan/task remain a
+  concrete draft/done asymmetry example.
+- **Gap rechecks**: Stage 99 contains no release template; lifecycle and route
+  summaries repeat across `sdlc-governance.md`, `stage-authoring-matrix.md`,
+  and `document-stage-routing.md`; semantic lineage remains link/review based;
+  the audit index has multiple `Current` dated snapshots; and
+  `graphify-out/GRAPH_REPORT.md` was built from `e8a99671`, 199 commits behind
+  the pre-edit `HEAD` according to `git rev-list --count e8a99671..HEAD`.
+- **External sources**: official OpenGitOps benchmark context was checked
+  read-only on 2026-07-10 at <https://opengitops.dev/> and
+  <https://github.com/open-gitops/documents/blob/main/PRINCIPLES.md>.
+- **Focused and optional validation**:
+  `rg -n 'External Benchmark|Owner and Authority Matrix|Enforcement and Evidence Map|Governance Gap Register|2026-07-10' docs/90.references/research/2026-07-07-wer/workspace-governance-baseline.md`
+  found every required heading/date; `markdownlint-cli2` reported 0 errors;
+  and `pre-commit run --files` passed every applicable hook for both changed
+  files.
+- **Required validation**: `git diff --check` exited 0;
+  `bash scripts/validate-repo-quality-gates.sh .` returned
+  `[PASS] repository quality gates passed`; and
+  `bash scripts/validate-harness.sh` returned
+  `PASS harness repo-static validation`.
+- **Limitations**: the harness ran repo-static checks only. `conftest` was not
+  installed, so the built-in policy fallback passed and is not reported as a
+  Conftest pass. No live Kubernetes/Argo CD/Vault/ESO, provider runtime,
+  secret-value, credential, remote GitHub/CI/ruleset, publish, push, merge, or
+  third-party mutation check ran. OpenGitOps is benchmark context only, never
+  local implementation proof.
+- **Commit evidence**: the WERH-002 commit field intentionally remains pending
+  until WERH-010 records the resulting SHA from `git log` after this commit
+  exists.
 
 - **RED command**:
   `rg -n '2026-07-10-current-research-pack-fact-first-hardening' docs/04.execution/tasks/README.md`
