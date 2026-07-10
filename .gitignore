@@ -50,6 +50,7 @@ tests/_tmp_*
 # Universal
 *.tmp
 Thumbs.db
+.worktrees/
 
 # Project-specific
 uploads/
