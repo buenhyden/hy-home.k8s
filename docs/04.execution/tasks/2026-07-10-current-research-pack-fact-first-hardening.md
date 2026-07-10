@@ -154,7 +154,7 @@ as each task completes.
 | WERH-006 | Harden automation, pipeline, workflow, and QA topology. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1; 5 workflows, 6 CI jobs, 2 parallel roots, 3 `changes`-dependent conditional jobs, 8 official sources, 9 coverage rows, 7 routed gap rows, and the exact GitOps ownership boundary are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
 | WERH-007 | Harden Kubernetes, infrastructure, and security analysis. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1; 15 primary sources, 12 control rows, 6 evidence lanes, 14 routed security gaps, AppProject/GitOps/NetworkPolicy/ESO-Vault controls, and supply-chain boundaries are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
 | WERH-008 | Harden AI-agent roster, upstream comparison, and model routing. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; exact 10-role/30-adapter status, ten pinned upstream-overlap classifications, pinned 17-division/254-file inventory, 15 install targets, 13 conversion targets, 13 routed pattern decisions, ten role-model routes, fixed-SHA/cutoff-state sources, and static validation are recorded below. | doc-writer | Important and Minor review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
-| WERH-009 | Close pack coverage and cross-document integration. | doc | Addendum: Coverage and Related-Document Integration Rules | Phase 3 | Every requested topic has one primary owner; links, freshness, and repeated content are consistent. | supervisor | Pending | Pending | Todo |
+| WERH-009 | Close pack coverage and cross-document integration. | doc | Addendum: Coverage and Related-Document Integration Rules | Phase 3 | RED README assertion exited 1; 48 exact six-column owner rows cover every requested family; 8 Current artifacts, 9 contradiction families, fixed cutoff/freshness, links, and static/live boundaries are integrated; focused scans, Markdown lint, pre-commit, diff check, harness, and repo-quality results are recorded below. | supervisor | Implementation self-review complete; independent review pending. | Pending WERH-010 closure from `git log` | Done |
 | WERH-010 | Run final validation and close execution records. | eval | Addendum: Verification and Acceptance | Phase 4 | Required static gates and final review pass; limitations and logical commits are recorded. | supervisor | Pending | Pending | Todo |
 
 ## Suggested Types
@@ -183,7 +183,7 @@ as each task completes.
 
 ### Phase 3: Pack Integration
 
-- [ ] WERH-009 Close pack coverage and cross-document integration.
+- [x] WERH-009 Close pack coverage and cross-document integration.
 
 ### Phase 4: Validation Closure
 
@@ -723,6 +723,71 @@ as each task completes.
   added; independent re-review remains pending. The WERH-008 commit field
   intentionally remains pending until WERH-010 records the actual SHA from
   `git log` after this follow-up commit exists.
+
+### WERH-009 Pack Coverage and Integration Evidence
+
+- **RED assertion**:
+  `rg -n 'Requirement Coverage Matrix|Audit Outcome Summary|Model Source Cutoff|Primary Current Owner' docs/90.references/research/2026-07-07-wer/README.md`
+  exited 1 with no output before editing, proving the final pack coverage
+  contract was absent.
+- **Coverage contract**: the README now contains the exact `Model Source
+  Cutoff`, `Requirement Coverage Matrix`, and `Audit Outcome Summary` headings.
+  An `awk -F'|'` assertion found 48 requirement rows and zero malformed rows
+  against the exact six-column contract: `Requirement`, `Primary Current
+  owner`, `Workspace evidence`, `External benchmark`, `Audit status`, and
+  `Follow-up route`.
+- **Exact requirement ownership**: the 48 rows assign one primary Current owner
+  to every planned topic family: purpose, roles, overview, operating contract,
+  governance, system, rules, templates, scripts, integration guides,
+  spec-driven development, SDLC and every required document family, security,
+  Kubernetes, infrastructure, CI/CD, QA and its three requested quality lanes,
+  automation, pipeline, workflow, harness/loop and workspace application,
+  Claude/Codex/Gemini plus the common provider layer, provider status,
+  workspace AI agents, `agency-agents`, task-model routing, MCP, supply chain,
+  and static/live evidence.
+- **Contradiction closure**: the compact README closure preserves the reviewed
+  primary-owner results for 10 stems/30 adapters; pinned upstream
+  17 divisions/254 files/15 install targets/13 conversions; five workflows/six
+  CI jobs; the fixed model cutoff and surface-specific lifecycle; Gemini CLI
+  `.gemini/agents` versus local `.agents/agents`; root-platform versus
+  apps-generator ownership; the four shared hook scripts; configured-but-
+  unwired Prettier and provider-hook/manual `bash -n`; MCP `2025-11-25`
+  Current versus `2025-06-18` Final; and static/live evidence separation.
+  The only retained stale `Eight`/`eight` statements are quoted as a Stage 00
+  catalog follow-up gap; they are not a Current-pack inventory claim.
+- **Source and freshness closure**: the pack name remains the dated
+  `2026-07-07-wer` identity, while the README now states `Last reviewed:
+  2026-07-10`, the exact `2026-07-10 10:00 KST` provider/model cutoff, the
+  pinned upstream SHA, post-cutoff refresh semantics, and the active-owner
+  boundary. No post-cutoff research observation was introduced.
+- **Changed-document outcome**: all seven topic references are linked from one
+  changed-document summary. No secondary topic reference required a Task 9
+  factual edit because the reviewed Task 2-8 outputs already agree on the nine
+  contradiction families; Task 9 therefore changed only the README and this
+  execution evidence record.
+- **Focused validation**: exact heading/cutoff scans passed; the 48-row/zero-
+  malformed assertion passed; pack-wide topic, count, model, path, GitOps,
+  hook, formatter/syntax, MCP, date, and evidence-boundary scans found the
+  expected primary-owner facts. `markdownlint-cli2` reported 0 errors for both
+  modified files, and `git diff --check` exited 0.
+- **Repository validation**: changed-file `pre-commit run --files` passed every
+  applicable file-hygiene, secret, and Markdown hook; non-applicable workflow,
+  shell, and manifest hooks were skipped. `bash scripts/validate-harness.sh`
+  returned `PASS harness repo-static validation`, and
+  `bash scripts/validate-repo-quality-gates.sh .` returned
+  `[PASS] repository quality gates passed`, including relative-link and
+  authored-route checks.
+- **Limitations**: `conftest` was not installed; the harness reported SKIP and
+  the built-in fallback passed, which is not a Conftest pass. No provider CLI,
+  native agent/model/hook runtime, MCP connection, live Kubernetes/Argo CD/
+  Vault/ESO, CNI/endpoint, credential, secret-value, remote GitHub/CI/ruleset,
+  artifact/release, publish, push, merge, or third-party mutation check ran.
+  Repo-static PASS and external benchmarks do not establish live or remote
+  readiness.
+- **Review and commit evidence**: implementation self-review is complete;
+  independent Task 9 review is pending. The WERH-009 commit field remains
+  pending until WERH-010 records the actual SHA from `git log` after this
+  commit exists.
 
 - **RED command**:
   `rg -n '2026-07-10-current-research-pack-fact-first-hardening' docs/04.execution/tasks/README.md`
