@@ -47,9 +47,10 @@ review gates, and logical commit boundaries for Subagent-Driven execution.
 
 ## Reference Type
 
-Execution design and evidence ledger for a dated implementation audit pack.
-It is descriptive metadata within Stage 90, not an active Plan or Task contract
-for the workspace runtime.
+This execution ledger originated as descriptive metadata within the dated
+Stage 90 audit pack. The relocated document is now the canonical
+`status: done` Stage 04 Plan and evidence record; it does not authorize runtime
+changes.
 
 ## Authority Boundary
 
