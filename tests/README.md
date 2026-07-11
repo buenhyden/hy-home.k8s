@@ -36,7 +36,9 @@
 
 ```text
 tests/
-└── README.md    # This file
+├── fixtures/
+│   └── agent-roster-currentness.json # Canonical roster validator self-test cases
+└── README.md                         # This file
 ```
 
 ## How to Work in This Area
@@ -51,6 +53,8 @@ tests/
 | Area | Command | Evidence class |
 | --- | --- | --- |
 | Repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` | Repo-static |
+| Agent roster currentness fixture | `python3 scripts/validate-agent-roster-currentness.py . --self-test` | Repo-static |
+| Agent roster currentness repository check | `python3 scripts/validate-agent-roster-currentness.py .` | Repo-static |
 | External service contracts | `bash infrastructure/tests/verify-contracts-static.sh` | Repo-static |
 | GitOps structure | `bash scripts/validate-gitops-structure.sh` | Repo-static |
 | Kubernetes manifests | `bash scripts/validate-k8s-manifests.sh .` | Repo-static with Optional tool `kube-linter` when installed |
@@ -61,6 +65,13 @@ tests/
 
 ## Evidence Boundaries
 
+- `tests/fixtures/agent-roster-currentness.json`은 valid, missing role, provider
+  mismatch, stale eight-role prose, missing canonical owner pointer의 결정적인
+  사례 5개를 다룬다. self-test는 각 mutation을 확장하고 repository 검증과
+  동일한 production `validate_contract()`를 호출한다.
+- Roster fixture와 repository 검사는 repo-static evidence만 제공한다. Claude,
+  Codex, Gemini provider runtime을 실행하지 않으며 provider-native runtime
+  readiness를 입증할 수 없다.
 - Repo-static 검증 통과는 live k3d 운영 검증 완료를 의미하지 않는다.
 - Optional tool 검증은 `kube-linter`나 `conftest`가 설치되어 실제 실행됐을 때만 해당 도구 coverage로 보고한다. 미설치 `SKIP`은 fallback 또는 syntax 검증 통과로 따로 기록한다.
 - Live/operator-owned 검증은 사람 승인 bootstrap 또는 break-glass 맥락에서만 실행하고, repo-static evidence와 섞어 보고하지 않는다.

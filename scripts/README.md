@@ -46,6 +46,7 @@ scripts/
 ├── check-secret-handling.sh          # GitOps/infrastructure/examples manifest plaintext secret pattern scan
 ├── generate-llm-wiki-index.sh        # LLM Wiki generated Markdown index refresh/check
 ├── render-platform-chart-kinds.sh    # Manual Helm chart render review for platform AppProject allow-list impact
+├── validate-agent-roster-currentness.py # Canonical three-provider roster and catalog owner-pointer validation
 ├── validate-gitops-structure.sh      # ArgoCD root app, kustomization structure, and resource completeness validation
 ├── validate-harness.sh               # Repo-static harness validation wrapper over existing gates (no live checks)
 ├── validate-k8s-manifests.sh         # YAML syntax and optional kube-linter validation
@@ -165,6 +166,19 @@ Shell syntax coverage는 Bash 문법 검증 범위일 뿐 보존 근거가 아�
 | `docs/00.agent-governance/rules/document-stage-routing.md`  | active generated-index routing contract                        |
 
 ## Command Contract
+
+canonical roster와 owner-pointer 검증은 fixture self-test와 repository input에
+동일한 production contract를 사용한다.
+
+```bash
+python3 scripts/validate-agent-roster-currentness.py . --self-test
+python3 scripts/validate-agent-roster-currentness.py .
+```
+
+첫 번째 명령은 결정적인 fixture mutation 5개를 확장한다. 두 번째 명령은 세
+provider adapter stem set, 30-file inventory, stale eight-role prose, canonical
+harness owner pointer를 확인한다. 두 명령 모두 repo-static 검사이며 provider
+runtime readiness를 입증하지 않는다.
 
 | Command                                           | Argument Contract                                                                      | Scan / Validation Scope                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Result Semantics                                                                                                                                                                                   |
 | ------------------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

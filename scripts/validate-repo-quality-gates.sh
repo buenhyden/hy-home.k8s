@@ -16,6 +16,10 @@ if ! python3 -c 'import yaml' >/dev/null 2>&1; then
   exit 1
 fi
 
+python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" \
+  "$ROOT_DIR" --self-test
+python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" "$ROOT_DIR"
+
 python3 - "$ROOT_DIR" <<'PY'
 import collections
 import fnmatch
