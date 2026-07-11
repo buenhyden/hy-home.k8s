@@ -103,6 +103,34 @@ This README is located at
 - Repository-root evidence uses `../../../../<path>`.
 - Planned or conditional artifacts remain code literals.
 
+## Repository Snapshot Contract
+
+The initial inventory baseline is commit
+`ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7`, observed on `2026-07-11`.
+This base SHA freezes the starting repository facts; it is distinct from the
+final audit observation SHA, which the completed pack records separately after
+all audit artifacts are present. Audit reports must say which SHA supports
+each repository claim and must not silently substitute the evolving branch
+HEAD for the initial baseline.
+
+Counts use top-level frontmatter `status` values from authored documents.
+Every `README.md` is an index surface and is excluded from the counts below.
+
+| Family and path basis | Authored inventory | Status at initial baseline |
+| --- | --- | --- |
+| PRD — `docs/01.requirements/*.md` | 4 | 4 `active` |
+| ARD — `docs/02.architecture/requirements/*.md` | 4 | 4 `active` |
+| ADR — `docs/02.architecture/decisions/*.md` | 9 | 9 `accepted` |
+| Spec — `docs/03.specs/*/spec.md` | 20 | 16 `draft`; 4 `active` |
+| Agent design — `docs/03.specs/*/agent-design.md` | 1 | 1 `draft` |
+| Plan — `docs/04.execution/plans/*.md` | 41 | 41 `done` |
+| Task — `docs/04.execution/tasks/*.md` | 43 | 43 `done` |
+| Guide — `docs/05.operations/guides/*.md` | 8 | 8 `active` |
+| Policy — `docs/05.operations/policies/*.md` | 7 | 7 `active` |
+| Runbook — `docs/05.operations/runbooks/*.md` | 9 | 9 `active` |
+| Incident — `docs/05.operations/incidents/*.md` | 0 | No authored record; `README.md` is index-only. |
+| Postmortem — `docs/05.operations/incidents/` postmortem records | 0 | No authored record. |
+
 ## Research Ownership
 
 | Current research owner | Approved strengthening responsibility |
@@ -116,6 +144,25 @@ This README is located at
 | `automation-pipeline-workflow-qa.md` | CI/CD, QA, formatting, linting, syntax, automation, pipeline, workflow, evidence artifacts, and delivery metrics. |
 | `ai-agents-roster-and-gap-analysis.md` | Local roster, provider adapters, `agency-agents`, role gaps, model routing, instructions, and vibe-coding controls. |
 
+### Research-to-Audit Topic Ownership
+
+The following map closes research-to-audit ownership for every requested
+cross-cutting topic. Each row has one primary research owner and one planned
+audit owner; planned paths remain code literals until their reports exist.
+
+| Requested topic | Primary Current research owner | Planned audit owner |
+| --- | --- | --- |
+| Frontmatter keys and values | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Document state transitions | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Semantic lineage | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Release readiness | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Incident readiness | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Postmortem readiness | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| AI-agent `pre-commit run --all-files` obligation | `spec-sdlc-ci-qa-formatting.md` | `ci-qa-automation-pipeline-workflow.md` |
+| Vibe coding | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
+| `agency-agents` comparison | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
+| Task-model routing | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
+
 ## Audit Method
 
 Every applicable control will record:
@@ -128,21 +175,23 @@ Every applicable control will record:
 6. recommendation and priority; and
 7. follow-up SDLC owner and acceptance criteria.
 
-### Maturity and Confidence
+### Shared Maturity, Confidence, and Verdict Contract
 
 | Maturity | Meaning |
 | --- | --- |
-| `0` | Absent. |
-| `1` | Documented or routed only. |
-| `2` | Implemented as repository-static evidence. |
-| `3` | Deterministically enforced in local validation and CI. |
-| `4` | Supported by runtime or operational evidence. |
+| `0 absent` | Control is absent. |
+| `1 documented/routed` | Control is documented or routed only. |
+| `2 repository-static` | Control is present as repository-static evidence. |
+| `3 deterministic local+CI enforcement` | Control is deterministically enforced in local validation and CI. |
+| `4 runtime/operational evidence` | Control is supported by runtime or operational evidence. |
 
 Category implementation is
 `sum(maturity) / (4 * applicable controls)`. The report must disclose the
 numerator, denominator, and every N/A exclusion. Human verdicts remain
 `Implemented`, `Partial`, `Gap`, or `Not in scope`. Evidence confidence is
-`Verified repo-static`, `Unverified live`, or `Conditional`.
+`Verified repo-static`, `Unverified live`, or `Conditional`. Maturity,
+confidence, and verdict are separate fields: a score does not imply stronger
+confidence or a different human verdict.
 
 ## Evidence Boundary
 

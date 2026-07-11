@@ -126,6 +126,65 @@ Pro Preview, 3.5 Flash Stable, and 3.1 Flash-Lite Stable. These official
 catalog facts do not prove local availability, native resolution, or approval
 to change the active model policy.
 
+## Integrated Audit Snapshot Contract
+
+The initial document inventory is fixed to repository commit
+`ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7` and observation date
+`2026-07-11`. This is the baseline used to start the integrated audit; it is
+not the final audit observation SHA. The completed audit pack records its final
+observation SHA separately after all research and report changes are complete.
+
+Counts below use the top-level frontmatter `status` of authored documents.
+Folder and stage `README.md` indexes are inventory surfaces, but are excluded
+from authored-document counts and status totals.
+
+| Family and path basis | Authored inventory at the initial snapshot | Status basis |
+| --- | --- | --- |
+| PRD — `docs/01.requirements/*.md` | 4 | 4 `active` |
+| ARD — `docs/02.architecture/requirements/*.md` | 4 | 4 `active` |
+| ADR — `docs/02.architecture/decisions/*.md` | 9 | 9 `accepted` |
+| Spec — `docs/03.specs/*/spec.md` | 20 | 16 `draft`; 4 `active` |
+| Agent design — `docs/03.specs/*/agent-design.md` | 1 | 1 `draft` |
+| Plan — `docs/04.execution/plans/*.md` | 41 | 41 `done` |
+| Task — `docs/04.execution/tasks/*.md` | 43 | 43 `done` |
+| Guide — `docs/05.operations/guides/*.md` | 8 | 8 `active` |
+| Policy — `docs/05.operations/policies/*.md` | 7 | 7 `active` |
+| Runbook — `docs/05.operations/runbooks/*.md` | 9 | 9 `active` |
+| Incident — `docs/05.operations/incidents/*.md` | 0 | No authored incident record; `README.md` is index-only. |
+| Postmortem — `docs/05.operations/incidents/` postmortem records | 0 | No authored postmortem record. |
+
+### Shared Measurement Contract
+
+Every applicable control uses the same maturity levels: `0 absent`,
+`1 documented/routed`, `2 repository-static`,
+`3 deterministic local+CI enforcement`, and
+`4 runtime/operational evidence`. Category implementation is calculated as
+`sum(maturity) / (4 * applicable controls)`. Every report must disclose the
+numerator, denominator, and each N/A exclusion.
+
+The human verdict vocabulary is `Implemented`, `Partial`, `Gap`, or
+`Not in scope`. Evidence confidence is `Verified repo-static`,
+`Unverified live`, or `Conditional`. A higher maturity score never upgrades
+confidence beyond the evidence actually observed.
+
+### Research-to-Audit Topic Ownership
+
+Each requested topic has exactly one primary Current research owner and one
+planned audit owner. Planned audit paths remain code literals until created.
+
+| Requested topic | Primary Current research owner | Planned audit owner |
+| --- | --- | --- |
+| Frontmatter keys and values | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Document state transitions | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Semantic lineage | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Release readiness | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Incident readiness | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Postmortem readiness | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| AI-agent `pre-commit run --all-files` obligation | `spec-sdlc-ci-qa-formatting.md` | `ci-qa-automation-pipeline-workflow.md` |
+| Vibe coding | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
+| `agency-agents` comparison | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
+| Task-model routing | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
+
 ## Requirement Coverage Matrix
 
 `Primary Current owner` assigns exactly one research owner to each requirement.

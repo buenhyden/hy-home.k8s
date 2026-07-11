@@ -125,7 +125,7 @@ excluded.
 - Produces: the snapshot, requirement map, scoring formula, evidence
   vocabulary, and topic ownership consumed by Tasks 2-13.
 
-- [ ] **Step 1: Record exact repository and document inventory**
+- [x] **Step 1: Record exact repository and document inventory**
 
 Run:
 
@@ -141,7 +141,7 @@ rg -n '^status: ' docs/01.requirements docs/02.architecture docs/03.specs \
 Expected: every count names its path, status basis, observation SHA, and date;
 README files are distinguished from authored documents.
 
-- [ ] **Step 2: Add the shared measurement contract**
+- [x] **Step 2: Add the shared measurement contract**
 
 Use these exact levels: `0 absent`, `1 documented/routed`,
 `2 repository-static`, `3 deterministic local+CI enforcement`, and
@@ -150,14 +150,14 @@ Use these exact levels: `0 absent`, `1 documented/routed`,
 exclusions, retain `Implemented/Partial/Gap/Not in scope`, and use
 `Verified repo-static/Unverified live/Conditional` for confidence.
 
-- [ ] **Step 3: Close requirement ownership**
+- [x] **Step 3: Close requirement ownership**
 
 Give every requested topic one primary research owner and one planned audit
 owner, including frontmatter keys/values, state transition, semantic lineage,
 Release, incident/postmortem readiness, AI-agent all-files pre-commit, vibe
 coding, agency-agents, and task-model routing.
 
-- [ ] **Step 4: Validate and commit**
+- [x] **Step 4: Validate and commit**
 
 Run:
 
