@@ -298,14 +298,14 @@ checks pass.
   Task 11, plus secondary role/application implications linked to Task 2's
   primary QA benchmark.
 
-- [ ] **Step 1: Research vibe coding with source classes separated**
+- [x] **Step 1: Research vibe coding with source classes separated**
 
 Use the coined/original discussion only as contextual definition. Use NIST
 SSDF, relevant OWASP guidance, and official provider secure-use/coding-agent
 guidance for controls. Record title, publisher, URL, date, check date,
 authority class, and supported claim.
 
-- [ ] **Step 2: Define risk-bounded controls**
+- [x] **Step 2: Define risk-bounded controls**
 
 Cover prompt-led exploration, executable acceptance criteria, small diffs,
 tests, static checks, independent review, provenance, secrets/permissions,
@@ -313,7 +313,7 @@ rollback, and stopping/escalation. Classify infrastructure, GitOps, identity,
 secret, network, and security-policy changes as AI-assisted but evidence- and
 approval-gated.
 
-- [ ] **Step 3: Record secondary AI-agent QA implications**
+- [x] **Step 3: Record secondary AI-agent QA implications**
 
 Describe how role instructions, provider adapters, and vibe-coding controls
 apply Task 2's AI-agent QA obligation. Link to the SDLC research owner instead
@@ -321,13 +321,13 @@ of restating or redefining the primary benchmark, and record only secondary
 role/application implications such as adapter feedback versus full-suite
 proof.
 
-- [ ] **Step 4: Refresh role and model-routing criteria**
+- [x] **Step 4: Refresh role and model-routing criteria**
 
 Keep active declaration, default, escalation, fallback, eval gate, and
 availability confidence separate. Require telemetry and a non-overlap case
 before recommending a new role such as FinOps.
 
-- [ ] **Step 5: Validate and commit**
+- [x] **Step 5: Validate and commit**
 
 ```bash
 rg -n 'vibe|pre-commit run --all-files|default|escalation|fallback|eval|FinOps' \

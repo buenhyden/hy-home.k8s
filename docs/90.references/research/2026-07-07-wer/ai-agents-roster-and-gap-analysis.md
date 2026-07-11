@@ -3,7 +3,7 @@ title: 'Reference: AI Agents Roster and Gap Analysis Research'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-10
+updated: 2026-07-11
 ---
 
 # Reference: AI Agents Roster and Gap Analysis Research
@@ -86,6 +86,59 @@ updated: 2026-07-10
 | Interpretation | Explicit comparison of the above evidence. | Must not be promoted to active policy. |
 | Recommendation | Non-mutating follow-up with an owner and eval gate. | Requires a separate approved Stage 03/04 change. |
 
+### Vibe-Coding Source and Authority Ledger
+
+이 절은 용어의 기원과 안전 통제의 근거를 분리한다. Karpathy의 게시물은
+`vibe coding`이라는 표현과 원래의 throwaway-project 맥락만 설명하는
+비규범적 1차 발언이다. 아래의 risk, review, test, provenance, permission,
+approval 통제는 NIST, OWASP와 공급자 공식 지침에서 가져온다. 모든 URL은
+`2026-07-11`에 다시 열었고 provider/model 사실은 승인된
+`2026-07-10 10:00 KST` 컷오프에서 동결했다. Living document의 컷오프 이후
+기능 변경은 이 문서에 소급하지 않았다.
+
+| Title | Publisher | URL | Source date | Check date | Authority class | Supported claim |
+| --- | --- | --- | --- | --- | --- | --- |
+| Original `vibe coding` post | Andrej Karpathy | <https://x.com/karpathy/status/1886192184808149383> | 2025-02-02 | 2026-07-11 | Contextual primary statement; non-normative | Prompt-led, low-attention coding was coined as a conversational style suitable in the post's throwaway/weekend-project context; it does not authorize production controls. |
+| Secure Software Development Framework (SSDF) Version 1.1, SP 800-218 | NIST | <https://csrc.nist.gov/pubs/sp/800/218/final> | 2022-02-03 | 2026-07-11 | Government security guidance | Track requirements, risks, decisions and exceptions (PW.1.2); protect development environments (PO.5); review/analyze code (PW.7); scope, perform and record testing (PW.8); preserve release provenance (PS.3.2). |
+| X03:2025 Inappropriate Trust in AI Generated Code (`Vibe Coding`) | OWASP Foundation | <https://owasp.org/Top10/2025/X01_2025-Next_Steps/#x032025-inappropriate-trust-in-ai-generated-code-vibe-coding> | 2025 edition | 2026-07-11 | OWASP project guidance; not a formal standard | The submitter remains responsible, should understand and review AI-assisted code with human and security-tool review, and should not use unattended vibe coding for complex or business-critical software. |
+| LLM01:2025 Prompt Injection | OWASP Gen AI Security Project | <https://genai.owasp.org/llmrisk/llm01-prompt-injection/> | 2025 edition | 2026-07-11 | OWASP project guidance | External content can redirect an agent; constrain scope, validate expected output, apply least privilege, require approval for high-risk actions, and adversarially test. |
+| LLM03:2025 Supply Chain | OWASP Gen AI Security Project | <https://genai.owasp.org/llmrisk/llm032025-supply-chain/> | 2025 edition | 2026-07-11 | OWASP project guidance | Verify suppliers and dependencies, keep inventories, preserve licensing and provenance, and use signing or hashes for externally supplied artifacts. |
+| LLM05:2025 Improper Output Handling | OWASP Gen AI Security Project | <https://genai.owasp.org/llmrisk/llm052025-improper-output-handling/> | 2025 edition | 2026-07-11 | OWASP project guidance | Treat model output as untrusted input and validate or sanitize it before shell, path, query, rendered-content, or downstream execution. |
+| LLM06:2025 Excessive Agency | OWASP Gen AI Security Project | <https://genai.owasp.org/llmrisk/llm062025-excessive-agency/> | 2025 edition | 2026-07-11 | OWASP project guidance | Minimize tools, functionality, permissions and autonomy; mediate authorization outside the model and require human approval for high-impact actions. |
+| Security | Anthropic, Claude Code Docs | <https://code.claude.com/docs/en/security> | Undated living document; available before cutoff | 2026-07-11 | Official product security guidance | Use permission boundaries and sandboxing, review commands and critical-file changes, verify trust for repositories/MCP, and protect sensitive code and credentials. |
+| Best Practices for Claude Code | Anthropic, Claude Code Docs | <https://code.claude.com/docs/en/best-practices> | Undated living document; available before cutoff | 2026-07-11 | Official coding-agent workflow guidance | Explore before complex implementation, give executable verification criteria, run tests/linters, use independent review, and do not ship unverifiable work. |
+| Running Codex safely at OpenAI | OpenAI | <https://openai.com/index/running-codex-safely/> | 2026-05-08 | 2026-07-11 | Official product security guidance | Combine sandbox and approval boundaries with constrained network/identity access, managed rules and agent-aware telemetry; stop higher-risk actions for review. |
+| Trusted Folders | Google, Gemini CLI Docs | <https://geminicli.com/docs/cli/trusted-folders/> | Last updated 2026-04-23 | 2026-07-11 | Official product security guidance | Treat repository commands, hooks, skills, settings and MCP configuration as trust-bearing input; untrusted workspaces should operate with restricted capabilities. |
+| Sandboxing in Gemini CLI | Google, Gemini CLI Docs | <https://geminicli.com/docs/cli/sandbox/> | Last updated 2026-04-27 | 2026-07-11 | Official product security guidance | Isolate shell/file actions, keep profiles restrictive, request explicit expansion, and do not treat a sandbox as eliminating all risk. |
+| Models overview | Anthropic | <https://platform.claude.com/docs/en/about-claude/models/overview> | Living catalog; cutoff snapshot 2026-07-10 10:00 KST | 2026-07-11 | Official model catalog | Capability, latency, effort and lifecycle inform a candidate route; API publication does not prove local Claude Code access or entitlement. |
+| Codex models | OpenAI | <https://developers.openai.com/codex/models> | Living catalog; cutoff snapshot 2026-07-10 10:00 KST | 2026-07-11 | Official model/product guidance | Coding-product model and effort guidance informs candidate routes; the local account and authentication surface still require a native canary. |
+| Gemini API models | Google | <https://ai.google.dev/gemini-api/docs/models> | Living catalog; cutoff snapshot 2026-07-10 10:00 KST | 2026-07-11 | Official API model catalog | API model lifecycle informs candidate evaluation only; it does not prove Gemini CLI selection or local availability. |
+
+### Risk-Bounded Vibe-Coding Control Matrix
+
+여기서 `vibe coding`은 자연어 prompt로 빠르게 탐색하고 생성 결과를 반복하는
+작업 방식이다. 빠른 feedback은 허용하지만 “결과가 그럴듯하다”는 완료 증거가
+아니다. 모든 등급에서 AI output은 untrusted proposal이며, 위험이 올라갈수록
+specification, deterministic evidence, independent review와 human approval을
+추가한다.
+
+| Control | R0 — disposable exploration | R1 — bounded repository change | R2 — protected control surface | R3 — live/high-impact action |
+| --- | --- | --- | --- | --- |
+| Allowed use | Time-boxed prompt-led spike with no production or durable-state claim. | AI-assisted implementation inside an explicit file and behavior scope. | AI-assisted analysis or patch proposal only for infrastructure, GitOps, identity, secret, network, security-policy, CI/hook or agent-governance changes. | Analysis, evidence collection and runbook draft only; not autonomous execution. |
+| Executable acceptance | State a disposable question and observable result before generation. | Define testable acceptance criteria, affected lanes and completion command before edit. | Bind PRD/ARD/ADR/Spec/Plan/Task owner as applicable, risk/exception record, negative cases and approval gate. | Require operator-approved target, runbook, preconditions, stop criteria, rollback and post-action evidence. |
+| Diff and iteration | Work in an isolated scratch/worktree and discard freely. | Keep diffs small, inspect every changed file and split unrelated work. | One logical control change at a time; flag lockfile, workflow, policy, credential path and out-of-scope edits. | No direct change by the coding agent; present the exact proposed action and blast radius to the operator. |
+| Tests and static checks | Smoke check the claimed behavior; label unverified output. | Run changed-file and affected-lane tests, lint, type/schema/static checks, then the canonical completion gates. | Add adversarial/negative fixtures, secret/policy scans and domain-specific validators; passing tests written by the same agent are not independent assurance. | Use only approved preflight/live/postflight checks; static desired state never proves runtime success. |
+| Review independence | Author self-review is enough only for discarded output. | Human or separately scoped reviewer checks the full diff and acceptance evidence. | Independent domain review is mandatory: GitOps/network/security/identity/secret owners cannot be replaced by the generating agent's summary. | Human operator owns approval and execution; peer/security approval follows the canonical operations boundary. |
+| Provenance | Record prompt/source only if the spike is retained. | Cite input sources, agent/tool/model declaration, changed files, commands and PASS/SKIP/FAIL. | Preserve supplier/dependency identity, hashes or pins where applicable, risk decisions, approvals and artifact/rollback identity. | Preserve operator, target, timestamp, command/result, approval and recovery evidence without exposing secret values. |
+| Secrets and permissions | No production credentials, external write tools or sensitive data. | Least-privilege workspace access; external content and model output remain untrusted. | No plaintext secret inspection or credential widening; sandbox, egress and tool scopes stay minimal and high-impact calls require human mediation. | No agent-held standing privilege; use approved operator identity and downstream authorization, never model judgment as authorization. |
+| Rollback | Delete the spike or reset the isolated workspace. | Revert the logical commit or restore the documented pre-change state. | Prove config/data migration rollback and preserve the previous policy/manifest before approval. | Operator-owned recovery step and validation are prerequisites, not an afterthought. |
+| Stop and escalate | Stop when the time box expires or the result cannot be observed. | Stop on scope drift, repeated failure, missing dependency, ambiguous acceptance or unverifiable claim. | Stop on missing owner/evidence, unexpected sensitive file, permission expansion, test weakening, validator bypass or Critical/High uncertainty; escalate to the canonical reviewer and human approver. | Stop on any target mismatch, stale approval, secret exposure, unexpected runtime state or rollback uncertainty and follow the incident/break-glass route. |
+
+R0 결과가 durable branch로 승격되는 순간 R1 이상을 처음부터 적용한다. 특히
+R2에 나열한 표면은 “vibe로 완성”할 수 있는 대상이 아니라 AI-assisted draft를
+evidence- and approval-gated SDLC로 넘기는 대상이다. 이 연구는 live mutation
+권한, secret 접근 권한 또는 active policy 예외를 만들지 않는다.
+
 ### Local Roster and Shared Body Contract
 
 The three directories each contain exactly ten files with the same stems:
@@ -130,6 +183,30 @@ model/tool/effort maps cover eight roles and omit `network-reviewer` and
 semantically compare the `.agents` bodies/frontmatter. No native provider
 agent-list, schema-load, model-resolution, tool-enforcement, or inference canary
 ran.
+
+### Secondary AI-Agent QA Application
+
+AI-agent QA 의무의 primary benchmark는
+[SDLC, CI, QA and Formatting Research](spec-sdlc-ci-qa-formatting.md#ai-agent-qa-benchmark-summary)가
+소유한다. 그 문서는 iteration 중 changed-file/affected-lane feedback, PR/merge
+전과 hook·validator·toolchain·global-format contract 변경 후의
+`pre-commit run --all-files`, 그리고 PASS/SKIP/FAIL 및 unavailable evidence
+기록을 정의한다. 이 절은 그 기준을 다시 정의하지 않고 로컬 역할과 adapter에
+적용할 때 생기는 2차 의미만 기록한다.
+
+| Application surface | Secondary role/application implication | Evidence boundary |
+| --- | --- | --- |
+| `supervisor` | Task 시작 전에 affected lane과 완료 gate를 배정하고, handoff에서 primary benchmark의 명령 결과와 skipped limitation이 있는지 확인한다. | Supervisor의 완료 판단은 명령 출력이나 승인 기록을 소비할 뿐, 자체 요약으로 full-suite PASS를 만들지 못한다. |
+| Authoring roles: `k8s-implementer`, `doc-writer`, `wiki-curator` | 작은 logical diff마다 changed-file/affected-lane feedback을 실행하고, 결과와 미실행 사유를 reviewer에게 넘긴다. | 생성 agent가 작성한 test와 self-review는 독립 검토가 아니며 protected surface sign-off가 아니다. |
+| Review roles: `code-reviewer`, `gitops-reviewer`, `network-reviewer`, `observability-reviewer`, `security-auditor`, `incident-responder` | 전체 changed-file inventory와 acceptance evidence를 검사하고 out-of-scope edit, 약화된 test, skipped hook, secret/permission drift를 finding으로 올린다. | Read-only review는 실행되지 않은 full suite, provider permission enforcement 또는 live state를 PASS로 승격하지 않는다. |
+| Provider adapters | Claude `tools`, Codex effort/sandbox outer boundary, `.agents` guardrail처럼 native metadata가 달라도 같은 QA handoff 문구와 scope를 유지해야 한다. | Adapter field와 stem parity는 선언 증거다. 실제 host가 adapter와 hook wiring을 소비했는지는 native canary 없이는 `Unverified`. |
+| PostToolUse and lifecycle hooks | 빠른 formatter/style/repo feedback으로 iteration을 줄이고 objective failure를 조기에 드러낸다. | PostToolUse 결과는 primary benchmark가 명시한 `pre-commit run --all-files` 또는 explicit completion command의 대체물이 아니다. |
+| R2 protected surfaces | 생성 역할과 domain reviewer를 분리하고, human approval 전에 deterministic repo evidence와 rollback을 함께 제시한다. | infrastructure, GitOps, identity, secret, network, security-policy 변경은 adapter feedback만으로 승인되지 않는다. |
+
+따라서 agent body 또는 adapter를 후속 변경할 때는 QA 명령을 중복 복사하기보다
+primary benchmark를 link하고, 역할에는 affected-lane 선택, evidence handoff,
+independent review와 stop/escalation 책임만 둔다. 이 구조는 primary owner가
+명령 계약을 바꿀 때 30개 adapter가 서로 다른 오래된 문구를 갖는 것을 막는다.
 
 ### Upstream Snapshot — 2026-07-10
 
@@ -227,36 +304,58 @@ read-only in this research workstream. Likewise, extending exact validator maps
 to network/observability and adding Gemini native-schema checks are recorded as
 future Stage 04 work, not applied here.
 
-### Default, Escalation, and Fallback Routing
+### Role and Model-Routing Decision Record
 
-This matrix is an evaluation hypothesis, not active assignment. Current local
-declarations remain `opus 4.8` / `sonnet 4.6`, `gpt-5.5` /
-`gpt-5.3-codex`, and `Gemini 3.1 Pro` / `Gemini 3.5 Flash`. Claude spaced
-labels and Gemini display labels are not documented exact IDs; Codex worker
-lifecycle depends on the authentication surface. Every proposed route requires
-native availability, exact-ID, role-task, tool, quality, latency/cost, and
-rollback evidence before an active owner changes.
+This matrix is an evaluation hypothesis, not active assignment. It separates
+six fields that must never be collapsed into “best model”: active declaration,
+research default, escalation, fallback, eval gate, and availability confidence.
+Current declarations remain owned by the adapter files and canonical catalog;
+candidate facts remain frozen at `2026-07-10 10:00 KST` in the adjacent
+[provider implementation reference](provider-implementation-status.md).
 
-| Local role | Task profile | Claude default/escalation/fallback | Codex default/escalation/fallback | Gemini default/escalation/fallback | Effort | Eval gate |
+`C / O / G` below means Claude / OpenAI Codex / Gemini. A candidate catalog
+entry is not an entitlement. `Verified repo-static declaration` means only that
+the tracked adapter names a model; every candidate route remains `Conditional`
+until the exact product surface resolves the ID, the account can invoke it, the
+role eval passes, and rollback to the incumbent is demonstrated.
+
+| Local role | Active declaration — repo-static only | Research default candidate | Escalation trigger and candidate | Fallback boundary and candidate | Eval gate | Availability confidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| `supervisor` | Ambiguous planning, decomposition, multi-agent synthesis, completion judgment | Opus 4.8 / Fable 5 / Sonnet 5 | Sol medium / Sol high or `max` / Terra | 3.5 Flash Stable / 3.1 Pro Preview with explicit acceptance / 3.1 Flash-Lite for bounded preprocessing only | Current Codex `xhigh`; proposed Sol effort starts medium and increases only on eval evidence. `max` is single-model reasoning, not orchestration. | Golden plans, delegation correctness, cross-agent synthesis, tool use, long-context retention, termination, cost/latency, rollback. |
-| `code-reviewer` | YAML/Helm/shell correctness and policy review | Sonnet 5 / Opus 4.8 / Haiku 4.5 for bounded scans | Terra / Sol / 5.4 Mini or Luna only if thresholds hold | 3.5 Flash / 3.1 Pro Preview / 3.1 Flash-Lite for bounded scans | Current Codex `high`; candidate uses lowest effort meeting false-negative threshold. | Seeded defects, false negatives/positives, evidence citations, severity calibration, no unauthorized edits, repo gates. |
-| `doc-writer` | Template routing, drafting, taxonomy and source synthesis | Sonnet 5 / Opus 4.8 / Haiku 4.5 | Terra / Sol / Luna or 5.4 Mini | 3.5 Flash / 3.1 Pro Preview / 3.1 Flash-Lite | Current Codex `medium`; candidate default/medium, escalate for conflicting sources or architecture. | Template/path correctness, unsupported-claim rate, link accuracy, Korean clarity, minimal duplication, cost. |
-| `gitops-reviewer` | Argo CD targeting, Kustomize structure, release risk | Sonnet 5 / Opus 4.8 / Haiku only for deterministic inventory | Terra / Sol / 5.4 Mini for bounded inventory | 3.5 Flash / 3.1 Pro Preview / Flash-Lite for inventory only | Current Codex `high`; retain high-risk review depth until comparative eval passes. | Seeded ownership/sync defects, missed-high-risk rate, file evidence, no live mutation, independent reviewer agreement. |
-| `incident-responder` | Timeline, impact, RCA hypothesis, remediation handoff | Opus 4.8 / Fable 5 / Sonnet 5 | Sol high / Sol `max` plus independent review / Terra as evidence collector | 3.5 Flash / 3.1 Pro Preview with lifecycle acceptance / Flash-Lite extraction only | Current Codex `high`; smaller fallback never signs off severity or recovery. | Timeline fidelity, causal uncertainty, severity calibration, evidence provenance, unsafe-action refusal, human approval. |
-| `k8s-implementer` | Bounded GitOps manifest authoring and validation repair | Sonnet 5 / Opus 4.8 / Haiku only for mechanical transforms | Terra / Sol / 5.4 Mini or Luna only for schema-bounded transforms | 3.5 Flash / 3.1 Pro Preview / Flash-Lite only for bounded transforms | Current Codex `high`; lower candidate effort must still pass write/review separation and all repo gates. | Patch correctness, schema/Kustomize validity, secret safety, minimal diff, tool boundary, independent GitOps/security review. |
-| `network-reviewer` | Ingress, Traefik, NetworkPolicy, DNS/TLS static review | Sonnet 5 / Opus 4.8 / Haiku only for inventory | Terra / Sol / 5.4 Mini for bounded inventory | 3.5 Flash / 3.1 Pro Preview / Flash-Lite inventory only | Current Codex `high`; exact-field validator coverage must be added before routing migration. | Seeded routing/isolation/TLS errors, scope separation from security, evidence lines, no live probes, false-negative threshold. |
-| `observability-reviewer` | Monitoring manifest and SLO-document review | Sonnet 5 / Opus 4.8 / Haiku only for inventory | Terra / Sol / 5.4 Mini for bounded inventory | 3.5 Flash / 3.1 Pro Preview / Flash-Lite inventory only | Current Codex `high`; exact-field validator coverage must be added before routing migration. | Seeded scrape/alert/SLO defects, no live-query claim, evidence lines, role handoff, false-negative threshold. |
-| `security-auditor` | RBAC, network isolation, secret and governance risk judgment | Opus 4.8 / Fable 5 where access permits / Sonnet 5 second pass | Sol high / Sol `max` plus independent review / Terra as evidence collector | 3.5 Flash / 3.1 Pro Preview with lifecycle acceptance / Flash-Lite extraction only | Current Codex `high`; fallback output cannot approve or downgrade a critical finding. | Missed-critical rate, severity consistency, evidence citations, refusal, secret non-disclosure, independent/human approval. |
-| `wiki-curator` | Canonical-owner maps, stale-link and generated-index curation | Sonnet 5 / Opus 4.8 / Haiku 4.5 | Terra / Sol / Luna or 5.4 Mini | 3.5 Flash / 3.1 Pro Preview / 3.1 Flash-Lite | Current Codex `medium`; default/medium, deterministic validators before escalation. | Link/owner accuracy, no policy duplication, no vector-store creation, generator idempotence, cost and rollback. |
+| `supervisor` | C `opus 4.8`; O `gpt-5.5`/`xhigh`; G `Gemini 3.1 Pro` | C Opus 4.8; O Sol/medium; G 3.5 Flash Stable | Ambiguous/high-risk planning or failed synthesis: C Fable 5; O Sol/high then `max`; G 3.1 Pro Preview only with lifecycle acceptance | C Sonnet 5; O Terra; G Flash-Lite only for bounded preprocessing, never completion judgment | Golden plans, delegation/synthesis correctness, tool use, termination, long-context retention, cost/latency, rollback | Active declaration `Verified repo-static`; every candidate `Conditional`; no native resolution, entitlement or inference canary. |
+| `code-reviewer` | C `sonnet 4.6`; O `gpt-5.3-codex`/`high`; G `Gemini 3.5 Flash` | C Sonnet 5; O Terra; G 3.5 Flash | High missed-defect risk or conflicting evidence: C Opus 4.8; O Sol; G 3.1 Pro Preview | C Haiku 4.5; O 5.4 Mini/Luna; G Flash-Lite for deterministic inventory only | Seeded defects, false negative/positive rate, citations, severity, no unauthorized edits, repo gates | Active declaration `Verified repo-static`; candidate product/account availability and comparative quality `Conditional`. |
+| `doc-writer` | C `sonnet 4.6`; O `gpt-5.3-codex`/`medium`; G `Gemini 3.5 Flash` | C Sonnet 5; O Terra; G 3.5 Flash | Conflicting sources or architecture synthesis: C Opus 4.8; O Sol; G 3.1 Pro Preview | C Haiku 4.5; O Luna/5.4 Mini; G Flash-Lite for bounded format work | Template/path correctness, unsupported claims, links, Korean clarity, duplication and cost | Active declaration `Verified repo-static`; candidate availability and native adapter consumption `Conditional`. |
+| `gitops-reviewer` | C `sonnet 4.6`; O `gpt-5.3-codex`/`high`; G `Gemini 3.5 Flash` | C Sonnet 5; O Terra; G 3.5 Flash | Sync/ownership/release-risk ambiguity: C Opus 4.8; O Sol; G 3.1 Pro Preview | Smaller models only for deterministic inventory; never risk sign-off | Seeded ownership/sync defects, missed-high-risk rate, file evidence, no live mutation, reviewer agreement | Active declaration `Verified repo-static`; candidates `Conditional`; no GitOps judgment inference canary. |
+| `incident-responder` | C `sonnet 4.6`; O `gpt-5.3-codex`/`high`; G `Gemini 3.5 Flash` | C Opus 4.8; O Sol/high; G 3.5 Flash | Severe/ambiguous causality: C Fable 5; O Sol/`max` plus independent review; G 3.1 Pro Preview with lifecycle acceptance | C Sonnet 5; O Terra; G Flash-Lite as evidence extractor only, never severity/recovery sign-off | Timeline fidelity, causal uncertainty, severity, provenance, unsafe-action refusal and human approval | Active declaration `Verified repo-static`; candidate availability `Conditional`; live response remains `Unverified live`. |
+| `k8s-implementer` | C `sonnet 4.6`; O `gpt-5.3-codex`/`high`; G `Gemini 3.5 Flash` | C Sonnet 5; O Terra; G 3.5 Flash | Cross-resource/security ambiguity: C Opus 4.8; O Sol; G 3.1 Pro Preview | Smaller model only for schema-bounded mechanical transform; independent review still required | Patch/schema/Kustomize correctness, secret safety, minimal diff, tool boundary, GitOps/security review | Active declaration `Verified repo-static`; candidate availability `Conditional`; local declaration does not prove cluster access or readiness. |
+| `network-reviewer` | C `sonnet 4.6`; O `gpt-5.3-codex`/`high`; G `Gemini 3.5 Flash` | C Sonnet 5; O Terra; G 3.5 Flash | Routing/isolation/TLS ambiguity: C Opus 4.8; O Sol; G 3.1 Pro Preview | Smaller model for inventory only, never isolation/TLS sign-off | Seeded routing/isolation/TLS errors, evidence lines, no live probes, false-negative threshold | Active declaration `Verified repo-static`; candidate availability `Conditional`; exact-field validator coverage is prerequisite to migration. |
+| `observability-reviewer` | C `sonnet 4.6`; O `gpt-5.3-codex`/`high`; G `Gemini 3.5 Flash` | C Sonnet 5; O Terra; G 3.5 Flash | Alert/SLO interpretation ambiguity: C Opus 4.8; O Sol; G 3.1 Pro Preview | Smaller model for inventory only, never live-state or SLO sign-off | Seeded scrape/alert/SLO defects, no live-query claim, evidence and handoff accuracy | Active declaration `Verified repo-static`; candidate availability `Conditional`; exact-field validator coverage is prerequisite to migration. |
+| `security-auditor` | C `sonnet 4.6`; O `gpt-5.3-codex`/`high`; G `Gemini 3.5 Flash` | C Opus 4.8; O Sol/high; G 3.5 Flash | Critical-risk uncertainty: C Fable 5 where entitled; O Sol/`max` plus independent review; G 3.1 Pro Preview with lifecycle acceptance | C Sonnet 5; O Terra; G Flash-Lite as evidence collector only; fallback cannot approve or downgrade findings | Missed-critical rate, severity consistency, citations, refusal, secret non-disclosure, independent/human approval | Active declaration `Verified repo-static`; candidate availability `Conditional`; security sign-off is never inferred from catalog publication. |
+| `wiki-curator` | C `sonnet 4.6`; O `gpt-5.3-codex`/`medium`; G `Gemini 3.5 Flash` | C Sonnet 5; O Terra; G 3.5 Flash | Conflicting canonical owners or large synthesis: C Opus 4.8; O Sol; G 3.1 Pro Preview | C Haiku 4.5; O Luna/5.4 Mini; G Flash-Lite for bounded curation | Link/owner accuracy, no policy duplication/vector store, generator idempotence, cost and rollback | Active declaration `Verified repo-static`; candidate availability and provider-native behavior `Conditional`. |
 
-Provider model facts behind these hypotheses are maintained in the adjacent
-[provider implementation reference](provider-implementation-status.md): Claude
-Fable 5, Opus 4.8, Sonnet 5, and Haiku 4.5; Codex-product GPT-5.6 Sol/Terra/Luna,
-previous-generation GPT-5.5, GPT-5.4 Mini, and authentication-specific
-GPT-5.3-Codex lifecycle; Gemini API `gemini-3.1-pro-preview`, stable
-`gemini-3.5-flash`, and stable `gemini-3.1-flash-lite`. API publication does
-not prove coding-product/CLI or local account availability.
+The active declaration column is descriptive, not a claim that the named model
+resolved in the current CLI or account. Default promotion requires the role eval
+to beat or match the incumbent at an approved cost/latency bound. Escalation is
+triggered by risk or failed evidence, not prestige. Fallback must reduce scope
+and authority rather than silently accept lower quality. If a native canary
+fails, the route stays on the incumbent and the failure is recorded; it is not
+papered over with an API catalog entry.
+
+### New-Role Admission Gate
+
+Upstream catalog breadth does not create a local role. A proposed role must
+provide all of: repeated repo-backed demand; a distinct canonical scope and
+deliverable; a written non-overlap case against all ten existing roles; least-
+privilege tool and data access; measurable eval thresholds; handoff/postflight;
+and rollback. A telemetry-dependent role must also identify the approved data
+source, access owner, freshness, retention and evidence-quality checks before an
+adapter is proposed.
+
+`FinOps` therefore remains `Skip`: there is no approved local cost telemetry
+pipeline, no repeated cost-optimization task evidence, and no demonstrated
+non-overlap case showing that `supervisor`, `observability-reviewer` and existing
+reporting workflows cannot absorb the bounded work. Only a future cost-
+observability requirement with those telemetry and non-overlap gates may reopen
+the Stage 03 agent-design decision.
 
 ## Interpretation
 
@@ -276,7 +375,31 @@ metadata, validate all adapters, run role-specific evals, and preserve rollback.
 
 ## Sources
 
-All external sources were checked read-only at `2026-07-10 10:00 KST`.
+Provider/model facts are frozen at `2026-07-10 10:00 KST`. All URLs below and
+in the source ledger were re-opened read-only on `2026-07-11`; no post-cutoff
+provider/model release, lifecycle or availability fact was added.
+
+### Vibe-Coding and Secure-Use Sources
+
+- Original contextual post, non-normative:
+  <https://x.com/karpathy/status/1886192184808149383>
+- NIST SP 800-218 SSDF Version 1.1:
+  <https://csrc.nist.gov/pubs/sp/800/218/final>
+- OWASP Top 10:2025 X03, Inappropriate Trust in AI Generated Code:
+  <https://owasp.org/Top10/2025/X01_2025-Next_Steps/#x032025-inappropriate-trust-in-ai-generated-code-vibe-coding>
+- OWASP Gen AI LLM01, LLM03, LLM05 and LLM06:
+  <https://genai.owasp.org/llmrisk/llm01-prompt-injection/>,
+  <https://genai.owasp.org/llmrisk/llm032025-supply-chain/>,
+  <https://genai.owasp.org/llmrisk/llm052025-improper-output-handling/>, and
+  <https://genai.owasp.org/llmrisk/llm062025-excessive-agency/>
+- Anthropic Claude Code security and best practices:
+  <https://code.claude.com/docs/en/security> and
+  <https://code.claude.com/docs/en/best-practices>
+- OpenAI, Running Codex safely at OpenAI:
+  <https://openai.com/index/running-codex-safely/>
+- Google Gemini CLI trusted folders and sandbox:
+  <https://geminicli.com/docs/cli/trusted-folders/> and
+  <https://geminicli.com/docs/cli/sandbox/>
 
 ### Pinned Agency-Agents Sources
 
@@ -328,7 +451,8 @@ All external sources were checked read-only at `2026-07-10 10:00 KST`.
 
 - Review cadence: on roster/adapter/model-policy/validator or upstream/provider
   source change.
-- Last reviewed: `2026-07-10 10:00 KST`
+- Last reviewed: `2026-07-11`; provider/model fact cutoff remains
+  `2026-07-10 10:00 KST`.
 - Next review trigger: any change to the 30 adapters, harness catalog, model
   policy, adapter validator, official native-agent paths/model lifecycle, or
   pinned upstream registry/conversion format.
