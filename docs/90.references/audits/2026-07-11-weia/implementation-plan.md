@@ -468,26 +468,26 @@ and checks pass.
 - Produces: report contracts, control ownership, scoring rules, snapshot, and
   priority vocabulary consumed by Tasks 7-12.
 
-- [ ] **Step 1: Record snapshot and report contracts**
+- [x] **Step 1: Record snapshot and report contracts**
 
 Record base SHA, audit observation SHA, cutoff, excluded live lanes, report
 responsibilities, and one owner per cross-cutting topic. Link completed
 research and retain uncreated reports as code literals.
 
-- [ ] **Step 2: Define exact row fields and priorities**
+- [x] **Step 2: Define exact row fields and priorities**
 
 Every control row contains `ID`, benchmark, expected control, repo evidence,
 maturity, verdict, confidence, gap, recommendation, priority, follow-up owner,
 and acceptance evidence. Priorities are `P0 immediate safety`, `P1 near-term
 integrity`, `P2 planned improvement`, and `P3 optional/telemetry-gated`.
 
-- [ ] **Step 3: Define contradiction ownership**
+- [x] **Step 3: Define contradiction ownership**
 
 Assign one report owner for lifecycle, provider implementation, CI DAG,
 Kubernetes/security, agent roster, model routing, and roadmap priority.
 Secondary reports link rather than duplicate volatile facts.
 
-- [ ] **Step 4: Validate and commit**
+- [x] **Step 4: Validate and commit**
 
 ```bash
 rg -n 'acceptance evidence|P0|P1|P2|P3|observation SHA|code literal' \

@@ -107,11 +107,16 @@ This README is located at
 
 The initial inventory baseline is commit
 `ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7`, observed on `2026-07-11`.
-This base SHA freezes the starting repository facts; it is distinct from the
-final audit observation SHA, which the completed pack records separately after
-all audit artifacts are present. Audit reports must say which SHA supports
-each repository claim and must not silently substitute the evolving branch
-HEAD for the initial baseline.
+This base SHA freezes the starting document inventory and its checked digest.
+
+The audit observation SHA is
+`a85df194bbb8ebc61187b905afaef7f95215cc2f`, observed on `2026-07-11` after
+Tasks 1-5 completed the Current research benchmark. Reports must read local
+implementation evidence from that Git tree and label it `audit observation
+SHA`; they must not substitute the evolving branch `HEAD`. Commits after this
+SHA create audit outputs and do not become implementation evidence merely by
+containing those outputs. The initial base remains the owner of the inventory
+table below; the observation SHA owns implementation claims in Tasks 7-12.
 
 Counts use top-level frontmatter `status` values from authored documents.
 Every `README.md` is an index surface and is excluded from the counts below.
@@ -165,17 +170,60 @@ The Current research pack
 Audit reports consume that map; this README owns only the snapshot, scoring,
 and evidence contract.
 
+## Completed Research Inputs
+
+The completed [Current research pack](../../research/2026-07-07-wer/README.md)
+is the benchmark input. Its topic owners are:
+
+| Completed research owner | Benchmark responsibility |
+| --- | --- |
+| [Workspace Governance Baseline](../../research/2026-07-07-wer/workspace-governance-baseline.md) | Workspace purpose, governance, ownership, rules, and consolidation boundaries. |
+| [Harness and Loop Engineering](../../research/2026-07-07-wer/harness-and-loop-engineering.md) | Harness, Observe/Plan/Act/Verify/Learn, retry, evaluation, recovery, compaction, MCP, and termination. |
+| [Provider Implementation Status](../../research/2026-07-07-wer/provider-implementation-status.md) | Claude, Codex, Gemini, shared layers, model declarations, and runtime-evidence boundaries. |
+| [Spec, SDLC, CI, QA, and Formatting](../../research/2026-07-07-wer/spec-sdlc-ci-qa-formatting.md) | Document families, lifecycle, lineage, frontmatter, release and incident readiness, and AI-agent QA obligations. |
+| [Automation, Pipeline, Workflow, and QA](../../research/2026-07-07-wer/automation-pipeline-workflow-qa.md) | CI/CD topology, formatting, linting, automation, workflows, evidence artifacts, and delivery metrics. |
+| [Kubernetes, Infrastructure, and Security](../../research/2026-07-07-wer/kubernetes-infrastructure-security.md) | Kubernetes, GitOps, Vault, ESO, network, policy, supply chain, and static-versus-live boundaries. |
+| [AI Agents Roster and Gap Analysis](../../research/2026-07-07-wer/ai-agents-roster-and-gap-analysis.md) | Local agents, provider adapters, `agency-agents`, role gaps, model routing, and vibe-coding controls. |
+
+## Report Interfaces and Topic Ownership
+
+Each requested topic has exactly one primary audit owner through the canonical
+map above. The following interfaces group those topics without changing that
+row-level ownership. Report paths remain code literals until their files
+exist; secondary reports link to the primary owner instead of copying volatile
+facts.
+
+| Planned report owner | Exclusive primary responsibility | Output interface |
+| --- | --- | --- |
+| `governance-harness-loop-providers.md` | Workspace purpose, roles, governance, rules, harness/loop controls, MCP, Claude, Codex, Gemini, shared provider layers, and provider implementation status. | Scored controls and routed governance/provider findings for `remediation-roadmap.md`. |
+| `sdlc-document-lifecycle-frontmatter.md` | Templates and integration guides; PRD through Reference/README roles; lifecycle, states, numbering, lineage, frontmatter, Release, Incident, and Postmortem readiness. | Scored lifecycle/metadata controls and target-state findings for `remediation-roadmap.md`. |
+| `ci-qa-automation-pipeline-workflow.md` | Scripts, CI/CD, QA, formatting, linting, syntax, automation, pipeline/workflow topology, and AI-agent all-files pre-commit obligations. | Scored delivery/quality controls and routed automation findings for `remediation-roadmap.md`. |
+| `kubernetes-infrastructure-security.md` | Kubernetes, infrastructure, GitOps, security, Vault, ESO, network and policy controls, supply chain, and static-versus-live evidence. | Scored platform/security controls and reconciled SEC findings for `remediation-roadmap.md`. |
+| `ai-agents-model-routing-vibe-coding.md` | Local AI-agent roster and adapters, `agency-agents`, task-model routing, provider availability boundaries, and vibe coding. | Scored role/model controls and routed agent findings for `remediation-roadmap.md`. |
+| `remediation-roadmap.md` | Cross-report deduplication, dependency order, target-state choice, and integrated priority ordering only. | One follow-up register with canonical PRD, ARD, ADR, Spec, Plan, or Task routes and acceptance evidence. |
+
 ## Audit Method
 
-Every applicable control will record:
+Every applicable control row uses these exact fields, in this order:
 
-1. external benchmark and source;
-2. expected control or operating contract;
-3. current repository evidence;
-4. implementation maturity and evidence confidence;
-5. missing, corrective, complementary, or unnecessary elements;
-6. recommendation and priority; and
-7. follow-up SDLC owner and acceptance criteria.
+| Field | Required content |
+| --- | --- |
+| `ID` | Stable report-local control identifier. |
+| `Benchmark` | External or Current-research benchmark and source. |
+| `Expected control` | Testable repository or operating contract being assessed. |
+| `Repository evidence` | Exact paths, commands, or observations fixed to the audit observation SHA. |
+| `Maturity` | One shared maturity value below, or `N/A` with an exclusion reason. |
+| `Verdict` | `Implemented`, `Partial`, `Gap`, or `Not in scope`. |
+| `Confidence` | `Verified repo-static`, `Unverified live`, or `Conditional`. |
+| `Gap` | Missing, corrective, complementary, unnecessary, or excluded element. |
+| `Recommendation` | Bounded next action; Stage 90 does not implement it. |
+| `Priority` | One `P0`-`P3` value from the shared vocabulary below. |
+| `Follow-up owner` | One canonical PRD, ARD, ADR, Spec, Plan, or Task route. |
+| `Acceptance evidence` | Measurable proof required to close the recommendation. |
+
+Rows may add notes outside the table, but must not rename, merge, or omit these
+fields. `Not in scope` controls use `Maturity: N/A`, state the exclusion in
+`Gap`, and remain outside the category denominator.
 
 ### Shared Maturity, Confidence, and Verdict Contract
 
@@ -195,10 +243,39 @@ numerator, denominator, and every N/A exclusion. Human verdicts remain
 confidence, and verdict are separate fields: a score does not imply stronger
 confidence or a different human verdict.
 
+### Shared Priority Vocabulary
+
+| Priority | Meaning |
+| --- | --- |
+| `P0 immediate safety` | Credible immediate risk to safety, secrets, access, data, or control integrity; stop or contain through the canonical owner before continuing affected work. |
+| `P1 near-term integrity` | Material correctness, security, governance, or delivery-integrity gap that should be resolved before the next affected change or release. |
+| `P2 planned improvement` | Bounded improvement with no demonstrated immediate integrity failure; schedule through the normal backlog and SDLC route. |
+| `P3 optional/telemetry-gated` | Optional optimization or role/control expansion that proceeds only when telemetry, evaluation, or repeated demand justifies it. |
+
+Priority never grants permission to mutate an active or live owner. Even a
+`P0 immediate safety` finding is routed out of Stage 90 for separately approved
+containment and remediation.
+
+### Contradiction Ownership
+
+| Contradiction topic | Sole audit owner | Secondary-report rule |
+| --- | --- | --- |
+| Document lifecycle, states, lineage, and frontmatter | `sdlc-document-lifecycle-frontmatter.md` | Link to the owner; do not restate counts or transitions. |
+| Provider implementation and native/local parity | `governance-harness-loop-providers.md` | Link to the owner; keep model-routing recommendations separate. |
+| CI job DAG, workflow counts, and QA wiring | `ci-qa-automation-pipeline-workflow.md` | Link to the owner; do not reconstruct the DAG elsewhere. |
+| Kubernetes, GitOps, infrastructure, and security evidence | `kubernetes-infrastructure-security.md` | Link to the owner; preserve repo-static versus live distinctions. |
+| Local and upstream agent roster facts | `ai-agents-model-routing-vibe-coding.md` | Link to the owner; upstream volume cannot redefine local need. |
+| Model declarations, availability, and task routing | `ai-agents-model-routing-vibe-coding.md` | Link to the owner; provider report supplies implementation facts only. |
+| Integrated roadmap priority and dependency order | `remediation-roadmap.md` | Source reports retain row findings; the roadmap alone deduplicates and orders them. |
+
+When a contradiction is found, its sole owner records both claims, their source
+and cutoff or observation SHA, the winning fact, and the reason. A secondary
+report links to that closure. It does not create a second truth owner.
+
 ## Evidence Boundary
 
-- Repository claims are fixed to the implementation audit commit recorded by
-  the completed pack.
+- Repository claims are fixed to audit observation SHA
+  `a85df194bbb8ebc61187b905afaef7f95215cc2f`.
 - Provider and model research retains the approved
   `2026-07-10 10:00 KST` cutoff and prioritizes official sources.
 - The `agency-agents` comparison uses a pinned upstream commit.
@@ -207,6 +284,15 @@ confidence or a different human verdict.
 - Static desired state never proves live Kubernetes, secret, policy, network,
   provider, or deployment enforcement.
 - Facts, local observations, and inference are labeled separately.
+
+Excluded live lanes are Kubernetes API and controller behavior; Argo CD sync,
+health, drift, and reconciliation; Vault and ESO runtime, TLS, authentication,
+secret values, rotation, and delivery; NetworkPolicy enforcement; provider
+native loading, account/auth entitlement, permissions, model resolution, and
+runtime behavior; remote GitHub Actions, rulesets, and CI results; credentials,
+deployments, and external-service state. These lanes remain `Unverified live`
+or `Conditional`; repository declarations and static PASS results cannot
+promote them to maturity 4.
 
 ## SDLC and Frontmatter Design
 
