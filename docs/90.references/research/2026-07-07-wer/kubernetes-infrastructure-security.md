@@ -150,7 +150,7 @@ snapshot facts. They are not live-resource counts.
 | Secret desired state | 3 `ExternalSecret` objects, 1 `ClusterSecretStore`, 1 TokenReview `ClusterRoleBinding`, and 0 tracked Kubernetes `Secret` manifest files on the checked YAML surfaces. | Generated Secrets, etcd encryption, Vault values/policy attachment, ESO Ready/sync, RBAC, rotation, and audit evidence remain live-Unverified. |
 | Network desired state | 6 `NetworkPolicy` objects, all egress-focused and all listed by one Kustomization. | No ingress-isolation or packet-enforcement claim follows; CNI and positive/negative traffic behavior were not tested. |
 | AppProject allow-lists | `apps` allows 8 exact namespaced kinds and no cluster kinds; `platform` lists 9 cluster kinds, 18 namespaced kinds, 9 sources, and 11 destination namespaces, including `argocd`. No wildcard group/kind is declared. | The broad platform project and `argocd` destination are a high-trust desired-state boundary; live Argo CD and repository-write authorization remain Unverified. |
-| Image identity | 7 explicit tracked `image:` references; 0 use `:latest`, and 0 use `@sha256` digests. | Non-`latest` tags provide mutable tag hygiene only; registry identity, vulnerability, signature, SBOM, provenance, and admission are absent or Unverified. |
+| Image identity | 6 explicit nonempty tracked `image:` references; 0 use `:latest`, and 0 use `@sha256` digests. One additional `image:` key is an empty Helm-values mapping and is excluded from the reference count. | Non-`latest` tags provide mutable tag hygiene only; registry identity, vulnerability, signature, SBOM, provenance, and admission are absent or Unverified. |
 
 ### AppProject and Authorization Boundaries
 
