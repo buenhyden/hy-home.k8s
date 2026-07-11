@@ -215,7 +215,7 @@ Expected: all requested topics have owners and all checks pass.
   AI-agent `pre-commit run --all-files` obligation benchmark consumed by
   Task 9.
 
-- [ ] **Step 1: Recount and cite the lifecycle**
+- [x] **Step 1: Recount and cite the lifecycle**
 
 Inspect the stage-authoring matrix, document routing, SDLC governance,
 template routing, frontmatter schema, and repo-quality validator. Record counts
@@ -223,14 +223,14 @@ by family/status for PRD, ARD, ADR, Spec, agent-design, Plan, Task, Guide,
 Policy, Runbook, Incident, Postmortem, Reference, and README. Correct the stale
 `42/43 done` Task observation to the fixed-snapshot result.
 
-- [ ] **Step 2: Add document-role and necessity matrices**
+- [x] **Step 2: Add document-role and necessity matrices**
 
 For PRD, ARD, ADR, Spec, Plan, Task, Guide, Policy, Runbook, Incident,
 Postmortem, Release, Reference, and README, state purpose, input, output,
 owner, expected state path, retention, overlap risk, and criteria for keep,
 consolidate, archive, or decline.
 
-- [ ] **Step 3: Define research candidate transitions and lineage**
+- [x] **Step 3: Define research candidate transitions and lineage**
 
 Document, without changing policy:
 
@@ -247,7 +247,7 @@ Cover approval evidence, reverse transitions, umbrella-number exceptions,
 PRD requirement-to-Spec-to-Task-to-validation coverage, and draft-Spec versus
 done-Task asymmetry.
 
-- [ ] **Step 4: Add the profile-specific frontmatter benchmark**
+- [x] **Step 4: Add the profile-specific frontmatter benchmark**
 
 Assess the current five keys and automation-consumer candidates: common `id`,
 `created`, `review_due`, `supersedes`; Reference `source_checked`; Incident
@@ -256,7 +256,7 @@ date validity, placeholders, future dates, allowed states, approval location,
 and body-versus-metadata ownership. Do not recommend universal expansion
 without a consumer.
 
-- [ ] **Step 5: Add Release and exercise decision gates**
+- [x] **Step 5: Add Release and exercise decision gates**
 
 Treat Release as an ADR-first home-lab decision. Treat zero real incidents and
 postmortems as neutral; identify missing tabletop/exercise evidence as the
@@ -268,7 +268,7 @@ affected-lane validation during iteration; require
 toolchain, or global-format changes; record unavailable/skipped tools; and
 separate PostToolUse feedback from full-suite proof.
 
-- [ ] **Step 6: Validate and commit**
+- [x] **Step 6: Validate and commit**
 
 ```bash
 rg -n 'PRD|ARD|ADR|Release|frontmatter|state transition|lineage|exercise' \
