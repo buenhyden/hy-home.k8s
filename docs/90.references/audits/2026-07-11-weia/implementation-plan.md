@@ -722,7 +722,7 @@ findings have current evidence, and checks pass.
   default/escalation/fallback/eval recommendations and adoption decisions for
   Task 12.
 
-- [ ] **Step 1: Audit the local role and adapter system**
+- [x] **Step 1: Audit the local role and adapter system**
 
 Score ten roles, shared bodies, instructions, tools, permissions, outputs,
 handoff, eval, and semantic validator depth. Use Task 7's thirty-adapter and
@@ -731,13 +731,13 @@ metadata, declarations, native loading/registration, settings/hooks/config, or
 entitlement/runtime availability evidence. Treat stem parity as inventory
 evidence only.
 
-- [ ] **Step 2: Compare pinned agency-agents patterns**
+- [x] **Step 2: Compare pinned agency-agents patterns**
 
 Compare responsibilities and reusable content rather than raw count. Classify
 each relevant pattern as `Adapt`, `Already covered`, `Skip`, or
 `Telemetry-gated`; improve existing roles before proposing new ones.
 
-- [ ] **Step 3: Audit model routing and vibe controls**
+- [x] **Step 3: Audit model routing and vibe controls**
 
 For each role, consume Task 7's active declaration, auth/entitlement surface,
 runtime availability evidence, and confidence as fixed inputs. Own only the
@@ -747,13 +747,13 @@ back to Task 7 instead of restating provider facts. Score spec, acceptance
 criteria, diff size, tests, static gates, independent review, provenance,
 secrets/permissions, rollback, and stopping rules for vibe coding.
 
-- [ ] **Step 4: Calculate scores and route findings**
+- [x] **Step 4: Calculate scores and route findings**
 
 Show arithmetic, N/A exclusions, confidence, priority, unnecessary role
 proposals, existing-role modifications, new-role threshold, follow-up owner,
 and acceptance evidence.
 
-- [ ] **Step 5: Validate and commit**
+- [x] **Step 5: Validate and commit**
 
 ```bash
 rg -n 'agency-agents|vibe|default|escalation|fallback|availability|Adapt|Skip' \
