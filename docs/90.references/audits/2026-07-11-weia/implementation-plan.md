@@ -567,34 +567,34 @@ Expected: provider/common scores are independently auditable and checks pass.
 - Produces: lifecycle, lineage, metadata, Release, and readiness findings for
   Task 12.
 
-- [ ] **Step 1: Audit flow and document families**
+- [x] **Step 1: Audit flow and document families**
 
 Score PRD, ARD, ADR, Spec, Plan, Task, Guide, Policy, Runbook, Incident,
 Postmortem, Release, Reference, and README roles, routes, templates, states,
 and evidence. Identify implemented, overlapping, unnecessary, missing, and
 conditional families.
 
-- [ ] **Step 2: Audit numbering, lineage, and transitions**
+- [x] **Step 2: Audit numbering, lineage, and transitions**
 
 Compare documented rules with actual paths/statuses. Measure PRD
 requirement-to-Spec-to-Task-to-validation traceability, link versus semantic
 lineage, numbering exceptions, upstream/downstream state mismatch, and
 reverse-transition evidence.
 
-- [ ] **Step 3: Audit frontmatter keys and values**
+- [x] **Step 3: Audit frontmatter keys and values**
 
 For every family, assess required keys, value domains, placeholder rejection,
 date validity, ownership precision, allowed states, review freshness,
 supersession, source freshness, and incident metadata. Keep body-owned
 information out of metadata unless an automation consumer exists.
 
-- [ ] **Step 4: Compare target states and route findings**
+- [x] **Step 4: Compare target states and route findings**
 
 Score Minimal, Consolidated, and Full redesign for benefit, cost, migration,
 rollback, blast radius, and prerequisites. Show maturity arithmetic, N/A
 exclusions, unnecessary controls, priority, owner, and acceptance evidence.
 
-- [ ] **Step 5: Validate and commit**
+- [x] **Step 5: Validate and commit**
 
 ```bash
 rg -n 'PRD|ARD|ADR|Incident|Postmortem|Release|frontmatter|lineage|Consolidated' \
