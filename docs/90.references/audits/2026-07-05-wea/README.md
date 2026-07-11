@@ -10,6 +10,14 @@ The pack is descriptive. It does not redefine active governance, provider
 runtime behavior, CI semantics, templates, scripts, manifests, approval
 boundaries, or live operations procedure.
 
+## Snapshot Contract
+
+- Pack role: Historical.
+- Snapshot date: 2026-07-05.
+- Successor: [2026-07-11 Workspace Engineering Implementation Audit](../2026-07-11-weia/README.md).
+- Scope: repository-backed comparison with the 2026-07-04 research benchmark
+  at this pack's cutoff.
+
 ## Audience
 
 This README is for:
@@ -67,10 +75,10 @@ This README is located at
 
 | Report | Availability | Purpose |
 | --- | --- | --- |
-| [governance-harness-loop-providers.md](./governance-harness-loop-providers.md) | Current | Governance, harness, loop, Claude, Codex, Gemini, and common provider implementation audit. |
-| [sdlc-ci-qa-formatting-automation.md](./sdlc-ci-qa-formatting-automation.md) | Current | Spec-driven development, SDLC, CI/CD, QA, formatting, linting, automation, pipeline, and workflow audit. |
-| [kubernetes-infrastructure-security.md](./kubernetes-infrastructure-security.md) | Current | Kubernetes, infrastructure, GitOps, secrets, policy, network, supply-chain, and security audit. |
-| [implementation-roadmap-and-automation-opportunities.md](./implementation-roadmap-and-automation-opportunities.md) | Current | Cross-report roadmap, priority matrix, automation candidates, and future task routing. |
+| [governance-harness-loop-providers.md](./governance-harness-loop-providers.md) | Historical | Governance, harness, loop, Claude, Codex, Gemini, and common provider implementation audit. |
+| [sdlc-ci-qa-formatting-automation.md](./sdlc-ci-qa-formatting-automation.md) | Historical | Spec-driven development, SDLC, CI/CD, QA, formatting, linting, automation, pipeline, and workflow audit. |
+| [kubernetes-infrastructure-security.md](./kubernetes-infrastructure-security.md) | Historical | Kubernetes, infrastructure, GitOps, secrets, policy, network, supply-chain, and security audit. |
+| [implementation-roadmap-and-automation-opportunities.md](./implementation-roadmap-and-automation-opportunities.md) | Historical | Cross-report roadmap, priority matrix, automation candidates, and future task routing. |
 
 ## Benchmark Sources
 
@@ -93,7 +101,11 @@ values in this pack.
 | `Gap` | The expected capability is relevant but no sufficient repo-backed implementation evidence was found. |
 | `Not in scope` | The capability is intentionally outside the workspace boundary or requires human-approved future work. |
 
-## Evidence Rules
+## Successor or Resolution
+
+Successor: [2026-07-11 Workspace Engineering Implementation Audit](../2026-07-11-weia/README.md).
+
+## Evidence Boundary
 
 - Repo-backed evidence is required for implementation status.
 - Upstream provider capability is benchmark context, not proof of local

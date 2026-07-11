@@ -224,7 +224,7 @@ or future artifact consumers the repository actually owns.
 ### Repository and Audit Sources
 
 - [Audit pack method](README.md)
-- [Implementation plan](implementation-plan.md)
+- [Implementation plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
 - [Current Kubernetes, Infrastructure, and Security Research](../../research/2026-07-07-wer/kubernetes-infrastructure-security.md)
 - [Task 9 CI, QA, and Supply-Chain Audit](ci-qa-automation-pipeline-workflow.md)
 - [GitOps README](../../../../gitops/README.md)
@@ -282,7 +282,7 @@ read from those paths at the audit observation SHA.
 ## Related Documents
 
 - **Audit pack**: [2026-07-11 WEIA README](README.md)
-- **Implementation plan**: [WEIA implementation plan](implementation-plan.md)
+- **Implementation plan**: [WEIA implementation plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
 - **Current research pack**: [2026-07-07 WER README](../../research/2026-07-07-wer/README.md)
 - **Parent audits index**: [Audits README](../README.md)
 - **Integrated remediation owner**: `remediation-roadmap.md`

@@ -1,7 +1,7 @@
 ---
-title: Workspace Engineering Research and Implementation Audit Integration Plan
-type: content/reference
-status: active
+title: 'Workspace Engineering Research and Implementation Audit Integration Plan'
+type: sdlc/plan
+status: done
 owner: platform
 updated: 2026-07-11
 ---
@@ -32,6 +32,14 @@ This document is the detailed, checkbox-driven execution plan for the approved
 Stage 90 research and audit integration design. It decomposes the work into
 independently reviewable and testable documentation tasks.
 
+## Context
+
+The work began as a Stage 90-only integration ledger. Its thirteen completed
+tasks produced the Current research and audit packs, fixed their evidence
+contracts, and published the reviewed Current pointers. This relocated Stage 04
+copy is now the canonical completed Plan; the dated audit reports remain
+unchanged evidence snapshots.
+
 ## Purpose
 
 Provide exact file ownership, evidence inputs, outputs, validation commands,
@@ -50,12 +58,20 @@ does not override Stage 00 governance, Stage 99 templates, provider-native
 configuration, CI, hooks, scripts, manifests, or operations procedure. Any
 recommended active change requires a separately approved canonical SDLC owner.
 
-## Scope
+## Goals & In-Scope
 
 The plan covers the in-place Current research refresh, five implementation
 audits, the integrated remediation roadmap, index reconciliation, evidence
 review, and final validation. Live operations and active-file remediation are
 excluded.
+
+## Non-Goals & Out-of-Scope
+
+- Do not rewrite dated report findings, scores, or evidence cutoffs.
+- Do not implement recommendations against active governance, templates, CI,
+  agents, scripts, manifests, or operations owners.
+- Do not claim live Kubernetes, Argo CD, Vault, ESO, provider-runtime,
+  credential, secret-value, remote CI, or deployment readiness.
 
 ## Definitions / Facts
 
@@ -70,11 +86,11 @@ excluded.
 
 ## Sources
 
-- [Approved pack design](README.md)
-- [Current research pack](../../research/2026-07-07-wer/README.md)
-- [Research index](../../research/README.md)
-- [Audit index](../README.md)
-- [Reference template](../../../99.templates/templates/common/reference.template.md)
+- [Approved pack design](../../90.references/audits/2026-07-11-weia/README.md)
+- [Current research pack](../../90.references/research/2026-07-07-wer/README.md)
+- [Research index](../../90.references/research/README.md)
+- [Audit index](../../90.references/audits/README.md)
+- [Reference template](../../99.templates/templates/common/reference.template.md)
 - Official provider and standards sources already inventoried in the Current
   research pack and reverified by the source-owning task.
 
@@ -119,6 +135,24 @@ ledger for this exception. Any later active follow-up PRD, ARD, ADR, Spec,
 Plan, or Task must restore the normal bootstrap `progress.md` workflow.
 
 ---
+
+## Work Breakdown
+
+| Task | Completed deliverable | Completion evidence |
+| --- | --- | --- |
+| 1 | Frozen inventory and shared measurement contract. | Checked steps and publication commit recorded below. |
+| 2 | SDLC, lifecycle, and frontmatter research. | Checked steps and publication commit recorded below. |
+| 3 | Vibe-coding and AI-agent verification research. | Checked steps and publication commit recorded below. |
+| 4 | Harness, loop, and provider research refresh. | Checked steps and publication commit recorded below. |
+| 5 | Governance, automation, Kubernetes, and security research refresh. | Checked steps and publication commit recorded below. |
+| 6 | Audit method and report interfaces. | Checked steps and publication commit recorded below. |
+| 7 | Governance, harness, loop, and provider audit. | Checked steps and publication commit recorded below. |
+| 8 | SDLC, document lifecycle, and frontmatter audit. | Checked steps and publication commit recorded below. |
+| 9 | CI/CD, QA, formatting, linting, and automation audit. | Checked steps and publication commit recorded below. |
+| 10 | Kubernetes, infrastructure, GitOps, and security audit. | Checked steps and publication commit recorded below. |
+| 11 | AI agents, models, agency-agents, and vibe-coding audit. | Checked steps and publication commit recorded below. |
+| 12 | Integrated remediation roadmap. | Checked steps and publication commit recorded below. |
+| 13 | Current-pointer reconciliation and whole-pack verification. | Checked steps, independent reviews, and final publication evidence recorded below. |
 
 ### Task 1: Freeze Inventory and the Measurement Contract
 
@@ -953,6 +987,47 @@ Final publication gate evidence:
 - No live, provider-runtime, remote, credential, secret-value, push, merge, or
   third-party mutation check or action ran.
 
+## Verification Plan
+
+| ID | Level | Completed verification | Pass criteria |
+| --- | --- | --- | --- |
+| VAL-WEIA-001 | Structural | Current research/audit pointer, ownership-row, source-row, and roadmap-finding counts. | Exactly one Current pointer per pack family and all recorded counts match. |
+| VAL-WEIA-002 | Repository static | `git diff --check`, repository quality gates, harness validation, and `pre-commit run --all-files`. | Required gates pass; optional Conftest is reported as skipped with the deterministic fallback passing. |
+| VAL-WEIA-003 | Review | Whole-branch specification/content and evidence/quality reviews. | Both reviews pass with no remaining Critical or Important finding. |
+| VAL-WEIA-004 | Boundary | Fixed-base and worktree path guards. | Only approved Stage 90 research/audit paths appear in the completed publication branch. |
+
+## Risks & Mitigations
+
+| Risk | Impact | Mitigation |
+| --- | --- | --- |
+| Dated evidence is mistaken for current policy. | High | Keep active implementation routed to canonical Stage 01-05 owners and preserve snapshot labels. |
+| Repo-static checks are overstated as live readiness. | High | Retain the explicit no-live/no-secret/no-remote boundary in the Plan, Task, and Current pack. |
+| Relocation breaks navigation. | Medium | Repair every active Plan link and validate the old Stage 90 filename has no active reference. |
+
+## Agent Rollout & Evaluation Gates (If Applicable)
+
+- **Offline Eval Gate**: completed repository-static structure, quality, and
+  whole-branch review gates are recorded in Task 13 below.
+- **Sandbox / Canary Rollout**: not applicable to documentation-only
+  relocation and audit-pack indexing.
+- **Human Approval Gate**: the user approved the original Stage 90 scope and
+  this later information-architecture normalization; no live or remote action
+  is authorized.
+- **Rollback Trigger**: a broken canonical link, changed dated finding, or
+  failed repository gate requires reverting the navigation change before
+  publication.
+- **Prompt / Model Promotion Criteria**: not applicable.
+
+## Completion Criteria
+
+- [x] All thirteen audit-integration tasks are complete.
+- [x] Both whole-branch reviews passed after the accepted source correction.
+- [x] Repository-static publication gates passed with optional-tool skips
+  recorded accurately.
+- [x] Current research and audit pointers were reconciled.
+- [x] No live, credential, secret-value, push, merge, or third-party mutation
+  was performed.
+
 ## Execution Choice
 
 The approved mode is Subagent-Driven Development: use a fresh implementer for
@@ -961,7 +1036,8 @@ advancing. This checklist is the durable execution ledger.
 
 ## Related Documents
 
-- [Approved Audit Pack Design](README.md)
-- [Current Research Pack](../../research/2026-07-07-wer/README.md)
-- [Audits Index](../README.md)
-- [Research Index](../../research/README.md)
+- [Current Audit Pack](../../90.references/audits/2026-07-11-weia/README.md)
+- [Audit Integration Task](../tasks/2026-07-11-workspace-engineering-research-audit-integration.md)
+- [Current Research Pack](../../90.references/research/2026-07-07-wer/README.md)
+- [Audits Index](../../90.references/audits/README.md)
+- [Research Index](../../90.references/research/README.md)

@@ -13,6 +13,15 @@ audits as historical or resolved baselines. The pack is descriptive and does
 not redefine or modify active governance, templates, CI, agents, scripts,
 manifests, credentials, or live operations.
 
+## Snapshot Contract
+
+- Pack role: Current.
+- Snapshot date: 2026-07-11.
+- Audit observation SHA: `a85df194bbb8ebc61187b905afaef7f95215cc2f`.
+- Successor: none.
+- Completion evidence: [Stage 04 Plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
+  and [Stage 04 Task](../../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md).
+
 ## Audience
 
 - Developers
@@ -65,7 +74,6 @@ pointer.
 ```text
 2026-07-11-weia/
 ├── README.md
-├── implementation-plan.md
 ├── governance-harness-loop-providers.md
 ├── sdlc-document-lifecycle-frontmatter.md
 ├── ci-qa-automation-pipeline-workflow.md
@@ -74,11 +82,13 @@ pointer.
 └── remediation-roadmap.md
 ```
 
-The [implementation plan](implementation-plan.md) is the durable execution
-ledger for this Stage 90-only integration. It does not authorize changes to
-the active owners it audits.
+The completed execution ledger now lives in the canonical
+[Stage 04 Plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md),
+with compact completion evidence in its paired
+[Task](../../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md).
+Neither document authorizes changes to the active owners audited here.
 
-## Completed Audit Report Index
+## Report Index
 
 All five scored reports use the shared measurement contract below. The roadmap
 normalizes their 80 actionable rows into 32 canonical findings; it does not
@@ -92,7 +102,12 @@ rescore or replace the source reports.
 | [Kubernetes Infrastructure and Security](kubernetes-infrastructure-security.md) | GitOps/platform foundations and `SEC-001` through `SEC-014` | `44/104` (42.3%); 26 applicable; no N/A | 15 Partial/Gap rows routed, including 2 P0 controls. |
 | [AI Agents, Model Routing, Agency-Agents, and Vibe Coding](ai-agents-model-routing-vibe-coding.md) | Ten local roles, shared role system, upstream adoption, routing, and vibe coding | `51/116` (44.0%); 29 applicable; 2 N/A | 26 Partial/Gap rows routed; direct import and FinOps remain excluded. |
 | [Integrated Remediation Roadmap](remediation-roadmap.md) | Deduplication, dependencies, target state, and canonical SDLC routes | 80 actionable source rows -> 32 canonical findings | Consolidated target selected; deferred/rejected lanes retain reopen triggers. |
-| [Implementation Plan](implementation-plan.md) | Task-by-task execution and validation ledger | Tasks 1-13 complete | Both whole-branch reviews and final repository-static publication gates pass. |
+| [Implementation Plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md) | Task-by-task execution and validation ledger | Tasks 1-13 complete | Both whole-branch reviews and final repository-static publication gates pass. |
+
+## Successor or Resolution
+
+Successor: none. This is the Current comparison owner until a separately
+reviewed dated audit pack replaces the parent registry pointer.
 
 ## How to Work in This Area
 
@@ -116,7 +131,7 @@ This README is located at
 - Repository-root evidence uses `../../../../<path>`.
 - Planned or conditional artifacts remain code literals.
 
-## Repository Snapshot Contract
+## Repository Snapshot Details
 
 The initial inventory baseline is commit
 `ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7`, observed on `2026-07-11`.
@@ -347,35 +362,15 @@ content into metadata.
   obligation and a mandatory check for hook, toolchain, global formatting, or
   validation-contract changes, not as an after-every-edit requirement.
 
-## Planned Logical Commits
+## Completion Evidence
 
-1. approved design and audit-pack contract;
-2. Current research index and traceability;
-3. SDLC, document lifecycle, and frontmatter research;
-4. AI agents, model routing, and vibe-coding research;
-5. remaining research fact and source refresh;
-6. audit method and pack index;
-7. governance, harness, loop, and provider audit;
-8. SDLC, lifecycle, and frontmatter audit;
-9. CI/CD, QA, automation, pipeline, and workflow audit;
-10. Kubernetes, infrastructure, and security audit;
-11. AI agents, model routing, `agency-agents`, and vibe-coding audit;
-12. remediation roadmap and follow-up SDLC routes; and
-13. Current pointer reconciliation and final verification corrections.
-
-## Execution and Review
-
-- Work is isolated under `.worktrees/` on a `codex/` branch.
-- Subagent-driven implementation assigned non-overlapping file ownership.
-- Each logical unit received content and evidence review before acceptance.
-- `whole_branch_spec_review` passed over the complete Stage 90 branch diff.
-- The evidence/quality review's accepted OpenAI redirect-source finding was
-  corrected in commit `14198a7`; `whole_branch_quality_review` then passed over
-  the corrected complete diff with no remaining Critical or Important finding.
-- Validation includes repository quality gates, changed-file pre-commit,
-  final all-files pre-commit, link/frontmatter/routing checks, source and count
-  verification, requirement coverage, and a path guard proving active files
-  were not changed.
+The [completed Plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
+preserves the thirteen-task ledger, logical publication boundaries, review
+record, and validation commands. The paired
+[Task](../../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md)
+summarizes completed tasks, known publication commits, repository-static
+validation, and the no-live/no-secret boundary. The final source correction is
+commit `14198a7`; the Current pack publication is commit `184d13e`.
 
 ## Final Review and Freshness
 
@@ -395,17 +390,12 @@ content into metadata.
   report score/N/A distribution, revalidate sources and counts, then repeat both
   whole-branch reviews before changing Current pointers.
 
-## Approval Record
-
-The user approved the Stage 90-only scope, approach 1, artifact ownership,
-audit method, maturity model, evidence boundary, SDLC/frontmatter design,
-cross-category comparison rules, and execution strategy on 2026-07-11.
-
 ## Related Documents
 
 - [Audits README](../README.md)
 - [Current Workspace Engineering Research Pack](../../research/2026-07-07-wer/README.md)
-- [Implementation Plan](implementation-plan.md)
+- [Implementation Plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
+- [Implementation Task](../../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md)
 - [Governance, Harness, Loop, and Provider Parity](governance-harness-loop-providers.md)
 - [SDLC, Document Lifecycle, and Frontmatter](sdlc-document-lifecycle-frontmatter.md)
 - [CI, QA, Automation, Pipeline, and Workflow](ci-qa-automation-pipeline-workflow.md)

@@ -231,7 +231,7 @@ remain code literals until created.
 ## Sources
 
 - [Audit pack design and method](README.md)
-- [Implementation plan](implementation-plan.md)
+- [Implementation plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
 - [Governance, Harness, Loop, and Provider Parity](governance-harness-loop-providers.md)
 - [SDLC Document Lifecycle and Frontmatter](sdlc-document-lifecycle-frontmatter.md)
 - [CI, QA, Automation, Pipeline, and Workflow](ci-qa-automation-pipeline-workflow.md)
@@ -253,6 +253,6 @@ remain code literals until created.
 ## Related Documents
 
 - **Audit pack**: [2026-07-11 WEIA README](README.md)
-- **Implementation plan**: [WEIA implementation plan](implementation-plan.md)
+- **Implementation plan**: [WEIA implementation plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
 - **Parent audits index**: [Audits README](../README.md)
 - **Reference maintenance runbook**: [Reference Maintenance Runbook](../../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

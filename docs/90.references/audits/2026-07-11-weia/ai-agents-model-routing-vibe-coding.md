@@ -290,7 +290,7 @@ snapshot. The score is descriptive and grants no model, tool, role, or live auth
 ## Related Documents
 
 - **Audit pack**: [2026-07-11 WEIA README](README.md)
-- **Implementation plan**: [WEIA implementation plan](implementation-plan.md)
+- **Implementation plan**: [WEIA implementation plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
 - **Task 7 canonical provider audit**: [Governance, Harness, Loop, and Provider Parity](governance-harness-loop-providers.md)
 - **Current research pack**: [2026-07-07 WER README](../../research/2026-07-07-wer/README.md)
 - **Parent audits index**: [Audits README](../README.md)
