@@ -1104,7 +1104,7 @@ mapping. The implementation must re-verify every finding before publication.
   commit range. Do not perform final lifecycle promotion until the focused
   reviewer returns a clean verdict.
 
-- [ ] **Step 6: Promote final lifecycle in a separate logical commit**
+- [ ] **Step 6: Validate and commit the final lifecycle promotion**
 
   Only after Step 5 passes, use `apply_patch` on the same five closure files to:
 
@@ -1116,16 +1116,54 @@ mapping. The implementation must re-verify every finding before publication.
   - finalize the progress-memory Handoff as complete without changing the
     no-live/no-remote evidence boundary.
 
-  Validate that only the five closure files changed, then commit:
+  With those final promotion edits still pending, run the deterministic bundle
+  against the complete working-tree state from the pinned base. Run the
+  `pre-commit` command when installed; otherwise omit it and record an exact
+  optional-tool SKIP:
 
   ```bash
-  git diff --check
-  git status --short --branch
-  git add docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/00.agent-governance/memory/progress.md
-  git commit -m 'docs(execution): promote current research hardening lifecycle'
+  git diff --check a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4
+  git diff --name-only a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4
+  git log --oneline a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4..HEAD
+  pre-commit run --files docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/00.agent-governance/memory/progress.md
+  bash scripts/validate-harness.sh
+  bash scripts/validate-repo-quality-gates.sh .
+  rg -n '\b(T[B]D|T[O]DO|F[I]XME|implement[[:space:]]+later)\b' docs/90.references/research/2026-07-07-wer docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md
   ```
 
-- [ ] **Step 7: Run final validation and full-branch check**
+  Expected: both validators pass, the incomplete-marker scan exits 1 with no
+  matches, and the pinned-base path and commit inventory matches the approved
+  scope. Record the exact command results, optional-tool limitations, pinned
+  base, and no-live/no-remote boundary in the still-pending Task and progress
+  memory. Do not claim post-commit verification at this point.
+
+  After recording that evidence, run the final-state gates again so the
+  recorded evidence itself is covered. This second pass is a commit gate, not
+  another result to write back. If `pre-commit` is unavailable, preserve the
+  recorded SKIP from the first pass and omit only that command:
+
+  ```bash
+  pre-commit run --files docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/00.agent-governance/memory/progress.md
+  git diff --check a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4
+  bash scripts/validate-harness.sh
+  bash scripts/validate-repo-quality-gates.sh .
+  git add docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/00.agent-governance/memory/progress.md
+  git diff --cached --check
+  git diff --cached --name-only
+  git diff --name-only
+  git status --short --branch
+  ```
+
+  Expected: all final-state gates pass; the staged diff contains exactly the
+  five closure files; no unstaged path remains; and the status contains only
+  those five staged files. Commit the already-recorded, reviewed, and validated
+  final evidence without another writeback:
+
+  ```bash
+  git commit -m 'docs(execution): close current research hardening evidence'
+  ```
+
+- [ ] **Step 7: Verify the committed branch and hand off without writeback**
 
   ```bash
   git diff --check a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4...HEAD
@@ -1137,10 +1175,13 @@ mapping. The implementation must re-verify every finding before publication.
   git status --short --branch
   ```
 
-  Expected: both validators pass, the incomplete-marker scan exits 1 with no
-  matches, the full-branch paths and logical commits match the approved scope,
-  and the worktree is clean. Record the exact results, then invoke
-  `superpowers:finishing-a-development-branch`.
+  Expected: the committed branch remains valid, the incomplete-marker scan
+  exits 1 with no matches, the full-branch paths and logical commits match the
+  approved scope, and the worktree is clean. Report this post-commit result
+  externally in the handoff; do not modify the completed plan, task, indexes,
+  or memory to self-record it. If any check fails, reopen the lifecycle, make a
+  reviewed fix, and repeat Steps 6 and 7 rather than leaving uncommitted
+  evidence. On success, invoke `superpowers:finishing-a-development-branch`.
 
 ## Completion Criteria
 
@@ -1154,7 +1195,7 @@ mapping. The implementation must re-verify every finding before publication.
 - [ ] Provisional closure remains review-pending until its exact immutable closure diff is independently approved
 - [ ] WERH-010, Phase View, frontmatter, indexes, and memory promoted to final `Done` only after closure-only review approval
 - [ ] Required repo-static validation passed with limitations recorded
-- [ ] Final full-branch validation passed from pinned base `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4`
+- [ ] Pre-commit final-state validation passed from pinned base `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4` and its results are durable; post-commit clean verification is externally reported handoff evidence without writeback
 - [ ] Logical commits preserved
 
 ## Related Documents
