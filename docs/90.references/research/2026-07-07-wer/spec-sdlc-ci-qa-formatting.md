@@ -101,6 +101,62 @@ README path stream SHA-256은
 README 22개는 Stage 01 1개, Stage 02 3개, Stage 03 1개, Stage 04
 3개, Stage 05 5개, Stage 90 9개다.
 
+세 hash는 다음 명령으로 재현한다. 모든 경로는 `LC_ALL=C`에서
+bytewise `sort`하며, path/status stream은 path와 status 사이에 tab
+separator, 각 record 끝에 LF newline을 `printf '%s\t%s\n'`으로
+명시한다. Status는 각 문서의 첫 `---` frontmatter block에서만
+첫 `status:` key 값을 읽고, 없으면 `MISSING`을 쓴다. README stream은
+status 없이 정렬된 path만 record당 LF 하나로 입력한다.
+
+```bash
+export LC_ALL=C
+base=ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7
+
+# Stage 01–05 non-README path<TAB>status<LF> stream.
+git ls-tree -r --name-only "$base" -- \
+  docs/01.requirements docs/02.architecture docs/03.specs \
+  docs/04.execution docs/05.operations |
+  awk '/\.md$/ && $0 !~ /\/README\.md$/ { print }' |
+  sort |
+  while IFS= read -r doc; do
+    doc_status=$(git show "$base:$doc" |
+      awk 'NR == 1 && $0 == "---" { fm=1; next }
+        fm && $0 == "---" { exit }
+        fm && /^status: / { sub(/^status: /, ""); print; exit }')
+    printf '%s\t%s\n' "$doc" "${doc_status:-MISSING}"
+  done |
+  sha256sum
+
+# Stage 90 Reference non-README path<TAB>status<LF> stream.
+git ls-tree -r --name-only "$base" -- docs/90.references |
+  awk '/\.md$/ && $0 !~ /\/README\.md$/ { print }' |
+  sort |
+  while IFS= read -r doc; do
+    doc_status=$(git show "$base:$doc" |
+      awk 'NR == 1 && $0 == "---" { fm=1; next }
+        fm && $0 == "---" { exit }
+        fm && /^status: / { sub(/^status: /, ""); print; exit }')
+    printf '%s\t%s\n' "$doc" "${doc_status:-MISSING}"
+  done |
+  sha256sum
+
+# Stage 01–05 plus Stage 90 README path<LF> stream.
+git ls-tree -r --name-only "$base" -- \
+  docs/01.requirements docs/02.architecture docs/03.specs \
+  docs/04.execution docs/05.operations docs/90.references |
+  awk '/(^|\/)README\.md$/ { print }' |
+  sort |
+  while IFS= read -r doc; do
+    printf '%s\n' "$doc"
+  done |
+  sha256sum
+```
+
+Expected outputs in command order are
+`253fcd638675527ddc6d1df59a04628f3dadfff47a55de1ac9893a927a7f17fd`,
+`88fc1208c298d637a4e9235c58c007370d583a4b733b49d8206b6d4762e9fd1a`, and
+`6e1944d7ff8ef3e1c5a22b02e827bb51271006d639ea4d6558836834618ffdf3`.
+
 기존 2026-07-10 관찰의 `42/43 done` Task 수치는 당시 진행 중이던
 hardening Task 1개가 `draft`였던 이전 시점의 역사적 사실이다. 그
 문맥은 보존하되, 본 audit의 고정 스냅샷 수치는 `43/43 done`으로
@@ -209,8 +265,14 @@ archive reason, replacement 또는 preservation reason을 남겨야 한다.
 | Incident | 실제 사고 fact record로 영구 보존 | Postmortem analysis 중복 | **Keep** every real scoped incident; **Consolidate** only duplicate record IDs; **Archive** through governed tombstone if relocated, not erased; **Decline** synthetic exercise in the real-incident route. |
 | Postmortem | 학습·action lineage로 영구 보존 | Incident chronology, Task action log 중복 | **Keep** material learning/action analysis; **Consolidate** duplicate analysis for one incident; **Archive** superseded copy; **Decline** no-analysis chronology. |
 | Release | 채택 시 artifact/promotion/provenance retention 기간 | Task evidence, changelog, Git tag 중복 | **Keep** only if ADR identifies distinct consumer/control; **Consolidate** into Task/tag evidence when sufficient; **Archive** superseded release record without deleting immutable artifact history; **Decline** a new route when no consumer exists. |
-| Reference | source가 재사용되고 freshness를 평가할 가치가 있는 동안 | Guide, Policy, dated audit 중복 | **Keep** slow-moving sourced knowledge; **Consolidate** duplicate current references; **Archive** replaced snapshot only under archive contract; **Decline** feature-local or normative content. |
+| Reference | source가 재사용되고 freshness를 평가할 가치가 있는 동안 | Guide, Policy, dated audit 중복 | **Keep** dated pack을 Stage 90 index의 `Current`/`Historical`로 보존; **Consolidate** 중복 Current coverage를 하나의 indexed pack으로 통합; **Delete**는 Stage 90 retention/governance 판정과 index update가 있을 때만; **Archive**는 현행 route가 아니며 future governance proposal이 필요; **Decline** feature-local or normative content. |
 | README | 폴더와 current index가 존재하는 동안 | Lifecycle governance body 복제 | **Keep** one entrypoint per routed folder; **Consolidate** duplicated policy into owner links; **Archive** only with removed/moved folder contract; **Decline** nested index with no navigation consumer. |
+
+현행 `docs/98.archive` Tombstone contract은 Stage 01–05의 이전
+active-stage 문서에만 적용된다. Stage 90 Reference를 그 경로로
+이동하는 것은 현재 허용된 retention 조치가 아니며, 필요하다면
+별도 governance proposal이 route, template, index, migration을 먼저 정의해야
+한다.
 
 ### Research Candidate State Transition and Semantic Lineage Contract
 
@@ -345,9 +407,14 @@ approved tabletop/exercise 증적도 0개이므로 response readiness는
 4. 통과는 연습이 한 번 수행됐음을 증명할 뿐, 실제 사고 없음,
    재발 방지 성공, live controller readiness를 증명하지 않는다.
 
-#### Primary AI-Agent QA Obligation
+#### AI-Agent QA Benchmark Summary
 
-AI agent의 주 QA obligation owner는 본 문서다.
+본 Stage 90 reference는 AI-agent QA의 비교 benchmark와 dated summary만
+소유한다. 활성 의무와 완료 경계의 정본은
+[Agentic Execution Rules](../../../00.agent-governance/rules/agentic.md)와
+[CI/CD & QA Reference Guide](../../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)다.
+아래는 그 정본을 대체하지 않는 risk-based benchmark 요약이며,
+충돌 시 Stage 00/05 owner가 우선한다.
 
 - 반복 중에는 changed-file pre-commit과 affected-lane validation으로
   빠른 feedback을 얻고, 위험에 맞는 최소 범위를 매 edit 후 재실행한다.
