@@ -37,7 +37,7 @@ remote actions.
 ## Reference Type
 
 - Type: durable-concept / external-standard-snapshot
-- Source checked: 2026-07-10
+- Source checked: `2026-07-10 10:00 KST`
 - Refresh trigger: official provider harness or agent-loop behavior changes,
   MCP revision/security guidance changes, Stage 00 harness ownership changes,
   provider-native runtime evidence, or validation-loop changes.
@@ -73,6 +73,16 @@ remote actions.
   hooks, provider adapters, runtime configuration, Stage 99 templates, CI,
   manifests, infrastructure, live environments, credentials, and remote state.
 
+### Exact Cutoff Handling
+
+External facts in this snapshot were eligible only when the official source was
+published or checked no later than `2026-07-10 10:00 KST`. A read-only recheck
+on 2026-07-11 found that some stable OpenAI developer URLs now redirect to
+ChatGPT Learn and that provider pages continue to change. Those post-cutoff
+representations are drift signals only: they are not back-projected into this
+snapshot. A later refresh must advance the cutoff explicitly and preserve the
+old snapshot rather than silently rewriting it.
+
 ## Definitions / Facts
 
 ### Harness Ownership Boundary
@@ -100,7 +110,7 @@ The evidence lanes must remain separate:
 | --- | --- | --- |
 | Declared wiring | Tracked JSON points SessionStart, PreToolUse, PostToolUse, Stop, SubagentStop, and PreCompact events to shared scripts. | A provider host parsed, registered, or invoked those events. |
 | Validator evidence | `validate-repo-quality-gates.sh` parses hook JSON, checks required event/script phrases, and simulates hook payloads, including blocking Stop/SubagentStop output and advisory PreCompact output. | End-to-end provider UI behavior, managed/user configuration precedence, or permission enforcement. |
-| Runtime/native behavior | Official provider docs describe native subagent, hook, sandbox, approval, or policy-engine surfaces. Claude has tracked native settings/permissions in this repo. | That Codex/Gemini hook JSON is a native permission gate or that untracked provider settings exist. |
+| Runtime/native behavior | Official provider docs describe native subagent, hook, sandbox, approval, or policy-engine surfaces. The repo has tracked files shaped for some of those surfaces. | That any provider loaded the files, that Codex/Gemini hook JSON is a native permission gate, or that untracked provider settings exist. |
 | Live/remote readiness | No live or remote check ran for this documentation task. | Claude/Codex/Gemini sessions, MCP connections, cluster health, CI/rulesets, Vault/ESO, deployment, credentials, secrets, or third-party readiness. |
 
 **Fact defect corrected.** Earlier Current wording concentrated role definitions,
@@ -128,16 +138,16 @@ minimum information a future canonical loop contract should carry. A task must
 set its own retry budget and approval boundary; this reference does not invent
 a repository-wide number.
 
-| Phase | Inputs | Allowed action | Feedback evidence | Termination condition | Knowledge update |
-| --- | --- | --- | --- | --- | --- |
-| Observe | User intent, approved Spec/Plan/Task, repo state, canonical owners, current diffs, tool output, external sources, and known limitations | Read and classify facts, unknowns, authority, risk, and evidence lanes; do not mutate live or external state | Evidence inventory with `Repo fact`, `External fact`, `Interpretation`, and `Recommendation` labels | Required owners and success evidence are known; otherwise stop for clarification or record `Unverified` | Add task-local observations and source provenance, not durable policy |
-| Plan | Observed facts, scope, acceptance criteria, approval boundary, failure classes, retry budget, and rollback/recovery route | Select the smallest authorized action, verifier, budget, escalation threshold, and handoff shape | Reviewable plan or task criteria tied to commands and expected results | Plan is testable and within authority; unresolved scope or required approval returns control to the human | Record decisions in the owning Spec/Plan/Task only |
-| Act | Approved plan, current state, least-privilege tools, remaining retry budget, and human approval state | Make only scoped changes; one recovery attempt consumes budget only after the failure is diagnosed and the input, hypothesis, or implementation changes | Tool result, changed-path inventory, diff, audit log, and approval record where applicable | Planned action completes, an unexpected boundary is reached, approval is required, or safe action is impossible | Preserve material decisions and deviations in task evidence |
-| Verify | Acceptance criteria, exact diff, deterministic checks, graders/review, and evidence-lane rules | Run the same defined verifier; classify failure as deterministic, transient, authority/approval, environment, or subjective-review failure | Command exit/output, test/static results, review findings, trace or transcript reference, and explicit skipped lanes | All required evidence passes; otherwise enter recovery while budget remains or escalate/terminate | Record pass/fail/skip honestly; static PASS never becomes live readiness |
-| Learn/Handoff | Final evidence, remaining risks, failure history, changed files, approvals, and unresolved unknowns | Summarize outcome, route durable learning to the smallest canonical owner, and return control to the human or next task | Task verification summary, commit/diff identity, review state, limitations, and next owner | Success is evidenced, or incomplete work has an explicit blocker, owner, and safe continuation point | Update Stage 04 evidence and, only when in approved scope, Stage 00 progress memory or another canonical owner |
-| Cross-phase: retry budget and failure escalation | Attempt count, repeated failure signature, elapsed/resource budget, and risk class | Retry only after diagnosis changes the next attempt; do not repeat identical tool calls or broaden authority | Attempt log with cause, changed hypothesis, and repeated-failure detection | Budget exhausted, the same blocking condition repeats, risk increases, or new authority is needed: stop and escalate | Store the failure class and next safe action in the task handoff |
-| Cross-phase: compaction | Context pressure, active plan, changed paths, verification state, approvals, and remaining budget | Create a compact checkpoint before continuing; never treat compaction as verification or permission | Checkpoint records goal, decisions, files, commands/results, risks, and next step | Continue only when critical state is recoverable; otherwise hand off or ask the human | Preserve durable facts in canonical task/memory owners, not only a generated summary |
-| Cross-phase: human approval | Planned mutation, affected system/data/people, privilege, rollback, and evidence requirement | Pause before approval-bound live, remote, credential, secret-value, publish, merge, push, paid, or protected-control action | Explicit approval scope or explicit denial/absence of approval | Approved action returns to Act; denial, timeout, or inability to surface approval terminates the branch safely | Record only approval scope and redacted evidence; never secret values |
+| Phase | Evidence and input | Accountable owner | Allowed action | Required output and eval trace | Failure, retry, and termination | Memory / next owner |
+| --- | --- | --- | --- | --- | --- | --- |
+| Observe | User intent, approved Spec/Plan/Task, repo state, canonical owners, current diff, tool output, source provenance, evidence lane, and known limitations | Task owner or intake agent | Read and classify facts, unknowns, authority, risk, and evidence lanes; do not mutate live or external state | Evidence inventory labeled `Repo fact`, `External fact`, `Interpretation`, or `Recommendation`, with source/check time | Missing authority, owner, or success evidence stops for clarification or remains `Unverified`; observation itself consumes no retry | Keep task-local observations and provenance; do not create durable policy |
+| Plan | Observed facts, scope, acceptance criteria, approval boundary, failure classes, task-specific retry budget, repeated-failure threshold, and rollback/recovery route | Owning Spec/Plan/Task author and approver | Select the smallest authorized action, verifier, budget, escalation threshold, and handoff shape | Reviewable plan tied to commands, expected results, failure classes, attempt identifier, and stop conditions | Untestable scope, missing approval, or no safe rollback terminates planning and returns control to the human | Record decisions only in the owning Spec/Plan/Task |
+| Act | Approved plan, current state, least-privilege tools, remaining budget, and approval state | Assigned implementer or delegated role | Make scoped changes only; a recovery attempt starts only after diagnosis changes the input, hypothesis, implementation, tool, or environment | Tool result, attempt ID, changed-path inventory, diff, audit log, and approval record where applicable | Unexpected boundary, unchanged repeated failure, exhausted budget, increased risk, or new authority stops Act and routes to escalation | Preserve material decisions and deviations in task evidence |
+| Verify | Acceptance criteria, exact diff, deterministic checks, grader/reviewer rubric, prior attempt trace, and evidence-lane rules | Named verifier/reviewer, independent when risk requires it | Run the defined verifier and classify deterministic, transient, authority, environment, or subjective-review failure | Command exit/output, test/static results, review findings, attempt-to-attempt comparison, transcript/trace reference, and explicit skipped lanes | PASS advances to Learn; a diagnosed change may consume one retry; threshold/budget/authority failure terminates safely | Record pass/fail/skip honestly; static PASS never becomes live readiness |
+| Learn/Handoff | Final evidence, attempt history, risks, changed files, approvals, and unresolved unknowns | Task owner and smallest canonical knowledge owner | Summarize the outcome, route durable learning, and return control to the human or next task | Verification summary, commit/diff identity, review state, limitations, next owner, and recoverable continuation point | Success ends the loop; incomplete work ends with an explicit blocker and safe next step rather than an implicit retry | Update Stage 04 evidence and, only in approved scope, Stage 00 progress memory or another canonical owner |
+| Cross-phase: compaction | Goal, decisions, changed paths, attempt/eval state, approvals, remaining budget, risks, and next verifier | Active task owner | Create a recoverable checkpoint before continuing; never treat compaction as verification or permission | Checkpoint containing every input at left plus the last command/result and next action | Continue only when critical state can be reconstructed; otherwise hand off or ask the human | Persist durable facts in canonical task/memory owners, not only a generated summary |
+| Cross-phase: human approval | Planned mutation, affected system/data/people, privilege, rollback, and evidence requirement | Human/operator named by the owning contract | Pause before live, remote, credential, secret-value, publish, merge, push, paid, or protected-control action | Explicit scoped approval or denial; redact secret values | Approval returns to Act; denial, timeout, or inability to surface approval terminates safely | Record approval scope and redacted evidence only |
+| Cross-phase: MCP inventory/security | Server owner, exact command/endpoint, transport, tool inventory, trust source, scopes, token audience, egress, sandbox, approval, logging, and disable/rollback path | Provider configuration owner plus security reviewer | Discover read-only metadata only when authorized; installation, enablement, credential use, or scope elevation requires a separate approved action | Per-server inventory and threat review tied to official MCP categories and provider-native config evidence | Unknown owner/command/scope, token passthrough, unsafe redirect/egress, or absent rollback terminates enablement; it is not retried as a generic tool error | Route inventory to the provider/security owner; never store tokens or secret values |
 
 **External fact.** OpenAI describes a turn as repeated inference and tool calls
 until the model emits an assistant message, which is a loop termination state.
@@ -210,9 +220,11 @@ Provider-neutral termination modes are:
 Current repository evaluation is repo-static by default: the harness catalog
 defines capability criteria in Task records and regression evidence through
 explicit commands/validators. There is no provider-neutral trial dataset,
-attempt schema, numeric retry budget, behavioral grader, or automatically
-verified compaction handoff. Those absences are recommendations for later
-canonical work, not defects repaired by this reference.
+attempt/eval-trace schema, task-required numeric retry budget, common
+repeated-failure threshold, behavioral grader, automatically verified
+compaction handoff, or provider/MCP runtime inventory. Those absences are
+recommendations for later canonical work, not defects repaired by this
+reference.
 
 ### MCP Version and Security Boundary
 
@@ -247,19 +259,21 @@ Provider-specific MCP configuration remains WERH-005 scope.
 This register uses only the approved classification vocabulary. It records
 recommendations and canonical follow-up routes; it does not mutate the owners.
 
-| ID | Classification | Severity | Risk rationale | Recommendation | Canonical follow-up |
-| --- | --- | --- | --- | --- | --- |
-| HL-001 | Fact defect | High | Assigning governance, memory, the four-element contract, or Stage 99 templates to `.agents/` hides the real authority boundary and can send policy changes to the wrong surface. | Keep the corrected ownership boundary and check the rest of the Current pack for the stale broad `.agents/` claim. | WERH-009 cross-document integration in [the current Task record](../../../04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md). |
-| HL-002 | Implementation gap | High | The canonical loop requires validation but defines no task-level attempt schema, retry budget, repeated-failure threshold, or failure-escalation contract; identical retries can consume context and hide non-convergence. | In a separate approved change, define a bounded retry/escalation contract that every applicable Task must instantiate without imposing an arbitrary count from this reference. | [Agentic Execution Rules](../../../00.agent-governance/rules/agentic.md). |
-| HL-003 | Needs strengthening | Medium | Current capability/regression eval language is accurate, but there is no common record for trials, traces, graders/rubrics, failure classes, and attempt-to-attempt comparison, limiting behavioral regression analysis. | Add an optional provider-neutral eval/evidence block only after a Spec/Plan/Task defines the schema and validator impact. | [Harness Task Contract Template](../../../99.templates/templates/sdlc/specs/harness-task-contract.template.md). |
-| HL-004 | Implementation gap | Medium | PreCompact reports dirty paths and suggested validation but does not require a recoverable checkpoint containing goal, decisions, evidence, approval state, remaining budget, and next verifier. | Define a compact handoff/checkpoint contract in later canonical governance; keep compaction advisory unless a provider-specific design proves safe blocking semantics. | [Agentic Execution Rules](../../../00.agent-governance/rules/agentic.md). |
-| HL-005 | Unverified | High | Tracked Codex/Gemini hook JSON and payload simulations can be mistaken for native permission or runtime-consumption evidence, creating false provider parity. | Keep status at declared wiring plus validator evidence until provider-native canaries record actual discovery, event handling, permission behavior, and managed/user precedence. | WERH-005 in [Provider Implementation Status](provider-implementation-status.md). |
-| HL-006 | Unverified | High | Repo-static PASS or opt-in probe wiring can be promoted incorrectly to live provider, MCP, cluster, CI, credential, or remote readiness. | Preserve separate evidence lanes and require an explicitly approved operator/runtime check before any live/remote readiness claim. | [Harness Implementation Map: Live Runtime Evidence](../../../00.agent-governance/harness-implementation-map.md#live-runtime-evidence). |
-| HL-007 | Implementation gap | High | No tracked MCP configuration or inventory proves server trust, command visibility, transport, scope, token audience, or egress controls against the current official taxonomy. | Do not enable or describe MCP servers as ready; require a separate approved provider/security task to inventory each server against the eight official categories above. | WERH-005 in [Provider Implementation Status](provider-implementation-status.md). |
+| ID | Status | Classification | Severity | Risk rationale | Recommendation | Canonical follow-up |
+| --- | --- | --- | --- | --- | --- | --- |
+| HL-001 | Open; corrected in this reference only | Fact defect | High | Assigning governance, memory, the four-element contract, or Stage 99 templates to `.agents/` hides the real authority boundary. The base snapshot also says `Eight`/`eight` local agents although ten role stems and 30 adapters exist. | Keep the corrected ownership and 10-role inventory in research; repair the stale active catalog wording only through a separately approved Stage 00 change. | WERH-009 cross-document integration, then [Local Harness Catalog](../../../00.agent-governance/harness-catalog.md). |
+| HL-002 | Open | Implementation gap | High | The canonical loop requires validation but defines no task-level attempt schema, retry budget, repeated-failure threshold, or failure-escalation contract; identical retries can consume context and hide non-convergence. | In a separate approved change, define a bounded retry/escalation contract that every applicable Task must instantiate without imposing an arbitrary count from this reference. | [Agentic Execution Rules](../../../00.agent-governance/rules/agentic.md). |
+| HL-003 | Open | Needs strengthening | Medium | Current capability/regression eval language is accurate, but there is no common record for trials, traces, graders/rubrics, failure classes, and attempt-to-attempt comparison, limiting behavioral regression analysis. | Add an optional provider-neutral eval/evidence block only after a Spec/Plan/Task defines the schema and validator impact. | [Harness Task Contract Template](../../../99.templates/templates/sdlc/specs/harness-task-contract.template.md). |
+| HL-004 | Open | Implementation gap | Medium | PreCompact reports dirty paths and suggested validation but does not require a recoverable checkpoint containing goal, decisions, evidence, approval state, remaining budget, and next verifier. | Define a compact handoff/checkpoint contract in later canonical governance; keep compaction advisory unless a provider-specific design proves safe blocking semantics. | [Agentic Execution Rules](../../../00.agent-governance/rules/agentic.md). |
+| HL-005 | Open / runtime Unverified | Unverified | High | Tracked Codex hook JSON and payload simulations can be mistaken for runtime-consumption evidence. `.agents/agents/*.md` and `.agents/hooks.json` are not native Gemini CLI registration/settings paths, so they cannot prove Gemini agent or hook consumption. | Keep status at declared local wiring plus validator evidence until provider-native canaries record discovery, event handling, permission behavior, and managed/user precedence. | WERH-005 in [Provider Implementation Status](provider-implementation-status.md). |
+| HL-006 | Open / live Unverified | Unverified | High | Repo-static PASS or opt-in probe wiring can be promoted incorrectly to live provider, MCP, cluster, CI, credential, or remote readiness. | Preserve separate evidence lanes and require an explicitly approved operator/runtime check before any live/remote readiness claim. | [Harness Implementation Map: Live Runtime Evidence](../../../00.agent-governance/harness-implementation-map.md#live-runtime-evidence). |
+| HL-007 | Open | Implementation gap | High | No tracked MCP configuration or inventory proves server trust, command visibility, transport, scope, token audience, or egress controls against the current official taxonomy. | Do not enable or describe MCP servers as ready; require a separate approved provider/security task to inventory each server against the eight official categories above. | WERH-005 in [Provider Implementation Status](provider-implementation-status.md). |
 
 ## Sources
 
-Official external sources, Source checked 2026-07-10:
+Official external sources, source checked at the fixed
+`2026-07-10 10:00 KST` cutoff. The 2026-07-11 URL recheck was used only to
+identify post-cutoff drift; no newly displayed claim was inserted:
 
 | Source lane | Claim use | Exact URL |
 | --- | --- | --- |
@@ -304,7 +318,7 @@ No market-scan source is used as authority.
 ## Review and Freshness
 
 - Review cadence: on source or canonical-owner change
-- Last reviewed: 2026-07-10
+- Last reviewed: `2026-07-10 10:00 KST`
 - Next review trigger: OpenAI harness/loop update, Claude/Codex/Gemini
   subagent or permission/hook change, MCP Current revision or security taxonomy
   change, tracked provider configuration, lifecycle/eval/retry contract change,

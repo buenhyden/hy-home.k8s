@@ -355,20 +355,20 @@ supports its claim, and checks pass.
   harness owners, and Task 1 evidence vocabulary.
 - Produces: control IDs and provider comparisons consumed by Task 7.
 
-- [ ] **Step 1: Verify official claims at the cutoff**
+- [x] **Step 1: Verify official claims at the cutoff**
 
 Check official Anthropic, OpenAI, and Google documentation for agents,
 subagents, hooks, permissions/sandbox, model lifecycle, and native paths.
 Retain the fixed cutoff; label page changes after it as outside the snapshot.
 
-- [ ] **Step 2: Reconcile native and local surfaces**
+- [x] **Step 2: Reconcile native and local surfaces**
 
 For each provider, record native path, local adapter, tracked settings, model
 declaration, hook wiring, project config, validator coverage, runtime evidence,
 and confidence. State that `.agents/agents` is not native Gemini CLI
 registration.
 
-- [ ] **Step 3: Complete the loop control model and gap register**
+- [x] **Step 3: Complete the loop control model and gap register**
 
 Ensure Observe/Plan/Act/Verify/Learn covers evidence, owner, output, failure,
 retry budget, repeated-failure threshold, termination, eval trace, recoverable
@@ -376,7 +376,7 @@ compaction checkpoint, memory, approval, and MCP inventory/security. Preserve
 or explicitly supersede HL-001 through HL-007 and retain stale `Eight/eight`,
 native-consumption, model-currentness, and MCP gaps as routed findings.
 
-- [ ] **Step 4: Validate and commit**
+- [x] **Step 4: Validate and commit**
 
 ```bash
 rg -n 'Observe|Plan|Act|Verify|Learn|retry|compaction|MCP|Gemini CLI|Unverified' \
