@@ -136,73 +136,77 @@ and are not duplicated here.
 
 ## Canonical Requirement-to-Research-to-Audit Ownership Map
 
-Every row in the 48-row Requirement Coverage Matrix, plus each requested
-cross-cutting topic, has exactly one primary Current research owner and one
-planned audit owner. Planned audit paths remain code literals until created.
+All 56 requested requirements and cross-cutting topics below have exactly one
+primary Current research owner and one completed audit owner. `Score / verdict`
+uses the owner report's fixed-row maturity (`maturity / 4`) or named category
+arithmetic; it does not imply live readiness. `Follow-up disposition` is either
+no action, an explicit adoption/defer decision, or the canonical finding(s) in
+the [integrated roadmap](../../audits/2026-07-11-weia/remediation-roadmap.md).
 
-| Requirement or topic | Primary Current research owner | Planned audit owner |
-| --- | --- | --- |
-| Workspace purpose | `workspace-governance-baseline.md` | `governance-harness-loop-providers.md` |
-| Roles | `workspace-governance-baseline.md` | `governance-harness-loop-providers.md` |
-| Overview | `workspace-governance-baseline.md` | `governance-harness-loop-providers.md` |
-| Operating contract | `workspace-governance-baseline.md` | `governance-harness-loop-providers.md` |
-| Governance | `workspace-governance-baseline.md` | `governance-harness-loop-providers.md` |
-| System / 체계 | `workspace-governance-baseline.md` | `governance-harness-loop-providers.md` |
-| Rules | `workspace-governance-baseline.md` | `governance-harness-loop-providers.md` |
-| Templates | `workspace-governance-baseline.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Scripts | `workspace-governance-baseline.md` | `ci-qa-automation-pipeline-workflow.md` |
-| Integration guides | `workspace-governance-baseline.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Spec-driven development | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| SDLC | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| PRD | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| ARD | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| ADR | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Spec, Plan, and Task | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Guide | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Incident | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Postmortem | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Policy | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Release | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Runbook | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Security | `kubernetes-infrastructure-security.md` | `kubernetes-infrastructure-security.md` |
-| Kubernetes | `kubernetes-infrastructure-security.md` | `kubernetes-infrastructure-security.md` |
-| Infrastructure | `kubernetes-infrastructure-security.md` | `kubernetes-infrastructure-security.md` |
-| CI/CD | `automation-pipeline-workflow-qa.md` | `ci-qa-automation-pipeline-workflow.md` |
-| QA | `spec-sdlc-ci-qa-formatting.md` | `ci-qa-automation-pipeline-workflow.md` |
-| Formatting | `spec-sdlc-ci-qa-formatting.md` | `ci-qa-automation-pipeline-workflow.md` |
-| Linting | `spec-sdlc-ci-qa-formatting.md` | `ci-qa-automation-pipeline-workflow.md` |
-| Syntax validation | `spec-sdlc-ci-qa-formatting.md` | `ci-qa-automation-pipeline-workflow.md` |
-| Automation | `automation-pipeline-workflow-qa.md` | `ci-qa-automation-pipeline-workflow.md` |
-| Pipeline | `automation-pipeline-workflow-qa.md` | `ci-qa-automation-pipeline-workflow.md` |
-| Workflow | `automation-pipeline-workflow-qa.md` | `ci-qa-automation-pipeline-workflow.md` |
-| Harness engineering | `harness-and-loop-engineering.md` | `governance-harness-loop-providers.md` |
-| Loop engineering | `harness-and-loop-engineering.md` | `governance-harness-loop-providers.md` |
-| Harness/loop application system, environment, and rules | `harness-and-loop-engineering.md` | `governance-harness-loop-providers.md` |
-| Claude | `provider-implementation-status.md` | `governance-harness-loop-providers.md` |
-| Codex | `provider-implementation-status.md` | `governance-harness-loop-providers.md` |
-| Gemini | `provider-implementation-status.md` | `governance-harness-loop-providers.md` |
-| Shared provider environment, rules, and system | `provider-implementation-status.md` | `governance-harness-loop-providers.md` |
-| Provider implementation status | `provider-implementation-status.md` | `governance-harness-loop-providers.md` |
-| Workspace-required AI Agents | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
-| AI Agents | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
-| `agency-agents` | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
-| Task-model routing | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
-| MCP currentness and security | `harness-and-loop-engineering.md` | `governance-harness-loop-providers.md` |
-| Supply-chain security | `kubernetes-infrastructure-security.md` | `kubernetes-infrastructure-security.md` |
-| Static versus live evidence | `kubernetes-infrastructure-security.md` | `kubernetes-infrastructure-security.md` |
-| Frontmatter keys and values | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Document state transitions | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Semantic lineage | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Release readiness | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Incident readiness | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Postmortem readiness | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| AI-agent `pre-commit run --all-files` obligation | `spec-sdlc-ci-qa-formatting.md` | `ci-qa-automation-pipeline-workflow.md` |
-| Vibe coding | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
+| Requirement or topic | Primary Current research owner | Completed audit owner | Score / verdict | Follow-up disposition |
+| --- | --- | --- | --- | --- |
+| Workspace purpose | [Workspace governance](workspace-governance-baseline.md) | [Governance/provider audit](../../audits/2026-07-11-weia/governance-harness-loop-providers.md) | GOV-001: `2/4`; Implemented | No action. |
+| Roles | [Workspace governance](workspace-governance-baseline.md) | [Governance/provider audit](../../audits/2026-07-11-weia/governance-harness-loop-providers.md) | GOV-002: `2/4`; Partial | [RMD-004](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Overview | [Workspace governance](workspace-governance-baseline.md) | [Governance/provider audit](../../audits/2026-07-11-weia/governance-harness-loop-providers.md) | GOV-001: `2/4`; Implemented | No action. |
+| Operating contract | [Workspace governance](workspace-governance-baseline.md) | [Governance/provider audit](../../audits/2026-07-11-weia/governance-harness-loop-providers.md) | GOV-001: `2/4`; Implemented | No action. |
+| Governance | [Workspace governance](workspace-governance-baseline.md) | [Governance/provider audit](../../audits/2026-07-11-weia/governance-harness-loop-providers.md) | GOV-006: `2/4`; Partial | [RMD-005](../../audits/2026-07-11-weia/remediation-roadmap.md), conditional after Task 13. |
+| System / 체계 | [Workspace governance](workspace-governance-baseline.md) | [Governance/provider audit](../../audits/2026-07-11-weia/governance-harness-loop-providers.md) | COM-001: `2/4`; Implemented | No action. |
+| Rules | [Workspace governance](workspace-governance-baseline.md) | [Governance/provider audit](../../audits/2026-07-11-weia/governance-harness-loop-providers.md) | GOV-003: `3/4`; Implemented | No action. |
+| Templates | [Workspace governance](workspace-governance-baseline.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | FM-001: `3/4`; Implemented | No action. |
+| Scripts | [Workspace governance](workspace-governance-baseline.md) | [CI/QA audit](../../audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md) | QA-001: `3/4`; Implemented | No action. |
+| Integration guides | [Workspace governance](workspace-governance-baseline.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | DOC-007: `3/4`; Implemented | No action. |
+| Spec-driven development | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | DOC-001: `2/4`; Partial | [RMD-006](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| SDLC | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | LIN-005: `1/4`; Gap | [RMD-006](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| PRD | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | DOC-001: `2/4`; Partial | [RMD-006](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| ARD | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | DOC-002: `2/4`; Implemented | No action. |
+| ADR | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | DOC-003: `2/4`; Implemented | No action. |
+| Spec, Plan, and Task | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | DOC-004: `2/4`; Partial | [RMD-006](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Guide | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | DOC-007: `3/4`; Implemented | No action. |
+| Incident | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | DOC-010: `2/4`; Partial | [RMD-010](../../audits/2026-07-11-weia/remediation-roadmap.md); tabletop only, no fake incident. |
+| Postmortem | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | DOC-011: `2/4`; Partial | [RMD-010](../../audits/2026-07-11-weia/remediation-roadmap.md); tabletop handoff. |
+| Policy | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | DOC-008: `3/4`; Implemented | No action. |
+| Release | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | DOC-012: N/A; Not in scope | Keep absent until an ADR establishes a consumer. |
+| Runbook | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | DOC-009: `3/4`; Implemented | No action. |
+| Security | [Platform/security research](kubernetes-infrastructure-security.md) | [Platform/security audit](../../audits/2026-07-11-weia/kubernetes-infrastructure-security.md) | SEC controls: `13/56` (23.2%); Partial/Gap | [RMD-001–003, RMD-011–012, RMD-014, RMD-023–027](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Kubernetes | [Platform/security research](kubernetes-infrastructure-security.md) | [Platform/security audit](../../audits/2026-07-11-weia/kubernetes-infrastructure-security.md) | Platform controls: `31/48` (64.6%); Implemented/Partial | [RMD-023–025](../../audits/2026-07-11-weia/remediation-roadmap.md) for approved live assurance. |
+| Infrastructure | [Platform/security research](kubernetes-infrastructure-security.md) | [Platform/security audit](../../audits/2026-07-11-weia/kubernetes-infrastructure-security.md) | Platform controls: `31/48` (64.6%); Implemented/Partial | [RMD-001–003, RMD-012, RMD-025](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| CI/CD | [Automation research](automation-pipeline-workflow-qa.md) | [CI/QA audit](../../audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md) | Delivery controls: `14/32` (43.8%); Implemented/Partial/Gap | [RMD-011 and RMD-029](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| QA | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [CI/QA audit](../../audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md) | QA controls: `38/60` (63.3%); Implemented/Partial | [RMD-012–013](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Formatting | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [CI/QA audit](../../audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md) | QA-003: `1/4`; Partial | [RMD-030](../../audits/2026-07-11-weia/remediation-roadmap.md), decision-gated. |
+| Linting | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [CI/QA audit](../../audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md) | QA-006: `3/4`; Implemented | No action. |
+| Syntax validation | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [CI/QA audit](../../audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md) | QA-005/007: `5/8`; Implemented/Partial | [RMD-012](../../audits/2026-07-11-weia/remediation-roadmap.md) for shell-parser alignment. |
+| Automation | [Automation research](automation-pipeline-workflow-qa.md) | [CI/QA audit](../../audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md) | Overall: `56/104` (53.8%); Implemented/Partial/Gap | [RMD-011, RMD-014, RMD-029–031](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Pipeline | [Automation research](automation-pipeline-workflow-qa.md) | [CI/QA audit](../../audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md) | CICD-004: `2/4`; Implemented | No action. |
+| Workflow | [Automation research](automation-pipeline-workflow-qa.md) | [CI/QA audit](../../audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md) | CICD-004: `2/4`; Implemented | No action. |
+| Harness engineering | [Harness research](harness-and-loop-engineering.md) | [Governance/provider audit](../../audits/2026-07-11-weia/governance-harness-loop-providers.md) | Harness controls: `13/32` (40.6%); Implemented/Partial/Gap | [RMD-018–019 and RMD-028](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Loop engineering | [Harness research](harness-and-loop-engineering.md) | [Governance/provider audit](../../audits/2026-07-11-weia/governance-harness-loop-providers.md) | Harness controls: `13/32` (40.6%); Implemented/Partial/Gap | [RMD-018–019](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Harness/loop application system, environment, and rules | [Harness research](harness-and-loop-engineering.md) | [Governance/provider audit](../../audits/2026-07-11-weia/governance-harness-loop-providers.md) | HAR-002: `2/4`; Implemented | No action; native/runtime evidence remains separate. |
+| Claude | [Provider research](provider-implementation-status.md) | [Governance/provider audit](../../audits/2026-07-11-weia/governance-harness-loop-providers.md) | Claude controls: `5/12` (41.7%); Implemented/Partial | [RMD-015–016](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Codex | [Provider research](provider-implementation-status.md) | [Governance/provider audit](../../audits/2026-07-11-weia/governance-harness-loop-providers.md) | Codex controls: `4/12` (33.3%); Implemented/Partial | [RMD-015–016](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Gemini | [Provider research](provider-implementation-status.md) | [Governance/provider audit](../../audits/2026-07-11-weia/governance-harness-loop-providers.md) | Gemini controls: `2/12` (16.7%); Partial/Gap | [RMD-015–016](../../audits/2026-07-11-weia/remediation-roadmap.md); ADR-first runtime decision. |
+| Shared provider environment, rules, and system | [Provider research](provider-implementation-status.md) | [Governance/provider audit](../../audits/2026-07-11-weia/governance-harness-loop-providers.md) | Common controls: `6/12` (50.0%); Implemented/Partial | [RMD-015–016](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Provider implementation status | [Provider research](provider-implementation-status.md) | [Governance/provider audit](../../audits/2026-07-11-weia/governance-harness-loop-providers.md) | Overall: `45/104` (43.3%); Implemented/Partial/Gap | [RMD-015–017](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Workspace-required AI Agents | [AI-agent research](ai-agents-roster-and-gap-analysis.md) | [Agents/model/vibe audit](../../audits/2026-07-11-weia/ai-agents-model-routing-vibe-coding.md) | Local roles: `20/40` (50.0%); 10 Partial | [RMD-020](../../audits/2026-07-11-weia/remediation-roadmap.md); improve existing roles before expansion. |
+| AI Agents | [AI-agent research](ai-agents-roster-and-gap-analysis.md) | [Agents/model/vibe audit](../../audits/2026-07-11-weia/ai-agents-model-routing-vibe-coding.md) | Overall: `51/116` (44.0%); Implemented/Partial/Gap | [RMD-020–021 and RMD-032](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| `agency-agents` | [AI-agent research](ai-agents-roster-and-gap-analysis.md) | [Agents/model/vibe audit](../../audits/2026-07-11-weia/ai-agents-model-routing-vibe-coding.md) | Applicable upstream controls: `5/16` (31.3%); Implemented/Partial | [RMD-020–021](../../audits/2026-07-11-weia/remediation-roadmap.md); direct import/FinOps remain skipped. |
+| Task-model routing | [AI-agent research](ai-agents-roster-and-gap-analysis.md) | [Agents/model/vibe audit](../../audits/2026-07-11-weia/ai-agents-model-routing-vibe-coding.md) | COMMON-005: `0/4`; Gap | [RMD-015–016 and RMD-020](../../audits/2026-07-11-weia/remediation-roadmap.md); every route remains Conditional. |
+| MCP currentness and security | [Harness research](harness-and-loop-engineering.md) | [Governance/provider audit](../../audits/2026-07-11-weia/governance-harness-loop-providers.md) | HAR-007: `0/4`; Gap | [RMD-017](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Supply-chain security | [Platform/security research](kubernetes-infrastructure-security.md) | [Platform/security audit](../../audits/2026-07-11-weia/kubernetes-infrastructure-security.md) | SEC-012/013: `2/8`; Gap/Partial | [RMD-014 and RMD-026](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Static versus live evidence | [Platform/security research](kubernetes-infrastructure-security.md) | [Platform/security audit](../../audits/2026-07-11-weia/kubernetes-infrastructure-security.md) | PLAT-009: `2/4`; Implemented | No action; live/remote lanes remain unverified until separately approved evidence exists. |
+| Frontmatter keys and values | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | FM-001: `3/4`; Implemented | [RMD-009](../../audits/2026-07-11-weia/remediation-roadmap.md) only for value semantics. |
+| Document state transitions | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | LIN-006: `0/4`; Gap | [RMD-007](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Semantic lineage | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | LIN-003: `0/4`; Gap | [RMD-006](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Release readiness | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | DOC-012: N/A; Not in scope | Keep Release absent until an ADR proves need, owner, artifact, rollback, and consumer. |
+| Incident readiness | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | DOC-010: `2/4`; Partial | [RMD-010](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Postmortem readiness | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [Lifecycle/frontmatter audit](../../audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | DOC-011: `2/4`; Partial | [RMD-010](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| AI-agent `pre-commit run --all-files` obligation | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [CI/QA audit](../../audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md) | QA-014: `1/4`; Partial | [RMD-013](../../audits/2026-07-11-weia/remediation-roadmap.md). |
+| Vibe coding | [AI-agent research](ai-agents-roster-and-gap-analysis.md) | [Agents/model/vibe audit](../../audits/2026-07-11-weia/ai-agents-model-routing-vibe-coding.md) | Vibe controls: `19/40` (47.5%); Implemented/Partial | [RMD-022](../../audits/2026-07-11-weia/remediation-roadmap.md). |
 
 ## Requirement Coverage Matrix
 
 `Primary Current owner` assigns exactly one research owner to each requirement;
-the canonical map above assigns its one planned audit owner.
+the canonical map above closes its completed audit owner, score/verdict, and
+follow-up disposition.
 Secondary references may summarize a boundary and link here or to the primary
 section; active policy and procedure remain with the canonical repository owner
 named by that reference.
@@ -264,7 +268,7 @@ named by that reference.
 
 | Current artifact | 2026-07-10 audit outcome |
 | --- | --- |
-| `README.md` | Added the fixed model cutoff, canonical research-to-audit ownership map, 48-row evidence matrix, contradiction closure, changed-document summary, and pack-wide freshness rules. |
+| `README.md` | Added the fixed model cutoff, canonical 56-row research-to-audit ownership and disposition map, evidence matrix, contradiction closure, changed-document summary, and pack-wide freshness rules. |
 | [Workspace Governance Baseline](workspace-governance-baseline.md) | Re-established purpose/contract/owner/enforcement maps and routed seven governance gaps without changing active owners. |
 | [Harness and Loop Engineering](harness-and-loop-engineering.md) | Corrected ownership, added bounded loop/eval/recovery/termination design, and made MCP `2025-11-25` currentness explicit. |
 | [Provider Implementation Status](provider-implementation-status.md) | Reconciled all 30 adapter paths, native/local surfaces, 17 model-surface rows, 13 migration rows, and fixed-cutoff provider sources. |

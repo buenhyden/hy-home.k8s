@@ -2,7 +2,7 @@
 
 ## Overview
 
-This dated Stage 90 pack will compare the Current
+This dated Stage 90 pack compares the Current
 `docs/90.references/research/2026-07-07-wer/` benchmark with repository-backed
 implementation evidence. It also records the approved design for integrating
 the research and audit outputs requested on 2026-07-11.
@@ -74,19 +74,32 @@ pointer.
 └── remediation-roadmap.md
 ```
 
-Until a report exists, its path remains a code literal rather than a broken
-Markdown link.
-
 The [implementation plan](implementation-plan.md) is the durable execution
 ledger for this Stage 90-only integration. It does not authorize changes to
 the active owners it audits.
+
+## Completed Audit Report Index
+
+All five scored reports use the shared measurement contract below. The roadmap
+normalizes their 80 actionable rows into 32 canonical findings; it does not
+rescore or replace the source reports.
+
+| Completed artifact | Scope | Applicable arithmetic | Actionable disposition |
+| --- | --- | --- | --- |
+| [Governance, Harness, Loop, and Provider Parity](governance-harness-loop-providers.md) | Governance, harness/loop, Claude, Codex, Gemini, and common system | `45/104` (43.3%); 26 applicable; no N/A | 17 Partial/Gap rows routed to the roadmap. |
+| [SDLC, Document Lifecycle, and Frontmatter](sdlc-document-lifecycle-frontmatter.md) | Fourteen document families, lineage, transitions, and profile values | `56/108` (51.9%); 27 applicable; 4 N/A | 14 Partial/Gap rows routed; Release and consumer-free metadata remain excluded. |
+| [CI, QA, Automation, Pipeline, and Workflow](ci-qa-automation-pipeline-workflow.md) | Delivery topology, QA/all-files obligations, and supply chain | `56/104` (53.8%); 26 applicable; 7 N/A | 8 Partial/Gap rows routed; consumer-free enterprise lanes remain excluded. |
+| [Kubernetes Infrastructure and Security](kubernetes-infrastructure-security.md) | GitOps/platform foundations and `SEC-001` through `SEC-014` | `44/104` (42.3%); 26 applicable; no N/A | 15 Partial/Gap rows routed, including 2 P0 controls. |
+| [AI Agents, Model Routing, Agency-Agents, and Vibe Coding](ai-agents-model-routing-vibe-coding.md) | Ten local roles, shared role system, upstream adoption, routing, and vibe coding | `51/116` (44.0%); 29 applicable; 2 N/A | 26 Partial/Gap rows routed; direct import and FinOps remain excluded. |
+| [Integrated Remediation Roadmap](remediation-roadmap.md) | Deduplication, dependencies, target state, and canonical SDLC routes | 80 actionable source rows -> 32 canonical findings | Consolidated target selected; deferred/rejected lanes retain reopen triggers. |
+| [Implementation Plan](implementation-plan.md) | Task-by-task execution and validation ledger | Tasks 1-12 complete; Task 13 review preparation recorded separately | Whole-branch review and final publication remain pending. |
 
 ## How to Work in This Area
 
 1. Treat this README as the approved Stage 90 design and pack contract.
 2. Use the Current research pack as benchmark context and the fixed audit
    commit as local implementation evidence.
-3. Keep planned reports as code literals until their files exist.
+3. Keep completed report links and score/disposition summaries synchronized.
 4. Require content and evidence review for each logical unit.
 5. Route every proposed active change to a canonical follow-up SDLC owner;
    never implement it from Stage 90.
@@ -188,19 +201,18 @@ is the benchmark input. Its topic owners are:
 ## Report Interfaces and Topic Ownership
 
 Each requested topic has exactly one primary audit owner through the canonical
-map above. The following interfaces group those topics without changing that
-row-level ownership. Report paths remain code literals until their files
-exist; secondary reports link to the primary owner instead of copying volatile
-facts.
+map above. The following completed interfaces group those topics without
+changing row-level ownership; secondary reports link to the primary owner
+instead of copying volatile facts.
 
-| Planned report owner | Exclusive primary responsibility | Output interface |
+| Completed audit owner | Exclusive primary responsibility | Output interface |
 | --- | --- | --- |
-| `governance-harness-loop-providers.md` | Workspace purpose, governance, rules, harness/loop controls, MCP, and provider implementation facts: adapter inventory and counts, provider/local declarations, native-provider semantics and loading/registration, settings/hooks/config, and entitlement/runtime availability evidence and confidence. It does not own role responsibilities, upstream roster comparison, role gaps, or adoption decisions. | Scored controls and canonical adapter/provider facts for `ai-agents-model-routing-vibe-coding.md`, plus routed governance/provider findings for `remediation-roadmap.md`. |
-| `sdlc-document-lifecycle-frontmatter.md` | Templates and integration guides; PRD through Reference/README roles; lifecycle, states, numbering, lineage, frontmatter, Release, Incident, and Postmortem readiness. | Scored lifecycle/metadata controls and target-state findings for `remediation-roadmap.md`. |
-| `ci-qa-automation-pipeline-workflow.md` | Scripts, CI/CD, QA, formatting, linting, syntax, automation, pipeline/workflow topology, and AI-agent all-files pre-commit obligations. | Scored delivery/quality controls and routed automation findings for `remediation-roadmap.md`. |
-| `kubernetes-infrastructure-security.md` | Kubernetes, infrastructure, GitOps, security, Vault, ESO, network and policy controls, supply chain, and static-versus-live evidence. | Scored platform/security controls and reconciled SEC findings for `remediation-roadmap.md`. |
-| `ai-agents-model-routing-vibe-coding.md` | Local role responsibilities, shared role bodies and instructions, upstream `agency-agents` roster/comparison, role gaps and adoption decisions, vibe coding, and role-specific default/escalation/fallback/eval recommendations. It consumes and links adapter inventory/count, provider metadata, native semantics/loading, and availability facts from `governance-harness-loop-providers.md`; it does not duplicate them. | Scored role and vibe-coding controls plus model-routing recommendations for `remediation-roadmap.md`. |
-| `remediation-roadmap.md` | Cross-report deduplication, dependency order, target-state choice, and integrated priority ordering only. | One follow-up register with canonical PRD, ARD, ADR, Spec, Plan, or Task routes and acceptance evidence. |
+| [Governance/provider](governance-harness-loop-providers.md) | Workspace purpose, governance, rules, harness/loop controls, MCP, and provider implementation facts: adapter inventory and counts, provider/local declarations, native-provider semantics and loading/registration, settings/hooks/config, and entitlement/runtime availability evidence and confidence. It does not own role responsibilities, upstream roster comparison, role gaps, or adoption decisions. | Scored controls and canonical adapter/provider facts for the [agents/model/vibe audit](ai-agents-model-routing-vibe-coding.md), plus routed governance/provider findings for the [roadmap](remediation-roadmap.md). |
+| [Lifecycle/frontmatter](sdlc-document-lifecycle-frontmatter.md) | Templates and integration guides; PRD through Reference/README roles; lifecycle, states, numbering, lineage, frontmatter, Release, Incident, and Postmortem readiness. | Scored lifecycle/metadata controls and target-state findings for the [roadmap](remediation-roadmap.md). |
+| [CI/QA](ci-qa-automation-pipeline-workflow.md) | Scripts, CI/CD, QA, formatting, linting, syntax, automation, pipeline/workflow topology, and AI-agent all-files pre-commit obligations. | Scored delivery/quality controls and routed automation findings for the [roadmap](remediation-roadmap.md). |
+| [Platform/security](kubernetes-infrastructure-security.md) | Kubernetes, infrastructure, GitOps, security, Vault, ESO, network and policy controls, supply chain, and static-versus-live evidence. | Scored platform/security controls and reconciled SEC findings for the [roadmap](remediation-roadmap.md). |
+| [Agents/model/vibe](ai-agents-model-routing-vibe-coding.md) | Local role responsibilities, shared role bodies and instructions, upstream `agency-agents` roster/comparison, role gaps and adoption decisions, vibe coding, and role-specific default/escalation/fallback/eval recommendations. It consumes and links adapter inventory/count, provider metadata, native semantics/loading, and availability facts from the governance/provider report; it does not duplicate them. | Scored role and vibe-coding controls plus model-routing recommendations for the [roadmap](remediation-roadmap.md). |
+| [Integrated roadmap](remediation-roadmap.md) | Cross-report deduplication, dependency order, target-state choice, and integrated priority ordering only. | One follow-up register with canonical PRD, ARD, ADR, Spec, Plan, or Task routes and acceptance evidence. |
 
 ## Audit Method
 
@@ -372,4 +384,11 @@ cross-category comparison rules, and execution strategy on 2026-07-11.
 
 - [Audits README](../README.md)
 - [Current Workspace Engineering Research Pack](../../research/2026-07-07-wer/README.md)
+- [Implementation Plan](implementation-plan.md)
+- [Governance, Harness, Loop, and Provider Parity](governance-harness-loop-providers.md)
+- [SDLC, Document Lifecycle, and Frontmatter](sdlc-document-lifecycle-frontmatter.md)
+- [CI, QA, Automation, Pipeline, and Workflow](ci-qa-automation-pipeline-workflow.md)
+- [Kubernetes Infrastructure and Security](kubernetes-infrastructure-security.md)
+- [AI Agents, Model Routing, Agency-Agents, and Vibe Coding](ai-agents-model-routing-vibe-coding.md)
+- [Integrated Remediation Roadmap](remediation-roadmap.md)
 - [Reference Template](../../../99.templates/templates/common/reference.template.md)

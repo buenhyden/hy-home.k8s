@@ -173,8 +173,8 @@ exclusions, retain `Implemented/Partial/Gap/Not in scope`, and use
 
 - [x] **Step 3: Close requirement ownership**
 
-Give every row in the 48-row requirement matrix, and every requested
-cross-cutting topic, one primary research owner and one planned audit owner.
+Give all 56 requested requirement and cross-cutting-topic rows one primary
+research owner and one designated audit owner.
 This includes frontmatter keys/values, state transition, semantic lineage,
 Release, incident/postmortem readiness, AI-agent all-files pre-commit, vibe
 coding, agency-agents, and task-model routing.
@@ -837,21 +837,21 @@ checks pass.
 - Produces: one Current research pointer, one Current audit pointer, historical
   status for replaced snapshots, complete links, and final evidence.
 
-- [ ] **Step 1: Resolve indexes and historical status**
+- [x] **Step 1: Resolve indexes and historical status**
 
 Make `2026-07-07-wer` the only Current research pack and `2026-07-11-weia` the
 only Current implementation audit pack. Mark older audit entries Historical or
 Resolved without deleting, moving, or rewriting snapshot bodies. Link every
 completed report from its pack README and parent index.
 
-- [ ] **Step 2: Close requirement coverage**
+- [x] **Step 2: Close requirement coverage**
 
 For every request, verify one research owner, one audit owner, one score/
 verdict, and one follow-up disposition. Explicitly cover frontmatter values,
 state transitions, Release, incidents/postmortems, all-files pre-commit, vibe
 coding, provider/common harness, agency-agents, and model routing.
 
-- [ ] **Step 3: Recheck arithmetic, counts, sources, and contradictions**
+- [x] **Step 3: Recheck arithmetic, counts, sources, and contradictions**
 
 Recompute scores and N/A denominators; rerun counts; verify URLs and cutoff;
 search for the former unlabeled Task-count wording while preserving explicitly
@@ -859,7 +859,7 @@ labeled historical 2026-07-10 observations, duplicate Current labels,
 conflicting role/workflow/job counts, native Gemini mislabeling, and
 live-readiness overclaims.
 
-- [ ] **Step 4: Enforce the path boundary**
+- [x] **Step 4: Enforce the path boundary**
 
 ```bash
 git diff --name-only ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7...HEAD
@@ -873,17 +873,36 @@ rg -n '42/43 [T]asks were done at audit time|\.agents/agents[^|.]*is [Nn]ative G
 Expected: every changed path is under the two approved roots and stale or
 overclaim searches have no unresolved matches.
 
-- [ ] **Step 5: Run full validation**
+- [x] **Step 5: Run full validation**
 
 ```bash
 git diff --check ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7...HEAD
 bash scripts/validate-repo-quality-gates.sh .
-bash docs/00.agent-governance/scripts/validate-harness.sh
+bash scripts/validate-harness.sh
 pre-commit run --all-files
 git status --short --branch
 ```
 
 Expected: all commands pass before final integration metadata is committed.
+
+Review-preparation evidence on 2026-07-11:
+
+- Exactly one research and one audit `Current pack` index row remain; all
+  completed reports and this implementation plan are linked.
+- The canonical ownership map contains 56 rows, each with one linked research
+  owner, one linked audit owner, a score/verdict, and a follow-up disposition.
+- Fixed-tree inventory digest and counts, five report score/distribution tables,
+  adapter/workflow/job/platform counts, the source cutoff, and 93 unique external
+  URLs were rechecked. Explicitly historical `42/43` evidence remains labeled;
+  stale native-Gemini and live-readiness overclaims have no unresolved match.
+- Both committed-branch and uncommitted-path guards contain only
+  `docs/90.references/research/**` or `docs/90.references/audits/**` paths.
+- `git diff --check`, repository quality gates, `bash scripts/validate-harness.sh`,
+  and `pre-commit run --all-files` pass. Optional Conftest is unavailable; the
+  harness records its SKIP and the built-in policy fallback passes. No live,
+  provider-runtime, remote, credential, secret-value, publish, or merge check ran.
+- Steps 6 and 7 remain pending for independent whole-branch review and final
+  publication metadata; this commit is review preparation only.
 
 - [ ] **Step 6: Run whole-branch reviews and correct findings**
 

@@ -48,6 +48,15 @@ docs/90.references/audits/
 │   ├── sdlc-ci-qa-formatting-automation.md
 │   ├── kubernetes-infrastructure-security.md
 │   └── implementation-roadmap-and-automation-opportunities.md
+├── 2026-07-11-weia/
+│   ├── README.md
+│   ├── implementation-plan.md
+│   ├── governance-harness-loop-providers.md
+│   ├── sdlc-document-lifecycle-frontmatter.md
+│   ├── ci-qa-automation-pipeline-workflow.md
+│   ├── kubernetes-infrastructure-security.md
+│   ├── ai-agents-model-routing-vibe-coding.md
+│   └── remediation-roadmap.md
 └── README.md
 ```
 
@@ -84,18 +93,26 @@ This README is located at `docs/90.references/audits/`.
 
 | Report | Availability | Purpose |
 | --- | --- | --- |
-| [2026-05-24-whga/workspace-harness-gap-analysis.md](./2026-05-24-whga/workspace-harness-gap-analysis.md) | Existing snapshot | Historical workspace harness gap-analysis reference. |
-| [2026-07-02-whia/workspace-governance-implementation-audit.md](./2026-07-02-whia/workspace-governance-implementation-audit.md) | Current | Workspace rules, systems, environment, operating contracts, templates, scripts, shared provider structure, and automation opportunities. |
-| [2026-07-02-whia/harness-loop-implementation-audit.md](./2026-07-02-whia/harness-loop-implementation-audit.md) | Current | Harness engineering and loop engineering implementation status against the research benchmark. |
-| [2026-07-02-whia/provider-harness-loop-implementation-audit.md](./2026-07-02-whia/provider-harness-loop-implementation-audit.md) | Current | Claude, Codex, Gemini, and common provider harness/loop parity. |
-| [2026-07-02-whia/sdlc-delivery-practices-implementation-audit.md](./2026-07-02-whia/sdlc-delivery-practices-implementation-audit.md) | Current | Spec-driven development, SDLC, CI/CD, QA, formatting, and validation evidence lanes. |
+| [2026-05-24-whga/workspace-harness-gap-analysis.md](./2026-05-24-whga/workspace-harness-gap-analysis.md) | Historical snapshot | Historical workspace harness gap-analysis reference. |
+| [2026-07-02-whia/workspace-governance-implementation-audit.md](./2026-07-02-whia/workspace-governance-implementation-audit.md) | Historical snapshot | Workspace rules, systems, environment, operating contracts, templates, scripts, shared provider structure, and automation opportunities at that cutoff. |
+| [2026-07-02-whia/harness-loop-implementation-audit.md](./2026-07-02-whia/harness-loop-implementation-audit.md) | Historical snapshot | Harness engineering and loop engineering implementation status against the then-current research benchmark. |
+| [2026-07-02-whia/provider-harness-loop-implementation-audit.md](./2026-07-02-whia/provider-harness-loop-implementation-audit.md) | Historical snapshot | Claude, Codex, Gemini, and common provider harness/loop parity at that cutoff. |
+| [2026-07-02-whia/sdlc-delivery-practices-implementation-audit.md](./2026-07-02-whia/sdlc-delivery-practices-implementation-audit.md) | Historical snapshot | Spec-driven development, SDLC, CI/CD, QA, formatting, and validation evidence lanes at that cutoff. |
 | [2026-07-03-wdgh/workspace-document-governance-hardening-audit.md](./2026-07-03-wdgh/workspace-document-governance-hardening-audit.md) | Resolved snapshot | Baseline workspace document governance inventory, README drift classes, provider traceability, and CI/QA evidence routing with a 2026-07-04 resolution overlay. |
-| [2026-07-04-wdcn/workspace-document-contract-normalization-audit.md](./2026-07-04-wdcn/workspace-document-contract-normalization-audit.md) | Current | Frontmatter, section, template, reference, archive, CI/QA, and historical-evidence drift inventory for workspace document contract normalization. |
-| [2026-07-05-wea/README.md](./2026-07-05-wea/README.md) | Current pack | Workspace engineering implementation audit pack entrypoint, status vocabulary, evidence rules, and report index. |
-| [2026-07-05-wea/governance-harness-loop-providers.md](./2026-07-05-wea/governance-harness-loop-providers.md) | Current | Governance, harness, loop, Claude, Codex, Gemini, and common provider implementation audit. |
-| [2026-07-05-wea/sdlc-ci-qa-formatting-automation.md](./2026-07-05-wea/sdlc-ci-qa-formatting-automation.md) | Current | Spec-driven development, SDLC, CI/CD, QA, formatting, linting, automation, pipeline, and workflow audit. |
-| [2026-07-05-wea/kubernetes-infrastructure-security.md](./2026-07-05-wea/kubernetes-infrastructure-security.md) | Current | Kubernetes, infrastructure, GitOps, secrets, policy, network, supply-chain, and security audit. |
-| [2026-07-05-wea/implementation-roadmap-and-automation-opportunities.md](./2026-07-05-wea/implementation-roadmap-and-automation-opportunities.md) | Current | Cross-report roadmap, priority matrix, automation candidates, and future task routing. |
+| [2026-07-04-wdcn/workspace-document-contract-normalization-audit.md](./2026-07-04-wdcn/workspace-document-contract-normalization-audit.md) | Resolved snapshot | Frontmatter, section, template, reference, archive, CI/QA, and historical-evidence drift inventory for workspace document contract normalization. |
+| [2026-07-05-wea/README.md](./2026-07-05-wea/README.md) | Historical pack | Replaced workspace engineering implementation audit pack entrypoint and evidence rules. |
+| [2026-07-05-wea/governance-harness-loop-providers.md](./2026-07-05-wea/governance-harness-loop-providers.md) | Historical snapshot | Governance, harness, loop, Claude, Codex, Gemini, and common provider implementation audit at that cutoff. |
+| [2026-07-05-wea/sdlc-ci-qa-formatting-automation.md](./2026-07-05-wea/sdlc-ci-qa-formatting-automation.md) | Historical snapshot | Spec-driven development, SDLC, CI/CD, QA, formatting, linting, automation, pipeline, and workflow audit at that cutoff. |
+| [2026-07-05-wea/kubernetes-infrastructure-security.md](./2026-07-05-wea/kubernetes-infrastructure-security.md) | Historical snapshot | Kubernetes, infrastructure, GitOps, secrets, policy, network, supply-chain, and security audit at that cutoff. |
+| [2026-07-05-wea/implementation-roadmap-and-automation-opportunities.md](./2026-07-05-wea/implementation-roadmap-and-automation-opportunities.md) | Historical roadmap | Replaced cross-report roadmap, priority matrix, automation candidates, and task routing. |
+| [2026-07-11-weia/README.md](./2026-07-11-weia/README.md) | Current pack | Current workspace engineering implementation audit pack, method, evidence boundary, and completed report index. |
+| [2026-07-11-weia/implementation-plan.md](./2026-07-11-weia/implementation-plan.md) | Execution ledger | Approved Stage 90 implementation and review ledger; final publish steps remain pending. |
+| [2026-07-11-weia/governance-harness-loop-providers.md](./2026-07-11-weia/governance-harness-loop-providers.md) | Included | Governance, harness, loop, provider, and common-system audit. |
+| [2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md](./2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md) | Included | SDLC, document-family, lifecycle, lineage, Release, incident, and frontmatter audit. |
+| [2026-07-11-weia/ci-qa-automation-pipeline-workflow.md](./2026-07-11-weia/ci-qa-automation-pipeline-workflow.md) | Included | CI/CD, QA, formatting, linting, automation, pipeline, workflow, and supply-chain audit. |
+| [2026-07-11-weia/kubernetes-infrastructure-security.md](./2026-07-11-weia/kubernetes-infrastructure-security.md) | Included | Kubernetes, infrastructure, GitOps, Vault/ESO, network, policy, and security audit. |
+| [2026-07-11-weia/ai-agents-model-routing-vibe-coding.md](./2026-07-11-weia/ai-agents-model-routing-vibe-coding.md) | Included | Local AI roles, `agency-agents`, model routing, and vibe-coding audit. |
+| [2026-07-11-weia/remediation-roadmap.md](./2026-07-11-weia/remediation-roadmap.md) | Included | Integrated 32-finding remediation roadmap and follow-up SDLC disposition. |
 
 ## Status Vocabulary
 
