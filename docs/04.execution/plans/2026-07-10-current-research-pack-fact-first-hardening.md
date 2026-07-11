@@ -1010,14 +1010,18 @@ mapping. The implementation must re-verify every finding before publication.
 **Interfaces:**
 
 - Consumes: all reviewed task commits and review results.
-- Produces: final deterministic validation evidence, complete lifecycle status,
-  durable memory, and a clean branch ready for whole-branch review.
+- Produces: a substantively reviewed branch, independently reviewed closure
+  evidence, complete lifecycle status, durable memory, and a clean branch.
 
-- [ ] **Step 1: Verify only approved paths changed from the branch base**
+- [ ] **Step 1: Verify only approved paths changed from the pinned branch base**
+
+  The feature branch originated from `main` at immutable base
+  `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4`. Use that SHA, not a moving
+  branch name, for every whole-branch comparison and review package.
 
   ```bash
-  git diff --name-only main...HEAD
-  git log --oneline main..HEAD
+  git diff --name-only a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4...HEAD
+  git log --oneline a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4..HEAD
   ```
 
   Expected: changes are limited to the approved Spec 017 addendum, Stage 04
@@ -1025,34 +1029,51 @@ mapping. The implementation must re-verify every finding before publication.
   `.gitignore` entries required by the approved worktree/SDD setup; commits are
   separated by the logical units in this plan.
 
-- [ ] **Step 2: Run the final deterministic validation bundle**
+- [ ] **Step 2: Run the pre-review deterministic validation bundle**
 
   ```bash
-  git diff --check main...HEAD
+  git diff --check a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4...HEAD
   bash scripts/validate-harness.sh
   bash scripts/validate-repo-quality-gates.sh .
   rg -n '\b(T[B]D|T[O]DO|F[I]XME|implement[[:space:]]+later)\b' docs/90.references/research/2026-07-07-wer docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md
   ```
 
   Expected: both validators exit 0; incomplete-marker scan exits 1 with no
-  matches.
-  If `pre-commit` is installed, also run `pre-commit run --all-files` and record
-  its exact result. Do not install missing optional tools in this task.
+  matches. If `pre-commit` is installed, also run
+  `pre-commit run --all-files` and record its exact result. Do not install
+  missing optional tools in this task.
 
-- [ ] **Step 3: Close lifecycle and evidence records**
+- [ ] **Step 3: Complete substantive whole-branch review and remediation**
+
+  Generate the Superpowers whole-branch review package for
+  `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4...HEAD`, dispatch an independent
+  reviewer, and record the exact package boundary and verdict. Fix every
+  Critical and Important finding in a logical reviewed fix wave, regenerate
+  the package from the same pinned base, and repeat review until no Critical or
+  Important finding remains. Re-run Step 2 after the last remediation commit.
+
+  Do not mark WERH-010, the final Phase View item, plan/task lifecycle, index
+  lifecycle, memory handoff, or whole-branch-review completion as final before
+  this substantive review passes.
+
+- [ ] **Step 4: Prepare and commit a provisional closure record**
 
   Use `apply_patch` to:
 
-  - mark WERH-001 through WERH-010 `Done` and check every Phase View item;
-  - record every validation command, output summary, task commit, review verdict,
-    optional-tool SKIP, and no-live/no-remote limitation;
-  - set plan/task frontmatter to `status: done` and `updated: 2026-07-10`;
-  - check every plan Completion Criteria item;
-  - change plan/task README rows from `Draft` to `Done`; and
-  - append a progress memory entry with Metadata, Progress, Memory, Evidence,
-    and Handoff sections.
+  - mark WERH-001 through WERH-009 `Done`, but keep WERH-010
+    `Review Pending` and its Phase View checkbox unchecked;
+  - record every validation command, output summary, task commit, substantive
+    review verdict, optional-tool SKIP, and no-live/no-remote limitation without
+    claiming that the closure-only review has occurred;
+  - set plan/task frontmatter to `status: active` and keep the corresponding
+    plan/task README rows `Active`;
+  - leave the final-promotion Completion Criteria unchecked;
+  - append a provisional progress-memory entry with Metadata, Progress, Memory,
+    Evidence, and Handoff sections that explicitly says closure review is
+    pending; and
+  - keep the closure diff limited to the five files listed for Task 10.
 
-- [ ] **Step 4: Re-run validation after lifecycle closure**
+  Validate the provisional closure files before commit:
 
   ```bash
   git diff --check
@@ -1062,20 +1083,63 @@ mapping. The implementation must re-verify every finding before publication.
   ```
 
   Expected: validators exit 0; status shows only the five expected closure
-  files before commit.
-
-- [ ] **Step 5: Commit final evidence closure**
+  files. Commit the provisional, review-pending record:
 
   ```bash
   git add docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/00.agent-governance/memory/progress.md
-  git commit -m 'docs(execution): close current research hardening evidence'
+  git commit -m 'docs(execution): record provisional current research closure'
   ```
 
-- [ ] **Step 6: Hand off to whole-branch review**
+- [ ] **Step 5: Independently review the closure-only diff**
 
-  Generate the Superpowers whole-branch review package from the merge base to
-  `HEAD`, dispatch the most capable available reviewer, fix all Critical and
-  Important findings in one reviewed fix wave, and only then invoke
+  Record the resulting immutable provisional commit as
+  `<PROVISIONAL_CLOSURE_SHA>`. Build a focused review package for exactly
+  `<PROVISIONAL_CLOSURE_SHA>^..<PROVISIONAL_CLOSURE_SHA>` and dispatch a fresh
+  independent reviewer. The review must verify that the five-file closure
+  evidence matches the already-approved substantive branch review and does not
+  make premature, unsupported, live-runtime, or remote-readiness claims.
+
+  Fix Critical and Important findings in another provisional closure commit
+  and repeat the focused review against the exact immutable closure commit or
+  commit range. Do not perform final lifecycle promotion until the focused
+  reviewer returns a clean verdict.
+
+- [ ] **Step 6: Promote final lifecycle in a separate logical commit**
+
+  Only after Step 5 passes, use `apply_patch` on the same five closure files to:
+
+  - mark WERH-010 `Done` and check its Phase View item;
+  - set plan/task frontmatter to `status: done` and set the corresponding
+    plan/task README rows to `Done`;
+  - check each Completion Criteria item whose evidence now exists;
+  - record the closure-only review package boundary and clean verdict; and
+  - finalize the progress-memory Handoff as complete without changing the
+    no-live/no-remote evidence boundary.
+
+  Validate that only the five closure files changed, then commit:
+
+  ```bash
+  git diff --check
+  git status --short --branch
+  git add docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/00.agent-governance/memory/progress.md
+  git commit -m 'docs(execution): promote current research hardening lifecycle'
+  ```
+
+- [ ] **Step 7: Run final validation and full-branch check**
+
+  ```bash
+  git diff --check a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4...HEAD
+  git diff --name-only a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4...HEAD
+  git log --oneline a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4..HEAD
+  bash scripts/validate-harness.sh
+  bash scripts/validate-repo-quality-gates.sh .
+  rg -n '\b(T[B]D|T[O]DO|F[I]XME|implement[[:space:]]+later)\b' docs/90.references/research/2026-07-07-wer docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md
+  git status --short --branch
+  ```
+
+  Expected: both validators pass, the incomplete-marker scan exits 1 with no
+  matches, the full-branch paths and logical commits match the approved scope,
+  and the worktree is clean. Record the exact results, then invoke
   `superpowers:finishing-a-development-branch`.
 
 ## Completion Criteria
@@ -1086,8 +1150,11 @@ mapping. The implementation must re-verify every finding before publication.
 - [ ] Earlier related content integrated without Historical changes or active-policy duplication
 - [ ] Provider/model matrix reflects `2026-07-10 10:00 KST` and surface-specific lifecycle
 - [ ] Fact defects corrected and implementation gaps routed without active changes
-- [ ] Task-scoped reviews and whole-branch review approved
+- [ ] Task-scoped reviews and substantive whole-branch review approved from pinned base `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4`
+- [ ] Provisional closure remains review-pending until its exact immutable closure diff is independently approved
+- [ ] WERH-010, Phase View, frontmatter, indexes, and memory promoted to final `Done` only after closure-only review approval
 - [ ] Required repo-static validation passed with limitations recorded
+- [ ] Final full-branch validation passed from pinned base `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4`
 - [ ] Logical commits preserved
 
 ## Related Documents
