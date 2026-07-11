@@ -17,9 +17,12 @@ legacy forms, and separates authoring guidance from authored section content.
 ## Strategic Boundaries & Non-goals
 
 This tranche changes Stage 99 support and non-README template forms plus direct
-Stage 00 mirrors. README profiles are owned by Spec 028 and authored population
-migration by Spec 030. This tranche does not rewrite historical Plans, Tasks,
-audits, research packs, or archive Tombstones.
+Stage 00 mirrors. It may update only inventory and target-link rows in
+`docs/99.templates/README.md` and `docs/99.templates/templates/README.md` when a
+form is added, renamed, or deleted; Spec 028 owns their profile layout and all
+other README body design. Authored population migration is owned by Spec 030.
+This tranche does not rewrite historical Plans, Tasks, audits, research packs,
+or archive Tombstones.
 
 ## Related Inputs
 
@@ -43,8 +46,9 @@ audits, research packs, or archive Tombstones.
 
 ## Core Design
 
-- **Component Boundary**: Six support contracts, Markdown and native forms,
-  Stage 99 indexes, direct Stage 00 lifecycle summaries, and legacy references.
+- **Component Boundary**: Six support contracts, non-README Markdown and native
+  forms, Stage 99 README inventory/link rows only, direct Stage 00 lifecycle
+  summaries, and legacy references.
 - **Key Dependencies**: Spec 026 registry and inventory; current validator
   compatibility mode; cross-link search.
 - **Tech Stack**: Markdown forms, HTML authoring comments, JSON registry, and

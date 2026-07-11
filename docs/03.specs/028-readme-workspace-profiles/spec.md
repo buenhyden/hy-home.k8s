@@ -44,7 +44,10 @@ or move durable SDLC evidence into `_workspace`.
 ## Core Design
 
 - **Component Boundary**: README profile registry entries, six minimal template
-  forms, the 67 tracked README files, and README-specific fixtures.
+  forms, the 67 tracked baseline README files, new provider-snapshot indexes at
+  `docs/90.references/cloud-examples/{README.md,aws/README.md,azure/README.md}`,
+  executable-example entrypoints at `examples/{aws,azure}/README.md`, and
+  README-specific fixture inputs for Spec 029.
 - **Key Dependencies**: Specs 026 and 027, path inventory, Markdown fence-aware
   parsing, and link validation.
 - **Tech Stack**: Frontmatter-free Markdown, registry-driven routing, and
@@ -69,8 +72,11 @@ Profile responsibilities:
   body marker or frontmatter key is added. Required and allowed headings live in
   the registry and profile template.
 - **Migration / Transition Plan**: Classify all README paths, replace the legacy
-  monolithic form with six forms, migrate one profile at a time, and delete the
-  old snippet library after all links and fixtures are updated.
+  monolithic form with six forms, migrate one profile at a time, create the five
+  cloud handoff indexes above, and delete the old snippet library after all
+  links and fixture inputs are updated. This Spec proves route classification,
+  profile inventory, and focused migration assertions; Spec 029 converts the
+  handed-off fixtures into durable fence-aware semantic enforcement.
 
 ## Interfaces & Data Structures
 
@@ -105,8 +111,7 @@ README body -> canonical owner links + path-specific inventory
 
 ```bash
 python3 scripts/validate-document-contract-registry.py --root . --mode compatibility
-python3 scripts/validate-markdown-profiles.py --self-test
-python3 scripts/validate-markdown-profiles.py --root . --profile readme
+python3 scripts/validate-document-contract-registry.py --root . --mode compatibility --profile readme
 bash scripts/validate-repo-quality-gates.sh .
 git diff --check
 ```
@@ -122,6 +127,10 @@ git diff --check
   links resolve to their canonical owners.
 - **VAL-SPC-004**: `_workspace` continues to track only its README, ignore scratch
   children, forbid secret/local diagnostic state, and define durable promotion.
+- **VAL-SPC-005**: README fixture inputs and expected profile/heading outcomes
+  are complete and pass focused migration assertions without importing the
+  not-yet-created Spec 029 semantic validator; Spec 029 later runs the same cases
+  through its production parser.
 
 ## Related Documents
 
