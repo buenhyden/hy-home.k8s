@@ -512,7 +512,9 @@ Expected: the README is a complete audit entrypoint and checks pass.
 **Interfaces:**
 
 - Consumes: Tasks 4-6 controls and method.
-- Produces: governance/harness/provider scores and routed findings for Task 12.
+- Produces: governance/harness/provider scores and routed findings for Task
+  12, plus canonical provider implementation and availability facts consumed
+  by Task 11.
 
 - [ ] **Step 1: Build governance and harness matrices**
 
@@ -523,10 +525,13 @@ memory, approval, tools/MCP, hooks, canaries, and feedback evidence.
 
 - [ ] **Step 2: Build provider and common-system matrices**
 
-Score Claude, Codex, and Gemini separately for native registration, local
-adapter, settings, hooks, model declaration, sandbox/permissions, validator
-semantics, runtime evidence, and fallback. Score the common stem/body/workflow/
-output-style/memory/script layer without treating it as one native runtime.
+Score Claude, Codex, and Gemini separately for provider/local declarations,
+native loading and registration, settings/hooks/config, model declarations,
+sandbox/permissions, validator semantics, and entitlement/runtime availability
+evidence and confidence. Score the common stem/body/workflow/output-style/
+memory/script layer without treating it as one native runtime. This task owns
+those implementation facts; role-specific default, escalation, fallback, eval,
+and adoption recommendations belong to Task 11.
 
 - [ ] **Step 3: Calculate scores and route gaps**
 
@@ -709,15 +714,21 @@ findings have current evidence, and checks pass.
 
 **Interfaces:**
 
-- Consumes: Tasks 3, 4, and 6.
-- Produces: role, adapter, instruction, model, upstream, and vibe-coding
-  findings for Task 12.
+- Consumes: Tasks 3 and 6 plus Task 7's canonical provider/local declaration,
+  native-loading/registration, settings/hooks/config, and entitlement/runtime
+  availability evidence and confidence. Task 7 already consumes Task 4.
+- Produces: role, instruction, upstream, vibe-coding, and role-specific model
+  default/escalation/fallback/eval recommendations and adoption decisions for
+  Task 12.
 
 - [ ] **Step 1: Audit the local role and adapter system**
 
-Score ten roles, thirty adapters, shared bodies, instructions, tools,
-permissions, outputs, handoff, eval, provider metadata, native loading, and
-semantic validator depth. Treat stem parity as inventory evidence only.
+Score ten roles, shared bodies, instructions, tools, permissions, outputs,
+handoff, eval, and semantic validator depth. Use Task 7's thirty-adapter and
+provider implementation facts by link; do not duplicate or rescore provider
+metadata, declarations, native loading/registration, settings/hooks/config, or
+entitlement/runtime availability evidence. Treat stem parity as inventory
+evidence only.
 
 - [ ] **Step 2: Compare pinned agency-agents patterns**
 
@@ -727,11 +738,13 @@ each relevant pattern as `Adapt`, `Already covered`, `Skip`, or
 
 - [ ] **Step 3: Audit model routing and vibe controls**
 
-For each role, compare active declaration, default, escalation, fallback, eval
-gate, lifecycle risk, auth surface, context/tool need, cost/latency concern,
-and availability confidence. Score spec, acceptance criteria, diff size,
-tests, static gates, independent review, provenance, secrets/permissions,
-rollback, and stopping rules for vibe coding.
+For each role, consume Task 7's active declaration, auth/entitlement surface,
+runtime availability evidence, and confidence as fixed inputs. Own only the
+role-specific default, escalation, fallback, eval gate, lifecycle risk,
+context/tool need, cost/latency recommendation, and adoption decision; link
+back to Task 7 instead of restating provider facts. Score spec, acceptance
+criteria, diff size, tests, static gates, independent review, provenance,
+secrets/permissions, rollback, and stopping rules for vibe coding.
 
 - [ ] **Step 4: Calculate scores and route findings**
 
@@ -751,8 +764,9 @@ git add docs/90.references/audits/2026-07-11-weia/ai-agents-model-routing-vibe-c
 git commit -m "docs(audit): assess agents models and vibe coding"
 ```
 
-Expected: local implementation, upstream discovery, recommended routing, and
-runtime availability remain separate and checks pass.
+Expected: Task 7 owns provider implementation and runtime-availability facts;
+Task 11 links those inputs and owns role-specific routing/adoption decisions,
+upstream discovery, and vibe-coding findings. Checks pass.
 
 ### Task 12: Build the Integrated Remediation Roadmap
 

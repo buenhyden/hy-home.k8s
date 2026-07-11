@@ -195,11 +195,11 @@ facts.
 
 | Planned report owner | Exclusive primary responsibility | Output interface |
 | --- | --- | --- |
-| `governance-harness-loop-providers.md` | Workspace purpose, roles, governance, rules, harness/loop controls, MCP, Claude, Codex, Gemini, shared provider layers, and provider implementation status. | Scored controls and routed governance/provider findings for `remediation-roadmap.md`. |
+| `governance-harness-loop-providers.md` | Workspace purpose, roles, governance, rules, harness/loop controls, MCP, and provider implementation facts: provider/local declarations, native loading/registration, settings/hooks/config, and entitlement/runtime availability evidence and confidence. | Scored controls and canonical provider facts for `ai-agents-model-routing-vibe-coding.md`, plus routed governance/provider findings for `remediation-roadmap.md`. |
 | `sdlc-document-lifecycle-frontmatter.md` | Templates and integration guides; PRD through Reference/README roles; lifecycle, states, numbering, lineage, frontmatter, Release, Incident, and Postmortem readiness. | Scored lifecycle/metadata controls and target-state findings for `remediation-roadmap.md`. |
 | `ci-qa-automation-pipeline-workflow.md` | Scripts, CI/CD, QA, formatting, linting, syntax, automation, pipeline/workflow topology, and AI-agent all-files pre-commit obligations. | Scored delivery/quality controls and routed automation findings for `remediation-roadmap.md`. |
 | `kubernetes-infrastructure-security.md` | Kubernetes, infrastructure, GitOps, security, Vault, ESO, network and policy controls, supply chain, and static-versus-live evidence. | Scored platform/security controls and reconciled SEC findings for `remediation-roadmap.md`. |
-| `ai-agents-model-routing-vibe-coding.md` | Local AI-agent roster and adapters, `agency-agents`, task-model routing, provider availability boundaries, and vibe coding. | Scored role/model controls and routed agent findings for `remediation-roadmap.md`. |
+| `ai-agents-model-routing-vibe-coding.md` | Local AI-agent roles, shared role bodies and instructions, `agency-agents`, vibe coding, and role-specific default/escalation/fallback/eval recommendations and adoption decisions. It consumes and links provider facts from `governance-harness-loop-providers.md`; it does not duplicate provider metadata or native-loading facts. | Scored role and vibe-coding controls plus model-routing recommendations for `remediation-roadmap.md`. |
 | `remediation-roadmap.md` | Cross-report deduplication, dependency order, target-state choice, and integrated priority ordering only. | One follow-up register with canonical PRD, ARD, ADR, Spec, Plan, or Task routes and acceptance evidence. |
 
 ## Audit Method
@@ -261,11 +261,11 @@ containment and remediation.
 | Contradiction topic | Sole audit owner | Secondary-report rule |
 | --- | --- | --- |
 | Document lifecycle, states, lineage, and frontmatter | `sdlc-document-lifecycle-frontmatter.md` | Link to the owner; do not restate counts or transitions. |
-| Provider implementation and native/local parity | `governance-harness-loop-providers.md` | Link to the owner; keep model-routing recommendations separate. |
+| Provider/local declarations, native loading/registration, settings/hooks/config, and entitlement/runtime availability evidence and confidence | `governance-harness-loop-providers.md` | Link to the owner; do not duplicate provider metadata or native-loading facts. |
 | CI job DAG, workflow counts, and QA wiring | `ci-qa-automation-pipeline-workflow.md` | Link to the owner; do not reconstruct the DAG elsewhere. |
 | Kubernetes, GitOps, infrastructure, and security evidence | `kubernetes-infrastructure-security.md` | Link to the owner; preserve repo-static versus live distinctions. |
 | Local and upstream agent roster facts | `ai-agents-model-routing-vibe-coding.md` | Link to the owner; upstream volume cannot redefine local need. |
-| Model declarations, availability, and task routing | `ai-agents-model-routing-vibe-coding.md` | Link to the owner; provider report supplies implementation facts only. |
+| Role-specific model default, escalation, fallback, eval recommendations, and adoption decisions | `ai-agents-model-routing-vibe-coding.md` | Consume and link provider declarations and availability confidence from `governance-harness-loop-providers.md`; do not reopen those facts. |
 | Integrated roadmap priority and dependency order | `remediation-roadmap.md` | Source reports retain row findings; the roadmap alone deduplicates and orders them. |
 
 When a contradiction is found, its sole owner records both claims, their source
