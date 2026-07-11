@@ -120,6 +120,35 @@ Plan traceable while preserving repository-static evidence boundaries.
   Kubernetes, Argo CD, Vault, ESO, provider runtime, credential, secret-value,
   remote GitHub/CI, publish, push, merge, or third-party mutation ran.
 
+### Parser and fixture final-review remediation (2026-07-11)
+
+- **Functional fix commit**:
+  `c444254fcafaca11b96d37a1e7ee70befc251ddc`
+  (`fix(governance): reject malformed canonical owner links`).
+- **Focused negative proofs**: seven canonical label/target pairs written as
+  image syntax returned exactly seven missing-owner-link errors. A bootstrap
+  label with only a leading backtick and one with only a trailing backtick each
+  returned exactly the canonical bootstrap missing-owner-link error. A copied
+  fixture whose `missing-role` case used mutation `none` and
+  `expected_errors: []` returned the deterministic `missing-role: fixture
+  schema mismatch` error before mutation execution.
+- **Validation commands**:
+  - `python3 scripts/validate-agent-roster-currentness.py . --self-test` —
+    PASS with `[PASS] agent roster currentness validation passed`.
+  - `python3 scripts/validate-agent-roster-currentness.py .` — PASS with
+    `[PASS] agent roster currentness validation passed`.
+  - `git diff --check` — PASS with exit 0 and no output.
+  - `bash scripts/validate-repo-quality-gates.sh .` — PASS with
+    `[PASS] repository quality gates passed` after both roster checks passed.
+  - `pre-commit run --all-files` — exit 0; all applicable hooks PASS. The
+    non-applicable `Lint Dockerfiles` hook reported `Skipped` and is not
+    claimed as a pass.
+  - `git diff --check 184d13e034101ee27c98bd0b850b91d956069c33...HEAD`
+    — PASS with exit 0 and no output.
+- **Evidence boundary**: these results are repository-static only. No live
+  Kubernetes, Argo CD, Vault, ESO, provider runtime, credential, secret-value,
+  remote GitHub/CI, publish, push, merge, or third-party mutation ran.
+
 ## Related Documents
 
 - **Spec**:

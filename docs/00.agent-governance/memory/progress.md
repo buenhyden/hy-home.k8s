@@ -8,6 +8,63 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-11 - Roster parser and fixture final-review remediation
+
+#### Metadata
+
+- **Date**: 2026-07-11
+- **Layer**: meta, qa, docs
+- **Status**: complete
+- **Tags**: #governance #roster #validation #review #repo-static
+
+#### Progress
+
+- Excluded Markdown image syntax from canonical owner-link recognition and
+  limited code-label normalization to a complete balanced enclosing backtick
+  pair, so leading-only and trailing-only backticks remain invalid.
+- Added production self-test probes for all seven image-form owner links and
+  both malformed bootstrap half-backtick labels.
+- Fixed the semantics of all five fixture cases in a hardcoded schema and
+  required the exact four `stale-count` variants before mutation execution.
+- Functional fix commit:
+  `c444254fcafaca11b96d37a1e7ee70befc251ddc`.
+
+#### Memory
+
+- Canonical Markdown owner links must reject visually related image syntax;
+  exact labels and targets are insufficient when the Markdown construct is
+  not an inline link.
+- Fixture name checks and expected-result comparisons do not prevent a case
+  from drifting to a different internally consistent mutation. Validate each
+  case's fixed semantics before executing it.
+
+#### Evidence
+
+- Focused production-contract proofs returned exactly seven missing-owner-link
+  errors for seven image-form owner links and exactly the bootstrap
+  missing-owner-link error for each leading-only and trailing-only backtick
+  label.
+- A copied fixture with `missing-role` changed to mutation `none` and
+  `expected_errors: []` returned a deterministic `missing-role: fixture schema
+  mismatch` failure before mutation execution.
+- `python3 scripts/validate-agent-roster-currentness.py . --self-test` — PASS.
+- `python3 scripts/validate-agent-roster-currentness.py .` — PASS.
+- `git diff --check` — PASS with no output.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `pre-commit run --all-files` — exit 0; all applicable hooks PASS. The
+  non-applicable `Lint Dockerfiles` hook reported `Skipped` and is not claimed
+  as a pass.
+- `git diff --check 184d13e034101ee27c98bd0b850b91d956069c33...HEAD`
+  — PASS with no output.
+- No live Kubernetes, Argo CD, Vault, ESO, provider-runtime, credential,
+  secret-value, remote GitHub/CI, publish, push, merge, or third-party mutation
+  check ran.
+
+#### Handoff
+
+- None. The parser and fixture final-review remediation is complete within the
+  repository-static boundary.
+
 ### 2026-07-11 - Roster currentness final-review remediation
 
 #### Metadata
