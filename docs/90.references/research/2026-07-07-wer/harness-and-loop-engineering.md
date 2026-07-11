@@ -76,12 +76,10 @@ remote actions.
 ### Exact Cutoff Handling
 
 External facts in this snapshot were eligible only when the official source was
-published or checked no later than `2026-07-10 10:00 KST`. A read-only recheck
-on 2026-07-11 found that some stable OpenAI developer URLs now redirect to
-ChatGPT Learn and that provider pages continue to change. Those post-cutoff
-representations are drift signals only: they are not back-projected into this
-snapshot. A later refresh must advance the cutoff explicitly and preserve the
-old snapshot rather than silently rewriting it.
+published or checked no later than `2026-07-10 10:00 KST`. Later page
+representations are not back-projected into this snapshot. A later refresh must
+advance the cutoff explicitly and preserve the old snapshot rather than
+silently rewriting it.
 
 ## Definitions / Facts
 
@@ -272,8 +270,8 @@ recommendations and canonical follow-up routes; it does not mutate the owners.
 ## Sources
 
 Official external sources, source checked at the fixed
-`2026-07-10 10:00 KST` cutoff. The 2026-07-11 URL recheck was used only to
-identify post-cutoff drift; no newly displayed claim was inserted:
+`2026-07-10 10:00 KST` cutoff. No later page representation is used as evidence
+for this snapshot:
 
 | Source lane | Claim use | Exact URL |
 | --- | --- | --- |

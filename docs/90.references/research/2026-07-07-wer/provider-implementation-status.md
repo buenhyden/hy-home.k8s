@@ -81,12 +81,10 @@ The fixed cutoff is `2026-07-10 10:00 KST`. A provider/model fact is included
 only when an official dated announcement predates that instant or the official
 page was captured during the cutoff check. OpenAI's dated 2026-07-09 GPT-5.6
 general-availability announcement is therefore eligible, but its stated gradual
-rollout is not converted into local account availability. A 2026-07-11
-read-only recheck found that stable OpenAI developer URLs now redirect to
-ChatGPT Learn; that redirect and any newly displayed content are outside this
-snapshot and are refresh signals only. API publication, product rollout, CLI
-resolution, account entitlement, and this workspace's local assignment remain
-separate evidence lanes.
+rollout is not converted into local account availability. Later page
+representations are not used as cutoff evidence. API publication, product
+rollout, CLI resolution, account entitlement, and this workspace's local
+assignment remain separate evidence lanes.
 
 ### Local Provider Inventory — 2026-07-10
 
@@ -264,11 +262,8 @@ an API catalog alone is insufficient migration evidence.
 ## Sources
 
 All external sources below were checked read-only at `2026-07-10 10:00 KST`.
-OpenAI's stable developer URLs currently redirect to ChatGPT Learn pages; the
-stable developer URLs and their cutoff page titles are retained. The redirect
-was observed only during the 2026-07-11 recheck. Web pages can change after the
-cutoff, so their current contents are a refresh trigger rather than a silent
-update to this snapshot.
+Later page changes require a new, explicitly dated snapshot and are not silently
+inserted into this one.
 
 ### Official Provider Sources
 
