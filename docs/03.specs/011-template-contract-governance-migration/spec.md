@@ -1,9 +1,9 @@
 ---
 title: 'Template Contract and Governance Migration Technical Specification'
 type: sdlc/spec
-status: draft
+status: done
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-11
 ---
 
 # Template Contract and Governance Migration Technical Specification (Spec)
@@ -451,6 +451,9 @@ rule.
 - [Stage 03 Specs README](../README.md)
 - [Progress Ledger](../../00.agent-governance/memory/progress.md)
 - [Repository Quality Gate](../../../scripts/validate-repo-quality-gates.sh)
+- [Plan](../../04.execution/plans/2026-07-03-template-contract-governance-migration.md)
+- [Task](../../04.execution/tasks/2026-07-03-template-contract-governance-migration.md)
+- **Completed evolution**: [011](./spec.md) -> [012](../012-template-governance-audit-enhancement/spec.md) -> [013](../013-workspace-document-governance-hardening/spec.md) -> [014](../014-workspace-document-contract-normalization/spec.md) -> [020](../020-workspace-contract-governance-normalization/spec.md) -> [021](../021-sdlc-lifecycle-contract/spec.md) -> [022](../022-control-cloud-doc-normalization/spec.md) -> [023](../023-stage03-04-repo-static-gap-closure/spec.md).
 - [GitHub Docs YAML frontmatter](https://docs.github.com/en/contributing/writing-for-github-docs/using-yaml-frontmatter)
 - [Diátaxis documentation framework](https://diataxis.fr/)
 - [Google developer documentation style guide](https://developers.google.com/style)

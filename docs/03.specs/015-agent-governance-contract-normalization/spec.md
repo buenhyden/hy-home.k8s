@@ -1,9 +1,9 @@
 ---
 title: 'Agent Governance Contract Normalization Technical Specification'
 type: sdlc/spec
-status: draft
+status: done
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-11
 ---
 
 # Agent Governance Contract Normalization Technical Specification (Spec)
@@ -353,3 +353,4 @@ surfaces change.
 - **Spec Template**: [../../99.templates/templates/sdlc/specs/spec.template.md](../../99.templates/templates/sdlc/specs/spec.template.md)
 - **Plan**: `../../04.execution/plans/2026-07-04-agent-governance-contract-normalization.md`
 - **Tasks**: `../../04.execution/tasks/2026-07-04-agent-governance-contract-normalization.md`
+- **Current implementation contract**: This completed normalization is an input to [Spec 025](../025-governance-owner-and-roster-currentness/spec.md).

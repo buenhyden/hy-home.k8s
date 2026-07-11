@@ -1,9 +1,9 @@
 ---
 title: 'Workspace Document Governance Hardening Technical Specification'
 type: sdlc/spec
-status: draft
+status: done
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-11
 ---
 
 # Workspace Document Governance Hardening Technical Specification (Spec)
@@ -398,3 +398,4 @@ freshness when claims depend on external tooling behavior:
 - [GitHub Configuration Hub](../../../.github/ABOUT.md)
 - [Plan](../../04.execution/plans/2026-07-03-workspace-document-governance-hardening.md)
 - [Task](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md)
+- **Completed evolution**: [011](../011-template-contract-governance-migration/spec.md) -> [012](../012-template-governance-audit-enhancement/spec.md) -> [013](./spec.md) -> [014](../014-workspace-document-contract-normalization/spec.md) -> [020](../020-workspace-contract-governance-normalization/spec.md) -> [021](../021-sdlc-lifecycle-contract/spec.md) -> [022](../022-control-cloud-doc-normalization/spec.md) -> [023](../023-stage03-04-repo-static-gap-closure/spec.md).

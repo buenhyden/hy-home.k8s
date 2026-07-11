@@ -1,9 +1,9 @@
 ---
 title: 'Template Governance Audit Enhancement Technical Specification'
 type: sdlc/spec
-status: draft
+status: done
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-11
 ---
 
 # Template Governance Audit Enhancement Technical Specification (Spec)
@@ -350,3 +350,4 @@ find docs/99.templates -maxdepth 5 -type f -print | sort
   [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/documentation-protocol.md)
 - **Quality Gate**:
   [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
+- **Completed evolution**: [011](../011-template-contract-governance-migration/spec.md) -> [012](./spec.md) -> [013](../013-workspace-document-governance-hardening/spec.md) -> [014](../014-workspace-document-contract-normalization/spec.md) -> [020](../020-workspace-contract-governance-normalization/spec.md) -> [021](../021-sdlc-lifecycle-contract/spec.md) -> [022](../022-control-cloud-doc-normalization/spec.md) -> [023](../023-stage03-04-repo-static-gap-closure/spec.md).

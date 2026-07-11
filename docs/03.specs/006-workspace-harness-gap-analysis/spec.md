@@ -3,7 +3,7 @@ title: 'Workspace Harness Gap Analysis Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-11
 ---
 
 # Workspace Harness Gap Analysis Technical Specification (Spec)
@@ -17,6 +17,15 @@ SDD (Spec-Driven Development), QA (Quality Assurance), CI/CD (Continuous
 Integration/Continuous Delivery), and AI Agent collaboration rules.
 
 ## Strategic Boundaries & Non-goals
+
+### Current Ownership Boundary
+
+This Spec remains active only for the historical harness-gap baseline and
+unresolved runtime/operator-approved boundaries. RMD-004 roster counts,
+provider stem parity, and canonical-owner pointer acceptance are owned by
+Spec 025 at `../025-governance-owner-and-roster-currentness/spec.md`.
+Completed provider normalization and role-addition evidence remain in Specs
+015 and 024.
 
 This spec owns the repository-static improvement contract for the workspace
 harness gap analysis. The original pass did not approve live cluster mutation,
@@ -512,3 +521,4 @@ clusterrolebinding` examples carry human-approved, bootstrap, break-glass,
 - **Docs Stage Conformance Skill**: [../../../.claude/skills/docs-stage-conformance/skill.md](../../../.claude/skills/docs-stage-conformance/skill.md)
 - **Workspace Harness Audit Skill**: [../../../.claude/skills/workspace-harness-audit/skill.md](../../../.claude/skills/workspace-harness-audit/skill.md)
 - **Scripts README**: [../../../scripts/README.md](../../../scripts/README.md)
+- **RMD-004 implementation contract**: [Spec 025](../025-governance-owner-and-roster-currentness/spec.md)

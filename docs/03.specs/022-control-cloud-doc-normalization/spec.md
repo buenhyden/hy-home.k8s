@@ -1,9 +1,9 @@
 ---
 title: 'Control Surface and Cloud Example Documentation Normalization Technical Specification'
 type: sdlc/spec
-status: draft
+status: done
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-11
 ---
 
 # Control Surface and Cloud Example Documentation Normalization Technical Specification
@@ -360,3 +360,4 @@ bash scripts/validate-policy-gates.sh .
 - **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
 - **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/frontmatter-schema.md)
 - **Common Documentation Governance**: [../../99.templates/support/common-documentation-governance.md](../../99.templates/support/common-documentation-governance.md)
+- **Completed evolution**: [011](../011-template-contract-governance-migration/spec.md) -> [012](../012-template-governance-audit-enhancement/spec.md) -> [013](../013-workspace-document-governance-hardening/spec.md) -> [014](../014-workspace-document-contract-normalization/spec.md) -> [020](../020-workspace-contract-governance-normalization/spec.md) -> [021](../021-sdlc-lifecycle-contract/spec.md) -> [022](./spec.md) -> [023](../023-stage03-04-repo-static-gap-closure/spec.md).

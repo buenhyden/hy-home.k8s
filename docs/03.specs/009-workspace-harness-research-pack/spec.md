@@ -1,9 +1,9 @@
 ---
 title: 'Workspace Harness Research Pack Technical Specification'
 type: sdlc/spec
-status: draft
+status: done
 owner: platform
-updated: 2026-07-02
+updated: 2026-07-11
 ---
 
 # Workspace Harness Research Pack Technical Specification (Spec)
@@ -289,3 +289,4 @@ rg --files | rg '(^|/)progress\.md$'
 - **Execution plan**: `../../04.execution/plans/2026-07-02-workspace-harness-research-pack.md`
 - **Task record**: `../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md`
 - **Reference maintenance runbook**: `../../05.operations/runbooks/0011-reference-maintenance-runbook.md`
+- **Current research lineage**: This completed predecessor continues in [Spec 017](../017-workspace-engineering-research-pack/spec.md).

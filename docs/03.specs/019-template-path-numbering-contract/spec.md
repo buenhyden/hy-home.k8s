@@ -1,9 +1,9 @@
 ---
 title: 'Template Path Numbering Contract Technical Specification'
 type: sdlc/spec
-status: draft
+status: done
 owner: platform
-updated: 2026-07-05
+updated: 2026-07-11
 ---
 
 # Template Path Numbering Contract Technical Specification
@@ -299,3 +299,5 @@ no matches after active links are updated.
 - **Google Developer Documentation Style Guide**: <https://developers.google.com/style>
 - **GitHub Docs Best Practices**: <https://docs.github.com/en/contributing/writing-for-github-docs/best-practices-for-github-docs>
 - **NIST SSDF SP 800-218**: <https://csrc.nist.gov/pubs/sp/800/218/final>
+- **Plan**: [../../04.execution/plans/2026-07-05-template-path-numbering-contract.md](../../04.execution/plans/2026-07-05-template-path-numbering-contract.md)
+- **Task**: [../../04.execution/tasks/2026-07-05-template-path-numbering-contract.md](../../04.execution/tasks/2026-07-05-template-path-numbering-contract.md)

@@ -1,9 +1,9 @@
 ---
 title: 'Active Control Surface Governance Hardening Technical Specification'
 type: sdlc/spec
-status: draft
+status: done
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-11
 ---
 
 # Active Control Surface Governance Hardening Technical Specification (Spec)
@@ -414,3 +414,5 @@ bash infrastructure/tests/verify-contracts-static.sh
 - [Quality Standards](../../00.agent-governance/rules/quality-standards.md)
 - [Repository Quality Gate](../../../scripts/validate-repo-quality-gates.sh)
 - [Harness Validation](../../../scripts/validate-harness.sh)
+- [Plan](../../04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md)
+- [Task](../../04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md)

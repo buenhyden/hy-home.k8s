@@ -1,9 +1,9 @@
 ---
 title: 'SDLC Lifecycle Contract Technical Specification'
 type: sdlc/spec
-status: draft
+status: done
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-11
 ---
 
 # SDLC Lifecycle Contract Technical Specification
@@ -356,3 +356,4 @@ find docs/03.specs -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | sort
 - **Archive Index**: `../../98.archive/README.md`
 - **Template Routing**: `../../99.templates/support/template-routing.md`
 - **Frontmatter Schema**: `../../99.templates/support/frontmatter-schema.md`
+- **Completed evolution**: [011](../011-template-contract-governance-migration/spec.md) -> [012](../012-template-governance-audit-enhancement/spec.md) -> [013](../013-workspace-document-governance-hardening/spec.md) -> [014](../014-workspace-document-contract-normalization/spec.md) -> [020](../020-workspace-contract-governance-normalization/spec.md) -> [021](./spec.md) -> [022](../022-control-cloud-doc-normalization/spec.md) -> [023](../023-stage03-04-repo-static-gap-closure/spec.md).

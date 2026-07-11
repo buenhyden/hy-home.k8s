@@ -1,9 +1,9 @@
 ---
 title: 'Workspace Contract Governance Normalization Technical Specification'
 type: sdlc/spec
-status: draft
+status: done
 owner: platform
-updated: 2026-07-05
+updated: 2026-07-11
 ---
 
 # Workspace Contract Governance Normalization Technical Specification
@@ -447,3 +447,4 @@ Expected notes:
 - **Quality Gate**: [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
 - **Future Plan**: `../../04.execution/plans/2026-07-05-workspace-contract-governance-normalization.md`
 - **Future Task Evidence**: `../../04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md`
+- **Completed evolution**: [011](../011-template-contract-governance-migration/spec.md) -> [012](../012-template-governance-audit-enhancement/spec.md) -> [013](../013-workspace-document-governance-hardening/spec.md) -> [014](../014-workspace-document-contract-normalization/spec.md) -> [020](./spec.md) -> [021](../021-sdlc-lifecycle-contract/spec.md) -> [022](../022-control-cloud-doc-normalization/spec.md) -> [023](../023-stage03-04-repo-static-gap-closure/spec.md).

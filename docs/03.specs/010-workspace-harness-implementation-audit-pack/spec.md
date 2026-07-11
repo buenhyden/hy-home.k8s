@@ -1,9 +1,9 @@
 ---
 title: 'Workspace Harness Implementation Audit Pack Technical Specification'
 type: sdlc/spec
-status: draft
+status: done
 owner: platform
-updated: 2026-07-02
+updated: 2026-07-11
 ---
 
 # Workspace Harness Implementation Audit Pack Technical Specification (Spec)
@@ -326,3 +326,4 @@ rg --files | rg '(^|/)progress\.md$'
   `../../04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md`
 - **Reference Maintenance Runbook**:
   `[../../05.operations/runbooks/0011-reference-maintenance-runbook.md]`
+- **Later audit-pack lineage**: This completed predecessor continues in [Spec 018](../018-workspace-engineering-implementation-audit-pack/spec.md).
