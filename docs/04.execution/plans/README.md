@@ -85,6 +85,13 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-07-10-current-research-pack-fact-first-hardening.md
 ├── 2026-07-11-governance-owner-and-roster-currentness.md
 ├── 2026-07-11-workspace-engineering-research-audit-integration.md
+├── 2026-07-12-document-contract-registry.md
+├── 2026-07-12-template-contract-consolidation.md
+├── 2026-07-12-readme-workspace-profiles.md
+├── 2026-07-12-semantic-document-validation.md
+├── 2026-07-12-authored-document-migration.md
+├── 2026-07-12-affected-surface-agent-qa.md
+├── 2026-07-12-protected-surface-supply-chain-hardening.md
 └── README.md
 ```
 
@@ -154,6 +161,13 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-07-10-current-research-pack-fact-first-hardening.md`](./2026-07-10-current-research-pack-fact-first-hardening.md)           | Fact-first in-place audit, external-source refresh, related-document integration, provider-model currentness analysis, and review plan for the Current workspace engineering research pack.                           | Done | 2026-07-10 |
 | [`./2026-07-11-governance-owner-and-roster-currentness.md`](./2026-07-11-governance-owner-and-roster-currentness.md)               | Evidence-preserving audit IA, complete Spec/Plan lifecycle reconciliation, and RMD-004 ten-role/30-adapter roster currentness implementation plan.                                                                    | Done   | 2026-07-11 |
 | [`./2026-07-11-workspace-engineering-research-audit-integration.md`](./2026-07-11-workspace-engineering-research-audit-integration.md) | Completed thirteen-task workspace engineering research and implementation-audit integration ledger relocated from the Current Stage 90 audit pack.                                                                  | Done | 2026-07-11 |
+| [`./2026-07-12-document-contract-registry.md`](./2026-07-12-document-contract-registry.md) | Declarative document registry, schema, classifier, baseline inventory, and compatibility-gate implementation plan. | Active | 2026-07-12 |
+| [`./2026-07-12-template-contract-consolidation.md`](./2026-07-12-template-contract-consolidation.md) | Stage 99 support/form consolidation, legacy template removal, and measured authored-document compatibility plan. | Active | 2026-07-12 |
+| [`./2026-07-12-readme-workspace-profiles.md`](./2026-07-12-readme-workspace-profiles.md) | Path-derived README profiles, full README migration, cloud handoff pages, and `_workspace` boundary plan. | Active | 2026-07-12 |
+| [`./2026-07-12-semantic-document-validation.md`](./2026-07-12-semantic-document-validation.md) | Registry-driven frontmatter, section, link, index, owner, and migration-ledger validation plan. | Active | 2026-07-12 |
+| [`./2026-07-12-authored-document-migration.md`](./2026-07-12-authored-document-migration.md) | Full authored-document migration, durable research ledger, cloud SDLC consolidation, and strict cutover plan. | Active | 2026-07-12 |
+| [`./2026-07-12-affected-surface-agent-qa.md`](./2026-07-12-affected-surface-agent-qa.md) | Canonical affected-surface selection, local/CI parity, and cross-provider agent-role QA plan. | Active | 2026-07-12 |
+| [`./2026-07-12-protected-surface-supply-chain-hardening.md`](./2026-07-12-protected-surface-supply-chain-hardening.md) | Immutable Action identity, least privilege, GitOps visibility, and local-only secret-boundary hardening plan. | Active | 2026-07-12 |
 
 ## Related Documents
 
