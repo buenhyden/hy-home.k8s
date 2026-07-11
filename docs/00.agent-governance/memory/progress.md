@@ -51,7 +51,7 @@ inventory stays in `scripts/README.md`.
 
 #### Evidence
 
-- Pinned-base inventory: 14 approved paths and 22 pre-closure logical commits;
+- Pinned-base inventory: 14 approved paths and 23 pre-closure logical commits;
   exact WERH-001 through WERH-009 SHAs and review outcomes are recorded in the
   Task table.
 - `git diff --check a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4...HEAD`
