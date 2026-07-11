@@ -65,6 +65,7 @@ pointer.
 ```text
 2026-07-11-weia/
 ├── README.md
+├── implementation-plan.md
 ├── governance-harness-loop-providers.md
 ├── sdlc-document-lifecycle-frontmatter.md
 ├── ci-qa-automation-pipeline-workflow.md
@@ -75,6 +76,10 @@ pointer.
 
 Until a report exists, its path remains a code literal rather than a broken
 Markdown link.
+
+The [implementation plan](implementation-plan.md) is the durable execution
+ledger for this Stage 90-only integration. It does not authorize changes to
+the active owners it audits.
 
 ## How to Work in This Area
 
