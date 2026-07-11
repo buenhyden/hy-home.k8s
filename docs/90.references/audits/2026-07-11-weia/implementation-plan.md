@@ -188,7 +188,9 @@ Expected: all requested topics have owners and all checks pass.
 
 - Consumes: Task 1 inventory and Stage 00/99 routing, lifecycle, template, and
   frontmatter owners.
-- Produces: the benchmark consumed by Task 8.
+- Produces: the SDLC/frontmatter benchmark consumed by Task 8 and the primary
+  AI-agent `pre-commit run --all-files` obligation benchmark consumed by
+  Task 9.
 
 - [ ] **Step 1: Recount and cite the lifecycle**
 
@@ -237,6 +239,12 @@ Treat Release as an ADR-first home-lab decision. Treat zero real incidents and
 postmortems as neutral; identify missing tabletop/exercise evidence as the
 readiness uncertainty.
 
+Define the primary AI-agent QA obligation benchmark here: use changed-file and
+affected-lane validation during iteration; require
+`pre-commit run --all-files` before PR/merge and after hook, validator,
+toolchain, or global-format changes; record unavailable/skipped tools; and
+separate PostToolUse feedback from full-suite proof.
+
 - [ ] **Step 6: Validate and commit**
 
 ```bash
@@ -261,8 +269,11 @@ checks pass.
 **Interfaces:**
 
 - Consumes: fixed cutoff, pinned agency-agents snapshot, local 10-role/
-  30-adapter inventory, and Task 1 scoring contract.
-- Produces: the benchmark consumed by Task 11.
+  30-adapter inventory, Task 1 scoring contract, and Task 2's primary
+  AI-agent QA obligation benchmark.
+- Produces: the vibe-coding, role, and model-routing benchmark consumed by
+  Task 11, plus secondary role/application implications linked to Task 2's
+  primary QA benchmark.
 
 - [ ] **Step 1: Research vibe coding with source classes separated**
 
@@ -279,12 +290,13 @@ rollback, and stopping/escalation. Classify infrastructure, GitOps, identity,
 secret, network, and security-policy changes as AI-assisted but evidence- and
 approval-gated.
 
-- [ ] **Step 3: Add an AI-agent QA obligation benchmark**
+- [ ] **Step 3: Record secondary AI-agent QA implications**
 
-Use changed-file and affected-lane validation during iteration; require
-`pre-commit run --all-files` before PR/merge and after hook, validator,
-toolchain, or global-format changes; record unavailable/skipped tools. Separate
-PostToolUse feedback from full-suite proof.
+Describe how role instructions, provider adapters, and vibe-coding controls
+apply Task 2's AI-agent QA obligation. Link to the SDLC research owner instead
+of restating or redefining the primary benchmark, and record only secondary
+role/application implications such as adapter feedback versus full-suite
+proof.
 
 - [ ] **Step 4: Refresh role and model-routing criteria**
 
@@ -576,7 +588,8 @@ pass.
 
 **Interfaces:**
 
-- Consumes: Task 5 automation benchmark and Task 6 method.
+- Consumes: Task 2 SDLC and primary AI-agent QA obligation benchmark, Task 5
+  automation benchmark, and Task 6 method.
 - Produces: delivery and quality findings for Task 12.
 
 - [ ] **Step 1: Audit CI/CD topology and ownership**
