@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hy-home.k8s/schemas/document-profiles-1.schema.json",
+  "schemaVersion": 1,
+  "baseline": {
+    "sha": "8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d",
+    "count": 433
+  },
+  "target": {
+    "roots": [
+      "_workspace",
+      ".agents",
+      ".claude",
+      ".codex",
+      ".github",
+      "docs",
+      "examples",
+      "gitops",
+      "infrastructure",
+      "policy",
+      "scripts",
+      "secrets",
+      "tests",
+      "traefik"
+    ],
+    "rootFiles": [
+      "AGENTS.md",
+      "CLAUDE.md",
+      "GEMINI.md",
+      "README.md"
+    ]
+  },
+  "profiles": [
+    {
+      "id": "test/sample",
+      "class": "common",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^tests/fixtures/document-contracts/sample\\.md$"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/fixtures/document-contracts/other.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [],
+        "allowed": []
+      },
+      "template": null,
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    }
+  ],
+  "programLineage": {
+    "prd": "005",
+    "ard": "0008",
+    "specs": [
+      "026",
+      "027",
+      "028",
+      "029",
+      "030",
+      "031",
+      "032"
+    ]
+  }
+}
