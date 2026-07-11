@@ -673,26 +673,26 @@ separate and checks pass.
 - Consumes: Task 5 platform/security benchmark and Task 6 method.
 - Produces: platform/security findings for Task 12.
 
-- [ ] **Step 1: Audit desired state and GitOps ownership**
+- [x] **Step 1: Audit desired state and GitOps ownership**
 
 Score manifest/Kustomize structure, Application/AppProject ownership,
 workload discovery, reconciliation declarations, health/sync assertions,
 rollback, environment boundaries, and static/live evidence.
 
-- [ ] **Step 2: Audit identity, secret, transport, network, and policy**
+- [x] **Step 2: Audit identity, secret, transport, network, and policy**
 
 Score RBAC, AppProject boundaries, Vault TLS/verification, ESO transport and
 audience compatibility, secret exposure in arguments, rotation/reconciliation,
 NetworkPolicy desired state/enforcement confidence, policy-as-code, manifest
 linting, image identity, workflow pinning, and admin-equivalent boundaries.
 
-- [ ] **Step 3: Reconcile SEC findings and calculate scores**
+- [x] **Step 3: Reconcile SEC findings and calculate scores**
 
 Map SEC-001 through SEC-014 to evidence, verdict, maturity, confidence,
 priority, follow-up owner, and acceptance evidence; explicitly supersede
 findings whose evidence changed. Disclose arithmetic and N/A exclusions.
 
-- [ ] **Step 4: Validate and commit**
+- [x] **Step 4: Validate and commit**
 
 ```bash
 rg -n 'GitOps|Vault|ESO|TLS|NetworkPolicy|SEC-0|Unverified live|acceptance' \
