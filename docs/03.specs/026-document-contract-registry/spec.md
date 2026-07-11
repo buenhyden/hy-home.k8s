@@ -160,5 +160,7 @@ git diff --check
 - **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
 - **ADR**: [Declarative Document Contract Registry](../../02.architecture/decisions/0015-declarative-document-contract-registry.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
+- **Plan**: [Document Contract Registry Implementation Plan](../../04.execution/plans/2026-07-12-document-contract-registry.md)
+- **Task**: [Document Contract Registry Task](../../04.execution/tasks/2026-07-12-document-contract-registry.md)
 - **Next Spec**: [Template Contract Consolidation](../027-template-contract-consolidation/spec.md)
 - **External Basis**: [JSON Schema object validation](https://json-schema.org/understanding-json-schema/reference/object), [YAML 1.2.2](https://yaml.org/spec/1.2.2/), and [GitHub Docs frontmatter convention](https://docs.github.com/en/contributing/writing-for-github-docs/using-yaml-frontmatter)

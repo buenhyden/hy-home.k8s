@@ -776,4 +776,4 @@ Expected: one closure commit and a clean focused diff.
 - **ADR**: [Declarative Document Contract Registry](../../02.architecture/decisions/0015-declarative-document-contract-registry.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Spec**: [Document Contract Registry](../../03.specs/026-document-contract-registry/spec.md)
-- **Planned Tasks**: `../tasks/2026-07-12-document-contract-registry.md` (created by DCR-001)
+- **Task**: [Document Contract Registry Task](../tasks/2026-07-12-document-contract-registry.md)
