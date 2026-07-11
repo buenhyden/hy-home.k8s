@@ -1,7 +1,7 @@
 ---
 title: 'Governance Owner and Roster Currentness Implementation Plan'
 type: sdlc/plan
-status: draft
+status: active
 owner: platform
 updated: 2026-07-11
 ---
@@ -1053,8 +1053,8 @@ git commit -m "docs(governance): close roster currentness evidence"
 
 - **Spec**:
   [../../03.specs/025-governance-owner-and-roster-currentness/spec.md](../../03.specs/025-governance-owner-and-roster-currentness/spec.md)
-- **Planned Task**:
-  `../tasks/2026-07-11-governance-owner-and-roster-currentness.md`
+- **Task**:
+  [../tasks/2026-07-11-governance-owner-and-roster-currentness.md](../tasks/2026-07-11-governance-owner-and-roster-currentness.md)
 - **Current Audit Pack**:
   [../../90.references/audits/2026-07-11-weia/README.md](../../90.references/audits/2026-07-11-weia/README.md)
 - **Remediation Roadmap**:

@@ -1,7 +1,7 @@
 ---
 title: 'Governance Owner and Roster Currentness Technical Specification'
 type: sdlc/spec
-status: draft
+status: active
 owner: platform
 updated: 2026-07-11
 ---
@@ -573,6 +573,8 @@ retains responsibility for final integration, validation, and branch finishing.
 - [Current Audit Pack](../../90.references/audits/2026-07-11-weia/README.md)
 - [Remediation Roadmap](../../90.references/audits/2026-07-11-weia/remediation-roadmap.md)
 - [Spec Stage](../README.md)
+- [Execution Plan](../../04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md)
+- [Execution Task](../../04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md)
 - [Plan Stage](../../04.execution/plans/README.md)
 - [Task Stage](../../04.execution/tasks/README.md)
 - [Agent Governance Normalization Spec](../015-agent-governance-contract-normalization/spec.md)

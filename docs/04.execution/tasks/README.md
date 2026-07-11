@@ -87,6 +87,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-07-06-observability-and-network-review-agents.md
 ├── 2026-07-07-workspace-engineering-research-pack-refresh.md
 ├── 2026-07-10-current-research-pack-fact-first-hardening.md
+├── 2026-07-11-governance-owner-and-roster-currentness.md
 └── README.md
 ```
 
@@ -156,6 +157,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-07-06-observability-and-network-review-agents.md`](./2026-07-06-observability-and-network-review-agents.md)                 | Task evidence for adding `observability-reviewer` and `network-reviewer` worker agents across three provider adapters and the harness catalog.                                                                                                                          | Done | 2026-07-06 |
 | [`./2026-07-07-workspace-engineering-research-pack-refresh.md`](./2026-07-07-workspace-engineering-research-pack-refresh.md)         | Task evidence for workspace engineering research pack refresh.                                                                                                                                                                                                          | Done | 2026-07-07 |
 | [`./2026-07-10-current-research-pack-fact-first-hardening.md`](./2026-07-10-current-research-pack-fact-first-hardening.md)           | Current research pack fact-first audit, source refresh, related-document integration, and validation evidence.                                                                                                                                                           | Done | 2026-07-10 |
+| [`./2026-07-11-governance-owner-and-roster-currentness.md`](./2026-07-11-governance-owner-and-roster-currentness.md)               | Governance owner, lifecycle, audit IA, Plan evidence, and ten-role/30-adapter roster currentness implementation evidence.                                                                                                                                                | Active | 2026-07-11 |
 
 ## Related Documents
 
