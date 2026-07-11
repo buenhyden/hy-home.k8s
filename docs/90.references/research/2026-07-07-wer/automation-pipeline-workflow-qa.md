@@ -3,7 +3,7 @@ title: 'Reference: Automation Pipeline Workflow QA Research'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-10
+updated: 2026-07-11
 ---
 
 # Reference: Automation Pipeline Workflow QA Research
@@ -11,7 +11,7 @@ updated: 2026-07-10
 ## Overview
 
 이 문서는 `hy-home.k8s`의 automation, pipeline, workflow, CI/CD, QA
-feedback topology를 2026-07-10 현재 repository evidence와 공식 GitHub
+feedback topology를 2026-07-11 fixed repository evidence와 공식 GitHub
 Actions, pre-commit, DORA, OpenGitOps 자료에 대조한다. Current pack의 짧은
 요약과 Historical pack의 유효한 조사 내용을 현재 파일·조건·소유권으로 다시
 검증해 이 문서에 통합했다.
@@ -22,8 +22,8 @@ runtime을 정의하거나 변경하지 않는다.
 
 ## Purpose
 
-- 다섯 workflow와 여섯 CI job의 실제 trigger, dependency, condition, output
-  관계를 설명한다.
+- 다섯 workflow와 전체 열 job(`ci.yml` 여섯 job)의 실제 trigger,
+  dependency, condition, output 관계를 설명한다.
 - local hook/pre-commit, CI job, validator, optional dependency의 coverage를
   변경 surface별로 연결한다.
 - CI의 static QA와 Argo CD의 pull-based delivery 경계를 분리한다.
@@ -34,7 +34,9 @@ runtime을 정의하거나 변경하지 않는다.
 
 - Type: durable-concept / external-standard-snapshot /
   dated-implementation-audit
-- Source checked: 2026-07-10
+- External sources checked: 2026-07-10
+- Repository snapshot checked: 2026-07-11 at
+  `ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7`
 - Refresh trigger: GitHub workflow, path filter, Dependabot, pre-commit,
   provider hook wiring, validator, GitOps root/ApplicationSet, CI/CD QA guide,
   DORA metric definition, or OpenGitOps principle changes.
@@ -42,7 +44,7 @@ runtime을 정의하거나 변경하지 않는다.
 ## Authority Boundary
 
 - **Authoritative for**:
-  - 2026-07-10 repository snapshot에서 다시 도출한 workflow/job/filter/hook/
+  - 2026-07-11 fixed repository snapshot에서 다시 도출한 workflow/job/filter/hook/
     validator/GitOps ownership mapping.
   - 아래 URL의 공식·primary 외부 자료와 local evidence의 dated comparison.
   - 이후 scoped task로 보낼 automation 개선 권고.
@@ -93,6 +95,27 @@ runtime을 정의하거나 변경하지 않는다.
 | `.github/dependabot.yml` | Dependency proposal automation | Weekly `github-actions` ecosystem scan | Grouped/cooldown Dependabot PRs | A proposal is not dependency safety proof |
 | `.pre-commit-config.yaml` | Local/CI toolchain | Git hook, manual command, and `pre-commit/action` | File hygiene, secret, Markdown, JSON/TOML/YAML, shell, workflow, Dockerfile, and manifest tool results | Tool result only; not live or delivery evidence |
 | Shared hook scripts | Provider-wired edit/lifecycle feedback | Provider event wiring in `.claude/settings.json`, `.agents/hooks.json`, `.codex/hooks.json` | Pre-edit warnings, scoped post-edit checks, lifecycle checks/advice | Wiring files do not prove every provider consumed or enforced the hook |
+
+### Fixed Snapshot Counts and Tool Wiring
+
+The fixed snapshot is
+`ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7`. No active workflow, hook,
+validator, manifest, policy, or operations path changed between that commit and
+the Task 4 branch state; only the approved Stage 90 roots changed. Counts below
+therefore describe the fixed snapshot, not live GitHub or provider execution.
+
+| Surface | Exact count / topology | Evidence meaning and limitation |
+| --- | --- | --- |
+| Workflow files and jobs | 5 workflows, 10 jobs total: CI 6; changelog, greeting, labeler, and stale 1 each. | Tracked YAML topology only; no remote run or required-check state was inspected. |
+| CI path-filter outputs | 3: `precommit`, `repo_quality`, `manifests`; `precommit: '**'`, while the other two are specialist subsets. | Every observed change selects the configured pre-commit lane, but specialist-validator input coverage is incomplete. |
+| CI DAG | Parallel roots `branch-policy` (PR only) and `changes`; `changes` fans out to `pre-commit`, `repo-quality-static`, and `manifest-static`; `ci-summary` needs all five predecessor jobs and runs `always()`. | A skipped conditional lane is reported but is not treated as failure; the aggregate rejects failure/cancelled results. |
+| Pre-commit | 21 hook IDs; `default_install_hook_types` includes `pre-commit` and `commit-msg`. | Configured hook coverage, not proof that a developer installed the hook. The CI pre-commit job provides a separate declared execution lane. |
+| Shared hooks | 4 scripts wired through three provider JSON surfaces for SessionStart, PreToolUse, PostToolUse, Stop/SubagentStop, and PreCompact. | Claude has a native permission list; Codex/Gemini JSON remains context/validation wiring. Consumption is runtime-Unverified. |
+| Prettier | Root `.prettierrc.json` defines six options and `.prettierignore` defines 11 ignore entries. Zero pre-commit hook, workflow step, shared-hook call, or package script invokes Prettier. | Configuration is tracked but execution/enforcement is absent. Markdownlint and file-hygiene hooks are the active formatting/quality evidence. |
+| Action dependencies | 15 `uses:` occurrences, 0 full 40-hex commit SHA pins. Dependabot proposes weekly Actions updates; Zizmor disables `unpinned-uses`. | Version tags are reproducible only while upstream tags remain stable; immutable dependency identity is not enforced. |
+| Artifact | 1 `actions/upload-artifact` step uploads generated `CHANGELOG.md`; no explicit `retention-days` is declared. | A run artifact is configured, but there is no checked release publication, provenance/attestation, signature, or repository mutation. Retention follows the unverified remote default. |
+| Optional tools | `manifest-static` installs PyYAML only. `validate-k8s-manifests.sh` skips kube-linter when absent; `validate-policy-gates.sh` runs its built-in four-category fallback and adds Conftest only when installed. The pre-commit job separately provisions its configured kube-linter hook. | CI-declared evidence must name which lane/tool produced it; a manifest-static PASS is not automatically a kube-linter or Conftest PASS. |
+| Supply chain and DORA | No active workflow contains CodeQL, dependency-review, SBOM, provenance/attestation, signature verification, or Scorecard. No automation emits the five DORA metrics. | These remain relevance/threat-model decisions and measurement gaps, not implicit failures of an artifact-building product pipeline. |
 
 ### Actual CI Job DAG
 
@@ -178,6 +201,22 @@ hooks unless a task separately records explicit manual or consumed shared-hook
   reference. `.github/zizmor.yml` explicitly disables `unpinned-uses`, so the
   current tool configuration does not enforce that benchmark.
 
+### Prettier Configuration Boundary
+
+The repository does contain a root `.prettierrc.json` and `.prettierignore`.
+The earlier 2026-07-05 audit statement that no tracked Prettier configuration
+existed is a superseded fact defect. The current six configuration keys are
+`printWidth`, `singleQuote`, `semi`, `trailingComma`, `arrowParens`, and
+`endOfLine`; the ignore file excludes editor/cache/build/generated areas and
+`package-lock.json`.
+
+No `prettier` hook, workflow step, shared hook command, `package.json`, or
+package-manager script exists in the checked repository. Therefore the correct
+verdict is **configured but unwired**, not active formatting enforcement. A
+later owner should either remove an intentionally unused config or define the
+languages, version, execution command, diff/migration scope, and CI/pre-commit
+consumer before wiring it. This Stage 90 refresh makes neither choice.
+
 ### GitOps Delivery Boundary
 
 | Surface | Declared owner/path | Delivery behavior in tracked desired state | Evidence boundary |
@@ -228,6 +267,21 @@ the named active files.
 | Implementation gap | High | No active CI supply-chain evidence lane for code scanning, dependency review, SBOM, provenance, or attestation | Focused scans of workflows, Dependabot, and pre-commit found no CodeQL, dependency-review, SBOM, provenance, attestation, Cosign, or SLSA automation; changelog artifact generation is not provenance | Static lint/secret checks do not establish dependency-change review or build/release provenance | Threat-model applicable artifacts first, then adopt only the controls that match this manifest/document repository and define retention/verification evidence | Security policy/ARD, `.github/workflows`, Stage 05 release/runbook owner, and a new Stage 03/04 supply-chain task |
 | Needs strengthening | Medium | Key static contracts rely heavily on textual/regex matching | `verify-contracts-static.sh` uses `grep -P`/`grep -Pz`; repo-quality and secret validators use extensive regex/text contracts alongside YAML parsing | Semantically equivalent YAML or document changes can cause false positives/negatives, while a text match may not prove object semantics | Classify contracts by schema/AST/text need, migrate high-risk checks to parsed structures, and add negative fixtures before removing proven sentinels | Validator scripts, `infrastructure/tests`, `tests`, scripts inventory, and a Stage 03/04 validator-quality task |
 | Needs strengthening | Medium | DORA telemetry is absent | DORA terms appear in research/task context, but no checked workflow, script, or operations automation emits/stores the current five metrics | Delivery-improvement claims cannot be measured consistently and repo CI duration is not deployment performance | Select one service and define event sources, ownership, privacy, baselines, and dashboard/retention before instrumenting | New Stage 03 measurement spec and Stage 04 task; then approved operations observability and workflow changes |
+| Needs strengthening | Low | Prettier is configured but has no execution consumer | `.prettierrc.json` and `.prettierignore` are tracked, but focused searches found no Prettier hook, workflow step, shared-hook call, package script, or package manifest | Readers can mistake dormant configuration for an enforced formatter, while wiring it without scope control could create a repository-wide formatting diff | Decide explicitly to remove the dormant config or adopt a versioned, language-scoped formatter with measured migration and rollback | New Stage 03 formatting-toolchain decision/spec; then `.prettierrc.json`, `.prettierignore`, pre-commit/CI/hooks, and CI/CD QA guide in one approved task |
+| Needs strengthening | Low | Changelog artifact retention is implicit | One changelog upload step exists and declares `if-no-files-found: error`, but no `retention-days`; no remote repository default was inspected | Evidence lifetime is controlled outside the tracked workflow and may not match a future release-record retention need | Define the release-evidence consumer and retention requirement before adding an explicit workflow value | Release-contract ADR/Spec, then `generate-changelog.yml`, GitHub automation hub, and Stage 05 release evidence owner |
+
+### Automation Restructuring Options
+
+| Option | Scope and benefit | Cost / blast radius | Prerequisites | Migration | Rollback | Decision owner |
+| --- | --- | --- | --- | --- | --- | --- |
+| Minimal | Repair documentation facts, add focused regression tests for the existing three path filters, and explicitly classify dormant Prettier/optional tools. Lowest-risk improvement to evidence honesty. | Low / CI tests, guides, and references; existing job graph remains. | Exact validator-input inventory and baseline CI durations. | Add tests and summaries before any filter/tool change. | Revert tests/documentation; existing workflow topology remains usable. | QA Engineer with repository maintainer approval. |
+| **Consolidated (default)** | Minimal work plus one machine-readable path-to-validator inventory, a cost-aware changed-surface local wrapper, explicit optional-tool evidence in summaries, and a single delivery-evidence contract connecting CI, changelog artifact, GitOps boundary, and applicable DORA events. | Medium / CI, pre-commit, shared hooks, validators, QA guide, and release-evidence owner; no deploy job is introduced. | Stage 03 CI/automation spec, latency budget, negative fixtures, tool version policy, artifact consumer/retention decision, and remote required-check review. | Introduce inventory/tests, run old and new selection in parallel, compare results/latency, then switch filters and summaries lane by lane. | Restore old filters and hook matrix; retain the inventory as documentation and keep Argo CD delivery separate. | System Architect and QA Engineer; Operations owns delivery metrics. |
+| Full redesign | Replace conditional specialist lanes with reusable workflows/generated matrices, enforce immutable action identities and a broad supply-chain suite, wire Prettier globally, and build DORA telemetry. Potentially stronger uniformity and observability. | High / every workflow, formatter-sensitive file, hook/validator consumer, artifact/metric store, remote ruleset, and contributor toolchain. | Threat model, artifact/build inventory, reusable-workflow design, formatter migration sample, credentials/retention/privacy owners, cost/latency budget, and remote rollback access. | Shadow workflows and non-blocking telemetry first; pin/migrate one dependency or format family at a time; promote only after false-positive and runtime review. | Keep prior CI required checks available, disable new matrices/telemetry, and revert formatter enforcement without rewriting already reviewed history. | Product/Platform owner and Security/Operations decision group. |
+
+`Consolidated` is the default because the observed failures are fragmented
+ownership, incomplete filter dependency mapping, and ambiguous optional-tool
+evidence. The repository has no build/publish/deploy pipeline or telemetry
+consumer that justifies a full supply-chain/formatter/metrics redesign today.
 
 ## Sources
 
@@ -268,8 +322,12 @@ files, not the external sources, establish local implementation claims.
 - [Labeler configuration](../../../../.github/labeler.yml)
 - [Zizmor configuration](../../../../.github/zizmor.yml)
 - [Pre-commit configuration](../../../../.pre-commit-config.yaml)
+- [Prettier configuration](../../../../.prettierrc.json)
+- [Prettier ignore configuration](../../../../.prettierignore)
+- [Shared pre-edit guard](../../../00.agent-governance/hooks/k8s-pre-edit.sh)
 - [Shared post-edit validator](../../../00.agent-governance/hooks/post-validate.sh)
 - [Shared lifecycle guard](../../../00.agent-governance/hooks/lifecycle-guard.sh)
+- [Shared session-start hook](../../../00.agent-governance/hooks/session-start.sh)
 - [Claude settings and hook wiring](../../../../.claude/settings.json)
 - [Codex hook wiring](../../../../.codex/hooks.json)
 - [Gemini/Antigravity hook wiring](../../../../.agents/hooks.json)
@@ -283,7 +341,7 @@ files, not the external sources, establish local implementation claims.
 ## Review and Freshness
 
 - Review cadence: on source change.
-- Last reviewed: 2026-07-10.
+- Last reviewed: 2026-07-11.
 - Next review trigger: any workflow/job/filter/action reference, Dependabot,
   pre-commit, hook routing, validator, GitOps root/ApplicationSet, live-test
   assertion, DORA metric, or OpenGitOps principle change.

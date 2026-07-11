@@ -3,7 +3,7 @@ title: 'Reference: Kubernetes Infrastructure Security Research'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-10
+updated: 2026-07-11
 ---
 
 # Reference: Kubernetes Infrastructure Security Research
@@ -14,7 +14,7 @@ This reference compares the repository's current Kubernetes, GitOps,
 infrastructure, secret-management, policy-as-code, network, and software
 supply-chain surfaces with primary upstream guidance. It consolidates the
 still-valid analysis from the Historical research pack after rechecking every
-local claim against the tracked repository on 2026-07-10.
+local claim against the fixed repository snapshot on 2026-07-11.
 
 The result is an implementation audit, not an implementation change. It does
 not prove that Kubernetes, Argo CD, External Secrets Operator (ESO), Vault, a
@@ -34,8 +34,9 @@ enforcing the tracked desired state.
 ## Reference Type
 
 - Type: durable-concept / external-standard-snapshot / dated-implementation-audit
-- Source checked: 2026-07-10 for all external and repository sources listed
-  below.
+- External sources checked: 2026-07-10 for all external sources listed below.
+- Repository snapshot checked: 2026-07-11 at
+  `ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7`.
 - Refresh trigger: Kubernetes, Argo CD, ESO, Vault, OPA, Conftest, NIST,
   SLSA, OpenSSF Scorecard, AppProject, Kustomize, NetworkPolicy, secret,
   bootstrap, infrastructure-test, policy-gate, image, GitHub Actions, or
@@ -44,7 +45,8 @@ enforcing the tracked desired state.
 ## Authority Boundary
 
 - **Authoritative for**:
-  - the repo-static observations and source comparison checked on 2026-07-10;
+  - the repo-static observations checked on 2026-07-11 at the fixed snapshot
+    and the external-source comparison checked on 2026-07-10;
   - the distinction between local desired state, static validation, optional
     fallback, operator-run live checks, and unverified enforcement; and
   - non-mutating recommendations and their follow-up routes.
@@ -131,6 +133,24 @@ The checked GitOps hierarchy corrects an earlier Current-pack ambiguity:
 This is repository desired-state evidence only. No controller pull,
 Application generation, sync, health, self-heal, prune, or convergence was
 observed in this task.
+
+### Fixed Snapshot Counts
+
+The fixed snapshot is
+`ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7`. The approved research branch made
+no changes to active GitOps, infrastructure, policy, validator, workflow, or
+operations paths before this refresh, so the counts below remain the fixed
+snapshot facts. They are not live-resource counts.
+
+| Desired-state or validation surface | Exact repo-static count / fact | Boundary |
+| --- | --- | --- |
+| GitOps YAML and Kustomize | 79 YAML files and 12 `gitops/**/kustomization.yaml` files. The manifest validator discovers 104 YAML targets across its required and optional repository roots. | File discovery and parse coverage do not prove a complete root render, API schema, CRD availability, admission, or reconciliation. |
+| Argo CD topology | 19 tracked `Application` objects: `root-platform` plus 18 root-platform child Application manifests; 1 `ApplicationSet`; 2 `AppProject` objects. | Tracked object declarations are not live generated Applications, health, sync, project enforcement, or controller ordering. |
+| Root composition | `gitops/apps/root/kustomization.yaml` lists 18 platform Applications; cluster-local Kustomize lists root Application, two AppProjects, and the workload ApplicationSet. | The root platform tree and workload generator are separate owners. |
+| Secret desired state | 3 `ExternalSecret` objects, 1 `ClusterSecretStore`, 1 TokenReview `ClusterRoleBinding`, and 0 tracked Kubernetes `Secret` manifest files on the checked YAML surfaces. | Generated Secrets, etcd encryption, Vault values/policy attachment, ESO Ready/sync, RBAC, rotation, and audit evidence remain live-Unverified. |
+| Network desired state | 6 `NetworkPolicy` objects, all egress-focused and all listed by one Kustomization. | No ingress-isolation or packet-enforcement claim follows; CNI and positive/negative traffic behavior were not tested. |
+| AppProject allow-lists | `apps` allows 8 exact namespaced kinds and no cluster kinds; `platform` lists 9 cluster kinds, 18 namespaced kinds, 9 sources, and 11 destination namespaces, including `argocd`. No wildcard group/kind is declared. | The broad platform project and `argocd` destination are a high-trust desired-state boundary; live Argo CD and repository-write authorization remain Unverified. |
+| Image identity | 7 explicit tracked `image:` references; 0 use `:latest`, and 0 use `@sha256` digests. | Non-`latest` tags provide mutable tag hygiene only; registry identity, vulnerability, signature, SBOM, provenance, and admission are absent or Unverified. |
 
 ### AppProject and Authorization Boundaries
 
@@ -284,6 +304,41 @@ any recommendation requires a separately approved Spec/Plan/Task.
 | SEC-013 — Implementation gap (High): supply-chain evidence lanes | No active tracked workflow provides CodeQL, dependency review, SBOM, provenance/attestation, signature verification, or Scorecard. | Source, dependency, artifact, and release integrity have no end-to-end machine-verifiable evidence chain. | Prioritize threat-modelled lanes, define artifact ownership and verification consumers, and assess SLSA only after evidence exists. | [CI workflow](../../../../.github/workflows/ci.yml) |
 | SEC-014 — Unverified (High): admin-equivalent Argo CD project boundary | `platform` can deploy to `argocd`; local role is read-only, but live RBAC and remote repository write controls were not inspected. | Compromise of an authorized source or principal could control Argo CD itself. | Require operator evidence for least-privilege Argo CD RBAC and protected source writes at each access-model change. | [Platform AppProject](../../../../gitops/clusters/local/appproject-platform.yaml) |
 
+### SEC Finding Reconciliation
+
+All fourteen IDs, `SEC-001` through `SEC-014`, remain current at the fixed
+snapshot. No active-file evidence changed after their 2026-07-10 derivation,
+and the 2026-07-11 recount confirmed the same path-filter, optional-tool,
+health/sync assertion, TLS, Vault/ESO transport, process-argument, audience,
+NetworkPolicy, parsing, Action identity, supply-chain, and AppProject
+boundaries. No ID is superseded or closed by this refresh.
+
+The IDs must not be collapsed into one generic "security gap":
+
+- `SEC-001` through `SEC-003` concern delivery-lane selection and evidence
+  strength, not live cluster failure.
+- `SEC-004`, `SEC-005`, `SEC-009`, `SEC-010`, and `SEC-014` require approved
+  live or remote evidence before their operational impact can be resolved.
+- `SEC-006` through `SEC-008`, `SEC-012`, and `SEC-013` are repository-visible
+  implementation gaps, but this Stage 90 reference is not authorized to change
+  the owning script, manifest, workflow, or policy.
+- `SEC-011` is a layered-validator design issue; fast text sentinels remain
+  useful until parsed/rendered negative fixtures replace their high-risk cases.
+
+### Platform and Security Restructuring Options
+
+| Option | Scope and benefit | Cost / blast radius | Prerequisites | Migration | Rollback | Decision owner |
+| --- | --- | --- | --- | --- | --- | --- |
+| Minimal | Keep topology and tools; strengthen strict-mode live assertions, document optional-tool output, and remediate the three direct secret-transport/argv gaps (`SEC-006`–`SEC-008`) in separate small tasks. | Medium / bootstrap, Vault store, focused tests/runbooks, and CI summaries. Live compatibility risk is concentrated in Vault/ESO/TLS. | Version inventory, CA/trust design, redaction tests, strict-vs-diagnostic acceptance criteria, and operator maintenance window. | Canary TLS/audience and strict checks, move credentials off argv, then make secure defaults blocking. | Restore the prior transport/default under an approved time-bounded break-glass path; retain redaction and diagnostic evidence. | Security Engineer and Operations Engineer. |
+| **Consolidated (default)** | Minimal work plus one platform-security contract spanning AppProject/RBAC, Vault/ESO/TLS, NetworkPolicy behavior, image identity, CI path selection, policy/render/schema layers, and SEC acceptance evidence. Keeps the current GitOps tree but makes owner/test dependencies explicit. | Medium-high / Stage 02/03 design, Stage 05 policy/runbooks, CI/validators, infrastructure tests, selected manifests, and remote authorization evidence. | Threat model, controller/Vault/CNI version contract, environment-specific test plan, path-to-validator inventory, parsed/rendered negative fixtures, and rollback rehearsals. | Land observation-only tests and owner matrix first; close SEC items by dependency order; promote strict gates only after canary evidence. | Disable new blocking assertions individually, preserve diagnostics, and revert one manifest/script owner at a time without bypassing GitOps review. | System Architect, Security Engineer, and Operations Engineer. |
+| Full redesign | Rebuild environment overlays, secret bootstrap, identity, network segmentation, policy admission, image-digest/signature verification, supply-chain attestations, and release promotion as an integrated platform. Highest theoretical assurance. | Very high / cluster bootstrap, all platform/workload manifests, Vault/ESO, CNI, Argo CD projects/RBAC, CI, registry/artifacts, operations, and remote repository controls. | Approved PRD/ARD/ADRs, target environments, trust roots, artifact/registry and admission architecture, credentials, migration capacity, live rollback environment, and measured need beyond the home-lab threat model. | Build a parallel environment, migrate one trust/namespace/application domain at a time, verify reconciliation and rollback, then retire old paths. | Keep the existing environment and GitOps revision available until each domain passes rollback; revert traffic/source pointers rather than editing live objects ad hoc. | Product/Platform owner with System Architect, Security, and Operations approval. |
+
+`Consolidated` remains the evidence-supported default. The current desired-state
+topology is coherent and already has deterministic static checks; the gaps are
+cross-owner enforcement and live-evidence depth. A full platform replacement
+would expand trust, credential, runtime, and migration risk without repository
+evidence that the existing tree itself is the root cause.
+
 ## Sources
 
 ### Repository Sources
@@ -343,7 +398,7 @@ those sources when local controller or Vault versions change.
 
 ## Review and Freshness
 
-- Last reviewed: 2026-07-10
+- Last reviewed: 2026-07-11
 - Review cadence: on any refresh trigger above or before a security-affecting
   Spec uses these findings.
 - Review method: re-open every external URL; diff current repository owners;

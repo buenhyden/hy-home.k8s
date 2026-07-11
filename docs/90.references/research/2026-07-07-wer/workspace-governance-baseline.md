@@ -3,7 +3,7 @@ title: 'Reference: Workspace Governance Baseline Research'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-10
+updated: 2026-07-11
 ---
 
 # Reference: Workspace Governance Baseline Research
@@ -33,7 +33,9 @@ runtime behavior, release 승인, live-cluster 절차를 정의하거나 변경�
 ## Reference Type
 
 - Type: durable-concept / source-ledger
-- Source checked: 2026-07-10
+- External sources checked: 2026-07-10
+- Repository snapshot checked: 2026-07-11 at
+  `ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7`
 - Refresh trigger: workspace purpose, Stage routing/lifecycle contract, agent roster,
   provider adapter, approval boundary, CI workflow, validation script, audit index,
   release evidence, or Graphify snapshot changes.
@@ -42,7 +44,7 @@ runtime behavior, release 승인, live-cluster 절차를 정의하거나 변경�
 
 - **Authoritative for**:
   - Repo-backed governance baseline and owner/evidence mapping checked on
-    2026-07-10.
+    2026-07-11 at the fixed repository snapshot.
   - Dated comparison between local evidence and the official OpenGitOps
     benchmark.
   - Evidence-backed follow-up recommendations for later scoped work.
@@ -86,15 +88,36 @@ runtime behavior, release 승인, live-cluster 절차를 정의하거나 변경�
   reconciled it in this review.
 - **Repo fact — people and agents**: persona-to-layer routing is owned by
   [Persona Protocol](../../../00.agent-governance/rules/persona.md) and the
-  matching scopes. A 2026-07-10 file inventory found the same ten agent stems in
+  matching scopes. The 2026-07-11 fixed-snapshot inventory found the same ten agent stems in
   each of `.claude/agents/*.md`, `.agents/agents/*.md`, and
   `.codex/agents/*.toml`. This proves file-stem parity only, not provider-native
   registration or runtime behavior.
 - **Repo fact — CI inventory**: `.github/workflows/` contains exactly five YAML
-  workflows. [`ci.yml`](../../../../.github/workflows/ci.yml) declares six jobs:
+  workflows and ten jobs in total. [`ci.yml`](../../../../.github/workflows/ci.yml)
+  declares six jobs:
   `branch-policy`, `changes`, `pre-commit`, `repo-quality-static`,
   `manifest-static`, and `ci-summary`. Local inspection did not verify remote
   GitHub Actions runs or branch-protection/ruleset state.
+
+### Fixed Snapshot and Currentness Reconciliation
+
+The Task 1 inventory commit
+`ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7` is the fixed fact basis for this
+refresh. A path comparison through the Task 4 branch state found no changes
+outside `docs/90.references/research/**` and
+`docs/90.references/audits/**`, so the active governance, workflow, hook,
+validator, GitOps, infrastructure, policy, and operations evidence below is
+byte-for-byte unchanged from that baseline. This statement does not promote
+the later branch HEAD into a new audit snapshot.
+
+| Snapshot surface | Exact repo-static observation | Currentness interpretation |
+| --- | --- | --- |
+| Stage owners | Stage 00 owns agent execution and stage routing; Stage 99 `sdlc-governance.md` owns lifecycle, lineage, handoff, and duplicate rules; Stage 99 `template-routing.md` owns path-to-template mapping; Stage 05 owns operating policy and runbooks; Stage 90 owns descriptive research/audits only. | Owner routes are explicit, but lifecycle summaries remain duplicated in Stage 00 and Stage 99 secondary surfaces. |
+| Provider/agent catalog | Ten stems exist in each of the three adapter directories; three numeric catalog statements still say `Eight`/`eight`. | Inventory parity is current; canonical catalog prose is stale and remains a routed finding. |
+| Delivery controls | Five workflows contain ten jobs; `ci.yml` owns six, including three conditional specialist lanes and one aggregate summary. Twenty-one pre-commit hook IDs are configured. | Static topology is explicit; remote required-check/ruleset and hook-consumption evidence was not inspected. |
+| Research Current pointer | `docs/90.references/research/README.md` identifies only `2026-07-07-wer` as the Current dated research pack. | Research routing is coherent. |
+| Audit Current pointer | The audit index labels several older reports and the 2026-07-05 pack `Current` while that pack benchmarks Historical `2026-07-04-wer`. | Current audit ownership remains ambiguous until the new audit pack is completed and the index is reconciled. |
+| Stage 90 authority | The approved 2026-07-11 audit design limits this work to Stage 90 and routes active changes to later PRD/ARD/ADR/Spec/Plan/Task owners. | Research can recommend consolidation, but cannot normalize active owners itself. |
 
 ### External Benchmark
 
@@ -131,6 +154,24 @@ separate approved GitHub settings/ruleset review.
 | Research and audit currentness | [Research index](../README.md), [Audit index](../../audits/README.md), [Reference Maintenance Runbook](../../../05.operations/runbooks/0011-reference-maintenance-runbook.md) | Dated Current/Historical research packs and dated audit snapshots | Stage 90 remains descriptive and must not label stale snapshots as active policy. | Needs strengthening; audit Current labels drift |
 | Release evidence | [GitHub automation hub](../../../../.github/ABOUT.md), [`generate-changelog.yml`](../../../../.github/workflows/generate-changelog.yml) | Version-tag workflow creates a review artifact and does not publish or mutate repository history | Artifact generation is not release approval, promotion policy, provenance, or deployment. | Partial; no dedicated release document contract |
 
+### Governance Restructuring Options
+
+These are non-mutating target-state comparisons. The benefit is evidence-based;
+cost and blast radius are qualitative planning estimates that require a later
+approved owner to validate.
+
+| Option | Scope and benefit | Cost / blast radius | Prerequisites | Migration | Rollback | Decision owner |
+| --- | --- | --- | --- | --- | --- | --- |
+| Minimal | Correct the three stale `Eight`/`eight` catalog statements and reconcile the audit Current labels. Fastest currentness repair with no taxonomy change. | Low / Stage 00 catalog and Stage 90 index only. It leaves duplicate lifecycle summaries and link-only lineage intact. | Confirm the ten-role inventory and choose one audit Current pointer. | One scoped Stage 00 maintenance task plus the final Stage 90 index task. | Revert the wording/index rows; adapter and lifecycle contracts are untouched. | Governance Steward for the catalog; Technical Writer for Stage 90. |
+| **Consolidated (default)** | Minimal repairs plus one normative lifecycle body in Stage 99, concise role-specific pointers in Stage 00/secondary Stage 99 surfaces, one explicit Current audit pointer, and a tested owner-to-validator dependency map. Reduces observed drift without changing the stage taxonomy. | Medium / Stage 00, Stage 99 support, Stage README/index, validator sentinel, and Stage 90 routing surfaces. | Stage 03 governance-normalization spec; cross-owner review; exact duplicate-text inventory; negative validator fixtures; approved migration sequence. | Add/update sentinels first, convert secondary bodies to pointers one owner at a time, reconcile indexes, then remove obsolete duplicate prose. | Restore the prior bodies and sentinel allow-list from the scoped change while retaining the single Current pointer repair. | System Architect and Governance Steward, with Technical Writer and QA review. |
+| Full redesign | Introduce stable document/lineage identifiers and metadata-led ownership across PRD→ARD/ADR→Spec→Plan/Task→Operations, and rebuild Current routing around those identifiers. Highest semantic traceability potential. | High / every active stage, templates, validators, hooks, indexes, archive links, and authored documents; large migration and review burden. | Approved PRD, ARD/ADR, schema/spec, consumer design, identifier allocation rules, migration inventory, compatibility plan, and measured proof that link-based lineage is inadequate. | Dual-read identifiers and links, backfill by family, audit coverage, switch consumers, then retire compatibility rules. | Keep links authoritative, disable new identifier enforcement, and revert consumers while preserving already-added inert metadata. | Product Manager and System Architect; Governance Steward owns policy adoption. |
+
+`Consolidated` remains the evidence-supported default: the observed defects are
+owner/currentness duplication and missing semantic dependency checks, while
+the stage taxonomy and concrete route map already have deterministic owners.
+The snapshot provides no evidence that a repository-wide identifier migration
+would currently repay its cost or blast radius.
+
 ### Enforcement and Evidence Map
 
 | Contract | Instruction | Preventive control | Feedback evidence | Knowledge store |
@@ -149,7 +190,7 @@ inside `Risk`, and each row names the canonical route for a later scoped task.
 
 | Finding | Evidence | Risk | Recommendation | Canonical follow-up route |
 | --- | --- | --- | --- | --- |
-| Lifecycle draft/done asymmetry | A 2026-07-10 scan found 16 of 20 active `docs/03.specs/*/spec.md` files at `status: draft` and no Spec at `done`; for example, `021-sdlc-lifecycle-contract/spec.md` is draft while its Stage 04 plan and task are done. | **Medium** — completed execution can appear to depend on an unpromoted implementation contract, weakening lifecycle/currentness signals. | Define an explicit human promotion/closure review and deterministic evidence rule; do not auto-promote existing specs from this research pass. | New Stage 03 lifecycle-governance spec, then Stage 00 `documentation-protocol.md`/`stage-authoring-matrix.md`, Stage 03/04 indexes, templates, and repo-quality validation. |
+| Lifecycle draft/done asymmetry | The 2026-07-11 fixed-snapshot scan found 16 of 20 active `docs/03.specs/*/spec.md` files at `status: draft` and no Spec at `done`; for example, `021-sdlc-lifecycle-contract/spec.md` is draft while its Stage 04 plan and task are done. | **Medium** — completed execution can appear to depend on an unpromoted implementation contract, weakening lifecycle/currentness signals. | Define an explicit human promotion/closure review and deterministic evidence rule; do not auto-promote existing specs from this research pass. | New Stage 03 lifecycle-governance spec, then Stage 00 `documentation-protocol.md`/`stage-authoring-matrix.md`, Stage 03/04 indexes, templates, and repo-quality validation. |
 | Harness catalog adapter-count drift | A current file scan finds ten matching stems under each of `.claude/agents`, `.agents/agents`, and `.codex/agents`, and the catalog roster lists the added observability/network roles; however, `harness-catalog.md` still says `Eight local provider adapters`, `Eight local agents`, and `Keep eight local agents` in its DAILY/readiness matrices. | **Medium** — the canonical runtime catalog contradicts the actual inventory, so readers or future count-sensitive automation can undercount supported roles even though file parity is currently ten. | Reconcile the canonical catalog prose and add a deterministic count/currentness check if the wording must remain numeric; do not change adapters or runtime configuration in this research task. | Scoped Stage 00 harness-catalog maintenance task owned by `docs/00.agent-governance/harness-catalog.md`, with `harness-implementation-map.md`, repo-quality validation, Stage 04 evidence, and progress memory reviewed together. |
 | Release document contract is absent | The Stage 99 route map has no release template. `.github/workflows/generate-changelog.yml` creates a changelog artifact, while `.github/ABOUT.md` states it does not publish, push, or deploy. | **Medium** — approval, promotion, retention, provenance, and rollback evidence can remain implicit even though a release-evidence artifact exists. | Decide whether a dedicated release record is needed and define its owner/route before adding a template or workflow gate. | New Stage 03 release-contract spec; if approved, Stage 05 policy/runbook plus Stage 99 route/template and `.github` release-evidence owner. |
 | Lifecycle and route summaries are duplicated | `sdlc-governance.md` says it owns lifecycle state, numeric lineage, handoff, and duplicate rules, but substantially similar summaries also appear in `stage-authoring-matrix.md` and `document-stage-routing.md`; `template-routing.md` already points to the canonical owner. | **Medium** — parallel normative summaries can diverge and make ownership ambiguous. | Keep one normative lifecycle body and convert secondary surfaces to concise role-specific pointers after a scoped cross-owner review. | Stage 00/99 governance-normalization spec and task covering `sdlc-governance.md`, stage routing/matrix, template routing, README indexes, and validator sentinels. |
@@ -196,7 +237,7 @@ inside `Risk`, and each row names the canonical route for a later scoped task.
 ## Review and Freshness
 
 - Review cadence: on source change
-- Last reviewed: 2026-07-10
+- Last reviewed: 2026-07-11
 - Next review trigger: canonical governance, lifecycle/route ownership, agent
   inventory, provider adapters, approval boundary, GitOps root/ApplicationSet,
   CI workflow/job inventory, validation scripts, audit Current pointer, release

@@ -408,33 +408,33 @@ checks pass.
   read-only evidence, and existing governance/automation/security gap IDs.
 - Produces: controls consumed by Tasks 7, 9, 10, and 12.
 
-- [ ] **Step 1: Refresh workspace owner and authority evidence**
+- [x] **Step 1: Refresh workspace owner and authority evidence**
 
 Recheck purpose, roles, canonical owners, rules, enforcement, templates,
 scripts, integrations, CI, operations, archive, and Stage 90 boundaries. Record
 duplicated lifecycle summaries and Current drift as consolidation findings.
 
-- [ ] **Step 2: Recount automation and CI topology**
+- [x] **Step 2: Recount automation and CI topology**
 
 Inspect workflows, pre-commit, Prettier config/ignore, shared hooks, and
 validators. Record workflow/job counts, actual DAG, path filters, specialist
 lanes, aggregate gate, optional tools, GitOps CD boundary, Prettier wiring,
 Action pinning, artifacts, supply-chain evidence, and DORA evidence.
 
-- [ ] **Step 3: Refresh Kubernetes and security evidence**
+- [x] **Step 3: Refresh Kubernetes and security evidence**
 
 Recheck desired-state ownership, Kustomize, AppProjects, Vault, ESO, TLS,
 secret transport and arguments, RBAC, NetworkPolicy, policy validation, image
 and workflow supply chain, and static/live boundaries. Preserve SEC IDs or
 record explicit supersession.
 
-- [ ] **Step 4: Compare restructuring options**
+- [x] **Step 4: Compare restructuring options**
 
 For Minimal, Consolidated, and Full redesign, state scope, benefit, cost,
 blast radius, prerequisites, migration, rollback, and decision owner. Keep
 Consolidated as the evidence-supported default unless findings disprove it.
 
-- [ ] **Step 5: Validate and commit**
+- [x] **Step 5: Validate and commit**
 
 ```bash
 rg -n 'Consolidated|Full redesign|Prettier|path filter|DORA|Vault|ESO|NetworkPolicy' \
