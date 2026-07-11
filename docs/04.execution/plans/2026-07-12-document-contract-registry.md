@@ -343,8 +343,10 @@ Expected: FAIL because the Task and reciprocal execution links do not exist.
 
 - [ ] **Step 2: Create the active Task record and reciprocal links**
 
-Create the Task from `task.template.md`, remove template authoring sections,
-and use this exact task table:
+Create the Task from `task.template.md`, replace authoring placeholders with
+topic-specific content, retain currently gate-required headings during the
+Spec 026 compatibility window, and hand their removal to Spec 027. Use this
+exact task table:
 
 ```markdown
 | Task ID | Description | Type | Validation / Evidence | Owner | Status |

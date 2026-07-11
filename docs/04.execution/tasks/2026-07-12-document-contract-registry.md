@@ -29,6 +29,13 @@ traceable while preserving repository-static evidence boundaries.
   readiness.
 - Keep Spec, Plan, Task, and index lineage reciprocal.
 
+## Suggested Types
+
+- `doc`: reciprocal lineage and index-only work.
+- `contract`: registry schema/profile/evidence contract work.
+- `guardrail`: deterministic validator and classifier work.
+- `validation`: gate integration and closure evidence work.
+
 ## Task Table
 
 | Task ID | Description | Type | Validation / Evidence | Owner | Status |
