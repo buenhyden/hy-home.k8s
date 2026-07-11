@@ -8,6 +8,75 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-11 - Provisional Current research pack fact-first closure
+
+#### Metadata
+
+- **Date**: 2026-07-11
+- **Layer**: docs, qa, research, governance
+- **Status**: in-progress
+- **Tags**: #wer #research #review #repo-static #stage-04
+
+#### Progress
+
+- Audited the Current pack README and all seven Current references in place,
+  mapped every requested topic to one primary Current owner, refreshed the
+  provider/model comparison at the fixed `2026-07-10 10:00 KST` cutoff, and
+  kept implementation gaps as recommendations with canonical follow-up routes.
+- Preserved the Historical pack and active scripts, templates, CI, agent,
+  provider/model-policy, runtime, GitOps, infrastructure, policy, credential,
+  secret, live, and remote surfaces unchanged.
+- Completed clean task-scoped reviews for WERH-001 through WERH-009. The
+  substantive whole-branch review package initially covered
+  `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4..39f915a118629dc9932ed31b4ac8f4ccdc16e10b`
+  and returned `With fixes`; remediation commits
+  `9712f0252c7b015b1e7e9a63bfed301959f9cbbd` and
+  `1819e50ec38d9bcfbdb6c696cd0222758e90d8d6` produced the preliminary final
+  verdict `Ready to merge: Yes` with no remaining Critical or Important
+  finding.
+- Kept the [Plan](../../04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md)
+  and [Task](../../04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md)
+  `active`, their indexes `Active`, WERH-010 `Review Pending`, and Phase 4
+  unchecked. The exact immutable closure-only diff has not yet been reviewed.
+
+#### Memory
+
+- Final lifecycle promotion must follow, never precede, independent review of
+  the exact provisional closure commit. Substantive branch review does not
+  approve later closure-only evidence automatically.
+- A documentation-only repo-static PASS is bounded evidence: it cannot be used
+  to infer provider-native, live Kubernetes, or remote GitHub readiness.
+- Whole-branch comparisons for this workstream must continue to use pinned base
+  `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4`, not a moving branch name.
+
+#### Evidence
+
+- Pinned-base inventory: 14 approved paths and 22 pre-closure logical commits;
+  exact WERH-001 through WERH-009 SHAs and review outcomes are recorded in the
+  Task table.
+- `git diff --check a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4...HEAD`
+  PASS.
+- `bash scripts/validate-harness.sh` PASS with
+  `PASS harness repo-static validation`.
+- `bash scripts/validate-repo-quality-gates.sh .` PASS with
+  `[PASS] repository quality gates passed`.
+- Incomplete-marker scan across the
+  [Current pack](../../90.references/research/2026-07-07-wer/README.md), Plan,
+  and Task found no matches and returned the expected exit 1.
+- Installed `pre-commit run --all-files` PASS for every applicable hook; the
+  Dockerfile-only hook skipped because it had no files.
+- Optional `conftest` was not installed; the harness reported SKIP and its
+  built-in policy fallback passed. This is not a Conftest pass.
+- No live/runtime, credential, secret-value, remote, publish, push, merge, or
+  third-party mutation check ran.
+
+#### Handoff
+
+- Closure-only review is pending. Independently review the exact immutable
+  provisional closure commit, remediate any Critical or Important finding,
+  and only then promote WERH-010, Phase 4, Plan/Task frontmatter and indexes,
+  and this memory handoff to final `Done`/complete state.
+
 ### 2026-07-07 - Refreshed workspace engineering research pack
 
 - **Date**: 2026-07-07

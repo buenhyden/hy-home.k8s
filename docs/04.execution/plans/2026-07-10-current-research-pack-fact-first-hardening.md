@@ -1,9 +1,9 @@
 ---
 title: 'Current Research Pack Fact-First Hardening Implementation Plan'
 type: sdlc/plan
-status: draft
+status: active
 owner: platform
-updated: 2026-07-10
+updated: 2026-07-11
 ---
 
 # Current Research Pack Fact-First Hardening Implementation Plan
@@ -1185,18 +1185,18 @@ mapping. The implementation must re-verify every finding before publication.
 
 ## Completion Criteria
 
-- [ ] All eight Current pack documents audited
-- [ ] Every requested topic mapped to one primary Current owner
-- [ ] Internal and external evidence recorded for every material comparison
-- [ ] Earlier related content integrated without Historical changes or active-policy duplication
-- [ ] Provider/model matrix reflects `2026-07-10 10:00 KST` and surface-specific lifecycle
-- [ ] Fact defects corrected and implementation gaps routed without active changes
-- [ ] Task-scoped reviews and substantive whole-branch review approved from pinned base `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4`
-- [ ] Provisional closure remains review-pending until its exact immutable closure diff is independently approved
+- [x] All eight Current pack documents audited
+- [x] Every requested topic mapped to one primary Current owner
+- [x] Internal and external evidence recorded for every material comparison
+- [x] Earlier related content integrated without Historical changes or active-policy duplication
+- [x] Provider/model matrix reflects `2026-07-10 10:00 KST` and surface-specific lifecycle
+- [x] Fact defects corrected and implementation gaps routed without active changes
+- [x] Task-scoped reviews and substantive whole-branch review approved from pinned base `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4`
+- [x] Provisional closure remains review-pending until its exact immutable closure diff is independently approved
 - [ ] WERH-010, Phase View, frontmatter, indexes, and memory promoted to final `Done` only after closure-only review approval
-- [ ] Required repo-static validation passed with limitations recorded
+- [x] Required repo-static validation passed with limitations recorded
 - [ ] Pre-commit final-state validation passed from pinned base `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4` and its results are durable; post-commit clean verification is externally reported handoff evidence without writeback
-- [ ] Logical commits preserved
+- [x] Logical commits preserved
 
 ## Related Documents
 

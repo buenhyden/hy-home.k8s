@@ -1,9 +1,9 @@
 ---
 title: 'Task: Current Research Pack Fact-First Hardening'
 type: sdlc/task
-status: draft
+status: active
 owner: platform
-updated: 2026-07-10
+updated: 2026-07-11
 ---
 
 # Task: Current Research Pack Fact-First Hardening
@@ -146,16 +146,16 @@ as each task completes.
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Review outcome | Commit | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| WERH-001 | Create execution evidence and baseline audit ledger. | doc | Addendum: Internal and External Research Contract | Phase 1 | Task IDs, evidence lanes, inventories, boundaries, and limitations are explicit. | supervisor | Pending | Pending | Todo |
-| WERH-002 | Harden workspace governance baseline. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1 before editing; current repo counts (10 agent stems on each of three adapter surfaces, 5 workflows, 6 CI jobs), official OpenGitOps sources, owner/enforcement matrices, 7 evidence-backed follow-up rows, focused heading/date scan, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
-| WERH-003 | Harden spec-driven SDLC, CI, QA, and document taxonomy. | doc | Addendum: Coverage and Gap Classification | Phase 2 | RED heading assertion exited 1; 19 SDLC templates, no Release route/template, zero Incident/Postmortem records, Spec/Task state asymmetry, all 14 document families, all 9 QA lanes, 11 primary sources, and 6 routed gap rows are recorded below. | doc-writer | Important review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
-| WERH-004 | Harden harness and loop engineering. | doc | Addendum: Internal and External Research Contract | Phase 2 | RED heading assertion, exact six-column loop matrix, ownership/evidence boundaries, evaluation/recovery/termination design, 2025-11-25 MCP currentness, 8-category official MCP taxonomy, 7 routed findings, and focused/repository checks are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
-| WERH-005 | Harden provider implementation and current-model analysis. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; exact 10-role/30-path adapter matrix, three hook/settings JSON surfaces, 17 surface-specific model rows, 13 one-to-one model evaluation/migration rows, six task-routing rows, 21 official URLs, eight routed findings, focused assertions, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Important review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
-| WERH-006 | Harden automation, pipeline, workflow, and QA topology. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1; 5 workflows, 6 CI jobs, 2 parallel roots, 3 `changes`-dependent conditional jobs, 8 official sources, 9 coverage rows, 7 routed gap rows, and the exact GitOps ownership boundary are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
-| WERH-007 | Harden Kubernetes, infrastructure, and security analysis. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1; 15 primary sources, 12 control rows, 6 evidence lanes, 14 routed security gaps, AppProject/GitOps/NetworkPolicy/ESO-Vault controls, and supply-chain boundaries are recorded below. | doc-writer | Pending independent review | Pending WERH-010 closure from `git log` | Done |
-| WERH-008 | Harden AI-agent roster, upstream comparison, and model routing. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; exact 10-role/30-adapter status, ten pinned upstream-overlap classifications, pinned 17-division/254-file inventory, 15 install targets, 13 conversion targets, 13 routed pattern decisions, ten role-model routes, fixed-SHA/cutoff-state sources, and static validation are recorded below. | doc-writer | Important and Minor review findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
-| WERH-009 | Close pack coverage and cross-document integration. | doc | Addendum: Coverage and Related-Document Integration Rules | Phase 3 | RED README assertion exited 1; 48 exact six-column owner rows cover every requested family; 8 Current artifacts, 9 contradiction families, fixed cutoff/freshness, links, and static/live boundaries are integrated; focused scans, Markdown lint, pre-commit, diff check, harness, and repo-quality results are recorded below. | supervisor | Important syntax-owner and Minor cross-reference findings corrected; independent re-review pending. | Pending WERH-010 closure from `git log` | Done |
-| WERH-010 | Run final validation and close execution records. | eval | Addendum: Verification and Acceptance | Phase 4 | Required static gates and final review pass; limitations and logical commits are recorded. | supervisor | Pending | Pending | Todo |
+| WERH-001 | Create execution evidence and baseline audit ledger. | doc | Addendum: Internal and External Research Contract | Phase 1 | Task IDs, evidence lanes, inventories, boundaries, limitations, and index routing are explicit. | supervisor | Clean after task-scoped correction and re-review. | `97154a8d0927f238d3ff1e98804ebec26e54b060`, `3e482c438dd202a40bbb33e04f3190a7bcc66ee8` | Done |
+| WERH-002 | Harden workspace governance baseline. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1 before editing; current repo counts (10 agent stems on each of three adapter surfaces, 5 workflows, 6 CI jobs), official OpenGitOps sources, owner/enforcement matrices, 7 evidence-backed follow-up rows, focused heading/date scan, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Clean after finding correction and independent re-review. | `412b6ec4d4426ba19c8bf1255190c825bbbe46f1`, `f9b219b865acbe8ba4a9e7e8259ec9b2b13b599b` | Done |
+| WERH-003 | Harden spec-driven SDLC, CI, QA, and document taxonomy. | doc | Addendum: Coverage and Gap Classification | Phase 2 | RED heading assertion exited 1; 19 SDLC templates, no Release route/template, zero Incident/Postmortem records, Spec/Task state asymmetry, all 14 document families, all 9 QA lanes, 11 primary sources, and 6 routed gap rows are recorded below. | doc-writer | Clean after two correction waves and independent re-review. | `4f1ef8dbecabb5628cb80db95adc59f6897b30f9`, `55a3ad0c2f12a29d2cab8f257f719680f3cbf4d0`, `41203113cd6bf4395bdc05a264b1a0043d0e83fc` | Done |
+| WERH-004 | Harden harness and loop engineering. | doc | Addendum: Internal and External Research Contract | Phase 2 | RED heading assertion, exact six-column loop matrix, ownership/evidence boundaries, evaluation/recovery/termination design, 2025-11-25 MCP currentness, 8-category official MCP taxonomy, 7 routed findings, and focused/repository checks are recorded below. | doc-writer | Clean after independent task-scoped review. | `fbe93e520063d027165e504db45164b7e5b72a32` | Done |
+| WERH-005 | Harden provider implementation and current-model analysis. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; exact 10-role/30-path adapter matrix, three hook/settings JSON surfaces, 17 surface-specific model rows, 13 one-to-one model evaluation/migration rows, six task-routing rows, 21 official URLs, eight routed findings, focused assertions, Markdown lint, diff check, harness, and repo-quality results are recorded below. | doc-writer | Clean after finding correction and independent re-review. | `8d607eeb88941908a7133c525b1f9c63ca0976e5`, `30b7e3e4a9ce2d7d9c38aa913c1108aaf2eceaf3` | Done |
+| WERH-006 | Harden automation, pipeline, workflow, and QA topology. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1; 5 workflows, 6 CI jobs, 2 parallel roots, 3 `changes`-dependent conditional jobs, 8 official sources, 9 coverage rows, 7 routed gap rows, and the exact GitOps ownership boundary are recorded below. | doc-writer | Clean after independent task-scoped review. | `c5992f811ba22207e8803dc20033a0852aacd872` | Done |
+| WERH-007 | Harden Kubernetes, infrastructure, and security analysis. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1; 15 primary sources, 12 control rows, 6 evidence lanes, 14 routed security gaps, AppProject/GitOps/NetworkPolicy/ESO-Vault controls, and supply-chain boundaries are recorded below. | doc-writer | Clean after Minor correction and independent re-review. | `ccc8d565e6799487d6538d17101fb64d57ed76af`, `eeeefd1d868c9905fc774f330d5307ad26fda236` | Done |
+| WERH-008 | Harden AI-agent roster, upstream comparison, and model routing. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; exact 10-role/30-adapter status, ten pinned upstream-overlap classifications, pinned 17-division/254-file inventory, 15 install targets, 13 conversion targets, 13 routed pattern decisions, ten role-model routes, fixed-SHA/cutoff-state sources, and static validation are recorded below. | doc-writer | Clean after Important and Minor corrections and independent re-review. | `bec1cd7c577a6be56d6c0940575ced5547c84c27`, `ec0124c2b22f0077064e0268f296b44420021ea8` | Done |
+| WERH-009 | Close pack coverage and cross-document integration. | doc | Addendum: Coverage and Related-Document Integration Rules | Phase 3 | RED README assertion exited 1; 48 exact six-column owner rows cover every requested family; 8 Current artifacts, 9 contradiction families, fixed cutoff/freshness, links, and static/live boundaries are integrated; focused scans, Markdown lint, pre-commit, diff check, harness, and repo-quality results are recorded below. | supervisor | Clean after Important and Minor corrections and independent re-review. | `160978712c09c489523ea4b62424772eddbf67e2`, `39f915a118629dc9932ed31b4ac8f4ccdc16e10b` | Done |
+| WERH-010 | Run final validation and close execution records. | eval | Addendum: Verification and Acceptance | Phase 4 | Pinned-base inventory, deterministic validation, substantive review, and provisional closure evidence are recorded; closure-only review remains pending. | supervisor | Substantive review clean; closure-only review pending. | Provisional closure commit pending | Review Pending |
 
 ## Suggested Types
 
@@ -169,7 +169,7 @@ as each task completes.
 
 ### Phase 1: Evidence Scaffold
 
-- [ ] WERH-001 Create execution evidence and baseline audit ledger.
+- [x] WERH-001 Create execution evidence and baseline audit ledger.
 
 ### Phase 2: Topic Hardening
 
@@ -229,9 +229,9 @@ as each task completes.
   secret-value, credential, remote GitHub/CI/ruleset, publish, push, merge, or
   third-party mutation check ran. OpenGitOps is benchmark context only, never
   local implementation proof.
-- **Commit evidence**: the WERH-002 commit field intentionally remains pending
-  until WERH-010 records the resulting SHA from `git log` after this commit
-  exists.
+- **Commit evidence**: implementation
+  `412b6ec4d4426ba19c8bf1255190c825bbbe46f1`; review correction
+  `f9b219b865acbe8ba4a9e7e8259ec9b2b13b599b`.
 - **Review follow-up**: review found that the owner matrix reported a clean
   adapter inventory verdict while canonical `harness-catalog.md` prose still
   said eight. The reference now records the dual fact (ten actual stems per
@@ -240,7 +240,7 @@ as each task completes.
   confirmed the three stale catalog phrases and ten files per provider;
   `git diff --check`, `markdownlint-cli2`, changed-file `pre-commit`, and
   `bash scripts/validate-repo-quality-gates.sh .` passed. Independent re-review
-  remains pending.
+  found no remaining Critical or Important finding.
 
 ### WERH-003 SDLC and QA Evidence
 
@@ -304,12 +304,14 @@ as each task completes.
   credential, secret-value, remote GitHub/CI/ruleset, release, publish, push,
   merge, or third-party mutation check ran. Repo-static PASS and external
   benchmark findings do not establish live or remote readiness.
-- **Commit evidence**: the WERH-003 commit field intentionally remains pending
-  until WERH-010 records the resulting SHA from `git log` after this commit
-  exists. Important review findings for classification vocabulary, Prettier
-  inventory/wiring, and explicit manual/shared-hook shell syntax ownership were
-  corrected;
-  independent re-review remains pending.
+- **Commit evidence**: implementation
+  `4f1ef8dbecabb5628cb80db95adc59f6897b30f9`; review corrections
+  `55a3ad0c2f12a29d2cab8f257f719680f3cbf4d0` and
+  `41203113cd6bf4395bdc05a264b1a0043d0e83fc`. Important review findings for
+  classification vocabulary, Prettier inventory/wiring, explicit manual/
+  shared-hook shell syntax ownership, and formatting-source freshness were
+  corrected; independent re-review found no remaining Critical or Important
+  finding.
 
 ### WERH-004 Harness and Loop Evidence
 
@@ -390,9 +392,9 @@ as each task completes.
   remote GitHub/CI/ruleset, publish, push, merge, or third-party mutation check
   ran. Repo-static PASS and official benchmarks do not establish live or
   remote readiness.
-- **Review and commit evidence**: independent task-scoped review remains
-  pending. The WERH-004 commit field intentionally remains pending until
-  WERH-010 records the resulting SHA from `git log` after this commit exists.
+- **Review and commit evidence**: independent task-scoped review found no
+  Critical or Important finding. Implementation commit:
+  `fbe93e520063d027165e504db45164b7e5b72a32`.
 
 ### WERH-005 Provider and Model Evidence
 
@@ -474,9 +476,10 @@ as each task completes.
 - **Review and commit evidence**: task review found Important issues in exact
   adapter-field proof, one-to-one model evaluation coverage, OpenAI
   product/API separation, and effort/orchestration wording. These findings were
-  corrected; independent re-review remains pending. The WERH-005 commit field
-  intentionally remains pending until WERH-010 records the actual SHA from
-  `git log` after the follow-up commit exists.
+  corrected; independent re-review found no remaining Critical or Important
+  finding. Implementation commit:
+  `8d607eeb88941908a7133c525b1f9c63ca0976e5`; correction commit:
+  `30b7e3e4a9ce2d7d9c38aa913c1108aaf2eceaf3`.
 
 ### WERH-006 Automation, Pipeline, Workflow, and QA Evidence
 
@@ -545,9 +548,9 @@ as each task completes.
   check ran. `conftest` was not installed, so the harness reported SKIP and the
   built-in policy fallback passed; this is not a Conftest pass. Kube-linter was
   available and reported no lint errors for the harness manifest targets.
-- **Review and commit evidence**: independent task-scoped review remains
-  pending. The WERH-006 commit field intentionally remains pending until
-  WERH-010 records the resulting SHA from `git log` after this commit exists.
+- **Review and commit evidence**: independent task-scoped review found no
+  Critical or Important finding. Implementation commit:
+  `c5992f811ba22207e8803dc20033a0852aacd872`.
 
 ### WERH-007 Kubernetes, Infrastructure, and Security Evidence
 
@@ -630,9 +633,10 @@ as each task completes.
   SKIP and the built-in policy fallback passed; this is not a Conftest pass.
   Repo-static and external benchmark evidence do not prove enforcement or
   readiness.
-- **Review and commit evidence**: independent task-scoped review remains
-  pending. The WERH-007 commit field intentionally remains pending until
-  WERH-010 records the resulting SHA from `git log` after this commit exists.
+- **Review and commit evidence**: a Minor wording finding was corrected and
+  independent re-review found no remaining Critical or Important finding.
+  Implementation commit: `ccc8d565e6799487d6538d17101fb64d57ed76af`;
+  correction commit: `eeeefd1d868c9905fc774f330d5307ad26fda236`.
 
 ### WERH-008 AI-Agent Roster and Routing Evidence
 
@@ -727,9 +731,10 @@ as each task completes.
   ambiguity between upstream role overlap and local gap closure, plus a Minor
   reproducibility gap for the cutoff/tags/releases API URLs. The role-overlap
   matrix, `Closed` semantics, exact API links, and their focused checks were
-  added; independent re-review remains pending. The WERH-008 commit field
-  intentionally remains pending until WERH-010 records the actual SHA from
-  `git log` after this follow-up commit exists.
+  added; independent re-review found no remaining Critical or Important
+  finding. Implementation commit:
+  `bec1cd7c577a6be56d6c0940575ced5547c84c27`; correction commit:
+  `ec0124c2b22f0077064e0268f296b44420021ea8`.
 
 ### WERH-009 Pack Coverage and Integration Evidence
 
@@ -806,9 +811,12 @@ as each task completes.
   readiness.
 - **Review and commit evidence**: Task 9 review found one Important syntax-owner
   contradiction and three Minor same-directory label defects. All findings are
-  corrected; independent re-review remains pending. The WERH-009 commit field
-  remains pending until WERH-010 records the actual SHAs from `git log` after
-  the remediation commit exists.
+  corrected; independent re-review found no remaining Critical or Important
+  finding. Implementation commit:
+  `160978712c09c489523ea4b62424772eddbf67e2`; remediation commit:
+  `39f915a118629dc9932ed31b4ac8f4ccdc16e10b`.
+
+### WERH-001 Evidence Scaffold and Index Evidence
 
 - **RED command**:
   `rg -n '2026-07-10-current-research-pack-fact-first-hardening' docs/04.execution/tasks/README.md`
@@ -828,11 +836,68 @@ as each task completes.
 - **Harness check**: `bash scripts/validate-harness.sh` exited 0 with
   `PASS harness repo-static validation`; optional `conftest` was skipped and
   the built-in policy fallback passed.
-- **Final workstream checks**: focused coverage/freshness/boundary/completeness
-  scans from the parent plan and task-scoped source/repo-fact review remain
-  assigned to WERH-010.
-- **Evidence location**: this task record, per-task logical commits, and the
-  final progress-memory entry created during WERH-010.
+- **Review and commit evidence**: task-scoped review found an index-tree gap;
+  the correction was independently re-reviewed with no remaining Critical or
+  Important finding. Scaffold commit:
+  `97154a8d0927f238d3ff1e98804ebec26e54b060`; correction commit:
+  `3e482c438dd202a40bbb33e04f3190a7bcc66ee8`.
+
+### WERH-010 Provisional Validation and Review Evidence
+
+- **Pinned base and path inventory**: every whole-branch comparison uses
+  `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4`. The 14 pre-closure paths are
+  `.gitignore`, `docs/03.specs/017-workspace-engineering-research-pack/spec.md`,
+  `docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md`,
+  `docs/04.execution/plans/README.md`,
+  `docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md`,
+  `docs/04.execution/tasks/README.md`, and all eight paths under
+  `docs/90.references/research/2026-07-07-wer/`: `README.md`,
+  `workspace-governance-baseline.md`, `spec-sdlc-ci-qa-formatting.md`,
+  `harness-and-loop-engineering.md`, `provider-implementation-status.md`,
+  `automation-pipeline-workflow-qa.md`,
+  `kubernetes-infrastructure-security.md`, and
+  `ai-agents-roster-and-gap-analysis.md`. This provisional five-file closure
+  adds `docs/00.agent-governance/memory/progress.md` as the fifteenth approved
+  path. No Historical pack or active script, template, CI, agent, provider,
+  model-policy, runtime, GitOps, infrastructure, policy, credential, secret,
+  live, or remote surface changed.
+- **Logical commit inventory**: design/planning/isolation commits are
+  `656b468835c66a02e46c6b205a3e273ccbce97a1`,
+  `8b71067d5d47d47884b61f34b25d9af2bf31eca5`,
+  `340805910c2e702c18cd576c2829c8c4861492a1`, and
+  `89a90cbcaa46261d74a15a6677499c672e0045df`. WERH-001 through WERH-009
+  commits are recorded exactly in the Task Table. Substantive review
+  remediation commits are `9712f0252c7b015b1e7e9a63bfed301959f9cbbd`
+  and `1819e50ec38d9bcfbdb6c696cd0222758e90d8d6`.
+- **Substantive review**: the initial whole-branch package covered
+  `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4..39f915a118629dc9932ed31b4ac8f4ccdc16e10b`
+  and returned `With fixes`. The two fix waves above aligned review/closure
+  order and made final validation evidence durable. The final preliminary
+  reviewer verdict over the pinned-base branch through
+  `1819e50ec38d9bcfbdb6c696cd0222758e90d8d6` was `Ready to merge: Yes`, with
+  no remaining Critical or Important finding. This is substantive branch
+  review only; it is not the closure-only review.
+- **Post-remediation deterministic bundle**:
+  `git diff --check a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4...HEAD`
+  exited 0; `bash scripts/validate-harness.sh` returned
+  `PASS harness repo-static validation`; and
+  `bash scripts/validate-repo-quality-gates.sh .` returned
+  `[PASS] repository quality gates passed`. The incomplete-marker scan across
+  the Current pack, Plan, and Task returned no matches and the expected exit
+  1. Installed `pre-commit run --all-files` exited 0: every applicable hook
+  passed and the Dockerfile-only hook skipped because it had no files.
+- **Optional-tool and evidence boundary**: `conftest` is not installed; the
+  harness reported optional SKIP and its built-in policy fallback passed. This
+  is not a Conftest pass. No live Kubernetes/Argo CD/Vault/ESO, provider
+  runtime, account/entitlement, credential, secret-value, remote GitHub/CI/
+  ruleset, release, publish, push, merge, or third-party mutation check ran.
+  Repo-static PASS does not establish live, provider-native, or remote
+  readiness.
+- **Provisional lifecycle**: WERH-001 through WERH-009 are complete with clean
+  task reviews. WERH-010 remains `Review Pending`, Phase 4 remains unchecked,
+  plan/task lifecycle remains `active`, and both indexes remain `Active` until
+  a fresh independent reviewer approves the exact immutable provisional
+  closure diff.
 
 ## Related Documents
 
