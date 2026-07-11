@@ -14,8 +14,16 @@ from typing import Any, Literal, Mapping, NoReturn, Sequence
 from jsonschema import Draft202012Validator
 
 
-BASELINE_SHA = "8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d"
+BASELINE_SHA = "8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d"  # pragma: allowlist secret
 BASELINE_COUNT = 433
+_LS_TREE_MODE_TYPES = {
+    b"040000": b"tree",
+    b"100644": b"blob",
+    b"100755": b"blob",
+    b"120000": b"blob",
+    b"160000": b"commit",
+}
+_LS_FILES_MODES = {b"100644", b"100755", b"120000", b"160000"}
 ROOT_FILES = ("AGENTS.md", "CLAUDE.md", "GEMINI.md", "README.md")
 TARGET_ROOTS = (
     "_workspace",
@@ -174,6 +182,13 @@ def _decode_git_path(raw: bytes) -> PurePosixPath:
         raise ValueError("git returned an invalid repository-relative path") from exc
 
 
+def _validate_git_object_id(raw_object: bytes, command: str) -> None:
+    if len(raw_object) not in {40, 64}:
+        raise ValueError(f"{command} object id must be exactly 40 or 64 characters")
+    if re.fullmatch(rb"[0-9a-f]+", raw_object) is None:
+        raise ValueError(f"{command} object id must be lowercase hexadecimal")
+
+
 def _parse_ls_tree_z(raw: bytes) -> tuple[_GitEntry, ...]:
     """Parse ``git ls-tree -z`` output without interpreting path contents."""
 
@@ -189,10 +204,11 @@ def _parse_ls_tree_z(raw: bytes) -> tuple[_GitEntry, ...]:
             raise ValueError("malformed git ls-tree record") from exc
         if raw_type not in {b"blob", b"tree", b"commit"}:
             raise ValueError("unsupported git ls-tree object type")
-        if not re.fullmatch(rb"[0-7]{6}", raw_mode):
-            raise ValueError("invalid git ls-tree mode")
-        if not re.fullmatch(rb"[0-9a-f]{40,64}", raw_object):
-            raise ValueError("invalid git ls-tree object id")
+        if raw_mode not in _LS_TREE_MODE_TYPES:
+            raise ValueError("noncanonical git ls-tree mode")
+        if _LS_TREE_MODE_TYPES[raw_mode] != raw_type:
+            raise ValueError("impossible git ls-tree mode/type pair")
+        _validate_git_object_id(raw_object, "git ls-tree")
         entries.append(
             _GitEntry(mode=raw_mode.decode("ascii"), path=_decode_git_path(raw_path))
         )
@@ -212,10 +228,9 @@ def _parse_ls_files_stage_z(raw: bytes) -> tuple[_GitEntry, ...]:
             raw_mode, raw_object, raw_stage = header.split(b" ", 2)
         except ValueError as exc:
             raise ValueError("malformed git ls-files record") from exc
-        if not re.fullmatch(rb"[0-7]{6}", raw_mode):
-            raise ValueError("invalid git ls-files mode")
-        if not re.fullmatch(rb"[0-9a-f]{40,64}", raw_object):
-            raise ValueError("invalid git ls-files object id")
+        if raw_mode not in _LS_FILES_MODES:
+            raise ValueError("noncanonical git ls-files mode")
+        _validate_git_object_id(raw_object, "git ls-files")
         if raw_stage not in {b"0", b"1", b"2", b"3"}:
             raise ValueError("invalid git ls-files stage")
         entries.append(
@@ -305,6 +320,11 @@ def enumerate_target_markdown(
         for entry in baseline_entries
         if entry.mode.startswith("100") and _is_target_markdown(entry.path)
     }
+    if len(baseline_paths) != BASELINE_COUNT:
+        raise ValueError(
+            "baseline Markdown inventory count mismatch: "
+            f"expected {BASELINE_COUNT}, actual {len(baseline_paths)}"
+        )
     current_paths = {
         entry.path
         for entry in current_entries

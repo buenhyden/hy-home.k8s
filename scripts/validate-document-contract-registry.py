@@ -18,6 +18,8 @@ from document_contracts import (
     classify_paths,
     enumerate_target_markdown,
     load_registry,
+    _parse_ls_files_stage_z,
+    _parse_ls_tree_z,
     validate_registry,
 )
 
@@ -139,6 +141,59 @@ def _assert_inventory_safety(root: Path) -> None:
             raise AssertionError(f"unsafe explicit include was accepted: {path}")
 
 
+def _assert_parser_safety() -> None:
+    oid = b"0" * 40
+    negative_cases = (
+        (
+            _parse_ls_tree_z,
+            b"100600 blob " + oid + b"\tdocs/a.md\0",
+            "noncanonical git ls-tree mode",
+        ),
+        (
+            _parse_ls_tree_z,
+            b"100644 tree " + oid + b"\tdocs/a.md\0",
+            "impossible git ls-tree mode/type pair",
+        ),
+        (
+            _parse_ls_tree_z,
+            b"100644 blob " + (b"g" * 40) + b"\tdocs/a.md\0",
+            "lowercase hexadecimal",
+        ),
+        (
+            _parse_ls_tree_z,
+            b"100644 blob " + (b"0" * 41) + b"\tdocs/a.md\0",
+            "exactly 40 or 64",
+        ),
+        (
+            _parse_ls_files_stage_z,
+            b"040000 " + oid + b" 0\tdocs\0",
+            "noncanonical git ls-files mode",
+        ),
+        (
+            _parse_ls_files_stage_z,
+            b"100644 " + (b"G" * 40) + b" 0\tdocs/a.md\0",
+            "lowercase hexadecimal",
+        ),
+        (
+            _parse_ls_files_stage_z,
+            b"100644 " + (b"0" * 63) + b" 0\tdocs/a.md\0",
+            "exactly 40 or 64",
+        ),
+    )
+    for parser, raw, expected_fragment in negative_cases:
+        try:
+            parser(raw)
+        except ValueError as exc:
+            if expected_fragment not in str(exc):
+                raise AssertionError(
+                    f"expected {expected_fragment!r}, got {str(exc)!r}"
+                ) from exc
+        else:
+            raise AssertionError(
+                f"parser accepted invalid record requiring {expected_fragment!r}"
+            )
+
+
 def _self_test(root: Path) -> int:
     raw_registry = _load_json(root / REGISTRY_PATH)
     fixture = _load_json(root / FIXTURE_PATH)
@@ -169,6 +224,7 @@ def _self_test(root: Path) -> int:
             return 1
 
     try:
+        _assert_parser_safety()
         _assert_inventory_safety(root)
     except (AssertionError, OSError, subprocess.SubprocessError) as exc:
         print(f"FAIL document contract registry self-test: inventory safety: {exc}")
@@ -209,9 +265,23 @@ def main() -> int:
         return 1
 
     diagnostics = classify_paths(registry, inventory.current_paths)
+    uncovered_count = sum(
+        diagnostic.rule_id == "REGISTRY_ROUTE_UNCOVERED"
+        for diagnostic in diagnostics
+    )
+    ambiguous_count = sum(
+        diagnostic.rule_id == "REGISTRY_ROUTE_AMBIGUOUS"
+        for diagnostic in diagnostics
+    )
     if diagnostics:
         for diagnostic in diagnostics:
             _print_diagnostic(diagnostic)
+    print(
+        f"baseline={len(inventory.baseline_paths)} "
+        f"new={len(inventory.new_paths)} "
+        f"uncovered={uncovered_count} ambiguous={ambiguous_count}"
+    )
+    if diagnostics:
         return 1
 
     selected_count = len(inventory.current_paths)
