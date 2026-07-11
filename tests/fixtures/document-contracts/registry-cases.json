@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {"name": "valid-minimal", "mutation": "none", "expected": []},
+    {"name": "duplicate-profile-id", "mutation": "duplicate-profile-id", "expected": ["REGISTRY_PROFILE_ID"]},
+    {"name": "unsupported-route-kind", "mutation": "route-kind-glob", "expected": ["REGISTRY_ROUTE_KIND"]},
+    {"name": "unanchored-regex", "mutation": "drop-regex-end-anchor", "expected": ["REGISTRY_ROUTE_ANCHOR"]},
+    {"name": "overlapping-route", "mutation": "add-overlapping-exact-route", "expected": ["REGISTRY_ROUTE_AMBIGUOUS"]},
+    {"name": "uncovered-route", "mutation": "remove-sample-route", "expected": ["REGISTRY_ROUTE_UNCOVERED"]},
+    {"name": "missing-template", "mutation": "point-to-missing-template", "expected": ["REGISTRY_TEMPLATE"]},
+    {"name": "wrong-baseline-sha", "mutation": "change-baseline-sha", "expected": ["REGISTRY_BASELINE_SHA"]},
+    {"name": "wrong-baseline-count", "mutation": "change-baseline-count", "expected": ["REGISTRY_BASELINE_COUNT"]}
+  ]
+}

@@ -37,7 +37,9 @@
 ```text
 tests/
 ├── fixtures/
-│   └── agent-roster-currentness.json # Canonical roster validator self-test cases
+│   ├── agent-roster-currentness.json # Canonical roster validator self-test cases
+│   └── document-contracts/
+│       └── registry-cases.json        # Document registry contract cases
 └── README.md                         # This file
 ```
 
@@ -65,6 +67,10 @@ tests/
 
 ## Evidence Boundaries
 
+- `tests/fixtures/document-contracts/registry-cases.json`의 각 사례는 하나의
+  mutation과 정확한 기대 rule ID 목록을 담는다. 이 fixture는 비밀값을
+  포함하지 않으며 registry/config self-test의 repo-static 입력으로만
+  사용한다.
 - `tests/fixtures/agent-roster-currentness.json`은 이름이 정확히 `valid`,
   `missing-role`, `provider-mismatch`, `stale-count`, `bad-owner`인 사례 5개만
   허용한다. 각 이름의 mutation과 `expected_errors` 집합은 hardcoded
