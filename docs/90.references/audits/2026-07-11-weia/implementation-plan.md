@@ -220,8 +220,9 @@ Expected: all requested topics have owners and all checks pass.
 Inspect the stage-authoring matrix, document routing, SDLC governance,
 template routing, frontmatter schema, and repo-quality validator. Record counts
 by family/status for PRD, ARD, ADR, Spec, agent-design, Plan, Task, Guide,
-Policy, Runbook, Incident, Postmortem, Reference, and README. Correct the stale
-`42/43 done` Task observation to the fixed-snapshot result.
+Policy, Runbook, Incident, Postmortem, Reference, and README. Preserve
+`42/43 done` only as an explicitly labeled historical 2026-07-10 observation
+and record `43/43 done` as the fixed-snapshot result.
 
 - [x] **Step 2: Add document-role and necessity matrices**
 
@@ -853,8 +854,10 @@ coding, provider/common harness, agency-agents, and model routing.
 - [ ] **Step 3: Recheck arithmetic, counts, sources, and contradictions**
 
 Recompute scores and N/A denominators; rerun counts; verify URLs and cutoff;
-search for stale `42/43`, duplicate Current labels, conflicting role/workflow/
-job counts, native Gemini mislabeling, and live-readiness overclaims.
+search for the former unlabeled Task-count wording while preserving explicitly
+labeled historical 2026-07-10 observations, duplicate Current labels,
+conflicting role/workflow/job counts, native Gemini mislabeling, and
+live-readiness overclaims.
 
 - [ ] **Step 4: Enforce the path boundary**
 
@@ -862,7 +865,7 @@ job counts, native Gemini mislabeling, and live-readiness overclaims.
 git diff --name-only ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7...HEAD
 git diff --name-only ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7...HEAD | \
   awk '!/^docs\/90\.references\/(research|audits)\// { print; bad=1 } END { exit bad }'
-rg -n '42/43|\.agents/agents.*native Gemini|live readiness.*Implemented' \
+rg -n '42/43 [T]asks were done at audit time|\.agents/agents[^|.]*is [Nn]ative Gemini|live readiness.*[I]mplemented' \
   docs/90.references/research/2026-07-07-wer \
   docs/90.references/audits/2026-07-11-weia
 ```

@@ -217,13 +217,17 @@ Every applicable control row uses these exact fields, in this order:
 | `Confidence` | `Verified repo-static`, `Unverified live`, or `Conditional`. |
 | `Gap` | Missing, corrective, complementary, unnecessary, or excluded element. |
 | `Recommendation` | Bounded next action; Stage 90 does not implement it. |
-| `Priority` | One `P0`-`P3` value from the shared vocabulary below. |
-| `Follow-up owner` | One canonical PRD, ARD, ADR, Spec, Plan, or Task route. |
-| `Acceptance evidence` | Measurable proof required to close the recommendation. |
+| `Priority` | One `P0`-`P3` value from the shared vocabulary below for every `Partial`, `Gap`, or otherwise actionable finding; otherwise `N/A — no action`. |
+| `Follow-up owner` | One canonical PRD, ARD, ADR, Spec, Plan, or Task route for every actionable finding; otherwise `N/A — no action`. |
+| `Acceptance evidence` | Measurable proof required to close every actionable finding; otherwise `N/A — no action`. |
 
 Rows may add notes outside the table, but must not rename, merge, or omit these
-fields. `Not in scope` controls use `Maturity: N/A`, state the exclusion in
-`Gap`, and remain outside the category denominator.
+fields. Every `Partial`, `Gap`, or otherwise actionable finding must supply a
+`P0`-`P3` priority, one canonical follow-up owner, and measurable acceptance
+evidence. An `Implemented`, `Not in scope`, or `Maturity: N/A` control with no
+action uses the exact value `N/A — no action` in all three fields; reports must
+not invent remediation to populate them. `Not in scope` controls also state the
+exclusion in `Gap` and remain outside the category denominator.
 
 ### Shared Maturity, Confidence, and Verdict Contract
 
