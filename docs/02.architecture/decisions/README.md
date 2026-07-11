@@ -46,6 +46,8 @@
 ├── 0012-argo-notifications-slack.md
 ├── 0013-stage-00-canonical-adapter-model.md
 ├── 0014-current-local-gitops-platform-contract.md
+├── 0015-declarative-document-contract-registry.md
+├── 0016-program-to-tranche-document-lineage.md
 └── README.md
 ```
 
@@ -79,6 +81,8 @@
 | [`./0012-argo-notifications-slack.md`](./0012-argo-notifications-slack.md) | Argo Notifications Slack webhook 도입 결정 | Accepted | Current GitOps notification pattern. |
 | [`./0013-stage-00-canonical-adapter-model.md`](./0013-stage-00-canonical-adapter-model.md) | Stage 00 canonical core, provider adapter, validation evidence ownership 결정 | Accepted | Current workspace AI Agent governance contract. |
 | [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md) | Current local GitOps platform baseline and archive replacement decision | Accepted | Current Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer contract. |
+| [`./0015-declarative-document-contract-registry.md`](./0015-declarative-document-contract-registry.md) | Declarative document contract registry 결정 | Accepted | Route, profile, lifecycle, section, README 예외의 단일 machine-readable owner를 선택한다. |
+| [`./0016-program-to-tranche-document-lineage.md`](./0016-program-to-tranche-document-lineage.md) | Program-to-tranche document lineage 결정 | Accepted | PRD 005와 Spec 026-032의 명시적 one-program-to-many-tranche 계보 및 번호 예외를 정의한다. |
 
 ## Related Documents
 

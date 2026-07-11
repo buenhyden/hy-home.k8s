@@ -87,6 +87,20 @@ Spec은 실행 기준을 소유하는 문서다.
 │   └── agent-design.md
 ├── 025-governance-owner-and-roster-currentness/
 │   └── spec.md
+├── 026-document-contract-registry/
+│   └── spec.md
+├── 027-template-contract-consolidation/
+│   └── spec.md
+├── 028-readme-workspace-profiles/
+│   └── spec.md
+├── 029-semantic-document-validation/
+│   └── spec.md
+├── 030-authored-document-migration/
+│   └── spec.md
+├── 031-affected-surface-agent-qa/
+│   └── spec.md
+├── 032-protected-surface-supply-chain-hardening/
+│   └── spec.md
 └── README.md
 ```
 
@@ -142,6 +156,13 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./023-stage03-04-repo-static-gap-closure/spec.md`](./023-stage03-04-repo-static-gap-closure/spec.md)                           | Stage 03/04 repo-static gap closure specification                             | Done   | Stage 03/04 문서의 repo-static 미구현/증적 gap을 닫고 live/runtime, secret, remote-required 항목은 operator-approved follow-up으로 분리하는 계약을 정의한다.                                                                                                                      | 2026-07-11 |
 | [`./024-observability-and-network-review-agents/spec.md`](./024-observability-and-network-review-agents/spec.md)                 | Observability and network review agents specification                         | Done   | `observability-reviewer`와 `network-reviewer` worker 에이전트를 3개 provider 어댑터와 harness catalog에 추가하는 repo-static, review-only 설계를 정의한다.                                                                                                                        | 2026-07-11 |
 | [`./025-governance-owner-and-roster-currentness/spec.md`](./025-governance-owner-and-roster-currentness/spec.md)                 | Governance owner and roster currentness specification                         | Done   | 전체 Spec/Plan 생명주기와 감사 IA를 증거 기반으로 정합화하고, RMD-004의 10-role/30-adapter roster 및 canonical-owner currentness 계약과 검증 경계를 정의한다.                                                                                                                     | 2026-07-11 |
+| [`./026-document-contract-registry/spec.md`](./026-document-contract-registry/spec.md)                                         | Document contract registry specification                                      | Active | 문서 route, profile, metadata, lifecycle, section, README, 예외의 machine-readable 단일 정본을 정의한다.                                                                                                                               | 2026-07-12 |
+| [`./027-template-contract-consolidation/spec.md`](./027-template-contract-consolidation/spec.md)                               | Template contract consolidation specification                                 | Active | Stage 99 support와 form을 registry에 정렬하고 중복 섹션, 작성 지침, Legacy Task form을 통합·삭제한다.                                                                                                                                | 2026-07-12 |
+| [`./028-readme-workspace-profiles/spec.md`](./028-readme-workspace-profiles/spec.md)                                           | README and workspace profile specification                                    | Active | README를 6개 경로 프로필로 분리하고 `_workspace`의 non-secret repo-support staging 경계를 보존한다.                                                                                                                                 | 2026-07-12 |
+| [`./029-semantic-document-validation/spec.md`](./029-semantic-document-validation/spec.md)                                     | Semantic document validation specification                                    | Active | Frontmatter, Markdown structure, link, index, duplicate owner, template residue를 fixture 기반으로 검증한다.                                                                                                                        | 2026-07-12 |
+| [`./030-authored-document-migration/spec.md`](./030-authored-document-migration/spec.md)                                       | Authored document migration specification                                     | Active | 전 문서 모집단을 wave별로 이행하고 AWS/Azure SDLC prose를 Stage 90 provider snapshot으로 통합한다.                                                                                                                                 | 2026-07-12 |
+| [`./031-affected-surface-agent-qa/spec.md`](./031-affected-surface-agent-qa/spec.md)                                           | Affected surface and Agent QA specification                                   | Active | 변경 경로, local hook, pre-commit, AI Agent 의무, provider gateway, CI selector를 하나의 검증 계약으로 정렬한다.                                                                                                                     | 2026-07-12 |
+| [`./032-protected-surface-supply-chain-hardening/spec.md`](./032-protected-surface-supply-chain-hardening/spec.md)             | Protected surface and supply-chain hardening specification                    | Active | GitHub Actions identity, workflow permissions, GitOps render, Vault/ESO, secret, policy의 repository-static 보호 경계를 강화한다.                                                                                                   | 2026-07-12 |
 
 ## Helper Templates
 
