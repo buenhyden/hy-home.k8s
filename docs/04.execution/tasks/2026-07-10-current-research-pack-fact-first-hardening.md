@@ -696,11 +696,14 @@ as each task completes.
   No active adapter or model migration was performed.
 - **Sources**: ten exact pinned/fixed-SHA upstream URLs cover commit, tree,
   recursive API, registry, linter, converter, tools, sample, README, and
-  license. The exact cutoff-commit, tags, and releases API URLs make selection
-  of the last pre-cutoff commit and the zero-tag/zero-release observations
-  reproducible. Eight official Claude, OpenAI/Codex, and Gemini model/subagent
-  URLs support native paths and routing. All were checked read-only at
-  `2026-07-10 10:00 KST`.
+  license. The cutoff-commit API query selects the last commit before the
+  cutoff, while the unversioned tags and releases API results were volatile,
+  read-only observations of zero at `2026-07-10 10:00 KST`. Those endpoints
+  can change, so the zero-tag and zero-release observations are not
+  independently reproducible without a captured response and hash; the
+  fixed-SHA evidence remains reproducible. Eight official Claude,
+  OpenAI/Codex, and Gemini model/subagent URLs support native paths and
+  routing. All were checked read-only at the same cutoff.
 - **Focused and optional validation**: the exact four headings each appeared
   once; adapter counts were `10/10/10`; exact status and routing matrices each
   had ten role rows; the overlap table had ten role rows and explicitly found
