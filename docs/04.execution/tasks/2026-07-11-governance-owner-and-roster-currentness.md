@@ -1,7 +1,7 @@
 ---
 title: 'Task: Governance Owner and Roster Currentness'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-07-11
 ---
@@ -34,11 +34,11 @@ Plan traceable while preserving repository-static evidence boundaries.
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | RCR-001 | Start reciprocal execution lineage | doc | Interfaces & Data Structures | T-001 | Reciprocal-link assertion | platform | Done |
-| RCR-002 | Normalize audit IA and relocate completed audit Plan | doc | Audit Information Architecture | T-002 | Current-pointer and pack assertion | platform | Todo |
-| RCR-003 | Reconcile all Spec lifecycle and ownership records | doc | Complete Spec Disposition Ledger | T-003 | Spec status/index assertion | platform | Todo |
-| RCR-004 | Reconcile all Plan-to-Task evidence links | doc | Complete Plan Evidence Ledger | T-004 | Plan evidence assertion | platform | Todo |
-| RCR-005 | Enforce roster and owner-pointer currentness | guardrail | RMD-004 Implementation Components | T-005 | Fixture self-test and quality gate | platform | Todo |
-| RCR-006 | Close lifecycle, evidence, and RMD-004 | doc | Success Criteria & Verification Plan | T-006 | Full validation bundle | platform | Todo |
+| RCR-002 | Normalize audit IA and relocate completed audit Plan | doc | Audit Information Architecture | T-002 | Current-pointer and pack assertion | platform | Done |
+| RCR-003 | Reconcile all Spec lifecycle and ownership records | doc | Complete Spec Disposition Ledger | T-003 | Spec status/index assertion | platform | Done |
+| RCR-004 | Reconcile all Plan-to-Task evidence links | doc | Complete Plan Evidence Ledger | T-004 | Plan evidence assertion | platform | Done |
+| RCR-005 | Enforce roster and owner-pointer currentness | guardrail | RMD-004 Implementation Components | T-005 | Fixture self-test and quality gate | platform | Done |
+| RCR-006 | Close lifecycle, evidence, and RMD-004 | doc | Success Criteria & Verification Plan | T-006 | Full validation bundle | platform | Done |
 
 ## Suggested Types
 
@@ -59,11 +59,34 @@ Plan traceable while preserving repository-static evidence boundaries.
 
 ## Verification Summary
 
-- **Test Commands**: reciprocal-lineage assertion, focused repository quality
-  gates, and changed-file pre-commit hooks.
-- **Eval Commands**: Not applicable to this documentation-only lineage task.
-- **Logs / Evidence Location**: This Task table and the logical commits for
-  RCR-001 through RCR-006.
+- **Logical task commits**:
+  - T-001: `d96b927ceea53a8aab085a5fd1832a208ff77e9d`.
+  - T-002: `078bd77220178bab19e88d69f3f167c50af23ae6`; review remediation
+    `04c91a18810e05b42a7c5bc6f2dcb0ff3ad4b600`.
+  - T-003: `8325a044725c784ea194d09675c3bef0cd935ab6`.
+  - T-004: `4abc9ccbc26322f058cfda52cb0793960ec57704`.
+  - T-005: `5035e496fb7b8584ad9a7d7a8baf1d03a9fc5d58`; review remediation
+    `365679efde96e44ed053a21c0b585f984b8e01da`.
+  - T-006: the closure commit containing this evidence, with exact post-commit
+    SHA recorded in the Task 6 implementation report because a commit cannot
+    contain its own content-addressed SHA.
+- **Fixture self-test**:
+  `python3 scripts/validate-agent-roster-currentness.py . --self-test` passed
+  with `[PASS] agent roster currentness validation passed`.
+- **Real roster validation**:
+  `python3 scripts/validate-agent-roster-currentness.py .` passed with
+  `[PASS] agent roster currentness validation passed`.
+- **Repository quality gate**: `bash scripts/validate-repo-quality-gates.sh .`
+  passed with `[PASS] repository quality gates passed` after its two blocking
+  roster checks passed.
+- **Pre-commit all files**: `pre-commit run --all-files` passed. All applicable
+  hooks passed; `Lint Dockerfiles` reported `Skipped` because there were no
+  matching files, and is not claimed as a pass.
+- **Diff check**: `git diff --check` passed with exit 0 and no output.
+- **Optional tool results**: Only the non-applicable Dockerfile hook skip
+  above was reported; no optional skipped hook is claimed as a pass.
+- **Logs / Evidence Location**: This Task table, the commits above, and the
+  Task 6 implementation report.
 - **Safety Boundary**: No live Kubernetes, Argo CD, Vault, provider-runtime,
   credential, secret-value, remote, publish, push, merge, or third-party
   mutation is authorized by this Task.

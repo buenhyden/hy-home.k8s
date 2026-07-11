@@ -8840,3 +8840,63 @@ section separating static from live evidence.
   (task-characteristic model config), and SDLC/spec taxonomy (verified current,
   no change needed). Historical pack untouched. Commits are unpushed on `main`;
   pushing/publishing remains a separate human-approved action.
+
+## 2026-07-11 - Governance owner and roster currentness closure
+
+### Metadata
+
+- **Date**: 2026-07-11
+- **Layer**: agent-governance
+- **Status**: done
+- **Tags**: #roster #currentness #spec #plan #audit-ia #validation
+
+### Progress
+
+- Normalized the audit-pack information architecture, reconciled the complete
+  Spec and Plan lifecycle/evidence ledgers, and retained every known Archive
+  candidate because none passed all five Archive gates.
+- Closed Spec 025, its implementation Plan, and its evidence Task after the
+  ten-role/thirty-adapter roster and canonical owner pointers were enforced by
+  the focused production validator and repository quality gate.
+- The six logical tasks are evidenced by T-001
+  `d96b927ceea53a8aab085a5fd1832a208ff77e9d`, T-002
+  `078bd77220178bab19e88d69f3f167c50af23ae6`, T-003
+  `8325a044725c784ea194d09675c3bef0cd935ab6`, T-004
+  `4abc9ccbc26322f058cfda52cb0793960ec57704`, T-005
+  `5035e496fb7b8584ad9a7d7a8baf1d03a9fc5d58`, and the T-006 closure commit
+  containing this ledger entry. Review remediations are
+  `04c91a18810e05b42a7c5bc6f2dcb0ff3ad4b600` and
+  `365679efde96e44ed053a21c0b585f984b8e01da`; the Task 6 report records the
+  exact post-commit T-006 SHA because a commit cannot contain its own SHA.
+
+### Evidence
+
+- `python3 scripts/validate-agent-roster-currentness.py . --self-test`: PASS,
+  `[PASS] agent roster currentness validation passed`.
+- `python3 scripts/validate-agent-roster-currentness.py .`: PASS,
+  `[PASS] agent roster currentness validation passed`.
+- `git diff --check`: PASS, exit 0 with no output.
+- `bash scripts/validate-repo-quality-gates.sh .`: PASS,
+  `[PASS] repository quality gates passed`; both blocking roster checks also
+  emitted their PASS lines.
+- `pre-commit run --all-files`: PASS for the complete run. Every applicable
+  hook passed. `Lint Dockerfiles` reported `Skipped` because no matching files
+  were present and is not claimed as a pass.
+
+### Memory
+
+- A closing commit cannot embed its own content-addressed SHA. Record the
+  first five task SHAs in the tracked Task and ledger, then record the exact
+  closure SHA in the post-commit implementation report without inventing a
+  hash.
+
+### Safety Boundary
+
+- No live Kubernetes, Argo CD, Vault, ESO, provider runtime, credential,
+  secret-value, remote CI, push, publish, merge, deployment, or third-party
+  mutation was performed. All evidence is repository-static.
+
+### Handoff
+
+- RMD-004 repository-static closure is complete. Remote push and local merge
+  remain separately approval-gated actions.

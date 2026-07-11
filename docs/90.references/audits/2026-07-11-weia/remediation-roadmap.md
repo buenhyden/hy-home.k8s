@@ -119,6 +119,17 @@ transfer fact ownership: RMD-011, RMD-012, RMD-014, RMD-018, RMD-019, RMD-020,
 and RMD-022 explicitly identify secondary reports while retaining one
 owner report for the underlying evidence.
 
+### RMD-004 closure evidence
+
+RMD-004 is closed by [Spec 025](../../../03.specs/025-governance-owner-and-roster-currentness/spec.md),
+its [implementation Plan](../../../04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md)
+and [evidence Task](../../../04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md),
+the durable [harness catalog](../../../00.agent-governance/harness-catalog.md),
+and the focused
+[`validate-agent-roster-currentness.py`](../../../../scripts/validate-agent-roster-currentness.py)
+guardrail. This closure is repository-static and does not change the original
+finding, priority, score, or live/provider evidence boundary.
+
 ### Historical Lineage Map
 
 | Historical finding or roadmap item | Current canonical disposition |
