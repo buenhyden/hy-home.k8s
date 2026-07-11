@@ -1,9 +1,9 @@
 ---
 title: 'Task: Current Research Pack Fact-First Hardening'
 type: sdlc/task
-status: active
+status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-10
 ---
 
 # Task: Current Research Pack Fact-First Hardening
@@ -155,7 +155,7 @@ as each task completes.
 | WERH-007 | Harden Kubernetes, infrastructure, and security analysis. | doc | Addendum: Artifact and Ownership Design | Phase 2 | RED heading assertion exited 1; 15 primary sources, 12 control rows, 6 evidence lanes, 14 routed security gaps, AppProject/GitOps/NetworkPolicy/ESO-Vault controls, and supply-chain boundaries are recorded below. | doc-writer | Clean after Minor correction and independent re-review. | `ccc8d565e6799487d6538d17101fb64d57ed76af`, `eeeefd1d868c9905fc774f330d5307ad26fda236` | Done |
 | WERH-008 | Harden AI-agent roster, upstream comparison, and model routing. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; exact 10-role/30-adapter status, ten pinned upstream-overlap classifications, pinned 17-division/254-file inventory, 15 install targets, 13 conversion targets, 13 routed pattern decisions, ten role-model routes, fixed-SHA/cutoff-state sources, and static validation are recorded below. | doc-writer | Clean after Important and Minor corrections and independent re-review. | `bec1cd7c577a6be56d6c0940575ced5547c84c27`, `ec0124c2b22f0077064e0268f296b44420021ea8` | Done |
 | WERH-009 | Close pack coverage and cross-document integration. | doc | Addendum: Coverage and Related-Document Integration Rules | Phase 3 | RED README assertion exited 1; 48 exact six-column owner rows cover every requested family; 8 Current artifacts, 9 contradiction families, fixed cutoff/freshness, links, and static/live boundaries are integrated; focused scans, Markdown lint, pre-commit, diff check, harness, and repo-quality results are recorded below. | supervisor | Clean after Important and Minor corrections and independent re-review. | `160978712c09c489523ea4b62424772eddbf67e2`, `39f915a118629dc9932ed31b4ac8f4ccdc16e10b` | Done |
-| WERH-010 | Run final validation and close execution records. | eval | Addendum: Verification and Acceptance | Phase 4 | Pinned-base inventory, deterministic validation, substantive review, and provisional closure evidence are recorded; closure-only review remains pending. | supervisor | Substantive review clean; closure-only review pending. | Provisional closure commit pending | Review Pending |
+| WERH-010 | Run final validation and close execution records. | eval | Addendum: Verification and Acceptance | Phase 4 | Pinned-base inventory, deterministic validation, substantive review, closure-only review, and final-state validation evidence are recorded with static/live boundaries. | supervisor | Substantive review clean; closure-only range `e0d92f7^..1965215` independently re-reviewed with Spec PASS and Quality PASS, no findings. | Provisional `e0d92f7ce1680117a57f514e7782e30118873fb5`; inventory fix `196521549455f2fa6d4c3e312baa7d1c94b71054`; final promotion is the commit containing this completed record with subject `docs(execution): close current research hardening evidence`. | Done |
 
 ## Suggested Types
 
@@ -187,7 +187,7 @@ as each task completes.
 
 ### Phase 4: Validation Closure
 
-- [ ] WERH-010 Run final validation and close execution records.
+- [x] WERH-010 Run final validation and close execution records.
 
 ## Verification Summary
 
@@ -842,7 +842,7 @@ as each task completes.
   `97154a8d0927f238d3ff1e98804ebec26e54b060`; correction commit:
   `3e482c438dd202a40bbb33e04f3190a7bcc66ee8`.
 
-### WERH-010 Provisional Validation and Review Evidence
+### WERH-010 Final Validation and Review Evidence
 
 - **Pinned base and path inventory**: every whole-branch comparison uses
   `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4`. The 14 pre-closure paths are
@@ -856,7 +856,7 @@ as each task completes.
   `harness-and-loop-engineering.md`, `provider-implementation-status.md`,
   `automation-pipeline-workflow-qa.md`,
   `kubernetes-infrastructure-security.md`, and
-  `ai-agents-roster-and-gap-analysis.md`. This provisional five-file closure
+  `ai-agents-roster-and-gap-analysis.md`. The five-file closure
   adds `docs/00.agent-governance/memory/progress.md` as the fifteenth approved
   path. No Historical pack or active script, template, CI, agent, provider,
   model-policy, runtime, GitOps, infrastructure, policy, credential, secret,
@@ -875,8 +875,7 @@ as each task completes.
   order and made final validation evidence durable. The final preliminary
   reviewer verdict over the pinned-base branch through
   `1819e50ec38d9bcfbdb6c696cd0222758e90d8d6` was `Ready to merge: Yes`, with
-  no remaining Critical or Important finding. This is substantive branch
-  review only; it is not the closure-only review.
+  no remaining Critical or Important finding.
 - **Post-remediation deterministic bundle**:
   `git diff --check a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4...HEAD`
   exited 0; `bash scripts/validate-harness.sh` returned
@@ -893,11 +892,41 @@ as each task completes.
   ruleset, release, publish, push, merge, or third-party mutation check ran.
   Repo-static PASS does not establish live, provider-native, or remote
   readiness.
-- **Provisional lifecycle**: WERH-001 through WERH-009 are complete with clean
-  task reviews. WERH-010 remains `Review Pending`, Phase 4 remains unchecked,
-  plan/task lifecycle remains `active`, and both indexes remain `Active` until
-  a fresh independent reviewer approves the exact immutable provisional
-  closure diff.
+- **Closure-only review**: provisional closure
+  `e0d92f7ce1680117a57f514e7782e30118873fb5` and inventory correction
+  `196521549455f2fa6d4c3e312baa7d1c94b71054` were reviewed as the exact
+  immutable range `e0d92f7^..1965215` using
+  `.superpowers/sdd/task-10-closure-rereview.diff`. A fresh independent
+  reviewer returned Spec PASS and Quality PASS with no findings.
+- **Final lifecycle**: WERH-001 through WERH-010 are complete with clean
+  scoped review evidence. Phase 4 is checked; plan/task lifecycle and both
+  indexes are `Done`. The final promotion is the commit containing this
+  completed record with subject
+  `docs(execution): close current research hardening evidence`; no unknowable
+  self-SHA is written back into that same commit.
+- **Final-promotion first pass**: with the completed five-file working-tree
+  state applied, `git diff --check
+  a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4` exited 0 with no output;
+  `git diff --name-only` from that pinned base returned exactly 15 approved
+  paths; and `git rev-list --count
+  a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4..HEAD` plus the matching pinned
+  `git log` returned 25 pre-promotion commits through
+  `196521549455f2fa6d4c3e312baa7d1c94b71054`.
+- **Five-file and repository gates**: installed `pre-commit run --files` over
+  the exact five closure files exited 0; all applicable hooks passed and
+  file-type-inapplicable hooks skipped. `bash scripts/validate-harness.sh`
+  exited 0 with `PASS harness repo-static validation`, including KubeLinter
+  with no errors over 104 manifest targets. `bash
+  scripts/validate-repo-quality-gates.sh .` exited 0 with
+  `[PASS] repository quality gates passed`. The incomplete-marker scan across
+  the Current pack, Plan, and Task returned no matches and expected exit 1.
+- **Final evidence limitations**: optional `conftest` remained unavailable;
+  the harness reported SKIP and its built-in policy fallback passed, which is
+  not a Conftest pass. No live Kubernetes/Argo CD/Vault/ESO, provider runtime,
+  account/model entitlement, credential, secret-value, remote GitHub/CI/
+  ruleset, release, publish, push, merge, or third-party mutation check ran.
+  These first-pass results cover the recorded working-tree state; the required
+  second pass is the commit gate and is not self-written afterward.
 
 ## Related Documents
 

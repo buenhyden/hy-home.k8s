@@ -1,9 +1,9 @@
 ---
 title: 'Current Research Pack Fact-First Hardening Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-10
 ---
 
 # Current Research Pack Fact-First Hardening Implementation Plan
@@ -1193,9 +1193,9 @@ mapping. The implementation must re-verify every finding before publication.
 - [x] Fact defects corrected and implementation gaps routed without active changes
 - [x] Task-scoped reviews and substantive whole-branch review approved from pinned base `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4`
 - [x] Provisional closure remains review-pending until its exact immutable closure diff is independently approved
-- [ ] WERH-010, Phase View, frontmatter, indexes, and memory promoted to final `Done` only after closure-only review approval
+- [x] WERH-010, Phase View, frontmatter, indexes, and memory promoted to final `Done` only after closure-only review approval
 - [x] Required repo-static validation passed with limitations recorded
-- [ ] Pre-commit final-state validation passed from pinned base `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4` and its results are durable; post-commit clean verification is externally reported handoff evidence without writeback
+- [x] Pre-commit final-state validation passed from pinned base `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4` and its results are durable; post-commit clean verification is externally reported handoff evidence without writeback
 - [x] Logical commits preserved
 
 ## Related Documents

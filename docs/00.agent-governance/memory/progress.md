@@ -8,13 +8,13 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
-### 2026-07-11 - Provisional Current research pack fact-first closure
+### 2026-07-10 - Current research pack fact-first closure
 
 #### Metadata
 
-- **Date**: 2026-07-11
+- **Date**: 2026-07-10
 - **Layer**: docs, qa, research, governance
-- **Status**: in-progress
+- **Status**: complete
 - **Tags**: #wer #research #review #repo-static #stage-04
 
 #### Progress
@@ -34,16 +34,19 @@ inventory stays in `scripts/README.md`.
   `1819e50ec38d9bcfbdb6c696cd0222758e90d8d6` produced the preliminary final
   verdict `Ready to merge: Yes` with no remaining Critical or Important
   finding.
-- Kept the [Plan](../../04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md)
-  and [Task](../../04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md)
-  `active`, their indexes `Active`, WERH-010 `Review Pending`, and Phase 4
-  unchecked. The exact immutable closure-only diff has not yet been reviewed.
+- Independently reviewed the corrected closure-only range
+  `e0d92f7^..1965215` using
+  `.superpowers/sdd/task-10-closure-rereview.diff`; the reviewer returned Spec
+  PASS and Quality PASS with no findings. The
+  [Plan](../../04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md),
+  [Task](../../04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md),
+  their indexes, WERH-010, and Phase 4 are therefore complete/`Done`.
 
 #### Memory
 
-- Final lifecycle promotion must follow, never precede, independent review of
-  the exact provisional closure commit. Substantive branch review does not
-  approve later closure-only evidence automatically.
+- Final lifecycle promotion followed independent review of the exact corrected
+  closure range. Substantive branch review did not substitute for that
+  closure-only evidence.
 - A documentation-only repo-static PASS is bounded evidence: it cannot be used
   to infer provider-native, live Kubernetes, or remote GitHub readiness.
 - Whole-branch comparisons for this workstream must continue to use pinned base
@@ -51,9 +54,18 @@ inventory stays in `scripts/README.md`.
 
 #### Evidence
 
-- Pinned-base inventory: 14 approved paths and 23 pre-closure logical commits;
-  exact WERH-001 through WERH-009 SHAs and review outcomes are recorded in the
-  Task table.
+- Pinned-base inventory before closure: 14 approved paths and 23 pre-closure
+  logical commits; exact WERH-001 through WERH-009 SHAs and review outcomes are
+  recorded in the Task table. The final-promotion first pass returned exactly
+  15 approved paths and 25 pre-promotion commits through
+  `196521549455f2fa6d4c3e312baa7d1c94b71054`.
+- Provisional closure commit
+  `e0d92f7ce1680117a57f514e7782e30118873fb5`, inventory correction
+  `196521549455f2fa6d4c3e312baa7d1c94b71054`, and closure-only review range
+  `e0d92f7^..1965215` are recorded exactly. The final promotion is the commit
+  containing this completed record with subject
+  `docs(execution): close current research hardening evidence`; its unknowable
+  self-SHA is intentionally not written back.
 - `git diff --check a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4...HEAD`
   PASS.
 - `bash scripts/validate-harness.sh` PASS with
@@ -65,6 +77,11 @@ inventory stays in `scripts/README.md`.
   and Task found no matches and returned the expected exit 1.
 - Installed `pre-commit run --all-files` PASS for every applicable hook; the
   Dockerfile-only hook skipped because it had no files.
+- Final-promotion first pass over the recorded five-file state: pinned-base
+  `git diff --check` PASS; exact-five-file `pre-commit` PASS; harness PASS with
+  KubeLinter reporting no errors over 104 manifest targets; repo-quality PASS;
+  and incomplete-marker scan no matches with expected exit 1. The unchanged
+  second pass is the commit gate and is not self-recorded afterward.
 - Optional `conftest` was not installed; the harness reported SKIP and its
   built-in policy fallback passed. This is not a Conftest pass.
 - No live/runtime, credential, secret-value, remote, publish, push, merge, or
@@ -72,10 +89,10 @@ inventory stays in `scripts/README.md`.
 
 #### Handoff
 
-- Closure-only review is pending. Independently review the exact immutable
-  provisional closure commit, remediate any Critical or Important finding,
-  and only then promote WERH-010, Phase 4, Plan/Task frontmatter and indexes,
-  and this memory handoff to final `Done`/complete state.
+- Handoff complete. All documentation-only lifecycle records are `Done`; the
+  static validation boundary remains unchanged. No live Kubernetes/Argo CD/
+  Vault/ESO, provider runtime, credential, secret-value, remote GitHub/CI/
+  ruleset, release, publish, push, merge, or third-party mutation check ran.
 
 ### 2026-07-07 - Refreshed workspace engineering research pack
 
