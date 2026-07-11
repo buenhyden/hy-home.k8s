@@ -92,7 +92,7 @@ rescore or replace the source reports.
 | [Kubernetes Infrastructure and Security](kubernetes-infrastructure-security.md) | GitOps/platform foundations and `SEC-001` through `SEC-014` | `44/104` (42.3%); 26 applicable; no N/A | 15 Partial/Gap rows routed, including 2 P0 controls. |
 | [AI Agents, Model Routing, Agency-Agents, and Vibe Coding](ai-agents-model-routing-vibe-coding.md) | Ten local roles, shared role system, upstream adoption, routing, and vibe coding | `51/116` (44.0%); 29 applicable; 2 N/A | 26 Partial/Gap rows routed; direct import and FinOps remain excluded. |
 | [Integrated Remediation Roadmap](remediation-roadmap.md) | Deduplication, dependencies, target state, and canonical SDLC routes | 80 actionable source rows -> 32 canonical findings | Consolidated target selected; deferred/rejected lanes retain reopen triggers. |
-| [Implementation Plan](implementation-plan.md) | Task-by-task execution and validation ledger | Tasks 1-12 complete; Task 13 review preparation recorded separately | Whole-branch review and final publication remain pending. |
+| [Implementation Plan](implementation-plan.md) | Task-by-task execution and validation ledger | Tasks 1-13 complete | Both whole-branch reviews and final repository-static publication gates pass. |
 
 ## How to Work in This Area
 
@@ -366,13 +366,34 @@ content into metadata.
 ## Execution and Review
 
 - Work is isolated under `.worktrees/` on a `codex/` branch.
-- Subagent-driven implementation assigns non-overlapping file ownership.
-- Each logical unit receives content and evidence review before acceptance.
-- A whole-branch review checks contradictions and coverage at the end.
+- Subagent-driven implementation assigned non-overlapping file ownership.
+- Each logical unit received content and evidence review before acceptance.
+- `whole_branch_spec_review` passed over the complete Stage 90 branch diff.
+- The evidence/quality review's accepted OpenAI redirect-source finding was
+  corrected in commit `14198a7`; `whole_branch_quality_review` then passed over
+  the corrected complete diff with no remaining Critical or Important finding.
 - Validation includes repository quality gates, changed-file pre-commit,
   final all-files pre-commit, link/frontmatter/routing checks, source and count
   verification, requirement coverage, and a path guard proving active files
   were not changed.
+
+## Final Review and Freshness
+
+- Final review status: specification/content PASS and evidence/quality PASS
+  after review-fix commit `14198a7`.
+- Review basis: complete branch diff from fixed base
+  `ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7` through the corrected review head.
+- Last reviewed: 2026-07-11.
+- Evidence boundary: Stage 90 documentation and repository-static validation
+  only; no live cluster, provider runtime, remote CI/settings, credential,
+  secret-value, publish, push, or merge operation was inspected or performed.
+- Next review trigger: a Current research owner, audit owner, source cutoff,
+  observation SHA, score/verdict, remediation disposition, canonical pointer,
+  or linked active implementation owner changes.
+- Refresh method: preserve this dated snapshot, choose a new observation SHA,
+  rerun the 56-row ownership and 80-to-32 disposition checks, recalculate every
+  report score/N/A distribution, revalidate sources and counts, then repeat both
+  whole-branch reviews before changing Current pointers.
 
 ## Approval Record
 

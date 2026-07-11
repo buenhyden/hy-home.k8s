@@ -904,13 +904,24 @@ Review-preparation evidence on 2026-07-11:
 - Steps 6 and 7 remain pending for independent whole-branch review and final
   publication metadata; this commit is review preparation only.
 
-- [ ] **Step 6: Run whole-branch reviews and correct findings**
+- [x] **Step 6: Run whole-branch reviews and correct findings**
 
 Require one specification/content review and one evidence/quality review over
 the complete diff. Correct every accepted finding in its owning commit or one
 clearly labeled final review-fix commit, then rerun Step 5.
 
-- [ ] **Step 7: Commit final integration metadata**
+Whole-branch review evidence:
+
+- `whole_branch_spec_review`: PASS over the complete Stage 90 branch diff.
+- The evidence/quality review identified one accepted source-quality finding:
+  unreproducible OpenAI redirect wording in two Current research references.
+  Review-fix commit `14198a7` removes that claim without changing audit scores,
+  maturity arithmetic, verdicts, or status policy.
+- `whole_branch_quality_review`: PASS after fix commit `14198a7` over the
+  corrected complete branch diff.
+- No Critical or Important finding remains in either whole-branch review.
+
+- [x] **Step 7: Commit final integration metadata**
 
 ```bash
 git add docs/90.references/research/README.md \
@@ -923,6 +934,24 @@ git commit -m "docs(audit): publish Current implementation audit pack"
 
 Expected: indexes, metadata, and the execution ledger describe the reviewed
 final state and the worktree is clean.
+
+Final publication gate evidence:
+
+- The fixed-base and worktree path guards contain only approved Stage 90
+  research/audit paths; `git diff --check` passes.
+- Repository quality gates, `bash scripts/validate-harness.sh`, and
+  `pre-commit run --all-files` pass after the review evidence and freshness
+  metadata update. The Dockerfile-only hook skips because no file applies;
+  optional Conftest skips and the deterministic built-in fallback passes.
+- The final structure check returns one Current research pointer, one Current
+  audit pointer, 56 ownership rows, 80 actionable source rows, and 32 canonical
+  roadmap findings. Contradiction/stale-overclaim scans have no unresolved
+  match and explicitly historical `42/43` evidence remains labeled.
+- `whole_branch_spec_review` and post-`14198a7`
+  `whole_branch_quality_review` are PASS. No score, maturity arithmetic,
+  verdict, confidence, or status policy changed during final metadata closure.
+- No live, provider-runtime, remote, credential, secret-value, push, merge, or
+  third-party mutation check or action ran.
 
 ## Execution Choice
 
