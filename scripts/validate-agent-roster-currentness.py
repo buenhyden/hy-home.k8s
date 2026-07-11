@@ -20,9 +20,6 @@ REQUIRED_OWNER_LINKS = {
     "docs/99.templates/support/documentation-contract.md": "../99.templates/support/documentation-contract.md",
     "docs/99.templates/support/template-routing.md": "../99.templates/support/template-routing.md",
 }
-REQUIRED_CASE_NAMES = frozenset({
-    "valid", "missing-role", "provider-mismatch", "stale-count", "bad-owner",
-})
 STALE_COUNT_VARIANTS = (
     "8 local agents",
     "Eight local provider adapters",
@@ -30,7 +27,60 @@ STALE_COUNT_VARIANTS = (
     "8 role stems",
 )
 VALID_ROSTER_PHRASE = "Ten shared local role stems / thirty provider adapters"
-MARKDOWN_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)\s]+)(?:\s+[^)]*)?\)")
+MARKDOWN_LINK_RE = re.compile(r"(?<!!)\[([^\]]+)\]\(([^)\s]+)(?:\s+[^)]*)?\)")
+
+
+def missing_owner_link_error(label: str, target: str) -> str:
+    return f"harness catalog missing canonical owner link: {label} -> {target}"
+
+
+FIXTURE_CASE_SCHEMA = {
+    "valid": {
+        "mutation": "none",
+        "expected_errors": frozenset(),
+        "catalog_variants": None,
+    },
+    "missing-role": {
+        "mutation": "remove-network-from-claude",
+        "expected_errors": frozenset({
+            "claude roster missing expected stems: network-reviewer",
+            "provider adapter inventory must contain exactly 30 files",
+        }),
+        "catalog_variants": None,
+    },
+    "provider-mismatch": {
+        "mutation": "add-extra-to-codex",
+        "expected_errors": frozenset({
+            "codex roster has unexpected stems: extra-reviewer",
+            "provider adapter inventory must contain exactly 30 files",
+        }),
+        "catalog_variants": None,
+    },
+    "stale-count": {
+        "mutation": "check-stale-count-variants",
+        "expected_errors": frozenset({
+            "harness catalog contains stale eight-role currentness prose",
+        }),
+        "catalog_variants": STALE_COUNT_VARIANTS,
+    },
+    "bad-owner": {
+        "mutation": "misdirect-bootstrap-owner",
+        "expected_errors": frozenset({
+            missing_owner_link_error(
+                "docs/00.agent-governance/rules/bootstrap.md",
+                "rules/bootstrap.md",
+            ),
+        }),
+        "catalog_variants": None,
+    },
+}
+REQUIRED_CASE_NAMES = frozenset(FIXTURE_CASE_SCHEMA)
+
+
+def normalize_markdown_label(label: str) -> str:
+    stripped = label.strip()
+    code_label = re.fullmatch(r"`([^`]*)`", stripped)
+    return code_label.group(1) if code_label else stripped
 
 
 def validate_contract(
@@ -55,14 +105,12 @@ def validate_contract(
     ):
         errors.append("harness catalog contains stale eight-role currentness prose")
     catalog_links = {
-        (label.strip().removeprefix("`").removesuffix("`"), target)
+        (normalize_markdown_label(label), target)
         for label, target in MARKDOWN_LINK_RE.findall(catalog_text)
     }
     for label, target in REQUIRED_OWNER_LINKS.items():
         if (label, target) not in catalog_links:
-            errors.append(
-                f"harness catalog missing canonical owner link: {label} -> {target}"
-            )
+            errors.append(missing_owner_link_error(label, target))
     return errors
 
 
@@ -90,9 +138,79 @@ def run_self_test(fixture_path: Path) -> list[str]:
             "fixture case names must be exactly: "
             + ", ".join(sorted(REQUIRED_CASE_NAMES))
         )
+        return failures
+    for case in cases:
+        case_name = case["name"]
+        schema = FIXTURE_CASE_SCHEMA[case_name]
+        schema_errors: list[str] = []
+        if case.get("mutation") != schema["mutation"]:
+            schema_errors.append(
+                f"mutation must be {schema['mutation']!r}, got "
+                f"{case.get('mutation')!r}"
+            )
+        fixture_expected_errors = case.get("expected_errors")
+        if not isinstance(fixture_expected_errors, list) or not all(
+            isinstance(error, str) for error in fixture_expected_errors
+        ):
+            fixture_error_set = None
+        else:
+            fixture_error_set = frozenset(fixture_expected_errors)
+        if fixture_error_set != schema["expected_errors"]:
+            schema_errors.append(
+                "expected_errors must be exactly "
+                f"{sorted(schema['expected_errors'])!r}, got "
+                f"{fixture_expected_errors!r}"
+            )
+        fixture_variants = case.get("catalog_variants")
+        schema_variants = schema["catalog_variants"]
+        expected_variants = list(schema_variants) if schema_variants else None
+        if fixture_variants != expected_variants:
+            schema_errors.append(
+                f"catalog_variants must be {expected_variants!r}, got "
+                f"{fixture_variants!r}"
+            )
+        if schema_errors:
+            failures.append(
+                f"{case_name}: fixture schema mismatch: " + "; ".join(schema_errors)
+            )
+    if failures:
+        return failures
     base_catalog = VALID_ROSTER_PHRASE + "\n" + "\n".join(
         f"[`{label}`]({target})" for label, target in REQUIRED_OWNER_LINKS.items()
     )
+    probe_providers = {
+        name: set(EXPECTED_STEMS) for name in ("claude", "codex", "gemini")
+    }
+    image_catalog = VALID_ROSTER_PHRASE + "\n" + "\n".join(
+        f"![`{label}`]({target})" for label, target in REQUIRED_OWNER_LINKS.items()
+    )
+    image_errors = set(validate_contract(probe_providers, image_catalog))
+    expected_image_errors = {
+        missing_owner_link_error(label, target)
+        for label, target in REQUIRED_OWNER_LINKS.items()
+    }
+    if image_errors != expected_image_errors:
+        failures.append(
+            "owner-link image syntax probe: expected exact errors "
+            f"{sorted(expected_image_errors)!r}, got {sorted(image_errors)!r}"
+        )
+    bootstrap_label = "docs/00.agent-governance/rules/bootstrap.md"
+    bootstrap_target = REQUIRED_OWNER_LINKS[bootstrap_label]
+    valid_bootstrap_link = f"[`{bootstrap_label}`]({bootstrap_target})"
+    expected_bootstrap_error = {
+        missing_owner_link_error(bootstrap_label, bootstrap_target)
+    }
+    for probe_name, malformed_link in (
+        ("leading backtick", f"[`{bootstrap_label}]({bootstrap_target})"),
+        ("trailing backtick", f"[{bootstrap_label}`]({bootstrap_target})"),
+    ):
+        probe_catalog = base_catalog.replace(valid_bootstrap_link, malformed_link, 1)
+        probe_errors = set(validate_contract(probe_providers, probe_catalog))
+        if probe_errors != expected_bootstrap_error:
+            failures.append(
+                f"bootstrap owner-link {probe_name} probe: expected exact errors "
+                f"{sorted(expected_bootstrap_error)!r}, got {sorted(probe_errors)!r}"
+            )
     for case in cases:
         providers = {name: set(EXPECTED_STEMS) for name in ("claude", "codex", "gemini")}
         catalog = base_catalog
