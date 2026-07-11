@@ -621,13 +621,13 @@ pass.
   automation benchmark, and Task 6 method.
 - Produces: delivery and quality findings for Task 12.
 
-- [ ] **Step 1: Audit CI/CD topology and ownership**
+- [x] **Step 1: Audit CI/CD topology and ownership**
 
 Score triggers, permissions, concurrency, DAG roots, specialist jobs,
 aggregate gates, path filters, caches/artifacts, reusable workflows, changelog,
 deploy ownership, Argo CD pull/reconcile boundary, and DORA evidence.
 
-- [ ] **Step 2: Audit QA and AI-agent obligations**
+- [x] **Step 2: Audit QA and AI-agent obligations**
 
 Score formatting, linting, syntax/parser, Markdown, data formats, shell,
 Actions, Dockerfile, Kubernetes, secrets, policy, artifact, and live lanes.
@@ -635,19 +635,19 @@ Separate configuration, local execution, CI enforcement, optional fallback,
 and live proof. Compare agent gateways/bodies/postflight/workflows/guidance with
 the risk-based all-files pre-commit rule.
 
-- [ ] **Step 3: Audit security and supply-chain automation**
+- [x] **Step 3: Audit security and supply-chain automation**
 
 Score Action pinning, CodeQL, dependency review, SBOM, provenance,
 attestation, Scorecard, artifact retention, and secret scanning according to
 repository relevance. Mark controls conditional or unnecessary when the
 home-lab threat model does not justify them.
 
-- [ ] **Step 4: Calculate scores and route findings**
+- [x] **Step 4: Calculate scores and route findings**
 
 Show arithmetic, N/A reasons, confidence, priority, owner, and acceptance
 evidence for every recommendation.
 
-- [ ] **Step 5: Validate and commit**
+- [x] **Step 5: Validate and commit**
 
 ```bash
 rg -n 'CI/CD|pre-commit run --all-files|Formatting|Linting|DORA|SBOM|provenance' \
