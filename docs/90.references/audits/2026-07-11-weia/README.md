@@ -116,6 +116,33 @@ HEAD for the initial baseline.
 Counts use top-level frontmatter `status` values from authored documents.
 Every `README.md` is an index surface and is excluded from the counts below.
 
+The checked recipe reads the pinned Git tree rather than the worktree and
+limits `status` parsing to the first frontmatter block:
+
+```bash
+export LC_ALL=C
+base=ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7
+git ls-tree -r --name-only "$base" -- \
+  docs/01.requirements docs/02.architecture docs/03.specs \
+  docs/04.execution docs/05.operations |
+  awk '/\.md$/ && $0 !~ /\/README\.md$/ { print }' |
+  sort |
+  while IFS= read -r doc; do
+    doc_status=$(git show "$base:$doc" |
+      awk 'NR == 1 && $0 == "---" { fm=1; next }
+        fm && $0 == "---" { exit }
+        fm && /^status: / { sub(/^status: /, ""); print; exit }')
+    printf '%s\t%s\n' "$doc" "${doc_status:-MISSING}"
+  done |
+  sha256sum
+```
+
+Observed output on `2026-07-11`:
+
+```text
+253fcd638675527ddc6d1df59a04628f3dadfff47a55de1ac9893a927a7f17fd  -
+```
+
 | Family and path basis | Authored inventory | Status at initial baseline |
 | --- | --- | --- |
 | PRD — `docs/01.requirements/*.md` | 4 | 4 `active` |
@@ -131,37 +158,12 @@ Every `README.md` is an index surface and is excluded from the counts below.
 | Incident — `docs/05.operations/incidents/*.md` | 0 | No authored record; `README.md` is index-only. |
 | Postmortem — `docs/05.operations/incidents/` postmortem records | 0 | No authored record. |
 
-## Research Ownership
+## Requirement Ownership Routing
 
-| Current research owner | Approved strengthening responsibility |
-| --- | --- |
-| `README.md` | Requirement-to-research-to-audit traceability, source cutoff, Current pointer, and contradiction closure. |
-| `workspace-governance-baseline.md` | Workspace purpose, roles, rules, environment, ownership, and consolidation boundaries. |
-| `harness-and-loop-engineering.md` | Observe/Plan/Act/Verify/Learn loop, retry, evaluation, recovery, compaction, MCP, and termination controls. |
-| `provider-implementation-status.md` | Claude, Codex, Gemini native/local surfaces, common contracts, model declaration, and runtime-evidence boundaries. |
-| `spec-sdlc-ci-qa-formatting.md` | Document roles, 01-to-05 flow, numbering, state transitions, lineage, frontmatter, release, incident, postmortem, and AI-agent pre-commit obligations. |
-| `kubernetes-infrastructure-security.md` | Kubernetes, GitOps, Vault, ESO, policy, network, supply-chain, and static-versus-live evidence. |
-| `automation-pipeline-workflow-qa.md` | CI/CD, QA, formatting, linting, syntax, automation, pipeline, workflow, evidence artifacts, and delivery metrics. |
-| `ai-agents-roster-and-gap-analysis.md` | Local roster, provider adapters, `agency-agents`, role gaps, model routing, instructions, and vibe-coding controls. |
-
-### Research-to-Audit Topic Ownership
-
-The following map closes research-to-audit ownership for every requested
-cross-cutting topic. Each row has one primary research owner and one planned
-audit owner; planned paths remain code literals until their reports exist.
-
-| Requested topic | Primary Current research owner | Planned audit owner |
-| --- | --- | --- |
-| Frontmatter keys and values | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Document state transitions | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Semantic lineage | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Release readiness | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Incident readiness | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| Postmortem readiness | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
-| AI-agent `pre-commit run --all-files` obligation | `spec-sdlc-ci-qa-formatting.md` | `ci-qa-automation-pipeline-workflow.md` |
-| Vibe coding | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
-| `agency-agents` comparison | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
-| Task-model routing | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
+The Current research pack
+[owns the canonical requirement-to-research-to-audit map](../../research/2026-07-07-wer/README.md#canonical-requirement-to-research-to-audit-ownership-map).
+Audit reports consume that map; this README owns only the snapshot, scoring,
+and evidence contract.
 
 ## Audit Method
 

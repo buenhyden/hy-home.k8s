@@ -108,6 +108,16 @@ excluded.
 - Keep facts, observations, recommendations, and inference distinguishable.
 - Link only files that exist; planned artifacts remain code literals.
 
+## Approved Stage 90 Governance Exception
+
+The user explicitly approved a Stage 90-only implementation boundary for this
+integration. Bootstrap `progress.md` is therefore not edited because its
+canonical path is outside the two approved `docs/90.references/research/` and
+`docs/90.references/audits/` roots. The checkboxes in this implementation plan
+and the branch's logical-unit commit history are the scoped durable execution
+ledger for this exception. Any later active follow-up PRD, ARD, ADR, Spec,
+Plan, or Task must restore the normal bootstrap `progress.md` workflow.
+
 ---
 
 ### Task 1: Freeze Inventory and the Measurement Contract
@@ -127,19 +137,30 @@ excluded.
 
 - [x] **Step 1: Record exact repository and document inventory**
 
-Run:
+Run the pinned-tree recipe; do not read inventory facts from the worktree:
 
 ```bash
-git rev-parse HEAD
-git ls-files 'docs/01.requirements/*.md' 'docs/02.architecture/**/*.md' \
-  'docs/03.specs/**/*.md' 'docs/04.execution/**/*.md' \
-  'docs/05.operations/**/*.md' 'docs/90.references/**/*.md' | sort
-rg -n '^status: ' docs/01.requirements docs/02.architecture docs/03.specs \
-  docs/04.execution docs/05.operations docs/90.references
+export LC_ALL=C
+base=ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7
+git ls-tree -r --name-only "$base" -- \
+  docs/01.requirements docs/02.architecture docs/03.specs \
+  docs/04.execution docs/05.operations |
+  awk '/\.md$/ && $0 !~ /\/README\.md$/ { print }' |
+  sort |
+  while IFS= read -r doc; do
+    doc_status=$(git show "$base:$doc" |
+      awk 'NR == 1 && $0 == "---" { fm=1; next }
+        fm && $0 == "---" { exit }
+        fm && /^status: / { sub(/^status: /, ""); print; exit }')
+    printf '%s\t%s\n' "$doc" "${doc_status:-MISSING}"
+  done |
+  sha256sum
 ```
 
 Expected: every count names its path, status basis, observation SHA, and date;
-README files are distinguished from authored documents.
+README files are distinguished from authored documents. The checked
+path/status stream output is
+`253fcd638675527ddc6d1df59a04628f3dadfff47a55de1ac9893a927a7f17fd  -`.
 
 - [x] **Step 2: Add the shared measurement contract**
 
@@ -152,8 +173,9 @@ exclusions, retain `Implemented/Partial/Gap/Not in scope`, and use
 
 - [x] **Step 3: Close requirement ownership**
 
-Give every requested topic one primary research owner and one planned audit
-owner, including frontmatter keys/values, state transition, semantic lineage,
+Give every row in the 48-row requirement matrix, and every requested
+cross-cutting topic, one primary research owner and one planned audit owner.
+This includes frontmatter keys/values, state transition, semantic lineage,
 Release, incident/postmortem readiness, AI-agent all-files pre-commit, vibe
 coding, agency-agents, and task-model routing.
 
@@ -162,6 +184,7 @@ coding, agency-agents, and task-model routing.
 Run:
 
 ```bash
+git diff --check
 rg -n 'maturity|confidence|frontmatter|vibe|pre-commit run --all-files|Release' \
   docs/90.references/research/2026-07-07-wer/README.md \
   docs/90.references/audits/2026-07-11-weia/README.md
@@ -173,7 +196,7 @@ pre-commit run --files \
 git add docs/90.references/research/2026-07-07-wer/README.md \
   docs/90.references/audits/2026-07-11-weia/README.md \
   docs/90.references/audits/2026-07-11-weia/implementation-plan.md
-git commit -m "docs(research): define integrated audit measurement contract"
+git commit -m "docs(research): harden audit traceability evidence"
 ```
 
 Expected: all requested topics have owners and all checks pass.

@@ -126,54 +126,70 @@ Pro Preview, 3.5 Flash Stable, and 3.1 Flash-Lite Stable. These official
 catalog facts do not prove local availability, native resolution, or approval
 to change the active model policy.
 
-## Integrated Audit Snapshot Contract
+## Integrated Audit Routing
 
-The initial document inventory is fixed to repository commit
-`ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7` and observation date
-`2026-07-11`. This is the baseline used to start the integrated audit; it is
-not the final audit observation SHA. The completed audit pack records its final
-observation SHA separately after all research and report changes are complete.
+This README is the canonical requirement-to-research-to-audit ownership map.
+The fixed repository snapshot, inventory counts, scoring formula, confidence,
+verdict, and evidence boundary are owned by the
+[Current audit pack](../../audits/2026-07-11-weia/README.md#repository-snapshot-contract)
+and are not duplicated here.
 
-Counts below use the top-level frontmatter `status` of authored documents.
-Folder and stage `README.md` indexes are inventory surfaces, but are excluded
-from authored-document counts and status totals.
+## Canonical Requirement-to-Research-to-Audit Ownership Map
 
-| Family and path basis | Authored inventory at the initial snapshot | Status basis |
-| --- | --- | --- |
-| PRD — `docs/01.requirements/*.md` | 4 | 4 `active` |
-| ARD — `docs/02.architecture/requirements/*.md` | 4 | 4 `active` |
-| ADR — `docs/02.architecture/decisions/*.md` | 9 | 9 `accepted` |
-| Spec — `docs/03.specs/*/spec.md` | 20 | 16 `draft`; 4 `active` |
-| Agent design — `docs/03.specs/*/agent-design.md` | 1 | 1 `draft` |
-| Plan — `docs/04.execution/plans/*.md` | 41 | 41 `done` |
-| Task — `docs/04.execution/tasks/*.md` | 43 | 43 `done` |
-| Guide — `docs/05.operations/guides/*.md` | 8 | 8 `active` |
-| Policy — `docs/05.operations/policies/*.md` | 7 | 7 `active` |
-| Runbook — `docs/05.operations/runbooks/*.md` | 9 | 9 `active` |
-| Incident — `docs/05.operations/incidents/*.md` | 0 | No authored incident record; `README.md` is index-only. |
-| Postmortem — `docs/05.operations/incidents/` postmortem records | 0 | No authored postmortem record. |
-
-### Shared Measurement Contract
-
-Every applicable control uses the same maturity levels: `0 absent`,
-`1 documented/routed`, `2 repository-static`,
-`3 deterministic local+CI enforcement`, and
-`4 runtime/operational evidence`. Category implementation is calculated as
-`sum(maturity) / (4 * applicable controls)`. Every report must disclose the
-numerator, denominator, and each N/A exclusion.
-
-The human verdict vocabulary is `Implemented`, `Partial`, `Gap`, or
-`Not in scope`. Evidence confidence is `Verified repo-static`,
-`Unverified live`, or `Conditional`. A higher maturity score never upgrades
-confidence beyond the evidence actually observed.
-
-### Research-to-Audit Topic Ownership
-
-Each requested topic has exactly one primary Current research owner and one
+Every row in the 48-row Requirement Coverage Matrix, plus each requested
+cross-cutting topic, has exactly one primary Current research owner and one
 planned audit owner. Planned audit paths remain code literals until created.
 
-| Requested topic | Primary Current research owner | Planned audit owner |
+| Requirement or topic | Primary Current research owner | Planned audit owner |
 | --- | --- | --- |
+| Workspace purpose | `workspace-governance-baseline.md` | `governance-harness-loop-providers.md` |
+| Roles | `workspace-governance-baseline.md` | `governance-harness-loop-providers.md` |
+| Overview | `workspace-governance-baseline.md` | `governance-harness-loop-providers.md` |
+| Operating contract | `workspace-governance-baseline.md` | `governance-harness-loop-providers.md` |
+| Governance | `workspace-governance-baseline.md` | `governance-harness-loop-providers.md` |
+| System / 체계 | `workspace-governance-baseline.md` | `governance-harness-loop-providers.md` |
+| Rules | `workspace-governance-baseline.md` | `governance-harness-loop-providers.md` |
+| Templates | `workspace-governance-baseline.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Scripts | `workspace-governance-baseline.md` | `ci-qa-automation-pipeline-workflow.md` |
+| Integration guides | `workspace-governance-baseline.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Spec-driven development | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| SDLC | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| PRD | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| ARD | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| ADR | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Spec, Plan, and Task | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Guide | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Incident | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Postmortem | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Policy | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Release | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Runbook | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
+| Security | `kubernetes-infrastructure-security.md` | `kubernetes-infrastructure-security.md` |
+| Kubernetes | `kubernetes-infrastructure-security.md` | `kubernetes-infrastructure-security.md` |
+| Infrastructure | `kubernetes-infrastructure-security.md` | `kubernetes-infrastructure-security.md` |
+| CI/CD | `automation-pipeline-workflow-qa.md` | `ci-qa-automation-pipeline-workflow.md` |
+| QA | `spec-sdlc-ci-qa-formatting.md` | `ci-qa-automation-pipeline-workflow.md` |
+| Formatting | `spec-sdlc-ci-qa-formatting.md` | `ci-qa-automation-pipeline-workflow.md` |
+| Linting | `spec-sdlc-ci-qa-formatting.md` | `ci-qa-automation-pipeline-workflow.md` |
+| Syntax validation | `spec-sdlc-ci-qa-formatting.md` | `ci-qa-automation-pipeline-workflow.md` |
+| Automation | `automation-pipeline-workflow-qa.md` | `ci-qa-automation-pipeline-workflow.md` |
+| Pipeline | `automation-pipeline-workflow-qa.md` | `ci-qa-automation-pipeline-workflow.md` |
+| Workflow | `automation-pipeline-workflow-qa.md` | `ci-qa-automation-pipeline-workflow.md` |
+| Harness engineering | `harness-and-loop-engineering.md` | `governance-harness-loop-providers.md` |
+| Loop engineering | `harness-and-loop-engineering.md` | `governance-harness-loop-providers.md` |
+| Harness/loop application system, environment, and rules | `harness-and-loop-engineering.md` | `governance-harness-loop-providers.md` |
+| Claude | `provider-implementation-status.md` | `governance-harness-loop-providers.md` |
+| Codex | `provider-implementation-status.md` | `governance-harness-loop-providers.md` |
+| Gemini | `provider-implementation-status.md` | `governance-harness-loop-providers.md` |
+| Shared provider environment, rules, and system | `provider-implementation-status.md` | `governance-harness-loop-providers.md` |
+| Provider implementation status | `provider-implementation-status.md` | `governance-harness-loop-providers.md` |
+| Workspace-required AI Agents | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
+| AI Agents | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
+| `agency-agents` | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
+| Task-model routing | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
+| MCP currentness and security | `harness-and-loop-engineering.md` | `governance-harness-loop-providers.md` |
+| Supply-chain security | `kubernetes-infrastructure-security.md` | `kubernetes-infrastructure-security.md` |
+| Static versus live evidence | `kubernetes-infrastructure-security.md` | `kubernetes-infrastructure-security.md` |
 | Frontmatter keys and values | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
 | Document state transitions | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
 | Semantic lineage | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
@@ -182,12 +198,11 @@ planned audit owner. Planned audit paths remain code literals until created.
 | Postmortem readiness | `spec-sdlc-ci-qa-formatting.md` | `sdlc-document-lifecycle-frontmatter.md` |
 | AI-agent `pre-commit run --all-files` obligation | `spec-sdlc-ci-qa-formatting.md` | `ci-qa-automation-pipeline-workflow.md` |
 | Vibe coding | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
-| `agency-agents` comparison | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
-| Task-model routing | `ai-agents-roster-and-gap-analysis.md` | `ai-agents-model-routing-vibe-coding.md` |
 
 ## Requirement Coverage Matrix
 
-`Primary Current owner` assigns exactly one research owner to each requirement.
+`Primary Current owner` assigns exactly one research owner to each requirement;
+the canonical map above assigns its one planned audit owner.
 Secondary references may summarize a boundary and link here or to the primary
 section; active policy and procedure remain with the canonical repository owner
 named by that reference.
@@ -249,7 +264,7 @@ named by that reference.
 
 | Current artifact | 2026-07-10 audit outcome |
 | --- | --- |
-| `README.md` | Added the fixed model cutoff, 48-row single-owner requirement map, contradiction closure, changed-document summary, and pack-wide freshness rules. |
+| `README.md` | Added the fixed model cutoff, canonical research-to-audit ownership map, 48-row evidence matrix, contradiction closure, changed-document summary, and pack-wide freshness rules. |
 | [Workspace Governance Baseline](workspace-governance-baseline.md) | Re-established purpose/contract/owner/enforcement maps and routed seven governance gaps without changing active owners. |
 | [Harness and Loop Engineering](harness-and-loop-engineering.md) | Corrected ownership, added bounded loop/eval/recovery/termination design, and made MCP `2025-11-25` currentness explicit. |
 | [Provider Implementation Status](provider-implementation-status.md) | Reconciled all 30 adapter paths, native/local surfaces, 17 model-surface rows, 13 migration rows, and fixed-cutoff provider sources. |
