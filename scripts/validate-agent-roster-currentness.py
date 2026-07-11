@@ -95,13 +95,17 @@ def main() -> int:
     parser.add_argument("repo_root", type=Path)
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
-    if args.self_test:
-        errors = run_self_test(
-            args.repo_root / "tests/fixtures/agent-roster-currentness.json"
-        )
-    else:
-        providers, catalog = repository_inputs(args.repo_root)
-        errors = validate_contract(providers, catalog)
+    try:
+        if args.self_test:
+            errors = run_self_test(
+                args.repo_root / "tests/fixtures/agent-roster-currentness.json"
+            )
+        else:
+            providers, catalog = repository_inputs(args.repo_root)
+            errors = validate_contract(providers, catalog)
+    except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
+        print(f"ERR agent roster currentness input error: {exc}", file=sys.stderr)
+        return 1
     if errors:
         for error in errors:
             print(f"ERR {error}", file=sys.stderr)
