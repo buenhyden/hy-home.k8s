@@ -124,6 +124,7 @@ decisions where no drift exists, and runs only approved read-only live validatio
 
 ## Related Documents
 
+- Parent Spec: N/A — pre-Spec execution record.
 - **ADR**: [../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 - **Phase 1 Plan**: [./2026-06-02-phase-1-decision-follow-up.md](./2026-06-02-phase-1-decision-follow-up.md)
 - **Phase 1 Audit Task**: [../tasks/2026-06-02-phase-1-governance-alignment-audit.md](../tasks/2026-06-02-phase-1-governance-alignment-audit.md)

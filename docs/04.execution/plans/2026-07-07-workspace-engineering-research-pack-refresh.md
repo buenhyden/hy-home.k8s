@@ -66,5 +66,5 @@ This work ensures that the workspace engineering reference materials remain curr
 ## Related Documents
 
 - **PRD**: `[../../01.requirements/017-workspace-engineering-research-pack.md]`
-- **Spec**: `[../../03.specs/017-workspace-engineering-research-pack/spec.md]`
-- **Tasks**: `[../tasks/2026-07-07-workspace-engineering-research-pack-refresh.md]`
+- **Parent Spec**: [../../03.specs/017-workspace-engineering-research-pack/spec.md](../../03.specs/017-workspace-engineering-research-pack/spec.md)
+- **Task**: [../tasks/2026-07-07-workspace-engineering-research-pack-refresh.md](../tasks/2026-07-07-workspace-engineering-research-pack-refresh.md)

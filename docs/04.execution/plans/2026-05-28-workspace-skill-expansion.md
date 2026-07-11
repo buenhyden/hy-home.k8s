@@ -102,6 +102,6 @@ deploy AI Agent models or prompts.
 ## Related Documents
 
 - Parent Gap Analysis: `../../00.agent-governance/memory/progress.md`
-- Task record: `../tasks/2026-05-28-workspace-skill-expansion.md`
+- **Task**: [../tasks/2026-05-28-workspace-skill-expansion.md](../tasks/2026-05-28-workspace-skill-expansion.md)
 - harness-catalog: `../../00.agent-governance/harness-catalog.md`
 - Spec 006: `../../03.specs/006-workspace-harness-gap-analysis/spec.md`

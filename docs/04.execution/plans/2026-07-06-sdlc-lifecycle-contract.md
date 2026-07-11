@@ -81,6 +81,11 @@ active-surface limits.
 
 ## Implementation Tasks
 
+> [!NOTE]
+> The unchecked items below preserve the approved historical execution
+> instructions. The linked `status: done` Task is the completion-state and
+> evidence owner; these boxes are not a current work queue.
+
 ### Task 1: Align Lifecycle Contract Surfaces
 
 **Files:**
@@ -486,8 +491,8 @@ git commit -m "docs(validation): Enforce SDLC lifecycle contract gates"
 
 ## Related Documents
 
-- **Spec**: `../../03.specs/021-sdlc-lifecycle-contract/spec.md`
-- **Task**: `../tasks/2026-07-06-sdlc-lifecycle-contract.md`
+- **Parent Spec**: [../../03.specs/021-sdlc-lifecycle-contract/spec.md](../../03.specs/021-sdlc-lifecycle-contract/spec.md)
+- **Task**: [../tasks/2026-07-06-sdlc-lifecycle-contract.md](../tasks/2026-07-06-sdlc-lifecycle-contract.md)
 - **Template Routing**: `../../99.templates/support/template-routing.md`
 - **Frontmatter Schema**: `../../99.templates/support/frontmatter-schema.md`
 - **SDLC Governance**: `../../99.templates/support/sdlc-governance.md`

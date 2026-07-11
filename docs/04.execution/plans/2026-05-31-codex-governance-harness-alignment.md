@@ -157,6 +157,7 @@ The key facts confirmed in Phase 1 were:
 
 ## Related Documents
 
+- Parent Spec: N/A — pre-Spec execution record.
 - [Governance Hub](../../00.agent-governance/README.md)
 - [Model Policy](../../00.agent-governance/model-policy.md)
 - [Harness Catalog](../../00.agent-governance/harness-catalog.md)

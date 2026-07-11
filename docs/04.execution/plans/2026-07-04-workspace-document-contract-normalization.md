@@ -106,6 +106,11 @@ by the user:
 
 ## Implementation Tasks
 
+> [!NOTE]
+> The unchecked items below preserve the approved historical execution
+> instructions. The linked `status: done` Task is the completion-state and
+> evidence owner; these boxes are not a current work queue.
+
 ### Task 1: Audit and Inventory Document Contract Drift
 
 **Files:**

@@ -107,6 +107,11 @@ Implementation must preserve that baseline after every logical commit.
 
 ## Task Execution Details
 
+> [!NOTE]
+> The unchecked items below preserve the approved historical execution
+> instructions. The linked `status: done` Task is the completion-state and
+> evidence owner; these boxes are not a current work queue.
+
 ### Task 1: Baseline Audit Inventory
 
 **Files:**

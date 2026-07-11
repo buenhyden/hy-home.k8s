@@ -180,10 +180,11 @@ Preserved completion evidence:
 - No files were deleted, moved, or renamed.
 - Based on `rg`, no links outside this file referenced the removed `Task Detail` heading or child task headings.
 - Detailed execution instructions were consolidated into completed history, and the current template link rules remain owned by `docs/99.templates/README.md` and `docs/00.agent-governance/rules/documentation-protocol.md`.
-- The 2026-05-21 follow-up changed active execution wording in the completed plan to historical-record wording and did not create a new Task document.
+- The 2026-05-21 follow-up changed active execution wording in the completed plan to historical-record wording; the linked Task document owns completion evidence.
 
 ## Related Documents
 
+- **Task**: [../tasks/2026-05-17-template-crosslink-fix.md](../tasks/2026-05-17-template-crosslink-fix.md)
 - **Templates**: [`../../99.templates/README.md`](../../99.templates/README.md)
 - **Documentation Protocol**: [`../../00.agent-governance/rules/documentation-protocol.md`](../../00.agent-governance/rules/documentation-protocol.md)
 - **Stage Authoring Matrix**: [`../../00.agent-governance/rules/stage-authoring-matrix.md`](../../00.agent-governance/rules/stage-authoring-matrix.md)

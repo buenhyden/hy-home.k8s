@@ -742,8 +742,7 @@ Expected: one closure commit with plan/task/status/progress evidence only.
 - **Prior Spec**: [Workspace Document Governance Hardening](../../03.specs/013-workspace-document-governance-hardening/spec.md)
 - **Prior Spec**: [Workspace Document Contract Normalization](../../03.specs/014-workspace-document-contract-normalization/spec.md)
 - **Prior Spec**: [Agent Governance Contract Normalization](../../03.specs/015-agent-governance-contract-normalization/spec.md)
-- **Task Record**: `../tasks/2026-07-04-active-control-surface-governance-hardening.md`
-  will be created by ACS-001.
+- **Task**: [../tasks/2026-07-04-active-control-surface-governance-hardening.md](../tasks/2026-07-04-active-control-surface-governance-hardening.md)
 - **Template Documentation Contract**: [documentation-contract.md](../../99.templates/support/documentation-contract.md)
 - **Template Routing Contract**: [template-routing.md](../../99.templates/support/template-routing.md)
 - **Frontmatter Schema**: [frontmatter-schema.md](../../99.templates/support/frontmatter-schema.md)

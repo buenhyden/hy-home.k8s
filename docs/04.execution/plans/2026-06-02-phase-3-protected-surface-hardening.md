@@ -135,6 +135,7 @@ ESO, or deployment readiness.
 
 ## Related Documents
 
+- Parent Spec: N/A — pre-Spec execution record.
 - **ADR**: [../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 - **Phase 1 Audit Task**: [../tasks/2026-06-02-phase-1-governance-alignment-audit.md](../tasks/2026-06-02-phase-1-governance-alignment-audit.md)
 - **Phase 2 Plan**: [./2026-06-02-phase-2-governance-alignment.md](./2026-06-02-phase-2-governance-alignment.md)

@@ -187,6 +187,7 @@ The core gaps confirmed during Phase 1 investigation were:
 
 ## Related Documents
 
+- Parent Spec: N/A — pre-Spec execution record.
 - **PRD**: [../../01.requirements/003-workspace-agent-governance-platform.md](../../01.requirements/003-workspace-agent-governance-platform.md)
 - **ARD**: [../../02.architecture/requirements/0006-workspace-agent-governance-platform.md](../../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
 - **ADR**: [../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)

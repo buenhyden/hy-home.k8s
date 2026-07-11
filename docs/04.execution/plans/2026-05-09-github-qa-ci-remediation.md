@@ -133,6 +133,7 @@ is not removed as prose duplication.
 
 ## Related Documents
 
+- Parent Spec: N/A — pre-Spec execution record.
 - **Task**: [`../tasks/2026-05-09-github-qa-ci-remediation.md`](../tasks/2026-05-09-github-qa-ci-remediation.md)
 - **Git Workflow**: [`../../00.agent-governance/rules/git-workflow.md`](../../00.agent-governance/rules/git-workflow.md)
 - **GitHub Hub**: [`../../../.github/ABOUT.md`](../../../.github/ABOUT.md)

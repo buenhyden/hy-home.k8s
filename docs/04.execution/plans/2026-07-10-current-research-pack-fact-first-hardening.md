@@ -183,6 +183,11 @@ mapping. The implementation must re-verify every finding before publication.
 
 ## Detailed Tasks
 
+> [!NOTE]
+> The unchecked items below preserve the approved historical execution
+> instructions. The linked `status: done` Task is the completion-state and
+> evidence owner; these boxes are not a current work queue.
+
 ### Task 1: Establish Execution Evidence and Baseline Ledger
 
 **Files:**
@@ -1201,7 +1206,7 @@ mapping. The implementation must re-verify every finding before publication.
 ## Related Documents
 
 - **Spec**: [Workspace Engineering Research Pack Specification](../../03.specs/017-workspace-engineering-research-pack/spec.md)
-- **Tasks**: `../tasks/2026-07-10-current-research-pack-fact-first-hardening.md`
+- **Task**: [../tasks/2026-07-10-current-research-pack-fact-first-hardening.md](../tasks/2026-07-10-current-research-pack-fact-first-hardening.md)
 - **Current Research Pack**: [2026-07-07 Current WER Pack](../../90.references/research/2026-07-07-wer/README.md)
 - **Historical Research Pack**: [2026-07-04 Historical WER Pack](../../90.references/research/2026-07-04-wer/README.md)
 - **Reference Template**: [Reference Template](../../99.templates/templates/common/reference.template.md)

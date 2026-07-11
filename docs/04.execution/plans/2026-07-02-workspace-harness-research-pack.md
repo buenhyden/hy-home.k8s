@@ -535,4 +535,4 @@ Expected: one final integration commit.
 - **ARD**: `../../02.architecture/requirements/0006-workspace-agent-governance-platform.md`
 - **Spec**: `../../03.specs/009-workspace-harness-research-pack/spec.md`
 - **ADR**: `../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md`
-- **Tasks**: `../tasks/2026-07-02-workspace-harness-research-pack.md`
+- **Task**: [../tasks/2026-07-02-workspace-harness-research-pack.md](../tasks/2026-07-02-workspace-harness-research-pack.md)

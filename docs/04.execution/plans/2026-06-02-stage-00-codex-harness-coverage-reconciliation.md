@@ -126,6 +126,7 @@ live infrastructure.
 
 ## Related Documents
 
+- Parent Spec: N/A — pre-Spec execution record.
 - **Original Follow-up Plan**: [./2026-06-02-phase-1-decision-follow-up.md](./2026-06-02-phase-1-decision-follow-up.md)
 - **Task**: [../tasks/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md](../tasks/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md)
 - **Codex Harness Plan**: [./2026-05-31-codex-governance-harness-alignment.md](./2026-05-31-codex-governance-harness-alignment.md)

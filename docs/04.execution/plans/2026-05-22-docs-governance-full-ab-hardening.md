@@ -111,6 +111,7 @@ the shared enforcement boundary for Hookify local rules in docs and validation.
 
 ## Related Documents
 
+- Parent Spec: N/A — pre-Spec execution record.
 - **Task**: [../tasks/2026-05-22-docs-governance-full-ab-hardening.md](../tasks/2026-05-22-docs-governance-full-ab-hardening.md)
 - **Templates**: [../../99.templates/README.md](../../99.templates/README.md)
 - **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/documentation-protocol.md)

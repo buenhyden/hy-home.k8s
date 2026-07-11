@@ -115,6 +115,7 @@ canonical progress ledger unique.
 
 ## Related Documents
 
+- Parent Spec: N/A — pre-Spec execution record.
 - **Task**: [../tasks/2026-06-05-harness-governance-v2-overlay.md](../tasks/2026-06-05-harness-governance-v2-overlay.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Agentic Rules**: [../../00.agent-governance/rules/agentic.md](../../00.agent-governance/rules/agentic.md)

@@ -109,6 +109,7 @@ quality gate.
 
 ## Related Documents
 
+- Parent Spec: N/A — pre-Spec execution record.
 - **Governance**: [Harness Catalog](../../00.agent-governance/harness-catalog.md)
 - **Governance**: [Agentic Execution Rules](../../00.agent-governance/rules/agentic.md)
 - **Governance**: [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)

@@ -101,6 +101,11 @@ Initial investigation found:
 
 ## Implementation Tasks
 
+> [!NOTE]
+> The unchecked items below preserve the approved historical execution
+> instructions. The linked `status: done` Task is the completion-state and
+> evidence owner; these boxes are not a current work queue.
+
 ### Task 1: Create Task Record and Baseline Audit
 
 **Files:**

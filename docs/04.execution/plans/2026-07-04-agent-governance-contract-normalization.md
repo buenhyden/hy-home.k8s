@@ -101,6 +101,11 @@ frontmatter-free, root shims thin, and validation evidence explicit.
 
 ## Detailed Tasks
 
+> [!NOTE]
+> The unchecked items below preserve the approved historical execution
+> instructions. The linked `status: done` Task is the completion-state and
+> evidence owner; these boxes are not a current work queue.
+
 ### Task 1: Baseline Drift Inventory and Task Record
 
 **Files:**
@@ -878,7 +883,7 @@ plan, task evidence, governance, adapters, CI/QA, and final validation.
 ## Related Documents
 
 - **Spec**: [../../03.specs/015-agent-governance-contract-normalization/spec.md](../../03.specs/015-agent-governance-contract-normalization/spec.md)
-- **Task Record**: `../tasks/2026-07-04-agent-governance-contract-normalization.md`
+- **Task**: [../tasks/2026-07-04-agent-governance-contract-normalization.md](../tasks/2026-07-04-agent-governance-contract-normalization.md)
 - **Governance Hub**: [../../00.agent-governance/README.md](../../00.agent-governance/README.md)
 - **Common Governance**: [../../00.agent-governance/common-governance.md](../../00.agent-governance/common-governance.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)

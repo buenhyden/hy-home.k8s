@@ -110,6 +110,7 @@ boundaries.
 
 ## Related Documents
 
+- Parent Spec: N/A — pre-Spec execution record.
 - **Task**: [../tasks/2026-05-22-workspace-purpose-alignment.md](../tasks/2026-05-22-workspace-purpose-alignment.md)
 - **Previous Plan**: [./2026-05-22-docs-governance-full-ab-hardening.md](./2026-05-22-docs-governance-full-ab-hardening.md)
 - **Templates**: [../../99.templates/README.md](../../99.templates/README.md)

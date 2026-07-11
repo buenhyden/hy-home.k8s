@@ -63,7 +63,8 @@ the current workspace-wide adapter contract is owned by ADR-0013 and the Stage
 
 ## Related Documents
 
-- **Tasks**: `[../tasks/2026-05-30-antigravity-governance.md]`
+- Parent Spec: N/A — pre-Spec execution record.
+- **Task**: [../tasks/2026-05-30-antigravity-governance.md](../tasks/2026-05-30-antigravity-governance.md)
 
 ## Non-Goals & Out-of-Scope
 

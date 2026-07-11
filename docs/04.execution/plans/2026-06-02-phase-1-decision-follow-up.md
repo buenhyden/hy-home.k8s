@@ -117,6 +117,8 @@ or live infrastructure.
 
 ## Related Documents
 
+- Parent Spec: N/A — pre-Spec execution record.
+- **Task**: [../tasks/2026-06-02-phase-1-governance-alignment-audit.md](../tasks/2026-06-02-phase-1-governance-alignment-audit.md)
 - **ADR**: [../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 - **Prior Plan**: [./2026-06-01-stage-00-canonical-adapter-redesign.md](./2026-06-01-stage-00-canonical-adapter-redesign.md)
 - **Prior Task**: [../tasks/2026-06-01-stage-00-canonical-adapter-redesign.md](../tasks/2026-06-01-stage-00-canonical-adapter-redesign.md)

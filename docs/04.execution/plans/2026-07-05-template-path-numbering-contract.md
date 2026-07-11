@@ -145,6 +145,11 @@ This plan updates the current contract to
 
 ## Detailed Tasks
 
+> [!NOTE]
+> The unchecked items below preserve the approved historical execution
+> instructions. The linked `status: done` Task is the completion-state and
+> evidence owner; these boxes are not a current work queue.
+
 ### Task 1: Create Task Evidence and Baseline Scans
 
 **Files:**
@@ -904,7 +909,7 @@ Expected: final closure commit succeeds.
 ## Related Documents
 
 - **Spec**: [../../03.specs/019-template-path-numbering-contract/spec.md](../../03.specs/019-template-path-numbering-contract/spec.md)
-- **Task Record**: `../tasks/2026-07-05-template-path-numbering-contract.md`
+- **Task**: [../tasks/2026-07-05-template-path-numbering-contract.md](../tasks/2026-07-05-template-path-numbering-contract.md)
 - **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
 - **SDLC Governance**: [../../99.templates/support/sdlc-governance.md](../../99.templates/support/sdlc-governance.md)
 - **Templates README**: [../../99.templates/README.md](../../99.templates/README.md)

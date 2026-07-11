@@ -149,6 +149,11 @@ docs/90.references/audits/
 
 ## Detailed Tasks
 
+> [!NOTE]
+> The unchecked items below preserve the approved historical execution
+> instructions. The linked `status: done` Task is the completion-state and
+> evidence owner; these boxes are not a current work queue.
+
 ### Task 1: Task Evidence and Baseline Inventory
 
 **Files:**
@@ -904,7 +909,7 @@ Expected: commit succeeds and the worktree is clean.
 - **Spec**: [../../03.specs/018-workspace-engineering-implementation-audit-pack/spec.md](../../03.specs/018-workspace-engineering-implementation-audit-pack/spec.md)
 - **Research Pack Spec**: [../../03.specs/017-workspace-engineering-research-pack/spec.md](../../03.specs/017-workspace-engineering-research-pack/spec.md)
 - **Prior Audit Pack Spec**: [../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md](../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md)
-- **Tasks**: `../tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md`
+- **Task**: [../tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md](../tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md)
 - **Research Pack README**: [../../90.references/research/2026-07-04-wer/README.md](../../90.references/research/2026-07-04-wer/README.md)
 - **Audits README**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
 - **Reference Template**: [../../99.templates/templates/common/reference.template.md](../../99.templates/templates/common/reference.template.md)

@@ -108,6 +108,7 @@ model/tool frontmatter existed.
 
 ## Related Documents
 
+- Parent Spec: N/A — pre-Spec execution record.
 - **Task**: [../tasks/2026-06-01-claude-agent-surface-restoration.md](../tasks/2026-06-01-claude-agent-surface-restoration.md)
 - **Runtime Baseline**: [../../../.claude/CLAUDE.md](../../../.claude/CLAUDE.md)
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)

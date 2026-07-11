@@ -132,6 +132,7 @@ Tier C-only, unused, or one-off deletion candidates.
 
 ## Related Documents
 
+- Parent Spec: N/A — pre-Spec execution record.
 - **Task**: [`../tasks/2026-05-09-scripts-inventory-remediation.md`](../tasks/2026-05-09-scripts-inventory-remediation.md)
 - **Scripts README**: [`../../../scripts/README.md`](../../../scripts/README.md)
 - **Root README**: [`../../../README.md`](../../../README.md)

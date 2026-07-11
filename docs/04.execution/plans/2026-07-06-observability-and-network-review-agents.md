@@ -70,5 +70,5 @@ bash scripts/validate-repo-quality-gates.sh .
 
 - **Spec**: [../../03.specs/024-observability-and-network-review-agents/spec.md](../../03.specs/024-observability-and-network-review-agents/spec.md)
 - **Agent Design**: [../../03.specs/024-observability-and-network-review-agents/agent-design.md](../../03.specs/024-observability-and-network-review-agents/agent-design.md)
-- **Task**: `2026-07-06-observability-and-network-review-agents.md`
+- **Task**: [../tasks/2026-07-06-observability-and-network-review-agents.md](../tasks/2026-07-06-observability-and-network-review-agents.md)
 - **Harness catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)

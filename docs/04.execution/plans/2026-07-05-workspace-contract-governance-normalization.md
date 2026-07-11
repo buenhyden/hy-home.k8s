@@ -148,6 +148,11 @@ Current local evidence before implementation:
 
 ## Detailed Tasks
 
+> [!NOTE]
+> The unchecked items below preserve the approved historical execution
+> instructions. The linked `status: done` Task is the completion-state and
+> evidence owner; these boxes are not a current work queue.
+
 ### Task 1: Create Task Evidence and Baseline Inventory
 
 **Files:**
@@ -792,7 +797,7 @@ Expected: staged diff has no whitespace errors and the commit succeeds.
 ## Related Documents
 
 - **Spec**: [../../03.specs/020-workspace-contract-governance-normalization/spec.md](../../03.specs/020-workspace-contract-governance-normalization/spec.md)
-- **Task Evidence**: `../tasks/2026-07-05-workspace-contract-governance-normalization.md`
+- **Task**: [../tasks/2026-07-05-workspace-contract-governance-normalization.md](../tasks/2026-07-05-workspace-contract-governance-normalization.md)
 - **Template Documentation Contract**: [../../99.templates/support/documentation-contract.md](../../99.templates/support/documentation-contract.md)
 - **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
 - **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/frontmatter-schema.md)

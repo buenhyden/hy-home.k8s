@@ -175,6 +175,11 @@ non-authoritative in the document section where it is used.
 
 ## Detailed Tasks
 
+> [!NOTE]
+> The unchecked items below preserve the approved historical execution
+> instructions. The linked `status: done` Task is the completion-state and
+> evidence owner; these boxes are not a current work queue.
+
 ### Task 1: Task Evidence and Baseline Inventory
 
 **Files:**
@@ -819,7 +824,7 @@ Expected: final closure commit exists and no unresolved drift remains.
 
 - **Spec**: [Workspace Engineering Research Pack](../../03.specs/017-workspace-engineering-research-pack/spec.md)
 - **Prior Research Spec**: [Workspace Harness Research Pack](../../03.specs/009-workspace-harness-research-pack/spec.md)
-- **Task Record**: `../tasks/2026-07-04-workspace-engineering-research-pack.md`
+- **Task**: [../tasks/2026-07-04-workspace-engineering-research-pack.md](../tasks/2026-07-04-workspace-engineering-research-pack.md)
 - **Research README**: [../../90.references/research/README.md](../../90.references/research/README.md)
 - **Reference Template**: [../../99.templates/templates/common/reference.template.md](../../99.templates/templates/common/reference.template.md)
 - **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
