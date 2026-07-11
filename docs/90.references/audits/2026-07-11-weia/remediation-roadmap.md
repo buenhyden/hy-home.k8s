@@ -134,7 +134,7 @@ finding, priority, score, or live/provider evidence boundary.
 
 | Historical finding or roadmap item | Current canonical disposition |
 | --- | --- |
-| HL-001 | RMD-004; corrected research fact is accepted, active currentness repair remains. |
+| HL-001 | RMD-004 is closed by Spec 025 and its Task/validator evidence; only canonical navigation and currentness remain in scope. |
 | HL-002 | RMD-018. |
 | HL-003 | RMD-020, with provider-neutral trial evidence consumed by role evals. |
 | HL-004 | RMD-019. |

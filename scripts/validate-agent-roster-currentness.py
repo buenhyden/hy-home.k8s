@@ -11,15 +11,26 @@ EXPECTED_STEMS = frozenset({
     "k8s-implementer", "network-reviewer", "observability-reviewer",
     "security-auditor", "supervisor", "wiki-curator",
 })
-REQUIRED_OWNER_POINTERS = (
-    "docs/00.agent-governance/rules/bootstrap.md",
-    "docs/00.agent-governance/rules/persona.md",
-    "docs/00.agent-governance/rules/stage-authoring-matrix.md",
-    "docs/04.execution/tasks/2026-07-06-observability-and-network-review-agents.md",
-    "docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md",
-    "docs/99.templates/support/documentation-contract.md",
-    "docs/99.templates/support/template-routing.md",
+REQUIRED_OWNER_LINKS = {
+    "docs/00.agent-governance/rules/bootstrap.md": "rules/bootstrap.md",
+    "docs/00.agent-governance/rules/persona.md": "rules/persona.md",
+    "docs/00.agent-governance/rules/stage-authoring-matrix.md": "rules/stage-authoring-matrix.md",
+    "docs/04.execution/tasks/2026-07-06-observability-and-network-review-agents.md": "../04.execution/tasks/2026-07-06-observability-and-network-review-agents.md",
+    "docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md": "../04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md",
+    "docs/99.templates/support/documentation-contract.md": "../99.templates/support/documentation-contract.md",
+    "docs/99.templates/support/template-routing.md": "../99.templates/support/template-routing.md",
+}
+REQUIRED_CASE_NAMES = frozenset({
+    "valid", "missing-role", "provider-mismatch", "stale-count", "bad-owner",
+})
+STALE_COUNT_VARIANTS = (
+    "8 local agents",
+    "Eight local provider adapters",
+    "eight shared roles",
+    "8 role stems",
 )
+VALID_ROSTER_PHRASE = "Ten shared local role stems / thirty provider adapters"
+MARKDOWN_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)\s]+)(?:\s+[^)]*)?\)")
 
 
 def validate_contract(
@@ -36,11 +47,22 @@ def validate_contract(
             errors.append(f"{provider} roster has unexpected stems: {', '.join(extra)}")
     if sum(len(stems) for stems in provider_stems.values()) != 30:
         errors.append("provider adapter inventory must contain exactly 30 files")
-    if re.search(r"\b(?:Eight|eight) (?:local )?(?:provider adapters|agents)\b", catalog_text):
+    if re.search(
+        r"\b(?:8|eight)\s+(?:local\s+|shared\s+)?"
+        r"(?:provider adapters|agents|roles|role stems)\b",
+        catalog_text,
+        re.IGNORECASE,
+    ):
         errors.append("harness catalog contains stale eight-role currentness prose")
-    for pointer in REQUIRED_OWNER_POINTERS:
-        if pointer not in catalog_text:
-            errors.append(f"harness catalog missing canonical owner pointer: {pointer}")
+    catalog_links = {
+        (label.strip().removeprefix("`").removesuffix("`"), target)
+        for label, target in MARKDOWN_LINK_RE.findall(catalog_text)
+    }
+    for label, target in REQUIRED_OWNER_LINKS.items():
+        if (label, target) not in catalog_links:
+            errors.append(
+                f"harness catalog missing canonical owner link: {label} -> {target}"
+            )
     return errors
 
 
@@ -61,10 +83,17 @@ def run_self_test(fixture_path: Path) -> list[str]:
     failures: list[str] = []
     if frozenset(data["expected_stems"]) != EXPECTED_STEMS:
         failures.append("fixture expected_stems does not match EXPECTED_STEMS")
-    base_catalog = "Ten local provider adapters\n" + "\n".join(
-        REQUIRED_OWNER_POINTERS
+    cases = data["cases"]
+    case_names = [case["name"] for case in cases]
+    if len(case_names) != len(REQUIRED_CASE_NAMES) or set(case_names) != REQUIRED_CASE_NAMES:
+        failures.append(
+            "fixture case names must be exactly: "
+            + ", ".join(sorted(REQUIRED_CASE_NAMES))
+        )
+    base_catalog = VALID_ROSTER_PHRASE + "\n" + "\n".join(
+        f"[`{label}`]({target})" for label, target in REQUIRED_OWNER_LINKS.items()
     )
-    for case in data["cases"]:
+    for case in cases:
         providers = {name: set(EXPECTED_STEMS) for name in ("claude", "codex", "gemini")}
         catalog = base_catalog
         mutation = case["mutation"]
@@ -72,21 +101,41 @@ def run_self_test(fixture_path: Path) -> list[str]:
             providers["claude"].remove("network-reviewer")
         elif mutation == "add-extra-to-codex":
             providers["codex"].add("extra-reviewer")
-        elif mutation == "replace-ten-with-eight":
-            catalog = catalog.replace("Ten local", "Eight local", 1)
-        elif mutation == "remove-bootstrap-owner":
+        elif mutation == "check-stale-count-variants":
+            variants = case["catalog_variants"]
+            if variants != list(STALE_COUNT_VARIANTS):
+                failures.append(
+                    f"{case['name']}: catalog_variants must be exactly "
+                    f"{list(STALE_COUNT_VARIANTS)!r}"
+                )
+            expected = set(case["expected_errors"])
+            for variant in variants:
+                errors = validate_contract(
+                    providers,
+                    catalog.replace(VALID_ROSTER_PHRASE, variant, 1),
+                )
+                if set(errors) != expected:
+                    failures.append(
+                        f"{case['name']} ({variant}): expected exact errors "
+                        f"{sorted(expected)!r}, got {sorted(set(errors))!r}"
+                    )
+            continue
+        elif mutation == "misdirect-bootstrap-owner":
             catalog = catalog.replace(
-                "docs/00.agent-governance/rules/bootstrap.md", "", 1
+                "[`docs/00.agent-governance/rules/bootstrap.md`](rules/bootstrap.md)",
+                "[`docs/00.agent-governance/rules/bootstrap.md`](rules/persona.md)",
+                1,
             )
         elif mutation != "none":
             failures.append(f"{case['name']}: unknown mutation {mutation}")
             continue
         errors = validate_contract(providers, catalog)
-        expected = case["expected_error"]
-        if expected is None and errors:
-            failures.append(f"{case['name']}: expected no errors, got {errors}")
-        elif expected is not None and expected not in errors:
-            failures.append(f"{case['name']}: missing expected error {expected!r}")
+        expected = set(case["expected_errors"])
+        if set(errors) != expected:
+            failures.append(
+                f"{case['name']}: expected exact errors {sorted(expected)!r}, "
+                f"got {sorted(set(errors))!r}"
+            )
     return failures
 
 

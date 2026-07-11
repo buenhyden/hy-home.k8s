@@ -12,10 +12,20 @@
     "wiki-curator"
   ],
   "cases": [
-    {"name": "valid", "mutation": "none", "expected_error": null},
-    {"name": "missing-role", "mutation": "remove-network-from-claude", "expected_error": "claude roster missing expected stems: network-reviewer"},
-    {"name": "provider-mismatch", "mutation": "add-extra-to-codex", "expected_error": "codex roster has unexpected stems: extra-reviewer"},
-    {"name": "stale-count", "mutation": "replace-ten-with-eight", "expected_error": "harness catalog contains stale eight-role currentness prose"},
-    {"name": "bad-owner", "mutation": "remove-bootstrap-owner", "expected_error": "harness catalog missing canonical owner pointer: docs/00.agent-governance/rules/bootstrap.md"}
+    {"name": "valid", "mutation": "none", "expected_errors": []},
+    {"name": "missing-role", "mutation": "remove-network-from-claude", "expected_errors": ["claude roster missing expected stems: network-reviewer", "provider adapter inventory must contain exactly 30 files"]},
+    {"name": "provider-mismatch", "mutation": "add-extra-to-codex", "expected_errors": ["codex roster has unexpected stems: extra-reviewer", "provider adapter inventory must contain exactly 30 files"]},
+    {
+      "name": "stale-count",
+      "mutation": "check-stale-count-variants",
+      "catalog_variants": [
+        "8 local agents",
+        "Eight local provider adapters",
+        "eight shared roles",
+        "8 role stems"
+      ],
+      "expected_errors": ["harness catalog contains stale eight-role currentness prose"]
+    },
+    {"name": "bad-owner", "mutation": "misdirect-bootstrap-owner", "expected_errors": ["harness catalog missing canonical owner link: docs/00.agent-governance/rules/bootstrap.md -> rules/bootstrap.md"]}
   ]
 }

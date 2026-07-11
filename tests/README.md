@@ -65,10 +65,15 @@ tests/
 
 ## Evidence Boundaries
 
-- `tests/fixtures/agent-roster-currentness.json`은 valid, missing role, provider
-  mismatch, stale eight-role prose, missing canonical owner pointer의 결정적인
-  사례 5개를 다룬다. self-test는 각 mutation을 확장하고 repository 검증과
-  동일한 production `validate_contract()`를 호출한다.
+- `tests/fixtures/agent-roster-currentness.json`은 이름이 정확히 `valid`,
+  `missing-role`, `provider-mismatch`, `stale-count`, `bad-owner`인 사례 5개만
+  허용한다. self-test는 각 mutation을 확장하고 repository 검증과 동일한
+  production `validate_contract()`를 호출한 뒤 실제 오류 집합과
+  `expected_errors` 집합을 정확히 비교한다.
+- `stale-count`는 `8 local agents`, `Eight local provider adapters`, `eight
+  shared roles`, `8 role stems`를 각각 독립적으로 거부한다. `bad-owner`는
+  canonical bootstrap label을 유지한 채 target만 `rules/persona.md`로 바꿔
+  exact Markdown label/target 검사를 입증한다.
 - Roster fixture와 repository 검사는 repo-static evidence만 제공한다. Claude,
   Codex, Gemini provider runtime을 실행하지 않으며 provider-native runtime
   readiness를 입증할 수 없다.
