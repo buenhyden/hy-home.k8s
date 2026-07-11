@@ -8,6 +8,56 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-11 - Roster currentness final-review remediation
+
+#### Metadata
+
+- **Date**: 2026-07-11
+- **Layer**: meta, qa, docs
+- **Status**: complete
+- **Tags**: #governance #roster #validation #review #repo-static
+
+#### Progress
+
+- Hardened the roster currentness validator to require exact canonical-owner
+  Markdown label/target pairs, reject numeric or spelled stale eight-role
+  variants, and compare exact error sets for exactly five fixture cases.
+- Corrected the durable DAILY roster wording and the HL-001 Current roadmap
+  disposition without changing the original RMD-004 finding, priority, score,
+  or repository-static/live boundary.
+- Functional fix commit:
+  `4c0b9d8a8ca6586f0aabb3dca8ec2272944c094f`.
+
+#### Memory
+
+- Canonical-owner currentness must validate Markdown destinations as well as
+  labels; a correct label can still be misdirected to an existing wrong owner.
+- Deterministic fixture coverage requires an exact case-name contract and exact
+  error-set equality so deleted, added, renamed, or partially passing cases do
+  not weaken the guardrail silently.
+
+#### Evidence
+
+- Focused production-contract proof: the bootstrap label linked to
+  `rules/persona.md` returned only the required missing-owner-link error, and
+  all four scoped stale variants returned only the stale-currentness error.
+- `python3 scripts/validate-agent-roster-currentness.py . --self-test` — PASS.
+- `python3 scripts/validate-agent-roster-currentness.py .` — PASS.
+- `git diff --check` — PASS with no output.
+- `bash scripts/validate-repo-quality-gates.sh .` — PASS.
+- `pre-commit run --all-files` — all applicable hooks PASS; the non-applicable
+  `Lint Dockerfiles` hook reported `Skipped` and is not claimed as a pass.
+- `git diff --check 184d13e034101ee27c98bd0b850b91d956069c33...HEAD`
+  — PASS with no output.
+- No live Kubernetes, Argo CD, Vault, ESO, provider-runtime, credential,
+  secret-value, remote GitHub/CI, publish, push, merge, or third-party mutation
+  check ran.
+
+#### Handoff
+
+- None. The final-review remediation is complete within the repository-static
+  boundary.
+
 ### 2026-07-10 - Current research pack fact-first closure
 
 #### Metadata

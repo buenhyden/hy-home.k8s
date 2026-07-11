@@ -91,6 +91,35 @@ Plan traceable while preserving repository-static evidence boundaries.
   credential, secret-value, remote, publish, push, merge, or third-party
   mutation is authorized by this Task.
 
+### Final-review remediation (2026-07-11)
+
+- **Functional fix commit**:
+  `4c0b9d8a8ca6586f0aabb3dca8ec2272944c094f`
+  (`fix(governance): harden roster currentness validation`).
+- **Focused negative proofs**: a canonical bootstrap label misdirected to
+  `rules/persona.md` returned exactly
+  `harness catalog missing canonical owner link: docs/00.agent-governance/rules/bootstrap.md -> rules/bootstrap.md`;
+  each of `8 local agents`, `Eight local provider adapters`, `eight shared
+  roles`, and `8 role stems` independently returned exactly
+  `harness catalog contains stale eight-role currentness prose` through
+  production `validate_contract()`.
+- **Validation commands**:
+  - `python3 scripts/validate-agent-roster-currentness.py . --self-test` —
+    PASS with `[PASS] agent roster currentness validation passed`.
+  - `python3 scripts/validate-agent-roster-currentness.py .` — PASS with
+    `[PASS] agent roster currentness validation passed`.
+  - `git diff --check` — PASS with exit 0 and no output.
+  - `bash scripts/validate-repo-quality-gates.sh .` — PASS with
+    `[PASS] repository quality gates passed`.
+  - `pre-commit run --all-files` — all applicable hooks PASS;
+    `Lint Dockerfiles` reported `Skipped` because no matching files exist and
+    is not claimed as a pass.
+  - `git diff --check 184d13e034101ee27c98bd0b850b91d956069c33...HEAD`
+    — PASS with exit 0 and no output.
+- **Evidence boundary**: these results are repository-static only. No live
+  Kubernetes, Argo CD, Vault, ESO, provider runtime, credential, secret-value,
+  remote GitHub/CI, publish, push, merge, or third-party mutation ran.
+
 ## Related Documents
 
 - **Spec**:
