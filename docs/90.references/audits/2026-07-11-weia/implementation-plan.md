@@ -517,14 +517,14 @@ Expected: the README is a complete audit entrypoint and checks pass.
   12, plus canonical provider implementation and availability facts consumed
   by Task 11.
 
-- [ ] **Step 1: Build governance and harness matrices**
+- [x] **Step 1: Build governance and harness matrices**
 
 Cover purpose, roles, authority, contracts, owners, rules, templates, scripts,
 integration guides, security boundary, shared assets, duplicated summaries,
 Observe/Plan/Act/Verify/Learn, retry, termination, eval, recovery, compaction,
 memory, approval, tools/MCP, hooks, canaries, and feedback evidence.
 
-- [ ] **Step 2: Build provider and common-system matrices**
+- [x] **Step 2: Build provider and common-system matrices**
 
 Score Claude, Codex, and Gemini separately for provider/local declarations,
 native loading and registration, settings/hooks/config, model declarations,
@@ -534,14 +534,14 @@ memory/script layer without treating it as one native runtime. This task owns
 those implementation facts; role-specific default, escalation, fallback, eval,
 and adoption recommendations belong to Task 11.
 
-- [ ] **Step 3: Calculate scores and route gaps**
+- [x] **Step 3: Calculate scores and route gaps**
 
 Show numerator, denominator, N/A rows, verdict/confidence distributions, and
 never award maturity 4 to static controls. Each Partial/Gap states missing,
 corrective, complementary, unnecessary, priority, follow-up document, and
 acceptance evidence.
 
-- [ ] **Step 4: Validate and commit**
+- [x] **Step 4: Validate and commit**
 
 ```bash
 rg -n 'Claude|Codex|Gemini|Observe|retry|compaction|MCP|maturity|acceptance' \
