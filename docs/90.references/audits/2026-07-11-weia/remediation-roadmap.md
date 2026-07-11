@@ -11,7 +11,7 @@ updated: 2026-07-11
 ## Overview
 
 이 문서는 2026-07-11 implementation audit의 5개 보고서에서 나온 실행 가능
-행 80개를 근본 원인과 후속 소유자 기준으로 28개 canonical finding으로
+행 80개를 근본 원인과 후속 소유자 기준으로 32개 canonical finding으로
 정규화한 통합 로드맵이다. 원 보고서는 관찰 SHA의 사실과 점수를 계속
 소유하며, 이 문서는 중복 제거, 의존 순서, 목표 운영 모델, 선택지와 후속
 SDLC 경로만 소유한다.
@@ -95,12 +95,12 @@ SDLC 경로만 소유한다.
 
 | Canonical ID | Owner report and source rows | Root cause and evidence pointer | Priority | Dependencies | Historical mapping | Disposition / first owner |
 | --- | --- | --- | --- | --- | --- | --- |
-| RMD-015 | [Governance/provider](governance-harness-loop-providers.md), CLA-003, COD-003, GEM-003, COM-002; secondary [agents/vibe](ai-agents-model-routing-vibe-coding.md), COMMON-004 | Static parity checks do not cover every role and provider-native semantic field, while runtime model resolution remains a separate evidence lane. | P1 | RMD-004, RMD-016 | HL-005/006 context; no runtime claim | Adopt: Stage 04 Task `provider-adapter-semantic-parity`; role-body fixtures remain a distinct child task. |
+| RMD-015 | [Governance/provider](governance-harness-loop-providers.md), CLA-003, COD-003, GEM-003, COM-002 | Provider parity checks do not cover every provider-required model/tool/effort/scope field, while runtime model resolution remains a separate evidence lane. | P1 | RMD-004, RMD-016 | HL-005/006 context; no runtime claim | Adopt: Stage 04 Task `provider-adapter-semantic-parity`; role-body semantics remain outside this owner. |
 | RMD-016 | [Governance/provider](governance-harness-loop-providers.md), HAR-008, CLA-002, COD-002, GEM-001, GEM-002, COM-003 | Provider intent, native registration/config, hook or permission consumption, and availability have no comparable redacted canary contract; Gemini runtime intent and Codex project defaults are undecided. | P1 | RMD-004 | Supersedes HL-005/006; maps 2026-07-05 provider-parity checker | ADR-first, then Stage 04 Task `provider-native-readiness-canaries`; each provider reports independently. |
 | RMD-017 | [Governance/provider](governance-harness-loop-providers.md), HAR-007 | No approved per-server MCP ownership, threat, scope, egress, logging, disable, and native-connection evidence contract exists. | P1 | RMD-016 | Supersedes HL-007 | Adopt only for intended servers: Stage 03 Spec `provider-mcp-inventory-and-security`. |
 | RMD-018 | [Governance/provider](governance-harness-loop-providers.md), HAR-004; secondary [agents/vibe](ai-agents-model-routing-vibe-coding.md), VIBE-009 | Retry and risk-stop rules lack task-instantiated attempts, changed hypotheses, budgets, terminal reasons, and deterministic non-convergence rejection. | P1 | RMD-013 | Supersedes HL-002 | Adopt: Stage 03 Spec `bounded-retry-and-termination-contract`; the AI risk contract links to it. |
 | RMD-019 | [Governance/provider](governance-harness-loop-providers.md), HAR-006; secondary [agents/vibe](ai-agents-model-routing-vibe-coding.md), COMMON-003 | Compaction and role handoff have prose fields but no recoverable, provider-neutral, secret-safe checkpoint/output schema. | P2 | RMD-018 | Supersedes HL-004 | Adopt: Stage 03 Spec `recoverable-compaction-and-handoff-evidence`. |
-| RMD-020 | [Agents/vibe](ai-agents-model-routing-vibe-coding.md), ROLE-001, ROLE-002, ROLE-003, ROLE-004, ROLE-005, ROLE-006, ROLE-007, ROLE-008, ROLE-009, ROLE-010, COMMON-005, UP-001, UP-002; secondary [governance/provider](governance-harness-loop-providers.md), HAR-005 | Role quality, safety, cost, refusal, routing, and model fitness lack versioned corpora, incumbent baselines, independent adjudication, and privacy-bounded result evidence. | P1 | RMD-015, RMD-016, RMD-019 | Supersedes HL-003; rejects duplicate-role response | Adopt: Stage 03 Spec `agent-role-contract-and-evaluation`; create only change-justified corpora. |
+| RMD-020 | [Agents/vibe](ai-agents-model-routing-vibe-coding.md), ROLE-001, ROLE-002, ROLE-003, ROLE-004, ROLE-005, ROLE-006, ROLE-007, ROLE-008, ROLE-009, ROLE-010, COMMON-005, UP-001, UP-002; secondary [governance/provider](governance-harness-loop-providers.md), HAR-005 | Role quality, safety, cost, refusal, routing, and model fitness lack versioned corpora, incumbent baselines, independent adjudication, and privacy-bounded result evidence. | P1 | RMD-015, RMD-016, RMD-019, RMD-032 | Supersedes HL-003; rejects duplicate-role response | Adopt: Stage 03 Spec `agent-role-contract-and-evaluation`; create only change-justified corpora. |
 | RMD-021 | [Agents/vibe](ai-agents-model-routing-vibe-coding.md), COMMON-002, UP-003 | The canonical role/tool taxonomy omits existing reviewers and upstream adaptation lacks a repeated-gap, least-privilege, non-overlap admission gate. | P1 | RMD-004, RMD-020 | Replaces broad upstream persona adoption | Adopt: existing-role taxonomy fixture first; Stage 03 Spec `agent-role-admission-and-upstream-adaptation` only for a concrete proposal. |
 | RMD-022 | [Agents/vibe](ai-agents-model-routing-vibe-coding.md), VIBE-001, VIBE-002, VIBE-003, VIBE-005, VIBE-006, VIBE-007, VIBE-008, VIBE-010 | Retained AI-assisted work lacks one R0-R3 risk overlay joining pre-edit criteria, diff/provenance, independent review, least privilege, rollback, human approval, and operator-only execution. | P1 | RMD-013, RMD-016, RMD-018, RMD-019 | New current control; does not create a permission system | Adopt: Stage 03 Spec `risk-bounded-ai-assisted-development`. |
 | RMD-023 | [Platform/security](kubernetes-infrastructure-security.md), SEC-004, SEC-005 | Live GitOps/TLS checks do not separate strict readiness from diagnostics or require complete state, trust, timeout, and recovery evidence. | P1 | RMD-003, RMD-012 | Current findings retained; narrows historical live-readiness route | Adopt: Stage 03 Spec `platform-live-assurance-modes`; live Task requires separate approval. |
@@ -108,25 +108,16 @@ SDLC 경로만 소유한다.
 | RMD-025 | [Platform/security](kubernetes-infrastructure-security.md), PLAT-008 | Recovery procedures exist without a time-bound, redacted rehearsal proving sequence and restored reconciliation. | P2 | RMD-023 | Maps historical live-readiness route | Adopt: Stage 04 Task `platform-recovery-rehearsal` after strict-mode fixtures. |
 | RMD-026 | [Platform/security](kubernetes-infrastructure-security.md), SEC-013 | Actual image/chart/Action consumers lack a threat-modelled assurance scope; broad SBOM/provenance/scanner adoption has no universal consumer. | P2 | RMD-014 | Current finding retained and narrowed; supersedes broad 2026-07-05 supply-chain proposal | ADR/ARD-first: Stage 02 ARD `platform-supply-chain-assurance-scope`. |
 | RMD-027 | [Platform/security](kubernetes-infrastructure-security.md), SEC-014 | Admin-equivalent Argo CD destinations lack one principal/source, review, audit, revocation, and break-glass evidence model. | P1 | RMD-023 | Current finding retained | Adopt: Stage 03 Spec `argocd-admin-boundary-assurance`; quarterly evidence remains read-only and approved. |
-| RMD-028 | [Governance/provider](governance-harness-loop-providers.md), HAR-001; [CI/QA](ci-qa-automation-pipeline-workflow.md), CICD-009, QA-003, SUP-008 | Machine task state, service-delivery metrics, a Prettier consumer, and changelog retention each lack a named consumer and measured value/cost; absence is not itself a defect. | P3 | Phases A-D complete; then each lane meets its own consumer trigger below | Consolidates 2026-07-05 DORA/optional automation routes | ADR-first: `optional-assurance-consumer-admission` decides whether any lane may open; an admitted lane remains owned by its original Spec or Task below. |
+| RMD-028 | [Governance/provider](governance-harness-loop-providers.md), HAR-001 | The documented Observe procedure has no named deterministic consumer for common machine-readable task state. | P3 | Phases A-D complete; a later harness Spec identifies the consumer | No older ID; optional task-state evidence lane | Telemetry-gated: Stage 03 Spec `harness-task-state-contract`; representative fixtures record source/evidence lane and owner and reject a missing Observe block without claiming provider execution. |
+| RMD-029 | [CI/QA](ci-qa-automation-pipeline-workflow.md), CICD-009 | Application/service delivery metrics lack a named service and valid deployment/failure/recovery/rework event model. | P3 | Phases A-D complete; service, owner, privacy, retention, and events named | Maps the 2026-07-05 DORA proposal route | Telemetry-gated: Stage 03 Spec `service-delivery-metrics-pilot`; one service has documented joins, owner/privacy/retention, five reproducible queries, baseline output, and tests rejecting CI-only proxies. |
+| RMD-030 | [CI/QA](ci-qa-automation-pipeline-workflow.md), QA-003 | Tracked Prettier configuration has neither an explicit dormant disposition nor a scoped execution consumer. | P3 | Phases A-D complete; representative dry run and overlap analysis | Replaces generic formatter automation wording | Decision-gated: Stage 03 Spec `prettier-scope-and-consumer-decision`; the dry run quantifies touched paths/conflicts, chooses removal or one pinned scoped consumer, and defines alignment, migration, and rollback. |
+| RMD-031 | [CI/QA](ci-qa-automation-pipeline-workflow.md), SUP-008 | Changelog preview retention has no named release/audit consumer and the remote default is unverified. | P3 | Phases A-D complete; consumer proven or transient disposition selected | Maps the 2026-07-05 optional artifact route | Decision-gated: Stage 04 Task `changelog-artifact-consumer-and-retention-decision`; it records the consumer or transient status and tests duration/deletion/rollback or consistent transient labels. |
+| RMD-032 | [Agents/vibe](ai-agents-model-routing-vibe-coding.md), COMMON-004 | Generic/static adapter shape can pass while responsibility, outputs, stop rules, prohibited actions, and handoffs drift across intended local role surfaces. | P1 | RMD-004, RMD-016 | Split from provider parity; provider fields stay with RMD-015 | Adopt: Stage 04 Task `local-role-semantic-contract-validation`; positive/negative fixtures cover all ten responsibilities and intended local surfaces, fail wrong/missing semantics or local-body drift, and do not redefine Task 7 provider metadata. |
 
 The register maps all 80 actionable source rows exactly once. Grouping does not
-transfer fact ownership: RMD-011, RMD-012, RMD-014, RMD-015, RMD-018, RMD-019,
-RMD-020, and RMD-022 explicitly identify secondary reports while retaining one
+transfer fact ownership: RMD-011, RMD-012, RMD-014, RMD-018, RMD-019, RMD-020,
+and RMD-022 explicitly identify secondary reports while retaining one
 owner report for the underlying evidence.
-
-#### RMD-028 Lane-Preserving Sub-dispositions
-
-The common ADR is only a consumer/telemetry admission gate. It cannot approve an
-implementation, merge the four evidence contracts, or replace the exact first
-canonical owner and acceptance evidence retained here.
-
-| Source row | Exact first canonical owner | Dependency / admission trigger | Exact acceptance evidence |
-| --- | --- | --- | --- |
-| HAR-001 | Stage 03 Spec `harness-task-state-contract` | A later harness Spec first identifies a deterministic consumer; provider execution remains outside the claim. | Representative task fixtures record source/evidence lane and owner, and a validator rejects a missing required Observe block without claiming provider execution. |
-| CICD-009 | Stage 03 Spec `service-delivery-metrics-pilot` | One named service first defines merge, Argo CD deployment, failure, recovery, rework events, owner, privacy, and retention. | The named service has documented event joins, owner/privacy/retention, five reproducible metric queries, baseline output, and tests that reject CI-only proxy events. |
-| QA-003 | Stage 03 Spec `prettier-scope-and-consumer-decision` | A representative dry run and overlap analysis first establish touched paths, conflicts, and a real formatter consumer. | The sampled dry run is quantified; the Spec chooses removal or one pinned scoped consumer, defines migration/rollback, and aligns docs, config, and tool output. |
-| SUP-008 | Stage 04 Task `changelog-artifact-consumer-and-retention-decision` | A named release/audit consumer is proven or the preview is explicitly classified as transient diagnostics. | The Task names the consumer or transient disposition; retained evidence has tested duration and deletion/rollback, while transient evidence is labeled consistently in guide and summary. |
 
 ### Historical Lineage Map
 
@@ -142,7 +133,7 @@ canonical owner and acceptance evidence retained here.
 | SEC-004/005/010 | RMD-023/RMD-024; retained, not superseded. |
 | SEC-006/007/008/009 | RMD-001/RMD-002/RMD-003; retained, not superseded. |
 | SEC-012/013/014 | RMD-014/RMD-026/RMD-027; retained; SEC-013 remains narrowed to actual consumers. |
-| 2026-07-05 audit/index, provider, QA, GitOps, secret, live, DORA, and supply-chain opportunities | Replaced by RMD-005, RMD-016, RMD-011/RMD-012, RMD-001 through RMD-003, RMD-023 through RMD-025, RMD-028, and RMD-014/RMD-026 respectively. |
+| 2026-07-05 audit/index, provider, QA, GitOps, secret, live, DORA/optional automation, and supply-chain opportunities | Replaced by RMD-005, RMD-016, RMD-011/RMD-012, RMD-001 through RMD-003, RMD-023 through RMD-025, RMD-028 through RMD-031, and RMD-014/RMD-026 respectively. |
 
 ### Target Operating Model
 
@@ -167,11 +158,12 @@ canonical owner and acceptance evidence retained here.
 | Consolidated | Medium cost; highest cross-report benefit through shared contracts for lineage, validation, provider evidence, AI risk, and platform assurance. | Bounded to named owners and consumers; no repository-wide identifier migration. | Add fixtures and ledgers opt-in, reconcile current exceptions, then enable gates by phase. | Disable new gates/canaries while preserving existing paths and generated mappings. | Approved PRD/ARD/ADR, owner inventory, privacy/redaction rules, fixed fixtures, rollback owners. | **Default.** Lifecycle evidence scores this option highest, and the governance, CI/QA, platform/security, and agent audits independently prefer targeted consolidation. |
 | Full redesign | Very high cost with no demonstrated incremental consumer value: universal IDs/metadata, generated adapters, expanded platform/release and assurance systems. | Repository-wide across active stages, templates, validators, adapters, CI, operations, and possibly runtime. | Dual-read/backfill, consumer cutover, compatibility retirement. | Retain old paths/forms and disable new required fields; migration ledger must survive. | Separate ADR, collision/consumer census, stable domains, dual validators, privacy and operational budget. | Defer. Reopen only when repeated failures show Consolidated cannot meet measured acceptance. |
 
-Consolidated is evidence-supported rather than preference-only: the lifecycle report
-scores it `34/40` versus Minimal `31/40` and Full redesign `18/40`; the other four
-reports independently recommend consolidated, consumer-bound changes and reject
-file-count parity, universal scanner adoption, or role proliferation as substitutes
-for evidence.
+Consolidated is evidence-supported rather than preference-only: the
+[lifecycle report Target-State Comparison](sdlc-document-lifecycle-frontmatter.md#target-state-comparison)
+scores it `34/40` versus Minimal `31/40` and Full redesign `18/40`; the other
+four reports independently recommend consolidated, consumer-bound changes and
+reject file-count parity, universal scanner adoption, or role proliferation as
+substitutes for evidence.
 
 ### Phased Follow-up Routes
 
@@ -179,9 +171,9 @@ for evidence.
 | --- | --- | --- | --- |
 | A — executable P0 safety | RMD-001, RMD-002 | Spec `vault-eso-transport-and-secret-exposure-hardening`, then Task `vault-bootstrap-safety-remediation` | An instrumented negative/positive suite proves verified TLS is default, untrusted endpoints fail, no secret appears in argv/env/output/temp capture, break-glass expires, cleanup survives failure/interrupt, and rollback restores the prior revision. |
 | B — lifecycle traceability | RMD-004, then RMD-005 through RMD-010 | Spec `governance-owner-and-roster-currentness`, then Spec `sdlc-semantic-lineage-and-lifecycle-enforcement` and Plan/Task `sdlc-traceability-reconciliation` | Currentness fixtures reject stale roster/owner facts before fixed-tree lifecycle fixtures account for every applicable requirement and validation criterion, reconcile state and reciprocal links, reject invalid transitions/placeholders/dates, preserve historical identifiers, and complete a labeled tabletop without a fake incident. |
-| C — provider and harness verification | RMD-011, RMD-013, RMD-016, RMD-015, RMD-017, RMD-018, RMD-019, RMD-020, RMD-021, in that dependency order | Spec `path-to-validator-and-affected-surface-contract`, Spec `ai-agent-validation-obligation-alignment`, ADR `provider-runtime-intent-and-canary-boundary`, Task `provider-native-readiness-canaries`, then harness/agent Specs | Path selection precedes the active validation rule; ten-role semantic fixtures pass; each intended provider independently records version/config/discovery/hook or policy/model/MCP PASS/FAIL/SKIP without secrets; retry/handoff recovery rehearses; no role/model promotion occurs without a versioned baseline, threshold, adjudicator, cost/latency, and rollback. |
-| D — delivery, supply chain, platform evidence, and AI risk | RMD-003, RMD-012, RMD-014, RMD-022, RMD-023, RMD-024, RMD-025, RMD-026, RMD-027, in that dependency order | Spec `vault-eso-transport-and-secret-exposure-hardening` compatibility slice, ARD `platform-supply-chain-assurance-scope`, then Specs for validation evidence, immutable Actions, risk-bounded AI work, and strict platform assurance | Phase C has fixed validator selection; required tool/fallback evidence is explicit; Actions use reviewed immutable identities; RMD-022 consumes completed RMD-013/RMD-016/RMD-018/RMD-019 evidence before R0-R3 fixtures can pass; Vault/ESO compatibility, strict GitOps/TLS state, NetworkPolicy behavior, recovery, artifact assurance, and Argo admin boundaries each have approved redacted positive/negative evidence and tested rollback. |
-| E — optional optimization | RMD-028 | ADR `optional-assurance-consumer-admission`, then only the admitted lane's retained Spec or Task owner | The ADR records a separate admit/defer decision for each lane against its trigger; an admitted lane meets the exact sub-disposition acceptance above, while a deferred lane creates no implementation or readiness claim. |
+| C — provider and harness verification | RMD-011, RMD-013, RMD-016, RMD-015, RMD-017, RMD-018, RMD-019, RMD-032, RMD-020, RMD-021, in that dependency order | Spec `path-to-validator-and-affected-surface-contract`, Spec `ai-agent-validation-obligation-alignment`, ADR `provider-runtime-intent-and-canary-boundary`, Task `provider-native-readiness-canaries`, then provider parity, harness, local-role semantic, and role-eval owners | Path selection precedes the active validation rule; provider parity and local role-body semantics have separate fixtures; all intended role surfaces reject semantic drift before role eval; each provider reports native PASS/FAIL/SKIP independently; retry/handoff recovery rehearses; no role/model promotion occurs without a versioned baseline, threshold, adjudicator, cost/latency, and rollback. |
+| D — delivery, supply chain, platform evidence, and AI risk | RMD-003, RMD-012, RMD-014, RMD-022, RMD-023, RMD-024, RMD-025, RMD-026, RMD-027, in that dependency order | In order: Spec `vault-eso-transport-and-secret-exposure-hardening` compatibility slice; Spec `platform-security-validation-evidence-contract`; Spec `github-actions-immutable-dependency-identity`; Spec `risk-bounded-ai-assisted-development`; Specs `platform-live-assurance-modes` and `network-policy-behavioral-assurance`; Task `platform-recovery-rehearsal`; ARD `platform-supply-chain-assurance-scope`; Spec `argocd-admin-boundary-assurance` | Each named owner meets its row acceptance before the next dependent route starts: tool/fallback evidence precedes immutable Actions, risk/platform fixtures consume prior contracts, recovery follows strict modes, the supply-chain ARD follows Action evidence, and Argo admin assurance follows live-mode boundaries. |
+| E — optional optimization | RMD-028, RMD-029, RMD-030, RMD-031 | Independently: Specs `harness-task-state-contract`, `service-delivery-metrics-pilot`, `prettier-scope-and-consumer-decision`, and Task `changelog-artifact-consumer-and-retention-decision` | Each lane independently meets its own consumer trigger and exact row acceptance or remains deferred. A portfolio ADR may coordinate scheduling only after lane-owner decisions; it is never the first owner or an admission substitute. |
 
 Phase ordering and the left-to-right order inside each row are dependency order, not
 a commitment date. Phase A is only the executable P0 safety slice. RMD-022 cannot
@@ -199,7 +191,7 @@ remain code literals until created.
 
 | Artifact | First canonical owner/name | Exact acceptance before handoff |
 | --- | --- | --- |
-| PRD | Product Manager — `workspace-assurance-remediation` | Names RMD-001 through RMD-028, sponsor, in/out scope, phase outcomes, risk, success metrics, explicit defer/reject decisions, and approval boundaries. |
+| PRD | Product Manager — `workspace-assurance-remediation` | Names RMD-001 through RMD-032, sponsor, in/out scope, phase outcomes, risk, success metrics, explicit defer/reject decisions, and approval boundaries. |
 | ARD | System Architect — `workspace-assurance-operating-model` | Assigns all ten target-model responsibilities, data/evidence flows, trust boundaries, failure modes, dependencies, migration, and rollback with no dual owner. |
 | ADR | System Architect — `consolidated-workspace-assurance-target-state` | Records Minimal/Consolidated/Full alternatives, why Consolidated wins, irreversible consequences, reopen triggers, and rollback decision owner. |
 | Spec | Security Engineer — `vault-eso-transport-and-secret-exposure-hardening` | Meets RMD-001 through RMD-003 positive/negative/redaction/version/rotation/rollback criteria before any secret-bearing execution. |
@@ -224,10 +216,10 @@ remain code literals until created.
   roles; automatic CodeQL/dependency-review/SBOM/provenance/Scorecard adoption with
   no applicable artifact and response consumer; provider file-count parity as
   runtime proof.
-- **Telemetry-gated**: RMD-028 task-state automation, service-delivery metrics,
-  Prettier adoption/removal, and artifact retention; FinOps or other new roles;
-  heavier eval automation. Each stays deferred until its own consumer and measured
-  threshold exist.
+- **Telemetry-gated**: RMD-028 task-state automation, RMD-029 service-delivery
+  metrics, RMD-030 Prettier adoption/removal, and RMD-031 artifact retention;
+  FinOps or other new roles; heavier eval automation. Each stays deferred until
+  its own consumer and measured threshold exist.
 - **ADR-first**: Full redesign; native Gemini CLI adoption or formal non-adoption;
   consequential Codex project-default changes; new Release or environment family;
   platform artifact assurance architecture; any permission/tool expansion or
