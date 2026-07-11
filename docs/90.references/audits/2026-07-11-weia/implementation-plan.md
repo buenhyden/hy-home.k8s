@@ -781,31 +781,31 @@ upstream discovery, and vibe-coding findings. Checks pass.
 - Produces: de-duplicated priority, dependency, target-state, and follow-up map
   consumed by Task 13 and future approved SDLC work.
 
-- [ ] **Step 1: Normalize findings**
+- [x] **Step 1: Normalize findings**
 
 Assign one ID, owner report, evidence, root cause, dependency, priority, and
 superseded historical finding to each gap. Secondary reports link to the owner.
 
-- [ ] **Step 2: Build the target operating model and options**
+- [x] **Step 2: Build the target operating model and options**
 
 Describe governance, lifecycle, harness, provider, agent, delivery, platform,
 security, evidence, and review responsibilities. Compare Minimal,
 Consolidated, and Full redesign with cost, benefit, blast radius, migration,
 rollback, and prerequisites.
 
-- [ ] **Step 3: Build phased follow-up routes**
+- [x] **Step 3: Build phased follow-up routes**
 
 Create phases for safety/integrity, lifecycle traceability, provider/harness
 verification, delivery/supply-chain evidence, and optional optimization. For
 each phase, name the first PRD/ARD/ADR/Spec/Plan/Task/Guide/Policy/Runbook
 owner and exact acceptance evidence.
 
-- [ ] **Step 4: Record adoption and rejection decisions**
+- [x] **Step 4: Record adoption and rejection decisions**
 
 Identify controls/document families that are unnecessary, telemetry-gated, or
 ADR-first. Do not convert every external practice into a local requirement.
 
-- [ ] **Step 5: Validate and commit**
+- [x] **Step 5: Validate and commit**
 
 ```bash
 rg -n 'P0|P1|P2|P3|Minimal|Consolidated|Full redesign|PRD|ARD|ADR|Spec|acceptance' \
