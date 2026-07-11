@@ -609,12 +609,17 @@ Expected: compilation and commit succeed.
 
 - Modify: `docs/99.templates/support/document-profiles.json`
 - Modify: `tests/fixtures/document-contracts/registry-cases.json`
+- Modify: `scripts/validate-document-contract-registry.py`
+- Modify: `docs/04.execution/plans/2026-07-12-document-contract-registry.md`
 
 **Interfaces:**
 
-- Consumes: `matching_profile_ids()` and
-  `enumerate_target_markdown().{baseline_paths,current_paths,new_paths}`.
-- Produces: profile classes `sdlc`, `common`, `governance`, `readme`, and `exception` with zero route gaps or overlaps.
+- Consumes: `classify_path()` and
+  `enumerate_target_markdown().{baseline_paths,current_paths,new_paths}` plus
+  the tracked `*.template.md` Git inventory.
+- Produces: profile classes `sdlc`, `common`, `governance`, `readme`, and
+  `exception` with zero route gaps or overlaps, plus persistent self-test
+  assertions for exact profile and template fixture coverage.
 
 - [ ] **Step 1: Run the incomplete-registry RED check**
 

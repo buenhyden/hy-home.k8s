@@ -32,17 +32,2206 @@
   },
   "profiles": [
     {
-      "id": "test/sample",
+      "id": "sdlc/prd",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/01\\.requirements/[0-9]{3}-[^/]+\\.md$"
+        },
+        {
+          "kind": "regex",
+          "value": "^examples/(?:aws|azure)/docs/01\\.requirements/(?!README\\.md$)[^/]+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Vision",
+          "Problem Statement",
+          "Personas",
+          "Key Use Cases",
+          "Functional Requirements",
+          "Success / Acceptance Criteria",
+          "Scope and Non-goals",
+          "Risks, Dependencies, and Assumptions",
+          "AI Agent Requirements (If Applicable)",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Vision",
+          "Problem Statement",
+          "Personas",
+          "Key Use Cases",
+          "Functional Requirements",
+          "Success / Acceptance Criteria",
+          "Scope and Non-goals",
+          "Risks, Dependencies, and Assumptions",
+          "AI Agent Requirements (If Applicable)",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/requirements/prd.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "sdlc/ard",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/02\\.architecture/requirements/[0-9]{4}-[^/]+\\.md$"
+        },
+        {
+          "kind": "regex",
+          "value": "^examples/(?:aws|azure)/docs/02\\.architecture/requirements/(?!README\\.md$)[^/]+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Summary",
+          "Boundaries & Non-goals",
+          "Quality Attributes",
+          "System Overview & Context",
+          "Data Architecture",
+          "Infrastructure & Deployment",
+          "AI Agent Architecture Requirements (If Applicable)",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Summary",
+          "Boundaries & Non-goals",
+          "Quality Attributes",
+          "System Overview & Context",
+          "Data Architecture",
+          "Infrastructure & Deployment",
+          "AI Agent Architecture Requirements (If Applicable)",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/architecture/ard.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "sdlc/adr",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/02\\.architecture/decisions/[0-9]{4}-[^/]+\\.md$"
+        },
+        {
+          "kind": "regex",
+          "value": "^examples/(?:aws|azure)/docs/02\\.architecture/decisions/(?!README\\.md$)[^/]+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Context",
+          "Decision",
+          "Explicit Non-goals",
+          "Consequences",
+          "Alternatives",
+          "Agent-related Example Decisions (If Applicable)",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Context",
+          "Decision",
+          "Explicit Non-goals",
+          "Consequences",
+          "Alternatives",
+          "Agent-related Example Decisions (If Applicable)",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/architecture/adr.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "sdlc/spec",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/spec\\.md$"
+        },
+        {
+          "kind": "regex",
+          "value": "^examples/(?:aws|azure)/docs/03\\.specs/(?!.*(?:/)?README\\.md$).+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Strategic Boundaries & Non-goals",
+          "Related Inputs",
+          "Contracts",
+          "Core Design",
+          "Data Modeling & Storage Strategy",
+          "Interfaces & Data Structures",
+          "API Contract (If Applicable)",
+          "Agent Role & IO Contract (If Applicable)",
+          "Tools & Tool Contract (If Applicable)",
+          "Prompt / Policy Contract (If Applicable)",
+          "Memory & Context Strategy (If Applicable)",
+          "Guardrails (If Applicable)",
+          "Evaluation (If Applicable)",
+          "Edge Cases & Error Handling",
+          "Failure Modes & Fallback / Human Escalation",
+          "Verification Commands",
+          "Success Criteria & Verification Plan",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Strategic Boundaries & Non-goals",
+          "Related Inputs",
+          "Contracts",
+          "Core Design",
+          "Data Modeling & Storage Strategy",
+          "Interfaces & Data Structures",
+          "API Contract (If Applicable)",
+          "Agent Role & IO Contract (If Applicable)",
+          "Tools & Tool Contract (If Applicable)",
+          "Prompt / Policy Contract (If Applicable)",
+          "Memory & Context Strategy (If Applicable)",
+          "Guardrails (If Applicable)",
+          "Evaluation (If Applicable)",
+          "Edge Cases & Error Handling",
+          "Failure Modes & Fallback / Human Escalation",
+          "Verification Commands",
+          "Success Criteria & Verification Plan",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/specs/spec.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "sdlc/api-spec",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/api-spec\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Parent Spec",
+          "Scope & Non-goals",
+          "API Style",
+          "Authentication & Authorization",
+          "Endpoint / Operation Catalog",
+          "Request / Response Schemas",
+          "Error Model",
+          "Data Contract Compatibility",
+          "Non-Functional Requirements",
+          "Machine-readable Contract Files",
+          "Verification",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Parent Spec",
+          "Scope & Non-goals",
+          "API Style",
+          "Authentication & Authorization",
+          "Endpoint / Operation Catalog",
+          "Request / Response Schemas",
+          "Error Model",
+          "Data Contract Compatibility",
+          "Non-Functional Requirements",
+          "Machine-readable Contract Files",
+          "Verification",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "sdlc/agent-design",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/agent-design\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Parent Documents",
+          "Scope & Non-goals",
+          "Agent Role",
+          "Inputs / Outputs",
+          "Orchestration Model",
+          "Tools & Permissions",
+          "Prompt / Policy Contract",
+          "Context & Memory Strategy",
+          "Guardrails",
+          "Failure Modes & Fallback",
+          "Evaluation Plan",
+          "Observability",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Parent Documents",
+          "Scope & Non-goals",
+          "Agent Role",
+          "Inputs / Outputs",
+          "Orchestration Model",
+          "Tools & Permissions",
+          "Prompt / Policy Contract",
+          "Context & Memory Strategy",
+          "Guardrails",
+          "Failure Modes & Fallback",
+          "Evaluation Plan",
+          "Observability",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "sdlc/data-model",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/data-model\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Parent Documents",
+          "Scope & Non-goals",
+          "Entities / Aggregates",
+          "Relationships",
+          "Schema / Structures",
+          "Validation & Integrity Rules",
+          "Storage Strategy",
+          "Privacy / Security",
+          "Migration & Compatibility",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Parent Documents",
+          "Scope & Non-goals",
+          "Entities / Aggregates",
+          "Relationships",
+          "Schema / Structures",
+          "Validation & Integrity Rules",
+          "Storage Strategy",
+          "Privacy / Security",
+          "Migration & Compatibility",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "sdlc/tests",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/tests\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Parent Documents",
+          "Verification Goals",
+          "TDD Scope",
+          "Test Matrix",
+          "Contract & Integration Tests",
+          "Non-Functional Tests",
+          "Agent Evals (If Applicable)",
+          "Fixtures / Datasets",
+          "How to Run",
+          "Evidence & Reporting",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Parent Documents",
+          "Verification Goals",
+          "TDD Scope",
+          "Test Matrix",
+          "Contract & Integration Tests",
+          "Non-Functional Tests",
+          "Agent Evals (If Applicable)",
+          "Fixtures / Datasets",
+          "How to Run",
+          "Evidence & Reporting",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/specs/tests.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "sdlc/plan",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/04\\.execution/plans/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+\\.md$"
+        },
+        {
+          "kind": "regex",
+          "value": "^examples/(?:aws|azure)/docs/04\\.execution/plans/(?!README\\.md$)[^/]+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Context",
+          "Goals & In-Scope",
+          "Non-Goals & Out-of-Scope",
+          "Work Breakdown",
+          "Verification Plan",
+          "Risks & Mitigations",
+          "Agent Rollout & Evaluation Gates (If Applicable)",
+          "Completion Criteria",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Context",
+          "Goals & In-Scope",
+          "Non-Goals & Out-of-Scope",
+          "Work Breakdown",
+          "Verification Plan",
+          "Risks & Mitigations",
+          "Agent Rollout & Evaluation Gates (If Applicable)",
+          "Completion Criteria",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/execution/plan.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "sdlc/task",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/04\\.execution/tasks/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+\\.md$"
+        },
+        {
+          "kind": "regex",
+          "value": "^examples/(?:aws|azure)/docs/04\\.execution/tasks/(?!README\\.md$)[^/]+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Inputs",
+          "Working Rules",
+          "Task Table",
+          "Suggested Types",
+          "Agent-specific Types (If Applicable)",
+          "Phase View (Optional)",
+          "Verification Summary",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Inputs",
+          "Working Rules",
+          "Task Table",
+          "Suggested Types",
+          "Agent-specific Types (If Applicable)",
+          "Phase View (Optional)",
+          "Verification Summary",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/execution/task.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "sdlc/guide",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/05\\.operations/guides/[0-9]{4}-[^/]+\\.md$"
+        },
+        {
+          "kind": "regex",
+          "value": "^examples/(?:aws|azure)/docs/05\\.operations/guides/(?!README\\.md$)[^/]+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Guide Type",
+          "Target Audience",
+          "Purpose",
+          "Prerequisites",
+          "Step-by-step Instructions",
+          "Common Pitfalls",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Guide Type",
+          "Target Audience",
+          "Purpose",
+          "Prerequisites",
+          "Step-by-step Instructions",
+          "Common Pitfalls",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/operations/guide.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "sdlc/policy",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/05\\.operations/policies/[0-9]{4}-[^/]+\\.md$"
+        },
+        {
+          "kind": "regex",
+          "value": "^examples/(?:aws|azure)/docs/05\\.operations/policies/(?!README\\.md$)[^/]+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Policy Scope",
+          "Applies To",
+          "Controls",
+          "Exceptions",
+          "Verification",
+          "Review Cadence",
+          "AI Agent Policy Section (If Applicable)",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Policy Scope",
+          "Applies To",
+          "Controls",
+          "Exceptions",
+          "Verification",
+          "Review Cadence",
+          "AI Agent Policy Section (If Applicable)",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/operations/policy.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "sdlc/runbook",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/05\\.operations/runbooks/[0-9]{4}-[^/]+\\.md$"
+        },
+        {
+          "kind": "regex",
+          "value": "^examples/(?:aws|azure)/docs/05\\.operations/runbooks/(?!README\\.md$)[^/]+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Runbook Type",
+          "Overview",
+          "Purpose",
+          "Canonical References",
+          "When to Use",
+          "Procedure or Checklist",
+          "Verification Steps",
+          "Observability and Evidence Sources",
+          "Safe Rollback or Recovery Procedure",
+          "Agent Operations (If Applicable)",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Runbook Type",
+          "Overview",
+          "Purpose",
+          "Canonical References",
+          "When to Use",
+          "Procedure or Checklist",
+          "Verification Steps",
+          "Observability and Evidence Sources",
+          "Safe Rollback or Recovery Procedure",
+          "Agent Operations (If Applicable)",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/operations/runbook.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "sdlc/incident",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/05\\.operations/incidents/[0-9]{4}/INC-[0-9]{3}-[^/]+/INC-[0-9]{3}-[^/]+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Incident Metadata",
+          "Agent Metadata (If Applicable)",
+          "Incident Summary",
+          "Impact",
+          "Timeline",
+          "Current Hypothesis / Response State",
+          "Evidence",
+          "Follow-up Actions",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Incident Metadata",
+          "Agent Metadata (If Applicable)",
+          "Incident Summary",
+          "Impact",
+          "Timeline",
+          "Current Hypothesis / Response State",
+          "Evidence",
+          "Follow-up Actions",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/operations/incident.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "sdlc/postmortem",
+      "class": "sdlc",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/05\\.operations/incidents/[0-9]{4}/INC-[0-9]{3}-[^/]+/postmortem\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Incident Summary",
+          "Agent Metadata (If Applicable)",
+          "Impact",
+          "Timeline",
+          "Root Cause Analysis",
+          "What Went Well",
+          "What Went Wrong",
+          "Action Items",
+          "Prevention and Verification",
+          "Required Documentation Feedback Loop",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Incident Summary",
+          "Agent Metadata (If Applicable)",
+          "Impact",
+          "Timeline",
+          "Root Cause Analysis",
+          "What Went Well",
+          "What Went Wrong",
+          "Action Items",
+          "Prevention and Verification",
+          "Required Documentation Feedback Loop",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/operations/postmortem.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "content/reference",
       "class": "common",
       "mode": "authored",
       "routes": [
         {
           "kind": "regex",
-          "value": "^tests/fixtures/document-contracts/sample\\.md$"
+          "value": "^docs/90\\.references/(?!.*(?:/)?README\\.md$)(?!llm-wiki/wiki-index\\.md$).+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Purpose",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Purpose",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/reference.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "content/archive-tombstone",
+      "class": "common",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/98\\.archive/(?!.*(?:/)?README\\.md$).+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "original_path",
+          "archived_on",
+          "archive_reason",
+          "replacement"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "original_path",
+          "archived_on",
+          "archive_reason",
+          "replacement"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "original_path",
+          "archived_on",
+          "archive_reason",
+          "replacement"
+        ]
+      },
+      "statusDomain": [
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Original Document",
+          "Archive Decision",
+          "Current Replacement",
+          "Current Implementation Evidence",
+          "Archive Index",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Original Document",
+          "Archive Decision",
+          "Current Replacement",
+          "Current Implementation Evidence",
+          "Archive Index",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/archive-tombstone.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "governance/reference",
+      "class": "governance",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/00\\.agent-governance/(?!README\\.md$)(?!memory/).+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [],
+        "allowed": []
+      },
+      "template": null,
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "governance/memory",
+      "class": "governance",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/00\\.agent-governance/memory/(?!README\\.md$)(?!progress\\.md$)[^/]+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Problem",
+          "Context",
+          "Resolution",
+          "Prevention",
+          "Related Progress"
+        ],
+        "allowed": [
+          "Problem",
+          "Context",
+          "Resolution",
+          "Prevention",
+          "Related Progress"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/memory.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "governance/template-support",
+      "class": "governance",
+      "mode": "authored",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/99\\.templates/support/(?!README\\.md$)[^/]+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [],
+        "allowed": []
+      },
+      "template": null,
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "governance/progress-ledger",
+      "class": "governance",
+      "mode": "frontmatter-free",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/00.agent-governance/memory/progress.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [
+          "Work Entries"
+        ],
+        "allowed": [
+          "Work Entries"
+        ]
+      },
+      "template": null,
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "readme/repository",
+      "class": "readme",
+      "mode": "frontmatter-free",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "README.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [
+          "Selection Guide",
+          "docs 디렉터리 상세 역할",
+          "Assembly Rules",
+          "Writing Principles",
+          "Overview",
+          "Audience",
+          "Scope",
+          "Structure",
+          "How to Work in This Area",
+          "Link Basis",
+          "Related Documents",
+          "SNIPPET LIBRARY",
+          "Repository Map",
+          "Tech Stack",
+          "Prerequisites",
+          "Getting Started",
+          "Available Scripts",
+          "Configuration",
+          "Testing",
+          "Change Impact",
+          "Documentation Standards",
+          "Traceability Rules",
+          "Template Usage",
+          "Metadata Expectations",
+          "SSoT References",
+          "Usage Instructions",
+          "Verification and Monitoring",
+          "Incident and Recovery Links",
+          "Record Purpose",
+          "Expected Record Shape",
+          "Review Expectations",
+          "AI Agent Guidance",
+          "License"
+        ],
+        "allowed": [
+          "Selection Guide",
+          "docs 디렉터리 상세 역할",
+          "Assembly Rules",
+          "Writing Principles",
+          "Overview",
+          "Audience",
+          "Scope",
+          "Structure",
+          "How to Work in This Area",
+          "Link Basis",
+          "Related Documents",
+          "SNIPPET LIBRARY",
+          "Repository Map",
+          "Tech Stack",
+          "Prerequisites",
+          "Getting Started",
+          "Available Scripts",
+          "Configuration",
+          "Testing",
+          "Change Impact",
+          "Documentation Standards",
+          "Traceability Rules",
+          "Template Usage",
+          "Metadata Expectations",
+          "SSoT References",
+          "Usage Instructions",
+          "Verification and Monitoring",
+          "Incident and Recovery Links",
+          "Record Purpose",
+          "Expected Record Shape",
+          "Review Expectations",
+          "AI Agent Guidance",
+          "License"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/readme.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "readme/stage-index",
+      "class": "readme",
+      "mode": "frontmatter-free",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/README.md"
         },
         {
           "kind": "exact",
-          "value": "tests/fixtures/document-contracts/other.md"
+          "value": "docs/00.agent-governance/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/01.requirements/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/02.architecture/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/03.specs/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/04.execution/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/05.operations/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/90.references/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/98.archive/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/README.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [
+          "Selection Guide",
+          "docs 디렉터리 상세 역할",
+          "Assembly Rules",
+          "Writing Principles",
+          "Overview",
+          "Audience",
+          "Scope",
+          "Structure",
+          "How to Work in This Area",
+          "Link Basis",
+          "Related Documents",
+          "SNIPPET LIBRARY",
+          "Repository Map",
+          "Tech Stack",
+          "Prerequisites",
+          "Getting Started",
+          "Available Scripts",
+          "Configuration",
+          "Testing",
+          "Change Impact",
+          "Documentation Standards",
+          "Traceability Rules",
+          "Template Usage",
+          "Metadata Expectations",
+          "SSoT References",
+          "Usage Instructions",
+          "Verification and Monitoring",
+          "Incident and Recovery Links",
+          "Record Purpose",
+          "Expected Record Shape",
+          "Review Expectations",
+          "AI Agent Guidance",
+          "License"
+        ],
+        "allowed": [
+          "Selection Guide",
+          "docs 디렉터리 상세 역할",
+          "Assembly Rules",
+          "Writing Principles",
+          "Overview",
+          "Audience",
+          "Scope",
+          "Structure",
+          "How to Work in This Area",
+          "Link Basis",
+          "Related Documents",
+          "SNIPPET LIBRARY",
+          "Repository Map",
+          "Tech Stack",
+          "Prerequisites",
+          "Getting Started",
+          "Available Scripts",
+          "Configuration",
+          "Testing",
+          "Change Impact",
+          "Documentation Standards",
+          "Traceability Rules",
+          "Template Usage",
+          "Metadata Expectations",
+          "SSoT References",
+          "Usage Instructions",
+          "Verification and Monitoring",
+          "Incident and Recovery Links",
+          "Record Purpose",
+          "Expected Record Shape",
+          "Review Expectations",
+          "AI Agent Guidance",
+          "License"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/readme.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "readme/collection-index",
+      "class": "readme",
+      "mode": "frontmatter-free",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/00.agent-governance/memory/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/02.architecture/decisions/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/02.architecture/requirements/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/04.execution/plans/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/04.execution/tasks/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/05.operations/guides/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/05.operations/incidents/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/05.operations/policies/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/05.operations/runbooks/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/90.references/audits/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/90.references/data/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/90.references/learning/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/90.references/llm-wiki/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/90.references/research/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/support/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "docs/90.references/cloud-examples/README.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [
+          "Selection Guide",
+          "docs 디렉터리 상세 역할",
+          "Assembly Rules",
+          "Writing Principles",
+          "Overview",
+          "Audience",
+          "Scope",
+          "Structure",
+          "How to Work in This Area",
+          "Link Basis",
+          "Related Documents",
+          "SNIPPET LIBRARY",
+          "Repository Map",
+          "Tech Stack",
+          "Prerequisites",
+          "Getting Started",
+          "Available Scripts",
+          "Configuration",
+          "Testing",
+          "Change Impact",
+          "Documentation Standards",
+          "Traceability Rules",
+          "Template Usage",
+          "Metadata Expectations",
+          "SSoT References",
+          "Usage Instructions",
+          "Verification and Monitoring",
+          "Incident and Recovery Links",
+          "Record Purpose",
+          "Expected Record Shape",
+          "Review Expectations",
+          "AI Agent Guidance",
+          "License"
+        ],
+        "allowed": [
+          "Selection Guide",
+          "docs 디렉터리 상세 역할",
+          "Assembly Rules",
+          "Writing Principles",
+          "Overview",
+          "Audience",
+          "Scope",
+          "Structure",
+          "How to Work in This Area",
+          "Link Basis",
+          "Related Documents",
+          "SNIPPET LIBRARY",
+          "Repository Map",
+          "Tech Stack",
+          "Prerequisites",
+          "Getting Started",
+          "Available Scripts",
+          "Configuration",
+          "Testing",
+          "Change Impact",
+          "Documentation Standards",
+          "Traceability Rules",
+          "Template Usage",
+          "Metadata Expectations",
+          "SSoT References",
+          "Usage Instructions",
+          "Verification and Monitoring",
+          "Incident and Recovery Links",
+          "Record Purpose",
+          "Expected Record Shape",
+          "Review Expectations",
+          "AI Agent Guidance",
+          "License"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/readme.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "readme/implementation",
+      "class": "readme",
+      "mode": "frontmatter-free",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "examples/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "examples/sample-app/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "gitops/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "gitops/workloads/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "infrastructure/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "scripts/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "tests/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "traefik/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "examples/azure/gitops/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "examples/azure/infrastructure/README.md"
+        },
+        {
+          "kind": "exact",
+          "value": "examples/azure/kubernetes/README.md"
+        },
+        {
+          "kind": "regex",
+          "value": "^examples/(?:aws|azure)/README\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [
+          "Selection Guide",
+          "docs 디렉터리 상세 역할",
+          "Assembly Rules",
+          "Writing Principles",
+          "Overview",
+          "Audience",
+          "Scope",
+          "Structure",
+          "How to Work in This Area",
+          "Link Basis",
+          "Related Documents",
+          "SNIPPET LIBRARY",
+          "Repository Map",
+          "Tech Stack",
+          "Prerequisites",
+          "Getting Started",
+          "Available Scripts",
+          "Configuration",
+          "Testing",
+          "Change Impact",
+          "Documentation Standards",
+          "Traceability Rules",
+          "Template Usage",
+          "Metadata Expectations",
+          "SSoT References",
+          "Usage Instructions",
+          "Verification and Monitoring",
+          "Incident and Recovery Links",
+          "Record Purpose",
+          "Expected Record Shape",
+          "Review Expectations",
+          "AI Agent Guidance",
+          "License"
+        ],
+        "allowed": [
+          "Selection Guide",
+          "docs 디렉터리 상세 역할",
+          "Assembly Rules",
+          "Writing Principles",
+          "Overview",
+          "Audience",
+          "Scope",
+          "Structure",
+          "How to Work in This Area",
+          "Link Basis",
+          "Related Documents",
+          "SNIPPET LIBRARY",
+          "Repository Map",
+          "Tech Stack",
+          "Prerequisites",
+          "Getting Started",
+          "Available Scripts",
+          "Configuration",
+          "Testing",
+          "Change Impact",
+          "Documentation Standards",
+          "Traceability Rules",
+          "Template Usage",
+          "Metadata Expectations",
+          "SSoT References",
+          "Usage Instructions",
+          "Verification and Monitoring",
+          "Incident and Recovery Links",
+          "Record Purpose",
+          "Expected Record Shape",
+          "Review Expectations",
+          "AI Agent Guidance",
+          "License"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/readme.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "readme/snapshot-pack",
+      "class": "readme",
+      "mode": "frontmatter-free",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/90\\.references/(?:audits|research)/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/README\\.md$"
+        },
+        {
+          "kind": "regex",
+          "value": "^examples/(?:aws|azure)/docs(?:/.+)?/README\\.md$"
+        },
+        {
+          "kind": "regex",
+          "value": "^docs/90\\.references/cloud-examples/(?:aws|azure)/README\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [
+          "Selection Guide",
+          "docs 디렉터리 상세 역할",
+          "Assembly Rules",
+          "Writing Principles",
+          "Overview",
+          "Audience",
+          "Scope",
+          "Structure",
+          "How to Work in This Area",
+          "Link Basis",
+          "Related Documents",
+          "SNIPPET LIBRARY",
+          "Repository Map",
+          "Tech Stack",
+          "Prerequisites",
+          "Getting Started",
+          "Available Scripts",
+          "Configuration",
+          "Testing",
+          "Change Impact",
+          "Documentation Standards",
+          "Traceability Rules",
+          "Template Usage",
+          "Metadata Expectations",
+          "SSoT References",
+          "Usage Instructions",
+          "Verification and Monitoring",
+          "Incident and Recovery Links",
+          "Record Purpose",
+          "Expected Record Shape",
+          "Review Expectations",
+          "AI Agent Guidance",
+          "License"
+        ],
+        "allowed": [
+          "Selection Guide",
+          "docs 디렉터리 상세 역할",
+          "Assembly Rules",
+          "Writing Principles",
+          "Overview",
+          "Audience",
+          "Scope",
+          "Structure",
+          "How to Work in This Area",
+          "Link Basis",
+          "Related Documents",
+          "SNIPPET LIBRARY",
+          "Repository Map",
+          "Tech Stack",
+          "Prerequisites",
+          "Getting Started",
+          "Available Scripts",
+          "Configuration",
+          "Testing",
+          "Change Impact",
+          "Documentation Standards",
+          "Traceability Rules",
+          "Template Usage",
+          "Metadata Expectations",
+          "SSoT References",
+          "Usage Instructions",
+          "Verification and Monitoring",
+          "Incident and Recovery Links",
+          "Record Purpose",
+          "Expected Record Shape",
+          "Review Expectations",
+          "AI Agent Guidance",
+          "License"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/readme.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "readme/workspace-staging",
+      "class": "readme",
+      "mode": "frontmatter-free",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "_workspace/README.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [
+          "Selection Guide",
+          "docs 디렉터리 상세 역할",
+          "Assembly Rules",
+          "Writing Principles",
+          "Overview",
+          "Audience",
+          "Scope",
+          "Structure",
+          "How to Work in This Area",
+          "Link Basis",
+          "Related Documents",
+          "SNIPPET LIBRARY",
+          "Repository Map",
+          "Tech Stack",
+          "Prerequisites",
+          "Getting Started",
+          "Available Scripts",
+          "Configuration",
+          "Testing",
+          "Change Impact",
+          "Documentation Standards",
+          "Traceability Rules",
+          "Template Usage",
+          "Metadata Expectations",
+          "SSoT References",
+          "Usage Instructions",
+          "Verification and Monitoring",
+          "Incident and Recovery Links",
+          "Record Purpose",
+          "Expected Record Shape",
+          "Review Expectations",
+          "AI Agent Guidance",
+          "License"
+        ],
+        "allowed": [
+          "Selection Guide",
+          "docs 디렉터리 상세 역할",
+          "Assembly Rules",
+          "Writing Principles",
+          "Overview",
+          "Audience",
+          "Scope",
+          "Structure",
+          "How to Work in This Area",
+          "Link Basis",
+          "Related Documents",
+          "SNIPPET LIBRARY",
+          "Repository Map",
+          "Tech Stack",
+          "Prerequisites",
+          "Getting Started",
+          "Available Scripts",
+          "Configuration",
+          "Testing",
+          "Change Impact",
+          "Documentation Standards",
+          "Traceability Rules",
+          "Template Usage",
+          "Metadata Expectations",
+          "SSoT References",
+          "Usage Instructions",
+          "Verification and Monitoring",
+          "Incident and Recovery Links",
+          "Record Purpose",
+          "Expected Record Shape",
+          "Review Expectations",
+          "AI Agent Guidance",
+          "License"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/readme.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "exception/root-provider-shim",
+      "class": "exception",
+      "mode": "frontmatter-free",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "AGENTS.md"
+        },
+        {
+          "kind": "exact",
+          "value": "CLAUDE.md"
+        },
+        {
+          "kind": "exact",
+          "value": "GEMINI.md"
         }
       ],
       "frontmatter": {
@@ -60,6 +2249,1695 @@
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
       "appendContract": null
+    },
+    {
+      "id": "exception/provider-native-metadata",
+      "class": "exception",
+      "mode": "native",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "tests/fixtures/document-contracts/sample.md"
+        },
+        {
+          "kind": "regex",
+          "value": "^\\.(?:agents|claude|codex)/.+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [],
+        "allowed": []
+      },
+      "template": null,
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "exception/github-native-control",
+      "class": "exception",
+      "mode": "frontmatter-free",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^\\.github/(?:ABOUT|PULL_REQUEST_TEMPLATE|SECURITY)\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [],
+        "allowed": []
+      },
+      "template": null,
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "exception/native-contract",
+      "class": "exception",
+      "mode": "native",
+      "routes": [
+        {
+          "kind": "regex",
+          "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/contracts/(?:openapi\\.yaml|schema\\.graphql|service\\.proto)$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [],
+        "allowed": []
+      },
+      "template": null,
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "exception/generated-record",
+      "class": "exception",
+      "mode": "generated",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/90.references/llm-wiki/wiki-index.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [],
+        "allowed": []
+      },
+      "template": null,
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "exception/program-non-target",
+      "class": "exception",
+      "mode": "non-target",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "RTK.md"
+        },
+        {
+          "kind": "regex",
+          "value": "^graphify-out/.+\\.md$"
+        }
+      ],
+      "frontmatter": {
+        "mode": "not-applicable",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [],
+        "allowed": []
+      },
+      "template": null,
+      "sourceProfileIds": [],
+      "placeholderPolicy": "forbidden",
+      "appendContract": null
+    },
+    {
+      "id": "template/content/archive-tombstone",
+      "class": "common",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/common/archive-tombstone.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "original_path",
+          "archived_on",
+          "archive_reason",
+          "replacement"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "original_path",
+          "archived_on",
+          "archive_reason",
+          "replacement"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated",
+          "original_path",
+          "archived_on",
+          "archive_reason",
+          "replacement"
+        ]
+      },
+      "statusDomain": [
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Original Document",
+          "Archive Decision",
+          "Current Replacement",
+          "Current Implementation Evidence",
+          "Archive Index",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Original Document",
+          "Archive Decision",
+          "Current Replacement",
+          "Current Implementation Evidence",
+          "Archive Index",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/archive-tombstone.template.md",
+      "sourceProfileIds": [
+        "content/archive-tombstone"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/governance/memory",
+      "class": "governance",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/common/memory.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Problem",
+          "Context",
+          "Resolution",
+          "Prevention",
+          "Related Progress"
+        ],
+        "allowed": [
+          "Problem",
+          "Context",
+          "Resolution",
+          "Prevention",
+          "Related Progress"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/memory.template.md",
+      "sourceProfileIds": [
+        "governance/memory"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/readme/common",
+      "class": "readme",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/common/readme.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [
+          "Selection Guide",
+          "docs 디렉터리 상세 역할",
+          "Assembly Rules",
+          "Writing Principles",
+          "Overview",
+          "Audience",
+          "Scope",
+          "Structure",
+          "How to Work in This Area",
+          "Link Basis",
+          "Related Documents",
+          "SNIPPET LIBRARY",
+          "Repository Map",
+          "Tech Stack",
+          "Prerequisites",
+          "Getting Started",
+          "Available Scripts",
+          "Configuration",
+          "Testing",
+          "Change Impact",
+          "Documentation Standards",
+          "Traceability Rules",
+          "Template Usage",
+          "Metadata Expectations",
+          "SSoT References",
+          "Usage Instructions",
+          "Verification and Monitoring",
+          "Incident and Recovery Links",
+          "Record Purpose",
+          "Expected Record Shape",
+          "Review Expectations",
+          "AI Agent Guidance",
+          "License"
+        ],
+        "allowed": [
+          "Selection Guide",
+          "docs 디렉터리 상세 역할",
+          "Assembly Rules",
+          "Writing Principles",
+          "Overview",
+          "Audience",
+          "Scope",
+          "Structure",
+          "How to Work in This Area",
+          "Link Basis",
+          "Related Documents",
+          "SNIPPET LIBRARY",
+          "Repository Map",
+          "Tech Stack",
+          "Prerequisites",
+          "Getting Started",
+          "Available Scripts",
+          "Configuration",
+          "Testing",
+          "Change Impact",
+          "Documentation Standards",
+          "Traceability Rules",
+          "Template Usage",
+          "Metadata Expectations",
+          "SSoT References",
+          "Usage Instructions",
+          "Verification and Monitoring",
+          "Incident and Recovery Links",
+          "Record Purpose",
+          "Expected Record Shape",
+          "Review Expectations",
+          "AI Agent Guidance",
+          "License"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/readme.template.md",
+      "sourceProfileIds": [
+        "readme/repository",
+        "readme/stage-index",
+        "readme/collection-index",
+        "readme/implementation",
+        "readme/snapshot-pack",
+        "readme/workspace-staging"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/content/reference",
+      "class": "common",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/common/reference.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Purpose",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Purpose",
+          "Reference Type",
+          "Authority Boundary",
+          "Scope",
+          "Definitions / Facts",
+          "Sources",
+          "Review and Freshness",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/reference.template.md",
+      "sourceProfileIds": [
+        "content/reference"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/sdlc/adr",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/architecture/adr.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Context",
+          "Decision",
+          "Explicit Non-goals",
+          "Consequences",
+          "Alternatives",
+          "Agent-related Example Decisions (If Applicable)",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Context",
+          "Decision",
+          "Explicit Non-goals",
+          "Consequences",
+          "Alternatives",
+          "Agent-related Example Decisions (If Applicable)",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/architecture/adr.template.md",
+      "sourceProfileIds": [
+        "sdlc/adr"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/sdlc/ard",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/architecture/ard.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Summary",
+          "Boundaries & Non-goals",
+          "Quality Attributes",
+          "System Overview & Context",
+          "Data Architecture",
+          "Infrastructure & Deployment",
+          "AI Agent Architecture Requirements (If Applicable)",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Summary",
+          "Boundaries & Non-goals",
+          "Quality Attributes",
+          "System Overview & Context",
+          "Data Architecture",
+          "Infrastructure & Deployment",
+          "AI Agent Architecture Requirements (If Applicable)",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/architecture/ard.template.md",
+      "sourceProfileIds": [
+        "sdlc/ard"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/sdlc/plan",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/execution/plan.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Context",
+          "Goals & In-Scope",
+          "Non-Goals & Out-of-Scope",
+          "Work Breakdown",
+          "Verification Plan",
+          "Risks & Mitigations",
+          "Agent Rollout & Evaluation Gates (If Applicable)",
+          "Completion Criteria",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Context",
+          "Goals & In-Scope",
+          "Non-Goals & Out-of-Scope",
+          "Work Breakdown",
+          "Verification Plan",
+          "Risks & Mitigations",
+          "Agent Rollout & Evaluation Gates (If Applicable)",
+          "Completion Criteria",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/execution/plan.template.md",
+      "sourceProfileIds": [
+        "sdlc/plan"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/sdlc/task",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/execution/task.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Inputs",
+          "Working Rules",
+          "Task Table",
+          "Suggested Types",
+          "Agent-specific Types (If Applicable)",
+          "Phase View (Optional)",
+          "Verification Summary",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Inputs",
+          "Working Rules",
+          "Task Table",
+          "Suggested Types",
+          "Agent-specific Types (If Applicable)",
+          "Phase View (Optional)",
+          "Verification Summary",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/execution/task.template.md",
+      "sourceProfileIds": [
+        "sdlc/task"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/sdlc/guide",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/operations/guide.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Guide Type",
+          "Target Audience",
+          "Purpose",
+          "Prerequisites",
+          "Step-by-step Instructions",
+          "Common Pitfalls",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Guide Type",
+          "Target Audience",
+          "Purpose",
+          "Prerequisites",
+          "Step-by-step Instructions",
+          "Common Pitfalls",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/operations/guide.template.md",
+      "sourceProfileIds": [
+        "sdlc/guide"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/sdlc/incident",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/operations/incident.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Incident Metadata",
+          "Agent Metadata (If Applicable)",
+          "Incident Summary",
+          "Impact",
+          "Timeline",
+          "Current Hypothesis / Response State",
+          "Evidence",
+          "Follow-up Actions",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Incident Metadata",
+          "Agent Metadata (If Applicable)",
+          "Incident Summary",
+          "Impact",
+          "Timeline",
+          "Current Hypothesis / Response State",
+          "Evidence",
+          "Follow-up Actions",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/operations/incident.template.md",
+      "sourceProfileIds": [
+        "sdlc/incident"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/sdlc/policy",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/operations/policy.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Policy Scope",
+          "Applies To",
+          "Controls",
+          "Exceptions",
+          "Verification",
+          "Review Cadence",
+          "AI Agent Policy Section (If Applicable)",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Policy Scope",
+          "Applies To",
+          "Controls",
+          "Exceptions",
+          "Verification",
+          "Review Cadence",
+          "AI Agent Policy Section (If Applicable)",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/operations/policy.template.md",
+      "sourceProfileIds": [
+        "sdlc/policy"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/sdlc/postmortem",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/operations/postmortem.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Incident Summary",
+          "Agent Metadata (If Applicable)",
+          "Impact",
+          "Timeline",
+          "Root Cause Analysis",
+          "What Went Well",
+          "What Went Wrong",
+          "Action Items",
+          "Prevention and Verification",
+          "Required Documentation Feedback Loop",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Incident Summary",
+          "Agent Metadata (If Applicable)",
+          "Impact",
+          "Timeline",
+          "Root Cause Analysis",
+          "What Went Well",
+          "What Went Wrong",
+          "Action Items",
+          "Prevention and Verification",
+          "Required Documentation Feedback Loop",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/operations/postmortem.template.md",
+      "sourceProfileIds": [
+        "sdlc/postmortem"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/sdlc/runbook",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/operations/runbook.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Runbook Type",
+          "Overview",
+          "Purpose",
+          "Canonical References",
+          "When to Use",
+          "Procedure or Checklist",
+          "Verification Steps",
+          "Observability and Evidence Sources",
+          "Safe Rollback or Recovery Procedure",
+          "Agent Operations (If Applicable)",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Runbook Type",
+          "Overview",
+          "Purpose",
+          "Canonical References",
+          "When to Use",
+          "Procedure or Checklist",
+          "Verification Steps",
+          "Observability and Evidence Sources",
+          "Safe Rollback or Recovery Procedure",
+          "Agent Operations (If Applicable)",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/operations/runbook.template.md",
+      "sourceProfileIds": [
+        "sdlc/runbook"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/sdlc/prd",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/requirements/prd.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Vision",
+          "Problem Statement",
+          "Personas",
+          "Key Use Cases",
+          "Functional Requirements",
+          "Success / Acceptance Criteria",
+          "Scope and Non-goals",
+          "Risks, Dependencies, and Assumptions",
+          "AI Agent Requirements (If Applicable)",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Vision",
+          "Problem Statement",
+          "Personas",
+          "Key Use Cases",
+          "Functional Requirements",
+          "Success / Acceptance Criteria",
+          "Scope and Non-goals",
+          "Risks, Dependencies, and Assumptions",
+          "AI Agent Requirements (If Applicable)",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/requirements/prd.template.md",
+      "sourceProfileIds": [
+        "sdlc/prd"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/sdlc/agent-design",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/specs/agent-design.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Parent Documents",
+          "Scope & Non-goals",
+          "Agent Role",
+          "Inputs / Outputs",
+          "Orchestration Model",
+          "Tools & Permissions",
+          "Prompt / Policy Contract",
+          "Context & Memory Strategy",
+          "Guardrails",
+          "Failure Modes & Fallback",
+          "Evaluation Plan",
+          "Observability",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Parent Documents",
+          "Scope & Non-goals",
+          "Agent Role",
+          "Inputs / Outputs",
+          "Orchestration Model",
+          "Tools & Permissions",
+          "Prompt / Policy Contract",
+          "Context & Memory Strategy",
+          "Guardrails",
+          "Failure Modes & Fallback",
+          "Evaluation Plan",
+          "Observability",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
+      "sourceProfileIds": [
+        "sdlc/agent-design"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/sdlc/api-spec",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/specs/api-spec.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Parent Spec",
+          "Scope & Non-goals",
+          "API Style",
+          "Authentication & Authorization",
+          "Endpoint / Operation Catalog",
+          "Request / Response Schemas",
+          "Error Model",
+          "Data Contract Compatibility",
+          "Non-Functional Requirements",
+          "Machine-readable Contract Files",
+          "Verification",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Parent Spec",
+          "Scope & Non-goals",
+          "API Style",
+          "Authentication & Authorization",
+          "Endpoint / Operation Catalog",
+          "Request / Response Schemas",
+          "Error Model",
+          "Data Contract Compatibility",
+          "Non-Functional Requirements",
+          "Machine-readable Contract Files",
+          "Verification",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
+      "sourceProfileIds": [
+        "sdlc/api-spec"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/sdlc/data-model",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/specs/data-model.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Parent Documents",
+          "Scope & Non-goals",
+          "Entities / Aggregates",
+          "Relationships",
+          "Schema / Structures",
+          "Validation & Integrity Rules",
+          "Storage Strategy",
+          "Privacy / Security",
+          "Migration & Compatibility",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Parent Documents",
+          "Scope & Non-goals",
+          "Entities / Aggregates",
+          "Relationships",
+          "Schema / Structures",
+          "Validation & Integrity Rules",
+          "Storage Strategy",
+          "Privacy / Security",
+          "Migration & Compatibility",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
+      "sourceProfileIds": [
+        "sdlc/data-model"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/sdlc/task-legacy-harness",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/specs/harness-task-contract.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Inputs",
+          "Working Rules",
+          "Task Table",
+          "Suggested Types",
+          "Agent-specific Types (If Applicable)",
+          "Phase View (Optional)",
+          "Verification Summary",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Inputs",
+          "Working Rules",
+          "Task Table",
+          "Suggested Types",
+          "Agent-specific Types (If Applicable)",
+          "Phase View (Optional)",
+          "Verification Summary",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/specs/harness-task-contract.template.md",
+      "sourceProfileIds": [
+        "sdlc/task"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/sdlc/spec",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/specs/spec.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Strategic Boundaries & Non-goals",
+          "Related Inputs",
+          "Contracts",
+          "Core Design",
+          "Data Modeling & Storage Strategy",
+          "Interfaces & Data Structures",
+          "API Contract (If Applicable)",
+          "Agent Role & IO Contract (If Applicable)",
+          "Tools & Tool Contract (If Applicable)",
+          "Prompt / Policy Contract (If Applicable)",
+          "Memory & Context Strategy (If Applicable)",
+          "Guardrails (If Applicable)",
+          "Evaluation (If Applicable)",
+          "Edge Cases & Error Handling",
+          "Failure Modes & Fallback / Human Escalation",
+          "Verification Commands",
+          "Success Criteria & Verification Plan",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Strategic Boundaries & Non-goals",
+          "Related Inputs",
+          "Contracts",
+          "Core Design",
+          "Data Modeling & Storage Strategy",
+          "Interfaces & Data Structures",
+          "API Contract (If Applicable)",
+          "Agent Role & IO Contract (If Applicable)",
+          "Tools & Tool Contract (If Applicable)",
+          "Prompt / Policy Contract (If Applicable)",
+          "Memory & Context Strategy (If Applicable)",
+          "Guardrails (If Applicable)",
+          "Evaluation (If Applicable)",
+          "Edge Cases & Error Handling",
+          "Failure Modes & Fallback / Human Escalation",
+          "Verification Commands",
+          "Success Criteria & Verification Plan",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/specs/spec.template.md",
+      "sourceProfileIds": [
+        "sdlc/spec"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/sdlc/tests",
+      "class": "sdlc",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/sdlc/specs/tests.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Parent Documents",
+          "Verification Goals",
+          "TDD Scope",
+          "Test Matrix",
+          "Contract & Integration Tests",
+          "Non-Functional Tests",
+          "Agent Evals (If Applicable)",
+          "Fixtures / Datasets",
+          "How to Run",
+          "Evidence & Reporting",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Parent Documents",
+          "Verification Goals",
+          "TDD Scope",
+          "Test Matrix",
+          "Contract & Integration Tests",
+          "Non-Functional Tests",
+          "Agent Evals (If Applicable)",
+          "Fixtures / Datasets",
+          "How to Run",
+          "Evidence & Reporting",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/sdlc/specs/tests.template.md",
+      "sourceProfileIds": [
+        "sdlc/tests"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "governance/progress-entry",
+      "class": "governance",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/common/progress.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [],
+        "allowed": []
+      },
+      "template": "docs/99.templates/templates/common/progress.template.md",
+      "sourceProfileIds": [
+        "governance/progress-ledger"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": {
+        "parentProfileId": "governance/progress-ledger",
+        "parentH2": "Work Entries",
+        "entryHeadingLevel": 3,
+        "sectionHeadingLevel": 4,
+        "requiredSections": [
+          "Metadata",
+          "Progress",
+          "Memory",
+          "Evidence",
+          "Handoff"
+        ]
+      }
     }
   ],
   "programLineage": {

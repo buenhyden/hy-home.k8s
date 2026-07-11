@@ -69,8 +69,21 @@ def _load_json(path: Path) -> Any:
 
 
 def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
-    profile = raw_registry["profiles"][0]
-    route = profile["routes"][0]
+    profile = next(
+        profile
+        for profile in raw_registry["profiles"]
+        if any(
+            route.get("kind") == "exact"
+            and route.get("value") == SAMPLE_PATH.as_posix()
+            for route in profile["routes"]
+        )
+    )
+    route = next(
+        route
+        for route in profile["routes"]
+        if route.get("kind") == "exact"
+        and route.get("value") == SAMPLE_PATH.as_posix()
+    )
     if mutation == "none":
         return
     if mutation == "duplicate-profile-id":
@@ -80,7 +93,12 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         route["kind"] = "glob"
         return
     if mutation == "drop-regex-end-anchor":
-        route["value"] = route["value"].removesuffix("$")
+        regex_route = next(
+            candidate
+            for candidate in profile["routes"]
+            if candidate.get("kind") == "regex"
+        )
+        regex_route["value"] = regex_route["value"].removesuffix("$")
         return
     if mutation == "add-overlapping-exact-route":
         profile["routes"].append({"kind": "exact", "value": SAMPLE_PATH.as_posix()})
@@ -194,6 +212,195 @@ def _assert_parser_safety() -> None:
             )
 
 
+def _tracked_template_paths(root: Path) -> tuple[PurePosixPath, ...]:
+    completed = subprocess.run(
+        [
+            "git",
+            "ls-files",
+            "-z",
+            "--",
+            "docs/99.templates/templates/**/*.template.md",
+        ],
+        cwd=root,
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    records = completed.stdout.split(b"\0")
+    if records[-1] != b"":
+        raise AssertionError("git ls-files template inventory is not NUL terminated")
+    try:
+        return tuple(
+            sorted(
+                (PurePosixPath(record.decode("utf-8")) for record in records[:-1]),
+                key=lambda path: path.as_posix(),
+            )
+        )
+    except UnicodeDecodeError as exc:
+        raise AssertionError("git returned a non-UTF-8 template path") from exc
+
+
+def _assert_positive_coverage(
+    root: Path, raw_registry: dict[str, Any], fixture: dict[str, Any]
+) -> tuple[int, int]:
+    registry = validate_registry(root, raw_registry)
+    profiles = {profile.profile_id: profile for profile in registry.profiles}
+
+    coverage = fixture.get("profileCoverage")
+    if not isinstance(coverage, list):
+        raise AssertionError("profileCoverage must be an array")
+    coverage_ids = [row.get("profile") for row in coverage if isinstance(row, dict)]
+    if len(coverage_ids) != len(coverage):
+        raise AssertionError("profileCoverage rows must be objects")
+    if len(coverage_ids) != len(set(coverage_ids)):
+        raise AssertionError("profileCoverage must contain each profile exactly once")
+    if set(coverage_ids) != set(profiles):
+        missing = sorted(set(profiles) - set(coverage_ids))
+        extra = sorted(set(coverage_ids) - set(profiles))
+        raise AssertionError(
+            f"profileCoverage profile set mismatch: missing={missing!r} extra={extra!r}"
+        )
+    for row in coverage:
+        if set(row) != {"path", "profile"} or not all(
+            isinstance(row[key], str) and row[key] for key in ("path", "profile")
+        ):
+            raise AssertionError(f"invalid profileCoverage row: {row!r}")
+        actual = classify_path(registry, PurePosixPath(row["path"])).profile_id
+        if actual != row["profile"]:
+            raise AssertionError(
+                f"{row['path']}: expected profile {row['profile']!r}, got {actual!r}"
+            )
+
+    template_coverage = fixture.get("templateCoverage")
+    if not isinstance(template_coverage, list):
+        raise AssertionError("templateCoverage must be an array")
+    if any(
+        not isinstance(row, dict)
+        or set(row) != {"path", "profile"}
+        or not all(
+            isinstance(row[key], str) and row[key]
+            for key in ("path", "profile")
+        )
+        for row in template_coverage
+    ):
+        raise AssertionError("templateCoverage rows must contain only path and profile")
+    fixture_template_paths = tuple(
+        sorted(
+            (PurePosixPath(row["path"]) for row in template_coverage),
+            key=lambda path: path.as_posix(),
+        )
+    )
+    if len(fixture_template_paths) != len(set(fixture_template_paths)):
+        raise AssertionError("templateCoverage paths must be unique")
+    tracked_template_paths = _tracked_template_paths(root)
+    if fixture_template_paths != tracked_template_paths:
+        raise AssertionError(
+            "templateCoverage path set must equal tracked *.template.md inventory"
+        )
+
+    covered_template_profiles: set[str] = set()
+    append_profiles: set[str] = set()
+    for row in template_coverage:
+        path = PurePosixPath(row["path"])
+        profile = classify_path(registry, path)
+        if profile.profile_id != row["profile"]:
+            raise AssertionError(
+                f"{path}: expected template profile {row['profile']!r}, "
+                f"got {profile.profile_id!r}"
+            )
+        if profile.mode != "template":
+            raise AssertionError(f"{profile.profile_id}: expected template mode")
+        if profile.placeholder_policy != "template-only":
+            raise AssertionError(
+                f"{profile.profile_id}: expected template-only placeholder policy"
+            )
+        if len(profile.routes) != 1 or (
+            profile.routes[0].kind != "exact"
+            or profile.routes[0].value != path.as_posix()
+        ):
+            raise AssertionError(
+                f"{profile.profile_id}: expected one exact route to {path.as_posix()}"
+            )
+        if profile.template != path:
+            raise AssertionError(
+                f"{profile.profile_id}: template must equal its exact route"
+            )
+        covered_template_profiles.add(profile.profile_id)
+        if profile.append_contract is not None:
+            append_profiles.add(profile.profile_id)
+            if profile.profile_id != "governance/progress-entry":
+                raise AssertionError(
+                    f"{profile.profile_id}: unexpected append contract"
+                )
+            append_contract = profile.append_contract
+            if (
+                profile.source_profile_ids != ("governance/progress-ledger",)
+                or append_contract.parent_profile_id
+                != "governance/progress-ledger"
+                or append_contract.parent_h2 != "Work Entries"
+                or append_contract.entry_heading_level != 3
+                or append_contract.section_heading_level != 4
+                or append_contract.required_sections
+                != ("Metadata", "Progress", "Memory", "Evidence", "Handoff")
+            ):
+                raise AssertionError(
+                    "governance/progress-entry append contract does not match "
+                    "the ledger H3/H4 contract"
+                )
+            continue
+        if not profile.source_profile_ids:
+            raise AssertionError(
+                f"{profile.profile_id}: ordinary template must declare a source profile"
+            )
+        for source_id in profile.source_profile_ids:
+            source = profiles.get(source_id)
+            if source is None:
+                raise AssertionError(
+                    f"{profile.profile_id}: unknown source profile {source_id!r}"
+                )
+            inherited = (
+                profile.profile_class,
+                profile.frontmatter,
+                profile.status_domain,
+                profile.headings,
+            )
+            expected = (
+                source.profile_class,
+                source.frontmatter,
+                source.status_domain,
+                source.headings,
+            )
+            if inherited != expected:
+                raise AssertionError(
+                    f"{profile.profile_id}: inherited contract differs from {source_id}"
+                )
+
+        if profile.profile_id == "template/readme/common":
+            readme_profile_ids = {
+                candidate.profile_id
+                for candidate in registry.profiles
+                if candidate.profile_class == "readme"
+                and candidate.mode == "frontmatter-free"
+            }
+            if set(profile.source_profile_ids) != readme_profile_ids:
+                raise AssertionError(
+                    "template/readme/common must source all six README profiles"
+                )
+
+    declared_template_profiles = {
+        profile.profile_id for profile in registry.profiles if profile.mode == "template"
+    }
+    if covered_template_profiles != declared_template_profiles:
+        raise AssertionError(
+            "templateCoverage profile set must equal declared template profiles"
+        )
+    if append_profiles != {"governance/progress-entry"}:
+        raise AssertionError(
+            "governance/progress-entry must be the sole append-contract template"
+        )
+    return len(coverage), len(template_coverage)
+
+
 def _self_test(root: Path) -> int:
     raw_registry = _load_json(root / REGISTRY_PATH)
     fixture = _load_json(root / FIXTURE_PATH)
@@ -226,11 +433,17 @@ def _self_test(root: Path) -> int:
     try:
         _assert_parser_safety()
         _assert_inventory_safety(root)
+        profile_count, template_count = _assert_positive_coverage(
+            root, raw_registry, fixture
+        )
     except (AssertionError, OSError, subprocess.SubprocessError) as exc:
-        print(f"FAIL document contract registry self-test: inventory safety: {exc}")
+        print(f"FAIL document contract registry self-test: {exc}")
         return 1
 
-    print("PASS document contract registry self-test: 9 cases")
+    print(
+        "PASS document contract registry self-test: "
+        f"9 cases, {profile_count} profiles, {template_count} templates"
+    )
     return 0
 
 
