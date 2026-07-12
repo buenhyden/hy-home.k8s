@@ -1,7 +1,7 @@
 ---
 title: 'Template Contract Consolidation Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-07-12
 ---
@@ -31,8 +31,11 @@ Bash, Git, `rg`, `pre-commit`, and repository quality gates.
 - Spec 026 registry/schema/classifier must be complete and green before this Plan starts.
 - Change only Stage 99 support, non-README template forms, direct Stage 00 mirrors, compatibility fixtures/gates, and execution evidence.
 - In `docs/99.templates/README.md` and `docs/99.templates/templates/README.md`, change inventory and target-link rows only; Spec 028 owns every other README layout/body change.
-- Keep authored non-README document bodies unchanged; Spec 030 owns their migration.
-- Do not rewrite completed Plans/Tasks, audits, research snapshots, ADR history, or Archive Tombstones.
+- Keep authored non-README document bodies structurally unchanged; Spec 030 owns
+  their migration. Bounded dead-link/current-claim cleanup and retirement
+  annotations required by duplicate-form removal were allowed and performed.
+- Do not otherwise rewrite completed Plans/Tasks, audits, research snapshots,
+  ADR history, or Archive Tombstones.
 - Keep OpenAPI, GraphQL, and protobuf forms native and frontmatter-free.
 - Every form change requires a reviewed row in `docs/90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md` first.
 - Label ISO/NIST sources as standards and Diátaxis, Spec Kit, Nygard ADR, Kubernetes style, GitHub README guidance, and Google SRE as practices/guidance.
@@ -160,7 +163,7 @@ the ledger title or existing entries.
 | --- | --- | --- | --- |
 | VAL-PLN-001 | Research | Focused ledger assertion in Task 2 | Every family has source/date/version/adopt/reject/extension/refresh. |
 | VAL-PLN-002 | Structure | Registry compatibility validation | Canonical headings/forms match; debt count does not grow. |
-| VAL-PLN-003 | Legacy | `rg -n "task-legacy-har[n]ess|Suggested Types|SNIPPET LIBRARY" docs scripts tests .agents .claude .codex` | No active duplicate Task/profile marker; README snippet is left only for Spec 028 until its task begins. |
+| VAL-PLN-003 | Legacy | `rg -n -e 'task-legacy-har[n]ess' -e 'Suggested Types' -e 'Working Rules' docs/99.templates docs/00.agent-governance scripts tests` | The retired duplicate marker has zero matches. Remaining authored-heading terms are inventoried as finite Spec 030 fixture/gate debt, completed historical evidence, or Stage 99 README/body debt owned by Specs 028/030; no new occurrence is allowed. |
 | VAL-PLN-004 | Repository | Quality gate and all-files pre-commit | Existing corpus and new contracts pass together. |
 
 ## Risks & Mitigations
@@ -198,7 +201,7 @@ the ledger title or existing entries.
 - Consumes: done Spec 026 evidence and active Spec 027.
 - Produces: active `TCC-001` through `TCC-006` execution lineage.
 
-- [ ] **Step 1: Run the failing lineage assertion**
+- [x] **Step 1: Run the failing lineage assertion**
 
 ```bash
 python3 - <<'PY'
@@ -220,14 +223,14 @@ PY
 
 Expected: FAIL because the Task does not exist.
 
-- [ ] **Step 2: Create Task and reciprocal links**
+- [x] **Step 2: Create Task and reciprocal links**
 
 Create an active Task containing exact rows `TCC-001` through `TCC-006`, with
 the descriptions and validation columns from Work Breakdown, `platform` owner,
 the first row `Done`, and remaining rows `Queued`. Set this Plan active and add
 reciprocal links/index rows dated `2026-07-12`.
 
-- [ ] **Step 3: Re-run lineage and commit**
+- [x] **Step 3: Re-run lineage and commit**
 
 ```bash
 python3 - <<'PY'
@@ -256,7 +259,7 @@ Expected: PASS and one commit.
 - Consumes: the ten source-family rows in Spec 027.
 - Produces: columns `Family`, `Source kind`, `Authority and link`, `Observed`, `Version/revision`, `Adopted guidance`, `Rejected guidance and reason`, `Local extension`, `Refresh trigger`, `Affected forms`.
 
-- [ ] **Step 1: Run the missing-ledger RED assertion**
+- [x] **Step 1: Run the missing-ledger RED assertion**
 
 ```bash
 test -f docs/90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md
@@ -264,7 +267,7 @@ test -f docs/90.references/research/2026-07-07-wer/document-type-format-and-evid
 
 Expected: exit 1 because the file does not exist.
 
-- [ ] **Step 2: Create the ten complete family rows**
+- [x] **Step 2: Create the ten complete family rows**
 
 Use the families and primary sources exactly named in Spec 027: PRD; ARD; ADR;
 Spec/Plan/Task/tests; native API contracts; agent design; Guide/Reference/README;
@@ -273,13 +276,13 @@ Policy/Runbook; Incident/Postmortem; Archive/memory/progress. Set observed date
 2026-07-12`; distinguish adopted concepts from repository-specific fields;
 record at least one rejected item and one refresh trigger per row.
 
-- [ ] **Step 3: Add authority and non-copying boundaries**
+- [x] **Step 3: Add authority and non-copying boundaries**
 
 State that the ledger is evidence, not the route/schema owner; paid standard
 text is not reproduced; provider facts need refresh on official model/tool
 contract change; and local Frontmatter fields are repository extensions.
 
-- [ ] **Step 4: Assert complete rows**
+- [x] **Step 4: Assert complete rows**
 
 ```bash
 python3 - <<'PY'
@@ -294,7 +297,7 @@ PY
 
 Expected: PASS.
 
-- [ ] **Step 5: Index and commit**
+- [x] **Step 5: Index and commit**
 
 ```bash
 git diff --check
@@ -328,7 +331,7 @@ Expected: commit succeeds.
   route/state/profile tables, and `active` enforcement for exactly the six
   canonical non-README support documents.
 
-- [ ] **Step 1: Capture duplicated machine tables as RED evidence**
+- [x] **Step 1: Capture duplicated machine tables as RED evidence**
 
 ```bash
 rg -n '^## (Current Route Map|Lifecycle State Contract|Profile Families)|^\| (Product requirement|PRD|`sdlc/)' docs/99.templates/support
@@ -336,7 +339,7 @@ rg -n '^## (Current Route Map|Lifecycle State Contract|Profile Families)|^\| (Pr
 
 Expected: matches in routing, governance, and frontmatter support documents.
 
-- [ ] **Step 2: Rewrite support responsibilities**
+- [x] **Step 2: Rewrite support responsibilities**
 
 Keep `documentation-contract.md` for surface ownership, `sdlc-governance.md`
 for lifecycle rationale and handoff semantics, `common-documentation-governance.md`
@@ -353,13 +356,13 @@ future lifecycle normalization in the research decision ledger as deferred,
 with a required dedicated migration decision, corpus transition evidence, and
 owner; it is not enacted by Spec 027.
 
-- [ ] **Step 3: Set canonical support lifecycle**
+- [x] **Step 3: Set canonical support lifecycle**
 
 Change the six canonical support documents from `status: draft` to
 `status: active`, preserve the five-key order, and update the support index
 descriptions without changing its README profile layout.
 
-- [ ] **Step 4: Verify no second machine owner and commit**
+- [x] **Step 4: Verify no second machine owner and commit**
 
 ```bash
 python3 scripts/validate-document-contract-registry.py --root . --mode compatibility
@@ -404,7 +407,7 @@ Reference/memory/progress assertions. Task 4 is therefore authorized to make
 the two Stage 99 README indexes, and replace those obsolete assertions. The
 authored corpus, hook/provider files, and registry library remain out of scope.
 
-- [ ] **Step 1: Create compatibility debt fixture before form edits**
+- [x] **Step 1: Create compatibility debt fixture before form edits**
 
 The fixture must contain `owner: "Spec 030"`, `growthAllowed: false`, and one
 entry per changed profile with `canonical`, `legacyRequiredAnyOf`, and
@@ -430,7 +433,7 @@ status domain, and headings. The progress row instead declares
 H3/H4 append contract. Keep the legacy harness row only until Task 5 deletes
 the form and row together.
 
-- [ ] **Step 2: Run exact-heading RED assertion**
+- [x] **Step 2: Run exact-heading RED assertion**
 
 ```bash
 python3 - <<'PY'
@@ -445,7 +448,7 @@ PY
 
 Expected: FAIL on the current Task form.
 
-- [ ] **Step 3: Normalize every Markdown form to the heading matrix**
+- [x] **Step 3: Normalize every Markdown form to the heading matrix**
 
 Use only minimal placeholders and HTML comments. Merge repeated `Purpose` or
 `Summary` text into `Overview`; replace parent/canonical input headings with
@@ -471,14 +474,14 @@ Rewrite `progress.template.md` as a fragment beginning with H3
 `Metadata`; remove the template H1 and every H2 so appending it cannot create a
 second ledger-level section.
 
-- [ ] **Step 4: Add protected Task safety fields before legacy deletion**
+- [x] **Step 4: Add protected Task safety fields before legacy deletion**
 
 Under `Approval and Safety Boundaries`, require fields `Allowed Paths`,
 `Forbidden Paths`, `Approval Required`, `Static Validation`, `Live Validation`,
 `Secret / Vault Handling`, `Rollback Plan`, and `Evidence Location`. Mark
 GitOps/Kubernetes/operations impact as conditional fields within this section.
 
-- [ ] **Step 5: Update registry headings and run compatibility checks**
+- [x] **Step 5: Update registry headings and run compatibility checks**
 
 ```bash
 python3 scripts/validate-document-contract-registry.py --self-test
@@ -553,7 +556,7 @@ bash scripts/validate-repo-quality-gates.sh .
 
 Expected: all PASS and compatibility debt count equals the fixture baseline.
 
-- [ ] **Step 6: Commit canonical forms**
+- [x] **Step 6: Commit canonical forms**
 
 ```bash
 git diff --check
@@ -589,12 +592,12 @@ Expected: commit succeeds.
 - Consumes: canonical Task safety fields from Task 4.
 - Produces: zero active references to the deleted form and dual-gate compatibility until Spec 030.
 
-- [ ] **Step 1: Record legacy-reference RED evidence**
+- [x] **Step 1: Record legacy-reference RED evidence**
 
 Run and preserve the exact pre-deletion legacy query in the Task report before
 editing. Expected: active references and the duplicate form are reported.
 
-- [ ] **Step 2: Delete the file with `apply_patch` and remove active references**
+- [x] **Step 2: Delete the file with `apply_patch` and remove active references**
 
 Delete the retired duplicate form. Remove its inventory rows, route prose, validator
 locations/types, and Stage 00 selection guidance. Replace high-risk Task
@@ -603,7 +606,7 @@ Boundaries` contract. Delete the duplicate exact-route registry profile and its
 `templateModeCoverage` fixture row in the same change; leave the canonical
 Task source/template profiles unchanged.
 
-- [ ] **Step 3: Make legacy heading enforcement explicitly temporary**
+- [x] **Step 3: Make legacy heading enforcement explicitly temporary**
 
 Modify the embedded structural template check to read
 `template-compatibility.json`: canonical forms are checked against registry
@@ -611,7 +614,7 @@ headings; current authored files may satisfy only the declared legacy aliases;
 unknown aliases and counts above `baselinePathCount` fail. Do not remove the
 existing quality gate before Spec 029 is production-ready.
 
-- [ ] **Step 4: Prove Stage 99 README scope is inventory-only**
+- [x] **Step 4: Prove Stage 99 README scope is inventory-only**
 
 ```bash
 git diff --unified=0 -- docs/99.templates/README.md docs/99.templates/templates/README.md
@@ -620,7 +623,7 @@ git diff --unified=0 -- docs/99.templates/README.md docs/99.templates/templates/
 Expected: changed hunks contain only form inventory/tree rows, target links,
 and removal of the legacy form reference; no README heading/layout redesign.
 
-- [ ] **Step 5: Prove zero active legacy references**
+- [x] **Step 5: Prove zero active legacy references**
 
 ```bash
 test -z "$(find docs/99.templates/templates/sdlc/specs -maxdepth 1 -type f -iname '*harness*task*' -print)"
@@ -631,7 +634,7 @@ bash scripts/validate-repo-quality-gates.sh .
 
 Expected: searches return no matches and both validators PASS.
 
-- [ ] **Step 6: Commit legacy removal**
+- [x] **Step 6: Commit legacy removal**
 
 ```bash
 git add docs scripts/validate-repo-quality-gates.sh scripts/validate-document-contract-registry.py tests/fixtures/document-contracts/template-compatibility.json tests/fixtures/document-contracts/registry-cases.json
@@ -658,7 +661,7 @@ Expected: commit succeeds.
 - Consumes: research, support, template, compatibility, and legacy-removal results.
 - Produces: done evidence and an explicit statement that Spec 028 owns all Stage 99 README profile/body redesign.
 
-- [ ] **Step 1: Run the complete validation bundle**
+- [x] **Step 1: Run the complete validation bundle**
 
 ```bash
 python3 scripts/validate-document-contract-registry.py --self-test
@@ -669,20 +672,23 @@ git diff --check
 pre-commit run --all-files
 ```
 
-Expected: validators PASS; legacy search returns no active marker; hooks pass.
+Expected: validators PASS; the retired duplicate marker has zero matches; each
+remaining `Suggested Types` or `Working Rules` match is classified as finite
+Spec 030 fixture/gate evidence, completed historical evidence, or authored
+Stage 99 README/body debt handed to Specs 028/030; hooks pass.
 
-- [ ] **Step 2: Record compatibility and README handoff evidence**
+- [x] **Step 2: Record compatibility and README handoff evidence**
 
 In the Task, record canonical/legacy heading counts, the Spec 030 removal owner,
 the exact Stage 99 README inventory-only diff boundary, commands, PASS/SKIP,
 reviewer, and rollback range. Link Spec 028 as README-form/body owner.
 
-- [ ] **Step 3: Close lifecycle and indexes**
+- [x] **Step 3: Close lifecycle and indexes**
 
 Set Spec, Plan, and Task to `done`, all TCC rows to `Done`, and all three index
 rows to `Done` dated `2026-07-12`.
 
-- [ ] **Step 4: Commit closure**
+- [x] **Step 4: Commit closure**
 
 ```bash
 git add docs/03.specs/027-template-contract-consolidation/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-07-12-template-contract-consolidation.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-07-12-template-contract-consolidation.md docs/04.execution/tasks/README.md
@@ -693,13 +699,13 @@ Expected: commit succeeds.
 
 ## Completion Criteria
 
-- [ ] Ten type-to-source family rows are reviewed before form changes.
-- [ ] Support prose no longer owns complete route/state/profile tables.
-- [ ] Every non-README routed type has one canonical form and exact heading profile.
-- [ ] Legacy harness Task form and active references are zero.
-- [ ] Compatibility debt is finite, non-growing, and assigned to Spec 030.
-- [ ] Stage 99 README edits remained inventory-only and Spec 028 handoff is explicit.
-- [ ] Repository quality, all-files, and reciprocal lifecycle evidence pass.
+- [x] Ten type-to-source family rows are reviewed before form changes.
+- [x] Support prose no longer owns complete route/state/profile tables.
+- [x] Every non-README routed type has one canonical form and exact heading profile.
+- [x] Legacy harness Task form and active references are zero.
+- [x] Compatibility debt is finite, non-growing, and assigned to Spec 030.
+- [x] Stage 99 README edits remained inventory-only and Spec 028 handoff is explicit.
+- [x] Repository quality, all-files, and reciprocal lifecycle evidence pass.
 
 ## Related Documents
 

@@ -1,7 +1,7 @@
 ---
 title: 'Template Contract Consolidation Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
 updated: 2026-07-12
 ---
@@ -21,8 +21,10 @@ Stage 00 mirrors. It may update only inventory and target-link rows in
 `docs/99.templates/README.md` and `docs/99.templates/templates/README.md` when a
 form is added, renamed, or deleted; Spec 028 owns their profile layout and all
 other README body design. Authored population migration is owned by Spec 030.
-This tranche does not rewrite historical Plans, Tasks, audits, research packs,
-or archive Tombstones.
+This tranche did not structurally rewrite historical Plans, Tasks, audits,
+research packs, or archive Tombstones. It did allow and perform bounded
+dead-link and current-claim cleanup plus retirement annotations required to
+remove the duplicate Task form; Spec 030 still owns authored corpus migration.
 
 ## Related Inputs
 
@@ -133,7 +135,7 @@ authored document -> topic-specific content only
 ```bash
 python3 scripts/validate-document-contract-registry.py --root . --mode compatibility
 bash scripts/validate-repo-quality-gates.sh .
-rg -n "task-legacy-har[n]ess|Suggested Types|SNIPPET LIBRARY" docs scripts tests .agents .claude .codex
+rg -n 'task-legacy-har[n]ess|Suggested Types|Working Rules' docs/99.templates docs/00.agent-governance scripts tests
 git diff --check
 ```
 
@@ -148,6 +150,9 @@ git diff --check
 - **VAL-SPC-005**: Every template family has a reviewed type-to-source row with
   observation/version/applicability/rejection/refresh fields, and no form change
   is accepted without linking its row and local decision.
+- **README Handoff**: TCC-004 and TCC-005 changed only Stage 99 README inventory,
+  tree, and target-link rows. Spec 028 owns every README form, profile, layout,
+  and body redesign; Spec 030 owns migration of the remaining authored corpus.
 
 ## Related Documents
 
