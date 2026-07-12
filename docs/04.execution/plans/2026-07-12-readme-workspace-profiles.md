@@ -810,12 +810,22 @@ gates PASS.
 - Modify: `docs/00.agent-governance/rules/documentation-protocol.md`
 - Modify: `docs/00.agent-governance/rules/document-stage-routing.md`
 - Modify: `docs/00.agent-governance/rules/stage-authoring-matrix.md`
+- Modify: `docs/00.agent-governance/rules/postflight-checklist.md`
 - Modify: `docs/00.agent-governance/hooks/k8s-pre-edit.sh`
+- Modify: `docs/00.agent-governance/memory/progress.md`
+- Modify: `.agents/output-styles/hy-home-k8s.md`
+- Modify: `.claude/CLAUDE.md`
+- Modify: `scripts/README.md`
 - Modify: `scripts/validate-document-contract-registry.py`
 - Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify: `tests/fixtures/document-contracts/registry-cases.json`
 - Modify: `tests/fixtures/document-contracts/template-compatibility.json`
 - Modify: Spec 028, this Plan, same-topic Task, and Stage 03/04 indexes
+
+No other provider file, hook, CI file, authored README, registry library,
+fixture, or historical document changes in this task. Non-README Specs, Plans,
+Tasks, Stage 90 research/audits, and Stage 98 records may retain dated evidence
+references to the retired form; they are not active routing consumers.
 
 **Interfaces:**
 
@@ -824,39 +834,60 @@ gates PASS.
 - Produces: zero old-form references, zero legacy-mode branch/token, and an
   explicit Spec 029 fixture-consumer handoff that retains the finite canonical
   fixture reader.
+- Preserves: the six one-to-one `readme/*` and `template/readme/*` bindings,
+  all 72 README paths, and the byte-identical README fixture.
+- Produces: 60 registry/profile-coverage rows, 27 template-coverage and
+  TemplateCompatibility mode rows, and a 466-path tracked target corpus.
 
 - [ ] **Step 1: Run legacy RED search**
 
 ```bash
-git ls-files -z -- 'README.md' ':(glob)**/README.md' | \
-  xargs -0 -r rg -n 'SNIPPET LIBRARY|Selection Guide|universal seven'
-rg -n 'RWP006_REMOVE_README_DUAL_MODE' scripts/validate-repo-quality-gates.sh
-rg -n '(^|/)readme\.template\.md|docs/99\.templates/templates/common/readme\.template\.md|template/readme/common' \
+test -e docs/99.templates/templates/common/readme.template.md
+rg -n 'readme\.template\.md|template/readme/common|RWP006_REMOVE_README_DUAL_MODE' \
   docs/99.templates docs/00.agent-governance/rules \
   docs/00.agent-governance/hooks scripts tests .agents .claude .codex
+rg -n 'README.*Link Basis|README Link Basis|README files must keep `Overview`' \
+  docs/99.templates/README.md \
+  docs/99.templates/support/common-documentation-governance.md \
+  docs/00.agent-governance/rules/documentation-protocol.md \
+  docs/00.agent-governance/rules/stage-authoring-matrix.md \
+  docs/00.agent-governance/rules/postflight-checklist.md \
+  .agents/output-styles/hy-home-k8s.md .claude/CLAUDE.md scripts/README.md
 ```
 
-Expected: old form and active consumer references are found. Deliberately do
-not search non-README Specs, Plans, Tasks, Stage 90 research/audits, or Stage 98
-history: those records may name the retired form as evidence and are not
-runtime or authoring consumers. README entrypoints remain in the first,
-README-owned scan because all 72 are migration targets. Generic legacy heading
-markers are not scanned across `.agents`, `.claude`, or `.codex`; only exact
-old-form/profile references are checked on those active consumer surfaces.
+Expected: the form exists; the literal search finds the detached registry,
+fixtures, validators, routing prose, hook, and template inventories; and the
+focused prose search finds universal `Link Basis` or seven-heading claims.
+Do not use `(^|/)readme\.template\.md`: it misses bare inventory and validator
+entries. Do not globally search generic `Selection Guide`; that phrase has an
+unrelated valid use in the RCA skill. Historical evidence surfaces are outside
+this active-consumer RED scan.
 
 - [ ] **Step 2: Delete old form and update consumers**
 
 Delete `readme.template.md` with `apply_patch`; remove exact profile
 `template/readme/common`, its registry and TemplateCompatibility coverage rows,
-every exact-ID/path validator exemption, and every active old-form consumer
-including the pre-edit hook. Recompute both semantic pins after removing that
-state. Preserve the six one-to-one authored/template profile bindings and
-forms. Remove only the quality gate's
-`RWP006_REMOVE_README_DUAL_MODE` legacy branch and detached common state;
-retain its finite canonical `readme-profile-cases.json` reader for the Spec 029
-handoff. The retained check may compare actual H1/H2 to fixture expectations
-but must carry removal owner `Spec 029` and must not become a second canonical
-heading table.
+every exact-ID/path validator exemption, and every active old-form consumer.
+The registry CLI must lose the detached constants, expected ID, source-less
+exception, and old-form consumer check. The registry and quality gate must
+instead require the ordinary source-less template set to be empty: every
+ordinary template except the existing progress append fragment has a source
+profile.
+
+Remove from the quality gate the old template inventory and frontmatter-free
+entries, detached route and comment-heading exceptions, detached route-map
+branch and presence assertion, legacy seven-heading predicate/probe/counters,
+and exact `RWP006_REMOVE_README_DUAL_MODE` token. Retain the finite canonical
+`readme-profile-cases.json` reader for all 72 paths with temporary consumer and
+removal owner `Spec 029`; it may compare actual H1/H2 to fixture expectations
+but must not embed a second heading table.
+
+The pre-edit hook routes README work through the registry and Template Routing
+Contract without copying six path rules. Stage 99/00 governance, the output
+style, Claude provider prose, postflight checklist, and scripts inventory must
+describe profile-declared required/allowed headings, not universal `Link
+Basis` or seven-H2 rules. Preserve the six one-to-one authored/template README
+bindings and forms.
 
 - [ ] **Step 3: Run focused fence-aware migration assertion**
 
@@ -870,10 +901,50 @@ paths. Do not save this state machine as the production parser.
 
 ```bash
 python3 - <<'PY'
+import copy
+import hashlib
 import json
 import subprocess
 from pathlib import Path
-data=json.loads(Path('tests/fixtures/document-contracts/readme-profile-cases.json').read_text())
+
+registry_path=Path('docs/99.templates/support/document-profiles.json')
+registry=json.loads(registry_path.read_text())
+registry_cases=json.loads(Path('tests/fixtures/document-contracts/registry-cases.json').read_text())
+compat=json.loads(Path('tests/fixtures/document-contracts/template-compatibility.json').read_text())
+fixture_path=Path('tests/fixtures/document-contracts/readme-profile-cases.json')
+data=json.loads(fixture_path.read_text())
+
+old_id='template/readme/common'
+old_path='docs/99.templates/templates/common/readme.template.md'
+assert len(registry['profiles']) == 60
+assert len(registry_cases['profileCoverage']) == 60
+assert len(registry_cases['templateCoverage']) == 27
+assert len(compat['templateModeCoverage']) == 27
+assert old_id not in {row['id'] for row in registry['profiles']}
+assert old_id not in {row['profile'] for row in registry_cases['profileCoverage']}
+assert old_path not in {row['path'] for row in registry_cases['templateCoverage']}
+assert old_id not in {row['profile'] for row in compat['templateModeCoverage']}
+assert old_path not in {row['form'] for row in compat['templateModeCoverage']}
+
+fields=('id','class','mode','frontmatter','statusDomain','headings','template',
+        'routes','sourceProfileIds','placeholderPolicy','appendContract')
+projection=[]
+for profile in sorted(registry['profiles'], key=lambda row: row['id']):
+    row={field: copy.deepcopy(profile[field]) for field in fields}
+    row['routes']=sorted(row['routes'], key=lambda route: (route['kind'], route['value']))
+    projection.append(row)
+digest=hashlib.sha256(json.dumps(
+    projection, ensure_ascii=True, separators=(',', ':'), sort_keys=True
+).encode()).hexdigest()
+assert digest == '54ab9344bc7c718da6bb8ad95cdd5a9e3ab66728052263afbe9f2c107a04a7a8'  # pragma: allowlist secret
+compat_digest=hashlib.sha256(json.dumps(
+    compat, ensure_ascii=True, separators=(',', ':'), sort_keys=True
+).encode()).hexdigest()
+assert compat_digest == 'd53a36f8849fdb8131f79c23ad2bd66c267a1594f12c0b03f353dfe5c88b46a2'  # pragma: allowlist secret
+assert hashlib.sha256(fixture_path.read_bytes()).hexdigest() == (
+    '50f8c8ab05267a9ddf059d72ca6950d4f05b14ad82010c0d9576eb7a9f1f68d0'  # pragma: allowlist secret
+)
+
 paths={row['path'] for row in data['paths']}
 tracked={
     path
@@ -888,11 +959,34 @@ tracked={
 assert len(paths) == 72
 assert paths == tracked, (sorted(paths-tracked), sorted(tracked-paths))
 assert {case['name'] for case in data['cases']} == {'valid-profile','frontmatter-forbidden','duplicate-h1','duplicate-h2','unsupported-h2','missing-required-h2','fenced-heading-ignored','unclosed-fence'}
+
+profiles={row['id']: row for row in registry['profiles']}
+names=('repository','stage-index','collection-index','implementation','snapshot-pack','workspace-staging')
+for name in names:
+    form=f'docs/99.templates/templates/common/readme-{name}.template.md'
+    assert profiles[f'readme/{name}']['template'] == form
+    assert profiles[f'template/readme/{name}']['template'] == form
+ordinary_source_less=[
+    row['id'] for row in registry['profiles']
+    if row['mode'] == 'template'
+    and row['id'] != 'governance/progress-entry'
+    and not row['sourceProfileIds']
+]
+assert ordinary_source_less == []
+
+for source in (Path('scripts/validate-document-contract-registry.py'),
+               Path('scripts/validate-repo-quality-gates.sh')):
+    text=source.read_text()
+    assert old_id not in text, source
+    assert old_path not in text, source
+    assert 'RWP006_REMOVE_README_DUAL_MODE' not in text, source
 PY
 ```
 
-Expected: PASS. The Task records that Spec 029 must run these same cases
-through its production CommonMark-aware parser.
+Expected: PASS with 60 profiles, 27 template rows, six preserved bindings, an
+empty ordinary source-less set, exact semantic pins, byte-identical README
+fixture, and exact 72-path fixture coverage. The Task records that Spec 029
+must run the same cases through its production CommonMark-aware parser.
 
 - [ ] **Step 5: Run final QA**
 
@@ -902,56 +996,55 @@ if git ls-files -z -- 'README.md' ':(glob)**/README.md' | \
   xargs -0 -r rg -n 'SNIPPET LIBRARY|Selection Guide|universal seven'; then
   exit 1
 fi
-if rg -n 'RWP006_REMOVE_README_DUAL_MODE' \
-  scripts/validate-repo-quality-gates.sh; then exit 1; fi
-if rg -n '(^|/)readme\.template\.md|docs/99\.templates/templates/common/readme\.template\.md|template/readme/common' \
+if rg -n 'readme\.template\.md|template/readme/common|RWP006_REMOVE_README_DUAL_MODE' \
   docs/99.templates docs/00.agent-governance/rules \
   docs/00.agent-governance/hooks scripts tests .agents .claude .codex; then exit 1; fi
-python3 - <<'PY'
-import json
-from pathlib import Path
-registry=json.loads(Path('docs/99.templates/support/document-profiles.json').read_text())
-registry_cases=json.loads(Path('tests/fixtures/document-contracts/registry-cases.json').read_text())
-compat=json.loads(Path('tests/fixtures/document-contracts/template-compatibility.json').read_text())
-old_id='template/readme/common'
-old_path='docs/99.templates/templates/common/readme.template.md'
-assert old_id not in {row['id'] for row in registry['profiles']}
-assert old_id not in {row['profile'] for row in registry_cases['profileCoverage']}
-assert old_path not in {row['path'] for row in registry_cases['templateCoverage']}
-assert old_id not in {row['profile'] for row in compat['templateModeCoverage']}
-assert old_path not in {row['form'] for row in compat['templateModeCoverage']}
-validator_sources=(
-    Path('scripts/validate-document-contract-registry.py'),
-    Path('scripts/validate-repo-quality-gates.sh'),
-)
-for source in validator_sources:
-    text=source.read_text()
-    assert old_id not in text, source
-    assert old_path not in text, source
-names=('repository','stage-index','collection-index','implementation','snapshot-pack','workspace-staging')
-profiles={row['id']: row for row in registry['profiles']}
-for name in names:
-    form=f'docs/99.templates/templates/common/readme-{name}.template.md'
-    assert profiles[f'readme/{name}']['template'] == form
-    assert profiles[f'template/readme/{name}']['template'] == form
-PY
 python3 scripts/validate-document-contract-registry.py --self-test
+python3 scripts/validate-document-contract-registry.py --root . --mode compatibility
 python3 scripts/validate-document-contract-registry.py --root . --mode compatibility --profile readme
 bash scripts/validate-repo-quality-gates.sh .
 git diff --check
 pre-commit run --all-files
 ```
 
-Expected: 72 README paths classify once, searches are empty, and all applicable checks PASS.
+Expected: full compatibility reports `baseline=433 new=35`, 466 current
+tracked target paths, and no uncovered or ambiguous path. README compatibility
+reports baseline 67, current/final 72, exact set, and canonical 72. Searches are
+empty and every applicable hook passes. Dockerfile lint is a non-applicable
+SKIP when no Dockerfile is selected, not a PASS.
 
 - [ ] **Step 6: Close lifecycle, evidence, and commit**
 
 Set Spec, Plan, Task, and three index rows to `done`; record baseline/final
-counts, all commands and outcomes, no-secret/no-live limitations, reviewer,
-rollback range, five cloud handoff paths, and Spec 029 fixture obligation.
+counts, all commands and outcomes, exact commit/reviewer/rollback ranges, five
+cloud handoff paths, and the Spec 029 fixture obligation. Set Task rows
+RWP-001 through RWP-006 to `Done` and replace its RWP-001-only safety/evidence
+language with the whole-tranche closure boundary. Record the progress entry,
+repository-static/no-live/no-secret limitations, and Dockerfile
+non-applicable-SKIP semantics.
 
 ```bash
-git add docs/99.templates docs/00.agent-governance/rules/documentation-protocol.md docs/00.agent-governance/rules/document-stage-routing.md docs/00.agent-governance/rules/stage-authoring-matrix.md docs/00.agent-governance/hooks/k8s-pre-edit.sh scripts/validate-document-contract-registry.py scripts/validate-repo-quality-gates.sh docs/03.specs/028-readme-workspace-profiles/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-07-12-readme-workspace-profiles.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-07-12-readme-workspace-profiles.md docs/04.execution/tasks/README.md tests/fixtures/document-contracts/registry-cases.json tests/fixtures/document-contracts/template-compatibility.json tests/fixtures/document-contracts/readme-profile-cases.json
+git add docs/99.templates/README.md docs/99.templates/templates/README.md \
+  docs/99.templates/templates/common/readme.template.md \
+  docs/99.templates/support/common-documentation-governance.md \
+  docs/99.templates/support/template-routing.md \
+  docs/99.templates/support/document-profiles.json \
+  docs/00.agent-governance/rules/documentation-protocol.md \
+  docs/00.agent-governance/rules/document-stage-routing.md \
+  docs/00.agent-governance/rules/stage-authoring-matrix.md \
+  docs/00.agent-governance/rules/postflight-checklist.md \
+  docs/00.agent-governance/hooks/k8s-pre-edit.sh \
+  docs/00.agent-governance/memory/progress.md \
+  .agents/output-styles/hy-home-k8s.md .claude/CLAUDE.md scripts/README.md \
+  scripts/validate-document-contract-registry.py \
+  scripts/validate-repo-quality-gates.sh \
+  tests/fixtures/document-contracts/registry-cases.json \
+  tests/fixtures/document-contracts/template-compatibility.json \
+  docs/03.specs/028-readme-workspace-profiles/spec.md docs/03.specs/README.md \
+  docs/04.execution/plans/2026-07-12-readme-workspace-profiles.md \
+  docs/04.execution/plans/README.md \
+  docs/04.execution/tasks/2026-07-12-readme-workspace-profiles.md \
+  docs/04.execution/tasks/README.md
 git commit -m "docs(readme): close profile migration evidence"
 ```
 
