@@ -41,12 +41,12 @@ preserves reciprocal Spec, Plan, Task, and index lineage throughout the Spec
 
 | Task ID | Description | Type | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- |
-| TCC-001 | Start reciprocal execution lineage | doc | Six links and index rows | platform | Done |
-| TCC-002 | Publish type-to-source decision ledger | research | Ten family rows with required evidence | platform | Queued |
+| TCC-001 | Start reciprocal execution lineage | doc | Spec/Plan/Task/index link assertion | platform | Done |
+| TCC-002 | Publish the type-to-source decision ledger | research | Ten family rows with all required evidence fields | platform | Queued |
 | TCC-003 | Consolidate support ownership | governance | No copied complete registry tables | platform | Queued |
 | TCC-004 | Normalize canonical non-README forms | template | Heading matrix and native-format checks | platform | Queued |
 | TCC-005 | Delete legacy Task form and establish compatibility | migration | Zero active legacy refs; old/new gates green | platform | Queued |
-| TCC-006 | Close evidence and hand off README body ownership | validation | Full QA and explicit Spec 028 handoff | platform | Queued |
+| TCC-006 | Close evidence and hand off Stage 99 README bodies | validation | Full QA and explicit Spec 028 handoff | platform | Queued |
 
 ## Suggested Types
 
