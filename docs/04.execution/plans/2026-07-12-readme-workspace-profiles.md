@@ -99,6 +99,12 @@ implementation entrypoints, and `_workspace` cannot express distinct jobs.
 | `readme/snapshot-pack` | `Overview`, `Snapshot Contract`, `Report Index`, `Refresh and Succession`, `Evidence Boundary`, `Related Documents` | `Method` |
 | `readme/workspace-staging` | `Overview`, `Permitted Artifacts`, `Forbidden Local State`, `Promotion and Cleanup`, `Tracking Rules`, `Related Documents` | none |
 
+The registry and fixture `allowedH2` array for each profile is the ordered
+concatenation of its required H2 sequence and the additional H2 values in the
+last column, with no duplicates. The additional column is not a standalone
+allow-list: every required heading must also be allowed and must never be
+reported as unsupported.
+
 ### Complete baseline and final profile map
 
 `readme/repository` (1 baseline):
@@ -221,7 +227,7 @@ Baseline total is `1 + 10 + 16 + 28 + 11 + 1 = 67`. Final total is
 
 | ID | Level | Command | Pass criteria |
 | --- | --- | --- | --- |
-| VAL-PLN-001 | Classification | `python3 scripts/validate-document-contract-registry.py --root . --mode compatibility --profile readme` | Baseline=67, final=72, uncovered=0, ambiguous=0. |
+| VAL-PLN-001 | Classification | `python3 scripts/validate-document-contract-registry.py --root . --mode compatibility --profile readme` | README baseline=67, declared final=72, current tracked progression=67 -> 68 -> 70 -> 72, uncovered=0, and ambiguous=0. |
 | VAL-PLN-002 | Migration | Focused Python assertion in Task 6 | One H1, profile H2 set, no frontmatter/duplicates/snippet residue. |
 | VAL-PLN-003 | Workspace | `git ls-files _workspace` plus ignore checks | Only README tracked; representative scratch ignored. |
 | VAL-PLN-004 | Repository | Quality gate and all-files pre-commit | All applicable checks pass. |
@@ -308,13 +314,43 @@ Expected: commit succeeds.
 - Modify: `docs/99.templates/support/document-profiles.json`
 - Create: `tests/fixtures/document-contracts/readme-profile-cases.json`
 - Modify: `tests/README.md`
+- Modify: `scripts/validate-document-contract-registry.py`
+- Modify: `tests/fixtures/document-contracts/registry-cases.json`
+- Modify: `tests/fixtures/document-contracts/template-compatibility.json`
+- Modify: `scripts/validate-repo-quality-gates.sh`
+- Modify inventory/target-link rows only: `docs/99.templates/README.md`
+- Modify inventory/target-link rows only: `docs/99.templates/templates/README.md`
+- Modify: `docs/99.templates/support/template-routing.md`
 
 **Interfaces:**
 
-- Consumes: profile heading table and complete path map in this Plan.
-- Produces: six frontmatter-free forms; 72 `paths` rows with keys `path`,
+- Consumes: the six existing authored `readme/*` profiles, their 67 current and
+  72 final routes, the profile heading table, and the complete path map in this
+  Plan. RWP-002 does not create another authored README profile family.
+- Produces: six frontmatter-free forms; six exact-route `template/readme/*`
+  profiles bound one-to-one to the existing authored profiles; 72 `paths` rows with keys `path`,
   `profile`, `requiredH2`, `allowedH2`, and `new`; and eight `cases` rows with
   keys `name`, `path`, `document`, and `expected_rule_ids`.
+- Preserves `docs/99.templates/templates/common/readme.template.md` until
+  RWP-006 as the sole bounded detached compatibility form. Its profile remains
+  exact ID `template/readme/common`, owns only that exact route, declares
+  `sourceProfileIds: []`, and is not referenced by any authored or
+  frontmatter-free profile's `template` field. It is the only ordinary
+  source-less template, and both registry fixtures must describe that state.
+- Permits both validators to exempt only that exact profile ID and old path
+  from ordinary template-source inheritance. No broader empty-source or
+  inheritance exception is allowed. RWP-006 removes the form, profile, fixture
+  rows, and both exact exemptions atomically.
+- Produces 61 registry profiles and 28 tracked Markdown template forms, up from
+  55 and 22. Add six profile and six template coverage rows to
+  `registry-cases.json`, add six rows to `templateModeCoverage`, and update the
+  `DocumentProfileContract.v1` and `TemplateCompatibilityContract.v1` semantic
+  digests without changing authored compatibility-debt baselines.
+- Defines `--profile readme` as a family alias selecting only IDs beginning
+  `readme/` whose class is `readme` and mode is `frontmatter-free`. Exact-ID
+  selection remains supported, and `template/readme/*` never counts in the
+  family total. The command validates all 72 fixture dispositions while
+  reporting current tracked count 67 after RWP-002 and declared final count 72.
 
 - [ ] **Step 1: Create the fixture before forms**
 
@@ -326,6 +362,8 @@ Add one `paths` row for every path in the Complete Map and cases
 `README_FENCE`. Every case names a real fixture `path` from `paths`, embeds its
 Markdown `document`, and carries `expected_rule_ids`; Spec 029 must resolve the
 named path to its production `DocumentProfile` before validating the document.
+Each path row's `allowedH2` is the complete ordered `requiredH2` plus additional
+H2 set, not only the optional values shown in the heading table.
 
 - [ ] **Step 2: Run missing-form RED check**
 
@@ -342,14 +380,52 @@ comments explaining topic-specific content, and target-relative link guidance.
 Do not add `Selection Guide`, `Assembly Rules`, `SNIPPET LIBRARY`, or generic
 optional sections.
 
-- [ ] **Step 4: Add exact non-overlapping registry routes**
+- [ ] **Step 4: Bind existing authored routes and add template profiles**
 
-Add the 72 path dispositions from the Complete Map. Prefer shared anchored
-regex only where every matched path has the same profile; otherwise use exact
-routes. Set frontmatter mode `forbidden`, bind one template per profile, and
-copy the exact required/allowed heading arrays from this Plan.
+Confirm that the existing six authored README profiles classify the 67 current
+and 72 final routes from the Complete Map. Prefer shared anchored regex only
+where every matched path has the same profile; otherwise use exact routes. Set
+frontmatter mode `forbidden`, replace each authored profile's monolith template
+reference with its one-to-one form, and set its required and complete allowed
+heading arrays from this Plan. Add six template-mode profiles with one exact
+form route and one corresponding authored source profile.
 
-- [ ] **Step 5: Assert counts and form structure**
+Detach `template/readme/common` by setting `sourceProfileIds: []` while keeping
+its exact old route and form through RWP-006. Add exact-ID/path guards in both
+validators proving it is the sole ordinary source-less template and no
+authored/frontmatter-free profile points to the old form. Update both coverage
+fixtures and both semantic digests without changing compatibility-debt counts.
+
+Implement the `readme` family alias in the registry CLI. It validates the
+fixture path/profile/heading dispositions, counts only authored
+frontmatter-free `readme/*` profiles, and reports baseline 67, current 67, and
+declared final 72 at the end of RWP-002.
+
+- [ ] **Step 5: Stage the complete atomic scope before GREEN**
+
+The registry self-test and quality gate derive template inventory from
+`git ls-files`. Stage the six new forms, new fixture, and every atomic consumer
+before running GREEN; do not use `git diff --name-only` as evidence for
+untracked forms.
+
+```bash
+git add docs/99.templates/templates/common/readme-repository.template.md \
+  docs/99.templates/templates/common/readme-stage-index.template.md \
+  docs/99.templates/templates/common/readme-collection-index.template.md \
+  docs/99.templates/templates/common/readme-implementation.template.md \
+  docs/99.templates/templates/common/readme-snapshot-pack.template.md \
+  docs/99.templates/templates/common/readme-workspace-staging.template.md \
+  docs/99.templates/support/document-profiles.json \
+  docs/99.templates/support/template-routing.md \
+  docs/99.templates/README.md docs/99.templates/templates/README.md \
+  scripts/validate-document-contract-registry.py \
+  scripts/validate-repo-quality-gates.sh \
+  tests/fixtures/document-contracts/registry-cases.json \
+  tests/fixtures/document-contracts/template-compatibility.json \
+  tests/fixtures/document-contracts/readme-profile-cases.json tests/README.md
+```
+
+- [ ] **Step 6: Assert fixture, forms, bindings, and detached compatibility**
 
 ```bash
 python3 - <<'PY'
@@ -358,26 +434,124 @@ from pathlib import Path
 data=json.loads(Path('tests/fixtures/document-contracts/readme-profile-cases.json').read_text())
 assert len(data['paths']) == 72
 assert len({row['path'] for row in data['paths']}) == 72
-assert sum(not row.get('new', False) for row in data['paths']) == 67
-for form in Path('docs/99.templates/templates/common').glob('readme-*.template.md'):
+assert sum(row['new'] is False for row in data['paths']) == 67
+assert sum(row['new'] is True for row in data['paths']) == 5
+expected_cases = {
+    'valid-profile': (),
+    'frontmatter-forbidden': ('README_FRONTMATTER',),
+    'duplicate-h1': ('README_H1',),
+    'duplicate-h2': ('README_H2_DUPLICATE',),
+    'unsupported-h2': ('README_H2_UNSUPPORTED',),
+    'missing-required-h2': ('README_H2_REQUIRED',),
+    'fenced-heading-ignored': (),
+    'unclosed-fence': ('README_FENCE',),
+}
+assert {
+    case['name']: tuple(case['expected_rule_ids']) for case in data['cases']
+} == expected_cases
+names = ('repository', 'stage-index', 'collection-index', 'implementation',
+         'snapshot-pack', 'workspace-staging')
+for name in names:
+    form = Path(f'docs/99.templates/templates/common/readme-{name}.template.md')
     text=form.read_text()
     assert not text.startswith('---\n')
     h1 = [line for line in text.splitlines() if line.startswith('# ')]
     assert len(h1) == 1, (form, h1)
+    assert all(marker not in text for marker in (
+        'Selection Guide', 'Assembly Rules', 'SNIPPET LIBRARY'))
+
+registry=json.loads(Path('docs/99.templates/support/document-profiles.json').read_text())
+profiles={row['id']: row for row in registry['profiles']}
+old='docs/99.templates/templates/common/readme.template.md'
+legacy=profiles['template/readme/common']
+assert legacy['routes'] == [{'kind': 'exact', 'value': old}]
+assert legacy['template'] == old and legacy['sourceProfileIds'] == []
+assert all(
+    row['id'] == 'template/readme/common' or row['sourceProfileIds']
+    for row in registry['profiles'] if row['mode'] == 'template'
+)
+assert all(
+    row['template'] != old
+    for row in registry['profiles']
+    if row['mode'] in {'authored', 'frontmatter-free'}
+)
+for name in names:
+    authored=profiles[f'readme/{name}']
+    template=profiles[f'template/readme/{name}']
+    form=f'docs/99.templates/templates/common/readme-{name}.template.md'
+    assert authored['template'] == form
+    assert template['routes'] == [{'kind': 'exact', 'value': form}]
+    assert template['sourceProfileIds'] == [f'readme/{name}']
+    assert template['headings'] == authored['headings']
+    required=authored['headings']['required']
+    assert authored['headings']['allowed'][:len(required)] == required
+    actual_h2=[line[3:] for line in Path(form).read_text().splitlines()
+               if line.startswith('## ')]
+    assert actual_h2 == required
+
+registry_cases=json.loads(Path('tests/fixtures/document-contracts/registry-cases.json').read_text())
+compat=json.loads(Path('tests/fixtures/document-contracts/template-compatibility.json').read_text())
+common_profile=next(row for row in registry_cases['profileCoverage']
+                    if row['profile'] == 'template/readme/common')
+common_template=next(row for row in registry_cases['templateCoverage']
+                     if row['profile'] == 'template/readme/common')
+common_mode=next(row for row in compat['templateModeCoverage']
+                 if row['profile'] == 'template/readme/common')
+assert common_profile['path'] == old and common_template['path'] == old
+assert common_mode['form'] == old and common_mode['sourceProfiles'] == []
 PY
 ```
 
 Expected: PASS.
 
-- [ ] **Step 6: Commit forms and fixture**
+- [ ] **Step 7: Run staged GREEN and prove exact cached scope**
 
 ```bash
-git diff --check
-git add docs/99.templates/templates/common/readme-*.template.md docs/99.templates/support/document-profiles.json tests/fixtures/document-contracts/readme-profile-cases.json tests/README.md
+python3 scripts/validate-document-contract-registry.py --self-test
+python3 scripts/validate-document-contract-registry.py --root . --mode compatibility --profile readme
+bash scripts/validate-repo-quality-gates.sh .
+pre-commit run --all-files
+python3 - <<'PY'
+import subprocess
+expected={
+    'docs/99.templates/README.md',
+    'docs/99.templates/support/document-profiles.json',
+    'docs/99.templates/support/template-routing.md',
+    'docs/99.templates/templates/README.md',
+    'docs/99.templates/templates/common/readme-collection-index.template.md',
+    'docs/99.templates/templates/common/readme-implementation.template.md',
+    'docs/99.templates/templates/common/readme-repository.template.md',
+    'docs/99.templates/templates/common/readme-snapshot-pack.template.md',
+    'docs/99.templates/templates/common/readme-stage-index.template.md',
+    'docs/99.templates/templates/common/readme-workspace-staging.template.md',
+    'scripts/validate-document-contract-registry.py',
+    'scripts/validate-repo-quality-gates.sh',
+    'tests/README.md',
+    'tests/fixtures/document-contracts/readme-profile-cases.json',
+    'tests/fixtures/document-contracts/registry-cases.json',
+    'tests/fixtures/document-contracts/template-compatibility.json',
+}
+actual=set(subprocess.run(
+    ['git','diff','--cached','--name-only'], check=True,
+    capture_output=True, text=True).stdout.splitlines())
+assert actual == expected, (sorted(expected-actual), sorted(actual-expected))
+PY
+git diff --cached --check
+git diff --cached --name-only
+```
+
+Expected: self-test reports 9 cases, 61 profiles, and 28 templates; README
+family classification reports current 67 and declared final 72; repository and
+all applicable pre-commit gates pass; and cached scope is exactly the 16 files
+listed in this Task.
+
+- [ ] **Step 8: Commit forms and fixture locally**
+
+```bash
 git commit -m "feat(templates): define readme profiles"
 ```
 
-Expected: commit succeeds.
+Expected: commit succeeds. Do not push or publish it.
 
 ---
 
@@ -393,13 +567,15 @@ Expected: commit succeeds.
 - Consumes: repository/stage/collection forms and registry routes.
 - Produces: 28 topic-specific entrypoints with canonical-owner links and no copied contract tables.
 
-- [ ] **Step 1: Run profile RED classification**
+- [ ] **Step 1: Run missing collection-handoff RED assertion**
 
 ```bash
-python3 scripts/validate-document-contract-registry.py --root . --mode compatibility --profile readme
+test -f docs/90.references/cloud-examples/README.md
 ```
 
-Expected: FAIL for missing cloud handoff and unmigrated profile expectations.
+Expected: exit 1 because structural registry classification deliberately
+allows a declared future path to remain untracked. The README family command is
+GREEN classification evidence after the handoff is created, not this RED.
 
 - [ ] **Step 2: Migrate repository and stage indexes**
 
@@ -563,10 +739,15 @@ Expected: tracking and repository gates PASS.
 - Modify: `docs/99.templates/templates/README.md`
 - Modify: `docs/99.templates/support/common-documentation-governance.md`
 - Modify: `docs/99.templates/support/template-routing.md`
+- Modify: `docs/99.templates/support/document-profiles.json`
 - Modify: `docs/00.agent-governance/rules/documentation-protocol.md`
 - Modify: `docs/00.agent-governance/rules/document-stage-routing.md`
 - Modify: `docs/00.agent-governance/rules/stage-authoring-matrix.md`
+- Modify: `docs/00.agent-governance/hooks/k8s-pre-edit.sh`
+- Modify: `scripts/validate-document-contract-registry.py`
 - Modify: `scripts/validate-repo-quality-gates.sh`
+- Modify: `tests/fixtures/document-contracts/registry-cases.json`
+- Modify: `tests/fixtures/document-contracts/template-compatibility.json`
 - Modify: Spec 028, this Plan, same-topic Task, and Stage 03/04 indexes
 
 **Interfaces:**
@@ -578,7 +759,8 @@ Expected: tracking and repository gates PASS.
 
 ```bash
 rg -n 'readme\.template\.md|SNIPPET LIBRARY|Selection Guide|universal seven' \
-  docs/99.templates docs/00.agent-governance/rules scripts .agents .claude .codex
+  docs/99.templates docs/00.agent-governance/rules \
+  docs/00.agent-governance/hooks scripts .agents .claude .codex
 ```
 
 Expected: old form and active consumer references are found. Deliberately do
@@ -588,11 +770,16 @@ authoring consumers.
 
 - [ ] **Step 2: Delete old form and update consumers**
 
-Delete `readme.template.md` with `apply_patch`; replace route/inventory links
-with six forms; replace the universal heading loop in the current quality gate
-with a finite reader of `readme-profile-cases.json`. This temporary check may
-compare actual H1/H2 to fixture expectations but must carry removal owner
-`Spec 029` and must not become a second canonical heading table.
+Delete `readme.template.md` with `apply_patch`; remove exact profile
+`template/readme/common`, its registry and TemplateCompatibility coverage rows,
+every exact-ID/path validator exemption, and every active old-form consumer
+including the pre-edit hook. Recompute both semantic pins after removing that
+state. Preserve the six one-to-one authored/template profile bindings and
+forms. Replace route/inventory links with the six forms and replace the
+universal heading loop in the current quality gate with a finite reader of
+`readme-profile-cases.json`. This temporary check may compare actual H1/H2 to
+fixture expectations but must carry removal owner `Spec 029` and must not
+become a second canonical heading table.
 
 - [ ] **Step 3: Run focused fence-aware migration assertion**
 
@@ -635,7 +822,28 @@ through its production CommonMark-aware parser.
 ```bash
 test ! -e docs/99.templates/templates/common/readme.template.md
 if rg -n 'readme\.template\.md|SNIPPET LIBRARY|Selection Guide|universal seven' \
-  docs/99.templates docs/00.agent-governance/rules scripts .agents .claude .codex; then exit 1; fi
+  docs/99.templates docs/00.agent-governance/rules \
+  docs/00.agent-governance/hooks scripts .agents .claude .codex; then exit 1; fi
+python3 - <<'PY'
+import json
+from pathlib import Path
+registry=json.loads(Path('docs/99.templates/support/document-profiles.json').read_text())
+registry_cases=json.loads(Path('tests/fixtures/document-contracts/registry-cases.json').read_text())
+compat=json.loads(Path('tests/fixtures/document-contracts/template-compatibility.json').read_text())
+old_id='template/readme/common'
+old_path='docs/99.templates/templates/common/readme.template.md'
+assert old_id not in {row['id'] for row in registry['profiles']}
+assert old_id not in {row['profile'] for row in registry_cases['profileCoverage']}
+assert old_path not in {row['path'] for row in registry_cases['templateCoverage']}
+assert old_id not in {row['profile'] for row in compat['templateModeCoverage']}
+assert old_path not in {row['form'] for row in compat['templateModeCoverage']}
+names=('repository','stage-index','collection-index','implementation','snapshot-pack','workspace-staging')
+profiles={row['id']: row for row in registry['profiles']}
+for name in names:
+    form=f'docs/99.templates/templates/common/readme-{name}.template.md'
+    assert profiles[f'readme/{name}']['template'] == form
+    assert profiles[f'template/readme/{name}']['template'] == form
+PY
 python3 scripts/validate-document-contract-registry.py --self-test
 python3 scripts/validate-document-contract-registry.py --root . --mode compatibility --profile readme
 bash scripts/validate-repo-quality-gates.sh .
@@ -652,7 +860,7 @@ counts, all commands and outcomes, no-secret/no-live limitations, reviewer,
 rollback range, five cloud handoff paths, and Spec 029 fixture obligation.
 
 ```bash
-git add docs/99.templates docs/00.agent-governance/rules/documentation-protocol.md docs/00.agent-governance/rules/document-stage-routing.md docs/00.agent-governance/rules/stage-authoring-matrix.md scripts/validate-repo-quality-gates.sh docs/03.specs/028-readme-workspace-profiles/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-07-12-readme-workspace-profiles.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-07-12-readme-workspace-profiles.md docs/04.execution/tasks/README.md tests/fixtures/document-contracts/readme-profile-cases.json
+git add docs/99.templates docs/00.agent-governance/rules/documentation-protocol.md docs/00.agent-governance/rules/document-stage-routing.md docs/00.agent-governance/rules/stage-authoring-matrix.md docs/00.agent-governance/hooks/k8s-pre-edit.sh scripts/validate-document-contract-registry.py scripts/validate-repo-quality-gates.sh docs/03.specs/028-readme-workspace-profiles/spec.md docs/03.specs/README.md docs/04.execution/plans/2026-07-12-readme-workspace-profiles.md docs/04.execution/plans/README.md docs/04.execution/tasks/2026-07-12-readme-workspace-profiles.md docs/04.execution/tasks/README.md tests/fixtures/document-contracts/registry-cases.json tests/fixtures/document-contracts/template-compatibility.json tests/fixtures/document-contracts/readme-profile-cases.json
 git commit -m "docs(readme): close profile migration evidence"
 ```
 
