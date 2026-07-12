@@ -16,9 +16,9 @@ and summarized in [Templates README](../../99.templates/README.md). This Stage
 00 rule owns the decision policy for choosing the right stage; it must not carry
 a competing copy of the full template route table.
 
-README entrypoints use
-`docs/99.templates/templates/common/readme.template.md`; exact README route
-variants remain in the support route map.
+README entrypoints resolve by path through
+`docs/99.templates/support/document-profiles.json`; use the selected profile's
+form and required/allowed headings from the Template Routing Contract.
 Operations policy documents use `policy.template.md` through the support route
 map.
 

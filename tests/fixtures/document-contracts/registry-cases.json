@@ -214,10 +214,6 @@
       "profile": "template/governance/template-support"
     },
     {
-      "path": "docs/99.templates/templates/common/readme.template.md",
-      "profile": "template/readme/common"
-    },
-    {
       "path": "docs/99.templates/templates/common/reference.template.md",
       "profile": "template/content/reference"
     },
@@ -330,10 +326,6 @@
     {
       "path": "docs/99.templates/templates/common/progress.template.md",
       "profile": "governance/progress-entry"
-    },
-    {
-      "path": "docs/99.templates/templates/common/readme.template.md",
-      "profile": "template/readme/common"
     },
     {
       "path": "docs/99.templates/templates/common/reference.template.md",

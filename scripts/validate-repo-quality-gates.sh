@@ -1037,22 +1037,7 @@ for contract_path, phrases in active_app_secret_contracts:
         if phrase not in contract_text:
             fail(f"{rel(contract_path)} missing app onboarding secret path contract phrase: {phrase}")
 
-legacy_readme_h2 = (
-    "Overview",
-    "Audience",
-    "Scope",
-    "Structure",
-    "How to Work in This Area",
-    "Link Basis",
-    "Related Documents",
-)
-
-
-def uses_legacy_readme_contract(h2: list[str]) -> bool:
-    return all(section in h2 for section in legacy_readme_h2)
-
-
-def assert_readme_dual_mode_probe() -> None:
+def assert_canonical_readme_probe() -> None:
     required = ["Overview", "Validation"]
     allowed = [*required, "Troubleshooting"]
     valid = """# Probe
@@ -1092,16 +1077,12 @@ def assert_readme_dual_mode_probe() -> None:
         )
         if actual_rule_ids != expected_rule_ids:
             fail(
-                f"README dual-mode probe {label} expected "
+                f"canonical README probe {label} expected "
                 f"{expected_rule_ids!r}, got {actual_rule_ids!r}"
             )
-    if not uses_legacy_readme_contract(list(legacy_readme_h2)):
-        fail("README dual-mode probe must recognize the legacy seven-heading contract")
-    if uses_legacy_readme_contract(required):
-        fail("README dual-mode probe must route canonical headings outside legacy mode")
 
 
-assert_readme_dual_mode_probe()
+assert_canonical_readme_probe()
 
 deprecated_readme_headings = [
     "Related " + "References",
@@ -1118,6 +1099,8 @@ for name in sorted(required_doc_dirs):
     if not readme.exists():
         fail(f"required README.md is missing: {rel(readme)}")
 
+# Temporary finite migration reader. Spec 029 owns replacement with the
+# production CommonMark-aware parser and removal of this reader.
 readme_fixture_path = root / "tests/fixtures/document-contracts/readme-profile-cases.json"
 readme_fixture = load_json(readme_fixture_path)
 readme_rows = {
@@ -1135,42 +1118,30 @@ if undeclared_readmes:
         f"{sorted(undeclared_readmes)!r}"
     )
 
-legacy_readme_count = 0
 canonical_readme_count = 0
 for readme_rel in sorted(tracked_readme_paths):
     readme = root / readme_rel
     text = read_text(readme)
     if has_markdown_frontmatter(readme, text):
         fail(f"{rel(readme)} must not use YAML frontmatter")
-    headings = extract_markdown_headings(text)
-    h2 = [heading for level, heading in headings if level == 2]
-
-    # RWP006_REMOVE_README_DUAL_MODE: remove this legacy branch after all 72
-    # paths use their canonical fixture profile; retain the finite reader.
-    if uses_legacy_readme_contract(h2):
-        legacy_readme_count += 1
-    else:
-        canonical_readme_count += 1
-        row = readme_rows.get(readme_rel)
-        if row is None:
-            continue
-        required_h2 = row.get("requiredH2", [])
-        allowed_h2 = row.get("allowedH2", [])
-        for rule_id, detail in canonical_readme_heading_diagnostics(
-            text, required_h2, allowed_h2
-        ):
-            fail(f"{rel(readme)} canonical README {rule_id}: {list(detail)!r}")
+    canonical_readme_count += 1
+    row = readme_rows.get(readme_rel)
+    if row is None:
+        continue
+    required_h2 = row.get("requiredH2", [])
+    allowed_h2 = row.get("allowedH2", [])
+    for rule_id, detail in canonical_readme_heading_diagnostics(
+        text, required_h2, allowed_h2
+    ):
+        fail(f"{rel(readme)} canonical README {rule_id}: {list(detail)!r}")
 
     for deprecated_heading in deprecated_readme_headings:
         if re.search(rf"^##\s+{re.escape(deprecated_heading)}\b", text, re.MULTILINE):
             fail(f"{rel(readme)} still uses deprecated README section: {deprecated_heading}")
 
-if legacy_readme_count + canonical_readme_count != len(tracked_readme_paths):
-    fail("README dual-mode accounting must cover every tracked README exactly once")
-print(
-    "README migration modes: "
-    f"legacy={legacy_readme_count} canonical={canonical_readme_count}"
-)
+if canonical_readme_count != len(tracked_readme_paths):
+    fail("canonical README accounting must cover every tracked README exactly once")
+print(f"README canonical profiles: canonical={canonical_readme_count}")
 
 github_native_markdown = [
     root / ".github/ABOUT.md",
@@ -1279,7 +1250,6 @@ for scan_root in markdown_link_roots:
 
 template_readme = read_text(root / "docs/99.templates/README.md")
 template_locations = {
-    "readme.template.md": "templates/common/readme.template.md",
     "readme-collection-index.template.md": "templates/common/readme-collection-index.template.md",
     "readme-implementation.template.md": "templates/common/readme-implementation.template.md",
     "readme-repository.template.md": "templates/common/readme-repository.template.md",
@@ -1426,7 +1396,6 @@ for template_name, expected_type in sorted(template_expected_types.items()):
             expected_status=expected_status,
         )
 for frontmatter_free_template_name in [
-    "readme.template.md",
     "readme-collection-index.template.md",
     "readme-implementation.template.md",
     "readme-repository.template.md",
@@ -1452,7 +1421,7 @@ registry_profiles = {
 TEMPLATE_COMPATIBILITY_CONTRACT_V1 = {
     "name": "TemplateCompatibilityContract.v1",
     "semantic_sha256": (
-        "81c5bb77edbfbc6106cb5c543ef54d9611ef258e6911b60ec064eac2ad5bcc3f"  # pragma: allowlist secret
+        "d53a36f8849fdb8131f79c23ad2bd66c267a1594f12c0b03f353dfe5c88b46a2"  # pragma: allowlist secret
     ),
 }
 
@@ -1597,17 +1566,7 @@ for row in canonical_form_rows:
 
 template_mode_rows = template_compatibility.get("templateModeCoverage", [])
 template_mode_paths = [row.get("form") for row in template_mode_rows]
-detached_readme_profile_id = "template/readme/common"
-detached_readme_form = "docs/99.templates/templates/common/readme.template.md"
 ordinary_source_less_profiles = []
-comment_only_template_heading_prefixes = {
-    "template/readme/common": [
-        "Selection Guide",
-        "docs 디렉터리 상세 역할",
-        "Assembly Rules",
-        "Writing Principles",
-    ],
-}
 tracked_template_paths = {
     tracked_path
     for tracked_path in tracked
@@ -1655,18 +1614,6 @@ for row in template_mode_rows:
         if row["appendContract"] is not None:
             fail(f"{row['profile']} non-progress template must not append")
         if not row["sourceProfiles"]:
-            # RWP-006 removes this exact detached compatibility form and this
-            # exemption atomically. No other ordinary source-less form is valid.
-            if not (
-                row["profile"] == detached_readme_profile_id
-                and row["form"] == detached_readme_form
-                and profile["routes"]
-                == [{"kind": "exact", "value": detached_readme_form}]
-                and profile["template"] == detached_readme_form
-            ):
-                fail(
-                    f"{row['profile']} ordinary template must declare source profiles"
-                )
             ordinary_source_less_profiles.append(row["profile"])
         form_headings = [
             text
@@ -1676,13 +1623,7 @@ for row in template_mode_rows:
             if level == 2
         ]
         required_headings = profile["headings"]["required"]
-        comment_only_prefix = comment_only_template_heading_prefixes.get(
-            row["profile"], []
-        )
-        if required_headings[: len(comment_only_prefix)] != comment_only_prefix:
-            fail(f"{row['profile']} comment-only heading prefix differs from registry")
-        visible_required_headings = required_headings[len(comment_only_prefix) :]
-        if form_headings != visible_required_headings:
+        if form_headings != required_headings:
             fail(f"{row['form']} H2 sequence must equal its template profile")
         for source_id in row["sourceProfiles"]:
             source = registry_profiles[source_id]
@@ -1690,21 +1631,10 @@ for row in template_mode_rows:
                 if profile[field] != source[field]:
                     fail(f"{row['profile']} {field} must equal {source_id}")
 
-if ordinary_source_less_profiles != [detached_readme_profile_id]:
+if ordinary_source_less_profiles:
     fail(
-        "RWP-006 detached README form must be the sole ordinary source-less "
-        f"template: {ordinary_source_less_profiles}"
-    )
-old_form_consumers = sorted(
-    profile_id
-    for profile_id, profile in registry_profiles.items()
-    if profile["mode"] in {"authored", "frontmatter-free"}
-    and profile["template"] == detached_readme_form
-)
-if old_form_consumers:
-    fail(
-        "RWP-006 detached README form remains referenced by authored profiles: "
-        f"{old_form_consumers}"
+        "ordinary templates must declare source profiles: "
+        f"{ordinary_source_less_profiles}"
     )
 
 compatibility_rows = template_compatibility.get("compatibilityDebt", [])
@@ -2168,7 +2098,6 @@ expected_readme_profile_templates = {
 expected_memory_target = ("docs/00.agent-governance/memory/<topic>.md",)
 expected_progress_target = ("docs/00.agent-governance/memory/progress.md",)
 seen_readme_profile_routes: dict[str, str] = {}
-seen_detached_readme_compatibility = False
 seen_memory_route = False
 seen_progress_route = False
 
@@ -2192,14 +2121,6 @@ for target_pattern, template_path_text in template_readme_route_pairs:
             )
             continue
         seen_readme_profile_routes[profile_id] = template_name
-        continue
-    if template_name == "readme.template.md":
-        if target_matches or "RWP-006" not in target_pattern:
-            fail(
-                "detached README compatibility route must have no authored "
-                "target and name RWP-006"
-            )
-        seen_detached_readme_compatibility = True
         continue
     if template_name == "memory.template.md":
         if target_matches != expected_memory_target:
@@ -2234,8 +2155,6 @@ if seen_readme_profile_routes != expected_readme_profile_templates:
         "Template-Folder Mapping must expose all six README profile forms: "
         f"{seen_readme_profile_routes}"
     )
-if not seen_detached_readme_compatibility:
-    fail("Template-Folder Mapping missing bounded detached README compatibility form")
 if not seen_memory_route:
     fail("Template-Folder Mapping missing canonical governance memory route")
 if not seen_progress_route:
@@ -2758,7 +2677,7 @@ template_enforcement_phrase_checks = {
         "template path used and the validation evidence",
     ],
     root / "docs/00.agent-governance/rules/document-stage-routing.md": [
-        "docs/99.templates/templates/common/readme.template.md",
+        "docs/99.templates/support/document-profiles.json",
         "structural template mapping",
         "required template headings",
         "template path used and validation evidence",

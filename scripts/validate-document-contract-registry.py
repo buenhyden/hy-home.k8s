@@ -34,10 +34,6 @@ FIXTURE_PATH = PurePosixPath("tests/fixtures/document-contracts/registry-cases.j
 README_FIXTURE_PATH = PurePosixPath(
     "tests/fixtures/document-contracts/readme-profile-cases.json"
 )
-DETACHED_README_PROFILE_ID = "template/readme/common"
-DETACHED_README_TEMPLATE_PATH = PurePosixPath(
-    "docs/99.templates/templates/common/readme.template.md"
-)
 EXPECTED_CASES = (
     ("valid-minimal", "none", ()),
     ("duplicate-profile-id", "duplicate-profile-id", ("REGISTRY_PROFILE_ID",)),
@@ -93,7 +89,6 @@ DOCUMENT_PROFILE_CONTRACT_V1 = {
         "template/governance/reference",
         "template/governance/template-support",
         "template/readme/collection-index",
-        "template/readme/common",
         "template/readme/implementation",
         "template/readme/repository",
         "template/readme/snapshot-pack",
@@ -116,7 +111,7 @@ DOCUMENT_PROFILE_CONTRACT_V1 = {
         "template/sdlc/tests",
     ),
     "semantic_sha256": (
-        "da820a4adc06353c3f3439d0eb72e718e8d0fd47f82b004a187f411437ac7122"  # pragma: allowlist secret
+        "54ab9344bc7c718da6bb8ad95cdd5a9e3ab66728052263afbe9f2c107a04a7a8"  # pragma: allowlist secret
     ),
 }
 DOCUMENT_PROFILE_CONTRACT_V1_FIELDS = (
@@ -622,20 +617,6 @@ def _assert_positive_coverage(
                 )
             continue
         if not profile.source_profile_ids:
-            # RWP-006 removes this exact detached compatibility form and this
-            # exemption atomically. No other ordinary source-less template is valid.
-            if not (
-                profile.profile_id == DETACHED_README_PROFILE_ID
-                and path == DETACHED_README_TEMPLATE_PATH
-                and profile.template == DETACHED_README_TEMPLATE_PATH
-                and len(profile.routes) == 1
-                and profile.routes[0].kind == "exact"
-                and profile.routes[0].value
-                == DETACHED_README_TEMPLATE_PATH.as_posix()
-            ):
-                raise AssertionError(
-                    f"{profile.profile_id}: ordinary template must declare a source profile"
-                )
             ordinary_source_less_profiles.append(profile.profile_id)
             continue
         for source_id in profile.source_profile_ids:
@@ -661,21 +642,10 @@ def _assert_positive_coverage(
                     f"{profile.profile_id}: inherited contract differs from {source_id}"
                 )
 
-    if ordinary_source_less_profiles != [DETACHED_README_PROFILE_ID]:
+    if ordinary_source_less_profiles:
         raise AssertionError(
-            "RWP-006 detached README form must be the sole ordinary "
-            f"source-less template: {ordinary_source_less_profiles!r}"
-        )
-    old_form_consumers = sorted(
-        candidate.profile_id
-        for candidate in registry.profiles
-        if candidate.mode in {"authored", "frontmatter-free"}
-        and candidate.template == DETACHED_README_TEMPLATE_PATH
-    )
-    if old_form_consumers:
-        raise AssertionError(
-            "RWP-006 detached README form remains referenced by authored profiles: "
-            f"{old_form_consumers!r}"
+            "ordinary templates must declare a source profile: "
+            f"{ordinary_source_less_profiles!r}"
         )
 
     declared_template_profiles = {

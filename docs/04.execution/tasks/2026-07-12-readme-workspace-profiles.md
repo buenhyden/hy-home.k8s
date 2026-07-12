@@ -1,7 +1,7 @@
 ---
 title: 'Task: README and Workspace Profiles'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-07-12
 ---
@@ -13,8 +13,9 @@ updated: 2026-07-12
 This Task tracks six bounded implementation units for replacing the monolithic
 README form with path-derived profiles, migrating the complete README corpus,
 and preserving `_workspace` as temporary non-secret repository-support staging.
-RWP-001 establishes the active execution lineage; later rows remain queued
-until their profile-specific changes and validation evidence are complete.
+RWP-001 through RWP-006 are complete: all 67 baseline README files and five
+cloud handoffs resolve to one of six profiles, and the retired common form and
+its compatibility exceptions have been removed.
 
 ## Inputs
 
@@ -30,69 +31,82 @@ until their profile-specific changes and validation evidence are complete.
 | ID | Work item | Owner | Status | Evidence |
 | --- | --- | --- | --- | --- |
 | RWP-001 | Start reciprocal execution lineage | platform | Done | Six links and index rows |
-| RWP-002 | Create six forms, routes, and complete fixture | platform | Queued | 67 baseline and 72 final dispositions |
-| RWP-003 | Migrate repository, stage, and collection entrypoints | platform | Queued | 27 baseline plus cloud collection handoff |
-| RWP-004 | Migrate snapshot packs and create provider snapshot handoffs | platform | Queued | 28 baseline plus two provider indexes |
-| RWP-005 | Migrate implementation/workspace entrypoints and create example handoffs | platform | Queued | 12 baseline plus two provider entrypoints |
-| RWP-006 | Delete monolith, verify handoff fixtures, and close | platform | Queued | 72 exact routes, zero universal markers |
+| RWP-002 | Create six forms, routes, and complete fixture | platform | Done | 67 baseline and 72 final dispositions; 8 executable cases |
+| RWP-003 | Migrate repository, stage, and collection entrypoints | platform | Done | 27 baseline plus cloud collection handoff |
+| RWP-004 | Migrate snapshot packs and create provider snapshot handoffs | platform | Done | 28 baseline plus two provider indexes |
+| RWP-005 | Migrate implementation/workspace entrypoints and create example handoffs | platform | Done | 12 baseline plus two provider entrypoints |
+| RWP-006 | Delete monolith, verify handoff fixtures, and close | platform | Done | 72 exact routes; 60 profiles, 27 templates, 466 targets; zero universal markers |
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: `docs/03.specs/028-readme-workspace-profiles/spec.md`,
-  `docs/03.specs/README.md`,
-  `docs/04.execution/plans/2026-07-12-readme-workspace-profiles.md`,
-  `docs/04.execution/plans/README.md`, this Task, and
-  `docs/04.execution/tasks/README.md` for RWP-001.
-- **Forbidden Paths**: README profile bodies, Stage 99 forms, the document
-  registry, fixtures, validators, scripts, provider adapters, hooks, CI, and
-  every other tracked path are outside RWP-001.
+- **Allowed Paths**: Each RWP unit used the exact path set declared in its Plan
+  task. RWP-006 changed exactly the 25 active consumer and lifecycle paths
+  listed in Plan Task 6: 24 modified paths and one deleted form. Historical
+  non-README evidence remained outside the closure scope.
+- **Forbidden Paths**: Ignored `_workspace` children, secrets, credentials,
+  local diagnostics, live/provider/cluster state, remote resources, and every
+  path outside the applicable RWP task scope remained untouched.
 - **Approval Required**: Human approval is required before adding a seventh
-  profile, changing protected surfaces, accessing secrets or local state,
-  publishing, pushing, or performing any remote or live mutation.
-- **Static Validation**: Run the six-link assertion, registry compatibility
-  validation, repository quality gate, `git diff --check`, exact changed-file
-  scope proof, and applicable pre-commit checks.
-- **Live Validation**: DEFER. RWP-001 is documentation-only and repository-static;
-  it does not establish Kubernetes, Argo CD, Vault, ESO, or provider-runtime
-  readiness.
+  profile, accessing secrets or local state, publishing, pushing, or performing
+  any remote or live mutation. The operator approved this tranche's protected
+  Stage 00, Stage 99, provider, hook, script, and validator changes.
+- **Static Validation**: Registry self-test and compatibility modes, the
+  focused fence-aware 72-path assertion, semantic digest and fixture SHA pins,
+  repository quality gate, active residue searches, `git diff --check`, exact
+  cached scope proof, and all-files pre-commit checks form the closure bundle.
+- **Live Validation**: DEFER. This tranche is repository-static and does not
+  establish Kubernetes, Argo CD, Vault, ESO, or provider-runtime readiness.
 - **Secret / Vault Handling**: Do not read, print, enumerate, move, or modify
   credentials, secret values, Vault data, tokens, keys, certificates,
   kubeconfigs, local settings, diagnostics, or ignored workspace content.
-- **Rollback Plan**: Revert the RWP-001 commit to remove this Task and restore
-  the prior Spec, Plan, and index lineage state.
-- **Evidence Location**: This Task, the RWP-001 commit, and the ignored
-  `.superpowers/sdd/rwp-task-1-report.md` execution report.
+- **Rollback Plan**: Revert newest-first: the closure commit containing this
+  Task, then `60fd310`, `3dfa3c1`, `f20f563`, `147b27b`, `771eecb`,
+  `495c792`, `01fdfd6`, `a6c3b91`, `6fe2a83`, `4e85c55`, `30468a9`,
+  `983bba9`, and `44b8e37`. Do not partially restore the retired common form
+  without its registry, fixture, and validator state.
+- **Evidence Location**: This Task, the commits above, and ignored
+  `.superpowers/sdd/rwp-task-{1..6}-report.md` implementation reports. The
+  exact closure SHA and independent RWP-006 review belong in the Task 6 report
+  because a commit cannot contain its own SHA.
 - **GitOps Impact**: None; no manifests or desired-state configuration change.
 - **Kubernetes Impact**: None; no live cluster command is authorized or run.
 - **Operations / Runbook Impact**: None; no operational procedure changes.
 
 `_workspace` validation is limited to tracked-file and ignore-rule metadata.
-It must never enumerate or open ignored children. The complete fixture created
-later is consumed by Spec 029's semantic validator, while Spec 030 owns authored
-corpus migration and cloud-document handoff consolidation.
+It must never enumerate or open ignored children. Spec 029 must run the same
+eight cases in `readme-profile-cases.json` through its production CommonMark-
+aware parser and then remove the temporary finite fixture reader from the
+repository quality gate. Spec 030 owns broader authored-corpus migration and
+cloud-document handoff consolidation.
 
 ## Verification Summary
 
-- Before editing, the six-link assertion failed with exit 1 and
-  `AssertionError` because this Task did not exist, preserving the required RED
-  lineage evidence.
-- Post-commit validation preserved the compatibility RED:
-  `ERR sdlc/task compatibility debt grew for pathCount: baseline=51 actual=52`.
-  The correction classifies total path inventory as observational while keeping
-  missing-canonical and forbidden-residue debt under strict no-growth limits.
-- RWP-001 changes only the six allowed files and establishes reciprocal
-  Spec/Plan/Task links plus one dated Active row in each Stage 03/04 index.
-- Registry compatibility passes with `456 paths`, `baseline=433`, `new=24`,
-  `uncovered=0`, and `ambiguous=0`. The future-state `--profile readme` filter
-  is deferred to RWP-002 because that row creates the README profiles.
-- After the correction, no compatibility debt counter grows and the repository
-  quality gate, its hook simulations, `git diff --check`, and every applicable
-  all-files pre-commit hook pass. The fixture, semantic digest, owner, growth
-  policy, and every baseline value remain unchanged. Dockerfile lint is a
-  non-applicable SKIP because no Dockerfile was selected, not a pass.
-- The implementation evidence is repository-static only. It makes no live,
-  secret-value, credential, remote CI, publication, push, merge, or deployment
-  readiness claim.
+- RWP-001 through RWP-005 were independently reviewed clean after their recorded
+  compatibility, proof-hardening, fixture, hidden-anchor, and implementation-
+  table fixes. The logical chain is `44b8e37` through `3dfa3c1`; `60fd310`
+  corrected the atomic RWP-006 closure proof before implementation.
+- Registry validation passes with 60 profiles, 27 template forms, 466 classified
+  targets (`baseline=433`, `new=35`), and no uncovered or ambiguous paths.
+  README validation passes for all 67 baseline and 72 final paths, with all 72
+  in canonical profile mode.
+- The byte-identical fixture SHA is
+  `50f8c8ab05267a9ddf059d72ca6950d4f05b14ad82010c0d9576eb7a9f1f68d0`;
+  its five added handoffs are `docs/90.references/cloud-examples/README.md`,
+  `docs/90.references/cloud-examples/aws/README.md`,
+  `docs/90.references/cloud-examples/azure/README.md`,
+  `examples/aws/README.md`, and `examples/azure/README.md`.
+- The document-profile projection SHA is
+  `54ab9344bc7c718da6bb8ad95cdd5a9e3ab66728052263afbe9f2c107a04a7a8`;
+  the template-compatibility fixture SHA is
+  `d53a36f8849fdb8131f79c23ad2bd66c267a1594f12c0b03f353dfe5c88b46a2`.
+- Active residue searches, focused parser and handoff proofs, registry modes,
+  repository quality, diff checks, link/index/hook/mutation probes, exact
+  25-path cached scope, and every applicable all-files pre-commit hook pass.
+  Dockerfile lint is a non-applicable SKIP because no Dockerfile was selected,
+  not a pass.
+- Evidence is repository-static only. No live, secret-value, credential,
+  remote CI, publication, push, merge, deployment, or third-party mutation was
+  performed or inferred.
 
 ## Traceability
 

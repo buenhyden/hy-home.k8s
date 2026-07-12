@@ -47,7 +47,6 @@ templates/
 │   ├── readme-snapshot-pack.template.md
 │   ├── readme-stage-index.template.md
 │   ├── readme-workspace-staging.template.md
-│   ├── readme.template.md
 │   ├── reference.template.md
 │   └── template-support.template.md
 └── sdlc/

@@ -37,8 +37,8 @@ records the external and local evidence behind these role decisions.
 
 - README files are frontmatter-free entrypoints unless a future renderer
   requires otherwise.
-- README files must keep `Overview`, `Audience`, `Scope`, `Structure`,
-  `How to Work in This Area`, `Link Basis`, and `Related Documents`.
+- Every README path resolves to one `readme/*` registry profile and must keep
+  that profile's required H2 headings without adding unsupported H2 headings.
 - README files may summarize active control boundaries through matrices and
   links, but detailed rules belong to support, governance, operations, or
   validator owners.

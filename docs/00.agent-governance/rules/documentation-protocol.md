@@ -29,8 +29,11 @@ This protocol defines how governance references authored docs and how language b
 - The canonical template map is the Template Routing Contract. If Stage 00
   summaries, provider adapters, hooks, or validators diverge from that support
   contract and `docs/99.templates/README.md`, fix the route owners first.
-- README files must use `docs/99.templates/templates/common/readme.template.md`.
-- README files must keep `## Link Basis` and `## Related Documents`; deprecated related-document headings are incomplete.
+- README files must resolve by path through
+  `docs/99.templates/support/document-profiles.json` to one of the six
+  profile-specific forms in the Template Routing Contract.
+- README H2 sections must satisfy the selected profile's required/allowed
+  heading contract; deprecated related-document headings are incomplete.
 - README files are entrypoints and must not hold duplicated policy bodies.
   They route readers to the canonical support, governance, operations,
   workflow, validator, GitOps, policy-as-code, or manifest owner.
@@ -134,7 +137,7 @@ This protocol defines how governance references authored docs and how language b
 
 **R1 — Template-First:** Read `docs/99.templates/README.md` and `docs/99.templates/support/template-routing.md`, then read the matching template in `docs/99.templates/templates/` before creating any document. Confirm the target path has exactly one structural template mapping, fill all required fields and required template headings, and set `status: draft`. k8s-specific triggers: new namespace → ARD required; RBAC change → ADR required; production change → operations policy first.
 
-**R2 — README Sync:** Any folder-level change (add, move, remove files) **or content modification to an existing document** requires the folder's `README.md` to be reviewed and updated in the same PR if its summary, link table, or description is now stale. Work is **BLOCKED** until the README reflects the current state and keeps `## Link Basis` plus `## Related Documents`.
+**R2 — README Sync:** Any folder-level change (add, move, remove files) **or content modification to an existing document** requires the folder's `README.md` to be reviewed and updated in the same PR if its summary, link table, or description is now stale. Work is **BLOCKED** until the README reflects the current state and conforms to its registry-selected profile.
 
 **R3 — Related Documents:** Every authored document must include a `## Related Documents` section with upstream links. A document without this section is **INCOMPLETE**.
 
@@ -142,4 +145,4 @@ This protocol defines how governance references authored docs and how language b
 
 **R5 — Archive Separation:** Current implementation conflicts cannot be hidden with historical or superseded markers in active docs. Move the old document to `docs/98.archive` as a Tombstone and link it from the archive index only.
 
-**HALT conditions:** Missing template read → HALT. README not updated → HALT. README Link Basis absent → HALT. Related Documents section absent → HALT. Memory entry without progress ledger update → HALT. Active doc retaining stale implementation contract → HALT.
+**HALT conditions:** Missing template read → HALT. README not updated → HALT. README profile mismatch → HALT. Related Documents section absent from an authored document that requires it → HALT. Memory entry without progress ledger update → HALT. Active doc retaining stale implementation contract → HALT.

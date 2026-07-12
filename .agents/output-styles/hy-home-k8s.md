@@ -36,4 +36,4 @@ loaded from `docs/00.agent-governance/**`.
 - State validation results plainly: if a gate failed, show the output; if a check was
   skipped, say so. Do not claim done-and-verified without evidence.
 - Record repo-changing work in `docs/00.agent-governance/memory/progress.md` and keep the
-  related README `## Link Basis` / `## Related Documents` current.
+  related README current and conformant with its registry-selected required/allowed H2 contract.

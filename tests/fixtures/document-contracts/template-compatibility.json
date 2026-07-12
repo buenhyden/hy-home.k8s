@@ -930,13 +930,6 @@
       }
     },
     {
-      "profile": "template/readme/common",
-      "form": "docs/99.templates/templates/common/readme.template.md",
-      "sourceProfiles": [],
-      "placeholderPolicy": "template-only",
-      "appendContract": null
-    },
-    {
       "profile": "template/readme/repository",
       "form": "docs/99.templates/templates/common/readme-repository.template.md",
       "sourceProfiles": [

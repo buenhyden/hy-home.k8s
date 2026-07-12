@@ -8,6 +8,64 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-12 - README profile migration closure
+
+#### Metadata
+
+- **Date**: 2026-07-12
+- **Layer**: docs, meta, qa
+- **Status**: complete
+- **Tags**: #readme #profiles #templates #validation #repo-static
+
+#### Progress
+
+- Replaced the retired common README form with six path-derived profile forms,
+  migrated all 67 baseline README files, and added five cloud handoff entrypoints
+  for an exact final corpus of 72.
+- Removed the detached common template profile, fixture rows, source-less
+  exceptions, and dual-mode validation branch while preserving the finite
+  fixture reader for Spec 029's production parser handoff.
+- Kept `_workspace` as tracked-README-only temporary non-secret repository-
+  support staging without enumerating or opening ignored children.
+
+#### Memory
+
+- A destructive template cutover is atomic across the form, registry, fixtures,
+  validators, routing prose, and lifecycle evidence; deleting only the file
+  leaves the tracked-index classifier and semantic pins inconsistent.
+- README structure is a path-selected profile contract. Shared governance and
+  provider guidance should refer to registry-required and allowed headings,
+  not restate a universal section list.
+
+#### Evidence
+
+- Registry self-test: PASS with 9 cases, 60 profiles, 27 templates, and all 8
+  README fixture mutation probes.
+- Compatibility: PASS for 466 targets (`baseline=433`, `new=35`) and all 72
+  README paths (`baseline=67`, `current=72`, `final=72`, exact set).
+- Repository quality: PASS with `canonical=72`; active retired-form and
+  universal-heading residue searches returned no matches.
+- Document-profile SHA
+  `54ab9344bc7c718da6bb8ad95cdd5a9e3ab66728052263afbe9f2c107a04a7a8`,
+  template-compatibility SHA
+  `d53a36f8849fdb8131f79c23ad2bd66c267a1594f12c0b03f353dfe5c88b46a2`,
+  and README fixture SHA
+  `50f8c8ab05267a9ddf059d72ca6950d4f05b14ad82010c0d9576eb7a9f1f68d0`
+  matched their closure pins.
+- `git diff --check` and all applicable `pre-commit run --all-files` hooks
+  passed; `Lint Dockerfiles` was a non-applicable SKIP, not a pass. The closure
+  commit uses subject `docs(readme): close profile migration evidence`; its
+  exact SHA and independent review are recorded in the ignored Task 6 report.
+- No live Kubernetes, Argo CD, Vault, ESO, provider-runtime, credential,
+  secret-value, remote CI, publish, push, merge, deployment, or third-party
+  mutation was performed.
+
+#### Handoff
+
+- Spec 029 must execute the same eight README fixture cases through its
+  production CommonMark-aware parser and then remove the temporary fixture
+  reader from the repository quality gate.
+
 ### 2026-07-11 - Roster parser and fixture final-review remediation
 
 #### Metadata

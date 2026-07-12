@@ -24,8 +24,8 @@ documents.
 The machine-readable [Document Profile Registry](./document-profiles.json)
 owns every exact or anchored-regex route and its profile, heading, and template
 facts. This support document owns the route-selection procedure, rationale,
-boundaries, and examples. Its one temporary route-map mirror is explicitly
-non-authoritative and exists only for the current compatibility consumer.
+boundaries, and examples. Its route-map mirror is explicitly non-authoritative
+and exists to help maintainers select the registry-owned form.
 
 ## Route-selection Procedure
 
@@ -48,17 +48,15 @@ surfaces rather than governance bodies.
 Exact lifecycle domains remain registry facts. Numeric lineage rationale,
 handoff links, and the active-surface duplicate rule are owned by [SDLC
 Governance](./sdlc-governance.md). This document owns the selection procedure
-and the temporary compatibility mirror below, not the route facts themselves.
+and the human-readable mirror below, not the route facts themselves.
 
 ## Current Route Map
 
 The [Document Profile Registry](./document-profiles.json) is the sole machine
 owner. The following non-authoritative compatibility mirror exposes each
-README profile form by registry ID. The old common form is detached from all
-authored profiles and remains only as bounded transition state until RWP-006
-removes its file, profile, fixture rows, and exact validator exemptions. The
-quality gate verifies this mirror against the migration contract; maintainers
-must not copy path inventories out of the registry into this table.
+README profile form by registry ID. The quality gate verifies this mirror
+against the registry contract; maintainers must not copy path inventories out
+of the registry into this table.
 
 | Target Pattern | Template Path |
 | --- | --- |
@@ -68,7 +66,6 @@ must not copy path inventories out of the registry into this table.
 | Registry `readme/implementation` routes | `templates/common/readme-implementation.template.md` |
 | Registry `readme/snapshot-pack` routes | `templates/common/readme-snapshot-pack.template.md` |
 | Registry `readme/workspace-staging` routes | `templates/common/readme-workspace-staging.template.md` |
-| Detached compatibility form; no authored route; removal owner RWP-006 | `templates/common/readme.template.md` |
 | `docs/01.requirements/<###-Numbering>-<feature-or-system>.md` | `templates/sdlc/requirements/prd.template.md` |
 | `docs/02.architecture/requirements/####-<system-or-domain>.md` | `templates/sdlc/architecture/ard.template.md` |
 | `docs/02.architecture/decisions/####-<short-title>.md` | `templates/sdlc/architecture/adr.template.md` |

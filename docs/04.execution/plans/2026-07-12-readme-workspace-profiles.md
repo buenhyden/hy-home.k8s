@@ -1,7 +1,7 @@
 ---
 title: 'README and Workspace Profiles Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-07-12
 ---
@@ -267,7 +267,7 @@ Baseline total is `1 + 10 + 16 + 28 + 11 + 1 = 67`. Final total is
 - Consumes: done Specs 026–027 and active Spec 028.
 - Produces: active `RWP-001` through `RWP-006` execution lineage.
 
-- [ ] **Step 1: Run the failing lineage assertion**
+- [x] **Step 1: Run the failing lineage assertion**
 
 ```bash
 python3 - <<'PY'
@@ -283,13 +283,13 @@ PY
 
 Expected: FAIL because the Task is absent.
 
-- [ ] **Step 2: Create Task, links, and indexes**
+- [x] **Step 2: Create Task, links, and indexes**
 
 Create an active Task with exact rows `RWP-001` through `RWP-006`, descriptions
 from Work Breakdown, first row `Done`, remaining rows `Queued`, and reciprocal
 Spec/Plan links. Set this Plan active and add dated active index rows.
 
-- [ ] **Step 3: Validate and commit**
+- [x] **Step 3: Validate and commit**
 
 ```bash
 git diff --check
@@ -359,7 +359,7 @@ Expected: commit succeeds.
   fixture required/allowed H2 contract. The CLI executes all eight fixture
   cases as handoff validation, not as the Spec 029 production semantic parser.
 
-- [ ] **Step 1: Create the fixture before forms**
+- [x] **Step 1: Create the fixture before forms**
 
 Add one `paths` row for every path in the Complete Map and cases
 `valid-profile`, `frontmatter-forbidden`, `duplicate-h1`, `duplicate-h2`,
@@ -375,7 +375,7 @@ Store actual Markdown newlines in every `document` string, never literal
 backslash-n text. Validate each `new` flag against the immutable registry
 baseline rather than accepting count-only swaps.
 
-- [ ] **Step 2: Run missing-form RED check**
+- [x] **Step 2: Run missing-form RED check**
 
 ```bash
 for name in repository stage-index collection-index implementation snapshot-pack workspace-staging; do test -f "docs/99.templates/templates/common/readme-${name}.template.md" || exit 1; done
@@ -383,14 +383,14 @@ for name in repository stage-index collection-index implementation snapshot-pack
 
 Expected: exit 1.
 
-- [ ] **Step 3: Create minimal forms with exact headings**
+- [x] **Step 3: Create minimal forms with exact headings**
 
 Each form contains one placeholder H1, only its required H2 sequence, HTML
 comments explaining topic-specific content, and target-relative link guidance.
 Do not add `Selection Guide`, `Assembly Rules`, `SNIPPET LIBRARY`, or generic
 optional sections.
 
-- [ ] **Step 4: Bind existing authored routes and add template profiles**
+- [x] **Step 4: Bind existing authored routes and add template profiles**
 
 Confirm that the existing six authored README profiles classify the 67 current
 and 72 final routes from the Complete Map. Prefer shared anchored regex only
@@ -411,7 +411,7 @@ fixture path/profile/heading dispositions, counts only authored
 frontmatter-free `readme/*` profiles, and reports baseline 67, current 67, and
 declared final 72 at the end of RWP-002.
 
-- [ ] **Step 5: Stage the complete atomic scope before GREEN**
+- [x] **Step 5: Stage the complete atomic scope before GREEN**
 
 The registry self-test and quality gate derive template inventory from
 `git ls-files`. Stage the six new forms, new fixture, and every atomic consumer
@@ -435,7 +435,7 @@ git add docs/99.templates/templates/common/readme-repository.template.md \
   tests/fixtures/document-contracts/readme-profile-cases.json tests/README.md
 ```
 
-- [ ] **Step 6: Assert fixture, forms, bindings, and detached compatibility**
+- [x] **Step 6: Assert fixture, forms, bindings, and detached compatibility**
 
 ```bash
 python3 - <<'PY'
@@ -561,7 +561,7 @@ PY
 
 Expected: PASS.
 
-- [ ] **Step 7: Run staged GREEN and prove exact cached scope**
+- [x] **Step 7: Run staged GREEN and prove exact cached scope**
 
 ```bash
 python3 scripts/validate-document-contract-registry.py --self-test
@@ -603,7 +603,7 @@ all applicable pre-commit gates pass with README migration modes
 `legacy=67 canonical=0`; and cached scope is exactly the 16 files listed in
 this Task.
 
-- [ ] **Step 8: Commit forms and fixture locally**
+- [x] **Step 8: Commit forms and fixture locally**
 
 ```bash
 git commit -m "feat(templates): define readme profiles"
@@ -627,7 +627,7 @@ Expected: commit succeeds. Do not push or publish it.
   pass through the bridge and leave the permitted count at 68.
 - Produces: 28 topic-specific entrypoints with canonical-owner links and no copied contract tables.
 
-- [ ] **Step 1: Run missing collection-handoff RED assertion**
+- [x] **Step 1: Run missing collection-handoff RED assertion**
 
 ```bash
 test -f docs/90.references/cloud-examples/README.md
@@ -637,27 +637,27 @@ Expected: exit 1 because structural registry classification deliberately
 allows a declared future path to remain untracked. The README family command is
 GREEN classification evidence after the handoff is created, not this RED.
 
-- [ ] **Step 2: Migrate repository and stage indexes**
+- [x] **Step 2: Migrate repository and stage indexes**
 
 Preserve root setup and QA facts under repository headings. For each stage,
 describe its role, list actual contained artifacts, link lifecycle rules to
 Stage 99/00 owners, and give the real add/find workflow. Do not move policy or
 validation prose into README.
 
-- [ ] **Step 3: Migrate collection indexes**
+- [x] **Step 3: Migrate collection indexes**
 
 Preserve every current inventory row and unique selection rule under the
 collection profile. Replace universal `Audience`, `Structure`, `Link Basis`,
 and `How to Work in This Area` only after their unique content has a destination.
 
-- [ ] **Step 4: Create the cloud collection handoff**
+- [x] **Step 4: Create the cloud collection handoff**
 
 `docs/90.references/cloud-examples/README.md` must state that AWS/Azure child
 indexes are dated reference destinations, executable assets remain under
 `examples/<provider>/`, Spec 030 owns relocation, and no current page claims
 live or provider-latest readiness.
 
-- [ ] **Step 5: Validate and commit**
+- [x] **Step 5: Validate and commit**
 
 ```bash
 git add README.md docs/README.md docs/00.agent-governance/README.md docs/00.agent-governance/memory/README.md docs/01.requirements/README.md docs/02.architecture docs/03.specs/README.md docs/04.execution docs/05.operations docs/90.references/README.md docs/90.references/audits/README.md docs/90.references/data/README.md docs/90.references/learning/README.md docs/90.references/llm-wiki/README.md docs/90.references/research/README.md docs/98.archive/README.md docs/99.templates docs/90.references/cloud-examples/README.md
@@ -687,7 +687,7 @@ gates PASS.
   pass through the bridge and leave the permitted count at 70.
 - Produces: 30 snapshot indexes with observation boundary, report inventory, refresh/successor, and evidence limits.
 
-- [ ] **Step 1: Run missing-provider-handoff RED check**
+- [x] **Step 1: Run missing-provider-handoff RED check**
 
 ```bash
 test -f docs/90.references/cloud-examples/aws/README.md && test -f docs/90.references/cloud-examples/azure/README.md
@@ -695,27 +695,27 @@ test -f docs/90.references/cloud-examples/aws/README.md && test -f docs/90.refer
 
 Expected: exit 1.
 
-- [ ] **Step 2: Migrate dated audit/research packs**
+- [x] **Step 2: Migrate dated audit/research packs**
 
 Preserve snapshot dates, baseline SHA when known, report indexes, Current versus
 historical role, successor/resolution, external source limits, and no-live
 evidence boundaries. Remove duplicated navigation headings only after merging
 their unique links.
 
-- [ ] **Step 3: Migrate example-local snapshot indexes**
+- [x] **Step 3: Migrate example-local snapshot indexes**
 
 For all AWS/Azure `examples/<provider>/docs/**/README.md`, state that content is
 a dated migration example, not active main-stage ownership or provider-latest
 guidance; retain exact child inventories for Spec 030 relocation.
 
-- [ ] **Step 4: Create provider destination indexes**
+- [x] **Step 4: Create provider destination indexes**
 
 Each new `docs/90.references/cloud-examples/<provider>/README.md` records
 observation date `2026-07-12`, baseline SHA, current source tree, planned Spec
 030 consolidation boundary, report inventory link, refresh trigger on official
 provider service/contract changes, and no-live authority boundary.
 
-- [ ] **Step 5: Validate and commit**
+- [x] **Step 5: Validate and commit**
 
 ```bash
 git add docs/90.references/audits docs/90.references/research/2026-07-04-wer/README.md docs/90.references/research/2026-07-07-wer/README.md docs/90.references/cloud-examples/aws/README.md docs/90.references/cloud-examples/azure/README.md examples/aws/docs examples/azure/docs
@@ -747,7 +747,7 @@ succeeds.
   pass through the bridge and leave the permitted count at 72.
 - Produces: 13 implementation entrypoints and one secret-safe workspace-staging contract.
 
-- [ ] **Step 1: Capture workspace tracking RED/GREEN baseline**
+- [x] **Step 1: Capture workspace tracking RED/GREEN baseline**
 
 ```bash
 test "$(git ls-files _workspace)" = "_workspace/README.md"
@@ -757,21 +757,21 @@ git check-ignore -q _workspace/probe.tmp
 Expected: both PASS before content edits; if the ignore probe fails, patch only
 the `_workspace/*` and `!_workspace/README.md` rules.
 
-- [ ] **Step 2: Migrate implementation READMEs**
+- [x] **Step 2: Migrate implementation READMEs**
 
 For examples, GitOps, workloads, infrastructure, scripts, tests, Traefik, and
 Azure component directories, retain actual structure, configuration boundary,
 validation commands, operational entrypoints, and component-specific matrices.
 Move normative rules only by linking their canonical policy/contract owner.
 
-- [ ] **Step 3: Create executable-provider handoffs**
+- [x] **Step 3: Create executable-provider handoffs**
 
 `examples/aws/README.md` and `examples/azure/README.md` must distinguish
 executable assets from dated documentation, link the provider snapshot
 destination, preserve setup/validation entrypoints, and state that Spec 030
 will remove example-local SDLC documents after knowledge consolidation.
 
-- [ ] **Step 4: Normalize `_workspace` without inspecting children**
+- [x] **Step 4: Normalize `_workspace` without inspecting children**
 
 Use the exact workspace headings. Permit temporary audit scratch, redacted
 non-secret dry-run summaries, route inventories, migration ledgers, and
@@ -780,7 +780,7 @@ history, kubeconfigs, keys, certificates, browser/provider state, personal
 diagnostics, and secret-bearing logs. Route promotion to Stage 00/04/90/99 and
 require deletion before closure when no durable destination exists.
 
-- [ ] **Step 5: Validate and commit**
+- [x] **Step 5: Validate and commit**
 
 ```bash
 test "$(git ls-files _workspace)" = "_workspace/README.md"
@@ -839,7 +839,7 @@ references to the retired form; they are not active routing consumers.
 - Produces: 60 registry/profile-coverage rows, 27 template-coverage and
   TemplateCompatibility mode rows, and a 466-path tracked target corpus.
 
-- [ ] **Step 1: Run legacy RED search**
+- [x] **Step 1: Run legacy RED search**
 
 ```bash
 test -e docs/99.templates/templates/common/readme.template.md
@@ -863,7 +863,7 @@ entries. Do not globally search generic `Selection Guide`; that phrase has an
 unrelated valid use in the RCA skill. Historical evidence surfaces are outside
 this active-consumer RED scan.
 
-- [ ] **Step 2: Delete old form and update consumers**
+- [x] **Step 2: Delete old form and update consumers**
 
 Delete `readme.template.md` with `apply_patch`; remove exact profile
 `template/readme/common`, its registry and TemplateCompatibility coverage rows,
@@ -889,7 +889,7 @@ describe profile-declared required/allowed headings, not universal `Link
 Basis` or seven-H2 rules. Preserve the six one-to-one authored/template README
 bindings and forms.
 
-- [ ] **Step 3: Run focused fence-aware migration assertion**
+- [x] **Step 3: Run focused fence-aware migration assertion**
 
 Use an inline Python state machine that ignores lines between matching backtick
 or tilde fences, rejects unclosed fences, collects H1/H2, loads expected
@@ -897,7 +897,7 @@ required/allowed headings from the fixture, and asserts one H1, no duplicate
 H2, all required H2, no unsupported H2, and no frontmatter for each of 72
 paths. Do not save this state machine as the production parser.
 
-- [ ] **Step 4: Prove fixture handoff completeness**
+- [x] **Step 4: Prove fixture handoff completeness**
 
 ```bash
 python3 - <<'PY'
@@ -988,7 +988,7 @@ empty ordinary source-less set, exact semantic pins, byte-identical README
 fixture, and exact 72-path fixture coverage. The Task records that Spec 029
 must run the same cases through its production CommonMark-aware parser.
 
-- [ ] **Step 5: Run final QA**
+- [x] **Step 5: Run final QA**
 
 ```bash
 test ! -e docs/99.templates/templates/common/readme.template.md
@@ -1013,7 +1013,7 @@ reports baseline 67, current/final 72, exact set, and canonical 72. Searches are
 empty and every applicable hook passes. Dockerfile lint is a non-applicable
 SKIP when no Dockerfile is selected, not a PASS.
 
-- [ ] **Step 6: Close lifecycle, evidence, and commit**
+- [x] **Step 6: Close lifecycle, evidence, and commit**
 
 Set Spec, Plan, Task, and three index rows to `done`; record baseline/final
 counts, all commands and outcomes, exact commit/reviewer/rollback ranges, five
@@ -1052,13 +1052,13 @@ Expected: closure commit succeeds.
 
 ## Completion Criteria
 
-- [ ] Six profile forms and exact routes exist; the monolithic form is deleted.
-- [ ] All 67 baseline and 72 final README paths have exactly one profile.
-- [ ] Frontmatter, duplicate structural headings, unsupported headings, and snippet residue are zero.
-- [ ] Five cloud handoff READMEs exist with correct execution/snapshot boundaries.
-- [ ] `_workspace` tracks only README and keeps ignored private/local state outside scope.
-- [ ] Spec 029 fixture handoff is complete and explicitly recorded.
-- [ ] Repository quality, all-files, links, reciprocal evidence, and index states pass.
+- [x] Six profile forms and exact routes exist; the monolithic form is deleted.
+- [x] All 67 baseline and 72 final README paths have exactly one profile.
+- [x] Frontmatter, duplicate structural headings, unsupported headings, and snippet residue are zero.
+- [x] Five cloud handoff READMEs exist with correct execution/snapshot boundaries.
+- [x] `_workspace` tracks only README and keeps ignored private/local state outside scope.
+- [x] Spec 029 fixture handoff is complete and explicitly recorded.
+- [x] Repository quality, all-files, links, reciprocal evidence, and index states pass.
 
 ## Related Documents
 

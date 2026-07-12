@@ -60,7 +60,6 @@
 │   │   ├── readme-snapshot-pack.template.md
 │   │   ├── readme-stage-index.template.md
 │   │   ├── readme-workspace-staging.template.md
-│   │   ├── readme.template.md
 │   │   ├── reference.template.md
 │   │   └── template-support.template.md
 │   └── sdlc/
@@ -156,7 +155,7 @@ governance, routing, frontmatter schema, legacy cleanup rule을 소유한다.
 - 생성 문서에 템플릿 안내 주석, placeholder, target-path 주석, template-use 문구를 남기지 않는다.
 - Spec 문서의 `Related Inputs`는 upstream 입력 요약이고, 필수
   `Related Documents` 섹션은 upstream/downstream 추적 링크를 함께 유지한다.
-- 모든 README는 `Link Basis`와 `Related Documents`를 사용한다. Deprecated related-document headings는 새 README나 정리된 README에 남기지 않는다.
+- 모든 README는 registry가 경로별로 선택한 profile의 required/allowed H2를 따른다. Deprecated related-document headings는 새 README나 정리된 README에 남기지 않는다.
 
 ### Template-Folder Mapping
 
@@ -168,7 +167,6 @@ governance, routing, frontmatter schema, legacy cleanup rule을 소유한다.
 | Registry `readme/implementation` routes                                 | `templates/common/readme-implementation.template.md`                       | Component structure, configuration, validation, and operations          |
 | Registry `readme/snapshot-pack` routes                                  | `templates/common/readme-snapshot-pack.template.md`                        | Snapshot boundary, report index, refresh, succession, and evidence      |
 | Registry `readme/workspace-staging` routes                              | `templates/common/readme-workspace-staging.template.md`                    | Temporary non-secret staging, promotion, cleanup, and tracking          |
-| Detached compatibility form; no authored route; removal owner RWP-006   | `templates/common/readme.template.md`                                      | Bounded transition state only                                           |
 | `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`                 | `templates/sdlc/requirements/prd.template.md`                              | Product requirements, users, scope, success / acceptance criteria       |
 | `docs/02.architecture/requirements/####-<system-or-domain>.md`           | `templates/sdlc/architecture/ard.template.md`                              | Architecture requirements, quality attributes, reference model          |
 | `docs/02.architecture/decisions/####-<short-title>.md`                   | `templates/sdlc/architecture/adr.template.md`                              | One architecture decision, context, consequences, alternatives          |
@@ -244,8 +242,7 @@ OpenAPI, GraphQL, proto 같은 계약 파일은 관련 `docs/03.specs/<###-Numbe
 `03.specs/<###-Numbering>-<feature-id>/` 아래에서 반복적으로 사용하는 보조 설계 문서와 계약 파일용 템플릿을 함께 제공한다.
 
 - 여섯 `readme-<profile>.template.md` form은 repository, stage-index, collection-index, implementation, snapshot-pack, workspace-staging 경로를 일대일로 소유한다. 최종 README 위치에서 상대 링크를 다시 계산한다.
-- `readme.template.md`는 authored route가 없는 bounded compatibility form이며 RWP-006에서 제거한다. 새 README나 migrated README의 시작점으로 사용하지 않는다.
-- 모든 README는 fixture가 경로별로 선언한 required/allowed H2만 사용하고 frontmatter를 두지 않는다.
+- 모든 README는 registry와 fixture가 경로별로 선언한 required/allowed H2만 사용하고 frontmatter를 두지 않는다.
 - `docs/03.specs/<###-Numbering>-<feature-id>/README.md`는 필수가 아니다. 기본 인덱스는 `docs/03.specs/README.md`가 소유하며, feature-local README는 API/agent/data/test 보조 문서가 늘어날 때만 만든다.
 - `openapi.template.yaml`, `schema.template.graphql`, `service.template.proto`는 형식상 YAML/GraphQL/proto 파일이므로 frontmatter 없이 owner comments와 parent API spec 링크로 추적성을 유지한다.
 - `memory.template.md`는 `docs/00.agent-governance/memory/<topic>.md` target family를 사용한다. 관련 progress 링크는 최종 memory 파일 위치 기준으로 계산한다.

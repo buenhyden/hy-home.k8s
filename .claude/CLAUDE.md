@@ -88,7 +88,7 @@ Claude implements the shared four-element harness model from
 
 - Use `.pre-commit-config.yaml`, `.github/workflows/ci.yml`, `scripts/*.sh`, and `infrastructure/tests/*.sh` as validation sources.
 - Keep `docs/00.agent-governance/hooks/post-validate.sh` as the PostToolUse surface for scoped auto-formatting, style checks, and repository validation after file edits.
-- Keep `scripts/validate-repo-quality-gates.sh .` as the regression gate for structural template coverage, README `Link Basis` / `Related Documents`, hook wiring, lifecycle hook payload simulation, and local Hookify ignore/frontmatter checks.
+- Keep `scripts/validate-repo-quality-gates.sh .` as the regression gate for structural template coverage, registry-selected README headings, hook wiring, lifecycle hook payload simulation, and local Hookify ignore/frontmatter checks.
 - Use `RTK.md` for shell-command guidance. If `rtk` is not on PATH, check `/home/hy/.local/bin/rtk --version`; if that works but `rtk gain` cannot initialize its tracking database, run the underlying command directly and report the PATH/DB limitation.
 - If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers. If graphify data or the `graphify` CLI is unavailable, use repo inspection and report the limitation.
 

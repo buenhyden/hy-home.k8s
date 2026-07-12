@@ -19,7 +19,7 @@ Run this checklist before finalizing a response.
 - [ ] All newly added links resolve correctly.
 - [ ] Relative paths in templates resolve from template location.
 - [ ] Optional placeholder paths are not emitted as broken Markdown links.
-- [ ] README files keep `## Link Basis` and `## Related Documents`; no deprecated related-document heading remains.
+- [ ] README files satisfy their registry-selected required/allowed H2 contract; no deprecated related-document heading remains.
 
 ## 4. Stage Compliance
 
@@ -42,7 +42,7 @@ Run this checklist before finalizing a response.
 ## 6. Docs 3 Rules Compliance
 
 - [ ] R1: Template read before document creation; `status: draft` set; k8s triggers respected (namespace→ARD, RBAC→ADR, prod→OPER first).
-- [ ] R2: Folder-level changes **and content modifications to existing documents** include a README review and update (if stale) in the same PR, with `## Link Basis` and `## Related Documents` intact.
+- [ ] R2: Folder-level changes **and content modifications to existing documents** include a README review and update (if stale) in the same PR, with the selected README profile intact.
 - [ ] R3: Every new authored document includes `## Related Documents` section.
 - [ ] R4: Memory ledger coupling is satisfied for repo-changing work and standalone memory files.
 - [ ] No HALT condition is unresolved before PR submission.
