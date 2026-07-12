@@ -150,15 +150,15 @@ def strip_multiline_html_comments(line: str, in_comment: bool) -> tuple[str, boo
     return "".join(visible), in_comment
 
 
-def extract_markdown_headings(markdown: str) -> list[tuple[int, str]]:
-    """Extract ATX headings outside matching fences and HTML comments."""
-    headings = []
+def visible_markdown_lines(markdown: str) -> list[tuple[int, str]]:
+    """Return visible Markdown lines with their original zero-based offsets."""
+    visible_lines: list[tuple[int, str]] = []
     fence_character = None
     fence_length = 0
     in_comment = False
     opening_fence = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 
-    for raw_line in markdown.splitlines():
+    for source_offset, raw_line in enumerate(markdown.splitlines()):
         if fence_character is not None:
             closing_fence = re.compile(
                 rf"^ {{0,3}}{re.escape(fence_character)}"
@@ -177,6 +177,16 @@ def extract_markdown_headings(markdown: str) -> list[tuple[int, str]]:
             fence_length = len(marker)
             continue
 
+        visible_lines.append((source_offset, line))
+
+    return visible_lines
+
+
+def extract_markdown_headings(markdown: str) -> list[tuple[int, str]]:
+    """Extract ATX headings from the shared visible Markdown line stream."""
+    headings = []
+
+    for _, line in visible_markdown_lines(markdown):
         heading_match = re.match(r"^ {0,3}(#{1,6})(?:[ \t]+|$)(.*)$", line)
         if not heading_match:
             continue
@@ -314,24 +324,39 @@ def markdown_table_after_heading(
     text: str,
     heading: str | tuple[str, ...],
 ) -> list[list[str]]:
-    lines = text.splitlines()
+    rows, diagnostic = parse_markdown_table_after_heading(text, heading)
+    if diagnostic:
+        fail(diagnostic)
+        return []
+    return rows
+
+
+def parse_markdown_table_after_heading(
+    text: str,
+    heading: str | tuple[str, ...],
+) -> tuple[list[list[str]], str | None]:
     headings = (heading,) if isinstance(heading, str) else heading
+    visible_lines = visible_markdown_lines(text)
     matches = [
-        (index, candidate)
-        for index, line in enumerate(lines)
+        (source_offset, candidate)
+        for source_offset, line in visible_lines
         for candidate in headings
         if line.strip() == candidate
     ]
     if not matches:
-        fail(f"missing markdown heading: one of {headings!r}")
-        return []
+        return [], f"missing visible markdown heading: one of {headings!r}"
     if len(matches) != 1:
-        fail(f"ambiguous markdown table headings: {[candidate for _, candidate in matches]!r}")
-        return []
+        return (
+            [],
+            "ambiguous visible markdown table headings: "
+            f"{[candidate for _, candidate in matches]!r}",
+        )
     start, _ = matches[0]
 
     table_lines: list[str] = []
-    for line in lines[start + 1 :]:
+    for source_offset, line in visible_lines:
+        if source_offset <= start:
+            continue
         stripped = line.strip()
         if not stripped:
             if table_lines:
@@ -349,19 +374,97 @@ def markdown_table_after_heading(
         if cells and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells):
             continue
         rows.append(cells)
-    return rows
+    return rows, None
 
 
 def assert_profiled_readme_table_heading_probe() -> None:
     expected = [["Name", "Value"], ["alpha", "one"]]
-    for heading in ("## Probe Index", "### Probe Index"):
-        document = f"# Probe\n\n{heading}\n\n| Name | Value |\n| --- | --- |\n| alpha | one |\n"
-        actual = markdown_table_after_heading(
+    candidates = ("## Probe Index", "### Probe Index")
+    documents = {
+        "visible legacy H2": """# Probe
+
+## Probe Index
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+""",
+        "visible canonical H3": """# Probe
+
+### Probe Index
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+""",
+        "visible plus fenced fakes": """# Probe
+
+```markdown
+## Probe Index
+| Name | Value |
+| fake-backtick | ignored |
+```
+
+~~~markdown
+### Probe Index
+| Name | Value |
+| fake-tilde | ignored |
+~~~
+
+### Probe Index
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+""",
+        "visible plus multiline-comment fake": """# Probe
+
+<!--
+## Probe Index
+| Name | Value |
+| fake-comment | ignored |
+-->
+
+### Probe Index
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+""",
+    }
+    for label, document in documents.items():
+        actual, diagnostic = parse_markdown_table_after_heading(
             document,
-            ("## Probe Index", "### Probe Index"),
+            candidates,
         )
-        if actual != expected:
-            fail(f"profiled README table heading probe failed for {heading}: {actual!r}")
+        if diagnostic or actual != expected:
+            fail(
+                f"profiled README table heading probe failed for {label}: "
+                f"rows={actual!r} diagnostic={diagnostic!r}"
+            )
+
+    duplicate = """# Probe
+
+## Probe Index
+
+### Probe Index
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+"""
+    duplicate_rows, duplicate_diagnostic = parse_markdown_table_after_heading(
+        duplicate,
+        candidates,
+    )
+    if duplicate_rows or duplicate_diagnostic != (
+        "ambiguous visible markdown table headings: "
+        "['## Probe Index', '### Probe Index']"
+    ):
+        fail(
+            "profiled README table heading duplicate probe failed: "
+            f"rows={duplicate_rows!r} diagnostic={duplicate_diagnostic!r}"
+        )
 
 
 assert_profiled_readme_table_heading_probe()
