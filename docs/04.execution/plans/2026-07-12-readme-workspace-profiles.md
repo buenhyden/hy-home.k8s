@@ -330,7 +330,9 @@ Expected: commit succeeds.
 - Produces: six frontmatter-free forms; six exact-route `template/readme/*`
   profiles bound one-to-one to the existing authored profiles; 72 `paths` rows with keys `path`,
   `profile`, `requiredH2`, `allowedH2`, and `new`; and eight `cases` rows with
-  keys `name`, `path`, `document`, and `expected_rule_ids`.
+  keys `name`, `path`, `document`, and `expected_rule_ids`. The fixture also
+  declares the only permitted tracked progression as
+  `allowedTrackedCounts: [67, 68, 70, 72]`.
 - Preserves `docs/99.templates/templates/common/readme.template.md` until
   RWP-006 as the sole bounded detached compatibility form. Its profile remains
   exact ID `template/readme/common`, owns only that exact route, declares
@@ -351,6 +353,11 @@ Expected: commit succeeds.
   selection remains supported, and `template/readme/*` never counts in the
   family total. The command validates all 72 fixture dispositions while
   reporting current tracked count 67 after RWP-002 and declared final count 72.
+- Introduces a bounded dual-mode quality bridge because the RWP-003 through
+  RWP-005 group commits must pass repository QA independently. Unmigrated paths
+  retain the legacy seven-heading check; migrated paths use their finite
+  fixture required/allowed H2 contract. The CLI executes all eight fixture
+  cases as handoff validation, not as the Spec 029 production semantic parser.
 
 - [ ] **Step 1: Create the fixture before forms**
 
@@ -364,6 +371,9 @@ Markdown `document`, and carries `expected_rule_ids`; Spec 029 must resolve the
 named path to its production `DocumentProfile` before validating the document.
 Each path row's `allowedH2` is the complete ordered `requiredH2` plus additional
 H2 set, not only the optional values shown in the heading table.
+Store actual Markdown newlines in every `document` string, never literal
+backslash-n text. Validate each `new` flag against the immutable registry
+baseline rather than accepting count-only swaps.
 
 - [ ] **Step 2: Run missing-form RED check**
 
@@ -434,6 +444,8 @@ from pathlib import Path
 data=json.loads(Path('tests/fixtures/document-contracts/readme-profile-cases.json').read_text())
 path_keys={'path','profile','requiredH2','allowedH2','new'}
 case_keys={'name','path','document','expected_rule_ids'}
+assert set(data) == {'schemaVersion','allowedTrackedCounts','paths','cases'}
+assert data['allowedTrackedCounts'] == [67,68,70,72]
 assert len(data['paths']) == 72
 assert all(set(row) == path_keys for row in data['paths'])
 assert len({row['path'] for row in data['paths']}) == 72
@@ -451,6 +463,7 @@ expected_cases = (
 )
 assert len(data['cases']) == 8
 assert all(set(case) == case_keys for case in data['cases'])
+assert all(r'\n' not in case['document'] for case in data['cases'])
 case_names=[case['name'] for case in data['cases']]
 assert len(case_names) == len(set(case_names)) == 8
 actual_cases=tuple(sorted(
@@ -586,8 +599,9 @@ git diff --cached --name-only
 
 Expected: self-test reports 9 cases, 61 profiles, and 28 templates; README
 family classification reports current 67 and declared final 72; repository and
-all applicable pre-commit gates pass; and cached scope is exactly the 16 files
-listed in this Task.
+all applicable pre-commit gates pass with README migration modes
+`legacy=67 canonical=0`; and cached scope is exactly the 16 files listed in
+this Task.
 
 - [ ] **Step 8: Commit forms and fixture locally**
 
@@ -609,6 +623,8 @@ Expected: commit succeeds. Do not push or publish it.
 **Interfaces:**
 
 - Consumes: repository/stage/collection forms and registry routes.
+- Consumes: the RWP-002 dual-mode bridge at tracked count 67; this commit must
+  pass through the bridge and leave the permitted count at 68.
 - Produces: 28 topic-specific entrypoints with canonical-owner links and no copied contract tables.
 
 - [ ] **Step 1: Run missing collection-handoff RED assertion**
@@ -644,14 +660,15 @@ live or provider-latest readiness.
 - [ ] **Step 5: Validate and commit**
 
 ```bash
+git add README.md docs/README.md docs/00.agent-governance/README.md docs/00.agent-governance/memory/README.md docs/01.requirements/README.md docs/02.architecture docs/03.specs/README.md docs/04.execution docs/05.operations docs/90.references/README.md docs/90.references/audits/README.md docs/90.references/data/README.md docs/90.references/learning/README.md docs/90.references/llm-wiki/README.md docs/90.references/research/README.md docs/98.archive/README.md docs/99.templates docs/90.references/cloud-examples/README.md
 python3 scripts/validate-document-contract-registry.py --root . --mode compatibility --profile readme
 bash scripts/validate-repo-quality-gates.sh .
-git diff --check
-git add README.md docs/README.md docs/00.agent-governance/README.md docs/00.agent-governance/memory/README.md docs/01.requirements/README.md docs/02.architecture docs/03.specs/README.md docs/04.execution docs/05.operations docs/90.references/README.md docs/90.references/audits/README.md docs/90.references/data/README.md docs/90.references/learning/README.md docs/90.references/llm-wiki/README.md docs/90.references/research/README.md docs/98.archive/README.md docs/99.templates docs/90.references/cloud-examples/README.md
+git diff --cached --check
 git commit -m "docs(readme): migrate repository and index profiles"
 ```
 
-Expected: focused and repository gates PASS.
+Expected: stage-first inventory observes current 68; focused and repository
+gates PASS.
 
 ---
 
@@ -666,6 +683,8 @@ Expected: focused and repository gates PASS.
 **Interfaces:**
 
 - Consumes: snapshot-pack form and provider research/snapshot evidence.
+- Consumes: the RWP-002 dual-mode bridge at tracked count 68; this commit must
+  pass through the bridge and leave the permitted count at 70.
 - Produces: 30 snapshot indexes with observation boundary, report inventory, refresh/successor, and evidence limits.
 
 - [ ] **Step 1: Run missing-provider-handoff RED check**
@@ -699,14 +718,15 @@ provider service/contract changes, and no-live authority boundary.
 - [ ] **Step 5: Validate and commit**
 
 ```bash
+git add docs/90.references/audits docs/90.references/research/2026-07-04-wer/README.md docs/90.references/research/2026-07-07-wer/README.md docs/90.references/cloud-examples/aws/README.md docs/90.references/cloud-examples/azure/README.md examples/aws/docs examples/azure/docs
 python3 scripts/validate-document-contract-registry.py --root . --mode compatibility --profile readme
 bash scripts/validate-repo-quality-gates.sh .
-git diff --check
-git add docs/90.references/audits docs/90.references/research/2026-07-04-wer/README.md docs/90.references/research/2026-07-07-wer/README.md docs/90.references/cloud-examples/aws/README.md docs/90.references/cloud-examples/azure/README.md examples/aws/docs examples/azure/docs
+git diff --cached --check
 git commit -m "docs(readme): migrate snapshot pack profiles"
 ```
 
-Expected: gates PASS and commit succeeds.
+Expected: stage-first inventory observes current 70; gates PASS and commit
+succeeds.
 
 ---
 
@@ -723,6 +743,8 @@ Expected: gates PASS and commit succeeds.
 **Interfaces:**
 
 - Consumes: implementation/workspace forms and existing component inventories.
+- Consumes: the RWP-002 dual-mode bridge at tracked count 70; this commit must
+  pass through the bridge and leave the permitted count at 72.
 - Produces: 13 implementation entrypoints and one secret-safe workspace-staging contract.
 
 - [ ] **Step 1: Capture workspace tracking RED/GREEN baseline**
@@ -763,14 +785,15 @@ require deletion before closure when no durable destination exists.
 ```bash
 test "$(git ls-files _workspace)" = "_workspace/README.md"
 git check-ignore -q _workspace/probe.tmp
+git add README.md _workspace/README.md .gitignore examples/README.md examples/sample-app/README.md examples/aws/README.md examples/azure/README.md examples/azure/gitops/README.md examples/azure/infrastructure/README.md examples/azure/kubernetes/README.md gitops/README.md gitops/workloads/README.md infrastructure/README.md scripts/README.md tests/README.md traefik/README.md
 python3 scripts/validate-document-contract-registry.py --root . --mode compatibility --profile readme
 bash scripts/validate-repo-quality-gates.sh .
-git diff --check
-git add README.md _workspace/README.md .gitignore examples/README.md examples/sample-app/README.md examples/aws/README.md examples/azure/README.md examples/azure/gitops/README.md examples/azure/infrastructure/README.md examples/azure/kubernetes/README.md gitops/README.md gitops/workloads/README.md infrastructure/README.md scripts/README.md tests/README.md traefik/README.md
+git diff --cached --check
 git commit -m "docs(readme): migrate implementation and workspace profiles"
 ```
 
-Expected: tracking and repository gates PASS.
+Expected: stage-first inventory observes current 72; tracking and repository
+gates PASS.
 
 ---
 
@@ -796,14 +819,18 @@ Expected: tracking and repository gates PASS.
 
 **Interfaces:**
 
-- Consumes: all 72 migrated paths and `readme-profile-cases.json`.
-- Produces: zero old-form references and an explicit Spec 029 fixture-consumer handoff.
+- Consumes: all 72 migrated paths, `readme-profile-cases.json`, and the
+  RWP-002 dual-mode bridge.
+- Produces: zero old-form references, zero legacy-mode branch/token, and an
+  explicit Spec 029 fixture-consumer handoff that retains the finite canonical
+  fixture reader.
 
 - [ ] **Step 1: Run legacy RED search**
 
 ```bash
 git ls-files -z -- 'README.md' ':(glob)**/README.md' | \
   xargs -0 -r rg -n 'SNIPPET LIBRARY|Selection Guide|universal seven'
+rg -n 'RWP006_REMOVE_README_DUAL_MODE' scripts/validate-repo-quality-gates.sh
 rg -n '(^|/)readme\.template\.md|docs/99\.templates/templates/common/readme\.template\.md|template/readme/common' \
   docs/99.templates docs/00.agent-governance/rules \
   docs/00.agent-governance/hooks scripts tests .agents .claude .codex
@@ -824,11 +851,12 @@ Delete `readme.template.md` with `apply_patch`; remove exact profile
 every exact-ID/path validator exemption, and every active old-form consumer
 including the pre-edit hook. Recompute both semantic pins after removing that
 state. Preserve the six one-to-one authored/template profile bindings and
-forms. Replace route/inventory links with the six forms and replace the
-universal heading loop in the current quality gate with a finite reader of
-`readme-profile-cases.json`. This temporary check may compare actual H1/H2 to
-fixture expectations but must carry removal owner `Spec 029` and must not
-become a second canonical heading table.
+forms. Remove only the quality gate's
+`RWP006_REMOVE_README_DUAL_MODE` legacy branch and detached common state;
+retain its finite canonical `readme-profile-cases.json` reader for the Spec 029
+handoff. The retained check may compare actual H1/H2 to fixture expectations
+but must carry removal owner `Spec 029` and must not become a second canonical
+heading table.
 
 - [ ] **Step 3: Run focused fence-aware migration assertion**
 
@@ -874,6 +902,8 @@ if git ls-files -z -- 'README.md' ':(glob)**/README.md' | \
   xargs -0 -r rg -n 'SNIPPET LIBRARY|Selection Guide|universal seven'; then
   exit 1
 fi
+if rg -n 'RWP006_REMOVE_README_DUAL_MODE' \
+  scripts/validate-repo-quality-gates.sh; then exit 1; fi
 if rg -n '(^|/)readme\.template\.md|docs/99\.templates/templates/common/readme\.template\.md|template/readme/common' \
   docs/99.templates docs/00.agent-governance/rules \
   docs/00.agent-governance/hooks scripts tests .agents .claude .codex; then exit 1; fi

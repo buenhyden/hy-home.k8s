@@ -128,6 +128,91 @@ def has_markdown_frontmatter(path: pathlib.Path, text: str | None = None) -> boo
     return bool(re.match(r"^---\n.*?\n---\n", content, re.DOTALL))
 
 
+def strip_multiline_html_comments(line: str, in_comment: bool) -> tuple[str, bool]:
+    """Remove HTML comments while retaining visible text around them."""
+    visible = []
+    cursor = 0
+    while cursor < len(line):
+        if in_comment:
+            end = line.find("-->", cursor)
+            if end < 0:
+                return "".join(visible), True
+            cursor = end + 3
+            in_comment = False
+            continue
+        start = line.find("<!--", cursor)
+        if start < 0:
+            visible.append(line[cursor:])
+            break
+        visible.append(line[cursor:start])
+        cursor = start + 4
+        in_comment = True
+    return "".join(visible), in_comment
+
+
+def extract_markdown_headings(markdown: str) -> list[tuple[int, str]]:
+    """Extract ATX headings outside matching fences and HTML comments."""
+    headings = []
+    fence_character = None
+    fence_length = 0
+    in_comment = False
+    opening_fence = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+
+    for raw_line in markdown.splitlines():
+        if fence_character is not None:
+            closing_fence = re.compile(
+                rf"^ {{0,3}}{re.escape(fence_character)}"
+                rf"{{{fence_length},}}[ \t]*$"
+            )
+            if closing_fence.match(raw_line):
+                fence_character = None
+                fence_length = 0
+            continue
+
+        line, in_comment = strip_multiline_html_comments(raw_line, in_comment)
+        fence_match = opening_fence.match(line)
+        if fence_match:
+            marker = fence_match.group(1)
+            fence_character = marker[0]
+            fence_length = len(marker)
+            continue
+
+        heading_match = re.match(r"^ {0,3}(#{1,6})(?:[ \t]+|$)(.*)$", line)
+        if not heading_match:
+            continue
+        heading_text = heading_match.group(2).strip()
+        heading_text = re.sub(r"[ \t]+#+[ \t]*$", "", heading_text).strip()
+        headings.append((len(heading_match.group(1)), heading_text))
+
+    return headings
+
+
+def canonical_readme_heading_diagnostics(
+    markdown: str,
+    required_h2: list[str],
+    allowed_h2: list[str],
+) -> tuple[tuple[str, tuple[str, ...]], ...]:
+    """Evaluate the bounded canonical side of the README migration bridge."""
+    headings = extract_markdown_headings(markdown)
+    h1 = [heading for level, heading in headings if level == 1]
+    h2 = [heading for level, heading in headings if level == 2]
+    diagnostics: list[tuple[str, tuple[str, ...]]] = []
+    if len(h1) != 1:
+        diagnostics.append(("README_H1", tuple(h1)))
+    duplicate_h2 = tuple(
+        sorted(heading for heading, count in collections.Counter(h2).items() if count > 1)
+    )
+    if duplicate_h2:
+        diagnostics.append(("README_H2_DUPLICATE", duplicate_h2))
+    missing_h2 = tuple(heading for heading in required_h2 if heading not in h2)
+    if missing_h2:
+        diagnostics.append(("README_H2_REQUIRED", missing_h2))
+    unsupported_h2 = tuple(heading for heading in h2 if heading not in allowed_h2)
+    if unsupported_h2:
+        diagnostics.append(("README_H2_UNSUPPORTED", unsupported_h2))
+    return tuple(diagnostics)
+
+
 def normalize_tools(value) -> str:
     if isinstance(value, str):
         return ", ".join(part.strip() for part in value.split(",") if part.strip())
@@ -722,15 +807,72 @@ for contract_path, phrases in active_app_secret_contracts:
         if phrase not in contract_text:
             fail(f"{rel(contract_path)} missing app onboarding secret path contract phrase: {phrase}")
 
-readme_base_sections = {
-    "Overview": re.compile(r"^##\s+Overview\b", re.MULTILINE),
-    "Audience": re.compile(r"^##\s+Audience\b", re.MULTILINE),
-    "Scope": re.compile(r"^##\s+Scope\b", re.MULTILINE),
-    "Structure": re.compile(r"^##\s+Structure\b", re.MULTILINE),
-    "How to Work in This Area": re.compile(r"^##\s+How to Work in This Area\b", re.MULTILINE),
-    "Link Basis": re.compile(r"^##\s+Link Basis\b", re.MULTILINE),
-    "Related Documents": re.compile(r"^##\s+Related Documents\b", re.MULTILINE),
-}
+legacy_readme_h2 = (
+    "Overview",
+    "Audience",
+    "Scope",
+    "Structure",
+    "How to Work in This Area",
+    "Link Basis",
+    "Related Documents",
+)
+
+
+def uses_legacy_readme_contract(h2: list[str]) -> bool:
+    return all(section in h2 for section in legacy_readme_h2)
+
+
+def assert_readme_dual_mode_probe() -> None:
+    required = ["Overview", "Validation"]
+    allowed = [*required, "Troubleshooting"]
+    valid = """# Probe
+
+## Overview
+
+```markdown
+# Fenced H1
+## Fenced H2
+```
+
+<!-- ## Commented H2 -->
+
+## Validation
+"""
+    probes = (
+        ("valid fence/comment handling", valid, ()),
+        ("duplicate H1", valid + "\n# Duplicate\n", ("README_H1",)),
+        ("duplicate H2", valid + "\n## Overview\n", ("README_H2_DUPLICATE",)),
+        (
+            "missing required H2",
+            "# Probe\n\n## Overview\n",
+            ("README_H2_REQUIRED",),
+        ),
+        (
+            "unsupported H2",
+            valid + "\n## Unsupported\n",
+            ("README_H2_UNSUPPORTED",),
+        ),
+    )
+    for label, markdown, expected_rule_ids in probes:
+        actual_rule_ids = tuple(
+            rule_id
+            for rule_id, _ in canonical_readme_heading_diagnostics(
+                markdown, required, allowed
+            )
+        )
+        if actual_rule_ids != expected_rule_ids:
+            fail(
+                f"README dual-mode probe {label} expected "
+                f"{expected_rule_ids!r}, got {actual_rule_ids!r}"
+            )
+    if not uses_legacy_readme_contract(list(legacy_readme_h2)):
+        fail("README dual-mode probe must recognize the legacy seven-heading contract")
+    if uses_legacy_readme_contract(required):
+        fail("README dual-mode probe must route canonical headings outside legacy mode")
+
+
+assert_readme_dual_mode_probe()
+
 deprecated_readme_headings = [
     "Related " + "References",
     "Related " + "Folders",
@@ -745,20 +887,60 @@ for name in sorted(required_doc_dirs):
     readme = docs_dir / name / "README.md"
     if not readme.exists():
         fail(f"required README.md is missing: {rel(readme)}")
-for readme in sorted(root.rglob("README.md")):
-    if ".git" in readme.parts or ".agents" in readme.parts or ".agent-work" in readme.parts:
-        continue
+
+readme_fixture_path = root / "tests/fixtures/document-contracts/readme-profile-cases.json"
+readme_fixture = load_json(readme_fixture_path)
+readme_rows = {
+    row["path"]: row
+    for row in readme_fixture.get("paths", [])
+    if isinstance(row, dict) and isinstance(row.get("path"), str)
+}
+tracked_readme_paths = {
+    path for path in tracked if path == "README.md" or path.endswith("/README.md")
+}
+undeclared_readmes = tracked_readme_paths - set(readme_rows)
+if undeclared_readmes:
+    fail(
+        f"{rel(readme_fixture_path)} must declare every tracked README: "
+        f"{sorted(undeclared_readmes)!r}"
+    )
+
+legacy_readme_count = 0
+canonical_readme_count = 0
+for readme_rel in sorted(tracked_readme_paths):
+    readme = root / readme_rel
     text = read_text(readme)
     if has_markdown_frontmatter(readme, text):
         fail(f"{rel(readme)} must not use YAML frontmatter")
-    for section, pattern in readme_base_sections.items():
-        if not pattern.search(text):
-            fail(f"{rel(readme)} missing README base section: {section}")
-    if not re.search(r"^##\s+Related Documents\b", text, re.MULTILINE):
-        fail(f"{rel(readme)} missing canonical README section: Related Documents")
+    headings = extract_markdown_headings(text)
+    h2 = [heading for level, heading in headings if level == 2]
+
+    # RWP006_REMOVE_README_DUAL_MODE: remove this legacy branch after all 72
+    # paths use their canonical fixture profile; retain the finite reader.
+    if uses_legacy_readme_contract(h2):
+        legacy_readme_count += 1
+    else:
+        canonical_readme_count += 1
+        row = readme_rows.get(readme_rel)
+        if row is None:
+            continue
+        required_h2 = row.get("requiredH2", [])
+        allowed_h2 = row.get("allowedH2", [])
+        for rule_id, detail in canonical_readme_heading_diagnostics(
+            text, required_h2, allowed_h2
+        ):
+            fail(f"{rel(readme)} canonical README {rule_id}: {list(detail)!r}")
+
     for deprecated_heading in deprecated_readme_headings:
         if re.search(rf"^##\s+{re.escape(deprecated_heading)}\b", text, re.MULTILINE):
             fail(f"{rel(readme)} still uses deprecated README section: {deprecated_heading}")
+
+if legacy_readme_count + canonical_readme_count != len(tracked_readme_paths):
+    fail("README dual-mode accounting must cover every tracked README exactly once")
+print(
+    "README migration modes: "
+    f"legacy={legacy_readme_count} canonical={canonical_readme_count}"
+)
 
 github_native_markdown = [
     root / ".github/ABOUT.md",
@@ -1102,65 +1284,6 @@ def assert_template_compatibility_mutation_proof(contract: dict) -> None:
                 f"{TEMPLATE_COMPATIBILITY_CONTRACT_V1['name']} mutation proof "
                 f"accepted a changed {label}"
             )
-
-
-def strip_multiline_html_comments(line: str, in_comment: bool) -> tuple[str, bool]:
-    """Remove HTML comments while retaining visible text around them."""
-    visible = []
-    cursor = 0
-    while cursor < len(line):
-        if in_comment:
-            end = line.find("-->", cursor)
-            if end < 0:
-                return "".join(visible), True
-            cursor = end + 3
-            in_comment = False
-            continue
-        start = line.find("<!--", cursor)
-        if start < 0:
-            visible.append(line[cursor:])
-            break
-        visible.append(line[cursor:start])
-        cursor = start + 4
-        in_comment = True
-    return "".join(visible), in_comment
-
-
-def extract_markdown_headings(markdown: str) -> list[tuple[int, str]]:
-    """Extract ATX headings outside matching fences and HTML comments."""
-    headings = []
-    fence_character = None
-    fence_length = 0
-    in_comment = False
-    opening_fence = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
-
-    for raw_line in markdown.splitlines():
-        if fence_character is not None:
-            closing_fence = re.compile(
-                rf"^ {{0,3}}{re.escape(fence_character)}"
-                rf"{{{fence_length},}}[ \t]*$"
-            )
-            if closing_fence.match(raw_line):
-                fence_character = None
-                fence_length = 0
-            continue
-
-        line, in_comment = strip_multiline_html_comments(raw_line, in_comment)
-        fence_match = opening_fence.match(line)
-        if fence_match:
-            marker = fence_match.group(1)
-            fence_character = marker[0]
-            fence_length = len(marker)
-            continue
-
-        heading_match = re.match(r"^ {0,3}(#{1,6})(?:[ \t]+|$)(.*)$", line)
-        if not heading_match:
-            continue
-        heading_text = heading_match.group(2).strip()
-        heading_text = re.sub(r"[ \t]+#+[ \t]*$", "", heading_text).strip()
-        headings.append((len(heading_match.group(1)), heading_text))
-
-    return headings
 
 
 def assert_markdown_heading_extractor_probe() -> None:

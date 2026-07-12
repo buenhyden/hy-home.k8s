@@ -1,5 +1,11 @@
 {
   "schemaVersion": 1,
+  "allowedTrackedCounts": [
+    67,
+    68,
+    70,
+    72
+  ],
   "paths": [
     {
       "path": "README.md",
@@ -1562,7 +1568,7 @@
     {
       "name": "duplicate-h1",
       "path": "README.md",
-      "document": "# Fixture README\n\n## Overview\n\n## Repository Map\n\n## Getting Started\n\n## Validation\n\n## Related Documents\n\\n# Duplicate\\n",
+      "document": "# Fixture README\n\n## Overview\n\n## Repository Map\n\n## Getting Started\n\n## Validation\n\n## Related Documents\n\n# Duplicate\n",
       "expected_rule_ids": [
         "README_H1"
       ]
@@ -1570,7 +1576,7 @@
     {
       "name": "duplicate-h2",
       "path": "README.md",
-      "document": "# Fixture README\n\n## Overview\n\n## Repository Map\n\n## Getting Started\n\n## Validation\n\n## Related Documents\n\\n## Overview\\n",
+      "document": "# Fixture README\n\n## Overview\n\n## Repository Map\n\n## Getting Started\n\n## Validation\n\n## Related Documents\n\n## Overview\n",
       "expected_rule_ids": [
         "README_H2_DUPLICATE"
       ]
@@ -1578,7 +1584,7 @@
     {
       "name": "unsupported-h2",
       "path": "README.md",
-      "document": "# Fixture README\n\n## Overview\n\n## Repository Map\n\n## Getting Started\n\n## Validation\n\n## Related Documents\n\\n## Unsupported\\n",
+      "document": "# Fixture README\n\n## Overview\n\n## Repository Map\n\n## Getting Started\n\n## Validation\n\n## Related Documents\n\n## Unsupported\n",
       "expected_rule_ids": [
         "README_H2_UNSUPPORTED"
       ]
@@ -1586,7 +1592,7 @@
     {
       "name": "missing-required-h2",
       "path": "README.md",
-      "document": "# Fixture README\\n\\n## Overview\\n\\n## Repository Map\\n\\n## Getting Started\\n\\n## Related Documents\\n",
+      "document": "# Fixture README\n\n## Overview\n\n## Repository Map\n\n## Getting Started\n\n## Related Documents\n",
       "expected_rule_ids": [
         "README_H2_REQUIRED"
       ]
@@ -1594,13 +1600,13 @@
     {
       "name": "fenced-heading-ignored",
       "path": "README.md",
-      "document": "# Fixture README\n\n## Overview\n\n## Repository Map\n\n## Getting Started\n\n## Validation\n\n## Related Documents\n\\n```markdown\\n# Ignored H1\\n## Ignored H2\\n```\\n",
+      "document": "# Fixture README\n\n## Overview\n\n## Repository Map\n\n## Getting Started\n\n## Validation\n\n## Related Documents\n\n```markdown\n# Ignored H1\n## Ignored H2\n```\n",
       "expected_rule_ids": []
     },
     {
       "name": "unclosed-fence",
       "path": "README.md",
-      "document": "# Fixture README\n\n## Overview\n\n## Repository Map\n\n## Getting Started\n\n## Validation\n\n## Related Documents\n\\n```markdown\\n# Ignored H1\\n",
+      "document": "# Fixture README\n\n## Overview\n\n## Repository Map\n\n## Getting Started\n\n## Validation\n\n## Related Documents\n\n```markdown\n# Ignored H1\n",
       "expected_rule_ids": [
         "README_FENCE"
       ]

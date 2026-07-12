@@ -7,6 +7,7 @@ import argparse
 import copy
 import hashlib
 import json
+import re
 import subprocess
 import tempfile
 from pathlib import Path, PurePosixPath
@@ -17,6 +18,7 @@ from document_contracts import (
     BASELINE_SHA,
     REGISTRY_PATH,
     DocumentContractError,
+    TargetInventory,
     classify_path,
     classify_paths,
     enumerate_target_markdown,
@@ -690,36 +692,170 @@ def _assert_positive_coverage(
     return len(coverage), len(template_coverage)
 
 
-def _assert_readme_family_contract(root: Path, registry: Any) -> tuple[int, int]:
-    fixture = _load_json(root / README_FIXTURE_PATH)
+def _strip_multiline_html_comments(line: str, in_comment: bool) -> tuple[str, bool]:
+    """Remove HTML comments while retaining visible text around them."""
+    visible: list[str] = []
+    cursor = 0
+    while cursor < len(line):
+        if in_comment:
+            end = line.find("-->", cursor)
+            if end < 0:
+                return "".join(visible), True
+            cursor = end + 3
+            in_comment = False
+            continue
+        start = line.find("<!--", cursor)
+        if start < 0:
+            visible.append(line[cursor:])
+            break
+        visible.append(line[cursor:start])
+        cursor = start + 4
+        in_comment = True
+    return "".join(visible), in_comment
+
+
+def _extract_markdown_structure(
+    markdown: str,
+) -> tuple[list[tuple[int, str]], bool]:
+    """Extract ATX headings and report an unclosed matching fence."""
+    headings: list[tuple[int, str]] = []
+    fence_character: str | None = None
+    fence_length = 0
+    in_comment = False
+    opening_fence = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+
+    for raw_line in markdown.splitlines():
+        if fence_character is not None:
+            closing_fence = re.compile(
+                rf"^ {{0,3}}{re.escape(fence_character)}"
+                rf"{{{fence_length},}}[ \t]*$"
+            )
+            if closing_fence.match(raw_line):
+                fence_character = None
+                fence_length = 0
+            continue
+
+        line, in_comment = _strip_multiline_html_comments(raw_line, in_comment)
+        fence_match = opening_fence.match(line)
+        if fence_match:
+            marker = fence_match.group(1)
+            fence_character = marker[0]
+            fence_length = len(marker)
+            continue
+
+        heading_match = re.match(r"^ {0,3}(#{1,6})(?:[ \t]+|$)(.*)$", line)
+        if not heading_match:
+            continue
+        heading_text = heading_match.group(2).strip()
+        heading_text = re.sub(r"[ \t]+#+[ \t]*$", "", heading_text).strip()
+        headings.append((len(heading_match.group(1)), heading_text))
+
+    return headings, fence_character is not None
+
+
+def extract_markdown_headings(markdown: str) -> list[tuple[int, str]]:
+    """Shared fence/comment-aware heading extraction for README validation."""
+    headings, _ = _extract_markdown_structure(markdown)
+    return headings
+
+
+def _evaluate_readme_document(
+    document: str, required_h2: tuple[str, ...], allowed_h2: tuple[str, ...]
+) -> tuple[str, ...]:
+    """Evaluate the bounded README handoff fixture, not production semantics."""
+    rule_ids: list[str] = []
+    if re.match(r"^---\n.*?\n---(?:\n|$)", document, re.DOTALL):
+        rule_ids.append("README_FRONTMATTER")
+
+    headings, unclosed_fence = _extract_markdown_structure(document)
+    h1 = [text for level, text in headings if level == 1]
+    h2 = [text for level, text in headings if level == 2]
+    if len(h1) != 1:
+        rule_ids.append("README_H1")
+    if len(h2) != len(set(h2)):
+        rule_ids.append("README_H2_DUPLICATE")
+    if any(heading not in allowed_h2 for heading in h2):
+        rule_ids.append("README_H2_UNSUPPORTED")
+    if any(heading not in h2 for heading in required_h2):
+        rule_ids.append("README_H2_REQUIRED")
+    if unclosed_fence:
+        rule_ids.append("README_FENCE")
+    return tuple(rule_ids)
+
+
+def _is_readme_path(path: PurePosixPath) -> bool:
+    return path.name == "README.md"
+
+
+def _readme_profile_ids(registry: Any) -> set[str]:
+    return {
+        profile.profile_id
+        for profile in registry.profiles
+        if profile.profile_id.startswith("readme/")
+        and profile.profile_class == "readme"
+        and profile.mode == "frontmatter-free"
+    }
+
+
+def _assert_readme_family_contract(
+    root: Path,
+    registry: Any,
+    *,
+    fixture: dict[str, Any] | None = None,
+    inventory: TargetInventory | None = None,
+) -> tuple[int, int, int]:
+    if fixture is None:
+        fixture = _load_json(root / README_FIXTURE_PATH)
+    if inventory is None:
+        inventory = enumerate_target_markdown(root)
+    if not isinstance(fixture, dict) or set(fixture) != {
+        "schemaVersion",
+        "allowedTrackedCounts",
+        "paths",
+        "cases",
+    }:
+        raise AssertionError("README profile fixture schema mismatch")
     paths = fixture.get("paths")
     cases = fixture.get("cases")
+    allowed_tracked_counts = fixture.get("allowedTrackedCounts")
     if fixture.get("schemaVersion") != 1 or not isinstance(paths, list):
         raise AssertionError("README profile fixture schema mismatch")
+    if allowed_tracked_counts != [67, 68, 70, 72]:
+        raise AssertionError(
+            "README fixture allowedTrackedCounts must equal [67, 68, 70, 72]"
+        )
     if not isinstance(cases, list):
         raise AssertionError("README profile fixture cases must be an array")
 
     path_keys = {"path", "profile", "requiredH2", "allowedH2", "new"}
     declared_paths: set[PurePosixPath] = set()
-    baseline_count = 0
+    rows_by_path: dict[PurePosixPath, dict[str, Any]] = {}
+    baseline_paths = set(inventory.baseline_paths)
     for row in paths:
         if not isinstance(row, dict) or set(row) != path_keys:
             raise AssertionError(f"invalid README fixture path row: {row!r}")
-        path = PurePosixPath(row["path"])
+        raw_path = row.get("path")
+        if not isinstance(raw_path, str) or not raw_path:
+            raise AssertionError(f"invalid README fixture path: {raw_path!r}")
+        path = PurePosixPath(raw_path)
+        if (
+            path.as_posix() != raw_path
+            or path.is_absolute()
+            or ".." in path.parts
+            or not _is_readme_path(path)
+        ):
+            raise AssertionError(f"invalid README fixture path: {raw_path!r}")
         if path in declared_paths:
             raise AssertionError(f"duplicate README fixture path: {path}")
         declared_paths.add(path)
+        rows_by_path[path] = row
         profile = classify_path(registry, path)
         if profile.profile_id != row["profile"]:
             raise AssertionError(
                 f"{path}: README fixture profile {row['profile']!r} differs "
                 f"from registry {profile.profile_id!r}"
             )
-        if not (
-            profile.profile_id.startswith("readme/")
-            and profile.profile_class == "readme"
-            and profile.mode == "frontmatter-free"
-        ):
+        if profile.profile_id not in _readme_profile_ids(registry):
             raise AssertionError(f"{path}: README fixture selected a non-authored profile")
         if list(profile.headings.required) != row["requiredH2"]:
             raise AssertionError(f"{path}: README required headings differ from registry")
@@ -727,40 +863,182 @@ def _assert_readme_family_contract(root: Path, registry: Any) -> tuple[int, int]
             raise AssertionError(f"{path}: README allowed headings differ from registry")
         if not isinstance(row["new"], bool):
             raise AssertionError(f"{path}: README new flag must be boolean")
-        baseline_count += row["new"] is False
+        expected_new = path not in baseline_paths
+        if row["new"] is not expected_new:
+            raise AssertionError(
+                f"{path}: README new flag differs from immutable baseline inventory"
+            )
 
+    expected_cases = (
+        ("valid-profile", ()),
+        ("frontmatter-forbidden", ("README_FRONTMATTER",)),
+        ("duplicate-h1", ("README_H1",)),
+        ("duplicate-h2", ("README_H2_DUPLICATE",)),
+        ("unsupported-h2", ("README_H2_UNSUPPORTED",)),
+        ("missing-required-h2", ("README_H2_REQUIRED",)),
+        ("fenced-heading-ignored", ()),
+        ("unclosed-fence", ("README_FENCE",)),
+    )
+    expected_by_name = dict(expected_cases)
     case_keys = {"name", "path", "document", "expected_rule_ids"}
-    expected_cases = {
-        "valid-profile": (),
-        "frontmatter-forbidden": ("README_FRONTMATTER",),
-        "duplicate-h1": ("README_H1",),
-        "duplicate-h2": ("README_H2_DUPLICATE",),
-        "unsupported-h2": ("README_H2_UNSUPPORTED",),
-        "missing-required-h2": ("README_H2_REQUIRED",),
-        "fenced-heading-ignored": (),
-        "unclosed-fence": ("README_FENCE",),
-    }
-    case_names: list[str] = []
+    actual_case_names: list[str] = []
     for case in cases:
         if not isinstance(case, dict) or set(case) != case_keys:
             raise AssertionError(f"invalid README fixture case: {case!r}")
-        case_names.append(case["name"])
-        if not isinstance(case["document"], str) or not case["document"]:
+        name = case.get("name")
+        actual_case_names.append(name)
+        document = case.get("document")
+        if not isinstance(document, str) or not document:
             raise AssertionError(f"README fixture case has invalid document: {case!r}")
-        if PurePosixPath(case["path"]) not in declared_paths:
-            raise AssertionError(f"README fixture case has undeclared path: {case['path']}")
-        actual_rule_ids = case["expected_rule_ids"]
-        if not isinstance(actual_rule_ids, list) or tuple(actual_rule_ids) != expected_cases.get(case["name"]):
+        if "\\n" in document:
             raise AssertionError(
-                f"README fixture case rule IDs differ for {case['name']!r}"
+                f"README fixture case contains literal backslash-n: {name!r}"
             )
-    if len(case_names) != len(set(case_names)) or set(case_names) != set(expected_cases):
-        raise AssertionError("README fixture case names differ from the eight-case contract")
-    if baseline_count != 67 or len(declared_paths) != 72:
-        raise AssertionError(
-            "README fixture must declare baseline 67 and final 72 paths"
+        raw_case_path = case.get("path")
+        if not isinstance(raw_case_path, str) or not raw_case_path:
+            raise AssertionError(f"README fixture case has invalid path: {case!r}")
+        path = PurePosixPath(raw_case_path)
+        row = rows_by_path.get(path)
+        if row is None:
+            raise AssertionError(f"README fixture case has undeclared path: {case['path']}")
+        expected_rule_ids = expected_by_name.get(name)
+        if (
+            not isinstance(case.get("expected_rule_ids"), list)
+            or tuple(case["expected_rule_ids"]) != expected_rule_ids
+        ):
+            raise AssertionError(f"README fixture case rule IDs differ for {name!r}")
+        actual_rule_ids = _evaluate_readme_document(
+            document,
+            tuple(row["requiredH2"]),
+            tuple(row["allowedH2"]),
         )
-    return baseline_count, len(declared_paths)
+        if actual_rule_ids != expected_rule_ids:
+            raise AssertionError(
+                f"README fixture case {name!r} expected {expected_rule_ids!r}, "
+                f"got {actual_rule_ids!r}"
+            )
+    if tuple(actual_case_names) != tuple(name for name, _ in expected_cases):
+        raise AssertionError("README fixture case names differ from the eight-case contract")
+
+    baseline_readmes = {
+        path for path in inventory.baseline_paths if _is_readme_path(path)
+    }
+    declared_baseline = {
+        path for path, row in rows_by_path.items() if row["new"] is False
+    }
+    if declared_baseline != baseline_readmes or len(declared_paths) != 72:
+        raise AssertionError(
+            "README fixture must declare the exact baseline 67 and final 72 paths"
+        )
+
+    tracked_readmes = {
+        path for path in inventory.current_paths if _is_readme_path(path)
+    }
+    declared_tracked = tracked_readmes & declared_paths
+    undeclared_tracked = tracked_readmes - declared_paths
+    if undeclared_tracked:
+        raise AssertionError(
+            "README fixture is missing tracked README paths: "
+            f"{sorted(path.as_posix() for path in undeclared_tracked)!r}"
+        )
+    readme_profile_ids = _readme_profile_ids(registry)
+    selected_tracked = {
+        path
+        for path in inventory.current_paths
+        if classify_path(registry, path).profile_id in readme_profile_ids
+    }
+    if selected_tracked != declared_tracked:
+        raise AssertionError(
+            "README family selected path set differs from declared tracked README set: "
+            f"extra={sorted(path.as_posix() for path in selected_tracked - declared_tracked)!r} "
+            f"missing={sorted(path.as_posix() for path in declared_tracked - selected_tracked)!r}"
+        )
+    current_count = len(selected_tracked)
+    if current_count not in allowed_tracked_counts:
+        raise AssertionError(
+            f"README tracked count {current_count} is outside staged progression "
+            f"{allowed_tracked_counts!r}"
+        )
+    return len(baseline_readmes), len(declared_paths), current_count
+
+
+def _assert_readme_fixture_mutation_proofs(
+    root: Path,
+    raw_registry: dict[str, Any],
+    registry: Any,
+    fixture: dict[str, Any],
+    inventory: TargetInventory,
+) -> None:
+    def expect_rejection(
+        label: str,
+        candidate_fixture: dict[str, Any],
+        *,
+        candidate_registry: Any = registry,
+        candidate_inventory: TargetInventory = inventory,
+    ) -> None:
+        try:
+            _assert_readme_family_contract(
+                root,
+                candidate_registry,
+                fixture=candidate_fixture,
+                inventory=candidate_inventory,
+            )
+        except AssertionError:
+            return
+        raise AssertionError(f"README fixture mutation proof accepted {label}")
+
+    literal_newline = copy.deepcopy(fixture)
+    literal_newline["cases"][0]["document"] += "\\n"
+    expect_rejection("a literal backslash-n document", literal_newline)
+
+    invalid_document = copy.deepcopy(fixture)
+    invalid_document["cases"][0]["document"] = ""
+    expect_rejection("an invalid empty document", invalid_document)
+
+    wrong_case_semantics = copy.deepcopy(fixture)
+    duplicate_h1 = next(
+        case for case in wrong_case_semantics["cases"] if case["name"] == "duplicate-h1"
+    )
+    duplicate_h1["document"] = wrong_case_semantics["cases"][0]["document"]
+    expect_rejection("changed case semantics", wrong_case_semantics)
+
+    swapped_flags = copy.deepcopy(fixture)
+    existing = next(row for row in swapped_flags["paths"] if row["new"] is False)
+    future = next(row for row in swapped_flags["paths"] if row["new"] is True)
+    existing["new"], future["new"] = True, False
+    expect_rejection("swapped existing/future flags", swapped_flags)
+
+    extra_path = PurePosixPath("docs/undeclared-bridge/README.md")
+    broad_raw_registry = copy.deepcopy(raw_registry)
+    repository_profile = next(
+        profile
+        for profile in broad_raw_registry["profiles"]
+        if profile["id"] == "readme/repository"
+    )
+    repository_profile["routes"].append(
+        {
+            "kind": "regex",
+            "value": r"^docs/undeclared-[^/]+/README\.md$",
+        }
+    )
+    broad_registry = validate_registry(root, broad_raw_registry)
+    extra_inventory = TargetInventory(
+        baseline_paths=inventory.baseline_paths,
+        current_paths=tuple(
+            sorted((*inventory.current_paths, extra_path), key=lambda path: path.as_posix())
+        ),
+        new_paths=tuple(
+            sorted((*inventory.new_paths, extra_path), key=lambda path: path.as_posix())
+        ),
+        baseline_symlink_paths=inventory.baseline_symlink_paths,
+        current_symlink_paths=inventory.current_symlink_paths,
+    )
+    expect_rejection(
+        "an undeclared broad-route README",
+        fixture,
+        candidate_registry=broad_registry,
+        candidate_inventory=extra_inventory,
+    )
 
 
 def _self_test(root: Path) -> int:
@@ -809,8 +1087,21 @@ def _self_test(root: Path) -> int:
         profile_count, template_count = _assert_positive_coverage(
             root, raw_registry, fixture
         )
+        registry = validate_registry(root, raw_registry)
+        readme_fixture = _load_json(root / README_FIXTURE_PATH)
+        inventory = enumerate_target_markdown(root)
         _assert_readme_family_contract(
-            root, validate_registry(root, raw_registry)
+            root,
+            registry,
+            fixture=readme_fixture,
+            inventory=inventory,
+        )
+        _assert_readme_fixture_mutation_proofs(
+            root,
+            raw_registry,
+            registry,
+            readme_fixture,
+            inventory,
         )
         if profile_count != contract_profile_count:
             raise AssertionError(
@@ -822,7 +1113,8 @@ def _self_test(root: Path) -> int:
 
     print(
         "PASS document contract registry self-test: "
-        f"9 cases, {profile_count} profiles, {template_count} templates"
+        f"9 cases, {profile_count} profiles, {template_count} templates; "
+        "README fixture 8/8, mutation probes passed"
     )
     return 0
 
@@ -846,13 +1138,13 @@ def main() -> int:
         is_readme_family = args.profile == "readme"
         if args.profile and not is_readme_family and args.profile not in profile_ids:
             raise ValueError(f"unknown profile: {args.profile}")
-        readme_counts = (
-            _assert_readme_family_contract(root, registry)
-            if is_readme_family
-            else None
-        )
         inventory = enumerate_target_markdown(
             root, include_paths=tuple(args.include_path)
+        )
+        readme_counts = (
+            _assert_readme_family_contract(root, registry, inventory=inventory)
+            if is_readme_family
+            else None
         )
     except DocumentContractError as exc:
         for diagnostic in exc.diagnostics:
@@ -885,21 +1177,12 @@ def main() -> int:
     selected_count = len(inventory.current_paths)
     if args.profile:
         if args.profile == "readme":
-            readme_profile_ids = {
-                profile.profile_id
-                for profile in registry.profiles
-                if profile.profile_id.startswith("readme/")
-                and profile.profile_class == "readme"
-                and profile.mode == "frontmatter-free"
-            }
-            selected_count = sum(
-                classify_path(registry, path).profile_id in readme_profile_ids
-                for path in inventory.current_paths
-            )
-            baseline_count, declared_final_count = readme_counts
+            baseline_count, declared_final_count, selected_count = readme_counts
             print(
                 f"README baseline={baseline_count} current={selected_count} "
-                f"declared_final={declared_final_count} uncovered=0 ambiguous=0"
+                f"declared_final={declared_final_count} "
+                "allowed_progression=67,68,70,72 exact_set=yes "
+                "uncovered=0 ambiguous=0"
             )
         else:
             selected_count = sum(
