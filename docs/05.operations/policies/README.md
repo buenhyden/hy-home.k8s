@@ -22,7 +22,7 @@
 | 실행 가능한 명령 블록이나 체크리스트를 작성해야 함 | Runbook으로 이동 |
 | 작업 배경과 사용법을 익혀야 함 | Guide로 이동 |
 
-## Audience
+### Collection Readers
 
 이 README의 주요 독자:
 
@@ -46,7 +46,7 @@
 - 장애 타임라인/사후 분석
 - 온보딩 중심 가이드
 
-## Structure
+## Item Index
 
 ```text
 docs/05.operations/policies/
@@ -60,7 +60,7 @@ docs/05.operations/policies/
 └── README.md                                                    # This file
 ```
 
-## How to Work in This Area
+## Add and Find
 
 1. 정책 수정 전에 관련 Spec/Runbook을 확인한다.
 2. [policy.template.md](../../99.templates/templates/sdlc/operations/policy.template.md)를 기준으로 섹션을 유지한다.
@@ -69,7 +69,7 @@ docs/05.operations/policies/
 5. 정책 문서에는 실행 절차를 복제하지 않는다. 검증은 필요한 증적과 성공 기준만 남기고, 실행 가능한 명령 순서와 체크리스트는 소유 runbook 링크로 연결한다.
 6. live cluster mutation, Vault write, kubeconfig 변경 예시는 human-approved, bootstrap-only, break-glass 문맥 없이는 추가하지 않는다.
 
-## Usage Instructions
+### Usage Instructions
 
 이 영역은 운영 통제 기준을 확인하고 변경 영향 범위를 판단할 때 사용한다.
 
@@ -77,19 +77,19 @@ docs/05.operations/policies/
 2. 필요한 증적과 예외 승인 경로를 확인한다.
 3. 실제 명령 순서나 복구 절차가 필요하면 연결된 Runbook으로 이동한다.
 
-## Verification and Monitoring
+### Verification and Monitoring
 
 - 정책 문서 구조 검증은 [policy.template.md](../../99.templates/templates/sdlc/operations/policy.template.md)와 `scripts/validate-repo-quality-gates.sh`를 기준으로 한다.
 - 정책 준수 증적은 연결된 Runbook의 verification output, CI 결과, GitOps diff, review evidence로 남긴다.
 - live cluster, Vault, Kubernetes mutation 증적은 human-approved bootstrap 또는 break-glass 작업에서만 수집한다.
 
-## Incident and Recovery Links
+### Incident and Recovery Links
 
 - Runbooks: [05.operations/runbooks](../runbooks/README.md)
 - Incident Records: [05.operations/incidents](../incidents/README.md)
 - Postmortems: `../incidents/YYYY/INC-###-<title>/postmortem.md`
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/05.operations/policies/`다.
 
@@ -107,9 +107,9 @@ docs/05.operations/policies/
 - [Spec](../../03.specs/008-current-local-gitops-platform/spec.md)
 - [Runbook](../runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 - [Operation Template](../../99.templates/templates/sdlc/operations/policy.template.md)
-- [README Template](../../99.templates/templates/common/readme.template.md)
+- [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)
 
-## 문서 인덱스
+### 문서 인덱스
 
 | 문서                                                                                                     | 설명                                                                                    | 상태   | 최종 수정  |
 | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------ | ---------- |

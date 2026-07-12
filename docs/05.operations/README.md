@@ -10,7 +10,7 @@
 `05.operations/`는 안정 상태 운영 지식, 운영 정책, 실행 런북, 사고 기록을 묶는 운영 허브다.
 안내 문서는 `guides/`, 정책은 `policies/`, 절차는 `runbooks/`, 사고와 회고는 `incidents/`에 둔다.
 
-## Operations Routing Matrix
+### Operations Routing Matrix
 
 | 필요 상황                                   | 사용할 위치                                                                  | 시작 템플릿                                                      |
 | ------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------- |
@@ -20,7 +20,7 @@
 | 실제 사고 사실, 타임라인을 기록해야 함      | [incidents](./incidents/README.md)                                           | [incident.template.md](../99.templates/templates/sdlc/operations/incident.template.md)     |
 | 사고 후 원인과 재발 방지를 분석해야 함      | [incidents README](./incidents/README.md)에서 postmortem 경로 생성 조건 확인 | [postmortem.template.md](../99.templates/templates/sdlc/operations/postmortem.template.md) |
 
-## Operations Folder Roles
+### Operations Folder Roles
 
 `05.operations`는 운영 지식을 한곳에 모으되, 문서가 맡는 일을 섞지 않는다.
 
@@ -29,7 +29,7 @@
 - `runbooks/`: 정해진 순서로 실행하고, 검증하고, 실패 시 복구하는 절차다.
 - `incidents/`: 실제 사고의 사실 기록과 postmortem을 보관한다.
 
-## Language Boundary
+### Language Boundary
 
 운영 문서는 사람이 읽고 실행하는 문서이므로 한국어를 기본으로 한다. 다만
 자동화가 직접 따라야 하는 `AI Agent Requirements`, `Agent Execution Notes`,
@@ -38,7 +38,7 @@ cluster, Vault, secret, ArgoCD 같은 고위험 명령은 언어와 무관하게
 human-approved, operator-approved, bootstrap-only, break-glass 같은 실행
 경계를 가까운 문맥에 남긴다.
 
-## Operations Mutation Boundary
+### Operations Mutation Boundary
 
 운영 문서는 `kubectl apply/patch`, `argocd app sync`, `vault kv put`,
 `vault policy write`, `helm upgrade/install`, `docker network connect`,
@@ -53,14 +53,14 @@ high-risk command 예시를 스캔해 boundary marker가 없는 경우 실패한
 검사는 실행 권한을 부여하지 않으며, AI Agent는 기본적으로 Git 파일 수정,
 리뷰, ArgoCD reconciliation 계획, 증적 정리까지만 수행한다.
 
-## Audience
+### Stage Readers
 
 - GitOps Operators
 - Platform Engineers
 - Incident Responders
 - AI Agents
 
-## Scope
+## Stage Contract
 
 ### In Scope
 
@@ -76,7 +76,7 @@ high-risk command 예시를 스캔해 boundary marker가 없는 경우 실패한
 - 기능 구현 상세 명세
 - 임시 scratch 로그
 
-## Structure
+## Document Index
 
 ```text
 05.operations/
@@ -87,7 +87,7 @@ high-risk command 예시를 스캔해 boundary marker가 없는 경우 실패한
 └── README.md
 ```
 
-## How to Work in This Area
+## Authoring Workflow
 
 1. 안정 상태 설명은 `guides/`, 준수해야 할 경계는 `policies/`, 실행 절차는 `runbooks/`, 사고 기록은 `incidents/`로 분리한다.
 2. 사고가 없으면 `incidents/`는 README만 유지하고, 첫 사고 기록이 생길 때만 `incidents/YYYY/INC-###-<title>/` 폴더를 만든다. Incident 파일명은 폴더명과 같은 `INC-###-<title>.md`이고, postmortem은 같은 폴더의 `postmortem.md`로 추가한다.
@@ -95,7 +95,7 @@ high-risk command 예시를 스캔해 boundary marker가 없는 경우 실패한
 4. 운영 문서가 현재 `bootstrap-local.sh`, `gitops/platform/external-services`, 정적 검증 계약과 충돌하지 않게 유지한다.
 5. 현재 구현과 충돌하거나 missing GitOps desired state를 active 운영 계약처럼 설명하는 old guide/runbook은 `../98.archive/README.md`에만 인덱싱되는 Tombstone으로 이동한다.
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/05.operations/`다.
 

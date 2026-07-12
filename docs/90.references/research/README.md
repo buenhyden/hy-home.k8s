@@ -18,7 +18,7 @@ deployment procedure, live cluster readiness, or provider contracts. Those stay
 with their canonical owners in `docs/00.agent-governance/`, `docs/03.specs/`,
 `docs/04.execution/`, and `docs/05.operations/`.
 
-## Audience
+### Collection Readers
 
 이 README의 주요 독자:
 
@@ -45,7 +45,7 @@ with their canonical owners in `docs/00.agent-governance/`, `docs/03.specs/`,
 - Operational runbooks, release gates, deployment approvals, or incident response
 - Generated or parallel `docs/superpowers/**` content
 
-## Structure
+## Item Index
 
 ```text
 research/
@@ -74,7 +74,7 @@ Dated research packs must use `YYYY-MM-DD-<sdlc_key>/` folders. Reference files
 inside a pack use semantic topic names only; do not use `part-*.md` or numeric
 order-prefix filenames for current reports.
 
-## How to Work in This Area
+## Add and Find
 
 1. Read the parent spec, plan, and task before adding or changing research pack material.
 2. Create authored reference documents with [reference.template.md](../../99.templates/templates/common/reference.template.md).
@@ -84,7 +84,7 @@ order-prefix filenames for current reports.
 6. Route active policy, implementation contracts, runbooks, and task evidence back to their canonical owners instead of redefining them here.
 7. Update this README, the parent [90.references README](../README.md), and the task record when research pack structure or validation evidence changes.
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/90.references/research/`다.
 
@@ -97,7 +97,7 @@ order-prefix filenames for current reports.
 - Root-level repository sources use `../../../<path>` from authored research reference files.
 - Optional or planned target paths remain code literals until the target exists.
 
-## Research Pack Index
+### Research Pack Index
 
 | Material                                                                                        | Status      | Role                                                                                      | Authority Boundary                                                                          |
 | ----------------------------------------------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
@@ -119,7 +119,7 @@ order-prefix filenames for current reports.
 | [automation-pipeline-workflow-qa.md](./2026-07-07-wer/automation-pipeline-workflow-qa.md)       | Included    | Automation, pipeline, workflow, CI job graph, validation-loop, and QA evidence (2026-07-07) | Descriptive reference only; no CI workflow or runtime changes                               |
 | [ai-agents-roster-and-gap-analysis.md](./2026-07-07-wer/ai-agents-roster-and-gap-analysis.md)   | Included    | Workspace agent roster, agency-agents comparison, and gap-closure (2026-07-07)              | Descriptive reference only; roster and tier policy stay with Stage 00 owners                |
 
-## Source Priority
+### Source Priority
 
 Use the following priority order when research sources disagree:
 

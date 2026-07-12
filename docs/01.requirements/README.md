@@ -11,7 +11,7 @@
 새 기능이나 플랫폼 변화가 어떤 사용자/운영자 가치와 성공/수용 기준을 가져야 하는지 먼저 정의한다.
 모든 개발의 시작점이며, '무엇을(What)', '왜(Why)' 개발하는지 설명한다.
 
-## Audience
+### Stage Readers
 
 이 README의 주요 독자:
 
@@ -20,7 +20,7 @@
 - Documentation Writers
 - AI Agents
 
-## Scope
+## Stage Contract
 
 ### In Scope
 
@@ -36,7 +36,7 @@
 
 포함하지 말아야 할 내용은 각각 `02.architecture/requirements/`, `02.architecture/decisions/`, `03.specs/`, `05.operations/runbooks/`로 분리한다.
 
-## Structure
+## Document Index
 
 ```text
 01.requirements/
@@ -48,7 +48,7 @@
 └── README.md
 ```
 
-## How to Work in This Area
+## Authoring Workflow
 
 1. 새 요구사항을 작성하기 전에 같은 문제를 다루는 기존 PRD를 먼저 확인한다.
 2. 새 PRD는 `../99.templates/templates/sdlc/requirements/prd.template.md`에서 시작하고, canonical target pattern은 `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`다.
@@ -58,7 +58,7 @@
 6. Agent 기능 요구에는 허용/금지 행동과 human-in-the-loop 기준을 포함하고, `AI Agent Requirements` 섹션은 영어로 작성한다.
 7. 현재 구현과 상충하는 old/superseded PRD는 `../98.archive/README.md`에만 인덱싱하고, 활성 PRD는 archive Tombstone에 직접 연결하지 않는다.
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/01.requirements/`다.
 
@@ -67,7 +67,7 @@
 - 하위 stage 연결은 `../02.architecture/`, `../03.specs/` 등 인접 stage 경로를 사용한다.
 - 새 PRD의 실제 Markdown 링크는 최종 PRD 파일 위치 기준으로 다시 계산하고, 아직 없는 후속 문서는 code literal로 남긴다.
 
-## 연결 규칙
+### 연결 규칙
 
 - PRD는 관련 ARD, Spec, Plan, ADR 링크를 가진다.
 - Spec은 PRD 요구 ID를 추적한다.
@@ -75,14 +75,14 @@
 - 후속 ARD/Spec/Plan이 아직 없으면 없는 링크를 만들지 않고, 문서 인덱스와 PRD의 `Related Documents`에 후속 갭으로 표시한다.
 - 현재 구현과 맞지 않는 old 실행계약은 활성 PRD에 보존하지 않고 중앙 archive Tombstone으로 이동한다.
 
-## 요구사항 읽는 순서
+### 요구사항 읽는 순서
 
 1. 현재 로컬 GitOps 플랫폼 기준은 [`004-current-local-gitops-platform.md`](./004-current-local-gitops-platform.md)와 `gitops/**`, `infrastructure/**`, `scripts/**` 정적 검증 증적이 소유한다.
 2. `Active` 문서는 현재 작업 기준으로 사용할 수 있지만, downstream ARD/ADR/Spec/Plan과 구현 증적을 함께 확인한다.
 3. `Draft` 문서는 후속 ARD/Spec/Plan이 완성되기 전의 제품 의도다. 구현은 별도 downstream 문서와 승인된 계획이 있어야 시작한다.
 4. 과거 문서가 필요한 경우 활성 문서에서 Tombstone으로 직접 이동하지 않고 [`../98.archive/README.md`](../98.archive/README.md)의 중앙 인덱스를 통해서만 확인한다.
 
-## 상태 해석
+### 상태 해석
 
 | 상태 | 의미 | 작업 기준 |
 | --- | --- | --- |
@@ -90,7 +90,7 @@
 | Draft | 요구사항 초안 또는 후속 설계 대기 상태 | 구현 시작 전 ARD/Spec/Plan 후속 갭을 해소한다. |
 | Archived | 현재 구현과 상충하거나 대체된 요구사항 기록 | 활성 stage에는 본문을 두지 않고 [`../98.archive/README.md`](../98.archive/README.md)에 Tombstone으로만 인덱싱한다. |
 
-## 문서 인덱스
+### 문서 인덱스
 
 | 문서 | 역할 | 현재성 | 추적성 / 후속 갭 | 최종 수정 |
 | --- | --- | --- | --- | --- |
@@ -100,7 +100,7 @@
 | [`./004-current-local-gitops-platform.md`](./004-current-local-gitops-platform.md) | 현재 repo-backed local GitOps 플랫폼 baseline PRD | Active | ARD-0007, ADR-0014, Spec 008, docs alignment Plan/Task 연결 완료. | 2026-06-02 |
 | [`./005-workspace-document-assurance-modernization.md`](./005-workspace-document-assurance-modernization.md) | Workspace document assurance modernization program PRD | Active | ARD-0008, ADR-0015/0016, Spec 026-032의 승인 설계와 순차 구현 경계를 소유한다. | 2026-07-12 |
 
-## 예시
+### 예시
 
 신규 플랫폼 기능은 [`004-current-local-gitops-platform.md`](./004-current-local-gitops-platform.md)처럼 사용자 가치, 범위, 성공/수용 기준을 현재 구현 증적과 함께 기록한다.
 

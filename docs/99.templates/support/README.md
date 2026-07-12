@@ -14,7 +14,7 @@ The support layer exists so `docs/99.templates/README.md` can remain an
 inventory and entrypoint instead of carrying every contract, governance rule,
 and legacy cleanup rule inline.
 
-## Audience
+### Collection Readers
 
 Primary readers:
 
@@ -40,7 +40,7 @@ Primary readers:
   documents.
 - Runtime, cluster, Vault, GitHub remote, paid job, or cloud mutation.
 
-## Structure
+## Item Index
 
 ```text
 support/
@@ -53,7 +53,7 @@ support/
 └── README.md
 ```
 
-## How to Work in This Area
+## Add and Find
 
 1. Update support contracts before changing template form paths or
    frontmatter profiles.
@@ -66,7 +66,7 @@ support/
 5. Run `git diff --check` and `bash scripts/validate-repo-quality-gates.sh .`
    after support changes.
 
-## Link Basis
+### Relative Link Rules
 
 This README is located at `docs/99.templates/support/`.
 
@@ -75,7 +75,7 @@ This README is located at `docs/99.templates/support/`.
 - Link to stage documents with `../../<stage>/`.
 - Keep optional future paths as code literals until the files exist.
 
-## Support Document Index
+### Support Document Index
 
 | Document | Responsibility |
 | --- | --- |

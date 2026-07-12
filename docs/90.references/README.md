@@ -13,7 +13,7 @@
 
 `90.references`는 사실과 기준값을 보존하는 곳이다. 단, 이 폴더의 문서가 실행 명령, 배포 승인, live cluster 변경 절차, agent runtime policy를 새로 정의해서는 안 된다.
 
-## Audience
+### Stage Readers
 
 이 README의 주요 독자:
 
@@ -22,7 +22,7 @@
 - Documentation Writers
 - AI Agents
 
-## Scope
+## Stage Contract
 
 ### In Scope
 
@@ -40,7 +40,7 @@
 - agent runtime policy의 원본 규칙
 - live cluster mutation, Vault writes, deployment approval, release gate 자체
 
-## Structure
+## Document Index
 
 ```text
 docs/90.references/
@@ -66,7 +66,7 @@ docs/90.references/
 | [learning/README.md](./learning/README.md) | learning-roadmap index | learning reference 하위 폴더의 범위와 라우팅 | learning reference 문서 추가/이동 시 |
 | [research/README.md](./research/README.md) | durable-concept index / source-ledger index | dated workspace engineering research pack 하위 폴더의 범위, source priority, planned/current reference structure | research reference 문서 추가/이동, source priority 변경, parent spec/plan 변경 시 |
 
-## How to Work in This Area
+## Authoring Workflow
 
 1. 새 참고 자료가 정책/계약/절차를 정의하는지 확인한다. 그렇다면 `00.agent-governance`, `03.specs`, `05.operations/policies`, `05.operations/runbooks`로 라우팅한다.
 2. 버전 기준을 갱신할 때는 실제 manifest/config/example code와 [tech-stack-version-inventory.md](./data/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
@@ -74,7 +74,7 @@ docs/90.references/
 4. 새 파일을 만들 경우 [reference template](../99.templates/templates/common/reference.template.md)을 사용하고 이 README 인덱스를 갱신한다. 일반 reference의 canonical target pattern은 `docs/90.references/<category>/<topic>.md`다. `audits/`와 `research/`의 dated pack은 `docs/90.references/<category>/<YYYY-MM-DD>-<sdlc_key>/<topic>.md`를 사용하고, part 순서를 표현해야 할 때도 `part-*.md`나 숫자 접두어 대신 의미 기반 파일명을 사용한다. `llm-wiki/wiki-index.md`는 `scripts/generate-llm-wiki-index.sh`로만 갱신한다.
 5. 모든 reference 문서는 `Reference Type`, `Authority Boundary`, `Review and Freshness`를 포함해야 한다.
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/90.references/`다.
 
@@ -83,7 +83,7 @@ docs/90.references/
 - root-level source file은 이 README 기준으로 `../../<path>`를 사용한다.
 - 새 reference 문서 안의 링크는 최종 reference 파일 위치 기준으로 다시 계산하고, optional target은 code literal로 남긴다.
 
-## Role and Authority Boundary
+### Role and Authority Boundary
 
 `90.references`의 역할은 다음 다섯 가지다.
 
@@ -103,7 +103,7 @@ docs/90.references/
 - 외부 기준은 시간에 따라 바뀌므로 `Source checked`, `Last reviewed`, refresh trigger를 남긴다.
 - Audit snapshot은 checked-date 기준 implementation evidence를 요약할 뿐이며 active policy, plans, tasks, runbooks, CI semantics, live runtime readiness를 소유하지 않는다.
 
-## Reference Folder Roles
+### Reference Folder Roles
 
 `90.references` 하위 폴더의 목적은 다음처럼 나눈다.
 
@@ -115,7 +115,7 @@ docs/90.references/
 | `llm-wiki/` | LLM-readable canonical owner link map과 generated index | 링크맵 설명은 혼합 가능, generated content와 canonical owner boundary는 영어-first |
 | `research/` | Dated workspace engineering research pack reference, source ledger, source priority를 관리하는 자료 | 사람용 설명은 한국어 가능, source authority와 non-authoritative market scan boundary는 영어-first |
 
-## Dated Pack Naming
+### Dated Pack Naming
 
 `audits/`와 `research/`의 날짜별 묶음은 다음 규칙을 따른다.
 
@@ -130,7 +130,7 @@ The `sdlc_key` is a short stable key for cross-reference readability. Use the
 long human title inside the pack README and report title instead of repeating
 it in every folder name.
 
-## Language Boundary
+### Language Boundary
 
 `90.references`는 사람이 먼저 읽는 reference hub이므로 README와 개요 문장은
 한국어를 사용할 수 있다. 다만 reference 문서가 AI Agent나 자동화가 판단 기준으로
@@ -144,7 +144,7 @@ Reference 문서는 정책, 실행 절차, 배포 승인, runtime permission을 
 owner로 이동하고, `90.references`에는 dated source, lookup fact, freshness
 trigger만 남긴다.
 
-## Required Reference Format
+### Required Reference Format
 
 새 reference 문서는 [reference.template.md](../99.templates/templates/common/reference.template.md)의 필수 heading을 유지한다.
 `README.md` 인덱스 파일은 탐색 진입점이므로 전체 reference 템플릿을 복제하지 않고 필요한 필드의 요약만 둘 수 있다.

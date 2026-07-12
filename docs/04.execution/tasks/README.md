@@ -11,7 +11,7 @@
 Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행 명령, evidence를 함께 보존하는 실행 추적 위치다.
 `../plans/`가 순서와 위험 관리를 소유하고, 이 경로는 실제 작업 상태와 완료 증거를 소유한다.
 
-## Audience
+### Collection Readers
 
 이 README의 주요 독자:
 
@@ -40,7 +40,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 
 이 내용은 각각 `../../03.specs/`, `../../05.operations/policies/`, `../../05.operations/runbooks/`, `../../05.operations/incidents/`로 분리한다.
 
-## Structure
+## Item Index
 
 ```text
 04.execution/tasks/
@@ -95,7 +95,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 └── README.md
 ```
 
-## How to Work in This Area
+## Add and Find
 
 1. 작업의 Parent Spec 또는 Parent Plan을 먼저 확인한다.
 2. 새 Task 문서는 `../../99.templates/templates/sdlc/execution/task.template.md`에서 시작하고, canonical target pattern은 `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md`다.
@@ -105,7 +105,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 6. 기능 수준의 보조 `tasks.md`가 `../../03.specs/<feature-id>/`에 있더라도, 팀 실행·스프린트·검증 집계의 정본은 이 경로다.
 7. 현재 구현과 상충하거나 superseded-only인 old Task는 `../../98.archive/README.md`에만 인덱싱하고, 활성 Task에서 Tombstone에 직접 연결하지 않는다.
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/04.execution/tasks/`다.
 
@@ -114,7 +114,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 - upstream docs stage는 `../../03.specs/`, `../../02.architecture/`, `../../01.requirements/`처럼 `docs/` 기준으로 올라간다.
 - Task 안의 Plan/Spec 링크는 `docs/04.execution/tasks/`의 최종 Task 파일 위치 기준으로 다시 계산한다.
 
-## 문서 인덱스
+### 문서 인덱스
 
 | 문서                                                                                                                                 | 설명                                                                                                                                                                                                                                                                    | 상태 | 최종 수정  |
 | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ---------- |

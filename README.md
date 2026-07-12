@@ -8,7 +8,7 @@
 
 이 저장소는 WSL2 + WSL-native Docker 환경에서 `k3d` 멀티노드 클러스터를 부트스트랩하고, ArgoCD App-of-Apps 기반 GitOps, External Secrets + Vault 연동, 외부 PostgreSQL/Valkey 인터페이스 계약을 선언형으로 관리한다. 외부 런타임 자체를 포함하지 않고, 이 저장소는 로컬 플랫폼의 **문서 SSoT + GitOps 매니페스트 + 부트스트랩 자산**에 집중한다.
 
-## Audience
+### Readers
 
 이 README의 주요 독자:
 
@@ -17,7 +17,7 @@
 - Documentation Writers
 - AI Agents
 
-## Scope
+### Scope
 
 ### In Scope
 
@@ -37,7 +37,7 @@
 - `docs/01.requirements`, `docs/02.architecture`, `docs/03.specs`, `docs/04.execution`, `docs/05.operations`, `docs/90.references`, `docs/99.templates` SSoT 문서의 승인 없는 임의 재작성
 - 운영 환경 SLA/DR 자체 보장
 
-## Structure
+## Repository Map
 
 ```text
 hy-home.k8s/
@@ -57,7 +57,7 @@ hy-home.k8s/
 └── README.md              # This file
 ```
 
-## Documentation Map
+### Documentation Map
 
 `docs/`는 stage별 책임이 분리된 문서 SSoT다. 새 문서나 변경 증적은 아래 책임에 맞는 위치와 템플릿에서 시작한다.
 
@@ -71,14 +71,14 @@ hy-home.k8s/
 | [`docs/90.references`](docs/90.references/README.md)     | 참조 자료, 용어, 버전 인벤토리, lookup material                                | [`reference.template.md`](docs/99.templates/templates/common/reference.template.md)                                                                                                                                                                                                                                                               |
 | [`docs/99.templates`](docs/99.templates/README.md)       | canonical document templates, route inventory, target-relative link 규칙       | 정확한 target pattern과 template 선택은 [Template Routing Contract](docs/99.templates/support/template-routing.md)를 기준으로 한다.                                                                                                                                                                                               |
 
-## 현재 구현 경계
+### 현재 구현 경계
 
 - `gitops/`는 로컬 k3d 클러스터의 desired state 정본이다. 현재 구현은 `clusters/local`의 bootstrap/AppProject/ApplicationSet, `apps/root`의 App-of-Apps 선언, `platform/*` 공통 컴포넌트, `workloads/adminer` 참조 워크로드를 포함한다.
 - `infrastructure/`는 클러스터 bootstrap과 repo-backed static checks를 위한 실행 자산이다. MetalLB 계약은 별도 디렉터리가 아니라 `ipaddresspool.yaml`, `l2advertisement.yaml` 루트 파일로 관리한다.
 - `traefik/`은 canonical 배포 경로가 아니라 `hy-home.docker` Traefik gateway와 맞물리는 로컬 dynamic config 참조다. Kubernetes desired state는 `gitops/`와 ArgoCD reconciliation이 기준이다.
 - `examples/`는 앱 온보딩 템플릿과 AWS/Azure cloud target reference-only 자산이다. 실제 cloud 계정, live cluster, provider runtime 변경은 이 저장소의 일반 실행 경로가 아니다.
 
-## How to Work in This Area
+### Repository Workflow
 
 1. 저장소를 처음 읽을 때는 `README.md -> docs/README.md -> 해당 provider shim(AGENTS.md, CLAUDE.md, GEMINI.md) -> 관련 stage 문서` 순서로 진입한다.
 2. 설계/구현/운영 판단은 가능한 한 `docs/01.requirements`부터 `docs/05.operations/runbooks`까지의 문서 체인을 기준으로 추적한다.
@@ -93,7 +93,7 @@ hy-home.k8s/
 11. 외부 서비스 계약이나 부트스트랩 명령을 변경했다면 관련 README, runbook, 운영 정책 링크도 함께 점검한다.
 12. AWS/Azure 예시는 [Tech Stack Version Inventory](./docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot`을 기준으로 관리하며, 실제 cloud 배포 절차가 아니라 참조 구현으로 다룬다.
 
-## Language Policy
+### Language Policy
 
 이 README와 stage README처럼 사람이 먼저 읽는 진입점은 한국어를 기본으로 한다.
 반대로 AI Agent가 실행 기준으로 삼는 governance, policy, prompt/tool contract,
@@ -105,7 +105,7 @@ hy-home.k8s/
 - `docs/05.operations/{guides,policies,runbooks,incidents}`: 운영자가 읽는 본문은 한국어를 사용할 수 있고, AI Agent 실행 지시나 tool/prompt contract는 영어로 분리한다.
 - `docs/90.references/**`: 사람용 overview와 lookup 설명은 한국어를 사용할 수 있고, `Authority Boundary`, `Sources`, `Review and Freshness`, version support boundary, generated-index contract는 영어를 우선한다.
 
-## Common Workflows
+### Common Workflows
 
 | Workflow       | Start Here                                               | Expected Follow-up                                                              |
 | -------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------- |
@@ -116,7 +116,7 @@ hy-home.k8s/
 | 참조값 갱신    | [`docs/90.references`](docs/90.references/README.md)     | 스냅샷 기준일과 관련 active stage 문서 영향을 함께 확인한다.                    |
 | 문서 체계 변경 | [`docs/99.templates`](docs/99.templates/README.md)       | docs hub, 대상 stage README, 생성 문서의 안전한 구조 반영 여부를 함께 확인한다. |
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 repository root다.
 
@@ -124,7 +124,7 @@ hy-home.k8s/
 - `gitops/`, `infrastructure/`, `examples/`, `scripts/`, `tests/`, `traefik/` 링크는 root-level implementation/support 영역으로 연결한다.
 - nested README 예시는 이 파일의 root-relative 링크를 복사하지 않고, 최종 README 위치에서 상대 경로를 다시 계산한다.
 
-## Related Documents
+### Canonical Owners
 
 - [docs/README.md](docs/README.md)
 - [AGENTS.md](AGENTS.md)
@@ -135,7 +135,7 @@ hy-home.k8s/
 - [.github/ABOUT.md](.github/ABOUT.md)
 - [scripts/README.md](scripts/README.md)
 
-## Repository Map
+### Top-level Areas
 
 - `docs/` - 공식 문서 체계, 요구사항부터 운영/회고까지의 단계형 SSoT
 - `gitops/` - ArgoCD App-of-Apps 루트, 플랫폼 리소스, 워크로드 선언
@@ -147,7 +147,7 @@ hy-home.k8s/
 - `.github/` - `main` PR flow용 CI, release evidence, PR/issue intake, CODEOWNERS, labeler, zizmor 설정
 - `.agents/`, `.claude/`, `.codex/` - 공유 에이전트 자산과 provider별 런타임 오버레이
 
-## Tech Stack
+### Tech Stack
 
 | Category       | Technology                                                                                      | Notes                                                                                           |
 | -------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
@@ -227,6 +227,8 @@ cd hy-home.k8s
 - [examples/README.md](./examples/README.md) - 앱 온보딩 및 cloud target 참조 예시
 - [tests/README.md](./tests/README.md) - 저장소 전역 테스트 원칙
 
+## Validation
+
 정적 품질 검증은 CI와 pre-commit 설정을 기준으로 한다.
 
 - [`./.pre-commit-config.yaml`](./.pre-commit-config.yaml)
@@ -251,3 +253,12 @@ find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' 
 `validate-repo-quality-gates.sh`는 authored docs에서 bare/main direct push 예시와 PR-flow 문맥 없는 push 예시 회귀를 차단하고, README/examples 등 broader Markdown roots에서는 bare/main direct push 예시를 차단한다. 또한 `generate-llm-wiki-index.sh --check`로 LLM WIKI generated index freshness를 확인한다. `pre-commit`, `kube-linter`, `zizmor`, `actionlint`, `shellcheck`는 로컬에 있으면 사용한다. 로컬 `PATH`에 없을 때는 위의 repo-backed 검증을 먼저 실행하고, 전체 hook/tool matrix는 GitHub Actions에서 확인한다.
 
 Cloud 예시의 버전 기준은 [Tech Stack Version Inventory](./docs/90.references/data/tech-stack-version-inventory.md)에 기록한다. 2026-03-24 이후 Ingress NGINX는 upstream retired 상태이므로 로컬 k3d 계약은 유지하되, AWS/Azure target은 ALB/Gateway API/AGC 계열로 분리한다.
+
+## Related Documents
+
+- [문서 허브](./docs/README.md)
+- [에이전트 실행 거버넌스](./docs/00.agent-governance/README.md)
+- [현재 로컬 GitOps 플랫폼 요구사항](./docs/01.requirements/004-current-local-gitops-platform.md)
+- [현재 로컬 GitOps 플랫폼 Spec](./docs/03.specs/008-current-local-gitops-platform/spec.md)
+- [ArgoCD 플랫폼 부트스트랩 Runbook](./docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)
+- [저장소 스크립트 인덱스](./scripts/README.md)

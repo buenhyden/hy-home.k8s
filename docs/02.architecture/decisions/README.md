@@ -10,7 +10,7 @@
 이 경로는 중요한 기술/아키텍처 결정을 ADR로 기록하는 canonical stage다.
 각 ADR은 하나의 결정, 그 맥락, 대안, 결과를 보존해 이후 Spec과 운영 정책이 같은 근거를 공유하게 한다.
 
-## Audience
+### Collection Readers
 
 이 README의 주요 독자:
 
@@ -33,7 +33,7 @@
 - 운영 절차와 장애 대응 단계
 - 장문의 제품 배경 설명
 
-## Structure
+## Item Index
 
 ```text
 02.architecture/decisions/
@@ -51,7 +51,7 @@
 └── README.md
 ```
 
-## How to Work in This Area
+## Add and Find
 
 1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `02.architecture/requirements/`에서 확인한다.
 2. 새 ADR은 `../../99.templates/templates/sdlc/architecture/adr.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/decisions/####-<short-title>.md`다.
@@ -59,7 +59,7 @@
 4. `Accepted` ADR의 현재 런타임 값은 GitOps manifest, 정적 검증 스크립트, current baseline ADR과 일치해야 한다.
 5. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/02.architecture/decisions/`다.
 
@@ -68,7 +68,7 @@
 - upstream/downstream docs stage는 `../../01.requirements/`, `../../03.specs/`, `../../04.execution/`, `../../05.operations/`로 연결한다.
 - 새 ADR의 실제 Markdown 링크는 최종 ADR 파일 위치 기준으로 다시 계산하고, placeholder target은 code literal로 남긴다.
 
-## Document Index
+### Current ADR Index
 
 | 문서 | 설명 | 상태 | 현재성/후속 기준 |
 | --- | --- | --- | --- |

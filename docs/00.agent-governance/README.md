@@ -10,7 +10,7 @@ scope routing, provider notes, reusable memory, shared hook scripts, model
 policy, and the canonical runtime catalog used by `.claude/**`, `.codex/**`,
 and `.agents/**` provider adapters.
 
-## Audience
+### Stage Readers
 
 This README is primarily for:
 
@@ -19,7 +19,7 @@ This README is primarily for:
 - Runtime operators
 - AI agents loading governance context
 
-## Scope
+## Stage Contract
 
 ### In Scope
 
@@ -36,7 +36,7 @@ This README is primarily for:
 - Runtime bridge content under `.claude/**`
 - Human-facing project onboarding outside this governance area
 
-## Structure
+## Document Index
 
 Key folders in this area:
 
@@ -60,7 +60,7 @@ docs/00.agent-governance/
 └── README.md           # This file
 ```
 
-## How to Work in This Area
+## Authoring Workflow
 
 1. Start from repository gateway files: `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md`.
 2. Follow the JIT loading order in `rules/bootstrap.md` and `rules/preflight-checklist.md`.
@@ -72,7 +72,7 @@ docs/00.agent-governance/
    memory entry.
 6. Update `harness-catalog.md` and this README in the same change set when the runtime roster changes.
 
-## Link Basis
+### Relative Link Rules
 
 Links in this README are relative to `docs/00.agent-governance/`.
 
@@ -81,7 +81,7 @@ Links in this README are relative to `docs/00.agent-governance/`.
 - Repository-root runtime files use `../../<path>`.
 - Template links use `../99.templates/templates/**/<template>`.
 
-## Governance Entry Points
+### Governance Entry Points
 
 - [Common Governance & Mappings](common-governance.md)
 - [Model Policy](model-policy.md)
@@ -104,7 +104,7 @@ Links in this README are relative to `docs/00.agent-governance/`.
 - [Codex Provider Notes](providers/codex.md)
 - [Gemini Provider Notes](providers/gemini.md)
 
-## Examples
+### Examples
 
 - Add a new execution rule under `rules/`.
 - Add a provider note under `providers/`.

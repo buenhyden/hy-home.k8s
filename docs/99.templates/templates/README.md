@@ -7,7 +7,7 @@
 This folder contains template forms only. Rules, contracts, routing, schema,
 and legacy cleanup guidance live in `../support/`.
 
-## Audience
+### Collection Readers
 
 Primary readers:
 
@@ -32,7 +32,7 @@ Primary readers:
 - Authored stage documents.
 - Runtime or external system actions.
 
-## Structure
+## Item Index
 
 ```text
 templates/
@@ -58,7 +58,7 @@ templates/
     └── specs/
 ```
 
-## How to Work in This Area
+## Add and Find
 
 1. Choose the template through `../README.md` and `../support/template-routing.md`.
 2. Copy the matching template into the final authored document path.
@@ -68,7 +68,7 @@ templates/
 5. Update support contracts and validators when adding, moving, or removing a
    template form.
 
-## Link Basis
+### Relative Link Rules
 
 This README is located at `docs/99.templates/templates/`.
 

@@ -9,7 +9,7 @@ repeated mistakes in agent work. Memory entries are supporting context only;
 they do not override repository governance, scope rules, or direct user
 instructions.
 
-## Audience
+### Collection Readers
 
 This README is primarily for:
 
@@ -32,7 +32,7 @@ This README is primarily for:
 - Runtime bridge configuration that belongs under `.claude/**` or `.codex/**`
 - Product, architecture, execution, and operations SSoT under the current docs taxonomy
 
-## Structure
+## Item Index
 
 ```text
 memory/
@@ -41,7 +41,7 @@ memory/
 └── README.md    # This file
 ```
 
-## How to Work in This Area
+## Add and Find
 
 1. Read `progress.md` before substantial repo-changing work to avoid repeating
    stale assumptions.
@@ -55,7 +55,7 @@ memory/
 6. When a standalone memory file is added or updated, append a matching
    progress entry to `progress.md` in the same change.
 
-## Link Basis
+### Relative Link Rules
 
 Links in this README are relative to `docs/00.agent-governance/memory/`.
 
@@ -71,20 +71,20 @@ Links in this README are relative to `docs/00.agent-governance/memory/`.
 - [Progress Template](../../99.templates/templates/common/progress.template.md)
 - [Documentation Protocol](../rules/documentation-protocol.md)
 
-## Policy
+### Policy
 
 - Record only non-obvious and repeat-preventing insights.
 - Record progress and handoff notes for repo-changing agent work.
 - Prefer short, factual entries over narrative summaries.
 - Link each memory item to affected specs, runbooks, incidents, or postmortems.
 
-## When to Write
+### When to Write
 
 - After resolving a complex defect.
 - After a high-severity incident or rollback.
 - After discovering a tooling or environment constraint likely to recur.
 
-## Format
+### Format
 
 Use `docs/99.templates/templates/common/progress.template.md` for `progress.md` entries and keep
 each item scoped to one workstream.

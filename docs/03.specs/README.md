@@ -13,7 +13,7 @@
 Spec은 실행 기준을 소유하는 문서다.
 활성 Spec은 현재 repo-backed 구현과 일치해야 하며, 구현과 상충하는 old Spec은 중앙 archive Tombstone으로 이동한다.
 
-## Audience
+### Stage Readers
 
 이 README의 주요 독자:
 
@@ -22,7 +22,7 @@ Spec은 실행 기준을 소유하는 문서다.
 - Documentation Writers
 - AI Agents
 
-## Scope
+## Stage Contract
 
 ### In Scope
 
@@ -40,7 +40,7 @@ Spec은 실행 기준을 소유하는 문서다.
 
 위 내용은 각각 `01.requirements/`, `05.operations/policies/`, `05.operations/runbooks/`, `04.execution/tasks/`로 분리한다.
 
-## Structure
+## Document Index
 
 ```text
 03.specs/
@@ -104,7 +104,7 @@ Spec은 실행 기준을 소유하는 문서다.
 └── README.md
 ```
 
-## How to Work in This Area
+## Authoring Workflow
 
 1. 관련 PRD, ARD, ADR 링크를 확인하고 Spec의 입력으로 고정한다.
 2. 새 Spec은 `../99.templates/templates/sdlc/specs/spec.template.md`에서 시작하고, canonical target pattern은 `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`다.
@@ -112,7 +112,7 @@ Spec은 실행 기준을 소유하는 문서다.
 4. 구현 및 검증 추적은 `04.execution/tasks/`로 연결한다.
 5. 현재 구현과 상충하는 historical/superseded 값은 활성 Spec에 보존하지 않고 `../98.archive/README.md`의 Tombstone 인덱스로 분리한다.
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/03.specs/`다.
 
@@ -121,7 +121,7 @@ Spec은 실행 기준을 소유하는 문서다.
 - 실행 문서는 `../04.execution/`, 운영 문서는 `../05.operations/`로 연결한다.
 - feature-local helper 문서 링크는 `docs/03.specs/<###-Numbering>-<feature-id>/` 안의 최종 파일 위치 기준으로 다시 계산한다.
 
-## Spec Authoring Rules
+### Spec Authoring Rules
 
 1. 모든 활성 Spec은 관련 PRD와 ARD를 링크하거나 부재를 명시한다.
 2. Verification은 필수다.
@@ -131,7 +131,7 @@ Spec은 실행 기준을 소유하는 문서다.
 6. feature-local `tasks.md` 또는 `tests.md`는 설계 보조 문서이며, 실행 추적 정본은 `../04.execution/tasks/`다.
 7. `Related Inputs`는 upstream 요약이고, `Related Documents`는 PRD/ARD/ADR와 Plan/Task/Operations 링크를 함께 담는다.
 
-## Document Index
+### Current Spec Index
 
 | 문서                                                                                                                             | 설명                                                                          | 상태   | 현재성                                                                                                                                                                                                                                                                            | 최종 수정  |
 | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
@@ -164,7 +164,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./031-affected-surface-agent-qa/spec.md`](./031-affected-surface-agent-qa/spec.md)                                           | Affected surface and Agent QA specification                                   | Active | 변경 경로, local hook, pre-commit, AI Agent 의무, provider gateway, CI selector를 하나의 검증 계약으로 정렬한다.                                                                                                                     | 2026-07-12 |
 | [`./032-protected-surface-supply-chain-hardening/spec.md`](./032-protected-surface-supply-chain-hardening/spec.md)             | Protected surface and supply-chain hardening specification                    | Active | GitHub Actions identity, workflow permissions, GitOps render, Vault/ESO, secret, policy의 repository-static 보호 경계를 강화한다.                                                                                                   | 2026-07-12 |
 
-## Helper Templates
+### Helper Templates
 
 아래 템플릿은 `docs/03.specs/<###-Numbering>-<feature-id>/` 아래에서 `spec.md`를 보조하는 계약 문서에만 사용한다.
 
