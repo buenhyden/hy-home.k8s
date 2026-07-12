@@ -549,6 +549,7 @@ remediation is a separate logical commit with its own progress entry.
 - Consume: `tests/fixtures/document-contracts/readme-profile-cases.json`
 - Modify: `tests/fixtures/document-contracts/template-compatibility.json`
 - Modify: `scripts/document_contracts.py`
+- Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify: `scripts/README.md`
 - Modify: `tests/README.md`
 - Modify: `docs/04.execution/tasks/2026-07-12-semantic-document-validation.md`
@@ -659,6 +660,18 @@ profile/path/occurrence cap. Strict mode fails the same item; new paths and
 unknown tokens never defer. Do not add debt to the registry. Sort diagnostics by
 `(path, rule_id, expected, actual)`.
 
+Because `affectedPaths` changes the complete semantic projection of
+`template-compatibility.json`, recompute its stable sorted-JSON SHA-256 with
+`template_compatibility_semantic_sha256()` and pin the complete new digest in
+`TEMPLATE_COMPATIBILITY_CONTRACT_V1` inside
+`scripts/validate-repo-quality-gates.sh` in this same Task. Extend
+`assert_template_compatibility_mutation_proof()` with at least one
+`affectedPaths` mutation that changes an exact path, rule ID, or token and
+prove `template_compatibility_contract_matches()` rejects it. Keep the owner,
+growth, residue, and baseline-count mutations. This is a required consumer
+update, not an allow-list, weakened digest projection, deferred failure, or
+SMDV-004 gate-delegation change.
+
 - [ ] **Step 6: Run GREEN self-test and compatibility validation**
 
 ```bash
@@ -680,9 +693,12 @@ evidence boundary in `scripts/README.md` and `tests/README.md`.
 python3 -m py_compile scripts/document_contracts.py scripts/validate-markdown-profiles.py
 python3 scripts/validate-document-contract-registry.py --self-test
 python3 scripts/validate-document-contract-registry.py --root . --mode compatibility
+readme_fixture_sha="50f8c8ab05267a9ddf059d72ca6950d4f05b14ad82010c0d9576eb7a9f1f68d0" # pragma: allowlist secret
+test "$(sha256sum tests/fixtures/document-contracts/readme-profile-cases.json | cut -d' ' -f1)" = "$readme_fixture_sha"
 bash scripts/validate-repo-quality-gates.sh .
 git diff --check
 pre-commit run --files scripts/document_contracts.py scripts/validate-markdown-profiles.py \
+  scripts/validate-repo-quality-gates.sh \
   tests/fixtures/markdown-profiles.json tests/fixtures/document-contracts/template-compatibility.json \
   scripts/README.md tests/README.md \
   docs/04.execution/tasks/2026-07-12-semantic-document-validation.md \
@@ -695,11 +711,12 @@ Expected: compile and all applicable hooks PASS.
 
 ```bash
 git add scripts/document_contracts.py scripts/validate-markdown-profiles.py \
+  scripts/validate-repo-quality-gates.sh \
   tests/fixtures/markdown-profiles.json tests/fixtures/document-contracts/template-compatibility.json \
   scripts/README.md tests/README.md \
   docs/04.execution/tasks/2026-07-12-semantic-document-validation.md \
   docs/00.agent-governance/memory/progress.md
-test "$(git diff --cached --name-only | wc -l)" -eq 8
+test "$(git diff --cached --name-only | wc -l)" -eq 9
 python3 - <<'PY'
 import subprocess
 expected = {
@@ -708,6 +725,7 @@ expected = {
     'scripts/README.md',
     'scripts/document_contracts.py',
     'scripts/validate-markdown-profiles.py',
+    'scripts/validate-repo-quality-gates.sh',
     'tests/README.md',
     'tests/fixtures/document-contracts/template-compatibility.json',
     'tests/fixtures/markdown-profiles.json',
@@ -720,9 +738,11 @@ git commit -m "feat(docs): add registry-driven markdown profile validation"
 
 Expected delta: two new non-target support files and no target-corpus,
 profile/template, or README count change. Roll back with
-`git revert <SMDV-002-commit>`. A fresh reviewer checks matrix coverage,
+`git revert <SMDV-002-commit>` so the fixture, its complete pinned digest, and
+its mutation proof return together. A fresh reviewer checks matrix coverage,
 production-entry-point use, debt matching, output/exit stability, exact
-eight-path scope, and repository-static boundaries in
+nine-path scope, readme-profile fixture byte identity, complete-fixture digest
+pinning, arbitrary `affectedPaths` drift rejection, and repository-static boundaries in
 `.superpowers/sdd/smdv-task-2-review.md`.
 
 ---
@@ -926,6 +946,9 @@ Delete blocks that reimplement registry route, general Frontmatter, general
 README heading, generic link, generic owner, and generic residue rules. Keep
 operations index parity, GitOps, infrastructure, agent-runtime, version, and
 other domain contracts whose semantics are not in the document registry.
+SMDV-004 owns this later delegation and removal of superseded hardcoded
+validation only. It does not postpone, repeat, or undo SMDV-002's required
+complete-fixture digest pin and `affectedPaths` mutation proof.
 
 - [ ] **Step 4: Run focused regression**
 
