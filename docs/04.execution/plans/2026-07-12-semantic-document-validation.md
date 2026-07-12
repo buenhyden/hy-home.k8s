@@ -32,10 +32,16 @@ CommonMark-compatible fence parsing, Bash, Markdown, Git, and pre-commit.
 - Use repository-relative POSIX paths and reject leading `./`, `..`, case aliases, and symlink traversal.
 - Diagnostics must contain rule ID, path, profile, expected value, actual value, and remediation owner without printing secret content.
 - Exit codes are `0` for success, `1` for document violations, and `2` for configuration or CLI errors.
-- Compatibility mode may defer only named registry debt; strict mode rejects every remaining debt item.
+- Compatibility mode may defer only an exact item from one of the two finite,
+  Spec-030-owned debt consumers defined below. The registry schema has no debt
+  field and must never be described as owning migration debt. Strict mode
+  rejects every debt item.
 - Validation performs no network or live runtime action.
 - Use `apply_patch` for content edits and commit each independently testable Task separately.
 - Run focused self-tests before every commit and repository-wide QA before closure.
+- Every repository-changing logical unit updates
+  `docs/00.agent-governance/memory/progress.md`. A review-remediation commit is
+  a separate logical unit and appends its own progress entry.
 
 ---
 
@@ -77,6 +83,27 @@ this Plan creates the consumer layer needed by the authored migration.
 | Cross-document validation | `scripts/validate-links-and-owners.py`, `tests/fixtures/links-and-owners.json` | Links, indexes, current owners, and durable migration ledger. |
 | Gate integration | `scripts/validate-repo-quality-gates.sh` | Invoke canonical validators and retain only domain checks not represented in the registry. |
 | Execution evidence | same-topic Spec, Plan, Task, three Stage indexes, `memory/progress.md` | Reciprocal lineage, commands, results, limitations, review, and rollback commits. |
+
+### Compatibility Debt Owners
+
+Compatibility is finite and fail-closed. It reads only these files; a CLI flag,
+environment variable, path glob, inline comment, or code-local allow-list may
+not create debt:
+
+| Consumer | Schema and permitted scope | Owner and removal transition |
+| --- | --- | --- |
+| `tests/fixtures/document-contracts/template-compatibility.json` | Existing schema v1 plus exact `affectedPaths` records under each `compatibilityDebt` profile. Each record contains `path`, sorted `ruleIds`, and sorted `tokens`. Aggregate profile/path/occurrence counts remain frozen with `growthAllowed: false`. Only legacy heading aliases and forbidden residue already named by this file may defer. | Spec 030. ADM-003 through ADM-006 remove a path record in the same logical unit that makes the path canonical; ADM-007 removes the last empty debt definitions after strict validation. |
+| `tests/fixtures/document-contracts/semantic-compatibility-debt.json` | Schema v1 with top-level `schemaVersion`, `owner`, `growthAllowed`, and `items`. Each item has exactly `ruleId`, `path`, `profile`, `expected`, `actual`, `ownerTask`, and `removeWhen`. The initial and only permitted item is `LEDGER-MISSING` for `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`, profile `content/reference`, owner task `ADM-002`, with `removeWhen` equal to `ledger exists, has the exact fourteen columns, and covers the inventory once`. | Spec 030 / ADM-002. ADM-002 creates and stages the durable ledger, proves completeness, and removes the `LEDGER-MISSING` item in the same commit. An empty file may remain until ADM-007, but `growthAllowed` stays false. |
+
+`LEDGER-MISSING` is therefore a represented compatibility item, not an
+implicit absence check. In compatibility mode that exact item emits `DEFER`
+and exit 0. In strict mode it emits `FAIL` and exit 1. A missing ledger after
+the item is removed is an ordinary `LEDGER-MISSING` violation and cannot defer.
+No other link, index, owner, ledger, frontmatter, or body rule is permitted in
+the semantic debt file without a separately approved Plan amendment.
+The Spec 030 Plan must consume these two files at ADM-002/ADM-007; its stale
+reference to registry debt does not authorize adding debt fields or records to
+`document-profiles.json`.
 
 ### Durable ledger columns
 
@@ -174,6 +201,88 @@ Both validators iterate `enumerate_target_markdown(root).current_paths`; neither
 may implement a second inventory walk or dereference the recorded symlink
 entries.
 
+### Deterministic Owner Key
+
+The cross-document validator computes a current-owner key only from repository
+content already admitted by the registry:
+
+1. Candidate documents are `mode: authored` and have frontmatter status
+   `active` or `accepted`. Exclude profile `content/archive-tombstone`, every
+   class `readme` or `exception`, every mode `template`, `frontmatter-free`,
+   `generated`, `native`, or `non-target`, and paths matching
+   `^docs/90\.references/(?:research|audits)/[0-9]{4}-[0-9]{2}-[0-9]{2}-[^/]+/`,
+   `^docs/90\.references/cloud-examples/`, or
+   `^examples/(?:aws|azure)/docs/`. Plans and Tasks with status `done` are
+   completed evidence and are excluded by the status rule.
+2. `role` is the validated frontmatter `type` value after Unicode NFKC,
+   case-folding, collapsing every run of characters for which Python
+   `str.isalnum()` is false to `-`, and
+   trimming `-`.
+3. `scope` is the validated frontmatter `title` after the same normalization
+   and removal of the one exact profile-family suffix (`product requirements`,
+   `architecture requirements`, `architecture decision record`, `technical
+   specification`, `implementation plan`, or leading `task`) when present.
+4. `lineage` is the normalized repository-relative destination of the first
+   local link, in document order, inside `## Traceability` that resolves to a
+   Stage 01 PRD or Stage 03 `spec.md`. If no such link exists, use the
+   candidate's own canonical feature key: Stage 01 filename without `.md`,
+   Stage 03 feature directory name, Stage 04 filename without date and `.md`,
+   otherwise the repository-relative path without suffix. URL fragments and
+   queries are removed before normalization.
+5. The serialized key is `role|scope|lineage`. Empty components produce
+   `OWNER-KEY-MISSING`; malformed links produce the relevant `LINK-*` rule;
+   two candidates with the same serialized key produce one sorted
+   `OWNER-DUPLICATE` diagnostic naming all paths. Matching excluded documents
+   never suppresses or creates a current-owner diagnostic.
+
+Fixture cases assert NFKC/case/punctuation normalization, suffix removal,
+first-upstream-link selection, fallback lineage, exclusions, missing
+components, and duplicate ordering. No title similarity, model judgment, Git
+history, or live lookup participates.
+
+### Declared Index Contracts
+
+`scripts/validate-links-and-owners.py` owns one immutable
+`DECLARED_INDEXES` tuple for these three Stage indexes; it is cross-document
+validator configuration not represented by the profile registry:
+
+| Index | Tree target | Table anchor and row href | Status semantics | Exclusions |
+| --- | --- | --- | --- | --- |
+| `docs/03.specs/README.md` | `docs/03.specs/[0-9][0-9][0-9]-*/spec.md` | `### Current Spec Index`; first cell contains exactly one href `./<feature>/spec.md` | `Active`, `Done`, `Archived` map case-insensitively to target frontmatter `active`, `done`, `archived` | README files and feature-local helper documents |
+| `docs/04.execution/plans/README.md` | `docs/04.execution/plans/*.md` | first Markdown table after `## Item Index`; href `./<filename>.md` | same mapping | `README.md` |
+| `docs/04.execution/tasks/README.md` | `docs/04.execution/tasks/*.md` | H3 anchor with code points `U+BB38 U+C11C U+0020 U+C778 U+B371 U+C2A4`; href `./<filename>.md` | same mapping | `README.md` |
+
+For each declaration, the actual key is the normalized repository-relative
+target path and the row key is its resolved href. Each actual target appears
+exactly once in the fenced tree and exactly once in the declared table; every
+row resolves to exactly one actual target; duplicate hrefs are
+`INDEX-DUPLICATE`, absent actual rows are `INDEX-MISSING`, non-target rows are
+`INDEX-STALE`, status mismatches are `INDEX-STATUS`, and tree duplicates or
+omissions are `INDEX-TREE`. Table alignment rows, headings, comments, fenced
+examples outside the declared tree block, external links, and nested tables
+outside the named anchor are excluded. Diagnostics sort by index path, rule,
+and target key.
+
+### Stable CLI Contract
+
+Both semantic validators implement identical result behavior:
+
+- Text output is one sorted line per result:
+  `PASS|DEFER|FAIL RULE_ID path profile expected=<json> actual=<json> owner=<json>`.
+  A clean run emits one deterministic `PASS` summary line.
+- JSON output is one object with keys in this order: `schemaVersion`, `mode`,
+  `outcome`, `counts`, `diagnostics`. Diagnostics use the `Diagnostic` field
+  order and the same sort as text. JSON goes to stdout; configuration and CLI
+  errors go to stderr without partial result JSON.
+- Exit `0` means no diagnostics or compatibility mode with only exact `DEFER`
+  items; exit `1` means at least one non-deferred document violation (and any
+  debt in strict mode); exit `2` means malformed registry/debt/configuration or
+  invalid CLI usage. Unknown items are never downgraded.
+- `--self-test` calls the production entry point. `--inventory` is read-only,
+  mutually exclusive with `--self-test`, and follows the same deterministic
+  JSON/error contract. All modes are repository-static and tracked-only plus
+  explicit `--include-path` values.
+
 ## Work Breakdown
 
 | Task | Deliverable | Primary validation | Commit |
@@ -198,7 +307,7 @@ entries.
 | Risk | Impact | Mitigation |
 | --- | --- | --- |
 | Parser differs from rendered Markdown | High | Fence conformance fixtures cover backtick, tilde, longer closing fences, and unclosed fences. |
-| Compatibility mode hides new drift | High | Only exact registry debt records may defer; unmatched failures remain exit 1. |
+| Compatibility mode hides new drift | High | Only exact records from the two finite debt consumers may defer; unmatched failures remain exit 1. |
 | Gate refactor removes unique checks | High | Map each deleted block to a rule ID and retain operations/domain checks without a registry representation. |
 | Fixture runner tests different logic | High | Self-tests call the same public validation functions as repository mode. |
 
@@ -222,51 +331,169 @@ entries.
 - Modify: `docs/04.execution/plans/README.md`
 - Create: `docs/04.execution/tasks/2026-07-12-semantic-document-validation.md`
 - Modify: `docs/04.execution/tasks/README.md`
+- Modify: `docs/00.agent-governance/memory/progress.md`
 
 **Interfaces:**
 
 - Consumes: active Spec 029 and this approved Plan.
 - Produces: Task IDs `SMDV-001` through `SMDV-004` and reciprocal links used by closure validation.
 
-- [ ] **Step 1: Run the failing lineage assertion**
+- [ ] **Step 1: Run the exact failing lineage and index assertion**
 
 ```bash
 python3 - <<'PY'
+import re
 from pathlib import Path
+
 spec = Path('docs/03.specs/029-semantic-document-validation/spec.md')
 plan = Path('docs/04.execution/plans/2026-07-12-semantic-document-validation.md')
 task = Path('docs/04.execution/tasks/2026-07-12-semantic-document-validation.md')
+task_table_anchor = '### ' + ''.join(map(chr, (0xBB38, 0xC11C, 0x20, 0xC778, 0xB371, 0xC2A4)))
+indexes = {
+    Path('docs/03.specs/README.md'): {
+        'tree_h2': '## Document Index',
+        'tree_line': '├── 029-semantic-document-validation/',
+        'table_kind': 'after-anchor',
+        'table_anchor': '### Current Spec Index',
+        'href': './029-semantic-document-validation/spec.md',
+    },
+    Path('docs/04.execution/plans/README.md'): {
+        'tree_h2': '## Item Index',
+        'tree_line': '├── 2026-07-12-semantic-document-validation.md',
+        'table_kind': 'first-after-h2',
+        'table_anchor': '## Item Index',
+        'href': './2026-07-12-semantic-document-validation.md',
+    },
+    Path('docs/04.execution/tasks/README.md'): {
+        'tree_h2': '## Item Index',
+        'tree_line': '├── 2026-07-12-semantic-document-validation.md',
+        'table_kind': 'after-anchor',
+        'table_anchor': task_table_anchor,
+        'href': './2026-07-12-semantic-document-validation.md',
+    },
+}
+expected = {
+    spec: {
+        '../../04.execution/plans/2026-07-12-semantic-document-validation.md',
+        '../../04.execution/tasks/2026-07-12-semantic-document-validation.md',
+    },
+    plan: {
+        '../../03.specs/029-semantic-document-validation/spec.md',
+        '../tasks/2026-07-12-semantic-document-validation.md',
+    },
+    task: {
+        '../../03.specs/029-semantic-document-validation/spec.md',
+        '../plans/2026-07-12-semantic-document-validation.md',
+    },
+}
 assert task.exists(), task
-for source, target in ((spec, plan), (spec, task), (plan, spec), (plan, task), (task, spec), (task, plan)):
-    assert target.name in source.read_text(encoding='utf-8'), (source, target)
+for source, hrefs in expected.items():
+    found = re.findall(r'\[[^]]*\]\(([^)]+)\)', source.read_text(encoding='utf-8'))
+    for href in hrefs:
+        assert found.count(href) == 1, (source, href, found.count(href))
+
+def unique_line(lines, value):
+    matches = [i for i, line in enumerate(lines) if line == value]
+    assert len(matches) == 1, (value, matches)
+    return matches[0]
+
+def after_blanks(lines, start):
+    while start < len(lines) and not lines[start]:
+        start += 1
+    return start
+
+alignment = re.compile(r'^\|(?:\s*:?-+:?\s*\|)+$')
+
+for index, contract in indexes.items():
+    text = index.read_text(encoding='utf-8')
+    lines = text.splitlines()
+
+    tree_h2 = unique_line(lines, contract['tree_h2'])
+    tree_open = after_blanks(lines, tree_h2 + 1)
+    assert tree_open < len(lines) and lines[tree_open] == '```text', (index, 'tree-open')
+    tree_close = next((i for i in range(tree_open + 1, len(lines)) if lines[i] == '```'), None)
+    assert tree_close is not None, (index, 'tree-close')
+    tree_body = lines[tree_open + 1:tree_close]
+    assert tree_body.count(contract['tree_line']) == 1, (index, contract['tree_line'])
+    outside_tree = lines[:tree_open] + lines[tree_close + 1:]
+    assert contract['tree_line'] not in outside_tree, (index, 'tree-line-outside-fence')
+
+    anchor = unique_line(lines, contract['table_anchor'])
+    if contract['table_kind'] == 'after-anchor':
+        table_start = after_blanks(lines, anchor + 1)
+    else:
+        table_start = next((i for i in range(anchor + 1, len(lines)) if lines[i].startswith('|')), None)
+        assert table_start is not None, (index, 'first-table-after-h2')
+    assert table_start + 2 < len(lines), (index, 'table-short')
+    assert lines[table_start].startswith('|') and alignment.fullmatch(lines[table_start + 1]), (index, 'table-header')
+    table_end = table_start + 2
+    while table_end < len(lines) and lines[table_end].startswith('|'):
+        table_end += 1
+    table_rows = lines[table_start + 2:table_end]
+    assert table_rows, (index, 'table-data')
+    target_rows = []
+    for row in table_rows:
+        hrefs = re.findall(r'\[[^]]*\]\(([^)]+)\)', row)
+        if contract['href'] in hrefs:
+            target_rows.append(row)
+    assert len(target_rows) == 1, (index, contract['href'], len(target_rows))
+    assert re.findall(r'\[[^]]*\]\(([^)]+)\)', target_rows[0]).count(contract['href']) == 1
+    outside_table = '\n'.join(lines[:table_start] + lines[table_end:])
+    assert f']({contract["href"]})' not in outside_table, (index, 'href-outside-table')
 PY
 ```
 
-Expected: FAIL because the Task does not exist and reciprocal links are absent.
+Expected: FAIL because the Task, its exact reciprocal hrefs, and its two unique
+index representations do not exist. The existing Spec and Plan each already
+have one tree entry and one table row; do not add duplicates.
 
 - [ ] **Step 2: Create the execution Task from the canonical Task form**
 
 Use frontmatter `title: 'Task: Semantic Document Validation'`,
 `type: sdlc/task`, `status: active`, `owner: platform`, and
-`updated: 2026-07-12`. Add four rows with IDs `SMDV-001` through `SMDV-004`,
-the commit messages from the Work Breakdown table, and exact validation commands
-from this Plan.
+`updated: 2026-07-12`. The direct program approvals explicitly promote this
+new Task from the canonical draft start to `active`; record that promotion in
+Inputs. Use exactly the six canonical H2 headings `Overview`, `Inputs`, `Task
+Table`, `Approval and Safety Boundaries`, `Verification Summary`, and
+`Traceability`, and exactly the five table columns `ID | Work item | Owner |
+Status | Evidence`. Add four rows: `SMDV-001` is `Done`; `SMDV-002` through
+`SMDV-004` are `Queued`; Owner is `platform`. Every Evidence cell names the
+logical commit from Work Breakdown and its exact primary validation command:
+SMDV-001 uses `python3 scripts/validate-document-contract-registry.py --root . --mode compatibility`,
+SMDV-002 uses `python3 scripts/validate-markdown-profiles.py --self-test`,
+SMDV-003 uses `python3 scripts/validate-links-and-owners.py --self-test`, and
+SMDV-004 uses `bash scripts/validate-repo-quality-gates.sh .`.
+Fill every safety field with the repository-static, tracked-only,
+no-secret/no-live boundary and rollback by logical commit.
 
 - [ ] **Step 3: Add reciprocal links and index rows**
 
-Link Spec 029 to this Plan and Task; link this Plan and Task back to Spec 029
-and each other. Add active rows dated `2026-07-12` to the Spec, Plan, and Task
-indexes without changing unrelated rows.
+Use the six exact hrefs from Step 1. Verify or update the existing Spec and Plan
+index rows in place; do not add them again. Add exactly one Task tree entry and
+one Task table row dated `2026-07-12`. Append one canonical progress entry for
+this logical unit.
 
 - [ ] **Step 4: Run the lineage assertion again**
 
-Run the Step 1 command.
+Stage the exact seven-file scope first, then run Step 1 and:
 
-Expected: PASS with no output.
+```bash
+git add docs/03.specs/029-semantic-document-validation/spec.md docs/03.specs/README.md \
+  docs/04.execution/plans/2026-07-12-semantic-document-validation.md docs/04.execution/plans/README.md \
+  docs/04.execution/tasks/2026-07-12-semantic-document-validation.md docs/04.execution/tasks/README.md \
+  docs/00.agent-governance/memory/progress.md
+python3 scripts/validate-document-contract-registry.py --self-test
+python3 scripts/validate-document-contract-registry.py --root . --mode compatibility
+```
+
+Expected: lineage PASS with no output; registry remains 9 cases, 60 profiles,
+27 templates; inventory is exactly 467 target Markdown paths
+(`baseline=433`, `new=36`) and README 72.
 
 - [ ] **Step 5: Run focused document QA**
 
 ```bash
+bash scripts/validate-repo-quality-gates.sh .
 git diff --check
 pre-commit run --files \
   docs/03.specs/029-semantic-document-validation/spec.md \
@@ -274,7 +501,23 @@ pre-commit run --files \
   docs/04.execution/plans/2026-07-12-semantic-document-validation.md \
   docs/04.execution/plans/README.md \
   docs/04.execution/tasks/2026-07-12-semantic-document-validation.md \
-  docs/04.execution/tasks/README.md
+  docs/04.execution/tasks/README.md \
+  docs/00.agent-governance/memory/progress.md
+test "$(git diff --cached --name-only | wc -l)" -eq 7
+python3 - <<'PY'
+import subprocess
+expected = {
+    'docs/00.agent-governance/memory/progress.md',
+    'docs/03.specs/029-semantic-document-validation/spec.md',
+    'docs/03.specs/README.md',
+    'docs/04.execution/plans/2026-07-12-semantic-document-validation.md',
+    'docs/04.execution/plans/README.md',
+    'docs/04.execution/tasks/2026-07-12-semantic-document-validation.md',
+    'docs/04.execution/tasks/README.md',
+}
+actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
+assert actual == expected, (sorted(actual - expected), sorted(expected - actual))
+PY
 ```
 
 Expected: all applicable hooks PASS.
@@ -284,9 +527,16 @@ Expected: all applicable hooks PASS.
 ```bash
 git add docs/03.specs/029-semantic-document-validation/spec.md docs/03.specs/README.md \
   docs/04.execution/plans/2026-07-12-semantic-document-validation.md docs/04.execution/plans/README.md \
-  docs/04.execution/tasks/2026-07-12-semantic-document-validation.md docs/04.execution/tasks/README.md
+  docs/04.execution/tasks/2026-07-12-semantic-document-validation.md docs/04.execution/tasks/README.md \
+  docs/00.agent-governance/memory/progress.md
 git commit -m "docs(execution): start semantic document validation"
 ```
+
+Expected delta: one new target Markdown path, no profile/template/README count
+change. Roll back with `git revert <SMDV-001-commit>`. A fresh independent
+reviewer verifies hrefs, Task shape/status/table, counts, seven-path scope, and
+command evidence in `.superpowers/sdd/smdv-task-1-review.md`; tracked review
+remediation is a separate logical commit with its own progress entry.
 
 ---
 
@@ -297,10 +547,12 @@ git commit -m "docs(execution): start semantic document validation"
 - Create: `scripts/validate-markdown-profiles.py`
 - Create: `tests/fixtures/markdown-profiles.json`
 - Consume: `tests/fixtures/document-contracts/readme-profile-cases.json`
+- Modify: `tests/fixtures/document-contracts/template-compatibility.json`
 - Modify: `scripts/document_contracts.py`
 - Modify: `scripts/README.md`
 - Modify: `tests/README.md`
 - Modify: `docs/04.execution/tasks/2026-07-12-semantic-document-validation.md`
+- Modify: `docs/00.agent-governance/memory/progress.md`
 
 **Interfaces:**
 
@@ -311,18 +563,46 @@ git commit -m "docs(execution): start semantic document validation"
   stable rule IDs consumed by Spec 030, and production-parser results for every
   Spec 028 README handoff case.
 
-- [ ] **Step 1: Add exact authored cases and bind the README handoff**
+- [ ] **Step 1: Add the profile/mode matrix and bind the README handoff**
 
-Create JSON cases named `valid-spec`, `duplicate-key`, `future-date`,
+`tests/fixtures/markdown-profiles.json` has `schemaVersion: 1`, one
+`profileMatrix` row for every registry profile, and `mutationCases`. Each row
+contains `profile`, `mode`, `applicability`, `fixturePath`, `positiveSource`,
+and `negativeMutations`. Markdown routes in modes `authored`, `template`,
+`frontmatter-free`, and `generated` are applicable; Markdown `native` routes
+are applicable to frontmatter/heading-forbidden checks. The registry profile
+`governance/progress-entry` is explicitly applicable as
+`applicability: append-fragment`: its positive case validates a canonical H3
+entry with the five required H4 sections against the parent
+`governance/progress-ledger` append contract, and focused negative cases remove
+one required H4, use the wrong H3/H4 level, and target the wrong parent H2.
+Those cases call the same production `validate_document()` entry point with
+the parent profile/context; they are not fixture-only parsing. Only
+non-Markdown native and `non-target` profiles use `applicability: excluded`
+with exact reason `non-markdown` or `non-target`. Self-test rejects missing,
+duplicate, stale, or unjustified rows and asserts that
+`governance/progress-entry` is never excluded. Every applicable or
+append-fragment row runs a positive document and at least one supported focused
+negative mutation through `validate_document()`.
+
+Render positive fixtures from the registry contract and canonical form with
+fixed values, not from a current authored file. Parameterize negative
+mutations by capability: delimiter/keyset/order/type/status/date, forbidden
+frontmatter, H1/H2/fence, placeholder residue, and the progress-entry append
+contract. Every
+implemented rule ID has one mutation. Keep cases `valid-spec`, `duplicate-key`, `future-date`,
 `wrong-key-order`, `missing-heading`, `heading-in-fence`, `duplicate-h2`,
-`unsupported-h2`, `template-residue`, and `unclosed-fence`. Each case contains
-`profile`, `document`, and `expected_rule_ids`; the valid and heading-in-fence
-cases use an empty expected list. Also load
+`unsupported-h2`, `template-residue`, and `unclosed-fence`.
+
+Also load
 `tests/fixtures/document-contracts/readme-profile-cases.json` and require its
 case names to be exactly `valid-profile`, `frontmatter-forbidden`,
 `duplicate-h1`, `duplicate-h2`, `unsupported-h2`, `missing-required-h2`,
-`fenced-heading-ignored`, and `unclosed-fence`. Do not copy or translate those
-case bodies into a second fixture.
+`fenced-heading-ignored`, and `unclosed-fence`. Run those exact bodies through
+the production entry point with their path-selected profile; do not copy or
+translate them. Separately generate one positive and supported negative case
+for all six README profiles, so the root handoff does not stand in for profile
+coverage.
 
 - [ ] **Step 2: Add the CLI shell and run RED**
 
@@ -370,7 +650,13 @@ fences and return an unclosed-fence flag.
 
 Validate exact required/allowed keys, ordered keys, type, status domain,
 `platform` owner, real ISO date, future-date policy, title, H1 count, required
-and allowed H2, duplicate H2, and residue markers. Sort diagnostics by
+and allowed H2, duplicate H2, and residue markers. Load path-level legacy
+shape debt only from `template-compatibility.json`: extend each existing
+profile debt row with sorted `affectedPaths` entries containing exact `path`,
+`ruleIds`, and `tokens` from the frozen 466-path pre-Task baseline. A defer
+requires an exact path/rule/token match and counts at or below every frozen
+profile/path/occurrence cap. Strict mode fails the same item; new paths and
+unknown tokens never defer. Do not add debt to the registry. Sort diagnostics by
 `(path, rule_id, expected, actual)`.
 
 - [ ] **Step 6: Run GREEN self-test and compatibility validation**
@@ -380,8 +666,10 @@ python3 scripts/validate-markdown-profiles.py --self-test
 python3 scripts/validate-markdown-profiles.py --root . --mode compatibility
 ```
 
-Expected: all ten authored cases and all eight README handoff cases PASS through
-the production parser; repository run exits 0 with only named `DEFER` debt.
+Expected: all named cases, all eight imported README cases, and every
+applicable profile/mode row PASS through the production parser; repository run
+exits 0 with only exact named `DEFER` debt. Inventory remains 467 target paths
+(`baseline=433`, `new=36`), 60 profiles, 27 templates, and README 72.
 
 - [ ] **Step 7: Update script/test inventories and run focused QA**
 
@@ -390,10 +678,15 @@ evidence boundary in `scripts/README.md` and `tests/README.md`.
 
 ```bash
 python3 -m py_compile scripts/document_contracts.py scripts/validate-markdown-profiles.py
+python3 scripts/validate-document-contract-registry.py --self-test
+python3 scripts/validate-document-contract-registry.py --root . --mode compatibility
+bash scripts/validate-repo-quality-gates.sh .
 git diff --check
 pre-commit run --files scripts/document_contracts.py scripts/validate-markdown-profiles.py \
-  tests/fixtures/markdown-profiles.json tests/fixtures/document-contracts/readme-profile-cases.json \
-  scripts/README.md tests/README.md
+  tests/fixtures/markdown-profiles.json tests/fixtures/document-contracts/template-compatibility.json \
+  scripts/README.md tests/README.md \
+  docs/04.execution/tasks/2026-07-12-semantic-document-validation.md \
+  docs/00.agent-governance/memory/progress.md
 ```
 
 Expected: compile and all applicable hooks PASS.
@@ -402,11 +695,35 @@ Expected: compile and all applicable hooks PASS.
 
 ```bash
 git add scripts/document_contracts.py scripts/validate-markdown-profiles.py \
-  tests/fixtures/markdown-profiles.json tests/fixtures/document-contracts/readme-profile-cases.json \
+  tests/fixtures/markdown-profiles.json tests/fixtures/document-contracts/template-compatibility.json \
   scripts/README.md tests/README.md \
-  docs/04.execution/tasks/2026-07-12-semantic-document-validation.md
+  docs/04.execution/tasks/2026-07-12-semantic-document-validation.md \
+  docs/00.agent-governance/memory/progress.md
+test "$(git diff --cached --name-only | wc -l)" -eq 8
+python3 - <<'PY'
+import subprocess
+expected = {
+    'docs/00.agent-governance/memory/progress.md',
+    'docs/04.execution/tasks/2026-07-12-semantic-document-validation.md',
+    'scripts/README.md',
+    'scripts/document_contracts.py',
+    'scripts/validate-markdown-profiles.py',
+    'tests/README.md',
+    'tests/fixtures/document-contracts/template-compatibility.json',
+    'tests/fixtures/markdown-profiles.json',
+}
+actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
+assert actual == expected, (sorted(actual - expected), sorted(expected - actual))
+PY
 git commit -m "feat(docs): add registry-driven markdown profile validation"
 ```
+
+Expected delta: two new non-target support files and no target-corpus,
+profile/template, or README count change. Roll back with
+`git revert <SMDV-002-commit>`. A fresh reviewer checks matrix coverage,
+production-entry-point use, debt matching, output/exit stability, exact
+eight-path scope, and repository-static boundaries in
+`.superpowers/sdd/smdv-task-2-review.md`.
 
 ---
 
@@ -416,9 +733,11 @@ git commit -m "feat(docs): add registry-driven markdown profile validation"
 
 - Create: `scripts/validate-links-and-owners.py`
 - Create: `tests/fixtures/links-and-owners.json`
+- Create: `tests/fixtures/document-contracts/semantic-compatibility-debt.json`
 - Modify: `scripts/README.md`
 - Modify: `tests/README.md`
 - Modify: `docs/04.execution/tasks/2026-07-12-semantic-document-validation.md`
+- Modify: `docs/00.agent-governance/memory/progress.md`
 
 **Interfaces:**
 
@@ -432,8 +751,13 @@ git commit -m "feat(docs): add registry-driven markdown profile validation"
 Create cases named `valid-tree`, `broken-link`, `absolute-link`,
 `archive-bypass`, `missing-index-row`, `stale-index-row`,
 `duplicate-current-owner`, `missing-ledger-row`, `incomplete-ledger-row`, and
-`unknown-ledger-path`. Each case embeds a minimal repository tree and exact
-`expected_rule_ids`.
+`unknown-ledger-path`, plus focused owner normalization/exclusion and index
+duplicate/status/tree cases. Each embeds a minimal repository tree and exact
+`expected_rule_ids`; `valid-tree` exercises all three declared index contracts
+and the fourteen-column ledger. Create the semantic debt file with the one
+exact `LEDGER-MISSING` item specified above. Self-test proves growth, alias
+keys, unknown rules, glob paths, duplicate items, and malformed removal
+transitions are configuration errors with exit 2.
 
 - [ ] **Step 2: Add CLI shell and run RED**
 
@@ -455,9 +779,10 @@ resolved target remains inside the repository.
 
 - [ ] **Step 4: Implement indexes and owner keys**
 
-Parse declared index tables; compare indexed and actual children. Build
-`owner-key` from normalized role, scope, and lineage, excluding archive,
-dated-snapshot, and completed-evidence profiles from current-owner candidates.
+Implement the exact `DECLARED_INDEXES` and Deterministic Owner Key contracts
+above. Assert href resolution, tree/table uniqueness, target frontmatter status,
+exclusions, normalization, fallback lineage, and sorted duplicate diagnostics.
+Do not discover indexes from heading similarity or prove links by basename.
 
 - [ ] **Step 5: Implement ledger parsing and inventory JSON**
 
@@ -469,30 +794,91 @@ extra, reordered, or aliased column with `LEDGER-INCOMPLETE`. `--inventory` retu
 one sorted JSON object per approved authored path with classification and owner
 key; it must not write files or inspect ignored paths.
 
+In compatibility mode, only the exact absent durable-ledger debt item emits
+DEFER. In strict mode it emits FAIL. Spec 030 ADM-002 creates and stages the
+ledger, validates all rows, and removes that debt item in the same commit;
+subsequent absence can never defer.
+
 - [ ] **Step 6: Run GREEN tests**
 
 ```bash
 python3 scripts/validate-links-and-owners.py --self-test
 python3 scripts/validate-links-and-owners.py --root . --mode compatibility
-python3 scripts/validate-links-and-owners.py --root . --inventory --format json | python3 -m json.tool >/dev/null
+inventory_json="$(mktemp /tmp/smdv-inventory.XXXXXX.json)"
+trap 'rm -f "$inventory_json"' EXIT
+
+producer_probe_rc=0
+false >"$inventory_json" || producer_probe_rc=$?
+if [ "$producer_probe_rc" -eq 0 ]; then
+  exit 1
+fi
+parser_probe_rc=0
+printf '{' >"$inventory_json"
+python3 -m json.tool "$inventory_json" >/dev/null 2>&1 || parser_probe_rc=$?
+if [ "$parser_probe_rc" -eq 0 ]; then
+  exit 1
+fi
+
+inventory_rc=0
+python3 scripts/validate-links-and-owners.py --root . --inventory --format json >"$inventory_json" || inventory_rc=$?
+if [ "$inventory_rc" -eq 0 ]; then
+  python3 -m json.tool "$inventory_json" >/dev/null || inventory_rc=$?
+fi
+rm -f "$inventory_json"
+trap - EXIT
+exit "$inventory_rc"
 ```
 
-Expected: fixture PASS, compatibility exit 0 with named debt only, valid JSON inventory.
+Expected: fixture PASS, compatibility exit 0 with the exact ledger debt only,
+the bounded negative probes preserve nonzero producer and parser status, the
+real inventory producer exits 0 before its separate JSON parse exits 0, no
+repository temporary file is created, and registry counts stay at 467 target paths
+(`baseline=433`, `new=36`), 60 profiles, 27 templates, README 72.
 
 - [ ] **Step 7: Run focused QA and commit**
 
 ```bash
 python3 -m py_compile scripts/validate-links-and-owners.py
+python3 scripts/validate-document-contract-registry.py --self-test
+python3 scripts/validate-document-contract-registry.py --root . --mode compatibility
+bash scripts/validate-repo-quality-gates.sh .
 git diff --check
 pre-commit run --files scripts/validate-links-and-owners.py \
-  tests/fixtures/links-and-owners.json scripts/README.md tests/README.md
-git add scripts/validate-links-and-owners.py tests/fixtures/links-and-owners.json \
+  tests/fixtures/links-and-owners.json tests/fixtures/document-contracts/semantic-compatibility-debt.json \
   scripts/README.md tests/README.md \
-  docs/04.execution/tasks/2026-07-12-semantic-document-validation.md
+  docs/04.execution/tasks/2026-07-12-semantic-document-validation.md \
+  docs/00.agent-governance/memory/progress.md
+git add scripts/validate-links-and-owners.py tests/fixtures/links-and-owners.json \
+  tests/fixtures/document-contracts/semantic-compatibility-debt.json \
+  scripts/README.md tests/README.md \
+  docs/04.execution/tasks/2026-07-12-semantic-document-validation.md \
+  docs/00.agent-governance/memory/progress.md
+test "$(git diff --cached --name-only | wc -l)" -eq 7
+python3 - <<'PY'
+import subprocess
+expected = {
+    'docs/00.agent-governance/memory/progress.md',
+    'docs/04.execution/tasks/2026-07-12-semantic-document-validation.md',
+    'scripts/README.md',
+    'scripts/validate-links-and-owners.py',
+    'tests/README.md',
+    'tests/fixtures/document-contracts/semantic-compatibility-debt.json',
+    'tests/fixtures/links-and-owners.json',
+}
+actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
+assert actual == expected, (sorted(actual - expected), sorted(expected - actual))
+PY
 git commit -m "feat(docs): validate links indexes and current owners"
 ```
 
 Expected: all checks PASS and commit succeeds.
+
+Expected delta: three new non-target support files and no target-corpus,
+profile/template, or README count change. Roll back with
+`git revert <SMDV-003-commit>`. A fresh reviewer checks link/index/owner
+algorithms, ledger schema and removal transition, output/exit stability, exact
+seven-path scope, and ignored/secret boundaries in
+`.superpowers/sdd/smdv-task-3-review.md`.
 
 ---
 
@@ -551,6 +937,8 @@ bash scripts/validate-repo-quality-gates.sh .
 ```
 
 Expected: all commands PASS; the repository command reports compatibility debt but no unknown deferral.
+Registry counts remain exactly 467 target paths (`baseline=433`, `new=36`),
+60 profiles, 27 templates, and README 72.
 
 - [ ] **Step 5: Run full QA**
 
@@ -569,6 +957,11 @@ Set Spec, Plan, and Task to `done`; update their index rows to `Done` and date
 and rollback commits in the Task and append a concise reusable handoff to
 `memory/progress.md`.
 
+The Task keeps exactly its six canonical H2 headings. Set all four Task rows to
+`Done`; every Evidence cell records its logical commit and exact validation
+command. Compatibility remains canonical until Spec 030 ADM-007, and this Task
+does not remove either finite debt consumer.
+
 - [ ] **Step 7: Commit**
 
 ```bash
@@ -577,13 +970,42 @@ git add scripts/validate-repo-quality-gates.sh scripts/README.md tests/README.md
   docs/04.execution/plans/2026-07-12-semantic-document-validation.md docs/04.execution/plans/README.md \
   docs/04.execution/tasks/2026-07-12-semantic-document-validation.md docs/04.execution/tasks/README.md \
   docs/00.agent-governance/memory/progress.md
+test "$(git diff --cached --name-only | wc -l)" -eq 10
+python3 - <<'PY'
+import subprocess
+expected = {
+    'docs/00.agent-governance/memory/progress.md',
+    'docs/03.specs/029-semantic-document-validation/spec.md',
+    'docs/03.specs/README.md',
+    'docs/04.execution/plans/2026-07-12-semantic-document-validation.md',
+    'docs/04.execution/plans/README.md',
+    'docs/04.execution/tasks/2026-07-12-semantic-document-validation.md',
+    'docs/04.execution/tasks/README.md',
+    'scripts/README.md',
+    'scripts/validate-repo-quality-gates.sh',
+    'tests/README.md',
+}
+actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
+assert actual == expected, (sorted(actual - expected), sorted(expected - actual))
+PY
 git commit -m "refactor(qa): delegate document checks to semantic validators"
 ```
+
+Expected delta: no new target and no change from 467 targets
+(`baseline=433`, `new=36`), 60 profiles, 27 templates, or README 72. Roll back
+with `git revert <SMDV-004-commit>`; retain the two validator feature commits
+when restoring only the wrapper. A fresh reviewer maps every deleted block to
+a new rule or a retained domain check, verifies lifecycle/progress evidence and
+the exact ten-path scope, and records
+`.superpowers/sdd/smdv-task-4-review.md`. Any tracked remediation is a new
+logical unit with its own progress entry.
 
 ## Completion Criteria
 
 - [ ] Every registry profile and cross-document rule has positive and focused negative fixture coverage.
 - [ ] Compatibility mode accounts for every known migration item without a silent allow-list.
+- [ ] `LEDGER-MISSING` has one exact Spec-030-owned representation and ADM-002 removal transition.
+- [ ] Every registry profile has exactly one deterministic matrix row; every applicable profile/mode, including the `governance/progress-entry` append fragment, and every cross-document rule has production-entry-point positive and focused negative coverage.
 - [ ] The quality gate consumes canonical validators and no longer owns duplicated general document rules.
 - [ ] Spec, Plan, Task, indexes, progress evidence, and rollback commits are reciprocal and complete.
 
