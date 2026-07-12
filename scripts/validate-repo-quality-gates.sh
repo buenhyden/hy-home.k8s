@@ -310,13 +310,25 @@ def has_cloud_example_snapshot_preservation_prompt(text: str) -> bool:
     return False
 
 
-def markdown_table_after_heading(text: str, heading: str) -> list[list[str]]:
+def markdown_table_after_heading(
+    text: str,
+    heading: str | tuple[str, ...],
+) -> list[list[str]]:
     lines = text.splitlines()
-    try:
-        start = next(index for index, line in enumerate(lines) if line.strip() == heading)
-    except StopIteration:
-        fail(f"missing markdown heading: {heading}")
+    headings = (heading,) if isinstance(heading, str) else heading
+    matches = [
+        (index, candidate)
+        for index, line in enumerate(lines)
+        for candidate in headings
+        if line.strip() == candidate
+    ]
+    if not matches:
+        fail(f"missing markdown heading: one of {headings!r}")
         return []
+    if len(matches) != 1:
+        fail(f"ambiguous markdown table headings: {[candidate for _, candidate in matches]!r}")
+        return []
+    start, _ = matches[0]
 
     table_lines: list[str] = []
     for line in lines[start + 1 :]:
@@ -338,6 +350,21 @@ def markdown_table_after_heading(text: str, heading: str) -> list[list[str]]:
             continue
         rows.append(cells)
     return rows
+
+
+def assert_profiled_readme_table_heading_probe() -> None:
+    expected = [["Name", "Value"], ["alpha", "one"]]
+    for heading in ("## Probe Index", "### Probe Index"):
+        document = f"# Probe\n\n{heading}\n\n| Name | Value |\n| --- | --- |\n| alpha | one |\n"
+        actual = markdown_table_after_heading(
+            document,
+            ("## Probe Index", "### Probe Index"),
+        )
+        if actual != expected:
+            fail(f"profiled README table heading probe failed for {heading}: {actual!r}")
+
+
+assert_profiled_readme_table_heading_probe()
 
 
 def validate_component_matrix(text: str, heading: str) -> None:
@@ -1786,7 +1813,10 @@ for provider in ["aws", "azure"]:
 template_routing_path = template_support_root / "template-routing.md"
 
 
-def template_route_pairs(path: pathlib.Path, heading: str) -> list[tuple[str, str]]:
+def template_route_pairs(
+    path: pathlib.Path,
+    heading: str | tuple[str, ...],
+) -> list[tuple[str, str]]:
     rows = markdown_table_after_heading(read_text(path), heading)
     if len(rows) < 2:
         fail(f"{rel(path)} {heading} must contain a header and route rows")
@@ -1802,7 +1832,7 @@ def template_route_pairs(path: pathlib.Path, heading: str) -> list[tuple[str, st
 
 template_readme_route_pairs = template_route_pairs(
     root / "docs/99.templates/README.md",
-    "## Template-Folder Mapping",
+    ("## Template-Folder Mapping", "### Template-Folder Mapping"),
 )
 template_routing_route_pairs = template_route_pairs(
     template_routing_path,
@@ -2165,7 +2195,7 @@ operations_readme_path = operations_stage_path / "README.md"
 operations_readme_text = read_text(operations_readme_path)
 operations_routing_rows = markdown_table_after_heading(
     operations_readme_text,
-    "## Operations Routing Matrix",
+    ("## Operations Routing Matrix", "### Operations Routing Matrix"),
 )
 expected_operations_routing_header = ["필요 상황", "사용할 위치", "시작 템플릿"]
 expected_operations_routing_targets = [
@@ -2234,7 +2264,7 @@ incidents_readme_path = operations_stage_path / "incidents/README.md"
 incidents_readme_text = read_text(incidents_readme_path)
 incident_boundary_rows = markdown_table_after_heading(
     incidents_readme_text,
-    "## Incident Boundary Matrix",
+    ("## Incident Boundary Matrix", "### Incident Boundary Matrix"),
 )
 expected_incident_boundary_header = [
     "Artifact",
@@ -2393,7 +2423,10 @@ for operations_root in operations_index_roots:
         continue
 
     readme_text = read_text(readme_path)
-    rows = markdown_table_after_heading(readme_text, "## 문서 인덱스")
+    rows = markdown_table_after_heading(
+        readme_text,
+        ("## 문서 인덱스", "### 문서 인덱스"),
+    )
     expected_header = ["문서", "설명", "상태", "최종 수정"]
     if len(rows) < 2:
         fail(f"{rel(readme_path)} 문서 인덱스 must contain a header and document rows")
@@ -2456,7 +2489,10 @@ def validate_stage04_index(stage_root: pathlib.Path) -> None:
         fail(f"Stage 04 README is missing: {rel(readme_path)}")
         return
 
-    rows = markdown_table_after_heading(read_text(readme_path), "## 문서 인덱스")
+    rows = markdown_table_after_heading(
+        read_text(readme_path),
+        ("## 문서 인덱스", "### 문서 인덱스"),
+    )
     expected_header = ["문서", "설명", "상태", "최종 수정"]
     if len(rows) < 2:
         fail(f"{rel(readme_path)} 문서 인덱스 must contain a header and document rows")
