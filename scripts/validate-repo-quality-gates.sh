@@ -377,9 +377,32 @@ def parse_markdown_table_after_heading(
     return rows, None
 
 
+def profiled_readme_table_headings(title: str) -> tuple[str, str]:
+    """Accept one visible legacy H2 or canonical implementation-profile H3."""
+    return (f"## {title}", f"### {title}")
+
+
 def assert_profiled_readme_table_heading_probe() -> None:
     expected = [["Name", "Value"], ["alpha", "one"]]
-    candidates = ("## Probe Index", "### Probe Index")
+    consumer_titles = (
+        "Example Role Matrix",
+        "Script Inventory",
+        "Script Classification Matrix",
+        "Kube-linter Exclusion Matrix",
+        "Service Coverage Matrix",
+        "External Service Contract Matrix",
+        "Secret Management Responsibility Matrix",
+        "Workload Coverage Matrix",
+        "AppProject Allow-list Rationale Matrix",
+        "Workload Image and Kind Policy Matrix",
+        "Namespace Ownership Matrix",
+        "Infrastructure Coverage Matrix",
+        "WSL2 Runtime Prerequisite Matrix",
+        "Bootstrap Boundary Matrix",
+        "Infrastructure Test Inventory",
+        "Traefik Route Inventory",
+    )
+    candidates = profiled_readme_table_headings("Probe Index")
     documents = {
         "visible legacy H2": """# Probe
 
@@ -465,6 +488,80 @@ def assert_profiled_readme_table_heading_probe() -> None:
             "profiled README table heading duplicate probe failed: "
             f"rows={duplicate_rows!r} diagnostic={duplicate_diagnostic!r}"
         )
+
+    for title in consumer_titles:
+        for level in ("##", "###"):
+            document = f"""# Probe
+
+{level} {title}
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+"""
+            actual, diagnostic = parse_markdown_table_after_heading(
+                document,
+                profiled_readme_table_headings(title),
+            )
+            if diagnostic or actual != expected:
+                fail(
+                    f"profiled README consumer probe failed for {level} {title}: "
+                    f"rows={actual!r} diagnostic={diagnostic!r}"
+                )
+
+        hidden = f"""# Probe
+
+```markdown
+## {title}
+| Name | Value |
+| hidden-fence | ignored |
+```
+
+<!--
+### {title}
+| Name | Value |
+| hidden-comment | ignored |
+-->
+
+### {title}
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+"""
+        hidden_rows, hidden_diagnostic = parse_markdown_table_after_heading(
+            hidden,
+            profiled_readme_table_headings(title),
+        )
+        if hidden_diagnostic or hidden_rows != expected:
+            fail(
+                f"profiled README hidden consumer probe failed for {title}: "
+                f"rows={hidden_rows!r} diagnostic={hidden_diagnostic!r}"
+            )
+
+        duplicate = f"""# Probe
+
+## {title}
+
+### {title}
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+"""
+        duplicate_rows, duplicate_diagnostic = parse_markdown_table_after_heading(
+            duplicate,
+            profiled_readme_table_headings(title),
+        )
+        expected_duplicate = (
+            "ambiguous visible markdown table headings: "
+            f"['## {title}', '### {title}']"
+        )
+        if duplicate_rows or duplicate_diagnostic != expected_duplicate:
+            fail(
+                f"profiled README duplicate consumer probe failed for {title}: "
+                f"rows={duplicate_rows!r} diagnostic={duplicate_diagnostic!r}"
+            )
 
 
 assert_profiled_readme_table_heading_probe()
@@ -764,7 +861,10 @@ for provider in ["aws", "azure"]:
 
 examples_readme_path = root / "examples/README.md"
 examples_readme_text = read_text(examples_readme_path)
-example_role_rows = markdown_table_after_heading(examples_readme_text, "## Example Role Matrix")
+example_role_rows = markdown_table_after_heading(
+    examples_readme_text,
+    profiled_readme_table_headings("Example Role Matrix"),
+)
 expected_example_role_header = [
     "Example path",
     "Role",
@@ -4458,7 +4558,10 @@ for script in script_paths:
         if pattern.search(script_text):
             fail(f"{rel(script)} contains a hardcoded absolute machine path")
 
-script_inventory_rows = markdown_table_after_heading(scripts_readme, "## Script Inventory")
+script_inventory_rows = markdown_table_after_heading(
+    scripts_readme,
+    profiled_readme_table_headings("Script Inventory"),
+)
 expected_script_inventory_header = ["스크립트", "결정", "보존 근거", "명령·문서 표면", "목적"]
 allowed_script_decisions = {"Keep", "Delete candidate", "Consolidation candidate", "Deferred"}
 if len(script_inventory_rows) < 2:
@@ -4504,7 +4607,10 @@ else:
     for script_name in sorted(set(indexed_scripts) - script_names):
         fail(f"scripts/README.md Script Inventory references missing script: {script_name}")
 
-script_classification_rows = markdown_table_after_heading(scripts_readme, "## Script Classification Matrix")
+script_classification_rows = markdown_table_after_heading(
+    scripts_readme,
+    profiled_readme_table_headings("Script Classification Matrix"),
+)
 expected_script_classification_header = ["스크립트", "분류", "삭제 후보", "통합 후보", "근거"]
 expected_script_classifications = {
     "validate-repo-quality-gates.sh": "operations-critical/reusable",
@@ -4614,7 +4720,10 @@ for exclusion in expected_kube_linter_exclusions:
     if len(rationale) < 12 or "TODO" in rationale or "TBD" in rationale:
         fail(f".kube-linter.yaml exclusion rationale is too weak: {exclusion}")
 
-kube_linter_rows = markdown_table_after_heading(scripts_readme, "## Kube-linter Exclusion Matrix")
+kube_linter_rows = markdown_table_after_heading(
+    scripts_readme,
+    profiled_readme_table_headings("Kube-linter Exclusion Matrix"),
+)
 expected_kube_linter_header = ["Excluded check", "Current rationale", "Boundary", "Follow-up"]
 if len(kube_linter_rows) < 2:
     fail("scripts/README.md Kube-linter Exclusion Matrix must contain a header and exclusion rows")
@@ -4689,7 +4798,10 @@ expected_gitops_service_areas = (
     + [f"platform/{path.name}" for path in sorted((gitops_dir / "platform").iterdir()) if path.is_dir()]
     + [f"workloads/{path.name}" for path in sorted((gitops_dir / "workloads").iterdir()) if path.is_dir()]
 )
-gitops_service_rows = markdown_table_after_heading(gitops_readme, "## Service Coverage Matrix")
+gitops_service_rows = markdown_table_after_heading(
+    gitops_readme,
+    profiled_readme_table_headings("Service Coverage Matrix"),
+)
 if len(gitops_service_rows) < 2:
     fail("gitops/README.md Service Coverage Matrix must contain a header and service rows")
 elif gitops_service_rows[0] != expected_gitops_service_header:
@@ -4760,7 +4872,7 @@ expected_external_contracts = [
 ]
 external_contract_rows = markdown_table_after_heading(
     gitops_readme,
-    "## External Service Contract Matrix",
+    profiled_readme_table_headings("External Service Contract Matrix"),
 )
 if len(external_contract_rows) < 2:
     fail("gitops/README.md External Service Contract Matrix must contain a header and contract rows")
@@ -4899,7 +5011,7 @@ expected_secret_responsibilities = [
 ]
 secret_responsibility_rows = markdown_table_after_heading(
     gitops_readme,
-    "## Secret Management Responsibility Matrix",
+    profiled_readme_table_headings("Secret Management Responsibility Matrix"),
 )
 if len(secret_responsibility_rows) < 2:
     fail("gitops/README.md Secret Management Responsibility Matrix must contain a header and responsibility rows")
@@ -5061,7 +5173,10 @@ expected_workload_header = [
 expected_workloads = [
     path.name for path in sorted((gitops_dir / "workloads").iterdir()) if path.is_dir()
 ]
-workload_rows = markdown_table_after_heading(workloads_readme, "## Workload Coverage Matrix")
+workload_rows = markdown_table_after_heading(
+    workloads_readme,
+    profiled_readme_table_headings("Workload Coverage Matrix"),
+)
 if len(workload_rows) < 2:
     fail("gitops/workloads/README.md Workload Coverage Matrix must contain a header and workload rows")
 elif workload_rows[0] != expected_workload_header:
@@ -5234,7 +5349,10 @@ expected_allowlist_surfaces = [
     "apps|policy namespaceResourceWhitelist",
     "platform|platform AppProject allow-lists",
 ]
-allowlist_rows = markdown_table_after_heading(gitops_readme, "## AppProject Allow-list Rationale Matrix")
+allowlist_rows = markdown_table_after_heading(
+    gitops_readme,
+    profiled_readme_table_headings("AppProject Allow-list Rationale Matrix"),
+)
 if len(allowlist_rows) < 2:
     fail("gitops/README.md AppProject Allow-list Rationale Matrix must contain a header and allow-list rows")
 elif allowlist_rows[0] != expected_allowlist_header:
@@ -5329,7 +5447,10 @@ expected_workload_policy_surfaces = [
     "gitops/platform/*",
     "examples/sample-app/*",
 ]
-workload_policy_rows = markdown_table_after_heading(gitops_readme, "## Workload Image and Kind Policy Matrix")
+workload_policy_rows = markdown_table_after_heading(
+    gitops_readme,
+    profiled_readme_table_headings("Workload Image and Kind Policy Matrix"),
+)
 if len(workload_policy_rows) < 2:
     fail("gitops/README.md Workload Image and Kind Policy Matrix must contain a header and policy rows")
 elif workload_policy_rows[0] != expected_workload_policy_header:
@@ -5504,7 +5625,10 @@ expected_namespace_ownership_surfaces = [
     "apps ApplicationSet",
     "platform root Applications",
 ]
-namespace_ownership_rows = markdown_table_after_heading(gitops_readme, "## Namespace Ownership Matrix")
+namespace_ownership_rows = markdown_table_after_heading(
+    gitops_readme,
+    profiled_readme_table_headings("Namespace Ownership Matrix"),
+)
 if len(namespace_ownership_rows) < 2:
     fail("gitops/README.md Namespace Ownership Matrix must contain a header and ownership rows")
 elif namespace_ownership_rows[0] != expected_namespace_ownership_header:
@@ -5615,7 +5739,7 @@ expected_infrastructure_coverage_areas = [
 ]
 infrastructure_coverage_rows = markdown_table_after_heading(
     infrastructure_readme,
-    "## Infrastructure Coverage Matrix",
+    profiled_readme_table_headings("Infrastructure Coverage Matrix"),
 )
 if len(infrastructure_coverage_rows) < 2:
     fail("infrastructure/README.md Infrastructure Coverage Matrix must contain a header and coverage rows")
@@ -5679,7 +5803,7 @@ else:
 
 wsl2_prerequisite_rows = markdown_table_after_heading(
     infrastructure_readme,
-    "## WSL2 Runtime Prerequisite Matrix",
+    profiled_readme_table_headings("WSL2 Runtime Prerequisite Matrix"),
 )
 expected_wsl2_prerequisite_header = [
     "Prerequisite",
@@ -5768,7 +5892,7 @@ else:
 
 bootstrap_boundary_rows = markdown_table_after_heading(
     infrastructure_readme,
-    "## Bootstrap Boundary Matrix",
+    profiled_readme_table_headings("Bootstrap Boundary Matrix"),
 )
 expected_bootstrap_boundary_header = [
     "Boundary",
@@ -5916,7 +6040,7 @@ for script in infrastructure_shell_paths:
 
 infrastructure_test_rows = markdown_table_after_heading(
     infrastructure_readme,
-    "## Infrastructure Test Inventory",
+    profiled_readme_table_headings("Infrastructure Test Inventory"),
 )
 expected_infra_test_header = [
     "Test script",
@@ -6022,7 +6146,10 @@ for phrase in [
 ]:
     if phrase not in normalized_traefik_readme:
         fail(f"traefik/README.md missing external gateway/serverlb boundary phrase: {phrase}")
-traefik_rows = markdown_table_after_heading(traefik_readme, "## Traefik Route Inventory")
+traefik_rows = markdown_table_after_heading(
+    traefik_readme,
+    profiled_readme_table_headings("Traefik Route Inventory"),
+)
 expected_traefik_header = ["Config", "Router host", "Backend URL", "Boundary", "Validation"]
 traefik_configs = sorted(traefik_dir.glob("*.yaml"))
 traefik_config_names = {path.name for path in traefik_configs}
