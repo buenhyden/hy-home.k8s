@@ -1409,8 +1409,9 @@ for tracked_path in sorted(tracked):
 
 for profile_id, row in compatibility_by_profile.items():
     actual = compatibility_actual[profile_id]
+    # pathCount is observed canonical population, not compatibility debt. New
+    # canonical documents may increase it; only the debt counters are no-growth.
     limits = {
-        "pathCount": row["baselinePathCount"],
         "missingCanonicalPathCount": row["baselineDebtPathCount"],
         "forbiddenResiduePathCount": row["baselineForbiddenResiduePathCount"],
         "forbiddenResidueOccurrences": row["baselineForbiddenResidueOccurrences"],

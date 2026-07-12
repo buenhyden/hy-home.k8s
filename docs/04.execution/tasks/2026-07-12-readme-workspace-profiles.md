@@ -76,14 +76,20 @@ corpus migration and cloud-document handoff consolidation.
 - Before editing, the six-link assertion failed with exit 1 and
   `AssertionError` because this Task did not exist, preserving the required RED
   lineage evidence.
+- Post-commit validation preserved the compatibility RED:
+  `ERR sdlc/task compatibility debt grew for pathCount: baseline=51 actual=52`.
+  The correction classifies total path inventory as observational while keeping
+  missing-canonical and forbidden-residue debt under strict no-growth limits.
 - RWP-001 changes only the six allowed files and establishes reciprocal
   Spec/Plan/Task links plus one dated Active row in each Stage 03/04 index.
-- Registry compatibility passes with `455 paths`, `baseline=433`, `new=23`,
+- Registry compatibility passes with `456 paths`, `baseline=433`, `new=24`,
   `uncovered=0`, and `ambiguous=0`. The future-state `--profile readme` filter
   is deferred to RWP-002 because that row creates the README profiles.
-- The repository quality gate, `git diff --check`, and every applicable
-  pre-commit hook for the six-file scope pass. Dockerfile lint and other
-  non-selected-file hooks are non-applicable SKIPs, not passes.
+- After the correction, no compatibility debt counter grows and the repository
+  quality gate, its hook simulations, `git diff --check`, and every applicable
+  all-files pre-commit hook pass. The fixture, semantic digest, owner, growth
+  policy, and every baseline value remain unchanged. Dockerfile lint is a
+  non-applicable SKIP because no Dockerfile was selected, not a pass.
 - The implementation evidence is repository-static only. It makes no live,
   secret-value, credential, remote CI, publication, push, merge, or deployment
   readiness claim.

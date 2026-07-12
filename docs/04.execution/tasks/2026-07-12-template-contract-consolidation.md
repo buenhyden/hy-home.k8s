@@ -89,9 +89,12 @@ preserves reciprocal Spec, Plan, Task, and index lineage throughout the Spec
   canonical-form rows and `22` template-mode rows.
 - **Finite Authored Compatibility Baseline**: Fresh row aggregation matched the
   fixture exactly: `20` profile rows, `25` legacy alias definitions, `26`
-  forbidden-residue definitions, `314` baseline paths, `89`
+  forbidden-residue definitions, `314` baseline paths as an inventory snapshot,
+  not a cap, `89`
   missing-canonical paths, `188` forbidden-residue paths, and `410`
-  forbidden-residue occurrences. Owner is Spec 030 and growth is forbidden.
+  forbidden-residue occurrences. Owner is Spec 030; missing-canonical and
+  forbidden-residue debt growth remains forbidden, while total canonical path
+  inventory may grow.
 - **Legacy Inventory**: The retired `task-legacy-harness` marker has zero
   matches. The remaining seven `Suggested Types`/`Working Rules` occurrences
   are six finite Spec 030 fixture/gate references and one completed historical

@@ -611,8 +611,10 @@ Task source/template profiles unchanged.
 Modify the embedded structural template check to read
 `template-compatibility.json`: canonical forms are checked against registry
 headings; current authored files may satisfy only the declared legacy aliases;
-unknown aliases and counts above `baselinePathCount` fail. Do not remove the
-existing quality gate before Spec 029 is production-ready.
+unknown aliases and growth above the missing-canonical or forbidden-residue
+debt baselines fail. Total path inventory is observational and may grow when
+new documents satisfy canonical headings. Do not remove the existing quality
+gate before Spec 029 is production-ready.
 
 - [x] **Step 4: Prove Stage 99 README scope is inventory-only**
 
