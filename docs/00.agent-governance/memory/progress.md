@@ -8,6 +8,52 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - Semantic debt lifecycle Plan correction
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, planning, qa
+- **Status**: complete
+- **Tags**: #semantic-validation #migration #compatibility-debt #review
+
+#### Progress
+
+- Reconciled the Spec 029 and Spec 030 execution Plans so semantic debt is
+  removed by ADM-002/007, template-shape debt by ADM-003 through ADM-007, and
+  no migration debt is assigned to the document-profile registry.
+- Bound ADM-003 through ADM-006 to independently reviewed pre-edit path/debt
+  manifests with immutable counts and SHA-256 values, exact exclusions, exact
+  staged-set proofs, and atomic fixture/digest rollback.
+- Defined ADM-007 as the atomic strict cutover for both production semantic
+  validators, their retired debt sources, self-tests, and the quality wrapper.
+
+#### Memory
+
+- A migration allow-list cannot be derived from its own post-edit diff. Freeze
+  eligible paths and debt tuples before mutation, review their count and
+  digest, then prove the cached set against that immutable input.
+- Retiring a compatibility source changes a producer contract: update both
+  validators and the wrapper together, and specify strict and compatibility
+  behavior for the absent source explicitly.
+
+#### Evidence
+
+- Embedded Python/Bash blocks, three-file diff checks, registry self-test and
+  compatibility validation, and focused pre-commit are the Plan-correction
+  evidence bundle for logical commit `fix(plans): align semantic debt removal
+  lifecycle`.
+- The repository quality gate passed from a clean `HEAD` clone under `/tmp`,
+  isolating the unrelated in-progress SMDV-002 fixture in the implementation
+  worktree.
+- No validator implementation, fixture, secret, live runtime, remote, push,
+  merge, deployment, or third-party state was changed by this correction.
+
+#### Handoff
+
+- Independently review the exact three-file correction, then resume SMDV-002
+  without staging or rewriting its preserved in-progress implementation files.
+
 ### 2026-07-12 - Semantic document validation execution lineage
 
 #### Metadata

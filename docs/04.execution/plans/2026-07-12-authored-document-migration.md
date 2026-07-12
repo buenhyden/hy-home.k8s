@@ -36,7 +36,9 @@ official primary-source research, `rg`, pre-commit, and repository quality gates
 - Repository-only decisions record `external-topic: not applicable` with a concrete reviewed reason.
 - Do not read, enumerate, move, or delete ignored `.env`, token, key, certificate, kubeconfig, shell-history, local-setting, or diagnostic content.
 - README redesign belongs to Spec 028; this Plan may make relocation-driven index/link updates only.
-- Validators belong to Spec 029; this Plan consumes their public interfaces and changes only named migration-debt records at strict cutover.
+- Validators belong to Spec 029; this Plan consumes their public interfaces and
+  changes only the two finite Spec-030-owned debt fixtures at the transitions
+  named below. The profile registry never contains migration debt.
 - Protected machine surfaces and behavior belong to Spec 032; this Plan changes only their authored documentation and links.
 - Use `apply_patch` for edits, `git mv` for one-to-one relocations, and a separate logical commit for every migration wave.
 
@@ -84,13 +86,60 @@ Compatibility mode must stay available until these families are reconciled.
 | Governance and references | non-README `docs/00.agent-governance/**`, Current Stage 90, `docs/98.archive/**` | Canonical governance, current research, and historical/current authority boundaries. |
 | Cloud snapshots | `docs/90.references/cloud-examples/{aws,azure}/2026-07-12-*-example-snapshot.md` | Dated official-source comparison and retained unique cloud-example knowledge. |
 | Executable examples | `examples/{aws,azure}/**` excluding deleted `docs/**` | Executable Terraform/Bicep/Kubernetes/GitOps assets and entrypoint links. |
-| Strict cutover | document profile registry debt records and `scripts/validate-repo-quality-gates.sh` | Remove compatibility debt and enforce strict repository validation. |
+| Finite shape debt | `tests/fixtures/document-contracts/template-compatibility.json`, `scripts/validate-repo-quality-gates.sh` | ADM-003 through ADM-006 remove exact canonicalized path records and refresh the complete-fixture digest/mutation proof in the same commit. |
+| Finite semantic debt | `tests/fixtures/document-contracts/semantic-compatibility-debt.json` | ADM-002 removes the sole ledger-missing item in the commit that creates the complete ledger; ADM-007 removes the empty compatibility container. |
+| Strict cutover | the two finite debt fixtures and `scripts/validate-repo-quality-gates.sh` | Remove empty compatibility containers and enforce strict repository validation; never add, remove, or describe registry debt. |
 
 ### Durable Ledger Interface
 
 ```text
 path | title | profile | owner-key | disposition | destination | local-evidence | official-sources | observed-version | applicability | content-decision | refresh-trigger | reviewer | result
 ```
+
+### Pre-ADM Hard Dependency
+
+No ADM Task may start until the logical commit
+`fix(plans): align semantic debt removal lifecycle` contains this Plan and the
+Spec 029 Plan together with one canonical append-only entry in
+`docs/00.agent-governance/memory/progress.md`, and proves their handoff is
+identical: the sole semantic item is removed by ADM-002; exact template-shape
+path records are removed by ADM-003 through ADM-006; ADM-007 cleans only empty
+debt containers and switches the wrapper to strict; the profile registry is
+never a debt owner. This Plan correction satisfies the planning dependency
+when that exact three-file commit passes focused QA. It does not authorize
+migration implementation by itself.
+
+For ADM-003 through ADM-006, each Task first exports its exact matched debt
+records to an ignored `_workspace/adm-NNN-debt-removals.json` manifest. The
+manifest records sorted path/rule/token tuples and exact before/removed/after
+path, obligation, occurrence, and union counts. Independent review approves
+that finite manifest before edits. In the same wave commit, every path in it is
+canonicalized, its exact records are removed from
+`template-compatibility.json`, all aggregate caps are recomputed downward, and
+the complete semantic fixture digest plus every existing and affected-path /
+rule-cap / union-count mutation proof is refreshed in
+`scripts/validate-repo-quality-gates.sh`. Set equality is mandatory: no
+canonicalized debt path may remain, and no record for an untouched path may be
+removed.
+
+Before any content mutation, the same Task must freeze
+`_workspace/adm-NNN-allowed-document-paths.nul`. Its sorted `documentPaths`
+come from the reviewed migration/debt manifest, are a subset of the Task's
+tracked eligible paths from `git ls-files`, include every path named by a debt
+tuple, and may add only the Task's exact declared new destinations or
+relocation-only README paths. README paths and the Task's explicit exclusions
+are absent unless that Task's Files list names the exact README path. Record the
+manifest path count and SHA-256 in the Task evidence and obtain independent
+approval before the first edit. The count/SHA are immutable for the wave.
+
+After edits, define `fixed` as the exact ledger, Task, progress, compatibility
+fixture, quality-gate consumer, and other non-document evidence files listed by
+that ADM Task. The staged document set must equal the paths from the frozen
+allowed manifest that actually differ from `HEAD`; it must be a subset of the
+frozen manifest, contain no excluded path, and include every path whose debt
+record was removed. The complete cached set must equal that changed-document
+set union `fixed`. Deriving an allowed or expected set from a post-edit broad
+directory diff is prohibited.
 
 ## Work Breakdown
 
@@ -144,6 +193,7 @@ path | title | profile | owner-key | disposition | destination | local-evidence 
 - Modify: `docs/04.execution/plans/README.md`
 - Create: `docs/04.execution/tasks/2026-07-12-authored-document-migration.md`
 - Modify: `docs/04.execution/tasks/README.md`
+- Modify: `docs/00.agent-governance/memory/progress.md`
 
 **Interfaces:**
 
@@ -208,9 +258,28 @@ Expected: assertion and applicable hooks PASS.
 ```bash
 git add docs/03.specs/030-authored-document-migration/spec.md docs/03.specs/README.md \
   docs/04.execution/plans/2026-07-12-authored-document-migration.md docs/04.execution/plans/README.md \
-  docs/04.execution/tasks/2026-07-12-authored-document-migration.md docs/04.execution/tasks/README.md
+  docs/04.execution/tasks/2026-07-12-authored-document-migration.md docs/04.execution/tasks/README.md \
+  docs/00.agent-governance/memory/progress.md
+python3 - <<'PY'
+import subprocess
+expected = {
+    'docs/00.agent-governance/memory/progress.md',
+    'docs/03.specs/030-authored-document-migration/spec.md',
+    'docs/03.specs/README.md',
+    'docs/04.execution/plans/2026-07-12-authored-document-migration.md',
+    'docs/04.execution/plans/README.md',
+    'docs/04.execution/tasks/2026-07-12-authored-document-migration.md',
+    'docs/04.execution/tasks/README.md',
+}
+actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
+assert actual == expected and len(actual) == 7, (sorted(actual), sorted(expected))
+PY
 git commit -m "docs(execution): start authored document migration"
 ```
+
+Expected: exactly seven staged paths. A fresh reviewer verifies reciprocal
+lineage, the seven Task rows, lifecycle/index state, progress evidence, and
+the exact staged set. Roll back with `git revert <ADM-001-commit>`.
 
 ---
 
@@ -220,12 +289,15 @@ git commit -m "docs(execution): start authored document migration"
 
 - Create: `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`
 - Modify: `docs/90.references/research/2026-07-07-wer/README.md`
+- Modify: `tests/fixtures/document-contracts/semantic-compatibility-debt.json`
 - Modify: `docs/04.execution/tasks/2026-07-12-authored-document-migration.md`
+- Modify: `docs/00.agent-governance/memory/progress.md`
 
 **Interfaces:**
 
 - Consumes: Spec 029 `--inventory --format json` output and Spec 027 type-to-source matrix.
-- Produces: exact fourteen-column durable ledger consumed by strict cross-document validation.
+- Produces: exact fourteen-column durable ledger consumed by strict
+  cross-document validation and an empty semantic-debt item set.
 
 - [ ] **Step 1: Generate ignored scratch inventory**
 
@@ -254,21 +326,49 @@ trigger, reviewer, and initial `inventory-reviewed` result.
 
 - [ ] **Step 4: Verify completeness and tracked boundary**
 
+In the same edit that makes the durable ledger complete, remove the one exact
+`LEDGER-MISSING` / `ADM-002` item from
+`semantic-compatibility-debt.json`. Keep its schema, owner, and
+`growthAllowed: false` container until ADM-007. Before staging, prove strict
+mode sees no ledger violation and compatibility has no `DEFER` or
+`DEBT-UNUSED` semantic item.
+
 ```bash
 python3 scripts/validate-links-and-owners.py --root . --mode compatibility
+python3 scripts/validate-links-and-owners.py --root . --mode strict
 git ls-files _workspace
 ```
 
-Expected: compatibility exit 0; tracked output is exactly `_workspace/README.md`.
+Expected: both modes exit 0; tracked output is exactly `_workspace/README.md`.
 
 - [ ] **Step 5: Commit**
 
 ```bash
 git add docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
   docs/90.references/research/2026-07-07-wer/README.md \
-  docs/04.execution/tasks/2026-07-12-authored-document-migration.md
+  tests/fixtures/document-contracts/semantic-compatibility-debt.json \
+  docs/04.execution/tasks/2026-07-12-authored-document-migration.md \
+  docs/00.agent-governance/memory/progress.md
+python3 - <<'PY'
+import subprocess
+expected = {
+    'docs/00.agent-governance/memory/progress.md',
+    'docs/04.execution/tasks/2026-07-12-authored-document-migration.md',
+    'docs/90.references/research/2026-07-07-wer/README.md',
+    'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
+    'tests/fixtures/document-contracts/semantic-compatibility-debt.json',
+}
+actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
+assert actual == expected and len(actual) == 5, (sorted(actual), sorted(expected))
+PY
 git commit -m "docs(migration): inventory authored document dispositions"
 ```
+
+Expected: exactly five staged paths. A fresh reviewer verifies inventory/ledger
+set equality, the exact fourteen columns, semantic debt `items: []`, strict and
+compatibility results, and the ignored boundary. Roll back only with
+`git revert <ADM-002-commit>` so the ledger and its one represented missing-ledger
+item return atomically.
 
 ---
 
@@ -281,11 +381,16 @@ git commit -m "docs(migration): inventory authored document dispositions"
 - Modify: non-README Markdown under `docs/02.architecture/decisions/`
 - Modify: `spec.md`, `agent-design.md`, `api-spec.md`, `data-model.md`, and `tests.md` under `docs/03.specs/`
 - Modify: durable migration ledger
+- Modify: `tests/fixtures/document-contracts/template-compatibility.json`
+- Modify: `scripts/validate-repo-quality-gates.sh`
+- Modify: `docs/04.execution/tasks/2026-07-12-authored-document-migration.md`
+- Modify: `docs/00.agent-governance/memory/progress.md`
 
 **Interfaces:**
 
 - Consumes: final registry, templates, compatibility diagnostics, and ledger rows.
-- Produces: debt-free current design documents without altering accepted-decision history.
+- Produces: debt-free current design documents without altering accepted-decision
+  history, with the exact Stage 01–03 debt records and aggregate caps removed.
 
 - [ ] **Step 1: Capture RED diagnostics for the three path prefixes**
 
@@ -295,7 +400,18 @@ python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --pa
 python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/03.specs --format json > _workspace/stage03-debt.json
 ```
 
-Expected: valid JSON inventories; every reported item names an approved registry debt record.
+Expected: valid JSON inventories; every reported item names an exact record in
+the finite template compatibility fixture.
+
+Create `_workspace/adm-003-debt-removals.json` from the exact diagnostic tuples
+matched by `template-compatibility.json`. Freeze the exact before counts,
+removed counts, and arithmetic after counts for paths, per-rule obligations,
+occurrences, and union. Independent review must approve this manifest before
+Step 2. Its reviewed `documentPaths` must be tracked, non-README paths under
+the five exact Files families above and include every debt-tuple path. Freeze
+the sorted paths as `_workspace/adm-003-allowed-document-paths.nul`; record and
+independently approve its count and SHA-256 in Task evidence before any
+mutation. These are compatibility-fixture records, never registry records.
 
 - [ ] **Step 2: Build exact NUL-delimited family batches**
 
@@ -305,19 +421,39 @@ and is one 2–5 minute edit/validation checkpoint.
 
 ```bash
 mkdir -p _workspace/adm-003-batches
-git ls-files -z docs/01.requirements docs/02.architecture/requirements \
-  | python3 -c 'import pathlib,sys; p=[x for x in sys.stdin.buffer.read().split(b"\0") if x and not x.endswith(b"/README.md")]; d=pathlib.Path("_workspace/adm-003-batches"); [(d / f"prd-ard-{i // 5 + 1:02d}.nul").write_bytes(b"\0".join(p[i:i+5]) + b"\0") for i in range(0, len(p), 5)]'
-git ls-files -z docs/02.architecture/decisions docs/03.specs \
-  | python3 -c 'import pathlib,sys; p=[x for x in sys.stdin.buffer.read().split(b"\0") if x and not x.endswith(b"/README.md")]; d=pathlib.Path("_workspace/adm-003-batches"); [(d / f"adr-spec-{i // 5 + 1:02d}.nul").write_bytes(b"\0".join(p[i:i+5]) + b"\0") for i in range(0, len(p), 5)]'
+python3 - <<'PY'
+import hashlib, json, pathlib, subprocess
+debt = json.loads(pathlib.Path('_workspace/adm-003-debt-removals.json').read_text())
+selected = set(debt['documentPaths'])
+eligible = set(subprocess.check_output([
+    'git', 'ls-files', 'docs/01.requirements',
+    'docs/02.architecture/requirements', 'docs/02.architecture/decisions',
+    'docs/03.specs',
+], text=True).splitlines())
+excluded = {p for p in eligible if pathlib.PurePosixPath(p).name == 'README.md'}
+assert selected and selected <= eligible and not selected & excluded
+assert {item['path'] for item in debt['debtTuples']} <= selected
+payload = b''.join(p.encode() + b'\0' for p in sorted(selected))
+pathlib.Path('_workspace/adm-003-allowed-document-paths.nul').write_bytes(payload)
+print(len(selected), hashlib.sha256(payload).hexdigest())
+d = pathlib.Path('_workspace/adm-003-batches')
+paths = sorted(selected)
+for i in range(0, len(paths), 5):
+    (d / f'documents-{i // 5 + 1:02d}.nul').write_bytes(
+        b''.join(p.encode() + b'\0' for p in paths[i:i + 5]))
+PY
 ```
 
-Expected: every owned non-README path occurs in exactly one NUL manifest.
+Expected: the independently recorded count/SHA matches; every frozen allowed
+path occurs in exactly one NUL batch, no README is present, and no unreviewed
+eligible path is self-authorized.
 
 - [ ] **Step 3: Transform PRD and ARD batches**
 
 Apply exact key order and family state domain, retain topic-specific requirements,
 merge duplicate opening intent, and move all upstream/downstream relationships
-to the profile-owned Traceability section. For each `prd-ard-*.nul` manifest,
+to the profile-owned Traceability section. For each `documents-*.nul` manifest
+containing PRD/ARD paths,
 edit only those at-most-five paths, update their ledger rows, run the
 compatibility validator on each exact path, and mark that 2–5 minute checkpoint
 complete before opening the next manifest.
@@ -327,16 +463,24 @@ complete before opening the next manifest.
 Preserve accepted ADR decisions and consequences. Remove copied form guidance,
 merge duplicate sections, correct contradictory current-owner links, and record
 every content choice and official source in the ledger. Repeat the same
-at-most-five-path checkpoint for each `adr-spec-*.nul` manifest; do not combine
+at-most-five-path checkpoint for each remaining `documents-*.nul` manifest; do not combine
 manifests in one edit/review checkpoint.
 
 - [ ] **Step 5: Run GREEN prefix validation**
+
+Remove exactly the manifest records from `template-compatibility.json` in the
+same edit checkpoint that canonicalizes their paths. Recompute every aggregate
+cap downward and refresh the complete fixture semantic digest and all mutation
+proofs in `scripts/validate-repo-quality-gates.sh`. Assert the post-fixture
+counts equal the manifest's exact arithmetic and that its removal tuple set is
+disjoint from remaining records.
 
 ```bash
 python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/01.requirements
 python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/02.architecture
 python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/03.specs
 python3 scripts/validate-links-and-owners.py --root . --mode compatibility
+bash scripts/validate-repo-quality-gates.sh .
 ```
 
 Expected: no debt for the three completed prefixes and no broken/duplicate owner findings.
@@ -348,13 +492,40 @@ git diff --check
 git ls-files -z docs/01.requirements docs/02.architecture docs/03.specs \
   docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
   | xargs -0 -r -n 5 pre-commit run --files
-git add docs/01.requirements docs/02.architecture docs/03.specs \
-  docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
-  docs/04.execution/tasks/2026-07-12-authored-document-migration.md
+git add docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
+  docs/04.execution/tasks/2026-07-12-authored-document-migration.md \
+  docs/00.agent-governance/memory/progress.md \
+  tests/fixtures/document-contracts/template-compatibility.json \
+  scripts/validate-repo-quality-gates.sh
+xargs -0 git add -- < _workspace/adm-003-allowed-document-paths.nul
+python3 - <<'PY'
+import hashlib, json, pathlib, subprocess
+manifest = pathlib.Path('_workspace/adm-003-allowed-document-paths.nul').read_bytes()
+allowed = {p.decode() for p in manifest.split(b'\0') if p}
+debt = json.loads(pathlib.Path('_workspace/adm-003-debt-removals.json').read_text())
+actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
+fixed = {'docs/04.execution/tasks/2026-07-12-authored-document-migration.md',
+         'docs/00.agent-governance/memory/progress.md',
+         'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
+         'scripts/validate-repo-quality-gates.sh',
+         'tests/fixtures/document-contracts/template-compatibility.json'}
+assert len(allowed) == debt['allowedDocumentPathCount']
+assert hashlib.sha256(manifest).hexdigest() == debt['allowedDocumentPathsSha256']
+changed = {p for p in allowed if subprocess.run(['git', 'diff', '--quiet', 'HEAD', '--', p]).returncode == 1}
+assert not {p for p in allowed if pathlib.PurePosixPath(p).name == 'README.md'}
+assert {item['path'] for item in debt['debtTuples']} <= changed
+assert actual == changed | fixed and fixed <= actual, (sorted(actual - (changed | fixed)), sorted((changed | fixed) - actual))
+print(f'ADM-003 exact staged count: {len(actual)}')
+PY
 git commit -m "docs(migration): normalize active sdlc design documents"
 ```
 
-Expected: focused hooks PASS and commit contains only this wave plus evidence.
+Expected: focused hooks PASS and commit contains only the reviewed exact wave,
+ledger/Task evidence, fixture, and digest consumer. A fresh reviewer compares
+the debt-removal manifest to document diffs, proves exact before - removed =
+after counts and complete digest/mutation refresh, and records the printed
+staged count. Roll back with `git revert <ADM-003-commit>` so documents, ledger,
+fixture records/caps, digest, and mutation proofs return atomically.
 
 ---
 
@@ -369,11 +540,16 @@ Expected: focused hooks PASS and commit contains only this wave plus evidence.
 - Modify: non-README Markdown under `docs/05.operations/runbooks/`
 - Modify: canonical real incident/postmortem documents if they exist
 - Modify: durable migration ledger
+- Modify: `tests/fixtures/document-contracts/template-compatibility.json`
+- Modify: `scripts/validate-repo-quality-gates.sh`
+- Modify: `docs/04.execution/tasks/2026-07-12-authored-document-migration.md`
+- Modify: `docs/00.agent-governance/memory/progress.md`
 
 **Interfaces:**
 
 - Consumes: Plan/Task/Guide/Policy/Runbook/Incident/Postmortem profiles.
-- Produces: preserved execution facts and role-separated operational documents.
+- Produces: preserved execution facts and role-separated operational documents,
+  with their exact shape-debt records and aggregate caps removed.
 
 - [ ] **Step 1: Capture RED prefix diagnostics**
 
@@ -384,50 +560,111 @@ python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --pa
 
 Expected: valid JSON with only named migration debt.
 
+Create and independently review
+`_workspace/adm-004-debt-removals.json` with the exact matched
+path/profile/rule/token tuples and exact before/removed/after path,
+obligation, occurrence, and union counts. No later step may remove a tuple not
+present in this frozen manifest. Its `documentPaths` must be a reviewed subset
+of tracked eligible non-README execution/operations paths, include every debt
+tuple path, and exclude the same-topic Task because that file is fixed evidence.
+Freeze `_workspace/adm-004-allowed-document-paths.nul`, record its count and
+SHA-256 in Task evidence, and obtain independent approval before any mutation.
+
 - [ ] **Step 2: Build exact NUL-delimited execution/operations batches**
 
 ```bash
 mkdir -p _workspace/adm-004-batches
-git ls-files -z docs/04.execution/plans docs/04.execution/tasks \
-  | python3 -c 'import pathlib,sys; p=[x for x in sys.stdin.buffer.read().split(b"\0") if x and not x.endswith(b"/README.md")]; d=pathlib.Path("_workspace/adm-004-batches"); [(d / f"execution-{i // 5 + 1:02d}.nul").write_bytes(b"\0".join(p[i:i+5]) + b"\0") for i in range(0, len(p), 5)]'
-git ls-files -z docs/05.operations \
-  | python3 -c 'import pathlib,sys; p=[x for x in sys.stdin.buffer.read().split(b"\0") if x and not x.endswith(b"/README.md")]; d=pathlib.Path("_workspace/adm-004-batches"); [(d / f"operations-{i // 5 + 1:02d}.nul").write_bytes(b"\0".join(p[i:i+5]) + b"\0") for i in range(0, len(p), 5)]'
+python3 - <<'PY'
+import hashlib, json, pathlib, subprocess
+debt = json.loads(pathlib.Path('_workspace/adm-004-debt-removals.json').read_text())
+selected = set(debt['documentPaths'])
+eligible = set(subprocess.check_output([
+    'git', 'ls-files', 'docs/04.execution/plans',
+    'docs/04.execution/tasks', 'docs/05.operations',
+], text=True).splitlines())
+fixed_task = 'docs/04.execution/tasks/2026-07-12-authored-document-migration.md'
+excluded = {p for p in eligible if pathlib.PurePosixPath(p).name == 'README.md'} | {fixed_task}
+assert selected and selected <= eligible and not selected & excluded
+assert {item['path'] for item in debt['debtTuples']} <= selected
+payload = b''.join(p.encode() + b'\0' for p in sorted(selected))
+pathlib.Path('_workspace/adm-004-allowed-document-paths.nul').write_bytes(payload)
+print(len(selected), hashlib.sha256(payload).hexdigest())
+d = pathlib.Path('_workspace/adm-004-batches')
+paths = sorted(selected)
+for i in range(0, len(paths), 5):
+    (d / f'documents-{i // 5 + 1:02d}.nul').write_bytes(
+        b''.join(p.encode() + b'\0' for p in paths[i:i + 5]))
+PY
 ```
 
-Expected: every owned non-README path occurs once; every manifest has no more
-than five paths and is handled as a separate 2–5 minute checkpoint.
+Expected: the independently recorded count/SHA matches; each frozen path occurs
+once, every batch has no more than five paths, and README/fixed evidence paths
+are absent.
 
 - [ ] **Step 3: Preserve completed execution evidence batch by batch**
 
 Keep historical commands, results, limitations, and unchecked historical
 instructions. Remove copied `Working Rules`, `Suggested Types`, target comments,
 and duplicate relationship sections; do not convert historical facts into
-current requirements. Complete and validate one `execution-*.nul` manifest at a
+current requirements. Complete and validate one `documents-*.nul` manifest at a
 time, updating the ledger before continuing.
 
 - [ ] **Step 4: Separate operational roles batch by batch**
 
 Keep Guides explanatory, Policies normative, Runbooks executable, Incidents
 factual, and Postmortems causal/learning-oriented. Move duplicate content to one
-owner and replace it with a relative link. Complete and validate one
-`operations-*.nul` manifest at a time, updating the ledger before continuing.
+owner and replace it with a relative link. Complete and validate the remaining
+`documents-*.nul` manifests one at a time, updating the ledger before continuing.
 
 - [ ] **Step 5: Run GREEN validation and commit**
+
+Remove every and only manifest tuple from
+`template-compatibility.json` in the same commit as its canonical document.
+Recompute all caps downward and refresh the quality gate's complete-fixture
+semantic digest and affected-path/rule-cap/union-count mutation proofs.
 
 ```bash
 python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/04.execution
 python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/05.operations
 python3 scripts/validate-links-and-owners.py --root . --mode compatibility
+bash scripts/validate-repo-quality-gates.sh .
 git diff --check
 git ls-files -z docs/04.execution docs/05.operations \
   docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
   | xargs -0 -r -n 5 pre-commit run --files
-git add docs/04.execution docs/05.operations \
-  docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md
+git add docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
+  docs/04.execution/tasks/2026-07-12-authored-document-migration.md \
+  docs/00.agent-governance/memory/progress.md \
+  tests/fixtures/document-contracts/template-compatibility.json \
+  scripts/validate-repo-quality-gates.sh
+xargs -0 git add -- < _workspace/adm-004-allowed-document-paths.nul
+python3 - <<'PY'
+import hashlib, json, pathlib, subprocess
+manifest = pathlib.Path('_workspace/adm-004-allowed-document-paths.nul').read_bytes()
+allowed = {p.decode() for p in manifest.split(b'\0') if p}
+debt = json.loads(pathlib.Path('_workspace/adm-004-debt-removals.json').read_text())
+actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
+fixed = {'docs/04.execution/tasks/2026-07-12-authored-document-migration.md',
+         'docs/00.agent-governance/memory/progress.md',
+         'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
+         'scripts/validate-repo-quality-gates.sh',
+         'tests/fixtures/document-contracts/template-compatibility.json'}
+assert len(allowed) == debt['allowedDocumentPathCount']
+assert hashlib.sha256(manifest).hexdigest() == debt['allowedDocumentPathsSha256']
+changed = {p for p in allowed if subprocess.run(['git', 'diff', '--quiet', 'HEAD', '--', p]).returncode == 1}
+excluded = {p for p in allowed if pathlib.PurePosixPath(p).name == 'README.md'}
+assert not excluded and 'docs/04.execution/tasks/2026-07-12-authored-document-migration.md' not in allowed
+assert {item['path'] for item in debt['debtTuples']} <= changed
+assert actual == changed | fixed and fixed <= actual, (sorted(actual - (changed | fixed)), sorted((changed | fixed) - actual))
+print(f'ADM-004 exact staged count: {len(actual)}')
+PY
 git commit -m "docs(migration): normalize execution and operations documents"
 ```
 
-Expected: completed prefixes have no debt and commit succeeds.
+Expected: completed prefixes have no debt and commit succeeds. A fresh reviewer
+proves document/removal set equality, exact count arithmetic, complete digest
+and mutation refresh, and the printed staged count. Roll back with
+`git revert <ADM-004-commit>` to restore the whole wave atomically.
 
 ---
 
@@ -442,11 +679,16 @@ Expected: completed prefixes have no debt and commit succeeds.
 - Modify: `docs/90.references/learning/*.md`
 - Modify: `docs/98.archive/**/*.md` only where authority/index links are wrong
 - Modify: durable migration ledger
+- Modify: `tests/fixtures/document-contracts/template-compatibility.json`
+- Modify: `scripts/validate-repo-quality-gates.sh`
+- Modify: `docs/04.execution/tasks/2026-07-12-authored-document-migration.md`
+- Modify: `docs/00.agent-governance/memory/progress.md`
 
 **Interfaces:**
 
 - Consumes: governance/reference/archive profiles and historical-path exclusions.
-- Produces: one current authority per role while retaining dated and archive evidence.
+- Produces: one current authority per role while retaining dated and archive
+  evidence, with exactly the canonicalized shape-debt records removed.
 
 - [ ] **Step 1: Capture RED diagnostics for remaining owned prefixes**
 
@@ -458,6 +700,17 @@ python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --pa
 
 Expected: valid JSON and no unregistered debt.
 
+Create and independently review
+`_workspace/adm-005-debt-removals.json` from exact matched tuples in the finite
+template compatibility fixture. Freeze exact before/removed/after counts for
+paths, each rule, obligations, occurrences, and union. An unregistered
+diagnostic fails; it is never converted into a registry record or new debt.
+Its reviewed `documentPaths` must be a subset of the exact tracked Files
+families, include every debt-tuple path, and exclude README, the seven handoff
+paths, the progress ledger, and durable migration ledger. Freeze
+`_workspace/adm-005-allowed-document-paths.nul`; record and independently
+approve its count and SHA-256 before mutation.
+
 - [ ] **Step 2: Build exact NUL-delimited governance/reference batches**
 
 Generate ignored manifests of at most five tracked paths for the owned Stage 00,
@@ -467,12 +720,43 @@ one 2–5 minute edit, ledger, and compatibility-validation checkpoint.
 
 ```bash
 mkdir -p _workspace/adm-005-batches
-git ls-files -z docs/00.agent-governance docs/90.references docs/98.archive \
-  | python3 -c 'import pathlib,sys; excluded={b"docs/00.agent-governance/rules/documentation-protocol.md",b"docs/00.agent-governance/rules/document-stage-routing.md",b"docs/00.agent-governance/rules/stage-authoring-matrix.md",b"docs/00.agent-governance/providers/agents-md.md",b"docs/00.agent-governance/providers/claude.md",b"docs/00.agent-governance/providers/codex.md",b"docs/00.agent-governance/providers/gemini.md"}; p=[x for x in sys.stdin.buffer.read().split(b"\0") if x and not x.endswith(b"/README.md") and x not in excluded]; d=pathlib.Path("_workspace/adm-005-batches"); [(d / f"governance-reference-{i // 5 + 1:02d}.nul").write_bytes(b"\0".join(p[i:i+5]) + b"\0") for i in range(0, len(p), 5)]'
+python3 - <<'PY'
+import hashlib, json, pathlib, subprocess
+debt = json.loads(pathlib.Path('_workspace/adm-005-debt-removals.json').read_text())
+selected = set(debt['documentPaths'])
+eligible = set(subprocess.check_output([
+    'git', 'ls-files', 'docs/00.agent-governance',
+    'docs/90.references/audits/2026-07-11-weia',
+    'docs/90.references/research/2026-07-07-wer',
+    'docs/90.references/data', 'docs/90.references/learning', 'docs/98.archive',
+], text=True).splitlines())
+excluded = {
+    'docs/00.agent-governance/rules/documentation-protocol.md',
+    'docs/00.agent-governance/rules/document-stage-routing.md',
+    'docs/00.agent-governance/rules/stage-authoring-matrix.md',
+    'docs/00.agent-governance/providers/agents-md.md',
+    'docs/00.agent-governance/providers/claude.md',
+    'docs/00.agent-governance/providers/codex.md',
+    'docs/00.agent-governance/providers/gemini.md',
+    'docs/00.agent-governance/memory/progress.md',
+    'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
+} | {p for p in eligible if pathlib.PurePosixPath(p).name == 'README.md'}
+assert selected and selected <= eligible and not selected & excluded
+assert {item['path'] for item in debt['debtTuples']} <= selected
+payload = b''.join(p.encode() + b'\0' for p in sorted(selected))
+pathlib.Path('_workspace/adm-005-allowed-document-paths.nul').write_bytes(payload)
+print(len(selected), hashlib.sha256(payload).hexdigest())
+d = pathlib.Path('_workspace/adm-005-batches')
+paths = sorted(selected)
+for i in range(0, len(paths), 5):
+    (d / f'documents-{i // 5 + 1:02d}.nul').write_bytes(
+        b''.join(p.encode() + b'\0' for p in paths[i:i + 5]))
+PY
 ```
 
-Expected: the seven exact handoff-owned paths are absent; every remaining
-candidate occurs once in a manifest of no more than five paths.
+Expected: the recorded count/SHA matches; all README, fixed evidence, and seven
+handoff paths are absent; every frozen path occurs once in a batch of at most
+five paths.
 
 - [ ] **Step 3: Transform current governance and reference owners in batches**
 
@@ -488,18 +772,51 @@ archive index, and does not regain the retired body.
 
 - [ ] **Step 5: Run GREEN validation and commit**
 
+Remove exactly the frozen manifest tuples from
+`template-compatibility.json` as their paths become canonical, recompute every
+cap downward, and refresh the complete-fixture semantic digest and all mutation
+proofs in `scripts/validate-repo-quality-gates.sh` in this commit.
+
 ```bash
 python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/00.agent-governance
 python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/90.references
 python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/98.archive
 python3 scripts/validate-links-and-owners.py --root . --mode compatibility
+bash scripts/validate-repo-quality-gates.sh .
 git diff --check
-git add docs/00.agent-governance docs/90.references docs/98.archive \
-  docs/04.execution/tasks/2026-07-12-authored-document-migration.md
+git add docs/00.agent-governance/memory/progress.md \
+  docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
+  docs/04.execution/tasks/2026-07-12-authored-document-migration.md \
+  tests/fixtures/document-contracts/template-compatibility.json \
+  scripts/validate-repo-quality-gates.sh
+xargs -0 git add -- < _workspace/adm-005-allowed-document-paths.nul
+python3 - <<'PY'
+import hashlib, json, pathlib, subprocess
+manifest = pathlib.Path('_workspace/adm-005-allowed-document-paths.nul').read_bytes()
+allowed = {p.decode() for p in manifest.split(b'\0') if p}
+debt = json.loads(pathlib.Path('_workspace/adm-005-debt-removals.json').read_text())
+actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
+fixed = {'docs/04.execution/tasks/2026-07-12-authored-document-migration.md',
+         'docs/00.agent-governance/memory/progress.md',
+         'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
+         'scripts/validate-repo-quality-gates.sh',
+         'tests/fixtures/document-contracts/template-compatibility.json'}
+assert len(allowed) == debt['allowedDocumentPathCount']
+assert hashlib.sha256(manifest).hexdigest() == debt['allowedDocumentPathsSha256']
+changed = {p for p in allowed if subprocess.run(['git', 'diff', '--quiet', 'HEAD', '--', p]).returncode == 1}
+excluded = {p for p in allowed if pathlib.PurePosixPath(p).name == 'README.md'}
+assert not excluded and {item['path'] for item in debt['debtTuples']} <= changed
+assert actual == changed | fixed and fixed <= actual, (sorted(actual - (changed | fixed)), sorted((changed | fixed) - actual))
+print(f'ADM-005 exact staged count: {len(actual)}')
+PY
 git commit -m "docs(migration): normalize governance references and archive links"
 ```
 
-Expected: all owned prefixes pass and historical bodies remain preserved.
+Expected: all owned prefixes pass and historical bodies remain preserved. A
+fresh reviewer proves preserve-boundary compliance, document/removal set
+equality, exact count arithmetic, complete digest/mutation refresh, and the
+printed staged count. Roll back with `git revert <ADM-005-commit>` so content,
+ledger, debt fixture, and digest consumer return together.
 
 ---
 
@@ -518,22 +835,57 @@ Expected: all owned prefixes pass and historical bodies remain preserved.
 - Delete: `examples/aws/docs/**`
 - Delete: `examples/azure/docs/**`
 - Modify: durable migration ledger
+- Modify: `tests/fixtures/document-contracts/template-compatibility.json`
+- Modify: `scripts/validate-repo-quality-gates.sh`
+- Modify: `docs/04.execution/tasks/2026-07-12-authored-document-migration.md`
+- Modify: `docs/00.agent-governance/memory/progress.md`
 
 **Interfaces:**
 
 - Consumes: Spec 028 README forms and the exact fifty-nine-file cloud source set.
-- Produces: two dated provider snapshots, executable entrypoints, and zero example-local SDLC Markdown.
+- Produces: two dated provider snapshots, executable entrypoints, zero
+  example-local SDLC Markdown, and no compatibility records for removed or
+  canonicalized cloud documentation.
 
 - [ ] **Step 1: Record RED source count and inbound links**
 
 ```bash
 git ls-files -z examples/aws/docs examples/azure/docs > _workspace/cloud-doc-source-paths.nul
-python3 -c 'import pathlib; p=[x for x in pathlib.Path("_workspace/cloud-doc-source-paths.nul").read_bytes().split(b"\0") if x]; print(len(p)); raise SystemExit(0 if len(p) == 59 else 1)'
+python3 - <<'PY'
+import hashlib, pathlib
+source = pathlib.Path('_workspace/cloud-doc-source-paths.nul').read_bytes()
+paths = {p.decode() for p in source.split(b'\0') if p}
+assert len(paths) == 59
+exact_additions = {
+    'docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md',
+    'docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md',
+    'docs/90.references/cloud-examples/README.md',
+    'docs/90.references/cloud-examples/aws/README.md',
+    'docs/90.references/cloud-examples/azure/README.md',
+    'examples/README.md', 'examples/aws/README.md', 'examples/azure/README.md',
+}
+allowed = paths | exact_additions
+payload = b''.join(p.encode() + b'\0' for p in sorted(allowed))
+pathlib.Path('_workspace/adm-006-allowed-document-paths.nul').write_bytes(payload)
+print(len(paths), hashlib.sha256(source).hexdigest())
+print(len(allowed), hashlib.sha256(payload).hexdigest())
+PY
 rg -n 'examples/(aws|azure)/docs' README.md docs examples scripts tests > _workspace/cloud-doc-inbound-links.txt
 ```
 
 Expected: source count `59`; the NUL file is the deletion review source of truth,
 and the inbound-link file records every active relocation consumer.
+
+Also create and independently review
+`_workspace/adm-006-debt-removals.json` containing every exact finite-debt
+tuple whose path is in the 59-file source set or another cloud path made
+canonical by this wave. Record exact before/removed/after path, rule,
+obligation, occurrence, and union counts. The NUL source set, durable ledger,
+and debt-removal manifest must agree before deletion. Record and independently
+approve both frozen manifest counts and SHA-256 values in Task evidence before
+the first snapshot, README, or deletion mutation. The 59-path source manifest
+is the immutable deletion set; the allowed manifest is exactly those deletions
+plus the two snapshots and six explicitly named README paths.
 
 - [ ] **Step 2: Build provider snapshots before deletion**
 
@@ -557,17 +909,24 @@ source-of-truth, and related-document links required by relocation.
 - [ ] **Step 4: Delete the reviewed duplicate trees**
 
 ```bash
-git rm -r examples/aws/docs examples/azure/docs
+git rm --pathspec-from-file=_workspace/cloud-doc-source-paths.nul --pathspec-file-nul
 ```
 
-Expected: only the two documentation trees are staged for deletion; executable assets remain.
+Expected: the cached deletion set equals the reviewed 59-path manifest exactly;
+executable assets remain.
 
 - [ ] **Step 5: Run GREEN cloud assertions**
+
+Remove every and only tuple in the approved ADM-006 debt manifest from
+`template-compatibility.json`, recompute all aggregate caps downward, and
+refresh the quality gate's complete-fixture digest plus affected-path,
+rule-cap, and union-count mutation proofs in this same commit.
 
 ```bash
 test -z "$(git ls-files examples/aws/docs examples/azure/docs)"
 python3 scripts/validate-markdown-profiles.py --root . --mode compatibility
 python3 scripts/validate-links-and-owners.py --root . --mode compatibility
+bash scripts/validate-repo-quality-gates.sh .
 git diff --check
 ```
 
@@ -576,11 +935,44 @@ Expected: no tracked cloud-doc path, no broken links, and compatibility PASS.
 - [ ] **Step 6: Commit**
 
 ```bash
-git add docs/90.references/cloud-examples examples \
-  docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
-  docs/04.execution/tasks/2026-07-12-authored-document-migration.md
+git add docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
+  docs/04.execution/tasks/2026-07-12-authored-document-migration.md \
+  docs/00.agent-governance/memory/progress.md \
+  tests/fixtures/document-contracts/template-compatibility.json \
+  scripts/validate-repo-quality-gates.sh
+xargs -0 git add -A -- < _workspace/adm-006-allowed-document-paths.nul
+python3 - <<'PY'
+import hashlib, json, pathlib, subprocess
+manifest = pathlib.Path('_workspace/adm-006-allowed-document-paths.nul').read_bytes()
+allowed = {p.decode() for p in manifest.split(b'\0') if p}
+deletions_raw = pathlib.Path('_workspace/cloud-doc-source-paths.nul').read_bytes()
+deletions = {p.decode() for p in deletions_raw.split(b'\0') if p}
+debt = json.loads(pathlib.Path('_workspace/adm-006-debt-removals.json').read_text())
+actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
+fixed = {'docs/04.execution/tasks/2026-07-12-authored-document-migration.md',
+         'docs/00.agent-governance/memory/progress.md',
+         'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
+         'scripts/validate-repo-quality-gates.sh',
+         'tests/fixtures/document-contracts/template-compatibility.json'}
+assert len(deletions) == debt['deletionPathCount'] == 59 and deletions <= allowed
+assert len(allowed) == debt['allowedDocumentPathCount']
+assert hashlib.sha256(manifest).hexdigest() == debt['allowedDocumentPathsSha256']
+assert hashlib.sha256(deletions_raw).hexdigest() == debt['deletionPathsSha256']
+changed = {p for p in allowed if subprocess.run(['git', 'diff', '--quiet', 'HEAD', '--', p]).returncode == 1}
+assert changed == allowed and {item['path'] for item in debt['debtTuples']} <= changed
+assert actual == changed | fixed and fixed <= actual, (sorted(actual - (changed | fixed)), sorted((changed | fixed) - actual))
+print(f'ADM-006 exact staged count: {len(actual)}')
+PY
 git commit -m "docs(migration): consolidate cloud example documentation"
 ```
+
+Expected: the staged set is exactly the printed reviewed set, including all 59
+deletions, two snapshots, relocation-only README link rows, ledger/Task
+evidence, fixture, and digest consumer. A fresh reviewer proves 59-source
+coverage, unique-content preservation, tuple set equality, exact count
+arithmetic, and complete digest/mutation refresh. Roll back with
+`git revert <ADM-006-commit>` so deletions and every supporting record return
+atomically.
 
 ---
 
@@ -588,14 +980,17 @@ git commit -m "docs(migration): consolidate cloud example documentation"
 
 **Files:**
 
-- Modify: `docs/99.templates/support/document-profiles.json` only to remove completed Spec 030 debt records
+- Modify: `tests/fixtures/document-contracts/template-compatibility.json` to remove the final empty debt definitions and refresh its complete digest contract
+- Delete: `tests/fixtures/document-contracts/semantic-compatibility-debt.json` after proving `items` is empty
+- Modify: `scripts/validate-markdown-profiles.py`
+- Modify: `scripts/validate-links-and-owners.py`
 - Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify: durable migration ledger
 - Modify: Spec 030, this Plan, same-topic Task, their indexes, and `memory/progress.md`
 
 **Interfaces:**
 
-- Consumes: zero-debt migrated corpus and strict Spec 029 validators.
+- Consumes: zero-debt migrated corpus, two empty finite debt consumers, and strict Spec 029 validators.
 - Produces: strict repository quality gate and completed migration evidence.
 
 - [ ] **Step 1: Run RED strict bundle before debt removal**
@@ -606,20 +1001,47 @@ python3 scripts/validate-markdown-profiles.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --root . --mode strict
 ```
 
-Expected: any remaining failure identifies an exact path and rule; do not remove debt records until the underlying path passes.
+Expected: the corpus passes strict before cleanup, both debt consumers contain
+zero path/item records, and compatibility has no `DEFER` or `DEBT-UNUSED`.
+Any remaining failure identifies an exact path and rule; do not remove an
+underlying record before its owning ADM wave passes.
 
-- [ ] **Step 2: Remove only cleared migration-debt records and switch the wrapper to strict**
+- [ ] **Step 2: Remove empty debt containers and switch the wrapper to strict**
 
-Change the three document-validator invocations in
-`scripts/validate-repo-quality-gates.sh` from `compatibility` to `strict`.
-Do not alter profile routes or semantics in this Task.
+Remove the now-empty `compatibilityDebt`, rule-cap, and union-count debt
+definitions from `template-compatibility.json`, then recompute and pin its
+complete semantic digest and refresh the mutation proof for the resulting
+debt-free schema. Delete the empty
+`semantic-compatibility-debt.json`. Change the semantic validator invocations
+in `scripts/validate-repo-quality-gates.sh` from `compatibility` to `strict`.
+Update both production semantic validators and their self-tests atomically:
+strict mode treats the retired semantic debt file and absent template
+`compatibilityDebt` container as the canonical zero-debt state; it does not
+silently recreate either source. Compatibility mode after retirement fails
+closed as configuration exit 2 with stable `DEBT-SOURCE-MISSING`, so the
+quality wrapper must switch every production invocation to strict in this same
+commit. Self-tests prove both absent-source strict PASS and compatibility
+exit 2 for each validator.
+Do not alter profile routes, registry data, or registry semantics. In
+particular, `docs/99.templates/support/document-profiles.json` is neither a
+debt owner nor an ADM-007 file.
 
 - [ ] **Step 3: Run GREEN strict and residue checks**
 
 ```bash
+python3 scripts/validate-markdown-profiles.py --self-test
+python3 scripts/validate-links-and-owners.py --self-test
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
 python3 scripts/validate-markdown-profiles.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --root . --mode strict
+set +e
+python3 scripts/validate-markdown-profiles.py --root . --mode compatibility
+markdown_compat_rc=$?
+python3 scripts/validate-links-and-owners.py --root . --mode compatibility
+links_compat_rc=$?
+set -e
+test "$markdown_compat_rc" -eq 2
+test "$links_compat_rc" -eq 2
 rg -n 'harness-task-contract|SNIPPET LIBRARY|Suggested Types' docs examples .agents .claude .codex scripts
 bash scripts/validate-repo-quality-gates.sh .
 git diff --check
@@ -637,14 +1059,51 @@ and append the strict-cutover handoff to `memory/progress.md`.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add docs/99.templates/support/document-profiles.json scripts/validate-repo-quality-gates.sh \
+git add tests/fixtures/document-contracts/template-compatibility.json \
+  tests/fixtures/document-contracts/semantic-compatibility-debt.json \
+  scripts/validate-markdown-profiles.py \
+  scripts/validate-links-and-owners.py \
+  scripts/validate-repo-quality-gates.sh \
   docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
   docs/03.specs/030-authored-document-migration/spec.md docs/03.specs/README.md \
   docs/04.execution/plans/2026-07-12-authored-document-migration.md docs/04.execution/plans/README.md \
   docs/04.execution/tasks/2026-07-12-authored-document-migration.md docs/04.execution/tasks/README.md \
   docs/00.agent-governance/memory/progress.md
+python3 - <<'PY'
+import subprocess
+expected = {
+    'docs/00.agent-governance/memory/progress.md',
+    'docs/03.specs/030-authored-document-migration/spec.md',
+    'docs/03.specs/README.md',
+    'docs/04.execution/plans/2026-07-12-authored-document-migration.md',
+    'docs/04.execution/plans/README.md',
+    'docs/04.execution/tasks/2026-07-12-authored-document-migration.md',
+    'docs/04.execution/tasks/README.md',
+    'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
+    'scripts/validate-repo-quality-gates.sh',
+    'scripts/validate-markdown-profiles.py',
+    'scripts/validate-links-and-owners.py',
+    'tests/fixtures/document-contracts/semantic-compatibility-debt.json',
+    'tests/fixtures/document-contracts/template-compatibility.json',
+}
+actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
+assert actual == expected and len(actual) == 13, (sorted(actual), sorted(expected))
+assert 'docs/99.templates/support/document-profiles.json' not in actual
+PY
 git commit -m "chore(docs): cut over document profiles to strict validation"
 ```
+
+Expected: exactly thirteen staged paths, including both validator producers and
+the deleted empty semantic
+fixture, and no registry file. A fresh reviewer proves both fixtures were empty
+before cleanup, both self-tests prove retired-source behavior, strict results
+before and after are identical and clean, compatibility fails closed with exit
+2 only after retirement, the quality wrapper switches atomically, the
+complete template fixture digest/mutations are current, lifecycle evidence is
+closed, and the exact staged set holds. Roll back with
+`git revert <ADM-007-commit>` to restore compatibility mode and both empty debt
+containers together with both validator behaviors, without restoring any
+removed migration debt.
 
 ## Completion Criteria
 

@@ -101,9 +101,9 @@ and exit 0. In strict mode it emits `FAIL` and exit 1. A missing ledger after
 the item is removed is an ordinary `LEDGER-MISSING` violation and cannot defer.
 No other link, index, owner, ledger, frontmatter, or body rule is permitted in
 the semantic debt file without a separately approved Plan amendment.
-The Spec 030 Plan must consume these two files at ADM-002/ADM-007; its stale
-reference to registry debt does not authorize adding debt fields or records to
-`document-profiles.json`.
+The Spec 030 Plan consumes the semantic fixture at ADM-002 and ADM-007, and the
+template fixture at every ADM-003 through ADM-007 transition. No transition
+authorizes adding debt fields or records to `document-profiles.json`.
 
 ### Durable ledger columns
 
@@ -118,6 +118,7 @@ path | title | profile | owner-key | disposition | destination | local-evidence 
 
 ```python
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path, PurePosixPath
 from typing import Literal
 
@@ -199,7 +200,8 @@ def enumerate_target_markdown(
 def classify_path(registry: Registry, path: PurePosixPath) -> DocumentProfile: ...
 def validate_document(root: Path, path: PurePosixPath,
                       profile: DocumentProfile, mode: str,
-                      append_context: AppendContext | None = None) -> list[Diagnostic]: ...
+                      append_context: AppendContext | None = None,
+                      today: date | None = None) -> list[Diagnostic]: ...
 def validate_cross_document_contracts(root: Path, mode: str) -> list[Diagnostic]: ...
 ```
 
@@ -278,9 +280,13 @@ Both semantic validators implement identical result behavior:
   `PASS|DEFER|FAIL RULE_ID path profile expected=<json> actual=<json> owner=<json>`.
   A clean run emits one deterministic `PASS` summary line.
 - JSON output is one object with keys in this order: `schemaVersion`, `mode`,
-  `outcome`, `counts`, `diagnostics`. Diagnostics use the `Diagnostic` field
-  order and the same sort as text. JSON goes to stdout; configuration and CLI
-  errors go to stderr without partial result JSON.
+  `outcome`, `counts`, `diagnostics`. Each diagnostic result uses keys in the
+  order `outcome`, `ruleId`, `path`, `profile`, `expected`, `actual`, `owner`,
+  `debtToken`; `debtToken` is the exact heading/residue matching token for a
+  token-bearing debt rule and the empty string otherwise. The remaining values
+  preserve `Diagnostic` field order and the array uses the same sort as text.
+  JSON goes to stdout; configuration and CLI errors go to stderr without
+  partial result JSON.
 - Exit `0` means no diagnostics or compatibility mode with only exact `DEFER`
   items; exit `1` means at least one non-deferred document violation (and any
   debt in strict mode); exit `2` means malformed registry/debt/configuration or
@@ -289,6 +295,44 @@ Both semantic validators implement identical result behavior:
   mutually exclusive with `--self-test`, and follows the same deterministic
   JSON/error contract. All modes are repository-static and tracked-only plus
   explicit `--include-path` values.
+
+### Validation Date Contract
+
+This Plan, rather than a nonexistent external "repository date policy", owns
+the deterministic future-date rule. Production derives `today` from the host
+clock in the IANA `Asia/Seoul` time zone with
+`datetime.now(ZoneInfo("Asia/Seoul")).date()`. The Python production entry
+accepts the optional `today: date | None` dependency above solely so callers
+and self-tests can inject a calendar date; `None` selects the Seoul-clock
+value. A naive UTC date, file mtime, Git date, environment variable, locale, or
+network time is never a validation source.
+
+Self-test injects `date(2026, 7, 12)` and never reads the live clock. It proves
+an authored `updated` value of `2026-07-11` and `2026-07-12` passes, while
+`2026-07-13` fails with `FM-FUTURE-DATE`. Separate real-calendar cases prove
+`2024-02-29` valid and `2025-02-29` invalid. A template-mode exact
+`YYYY-MM-DD` placeholder bypasses comparison only after recognition as the
+canonical template placeholder; every other non-calendar value fails.
+
+### Production Compatibility / Strict Bijection
+
+The production repository entry point accounts for the two debt consumers as
+exact finite sets. For every diagnostic it forms
+`(path, profile, ruleId, token)`; token is the exact offending heading/residue
+token for token-bearing rules and the empty string otherwise. Compatibility
+may convert a diagnostic to `DEFER` only when this tuple has one exact,
+previously unused record. The same corpus and debt files in strict mode emit
+the same sorted tuples as `FAIL`. Thus an all-debt repository run is all
+`DEFER` with exit 0 only in compatibility and the identical set is all `FAIL`
+with exit 1 in strict.
+
+Every debt record must be consumed exactly once. A syntactically valid but
+stale or duplicate-consumed record emits `DEBT-UNUSED` as `FAIL` with exit 1
+in both modes. A newly observed or unknown path, rule ID, or token has no exact
+match and remains `FAIL` with exit 1 in both modes. Malformed debt schema or an
+unknown configured debt rule is a configuration error with exit 2. Self-test
+exercises every branch through the production entry, not a fixture-only
+matcher.
 
 ## Work Breakdown
 
@@ -610,6 +654,11 @@ implemented rule ID has one mutation. Keep cases `valid-spec`, `duplicate-key`, 
 `wrong-key-order`, `missing-heading`, `heading-in-fence`, `duplicate-h2`,
 `unsupported-h2`, `template-residue`, and `unclosed-fence`.
 
+The `future-date` family injects fixed `today=date(2026, 7, 12)` into the
+production entry and covers previous-day, same-day, next-day, valid leap-day,
+invalid leap-day, canonical template-placeholder, and invalid-template-date
+cases. No self-test case reads the wall clock.
+
 Also load
 `tests/fixtures/document-contracts/readme-profile-cases.json` and require its
 case names to be exactly `valid-profile`, `frontmatter-forbidden`,
@@ -659,11 +708,12 @@ def extract_frontmatter(text: str) -> tuple[list[str], dict[str, object], str]:
     return list(data.keys()), data, text[closing + 5:]
 ```
 
-Date validation is mode-specific. Authored documents require a real ISO
-calendar date that is not future-dated under the repository date policy.
-Template-mode forms may use the exact `YYYY-MM-DD` placeholder and do not run
-the authored future-date rule; any other invalid template date still fails.
-Positive and focused negative cases cover both branches.
+Date validation is mode-specific and implements the Validation Date Contract
+above. Authored documents require a real ISO calendar date no later than the
+injected or Seoul-clock `today`. Template-mode forms may use the exact
+`YYYY-MM-DD` placeholder and do not run the authored comparison for that exact
+value; any other invalid template date still fails. Positive, boundary, leap,
+and focused negative cases cover both branches.
 
 - [ ] **Step 4: Implement fence-aware heading parsing**
 
@@ -699,6 +749,13 @@ profile/path/occurrence cap. Strict mode fails the same item; new paths and
 unknown tokens never defer. Do not add debt to the registry. Sort diagnostics by
 `(path, rule_id, expected, actual)`.
 
+After matching, compare the consumed record set with the complete configured
+record set. There may be no unused record. An extra/stale record, or a record
+whose path/rule/token no longer produces that diagnostic, yields
+`DEBT-UNUSED` and exit 1 in compatibility and strict. Add production-entry
+mutations for a new path, an unknown rule, an unknown token, a stale record,
+and a duplicate-consumed record; none may be downgraded in either mode.
+
 Because `affectedPaths` changes the complete semantic projection of
 `template-compatibility.json`, recompute its stable sorted-JSON SHA-256 with
 `template_compatibility_semantic_sha256()` and pin the complete new digest in
@@ -717,7 +774,31 @@ SMDV-004 gate-delegation change.
 
 ```bash
 python3 scripts/validate-markdown-profiles.py --self-test
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility
+set +e
+python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --format json > /tmp/smdv-compat.json
+compat_rc=$?
+python3 scripts/validate-markdown-profiles.py --root . --mode strict --format json > /tmp/smdv-strict.json
+strict_rc=$?
+set -e
+python3 - "$compat_rc" "$strict_rc" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+compat = json.loads(Path('/tmp/smdv-compat.json').read_text(encoding='utf-8'))
+strict = json.loads(Path('/tmp/smdv-strict.json').read_text(encoding='utf-8'))
+assert int(sys.argv[1]) == 0, sys.argv[1]
+assert int(sys.argv[2]) == 1, sys.argv[2]
+def key(item):
+    return (item['path'], item['profile'], item['ruleId'], item['debtToken'])
+compat_keys = sorted(key(item) for item in compat['diagnostics'])
+strict_keys = sorted(key(item) for item in strict['diagnostics'])
+assert compat_keys == strict_keys and compat_keys, (len(compat_keys), len(strict_keys))
+assert {item['outcome'] for item in compat['diagnostics']} == {'DEFER'}
+assert {item['outcome'] for item in strict['diagnostics']} == {'FAIL'}
+assert not any(item['ruleId'] == 'DEBT-UNUSED' for item in compat['diagnostics'])
+PY
+rm -f /tmp/smdv-compat.json /tmp/smdv-strict.json
 ```
 
 Expected: all named cases, all eight imported README cases, and every
@@ -726,13 +807,20 @@ exits 0 with only the exact 266-path union and its frozen per-rule caps reported
 as named `DEFER` debt. Classification-only native/generated profiles remain
 structural N/A, progress entries use explicit parent context, template date
 placeholders pass only in template mode, and authored dates remain real and
-not future. Inventory remains 467 target paths
+not future under the fixed self-test/Seoul production-clock contract. The
+strict run returns the identical diagnostic tuple set as `FAIL`; fixture
+mutations prove new, stale, or unknown path/rule/token records fail both modes
+and no configured debt record is unused. Inventory remains 467 target paths
 (`baseline=433`, `new=36`), 60 profiles, 27 templates, and README 72.
 
 - [ ] **Step 7: Update script/test inventories and run focused QA**
 
 Document the CLI, exit codes, rule-ID stability, fixture names, and repo-static
-evidence boundary in `scripts/README.md` and `tests/README.md`.
+evidence boundary in `scripts/README.md` and `tests/README.md`. In the same
+logical unit, replace the in-scope SMDV-002 Task-table Evidence commit subject
+`feat(validation): add markdown profile validator` with the one canonical
+subject `feat(docs): add registry-driven markdown profile validation`; the
+Task row, Work Breakdown, and Step 8 must then agree exactly.
 
 ```bash
 python3 -m py_compile scripts/document_contracts.py scripts/validate-markdown-profiles.py
