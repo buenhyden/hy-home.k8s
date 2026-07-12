@@ -8,7 +8,7 @@
 
 실제 실행 가능한 검증 스크립트는 `scripts/`와 `infrastructure/tests/`에 둔다. 이 폴더는 여러 경로를 가로지르는 장기 테스트 산출물이나 evidence가 필요할 때만 확장한다.
 
-## Audience
+### Audience
 
 이 README의 주요 독자:
 
@@ -17,15 +17,15 @@
 - Documentation writers
 - AI agents
 
-## Scope
+### Scope
 
-### In Scope
+#### In Scope
 
 - 저장소 전체 검증 모델 설명
 - k3d/GitOps/static validation evidence의 해석 기준
 - 향후 cross-repo integration 또는 e2e evidence를 둘 때의 기준
 
-### Out of Scope
+#### Out of Scope
 
 - 애플리케이션 단위 테스트 피라미드
 - 소스 코드와 co-location되는 unit test 규칙
@@ -45,14 +45,30 @@ tests/
 └── README.md                         # This file
 ```
 
-## How to Work in This Area
+## Configuration Boundary
+
+This tree owns repository contract fixtures and validation entrypoints, not
+application coverage policy or live environment state. Fixtures must remain
+non-secret and deterministic; credentials, kubeconfigs, runtime diagnostics,
+and secret values stay outside the repository.
+
+## Validation
+
+Use the exact focused commands and PASS/SKIP semantics in the validation model
+below, then run `bash scripts/validate-repo-quality-gates.sh .` and applicable
+pre-commit hooks. Do not report an unavailable optional tool or static check as
+live readiness.
+
+## Operations
+
+### Working Procedure
 
 1. 기본 검증 기준은 [scripts/README.md](../scripts/README.md)와 [infrastructure/README.md](../infrastructure/README.md)를 먼저 확인한다.
 2. manifest나 GitOps 구조를 바꾸면 `scripts/`와 `infrastructure/tests/`의 정적 검증을 함께 실행한다.
 3. 이 폴더에는 여러 하위 시스템을 동시에 검증하는 산출물이 있을 때만 새 파일을 추가한다.
 4. live cluster evidence는 사람 승인 bootstrap 또는 break-glass 절차로만 기록하며, 로컬 정적 검증과 분리해서 보고한다.
 
-## Validation Model
+### Validation Model
 
 | Area | Command | Evidence class |
 | --- | --- | --- |
@@ -67,7 +83,7 @@ tests/
 | Shell syntax | `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +` | Repo-static |
 | Live runtime checks | `bash infrastructure/tests/run-all.sh` after approved bootstrap | Live/operator-owned |
 
-## Evidence Boundaries
+### Evidence Boundaries
 
 - `tests/fixtures/document-contracts/registry-cases.json`의 각 사례는 하나의
   mutation과 정확한 기대 rule ID 목록을 담는다. 이 fixture는 비밀값을
@@ -105,7 +121,7 @@ tests/
 - `pre-commit`, `kube-linter`, `actionlint`, `zizmor`, `graphify`, `rtk` 같은 optional local tools가 없으면 통과로 간주하지 않고 제한사항으로 보고한다.
 - 외부 Vault, 실제 Kubernetes API, ArgoCD reconciliation 상태는 승인된 live check가 없으면 검증 범위 밖이다.
 
-## Link Basis
+### Link Basis
 
 이 README의 링크 기준 위치는 `tests/`다.
 
