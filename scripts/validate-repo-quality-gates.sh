@@ -30,7 +30,9 @@ python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" "$ROOT_DIR"
 
 python3 - "$ROOT_DIR" <<'PY'
 import collections
+import copy
 import fnmatch
+import hashlib
 import json
 import os
 import pathlib
@@ -1022,6 +1024,165 @@ registry_profiles = {
     profile["id"]: profile for profile in document_registry["profiles"]
 }
 
+TEMPLATE_COMPATIBILITY_CONTRACT_V1 = {
+    "name": "TemplateCompatibilityContract.v1",
+    "semantic_sha256": (
+        "4304a8d68d11264733195a6f63d4fc3df002b4e65070428db90c5956eb6ae222"  # pragma: allowlist secret
+    ),
+}
+
+
+def template_compatibility_semantic_sha256(contract: dict) -> str:
+    """Hash the complete semantic fixture projection with stable JSON encoding."""
+    payload = json.dumps(
+        contract,
+        ensure_ascii=True,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def template_compatibility_contract_matches(contract: dict) -> bool:
+    return (
+        template_compatibility_semantic_sha256(contract)
+        == TEMPLATE_COMPATIBILITY_CONTRACT_V1["semantic_sha256"]
+    )
+
+
+def assert_template_compatibility_mutation_proof(contract: dict) -> None:
+    """Prove protected policy, residue, and baseline mutations are rejected."""
+
+    def mutate_owner(candidate: dict) -> None:
+        candidate["owner"] = "Spec 999"
+
+    def mutate_growth_policy(candidate: dict) -> None:
+        candidate["growthAllowed"] = True
+
+    def mutate_task_residue(candidate: dict) -> None:
+        task = next(
+            row
+            for row in candidate["compatibilityDebt"]
+            if row["profile"] == "sdlc/task"
+        )
+        task["forbiddenResidue"].pop()
+
+    def mutate_task_baseline(candidate: dict) -> None:
+        task = next(
+            row
+            for row in candidate["compatibilityDebt"]
+            if row["profile"] == "sdlc/task"
+        )
+        task["baselineForbiddenResidueOccurrences"] += 1
+
+    mutations = {
+        "owner": mutate_owner,
+        "growthAllowed": mutate_growth_policy,
+        "Task forbidden residue": mutate_task_residue,
+        "Task baseline count": mutate_task_baseline,
+    }
+    for label, mutate in mutations.items():
+        candidate = copy.deepcopy(contract)
+        mutate(candidate)
+        if template_compatibility_contract_matches(candidate):
+            fail(
+                f"{TEMPLATE_COMPATIBILITY_CONTRACT_V1['name']} mutation proof "
+                f"accepted a changed {label}"
+            )
+
+
+def strip_multiline_html_comments(line: str, in_comment: bool) -> tuple[str, bool]:
+    """Remove HTML comments while retaining visible text around them."""
+    visible = []
+    cursor = 0
+    while cursor < len(line):
+        if in_comment:
+            end = line.find("-->", cursor)
+            if end < 0:
+                return "".join(visible), True
+            cursor = end + 3
+            in_comment = False
+            continue
+        start = line.find("<!--", cursor)
+        if start < 0:
+            visible.append(line[cursor:])
+            break
+        visible.append(line[cursor:start])
+        cursor = start + 4
+        in_comment = True
+    return "".join(visible), in_comment
+
+
+def extract_markdown_headings(markdown: str) -> list[tuple[int, str]]:
+    """Extract ATX headings outside matching fences and HTML comments."""
+    headings = []
+    fence_character = None
+    fence_length = 0
+    in_comment = False
+    opening_fence = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+
+    for raw_line in markdown.splitlines():
+        if fence_character is not None:
+            closing_fence = re.compile(
+                rf"^ {{0,3}}{re.escape(fence_character)}"
+                rf"{{{fence_length},}}[ \t]*$"
+            )
+            if closing_fence.match(raw_line):
+                fence_character = None
+                fence_length = 0
+            continue
+
+        line, in_comment = strip_multiline_html_comments(raw_line, in_comment)
+        fence_match = opening_fence.match(line)
+        if fence_match:
+            marker = fence_match.group(1)
+            fence_character = marker[0]
+            fence_length = len(marker)
+            continue
+
+        heading_match = re.match(r"^ {0,3}(#{1,6})(?:[ \t]+|$)(.*)$", line)
+        if not heading_match:
+            continue
+        heading_text = heading_match.group(2).strip()
+        heading_text = re.sub(r"[ \t]+#+[ \t]*$", "", heading_text).strip()
+        headings.append((len(heading_match.group(1)), heading_text))
+
+    return headings
+
+
+def assert_markdown_heading_extractor_probe() -> None:
+    probe = """## Real H2
+```markdown
+## Backtick-fenced H2
+### Backtick-fenced H3
+```
+~~~markdown
+#### Tilde-fenced H4
+~~~
+<!--
+## Commented H2
+### Commented H3
+-->
+### Real H3
+#### Real H4
+"""
+    expected = [(2, "Real H2"), (3, "Real H3"), (4, "Real H4")]
+    actual = extract_markdown_headings(probe)
+    if actual != expected:
+        fail(
+            "Markdown heading extractor probe must ignore fenced/commented "
+            f"headings and retain real H2/H3/H4 headings: {actual}"
+        )
+
+
+if not template_compatibility_contract_matches(template_compatibility):
+    fail(
+        f"{rel(template_compatibility_path)} does not match "
+        f"{TEMPLATE_COMPATIBILITY_CONTRACT_V1['name']} semantic SHA-256"
+    )
+assert_template_compatibility_mutation_proof(template_compatibility)
+assert_markdown_heading_extractor_probe()
+
 if template_compatibility.get("owner") != "Spec 030":
     fail(f"{rel(template_compatibility_path)} owner must be Spec 030")
 if template_compatibility.get("growthAllowed") is not False:
@@ -1061,15 +1222,23 @@ for row in canonical_form_rows:
     if metadata.get("type") != row["frontmatterType"]:
         fail(f"{rel(form_path)} frontmatter type must be {row['frontmatterType']}")
     actual_headings = [
-        line[3:]
-        for line in read_text(form_path).splitlines()
-        if line.startswith("## ")
+        text
+        for level, text in extract_markdown_headings(read_text(form_path))
+        if level == 2
     ]
     if actual_headings != row["requiredHeadings"]:
         fail(f"{rel(form_path)} H2 sequence must equal canonicalFormCoverage")
 
 template_mode_rows = template_compatibility.get("templateModeCoverage", [])
 template_mode_paths = [row.get("form") for row in template_mode_rows]
+comment_only_template_heading_prefixes = {
+    "template/readme/common": [
+        "Selection Guide",
+        "docs 디렉터리 상세 역할",
+        "Assembly Rules",
+        "Writing Principles",
+    ],
+}
 tracked_template_paths = {
     tracked_path
     for tracked_path in tracked
@@ -1099,19 +1268,14 @@ for row in template_mode_rows:
         fail(f"{row['profile']} append contract differs from fixture")
     if row["profile"] == "governance/progress-entry":
         form_text = read_text(root / row["form"])
-        if any(
-            line.startswith(("# ", "## ")) for line in form_text.splitlines()
-        ):
+        form_headings = extract_markdown_headings(form_text)
+        if any(level in {1, 2} for level, _ in form_headings):
             fail(f"{row['form']} progress fragment must not contain H1 or H2")
         entry_headings = [
-            line[4:]
-            for line in form_text.splitlines()
-            if line.startswith("### ")
+            text for level, text in form_headings if level == 3
         ]
         section_headings = [
-            line[5:]
-            for line in form_text.splitlines()
-            if line.startswith("#### ")
+            text for level, text in form_headings if level == 4
         ]
         append_contract = row["appendContract"]
         if entry_headings != ["YYYY-MM-DD - <workstream-title>"]:
@@ -1122,11 +1286,20 @@ for row in template_mode_rows:
         if row["appendContract"] is not None:
             fail(f"{row['profile']} non-progress template must not append")
         form_headings = [
-            line[3:]
-            for line in read_text(root / row["form"]).splitlines()
-            if line.startswith("## ")
+            text
+            for level, text in extract_markdown_headings(
+                read_text(root / row["form"])
+            )
+            if level == 2
         ]
-        if form_headings != profile["headings"]["required"]:
+        required_headings = profile["headings"]["required"]
+        comment_only_prefix = comment_only_template_heading_prefixes.get(
+            row["profile"], []
+        )
+        if required_headings[: len(comment_only_prefix)] != comment_only_prefix:
+            fail(f"{row['profile']} comment-only heading prefix differs from registry")
+        visible_required_headings = required_headings[len(comment_only_prefix) :]
+        if form_headings != visible_required_headings:
             fail(f"{row['form']} H2 sequence must equal its template profile")
         for source_id in row["sourceProfiles"]:
             source = registry_profiles[source_id]
@@ -1135,12 +1308,50 @@ for row in template_mode_rows:
                     fail(f"{row['profile']} {field} must equal {source_id}")
 
 compatibility_rows = template_compatibility.get("compatibilityDebt", [])
+compatibility_profile_ids = [row.get("profile") for row in compatibility_rows]
+if len(compatibility_profile_ids) != len(set(compatibility_profile_ids)):
+    fail(f"{rel(template_compatibility_path)} compatibility profile IDs must be unique")
 compatibility_by_profile = {row["profile"]: row for row in compatibility_rows}
 if set(compatibility_by_profile) != authored_profile_ids:
     fail(
         f"{rel(template_compatibility_path)} compatibilityDebt must cover "
         "every authored profile exactly once"
     )
+task_forbidden_residue = {
+    "Working Rules",
+    "Suggested Types",
+    "Agent-specific Types (If Applicable)",
+    "Phase View (Optional)",
+}
+for row in compatibility_rows:
+    profile_id = row["profile"]
+    canonical = row["canonical"]
+    forbidden_residue = row["forbiddenResidue"]
+    aliases_by_canonical = row["legacyRequiredAnyOf"]
+    if canonical != registry_profiles[profile_id]["headings"]["required"]:
+        fail(f"{profile_id} compatibility canonical headings must equal registry")
+    if len(canonical) != len(set(canonical)):
+        fail(f"{profile_id} compatibility canonical headings must be unique")
+    if len(forbidden_residue) != len(set(forbidden_residue)):
+        fail(f"{profile_id} forbidden residue definitions must be unique")
+    if set(canonical) & set(forbidden_residue):
+        fail(f"{profile_id} canonical headings and forbidden residue must be disjoint")
+    alias_canonical_keys = [item["canonical"] for item in aliases_by_canonical]
+    if len(alias_canonical_keys) != len(set(alias_canonical_keys)):
+        fail(f"{profile_id} legacy alias canonical keys must be unique")
+    if not set(alias_canonical_keys).issubset(canonical):
+        fail(f"{profile_id} legacy alias canonical keys must be canonical headings")
+    aliases = [
+        alias for item in aliases_by_canonical for alias in item["aliases"]
+    ]
+    if len(aliases) != len(set(aliases)):
+        fail(f"{profile_id} legacy aliases must be unique")
+    if set(aliases) & set(canonical):
+        fail(f"{profile_id} legacy aliases and canonical headings must be disjoint")
+    if set(aliases) & set(forbidden_residue):
+        fail(f"{profile_id} legacy aliases and forbidden residue must be disjoint")
+    if profile_id == "sdlc/task" and set(forbidden_residue) != task_forbidden_residue:
+        fail("sdlc/task must retain the four fixed forbidden residue definitions")
 
 
 def registry_profile_for_path(relative_path: str) -> str | None:
@@ -1173,9 +1384,9 @@ for tracked_path in sorted(tracked):
         continue
     row = compatibility_by_profile[profile_id]
     headings = {
-        line[3:]
-        for line in read_text(path).splitlines()
-        if line.startswith("## ")
+        text
+        for level, text in extract_markdown_headings(read_text(path))
+        if level == 2
     }
     aliases = {
         item["canonical"]: item["aliases"]
