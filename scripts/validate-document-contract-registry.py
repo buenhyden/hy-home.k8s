@@ -194,21 +194,29 @@ def _assert_document_profile_contract_mutation_proof(
     raw_registry: dict[str, Any],
 ) -> None:
     mutations = (
-        ("placeholder policy", "placeholderPolicy", "template-only"),
+        ("placeholder policy", ("placeholderPolicy",), "template-only"),
         (
             "authored template",
-            "template",
+            ("template",),
             "docs/99.templates/templates/sdlc/specs/spec.template.md",
         ),
+        (
+            "required headings",
+            ("headings", "required"),
+            ["Document profile contract mutation proof"],
+        ),
     )
-    for label, field, value in mutations:
+    for label, path, value in mutations:
         mutated = copy.deepcopy(raw_registry)
         profile = next(
             profile
             for profile in mutated["profiles"]
             if profile["id"] == "sdlc/prd"
         )
-        profile[field] = value
+        target = profile
+        for field in path[:-1]:
+            target = target[field]
+        target[path[-1]] = value
         try:
             _assert_document_profile_contract(mutated)
         except AssertionError as exc:
