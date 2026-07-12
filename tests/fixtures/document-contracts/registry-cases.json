@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "negativeFixtureSamplePath": ".agents/GEMINI.md",
   "cases": [
     {
       "name": "valid-minimal",

@@ -263,7 +263,11 @@
         },
         {
           "kind": "regex",
-          "value": "^examples/(?:aws|azure)/docs/03\\.specs/(?!.*(?:/)?README\\.md$).+\\.md$"
+          "value": "^examples/(?:aws|azure)/docs/03\\.specs/[^/]+/spec\\.md$"
+        },
+        {
+          "kind": "exact",
+          "value": "examples/azure/docs/03.specs/2026-03-31-resource-specs.md"
         }
       ],
       "frontmatter": {
@@ -353,6 +357,10 @@
         {
           "kind": "regex",
           "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/api-spec\\.md$"
+        },
+        {
+          "kind": "regex",
+          "value": "^examples/(?:aws|azure)/docs/03\\.specs/[^/]+/api-spec\\.md$"
         }
       ],
       "frontmatter": {
@@ -430,6 +438,10 @@
         {
           "kind": "regex",
           "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/agent-design\\.md$"
+        },
+        {
+          "kind": "regex",
+          "value": "^examples/(?:aws|azure)/docs/03\\.specs/[^/]+/agent-design\\.md$"
         }
       ],
       "frontmatter": {
@@ -509,6 +521,10 @@
         {
           "kind": "regex",
           "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/data-model\\.md$"
+        },
+        {
+          "kind": "regex",
+          "value": "^examples/(?:aws|azure)/docs/03\\.specs/[^/]+/data-model\\.md$"
         }
       ],
       "frontmatter": {
@@ -582,6 +598,10 @@
         {
           "kind": "regex",
           "value": "^docs/03\\.specs/[0-9]{3}-[^/]+/tests\\.md$"
+        },
+        {
+          "kind": "regex",
+          "value": "^examples/(?:aws|azure)/docs/03\\.specs/[^/]+/tests\\.md$"
         }
       ],
       "frontmatter": {
@@ -2255,10 +2275,6 @@
       "class": "exception",
       "mode": "native",
       "routes": [
-        {
-          "kind": "exact",
-          "value": "tests/fixtures/document-contracts/sample.md"
-        },
         {
           "kind": "regex",
           "value": "^\\.(?:agents|claude|codex)/.+\\.md$"

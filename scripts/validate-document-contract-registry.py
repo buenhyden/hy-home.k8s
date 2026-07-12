@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 import subprocess
 import tempfile
@@ -12,6 +13,8 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 from document_contracts import (
+    BASELINE_COUNT,
+    BASELINE_SHA,
     REGISTRY_PATH,
     DocumentContractError,
     classify_path,
@@ -24,7 +27,7 @@ from document_contracts import (
 )
 
 
-SAMPLE_PATH = PurePosixPath("tests/fixtures/document-contracts/sample.md")
+SAMPLE_PATH = PurePosixPath(".agents/GEMINI.md")
 FIXTURE_PATH = PurePosixPath("tests/fixtures/document-contracts/registry-cases.json")
 EXPECTED_CASES = (
     ("valid-minimal", "none", ()),
@@ -36,6 +39,80 @@ EXPECTED_CASES = (
     ("missing-template", "point-to-missing-template", ("REGISTRY_TEMPLATE",)),
     ("wrong-baseline-sha", "change-baseline-sha", ("REGISTRY_BASELINE_SHA",)),
     ("wrong-baseline-count", "change-baseline-count", ("REGISTRY_BASELINE_COUNT",)),
+)
+
+DOCUMENT_PROFILE_CONTRACT_V1 = {
+    "name": "DocumentProfileContract.v1",
+    "profile_ids": (
+        "content/archive-tombstone",
+        "content/reference",
+        "exception/generated-record",
+        "exception/github-native-control",
+        "exception/native-contract",
+        "exception/program-non-target",
+        "exception/provider-native-metadata",
+        "exception/root-provider-shim",
+        "governance/memory",
+        "governance/progress-entry",
+        "governance/progress-ledger",
+        "governance/reference",
+        "governance/template-support",
+        "readme/collection-index",
+        "readme/implementation",
+        "readme/repository",
+        "readme/snapshot-pack",
+        "readme/stage-index",
+        "readme/workspace-staging",
+        "sdlc/adr",
+        "sdlc/agent-design",
+        "sdlc/api-spec",
+        "sdlc/ard",
+        "sdlc/data-model",
+        "sdlc/guide",
+        "sdlc/incident",
+        "sdlc/plan",
+        "sdlc/policy",
+        "sdlc/postmortem",
+        "sdlc/prd",
+        "sdlc/runbook",
+        "sdlc/spec",
+        "sdlc/task",
+        "sdlc/tests",
+        "template/content/archive-tombstone",
+        "template/content/reference",
+        "template/governance/memory",
+        "template/readme/common",
+        "template/sdlc/adr",
+        "template/sdlc/agent-design",
+        "template/sdlc/api-spec",
+        "template/sdlc/ard",
+        "template/sdlc/data-model",
+        "template/sdlc/guide",
+        "template/sdlc/incident",
+        "template/sdlc/plan",
+        "template/sdlc/policy",
+        "template/sdlc/postmortem",
+        "template/sdlc/prd",
+        "template/sdlc/runbook",
+        "template/sdlc/spec",
+        "template/sdlc/task",
+        "template/sdlc/task-legacy-harness",
+        "template/sdlc/tests",
+    ),
+    "semantic_sha256": (
+        "c1632291f7336e68a6a34ba1965a68609a2181f2eecc9f5b16448d6a27e7908d"  # pragma: allowlist secret
+    ),
+}
+DOCUMENT_PROFILE_CONTRACT_V1_FIELDS = (
+    "id",
+    "class",
+    "mode",
+    "frontmatter",
+    "statusDomain",
+    "routes",
+    "sourceProfileIds",
+    "placeholderPolicy",
+    "appendContract",
 )
 
 
@@ -66,6 +143,114 @@ def _parse_args() -> argparse.Namespace:
 def _load_json(path: Path) -> Any:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def _document_profile_contract_projection(
+    raw_registry: dict[str, Any],
+) -> list[dict[str, Any]]:
+    projection: list[dict[str, Any]] = []
+    for profile in sorted(raw_registry["profiles"], key=lambda item: item["id"]):
+        row = {
+            field: copy.deepcopy(profile[field])
+            for field in DOCUMENT_PROFILE_CONTRACT_V1_FIELDS
+        }
+        row["routes"] = sorted(
+            row["routes"], key=lambda route: (route["kind"], route["value"])
+        )
+        projection.append(row)
+    return projection
+
+
+def _assert_document_profile_contract(raw_registry: dict[str, Any]) -> int:
+    expected_ids = DOCUMENT_PROFILE_CONTRACT_V1["profile_ids"]
+    actual_ids = tuple(sorted(profile["id"] for profile in raw_registry["profiles"]))
+    if actual_ids != expected_ids:
+        missing = sorted(set(expected_ids) - set(actual_ids))
+        extra = sorted(set(actual_ids) - set(expected_ids))
+        raise AssertionError(
+            "DocumentProfileContract.v1 ID mismatch: "
+            f"missing={missing!r} extra={extra!r}"
+        )
+
+    canonical = json.dumps(
+        _document_profile_contract_projection(raw_registry),
+        ensure_ascii=True,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    actual_digest = hashlib.sha256(canonical).hexdigest()
+    expected_digest = DOCUMENT_PROFILE_CONTRACT_V1["semantic_sha256"]
+    if actual_digest != expected_digest:
+        raise AssertionError(
+            "DocumentProfileContract.v1 semantic digest mismatch: "
+            f"expected={expected_digest} actual={actual_digest}"
+        )
+    return len(actual_ids)
+
+
+def _assert_document_profile_contract_mutation_proof(
+    raw_registry: dict[str, Any],
+) -> None:
+    mutated = copy.deepcopy(raw_registry)
+    profile = next(
+        profile for profile in mutated["profiles"] if profile["id"] == "sdlc/prd"
+    )
+    profile["placeholderPolicy"] = "template-only"
+    try:
+        _assert_document_profile_contract(mutated)
+    except AssertionError as exc:
+        if "semantic digest mismatch" not in str(exc):
+            raise AssertionError(
+                "DocumentProfileContract.v1 mutation proof failed unexpectedly"
+            ) from exc
+    else:
+        raise AssertionError(
+            "DocumentProfileContract.v1 accepted a semantic mutation"
+        )
+
+
+def _minimal_fixture_registry() -> dict[str, Any]:
+    return {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://hy-home.k8s/schemas/document-profiles-1.schema.json",
+        "schemaVersion": 1,
+        "baseline": {"sha": BASELINE_SHA, "count": BASELINE_COUNT},
+        "target": {"roots": [".agents"], "rootFiles": ["README.md"]},
+        "profiles": [
+            {
+                "id": "test/sample",
+                "class": "exception",
+                "mode": "native",
+                "routes": [
+                    {"kind": "exact", "value": SAMPLE_PATH.as_posix()},
+                    {
+                        "kind": "regex",
+                        "value": (
+                            "^tests/fixtures/document-contracts/"
+                            "self-test-.+\\.md$"
+                        ),
+                    },
+                ],
+                "frontmatter": {
+                    "mode": "not-applicable",
+                    "required": [],
+                    "allowed": [],
+                    "order": [],
+                },
+                "statusDomain": [],
+                "headings": {"required": [], "allowed": []},
+                "template": None,
+                "sourceProfileIds": [],
+                "placeholderPolicy": "forbidden",
+                "appendContract": None,
+            }
+        ],
+        "programLineage": {
+            "prd": "005",
+            "ard": "0008",
+            "specs": ["026"],
+        },
+    }
 
 
 def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
@@ -240,11 +425,59 @@ def _tracked_template_paths(root: Path) -> tuple[PurePosixPath, ...]:
         raise AssertionError("git returned a non-UTF-8 template path") from exc
 
 
+def _assert_role_specific_spec_routes(registry: Any) -> None:
+    probes = {
+        PurePosixPath("examples/aws/docs/03.specs/contract-probe/spec.md"): "sdlc/spec",
+        PurePosixPath(
+            "examples/aws/docs/03.specs/contract-probe/api-spec.md"
+        ): "sdlc/api-spec",
+        PurePosixPath(
+            "examples/azure/docs/03.specs/contract-probe/agent-design.md"
+        ): "sdlc/agent-design",
+        PurePosixPath(
+            "examples/azure/docs/03.specs/contract-probe/data-model.md"
+        ): "sdlc/data-model",
+        PurePosixPath(
+            "examples/azure/docs/03.specs/contract-probe/tests.md"
+        ): "sdlc/tests",
+        PurePosixPath(
+            "examples/azure/docs/03.specs/2026-03-31-resource-specs.md"
+        ): "sdlc/spec",
+    }
+    for path, expected_profile in probes.items():
+        actual_profile = classify_path(registry, path).profile_id
+        if actual_profile != expected_profile:
+            raise AssertionError(
+                f"{path}: expected role-specific profile {expected_profile!r}, "
+                f"got {actual_profile!r}"
+            )
+
+
+def _assert_tracked_negative_fixture_sample(root: Path, registry: Any) -> None:
+    completed = subprocess.run(
+        ["git", "ls-files", "--error-unmatch", "--", SAMPLE_PATH.as_posix()],
+        cwd=root,
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    if completed.stdout.strip() != SAMPLE_PATH.as_posix():
+        raise AssertionError("negative fixture sample must be one exact tracked path")
+    actual_profile = classify_path(registry, SAMPLE_PATH).profile_id
+    if actual_profile != "exception/provider-native-metadata":
+        raise AssertionError(
+            f"{SAMPLE_PATH}: expected provider metadata, got {actual_profile!r}"
+        )
+
+
 def _assert_positive_coverage(
     root: Path, raw_registry: dict[str, Any], fixture: dict[str, Any]
 ) -> tuple[int, int]:
     registry = validate_registry(root, raw_registry)
     profiles = {profile.profile_id: profile for profile in registry.profiles}
+    _assert_role_specific_spec_routes(registry)
+    _assert_tracked_negative_fixture_sample(root, registry)
 
     coverage = fixture.get("profileCoverage")
     if not isinstance(coverage, list):
@@ -403,17 +636,28 @@ def _assert_positive_coverage(
 
 def _self_test(root: Path) -> int:
     raw_registry = _load_json(root / REGISTRY_PATH)
+    try:
+        contract_profile_count = _assert_document_profile_contract(raw_registry)
+        _assert_document_profile_contract_mutation_proof(raw_registry)
+    except (AssertionError, KeyError, TypeError) as exc:
+        print(f"FAIL document contract registry self-test: {exc}")
+        return 1
+
     fixture = _load_json(root / FIXTURE_PATH)
     actual_contract = tuple(
         (case.get("name"), case.get("mutation"), tuple(case.get("expected", ())))
         for case in fixture.get("cases", ())
     )
-    if fixture.get("schemaVersion") != 1 or actual_contract != EXPECTED_CASES:
+    if (
+        fixture.get("schemaVersion") != 1
+        or fixture.get("negativeFixtureSamplePath") != SAMPLE_PATH.as_posix()
+        or actual_contract != EXPECTED_CASES
+    ):
         print("FAIL document contract registry self-test: fixture contract mismatch")
         return 1
 
     for name, mutation, expected in EXPECTED_CASES:
-        mutated = copy.deepcopy(raw_registry)
+        mutated = _minimal_fixture_registry()
         _mutate(mutated, mutation)
         diagnostics = ()
         try:
@@ -436,6 +680,10 @@ def _self_test(root: Path) -> int:
         profile_count, template_count = _assert_positive_coverage(
             root, raw_registry, fixture
         )
+        if profile_count != contract_profile_count:
+            raise AssertionError(
+                "profileCoverage count differs from DocumentProfileContract.v1"
+            )
     except (AssertionError, OSError, subprocess.SubprocessError) as exc:
         print(f"FAIL document contract registry self-test: {exc}")
         return 1

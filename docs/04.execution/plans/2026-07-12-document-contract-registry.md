@@ -610,16 +610,20 @@ Expected: compilation and commit succeed.
 - Modify: `docs/99.templates/support/document-profiles.json`
 - Modify: `tests/fixtures/document-contracts/registry-cases.json`
 - Modify: `scripts/validate-document-contract-registry.py`
+- Modify: `.secrets.baseline`
 - Modify: `docs/04.execution/plans/2026-07-12-document-contract-registry.md`
 
 **Interfaces:**
 
 - Consumes: `classify_path()` and
   `enumerate_target_markdown().{baseline_paths,current_paths,new_paths}` plus
-  the tracked `*.template.md` Git inventory.
+  the tracked `*.template.md` Git inventory and the reviewed detect-secrets
+  finding for the required public baseline Git SHA.
 - Produces: profile classes `sdlc`, `common`, `governance`, `readme`, and
-  `exception` with zero route gaps or overlaps, plus persistent self-test
-  assertions for exact profile and template fixture coverage.
+  `exception` with zero route gaps or overlaps; the independent fixed
+  `DocumentProfileContract.v1` ID/semantic digest; persistent self-test
+  assertions for exact profile and template fixture coverage; and one narrow
+  `.secrets.baseline` `is_secret: false` adjudication for that public SHA.
 
 - [ ] **Step 1: Run the incomplete-registry RED check**
 
