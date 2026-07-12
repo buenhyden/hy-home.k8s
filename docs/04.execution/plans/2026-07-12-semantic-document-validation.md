@@ -686,7 +686,7 @@ audit contract is one 266-path union with these exact no-growth caps:
 | `BODY-HEADING-REQUIRED` | 89 paths and 247 missing path/token obligations |
 | `BODY-TEMPLATE-RESIDUE` | 188 paths and 410 occurrences; its overlap with required-heading debt is 51 paths, so the existing-debt union is 226 paths |
 | `FM-DELIMITER` | 24 exact `governance/reference` paths |
-| `BODY-HEADING-UNSUPPORTED` | 175 paths, 617 occurrences, and 422 exact path/token obligations after represented aliases and residue are removed |
+| `BODY-HEADING-UNSUPPORTED` | 175 paths, 617 occurrences, and 617 exact path/token obligations after represented aliases, residue, and progress-ledger `Historical Entries` are removed; these obligations contain 400 globally distinct token strings |
 | `BODY-H2-DUPLICATE` | 1 exact path and 1 token |
 
 Store every rule on the affected path record, store sorted exact tokens where
