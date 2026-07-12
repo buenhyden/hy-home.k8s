@@ -1505,77 +1505,24 @@
       "statusDomain": [],
       "headings": {
         "required": [
-          "Selection Guide",
-          "docs 디렉터리 상세 역할",
-          "Assembly Rules",
-          "Writing Principles",
           "Overview",
-          "Audience",
-          "Scope",
-          "Structure",
-          "How to Work in This Area",
-          "Link Basis",
-          "Related Documents",
-          "SNIPPET LIBRARY",
           "Repository Map",
-          "Tech Stack",
-          "Prerequisites",
           "Getting Started",
-          "Available Scripts",
-          "Configuration",
-          "Testing",
-          "Change Impact",
-          "Documentation Standards",
-          "Traceability Rules",
-          "Template Usage",
-          "Metadata Expectations",
-          "SSoT References",
-          "Usage Instructions",
-          "Verification and Monitoring",
-          "Incident and Recovery Links",
-          "Record Purpose",
-          "Expected Record Shape",
-          "Review Expectations",
-          "AI Agent Guidance",
-          "License"
+          "Validation",
+          "Related Documents"
         ],
         "allowed": [
-          "Selection Guide",
-          "docs 디렉터리 상세 역할",
-          "Assembly Rules",
-          "Writing Principles",
           "Overview",
-          "Audience",
-          "Scope",
-          "Structure",
-          "How to Work in This Area",
-          "Link Basis",
-          "Related Documents",
-          "SNIPPET LIBRARY",
           "Repository Map",
-          "Tech Stack",
-          "Prerequisites",
           "Getting Started",
-          "Available Scripts",
+          "Validation",
+          "Related Documents",
+          "Prerequisites",
           "Configuration",
-          "Testing",
-          "Change Impact",
-          "Documentation Standards",
-          "Traceability Rules",
-          "Template Usage",
-          "Metadata Expectations",
-          "SSoT References",
-          "Usage Instructions",
-          "Verification and Monitoring",
-          "Incident and Recovery Links",
-          "Record Purpose",
-          "Expected Record Shape",
-          "Review Expectations",
-          "AI Agent Guidance",
-          "License"
+          "Security Boundary"
         ]
       },
-      "template": "docs/99.templates/templates/common/readme.template.md",
+      "template": "docs/99.templates/templates/common/readme-repository.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
       "appendContract": null
@@ -1635,77 +1582,22 @@
       "statusDomain": [],
       "headings": {
         "required": [
-          "Selection Guide",
-          "docs 디렉터리 상세 역할",
-          "Assembly Rules",
-          "Writing Principles",
           "Overview",
-          "Audience",
-          "Scope",
-          "Structure",
-          "How to Work in This Area",
-          "Link Basis",
-          "Related Documents",
-          "SNIPPET LIBRARY",
-          "Repository Map",
-          "Tech Stack",
-          "Prerequisites",
-          "Getting Started",
-          "Available Scripts",
-          "Configuration",
-          "Testing",
-          "Change Impact",
-          "Documentation Standards",
-          "Traceability Rules",
-          "Template Usage",
-          "Metadata Expectations",
-          "SSoT References",
-          "Usage Instructions",
-          "Verification and Monitoring",
-          "Incident and Recovery Links",
-          "Record Purpose",
-          "Expected Record Shape",
-          "Review Expectations",
-          "AI Agent Guidance",
-          "License"
+          "Stage Contract",
+          "Document Index",
+          "Authoring Workflow",
+          "Related Documents"
         ],
         "allowed": [
-          "Selection Guide",
-          "docs 디렉터리 상세 역할",
-          "Assembly Rules",
-          "Writing Principles",
           "Overview",
-          "Audience",
-          "Scope",
-          "Structure",
-          "How to Work in This Area",
-          "Link Basis",
+          "Stage Contract",
+          "Document Index",
+          "Authoring Workflow",
           "Related Documents",
-          "SNIPPET LIBRARY",
-          "Repository Map",
-          "Tech Stack",
-          "Prerequisites",
-          "Getting Started",
-          "Available Scripts",
-          "Configuration",
-          "Testing",
-          "Change Impact",
-          "Documentation Standards",
-          "Traceability Rules",
-          "Template Usage",
-          "Metadata Expectations",
-          "SSoT References",
-          "Usage Instructions",
-          "Verification and Monitoring",
-          "Incident and Recovery Links",
-          "Record Purpose",
-          "Expected Record Shape",
-          "Review Expectations",
-          "AI Agent Guidance",
-          "License"
+          "Lifecycle Handoff"
         ]
       },
-      "template": "docs/99.templates/templates/common/readme.template.md",
+      "template": "docs/99.templates/templates/common/readme-stage-index.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
       "appendContract": null
@@ -1793,77 +1685,22 @@
       "statusDomain": [],
       "headings": {
         "required": [
-          "Selection Guide",
-          "docs 디렉터리 상세 역할",
-          "Assembly Rules",
-          "Writing Principles",
           "Overview",
-          "Audience",
           "Scope",
-          "Structure",
-          "How to Work in This Area",
-          "Link Basis",
-          "Related Documents",
-          "SNIPPET LIBRARY",
-          "Repository Map",
-          "Tech Stack",
-          "Prerequisites",
-          "Getting Started",
-          "Available Scripts",
-          "Configuration",
-          "Testing",
-          "Change Impact",
-          "Documentation Standards",
-          "Traceability Rules",
-          "Template Usage",
-          "Metadata Expectations",
-          "SSoT References",
-          "Usage Instructions",
-          "Verification and Monitoring",
-          "Incident and Recovery Links",
-          "Record Purpose",
-          "Expected Record Shape",
-          "Review Expectations",
-          "AI Agent Guidance",
-          "License"
+          "Item Index",
+          "Add and Find",
+          "Related Documents"
         ],
         "allowed": [
-          "Selection Guide",
-          "docs 디렉터리 상세 역할",
-          "Assembly Rules",
-          "Writing Principles",
           "Overview",
-          "Audience",
           "Scope",
-          "Structure",
-          "How to Work in This Area",
-          "Link Basis",
+          "Item Index",
+          "Add and Find",
           "Related Documents",
-          "SNIPPET LIBRARY",
-          "Repository Map",
-          "Tech Stack",
-          "Prerequisites",
-          "Getting Started",
-          "Available Scripts",
-          "Configuration",
-          "Testing",
-          "Change Impact",
-          "Documentation Standards",
-          "Traceability Rules",
-          "Template Usage",
-          "Metadata Expectations",
-          "SSoT References",
-          "Usage Instructions",
-          "Verification and Monitoring",
-          "Incident and Recovery Links",
-          "Record Purpose",
-          "Expected Record Shape",
-          "Review Expectations",
-          "AI Agent Guidance",
-          "License"
+          "Selection Rules"
         ]
       },
-      "template": "docs/99.templates/templates/common/readme.template.md",
+      "template": "docs/99.templates/templates/common/readme-collection-index.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
       "appendContract": null
@@ -1931,77 +1768,25 @@
       "statusDomain": [],
       "headings": {
         "required": [
-          "Selection Guide",
-          "docs 디렉터리 상세 역할",
-          "Assembly Rules",
-          "Writing Principles",
           "Overview",
-          "Audience",
-          "Scope",
           "Structure",
-          "How to Work in This Area",
-          "Link Basis",
-          "Related Documents",
-          "SNIPPET LIBRARY",
-          "Repository Map",
-          "Tech Stack",
-          "Prerequisites",
-          "Getting Started",
-          "Available Scripts",
-          "Configuration",
-          "Testing",
-          "Change Impact",
-          "Documentation Standards",
-          "Traceability Rules",
-          "Template Usage",
-          "Metadata Expectations",
-          "SSoT References",
-          "Usage Instructions",
-          "Verification and Monitoring",
-          "Incident and Recovery Links",
-          "Record Purpose",
-          "Expected Record Shape",
-          "Review Expectations",
-          "AI Agent Guidance",
-          "License"
+          "Configuration Boundary",
+          "Validation",
+          "Operations",
+          "Related Documents"
         ],
         "allowed": [
-          "Selection Guide",
-          "docs 디렉터리 상세 역할",
-          "Assembly Rules",
-          "Writing Principles",
           "Overview",
-          "Audience",
-          "Scope",
           "Structure",
-          "How to Work in This Area",
-          "Link Basis",
+          "Configuration Boundary",
+          "Validation",
+          "Operations",
           "Related Documents",
-          "SNIPPET LIBRARY",
-          "Repository Map",
-          "Tech Stack",
           "Prerequisites",
-          "Getting Started",
-          "Available Scripts",
-          "Configuration",
-          "Testing",
-          "Change Impact",
-          "Documentation Standards",
-          "Traceability Rules",
-          "Template Usage",
-          "Metadata Expectations",
-          "SSoT References",
-          "Usage Instructions",
-          "Verification and Monitoring",
-          "Incident and Recovery Links",
-          "Record Purpose",
-          "Expected Record Shape",
-          "Review Expectations",
-          "AI Agent Guidance",
-          "License"
+          "Troubleshooting"
         ]
       },
-      "template": "docs/99.templates/templates/common/readme.template.md",
+      "template": "docs/99.templates/templates/common/readme-implementation.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
       "appendContract": null
@@ -2033,77 +1818,24 @@
       "statusDomain": [],
       "headings": {
         "required": [
-          "Selection Guide",
-          "docs 디렉터리 상세 역할",
-          "Assembly Rules",
-          "Writing Principles",
           "Overview",
-          "Audience",
-          "Scope",
-          "Structure",
-          "How to Work in This Area",
-          "Link Basis",
-          "Related Documents",
-          "SNIPPET LIBRARY",
-          "Repository Map",
-          "Tech Stack",
-          "Prerequisites",
-          "Getting Started",
-          "Available Scripts",
-          "Configuration",
-          "Testing",
-          "Change Impact",
-          "Documentation Standards",
-          "Traceability Rules",
-          "Template Usage",
-          "Metadata Expectations",
-          "SSoT References",
-          "Usage Instructions",
-          "Verification and Monitoring",
-          "Incident and Recovery Links",
-          "Record Purpose",
-          "Expected Record Shape",
-          "Review Expectations",
-          "AI Agent Guidance",
-          "License"
+          "Snapshot Contract",
+          "Report Index",
+          "Refresh and Succession",
+          "Evidence Boundary",
+          "Related Documents"
         ],
         "allowed": [
-          "Selection Guide",
-          "docs 디렉터리 상세 역할",
-          "Assembly Rules",
-          "Writing Principles",
           "Overview",
-          "Audience",
-          "Scope",
-          "Structure",
-          "How to Work in This Area",
-          "Link Basis",
+          "Snapshot Contract",
+          "Report Index",
+          "Refresh and Succession",
+          "Evidence Boundary",
           "Related Documents",
-          "SNIPPET LIBRARY",
-          "Repository Map",
-          "Tech Stack",
-          "Prerequisites",
-          "Getting Started",
-          "Available Scripts",
-          "Configuration",
-          "Testing",
-          "Change Impact",
-          "Documentation Standards",
-          "Traceability Rules",
-          "Template Usage",
-          "Metadata Expectations",
-          "SSoT References",
-          "Usage Instructions",
-          "Verification and Monitoring",
-          "Incident and Recovery Links",
-          "Record Purpose",
-          "Expected Record Shape",
-          "Review Expectations",
-          "AI Agent Guidance",
-          "License"
+          "Method"
         ]
       },
-      "template": "docs/99.templates/templates/common/readme.template.md",
+      "template": "docs/99.templates/templates/common/readme-snapshot-pack.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
       "appendContract": null
@@ -2127,77 +1859,23 @@
       "statusDomain": [],
       "headings": {
         "required": [
-          "Selection Guide",
-          "docs 디렉터리 상세 역할",
-          "Assembly Rules",
-          "Writing Principles",
           "Overview",
-          "Audience",
-          "Scope",
-          "Structure",
-          "How to Work in This Area",
-          "Link Basis",
-          "Related Documents",
-          "SNIPPET LIBRARY",
-          "Repository Map",
-          "Tech Stack",
-          "Prerequisites",
-          "Getting Started",
-          "Available Scripts",
-          "Configuration",
-          "Testing",
-          "Change Impact",
-          "Documentation Standards",
-          "Traceability Rules",
-          "Template Usage",
-          "Metadata Expectations",
-          "SSoT References",
-          "Usage Instructions",
-          "Verification and Monitoring",
-          "Incident and Recovery Links",
-          "Record Purpose",
-          "Expected Record Shape",
-          "Review Expectations",
-          "AI Agent Guidance",
-          "License"
+          "Permitted Artifacts",
+          "Forbidden Local State",
+          "Promotion and Cleanup",
+          "Tracking Rules",
+          "Related Documents"
         ],
         "allowed": [
-          "Selection Guide",
-          "docs 디렉터리 상세 역할",
-          "Assembly Rules",
-          "Writing Principles",
           "Overview",
-          "Audience",
-          "Scope",
-          "Structure",
-          "How to Work in This Area",
-          "Link Basis",
-          "Related Documents",
-          "SNIPPET LIBRARY",
-          "Repository Map",
-          "Tech Stack",
-          "Prerequisites",
-          "Getting Started",
-          "Available Scripts",
-          "Configuration",
-          "Testing",
-          "Change Impact",
-          "Documentation Standards",
-          "Traceability Rules",
-          "Template Usage",
-          "Metadata Expectations",
-          "SSoT References",
-          "Usage Instructions",
-          "Verification and Monitoring",
-          "Incident and Recovery Links",
-          "Record Purpose",
-          "Expected Record Shape",
-          "Review Expectations",
-          "AI Agent Guidance",
-          "License"
+          "Permitted Artifacts",
+          "Forbidden Local State",
+          "Promotion and Cleanup",
+          "Tracking Rules",
+          "Related Documents"
         ]
       },
-      "template": "docs/99.templates/templates/common/readme.template.md",
+      "template": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
       "appendContract": null
@@ -2600,12 +2278,259 @@
         ]
       },
       "template": "docs/99.templates/templates/common/readme.template.md",
+      "sourceProfileIds": [],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/readme/repository",
+      "class": "readme",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/common/readme-repository.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [
+          "Overview",
+          "Repository Map",
+          "Getting Started",
+          "Validation",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Repository Map",
+          "Getting Started",
+          "Validation",
+          "Related Documents",
+          "Prerequisites",
+          "Configuration",
+          "Security Boundary"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/readme-repository.template.md",
       "sourceProfileIds": [
-        "readme/repository",
-        "readme/stage-index",
-        "readme/collection-index",
-        "readme/implementation",
-        "readme/snapshot-pack",
+        "readme/repository"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/readme/stage-index",
+      "class": "readme",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/common/readme-stage-index.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [
+          "Overview",
+          "Stage Contract",
+          "Document Index",
+          "Authoring Workflow",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Stage Contract",
+          "Document Index",
+          "Authoring Workflow",
+          "Related Documents",
+          "Lifecycle Handoff"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/readme-stage-index.template.md",
+      "sourceProfileIds": [
+        "readme/stage-index"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/readme/collection-index",
+      "class": "readme",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/common/readme-collection-index.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [
+          "Overview",
+          "Scope",
+          "Item Index",
+          "Add and Find",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Scope",
+          "Item Index",
+          "Add and Find",
+          "Related Documents",
+          "Selection Rules"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/readme-collection-index.template.md",
+      "sourceProfileIds": [
+        "readme/collection-index"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/readme/implementation",
+      "class": "readme",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/common/readme-implementation.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [
+          "Overview",
+          "Structure",
+          "Configuration Boundary",
+          "Validation",
+          "Operations",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Structure",
+          "Configuration Boundary",
+          "Validation",
+          "Operations",
+          "Related Documents",
+          "Prerequisites",
+          "Troubleshooting"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/readme-implementation.template.md",
+      "sourceProfileIds": [
+        "readme/implementation"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/readme/snapshot-pack",
+      "class": "readme",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/common/readme-snapshot-pack.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [
+          "Overview",
+          "Snapshot Contract",
+          "Report Index",
+          "Refresh and Succession",
+          "Evidence Boundary",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Snapshot Contract",
+          "Report Index",
+          "Refresh and Succession",
+          "Evidence Boundary",
+          "Related Documents",
+          "Method"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/readme-snapshot-pack.template.md",
+      "sourceProfileIds": [
+        "readme/snapshot-pack"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/readme/workspace-staging",
+      "class": "readme",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/common/readme-workspace-staging.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "forbidden",
+        "required": [],
+        "allowed": [],
+        "order": []
+      },
+      "statusDomain": [],
+      "headings": {
+        "required": [
+          "Overview",
+          "Permitted Artifacts",
+          "Forbidden Local State",
+          "Promotion and Cleanup",
+          "Tracking Rules",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Permitted Artifacts",
+          "Forbidden Local State",
+          "Promotion and Cleanup",
+          "Tracking Rules",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
+      "sourceProfileIds": [
         "readme/workspace-staging"
       ],
       "placeholderPolicy": "template-only",

@@ -41,6 +41,12 @@ templates/
 │   ├── governance-reference.template.md
 │   ├── memory.template.md
 │   ├── progress.template.md
+│   ├── readme-collection-index.template.md
+│   ├── readme-implementation.template.md
+│   ├── readme-repository.template.md
+│   ├── readme-snapshot-pack.template.md
+│   ├── readme-stage-index.template.md
+│   ├── readme-workspace-staging.template.md
 │   ├── readme.template.md
 │   ├── reference.template.md
 │   └── template-support.template.md

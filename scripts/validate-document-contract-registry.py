@@ -29,6 +29,13 @@ from document_contracts import (
 
 SAMPLE_PATH = PurePosixPath(".agents/GEMINI.md")
 FIXTURE_PATH = PurePosixPath("tests/fixtures/document-contracts/registry-cases.json")
+README_FIXTURE_PATH = PurePosixPath(
+    "tests/fixtures/document-contracts/readme-profile-cases.json"
+)
+DETACHED_README_PROFILE_ID = "template/readme/common"
+DETACHED_README_TEMPLATE_PATH = PurePosixPath(
+    "docs/99.templates/templates/common/readme.template.md"
+)
 EXPECTED_CASES = (
     ("valid-minimal", "none", ()),
     ("duplicate-profile-id", "duplicate-profile-id", ("REGISTRY_PROFILE_ID",)),
@@ -83,7 +90,13 @@ DOCUMENT_PROFILE_CONTRACT_V1 = {
         "template/governance/memory",
         "template/governance/reference",
         "template/governance/template-support",
+        "template/readme/collection-index",
         "template/readme/common",
+        "template/readme/implementation",
+        "template/readme/repository",
+        "template/readme/snapshot-pack",
+        "template/readme/stage-index",
+        "template/readme/workspace-staging",
         "template/sdlc/adr",
         "template/sdlc/agent-design",
         "template/sdlc/api-spec",
@@ -101,7 +114,7 @@ DOCUMENT_PROFILE_CONTRACT_V1 = {
         "template/sdlc/tests",
     ),
     "semantic_sha256": (
-        "66965bb7a848a0b62b7007bbaebe453d4c8baa0c5631a73e7ecd444ee5755da7"  # pragma: allowlist secret
+        "da820a4adc06353c3f3439d0eb72e718e8d0fd47f82b004a187f411437ac7122"  # pragma: allowlist secret
     ),
 }
 DOCUMENT_PROFILE_CONTRACT_V1_FIELDS = (
@@ -556,6 +569,7 @@ def _assert_positive_coverage(
         )
 
     covered_template_profiles: set[str] = set()
+    ordinary_source_less_profiles: list[str] = []
     append_profiles: set[str] = set()
     for row in template_coverage:
         path = PurePosixPath(row["path"])
@@ -606,9 +620,22 @@ def _assert_positive_coverage(
                 )
             continue
         if not profile.source_profile_ids:
-            raise AssertionError(
-                f"{profile.profile_id}: ordinary template must declare a source profile"
-            )
+            # RWP-006 removes this exact detached compatibility form and this
+            # exemption atomically. No other ordinary source-less template is valid.
+            if not (
+                profile.profile_id == DETACHED_README_PROFILE_ID
+                and path == DETACHED_README_TEMPLATE_PATH
+                and profile.template == DETACHED_README_TEMPLATE_PATH
+                and len(profile.routes) == 1
+                and profile.routes[0].kind == "exact"
+                and profile.routes[0].value
+                == DETACHED_README_TEMPLATE_PATH.as_posix()
+            ):
+                raise AssertionError(
+                    f"{profile.profile_id}: ordinary template must declare a source profile"
+                )
+            ordinary_source_less_profiles.append(profile.profile_id)
+            continue
         for source_id in profile.source_profile_ids:
             source = profiles.get(source_id)
             if source is None:
@@ -632,17 +659,22 @@ def _assert_positive_coverage(
                     f"{profile.profile_id}: inherited contract differs from {source_id}"
                 )
 
-        if profile.profile_id == "template/readme/common":
-            readme_profile_ids = {
-                candidate.profile_id
-                for candidate in registry.profiles
-                if candidate.profile_class == "readme"
-                and candidate.mode == "frontmatter-free"
-            }
-            if set(profile.source_profile_ids) != readme_profile_ids:
-                raise AssertionError(
-                    "template/readme/common must source all six README profiles"
-                )
+    if ordinary_source_less_profiles != [DETACHED_README_PROFILE_ID]:
+        raise AssertionError(
+            "RWP-006 detached README form must be the sole ordinary "
+            f"source-less template: {ordinary_source_less_profiles!r}"
+        )
+    old_form_consumers = sorted(
+        candidate.profile_id
+        for candidate in registry.profiles
+        if candidate.mode in {"authored", "frontmatter-free"}
+        and candidate.template == DETACHED_README_TEMPLATE_PATH
+    )
+    if old_form_consumers:
+        raise AssertionError(
+            "RWP-006 detached README form remains referenced by authored profiles: "
+            f"{old_form_consumers!r}"
+        )
 
     declared_template_profiles = {
         profile.profile_id for profile in registry.profiles if profile.mode == "template"
@@ -656,6 +688,79 @@ def _assert_positive_coverage(
             "governance/progress-entry must be the sole append-contract template"
         )
     return len(coverage), len(template_coverage)
+
+
+def _assert_readme_family_contract(root: Path, registry: Any) -> tuple[int, int]:
+    fixture = _load_json(root / README_FIXTURE_PATH)
+    paths = fixture.get("paths")
+    cases = fixture.get("cases")
+    if fixture.get("schemaVersion") != 1 or not isinstance(paths, list):
+        raise AssertionError("README profile fixture schema mismatch")
+    if not isinstance(cases, list):
+        raise AssertionError("README profile fixture cases must be an array")
+
+    path_keys = {"path", "profile", "requiredH2", "allowedH2", "new"}
+    declared_paths: set[PurePosixPath] = set()
+    baseline_count = 0
+    for row in paths:
+        if not isinstance(row, dict) or set(row) != path_keys:
+            raise AssertionError(f"invalid README fixture path row: {row!r}")
+        path = PurePosixPath(row["path"])
+        if path in declared_paths:
+            raise AssertionError(f"duplicate README fixture path: {path}")
+        declared_paths.add(path)
+        profile = classify_path(registry, path)
+        if profile.profile_id != row["profile"]:
+            raise AssertionError(
+                f"{path}: README fixture profile {row['profile']!r} differs "
+                f"from registry {profile.profile_id!r}"
+            )
+        if not (
+            profile.profile_id.startswith("readme/")
+            and profile.profile_class == "readme"
+            and profile.mode == "frontmatter-free"
+        ):
+            raise AssertionError(f"{path}: README fixture selected a non-authored profile")
+        if list(profile.headings.required) != row["requiredH2"]:
+            raise AssertionError(f"{path}: README required headings differ from registry")
+        if list(profile.headings.allowed) != row["allowedH2"]:
+            raise AssertionError(f"{path}: README allowed headings differ from registry")
+        if not isinstance(row["new"], bool):
+            raise AssertionError(f"{path}: README new flag must be boolean")
+        baseline_count += row["new"] is False
+
+    case_keys = {"name", "path", "document", "expected_rule_ids"}
+    expected_cases = {
+        "valid-profile": (),
+        "frontmatter-forbidden": ("README_FRONTMATTER",),
+        "duplicate-h1": ("README_H1",),
+        "duplicate-h2": ("README_H2_DUPLICATE",),
+        "unsupported-h2": ("README_H2_UNSUPPORTED",),
+        "missing-required-h2": ("README_H2_REQUIRED",),
+        "fenced-heading-ignored": (),
+        "unclosed-fence": ("README_FENCE",),
+    }
+    case_names: list[str] = []
+    for case in cases:
+        if not isinstance(case, dict) or set(case) != case_keys:
+            raise AssertionError(f"invalid README fixture case: {case!r}")
+        case_names.append(case["name"])
+        if not isinstance(case["document"], str) or not case["document"]:
+            raise AssertionError(f"README fixture case has invalid document: {case!r}")
+        if PurePosixPath(case["path"]) not in declared_paths:
+            raise AssertionError(f"README fixture case has undeclared path: {case['path']}")
+        actual_rule_ids = case["expected_rule_ids"]
+        if not isinstance(actual_rule_ids, list) or tuple(actual_rule_ids) != expected_cases.get(case["name"]):
+            raise AssertionError(
+                f"README fixture case rule IDs differ for {case['name']!r}"
+            )
+    if len(case_names) != len(set(case_names)) or set(case_names) != set(expected_cases):
+        raise AssertionError("README fixture case names differ from the eight-case contract")
+    if baseline_count != 67 or len(declared_paths) != 72:
+        raise AssertionError(
+            "README fixture must declare baseline 67 and final 72 paths"
+        )
+    return baseline_count, len(declared_paths)
 
 
 def _self_test(root: Path) -> int:
@@ -704,6 +809,9 @@ def _self_test(root: Path) -> int:
         profile_count, template_count = _assert_positive_coverage(
             root, raw_registry, fixture
         )
+        _assert_readme_family_contract(
+            root, validate_registry(root, raw_registry)
+        )
         if profile_count != contract_profile_count:
             raise AssertionError(
                 "profileCoverage count differs from DocumentProfileContract.v1"
@@ -734,10 +842,15 @@ def main() -> int:
 
     try:
         registry = load_registry(root)
-        if args.profile and args.profile not in {
-            profile.profile_id for profile in registry.profiles
-        }:
+        profile_ids = {profile.profile_id for profile in registry.profiles}
+        is_readme_family = args.profile == "readme"
+        if args.profile and not is_readme_family and args.profile not in profile_ids:
             raise ValueError(f"unknown profile: {args.profile}")
+        readme_counts = (
+            _assert_readme_family_contract(root, registry)
+            if is_readme_family
+            else None
+        )
         inventory = enumerate_target_markdown(
             root, include_paths=tuple(args.include_path)
         )
@@ -745,7 +858,7 @@ def main() -> int:
         for diagnostic in exc.diagnostics:
             _print_diagnostic(diagnostic)
         return 1
-    except (OSError, ValueError, subprocess.SubprocessError) as exc:
+    except (AssertionError, OSError, ValueError, subprocess.SubprocessError) as exc:
         print(f"FAIL document contract registry: {exc}")
         return 1
 
@@ -771,10 +884,28 @@ def main() -> int:
 
     selected_count = len(inventory.current_paths)
     if args.profile:
-        selected_count = sum(
-            classify_path(registry, path).profile_id == args.profile
-            for path in inventory.current_paths
-        )
+        if args.profile == "readme":
+            readme_profile_ids = {
+                profile.profile_id
+                for profile in registry.profiles
+                if profile.profile_id.startswith("readme/")
+                and profile.profile_class == "readme"
+                and profile.mode == "frontmatter-free"
+            }
+            selected_count = sum(
+                classify_path(registry, path).profile_id in readme_profile_ids
+                for path in inventory.current_paths
+            )
+            baseline_count, declared_final_count = readme_counts
+            print(
+                f"README baseline={baseline_count} current={selected_count} "
+                f"declared_final={declared_final_count} uncovered=0 ambiguous=0"
+            )
+        else:
+            selected_count = sum(
+                classify_path(registry, path).profile_id == args.profile
+                for path in inventory.current_paths
+            )
     print(
         f"PASS document contract registry: {selected_count} paths "
         f"({args.mode}, tracked-only plus explicit includes)"

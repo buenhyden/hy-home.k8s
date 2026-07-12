@@ -54,6 +54,12 @@
 │   │   ├── governance-reference.template.md
 │   │   ├── memory.template.md
 │   │   ├── progress.template.md
+│   │   ├── readme-collection-index.template.md
+│   │   ├── readme-implementation.template.md
+│   │   ├── readme-repository.template.md
+│   │   ├── readme-snapshot-pack.template.md
+│   │   ├── readme-stage-index.template.md
+│   │   ├── readme-workspace-staging.template.md
 │   │   ├── readme.template.md
 │   │   ├── reference.template.md
 │   │   └── template-support.template.md
@@ -156,7 +162,13 @@ governance, routing, frontmatter schema, legacy cleanup rule을 소유한다.
 
 | Target Pattern                                                           | Template Path                                                              | Responsibility                                                          |
 | ------------------------------------------------------------------------ | -------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `README.md`, `**/README.md`, `.claude/README.md`, `.codex/README.md`     | `templates/common/readme.template.md`                                      | Entry point, scope, structure, workflow, link basis, related documents  |
+| Registry `readme/repository` routes                                     | `templates/common/readme-repository.template.md`                           | Repository purpose, map, setup, validation, and owner links             |
+| Registry `readme/stage-index` routes                                    | `templates/common/readme-stage-index.template.md`                          | Stage contract, contained-document index, and authoring handoff          |
+| Registry `readme/collection-index` routes                               | `templates/common/readme-collection-index.template.md`                     | Collection scope, item inventory, and add/find workflow                  |
+| Registry `readme/implementation` routes                                 | `templates/common/readme-implementation.template.md`                       | Component structure, configuration, validation, and operations          |
+| Registry `readme/snapshot-pack` routes                                  | `templates/common/readme-snapshot-pack.template.md`                        | Snapshot boundary, report index, refresh, succession, and evidence      |
+| Registry `readme/workspace-staging` routes                              | `templates/common/readme-workspace-staging.template.md`                    | Temporary non-secret staging, promotion, cleanup, and tracking          |
+| Detached compatibility form; no authored route; removal owner RWP-006   | `templates/common/readme.template.md`                                      | Bounded transition state only                                           |
 | `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`                 | `templates/sdlc/requirements/prd.template.md`                              | Product requirements, users, scope, success / acceptance criteria       |
 | `docs/02.architecture/requirements/####-<system-or-domain>.md`           | `templates/sdlc/architecture/ard.template.md`                              | Architecture requirements, quality attributes, reference model          |
 | `docs/02.architecture/decisions/####-<short-title>.md`                   | `templates/sdlc/architecture/adr.template.md`                              | One architecture decision, context, consequences, alternatives          |

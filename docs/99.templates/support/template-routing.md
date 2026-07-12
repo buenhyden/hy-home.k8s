@@ -53,15 +53,22 @@ and the temporary compatibility mirror below, not the route facts themselves.
 ## Current Route Map
 
 The [Document Profile Registry](./document-profiles.json) is the sole machine
-owner. The following non-authoritative compatibility mirror remains only while
-the existing Stage 99 README and embedded quality-gate comparison stay active
-through Spec 030. The quality gate verifies this mirror against the migration
-contract; maintainers must not expand or hand-edit it beyond that consumer's
-requirements:
+owner. The following non-authoritative compatibility mirror exposes each
+README profile form by registry ID. The old common form is detached from all
+authored profiles and remains only as bounded transition state until RWP-006
+removes its file, profile, fixture rows, and exact validator exemptions. The
+quality gate verifies this mirror against the migration contract; maintainers
+must not copy path inventories out of the registry into this table.
 
 | Target Pattern | Template Path |
 | --- | --- |
-| `README.md`, `**/README.md`, `.claude/README.md`, `.codex/README.md` | `templates/common/readme.template.md` |
+| Registry `readme/repository` routes | `templates/common/readme-repository.template.md` |
+| Registry `readme/stage-index` routes | `templates/common/readme-stage-index.template.md` |
+| Registry `readme/collection-index` routes | `templates/common/readme-collection-index.template.md` |
+| Registry `readme/implementation` routes | `templates/common/readme-implementation.template.md` |
+| Registry `readme/snapshot-pack` routes | `templates/common/readme-snapshot-pack.template.md` |
+| Registry `readme/workspace-staging` routes | `templates/common/readme-workspace-staging.template.md` |
+| Detached compatibility form; no authored route; removal owner RWP-006 | `templates/common/readme.template.md` |
 | `docs/01.requirements/<###-Numbering>-<feature-or-system>.md` | `templates/sdlc/requirements/prd.template.md` |
 | `docs/02.architecture/requirements/####-<system-or-domain>.md` | `templates/sdlc/architecture/ard.template.md` |
 | `docs/02.architecture/decisions/####-<short-title>.md` | `templates/sdlc/architecture/adr.template.md` |
@@ -85,9 +92,9 @@ requirements:
 | `docs/00.agent-governance/memory/<topic>.md` | `templates/common/memory.template.md` |
 | `docs/00.agent-governance/memory/progress.md` | `templates/common/progress.template.md` |
 
-Feature-local indexes such as `docs/03.specs/<###-Numbering>-<feature-id>/README.md` use the
-generic README route. Do not add a second structural README route for a nested
-README target.
+Feature-local indexes such as `docs/03.specs/<###-Numbering>-<feature-id>/README.md`
+must resolve through exactly one `readme/*` registry profile. Do not add a
+second structural route for a nested README target.
 
 The memory `<topic>` placeholder excludes `progress`; `progress.md` is an
 exact reserved route owned by `templates/common/progress.template.md`.

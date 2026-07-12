@@ -868,6 +868,12 @@ for scan_root in markdown_link_roots:
 template_readme = read_text(root / "docs/99.templates/README.md")
 template_locations = {
     "readme.template.md": "templates/common/readme.template.md",
+    "readme-collection-index.template.md": "templates/common/readme-collection-index.template.md",
+    "readme-implementation.template.md": "templates/common/readme-implementation.template.md",
+    "readme-repository.template.md": "templates/common/readme-repository.template.md",
+    "readme-snapshot-pack.template.md": "templates/common/readme-snapshot-pack.template.md",
+    "readme-stage-index.template.md": "templates/common/readme-stage-index.template.md",
+    "readme-workspace-staging.template.md": "templates/common/readme-workspace-staging.template.md",
     "reference.template.md": "templates/common/reference.template.md",
     "archive-tombstone.template.md": "templates/common/archive-tombstone.template.md",
     "governance-reference.template.md": "templates/common/governance-reference.template.md",
@@ -1007,7 +1013,16 @@ for template_name, expected_type in sorted(template_expected_types.items()):
             expected_type,
             expected_status=expected_status,
         )
-for frontmatter_free_template_name in ["readme.template.md", "progress.template.md"]:
+for frontmatter_free_template_name in [
+    "readme.template.md",
+    "readme-collection-index.template.md",
+    "readme-implementation.template.md",
+    "readme-repository.template.md",
+    "readme-snapshot-pack.template.md",
+    "readme-stage-index.template.md",
+    "readme-workspace-staging.template.md",
+    "progress.template.md",
+]:
     frontmatter_free_path = template_path(frontmatter_free_template_name)
     if has_markdown_frontmatter(frontmatter_free_path):
         fail(f"{rel(frontmatter_free_path)} must remain frontmatter-free")
@@ -1025,7 +1040,7 @@ registry_profiles = {
 TEMPLATE_COMPATIBILITY_CONTRACT_V1 = {
     "name": "TemplateCompatibilityContract.v1",
     "semantic_sha256": (
-        "2d55eb8a37afc8cf620c2a44a171862cfe121537925bbb48c9b7f2a8445a2271"  # pragma: allowlist secret
+        "81c5bb77edbfbc6106cb5c543ef54d9611ef258e6911b60ec064eac2ad5bcc3f"  # pragma: allowlist secret
     ),
 }
 
@@ -1229,6 +1244,9 @@ for row in canonical_form_rows:
 
 template_mode_rows = template_compatibility.get("templateModeCoverage", [])
 template_mode_paths = [row.get("form") for row in template_mode_rows]
+detached_readme_profile_id = "template/readme/common"
+detached_readme_form = "docs/99.templates/templates/common/readme.template.md"
+ordinary_source_less_profiles = []
 comment_only_template_heading_prefixes = {
     "template/readme/common": [
         "Selection Guide",
@@ -1283,6 +1301,20 @@ for row in template_mode_rows:
     else:
         if row["appendContract"] is not None:
             fail(f"{row['profile']} non-progress template must not append")
+        if not row["sourceProfiles"]:
+            # RWP-006 removes this exact detached compatibility form and this
+            # exemption atomically. No other ordinary source-less form is valid.
+            if not (
+                row["profile"] == detached_readme_profile_id
+                and row["form"] == detached_readme_form
+                and profile["routes"]
+                == [{"kind": "exact", "value": detached_readme_form}]
+                and profile["template"] == detached_readme_form
+            ):
+                fail(
+                    f"{row['profile']} ordinary template must declare source profiles"
+                )
+            ordinary_source_less_profiles.append(row["profile"])
         form_headings = [
             text
             for level, text in extract_markdown_headings(
@@ -1304,6 +1336,23 @@ for row in template_mode_rows:
             for field in ("frontmatter", "statusDomain", "headings"):
                 if profile[field] != source[field]:
                     fail(f"{row['profile']} {field} must equal {source_id}")
+
+if ordinary_source_less_profiles != [detached_readme_profile_id]:
+    fail(
+        "RWP-006 detached README form must be the sole ordinary source-less "
+        f"template: {ordinary_source_less_profiles}"
+    )
+old_form_consumers = sorted(
+    profile_id
+    for profile_id, profile in registry_profiles.items()
+    if profile["mode"] in {"authored", "frontmatter-free"}
+    and profile["template"] == detached_readme_form
+)
+if old_form_consumers:
+    fail(
+        "RWP-006 detached README form remains referenced by authored profiles: "
+        f"{old_form_consumers}"
+    )
 
 compatibility_rows = template_compatibility.get("compatibilityDebt", [])
 compatibility_profile_ids = [row.get("profile") for row in compatibility_rows]
@@ -1752,10 +1801,18 @@ required_stage_templates = [
 expected_structural_route_pairs = set(required_stage_templates)
 actual_structural_route_pairs: set[tuple[str, str]] = set()
 actual_native_contract_routes: set[tuple[str, str]] = set()
-expected_readme_targets = ("README.md", "**/README.md", ".claude/README.md", ".codex/README.md")
+expected_readme_profile_templates = {
+    "readme/repository": "readme-repository.template.md",
+    "readme/stage-index": "readme-stage-index.template.md",
+    "readme/collection-index": "readme-collection-index.template.md",
+    "readme/implementation": "readme-implementation.template.md",
+    "readme/snapshot-pack": "readme-snapshot-pack.template.md",
+    "readme/workspace-staging": "readme-workspace-staging.template.md",
+}
 expected_memory_target = ("docs/00.agent-governance/memory/<topic>.md",)
 expected_progress_target = ("docs/00.agent-governance/memory/progress.md",)
-seen_readme_route = False
+seen_readme_profile_routes: dict[str, str] = {}
+seen_detached_readme_compatibility = False
 seen_memory_route = False
 seen_progress_route = False
 
@@ -1766,10 +1823,27 @@ for target_pattern, template_path_text in template_readme_route_pairs:
         continue
     template_name = pathlib.Path(template_matches[0]).name
     target_matches = tuple(re.findall(r"`([^`]+)`", target_pattern))
+    if template_name in expected_readme_profile_templates.values():
+        if len(target_matches) != 1:
+            fail(f"README profile route must name one registry profile: {target_pattern}")
+            continue
+        profile_id = target_matches[0]
+        expected_template = expected_readme_profile_templates.get(profile_id)
+        if expected_template != template_name:
+            fail(
+                f"README profile route differs from registry form mapping: "
+                f"{profile_id} -> {template_name}"
+            )
+            continue
+        seen_readme_profile_routes[profile_id] = template_name
+        continue
     if template_name == "readme.template.md":
-        if target_matches != expected_readme_targets:
-            fail(f"README template route must target only the canonical README set: {target_pattern}")
-        seen_readme_route = True
+        if target_matches or "RWP-006" not in target_pattern:
+            fail(
+                "detached README compatibility route must have no authored "
+                "target and name RWP-006"
+            )
+        seen_detached_readme_compatibility = True
         continue
     if template_name == "memory.template.md":
         if target_matches != expected_memory_target:
@@ -1799,8 +1873,13 @@ for target_pattern, template_path_text in template_readme_route_pairs:
         continue
     fail(f"template route is not covered by structural or native validator mapping: {target_pattern} -> {template_name}")
 
-if not seen_readme_route:
-    fail("Template-Folder Mapping missing canonical README route")
+if seen_readme_profile_routes != expected_readme_profile_templates:
+    fail(
+        "Template-Folder Mapping must expose all six README profile forms: "
+        f"{seen_readme_profile_routes}"
+    )
+if not seen_detached_readme_compatibility:
+    fail("Template-Folder Mapping missing bounded detached README compatibility form")
 if not seen_memory_route:
     fail("Template-Folder Mapping missing canonical governance memory route")
 if not seen_progress_route:

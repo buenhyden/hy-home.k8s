@@ -284,6 +284,30 @@
     {
       "path": "docs/99.templates/templates/common/progress.template.md",
       "profile": "governance/progress-entry"
+    },
+    {
+      "path": "docs/99.templates/templates/common/readme-repository.template.md",
+      "profile": "template/readme/repository"
+    },
+    {
+      "path": "docs/99.templates/templates/common/readme-stage-index.template.md",
+      "profile": "template/readme/stage-index"
+    },
+    {
+      "path": "docs/99.templates/templates/common/readme-collection-index.template.md",
+      "profile": "template/readme/collection-index"
+    },
+    {
+      "path": "docs/99.templates/templates/common/readme-implementation.template.md",
+      "profile": "template/readme/implementation"
+    },
+    {
+      "path": "docs/99.templates/templates/common/readme-snapshot-pack.template.md",
+      "profile": "template/readme/snapshot-pack"
+    },
+    {
+      "path": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
+      "profile": "template/readme/workspace-staging"
     }
   ],
   "templateCoverage": [
@@ -374,6 +398,30 @@
     {
       "path": "docs/99.templates/templates/sdlc/specs/tests.template.md",
       "profile": "template/sdlc/tests"
+    },
+    {
+      "path": "docs/99.templates/templates/common/readme-repository.template.md",
+      "profile": "template/readme/repository"
+    },
+    {
+      "path": "docs/99.templates/templates/common/readme-stage-index.template.md",
+      "profile": "template/readme/stage-index"
+    },
+    {
+      "path": "docs/99.templates/templates/common/readme-collection-index.template.md",
+      "profile": "template/readme/collection-index"
+    },
+    {
+      "path": "docs/99.templates/templates/common/readme-implementation.template.md",
+      "profile": "template/readme/implementation"
+    },
+    {
+      "path": "docs/99.templates/templates/common/readme-snapshot-pack.template.md",
+      "profile": "template/readme/snapshot-pack"
+    },
+    {
+      "path": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
+      "profile": "template/readme/workspace-staging"
     }
   ]
 }

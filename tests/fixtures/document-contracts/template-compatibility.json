@@ -932,12 +932,59 @@
     {
       "profile": "template/readme/common",
       "form": "docs/99.templates/templates/common/readme.template.md",
+      "sourceProfiles": [],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/readme/repository",
+      "form": "docs/99.templates/templates/common/readme-repository.template.md",
       "sourceProfiles": [
-        "readme/repository",
-        "readme/stage-index",
-        "readme/collection-index",
-        "readme/implementation",
-        "readme/snapshot-pack",
+        "readme/repository"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/readme/stage-index",
+      "form": "docs/99.templates/templates/common/readme-stage-index.template.md",
+      "sourceProfiles": [
+        "readme/stage-index"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/readme/collection-index",
+      "form": "docs/99.templates/templates/common/readme-collection-index.template.md",
+      "sourceProfiles": [
+        "readme/collection-index"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/readme/implementation",
+      "form": "docs/99.templates/templates/common/readme-implementation.template.md",
+      "sourceProfiles": [
+        "readme/implementation"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/readme/snapshot-pack",
+      "form": "docs/99.templates/templates/common/readme-snapshot-pack.template.md",
+      "sourceProfiles": [
+        "readme/snapshot-pack"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/readme/workspace-staging",
+      "form": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
+      "sourceProfiles": [
         "readme/workspace-staging"
       ],
       "placeholderPolicy": "template-only",

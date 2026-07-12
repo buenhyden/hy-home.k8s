@@ -39,7 +39,9 @@ tests/
 ├── fixtures/
 │   ├── agent-roster-currentness.json # Canonical roster validator self-test cases
 │   └── document-contracts/
-│       └── registry-cases.json        # Document registry contract cases
+│       ├── readme-profile-cases.json  # README route and semantic-validator handoff cases
+│       ├── registry-cases.json        # Document registry contract cases
+│       └── template-compatibility.json # Canonical template and migration-debt contract
 └── README.md                         # This file
 ```
 
@@ -71,6 +73,11 @@ tests/
   mutation과 정확한 기대 rule ID 목록을 담는다. 이 fixture는 비밀값을
   포함하지 않으며 registry/config self-test의 repo-static 입력으로만
   사용한다.
+- `tests/fixtures/document-contracts/readme-profile-cases.json`은 67개 baseline과
+  72개 final README 경로의 profile 및 heading disposition을 고정하고, Spec 029가
+  production parser로 실행해야 할 여덟 positive/negative 사례를 전달한다.
+- `tests/fixtures/document-contracts/template-compatibility.json`은 canonical form,
+  template-mode inheritance, authored migration debt의 no-growth 기준을 고정한다.
 - `tests/fixtures/agent-roster-currentness.json`은 이름이 정확히 `valid`,
   `missing-role`, `provider-mismatch`, `stale-count`, `bad-owner`인 사례 5개만
   허용한다. 각 이름의 mutation과 `expected_errors` 집합은 hardcoded
