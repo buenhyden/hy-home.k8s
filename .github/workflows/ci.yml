@@ -117,7 +117,7 @@ jobs:
           python-version: '3.x'
       - name: Install repository validation dependencies
         run: |
-          python -m pip install --disable-pip-version-check pyyaml
+          python -m pip install --disable-pip-version-check pyyaml jsonschema
       - name: Run repository quality gates
         run: |
           bash scripts/validate-repo-quality-gates.sh .

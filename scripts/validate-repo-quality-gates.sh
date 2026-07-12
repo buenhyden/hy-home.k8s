@@ -16,6 +16,14 @@ if ! python3 -c 'import yaml' >/dev/null 2>&1; then
   exit 1
 fi
 
+if ! python3 -c 'import jsonschema' >/dev/null 2>&1; then
+  echo "ERR python3 jsonschema package is required for repository quality validation" >&2
+  exit 1
+fi
+
+python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --root "$ROOT_DIR" --mode compatibility
+
 python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" \
   "$ROOT_DIR" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" "$ROOT_DIR"

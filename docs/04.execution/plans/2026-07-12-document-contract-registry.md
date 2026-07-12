@@ -1,7 +1,7 @@
 ---
 title: 'Document Contract Registry Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-07-12
 ---
@@ -352,10 +352,10 @@ exact task table:
 | Task ID | Description | Type | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- |
 | DCR-001 | Start reciprocal execution lineage | doc | Reciprocal-link assertion | platform | Done |
-| DCR-002 | Define schema and registry fixtures | contract | Schema fixture runner | platform | Queued |
-| DCR-003 | Implement loader and deterministic classifier | guardrail | Registry self-test | platform | Queued |
-| DCR-004 | Populate profiles and classify approved corpus | contract | 433-path compatibility result | platform | Queued |
-| DCR-005 | Integrate gate and close evidence | validation | Full QA bundle | platform | Queued |
+| DCR-002 | Define schema and registry fixtures | contract | Schema fixture runner | platform | Done |
+| DCR-003 | Implement loader and deterministic classifier | guardrail | Registry self-test | platform | Done |
+| DCR-004 | Populate profiles and classify approved corpus | contract | 433-path compatibility result | platform | Done |
+| DCR-005 | Integrate gate and close evidence | validation | Full QA bundle | platform | Done |
 ```
 
 Set this Plan to `status: active`; add `Plan` and `Task` links to Spec 026;
@@ -788,3 +788,4 @@ Expected: one closure commit and a clean focused diff.
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Spec**: [Document Contract Registry](../../03.specs/026-document-contract-registry/spec.md)
 - **Task**: [Document Contract Registry Task](../tasks/2026-07-12-document-contract-registry.md)
+- **Next Spec**: [Template Contract Consolidation](../../03.specs/027-template-contract-consolidation/spec.md)

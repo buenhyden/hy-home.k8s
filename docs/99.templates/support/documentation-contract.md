@@ -32,6 +32,10 @@ The template system has separate surfaces:
 
 ## Contract Rules
 
+- The machine-readable [Document Profile Registry](./document-profiles.json)
+  owns exact document routes, frontmatter key sets and states, heading sets, and
+  template paths. This support contract owns rationale and examples only; it
+  must not become a second machine contract.
 - README files are entrypoints and inventories. They should summarize where to
   find rules and route to canonical owners, not duplicate full contract bodies.
 - README files route readers to lifecycle contract owners instead of carrying
@@ -63,13 +67,13 @@ The template system has separate surfaces:
 
 ## Lifecycle Route Summary
 
-- Stage 01 PRDs use `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
-- Stage 03 specs use `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.
-- Stage 04 plans and tasks stay date-based execution records.
-- AWS/Azure example-local SDLC snapshot docs stay under
-  `examples/<provider>/docs/**` and reuse the matching SDLC role profile.
-- README files route readers to lifecycle contract owners instead of carrying
-  full governance bodies.
+The [Document Profile Registry](./document-profiles.json) is the canonical
+owner for the exact lifecycle, example-local, README, and exception routes and
+their template mappings. At the support layer, the durable rationale is that
+Stage 01 requirements and Stage 03 specifications use numbered lineage, Stage
+04 plans and tasks remain dated execution evidence, example-local cloud
+documents reuse SDLC role profiles without becoming active-stage owners, and
+README files remain navigation surfaces rather than governance bodies.
 
 The detailed lifecycle state table, PRD/Spec numbering lineage rule, handoff
 link expectations, and archive tombstone lifecycle rule are owned by

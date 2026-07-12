@@ -21,6 +21,11 @@ Each authored document path must map to exactly one template. Route ambiguity
 creates broken validation, duplicated contracts, and inconsistent authored
 documents.
 
+The machine-readable [Document Profile Registry](./document-profiles.json)
+owns every exact or anchored-regex route and its profile, heading, and template
+facts. This support document keeps the routing rationale, boundaries, and
+examples without serving as a second route map.
+
 ## Route Families
 
 | Family | Target Folder | Ownership |
@@ -34,13 +39,11 @@ documents.
 
 ## Lifecycle Route Summary
 
-- Stage 01 PRDs use `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
-- Stage 03 specs use `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.
-- Stage 04 plans and tasks stay date-based execution records.
-- AWS/Azure example-local SDLC snapshot docs reuse the matching SDLC template
-  family by document role while staying under `examples/<provider>/docs/**`.
-- README files route readers to lifecycle contract owners instead of carrying
-  full governance bodies.
+The registry owns the exact path patterns. The lifecycle rationale remains:
+requirements and specifications carry numbered lineage, plans and tasks remain
+dated execution evidence, example-local cloud snapshots reuse SDLC roles
+without becoming active-stage owners, and README files remain navigation
+surfaces rather than governance bodies.
 
 The SDLC lifecycle state table, numeric lineage rule, handoff links, and
 active-surface duplicate rule are owned by
@@ -48,6 +51,10 @@ active-surface duplicate rule are owned by
 path-to-template route map.
 
 ## Current Route Map
+
+The [Document Profile Registry](./document-profiles.json) is normative. The
+following compatibility mirror remains only while the existing Stage 99 README
+and embedded quality-gate comparison stay active through Spec 030:
 
 | Target Pattern | Template Path |
 | --- | --- |
@@ -84,14 +91,11 @@ exact reserved route owned by `templates/common/progress.template.md`.
 
 ## Explicit Non-routed Markdown Exceptions
 
-The following Markdown files are active repository control surfaces but are not
-authored stage documents and are not copied from a structural template:
-
-| Target | Contract |
-| --- | --- |
-| `.github/ABOUT.md` | GitHub configuration hub; frontmatter-free; routes policy detail to Stage 00, Stage 05, scripts, and workflow owners. |
-| `.github/PULL_REQUEST_TEMPLATE.md` | GitHub PR body template; frontmatter-free; checklist mirrors canonical governance and CI/QA owners. |
-| `.github/SECURITY.md` | GitHub security policy surface; frontmatter-free; vulnerability reporting body must remain GitHub-renderable. |
+The registry identifies the exact GitHub-native control paths as exception
+profiles. They remain active repository control surfaces rather than authored
+stage documents: the configuration hub routes policy detail to canonical
+owners, the pull-request template mirrors intake and CI/QA owners, and the
+security policy remains GitHub-renderable.
 
 Validators may check these files for frontmatter bans and stale currentness
 claims, but they must not require stage frontmatter or required template
@@ -107,23 +111,10 @@ tree. Non-README Markdown in those trees uses the matching SDLC frontmatter
 role and should align section names with the closest SDLC template without
 retaining template instructions or placeholders.
 
-Example-local mapping by path:
-
-| Target Pattern | Template Family |
-| --- | --- |
-| `examples/<provider>/docs/01.requirements/*.md` | `templates/sdlc/requirements/prd.template.md` |
-| `examples/<provider>/docs/02.architecture/requirements/*.md` | `templates/sdlc/architecture/ard.template.md` |
-| `examples/<provider>/docs/02.architecture/decisions/*.md` | `templates/sdlc/architecture/adr.template.md` |
-| `examples/<provider>/docs/03.specs/**/*.md` | `templates/sdlc/specs/spec.template.md` for parent specs unless a future feature-local helper route is documented. |
-| `examples/<provider>/docs/04.execution/plans/*.md` | `templates/sdlc/execution/plan.template.md` |
-| `examples/<provider>/docs/04.execution/tasks/*.md` | `templates/sdlc/execution/task.template.md` |
-| `examples/<provider>/docs/05.operations/guides/*.md` | `templates/sdlc/operations/guide.template.md` |
-| `examples/<provider>/docs/05.operations/policies/*.md` | `templates/sdlc/operations/policy.template.md` |
-| `examples/<provider>/docs/05.operations/runbooks/*.md` | `templates/sdlc/operations/runbook.template.md` |
-
-The `provider` placeholder is currently limited to `aws` and `azure`.
-README files under the example docs tree continue to use the generic README
-route and remain frontmatter-free.
+The registry owns the exact example-local path mappings and provider coverage.
+Conceptually, non-README example documents resolve by their SDLC role, while
+example README files remain frontmatter-free navigation. That distinction lets
+examples reuse structure without claiming current provider authority.
 
 ## Supplemental Task Starter
 
@@ -167,6 +158,7 @@ Historical progress entries may require an explicit allow-list.
 ## Related Documents
 
 - [Documentation Contract](./documentation-contract.md)
+- [Document Profile Registry](./document-profiles.json)
 - [SDLC Governance](./sdlc-governance.md)
 - [Common Documentation Governance](./common-documentation-governance.md)
 - [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
