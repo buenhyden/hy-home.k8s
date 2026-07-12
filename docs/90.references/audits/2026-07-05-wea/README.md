@@ -18,7 +18,7 @@ boundaries, or live operations procedure.
 - Scope: repository-backed comparison with the 2026-07-04 research benchmark
   at this pack's cutoff.
 
-## Audience
+### Audience
 
 This README is for:
 
@@ -27,7 +27,7 @@ This README is for:
 - Documentation Writers
 - AI Agents
 
-## Scope
+### Scope
 
 This pack covers workspace governance, harness and loop engineering, provider
 adapter implementation status, SDLC/CI/QA/formatting/automation evidence,
@@ -38,7 +38,7 @@ This pack does not prove live k3d, ArgoCD, Vault, ESO, Kubernetes, cloud,
 provider runtime, secret, deployment, paid-job, or external-service readiness.
 Those evidence lanes require separately approved operations or runtime tasks.
 
-## Structure
+### Structure
 
 ```text
 2026-07-05-wea/
@@ -49,7 +49,7 @@ Those evidence lanes require separately approved operations or runtime tasks.
 `-- implementation-roadmap-and-automation-opportunities.md
 ```
 
-## How to Work in This Area
+### How to Work in This Area
 
 1. Start from the parent Spec, Plan, task record, and 2026-07-04 research pack.
 2. Treat research references as benchmark context and repository files as local
@@ -59,7 +59,7 @@ Those evidence lanes require separately approved operations or runtime tasks.
 5. Record validation evidence in the Stage 04 task record when adding or
    refreshing a report.
 
-## Link Basis
+### Link Basis
 
 This README is located at
 `docs/90.references/audits/2026-07-05-wea/`.
@@ -80,7 +80,7 @@ This README is located at
 | [kubernetes-infrastructure-security.md](./kubernetes-infrastructure-security.md) | Historical | Kubernetes, infrastructure, GitOps, secrets, policy, network, supply-chain, and security audit. |
 | [implementation-roadmap-and-automation-opportunities.md](./implementation-roadmap-and-automation-opportunities.md) | Historical | Cross-report roadmap, priority matrix, automation candidates, and future task routing. |
 
-## Benchmark Sources
+### Benchmark Sources
 
 - [Workspace Governance Baseline Research](../../research/2026-07-04-wer/workspace-governance-baseline.md)
 - [Harness and Loop Engineering Research](../../research/2026-07-04-wer/harness-and-loop-engineering.md)
@@ -89,7 +89,7 @@ This README is located at
 - [Kubernetes Infrastructure Security Research](../../research/2026-07-04-wer/kubernetes-infrastructure-security.md)
 - [Automation Pipeline Workflow QA Research](../../research/2026-07-04-wer/automation-pipeline-workflow-qa.md)
 
-## Status Vocabulary
+### Status Vocabulary
 
 `Implemented`, `Partial`, `Gap`, and `Not in scope` are the only audit status
 values in this pack.
@@ -101,7 +101,7 @@ values in this pack.
 | `Gap` | The expected capability is relevant but no sufficient repo-backed implementation evidence was found. |
 | `Not in scope` | The capability is intentionally outside the workspace boundary or requires human-approved future work. |
 
-## Successor or Resolution
+## Refresh and Succession
 
 Successor: [2026-07-11 Workspace Engineering Implementation Audit](../2026-07-11-weia/README.md).
 
@@ -116,7 +116,7 @@ Successor: [2026-07-11 Workspace Engineering Implementation Audit](../2026-07-11
 - Evidence links should point to current repository owners, not historical
   snapshots unless the row is explicitly about history.
 
-## Review and Freshness
+### Review and Freshness
 
 - Review cadence: on source change
 - Last reviewed: 2026-07-05

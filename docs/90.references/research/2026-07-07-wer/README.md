@@ -16,7 +16,7 @@
 
 이 폴더는 설명용 참고 문서로서, 실제 실행 정책, CI 설정, 인프라 권한, 배포 승인 절차를 직접 정의하거나 변경하지 않는다.
 
-## Audience
+### Audience
 
 이 README의 주요 독자:
 
@@ -25,9 +25,9 @@
 - Documentation Writers
 - AI Agents
 
-## Scope
+### Scope
 
-### In Scope
+#### In Scope
 
 - `2026-07-07` dated pack의 2026-07-10 재검토 인덱스
 - 워크스페이스 거버넌스, 하네스/루프 엔지니어링, 프로바이더 구현 상태 분석
@@ -35,14 +35,14 @@
 - 쿠버네티스/인프라/보안 분석
 - 워크스페이스 에이전트와 `agency-agents` 간의 gap analysis
 
-### Out of Scope
+#### Out of Scope
 
 - 실 클러스터, 클라우드 리소스, Vault/ESO 런타임의 수정 및 생성
 - secrets/credentials 정보의 노출 및 직접 조회
 - 실제 GitHub remote 설정 또는 Actions 실행 방식 변경
 - 시장 분석 자료를 워크스페이스 운영의 절대적인 기준으로 삼는 행위
 
-## Structure
+### Structure
 
 ```text
 2026-07-07-wer/
@@ -57,7 +57,7 @@
 └── ai-agents-roster-and-gap-analysis.md    # 워크스페이스 AI 에이전트 로스터 및 gap analysis
 ```
 
-## Source Priority
+### Source Priority
 
 소스 간 내용 상충 시 다음 우선순위를 따른다:
 
@@ -73,17 +73,17 @@
 모델, provider, 표준, upstream 사실은 아래 고정 cutoff에 확인한 공식/primary
 source가 지배하며, cutoff 이후의 웹 페이지 변경을 이 스냅샷에 소급하지 않는다.
 
-## How to Work in This Pack
+### How to Work in This Pack
 
 1. 이 팩의 모든 수정 사항은 Parent Spec/Plan을 따르고, Stage 04 task에 증적을 남긴다.
 2. 새 문서는 [reference.template.md](../../../99.templates/templates/common/reference.template.md)를 준수하여 작성한다.
 3. 소스 체크 일자(Source checked)와 freshness trigger, 권한 경계를 매 문서마다 명확히 밝힌다.
 
-## How to Work in This Area
+### How to Work in This Area
 
 이 영역의 모든 작업은 위의 `How to Work in This Pack` 수칙을 따른다.
 
-## Link Basis
+### Link Basis
 
 이 README의 링크 기준 위치는 `docs/90.references/research/2026-07-07-wer/`이다.
 
@@ -93,7 +93,20 @@ source가 지배하며, cutoff 이후의 웹 페이지 변경을 이 스냅샷�
 - canonical stages 경로는 `../../../<stage>/`로 계산한다.
 - root level 소스는 `../../../../<path>`를 기준으로 삼는다.
 
-## Pack Index
+## Snapshot Contract
+
+- Pack role: Current research owner at this recorded cutoff.
+- Snapshot date: 2026-07-07.
+- Repository observation date: 2026-07-10.
+- Provider/model source cutoff: 2026-07-10 10:00 KST.
+- Later format-evidence addition: 2026-07-12.
+- Baseline revision: the external `agency-agents` snapshot is
+  `9f3e401ccd09aa0ee0ef8e015226d0647908e01e`; this index does not assign that
+  external SHA to the local repository.
+- Authority: dated research evidence only; current policy and implementation
+  remain with their canonical repository owners.
+
+## Report Index
 
 | Reference | Status | Role | Authority Boundary |
 | --- | --- | --- | --- |
@@ -106,7 +119,7 @@ source가 지배하며, cutoff 이후의 웹 페이지 변경을 이 스냅샷�
 | [document-type-format-and-evidence-contract.md](document-type-format-and-evidence-contract.md) | Current | 문서 타입별 외부 형식 근거, 채택·거부 결정, freshness trigger | 형식 결정 증적; route, Frontmatter schema, lifecycle 정본은 Stage 99가 소유 |
 | [ai-agents-roster-and-gap-analysis.md](ai-agents-roster-and-gap-analysis.md) | Current | 에이전트 로스터 비교 및 `agency-agents`와의 gap analysis | 로스터 및 gap 분석; 실제 local agent configuration은 Stage 00/harness가 소유 |
 
-## Model Source Cutoff
+### Model Source Cutoff
 
 - **Provider/model cutoff**: `2026-07-10 10:00 KST`
 - **Repository observation date**: `2026-07-10`
@@ -129,15 +142,15 @@ Pro Preview, 3.5 Flash Stable, and 3.1 Flash-Lite Stable. These official
 catalog facts do not prove local availability, native resolution, or approval
 to change the active model policy.
 
-## Integrated Audit Routing
+### Integrated Audit Routing
 
 This README is the canonical requirement-to-research-to-audit ownership map.
 The fixed repository snapshot, inventory counts, scoring formula, confidence,
 verdict, and evidence boundary are owned by the
-[Current audit pack](../../audits/2026-07-11-weia/README.md#repository-snapshot-contract)
+[Current audit pack](../../audits/2026-07-11-weia/README.md#repository-snapshot-details)
 and are not duplicated here.
 
-## Canonical Requirement-to-Research-to-Audit Ownership Map
+### Canonical Requirement-to-Research-to-Audit Ownership Map
 
 All 56 requested requirements and cross-cutting topics below have exactly one
 primary Current research owner and one completed audit owner. `Score / verdict`
@@ -205,7 +218,7 @@ the [integrated roadmap](../../audits/2026-07-11-weia/remediation-roadmap.md).
 | AI-agent `pre-commit run --all-files` obligation | [SDLC research](spec-sdlc-ci-qa-formatting.md) | [CI/QA audit](../../audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md) | QA-014: `1/4`; Partial | [RMD-013](../../audits/2026-07-11-weia/remediation-roadmap.md). |
 | Vibe coding | [AI-agent research](ai-agents-roster-and-gap-analysis.md) | [Agents/model/vibe audit](../../audits/2026-07-11-weia/ai-agents-model-routing-vibe-coding.md) | Vibe controls: `19/40` (47.5%); Implemented/Partial | [RMD-022](../../audits/2026-07-11-weia/remediation-roadmap.md). |
 
-## Requirement Coverage Matrix
+### Requirement Coverage Matrix
 
 `Primary Current owner` assigns exactly one research owner to each requirement;
 the canonical map above closes its completed audit owner, score/verdict, and
@@ -231,7 +244,7 @@ named by that reference.
 | PRD | [SDLC: PRD row](spec-sdlc-ci-qa-formatting.md#lifecycle-and-traceability-matrix) | Stage 01 route owns problem, value, requirements, and acceptance criteria. | Workspace/industry convention; Spec Kit provides adjacent practice. | Sufficient local contract. | Stage 01 and PRD template owner. |
 | ARD | [SDLC: ARD row](spec-sdlc-ci-qa-formatting.md#lifecycle-and-traceability-matrix) | Stage 02 requirements route owns boundary and quality attributes. | Workspace/industry convention, not presented as a universal standard. | Sufficient local contract. | Stage 02 architecture requirements and ARD template owner. |
 | ADR | [SDLC: ADR row](spec-sdlc-ci-qa-formatting.md#lifecycle-and-traceability-matrix) | Stage 02 decision route owns alternatives, decision, consequences, and supersession. | Nygard/Cognitect ADR primary practice. | Sufficient local contract. | Stage 02 decisions and ADR template owner. |
-| Spec, Plan, and Task | [SDLC: lifecycle matrix](spec-sdlc-ci-qa-formatting.md#lifecycle-and-traceability-matrix) | Stage 03 contract and Stage 04 decomposition/evidence routes are present. | Spec Kit and NIST SSDF supply lifecycle context. | Needs strengthening: the historical 2026-07-10 observation was 16/20 Specs `draft` and 42/43 Tasks `done`; the [fixed initial baseline](../../audits/2026-07-11-weia/README.md#repository-snapshot-contract) at `ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7` is 16/20 Specs `draft` and 43/43 Tasks `done`. The maturity asymmetry remains. | Lifecycle-promotion audit under Stage 03/04 and Stage 99. |
+| Spec, Plan, and Task | [SDLC: lifecycle matrix](spec-sdlc-ci-qa-formatting.md#lifecycle-and-traceability-matrix) | Stage 03 contract and Stage 04 decomposition/evidence routes are present. | Spec Kit and NIST SSDF supply lifecycle context. | Needs strengthening: the historical 2026-07-10 observation was 16/20 Specs `draft` and 42/43 Tasks `done`; the [fixed initial baseline](../../audits/2026-07-11-weia/README.md#repository-snapshot-details) at `ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7` is 16/20 Specs `draft` and 43/43 Tasks `done`. The maturity asymmetry remains. | Lifecycle-promotion audit under Stage 03/04 and Stage 99. |
 | Guide | [SDLC: Guide row](spec-sdlc-ci-qa-formatting.md#lifecycle-and-traceability-matrix) | Stage 05 guide route owns stable explanation and reproducibility. | NIST SSDF knowledge/operation context. | Sufficient local contract. | Stage 05 guides and guide template owner. |
 | Incident | [SDLC: Incident row](spec-sdlc-ci-qa-formatting.md#lifecycle-and-traceability-matrix) | Incident route/template exists; no actual tracked incident record was found. | NIST SP 800-61 Rev. 3. | Unverified readiness; absence of a record is not exercise evidence. | Approved tabletop/evidence design through Stage 05 and a new task. |
 | Postmortem | [SDLC: Postmortem row](spec-sdlc-ci-qa-formatting.md#lifecycle-and-traceability-matrix) | Postmortem route/template exists; no tracked postmortem record was found. | Google SRE postmortem culture. | Unverified readiness. | Stage 05 incident owner and approved tabletop/postmortem task. |
@@ -260,12 +273,12 @@ named by that reference.
 | Workspace-required AI Agents | [AI agents: local roster](ai-agents-roster-and-gap-analysis.md#local-roster-and-shared-body-contract) | Ten bounded local roles cover supervision, implementation, review, security, incident, network, observability, and documentation work. | Pinned upstream roles are discovery context only. | Sufficient roster breadth; no new Candidate met the bar. | Harness catalog; add a role only through a new agent-design Spec/Task. |
 | AI Agents | [AI agents: adapter status](ai-agents-roster-and-gap-analysis.md#provider-native-adapter-status) | 10 stems x 3 local surfaces = 30 files; provider metadata and validator depth differ. | Claude/Codex/Gemini native subagent documentation. | Needs strengthening: stem parity is not behavioral parity. | Provider-native canaries and scoped validator task. |
 | `agency-agents` | [AI agents: upstream snapshot](ai-agents-roster-and-gap-analysis.md) | Pinned comparison records 17 divisions, 254 recursive files, 15 install targets, and 13 generated conversions. | Fixed upstream commit/tree/linter/converter/tools/license sources. | Sufficient reproducible market scan; non-authoritative for local policy. | Refresh from the last pre-cutoff commit when upstream changes. |
-| Task-model routing | [AI agents: role routing](ai-agents-roster-and-gap-analysis.md#default-escalation-and-fallback-routing) | Ten role rows separate active declarations from default/escalation/fallback hypotheses and eval gates. | Official provider model/lifecycle sources at the cutoff. | Needs strengthening until native availability and task evals pass. | Model policy plus provider-specific migration Spec/Plan/Task. |
+| Task-model routing | [AI agents: role routing](ai-agents-roster-and-gap-analysis.md#role-and-model-routing-decision-record) | Ten role rows separate active declarations from default/escalation/fallback hypotheses and eval gates. | Official provider model/lifecycle sources at the cutoff. | Needs strengthening until native availability and task evals pass. | Model policy plus provider-specific migration Spec/Plan/Task. |
 | MCP currentness and security | [Harness: MCP boundary](harness-and-loop-engineering.md#mcp-version-and-security-boundary) | No tracked MCP config; server/scopes/runtime remain Unverified. | MCP `2025-11-25` is Current; `2025-06-18` is historical Final; eight-category security taxonomy is used. | Unverified local implementation. | Separate approved provider/security MCP inventory task. |
 | Supply-chain security | [Kubernetes Security: supply chain](kubernetes-infrastructure-security.md#supply-chain-security-analysis) | Scoped workflow permissions, secret/static tooling, tagged Actions, and missing provenance lanes are explicit. | NIST SP 800-204D, SLSA v1.2, OpenSSF Scorecard, and GitHub secure use. | Implementation gaps; no SLSA level claimed. | Threat-modelled CI/release supply-chain task. |
 | Static versus live evidence | [Kubernetes Security: evidence boundary](kubernetes-infrastructure-security.md#static-and-live-evidence-boundary) | Desired state, repo-static, optional tools, CI declarations, operator live scripts, and unverified enforcement are separate. | Tool-owner and platform guidance defines the live enforcement boundary. | Sufficient boundary; live/remote readiness not tested. | Approved Stage 05 runbook/task evidence only. |
 
-## Audit Outcome Summary
+### Audit Outcome Summary
 
 ### Changed-Document Summary
 
@@ -311,7 +324,11 @@ named by that reference.
   provider-native, remote GitHub, cluster, controller, secret, or live-runtime
   readiness.
 
-## Authority Boundary
+## Refresh and Succession
+
+이 팩은 2026-07-10 fact-first 검토와 2026-07-12 형식 근거 보강을 보존하는 Current 연구 owner다. 공식 provider/model·표준 source, canonical repository owner, pack inventory 또는 완료 audit disposition이 바뀌면 새 관찰 경계를 기록해 갱신하고, 필요하면 새 dated successor를 지정한다.
+
+## Evidence Boundary
 
 이 연구 팩은 참고용 lookup, 정의, 그리고 2026-07-10에 재검토한 dated source
 분석만을 다룬다. 실제 워크스페이스의 실행 규칙, 인프라 manifests, secrets,
@@ -319,7 +336,7 @@ CI workflow, pre-commit config, provider adapter/model policy 등은 각 canonic
 owner가 단독으로 지배한다. 이 팩의 권고나 `Sufficient` 판정은 활성 파일 변경,
 provider-native 동작, remote CI, 또는 live readiness를 승인하거나 증명하지 않는다.
 
-## Review and Freshness
+### Review and Freshness
 
 - Review cadence: 소스 또는 거버넌스 체계 변경 시
 - Last reviewed: 2026-07-10

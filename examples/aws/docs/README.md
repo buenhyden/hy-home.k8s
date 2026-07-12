@@ -6,28 +6,32 @@
 
 이 디렉토리는 `hy-home.k8s` 인프라를 AWS EKS 1.35 target 및 Managed Services 환경으로 전환할 때 참고하는 설계, 계획, 운영 문서 예시를 포함합니다. 버전 현재성은 [Tech Stack Version Inventory](../../../docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot`을 기준으로 확인하며, 현재 로컬 플랫폼의 active SSoT나 실제 AWS 배포 절차를 대체하지 않습니다.
 
-## Audience
+### Audience
 
 - Cloud Architects
 - DevOps Engineers
 - Operations Team
 - AI Agents
 
-## Scope
+### Scope
 
-### In Scope
+#### In Scope
 
 - AWS EKS 1.35 target migration reference 문서
 - Terraform AWS provider 6.x 기반 예시 구조
 - Managed Services 전환 시 검토할 PRD/ARD/ADR/Spec/Plan/Task/Guide/Policy/Runbook 예시
 
-### Out of Scope
+#### Out of Scope
 
 - 실제 AWS 계정 프로비저닝
 - live Kubernetes 클러스터 변경
 - 로컬 k3d desired state의 정본 변경
 
-## Structure
+## Snapshot Contract
+
+이 인덱스는 2026-07-12에 저장소 정적 상태로 관찰한 AWS 마이그레이션 예시다. 기반 마이그레이션 기록은 하위 문서가 다른 날짜를 명시하지 않는 한 2026-03-31 기준이며, 이 경로는 active main-stage 소유권이나 provider-latest 가이드를 대체하지 않는다.
+
+## Report Index
 
 | Directory | Purpose | Primary Document |
 | :--- | :--- | :--- |
@@ -41,7 +45,7 @@
 | [05.operations/policies](05.operations/policies/README.md) | 시스템 운영 거버넌스 | [AWS Operations Policy](05.operations/policies/aws-operations-policy.md) |
 | [05.operations/runbooks](05.operations/runbooks/README.md) | 장애 대응 런북 | [AWS Disaster Recovery](05.operations/runbooks/aws-disaster-recovery.md) |
 
-## Tech Stack & Standards
+### Tech Stack & Standards
 
 - **Cloud Platform**: Amazon Web Services (ap-northeast-2)
 - **Container**: Amazon EKS 1.35 target, Karpenter v1.x
@@ -49,7 +53,9 @@
 - **Security**: IAM Pod Identity, AWS Secrets Manager + External Secrets Operator
 - **IaC**: Terraform v1.14+
 
-## How to Work in This Area
+## Refresh and Succession
+
+Spec 030이 `docs/90.references/cloud-examples/aws`로의 후속 통합을 소유한다. AWS 공식 서비스·API·지원 계약 또는 하위 인벤토리가 바뀔 때 이 예시를 다시 검토하며, 실행 자산은 계속 `examples/aws/`에 둔다.
 
 1. 이 경로의 문서는 AWS migration reference로만 사용합니다.
 2. 버전 기준을 바꾸면 [Tech Stack Version Inventory](../../../docs/90.references/data/tech-stack-version-inventory.md)를 같은 변경에서 갱신합니다.
@@ -57,7 +63,9 @@
 4. 문서 간에는 상대 경로 링크를 유지하여 추적성을 확보합니다.
 5. 마이그레이션 실행 예시와 상세 작업 내역은 [04.execution/tasks](04.execution/tasks/README.md)에서 확인합니다.
 
-## Link Basis
+## Evidence Boundary
+
+이 README는 저장소 정적 문서 증거만 제공한다. live AWS 계정, EKS, 자격 증명, 비용, 네트워크, secret 또는 provider-latest 준비 상태를 증명하지 않는다.
 
 이 README의 링크 기준 위치는 `examples/aws/docs/`다.
 

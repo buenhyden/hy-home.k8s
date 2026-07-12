@@ -6,7 +6,7 @@
 
 이 경로는 `hy-home.k8s` 프로젝트의 로컬 Kubernetes 환경을 Azure 클라우드로 마이그레이션할 때 참고하는 설계, 계획, 작업 및 운영 지식 예시를 관리한다. 버전 현재성은 [Tech Stack Version Inventory](../../../docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot`을 기준으로 확인하며, 현재 로컬 플랫폼의 active SSoT나 실제 Azure 배포 절차를 대체하지 않는다.
 
-## Audience
+### Audience
 
 이 README의 주요 독자:
 
@@ -15,9 +15,9 @@
 - Cloud Architects
 - AI Agents
 
-## Scope
+### Scope
 
-### In Scope
+#### In Scope
 
 - **01.requirements**: 제품 요구사항 정의 및 성공 지표
 - **02.architecture/requirements**: 참조 아키텍처 및 품질 속성
@@ -29,14 +29,18 @@
 - **05.operations/policies**: 클라우드 운영 정책 및 거버넌스
 - **05.operations/runbooks**: 장애 대응 및 긴급 복구 매뉴얼
 
-### Out of Scope
+#### Out of Scope
 
 - 애플리케이션 비즈니스 로직 소스 코드
 - AWS 또는 GCP 등 타 클라우드 아키텍처 (별도 경로에서 관리)
 - 레거시 하드웨어 폐기 절차
 - 실제 Azure 구독 프로비저닝 또는 live cluster 변경
 
-## Structure
+## Snapshot Contract
+
+이 인덱스는 2026-07-12에 저장소 정적 상태로 관찰한 Azure 마이그레이션 예시다. 기반 마이그레이션 기록은 2026-03-31 기준이고, 2026-05-09 지원 상태 언급은 해당 날짜의 주석으로만 유지하며, 이 경로는 active main-stage 소유권이나 provider-latest 가이드를 대체하지 않는다.
+
+## Report Index
 
 ```text
 examples/azure/docs/
@@ -52,7 +56,7 @@ examples/azure/docs/
 └── README.md         # This hub file
 ```
 
-## Tech Stack
+### Tech Stack
 
 이 표의 기준 날짜와 지원 상태는 [Tech Stack Version Inventory](../../../docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot`을 따른다.
 
@@ -65,7 +69,9 @@ examples/azure/docs/
 | Security   | Azure Key Vault + Workload Identity       | Passwordless Auth         |
 | IaC        | Bicep                                     | Resource Module Pattern   |
 
-## How to Work in This Area
+## Refresh and Succession
+
+Spec 030이 `docs/90.references/cloud-examples/azure`로의 후속 통합을 소유한다. Azure 공식 서비스·API·지원 계약 또는 하위 인벤토리가 바뀔 때 이 예시를 다시 검토하며, 실행 자산은 계속 `examples/azure/`에 둔다.
 
 1. **Requirement First**: 변경 사항은 항상 [01.requirements](01.requirements/README.md)에서 시작하여 하위 문서로 전파한다.
 2. **Standard Templates**: 모든 문서는 `docs/99.templates/` 산하의 최신 템플릿을 사용하여 작성한다.
@@ -73,7 +79,9 @@ examples/azure/docs/
 4. **Reference Boundary**: 실제 Azure 배포 전에는 provider 공식 지원 버전, 비용, RBAC, 네트워크 경계를 다시 확인한다.
 5. **Agent Guidance**: 에이전트는 작업 전 [04.execution/tasks](04.execution/tasks/README.md)를 확인하고 진행 상황을 업데이트한다.
 
-## Link Basis
+## Evidence Boundary
+
+이 README는 저장소 정적 문서 증거만 제공한다. live Azure 구독, AKS, 자격 증명, 비용, 네트워크, secret 또는 provider-latest 준비 상태를 증명하지 않는다.
 
 이 README의 링크 기준 위치는 `examples/azure/docs/`다.
 
