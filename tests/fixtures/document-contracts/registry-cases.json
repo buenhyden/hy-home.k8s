@@ -206,6 +206,14 @@
       "profile": "template/governance/memory"
     },
     {
+      "path": "docs/99.templates/templates/common/governance-reference.template.md",
+      "profile": "template/governance/reference"
+    },
+    {
+      "path": "docs/99.templates/templates/common/template-support.template.md",
+      "profile": "template/governance/template-support"
+    },
+    {
       "path": "docs/99.templates/templates/common/readme.template.md",
       "profile": "template/readme/common"
     },
@@ -290,6 +298,14 @@
     {
       "path": "docs/99.templates/templates/common/memory.template.md",
       "profile": "template/governance/memory"
+    },
+    {
+      "path": "docs/99.templates/templates/common/governance-reference.template.md",
+      "profile": "template/governance/reference"
+    },
+    {
+      "path": "docs/99.templates/templates/common/template-support.template.md",
+      "profile": "template/governance/template-support"
     },
     {
       "path": "docs/99.templates/templates/common/progress.template.md",

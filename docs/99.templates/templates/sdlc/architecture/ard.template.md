@@ -10,71 +10,34 @@ updated: YYYY-MM-DD
 
 # [System or Domain Name] Architecture Reference Document (ARD)
 
-> Use this template for `docs/02.architecture/requirements/####-<system-or-domain>.md`.
->
-> Rules:
->
-> - Keep ARD architectural.
-> - File-level implementation detail belongs in the Spec.
-> - Use relative links only, calculated from the final authored document location.
-> - Use one `Overview` summary near the top.
-
----
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Overview
 
-이 문서는 [시스템 또는 도메인명]의 참조 아키텍처와 품질 속성을 정의한다. 시스템 경계, 책임, 데이터 흐름, 운영 관점을 정리하는 기준 문서다.
-
-## Summary
-
-[What this system owns and why.]
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
 ## Boundaries & Non-goals
 
-- **Owns**:
-- **Consumes**:
-- **Does Not Own**:
-- **Non-goals**:
+<!-- Describe the topic-specific boundaries & non-goals without copying template guidance. -->
 
 ## Quality Attributes
 
-- **Performance**:
-- **Security**:
-- **Reliability**:
-- **Scalability**:
-- **Observability**:
-- **Operability**:
+<!-- Describe the topic-specific quality attributes without copying template guidance. -->
 
 ## System Overview & Context
 
-[High-level architecture and context.]
+<!-- Describe the topic-specific system overview & context without copying template guidance. -->
 
 ## Data Architecture
 
-- **Key Entities / Flows**:
-- **Storage Strategy**:
-- **Data Boundaries**:
+<!-- Describe the topic-specific data architecture without copying template guidance. -->
 
 ## Infrastructure & Deployment
 
-- **Runtime / Platform**:
-- **Deployment Model**:
-- **Operational Evidence**:
+<!-- Describe the topic-specific infrastructure & deployment without copying template guidance. -->
 
-## AI Agent Architecture Requirements (If Applicable)
+## Traceability
 
-- **Model/Provider Strategy**:
-- **Tooling Boundary**:
-- **Memory & Context Strategy**:
-- **Guardrail Boundary**:
-- **Latency / Cost Budget**:
-
-## Related Documents
-
-Target-relative examples below assume the authored file will be created at
-`docs/02.architecture/requirements/####-<system-or-domain>.md`.
-
-- **PRD**: `[../../01.requirements/<###-Numbering>-<feature-or-system>.md]`
-- **Spec**: `[../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
-- **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
-- **ADR**: `[../decisions/####-<short-title>.md]`
+<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->

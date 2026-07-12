@@ -10,73 +10,46 @@ updated: YYYY-MM-DD
 
 # [Feature or System Name] Product Requirements
 
-> Use this template for `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
->
-> Rules:
->
-> - Use exactly one meaningful H1.
-> - Use relative links only, calculated from the final authored document location.
-> - Remove every placeholder before saving.
-> - Keep implementation detail out of the PRD.
-> - Keep one `Overview` summary near the top.
-
----
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Overview
 
-이 문서는 [기능 또는 시스템명]의 제품 요구사항을 정의한다. 사용자 가치, 문제 정의, 성공 기준을 명확히 하여 후속 설계와 구현의 기준으로 사용한다.
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
 ## Vision
 
-[State the user or business outcome.]
+<!-- Describe the topic-specific vision without copying template guidance. -->
 
 ## Problem Statement
 
-[What problem exists now and why it matters.]
+<!-- Describe the topic-specific problem statement without copying template guidance. -->
 
 ## Personas
 
-- **Persona 1**: [Role / need]
-- **Persona 2**: [Role / need]
+<!-- Describe the topic-specific personas without copying template guidance. -->
 
 ## Key Use Cases
 
-- **STORY-01**: [User story]
-- **STORY-02**: [User story]
+<!-- Describe the topic-specific key use cases without copying template guidance. -->
 
 ## Functional Requirements
 
-- **REQ-PRD-FUN-01**: [Requirement]
-- **REQ-PRD-FUN-02**: [Requirement]
+<!-- Describe the topic-specific functional requirements without copying template guidance. -->
 
 ## Success / Acceptance Criteria
 
-- **REQ-PRD-MET-01**: [Metric and target]
-- **REQ-PRD-MET-02**: [Metric and target]
+<!-- Describe the topic-specific success / acceptance criteria without copying template guidance. -->
 
 ## Scope and Non-goals
 
-- **In Scope**:
-- **Out of Scope**:
-- **Non-goals**:
+<!-- Describe the topic-specific scope and non-goals without copying template guidance. -->
 
 ## Risks, Dependencies, and Assumptions
 
-- [Risk / dependency / assumption]
+<!-- Describe the topic-specific risks, dependencies, and assumptions without copying template guidance. -->
 
-## AI Agent Requirements (If Applicable)
+## Traceability
 
-- **Allowed Actions**:
-- **Disallowed Actions**:
-- **Human-in-the-loop Requirement**:
-- **Evaluation Expectation**:
-
-## Related Documents
-
-Target-relative examples below assume the authored file will be created at
-`docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
-
-- **ARD**: `[../02.architecture/requirements/####-<system-or-domain>.md]`
-- **Spec**: `[../03.specs/<###-Numbering>-<feature-id>/spec.md]`
-- **Plan**: `[../04.execution/plans/YYYY-MM-DD-<feature>.md]`
-- **ADR**: `[../02.architecture/decisions/####-<short-title>.md]`
+<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->

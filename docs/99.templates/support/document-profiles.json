@@ -86,8 +86,7 @@
           "Success / Acceptance Criteria",
           "Scope and Non-goals",
           "Risks, Dependencies, and Assumptions",
-          "AI Agent Requirements (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
@@ -99,8 +98,7 @@
           "Success / Acceptance Criteria",
           "Scope and Non-goals",
           "Risks, Dependencies, and Assumptions",
-          "AI Agent Requirements (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/requirements/prd.template.md",
@@ -155,25 +153,21 @@
       "headings": {
         "required": [
           "Overview",
-          "Summary",
           "Boundaries & Non-goals",
           "Quality Attributes",
           "System Overview & Context",
           "Data Architecture",
           "Infrastructure & Deployment",
-          "AI Agent Architecture Requirements (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
-          "Summary",
           "Boundaries & Non-goals",
           "Quality Attributes",
           "System Overview & Context",
           "Data Architecture",
           "Infrastructure & Deployment",
-          "AI Agent Architecture Requirements (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/architecture/ard.template.md",
@@ -233,8 +227,7 @@
           "Explicit Non-goals",
           "Consequences",
           "Alternatives",
-          "Agent-related Example Decisions (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
@@ -243,8 +236,7 @@
           "Explicit Non-goals",
           "Consequences",
           "Alternatives",
-          "Agent-related Example Decisions (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/architecture/adr.template.md",
@@ -304,44 +296,28 @@
         "required": [
           "Overview",
           "Strategic Boundaries & Non-goals",
-          "Related Inputs",
           "Contracts",
           "Core Design",
           "Data Modeling & Storage Strategy",
           "Interfaces & Data Structures",
-          "API Contract (If Applicable)",
-          "Agent Role & IO Contract (If Applicable)",
-          "Tools & Tool Contract (If Applicable)",
-          "Prompt / Policy Contract (If Applicable)",
-          "Memory & Context Strategy (If Applicable)",
-          "Guardrails (If Applicable)",
-          "Evaluation (If Applicable)",
           "Edge Cases & Error Handling",
           "Failure Modes & Fallback / Human Escalation",
           "Verification Commands",
           "Success Criteria & Verification Plan",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
           "Strategic Boundaries & Non-goals",
-          "Related Inputs",
           "Contracts",
           "Core Design",
           "Data Modeling & Storage Strategy",
           "Interfaces & Data Structures",
-          "API Contract (If Applicable)",
-          "Agent Role & IO Contract (If Applicable)",
-          "Tools & Tool Contract (If Applicable)",
-          "Prompt / Policy Contract (If Applicable)",
-          "Memory & Context Strategy (If Applicable)",
-          "Guardrails (If Applicable)",
-          "Evaluation (If Applicable)",
           "Edge Cases & Error Handling",
           "Failure Modes & Fallback / Human Escalation",
           "Verification Commands",
           "Success Criteria & Verification Plan",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/specs/spec.template.md",
@@ -396,7 +372,6 @@
       "headings": {
         "required": [
           "Overview",
-          "Parent Spec",
           "Scope & Non-goals",
           "API Style",
           "Authentication & Authorization",
@@ -407,11 +382,10 @@
           "Non-Functional Requirements",
           "Machine-readable Contract Files",
           "Verification",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
-          "Parent Spec",
           "Scope & Non-goals",
           "API Style",
           "Authentication & Authorization",
@@ -422,7 +396,7 @@
           "Non-Functional Requirements",
           "Machine-readable Contract Files",
           "Verification",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
@@ -477,7 +451,6 @@
       "headings": {
         "required": [
           "Overview",
-          "Parent Documents",
           "Scope & Non-goals",
           "Agent Role",
           "Inputs / Outputs",
@@ -489,11 +462,10 @@
           "Failure Modes & Fallback",
           "Evaluation Plan",
           "Observability",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
-          "Parent Documents",
           "Scope & Non-goals",
           "Agent Role",
           "Inputs / Outputs",
@@ -505,7 +477,7 @@
           "Failure Modes & Fallback",
           "Evaluation Plan",
           "Observability",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
@@ -560,7 +532,6 @@
       "headings": {
         "required": [
           "Overview",
-          "Parent Documents",
           "Scope & Non-goals",
           "Entities / Aggregates",
           "Relationships",
@@ -569,11 +540,10 @@
           "Storage Strategy",
           "Privacy / Security",
           "Migration & Compatibility",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
-          "Parent Documents",
           "Scope & Non-goals",
           "Entities / Aggregates",
           "Relationships",
@@ -582,7 +552,7 @@
           "Storage Strategy",
           "Privacy / Security",
           "Migration & Compatibility",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
@@ -637,31 +607,27 @@
       "headings": {
         "required": [
           "Overview",
-          "Parent Documents",
           "Verification Goals",
           "TDD Scope",
           "Test Matrix",
           "Contract & Integration Tests",
           "Non-Functional Tests",
-          "Agent Evals (If Applicable)",
           "Fixtures / Datasets",
           "How to Run",
           "Evidence & Reporting",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
-          "Parent Documents",
           "Verification Goals",
           "TDD Scope",
           "Test Matrix",
           "Contract & Integration Tests",
           "Non-Functional Tests",
-          "Agent Evals (If Applicable)",
           "Fixtures / Datasets",
           "How to Run",
           "Evidence & Reporting",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/specs/tests.template.md",
@@ -722,9 +688,8 @@
           "Work Breakdown",
           "Verification Plan",
           "Risks & Mitigations",
-          "Agent Rollout & Evaluation Gates (If Applicable)",
           "Completion Criteria",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
@@ -734,9 +699,8 @@
           "Work Breakdown",
           "Verification Plan",
           "Risks & Mitigations",
-          "Agent Rollout & Evaluation Gates (If Applicable)",
           "Completion Criteria",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/execution/plan.template.md",
@@ -792,24 +756,18 @@
         "required": [
           "Overview",
           "Inputs",
-          "Working Rules",
           "Task Table",
-          "Suggested Types",
-          "Agent-specific Types (If Applicable)",
-          "Phase View (Optional)",
+          "Approval and Safety Boundaries",
           "Verification Summary",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
           "Inputs",
-          "Working Rules",
           "Task Table",
-          "Suggested Types",
-          "Agent-specific Types (If Applicable)",
-          "Phase View (Optional)",
+          "Approval and Safety Boundaries",
           "Verification Summary",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/execution/task.template.md",
@@ -866,21 +824,19 @@
           "Overview",
           "Guide Type",
           "Target Audience",
-          "Purpose",
           "Prerequisites",
           "Step-by-step Instructions",
           "Common Pitfalls",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
           "Guide Type",
           "Target Audience",
-          "Purpose",
           "Prerequisites",
           "Step-by-step Instructions",
           "Common Pitfalls",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/operations/guide.template.md",
@@ -941,8 +897,7 @@
           "Exceptions",
           "Verification",
           "Review Cadence",
-          "AI Agent Policy Section (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
@@ -952,8 +907,7 @@
           "Exceptions",
           "Verification",
           "Review Cadence",
-          "AI Agent Policy Section (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/operations/policy.template.md",
@@ -1007,30 +961,24 @@
       ],
       "headings": {
         "required": [
-          "Runbook Type",
           "Overview",
-          "Purpose",
-          "Canonical References",
+          "Runbook Type",
           "When to Use",
           "Procedure or Checklist",
           "Verification Steps",
           "Observability and Evidence Sources",
           "Safe Rollback or Recovery Procedure",
-          "Agent Operations (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
-          "Runbook Type",
           "Overview",
-          "Purpose",
-          "Canonical References",
+          "Runbook Type",
           "When to Use",
           "Procedure or Checklist",
           "Verification Steps",
           "Observability and Evidence Sources",
           "Safe Rollback or Recovery Procedure",
-          "Agent Operations (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/operations/runbook.template.md",
@@ -1082,26 +1030,22 @@
         "required": [
           "Overview",
           "Incident Metadata",
-          "Agent Metadata (If Applicable)",
-          "Incident Summary",
           "Impact",
           "Timeline",
-          "Current Hypothesis / Response State",
+          "Response State",
           "Evidence",
           "Follow-up Actions",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
           "Incident Metadata",
-          "Agent Metadata (If Applicable)",
-          "Incident Summary",
           "Impact",
           "Timeline",
-          "Current Hypothesis / Response State",
+          "Response State",
           "Evidence",
           "Follow-up Actions",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/operations/incident.template.md",
@@ -1152,31 +1096,27 @@
       "headings": {
         "required": [
           "Overview",
-          "Incident Summary",
-          "Agent Metadata (If Applicable)",
-          "Impact",
-          "Timeline",
+          "Incident Link and Impact Summary",
           "Root Cause Analysis",
+          "Contributing Factors",
           "What Went Well",
           "What Went Wrong",
           "Action Items",
           "Prevention and Verification",
-          "Required Documentation Feedback Loop",
-          "Related Documents"
+          "Documentation Feedback Loop",
+          "Traceability"
         ],
         "allowed": [
           "Overview",
-          "Incident Summary",
-          "Agent Metadata (If Applicable)",
-          "Impact",
-          "Timeline",
+          "Incident Link and Impact Summary",
           "Root Cause Analysis",
+          "Contributing Factors",
           "What Went Well",
           "What Went Wrong",
           "Action Items",
           "Prevention and Verification",
-          "Required Documentation Feedback Loop",
-          "Related Documents"
+          "Documentation Feedback Loop",
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/operations/postmortem.template.md",
@@ -1228,7 +1168,6 @@
       "headings": {
         "required": [
           "Overview",
-          "Purpose",
           "Reference Type",
           "Authority Boundary",
           "Scope",
@@ -1239,7 +1178,6 @@
         ],
         "allowed": [
           "Overview",
-          "Purpose",
           "Reference Type",
           "Authority Boundary",
           "Scope",
@@ -1370,10 +1308,24 @@
         "archived"
       ],
       "headings": {
-        "required": [],
-        "allowed": []
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ]
       },
-      "template": null,
+      "template": "docs/99.templates/templates/common/governance-reference.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
       "appendContract": null
@@ -1482,10 +1434,24 @@
         "archived"
       ],
       "headings": {
-        "required": [],
-        "allowed": []
+        "required": [
+          "Overview",
+          "Purpose",
+          "Owned Contract",
+          "Authoring Rules",
+          "Validation Contract",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Purpose",
+          "Owned Contract",
+          "Authoring Rules",
+          "Validation Contract",
+          "Related Documents"
+        ]
       },
-      "template": null,
+      "template": "docs/99.templates/templates/common/template-support.template.md",
       "sourceProfileIds": [],
       "placeholderPolicy": "forbidden",
       "appendContract": null
@@ -2689,7 +2655,6 @@
       "headings": {
         "required": [
           "Overview",
-          "Purpose",
           "Reference Type",
           "Authority Boundary",
           "Scope",
@@ -2700,7 +2665,6 @@
         ],
         "allowed": [
           "Overview",
-          "Purpose",
           "Reference Type",
           "Authority Boundary",
           "Scope",
@@ -2765,8 +2729,7 @@
           "Explicit Non-goals",
           "Consequences",
           "Alternatives",
-          "Agent-related Example Decisions (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
@@ -2775,8 +2738,7 @@
           "Explicit Non-goals",
           "Consequences",
           "Alternatives",
-          "Agent-related Example Decisions (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/architecture/adr.template.md",
@@ -2829,25 +2791,21 @@
       "headings": {
         "required": [
           "Overview",
-          "Summary",
           "Boundaries & Non-goals",
           "Quality Attributes",
           "System Overview & Context",
           "Data Architecture",
           "Infrastructure & Deployment",
-          "AI Agent Architecture Requirements (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
-          "Summary",
           "Boundaries & Non-goals",
           "Quality Attributes",
           "System Overview & Context",
           "Data Architecture",
           "Infrastructure & Deployment",
-          "AI Agent Architecture Requirements (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/architecture/ard.template.md",
@@ -2906,9 +2864,8 @@
           "Work Breakdown",
           "Verification Plan",
           "Risks & Mitigations",
-          "Agent Rollout & Evaluation Gates (If Applicable)",
           "Completion Criteria",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
@@ -2918,9 +2875,8 @@
           "Work Breakdown",
           "Verification Plan",
           "Risks & Mitigations",
-          "Agent Rollout & Evaluation Gates (If Applicable)",
           "Completion Criteria",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/execution/plan.template.md",
@@ -2974,24 +2930,18 @@
         "required": [
           "Overview",
           "Inputs",
-          "Working Rules",
           "Task Table",
-          "Suggested Types",
-          "Agent-specific Types (If Applicable)",
-          "Phase View (Optional)",
+          "Approval and Safety Boundaries",
           "Verification Summary",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
           "Inputs",
-          "Working Rules",
           "Task Table",
-          "Suggested Types",
-          "Agent-specific Types (If Applicable)",
-          "Phase View (Optional)",
+          "Approval and Safety Boundaries",
           "Verification Summary",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/execution/task.template.md",
@@ -3046,21 +2996,19 @@
           "Overview",
           "Guide Type",
           "Target Audience",
-          "Purpose",
           "Prerequisites",
           "Step-by-step Instructions",
           "Common Pitfalls",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
           "Guide Type",
           "Target Audience",
-          "Purpose",
           "Prerequisites",
           "Step-by-step Instructions",
           "Common Pitfalls",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/operations/guide.template.md",
@@ -3114,26 +3062,22 @@
         "required": [
           "Overview",
           "Incident Metadata",
-          "Agent Metadata (If Applicable)",
-          "Incident Summary",
           "Impact",
           "Timeline",
-          "Current Hypothesis / Response State",
+          "Response State",
           "Evidence",
           "Follow-up Actions",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
           "Incident Metadata",
-          "Agent Metadata (If Applicable)",
-          "Incident Summary",
           "Impact",
           "Timeline",
-          "Current Hypothesis / Response State",
+          "Response State",
           "Evidence",
           "Follow-up Actions",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/operations/incident.template.md",
@@ -3192,8 +3136,7 @@
           "Exceptions",
           "Verification",
           "Review Cadence",
-          "AI Agent Policy Section (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
@@ -3203,8 +3146,7 @@
           "Exceptions",
           "Verification",
           "Review Cadence",
-          "AI Agent Policy Section (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/operations/policy.template.md",
@@ -3257,31 +3199,27 @@
       "headings": {
         "required": [
           "Overview",
-          "Incident Summary",
-          "Agent Metadata (If Applicable)",
-          "Impact",
-          "Timeline",
+          "Incident Link and Impact Summary",
           "Root Cause Analysis",
+          "Contributing Factors",
           "What Went Well",
           "What Went Wrong",
           "Action Items",
           "Prevention and Verification",
-          "Required Documentation Feedback Loop",
-          "Related Documents"
+          "Documentation Feedback Loop",
+          "Traceability"
         ],
         "allowed": [
           "Overview",
-          "Incident Summary",
-          "Agent Metadata (If Applicable)",
-          "Impact",
-          "Timeline",
+          "Incident Link and Impact Summary",
           "Root Cause Analysis",
+          "Contributing Factors",
           "What Went Well",
           "What Went Wrong",
           "Action Items",
           "Prevention and Verification",
-          "Required Documentation Feedback Loop",
-          "Related Documents"
+          "Documentation Feedback Loop",
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/operations/postmortem.template.md",
@@ -3333,30 +3271,24 @@
       ],
       "headings": {
         "required": [
-          "Runbook Type",
           "Overview",
-          "Purpose",
-          "Canonical References",
+          "Runbook Type",
           "When to Use",
           "Procedure or Checklist",
           "Verification Steps",
           "Observability and Evidence Sources",
           "Safe Rollback or Recovery Procedure",
-          "Agent Operations (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
-          "Runbook Type",
           "Overview",
-          "Purpose",
-          "Canonical References",
+          "Runbook Type",
           "When to Use",
           "Procedure or Checklist",
           "Verification Steps",
           "Observability and Evidence Sources",
           "Safe Rollback or Recovery Procedure",
-          "Agent Operations (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/operations/runbook.template.md",
@@ -3417,8 +3349,7 @@
           "Success / Acceptance Criteria",
           "Scope and Non-goals",
           "Risks, Dependencies, and Assumptions",
-          "AI Agent Requirements (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
@@ -3430,8 +3361,7 @@
           "Success / Acceptance Criteria",
           "Scope and Non-goals",
           "Risks, Dependencies, and Assumptions",
-          "AI Agent Requirements (If Applicable)",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/requirements/prd.template.md",
@@ -3484,7 +3414,6 @@
       "headings": {
         "required": [
           "Overview",
-          "Parent Documents",
           "Scope & Non-goals",
           "Agent Role",
           "Inputs / Outputs",
@@ -3496,11 +3425,10 @@
           "Failure Modes & Fallback",
           "Evaluation Plan",
           "Observability",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
-          "Parent Documents",
           "Scope & Non-goals",
           "Agent Role",
           "Inputs / Outputs",
@@ -3512,7 +3440,7 @@
           "Failure Modes & Fallback",
           "Evaluation Plan",
           "Observability",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
@@ -3565,7 +3493,6 @@
       "headings": {
         "required": [
           "Overview",
-          "Parent Spec",
           "Scope & Non-goals",
           "API Style",
           "Authentication & Authorization",
@@ -3576,11 +3503,10 @@
           "Non-Functional Requirements",
           "Machine-readable Contract Files",
           "Verification",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
-          "Parent Spec",
           "Scope & Non-goals",
           "API Style",
           "Authentication & Authorization",
@@ -3591,7 +3517,7 @@
           "Non-Functional Requirements",
           "Machine-readable Contract Files",
           "Verification",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
@@ -3644,7 +3570,6 @@
       "headings": {
         "required": [
           "Overview",
-          "Parent Documents",
           "Scope & Non-goals",
           "Entities / Aggregates",
           "Relationships",
@@ -3653,11 +3578,10 @@
           "Storage Strategy",
           "Privacy / Security",
           "Migration & Compatibility",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
-          "Parent Documents",
           "Scope & Non-goals",
           "Entities / Aggregates",
           "Relationships",
@@ -3666,7 +3590,7 @@
           "Storage Strategy",
           "Privacy / Security",
           "Migration & Compatibility",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
@@ -3720,24 +3644,18 @@
         "required": [
           "Overview",
           "Inputs",
-          "Working Rules",
           "Task Table",
-          "Suggested Types",
-          "Agent-specific Types (If Applicable)",
-          "Phase View (Optional)",
+          "Approval and Safety Boundaries",
           "Verification Summary",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
           "Inputs",
-          "Working Rules",
           "Task Table",
-          "Suggested Types",
-          "Agent-specific Types (If Applicable)",
-          "Phase View (Optional)",
+          "Approval and Safety Boundaries",
           "Verification Summary",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/specs/harness-task-contract.template.md",
@@ -3791,44 +3709,28 @@
         "required": [
           "Overview",
           "Strategic Boundaries & Non-goals",
-          "Related Inputs",
           "Contracts",
           "Core Design",
           "Data Modeling & Storage Strategy",
           "Interfaces & Data Structures",
-          "API Contract (If Applicable)",
-          "Agent Role & IO Contract (If Applicable)",
-          "Tools & Tool Contract (If Applicable)",
-          "Prompt / Policy Contract (If Applicable)",
-          "Memory & Context Strategy (If Applicable)",
-          "Guardrails (If Applicable)",
-          "Evaluation (If Applicable)",
           "Edge Cases & Error Handling",
           "Failure Modes & Fallback / Human Escalation",
           "Verification Commands",
           "Success Criteria & Verification Plan",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
           "Strategic Boundaries & Non-goals",
-          "Related Inputs",
           "Contracts",
           "Core Design",
           "Data Modeling & Storage Strategy",
           "Interfaces & Data Structures",
-          "API Contract (If Applicable)",
-          "Agent Role & IO Contract (If Applicable)",
-          "Tools & Tool Contract (If Applicable)",
-          "Prompt / Policy Contract (If Applicable)",
-          "Memory & Context Strategy (If Applicable)",
-          "Guardrails (If Applicable)",
-          "Evaluation (If Applicable)",
           "Edge Cases & Error Handling",
           "Failure Modes & Fallback / Human Escalation",
           "Verification Commands",
           "Success Criteria & Verification Plan",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/specs/spec.template.md",
@@ -3881,31 +3783,27 @@
       "headings": {
         "required": [
           "Overview",
-          "Parent Documents",
           "Verification Goals",
           "TDD Scope",
           "Test Matrix",
           "Contract & Integration Tests",
           "Non-Functional Tests",
-          "Agent Evals (If Applicable)",
           "Fixtures / Datasets",
           "How to Run",
           "Evidence & Reporting",
-          "Related Documents"
+          "Traceability"
         ],
         "allowed": [
           "Overview",
-          "Parent Documents",
           "Verification Goals",
           "TDD Scope",
           "Test Matrix",
           "Contract & Integration Tests",
           "Non-Functional Tests",
-          "Agent Evals (If Applicable)",
           "Fixtures / Datasets",
           "How to Run",
           "Evidence & Reporting",
-          "Related Documents"
+          "Traceability"
         ]
       },
       "template": "docs/99.templates/templates/sdlc/specs/tests.template.md",
@@ -3954,6 +3852,138 @@
           "Handoff"
         ]
       }
+    },
+    {
+      "id": "template/governance/reference",
+      "class": "governance",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/common/governance-reference.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Authority Boundary",
+          "Governance Context",
+          "Current Contract",
+          "Validation and Refresh",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/governance-reference.template.md",
+      "sourceProfileIds": [
+        "governance/reference"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "id": "template/governance/template-support",
+      "class": "governance",
+      "mode": "template",
+      "routes": [
+        {
+          "kind": "exact",
+          "value": "docs/99.templates/templates/common/template-support.template.md"
+        }
+      ],
+      "frontmatter": {
+        "mode": "required",
+        "required": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "allowed": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ],
+        "order": [
+          "title",
+          "type",
+          "status",
+          "owner",
+          "updated"
+        ]
+      },
+      "statusDomain": [
+        "draft",
+        "active",
+        "accepted",
+        "done",
+        "archived"
+      ],
+      "headings": {
+        "required": [
+          "Overview",
+          "Purpose",
+          "Owned Contract",
+          "Authoring Rules",
+          "Validation Contract",
+          "Related Documents"
+        ],
+        "allowed": [
+          "Overview",
+          "Purpose",
+          "Owned Contract",
+          "Authoring Rules",
+          "Validation Contract",
+          "Related Documents"
+        ]
+      },
+      "template": "docs/99.templates/templates/common/template-support.template.md",
+      "sourceProfileIds": [
+        "governance/template-support"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
     }
   ],
   "programLineage": {

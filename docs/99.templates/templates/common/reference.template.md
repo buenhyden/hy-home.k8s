@@ -10,66 +10,38 @@ updated: YYYY-MM-DD
 
 # Reference: [Item Name]
 
-> Use this template for `docs/90.references/<category>/<topic>.md`.
->
-> Rules:
->
-> - Keep this document factual, slow-moving, and explicitly bounded.
-> - Do not duplicate active requirements, specs, plans, tasks, policies, or runbooks.
-> - Human-facing overview and explanatory notes may be Korean; authority, source, freshness, and AI-agent boundary fields should stay English-first.
-> - Use relative links only, calculated from the final authored document location.
-> - Keep placeholder or optional target paths as code literals until the target exists.
-
----
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Overview
 
-이 문서는 [주제]에 대한 참고 문서다. 느리게 변하는 기준 정보, 용어, 외부 표준 요약을 정리한다.
-
-## Purpose
-
-[Why this reference exists.]
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
 ## Reference Type
 
-- Type: version-contract-inventory | external-standard-snapshot | durable-concept | data-catalog | source-ledger | learning-roadmap | glossary | faq | dated-implementation-audit
-- Source checked: YYYY-MM-DD
-- Refresh trigger: [What event requires review.]
+<!-- Describe the topic-specific reference type without copying template guidance. -->
 
 ## Authority Boundary
 
-- **Authoritative for**:
-  - [Facts, versions, concepts, or lookup material this document owns.]
-- **Not authoritative for**:
-  - [Requirements, decisions, implementation contracts, plans, tasks, policies, or runbooks that belong in other stages.]
+<!-- Describe the topic-specific authority boundary without copying template guidance. -->
 
 ## Scope
 
-- [What is covered]
-- [What is not covered]
+<!-- Describe the topic-specific scope without copying template guidance. -->
 
 ## Definitions / Facts
 
-- **Term / Fact 1**:
-- **Term / Fact 2**:
+<!-- Describe the topic-specific definitions / facts without copying template guidance. -->
 
 ## Sources
 
-- [Source 1]
-- [Source 2]
+<!-- Describe the topic-specific sources without copying template guidance. -->
 
 ## Review and Freshness
 
-- Review cadence: [monthly | quarterly | on source change | on dependency bump]
-- Last reviewed: YYYY-MM-DD
-- Next review trigger: [Manifest/config change, cloud-provider support change, or linked stage update.]
+<!-- Describe the topic-specific review and freshness without copying template guidance. -->
 
 ## Related Documents
 
-Target-relative examples below assume the authored file will be created at
-`docs/90.references/<category>/<topic>.md`.
-
-- **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
-- **Spec**: `[../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
-- **Reference maintenance runbook**: `../../05.operations/runbooks/0011-reference-maintenance-runbook.md`
-- **LLM Wiki curation guide**: `../../05.operations/guides/0009-llm-wiki-curation-guide.md`
+<!-- Link only the canonical related owners using paths relative to the authored document. -->

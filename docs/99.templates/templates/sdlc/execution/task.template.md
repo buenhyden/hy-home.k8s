@@ -10,82 +10,45 @@ updated: YYYY-MM-DD
 
 # Task: [Task Name]
 
-> Use this template for `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md`.
->
-> Rules:
->
-> - Task documents are traceability-first.
-> - Core behavior should default to TDD.
-> - Agent work must include eval tasks where applicable.
-> - This is the canonical execution-tracking location; feature-local task notes under `03.specs/` are secondary.
-> - Write this task record in English.
-> - Use relative links only, calculated from the final authored document location.
-
----
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Overview
 
-This document tracks implementation and verification work for [Feature or Work
-Stream Name]. It keeps tasks derived from the parent Spec and Plan traceable.
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
 ## Inputs
 
-- **Parent Spec**: `[../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
-- **Parent Plan**: `[../plans/YYYY-MM-DD-<feature>.md]`
-
-## Working Rules
-
-- Write failing tests first for core behavior.
-- Every task must define evidence.
-- Documentation-only work still needs validation evidence.
-- Repo-static validation must not be reported as live runtime readiness unless a separate live check was approved and run.
-- If a feature-local `tasks.md` exists under `03.specs/`, this document remains the execution-tracking source of truth.
-- Remove optional boilerplate sections when they do not add task-specific evidence or execution clarity.
+<!-- Describe the topic-specific inputs without copying template guidance. -->
 
 ## Task Table
 
-| Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner  | Status |
-| ------- | ----------- | ---- | --------------------- | ------------------- | --------------------- | ------ | ------ |
-| T-001   | [Action]    | impl | SPC-001 / §2          | Phase 1             | `pytest ...`          | [Name] | Todo   |
+<!-- Add only executable work items derived from the parent Plan/Spec. -->
 
-## Suggested Types
+| ID | Work item | Owner | Status | Evidence |
+| --- | --- | --- | --- | --- |
+| `<task-id>` | `<bounded change>` | platform | draft | `<evidence path>` |
 
-- `impl`
-- `test`
-- `eval`
-- `doc`
-- `ops`
+## Approval and Safety Boundaries
 
-## Agent-specific Types (If Applicable)
+- **Allowed Paths**: `<repository-relative paths>`
+- **Forbidden Paths**: `<repository-relative paths or none>`
+- **Approval Required**: `<approval boundary>`
+- **Static Validation**: `<commands and expected evidence>`
+- **Live Validation**: `<approved lane or DEFER with reason>`
+- **Secret / Vault Handling**: `<no-read/no-print boundary and owner>`
+- **Rollback Plan**: `<reversible steps or commit>`
+- **Evidence Location**: `<durable repository path>`
 
-- `prompt`
-- `tool`
-- `memory`
-- `guardrail`
-- `eval`
-- `observability`
-
-## Phase View (Optional)
-
-### Phase 1
-
-- [ ] T-001 [Description]
-
-### Phase 2
-
-- [ ] T-002 [Description]
+<!-- When applicable, add GitOps Impact, Kubernetes Impact, and
+Operations / Runbook Impact as fields in this section. Do not claim
+live convergence from repository-static evidence. -->
 
 ## Verification Summary
 
-- **Test Commands**:
-- **Eval Commands**:
-- **Logs / Evidence Location**:
+<!-- Describe the topic-specific verification summary without copying template guidance. -->
 
-## Related Documents
+## Traceability
 
-Target-relative examples below assume the authored file will be created at
-`docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md`.
-
-- **Spec**: `[../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
-- **Plan**: `[../plans/YYYY-MM-DD-<feature>.md]`
-- **Tests**: `[../../03.specs/<###-Numbering>-<feature-id>/tests.md]`
+<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->

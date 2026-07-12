@@ -10,87 +10,38 @@ updated: YYYY-MM-DD
 
 # [Topic Name] Runbook
 
-> Use this template for `docs/05.operations/runbooks/####-<topic>.md`.
->
-> Rules:
->
-> - This document exists for immediate execution.
-> - This document is not a policy definition.
-> - This document is not a tutorial-first guide.
-> - If the main purpose is analysis after the event, write a Postmortem instead.
-> - Use relative links only, calculated from the final authored document location.
-> - Keep placeholder or optional target paths as code literals until the target exists.
-
----
-
-## Runbook Type
-
-`bootstrap | recovery | maintenance | hotfix | onboarding | troubleshooting`
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Overview
 
-이 런북은 [서비스 또는 워크플로명]에 대한 실행 절차를 정의한다. 운영자가 즉시 따라 할 수 있는 단계와 검증 기준을 제공한다.
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
-## Purpose
+## Runbook Type
 
-[What operational problem this runbook addresses.]
-
-## Canonical References
-
-- `[../../02.architecture/requirements/####-<system-or-domain>.md]`
-- `[../../02.architecture/decisions/####-<short-title>.md]`
-- `[../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
-- `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
+<!-- Describe the topic-specific runbook type without copying template guidance. -->
 
 ## When to Use
 
-- [Use case 1]
-- [Use case 2]
+<!-- Describe the topic-specific when to use without copying template guidance. -->
 
 ## Procedure or Checklist
 
-### Checklist
-
-- [ ] [Check 1]
-- [ ] [Check 2]
-
-### Procedure
-
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
+<!-- Describe the topic-specific procedure or checklist without copying template guidance. -->
 
 ## Verification Steps
 
-- [ ] [Verification command or manual check]
+<!-- Describe the topic-specific verification steps without copying template guidance. -->
 
 ## Observability and Evidence Sources
 
-- **Signals**:
-- **Evidence to Capture**:
+<!-- Describe the topic-specific observability and evidence sources without copying template guidance. -->
 
 ## Safe Rollback or Recovery Procedure
 
-- [ ] [Recovery step 1]
-- [ ] [Recovery step 2]
+<!-- Describe the topic-specific safe rollback or recovery procedure without copying template guidance. -->
 
-## Agent Operations (If Applicable)
+## Traceability
 
-- **Prompt Rollback**:
-- **Model Fallback**:
-- **Tool Disable / Revoke**:
-- **Eval Re-run**:
-- **Trace Capture**:
-
-## Related Documents
-
-Target-relative examples below assume the authored file will be created at
-`docs/05.operations/runbooks/####-<topic>.md`.
-
-- **Incident examples**: `[../incidents/YYYY/INC-###-<title>/INC-###-<title>.md]`
-- **Postmortem examples**: `[../incidents/YYYY/INC-###-<title>/postmortem.md]`
-- **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
-- **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
-- **Spec**: `[../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
-- **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
-- **Operation**: `[../policies/####-<policy-or-standard>.md]`
+<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->

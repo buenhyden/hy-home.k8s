@@ -81,6 +81,8 @@ DOCUMENT_PROFILE_CONTRACT_V1 = {
         "template/content/archive-tombstone",
         "template/content/reference",
         "template/governance/memory",
+        "template/governance/reference",
+        "template/governance/template-support",
         "template/readme/common",
         "template/sdlc/adr",
         "template/sdlc/agent-design",
@@ -100,7 +102,7 @@ DOCUMENT_PROFILE_CONTRACT_V1 = {
         "template/sdlc/tests",
     ),
     "semantic_sha256": (
-        "0d15439c97695d6b833bc1b2f94760b82ae9c95f39fa8e7e30886dc3967d19b2"  # pragma: allowlist secret
+        "8652958bffd95ba45cdf1fde97d282ad2788629bfa0c8e6614daae4a32649ad9"  # pragma: allowlist secret
     ),
 }
 DOCUMENT_PROFILE_CONTRACT_V1_FIELDS = (

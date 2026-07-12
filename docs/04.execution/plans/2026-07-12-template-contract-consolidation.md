@@ -382,12 +382,26 @@ Expected: compatibility and legacy gate PASS.
 - Create: `docs/99.templates/templates/common/governance-reference.template.md`
 - Create: `docs/99.templates/templates/common/template-support.template.md`
 - Modify: `docs/99.templates/support/document-profiles.json`
+- Modify: `scripts/validate-document-contract-registry.py` fixed profile IDs and
+  semantic digest; the registry library remains out of scope
+- Modify: `tests/fixtures/document-contracts/registry-cases.json` profile and
+  template coverage rows
 - Create: `tests/fixtures/document-contracts/template-compatibility.json`
 
 **Interfaces:**
 
 - Consumes: the exact heading matrix in this Plan and the research ledger.
-- Produces: canonical required headings plus finite `legacyRequiredAnyOf` aliases keyed by profile for Spec 030 removal.
+- Produces: canonical required headings plus finite `legacyRequiredAnyOf` aliases
+  keyed by profile for Spec 030 removal, synchronized through the thin CLI
+  contract and registry coverage fixture without changing the registry library.
+
+Controller resolution for Task 4: the unchanged quality gate treated new form
+headings as immediate authored-corpus requirements and retained whole-document
+Reference/memory/progress assertions. Task 4 is therefore authorized to make
+`scripts/validate-repo-quality-gates.sh` consume the registry and finite
+`template-compatibility.json` debt baseline, update only inventory/link rows in
+the two Stage 99 README indexes, and replace those obsolete assertions. The
+authored corpus, hook/provider files, and registry library remain out of scope.
 
 - [ ] **Step 1: Create compatibility debt fixture before form edits**
 

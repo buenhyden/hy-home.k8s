@@ -10,66 +10,34 @@ updated: YYYY-MM-DD
 
 # ADR-####: [Short Title]
 
-> Use this template for `docs/02.architecture/decisions/####-<short-title>.md`.
->
-> Rules:
->
-> - One decision per ADR.
-> - Do not turn ADRs into implementation specs.
-> - Use global numbering.
-> - Use relative links only, calculated from the final authored document location.
-
----
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Overview
 
-이 문서는 [결정 주제]에 대한 아키텍처 결정 기록이다. 특정 선택의 배경, 대안, 결과를 추적하기 위해 사용한다.
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
 ## Context
 
-[Why a formal decision is needed now.]
+<!-- Describe the topic-specific context without copying template guidance. -->
 
 ## Decision
 
-- [Decision point 1]
-- [Decision point 2]
+<!-- Describe the topic-specific decision without copying template guidance. -->
 
 ## Explicit Non-goals
 
-- [What this ADR does not cover]
+<!-- Describe the topic-specific explicit non-goals without copying template guidance. -->
 
 ## Consequences
 
-- **Positive**:
-- **Trade-offs**:
+<!-- Describe the topic-specific consequences without copying template guidance. -->
 
 ## Alternatives
 
-### [Alternative 1]
+<!-- Describe the topic-specific alternatives without copying template guidance. -->
 
-- Good:
-- Bad:
+## Traceability
 
-### [Alternative 2]
-
-- Good:
-- Bad:
-
-## Agent-related Example Decisions (If Applicable)
-
-- Model selection
-- Tool gating
-- Guardrail strategy
-- Planner / executor pattern
-- Fallback model policy
-
-## Related Documents
-
-Target-relative examples below assume the authored file will be created at
-`docs/02.architecture/decisions/####-<short-title>.md`.
-
-- **PRD**: `[../../01.requirements/<###-Numbering>-<feature-or-system>.md]`
-- **ARD**: `[../requirements/####-<system-or-domain>.md]`
-- **Spec**: `[../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
-- **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
-- **Related ADR**: `[./####-<related-decision>.md]`
+<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->

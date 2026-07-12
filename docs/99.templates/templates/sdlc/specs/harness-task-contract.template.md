@@ -6,72 +6,49 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
+<!-- Legacy compatibility form; Task 5 removes this duplicate route after reference cleanup. -->
+
 # Harness Task Contract
 
-Use this contract for any change that touches a harness surface (governance,
-GitOps, infrastructure, validation scripts, CI, secrets, or operations). It
-binds the task to allowed paths, approval boundaries, and static-vs-live
-evidence before editing. Remove guidance comments in the authored copy.
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
-## Goal
+## Overview
 
--
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
-## Non-goals
+## Inputs
 
--
+<!-- Describe the topic-specific inputs without copying template guidance. -->
 
-## Affected Surfaces
+## Task Table
 
--
+<!-- Add only executable work items derived from the parent Plan/Spec. -->
 
-## Allowed Paths
+| ID | Work item | Owner | Status | Evidence |
+| --- | --- | --- | --- | --- |
+| `<task-id>` | `<bounded change>` | platform | draft | `<evidence path>` |
 
--
+## Approval and Safety Boundaries
 
-## Forbidden Paths
+- **Allowed Paths**: `<repository-relative paths>`
+- **Forbidden Paths**: `<repository-relative paths or none>`
+- **Approval Required**: `<approval boundary>`
+- **Static Validation**: `<commands and expected evidence>`
+- **Live Validation**: `<approved lane or DEFER with reason>`
+- **Secret / Vault Handling**: `<no-read/no-print boundary and owner>`
+- **Rollback Plan**: `<reversible steps or commit>`
+- **Evidence Location**: `<durable repository path>`
 
--
+<!-- When applicable, add GitOps Impact, Kubernetes Impact, and
+Operations / Runbook Impact as fields in this section. Do not claim
+live convergence from repository-static evidence. -->
 
-## Approval Required
+## Verification Summary
 
-- Resolve each affected surface against the approval matrix in
-  [`../../../../00.agent-governance/rules/approval-boundaries.md`](../../../../00.agent-governance/rules/approval-boundaries.md).
+<!-- Describe the topic-specific verification summary without copying template guidance. -->
 
-## GitOps Impact
+## Traceability
 
--
-
-## Kubernetes Impact
-
--
-
-## Secret / Vault Handling
-
-- Record only path, key, property, mount, and redacted evidence. Never include
-  secret values, Vault tokens, private keys, or certificate material.
-
-## Static Validation
-
-- `bash scripts/validate-harness.sh`
-
-## Live Validation
-
-- Operator-approved only; record approval status and reason if skipped.
-
-## Operations / Runbook Impact
-
--
-
-## Rollback Plan
-
--
-
-## Evidence Location
-
--
-
-## Related Documents
-
-- [Harness Implementation Map](../../../../00.agent-governance/harness-implementation-map.md)
-- [Local Harness Catalog](../../../../00.agent-governance/harness-catalog.md)
+<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->

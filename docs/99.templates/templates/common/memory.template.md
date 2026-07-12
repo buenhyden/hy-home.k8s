@@ -6,45 +6,30 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-# Memory Template: \<short-title\>
+<!-- Target: docs/00.agent-governance/memory/<topic>.md -->
 
-Use this template for standalone files under
-`docs/00.agent-governance/memory/`. When a standalone memory file is created or
-updated, append the related progress entry to
-`docs/00.agent-governance/memory/progress.md` using
-`docs/99.templates/templates/common/progress.template.md` in the same change.
+# Memory: <short-title>
 
-Target family: `docs/00.agent-governance/memory/<topic>.md`. The `<topic>`
-placeholder excludes `progress`; `progress.md` is reserved for the canonical
-progress ledger.
-
-Link basis: standalone memory files live beside `progress.md`, so related
-progress links should be calculated from `docs/00.agent-governance/memory/`,
-not from this template file. Keep optional or placeholder paths as code
-literals until the target file exists.
-
-- **Date**: YYYY-MM-DD
-- **Layer**: product | architecture | backend | frontend | infra | ops | security | qa | docs | meta
-- **Tags**: #incident #performance #tooling #governance
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Problem
 
-One-paragraph statement of the exact failure mode.
+<!-- Describe the topic-specific problem without copying template guidance. -->
 
 ## Context
 
-- Affected paths:
-- Environment:
-- Preconditions:
+<!-- Describe the topic-specific context without copying template guidance. -->
 
 ## Resolution
 
-List concrete remediation steps and links to evidence.
+<!-- Describe the topic-specific resolution without copying template guidance. -->
 
 ## Prevention
 
-List enforceable checks or policy updates that prevent recurrence.
+<!-- Describe the topic-specific prevention without copying template guidance. -->
 
 ## Related Progress
 
-- Progress entry: `./progress.md#<entry-anchor>`
+<!-- Describe the topic-specific related progress without copying template guidance. -->

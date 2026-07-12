@@ -10,85 +10,46 @@ updated: YYYY-MM-DD
 
 # [Feature Name] Data Model
 
-> Use this template for `docs/03.specs/<###-Numbering>-<feature-id>/data-model.md`.
->
-> Rules:
->
-> - This document captures logical/physical data structures for the feature.
-> - Keep API surface details in `api-spec.md`.
-> - Keep migration execution steps in Plan or Runbook, not here.
-> - Use relative links only, calculated from the final authored document location.
-
----
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Overview
 
-이 문서는 [기능명]의 데이터 모델과 저장 전략을 정의한다. 엔터티, 관계, 식별자, 무결성 규칙, 보존 정책, 변경 전략을 설명한다.
-
-## Parent Documents
-
-- **Spec**: `[./spec.md]`
-- **API Spec**: `[./api-spec.md]`
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
 ## Scope & Non-goals
 
-- **Covers**:
-- **Does Not Cover**:
+<!-- Describe the topic-specific scope & non-goals without copying template guidance. -->
 
 ## Entities / Aggregates
 
-| Entity   | Purpose   | Identifier | Ownership | Notes   |
-| -------- | --------- | ---------- | --------- | ------- |
-| [Entity] | [Purpose] | [ID]       | [Owner]   | [Notes] |
+<!-- Describe the topic-specific entities / aggregates without copying template guidance. -->
 
 ## Relationships
 
-- [Entity A] -> [Entity B]:
-- Cardinality:
-- Invariants:
+<!-- Describe the topic-specific relationships without copying template guidance. -->
 
 ## Schema / Structures
 
-```sql
--- Example
-CREATE TABLE example (
-  id UUID PRIMARY KEY,
-  name TEXT NOT NULL
-);
-```
+<!-- Describe the topic-specific schema / structures without copying template guidance. -->
 
 ## Validation & Integrity Rules
 
-- **Required fields**:
-- **Uniqueness**:
-- **Referential integrity**:
-- **State transition rules**:
+<!-- Describe the topic-specific validation & integrity rules without copying template guidance. -->
 
 ## Storage Strategy
 
-- **Primary store**:
-- **Indexes / partitioning**:
-- **Caching strategy**:
-- **Backup / retention**:
+<!-- Describe the topic-specific storage strategy without copying template guidance. -->
 
 ## Privacy / Security
 
-- **Sensitive fields**:
-- **Encryption / masking**:
-- **Access boundary**:
-- **Retention / deletion policy**:
+<!-- Describe the topic-specific privacy / security without copying template guidance. -->
 
 ## Migration & Compatibility
 
-- **Backward compatibility rule**:
-- **Migration approach**:
-- **Rollback notes**:
+<!-- Describe the topic-specific migration & compatibility without copying template guidance. -->
 
-## Related Documents
+## Traceability
 
-Target-relative examples below assume the authored file will be created at
-`docs/03.specs/<###-Numbering>-<feature-id>/data-model.md`.
-
-- **Spec**: `[./spec.md]`
-- **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
-- **Runbook**: `[../../05.operations/runbooks/####-<topic>.md]`
+<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->

@@ -10,59 +10,34 @@ updated: YYYY-MM-DD
 
 # [Topic Name] Guide
 
-> Use this template for `docs/05.operations/guides/####-<topic>.md`.
->
-> Rules:
->
-> - This document explains how to do something or how to understand a system.
-> - This document is not an operations policy.
-> - This document is not a real-time incident response procedure.
-> - If command order, rollback, or recovery is the primary purpose, write a Runbook instead.
-> - Use relative links only, calculated from the final authored document location.
-> - Keep placeholder or optional target paths as code literals until the target exists.
-
----
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Overview
 
-이 문서는 [주제]에 대한 가이드다. 특정 대상 독자가 작업을 이해하고 재현할 수 있도록 단계별 절차와 주의사항을 제공한다.
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
 ## Guide Type
 
-`onboarding | how-to | style-guide | troubleshooting-guide | system-guide`
+<!-- Describe the topic-specific guide type without copying template guidance. -->
 
 ## Target Audience
 
-- Developer
-- Operator
-- Contributor
-- Agent-tuner
-
-## Purpose
-
-[What this guide helps the reader achieve.]
+<!-- Describe the topic-specific target audience without copying template guidance. -->
 
 ## Prerequisites
 
-- [Prerequisite 1]
-- [Prerequisite 2]
+<!-- Describe the topic-specific prerequisites without copying template guidance. -->
 
 ## Step-by-step Instructions
 
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
+<!-- Describe the topic-specific step-by-step instructions without copying template guidance. -->
 
 ## Common Pitfalls
 
-- [Pitfall 1]
-- [Pitfall 2]
+<!-- Describe the topic-specific common pitfalls without copying template guidance. -->
 
-## Related Documents
+## Traceability
 
-Target-relative examples below assume the authored file will be created at
-`docs/05.operations/guides/####-<topic>.md`.
-
-- **Spec**: `[../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
-- **Operations Policy**: `[../policies/####-<policy-or-standard>.md]`
-- **Runbook**: `[../runbooks/####-<topic>.md]`
+<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->

@@ -868,10 +868,12 @@ template_locations = {
     "readme.template.md": "templates/common/readme.template.md",
     "reference.template.md": "templates/common/reference.template.md",
     "archive-tombstone.template.md": "templates/common/archive-tombstone.template.md",
+    "governance-reference.template.md": "templates/common/governance-reference.template.md",
     "memory.template.md": "templates/common/memory.template.md",
     "progress.template.md": "templates/common/progress.template.md",
     "prd.template.md": "templates/sdlc/requirements/prd.template.md",
     "ard.template.md": "templates/sdlc/architecture/ard.template.md",
+    "template-support.template.md": "templates/common/template-support.template.md",
     "adr.template.md": "templates/sdlc/architecture/adr.template.md",
     "spec.template.md": "templates/sdlc/specs/spec.template.md",
     "api-spec.template.md": "templates/sdlc/specs/api-spec.template.md",
@@ -894,7 +896,9 @@ template_locations = {
 template_expected_types = {
     "reference.template.md": "content/reference",
     "archive-tombstone.template.md": "content/archive-tombstone",
+    "governance-reference.template.md": "governance/reference",
     "memory.template.md": "governance/memory",
+    "template-support.template.md": "governance/template-support",
     "prd.template.md": "sdlc/prd",
     "ard.template.md": "sdlc/ard",
     "adr.template.md": "sdlc/adr",
@@ -1007,6 +1011,207 @@ for frontmatter_free_template_name in ["readme.template.md", "progress.template.
     frontmatter_free_path = template_path(frontmatter_free_template_name)
     if has_markdown_frontmatter(frontmatter_free_path):
         fail(f"{rel(frontmatter_free_path)} must remain frontmatter-free")
+
+template_compatibility_path = (
+    root / "tests/fixtures/document-contracts/template-compatibility.json"
+)
+document_registry_path = root / "docs/99.templates/support/document-profiles.json"
+template_compatibility = load_json(template_compatibility_path)
+document_registry = load_json(document_registry_path)
+registry_profiles = {
+    profile["id"]: profile for profile in document_registry["profiles"]
+}
+
+if template_compatibility.get("owner") != "Spec 030":
+    fail(f"{rel(template_compatibility_path)} owner must be Spec 030")
+if template_compatibility.get("growthAllowed") is not False:
+    fail(f"{rel(template_compatibility_path)} must set growthAllowed=false")
+
+canonical_form_rows = template_compatibility.get("canonicalFormCoverage", [])
+canonical_profile_ids = [row.get("profile") for row in canonical_form_rows]
+canonical_form_paths = [row.get("form") for row in canonical_form_rows]
+authored_profile_ids = {
+    profile_id
+    for profile_id, profile in registry_profiles.items()
+    if profile["mode"] == "authored"
+}
+if len(canonical_profile_ids) != len(set(canonical_profile_ids)):
+    fail(f"{rel(template_compatibility_path)} canonical profile IDs must be unique")
+if len(canonical_form_paths) != len(set(canonical_form_paths)):
+    fail(f"{rel(template_compatibility_path)} canonical form paths must be unique")
+if set(canonical_profile_ids) != authored_profile_ids:
+    fail(
+        f"{rel(template_compatibility_path)} canonicalFormCoverage must cover "
+        "every authored registry profile exactly once"
+    )
+for row in canonical_form_rows:
+    profile_id = row["profile"]
+    profile = registry_profiles[profile_id]
+    form_path = root / row["form"]
+    if row["form"] != profile["template"]:
+        fail(f"{profile_id} canonical form must equal registry template")
+    if row["frontmatterType"] != profile_id:
+        fail(f"{profile_id} canonical form frontmatterType must equal profile ID")
+    if row["requiredHeadings"] != profile["headings"]["required"]:
+        fail(f"{profile_id} canonical headings must equal registry required headings")
+    if not form_path.exists():
+        fail(f"{profile_id} canonical form is missing: {row['form']}")
+        continue
+    metadata = load_markdown_frontmatter(form_path)
+    if metadata.get("type") != row["frontmatterType"]:
+        fail(f"{rel(form_path)} frontmatter type must be {row['frontmatterType']}")
+    actual_headings = [
+        line[3:]
+        for line in read_text(form_path).splitlines()
+        if line.startswith("## ")
+    ]
+    if actual_headings != row["requiredHeadings"]:
+        fail(f"{rel(form_path)} H2 sequence must equal canonicalFormCoverage")
+
+template_mode_rows = template_compatibility.get("templateModeCoverage", [])
+template_mode_paths = [row.get("form") for row in template_mode_rows]
+tracked_template_paths = {
+    tracked_path
+    for tracked_path in tracked
+    if tracked_path.startswith("docs/99.templates/templates/")
+    and tracked_path.endswith(".template.md")
+}
+if len(template_mode_paths) != len(set(template_mode_paths)):
+    fail(f"{rel(template_compatibility_path)} template form paths must be unique")
+if set(template_mode_paths) != tracked_template_paths:
+    fail(
+        f"{rel(template_compatibility_path)} templateModeCoverage path set must "
+        "equal tracked *.template.md inventory"
+    )
+for row in template_mode_rows:
+    profile = registry_profiles.get(row["profile"])
+    if not profile or profile["mode"] != "template":
+        fail(f"templateModeCoverage has unknown template profile: {row['profile']}")
+        continue
+    expected_route = [{"kind": "exact", "value": row["form"]}]
+    if profile["routes"] != expected_route or profile["template"] != row["form"]:
+        fail(f"{row['profile']} must own one exact template route")
+    if profile["placeholderPolicy"] != row["placeholderPolicy"]:
+        fail(f"{row['profile']} placeholder policy differs from fixture")
+    if profile["sourceProfileIds"] != row["sourceProfiles"]:
+        fail(f"{row['profile']} source profiles differ from fixture")
+    if profile["appendContract"] != row["appendContract"]:
+        fail(f"{row['profile']} append contract differs from fixture")
+    if row["profile"] == "governance/progress-entry":
+        form_text = read_text(root / row["form"])
+        if any(
+            line.startswith(("# ", "## ")) for line in form_text.splitlines()
+        ):
+            fail(f"{row['form']} progress fragment must not contain H1 or H2")
+        entry_headings = [
+            line[4:]
+            for line in form_text.splitlines()
+            if line.startswith("### ")
+        ]
+        section_headings = [
+            line[5:]
+            for line in form_text.splitlines()
+            if line.startswith("#### ")
+        ]
+        append_contract = row["appendContract"]
+        if entry_headings != ["YYYY-MM-DD - <workstream-title>"]:
+            fail(f"{row['form']} must contain the canonical H3 entry heading")
+        if section_headings != append_contract["requiredSections"]:
+            fail(f"{row['form']} H4 sequence must equal append contract")
+    else:
+        if row["appendContract"] is not None:
+            fail(f"{row['profile']} non-progress template must not append")
+        form_headings = [
+            line[3:]
+            for line in read_text(root / row["form"]).splitlines()
+            if line.startswith("## ")
+        ]
+        if form_headings != profile["headings"]["required"]:
+            fail(f"{row['form']} H2 sequence must equal its template profile")
+        for source_id in row["sourceProfiles"]:
+            source = registry_profiles[source_id]
+            for field in ("frontmatter", "statusDomain", "headings"):
+                if profile[field] != source[field]:
+                    fail(f"{row['profile']} {field} must equal {source_id}")
+
+compatibility_rows = template_compatibility.get("compatibilityDebt", [])
+compatibility_by_profile = {row["profile"]: row for row in compatibility_rows}
+if set(compatibility_by_profile) != authored_profile_ids:
+    fail(
+        f"{rel(template_compatibility_path)} compatibilityDebt must cover "
+        "every authored profile exactly once"
+    )
+
+
+def registry_profile_for_path(relative_path: str) -> str | None:
+    matches = []
+    for profile in document_registry["profiles"]:
+        for route in profile["routes"]:
+            if route["kind"] == "exact" and relative_path == route["value"]:
+                matches.append(profile["id"])
+            elif route["kind"] == "regex" and re.match(route["value"], relative_path):
+                matches.append(profile["id"])
+    return matches[0] if len(matches) == 1 else None
+
+
+compatibility_actual = collections.defaultdict(
+    lambda: {
+        "pathCount": 0,
+        "missingCanonicalPathCount": 0,
+        "forbiddenResiduePathCount": 0,
+        "forbiddenResidueOccurrences": 0,
+    }
+)
+for tracked_path in sorted(tracked):
+    if not tracked_path.endswith(".md"):
+        continue
+    profile_id = registry_profile_for_path(tracked_path)
+    if profile_id not in compatibility_by_profile:
+        continue
+    path = root / tracked_path
+    if not path.is_file():
+        continue
+    row = compatibility_by_profile[profile_id]
+    headings = {
+        line[3:]
+        for line in read_text(path).splitlines()
+        if line.startswith("## ")
+    }
+    aliases = {
+        item["canonical"]: item["aliases"]
+        for item in row["legacyRequiredAnyOf"]
+    }
+    missing = [
+        heading
+        for heading in row["canonical"]
+        if heading not in headings
+        and not any(alias in headings for alias in aliases.get(heading, []))
+    ]
+    residue = [
+        heading for heading in row["forbiddenResidue"] if heading in headings
+    ]
+    actual = compatibility_actual[profile_id]
+    actual["pathCount"] += 1
+    if missing:
+        actual["missingCanonicalPathCount"] += 1
+    if residue:
+        actual["forbiddenResiduePathCount"] += 1
+        actual["forbiddenResidueOccurrences"] += len(residue)
+
+for profile_id, row in compatibility_by_profile.items():
+    actual = compatibility_actual[profile_id]
+    limits = {
+        "pathCount": row["baselinePathCount"],
+        "missingCanonicalPathCount": row["baselineDebtPathCount"],
+        "forbiddenResiduePathCount": row["baselineForbiddenResiduePathCount"],
+        "forbiddenResidueOccurrences": row["baselineForbiddenResidueOccurrences"],
+    }
+    for field, limit in limits.items():
+        if actual[field] > limit:
+            fail(
+                f"{profile_id} compatibility debt grew for {field}: "
+                f"baseline={limit} actual={actual[field]}"
+            )
 
 template_support_root = root / "docs/99.templates/support"
 active_template_support_names = {
@@ -1251,24 +1456,6 @@ reference_template_path = template_path("reference.template.md")
 reference_template_text = read_text(reference_template_path)
 if re.search(r"archive", reference_template_text, re.IGNORECASE):
     fail(f"{rel(reference_template_path)} must not contain archive wording")
-reference_template_target_parent = root / "docs/90.references/example-category"
-reference_template_target_relative_links = {
-    "../../05.operations/runbooks/0011-reference-maintenance-runbook.md": root
-    / "docs/05.operations/runbooks/0011-reference-maintenance-runbook.md",
-    "../../05.operations/guides/0009-llm-wiki-curation-guide.md": root
-    / "docs/05.operations/guides/0009-llm-wiki-curation-guide.md",
-}
-for target, expected_path in reference_template_target_relative_links.items():
-    if f"`{target}`" not in reference_template_text:
-        fail(f"{rel(reference_template_path)} missing target-relative reference link: {target}")
-    resolved_path = (reference_template_target_parent / target).resolve()
-    if resolved_path != expected_path.resolve():
-        fail(
-            f"{rel(reference_template_path)} target-relative link does not resolve from "
-            f"docs/90.references/<category>/<item>.md: {target}"
-        )
-    if not expected_path.exists():
-        fail(f"{rel(reference_template_path)} target-relative link points to missing file: {target}")
 
 for path in docs_dir.rglob("*"):
     if not path.is_file():
@@ -1477,20 +1664,6 @@ def required_headings_from_template(template_name: str) -> list[str]:
         headings.append(heading)
     return headings
 
-
-for glob_pattern, template_name in required_stage_templates:
-    required_headings = required_headings_from_template(template_name)
-    for path in sorted(root.glob(glob_pattern)):
-        if path.name == "README.md":
-            continue
-        document_headings = {
-            line.strip()
-            for line in read_text(path).splitlines()
-            if line.startswith("## ")
-        }
-        for heading in required_headings:
-            if heading not in document_headings:
-                fail(f"{rel(path)} missing required template heading from {template_name}: {heading}")
 
 english_first_stage_globs = [
     "docs/03.specs/*/spec.md",
@@ -2749,21 +2922,6 @@ for phrase in [
 ]:
     if phrase not in memory_readme_text:
         fail(f"{rel(memory_dir / 'README.md')} missing memory contract phrase: {phrase}")
-
-for phrase in [
-    "docs/00.agent-governance/memory/progress.md",
-    "docs/99.templates/templates/common/progress.template.md",
-    "## Related Progress",
-]:
-    if phrase not in read_text(memory_template_path):
-        fail(f"{rel(memory_template_path)} missing standalone memory template phrase: {phrase}")
-
-for phrase in [
-    "docs/00.agent-governance/memory/progress.md",
-    "## Work Entries",
-]:
-    if phrase not in read_text(progress_template_path):
-        fail(f"{rel(progress_template_path)} missing progress template phrase: {phrase}")
 
 for phrase in ["memory.template.md", "progress.template.md", "00.agent-governance/memory/"]:
     if phrase not in template_readme:

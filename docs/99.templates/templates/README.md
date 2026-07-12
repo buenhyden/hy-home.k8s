@@ -38,10 +38,12 @@ Primary readers:
 templates/
 ├── common/
 │   ├── archive-tombstone.template.md
+│   ├── governance-reference.template.md
 │   ├── memory.template.md
 │   ├── progress.template.md
 │   ├── readme.template.md
-│   └── reference.template.md
+│   ├── reference.template.md
+│   └── template-support.template.md
 └── sdlc/
     ├── architecture/
     ├── execution/

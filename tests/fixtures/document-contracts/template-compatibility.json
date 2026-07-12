@@ -1,0 +1,1109 @@
+{
+  "schemaVersion": 1,
+  "owner": "Spec 030",
+  "growthAllowed": false,
+  "baselineDebtCounts": {
+    "profileRows": 20,
+    "legacyAliasDefinitions": 25,
+    "forbiddenResidueDefinitions": 26,
+    "baselinePathCount": 314,
+    "missingCanonicalPathCount": 89,
+    "forbiddenResiduePathCount": 188,
+    "forbiddenResidueOccurrences": 410
+  },
+  "compatibilityDebt": [
+    {
+      "profile": "sdlc/prd",
+      "canonical": [
+        "Overview",
+        "Vision",
+        "Problem Statement",
+        "Personas",
+        "Key Use Cases",
+        "Functional Requirements",
+        "Success / Acceptance Criteria",
+        "Scope and Non-goals",
+        "Risks, Dependencies, and Assumptions",
+        "Traceability"
+      ],
+      "legacyRequiredAnyOf": [
+        {
+          "canonical": "Traceability",
+          "aliases": [
+            "Related Documents"
+          ]
+        }
+      ],
+      "forbiddenResidue": [
+        "AI Agent Requirements (If Applicable)"
+      ],
+      "baselinePathCount": 8,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 5,
+      "baselineForbiddenResidueOccurrences": 5
+    },
+    {
+      "profile": "sdlc/ard",
+      "canonical": [
+        "Overview",
+        "Boundaries & Non-goals",
+        "Quality Attributes",
+        "System Overview & Context",
+        "Data Architecture",
+        "Infrastructure & Deployment",
+        "Traceability"
+      ],
+      "legacyRequiredAnyOf": [
+        {
+          "canonical": "Traceability",
+          "aliases": [
+            "Related Documents"
+          ]
+        }
+      ],
+      "forbiddenResidue": [
+        "Summary",
+        "AI Agent Architecture Requirements (If Applicable)"
+      ],
+      "baselinePathCount": 10,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 10,
+      "baselineForbiddenResidueOccurrences": 15
+    },
+    {
+      "profile": "sdlc/adr",
+      "canonical": [
+        "Overview",
+        "Context",
+        "Decision",
+        "Explicit Non-goals",
+        "Consequences",
+        "Alternatives",
+        "Traceability"
+      ],
+      "legacyRequiredAnyOf": [
+        {
+          "canonical": "Traceability",
+          "aliases": [
+            "Related Documents"
+          ]
+        }
+      ],
+      "forbiddenResidue": [
+        "Agent-related Example Decisions (If Applicable)"
+      ],
+      "baselinePathCount": 18,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 2,
+      "baselineForbiddenResidueOccurrences": 2
+    },
+    {
+      "profile": "sdlc/spec",
+      "canonical": [
+        "Overview",
+        "Strategic Boundaries & Non-goals",
+        "Contracts",
+        "Core Design",
+        "Data Modeling & Storage Strategy",
+        "Interfaces & Data Structures",
+        "Edge Cases & Error Handling",
+        "Failure Modes & Fallback / Human Escalation",
+        "Verification Commands",
+        "Success Criteria & Verification Plan",
+        "Traceability"
+      ],
+      "legacyRequiredAnyOf": [
+        {
+          "canonical": "Traceability",
+          "aliases": [
+            "Related Inputs",
+            "Related Documents"
+          ]
+        }
+      ],
+      "forbiddenResidue": [
+        "API Contract (If Applicable)",
+        "Agent Role & IO Contract (If Applicable)",
+        "Tools & Tool Contract (If Applicable)",
+        "Prompt / Policy Contract (If Applicable)",
+        "Memory & Context Strategy (If Applicable)",
+        "Guardrails (If Applicable)",
+        "Evaluation (If Applicable)"
+      ],
+      "baselinePathCount": 31,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 18,
+      "baselineForbiddenResidueOccurrences": 126
+    },
+    {
+      "profile": "sdlc/api-spec",
+      "canonical": [
+        "Overview",
+        "Scope & Non-goals",
+        "API Style",
+        "Authentication & Authorization",
+        "Endpoint / Operation Catalog",
+        "Request / Response Schemas",
+        "Error Model",
+        "Data Contract Compatibility",
+        "Non-Functional Requirements",
+        "Machine-readable Contract Files",
+        "Verification",
+        "Traceability"
+      ],
+      "legacyRequiredAnyOf": [
+        {
+          "canonical": "Traceability",
+          "aliases": [
+            "Parent Spec",
+            "Related Documents"
+          ]
+        }
+      ],
+      "forbiddenResidue": [],
+      "baselinePathCount": 0,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 0,
+      "baselineForbiddenResidueOccurrences": 0
+    },
+    {
+      "profile": "sdlc/agent-design",
+      "canonical": [
+        "Overview",
+        "Scope & Non-goals",
+        "Agent Role",
+        "Inputs / Outputs",
+        "Orchestration Model",
+        "Tools & Permissions",
+        "Prompt / Policy Contract",
+        "Context & Memory Strategy",
+        "Guardrails",
+        "Failure Modes & Fallback",
+        "Evaluation Plan",
+        "Observability",
+        "Traceability"
+      ],
+      "legacyRequiredAnyOf": [
+        {
+          "canonical": "Traceability",
+          "aliases": [
+            "Parent Documents",
+            "Related Documents"
+          ]
+        }
+      ],
+      "forbiddenResidue": [],
+      "baselinePathCount": 1,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 0,
+      "baselineForbiddenResidueOccurrences": 0
+    },
+    {
+      "profile": "sdlc/data-model",
+      "canonical": [
+        "Overview",
+        "Scope & Non-goals",
+        "Entities / Aggregates",
+        "Relationships",
+        "Schema / Structures",
+        "Validation & Integrity Rules",
+        "Storage Strategy",
+        "Privacy / Security",
+        "Migration & Compatibility",
+        "Traceability"
+      ],
+      "legacyRequiredAnyOf": [
+        {
+          "canonical": "Traceability",
+          "aliases": [
+            "Parent Documents",
+            "Related Documents"
+          ]
+        }
+      ],
+      "forbiddenResidue": [],
+      "baselinePathCount": 0,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 0,
+      "baselineForbiddenResidueOccurrences": 0
+    },
+    {
+      "profile": "sdlc/tests",
+      "canonical": [
+        "Overview",
+        "Verification Goals",
+        "TDD Scope",
+        "Test Matrix",
+        "Contract & Integration Tests",
+        "Non-Functional Tests",
+        "Fixtures / Datasets",
+        "How to Run",
+        "Evidence & Reporting",
+        "Traceability"
+      ],
+      "legacyRequiredAnyOf": [
+        {
+          "canonical": "Traceability",
+          "aliases": [
+            "Parent Documents",
+            "Related Documents"
+          ]
+        }
+      ],
+      "forbiddenResidue": [
+        "Agent Evals (If Applicable)"
+      ],
+      "baselinePathCount": 0,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 0,
+      "baselineForbiddenResidueOccurrences": 0
+    },
+    {
+      "profile": "sdlc/plan",
+      "canonical": [
+        "Overview",
+        "Context",
+        "Goals & In-Scope",
+        "Non-Goals & Out-of-Scope",
+        "Work Breakdown",
+        "Verification Plan",
+        "Risks & Mitigations",
+        "Completion Criteria",
+        "Traceability"
+      ],
+      "legacyRequiredAnyOf": [
+        {
+          "canonical": "Traceability",
+          "aliases": [
+            "Related Documents"
+          ]
+        }
+      ],
+      "forbiddenResidue": [
+        "Agent Rollout & Evaluation Gates (If Applicable)"
+      ],
+      "baselinePathCount": 54,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 35,
+      "baselineForbiddenResidueOccurrences": 35
+    },
+    {
+      "profile": "sdlc/task",
+      "canonical": [
+        "Overview",
+        "Inputs",
+        "Task Table",
+        "Approval and Safety Boundaries",
+        "Verification Summary",
+        "Traceability"
+      ],
+      "legacyRequiredAnyOf": [
+        {
+          "canonical": "Traceability",
+          "aliases": [
+            "Related Documents"
+          ]
+        }
+      ],
+      "forbiddenResidue": [
+        "Working Rules",
+        "Suggested Types",
+        "Agent-specific Types (If Applicable)",
+        "Phase View (Optional)"
+      ],
+      "baselinePathCount": 51,
+      "baselineDebtPathCount": 51,
+      "baselineForbiddenResiduePathCount": 51,
+      "baselineForbiddenResidueOccurrences": 151
+    },
+    {
+      "profile": "sdlc/guide",
+      "canonical": [
+        "Overview",
+        "Guide Type",
+        "Target Audience",
+        "Prerequisites",
+        "Step-by-step Instructions",
+        "Common Pitfalls",
+        "Traceability"
+      ],
+      "legacyRequiredAnyOf": [
+        {
+          "canonical": "Traceability",
+          "aliases": [
+            "Related Documents"
+          ]
+        }
+      ],
+      "forbiddenResidue": [
+        "Purpose"
+      ],
+      "baselinePathCount": 11,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 11,
+      "baselineForbiddenResidueOccurrences": 11
+    },
+    {
+      "profile": "sdlc/policy",
+      "canonical": [
+        "Overview",
+        "Policy Scope",
+        "Applies To",
+        "Controls",
+        "Exceptions",
+        "Verification",
+        "Review Cadence",
+        "Traceability"
+      ],
+      "legacyRequiredAnyOf": [
+        {
+          "canonical": "Traceability",
+          "aliases": [
+            "Related Documents"
+          ]
+        }
+      ],
+      "forbiddenResidue": [
+        "AI Agent Policy Section (If Applicable)"
+      ],
+      "baselinePathCount": 12,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 7,
+      "baselineForbiddenResidueOccurrences": 7
+    },
+    {
+      "profile": "sdlc/runbook",
+      "canonical": [
+        "Overview",
+        "Runbook Type",
+        "When to Use",
+        "Procedure or Checklist",
+        "Verification Steps",
+        "Observability and Evidence Sources",
+        "Safe Rollback or Recovery Procedure",
+        "Traceability"
+      ],
+      "legacyRequiredAnyOf": [
+        {
+          "canonical": "Traceability",
+          "aliases": [
+            "Canonical References",
+            "Related Documents"
+          ]
+        }
+      ],
+      "forbiddenResidue": [
+        "Purpose",
+        "Agent Operations (If Applicable)"
+      ],
+      "baselinePathCount": 14,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 14,
+      "baselineForbiddenResidueOccurrences": 23
+    },
+    {
+      "profile": "sdlc/incident",
+      "canonical": [
+        "Overview",
+        "Incident Metadata",
+        "Impact",
+        "Timeline",
+        "Response State",
+        "Evidence",
+        "Follow-up Actions",
+        "Traceability"
+      ],
+      "legacyRequiredAnyOf": [
+        {
+          "canonical": "Response State",
+          "aliases": [
+            "Current Hypothesis / Response State"
+          ]
+        },
+        {
+          "canonical": "Traceability",
+          "aliases": [
+            "Related Documents"
+          ]
+        }
+      ],
+      "forbiddenResidue": [
+        "Agent Metadata (If Applicable)",
+        "Incident Summary"
+      ],
+      "baselinePathCount": 0,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 0,
+      "baselineForbiddenResidueOccurrences": 0
+    },
+    {
+      "profile": "sdlc/postmortem",
+      "canonical": [
+        "Overview",
+        "Incident Link and Impact Summary",
+        "Root Cause Analysis",
+        "Contributing Factors",
+        "What Went Well",
+        "What Went Wrong",
+        "Action Items",
+        "Prevention and Verification",
+        "Documentation Feedback Loop",
+        "Traceability"
+      ],
+      "legacyRequiredAnyOf": [
+        {
+          "canonical": "Incident Link and Impact Summary",
+          "aliases": [
+            "Incident Summary",
+            "Impact"
+          ]
+        },
+        {
+          "canonical": "Documentation Feedback Loop",
+          "aliases": [
+            "Required Documentation Feedback Loop"
+          ]
+        },
+        {
+          "canonical": "Traceability",
+          "aliases": [
+            "Related Documents"
+          ]
+        }
+      ],
+      "forbiddenResidue": [
+        "Agent Metadata (If Applicable)",
+        "Timeline"
+      ],
+      "baselinePathCount": 0,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 0,
+      "baselineForbiddenResidueOccurrences": 0
+    },
+    {
+      "profile": "content/reference",
+      "canonical": [
+        "Overview",
+        "Reference Type",
+        "Authority Boundary",
+        "Scope",
+        "Definitions / Facts",
+        "Sources",
+        "Review and Freshness",
+        "Related Documents"
+      ],
+      "legacyRequiredAnyOf": [],
+      "forbiddenResidue": [
+        "Purpose"
+      ],
+      "baselinePathCount": 35,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 35,
+      "baselineForbiddenResidueOccurrences": 35
+    },
+    {
+      "profile": "content/archive-tombstone",
+      "canonical": [
+        "Overview",
+        "Original Document",
+        "Archive Decision",
+        "Current Replacement",
+        "Current Implementation Evidence",
+        "Archive Index",
+        "Related Documents"
+      ],
+      "legacyRequiredAnyOf": [],
+      "forbiddenResidue": [],
+      "baselinePathCount": 31,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 0,
+      "baselineForbiddenResidueOccurrences": 0
+    },
+    {
+      "profile": "governance/reference",
+      "canonical": [
+        "Overview",
+        "Authority Boundary",
+        "Governance Context",
+        "Current Contract",
+        "Validation and Refresh",
+        "Related Documents"
+      ],
+      "legacyRequiredAnyOf": [],
+      "forbiddenResidue": [],
+      "baselinePathCount": 32,
+      "baselineDebtPathCount": 32,
+      "baselineForbiddenResiduePathCount": 0,
+      "baselineForbiddenResidueOccurrences": 0
+    },
+    {
+      "profile": "governance/memory",
+      "canonical": [
+        "Problem",
+        "Context",
+        "Resolution",
+        "Prevention",
+        "Related Progress"
+      ],
+      "legacyRequiredAnyOf": [],
+      "forbiddenResidue": [],
+      "baselinePathCount": 0,
+      "baselineDebtPathCount": 0,
+      "baselineForbiddenResiduePathCount": 0,
+      "baselineForbiddenResidueOccurrences": 0
+    },
+    {
+      "profile": "governance/template-support",
+      "canonical": [
+        "Overview",
+        "Purpose",
+        "Owned Contract",
+        "Authoring Rules",
+        "Validation Contract",
+        "Related Documents"
+      ],
+      "legacyRequiredAnyOf": [],
+      "forbiddenResidue": [],
+      "baselinePathCount": 6,
+      "baselineDebtPathCount": 6,
+      "baselineForbiddenResiduePathCount": 0,
+      "baselineForbiddenResidueOccurrences": 0
+    }
+  ],
+  "canonicalFormCoverage": [
+    {
+      "profile": "sdlc/prd",
+      "form": "docs/99.templates/templates/sdlc/requirements/prd.template.md",
+      "frontmatterType": "sdlc/prd",
+      "requiredHeadings": [
+        "Overview",
+        "Vision",
+        "Problem Statement",
+        "Personas",
+        "Key Use Cases",
+        "Functional Requirements",
+        "Success / Acceptance Criteria",
+        "Scope and Non-goals",
+        "Risks, Dependencies, and Assumptions",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/ard",
+      "form": "docs/99.templates/templates/sdlc/architecture/ard.template.md",
+      "frontmatterType": "sdlc/ard",
+      "requiredHeadings": [
+        "Overview",
+        "Boundaries & Non-goals",
+        "Quality Attributes",
+        "System Overview & Context",
+        "Data Architecture",
+        "Infrastructure & Deployment",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/adr",
+      "form": "docs/99.templates/templates/sdlc/architecture/adr.template.md",
+      "frontmatterType": "sdlc/adr",
+      "requiredHeadings": [
+        "Overview",
+        "Context",
+        "Decision",
+        "Explicit Non-goals",
+        "Consequences",
+        "Alternatives",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/spec",
+      "form": "docs/99.templates/templates/sdlc/specs/spec.template.md",
+      "frontmatterType": "sdlc/spec",
+      "requiredHeadings": [
+        "Overview",
+        "Strategic Boundaries & Non-goals",
+        "Contracts",
+        "Core Design",
+        "Data Modeling & Storage Strategy",
+        "Interfaces & Data Structures",
+        "Edge Cases & Error Handling",
+        "Failure Modes & Fallback / Human Escalation",
+        "Verification Commands",
+        "Success Criteria & Verification Plan",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/api-spec",
+      "form": "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
+      "frontmatterType": "sdlc/api-spec",
+      "requiredHeadings": [
+        "Overview",
+        "Scope & Non-goals",
+        "API Style",
+        "Authentication & Authorization",
+        "Endpoint / Operation Catalog",
+        "Request / Response Schemas",
+        "Error Model",
+        "Data Contract Compatibility",
+        "Non-Functional Requirements",
+        "Machine-readable Contract Files",
+        "Verification",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/agent-design",
+      "form": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
+      "frontmatterType": "sdlc/agent-design",
+      "requiredHeadings": [
+        "Overview",
+        "Scope & Non-goals",
+        "Agent Role",
+        "Inputs / Outputs",
+        "Orchestration Model",
+        "Tools & Permissions",
+        "Prompt / Policy Contract",
+        "Context & Memory Strategy",
+        "Guardrails",
+        "Failure Modes & Fallback",
+        "Evaluation Plan",
+        "Observability",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/data-model",
+      "form": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
+      "frontmatterType": "sdlc/data-model",
+      "requiredHeadings": [
+        "Overview",
+        "Scope & Non-goals",
+        "Entities / Aggregates",
+        "Relationships",
+        "Schema / Structures",
+        "Validation & Integrity Rules",
+        "Storage Strategy",
+        "Privacy / Security",
+        "Migration & Compatibility",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/tests",
+      "form": "docs/99.templates/templates/sdlc/specs/tests.template.md",
+      "frontmatterType": "sdlc/tests",
+      "requiredHeadings": [
+        "Overview",
+        "Verification Goals",
+        "TDD Scope",
+        "Test Matrix",
+        "Contract & Integration Tests",
+        "Non-Functional Tests",
+        "Fixtures / Datasets",
+        "How to Run",
+        "Evidence & Reporting",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/plan",
+      "form": "docs/99.templates/templates/sdlc/execution/plan.template.md",
+      "frontmatterType": "sdlc/plan",
+      "requiredHeadings": [
+        "Overview",
+        "Context",
+        "Goals & In-Scope",
+        "Non-Goals & Out-of-Scope",
+        "Work Breakdown",
+        "Verification Plan",
+        "Risks & Mitigations",
+        "Completion Criteria",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/task",
+      "form": "docs/99.templates/templates/sdlc/execution/task.template.md",
+      "frontmatterType": "sdlc/task",
+      "requiredHeadings": [
+        "Overview",
+        "Inputs",
+        "Task Table",
+        "Approval and Safety Boundaries",
+        "Verification Summary",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/guide",
+      "form": "docs/99.templates/templates/sdlc/operations/guide.template.md",
+      "frontmatterType": "sdlc/guide",
+      "requiredHeadings": [
+        "Overview",
+        "Guide Type",
+        "Target Audience",
+        "Prerequisites",
+        "Step-by-step Instructions",
+        "Common Pitfalls",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/policy",
+      "form": "docs/99.templates/templates/sdlc/operations/policy.template.md",
+      "frontmatterType": "sdlc/policy",
+      "requiredHeadings": [
+        "Overview",
+        "Policy Scope",
+        "Applies To",
+        "Controls",
+        "Exceptions",
+        "Verification",
+        "Review Cadence",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/runbook",
+      "form": "docs/99.templates/templates/sdlc/operations/runbook.template.md",
+      "frontmatterType": "sdlc/runbook",
+      "requiredHeadings": [
+        "Overview",
+        "Runbook Type",
+        "When to Use",
+        "Procedure or Checklist",
+        "Verification Steps",
+        "Observability and Evidence Sources",
+        "Safe Rollback or Recovery Procedure",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/incident",
+      "form": "docs/99.templates/templates/sdlc/operations/incident.template.md",
+      "frontmatterType": "sdlc/incident",
+      "requiredHeadings": [
+        "Overview",
+        "Incident Metadata",
+        "Impact",
+        "Timeline",
+        "Response State",
+        "Evidence",
+        "Follow-up Actions",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/postmortem",
+      "form": "docs/99.templates/templates/sdlc/operations/postmortem.template.md",
+      "frontmatterType": "sdlc/postmortem",
+      "requiredHeadings": [
+        "Overview",
+        "Incident Link and Impact Summary",
+        "Root Cause Analysis",
+        "Contributing Factors",
+        "What Went Well",
+        "What Went Wrong",
+        "Action Items",
+        "Prevention and Verification",
+        "Documentation Feedback Loop",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "content/reference",
+      "form": "docs/99.templates/templates/common/reference.template.md",
+      "frontmatterType": "content/reference",
+      "requiredHeadings": [
+        "Overview",
+        "Reference Type",
+        "Authority Boundary",
+        "Scope",
+        "Definitions / Facts",
+        "Sources",
+        "Review and Freshness",
+        "Related Documents"
+      ]
+    },
+    {
+      "profile": "content/archive-tombstone",
+      "form": "docs/99.templates/templates/common/archive-tombstone.template.md",
+      "frontmatterType": "content/archive-tombstone",
+      "requiredHeadings": [
+        "Overview",
+        "Original Document",
+        "Archive Decision",
+        "Current Replacement",
+        "Current Implementation Evidence",
+        "Archive Index",
+        "Related Documents"
+      ]
+    },
+    {
+      "profile": "governance/reference",
+      "form": "docs/99.templates/templates/common/governance-reference.template.md",
+      "frontmatterType": "governance/reference",
+      "requiredHeadings": [
+        "Overview",
+        "Authority Boundary",
+        "Governance Context",
+        "Current Contract",
+        "Validation and Refresh",
+        "Related Documents"
+      ]
+    },
+    {
+      "profile": "governance/memory",
+      "form": "docs/99.templates/templates/common/memory.template.md",
+      "frontmatterType": "governance/memory",
+      "requiredHeadings": [
+        "Problem",
+        "Context",
+        "Resolution",
+        "Prevention",
+        "Related Progress"
+      ]
+    },
+    {
+      "profile": "governance/template-support",
+      "form": "docs/99.templates/templates/common/template-support.template.md",
+      "frontmatterType": "governance/template-support",
+      "requiredHeadings": [
+        "Overview",
+        "Purpose",
+        "Owned Contract",
+        "Authoring Rules",
+        "Validation Contract",
+        "Related Documents"
+      ]
+    }
+  ],
+  "templateModeCoverage": [
+    {
+      "profile": "template/content/archive-tombstone",
+      "form": "docs/99.templates/templates/common/archive-tombstone.template.md",
+      "sourceProfiles": [
+        "content/archive-tombstone"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/governance/reference",
+      "form": "docs/99.templates/templates/common/governance-reference.template.md",
+      "sourceProfiles": [
+        "governance/reference"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/governance/memory",
+      "form": "docs/99.templates/templates/common/memory.template.md",
+      "sourceProfiles": [
+        "governance/memory"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "governance/progress-entry",
+      "form": "docs/99.templates/templates/common/progress.template.md",
+      "sourceProfiles": [
+        "governance/progress-ledger"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": {
+        "parentProfileId": "governance/progress-ledger",
+        "parentH2": "Work Entries",
+        "entryHeadingLevel": 3,
+        "sectionHeadingLevel": 4,
+        "requiredSections": [
+          "Metadata",
+          "Progress",
+          "Memory",
+          "Evidence",
+          "Handoff"
+        ]
+      }
+    },
+    {
+      "profile": "template/readme/common",
+      "form": "docs/99.templates/templates/common/readme.template.md",
+      "sourceProfiles": [
+        "readme/repository",
+        "readme/stage-index",
+        "readme/collection-index",
+        "readme/implementation",
+        "readme/snapshot-pack",
+        "readme/workspace-staging"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/content/reference",
+      "form": "docs/99.templates/templates/common/reference.template.md",
+      "sourceProfiles": [
+        "content/reference"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/governance/template-support",
+      "form": "docs/99.templates/templates/common/template-support.template.md",
+      "sourceProfiles": [
+        "governance/template-support"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/adr",
+      "form": "docs/99.templates/templates/sdlc/architecture/adr.template.md",
+      "sourceProfiles": [
+        "sdlc/adr"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/ard",
+      "form": "docs/99.templates/templates/sdlc/architecture/ard.template.md",
+      "sourceProfiles": [
+        "sdlc/ard"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/plan",
+      "form": "docs/99.templates/templates/sdlc/execution/plan.template.md",
+      "sourceProfiles": [
+        "sdlc/plan"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/task",
+      "form": "docs/99.templates/templates/sdlc/execution/task.template.md",
+      "sourceProfiles": [
+        "sdlc/task"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/guide",
+      "form": "docs/99.templates/templates/sdlc/operations/guide.template.md",
+      "sourceProfiles": [
+        "sdlc/guide"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/incident",
+      "form": "docs/99.templates/templates/sdlc/operations/incident.template.md",
+      "sourceProfiles": [
+        "sdlc/incident"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/policy",
+      "form": "docs/99.templates/templates/sdlc/operations/policy.template.md",
+      "sourceProfiles": [
+        "sdlc/policy"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/postmortem",
+      "form": "docs/99.templates/templates/sdlc/operations/postmortem.template.md",
+      "sourceProfiles": [
+        "sdlc/postmortem"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/runbook",
+      "form": "docs/99.templates/templates/sdlc/operations/runbook.template.md",
+      "sourceProfiles": [
+        "sdlc/runbook"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/prd",
+      "form": "docs/99.templates/templates/sdlc/requirements/prd.template.md",
+      "sourceProfiles": [
+        "sdlc/prd"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/agent-design",
+      "form": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
+      "sourceProfiles": [
+        "sdlc/agent-design"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/api-spec",
+      "form": "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
+      "sourceProfiles": [
+        "sdlc/api-spec"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/data-model",
+      "form": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
+      "sourceProfiles": [
+        "sdlc/data-model"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/task-legacy-harness",
+      "form": "docs/99.templates/templates/sdlc/specs/harness-task-contract.template.md",
+      "sourceProfiles": [
+        "sdlc/task"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/spec",
+      "form": "docs/99.templates/templates/sdlc/specs/spec.template.md",
+      "sourceProfiles": [
+        "sdlc/spec"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/tests",
+      "form": "docs/99.templates/templates/sdlc/specs/tests.template.md",
+      "sourceProfiles": [
+        "sdlc/tests"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    }
+  ]
+}

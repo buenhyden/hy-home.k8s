@@ -10,89 +10,46 @@ updated: YYYY-MM-DD
 
 # [Feature Name] Test & Evaluation Strategy
 
-> Use this template for `docs/03.specs/<###-Numbering>-<feature-id>/tests.md`.
->
-> Rules:
->
-> - This document defines the verification strategy for the feature.
-> - Core behavior defaults to TDD.
-> - Agent functionality must include both software tests and eval coverage when applicable.
-> - Execution-tracking remains in `04.execution/tasks/`.
-> - This document defines strategy and test inventory.
-> - Use relative links only, calculated from the final authored document location.
-
----
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Overview
 
-단위, 통합, 계약, 성능 테스트 및 Agent Eval 기준을 정리한다.
-
-## Parent Documents
-
-- **Spec**: `[./spec.md]`
-- **Agent Design**: `[./agent-design.md]`
-- **API Spec**: `[./api-spec.md]`
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
 ## Verification Goals
 
-- **What must be proven**:
-- **What risks are targeted**:
+<!-- Describe the topic-specific verification goals without copying template guidance. -->
 
 ## TDD Scope
 
-- **Core behavior requiring test-first implementation**:
-- **Exceptions and reason**:
+<!-- Describe the topic-specific tdd scope without copying template guidance. -->
 
 ## Test Matrix
 
-| Test ID  | Layer | Purpose   | Input / Fixture | Expected Result | Automation |
-| -------- | ----- | --------- | --------------- | --------------- | ---------- |
-| TEST-001 | unit  | [Purpose] | [Input]         | [Result]        | yes        |
+<!-- Describe the topic-specific test matrix without copying template guidance. -->
 
 ## Contract & Integration Tests
 
-- **API contract checks**:
-- **Consumer compatibility checks**:
-- **Dependency integration checks**:
+<!-- Describe the topic-specific contract & integration tests without copying template guidance. -->
 
 ## Non-Functional Tests
 
-- **Performance / latency**:
-- **Reliability / retry**:
-- **Security / abuse**:
-
-## Agent Evals (If Applicable)
-
-| Eval ID  | Type    | Scenario   | Dataset / Prompt Set | Metric   | Threshold   |
-| -------- | ------- | ---------- | -------------------- | -------- | ----------- |
-| EVAL-001 | offline | [Scenario] | [Dataset]            | [Metric] | [Threshold] |
+<!-- Describe the topic-specific non-functional tests without copying template guidance. -->
 
 ## Fixtures / Datasets
 
-- **Test fixtures**:
-- **Eval datasets**:
-- **Golden outputs**:
+<!-- Describe the topic-specific fixtures / datasets without copying template guidance. -->
 
 ## How to Run
 
-```bash
-pytest tests/
-npm test
-python evals/run_feature_eval.py
-```
+<!-- Describe the topic-specific how to run without copying template guidance. -->
 
 ## Evidence & Reporting
 
-- **Where results are stored**:
-- **Failure triage rule**:
-- **Linked execution tasks**: `[../../04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md]`
+<!-- Describe the topic-specific evidence & reporting without copying template guidance. -->
 
-## Related Documents
+## Traceability
 
-Target-relative examples below assume the authored file will be created at
-`docs/03.specs/<###-Numbering>-<feature-id>/tests.md`.
-
-- **Spec**: `[./spec.md]`
-- **Agent Design**: `[./agent-design.md]`
-- **Tasks**: `[../../04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md]`
-- **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
+<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->

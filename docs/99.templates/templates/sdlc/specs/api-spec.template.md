@@ -10,106 +10,54 @@ updated: YYYY-MM-DD
 
 # [API Name] Specification
 
-> Use this template for `docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md`.
->
-> Rules:
->
-> - This document is a child of the feature Spec, not a separate top-level doc type.
-> - Do not create a parallel `docs/api/` tree for this document.
-> - Use this for REST, GraphQL, or gRPC contracts.
-> - Link the parent Spec near the top.
-> - Use relative links only, calculated from the final authored document location.
-
----
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Overview
 
-이 문서는 [기능명]이 외부에 노출하는 API 계약을 정의한다. 엔드포인트, 인증, 요청/응답 스키마, 에러, 버저닝, 비기능 요구를 상세히 기술한다.
-
-## Parent Spec
-
-- **Spec**: `[./spec.md]`
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
 ## Scope & Non-goals
 
-- **Covers**:
-- **Does Not Cover**:
-- **Parent Design Context**: full design rationale remains in `spec.md`
+<!-- Describe the topic-specific scope & non-goals without copying template guidance. -->
 
 ## API Style
 
-- **Type**: `REST | GraphQL | gRPC`
-- **Audience**:
-- **Versioning Strategy**:
+<!-- Describe the topic-specific api style without copying template guidance. -->
 
 ## Authentication & Authorization
 
-- **Auth Mechanism**:
-- **Scopes / Roles**:
-- **Rate Limit / Abuse Control**:
+<!-- Describe the topic-specific authentication & authorization without copying template guidance. -->
 
 ## Endpoint / Operation Catalog
 
-| Operation ID | Method / Type | Path / Name | Purpose   | Caller   |
-| ------------ | ------------- | ----------- | --------- | -------- |
-| API-001      | GET           | `/example`  | [Purpose] | [Client] |
+<!-- Describe the topic-specific endpoint / operation catalog without copying template guidance. -->
 
 ## Request / Response Schemas
 
-### Request
-
-```json
-{
-  "example": "value"
-}
-```
-
-### Response
-
-```json
-{
-  "id": "123",
-  "status": "ok"
-}
-```
+<!-- Describe the topic-specific request / response schemas without copying template guidance. -->
 
 ## Error Model
 
-| Code | Meaning     | Retryable | Notes            |
-| ---- | ----------- | --------- | ---------------- |
-| 400  | Bad Request | No        | Validation error |
+<!-- Describe the topic-specific error model without copying template guidance. -->
 
 ## Data Contract Compatibility
 
-- **Backward Compatibility Rule**:
-- **Breaking Change Rule**:
-- **Deprecation Policy**:
+<!-- Describe the topic-specific data contract compatibility without copying template guidance. -->
 
 ## Non-Functional Requirements
 
-- **Latency Budget**:
-- **Availability Expectation**:
-- **Observability**:
-- **Audit / Traceability**:
+<!-- Describe the topic-specific non-functional requirements without copying template guidance. -->
 
 ## Machine-readable Contract Files
 
-- `./contracts/openapi.yaml`
-- `./contracts/service.proto`
-- `./contracts/schema.graphql`
+<!-- Describe the topic-specific machine-readable contract files without copying template guidance. -->
 
 ## Verification
 
-- Contract lint
-- Mock / integration test
-- Consumer compatibility check
+<!-- Describe the topic-specific verification without copying template guidance. -->
 
-## Related Documents
+## Traceability
 
-Target-relative examples below assume the authored file will be created at
-`docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md`.
-
-- **Spec**: `[./spec.md]`
-- **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
-- **Tasks**: `[../../04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md]`
-- **Runbook**: `[../../05.operations/runbooks/####-<topic>.md]`
+<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->
