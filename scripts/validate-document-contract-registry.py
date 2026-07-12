@@ -100,7 +100,7 @@ DOCUMENT_PROFILE_CONTRACT_V1 = {
         "template/sdlc/tests",
     ),
     "semantic_sha256": (
-        "c1632291f7336e68a6a34ba1965a68609a2181f2eecc9f5b16448d6a27e7908d"  # pragma: allowlist secret
+        "0d15439c97695d6b833bc1b2f94760b82ae9c95f39fa8e7e30886dc3967d19b2"  # pragma: allowlist secret
     ),
 }
 DOCUMENT_PROFILE_CONTRACT_V1_FIELDS = (
@@ -109,6 +109,8 @@ DOCUMENT_PROFILE_CONTRACT_V1_FIELDS = (
     "mode",
     "frontmatter",
     "statusDomain",
+    "headings",
+    "template",
     "routes",
     "sourceProfileIds",
     "placeholderPolicy",
@@ -191,22 +193,35 @@ def _assert_document_profile_contract(raw_registry: dict[str, Any]) -> int:
 def _assert_document_profile_contract_mutation_proof(
     raw_registry: dict[str, Any],
 ) -> None:
-    mutated = copy.deepcopy(raw_registry)
-    profile = next(
-        profile for profile in mutated["profiles"] if profile["id"] == "sdlc/prd"
+    mutations = (
+        ("placeholder policy", "placeholderPolicy", "template-only"),
+        (
+            "authored template",
+            "template",
+            "docs/99.templates/templates/sdlc/specs/spec.template.md",
+        ),
     )
-    profile["placeholderPolicy"] = "template-only"
-    try:
-        _assert_document_profile_contract(mutated)
-    except AssertionError as exc:
-        if "semantic digest mismatch" not in str(exc):
-            raise AssertionError(
-                "DocumentProfileContract.v1 mutation proof failed unexpectedly"
-            ) from exc
-    else:
-        raise AssertionError(
-            "DocumentProfileContract.v1 accepted a semantic mutation"
+    for label, field, value in mutations:
+        mutated = copy.deepcopy(raw_registry)
+        profile = next(
+            profile
+            for profile in mutated["profiles"]
+            if profile["id"] == "sdlc/prd"
         )
+        profile[field] = value
+        try:
+            _assert_document_profile_contract(mutated)
+        except AssertionError as exc:
+            if "semantic digest mismatch" not in str(exc):
+                raise AssertionError(
+                    "DocumentProfileContract.v1 "
+                    f"{label} mutation proof failed unexpectedly"
+                ) from exc
+        else:
+            raise AssertionError(
+                "DocumentProfileContract.v1 accepted a "
+                f"{label} semantic mutation"
+            )
 
 
 def _minimal_fixture_registry() -> dict[str, Any]:
