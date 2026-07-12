@@ -316,11 +316,16 @@ Expected: commit succeeds.
 - Modify: `docs/99.templates/support/template-routing.md`
 - Modify: `docs/99.templates/support/legacy-cleanup-rules.md`
 - Modify: `docs/99.templates/support/README.md`
+- Modify: `scripts/validate-repo-quality-gates.sh`
+- Modify: `docs/04.execution/plans/2026-07-12-template-contract-consolidation.md`
 
 **Interfaces:**
 
-- Consumes: `document-profiles.json` and the research ledger.
-- Produces: one responsibility owner per rule and links instead of complete copied route/state/profile tables.
+- Consumes: `document-profiles.json`, the research ledger, and the legacy gate's
+  exact Stage 99 support-status consumer.
+- Produces: one responsibility owner per rule, links instead of complete copied
+  route/state/profile tables, and `active` enforcement for exactly the six
+  canonical non-README support documents.
 
 - [ ] **Step 1: Capture duplicated machine tables as RED evidence**
 

@@ -1,7 +1,7 @@
 ---
 title: 'Template Documentation Contract'
 type: governance/template-support
-status: draft
+status: active
 owner: platform
 updated: 2026-07-06
 ---
@@ -36,6 +36,10 @@ The template system has separate surfaces:
   owns exact document routes, frontmatter key sets and states, heading sets, and
   template paths. This support contract owns rationale and examples only; it
   must not become a second machine contract.
+- The
+  [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+  records the research basis for profile-family decisions without owning their
+  machine values.
 - README files are entrypoints and inventories. They should summarize where to
   find rules and route to canonical owners, not duplicate full contract bodies.
 - README files route readers to lifecycle contract owners instead of carrying
@@ -75,11 +79,11 @@ Stage 01 requirements and Stage 03 specifications use numbered lineage, Stage
 documents reuse SDLC role profiles without becoming active-stage owners, and
 README files remain navigation surfaces rather than governance bodies.
 
-The detailed lifecycle state table, PRD/Spec numbering lineage rule, handoff
-link expectations, and archive tombstone lifecycle rule are owned by
-[SDLC Governance](./sdlc-governance.md). Archive tombstone metadata keys such
-as `original_path` are owned by [Frontmatter Schema](./frontmatter-schema.md)
-and the archive tombstone template.
+The registry profiles own exact lifecycle states and archive metadata keys.
+[SDLC Governance](./sdlc-governance.md) owns lifecycle rationale, numbering,
+handoff semantics, and active-surface rules; [Frontmatter
+Schema](./frontmatter-schema.md) explains metadata rationale without copying
+the registry values.
 
 ## SDLC and Common Documentation Split
 
@@ -127,4 +131,6 @@ in [Template Routing](./template-routing.md) and
 - [Frontmatter Schema](./frontmatter-schema.md)
 - [Template Routing](./template-routing.md)
 - [Legacy Cleanup Rules](./legacy-cleanup-rules.md)
+- [Document Profile Registry](./document-profiles.json)
+- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
 - [Documentation Protocol](../../00.agent-governance/rules/documentation-protocol.md)

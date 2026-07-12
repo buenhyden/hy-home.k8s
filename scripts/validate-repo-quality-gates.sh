@@ -1009,6 +1009,14 @@ for frontmatter_free_template_name in ["readme.template.md", "progress.template.
         fail(f"{rel(frontmatter_free_path)} must remain frontmatter-free")
 
 template_support_root = root / "docs/99.templates/support"
+active_template_support_names = {
+    "common-documentation-governance.md",
+    "documentation-contract.md",
+    "frontmatter-schema.md",
+    "legacy-cleanup-rules.md",
+    "sdlc-governance.md",
+    "template-routing.md",
+}
 support_stale_patterns = [
     (re.compile(r"Phase [1-4]"), "migration phase wording"),
     (re.compile(r"during the migration"), "migration-only wording"),
@@ -1025,7 +1033,9 @@ for support_doc in sorted(template_support_root.glob("*.md")):
     validate_markdown_frontmatter_profile(
         support_doc,
         "governance/template-support",
-        expected_status="draft",
+        expected_status=(
+            "active" if support_doc.name in active_template_support_names else "draft"
+        ),
     )
 
 example_local_sdlc_routes = [

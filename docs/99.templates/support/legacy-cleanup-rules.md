@@ -1,7 +1,7 @@
 ---
 title: 'Template Legacy Cleanup Rules'
 type: governance/template-support
-status: draft
+status: active
 owner: platform
 updated: 2026-07-05
 ---
@@ -18,6 +18,13 @@ evidence can remain only when it is clearly dated and not an active contract.
 
 Legacy cleanup keeps active documentation from presenting old paths, duplicate
 roles, or obsolete sections as current rules.
+
+The [Document Profile Registry](./document-profiles.json) owns current machine
+values. This document owns only the migration and removal policy for identifying
+and disposing of legacy representations. The [Document Type Format and Evidence
+Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+records the research basis for the replacement families without becoming an
+enforcement source.
 
 ## Legacy Items to Remove from Active Contracts
 
@@ -85,6 +92,8 @@ template-use instructions; authored docs must not retain those markers.
 ## Related Documents
 
 - [Documentation Contract](./documentation-contract.md)
+- [Document Profile Registry](./document-profiles.json)
+- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
 - [Frontmatter Schema](./frontmatter-schema.md)
 - [Template Routing](./template-routing.md)
 - [Documentation Protocol](../../00.agent-governance/rules/documentation-protocol.md)

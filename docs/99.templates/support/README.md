@@ -27,9 +27,9 @@ Primary readers:
 
 ### In Scope
 
-- Template support contracts and route ownership.
-- SDLC and common documentation governance.
-- Frontmatter profile rules.
+- Template support responsibility boundaries and route-selection procedure.
+- SDLC lifecycle/handoff and common-role rationale.
+- Frontmatter metadata rationale; exact profile values remain registry-owned.
 - Legacy template, key, value, and section cleanup rules.
 - Validator and hook alignment requirements for template routing.
 
@@ -79,16 +79,18 @@ This README is located at `docs/99.templates/support/`.
 
 | Document | Responsibility |
 | --- | --- |
-| [Documentation Contract](./documentation-contract.md) | Separates template forms, support contracts, Stage 00 governance, and authored docs. |
-| [SDLC Governance](./sdlc-governance.md) | Defines SDLC lifecycle template responsibilities. |
-| [Common Documentation Governance](./common-documentation-governance.md) | Defines README, reference, archive, memory, and progress template responsibilities. |
-| [Frontmatter Schema](./frontmatter-schema.md) | Defines current frontmatter profile rules. |
-| [Template Routing](./template-routing.md) | Defines the current `templates/**` route map. |
-| [Legacy Cleanup Rules](./legacy-cleanup-rules.md) | Defines active legacy keys, values, sections, and route references rejected by current contracts. |
+| [Documentation Contract](./documentation-contract.md) | Assigns ownership across forms, support, Stage 00 governance, authored documents, and enforcement surfaces. |
+| [SDLC Governance](./sdlc-governance.md) | Owns SDLC lifecycle rationale, handoff semantics, numbering, and active-surface rules. |
+| [Common Documentation Governance](./common-documentation-governance.md) | Owns README, reference, archive, memory, and progress role rationale. |
+| [Frontmatter Schema](./frontmatter-schema.md) | Explains metadata rationale while the registry owns exact profile values. |
+| [Template Routing](./template-routing.md) | Owns route selection and the non-authoritative compatibility mirror required through Spec 030. |
+| [Legacy Cleanup Rules](./legacy-cleanup-rules.md) | Owns migration and removal policy for legacy keys, values, sections, and route references. |
 
 ## Related Documents
 
 - [Templates README](../README.md)
+- [Document Profile Registry](./document-profiles.json)
+- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
 - [Documentation Protocol](../../00.agent-governance/rules/documentation-protocol.md)
 - [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
 - [Stage Authoring Matrix](../../00.agent-governance/rules/stage-authoring-matrix.md)

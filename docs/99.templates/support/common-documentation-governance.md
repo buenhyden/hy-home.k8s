@@ -1,7 +1,7 @@
 ---
 title: 'Common Documentation Template Governance'
 type: governance/template-support
-status: draft
+status: active
 owner: platform
 updated: 2026-07-04
 ---
@@ -20,15 +20,18 @@ agent memory or progress records.
 Common documentation templates keep repository entrypoints and durable
 knowledge consistent without forcing every common document into an SDLC phase.
 
-## Common Template Family
+## Common Profile Handoff
 
-| Role | Target Pattern | Template Path |
-| --- | --- | --- |
-| README or folder index | `README.md`, `**/README.md`, `.claude/README.md`, `.codex/README.md` | `../templates/common/readme.template.md` |
-| Durable reference | `docs/90.references/<category>/<topic>.md` | `../templates/common/reference.template.md` |
-| Archive Tombstone | `docs/98.archive/**/*.md` | `../templates/common/archive-tombstone.template.md` |
-| Governance memory | `docs/00.agent-governance/memory/<topic>.md` | `../templates/common/memory.template.md` |
-| Progress ledger entry | `docs/00.agent-governance/memory/progress.md` | `../templates/common/progress.template.md` |
+The [Document Profile Registry](./document-profiles.json) owns the exact routes,
+forms, headings, and metadata contracts for `readme/*`, `content/reference`,
+`content/archive-tombstone`, `governance/memory`,
+`governance/progress-ledger`, and `governance/progress-entry`. This document
+owns the human rationale for navigation, reference, preservation, and durable
+agent-learning roles without becoming another profile table.
+
+The [Document Type Format and Evidence
+Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+records the external and local evidence behind these role decisions.
 
 ## README Governance
 
@@ -101,6 +104,8 @@ Official basis:
 ## Related Documents
 
 - [Documentation Contract](./documentation-contract.md)
+- [Document Profile Registry](./document-profiles.json)
+- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
 - [Frontmatter Schema](./frontmatter-schema.md)
 - [Legacy Cleanup Rules](./legacy-cleanup-rules.md)
 - [Documentation Protocol](../../00.agent-governance/rules/documentation-protocol.md)

@@ -1,7 +1,7 @@
 ---
 title: 'Template Routing Contract'
 type: governance/template-support
-status: draft
+status: active
 owner: platform
 updated: 2026-07-06
 ---
@@ -23,19 +23,19 @@ documents.
 
 The machine-readable [Document Profile Registry](./document-profiles.json)
 owns every exact or anchored-regex route and its profile, heading, and template
-facts. This support document keeps the routing rationale, boundaries, and
-examples without serving as a second route map.
+facts. This support document owns the route-selection procedure, rationale,
+boundaries, and examples. Its one temporary route-map mirror is explicitly
+non-authoritative and exists only for the current compatibility consumer.
 
-## Route Families
+## Route-selection Procedure
 
-| Family | Target Folder | Ownership |
-| --- | --- | --- |
-| Requirements | `templates/sdlc/requirements/` | Product requirements. |
-| Architecture | `templates/sdlc/architecture/` | Architecture requirements and decisions. |
-| Specs | `templates/sdlc/specs/` | Technical specs and helper contracts. |
-| Execution | `templates/sdlc/execution/` | Plans and task evidence. |
-| Operations | `templates/sdlc/operations/` | Guides, policies, runbooks, incidents, postmortems. |
-| Common | `templates/common/` | README, reference, archive, memory, progress. |
+1. Normalize the repository-relative POSIX target path without traversing
+   ignored paths or symlinked provider views.
+2. Load the [Document Profile Registry](./document-profiles.json) and evaluate
+   every exact or anchored-regex route.
+3. Require exactly one matching profile; declaration order is never precedence.
+4. Use that profile's template and document contract, and use this support
+   document only for routing rationale and migration boundaries.
 
 ## Lifecycle Route Summary
 
@@ -45,16 +45,19 @@ dated execution evidence, example-local cloud snapshots reuse SDLC roles
 without becoming active-stage owners, and README files remain navigation
 surfaces rather than governance bodies.
 
-The SDLC lifecycle state table, numeric lineage rule, handoff links, and
-active-surface duplicate rule are owned by
-[SDLC Governance](./sdlc-governance.md). This document owns only the concrete
-path-to-template route map.
+Exact lifecycle domains remain registry facts. Numeric lineage rationale,
+handoff links, and the active-surface duplicate rule are owned by [SDLC
+Governance](./sdlc-governance.md). This document owns the selection procedure
+and the temporary compatibility mirror below, not the route facts themselves.
 
 ## Current Route Map
 
-The [Document Profile Registry](./document-profiles.json) is normative. The
-following compatibility mirror remains only while the existing Stage 99 README
-and embedded quality-gate comparison stay active through Spec 030:
+The [Document Profile Registry](./document-profiles.json) is the sole machine
+owner. The following non-authoritative compatibility mirror remains only while
+the existing Stage 99 README and embedded quality-gate comparison stay active
+through Spec 030. The quality gate verifies this mirror against the migration
+contract; maintainers must not expand or hand-edit it beyond that consumer's
+requirements:
 
 | Target Pattern | Template Path |
 | --- | --- |
@@ -159,6 +162,7 @@ Historical progress entries may require an explicit allow-list.
 
 - [Documentation Contract](./documentation-contract.md)
 - [Document Profile Registry](./document-profiles.json)
+- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
 - [SDLC Governance](./sdlc-governance.md)
 - [Common Documentation Governance](./common-documentation-governance.md)
 - [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)

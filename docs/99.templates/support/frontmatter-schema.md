@@ -1,7 +1,7 @@
 ---
 title: 'Template Frontmatter Schema'
 type: governance/template-support
-status: draft
+status: active
 owner: platform
 updated: 2026-07-06
 ---
@@ -10,9 +10,9 @@ updated: 2026-07-06
 
 ## Overview
 
-This document defines the canonical frontmatter schema for Markdown template
-families and authored documents. This schema applies to Markdown template
-files, authored documents, and repository validation.
+This document explains the metadata rationale for Markdown template families
+and authored documents. The machine-readable registry owns the schema applied
+to template files, authored documents, and repository validation.
 
 ## Purpose
 
@@ -25,16 +25,9 @@ content summaries, route tables, or governance prose.
 
 The machine-readable [Document Profile Registry](./document-profiles.json)
 owns the exact required, allowed, and ordered key sets, lifecycle state domains,
-heading sets, and template path for every profile. The following block remains
-an illustrative authored-document example, not a second schema:
-
-```yaml
-title: '<Document Title>'
-type: <profile-family>/<document-role>
-status: draft
-owner: platform
-updated: YYYY-MM-DD
-```
+heading sets, and template path for every profile. Authors and validators must
+read those values from the matched profile rather than from an illustrative
+copy in support prose.
 
 Exceptions:
 
@@ -50,7 +43,7 @@ Exceptions:
 - `progress.template.md` is an appendable ledger entry template.
 - OpenAPI, GraphQL, and protobuf templates must remain native to their format.
 
-## Profile Families
+## Profile Rationale
 
 The registry defines the complete profile set. The families remain useful as a
 human model: SDLC profiles cover delivery records, common and governance
@@ -59,6 +52,11 @@ frontmatter-free, and explicit exception profiles preserve GitHub-native,
 provider-native, generated, and native-contract behavior. Exact `type` values,
 keys, states, headings, and templates must be read from the registry rather
 than copied into a Markdown table.
+
+The [Document Type Format and Evidence
+Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+records why the repository adopted these metadata roles and which external
+guidance it rejected; it is evidence, not a second schema owner.
 
 ## Key Rules
 
@@ -70,13 +68,10 @@ than copied into a Markdown table.
 - `owner` is `platform` for repository-authored documents.
 - `updated` uses an ISO calendar date.
 - Do not quote scalar `owner` values when the value is the canonical owner.
-- Archive Tombstones add `original_path`, `archived_on`, `archive_reason`, and
-  `replacement` because archive routing and replacement traceability are part
-  of the tombstone identity, not body prose.
-- `archive_reason` uses one of `superseded`, `duplicate`, `obsolete`,
-  `migrated`, or `historical-baseline`.
-- `replacement` is a repository path when a current owner exists, or `none`
-  when there is no direct replacement.
+- Archive Tombstones carry the registry-defined traceability extension because
+  archive identity and replacement routing are metadata concerns, not body
+  prose. Exact extension keys and allowed values come only from the
+  `content/archive-tombstone` profile.
 
 ## Legacy Cleanup Rules
 
@@ -112,6 +107,7 @@ has exactly one frontmatter profile. The gate rejects:
 
 - [Documentation Contract](./documentation-contract.md)
 - [Document Profile Registry](./document-profiles.json)
+- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
 - [SDLC Governance](./sdlc-governance.md)
 - [Common Documentation Governance](./common-documentation-governance.md)
 - [Legacy Cleanup Rules](./legacy-cleanup-rules.md)
