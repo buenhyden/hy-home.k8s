@@ -90,6 +90,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-07-11-governance-owner-and-roster-currentness.md
 ├── 2026-07-11-workspace-engineering-research-audit-integration.md
 ├── 2026-07-12-document-contract-registry.md
+├── 2026-07-12-template-contract-consolidation.md
 └── README.md
 ```
 
@@ -162,6 +163,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-07-11-governance-owner-and-roster-currentness.md`](./2026-07-11-governance-owner-and-roster-currentness.md)               | Governance owner, lifecycle, audit IA, Plan evidence, and ten-role/30-adapter roster currentness implementation evidence.                                                                                                                                                | Done   | 2026-07-11 |
 | [`./2026-07-11-workspace-engineering-research-audit-integration.md`](./2026-07-11-workspace-engineering-research-audit-integration.md) | Compact completion evidence for the thirteen-task workspace engineering research and implementation-audit integration, publication commits, reviews, and repository-static boundaries.                                                                                | Done | 2026-07-11 |
 | [`./2026-07-12-document-contract-registry.md`](./2026-07-12-document-contract-registry.md) | Document contract registry schema, classifier, approved corpus, compatibility gate, and validation evidence. | Done | 2026-07-12 |
+| [`./2026-07-12-template-contract-consolidation.md`](./2026-07-12-template-contract-consolidation.md) | Stage 99 support/form consolidation, canonical template normalization, legacy Task form removal, and compatibility evidence. | Active | 2026-07-12 |
 
 ## Related Documents
 

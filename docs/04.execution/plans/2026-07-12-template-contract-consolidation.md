@@ -687,4 +687,4 @@ Expected: commit succeeds.
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Registry Spec**: [Document Contract Registry](../../03.specs/026-document-contract-registry/spec.md)
 - **Spec**: [Template Contract Consolidation](../../03.specs/027-template-contract-consolidation/spec.md)
-- **Planned Tasks**: `../tasks/2026-07-12-template-contract-consolidation.md` (created by TCC-001)
+- **Task**: [Template Contract Consolidation](../tasks/2026-07-12-template-contract-consolidation.md)

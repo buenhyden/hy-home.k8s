@@ -152,6 +152,8 @@ git diff --check
 ## Related Documents
 
 - **Registry Spec**: [Document Contract Registry](../026-document-contract-registry/spec.md)
+- **Plan**: [Template Contract Consolidation Implementation Plan](../../04.execution/plans/2026-07-12-template-contract-consolidation.md)
+- **Task**: [Template Contract Consolidation Task](../../04.execution/tasks/2026-07-12-template-contract-consolidation.md)
 - **Next Spec**: [README and Workspace Profiles](../028-readme-workspace-profiles/spec.md)
 - **Template Support**: [Template Support Index](../../99.templates/support/README.md)
 - **Documentation Method**: [Diátaxis](https://diataxis.fr/start-here/)
