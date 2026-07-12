@@ -170,6 +170,12 @@ class DocumentProfile:
     append_contract: AppendContract | None
 
 @dataclass(frozen=True)
+class AppendContext:
+    parent_path: PurePosixPath
+    parent_profile: DocumentProfile
+    parent_h2: str
+
+@dataclass(frozen=True)
 class Registry:
     schema_version: int
     baseline_sha: str
@@ -192,7 +198,8 @@ def enumerate_target_markdown(
 ) -> TargetInventory: ...
 def classify_path(registry: Registry, path: PurePosixPath) -> DocumentProfile: ...
 def validate_document(root: Path, path: PurePosixPath,
-                      profile: DocumentProfile, mode: str) -> list[Diagnostic]: ...
+                      profile: DocumentProfile, mode: str,
+                      append_context: AppendContext | None = None) -> list[Diagnostic]: ...
 def validate_cross_document_contracts(root: Path, mode: str) -> list[Diagnostic]: ...
 ```
 
@@ -569,22 +576,30 @@ remediation is a separate logical commit with its own progress entry.
 `tests/fixtures/markdown-profiles.json` has `schemaVersion: 1`, one
 `profileMatrix` row for every registry profile, and `mutationCases`. Each row
 contains `profile`, `mode`, `applicability`, `fixturePath`, `positiveSource`,
-and `negativeMutations`. Markdown routes in modes `authored`, `template`,
-`frontmatter-free`, and `generated` are applicable; Markdown `native` routes
-are applicable to frontmatter/heading-forbidden checks. The registry profile
+and `negativeMutations`. Applicability is exactly one of `validate-document`,
+`append-fragment`, `classification-only`, or `excluded`. Markdown routes in
+modes `authored`, `template`, and `frontmatter-free` with declared structural
+contracts use `validate-document`. Profiles in modes `native` or `generated`
+whose frontmatter mode is `not-applicable` and whose required/allowed headings
+are both empty use `classification-only`: empty headings mean structural N/A,
+not "forbid every heading". Their positive and focused route/profile mismatch
+cases run through production `classify_path()` and inventory selection while
+`validate_document()` emits no invented structural rule. The registry profile
 `governance/progress-entry` is explicitly applicable as
 `applicability: append-fragment`: its positive case validates a canonical H3
 entry with the five required H4 sections against the parent
 `governance/progress-ledger` append contract, and focused negative cases remove
 one required H4, use the wrong H3/H4 level, and target the wrong parent H2.
-Those cases call the same production `validate_document()` entry point with
-the parent profile/context; they are not fixture-only parsing. Only
-non-Markdown native and `non-target` profiles use `applicability: excluded`
-with exact reason `non-markdown` or `non-target`. Self-test rejects missing,
-duplicate, stale, or unjustified rows and asserts that
-`governance/progress-entry` is never excluded. Every applicable or
-append-fragment row runs a positive document and at least one supported focused
-negative mutation through `validate_document()`.
+Those cases call the same production `validate_document()` entry point with an
+explicit `AppendContext(parent_path, parent_profile, parent_h2)`; missing,
+wrong-profile, and wrong-parent-H2 contexts fail with stable append rule IDs.
+They are not fixture-only parsing. Only `non-target` uses
+`applicability: excluded` with exact reason `non-target`. Self-test rejects
+missing, duplicate, stale, or unjustified rows and asserts that
+`governance/progress-entry` is never excluded. Every `validate-document` or
+`append-fragment` row runs production positive and focused negative cases;
+every `classification-only` row runs production classifier/inventory positive
+and focused negative cases.
 
 Render positive fixtures from the registry contract and canonical form with
 fixed values, not from a current authored file. Parameterize negative
@@ -611,7 +626,10 @@ Implement argument parsing and one self-test loop that calls the same
 `validate_document()` production entry point for every case in both fixture
 files. Select each README case's path/profile contract from the handoff's
 `paths` table; do not use a fixture-only parser. Initially return an empty
-diagnostic list from `validate_document()`.
+diagnostic list from `validate_document()`. Pass `append_context=None` for
+ordinary documents and an explicit parent context for progress-entry cases;
+classification-only profiles exercise the production classifier/inventory
+path rather than a structural fixture parser.
 
 ```bash
 python3 scripts/validate-markdown-profiles.py --self-test
@@ -641,6 +659,12 @@ def extract_frontmatter(text: str) -> tuple[list[str], dict[str, object], str]:
     return list(data.keys()), data, text[closing + 5:]
 ```
 
+Date validation is mode-specific. Authored documents require a real ISO
+calendar date that is not future-dated under the repository date policy.
+Template-mode forms may use the exact `YYYY-MM-DD` placeholder and do not run
+the authored future-date rule; any other invalid template date still fails.
+Positive and focused negative cases cover both branches.
+
 - [ ] **Step 4: Implement fence-aware heading parsing**
 
 Track fence character and length; accept a closing fence only when it uses the
@@ -650,11 +674,26 @@ fences and return an unclosed-fence flag.
 - [ ] **Step 5: Implement profile rules and sorted diagnostics**
 
 Validate exact required/allowed keys, ordered keys, type, status domain,
-`platform` owner, real ISO date, future-date policy, title, H1 count, required
+`platform` owner, mode-specific date policy, title, H1 count, required
 and allowed H2, duplicate H2, and residue markers. Load path-level legacy
 shape debt only from `template-compatibility.json`: extend each existing
 profile debt row with sorted `affectedPaths` entries containing exact `path`,
-`ruleIds`, and `tokens` from the frozen 466-path pre-Task baseline. A defer
+`ruleIds`, and `tokens` from the frozen 466-path pre-Task baseline. The frozen
+audit contract is one 266-path union with these exact no-growth caps:
+
+| Rule | Exact finite baseline |
+| --- | --- |
+| `BODY-HEADING-REQUIRED` | 89 paths and 247 missing path/token obligations |
+| `BODY-TEMPLATE-RESIDUE` | 188 paths and 410 occurrences; its overlap with required-heading debt is 51 paths, so the existing-debt union is 226 paths |
+| `FM-DELIMITER` | 24 exact `governance/reference` paths |
+| `BODY-HEADING-UNSUPPORTED` | 175 paths, 617 occurrences, and 422 exact path/token obligations after represented aliases and residue are removed |
+| `BODY-H2-DUPLICATE` | 1 exact path and 1 token |
+
+Store every rule on the affected path record, store sorted exact tokens where
+the rule is token-bearing, and add aggregate rule caps plus
+`unionPathCount: 266`. Self-test recomputes the per-rule and union counts from
+the exact records and rejects missing/extra paths, tokens, occurrences,
+overlap drift, or cap growth. A defer
 requires an exact path/rule/token match and counts at or below every frozen
 profile/path/occurrence cap. Strict mode fails the same item; new paths and
 unknown tokens never defer. Do not add debt to the registry. Sort diagnostics by
@@ -668,7 +707,9 @@ Because `affectedPaths` changes the complete semantic projection of
 `assert_template_compatibility_mutation_proof()` with at least one
 `affectedPaths` mutation that changes an exact path, rule ID, or token and
 prove `template_compatibility_contract_matches()` rejects it. Keep the owner,
-growth, residue, and baseline-count mutations. This is a required consumer
+growth, residue, and baseline-count mutations; add rule-cap and
+`unionPathCount` mutations so the new finite-debt dimensions are also proven
+immutable. This is a required consumer
 update, not an allow-list, weakened digest projection, deferred failure, or
 SMDV-004 gate-delegation change.
 
@@ -681,7 +722,11 @@ python3 scripts/validate-markdown-profiles.py --root . --mode compatibility
 
 Expected: all named cases, all eight imported README cases, and every
 applicable profile/mode row PASS through the production parser; repository run
-exits 0 with only exact named `DEFER` debt. Inventory remains 467 target paths
+exits 0 with only the exact 266-path union and its frozen per-rule caps reported
+as named `DEFER` debt. Classification-only native/generated profiles remain
+structural N/A, progress entries use explicit parent context, template date
+placeholders pass only in template mode, and authored dates remain real and
+not future. Inventory remains 467 target paths
 (`baseline=433`, `new=36`), 60 profiles, 27 templates, and README 72.
 
 - [ ] **Step 7: Update script/test inventories and run focused QA**
@@ -742,7 +787,9 @@ profile/template, or README count change. Roll back with
 its mutation proof return together. A fresh reviewer checks matrix coverage,
 production-entry-point use, debt matching, output/exit stability, exact
 nine-path scope, readme-profile fixture byte identity, complete-fixture digest
-pinning, arbitrary `affectedPaths` drift rejection, and repository-static boundaries in
+pinning, the exact 266-path/per-rule cap recomputation, arbitrary
+`affectedPaths` drift rejection, append-context and date-mode coverage, and
+repository-static boundaries in
 `.superpowers/sdd/smdv-task-2-review.md`.
 
 ---
@@ -1028,7 +1075,7 @@ logical unit with its own progress entry.
 - [ ] Every registry profile and cross-document rule has positive and focused negative fixture coverage.
 - [ ] Compatibility mode accounts for every known migration item without a silent allow-list.
 - [ ] `LEDGER-MISSING` has one exact Spec-030-owned representation and ADM-002 removal transition.
-- [ ] Every registry profile has exactly one deterministic matrix row; every applicable profile/mode, including the `governance/progress-entry` append fragment, and every cross-document rule has production-entry-point positive and focused negative coverage.
+- [ ] Every registry profile has exactly one deterministic matrix row; every structural profile/mode, the `governance/progress-entry` append fragment, every native/generated classification-only row, and every cross-document rule has the matching production-entry-point positive and focused negative coverage.
 - [ ] The quality gate consumes canonical validators and no longer owns duplicated general document rules.
 - [ ] Spec, Plan, Task, indexes, progress evidence, and rollback commits are reciprocal and complete.
 
