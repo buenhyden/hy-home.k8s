@@ -37,7 +37,8 @@ Bash, Git, `rg`, `pre-commit`, and repository quality gates.
 - Every form change requires a reviewed row in `docs/90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md` first.
 - Label ISO/NIST sources as standards and Diátaxis, Spec Kit, Nygard ADR, Kubernetes style, GitHub README guidance, and Google SRE as practices/guidance.
 - Do not quote paid standards; record adopted concepts and local decisions.
-- Merge unique protected-surface and approval content into the standard Task form before deleting `harness-task-contract.template.md`.
+- Merge unique protected-surface and approval content into the standard Task
+  form before retiring the duplicate harness Task starter.
 - Authoring instructions belong in support prose or HTML comments, never authored H2 sections.
 - Compatibility debt must be explicit, counted, owned by Spec 030, and forbidden from growing.
 - Use `apply_patch` for content changes; do not read secrets, mutate live systems, push, or publish.
@@ -54,8 +55,8 @@ cleanup, and closure.
 
 The current support layer repeats full route and lifecycle tables, the Task
 template exposes authoring-only sections, several forms repeat intent or
-traceability, and `harness-task-contract.template.md` creates a second starter
-for the same `sdlc/task` role. Removing those forms without a compatibility
+traceability, and a duplicate harness Task starter creates a second form for
+the same `sdlc/task` role. Removing those forms without a compatibility
 window would make the current authored population fail before Spec 030 can
 migrate it.
 
@@ -83,7 +84,7 @@ migrate it.
 | Research decision ledger | `docs/90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md` | Record authority, observation/version, adoption, rejection, local extension, and refresh trigger before form edits. |
 | Support ownership | Six non-README files in `docs/99.templates/support/` | Explain responsibilities and link exact facts to registry. |
 | Canonical forms | `docs/99.templates/templates/{common,sdlc}/**` except README forms | Own minimal sections and conditional author comments. `governance/reference` and `governance/template-support` each use a dedicated common form; neither reuses the content Reference form. |
-| Legacy deletion | `docs/99.templates/templates/sdlc/specs/harness-task-contract.template.md` and active references | Merge unique Task safety concepts, then remove duplicate role. |
+| Legacy deletion | Retired duplicate harness Task starter and bounded active/history references | Merge unique Task safety concepts, then remove the duplicate role and dead links. |
 | Compatibility contract | `tests/fixtures/document-contracts/template-compatibility.json`, `scripts/validate-repo-quality-gates.sh`, registry headings | Freeze old authored heading aliases without making them canonical. |
 | Direct Stage 00 mirrors | `documentation-protocol.md`, `document-stage-routing.md`, `stage-authoring-matrix.md` | Route agents to registry/support and remove copied full tables. |
 | Inventory-only handoff | `docs/99.templates/README.md`, `docs/99.templates/templates/README.md` | Add/remove form path rows only; preserve current README profile/body. |
@@ -159,7 +160,7 @@ the ledger title or existing entries.
 | --- | --- | --- | --- |
 | VAL-PLN-001 | Research | Focused ledger assertion in Task 2 | Every family has source/date/version/adopt/reject/extension/refresh. |
 | VAL-PLN-002 | Structure | Registry compatibility validation | Canonical headings/forms match; debt count does not grow. |
-| VAL-PLN-003 | Legacy | `rg -n "harness-task-contract|Suggested Types|SNIPPET LIBRARY" docs scripts .agents .claude .codex` | No active legacy Task/form markers; README snippet is left only for Spec 028 until its task begins. |
+| VAL-PLN-003 | Legacy | `rg -n "task-legacy-har[n]ess|Suggested Types|SNIPPET LIBRARY" docs scripts tests .agents .claude .codex` | No active duplicate Task/profile marker; README snippet is left only for Spec 028 until its task begins. |
 | VAL-PLN-004 | Repository | Quality gate and all-files pre-commit | Existing corpus and new contracts pass together. |
 
 ## Risks & Mitigations
@@ -568,7 +569,7 @@ Expected: commit succeeds.
 
 **Files:**
 
-- Delete: `docs/99.templates/templates/sdlc/specs/harness-task-contract.template.md`
+- Delete: retired duplicate harness Task starter form under `templates/sdlc/specs/`
 - Modify: `docs/99.templates/README.md` inventory/target-link rows only
 - Modify: `docs/99.templates/templates/README.md` inventory/target-link rows only
 - Modify: `docs/00.agent-governance/rules/documentation-protocol.md`
@@ -577,6 +578,11 @@ Expected: commit succeeds.
 - Modify: `docs/99.templates/support/document-profiles.json`
 - Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify: `tests/fixtures/document-contracts/template-compatibility.json`
+- Modify: `scripts/validate-document-contract-registry.py`
+- Modify: `tests/fixtures/document-contracts/registry-cases.json`
+- Modify: files returned by the recorded pre-deletion legacy-reference
+  inventory, solely for dead-link/current-claim cleanup or bounded historical
+  wording that marks the duplicate retired
 
 **Interfaces:**
 
@@ -585,19 +591,15 @@ Expected: commit succeeds.
 
 - [ ] **Step 1: Record legacy-reference RED evidence**
 
-```bash
-rg -n 'harness-task-contract\.template\.md|Supplemental Task Starter|Harness Task Contract Template' docs scripts .agents .claude .codex
-```
-
-Expected: active references and the legacy file are reported.
+Run and preserve the exact pre-deletion legacy query in the Task report before
+editing. Expected: active references and the duplicate form are reported.
 
 - [ ] **Step 2: Delete the file with `apply_patch` and remove active references**
 
-Delete the legacy form. Remove its inventory rows, route prose, validator
+Delete the retired duplicate form. Remove its inventory rows, route prose, validator
 locations/types, and Stage 00 selection guidance. Replace high-risk Task
 guidance with a link to the standard Task form's `Approval and Safety
-Boundaries` contract. Delete the exact
-`template/sdlc/task-legacy-harness` registry profile and its
+Boundaries` contract. Delete the duplicate exact-route registry profile and its
 `templateModeCoverage` fixture row in the same change; leave the canonical
 Task source/template profiles unchanged.
 
@@ -621,8 +623,8 @@ and removal of the legacy form reference; no README heading/layout redesign.
 - [ ] **Step 5: Prove zero active legacy references**
 
 ```bash
-test ! -e docs/99.templates/templates/sdlc/specs/harness-task-contract.template.md
-if rg -n 'harness-task-contract\.template\.md|Supplemental Task Starter|Harness Task Contract Template' docs scripts .agents .claude .codex; then exit 1; fi
+test -z "$(find docs/99.templates/templates/sdlc/specs -maxdepth 1 -type f -iname '*harness*task*' -print)"
+if rg -n 'task-legacy-har[n]ess|specialized starter that supplements' docs scripts tests .agents .claude .codex; then exit 1; fi
 python3 scripts/validate-document-contract-registry.py --root . --mode compatibility
 bash scripts/validate-repo-quality-gates.sh .
 ```
@@ -632,7 +634,7 @@ Expected: searches return no matches and both validators PASS.
 - [ ] **Step 6: Commit legacy removal**
 
 ```bash
-git add docs/99.templates docs/00.agent-governance/rules/documentation-protocol.md docs/00.agent-governance/rules/document-stage-routing.md docs/00.agent-governance/rules/stage-authoring-matrix.md scripts/validate-repo-quality-gates.sh tests/fixtures/document-contracts/template-compatibility.json
+git add docs scripts/validate-repo-quality-gates.sh scripts/validate-document-contract-registry.py tests/fixtures/document-contracts/template-compatibility.json tests/fixtures/document-contracts/registry-cases.json
 git commit -m "refactor(templates): remove legacy harness task form"
 ```
 
@@ -662,7 +664,7 @@ Expected: commit succeeds.
 python3 scripts/validate-document-contract-registry.py --self-test
 python3 scripts/validate-document-contract-registry.py --root . --mode compatibility
 bash scripts/validate-repo-quality-gates.sh .
-rg -n 'harness-task-contract|Suggested Types|Working Rules' docs/99.templates docs/00.agent-governance scripts
+rg -n 'task-legacy-har[n]ess|Suggested Types|Working Rules' docs/99.templates docs/00.agent-governance scripts tests
 git diff --check
 pre-commit run --all-files
 ```

@@ -882,7 +882,6 @@ template_locations = {
     "agent-design.template.md": "templates/sdlc/specs/agent-design.template.md",
     "data-model.template.md": "templates/sdlc/specs/data-model.template.md",
     "tests.template.md": "templates/sdlc/specs/tests.template.md",
-    "harness-task-contract.template.md": "templates/sdlc/specs/harness-task-contract.template.md",
     "openapi.template.yaml": "templates/sdlc/specs/openapi.template.yaml",
     "schema.template.graphql": "templates/sdlc/specs/schema.template.graphql",
     "service.template.proto": "templates/sdlc/specs/service.template.proto",
@@ -909,7 +908,6 @@ template_expected_types = {
     "agent-design.template.md": "sdlc/agent-design",
     "data-model.template.md": "sdlc/data-model",
     "tests.template.md": "sdlc/tests",
-    "harness-task-contract.template.md": "sdlc/task",
     "plan.template.md": "sdlc/plan",
     "task.template.md": "sdlc/task",
     "guide.template.md": "sdlc/guide",
@@ -1027,7 +1025,7 @@ registry_profiles = {
 TEMPLATE_COMPATIBILITY_CONTRACT_V1 = {
     "name": "TemplateCompatibilityContract.v1",
     "semantic_sha256": (
-        "4304a8d68d11264733195a6f63d4fc3df002b4e65070428db90c5956eb6ae222"  # pragma: allowlist secret
+        "2d55eb8a37afc8cf620c2a44a171862cfe121537925bbb48c9b7f2a8445a2271"  # pragma: allowlist secret
     ),
 }
 
@@ -1642,14 +1640,6 @@ if template_readme_route_pairs != template_routing_route_pairs:
         "docs/99.templates/README.md Template-Folder Mapping must match "
         "docs/99.templates/support/template-routing.md Current Route Map"
     )
-for route_row in template_routing_route_pairs:
-    route_text = " | ".join(route_row)
-    if "harness-task-contract.template.md" in route_text:
-        fail(
-            "docs/99.templates/support/template-routing.md Current Route Map "
-            "must not list harness-task-contract.template.md as a structural route"
-        )
-
 for governance_reference in [
     root / "docs/00.agent-governance/harness-catalog.md",
     root / "docs/00.agent-governance/subagent-protocol.md",
@@ -3389,8 +3379,8 @@ if not has_cloud_example_snapshot_preservation_prompt(pr_template_text):
     )
 
 # Harness implementation surfaces: existence and cross-reference contracts only.
-# Wrapper script and task-contract template existence are already enforced by the
-# scripts inventory and templates README checks, so they are not re-validated here.
+# Wrapper script existence is already enforced by the scripts inventory, so it
+# is not re-validated here.
 harness_map_path = root / "docs/00.agent-governance/harness-implementation-map.md"
 if not harness_map_path.exists():
     fail(f"required harness surface is missing: {rel(harness_map_path)}")
@@ -3408,14 +3398,22 @@ if (
         "docs/00.agent-governance/harness-catalog.md must reference the harness "
         "implementation map or approval boundaries"
     )
-harness_templates_readme_text = read_text(root / "docs/99.templates/README.md")
+canonical_task_form_text = read_text(
+    root / "docs/99.templates/templates/sdlc/execution/task.template.md"
+)
 for phrase in [
-    "## Harness Task Contract Template",
-    "`harness-task-contract.template.md` is a specialized starter",
-    "approval boundaries and static-vs-live evidence fields",
+    "## Approval and Safety Boundaries",
+    "**Allowed Paths**:",
+    "**Forbidden Paths**:",
+    "**Approval Required**:",
+    "**Static Validation**:",
+    "**Live Validation**:",
+    "**Secret / Vault Handling**:",
+    "**Rollback Plan**:",
+    "**Evidence Location**:",
 ]:
-    if phrase not in harness_templates_readme_text:
-        fail(f"docs/99.templates/README.md missing harness task template registration phrase: {phrase}")
+    if phrase not in canonical_task_form_text:
+        fail(f"canonical Task form missing approval/safety contract field: {phrase}")
 
 pr_branch_prefixes = extract_pr_template_prefixes(pr_template_text)
 if pr_branch_prefixes != branch_prefixes:

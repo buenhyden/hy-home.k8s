@@ -1079,15 +1079,6 @@
       "appendContract": null
     },
     {
-      "profile": "template/sdlc/task-legacy-harness",
-      "form": "docs/99.templates/templates/sdlc/specs/harness-task-contract.template.md",
-      "sourceProfiles": [
-        "sdlc/task"
-      ],
-      "placeholderPolicy": "template-only",
-      "appendContract": null
-    },
-    {
       "profile": "template/sdlc/spec",
       "form": "docs/99.templates/templates/sdlc/specs/spec.template.md",
       "sourceProfiles": [

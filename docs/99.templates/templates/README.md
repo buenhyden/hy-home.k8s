@@ -77,3 +77,4 @@ This README is located at `docs/99.templates/templates/`.
 - [Template Support Contracts](../support/README.md)
 - [Template Routing](../support/template-routing.md)
 - [Frontmatter Schema](../support/frontmatter-schema.md)
+- [Canonical Task Form](./sdlc/execution/task.template.md)

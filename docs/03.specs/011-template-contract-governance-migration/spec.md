@@ -154,7 +154,7 @@ docs/99.templates/
             ├── agent-design.template.md
             ├── api-spec.template.md
             ├── data-model.template.md
-            ├── harness-task-contract.template.md
+            ├── retired duplicate harness Task starter (removed by Spec 027)
             ├── openapi.template.yaml
             ├── schema.template.graphql
             ├── service.template.proto

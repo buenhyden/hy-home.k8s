@@ -252,9 +252,9 @@ The current shared `common/readme.template.md` temporarily uses
 `template/readme/common` with all six README source IDs. That row is valid only
 while their frontmatter and heading objects are identical; Spec 028 must replace
 or split the row in the same commit that makes README profile structures
-diverge. The legacy `harness-task-contract.template.md` has its own exact
-`template/sdlc/task-legacy-harness` row sourced from `sdlc/task` until Spec 027
-deletes both the form and row. The progress form is the sole inheritance
+diverge. The retired duplicate harness Task starter had its own exact
+template-profile row sourced from `sdlc/task` until Spec 027 deleted both the
+form and row. The progress form is the sole inheritance
 exception: `governance/progress-entry` uses the explicit `AppendContract` above
 instead of copying the ledger's H2 contract. Inventory rows such as
 `docs/99.templates/templates/README.md` are routed as README documents, not as

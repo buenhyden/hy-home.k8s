@@ -35,6 +35,9 @@ This protocol defines how governance references authored docs and how language b
   They route readers to the canonical support, governance, operations,
   workflow, validator, GitOps, policy-as-code, or manifest owner.
 - PRD, ARD, ADR, Spec, Plan, Task, Guide, Operations Policy, Runbook, Incident, Postmortem, Reference, and Archive Tombstone documents must use their stage-specific templates from `docs/99.templates/`.
+- Protected-surface Task records use the canonical Task form's [Approval and
+  Safety Boundaries](../../99.templates/templates/sdlc/execution/task.template.md#approval-and-safety-boundaries);
+  do not create a second Task starter.
 - `docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md`, `agent-design.md`, `data-model.md`, and `tests.md` must use their matching helper templates.
 - Every non-README authored Markdown file under stage roots must match exactly one structural template mapping in `docs/99.templates/README.md` and `scripts/validate-repo-quality-gates.sh`; an uncovered path is incomplete.
 - New authored documents must keep `status: draft` until a human promotes the lifecycle state.

@@ -290,8 +290,8 @@ Apply these rules:
 - Frontmatter key order is `title`, `type`, `status`, `owner`, `updated`.
 - Template forms keep only starter structure and concise instructions.
 - Reusable rules move to support contracts.
-- `harness-task-contract.template.md` remains supplemental, not a structural
-  route for `docs/04.execution/tasks/*.md`.
+- The duplicate harness Task starter remained supplemental at this point, not
+  a structural route; Spec 027 later retired it.
 - Incident layout remains
   `docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md`
   and `postmortem.md`.

@@ -1257,9 +1257,8 @@ inventory stays in `scripts/README.md`.
 
 #### Memory
 
-- `harness-task-contract.template.md` remains a supplemental task starter and
-  must not become a second structural route for
-  `docs/04.execution/tasks/*.md`.
+- The duplicate harness Task starter remained supplemental at that time and
+  did not become a second structural route; Spec 027 later retired it.
 - Feature-local README files under `docs/03.specs/<###-Numbering>-<feature-id>/` are README
   entrypoints, not a separate structural template family.
 - Active core-contract surfaces should avoid carrying exact legacy residue
@@ -1412,9 +1411,9 @@ inventory stays in `scripts/README.md`.
 
 #### Memory
 
-- `harness-task-contract.template.md` should remain a supplemental starter for
-  high-risk Stage 04 Task records, not a second structural route that competes
-  with `task.template.md`.
+- The duplicate harness Task starter was intended to remain supplemental for
+  high-risk Stage 04 Task records at that time; Spec 027 later merged its safety
+  fields into the canonical Task form and retired the duplicate.
 - Active support contracts should describe the current steady-state template
   model; completed migration phase wording belongs in completed plan/task
   evidence, not current support rules.
@@ -7426,8 +7425,8 @@ section separating static from live evidence.
 - Added `docs/00.agent-governance/rules/approval-boundaries.md` as the single
   approval matrix: default state, approval triggers, validation, evidence, and
   rollback per surface, plus mandatory live-mutation and secret-handling policy.
-- Added `docs/99.templates/templates/sdlc/specs/harness-task-contract.template.md` and registered it
-  in `docs/99.templates/README.md`.
+- Added and registered the duplicate harness Task starter at that time; Spec 027
+  later retired it after merging its safety fields into the canonical Task form.
 - Added `scripts/validate-harness.sh` as a repo-static wrapper over the existing
   gates (no new validation logic, no live checks) and registered it in the
   `scripts/README.md` Structure, Inventory, Classification, and Command Contract

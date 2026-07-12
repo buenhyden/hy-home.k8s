@@ -56,8 +56,8 @@ or archive Tombstones.
 
 Normalization rules:
 
-- Remove `harness-task-contract.template.md` after merging its unique protected-
-  surface and approval concepts into the standard Task profile.
+- Keep the retired duplicate harness Task starter removed after merging its
+  unique protected-surface and approval concepts into the standard Task profile.
 - Remove authored headings such as `Suggested Types` and `Working Rules`; keep
   vocabulary and selection guidance in support contracts.
 - Consolidate `Related Inputs`, `Parent Documents`, `Parent Spec`, and
@@ -133,7 +133,7 @@ authored document -> topic-specific content only
 ```bash
 python3 scripts/validate-document-contract-registry.py --root . --mode compatibility
 bash scripts/validate-repo-quality-gates.sh .
-rg -n "harness-task-contract|Suggested Types|SNIPPET LIBRARY" docs scripts .agents .claude .codex
+rg -n "task-legacy-har[n]ess|Suggested Types|SNIPPET LIBRARY" docs scripts tests .agents .claude .codex
 git diff --check
 ```
 

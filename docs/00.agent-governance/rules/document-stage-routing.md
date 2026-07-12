@@ -68,7 +68,7 @@ Stage 99 owners instead of copying full governance bodies into README files.
 | Architecture decision | `docs/02.architecture/decisions/` | Template Routing Contract | Use for decision context, selected option, alternatives, and consequences. |
 | Technical specification and helper contracts | `docs/03.specs/` | Template Routing Contract | Use for implementation contracts, feature-local API, agent, data, test, OpenAPI, GraphQL, and protobuf contracts. |
 | Implementation plan | `docs/04.execution/plans/` | Template Routing Contract | Use for execution order, risks, gates, and rollout. |
-| Task record | `docs/04.execution/tasks/` | Template Routing Contract | Use for implementation status, validation evidence, and handoff. |
+| Task record | `docs/04.execution/tasks/` | [Canonical Task Approval and Safety Boundaries](../../99.templates/templates/sdlc/execution/task.template.md#approval-and-safety-boundaries) | Use for implementation status, protected-surface boundaries, validation evidence, and handoff. |
 | User or operator guide | `docs/05.operations/guides/` | Template Routing Contract | Use after the relevant spec is stable. |
 | Operations policy | `docs/05.operations/policies/` | Template Routing Contract | Required for release and operational controls. |
 | Runbook | `docs/05.operations/runbooks/` | Template Routing Contract | Use for executable operational procedures. |

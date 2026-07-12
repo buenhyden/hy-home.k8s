@@ -119,14 +119,6 @@ Conceptually, non-README example documents resolve by their SDLC role, while
 example README files remain frontmatter-free navigation. That distinction lets
 examples reuse structure without claiming current provider authority.
 
-## Supplemental Task Starter
-
-`harness-task-contract.template.md` supplements
-`templates/sdlc/execution/task.template.md` for high-risk harness tasks. It
-does not create a second structural route for `docs/04.execution/tasks/*.md`;
-the authored Task record still uses `type: sdlc/task` and the Stage 04 Task
-location.
-
 ## Enforcement Surfaces
 
 Route-breaking changes must update these surfaces in the same logical unit:

@@ -274,10 +274,6 @@
       "profile": "template/sdlc/data-model"
     },
     {
-      "path": "docs/99.templates/templates/sdlc/specs/harness-task-contract.template.md",
-      "profile": "template/sdlc/task-legacy-harness"
-    },
-    {
       "path": "docs/99.templates/templates/sdlc/specs/spec.template.md",
       "profile": "template/sdlc/spec"
     },
@@ -370,10 +366,6 @@
     {
       "path": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
       "profile": "template/sdlc/data-model"
-    },
-    {
-      "path": "docs/99.templates/templates/sdlc/specs/harness-task-contract.template.md",
-      "profile": "template/sdlc/task-legacy-harness"
     },
     {
       "path": "docs/99.templates/templates/sdlc/specs/spec.template.md",

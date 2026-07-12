@@ -98,11 +98,10 @@ DOCUMENT_PROFILE_CONTRACT_V1 = {
         "template/sdlc/runbook",
         "template/sdlc/spec",
         "template/sdlc/task",
-        "template/sdlc/task-legacy-harness",
         "template/sdlc/tests",
     ),
     "semantic_sha256": (
-        "8652958bffd95ba45cdf1fde97d282ad2788629bfa0c8e6614daae4a32649ad9"  # pragma: allowlist secret
+        "66965bb7a848a0b62b7007bbaebe453d4c8baa0c5631a73e7ecd444ee5755da7"  # pragma: allowlist secret
     ),
 }
 DOCUMENT_PROFILE_CONTRACT_V1_FIELDS = (

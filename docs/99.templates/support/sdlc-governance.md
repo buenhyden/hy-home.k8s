@@ -85,14 +85,6 @@ active documents that own the same role, purpose, and feature lineage. Retire
 superseded, duplicate, obsolete, migrated, or currentness-conflicting surfaces
 to archive or rewrite them as historical evidence.
 
-## Supplemental Task Starter
-
-`harness-task-contract.template.md` supplements
-`templates/sdlc/execution/task.template.md` for high-risk harness tasks. It
-does not create a second structural route for `docs/04.execution/tasks/*.md`;
-the authored Task record still uses `type: sdlc/task` and the Stage 04 Task
-location.
-
 ## Governance Rules
 
 - Every non-README SDLC Markdown document must match exactly one structural

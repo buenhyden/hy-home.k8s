@@ -151,7 +151,7 @@ and Plan.
   docs/99.templates/templates/sdlc/specs/agent-design.template.md
   docs/99.templates/templates/sdlc/specs/api-spec.template.md
   docs/99.templates/templates/sdlc/specs/data-model.template.md
-  docs/99.templates/templates/sdlc/specs/harness-task-contract.template.md
+  # retired duplicate harness Task starter (removed by Spec 027)
   docs/99.templates/templates/sdlc/specs/openapi.template.yaml
   docs/99.templates/templates/sdlc/specs/schema.template.graphql
   docs/99.templates/templates/sdlc/specs/service.template.proto
@@ -277,8 +277,8 @@ and Plan.
   Templates README route table. Feature-local README files remain covered by
   the generic README route.
 - Updated the Template Routing Contract to make nested README targets use the
-  generic README route and keep `harness-task-contract.template.md`
-  supplemental rather than structural.
+  generic README route and kept the duplicate harness Task starter
+  supplemental rather than structural at that time; Spec 027 later retired it.
 - Updated Stage 00 routing, documentation protocol, and authoring matrix docs
   so exact target-pattern/template routing points to
   `docs/99.templates/support/template-routing.md` instead of carrying a full

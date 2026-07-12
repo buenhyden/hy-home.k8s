@@ -26,7 +26,7 @@
 - 문서 stage별 Markdown 템플릿
 - 중앙 archive Tombstone 템플릿
 - API/OpenAPI, GraphQL, proto 계약 템플릿
-- 하네스 표면 변경용 task contract 템플릿
+- 보호 표면 변경을 위한 canonical Task 승인·안전 계약
 - README와 governance memory 항목 템플릿
 
 ### Out of Scope
@@ -76,7 +76,6 @@
 │           ├── agent-design.template.md
 │           ├── api-spec.template.md
 │           ├── data-model.template.md
-│           ├── harness-task-contract.template.md
 │           ├── openapi.template.yaml
 │           ├── schema.template.graphql
 │           ├── service.template.proto
@@ -112,7 +111,7 @@
 
 - `spec.template.md`로 만드는 `docs/03.specs/**/spec.md` 문서는 영어로 작성한다.
 - `plan.template.md`로 만드는 `docs/04.execution/plans/*.md` 문서는 영어로 작성한다.
-- `task.template.md`와 `harness-task-contract.template.md`로 만드는 `docs/04.execution/tasks/*.md` 문서는 영어로 작성한다.
+- `task.template.md`로 만드는 `docs/04.execution/tasks/*.md` 문서는 영어로 작성한다.
 - `guide`, `policy`, `runbook`, `incident`, `postmortem` 문서는 운영자가 읽는 본문은 한국어를 기본으로 하되, AI Agent 실행 지시나 tool/prompt contract는 영어로 분리한다.
 - `reference.template.md`로 만드는 `docs/90.references/**/*.md` 문서는 사람용 overview와 설명에는 한국어를 사용할 수 있지만, `Reference Type`, `Authority Boundary`, `Sources`, `Review and Freshness`, version support boundary, generated-index contract는 영어를 우선한다.
 
@@ -183,14 +182,6 @@ governance, routing, frontmatter schema, legacy cleanup rule을 소유한다.
 
 The memory `<topic>` placeholder excludes `progress`; `progress.md` is an
 exact reserved route owned by the progress template.
-
-## Harness Task Contract Template
-
-`harness-task-contract.template.md` is a specialized starter that supplements
-`templates/sdlc/execution/task.template.md` for high-risk harness tasks that
-change surfaces such as governance, GitOps, infrastructure, validation scripts,
-CI, secrets, or operations. It adds approval boundaries and static-vs-live evidence fields; it does not create a second structural route for
-`docs/04.execution/tasks/*.md`.
 
 ## Contract Template Placement
 

@@ -49,7 +49,7 @@ Current quick inspection shows three concrete improvement candidates:
 
 - Some support contract wording still describes the completed migration in
   phase-oriented terms instead of current steady-state rules.
-- `harness-task-contract.template.md` is a specialized Task starter, but some
+- A retired duplicate harness Task starter was specialized, but some
   support route tables can make it look like a second structural route for
   `docs/04.execution/tasks/*.md`.
 - The quality gate enforces many template rules, but it can add a narrow guard
@@ -60,8 +60,8 @@ Current quick inspection shows three concrete improvement candidates:
 - **Goals**:
   - Record an auditable Stage 04 finding ledger for the follow-up.
   - Clarify current support contracts without changing the template taxonomy.
-  - Keep `harness-task-contract.template.md` documented as a supplemental
-    Task starter, not an overlapping structural route.
+  - Record the duplicate as a supplemental Task starter at that time, not an
+    overlapping structural route; Spec 027 later retired it.
   - Add deterministic validation for support-contract drift where the false
     positive risk is low.
   - Re-run route, residue, frontmatter, README, and incident-bundle checks.
@@ -196,7 +196,7 @@ Expected: files are only under `README.md`, `support/**`, and
 Run:
 
 ```bash
-rg -n "Phase [1-4]|during the migration|after Phase|current and target|YYYY-MM-DD-<harness-task>|harness-task-contract" docs/99.templates/support docs/99.templates/README.md docs/00.agent-governance/rules/document-stage-routing.md scripts/validate-repo-quality-gates.sh
+rg -n "Phase [1-4]|during the migration|after Phase|current and target|YYYY-MM-DD-<harness-task>|duplicate-harness-task-starter" docs/99.templates/support docs/99.templates/README.md docs/00.agent-governance/rules/document-stage-routing.md scripts/validate-repo-quality-gates.sh
 ```
 
 Expected: the scan identifies only bounded support/README references that map
@@ -286,13 +286,12 @@ In `template-routing.md` and `sdlc-governance.md`, remove
 tables and add a supplemental starter note:
 
 ```markdown
-## Supplemental Task Starter
+## Retired Duplicate Task Starter
 
-`harness-task-contract.template.md` supplements
-`templates/sdlc/execution/task.template.md` for high-risk harness tasks. It
-does not create a second structural route for `docs/04.execution/tasks/*.md`;
-the authored Task record still uses `type: sdlc/task` and the Stage 04 Task
-location.
+The retired duplicate harness Task starter supplemented the canonical Task
+form for high-risk harness work at the time of this plan. It did not create a
+second structural route; Spec 027 later folded its safety fields into the
+canonical Task form and removed the duplicate.
 ```
 
 Expected: `task.template.md` remains the only structural mapping for
@@ -304,7 +303,7 @@ Set FND-001 and FND-002 to `Resolved` with validation commands:
 
 ```bash
 rg -n "Phase [1-4]|during the migration|after Phase|current and target" docs/99.templates/support
-rg -n "YYYY-MM-DD-<harness-task>.*harness-task-contract|harness-task-contract.*YYYY-MM-DD-<harness-task>" docs/99.templates/support/template-routing.md docs/99.templates/support/sdlc-governance.md
+rg -n "YYYY-MM-DD-<harness-task>.*duplicate-harness-task-starter|duplicate-harness-task-starter.*YYYY-MM-DD-<harness-task>" docs/99.templates/support/template-routing.md docs/99.templates/support/sdlc-governance.md
 ```
 
 Expected: the first command returns no support-doc matches. The second command
@@ -379,11 +378,8 @@ template_routing_rows = markdown_table_after_heading(
 )
 for route_row in template_routing_rows[1:]:
     route_text = " | ".join(route_row)
-    if "harness-task-contract.template.md" in route_text:
-        fail(
-            "docs/99.templates/support/template-routing.md Current Route Map "
-            "must not list harness-task-contract.template.md as a structural route"
-        )
+    if "retired duplicate harness Task starter" in route_text:
+        fail("Current Route Map must contain only canonical structural routes")
 ```
 
 Expected: the current route table passes and future overlap is rejected.

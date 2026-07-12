@@ -305,8 +305,8 @@ Expected:
 - Every structural route in `docs/99.templates/README.md` appears in
   `docs/99.templates/support/template-routing.md`.
 - Every Markdown route has a matching validator mapping.
-- `harness-task-contract.template.md` remains supplemental and does not become
-  a second structural route for `docs/04.execution/tasks/*.md`.
+- The duplicate harness Task starter was supplemental at this point and did
+  not become a second structural route; Spec 027 later retired it.
 
 - [ ] **Step 2: Compare frontmatter profiles**
 
