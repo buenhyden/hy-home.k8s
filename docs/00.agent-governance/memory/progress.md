@@ -8,6 +8,45 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-12 - Semantic document validation execution lineage
+
+#### Metadata
+
+- **Date**: 2026-07-12
+- **Layer**: docs, meta, qa
+- **Status**: complete
+- **Tags**: #semantic-validation #lineage #index #repo-static
+
+#### Progress
+
+- Created the canonical active Spec 029 Task with SMDV-001 complete and the
+  three validator and integration units queued.
+- Connected the Spec, Plan, and Task with exact reciprocal links and represented
+  the Task exactly once in the Stage 04 Task tree and table.
+
+#### Memory
+
+- Execution lineage is a bidirectional contract: each lifecycle document owns
+  one exact relative link to both peers, while each Stage index owns one tree
+  representation and one table href for its target.
+
+#### Evidence
+
+- The exact pre-change lineage assertion failed because the canonical Task did
+  not exist; after creation the same reciprocal href and contiguous tree/table
+  assertion passes.
+- Registry self-test and compatibility, repository quality, diff checks,
+  exact seven-path staging, and focused pre-commit form the static evidence
+  bundle for logical commit `docs(execution): start semantic document
+  validation`.
+- No live, secret-value, credential, remote CI, publication, push, merge,
+  deployment, or third-party mutation check is performed or inferred.
+
+#### Handoff
+
+- Execute SMDV-002 with production-entry-point fixtures for every applicable
+  registry profile and the eight README handoff cases.
+
 ### 2026-07-12 - README final exact-set validation remediation
 
 #### Metadata

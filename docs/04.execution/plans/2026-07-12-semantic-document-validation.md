@@ -338,7 +338,7 @@ Both semantic validators implement identical result behavior:
 - Consumes: active Spec 029 and this approved Plan.
 - Produces: Task IDs `SMDV-001` through `SMDV-004` and reciprocal links used by closure validation.
 
-- [ ] **Step 1: Run the exact failing lineage and index assertion**
+- [x] **Step 1: Run the exact failing lineage and index assertion**
 
 ```bash
 python3 - <<'PY'
@@ -447,7 +447,7 @@ Expected: FAIL because the Task, its exact reciprocal hrefs, and its two unique
 index representations do not exist. The existing Spec and Plan each already
 have one tree entry and one table row; do not add duplicates.
 
-- [ ] **Step 2: Create the execution Task from the canonical Task form**
+- [x] **Step 2: Create the execution Task from the canonical Task form**
 
 Use frontmatter `title: 'Task: Semantic Document Validation'`,
 `type: sdlc/task`, `status: active`, `owner: platform`, and
@@ -466,14 +466,14 @@ SMDV-004 uses `bash scripts/validate-repo-quality-gates.sh .`.
 Fill every safety field with the repository-static, tracked-only,
 no-secret/no-live boundary and rollback by logical commit.
 
-- [ ] **Step 3: Add reciprocal links and index rows**
+- [x] **Step 3: Add reciprocal links and index rows**
 
 Use the six exact hrefs from Step 1. Verify or update the existing Spec and Plan
 index rows in place; do not add them again. Add exactly one Task tree entry and
 one Task table row dated `2026-07-12`. Append one canonical progress entry for
 this logical unit.
 
-- [ ] **Step 4: Run the lineage assertion again**
+- [x] **Step 4: Run the lineage assertion again**
 
 Stage the exact seven-file scope first, then run Step 1 and:
 
@@ -490,7 +490,7 @@ Expected: lineage PASS with no output; registry remains 9 cases, 60 profiles,
 27 templates; inventory is exactly 467 target Markdown paths
 (`baseline=433`, `new=36`) and README 72.
 
-- [ ] **Step 5: Run focused document QA**
+- [x] **Step 5: Run focused document QA**
 
 ```bash
 bash scripts/validate-repo-quality-gates.sh .
@@ -522,7 +522,7 @@ PY
 
 Expected: all applicable hooks PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add docs/03.specs/029-semantic-document-validation/spec.md docs/03.specs/README.md \
@@ -1015,4 +1015,5 @@ logical unit with its own progress entry.
 - [Operating Model ARD](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
 - [Registry ADR](../../02.architecture/decisions/0015-declarative-document-contract-registry.md)
 - [Semantic Validation Spec](../../03.specs/029-semantic-document-validation/spec.md)
+- [Semantic Validation Task](../tasks/2026-07-12-semantic-document-validation.md)
 - [Authored Migration Spec](../../03.specs/030-authored-document-migration/spec.md)

@@ -125,5 +125,7 @@ git diff --check
 
 - **Registry Spec**: [Document Contract Registry](../026-document-contract-registry/spec.md)
 - **README Spec**: [README and Workspace Profiles](../028-readme-workspace-profiles/spec.md)
+- **Execution Plan**: [Semantic Document Validation Implementation Plan](../../04.execution/plans/2026-07-12-semantic-document-validation.md)
+- **Execution Task**: [Task: Semantic Document Validation](../../04.execution/tasks/2026-07-12-semantic-document-validation.md)
 - **Next Spec**: [Authored Document Migration](../030-authored-document-migration/spec.md)
 - **Parsing Basis**: [CommonMark](https://spec.commonmark.org/0.31.2/) and [JSON Schema validation](https://json-schema.org/draft/2020-12/json-schema-validation)
