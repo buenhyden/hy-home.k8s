@@ -677,4 +677,4 @@ Expected: closure commit succeeds.
 - **Template Spec**: [Template Contract Consolidation](../../03.specs/027-template-contract-consolidation/spec.md)
 - **Spec**: [README and Workspace Profiles](../../03.specs/028-readme-workspace-profiles/spec.md)
 - **Next Spec**: [Semantic Document Validation](../../03.specs/029-semantic-document-validation/spec.md)
-- **Planned Tasks**: `../tasks/2026-07-12-readme-workspace-profiles.md` (created by RWP-001)
+- **Task**: [README and Workspace Profiles](../tasks/2026-07-12-readme-workspace-profiles.md)

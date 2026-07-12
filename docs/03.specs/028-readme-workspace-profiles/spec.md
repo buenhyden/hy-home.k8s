@@ -29,6 +29,8 @@ or move durable SDLC evidence into `_workspace`.
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Registry Spec**: [Document Contract Registry](../026-document-contract-registry/spec.md)
 - **Template Spec**: [Template Contract Consolidation](../027-template-contract-consolidation/spec.md)
+- **Execution Plan**: [README and Workspace Profiles Implementation Plan](../../04.execution/plans/2026-07-12-readme-workspace-profiles.md)
+- **Execution Task**: [README and Workspace Profiles Task](../../04.execution/tasks/2026-07-12-readme-workspace-profiles.md)
 - **Current Workspace Contract**: [Workspace Support Staging](../../../_workspace/README.md)
 
 ## Contracts
@@ -135,6 +137,8 @@ git diff --check
 ## Related Documents
 
 - **Template Spec**: [Template Contract Consolidation](../027-template-contract-consolidation/spec.md)
+- **Plan**: [README and Workspace Profiles Implementation Plan](../../04.execution/plans/2026-07-12-readme-workspace-profiles.md)
+- **Task**: [README and Workspace Profiles Task](../../04.execution/tasks/2026-07-12-readme-workspace-profiles.md)
 - **Next Spec**: [Semantic Document Validation](../029-semantic-document-validation/spec.md)
 - **Workspace Contract**: [Workspace Support Staging](../../../_workspace/README.md)
 - **Markdown Basis**: [CommonMark fenced code blocks](https://spec.commonmark.org/0.31.2/#fenced-code-blocks)
