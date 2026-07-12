@@ -432,26 +432,68 @@ python3 - <<'PY'
 import json
 from pathlib import Path
 data=json.loads(Path('tests/fixtures/document-contracts/readme-profile-cases.json').read_text())
+path_keys={'path','profile','requiredH2','allowedH2','new'}
+case_keys={'name','path','document','expected_rule_ids'}
 assert len(data['paths']) == 72
+assert all(set(row) == path_keys for row in data['paths'])
 assert len({row['path'] for row in data['paths']}) == 72
 assert sum(row['new'] is False for row in data['paths']) == 67
 assert sum(row['new'] is True for row in data['paths']) == 5
-expected_cases = {
-    'valid-profile': (),
-    'frontmatter-forbidden': ('README_FRONTMATTER',),
-    'duplicate-h1': ('README_H1',),
-    'duplicate-h2': ('README_H2_DUPLICATE',),
-    'unsupported-h2': ('README_H2_UNSUPPORTED',),
-    'missing-required-h2': ('README_H2_REQUIRED',),
-    'fenced-heading-ignored': (),
-    'unclosed-fence': ('README_FENCE',),
+expected_cases = (
+    ('valid-profile', ()),
+    ('frontmatter-forbidden', ('README_FRONTMATTER',)),
+    ('duplicate-h1', ('README_H1',)),
+    ('duplicate-h2', ('README_H2_DUPLICATE',)),
+    ('unsupported-h2', ('README_H2_UNSUPPORTED',)),
+    ('missing-required-h2', ('README_H2_REQUIRED',)),
+    ('fenced-heading-ignored', ()),
+    ('unclosed-fence', ('README_FENCE',)),
+)
+assert len(data['cases']) == 8
+assert all(set(case) == case_keys for case in data['cases'])
+case_names=[case['name'] for case in data['cases']]
+assert len(case_names) == len(set(case_names)) == 8
+actual_cases=tuple(sorted(
+    (case['name'], tuple(case['expected_rule_ids'])) for case in data['cases']))
+assert actual_cases == tuple(sorted(expected_cases))
+rule_ids={rule_id for _, expected in actual_cases for rule_id in expected}
+assert rule_ids == {
+    'README_FRONTMATTER', 'README_H1', 'README_H2_DUPLICATE',
+    'README_H2_UNSUPPORTED', 'README_H2_REQUIRED', 'README_FENCE',
 }
-assert {
-    case['name']: tuple(case['expected_rule_ids']) for case in data['cases']
-} == expected_cases
-names = ('repository', 'stage-index', 'collection-index', 'implementation',
-         'snapshot-pack', 'workspace-staging')
-for name in names:
+fixture_paths={row['path'] for row in data['paths']}
+assert all(case['path'] in fixture_paths for case in data['cases'])
+
+expected_headings={
+    'repository': (
+        ('Overview','Repository Map','Getting Started','Validation','Related Documents'),
+        ('Prerequisites','Configuration','Security Boundary')),
+    'stage-index': (
+        ('Overview','Stage Contract','Document Index','Authoring Workflow','Related Documents'),
+        ('Lifecycle Handoff',)),
+    'collection-index': (
+        ('Overview','Scope','Item Index','Add and Find','Related Documents'),
+        ('Selection Rules',)),
+    'implementation': (
+        ('Overview','Structure','Configuration Boundary','Validation','Operations','Related Documents'),
+        ('Prerequisites','Troubleshooting')),
+    'snapshot-pack': (
+        ('Overview','Snapshot Contract','Report Index','Refresh and Succession','Evidence Boundary','Related Documents'),
+        ('Method',)),
+    'workspace-staging': (
+        ('Overview','Permitted Artifacts','Forbidden Local State','Promotion and Cleanup','Tracking Rules','Related Documents'),
+        ()),
+}
+for row in data['paths']:
+    name=row['profile'].removeprefix('readme/')
+    assert name in expected_headings and row['profile'] == f'readme/{name}'
+    required, additional=expected_headings[name]
+    allowed=required+additional
+    assert len(allowed) == len(set(allowed))
+    assert tuple(row['requiredH2']) == required
+    assert tuple(row['allowedH2']) == allowed
+
+for name, (required, _) in expected_headings.items():
     form = Path(f'docs/99.templates/templates/common/readme-{name}.template.md')
     text=form.read_text()
     assert not text.startswith('---\n')
@@ -475,7 +517,7 @@ assert all(
     for row in registry['profiles']
     if row['mode'] in {'authored', 'frontmatter-free'}
 )
-for name in names:
+for name, (required, additional) in expected_headings.items():
     authored=profiles[f'readme/{name}']
     template=profiles[f'template/readme/{name}']
     form=f'docs/99.templates/templates/common/readme-{name}.template.md'
@@ -483,11 +525,13 @@ for name in names:
     assert template['routes'] == [{'kind': 'exact', 'value': form}]
     assert template['sourceProfileIds'] == [f'readme/{name}']
     assert template['headings'] == authored['headings']
-    required=authored['headings']['required']
-    assert authored['headings']['allowed'][:len(required)] == required
+    allowed=required+additional
+    assert len(allowed) == len(set(allowed))
+    assert tuple(authored['headings']['required']) == required
+    assert tuple(authored['headings']['allowed']) == allowed
     actual_h2=[line[3:] for line in Path(form).read_text().splitlines()
                if line.startswith('## ')]
-    assert actual_h2 == required
+    assert tuple(actual_h2) == required
 
 registry_cases=json.loads(Path('tests/fixtures/document-contracts/registry-cases.json').read_text())
 compat=json.loads(Path('tests/fixtures/document-contracts/template-compatibility.json').read_text())
@@ -758,15 +802,20 @@ Expected: tracking and repository gates PASS.
 - [ ] **Step 1: Run legacy RED search**
 
 ```bash
-rg -n 'readme\.template\.md|SNIPPET LIBRARY|Selection Guide|universal seven' \
+git ls-files -z -- 'README.md' ':(glob)**/README.md' | \
+  xargs -0 -r rg -n 'SNIPPET LIBRARY|Selection Guide|universal seven'
+rg -n '(^|/)readme\.template\.md|docs/99\.templates/templates/common/readme\.template\.md|template/readme/common' \
   docs/99.templates docs/00.agent-governance/rules \
-  docs/00.agent-governance/hooks scripts .agents .claude .codex
+  docs/00.agent-governance/hooks scripts tests .agents .claude .codex
 ```
 
 Expected: old form and active consumer references are found. Deliberately do
-not search Specs, Plans, Tasks, Stage 90 research/audits, or Stage 98 history:
-those records may name the retired form as evidence and are not runtime or
-authoring consumers.
+not search non-README Specs, Plans, Tasks, Stage 90 research/audits, or Stage 98
+history: those records may name the retired form as evidence and are not
+runtime or authoring consumers. README entrypoints remain in the first,
+README-owned scan because all 72 are migration targets. Generic legacy heading
+markers are not scanned across `.agents`, `.claude`, or `.codex`; only exact
+old-form/profile references are checked on those active consumer surfaces.
 
 - [ ] **Step 2: Delete old form and update consumers**
 
@@ -821,9 +870,13 @@ through its production CommonMark-aware parser.
 
 ```bash
 test ! -e docs/99.templates/templates/common/readme.template.md
-if rg -n 'readme\.template\.md|SNIPPET LIBRARY|Selection Guide|universal seven' \
+if git ls-files -z -- 'README.md' ':(glob)**/README.md' | \
+  xargs -0 -r rg -n 'SNIPPET LIBRARY|Selection Guide|universal seven'; then
+  exit 1
+fi
+if rg -n '(^|/)readme\.template\.md|docs/99\.templates/templates/common/readme\.template\.md|template/readme/common' \
   docs/99.templates docs/00.agent-governance/rules \
-  docs/00.agent-governance/hooks scripts .agents .claude .codex; then exit 1; fi
+  docs/00.agent-governance/hooks scripts tests .agents .claude .codex; then exit 1; fi
 python3 - <<'PY'
 import json
 from pathlib import Path
@@ -837,6 +890,14 @@ assert old_id not in {row['profile'] for row in registry_cases['profileCoverage'
 assert old_path not in {row['path'] for row in registry_cases['templateCoverage']}
 assert old_id not in {row['profile'] for row in compat['templateModeCoverage']}
 assert old_path not in {row['form'] for row in compat['templateModeCoverage']}
+validator_sources=(
+    Path('scripts/validate-document-contract-registry.py'),
+    Path('scripts/validate-repo-quality-gates.sh'),
+)
+for source in validator_sources:
+    text=source.read_text()
+    assert old_id not in text, source
+    assert old_path not in text, source
 names=('repository','stage-index','collection-index','implementation','snapshot-pack','workspace-staging')
 profiles={row['id']: row for row in registry['profiles']}
 for name in names:
