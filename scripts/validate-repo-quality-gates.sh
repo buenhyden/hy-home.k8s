@@ -1111,12 +1111,70 @@ readme_rows = {
 tracked_readme_paths = {
     path for path in tracked if path == "README.md" or path.endswith("/README.md")
 }
-undeclared_readmes = tracked_readme_paths - set(readme_rows)
-if undeclared_readmes:
-    fail(
-        f"{rel(readme_fixture_path)} must declare every tracked README: "
-        f"{sorted(undeclared_readmes)!r}"
+
+
+def readme_inventory_exact_error(tracked_paths: set[str], declared_paths: set[str]):
+    missing = sorted(declared_paths - tracked_paths)
+    extra = sorted(tracked_paths - declared_paths)
+    if not missing and not extra:
+        return None
+    return (
+        "tracked README set must equal fixture-declared final set: "
+        f"missing={missing!r} extra={extra!r}"
     )
+
+
+def assert_readme_inventory_exact_probe() -> None:
+    scripts_path = str(root / "scripts")
+    if scripts_path not in sys.path:
+        sys.path.insert(0, scripts_path)
+    from document_contracts import classify_path, load_registry
+
+    declared_readme_paths = set(readme_rows)
+    if len(declared_readme_paths) != 72:
+        fail(
+            "README exact-set mutation probe requires the 72-path final fixture set"
+        )
+        return
+    missing_path = "docs/90.references/cloud-examples/README.md"
+    extra_path = "docs/90.references/audits/2099-01-01-exact-set-probe/README.md"
+    if missing_path not in declared_readme_paths or extra_path in declared_readme_paths:
+        fail("README exact-set mutation probe paths violate fixture preconditions")
+        return
+    swapped_readme_paths = (declared_readme_paths - {missing_path}) | {extra_path}
+    if len(swapped_readme_paths) != len(declared_readme_paths):
+        fail("README exact-set mutation probe must preserve cardinality at 72")
+        return
+    registry = load_registry(root)
+    extra_profile = classify_path(registry, pathlib.PurePosixPath(extra_path))
+    if not extra_profile.profile_id.startswith("readme/"):
+        fail(
+            "README exact-set mutation probe extra path must classify to a "
+            f"README profile, got {extra_profile.profile_id!r}"
+        )
+        return
+
+    actual = readme_inventory_exact_error(
+        swapped_readme_paths, declared_readme_paths
+    )
+    expected = (
+        "tracked README set must equal fixture-declared final set: "
+        "missing=['docs/90.references/cloud-examples/README.md'] "
+        "extra=['docs/90.references/audits/2099-01-01-exact-set-probe/README.md']"
+    )
+    if actual != expected:
+        fail(
+            "README exact-set mutation probe expected "
+            f"{expected!r}, got {actual!r}"
+        )
+
+
+assert_readme_inventory_exact_probe()
+readme_inventory_error = readme_inventory_exact_error(
+    tracked_readme_paths, set(readme_rows)
+)
+if readme_inventory_error is not None:
+    fail(f"{rel(readme_fixture_path)} {readme_inventory_error}")
 
 canonical_readme_count = 0
 for readme_rel in sorted(tracked_readme_paths):
@@ -1139,9 +1197,10 @@ for readme_rel in sorted(tracked_readme_paths):
         if re.search(rf"^##\s+{re.escape(deprecated_heading)}\b", text, re.MULTILINE):
             fail(f"{rel(readme)} still uses deprecated README section: {deprecated_heading}")
 
-if canonical_readme_count != len(tracked_readme_paths):
-    fail("canonical README accounting must cover every tracked README exactly once")
-print(f"README canonical profiles: canonical={canonical_readme_count}")
+if readme_inventory_error is not None or canonical_readme_count != len(readme_rows):
+    fail("canonical README accounting must cover the exact final fixture set")
+else:
+    print(f"README canonical profiles: canonical={canonical_readme_count} exact_set=yes")
 
 github_native_markdown = [
     root / ".github/ABOUT.md",

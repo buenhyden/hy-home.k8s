@@ -8,6 +8,47 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-12 - README final exact-set validation remediation
+
+#### Metadata
+
+- **Date**: 2026-07-12
+- **Layer**: qa, docs, meta
+- **Status**: complete
+- **Tags**: #readme #validation #review #repo-static
+
+#### Progress
+
+- Closed the independent-review gap that allowed a fixture-declared README to
+  disappear from the tracked inventory while the staged count still matched an
+  earlier migration checkpoint.
+- Required both the registry validator and repository quality gate to compare
+  the tracked README inventory with the complete 72-path final fixture set.
+
+#### Memory
+
+- A staged count allow-list is transition evidence, not final-state proof.
+  Closure validators must compare both set directions before reporting an
+  exact set.
+
+#### Evidence
+
+- A synthetic RED inventory with two declared paths removed was accepted at
+  `current=70`; after remediation it fails with the stable
+  `README tracked set differs from fixture-declared final set` diagnostic.
+- Re-review holds the synthetic inventory at 72 by replacing one declared
+  README with one route-able undeclared README; production proofs require the
+  exact missing and extra path sets rather than a count-fallback rejection.
+- Registry self-test and compatibility passed with 9 cases, 60 profiles, 27
+  templates, 466 total paths, and 72 exact README paths.
+- Repository quality passed with `canonical=72 exact_set=yes`; the fixture and
+  all authored README files remained unchanged.
+
+#### Handoff
+
+- Complete independent re-review of the remediation, then continue Spec 029's
+  production CommonMark-aware validator tranche.
+
 ### 2026-07-12 - README profile migration closure
 
 #### Metadata

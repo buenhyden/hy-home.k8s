@@ -757,6 +757,21 @@ def _is_readme_path(path: PurePosixPath) -> bool:
     return path.name == "README.md"
 
 
+def _readme_inventory_exact_error(
+    tracked_paths: set[PurePosixPath], declared_paths: set[PurePosixPath]
+) -> str | None:
+    missing = sorted(
+        path.as_posix() for path in declared_paths - tracked_paths
+    )
+    extra = sorted(path.as_posix() for path in tracked_paths - declared_paths)
+    if not missing and not extra:
+        return None
+    return (
+        "README tracked set differs from fixture-declared final set: "
+        f"missing={missing!r} extra={extra!r}"
+    )
+
+
 def _readme_profile_ids(registry: Any) -> set[str]:
     return {
         profile.profile_id
@@ -904,24 +919,22 @@ def _assert_readme_family_contract(
     tracked_readmes = {
         path for path in inventory.current_paths if _is_readme_path(path)
     }
-    declared_tracked = tracked_readmes & declared_paths
-    undeclared_tracked = tracked_readmes - declared_paths
-    if undeclared_tracked:
-        raise AssertionError(
-            "README fixture is missing tracked README paths: "
-            f"{sorted(path.as_posix() for path in undeclared_tracked)!r}"
-        )
+    inventory_error = _readme_inventory_exact_error(
+        tracked_readmes, declared_paths
+    )
+    if inventory_error is not None:
+        raise AssertionError(inventory_error)
     readme_profile_ids = _readme_profile_ids(registry)
     selected_tracked = {
         path
         for path in inventory.current_paths
         if classify_path(registry, path).profile_id in readme_profile_ids
     }
-    if selected_tracked != declared_tracked:
+    if selected_tracked != declared_paths:
         raise AssertionError(
-            "README family selected path set differs from declared tracked README set: "
-            f"extra={sorted(path.as_posix() for path in selected_tracked - declared_tracked)!r} "
-            f"missing={sorted(path.as_posix() for path in declared_tracked - selected_tracked)!r}"
+            "README family selected path set differs from fixture-declared final set: "
+            f"extra={sorted(path.as_posix() for path in selected_tracked - declared_paths)!r} "
+            f"missing={sorted(path.as_posix() for path in declared_paths - selected_tracked)!r}"
         )
     current_count = len(selected_tracked)
     if current_count not in allowed_tracked_counts:
@@ -945,6 +958,7 @@ def _assert_readme_fixture_mutation_proofs(
         *,
         candidate_registry: Any = registry,
         candidate_inventory: TargetInventory = inventory,
+        expected_message: str | None = None,
     ) -> None:
         try:
             _assert_readme_family_contract(
@@ -953,7 +967,12 @@ def _assert_readme_fixture_mutation_proofs(
                 fixture=candidate_fixture,
                 inventory=candidate_inventory,
             )
-        except AssertionError:
+        except AssertionError as exc:
+            if expected_message is not None and str(exc) != expected_message:
+                raise AssertionError(
+                    f"README fixture mutation proof {label} produced unexpected "
+                    f"diagnostic: {exc}"
+                ) from exc
             return
         raise AssertionError(f"README fixture mutation proof accepted {label}")
 
@@ -978,6 +997,40 @@ def _assert_readme_fixture_mutation_proofs(
     existing["new"], future["new"] = True, False
     expect_rejection("swapped existing/future flags", swapped_flags)
 
+    declared_new_paths = sorted(
+        (
+            PurePosixPath(row["path"])
+            for row in fixture["paths"]
+            if row["new"] is True
+            and PurePosixPath(row["path"]) in inventory.current_paths
+        ),
+        key=lambda path: path.as_posix(),
+    )
+    if len(declared_new_paths) < 2:
+        raise AssertionError(
+            "README fixture mutation proof requires two tracked new README paths"
+        )
+    missing_paths = set(declared_new_paths[:2])
+    missing_declared_inventory = TargetInventory(
+        baseline_paths=inventory.baseline_paths,
+        current_paths=tuple(
+            path for path in inventory.current_paths if path not in missing_paths
+        ),
+        new_paths=tuple(path for path in inventory.new_paths if path not in missing_paths),
+        baseline_symlink_paths=inventory.baseline_symlink_paths,
+        current_symlink_paths=inventory.current_symlink_paths,
+    )
+    expect_rejection(
+        "fixture-declared README paths missing from current inventory",
+        fixture,
+        candidate_inventory=missing_declared_inventory,
+        expected_message=(
+            "README tracked set differs from fixture-declared final set: "
+            f"missing={sorted(path.as_posix() for path in missing_paths)!r} "
+            "extra=[]"
+        ),
+    )
+
     extra_path = PurePosixPath("docs/undeclared-bridge/README.md")
     broad_raw_registry = copy.deepcopy(raw_registry)
     repository_profile = next(
@@ -992,22 +1045,40 @@ def _assert_readme_fixture_mutation_proofs(
         }
     )
     broad_registry = validate_registry(root, broad_raw_registry)
-    extra_inventory = TargetInventory(
+    swapped_path = declared_new_paths[0]
+    equal_count_swap_inventory = TargetInventory(
         baseline_paths=inventory.baseline_paths,
         current_paths=tuple(
-            sorted((*inventory.current_paths, extra_path), key=lambda path: path.as_posix())
+            sorted(
+                (
+                    *(path for path in inventory.current_paths if path != swapped_path),
+                    extra_path,
+                ),
+                key=lambda path: path.as_posix(),
+            )
         ),
         new_paths=tuple(
-            sorted((*inventory.new_paths, extra_path), key=lambda path: path.as_posix())
+            sorted(
+                (
+                    *(path for path in inventory.new_paths if path != swapped_path),
+                    extra_path,
+                ),
+                key=lambda path: path.as_posix(),
+            )
         ),
         baseline_symlink_paths=inventory.baseline_symlink_paths,
         current_symlink_paths=inventory.current_symlink_paths,
     )
     expect_rejection(
-        "an undeclared broad-route README",
+        "an equal-count missing-and-extra README swap",
         fixture,
         candidate_registry=broad_registry,
-        candidate_inventory=extra_inventory,
+        candidate_inventory=equal_count_swap_inventory,
+        expected_message=(
+            "README tracked set differs from fixture-declared final set: "
+            f"missing=['{swapped_path.as_posix()}'] "
+            f"extra=['{extra_path.as_posix()}']"
+        ),
     )
 
 
