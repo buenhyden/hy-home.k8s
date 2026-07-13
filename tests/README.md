@@ -40,6 +40,7 @@ tests/
 │   ├── agent-roster-currentness.json # Canonical roster validator self-test cases
 │   ├── markdown-profiles.json       # Registry profile matrix, mutations, and fixed date cases
 │   ├── links-and-owners.json        # Cross-document link, index, owner, and ledger cases
+│   ├── validation-surfaces.json     # Affected path, selection, rejection, and contract mutation cases
 │   └── document-contracts/
 │       ├── readme-profile-cases.json  # README route and semantic-validator handoff cases
 │       ├── registry-cases.json        # Document registry contract cases
@@ -83,6 +84,8 @@ live readiness.
 | Cross-document inventory | `python3 scripts/validate-links-and-owners.py --root . --inventory --format json` | Repo-static ordered registry population |
 | Agent roster currentness fixture | `python3 scripts/validate-agent-roster-currentness.py . --self-test` | Repo-static |
 | Agent roster currentness repository check | `python3 scripts/validate-agent-roster-currentness.py .` | Repo-static |
+| Affected-surface fixture | `python3 scripts/validate-affected-surfaces.py --self-test` | Repo-static exact-route, argv, output, and NUL-transport evidence |
+| Affected-surface repository coverage | `python3 scripts/validate-affected-surfaces.py --root .` | Repo-static tracked-path coverage; no ignored scratch traversal |
 | External service contracts | `bash infrastructure/tests/verify-contracts-static.sh` | Repo-static |
 | GitOps structure | `bash scripts/validate-gitops-structure.sh` | Repo-static |
 | Kubernetes manifests | `bash scripts/validate-k8s-manifests.sh .` | Repo-static with Optional tool `kube-linter` when installed |
@@ -145,6 +148,18 @@ changing candidate logic.
   Canonical owner link에는 일반 inline link만 인정되며 image syntax와
   leading-only 또는 trailing-only half-backtick label은 동일한 label/target을
   담아도 canonical link로 인정되지 않는다.
+- `tests/fixtures/validation-surfaces.json`은 요청된 tracked root별 positive
+  path, validator/CI selection 집합, `../`, leading `./`, case alias, symlink
+  traversal, unmatched path rejection과 route, minimal/combined/assignment
+  shell/Python/Node interpreter-eval argv, wrapper trampoline, executable path
+  prefixes/case alias, option-before-script,
+  lane, job, protection, validator/surface fallback, evidence mutation을 production
+  selector에 통과시킨다. Bash/Python/Node의 script operand 뒤 `-c`/`-e`는
+  positive case로 유지하고 `bash -- scripts/validate-harness.sh -c` 경계도 통과시켜
+  script argument를 interpreter option으로 오인하지 않는 것을 검증한다.
+  Selector self-test는 JSON과
+  GitHub output ordering, NUL termination, newline-containing record의 단일-record
+  보존도 검증하며 shell parsing이나 first-match precedence를 사용하지 않는다.
 - Roster fixture와 repository 검사는 repo-static evidence만 제공한다. Claude,
   Codex, Gemini provider runtime을 실행하지 않으며 provider-native runtime
   readiness를 입증할 수 없다.

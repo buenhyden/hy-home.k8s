@@ -1,0 +1,308 @@
+{
+  "$schema": "./validation-surfaces.schema.json",
+  "schemaVersion": 1,
+  "pathSemantics": {
+    "separator": "posix",
+    "matching": "exact-or-anchored-regex",
+    "caseSensitive": true,
+    "precedence": "none"
+  },
+  "lanes": [
+    "affected",
+    "staged",
+    "all-files",
+    "message/manual",
+    "ci",
+    "remote/live",
+    "inventory"
+  ],
+  "protectedLevels": ["none", "review", "protected"],
+  "evidenceLanes": ["repo-static", "ci", "remote/live"],
+  "validators": [
+    {
+      "id": "agent-roster-currentness",
+      "argv": ["python3", "scripts/validate-agent-roster-currentness.py", "."],
+      "lanes": ["affected", "staged", "all-files", "ci"],
+      "optional": false,
+      "fallback": {"status": "FAIL", "reason": "Canonical provider roster validation is required."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "document-contract-registry",
+      "argv": ["python3", "scripts/validate-document-contract-registry.py", "--root", ".", "--mode", "strict"],
+      "lanes": ["affected", "staged", "all-files", "ci"],
+      "optional": false,
+      "fallback": {"status": "FAIL", "reason": "Document path classification is required."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "gitops-structure",
+      "argv": ["bash", "scripts/validate-gitops-structure.sh"],
+      "lanes": ["affected", "staged", "all-files", "ci"],
+      "optional": false,
+      "fallback": {"status": "FAIL", "reason": "Argo CD hierarchy validation is required."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "infrastructure-contracts",
+      "argv": ["bash", "infrastructure/tests/verify-contracts-static.sh"],
+      "lanes": ["affected", "staged", "all-files", "ci"],
+      "optional": false,
+      "fallback": {"status": "FAIL", "reason": "Static infrastructure contracts are required."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "k8s-manifests",
+      "argv": ["bash", "scripts/validate-k8s-manifests.sh", "."],
+      "lanes": ["affected", "staged", "all-files", "ci"],
+      "optional": false,
+      "fallback": {"status": "FAIL", "reason": "Manifest syntax fallback remains mandatory."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "links-and-owners",
+      "argv": ["python3", "scripts/validate-links-and-owners.py", "--root", ".", "--mode", "strict"],
+      "lanes": ["affected", "staged", "all-files", "ci"],
+      "optional": false,
+      "fallback": {"status": "FAIL", "reason": "Cross-document ownership validation is required."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "markdown-profiles",
+      "argv": ["python3", "scripts/validate-markdown-profiles.py", "--root", ".", "--mode", "strict"],
+      "lanes": ["affected", "staged", "all-files", "ci"],
+      "optional": false,
+      "fallback": {"status": "FAIL", "reason": "Authored Markdown semantics are required."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "policy-gates",
+      "argv": ["bash", "scripts/validate-policy-gates.sh", "."],
+      "lanes": ["affected", "staged", "all-files", "ci"],
+      "optional": false,
+      "fallback": {"status": "FAIL", "reason": "Built-in policy fallback remains mandatory."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "repository-quality",
+      "argv": ["bash", "scripts/validate-repo-quality-gates.sh", "."],
+      "lanes": ["affected", "staged", "all-files", "ci"],
+      "optional": false,
+      "fallback": {"status": "FAIL", "reason": "Repository quality validation is required."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "secret-handling",
+      "argv": ["bash", "scripts/check-secret-handling.sh", "."],
+      "lanes": ["affected", "staged", "all-files", "ci"],
+      "optional": false,
+      "fallback": {"status": "FAIL", "reason": "Redacted plaintext-secret scanning is required."},
+      "evidenceLane": "repo-static"
+    }
+  ],
+  "ciJobs": [
+    {"id": "manifest-static", "output": "manifests", "evidenceLane": "ci"},
+    {"id": "pre-commit", "output": "precommit", "evidenceLane": "ci"},
+    {"id": "repo-quality-static", "output": "repo_quality", "evidenceLane": "ci"}
+  ],
+  "surfaces": [
+    {
+      "id": "root-config",
+      "routes": [
+        {"kind": "exact", "value": ".cz.toml"},
+        {"kind": "exact", "value": ".editorconfig"},
+        {"kind": "exact", "value": ".env.example"},
+        {"kind": "exact", "value": ".eslintignore"},
+        {"kind": "exact", "value": ".gitattributes"},
+        {"kind": "exact", "value": ".gitignore"},
+        {"kind": "exact", "value": ".gitleaks.toml"},
+        {"kind": "exact", "value": ".gitmessage"},
+        {"kind": "exact", "value": ".graphifyignore"},
+        {"kind": "exact", "value": ".hadolint.yaml"},
+        {"kind": "exact", "value": ".kube-linter.yaml"},
+        {"kind": "exact", "value": ".markdownlint-cli2.yaml"},
+        {"kind": "exact", "value": ".pre-commit-config.yaml"},
+        {"kind": "exact", "value": ".prettierignore"},
+        {"kind": "exact", "value": ".prettierrc.json"},
+        {"kind": "exact", "value": ".secrets.baseline"},
+        {"kind": "exact", "value": "README.md"},
+        {"kind": "exact", "value": "RTK.md"},
+        {"kind": "exact", "value": "cliff.toml"}
+      ],
+      "validators": ["repository-quality"],
+      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "protectedLevel": "review",
+      "fallback": {"status": "FAIL", "reason": "New root files require an explicit route."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "provider-gateways",
+      "routes": [
+        {"kind": "exact", "value": "AGENTS.md"},
+        {"kind": "exact", "value": "CLAUDE.md"},
+        {"kind": "exact", "value": "GEMINI.md"}
+      ],
+      "validators": ["agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "protectedLevel": "protected",
+      "fallback": {"status": "FAIL", "reason": "Provider gateways must remain thin and aligned."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "workspace-boundary",
+      "routes": [{"kind": "exact", "value": "_workspace/README.md"}],
+      "validators": ["document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "protectedLevel": "review",
+      "fallback": {"status": "FAIL", "reason": "Ignored scratch children are not tracked inputs."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "agent-shared",
+      "routes": [{"kind": "regex", "value": "^\\.agents/.*$"}],
+      "validators": ["agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "protectedLevel": "protected",
+      "fallback": {"status": "FAIL", "reason": "Shared agent assets require provider parity evidence."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "agent-claude",
+      "routes": [{"kind": "regex", "value": "^\\.claude/.*$"}],
+      "validators": ["agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "protectedLevel": "protected",
+      "fallback": {"status": "FAIL", "reason": "Claude adapters require provider parity evidence."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "agent-codex",
+      "routes": [{"kind": "regex", "value": "^\\.codex/.*$"}],
+      "validators": ["agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "protectedLevel": "protected",
+      "fallback": {"status": "FAIL", "reason": "Codex adapters require provider parity evidence."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "github-automation",
+      "routes": [{"kind": "regex", "value": "^\\.github/.*$"}],
+      "validators": ["repository-quality"],
+      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "protectedLevel": "protected",
+      "fallback": {"status": "FAIL", "reason": "Workflow and policy changes require repository QA."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "governance-documents",
+      "routes": [{"kind": "regex", "value": "^docs/00\\.agent-governance/.*$"}],
+      "validators": ["agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "protectedLevel": "protected",
+      "fallback": {"status": "FAIL", "reason": "Stage 00 changes require governance validation."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "template-documents",
+      "routes": [{"kind": "regex", "value": "^docs/99\\.templates/.*$"}],
+      "validators": ["document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "protectedLevel": "protected",
+      "fallback": {"status": "FAIL", "reason": "Template changes require strict document validation."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "authored-documents",
+      "routes": [{"kind": "regex", "value": "^docs/(?:README\\.md|01\\.requirements/.*|02\\.architecture/.*|03\\.specs/.*|04\\.execution/.*|05\\.operations/.*|90\\.references/.*|98\\.archive/.*)$"}],
+      "validators": ["document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "protectedLevel": "review",
+      "fallback": {"status": "FAIL", "reason": "Authored documents require strict profile and link validation."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "examples",
+      "routes": [{"kind": "regex", "value": "^examples/.*$"}],
+      "validators": ["gitops-structure", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling"],
+      "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+      "protectedLevel": "review",
+      "fallback": {"status": "FAIL", "reason": "Examples are validated as executable manifest guidance."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "gitops-desired-state",
+      "routes": [{"kind": "regex", "value": "^gitops/.*$"}],
+      "validators": ["gitops-structure", "infrastructure-contracts", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling"],
+      "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+      "protectedLevel": "protected",
+      "fallback": {"status": "FAIL", "reason": "GitOps desired state requires the complete static manifest lane."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "infrastructure",
+      "routes": [{"kind": "regex", "value": "^infrastructure/.*$"}],
+      "validators": ["gitops-structure", "infrastructure-contracts", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling"],
+      "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+      "protectedLevel": "protected",
+      "fallback": {"status": "FAIL", "reason": "Infrastructure changes require static contract and manifest validation."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "policy",
+      "routes": [{"kind": "regex", "value": "^policy/.*$"}],
+      "validators": ["policy-gates", "repository-quality"],
+      "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+      "protectedLevel": "protected",
+      "fallback": {"status": "FAIL", "reason": "Policy changes require policy-gate validation."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "scripts",
+      "routes": [{"kind": "regex", "value": "^scripts/.*$"}],
+      "validators": ["gitops-structure", "infrastructure-contracts", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling"],
+      "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+      "protectedLevel": "protected",
+      "fallback": {"status": "FAIL", "reason": "Validator changes rerun every dependent static lane."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "secrets-contract",
+      "routes": [{"kind": "regex", "value": "^secrets/.*$"}],
+      "validators": ["repository-quality", "secret-handling"],
+      "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+      "protectedLevel": "protected",
+      "fallback": {"status": "FAIL", "reason": "Secret contract metadata requires redacted static scanning."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "tests",
+      "routes": [{"kind": "regex", "value": "^tests/.*$"}],
+      "validators": ["repository-quality"],
+      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "protectedLevel": "review",
+      "fallback": {"status": "FAIL", "reason": "Fixture changes require repository QA."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "traefik",
+      "routes": [{"kind": "regex", "value": "^traefik/.*$"}],
+      "validators": ["k8s-manifests", "policy-gates", "repository-quality", "secret-handling"],
+      "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+      "protectedLevel": "protected",
+      "fallback": {"status": "FAIL", "reason": "Traefik configuration requires manifest and policy validation."},
+      "evidenceLane": "repo-static"
+    },
+    {
+      "id": "generated-tooling",
+      "routes": [
+        {"kind": "regex", "value": "^\\.rtk/.*$"},
+        {"kind": "regex", "value": "^graphify-out/.*$"}
+      ],
+      "validators": ["repository-quality"],
+      "ciJobs": ["pre-commit", "repo-quality-static"],
+      "protectedLevel": "none",
+      "fallback": {"status": "FAIL", "reason": "Tracked generated/tooling records require deterministic QA."},
+      "evidenceLane": "repo-static"
+    }
+  ]
+}

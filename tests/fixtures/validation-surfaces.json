@@ -1,0 +1,411 @@
+{
+  "schemaVersion": 1,
+  "surfaceCases": [
+    {"name": "workspace-readme", "path": "_workspace/README.md", "expectedSurface": "workspace-boundary"},
+    {"name": "gitignore", "path": ".gitignore", "expectedSurface": "root-config"},
+    {"name": "environment-example", "path": ".env.example", "expectedSurface": "root-config"},
+    {"name": "root-provider-gateway", "path": "AGENTS.md", "expectedSurface": "provider-gateways"},
+    {"name": "governance", "path": "docs/00.agent-governance/rules/bootstrap.md", "expectedSurface": "governance-documents"},
+    {"name": "templates", "path": "docs/99.templates/support/template-routing.md", "expectedSurface": "template-documents"},
+    {"name": "shared-agent", "path": ".agents/agents/supervisor.md", "expectedSurface": "agent-shared"},
+    {"name": "claude-adapter", "path": ".claude/agents/supervisor.md", "expectedSurface": "agent-claude"},
+    {"name": "codex-adapter", "path": ".codex/agents/supervisor.toml", "expectedSurface": "agent-codex"},
+    {"name": "github", "path": ".github/workflows/ci.yml", "expectedSurface": "github-automation"},
+    {"name": "gitops", "path": "gitops/clusters/local/root-application.yaml", "expectedSurface": "gitops-desired-state"},
+    {"name": "infrastructure", "path": "infrastructure/tests/verify-contracts-static.sh", "expectedSurface": "infrastructure"},
+    {"name": "policy", "path": "policy/conftest/kubernetes.rego", "expectedSurface": "policy"},
+    {"name": "scripts", "path": "scripts/validate-repo-quality-gates.sh", "expectedSurface": "scripts"},
+    {"name": "secrets", "path": "secrets/README.md", "expectedSurface": "secrets-contract"},
+    {"name": "tests", "path": "tests/README.md", "expectedSurface": "tests"},
+    {"name": "traefik", "path": "traefik/traefik.yaml", "expectedSurface": "traefik"},
+    {"name": "examples", "path": "examples/sample-app/deployment.yaml", "expectedSurface": "examples"},
+    {"name": "authored-doc", "path": "docs/03.specs/031-affected-surface-agent-qa/spec.md", "expectedSurface": "authored-documents"},
+    {"name": "generated-record", "path": "graphify-out/GRAPH_REPORT.md", "expectedSurface": "generated-tooling"},
+    {"name": "root-config", "path": ".pre-commit-config.yaml", "expectedSurface": "root-config"}
+  ],
+  "selectionCases": [
+    {
+      "name": "root-boundaries",
+      "lane": "affected",
+      "paths": [".env.example", ".gitignore", "_workspace/README.md"],
+      "expected": {
+        "validators": ["document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+        "ciJobs": ["pre-commit", "repo-quality-static"],
+        "protectedLevel": "review",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "provider-gateway",
+      "lane": "affected",
+      "paths": ["AGENTS.md", ".agents/agents/supervisor.md"],
+      "expected": {
+        "validators": ["agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+        "ciJobs": ["pre-commit", "repo-quality-static"],
+        "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "manifest-domain",
+      "lane": "ci",
+      "paths": ["gitops/clusters/local/root-application.yaml"],
+      "expected": {
+        "validators": ["gitops-structure", "infrastructure-contracts", "k8s-manifests", "policy-gates", "repository-quality", "secret-handling"],
+        "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+        "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "all-requested-roots",
+      "lane": "all-files",
+      "paths": [
+        "_workspace/README.md",
+        ".gitignore",
+        ".env.example",
+        "AGENTS.md",
+        "docs/00.agent-governance/rules/bootstrap.md",
+        "docs/99.templates/support/template-routing.md",
+        ".agents/agents/supervisor.md",
+        ".claude/agents/supervisor.md",
+        ".codex/agents/supervisor.toml",
+        ".github/workflows/ci.yml",
+        "gitops/clusters/local/root-application.yaml",
+        "infrastructure/tests/verify-contracts-static.sh",
+        "policy/conftest/kubernetes.rego",
+        "scripts/validate-repo-quality-gates.sh",
+        "secrets/README.md",
+        "tests/README.md",
+        "traefik/traefik.yaml"
+      ],
+      "expected": {
+        "validators": ["agent-roster-currentness", "document-contract-registry", "gitops-structure", "infrastructure-contracts", "k8s-manifests", "links-and-owners", "markdown-profiles", "policy-gates", "repository-quality", "secret-handling"],
+        "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+        "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    }
+  ],
+  "rejectionCases": [
+    {"name": "parent-segment", "paths": ["../x"], "expectedError": "SURFACE-PATH-NORMALIZATION"},
+    {"name": "leading-dot", "paths": ["./README.md"], "expectedError": "SURFACE-PATH-NORMALIZATION"},
+    {"name": "case-alias", "paths": ["readme.md"], "expectedError": "SURFACE-PATH-CASE-ALIAS"},
+    {"name": "symlink-traversal", "paths": [".codex/skills/README.md"], "expectedError": "SURFACE-PATH-SYMLINK"},
+    {"name": "unmatched-tracked-path", "paths": ["unowned/new.txt"], "expectedError": "SURFACE-PATH-UNMATCHED"}
+  ],
+  "argvPositiveCases": [
+    {
+      "name": "bash-script-argument-c",
+      "validatorId": "repository-quality",
+      "argv": ["bash", "scripts/validate-harness.sh", "-c"]
+    },
+    {
+      "name": "python-script-argument-c",
+      "validatorId": "repository-quality",
+      "argv": ["python3", "scripts/validate-affected-surfaces.py", "-c"]
+    },
+    {
+      "name": "node-script-argument-e",
+      "validatorId": "repository-quality",
+      "argv": ["node", "tests/fixtures/direct-script-probe.js", "-e"]
+    },
+    {
+      "name": "bash-option-boundary",
+      "validatorId": "repository-quality",
+      "argv": ["bash", "--", "scripts/validate-harness.sh", "-c"]
+    }
+  ],
+  "mutationCases": [
+    {
+      "name": "ambiguous-route",
+      "mutation": {
+        "kind": "append-route",
+        "surfaceId": "generated-tooling",
+        "route": {"kind": "exact", "value": "README.md"}
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-PATH-AMBIGUOUS"
+    },
+    {
+      "name": "unanchored-regex",
+      "mutation": {
+        "kind": "append-route",
+        "surfaceId": "generated-tooling",
+        "route": {"kind": "regex", "value": "scripts/.*"}
+      },
+      "paths": ["scripts/README.md"],
+      "expectedError": "SURFACE-REGEX-ANCHOR"
+    },
+    {
+      "name": "shell-eval-argv",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["bash", "-c", "id"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-ARGV-EVAL"
+    },
+    {
+      "name": "python-eval-argv",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["python3", "-c", "pass"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-ARGV-EVAL"
+    },
+    {
+      "name": "node-eval-argv",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["node", "--print", "0"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-ARGV-EVAL"
+    },
+    {
+      "name": "bash-eval-bundle-lc",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["bash", "-lc", "id"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-ARGV-EVAL"
+    },
+    {
+      "name": "bash-eval-bundle-cl",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["bash", "-cl", "id"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-ARGV-EVAL"
+    },
+    {
+      "name": "python-eval-bundle-Ic",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["python3", "-Ic", "pass"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-ARGV-EVAL"
+    },
+    {
+      "name": "python-eval-bundle-cI",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["python3", "-cI", "pass"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-ARGV-EVAL"
+    },
+    {
+      "name": "node-eval-bundle-pe",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["node", "-pe", "0"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-ARGV-EVAL"
+    },
+    {
+      "name": "node-eval-bundle-ep",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["node", "-ep", "0"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-ARGV-EVAL"
+    },
+    {
+      "name": "node-eval-assignment",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["node", "--eval=0"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-ARGV-EVAL"
+    },
+    {
+      "name": "node-print-assignment",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["node", "--print=0"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-ARGV-EVAL"
+    },
+    {
+      "name": "bash-command-assignment",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["bash", "--command=id"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-ARGV-EVAL"
+    },
+    {
+      "name": "wrapper-trampoline",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["env", "bash", "scripts/validate-harness.sh"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-EXECUTABLE"
+    },
+    {
+      "name": "option-before-script",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["python3", "-I", "scripts/validate-affected-surfaces.py"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-ARGV-SCRIPT"
+    },
+    {
+      "name": "relative-executable-prefix",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["scripts/bash", "scripts/validate-harness.sh"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-EXECUTABLE"
+    },
+    {
+      "name": "dot-executable-prefix",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["./python3", "scripts/validate-affected-surfaces.py"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-EXECUTABLE"
+    },
+    {
+      "name": "absolute-executable-prefix",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["/tmp/node", "tests/fixtures/direct-script-probe.js"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-EXECUTABLE"
+    },
+    {
+      "name": "parent-executable-prefix",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["../bin/bash", "scripts/validate-harness.sh"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-EXECUTABLE"
+    },
+    {
+      "name": "executable-case-alias",
+      "mutation": {
+        "kind": "replace-argv",
+        "validatorId": "repository-quality",
+        "argv": ["Bash", "scripts/validate-harness.sh"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-EXECUTABLE"
+    },
+    {
+      "name": "unknown-validator-lane",
+      "mutation": {
+        "kind": "replace-validator-lanes",
+        "validatorId": "repository-quality",
+        "lanes": ["affected", "unknown"]
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-LANE"
+    },
+    {
+      "name": "unknown-validator-reference",
+      "mutation": {
+        "kind": "append-validator-reference",
+        "surfaceId": "root-config",
+        "validatorId": "missing-validator"
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-VALIDATOR-REFERENCE"
+    },
+    {
+      "name": "unknown-ci-job-reference",
+      "mutation": {
+        "kind": "append-ci-job-reference",
+        "surfaceId": "root-config",
+        "ciJobId": "missing-job"
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-CI-JOB-REFERENCE"
+    },
+    {
+      "name": "invalid-protected-level",
+      "mutation": {
+        "kind": "replace-protected-level",
+        "surfaceId": "root-config",
+        "protectedLevel": "critical"
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-SCHEMA"
+    },
+    {
+      "name": "invalid-required-fallback",
+      "mutation": {
+        "kind": "replace-fallback-status",
+        "validatorId": "repository-quality",
+        "status": "DEFER"
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-FALLBACK"
+    },
+    {
+      "name": "invalid-surface-fallback",
+      "mutation": {
+        "kind": "replace-surface-fallback-status",
+        "surfaceId": "root-config",
+        "status": "SKIP"
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-SURFACE-FALLBACK"
+    },
+    {
+      "name": "unknown-evidence-lane",
+      "mutation": {
+        "kind": "replace-evidence-lane",
+        "validatorId": "repository-quality",
+        "evidenceLane": "local-inferred"
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-EVIDENCE-LANE"
+    },
+    {
+      "name": "duplicate-ci-output",
+      "mutation": {
+        "kind": "replace-ci-output",
+        "ciJobId": "manifest-static",
+        "output": "precommit"
+      },
+      "paths": ["README.md"],
+      "expectedError": "SURFACE-CI-OUTPUT"
+    }
+  ]
+}

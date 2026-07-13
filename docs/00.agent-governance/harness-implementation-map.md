@@ -3,7 +3,7 @@ title: 'Reference: Harness Implementation Map'
 type: governance/reference
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Reference: Harness Implementation Map
@@ -90,6 +90,13 @@ where is the evidence recorded?_
 | ----------- | ---------------------------------- | --------------------------------------------------------------- | ------------------- | ------------- |
 | CI gates    | `.github/workflows/ci.yml`         | branch-policy, repo-quality-static, manifest-static, ci-summary | CI run on PR        | GitHub checks |
 | PR contract | `.github/PULL_REQUEST_TEMPLATE.md` | Harness Impact + static/live evidence split                     | repo-quality-static | PR body       |
+
+### Affected-Surface Selection
+
+| Surface | Source | Role | Required Validation | Evidence |
+| --- | --- | --- | --- | --- |
+| Path contract | `contracts/validation-surfaces.json`, adjacent schema | Map one normalized tracked path to exactly one surface, argv validators, lanes, CI jobs, protection, fallback, and evidence class | `python3 scripts/validate-affected-surfaces.py --root .` | Spec 031 Task |
+| Selector and fixture | `scripts/select-affected-surfaces.py`, `tests/fixtures/validation-surfaces.json` | Preserve NUL path records and emit deterministic JSON or GitHub job booleans without shell evaluation or first-match precedence | `python3 scripts/validate-affected-surfaces.py --self-test` | Spec 031 Task |
 
 ### Evidence / Progress
 

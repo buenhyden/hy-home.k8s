@@ -33,7 +33,7 @@ across thirty provider adapters, and close the shared QA handoff contract.
 | ID | Work item | Owner | Status | Evidence |
 | --- | --- | --- | --- | --- |
 | ASQA-001 | Start reciprocal Spec, Plan, Task, unique active Stage-index lineage, and strict durable-ledger coverage | platform | Active | GREEN lineage assertion, exact fourteen-column Task ledger row, and focused strict document QA; logical commit `docs(execution): start affected surface agent qa` |
-| ASQA-002 | Define the affected-surface registry, schema, selector, and positive/negative path fixtures | platform | Draft | Surface self-test, repository coverage, and Python compile evidence; logical commit `feat(qa): define affected-surface validation contract` |
+| ASQA-002 | Define the affected-surface registry, schema, selector, and positive/negative path fixtures | platform | Done | RED empty-selector exit `1`; GREEN 19/19 surface and 630 pre-stage/635 exact-index tracked-path coverage, 21 positive paths, 4 exact selection cases, 5 rejection cases, 4 post-script/`--` boundary positives, 29 route/argv/lane/job/protection/fallback/evidence mutations, exact executable tokens, direct-script/wrapper boundaries, fail-closed interpreter-eval options and surface fallbacks, NUL/output self-tests, Python compile, strict document QA, full quality gate, and focused pre-commit; logical commit `feat(qa): define affected-surface validation contract` |
 | ASQA-003 | Drive local hooks and pre-commit lanes from validated selector output without newline path transport | platform | Draft | Hook simulations, shell/JSON syntax checks, and affected-surface hook evidence; logical commit `refactor(hooks): drive local validation from affected surfaces` |
 | ASQA-004 | Select existing CI jobs from NUL-delimited changed paths and preserve Spec 032 workflow ownership | platform | Draft | Local/CI parity fixtures, actionlint, and separately reported zizmor evidence; logical commit `ci(qa): select jobs from affected-surface registry` |
 | ASQA-005 | Enforce responsibility, output, prohibition, stop, handoff, capability-tier, and evidence semantics for ten roles and thirty adapters | platform | Draft | Semantic mutation self-tests and roster-currentness checks; logical commit `feat(agents): enforce cross-provider role semantics` |
@@ -190,6 +190,24 @@ exact seven-path staged set (six execution-lineage documents plus the Task's
 single durable-ledger row) with no unstaged tracked changes. This evidence is
 repository-static and does not prove manual or commit-message hook stages,
 remote CI, provider runtime consumption, secrets, or live infrastructure.
+
+ASQA-002 began with the fixture, schema, and an intentionally empty selector;
+the self-test printed `affected-surface selector is not implemented` and exited
+`1`. GREEN validates 19 disjoint surfaces, ten shell-free argv validators, and
+three selectable CI jobs. It classifies all 630 tracked paths with zero
+uncovered or ambiguous paths before staging and 635 after the exact nine-path
+index was assembled; exercises 21 requested-root paths,
+four exact selection sets, five normalization/case/symlink/unmatched rejections,
+four post-script/`--` boundary positives, and twenty-nine route/argv/lane/job/
+protection/fallback/evidence mutations, including minimal, combined, and long
+assignment shell/Python/Node interpreter evaluation, wrapper/option-before-
+script rejection, executable path-prefix/case-alias rejection, and a
+non-optional surface `SKIP`; and preserves
+newline data inside NUL-delimited records.
+JSON keys/sets and GitHub output booleans are sorted and stable. This is
+repository-static evidence only: local hook consumption begins in ASQA-003 and
+CI workflow consumption begins in ASQA-004, while remote CI and live systems
+remain DEFER.
 
 Later rows retain their own fixture-first RED/GREEN evidence. ASQA-002 and
 ASQA-003 must reject unmatched or ambiguous paths and unsafe path transport;
