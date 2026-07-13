@@ -169,7 +169,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-07-12-readme-workspace-profiles.md`](./2026-07-12-readme-workspace-profiles.md) | Completed RWP-001 through RWP-006 plan for 72 path-derived README profiles, five cloud handoffs, and the `_workspace` boundary. | Done | 2026-07-12 |
 | [`./2026-07-12-semantic-document-validation.md`](./2026-07-12-semantic-document-validation.md) | Registry-driven frontmatter, section, link, index, owner, migration-ledger, and reciprocal execution-lineage validation plan. | Done | 2026-07-12 |
 | [`./2026-07-12-authored-document-migration.md`](./2026-07-12-authored-document-migration.md) | Full authored-document migration, durable research ledger, cloud SDLC consolidation, strict cutover, and reciprocal [Task](../tasks/2026-07-12-authored-document-migration.md) plan. | Done | 2026-07-13 |
-| [`./2026-07-12-affected-surface-agent-qa.md`](./2026-07-12-affected-surface-agent-qa.md) | Canonical affected-surface selection, local/CI parity, and cross-provider agent-role QA plan. | Active | 2026-07-12 |
+| [`./2026-07-12-affected-surface-agent-qa.md`](./2026-07-12-affected-surface-agent-qa.md) | Canonical affected-surface selection, local/CI parity, and cross-provider agent-role QA plan with reciprocal [Spec](../../03.specs/031-affected-surface-agent-qa/spec.md) and [Task](../tasks/2026-07-12-affected-surface-agent-qa.md) lineage. | Active | 2026-07-14 |
 | [`./2026-07-12-protected-surface-supply-chain-hardening.md`](./2026-07-12-protected-surface-supply-chain-hardening.md) | Immutable Action identity, least privilege, GitOps visibility, and local-only secret-boundary hardening plan. | Active | 2026-07-12 |
 
 ## Related Documents

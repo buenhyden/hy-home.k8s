@@ -3,7 +3,7 @@ title: 'Affected Surface and Agent QA Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-07-12
+updated: 2026-07-14
 ---
 
 # Affected Surface and Agent QA Technical Specification (Spec)
@@ -45,7 +45,11 @@ surface domain validators owned by Spec 032.
   selection only; Spec 032 owns Action identity, permissions, and protected
   domain behavior.
 - **Key Dependencies**: Strict document validation from Spec 029 and migrated
-  paths from Spec 030.
+  paths from Spec 030. After Spec 030 strict cutover, every program-created
+  authored document must add its exact fourteen-column row to the durable
+  [Document Migration Evidence Ledger](../../90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md)
+  in the same creation commit; validator or ledger coverage must not be weakened
+  to admit an unaccounted path.
 - **Tech Stack**: JSON contract, repository scripts, pre-commit, GitHub Actions,
   shared role fixtures, and provider-native Markdown/TOML/settings formats.
 
@@ -150,6 +154,8 @@ git diff --check
 
 ### Delivery and References
 
+- **Implementation Plan**: [Affected Surface and Agent QA Implementation Plan](../../04.execution/plans/2026-07-12-affected-surface-agent-qa.md)
+- **Execution Task**: [Affected Surface and Agent QA Task](../../04.execution/tasks/2026-07-12-affected-surface-agent-qa.md)
 - **Next Spec**: [Protected Surface and Supply Chain Hardening](../032-protected-surface-supply-chain-hardening/spec.md)
 - **pre-commit Semantics**: [pre-commit documentation](https://pre-commit.com/)
 - **Agent Governance**: [Harness Catalog](../../00.agent-governance/harness-catalog.md)

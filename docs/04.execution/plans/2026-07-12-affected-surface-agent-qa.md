@@ -3,7 +3,7 @@ title: 'Affected Surface and Agent QA Implementation Plan'
 type: sdlc/plan
 status: active
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Affected Surface and Agent QA Implementation Plan
@@ -40,6 +40,9 @@ repository-static validators.
 - Ignored `_workspace/**` children are not changed-path inputs; only `_workspace/README.md` and ignore contracts are tracked surfaces.
 - Provider-native syntax and metadata remain distinct; common role semantics must not duplicate provider model IDs, Claude tools, or Codex effort values.
 - This Plan owns workflow path detection and job routing only. Spec 032 owns Action identity, permissions, and protected-domain behavior.
+- Post-Spec-030 program-created authored documents add an exact fourteen-column
+  durable migration-ledger row in their creation commit; never weaken strict
+  ledger inventory equality to admit a new path.
 - Remote/provider/live availability remains `DEFER` without separately approved evidence.
 - Do not inspect secret values or ignored authentication/local-state files.
 - Use `apply_patch`, run fixture-first TDD, obtain independent review for protected changes, and commit each Task separately.
@@ -167,11 +170,13 @@ handoffs, capabilityTier, requiredEvidence
 - Modify: `docs/04.execution/plans/README.md`
 - Create: `docs/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md`
 - Modify: `docs/04.execution/tasks/README.md`
+- Modify: `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`
 
 **Interfaces:**
 
 - Consumes: strict Spec 029/030 document validation and this Plan.
-- Produces: Task IDs `ASQA-001` through `ASQA-006` and reciprocal execution lineage.
+- Produces: Task IDs `ASQA-001` through `ASQA-006`, reciprocal execution
+  lineage, and the new Task's exact durable-ledger row.
 
 - [ ] **Step 1: Run RED lineage assertion**
 
@@ -194,6 +199,10 @@ Expected: FAIL because Task and reciprocal links are absent.
 
 Use the canonical Task profile and rows `ASQA-001` through `ASQA-006` from the
 Work Breakdown table, including exact validation commands and commit messages.
+In the same change, add the program-created Task's fourteen-column ledger row
+with its computed active owner key, self destination, Spec/Plan lineage,
+official Spec Kit and NIST SSDF applicability, independent reviewer, and
+`execution-lineage-active` result.
 
 - [ ] **Step 3: Add reciprocal links and active index rows**
 
@@ -215,10 +224,34 @@ PY
 git diff --check
 pre-commit run --files docs/03.specs/031-affected-surface-agent-qa/spec.md docs/03.specs/README.md \
   docs/04.execution/plans/2026-07-12-affected-surface-agent-qa.md docs/04.execution/plans/README.md \
-  docs/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md docs/04.execution/tasks/README.md
+  docs/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md docs/04.execution/tasks/README.md \
+  docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md
 git add docs/03.specs/031-affected-surface-agent-qa/spec.md docs/03.specs/README.md \
   docs/04.execution/plans/2026-07-12-affected-surface-agent-qa.md docs/04.execution/plans/README.md \
-  docs/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md docs/04.execution/tasks/README.md
+  docs/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md docs/04.execution/tasks/README.md \
+  docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md
+python3 - <<'PY'
+import subprocess
+expected = {
+    'docs/03.specs/031-affected-surface-agent-qa/spec.md',
+    'docs/03.specs/README.md',
+    'docs/04.execution/plans/2026-07-12-affected-surface-agent-qa.md',
+    'docs/04.execution/plans/README.md',
+    'docs/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md',
+    'docs/04.execution/tasks/README.md',
+    'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
+}
+staged = {
+    item.decode()
+    for item in subprocess.check_output(
+        ['git', 'diff', '--cached', '--name-only', '-z']
+    ).split(b'\0')
+    if item
+}
+unstaged = subprocess.check_output(['git', 'diff', '--name-only', '-z'])
+assert staged == expected, (sorted(staged), sorted(expected))
+assert unstaged == b'', unstaged
+PY
 git commit -m "docs(execution): start affected surface agent qa"
 ```
 
@@ -632,5 +665,6 @@ git commit -m "docs(agents): align provider qa evidence contracts"
 - [Program PRD](../../01.requirements/005-workspace-document-assurance-modernization.md)
 - [Operating Model ARD](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
 - [Affected Surface and Agent QA Spec](../../03.specs/031-affected-surface-agent-qa/spec.md)
+- [Affected Surface and Agent QA Task](../tasks/2026-07-12-affected-surface-agent-qa.md)
 - [Authored Migration Plan](./2026-07-12-authored-document-migration.md)
 - [Protected Surface Spec](../../03.specs/032-protected-surface-supply-chain-hardening/spec.md)
