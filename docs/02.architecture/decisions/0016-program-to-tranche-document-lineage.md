@@ -72,7 +72,7 @@ program PRDs would weaken either family uniqueness or product ownership.
 - Bad: Removes the approved independent tranche, review, commit, and rollback
   boundaries.
 
-## Related Documents
+## Traceability
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
 - **ARD**: [Workspace Document Assurance Operating Model](../requirements/0008-workspace-document-assurance-operating-model.md)

@@ -61,7 +61,7 @@ This plan is closed as done. Its scoped Gemini/Antigravity files exist, and
 the current workspace-wide adapter contract is owned by ADR-0013 and the Stage
 00 canonical adapter workstream. No remaining redesign scope is carried here.
 
-## Related Documents
+## Traceability
 
 - Parent Spec: N/A — pre-Spec execution record.
 - **Task**: [../tasks/2026-05-30-antigravity-governance.md](../tasks/2026-05-30-antigravity-governance.md)

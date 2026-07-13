@@ -14,11 +14,6 @@ This document defines the behavior of two worker-tier review agents,
 `observability-reviewer` and `network-reviewer`, added to the `hy-home.k8s`
 runtime roster. Both are repository-static, review-only delegated subagents.
 
-## Parent Documents
-
-- **Spec**: [./spec.md](./spec.md)
-- **Gap-analysis reference**: [../../90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md](../../90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md)
-
 ## Scope & Non-goals
 
 - **Covers**: manifest-static and documentation review for observability and
@@ -110,9 +105,15 @@ runtime roster. Both are repository-static, review-only delegated subagents.
 - **Logs / Events**: findings recorded in review output and task evidence.
 - **Redaction / Privacy Rules**: never surface secret values in findings.
 
-## Related Documents
+## Traceability
+
+### Parent Documents
 
 - **Spec**: [./spec.md](./spec.md)
+- **Gap-analysis reference**: [../../90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md](../../90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md)
+
+### Delivery and Governance
+
 - **Plan**: [../../04.execution/plans/2026-07-06-observability-and-network-review-agents.md](../../04.execution/plans/2026-07-06-observability-and-network-review-agents.md)
 - **Harness catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Model policy**: [../../00.agent-governance/model-policy.md](../../00.agent-governance/model-policy.md)

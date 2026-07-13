@@ -22,14 +22,6 @@ push, change remote repository rules, or apply to Kubernetes, Vault, Argo CD,
 ESO, or provider accounts. Repository evidence does not establish live
 readiness, SLSA level, or OpenSSF compliance.
 
-## Related Inputs
-
-- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
-- **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
-- **Affected Surface Spec**: [Affected Surface and Agent QA](../031-affected-surface-agent-qa/spec.md)
-- **Audit**: [Kubernetes Infrastructure and Security](../../90.references/audits/2026-07-11-weia/kubernetes-infrastructure-security.md)
-
 ## Contracts
 
 - **Config Contract**: Third-party Actions use full commit SHA plus a reviewable
@@ -150,9 +142,18 @@ git diff --check
 - **VAL-SPC-004**: All required static gates pass; optional tool SKIP and
   fallback outcomes are accurately recorded; remote/live lanes remain DEFER.
 
-## Related Documents
+## Traceability
 
+### Inputs
+
+- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
+- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Affected Surface Spec**: [Affected Surface and Agent QA](../031-affected-surface-agent-qa/spec.md)
+- **Audit**: [Kubernetes Infrastructure and Security](../../90.references/audits/2026-07-11-weia/kubernetes-infrastructure-security.md)
+
+### Delivery and References
+
 - **GitHub Actions Security**: [Secure use reference](https://docs.github.com/en/actions/reference/security/secure-use)
 - **GitOps Principles**: [OpenGitOps](https://opengitops.dev/)
 - **ESO Security**: [External Secrets security best practices](https://external-secrets.io/v2.0.0/guides/security-best-practices/)

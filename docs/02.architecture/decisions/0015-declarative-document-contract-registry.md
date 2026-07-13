@@ -82,7 +82,7 @@ historical evidence and provider-native schemas.
 - Bad: Erases topic-specific rationale, creates noisy generated Markdown, and
   exceeds demonstrated consumer value.
 
-## Related Documents
+## Traceability
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
 - **ARD**: [Workspace Document Assurance Operating Model](../requirements/0008-workspace-document-assurance-operating-model.md)

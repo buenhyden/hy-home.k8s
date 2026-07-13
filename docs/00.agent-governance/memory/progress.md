@@ -8,6 +8,56 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - ADM-006C residual relationship-alias retirement
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, semantic validation
+- **Status**: ready-for-review
+- **Tags**: #adm-006c #traceability #finite-debt #strict-cutover
+
+#### Progress
+
+- Reconstructed the hardcoded exact-17 document set as the ADM-003C exact-16
+  plus ADM-004C exact-1 escape owners. Its canonical sorted-NUL SHA-256 is
+  `345cbbfa545bb2850b57155ce6f65aab79e624f0fd14c4c915748072b2802e86`.
+- Reproduced the no-container RED as exactly `43` diagnostics over those 17
+  paths: `17` missing canonical `Traceability` headings and `26` unsupported
+  `Related Inputs`, `Related Documents`, or `Parent Documents` headings.
+- Canonicalized only relationship structure. Every path now has one
+  `Traceability` H2 and no legacy relationship H2. Unique relationship inputs
+  from Specs and the Agent Design are retained in topic-specific H3
+  subsections; duplicate links alone were removed.
+- Updated the exact 17 durable-ledger rows with their original escape owner,
+  canonicalization result, and independent-review boundary. No template
+  fixture, validator, registry, README/index, provider adapter, protected
+  surface, CI, agent behavior, or live system changed.
+
+#### Evidence
+
+- Unique link-target sets and fenced-block counts equal the pre-edit versions
+  for all exact 17 documents. ADR decisions, completed evidence, status, topic
+  prose, tables, fences, link targets, and ordering meaning are preserved.
+- Modeling the compatibility container absent after the edit yields zero
+  repository diagnostics. Markdown compatibility, link/owner compatibility,
+  `git diff --check`, and the full repository quality gate pass with zero
+  violations. Focused hooks and exact-21 stage proof remain the final
+  implementation gates before independent review.
+
+#### Safety Boundary
+
+- This is repository-static documentation migration only. It performed no
+  live Kubernetes, Argo CD, Vault, ESO, cloud-provider, credential, secret,
+  remote CI, publication, push, merge, deployment, or third-party mutation.
+
+#### Handoff
+
+- Review exactly 21 modified paths: the hardcoded exact 17 plus the durable
+  ledger, migration Plan, migration Task, and this progress memory. Commit only
+  after exact-set, post-hook, and independent-review proof; then ADM-007 may
+  retire the empty compatibility sources and enable strict validation.
+
 ### 2026-07-13 - ADM-006 cloud example consolidation
 
 #### Metadata

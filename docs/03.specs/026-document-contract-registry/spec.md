@@ -22,14 +22,6 @@ own rationale and examples. It does not own affected-surface validator routing,
 provider runtime configuration, topic content, or live operational state. It
 does not introduce universal metadata fields or a root `DESIGN.md`.
 
-## Related Inputs
-
-- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
-- **ADR**: [Declarative Document Contract Registry](../../02.architecture/decisions/0015-declarative-document-contract-registry.md)
-- **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
-- **Audit**: [SDLC, Document Lifecycle, and Frontmatter](../../90.references/audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md)
-
 ## Contracts
 
 - **Config Contract**: `docs/99.templates/support/document-profiles.json`
@@ -154,12 +146,18 @@ git diff --check
 - **VAL-SPC-004**: Stage 99 support and README indexes no longer need full copied
   route or lifecycle tables after their consuming Specs land.
 
-## Related Documents
+## Traceability
+
+### Inputs
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
 - **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
 - **ADR**: [Declarative Document Contract Registry](../../02.architecture/decisions/0015-declarative-document-contract-registry.md)
 - **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
+- **Audit**: [SDLC, Document Lifecycle, and Frontmatter](../../90.references/audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md)
+
+### Delivery and References
+
 - **Plan**: [Document Contract Registry Implementation Plan](../../04.execution/plans/2026-07-12-document-contract-registry.md)
 - **Task**: [Document Contract Registry Task](../../04.execution/tasks/2026-07-12-document-contract-registry.md)
 - **Next Spec**: [Template Contract Consolidation](../027-template-contract-consolidation/spec.md)

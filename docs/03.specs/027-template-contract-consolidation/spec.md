@@ -26,14 +26,6 @@ research packs, or archive Tombstones. It did allow and perform bounded
 dead-link and current-claim cleanup plus retirement annotations required to
 remove the duplicate Task form; Spec 030 still owns authored corpus migration.
 
-## Related Inputs
-
-- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
-- **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
-- **Registry Spec**: [Document Contract Registry](../026-document-contract-registry/spec.md)
-- **Current Contracts**: [Template Documentation Contract](../../99.templates/support/documentation-contract.md) and [SDLC Template Governance](../../99.templates/support/sdlc-governance.md)
-
 ## Contracts
 
 - **Config Contract**: Each structural route has one template form and one
@@ -154,9 +146,18 @@ git diff --check
   tree, and target-link rows. Spec 028 owns every README form, profile, layout,
   and body redesign; Spec 030 owns migration of the remaining authored corpus.
 
-## Related Documents
+## Traceability
 
+### Inputs
+
+- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
+- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Registry Spec**: [Document Contract Registry](../026-document-contract-registry/spec.md)
+- **Current Contracts**: [Template Documentation Contract](../../99.templates/support/documentation-contract.md) and [SDLC Template Governance](../../99.templates/support/sdlc-governance.md)
+
+### Delivery and References
+
 - **Plan**: [Template Contract Consolidation Implementation Plan](../../04.execution/plans/2026-07-12-template-contract-consolidation.md)
 - **Task**: [Template Contract Consolidation Task](../../04.execution/tasks/2026-07-12-template-contract-consolidation.md)
 - **Next Spec**: [README and Workspace Profiles](../028-readme-workspace-profiles/spec.md)

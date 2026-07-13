@@ -22,14 +22,6 @@ the truth of every prose claim, execute live infrastructure, or treat external
 link availability as proof of technical correctness. It does not rewrite the
 document population; Spec 030 owns migration.
 
-## Related Inputs
-
-- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
-- **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
-- **Registry Spec**: [Document Contract Registry](../026-document-contract-registry/spec.md)
-- **README Spec**: [README and Workspace Profiles](../028-readme-workspace-profiles/spec.md)
-
 ## Contracts
 
 - **Config Contract**: Validators load versioned registries and fail closed on
@@ -129,10 +121,18 @@ operations, GitOps, infrastructure, agent-runtime, CI/QA, security, and
 supply-chain checks. Compatibility remains canonical until Spec 030 ADM-007;
 repository-static PASS does not establish live cluster or provider readiness.
 
-## Related Documents
+## Traceability
 
+### Inputs
+
+- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
+- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Registry Spec**: [Document Contract Registry](../026-document-contract-registry/spec.md)
 - **README Spec**: [README and Workspace Profiles](../028-readme-workspace-profiles/spec.md)
+
+### Delivery and References
+
 - **Execution Plan**: [Semantic Document Validation Implementation Plan](../../04.execution/plans/2026-07-12-semantic-document-validation.md)
 - **Execution Task**: [Task: Semantic Document Validation](../../04.execution/tasks/2026-07-12-semantic-document-validation.md)
 - **Next Spec**: [Authored Document Migration](../030-authored-document-migration/spec.md)

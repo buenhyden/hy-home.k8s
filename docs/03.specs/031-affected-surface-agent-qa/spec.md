@@ -22,14 +22,6 @@ and shared agent QA semantics. It does not force provider adapters into one
 syntax, claim provider runtime availability from files, or replace protected-
 surface domain validators owned by Spec 032.
 
-## Related Inputs
-
-- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
-- **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
-- **Migration Spec**: [Authored Document Migration](../030-authored-document-migration/spec.md)
-- **Audit**: [CI, QA, Automation, Pipeline, and Workflow](../../90.references/audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md)
-
 ## Contracts
 
 - **Config Contract**:
@@ -146,9 +138,18 @@ git diff --check
   tranche owns selectors/job routing, while Spec 032 owns Action references,
   permissions, and protected domain steps.
 
-## Related Documents
+## Traceability
 
+### Inputs
+
+- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
+- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
 - **Migration Spec**: [Authored Document Migration](../030-authored-document-migration/spec.md)
+- **Audit**: [CI, QA, Automation, Pipeline, and Workflow](../../90.references/audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md)
+
+### Delivery and References
+
 - **Next Spec**: [Protected Surface and Supply Chain Hardening](../032-protected-surface-supply-chain-hardening/spec.md)
 - **pre-commit Semantics**: [pre-commit documentation](https://pre-commit.com/)
 - **Agent Governance**: [Harness Catalog](../../00.agent-governance/harness-catalog.md)

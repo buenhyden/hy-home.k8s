@@ -62,7 +62,7 @@ mkcert rootCA는 이미 로컬 신뢰 저장소에 등록되어 있으므로, ce
 - Good: rootCA 주입 불필요
 - Bad: 브라우저 신뢰 불가, 로컬 신뢰 저장소 재등록 필요
 
-## Related Documents
+## Traceability
 
 - **PRD**: [`../../01.requirements/004-current-local-gitops-platform.md`](../../01.requirements/004-current-local-gitops-platform.md)
 - **ARD**: [`../requirements/0007-current-local-gitops-platform.md`](../requirements/0007-current-local-gitops-platform.md)

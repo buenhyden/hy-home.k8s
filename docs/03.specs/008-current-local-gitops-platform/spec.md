@@ -20,12 +20,6 @@ validation evidence.
 This spec owns the current local platform implementation contract represented by `gitops/`, `infrastructure/`, `scripts/`, and root/stage READMEs.
 It does not own external service runtime creation, live cluster repair, secret values, or cloud provider provisioning.
 
-## Related Inputs
-
-- **PRD**: [../../01.requirements/004-current-local-gitops-platform.md](../../01.requirements/004-current-local-gitops-platform.md)
-- **ARD**: [../../02.architecture/requirements/0007-current-local-gitops-platform.md](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
-- **Related ADRs**: [../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-
 ## Contracts
 
 - **Config Contract**:
@@ -113,11 +107,16 @@ bash scripts/validate-k8s-manifests.sh .
 - **VAL-SPC-003**: GitOps structure check passes.
 - **VAL-SPC-004**: Kubernetes manifest syntax validation passes.
 
-## Related Documents
+## Traceability
+
+### Inputs
 
 - **PRD**: [../../01.requirements/004-current-local-gitops-platform.md](../../01.requirements/004-current-local-gitops-platform.md)
 - **ARD**: [../../02.architecture/requirements/0007-current-local-gitops-platform.md](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
 - **Related ADRs**: [../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
+
+### Delivery and References
+
 - **Plan**: [../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md](../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md)
 - **Tasks**: [../../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md](../../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md)
 - **Runbook**: [../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md](../../05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md)

@@ -23,14 +23,6 @@ Task evidence, accepted ADR history, dated research and audit facts, archive
 Tombstones, generated-owner boundaries, provider-native metadata, and ignored
 local state. It does not rewrite history for stylistic uniformity.
 
-## Related Inputs
-
-- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
-- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
-- **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
-- **Validation Spec**: [Semantic Document Validation](../029-semantic-document-validation/spec.md)
-- **Current Audit**: [SDLC, Document Lifecycle, and Frontmatter](../../90.references/audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md)
-
 ## Contracts
 
 - **Config Contract**: A migration inventory records each approved target
@@ -288,11 +280,20 @@ git diff --check
   commands, and a single pinned schema-v2 registry summary expression without
   changing exact79.
 
-## Related Documents
+## Traceability
+
+### Inputs
+
+- **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
+- **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
+- **Lineage ADR**: [Program-to-Tranche Document Lineage](../../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)
+- **Validation Spec**: [Semantic Document Validation](../029-semantic-document-validation/spec.md)
+- **Current Audit**: [SDLC, Document Lifecycle, and Frontmatter](../../90.references/audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md)
+
+### Delivery and References
 
 - **Execution Plan**: [Authored Document Migration Implementation Plan](../../04.execution/plans/2026-07-12-authored-document-migration.md)
 - **Execution Task**: [Authored Document Migration Task](../../04.execution/tasks/2026-07-12-authored-document-migration.md)
-- **Validation Spec**: [Semantic Document Validation](../029-semantic-document-validation/spec.md)
 - **Next Spec**: [Affected Surface and Agent QA](../031-affected-surface-agent-qa/spec.md)
 - **ADR Practice**: [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions)
 - **Documentation Classification Aid**: [Diátaxis](https://diataxis.fr/)

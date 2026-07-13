@@ -2460,7 +2460,7 @@ staged set.
 The 17-document set already includes the Spec 030 Spec; count it once. With the
 four unique evidence owners, the atomic staged set is 17 + 4 = 21, not 22.
 
-- [ ] **Step C1: Freeze RED and exact ownership**
+- [x] **Step C1: Freeze RED and exact ownership**
 
 Reproduce the no-container result before editing: exactly 43 diagnostics over
 the exact 17 paths, comprising 17 `BODY-HEADING-REQUIRED` and 26
@@ -2514,7 +2514,13 @@ print(len(documents), hashlib.sha256(payload).hexdigest())
 PY
 ```
 
-- [ ] **Step C2: Canonicalize only relationships**
+Implementation evidence on 2026-07-13 reproduced the exact `16 + 1` split,
+the pinned canonical sorted-NUL SHA-256
+`345cbbfa545bb2850b57155ce6f65aab79e624f0fd14c4c915748072b2802e86`,
+and the expected RED: `43` diagnostics over exactly `17` paths, comprising
+`17` `BODY-HEADING-REQUIRED` and `26` `BODY-HEADING-UNSUPPORTED` findings.
+
+- [x] **Step C2: Canonicalize only relationships**
 
 For each exact document, merge topic-specific links from `Related Inputs`,
 `Related Documents`, or `Parent Documents` under one `Traceability` H2 and
@@ -2523,7 +2529,14 @@ completed evidence, status, topic prose, link targets, and historical meaning.
 Update the exact ledger rows and the three execution evidence owners in the
 same logical unit.
 
-- [ ] **Step C3: Prove GREEN without a semantic container**
+Implementation evidence on 2026-07-13 proves one canonical `Traceability` H2
+and zero legacy relationship H2s in every exact document. Unique link-target
+sets and fenced-block counts match the pre-edit documents. Specs retain unique
+inputs and delivery/reference links in topic-specific H3 subsections; the
+Agent Design retains unique parent and delivery/governance links. The exact
+ledger rows record the ADM-003C exact-16 and ADM-004C exact-1 escape owners.
+
+- [x] **Step C3: Prove GREEN without a semantic container**
 
 ```bash
 python3 - <<'PY'
@@ -2557,6 +2570,12 @@ python3 scripts/validate-links-and-owners.py --root . --mode compatibility
 bash scripts/validate-repo-quality-gates.sh .
 git diff --check
 ```
+
+Implementation evidence on 2026-07-13 proves zero diagnostics with the
+compatibility container modeled absent. Normal Markdown compatibility and
+cross-document compatibility both pass with zero violations,
+`git diff --check` passes, and the complete repository quality gate reports
+`[PASS] repository quality gates passed`.
 
 Expected: the modeled absent container yields zero diagnostics, normal
 compatibility remains clean, and the complete canonical quality gate passes.
