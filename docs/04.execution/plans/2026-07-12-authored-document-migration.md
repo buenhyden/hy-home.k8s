@@ -98,13 +98,14 @@ path | title | profile | owner-key | disposition | destination | local-evidence 
 
 ### Inventory Count Transition
 
-SMDV-003 and ADM-002 Step 1 start from the tracked inventory of 467 current
-paths (`baseline=433`, `new=36`). ADM-002 then creates the durable ledger as a
+SMDV-003 closed with 467 current paths, but ADM-001 added the authored Task as
+a normal registry target. ADM-002 Step 1 therefore starts from 468 current
+paths (`baseline=433`, `new=37`). ADM-002 then creates the durable ledger as a
 normal `content/reference` target and passes its exact path through the
 validator's supported `--include-path` option before staging. The final ADM-002
-inventory and ledger therefore contain 468 paths (`baseline=433`, `new=37`),
+inventory and ledger therefore contain 469 paths (`baseline=433`, `new=38`),
 including exactly one self-row for the ledger. ADM-003 and every later task
-start from 468/current and 37/new until that task's independently declared
+start from 469/current and 38/new until that task's independently declared
 creation, relocation, or deletion manifest proves a different count. The
 ledger is never made non-target to avoid this transition.
 
@@ -159,7 +160,7 @@ directory diff is prohibited.
 | --- | --- | --- | --- |
 | ADM-001 | Reciprocal execution chain | Lineage assertion | `docs(execution): start authored document migration` |
 | ADM-002 | Baseline disposition and research ledger | Inventory/ledger validation | `docs(migration): inventory authored document dispositions` |
-| ADM-003 | Stage 01–03 normalization | Path-prefix compatibility checks | `docs(migration): normalize active sdlc design documents` |
+| ADM-003 | Stage 01–03 normalization | Full-corpus JSON filtered to exact reviewed paths | `docs(migration): normalize active sdlc design documents` |
 | ADM-004 | Stage 04–05 normalization | Execution/operations compatibility checks | `docs(migration): normalize execution and operations documents` |
 | ADM-005 | Governance/reference/archive normalization | Link, owner, and preserve-boundary checks | `docs(migration): normalize governance references and archive links` |
 | ADM-006 | AWS/Azure consolidation | Zero example-local docs and valid snapshot links | `docs(migration): consolidate cloud example documentation` |
@@ -169,8 +170,8 @@ directory diff is prohibited.
 
 | ID | Level | Command | Pass criteria |
 | --- | --- | --- | --- |
-| VAL-030-001 | Inventory | `validate-links-and-owners.py --inventory --format json` | Pre-ledger 467/current is exact; ADM-002 final inventory uses the ledger `--include-path` and classifies 468/current and 37/new exactly once, including its pinned self-row. |
-| VAL-030-002 | Wave | `validate-markdown-profiles.py --mode compatibility --path-prefix PATH` | Completed wave has no document debt. |
+| VAL-030-001 | Inventory | `validate-links-and-owners.py --inventory --format json` | Pre-ledger 468/current is exact; ADM-002 final inventory uses the ledger `--include-path` and classifies 469/current and 38/new exactly once, including its pinned self-row. |
+| VAL-030-002 | Wave | `validate-markdown-profiles.py --mode compatibility --format json` plus deterministic filtering | RED preserves the validator exit code and selects a nonempty all-`DEFER` diagnostic set; every batch and GREEN gate select exact reviewed path sets, and GREEN selects zero diagnostics. |
 | VAL-030-003 | Research | strict link/owner validator | Every migrated current document has one complete durable row. |
 | VAL-030-004 | Cloud | directory-based `git ls-files examples/aws/docs examples/azure/docs` source/ledger comparison | All 59 source paths have durable ledger rows before deletion; no example-local SDLC Markdown remains afterward. |
 | VAL-030-005 | Strict | all three document validators in strict mode | Zero debt, unknown route, duplicate owner, incomplete ledger, or broken link. |
@@ -187,7 +188,11 @@ directory diff is prohibited.
 
 ## Agent Rollout & Evaluation Gates
 
-- **Offline Eval Gate:** Each wave clears its path-prefix debt and passes link/owner validation.
+- **Offline Eval Gate:** Each wave consumes one full-corpus Markdown JSON result,
+  filters it deterministically to the reviewed exact path set, proves the RED
+  selection is nonempty and all `DEFER`, proves every batch/GREEN selection is
+  empty, and passes link/owner validation without masking either validator exit
+  code.
 - **Sandbox / Canary Rollout:** Compatibility mode remains canonical through ADM-006.
 - **Human Approval Gate:** Required before deletion, accepted-ADR supersession, remote push, merge, or protected/live changes.
 - **Rollback Trigger:** Unique-content loss, historical evidence drift, duplicate current owner, incomplete research, or unresolved link regression.
@@ -212,7 +217,7 @@ directory diff is prohibited.
 - Consumes: active Spec 030, completed Specs 026–029, and this Plan.
 - Produces: Task IDs `ADM-001` through `ADM-007` and reciprocal execution lineage.
 
-- [ ] **Step 1: Run RED lineage assertion**
+- [x] **Step 1: Run RED lineage assertion**
 
 ```bash
 python3 - <<'PY'
@@ -233,18 +238,18 @@ PY
 
 Expected: FAIL because the execution Task and reciprocal links do not exist.
 
-- [ ] **Step 2: Create the active Task and exact seven-row table**
+- [x] **Step 2: Create the active Task and exact seven-row table**
 
 Use the five canonical Frontmatter keys, `status: active`, and one row for every
 `ADM-001` through `ADM-007` Work Breakdown item with its exact command and
 commit message.
 
-- [ ] **Step 3: Add reciprocal links and active index rows**
+- [x] **Step 3: Add reciprocal links and active index rows**
 
 Update Spec, Plan, Task, and the three Stage indexes only. Preserve all unrelated
 index order and content.
 
-- [ ] **Step 4: Run GREEN lineage and focused QA**
+- [x] **Step 4: Run GREEN lineage and focused QA**
 
 ```bash
 python3 - <<'PY'
@@ -265,7 +270,7 @@ pre-commit run --files docs/03.specs/030-authored-document-migration/spec.md doc
 
 Expected: assertion and applicable hooks PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add docs/03.specs/030-authored-document-migration/spec.md docs/03.specs/README.md \
@@ -307,9 +312,9 @@ the exact staged set. Roll back with `git revert <ADM-001-commit>`.
 
 **Interfaces:**
 
-- Consumes: Spec 029's pre-ledger `--inventory --format json` envelope whose
-  `documents[].path` is the exact sorted 467-path `current_paths` set, the same
-  validator's explicit `--include-path` transition to 468 after ledger
+- Consumes: the post-ADM-001 `--inventory --format json` envelope whose
+  `documents[].path` is the exact sorted 468-path `current_paths` set, the same
+  validator's explicit `--include-path` transition to 469 after ledger
   creation, and the Spec 027 type-to-source matrix.
 - Produces: exact fourteen-column durable ledger consumed by strict
   cross-document validation and an empty semantic-debt item set.
@@ -334,7 +339,7 @@ assert list(data) == [
 assert data['schemaVersion'] == 1
 assert data['mode'] == 'inventory' and data['outcome'] == 'PASS'
 assert data['counts'] == {
-    'baseline': 433, 'current': 467, 'new': 36, 'documents': 467
+    'baseline': 433, 'current': 468, 'new': 37, 'documents': 468
 }
 assert data['diagnostics'] == []
 expected = [
@@ -342,12 +347,12 @@ expected = [
     for path in enumerate_target_markdown(pathlib.Path('.')).current_paths
 ]
 actual = [item['path'] for item in data['documents']]
-assert actual == expected == sorted(actual) and len(set(actual)) == 467
+assert actual == expected == sorted(actual) and len(set(actual)) == 468
 PY
 ```
 
 Expected: the one deterministic pre-ledger inventory envelope, exact counts,
-and exact ordered 467-path equality pass; no tracked `_workspace` child is
+and exact ordered 468-path equality pass; no tracked `_workspace` child is
 created. This snapshot is input to ledger creation, not the final ADM-002
 inventory.
 
@@ -362,7 +367,12 @@ Expected: exit 1 with `LEDGER-MISSING` or `LEDGER-INCOMPLETE`.
 - [ ] **Step 3: Create the durable ledger**
 
 Use the common Reference profile and one table with exactly the fourteen
-columns declared above. Start with one row per Step 1 `documents[].path`, then
+columns declared above. Its body has exactly these eight H2 sections in order:
+`Overview`, `Reference Type`, `Authority Boundary`, `Scope`,
+`Definitions / Facts`, `Sources`, `Review and Freshness`, and
+`Related Documents`. The sole fourteen-column table is directly under
+`Definitions / Facts`; do not create an earlier path-header table. Start with
+one row per Step 1 `documents[].path`, then
 add the ledger's own row before producing the final inventory. No other path
 may appear. The ledger frontmatter is pinned to title `Document Migration
 Evidence Ledger`, type `content/reference`, status `active`, owner `platform`,
@@ -372,7 +382,15 @@ and origin `program-created`. Its ledger self-row literals are pinned by the
 Step 4 assertion. Every other row names baseline or program-created local
 evidence, disposition, destination, applicable official source or reviewed
 non-applicability reason, content decision, refresh trigger, reviewer, and
-initial `inventory-reviewed` result.
+initial `inventory-reviewed` result. Every table cell serializes a literal pipe
+as `&#124;`, especially `path`, `title`, and `owner-key`; multiple source links
+or URLs are separated with `<br>`, never a raw `|`. A nonempty title uses the
+inventory title when present, otherwise the first visible H1, otherwise
+`PurePosixPath(path).stem`. All six disposition values are limited to
+`preserve`, `transform`, `merge`, `relocate`, `tombstone`, or `delete`.
+Destination is required even for `delete`, which uses an explicit reviewed
+`not applicable - no successor approved` value. The ledger self-row owner-key
+remains empty, and every row still requires the other thirteen cells.
 
 - [ ] **Step 4: Verify completeness and tracked boundary**
 
@@ -415,7 +433,7 @@ assert list(inventory) == [
     'schemaVersion', 'mode', 'outcome', 'counts', 'documents', 'diagnostics'
 ]
 assert inventory['counts'] == {
-    'baseline': 433, 'current': 468, 'new': 37, 'documents': 468
+    'baseline': 433, 'current': 469, 'new': 38, 'documents': 469
 }
 assert inventory['diagnostics'] == []
 inventory_paths = [item['path'] for item in inventory['documents']]
@@ -426,7 +444,7 @@ expected = [
     ).current_paths
 ]
 assert inventory_paths == expected == sorted(inventory_paths)
-assert len(inventory_paths) == len(set(inventory_paths)) == 468
+assert len(inventory_paths) == len(set(inventory_paths)) == 469
 own_inventory = next(item for item in inventory['documents'] if item['path'] == ledger_path)
 assert own_inventory == {
     'path': ledger_path,
@@ -439,12 +457,21 @@ assert own_inventory == {
     'origin': 'program-created',
 }
 ledger = pathlib.Path(ledger_path).read_text().splitlines()
+assert [line[3:] for line in ledger if line.startswith('## ')] == [
+    'Overview', 'Reference Type', 'Authority Boundary', 'Scope',
+    'Definitions / Facts', 'Sources', 'Review and Freshness',
+    'Related Documents',
+]
 header = (
     '| path | title | profile | owner-key | disposition | destination | '
     'local-evidence | official-sources | observed-version | applicability | '
     'content-decision | refresh-trigger | reviewer | result |'
 )
 start = ledger.index(header)
+definitions_index = ledger.index('## Definitions / Facts')
+sources_index = ledger.index('## Sources')
+assert definitions_index < start < sources_index
+assert ledger.count(header) == 1
 rows = []
 for line in ledger[start + 2:]:
     if not line.startswith('|'):
@@ -452,9 +479,32 @@ for line in ledger[start + 2:]:
     cells = [cell.strip() for cell in line.strip('|').split('|')]
     assert len(cells) == 14, (len(cells), line)
     rows.append(cells)
-ledger_paths = [row[0].removeprefix('`').removesuffix('`') for row in rows]
+ledger_paths = [
+    row[0].removeprefix('`').removesuffix('`').replace('&#124;', '|')
+    for row in rows
+]
 assert ledger_paths == inventory_paths
-assert len(ledger_paths) == len(set(ledger_paths)) == 468
+assert len(ledger_paths) == len(set(ledger_paths)) == 469
+inventory_by_path = {item['path']: item for item in inventory['documents']}
+dispositions = {'preserve', 'transform', 'merge', 'relocate', 'tombstone', 'delete'}
+for row in rows:
+    path = row[0].removeprefix('`').removesuffix('`')
+    item = inventory_by_path[path]
+    source = pathlib.Path(path).read_text(encoding='utf-8')
+    visible_h1 = next(
+        (line[2:].strip() for line in source.splitlines() if line.startswith('# ')),
+        '',
+    )
+    expected_title = item['title'] or visible_h1 or pathlib.PurePosixPath(path).stem
+    assert row[0] == f'`{item["path"].replace("|", "&#124;")}`', (path, row[0])
+    assert row[1] == expected_title.replace('|', '&#124;'), (path, row[1])
+    assert row[2] == item['profile'].replace('|', '&#124;'), (path, row[2])
+    assert row[3] == item['ownerKey'].replace('|', '&#124;'), (path, row[3])
+    assert row[4] in dispositions, (path, row[4])
+    assert all(row[index] for index in range(14) if index != 3), (path, row)
+    assert all('|' not in cell and '\r' not in cell and '\n' not in cell for cell in row)
+    if row[4] == 'delete':
+        assert row[5] == 'not applicable - no successor approved', (path, row[5])
 own_row = rows[ledger_paths.index(ledger_path)]
 assert own_row == [
     f'`{ledger_path}`',
@@ -473,6 +523,30 @@ assert own_row == [
     'inventory-reviewed',
 ]
 PY
+fi
+
+if [ "$overall_rc" -eq 0 ]; then
+  markdown_report='_workspace/document-migration-markdown-compatibility.json'
+  markdown_rc=0
+  python3 scripts/validate-markdown-profiles.py --root . --mode compatibility \
+    --format json --include-path "$ledger_path" >"$markdown_report" || markdown_rc=$?
+  if [ "$markdown_rc" -ne 0 ]; then
+    overall_rc="$markdown_rc"
+  else
+    python3 - "$markdown_report" "$ledger_path" <<'PY' || overall_rc=$?
+import json
+import pathlib
+import sys
+
+report = json.loads(pathlib.Path(sys.argv[1]).read_text())
+ledger_path = sys.argv[2]
+assert list(report) == [
+    'schemaVersion', 'mode', 'outcome', 'counts', 'diagnostics'
+]
+assert report['mode'] == 'compatibility'
+assert not [item for item in report['diagnostics'] if item['path'] == ledger_path]
+PY
+  fi
 fi
 
 if [ "$overall_rc" -eq 0 ]; then
@@ -498,7 +572,7 @@ fi
 exit "$overall_rc"
 ```
 
-Expected: final inventory is 468/current and 37/new, the pinned ledger
+Expected: final inventory is 469/current and 38/new, the pinned ledger
 classification and self-row pass, both modes exit 0, and the ordered ledger
 path list equals the exact final `documents[].path` list with no omission,
 extra, or duplicate. Tracked `_workspace` output is exactly
@@ -507,6 +581,18 @@ extra, or duplicate. Tracked `_workspace` output is exactly
 - [ ] **Step 5: Commit**
 
 ```bash
+git add docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
+  docs/90.references/research/2026-07-07-wer/README.md \
+  tests/fixtures/document-contracts/semantic-compatibility-debt.json \
+  docs/04.execution/tasks/2026-07-12-authored-document-migration.md \
+  docs/00.agent-governance/memory/progress.md
+git diff --check
+pre-commit run --files \
+  docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
+  docs/90.references/research/2026-07-07-wer/README.md \
+  tests/fixtures/document-contracts/semantic-compatibility-debt.json \
+  docs/04.execution/tasks/2026-07-12-authored-document-migration.md \
+  docs/00.agent-governance/memory/progress.md
 git add docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
   docs/90.references/research/2026-07-07-wer/README.md \
   tests/fixtures/document-contracts/semantic-compatibility-debt.json \
@@ -527,8 +613,10 @@ PY
 git commit -m "docs(migration): inventory authored document dispositions"
 ```
 
-Expected: exactly five staged paths. A fresh reviewer verifies the final
-468-path inventory/ledger set equality, pinned self-row, the exact fourteen
+Expected: `git diff --check` and focused hooks pass against the tracked ledger
+and links, then the same five paths are re-added after any hook rewrite. A
+fresh reviewer verifies exactly five staged paths and the final
+469-path inventory/ledger set equality, pinned self-row, the exact fourteen
 columns, semantic debt `items: []`, strict and compatibility results, and the
 ignored boundary. Roll back only with
 `git revert <ADM-002-commit>` so the ledger and its one represented missing-ledger
@@ -556,12 +644,24 @@ item return atomically.
 - Produces: debt-free current design documents without altering accepted-decision
   history, with the exact Stage 01–03 debt records and aggregate caps removed.
 
-- [ ] **Step 1: Capture RED diagnostics for the three path prefixes**
+- [ ] **Step 1: Capture RED diagnostics for the three directory boundaries**
 
 ```bash
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/01.requirements --format json > _workspace/stage01-debt.json
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/02.architecture --format json > _workspace/stage02-debt.json
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/03.specs --format json > _workspace/stage03-debt.json
+report=_workspace/adm-003-markdown-red.json
+validator_rc=0
+python3 scripts/validate-markdown-profiles.py --root . --mode compatibility \
+  --format json >"$report" || validator_rc=$?
+if [ "$validator_rc" -ne 0 ]; then exit "$validator_rc"; fi
+python3 - "$report" docs/01.requirements docs/02.architecture docs/03.specs <<'PY'
+import json, pathlib, sys
+data = json.loads(pathlib.Path(sys.argv[1]).read_text())
+boundaries = sys.argv[2:]
+selected = [d for d in data['diagnostics'] if any(
+    d['path'] == boundary or d['path'].startswith(boundary + '/')
+    for boundary in boundaries
+)]
+assert selected and all(d['outcome'] == 'DEFER' for d in selected)
+PY
 ```
 
 Expected: valid JSON inventories; every reported item names an exact record in
@@ -612,6 +712,25 @@ Expected: the independently recorded count/SHA matches; every frozen allowed
 path occurs in exactly one NUL batch, no README is present, and no unreviewed
 eligible path is self-authorized.
 
+After editing one batch, set `ADM_BATCH` to that exact reviewed manifest and
+run this full-corpus result filtered to only its NUL path set:
+
+```bash
+batch=${ADM_BATCH:?set ADM_BATCH to the exact reviewed ADM-003 batch manifest}
+case "$batch" in _workspace/adm-003-batches/documents-*.nul) ;; *) exit 1;; esac
+report="${batch%.nul}-green.json"; validator_rc=0
+python3 scripts/validate-markdown-profiles.py --root . --mode compatibility \
+  --format json >"$report" || validator_rc=$?
+if [ "$validator_rc" -ne 0 ]; then exit "$validator_rc"; fi
+python3 - "$report" "$batch" <<'PY'
+import json, pathlib, sys
+data = json.loads(pathlib.Path(sys.argv[1]).read_text())
+paths = {p.decode() for p in pathlib.Path(sys.argv[2]).read_bytes().split(b'\0') if p}
+assert paths
+assert not [d for d in data['diagnostics'] if d['path'] in paths]
+PY
+```
+
 - [ ] **Step 3: Transform PRD and ARD batches**
 
 Apply exact key order and family state domain, retain topic-specific requirements,
@@ -630,7 +749,7 @@ every content choice and official source in the ledger. Repeat the same
 at-most-five-path checkpoint for each remaining `documents-*.nul` manifest; do not combine
 manifests in one edit/review checkpoint.
 
-- [ ] **Step 5: Run GREEN prefix validation**
+- [ ] **Step 5: Run GREEN exact-wave validation**
 
 Remove exactly the manifest records from `template-compatibility.json` in the
 same edit checkpoint that canonicalizes their paths. Recompute every aggregate
@@ -640,14 +759,24 @@ counts equal the manifest's exact arithmetic and that its removal tuple set is
 disjoint from remaining records.
 
 ```bash
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/01.requirements
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/02.architecture
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/03.specs
+report=_workspace/adm-003-markdown-green.json
+validator_rc=0
+python3 scripts/validate-markdown-profiles.py --root . --mode compatibility \
+  --format json >"$report" || validator_rc=$?
+if [ "$validator_rc" -ne 0 ]; then exit "$validator_rc"; fi
+python3 - "$report" _workspace/adm-003-allowed-document-paths.nul <<'PY'
+import json, pathlib, sys
+data = json.loads(pathlib.Path(sys.argv[1]).read_text())
+paths = {p.decode() for p in pathlib.Path(sys.argv[2]).read_bytes().split(b'\0') if p}
+assert paths
+assert not [d for d in data['diagnostics'] if d['path'] in paths]
+PY
 python3 scripts/validate-links-and-owners.py --root . --mode compatibility
 bash scripts/validate-repo-quality-gates.sh .
 ```
 
-Expected: no debt for the three completed prefixes and no broken/duplicate owner findings.
+Expected: the exact reviewed wave selects no diagnostic and no broken/duplicate
+owner finding remains.
 
 - [ ] **Step 6: Review and commit**
 
@@ -715,11 +844,24 @@ fixture records/caps, digest, and mutation proofs return atomically.
 - Produces: preserved execution facts and role-separated operational documents,
   with their exact shape-debt records and aggregate caps removed.
 
-- [ ] **Step 1: Capture RED prefix diagnostics**
+- [ ] **Step 1: Capture RED directory-boundary diagnostics**
 
 ```bash
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/04.execution --format json > _workspace/stage04-debt.json
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/05.operations --format json > _workspace/stage05-debt.json
+report=_workspace/adm-004-markdown-red.json
+validator_rc=0
+python3 scripts/validate-markdown-profiles.py --root . --mode compatibility \
+  --format json >"$report" || validator_rc=$?
+if [ "$validator_rc" -ne 0 ]; then exit "$validator_rc"; fi
+python3 - "$report" docs/04.execution docs/05.operations <<'PY'
+import json, pathlib, sys
+data = json.loads(pathlib.Path(sys.argv[1]).read_text())
+boundaries = sys.argv[2:]
+selected = [d for d in data['diagnostics'] if any(
+    d['path'] == boundary or d['path'].startswith(boundary + '/')
+    for boundary in boundaries
+)]
+assert selected and all(d['outcome'] == 'DEFER' for d in selected)
+PY
 ```
 
 Expected: valid JSON with only named migration debt.
@@ -763,7 +905,24 @@ PY
 
 Expected: the independently recorded count/SHA matches; each frozen path occurs
 once, every batch has no more than five paths, and README/fixed evidence paths
-are absent.
+are absent. After each batch edit, run the same full-corpus validator and filter
+to that exact batch only:
+
+```bash
+batch=${ADM_BATCH:?set ADM_BATCH to the exact reviewed ADM-004 batch manifest}
+case "$batch" in _workspace/adm-004-batches/documents-*.nul) ;; *) exit 1;; esac
+report="${batch%.nul}-green.json"; validator_rc=0
+python3 scripts/validate-markdown-profiles.py --root . --mode compatibility \
+  --format json >"$report" || validator_rc=$?
+if [ "$validator_rc" -ne 0 ]; then exit "$validator_rc"; fi
+python3 - "$report" "$batch" <<'PY'
+import json, pathlib, sys
+data = json.loads(pathlib.Path(sys.argv[1]).read_text())
+paths = {p.decode() for p in pathlib.Path(sys.argv[2]).read_bytes().split(b'\0') if p}
+assert paths
+assert not [d for d in data['diagnostics'] if d['path'] in paths]
+PY
+```
 
 - [ ] **Step 3: Preserve completed execution evidence batch by batch**
 
@@ -788,8 +947,18 @@ Recompute all caps downward and refresh the quality gate's complete-fixture
 semantic digest and affected-path/rule-cap/union-count mutation proofs.
 
 ```bash
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/04.execution
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/05.operations
+report=_workspace/adm-004-markdown-green.json
+validator_rc=0
+python3 scripts/validate-markdown-profiles.py --root . --mode compatibility \
+  --format json >"$report" || validator_rc=$?
+if [ "$validator_rc" -ne 0 ]; then exit "$validator_rc"; fi
+python3 - "$report" _workspace/adm-004-allowed-document-paths.nul <<'PY'
+import json, pathlib, sys
+data = json.loads(pathlib.Path(sys.argv[1]).read_text())
+paths = {p.decode() for p in pathlib.Path(sys.argv[2]).read_bytes().split(b'\0') if p}
+assert paths
+assert not [d for d in data['diagnostics'] if d['path'] in paths]
+PY
 python3 scripts/validate-links-and-owners.py --root . --mode compatibility
 bash scripts/validate-repo-quality-gates.sh .
 git diff --check
@@ -825,7 +994,7 @@ PY
 git commit -m "docs(migration): normalize execution and operations documents"
 ```
 
-Expected: completed prefixes have no debt and commit succeeds. A fresh reviewer
+Expected: the exact reviewed wave has no debt and commit succeeds. A fresh reviewer
 proves document/removal set equality, exact count arithmetic, complete digest
 and mutation refresh, and the printed staged count. Roll back with
 `git revert <ADM-004-commit>` to restore the whole wave atomically.
@@ -854,12 +1023,24 @@ and mutation refresh, and the printed staged count. Roll back with
 - Produces: one current authority per role while retaining dated and archive
   evidence, with exactly the canonicalized shape-debt records removed.
 
-- [ ] **Step 1: Capture RED diagnostics for remaining owned prefixes**
+- [ ] **Step 1: Capture RED diagnostics for remaining owned boundaries**
 
 ```bash
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/00.agent-governance --format json > _workspace/stage00-debt.json
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/90.references --format json > _workspace/stage90-debt.json
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/98.archive --format json > _workspace/stage98-debt.json
+report=_workspace/adm-005-markdown-red.json
+validator_rc=0
+python3 scripts/validate-markdown-profiles.py --root . --mode compatibility \
+  --format json >"$report" || validator_rc=$?
+if [ "$validator_rc" -ne 0 ]; then exit "$validator_rc"; fi
+python3 - "$report" docs/00.agent-governance docs/90.references docs/98.archive <<'PY'
+import json, pathlib, sys
+data = json.loads(pathlib.Path(sys.argv[1]).read_text())
+boundaries = sys.argv[2:]
+selected = [d for d in data['diagnostics'] if any(
+    d['path'] == boundary or d['path'].startswith(boundary + '/')
+    for boundary in boundaries
+)]
+assert selected and all(d['outcome'] == 'DEFER' for d in selected)
+PY
 ```
 
 Expected: valid JSON and no unregistered debt.
@@ -920,7 +1101,24 @@ PY
 
 Expected: the recorded count/SHA matches; all README, fixed evidence, and seven
 handoff paths are absent; every frozen path occurs once in a batch of at most
-five paths.
+five paths. After each batch edit, run the full-corpus validator and filter to
+that exact batch only:
+
+```bash
+batch=${ADM_BATCH:?set ADM_BATCH to the exact reviewed ADM-005 batch manifest}
+case "$batch" in _workspace/adm-005-batches/documents-*.nul) ;; *) exit 1;; esac
+report="${batch%.nul}-green.json"; validator_rc=0
+python3 scripts/validate-markdown-profiles.py --root . --mode compatibility \
+  --format json >"$report" || validator_rc=$?
+if [ "$validator_rc" -ne 0 ]; then exit "$validator_rc"; fi
+python3 - "$report" "$batch" <<'PY'
+import json, pathlib, sys
+data = json.loads(pathlib.Path(sys.argv[1]).read_text())
+paths = {p.decode() for p in pathlib.Path(sys.argv[2]).read_bytes().split(b'\0') if p}
+assert paths
+assert not [d for d in data['diagnostics'] if d['path'] in paths]
+PY
+```
 
 - [ ] **Step 3: Transform current governance and reference owners in batches**
 
@@ -942,9 +1140,18 @@ cap downward, and refresh the complete-fixture semantic digest and all mutation
 proofs in `scripts/validate-repo-quality-gates.sh` in this commit.
 
 ```bash
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/00.agent-governance
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/90.references
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/98.archive
+report=_workspace/adm-005-markdown-green.json
+validator_rc=0
+python3 scripts/validate-markdown-profiles.py --root . --mode compatibility \
+  --format json >"$report" || validator_rc=$?
+if [ "$validator_rc" -ne 0 ]; then exit "$validator_rc"; fi
+python3 - "$report" _workspace/adm-005-allowed-document-paths.nul <<'PY'
+import json, pathlib, sys
+data = json.loads(pathlib.Path(sys.argv[1]).read_text())
+paths = {p.decode() for p in pathlib.Path(sys.argv[2]).read_bytes().split(b'\0') if p}
+assert paths
+assert not [d for d in data['diagnostics'] if d['path'] in paths]
+PY
 python3 scripts/validate-links-and-owners.py --root . --mode compatibility
 bash scripts/validate-repo-quality-gates.sh .
 git diff --check
@@ -976,7 +1183,7 @@ PY
 git commit -m "docs(migration): normalize governance references and archive links"
 ```
 
-Expected: all owned prefixes pass and historical bodies remain preserved. A
+Expected: the exact reviewed wave passes and historical bodies remain preserved. A
 fresh reviewer proves preserve-boundary compliance, document/removal set
 equality, exact count arithmetic, complete digest/mutation refresh, and the
 printed staged count. Roll back with `git revert <ADM-005-commit>` so content,

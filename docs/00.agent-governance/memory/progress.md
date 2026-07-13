@@ -8,6 +8,56 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - Authored migration execution-contract correction
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, planning, qa
+- **Status**: complete
+- **Tags**: #authored-document #migration #inventory #semantic-validation
+
+#### Progress
+
+- Preserved the committed ADM-001 lineage evidence and recorded this
+  append-only correction after independent review found that creating its Task
+  changed the next inventory boundary: ADM-002 starts at exactly 468/current
+  and 37/new and ledger inclusion produces 469/current and 38/new.
+- Replaced every unsupported Markdown `--path-prefix` contract with one
+  executable full-corpus JSON invocation followed by deterministic filtering:
+  RED keeps the validator exit code and requires nonempty all-`DEFER`
+  selections, while batch and GREEN checks use exact reviewed paths and require
+  empty selections.
+- Pinned the ledger serialization boundary for literal pipes, empty inventory
+  titles, the exact Reference body shape, all fourteen cells, six disposition
+  values, nonempty destinations, and a zero-diagnostic Markdown compatibility
+  check for the included ledger path.
+
+#### Memory
+
+- A newly tracked execution Task is part of the registry corpus even when its
+  logical purpose is only lineage; recompute the downstream pre/post inventory
+  transition after the commit rather than carrying forward a pre-Task count.
+- Human-readable Markdown tables require an explicit cell codec. Encode literal
+  pipes as `&#124;`, separate multiple links with `<br>`, and compare encoded
+  inventory values row by row instead of trusting a naïve split.
+
+#### Evidence
+
+- Repository inventory after ADM-001 is exactly
+  `baseline=433/current=468/new=37/documents=468`; 64 owner keys contain a
+  literal pipe and 154 inventory titles are empty, so both cases now have
+  executable ledger assertions and deterministic fallbacks.
+- The correction is bounded to this canonical progress entry, Plan 030, and
+  Task 030. Focused hooks, executable inventory/filter probes,
+  `git diff --check`, and exact three-path proof gate its logical commit.
+
+#### Handoff
+
+- ADM-001 remains complete. Independently review this correction, then start
+  ADM-002 at the corrected 468-to-469 boundary; do not begin ADM-003 content
+  normalization in the ledger-publication commit.
+
 ### 2026-07-13 - Authored document migration execution lineage
 
 #### Metadata
@@ -25,7 +75,7 @@ inventory stays in `scripts/README.md`.
 - Added reciprocal Spec, Plan, and Task links and aligned their three Stage
   indexes without changing unrelated index order or lifecycle state.
 - Completed ADM-001 as the repository-static lineage unit; ADM-002 remains the
-  sole next owner of the durable ledger and 467-to-468 inventory transition.
+  sole next owner of the durable ledger and 468-to-469 inventory transition.
 
 #### Memory
 

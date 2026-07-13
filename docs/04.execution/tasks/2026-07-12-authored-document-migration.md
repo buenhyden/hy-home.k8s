@@ -23,8 +23,8 @@ consolidate duplicate AWS/Azure prose, and close the compatibility boundary.
 - **Parent Spec**: `docs/03.specs/030-authored-document-migration/spec.md`
 - **Parent Plan**: `docs/04.execution/plans/2026-07-12-authored-document-migration.md`
 - **Validation Baseline**: Completed Specs 026 through 029 provide the registry,
-  templates, README profiles, semantic validators, and the exact 467-path
-  pre-ledger inventory.
+  templates, README profiles, semantic validators, and the exact 468-path
+  post-ADM-001/pre-ledger inventory (`baseline=433`, `new=37`).
 - **Migration Baseline**: The approved baseline identity is
   `8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d`; program-created targets are
   accounted for separately by the validator inventory.
@@ -35,9 +35,9 @@ consolidate duplicate AWS/Azure prose, and close the compatibility boundary.
 | --- | --- | --- | --- | --- |
 | ADM-001 | Start reciprocal Spec, Plan, Task, and index lineage | platform | Done | `python3` reciprocal-lineage assertion in Plan Task 1 Step 4; logical commit `docs(execution): start authored document migration` |
 | ADM-002 | Publish the baseline disposition and durable research ledger | platform | Queued | `python3 scripts/validate-links-and-owners.py --root . --mode strict`; logical commit `docs(migration): inventory authored document dispositions` |
-| ADM-003 | Normalize Stage 01–03 active design documents | platform | Queued | `python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/01.requirements`, `docs/02.architecture`, and `docs/03.specs`; logical commit `docs(migration): normalize active sdlc design documents` |
-| ADM-004 | Normalize Stage 04–05 execution and operations documents | platform | Queued | `python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/04.execution` and `docs/05.operations`; logical commit `docs(migration): normalize execution and operations documents` |
-| ADM-005 | Normalize governance, Current references, and Archive links | platform | Queued | `python3 scripts/validate-markdown-profiles.py --root . --mode compatibility --path-prefix docs/00.agent-governance`, `docs/90.references`, and `docs/98.archive`; logical commit `docs(migration): normalize governance references and archive links` |
+| ADM-003 | Normalize Stage 01–03 active design documents | platform | Queued | Full-corpus compatibility JSON filtered first by the three RED directory boundaries and then by each exact reviewed batch/GREEN path set; logical commit `docs(migration): normalize active sdlc design documents` |
+| ADM-004 | Normalize Stage 04–05 execution and operations documents | platform | Queued | Full-corpus compatibility JSON filtered first by the two RED directory boundaries and then by each exact reviewed batch/GREEN path set; logical commit `docs(migration): normalize execution and operations documents` |
+| ADM-005 | Normalize governance, Current references, and Archive links | platform | Queued | Full-corpus compatibility JSON filtered first by the three RED directory boundaries and then by each exact reviewed batch/GREEN path set; logical commit `docs(migration): normalize governance references and archive links` |
 | ADM-006 | Consolidate AWS and Azure example documentation | platform | Queued | `test -z "$(git ls-files examples/aws/docs examples/azure/docs)"`; logical commit `docs(migration): consolidate cloud example documentation` |
 | ADM-007 | Enable strict validation and close Spec 030 | platform | Queued | `python3 scripts/validate-document-contract-registry.py --root . --mode strict`, both semantic validators in strict mode, and `bash scripts/validate-repo-quality-gates.sh .`; logical commit `chore(docs): cut over document profiles to strict validation` |
 
@@ -80,7 +80,10 @@ GREEN requires the Spec, Plan, and Task to name each other, unique active rows
 in all three Stage indexes, exactly seven ADM rows, an append-only progress
 entry, `git diff --check`, focused pre-commit, and an exact seven-path change
 set. These checks are repository-static and do not access ignored local state,
-secrets, live systems, remote CI, publication, push, merge, or deployment.
+secrets, live systems, remote CI, publication, push, merge, or deployment. Its
+committed Task adds one normal authored target, so ADM-002 now consumes exactly
+468/current and 37/new before ledger creation and must produce 469/current and
+38/new with the ledger self-row.
 
 ## Traceability
 
