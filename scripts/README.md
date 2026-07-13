@@ -49,6 +49,7 @@ scripts/
 ├── render-platform-chart-kinds.sh    # Manual Helm chart render review for platform AppProject allow-list impact
 ├── validate-agent-roster-currentness.py # Canonical three-provider roster and catalog owner-pointer validation
 ├── validate-document-contract-registry.py # Document registry schema, inventory, and route validation
+├── validate-links-and-owners.py      # Full-corpus links, indexes, current owners, and migration-ledger validation
 ├── validate-markdown-profiles.py       # Registry-driven Markdown semantics and finite compatibility debt
 ├── validate-gitops-structure.sh      # ArgoCD root app, kustomization structure, and resource completeness validation
 ├── validate-harness.sh               # Repo-static harness validation wrapper over existing gates (no live checks)
@@ -115,6 +116,7 @@ Shell syntax coverage는 Bash 문법 검증 범위일 뿐 보존 근거가 아�
 | --- | --- | --- | --- | --- |
 | `validate-document-contract-registry.py` | Keep | Tier A document contract registry gate | Repository-static `jsonschema` preflight, mode-aware Git inventory, exactly-one route classification. 기본 inventory는 tracked-only이고 named untracked candidate만 `lstat()`으로 검사하며 ignored path와 symlink는 열거나 순회하지 않는다. | `--root`, `--mode compatibility\|strict`, `--profile`, repeatable `--include-path`, `--self-test`; `PASS`/exit `0`은 선택 scope 통과, `FAIL`/non-zero는 rule-ID 또는 입력 경계 위반을 뜻한다. |
 | `validate-markdown-profiles.py` | Keep | Tier B semantic document gate; Spec 029 SMDV-004 promotes it through the repository orchestrator. | Registry-selected Frontmatter, H1/H2, fence, residue, append-fragment, native/generated structural N/A, and imported README handoff semantics. Compatibility debt is read only from the finite Spec-030-owned fixture. | `--root`, `--mode compatibility\|strict`, `--format text\|json`, repeatable `--include-path`, mutually exclusive `--self-test`/`--inventory`; exit `0` is clean or exact compatibility `DEFER`, `1` is a document violation/strict debt, and `2` is configuration or CLI failure. |
+| `validate-links-and-owners.py` | Keep | Tier B cross-document semantic gate; Spec 029 SMDV-004 promotes it through the repository orchestrator. | All registry `current_paths` links, the three declared indexes, deterministic current-owner keys, and the exact fourteen-column Spec 030 migration ledger. It reads no network or secret content and does not dereference provider symlink adapters. | `--root`, `--mode compatibility\|strict`, `--format text\|json`, repeatable `--include-path`, mutually exclusive `--self-test`/`--inventory`; JSON inventory returns the exact ordered registry population. Exit `0` is clean or the exact compatibility ledger `DEFER`, `1` is a document violation/strict debt, and `2` is configuration or CLI failure. |
 
 ### Script Classification Matrix
 

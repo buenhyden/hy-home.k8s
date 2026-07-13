@@ -39,9 +39,11 @@ tests/
 ├── fixtures/
 │   ├── agent-roster-currentness.json # Canonical roster validator self-test cases
 │   ├── markdown-profiles.json       # Registry profile matrix, mutations, and fixed date cases
+│   ├── links-and-owners.json        # Cross-document link, index, owner, and ledger cases
 │   └── document-contracts/
 │       ├── readme-profile-cases.json  # README route and semantic-validator handoff cases
 │       ├── registry-cases.json        # Document registry contract cases
+│       ├── semantic-compatibility-debt.json # Exact Spec 030 ledger transition debt
 │       └── template-compatibility.json # Canonical template and migration-debt contract
 └── README.md                         # This file
 ```
@@ -76,6 +78,9 @@ live readiness.
 | Repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` | Repo-static |
 | Markdown profile self-test | `python3 scripts/validate-markdown-profiles.py --self-test` | Repo-static |
 | Markdown profile compatibility | `python3 scripts/validate-markdown-profiles.py --root . --mode compatibility` | Repo-static finite-debt evidence |
+| Cross-document self-test | `python3 scripts/validate-links-and-owners.py --self-test` | Repo-static link/index/owner/ledger mutation evidence |
+| Cross-document compatibility | `python3 scripts/validate-links-and-owners.py --root . --mode compatibility` | Repo-static exact ledger-transition debt evidence |
+| Cross-document inventory | `python3 scripts/validate-links-and-owners.py --root . --inventory --format json` | Repo-static ordered registry population |
 | Agent roster currentness fixture | `python3 scripts/validate-agent-roster-currentness.py . --self-test` | Repo-static |
 | Agent roster currentness repository check | `python3 scripts/validate-agent-roster-currentness.py .` | Repo-static |
 | External service contracts | `bash infrastructure/tests/verify-contracts-static.sh` | Repo-static |
@@ -106,6 +111,12 @@ live readiness.
   정확히 구분한다. Fixed `2026-07-12` 기준일, leap-day,
   template placeholder, append context, stable rule-ID mutation은 모두 production
   entry point를 통과한다.
+- `tests/fixtures/links-and-owners.json`은 fence 및 HTML comment 밖의 inline/reference
+  link, URL decode 경계, 선언된 세 index, owner-key 정규화·제외·중복, exact
+  fourteen-column ledger를 production component로 검증한다. Semantic debt fixture는
+  ADM-002가 ledger와 468-path self-row를 같은 commit에서 만들 때 제거하는 exact
+  `LEDGER-MISSING` 한 건만 허용하며 alias, glob, growth, duplicate, unknown rule을
+  configuration error로 거부한다.
 - `tests/fixtures/agent-roster-currentness.json`은 이름이 정확히 `valid`,
   `missing-role`, `provider-mismatch`, `stale-count`, `bad-owner`인 사례 5개만
   허용한다. 각 이름의 mutation과 `expected_errors` 집합은 hardcoded

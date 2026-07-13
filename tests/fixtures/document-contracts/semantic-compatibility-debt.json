@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "owner": "Spec 030",
+  "growthAllowed": false,
+  "items": [
+    {
+      "ruleId": "LEDGER-MISSING",
+      "path": "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+      "profile": "content/reference",
+      "expected": "ledger exists, has the exact fourteen columns, and covers the inventory once",
+      "actual": "ledger is missing",
+      "ownerTask": "ADM-002",
+      "removeWhen": "ledger exists, has the exact fourteen columns, and covers the inventory once"
+    }
+  ]
+}

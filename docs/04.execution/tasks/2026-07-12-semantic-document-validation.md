@@ -14,8 +14,9 @@ This Task tracks four bounded implementation units for replacing hardcoded
 document-shape checks with deterministic registry-driven Markdown, link, index,
 current-owner, and migration-ledger validation. SMDV-001 establishes the
 reciprocal execution lineage, and SMDV-002 adds the production Markdown
-profile validator. SMDV-003 and SMDV-004 remain queued until their
-cross-document and integration changes pass the Plan's repository-static gates.
+profile validator. SMDV-003 adds the cross-document producer and its exact
+467-path inventory handoff; SMDV-004 remains queued until gate integration
+passes the Plan's repository-static checks.
 
 ## Inputs
 
@@ -34,7 +35,7 @@ cross-document and integration changes pass the Plan's repository-static gates.
 | --- | --- | --- | --- | --- |
 | SMDV-001 | Start reciprocal Spec, Plan, Task, and index lineage | platform | Done | Logical commit `docs(execution): start semantic document validation`; `python3 scripts/validate-document-contract-registry.py --root . --mode compatibility` |
 | SMDV-002 | Implement production Markdown profile validation | platform | Done | Logical commits `feat(docs): add registry-driven markdown profile validation` and `fix(validation): harden markdown debt mutation proofs`; `python3 scripts/validate-markdown-profiles.py --self-test` |
-| SMDV-003 | Implement cross-document link, index, owner, and ledger validation | platform | Queued | Logical commit `feat(docs): validate links indexes and current owners`; cross-document self-test, sole compatibility `LEDGER-MISSING` `DEFER` versus identical strict `FAIL`, exact ordered 467-path inventory envelope, registry/quality gates, and exact seven-path staged proof |
+| SMDV-003 | Implement cross-document link, index, owner, and ledger validation | platform | Done | Logical commit `feat(docs): validate links indexes and current owners`; cross-document self-test, sole compatibility `LEDGER-MISSING` `DEFER` versus identical strict `FAIL`, exact ordered 467-path inventory envelope, 66 unique current-owner keys, registry/quality gates, and exact seven-path staged proof |
 | SMDV-004 | Delegate the repository gate and close Spec 029 | platform | Queued | Logical commit `feat(validation): delegate semantic document gates`; `bash scripts/validate-repo-quality-gates.sh .` |
 
 ## Approval and Safety Boundaries
@@ -85,6 +86,17 @@ the seven date cases cannot silently shrink. Registry inventory remains 467 targ
 paths. Evidence is repository-static and excludes live, secret-value,
 credential, remote CI, publication, push, merge, deployment, and third-party
 mutation checks.
+
+SMDV-003 GREEN scans all 467 sorted registry paths without dereferencing the
+recorded provider adapters, closes all three declared index dimensions, and
+computes 66 unique active/accepted owner keys. Compatibility emits only the
+pinned `LEDGER-MISSING` `DEFER` with exit 0; strict emits the identical tuple as
+`FAIL` with exit 1. Inventory emits the ordered `433/467/36/467` envelope with
+no diagnostics. The fixture runner covers local-link normalization and safety,
+index row/tree/status mutations, owner normalization/exclusions/duplicates,
+ledger completeness, and closed semantic-debt configuration mutations. ADM-002
+owns ledger creation, the 468-path self-row transition, and exact debt removal;
+this Task does not implement that migration handoff.
 
 ## Traceability
 

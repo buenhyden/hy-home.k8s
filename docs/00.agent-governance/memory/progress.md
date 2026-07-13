@@ -8,6 +8,50 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - Cross-document semantic validation
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, validation, qa
+- **Status**: complete
+- **Tags**: #semantic-validation #links #indexes #current-owner #ledger
+
+#### Progress
+
+- Added the repository-static cross-document validator for the exact sorted
+  467-path registry population, all local Markdown links, three declared Stage
+  indexes, deterministic current-owner keys, and the fourteen-column migration
+  ledger.
+- Fixed the pre-ledger contract at 66 unique current-owner keys and one exact
+  `LEDGER-MISSING` semantic item: compatibility defers it and strict rejects the
+  identical tuple.
+- Published the ordered inventory envelope consumed by Spec 030 ADM-002 while
+  retaining the explicit `--include-path` transition for the ledger self-row.
+
+#### Memory
+
+- Cross-document validation must consume the registry inventory rather than
+  rediscover files. This preserves ignored-path and symlink-adapter boundaries.
+- A migration ledger is both evidence and a target document. Its absence may
+  defer only while the exact closed fixture exists; creation, self-row, and debt
+  removal belong to one downstream logical commit.
+
+#### Evidence
+
+- RED proved all named link, index, owner, and ledger rules were initially
+  absent. GREEN covers production fixtures, exact compatibility/strict parity,
+  ordered inventory set equality, registry checks, repository quality gates,
+  diff checks, focused and full pre-commit, and exact seven-path staging.
+- No network, live cluster, provider runtime, secret value, ignored workspace
+  content, remote CI, push, merge, publication, or deployment was accessed.
+
+#### Handoff
+
+- Independently review SMDV-003, then integrate the canonical semantic
+  validators through SMDV-004. Spec 030 ADM-002 remains the sole owner of the
+  ledger creation and 467-to-468 inventory transition.
+
 ### 2026-07-13 - Cross-document inventory handoff Plan correction
 
 #### Metadata
