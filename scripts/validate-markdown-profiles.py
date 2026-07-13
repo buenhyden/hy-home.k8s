@@ -5,8 +5,10 @@ from __future__ import annotations
 
 import argparse
 import collections
+import contextlib
 import copy
 import datetime as dt
+import io
 import json
 import re
 import sys
@@ -57,38 +59,6 @@ TOKEN_BEARING_DEBT_RULES = frozenset(
         "BODY-TEMPLATE-RESIDUE",
     }
 )
-DEFERABLE_DEBT_RULES = TOKEN_BEARING_DEBT_RULES | {"FM-DELIMITER"}
-EXPECTED_DEBT_CAPS: dict[str, dict[str, int]] = {
-    "BODY-HEADING-REQUIRED": {
-        "pathCount": 0,
-        "occurrenceCount": 0,
-        "tokenObligationCount": 0,
-    },
-    "BODY-TEMPLATE-RESIDUE": {
-        "pathCount": 0,
-        "occurrenceCount": 0,
-        "tokenObligationCount": 0,
-    },
-    "FM-DELIMITER": {
-        "pathCount": 0,
-        "occurrenceCount": 0,
-        "tokenObligationCount": 0,
-    },
-    "BODY-HEADING-UNSUPPORTED": {
-        "pathCount": 0,
-        "occurrenceCount": 0,
-        "tokenObligationCount": 0,
-        "distinctTokenCount": 0,
-    },
-    "BODY-H2-DUPLICATE": {
-        "pathCount": 0,
-        "occurrenceCount": 0,
-        "tokenObligationCount": 0,
-    },
-}
-EXPECTED_REQUIRED_RESIDUE_OVERLAP = 0
-EXPECTED_REQUIRED_RESIDUE_UNION = 0
-EXPECTED_DEBT_UNION = 0
 IMPLEMENTED_RULE_IDS = frozenset(
     {
         "APPEND-CONTEXT",
@@ -259,20 +229,6 @@ def _diagnostic(
     return Diagnostic(rule_id, path, profile.profile_id, expected, actual, OWNER)
 
 
-def _compatibility_rows(root: Path) -> dict[str, dict[str, Any]]:
-    data = json.loads((root / COMPATIBILITY_PATH).read_text(encoding="utf-8"))
-    rows = data.get("compatibilityDebt")
-    if not isinstance(rows, list):
-        raise ValueError("compatibilityDebt must be a list")
-    result: dict[str, dict[str, Any]] = {}
-    for row in rows:
-        profile = row.get("profile")
-        if not isinstance(profile, str) or profile in result:
-            raise ValueError("compatibilityDebt profile IDs must be unique strings")
-        result[profile] = row
-    return result
-
-
 def _expected_type(profile: DocumentProfile) -> str:
     if profile.mode == "template" and profile.source_profile_ids:
         return profile.source_profile_ids[0]
@@ -411,7 +367,6 @@ def _append_diagnostics(
 
 
 def _body_diagnostics(
-    root: Path,
     path: PurePosixPath,
     profile: DocumentProfile,
     body: str,
@@ -439,21 +394,16 @@ def _body_diagnostics(
     if len(h1) != 1:
         rule = "README_H1" if readme else "BODY-H1"
         diagnostics.append(_diagnostic(rule, path, profile, "exactly one H1", json.dumps(h1)))
-    compatibility = _compatibility_rows(root).get(profile.profile_id, {})
-    aliases = {item["canonical"]: tuple(item["aliases"]) for item in compatibility.get("legacyRequiredAnyOf", [])}
-    residue = tuple(compatibility.get("forbiddenResidue", []))
-    missing = [heading for heading in profile.headings.required if heading not in h2 and not any(alias in h2 for alias in aliases.get(heading, ()))]
+    missing = [heading for heading in profile.headings.required if heading not in h2]
     required_rule = "README_H2_REQUIRED" if readme else "BODY-HEADING-REQUIRED"
     diagnostics.extend(_diagnostic(required_rule, path, profile, "required H2", heading) for heading in missing)
     duplicate = sorted(heading for heading, count in collections.Counter(h2).items() if count > 1)
     duplicate_rule = "README_H2_DUPLICATE" if readme else "BODY-H2-DUPLICATE"
     diagnostics.extend(_diagnostic(duplicate_rule, path, profile, "unique H2", heading) for heading in duplicate)
-    represented = set(profile.headings.allowed) | set(residue)
-    represented.update(alias for values in aliases.values() for alias in values)
+    represented = set(profile.headings.allowed)
     unsupported_rule = "README_H2_UNSUPPORTED" if readme else "BODY-HEADING-UNSUPPORTED"
     diagnostics.extend(_diagnostic(unsupported_rule, path, profile, "allowed H2", heading) for heading in h2 if heading not in represented)
     if profile.placeholder_policy == "forbidden":
-        diagnostics.extend(_diagnostic("BODY-TEMPLATE-RESIDUE", path, profile, "authored content without legacy/template residue", heading) for heading in h2 if heading in residue)
         for marker in GENERIC_RESIDUE:
             for _ in range(body.count(marker)):
                 diagnostics.append(_diagnostic("BODY-TEMPLATE-RESIDUE", path, profile, "authored content without legacy/template residue", marker))
@@ -484,7 +434,7 @@ def validate_document(
     text = read_repository_text(root, path)
     diagnostics: list[Diagnostic] = []
     body = _frontmatter_body(text, path, profile, diagnostics, effective_today)
-    diagnostics.extend(_body_diagnostics(root, path, profile, body, append_context))
+    diagnostics.extend(_body_diagnostics(path, profile, body, append_context))
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 
@@ -568,13 +518,6 @@ def _rule_ids(diagnostics: Sequence[Diagnostic]) -> list[str]:
 
 
 @dataclass(frozen=True)
-class DebtContract:
-    keys: frozenset[tuple[str, str, str, str]]
-    caps: dict[str, dict[str, int]]
-    union_path_count: int
-
-
-@dataclass(frozen=True)
 class ResultRow:
     outcome: str
     diagnostic: Diagnostic
@@ -585,134 +528,28 @@ def _debt_token(diagnostic: Diagnostic) -> str:
     return diagnostic.actual if diagnostic.rule_id in TOKEN_BEARING_DEBT_RULES else ""
 
 
-def _load_debt_contract(
-    root: Path, contract: dict[str, Any] | None = None
-) -> DebtContract:
+def _assert_retired_debt_source(
+    root: Path, mode: str, contract: dict[str, Any] | None = None
+) -> None:
+    """Require the canonical post-migration debt-source retirement state."""
+
     if contract is None:
         contract = json.loads((root / COMPATIBILITY_PATH).read_text(encoding="utf-8"))
     if contract.get("schemaVersion") != 1:
         raise ValueError("template compatibility schemaVersion must be 1")
     if contract.get("owner") != "Spec 030" or contract.get("growthAllowed") is not False:
-        raise ValueError("template compatibility debt must be Spec 030 owned and no-growth")
-    registry = load_registry(root)
-    inventory_paths = set(enumerate_target_markdown(root).current_paths)
-    aggregate = contract.get("semanticDebtCaps")
-    if not isinstance(aggregate, dict):
-        raise ValueError("semanticDebtCaps must be an object")
-    if aggregate.get("rules") != EXPECTED_DEBT_CAPS:
-        raise ValueError("semantic debt rule caps changed")
-    if aggregate.get("requiredResidueOverlapPathCount") != EXPECTED_REQUIRED_RESIDUE_OVERLAP:
-        raise ValueError("required/residue overlap cap changed")
-    if aggregate.get("requiredResidueUnionPathCount") != EXPECTED_REQUIRED_RESIDUE_UNION:
-        raise ValueError("required/residue union cap changed")
-    if aggregate.get("unionPathCount") != EXPECTED_DEBT_UNION:
-        raise ValueError("semantic debt union cap changed")
-
-    rows = contract.get("compatibilityDebt")
-    if not isinstance(rows, list):
-        raise ValueError("compatibilityDebt must be a list")
-    keys: set[tuple[str, str, str, str]] = set()
-    profile_ids: set[str] = set()
-    for row in rows:
-        profile = row.get("profile")
-        if not isinstance(profile, str) or profile in profile_ids:
-            raise ValueError("compatibilityDebt profile IDs must be unique strings")
-        profile_ids.add(profile)
-        affected_paths = row.get("affectedPaths")
-        if not isinstance(affected_paths, list):
-            raise ValueError("every compatibilityDebt row requires affectedPaths")
-        path_values = [item.get("path") for item in affected_paths if isinstance(item, dict)]
-        if len(path_values) != len(affected_paths):
-            raise ValueError("affectedPaths entries must be objects")
-        if path_values != sorted(path_values) or len(path_values) != len(set(path_values)):
-            raise ValueError("affectedPaths must be unique and sorted by path")
-        for item in affected_paths:
-            if set(item) != {"path", "ruleIds", "tokens"}:
-                raise ValueError("affectedPaths entries require exactly path, ruleIds, and tokens")
-            path = item["path"]
-            rule_ids = item["ruleIds"]
-            encoded_tokens = item["tokens"]
-            if not isinstance(path, str) or not isinstance(rule_ids, list) or not isinstance(encoded_tokens, list):
-                raise ValueError("affectedPaths path, ruleIds, and tokens have invalid types")
-            pure_path = PurePosixPath(path)
-            if path != pure_path.as_posix() or path.startswith("./") or ".." in pure_path.parts:
-                raise ValueError(f"affectedPaths path is not normalized: {path}")
-            try:
-                actual_profile = classify_path(registry, pure_path).profile_id
-            except DocumentContractError as exc:
-                raise ValueError(f"affectedPaths path is not classifiable: {path}") from exc
-            if pure_path not in inventory_paths:
-                raise ValueError(f"affectedPaths path is not in the tracked target inventory: {path}")
-            if actual_profile != profile:
-                raise ValueError(
-                    f"affectedPaths profile mismatch for {path}: {profile} != {actual_profile}"
-                )
-            if rule_ids != sorted(set(rule_ids)) or not rule_ids:
-                raise ValueError("affectedPaths ruleIds must be non-empty, unique, and sorted")
-            if not set(rule_ids).issubset(DEFERABLE_DEBT_RULES):
-                raise ValueError("affectedPaths contains a non-deferable rule")
-            if encoded_tokens != sorted(set(encoded_tokens)):
-                raise ValueError("affectedPaths tokens must be unique and sorted")
-            tokens_by_rule: dict[str, list[str]] = collections.defaultdict(list)
-            for encoded in encoded_tokens:
-                if not isinstance(encoded, str) or "::" not in encoded:
-                    raise ValueError("affectedPaths tokens must use RULE_ID::token")
-                rule_id, token = encoded.split("::", 1)
-                if rule_id not in rule_ids or rule_id not in TOKEN_BEARING_DEBT_RULES or not token:
-                    raise ValueError("affectedPaths token rule must be declared and token-bearing")
-                tokens_by_rule[rule_id].append(token)
-            for rule_id in rule_ids:
-                if rule_id in TOKEN_BEARING_DEBT_RULES and not tokens_by_rule[rule_id]:
-                    raise ValueError("token-bearing affectedPaths rules require exact tokens")
-                rule_tokens = tokens_by_rule[rule_id] if rule_id in TOKEN_BEARING_DEBT_RULES else [""]
-                for token in rule_tokens:
-                    key = (path, profile, rule_id, token)
-                    if key in keys:
-                        raise ValueError("affectedPaths contains a duplicate debt obligation")
-                    keys.add(key)
-
-    paths_by_rule = {
-        rule_id: {path for path, _, rule, _ in keys if rule == rule_id}
-        for rule_id in DEFERABLE_DEBT_RULES
-    }
-    tokens_by_rule = {
-        rule_id: {
-            (path, token)
-            for path, _, rule, token in keys
-            if rule == rule_id and token
-        }
-        for rule_id in DEFERABLE_DEBT_RULES
-    }
-    for rule_id, expected in EXPECTED_DEBT_CAPS.items():
-        if len(paths_by_rule[rule_id]) != expected["pathCount"]:
-            raise ValueError(f"{rule_id} affected path cap does not match records")
-        if "tokenObligationCount" in expected and len(tokens_by_rule[rule_id]) != expected["tokenObligationCount"]:
-            raise ValueError(f"{rule_id} token obligation cap does not match records")
-        if "distinctTokenCount" in expected:
-            distinct = {token for _, token in tokens_by_rule[rule_id]}
-            if len(distinct) != expected["distinctTokenCount"]:
-                raise ValueError(f"{rule_id} distinct token cap does not match records")
-    required_paths = paths_by_rule["BODY-HEADING-REQUIRED"]
-    residue_paths = paths_by_rule["BODY-TEMPLATE-RESIDUE"]
-    if len(required_paths & residue_paths) != EXPECTED_REQUIRED_RESIDUE_OVERLAP:
-        raise ValueError("required/residue overlap does not match exact records")
-    if len(required_paths | residue_paths) != EXPECTED_REQUIRED_RESIDUE_UNION:
-        raise ValueError("required/residue union does not match exact records")
-    if len({path for path, _, _, _ in keys}) != EXPECTED_DEBT_UNION:
-        raise ValueError("semantic debt union does not match exact records")
-    return DebtContract(frozenset(keys), EXPECTED_DEBT_CAPS, EXPECTED_DEBT_UNION)
-
-
-def _unused_diagnostic(key: tuple[str, str, str, str]) -> Diagnostic:
-    path, profile, rule_id, token = key
-    return Diagnostic(
-        "DEBT-UNUSED",
-        PurePosixPath(path),
-        profile,
-        "configured debt produces one or more matching diagnostics",
-        f"{rule_id}::{token}" if token else rule_id,
-        OWNER,
-    )
+        raise ValueError("template compatibility contract must be Spec 030 owned and no-growth")
+    retired = {"compatibilityDebt", "semanticDebtCaps"} & set(contract)
+    if retired:
+        raise ValueError(
+            "DEBT-SOURCE-REINTRODUCED: " + ",".join(sorted(retired))
+        )
+    if mode == "compatibility":
+        raise ValueError(
+            "DEBT-SOURCE-MISSING: compatibilityDebt and semanticDebtCaps are retired"
+        )
+    if mode != "strict":
+        raise ValueError("mode must be compatibility or strict")
 
 
 def _outcome_rows(
@@ -722,45 +559,11 @@ def _outcome_rows(
     *,
     contract: dict[str, Any] | None = None,
 ) -> list[ResultRow]:
-    debt = _load_debt_contract(root, contract)
-    diagnostic_keys = [
-        (item.path.as_posix(), item.profile, item.rule_id, _debt_token(item))
-        for item in diagnostics
+    _assert_retired_debt_source(root, mode, contract)
+    return [
+        ResultRow("FAIL", diagnostic, _debt_token(diagnostic))
+        for diagnostic in sorted(diagnostics, key=diagnostic_sort_key)
     ]
-    consumption = collections.Counter(diagnostic_keys)
-    consumed = {
-        key for key, count in consumption.items() if count == 1 and key in debt.keys
-    }
-    actual_paths: dict[str, set[str]] = collections.defaultdict(set)
-    actual_occurrences: collections.Counter[str] = collections.Counter()
-    for diagnostic in diagnostics:
-        if diagnostic.rule_id in DEFERABLE_DEBT_RULES:
-            actual_paths[diagnostic.rule_id].add(diagnostic.path.as_posix())
-            actual_occurrences[diagnostic.rule_id] += 1
-    growth_rules = {
-        rule_id
-        for rule_id, caps in debt.caps.items()
-        if len(actual_paths[rule_id]) > caps["pathCount"]
-        or actual_occurrences[rule_id] > caps["occurrenceCount"]
-    }
-    union_growth = len({path for path, _, _, _ in diagnostic_keys}) > debt.union_path_count
-    rows: list[ResultRow] = []
-    for diagnostic, key in sorted(
-        zip(diagnostics, diagnostic_keys), key=lambda pair: diagnostic_sort_key(pair[0])
-    ):
-        token = key[3]
-        exact = key in debt.keys
-        can_defer = (
-            exact
-            and consumption[key] == 1
-            and diagnostic.rule_id not in growth_rules
-            and not union_growth
-        )
-        outcome = "DEFER" if mode == "compatibility" and can_defer else "FAIL"
-        rows.append(ResultRow(outcome, diagnostic, token))
-    for key in sorted(debt.keys - consumed):
-        rows.append(ResultRow("FAIL", _unused_diagnostic(key), key[3]))
-    return sorted(rows, key=lambda row: diagnostic_sort_key(row.diagnostic))
 
 
 def _result_object(mode: str, rows: Sequence[ResultRow]) -> dict[str, Any]:
@@ -1288,100 +1091,83 @@ def _self_test(root: Path) -> list[str]:
     if uncovered_rules:
         failures.append(f"implemented rules lack mutations: {uncovered_rules}")
 
-    try:
-        _load_debt_contract(root)
-    except (DocumentContractError, OSError, ValueError) as exc:
-        failures.append(f"semantic debt contract invalid: {exc}")
-        return failures
     production_diagnostics = _repository_diagnostics(
         root,
         registry,
         inventory,
         today=dt.datetime.now(ZoneInfo("Asia/Seoul")).date(),
     )
-    expected_occurrences = {
-        rule_id: caps["occurrenceCount"] for rule_id, caps in EXPECTED_DEBT_CAPS.items()
-    }
-    actual_occurrences = collections.Counter(
-        item.rule_id for item in production_diagnostics
-    )
-    if {
-        rule_id: actual_occurrences[rule_id] for rule_id in EXPECTED_DEBT_CAPS
-    } != expected_occurrences:
-        failures.append(
-            f"repository semantic occurrence caps changed: {dict(actual_occurrences)}"
-        )
-    actual_paths = {
-        rule_id: {item.path.as_posix() for item in production_diagnostics if item.rule_id == rule_id}
-        for rule_id in EXPECTED_DEBT_CAPS
-    }
-    for rule_id, caps in EXPECTED_DEBT_CAPS.items():
-        if len(actual_paths[rule_id]) != caps["pathCount"]:
-            failures.append(f"repository semantic path cap changed: {rule_id}")
-    if len(actual_paths["BODY-HEADING-REQUIRED"] & actual_paths["BODY-TEMPLATE-RESIDUE"]) != EXPECTED_REQUIRED_RESIDUE_OVERLAP:
-        failures.append("repository required/residue overlap changed")
-    if len(actual_paths["BODY-HEADING-REQUIRED"] | actual_paths["BODY-TEMPLATE-RESIDUE"]) != EXPECTED_REQUIRED_RESIDUE_UNION:
-        failures.append("repository required/residue union changed")
-    if len({item.path.as_posix() for item in production_diagnostics}) != EXPECTED_DEBT_UNION:
-        failures.append("repository semantic debt union changed")
-    unsupported_tokens = {
-        item.actual
-        for item in production_diagnostics
-        if item.rule_id == "BODY-HEADING-UNSUPPORTED"
-    }
-    if len(unsupported_tokens) != 0:
-        failures.append("repository unsupported-heading distinct token cap changed")
-
-    compatibility_rows = _outcome_rows(
-        root, production_diagnostics, "compatibility"
-    )
-    strict_rows = _outcome_rows(root, production_diagnostics, "strict")
-    compatibility_keys = [
-        (
-            row.diagnostic.path.as_posix(),
-            row.diagnostic.profile,
-            row.diagnostic.rule_id,
-            row.debt_token,
-        )
-        for row in compatibility_rows
-    ]
-    strict_keys = [
-        (
-            row.diagnostic.path.as_posix(),
-            row.diagnostic.profile,
-            row.diagnostic.rule_id,
-            row.debt_token,
-        )
-        for row in strict_rows
-    ]
-    if compatibility_keys != strict_keys or compatibility_keys:
-        failures.append("compatibility and strict diagnostic tuples must both be empty")
     if production_diagnostics:
-        failures.append("zero-debt production diagnostics must be empty")
-    if compatibility_rows:
-        failures.append("zero-debt compatibility outcome rows must be empty")
-    if strict_rows:
-        failures.append("zero-debt strict outcome rows must be empty")
-    if any(row.diagnostic.rule_id == "DEBT-UNUSED" for row in compatibility_rows):
-        failures.append("repository compatibility debt contains unused records")
+        failures.append("retired-source production diagnostics must be empty")
 
     base_contract = json.loads(
         (root / COMPATIBILITY_PATH).read_text(encoding="utf-8")
     )
-    configured_records = [
-        item
-        for row in base_contract.get("compatibilityDebt", [])
-        for item in row.get("affectedPaths", [])
-    ]
-    if configured_records:
-        failures.append("zero-debt compatibility affectedPaths must be empty")
+    retired_fields = {"compatibilityDebt", "semanticDebtCaps"}
+    if retired_fields & set(base_contract):
+        failures.append("retired template debt source is still present")
+    try:
+        strict_rows = _outcome_rows(root, production_diagnostics, "strict")
+    except (OSError, ValueError) as exc:
+        failures.append(f"strict retired-source state rejected: {exc}")
+        strict_rows = []
+    if strict_rows:
+        failures.append("strict retired-source outcome rows must be empty")
 
-    def expect_config_rejection(label: str, candidate: dict[str, Any]) -> None:
-        try:
-            _load_debt_contract(root, candidate)
-        except (DocumentContractError, ValueError):
-            return
-        failures.append(f"debt mutation accepted: {label}")
+    try:
+        _outcome_rows(root, production_diagnostics, "compatibility")
+    except ValueError as exc:
+        expected = (
+            "DEBT-SOURCE-MISSING: compatibilityDebt and semanticDebtCaps are retired"
+        )
+        if str(exc) != expected:
+            failures.append("compatibility retired-source diagnostic differs")
+    else:
+        failures.append("compatibility accepted the retired template debt source")
+
+    stdout = io.StringIO()
+    stderr = io.StringIO()
+    fixture_before = (root / COMPATIBILITY_PATH).read_bytes()
+    with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+        return_code = main(
+            ["--root", str(root), "--mode", "compatibility", "--format", "json"]
+        )
+    expected_stderr = (
+        "configuration error: DEBT-SOURCE-MISSING: compatibilityDebt and "
+        "semanticDebtCaps are retired\n"
+    )
+    if return_code != 2 or stdout.getvalue() or stderr.getvalue() != expected_stderr:
+        failures.append("compatibility retired-source CLI boundary differs")
+    if (root / COMPATIBILITY_PATH).read_bytes() != fixture_before:
+        failures.append("retired-source validation rewrote the template fixture")
+
+    def expect_config_rejection(
+        label: str,
+        candidate: dict[str, Any],
+        *,
+        modes: tuple[str, ...] = ("strict",),
+    ) -> None:
+        for mode in modes:
+            try:
+                _assert_retired_debt_source(root, mode, candidate)
+            except ValueError:
+                continue
+            failures.append(f"debt mutation accepted in {mode}: {label}")
+
+    reintroduced_fields = (
+        ("compatibilityDebt", {"compatibilityDebt": []}),
+        ("semanticDebtCaps", {"semanticDebtCaps": {}}),
+        (
+            "both retired fields",
+            {"compatibilityDebt": [], "semanticDebtCaps": {}},
+        ),
+    )
+    for label, values in reintroduced_fields:
+        candidate = copy.deepcopy(base_contract)
+        candidate.update(values)
+        expect_config_rejection(
+            label, candidate, modes=("strict", "compatibility")
+        )
 
     wrong_owner = copy.deepcopy(base_contract)
     wrong_owner["owner"] = "Spec 999"
@@ -1390,68 +1176,6 @@ def _self_test(root: Path) -> list[str]:
     growth_allowed = copy.deepcopy(base_contract)
     growth_allowed["growthAllowed"] = True
     expect_config_rejection("growth allowed", growth_allowed)
-
-    nonzero_rule_cap = copy.deepcopy(base_contract)
-    nonzero_rule_cap["semanticDebtCaps"]["rules"]["BODY-HEADING-REQUIRED"][
-        "pathCount"
-    ] = 1
-    expect_config_rejection("nonzero rule cap", nonzero_rule_cap)
-
-    nonzero_union_cap = copy.deepcopy(base_contract)
-    nonzero_union_cap["semanticDebtCaps"]["unionPathCount"] = 1
-    expect_config_rejection("nonzero union cap", nonzero_union_cap)
-
-    malformed_record = copy.deepcopy(base_contract)
-    malformed_record["compatibilityDebt"][0]["affectedPaths"] = [
-        {
-            "path": "./adm006-malformed.md",
-            "ruleIds": ["UNKNOWN-RULE"],
-            "tokens": ["UNKNOWN-RULE::malformed"],
-        }
-    ]
-    expect_config_rejection("malformed reintroduced record", malformed_record)
-
-    reintroduced_record = copy.deepcopy(base_contract)
-    governance_rows = [
-        row
-        for row in reintroduced_record["compatibilityDebt"]
-        if row.get("profile") == "governance/reference"
-    ]
-    if len(governance_rows) != 1:
-        failures.append("synthetic debt proof requires one governance/reference row")
-    else:
-        governance_rows[0]["affectedPaths"] = [
-            {
-                "path": "docs/00.agent-governance/rules/bootstrap.md",
-                "ruleIds": ["BODY-HEADING-UNSUPPORTED"],
-                "tokens": [
-                    "BODY-HEADING-UNSUPPORTED::Synthetic Reintroduced Debt"
-                ],
-            }
-        ]
-        expect_config_rejection(
-            "well-formed reintroduced debt with zero caps", reintroduced_record
-        )
-
-    missing_token_record = copy.deepcopy(base_contract)
-    missing_token_rows = [
-        row
-        for row in missing_token_record["compatibilityDebt"]
-        if row.get("profile") == "governance/reference"
-    ]
-    if len(missing_token_rows) != 1:
-        failures.append("missing-token proof requires one governance/reference row")
-    else:
-        missing_token_rows[0]["affectedPaths"] = [
-            {
-                "path": "docs/00.agent-governance/rules/bootstrap.md",
-                "ruleIds": ["BODY-HEADING-UNSUPPORTED"],
-                "tokens": [],
-            }
-        ]
-        expect_config_rejection(
-            "reintroduced token-bearing debt without token", missing_token_record
-        )
 
     synthetic_diagnostics = (
         (
@@ -1478,14 +1202,13 @@ def _self_test(root: Path) -> list[str]:
         ),
     )
     for label, diagnostic in synthetic_diagnostics:
-        for mode in ("compatibility", "strict"):
-            result = _outcome_rows(root, [diagnostic], mode)
-            if (
-                len(result) != 1
-                or result[0].outcome != "FAIL"
-                or any(row.outcome == "DEFER" for row in result)
-            ):
-                failures.append(f"{label} mutation deferred in {mode}")
+        result = _outcome_rows(root, [diagnostic], "strict")
+        if (
+            len(result) != 1
+            or result[0].outcome != "FAIL"
+            or any(row.outcome == "DEFER" for row in result)
+        ):
+            failures.append(f"{label} mutation did not fail in strict mode")
     return failures
 
 

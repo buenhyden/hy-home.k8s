@@ -1,7 +1,7 @@
 ---
 title: 'Authored Document Migration Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-07-13
 ---
@@ -464,7 +464,7 @@ the exact staged set. Roll back with `git revert <ADM-001-commit>`.
 - Produces: exact fourteen-column durable ledger consumed by strict
   cross-document validation and an empty semantic-debt item set.
 
-- [ ] **Step 1: Generate ignored scratch inventory**
+- [x] **Step 1: Generate ignored scratch inventory**
 
 ```bash
 python3 scripts/validate-links-and-owners.py --root . --inventory --format json > _workspace/document-migration-inventory.json
@@ -501,7 +501,7 @@ and exact ordered 468-path equality pass; no tracked `_workspace` child is
 created. This snapshot is input to ledger creation, not the final ADM-002
 inventory.
 
-- [ ] **Step 2: Run RED ledger validation**
+- [x] **Step 2: Run RED ledger validation**
 
 ```bash
 python3 scripts/validate-links-and-owners.py --root . --mode strict
@@ -509,7 +509,7 @@ python3 scripts/validate-links-and-owners.py --root . --mode strict
 
 Expected: exit 1 with `LEDGER-MISSING` or `LEDGER-INCOMPLETE`.
 
-- [ ] **Step 3: Create the durable ledger**
+- [x] **Step 3: Create the durable ledger**
 
 Use the common Reference profile and one table with exactly the fourteen
 columns declared above. Its body has exactly these eight H2 sections in order:
@@ -548,7 +548,7 @@ self-row, is `preserve` with itself as destination. The final 469-row ledger
 must therefore contain exactly `preserve=183`, `transform=227`, and `merge=59`,
 with zero `relocate`, `tombstone`, or `delete` rows at ADM-002.
 
-- [ ] **Step 4: Verify completeness and tracked boundary**
+- [x] **Step 4: Verify completeness and tracked boundary**
 
 In the same edit that makes the durable ledger complete, remove the one exact
 `LEDGER-MISSING` / `ADM-002` item from
@@ -734,7 +734,7 @@ path list equals the exact final `documents[].path` list with no omission,
 extra, or duplicate. Tracked `_workspace` output is exactly
 `_workspace/README.md`; any earlier nonzero result survives the final check.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 set -e
@@ -805,7 +805,7 @@ item return atomically.
   history, with the exact 34 Stage 01–03 shape-debt paths and their aggregate
   caps removed.
 
-- [ ] **Step 1: Capture RED diagnostics for the three directory boundaries**
+- [x] **Step 1: Capture RED diagnostics for the three directory boundaries**
 
 ```bash
 report=_workspace/adm-003-markdown-red.json
@@ -840,7 +840,7 @@ mutation. These are compatibility-fixture records, never registry records.
 The manifest must contain exactly the 34 ADM-003 paths proven by the
 pre-ADM-002 coverage gate.
 
-- [ ] **Step 2: Build exact NUL-delimited family batches**
+- [x] **Step 2: Build exact NUL-delimited family batches**
 
 Generate ignored batch manifests from tracked files, never from a directory
 argument passed to a formatter. Each manifest contains at most five exact paths
@@ -898,7 +898,7 @@ assert not [d for d in data['diagnostics'] if d['path'] in paths]
 PY
 ```
 
-- [ ] **Step 3: Transform PRD and ARD batches**
+- [x] **Step 3: Transform PRD and ARD batches**
 
 Apply exact key order and family state domain, retain topic-specific requirements,
 merge duplicate opening intent, and move all upstream/downstream relationships
@@ -908,7 +908,7 @@ edit only those at-most-five paths, update their ledger rows, run the
 compatibility validator on each exact path, and mark that 2–5 minute checkpoint
 complete before opening the next manifest.
 
-- [ ] **Step 4: Transform ADR and Spec batches**
+- [x] **Step 4: Transform ADR and Spec batches**
 
 Preserve accepted ADR decisions and consequences. Remove copied form guidance,
 merge duplicate sections, correct contradictory current-owner links, and record
@@ -916,7 +916,7 @@ every content choice and official source in the ledger. Repeat the same
 at-most-five-path checkpoint for each remaining `documents-*.nul` manifest; do not combine
 manifests in one edit/review checkpoint.
 
-- [ ] **Step 5: Run GREEN exact-wave validation**
+- [x] **Step 5: Run GREEN exact-wave validation**
 
 Assert that the cumulative batch checkpoints already removed exactly the full
 manifest tuple set and that the fixture and validator caps equal the
@@ -945,7 +945,7 @@ bash scripts/validate-repo-quality-gates.sh .
 Expected: the exact reviewed wave selects no diagnostic and no broken/duplicate
 owner finding remains.
 
-- [ ] **Step 6: Review and commit**
+- [x] **Step 6: Review and commit**
 
 ```bash
 git diff --check
@@ -1014,7 +1014,7 @@ fixture records/caps, digest, and mutation proofs return atomically.
 - Produces: preserved execution facts and role-separated operational documents,
   with the exact 120 ADM-004 shape-debt paths and their aggregate caps removed.
 
-- [ ] **Step 1: Capture RED directory-boundary diagnostics**
+- [x] **Step 1: Capture RED directory-boundary diagnostics**
 
 ```bash
 report=_workspace/adm-004-markdown-red.json
@@ -1048,7 +1048,7 @@ SHA-256 in Task evidence, and obtain independent approval before any mutation.
 The manifest must contain exactly the 120 ADM-004 paths proven by the
 pre-ADM-002 coverage gate.
 
-- [ ] **Step 2: Build exact NUL-delimited execution/operations batches**
+- [x] **Step 2: Build exact NUL-delimited execution/operations batches**
 
 ```bash
 mkdir -p _workspace/adm-004-batches
@@ -1099,7 +1099,7 @@ assert not [d for d in data['diagnostics'] if d['path'] in paths]
 PY
 ```
 
-- [ ] **Step 3: Preserve completed execution evidence batch by batch**
+- [x] **Step 3: Preserve completed execution evidence batch by batch**
 
 Keep historical commands, results, limitations, and unchecked historical
 instructions. Remove copied `Working Rules`, `Suggested Types`, target comments,
@@ -1107,14 +1107,14 @@ and duplicate relationship sections; do not convert historical facts into
 current requirements. Complete and validate one `documents-*.nul` manifest at a
 time, updating the ledger before continuing.
 
-- [ ] **Step 4: Separate operational roles batch by batch**
+- [x] **Step 4: Separate operational roles batch by batch**
 
 Keep Guides explanatory, Policies normative, Runbooks executable, Incidents
 factual, and Postmortems causal/learning-oriented. Move duplicate content to one
 owner and replace it with a relative link. Complete and validate the remaining
 `documents-*.nul` manifests one at a time, updating the ledger before continuing.
 
-- [ ] **Step 5: Run GREEN validation and commit**
+- [x] **Step 5: Run GREEN validation and commit**
 
 Assert that the batch checkpoints already removed every and only manifest
 tuple, and that cumulative fixture and validator caps equal the manifest's
@@ -1209,7 +1209,7 @@ and mutation refresh, and the printed staged count. Roll back with
   preserves their facts, provider semantics, route/schema/form behavior, and
   the semantic ownership assigned to Specs 027 and 031.
 
-- [ ] **Step 1: Capture RED diagnostics for remaining owned boundaries**
+- [x] **Step 1: Capture RED diagnostics for remaining owned boundaries**
 
 ```bash
 report=_workspace/adm-005-markdown-red.json
@@ -1246,7 +1246,7 @@ plus the exact six support paths named in Files, for exactly 73 paths. Freeze
 `_workspace/adm-005-allowed-document-paths.nul`; record and independently
 approve its count and SHA-256 before mutation.
 
-- [ ] **Step 2: Build exact NUL-delimited governance/reference batches**
+- [x] **Step 2: Build exact NUL-delimited governance/reference batches**
 
 Generate ignored manifests of at most five tracked paths for the structurally
 owned Stage 00, Stage 90, Stage 98, and exact Stage 99 support sets. README,
@@ -1309,7 +1309,7 @@ assert not [d for d in data['diagnostics'] if d['path'] in paths]
 PY
 ```
 
-- [ ] **Step 3: Transform current governance and reference owners in batches**
+- [x] **Step 3: Transform current governance and reference owners in batches**
 
 Normalize sections and authority links in owned files. Preserve earlier dated
 packs and record their snapshot boundary in the ledger without rewriting bodies.
@@ -1320,12 +1320,12 @@ Spec 027/031-owned route, schema, form, provider, or agent behavior.
 Do not open a later manifest until all exact paths in the current manifest and
 their ledger rows pass compatibility validation.
 
-- [ ] **Step 4: Verify Tombstone preservation**
+- [x] **Step 4: Verify Tombstone preservation**
 
 Ensure each Tombstone remains metadata-only, uses `status: archived`, links the
 archive index, and does not regain the retired body.
 
-- [ ] **Step 5: Run GREEN validation and commit**
+- [x] **Step 5: Run GREEN validation and commit**
 
 Assert that the batch checkpoints already removed exactly the frozen manifest
 tuples and that cumulative fixture and validator caps equal the manifest's
@@ -1441,7 +1441,7 @@ ledger, debt fixture, and digest consumer return together.
   eight relative links resolve into the deletion set; their non-link text is
   frozen, and ADM-006 owns no README profile or purpose redesign.
 
-- [ ] **Step 1: Record RED source count and inbound links**
+- [x] **Step 1: Record RED source count and inbound links**
 
 ```bash
 git ls-files -z examples/aws/docs examples/azure/docs > _workspace/cloud-doc-source-paths.nul
@@ -1602,7 +1602,7 @@ plus the two snapshots and nine explicitly named README paths. Independent
 approval covers the resolved graph identity and consumer-set equality as well
 as the two NUL manifests and debt tuples.
 
-- [ ] **Step 2: Build provider snapshots before deletion**
+- [x] **Step 2: Build provider snapshots before deletion**
 
 For each provider, record source files, retained unique knowledge, executable
 asset mapping, official source URLs, observed date/version, applicable and
@@ -1616,7 +1616,7 @@ python3 -c 'import pathlib,sys; paths=[x.decode() for x in pathlib.Path("_worksp
 
 Expected: exit 0 with no missing path output.
 
-- [ ] **Step 3: Update entrypoint, snapshot index, and bounded lifecycle rows**
+- [x] **Step 3: Update entrypoint, snapshot index, and bounded lifecycle rows**
 
 Use the existing Spec 028 README profile sections. Change only inventory,
 source-of-truth, and related-document links required by relocation. In the
@@ -1672,7 +1672,7 @@ python3 scripts/validate-links-and-owners.py --root . --mode compatibility
 Expected: zero external link resolves into the deletion set, and the link
 validator reports zero unresolved local target before `git rm`.
 
-- [ ] **Step 4: Delete the reviewed duplicate trees**
+- [x] **Step 4: Delete the reviewed duplicate trees**
 
 ```bash
 git rm --pathspec-from-file=_workspace/cloud-doc-source-paths.nul --pathspec-file-nul
@@ -1681,7 +1681,7 @@ git rm --pathspec-from-file=_workspace/cloud-doc-source-paths.nul --pathspec-fil
 Expected: the cached deletion set equals the reviewed 59-path manifest exactly;
 executable assets remain.
 
-- [ ] **Step 5: Run GREEN cloud assertions**
+- [x] **Step 5: Run GREEN cloud assertions**
 
 Remove every and only tuple in the approved ADM-006 debt manifest from
 `template-compatibility.json`, recompute all aggregate caps downward, and
@@ -2341,7 +2341,7 @@ git diff --check
 
 Expected: no tracked cloud-doc path, no broken links, and compatibility PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
@@ -2581,7 +2581,7 @@ Expected: the modeled absent container yields zero diagnostics, normal
 compatibility remains clean, and the complete canonical quality gate passes.
 Do not bypass a failing canonical invocation with this focused proof.
 
-- [ ] **Step C4: Stage exact 21, review, and commit**
+- [x] **Step C4: Stage exact 21, review, and commit**
 
 Stage only the enumerated 17 documents plus ledger, this Plan, Task, and
 progress. Assert exact set equality and `len(actual) == 21`, run focused
@@ -2707,7 +2707,7 @@ no-container proof.
   active-owner lifecycle `67 -> 64 -> 61` and turns the known empty-`items`
   cross-document self-test index crash from focused RED to GREEN.
 
-- [ ] **Step 1: Characterize the clean pre-retirement state**
+- [x] **Step 1: Characterize the clean pre-retirement state**
 
 ```bash
 python3 scripts/validate-document-contract-registry.py --self-test
@@ -2774,7 +2774,7 @@ diagnostics/`DEFER`/`FAIL`/`DEBT-UNUSED`. The existing
 empty is a known focused RED assigned to this Task, not an ADM-006 gate and not
 a reason to enlarge ADM-006.
 
-- [ ] **Step 2: Write retirement RED, then remove empty sources and switch the wrapper**
+- [x] **Step 2: Write retirement RED, then remove empty sources and switch the wrapper**
 
 First change only both validators' self-tests to require absent-source strict
 PASS and compatibility configuration exit 2 with stable
@@ -2807,7 +2807,7 @@ Do not alter profile routes, registry data, or registry semantics. In
 particular, `docs/99.templates/support/document-profiles.json` is neither a
 debt owner nor an ADM-007 file.
 
-- [ ] **Step 3: Run GREEN strict and residue checks**
+- [x] **Step 3: Run GREEN strict and residue checks**
 
 ```bash
 python3 scripts/validate-markdown-profiles.py --self-test
@@ -2845,7 +2845,7 @@ the pre/post strict normalized diagnostic tuples and require both to be empty.
 The full wrapper result is authoritative and may not be replaced by only the
 focused commands.
 
-- [ ] **Step 4: Close evidence and lifecycle**
+- [x] **Step 4: Close evidence and lifecycle**
 
 Set Spec, Plan, and Task to `done`, update index rows, finish every ledger result
 and reviewer field, record destructive rollback commits and review decisions,
@@ -2857,7 +2857,7 @@ Record the exact-13 staged boundary, source-empty precondition, focused
 RED/GREEN evidence, complete-fixture digest/mutations, independent reviewer,
 rollback commit, and repository-static/no-live boundary.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tests/fixtures/document-contracts/template-compatibility.json \
@@ -2939,11 +2939,11 @@ removed migration debt.
 
 ## Completion Criteria
 
-- [ ] Every approved and program-created target has one profile or native exception.
-- [ ] Every migrated current authored document has one complete durable research row.
-- [ ] Duplicate current owners, template residue, unsupported sections, and broken links are zero.
-- [ ] AWS/Azure example-local SDLC Markdown is zero and executable entrypoints resolve.
-- [ ] Strict mode and the full repository QA bundle pass.
+- [x] Every approved and program-created target has one profile or native exception.
+- [x] Every migrated current authored document has one complete durable research row.
+- [x] Duplicate current owners, template residue, unsupported sections, and broken links are zero.
+- [x] AWS/Azure example-local SDLC Markdown is zero and executable entrypoints resolve.
+- [x] Strict mode and the full repository QA bundle pass.
 
 ## Traceability
 

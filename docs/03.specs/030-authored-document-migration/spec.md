@@ -1,7 +1,7 @@
 ---
 title: 'Authored Document Migration Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
 updated: 2026-07-12
 ---

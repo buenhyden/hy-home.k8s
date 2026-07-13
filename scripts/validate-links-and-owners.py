@@ -20,7 +20,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Any, Iterable, Sequence
-from unittest import mock
 from urllib.parse import unquote, urlsplit
 
 import yaml
@@ -79,8 +78,18 @@ SMDV_CLOSURE_PATHS = (
         "docs/04.execution/tasks/2026-07-12-semantic-document-validation.md"
     ),
 )
-POST_SMDV_CLOSURE_OWNER_KEYS = 63
-PRE_SMDV_CLOSURE_OWNER_KEYS = 66
+ADM_CLOSURE_PATHS = (
+    PurePosixPath("docs/03.specs/030-authored-document-migration/spec.md"),
+    PurePosixPath(
+        "docs/04.execution/plans/2026-07-12-authored-document-migration.md"
+    ),
+    PurePosixPath(
+        "docs/04.execution/tasks/2026-07-12-authored-document-migration.md"
+    ),
+)
+POST_ADM_CLOSURE_OWNER_KEYS = 61
+POST_SMDV_CLOSURE_OWNER_KEYS = 64
+PRE_SMDV_CLOSURE_OWNER_KEYS = 67
 
 
 @dataclass(frozen=True)
@@ -577,43 +586,38 @@ def _ledger_diagnostics(context: Context) -> list[Diagnostic]:
     return diagnostics
 
 
-def _load_debt(root: Path, raw: Any | None = None) -> dict[str, Any]:
-    if raw is None:
-        try:
-            raw = json.loads((root / DEBT_PATH).read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as exc:
-            raise ConfigurationError("semantic debt file is unreadable") from exc
-    if not isinstance(raw, dict) or list(raw) != ["schemaVersion", "owner", "growthAllowed", "items"]:
-        raise ConfigurationError("semantic debt top-level keys differ")
-    if raw["schemaVersion"] != 1 or raw["owner"] != "Spec 030" or raw["growthAllowed"] is not False:
-        raise ConfigurationError("semantic debt closed values differ")
-    items = raw["items"]
-    if not isinstance(items, list) or len(items) > 1:
-        raise ConfigurationError("semantic debt items must be empty or the pinned singleton")
-    if items and (not isinstance(items[0], dict) or items[0] != DEBT_LITERAL or list(items[0]) != list(DEBT_LITERAL)):
-        raise ConfigurationError("semantic debt item differs from the pinned literal")
-    return raw
+def _load_debt(
+    root: Path,
+    raw: Any | None = None,
+    *,
+    mode: str = "strict",
+) -> dict[str, Any]:
+    """Require the canonical retired semantic-debt source state."""
+
+    if mode not in {"compatibility", "strict"}:
+        raise ConfigurationError("mode must be compatibility or strict")
+    if raw is not None or (root / DEBT_PATH).exists():
+        raise ConfigurationError(
+            "DEBT-SOURCE-REINTRODUCED: semantic compatibility debt must remain absent"
+        )
+    if mode == "compatibility":
+        raise ConfigurationError(
+            "DEBT-SOURCE-MISSING: semantic compatibility debt is retired"
+        )
+    return {
+        "schemaVersion": 1,
+        "owner": "Spec 030",
+        "growthAllowed": False,
+        "items": [],
+    }
 
 
 def _apply_debt(root: Path, diagnostics: Iterable[Diagnostic], mode: str, contract: Any | None = None) -> list[tuple[str, Diagnostic]]:
-    raw = _load_debt(root, contract)
-    remaining = list(raw["items"])
-    rows: list[tuple[str, Diagnostic]] = []
-    for diagnostic in sorted(diagnostics, key=diagnostic_sort_key):
-        literal = {
-            "ruleId": diagnostic.rule_id, "path": diagnostic.path.as_posix(),
-            "profile": diagnostic.profile, "expected": diagnostic.expected,
-            "actual": diagnostic.actual,
-        }
-        match = next((item for item in remaining if all(item[key] == value for key, value in literal.items())), None)
-        if match:
-            remaining.remove(match)
-            rows.append(("DEFER" if mode == "compatibility" else "FAIL", diagnostic))
-        else:
-            rows.append(("FAIL", diagnostic))
-    for item in remaining:
-        rows.append(("FAIL", _diag("DEBT-UNUSED", PurePosixPath(item["path"]), item["profile"], "configured debt consumed exactly once", "configured debt was unused")))
-    return sorted(rows, key=lambda row: diagnostic_sort_key(row[1]))
+    _load_debt(root, contract, mode=mode)
+    return [
+        ("FAIL", diagnostic)
+        for diagnostic in sorted(diagnostics, key=diagnostic_sort_key)
+    ]
 
 
 def _raw_diagnostics(context: Context) -> list[Diagnostic]:
@@ -630,7 +634,7 @@ def validate_cross_document_contracts(root: Path, mode: str) -> list[Diagnostic]
     if mode not in {"compatibility", "strict"}:
         raise ConfigurationError("mode must be compatibility or strict")
     context = _build_context(root)
-    _load_debt(context.root)
+    _load_debt(context.root, mode=mode)
     return _raw_diagnostics(context)
 
 
@@ -850,82 +854,127 @@ def _self_test(root: Path) -> list[str]:
                 failures.append(f"{case['name']}: expected {expected}, actual {actual}")
     if (root / LEDGER_PATH).exists() != ledger_existed_before:
         failures.append("self-test changed the repository ledger artifact")
-    base = _load_debt(root)
-    mutations: list[tuple[str, Any]] = []
-    extra = copy.deepcopy(base); extra["alias"] = 1; mutations.append(("extra key", extra))
-    growth = copy.deepcopy(base); growth["growthAllowed"] = True; mutations.append(("growth", growth))
-    duplicate = copy.deepcopy(base); duplicate["items"].append(copy.deepcopy(duplicate["items"][0])); mutations.append(("duplicate", duplicate))
-    alias = copy.deepcopy(base); alias["items"][0]["owner_task"] = alias["items"][0].pop("ownerTask"); mutations.append(("alias", alias))
-    unknown = copy.deepcopy(base); unknown["items"][0]["ruleId"] = "UNKNOWN"; mutations.append(("unknown rule", unknown))
-    glob = copy.deepcopy(base); glob["items"][0]["path"] = "docs/**"; mutations.append(("glob", glob))
-    literal = copy.deepcopy(base); literal["items"][0]["actual"] = "changed"; mutations.append(("literal", literal))
-    partial = copy.deepcopy(base); partial["items"][0].pop("removeWhen"); mutations.append(("partial removal", partial))
+    if (root / DEBT_PATH).exists():
+        failures.append("retired semantic debt source is still present")
+    base = _load_debt(root, mode="strict")
+    singleton = {
+        "schemaVersion": 1,
+        "owner": "Spec 030",
+        "growthAllowed": False,
+        "items": [copy.deepcopy(DEBT_LITERAL)],
+    }
+    partial = copy.deepcopy(singleton)
+    partial["items"][0].pop("removeWhen")
+    mutations = (
+        ("empty source", base),
+        ("new debt", singleton),
+        ("partial source", partial),
+    )
     for label, candidate in mutations:
-        try:
-            _load_debt(root, candidate)
-        except ConfigurationError:
-            pass
-        else:
-            failures.append(f"debt mutation accepted: {label}")
-            continue
-        original_loader = _load_debt
-        stdout = io.StringIO()
-        stderr = io.StringIO()
-        with mock.patch(f"{__name__}._load_debt", side_effect=lambda _root, _raw=None, candidate=candidate: original_loader(_root, candidate)):
-            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-                return_code = main(["--root", str(root), "--mode", "compatibility", "--format", "json"])
-        if return_code != 2 or stdout.getvalue() or not stderr.getvalue():
-            failures.append(f"debt mutation CLI boundary differs: {label}")
-    _load_debt(root, {"schemaVersion": 1, "owner": "Spec 030", "growthAllowed": False, "items": []})
+        for mode in ("compatibility", "strict"):
+            try:
+                _load_debt(root, candidate, mode=mode)
+            except ConfigurationError:
+                continue
+            failures.append(f"debt source mutation accepted in {mode}: {label}")
+    stdout = io.StringIO()
+    stderr = io.StringIO()
+    with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+        return_code = main(
+            ["--root", str(root), "--mode", "compatibility", "--format", "json"]
+        )
+    expected_stderr = (
+        "configuration error: DEBT-SOURCE-MISSING: semantic compatibility "
+        "debt is retired\n"
+    )
+    if return_code != 2 or stdout.getvalue() or stderr.getvalue() != expected_stderr:
+        failures.append("retired semantic debt CLI boundary differs")
+    if (root / DEBT_PATH).exists():
+        failures.append("retired semantic debt source was recreated")
     production_context = _build_context(root)
-    production = validate_cross_document_contracts(root, "compatibility")
-    expected_rules = ["LEDGER-MISSING"] if base["items"] else []
-    if [item.rule_id for item in production] != expected_rules:
-        failures.append("production repository diagnostics differ from the semantic transition state")
+    production = validate_cross_document_contracts(root, "strict")
+    if production:
+        failures.append("strict production repository diagnostics must be empty")
     owner_keys, owner_diagnostics = _owner_state(production_context)
     current_unique_keys = {key for key in owner_keys.values() if key}
-    if owner_diagnostics or len(current_unique_keys) != POST_SMDV_CLOSURE_OWNER_KEYS:
+    if owner_diagnostics or len(current_unique_keys) != POST_ADM_CLOSURE_OWNER_KEYS:
         failures.append(
             "production current-owner key baseline differs from "
-            f"{POST_SMDV_CLOSURE_OWNER_KEYS} unique keys"
+            f"{POST_ADM_CLOSURE_OWNER_KEYS} unique keys"
         )
 
-    preclosure_context = copy.deepcopy(production_context)
-    closure_preconditions_valid = True
-    for path in SMDV_CLOSURE_PATHS:
+    post_smdv_context = copy.deepcopy(production_context)
+    adm_closure_valid = True
+    for path in ADM_CLOSURE_PATHS:
         if (
             path not in production_context.metadata
             or production_context.metadata[path].get("status") != "done"
             or _owner_candidate(production_context, path)
             or owner_keys.get(path)
         ):
-            closure_preconditions_valid = False
+            adm_closure_valid = False
             break
-        preclosure_context.metadata[path]["status"] = "active"
-    if not closure_preconditions_valid:
+        post_smdv_context.metadata[path]["status"] = "active"
+    if not adm_closure_valid:
         failures.append(
-            "SMDV closure paths must be the exact done-status owner exclusions"
+            "ADM closure paths must be the exact done-status owner exclusions"
         )
     else:
-        preclosure_keys, preclosure_diagnostics = _owner_state(preclosure_context)
-        transitioned_paths = {
+        post_smdv_keys, post_smdv_diagnostics = _owner_state(post_smdv_context)
+        adm_transitioned_paths = {
             path
             for path in production_context.paths
-            if owner_keys.get(path) != preclosure_keys.get(path)
+            if owner_keys.get(path) != post_smdv_keys.get(path)
         }
-        preclosure_unique_keys = {
-            key for key in preclosure_keys.values() if key
+        post_smdv_unique_keys = {
+            key for key in post_smdv_keys.values() if key
         }
         if (
-            preclosure_diagnostics
-            or len(preclosure_unique_keys) != PRE_SMDV_CLOSURE_OWNER_KEYS
-            or transitioned_paths != set(SMDV_CLOSURE_PATHS)
-            or any(not preclosure_keys.get(path) for path in SMDV_CLOSURE_PATHS)
+            post_smdv_diagnostics
+            or len(post_smdv_unique_keys) != POST_SMDV_CLOSURE_OWNER_KEYS
+            or adm_transitioned_paths != set(ADM_CLOSURE_PATHS)
+            or any(not post_smdv_keys.get(path) for path in ADM_CLOSURE_PATHS)
         ):
             failures.append(
-                "SMDV done-status transition must remove exactly the Spec 029, "
-                "Plan 029, and Task 029 owner keys from the 66-key preclosure set"
+                "ADM done-status transition must remove exactly the Spec 030, "
+                "Plan 030, and Task 030 owner keys from the 64-key set"
             )
+        pre_smdv_context = copy.deepcopy(post_smdv_context)
+        smdv_closure_valid = True
+        for path in SMDV_CLOSURE_PATHS:
+            if (
+                path not in post_smdv_context.metadata
+                or post_smdv_context.metadata[path].get("status") != "done"
+                or _owner_candidate(post_smdv_context, path)
+                or post_smdv_keys.get(path)
+            ):
+                smdv_closure_valid = False
+                break
+            pre_smdv_context.metadata[path]["status"] = "active"
+        if not smdv_closure_valid:
+            failures.append(
+                "SMDV closure paths must be the exact done-status owner exclusions"
+            )
+        else:
+            pre_smdv_keys, pre_smdv_diagnostics = _owner_state(pre_smdv_context)
+            smdv_transitioned_paths = {
+                path
+                for path in post_smdv_context.paths
+                if post_smdv_keys.get(path) != pre_smdv_keys.get(path)
+            }
+            pre_smdv_unique_keys = {
+                key for key in pre_smdv_keys.values() if key
+            }
+            if (
+                pre_smdv_diagnostics
+                or len(pre_smdv_unique_keys) != PRE_SMDV_CLOSURE_OWNER_KEYS
+                or smdv_transitioned_paths != set(SMDV_CLOSURE_PATHS)
+                or any(not pre_smdv_keys.get(path) for path in SMDV_CLOSURE_PATHS)
+            ):
+                failures.append(
+                    "SMDV done-status transition must remove exactly the Spec 029, "
+                    "Plan 029, and Task 029 owner keys from the 67-key preclosure set"
+                )
     return failures
 
 
@@ -957,7 +1006,6 @@ def main(argv: Sequence[str] | None = None) -> int:
             return 0
         include_paths = tuple(PurePosixPath(value) for value in args.include_path)
         context = _build_context(args.root, include_paths)
-        _load_debt(context.root)
         inventory = enumerate_target_markdown(context.root, include_paths=include_paths)
         counts = {
             "baseline": len(inventory.baseline_paths),

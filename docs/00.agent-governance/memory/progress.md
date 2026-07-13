@@ -8,13 +8,80 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - ADM-007 strict document-profile cutover
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, semantic validation, repository quality gates
+- **Status**: complete
+- **Tags**: #adm-007 #strict-cutover #finite-debt #spec-030
+
+#### Progress
+
+- Proved the committed ADM-006C starting state was clean, both provider
+  snapshots retained their approved hashes, cloud source59 was absent, the
+  template fixture contained zero affected paths and zero semantic caps, and
+  the semantic fixture contained `items: []`.
+- Retired the empty `compatibilityDebt` and `semanticDebtCaps` fields and
+  deleted the empty semantic debt file. Strict mode now treats absence as the
+  canonical zero-debt state; compatibility mode fails closed with exit `2`,
+  empty stdout, and stable `DEBT-SOURCE-MISSING` stderr.
+- Switched registry, Markdown, and cross-document production validation in the
+  repository quality gate to strict mode as one atomic unit. Inventory mode
+  remains available without loading the retired cross-document source.
+- Closed the exact Spec 030 Spec, Plan, and Task lineage plus their three index
+  rows. The cross-document self-test now proves the exact owner-key lifecycle
+  `67 -> 64 -> 61` by mutating only the Spec 029 and Spec 030 trios.
+
+#### Memory
+
+- Empty migration debt is transitional evidence, not permanent policy. Once
+  the corpus is canonical, strict validation must own normal failures and the
+  removed compatibility source must not be recreated as a fixture, registry
+  field, Python allow-list, path filter, or environment waiver.
+- A destructive cutover is safest when its wrapper, producers, fixtures,
+  lifecycle evidence, and rollback boundary change in one exact staged set.
+
+#### Evidence
+
+- Pre-retirement strict and compatibility JSON runs were `4/4` PASS with zero
+  diagnostics. The empty template file SHA-256 was
+  `56c0809aacc358be4c6f4a842ffafcd8e49065812cb4e82749b065fe4d960bc9`;
+  the empty semantic file SHA-256 was
+  `e81061f245bd63a5f28b17b2e98964a6e526ea635f4091e051ac3d85f14085a3`.
+- Test-first retirement RED returned the explicit source-present failure for
+  both validators; the links test additionally exposed the planned stale
+  lifecycle constants without the former empty-`items` index crash. GREEN
+  proves strict PASS, compatibility exit `2`, exact stderr, empty stdout,
+  source-reintroduction rejection, and no silent source recreation.
+- The retained complete template fixture semantic SHA-256 is
+  `e2a7b02ed9cf31b97480a9de31128d5d1486acf01c8e556d040f4071a6083cf6`.
+  Mutation proofs reject owner, growth policy, baseline, canonical-form,
+  template-mode, partial source restoration, and both retired fields together.
+- Registry, Markdown, and cross-document strict validation, both semantic
+  self-tests, inventory, residue classification, the full repository quality
+  gate, shell syntax checks, `git diff --check`, all-files pre-commit, and the
+  exact13 pre/post-hook proof form the final handoff gate.
+
+#### Handoff
+
+- Review the exact thirteen paths: one semantic fixture deletion and twelve
+  modifications. The registry and all migrated content/provider paths remain
+  outside this unit. Commit only after independent review with
+  `chore(docs): cut over document profiles to strict validation`.
+- Roll back the cutover only with `git revert <ADM-007-commit>` so the two empty
+  sources, compatibility behavior, wrapper modes, and active lifecycle return
+  atomically. No live cluster, provider, secret, credential, remote CI,
+  publication, push, merge, or deployment action occurred.
+
 ### 2026-07-13 - ADM-006C residual relationship-alias retirement
 
 #### Metadata
 
 - **Date**: 2026-07-13
 - **Layer**: docs, migration, semantic validation
-- **Status**: ready-for-review
+- **Status**: complete
 - **Tags**: #adm-006c #traceability #finite-debt #strict-cutover
 
 #### Progress
@@ -42,8 +109,8 @@ inventory stays in `scripts/README.md`.
 - Modeling the compatibility container absent after the edit yields zero
   repository diagnostics. Markdown compatibility, link/owner compatibility,
   `git diff --check`, and the full repository quality gate pass with zero
-  violations. Focused hooks and exact-21 stage proof remain the final
-  implementation gates before independent review.
+  violations. Focused hooks and exact-21 stage proof passed; independent
+  review approved with zero findings and commit `062bd9d` closed the unit.
 
 #### Safety Boundary
 
@@ -53,10 +120,9 @@ inventory stays in `scripts/README.md`.
 
 #### Handoff
 
-- Review exactly 21 modified paths: the hardcoded exact 17 plus the durable
-  ledger, migration Plan, migration Task, and this progress memory. Commit only
-  after exact-set, post-hook, and independent-review proof; then ADM-007 may
-  retire the empty compatibility sources and enable strict validation.
+- ADM-006C is the committed prerequisite at `062bd9d`. ADM-007 may retire only
+  the empty compatibility sources and enable strict validation without
+  restoring an alias or changing the exact-17 documents.
 
 ### 2026-07-13 - ADM-006 cloud example consolidation
 

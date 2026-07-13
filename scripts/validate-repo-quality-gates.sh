@@ -22,9 +22,9 @@ if ! python3 -c 'import jsonschema' >/dev/null 2>&1; then
 fi
 
 python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --self-test
-python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --root "$ROOT_DIR" --mode compatibility
-python3 "$ROOT_DIR/scripts/validate-markdown-profiles.py" --root "$ROOT_DIR" --mode compatibility
-python3 "$ROOT_DIR/scripts/validate-links-and-owners.py" --root "$ROOT_DIR" --mode compatibility
+python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --root "$ROOT_DIR" --mode strict
+python3 "$ROOT_DIR/scripts/validate-markdown-profiles.py" --root "$ROOT_DIR" --mode strict
+python3 "$ROOT_DIR/scripts/validate-links-and-owners.py" --root "$ROOT_DIR" --mode strict
 
 python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" \
   "$ROOT_DIR" --self-test
@@ -1104,46 +1104,18 @@ template_compatibility = load_json(template_compatibility_path)
 TEMPLATE_COMPATIBILITY_CONTRACT_V1 = {
     "name": "TemplateCompatibilityContract.v1",
     "semantic_sha256": (
-        "9bc4cbc4eb6a3a53e0ffdaa7465a3085092cf03ec8273881a6d3584fe26218fc"  # pragma: allowlist secret
+        "e2a7b02ed9cf31b97480a9de31128d5d1486acf01c8e556d040f4071a6083cf6"  # pragma: allowlist secret
     ),
 }
-
-ADM006_TEMPLATE_DEBT_AFTER = {
-    "affectedPathCount": 0,
-    "occurrenceCount": 0,
-    "tokenObligationCount": 0,
-    "rules": {
-        "BODY-HEADING-REQUIRED": {
-            "pathCount": 0,
-            "occurrenceCount": 0,
-            "tokenObligationCount": 0,
-        },
-        "BODY-TEMPLATE-RESIDUE": {
-            "pathCount": 0,
-            "occurrenceCount": 0,
-            "tokenObligationCount": 0,
-        },
-        "FM-DELIMITER": {
-            "pathCount": 0,
-            "occurrenceCount": 0,
-            "tokenObligationCount": 0,
-        },
-        "BODY-HEADING-UNSUPPORTED": {
-            "pathCount": 0,
-            "occurrenceCount": 0,
-            "tokenObligationCount": 0,
-            "distinctTokenCount": 0,
-        },
-        "BODY-H2-DUPLICATE": {
-            "pathCount": 0,
-            "occurrenceCount": 0,
-            "tokenObligationCount": 0,
-        },
-    },
-    "requiredResidueOverlapPathCount": 0,
-    "requiredResidueUnionPathCount": 0,
-    "unionPathCount": 0,
-}
+EXPECTED_TEMPLATE_COMPATIBILITY_KEYS = (
+    "schemaVersion",
+    "owner",
+    "growthAllowed",
+    "baselineDebtCounts",
+    "canonicalFormCoverage",
+    "templateModeCoverage",
+)
+RETIRED_TEMPLATE_DEBT_FIELDS = {"compatibilityDebt", "semanticDebtCaps"}
 
 
 def template_compatibility_semantic_sha256(contract: dict) -> str:
@@ -1165,7 +1137,7 @@ def template_compatibility_contract_matches(contract: dict) -> bool:
 
 
 def assert_template_compatibility_mutation_proof(contract: dict) -> None:
-    """Prove protected policy, empty-debt, residue, and baseline mutations are rejected."""
+    """Prove retained coverage and retired debt fields remain fail-closed."""
 
     def mutate_owner(candidate: dict) -> None:
         candidate["owner"] = "Spec 999"
@@ -1173,119 +1145,36 @@ def assert_template_compatibility_mutation_proof(contract: dict) -> None:
     def mutate_growth_policy(candidate: dict) -> None:
         candidate["growthAllowed"] = True
 
-    def mutate_task_residue(candidate: dict) -> None:
-        task = next(
-            row
-            for row in candidate["compatibilityDebt"]
-            if row["profile"] == "sdlc/task"
-        )
-        task["forbiddenResidue"].pop()
+    def mutate_baseline(candidate: dict) -> None:
+        candidate["baselineDebtCounts"]["profileRows"] += 1
 
-    def mutate_task_baseline(candidate: dict) -> None:
-        task = next(
-            row
-            for row in candidate["compatibilityDebt"]
-            if row["profile"] == "sdlc/task"
-        )
-        task["baselineForbiddenResidueOccurrences"] += 1
-
-    def append_affected_record(
-        candidate: dict,
-        *,
-        path: str,
-        rule_id: str,
-        marker: str,
-    ) -> None:
-        task = next(
-            row
-            for row in candidate["compatibilityDebt"]
-            if row["profile"] == "sdlc/task"
-        )
-        task["affectedPaths"].append(
-            {
-                "path": path,
-                "ruleIds": [rule_id],
-                "tokens": [f"{rule_id}::{marker}"],
-            }
+    def mutate_canonical_form(candidate: dict) -> None:
+        candidate["canonicalFormCoverage"][0]["requiredHeadings"].append(
+            "Synthetic Drift"
         )
 
-    def mutate_affected_path(candidate: dict) -> None:
-        append_affected_record(
-            candidate,
-            path="docs/04.execution/tasks/adm006-empty-debt-drift.md",
-            rule_id="BODY-HEADING-UNSUPPORTED",
-            marker="Working Rules",
-        )
+    def mutate_template_mode(candidate: dict) -> None:
+        candidate["templateModeCoverage"][0]["placeholderPolicy"] = "drift"
 
-    def mutate_affected_rule(candidate: dict) -> None:
-        append_affected_record(
-            candidate,
-            path="docs/04.execution/tasks/adm006-empty-debt-rule.md",
-            rule_id="BODY-HEADING-UNSUPPORTED-DRIFT",
-            marker="Working Rules",
-        )
+    def restore_compatibility_debt(candidate: dict) -> None:
+        candidate["compatibilityDebt"] = []
 
-    def mutate_affected_token(candidate: dict) -> None:
-        append_affected_record(
-            candidate,
-            path="docs/04.execution/tasks/adm006-empty-debt-token.md",
-            rule_id="BODY-HEADING-UNSUPPORTED",
-            marker="Working Rules drift",
-        )
+    def restore_semantic_caps(candidate: dict) -> None:
+        candidate["semanticDebtCaps"] = {}
 
-    def mutate_rule_cap(candidate: dict) -> None:
-        candidate["semanticDebtCaps"]["rules"]["BODY-HEADING-REQUIRED"][
-            "pathCount"
-        ] += 1
-
-    def mutate_rule_occurrence_cap(candidate: dict) -> None:
-        candidate["semanticDebtCaps"]["rules"]["BODY-TEMPLATE-RESIDUE"][
-            "occurrenceCount"
-        ] += 1
-
-    def mutate_rule_obligation_cap(candidate: dict) -> None:
-        candidate["semanticDebtCaps"]["rules"]["BODY-HEADING-UNSUPPORTED"][
-            "tokenObligationCount"
-        ] += 1
-
-    def mutate_rule_distinct_token_cap(candidate: dict) -> None:
-        candidate["semanticDebtCaps"]["rules"]["BODY-HEADING-UNSUPPORTED"][
-            "distinctTokenCount"
-        ] += 1
-
-    def mutate_required_residue_overlap_cap(candidate: dict) -> None:
-        candidate["semanticDebtCaps"]["requiredResidueOverlapPathCount"] += 1
-
-    def mutate_required_residue_union_cap(candidate: dict) -> None:
-        candidate["semanticDebtCaps"]["requiredResidueUnionPathCount"] += 1
-
-    def mutate_union_cap(candidate: dict) -> None:
-        candidate["semanticDebtCaps"]["unionPathCount"] += 1
-
-    def mutate_residue_token_obligation(candidate: dict) -> None:
-        append_affected_record(
-            candidate,
-            path="docs/04.execution/tasks/adm006-empty-debt-residue.md",
-            rule_id="BODY-TEMPLATE-RESIDUE",
-            marker="Working Rules",
-        )
+    def restore_both_debt_fields(candidate: dict) -> None:
+        restore_compatibility_debt(candidate)
+        restore_semantic_caps(candidate)
 
     mutations = {
         "owner": mutate_owner,
-        "growthAllowed": mutate_growth_policy,
-        "Task forbidden residue": mutate_task_residue,
-        "Task baseline count": mutate_task_baseline,
-        "affected path": mutate_affected_path,
-        "affected rule": mutate_affected_rule,
-        "affected token": mutate_affected_token,
-        "semantic rule cap": mutate_rule_cap,
-        "semantic occurrence cap": mutate_rule_occurrence_cap,
-        "semantic obligation cap": mutate_rule_obligation_cap,
-        "semantic distinct-token cap": mutate_rule_distinct_token_cap,
-        "required/residue overlap cap": mutate_required_residue_overlap_cap,
-        "required/residue union cap": mutate_required_residue_union_cap,
-        "semantic union cap": mutate_union_cap,
-        "residue token obligation introduction": mutate_residue_token_obligation,
+        "growth policy": mutate_growth_policy,
+        "baseline coverage": mutate_baseline,
+        "canonical form coverage": mutate_canonical_form,
+        "template mode coverage": mutate_template_mode,
+        "compatibilityDebt reintroduction": restore_compatibility_debt,
+        "semanticDebtCaps reintroduction": restore_semantic_caps,
+        "both retired debt fields": restore_both_debt_fields,
     }
     for label, mutate in mutations.items():
         candidate = copy.deepcopy(contract)
@@ -1293,10 +1182,21 @@ def assert_template_compatibility_mutation_proof(contract: dict) -> None:
         if template_compatibility_contract_matches(candidate):
             fail(
                 f"{TEMPLATE_COMPATIBILITY_CONTRACT_V1['name']} mutation proof "
-                f"accepted a changed {label}"
+                f"accepted changed {label}"
             )
 
 
+if tuple(template_compatibility) != EXPECTED_TEMPLATE_COMPATIBILITY_KEYS:
+    fail(
+        f"{rel(template_compatibility_path)} top-level fields differ from the "
+        "retired debt-free contract"
+    )
+restored_debt_fields = RETIRED_TEMPLATE_DEBT_FIELDS & set(template_compatibility)
+if restored_debt_fields:
+    fail(
+        f"{rel(template_compatibility_path)} restored retired fields: "
+        f"{sorted(restored_debt_fields)}"
+    )
 if not template_compatibility_contract_matches(template_compatibility):
     fail(
         f"{rel(template_compatibility_path)} does not match "
@@ -1304,41 +1204,10 @@ if not template_compatibility_contract_matches(template_compatibility):
     )
 assert_template_compatibility_mutation_proof(template_compatibility)
 
-affected_records = [
-    (row["profile"], item)
-    for row in template_compatibility["compatibilityDebt"]
-    for item in row["affectedPaths"]
-]
-affected_occurrence_count = sum(
-    max(
-        1,
-        sum(token.startswith(rule_id + "::") for token in item["tokens"]),
-    )
-    for _, item in affected_records
-    for rule_id in item["ruleIds"]
-)
-affected_token_obligation_count = sum(
-    sum(token.startswith(rule_id + "::") for token in item["tokens"])
-    for _, item in affected_records
-    for rule_id in item["ruleIds"]
-)
-adm006_after_projection = {
-    "affectedPathCount": len({item["path"] for _, item in affected_records}),
-    "occurrenceCount": affected_occurrence_count,
-    "tokenObligationCount": affected_token_obligation_count,
-    **template_compatibility["semanticDebtCaps"],
-}
-if adm006_after_projection != ADM006_TEMPLATE_DEBT_AFTER:
-    fail(
-        f"{rel(template_compatibility_path)} ADM-006 after projection changed: "
-        f"{adm006_after_projection}"
-    )
-
 if template_compatibility.get("owner") != "Spec 030":
     fail(f"{rel(template_compatibility_path)} owner must be Spec 030")
 if template_compatibility.get("growthAllowed") is not False:
     fail(f"{rel(template_compatibility_path)} must set growthAllowed=false")
-
 template_support_root = root / "docs/99.templates/support"
 support_stale_patterns = [
     (re.compile(r"Phase [1-4]"), "migration phase wording"),
