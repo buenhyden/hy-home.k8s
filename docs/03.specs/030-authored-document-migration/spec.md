@@ -54,7 +54,9 @@ local state. It does not rewrite history for stylistic uniformity.
   canonicalization of thirteen paths already registered as finite Spec 030
   shape debt: six support documents, three Stage 00 authoring/routing rules,
   and four provider guidance documents. This exception does not transfer
-  semantic or behavioral ownership.
+  semantic or behavioral ownership. ADM-006 has one additional closed
+  exception for relocation-driven link/index rows in the exact nine README
+  paths named below; it transfers no README profile or body ownership.
 - **Key Dependencies**: Specs 026–029, official topic sources, Git history, link
   graph, generated-file ownership, and current audit findings.
 - **Tech Stack**: `git mv`, focused manual edits, registry validation, link and
@@ -77,12 +79,26 @@ Tranche handoff is binding:
 | Path or responsibility | Canonical change owner | This Spec's allowed interaction |
 | --- | --- | --- |
 | `docs/99.templates/support/**` and non-README forms | Spec 027 | Consume final contracts. Structural-only canonicalization is authorized for exactly `common-documentation-governance.md`, `documentation-contract.md`, `frontmatter-schema.md`, `legacy-cleanup-rules.md`, `sdlc-governance.md`, and `template-routing.md`; no route, schema, form, or governance-semantic change. |
-| README forms and every tracked `README.md`, including `_workspace/README.md` | Spec 028 | Request or apply relocation-driven index/link rows only; no profile/body redesign. |
+| README forms and every tracked `README.md`, including `_workspace/README.md` | Spec 028 | ADM-006 may apply relocation-driven index/link rows only in the exact nine-path exception below; every unlisted README and all profile/body redesign remain excluded. |
 | Validator parser, rule semantics, and fixture engine | Spec 029 | Consume the public interface and change no parser or rule behavior. ADM-003 through ADM-006 may synchronize only the frozen migration-count/self-test constants in `validate-markdown-profiles.py` with the shrinking Spec-030-owned fixture and apply the exact zero-cap Counter projection required when a rule reaches zero; an executable line guard rejects every other validator edit. ADM-007 owns the separately named strict-mode cutover. |
 | Root provider shims, `.agents/**`, `.claude/**`, `.codex/**`, shared role semantics | Spec 031 | Excluded from authored migration; link to canonical owners only. Structural-only canonicalization is authorized for exactly `docs/00.agent-governance/providers/{agents-md,claude,codex,gemini}.md`; no provider or agent behavior change. |
 | CI selector blocks and validation obligations | Spec 031 | Excluded except link repair. |
 | Action identities/permissions, GitOps, infrastructure, policy, secrets, Traefik machine surfaces | Spec 032 | Do not change behavior; migrate only their authored documentation after the protected owner confirms links. |
 | Remaining non-README authored documents in Stages 00–05, 90, and 98 | Spec 030 | Full disposition and topic-content migration owner. |
+
+The closed ADM-006 Spec 028 exception is exactly
+`docs/90.references/cloud-examples/README.md`,
+`docs/90.references/cloud-examples/aws/README.md`,
+`docs/90.references/cloud-examples/azure/README.md`, `examples/README.md`,
+`examples/aws/README.md`, `examples/azure/README.md`,
+`examples/azure/gitops/README.md`,
+`examples/azure/infrastructure/README.md`, and
+`examples/azure/kubernetes/README.md`. The last three are executable-example
+entrypoints whose eight relative links resolve into the immutable 59-path
+deletion set. ADM-006 may reroute only those links and the index rows required
+to expose the two dated snapshots; it may not change README Frontmatter,
+profile sections, prose purpose, commands, inventory outside the relocation,
+or Spec 028 semantics.
 
 The other three handoff exceptions are exactly
 `docs/00.agent-governance/rules/documentation-protocol.md`,
@@ -120,6 +136,12 @@ AWS and Azure migration rules:
   entrypoint README files under `examples/**`.
 - Retire duplicate PRD, ARD, ADR, Spec, Plan, Task, Guide, Policy, and Runbook
   files; create Tombstones only where lineage or inbound references require it.
+- Resolve every tracked Markdown link target relative to its consumer and
+  freeze every edge whose target is in the exact 59-path source set. Before
+  deletion, every external consumer must be covered by the exact nine-README
+  exception; after relocation-row updates, the resolved graph must contain zero
+  external deletion-target edges and the link validator must contain zero
+  unresolved local link.
 
 Research rules apply to every current authored document, not only cloud
 snapshots. A document with external technology, standard, provider, security,
@@ -188,8 +210,11 @@ git diff --check
   non-applicability reason. The ledger can be revalidated after `_workspace`
   scratch is removed.
 - **VAL-SPC-006**: The tranche responsibility table has no uncoordinated
-  multi-owner edit; README changes after relocation are link/index-only and
-  provider/protected surfaces remain with Specs 031 and 032.
+  multi-owner edit; ADM-006 README changes are link/index-only in the exact
+  nine-path Spec 028 exception, the resolved tracked-Markdown graph covers
+  every external consumer before deletion and has zero deletion-target edge
+  after rerouting, and provider/protected surfaces remain with Specs 031 and
+  032.
 
 ## Related Documents
 

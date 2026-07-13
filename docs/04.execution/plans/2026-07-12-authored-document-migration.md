@@ -1361,6 +1361,9 @@ ledger, debt fixture, and digest consumer return together.
 - Modify link/index rows only: `examples/README.md`
 - Modify link/index rows only: `examples/aws/README.md`
 - Modify link/index rows only: `examples/azure/README.md`
+- Modify link/index rows only: `examples/azure/gitops/README.md`
+- Modify link/index rows only: `examples/azure/infrastructure/README.md`
+- Modify link/index rows only: `examples/azure/kubernetes/README.md`
 - Delete: `examples/aws/docs/**`
 - Delete: `examples/azure/docs/**`
 - Modify: durable migration ledger
@@ -1376,8 +1379,13 @@ ledger, debt fixture, and digest consumer return together.
 - Produces: two dated provider snapshots, executable entrypoints, zero
   example-local SDLC Markdown, and no compatibility records for removed or
   canonicalized cloud documentation. Its frozen debt manifest contains exactly
-  the 39 ADM-006 shape-debt paths proven by the pre-ADM-002 coverage gate; all
-  59 source paths still receive `merge` dispositions and deletion review.
+  the 39 ADM-006 shape-debt paths and 102 tuples proven by the pre-ADM-002
+  coverage gate; all 59 source paths still receive `merge` dispositions and
+  deletion review. The
+  exact nine Spec 028 README interactions are relocation-driven link/index rows
+  only; `examples/azure/{gitops,infrastructure,kubernetes}/README.md` are added
+  because eight of their relative links resolve into the deletion set, not
+  because ADM-006 owns their profiles or bodies.
 
 - [ ] **Step 1: Record RED source count and inbound links**
 
@@ -1395,18 +1403,136 @@ exact_additions = {
     'docs/90.references/cloud-examples/aws/README.md',
     'docs/90.references/cloud-examples/azure/README.md',
     'examples/README.md', 'examples/aws/README.md', 'examples/azure/README.md',
+    'examples/azure/gitops/README.md',
+    'examples/azure/infrastructure/README.md',
+    'examples/azure/kubernetes/README.md',
 }
 allowed = paths | exact_additions
 payload = b''.join(p.encode() + b'\0' for p in sorted(allowed))
 pathlib.Path('_workspace/adm-006-allowed-document-paths.nul').write_bytes(payload)
+assert len(allowed) == 70
 print(len(paths), hashlib.sha256(source).hexdigest())
 print(len(allowed), hashlib.sha256(payload).hexdigest())
 PY
-rg -n 'examples/(aws|azure)/docs' README.md docs examples scripts tests > _workspace/cloud-doc-inbound-links.txt
+python3 - <<'PY'
+import collections
+import hashlib
+import importlib.util
+import json
+import pathlib
+import subprocess
+import sys
+from pathlib import PurePosixPath
+
+sys.path.insert(0, 'scripts')
+spec = importlib.util.spec_from_file_location(
+    'adm006_link_validator', 'scripts/validate-links-and-owners.py'
+)
+link_validator = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = link_validator
+spec.loader.exec_module(link_validator)
+
+source_raw = pathlib.Path('_workspace/cloud-doc-source-paths.nul').read_bytes()
+sources = {part.decode() for part in source_raw.split(b'\0') if part}
+allowed_raw = pathlib.Path('_workspace/adm-006-allowed-document-paths.nul').read_bytes()
+allowed = {part.decode() for part in allowed_raw.split(b'\0') if part}
+tracked = [
+    part.decode()
+    for part in subprocess.check_output(
+        ['git', 'ls-files', '-z', '--', '*.md']
+    ).split(b'\0')
+    if part
+]
+exact_readmes = {
+    'docs/90.references/cloud-examples/README.md',
+    'docs/90.references/cloud-examples/aws/README.md',
+    'docs/90.references/cloud-examples/azure/README.md',
+    'examples/README.md',
+    'examples/aws/README.md',
+    'examples/azure/README.md',
+    'examples/azure/gitops/README.md',
+    'examples/azure/infrastructure/README.md',
+    'examples/azure/kubernetes/README.md',
+}
+index_only = 'docs/90.references/cloud-examples/README.md'
+
+edges = []
+for consumer in tracked:
+    text = pathlib.Path(consumer).read_text()
+    for occurrence, raw_target in enumerate(
+        link_validator._extract_links(text), 1
+    ):
+        kind, target = link_validator._local_destination(
+            PurePosixPath(consumer), raw_target
+        )
+        if kind != 'local' or target is None or target.as_posix() not in sources:
+            continue
+        edges.append({
+            'consumer': consumer,
+            'consumerInDeletionSet': consumer in sources,
+            'occurrence': occurrence,
+            'rawTarget': raw_target,
+            'resolvedTarget': target.as_posix(),
+        })
+
+external = [edge for edge in edges if not edge['consumerInDeletionSet']]
+consumer_counts = collections.Counter(edge['consumer'] for edge in external)
+consumers = set(consumer_counts)
+assert len(tracked) == 472
+assert len(edges) == 265
+assert len(edges) - len(external) == 225
+assert len(external) == 40
+assert len(consumers) == 8
+assert len({edge['resolvedTarget'] for edge in external}) == 23
+assert consumers == exact_readmes - {index_only}
+assert consumers <= allowed and exact_readmes <= allowed
+
+payload = {
+    'schemaVersion': 1,
+    'baselineHead': subprocess.check_output(
+        ['git', 'rev-parse', 'HEAD'], text=True
+    ).strip(),
+    'sourceManifest': {
+        'path': '_workspace/cloud-doc-source-paths.nul',
+        'pathCount': len(sources),
+        'sha256': hashlib.sha256(source_raw).hexdigest(),
+    },
+    'trackedMarkdownCount': len(tracked),
+    'sourceTargetLinkCount': len(edges),
+    'sourceInternalLinkCount': len(edges) - len(external),
+    'externalDeletionTargetLinkCount': len(external),
+    'externalConsumerPathCount': len(consumers),
+    'externalTargetPathCount': len({
+        edge['resolvedTarget'] for edge in external
+    }),
+    'externalConsumerLinkCounts': dict(sorted(consumer_counts.items())),
+    'externalConsumerPaths': sorted(consumers),
+    'exactRelocationReadmePaths': sorted(exact_readmes),
+    'plannedIndexOnlyReadmePathsWithoutCurrentDeletionEdge': [index_only],
+    'externalConsumerSetCoveredByAllowedReadmes': (
+        consumers == exact_readmes - {index_only}
+    ),
+    'edges': edges,
+}
+output = pathlib.Path('_workspace/cloud-doc-inbound-link-graph.json')
+output.write_text(
+    json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + '\n'
+)
+print(
+    len(edges), len(external), len(consumers),
+    hashlib.sha256(output.read_bytes()).hexdigest()
+)
+PY
 ```
 
-Expected: source count `59`; the NUL file is the deletion review source of truth,
-and the inbound-link file records every active relocation consumer.
+Expected: source count `59`; allowed count `70`; the source NUL is the immutable
+deletion review source of truth. The resolved graph records all 265 tracked
+Markdown links into that set: 225 internal deletion-tree links plus 40 external
+links from exactly eight README consumers to 23 source targets. Those eight
+consumers plus the snapshot-pack root index are exactly the nine relocation-only
+README paths, so every external consumer is covered before deletion. Literal
+`rg` mentions are non-authoritative supplemental search evidence and cannot
+replace target resolution.
 
 Also create and independently review
 `_workspace/adm-006-debt-removals.json` containing every exact finite-debt
@@ -1417,7 +1543,9 @@ and debt-removal manifest must agree before deletion. Record and independently
 approve both frozen manifest counts and SHA-256 values in Task evidence before
 the first snapshot, README, or deletion mutation. The 59-path source manifest
 is the immutable deletion set; the allowed manifest is exactly those deletions
-plus the two snapshots and six explicitly named README paths.
+plus the two snapshots and nine explicitly named README paths. Independent
+approval covers the resolved graph identity and consumer-set equality as well
+as the two NUL manifests and debt tuples.
 
 - [ ] **Step 2: Build provider snapshots before deletion**
 
@@ -1436,7 +1564,54 @@ Expected: exit 0 with no missing path output.
 - [ ] **Step 3: Update entrypoint and snapshot index rows**
 
 Use the existing Spec 028 README profile sections. Change only inventory,
-source-of-truth, and related-document links required by relocation.
+source-of-truth, and related-document links required by relocation. The three
+Azure executable sub-entrypoints are in scope only for the eight reviewed
+relative links; do not redesign their profile, prose body, commands, or
+unrelated inventory. After all nine README paths are updated and both snapshots
+exist, prove zero external deletion-target link and zero unresolved local link:
+
+```bash
+python3 - <<'PY'
+import importlib.util, pathlib, subprocess, sys
+from pathlib import PurePosixPath
+sys.path.insert(0, 'scripts')
+spec = importlib.util.spec_from_file_location(
+    'adm006_link_validator', 'scripts/validate-links-and-owners.py'
+)
+link_validator = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = link_validator
+spec.loader.exec_module(link_validator)
+sources = {
+    part.decode()
+    for part in pathlib.Path(
+        '_workspace/cloud-doc-source-paths.nul'
+    ).read_bytes().split(b'\0')
+    if part
+}
+remaining = []
+for raw_consumer in subprocess.check_output(
+    ['git', 'ls-files', '-z', '--', '*.md']
+).split(b'\0'):
+    if not raw_consumer:
+        continue
+    consumer = raw_consumer.decode()
+    if consumer in sources:
+        continue
+    for raw_target in link_validator._extract_links(
+        pathlib.Path(consumer).read_text()
+    ):
+        kind, target = link_validator._local_destination(
+            PurePosixPath(consumer), raw_target
+        )
+        if kind == 'local' and target and target.as_posix() in sources:
+            remaining.append((consumer, raw_target, target.as_posix()))
+assert not remaining, remaining
+PY
+python3 scripts/validate-links-and-owners.py --root . --mode compatibility
+```
+
+Expected: zero external link resolves into the deletion set, and the link
+validator reports zero unresolved local target before `git rm`.
 
 - [ ] **Step 4: Delete the reviewed duplicate trees**
 
@@ -1490,22 +1665,25 @@ fixed = {'docs/04.execution/tasks/2026-07-12-authored-document-migration.md',
          'scripts/validate-repo-quality-gates.sh',
          'tests/fixtures/document-contracts/template-compatibility.json'}
 assert len(deletions) == debt['deletionPathCount'] == 59 and deletions <= allowed
-assert len(allowed) == debt['allowedDocumentPathCount']
+assert len(allowed) == debt['allowedDocumentPathCount'] == 70
 assert hashlib.sha256(manifest).hexdigest() == debt['allowedDocumentPathsSha256']
 assert hashlib.sha256(deletions_raw).hexdigest() == debt['deletionPathsSha256']
 changed = {p for p in allowed if subprocess.run(['git', 'diff', '--quiet', 'HEAD', '--', p]).returncode == 1}
 assert changed == allowed and {item['path'] for item in debt['debtTuples']} <= changed
 assert actual == changed | fixed and fixed <= actual, (sorted(actual - (changed | fixed)), sorted((changed | fixed) - actual))
+assert len(actual) == 76
 print(f'ADM-006 exact staged count: {len(actual)}')
 PY
 git commit -m "docs(migration): consolidate cloud example documentation"
 ```
 
 Expected: the staged set is exactly the printed reviewed set, including all 59
-deletions, two snapshots, relocation-only README link rows, ledger/Task
-evidence, fixture, and digest consumer. A fresh reviewer proves 59-source
+deletions, two snapshots, nine relocation-only README link/index paths, and six
+fixed ledger/Task/progress/fixture/validator/digest owners: exactly 76 tracked
+paths. A fresh reviewer proves 59-source
 coverage, unique-content preservation, tuple set equality, exact count
-arithmetic, and complete digest/mutation refresh. Roll back with
+arithmetic, zero external deletion-target/unresolved links, and complete
+digest/mutation refresh. Roll back with
 `git revert <ADM-006-commit>` so deletions and every supporting record return
 atomically.
 

@@ -38,7 +38,7 @@ consolidate duplicate AWS/Azure prose, and close the compatibility boundary.
 | ADM-003 | Normalize Stage 01–03 active design documents | platform | Done | Exact 34-path manifest SHA-256 `3cd63fa57b386f8036f14a8a59638318b5686fe4b618422b8577ad106f54e29f`; seven atomic batches `5/5/5/5/5/5/4` each returned zero exact-path diagnostics; all 34 ledger rows record official-primary or explicit repository-only source applicability and `shape-normalized`; compatibility debt moved from `266/1299` paths/occurrences to `232/1127`; logical commit `docs(migration): normalize active sdlc design documents` |
 | ADM-004 | Normalize Stage 04–05 execution and operations documents | platform | Done | Exact 120-path allowed manifest SHA-256 `ac9ca4985d0f8945ae342294bcb059fb00d5f343c5167d3c71378e3b0e6c2a8e`; corrected debt-removal manifest SHA-256 `947e7a5e37ace8e0da7099fad2a7891d371308a52ec214d52b734419988fd565`; 24 atomic five-path checkpoints each returned zero exact-path diagnostics; independent correction reconstructed 47 Task safety boundaries, restored seven Plan fence interiors from `851007d`, canonicalized nine Runbooks, and added semantic-review evidence to the same 63 ledger rows; final Task re-review corrected nine Task-table range endpoints and the two affected validation-command/live-lane records across exactly ten Task and ledger rows; remaining debt is `112` paths, `626` occurrences, and `602` token obligations; final exact set is `120` documents plus six evidence/validation owners; zero-cap correction dependency `851007d`; logical commit target `docs(migration): normalize execution and operations documents` |
 | ADM-005 | Normalize governance, Current references, Archive links, and six support documents | platform | Done | Exact 73-path allowed manifest SHA-256 `c9788e8f27a3497ab459aae2d0b001d98323672cefb0e1228ef328331749fe95`; debt-removal manifest SHA-256 `5d8b9fc200e0029011b1c8469492ee99a555e6e979979851ffb5d77284b1a9d1`; 15 atomic batches returned zero exact-path diagnostics; final debt is `39` paths, `102` occurrences, and `102` obligations, solely the frozen ADM-006 cloud set; exact rollback unit is 73 documents plus six evidence/validation owners; logical commit `docs(migration): normalize governance references and archive links` |
-| ADM-006 | Consolidate AWS and Azure example documentation | platform | Queued | Exact 39-path debt manifest within the immutable 59-source merge/deletion set; synchronize the final zero-debt validator cap constants under the executable diff guard; `test -z "$(git ls-files examples/aws/docs examples/azure/docs)"`; logical commit `docs(migration): consolidate cloud example documentation` |
+| ADM-006 | Consolidate AWS and Azure example documentation | platform | Queued | Immutable 59-source manifest SHA-256 `2ed87a48e9b62da9e16f904f0bbe2ebdf3f1ebaef5be55fdcf06b1608c3a315b`; exact 70-path allowed manifest SHA-256 `3c297fa6f0feedbd813b3e3de467a1cb6f0d01da44253951a737b15e756877b9`; exact 39-path debt projection SHA-256 `35ad28eee5da9f73bb5878f18a05c2282785b43187e5657424c563fd03f96034` and regenerated 102-tuple debt-manifest SHA-256 `b3590d397620f6e45280073140eacb08b07034b1f24b82d54f6fc987e42b36f1`; resolved graph SHA-256 `2ecf54da33dd7f2163db470ae447e79be7693b079f341a8e69d57fc20561fcdc` covers 265 links, including 40 external deletion-target links from eight consumers, through the exact nine relocation-only Spec 028 README paths; final staged set must be exactly 76 paths; synchronize the final zero-debt validator cap constants under the executable diff guard; `test -z "$(git ls-files examples/aws/docs examples/azure/docs)"`; logical commit `docs(migration): consolidate cloud example documentation` |
 | ADM-007 | Enable strict validation and close Spec 030 | platform | Queued | `python3 scripts/validate-document-contract-registry.py --root . --mode strict`, both semantic validators in strict mode, and `bash scripts/validate-repo-quality-gates.sh .`; logical commit `chore(docs): cut over document profiles to strict validation` |
 
 ## Approval and Safety Boundaries
@@ -47,7 +47,12 @@ consolidate duplicate AWS/Azure prose, and close the compatibility boundary.
   Task may change. ADM-001 is limited to its seven Spec, Plan, Task, index, and
   canonical progress-ledger paths. ADM-003 through ADM-006 use the reviewed
   disjoint fixture allocation `34/120/73/39`; ADM-005's thirteen handoff paths
-  are structural-only and retain Spec 027/031 semantic ownership.
+  are structural-only and retain Spec 027/031 semantic ownership. ADM-006's
+  document manifest is exactly 70 paths: 59 deletions, two snapshots, and nine
+  relocation-only README paths. The three added Azure `gitops`,
+  `infrastructure`, and `kubernetes` READMEs may change only the eight relative
+  links that resolve into the deletion set; all nine paths retain Spec 028
+  profile/body ownership.
 - **Forbidden Paths**: Credentials, secrets, ignored `_workspace` children,
   local diagnostics, provider or cluster state, generated outputs, and paths
   outside the current ADM wave are excluded.
@@ -228,6 +233,35 @@ durable ledger, fixture, Markdown validator, quality-gate consumer, this Task,
 and canonical progress ledger. Revert the eventual ADM-005 logical commit as
 one unit; ADM-006 consumes the exact 39-path cloud remainder without reopening
 any ADM-005 document or evidence row.
+
+ADM-006 pre-mutation review reproduced the source, debt, ledger, executable
+asset, and official-primary evidence but rejected the 67-path boundary because
+literal `rg` matching omitted eighteen relative Markdown links. Ten were in
+already named README paths; eight were in
+`examples/azure/{gitops,infrastructure,kubernetes}/README.md`. The corrected
+Plan resolves tracked Markdown destinations with the existing link-validator
+parser and freezes every edge into the immutable 59-source set. Its RED graph
+contains 265 source-target links: 225 internal deletion-tree links and 40
+external links from exactly eight consumers to 23 targets. Those eight
+consumers plus the snapshot-pack root index equal the exact nine Spec 028
+relocation-only README paths.
+
+The correction preserves the source identity
+`2ed87a48e9b62da9e16f904f0bbe2ebdf3f1ebaef5be55fdcf06b1608c3a315b`,
+the 39-path debt identity
+`35ad28eee5da9f73bb5878f18a05c2282785b43187e5657424c563fd03f96034`,
+and all `102` tuples. It replaces only the unsafe allowed/inbound boundaries:
+the exact 70-path allowed identity is
+`3c297fa6f0feedbd813b3e3de467a1cb6f0d01da44253951a737b15e756877b9`,
+and the resolved graph identity is
+`2ecf54da33dd7f2163db470ae447e79be7693b079f341a8e69d57fc20561fcdc`.
+The regenerated debt manifest that binds those immutable source/debt identities
+to the 70-path allowed set and resolved graph has SHA-256
+`b3590d397620f6e45280073140eacb08b07034b1f24b82d54f6fc987e42b36f1`.
+After README rerouting, ADM-006 must prove zero external deletion-target edge
+and zero unresolved local link before deleting any source. This four-owner Plan
+correction creates no snapshot, changes no README/source/fixture, and does not
+authorize mutation until a fresh preparation review approves the new hashes.
 
 ## Traceability
 

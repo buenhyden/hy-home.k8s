@@ -8,6 +8,72 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - ADM-006 resolved-link preparation correction
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, cloud examples, qa
+- **Status**: in-progress
+- **Tags**: #adm-006 #plan-correction #link-graph #readme-handoff
+
+#### Progress
+
+- Corrected only Spec 030, Plan 030, the ADM migration Task, and this canonical
+  progress ledger after independent preparation review found eighteen relative
+  Markdown links that literal-path `rg` capture could not see.
+- Added the exact three Spec 028 relocation-only consumers
+  `examples/azure/{gitops,infrastructure,kubernetes}/README.md`; their eight
+  links resolve into the immutable deletion set. No README profile/body
+  ownership moved to Spec 030, and no README, snapshot, source, fixture,
+  validator, or ledger row changed in this correction.
+- Replaced the authoritative inbound boundary with a resolved tracked-Markdown
+  graph using the repository link validator's extraction and relative-target
+  semantics. The 59-source and 39-debt identities remain immutable; the allowed
+  document boundary is now exactly `70`: 59 deletions, two snapshots, and nine
+  READMEs.
+
+#### Evidence
+
+- Source manifest: 59 paths, SHA-256
+  `2ed87a48e9b62da9e16f904f0bbe2ebdf3f1ebaef5be55fdcf06b1608c3a315b`.
+- Debt projection: 39 paths, SHA-256
+  `35ad28eee5da9f73bb5878f18a05c2282785b43187e5657424c563fd03f96034`;
+  the exact 102 tuples and all zero-after arithmetic are unchanged. The
+  regenerated debt manifest SHA-256 is
+  `b3590d397620f6e45280073140eacb08b07034b1f24b82d54f6fc987e42b36f1`.
+- Allowed manifest: 70 sorted unique NUL paths, SHA-256
+  `3c297fa6f0feedbd813b3e3de467a1cb6f0d01da44253951a737b15e756877b9`.
+- Resolved RED graph: 472 tracked Markdown files, 265 links into the source
+  set, 225 internal links, and 40 external links from eight consumers to 23
+  targets; SHA-256
+  `2ecf54da33dd7f2163db470ae447e79be7693b079f341a8e69d57fc20561fcdc`.
+  The eight consumers plus the cloud snapshot-pack root index equal the exact
+  nine relocation-only README paths.
+
+#### Memory
+
+- A literal repository-path search is evidence about string mentions, not a
+  deletion-safe Markdown link graph. Destructive documentation migration must
+  resolve relative targets with the same parser semantics as the link validator
+  and prove the consumer set is covered by the frozen allowed manifest.
+- Spec 028 ownership can be borrowed only through a closed exact-path,
+  link/index-row exception. Finding additional broken-link consumers does not
+  authorize README profile or body redesign.
+
+#### Handoff
+
+- Regenerate the ignored allowed/debt manifests and resolved graph after this
+  exact-four correction, then obtain a fresh preparation review before the
+  first snapshot, README edit, fixture change, or source deletion.
+- During ADM-006, reroute all nine README paths, prove zero external
+  deletion-target link and zero unresolved local link before `git rm`, and
+  require the final staged set to be exactly `76`: 70 documents plus six fixed
+  evidence/validation owners.
+- No live system, secret, remote CI, push, publish, merge, deployment, stage,
+  commit, snapshot, README, source, or fixture action was performed by this
+  correction.
+
 ### 2026-07-13 - ADM-005 governance and Current-reference shape normalization
 
 #### Metadata
