@@ -43,6 +43,14 @@ import sys
 
 import yaml
 
+sys.path.insert(0, str(pathlib.Path(sys.argv[1]) / "scripts"))
+from document_contracts import (  # noqa: E402 - repository-local contract module
+    DocumentContractError,
+    TARGET_ROOTS,
+    classify_path,
+    load_registry,
+)
+
 try:
     import tomllib
 except ModuleNotFoundError:  # pragma: no cover - Python < 3.11 fallback path
@@ -196,6 +204,14 @@ def extract_scope_imports(text: str) -> list[str]:
 
 def rel(path: pathlib.Path) -> str:
     return str(path.relative_to(root))
+
+
+def is_historical_evidence_path(path: pathlib.Path) -> bool:
+    return (
+        path == root / "docs/00.agent-governance/memory/progress.md"
+        or path.is_relative_to(root / "docs/90.references/audits")
+        or path.is_relative_to(root / "docs/98.archive")
+    )
 
 
 def collect_strings(value) -> list[str]:
@@ -1259,6 +1275,10 @@ for provider in ["aws", "azure"]:
             fail(f"{rel(example_doc)} must use canonical ## Related Documents heading")
 
 template_routing_path = template_support_root / "template-routing.md"
+document_registry = load_registry(root)
+registry_profiles_by_id = {
+    profile.profile_id: profile for profile in document_registry.profiles
+}
 
 
 def template_route_pairs(
@@ -1286,11 +1306,183 @@ template_routing_route_pairs = template_route_pairs(
     template_routing_path,
     "## Current Route Map",
 )
-if template_readme_route_pairs != template_routing_route_pairs:
-    fail(
-        "docs/99.templates/README.md Template-Folder Mapping must match "
-        "docs/99.templates/support/template-routing.md Current Route Map"
+
+
+def registry_profile(profile_id: str):
+    profile = registry_profiles_by_id.get(profile_id)
+    if profile is None:
+        fail(f"public template route references missing registry profile: {profile_id}")
+    return profile
+
+
+def public_template_cell(template_path: pathlib.PurePosixPath) -> str:
+    prefix = "docs/99.templates/"
+    value = template_path.as_posix()
+    if not value.startswith(prefix):
+        fail(f"public template route escapes canonical template root: {value}")
+        return f"`{value}`"
+    path = root / value
+    if not path.is_file():
+        fail(f"public template route points to missing canonical template: {value}")
+    return f"`{value.removeprefix(prefix)}`"
+
+
+def registry_backed_public_route(
+    target_pattern: str,
+    profile_id: str,
+    witness_path: str,
+) -> tuple[str, str]:
+    profile = registry_profile(profile_id)
+    if profile is None or profile.template is None:
+        fail(f"public template route profile has no canonical template: {profile_id}")
+        return f"`{target_pattern}`", "`<missing>`"
+    try:
+        selected = classify_path(document_registry, pathlib.PurePosixPath(witness_path))
+    except DocumentContractError as exc:
+        fail(f"public template route witness is unclassified: {witness_path}: {exc}")
+    else:
+        if selected.profile_id != profile_id:
+            fail(
+                "public template route witness selects the wrong registry profile: "
+                f"{witness_path}: expected {profile_id}, actual {selected.profile_id}"
+            )
+    return f"`{target_pattern}`", public_template_cell(profile.template)
+
+
+expected_readme_profile_ids = (
+    "readme/repository",
+    "readme/stage-index",
+    "readme/collection-index",
+    "readme/implementation",
+    "readme/snapshot-pack",
+    "readme/workspace-staging",
+)
+actual_readme_profile_ids = tuple(
+    profile.profile_id
+    for profile in document_registry.profiles
+    if (
+        profile.profile_class == "readme"
+        and profile.profile_id.startswith("readme/")
+        and profile.template is not None
     )
+)
+if actual_readme_profile_ids != expected_readme_profile_ids:
+    fail(
+        "public README route projection must track the canonical registry order: "
+        f"expected {expected_readme_profile_ids}, actual {actual_readme_profile_ids}"
+    )
+expected_public_route_pairs = [
+    (
+        f"Registry `{profile_id}` routes",
+        public_template_cell(registry_profile(profile_id).template),
+    )
+    for profile_id in actual_readme_profile_ids
+    if registry_profile(profile_id) is not None
+    and registry_profile(profile_id).template is not None
+]
+
+public_structural_route_bridge = (
+    ("docs/01.requirements/<###-Numbering>-<feature-or-system>.md", "sdlc/prd", "docs/01.requirements/999-projection.md"),
+    ("docs/02.architecture/requirements/####-<system-or-domain>.md", "sdlc/ard", "docs/02.architecture/requirements/9999-projection.md"),
+    ("docs/02.architecture/decisions/####-<short-title>.md", "sdlc/adr", "docs/02.architecture/decisions/9999-projection.md"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/spec.md", "sdlc/spec", "docs/03.specs/999-projection/spec.md"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md", "sdlc/api-spec", "docs/03.specs/999-projection/api-spec.md"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md", "sdlc/agent-design", "docs/03.specs/999-projection/agent-design.md"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/data-model.md", "sdlc/data-model", "docs/03.specs/999-projection/data-model.md"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/tests.md", "sdlc/tests", "docs/03.specs/999-projection/tests.md"),
+)
+expected_public_route_pairs.extend(
+    registry_backed_public_route(*route) for route in public_structural_route_bridge
+)
+
+native_contract_profile = registry_profile("exception/native-contract")
+native_contract_route_bridge = (
+    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/openapi.yaml", "docs/03.specs/999-projection/contracts/openapi.yaml", "docs/99.templates/templates/sdlc/specs/openapi.template.yaml"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/schema.graphql", "docs/03.specs/999-projection/contracts/schema.graphql", "docs/99.templates/templates/sdlc/specs/schema.template.graphql"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/service.proto", "docs/03.specs/999-projection/contracts/service.proto", "docs/99.templates/templates/sdlc/specs/service.template.proto"),
+)
+for target_pattern, witness_path, template_path_text in native_contract_route_bridge:
+    try:
+        selected = classify_path(document_registry, pathlib.PurePosixPath(witness_path))
+    except DocumentContractError as exc:
+        fail(f"native public route witness is unclassified: {witness_path}: {exc}")
+    else:
+        if native_contract_profile is None or selected.profile_id != native_contract_profile.profile_id:
+            fail(
+                "native public route witness must select exception/native-contract: "
+                f"{witness_path}: actual {selected.profile_id}"
+            )
+    expected_public_route_pairs.append(
+        (
+            f"`{target_pattern}`",
+            public_template_cell(pathlib.PurePosixPath(template_path_text)),
+        )
+    )
+
+public_structural_route_bridge_tail = (
+    ("docs/04.execution/plans/YYYY-MM-DD-<feature>.md", "sdlc/plan", "docs/04.execution/plans/2099-01-01-projection.md"),
+    ("docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md", "sdlc/task", "docs/04.execution/tasks/2099-01-01-projection.md"),
+    ("docs/05.operations/guides/####-<topic>.md", "sdlc/guide", "docs/05.operations/guides/9999-projection.md"),
+    ("docs/05.operations/policies/####-<policy-or-standard>.md", "sdlc/policy", "docs/05.operations/policies/9999-projection.md"),
+    ("docs/05.operations/runbooks/####-<topic>.md", "sdlc/runbook", "docs/05.operations/runbooks/9999-projection.md"),
+    ("docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md", "sdlc/incident", "docs/05.operations/incidents/2099/INC-999-projection/INC-999-projection.md"),
+    ("docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md", "sdlc/postmortem", "docs/05.operations/incidents/2099/INC-999-projection/postmortem.md"),
+    ("docs/90.references/<category>/<topic>.md", "content/reference", "docs/90.references/research/projection.md"),
+    ("docs/98.archive/**/*.md", "content/archive-tombstone", "docs/98.archive/projection.md"),
+    ("docs/00.agent-governance/memory/<topic>.md", "governance/memory", "docs/00.agent-governance/memory/projection.md"),
+)
+expected_public_route_pairs.extend(
+    registry_backed_public_route(*route) for route in public_structural_route_bridge_tail
+)
+
+progress_entry_profile = registry_profile("governance/progress-entry")
+progress_ledger_profile = registry_profile("governance/progress-ledger")
+if (
+    progress_entry_profile is None
+    or progress_ledger_profile is None
+    or progress_entry_profile.source_profile_ids != ("governance/progress-ledger",)
+    or progress_entry_profile.template is None
+):
+    fail("public progress route must link the canonical progress-entry and progress-ledger profiles")
+else:
+    selected_progress_profile = classify_path(
+        document_registry,
+        pathlib.PurePosixPath("docs/00.agent-governance/memory/progress.md"),
+    )
+    if selected_progress_profile.profile_id != progress_ledger_profile.profile_id:
+        fail("canonical progress path must select governance/progress-ledger")
+    expected_public_route_pairs.append(
+        (
+            "`docs/00.agent-governance/memory/progress.md`",
+            public_template_cell(progress_entry_profile.template),
+        )
+    )
+
+
+def assert_public_route_projection(
+    route_pairs: list[tuple[str, str]],
+    source_label: str,
+) -> None:
+    if not public_route_projection_matches(route_pairs):
+        fail(f"{source_label} must equal the canonical registry-backed public route projection")
+
+
+def public_route_projection_matches(route_pairs: list[tuple[str, str]]) -> bool:
+    return route_pairs == expected_public_route_pairs
+
+
+assert_public_route_projection(
+    template_readme_route_pairs,
+    "docs/99.templates/README.md Template-Folder Mapping",
+)
+assert_public_route_projection(
+    template_routing_route_pairs,
+    "docs/99.templates/support/template-routing.md Current Route Map",
+)
+public_route_mutation = list(expected_public_route_pairs)
+public_route_mutation[0] = (public_route_mutation[0][0], "`templates/common/drift.template.md`")
+if public_route_projection_matches(public_route_mutation):
+    fail("public route projection mutation proof failed to reject same-table canonical drift")
 for phrase in [
     "## Structural Template Coverage",
     "structural template mapping",
@@ -1298,6 +1490,91 @@ for phrase in [
 ]:
     if phrase not in template_readme:
         fail(f"{rel(root / 'docs/99.templates/README.md')} missing structural template coverage phrase: {phrase}")
+
+
+def canonical_markdown_owns_generic_residue(path: pathlib.Path) -> bool:
+    try:
+        profile = classify_path(
+            document_registry,
+            pathlib.PurePosixPath(rel(path)),
+        )
+    except DocumentContractError:
+        return False
+    if profile.placeholder_policy != "forbidden" or profile.append_contract is not None:
+        return False
+    if (
+        profile.frontmatter.mode == "not-applicable"
+        and not profile.headings.required
+        and not profile.headings.allowed
+    ):
+        return False
+    return bool(profile.headings.required or profile.headings.allowed)
+
+
+authored_template_residue = ("Target: " + "docs/", "Use this " + "template")
+
+
+def generic_template_residue_lines(text: str) -> list[int]:
+    return [
+        line_number
+        for line_number, line in enumerate(text.splitlines(), start=1)
+        if any(marker in line for marker in authored_template_residue)
+    ]
+
+
+def assert_generic_residue_delegation_probe() -> None:
+    if generic_template_residue_lines("route: Use this " + "template") != [1]:
+        fail("generic residue mutation probe failed for active non-Markdown config")
+    if generic_template_residue_lines("Target: " + "docs/example.md") != [1]:
+        fail("generic residue mutation probe failed for non-structural Markdown")
+    structural = root / "docs/01.requirements/999-projection.md"
+    if not canonical_markdown_owns_generic_residue(structural):
+        fail("generic residue delegation probe must delegate authored structural Markdown")
+    provider_shim = root / "AGENTS.md"
+    if canonical_markdown_owns_generic_residue(provider_shim):
+        fail("generic residue delegation probe must retain headingless provider shims")
+
+
+assert_generic_residue_delegation_probe()
+active_residue_suffixes = {
+    ".graphql",
+    ".json",
+    ".md",
+    ".proto",
+    ".sh",
+    ".toml",
+    ".yaml",
+    ".yml",
+}
+tracked_active_paths = subprocess.run(
+    ["git", "-C", str(root), "ls-files", "-z"],
+    check=True,
+    stdout=subprocess.PIPE,
+).stdout.split(b"\0")
+for raw_relative_path in tracked_active_paths:
+    if not raw_relative_path:
+        continue
+    try:
+        relative_path = pathlib.PurePosixPath(raw_relative_path.decode("utf-8"))
+    except UnicodeDecodeError:
+        fail("git returned a non-UTF-8 active path during generic residue validation")
+        continue
+    if not (
+        relative_path.as_posix() in {"README.md", "AGENTS.md", "CLAUDE.md", "GEMINI.md"}
+        or relative_path.parts[0] in TARGET_ROOTS
+    ):
+        continue
+    path = root / relative_path
+    if path.suffix not in active_residue_suffixes or not path.is_file() or path.is_symlink():
+        continue
+    if path.is_relative_to(root / "docs/99.templates/templates"):
+        continue
+    if is_historical_evidence_path(path):
+        continue
+    if path.suffix == ".md" and canonical_markdown_owns_generic_residue(path):
+        continue
+    for line_number in generic_template_residue_lines(read_text(path)):
+        fail(f"active non-structural template residue in {rel(path)}:{line_number}")
 
 reference_template_path = template_path("reference.template.md")
 reference_template_text = read_text(reference_template_path)

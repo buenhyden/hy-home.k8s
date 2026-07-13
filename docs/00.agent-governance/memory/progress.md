@@ -32,6 +32,11 @@ inventory stays in `scripts/README.md`.
 - Corrected the closure interaction discovered by GREEN: Spec 029, Plan 029,
   and Task 029 are the exact three owner candidates removed by `status: done`,
   producing a deterministically proved 66-to-63 unique-key transition.
+- Remediated independent-review delegation gaps without restoring duplicate
+  authored-Markdown validation: a bounded bridge now owns generic residue in
+  active shell/config/native and registry-nondelegated Markdown surfaces, and
+  both public route mirrors must equal the registry-backed structural,
+  README, memory, progress, and three-format native projection.
 
 #### Memory
 
@@ -51,6 +56,11 @@ inventory stays in `scripts/README.md`.
   eleven-path staging, and all-files pre-commit form the static closure bundle.
   A fresh SDD review is recorded in the ignored
   `.superpowers/sdd/smdv-task-4-review.md` after the closure commit.
+- Review-remediation probes reject generic residue in non-structural text,
+  prove authored structural Markdown remains delegated, classify every public
+  route witness through the registry, and reject synchronized public-table
+  drift from the canonical projection. The repository quality gate passes
+  after the exact three-path remediation.
 - No live Kubernetes, Argo CD, Vault, ESO, provider runtime, credential,
   secret-value, remote CI, push, publication, merge, deployment, or
   third-party mutation was performed or inferred.

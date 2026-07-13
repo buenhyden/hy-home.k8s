@@ -36,7 +36,7 @@ gate a compatibility-mode orchestrator while retaining domain-only checks.
 | SMDV-001 | Start reciprocal Spec, Plan, Task, and index lineage | platform | Done | Logical commit `docs(execution): start semantic document validation`; `python3 scripts/validate-document-contract-registry.py --root . --mode compatibility` |
 | SMDV-002 | Implement production Markdown profile validation | platform | Done | Logical commits `feat(docs): add registry-driven markdown profile validation` and `fix(validation): harden markdown debt mutation proofs`; `python3 scripts/validate-markdown-profiles.py --self-test` |
 | SMDV-003 | Implement cross-document link, index, owner, and ledger validation | platform | Done | Logical commits `feat(docs): validate links indexes and current owners` (`f41f437`) and `fix(validation): harden cross-document boundary proofs` (`32b9414`); `python3 scripts/validate-links-and-owners.py --self-test` |
-| SMDV-004 | Delegate the repository gate and close Spec 029 | platform | Done | Logical commit `refactor(qa): delegate document checks to semantic validators`; `bash scripts/validate-repo-quality-gates.sh .` reports exact Markdown and ledger compatibility debt, no `FAIL`, and final repository PASS |
+| SMDV-004 | Delegate the repository gate and close Spec 029 | platform | Done | Logical commit `refactor(qa): delegate document checks to semantic validators`; review remediation restores a bounded non-structural residue bridge and registry-backed public-route projection; `bash scripts/validate-repo-quality-gates.sh .` reports exact Markdown and ledger compatibility debt, no `FAIL`, and final repository PASS |
 
 ## Approval and Safety Boundaries
 
@@ -48,6 +48,8 @@ gate a compatibility-mode orchestrator while retaining domain-only checks.
   the canonical progress ledger. SMDV-004 is limited to the corrected Plan's
   exact eleven paths; its additional validator path proves the exact
   66-to-63 owner-key transition caused by closing this Spec, Plan, and Task.
+  The post-commit review remediation is limited to the exact three paths for
+  the quality gate, this Task evidence, and the canonical progress ledger.
 - **Forbidden Paths**: Secrets, credentials, ignored `_workspace` children,
   local diagnostics, provider or cluster state, remote resources, and paths
   outside the active SMDV Task scope must not be read or changed.
@@ -116,6 +118,17 @@ the pinned `LEDGER-MISSING` `DEFER`; neither emits `FAIL`. The production
 self-test proves that these exact three lifecycle paths were prior owner
 candidates and that their `done` status alone changes the unique owner-key
 baseline from 66 to 63.
+
+Independent SMDV-004 review found two Important delegation gaps. The bounded
+remediation keeps authored structural Markdown residue with the canonical
+Markdown validator, but scans registry-nondelegated Markdown and active
+shell/config/native contract text for the two generic residue markers. Its
+self-test proves both detection and structural delegation. The two public
+Template-Folder Mapping tables now each equal one ordered projection derived
+from registry profile IDs, canonical template paths, and classified route
+witnesses; the only explicit bridge is the three registry-classified native
+contract formats. A same-table drift mutation must differ from that canonical
+projection, so synchronized mirror drift cannot pass.
 
 Static closure evidence includes shell syntax, all three validator self-tests,
 registry compatibility, the repository wrapper, `git diff --check`, exact
