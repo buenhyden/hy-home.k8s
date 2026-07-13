@@ -20,7 +20,8 @@
       },
       "BODY-TEMPLATE-RESIDUE": {
         "pathCount": 188,
-        "occurrenceCount": 410
+        "occurrenceCount": 410,
+        "tokenObligationCount": 410
       },
       "FM-DELIMITER": {
         "pathCount": 24,

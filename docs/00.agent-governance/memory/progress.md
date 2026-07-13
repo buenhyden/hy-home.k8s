@@ -8,6 +8,47 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - Markdown debt mutation proof hardening
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, qa, governance
+- **Status**: complete
+- **Tags**: #semantic-validation #review #debt-bijection #fixture-safety
+
+#### Progress
+
+- Closed four Important independent-review findings by treating duplicate
+  production consumption as unused debt, deriving every token-bearing
+  occurrence cap from exact records, rejecting fixture path escapes before
+  writes, and pinning the complete ordered seven-case date contract.
+- Extended both the production self-test and protected quality-gate mutation
+  proof with residue-token deletion and preserved the complete fixture digest.
+
+#### Memory
+
+- A configured debt key is consumed only when its production match count is
+  exactly one. Zero and duplicate matches are both unused configuration and
+  must emit deterministic failure evidence.
+- Test fixtures are configuration inputs. Normalize their paths before any
+  filesystem operation and independently prove containment under the temporary
+  root.
+
+#### Evidence
+
+- RED reproduced duplicate consumption without `DEBT-UNUSED`, accepted
+  residue-token deletion, unsafe fixture path writes, and silently removable
+  positive date cases.
+- GREEN requires the focused self-test, exact compatibility/strict tuple
+  parity, rule-cap recomputation, quality gate, README fixture digest, diff
+  check, exact cached scope, and full pre-commit.
+
+#### Handoff
+
+- Request a fresh independent re-review of the bounded remediation before
+  returning to SMDV-003.
+
 ### 2026-07-13 - Registry-driven Markdown profile validation
 
 #### Metadata

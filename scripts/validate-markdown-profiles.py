@@ -67,6 +67,7 @@ EXPECTED_DEBT_CAPS: dict[str, dict[str, int]] = {
     "BODY-TEMPLATE-RESIDUE": {
         "pathCount": 188,
         "occurrenceCount": 410,
+        "tokenObligationCount": 410,
     },
     "FM-DELIMITER": {
         "pathCount": 24,
@@ -487,10 +488,35 @@ def validate_document(
     return sorted(diagnostics, key=diagnostic_sort_key)
 
 
-def _write_source(root: Path, path: PurePosixPath, source: str) -> None:
-    target = root / path
+def _write_source(root: Path, path: str, source: str) -> None:
+    if not isinstance(path, str):
+        raise ValueError("fixture writer requires an unparsed path string")
+    normalized_path = _fixture_path(path)
+    normalized_root = root.resolve()
+    target = (normalized_root / normalized_path).resolve(strict=False)
+    if not target.is_relative_to(normalized_root):
+        raise ValueError(f"fixture path escapes temporary root: {path}")
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(source, encoding="utf-8")
+
+
+def _fixture_path(value: object) -> PurePosixPath:
+    if not isinstance(value, str):
+        raise ValueError("fixture path must be a string")
+    path = PurePosixPath(value)
+    if (
+        not value
+        or value == "."
+        or value != path.as_posix()
+        or value.startswith("./")
+        or path.is_absolute()
+        or ".." in path.parts
+        or "\\" in value
+    ):
+        raise ValueError(
+            f"fixture path must be normalized and repository-relative: {value}"
+        )
+    return path
 
 
 def _remove_first_required_h2(source: str, profile: DocumentProfile) -> str:
@@ -702,7 +728,9 @@ def _outcome_rows(
         for item in diagnostics
     ]
     consumption = collections.Counter(diagnostic_keys)
-    consumed = set(consumption) & set(debt.keys)
+    consumed = {
+        key for key, count in consumption.items() if count == 1 and key in debt.keys
+    }
     actual_paths: dict[str, set[str]] = collections.defaultdict(set)
     actual_occurrences: collections.Counter[str] = collections.Counter()
     for diagnostic in diagnostics:
@@ -802,7 +830,7 @@ def _run_source_case(
     append_context: AppendContext | None = None,
     today: dt.date = dt.date(2026, 7, 12),
 ) -> list[str]:
-    _write_source(temp_root, path, source)
+    _write_source(temp_root, path.as_posix(), source)
     return _rule_ids(
         validate_document(
             temp_root,
@@ -869,6 +897,26 @@ def _self_test(root: Path) -> list[str]:
         failures.append("profileMatrix contains duplicate profiles")
     if set(row_ids) != set(profiles):
         failures.append("profileMatrix must cover every registry profile exactly once")
+    expected_date_cases = (
+        ("authored-previous-day", "sdlc/spec", "2026-07-11", ()),
+        ("authored-same-day", "sdlc/spec", "2026-07-12", ()),
+        ("authored-next-day", "sdlc/spec", "2026-07-13", ("FM-FUTURE-DATE",)),
+        ("authored-valid-leap-day", "sdlc/spec", "2024-02-29", ()),
+        ("authored-invalid-leap-day", "sdlc/spec", "2025-02-29", ("FM-DATE",)),
+        ("template-date-placeholder", "template/sdlc/spec", "YYYY-MM-DD", ()),
+        ("template-invalid-date", "template/sdlc/spec", "2025-02-29", ("FM-DATE",)),
+    )
+    actual_date_cases = tuple(
+        (
+            case.get("name"),
+            case.get("profile"),
+            case.get("value"),
+            tuple(case.get("expectedRuleIds", ())),
+        )
+        for case in fixture.get("dateCases", [])
+    )
+    if actual_date_cases != expected_date_cases:
+        failures.append("dateCases must preserve the exact seven-case contract")
 
     readme_names = tuple(case.get("name") for case in readme_fixture.get("cases", []))
     if readme_names != EXPECTED_README_CASES:
@@ -891,7 +939,11 @@ def _self_test(root: Path) -> list[str]:
         if not isinstance(path_text, str):
             failures.append("README handoff path values must be strings")
             continue
-        selected = classify_path(registry, PurePosixPath(path_text))
+        try:
+            selected = classify_path(registry, _fixture_path(path_text))
+        except ValueError as exc:
+            failures.append(f"README handoff path invalid: {exc}")
+            continue
         if handoff.get("profile") != selected.profile_id:
             failures.append(f"README handoff profile mismatch: {path_text}")
         if handoff.get("requiredH2") != list(selected.headings.required):
@@ -950,7 +1002,11 @@ def _self_test(root: Path) -> list[str]:
                 failures.append(f"invalid append-fragment profile: {profile.profile_id}")
             if profile.profile_id == "governance/progress-entry" and applicability != "append-fragment":
                 failures.append("governance/progress-entry must be append-fragment")
-            fixture_path = PurePosixPath(row["fixturePath"])
+            try:
+                fixture_path = _fixture_path(row["fixturePath"])
+            except ValueError as exc:
+                failures.append(f"matrix fixture path invalid: {exc}")
+                continue
             try:
                 selected_profile = classify_path(registry, fixture_path).profile_id
             except DocumentContractError as exc:
@@ -1049,7 +1105,7 @@ def _self_test(root: Path) -> list[str]:
             profile = profiles[case["profile"]]
             actual_rules = _run_source_case(
                 temp_root,
-                PurePosixPath(case["path"]),
+                _fixture_path(case["path"]),
                 case["source"],
                 profile,
             )
@@ -1059,7 +1115,7 @@ def _self_test(root: Path) -> list[str]:
                 )
 
         for case in readme_fixture.get("cases", []):
-            path = PurePosixPath(case["path"])
+            path = _fixture_path(case["path"])
             handoff = readme_by_path.get(path.as_posix())
             if handoff is None:
                 failures.append(f"README case path is absent from paths table: {path}")
@@ -1084,7 +1140,7 @@ def _self_test(root: Path) -> list[str]:
             )
             actual_rules = _run_source_case(
                 temp_root,
-                PurePosixPath(matrix_by_profile[profile.profile_id]["fixturePath"]),
+                _fixture_path(matrix_by_profile[profile.profile_id]["fixturePath"]),
                 source,
                 profile,
                 today=dt.date(2026, 7, 12),
@@ -1093,6 +1149,34 @@ def _self_test(root: Path) -> list[str]:
                 failures.append(
                     f"date {case['name']}: expected={case['expectedRuleIds']} actual={actual_rules}"
                 )
+
+        for escape in (
+            ".",
+            "./smdv-escape.md",
+            "/tmp/smdv-escape.md",
+            "../smdv-escape.md",
+            "nested\\smdv-escape.md",
+            PurePosixPath("./smdv-normalized-too-early.md"),
+        ):
+            try:
+                _write_source(temp_root, escape, "unsafe")
+            except ValueError:
+                pass
+            else:
+                failures.append(f"fixture writer accepted escaping path: {escape}")
+        for raw_escape in (
+            ".",
+            "./smdv-escape.md",
+            "../smdv-escape.md",
+            "/tmp/smdv-escape.md",
+            "nested\\smdv-escape.md",
+        ):
+            try:
+                _fixture_path(raw_escape)
+            except ValueError:
+                pass
+            else:
+                failures.append(f"fixture parser accepted escaping path: {raw_escape}")
     named_cases = {case.get("name") for case in fixture.get("mutationCases", [])}
     required_named_cases = {
         "valid-spec",
@@ -1244,11 +1328,29 @@ def _self_test(root: Path) -> list[str]:
         row["affectedPaths"].append(copy.deepcopy(row["affectedPaths"][0]))
         row["affectedPaths"].sort(key=lambda item: item["path"])
 
+    def delete_residue_token(candidate: dict[str, Any]) -> None:
+        item = next(
+            item
+            for row in candidate["compatibilityDebt"]
+            for item in row["affectedPaths"]
+            if any(
+                token.startswith("BODY-TEMPLATE-RESIDUE::")
+                for token in item["tokens"]
+            )
+        )
+        token_index = next(
+            index
+            for index, token in enumerate(item["tokens"])
+            if token.startswith("BODY-TEMPLATE-RESIDUE::")
+        )
+        item["tokens"].pop(token_index)
+
     expect_config_rejection("affected path", mutate_path)
     expect_config_rejection("rule ID", mutate_rule)
     expect_config_rejection("rule cap", mutate_cap)
     expect_config_rejection("union cap", mutate_union)
     expect_config_rejection("duplicate consumed record", duplicate_record)
+    expect_config_rejection("residue token deletion", delete_residue_token)
 
     stale_contract = copy.deepcopy(base_contract)
     stale_item = next(
@@ -1307,6 +1409,20 @@ def _self_test(root: Path) -> list[str]:
             result = _outcome_rows(root, [diagnostic], mode)
             if not result or not all(row.outcome == "FAIL" for row in result):
                 failures.append(f"{label} mutation deferred in {mode}")
+
+    duplicate_key_diagnostics = [*production_diagnostics, production_diagnostics[0]]
+    for mode in ("compatibility", "strict"):
+        duplicated_rows = _outcome_rows(root, duplicate_key_diagnostics, mode)
+        duplicate_unused = [
+            row
+            for row in duplicated_rows
+            if row.diagnostic.rule_id == "DEBT-UNUSED"
+            and row.diagnostic.path == production_diagnostics[0].path
+        ]
+        if len(duplicate_unused) != 1 or duplicate_unused[0].outcome != "FAIL":
+            failures.append(
+                f"duplicate production debt consumption lacked DEBT-UNUSED in {mode}"
+            )
 
     if first_affected.get("path") is None:
         failures.append("semantic debt proof fixture unexpectedly empty")

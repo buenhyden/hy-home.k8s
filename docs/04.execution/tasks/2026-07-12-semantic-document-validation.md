@@ -33,7 +33,7 @@ cross-document and integration changes pass the Plan's repository-static gates.
 | ID | Work item | Owner | Status | Evidence |
 | --- | --- | --- | --- | --- |
 | SMDV-001 | Start reciprocal Spec, Plan, Task, and index lineage | platform | Done | Logical commit `docs(execution): start semantic document validation`; `python3 scripts/validate-document-contract-registry.py --root . --mode compatibility` |
-| SMDV-002 | Implement production Markdown profile validation | platform | Done | Logical commit `feat(docs): add registry-driven markdown profile validation`; `python3 scripts/validate-markdown-profiles.py --self-test` |
+| SMDV-002 | Implement production Markdown profile validation | platform | Done | Logical commits `feat(docs): add registry-driven markdown profile validation` and `fix(validation): harden markdown debt mutation proofs`; `python3 scripts/validate-markdown-profiles.py --self-test` |
 | SMDV-003 | Implement cross-document link, index, owner, and ledger validation | platform | Queued | Logical commit `feat(validation): add link and owner validator`; `python3 scripts/validate-links-and-owners.py --self-test` |
 | SMDV-004 | Delegate the repository gate and close Spec 029 | platform | Queued | Logical commit `feat(validation): delegate semantic document gates`; `bash scripts/validate-repo-quality-gates.sh .` |
 
@@ -75,7 +75,10 @@ handoff and its exact 72-path table, append context, deterministic Seoul-date
 semantics, stable text/JSON diagnostics, and exact finite compatibility debt.
 Compatibility reports 1,299 `DEFER` diagnostics across the frozen 266-path
 union with exit 0; strict mode reports the identical tuples as `FAIL` with exit
-1 and no `DEBT-UNUSED`. Registry inventory remains 467 target Markdown paths
+1 and no baseline `DEBT-UNUSED`. Independent-review mutations prove duplicate
+production consumption emits `DEBT-UNUSED`, all token obligations reproduce
+their occurrence caps, unsafe fixture paths are rejected before writes, and
+the seven date cases cannot silently shrink. Registry inventory remains 467 target Markdown paths
 (`baseline=433`, `new=36`), 60 profiles, 27 templates, and 72 canonical README
 paths. Evidence is repository-static and excludes live, secret-value,
 credential, remote CI, publication, push, merge, deployment, and third-party

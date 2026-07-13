@@ -1480,7 +1480,7 @@ registry_profiles = {
 TEMPLATE_COMPATIBILITY_CONTRACT_V1 = {
     "name": "TemplateCompatibilityContract.v1",
     "semantic_sha256": (
-        "95535fcb8ef0571d6c2a9f7d6bd27d64eef299c3f9dd181f0d598284767322bb"  # pragma: allowlist secret
+        "ac12a64212c5073df482509f3b453596482e2563284eb9e9aae03cdd41514759"  # pragma: allowlist secret
     ),
 }
 
@@ -1560,6 +1560,23 @@ def assert_template_compatibility_mutation_proof(contract: dict) -> None:
     def mutate_union_cap(candidate: dict) -> None:
         candidate["semanticDebtCaps"]["unionPathCount"] += 1
 
+    def delete_residue_token(candidate: dict) -> None:
+        item = next(
+            item
+            for row in candidate["compatibilityDebt"]
+            for item in row["affectedPaths"]
+            if any(
+                token.startswith("BODY-TEMPLATE-RESIDUE::")
+                for token in item["tokens"]
+            )
+        )
+        token = next(
+            token
+            for token in item["tokens"]
+            if token.startswith("BODY-TEMPLATE-RESIDUE::")
+        )
+        item["tokens"].remove(token)
+
     mutations = {
         "owner": mutate_owner,
         "growthAllowed": mutate_growth_policy,
@@ -1570,6 +1587,7 @@ def assert_template_compatibility_mutation_proof(contract: dict) -> None:
         "affected token": mutate_affected_token,
         "semantic rule cap": mutate_rule_cap,
         "semantic union cap": mutate_union_cap,
+        "residue token obligation": delete_residue_token,
     }
     for label, mutate in mutations.items():
         candidate = copy.deepcopy(contract)
