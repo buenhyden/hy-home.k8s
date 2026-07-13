@@ -50,7 +50,11 @@ local state. It does not rewrite history for stylistic uniformity.
   433-file baseline corpus plus program-created authored documents. Stage 99
   support/templates, README bodies, provider gateways/adapters, validation
   selection, and protected machine surfaces remain owned by their preceding or
-  following tranche as defined below.
+  following tranche as defined below. The only exception is structural
+  canonicalization of thirteen paths already registered as finite Spec 030
+  shape debt: six support documents, three Stage 00 authoring/routing rules,
+  and four provider guidance documents. This exception does not transfer
+  semantic or behavioral ownership.
 - **Key Dependencies**: Specs 026–029, official topic sources, Git history, link
   graph, generated-file ownership, and current audit findings.
 - **Tech Stack**: `git mv`, focused manual edits, registry validation, link and
@@ -60,9 +64,10 @@ Migration waves:
 
 1. Stage 01–03 active PRD, architecture, ADR, and Spec documents.
 2. Stage 04–05 active execution and operations documents.
-3. Remaining Stage 00 authored governance/reference bodies, excluding Stage 00
-   template mirrors changed by Spec 027 and provider gateways owned by Spec 031.
-4. Current non-README Stage 90 references and Stage 98 traceability records.
+3. Remaining Stage 00 authored governance/reference bodies plus the thirteen
+   pre-registered Spec 027/031 handoff paths under a structural-only exception.
+4. All remaining shape-debt non-README Stage 90 references and Stage 98
+   traceability records.
 5. AWS and Azure provider snapshots and executable example indexes.
 6. Cross-link-only follow-ups in README indexes owned by Spec 028, followed by
    strict validation cutover and residual legacy search.
@@ -71,13 +76,23 @@ Tranche handoff is binding:
 
 | Path or responsibility | Canonical change owner | This Spec's allowed interaction |
 | --- | --- | --- |
-| `docs/99.templates/support/**` and non-README forms | Spec 027 | Consume final contracts; cross-link repair only. |
+| `docs/99.templates/support/**` and non-README forms | Spec 027 | Consume final contracts. Structural-only canonicalization is authorized for exactly `common-documentation-governance.md`, `documentation-contract.md`, `frontmatter-schema.md`, `legacy-cleanup-rules.md`, `sdlc-governance.md`, and `template-routing.md`; no route, schema, form, or governance-semantic change. |
 | README forms and every tracked `README.md`, including `_workspace/README.md` | Spec 028 | Request or apply relocation-driven index/link rows only; no profile/body redesign. |
 | Validator implementation and fixture engine | Spec 029 | Consume strict results; add migration cases through its fixture interface. |
-| Root provider shims, `.agents/**`, `.claude/**`, `.codex/**`, shared role semantics | Spec 031 | Excluded from authored migration; link to canonical owners only. |
+| Root provider shims, `.agents/**`, `.claude/**`, `.codex/**`, shared role semantics | Spec 031 | Excluded from authored migration; link to canonical owners only. Structural-only canonicalization is authorized for exactly `docs/00.agent-governance/providers/{agents-md,claude,codex,gemini}.md`; no provider or agent behavior change. |
 | CI selector blocks and validation obligations | Spec 031 | Excluded except link repair. |
 | Action identities/permissions, GitOps, infrastructure, policy, secrets, Traefik machine surfaces | Spec 032 | Do not change behavior; migrate only their authored documentation after the protected owner confirms links. |
 | Remaining non-README authored documents in Stages 00–05, 90, and 98 | Spec 030 | Full disposition and topic-content migration owner. |
+
+The other three handoff exceptions are exactly
+`docs/00.agent-governance/rules/documentation-protocol.md`,
+`docs/00.agent-governance/rules/document-stage-routing.md`, and
+`docs/00.agent-governance/rules/stage-authoring-matrix.md`. Together with the
+six support and four provider paths above, these thirteen files may receive
+only Frontmatter/section-order normalization, duplicate template-residue
+removal, and link repair. Historical facts and all Spec 027/031-owned semantic,
+route, schema, form, provider, agent, CI, and validation behavior remain
+unchanged.
 
 ## Data Modeling & Storage Strategy
 

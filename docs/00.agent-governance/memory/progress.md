@@ -8,6 +8,48 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - Authored migration shape-debt ownership correction
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, planning, governance
+- **Status**: complete
+- **Tags**: #authored-document #shape-debt #ownership #strict-cutover
+
+#### Progress
+
+- Reconciled all 266 finite template-shape debt paths before ADM-002 and fixed
+  the wave allocation to the disjoint exhaustive split
+  `ADM-003=34`, `ADM-004=120`, `ADM-005=73`, and `ADM-006=39`.
+- Expanded ADM-005 to the omitted historical Stage 90 references, six Stage 99
+  support documents, and seven governance/provider handoff documents.
+- Authorized the thirteen Spec 027/031 handoff paths for structural-only
+  canonicalization while preserving their route, schema, form, provider,
+  agent, and governance semantics with their original owners.
+- Pinned ADM-002 dispositions to 59 cloud `merge` rows, 227 non-cloud debt
+  `transform` rows, and 183 `preserve` rows including the ledger self-row.
+
+#### Memory
+
+- Strict cutover requires an executable, exhaustive owner for every finite
+  compatibility record; directory prose alone is not a coverage proof.
+- Cross-tranche shape cleanup may use a narrowly enumerated exception without
+  transferring semantic or behavioral ownership.
+
+#### Evidence
+
+- The fixture-derived gate proves pairwise disjoint wave sets whose union is
+  the exact 266-path debt set; a stranded or multiply owned path fails before
+  ledger publication.
+- The correction changes only Spec 030, Plan 030, Task 030, and this canonical
+  progress entry. No authored migration body or protected behavior changed.
+
+#### Handoff
+
+- ADM-002 may resume from the clean 468-path pre-ledger inventory. Its ledger
+  must use the fixture-derived disposition split before any ADM-003 mutation.
+
 ### 2026-07-13 - Authored migration execution-contract correction
 
 #### Metadata

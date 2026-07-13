@@ -34,18 +34,20 @@ consolidate duplicate AWS/Azure prose, and close the compatibility boundary.
 | ID | Work item | Owner | Status | Evidence |
 | --- | --- | --- | --- | --- |
 | ADM-001 | Start reciprocal Spec, Plan, Task, and index lineage | platform | Done | `python3` reciprocal-lineage assertion in Plan Task 1 Step 4; logical commit `docs(execution): start authored document migration` |
-| ADM-002 | Publish the baseline disposition and durable research ledger | platform | Queued | `python3 scripts/validate-links-and-owners.py --root . --mode strict`; logical commit `docs(migration): inventory authored document dispositions` |
-| ADM-003 | Normalize Stage 01–03 active design documents | platform | Queued | Full-corpus compatibility JSON filtered first by the three RED directory boundaries and then by each exact reviewed batch/GREEN path set; logical commit `docs(migration): normalize active sdlc design documents` |
-| ADM-004 | Normalize Stage 04–05 execution and operations documents | platform | Queued | Full-corpus compatibility JSON filtered first by the two RED directory boundaries and then by each exact reviewed batch/GREEN path set; logical commit `docs(migration): normalize execution and operations documents` |
-| ADM-005 | Normalize governance, Current references, and Archive links | platform | Queued | Full-corpus compatibility JSON filtered first by the three RED directory boundaries and then by each exact reviewed batch/GREEN path set; logical commit `docs(migration): normalize governance references and archive links` |
-| ADM-006 | Consolidate AWS and Azure example documentation | platform | Queued | `test -z "$(git ls-files examples/aws/docs examples/azure/docs)"`; logical commit `docs(migration): consolidate cloud example documentation` |
+| ADM-002 | Publish the baseline disposition and durable research ledger | platform | Queued | Pre-edit fixture gate proves disjoint/exhaustive shape-debt ownership `34 + 120 + 73 + 39 = 266`; final ledger disposition proof is exactly `preserve=183`, `transform=227`, `merge=59`; logical commit `docs(migration): inventory authored document dispositions` |
+| ADM-003 | Normalize Stage 01–03 active design documents | platform | Queued | Full-corpus compatibility JSON filtered first by the three RED directory boundaries and then by the exact reviewed 34-path batch/GREEN set; logical commit `docs(migration): normalize active sdlc design documents` |
+| ADM-004 | Normalize Stage 04–05 execution and operations documents | platform | Queued | Full-corpus compatibility JSON filtered first by the two RED directory boundaries and then by the exact reviewed 120-path batch/GREEN set; logical commit `docs(migration): normalize execution and operations documents` |
+| ADM-005 | Normalize governance, Current references, Archive links, and six support documents | platform | Queued | Full-corpus compatibility JSON filtered first by four RED boundaries and then by the exact reviewed 73-path batch/GREEN set; structural-only checks preserve historical facts and Spec 027/031 route/schema/form/provider semantics; logical commit `docs(migration): normalize governance references and archive links` |
+| ADM-006 | Consolidate AWS and Azure example documentation | platform | Queued | Exact 39-path debt manifest within the immutable 59-source merge/deletion set; `test -z "$(git ls-files examples/aws/docs examples/azure/docs)"`; logical commit `docs(migration): consolidate cloud example documentation` |
 | ADM-007 | Enable strict validation and close Spec 030 | platform | Queued | `python3 scripts/validate-document-contract-registry.py --root . --mode strict`, both semantic validators in strict mode, and `bash scripts/validate-repo-quality-gates.sh .`; logical commit `chore(docs): cut over document profiles to strict validation` |
 
 ## Approval and Safety Boundaries
 
 - **Allowed Paths**: Only the exact path set declared by the active ADM Plan
   Task may change. ADM-001 is limited to its seven Spec, Plan, Task, index, and
-  canonical progress-ledger paths.
+  canonical progress-ledger paths. ADM-003 through ADM-006 use the reviewed
+  disjoint fixture allocation `34/120/73/39`; ADM-005's thirteen handoff paths
+  are structural-only and retain Spec 027/031 semantic ownership.
 - **Forbidden Paths**: Credentials, secrets, ignored `_workspace` children,
   local diagnostics, provider or cluster state, generated outputs, and paths
   outside the current ADM wave are excluded.

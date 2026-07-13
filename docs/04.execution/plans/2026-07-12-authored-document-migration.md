@@ -135,6 +135,62 @@ rule-cap / union-count mutation proof is refreshed in
 canonicalized debt path may remain, and no record for an untouched path may be
 removed.
 
+Before ADM-002 creates any ledger row, run this fixture-owned coverage gate.
+It is the executable ownership contract for all 266 pre-registered shape-debt
+paths: ADM-003 owns 34, ADM-004 owns 120, ADM-005 owns 73, and ADM-006 owns 39.
+The sets are pairwise disjoint and their union is the complete fixture path
+set; a stranded or multiply owned path blocks ADM-002.
+
+```bash
+python3 - <<'PY'
+import json
+import pathlib
+
+fixture = json.loads(pathlib.Path(
+    'tests/fixtures/document-contracts/template-compatibility.json'
+).read_text())
+debt_paths = {
+    affected['path']
+    for profile in fixture['compatibilityDebt']
+    for affected in profile['affectedPaths']
+}
+support_paths = {
+    'docs/99.templates/support/common-documentation-governance.md',
+    'docs/99.templates/support/documentation-contract.md',
+    'docs/99.templates/support/frontmatter-schema.md',
+    'docs/99.templates/support/legacy-cleanup-rules.md',
+    'docs/99.templates/support/sdlc-governance.md',
+    'docs/99.templates/support/template-routing.md',
+}
+adm003 = {path for path in debt_paths if path.startswith((
+    'docs/01.requirements/', 'docs/02.architecture/requirements/',
+    'docs/02.architecture/decisions/', 'docs/03.specs/',
+))}
+adm004 = {path for path in debt_paths if path.startswith((
+    'docs/04.execution/plans/', 'docs/04.execution/tasks/',
+    'docs/05.operations/',
+))}
+adm006 = {path for path in debt_paths if path.startswith((
+    'examples/aws/docs/', 'examples/azure/docs/',
+))}
+adm005 = debt_paths - adm003 - adm004 - adm006
+assert support_paths <= adm005
+assert all(path.startswith((
+    'docs/00.agent-governance/', 'docs/90.references/', 'docs/98.archive/',
+)) or path in support_paths for path in adm005)
+waves = {'ADM-003': adm003, 'ADM-004': adm004, 'ADM-005': adm005, 'ADM-006': adm006}
+assert {name: len(paths) for name, paths in waves.items()} == {
+    'ADM-003': 34, 'ADM-004': 120, 'ADM-005': 73, 'ADM-006': 39,
+}
+names = list(waves)
+for index, left in enumerate(names):
+    for right in names[index + 1:]:
+        assert waves[left].isdisjoint(waves[right]), (left, right)
+assert set().union(*waves.values()) == debt_paths
+assert len(debt_paths) == 266
+PY
+```
+
 Before any content mutation, the same Task must freeze
 `_workspace/adm-NNN-allowed-document-paths.nul`. Its sorted `documentPaths`
 come from the reviewed migration/debt manifest, are a subset of the Task's
@@ -392,6 +448,17 @@ Destination is required even for `delete`, which uses an explicit reviewed
 `not applicable - no successor approved` value. The ledger self-row owner-key
 remains empty, and every row still requires the other thirteen cells.
 
+Disposition assignment is deterministic and ordered. First, all 59 tracked
+`examples/aws/docs/**` and `examples/azure/docs/**` source paths are `merge`
+rows targeting their provider snapshot; this rule takes precedence for the 39
+cloud paths that also have shape debt. Next, every remaining path in the exact
+266-path fixture coverage set is `transform` with itself as destination,
+including completed-history documents and the structurally scoped Spec
+027/031 handoff paths. Every other current path, including the new ledger
+self-row, is `preserve` with itself as destination. The final 469-row ledger
+must therefore contain exactly `preserve=183`, `transform=227`, and `merge=59`,
+with zero `relocate`, `tombstone`, or `delete` rows at ADM-002.
+
 - [ ] **Step 4: Verify completeness and tracked boundary**
 
 In the same edit that makes the durable ledger complete, remove the one exact
@@ -645,7 +712,8 @@ item return atomically.
 
 - Consumes: final registry, templates, compatibility diagnostics, and ledger rows.
 - Produces: debt-free current design documents without altering accepted-decision
-  history, with the exact Stage 01–03 debt records and aggregate caps removed.
+  history, with the exact 34 Stage 01–03 shape-debt paths and their aggregate
+  caps removed.
 
 - [ ] **Step 1: Capture RED diagnostics for the three directory boundaries**
 
@@ -679,6 +747,8 @@ the five exact Files families above and include every debt-tuple path. Freeze
 the sorted paths as `_workspace/adm-003-allowed-document-paths.nul`; record and
 independently approve its count and SHA-256 in Task evidence before any
 mutation. These are compatibility-fixture records, never registry records.
+The manifest must contain exactly the 34 ADM-003 paths proven by the
+pre-ADM-002 coverage gate.
 
 - [ ] **Step 2: Build exact NUL-delimited family batches**
 
@@ -845,7 +915,7 @@ fixture records/caps, digest, and mutation proofs return atomically.
 
 - Consumes: Plan/Task/Guide/Policy/Runbook/Incident/Postmortem profiles.
 - Produces: preserved execution facts and role-separated operational documents,
-  with their exact shape-debt records and aggregate caps removed.
+  with the exact 120 ADM-004 shape-debt paths and their aggregate caps removed.
 
 - [ ] **Step 1: Capture RED directory-boundary diagnostics**
 
@@ -878,6 +948,8 @@ of tracked eligible non-README execution/operations paths, include every debt
 tuple path, and exclude the same-topic Task because that file is fixed evidence.
 Freeze `_workspace/adm-004-allowed-document-paths.nul`, record its count and
 SHA-256 in Task evidence, and obtain independent approval before any mutation.
+The manifest must contain exactly the 120 ADM-004 paths proven by the
+pre-ADM-002 coverage gate.
 
 - [ ] **Step 2: Build exact NUL-delimited execution/operations batches**
 
@@ -1008,12 +1080,15 @@ and mutation refresh, and the printed staged count. Roll back with
 
 **Files:**
 
-- Modify: non-README authored Markdown under `docs/00.agent-governance/`, excluding Spec 027 template mirrors and Spec 031 provider gateways
-- Modify: `docs/90.references/audits/2026-07-11-weia/*.md`
-- Modify: `docs/90.references/research/2026-07-07-wer/*.md`
-- Modify: `docs/90.references/data/*.md`
-- Modify: `docs/90.references/learning/*.md`
-- Modify: `docs/98.archive/**/*.md` only where authority/index links are wrong
+- Modify structurally only: every shape-debt non-README Markdown path under `docs/00.agent-governance/`
+- Modify structurally only: every remaining shape-debt non-README Markdown path under `docs/90.references/`
+- Modify structurally only: every remaining shape-debt non-README Markdown path under `docs/98.archive/`
+- Modify structurally only: `docs/99.templates/support/common-documentation-governance.md`
+- Modify structurally only: `docs/99.templates/support/documentation-contract.md`
+- Modify structurally only: `docs/99.templates/support/frontmatter-schema.md`
+- Modify structurally only: `docs/99.templates/support/legacy-cleanup-rules.md`
+- Modify structurally only: `docs/99.templates/support/sdlc-governance.md`
+- Modify structurally only: `docs/99.templates/support/template-routing.md`
 - Modify: durable migration ledger
 - Modify: `tests/fixtures/document-contracts/template-compatibility.json`
 - Modify: `scripts/validate-repo-quality-gates.sh`
@@ -1024,7 +1099,11 @@ and mutation refresh, and the printed staged count. Roll back with
 
 - Consumes: governance/reference/archive profiles and historical-path exclusions.
 - Produces: one current authority per role while retaining dated and archive
-  evidence, with exactly the canonicalized shape-debt records removed.
+  evidence, with exactly the 73 ADM-005 shape-debt paths canonicalized and
+  their records removed. This wave changes only Frontmatter/section shape and
+  duplicate template residue in the thirteen Spec 027/031 handoff paths; it
+  preserves their facts, provider semantics, route/schema/form behavior, and
+  the semantic ownership assigned to Specs 027 and 031.
 
 - [ ] **Step 1: Capture RED diagnostics for remaining owned boundaries**
 
@@ -1034,7 +1113,7 @@ validator_rc=0
 python3 scripts/validate-markdown-profiles.py --root . --mode compatibility \
   --format json >"$report" || validator_rc=$?
 if [ "$validator_rc" -ne 0 ]; then exit "$validator_rc"; fi
-python3 - "$report" docs/00.agent-governance docs/90.references docs/98.archive <<'PY'
+python3 - "$report" docs/00.agent-governance docs/90.references docs/98.archive docs/99.templates/support <<'PY'
 import json, pathlib, sys
 data = json.loads(pathlib.Path(sys.argv[1]).read_text())
 boundaries = sys.argv[2:]
@@ -1043,10 +1122,12 @@ selected = [d for d in data['diagnostics'] if any(
     for boundary in boundaries
 )]
 assert selected and all(d['outcome'] == 'DEFER' for d in selected)
+assert len({d['path'] for d in selected}) == 73
 PY
 ```
 
-Expected: valid JSON and no unregistered debt.
+Expected: valid JSON across exactly four RED boundaries, exactly 73 distinct
+paths, and no unregistered debt.
 
 Create and independently review
 `_workspace/adm-005-debt-removals.json` from exact matched tuples in the finite
@@ -1054,17 +1135,22 @@ template compatibility fixture. Freeze exact before/removed/after counts for
 paths, each rule, obligations, occurrences, and union. An unregistered
 diagnostic fails; it is never converted into a registry record or new debt.
 Its reviewed `documentPaths` must be a subset of the exact tracked Files
-families, include every debt-tuple path, and exclude README, the seven handoff
-paths, the progress ledger, and durable migration ledger. Freeze
+families, include every debt-tuple path, and exclude README, the progress
+ledger, and durable migration ledger. It must contain all remaining broad
+`docs/00.agent-governance`, `docs/90.references`, and `docs/98.archive` debt
+plus the exact six support paths named in Files, for exactly 73 paths. Freeze
 `_workspace/adm-005-allowed-document-paths.nul`; record and independently
 approve its count and SHA-256 before mutation.
 
 - [ ] **Step 2: Build exact NUL-delimited governance/reference batches**
 
-Generate ignored manifests of at most five tracked paths for the owned Stage 00,
-Stage 90, and Stage 98 sets. Exclude README paths and the stated Spec 027/031
-ownership exceptions while constructing the manifests. Treat each manifest as
-one 2–5 minute edit, ledger, and compatibility-validation checkpoint.
+Generate ignored manifests of at most five tracked paths for the structurally
+owned Stage 00, Stage 90, Stage 98, and exact Stage 99 support sets. README,
+progress, and durable-ledger paths remain excluded. The former seven handoff
+exclusions are now included under the narrow structural-only exception in Spec
+030; semantic, behavior, route, schema, form, and provider changes remain
+forbidden. Treat each manifest as one 2–5 minute edit, ledger, and
+compatibility-validation checkpoint.
 
 ```bash
 mkdir -p _workspace/adm-005-batches
@@ -1074,22 +1160,14 @@ debt = json.loads(pathlib.Path('_workspace/adm-005-debt-removals.json').read_tex
 selected = set(debt['documentPaths'])
 eligible = set(subprocess.check_output([
     'git', 'ls-files', 'docs/00.agent-governance',
-    'docs/90.references/audits/2026-07-11-weia',
-    'docs/90.references/research/2026-07-07-wer',
-    'docs/90.references/data', 'docs/90.references/learning', 'docs/98.archive',
+    'docs/90.references', 'docs/98.archive', 'docs/99.templates/support',
 ], text=True).splitlines())
 excluded = {
-    'docs/00.agent-governance/rules/documentation-protocol.md',
-    'docs/00.agent-governance/rules/document-stage-routing.md',
-    'docs/00.agent-governance/rules/stage-authoring-matrix.md',
-    'docs/00.agent-governance/providers/agents-md.md',
-    'docs/00.agent-governance/providers/claude.md',
-    'docs/00.agent-governance/providers/codex.md',
-    'docs/00.agent-governance/providers/gemini.md',
     'docs/00.agent-governance/memory/progress.md',
     'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
 } | {p for p in eligible if pathlib.PurePosixPath(p).name == 'README.md'}
 assert selected and selected <= eligible and not selected & excluded
+assert len(selected) == 73
 assert {item['path'] for item in debt['debtTuples']} <= selected
 payload = b''.join(p.encode() + b'\0' for p in sorted(selected))
 pathlib.Path('_workspace/adm-005-allowed-document-paths.nul').write_bytes(payload)
@@ -1102,10 +1180,10 @@ for i in range(0, len(paths), 5):
 PY
 ```
 
-Expected: the recorded count/SHA matches; all README, fixed evidence, and seven
-handoff paths are absent; every frozen path occurs once in a batch of at most
-five paths. After each batch edit, run the full-corpus validator and filter to
-that exact batch only:
+Expected: the recorded count/SHA matches 73; all README and fixed evidence
+paths are absent; the thirteen narrowly authorized handoff paths are present;
+and every frozen path occurs once in a batch of at most five paths. After each
+batch edit, run the full-corpus validator and filter to that exact batch only:
 
 ```bash
 batch=${ADM_BATCH:?set ADM_BATCH to the exact reviewed ADM-005 batch manifest}
@@ -1127,6 +1205,10 @@ PY
 
 Normalize sections and authority links in owned files. Preserve earlier dated
 packs and record their snapshot boundary in the ledger without rewriting bodies.
+For completed history and the thirteen handoff paths, restrict changes to
+canonical Frontmatter order/values, canonical section naming/order, duplicate
+template-residue removal, and link repair. Do not change historical facts or
+Spec 027/031-owned route, schema, form, provider, or agent behavior.
 Do not open a later manifest until all exact paths in the current manifest and
 their ledger rows pass compatibility validation.
 
@@ -1219,7 +1301,9 @@ ledger, debt fixture, and digest consumer return together.
 - Consumes: Spec 028 README forms and the exact fifty-nine-file cloud source set.
 - Produces: two dated provider snapshots, executable entrypoints, zero
   example-local SDLC Markdown, and no compatibility records for removed or
-  canonicalized cloud documentation.
+  canonicalized cloud documentation. Its frozen debt manifest contains exactly
+  the 39 ADM-006 shape-debt paths proven by the pre-ADM-002 coverage gate; all
+  59 source paths still receive `merge` dispositions and deletion review.
 
 - [ ] **Step 1: Record RED source count and inbound links**
 
