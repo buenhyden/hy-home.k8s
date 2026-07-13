@@ -42,6 +42,12 @@ Curate the repo-local LLM Wiki Markdown entrypoints so agents and humans can fin
 - Do not run live cluster mutation commands such as `kubectl apply`, `kubectl patch`, or forced ArgoCD sync.
 - Do not create vector stores, embeddings, retrieval services, runtime caches, package manifests, lockfiles, or static wiki site artifacts.
 - Keep policy and procedure changes in their canonical owner files; update LLM Wiki links only when ownership or entrypoints change.
+- Stop curation when ownership is ambiguous, content would duplicate a canonical contract, or the request requires a new runtime or generated artifact.
+
+## Capability and Evidence
+
+- Capability tier: `worker`; perform bounded wiki entrypoint and link-map curation without policy or runtime ownership.
+- Required evidence: identify each changed entrypoint, canonical owner target, stale-link result, and generated-index validation outcome.
 
 ## Handoff / Escalation
 

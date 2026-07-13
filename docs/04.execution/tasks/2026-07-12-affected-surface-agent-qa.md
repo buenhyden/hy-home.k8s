@@ -36,7 +36,7 @@ across thirty provider adapters, and close the shared QA handoff contract.
 | ASQA-002 | Define the affected-surface registry, schema, selector, and positive/negative path fixtures | platform | Done | RED empty-selector exit `1`; GREEN 19/19 surface and 630 pre-stage/635 exact-index tracked-path coverage, 21 positive paths, 4 exact selection cases, 5 rejection cases, 4 post-script/`--` boundary positives, 29 route/argv/lane/job/protection/fallback/evidence mutations, exact executable tokens, direct-script/wrapper boundaries, fail-closed interpreter-eval options and surface fallbacks, NUL/output self-tests, Python compile, strict document QA, full quality gate, and focused pre-commit; logical commit `feat(qa): define affected-surface validation contract` |
 | ASQA-003 | Drive local hooks and pre-commit lanes from validated selector output without newline path transport | platform | Done | Fixture-first RED/GREEN, 636-path tracked coverage, bounded/redacted shell-free runner evidence, three-provider hook payload/no-file/control-byte/root/symlink/alias simulations, zero pre-commit invocation on invalid input, shell/JSON/Python syntax checks, strict document QA, full quality gate, focused pre-commit, and exact thirteen-path staging; logical commit `refactor(hooks): drive local validation from affected surfaces` |
 | ASQA-004 | Select existing CI jobs from NUL-delimited changed paths and preserve Spec 032 workflow ownership | platform | Done | Fixture-first RED/GREEN for four push/PR range cases, exact selector job/GitHub-output parity, initial/zero-before fail-safe, 636-path contract coverage, canonical quality-gate and Action-inventory alignment, actionlint and zizmor PASS, protected-job digest equality, and exact eight-path staging; logical commit `ci(qa): select jobs from affected-surface registry` |
-| ASQA-005 | Enforce responsibility, output, prohibition, stop, handoff, capability-tier, and evidence semantics for ten roles and thirty adapters | platform | Draft | Semantic mutation self-tests and roster-currentness checks; logical commit `feat(agents): enforce cross-provider role semantics` |
+| ASQA-005 | Enforce responsibility, output, prohibition, stop, handoff, capability-tier, and evidence semantics for ten roles and thirty adapters | platform | Done | Fixture-first RED exposed all eight unimplemented `ROLE-*` rules; GREEN validates 10 roles × 3 providers × 8 categories × remove/replace = 480 source-to-parser exact-rule mutations, 33 malformed-YAML/non-operative-Markdown adversarial cases, and 20 shared-negation-vocabulary probes, all thirty native adapters, provider-metadata exclusion, metadata/import hash invariance, roster currentness, strict document QA, full quality gate, all-files pre-commit, and exact 37-path staging; logical commit `feat(agents): enforce cross-provider role semantics` |
 | ASQA-006 | Align thin gateways, Stage 00 QA governance, repository gates, lifecycle, and independent-review evidence | platform | Draft | Full static QA bundle with lane limitations and reviewer findings; logical commit `docs(agents): align provider qa evidence contracts` |
 
 The exact validation commands for each logical unit are:
@@ -266,9 +266,39 @@ Spec 032 handoff rather than active current inventory or ASQA-004 behavior.
 
 Later rows retain their own fixture-first RED/GREEN evidence. ASQA-002 and
 ASQA-003 reject unmatched or ambiguous paths and unsafe path transport;
-ASQA-005 must fail independently for each semantic category and provider form;
 ASQA-006 must report every lane as PASS, SKIP, FAIL, or DEFER and record
 independent review before lifecycle closure.
+
+ASQA-005 began with a validator shell that emitted the exact eight unimplemented
+rule IDs and exited `1`. The completed provider-neutral JSON contract and schema
+own responsibility, output, prohibited action, stop condition, handoff,
+capability tier, and required evidence claims for the exact ten current roles;
+they reject provider-owned `model`, `tools`, and `modelReasoningEffort` fields.
+The production parser reads YAML frontmatter plus Markdown for Gemini and Claude
+and TOML `developer_instructions` for Codex, normalizing whitespace only. Its
+fixture executes all 480 role/provider/category/remove-or-replace combinations
+against provider source through the production YAML/TOML/Markdown parser and
+requires each mutation to return exactly its distinct `ROLE-*` rule ID,
+including provider-stem failures. YAML duplicate keys, non-mapping metadata,
+and non-scalar names fail closed. Thirty-three additional adversarial cases prove
+that fenced, absolute/list-container-indented, and indented-tilde code, HTML
+comments, strikethrough, blockquote/nested/lazy continuation, forward/backward
+revocation, external negation, inline-code-only claims, and quoted/nested
+headings cannot satisfy a semantic claim. Each category claim must equal a
+complete normalized paragraph/list-item unit in its owning section. The smallest
+provider-native body changes add
+topic-specific stop, bounded capability, and evidence claims while all native
+metadata and scope-import hashes remain equal to their pre-edit values. Focused
+semantic and roster checks, strict document checks, the full repository quality
+gate, all-files pre-commit, diff checks, and exact A4/M33 staging form the final
+repo-static evidence; provider runtime consumption, remote CI, credentials,
+secrets, and live Kubernetes or cloud state remain `DEFER`.
+
+Forward, backward, and contextual negation share one ten-state vocabulary,
+including `false`, `not true`, invalidation, revocation/retraction/supersession,
+contradiction, non-operative status, and non-applicability. Twenty generated
+source-to-parser probes exercise every state in both directions so the three
+recognizers cannot drift independently.
 
 ## Traceability
 

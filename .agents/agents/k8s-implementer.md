@@ -41,6 +41,12 @@ Author and refine Kubernetes manifest changes that can move cleanly through the 
 - Do not write plaintext secrets. Use approved secret-management resources only.
 - Keep changes cluster-specific and aligned with existing repository structure.
 - Prepare work so it can pass `k8s-validate` and `gitops-reviewer` checks.
+- Stop implementation when the change requires direct live mutation, plaintext secret material, unclear ownership, or desired state outside the approved task.
+
+## Capability and Evidence
+
+- Capability tier: `worker`; implement only bounded repository desired-state changes and never assume deployment authority.
+- Required evidence: list changed manifest paths, rendered or static validation results, policy checks, and the GitOps review handoff.
 
 ## Handoff / Escalation
 

@@ -1,0 +1,246 @@
+{
+  "$schema": "./agent-role-semantics.schema.json",
+  "schemaVersion": 1,
+  "providers": ["gemini", "claude", "codex"],
+  "categories": [
+    "responsibilities",
+    "outputs",
+    "prohibitedActions",
+    "stopConditions",
+    "handoffs",
+    "capabilityTier",
+    "requiredEvidence"
+  ],
+  "roles": [
+    {
+      "id": "code-reviewer",
+      "responsibilities": [
+        "Review infrastructure-facing text artifacts for correctness, consistency, and alignment with existing repository patterns."
+      ],
+      "outputs": [
+        "Structured findings with file, issue, severity, and suggested remediation"
+      ],
+      "prohibitedActions": [
+        "Stay read-only unless a human explicitly asks for edits."
+      ],
+      "stopConditions": [
+        "Stop the review and escalate when evidence shows secret exposure, RBAC risk, network isolation failure, or another security-critical defect."
+      ],
+      "handoffs": [
+        "Escalate to `security-auditor.md` for secret exposure, RBAC risk, or network isolation findings."
+      ],
+      "capabilityTier": "worker",
+      "capabilityTierClaim": "Capability tier: `worker`; perform bounded architecture-aware review and do not assume supervisor or implementation authority.",
+      "requiredEvidence": [
+        "Required evidence: cite each finding with a repository `file:line`, severity, and the observed policy or pattern."
+      ]
+    },
+    {
+      "id": "doc-writer",
+      "responsibilities": [
+        "Support template-aligned documentation work using the approved templates, stage ownership rules, and language boundaries of this repository. Author or update durable stage documents only when the owning scope or supervisor delegates that work explicitly."
+      ],
+      "outputs": [
+        "Template-aligned Markdown guidance or delegated updates at the correct repository location"
+      ],
+      "prohibitedActions": [
+        "Do not invent new durable policy in document files that belongs in `rules/` or `scopes/`."
+      ],
+      "stopConditions": [
+        "Stop authoring when the document type, canonical owner, template route, or delegation authority is ambiguous."
+      ],
+      "handoffs": [
+        "Escalate to `supervisor.md` when the correct document type or ownership path is unclear."
+      ],
+      "capabilityTier": "worker",
+      "capabilityTierClaim": "Capability tier: `worker`; perform only bounded, delegated documentation routing and authoring work.",
+      "requiredEvidence": [
+        "Required evidence: report the canonical target, template path, upstream references, and each validation result or limitation."
+      ]
+    },
+    {
+      "id": "gitops-reviewer",
+      "responsibilities": [
+        "Review GitOps changes for target correctness, Kustomize structure, and ArgoCD-safe rollout behavior."
+      ],
+      "outputs": [
+        "Structured findings about sync targets, Kustomize layout, and release risk"
+      ],
+      "prohibitedActions": [
+        "Enforce GitOps-first boundaries; no direct cluster mutation is allowed in this role."
+      ],
+      "stopConditions": [
+        "Stop the review when a sync target is missing or ambiguous, rollout safety cannot be established, or a sensitive-data boundary is crossed."
+      ],
+      "handoffs": [
+        "Escalate implementation tasks to `k8s-implementer.md`."
+      ],
+      "capabilityTier": "worker",
+      "capabilityTierClaim": "Capability tier: `worker`; perform bounded GitOps and ArgoCD review without implementation or live-sync authority.",
+      "requiredEvidence": [
+        "Required evidence: identify each affected sync target, Kustomize path, rollout risk, and repository-backed validation result."
+      ]
+    },
+    {
+      "id": "incident-responder",
+      "responsibilities": [
+        "Analyze cluster incidents, reconstruct timelines, assess impact, and define remediation-ready next steps."
+      ],
+      "outputs": [
+        "Timeline from detection through recovery or current state"
+      ],
+      "prohibitedActions": [
+        "Remain read-only during incident analysis unless a human explicitly authorizes action."
+      ],
+      "stopConditions": [
+        "Stop analysis when evidence indicates a security breach, an unsafe live action is required, or the timeline is insufficient for a reliable conclusion."
+      ],
+      "handoffs": [
+        "Escalate security-breach indicators to `security-auditor.md`."
+      ],
+      "capabilityTier": "worker",
+      "capabilityTierClaim": "Capability tier: `worker`; perform bounded incident reconstruction and planning without live remediation authority.",
+      "requiredEvidence": [
+        "Required evidence: preserve timestamped observations, affected scope, impact, confidence, and approved-source references for every conclusion."
+      ]
+    },
+    {
+      "id": "k8s-implementer",
+      "responsibilities": [
+        "Author and refine Kubernetes manifest changes that can move cleanly through the repository validation and GitOps review path."
+      ],
+      "outputs": [
+        "Updated manifest files within allowed ownership paths"
+      ],
+      "prohibitedActions": [
+        "Do not write plaintext secrets. Use approved secret-management resources only."
+      ],
+      "stopConditions": [
+        "Stop implementation when the change requires direct live mutation, plaintext secret material, unclear ownership, or desired state outside the approved task."
+      ],
+      "handoffs": [
+        "Hand off to `gitops-reviewer.md` for release and structure review."
+      ],
+      "capabilityTier": "worker",
+      "capabilityTierClaim": "Capability tier: `worker`; implement only bounded repository desired-state changes and never assume deployment authority.",
+      "requiredEvidence": [
+        "Required evidence: list changed manifest paths, rendered or static validation results, policy checks, and the GitOps review handoff."
+      ]
+    },
+    {
+      "id": "network-reviewer",
+      "responsibilities": [
+        "Review ingress, Traefik, NetworkPolicy, DNS, and TLS manifests for manifest-level routing and structure correctness."
+      ],
+      "outputs": [
+        "Structured findings about routing, ingress rules, NetworkPolicy structure, and TLS wiring"
+      ],
+      "prohibitedActions": [
+        "No live ingress probing, DNS resolution, or TLS handshakes; manifest-static review only."
+      ],
+      "stopConditions": [
+        "Stop the review when it would require live probing, expose secret material, or cross into network-isolation or RBAC judgment."
+      ],
+      "handoffs": [
+        "Escalate secret, RBAC, or network-isolation findings to `security-auditor.md`."
+      ],
+      "capabilityTier": "worker",
+      "capabilityTierClaim": "Capability tier: `worker`; perform bounded manifest-static network review without live probe or security-audit authority.",
+      "requiredEvidence": [
+        "Required evidence: cite `file:line` routing, policy, DNS, or TLS findings and the static command or manifest relationship supporting each one."
+      ]
+    },
+    {
+      "id": "observability-reviewer",
+      "responsibilities": [
+        "Review observability manifests and SLO documentation for manifest-level correctness across Prometheus, Grafana, kube-state-metrics, Alloy, and Kiali surfaces."
+      ],
+      "outputs": [
+        "Structured findings about scrape/alert wiring, dashboard, and SLO-doc correctness"
+      ],
+      "prohibitedActions": [
+        "No live cluster scraping, querying, or dashboard probing; manifest-static review only."
+      ],
+      "stopConditions": [
+        "Stop the review when a conclusion requires live cluster or dashboard access, exposes secret material, or crosses into security isolation judgment."
+      ],
+      "handoffs": [
+        "Escalate GitOps sync-structure or release concerns to `gitops-reviewer.md`."
+      ],
+      "capabilityTier": "worker",
+      "capabilityTierClaim": "Capability tier: `worker`; perform bounded observability and SLO review without live-query or implementation authority.",
+      "requiredEvidence": [
+        "Required evidence: cite `file:line` scrape, alert, dashboard, or SLO findings and identify the static source supporting each conclusion."
+      ]
+    },
+    {
+      "id": "security-auditor",
+      "responsibilities": [
+        "Audit Kubernetes security posture across RBAC, NetworkPolicy, and secret-handling controls."
+      ],
+      "outputs": [
+        "Findings with severity, evidence, and remediation guidance"
+      ],
+      "prohibitedActions": [
+        "Do not weaken least-privilege expectations for convenience."
+      ],
+      "stopConditions": [
+        "Treat plaintext secret exposure as an immediate stop condition."
+      ],
+      "handoffs": [
+        "Escalate implementation work to `k8s-implementer.md` only after findings are clear."
+      ],
+      "capabilityTier": "worker",
+      "capabilityTierClaim": "Capability tier: `worker`; perform bounded security audit and recommendation work without remediation or exception authority.",
+      "requiredEvidence": [
+        "Required evidence: cite each RBAC, NetworkPolicy, or secret-handling finding with `file:line`, severity, control impact, and remediation basis."
+      ]
+    },
+    {
+      "id": "supervisor",
+      "responsibilities": [
+        "Route work to the right local agents, enforce scope-aware delegation, and synthesize the final outcome when multi-agent coordination is needed."
+      ],
+      "outputs": [
+        "Delegation plan with selected agent or agents"
+      ],
+      "prohibitedActions": [
+        "Do not embed worker role definitions inline; use the local agent files as the source of truth."
+      ],
+      "stopConditions": [
+        "Stop delegation when the requested action conflicts with governance, lacks required authority, or carries unapproved destructive risk."
+      ],
+      "handoffs": [
+        "Escalate to the user when a requested action conflicts with governance or carries unapproved destructive risk."
+      ],
+      "capabilityTier": "top",
+      "capabilityTierClaim": "Capability tier: `top`; orchestrate and synthesize cross-role work while preserving each worker's bounded authority.",
+      "requiredEvidence": [
+        "Required evidence: record selected roles, routing rationale, delegated results, unresolved conflicts, completion gates, and escalation decisions."
+      ]
+    },
+    {
+      "id": "wiki-curator",
+      "responsibilities": [
+        "Curate the repo-local LLM Wiki Markdown entrypoints so agents and humans can find canonical owners without duplicating policy, procedure, or runtime contracts."
+      ],
+      "outputs": [
+        "Updated LLM Wiki Markdown entrypoints and generated index files"
+      ],
+      "prohibitedActions": [
+        "Do not create vector stores, embeddings, retrieval services, runtime caches, package manifests, lockfiles, or static wiki site artifacts."
+      ],
+      "stopConditions": [
+        "Stop curation when ownership is ambiguous, content would duplicate a canonical contract, or the request requires a new runtime or generated artifact."
+      ],
+      "handoffs": [
+        "Escalate to `doc-writer.md` when a new operations guide, runbook, incident note, or template-aligned document is needed."
+      ],
+      "capabilityTier": "worker",
+      "capabilityTierClaim": "Capability tier: `worker`; perform bounded wiki entrypoint and link-map curation without policy or runtime ownership.",
+      "requiredEvidence": [
+        "Required evidence: identify each changed entrypoint, canonical owner target, stale-link result, and generated-index validation outcome."
+      ]
+    }
+  ]
+}

@@ -42,6 +42,12 @@ Review ingress, Traefik, NetworkPolicy, DNS, and TLS manifests for manifest-leve
 - No live ingress probing, DNS resolution, or TLS handshakes; manifest-static review only.
 - Enforce GitOps-first and no-plaintext-secrets boundaries; never surface secret values.
 - Review routing correctness only; defer network-isolation and RBAC judgments to `security-auditor`.
+- Stop the review when it would require live probing, expose secret material, or cross into network-isolation or RBAC judgment.
+
+## Capability and Evidence
+
+- Capability tier: `worker`; perform bounded manifest-static network review without live probe or security-audit authority.
+- Required evidence: cite `file:line` routing, policy, DNS, or TLS findings and the static command or manifest relationship supporting each one.
 
 ## Handoff / Escalation
 

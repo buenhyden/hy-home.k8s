@@ -38,6 +38,12 @@ Route work to the right local agents, enforce scope-aware delegation, and synthe
 - Do not embed worker role definitions inline; use the local agent files as the source of truth.
 - Keep routing aligned with `docs/00.agent-governance/harness-catalog.md`.
 - Enforce GitOps-first and no-plaintext-secrets constraints through delegation boundaries.
+- Stop delegation when the requested action conflicts with governance, lacks required authority, or carries unapproved destructive risk.
+
+## Capability and Evidence
+
+- Capability tier: `top`; orchestrate and synthesize cross-role work while preserving each worker's bounded authority.
+- Required evidence: record selected roles, routing rationale, delegated results, unresolved conflicts, completion gates, and escalation decisions.
 
 ## Handoff / Escalation
 

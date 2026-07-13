@@ -37,6 +37,7 @@
 ```text
 tests/
 ├── fixtures/
+│   ├── agent-role-semantics.json     # Thirty-adapter semantic mutation matrix
 │   ├── agent-roster-currentness.json # Canonical roster validator self-test cases
 │   ├── markdown-profiles.json       # Registry profile matrix, mutations, and fixed date cases
 │   ├── links-and-owners.json        # Cross-document link, index, owner, and ledger cases
@@ -82,6 +83,8 @@ live readiness.
 | Cross-document self-test | `python3 scripts/validate-links-and-owners.py --self-test` | Repo-static link/index/owner/ledger mutation evidence |
 | Cross-document compatibility | `python3 scripts/validate-links-and-owners.py --root . --mode compatibility` | Repo-static exact ledger-transition debt evidence |
 | Cross-document inventory | `python3 scripts/validate-links-and-owners.py --root . --inventory --format json` | Repo-static ordered registry population |
+| Agent role semantics fixture | `python3 scripts/validate-agent-role-semantics.py --self-test` | Repo-static 480-case category mutation evidence |
+| Agent role semantics repository check | `python3 scripts/validate-agent-role-semantics.py --root .` | Repo-static thirty-adapter semantic coverage |
 | Agent roster currentness fixture | `python3 scripts/validate-agent-roster-currentness.py . --self-test` | Repo-static |
 | Agent roster currentness repository check | `python3 scripts/validate-agent-roster-currentness.py .` | Repo-static |
 | Affected-surface fixture | `python3 scripts/validate-affected-surfaces.py --self-test` | Repo-static exact-route, argv, output, and NUL-transport evidence |
@@ -149,6 +152,22 @@ changing candidate logic.
   Canonical owner link에는 일반 inline link만 인정되며 image syntax와
   leading-only 또는 trailing-only half-backtick label은 동일한 label/target을
   담아도 canonical link로 인정되지 않는다.
+- `tests/fixtures/agent-role-semantics.json`은 정확히 10개 role, Gemini/Claude/
+  Codex 3개 provider, responsibility/output/prohibition/stop/handoff/capability-
+  tier/evidence/provider-stem 8개 category, remove/replace 2개 mutation의
+  480-case Cartesian matrix를 고정한다. 모든 case는 production parser와
+  validator를 사용하고 하나의 서로 다른 `ROLE-*` rule ID만 반환해야 한다.
+  Mutation은 파싱된 객체가 아니라 provider source에 적용되어 480개 모두
+  YAML/TOML/operative-Markdown parser를 다시 통과한다. 추가 33개 adversarial
+  case는 duplicate/non-mapping/non-scalar YAML, fenced/absolute-or-list-
+  container-indented code, HTML comment, strikethrough, blockquote/nested/lazy
+  continuation, forward/backward revocation, external negation, inline-code-
+  only claim, quoted/nested H1 우회를 거부한다. Category claim은 소유 section의
+  paragraph/list-item unit 전체와 정확히 같아야 한다. `false`, `not true`,
+  `invalid`, revoked 계열과 non-operative/non-applicable 상태는 단일 10-state
+  vocabulary와 forward/backward 20개 production-parser probe로 동기화한다.
+  공통 계약은 provider-native `model`, `tools`, `modelReasoningEffort`를
+  schema로 거부하며, operative prose에서만 whitespace를 정규화한다.
 - `tests/fixtures/validation-surfaces.json`은 요청된 tracked root별 positive
   path, validator/CI selection 집합, `../`, leading `./`, case alias, symlink
   traversal, unmatched path rejection과 route, minimal/combined/assignment

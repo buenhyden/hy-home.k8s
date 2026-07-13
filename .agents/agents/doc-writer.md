@@ -50,6 +50,12 @@ Support template-aligned documentation work using the approved templates, stage 
 - Keep governance documents in English and human-facing README content in Korean.
 - Include `## Related Documents` where the documentation protocol requires it.
 - Do not invent new durable policy in document files that belongs in `rules/` or `scopes/`.
+- Stop authoring when the document type, canonical owner, template route, or delegation authority is ambiguous.
+
+## Capability and Evidence
+
+- Capability tier: `worker`; perform only bounded, delegated documentation routing and authoring work.
+- Required evidence: report the canonical target, template path, upstream references, and each validation result or limitation.
 
 ## Handoff / Escalation
 
