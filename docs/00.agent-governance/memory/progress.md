@@ -8,6 +8,51 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - Registry-driven Markdown profile validation
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, qa, governance
+- **Status**: complete
+- **Tags**: #semantic-validation #frontmatter #markdown #compatibility-debt
+
+#### Progress
+
+- Added the production Markdown profile validator for all 60 registry
+  profiles, the exact README 72-path/eight-case handoff, append fragments,
+  classification-only profiles, deterministic dates, and stable text/JSON
+  diagnostics.
+- Materialized the Spec-030-owned, no-growth semantic debt ledger as 266 exact
+  affected paths and bound the quality-gate digest to every path, rule, token,
+  rule cap, overlap, and union dimension.
+
+#### Memory
+
+- Compatibility is safe only when the configured debt and observed diagnostics
+  form a bijection. Match path, profile, rule, and token; reject unknown items,
+  duplicate consumption, unused records, and aggregate growth.
+- Calendar validation needs an injected date for tests and one explicit
+  production timezone. File timestamps, Git dates, locale, and UTC rollover are
+  not document-policy inputs.
+
+#### Evidence
+
+- `python3 scripts/validate-markdown-profiles.py --self-test`: PASS across the
+  registry matrix, date boundaries, README handoff, production inventory, debt
+  mutations, and exact aggregate recomputation.
+- Repository compatibility: exit 0 with 1,299 `DEFER`, zero `FAIL`, and no
+  `DEBT-UNUSED`; strict: exit 1 with the identical 1,299 diagnostic tuples as
+  `FAIL`.
+- Registry remains 60 profiles, 27 templates, 467 target Markdown paths, and
+  72 canonical README paths. The imported README fixture remains byte-identical.
+
+#### Handoff
+
+- Continue SMDV-003 with the cross-document link, index, current-owner, and
+  durable migration-ledger validator. Strict cutover remains owned by Specs 030
+  and 029 SMDV-004.
+
 ### 2026-07-13 - Semantic debt lifecycle Plan correction
 
 #### Metadata

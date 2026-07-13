@@ -1,0 +1,1132 @@
+{
+  "schemaVersion": 1,
+  "dateCases": [
+    {
+      "name": "authored-previous-day",
+      "profile": "sdlc/spec",
+      "value": "2026-07-11",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "authored-same-day",
+      "profile": "sdlc/spec",
+      "value": "2026-07-12",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "authored-next-day",
+      "profile": "sdlc/spec",
+      "value": "2026-07-13",
+      "expectedRuleIds": [
+        "FM-FUTURE-DATE"
+      ]
+    },
+    {
+      "name": "authored-valid-leap-day",
+      "profile": "sdlc/spec",
+      "value": "2024-02-29",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "authored-invalid-leap-day",
+      "profile": "sdlc/spec",
+      "value": "2025-02-29",
+      "expectedRuleIds": [
+        "FM-DATE"
+      ]
+    },
+    {
+      "name": "template-date-placeholder",
+      "profile": "template/sdlc/spec",
+      "value": "YYYY-MM-DD",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "template-invalid-date",
+      "profile": "template/sdlc/spec",
+      "value": "2025-02-29",
+      "expectedRuleIds": [
+        "FM-DATE"
+      ]
+    }
+  ],
+  "profileMatrix": [
+    {
+      "profile": "sdlc/prd",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/01.requirements/999-fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/prd\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Vision\n\nFixture content.\n\n## Problem Statement\n\nFixture content.\n\n## Personas\n\nFixture content.\n\n## Key Use Cases\n\nFixture content.\n\n## Functional Requirements\n\nFixture content.\n\n## Success / Acceptance Criteria\n\nFixture content.\n\n## Scope and Non-goals\n\nFixture content.\n\n## Risks, Dependencies, and Assumptions\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "duplicate-h1",
+          "expectedRuleIds": [
+            "BODY-H1"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "sdlc/ard",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/02.architecture/requirements/9999-fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/ard\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Boundaries & Non-goals\n\nFixture content.\n\n## Quality Attributes\n\nFixture content.\n\n## System Overview & Context\n\nFixture content.\n\n## Data Architecture\n\nFixture content.\n\n## Infrastructure & Deployment\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "sdlc/adr",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/02.architecture/decisions/9999-fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/adr\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Context\n\nFixture content.\n\n## Decision\n\nFixture content.\n\n## Explicit Non-goals\n\nFixture content.\n\n## Consequences\n\nFixture content.\n\n## Alternatives\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "sdlc/spec",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/03.specs/999-fixture/spec.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "sdlc/api-spec",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/03.specs/999-fixture/api-spec.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/api-spec\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Scope & Non-goals\n\nFixture content.\n\n## API Style\n\nFixture content.\n\n## Authentication & Authorization\n\nFixture content.\n\n## Endpoint / Operation Catalog\n\nFixture content.\n\n## Request / Response Schemas\n\nFixture content.\n\n## Error Model\n\nFixture content.\n\n## Data Contract Compatibility\n\nFixture content.\n\n## Non-Functional Requirements\n\nFixture content.\n\n## Machine-readable Contract Files\n\nFixture content.\n\n## Verification\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "sdlc/agent-design",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/03.specs/999-fixture/agent-design.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/agent-design\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Scope & Non-goals\n\nFixture content.\n\n## Agent Role\n\nFixture content.\n\n## Inputs / Outputs\n\nFixture content.\n\n## Orchestration Model\n\nFixture content.\n\n## Tools & Permissions\n\nFixture content.\n\n## Prompt / Policy Contract\n\nFixture content.\n\n## Context & Memory Strategy\n\nFixture content.\n\n## Guardrails\n\nFixture content.\n\n## Failure Modes & Fallback\n\nFixture content.\n\n## Evaluation Plan\n\nFixture content.\n\n## Observability\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "sdlc/data-model",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/03.specs/999-fixture/data-model.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/data-model\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Scope & Non-goals\n\nFixture content.\n\n## Entities / Aggregates\n\nFixture content.\n\n## Relationships\n\nFixture content.\n\n## Schema / Structures\n\nFixture content.\n\n## Validation & Integrity Rules\n\nFixture content.\n\n## Storage Strategy\n\nFixture content.\n\n## Privacy / Security\n\nFixture content.\n\n## Migration & Compatibility\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "sdlc/tests",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/03.specs/999-fixture/tests.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/tests\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Verification Goals\n\nFixture content.\n\n## TDD Scope\n\nFixture content.\n\n## Test Matrix\n\nFixture content.\n\n## Contract & Integration Tests\n\nFixture content.\n\n## Non-Functional Tests\n\nFixture content.\n\n## Fixtures / Datasets\n\nFixture content.\n\n## How to Run\n\nFixture content.\n\n## Evidence & Reporting\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "sdlc/plan",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/04.execution/plans/2026-07-12-fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/plan\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Context\n\nFixture content.\n\n## Goals & In-Scope\n\nFixture content.\n\n## Non-Goals & Out-of-Scope\n\nFixture content.\n\n## Work Breakdown\n\nFixture content.\n\n## Verification Plan\n\nFixture content.\n\n## Risks & Mitigations\n\nFixture content.\n\n## Completion Criteria\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "sdlc/task",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/04.execution/tasks/2026-07-12-fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/task\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Inputs\n\nFixture content.\n\n## Task Table\n\nFixture content.\n\n## Approval and Safety Boundaries\n\nFixture content.\n\n## Verification Summary\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "sdlc/guide",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/05.operations/guides/9999-fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/guide\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Guide Type\n\nFixture content.\n\n## Target Audience\n\nFixture content.\n\n## Prerequisites\n\nFixture content.\n\n## Step-by-step Instructions\n\nFixture content.\n\n## Common Pitfalls\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "sdlc/policy",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/05.operations/policies/9999-fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/policy\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Policy Scope\n\nFixture content.\n\n## Applies To\n\nFixture content.\n\n## Controls\n\nFixture content.\n\n## Exceptions\n\nFixture content.\n\n## Verification\n\nFixture content.\n\n## Review Cadence\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "sdlc/runbook",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/05.operations/runbooks/9999-fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/runbook\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Runbook Type\n\nFixture content.\n\n## When to Use\n\nFixture content.\n\n## Procedure or Checklist\n\nFixture content.\n\n## Verification Steps\n\nFixture content.\n\n## Observability and Evidence Sources\n\nFixture content.\n\n## Safe Rollback or Recovery Procedure\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "sdlc/incident",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/05.operations/incidents/2026/INC-999-fixture/INC-999-fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/incident\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Incident Metadata\n\nFixture content.\n\n## Impact\n\nFixture content.\n\n## Timeline\n\nFixture content.\n\n## Response State\n\nFixture content.\n\n## Evidence\n\nFixture content.\n\n## Follow-up Actions\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "sdlc/postmortem",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/05.operations/incidents/2026/INC-999-fixture/postmortem.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/postmortem\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Incident Link and Impact Summary\n\nFixture content.\n\n## Root Cause Analysis\n\nFixture content.\n\n## Contributing Factors\n\nFixture content.\n\n## What Went Well\n\nFixture content.\n\n## What Went Wrong\n\nFixture content.\n\n## Action Items\n\nFixture content.\n\n## Prevention and Verification\n\nFixture content.\n\n## Documentation Feedback Loop\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "content/reference",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/90.references/research/fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: content/reference\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Reference Type\n\nFixture content.\n\n## Authority Boundary\n\nFixture content.\n\n## Scope\n\nFixture content.\n\n## Definitions / Facts\n\nFixture content.\n\n## Sources\n\nFixture content.\n\n## Review and Freshness\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "content/archive-tombstone",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/98.archive/fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: content/archive-tombstone\nstatus: archived\nowner: platform\nupdated: 2026-07-12\noriginal_path: docs/legacy.md\narchived_on: 2026-07-12\narchive_reason: superseded\nreplacement: docs/current.md\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Original Document\n\nFixture content.\n\n## Archive Decision\n\nFixture content.\n\n## Current Replacement\n\nFixture content.\n\n## Current Implementation Evidence\n\nFixture content.\n\n## Archive Index\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "governance/reference",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/00.agent-governance/rules/fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: governance/reference\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Authority Boundary\n\nFixture content.\n\n## Governance Context\n\nFixture content.\n\n## Current Contract\n\nFixture content.\n\n## Validation and Refresh\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "governance/memory",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/00.agent-governance/memory/fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: governance/memory\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Problem\n\nFixture content.\n\n## Context\n\nFixture content.\n\n## Resolution\n\nFixture content.\n\n## Prevention\n\nFixture content.\n\n## Related Progress\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "governance/template-support",
+      "mode": "authored",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/support/fixture.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: governance/template-support\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Purpose\n\nFixture content.\n\n## Owned Contract\n\nFixture content.\n\n## Authoring Rules\n\nFixture content.\n\n## Validation Contract\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "governance/progress-ledger",
+      "mode": "frontmatter-free",
+      "applicability": "validate-document",
+      "fixturePath": "docs/00.agent-governance/memory/progress.md",
+      "positiveSource": "# Fixture Document\n\n## Work Entries\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "readme/repository",
+      "mode": "frontmatter-free",
+      "applicability": "validate-document",
+      "fixturePath": "README.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Repository Map\n\nFixture content.\n\n## Getting Started\n\nFixture content.\n\n## Validation\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "README_H2_REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "readme/stage-index",
+      "mode": "frontmatter-free",
+      "applicability": "validate-document",
+      "fixturePath": "docs/README.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Stage Contract\n\nFixture content.\n\n## Document Index\n\nFixture content.\n\n## Authoring Workflow\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "README_H2_REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "readme/collection-index",
+      "mode": "frontmatter-free",
+      "applicability": "validate-document",
+      "fixturePath": "docs/04.execution/plans/README.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Scope\n\nFixture content.\n\n## Item Index\n\nFixture content.\n\n## Add and Find\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "README_H2_REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "readme/implementation",
+      "mode": "frontmatter-free",
+      "applicability": "validate-document",
+      "fixturePath": "scripts/README.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Structure\n\nFixture content.\n\n## Configuration Boundary\n\nFixture content.\n\n## Validation\n\nFixture content.\n\n## Operations\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "README_H2_REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "readme/snapshot-pack",
+      "mode": "frontmatter-free",
+      "applicability": "validate-document",
+      "fixturePath": "docs/90.references/research/2026-07-12-fixture/README.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Snapshot Contract\n\nFixture content.\n\n## Report Index\n\nFixture content.\n\n## Refresh and Succession\n\nFixture content.\n\n## Evidence Boundary\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "README_H2_REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "readme/workspace-staging",
+      "mode": "frontmatter-free",
+      "applicability": "validate-document",
+      "fixturePath": "_workspace/README.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Permitted Artifacts\n\nFixture content.\n\n## Forbidden Local State\n\nFixture content.\n\n## Promotion and Cleanup\n\nFixture content.\n\n## Tracking Rules\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "README_H2_REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "exception/root-provider-shim",
+      "mode": "frontmatter-free",
+      "applicability": "validate-document",
+      "fixturePath": "AGENTS.md",
+      "positiveSource": "# Fixture Document\n",
+      "negativeMutations": [
+        {
+          "kind": "add-frontmatter",
+          "expectedRuleIds": [
+            "FM-FORBIDDEN"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "exception/provider-native-metadata",
+      "mode": "native",
+      "applicability": "classification-only",
+      "fixturePath": ".agents/fixture.md",
+      "positiveSource": "# Fixture Document\n",
+      "negativeMutations": [
+        {
+          "kind": "classification-route-mismatch",
+          "expectedRuleIds": [
+            "REGISTRY_ROUTE_UNCOVERED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "exception/github-native-control",
+      "mode": "frontmatter-free",
+      "applicability": "validate-document",
+      "fixturePath": ".github/ABOUT.md",
+      "positiveSource": "# Fixture Document\n",
+      "negativeMutations": [
+        {
+          "kind": "add-frontmatter",
+          "expectedRuleIds": [
+            "FM-FORBIDDEN"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "exception/native-contract",
+      "mode": "native",
+      "applicability": "classification-only",
+      "fixturePath": "docs/03.specs/999-fixture/contracts/openapi.yaml",
+      "positiveSource": "# Fixture Document\n",
+      "negativeMutations": [
+        {
+          "kind": "classification-route-mismatch",
+          "expectedRuleIds": [
+            "REGISTRY_ROUTE_UNCOVERED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "exception/generated-record",
+      "mode": "generated",
+      "applicability": "classification-only",
+      "fixturePath": "docs/90.references/llm-wiki/wiki-index.md",
+      "positiveSource": "# Fixture Document\n",
+      "negativeMutations": [
+        {
+          "kind": "classification-route-mismatch",
+          "expectedRuleIds": [
+            "REGISTRY_ROUTE_UNCOVERED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "exception/program-non-target",
+      "mode": "non-target",
+      "applicability": "excluded",
+      "fixturePath": "RTK.md",
+      "positiveSource": "# Fixture Document\n",
+      "negativeMutations": [],
+      "reason": "non-target"
+    },
+    {
+      "profile": "template/content/archive-tombstone",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/common/archive-tombstone.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: content/archive-tombstone\nstatus: archived\nowner: platform\nupdated: YYYY-MM-DD\noriginal_path: docs/legacy.md\narchived_on: YYYY-MM-DD\narchive_reason: superseded\nreplacement: docs/current.md\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Original Document\n\nFixture content.\n\n## Archive Decision\n\nFixture content.\n\n## Current Replacement\n\nFixture content.\n\n## Current Implementation Evidence\n\nFixture content.\n\n## Archive Index\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/governance/memory",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/common/memory.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: governance/memory\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Problem\n\nFixture content.\n\n## Context\n\nFixture content.\n\n## Resolution\n\nFixture content.\n\n## Prevention\n\nFixture content.\n\n## Related Progress\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/readme/repository",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/common/readme-repository.template.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Repository Map\n\nFixture content.\n\n## Getting Started\n\nFixture content.\n\n## Validation\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "README_H2_REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/readme/stage-index",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/common/readme-stage-index.template.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Stage Contract\n\nFixture content.\n\n## Document Index\n\nFixture content.\n\n## Authoring Workflow\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "README_H2_REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/readme/collection-index",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/common/readme-collection-index.template.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Scope\n\nFixture content.\n\n## Item Index\n\nFixture content.\n\n## Add and Find\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "README_H2_REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/readme/implementation",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/common/readme-implementation.template.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Structure\n\nFixture content.\n\n## Configuration Boundary\n\nFixture content.\n\n## Validation\n\nFixture content.\n\n## Operations\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "README_H2_REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/readme/snapshot-pack",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/common/readme-snapshot-pack.template.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Snapshot Contract\n\nFixture content.\n\n## Report Index\n\nFixture content.\n\n## Refresh and Succession\n\nFixture content.\n\n## Evidence Boundary\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "README_H2_REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/readme/workspace-staging",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
+      "positiveSource": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Permitted Artifacts\n\nFixture content.\n\n## Forbidden Local State\n\nFixture content.\n\n## Promotion and Cleanup\n\nFixture content.\n\n## Tracking Rules\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "README_H2_REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/content/reference",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/common/reference.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: content/reference\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Reference Type\n\nFixture content.\n\n## Authority Boundary\n\nFixture content.\n\n## Scope\n\nFixture content.\n\n## Definitions / Facts\n\nFixture content.\n\n## Sources\n\nFixture content.\n\n## Review and Freshness\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/sdlc/adr",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/sdlc/architecture/adr.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/adr\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Context\n\nFixture content.\n\n## Decision\n\nFixture content.\n\n## Explicit Non-goals\n\nFixture content.\n\n## Consequences\n\nFixture content.\n\n## Alternatives\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/sdlc/ard",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/sdlc/architecture/ard.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/ard\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Boundaries & Non-goals\n\nFixture content.\n\n## Quality Attributes\n\nFixture content.\n\n## System Overview & Context\n\nFixture content.\n\n## Data Architecture\n\nFixture content.\n\n## Infrastructure & Deployment\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/sdlc/plan",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/sdlc/execution/plan.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/plan\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Context\n\nFixture content.\n\n## Goals & In-Scope\n\nFixture content.\n\n## Non-Goals & Out-of-Scope\n\nFixture content.\n\n## Work Breakdown\n\nFixture content.\n\n## Verification Plan\n\nFixture content.\n\n## Risks & Mitigations\n\nFixture content.\n\n## Completion Criteria\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/sdlc/task",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/sdlc/execution/task.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/task\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Inputs\n\nFixture content.\n\n## Task Table\n\nFixture content.\n\n## Approval and Safety Boundaries\n\nFixture content.\n\n## Verification Summary\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/sdlc/guide",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/sdlc/operations/guide.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/guide\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Guide Type\n\nFixture content.\n\n## Target Audience\n\nFixture content.\n\n## Prerequisites\n\nFixture content.\n\n## Step-by-step Instructions\n\nFixture content.\n\n## Common Pitfalls\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/sdlc/incident",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/sdlc/operations/incident.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/incident\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Incident Metadata\n\nFixture content.\n\n## Impact\n\nFixture content.\n\n## Timeline\n\nFixture content.\n\n## Response State\n\nFixture content.\n\n## Evidence\n\nFixture content.\n\n## Follow-up Actions\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/sdlc/policy",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/sdlc/operations/policy.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/policy\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Policy Scope\n\nFixture content.\n\n## Applies To\n\nFixture content.\n\n## Controls\n\nFixture content.\n\n## Exceptions\n\nFixture content.\n\n## Verification\n\nFixture content.\n\n## Review Cadence\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/sdlc/postmortem",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/sdlc/operations/postmortem.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/postmortem\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Incident Link and Impact Summary\n\nFixture content.\n\n## Root Cause Analysis\n\nFixture content.\n\n## Contributing Factors\n\nFixture content.\n\n## What Went Well\n\nFixture content.\n\n## What Went Wrong\n\nFixture content.\n\n## Action Items\n\nFixture content.\n\n## Prevention and Verification\n\nFixture content.\n\n## Documentation Feedback Loop\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/sdlc/runbook",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/sdlc/operations/runbook.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/runbook\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Runbook Type\n\nFixture content.\n\n## When to Use\n\nFixture content.\n\n## Procedure or Checklist\n\nFixture content.\n\n## Verification Steps\n\nFixture content.\n\n## Observability and Evidence Sources\n\nFixture content.\n\n## Safe Rollback or Recovery Procedure\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/sdlc/prd",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/sdlc/requirements/prd.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/prd\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Vision\n\nFixture content.\n\n## Problem Statement\n\nFixture content.\n\n## Personas\n\nFixture content.\n\n## Key Use Cases\n\nFixture content.\n\n## Functional Requirements\n\nFixture content.\n\n## Success / Acceptance Criteria\n\nFixture content.\n\n## Scope and Non-goals\n\nFixture content.\n\n## Risks, Dependencies, and Assumptions\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/sdlc/agent-design",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/agent-design\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Scope & Non-goals\n\nFixture content.\n\n## Agent Role\n\nFixture content.\n\n## Inputs / Outputs\n\nFixture content.\n\n## Orchestration Model\n\nFixture content.\n\n## Tools & Permissions\n\nFixture content.\n\n## Prompt / Policy Contract\n\nFixture content.\n\n## Context & Memory Strategy\n\nFixture content.\n\n## Guardrails\n\nFixture content.\n\n## Failure Modes & Fallback\n\nFixture content.\n\n## Evaluation Plan\n\nFixture content.\n\n## Observability\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/sdlc/api-spec",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/api-spec\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Scope & Non-goals\n\nFixture content.\n\n## API Style\n\nFixture content.\n\n## Authentication & Authorization\n\nFixture content.\n\n## Endpoint / Operation Catalog\n\nFixture content.\n\n## Request / Response Schemas\n\nFixture content.\n\n## Error Model\n\nFixture content.\n\n## Data Contract Compatibility\n\nFixture content.\n\n## Non-Functional Requirements\n\nFixture content.\n\n## Machine-readable Contract Files\n\nFixture content.\n\n## Verification\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/sdlc/data-model",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/data-model\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Scope & Non-goals\n\nFixture content.\n\n## Entities / Aggregates\n\nFixture content.\n\n## Relationships\n\nFixture content.\n\n## Schema / Structures\n\nFixture content.\n\n## Validation & Integrity Rules\n\nFixture content.\n\n## Storage Strategy\n\nFixture content.\n\n## Privacy / Security\n\nFixture content.\n\n## Migration & Compatibility\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/sdlc/spec",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/sdlc/specs/spec.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/sdlc/tests",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/sdlc/specs/tests.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: sdlc/tests\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Verification Goals\n\nFixture content.\n\n## TDD Scope\n\nFixture content.\n\n## Test Matrix\n\nFixture content.\n\n## Contract & Integration Tests\n\nFixture content.\n\n## Non-Functional Tests\n\nFixture content.\n\n## Fixtures / Datasets\n\nFixture content.\n\n## How to Run\n\nFixture content.\n\n## Evidence & Reporting\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "governance/progress-entry",
+      "mode": "template",
+      "applicability": "append-fragment",
+      "fixturePath": "docs/99.templates/templates/common/progress.template.md",
+      "positiveSource": "### 2026-07-12 - Fixture entry\n\n#### Metadata\n\nFixture evidence.\n\n#### Progress\n\nFixture evidence.\n\n#### Memory\n\nFixture evidence.\n\n#### Evidence\n\nFixture evidence.\n\n#### Handoff\n\nFixture evidence.\n",
+      "negativeMutations": [
+        {
+          "kind": "append-missing-section",
+          "expectedRuleIds": [
+            "APPEND-SECTION-REQUIRED"
+          ]
+        },
+        {
+          "kind": "append-wrong-entry-level",
+          "expectedRuleIds": [
+            "APPEND-ENTRY-LEVEL"
+          ]
+        },
+        {
+          "kind": "append-wrong-section-level",
+          "expectedRuleIds": [
+            "APPEND-SECTION-LEVEL"
+          ]
+        },
+        {
+          "kind": "append-wrong-parent-h2",
+          "expectedRuleIds": [
+            "APPEND-PARENT-H2"
+          ]
+        },
+        {
+          "kind": "append-wrong-parent-profile",
+          "expectedRuleIds": [
+            "APPEND-PARENT-PROFILE"
+          ]
+        },
+        {
+          "kind": "append-missing-context",
+          "expectedRuleIds": [
+            "APPEND-CONTEXT"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/governance/reference",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/common/governance-reference.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: governance/reference\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Authority Boundary\n\nFixture content.\n\n## Governance Context\n\nFixture content.\n\n## Current Contract\n\nFixture content.\n\n## Validation and Refresh\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "template/governance/template-support",
+      "mode": "template",
+      "applicability": "validate-document",
+      "fixturePath": "docs/99.templates/templates/common/template-support.template.md",
+      "positiveSource": "---\ntitle: Fixture Document\ntype: governance/template-support\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Purpose\n\nFixture content.\n\n## Owned Contract\n\nFixture content.\n\n## Authoring Rules\n\nFixture content.\n\n## Validation Contract\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "negativeMutations": [
+        {
+          "kind": "remove-required-heading",
+          "expectedRuleIds": [
+            "BODY-HEADING-REQUIRED"
+          ]
+        }
+      ]
+    }
+  ],
+  "mutationCases": [
+    {
+      "name": "valid-spec",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "duplicate-key",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "---\ntitle: Fixture Document\ntitle: Duplicate\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "FM-DUPLICATE-KEY"
+      ]
+    },
+    {
+      "name": "future-date",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2999-01-01\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "FM-FUTURE-DATE"
+      ]
+    },
+    {
+      "name": "wrong-key-order",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "---\ntype: sdlc/spec\ntitle: Fixture Document\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "FM-KEY-ORDER"
+      ]
+    },
+    {
+      "name": "missing-heading",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "BODY-HEADING-REQUIRED"
+      ]
+    },
+    {
+      "name": "heading-in-fence",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n```markdown\n## Overview\n```\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "BODY-HEADING-REQUIRED"
+      ]
+    },
+    {
+      "name": "duplicate-h2",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n\n## Overview\n",
+      "expectedRuleIds": [
+        "BODY-H2-DUPLICATE"
+      ]
+    },
+    {
+      "name": "unsupported-h2",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n\n## Unsupported\n",
+      "expectedRuleIds": [
+        "BODY-HEADING-UNSUPPORTED"
+      ]
+    },
+    {
+      "name": "template-residue",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n\nUse this \u0074emplate\n",
+      "expectedRuleIds": [
+        "BODY-TEMPLATE-RESIDUE"
+      ]
+    },
+    {
+      "name": "unclosed-fence",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n\n```markdown\n",
+      "expectedRuleIds": [
+        "BODY-FENCE-UNCLOSED"
+      ]
+    },
+    {
+      "name": "missing-key",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "FM-KEYSET"
+      ]
+    },
+    {
+      "name": "wrong-type",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "---\ntitle: Fixture Document\ntype: sdlc/plan\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "FM-TYPE"
+      ]
+    },
+    {
+      "name": "wrong-status",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: invalid\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "FM-STATUS"
+      ]
+    },
+    {
+      "name": "wrong-owner",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: other\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "FM-OWNER"
+      ]
+    },
+    {
+      "name": "invalid-date",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "---\ntitle: Fixture Document\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-02-31\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "FM-DATE"
+      ]
+    },
+    {
+      "name": "empty-title",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "---\ntitle: \"\"\ntype: sdlc/spec\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "FM-TITLE"
+      ]
+    },
+    {
+      "name": "missing-frontmatter",
+      "profile": "sdlc/spec",
+      "path": "docs/03.specs/999-fixture/spec.md",
+      "source": "# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Strategic Boundaries & Non-goals\n\nFixture content.\n\n## Contracts\n\nFixture content.\n\n## Core Design\n\nFixture content.\n\n## Data Modeling & Storage Strategy\n\nFixture content.\n\n## Interfaces & Data Structures\n\nFixture content.\n\n## Edge Cases & Error Handling\n\nFixture content.\n\n## Failure Modes & Fallback / Human Escalation\n\nFixture content.\n\n## Verification Commands\n\nFixture content.\n\n## Success Criteria & Verification Plan\n\nFixture content.\n\n## Traceability\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "FM-DELIMITER"
+      ]
+    }
+  ]
+}

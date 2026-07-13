@@ -1480,7 +1480,7 @@ registry_profiles = {
 TEMPLATE_COMPATIBILITY_CONTRACT_V1 = {
     "name": "TemplateCompatibilityContract.v1",
     "semantic_sha256": (
-        "d53a36f8849fdb8131f79c23ad2bd66c267a1594f12c0b03f353dfe5c88b46a2"  # pragma: allowlist secret
+        "95535fcb8ef0571d6c2a9f7d6bd27d64eef299c3f9dd181f0d598284767322bb"  # pragma: allowlist secret
     ),
 }
 
@@ -1528,11 +1528,48 @@ def assert_template_compatibility_mutation_proof(contract: dict) -> None:
         )
         task["baselineForbiddenResidueOccurrences"] += 1
 
+    def first_affected_path(candidate: dict) -> dict:
+        return next(
+            item
+            for row in candidate["compatibilityDebt"]
+            for item in row["affectedPaths"]
+        )
+
+    def mutate_affected_path(candidate: dict) -> None:
+        item = first_affected_path(candidate)
+        item["path"] += ".drift"
+
+    def mutate_affected_rule(candidate: dict) -> None:
+        item = first_affected_path(candidate)
+        item["ruleIds"][0] += "-DRIFT"
+
+    def mutate_affected_token(candidate: dict) -> None:
+        item = next(
+            item
+            for row in candidate["compatibilityDebt"]
+            for item in row["affectedPaths"]
+            if item["tokens"]
+        )
+        item["tokens"][0] += " drift"
+
+    def mutate_rule_cap(candidate: dict) -> None:
+        candidate["semanticDebtCaps"]["rules"]["BODY-HEADING-REQUIRED"][
+            "pathCount"
+        ] += 1
+
+    def mutate_union_cap(candidate: dict) -> None:
+        candidate["semanticDebtCaps"]["unionPathCount"] += 1
+
     mutations = {
         "owner": mutate_owner,
         "growthAllowed": mutate_growth_policy,
         "Task forbidden residue": mutate_task_residue,
         "Task baseline count": mutate_task_baseline,
+        "affected path": mutate_affected_path,
+        "affected rule": mutate_affected_rule,
+        "affected token": mutate_affected_token,
+        "semantic rule cap": mutate_rule_cap,
+        "semantic union cap": mutate_union_cap,
     }
     for label, mutate in mutations.items():
         candidate = copy.deepcopy(contract)

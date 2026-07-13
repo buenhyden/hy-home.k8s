@@ -38,6 +38,7 @@
 tests/
 ├── fixtures/
 │   ├── agent-roster-currentness.json # Canonical roster validator self-test cases
+│   ├── markdown-profiles.json       # Registry profile matrix, mutations, and fixed date cases
 │   └── document-contracts/
 │       ├── readme-profile-cases.json  # README route and semantic-validator handoff cases
 │       ├── registry-cases.json        # Document registry contract cases
@@ -73,6 +74,8 @@ live readiness.
 | Area | Command | Evidence class |
 | --- | --- | --- |
 | Repository quality gates | `bash scripts/validate-repo-quality-gates.sh .` | Repo-static |
+| Markdown profile self-test | `python3 scripts/validate-markdown-profiles.py --self-test` | Repo-static |
+| Markdown profile compatibility | `python3 scripts/validate-markdown-profiles.py --root . --mode compatibility` | Repo-static finite-debt evidence |
 | Agent roster currentness fixture | `python3 scripts/validate-agent-roster-currentness.py . --self-test` | Repo-static |
 | Agent roster currentness repository check | `python3 scripts/validate-agent-roster-currentness.py .` | Repo-static |
 | External service contracts | `bash infrastructure/tests/verify-contracts-static.sh` | Repo-static |
@@ -94,6 +97,15 @@ live readiness.
   production parser로 실행해야 할 여덟 positive/negative 사례를 전달한다.
 - `tests/fixtures/document-contracts/template-compatibility.json`은 canonical form,
   template-mode inheritance, authored migration debt의 no-growth 기준을 고정한다.
+  `affectedPaths`는 path/profile/rule/token을 정확히 결합하며 required
+  89/247, residue 188/410, delimiter 24, unsupported 175/617/400 distinct
+  tokens, duplicate 1, required-residue overlap 51, union 266을 초과하거나
+  사용되지 않은 record을 남기면 실패한다.
+- `tests/fixtures/markdown-profiles.json`은 60개 registry profile의 applicability를
+  `validate-document`, `append-fragment`, `classification-only`, `excluded`로
+  정확히 구분한다. Fixed `2026-07-12` 기준일, leap-day,
+  template placeholder, append context, stable rule-ID mutation은 모두 production
+  entry point를 통과한다.
 - `tests/fixtures/agent-roster-currentness.json`은 이름이 정확히 `valid`,
   `missing-role`, `provider-mismatch`, `stale-count`, `bad-owner`인 사례 5개만
   허용한다. 각 이름의 mutation과 `expected_errors` 집합은 hardcoded

@@ -302,6 +302,27 @@ def _lstat_named_path(root: Path, path: PurePosixPath) -> int:
     return mode
 
 
+def read_repository_text(root: Path, path: PurePosixPath) -> str:
+    """Read one normalized regular file without following path symlinks."""
+
+    normalized = _normalize_relative_path(path)
+    mode = _lstat_named_path(root.absolute(), normalized)
+    if not stat.S_ISREG(mode):
+        raise ValueError(f"repository path is not a regular file: {normalized}")
+    return (root.absolute() / normalized).read_text(encoding="utf-8")
+
+
+def diagnostic_sort_key(diagnostic: Diagnostic) -> tuple[str, str, str, str]:
+    """Return the stable cross-validator diagnostic ordering contract."""
+
+    return (
+        diagnostic.path.as_posix(),
+        diagnostic.rule_id,
+        diagnostic.expected,
+        diagnostic.actual,
+    )
+
+
 def enumerate_target_markdown(
     root: Path,
     *,

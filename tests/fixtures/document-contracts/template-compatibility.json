@@ -11,6 +11,38 @@
     "forbiddenResiduePathCount": 188,
     "forbiddenResidueOccurrences": 410
   },
+  "semanticDebtCaps": {
+    "rules": {
+      "BODY-HEADING-REQUIRED": {
+        "pathCount": 89,
+        "occurrenceCount": 247,
+        "tokenObligationCount": 247
+      },
+      "BODY-TEMPLATE-RESIDUE": {
+        "pathCount": 188,
+        "occurrenceCount": 410
+      },
+      "FM-DELIMITER": {
+        "pathCount": 24,
+        "occurrenceCount": 24,
+        "tokenObligationCount": 0
+      },
+      "BODY-HEADING-UNSUPPORTED": {
+        "pathCount": 175,
+        "occurrenceCount": 617,
+        "tokenObligationCount": 617,
+        "distinctTokenCount": 400
+      },
+      "BODY-H2-DUPLICATE": {
+        "pathCount": 1,
+        "occurrenceCount": 1,
+        "tokenObligationCount": 1
+      }
+    },
+    "requiredResidueOverlapPathCount": 51,
+    "requiredResidueUnionPathCount": 226,
+    "unionPathCount": 266
+  },
   "compatibilityDebt": [
     {
       "profile": "sdlc/prd",
@@ -40,7 +72,87 @@
       "baselinePathCount": 8,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 5,
-      "baselineForbiddenResidueOccurrences": 5
+      "baselineForbiddenResidueOccurrences": 5,
+      "affectedPaths": [
+        {
+          "path": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Requirement Status",
+            "BODY-TEMPLATE-RESIDUE::AI Agent Requirements (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/01.requirements/002-argo-notifications-slack.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Requirement Status",
+            "BODY-TEMPLATE-RESIDUE::AI Agent Requirements (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/01.requirements/003-workspace-agent-governance-platform.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::AI Agent Requirements (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/01.requirements/004-current-local-gitops-platform.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::AI Agent Requirements (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/01.requirements/005-workspace-document-assurance-modernization.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::AI Agent Requirements (If Applicable)"
+          ]
+        },
+        {
+          "path": "examples/aws/docs/01.requirements/2026-03-31-aws-migration-prd.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/01.requirements/2026-03-31-azure-migration-prd.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/01.requirements/2026-03-31-azure-migration.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Current Situation Audit (Analysis)",
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-HEADING-UNSUPPORTED::Target Requirements (2026-05-09 Snapshot)"
+          ]
+        }
+      ]
     },
     {
       "profile": "sdlc/ard",
@@ -68,7 +180,117 @@
       "baselinePathCount": 10,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 10,
-      "baselineForbiddenResidueOccurrences": 15
+      "baselineForbiddenResidueOccurrences": 15,
+      "affectedPaths": [
+        {
+          "path": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::AI Agent Architecture Requirements (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Summary"
+          ]
+        },
+        {
+          "path": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::AI Agent Architecture Requirements (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Summary"
+          ]
+        },
+        {
+          "path": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::AI Agent Architecture Requirements (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Summary"
+          ]
+        },
+        {
+          "path": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::AI Agent Architecture Requirements (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Summary"
+          ]
+        },
+        {
+          "path": "docs/02.architecture/requirements/0008-workspace-document-assurance-operating-model.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::AI Agent Architecture Requirements (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Summary"
+          ]
+        },
+        {
+          "path": "examples/aws/docs/02.architecture/requirements/0001-aws-cloud-native-architecture.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-TEMPLATE-RESIDUE::Summary"
+          ]
+        },
+        {
+          "path": "examples/aws/docs/02.architecture/requirements/2026-03-31-aws-migration-ard.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-TEMPLATE-RESIDUE::Summary"
+          ]
+        },
+        {
+          "path": "examples/aws/docs/02.architecture/requirements/aws-cloud-architecture.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Cost Optimization (FinOps)",
+            "BODY-HEADING-UNSUPPORTED::Network Architecture",
+            "BODY-HEADING-UNSUPPORTED::Security Best Practices",
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-TEMPLATE-RESIDUE::Summary"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/02.architecture/requirements/0001-azure-migration-architecture.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-TEMPLATE-RESIDUE::Summary"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/02.architecture/requirements/2026-03-31-azure-migration-ard.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-TEMPLATE-RESIDUE::Summary"
+          ]
+        }
+      ]
     },
     {
       "profile": "sdlc/adr",
@@ -95,7 +317,111 @@
       "baselinePathCount": 18,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 2,
-      "baselineForbiddenResidueOccurrences": 2
+      "baselineForbiddenResidueOccurrences": 2,
+      "affectedPaths": [
+        {
+          "path": "docs/02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Status"
+          ]
+        },
+        {
+          "path": "docs/02.architecture/decisions/0012-argo-notifications-slack.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Operational Prerequisite",
+            "BODY-HEADING-UNSUPPORTED::Status"
+          ]
+        },
+        {
+          "path": "docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent-related Example Decisions (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent-related Example Decisions (If Applicable)"
+          ]
+        },
+        {
+          "path": "examples/aws/docs/02.architecture/decisions/0001-aws-managed-services-selection.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary"
+          ]
+        },
+        {
+          "path": "examples/aws/docs/02.architecture/decisions/2026-03-31-replace-vault-with-secrets-manager.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/02.architecture/decisions/0001-cni-overlay.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/02.architecture/decisions/0002-agc-gateway-api.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/02.architecture/decisions/0003-workload-identity.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/02.architecture/decisions/0004-postgresql-flexible-ha.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Decisions",
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-HEADING-UNSUPPORTED::Verification"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/02.architecture/decisions/2026-03-31-adr-agc-selection.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary"
+          ]
+        }
+      ]
     },
     {
       "profile": "sdlc/spec",
@@ -133,7 +459,356 @@
       "baselinePathCount": 31,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 18,
-      "baselineForbiddenResidueOccurrences": 126
+      "baselineForbiddenResidueOccurrences": 126,
+      "affectedPaths": [
+        {
+          "path": "docs/03.specs/004-argo-rollouts-progressive-delivery/spec.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Implementation Status",
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/005-argo-notifications-slack/spec.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Implementation Status",
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/006-workspace-harness-gap-analysis/spec.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/009-workspace-harness-research-pack/spec.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/010-workspace-harness-implementation-audit-pack/spec.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/011-template-contract-governance-migration/spec.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/012-template-governance-audit-enhancement/spec.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/013-workspace-document-governance-hardening/spec.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::External Reference Basis",
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/014-workspace-document-contract-normalization/spec.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::External Basis",
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/015-agent-governance-contract-normalization/spec.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/016-active-control-surface-governance-hardening/spec.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/017-workspace-engineering-research-pack/spec.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::2026-07-10 Current Pack Fact-First Hardening Addendum",
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/018-workspace-engineering-implementation-audit-pack/spec.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/019-template-path-numbering-contract/spec.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/020-workspace-contract-governance-normalization/spec.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/021-sdlc-lifecycle-contract/spec.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::API Contract",
+            "BODY-HEADING-UNSUPPORTED::Agent Role & IO Contract",
+            "BODY-HEADING-UNSUPPORTED::Evaluation",
+            "BODY-HEADING-UNSUPPORTED::Guardrails",
+            "BODY-HEADING-UNSUPPORTED::Memory & Context Strategy",
+            "BODY-HEADING-UNSUPPORTED::Prompt / Policy Contract",
+            "BODY-HEADING-UNSUPPORTED::Tools & Tool Contract"
+          ]
+        },
+        {
+          "path": "docs/03.specs/022-control-cloud-doc-normalization/spec.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/024-observability-and-network-review-agents/spec.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/03.specs/025-governance-owner-and-roster-currentness/spec.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Approved Decisions",
+            "BODY-HEADING-UNSUPPORTED::Audit Information Architecture",
+            "BODY-HEADING-UNSUPPORTED::Baseline Evidence",
+            "BODY-HEADING-UNSUPPORTED::Complete Plan Evidence Ledger",
+            "BODY-HEADING-UNSUPPORTED::Complete Spec Disposition Ledger",
+            "BODY-HEADING-UNSUPPORTED::Design Alternatives",
+            "BODY-HEADING-UNSUPPORTED::Logical Commit Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Plan Lifecycle and Evidence Design",
+            "BODY-HEADING-UNSUPPORTED::RMD-004 Canonical Contract",
+            "BODY-HEADING-UNSUPPORTED::RMD-004 Implementation Components",
+            "BODY-HEADING-UNSUPPORTED::Spec Lifecycle and Current-Owner Design",
+            "BODY-HEADING-UNSUPPORTED::Subagent-Driven Execution"
+          ]
+        },
+        {
+          "path": "examples/aws/docs/03.specs/aws-migration/spec.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-HEADING-UNSUPPORTED::Verification"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/03.specs/2026-03-31-resource-specs.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-HEADING-UNSUPPORTED::Verification"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/03.specs/azure-migration/spec.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Resource Mapping Table",
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-HEADING-UNSUPPORTED::System Specification",
+            "BODY-HEADING-UNSUPPORTED::Technical Standards (2026-03)"
+          ]
+        }
+      ]
     },
     {
       "profile": "sdlc/api-spec",
@@ -164,7 +839,8 @@
       "baselinePathCount": 0,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 0,
-      "baselineForbiddenResidueOccurrences": 0
+      "baselineForbiddenResidueOccurrences": 0,
+      "affectedPaths": []
     },
     {
       "profile": "sdlc/agent-design",
@@ -196,7 +872,8 @@
       "baselinePathCount": 1,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 0,
-      "baselineForbiddenResidueOccurrences": 0
+      "baselineForbiddenResidueOccurrences": 0,
+      "affectedPaths": []
     },
     {
       "profile": "sdlc/data-model",
@@ -225,7 +902,8 @@
       "baselinePathCount": 0,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 0,
-      "baselineForbiddenResidueOccurrences": 0
+      "baselineForbiddenResidueOccurrences": 0,
+      "affectedPaths": []
     },
     {
       "profile": "sdlc/tests",
@@ -256,7 +934,8 @@
       "baselinePathCount": 0,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 0,
-      "baselineForbiddenResidueOccurrences": 0
+      "baselineForbiddenResidueOccurrences": 0,
+      "affectedPaths": []
     },
     {
       "profile": "sdlc/plan",
@@ -285,7 +964,587 @@
       "baselinePathCount": 54,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 35,
-      "baselineForbiddenResidueOccurrences": 35
+      "baselineForbiddenResidueOccurrences": 35,
+      "affectedPaths": [
+        {
+          "path": "docs/04.execution/plans/2026-05-09-github-qa-ci-remediation.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-05-09-scripts-inventory-remediation.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::2026-05-17 Evidence Refresh",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-05-10-agent-first-harness-llm-wiki-hooks.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-05-17-template-crosslink-fix.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Historical Execution Notes",
+            "BODY-HEADING-UNSUPPORTED::Migration Note",
+            "BODY-HEADING-UNSUPPORTED::Template Coverage Matrix",
+            "BODY-HEADING-UNSUPPORTED::Template Improvement Plan",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-05-18-argo-notifications-slack.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-05-18-argo-rollouts-progressive-delivery.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-05-22-docs-governance-full-ab-hardening.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-05-22-workspace-purpose-alignment.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Implementation Results",
+            "BODY-HEADING-UNSUPPORTED::Remaining Follow-up",
+            "BODY-HEADING-UNSUPPORTED::Runtime Check Interpretation",
+            "BODY-HEADING-UNSUPPORTED::Verification Results",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-05-28-workspace-skill-expansion.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Requirements & Acceptance Criteria",
+            "BODY-HEADING-UNSUPPORTED::Rollback",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-05-31-codex-governance-harness-alignment.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Codex Model and Reasoning-Effort Assignment",
+            "BODY-HEADING-UNSUPPORTED::Concept Alignment Plan",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-06-01-claude-agent-surface-restoration.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-06-01-stage-00-canonical-adapter-redesign.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Canonical Adapter Model",
+            "BODY-HEADING-UNSUPPORTED::Change Unit Split",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-06-02-current-implementation-docs-alignment.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-06-02-docs-01-05-current-implementation-alignment.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-06-02-phase-1-decision-follow-up.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Requirements & Acceptance Criteria",
+            "BODY-HEADING-UNSUPPORTED::Rollback",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-06-02-phase-3-protected-surface-hardening.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Requirements & Acceptance Criteria",
+            "BODY-HEADING-UNSUPPORTED::Rollback",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Requirements & Acceptance Criteria",
+            "BODY-HEADING-UNSUPPORTED::Rollback",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-06-04-harness-four-element-alignment.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-06-05-harness-governance-v2-overlay.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Detailed Task Steps",
+            "BODY-HEADING-UNSUPPORTED::File Structure",
+            "BODY-HEADING-UNSUPPORTED::Source Baseline",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-02-workspace-harness-research-pack.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Detailed Task Steps",
+            "BODY-HEADING-UNSUPPORTED::File Structure",
+            "BODY-HEADING-UNSUPPORTED::Source Baseline",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-03-template-contract-governance-migration.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Agent Rollout & Evaluation Gates"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Agent Rollout & Evaluation Gates",
+            "BODY-HEADING-UNSUPPORTED::Implementation Tasks"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-03-workspace-document-governance-hardening.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Agent Rollout & Evaluation Gates",
+            "BODY-HEADING-UNSUPPORTED::File Structure",
+            "BODY-HEADING-UNSUPPORTED::Task Execution Details"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Detailed Tasks",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-04-agent-governance-contract-normalization.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Agent Rollout & Evaluation Gates",
+            "BODY-HEADING-UNSUPPORTED::Detailed Tasks"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-04-workspace-document-contract-normalization.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Agent Rollout & Evaluation Gates",
+            "BODY-HEADING-UNSUPPORTED::File Responsibility Map",
+            "BODY-HEADING-UNSUPPORTED::Implementation Tasks"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Detailed Tasks",
+            "BODY-HEADING-UNSUPPORTED::File Structure",
+            "BODY-HEADING-UNSUPPORTED::Source Baseline",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-05-template-path-numbering-contract.md",
+          "ruleIds": [
+            "BODY-H2-DUPLICATE",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-H2-DUPLICATE::Related Documents",
+            "BODY-HEADING-UNSUPPORTED::Detailed Tasks",
+            "BODY-HEADING-UNSUPPORTED::Evidence Log",
+            "BODY-HEADING-UNSUPPORTED::File Structure",
+            "BODY-HEADING-UNSUPPORTED::Handoff",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-05-workspace-contract-governance-normalization.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Agent Rollout & Evaluation Gates",
+            "BODY-HEADING-UNSUPPORTED::Detailed Tasks",
+            "BODY-HEADING-UNSUPPORTED::File Structure"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-05-workspace-engineering-implementation-audit-pack.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Agent Rollout & Evaluation Gates",
+            "BODY-HEADING-UNSUPPORTED::Detailed Tasks",
+            "BODY-HEADING-UNSUPPORTED::File Structure"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-06-control-cloud-doc-normalization.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-06-observability-and-network-review-agents.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-06-sdlc-lifecycle-contract.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Agent Rollout & Evaluation Gates",
+            "BODY-HEADING-UNSUPPORTED::Implementation Tasks"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-06-stage03-04-repo-static-gap-closure.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Implementation Tasks",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-07-workspace-engineering-research-pack-refresh.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Agent Rollout & Evaluation Gates",
+            "BODY-HEADING-UNSUPPORTED::Detailed Tasks",
+            "BODY-HEADING-UNSUPPORTED::File Structure",
+            "BODY-HEADING-UNSUPPORTED::Global Constraints"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Agent Rollout & Evaluation Gates",
+            "BODY-HEADING-UNSUPPORTED::File and Interface Map",
+            "BODY-HEADING-UNSUPPORTED::Global Constraints"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Approved Stage 90 Governance Exception",
+            "BODY-HEADING-UNSUPPORTED::Authority Boundary",
+            "BODY-HEADING-UNSUPPORTED::Definitions / Facts",
+            "BODY-HEADING-UNSUPPORTED::Execution Choice",
+            "BODY-HEADING-UNSUPPORTED::Global Constraints",
+            "BODY-HEADING-UNSUPPORTED::Purpose",
+            "BODY-HEADING-UNSUPPORTED::Reference Type",
+            "BODY-HEADING-UNSUPPORTED::Review and Freshness",
+            "BODY-HEADING-UNSUPPORTED::Sources",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-12-affected-surface-agent-qa.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Agent Rollout & Evaluation Gates",
+            "BODY-HEADING-UNSUPPORTED::File and Interface Map",
+            "BODY-HEADING-UNSUPPORTED::Global Constraints"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-12-authored-document-migration.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Agent Rollout & Evaluation Gates",
+            "BODY-HEADING-UNSUPPORTED::File and Interface Map",
+            "BODY-HEADING-UNSUPPORTED::Global Constraints"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-12-document-contract-registry.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::File and Interface Map",
+            "BODY-HEADING-UNSUPPORTED::Global Constraints",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Agent Rollout & Evaluation Gates",
+            "BODY-HEADING-UNSUPPORTED::File and Interface Map",
+            "BODY-HEADING-UNSUPPORTED::Global Constraints"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-12-readme-workspace-profiles.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::File and Interface Map",
+            "BODY-HEADING-UNSUPPORTED::Global Constraints",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-12-semantic-document-validation.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Agent Rollout & Evaluation Gates",
+            "BODY-HEADING-UNSUPPORTED::File and Interface Map",
+            "BODY-HEADING-UNSUPPORTED::Global Constraints"
+          ]
+        },
+        {
+          "path": "docs/04.execution/plans/2026-07-12-template-contract-consolidation.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::File and Interface Map",
+            "BODY-HEADING-UNSUPPORTED::Global Constraints",
+            "BODY-TEMPLATE-RESIDUE::Agent Rollout & Evaluation Gates (If Applicable)"
+          ]
+        },
+        {
+          "path": "examples/aws/docs/04.execution/plans/2026-03-31-aws-migration-plan.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary"
+          ]
+        },
+        {
+          "path": "examples/aws/docs/04.execution/plans/2026-03-31-aws-migration-roadmap.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/04.execution/plans/2026-03-31-azure-migration.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Milestones",
+            "BODY-HEADING-UNSUPPORTED::Phase 1: Infrastructure Provisioning",
+            "BODY-HEADING-UNSUPPORTED::Phase 2: Platform Bootstrapping",
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/04.execution/plans/2026-03-31-migration-strategy.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Migration Phases",
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-HEADING-UNSUPPORTED::Success / Acceptance Criteria"
+          ]
+        }
+      ]
     },
     {
       "profile": "sdlc/task",
@@ -314,7 +1573,808 @@
       "baselinePathCount": 51,
       "baselineDebtPathCount": 51,
       "baselineForbiddenResiduePathCount": 51,
-      "baselineForbiddenResidueOccurrences": 151
+      "baselineForbiddenResidueOccurrences": 151,
+      "affectedPaths": [
+        {
+          "path": "docs/04.execution/tasks/2026-05-09-github-qa-ci-remediation.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-05-09-scripts-inventory-remediation.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::2026-05-17 Evidence Refresh",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-05-10-agent-first-harness-llm-wiki-hooks.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-05-17-template-crosslink-fix.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-05-18-argo-notifications-slack.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-05-22-docs-governance-full-ab-hardening.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-05-22-workspace-purpose-alignment.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Audit Result",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Implementation Decisions",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-HEADING-UNSUPPORTED::Skipped or Deferred Verification",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-05-28-workspace-skill-expansion.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-05-30-antigravity-governance.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-05-31-codex-governance-harness-alignment.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-06-01-claude-agent-surface-restoration.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-06-01-stage-00-canonical-adapter-redesign.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Handoff and Limitations",
+            "BODY-HEADING-UNSUPPORTED::Phase 1 Skill-Axis Completion Audit",
+            "BODY-HEADING-UNSUPPORTED::Phase 2 Traceability Backfill Evidence",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-06-02-docs-01-05-current-implementation-alignment.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-06-02-phase-1-governance-alignment-audit.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Coverage Ledger",
+            "BODY-HEADING-UNSUPPORTED::Gap Ledger",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-HEADING-UNSUPPORTED::Recommended Actions",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-06-02-phase-2-governance-alignment.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Acceptance Criteria",
+            "BODY-HEADING-UNSUPPORTED::Evidence",
+            "BODY-HEADING-UNSUPPORTED::Goal",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-HEADING-UNSUPPORTED::Rollback",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-06-02-phase-3-protected-surface-hardening.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Approved Protected Surface Follow-up (2026-06-02)",
+            "BODY-HEADING-UNSUPPORTED::Coverage Matrix",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-06-04-harness-four-element-alignment.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Current Audit Ledger",
+            "BODY-HEADING-UNSUPPORTED::Named Skill Application Boundary",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-06-05-harness-connective-layer-risk-closure.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Affected Surfaces",
+            "BODY-HEADING-UNSUPPORTED::Allowed Paths",
+            "BODY-HEADING-UNSUPPORTED::Approval Required",
+            "BODY-HEADING-UNSUPPORTED::Evidence Location",
+            "BODY-HEADING-UNSUPPORTED::Follow-up Task Closure",
+            "BODY-HEADING-UNSUPPORTED::Forbidden Paths",
+            "BODY-HEADING-UNSUPPORTED::GitOps Impact",
+            "BODY-HEADING-UNSUPPORTED::Goal",
+            "BODY-HEADING-UNSUPPORTED::Kubernetes Impact",
+            "BODY-HEADING-UNSUPPORTED::Live Validation",
+            "BODY-HEADING-UNSUPPORTED::Non-goals",
+            "BODY-HEADING-UNSUPPORTED::Operations / Runbook Impact",
+            "BODY-HEADING-UNSUPPORTED::Remaining Risk Closure",
+            "BODY-HEADING-UNSUPPORTED::Rollback Plan",
+            "BODY-HEADING-UNSUPPORTED::Secret / Vault Handling",
+            "BODY-HEADING-UNSUPPORTED::Static Validation",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-06-05-harness-governance-v2-overlay.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Named Skill Application Boundary",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-06-05-language-boundary-alignment.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Completion Notes",
+            "BODY-HEADING-UNSUPPORTED::Language Boundary Audit",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-HEADING-UNSUPPORTED::Task Evidence",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-HEADING-UNSUPPORTED::Task Evidence",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-03-template-contract-governance-migration.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Audit Finding Ledger",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Current Evidence",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::ACS-002 Canonical Ownership Evidence",
+            "BODY-HEADING-UNSUPPORTED::ACS-003 GitHub Control Evidence",
+            "BODY-HEADING-UNSUPPORTED::ACS-004 GitOps and Repo-static Validation Evidence",
+            "BODY-HEADING-UNSUPPORTED::ACS-005 Final Closure Evidence",
+            "BODY-HEADING-UNSUPPORTED::Approved Snapshot Boundary",
+            "BODY-HEADING-UNSUPPORTED::Baseline Inventory Evidence",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-04-agent-governance-contract-normalization.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Baseline Drift Inventory",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-HEADING-UNSUPPORTED::T-002 Evidence",
+            "BODY-HEADING-UNSUPPORTED::T-003 Evidence",
+            "BODY-HEADING-UNSUPPORTED::T-004 Evidence",
+            "BODY-HEADING-UNSUPPORTED::T-005 Evidence",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Execution Evidence",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Baseline Evidence Summary",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-HEADING-UNSUPPORTED::WER-002 Evidence Summary",
+            "BODY-HEADING-UNSUPPORTED::WER-003 Evidence Summary",
+            "BODY-HEADING-UNSUPPORTED::WER-004 Evidence Summary",
+            "BODY-HEADING-UNSUPPORTED::WER-005 Evidence Summary",
+            "BODY-HEADING-UNSUPPORTED::WER-006 Evidence Summary",
+            "BODY-HEADING-UNSUPPORTED::WER-007 Evidence Summary",
+            "BODY-HEADING-UNSUPPORTED::WER-008 Evidence Summary",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Baseline Evidence",
+            "BODY-HEADING-UNSUPPORTED::Evidence Log",
+            "BODY-HEADING-UNSUPPORTED::Handoff",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Audit Findings",
+            "BODY-HEADING-UNSUPPORTED::Baseline Inventory",
+            "BODY-HEADING-UNSUPPORTED::Deferrals",
+            "BODY-HEADING-UNSUPPORTED::Remediation Evidence",
+            "BODY-HEADING-UNSUPPORTED::Validation Evidence",
+            "BODY-HEADING-UNSUPPORTED::Verification Commands",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Baseline Evidence Summary",
+            "BODY-HEADING-UNSUPPORTED::Boundary Statement",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-HEADING-UNSUPPORTED::WEA-002 Evidence Summary",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-06-control-cloud-doc-normalization.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-06-observability-and-network-review-agents.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-06-sdlc-lifecycle-contract.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Baseline Audit",
+            "BODY-HEADING-UNSUPPORTED::Final Validation Bundle",
+            "BODY-HEADING-UNSUPPORTED::Gap Classification Ledger",
+            "BODY-HEADING-UNSUPPORTED::Gap Scan Evidence",
+            "BODY-HEADING-UNSUPPORTED::Operator-Approved Follow-up Evidence",
+            "BODY-HEADING-UNSUPPORTED::Operator-Approved Follow-up Ledger",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-HEADING-UNSUPPORTED::WER Lifecycle Closure Evidence",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-07-workspace-engineering-research-pack-refresh.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Baseline Evidence",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-HEADING-UNSUPPORTED::Source and Claim Ledger",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Evidence Boundary",
+            "BODY-HEADING-UNSUPPORTED::Publication Commits",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-12-document-contract-registry.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "docs/04.execution/tasks/2026-07-12-template-contract-consolidation.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-TEMPLATE-RESIDUE::Agent-specific Types (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Phase View (Optional)",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "examples/aws/docs/04.execution/tasks/2026-03-31-aws-migration-tasks.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "examples/aws/docs/04.execution/tasks/2026-03-31-bootstrap-aws.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Phase View",
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/04.execution/tasks/0001-aks-cluster-provisioning.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Performance & Quality Expectations",
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/04.execution/tasks/2026-03-31-migration-tasks.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Approval and Safety Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-TEMPLATE-RESIDUE::Suggested Types",
+            "BODY-TEMPLATE-RESIDUE::Working Rules"
+          ]
+        }
+      ]
     },
     {
       "profile": "sdlc/guide",
@@ -341,7 +2401,124 @@
       "baselinePathCount": 11,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 11,
-      "baselineForbiddenResidueOccurrences": 11
+      "baselineForbiddenResidueOccurrences": 11,
+      "affectedPaths": [
+        {
+          "path": "docs/05.operations/guides/0001-wsl-k3d-argocd-bootstrap-guide.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/05.operations/guides/0002-wsl2-k3d-argocd-ha-setup-guide.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/05.operations/guides/0003-platform-expansion-bootstrap-guide.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/05.operations/guides/0006-argocd-prometheus-grafana-guide.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Verification",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/05.operations/guides/0007-k8s-observability-bootstrap-guide.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Verification",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/05.operations/guides/0009-llm-wiki-curation-guide.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Source Basis",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "examples/aws/docs/05.operations/guides/aws-setup-guide.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/05.operations/guides/0001-azure-onboarding-guide.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Deployment Workflow",
+            "BODY-HEADING-UNSUPPORTED::Enrollment & Authentication",
+            "BODY-HEADING-UNSUPPORTED::Secret Management (Secret Store CSI)",
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-HEADING-UNSUPPORTED::Troubleshooting",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/05.operations/guides/2026-03-31-azure-deployment-guide.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        }
+      ]
     },
     {
       "profile": "sdlc/policy",
@@ -369,7 +2546,141 @@
       "baselinePathCount": 12,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 7,
-      "baselineForbiddenResidueOccurrences": 7
+      "baselineForbiddenResidueOccurrences": 7,
+      "affectedPaths": [
+        {
+          "path": "docs/05.operations/policies/0001-k8s-gitops-operations-policy.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::AI Agent Policy Section (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/05.operations/policies/0002-wsl2-k3d-gitops-ha-operations-policy.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Audit Items",
+            "BODY-HEADING-UNSUPPORTED::CI Governance",
+            "BODY-HEADING-UNSUPPORTED::EndpointSlice Ownership Boundary",
+            "BODY-TEMPLATE-RESIDUE::AI Agent Policy Section (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/05.operations/policies/0003-service-mesh-cert-manager-policy.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::CI Governance",
+            "BODY-TEMPLATE-RESIDUE::AI Agent Policy Section (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/05.operations/policies/0004-rollouts-notifications-headlamp-policy.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Traefik 외부 Artifact 관리",
+            "BODY-TEMPLATE-RESIDUE::AI Agent Policy Section (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/05.operations/policies/0005-observability-platform-operations-policy.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::AI Agent Policy Section (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/05.operations/policies/0006-k8s-observability-operations-policy.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::AI Agent Policy Section (If Applicable)"
+          ]
+        },
+        {
+          "path": "docs/05.operations/policies/0007-app-gitops-onboarding-policy.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::1. 배포 리소스 정책",
+            "BODY-HEADING-UNSUPPORTED::2. 네트워킹 정책",
+            "BODY-HEADING-UNSUPPORTED::3. 보안 정책",
+            "BODY-HEADING-UNSUPPORTED::4. GitOps 워크플로우 정책",
+            "BODY-HEADING-UNSUPPORTED::5. 온보딩 통제 체크리스트",
+            "BODY-HEADING-UNSUPPORTED::Current Contract Note",
+            "BODY-HEADING-UNSUPPORTED::Purpose",
+            "BODY-TEMPLATE-RESIDUE::AI Agent Policy Section (If Applicable)"
+          ]
+        },
+        {
+          "path": "examples/aws/docs/05.operations/policies/aws-management.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary"
+          ]
+        },
+        {
+          "path": "examples/aws/docs/05.operations/policies/aws-operations-policy.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::AI Agent Policy Section",
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/05.operations/policies/2026-03-31-azure-ops-policy.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/05.operations/policies/azure-cost-optimization.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::1. 노드 풀 및 컴퓨팅 최적화",
+            "BODY-HEADING-UNSUPPORTED::2. 데이터베이스 및 스토리지 최적화",
+            "BODY-HEADING-UNSUPPORTED::3. 태깅(Tagging) 및 리소스 관리",
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/05.operations/policies/azure-maintenance-policy.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Change Management",
+            "BODY-HEADING-UNSUPPORTED::KPIs (Success Metrics)",
+            "BODY-HEADING-UNSUPPORTED::Maintenance Windows",
+            "BODY-HEADING-UNSUPPORTED::Operational Standards",
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary"
+          ]
+        }
+      ]
     },
     {
       "profile": "sdlc/runbook",
@@ -399,7 +2710,205 @@
       "baselinePathCount": 14,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 14,
-      "baselineForbiddenResidueOccurrences": 23
+      "baselineForbiddenResidueOccurrences": 23,
+      "affectedPaths": [
+        {
+          "path": "docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Troubleshooting Matrix",
+            "BODY-TEMPLATE-RESIDUE::Agent Operations (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Troubleshooting Signatures",
+            "BODY-TEMPLATE-RESIDUE::Agent Operations (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/05.operations/runbooks/0003-platform-expansion-bootstrap-runbook.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Operations (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Procedure 1: Vault Notifications Secret 준비 (최초 1회)",
+            "BODY-HEADING-UNSUPPORTED::Procedure 2: ArgoCD Notifications 활성화 확인",
+            "BODY-HEADING-UNSUPPORTED::Procedure 3: Argo Rollouts 상태 확인",
+            "BODY-HEADING-UNSUPPORTED::Procedure 4: Headlamp 접근 검증",
+            "BODY-HEADING-UNSUPPORTED::Procedure 5: Rollouts Dashboard 접근 검증",
+            "BODY-HEADING-UNSUPPORTED::Troubleshooting Signatures",
+            "BODY-TEMPLATE-RESIDUE::Agent Operations (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/05.operations/runbooks/0007-kiali-observability-connectivity-runbook.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Procedure 1: 연결 상태 진단",
+            "BODY-HEADING-UNSUPPORTED::Procedure 2: EndpointSlice IP 업데이트",
+            "BODY-HEADING-UNSUPPORTED::Procedure 3: NetworkPolicy egress 규칙 점검",
+            "BODY-HEADING-UNSUPPORTED::Procedure 4: Kiali Grafana URL 설정 확인",
+            "BODY-HEADING-UNSUPPORTED::Troubleshooting",
+            "BODY-HEADING-UNSUPPORTED::k3d-hyhome 올바른 IP 할당표",
+            "BODY-HEADING-UNSUPPORTED::주의사항: ArgoCD EndpointSlice 제외",
+            "BODY-HEADING-UNSUPPORTED::핵심 교훈 요약",
+            "BODY-TEMPLATE-RESIDUE::Agent Operations (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/05.operations/runbooks/0008-argocd-metrics-prometheus-runbook.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::NodePort 정상 상태 기준값",
+            "BODY-HEADING-UNSUPPORTED::Procedure 1: 연결 상태 진단",
+            "BODY-HEADING-UNSUPPORTED::Procedure 2: NodePort 서비스 재배포",
+            "BODY-HEADING-UNSUPPORTED::Procedure 3: k3d 노드 IP 변경 대응",
+            "BODY-HEADING-UNSUPPORTED::Procedure 4: Prometheus config reload",
+            "BODY-HEADING-UNSUPPORTED::Troubleshooting",
+            "BODY-HEADING-UNSUPPORTED::오류 시그니처 요약",
+            "BODY-TEMPLATE-RESIDUE::Agent Operations (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/05.operations/runbooks/0009-k8s-observability-runbook.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Procedure 1: 전체 상태 진단",
+            "BODY-HEADING-UNSUPPORTED::Procedure 2: platform-monitoring ArgoCD App 배포 복구",
+            "BODY-HEADING-UNSUPPORTED::Procedure 3: alloy-k8s-logs CrashLoop 복구",
+            "BODY-HEADING-UNSUPPORTED::Procedure 4: Prometheus alert_rules 미로드 복구",
+            "BODY-HEADING-UNSUPPORTED::Procedure 5: k3d 재시작 후 NodePort 복구",
+            "BODY-HEADING-UNSUPPORTED::Troubleshooting",
+            "BODY-HEADING-UNSUPPORTED::정상 상태 기준값",
+            "BODY-TEMPLATE-RESIDUE::Agent Operations (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/05.operations/runbooks/0010-github-app-gitops-onboarding-runbook.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Procedure 1: GitOps 매니페스트 생성 및 배포",
+            "BODY-HEADING-UNSUPPORTED::Procedure 2: 배포 상태 검증",
+            "BODY-HEADING-UNSUPPORTED::Procedure 3: canary 배포 업데이트 (이미지 버전 갱신)",
+            "BODY-HEADING-UNSUPPORTED::Procedure 4: canary 실패 → rollback",
+            "BODY-HEADING-UNSUPPORTED::Procedure 5: Vault 시크릿 연동 추가",
+            "BODY-HEADING-UNSUPPORTED::Troubleshooting",
+            "BODY-HEADING-UNSUPPORTED::사전 점검",
+            "BODY-TEMPLATE-RESIDUE::Agent Operations (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/05.operations/runbooks/0011-reference-maintenance-runbook.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Agent Operations (If Applicable)",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "examples/aws/docs/05.operations/runbooks/aws-disaster-recovery.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "examples/aws/docs/05.operations/runbooks/aws-recovery.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/05.operations/runbooks/0001-disaster-recovery.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Disaster Scenarios",
+            "BODY-HEADING-UNSUPPORTED::Escalation Matrix",
+            "BODY-HEADING-UNSUPPORTED::Post-Mortem Requirements",
+            "BODY-HEADING-UNSUPPORTED::Recovery Objectives (SLO)",
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-HEADING-UNSUPPORTED::Step-by-Step Recovery Procedures",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/05.operations/runbooks/2026-03-31-fault-tolerance-runbook.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "examples/azure/docs/05.operations/runbooks/aks-node-replacement.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::1. 노드 풀 교체 (Rolling Update)",
+            "BODY-HEADING-UNSUPPORTED::2. 노드 규모 조정 (Scaling)",
+            "BODY-HEADING-UNSUPPORTED::Snapshot Boundary",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        }
+      ]
     },
     {
       "profile": "sdlc/incident",
@@ -434,7 +2943,8 @@
       "baselinePathCount": 0,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 0,
-      "baselineForbiddenResidueOccurrences": 0
+      "baselineForbiddenResidueOccurrences": 0,
+      "affectedPaths": []
     },
     {
       "profile": "sdlc/postmortem",
@@ -478,7 +2988,8 @@
       "baselinePathCount": 0,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 0,
-      "baselineForbiddenResidueOccurrences": 0
+      "baselineForbiddenResidueOccurrences": 0,
+      "affectedPaths": []
     },
     {
       "profile": "content/reference",
@@ -499,7 +3010,369 @@
       "baselinePathCount": 35,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 35,
-      "baselineForbiddenResidueOccurrences": 35
+      "baselineForbiddenResidueOccurrences": 35,
+      "affectedPaths": [
+        {
+          "path": "docs/90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/audits/2026-07-02-whia/harness-loop-implementation-audit.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/audits/2026-07-02-whia/provider-harness-loop-implementation-audit.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/audits/2026-07-02-whia/sdlc-delivery-practices-implementation-audit.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/audits/2026-07-02-whia/workspace-governance-implementation-audit.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Findings",
+            "BODY-HEADING-UNSUPPORTED::Implementation Checklist",
+            "BODY-HEADING-UNSUPPORTED::Resolution Overlay",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/audits/2026-07-04-wdcn/workspace-document-contract-normalization-audit.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Comparison Analysis",
+            "BODY-HEADING-UNSUPPORTED::Findings",
+            "BODY-HEADING-UNSUPPORTED::Implementation Checklist",
+            "BODY-HEADING-UNSUPPORTED::Resolution Overlay",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/audits/2026-07-05-wea/governance-harness-loop-providers.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/audits/2026-07-05-wea/implementation-roadmap-and-automation-opportunities.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/audits/2026-07-05-wea/kubernetes-infrastructure-security.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/audits/2026-07-05-wea/sdlc-ci-qa-formatting-automation.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/audits/2026-07-11-weia/ai-agents-model-routing-vibe-coding.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Automation Opportunities",
+            "BODY-HEADING-UNSUPPORTED::Comparison Analysis",
+            "BODY-HEADING-UNSUPPORTED::Residual Risks",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Comparison Analysis",
+            "BODY-HEADING-UNSUPPORTED::Residual Risks",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/audits/2026-07-11-weia/governance-harness-loop-providers.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Automation Opportunities",
+            "BODY-HEADING-UNSUPPORTED::Comparison Analysis",
+            "BODY-HEADING-UNSUPPORTED::Residual Risks",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/audits/2026-07-11-weia/kubernetes-infrastructure-security.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Comparison Analysis",
+            "BODY-HEADING-UNSUPPORTED::GitOps and Platform Foundation Controls",
+            "BODY-HEADING-UNSUPPORTED::Residual Risks",
+            "BODY-HEADING-UNSUPPORTED::SEC Finding Reconciliation Controls",
+            "BODY-HEADING-UNSUPPORTED::Score and Distribution Summary",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/audits/2026-07-11-weia/remediation-roadmap.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/audits/2026-07-11-weia/sdlc-document-lifecycle-frontmatter.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Comparison Analysis",
+            "BODY-HEADING-UNSUPPORTED::Residual Risks",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/data/agent-reference-index.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/data/tech-stack-version-inventory.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Cloud Example Snapshot: 2026-05-22",
+            "BODY-HEADING-UNSUPPORTED::Version Contracts",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/learning/infrastructure-to-theory-roadmap.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Deep Dive Modules",
+            "BODY-HEADING-UNSUPPORTED::Module C: Offline Controller Thought Experiment",
+            "BODY-HEADING-UNSUPPORTED::Recommended Reading List",
+            "BODY-HEADING-UNSUPPORTED::Theoretical Mapping (Infrastructure -> CS Theory)",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/research/2026-07-04-wer/harness-and-loop-engineering.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/research/2026-07-04-wer/kubernetes-infrastructure-security.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/research/2026-07-04-wer/provider-implementation-status.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/research/2026-07-04-wer/workspace-governance-baseline.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/research/2026-07-07-wer/ai-agents-roster-and-gap-analysis.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Interpretation",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/research/2026-07-07-wer/automation-pipeline-workflow-qa.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Decision Ledger",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/research/2026-07-07-wer/harness-and-loop-engineering.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/research/2026-07-07-wer/kubernetes-infrastructure-security.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/research/2026-07-07-wer/provider-implementation-status.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Interpretation",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/research/2026-07-07-wer/spec-sdlc-ci-qa-formatting.md",
+          "ruleIds": [
+            "BODY-HEADING-UNSUPPORTED",
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-HEADING-UNSUPPORTED::Implementation Checklist",
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        },
+        {
+          "path": "docs/90.references/research/2026-07-07-wer/workspace-governance-baseline.md",
+          "ruleIds": [
+            "BODY-TEMPLATE-RESIDUE"
+          ],
+          "tokens": [
+            "BODY-TEMPLATE-RESIDUE::Purpose"
+          ]
+        }
+      ]
     },
     {
       "profile": "content/archive-tombstone",
@@ -517,7 +3390,8 @@
       "baselinePathCount": 31,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 0,
-      "baselineForbiddenResidueOccurrences": 0
+      "baselineForbiddenResidueOccurrences": 0,
+      "affectedPaths": []
     },
     {
       "profile": "governance/reference",
@@ -534,7 +3408,708 @@
       "baselinePathCount": 32,
       "baselineDebtPathCount": 32,
       "baselineForbiddenResiduePathCount": 0,
-      "baselineForbiddenResidueOccurrences": 0
+      "baselineForbiddenResidueOccurrences": 0,
+      "affectedPaths": [
+        {
+          "path": "docs/00.agent-governance/common-governance.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Canonical Adapter Ownership",
+            "BODY-HEADING-UNSUPPORTED::Definitions / Facts",
+            "BODY-HEADING-UNSUPPORTED::Platform Mapping",
+            "BODY-HEADING-UNSUPPORTED::Policies",
+            "BODY-HEADING-UNSUPPORTED::Purpose",
+            "BODY-HEADING-UNSUPPORTED::Reference Type",
+            "BODY-HEADING-UNSUPPORTED::Review and Freshness",
+            "BODY-HEADING-UNSUPPORTED::Scope",
+            "BODY-HEADING-UNSUPPORTED::Sources",
+            "BODY-HEADING-UNSUPPORTED::Support Matrix"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/harness-catalog.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Agent Eval Completion Contract",
+            "BODY-HEADING-UNSUPPORTED::Agent-first Engineering Matrix",
+            "BODY-HEADING-UNSUPPORTED::Agents",
+            "BODY-HEADING-UNSUPPORTED::Canonical Adapter Ownership Model",
+            "BODY-HEADING-UNSUPPORTED::Consistency Rules",
+            "BODY-HEADING-UNSUPPORTED::ECC DAILY/LIBRARY Surface",
+            "BODY-HEADING-UNSUPPORTED::External Agency Catalog Gap Lens",
+            "BODY-HEADING-UNSUPPORTED::Harness Engineering Matrix",
+            "BODY-HEADING-UNSUPPORTED::Harness Four-Element Control Model",
+            "BODY-HEADING-UNSUPPORTED::Matrix Status Contract",
+            "BODY-HEADING-UNSUPPORTED::Model Tier Mapping",
+            "BODY-HEADING-UNSUPPORTED::Official Capability Basis",
+            "BODY-HEADING-UNSUPPORTED::Provider Capability Parity Matrix",
+            "BODY-HEADING-UNSUPPORTED::Provider-Native Role Adapters",
+            "BODY-HEADING-UNSUPPORTED::Purpose",
+            "BODY-HEADING-UNSUPPORTED::Readiness Evidence Boundary",
+            "BODY-HEADING-UNSUPPORTED::Readiness Matrix",
+            "BODY-HEADING-UNSUPPORTED::Runtime Principles",
+            "BODY-HEADING-UNSUPPORTED::Scope",
+            "BODY-HEADING-UNSUPPORTED::Skills",
+            "BODY-HEADING-UNSUPPORTED::Task-to-Skill Routing"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/harness-implementation-map.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Bootstrap Boundary",
+            "BODY-HEADING-UNSUPPORTED::CI",
+            "BODY-HEADING-UNSUPPORTED::Control / Governance",
+            "BODY-HEADING-UNSUPPORTED::Evidence / Progress",
+            "BODY-HEADING-UNSUPPORTED::GitOps Runtime",
+            "BODY-HEADING-UNSUPPORTED::Harness Catalog / Runtime Roster",
+            "BODY-HEADING-UNSUPPORTED::Kubernetes Static Validation",
+            "BODY-HEADING-UNSUPPORTED::Live Runtime Evidence",
+            "BODY-HEADING-UNSUPPORTED::Operations / Runbooks",
+            "BODY-HEADING-UNSUPPORTED::Policy Gates",
+            "BODY-HEADING-UNSUPPORTED::Secret / Vault / External Secrets"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/model-policy.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Enforcement",
+            "BODY-HEADING-UNSUPPORTED::Model Tiers (July 2026 Local Baseline)",
+            "BODY-HEADING-UNSUPPORTED::Principles",
+            "BODY-HEADING-UNSUPPORTED::Source Freshness"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/providers/agents-md.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Codex Provider Resolution",
+            "BODY-HEADING-UNSUPPORTED::Cross-Provider Consistency",
+            "BODY-HEADING-UNSUPPORTED::Gateway Integrity Rules",
+            "BODY-HEADING-UNSUPPORTED::Loading Model",
+            "BODY-HEADING-UNSUPPORTED::Repository Instruction Model",
+            "BODY-HEADING-UNSUPPORTED::Role"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/providers/claude.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Context Strategy",
+            "BODY-HEADING-UNSUPPORTED::Execution Expectations",
+            "BODY-HEADING-UNSUPPORTED::Loading Model",
+            "BODY-HEADING-UNSUPPORTED::Memory and Context",
+            "BODY-HEADING-UNSUPPORTED::Native Boundary",
+            "BODY-HEADING-UNSUPPORTED::Official Source Basis"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/providers/codex.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Context Strategy",
+            "BODY-HEADING-UNSUPPORTED::Execution Expectations",
+            "BODY-HEADING-UNSUPPORTED::Loading Model",
+            "BODY-HEADING-UNSUPPORTED::Official Source Basis",
+            "BODY-HEADING-UNSUPPORTED::Permission & Hook Boundary",
+            "BODY-HEADING-UNSUPPORTED::Role",
+            "BODY-HEADING-UNSUPPORTED::Runtime Tooling Boundary"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/providers/gemini.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Antigravity Harness Structure (`.agents/`)",
+            "BODY-HEADING-UNSUPPORTED::Context Strategy",
+            "BODY-HEADING-UNSUPPORTED::Execution Expectations",
+            "BODY-HEADING-UNSUPPORTED::File Name Compatibility",
+            "BODY-HEADING-UNSUPPORTED::Loading Model",
+            "BODY-HEADING-UNSUPPORTED::Model Policy (Gemini)",
+            "BODY-HEADING-UNSUPPORTED::Official Source Basis"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/rules/agentic.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Agent-first Engineering Defaults",
+            "BODY-HEADING-UNSUPPORTED::Context Hierarchy Defaults",
+            "BODY-HEADING-UNSUPPORTED::Direct Mutation Boundary",
+            "BODY-HEADING-UNSUPPORTED::Drift Garbage Collection Defaults",
+            "BODY-HEADING-UNSUPPORTED::Escalation and Safety",
+            "BODY-HEADING-UNSUPPORTED::Execution Contract",
+            "BODY-HEADING-UNSUPPORTED::Gateway and Runtime Audit Checklist",
+            "BODY-HEADING-UNSUPPORTED::Matrix-first Change Rule",
+            "BODY-HEADING-UNSUPPORTED::Persona and Rule Enforcement",
+            "BODY-HEADING-UNSUPPORTED::Readiness Review Defaults"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/rules/approval-boundaries.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Approval Matrix",
+            "BODY-HEADING-UNSUPPORTED::Default Stance",
+            "BODY-HEADING-UNSUPPORTED::Mandatory Policies"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/rules/bootstrap.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Core Rules",
+            "BODY-HEADING-UNSUPPORTED::Definition of Done for Governance Tasks",
+            "BODY-HEADING-UNSUPPORTED::JIT Loading Sequence",
+            "BODY-HEADING-UNSUPPORTED::Stage Taxonomy"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/rules/document-stage-routing.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Authoring Guardrails",
+            "BODY-HEADING-UNSUPPORTED::Core Routing Policy",
+            "BODY-HEADING-UNSUPPORTED::Legacy Path Migration Map",
+            "BODY-HEADING-UNSUPPORTED::Lifecycle Pre-Edit Contract",
+            "BODY-HEADING-UNSUPPORTED::Prohibited Paths",
+            "BODY-HEADING-UNSUPPORTED::Purpose",
+            "BODY-HEADING-UNSUPPORTED::Routing Decision Rules"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/rules/documentation-protocol.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Checklist Policy",
+            "BODY-HEADING-UNSUPPORTED::Core Requirements",
+            "BODY-HEADING-UNSUPPORTED::Docs 3 Rules (HALT)",
+            "BODY-HEADING-UNSUPPORTED::Document Output Routing",
+            "BODY-HEADING-UNSUPPORTED::Drift Garbage Collection",
+            "BODY-HEADING-UNSUPPORTED::Language Boundary Rules",
+            "BODY-HEADING-UNSUPPORTED::Template Enforcement Policy",
+            "BODY-HEADING-UNSUPPORTED::Template Link Policy",
+            "BODY-HEADING-UNSUPPORTED::Traceability Rules"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/rules/git-workflow.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Branch Completion Strategy",
+            "BODY-HEADING-UNSUPPORTED::Branch Roles",
+            "BODY-HEADING-UNSUPPORTED::Branch Types",
+            "BODY-HEADING-UNSUPPORTED::Pull Requests",
+            "BODY-HEADING-UNSUPPORTED::Rules"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/rules/persona.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Activation Steps",
+            "BODY-HEADING-UNSUPPORTED::Persona Mapping",
+            "BODY-HEADING-UNSUPPORTED::Stage Mapping"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/rules/postflight-checklist.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::1. Policy Consistency",
+            "BODY-HEADING-UNSUPPORTED::2. Language and Audience",
+            "BODY-HEADING-UNSUPPORTED::3. Reference Integrity",
+            "BODY-HEADING-UNSUPPORTED::4. Stage Compliance",
+            "BODY-HEADING-UNSUPPORTED::5. Verification Evidence",
+            "BODY-HEADING-UNSUPPORTED::6. Docs 3 Rules Compliance",
+            "BODY-HEADING-UNSUPPORTED::7. Branch Completion Boundary"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/rules/preflight-checklist.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::1. Task Intake",
+            "BODY-HEADING-UNSUPPORTED::2. Governance Routing",
+            "BODY-HEADING-UNSUPPORTED::3. Stage and Source Mapping",
+            "BODY-HEADING-UNSUPPORTED::4. Safety and Boundaries",
+            "BODY-HEADING-UNSUPPORTED::5. Execution Readiness"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/rules/quality-standards.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Coverage Applicability",
+            "BODY-HEADING-UNSUPPORTED::Minimum Verification for Governance Updates",
+            "BODY-HEADING-UNSUPPORTED::Required Quality Dimensions"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/rules/stage-authoring-matrix.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Lifecycle Pre-Edit Contract"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/rules/stage-checklists.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::`00.agent-governance`",
+            "BODY-HEADING-UNSUPPORTED::`01.requirements`",
+            "BODY-HEADING-UNSUPPORTED::`02.architecture/decisions`",
+            "BODY-HEADING-UNSUPPORTED::`02.architecture/requirements`",
+            "BODY-HEADING-UNSUPPORTED::`03.specs`",
+            "BODY-HEADING-UNSUPPORTED::`04.execution/plans`",
+            "BODY-HEADING-UNSUPPORTED::`04.execution/tasks`",
+            "BODY-HEADING-UNSUPPORTED::`05.operations/guides`",
+            "BODY-HEADING-UNSUPPORTED::`05.operations/incidents`",
+            "BODY-HEADING-UNSUPPORTED::`05.operations/policies`",
+            "BODY-HEADING-UNSUPPORTED::`05.operations/runbooks`",
+            "BODY-HEADING-UNSUPPORTED::`98.archive`"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/rules/standards.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Documentation Boundary Policy",
+            "BODY-HEADING-UNSUPPORTED::Language Policy",
+            "BODY-HEADING-UNSUPPORTED::Quality Policy",
+            "BODY-HEADING-UNSUPPORTED::Security & Infrastructure Policy",
+            "BODY-HEADING-UNSUPPORTED::Token and Context Policy",
+            "BODY-HEADING-UNSUPPORTED::Workspace Alignment"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/scopes/architecture.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Definition of Done",
+            "BODY-HEADING-UNSUPPORTED::File Ownership",
+            "BODY-HEADING-UNSUPPORTED::Responsibilities",
+            "BODY-HEADING-UNSUPPORTED::Source of Truth",
+            "BODY-HEADING-UNSUPPORTED::Subagent Bridge"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/scopes/backend.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Definition of Done",
+            "BODY-HEADING-UNSUPPORTED::File Ownership",
+            "BODY-HEADING-UNSUPPORTED::Responsibilities",
+            "BODY-HEADING-UNSUPPORTED::Source of Truth",
+            "BODY-HEADING-UNSUPPORTED::Subagent Bridge"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/scopes/docs.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Definition of Done",
+            "BODY-HEADING-UNSUPPORTED::File Ownership",
+            "BODY-HEADING-UNSUPPORTED::Responsibilities",
+            "BODY-HEADING-UNSUPPORTED::Source of Truth",
+            "BODY-HEADING-UNSUPPORTED::Subagent Bridge"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/scopes/frontend.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Definition of Done",
+            "BODY-HEADING-UNSUPPORTED::File Ownership",
+            "BODY-HEADING-UNSUPPORTED::Responsibilities",
+            "BODY-HEADING-UNSUPPORTED::Source of Truth",
+            "BODY-HEADING-UNSUPPORTED::Subagent Bridge"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/scopes/infra.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Definition of Done",
+            "BODY-HEADING-UNSUPPORTED::File Ownership",
+            "BODY-HEADING-UNSUPPORTED::Responsibilities",
+            "BODY-HEADING-UNSUPPORTED::Source of Truth",
+            "BODY-HEADING-UNSUPPORTED::Subagent Bridge",
+            "BODY-HEADING-UNSUPPORTED::Workspace Facts"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/scopes/meta.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Definition of Done",
+            "BODY-HEADING-UNSUPPORTED::File Ownership",
+            "BODY-HEADING-UNSUPPORTED::Responsibilities",
+            "BODY-HEADING-UNSUPPORTED::Source of Truth",
+            "BODY-HEADING-UNSUPPORTED::Subagent Bridge"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/scopes/ops.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Definition of Done",
+            "BODY-HEADING-UNSUPPORTED::File Ownership",
+            "BODY-HEADING-UNSUPPORTED::Responsibilities",
+            "BODY-HEADING-UNSUPPORTED::Source of Truth",
+            "BODY-HEADING-UNSUPPORTED::Subagent Bridge"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/scopes/product.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Definition of Done",
+            "BODY-HEADING-UNSUPPORTED::File Ownership",
+            "BODY-HEADING-UNSUPPORTED::Responsibilities",
+            "BODY-HEADING-UNSUPPORTED::Source of Truth",
+            "BODY-HEADING-UNSUPPORTED::Subagent Bridge"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/scopes/qa.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Definition of Done",
+            "BODY-HEADING-UNSUPPORTED::File Ownership",
+            "BODY-HEADING-UNSUPPORTED::Responsibilities",
+            "BODY-HEADING-UNSUPPORTED::Source of Truth",
+            "BODY-HEADING-UNSUPPORTED::Subagent Bridge"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/scopes/security.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED",
+            "FM-DELIMITER"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Overview",
+            "BODY-HEADING-REQUIRED::Related Documents",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Definition of Done",
+            "BODY-HEADING-UNSUPPORTED::File Ownership",
+            "BODY-HEADING-UNSUPPORTED::Responsibilities",
+            "BODY-HEADING-UNSUPPORTED::Source of Truth",
+            "BODY-HEADING-UNSUPPORTED::Subagent Bridge"
+          ]
+        },
+        {
+          "path": "docs/00.agent-governance/subagent-protocol.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authority Boundary",
+            "BODY-HEADING-REQUIRED::Current Contract",
+            "BODY-HEADING-REQUIRED::Governance Context",
+            "BODY-HEADING-REQUIRED::Validation and Refresh",
+            "BODY-HEADING-UNSUPPORTED::Agent File Requirement",
+            "BODY-HEADING-UNSUPPORTED::Catalog Reference",
+            "BODY-HEADING-UNSUPPORTED::Coordination",
+            "BODY-HEADING-UNSUPPORTED::Dispatch Rules",
+            "BODY-HEADING-UNSUPPORTED::Execution Boundaries",
+            "BODY-HEADING-UNSUPPORTED::Model Hierarchy",
+            "BODY-HEADING-UNSUPPORTED::Purpose",
+            "BODY-HEADING-UNSUPPORTED::Scope",
+            "BODY-HEADING-UNSUPPORTED::Tool Scoping"
+          ]
+        }
+      ]
     },
     {
       "profile": "governance/memory",
@@ -550,7 +4125,8 @@
       "baselinePathCount": 0,
       "baselineDebtPathCount": 0,
       "baselineForbiddenResiduePathCount": 0,
-      "baselineForbiddenResidueOccurrences": 0
+      "baselineForbiddenResidueOccurrences": 0,
+      "affectedPaths": []
     },
     {
       "profile": "governance/template-support",
@@ -567,7 +4143,109 @@
       "baselinePathCount": 6,
       "baselineDebtPathCount": 6,
       "baselineForbiddenResiduePathCount": 0,
-      "baselineForbiddenResidueOccurrences": 0
+      "baselineForbiddenResidueOccurrences": 0,
+      "affectedPaths": [
+        {
+          "path": "docs/99.templates/support/common-documentation-governance.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authoring Rules",
+            "BODY-HEADING-REQUIRED::Owned Contract",
+            "BODY-HEADING-REQUIRED::Validation Contract",
+            "BODY-HEADING-UNSUPPORTED::Archive Governance",
+            "BODY-HEADING-UNSUPPORTED::Common Profile Handoff",
+            "BODY-HEADING-UNSUPPORTED::GitHub-Native Control Markdown Governance",
+            "BODY-HEADING-UNSUPPORTED::Memory and Progress Governance",
+            "BODY-HEADING-UNSUPPORTED::README Governance",
+            "BODY-HEADING-UNSUPPORTED::Reference Governance"
+          ]
+        },
+        {
+          "path": "docs/99.templates/support/documentation-contract.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authoring Rules",
+            "BODY-HEADING-REQUIRED::Owned Contract",
+            "BODY-HEADING-UNSUPPORTED::Contract Rules",
+            "BODY-HEADING-UNSUPPORTED::Lifecycle Route Summary",
+            "BODY-HEADING-UNSUPPORTED::Protected Surface Rules",
+            "BODY-HEADING-UNSUPPORTED::SDLC and Common Documentation Split"
+          ]
+        },
+        {
+          "path": "docs/99.templates/support/frontmatter-schema.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authoring Rules",
+            "BODY-HEADING-REQUIRED::Owned Contract",
+            "BODY-HEADING-UNSUPPORTED::Current Baseline",
+            "BODY-HEADING-UNSUPPORTED::Key Rules",
+            "BODY-HEADING-UNSUPPORTED::Legacy Cleanup Rules",
+            "BODY-HEADING-UNSUPPORTED::Profile Rationale"
+          ]
+        },
+        {
+          "path": "docs/99.templates/support/legacy-cleanup-rules.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authoring Rules",
+            "BODY-HEADING-REQUIRED::Owned Contract",
+            "BODY-HEADING-REQUIRED::Validation Contract",
+            "BODY-HEADING-UNSUPPORTED::Active vs Historical References",
+            "BODY-HEADING-UNSUPPORTED::Current Review Order",
+            "BODY-HEADING-UNSUPPORTED::Legacy Items to Remove from Active Contracts",
+            "BODY-HEADING-UNSUPPORTED::Validation Commands"
+          ]
+        },
+        {
+          "path": "docs/99.templates/support/sdlc-governance.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authoring Rules",
+            "BODY-HEADING-REQUIRED::Owned Contract",
+            "BODY-HEADING-REQUIRED::Validation Contract",
+            "BODY-HEADING-UNSUPPORTED::Governance Rules",
+            "BODY-HEADING-UNSUPPORTED::Lifecycle Rationale and Deferred Normalization",
+            "BODY-HEADING-UNSUPPORTED::Numbering, Handoff, and Active Surfaces",
+            "BODY-HEADING-UNSUPPORTED::SDLC Profile Handoff",
+            "BODY-HEADING-UNSUPPORTED::Validation Rules"
+          ]
+        },
+        {
+          "path": "docs/99.templates/support/template-routing.md",
+          "ruleIds": [
+            "BODY-HEADING-REQUIRED",
+            "BODY-HEADING-UNSUPPORTED"
+          ],
+          "tokens": [
+            "BODY-HEADING-REQUIRED::Authoring Rules",
+            "BODY-HEADING-REQUIRED::Owned Contract",
+            "BODY-HEADING-REQUIRED::Validation Contract",
+            "BODY-HEADING-UNSUPPORTED::Current Route Map",
+            "BODY-HEADING-UNSUPPORTED::Enforcement Surfaces",
+            "BODY-HEADING-UNSUPPORTED::Example-Local SDLC Snapshot Boundary",
+            "BODY-HEADING-UNSUPPORTED::Explicit Non-routed Markdown Exceptions",
+            "BODY-HEADING-UNSUPPORTED::Lifecycle Route Summary",
+            "BODY-HEADING-UNSUPPORTED::Route-selection Procedure",
+            "BODY-HEADING-UNSUPPORTED::Validation Commands"
+          ]
+        }
+      ]
     }
   ],
   "canonicalFormCoverage": [

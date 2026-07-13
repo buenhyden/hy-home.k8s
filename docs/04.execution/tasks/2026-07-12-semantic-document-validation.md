@@ -13,9 +13,9 @@ updated: 2026-07-12
 This Task tracks four bounded implementation units for replacing hardcoded
 document-shape checks with deterministic registry-driven Markdown, link, index,
 current-owner, and migration-ledger validation. SMDV-001 establishes the
-reciprocal execution lineage; SMDV-002 through SMDV-004 remain queued until
-their validator and integration changes pass the Plan's repository-static
-gates.
+reciprocal execution lineage, and SMDV-002 adds the production Markdown
+profile validator. SMDV-003 and SMDV-004 remain queued until their
+cross-document and integration changes pass the Plan's repository-static gates.
 
 ## Inputs
 
@@ -33,15 +33,16 @@ gates.
 | ID | Work item | Owner | Status | Evidence |
 | --- | --- | --- | --- | --- |
 | SMDV-001 | Start reciprocal Spec, Plan, Task, and index lineage | platform | Done | Logical commit `docs(execution): start semantic document validation`; `python3 scripts/validate-document-contract-registry.py --root . --mode compatibility` |
-| SMDV-002 | Implement production Markdown profile validation | platform | Queued | Logical commit `feat(validation): add markdown profile validator`; `python3 scripts/validate-markdown-profiles.py --self-test` |
+| SMDV-002 | Implement production Markdown profile validation | platform | Done | Logical commit `feat(docs): add registry-driven markdown profile validation`; `python3 scripts/validate-markdown-profiles.py --self-test` |
 | SMDV-003 | Implement cross-document link, index, owner, and ledger validation | platform | Queued | Logical commit `feat(validation): add link and owner validator`; `python3 scripts/validate-links-and-owners.py --self-test` |
 | SMDV-004 | Delegate the repository gate and close Spec 029 | platform | Queued | Logical commit `feat(validation): delegate semantic document gates`; `bash scripts/validate-repo-quality-gates.sh .` |
 
 ## Approval and Safety Boundaries
 
 - **Allowed Paths**: Only the exact tracked path set declared by the active
-  SMDV Plan Task may change. SMDV-001 is limited to its seven Spec, Plan, Task,
-  index, and canonical progress-ledger paths.
+  SMDV Plan Task may change. SMDV-002 is limited to its nine validator,
+  fixture, documentation, Task, quality-gate consumer, and canonical
+  progress-ledger paths.
 - **Forbidden Paths**: Secrets, credentials, ignored `_workspace` children,
   local diagnostics, provider or cluster state, remote resources, and paths
   outside the active SMDV Task scope must not be read or changed.
@@ -69,13 +70,16 @@ gates.
 
 ## Verification Summary
 
-SMDV-001 begins from the expected RED state in which this Task and its Task
-index entries are absent. GREEN requires six exact reciprocal hrefs, unique
-tree and table entries in all three Stage indexes, 60 profiles, 27 templates,
-467 classified target Markdown paths (`baseline=433`, `new=36`), and all 72
-README paths still canonical. Evidence is repository-static and excludes live,
-secret-value, credential, remote CI, publication, push, merge, deployment, and
-third-party mutation checks.
+SMDV-002 GREEN covers all 60 registry profiles, the imported eight-case README
+handoff and its exact 72-path table, append context, deterministic Seoul-date
+semantics, stable text/JSON diagnostics, and exact finite compatibility debt.
+Compatibility reports 1,299 `DEFER` diagnostics across the frozen 266-path
+union with exit 0; strict mode reports the identical tuples as `FAIL` with exit
+1 and no `DEBT-UNUSED`. Registry inventory remains 467 target Markdown paths
+(`baseline=433`, `new=36`), 60 profiles, 27 templates, and 72 canonical README
+paths. Evidence is repository-static and excludes live, secret-value,
+credential, remote CI, publication, push, merge, deployment, and third-party
+mutation checks.
 
 ## Traceability
 
