@@ -1759,7 +1759,7 @@ FINAL_SHA256 = {
     "docs/90.references/cloud-examples/README.md": "113179c7e893c9ef6156f29f0d0bc444f4c3d57e9961cf932f996a95ca6d35d9",  # pragma: allowlist secret
     "docs/90.references/cloud-examples/aws/README.md": "5050941e71a5c1cc02cddae4bb92c38f29a9f0f3e19dea040526ca770d7c71ff",  # pragma: allowlist secret
     "docs/90.references/cloud-examples/azure/README.md": "c3bbc878c806905623b0174bde9c4050a586ed4d3c27a055177fb149eb0eff05",  # pragma: allowlist secret
-    "examples/README.md": "fe05dbc138d7569b32810047cb064178593fff410c857ed6575c054935b6ce4b",  # pragma: allowlist secret
+    "examples/README.md": "4e201d74268c5b5fe8ee14140cf502759985cdd4967e3362c86ff71e80eddb04",  # pragma: allowlist secret
     "examples/aws/README.md": "419ee1d75c9c0fcf36beb9998fc9d81f506199e201a5116b83dd9cd0a43c8be8",  # pragma: allowlist secret
     "examples/azure/README.md": "59844f14f9e77cd5a71e581d6552e7446cac9cc16a00f6562b681076d0eef123",  # pragma: allowlist secret
 }
@@ -1790,9 +1790,9 @@ REPLACEMENTS = {
     ),),
     "docs/90.references/cloud-examples/aws/README.md": (
         (
-            "이 인덱스는 `examples/aws/docs/`에 남아 있는 AWS 마이그레이션 문서 예시를\n"
-            "Stage 90에서 찾기 위한 handoff다. 문서와 실행 자산을 이동하지 않으며,\n"
-            "Spec 030이 후속 통합 범위를 결정할 때까지 원본 경로를 보존한다.\n",
+            "\uc774 \uc778\ub371\uc2a4\ub294 `examples/aws/docs/`\uc5d0 \ub0a8\uc544 \uc788\ub294 AWS \ub9c8\uc774\uadf8\ub808\uc774\uc158 \ubb38\uc11c \uc608\uc2dc\ub97c\n"
+            "Stage 90\uc5d0\uc11c \ucc3e\uae30 \uc704\ud55c handoff\ub2e4. \ubb38\uc11c\uc640 \uc2e4\ud589 \uc790\uc0b0\uc744 \uc774\ub3d9\ud558\uc9c0 \uc54a\uc73c\uba70,\n"
+            "Spec 030\uc774 \ud6c4\uc18d \ud1b5\ud569 \ubc94\uc704\ub97c \uacb0\uc815\ud560 \ub54c\uae4c\uc9c0 \uc6d0\ubcf8 \uacbd\ub85c\ub97c \ubcf4\uc874\ud55c\ub2e4.\n",
             "This index is the current Stage 90 entrypoint for the dated AWS snapshot.\n"
             "The 26 AWS paths from source59 under `examples/aws/docs/` are retired; the dated\n"
             "snapshot is their durable documentation destination, while executable assets\n"
@@ -1823,9 +1823,9 @@ REPLACEMENTS = {
     ),
     "docs/90.references/cloud-examples/azure/README.md": (
         (
-            "이 인덱스는 `examples/azure/docs/`에 남아 있는 Azure 마이그레이션 문서 예시를\n"
-            "Stage 90에서 찾기 위한 handoff다. 문서와 실행 자산을 이동하지 않으며,\n"
-            "Spec 030이 후속 통합 범위를 결정할 때까지 원본 경로를 보존한다.\n",
+            "\uc774 \uc778\ub371\uc2a4\ub294 `examples/azure/docs/`\uc5d0 \ub0a8\uc544 \uc788\ub294 Azure \ub9c8\uc774\uadf8\ub808\uc774\uc158 \ubb38\uc11c \uc608\uc2dc\ub97c\n"
+            "Stage 90\uc5d0\uc11c \ucc3e\uae30 \uc704\ud55c handoff\ub2e4. \ubb38\uc11c\uc640 \uc2e4\ud589 \uc790\uc0b0\uc744 \uc774\ub3d9\ud558\uc9c0 \uc54a\uc73c\uba70,\n"
+            "Spec 030\uc774 \ud6c4\uc18d \ud1b5\ud569 \ubc94\uc704\ub97c \uacb0\uc815\ud560 \ub54c\uae4c\uc9c0 \uc6d0\ubcf8 \uacbd\ub85c\ub97c \ubcf4\uc874\ud55c\ub2e4.\n",
             "This index is the current Stage 90 entrypoint for the dated Azure snapshot.\n"
             "The 33 Azure paths from source59 under `examples/azure/docs/` are retired; the\n"
             "dated snapshot is their durable documentation destination, while executable\n"
@@ -1856,30 +1856,30 @@ REPLACEMENTS = {
     ),
     "examples/README.md": (
         (
-            "이 경로는 실제 운영 manifest의 복제본이 아니라, 새 앱 또는 cloud target을 설계할 때 참고하는 예시를 담는다. `sample-app/`은 로컬 k3d GitOps 최소 온보딩 템플릿이고, `aws/`, `azure/`는 [Tech Stack Version Inventory](../docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot` 기준을 따르는 example-local SDLC snapshot 참조 자산이다.\n",
-            "이 경로는 실제 운영 manifest의 복제본이 아니라, 새 앱 또는 cloud target을 설계할 때 참고하는 예시를 담는다. `sample-app/`은 로컬 k3d GitOps 최소 온보딩 템플릿이고, `aws/`, `azure/`의 실행 자산은 provider별 참조 구현이다. 통합된 문서 근거의 durable destination은 [dated Stage 90 snapshots](../docs/90.references/cloud-examples/README.md)다.\n",
+            "\uc774 \uacbd\ub85c\ub294 \uc2e4\uc81c \uc6b4\uc601 manifest\uc758 \ubcf5\uc81c\ubcf8\uc774 \uc544\ub2c8\ub77c, \uc0c8 \uc571 \ub610\ub294 cloud target\uc744 \uc124\uacc4\ud560 \ub54c \ucc38\uace0\ud558\ub294 \uc608\uc2dc\ub97c \ub2f4\ub294\ub2e4. `sample-app/`\uc740 \ub85c\uceec k3d GitOps \ucd5c\uc18c \uc628\ubcf4\ub529 \ud15c\ud50c\ub9bf\uc774\uace0, `aws/`, `azure/`\ub294 [Tech Stack Version Inventory](../docs/90.references/data/tech-stack-version-inventory.md)\uc758 `Cloud Example Snapshot` \uae30\uc900\uc744 \ub530\ub974\ub294 example-local SDLC snapshot \ucc38\uc870 \uc790\uc0b0\uc774\ub2e4.\n",
+            "\uc774 \uacbd\ub85c\ub294 \uc2e4\uc81c \uc6b4\uc601 manifest\uc758 \ubcf5\uc81c\ubcf8\uc774 \uc544\ub2c8\ub77c, \uc0c8 \uc571 \ub610\ub294 cloud target\uc744 \uc124\uacc4\ud560 \ub54c \ucc38\uace0\ud558\ub294 \uc608\uc2dc\ub97c \ub2f4\ub294\ub2e4. `sample-app/`\uc740 \ub85c\uceec k3d GitOps \ucd5c\uc18c \uc628\ubcf4\ub529 \ud15c\ud50c\ub9bf\uc774\uace0, `aws/`, `azure/`\uc758 \uc2e4\ud589 \uc790\uc0b0\uc740 provider\ubcc4 \ucc38\uc870 \uad6c\ud604\uc774\ub2e4. \ud1b5\ud569\ub41c \ubb38\uc11c \uadfc\uac70\uc758 durable destination\uc740 [dated Stage 90 snapshots](../docs/90.references/cloud-examples/README.md)\ub2e4.\n",
         ),
         (
-            "AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 비-README Markdown 문서는 `examples/<provider>/docs/**` 안에서 SDLC 역할별 frontmatter와 섹션 기대값을 따른다. 실제 배포를 계획할 때는 새 provider 검증 결과로 `Cloud Example Snapshot`을 갱신하고 비용, IAM/RBAC, 네트워크 경계를 다시 확인해야 한다.\n",
-            "AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 기존 `examples/<provider>/docs/**` source59 문서는 retired 상태이며 provider별 dated Stage 90 snapshot에 통합되었다. 실제 배포를 계획할 때는 새 provider 검증 결과로 `Cloud Example Snapshot`을 갱신하고 비용, IAM/RBAC, 네트워크 경계를 다시 확인해야 한다.\n",
+            "AWS/Azure \uc608\uc2dc\ub294 \uacc4\uc815\uc774\ub098 live cluster\ub97c \ubcc0\uacbd\ud558\uc9c0 \uc54a\ub294\ub2e4. \ube44-README Markdown \ubb38\uc11c\ub294 `examples/<provider>/docs/**` \uc548\uc5d0\uc11c SDLC \uc5ed\ud560\ubcc4 frontmatter\uc640 \uc139\uc158 \uae30\ub300\uac12\uc744 \ub530\ub978\ub2e4. \uc2e4\uc81c \ubc30\ud3ec\ub97c \uacc4\ud68d\ud560 \ub54c\ub294 \uc0c8 provider \uac80\uc99d \uacb0\uacfc\ub85c `Cloud Example Snapshot`\uc744 \uac31\uc2e0\ud558\uace0 \ube44\uc6a9, IAM/RBAC, \ub124\ud2b8\uc6cc\ud06c \uacbd\uacc4\ub97c \ub2e4\uc2dc \ud655\uc778\ud574\uc57c \ud55c\ub2e4.\n",
+            "AWS/Azure \uc608\uc2dc\ub294 \uacc4\uc815\uc774\ub098 live cluster\ub97c \ubcc0\uacbd\ud558\uc9c0 \uc54a\ub294\ub2e4. \uae30\uc874 `examples/<provider>/docs/**` source59 \ubb38\uc11c\ub294 retired \uc0c1\ud0dc\uc774\uba70 provider\ubcc4 dated Stage 90 snapshot\uc5d0 \ud1b5\ud569\ub418\uc5c8\ub2e4. \uc2e4\uc81c \ubc30\ud3ec\ub97c \uacc4\ud68d\ud560 \ub54c\ub294 \uc0c8 provider \uac80\uc99d \uacb0\uacfc\ub85c `Cloud Example Snapshot`\uc744 \uac31\uc2e0\ud558\uace0 \ube44\uc6a9, IAM/RBAC, \ub124\ud2b8\uc6cc\ud06c \uacbd\uacc4\ub97c \ub2e4\uc2dc \ud655\uc778\ud574\uc57c \ud55c\ub2e4.\n",
         ),
         (
-            "- cloud migration 문서 샘플과 학습 자료\n",
-            "- Stage 90에 통합된 cloud migration snapshot과 실행 자산 매핑\n",
+            "- cloud migration \ubb38\uc11c \uc0d8\ud50c\uacfc \ud559\uc2b5 \uc790\ub8cc\n",
+            "- Stage 90\uc5d0 \ud1b5\ud569\ub41c cloud migration snapshot\uacfc \uc2e4\ud589 \uc790\uc0b0 \ub9e4\ud551\n",
         ),
         (
-            "2. AWS/Azure 예시는 [Tech Stack Version Inventory](../docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot` 기준과 example-local SDLC snapshot route에 맞춰 수정한다.\n"
-            "3. provider module, Kubernetes version, ingress/gateway 선택이 바뀌면 관련 README와 docs 예시를 같은 변경에서 갱신한다.\n",
-            "2. AWS/Azure 예시는 [dated Stage 90 snapshot index](../docs/90.references/cloud-examples/README.md)와 `Cloud Example Snapshot` 기준에 맞춰 검토한다.\n"
-            "3. provider module, Kubernetes version, ingress/gateway 선택이 바뀌면 관련 README, dated snapshot, 실행 자산 매핑을 같은 변경에서 갱신한다.\n",
+            "2. AWS/Azure \uc608\uc2dc\ub294 [Tech Stack Version Inventory](../docs/90.references/data/tech-stack-version-inventory.md)\uc758 `Cloud Example Snapshot` \uae30\uc900\uacfc example-local SDLC snapshot route\uc5d0 \ub9de\ucdb0 \uc218\uc815\ud55c\ub2e4.\n"
+            "3. provider module, Kubernetes version, ingress/gateway \uc120\ud0dd\uc774 \ubc14\ub00c\uba74 \uad00\ub828 README\uc640 docs \uc608\uc2dc\ub97c \uac19\uc740 \ubcc0\uacbd\uc5d0\uc11c \uac31\uc2e0\ud55c\ub2e4.\n",
+            "2. AWS/Azure \uc608\uc2dc\ub294 [dated Stage 90 snapshot index](../docs/90.references/cloud-examples/README.md)\uc640 `Cloud Example Snapshot` \uae30\uc900\uc5d0 \ub9de\ucdb0 \uac80\ud1a0\ud55c\ub2e4.\n"
+            "3. provider module, Kubernetes version, ingress/gateway \uc120\ud0dd\uc774 \ubc14\ub00c\uba74 \uad00\ub828 README, dated snapshot, \uc2e4\ud589 \uc790\uc0b0 \ub9e4\ud551\uc744 \uac19\uc740 \ubcc0\uacbd\uc5d0\uc11c \uac31\uc2e0\ud55c\ub2e4.\n",
         ),
         (
             "| `aws/` | Cloud migration reference snapshot for AWS. | `../docs/90.references/data/tech-stack-version-inventory.md` `Cloud Example Snapshot`; example-local SDLC snapshot route; not live provider-latest guidance. |",
-            "| `aws/` | Cloud migration reference snapshot for AWS. | Durable documentation: `../docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md`; executable assets remain under `aws/`; not live provider-latest guidance. |",
+            "| `aws/` | Cloud migration reference snapshot for AWS. | Cloud Example Snapshot durable documentation: `../docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md`; executable assets remain under `aws/`; not live provider-latest guidance. |",
         ),
         (
             "| `azure/` | Cloud migration reference snapshot for Azure. | `../docs/90.references/data/tech-stack-version-inventory.md` `Cloud Example Snapshot`; example-local SDLC snapshot route; not live provider-latest guidance. |",
-            "| `azure/` | Cloud migration reference snapshot for Azure. | Durable documentation: `../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md`; executable assets remain under `azure/`; not live provider-latest guidance. |",
+            "| `azure/` | Cloud migration reference snapshot for Azure. | Cloud Example Snapshot durable documentation: `../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md`; executable assets remain under `azure/`; not live provider-latest guidance. |",
         ),
     ),
     "examples/aws/README.md": (
@@ -1915,7 +1915,7 @@ STALE = {
     "future index location": ("will live at",),
     "future asset ownership": ("until the approved migration",),
     "deleted tree described as current": (
-        "남아 있는", "원본 경로를 보존한다", "Current source tree"
+        "\ub0a8\uc544 \uc788\ub294", "\uc6d0\ubcf8 \uacbd\ub85c\ub97c \ubcf4\uc874\ud55c\ub2e4", "Current source tree"
     ),
     "planned consolidation": ("planned consolidation decision",),
     "future removal": ("Spec 030 will remove",),
