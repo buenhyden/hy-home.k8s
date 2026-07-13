@@ -1,4 +1,14 @@
+---
+title: 'Harness Approval Boundaries'
+type: governance/reference
+status: draft
+owner: platform
+updated: 2026-07-13
+---
+
 # Harness Approval Boundaries
+
+## Overview
 
 This is the single approval-boundary matrix for harness surfaces in
 `hy-home.k8s`. It makes the default state, the condition that requires human or
@@ -10,7 +20,7 @@ consolidates the live-mutation and protected-surface boundaries that are
 otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
 [Local Harness Catalog](../harness-catalog.md) into one decision table.
 
-## Default Stance
+### Default Stance
 
 - Agents operate on repo-backed desired state. Live cluster mutation is **not**
   part of the default execution path.
@@ -23,7 +33,9 @@ otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
   `.agents/hooks.json` and `.codex/hooks.json` provide context/validation
   wiring where supported.
 
-## Approval Matrix
+## Authority Boundary
+
+### Approval Matrix
 
 | Surface                                                      | Default State            | Approval Required When                                                      | Required Validation                                                                                                 | Evidence Location         | Rollback                           |
 | ------------------------------------------------------------ | ------------------------ | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------- | ---------------------------------- |
@@ -44,7 +56,7 @@ otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
 | Cloud resources                                              | Read-only by default     | Any cloud API mutation, paid job, publish, or provider refresh              | scoped plan/spec evidence and repo-static checks                                                                    | PR / runbook              | operator-approved recovery         |
 | GitHub publish / merge / remote dispatch                     | Local draft only         | Any PR creation, merge, release, publish, workflow dispatch, or remote push | `git diff --check`, `scripts/validate-repo-quality-gates.sh .`, and human review                                    | PR / handoff              | revert / close remote action       |
 
-## Mandatory Policies
+### Mandatory Policies
 
 - Live cluster mutation is forbidden by default.
 - `kubectl apply` / `kubectl patch` / `kubectl delete` are allowed only on an
@@ -66,6 +78,12 @@ otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
 - Live runtime evidence is separated from repo-static validation and is produced
   only through an approved operations runbook; skipped live checks are reported
   with their reason.
+
+## Governance Context
+
+## Current Contract
+
+## Validation and Refresh
 
 ## Related Documents
 

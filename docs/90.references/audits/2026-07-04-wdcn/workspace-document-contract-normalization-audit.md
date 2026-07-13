@@ -16,7 +16,7 @@ reference, CI/QA, archive, and historical-evidence drift classes so later
 normalization tasks can change the right owner surfaces without blurring
 active policy and dated evidence.
 
-## Purpose
+### Purpose
 
 - Preserve a dated implementation snapshot before aggressive document
   normalization.
@@ -102,7 +102,7 @@ active policy and dated evidence.
 | `sdlc/task` | 33 |
 | `sdlc/tests` | 1 |
 
-## Findings
+### Findings
 
 | Finding ID | Surface | Evidence | Decision | Routed Task |
 | --- | --- | --- | --- | --- |
@@ -118,7 +118,7 @@ active policy and dated evidence.
 | WDCN-AUD-010 | Coverage wording boundary | `docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md` states new application code maintains 90% coverage, while `tests/README.md` says `tests/` does not own app test-pyramid or co-located unit-test rules. The PR template narrows the policy to future testable application code where applicable. | Boundary wording mismatch, not a validator failure. Make the QA guide, tests README, and PR template use one coverage/validation-matrix contract. | T-005 |
 | WDCN-AUD-011 | Prior audit historical evidence | `docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md` records README heading and CI/QA hook-documentation findings that current files have since corrected. | Preserve the dated audit facts, but mark or contextualize them as resolved historical evidence so they are not mistaken for current drift. | T-004 |
 
-## Comparison Analysis
+### Comparison Analysis
 
 - The workspace has a coherent current contract: frontmatter profiles are
   namespaced, README files are frontmatter-free, templates are split from
@@ -142,7 +142,7 @@ active policy and dated evidence.
   now read like stale current-state claims. T-004 should preserve the dates and
   add resolved or historical framing instead of deleting evidence.
 
-## Resolution Overlay
+### Resolution Overlay
 
 This audit is the active tracking reference for the 2026-07-04 normalization
 stream. All tracked items are resolved as of T-006; the rows below preserve
@@ -157,7 +157,7 @@ the task that closed each area.
 | Scripts inventory and coverage wording | Resolved in T-005. | `scripts/README.md`, the CI/CD QA guide, `tests/README.md`, and the PR template now use the same inventory and coverage/validation-matrix boundary. |
 | Final validation parity | Resolved in T-006. | Full repo-static validation bundle passed and the final independent reviewer found no blocking contract issues after stale tracking was fixed. |
 
-## Implementation Checklist
+### Implementation Checklist
 
 | Item | Owner Surface | Action | Status |
 | --- | --- | --- | --- |

@@ -15,7 +15,7 @@ format and evidence concepts. It compares the repository forms with formal
 standards, normative technical specifications, government guidance, documented
 methods, and official product guidance observed on `2026-07-12`.
 
-## Purpose
+### Purpose
 
 Template maintainers use this ledger before changing a form. It preserves the
 source authority, the local decision, and the freshness boundary without making
@@ -68,7 +68,7 @@ extensions, not requirements imposed by any cited source.
 - **Official living guidance**: Product or project documentation whose current
   contents may change without a new numbered edition.
 
-## Decision Ledger
+### Decision Ledger
 
 | Family | Source kind | Authority and link | Observed | Version/revision | Adopted guidance | Rejected guidance and reason | Local extension | Refresh trigger | Affected forms |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |

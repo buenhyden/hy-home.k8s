@@ -1101,35 +1101,35 @@ template_compatibility = load_json(template_compatibility_path)
 TEMPLATE_COMPATIBILITY_CONTRACT_V1 = {
     "name": "TemplateCompatibilityContract.v1",
     "semantic_sha256": (
-        "e95542b4fc35b19fe4ab408088561110b968a57234345029193d3f45766102b1"  # pragma: allowlist secret
+        "a81a558d97472bcb9624a9270e3be7e8cbd16c44aa3dc6a5bd8f9be3e663b8a7"  # pragma: allowlist secret
     ),
 }
 
-ADM004_TEMPLATE_DEBT_AFTER = {
-    "affectedPathCount": 112,
-    "occurrenceCount": 626,
-    "tokenObligationCount": 602,
+ADM005_TEMPLATE_DEBT_AFTER = {
+    "affectedPathCount": 39,
+    "occurrenceCount": 102,
+    "tokenObligationCount": 102,
     "rules": {
         "BODY-HEADING-REQUIRED": {
-            "pathCount": 42,
-            "occurrenceCount": 200,
-            "tokenObligationCount": 200,
+            "pathCount": 4,
+            "occurrenceCount": 4,
+            "tokenObligationCount": 4,
         },
         "BODY-TEMPLATE-RESIDUE": {
-            "pathCount": 52,
-            "occurrenceCount": 56,
-            "tokenObligationCount": 56,
+            "pathCount": 17,
+            "occurrenceCount": 21,
+            "tokenObligationCount": 21,
         },
         "FM-DELIMITER": {
-            "pathCount": 24,
-            "occurrenceCount": 24,
+            "pathCount": 0,
+            "occurrenceCount": 0,
             "tokenObligationCount": 0,
         },
         "BODY-HEADING-UNSUPPORTED": {
-            "pathCount": 90,
-            "occurrenceCount": 346,
-            "tokenObligationCount": 346,
-            "distinctTokenCount": 228,
+            "pathCount": 39,
+            "occurrenceCount": 77,
+            "tokenObligationCount": 77,
+            "distinctTokenCount": 37,
         },
         "BODY-H2-DUPLICATE": {
             "pathCount": 0,
@@ -1138,8 +1138,8 @@ ADM004_TEMPLATE_DEBT_AFTER = {
         },
     },
     "requiredResidueOverlapPathCount": 4,
-    "requiredResidueUnionPathCount": 90,
-    "unionPathCount": 112,
+    "requiredResidueUnionPathCount": 17,
+    "unionPathCount": 39,
 }
 
 
@@ -1308,16 +1308,16 @@ affected_token_obligation_count = sum(
     for _, item in affected_records
     for rule_id in item["ruleIds"]
 )
-adm004_after_projection = {
+adm005_after_projection = {
     "affectedPathCount": len({item["path"] for _, item in affected_records}),
     "occurrenceCount": affected_occurrence_count,
     "tokenObligationCount": affected_token_obligation_count,
     **template_compatibility["semanticDebtCaps"],
 }
-if adm004_after_projection != ADM004_TEMPLATE_DEBT_AFTER:
+if adm005_after_projection != ADM005_TEMPLATE_DEBT_AFTER:
     fail(
-        f"{rel(template_compatibility_path)} ADM-004 after projection changed: "
-        f"{adm004_after_projection}"
+        f"{rel(template_compatibility_path)} ADM-005 after projection changed: "
+        f"{adm005_after_projection}"
     )
 
 if template_compatibility.get("owner") != "Spec 030":
@@ -1397,7 +1397,7 @@ template_readme_route_pairs = template_route_pairs(
 )
 template_routing_route_pairs = template_route_pairs(
     template_routing_path,
-    "## Current Route Map",
+    "### Current Route Map",
 )
 
 
@@ -2704,15 +2704,15 @@ for phrase in [
     "regression and structure guard",
     "Authored-doc command boundary",
     "command examples in authored docs require",
-    "## Harness Engineering Matrix",
-    "## Agent-first Engineering Matrix",
+    "### Harness Engineering Matrix",
+    "### Agent-first Engineering Matrix",
 ]:
     if phrase not in harness_catalog_text:
         fail(f"{rel(harness_catalog_path)} missing runtime readiness boundary phrase: {phrase}")
 if "| Required Component | Current Surface | Status | Gap | Remediation |" not in harness_catalog_normalized:
     fail(f"{rel(harness_catalog_path)} missing runtime readiness boundary phrase: | Required Component | Current Surface | Status | Gap | Remediation |")
-validate_component_matrix(harness_catalog_text, "## Harness Engineering Matrix")
-validate_component_matrix(harness_catalog_text, "## Agent-first Engineering Matrix")
+validate_component_matrix(harness_catalog_text, "### Harness Engineering Matrix")
+validate_component_matrix(harness_catalog_text, "### Agent-first Engineering Matrix")
 for phrase in [
     "Thin gateway",
     "Runtime baseline",

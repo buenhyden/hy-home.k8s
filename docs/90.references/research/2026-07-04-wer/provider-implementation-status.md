@@ -19,7 +19,7 @@ This is durable reference material. It summarizes current facts checked on
 2026-07-04 and routes follow-up work to canonical owners; it does not redefine
 active governance, provider permissions, CI behavior, or live-runtime procedure.
 
-## Purpose
+### Purpose
 
 - Provide a dated, source-attributed comparison of provider harness surfaces.
 - Distinguish native provider capabilities from this repo's adapter/mirror

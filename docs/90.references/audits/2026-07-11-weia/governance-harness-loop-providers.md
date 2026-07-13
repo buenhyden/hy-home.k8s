@@ -21,7 +21,7 @@ settings/hooks/config, validator coverage, entitlement/runtime availability evid
 canonical audit owner다. 역할별 model default, escalation, fallback, eval, adoption
 recommendation은 후속 `ai-agents-model-routing-vibe-coding.md`가 소유한다.
 
-## Purpose
+### Purpose
 
 - Audit workspace purpose, owners, rules, template/script/integration routing, and
   the bounded Observe/Plan/Act/Verify/Learn loop.
@@ -169,7 +169,7 @@ release or runtime readiness gate.
 | `HL-006` live-readiness overclaim risk | HAR-008, COM-003 | Conditional/provider-live lanes remain independent; canaries cannot be replaced by static PASS. |
 | `HL-007` MCP inventory/security gap | HAR-007 | Gap, P1; no readiness claim before approved per-server inventory and canary. |
 
-## Comparison Analysis
+### Comparison Analysis
 
 - Governance and repository-static validation are the strongest categories, but
   duplicated owner summaries and stale role-count prose prevent clean currentness.
@@ -186,7 +186,7 @@ release or runtime readiness gate.
   but its expected maps cover only 8 of 10 roles and it does not semantically compare
   Gemini metadata.
 
-## Automation Opportunities
+### Automation Opportunities
 
 - Add fixture-backed 10/10 provider semantic validation after a scoped Stage 04
   task owns the change.
@@ -197,7 +197,7 @@ release or runtime readiness gate.
 - Add an MCP inventory validator only after intended servers, owners, scopes, and
   rollback paths are approved.
 
-## Residual Risks
+### Residual Risks
 
 - All provider entitlement, account, model resolution, agent discovery, hook
   consumption, permission behavior, MCP connection, and inference claims remain

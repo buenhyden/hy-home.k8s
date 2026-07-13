@@ -22,7 +22,7 @@ owner다. Kubernetes, GitOps, infrastructure, security desired-state 상세는
 후속 `kubernetes-infrastructure-security.md`가 소유하며, 여기서는
 delivery boundary와 QA 연결점만 채점한다.
 
-## Purpose
+### Purpose
 
 - Audit workflow triggers, permissions, concurrency, job dependencies, path
   filters, aggregate gates, artifacts, and delivery ownership.
@@ -216,7 +216,7 @@ provider-native hook, deployment, reconciliation, or live runtime observation.
 | P2 planned improvement | QA-007, QA-015 | Use the affected-surface matrix to choose the shell parser authority and local DEFER semantics without promoting hooks to full-suite or permission enforcement. |
 | P3 optional/telemetry-gated | CICD-009, QA-003, SUP-008 | Pilot only after a named service/formatter/artifact consumer and measured cost exist; absence alone does not justify a full delivery-platform redesign. |
 
-## Comparison Analysis
+### Comparison Analysis
 
 - The strongest category is QA (63.3%): file hygiene, Markdown, data formats,
   shell lint/style, Actions, Dockerfile selection, Kubernetes, secrets, and
@@ -236,7 +236,7 @@ provider-native hook, deployment, reconciliation, or live runtime observation.
   PASS/SKIP/DEFER semantics. A reusable-workflow/cache/SBOM/provenance/Scorecard
   redesign is not supported by current artifact or telemetry evidence.
 
-## Residual Risks
+### Residual Risks
 
 - Path filters and workflow semantics were parsed from YAML; no remote event,
   ruleset, permission, artifact default, or result was observed.

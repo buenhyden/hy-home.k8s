@@ -3,20 +3,26 @@ title: 'Reference: Model Selection Policy'
 type: governance/reference
 status: draft
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Model Selection Policy
 
+## Overview
+
 This document defines the canonical model selection policy for agents running in `hy-home.k8s`, enforcing a standardized tier mapping across Gemini (Antigravity), Claude, and Codex environments.
 
-## Principles
+### Principles
 
 - **Planning & Supervisor**: Use the most capable reasoning models for supervisor orchestration, deep context synthesis, architecture design, and complex multi-agent routing.
 - **Worker & Subagent**: Use coding-optimized or cost-efficient models for routine tasks, validation, focused file edits, and repetitive tasks.
 - **Escalation**: A worker task may be routed to a top-tier model for high-risk governance, security, or cluster-affecting review, but that does not reclassify the worker agent itself as a top-tier agent.
 
-## Source Freshness
+## Authority Boundary
+
+## Governance Context
+
+### Source Freshness
 
 - Last checked: 2026-07-06
 - Provider capability references were reconciled with the official source basis
@@ -25,7 +31,9 @@ This document defines the canonical model selection policy for agents running in
   recorded in `harness-catalog.md`; verify against provider-native docs before
   changing those concrete IDs.
 
-## Model Tiers (July 2026 Local Baseline)
+## Current Contract
+
+### Model Tiers (July 2026 Local Baseline)
 
 | Provider / Environment | Planning / Supervisor Tier (High Difficulty) | Worker / Subagent Tier (Speed & Efficiency) | Reasoning / Effort Policy |
 | --- | --- | --- | --- |
@@ -39,7 +47,9 @@ That catalog is the canonical roster table; this file owns the tier vocabulary
 and reasoning/effort policy. Codex TOML role adapters must use lowercase model
 IDs and must declare `model_reasoning_effort` explicitly.
 
-## Enforcement
+## Validation and Refresh
+
+### Enforcement
 
 - All `agent-design.md` specs must adhere to these tier definitions when assigning models to roles.
 - Platform configurations (`GEMINI.md`, `CLAUDE.md`, `CODEX.md`) should inherit this policy instead of re-defining model specs locally.

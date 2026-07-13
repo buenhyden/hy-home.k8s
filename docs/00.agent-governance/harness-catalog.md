@@ -3,7 +3,7 @@ title: 'Reference: Local Harness Catalog'
 type: governance/reference
 status: draft
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Reference: Local Harness Catalog
@@ -14,7 +14,7 @@ This document is the canonical catalog for the local agent runtime used in `hy-h
 It defines the supported agents, skills, model allocation, scope imports, and pattern families
 that shape the runtime contract under the shared local runtime bridge (`.claude/`, `.codex/`, `.agents/`).
 
-## Purpose
+### Purpose
 
 - Provide a single source of truth for the local runtime roster.
 - Keep gateway files and runtime files in sync.
@@ -22,7 +22,7 @@ that shape the runtime contract under the shared local runtime bridge (`.claude/
 - Record the model hierarchy for supervising and worker agents.
 - Preserve pattern lineage without exposing source directory paths.
 
-## Scope
+### Scope
 
 - Covers local runtime agents, skills, scope imports, and model allocation.
 - Does not duplicate rule text from `rules/`, `scopes/`, or `providers/`.
@@ -32,7 +32,9 @@ that shape the runtime contract under the shared local runtime bridge (`.claude/
   agency catalogs are gap-analysis lenses, not automatic roster expansion
   sources.
 
-## Runtime Principles
+## Authority Boundary
+
+### Runtime Principles
 
 - The local runtime is cluster-specific and GitOps-first.
 - Supervising agents use the `top` model tier; task and worker agents use the `worker` model tier by default (see Model Tier Mapping below).
@@ -43,7 +45,24 @@ that shape the runtime contract under the shared local runtime bridge (`.claude/
 - Skill files are either workflow contracts or reference-pattern contracts and
   must remain specific to this cluster.
 
-## Official Capability Basis
+### Readiness Evidence Boundary
+
+`Ready` in this catalog means the repository surface exists, is wired into the local
+governance/runtime contract, and is covered by repo-backed static gates where applicable.
+It is not proof that GitHub CI, the full optional local toolchain, live k3d bootstrap,
+ArgoCD health, or live cluster reconciliation completed in the current session.
+Matrix validation is a regression and structure guard for catalog shape and required
+fields. It is not semantic proof that every `Ready` claim was freshly revalidated.
+
+Report readiness evidence in separate lanes:
+
+- Repo/static readiness: local files, provider-native role-adapter contracts, command boundaries, and validation scripts.
+- CI/toolchain readiness: GitHub Actions plus local validators and optional tools such as `pre-commit`, `kube-linter`, `actionlint`, `zizmor`, `graphify`, and `rtk`.
+- Live k3d readiness: human-approved bootstrap, ArgoCD reconciliation, Kubernetes API checks, and runtime health evidence.
+
+## Governance Context
+
+### Official Capability Basis
 
 Official provider capability basis checked on 2026-07-06:
 
@@ -57,7 +76,9 @@ Official provider capability basis checked on 2026-07-06:
 - GitHub Actions: <https://docs.github.com/en/actions>
 - External Agency Agents roster and multi-tool packaging scan: <https://github.com/msitarzewski/agency-agents>
 
-## Canonical Adapter Ownership Model
+## Current Contract
+
+### Canonical Adapter Ownership Model
 
 Stage 00 uses a `canonical core + provider adapter + validation evidence` model.
 This table defines the owner of each contract so provider files do not copy the
@@ -72,7 +93,7 @@ same policy in different words.
 | Template contract                         | `docs/99.templates/support/template-routing.md` and `docs/99.templates/README.md` | docs-stage-routing skill, provider event wiring, doc-writer agents              | Structural template coverage and README/link checks                                |
 | Work evidence                             | `docs/04.execution/tasks/**` and `memory/progress.md`                             | Provider final responses and PR descriptions                                    | Task verification summary and progress ledger                                      |
 
-## Model Tier Mapping
+### Model Tier Mapping
 
 Model allocation is provider-agnostic at the tier level and provider-specific at the
 concrete model level. The `top` tier serves planning and supervising roles; the
@@ -100,22 +121,7 @@ Select a model tier by task profile, then map to the provider-specific identifie
 - This table is the single source consumed by all provider agent files; keep the verified identifier set current here.
 - Codex `model_reasoning_effort` values must be one of the allowed values in `docs/00.agent-governance/model-policy.md`.
 
-## Readiness Evidence Boundary
-
-`Ready` in this catalog means the repository surface exists, is wired into the local
-governance/runtime contract, and is covered by repo-backed static gates where applicable.
-It is not proof that GitHub CI, the full optional local toolchain, live k3d bootstrap,
-ArgoCD health, or live cluster reconciliation completed in the current session.
-Matrix validation is a regression and structure guard for catalog shape and required
-fields. It is not semantic proof that every `Ready` claim was freshly revalidated.
-
-Report readiness evidence in separate lanes:
-
-- Repo/static readiness: local files, provider-native role-adapter contracts, command boundaries, and validation scripts.
-- CI/toolchain readiness: GitHub Actions plus local validators and optional tools such as `pre-commit`, `kube-linter`, `actionlint`, `zizmor`, `graphify`, and `rtk`.
-- Live k3d readiness: human-approved bootstrap, ArgoCD reconciliation, Kubernetes API checks, and runtime health evidence.
-
-## Matrix Status Contract
+### Matrix Status Contract
 
 Matrix status values are limited to `Ready`, `Partial`, and `Missing`.
 
@@ -133,7 +139,7 @@ explicitly requests a new runtime surface or future work discovers a concrete
 gap, update this matrix first, then implement only the smallest surface needed
 to close that gap.
 
-## Harness Four-Element Control Model
+### Harness Four-Element Control Model
 
 The local harness is a control loop, not a file inventory. Each provider must
 preserve this relationship:
@@ -178,7 +184,7 @@ Instruction and settings documents -> Architecture constraints -> Feedback loops
   Remove temporary files, debug-only code, unused imports, and disallowed
   scratch naming (`temp_`, `_new`, `_old`, `_backup`) before handoff.
 
-## ECC DAILY/LIBRARY Surface
+### ECC DAILY/LIBRARY Surface
 
 This repository uses the `agent-sort` evidence model to classify ECC surfaces
 into two buckets only. The classification is routing guidance, not a second
@@ -215,7 +221,7 @@ routing, but they are not always-loaded daily context.
 | `eval-harness` and `harness-writing`                     | External skills explicitly requested for evaluation quality                 | Use as deterministic eval and reproducible validation lenses. No fuzz target or provider-local `.claude/evals` tree is created by default.                                                                                                    |
 | `enhance-prompt`                                         | External UI/Stitch prompt skill explicitly named                            | Treat as a near-miss no-op unless the active task is a UI prompt generation or prompt refinement task.                                                                                                                                        |
 
-## Agent Eval Completion Contract
+### Agent Eval Completion Contract
 
 Agent eval completion in this repository is deterministic and repo-static by
 default. Capability evals are expressed as explicit acceptance criteria in the
@@ -235,7 +241,7 @@ that can be rerun from the repository checkout.
   surface; common eval contracts live in Stage 00, Plan/Task evidence, and
   repository validators.
 
-## Readiness Matrix
+### Readiness Matrix
 
 | Layer                         | Implemented Surface                                                                                                                                    | Status | Readiness Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -252,7 +258,7 @@ that can be rerun from the repository checkout.
 | LLM Wiki curation             | `.claude/agents/wiki-curator.md`, `.codex/agents/wiki-curator.toml`, `docs/90.references/llm-wiki/wiki-index.md`, `scripts/generate-llm-wiki-index.sh` | Ready  | Runtime surface added for LLM Wiki curation with Markdown-only generated index and repo-quality freshness check                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | Escalation boundary           | `subagent-protocol.md`, `rules/agentic.md`                                                                                                             | Ready  | Delegation, file ownership, direct mutation, and human approval boundaries are explicit                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 
-## Harness Engineering Matrix
+### Harness Engineering Matrix
 
 | Required Component                          | Current Surface                                                                                                                                        | Status | Gap  | Remediation                                                                                                                                                                                                                                                                                                                                                                                                               |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -276,7 +282,7 @@ that can be rerun from the repository checkout.
 | LLM Wiki curation                           | `.claude/agents/wiki-curator.md`, `.codex/agents/wiki-curator.toml`, `docs/90.references/llm-wiki/wiki-index.md`, `scripts/generate-llm-wiki-index.sh` | Ready  | None | Runtime surface added for LLM Wiki curation; keep it Markdown-only, generator-checked, and routed back to canonical owners.                                                                                                                                                                                                                                                                                               |
 | Escalation boundary                         | `subagent-protocol.md`, `rules/agentic.md`                                                                                                             | Ready  | None | Keep delegation, destructive-action, live-mutation, and human-approval boundaries explicit.                                                                                                                                                                                                                                                                                                                               |
 
-## Agent-first Engineering Matrix
+### Agent-first Engineering Matrix
 
 | Required Component              | Current Surface                                                                                                                                                                        | Status | Gap  | Remediation                                                                                                                                                                               |
 | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -296,7 +302,7 @@ Direct cluster mutation is not part of the default Agent-first execution path.
 Any `kubectl apply`, `kubectl patch`, external secret change, or live-cluster mutation
 belongs to a human-approved bootstrap or break-glass path with explicit evidence.
 
-## Agents
+### Agents
 
 | File                                       | Role                                         | Model    | Scope Imports  | Responsibility                                                                  | Lineage Family                               |
 | ------------------------------------------ | -------------------------------------------- | -------- | -------------- | ------------------------------------------------------------------------------- | -------------------------------------------- |
@@ -311,7 +317,7 @@ belongs to a human-approved bootstrap or break-glass path with explicit evidence
 | `.claude/agents/observability-reviewer.md` | Observability manifest and SLO-doc review    | `sonnet` | `infra`        | Review Prometheus/Grafana/kube-state-metrics/Alloy/Kiali manifests and SLO docs | cicd-pipeline, infra-as-code                 |
 | `.claude/agents/network-reviewer.md`       | Ingress and network manifest review          | `sonnet` | `infra`        | Review Traefik/ingress/NetworkPolicy/DNS/TLS manifest correctness               | infra-as-code                                |
 
-## Provider-Native Role Adapters
+### Provider-Native Role Adapters
 
 `.claude/agents/*.md`, `.agents/agents/*.md`, and `.codex/agents/*.toml` are
 provider-native role adapters for the same local roster. They must keep the same
@@ -338,7 +344,7 @@ Gemini has Markdown agent metadata without Claude-style tool scoping, and Codex
 uses TOML metadata including `developer_instructions` and
 `model_reasoning_effort`.
 
-## External Agency Catalog Gap Lens
+### External Agency Catalog Gap Lens
 
 The public Agency Agents roster is a market-scan reference for possible role
 families, not a source of automatic local agents. This repository keeps a
@@ -353,7 +359,7 @@ human request names a concrete local need.
 | Technical writer / codebase onboarding engineer                                            | `doc-writer`, `wiki-curator`, `knowledge-map` skill                                                      | Covered for template routing, LLM Wiki curation, and stale-link detection.                                                                                                                        |
 | Product, sales, market research, data, frontend, backend, and general AI engineering roles | No dedicated local provider adapter                                                                      | Deferred; route through existing docs, product, architecture, or external research workflows until this catalog records a repo-backed gap.                                                        |
 
-## Skills
+### Skills
 
 | Path                                              | Contract Type     | Purpose                                                                                                                                           | Supported Workflows                                                                        | Lineage Family                               |
 | ------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------- |
@@ -380,7 +386,7 @@ review heuristics. Do not require every reference-pattern skill to carry the
 same checklist shape as a workflow skill; instead, keep its trigger,
 applicable review surface, and failure boundaries clear.
 
-## Task-to-Skill Routing
+### Task-to-Skill Routing
 
 Use the repo-local `.agents/skills/**` SSoT first for cluster-specific work.
 Provider symlink views such as `.claude/skills/**` and `.codex/skills/**`
@@ -424,7 +430,7 @@ enforcement must remain in tracked hooks, runtime settings, Codex hook wiring,
 and `scripts/validate-repo-quality-gates.sh`. Local Hookify rules must stay
 untracked, ignored, and frontmatter-shaped when they exist.
 
-## Provider Capability Parity Matrix
+### Provider Capability Parity Matrix
 
 Each capability dimension has one common contract in `docs/00.agent-governance/**`
 and a provider-native implementation. Provider parity means role parity plus
@@ -483,7 +489,9 @@ its agent prompt. Do not duplicate the same rule across all three layers.
 - `project` scope = repository governance memory: `docs/00.agent-governance/memory/progress.md` (append-only) plus standalone files via `memory.template.md` (R4 coupling). This is the shared, tracked memory all providers use.
 - `user` / `local` scope = per-operator, untracked (`.claude/*.local.md` and similar); advisory only and never a substitute for the tracked project ledger.
 
-## Consistency Rules
+## Validation and Refresh
+
+### Consistency Rules
 
 - `AGENTS.md` must route to this catalog instead of embedding a duplicate agent table.
 - Root `CLAUDE.md` and `GEMINI.md` must point to this catalog when describing runtime agents.

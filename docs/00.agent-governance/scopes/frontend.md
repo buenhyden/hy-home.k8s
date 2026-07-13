@@ -1,19 +1,20 @@
+---
+title: 'Frontend Scope'
+type: governance/reference
+status: draft
+owner: platform
+updated: 2026-07-13
+---
+
 # Frontend Scope
+
+## Overview
 
 Persona: Frontend Engineer
 
-## Source of Truth
+## Authority Boundary
 
-- `docs/03.specs/`
-- `docs/01.requirements/`
-
-## Responsibilities
-
-- Implement UI behavior and states as specified.
-- Preserve accessibility and responsive behavior.
-- Keep UI contract decisions aligned with stage artifacts.
-
-## File Ownership
+### File Ownership
 
 | Path               | Owner    | Notes                                          |
 | ------------------ | -------- | ---------------------------------------------- |
@@ -22,7 +23,22 @@ Persona: Frontend Engineer
 
 Frontend scope does **not** own infra manifests (`gitops/`, `infrastructure/`) or governance files.
 
-## Subagent Bridge
+## Governance Context
+
+### Source of Truth
+
+- `docs/03.specs/`
+- `docs/01.requirements/`
+
+## Current Contract
+
+### Responsibilities
+
+- Implement UI behavior and states as specified.
+- Preserve accessibility and responsive behavior.
+- Keep UI contract decisions aligned with stage artifacts.
+
+### Subagent Bridge
 
 No dedicated subagent for frontend scope in this k8s-focused repo.
 
@@ -30,8 +46,12 @@ Subagent dispatch: use the current runtime's provider-native delegated-agent
 mechanism; never inline full role definitions when a provider-local agent file
 exists.
 
-## Definition of Done
+## Validation and Refresh
+
+### Definition of Done
 
 - UI changes are traceable to spec and acceptance criteria.
 - Accessibility and responsive checks are executed.
 - Frontend behavior changes are reflected in validation evidence.
+
+## Related Documents

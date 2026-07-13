@@ -8,7 +8,11 @@ updated: 2026-07-02
 
 # Tech Stack Version Inventory
 
-## Purpose
+## Overview
+
+이 문서는 일반 참고 링크 모음이 아니라 검증 대상 버전 계약 인벤토리다. repo-backed manifest, GitHub Actions, pre-commit hook, cloud example snapshot의 기준 값을 한곳에서 추적한다.
+
+### Purpose
 
 이 문서는 `hy-home.k8s`의 repo-backed 매니페스트와 품질 게이트에서 읽어야 하는 버전 기준을 고정한다.
 새 버전으로 올릴 때는 실제 manifest/config와 이 문서를 같은 변경으로 수정한다.
@@ -31,10 +35,6 @@ updated: 2026-07-02
   - Product requirements, architecture decisions, implementation plans, or runbooks.
   - Dependency updates that were not applied to the corresponding repo files.
 
-## Overview
-
-이 문서는 일반 참고 링크 모음이 아니라 검증 대상 버전 계약 인벤토리다. repo-backed manifest, GitHub Actions, pre-commit hook, cloud example snapshot의 기준 값을 한곳에서 추적한다.
-
 ## Scope
 
 - repo-backed k3s/Helm chart/GitHub Actions/pre-commit 버전 계약
@@ -48,18 +48,7 @@ updated: 2026-07-02
 - **Cloud Example Snapshot**: AWS/Azure 예시와 upstream Kubernetes awareness를 재확인한 2026-05-22 기준 공식 지원 상태다.
 - **Ingress NGINX boundary**: 로컬 k3d 계약은 유지하되 cloud target은 ALB/Gateway API/AGC 경로로 분리한다.
 
-## Sources
-
-- cloud example snapshot의 각 행에 공식 기준 링크를 둔다.
-- repo-backed version contracts는 `.github/`, `.pre-commit-config.yaml`, `gitops/`, `infrastructure/`의 실제 파일과 함께 유지한다.
-
-## Review and Freshness
-
-- Review cadence: on dependency bump, cloud example refresh, or official support-range change.
-- Last reviewed: 2026-07-02.
-- Next review trigger: a PR that changes `gitops/**`, `infrastructure/**`, `.github/workflows/**`, `.pre-commit-config.yaml`, `examples/aws/**`, or `examples/azure/**` version pins.
-
-## Cloud Example Snapshot: 2026-05-22
+### Cloud Example Snapshot: 2026-05-22
 
 이 섹션은 `examples/aws`와 `examples/azure`의 참조 구현을 검토할 때 사용하는 공식 기준이다. 로컬 k3d 실행 계약은 아래 `Version Contracts`의 `rancher/k3s:v1.35.0-k3s1`을 따른다. 이 snapshot은 freshness 기록이며 자동 upgrade 지시가 아니다.
 
@@ -74,7 +63,7 @@ updated: 2026-07-02
 | Terraform RDS Aurora module | `10.2.0`                                            | [RDS Aurora module](https://registry.terraform.io/modules/terraform-aws-modules/rds-aurora/aws)     | 2026-05-22 기준 latest와 일치한다. Aurora Serverless v2 example 기준이다.                                                                             |
 | Ingress NGINX               | Retired upstream since 2026-03-24                   | [Ingress NGINX retirement](https://kubernetes.io/blog/2026/01/29/ingress-nginx-statement/)          | 로컬 k3d 계약은 문서상 경고로 유지하고 cloud target은 ALB/Gateway API/AGC로 분리한다.                                                                 |
 
-## Version Contracts
+### Version Contracts
 
 ```yaml
 k3s_image: 'rancher/k3s:v1.35.0-k3s1'
@@ -135,6 +124,17 @@ pre_commit:
   'https://github.com/rhysd/actionlint': 'v1.7.12'
   'https://github.com/stackrox/kube-linter': 'v0.8.3'
 ```
+
+## Sources
+
+- cloud example snapshot의 각 행에 공식 기준 링크를 둔다.
+- repo-backed version contracts는 `.github/`, `.pre-commit-config.yaml`, `gitops/`, `infrastructure/`의 실제 파일과 함께 유지한다.
+
+## Review and Freshness
+
+- Review cadence: on dependency bump, cloud example refresh, or official support-range change.
+- Last reviewed: 2026-07-02.
+- Next review trigger: a PR that changes `gitops/**`, `infrastructure/**`, `.github/workflows/**`, `.pre-commit-config.yaml`, `examples/aws/**`, or `examples/azure/**` version pins.
 
 ## Related Documents
 

@@ -3,7 +3,7 @@ title: 'SDLC Template Governance'
 type: governance/template-support
 status: active
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # SDLC Template Governance
@@ -21,7 +21,9 @@ The SDLC template family ensures that each active stage document has one role,
 one target path pattern, one template form, one lifecycle state contract, and
 one validation route.
 
-## SDLC Profile Handoff
+## Owned Contract
+
+### SDLC Profile Handoff
 
 The [Document Profile Registry](./document-profiles.json) is the sole machine
 owner of SDLC routes, templates, headings, frontmatter, and lifecycle domains.
@@ -39,7 +41,7 @@ uses a filename that matches the incident folder, and the postmortem is always
 `postmortem.md` in the same folder. Placeholder incident directories are not
 part of the steady-state structure.
 
-## Lifecycle Rationale and Deferred Normalization
+### Lifecycle Rationale and Deferred Normalization
 
 The registry owns the exact status domains. Template forms may show a valid
 starting state, but support prose and agent-facing routing rules must not define
@@ -63,7 +65,7 @@ future lifecycle normalization remains **Deferred**. The `platform` owner must
 first publish a dedicated migration decision and corpus transition evidence,
 then refresh that ledger disposition. Spec 027 does not enact the proposal.
 
-## Numbering, Handoff, and Active Surfaces
+### Numbering, Handoff, and Active Surfaces
 
 Stage 01 PRDs use `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
 Stage 03 specs use `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`. When creating new work,
@@ -85,7 +87,9 @@ active documents that own the same role, purpose, and feature lineage. Retire
 superseded, duplicate, obsolete, migrated, or currentness-conflicting surfaces
 to archive or rewrite them as historical evidence.
 
-## Governance Rules
+## Authoring Rules
+
+### Governance Rules
 
 - Every non-README SDLC Markdown document must match exactly one structural
   template mapping.
@@ -101,7 +105,9 @@ to archive or rewrite them as historical evidence.
 - Incident records own factual chronology and response state. Postmortems own
   root-cause analysis, prevention, and documentation feedback loops.
 
-## Validation Rules
+## Validation Contract
+
+### Validation Rules
 
 - Required heading checks come from the matched template.
 - Required heading extraction uses literal `##` headings from the template,

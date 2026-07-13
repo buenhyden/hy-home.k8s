@@ -3,7 +3,7 @@ title: 'Template Frontmatter Schema'
 type: governance/template-support
 status: active
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Template Frontmatter Schema
@@ -21,7 +21,9 @@ document classification, freshness, and validation. It should contain only
 metadata that belongs to the document type. It should not duplicate headings,
 content summaries, route tables, or governance prose.
 
-## Current Baseline
+## Owned Contract
+
+### Current Baseline
 
 The machine-readable [Document Profile Registry](./document-profiles.json)
 owns the exact required, allowed, and ordered key sets, lifecycle state domains,
@@ -43,7 +45,7 @@ Exceptions:
 - `progress.template.md` is an appendable ledger entry template.
 - OpenAPI, GraphQL, and protobuf templates must remain native to their format.
 
-## Profile Rationale
+### Profile Rationale
 
 The registry defines the complete profile set. The families remain useful as a
 human model: SDLC profiles cover delivery records, common and governance
@@ -58,7 +60,9 @@ Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-e
 records why the repository adopted these metadata roles and which external
 guidance it rejected; it is evidence, not a second schema owner.
 
-## Key Rules
+## Authoring Rules
+
+### Key Rules
 
 - `title` is the human-readable document title.
 - `type` classifies the document role and must use a namespaced value from
@@ -73,7 +77,7 @@ guidance it rejected; it is evidence, not a second schema owner.
   prose. Exact extension keys and allowed values come only from the
   `content/archive-tombstone` profile.
 
-## Legacy Cleanup Rules
+### Legacy Cleanup Rules
 
 - Use `owner: platform` in active authored frontmatter and task owner cells.
 - Use `type: sdlc/policy` for operations policy documents.

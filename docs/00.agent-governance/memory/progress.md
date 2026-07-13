@@ -8,6 +8,63 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - ADM-005 governance and Current-reference shape normalization
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, governance, research, templates, migration, qa
+- **Status**: complete
+- **Tags**: #adm-005 #shape-normalization #current-research #template-support
+
+#### Progress
+
+- Applied the exact 73-path allowed manifest, SHA-256
+  `c9788e8f27a3497ab459aae2d0b001d98323672cefb0e1228ef328331749fe95`,
+  through 15 atomic batches; the reviewed debt-removal manifest SHA-256 is
+  `5d8b9fc200e0029011b1c8469492ee99a555e6e979979851ffb5d77284b1a9d1`.
+- Normalized Stage 00 governance and Stage 90 Current references while
+  retaining dated facts, sources, applicability, versions, currentness,
+  commands, fences, tables, links, and authority boundaries. All 73 durable
+  evidence rows are `shape-normalized`.
+- Kept all thirteen Spec 027/031 handoff files structural-only. The six support
+  and seven Stage 00 files preserve exact semantic, route, schema, form,
+  provider, fence, table, and authority payloads. The frozen manifest contains
+  zero Stage 98 paths, so Tombstone mutation is exactly zero.
+
+#### Evidence
+
+- All 15 compatibility checkpoints exited zero with no exact-batch diagnostic.
+  Final compatibility is `102 DEFER / 0 FAIL` with zero diagnostics on the 73
+  ADM-005 paths.
+- The complete fixture semantic digest is
+  `a81a558d97472bcb9624a9270e3be7e8cbd16c44aa3dc6a5bd8f9be3e663b8a7`.
+  Remaining caps are required `4/4/4`, residue `17/21/21`, delimiter `0/0/0`,
+  unsupported `39/77/77` with `37` distinct tokens, duplicate `0/0/0`, overlap
+  `4`, required/residue union `17`, and total union `39`.
+- The exact working and rollback set is `79` paths: 73 documents plus the
+  durable ledger, fixture, Markdown validator, quality-gate consumer, ADM Task,
+  and this progress ledger. The combined validator diff guard, self-test,
+  links/owners, full repository quality gate, focused pre-commit, diff check,
+  manifest/fixture proofs, and empty-index assertion all passed.
+
+#### Memory
+
+- A finite-debt wave stays batch-atomic across document shape, durable evidence,
+  fixture records, cap constants, and validator expectations; a document-only
+  checkpoint correctly fails as unused debt.
+- Structural-only handoffs require payload-level preservation, not merely a
+  final validator pass. Compare semantic lines, fences, tables, and links to
+  the pre-wave source before handing semantic ownership back.
+
+#### Handoff
+
+- Revert the eventual ADM-005 logical commit as one 79-path unit if rollback is
+  required. ADM-006 owns the exact remaining `39` AWS/Azure cloud paths with
+  `102` occurrences and `102` obligations; it must not reopen ADM-005 files.
+- No live system, secret, remote CI, push, publish, merge, deployment, stage, or
+  commit action was performed during this evidence finalization.
+
 ### 2026-07-13 - ADM-004 independent semantic correction
 
 #### Metadata

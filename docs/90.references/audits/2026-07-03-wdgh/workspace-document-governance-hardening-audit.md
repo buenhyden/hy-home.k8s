@@ -15,7 +15,7 @@ governance hardening. It preserves the current inventory, summarizes durable
 drift classes, and routes remediation to later tasks without changing the
 active contracts during the audit pass.
 
-## Purpose
+### Purpose
 
 Provide a durable, dated lookup for the baseline audit findings that should
 inform Task 2 through Task 5 without making those remediation changes in
@@ -53,7 +53,7 @@ below before treating any pending item as current drift.
   this active reference because the repository quality gate rejects that
   literal in active authored documents.
 
-## Findings
+### Findings
 
 | Finding ID | Surface | Evidence | Decision | Routed Task |
 | --- | --- | --- | --- | --- |
@@ -62,7 +62,7 @@ below before treating any pending item as current drift.
 | WDGH-AUD-003 | CI/QA documentation | `tests/README.md:58` still names the legacy Claude provider-local hook directory in the shell syntax command, while `docs/05.operations/guides/0010-ci-cd-qa-reference-guide.md:92` and `scripts/README.md` point to `docs/00.agent-governance/hooks`. | Active CI/QA documentation drift. Align the current shell syntax surface and add deterministic coverage if practical. | T-004, T-005 |
 | WDGH-AUD-004 | Provider and CI owner traceability | Root shims route to Stage 00 provider notes and runtime baselines; `.github/ABOUT.md` and `.github/workflows/ci.yml` own the CI job contract. | No Task 1 fix. Use these owners as the traceability baseline for provider and CI/QA hardening. | T-003, T-005 |
 
-## Resolution Overlay
+### Resolution Overlay
 
 As of 2026-07-04, this report is a resolved historical baseline. The original
 findings remain useful for chronology, but they are not current operating
@@ -75,7 +75,7 @@ guidance unless a fresh scan reproduces them.
 | WDGH-AUD-003 | Resolved historical CI/QA hook path drift. | Active `tests/README.md`, CI/QA guide, and scripts README no longer contain the provider-local hook wording; remaining matches are only historical audit/progress evidence. |
 | WDGH-AUD-004 | Preserved traceability baseline. | Provider and CI owner routing remains owned by root shims, Stage 00 provider notes, runtime overlays, `.github/ABOUT.md`, and `.github/workflows/ci.yml`. |
 
-## Implementation Checklist
+### Implementation Checklist
 
 | Item | Owner Surface | Action | Status |
 | --- | --- | --- | --- |
@@ -85,13 +85,6 @@ guidance unless a fresh scan reproduces them.
 | Review README body delimiter evidence. | Workspace README surfaces | Decide whether the post-`Related Documents` horizontal rule should be removed or preserved as intentional content. | Resolved historical item; see overlay. |
 | Align CI/QA hook syntax documentation. | CI/QA documentation and validator | Update active shell syntax guidance and evaluate deterministic validator coverage. | Resolved historical item; broader coverage wording remains in the 2026-07-04 T-005 stream. |
 | Verify provider wording boundaries. | Provider entrypoints and runtime overlays | Ensure provider claims do not overstate hook or permission parity. | Resolved historical item; see overlay. |
-
-## Review and Freshness
-
-- Review date: 2026-07-03.
-- Resolution overlay added: 2026-07-04.
-- Refresh trigger: rerun when template routing, provider entrypoints, CI/QA
-  workflows, README contracts, or validator contracts change.
 
 ## Sources
 
@@ -105,6 +98,13 @@ guidance unless a fresh scan reproduces them.
 - `find docs/00.agent-governance -maxdepth 3 -type f | sort`
 - Frontmatter, README heading, provider, and CI/QA scans recorded in the
   linked Task evidence.
+
+## Review and Freshness
+
+- Review date: 2026-07-03.
+- Resolution overlay added: 2026-07-04.
+- Refresh trigger: rerun when template routing, provider entrypoints, CI/QA
+  workflows, README contracts, or validator contracts change.
 
 ## Related Documents
 

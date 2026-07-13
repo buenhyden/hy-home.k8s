@@ -14,7 +14,7 @@ updated: 2026-07-04
 
 This reference is descriptive. It summarizes canonical owners and current repository facts; it does not redefine active governance policy, CI enforcement, provider runtime behavior, or live-cluster procedure.
 
-## Purpose
+### Purpose
 
 - Provide a durable baseline for the workspace engineering research pack.
 - Preserve a repo-first summary of the current governance, automation, validation, and documentation-routing model.

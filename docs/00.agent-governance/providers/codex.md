@@ -3,45 +3,22 @@ title: 'Reference: Codex Provider Notes'
 type: governance/reference
 status: draft
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Codex Provider Notes
 
+## Overview
+
 Guidance for Codex (GPT) execution in the `hy-home.k8s` repository.
 
-## Official Source Basis
-
-Checked on 2026-07-06:
-
-- Codex custom instructions with `AGENTS.md`: <https://developers.openai.com/codex/guides/agents-md>
-- Codex subagents: <https://developers.openai.com/codex/subagents>
-- Codex CLI/config/approval modes: <https://developers.openai.com/codex/cli>
-
-## Role
+### Role
 
 Codex sessions act as a peer provider to Claude and Gemini. This document defines how Codex interacts with the shared governance model while maintaining its own runtime baseline.
 
-## Loading Model
+## Authority Boundary
 
-- Start with the Codex/GPT gateway: `AGENTS.md`
-- Follow the JIT loading sequence defined in `docs/00.agent-governance/rules/bootstrap.md`
-- Load the local Codex runtime baseline: `.codex/CODEX.md`
-
-## Context Strategy
-
-- Codex uses `.codex/agents/*.toml` as provider-native role adapters for the local agent roster.
-- Hook event wiring is defined in `.codex/hooks.json`, which points to the repository's shared lifecycle hook implementations where the runtime consumes that file.
-- `.codex/hooks.json` is strictly for event wiring (context and validation) and is **not** a permission gate.
-- Shared skills, workflows, and output styles resolve through `.codex/{skills,workflows,output-styles}` symlinks to the `.agents/` SSoT. Codex-specific rules stay in this provider note and Stage 00 rules; `.codex/rules/` is only a placeholder/adapter surface unless populated by a future approved adapter change.
-
-## Execution Expectations
-
-- **Symmetry**: Codex is expected to follow the same 3-provider role parity rules as Claude and Gemini while using Codex-native TOML metadata.
-- **GitOps-First**: Adhere strictly to the workspace constraints; never write plaintext secrets.
-- **Language**: Produce human-facing responses in Korean, but keep governance and policy documents in English.
-
-## Permission & Hook Boundary
+### Permission & Hook Boundary
 
 Codex uses official `AGENTS.md`, configuration, sandbox, and approval-mode
 surfaces for its native execution boundary. Unlike Claude's `settings.json`,
@@ -54,10 +31,45 @@ Codex subagents are explicit orchestration only when requested by the user; use
 `.codex/agents/*.toml` role adapters and do not inline full role definitions
 when a local adapter exists.
 
-## Runtime Tooling Boundary
+### Runtime Tooling Boundary
 
 Codex should follow `RTK.md` for shell command guidance. If `rtk` is not on
 PATH but `/home/hy/.local/bin/rtk --version` works, record the PATH limitation.
 If `rtk gain` cannot initialize its tracking database, do not inspect private
 databases or credential files; run the underlying command directly and record
 the limitation in the active task evidence.
+
+## Governance Context
+
+### Official Source Basis
+
+Checked on 2026-07-06:
+
+- Codex custom instructions with `AGENTS.md`: <https://developers.openai.com/codex/guides/agents-md>
+- Codex subagents: <https://developers.openai.com/codex/subagents>
+- Codex CLI/config/approval modes: <https://developers.openai.com/codex/cli>
+
+### Loading Model
+
+- Start with the Codex/GPT gateway: `AGENTS.md`
+- Follow the JIT loading sequence defined in `docs/00.agent-governance/rules/bootstrap.md`
+- Load the local Codex runtime baseline: `.codex/CODEX.md`
+
+### Context Strategy
+
+- Codex uses `.codex/agents/*.toml` as provider-native role adapters for the local agent roster.
+- Hook event wiring is defined in `.codex/hooks.json`, which points to the repository's shared lifecycle hook implementations where the runtime consumes that file.
+- `.codex/hooks.json` is strictly for event wiring (context and validation) and is **not** a permission gate.
+- Shared skills, workflows, and output styles resolve through `.codex/{skills,workflows,output-styles}` symlinks to the `.agents/` SSoT. Codex-specific rules stay in this provider note and Stage 00 rules; `.codex/rules/` is only a placeholder/adapter surface unless populated by a future approved adapter change.
+
+## Current Contract
+
+### Execution Expectations
+
+- **Symmetry**: Codex is expected to follow the same 3-provider role parity rules as Claude and Gemini while using Codex-native TOML metadata.
+- **GitOps-First**: Adhere strictly to the workspace constraints; never write plaintext secrets.
+- **Language**: Produce human-facing responses in Korean, but keep governance and policy documents in English.
+
+## Validation and Refresh
+
+## Related Documents

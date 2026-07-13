@@ -21,7 +21,7 @@ semantics, branch protection, CI enforcement, release approval, deployment
 procedure, credential handling, live runtime readiness, or maintenance-bot
 behavior.
 
-## Purpose
+### Purpose
 
 - Provide a dated source snapshot for automation, workflow triggers,
   workflow syntax, concurrency, reusable workflow concepts, workflow commands,

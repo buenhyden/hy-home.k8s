@@ -18,7 +18,7 @@ execution rule은 Stage 00 governance가 소유한다.
 기능 또는 서비스에 종속된 Agent 설계는 이 문서가 아니라
 `docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md`가 정본 위치다.
 
-## Purpose
+### Purpose
 
 이 문서는 `90.references/data/` 아래에 둘 수 있는 Agent reference data와
 Stage 00 또는 Stage 03으로 라우팅해야 하는 Agent runtime contract를

@@ -20,7 +20,7 @@ This is descriptive Stage 90 reference material. It does not create a retry
 policy, change provider permissions, enable MCP servers, or authorize live or
 remote actions.
 
-## Purpose
+### Purpose
 
 - Define a provider-neutral four-element harness and bounded
   Observe/Plan/Act/Verify/Learn control loop.

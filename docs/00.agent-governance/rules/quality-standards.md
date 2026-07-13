@@ -1,15 +1,27 @@
+---
+title: 'Agent Quality Standards (March 2026)'
+type: governance/reference
+status: draft
+owner: platform
+updated: 2026-07-13
+---
+
 # Agent Quality Standards (March 2026)
+
+## Overview
 
 Quality gates for governance and execution alignment.
 
-## Required Quality Dimensions
+### Required Quality Dimensions
 
 - Accuracy: policy text matches actual workspace behavior.
 - Concision: avoid repetitive or generic instructions.
 - Actionability: every rule implies a concrete action.
 - Consistency: no conflicts across bootstrap, persona, scope, and provider docs.
 
-## Coverage Applicability
+## Authority Boundary
+
+### Coverage Applicability
 
 - Future testable application code should target at least 90% line and branch coverage where a language-specific test framework and coverage tool exist.
 - Current Bash/YAML/Markdown infrastructure work uses validation-matrix coverage instead of fake numeric code coverage.
@@ -27,10 +39,18 @@ Quality gates for governance and execution alignment.
   permission surfaces.
 - PR verification must state which coverage lane applies: 90% code coverage for future testable application code, or validation-matrix coverage for current infrastructure artifacts.
 
-## Minimum Verification for Governance Updates
+## Governance Context
+
+## Current Contract
+
+## Validation and Refresh
+
+### Minimum Verification for Governance Updates
 
 - Structure parity with expected governance tree.
 - English-only check under `docs/00.agent-governance/`.
 - Root shim link checks for `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`.
 - Checklist references remain valid (`preflight`, `postflight`, `stage-authoring-matrix`, `stage-checklists`).
 - Diff check confirms no unintended edits outside the approved change scope.
+
+## Related Documents

@@ -3,7 +3,7 @@ title: 'Template Routing Contract'
 type: governance/template-support
 status: active
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Template Routing Contract
@@ -27,7 +27,9 @@ facts. This support document owns the route-selection procedure, rationale,
 boundaries, and examples. Its route-map mirror is explicitly non-authoritative
 and exists to help maintainers select the registry-owned form.
 
-## Route-selection Procedure
+## Owned Contract
+
+### Route-selection Procedure
 
 1. Normalize the repository-relative POSIX target path without traversing
    ignored paths or symlinked provider views.
@@ -37,7 +39,7 @@ and exists to help maintainers select the registry-owned form.
 4. Use that profile's template and document contract, and use this support
    document only for routing rationale and migration boundaries.
 
-## Lifecycle Route Summary
+### Lifecycle Route Summary
 
 The registry owns the exact path patterns. The lifecycle rationale remains:
 requirements and specifications carry numbered lineage, plans and tasks remain
@@ -50,7 +52,7 @@ handoff links, and the active-surface duplicate rule are owned by [SDLC
 Governance](./sdlc-governance.md). This document owns the selection procedure
 and the human-readable mirror below, not the route facts themselves.
 
-## Current Route Map
+### Current Route Map
 
 The [Document Profile Registry](./document-profiles.json) is the sole machine
 owner. The following non-authoritative compatibility mirror exposes each
@@ -96,7 +98,7 @@ second structural route for a nested README target.
 The memory `<topic>` placeholder excludes `progress`; `progress.md` is an
 exact reserved route owned by `templates/common/progress.template.md`.
 
-## Explicit Non-routed Markdown Exceptions
+### Explicit Non-routed Markdown Exceptions
 
 The registry identifies the exact GitHub-native control paths as exception
 profiles. They remain active repository control surfaces rather than authored
@@ -108,7 +110,7 @@ Validators may check these files for frontmatter bans and stale currentness
 claims, but they must not require stage frontmatter or required template
 headings.
 
-## Example-Local SDLC Snapshot Boundary
+### Example-Local SDLC Snapshot Boundary
 
 AWS and Azure cloud example docs under `examples/aws/docs/**` and
 `examples/azure/docs/**` are dated Cloud Example Snapshot material and
@@ -123,7 +125,9 @@ Conceptually, non-README example documents resolve by their SDLC role, while
 example README files remain frontmatter-free navigation. That distinction lets
 examples reuse structure without claiming current provider authority.
 
-## Enforcement Surfaces
+## Authoring Rules
+
+### Enforcement Surfaces
 
 Route-breaking changes must update these surfaces in the same logical unit:
 
@@ -141,7 +145,9 @@ Route-breaking changes must update these surfaces in the same logical unit:
 - GitHub-native Markdown control-surface exceptions when `.github` control
   documents are added, removed, or repurposed.
 
-## Validation Commands
+## Validation Contract
+
+### Validation Commands
 
 ```bash
 git diff --check

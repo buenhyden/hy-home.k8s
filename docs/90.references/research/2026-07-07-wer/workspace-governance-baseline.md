@@ -19,7 +19,7 @@ WSL2 + k3d 로컬 Kubernetes 홈랩, ArgoCD GitOps desired state, Stage 00~99
 이 문서는 설명용 Stage 90 reference다. 활성 정책, CI semantics, provider
 runtime behavior, release 승인, live-cluster 절차를 정의하거나 변경하지 않는다.
 
-## Purpose
+### Purpose
 
 - 워크스페이스 목적과 GitOps-first operating contract를 current repo fact로
   요약한다.

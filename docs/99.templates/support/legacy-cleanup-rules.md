@@ -3,7 +3,7 @@ title: 'Template Legacy Cleanup Rules'
 type: governance/template-support
 status: active
 owner: platform
-updated: 2026-07-05
+updated: 2026-07-13
 ---
 
 # Template Legacy Cleanup Rules
@@ -26,7 +26,9 @@ Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-e
 records the research basis for the replacement families without becoming an
 enforcement source.
 
-## Legacy Items to Remove from Active Contracts
+## Owned Contract
+
+### Legacy Items to Remove from Active Contracts
 
 | Legacy Item | Replacement | Current Enforcement |
 | --- | --- | --- |
@@ -43,7 +45,7 @@ enforcement source.
 | Missing frontmatter on non-README cloud example docs | Role-appropriate `sdlc/*` frontmatter under the example-local SDLC snapshot route | Reject after the example-local route is enabled for the target provider tree |
 | Active tracked scratch residue named or classified as backup files, auth files, token caches, shell history, local diagnostics, or secret-bearing logs | Delete, ignore as temporary non-secret scratch, or promote non-secret durable findings to the canonical docs taxonomy | Reject as active tracked scratch residue |
 
-## Active vs Historical References
+### Active vs Historical References
 
 Active contracts include:
 
@@ -66,7 +68,9 @@ resolved, keep the original finding as historical evidence and add resolved
 context in the next audit or normalization task instead of rewriting it into a
 false current-state claim.
 
-## Current Review Order
+## Authoring Rules
+
+### Current Review Order
 
 1. Confirm support contracts describe the current steady-state model.
 2. Confirm template files and route enforcement use categorized paths.
@@ -74,7 +78,9 @@ false current-state claim.
 4. Confirm authored documents and indexes follow the current contracts.
 5. Run legacy searches and record evidence for any accepted historical matches.
 
-## Validation Commands
+## Validation Contract
+
+### Validation Commands
 
 ```bash
 bash scripts/validate-repo-quality-gates.sh .

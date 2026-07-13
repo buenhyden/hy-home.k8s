@@ -1,4 +1,14 @@
+---
+title: 'Stage Authoring Matrix'
+type: governance/reference
+status: draft
+owner: platform
+updated: 2026-07-13
+---
+
 # Stage Authoring Matrix
+
+## Overview
 
 Canonical authoring matrix for the current docs taxonomy.
 
@@ -20,7 +30,13 @@ English-first execution artifacts. When a stage document mixes human and agent
 audiences, keep the reader-facing context in Korean and keep the AI-agent
 execution requirements in English.
 
-## Lifecycle Pre-Edit Contract
+## Authority Boundary
+
+## Governance Context
+
+## Current Contract
+
+### Lifecycle Pre-Edit Contract
 
 Agents must check these lifecycle rules before editing authored documents:
 
@@ -60,3 +76,7 @@ Agents must check these lifecycle rules before editing authored documents:
 | `90.references` | Durable reference material | When knowledge should be reused across features or operations | Technical Writer/Governance Steward | Stable facts, inventories, learning material | Reference documents | `reference.template.md` | Reference material is factual, slow-moving, linked from relevant stages, and keeps authority/source/freshness fields English-first |
 | `98.archive` | Metadata-only old document Tombstones | When an old active-stage document conflicts with current implementation or is deprecated-only/superseded-only | Governance Steward | Current replacement docs, implementation evidence | Tombstone documents and archive index rows | `archive-tombstone.template.md` | Archive traceability metadata and mirrored path are preserved, old body is removed, active docs link only to the archive index |
 | `99.templates` | Reusable document templates | Before authoring or restructuring docs | Technical Writer/Governance Steward | Taxonomy requirements | Templates | n/a | Templates match canonical paths and stay referenced by README files |
+
+## Validation and Refresh
+
+## Related Documents

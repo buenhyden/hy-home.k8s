@@ -21,7 +21,7 @@ not prove that Kubernetes, Argo CD, External Secrets Operator (ESO), Vault, a
 network plugin, GitHub Actions, or any external service is live or correctly
 enforcing the tracked desired state.
 
-## Purpose
+### Purpose
 
 - Map external Kubernetes and GitOps expectations to exact local desired-state
   and validation surfaces.

@@ -1,18 +1,20 @@
+---
+title: 'Meta Scope'
+type: governance/reference
+status: draft
+owner: platform
+updated: 2026-07-13
+---
+
 # Meta Scope
+
+## Overview
 
 Persona: Governance Steward
 
-## Source of Truth
+## Authority Boundary
 
-- `docs/00.agent-governance/`
-
-## Responsibilities
-
-- Maintain governance structure, consistency, and policy clarity.
-- Keep rule routing deterministic and conflict-free.
-- Enforce language and taxonomy boundaries.
-
-## File Ownership
+### File Ownership
 
 | Path                          | Owner | Notes                                           |
 | ----------------------------- | ----- | ----------------------------------------------- |
@@ -32,7 +34,21 @@ own the domain behavior for each worker.
 
 Meta scope does **not** own `docs/01.requirements/`, `docs/02.architecture/`, `docs/03.specs/`, `docs/04.execution/`, `docs/05.operations/`, `docs/90.references/`, `docs/98.archive/`, or `docs/99.templates/` (authored SSoT).
 
-## Subagent Bridge
+## Governance Context
+
+### Source of Truth
+
+- `docs/00.agent-governance/`
+
+## Current Contract
+
+### Responsibilities
+
+- Maintain governance structure, consistency, and policy clarity.
+- Keep rule routing deterministic and conflict-free.
+- Enforce language and taxonomy boundaries.
+
+### Subagent Bridge
 
 No dedicated worker subagent for meta scope. Governance steward operates
 directly, while `supervisor` imports `meta` only for routing and escalation
@@ -42,8 +58,12 @@ Subagent dispatch: use the current runtime's provider-native delegated-agent
 mechanism; never inline full role definitions when a provider-local agent file
 exists.
 
-## Definition of Done
+## Validation and Refresh
+
+### Definition of Done
 
 - Governance tree matches expected structure.
 - Rule references are valid and non-duplicative.
 - Governance documents remain English-only.
+
+## Related Documents

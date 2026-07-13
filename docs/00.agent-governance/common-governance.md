@@ -3,14 +3,14 @@ title: 'Reference: Common Governance & Mappings'
 type: governance/reference
 status: draft
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Reference: Common Governance & Mappings
 
-> Use this document to understand the common governance structure across all AI agents operating in `hy-home.k8s`.
-
 ## Overview
+
+> Use this document to understand the common governance structure across all AI agents operating in `hy-home.k8s`.
 
 This document defines the common governance concepts, cross-platform mappings,
 Memory, QA, and CI/static validation policies, and support matrix for AI agents (Gemini, Claude,
@@ -19,11 +19,11 @@ content use `.agents/` as their provider-neutral Single Source of Truth (SSoT),
 while `.agents/agents/*.md`, `.claude/agents/*.md`, and
 `.codex/agents/*.toml` are provider-native role adapters.
 
-## Purpose
+### Purpose
 
 To provide a unified understanding of agent concepts and their implementation across different agent runtimes.
 
-## Reference Type
+### Reference Type
 
 - Type: durable-concept
 - Source checked: 2026-07-06
@@ -40,13 +40,15 @@ To provide a unified understanding of agent concepts and their implementation ac
   - Concrete model IDs and reasoning-effort values (see `harness-catalog.md` and `model-policy.md`)
   - Stage-to-template mapping details (see `docs/99.templates/support/template-routing.md` and `rules/document-stage-routing.md`)
 
-## Scope
+### Scope
 
 - Common agent concepts
 - Directory mappings for `.agents/`, `.claude/`, and `.codex/`
 - Policy requirements for operations
 
-## Definitions / Facts
+## Governance Context
+
+### Definitions / Facts
 
 - **Agent**: An entity assigned a specific persona (e.g., `k8s-implementer`) to perform tasks.
 - **Skill**: A bundled capability, script, or knowledge set invoked by an agent to execute tasks.
@@ -58,7 +60,7 @@ To provide a unified understanding of agent concepts and their implementation ac
 - **Memory**: Persistent storage (`docs/00.agent-governance/memory/`) for lessons learned and context.
 - **QA / CI**: Automated pipelines enforcing code quality, templates, and Kubernetes manifest validity.
 
-## Platform Mapping
+### Platform Mapping
 
 | Concept | Gemini (Antigravity) | Claude | Codex |
 | --- | --- | --- | --- |
@@ -71,7 +73,9 @@ To provide a unified understanding of agent concepts and their implementation ac
 | **Workflows** | `.agents/workflows/` | `.claude/workflows/` | `.codex/workflows/` |
 | **Output Styles** | `.agents/output-styles/` | `.claude/output-styles/` | `.codex/output-styles/` |
 
-## Canonical Adapter Ownership
+## Current Contract
+
+### Canonical Adapter Ownership
 
 | Layer | Canonical Owner | Provider Adapter Rule |
 | --- | --- | --- |
@@ -82,7 +86,7 @@ To provide a unified understanding of agent concepts and their implementation ac
 | Hook scripts | `docs/00.agent-governance/hooks/*.sh` | `.claude/settings.json` wires Claude native settings/hooks; `.agents/hooks.json` and `.codex/hooks.json` are context/validation wiring, not native permission gates equivalent to Claude settings. |
 | Execution evidence | `docs/04.execution/tasks/**` and `docs/00.agent-governance/memory/progress.md` | Provider handoff text links to evidence rather than embedding separate ledgers. |
 
-## Policies
+### Policies
 
 - **Memory Policy**: Agents must log lessons learned and persistent context in `docs/00.agent-governance/memory/` and review them before initiating work.
 - **GitOps-First QA**: Agents cannot modify the production cluster directly (`no-kubectl-mutation`). All changes must go through PR and CI/static validation.
@@ -91,7 +95,7 @@ To provide a unified understanding of agent concepts and their implementation ac
   - **Post-flight/validate**: Run `scripts/validate-repo-quality-gates.sh` to ensure compliance.
   - Claude has the native permission gate; Gemini and Codex hook JSON files are context/validation wiring.
 
-## Support Matrix
+### Support Matrix
 
 | Feature | Gemini (Antigravity) | Claude | Codex | Status |
 | --- | --- | --- | --- | --- |
@@ -101,7 +105,9 @@ To provide a unified understanding of agent concepts and their implementation ac
 | **Cross-Platform Memory DB** | ❌ Unsupported | ❌ Unsupported | ❌ Unsupported | Unsupported (Fallback to Markdown) |
 | **Output Style Enforcement** | ⚠️ Tone/behavioral | ✅ Native output-style files | ⚠️ Tone/behavioral | Shared style content exists; native enforcement differs by provider |
 
-## Sources
+## Validation and Refresh
+
+### Sources
 
 - Official capability basis checked on 2026-07-06: Codex `AGENTS.md`,
   subagents, CLI/config/approval modes; Claude settings, hooks, subagents;
@@ -110,7 +116,7 @@ To provide a unified understanding of agent concepts and their implementation ac
   <https://github.com/msitarzewski/agency-agents>.
 - Workspace analysis and current provider adapter files.
 
-## Review and Freshness
+### Review and Freshness
 
 - Review cadence: on dependency bump or agent framework update
 - Last reviewed: 2026-07-06

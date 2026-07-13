@@ -18,7 +18,7 @@ This audit does not change active governance policy, provider runtime behavior,
 CI semantics, scripts, templates, manifests, approval boundaries, or live
 cluster procedure.
 
-## Purpose
+### Purpose
 
 - Record whether the researched workspace governance model is implemented in
   current repository surfaces.

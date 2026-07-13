@@ -3,7 +3,7 @@ title: 'Reference: Subagent Protocol'
 type: governance/reference
 status: draft
 owner: platform
-updated: 2026-07-05
+updated: 2026-07-13
 ---
 
 # Reference: Subagent Protocol
@@ -13,18 +13,57 @@ updated: 2026-07-05
 This document defines how local subagents are dispatched, constrained, and
 coordinated in `hy-home.k8s`.
 
-## Purpose
+### Purpose
 
 - Define the runtime contract for delegated agent execution.
 - Keep orchestration behavior aligned with the local runtime catalog.
 - Prevent policy duplication across gateway, provider, and agent files.
 
-## Scope
+## Authority Boundary
+
+### Scope
 
 - Covers dispatch rules, file requirements, model hierarchy, and coordination.
 - Does not replace scope policy, provider notes, or runtime bridge files.
 
-## Dispatch Rules
+### Tool Scoping
+
+Each agent declares a least-privilege tool set matched to its responsibility. The
+canonical mapping below is implemented natively in `.claude/agents/*.md` `tools:`
+frontmatter; Gemini (`.agents/agents/*.md`) and Codex (`.codex/agents/*.toml`)
+honor the same boundary within their native capabilities and governance
+guardrails without requiring identical metadata keys.
+
+- `supervisor`: full toolset (orchestration and delegation).
+- Read-only review agents (`code-reviewer`, `gitops-reviewer`, `security-auditor`, `incident-responder`): `Read`, `Grep`, `Glob`, `Bash` (read-only command policy still applies).
+- Authoring agents (`k8s-implementer`, `doc-writer`, `wiki-curator`): `Read`, `Write`, `Edit`, `Grep`, `Glob`, `Bash`.
+- Tool scoping never overrides the destructive-command deny list or the no-direct-cluster-mutation boundary.
+- Additional Claude agent frontmatter fields (`permissionMode`, `memory`, `effort`) are deferred until verified against the current Claude Code agent schema; add them only when confirmed supported, otherwise keep the boundary in this contract.
+
+### Execution Boundaries
+
+- Subagents may **read** any file in the repository.
+- Subagents may **write** only within their declared File Ownership paths (see scope file).
+- Subagents must **never** run `kubectl apply` or any destructive cluster command.
+- Subagents must complete the postflight checklist before returning results.
+
+## Governance Context
+
+### Model Hierarchy
+
+- `supervisor.md` uses the `top` model tier; all worker agents use the `worker` tier.
+- Per-provider concrete model identifiers are canonical in the Model Tier Mapping table in `docs/00.agent-governance/harness-catalog.md`.
+
+### Catalog Reference
+
+Start from the appropriate root provider shim (`AGENTS.md`, `CLAUDE.md`, or
+`GEMINI.md`) for gateway routing and use
+`docs/00.agent-governance/harness-catalog.md` for the canonical local runtime
+catalog, including provider-native role adapters.
+
+## Current Contract
+
+### Dispatch Rules
 
 - Dispatch subagents through the current runtime's provider-native delegated-agent mechanism. Claude uses the Task tool or explicit Agent invocation, Codex uses explicit subagent orchestration when requested by the user, and Gemini uses the available agent registry or project-local adapter workflow where supported.
 - Never embed full role definitions inline when a provider-local agent file exists.
@@ -32,7 +71,7 @@ coordinated in `hy-home.k8s`.
 - Each agent file must `@import` one or more matching scope files from `scopes/`.
 - `supervisor.md` is the only supervising agent and owns routing and escalation decisions.
 
-## Agent File Requirement
+### Agent File Requirement
 
 Every delegated agent must have corresponding provider files in `.agents/agents/`,
 `.claude/agents/`, and `.codex/agents/`.
@@ -55,33 +94,7 @@ stems, scope imports, Runtime Bootstrap text, Guardrails, Handoff / Escalation,
 and Postflight requirements. Native metadata keys differ by provider. This
 parity relationship is validated by `scripts/validate-repo-quality-gates.sh`.
 
-## Tool Scoping
-
-Each agent declares a least-privilege tool set matched to its responsibility. The
-canonical mapping below is implemented natively in `.claude/agents/*.md` `tools:`
-frontmatter; Gemini (`.agents/agents/*.md`) and Codex (`.codex/agents/*.toml`)
-honor the same boundary within their native capabilities and governance
-guardrails without requiring identical metadata keys.
-
-- `supervisor`: full toolset (orchestration and delegation).
-- Read-only review agents (`code-reviewer`, `gitops-reviewer`, `security-auditor`, `incident-responder`): `Read`, `Grep`, `Glob`, `Bash` (read-only command policy still applies).
-- Authoring agents (`k8s-implementer`, `doc-writer`, `wiki-curator`): `Read`, `Write`, `Edit`, `Grep`, `Glob`, `Bash`.
-- Tool scoping never overrides the destructive-command deny list or the no-direct-cluster-mutation boundary.
-- Additional Claude agent frontmatter fields (`permissionMode`, `memory`, `effort`) are deferred until verified against the current Claude Code agent schema; add them only when confirmed supported, otherwise keep the boundary in this contract.
-
-## Model Hierarchy
-
-- `supervisor.md` uses the `top` model tier; all worker agents use the `worker` tier.
-- Per-provider concrete model identifiers are canonical in the Model Tier Mapping table in `docs/00.agent-governance/harness-catalog.md`.
-
-## Execution Boundaries
-
-- Subagents may **read** any file in the repository.
-- Subagents may **write** only within their declared File Ownership paths (see scope file).
-- Subagents must **never** run `kubectl apply` or any destructive cluster command.
-- Subagents must complete the postflight checklist before returning results.
-
-## Coordination
+### Coordination
 
 - Use the provider-native delegated-agent mechanism for work assignment and
   status tracking.
@@ -94,12 +107,7 @@ guardrails without requiring identical metadata keys.
   `docs/04.execution/` for task evidence, `docs/90.references/audits/` for
   durable audits, Stage 00 governance, or Stage 99 support contracts.
 
-## Catalog Reference
-
-Start from the appropriate root provider shim (`AGENTS.md`, `CLAUDE.md`, or
-`GEMINI.md`) for gateway routing and use
-`docs/00.agent-governance/harness-catalog.md` for the canonical local runtime
-catalog, including provider-native role adapters.
+## Validation and Refresh
 
 ## Related Documents
 

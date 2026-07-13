@@ -19,7 +19,7 @@ policy, CI workflow behavior, validation script behavior, branch protection,
 pre-commit hooks, formatting rules, release procedure, maintenance automation,
 approval boundaries, or live operations procedure.
 
-## Purpose
+### Purpose
 
 - Record whether the researched spec-driven development, SDLC, CI/CD, QA,
   formatting, linting, workflow, pipeline, and automation model is implemented

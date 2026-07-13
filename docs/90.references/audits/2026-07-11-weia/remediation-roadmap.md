@@ -16,7 +16,7 @@ updated: 2026-07-11
 소유하며, 이 문서는 중복 제거, 의존 순서, 목표 운영 모델, 선택지와 후속
 SDLC 경로만 소유한다.
 
-## Purpose
+### Purpose
 
 - Give every non-implemented audit row exactly one canonical disposition.
 - Order remediation by safety, integrity, dependency, and evidence readiness.

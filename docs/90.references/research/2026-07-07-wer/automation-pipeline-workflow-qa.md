@@ -20,7 +20,7 @@ Actions, pre-commit, DORA, OpenGitOps 자료에 대조한다. Current pack의 �
 validator, GitOps manifest, branch protection, remote Actions 설정 또는 live
 runtime을 정의하거나 변경하지 않는다.
 
-## Purpose
+### Purpose
 
 - 다섯 workflow와 전체 열 job(`ci.yml` 여섯 job)의 실제 trigger,
   dependency, condition, output 관계를 설명한다.

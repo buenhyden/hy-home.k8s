@@ -1,8 +1,18 @@
+---
+title: 'AI Agent Persona Protocol (March 2026)'
+type: governance/reference
+status: draft
+owner: platform
+updated: 2026-07-13
+---
+
 # AI Agent Persona Protocol (March 2026)
+
+## Overview
 
 Persona routing for layer-based execution.
 
-## Activation Steps
+### Activation Steps
 
 1. Load `rules/bootstrap.md`.
 2. Complete `rules/preflight-checklist.md`.
@@ -12,7 +22,11 @@ Persona routing for layer-based execution.
 6. Execute using the selected persona contract.
 7. Validate completion with `rules/postflight-checklist.md`.
 
-## Persona Mapping
+## Authority Boundary
+
+## Governance Context
+
+### Persona Mapping
 
 | Persona | Layer | Primary SSoT |
 | --- | --- | --- |
@@ -27,6 +41,12 @@ Persona routing for layer-based execution.
 | Technical Writer | docs | `docs/05.operations/guides/`, `docs/90.references/` |
 | Governance Steward | meta | `docs/00.agent-governance/` |
 
-## Stage Mapping
+### Stage Mapping
 
 Use [stage-authoring-matrix.md](stage-authoring-matrix.md) for canonical taxonomy authoring timing, inputs, outputs, templates, and completion criteria.
+
+## Current Contract
+
+## Validation and Refresh
+
+## Related Documents

@@ -1,11 +1,21 @@
+---
+title: 'Git Workflow (April 2026)'
+type: governance/reference
+status: draft
+owner: platform
+updated: 2026-07-13
+---
+
 # Git Workflow (April 2026)
 
-## Branch Roles
+## Overview
+
+### Branch Roles
 
 - `main`: canonical integration and release baseline for this repository.
 - Additional long-lived branches are opt-in. Do not assume `dev` exists unless the repository actually introduces it.
 
-## Branch Types
+### Branch Types
 
 - `feat/<scope>-<slug>`
 - `fix/<scope>-<slug>`
@@ -19,7 +29,9 @@
 - `codex/<scope>-<slug>`
 - `dependabot/<ecosystem-or-scope>`
 
-## Rules
+## Authority Boundary
+
+### Rules
 
 - Start normal work from `main`.
 - Start hotfix work from `main`.
@@ -44,7 +56,11 @@
 - Do not bypass the commit-msg hook with `--no-verify`. Commitizen enforces Conventional Commit format; bypassing it leaves malformed messages in the permanent history.
 - Apply the coverage policy in `quality-standards.md`: future testable application code targets 90% coverage where applicable, while current infra-only Bash/YAML/Markdown work uses validation-matrix coverage.
 
-## Pull Requests
+## Governance Context
+
+## Current Contract
+
+### Pull Requests
 
 - Default PR target: `main`.
 - Draft or WIP PRs may be opened for early CI feedback, but they are not ready for review or merge until required checks pass and verification evidence is complete.
@@ -52,7 +68,9 @@
 - Required checks must match the active GitHub branch protection or ruleset, not stale local assumptions.
 - Keep PR scope aligned to one plan/task slice where possible.
 
-## Branch Completion Strategy
+## Validation and Refresh
+
+### Branch Completion Strategy
 
 Use this sequence before presenting merge, PR, keep, or discard options.
 
@@ -76,3 +94,5 @@ Use this sequence before presenting merge, PR, keep, or discard options.
 7. For PR creation, preserve the working branch/worktree for review iteration.
 8. For local merge or discard, clean only worktrees created and owned by the
    active workflow; do not remove host-managed workspaces.
+
+## Related Documents

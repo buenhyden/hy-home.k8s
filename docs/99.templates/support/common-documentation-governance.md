@@ -3,7 +3,7 @@ title: 'Common Documentation Template Governance'
 type: governance/template-support
 status: active
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-13
 ---
 
 # Common Documentation Template Governance
@@ -20,7 +20,9 @@ agent memory or progress records.
 Common documentation templates keep repository entrypoints and durable
 knowledge consistent without forcing every common document into an SDLC phase.
 
-## Common Profile Handoff
+## Owned Contract
+
+### Common Profile Handoff
 
 The [Document Profile Registry](./document-profiles.json) owns the exact routes,
 forms, headings, and metadata contracts for `readme/*`, `content/reference`,
@@ -33,7 +35,9 @@ The [Document Type Format and Evidence
 Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
 records the external and local evidence behind these role decisions.
 
-## README Governance
+## Authoring Rules
+
+### README Governance
 
 - README files are frontmatter-free entrypoints unless a future renderer
   requires otherwise.
@@ -47,7 +51,7 @@ records the external and local evidence behind these role decisions.
   remain frontmatter-free indexes even though non-README Markdown siblings are
   routed as example-local SDLC snapshot documents.
 
-## GitHub-Native Control Markdown Governance
+### GitHub-Native Control Markdown Governance
 
 `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and
 `.github/SECURITY.md` are active repository control surfaces, but they are not
@@ -65,7 +69,7 @@ Official basis:
 - [GitHub pull request templates](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository) documents `.github` as a supported PR template location.
 - [GitHub security policy](https://docs.github.com/code-security/getting-started/adding-a-security-policy-to-your-repository) documents `SECURITY.md` as the repository security reporting surface.
 
-## Reference Governance
+### Reference Governance
 
 - Reference documents own durable lookup facts, source boundaries, freshness
   rules, and stable external-standard snapshots.
@@ -78,7 +82,7 @@ Official basis:
 - `reference.template.md` must not contain archive policy wording. Archive
   policy belongs to archive governance and Tombstone templates.
 
-## Archive Governance
+### Archive Governance
 
 - Archive Tombstones are metadata-only.
 - Active docs link to archive content through the archive index, not directly
@@ -89,7 +93,7 @@ Official basis:
   operating guidance; the current replacement owns active requirements,
   implementation contracts, and procedures.
 
-## Memory and Progress Governance
+### Memory and Progress Governance
 
 - Standalone memory files under `docs/00.agent-governance/memory/` use the
   memory template and require a related progress ledger entry in the same
@@ -100,6 +104,8 @@ Official basis:
   `docs/00.agent-governance/memory/progress.md`.
 - `progress.template.md` defines appendable entries, not a whole-document
   frontmatter schema.
+
+## Validation Contract
 
 ## Related Documents
 

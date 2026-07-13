@@ -1,14 +1,97 @@
+---
+title: 'Document Stage Routing Rules (April 2026)'
+type: governance/reference
+status: draft
+owner: platform
+updated: 2026-07-13
+---
+
 # Document Stage Routing Rules (April 2026)
+
+## Overview
 
 Route all generated documentation into the existing `docs/` stage taxonomy.
 
-## Purpose
+### Purpose
 
 - Prevent parallel documentation trees such as `docs/superpowers/**`.
 - Keep generated outputs aligned with the stage authoring matrix.
 - Ensure document-writing skills produce repository-native paths.
 
-## Core Routing Policy
+## Authority Boundary
+
+### Prohibited Paths
+
+The following paths are not valid authored-document targets in this repository:
+
+- `docs/superpowers/**`
+- `docs/api/**`
+- `docs/01.prd/**`
+- `docs/02.ard/**`
+- `docs/03.adr/**`
+- `docs/04.specs/**`
+- `docs/05.plans/**`
+- `docs/06.tasks/**`
+- `docs/07.guides/**`
+- `docs/08.operations/**`
+- `docs/09.runbooks/**`
+- `docs/10.incidents/**`
+- Legacy postmortem top-level trees
+- Legacy learning top-level trees
+- Ad hoc top-level trees for plans, specs, or references outside the canonical stage folders
+
+When a skill suggests one of these paths, reroute the output into the canonical stage location instead of creating the proposed path.
+
+### Authoring Guardrails
+
+- Read `docs/99.templates/support/template-routing.md` to select the exact
+  target-pattern/template route, use `docs/99.templates/README.md` only as the
+  synchronized index summary, then read the matching template under
+  `docs/99.templates/templates/` before creating any stage document.
+- Confirm the target path matches exactly one structural template mapping before authoring; uncovered stage paths are invalid even when they sit under an allowed docs folder.
+- New authored documents must set `status: draft` until a human promotes the lifecycle state.
+- The required template headings are part of the document contract and must not be omitted.
+- Required heading enforcement is derived from literal second-level headings
+  in the matched template. Headings containing placeholders or marked optional
+  are guidance, not required coverage.
+- New or moved authored documents must trigger a same-change update to the owning folder `README.md`.
+- Every newly created authored document must include `## Related Documents`.
+- Old active-stage docs cannot remain current merely by adding historical, superseded, or current-contract notes when their body conflicts with the implementation.
+- Agents must return the template path used and validation evidence in the handoff.
+- Provider event wiring must warn on authored stage doc paths where supported
+  and run post-edit template enforcement through the repository quality gate.
+  Claude uses native settings; Codex and Gemini hook JSON remain
+  context/validation wiring and do not replace explicit validation commands.
+- Governance docs remain English-only; human-facing READMEs remain Korean.
+- Root gateway files must stay thin and should link to rule docs instead of duplicating rule text.
+
+## Governance Context
+
+### Legacy Path Migration Map
+
+The repository uses the reduced canonical docs model below. Do not recreate the
+old top-level 13-folder model.
+
+| Legacy Path | Canonical Path |
+| --- | --- |
+| `docs/01.prd/` | `docs/01.requirements/` |
+| `docs/02.ard/` | `docs/02.architecture/requirements/` |
+| `docs/03.adr/` | `docs/02.architecture/decisions/` |
+| `docs/04.specs/` | `docs/03.specs/` |
+| `docs/05.plans/` | `docs/04.execution/plans/` |
+| `docs/06.tasks/` | `docs/04.execution/tasks/` |
+| `docs/07.guides/` | `docs/05.operations/guides/` |
+| `docs/08.operations/` | `docs/05.operations/policies/` |
+| `docs/09.runbooks/` | `docs/05.operations/runbooks/` |
+| `docs/10.incidents/` | `docs/05.operations/incidents/` |
+| `docs/00.agent-governance/` | `docs/00.agent-governance/` |
+| `docs/90.references/` | `docs/90.references/` |
+| `docs/98.archive/` | `docs/98.archive/` |
+| `docs/99.templates/` | `docs/99.templates/` |
+
+## Current Contract
+
+### Core Routing Policy
 
 Use the existing stage structure only. The exact current route map is owned by
 the [Template Routing Contract](../../99.templates/support/template-routing.md)
@@ -35,7 +118,7 @@ frontmatter and section expectations, but it remains outside the main active
 Future provider-refresh work must promote any scoped currentness change
 through an approved spec and support contract update.
 
-## Lifecycle Pre-Edit Contract
+### Lifecycle Pre-Edit Contract
 
 Before editing or creating lifecycle documents, agents must align with the
 Stage 99 owners instead of copying full governance bodies into README files.
@@ -78,51 +161,7 @@ Stage 99 owners instead of copying full governance bodies into README files.
 | Archive Tombstone | `docs/98.archive/` | Template Routing Contract | Use only for metadata-only Tombstones of old docs moved out of active stages. |
 | Governance memory | `docs/00.agent-governance/memory/` | Template Routing Contract | Use for reusable agent governance lessons and repo-changing progress entries. |
 
-## Legacy Path Migration Map
-
-The repository uses the reduced canonical docs model below. Do not recreate the
-old top-level 13-folder model.
-
-| Legacy Path | Canonical Path |
-| --- | --- |
-| `docs/01.prd/` | `docs/01.requirements/` |
-| `docs/02.ard/` | `docs/02.architecture/requirements/` |
-| `docs/03.adr/` | `docs/02.architecture/decisions/` |
-| `docs/04.specs/` | `docs/03.specs/` |
-| `docs/05.plans/` | `docs/04.execution/plans/` |
-| `docs/06.tasks/` | `docs/04.execution/tasks/` |
-| `docs/07.guides/` | `docs/05.operations/guides/` |
-| `docs/08.operations/` | `docs/05.operations/policies/` |
-| `docs/09.runbooks/` | `docs/05.operations/runbooks/` |
-| `docs/10.incidents/` | `docs/05.operations/incidents/` |
-| `docs/00.agent-governance/` | `docs/00.agent-governance/` |
-| `docs/90.references/` | `docs/90.references/` |
-| `docs/98.archive/` | `docs/98.archive/` |
-| `docs/99.templates/` | `docs/99.templates/` |
-
-## Prohibited Paths
-
-The following paths are not valid authored-document targets in this repository:
-
-- `docs/superpowers/**`
-- `docs/api/**`
-- `docs/01.prd/**`
-- `docs/02.ard/**`
-- `docs/03.adr/**`
-- `docs/04.specs/**`
-- `docs/05.plans/**`
-- `docs/06.tasks/**`
-- `docs/07.guides/**`
-- `docs/08.operations/**`
-- `docs/09.runbooks/**`
-- `docs/10.incidents/**`
-- Legacy postmortem top-level trees
-- Legacy learning top-level trees
-- Ad hoc top-level trees for plans, specs, or references outside the canonical stage folders
-
-When a skill suggests one of these paths, reroute the output into the canonical stage location instead of creating the proposed path.
-
-## Routing Decision Rules
+### Routing Decision Rules
 
 ### Feature-Bound vs Durable Knowledge
 
@@ -169,28 +208,7 @@ When a skill suggests one of these paths, reroute the output into the canonical 
 - Project-specific runtime guidance belongs in `.claude/CLAUDE.md`, `docs/00.agent-governance/**`, or shared `.agents/skills/**`, depending on ownership.
 - Suggestions to create `docs/superpowers/specs`, `docs/superpowers/plans`, or similar parallel trees must be rejected and rerouted.
 
-## Authoring Guardrails
-
-- Read `docs/99.templates/support/template-routing.md` to select the exact
-  target-pattern/template route, use `docs/99.templates/README.md` only as the
-  synchronized index summary, then read the matching template under
-  `docs/99.templates/templates/` before creating any stage document.
-- Confirm the target path matches exactly one structural template mapping before authoring; uncovered stage paths are invalid even when they sit under an allowed docs folder.
-- New authored documents must set `status: draft` until a human promotes the lifecycle state.
-- The required template headings are part of the document contract and must not be omitted.
-- Required heading enforcement is derived from literal second-level headings
-  in the matched template. Headings containing placeholders or marked optional
-  are guidance, not required coverage.
-- New or moved authored documents must trigger a same-change update to the owning folder `README.md`.
-- Every newly created authored document must include `## Related Documents`.
-- Old active-stage docs cannot remain current merely by adding historical, superseded, or current-contract notes when their body conflicts with the implementation.
-- Agents must return the template path used and validation evidence in the handoff.
-- Provider event wiring must warn on authored stage doc paths where supported
-  and run post-edit template enforcement through the repository quality gate.
-  Claude uses native settings; Codex and Gemini hook JSON remain
-  context/validation wiring and do not replace explicit validation commands.
-- Governance docs remain English-only; human-facing READMEs remain Korean.
-- Root gateway files must stay thin and should link to rule docs instead of duplicating rule text.
+## Validation and Refresh
 
 ## Related Documents
 

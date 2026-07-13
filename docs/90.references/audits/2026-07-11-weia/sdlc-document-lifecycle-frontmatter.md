@@ -19,7 +19,7 @@ consumer-bound 후보를 서로 다른 통제로 채점한다.
 `PRD -> Spec -> Task -> validation` 경로가 연결되어 있어도 requirement ID와
 검증 결과의 의미 대응이 없으면 semantic lineage로 인정하지 않는다.
 
-## Purpose
+### Purpose
 
 - Audit roles, routes, templates, states, evidence, and necessity for all 14
   requested document families.
@@ -204,7 +204,7 @@ rollback owner. Migration would backfill identifiers, dual-validate old/new form
 switch consumers, and only then retire compatibility; rollback would retain old
 paths and disable new required fields without losing the mapping ledger.
 
-## Comparison Analysis
+### Comparison Analysis
 
 - Structural routing and exact five-key profiles are strong; semantic lineage and
   state evidence are the weakest category.
@@ -222,7 +222,7 @@ paths and disable new required fields without losing the mapping ledger.
   authored-placeholder, calendar/future-date, title value, and family-state checks,
   not universal IDs.
 
-## Residual Risks
+### Residual Risks
 
 - Counts and link searches are repository-static and do not prove human approval,
   document comprehension, remote CI, release readiness, or incident response.

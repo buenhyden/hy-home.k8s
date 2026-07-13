@@ -60,25 +60,25 @@ TOKEN_BEARING_DEBT_RULES = frozenset(
 DEFERABLE_DEBT_RULES = TOKEN_BEARING_DEBT_RULES | {"FM-DELIMITER"}
 EXPECTED_DEBT_CAPS: dict[str, dict[str, int]] = {
     "BODY-HEADING-REQUIRED": {
-        "pathCount": 42,
-        "occurrenceCount": 200,
-        "tokenObligationCount": 200,
+        "pathCount": 4,
+        "occurrenceCount": 4,
+        "tokenObligationCount": 4,
     },
     "BODY-TEMPLATE-RESIDUE": {
-        "pathCount": 52,
-        "occurrenceCount": 56,
-        "tokenObligationCount": 56,
+        "pathCount": 17,
+        "occurrenceCount": 21,
+        "tokenObligationCount": 21,
     },
     "FM-DELIMITER": {
-        "pathCount": 24,
-        "occurrenceCount": 24,
+        "pathCount": 0,
+        "occurrenceCount": 0,
         "tokenObligationCount": 0,
     },
     "BODY-HEADING-UNSUPPORTED": {
-        "pathCount": 90,
-        "occurrenceCount": 346,
-        "tokenObligationCount": 346,
-        "distinctTokenCount": 228,
+        "pathCount": 39,
+        "occurrenceCount": 77,
+        "tokenObligationCount": 77,
+        "distinctTokenCount": 37,
     },
     "BODY-H2-DUPLICATE": {
         "pathCount": 0,
@@ -87,8 +87,8 @@ EXPECTED_DEBT_CAPS: dict[str, dict[str, int]] = {
     },
 }
 EXPECTED_REQUIRED_RESIDUE_OVERLAP = 4
-EXPECTED_REQUIRED_RESIDUE_UNION = 90
-EXPECTED_DEBT_UNION = 112
+EXPECTED_REQUIRED_RESIDUE_UNION = 17
+EXPECTED_DEBT_UNION = 39
 IMPLEMENTED_RULE_IDS = frozenset(
     {
         "APPEND-CONTEXT",
@@ -1253,7 +1253,7 @@ def _self_test(root: Path) -> list[str]:
         for item in production_diagnostics
         if item.rule_id == "BODY-HEADING-UNSUPPORTED"
     }
-    if len(unsupported_tokens) != 228:
+    if len(unsupported_tokens) != 37:
         failures.append("repository unsupported-heading distinct token cap changed")
 
     compatibility_rows = _outcome_rows(
@@ -1278,7 +1278,7 @@ def _self_test(root: Path) -> list[str]:
         )
         for row in strict_rows
     ]
-    if compatibility_keys != strict_keys or len(compatibility_keys) != 626:
+    if compatibility_keys != strict_keys or len(compatibility_keys) != 102:
         failures.append("compatibility and strict diagnostic tuples differ")
     if {row.outcome for row in compatibility_rows} != {"DEFER"}:
         failures.append("repository compatibility results are not exact DEFER debt")

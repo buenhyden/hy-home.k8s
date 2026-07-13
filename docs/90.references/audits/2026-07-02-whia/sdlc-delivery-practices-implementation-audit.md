@@ -26,7 +26,7 @@ unless that run is separately checked. Static repository evidence also does
 not prove live k3d, ArgoCD, Vault, ESO, Kubernetes, cloud, deployment, or
 secret readiness.
 
-## Purpose
+### Purpose
 
 - Record whether the researched SDLC delivery practices model is implemented
   in current repository surfaces.

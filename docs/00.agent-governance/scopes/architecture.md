@@ -1,20 +1,20 @@
+---
+title: 'Architecture Scope'
+type: governance/reference
+status: draft
+owner: platform
+updated: 2026-07-13
+---
+
 # Architecture Scope
+
+## Overview
 
 Persona: System Architect
 
-## Source of Truth
+## Authority Boundary
 
-- `docs/02.architecture/requirements/`
-- `docs/02.architecture/decisions/`
-- `docs/03.specs/`
-
-## Responsibilities
-
-- Maintain architecture consistency across ARD, ADR, and specs.
-- Ensure major design changes are recorded as ADRs.
-- Keep architecture-level constraints explicit for implementation layers.
-
-## File Ownership
+### File Ownership
 
 | Path               | Owner        | Notes                              |
 | ------------------ | ------------ | ---------------------------------- |
@@ -24,7 +24,23 @@ Persona: System Architect
 
 Architecture scope does **not** own infrastructure (`gitops/`, `infrastructure/`) or governance (`docs/00.agent-governance/`).
 
-## Subagent Bridge
+## Governance Context
+
+### Source of Truth
+
+- `docs/02.architecture/requirements/`
+- `docs/02.architecture/decisions/`
+- `docs/03.specs/`
+
+## Current Contract
+
+### Responsibilities
+
+- Maintain architecture consistency across ARD, ADR, and specs.
+- Ensure major design changes are recorded as ADRs.
+- Keep architecture-level constraints explicit for implementation layers.
+
+### Subagent Bridge
 
 Agents that import this scope: `.claude/agents/code-reviewer.md`.
 
@@ -32,8 +48,12 @@ Subagent dispatch: use the current runtime's provider-native delegated-agent
 mechanism; never inline full role definitions when a provider-local agent file
 exists.
 
-## Definition of Done
+## Validation and Refresh
+
+### Definition of Done
 
 - Architectural changes are traceable to PRD and specs.
 - Affected ADR entries exist or are explicitly referenced.
 - Cross-layer impacts are documented for backend, frontend, and infra scopes.
+
+## Related Documents

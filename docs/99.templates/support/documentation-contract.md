@@ -3,7 +3,7 @@ title: 'Template Documentation Contract'
 type: governance/template-support
 status: active
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Template Documentation Contract
@@ -30,7 +30,9 @@ The template system has separate surfaces:
 | Example-local SDLC snapshots | `examples/aws/docs/**`, `examples/azure/docs/**` | Dated cloud migration example documents that reuse SDLC role profiles without becoming main active stage documents or provider-latest guidance. |
 | Workspace scratch staging | `_workspace/README.md` plus ignored `_workspace/**` scratch | Temporary non-secret repo-support staging; durable findings promote to canonical docs. |
 
-## Contract Rules
+## Owned Contract
+
+### Contract Rules
 
 - The machine-readable [Document Profile Registry](./document-profiles.json)
   owns exact document routes, frontmatter key sets and states, heading sets, and
@@ -69,7 +71,7 @@ The template system has separate surfaces:
 - Active-surface duplicate rule: stages 01 through 04 must not keep multiple
   active documents that own the same role, purpose, and feature lineage.
 
-## Lifecycle Route Summary
+### Lifecycle Route Summary
 
 The [Document Profile Registry](./document-profiles.json) is the canonical
 owner for the exact lifecycle, example-local, README, and exception routes and
@@ -85,7 +87,7 @@ handoff semantics, and active-surface rules; [Frontmatter
 Schema](./frontmatter-schema.md) explains metadata rationale without copying
 the registry values.
 
-## SDLC and Common Documentation Split
+### SDLC and Common Documentation Split
 
 SDLC documentation follows the delivery lifecycle from requirement through
 operations. Common documentation supports repository navigation, durable
@@ -99,7 +101,7 @@ reference, archive, memory, and progress recording.
 | Routing and path mapping | [Template Routing](./template-routing.md) | Maps authored target patterns to one template form. |
 | Legacy cleanup | [Legacy Cleanup Rules](./legacy-cleanup-rules.md) | Removes old keys, sections, values, and routes from active contracts. |
 
-## Protected Surface Rules
+### Protected Surface Rules
 
 - Template migration may change `docs/99.templates/**`, Stage 00 routing docs,
   `docs/00.agent-governance/hooks/k8s-pre-edit.sh`, and
@@ -108,6 +110,8 @@ reference, archive, memory, and progress recording.
 - Do not mutate live runtime resources as part of template migration.
 - Do not inspect secret values.
 - Do not push or publish without explicit approval.
+
+## Authoring Rules
 
 ## Validation Contract
 
