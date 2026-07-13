@@ -95,6 +95,14 @@ own wave, and all other paths preserve themselves. The compatibility debt
 container remains schema-v1 and growth-closed with `items: []`; strict and
 compatibility cross-document checks now have zero ledger diagnostics.
 
+Post-commit quality review corrected two orchestration boundaries without
+changing the ledger rows: the Markdown self-test now evaluates the production
+corpus against the current Asia/Seoul date while retaining fixed dates for
+parser fixtures, and the active-currentness stale-contract scan excludes only
+the exact migration ledger because its required inventory rows name archived
+paths as evidence rather than current authority. Exact-path negative proof
+prevents the exception from widening to other Stage 90 documents.
+
 The first ADM-003 batch rehearsal changed only five documents while leaving
 their compatibility records in place. The semantic validator correctly
 returned nonzero `DEBT-UNUSED` failures, proving that a document-only batch

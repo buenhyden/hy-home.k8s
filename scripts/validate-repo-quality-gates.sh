@@ -2271,6 +2271,21 @@ active_currentness_roots = [
     root / "docs/05.operations",
     root / "docs/90.references",
 ]
+migration_evidence_ledger_path = (
+    root
+    / "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
+)
+
+
+def is_currentness_evidence_only(path: pathlib.Path) -> bool:
+    return path == migration_evidence_ledger_path
+
+
+if not is_currentness_evidence_only(migration_evidence_ledger_path):
+    fail("migration evidence ledger currentness exception must match its exact path")
+if is_currentness_evidence_only(root / "docs/90.references/README.md"):
+    fail("migration evidence ledger currentness exception must not widen to Stage 90")
+
 stale_provider_hook_path = "." + "claude/hooks"
 stale_shell_job_name = "shell" + "-static"
 stale_headlamp_oidc_patterns = [
@@ -2299,6 +2314,8 @@ stale_app_onboarding_currentness_patterns = [
 for scan_root in active_currentness_roots:
     for path in sorted(scan_root.rglob("*.md")):
         if path.is_relative_to(root / "docs/98.archive"):
+            continue
+        if is_currentness_evidence_only(path):
             continue
         text = read_text(path)
         if stale_provider_hook_path in text:

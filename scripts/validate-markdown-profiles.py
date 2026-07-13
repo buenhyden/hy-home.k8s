@@ -1218,7 +1218,10 @@ def _self_test(root: Path) -> list[str]:
         failures.append(f"semantic debt contract invalid: {exc}")
         return failures
     production_diagnostics = _repository_diagnostics(
-        root, registry, inventory, today=dt.date(2026, 7, 12)
+        root,
+        registry,
+        inventory,
+        today=dt.datetime.now(ZoneInfo("Asia/Seoul")).date(),
     )
     expected_occurrences = {
         rule_id: caps["occurrenceCount"] for rule_id, caps in EXPECTED_DEBT_CAPS.items()

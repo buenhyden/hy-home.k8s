@@ -8,6 +8,46 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - ADM-002 quality-boundary remediation
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, validation, qa
+- **Status**: complete
+- **Tags**: #adm-002 #currentness #self-test #quality-gate
+
+#### Progress
+
+- Corrected the Markdown production-corpus self-test to use the current
+  Asia/Seoul date so newly authored same-day Task and ledger documents are not
+  misclassified as future-dated; deterministic parser fixtures remain pinned.
+- Excluded only the exact durable migration ledger from the active-currentness
+  stale-contract scan because its 469-row evidence contract must enumerate
+  archived paths without presenting them as current operational authority.
+
+#### Memory
+
+- A preserved archive path in an inventory ledger is evidence, not a revived
+  current contract. Currentness scans need an exact evidence-owner boundary,
+  not string suppression or a broad Stage 90 exemption.
+- Production-corpus date checks must follow the repository's current KST date;
+  parser unit fixtures may remain fixed for deterministic edge cases.
+
+#### Evidence
+
+- The currentness exception has a positive exact-ledger assertion and a
+  negative Stage 90 assertion; every other active authored document remains in
+  the stale Headlamp/provider/CI scan.
+- Validator self-tests, the repository quality gate, focused pre-commit, and an
+  exact four-path change set gate this remediation. No ledger row, debt
+  fixture, authored migration body, protected behavior, or live state changed.
+
+#### Handoff
+
+- Independently review this ADM-002 follow-up before resuming the approved
+  ADM-003 manifest batches.
+
 ### 2026-07-13 - Authored migration batch-atomic debt sequencing correction
 
 #### Metadata
