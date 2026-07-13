@@ -93,7 +93,26 @@ not create debt:
 | Consumer | Schema and permitted scope | Owner and removal transition |
 | --- | --- | --- |
 | `tests/fixtures/document-contracts/template-compatibility.json` | Existing schema v1 plus exact `affectedPaths` records under each `compatibilityDebt` profile. Each record contains `path`, sorted `ruleIds`, and sorted `tokens`. Aggregate profile/path/occurrence counts remain frozen with `growthAllowed: false`. Only legacy heading aliases and forbidden residue already named by this file may defer. | Spec 030. ADM-003 through ADM-006 remove a path record in the same logical unit that makes the path canonical; ADM-007 removes the last empty debt definitions after strict validation. |
-| `tests/fixtures/document-contracts/semantic-compatibility-debt.json` | Schema v1 with top-level `schemaVersion`, `owner`, `growthAllowed`, and `items`. Each item has exactly `ruleId`, `path`, `profile`, `expected`, `actual`, `ownerTask`, and `removeWhen`. The initial and only permitted item is `LEDGER-MISSING` for `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`, profile `content/reference`, owner task `ADM-002`, with `removeWhen` equal to `ledger exists, has the exact fourteen columns, and covers the inventory once`. | Spec 030 / ADM-002. ADM-002 creates and stages the durable ledger, proves completeness, and removes the `LEDGER-MISSING` item in the same commit. An empty file may remain until ADM-007, but `growthAllowed` stays false. |
+| `tests/fixtures/document-contracts/semantic-compatibility-debt.json` | The exact schema-v1 object printed below. Its top-level keys and values and its sole item's keys and literal values are closed configuration, not examples. | Spec 030 / ADM-002. ADM-002 creates and stages the durable ledger, proves exact inventory/ledger set equality, and removes the `LEDGER-MISSING` item in the same commit. An empty file may remain until ADM-007, but `growthAllowed` stays false. |
+
+```json
+{
+  "schemaVersion": 1,
+  "owner": "Spec 030",
+  "growthAllowed": false,
+  "items": [
+    {
+      "ruleId": "LEDGER-MISSING",
+      "path": "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md",
+      "profile": "content/reference",
+      "expected": "ledger exists, has the exact fourteen columns, and covers the inventory once",
+      "actual": "ledger is missing",
+      "ownerTask": "ADM-002",
+      "removeWhen": "ledger exists, has the exact fourteen columns, and covers the inventory once"
+    }
+  ]
+}
+```
 
 `LEDGER-MISSING` is therefore a represented compatibility item, not an
 implicit absence check. In compatibility mode that exact item emits `DEFER`
@@ -101,6 +120,9 @@ and exit 0. In strict mode it emits `FAIL` and exit 1. A missing ledger after
 the item is removed is an ordinary `LEDGER-MISSING` violation and cannot defer.
 No other link, index, owner, ledger, frontmatter, or body rule is permitted in
 the semantic debt file without a separately approved Plan amendment.
+An alias or extra key, a glob or path alias, a duplicate item, an unknown rule,
+`growthAllowed: true`, or any changed pinned literal is malformed configuration
+and exits 2 before emitting partial result JSON.
 The Spec 030 Plan consumes the semantic fixture at ADM-002 and ADM-007, and the
 template fixture at every ADM-003 through ADM-007 transition. No transition
 authorizes adding debt fields or records to `document-profiles.json`.
@@ -271,16 +293,47 @@ omissions are `INDEX-TREE`. Table alignment rows, headings, comments, fenced
 examples outside the declared tree block, external links, and nested tables
 outside the named anchor are excluded. Diagnostics sort by index path, rule,
 and target key.
+Before SMDV-003 implementation, all three declared index dimensions are
+closed: the Plan index has exactly 50 target files, 50 tree entries, and 50
+unique table hrefs; the Spec and Task indexes likewise have equal target,
+tree, and unique-table counts. Therefore the sole repository compatibility
+diagnostic at SMDV-003 start is the pinned `LEDGER-MISSING` item.
+
+### Full-Corpus Link Boundary
+
+The cross-document validator scans links in all 467 sorted paths from
+`enumerate_target_markdown(root).current_paths`; a narrower root list or an
+authored-only subset is forbidden. It excludes fenced blocks and HTML comments,
+parses both inline and reference links, strips query and fragment components
+before URL-decoding the path, ignores external schemes, and rejects the local
+file URI scheme, absolute paths, and resolution outside the repository. Local
+targets must exist, and a current-authority link may not bypass the archive
+boundary.
+Recorded symlink adapters are inventory evidence only and are never
+dereferenced as documents. The validator does not infer targets by basename.
+Diagnostics identify the source path and stable rule fields but never print
+the link body, resolved file contents, or secret-bearing text.
 
 ### Stable CLI Contract
 
-Both semantic validators implement identical result behavior:
+The cross-document validator implements this result behavior. The completed
+Markdown profile validator retains its SMDV-002 JSON envelope
+`schemaVersion`, `mode`, `outcome`, `counts`, `diagnostics`; SMDV-003 neither
+adds `documents` to that validator nor changes its CLI contract.
 
 - Text output is one sorted line per result:
   `PASS|DEFER|FAIL RULE_ID path profile expected=<json> actual=<json> owner=<json>`.
   A clean run emits one deterministic `PASS` summary line.
 - JSON output is one object with keys in this order: `schemaVersion`, `mode`,
-  `outcome`, `counts`, `diagnostics`. Each diagnostic result uses keys in the
+  `outcome`, `counts`, `documents`, `diagnostics`. Validation mode always emits
+  `documents: []`. Inventory mode emits one record for each of the exact 467
+  sorted `current_paths`, with record keys in this order: `path`, `profile`,
+  `profileClass`, `mode`, `title`, `status`, `ownerKey`, `origin`. `title`,
+  `status`, and `ownerKey` are empty strings when not applicable; `origin` is
+  exactly `baseline` or `program-created`. Inventory counts are exactly
+  `baseline: 433`, `current: 467`, `new: 36`, and `documents: 467`; the
+  `documents[].path` set must equal `current_paths` with no omission or
+  duplicate. Each diagnostic result uses keys in the
   order `outcome`, `ruleId`, `path`, `profile`, `expected`, `actual`, `owner`,
   `debtToken`; `debtToken` is the exact heading/residue matching token for a
   token-bearing debt rule and the empty string otherwise. The remaining values
@@ -293,8 +346,11 @@ Both semantic validators implement identical result behavior:
   invalid CLI usage. Unknown items are never downgraded.
 - `--self-test` calls the production entry point. `--inventory` is read-only,
   mutually exclusive with `--self-test`, and follows the same deterministic
-  JSON/error contract. All modes are repository-static and tracked-only plus
-  explicit `--include-path` values.
+  JSON/error contract. Inventory document violations exit 1, malformed
+  registry, debt, or CLI configuration exits 2, successful output exits 0,
+  result JSON is written only to stdout, and configuration/CLI errors are
+  written only to stderr. All modes are repository-static and tracked-only
+  plus explicit `--include-path` values.
 
 ### Validation Date Contract
 
@@ -913,6 +969,39 @@ and the fourteen-column ledger. Create the semantic debt file with the one
 exact `LEDGER-MISSING` item specified above. Self-test proves growth, alias
 keys, unknown rules, glob paths, duplicate items, and malformed removal
 transitions are configuration errors with exit 2.
+The fixture file is exactly the pinned object in **Compatibility Debt Owners**:
+top-level `schemaVersion: 1`, `owner: "Spec 030"`,
+`growthAllowed: false`, and its one literal item. An extra or aliased key,
+changed literal, glob/path alias, duplicate item, unknown rule, or enabled
+growth must fail as configuration before document validation.
+
+Before writing the fixture, freeze the corrected current Plan-index baseline:
+
+```bash
+python3 - <<'PY'
+import pathlib
+import re
+import subprocess
+
+index_path = pathlib.Path('docs/04.execution/plans/README.md')
+text = index_path.read_text()
+targets = {
+    pathlib.PurePosixPath(path).name
+    for path in subprocess.check_output(
+        ['git', 'ls-files', 'docs/04.execution/plans'], text=True
+    ).splitlines()
+    if pathlib.PurePosixPath(path).name != 'README.md'
+}
+tree = re.findall(r'^[├└]── (2026-[^/\n]+\.md)$', text, re.MULTILINE)
+table = re.findall(r'\]\(\./(2026-[^)\n]+\.md)\)', text)
+assert len(targets) == len(tree) == len(table) == 50
+assert len(set(tree)) == len(set(table)) == 50
+assert targets == set(tree) == set(table)
+PY
+```
+
+Expected: target/tree/table counts are `50/50/50` with exact set equality;
+there is no pre-existing index diagnostic to hide behind semantic debt.
 
 - [ ] **Step 2: Add CLI shell and run RED**
 
@@ -928,9 +1017,12 @@ Expected: exit 1 with missing expected rules `LINK-BROKEN`, `LINK-ABSOLUTE`,
 
 - [ ] **Step 3: Implement fence-aware link resolution**
 
-Parse inline and reference links outside fences, reject local-filesystem URI schemes and absolute
-paths, ignore external schemes, URL-decode the path portion, and verify the
-resolved target remains inside the repository.
+Implement the **Full-Corpus Link Boundary** over all 467 `current_paths`.
+Parse inline and reference links outside fences and HTML comments, strip query
+and fragment before URL-decoding, reject local-filesystem URI schemes,
+absolute paths, repository escape, missing targets, and archive bypass, and
+ignore external schemes. Do not dereference recorded symlink adapters, infer a
+target by basename, or expose link bodies or file content in diagnostics.
 
 - [ ] **Step 4: Implement indexes and owner keys**
 
@@ -945,9 +1037,16 @@ Require this exact ordered column list directly in code:
 `path`, `title`, `profile`, `owner-key`, `disposition`, `destination`,
 `local-evidence`, `official-sources`, `observed-version`, `applicability`,
 `content-decision`, `refresh-trigger`, `reviewer`, `result`. Reject a missing,
-extra, reordered, or aliased column with `LEDGER-INCOMPLETE`. `--inventory` returns
-one sorted JSON object per approved authored path with classification and owner
-key; it must not write files or inspect ignored paths.
+extra, reordered, or aliased column with `LEDGER-INCOMPLETE`. Both validation
+and inventory JSON use the one Stable CLI Contract envelope. Validation emits
+`documents: []`; inventory emits the exact 467 path-sorted records from
+`current_paths`, each with `path`, `profile`, `profileClass`, `mode`, `title`,
+`status`, `ownerKey`, and `origin`, using an empty string where a field is not
+applicable. Its counts are exactly `baseline=433`, `current=467`, `new=36`,
+and `documents=467`; it must not write files or inspect ignored paths.
+`--inventory` and `--self-test` are mutually exclusive, and all
+success/document/configuration paths preserve exit 0/1/2 and stdout/stderr
+separation.
 
 In compatibility mode, only the exact absent durable-ledger debt item emits
 DEFER. In strict mode it emits FAIL. Spec 030 ADM-002 creates and stages the
@@ -957,31 +1056,118 @@ subsequent absence can never defer.
 - [ ] **Step 6: Run GREEN tests**
 
 ```bash
-python3 scripts/validate-links-and-owners.py --self-test
-python3 scripts/validate-links-and-owners.py --root . --mode compatibility
-inventory_json="$(mktemp /tmp/smdv-inventory.XXXXXX.json)"
-trap 'rm -f "$inventory_json"' EXIT
+set -u
+overall_rc=0
+inventory_json=''
+compatibility_json=''
+strict_json=''
+inventory_json="$(mktemp /tmp/smdv-inventory.XXXXXX.json)" || overall_rc=$?
+compatibility_json="$(mktemp /tmp/smdv-compatibility.XXXXXX.json)" || overall_rc=$?
+strict_json="$(mktemp /tmp/smdv-strict.XXXXXX.json)" || overall_rc=$?
+trap 'rm -f "$inventory_json" "$compatibility_json" "$strict_json"' EXIT
 
-producer_probe_rc=0
-false >"$inventory_json" || producer_probe_rc=$?
-if [ "$producer_probe_rc" -eq 0 ]; then
-  exit 1
-fi
-parser_probe_rc=0
-printf '{' >"$inventory_json"
-python3 -m json.tool "$inventory_json" >/dev/null 2>&1 || parser_probe_rc=$?
-if [ "$parser_probe_rc" -eq 0 ]; then
-  exit 1
+if [ "$overall_rc" -eq 0 ]; then
+  self_test_rc=0
+  python3 scripts/validate-links-and-owners.py --self-test || self_test_rc=$?
+  if [ "$self_test_rc" -ne 0 ]; then
+    overall_rc="$self_test_rc"
+  fi
 fi
 
-inventory_rc=0
-python3 scripts/validate-links-and-owners.py --root . --inventory --format json >"$inventory_json" || inventory_rc=$?
-if [ "$inventory_rc" -eq 0 ]; then
-  python3 -m json.tool "$inventory_json" >/dev/null || inventory_rc=$?
+if [ "$overall_rc" -eq 0 ]; then
+  compatibility_rc=0
+  python3 scripts/validate-links-and-owners.py --root . --mode compatibility --format json >"$compatibility_json" || compatibility_rc=$?
+  strict_rc=0
+  python3 scripts/validate-links-and-owners.py --root . --mode strict --format json >"$strict_json" || strict_rc=$?
+  if [ "$compatibility_rc" -ne 0 ] || [ "$strict_rc" -ne 1 ]; then
+    overall_rc=1
+  fi
 fi
-rm -f "$inventory_json"
+if [ "$overall_rc" -eq 0 ]; then
+  python3 - "$compatibility_json" "$strict_json" <<'PY' || overall_rc=$?
+import json
+import pathlib
+import sys
+
+compatibility = json.loads(pathlib.Path(sys.argv[1]).read_text())
+strict = json.loads(pathlib.Path(sys.argv[2]).read_text())
+assert compatibility['documents'] == strict['documents'] == []
+assert len(compatibility['diagnostics']) == len(strict['diagnostics']) == 1
+compatibility_item = compatibility['diagnostics'][0]
+strict_item = strict['diagnostics'][0]
+assert compatibility_item['outcome'] == 'DEFER'
+assert strict_item['outcome'] == 'FAIL'
+assert compatibility_item['ruleId'] == strict_item['ruleId'] == 'LEDGER-MISSING'
+assert {
+    key: value for key, value in compatibility_item.items() if key != 'outcome'
+} == {
+    key: value for key, value in strict_item.items() if key != 'outcome'
+}
+PY
+fi
+
+if [ "$overall_rc" -eq 0 ]; then
+  producer_probe_rc=0
+  false >"$inventory_json" || producer_probe_rc=$?
+  if [ "$producer_probe_rc" -eq 0 ]; then
+    overall_rc=1
+  fi
+fi
+if [ "$overall_rc" -eq 0 ]; then
+  parser_probe_rc=0
+  printf '{' >"$inventory_json"
+  python3 -m json.tool "$inventory_json" >/dev/null 2>&1 || parser_probe_rc=$?
+  if [ "$parser_probe_rc" -eq 0 ]; then
+    overall_rc=1
+  fi
+fi
+
+if [ "$overall_rc" -eq 0 ]; then
+  inventory_rc=0
+  python3 scripts/validate-links-and-owners.py --root . --inventory --format json >"$inventory_json" || inventory_rc=$?
+  if [ "$inventory_rc" -ne 0 ]; then
+    overall_rc="$inventory_rc"
+  fi
+fi
+if [ "$overall_rc" -eq 0 ]; then
+  python3 -m json.tool "$inventory_json" >/dev/null || overall_rc=$?
+fi
+if [ "$overall_rc" -eq 0 ]; then
+  python3 - "$inventory_json" <<'PY' || overall_rc=$?
+import json
+import pathlib
+import sys
+
+sys.path.insert(0, 'scripts')
+from document_contracts import enumerate_target_markdown
+
+data = json.loads(pathlib.Path(sys.argv[1]).read_text())
+assert list(data) == [
+    'schemaVersion', 'mode', 'outcome', 'counts', 'documents', 'diagnostics'
+]
+assert data['schemaVersion'] == 1
+assert data['mode'] == 'inventory' and data['outcome'] == 'PASS'
+assert data['counts'] == {
+    'baseline': 433, 'current': 467, 'new': 36, 'documents': 467
+}
+assert data['diagnostics'] == []
+expected = [
+    path.as_posix()
+    for path in enumerate_target_markdown(pathlib.Path('.')).current_paths
+]
+actual = [item['path'] for item in data['documents']]
+assert actual == expected == sorted(actual) and len(set(actual)) == 467
+keys = [
+    'path', 'profile', 'profileClass', 'mode',
+    'title', 'status', 'ownerKey', 'origin',
+]
+assert all(list(item) == keys for item in data['documents'])
+assert all(item['origin'] in {'baseline', 'program-created'} for item in data['documents'])
+PY
+fi
+rm -f "$inventory_json" "$compatibility_json" "$strict_json"
 trap - EXIT
-exit "$inventory_rc"
+exit "$overall_rc"
 ```
 
 Expected: fixture PASS, compatibility exit 0 with the exact ledger debt only,
@@ -989,6 +1175,8 @@ the bounded negative probes preserve nonzero producer and parser status, the
 real inventory producer exits 0 before its separate JSON parse exits 0, no
 repository temporary file is created, and registry counts stay at 467 target paths
 (`baseline=433`, `new=36`), 60 profiles, 27 templates, README 72.
+The inventory envelope and ordered record keysets match exactly, and its 467
+ordered paths equal `current_paths` with no omission or duplicate.
 
 - [ ] **Step 7: Run focused QA and commit**
 

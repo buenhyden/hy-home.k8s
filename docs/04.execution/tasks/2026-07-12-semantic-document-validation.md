@@ -34,7 +34,7 @@ cross-document and integration changes pass the Plan's repository-static gates.
 | --- | --- | --- | --- | --- |
 | SMDV-001 | Start reciprocal Spec, Plan, Task, and index lineage | platform | Done | Logical commit `docs(execution): start semantic document validation`; `python3 scripts/validate-document-contract-registry.py --root . --mode compatibility` |
 | SMDV-002 | Implement production Markdown profile validation | platform | Done | Logical commits `feat(docs): add registry-driven markdown profile validation` and `fix(validation): harden markdown debt mutation proofs`; `python3 scripts/validate-markdown-profiles.py --self-test` |
-| SMDV-003 | Implement cross-document link, index, owner, and ledger validation | platform | Queued | Logical commit `feat(validation): add link and owner validator`; `python3 scripts/validate-links-and-owners.py --self-test` |
+| SMDV-003 | Implement cross-document link, index, owner, and ledger validation | platform | Queued | Logical commit `feat(docs): validate links indexes and current owners`; cross-document self-test, sole compatibility `LEDGER-MISSING` `DEFER` versus identical strict `FAIL`, exact ordered 467-path inventory envelope, registry/quality gates, and exact seven-path staged proof |
 | SMDV-004 | Delegate the repository gate and close Spec 029 | platform | Queued | Logical commit `feat(validation): delegate semantic document gates`; `bash scripts/validate-repo-quality-gates.sh .` |
 
 ## Approval and Safety Boundaries
@@ -42,7 +42,9 @@ cross-document and integration changes pass the Plan's repository-static gates.
 - **Allowed Paths**: Only the exact tracked path set declared by the active
   SMDV Plan Task may change. SMDV-002 is limited to its nine validator,
   fixture, documentation, Task, quality-gate consumer, and canonical
-  progress-ledger paths.
+  progress-ledger paths. SMDV-003 is limited to the Plan's exact seven paths:
+  the new validator, its two fixtures, two README inventories, this Task, and
+  the canonical progress ledger.
 - **Forbidden Paths**: Secrets, credentials, ignored `_workspace` children,
   local diagnostics, provider or cluster state, remote resources, and paths
   outside the active SMDV Task scope must not be read or changed.

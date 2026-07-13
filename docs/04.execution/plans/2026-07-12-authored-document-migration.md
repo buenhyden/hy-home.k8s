@@ -96,6 +96,18 @@ Compatibility mode must stay available until these families are reconciled.
 path | title | profile | owner-key | disposition | destination | local-evidence | official-sources | observed-version | applicability | content-decision | refresh-trigger | reviewer | result
 ```
 
+### Inventory Count Transition
+
+SMDV-003 and ADM-002 Step 1 start from the tracked inventory of 467 current
+paths (`baseline=433`, `new=36`). ADM-002 then creates the durable ledger as a
+normal `content/reference` target and passes its exact path through the
+validator's supported `--include-path` option before staging. The final ADM-002
+inventory and ledger therefore contain 468 paths (`baseline=433`, `new=37`),
+including exactly one self-row for the ledger. ADM-003 and every later task
+start from 468/current and 37/new until that task's independently declared
+creation, relocation, or deletion manifest proves a different count. The
+ledger is never made non-target to avoid this transition.
+
 ### Pre-ADM Hard Dependency
 
 No ADM Task may start until the logical commit
@@ -157,7 +169,7 @@ directory diff is prohibited.
 
 | ID | Level | Command | Pass criteria |
 | --- | --- | --- | --- |
-| VAL-030-001 | Inventory | `validate-links-and-owners.py --inventory --format json` | Every approved and program-created target is classified once. |
+| VAL-030-001 | Inventory | `validate-links-and-owners.py --inventory --format json` | Pre-ledger 467/current is exact; ADM-002 final inventory uses the ledger `--include-path` and classifies 468/current and 37/new exactly once, including its pinned self-row. |
 | VAL-030-002 | Wave | `validate-markdown-profiles.py --mode compatibility --path-prefix PATH` | Completed wave has no document debt. |
 | VAL-030-003 | Research | strict link/owner validator | Every migrated current document has one complete durable row. |
 | VAL-030-004 | Cloud | directory-based `git ls-files examples/aws/docs examples/azure/docs` source/ledger comparison | All 59 source paths have durable ledger rows before deletion; no example-local SDLC Markdown remains afterward. |
@@ -295,7 +307,10 @@ the exact staged set. Roll back with `git revert <ADM-001-commit>`.
 
 **Interfaces:**
 
-- Consumes: Spec 029 `--inventory --format json` output and Spec 027 type-to-source matrix.
+- Consumes: Spec 029's pre-ledger `--inventory --format json` envelope whose
+  `documents[].path` is the exact sorted 467-path `current_paths` set, the same
+  validator's explicit `--include-path` transition to 468 after ledger
+  creation, and the Spec 027 type-to-source matrix.
 - Produces: exact fourteen-column durable ledger consumed by strict
   cross-document validation and an empty semantic-debt item set.
 
@@ -304,9 +319,37 @@ the exact staged set. Roll back with `git revert <ADM-001-commit>`.
 ```bash
 python3 scripts/validate-links-and-owners.py --root . --inventory --format json > _workspace/document-migration-inventory.json
 python3 -m json.tool _workspace/document-migration-inventory.json >/dev/null
+python3 - <<'PY'
+import json
+import pathlib
+import sys
+
+sys.path.insert(0, 'scripts')
+from document_contracts import enumerate_target_markdown
+
+data = json.loads(pathlib.Path('_workspace/document-migration-inventory.json').read_text())
+assert list(data) == [
+    'schemaVersion', 'mode', 'outcome', 'counts', 'documents', 'diagnostics'
+]
+assert data['schemaVersion'] == 1
+assert data['mode'] == 'inventory' and data['outcome'] == 'PASS'
+assert data['counts'] == {
+    'baseline': 433, 'current': 467, 'new': 36, 'documents': 467
+}
+assert data['diagnostics'] == []
+expected = [
+    path.as_posix()
+    for path in enumerate_target_markdown(pathlib.Path('.')).current_paths
+]
+actual = [item['path'] for item in data['documents']]
+assert actual == expected == sorted(actual) and len(set(actual)) == 467
+PY
 ```
 
-Expected: valid JSON and no tracked `_workspace` child.
+Expected: the one deterministic pre-ledger inventory envelope, exact counts,
+and exact ordered 467-path equality pass; no tracked `_workspace` child is
+created. This snapshot is input to ledger creation, not the final ADM-002
+inventory.
 
 - [ ] **Step 2: Run RED ledger validation**
 
@@ -319,10 +362,17 @@ Expected: exit 1 with `LEDGER-MISSING` or `LEDGER-INCOMPLETE`.
 - [ ] **Step 3: Create the durable ledger**
 
 Use the common Reference profile and one table with exactly the fourteen
-columns declared above. Add one row per inventory path. Each row names baseline
-or program-created local evidence, disposition, destination, applicable
-official source or reviewed non-applicability reason, content decision, refresh
-trigger, reviewer, and initial `inventory-reviewed` result.
+columns declared above. Start with one row per Step 1 `documents[].path`, then
+add the ledger's own row before producing the final inventory. No other path
+may appear. The ledger frontmatter is pinned to title `Document Migration
+Evidence Ledger`, type `content/reference`, status `active`, owner `platform`,
+and updated date `2026-07-13`; its inventory classification is pinned to
+profile `content/reference`, class `common`, mode `authored`, empty `ownerKey`,
+and origin `program-created`. Its ledger self-row literals are pinned by the
+Step 4 assertion. Every other row names baseline or program-created local
+evidence, disposition, destination, applicable official source or reviewed
+non-applicability reason, content decision, refresh trigger, reviewer, and
+initial `inventory-reviewed` result.
 
 - [ ] **Step 4: Verify completeness and tracked boundary**
 
@@ -334,12 +384,125 @@ mode sees no ledger violation and compatibility has no `DEFER` or
 `DEBT-UNUSED` semantic item.
 
 ```bash
-python3 scripts/validate-links-and-owners.py --root . --mode compatibility
-python3 scripts/validate-links-and-owners.py --root . --mode strict
-git ls-files _workspace
+set -u
+overall_rc=0
+ledger_path='docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md'
+final_inventory='_workspace/document-migration-final-inventory.json'
+
+inventory_rc=0
+python3 scripts/validate-links-and-owners.py --root . --inventory --format json \
+  --include-path "$ledger_path" >"$final_inventory" || inventory_rc=$?
+if [ "$inventory_rc" -ne 0 ]; then
+  overall_rc="$inventory_rc"
+fi
+if [ "$overall_rc" -eq 0 ]; then
+  python3 -m json.tool "$final_inventory" >/dev/null || overall_rc=$?
+fi
+if [ "$overall_rc" -eq 0 ]; then
+  python3 - "$final_inventory" "$ledger_path" <<'PY' || overall_rc=$?
+import json
+import pathlib
+import sys
+
+sys.path.insert(0, 'scripts')
+from document_contracts import enumerate_target_markdown
+
+inventory = json.loads(
+    pathlib.Path(sys.argv[1]).read_text()
+)
+ledger_path = sys.argv[2]
+assert list(inventory) == [
+    'schemaVersion', 'mode', 'outcome', 'counts', 'documents', 'diagnostics'
+]
+assert inventory['counts'] == {
+    'baseline': 433, 'current': 468, 'new': 37, 'documents': 468
+}
+assert inventory['diagnostics'] == []
+inventory_paths = [item['path'] for item in inventory['documents']]
+expected = [
+    path.as_posix()
+    for path in enumerate_target_markdown(
+        pathlib.Path('.'), include_paths=(pathlib.PurePosixPath(ledger_path),)
+    ).current_paths
+]
+assert inventory_paths == expected == sorted(inventory_paths)
+assert len(inventory_paths) == len(set(inventory_paths)) == 468
+own_inventory = next(item for item in inventory['documents'] if item['path'] == ledger_path)
+assert own_inventory == {
+    'path': ledger_path,
+    'profile': 'content/reference',
+    'profileClass': 'common',
+    'mode': 'authored',
+    'title': 'Document Migration Evidence Ledger',
+    'status': 'active',
+    'ownerKey': '',
+    'origin': 'program-created',
+}
+ledger = pathlib.Path(ledger_path).read_text().splitlines()
+header = (
+    '| path | title | profile | owner-key | disposition | destination | '
+    'local-evidence | official-sources | observed-version | applicability | '
+    'content-decision | refresh-trigger | reviewer | result |'
+)
+start = ledger.index(header)
+rows = []
+for line in ledger[start + 2:]:
+    if not line.startswith('|'):
+        break
+    cells = [cell.strip() for cell in line.strip('|').split('|')]
+    assert len(cells) == 14, (len(cells), line)
+    rows.append(cells)
+ledger_paths = [row[0].removeprefix('`').removesuffix('`') for row in rows]
+assert ledger_paths == inventory_paths
+assert len(ledger_paths) == len(set(ledger_paths)) == 468
+own_row = rows[ledger_paths.index(ledger_path)]
+assert own_row == [
+    f'`{ledger_path}`',
+    'Document Migration Evidence Ledger',
+    'content/reference',
+    '',
+    'preserve',
+    f'`{ledger_path}`',
+    'Spec 030 ADM-002',
+    'external-topic: not applicable - repository-specific migration evidence',
+    '2026-07-13',
+    'repository-specific',
+    'retain as durable migration evidence owner',
+    'each ADM task',
+    'independent reviewer',
+    'inventory-reviewed',
+]
+PY
+fi
+
+if [ "$overall_rc" -eq 0 ]; then
+  compatibility_rc=0
+  python3 scripts/validate-links-and-owners.py --root . --mode compatibility \
+    --include-path "$ledger_path" || compatibility_rc=$?
+  strict_rc=0
+  python3 scripts/validate-links-and-owners.py --root . --mode strict \
+    --include-path "$ledger_path" || strict_rc=$?
+  if [ "$compatibility_rc" -ne 0 ]; then
+    overall_rc="$compatibility_rc"
+  elif [ "$strict_rc" -ne 0 ]; then
+    overall_rc="$strict_rc"
+  fi
+fi
+
+if [ "$overall_rc" -eq 0 ]; then
+  tracked_workspace="$(git ls-files _workspace)" || overall_rc=$?
+  if [ "$overall_rc" -eq 0 ] && [ "$tracked_workspace" != '_workspace/README.md' ]; then
+    overall_rc=1
+  fi
+fi
+exit "$overall_rc"
 ```
 
-Expected: both modes exit 0; tracked output is exactly `_workspace/README.md`.
+Expected: final inventory is 468/current and 37/new, the pinned ledger
+classification and self-row pass, both modes exit 0, and the ordered ledger
+path list equals the exact final `documents[].path` list with no omission,
+extra, or duplicate. Tracked `_workspace` output is exactly
+`_workspace/README.md`; any earlier nonzero result survives the final check.
 
 - [ ] **Step 5: Commit**
 
@@ -364,9 +527,10 @@ PY
 git commit -m "docs(migration): inventory authored document dispositions"
 ```
 
-Expected: exactly five staged paths. A fresh reviewer verifies inventory/ledger
-set equality, the exact fourteen columns, semantic debt `items: []`, strict and
-compatibility results, and the ignored boundary. Roll back only with
+Expected: exactly five staged paths. A fresh reviewer verifies the final
+468-path inventory/ledger set equality, pinned self-row, the exact fourteen
+columns, semantic debt `items: []`, strict and compatibility results, and the
+ignored boundary. Roll back only with
 `git revert <ADM-002-commit>` so the ledger and its one represented missing-ledger
 item return atomically.
 

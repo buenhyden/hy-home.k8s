@@ -8,6 +8,60 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - Cross-document inventory handoff Plan correction
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, planning, qa
+- **Status**: complete
+- **Tags**: #semantic-validation #inventory #migration #link-validation
+
+#### Progress
+
+- Unified cross-document validation and inventory JSON around one deterministic
+  envelope and made SMDV-003 enumerate the exact sorted 467-path registry
+  `current_paths` set without changing the completed Markdown validator.
+- Pinned the sole semantic compatibility-debt object and its literals, the
+  full-corpus link boundary, exit and stream behavior, and the canonical
+  SMDV-003 commit identity.
+- Closed the Plan index at exact target/tree/table equality `50/50/50` and
+  bound ADM-002 to create the target ledger, include it explicitly, transition
+  to 468/current and 37/new, prove its pinned self-row and exact ledger
+  equality, and remove represented debt in the same logical commit.
+
+#### Memory
+
+- A machine-readable handoff needs one closed producer envelope and a consumer
+  set-equality proof. Counts alone cannot detect a substituted, omitted, or
+  duplicate migration target.
+- A generated inventory owner is itself a target document. Create it first,
+  pass its exact untracked path through the supported include boundary, and
+  make the post-creation inventory rather than the pre-creation snapshot the
+  durable equality owner.
+- Compatibility debt literals are configuration. If values needed to match a
+  diagnostic remain implicit, implementation and migration can each choose a
+  different tuple while appearing to follow the same Plan.
+
+#### Evidence
+
+- Independent review found three omitted Plan tree rows, ledger
+  self-inventory, an over-broad shared-envelope statement, and swallowed shell
+  failures. The corrected scope is the two execution Plans, Plan index, current
+  Spec 029 Task, and this canonical progress entry; it changes no validator,
+  fixture, corpus, secret, runtime, remote, or migration implementation.
+- Embedded inventory and ledger assertions, registry compatibility, repository
+  quality, diff checks, focused pre-commit, and exact five-path staging are the
+  correction gate for `fix(plans): define cross-document inventory handoff`.
+- Roll back only by reverting that complete corrected Plan commit so the index,
+  producer/consumer contract, Task evidence, and memory remain atomic.
+
+#### Handoff
+
+- Independently re-review the five-path Plan correction, then implement
+  SMDV-003 in its exact seven-path scope with commit
+  `feat(docs): validate links indexes and current owners`.
+
 ### 2026-07-13 - Markdown debt mutation proof hardening
 
 #### Metadata
