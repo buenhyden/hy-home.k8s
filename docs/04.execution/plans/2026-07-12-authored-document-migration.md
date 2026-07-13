@@ -1694,8 +1694,11 @@ registry/fixture equality failure in the repository quality gate.
 Before staging exact 79, create the ignored executable guard
 `_workspace/adm-006-registry-diff-guard.py` with the following content using
 `apply_patch`, then run it. The AST proof pins `ca69b3e` as the ownership
-baseline, permits body changes only in the five explicitly named README
-handoff functions, and requires the two contract/mutation functions to change.
+baseline, permits body changes only in the two explicitly named README
+retirement contract/mutation functions, and requires both to change. It keeps
+`main`, `_self_test`, CLI dispatch, route classification, diagnostic/output
+behavior, every unrelated self-test call, all function signatures, and every
+other module node AST-identical; no new helper or constant is authorized.
 The semantic projection separately proves the schema-v2 sets and destinations;
 therefore normalizing an allowed function body cannot by itself waive the
 handoff contract.
@@ -1710,13 +1713,6 @@ BASE = "ca69b3e"
 VALIDATOR = "scripts/validate-document-contract-registry.py"
 FIXTURE = "tests/fixtures/document-contracts/readme-profile-cases.json"
 ALLOWED_FUNCTIONS = {
-    "_readme_inventory_exact_error",
-    "_assert_readme_family_contract",
-    "_assert_readme_fixture_mutation_proofs",
-    "_self_test",
-    "main",
-}
-REQUIRED_CHANGED_FUNCTIONS = {
     "_assert_readme_family_contract",
     "_assert_readme_fixture_mutation_proofs",
 }
@@ -1745,24 +1741,84 @@ def normalized(source):
     return ast.dump(tree, include_attributes=False)
 
 
+def ownership_guard(baseline_source, candidate_source):
+    baseline_functions = function_map(ast.parse(baseline_source))
+    candidate_functions = function_map(ast.parse(candidate_source))
+    assert set(baseline_functions) == set(candidate_functions), (
+        "function set changed"
+    )
+    changed_functions = {
+        name
+        for name in baseline_functions
+        if ast.dump(baseline_functions[name], include_attributes=False)
+        != ast.dump(candidate_functions[name], include_attributes=False)
+    }
+    assert changed_functions == ALLOWED_FUNCTIONS, changed_functions
+    assert normalized(baseline_source) == normalized(candidate_source), (
+        "registry validator changed outside the exact README handoff functions"
+    )
+
+
+def replace_function_body(source, name, body):
+    tree = ast.parse(source)
+    function = function_map(tree)[name]
+    function.body = body
+    ast.fix_missing_locations(tree)
+    return ast.unparse(tree)
+
+
+def drop_call_from_function(source, function_name, called_name):
+    tree = ast.parse(source)
+    function = function_map(tree)[function_name]
+
+    class DropCall(ast.NodeTransformer):
+        removed = 0
+
+        def visit_Expr(self, node):
+            if (
+                isinstance(node.value, ast.Call)
+                and isinstance(node.value.func, ast.Name)
+                and node.value.func.id == called_name
+            ):
+                self.removed += 1
+                return None
+            return self.generic_visit(node)
+
+    mutation = DropCall()
+    mutation.visit(function)
+    assert mutation.removed == 1, (function_name, called_name, mutation.removed)
+    ast.fix_missing_locations(tree)
+    return ast.unparse(tree)
+
+
+def expect_guard_rejection(label, candidate_source):
+    try:
+        ownership_guard(baseline_source, candidate_source)
+    except AssertionError:
+        return
+    raise AssertionError(f"registry ownership guard accepted {label}")
+
+
 baseline_source = git_text("show", f"{BASE}:{VALIDATOR}")
 current_source = pathlib.Path(VALIDATOR).read_text()
-baseline_tree = ast.parse(baseline_source)
-current_tree = ast.parse(current_source)
-baseline_functions = function_map(baseline_tree)
-current_functions = function_map(current_tree)
-assert set(baseline_functions) == set(current_functions), "function set changed"
-changed_functions = {
-    name
-    for name in baseline_functions
-    if ast.dump(baseline_functions[name], include_attributes=False)
-    != ast.dump(current_functions[name], include_attributes=False)
-}
-assert REQUIRED_CHANGED_FUNCTIONS <= changed_functions <= ALLOWED_FUNCTIONS, (
-    changed_functions
+ownership_guard(baseline_source, current_source)
+expect_guard_rejection(
+    "a no-op main",
+    replace_function_body(current_source, "main", [ast.Return(ast.Constant(0))]),
 )
-assert normalized(baseline_source) == normalized(current_source), (
-    "registry validator changed outside the exact README handoff functions"
+expect_guard_rejection(
+    "removal of the non-README parser safety self-test call",
+    drop_call_from_function(current_source, "_self_test", "_assert_parser_safety"),
+)
+expect_guard_rejection(
+    "changed README route classification",
+    replace_function_body(
+        current_source, "_readme_profile_ids", [ast.Return(ast.Set(elts=[]))]
+    ),
+)
+expect_guard_rejection(
+    "changed unrelated diagnostic output",
+    replace_function_body(current_source, "_print_diagnostic", [ast.Pass()]),
 )
 
 fixture = json.loads(pathlib.Path(FIXTURE).read_text())
@@ -1955,14 +2011,17 @@ the exact 17 paths, comprising 17 `BODY-HEADING-REQUIRED` and 26
 the exact-21 manifest in ignored evidence. No current fixture, registry, Python
 constant, path glob, or waiver may become an alias owner.
 
-Freeze the exact 17-document set as a NUL manifest and prove the exact-16 /
-exact-1 ownership split before editing:
+Freeze the exact 17-document set as a canonical sorted NUL manifest and prove
+the exact-16 / exact-1 ownership split before editing. Its reviewed SHA-256 is
+`345cbbfa545bb2850b57155ce6f65aab79e624f0fd14c4c915748072b2802e86`;
+the mutable ignored file is never an authority by itself.
 
 ```bash
 python3 - <<'PY'
 import hashlib
 import pathlib
 
+EXPECTED_SHA256 = '345cbbfa545bb2850b57155ce6f65aab79e624f0fd14c4c915748072b2802e86'  # pragma: allowlist secret
 adm004c = {
     'docs/04.execution/plans/2026-05-30-antigravity-governance.md',
 }
@@ -1991,6 +2050,7 @@ assert len(adm003c) == 16 and len(adm004c) == 1
 assert 'docs/03.specs/030-authored-document-migration/spec.md' in adm003c
 assert all(pathlib.Path(path).is_file() for path in documents)
 payload = b''.join(path.encode() + b'\0' for path in sorted(documents))
+assert hashlib.sha256(payload).hexdigest() == EXPECTED_SHA256
 path = pathlib.Path('_workspace/adm-006c-document-paths.nul')
 path.write_bytes(payload)
 print(len(documents), hashlib.sha256(payload).hexdigest())
@@ -2060,30 +2120,60 @@ xargs -0 git add -- < _workspace/adm-006c-document-paths.nul
 
 adm006c_stage_proof() {
 python3 - <<'PY'
+import hashlib
 import pathlib
 import subprocess
 
-documents = {
-    part.decode()
-    for part in pathlib.Path('_workspace/adm-006c-document-paths.nul')
-    .read_bytes().split(b'\0')
-    if part
+EXPECTED_SHA256 = '345cbbfa545bb2850b57155ce6f65aab79e624f0fd14c4c915748072b2802e86'  # pragma: allowlist secret
+adm003c = {
+    'docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md',
+    'docs/02.architecture/decisions/0003-eso-vault-k8s-auth.md',
+    'docs/02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md',
+    'docs/02.architecture/decisions/0008-istio-install-and-ingress-coexist.md',
+    'docs/02.architecture/decisions/0009-kiali-external-observability.md',
+    'docs/02.architecture/decisions/0015-declarative-document-contract-registry.md',
+    'docs/02.architecture/decisions/0016-program-to-tranche-document-lineage.md',
+    'docs/03.specs/008-current-local-gitops-platform/spec.md',
+    'docs/03.specs/024-observability-and-network-review-agents/agent-design.md',
+    'docs/03.specs/026-document-contract-registry/spec.md',
+    'docs/03.specs/027-template-contract-consolidation/spec.md',
+    'docs/03.specs/028-readme-workspace-profiles/spec.md',
+    'docs/03.specs/029-semantic-document-validation/spec.md',
+    'docs/03.specs/030-authored-document-migration/spec.md',
+    'docs/03.specs/031-affected-surface-agent-qa/spec.md',
+    'docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md',
 }
 adm004c = {
     'docs/04.execution/plans/2026-05-30-antigravity-governance.md',
 }
-adm003c = documents - adm004c
+approved_documents = adm003c | adm004c
+manifest_raw = pathlib.Path(
+    '_workspace/adm-006c-document-paths.nul'
+).read_bytes()
+manifest_documents = {
+    part.decode()
+    for part in manifest_raw.split(b'\0')
+    if part
+}
+canonical_raw = b''.join(
+    path.encode() + b'\0' for path in sorted(approved_documents)
+)
+assert hashlib.sha256(manifest_raw).hexdigest() == EXPECTED_SHA256
+assert manifest_raw == canonical_raw
+assert manifest_documents == approved_documents
 fixed = {
     'docs/00.agent-governance/memory/progress.md',
     'docs/04.execution/plans/2026-07-12-authored-document-migration.md',
     'docs/04.execution/tasks/2026-07-12-authored-document-migration.md',
     'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
 }
-expected = documents | fixed
+expected = approved_documents | fixed
 actual = set(subprocess.check_output(
     ['git', 'diff', '--cached', '--name-only'], text=True
 ).splitlines())
-assert len(documents) == 17 and len(adm003c) == 16 and len(adm004c) == 1
+assert len(approved_documents) == 17
+assert len(adm003c) == 16 and len(adm004c) == 1
+assert not (adm003c & adm004c)
 assert len(expected) == 21 and actual == expected, (
     sorted(actual - expected), sorted(expected - actual)
 )
@@ -2099,7 +2189,10 @@ assert set(status) == expected
 assert all(change == 'M' for change in status.values()), status
 unstaged = subprocess.check_output(['git', 'diff', '--name-only'], text=True)
 assert not unstaged.splitlines(), unstaged
-print('ADM-006C exact17=16+1; exact21 all M; no unstaged tracked diff')
+print(
+    'ADM-006C pinned exact17=16+1; exact21 all M; '
+    'manifest SHA and no unstaged tracked diff proved'
+)
 PY
 }
 

@@ -143,7 +143,12 @@ Spec 029 Spec/Plan/Task removes three keys, then completing the exact Spec 030
 Spec/Plan/Task removes three more. The repository quality gate must consume the
 canonical validators and fixtures directly; no alternate command, filtered
 inventory, environment waiver, or duplicate debt/alias source may bypass their
-fail-closed results.
+fail-closed results. The ADM-006 registry handoff guard keeps `main`, CLI
+dispatch, route classification, diagnostic/output behavior, and the complete
+non-README self-test call graph AST-identical to the approved baseline. It may
+normalize only the two README retirement contract/mutation function bodies;
+negative mutations must reject a no-op `main` and removal of an unrelated
+self-test call.
 
 The other three handoff exceptions are exactly
 `docs/00.agent-governance/rules/documentation-protocol.md`,
