@@ -24,18 +24,6 @@ secret checks are out of scope unless separately approved by a human.
 - **Parent Spec**: `../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md`
 - **Parent Plan**: `../plans/2026-07-02-workspace-harness-implementation-audit-pack.md`
 
-## Approval and Safety Boundaries
-
-- Documentation-only work still needs validation evidence.
-- Audit reports must use the research pack as benchmark material and repo files
-  as implementation evidence.
-- Upstream provider capability does not count as local implementation unless a
-  repo-backed surface implements or routes it.
-- Audit reports must not redefine active governance policy, provider runtime
-  behavior, CI semantics, scripts, templates, manifests, or live operations.
-- Repo-static validation must not be reported as live runtime readiness.
-- Logical-unit commits are required.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -46,19 +34,6 @@ secret checks are out of scope unless separately approved by a human.
 | T-004 | Write provider harness and loop implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-004 | Provider evidence review; repo quality gate | Codex | Done |
 | T-005 | Write SDLC delivery practices implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-005 | Delivery-practice matrix review; repo quality gate | Codex | Done |
 | T-006 | Final integration, validation, memory, and handoff | doc | VAL-SPC-006 | PLN-006 | Final validation bundle | Codex | Done |
-
-### Suggested Types
-
-- `doc`
-- `eval`
-- `ops`
-
-### Agent-specific Types
-
-- `memory`
-- `guardrail`
-- `eval`
-- `observability`
 
 ### Phase View
 
@@ -76,6 +51,28 @@ secret checks are out of scope unless separately approved by a human.
 ### Phase 3
 
 - [x] T-006 Final integration, validation, memory, and handoff.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `T-001 through T-006` is limited to these Workspace Harness Implementation Audit Pack owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md`
+  - `docs/03.specs/010-workspace-harness-implementation-audit-pack/spec.md`
+  - `docs/04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md`
+- **Forbidden Paths**: active policy or runtime configuration not named by the Workspace Harness Implementation Audit Pack Task Table, provider settings, secret values, local diagnostics, and remote publication surfaces.
+- **Approval Required**: Human approval is required before publishing Workspace Harness Implementation Audit Pack research, changing active policy/runtime behavior, deleting evidence, contacting providers, push, merge, or corpus expansion.
+- **Static Validation**: Preserve the Workspace Harness Implementation Audit Pack outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+  - `bash scripts/generate-llm-wiki-index.sh --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `rg --files | rg '(^|/)progress\.md$'`
+- **Live Validation**: DEFER — Workspace Harness Implementation Audit Pack is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: Workspace Harness Implementation Audit Pack evidence must use public or repository-visible facts only; do not inspect or reproduce credentials, tokens, auth files, private logs, kubeconfigs, or shell history.
+- **Rollback Plan**: Revert the logical Workspace Harness Implementation Audit Pack change set for `T-001 through T-006` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Workspace Harness Implementation Audit Pack evidence remains in:
+  - `docs/04.execution/tasks/2026-07-02-workspace-harness-implementation-audit-pack.md`
+  - `docs/03.specs/010-workspace-harness-implementation-audit-pack/spec.md`
+  - `docs/04.execution/plans/2026-07-02-workspace-harness-implementation-audit-pack.md`
+  - `docs/00.agent-governance/memory/progress.md`
 
 ## Verification Summary
 

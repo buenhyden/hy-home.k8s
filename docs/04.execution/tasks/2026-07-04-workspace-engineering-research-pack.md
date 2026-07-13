@@ -23,23 +23,6 @@ runtimes, credentials, secret values, or third-party systems.
 - **Parent Plan**: [../plans/2026-07-04-workspace-engineering-research-pack.md](../plans/2026-07-04-workspace-engineering-research-pack.md)
 - **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
 
-## Approval and Safety Boundaries
-
-- Keep this work documentation-only unless a later task explicitly scopes a
-  repository document move or index update.
-- Do not touch research reference files during WER-001.
-- Preserve one current path for each moved research reference in later tasks.
-- Treat `docs/90.references/**` as descriptive reference material, not active
-  policy, runbook, release gate, or runtime permission owner.
-- Use repo-first evidence before external sources, and use official or primary
-  external sources before market scan material.
-- Label market scan material non-authoritative wherever it is used.
-- Do not perform live Kubernetes, Argo CD, Vault, cloud, GitHub remote,
-  provider runtime, credential, secret-value, paid-job, publishing, merge, push,
-  or third-party mutation.
-- Record repo-static validation as repo-static evidence only; do not report it
-  as live runtime readiness.
-
 ## Task Table
 
 | Task ID | Description                                                                            | Type | Parent Spec / Section                              | Parent Plan / Phase | Validation / Evidence                                                                                              | Owner    | Status |
@@ -52,12 +35,6 @@ runtimes, credentials, secret values, or third-party systems.
 | WER-006 | Add Kubernetes, infrastructure, and security reference                                 | doc  | VAL-SPC-004, VAL-SPC-005                           | Task 6              | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, and security coverage                           | platform | Done   |
 | WER-007 | Add automation, pipeline, workflow, and QA reference; close indexes and validation     | doc  | VAL-SPC-002, VAL-SPC-004, VAL-SPC-006, VAL-SPC-007 | Task 7              | Automation reference coverage, index closure, stale-link scans, final validation, and no-mutation handoff          | platform | Done   |
 | WER-008 | Add AI agents roster and gap-analysis reference; index closure and human-approved push | doc  | VAL-SPC-002, VAL-SPC-004, VAL-SPC-005              | Follow-up           | Roster snapshot, external market-scan gap analysis, index closure, repo-static validation, and human-approved push | platform | Done   |
-
-### Suggested Types
-
-- `doc`
-- `memory`
-- `eval`
 
 ### Phase View
 
@@ -540,6 +517,33 @@ Summary:
   Stage 00 progress documentation. No live Kubernetes, Argo CD, Vault, cloud,
   provider runtime, credential, secret-value, paid-job, publishing, or merge
   action was performed.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `WER-001 through docs/90.references/research/spec-sdlc-ci-qa-formatting.md` is limited to these Workspace Engineering Research Pack Task Record owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md`
+  - `docs/03.specs/017-workspace-engineering-research-pack/spec.md`
+  - `docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md`
+  - `docs/99.templates/templates/sdlc/execution/task.template.md`
+  - `docs/90.references/research`
+  - `docs/90.references`
+  - `docs/90.references/research/workspace-governance-baseline.md`
+  - `docs/90.references/research/harness-and-loop-engineering.md`
+- **Forbidden Paths**: active policy or runtime configuration not named by the Workspace Engineering Research Pack Task Record Task Table, provider settings, secret values, local diagnostics, and remote publication surfaces.
+- **Approval Required**: Human approval is required before publishing Workspace Engineering Research Pack Task Record research, changing active policy/runtime behavior, deleting evidence, contacting providers, push, merge, or corpus expansion.
+- **Static Validation**: Preserve the Workspace Engineering Research Pack Task Record outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git status --short --branch`
+  - `git diff --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `rg`
+- **Live Validation**: DEFER — Workspace Engineering Research Pack Task Record is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: Workspace Engineering Research Pack Task Record evidence must use public or repository-visible facts only; do not inspect or reproduce credentials, tokens, auth files, private logs, kubeconfigs, or shell history.
+- **Rollback Plan**: Revert the logical Workspace Engineering Research Pack Task Record change set for `WER-001 through docs/90.references/research/spec-sdlc-ci-qa-formatting.md` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Workspace Engineering Research Pack Task Record evidence remains in:
+  - `docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md`
+  - `docs/03.specs/017-workspace-engineering-research-pack/spec.md`
+  - `docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md`
+  - `docs/99.templates/templates/sdlc/execution/task.template.md`
 
 ## Verification Summary
 

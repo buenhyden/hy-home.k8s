@@ -8,10 +8,6 @@ updated: 2026-06-02
 
 # Platform Expansion Bootstrap Runbook
 
-## Runbook Type
-
-`bootstrap`
-
 ## Overview
 
 이 런북은 cert-manager, Headlamp, Istio, Kiali가 추가된 확장 플랫폼을 부트스트랩하거나 복구하기 위한 즉시 실행 가능한 체크리스트와 증상별 복구 절차를 제공한다.
@@ -24,12 +20,9 @@ updated: 2026-06-02
 
 플랫폼 확장 컴포넌트의 부트스트랩 단계를 재현 가능하게 수행하고, 장애 발생 시 원인별 복구 명령을 제공한다.
 
-## Canonical References
+## Runbook Type
 
-- [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
-- [`../guides/0003-platform-expansion-bootstrap-guide.md`](../guides/0003-platform-expansion-bootstrap-guide.md)
-- [`../policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md)
-- [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
+`bootstrap`
 
 ## When to Use
 
@@ -127,6 +120,32 @@ updated: 2026-06-02
    ```bash
    ./infrastructure/tests/verify-contracts-static.sh
    ```
+
+## Verification Steps
+
+```bash
+# 정적 계약
+./infrastructure/tests/verify-contracts-static.sh
+
+# 런타임
+kubectl get clusterissuer mkcert-ca-issuer
+kubectl -n headlamp get certificate headlamp-tls 2>/dev/null || kubectl -n headlamp get secret headlamp-tls
+kubectl -n istio-system get deploy istiod kiali
+
+# TLS 접근
+curl -sk https://headlamp.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
+curl -sk https://kiali.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
+```
+
+## Observability and Evidence Sources
+
+- **Signals**: ClusterIssuer readiness, Headlamp TLS state, Istiod/Kiali deployment availability, ArgoCD Application health.
+- **Evidence to Capture**: static contract output, relevant Kubernetes events, cert-manager logs, Kiali Prometheus connection logs.
+
+### Agent Operations
+
+이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
+단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
 
 ## Safe Rollback or Recovery Procedure
 
@@ -236,32 +255,6 @@ kubectl get crd | grep istio.io | wc -l
 argocd app sync platform-istiod
 ```
 
-## Verification Steps
-
-```bash
-# 정적 계약
-./infrastructure/tests/verify-contracts-static.sh
-
-# 런타임
-kubectl get clusterissuer mkcert-ca-issuer
-kubectl -n headlamp get certificate headlamp-tls 2>/dev/null || kubectl -n headlamp get secret headlamp-tls
-kubectl -n istio-system get deploy istiod kiali
-
-# TLS 접근
-curl -sk https://headlamp.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
-curl -sk https://kiali.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
-```
-
-## Observability and Evidence Sources
-
-- **Signals**: ClusterIssuer readiness, Headlamp TLS state, Istiod/Kiali deployment availability, ArgoCD Application health.
-- **Evidence to Capture**: static contract output, relevant Kubernetes events, cert-manager logs, Kiali Prometheus connection logs.
-
-### Agent Operations
-
-이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
-단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
-
 ## Traceability
 
 - **Guide**: [`../guides/0003-platform-expansion-bootstrap-guide.md`](../guides/0003-platform-expansion-bootstrap-guide.md)
@@ -269,3 +262,4 @@ curl -sk https://kiali.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
 - **Operations**: [`../policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md)
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **Previous Runbook**: [`./0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)
+- [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)

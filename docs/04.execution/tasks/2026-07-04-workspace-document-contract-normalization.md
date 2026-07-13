@@ -22,17 +22,6 @@ traceable to the parent Spec and Plan.
 - **Parent Plan**:
   [Workspace Document Contract Normalization Plan](../plans/2026-07-04-workspace-document-contract-normalization.md)
 
-## Approval and Safety Boundaries
-
-- Use subagent-driven development for implementation.
-- Each task gets one logical commit.
-- Each task receives spec compliance review before code quality review.
-- Documentation-only work still requires validation evidence.
-- Historical evidence is in scope for normalization, but old facts must remain
-  distinguishable from current operating guidance.
-- Repo-static validation must not be reported as live runtime readiness unless
-  a separate live check is approved and run.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -43,13 +32,6 @@ traceable to the parent Spec and Plan.
 | T-004 | Normalize historical evidence contracts. | doc | VAL-SPC-003 | PLN-004 | Historical evidence scans, archive/progress checks, repo gate | platform | Done |
 | T-005 | Align references, CI/QA, and formatting contracts. | doc | VAL-SPC-004, VAL-SPC-005 | PLN-005 | Official source review, workflow/doc comparison, repo gate | platform | Done |
 | T-006 | Reconcile final validator and governance gates. | test | VAL-SPC-006, VAL-SPC-007 | PLN-006 | Full validation bundle and final review | platform | Done |
-
-### Suggested Types
-
-- `doc`
-- `test`
-- `guardrail`
-- `ops`
 
 ### Phase View
 
@@ -76,6 +58,29 @@ traceable to the parent Spec and Plan.
 ### Phase 6: Final Validation
 
 - [x] T-006 Reconcile final validator and governance gates.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `T-001 through T-006` is limited to these Workspace Document Contract Normalization owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md`
+  - `docs/03.specs/014-workspace-document-contract-normalization/spec.md`
+  - `docs/04.execution/plans/2026-07-04-workspace-document-contract-normalization.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Workspace Document Contract Normalization work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Workspace Document Contract Normalization protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Workspace Document Contract Normalization outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+  - `bash -n scripts/validate-repo-quality-gates.sh`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `bash scripts/validate-harness.sh`
+- **Live Validation**: DEFER — Workspace Document Contract Normalization is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Workspace Document Contract Normalization; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Workspace Document Contract Normalization change set for `T-001 through T-006` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Workspace Document Contract Normalization evidence remains in:
+  - `docs/04.execution/tasks/2026-07-04-workspace-document-contract-normalization.md`
+  - `docs/03.specs/014-workspace-document-contract-normalization/spec.md`
+  - `docs/04.execution/plans/2026-07-04-workspace-document-contract-normalization.md`
+  - `.github/ABOUT.md`
+  - `.github/PULL_REQUEST_TEMPLATE.md`
 
 ## Verification Summary
 

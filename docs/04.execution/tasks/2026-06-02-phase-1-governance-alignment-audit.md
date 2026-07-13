@@ -22,14 +22,6 @@ implementation, then records the gap ledger.
 - **Governance Decision**: [ADR-0013: Stage 00 Canonical Adapter Model](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 - **Current Request**: Inline "Phase 1 Governance Alignment Audit Plan" from the 2026-06-02 user request.
 
-## Approval and Safety Boundaries
-
-- Preserve ADR-0013 as the accepted architecture unless concrete drift proves a redesign is needed.
-- Route audit evidence through the canonical docs stage tree; do not create `docs/superpowers/**`.
-- Treat HADS and Superpowers skills as strategy lenses only; `docs/99.templates` remains the repository template contract.
-- Keep verification repo-static unless a human explicitly approves live k3d, ArgoCD, Vault, ESO, deployment, or external-service checks.
-- Do not inspect credentials, token files, private keys, shell history, or private RTK databases.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -39,18 +31,6 @@ implementation, then records the gap ledger.
 | T-003 | Docs lifecycle audit | doc | N/A | Audit Work 3 | Active docs and execution stage indexes inspected; stale Antigravity `active` status remediated in place | platform | Done |
 | T-004 | QA/CI/CD and GitOps audit | guardrail | N/A | Audit Work 4 | CI, scripts, GitOps manifests, operations docs, and secret/deployment boundaries inspected through targeted scans and final static checks | platform | Done |
 | T-005 | Decision output and verification evidence | eval | N/A | Audit Work 5 | Gap ledger, recommended actions, skipped live checks, and static verification summary recorded here and in progress memory | platform | Done |
-
-### Suggested Types
-
-- `doc`
-- `guardrail`
-- `eval`
-
-### Agent-specific Types
-
-- `memory`
-- `guardrail`
-- `eval`
 
 ### Phase View
 
@@ -96,6 +76,31 @@ implementation, then records the gap ledger.
 | Preserve current repo-static QA/CI/CD and GitOps validation gates. | no-op | platform | P1 | Complete |
 | Correct stale 2026-05-30 Antigravity active status in execution indexes and source documents. | in-place doc correction | platform | P1 | Complete |
 | Run live k3d/ArgoCD/Vault/ESO checks only under a separately approved runtime validation task. | CI/live follow-up boundary | platform | P2 | Deferred |
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `T-001 through Run live k3d/ArgoCD/Vault/ESO checks only under a separately approved runtime validation task.` is limited to these Phase 1 Governance Alignment Audit owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-06-02-phase-1-governance-alignment-audit.md`
+  - `docs/04.execution/plans/2026-06-02-phase-1-decision-follow-up.md`
+  - `docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md`
+  - `docs/00.agent-governance/**`
+  - `.claude/{skills,workflows,output-styles}`
+  - `.codex/{skills,workflows,output-styles}`
+  - `.agents/**`
+- **Forbidden Paths**: active policy or runtime configuration not named by the Phase 1 Governance Alignment Audit Task Table, provider settings, secret values, local diagnostics, and remote publication surfaces.
+- **Approval Required**: Human approval is required before publishing Phase 1 Governance Alignment Audit research, changing active policy/runtime behavior, deleting evidence, contacting providers, push, merge, or corpus expansion.
+- **Static Validation**: Preserve the Phase 1 Governance Alignment Audit outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `bash scripts/validate-gitops-structure.sh`
+  - `bash scripts/validate-k8s-manifests.sh .`
+- **Live Validation**: DEFER — Phase 1 Governance Alignment Audit is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: Phase 1 Governance Alignment Audit evidence must use public or repository-visible facts only; do not inspect or reproduce credentials, tokens, auth files, private logs, kubeconfigs, or shell history.
+- **Rollback Plan**: Revert the logical Phase 1 Governance Alignment Audit change set for `T-001 through Run live k3d/ArgoCD/Vault/ESO checks only under a separately approved runtime validation task.` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Phase 1 Governance Alignment Audit evidence remains in:
+  - `docs/04.execution/tasks/2026-06-02-phase-1-governance-alignment-audit.md`
+  - `docs/04.execution/plans/2026-06-02-phase-1-decision-follow-up.md`
+  - `docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md`
 
 ## Verification Summary
 

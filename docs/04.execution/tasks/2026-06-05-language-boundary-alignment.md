@@ -24,33 +24,6 @@ and adds deterministic validation for English-first execution artifacts.
   - `/home/hy/gstack/.agents/skills/gstack-document-release/SKILL.md`
   - `/home/hy/im-not-ai/codex/skills/humanize-korean/SKILL.md`
 
-## Approval and Safety Boundaries
-
-- Governance and policy-control documents under `docs/00.agent-governance/**`
-  remain English.
-- `docs/03.specs/**/spec.md`, `docs/04.execution/plans/*.md`, and
-  `docs/04.execution/tasks/*.md` are English-first execution artifacts.
-- Human-facing README files and operations guidance may remain Korean.
-- Reference hubs may use Korean for human-facing lookup context, while
-  authority, source, freshness, generated-index, version-support, and AI-agent
-  routing fields remain English-first.
-- Mixed-audience documents keep human context in Korean and AI-agent execution
-  contracts in English.
-- Korean prose changes must preserve meaning, facts, paths, commands, dates,
-  and proper nouns.
-
-### Language Boundary Audit
-
-| Area | Current Evidence | Result |
-| ---- | ---------------- | ------ |
-| `docs/00.agent-governance/**` | Existing validators keep tracked governance/runtime files English-only. | Policy reinforced. |
-| `docs/03.specs/**/spec.md` | A ripgrep scan for Korean syllables now returns no matches. | English-first remediation complete. |
-| `docs/04.execution/plans/*.md` | A ripgrep scan for Korean syllables now returns no matches outside the human-facing README index. | English-first remediation complete. |
-| `docs/04.execution/tasks/*.md` | A ripgrep scan for Korean syllables now returns no matches outside the human-facing README index. | English-first remediation complete. |
-| `docs/05.operations/{guides,policies,runbooks,incidents}` | Folder READMEs define guide, policy, runbook, incident, and postmortem roles. | Operations boundary reinforced in the operations hub. |
-| `docs/90.references/**` | Root and subfolder READMEs define agents, learning, llm-wiki, and versions roles plus language boundaries. | Reference boundary reinforced. |
-| Root `README.md` and docs hub | Both entrypoints state the language policy for human-facing docs, Stage 03/04 execution artifacts, operations docs, and references. | Human-facing entrypoints aligned. |
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -66,19 +39,6 @@ and adds deterministic validation for English-first execution artifacts.
 | LANG-009 | Reinforce reference folder roles and language boundary | doc | References | Reference docs | `docs/90.references/README.md` and subfolder READMEs | platform | Done |
 | LANG-010 | Apply language policy to root and docs entrypoints | doc | Entrypoints | README docs | `README.md`, `docs/README.md` | platform | Done |
 
-### Suggested Types
-
-- `doc`
-- `eval`
-- `guardrail`
-- `test`
-
-### Agent-specific Types
-
-- `memory`
-- `guardrail`
-- `eval`
-
 ### Completion Notes
 
 - Legacy Stage 03 spec documents have been translated to English.
@@ -87,6 +47,32 @@ and adds deterministic validation for English-first execution artifacts.
 - The repo quality gate now enforces the English-first Stage 03/04 paths.
 - Operations and references remain mixed-audience areas with explicit language
   boundaries.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `LANG-001 through LANG-010` is limited to these Language Boundary Alignment owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-06-05-language-boundary-alignment.md`
+  - `docs/03.specs/006-workspace-harness-gap-analysis/spec.md`
+  - `docs/04.execution/plans/2026-06-05-harness-governance-v2-overlay.md`
+  - `docs/99.templates/README.md`
+  - `docs/05.operations/README.md`
+  - `docs/90.references/README.md`
+  - `docs/README.md`
+- **Forbidden Paths**: provider account settings, live agent sessions, credentials, model/runtime policy outside the parent Plan, and repository paths outside the Language Boundary Alignment surfaces.
+- **Approval Required**: Human approval is required before Language Boundary Alignment provider configuration, model-policy promotion, remote agent action, credential access, protected-file expansion, push, merge, or publication.
+- **Static Validation**: Preserve the Language Boundary Alignment outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `git diff --check`
+  - `bash -n scripts/validate-repo-quality-gates.sh`
+- **Live Validation**: DEFER — Language Boundary Alignment is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: Use only redacted repository contracts for Language Boundary Alignment; do not read or print provider tokens, auth files, memory stores, private logs, kubeconfigs, secret values, or shell history.
+- **Rollback Plan**: Revert the logical Language Boundary Alignment change set for `LANG-001 through LANG-010` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Language Boundary Alignment evidence remains in:
+  - `docs/04.execution/tasks/2026-06-05-language-boundary-alignment.md`
+  - `docs/03.specs/006-workspace-harness-gap-analysis/spec.md`
+  - `docs/04.execution/plans/2026-06-05-harness-governance-v2-overlay.md`
+  - `docs/03.specs/**/spec.md`
+  - `docs/04.execution/plans/*.md`
 
 ## Verification Summary
 

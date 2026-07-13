@@ -217,13 +217,13 @@ title: 'Task: Template Path Numbering Contract'
 type: sdlc/task
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-05
 ---
 ```
 
 The task record must include these sections:
 
-```markdown
+````markdown
 # Task: Template Path Numbering Contract
 
 ## Overview
@@ -268,22 +268,22 @@ rg -n "docs/01\\.requirements/YYYY-MM-DD-<feature-or-system>|docs/03\\.specs/<fe
 rg -n "2026-05-17-argo-rollouts-progressive-delivery|2026-05-17-argo-notifications-slack|2026-06-01-workspace-agent-governance-platform|2026-06-02-current-local-gitops-platform" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts
 ```
 
-### Evidence Log
+## Evidence Log
 
 | Date | Task | Check | Result |
 | --- | --- | --- | --- |
 | 2026-07-05 | TPN-001 | Baseline inventory | Pending |
 
-### Handoff
+## Handoff
 
 No handoff until all TPN tasks are complete and validation passes.
 
-### Related Evidence
+## Related Documents
 
 - **Spec**: [../../03.specs/019-template-path-numbering-contract/spec.md](../../03.specs/019-template-path-numbering-contract/spec.md)
 - **Plan**: [../plans/2026-07-05-template-path-numbering-contract.md](../plans/2026-07-05-template-path-numbering-contract.md)
 - **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
-```
+````
 
 Expected: the task record has all required template headings and no template
 instruction residue.
@@ -816,7 +816,7 @@ In `docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md`:
 Replace the Handoff section with:
 
 ```markdown
-### Handoff
+## Handoff
 
 Template path numbering contract implementation is complete. No live runtime,
 credential, GitOps desired-state, provider runtime, external service, push,

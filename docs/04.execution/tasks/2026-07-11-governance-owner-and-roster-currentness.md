@@ -21,14 +21,6 @@ Plan traceable while preserving repository-static evidence boundaries.
 - **Parent Plan**:
   [../plans/2026-07-11-governance-owner-and-roster-currentness.md](../plans/2026-07-11-governance-owner-and-roster-currentness.md)
 
-## Approval and Safety Boundaries
-
-- Write failing assertions first for deterministic repository behavior.
-- Record evidence for every completed task.
-- Treat repository-static validation as bounded evidence, not live runtime
-  readiness.
-- Keep Spec, Plan, Task, audit, owner, and roster lineage reciprocal.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -40,22 +32,26 @@ Plan traceable while preserving repository-static evidence boundaries.
 | RCR-005 | Enforce roster and owner-pointer currentness | guardrail | RMD-004 Implementation Components | T-005 | Fixture self-test and quality gate | platform | Done |
 | RCR-006 | Close lifecycle, evidence, and RMD-004 | doc | Success Criteria & Verification Plan | T-006 | Full validation bundle | platform | Done |
 
-### Suggested Types
+## Approval and Safety Boundaries
 
-- `impl`
-- `test`
-- `eval`
-- `doc`
-- `ops`
-
-### Agent-specific Types
-
-- `prompt`
-- `tool`
-- `memory`
-- `guardrail`
-- `eval`
-- `observability`
+- **Allowed Paths**: `RCR-001 through RCR-006` is limited to these Governance Owner and Roster Currentness owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md`
+  - `docs/03.specs/025-governance-owner-and-roster-currentness/spec.md`
+  - `docs/04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Governance Owner and Roster Currentness work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Governance Owner and Roster Currentness protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Governance Owner and Roster Currentness outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `python3 scripts/validate-agent-roster-currentness.py . --self-test`
+  - `python3 scripts/validate-agent-roster-currentness.py .`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `pre-commit run --all-files`
+- **Live Validation**: DEFER — Governance Owner and Roster Currentness is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Governance Owner and Roster Currentness; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Governance Owner and Roster Currentness change set for `RCR-001 through RCR-006` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Governance Owner and Roster Currentness evidence remains in:
+  - `docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md`
+  - `docs/03.specs/025-governance-owner-and-roster-currentness/spec.md`
+  - `docs/04.execution/plans/2026-07-11-governance-owner-and-roster-currentness.md`
 
 ## Verification Summary
 

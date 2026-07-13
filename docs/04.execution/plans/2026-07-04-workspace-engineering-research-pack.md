@@ -253,7 +253,7 @@ title: 'Workspace Engineering Research Pack Task Record'
 type: sdlc/task
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-04
 ```
 
 Include task IDs `WER-001` through `WER-007`, parent plan link
@@ -570,7 +570,7 @@ title: 'Reference: Automation Pipeline Workflow QA Research'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-04
 ```
 
 Required `Definitions / Facts` subsections:
@@ -645,7 +645,7 @@ title: 'Reference: Kubernetes Infrastructure Security Research'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-04
 ```
 
 Required `Definitions / Facts` subsections:

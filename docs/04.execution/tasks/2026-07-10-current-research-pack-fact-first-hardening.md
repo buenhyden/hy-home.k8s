@@ -28,120 +28,6 @@ live runtime or remote readiness.
   [2026-07-04 Workspace Engineering Research Pack](../../90.references/research/2026-07-04-wer/README.md)
 - **Provider-model source cutoff**: `2026-07-10 10:00 KST`
 
-## Approval and Safety Boundaries
-
-- Audit the Current pack README and all seven Current references in place.
-- Preserve `docs/90.references/research/2026-07-04-wer/` unchanged as a
-  Historical snapshot.
-- Support local implementation claims with current repository evidence and
-  external capability claims with official provider, standards-body, or
-  upstream project evidence.
-- Record exact external URLs, source checked dates, refresh triggers, and the
-  distinction among repo fact, external fact, interpretation, recommendation,
-  and unverified claims.
-- Summarize active policy and link to its canonical owner; do not duplicate
-  normative bodies in Stage 90 research.
-- Record implementation gaps as non-mutating recommendations with severity,
-  rationale, and canonical follow-up routes.
-- Keep API, coding-agent product, CLI, local adapter, lifecycle, and
-  recommendation claims surface-specific.
-- Use repo-static validation as documentation evidence only. Do not infer live
-  runtime, Kubernetes, Argo CD, Vault, ESO, provider, credential, secret, or
-  deployment readiness.
-- Do not perform live, remote, credential, secret, provider-runtime, publish,
-  push, merge, or third-party mutation actions.
-- Run focused assertions before and after each task, record deterministic
-  validation, and capture task-scoped review and commit evidence.
-
-### Baseline Evidence
-
-### Current Pack Inventory
-
-The Current pack contains exactly eight Markdown files:
-
-| # | Current file | Primary responsibility |
-| --- | --- | --- |
-| 1 | `docs/90.references/research/2026-07-07-wer/README.md` | Pack coverage, cutoff, reading order, authority, and freshness. |
-| 2 | `docs/90.references/research/2026-07-07-wer/workspace-governance-baseline.md` | Workspace governance and owner/authority baseline. |
-| 3 | `docs/90.references/research/2026-07-07-wer/spec-sdlc-ci-qa-formatting.md` | SDLC, document taxonomy, CI, QA, and validation lanes. |
-| 4 | `docs/90.references/research/2026-07-07-wer/harness-and-loop-engineering.md` | Harness and bounded-loop engineering. |
-| 5 | `docs/90.references/research/2026-07-07-wer/provider-implementation-status.md` | Provider surfaces, local adapters, and model lifecycle. |
-| 6 | `docs/90.references/research/2026-07-07-wer/automation-pipeline-workflow-qa.md` | Automation, pipeline, workflow, and QA topology. |
-| 7 | `docs/90.references/research/2026-07-07-wer/kubernetes-infrastructure-security.md` | Kubernetes, infrastructure, and security boundaries. |
-| 8 | `docs/90.references/research/2026-07-07-wer/ai-agents-roster-and-gap-analysis.md` | Local roster, upstream comparison, and task-model routing. |
-
-### Local Agent Adapter Inventory
-
-The same ten local agent stems exist across each provider/native adapter
-surface: `.claude/agents/<stem>.md`, `.agents/agents/<stem>.md`, and
-`.codex/agents/<stem>.toml`.
-
-| # | Agent stem | Claude | Shared | Codex |
-| --- | --- | --- | --- | --- |
-| 1 | `code-reviewer` | Present | Present | Present |
-| 2 | `doc-writer` | Present | Present | Present |
-| 3 | `gitops-reviewer` | Present | Present | Present |
-| 4 | `incident-responder` | Present | Present | Present |
-| 5 | `k8s-implementer` | Present | Present | Present |
-| 6 | `network-reviewer` | Present | Present | Present |
-| 7 | `observability-reviewer` | Present | Present | Present |
-| 8 | `security-auditor` | Present | Present | Present |
-| 9 | `supervisor` | Present | Present | Present |
-| 10 | `wiki-curator` | Present | Present | Present |
-
-This inventory proves file-stem parity only; it does not prove provider-native
-registration, runtime loading, permission enforcement, or live behavior.
-
-### GitHub Workflow and CI Job Inventory
-
-Five workflow files are present:
-
-| # | Workflow file |
-| --- | --- |
-| 1 | `.github/workflows/ci.yml` |
-| 2 | `.github/workflows/generate-changelog.yml` |
-| 3 | `.github/workflows/greetings.yml` |
-| 4 | `.github/workflows/labeler.yml` |
-| 5 | `.github/workflows/stale.yml` |
-
-The repository CI workflow declares six jobs:
-`branch-policy`, `changes`, `pre-commit`, `repo-quality-static`,
-`manifest-static`, and `ci-summary`. This is repo-static workflow evidence;
-no remote GitHub Actions run or branch-protection state was inspected.
-
-### Evidence Boundary and Optional Tools
-
-- Baseline repository validation:
-  `bash scripts/validate-repo-quality-gates.sh .` exited 0 with
-  `[PASS] repository quality gates passed`.
-- `rtk 0.34.3` is available at `/home/hy/.local/bin/rtk`, but `rtk gain`
-  cannot initialize its tracking database (`Error code 14`). Required commands
-  therefore run directly; RTK tracking is recorded as unavailable rather than
-  passed, and no private runtime database is inspected.
-- `pre-commit` and `markdownlint-cli2` are locally available for task-scoped
-  optional checks. Their results belong in the verification evidence for the
-  task on which they run.
-- `conftest` is not installed. Harness validation reports this optional lane as
-  `SKIP` and runs the built-in policy fallback, which passed; this fallback is
-  repo-static evidence and is not equivalent to a `conftest` pass.
-- Live runtime, remote GitHub, provider-runtime, credential, secret-value,
-  publish, push, merge, and third-party checks are prohibited for this plan and
-  remain not run. Repo-static PASS does not promote those lanes to ready.
-
-### Source and Claim Ledger
-
-| Claim lane | Evidence required | Approved source priority | Recording rule | Failure handling |
-| --- | --- | --- | --- | --- |
-| Repo fact | Current tracked file, config, script, workflow, manifest, adapter, template, Git history, or deterministic static output. | Canonical repository owner first; related historical material is context only. | Record the exact path, command, or commit and the observation date. | Classify contradicted content as `Fact defect`; do not preserve it for completeness. |
-| External fact | Current official provider documentation, standards body, or upstream project source. | Official provider/project page, then a primary standards source; market scans are non-authoritative. | Record the exact URL, surface, and `Source checked` date or cutoff. | Use another first-party source or classify the claim `Unverified` and omit unsupported capability text. |
-| Interpretation | Explicit comparison between repo evidence and external benchmark. | The paired repo-fact and external-fact entries. | State the inference and keep it separate from sourced facts. | Downgrade to `Unverified` when either side is missing or ambiguous. |
-| Recommendation | Evidence-backed gap with severity, rationale, and canonical follow-up owner. | Confirmed repo fact plus applicable external fact or explicit local contract. | Keep recommendations non-mutating and outside active implementation claims. | Do not apply active-file, runtime, model-policy, adapter, CI, or manifest changes in this workstream. |
-| Unverified | Evidence is inaccessible, ambiguous, stale, or surface-conflicted. | None until sufficient primary evidence is available. | Mark `Unverified` or remove the claim; never substitute recollection. | Record the limitation and refresh trigger. |
-
-Task-level source URLs, repo paths, checked dates, claim classifications, review
-outcomes, and commit SHAs are added to the corresponding row or linked evidence
-as each task completes.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Review outcome | Commit | Status |
@@ -156,14 +42,6 @@ as each task completes.
 | WERH-008 | Harden AI-agent roster, upstream comparison, and model routing. | doc | Addendum: Provider and Model Freshness Design | Phase 2 | RED heading assertion exited 1; exact 10-role/30-adapter status, ten pinned upstream-overlap classifications, pinned 17-division/254-file inventory, 15 install targets, 13 conversion targets, 13 routed pattern decisions, ten role-model routes, fixed-SHA/cutoff-state sources, and static validation are recorded below. | doc-writer | Clean after Important and Minor corrections and independent re-review. | `bec1cd7c577a6be56d6c0940575ced5547c84c27`, `ec0124c2b22f0077064e0268f296b44420021ea8` | Done |
 | WERH-009 | Close pack coverage and cross-document integration. | doc | Addendum: Coverage and Related-Document Integration Rules | Phase 3 | RED README assertion exited 1; 48 exact six-column owner rows cover every requested family; 8 Current artifacts, 9 contradiction families, fixed cutoff/freshness, links, and static/live boundaries are integrated; focused scans, Markdown lint, pre-commit, diff check, harness, and repo-quality results are recorded below. | supervisor | Clean after Important and Minor corrections and independent re-review. | `160978712c09c489523ea4b62424772eddbf67e2`, `39f915a118629dc9932ed31b4ac8f4ccdc16e10b` | Done |
 | WERH-010 | Run final validation and close execution records. | eval | Addendum: Verification and Acceptance | Phase 4 | Pinned-base inventory, deterministic validation, substantive review, closure-only review, and final-state validation evidence are recorded with static/live boundaries. | supervisor | Substantive review clean; closure-only range `e0d92f7^..1965215` independently re-reviewed with Spec PASS and Quality PASS, no findings. | Provisional `e0d92f7ce1680117a57f514e7782e30118873fb5`; inventory fix `196521549455f2fa6d4c3e312baa7d1c94b71054`; final promotion is the commit containing this completed record with subject `docs(execution): close current research hardening evidence`. | Done |
-
-### Suggested Types
-
-- `impl`
-- `test`
-- `eval`
-- `doc`
-- `ops`
 
 ### Phase View
 
@@ -188,6 +66,31 @@ as each task completes.
 ### Phase 4: Validation Closure
 
 - [x] WERH-010 Run final validation and close execution records.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `WERH-001 through WERH-010` is limited to these Current Research Pack Fact-First Hardening owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md`
+  - `docs/03.specs/017-workspace-engineering-research-pack/spec.md`
+  - `docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md`
+  - `docs/90.references/research/2026-07-07-wer/README.md`
+  - `docs/90.references/research/2026-07-04-wer/README.md`
+- **Forbidden Paths**: active policy or runtime configuration not named by the Current Research Pack Fact-First Hardening Task Table, provider settings, secret values, local diagnostics, and remote publication surfaces.
+- **Approval Required**: Human approval is required before publishing Current Research Pack Fact-First Hardening research, changing active policy/runtime behavior, deleting evidence, contacting providers, push, merge, or corpus expansion.
+- **Static Validation**: Preserve the Current Research Pack Fact-First Hardening outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `rg -n 'Owner and Authority Matrix|Enforcement and Evidence Map|Governance Gap Register|External Benchmark' docs/90.references/research/2026-07-07-wer/workspace-governance-baseline.md`
+  - `find`
+  - `git rev-list --count e8a99671..HEAD`
+  - `rg -n 'External Benchmark|Owner and Authority Matrix|Enforcement and Evidence Map|Governance Gap Register|2026-07-10' docs/90.references/research/2026-07-07-wer/workspace-governance-baseline.md`
+- **Live Validation**: Only the recorded read-only Current Research Pack Fact-First Hardening lane (`argocd`) is in scope; it does not authorize mutation or broaden the cited observation into readiness.
+- **Secret / Vault Handling**: Current Research Pack Fact-First Hardening evidence must use public or repository-visible facts only; do not inspect or reproduce credentials, tokens, auth files, private logs, kubeconfigs, or shell history.
+- **Rollback Plan**: Revert the logical Current Research Pack Fact-First Hardening change set for `WERH-001 through WERH-010` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Current Research Pack Fact-First Hardening evidence remains in:
+  - `docs/04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md`
+  - `docs/03.specs/017-workspace-engineering-research-pack/spec.md`
+  - `docs/04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md`
+  - `docs/90.references/research/2026-07-07-wer/README.md`
+  - `docs/90.references/research/2026-07-04-wer/README.md`
 
 ## Verification Summary
 

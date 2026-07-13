@@ -20,45 +20,6 @@ validation gates.
 - **Parent Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Parent Plan**: [../plans/2026-06-04-harness-four-element-alignment.md](../plans/2026-06-04-harness-four-element-alignment.md)
 
-## Approval and Safety Boundaries
-
-- Keep Stage 00 as the common AI Agent governance source of truth.
-- Keep `.claude/**` and `.codex/**` as provider adapters based on Stage 00.
-- Preserve `.agents/{skills,workflows,output-styles}` as the shared content
-  SSoT and provider symlink target.
-- Keep human-facing README and overview prose Korean, but keep explicit
-  AI-agent-facing requirement sections in English.
-- Treat recurring code, document, and structure drift as harness feedback that
-  should update a durable rule, skill, hook, validator, template, README index,
-  archive Tombstone, or memory entry.
-- Do not mutate live k3d, ArgoCD, Vault, ESO, Kubernetes resources, CI
-  topology, model policy, or secret-bearing state.
-- Record validation evidence before handoff.
-
-### Named Skill Application Boundary
-
-| Named Skill | Path Evidence | Application in This Task |
-| ----------- | ------------- | ------------------------ |
-| `using-superpowers` | `/home/hy/.codex/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/using-superpowers/SKILL.md` exists | Applied as the process lens for explicit skill routing and named-skill evidence. The current Codex tool surface did not expose a dedicated Skill invocation tool. |
-| `skill-creator` | `/home/hy/.codex/skills/.system/skill-creator/SKILL.md` provided in prompt | Applied to keep `workspace-harness-audit` concise and update an existing skill instead of creating an unnecessary new one. |
-| `imp-agent-md-refactor` | `/home/hy/.agents/skills/imp-agent-md-refactor/SKILL.md` provided in prompt | Applied as the progressive-disclosure lens: root gateways stayed thin and detailed behavior moved to catalog/provider baselines. |
-| `claude-md-improver` | `/home/hy/.codex/plugins/cache/claude-plugins-official/claude-md-management/1.0.0/skills/claude-md-improver/SKILL.md` exists; `/home/hy/.agents/skills/claude-md-improver/SKILL.md` absent | Applied as a targeted CLAUDE runtime-baseline improvement lens. Full interactive quality-report approval flow was skipped because the user explicitly requested implementation in this turn. |
-| `Hook Development` | `/home/hy/.agents/skills/hook-development/SKILL.md` provided in prompt | Applied to keep shared hook scripts and provider wiring as the enforcement/feedback surface instead of adding provider-local hook drift. |
-| `imp-doc-coauthoring` | `/home/hy/.agents/skills/imp-doc-coauthoring/SKILL.md` provided in prompt | Applied as a document-structure lens for Plan/Task evidence. The interactive co-authoring workflow was not used because the request supplied scope and asked for implementation. |
-| `imp-harness` | `/home/hy/.agents/skills/imp-harness/SKILL.md` provided in prompt | Applied as the primary harness architecture workflow. Existing harness assets were updated in place rather than creating a new agent team or duplicate skill tree. |
-| `testing-handbook-skills:harness-writing` | `/home/hy/.codex/trailofbits-skills/plugins/testing-handbook-skills/skills/harness-writing/SKILL.md` exists | Treated as a near-miss technique lens: no fuzz target was needed, but its determinism, input boundary, and feedback-quality principles informed the AI harness validation framing. |
-
-### Current Audit Ledger
-
-| Harness Element | Current Common Surface | Claude Surface | Codex Surface | Result |
-| --------------- | ---------------------- | -------------- | ------------- | ------ |
-| Instruction and settings documents | `AGENTS.md`, root `CLAUDE.md`, `docs/00.agent-governance/rules/bootstrap.md`, `harness-catalog.md` | `.claude/CLAUDE.md`, `.claude/settings.json`, `.claude/agents/*.md` | `.codex/CODEX.md`, `.codex/hooks.json`, `.codex/agents/*.toml` | Present; relationship made explicit in this task |
-| Architecture constraints | `rules/agentic.md`, `subagent-protocol.md`, `model-policy.md`, templates, GitOps-first rules | Native allow/deny policy in `.claude/settings.json` plus shared hooks | Codex sandbox/approval boundary plus `.codex/hooks.json` context/validation wiring | Present; provider difference documented |
-| Feedback loops | `scripts/validate-*.sh`, `scripts/check-secret-handling.sh`, `infrastructure/tests/*.sh`, `.github/workflows/ci.yml`, lifecycle hooks | SessionStart, PreToolUse, PostToolUse, Stop, SubagentStop, PreCompact hooks | Same shared hook scripts through Codex event wiring plus explicit validation commands | Present; regression checks strengthened |
-| Knowledge stores | `docs/00.agent-governance/memory/progress.md`, `docs/90.references/llm-wiki/wiki-index.md`, Stage 01-05 docs, `graphify-out/GRAPH_REPORT.md` when present | Runtime baseline points to memory, catalog, and generated wiki rules | Runtime baseline points to memory, catalog, generated wiki rules, and RTK limitations | Present; next-session loop documented |
-| Documentation language and template routing | `documentation-protocol.md`, `stage-authoring-matrix.md`, `document-stage-routing.md`, `docs/99.templates/README.md`, `docs/README.md` | `.claude/CLAUDE.md` points to common Stage 00; Claude hooks warn and validate authored docs | `.codex/CODEX.md` points to common Stage 00; Codex hooks reuse shared doc validation wiring | Present; explicit AI-agent-facing sections are English and template routing owners are recorded |
-| Drift garbage collection | `rules/agentic.md`, `documentation-protocol.md`, `scripts/validate-repo-quality-gates.sh`, `docs/98.archive`, `memory/progress.md` | Claude runtime routes repeated errors to shared harness surfaces | Codex runtime routes repeated errors to shared harness surfaces | Present; recurring drift is treated as a harness feedback loop |
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -72,24 +33,6 @@ validation gates.
 | H4-T-007 | Normalize AI-agent requirement prose | doc | REQ-H4-006 | PLN-006 | Existing PRD `AI Agent Requirements` sections use English | platform | Done |
 | H4-T-008 | Update indexes and progress memory | memory | REQ-H4-007 | PLN-007 | README index rows and progress ledger entry | platform | Done |
 | H4-T-009 | Run static validation | eval | Verification | PLN-007 | Verification Summary | platform | Done |
-
-### Suggested Types
-
-- `doc`
-- `test`
-- `eval`
-- `guardrail`
-- `prompt`
-- `memory`
-
-### Agent-specific Types
-
-- `prompt`
-- `tool`
-- `memory`
-- `guardrail`
-- `eval`
-- `observability`
 
 ### Phase View
 
@@ -110,6 +53,33 @@ validation gates.
 - [x] H4-T-007 Normalize AI-agent requirement prose.
 - [x] H4-T-008 Update indexes and progress memory.
 - [x] H4-T-009 Run static validation.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `H4-T-001 through H4-T-009` is limited to these Harness Four-Element Alignment owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-06-04-harness-four-element-alignment.md`
+  - `docs/03.specs/006-workspace-harness-gap-analysis/spec.md`
+  - `docs/04.execution/plans/2026-06-04-harness-four-element-alignment.md`
+  - `.claude/CLAUDE.md`
+  - `.codex/CODEX.md`
+  - `.agents/skills/workspace-harness-audit/skill.md`
+  - `scripts/validate-repo-quality-gates.sh`
+- **Forbidden Paths**: provider account settings, live agent sessions, credentials, model/runtime policy outside the parent Plan, and repository paths outside the Harness Four-Element Alignment surfaces.
+- **Approval Required**: Human approval is required before Harness Four-Element Alignment provider configuration, model-policy promotion, remote agent action, credential access, protected-file expansion, push, merge, or publication.
+- **Static Validation**: Preserve the Harness Four-Element Alignment outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+  - `python3 -m json.tool .claude/settings.json`
+  - `python3 -m json.tool .codex/hooks.json`
+  - `python3 -m json.tool .agents/hooks.json`
+- **Live Validation**: DEFER — Harness Four-Element Alignment is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: Use only redacted repository contracts for Harness Four-Element Alignment; do not read or print provider tokens, auth files, memory stores, private logs, kubeconfigs, secret values, or shell history.
+- **Rollback Plan**: Revert the logical Harness Four-Element Alignment change set for `H4-T-001 through H4-T-009` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Harness Four-Element Alignment evidence remains in:
+  - `docs/04.execution/tasks/2026-06-04-harness-four-element-alignment.md`
+  - `docs/03.specs/006-workspace-harness-gap-analysis/spec.md`
+  - `docs/04.execution/plans/2026-06-04-harness-four-element-alignment.md`
+  - `.agents/**`
+  - `.codex/**`
 
 ## Verification Summary
 

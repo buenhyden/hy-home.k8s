@@ -20,17 +20,6 @@ repository-static validation evidence.
 - **Parent Spec**: [../../03.specs/021-sdlc-lifecycle-contract/spec.md](../../03.specs/021-sdlc-lifecycle-contract/spec.md)
 - **Parent Plan**: [../plans/2026-07-06-sdlc-lifecycle-contract.md](../plans/2026-07-06-sdlc-lifecycle-contract.md)
 
-## Approval and Safety Boundaries
-
-- Documentation-only work still needs validation evidence.
-- Contract bodies stay in Stage 00 and Stage 99 owners; README files route and
-  index rather than duplicating governance bodies.
-- Repo-static validation must not be reported as live runtime readiness unless
-  a separate live check was approved and run.
-- `_workspace` may stage only temporary, non-secret repo-support artifacts.
-- Archive tombstones preserve traceability metadata in frontmatter and keep
-  tombstone bodies concise by default.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -39,12 +28,6 @@ repository-static validation evidence.
 | T-002 | Add archive tombstone metadata contract, update current tombstones, and keep archive validator support passing. | doc/test | Archive Contract; Data Modeling & Storage Strategy | PLN-002 | Commit `b7eeac9`; amended after semantic archive reason review; `git diff --check`; `bash -n scripts/validate-repo-quality-gates.sh`; `bash scripts/validate-repo-quality-gates.sh .`. | platform | Done |
 | T-003 | Record active route evidence, `_workspace` boundary evidence, and this Stage 04 task record. | doc | Numbering Contract; Workspace Staging Contract | PLN-003 | Active route scans confirmed numeric Stage 01 PRDs and numeric Stage 03 spec folders; `_workspace/README.md` boundary wording; task README index update; `bash scripts/validate-repo-quality-gates.sh .`. | platform | Done |
 | T-004 | Add remaining deterministic lifecycle route gates and close final validation evidence. | test/doc | Core Design; Acceptance Criteria | PLN-004 | Validator now rejects date-based active PRDs, nonnumeric active PRDs, nonnumeric active Spec folders, invalid archive tombstone metadata, and Stage 04 README index status/updated drift; final `git diff --check`, shell syntax check, full repository quality gate, and active route scans passed. | platform | Done |
-
-### Suggested Types
-
-This task uses `doc` for contract and evidence updates and `test` for
-repository-static validation gate changes. It does not include runtime `impl`
-or `ops` work.
 
 ### Phase View
 
@@ -57,6 +40,28 @@ or `ops` work.
 
 - [x] T-003 Align active surface evidence and workspace boundary.
 - [x] T-004 Add validation gates and close evidence.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `T-001 through T-004` is limited to these SDLC Lifecycle Contract owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-06-sdlc-lifecycle-contract.md`
+  - `docs/03.specs/021-sdlc-lifecycle-contract/spec.md`
+  - `docs/04.execution/plans/2026-07-06-sdlc-lifecycle-contract.md`
+  - `_workspace/README.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the SDLC Lifecycle Contract work items and linked evidence owners.
+- **Approval Required**: Human approval is required before SDLC Lifecycle Contract protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the SDLC Lifecycle Contract outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+  - `bash -n scripts/validate-repo-quality-gates.sh`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `find docs/01.requirements -maxdepth 1 -type f -name '*.md' -printf '%f\n' | sort`
+- **Live Validation**: DEFER — SDLC Lifecycle Contract is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for SDLC Lifecycle Contract; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical SDLC Lifecycle Contract change set for `T-001 through T-004` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable SDLC Lifecycle Contract evidence remains in:
+  - `docs/04.execution/tasks/2026-07-06-sdlc-lifecycle-contract.md`
+  - `docs/03.specs/021-sdlc-lifecycle-contract/spec.md`
+  - `docs/04.execution/plans/2026-07-06-sdlc-lifecycle-contract.md`
 
 ## Verification Summary
 

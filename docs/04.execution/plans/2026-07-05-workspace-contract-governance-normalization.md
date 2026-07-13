@@ -199,7 +199,7 @@ title: 'Task: Workspace Contract Governance Normalization'
 type: sdlc/task
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-05
 ---
 ```
 
@@ -228,7 +228,7 @@ Use these top-level sections in order:
 
 ## Deferrals
 
-## Traceability
+## Related Documents
 ```
 
 Populate the `## Task Table` with rows for WCGN-001 through WCGN-005. Set
@@ -338,7 +338,7 @@ Create a frontmatter-free README with the required headings:
 
 ## Link Basis
 
-## Traceability
+## Related Documents
 ```
 
 The body must state these contract facts:

@@ -8,10 +8,6 @@ updated: 2026-05-17
 
 # Reference Maintenance Runbook
 
-## Runbook Type
-
-`maintenance`
-
 ## Overview
 
 이 런북은 `docs/90.references`의 reference 문서, 버전 인벤토리, LLM Wiki 링크맵을 변경할 때 따라야 하는 반복 유지보수 절차를 정의한다.
@@ -24,14 +20,9 @@ updated: 2026-05-17
 
 Reference 추가, 이동, 버전 snapshot 갱신, LLM Wiki owner/link 변경이 있을 때 `90.references`의 사실 경계와 `05.operations`의 반복 절차 경계를 유지하면서 README, template, generated index, 품질 게이트를 같은 변경 단위에서 검증한다.
 
-## Canonical References
+## Runbook Type
 
-- [90.references README](../../90.references/README.md)
-- [Tech Stack Version Inventory](../../90.references/data/tech-stack-version-inventory.md)
-- [LLM WIKI README](../../90.references/llm-wiki/README.md)
-- [LLM Wiki Curation Guide](../guides/0009-llm-wiki-curation-guide.md)
-- [Reference Template](../../99.templates/templates/common/reference.template.md)
-- [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
+`maintenance`
 
 ## When to Use
 
@@ -155,3 +146,4 @@ git diff --check
 - **Reference**: [LLM WIKI README](../../90.references/llm-wiki/README.md)
 - **Guide**: [LLM Wiki Curation Guide](../guides/0009-llm-wiki-curation-guide.md)
 - **Template**: [Reference Template](../../99.templates/templates/common/reference.template.md)
+- [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)

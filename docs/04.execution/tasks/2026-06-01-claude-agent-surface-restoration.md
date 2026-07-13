@@ -21,12 +21,6 @@ restoration and validation hardening were completed after Phase 2 planning.
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Subagent Protocol**: [../../00.agent-governance/subagent-protocol.md](../../00.agent-governance/subagent-protocol.md)
 
-## Approval and Safety Boundaries
-
-- Treat `bash scripts/validate-repo-quality-gates.sh .` as necessary but not sufficient evidence.
-- Preserve provider separation: Claude agents are real files, Gemini agents stay under `.agents/agents`, and Codex agents stay under `.codex/agents`.
-- Do not perform live cluster, secret, deployment, or destructive Git actions for this workstream.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -38,17 +32,6 @@ restoration and validation hardening were completed after Phase 2 planning.
 | T-005 | Harden validator for symlink and Claude frontmatter drift | test | N/A | PLN-005 | validator fails on symlink/frontmatter drift and passes after remediation | platform | Done |
 | T-006 | Update governance/readiness text only where current evidence requires it | doc | N/A | PLN-006 | Current governance text already matched the restored provider-specific agent layout | platform | Done |
 | T-007 | Record Phase 3 execution evidence and limitations | doc | N/A | PLN-007 | task verification summary includes commands, skipped checks, and no-live-action statement | platform | Done |
-
-### Suggested Types
-
-- `impl`
-- `test`
-- `doc`
-
-### Agent-specific Types
-
-- `guardrail`
-- `eval`
 
 ### Phase View
 
@@ -64,6 +47,31 @@ restoration and validation hardening were completed after Phase 2 planning.
 - [x] T-003 Add Claude model/tool frontmatter to all Claude agent files.
 - [x] T-004 Preserve mirror parity across Claude/Gemini/Codex agents.
 - [x] T-006 Update governance/readiness text only where current evidence requires it.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `T-001 through T-007` is limited to these Claude Agent Surface Restoration owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-06-01-claude-agent-surface-restoration.md`
+  - `docs/04.execution/plans/2026-06-01-claude-agent-surface-restoration.md`
+  - `.claude/CLAUDE.md`
+  - `docs/00.agent-governance/harness-catalog.md`
+  - `docs/00.agent-governance/subagent-protocol.md`
+  - `.claude/agents`
+- **Forbidden Paths**: provider account settings, live agent sessions, credentials, model/runtime policy outside the parent Plan, and repository paths outside the Claude Agent Surface Restoration surfaces.
+- **Approval Required**: Human approval is required before Claude Agent Surface Restoration provider configuration, model-policy promotion, remote agent action, credential access, protected-file expansion, push, merge, or publication.
+- **Static Validation**: Preserve the Claude Agent Surface Restoration outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `find .claude/agents -maxdepth 1 -type f -name '*.md' | sort`
+  - `rg -n "model: Gemini|Gemini 3\\." .claude/agents`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+- **Live Validation**: DEFER — Claude Agent Surface Restoration is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: Use only redacted repository contracts for Claude Agent Surface Restoration; do not read or print provider tokens, auth files, memory stores, private logs, kubeconfigs, secret values, or shell history.
+- **Rollback Plan**: Revert the logical Claude Agent Surface Restoration change set for `T-001 through T-007` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Claude Agent Surface Restoration evidence remains in:
+  - `docs/04.execution/tasks/2026-06-01-claude-agent-surface-restoration.md`
+  - `docs/04.execution/plans/2026-06-01-claude-agent-surface-restoration.md`
+  - `.claude/CLAUDE.md`
+  - `docs/00.agent-governance/harness-catalog.md`
+  - `docs/00.agent-governance/subagent-protocol.md`
 
 ## Verification Summary
 

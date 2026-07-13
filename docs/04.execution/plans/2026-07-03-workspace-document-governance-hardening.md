@@ -202,7 +202,7 @@ title: 'Reference: Workspace Document Governance Hardening Audit'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-03
 ---
 
 # Reference: Workspace Document Governance Hardening Audit
@@ -243,7 +243,7 @@ and repository validators.
 - Repository scans from tracked files.
 - Official source references listed in the parent Spec.
 
-## Traceability
+## Related Documents
 
 - [Parent Spec](../../03.specs/013-workspace-document-governance-hardening/spec.md)
 - [Parent Plan](../../04.execution/plans/2026-07-03-workspace-document-governance-hardening.md)

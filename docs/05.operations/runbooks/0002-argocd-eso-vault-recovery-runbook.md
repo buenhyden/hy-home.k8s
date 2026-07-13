@@ -8,10 +8,6 @@ updated: 2026-06-02
 
 # ArgoCD ESO Vault Recovery Runbook
 
-## Runbook Type
-
-`recovery`
-
 ## Overview
 
 이 런북은 `ClusterSecretStore/vault-backend Ready=False` 상황에서 Vault sealed 상태, EndpointSlice drift, Kubernetes auth drift를 구분하고, ArgoCD/ESO 상태를 정상화한 뒤 TLS/CI 계약 회귀를 점검하는 절차를 제공한다.
@@ -24,12 +20,9 @@ updated: 2026-06-02
 
 `vault-external` endpoint 부재, 연결 거부, Vault sealed 상태, 또는 Kubernetes auth drift로 발생하는 ESO/Vault 연동 장애를 빠르게 분류하고, operator-bound 복구 절차와 계약 회귀 검증을 연결한다.
 
-## Canonical References
+## Runbook Type
 
-- [`../../02.architecture/requirements/0007-current-local-gitops-platform.md`](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
-- [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
-- [`../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md)
+`recovery`
 
 ## When to Use
 
@@ -236,3 +229,7 @@ kubectl -n platform delete endpointslice vault-external-1
 
 - **Guide**: [`../guides/0002-wsl2-k3d-argocd-ha-setup-guide.md`](../guides/0002-wsl2-k3d-argocd-ha-setup-guide.md)
 - **Operations Policy**: [`../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md`](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md)
+- [`../../02.architecture/requirements/0007-current-local-gitops-platform.md`](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
+- [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
+- [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
+- [`../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md)

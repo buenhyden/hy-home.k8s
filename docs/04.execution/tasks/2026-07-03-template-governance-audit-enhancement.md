@@ -24,20 +24,6 @@ approved Stage 03 spec and Stage 04 plan.
 - **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/frontmatter-schema.md)
 - **Quality Gate**: [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
 
-## Approval and Safety Boundaries
-
-- Keep this work repo-static unless the user separately approves a remote or
-  live-runtime action.
-- Treat support contracts as the expected behavior for template forms.
-- Record each finding with evidence, expected contract, observed state, risk,
-  action, validation command, and status.
-- Add validator rules only when the rule is deterministic and rooted in a
-  documented support or Stage 00 contract.
-- Do not rewrite topic content in authored documents unless a concrete
-  template-governance finding requires it.
-- Run `git diff --check` and
-  `bash scripts/validate-repo-quality-gates.sh .` before every logical commit.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -48,13 +34,6 @@ approved Stage 03 spec and Stage 04 plan.
 | T-004 | Add deterministic validator guardrails for stable support drift patterns | guardrail | Evaluation / Verification Commands | PLN-005 | Quality gate PASS and focused negative-risk review | platform | Done |
 | T-005 | Verify authored documents and template use after remediation | eval | Guardrails / Success Criteria | PLN-006 | Residue, flat-route, incident-route, and frontmatter scans | platform | Done |
 | T-006 | Record final validation evidence and mark Plan, Task, README indexes, and progress complete | doc | Success Criteria | PLN-006 | Final validation summary and completion commit | platform | Done |
-
-### Suggested Types
-
-- `doc` for support contract, README, plan, task, and progress updates.
-- `eval` for route, residue, frontmatter, incident-path, and external-source
-  evidence scans.
-- `guardrail` for repository quality gate enhancements.
 
 ### Audit Finding Ledger
 
@@ -84,6 +63,36 @@ approved Stage 03 spec and Stage 04 plan.
 
 - [x] T-005 Verify authored document usage.
 - [x] T-006 Complete final sync and evidence.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `T-001 through FND-004` is limited to these Template Governance Audit Enhancement owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
+  - `docs/03.specs/012-template-governance-audit-enhancement/spec.md`
+  - `docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md`
+  - `docs/99.templates/README.md`
+  - `docs/99.templates/support/template-routing.md`
+  - `docs/99.templates/support/frontmatter-schema.md`
+  - `docs/99.templates/support/legacy-cleanup-rules.md`
+  - `docs/99.templates/support/README.md`
+  - `docs/99.templates/support/sdlc-governance.md`
+  - `scripts/validate-repo-quality-gates.sh`
+- **Forbidden Paths**: active policy or runtime configuration not named by the Template Governance Audit Enhancement Task Table, provider settings, secret values, local diagnostics, and remote publication surfaces.
+- **Approval Required**: Human approval is required before publishing Template Governance Audit Enhancement research, changing active policy/runtime behavior, deleting evidence, contacting providers, push, merge, or corpus expansion.
+- **Static Validation**: Preserve the Template Governance Audit Enhancement outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `find docs/99.templates -maxdepth 5 -type f -print | sort`
+  - `rg -n "Phase [1-4]|during the migration|after Phase|current and target|YYYY-MM-DD-<harness-task>|duplicate-harness-task-starter" docs/99.templates/support docs/99.templates/README.md docs/00.agent-governance/rules/document-stage-routing.md scripts/validate-repo-quality-gates.sh`
+- **Live Validation**: DEFER — Template Governance Audit Enhancement is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: Template Governance Audit Enhancement evidence must use public or repository-visible facts only; do not inspect or reproduce credentials, tokens, auth files, private logs, kubeconfigs, or shell history.
+- **Rollback Plan**: Revert the logical Template Governance Audit Enhancement change set for `T-001 through FND-004` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Template Governance Audit Enhancement evidence remains in:
+  - `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
+  - `docs/03.specs/012-template-governance-audit-enhancement/spec.md`
+  - `docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md`
+  - `docs/99.templates/README.md`
+  - `docs/99.templates/support/template-routing.md`
 
 ## Verification Summary
 

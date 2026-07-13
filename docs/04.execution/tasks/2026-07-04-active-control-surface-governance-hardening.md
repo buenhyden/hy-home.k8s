@@ -23,20 +23,6 @@ examples as dated snapshots.
 - **Parent Spec**:
   [../../03.specs/016-active-control-surface-governance-hardening/spec.md](../../03.specs/016-active-control-surface-governance-hardening/spec.md)
 
-## Approval and Safety Boundaries
-
-- Work only repo-static control surfaces unless a separate human approval
-  grants a live mutation path.
-- Do not inspect secret values, regenerate credentials, mutate live clusters,
-  or change third-party resources.
-- Keep README files and GitHub-native Markdown frontmatter-free.
-- Keep durable policy in Stage 00 governance, Stage 99 support contracts,
-  Stage 05 operations documents, workflow files, or validators according to
-  the owning surface.
-- Repo-static validation must not be reported as live k3d, Argo CD, Vault,
-  ESO, cloud, or deployment readiness unless the matching live check was
-  approved and run.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -46,14 +32,6 @@ examples as dated snapshots.
 | ACS-003 | Align GitHub, CI/CD, QA, and protected-surface control files | doc | VAL-SPC-001, VAL-SPC-003, VAL-SPC-004 | Task 3 | GitHub Markdown remains frontmatter-free, workflow YAML parses, repo quality gate | platform | Done |
 | ACS-004 | Align GitOps, infrastructure, policy, scripts, tests, Traefik, and sample-app surfaces | doc | VAL-SPC-001, VAL-SPC-002, VAL-SPC-004 | Task 4 | Harness validation passes and optional tool skips remain explicit | platform | Done |
 | ACS-005 | Close evidence, review, and branch readiness | doc | VAL-SPC-005 | Task 5 | Full validation bundle, updated plan/task evidence, final drift review | platform | Done |
-
-### Suggested Types
-
-- `doc`
-- `test`
-- `eval`
-- `guardrail`
-- `ops`
 
 ### Phase View
 
@@ -304,6 +282,31 @@ PY
 - Plan and task indexes are marked `Done`, and this task record is closed.
 - No live Kubernetes, Argo CD, Vault, cloud, external Traefik, provider,
   publish, push, merge, or secret-value action was performed.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `ACS-001 through traefik` is limited to these Active Control Surface Governance Hardening owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md`
+  - `docs/04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md`
+  - `docs/03.specs/016-active-control-surface-governance-hardening/spec.md`
+  - `examples/aws/docs`
+  - `examples/azure/docs`
+  - `examples/sample-app`
+  - `.github/ABOUT.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Active Control Surface Governance Hardening work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Active Control Surface Governance Hardening protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Active Control Surface Governance Hardening outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git status --short --branch`
+  - `git diff --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `bash scripts/validate-harness.sh`
+- **Live Validation**: DEFER — Active Control Surface Governance Hardening is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Active Control Surface Governance Hardening; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Active Control Surface Governance Hardening change set for `ACS-001 through traefik` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Active Control Surface Governance Hardening evidence remains in:
+  - `docs/04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md`
+  - `docs/04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md`
+  - `docs/03.specs/016-active-control-surface-governance-hardening/spec.md`
 
 ## Verification Summary
 

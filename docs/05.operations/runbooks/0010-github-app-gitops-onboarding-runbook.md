@@ -8,10 +8,6 @@ updated: 2026-05-26
 
 # GitHub 앱 GitOps 온보딩 런북
 
-## Runbook Type
-
-`onboarding`
-
 ## Overview
 
 이 런북은 GitHub 레포 기반 애플리케이션을 `hy-home.k8s` 클러스터에 GitOps 방식으로 온보딩하는
@@ -22,12 +18,9 @@ updated: 2026-05-26
 
 신규 GitHub 앱을 `gitops/workloads/`에 추가하고 PR review 이후 ArgoCD reconciliation으로 배포/검증/rollback할 수 있게 한다.
 
-## Canonical References
+## Runbook Type
 
-- [`../guides/0008-github-app-gitops-onboarding-guide.md`](../guides/0008-github-app-gitops-onboarding-guide.md)
-- [`../policies/0007-app-gitops-onboarding-policy.md`](../policies/0007-app-gitops-onboarding-policy.md)
-- [`../../../gitops/workloads/adminer`](../../../gitops/workloads/adminer) — fuller active reference pattern
-- [`../../../examples/sample-app`](../../../examples/sample-app) — minimal onboarding template
+`onboarding`
 
 ## When to Use
 
@@ -211,6 +204,19 @@ kubectl argo rollouts get rollout ${APP} -n apps
 
 ---
 
+## Observability and Evidence Sources
+
+- **Signals**: ArgoCD Application health/sync, Rollout status, AnalysisRun result, Pod readiness, Ingress certificate status
+- **Evidence to Capture**: PR diff, ArgoCD app status, rollout history, relevant events/log snippets, HTTPS verification output
+
+### Agent Operations
+
+- **Prompt Rollback**: 최근 agent-generated manifest 변경을 PR diff 기준으로 되돌린다.
+- **Model Fallback**: 검증 실패 시 sample-app/adminer 패턴에 맞춘 최소 변경만 유지한다.
+- **Tool Disable / Revoke**: 실패 중 live cluster mutation 또는 secret write 자동화를 중지한다.
+- **Eval Re-run**: GitOps structure, manifest validation, secret handling gate를 재실행한다.
+- **Trace Capture**: 온보딩 task 또는 PR에 검증 명령과 결과를 남긴다.
+
 ## Safe Rollback or Recovery Procedure
 
 Procedure 4의 abort/rollback 절차를 우선 사용한다. GitOps manifest 수정이 필요한 경우 이미지 태그 또는 설정을 수정한 뒤 feature branch PR flow로 재배포한다.
@@ -305,22 +311,10 @@ kubectl apply -f gitops/clusters/local/appproject-apps.yaml
 
 ---
 
-## Observability and Evidence Sources
-
-- **Signals**: ArgoCD Application health/sync, Rollout status, AnalysisRun result, Pod readiness, Ingress certificate status
-- **Evidence to Capture**: PR diff, ArgoCD app status, rollout history, relevant events/log snippets, HTTPS verification output
-
-### Agent Operations
-
-- **Prompt Rollback**: 최근 agent-generated manifest 변경을 PR diff 기준으로 되돌린다.
-- **Model Fallback**: 검증 실패 시 sample-app/adminer 패턴에 맞춘 최소 변경만 유지한다.
-- **Tool Disable / Revoke**: 실패 중 live cluster mutation 또는 secret write 자동화를 중지한다.
-- **Eval Re-run**: GitOps structure, manifest validation, secret handling gate를 재실행한다.
-- **Trace Capture**: 온보딩 task 또는 PR에 검증 명령과 결과를 남긴다.
-
 ## Traceability
 
 - **Guide**: [`../guides/0008-github-app-gitops-onboarding-guide.md`](../guides/0008-github-app-gitops-onboarding-guide.md)
 - **Operations 정책**: [`../policies/0007-app-gitops-onboarding-policy.md`](../policies/0007-app-gitops-onboarding-policy.md)
 - **ESO/Vault Recovery**: [`./0002-argocd-eso-vault-recovery-runbook.md`](./0002-argocd-eso-vault-recovery-runbook.md)
 - **예시 템플릿**: [`../../../examples/sample-app`](../../../examples/sample-app)
+- [`../../../gitops/workloads/adminer`](../../../gitops/workloads/adminer) — fuller active reference pattern

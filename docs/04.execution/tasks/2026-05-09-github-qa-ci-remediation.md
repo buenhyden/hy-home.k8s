@@ -24,16 +24,6 @@ defensive overlap between CI jobs remains intentional QA coverage.
 - **Parent Spec**: not applicable; this remediation does not introduce a new Kubernetes or runtime contract.
 - **Parent Plan**: [`../plans/2026-05-09-github-qa-ci-remediation.md`](../plans/2026-05-09-github-qa-ci-remediation.md)
 
-## Approval and Safety Boundaries
-
-- Documentation-only and workflow-only changes still need validation evidence.
-- Keep CI role separation intact: `pre-commit`, `repo-quality-static`, and `manifest-static`. Shell syntax coverage is handled by pre-commit and repo-static/manual verification commands, not by a separate active CI job.
-- Do not add deployment, direct cluster mutation, or publishing commands to GitHub Actions.
-- Do not modify GitHub branch protection/ruleset settings in this work item.
-- Treat `.github/ABOUT.md` as a routing hub, not the branch policy source of truth.
-- Keep branch policy SSoT in `docs/00.agent-governance/rules/git-workflow.md`; CI and PR template are required mirrors.
-- This document remains the execution-tracking source of truth for this remediation.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -51,23 +41,6 @@ defensive overlap between CI jobs remains intentional QA coverage.
 | T-011 | Add branch prefix parity checks from `git-workflow.md` | test | n/a | PLN-011 | quality gate compares CI regex/message and PR template prefixes to governance SSoT | Platform | Done |
 | T-012 | Add `.github/ABOUT.md` drift guard | test | n/a | PLN-011 | quality gate fails if ABOUT mirrors the full branch policy instead of routing to SSoTs | Platform | Done |
 | T-013 | Record follow-up evidence by local/CI-only/skipped lanes | doc | n/a | PLN-012 | verification summary separates local PASS from optional unavailable tools | Platform | Done |
-
-### Suggested Types
-
-- `impl`
-- `test`
-- `eval`
-- `doc`
-- `ops`
-
-### Agent-specific Types
-
-- `prompt`
-- `tool`
-- `memory`
-- `guardrail`
-- `eval`
-- `observability`
 
 ### Phase View
 
@@ -89,6 +62,28 @@ defensive overlap between CI jobs remains intentional QA coverage.
 ### Phase 2
 
 - [x] T-007 Run and record repo-backed validation bundle
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `T-001 through T-013` is limited to these .github QA and CI Remediation owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-05-09-github-qa-ci-remediation.md`
+  - `docs/04.execution/plans/2026-05-09-github-qa-ci-remediation.md`
+  - `docs/04.execution/plans/README.md`
+  - `docs/04.execution/tasks/README.md`
+  - `.github/ABOUT.md`
+- **Forbidden Paths**: remote GitHub rulesets or branch protection, workflow-dispatch state, credentials, deployment targets, and paths outside the .github QA and CI Remediation work-item surfaces.
+- **Approval Required**: Human approval is required before remote GitHub/ruleset changes, workflow dispatch, deployment, push, merge, or widening the .github QA and CI Remediation parent-Plan file set.
+- **Static Validation**: Preserve the .github QA and CI Remediation outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `git diff --check`
+  - `bash infrastructure/tests/verify-contracts-static.sh`
+  - `bash scripts/validate-gitops-structure.sh`
+- **Live Validation**: DEFER — .github QA and CI Remediation is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No credential value is required for .github QA and CI Remediation; do not read or print GitHub tokens, signing material, repository secrets, kubeconfigs, or shell history.
+- **Rollback Plan**: Revert the logical .github QA and CI Remediation change set for `T-001 through T-013` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable .github QA and CI Remediation evidence remains in:
+  - `docs/04.execution/tasks/2026-05-09-github-qa-ci-remediation.md`
+  - `docs/04.execution/plans/2026-05-09-github-qa-ci-remediation.md`
 
 ## Verification Summary
 

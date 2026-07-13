@@ -432,7 +432,7 @@ title: 'Reference: Governance Harness Loop Provider Implementation Audit'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-05
 ---
 ```
 

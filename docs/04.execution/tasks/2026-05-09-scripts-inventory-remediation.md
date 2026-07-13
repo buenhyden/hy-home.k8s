@@ -19,28 +19,6 @@ in a traceable form.
 - **Parent Spec**: not applicable; this remediation does not introduce a new technical contract.
 - **Parent Plan**: [`../plans/2026-05-09-scripts-inventory-remediation.md`](../plans/2026-05-09-scripts-inventory-remediation.md)
 
-## Approval and Safety Boundaries
-
-- Documentation-only work still needs validation evidence.
-- Do not delete, rename, or merge scripts unless a future plan finds concrete unused code.
-- Keep the public command contract unchanged.
-- Clarify existing optional arguments as repo root only; do not add arbitrary subpath scan mode.
-- Keep `scripts/README.md` as the current script inventory entry point.
-- This document remains the execution-tracking source of truth for this remediation.
-
-### 2026-05-17 Evidence Refresh
-
-The 2026-05-09 task context recorded the initial four-script snapshot.
-Current inventory is maintained in `scripts/README.md`; as of 2026-05-17 it contains five `*.sh` scripts.
-
-Retention now uses the Tier A/B/C standard:
-Tier A is a directly executed CI job or post-edit hook gate and counts as retention evidence.
-Tier B is an indirect dependency of a required quality gate that owns a generated artifact or check contract and counts as indirect retention evidence.
-Tier C is a README, PR template, docs, allowlist, or manual command surface and does not count as retention evidence by itself.
-
-`generate-llm-wiki-index.sh` is Tier B indirect because `validate-repo-quality-gates.sh` runs it with `--check` and it owns the generated `docs/90.references/llm-wiki/wiki-index.md` contract.
-No Tier C-only, unused, or one-off deletion candidates are present as of 2026-05-17.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -52,23 +30,6 @@ No Tier C-only, unused, or one-off deletion candidates are present as of 2026-05
 | T-005 | Run repo-backed validation bundle | test | n/a | PLN-005 | validation command output reviewed | Platform | Done |
 | T-006 | Clarify repo-root argument contract and fail invalid manifest/secret scan roots | impl | n/a | PLN-006 | canonical commands pass and subpath negative checks fail clearly | Platform | Done |
 | T-007 | Refresh 2026-05-17 retention evidence and command-contract allowlist | doc | n/a | 2026-05-17 Evidence Refresh | quality gate and generated-index checks run before handoff | Platform | Done |
-
-### Suggested Types
-
-- `impl`
-- `test`
-- `eval`
-- `doc`
-- `ops`
-
-### Agent-specific Types
-
-- `prompt`
-- `tool`
-- `memory`
-- `guardrail`
-- `eval`
-- `observability`
 
 ### Phase View
 
@@ -84,6 +45,26 @@ No Tier C-only, unused, or one-off deletion candidates are present as of 2026-05
 
 - [x] T-005 Run and record repo-backed validation bundle
 - [x] T-006 Clarify repo-root argument contract for manifest and secret scan scripts
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `T-001 through T-007` is limited to these scripts Inventory Remediation owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-05-09-scripts-inventory-remediation.md`
+  - `docs/04.execution/plans/2026-05-09-scripts-inventory-remediation.md`
+  - `scripts/README.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the scripts Inventory Remediation work items and linked evidence owners.
+- **Approval Required**: Human approval is required before scripts Inventory Remediation protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the scripts Inventory Remediation outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `bash scripts/generate-llm-wiki-index.sh --check`
+  - `git diff --check`
+  - `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +`
+- **Live Validation**: DEFER — scripts Inventory Remediation is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for scripts Inventory Remediation; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical scripts Inventory Remediation change set for `T-001 through T-007` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable scripts Inventory Remediation evidence remains in:
+  - `docs/04.execution/tasks/2026-05-09-scripts-inventory-remediation.md`
+  - `docs/04.execution/plans/2026-05-09-scripts-inventory-remediation.md`
 
 ## Verification Summary
 

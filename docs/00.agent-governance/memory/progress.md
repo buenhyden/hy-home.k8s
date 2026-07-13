@@ -8,6 +8,58 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - ADM-004 independent semantic correction
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, execution, operations, qa
+- **Status**: complete
+- **Tags**: #adm-004 #semantic-review #task-safety #fence-preservation
+
+#### Progress
+
+- Reconstructed the Approval and Safety Boundaries of exactly 47 Tasks from
+  each document's own Inputs, Task Table, verification evidence, and parent
+  authorities; removed copied Working Rules and provider-type catalogs.
+- Restored the fenced instruction/example interiors of exactly seven Plans
+  byte-for-byte from dependency `851007d` while retaining outer canonical
+  structure, and canonicalized exactly nine Runbooks without changing their
+  procedures or recovery evidence.
+- Added category-specific independent-review evidence and content decisions to
+  the corresponding 63 durable-ledger rows; official sources, applicability,
+  historical facts, and `shape-normalized` results remain preserved.
+
+#### Memory
+
+- Structural normalization must never rewrite executable fenced instructions,
+  and a Task safety contract must be derived from that Task rather than copied
+  from a generic catalog.
+- Runbook relationship links have one owner: Traceability. Consolidation must
+  deduplicate by target while preserving procedure, verification, observation,
+  and recovery owners.
+
+#### Evidence
+
+- Structural audit proves `47/7/9` exact document counts, 47 unique
+  Task safety blocks with all required fields, zero forbidden catalog residue,
+  seven fenced payloads equal to `851007d`, and nine canonical Runbook H2
+  sequences with no Canonical References H2. One nested historical Markdown
+  example uses a four-backtick outer delimiter so its unchanged three-backtick
+  payload remains CommonMark-safe and invisible to containing-document H2
+  validation.
+- Closure passed with an exact 66-path working correction, unchanged 126-path
+  combined wave, compatibility `626 DEFER / 0 FAIL`, exact-wave zero
+  diagnostics, links, full quality gates, Plan Step 5 pre-commit, diff check,
+  the combined validator guard, and index cleanliness.
+
+#### Handoff
+
+- Independently review and commit the exact 66-path bounded correction; retain
+  the 120-document wave and six fixed owners as the 126-path rollback unit.
+- ADM-005 remains blocked until this correction is accepted with the existing
+  ADM-004 wave and dependency `851007d`.
+
 ### 2026-07-13 - ADM-004 Stage 04–05 authored shape normalization
 
 #### Metadata

@@ -36,7 +36,7 @@ consolidate duplicate AWS/Azure prose, and close the compatibility boundary.
 | ADM-001 | Start reciprocal Spec, Plan, Task, and index lineage | platform | Done | `python3` reciprocal-lineage assertion in Plan Task 1 Step 4; logical commit `docs(execution): start authored document migration` |
 | ADM-002 | Publish the baseline disposition and durable research ledger | platform | Done | Pre-ledger RED was sole `LEDGER-MISSING`; final inventory/ledger equality is exactly 469 paths (`baseline=433`, `new=38`) with 14 columns, a pinned self-row, `preserve=183`, `transform=227`, `merge=59`, zero ledger Markdown/cross-document diagnostics, and empty semantic items; logical commit `docs(migration): inventory authored document dispositions` |
 | ADM-003 | Normalize Stage 01–03 active design documents | platform | Done | Exact 34-path manifest SHA-256 `3cd63fa57b386f8036f14a8a59638318b5686fe4b618422b8577ad106f54e29f`; seven atomic batches `5/5/5/5/5/5/4` each returned zero exact-path diagnostics; all 34 ledger rows record official-primary or explicit repository-only source applicability and `shape-normalized`; compatibility debt moved from `266/1299` paths/occurrences to `232/1127`; logical commit `docs(migration): normalize active sdlc design documents` |
-| ADM-004 | Normalize Stage 04–05 execution and operations documents | platform | Done | Exact 120-path allowed manifest SHA-256 `ac9ca4985d0f8945ae342294bcb059fb00d5f343c5167d3c71378e3b0e6c2a8e`; corrected debt-removal manifest SHA-256 `947e7a5e37ace8e0da7099fad2a7891d371308a52ec214d52b734419988fd565`; 24 atomic five-path checkpoints each returned zero exact-path diagnostics; remaining debt is `112` paths, `626` occurrences, and `602` token obligations; final exact set is `120` documents plus six evidence/validation owners; zero-cap correction dependency `851007d`; logical commit target `docs(migration): normalize execution and operations documents` |
+| ADM-004 | Normalize Stage 04–05 execution and operations documents | platform | Done | Exact 120-path allowed manifest SHA-256 `ac9ca4985d0f8945ae342294bcb059fb00d5f343c5167d3c71378e3b0e6c2a8e`; corrected debt-removal manifest SHA-256 `947e7a5e37ace8e0da7099fad2a7891d371308a52ec214d52b734419988fd565`; 24 atomic five-path checkpoints each returned zero exact-path diagnostics; independent correction reconstructed 47 Task safety boundaries, restored seven Plan fence interiors from `851007d`, canonicalized nine Runbooks, and added semantic-review evidence to the same 63 ledger rows; remaining debt is `112` paths, `626` occurrences, and `602` token obligations; final exact set is `120` documents plus six evidence/validation owners; zero-cap correction dependency `851007d`; logical commit target `docs(migration): normalize execution and operations documents` |
 | ADM-005 | Normalize governance, Current references, Archive links, and six support documents | platform | Queued | Exact 73-path frozen manifest with batch-atomic ledger/debt/cap checkpoints; structural-only checks preserve historical facts and Spec 027/031 route/schema/form/provider semantics; logical commit `docs(migration): normalize governance references and archive links` |
 | ADM-006 | Consolidate AWS and Azure example documentation | platform | Queued | Exact 39-path debt manifest within the immutable 59-source merge/deletion set; synchronize the final zero-debt validator cap constants under the executable diff guard; `test -z "$(git ls-files examples/aws/docs examples/azure/docs)"`; logical commit `docs(migration): consolidate cloud example documentation` |
 | ADM-007 | Enable strict validation and close Spec 030 | platform | Queued | `python3 scripts/validate-document-contract-registry.py --root . --mode strict`, both semantic validators in strict mode, and `bash scripts/validate-repo-quality-gates.sh .`; logical commit `chore(docs): cut over document profiles to strict validation` |
@@ -178,6 +178,20 @@ ledger outcomes, and the exact 126-path set remain unchanged, no README became
 stale, and the full repository quality gate passed. ADM-005 remains blocked
 until the ADM-004 commit and its independent review are accepted. Reverting
 `851007d` is only safe after removing every dependent ADM-004 validator change.
+
+Independent semantic review then identified three bounded authoring defects in
+the committed ADM-004 document subset. The correction removes generic Working
+Rules and provider-type catalogs from exactly 47 Tasks and reconstructs each
+Task's eight safety fields from its own Inputs, executable rows, recorded
+verification, and parent authorities. It restores every fence interior in the
+exact seven affected Plans byte-for-byte from dependency `851007d`, while
+retaining their outer canonical heading normalization. It also puts the exact
+nine affected Runbooks in canonical H2 order and consolidates unique Canonical
+References links under the sole Traceability owner without changing procedures
+or recovery evidence. The same 63 durable-ledger rows now record this
+independent semantic decision. Final closure proves the exact `66`-path working
+correction and unchanged `126`-path combined wave, with `626 DEFER / 0 FAIL`,
+zero diagnostics on all 120 wave documents, and a clean index.
 
 ## Traceability
 

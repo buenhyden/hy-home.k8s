@@ -24,20 +24,6 @@ preserves reciprocal Spec, Plan, Task, and index lineage throughout the Spec
 - **Completed Registry Task**:
   [./2026-07-12-document-contract-registry.md](./2026-07-12-document-contract-registry.md)
 
-## Approval and Safety Boundaries
-
-- Record failing assertions before each deterministic contract change.
-- Publish the type-to-source evidence row before changing a template family.
-- Link exact machine facts to the registry instead of copying complete tables
-  into support prose.
-- Preserve authored bodies outside bounded duplicate-form cleanup; TCC-005
-  established the explicit finite compatibility contract and Spec 030 owns its
-  removal.
-- Restrict Stage 99 README changes to inventory and target-link rows; Spec 028
-  owns README body design.
-- Treat repository-static evidence as bounded evidence, not live runtime
-  readiness.
-
 ## Task Table
 
 | Task ID | Description | Type | Validation / Evidence | Owner | Status |
@@ -48,20 +34,6 @@ preserves reciprocal Spec, Plan, Task, and index lineage throughout the Spec
 | TCC-004 | Normalize canonical non-README forms | template | Heading matrix and native-format checks | platform | Done |
 | TCC-005 | Delete legacy Task form and establish compatibility | migration | Zero active legacy refs; old/new gates green | platform | Done |
 | TCC-006 | Close evidence and hand off Stage 99 README bodies | validation | Full QA and explicit Spec 028 handoff | platform | Done |
-
-### Suggested Types
-
-- `doc`: reciprocal Spec, Plan, Task, and index lineage work.
-- `research`: type-to-source evidence ledger work.
-- `governance`: support ownership consolidation work.
-- `template`: canonical non-README form normalization work.
-- `migration`: legacy form removal and compatibility work.
-- `validation`: closure QA and explicit Spec 028 handoff work.
-
-### Agent-specific Types
-
-- No agent-specific task types apply to TCC-001 through TCC-006; the tranche
-  uses the topic-specific types above.
 
 ### Phase View
 
@@ -79,6 +51,26 @@ preserves reciprocal Spec, Plan, Task, and index lineage throughout the Spec
 ### Phase 3: Closure
 
 - [x] TCC-006 Close evidence and hand off README body ownership.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `TCC-001 through TCC-006` is limited to these Template Contract Consolidation owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-12-template-contract-consolidation.md`
+  - `docs/03.specs/027-template-contract-consolidation/spec.md`
+  - `docs/04.execution/plans/2026-07-12-template-contract-consolidation.md`
+  - `docs/04.execution/tasks/2026-07-12-document-contract-registry.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Template Contract Consolidation work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Template Contract Consolidation protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Template Contract Consolidation outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+- **Live Validation**: DEFER — Template Contract Consolidation is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Template Contract Consolidation; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Template Contract Consolidation change set for `TCC-001 through TCC-006` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Template Contract Consolidation evidence remains in:
+  - `docs/04.execution/tasks/2026-07-12-template-contract-consolidation.md`
+  - `docs/03.specs/027-template-contract-consolidation/spec.md`
+  - `docs/04.execution/plans/2026-07-12-template-contract-consolidation.md`
+  - `docs/04.execution/tasks/2026-07-12-document-contract-registry.md`
 
 ## Verification Summary
 

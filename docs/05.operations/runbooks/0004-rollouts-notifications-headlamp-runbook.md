@@ -8,10 +8,6 @@ updated: 2026-05-09
 
 # Argo Rollouts, Notifications & Headlamp Runbook
 
-## Runbook Type
-
-`bootstrap`
-
 ## Overview
 
 이 런북은 Argo Rollouts, Argo Notifications(Slack), Headlamp의 초기 부트스트랩, 복구, 검증 절차를 제공한다.
@@ -20,14 +16,9 @@ updated: 2026-05-09
 
 Rollouts, Notifications, Headlamp 운영 상태를 빠르게 확인하고, 초기 부트스트랩 또는 장애 복구 시 필요한 순서를 제공한다.
 
-## Canonical References
+## Runbook Type
 
-- [`../policies/0004-rollouts-notifications-headlamp-policy.md`](../policies/0004-rollouts-notifications-headlamp-policy.md)
-- [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)
-- [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md)
-- [`../../03.specs/004-argo-rollouts-progressive-delivery/spec.md`](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md)
-- [`../../03.specs/005-argo-notifications-slack/spec.md`](../../03.specs/005-argo-notifications-slack/spec.md)
+`bootstrap`
 
 ## When to Use
 

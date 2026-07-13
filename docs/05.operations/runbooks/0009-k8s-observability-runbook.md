@@ -8,10 +8,6 @@ updated: 2026-05-09
 
 # k8s Observability 복구 Runbook
 
-## Runbook Type
-
-`bootstrap`
-
 ## Overview
 
 이 런북은 k3d/k3s 클러스터의 메트릭/로그 수집 스택(kube-state-metrics, in-cluster Alloy, Prometheus alert_rules)에 장애가 발생했을 때 즉시 진단하고 복구하는 절차를 제공한다.
@@ -28,11 +24,9 @@ updated: 2026-05-09
 
 k3d cluster observability metrics, logs, and alert rule loading failures를 진단하고, GitOps 상태와 external observability endpoint 연결을 복구한다.
 
-## Canonical References
+## Runbook Type
 
-- [`../guides/0007-k8s-observability-bootstrap-guide.md`](../guides/0007-k8s-observability-bootstrap-guide.md)
-- [`../policies/0006-k8s-observability-operations-policy.md`](../policies/0006-k8s-observability-operations-policy.md)
-- [`../../../gitops/platform/monitoring`](../../../gitops/platform/monitoring)
+`bootstrap`
 
 ## When to Use
 
@@ -368,3 +362,4 @@ curl -s -G "http://172.18.0.13:3100/loki/api/v1/query" \
 - [k8s Observability 운영 정책](../policies/0006-k8s-observability-operations-policy.md)
 - [Observability Platform Policy](../policies/0005-observability-platform-operations-policy.md)
 - [ArgoCD 메트릭 런북](./0008-argocd-metrics-prometheus-runbook.md)
+- [`../../../gitops/platform/monitoring`](../../../gitops/platform/monitoring)

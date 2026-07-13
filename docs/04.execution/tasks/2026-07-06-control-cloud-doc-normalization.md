@@ -19,18 +19,6 @@ approved spec and plan traceable to concrete commits and validation evidence.
 - **Parent Spec**: [../../03.specs/022-control-cloud-doc-normalization/spec.md](../../03.specs/022-control-cloud-doc-normalization/spec.md)
 - **Parent Plan**: [../plans/2026-07-06-control-cloud-doc-normalization.md](../plans/2026-07-06-control-cloud-doc-normalization.md)
 
-## Approval and Safety Boundaries
-
-- Documentation-only work still needs validation evidence.
-- README files and GitHub-native Markdown must remain frontmatter-free.
-- Example-local cloud docs may receive SDLC frontmatter only through the
-  approved route contract.
-- Repo-static validation must not be reported as live runtime readiness unless
-  a separate live check was approved and run.
-- Do not inspect, write, or record secret values.
-- Do not mutate live clusters, cloud providers, GitHub remote resources, or
-  credentials.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -41,19 +29,6 @@ approved spec and plan traceable to concrete commits and validation evidence.
 | CCDN-004 | Normalize AWS example-local SDLC snapshot docs. | doc | Example-Local SDLC Snapshot Contract | PLN-004 | AWS non-README docs now have role-appropriate frontmatter, `Snapshot Boundary`, `Related Documents`, and type-specific required sections; repo-quality now enforces the same route. | platform | Done |
 | CCDN-005 | Normalize Azure example-local SDLC snapshot docs. | doc | Example-Local SDLC Snapshot Contract | PLN-005 | Azure non-README docs now have role-appropriate frontmatter, `Snapshot Boundary`, `Related Documents`, and type-specific required sections; repo-quality now enforces the same route. | platform | Done |
 | CCDN-006 | Close validation and execution evidence. | test/doc | Verification Commands | PLN-006 | Final validation bundle passed: diff check, repo-quality, manifest syntax with optional kube-linter skip, secret scan, and policy fallback. | platform | Done |
-
-### Suggested Types
-
-- `doc`
-- `test`
-- `eval`
-- `ops`
-
-### Agent-specific Types
-
-- `guardrail`
-- `eval`
-- `observability`
 
 ### Phase View
 
@@ -71,6 +46,30 @@ approved spec and plan traceable to concrete commits and validation evidence.
 ### Phase 3
 
 - [x] CCDN-006 Close validation and evidence.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `CCDN-001 through CCDN-006` is limited to these Control Surface and Cloud Example Documentation Normalization owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-06-control-cloud-doc-normalization.md`
+  - `docs/03.specs/022-control-cloud-doc-normalization/spec.md`
+  - `docs/04.execution/plans/2026-07-06-control-cloud-doc-normalization.md`
+  - `.github/PULL_REQUEST_TEMPLATE.md`
+  - `examples/README.md`
+- **Forbidden Paths**: live Kubernetes, Argo CD, Vault, cloud-provider, or notification state; secret values and credentials; and paths outside the Control Surface and Cloud Example Documentation Normalization work-item surfaces.
+- **Approval Required**: Human approval is required before Control Surface and Cloud Example Documentation Normalization live reconciliation, direct cluster/provider mutation, secret access, remote notification, deployment, push, merge, or parent-Plan expansion.
+- **Static Validation**: Preserve the Control Surface and Cloud Example Documentation Normalization outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+  - `bash -n scripts/validate-repo-quality-gates.sh`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `bash scripts/validate-k8s-manifests.sh .`
+- **Live Validation**: DEFER — Control Surface and Cloud Example Documentation Normalization is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: Repository evidence for Control Surface and Cloud Example Documentation Normalization must not read or print Secret data, Vault material, provider credentials, kubeconfigs, auth files, private RTK data, or shell history.
+- **Rollback Plan**: Revert the logical Control Surface and Cloud Example Documentation Normalization change set for `CCDN-001 through CCDN-006` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Control Surface and Cloud Example Documentation Normalization evidence remains in:
+  - `docs/04.execution/tasks/2026-07-06-control-cloud-doc-normalization.md`
+  - `docs/03.specs/022-control-cloud-doc-normalization/spec.md`
+  - `docs/04.execution/plans/2026-07-06-control-cloud-doc-normalization.md`
+  - `docs/00.agent-governance/memory/progress.md`
 
 ## Verification Summary
 

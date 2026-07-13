@@ -200,7 +200,7 @@ title: 'Workspace Document Contract Normalization Audit'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-04
 ---
 
 # Workspace Document Contract Normalization Audit
@@ -219,7 +219,7 @@ updated: 2026-07-13
 
 ## Review and Freshness
 
-## Traceability
+## Related Documents
 ```
 
 Expected:

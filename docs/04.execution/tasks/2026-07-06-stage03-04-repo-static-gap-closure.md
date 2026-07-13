@@ -27,19 +27,6 @@ settings, or provider mutation.
 - **WER Plan**: [../plans/2026-07-04-workspace-engineering-research-pack.md](../plans/2026-07-04-workspace-engineering-research-pack.md)
 - **WER Task**: [./2026-07-04-workspace-engineering-research-pack.md](./2026-07-04-workspace-engineering-research-pack.md)
 
-## Approval and Safety Boundaries
-
-- Close only repository-static gaps that can be resolved through local files,
-  local validators, indexes, task evidence, or progress memory.
-- Do not run or claim live Kubernetes, Argo CD, Vault, External Secrets
-  Operator, cloud, DNS, remote GitHub, provider, or credential work.
-- Do not inspect secret values.
-- Preserve pre-existing untracked files unless explicitly brought into scope.
-- Keep historical command literals intact when they are plan instructions or
-  old evidence, not current active contradictions.
-- Record operator-required items as follow-up instead of implementation
-  evidence.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -49,14 +36,6 @@ settings, or provider mutation.
 | S34-003 | Close WER repo-static lifecycle drift. | doc | VAL-SPC-023-002 | S34-PLN-003 | WER plan/task/index statuses and completion criteria align. | platform | Done |
 | S34-004 | Record operator-approved follow-up ledger. | ops | VAL-SPC-023-003 | S34-PLN-004 | Live/runtime and remote-required items are routed without mutation. | platform | Done |
 | S34-005 | Close validation and handoff evidence. | test | VAL-SPC-023-004, VAL-SPC-023-005 | S34-PLN-005 | Final validation bundle passes. | platform | Done |
-
-### Suggested Types
-
-- `impl`
-- `test`
-- `eval`
-- `doc`
-- `ops`
 
 ### Phase View
 
@@ -170,6 +149,35 @@ Final boundary: WER repo-static drift is closed, operator-approved follow-up is
 separate, and the pre-existing untracked
 `docs/90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`
 and `sessions/` paths remain untouched.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `S34-001 through bash scripts/validate-policy-gates.sh .` is limited to these Stage 03/04 Repo-Static Gap Closure owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`
+  - `docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md`
+  - `docs/04.execution/plans/2026-07-06-stage03-04-repo-static-gap-closure.md`
+  - `docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md`
+  - `docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md`
+  - `docs/03.specs/004-argo-rollouts-progressive-delivery/spec.md`
+  - `docs/03.specs/005-argo-notifications-slack/spec.md`
+  - `docs/03.specs/006-workspace-harness-gap-analysis/spec.md`
+  - `docs/03.specs/008-current-local-gitops-platform/spec.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Stage 03/04 Repo-Static Gap Closure work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Stage 03/04 Repo-Static Gap Closure protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Stage 03/04 Repo-Static Gap Closure outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git status --short --branch`
+  - `python3 - <<'PY' ... status inventory ... PY`
+  - `rg -n "status: draft|WER-00[1-7].*Done|\[x\] WER-|Completion Criteria|Final validation|Handoff" ...`
+  - `rg -n "(?i)pending|deferred|todo|in progress|not implemented|unimplemented|missing|gap|follow-?up|remaining|blocked|outstanding|future|live validation|runtime validation|not yet|next" docs/03.specs docs/04.execution/plans docs/04.execution/tasks`
+- **Live Validation**: DEFER — Stage 03/04 Repo-Static Gap Closure is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Stage 03/04 Repo-Static Gap Closure; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Stage 03/04 Repo-Static Gap Closure change set for `S34-001 through bash scripts/validate-policy-gates.sh .` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Stage 03/04 Repo-Static Gap Closure evidence remains in:
+  - `docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`
+  - `docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md`
+  - `docs/04.execution/plans/2026-07-06-stage03-04-repo-static-gap-closure.md`
+  - `docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md`
+  - `docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md`
 
 ## Verification Summary
 

@@ -8,10 +8,6 @@ updated: 2026-05-22
 
 # ArgoCD Platform Bootstrap Runbook
 
-## Runbook Type
-
-`bootstrap`
-
 ## Overview
 
 이 런북은 WSL2 기반 GitOps 플랫폼을 즉시 실행 가능한 체크리스트 순서로 부트스트랩하고, 오류 시그니처별 복구 절차를 제공한다.
@@ -20,14 +16,9 @@ updated: 2026-05-22
 
 클러스터 구성, ArgoCD 설치, ESO/Vault 연동, 외부 endpoint 연결(Valkey `6379`, PostgreSQL `15432/15433`)을 재현 가능하게 수행한다.
 
-## Canonical References
+## Runbook Type
 
-- [`../../02.architecture/requirements/0007-current-local-gitops-platform.md`](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
-- [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- [`../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
-- [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md)
-- [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
-- [`../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md)
+`bootstrap`
 
 ## When to Use
 
@@ -204,5 +195,10 @@ argocd app list
 
 ## Traceability
 
-- **Incident Index**: [`../incidents/README.md`](../incidents/README.md)
-- **Postmortem Index**: [`../incidents/README.md`](../incidents/README.md)
+- **Incident and Postmortem Index**: [`../incidents/README.md`](../incidents/README.md)
+- [`../../02.architecture/requirements/0007-current-local-gitops-platform.md`](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
+- [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
+- [`../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
+- [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md)
+- [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
+- [`../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md)

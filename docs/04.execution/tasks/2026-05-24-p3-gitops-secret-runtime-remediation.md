@@ -21,15 +21,6 @@ secret value output and live mutation are prohibited.
 - **Parent Plan**: [../plans/2026-05-24-p3-gitops-secret-runtime-remediation.md](../plans/2026-05-24-p3-gitops-secret-runtime-remediation.md)
 - **Source Gap Plan**: [../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md](../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md)
 
-## Approval and Safety Boundaries
-
-- Use `gitops-workflow`, `k8s-security-audit`, and `k8s-validate`.
-- Do not print or inspect secret values.
-- Do not run `kubectl apply`, `kubectl patch`, `argocd app sync`, `vault write`,
-  or `vault kv` mutation commands in this task.
-- Make repository-backed changes first, then run static validation.
-- Read-only runtime checks may inspect metadata/status only.
-
 ## Task Table
 
 | Task ID         | Description                                                              | Type   | Parent Spec / Section             | Parent Plan / Phase | Validation / Evidence                           | Owner    | Status |
@@ -42,20 +33,6 @@ secret value output and live mutation are prohibited.
 | P3-GITOPS-T-006 | Run repo-static validation bundle                                        | test   | Verification                      | P3-PLN-006          | verification summary                            | Platform | Done   |
 | P3-GITOPS-T-007 | Run approved read-only runtime metadata checks                           | eval   | Verification                      | P3-PLN-006          | live metadata summary without secret values     | Platform | Done   |
 | P3-GITOPS-T-008 | Append progress memory                                                   | memory | Memory Strategy                   | P3-PLN-001          | progress entry                                  | Platform | Done   |
-
-### Suggested Types
-
-- `impl`
-- `test`
-- `eval`
-- `doc`
-- `ops`
-
-### Agent-specific Types
-
-- `guardrail`
-- `memory`
-- `eval`
 
 ### Phase View
 
@@ -85,6 +62,33 @@ secret value output and live mutation are prohibited.
 | Add only the notifications Vault path                                  | `infrastructure/vault/policies/eso-read.hcl`                                                    | Keeps the ArgoCD Notifications secret path least-privilege and avoids wildcard expansion               | Remove the `platform/notifications` data/metadata policy blocks                |
 | Align sample app `remoteRef.key` with ClusterSecretStore path behavior | `examples/sample-app/external-secret.yaml`                                                      | `vault kv put secret/apps/...` maps to ESO `remoteRef.key: apps/...` when the store path is `secret`   | Restore the previous sample key and related docs if the store contract changes |
 | Add a root child app for cluster-local ArgoCD config                   | `gitops/apps/root/platform-cluster-config-app.yaml`, `gitops/clusters/local/kustomization.yaml` | Gives steady-state GitOps ownership to AppProject/ApplicationSet bootstrap CRs after initial bootstrap | Remove the child app and cluster-local kustomization from the root app set     |
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `P3-GITOPS-T-001 through Add a root child app for cluster-local ArgoCD config` is limited to these P3 GitOps Secret Runtime Remediation owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md`
+  - `docs/03.specs/006-workspace-harness-gap-analysis/spec.md`
+  - `docs/04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md`
+  - `docs/90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md`
+  - `gitops/platform/network-policies/external-secrets-egress-to-vault.yaml`
+  - `infrastructure/vault/policies/eso-read.hcl`
+  - `examples/sample-app/external-secret.yaml`
+  - `gitops/apps/root/platform-cluster-config-app.yaml`
+- **Forbidden Paths**: Vault data/auth state, Kubernetes Secret values, unseal material, kubeconfigs, shell history, and paths outside the P3 GitOps Secret Runtime Remediation evidence/control surfaces.
+- **Approval Required**: Human approval is required before any P3 GitOps Secret Runtime Remediation Vault unseal/auth write, Secret access, live Kubernetes or Argo CD mutation, remote publication, push, or merge.
+- **Static Validation**: Preserve the P3 GitOps Secret Runtime Remediation outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `bash scripts/generate-llm-wiki-index.sh --check`
+  - `bash scripts/validate-gitops-structure.sh`
+  - `bash scripts/validate-k8s-manifests.sh .`
+- **Live Validation**: Only the recorded read-only P3 GitOps Secret Runtime Remediation lane (`kubectl config current-context`) is in scope; it does not authorize mutation or broaden the cited observation into readiness.
+- **Secret / Vault Handling**: The P3 GitOps Secret Runtime Remediation lane must not read, print, enumerate, move, or rewrite Vault tokens, unseal keys, Secret data, credentials, kubeconfigs, private RTK data, or shell history; operator recovery remains out of scope.
+- **Rollback Plan**: Revert the logical P3 GitOps Secret Runtime Remediation change set for `P3-GITOPS-T-001 through Add a root child app for cluster-local ArgoCD config` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable P3 GitOps Secret Runtime Remediation evidence remains in:
+  - `docs/04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md`
+  - `docs/03.specs/006-workspace-harness-gap-analysis/spec.md`
+  - `docs/04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md`
+  - `docs/90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md`
 
 ## Verification Summary
 

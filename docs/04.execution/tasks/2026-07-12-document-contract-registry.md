@@ -21,21 +21,6 @@ traceable while preserving repository-static evidence boundaries.
 - **Parent Plan**:
   [../plans/2026-07-12-document-contract-registry.md](../plans/2026-07-12-document-contract-registry.md)
 
-## Approval and Safety Boundaries
-
-- Write failing assertions first for deterministic repository behavior.
-- Record validation evidence for every completed task.
-- Treat repository-static validation as bounded evidence, not live runtime
-  readiness.
-- Keep Spec, Plan, Task, and index lineage reciprocal.
-
-### Suggested Types
-
-- `doc`: reciprocal lineage and index-only work.
-- `contract`: registry schema/profile/evidence contract work.
-- `guardrail`: deterministic validator and classifier work.
-- `validation`: gate integration and closure evidence work.
-
 ## Task Table
 
 | Task ID | Description | Type | Validation / Evidence | Owner | Status |
@@ -45,6 +30,27 @@ traceable while preserving repository-static evidence boundaries.
 | DCR-003 | Implement loader and deterministic classifier | guardrail | Registry self-test | platform | Done |
 | DCR-004 | Populate profiles and classify approved corpus | contract | 433-path compatibility result | platform | Done |
 | DCR-005 | Integrate gate and close evidence | validation | Full QA bundle | platform | Done |
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `DCR-001 through DCR-005` is limited to these Document Contract Registry owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-12-document-contract-registry.md`
+  - `docs/03.specs/026-document-contract-registry/spec.md`
+  - `docs/04.execution/plans/2026-07-12-document-contract-registry.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Document Contract Registry work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Document Contract Registry protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Document Contract Registry outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `python3 scripts/validate-document-contract-registry.py --self-test`
+  - `python3 scripts/validate-document-contract-registry.py --root . --mode compatibility`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `git diff --check`
+- **Live Validation**: DEFER — Document Contract Registry is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Document Contract Registry; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Document Contract Registry change set for `DCR-001 through DCR-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Document Contract Registry evidence remains in:
+  - `docs/04.execution/tasks/2026-07-12-document-contract-registry.md`
+  - `docs/03.specs/026-document-contract-registry/spec.md`
+  - `docs/04.execution/plans/2026-07-12-document-contract-registry.md`
 
 ## Verification Summary
 

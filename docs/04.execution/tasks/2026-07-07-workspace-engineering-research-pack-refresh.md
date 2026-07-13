@@ -17,12 +17,6 @@ This document tracks implementation and verification work for the refreshed work
 - **Parent Spec**: `[../../03.specs/017-workspace-engineering-research-pack/spec.md]`
 - **Parent Plan**: `[../plans/2026-07-07-workspace-engineering-research-pack-refresh.md]`
 
-## Approval and Safety Boundaries
-
-- Documentation-only work still needs validation evidence.
-- Use relative links calculated from the final authored document location.
-- Do not perform any live cluster mutation.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -32,14 +26,6 @@ This document tracks implementation and verification work for the refreshed work
 | PLN-003 | Update and enrich documents | doc | VAL-SPC-003, VAL-SPC-004 | Phase 3 | 7 reference files generated and enriched | platform | Done |
 | PLN-004 | Update indices and memory | doc | VAL-SPC-002 | Phase 4 | README index and progress.md updated | platform | Done |
 | PLN-005 | Quality gates validation | test | VAL-SPC-006 | Phase 5 | `validate-repo-quality-gates.sh` passes | platform | Done |
-
-### Suggested Types
-
-- `impl`
-- `test`
-- `eval`
-- `doc`
-- `ops`
 
 ### Phase View
 
@@ -62,6 +48,24 @@ This document tracks implementation and verification work for the refreshed work
 ### Phase 5
 
 - [x] PLN-005 Quality gates validation
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `PLN-001 through PLN-005` is limited to these Workspace Engineering Research Pack Refresh Task Record owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-07-workspace-engineering-research-pack-refresh.md`
+  - `docs/03.specs/017-workspace-engineering-research-pack/spec.md`
+  - `docs/04.execution/plans/2026-07-07-workspace-engineering-research-pack-refresh.md`
+- **Forbidden Paths**: active policy or runtime configuration not named by the Workspace Engineering Research Pack Refresh Task Record Task Table, provider settings, secret values, local diagnostics, and remote publication surfaces.
+- **Approval Required**: Human approval is required before publishing Workspace Engineering Research Pack Refresh Task Record research, changing active policy/runtime behavior, deleting evidence, contacting providers, push, merge, or corpus expansion.
+- **Static Validation**: Preserve the Workspace Engineering Research Pack Refresh Task Record outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+- **Live Validation**: DEFER — Workspace Engineering Research Pack Refresh Task Record is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: Workspace Engineering Research Pack Refresh Task Record evidence must use public or repository-visible facts only; do not inspect or reproduce credentials, tokens, auth files, private logs, kubeconfigs, or shell history.
+- **Rollback Plan**: Revert the logical Workspace Engineering Research Pack Refresh Task Record change set for `PLN-001 through PLN-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Workspace Engineering Research Pack Refresh Task Record evidence remains in:
+  - `docs/04.execution/tasks/2026-07-07-workspace-engineering-research-pack-refresh.md`
+  - `docs/03.specs/017-workspace-engineering-research-pack/spec.md`
+  - `docs/04.execution/plans/2026-07-07-workspace-engineering-research-pack-refresh.md`
 
 ## Verification Summary
 

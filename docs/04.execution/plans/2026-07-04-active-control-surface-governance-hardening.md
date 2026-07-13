@@ -208,7 +208,7 @@ title: 'Active Control Surface Governance Hardening Task Record'
 type: sdlc/task
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-04
 ```
 
 The task record must include:

@@ -8,10 +8,6 @@ updated: 2026-05-09
 
 # Kiali Observability 연결 복구 Runbook
 
-## Runbook Type
-
-`troubleshooting`
-
 ## Overview
 
 이 런북은 Kiali에서 Grafana, Prometheus, Tempo 등 외부 관측성 서비스가 Unreachable로 표시되는 장애를 진단하고 복구하는 절차를 제공한다.
@@ -28,11 +24,9 @@ updated: 2026-05-09
 
 Kiali에서 외부 observability service가 unreachable로 표시될 때 EndpointSlice, NetworkPolicy, Kiali configuration, Grafana auth 상태를 순서대로 진단하고 복구한다.
 
-## Canonical References
+## Runbook Type
 
-- [`../policies/0005-observability-platform-operations-policy.md`](../policies/0005-observability-platform-operations-policy.md)
-- [`../guides/0006-argocd-prometheus-grafana-guide.md`](../guides/0006-argocd-prometheus-grafana-guide.md)
-- [`../../../gitops/platform/external-services`](../../../gitops/platform/external-services)
+`troubleshooting`
 
 ## When to Use
 
@@ -379,3 +373,4 @@ argocd app set platform-external-services \
 - **Operations Policy**: [`../policies/0005-observability-platform-operations-policy.md`](../policies/0005-observability-platform-operations-policy.md)
 - **ArgoCD Metrics Runbook**: [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md)
 - **External Services**: [`../../../gitops/platform/external-services`](../../../gitops/platform/external-services)
+- [`../guides/0006-argocd-prometheus-grafana-guide.md`](../guides/0006-argocd-prometheus-grafana-guide.md)
