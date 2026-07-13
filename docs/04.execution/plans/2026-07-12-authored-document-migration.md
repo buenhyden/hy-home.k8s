@@ -36,9 +36,13 @@ official primary-source research, `rg`, pre-commit, and repository quality gates
 - Repository-only decisions record `external-topic: not applicable` with a concrete reviewed reason.
 - Do not read, enumerate, move, or delete ignored `.env`, token, key, certificate, kubeconfig, shell-history, local-setting, or diagnostic content.
 - README redesign belongs to Spec 028; this Plan may make relocation-driven index/link updates only.
-- Validators belong to Spec 029; this Plan consumes their public interfaces and
-  changes only the two finite Spec-030-owned debt fixtures at the transitions
-  named below. The profile registry never contains migration debt.
+- Validator parsers and rule semantics belong to Spec 029. This Plan consumes
+  their public interfaces and changes the two finite Spec-030-owned debt
+  fixtures at the named transitions. ADM-003 through ADM-006 may synchronize
+  only frozen migration-count/self-test constants in
+  `scripts/validate-markdown-profiles.py` with the shrinking fixture; they may
+  not add, remove, or reinterpret a rule. The profile registry never contains
+  migration debt.
 - Protected machine surfaces and behavior belong to Spec 032; this Plan changes only their authored documentation and links.
 - Use `apply_patch` for edits, `git mv` for one-to-one relocations, and a separate logical commit for every migration wave.
 
@@ -86,7 +90,7 @@ Compatibility mode must stay available until these families are reconciled.
 | Governance and references | non-README `docs/00.agent-governance/**`, Current Stage 90, `docs/98.archive/**` | Canonical governance, current research, and historical/current authority boundaries. |
 | Cloud snapshots | `docs/90.references/cloud-examples/{aws,azure}/2026-07-12-*-example-snapshot.md` | Dated official-source comparison and retained unique cloud-example knowledge. |
 | Executable examples | `examples/{aws,azure}/**` excluding deleted `docs/**` | Executable Terraform/Bicep/Kubernetes/GitOps assets and entrypoint links. |
-| Finite shape debt | `tests/fixtures/document-contracts/template-compatibility.json`, `scripts/validate-repo-quality-gates.sh` | ADM-003 through ADM-006 remove exact canonicalized path records and refresh the complete-fixture digest/mutation proof in the same commit. |
+| Finite shape debt | `tests/fixtures/document-contracts/template-compatibility.json`, `scripts/validate-markdown-profiles.py`, `scripts/validate-repo-quality-gates.sh` | ADM-003 through ADM-006 remove exact canonicalized path records, keep the validator's cumulative remaining-debt caps synchronized at every batch checkpoint, and refresh the complete-fixture digest/mutation proof once in the wave commit. |
 | Finite semantic debt | `tests/fixtures/document-contracts/semantic-compatibility-debt.json` | ADM-002 removes the sole ledger-missing item in the commit that creates the complete ledger; ADM-007 removes the empty compatibility container. |
 | Strict cutover | the two finite debt fixtures and `scripts/validate-repo-quality-gates.sh` | Remove empty compatibility containers and enforce strict repository validation; never add, remove, or describe registry debt. |
 
@@ -134,6 +138,47 @@ rule-cap / union-count mutation proof is refreshed in
 `scripts/validate-repo-quality-gates.sh`. Set equality is mandatory: no
 canonicalized debt path may remain, and no record for an untouched path may be
 removed.
+
+ADM-003 through ADM-005 use a fail-safe batch-atomic sequence. A checkpoint
+must change the exact batch documents, their exact durable-ledger rows, the
+matching `affectedPaths` records, the fixture's cumulatively recomputed
+semantic caps, and the validator's matching cumulative expected-cap constants
+before running compatibility mode. A document-only batch is invalid: the
+first ADM-003 attempt proved that stale fixture records become `DEBT-UNUSED`
+failures and make the validator exit nonzero. Therefore no later batch may be
+opened until the current atomic checkpoint returns zero diagnostics for its
+exact NUL path set. The quality gate's complete-fixture digest and mutation
+proof are intentionally refreshed once in Step 5 after all reviewed batch
+records for the wave have been removed; they are not rewritten at every
+intermediate checkpoint.
+
+Every ADM-003 through ADM-006 staged-set proof must also run this validator
+diff guard. It permits only numeric migration-cap assignments and the two
+numeric self-test comparisons; any parser, route, diagnostic, outcome, CLI, or
+rule-semantic edit fails even though the validator path is otherwise in scope.
+
+```bash
+python3 - <<'PY'
+import re
+import subprocess
+
+diff = subprocess.check_output(
+    ['git', 'diff', '--cached', '-U0', '--', 'scripts/validate-markdown-profiles.py'],
+    text=True,
+)
+changed = [
+    line for line in diff.splitlines()
+    if line[:1] in {'+', '-'} and not line.startswith(('+++', '---'))
+]
+allowed = [
+    re.compile(r'^[+-]\s*"(?:pathCount|occurrenceCount|tokenObligationCount|distinctTokenCount)": \d+,$'),
+    re.compile(r'^[+-]EXPECTED_(?:REQUIRED_RESIDUE_OVERLAP|REQUIRED_RESIDUE_UNION|DEBT_UNION) = \d+$'),
+    re.compile(r'^[+-]\s*if len\(unsupported_tokens\) != \d+:$'),
+    re.compile(r'^[+-]\s*if compatibility_keys != strict_keys or len\(compatibility_keys\) != \d+:$'),
+]
+assert changed and all(any(pattern.fullmatch(line) for pattern in allowed) for line in changed), changed
+PY
+```
 
 Before ADM-002 creates any ledger row, run this fixture-owned coverage gate.
 It is the executable ownership contract for all 266 pre-registered shape-debt
@@ -704,6 +749,7 @@ item return atomically.
 - Modify: `spec.md`, `agent-design.md`, `api-spec.md`, `data-model.md`, and `tests.md` under `docs/03.specs/`
 - Modify: durable migration ledger
 - Modify: `tests/fixtures/document-contracts/template-compatibility.json`
+- Modify: `scripts/validate-markdown-profiles.py`
 - Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify: `docs/04.execution/tasks/2026-07-12-authored-document-migration.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
@@ -785,8 +831,12 @@ Expected: the independently recorded count/SHA matches; every frozen allowed
 path occurs in exactly one NUL batch, no README is present, and no unreviewed
 eligible path is self-authorized.
 
-After editing one batch, set `ADM_BATCH` to that exact reviewed manifest and
-run this full-corpus result filtered to only its NUL path set:
+For each batch, atomically canonicalize its exact documents, update only their
+durable-ledger rows, remove only that batch's frozen `affectedPaths` records,
+and recompute the fixture and validator caps for all cumulative remaining
+records. Then set `ADM_BATCH` to that exact reviewed manifest and run this
+full-corpus result filtered to only its NUL path set. A nonzero validator exit,
+including `DEBT-UNUSED`, terminates the checkpoint before another batch opens:
 
 ```bash
 batch=${ADM_BATCH:?set ADM_BATCH to the exact reviewed ADM-003 batch manifest}
@@ -824,12 +874,12 @@ manifests in one edit/review checkpoint.
 
 - [ ] **Step 5: Run GREEN exact-wave validation**
 
-Remove exactly the manifest records from `template-compatibility.json` in the
-same edit checkpoint that canonicalizes their paths. Recompute every aggregate
-cap downward and refresh the complete fixture semantic digest and all mutation
-proofs in `scripts/validate-repo-quality-gates.sh`. Assert the post-fixture
-counts equal the manifest's exact arithmetic and that its removal tuple set is
-disjoint from remaining records.
+Assert that the cumulative batch checkpoints already removed exactly the full
+manifest tuple set and that the fixture and validator caps equal the
+manifest's exact after values. Refresh the complete fixture semantic digest
+and all affected-path, rule-cap, occurrence, and union-count mutation proofs
+in `scripts/validate-repo-quality-gates.sh` once at this final wave boundary.
+The manifest removal tuple set must be disjoint from all remaining records.
 
 ```bash
 report=_workspace/adm-003-markdown-green.json
@@ -862,6 +912,7 @@ git add docs/90.references/research/2026-07-07-wer/document-migration-evidence-l
   docs/04.execution/tasks/2026-07-12-authored-document-migration.md \
   docs/00.agent-governance/memory/progress.md \
   tests/fixtures/document-contracts/template-compatibility.json \
+  scripts/validate-markdown-profiles.py \
   scripts/validate-repo-quality-gates.sh
 xargs -0 git add -- < _workspace/adm-003-allowed-document-paths.nul
 python3 - <<'PY'
@@ -873,6 +924,7 @@ actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'],
 fixed = {'docs/04.execution/tasks/2026-07-12-authored-document-migration.md',
          'docs/00.agent-governance/memory/progress.md',
          'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
+         'scripts/validate-markdown-profiles.py',
          'scripts/validate-repo-quality-gates.sh',
          'tests/fixtures/document-contracts/template-compatibility.json'}
 assert len(allowed) == debt['allowedDocumentPathCount']
@@ -907,6 +959,7 @@ fixture records/caps, digest, and mutation proofs return atomically.
 - Modify: canonical real incident/postmortem documents if they exist
 - Modify: durable migration ledger
 - Modify: `tests/fixtures/document-contracts/template-compatibility.json`
+- Modify: `scripts/validate-markdown-profiles.py`
 - Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify: `docs/04.execution/tasks/2026-07-12-authored-document-migration.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
@@ -980,8 +1033,11 @@ PY
 
 Expected: the independently recorded count/SHA matches; each frozen path occurs
 once, every batch has no more than five paths, and README/fixed evidence paths
-are absent. After each batch edit, run the same full-corpus validator and filter
-to that exact batch only:
+are absent. For each batch, atomically update its exact documents and ledger
+rows, remove only its frozen `affectedPaths` records, and recompute the
+fixture and validator caps for all cumulative remaining records. Then run the
+same full-corpus validator and filter to that exact batch only. A nonzero exit
+or any exact-batch diagnostic, including `DEBT-UNUSED`, blocks the next batch:
 
 ```bash
 batch=${ADM_BATCH:?set ADM_BATCH to the exact reviewed ADM-004 batch manifest}
@@ -1016,10 +1072,11 @@ owner and replace it with a relative link. Complete and validate the remaining
 
 - [ ] **Step 5: Run GREEN validation and commit**
 
-Remove every and only manifest tuple from
-`template-compatibility.json` in the same commit as its canonical document.
-Recompute all caps downward and refresh the quality gate's complete-fixture
-semantic digest and affected-path/rule-cap/union-count mutation proofs.
+Assert that the batch checkpoints already removed every and only manifest
+tuple, and that cumulative fixture and validator caps equal the manifest's
+exact after values. Refresh the quality gate's complete-fixture semantic
+digest and affected-path/rule-cap/occurrence/union-count mutation proofs once
+after the final batch.
 
 ```bash
 report=_workspace/adm-004-markdown-green.json
@@ -1044,6 +1101,7 @@ git add docs/90.references/research/2026-07-07-wer/document-migration-evidence-l
   docs/04.execution/tasks/2026-07-12-authored-document-migration.md \
   docs/00.agent-governance/memory/progress.md \
   tests/fixtures/document-contracts/template-compatibility.json \
+  scripts/validate-markdown-profiles.py \
   scripts/validate-repo-quality-gates.sh
 xargs -0 git add -- < _workspace/adm-004-allowed-document-paths.nul
 python3 - <<'PY'
@@ -1055,6 +1113,7 @@ actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'],
 fixed = {'docs/04.execution/tasks/2026-07-12-authored-document-migration.md',
          'docs/00.agent-governance/memory/progress.md',
          'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
+         'scripts/validate-markdown-profiles.py',
          'scripts/validate-repo-quality-gates.sh',
          'tests/fixtures/document-contracts/template-compatibility.json'}
 assert len(allowed) == debt['allowedDocumentPathCount']
@@ -1091,6 +1150,7 @@ and mutation refresh, and the printed staged count. Roll back with
 - Modify structurally only: `docs/99.templates/support/template-routing.md`
 - Modify: durable migration ledger
 - Modify: `tests/fixtures/document-contracts/template-compatibility.json`
+- Modify: `scripts/validate-markdown-profiles.py`
 - Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify: `docs/04.execution/tasks/2026-07-12-authored-document-migration.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
@@ -1182,8 +1242,12 @@ PY
 
 Expected: the recorded count/SHA matches 73; all README and fixed evidence
 paths are absent; the thirteen narrowly authorized handoff paths are present;
-and every frozen path occurs once in a batch of at most five paths. After each
-batch edit, run the full-corpus validator and filter to that exact batch only:
+and every frozen path occurs once in a batch of at most five paths. For each
+batch, atomically update its exact documents and ledger rows, remove only its
+frozen `affectedPaths` records, and recompute the fixture and validator caps
+for all cumulative remaining records. Then run the full-corpus validator and
+filter to that exact batch only. A nonzero exit or any exact-batch diagnostic,
+including `DEBT-UNUSED`, blocks the next batch:
 
 ```bash
 batch=${ADM_BATCH:?set ADM_BATCH to the exact reviewed ADM-005 batch manifest}
@@ -1219,10 +1283,11 @@ archive index, and does not regain the retired body.
 
 - [ ] **Step 5: Run GREEN validation and commit**
 
-Remove exactly the frozen manifest tuples from
-`template-compatibility.json` as their paths become canonical, recompute every
-cap downward, and refresh the complete-fixture semantic digest and all mutation
-proofs in `scripts/validate-repo-quality-gates.sh` in this commit.
+Assert that the batch checkpoints already removed exactly the frozen manifest
+tuples and that cumulative fixture and validator caps equal the manifest's
+exact after values. Refresh the complete-fixture semantic digest and all
+affected-path, rule-cap, occurrence, and union-count mutation proofs in
+`scripts/validate-repo-quality-gates.sh` once after the final batch.
 
 ```bash
 report=_workspace/adm-005-markdown-green.json
@@ -1244,6 +1309,7 @@ git add docs/00.agent-governance/memory/progress.md \
   docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
   docs/04.execution/tasks/2026-07-12-authored-document-migration.md \
   tests/fixtures/document-contracts/template-compatibility.json \
+  scripts/validate-markdown-profiles.py \
   scripts/validate-repo-quality-gates.sh
 xargs -0 git add -- < _workspace/adm-005-allowed-document-paths.nul
 python3 - <<'PY'
@@ -1255,6 +1321,7 @@ actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'],
 fixed = {'docs/04.execution/tasks/2026-07-12-authored-document-migration.md',
          'docs/00.agent-governance/memory/progress.md',
          'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
+         'scripts/validate-markdown-profiles.py',
          'scripts/validate-repo-quality-gates.sh',
          'tests/fixtures/document-contracts/template-compatibility.json'}
 assert len(allowed) == debt['allowedDocumentPathCount']
@@ -1292,6 +1359,7 @@ ledger, debt fixture, and digest consumer return together.
 - Delete: `examples/azure/docs/**`
 - Modify: durable migration ledger
 - Modify: `tests/fixtures/document-contracts/template-compatibility.json`
+- Modify: `scripts/validate-markdown-profiles.py` only through the migration-constant diff guard
 - Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify: `docs/04.execution/tasks/2026-07-12-authored-document-migration.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
@@ -1377,8 +1445,9 @@ executable assets remain.
 
 Remove every and only tuple in the approved ADM-006 debt manifest from
 `template-compatibility.json`, recompute all aggregate caps downward, and
-refresh the quality gate's complete-fixture digest plus affected-path,
-rule-cap, and union-count mutation proofs in this same commit.
+synchronize the validator's final zero-debt cap/self-test constants. Refresh
+the quality gate's complete-fixture digest plus affected-path, rule-cap, and
+union-count mutation proofs in this same commit.
 
 ```bash
 test -z "$(git ls-files examples/aws/docs examples/azure/docs)"
@@ -1397,6 +1466,7 @@ git add docs/90.references/research/2026-07-07-wer/document-migration-evidence-l
   docs/04.execution/tasks/2026-07-12-authored-document-migration.md \
   docs/00.agent-governance/memory/progress.md \
   tests/fixtures/document-contracts/template-compatibility.json \
+  scripts/validate-markdown-profiles.py \
   scripts/validate-repo-quality-gates.sh
 xargs -0 git add -A -- < _workspace/adm-006-allowed-document-paths.nul
 python3 - <<'PY'
@@ -1410,6 +1480,7 @@ actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'],
 fixed = {'docs/04.execution/tasks/2026-07-12-authored-document-migration.md',
          'docs/00.agent-governance/memory/progress.md',
          'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
+         'scripts/validate-markdown-profiles.py',
          'scripts/validate-repo-quality-gates.sh',
          'tests/fixtures/document-contracts/template-compatibility.json'}
 assert len(deletions) == debt['deletionPathCount'] == 59 and deletions <= allowed

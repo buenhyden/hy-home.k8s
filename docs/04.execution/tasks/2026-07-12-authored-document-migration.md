@@ -35,10 +35,10 @@ consolidate duplicate AWS/Azure prose, and close the compatibility boundary.
 | --- | --- | --- | --- | --- |
 | ADM-001 | Start reciprocal Spec, Plan, Task, and index lineage | platform | Done | `python3` reciprocal-lineage assertion in Plan Task 1 Step 4; logical commit `docs(execution): start authored document migration` |
 | ADM-002 | Publish the baseline disposition and durable research ledger | platform | Done | Pre-ledger RED was sole `LEDGER-MISSING`; final inventory/ledger equality is exactly 469 paths (`baseline=433`, `new=38`) with 14 columns, a pinned self-row, `preserve=183`, `transform=227`, `merge=59`, zero ledger Markdown/cross-document diagnostics, and empty semantic items; logical commit `docs(migration): inventory authored document dispositions` |
-| ADM-003 | Normalize Stage 01–03 active design documents | platform | Queued | Full-corpus compatibility JSON filtered first by the three RED directory boundaries and then by the exact reviewed 34-path batch/GREEN set; logical commit `docs(migration): normalize active sdlc design documents` |
-| ADM-004 | Normalize Stage 04–05 execution and operations documents | platform | Queued | Full-corpus compatibility JSON filtered first by the two RED directory boundaries and then by the exact reviewed 120-path batch/GREEN set; logical commit `docs(migration): normalize execution and operations documents` |
-| ADM-005 | Normalize governance, Current references, Archive links, and six support documents | platform | Queued | Full-corpus compatibility JSON filtered first by four RED boundaries and then by the exact reviewed 73-path batch/GREEN set; structural-only checks preserve historical facts and Spec 027/031 route/schema/form/provider semantics; logical commit `docs(migration): normalize governance references and archive links` |
-| ADM-006 | Consolidate AWS and Azure example documentation | platform | Queued | Exact 39-path debt manifest within the immutable 59-source merge/deletion set; `test -z "$(git ls-files examples/aws/docs examples/azure/docs)"`; logical commit `docs(migration): consolidate cloud example documentation` |
+| ADM-003 | Normalize Stage 01–03 active design documents | platform | Queued | Exact 34-path frozen manifest; each at-most-five-path checkpoint atomically updates documents/ledger, removes its exact fixture records, synchronizes cumulative fixture/validator caps, and proves zero batch diagnostics before Step 5 refreshes the quality-gate digest once; logical commit `docs(migration): normalize active sdlc design documents` |
+| ADM-004 | Normalize Stage 04–05 execution and operations documents | platform | Queued | Exact 120-path frozen manifest with the same batch-atomic ledger/debt/cap sequence and zero-diagnostic next-batch gate; logical commit `docs(migration): normalize execution and operations documents` |
+| ADM-005 | Normalize governance, Current references, Archive links, and six support documents | platform | Queued | Exact 73-path frozen manifest with batch-atomic ledger/debt/cap checkpoints; structural-only checks preserve historical facts and Spec 027/031 route/schema/form/provider semantics; logical commit `docs(migration): normalize governance references and archive links` |
+| ADM-006 | Consolidate AWS and Azure example documentation | platform | Queued | Exact 39-path debt manifest within the immutable 59-source merge/deletion set; synchronize the final zero-debt validator cap constants under the executable diff guard; `test -z "$(git ls-files examples/aws/docs examples/azure/docs)"`; logical commit `docs(migration): consolidate cloud example documentation` |
 | ADM-007 | Enable strict validation and close Spec 030 | platform | Queued | `python3 scripts/validate-document-contract-registry.py --root . --mode strict`, both semantic validators in strict mode, and `bash scripts/validate-repo-quality-gates.sh .`; logical commit `chore(docs): cut over document profiles to strict validation` |
 
 ## Approval and Safety Boundaries
@@ -94,6 +94,21 @@ snapshot destinations, all remaining registered debt rows transform in their
 own wave, and all other paths preserve themselves. The compatibility debt
 container remains schema-v1 and growth-closed with `items: []`; strict and
 compatibility cross-document checks now have zero ledger diagnostics.
+
+The first ADM-003 batch rehearsal changed only five documents while leaving
+their compatibility records in place. The semantic validator correctly
+returned nonzero `DEBT-UNUSED` failures, proving that a document-only batch
+cannot satisfy the advertised checkpoint. Those edits were fully reverted.
+The corrected ADM-003 through ADM-005 sequence now makes each batch atomic
+across its exact documents, ledger rows, fixture records, and cumulative
+fixture/validator caps; the next batch remains blocked until compatibility
+mode reports zero diagnostics for the exact current NUL batch. The repository
+quality gate's complete-fixture digest and mutation proof are refreshed once
+after the wave's final batch, not at every intermediate checkpoint.
+ADM-006 performs the final permitted cap/self-test synchronization after its
+39 records are removed. Every ADM-003 through ADM-006 commit runs a staged
+line guard that rejects validator changes outside the frozen numeric cap and
+self-test comparisons.
 
 ## Traceability
 

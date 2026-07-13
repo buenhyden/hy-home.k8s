@@ -8,6 +8,58 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - Authored migration batch-atomic debt sequencing correction
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, planning, validation
+- **Status**: complete
+- **Tags**: #authored-document #batch-atomic #shape-debt #semantic-validation
+
+#### Progress
+
+- Rehearsed the first five-path ADM-003 batch and observed the semantic
+  validator's intended fail-safe behavior: canonical documents with stale
+  fixture records produced nonzero `DEBT-UNUSED` failures.
+- Reverted the rehearsal completely, then corrected ADM-003 through ADM-005 so
+  every batch checkpoint atomically updates its exact documents and ledger
+  rows, removes only its exact frozen `affectedPaths` records, and recomputes
+  cumulative fixture and validator caps before compatibility validation.
+- Deferred the quality gate's complete-fixture digest and mutation-proof
+  refresh to each wave's final Step 5, after the full reviewed manifest removal
+  is present, instead of requiring intermediate digest rewrites.
+- Bounded ADM-003 through ADM-006 validator edits to frozen migration-count
+  and self-test expectations, protected by an executable staged-line guard;
+  Spec 029 retains ownership of every parser and rule semantic.
+
+#### Memory
+
+- Finite compatibility records are consumed state, not passive allowances. If
+  a canonicalized document leaves its record behind, `DEBT-UNUSED` must stop
+  the batch before later edits can obscure the mismatch.
+- A wave may accumulate reviewed batch-atomic fixture transitions while
+  refreshing one complete-fixture digest at the final wave boundary, provided
+  cumulative caps are exact and every batch is diagnostic-free before the next
+  begins.
+
+#### Evidence
+
+- The document-only rehearsal failed compatibility validation solely because
+  its now-unused exact debt tuples remained configured; all five document
+  edits were reverted and the tracked tree returned clean before this
+  correction.
+- This correction is limited to Spec 030, Plan 030, Task 030, and this
+  append-only canonical progress entry. It changes no authored migration body, ledger row,
+  fixture record, validator, quality gate, README, protected surface, live
+  system, secret, credential, or remote state.
+
+#### Handoff
+
+- Independently review and commit this exact four-path correction. Then resume
+  ADM-003 from the already approved 34-path frozen manifest and execute each
+  batch with the corrected atomic debt-consumption sequence.
+
 ### 2026-07-13 - Authored migration durable evidence ledger
 
 #### Metadata
