@@ -3,7 +3,7 @@ title: 'Agent Governance Contract Normalization Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Agent Governance Contract Normalization Technical Specification (Spec)
@@ -47,50 +47,6 @@ Out of scope:
 - Rewriting non-target SDLC, operations, reference, or archive documents except
   when they must be touched for direct traceability or validation evidence.
 - Claiming live runtime readiness from repo-static validation.
-
-## Related Inputs
-
-- **PRD**: No separate PRD exists for this governance normalization pass. The
-  upstream requirement is the approved user request to normalize the target
-  AI-agent governance, frontmatter, section, contract, provider-adapter, QA,
-  and CI/CD surfaces.
-- **ARD**: No separate ARD exists. The architectural baseline is the current
-  Stage 00 canonical core plus provider-adapter model.
-- **Related ADRs**: No new ADR is required unless implementation discovers a
-  provider capability decision that changes the architecture rather than merely
-  documenting the current contract.
-
-Official capability basis:
-
-- Codex custom instructions with `AGENTS.md`:
-  <https://developers.openai.com/codex/guides/agents-md>
-- Codex subagents:
-  <https://developers.openai.com/codex/subagents>
-- Codex CLI and configuration:
-  <https://developers.openai.com/codex/cli>
-- Claude Code settings:
-  <https://code.claude.com/docs/en/settings>
-- Claude Code hooks:
-  <https://code.claude.com/docs/en/hooks>
-- Claude Code subagents:
-  <https://code.claude.com/docs/en/sub-agents>
-- Gemini CLI commands and hierarchical memory:
-  <https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/commands.md>
-- GitHub Actions:
-  <https://docs.github.com/en/actions>
-
-Repository inputs:
-
-- `docs/00.agent-governance/rules/bootstrap.md`
-- `docs/00.agent-governance/common-governance.md`
-- `docs/00.agent-governance/harness-catalog.md`
-- `docs/00.agent-governance/harness-implementation-map.md`
-- `docs/00.agent-governance/subagent-protocol.md`
-- `docs/00.agent-governance/providers/*.md`
-- `docs/00.agent-governance/rules/*.md`
-- `.github/workflows/ci.yml`
-- `.agents/hooks.json`, `.claude/settings.json`, `.codex/hooks.json`
-- `scripts/validate-repo-quality-gates.sh`
 
 ## Contracts
 
@@ -163,12 +119,12 @@ The interface is document-to-document traceability rather than a software API.
 Every durable rule must have exactly one canonical owner, and every adapter or
 automation surface must point back to that owner.
 
-## API Contract (If Applicable)
+### API Contract
 
 This work exposes no external API. No `api-spec.md`, OpenAPI, GraphQL, or
 protobuf contract is required.
 
-## Agent Role & IO Contract (If Applicable)
+### Agent Role & IO Contract
 
 - **Agent Role**: Governance/documentation implementer with review support from
   subagents when useful.
@@ -182,7 +138,7 @@ protobuf contract is required.
   agent governance contract that passes repo-static validation and clearly
   separates native provider capabilities from behavioral mirrors.
 
-## Tools & Tool Contract (If Applicable)
+### Tools & Tool Contract
 
 - **Tool List**:
   - Repository search and inspection with `rg`, `sed`, and Git commands.
@@ -200,7 +156,7 @@ protobuf contract is required.
   - If a validator cannot deterministically enforce a rule, document the
     boundary and keep manual validation evidence in the task/progress record.
 
-## Prompt / Policy Contract (If Applicable)
+### Prompt / Policy Contract
 
 - **System / Instruction Contract**: Agents must load the root shim for their
   provider, then Stage 00 bootstrap, scope, provider note, progress ledger, and
@@ -211,7 +167,7 @@ protobuf contract is required.
 - **Versioning Rule**: Capability claims tied to vendor behavior must carry a
   source basis and freshness note when they are changed.
 
-## Memory & Context Strategy (If Applicable)
+### Memory & Context Strategy
 
 - **Short-term Context**: Use the active spec, implementation plan, and task
   record once implementation begins.
@@ -221,7 +177,7 @@ protobuf contract is required.
 - **Retrieval Boundary**: Do not store secrets, credentials, private runtime
   databases, or unredacted token material in memory.
 
-## Guardrails (If Applicable)
+### Guardrails
 
 - **Input Guardrails**:
   - Confirm target documents are in scope before editing.
@@ -242,7 +198,7 @@ protobuf contract is required.
   - Ask the human before changing branch strategy, deleting work, pushing,
     publishing, mutating third-party resources, or changing credentials.
 
-## Evaluation (If Applicable)
+### Evaluation
 
 - **Eval Types**:
   - Structural validation: frontmatter, README, link, route, JSON/TOML/YAML,
@@ -341,7 +297,7 @@ surfaces change.
 - **VAL-AGC-006**: Repo-changing work is recorded in the canonical progress
   ledger and each logical work unit is committed separately.
 
-## Related Documents
+## Traceability
 
 - **Governance Hub**: [../../00.agent-governance/README.md](../../00.agent-governance/README.md)
 - **Bootstrap Governance**: [../../00.agent-governance/rules/bootstrap.md](../../00.agent-governance/rules/bootstrap.md)
@@ -354,3 +310,46 @@ surfaces change.
 - **Plan**: `../../04.execution/plans/2026-07-04-agent-governance-contract-normalization.md`
 - **Tasks**: `../../04.execution/tasks/2026-07-04-agent-governance-contract-normalization.md`
 - **Current implementation contract**: This completed normalization is an input to [Spec 025](../025-governance-owner-and-roster-currentness/spec.md).
+### Related inputs
+
+- **PRD**: No separate PRD exists for this governance normalization pass. The
+  upstream requirement is the approved user request to normalize the target
+  AI-agent governance, frontmatter, section, contract, provider-adapter, QA,
+  and CI/CD surfaces.
+- **ARD**: No separate ARD exists. The architectural baseline is the current
+  Stage 00 canonical core plus provider-adapter model.
+- **Related ADRs**: No new ADR is required unless implementation discovers a
+  provider capability decision that changes the architecture rather than merely
+  documenting the current contract.
+
+Official capability basis:
+
+- Codex custom instructions with `AGENTS.md`:
+  <https://developers.openai.com/codex/guides/agents-md>
+- Codex subagents:
+  <https://developers.openai.com/codex/subagents>
+- Codex CLI and configuration:
+  <https://developers.openai.com/codex/cli>
+- Claude Code settings:
+  <https://code.claude.com/docs/en/settings>
+- Claude Code hooks:
+  <https://code.claude.com/docs/en/hooks>
+- Claude Code subagents:
+  <https://code.claude.com/docs/en/sub-agents>
+- Gemini CLI commands and hierarchical memory:
+  <https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/commands.md>
+- GitHub Actions:
+  <https://docs.github.com/en/actions>
+
+Repository inputs:
+
+- `docs/00.agent-governance/rules/bootstrap.md`
+- `docs/00.agent-governance/common-governance.md`
+- `docs/00.agent-governance/harness-catalog.md`
+- `docs/00.agent-governance/harness-implementation-map.md`
+- `docs/00.agent-governance/subagent-protocol.md`
+- `docs/00.agent-governance/providers/*.md`
+- `docs/00.agent-governance/rules/*.md`
+- `.github/workflows/ci.yml`
+- `.agents/hooks.json`, `.claude/settings.json`, `.codex/hooks.json`
+- `scripts/validate-repo-quality-gates.sh`

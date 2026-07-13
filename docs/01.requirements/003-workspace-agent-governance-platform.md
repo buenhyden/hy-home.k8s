@@ -3,7 +3,7 @@ title: 'Workspace Agent Governance Platform Product Requirements'
 type: sdlc/prd
 status: active
 owner: platform
-updated: 2026-06-01
+updated: 2026-07-13
 ---
 
 # Workspace Agent Governance Platform Product Requirements
@@ -86,7 +86,7 @@ Template Contract, Model Policy가 여러 문서와 provider surface에 분산�
 - External skill paths may change outside the repository; missing external skills must be recorded as gaps rather than silently substituted.
 - Repo-static validation is required for this governance work; live runtime validation is outside scope unless separately approved.
 
-## AI Agent Requirements (If Applicable)
+### Agent execution and approval requirements
 
 - **Allowed Actions**:
   - Read and update repository governance, requirements, architecture, plan, task, and memory documents according to templates.
@@ -102,7 +102,7 @@ Template Contract, Model Policy가 여러 문서와 provider surface에 분산�
 - **Evaluation Expectation**:
   - `git diff --check`, `bash scripts/generate-llm-wiki-index.sh --check`, and `bash scripts/validate-repo-quality-gates.sh .` pass or limitations are recorded.
 
-## Related Documents
+## Traceability
 
 - **ARD**: [../02.architecture/requirements/0006-workspace-agent-governance-platform.md](../02.architecture/requirements/0006-workspace-agent-governance-platform.md)
 - **ADR**: [../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md](../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)

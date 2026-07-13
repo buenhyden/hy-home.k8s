@@ -3,7 +3,7 @@ title: 'Workspace Document Assurance Operating Model Architecture Reference Docu
 type: sdlc/ard
 status: accepted
 owner: platform
-updated: 2026-07-12
+updated: 2026-07-13
 ---
 
 # Workspace Document Assurance Operating Model Architecture Reference Document (ARD)
@@ -15,7 +15,7 @@ document profiles, template forms, authored documents, validators, provider
 adapters, and CI selectors interact. The operating model has one owner per
 fact and treats every copied table or prose summary as a non-authoritative view.
 
-## Summary
+### Current architecture summary
 
 Stage 99 owns document profile and form contracts; Stage 00 owns agent-facing
 execution policy; authored stages own topic facts and evidence; validators and
@@ -105,7 +105,7 @@ against their source rather than becoming new owners.
   policy fallback, selector fixtures, and full-SHA Action checks. Live evidence
   remains explicitly unverified.
 
-## AI Agent Architecture Requirements (If Applicable)
+### Agent architecture requirements
 
 - **Model/Provider Strategy**: Capability tiers are canonical; provider notes
   map Claude, Codex, and Gemini to available native models without duplicating
@@ -120,7 +120,7 @@ against their source rather than becoming new owners.
 - **Latency / Cost Budget**: Affected-file checks are narrow; all-files and broad
   reviewers run at defined completion gates rather than after every edit.
 
-## Related Documents
+## Traceability
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
 - **ADRs**: [Declarative Document Contract Registry](../decisions/0015-declarative-document-contract-registry.md) and [Program-to-Tranche Lineage](../decisions/0016-program-to-tranche-document-lineage.md)

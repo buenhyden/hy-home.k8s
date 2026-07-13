@@ -1101,8 +1101,44 @@ template_compatibility = load_json(template_compatibility_path)
 TEMPLATE_COMPATIBILITY_CONTRACT_V1 = {
     "name": "TemplateCompatibilityContract.v1",
     "semantic_sha256": (
-        "ac12a64212c5073df482509f3b453596482e2563284eb9e9aae03cdd41514759"  # pragma: allowlist secret
+        "6fcb92853930b4206551c0d014f3403cff2a37f2c2a6389d6eba7b9453bca402"  # pragma: allowlist secret
     ),
+}
+
+ADM003_TEMPLATE_DEBT_AFTER = {
+    "affectedPathCount": 232,
+    "occurrenceCount": 1127,
+    "rules": {
+        "BODY-HEADING-REQUIRED": {
+            "pathCount": 89,
+            "occurrenceCount": 247,
+            "tokenObligationCount": 247,
+        },
+        "BODY-TEMPLATE-RESIDUE": {
+            "pathCount": 158,
+            "occurrenceCount": 267,
+            "tokenObligationCount": 267,
+        },
+        "FM-DELIMITER": {
+            "pathCount": 24,
+            "occurrenceCount": 24,
+            "tokenObligationCount": 0,
+        },
+        "BODY-HEADING-UNSUPPORTED": {
+            "pathCount": 164,
+            "occurrenceCount": 588,
+            "tokenObligationCount": 588,
+            "distinctTokenCount": 375,
+        },
+        "BODY-H2-DUPLICATE": {
+            "pathCount": 1,
+            "occurrenceCount": 1,
+            "tokenObligationCount": 1,
+        },
+    },
+    "requiredResidueOverlapPathCount": 51,
+    "requiredResidueUnionPathCount": 196,
+    "unionPathCount": 232,
 }
 
 
@@ -1178,6 +1214,14 @@ def assert_template_compatibility_mutation_proof(contract: dict) -> None:
             "pathCount"
         ] += 1
 
+    def mutate_rule_occurrence_cap(candidate: dict) -> None:
+        candidate["semanticDebtCaps"]["rules"]["BODY-TEMPLATE-RESIDUE"][
+            "occurrenceCount"
+        ] += 1
+
+    def mutate_required_residue_union_cap(candidate: dict) -> None:
+        candidate["semanticDebtCaps"]["requiredResidueUnionPathCount"] += 1
+
     def mutate_union_cap(candidate: dict) -> None:
         candidate["semanticDebtCaps"]["unionPathCount"] += 1
 
@@ -1207,6 +1251,8 @@ def assert_template_compatibility_mutation_proof(contract: dict) -> None:
         "affected rule": mutate_affected_rule,
         "affected token": mutate_affected_token,
         "semantic rule cap": mutate_rule_cap,
+        "semantic occurrence cap": mutate_rule_occurrence_cap,
+        "required/residue union cap": mutate_required_residue_union_cap,
         "semantic union cap": mutate_union_cap,
         "residue token obligation": delete_residue_token,
     }
@@ -1226,6 +1272,30 @@ if not template_compatibility_contract_matches(template_compatibility):
         f"{TEMPLATE_COMPATIBILITY_CONTRACT_V1['name']} semantic SHA-256"
     )
 assert_template_compatibility_mutation_proof(template_compatibility)
+
+affected_records = [
+    (row["profile"], item)
+    for row in template_compatibility["compatibilityDebt"]
+    for item in row["affectedPaths"]
+]
+affected_occurrence_count = sum(
+    max(
+        1,
+        sum(token.startswith(rule_id + "::") for token in item["tokens"]),
+    )
+    for _, item in affected_records
+    for rule_id in item["ruleIds"]
+)
+adm003_after_projection = {
+    "affectedPathCount": len({item["path"] for _, item in affected_records}),
+    "occurrenceCount": affected_occurrence_count,
+    **template_compatibility["semanticDebtCaps"],
+}
+if adm003_after_projection != ADM003_TEMPLATE_DEBT_AFTER:
+    fail(
+        f"{rel(template_compatibility_path)} ADM-003 after projection changed: "
+        f"{adm003_after_projection}"
+    )
 
 if template_compatibility.get("owner") != "Spec 030":
     fail(f"{rel(template_compatibility_path)} owner must be Spec 030")

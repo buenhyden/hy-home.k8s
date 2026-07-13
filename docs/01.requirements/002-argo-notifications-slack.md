@@ -3,7 +3,7 @@ title: 'Argo Notifications Slack Webhook Product Requirements'
 type: sdlc/prd
 status: active
 owner: platform
-updated: 2026-05-18
+updated: 2026-07-13
 ---
 
 # Argo Notifications Slack Webhook Product Requirements
@@ -12,7 +12,7 @@ updated: 2026-05-18
 
 이 문서는 ArgoCD Notifications 컨트롤러를 활성화하고 Slack webhook을 알림 destination으로 사용하여 GitOps 이벤트(sync 실패, health 저하, 배포 완료)와 Rollouts 이벤트(완료, abort)를 운영자에게 자동 전달하기 위한 제품 요구사항을 정의한다.
 
-## Requirement Status
+### Current requirement status
 
 이 PRD는 current-contract backfill 기준의 active 문서다.
 ArgoCD Notifications values, ConfigMap, ExternalSecret, 운영 문서는 이미 저장소에 존재하며, 2026-05-18에 ARD/Spec/Plan/Task 추적 체인을 보강했다.
@@ -77,14 +77,14 @@ ArgoCD Notifications values, ConfigMap, ExternalSecret, 운영 문서는 이미 
 - ESO가 정상 동작 중인 상태를 전제한다 (현재 baseline PRD 의존).
 - Argo Rollouts가 설치된 상태에서 rollout-\* 이벤트가 동작한다 (PRD `001-argo-rollouts-progressive-delivery.md` 의존).
 
-## AI Agent Requirements (If Applicable)
+### Agent execution and approval requirements
 
 - **Allowed Actions**: Update PRD/documentation, run non-destructive static validation, and collect read-only status evidence.
 - **Disallowed Actions**: Store Slack credentials in plaintext, modify Vault paths without approval, or change manifests outside an approved downstream stage.
 - **Human-in-the-loop Requirement**: Required before initial notification credential registration or Slack channel permission changes.
 - **Evaluation Expectation**: Verify controller status, ExternalSecret readiness, and Slack notification receipt in a downstream validation stage.
 
-## Related Documents
+## Traceability
 
 - **ARD**: [`../02.architecture/requirements/0005-argo-notifications-slack.md`](../02.architecture/requirements/0005-argo-notifications-slack.md)
 - **Spec**: [`../03.specs/005-argo-notifications-slack/spec.md`](../03.specs/005-argo-notifications-slack/spec.md)

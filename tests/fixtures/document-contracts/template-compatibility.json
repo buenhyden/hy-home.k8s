@@ -8,8 +8,8 @@
     "forbiddenResidueDefinitions": 26,
     "baselinePathCount": 314,
     "missingCanonicalPathCount": 89,
-    "forbiddenResiduePathCount": 188,
-    "forbiddenResidueOccurrences": 410
+    "forbiddenResiduePathCount": 158,
+    "forbiddenResidueOccurrences": 267
   },
   "semanticDebtCaps": {
     "rules": {
@@ -19,9 +19,9 @@
         "tokenObligationCount": 247
       },
       "BODY-TEMPLATE-RESIDUE": {
-        "pathCount": 188,
-        "occurrenceCount": 410,
-        "tokenObligationCount": 410
+        "pathCount": 158,
+        "occurrenceCount": 267,
+        "tokenObligationCount": 267
       },
       "FM-DELIMITER": {
         "pathCount": 24,
@@ -29,10 +29,10 @@
         "tokenObligationCount": 0
       },
       "BODY-HEADING-UNSUPPORTED": {
-        "pathCount": 175,
-        "occurrenceCount": 617,
-        "tokenObligationCount": 617,
-        "distinctTokenCount": 400
+        "pathCount": 164,
+        "occurrenceCount": 588,
+        "tokenObligationCount": 588,
+        "distinctTokenCount": 375
       },
       "BODY-H2-DUPLICATE": {
         "pathCount": 1,
@@ -41,8 +41,8 @@
       }
     },
     "requiredResidueOverlapPathCount": 51,
-    "requiredResidueUnionPathCount": 226,
-    "unionPathCount": 266
+    "requiredResidueUnionPathCount": 196,
+    "unionPathCount": 232
   },
   "compatibilityDebt": [
     {
@@ -72,58 +72,9 @@
       ],
       "baselinePathCount": 8,
       "baselineDebtPathCount": 0,
-      "baselineForbiddenResiduePathCount": 5,
-      "baselineForbiddenResidueOccurrences": 5,
+      "baselineForbiddenResiduePathCount": 0,
+      "baselineForbiddenResidueOccurrences": 0,
       "affectedPaths": [
-        {
-          "path": "docs/01.requirements/001-argo-rollouts-progressive-delivery.md",
-          "ruleIds": [
-            "BODY-HEADING-UNSUPPORTED",
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-HEADING-UNSUPPORTED::Requirement Status",
-            "BODY-TEMPLATE-RESIDUE::AI Agent Requirements (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/01.requirements/002-argo-notifications-slack.md",
-          "ruleIds": [
-            "BODY-HEADING-UNSUPPORTED",
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-HEADING-UNSUPPORTED::Requirement Status",
-            "BODY-TEMPLATE-RESIDUE::AI Agent Requirements (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/01.requirements/003-workspace-agent-governance-platform.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::AI Agent Requirements (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/01.requirements/004-current-local-gitops-platform.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::AI Agent Requirements (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/01.requirements/005-workspace-document-assurance-modernization.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::AI Agent Requirements (If Applicable)"
-          ]
-        },
         {
           "path": "examples/aws/docs/01.requirements/2026-03-31-aws-migration-prd.md",
           "ruleIds": [
@@ -180,59 +131,9 @@
       ],
       "baselinePathCount": 10,
       "baselineDebtPathCount": 0,
-      "baselineForbiddenResiduePathCount": 10,
-      "baselineForbiddenResidueOccurrences": 15,
+      "baselineForbiddenResiduePathCount": 5,
+      "baselineForbiddenResidueOccurrences": 5,
       "affectedPaths": [
-        {
-          "path": "docs/02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::AI Agent Architecture Requirements (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Summary"
-          ]
-        },
-        {
-          "path": "docs/02.architecture/requirements/0005-argo-notifications-slack.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::AI Agent Architecture Requirements (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Summary"
-          ]
-        },
-        {
-          "path": "docs/02.architecture/requirements/0006-workspace-agent-governance-platform.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::AI Agent Architecture Requirements (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Summary"
-          ]
-        },
-        {
-          "path": "docs/02.architecture/requirements/0007-current-local-gitops-platform.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::AI Agent Architecture Requirements (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Summary"
-          ]
-        },
-        {
-          "path": "docs/02.architecture/requirements/0008-workspace-document-assurance-operating-model.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::AI Agent Architecture Requirements (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Summary"
-          ]
-        },
         {
           "path": "examples/aws/docs/02.architecture/requirements/0001-aws-cloud-native-architecture.md",
           "ruleIds": [
@@ -317,46 +218,9 @@
       ],
       "baselinePathCount": 18,
       "baselineDebtPathCount": 0,
-      "baselineForbiddenResiduePathCount": 2,
-      "baselineForbiddenResidueOccurrences": 2,
+      "baselineForbiddenResiduePathCount": 0,
+      "baselineForbiddenResidueOccurrences": 0,
       "affectedPaths": [
-        {
-          "path": "docs/02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md",
-          "ruleIds": [
-            "BODY-HEADING-UNSUPPORTED"
-          ],
-          "tokens": [
-            "BODY-HEADING-UNSUPPORTED::Status"
-          ]
-        },
-        {
-          "path": "docs/02.architecture/decisions/0012-argo-notifications-slack.md",
-          "ruleIds": [
-            "BODY-HEADING-UNSUPPORTED"
-          ],
-          "tokens": [
-            "BODY-HEADING-UNSUPPORTED::Operational Prerequisite",
-            "BODY-HEADING-UNSUPPORTED::Status"
-          ]
-        },
-        {
-          "path": "docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::Agent-related Example Decisions (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/02.architecture/decisions/0014-current-local-gitops-platform-contract.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::Agent-related Example Decisions (If Applicable)"
-          ]
-        },
         {
           "path": "examples/aws/docs/02.architecture/decisions/0001-aws-managed-services-selection.md",
           "ruleIds": [
@@ -459,324 +323,9 @@
       ],
       "baselinePathCount": 31,
       "baselineDebtPathCount": 0,
-      "baselineForbiddenResiduePathCount": 18,
-      "baselineForbiddenResidueOccurrences": 126,
+      "baselineForbiddenResiduePathCount": 0,
+      "baselineForbiddenResidueOccurrences": 0,
       "affectedPaths": [
-        {
-          "path": "docs/03.specs/004-argo-rollouts-progressive-delivery/spec.md",
-          "ruleIds": [
-            "BODY-HEADING-UNSUPPORTED",
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-HEADING-UNSUPPORTED::Implementation Status",
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/005-argo-notifications-slack/spec.md",
-          "ruleIds": [
-            "BODY-HEADING-UNSUPPORTED",
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-HEADING-UNSUPPORTED::Implementation Status",
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/006-workspace-harness-gap-analysis/spec.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/009-workspace-harness-research-pack/spec.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/010-workspace-harness-implementation-audit-pack/spec.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/011-template-contract-governance-migration/spec.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/012-template-governance-audit-enhancement/spec.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/013-workspace-document-governance-hardening/spec.md",
-          "ruleIds": [
-            "BODY-HEADING-UNSUPPORTED",
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-HEADING-UNSUPPORTED::External Reference Basis",
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/014-workspace-document-contract-normalization/spec.md",
-          "ruleIds": [
-            "BODY-HEADING-UNSUPPORTED",
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-HEADING-UNSUPPORTED::External Basis",
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/015-agent-governance-contract-normalization/spec.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/016-active-control-surface-governance-hardening/spec.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/017-workspace-engineering-research-pack/spec.md",
-          "ruleIds": [
-            "BODY-HEADING-UNSUPPORTED",
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-HEADING-UNSUPPORTED::2026-07-10 Current Pack Fact-First Hardening Addendum",
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/018-workspace-engineering-implementation-audit-pack/spec.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/019-template-path-numbering-contract/spec.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/020-workspace-contract-governance-normalization/spec.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/021-sdlc-lifecycle-contract/spec.md",
-          "ruleIds": [
-            "BODY-HEADING-UNSUPPORTED"
-          ],
-          "tokens": [
-            "BODY-HEADING-UNSUPPORTED::API Contract",
-            "BODY-HEADING-UNSUPPORTED::Agent Role & IO Contract",
-            "BODY-HEADING-UNSUPPORTED::Evaluation",
-            "BODY-HEADING-UNSUPPORTED::Guardrails",
-            "BODY-HEADING-UNSUPPORTED::Memory & Context Strategy",
-            "BODY-HEADING-UNSUPPORTED::Prompt / Policy Contract",
-            "BODY-HEADING-UNSUPPORTED::Tools & Tool Contract"
-          ]
-        },
-        {
-          "path": "docs/03.specs/022-control-cloud-doc-normalization/spec.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/024-observability-and-network-review-agents/spec.md",
-          "ruleIds": [
-            "BODY-TEMPLATE-RESIDUE"
-          ],
-          "tokens": [
-            "BODY-TEMPLATE-RESIDUE::API Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Agent Role & IO Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Evaluation (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Guardrails (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Memory & Context Strategy (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Prompt / Policy Contract (If Applicable)",
-            "BODY-TEMPLATE-RESIDUE::Tools & Tool Contract (If Applicable)"
-          ]
-        },
-        {
-          "path": "docs/03.specs/025-governance-owner-and-roster-currentness/spec.md",
-          "ruleIds": [
-            "BODY-HEADING-UNSUPPORTED"
-          ],
-          "tokens": [
-            "BODY-HEADING-UNSUPPORTED::Approved Decisions",
-            "BODY-HEADING-UNSUPPORTED::Audit Information Architecture",
-            "BODY-HEADING-UNSUPPORTED::Baseline Evidence",
-            "BODY-HEADING-UNSUPPORTED::Complete Plan Evidence Ledger",
-            "BODY-HEADING-UNSUPPORTED::Complete Spec Disposition Ledger",
-            "BODY-HEADING-UNSUPPORTED::Design Alternatives",
-            "BODY-HEADING-UNSUPPORTED::Logical Commit Boundaries",
-            "BODY-HEADING-UNSUPPORTED::Plan Lifecycle and Evidence Design",
-            "BODY-HEADING-UNSUPPORTED::RMD-004 Canonical Contract",
-            "BODY-HEADING-UNSUPPORTED::RMD-004 Implementation Components",
-            "BODY-HEADING-UNSUPPORTED::Spec Lifecycle and Current-Owner Design",
-            "BODY-HEADING-UNSUPPORTED::Subagent-Driven Execution"
-          ]
-        },
         {
           "path": "examples/aws/docs/03.specs/aws-migration/spec.md",
           "ruleIds": [

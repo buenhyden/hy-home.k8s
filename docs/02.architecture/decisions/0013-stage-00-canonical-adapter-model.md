@@ -3,7 +3,7 @@ title: 'ADR-0013: Stage 00 Canonical Adapter Model'
 type: sdlc/adr
 status: accepted
 owner: platform
-updated: 2026-06-01
+updated: 2026-07-13
 ---
 
 # ADR-0013: Stage 00 Canonical Adapter Model
@@ -33,6 +33,14 @@ policy를 복제하면 같은 규칙이 서로 다른 표현으로 drift될 수 
   - Gemini: `.agents/agents/*.md`
 - Hook scripts are shared under `docs/00.agent-governance/hooks/*.sh`; provider hook configs are event wiring surfaces.
 - Work evidence belongs in `docs/04.execution/tasks/**` and `docs/00.agent-governance/memory/progress.md`, not in provider-specific hidden ledgers.
+
+### Agent decision application
+
+- Model selection is governed by Stage 00 model policy and harness catalog, not provider-local preference.
+- Tool gating is provider-native where supported and behavioral otherwise; all providers still follow the same approval boundaries.
+- Guardrail strategy favors static validation and task evidence before final handoff.
+- Planner/executor separation follows SDD stage routing: requirements and architecture upstream, plan/task execution downstream.
+- Fallback model or skill choices require explicit gap recording when the requested external capability is missing.
 
 ## Explicit Non-goals
 
@@ -80,15 +88,7 @@ policy를 복제하면 같은 규칙이 서로 다른 표현으로 drift될 수 
   - No objective guard against stale hook paths, model IDs, template routing, or provider mirror drift.
   - Completion would rely on intent instead of repo-backed evidence.
 
-## Agent-related Example Decisions (If Applicable)
-
-- Model selection is governed by Stage 00 model policy and harness catalog, not provider-local preference.
-- Tool gating is provider-native where supported and behavioral otherwise; all providers still follow the same approval boundaries.
-- Guardrail strategy favors static validation and task evidence before final handoff.
-- Planner/executor separation follows SDD stage routing: requirements and architecture upstream, plan/task execution downstream.
-- Fallback model or skill choices require explicit gap recording when the requested external capability is missing.
-
-## Related Documents
+## Traceability
 
 - **PRD**: [../../01.requirements/003-workspace-agent-governance-platform.md](../../01.requirements/003-workspace-agent-governance-platform.md)
 - **ARD**: [../requirements/0006-workspace-agent-governance-platform.md](../requirements/0006-workspace-agent-governance-platform.md)

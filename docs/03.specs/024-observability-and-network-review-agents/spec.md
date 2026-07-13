@@ -3,7 +3,7 @@ title: 'Observability and Network Review Agents Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Observability and Network Review Agents Technical Specification
@@ -29,14 +29,6 @@ surface (`traefik/`, multiple ingress manifests, `gitops/platform/network-polici
 - **Non-goal**: replacing `security-auditor` (network isolation/RBAC/secrets
   stay there) or `gitops-reviewer` (sync-target/Kustomize structure stays
   there); the new agents review domain correctness, not those concerns.
-
-## Related Inputs
-
-- AI agents roster and gap-analysis reference:
-  `../../90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`
-- Canonical roster: `../../00.agent-governance/harness-catalog.md`
-- Canonical tier policy: `../../00.agent-governance/model-policy.md`
-- Existing worker adapter pattern: `.claude/agents/gitops-reviewer.md`
 
 ## Contracts
 
@@ -75,37 +67,37 @@ No new data stores. Durable lessons route to
 - Output: severity-ranked findings with file:line evidence and a readiness
   statement for the relevant merge flow.
 
-## API Contract (If Applicable)
+#### API Contract
 
 Not applicable; these are delegated subagents, not network services.
 
-## Agent Role & IO Contract (If Applicable)
+#### Agent Role & IO Contract
 
 Defined in the sibling `agent-design.md`.
 
-## Tools & Tool Contract (If Applicable)
+#### Tools & Tool Contract
 
 Least-privilege `tools: Read, Grep, Glob, Bash`, matching existing review
 workers. Bash is limited to read-only repository inspection and repo-static
 validators; no live cluster or external mutation.
 
-## Prompt / Policy Contract (If Applicable)
+#### Prompt / Policy Contract
 
 System instruction summarized in each adapter body; policy stays in Stage 00
 governance and is imported by scope, not duplicated inline.
 
-## Memory & Context Strategy (If Applicable)
+#### Memory & Context Strategy
 
 Session-scoped only. Persistent lessons go to the progress ledger.
 
-## Guardrails (If Applicable)
+#### Guardrails
 
 - Review-only unless a human explicitly requests implementation.
 - No live cluster scraping, querying, or probing; manifest-static review only.
 - Enforce GitOps-first and no-plaintext-secrets boundaries.
 - Escalate secret/RBAC/network-isolation findings to `security-auditor`.
 
-## Evaluation (If Applicable)
+#### Evaluation
 
 Acceptance is repo-static: adapter parity across three providers, catalog
 roster rows present, and `bash scripts/validate-repo-quality-gates.sh .` PASS.
@@ -135,7 +127,7 @@ bash scripts/validate-repo-quality-gates.sh .
 - Harness catalog roster and adapter tables list both agents.
 - Repo-static validation passes and evidence is recorded in the Stage 04 task.
 
-## Related Documents
+## Traceability
 
 - **Agent Design**: [./agent-design.md](./agent-design.md)
 - **Plan**: [../../04.execution/plans/2026-07-06-observability-and-network-review-agents.md](../../04.execution/plans/2026-07-06-observability-and-network-review-agents.md)
@@ -144,3 +136,10 @@ bash scripts/validate-repo-quality-gates.sh .
 - **Harness catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Model policy**: [../../00.agent-governance/model-policy.md](../../00.agent-governance/model-policy.md)
 - **Current implementation contract**: This completed role-delivery evidence is an input to [Spec 025](../025-governance-owner-and-roster-currentness/spec.md).
+### Related inputs
+
+- AI agents roster and gap-analysis reference:
+  `../../90.references/research/2026-07-04-wer/ai-agents-roster-and-gap-analysis.md`
+- Canonical roster: `../../00.agent-governance/harness-catalog.md`
+- Canonical tier policy: `../../00.agent-governance/model-policy.md`
+- Existing worker adapter pattern: `.claude/agents/gitops-reviewer.md`

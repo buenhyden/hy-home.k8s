@@ -3,7 +3,7 @@ title: 'Governance Owner and Roster Currentness Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Governance Owner and Roster Currentness Technical Specification
@@ -36,17 +36,6 @@ provider agent roles, model promotion, new provider capabilities, unrelated
 RMD findings, live runtime proof, and bulk archival based only on document age
 or completion.
 
-## Related Inputs
-
-- **PRD**: No product PRD is required. The approved requirement is repository
-  governance and lifecycle normalization based on the Current audit findings.
-- **ARD**: No infrastructure ARD is changed. The existing Stage 00 canonical
-  core and provider-adapter architecture remains in force.
-- **Related ADRs**: No new architectural decision is needed unless execution
-  discovers that canonical ownership cannot be represented by the existing
-  Stage 00/03/04/99 boundaries.
-- **Audit input**: RMD-004 and GOV-002 in the 2026-07-11 Current audit pack.
-
 ## Contracts
 
 - **Config Contract**: The three provider adapter directories expose the same
@@ -57,7 +46,7 @@ or completion.
   Completed evidence remains `done`; only genuinely conflicting and fully
   replaced records become Archive Tombstones.
 
-## Approved Decisions
+### Approved Decisions
 
 - Use evidence-based selective Archive, not age-based or completion-based
   Archive.
@@ -76,7 +65,7 @@ or completion.
 - Work in an isolated `.worktrees/` worktree and commit each logical unit
   separately.
 
-## Baseline Evidence
+### Baseline Evidence
 
 The design audit found:
 
@@ -98,7 +87,7 @@ The design audit found:
   `.claude/agents`, `.agents/agents`, and `.codex/agents`, while three active
   harness-catalog statements still describe an eight-role roster.
 
-## Design Alternatives
+### Design Alternatives
 
 ### Selected: Evidence-Preserving Normalization
 
@@ -183,7 +172,7 @@ file relocation is the completed Stage 90 execution plan moving to its
 canonical Stage 04 Plan route. Archive operations, if later proven necessary,
 use the existing central Tombstone schema and index-only access rule.
 
-## Audit Information Architecture
+### Audit Information Architecture
 
 ### Parent Audit Index
 
@@ -222,7 +211,7 @@ will record the completed audit-pack outputs, commits, validation, and scope
 boundary. Stage 90 reports will link to that Stage 04 execution record instead
 of owning an active execution plan.
 
-## Spec Lifecycle and Current-Owner Design
+### Spec Lifecycle and Current-Owner Design
 
 ### Disposition
 
@@ -284,7 +273,7 @@ No known candidate meets all five Archive conditions in this cycle. A newly
 discovered candidate must be recorded with the same five-column decision before
 any Tombstone move.
 
-## Plan Lifecycle and Evidence Design
+### Plan Lifecycle and Evidence Design
 
 All forty-one existing canonical Plans remain `done`. The implementation will:
 
@@ -323,7 +312,7 @@ three provider directories. Current-owner checks use an explicit allowlisted
 path/link contract declared by Spec 025 rather than interpreting free-form
 prose.
 
-## RMD-004 Canonical Contract
+### RMD-004 Canonical Contract
 
 The new Spec will be:
 
@@ -343,7 +332,7 @@ The new same-topic Stage 04 Plan and Task will be the only execution pair for
 RMD-004. The completed Spec 015 Plan/Task remain historical inputs, while Spec
 024's Task remains the evidence that added the ninth and tenth roles.
 
-## RMD-004 Implementation Components
+### RMD-004 Implementation Components
 
 ### Canonical Roster Projection
 
@@ -433,7 +422,7 @@ Focused assertions will additionally verify:
 
 Optional tools that are unavailable will be reported as skipped, not passed.
 
-## Complete Spec Disposition Ledger
+### Complete Spec Disposition Ledger
 
 This ledger is the implementation input for all twenty baseline Specs. Spec
 025 is the new design record and is therefore not part of the pre-change count.
@@ -461,7 +450,7 @@ This ledger is the implementation input for all twenty baseline Specs. Spec
 | 023 Stage03/04 closure | draft | `2026-07-06-stage03-04-repo-static-gap-closure.md` Task | done | completed closure evidence | Retain done. |
 | 024 Review agents | draft | `2026-07-06-observability-and-network-review-agents.md` Task | done | 025 consumes role-delivery evidence | Retain Spec and agent design as done. |
 
-## Complete Plan Evidence Ledger
+### Complete Plan Evidence Ledger
 
 All forty-one baseline Plans are already `done`. `Task` below names the
 evidence record; `same` means the Task uses the same filename under
@@ -516,7 +505,7 @@ The relocated 2026-07-11 audit-integration Plan and the new RMD-004 Plan are
 new records and will be added after this baseline ledger, each with a
 same-basename Task and reciprocal links.
 
-## Logical Commit Boundaries
+### Logical Commit Boundaries
 
 1. `docs(audits): normalize audit pack information architecture`
    - parent/pack indexes and currentness;
@@ -536,7 +525,7 @@ same-basename Task and reciprocal links.
 Commit boundaries may be split further if a review discovers an independently
 revertible unit. They must not be collapsed into one repository-wide commit.
 
-## Subagent-Driven Execution
+### Subagent-Driven Execution
 
 After the written design and implementation plan are approved, execution will
 use fresh subagents per logical task. Each task receives:
@@ -568,7 +557,7 @@ retains responsibility for final integration, validation, and branch finishing.
 - Work is committed in logical units and is ready for an explicitly approved
   local merge to `main`.
 
-## Related Documents
+## Traceability
 
 - [Current Audit Pack](../../90.references/audits/2026-07-11-weia/README.md)
 - [Remediation Roadmap](../../90.references/audits/2026-07-11-weia/remediation-roadmap.md)
@@ -584,3 +573,13 @@ retains responsibility for final integration, validation, and branch finishing.
 - [Document Stage Routing](../../00.agent-governance/rules/document-stage-routing.md)
 - [Frontmatter Schema](../../99.templates/support/frontmatter-schema.md)
 - [Archive Index](../../98.archive/README.md)
+### Related inputs
+
+- **PRD**: No product PRD is required. The approved requirement is repository
+  governance and lifecycle normalization based on the Current audit findings.
+- **ARD**: No infrastructure ARD is changed. The existing Stage 00 canonical
+  core and provider-adapter architecture remains in force.
+- **Related ADRs**: No new architectural decision is needed unless execution
+  discovers that canonical ownership cannot be represented by the existing
+  Stage 00/03/04/99 boundaries.
+- **Audit input**: RMD-004 and GOV-002 in the 2026-07-11 Current audit pack.

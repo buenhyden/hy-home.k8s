@@ -3,7 +3,7 @@ title: 'Template Path Numbering Contract Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Template Path Numbering Contract Technical Specification
@@ -50,24 +50,6 @@ Out of scope:
 - Creating duplicate PRD aliases or compatibility copies.
 - Changing live infrastructure, provider runtime configuration, GitOps desired
   state, secrets, credentials, CI semantics, or external services.
-
-## Related Inputs
-
-- **User request**: Normalize `docs/99.templates/**`, update PRD and Stage 03
-  route contracts, rename the existing four PRDs to numeric filenames, update
-  cross-links, and commit by logical unit.
-- **Current PRD stage**: `docs/01.requirements/README.md` and the four active
-  date-based PRD files.
-- **Current Stage 03 structure**: `docs/03.specs/README.md` and existing
-  numbered spec folders.
-- **Template support contracts**:
-  `docs/99.templates/support/documentation-contract.md`,
-  `docs/99.templates/support/sdlc-governance.md`,
-  `docs/99.templates/support/template-routing.md`, and
-  `docs/99.templates/support/frontmatter-schema.md`.
-- **Validator**: `scripts/validate-repo-quality-gates.sh`.
-- **External basis**: Diataxis, Google developer documentation style guidance,
-  GitHub Docs writing guidance, and NIST SSDF.
 
 ## Contracts
 
@@ -164,13 +146,13 @@ The implementation plan should update these surfaces together:
 - Any authored Markdown link that points to the old PRD filenames or the old
   unnumbered Stage 03 placeholder.
 
-## API Contract (If Applicable)
+#### API Contract
 
 No external API is introduced. The API-related route contract is limited to
 the feature-local documentation path:
 `docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md`.
 
-## Agent Role & IO Contract (If Applicable)
+#### Agent Role & IO Contract
 
 Agents working on this implementation must treat repository files as the source
 of truth, avoid live runtime mutation, preserve historical evidence boundaries,
@@ -189,7 +171,7 @@ Outputs:
 - Updated route contracts and cross-links.
 - Validation evidence and logical commits.
 
-## Tools & Tool Contract (If Applicable)
+#### Tools & Tool Contract
 
 - `git mv` should be used for PRD renames.
 - `apply_patch` should be used for manual file edits.
@@ -198,20 +180,20 @@ Outputs:
   gate.
 - No tool may inspect secret values or mutate live infrastructure.
 
-## Prompt / Policy Contract (If Applicable)
+#### Prompt / Policy Contract
 
 Implementation agents must keep the route contract precise and avoid adding
 new README sections unless the README already owns an index or navigation
 summary. Durable rules belong in support contracts or Stage 00 governance.
 
-## Memory & Context Strategy (If Applicable)
+#### Memory & Context Strategy
 
 Reusable lessons should be recorded in
 `docs/00.agent-governance/memory/progress.md` only after implementation
 evidence exists. The memory entry should note that Stage 01 PRDs and Stage 03
 specs use numeric identity, while Stage 04 execution records remain date-based.
 
-## Guardrails (If Applicable)
+#### Guardrails
 
 - Do not create duplicate compatibility files for old PRD paths.
 - Do not rewrite historical execution evidence unless a path is an active link
@@ -221,7 +203,7 @@ specs use numeric identity, while Stage 04 execution records remain date-based.
 - Do not mutate live infrastructure, credentials, secrets, provider runtime
   configuration, or external services.
 
-## Evaluation (If Applicable)
+#### Evaluation
 
 Evaluation is repository-static:
 
@@ -284,7 +266,7 @@ no matches after active links are updated.
 - **VAL-SPC-019-007**: `git diff --check` passes.
 - **VAL-SPC-019-008**: `bash scripts/validate-repo-quality-gates.sh .` passes.
 
-## Related Documents
+## Traceability
 
 - **Templates README**: [../../99.templates/README.md](../../99.templates/README.md)
 - **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
@@ -301,3 +283,20 @@ no matches after active links are updated.
 - **NIST SSDF SP 800-218**: <https://csrc.nist.gov/pubs/sp/800/218/final>
 - **Plan**: [../../04.execution/plans/2026-07-05-template-path-numbering-contract.md](../../04.execution/plans/2026-07-05-template-path-numbering-contract.md)
 - **Task**: [../../04.execution/tasks/2026-07-05-template-path-numbering-contract.md](../../04.execution/tasks/2026-07-05-template-path-numbering-contract.md)
+### Related inputs
+
+- **User request**: Normalize `docs/99.templates/**`, update PRD and Stage 03
+  route contracts, rename the existing four PRDs to numeric filenames, update
+  cross-links, and commit by logical unit.
+- **Current PRD stage**: `docs/01.requirements/README.md` and the four active
+  date-based PRD files.
+- **Current Stage 03 structure**: `docs/03.specs/README.md` and existing
+  numbered spec folders.
+- **Template support contracts**:
+  `docs/99.templates/support/documentation-contract.md`,
+  `docs/99.templates/support/sdlc-governance.md`,
+  `docs/99.templates/support/template-routing.md`, and
+  `docs/99.templates/support/frontmatter-schema.md`.
+- **Validator**: `scripts/validate-repo-quality-gates.sh`.
+- **External basis**: Diataxis, Google developer documentation style guidance,
+  GitHub Docs writing guidance, and NIST SSDF.

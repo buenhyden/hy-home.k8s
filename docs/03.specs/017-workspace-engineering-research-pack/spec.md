@@ -3,7 +3,7 @@ title: 'Workspace Engineering Research Pack Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Workspace Engineering Research Pack Technical Specification (Spec)
@@ -51,31 +51,6 @@ Out of scope:
 - Changing active governance policy except where a later implementation task
   explicitly routes documented drift to the canonical owner.
 - Treating market scan material as authoritative.
-
-## Related Inputs
-
-- **PRD**: No separate PRD exists. The upstream requirement is the approved
-  user request to build a dated workspace engineering research pack, move the
-  existing four research documents into it, and include external source-backed
-  analysis.
-- **ARD**: No separate ARD exists. The architectural baseline is the current
-  Stage 00 to Stage 99 documentation taxonomy and the existing
-  `docs/90.references/**` reference contract.
-- **Prior Specs**:
-  - [Workspace Harness Research Pack](../009-workspace-harness-research-pack/spec.md)
-  - [Workspace Harness Implementation Audit Pack](../010-workspace-harness-implementation-audit-pack/spec.md)
-  - [Active Control Surface Governance Hardening](../016-active-control-surface-governance-hardening/spec.md)
-
-Repository inputs:
-
-- [90.references README](../../90.references/README.md)
-- [Research README](../../90.references/research/README.md)
-- [Reference Template](../../99.templates/templates/common/reference.template.md)
-- [Agent Governance Hub](../../00.agent-governance/README.md)
-- [Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- [Harness Implementation Map](../../00.agent-governance/harness-implementation-map.md)
-- [Repository Quality Gate](../../../scripts/validate-repo-quality-gates.sh)
-- [Harness Validation Wrapper](../../../scripts/validate-harness.sh)
 
 ## Contracts
 
@@ -188,11 +163,11 @@ interface WorkspaceEngineeringResearchPack {
 }
 ```
 
-## API Contract (If Applicable)
+#### API Contract
 
 No external API is introduced.
 
-## Agent Role & IO Contract (If Applicable)
+#### Agent Role & IO Contract
 
 - **Agent Role**: Documentation and governance researcher operating under the
   repo-local docs, meta, QA, infra, and security scopes.
@@ -205,7 +180,7 @@ No external API is introduced.
   required topics are covered, source authority is explicit, validation passes,
   and no live or external mutation occurs.
 
-## Tools & Tool Contract (If Applicable)
+#### Tools & Tool Contract
 
 - **Tool List**:
   - `rg` and shell readers for repo evidence.
@@ -224,7 +199,7 @@ No external API is introduced.
   - If validation fails, fix the owning reference, index, template route, or
     stale link before proceeding.
 
-## Prompt / Policy Contract (If Applicable)
+#### Prompt / Policy Contract
 
 - **System / Instruction Contract**:
   - Follow repo-first and official-source-first research order.
@@ -236,7 +211,7 @@ No external API is introduced.
 - **Versioning Rule**:
   - Use the dated pack folder as the version boundary for this refresh.
 
-## Memory & Context Strategy (If Applicable)
+#### Memory & Context Strategy
 
 - **Short-term Context**:
   - Stage 04 plan and task records own execution order, evidence, and status.
@@ -247,7 +222,7 @@ No external API is introduced.
   - The research pack provides lookup context only. It does not become an
     execution rule source.
 
-## Guardrails (If Applicable)
+#### Guardrails
 
 - **Input Guardrails**:
   - Verify external claims with web research before updating current source
@@ -266,7 +241,7 @@ No external API is introduced.
   - Stop and ask for clarification if a required source, canonical owner, or
     scope boundary is ambiguous enough to change the pack structure.
 
-## Evaluation (If Applicable)
+#### Evaluation
 
 - **Eval Types**:
   - Structural validation, stale-link scans, source-authority review, and
@@ -356,7 +331,48 @@ rg -n "non-authoritative|market scan|Source checked|Review and Freshness" docs/9
 - **VAL-SPC-007**: No live Kubernetes, Argo CD, Vault, cloud, GitHub remote,
   provider runtime, credential, or third-party mutation occurs.
 
-## 2026-07-10 Current Pack Fact-First Hardening Addendum
+## Traceability
+
+- **Prior Spec**: [Workspace Harness Research Pack](../009-workspace-harness-research-pack/spec.md)
+- **Prior Spec**: [Workspace Harness Implementation Audit Pack](../010-workspace-harness-implementation-audit-pack/spec.md)
+- **Prior Spec**: [Active Control Surface Governance Hardening](../016-active-control-surface-governance-hardening/spec.md)
+- **Historical/original Plan (2026-07-04)**:
+  [Workspace Engineering Research Pack Plan](../../04.execution/plans/2026-07-04-workspace-engineering-research-pack.md)
+- **Historical/original Task (2026-07-04)**:
+  [Workspace Engineering Research Pack Task](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md)
+- **Current execution Plan (2026-07-10)**:
+  [Current Research Pack Fact-First Hardening Plan](../../04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md)
+- **Current execution Task (2026-07-10)**:
+  [Current Research Pack Fact-First Hardening Task](../../04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md)
+- **Research README**: [../../90.references/research/README.md](../../90.references/research/README.md)
+- **Reference Template**: [../../99.templates/templates/common/reference.template.md](../../99.templates/templates/common/reference.template.md)
+- **Reference Maintenance Runbook**: [../../05.operations/runbooks/0011-reference-maintenance-runbook.md](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)
+### Related inputs
+
+- **PRD**: No separate PRD exists. The upstream requirement is the approved
+  user request to build a dated workspace engineering research pack, move the
+  existing four research documents into it, and include external source-backed
+  analysis.
+- **ARD**: No separate ARD exists. The architectural baseline is the current
+  Stage 00 to Stage 99 documentation taxonomy and the existing
+  `docs/90.references/**` reference contract.
+- **Prior Specs**:
+  - [Workspace Harness Research Pack](../009-workspace-harness-research-pack/spec.md)
+  - [Workspace Harness Implementation Audit Pack](../010-workspace-harness-implementation-audit-pack/spec.md)
+  - [Active Control Surface Governance Hardening](../016-active-control-surface-governance-hardening/spec.md)
+
+Repository inputs:
+
+- [90.references README](../../90.references/README.md)
+- [Research README](../../90.references/research/README.md)
+- [Reference Template](../../99.templates/templates/common/reference.template.md)
+- [Agent Governance Hub](../../00.agent-governance/README.md)
+- [Harness Catalog](../../00.agent-governance/harness-catalog.md)
+- [Harness Implementation Map](../../00.agent-governance/harness-implementation-map.md)
+- [Repository Quality Gate](../../../scripts/validate-repo-quality-gates.sh)
+- [Harness Validation Wrapper](../../../scripts/validate-harness.sh)
+
+### 2026-07-10 Current Pack fact-first hardening addendum
 
 ### Purpose and Approved Scope
 
@@ -609,20 +625,3 @@ This maintenance addendum is complete only when:
 - every logical task passes task-scoped review and the whole pack passes final
   review; and
 - required repository validation passes with limitations recorded honestly.
-
-## Related Documents
-
-- **Prior Spec**: [Workspace Harness Research Pack](../009-workspace-harness-research-pack/spec.md)
-- **Prior Spec**: [Workspace Harness Implementation Audit Pack](../010-workspace-harness-implementation-audit-pack/spec.md)
-- **Prior Spec**: [Active Control Surface Governance Hardening](../016-active-control-surface-governance-hardening/spec.md)
-- **Historical/original Plan (2026-07-04)**:
-  [Workspace Engineering Research Pack Plan](../../04.execution/plans/2026-07-04-workspace-engineering-research-pack.md)
-- **Historical/original Task (2026-07-04)**:
-  [Workspace Engineering Research Pack Task](../../04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md)
-- **Current execution Plan (2026-07-10)**:
-  [Current Research Pack Fact-First Hardening Plan](../../04.execution/plans/2026-07-10-current-research-pack-fact-first-hardening.md)
-- **Current execution Task (2026-07-10)**:
-  [Current Research Pack Fact-First Hardening Task](../../04.execution/tasks/2026-07-10-current-research-pack-fact-first-hardening.md)
-- **Research README**: [../../90.references/research/README.md](../../90.references/research/README.md)
-- **Reference Template**: [../../99.templates/templates/common/reference.template.md](../../99.templates/templates/common/reference.template.md)
-- **Reference Maintenance Runbook**: [../../05.operations/runbooks/0011-reference-maintenance-runbook.md](../../05.operations/runbooks/0011-reference-maintenance-runbook.md)

@@ -3,7 +3,7 @@ title: 'Workspace Agent Governance Platform Architecture Reference Document'
 type: sdlc/ard
 status: active
 owner: platform
-updated: 2026-06-01
+updated: 2026-07-13
 ---
 
 # Workspace Agent Governance Platform Architecture Reference Document (ARD)
@@ -15,7 +15,7 @@ Stage 00을 canonical core로 두고, `.agents` shared assets와 `.claude`, `.co
 provider adapter가 하나의 governance, QA/CI/CD, Template Contract, Model Policy를 따르도록
 하는 구조를 고정한다.
 
-## Summary
+### Current architecture summary
 
 Workspace agent governance platform은 `canonical core + provider adapter + validation evidence`
 모델을 사용한다. Durable policy는 `docs/00.agent-governance/**`가 소유하고, shared skills,
@@ -96,7 +96,7 @@ The governance architecture has five layers:
   - `git diff --check`
   - Targeted `rg` checks for traceability and stale routing.
 
-## AI Agent Architecture Requirements (If Applicable)
+### Agent architecture requirements
 
 - **Model/Provider Strategy**:
   - Model tiers and provider-specific concrete IDs are owned by Stage 00 model policy and harness catalog.
@@ -112,7 +112,7 @@ The governance architecture has five layers:
 - **Latency / Cost Budget**:
   - Not a runtime service budget. Agents should use JIT loading and scoped validation to keep governance work bounded.
 
-## Related Documents
+## Traceability
 
 - **PRD**: [../../01.requirements/003-workspace-agent-governance-platform.md](../../01.requirements/003-workspace-agent-governance-platform.md)
 - **ADR**: [../decisions/0013-stage-00-canonical-adapter-model.md](../decisions/0013-stage-00-canonical-adapter-model.md)

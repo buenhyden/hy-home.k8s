@@ -3,7 +3,7 @@ title: 'Workspace Engineering Implementation Audit Pack Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Workspace Engineering Implementation Audit Pack Technical Specification (Spec)
@@ -61,32 +61,6 @@ Out of scope:
   semantics, provider adapters, manifests, or operations runbooks.
 - Treating audit findings as active policy. Findings route future work to
   canonical owners.
-
-## Related Inputs
-
-- **PRD**: No separate PRD exists. The upstream requirement is the approved
-  user request to write a dated audit pack, compare research findings against
-  workspace implementation status, and folderize existing audit reports.
-- **ARD**: No separate ARD exists. The architecture baseline is the Stage 00 to
-  Stage 99 documentation taxonomy and the existing Stage 90 reference/audit
-  contract.
-- **Related Specs**:
-  - [Workspace Harness Implementation Audit Pack](../010-workspace-harness-implementation-audit-pack/spec.md)
-  - [Workspace Engineering Research Pack](../017-workspace-engineering-research-pack/spec.md)
-
-Repository inputs:
-
-- [Audits README](../../90.references/audits/README.md)
-- [Research Pack README](../../90.references/research/2026-07-04-wer/README.md)
-- [90.references README](../../90.references/README.md)
-- [Reference Template](../../99.templates/templates/common/reference.template.md)
-- [Agent Governance Hub](../../00.agent-governance/README.md)
-- [Harness Catalog](../../00.agent-governance/harness-catalog.md)
-- [Harness Implementation Map](../../00.agent-governance/harness-implementation-map.md)
-- [CI/CD QA Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
-- [Scripts README](../../../scripts/README.md)
-- [GitHub Configuration Hub](../../../.github/ABOUT.md)
-- [Repository Quality Gate](../../../scripts/validate-repo-quality-gates.sh)
 
 ## Contracts
 
@@ -200,11 +174,11 @@ interface WorkspaceEngineeringImplementationAuditPack {
 }
 ```
 
-## API Contract (If Applicable)
+#### API Contract
 
 No external API is introduced.
 
-## Agent Role & IO Contract (If Applicable)
+#### Agent Role & IO Contract
 
 - **Agent Role**: Documentation, governance, platform, and security auditor.
 - **Inputs**: Approved spec, current research pack, existing audit reports,
@@ -217,7 +191,7 @@ No external API is introduced.
   audit pack covers all requested topics, evidence/status boundaries are
   explicit, validation passes, and no live or external mutation occurs.
 
-## Tools & Tool Contract (If Applicable)
+#### Tools & Tool Contract
 
 - **Tool List**:
   - `rg` and shell readers for repository evidence.
@@ -237,7 +211,7 @@ No external API is introduced.
   - If link or quality validation fails, fix the owning file or index before
     proceeding.
 
-## Prompt / Policy Contract (If Applicable)
+#### Prompt / Policy Contract
 
 - **System / Instruction Contract**:
   - Use repo-backed evidence for local implementation status.
@@ -252,7 +226,7 @@ No external API is introduced.
   - Use the `2026-07-05-wea` folder as
     the dated audit-pack boundary.
 
-## Memory & Context Strategy (If Applicable)
+#### Memory & Context Strategy
 
 - **Short-term Context**:
   - Stage 04 plan/task records own execution order, evidence, validation, and
@@ -264,7 +238,7 @@ No external API is introduced.
   - Audit reports are lookup snapshots. They do not override current runtime
     truth or active owner documents.
 
-## Guardrails (If Applicable)
+#### Guardrails
 
 - **Input Guardrails**:
   - Read current research references before comparing implementation status.
@@ -286,7 +260,7 @@ No external API is introduced.
     manifests, provider adapters, credentials, remote GitHub state, or live
     environments.
 
-## Evaluation (If Applicable)
+#### Evaluation
 
 - **Eval Types**:
   - Repo-static validation.
@@ -371,7 +345,7 @@ bash scripts/validate-repo-quality-gates.sh .
   GitHub remote, provider runtime, credential, secret-value, paid-job,
   publishing, merge, push, or third-party mutation.
 
-## Related Documents
+## Traceability
 
 - **Research Pack Spec**: [../017-workspace-engineering-research-pack/spec.md](../017-workspace-engineering-research-pack/spec.md)
 - **Prior Audit Pack Spec**: [../010-workspace-harness-implementation-audit-pack/spec.md](../010-workspace-harness-implementation-audit-pack/spec.md)
@@ -381,3 +355,28 @@ bash scripts/validate-repo-quality-gates.sh .
 - **Audits README**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
 - **Reference Template**: [../../99.templates/templates/common/reference.template.md](../../99.templates/templates/common/reference.template.md)
 - **CI/CD QA Guide**: [../../05.operations/guides/0010-ci-cd-qa-reference-guide.md](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
+### Related inputs
+
+- **PRD**: No separate PRD exists. The upstream requirement is the approved
+  user request to write a dated audit pack, compare research findings against
+  workspace implementation status, and folderize existing audit reports.
+- **ARD**: No separate ARD exists. The architecture baseline is the Stage 00 to
+  Stage 99 documentation taxonomy and the existing Stage 90 reference/audit
+  contract.
+- **Related Specs**:
+  - [Workspace Harness Implementation Audit Pack](../010-workspace-harness-implementation-audit-pack/spec.md)
+  - [Workspace Engineering Research Pack](../017-workspace-engineering-research-pack/spec.md)
+
+Repository inputs:
+
+- [Audits README](../../90.references/audits/README.md)
+- [Research Pack README](../../90.references/research/2026-07-04-wer/README.md)
+- [90.references README](../../90.references/README.md)
+- [Reference Template](../../99.templates/templates/common/reference.template.md)
+- [Agent Governance Hub](../../00.agent-governance/README.md)
+- [Harness Catalog](../../00.agent-governance/harness-catalog.md)
+- [Harness Implementation Map](../../00.agent-governance/harness-implementation-map.md)
+- [CI/CD QA Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
+- [Scripts README](../../../scripts/README.md)
+- [GitHub Configuration Hub](../../../.github/ABOUT.md)
+- [Repository Quality Gate](../../../scripts/validate-repo-quality-gates.sh)

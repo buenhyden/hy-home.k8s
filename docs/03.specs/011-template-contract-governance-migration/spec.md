@@ -3,7 +3,7 @@ title: 'Template Contract and Governance Migration Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Template Contract and Governance Migration Technical Specification (Spec)
@@ -51,25 +51,6 @@ for this documentation migration.
 The first implementation unit after this spec should create support documents
 before moving templates. That keeps reviewers able to compare the new contract
 against the old flat inventory before the path migration begins.
-
-## Related Inputs
-
-- **PRD**: No separate PRD exists. The user-approved request in this Codex
-  thread is the product requirement input.
-- **ARD**: No separate ARD exists. Existing Stage 00 documentation governance
-  defines the architectural boundary.
-- **Related ADRs**: No new ADR is required unless the implementation changes
-  non-documentation runtime behavior.
-- **Current template inventory**:
-  [`../../99.templates/README.md`](../../99.templates/README.md)
-- **Documentation protocol**:
-  [`../../00.agent-governance/rules/documentation-protocol.md`](../../00.agent-governance/rules/documentation-protocol.md)
-- **Stage routing rules**:
-  [`../../00.agent-governance/rules/document-stage-routing.md`](../../00.agent-governance/rules/document-stage-routing.md)
-- **Stage authoring matrix**:
-  [`../../00.agent-governance/rules/stage-authoring-matrix.md`](../../00.agent-governance/rules/stage-authoring-matrix.md)
-- **Repository quality gate**:
-  [`../../../scripts/validate-repo-quality-gates.sh`](../../../scripts/validate-repo-quality-gates.sh)
 
 ## Contracts
 
@@ -231,7 +212,7 @@ These TypeScript interfaces are illustrative contracts for the migration. The
 actual repository gate can remain Bash plus embedded Python if it is simpler to
 integrate with the existing validator.
 
-## API Contract (If Applicable)
+### API Contract
 
 No external API is introduced by this migration.
 
@@ -244,7 +225,7 @@ Machine-readable template files must keep their native contract roots:
 
 Do not wrap machine-readable contracts in Markdown frontmatter.
 
-## Agent Role & IO Contract (If Applicable)
+### Agent Role & IO Contract
 
 - **Agent Role**: Documentation migration agent.
 - **Inputs**:
@@ -265,7 +246,7 @@ Do not wrap machine-readable contracts in Markdown frontmatter.
   - Repository quality gates pass after each logical implementation unit where
     possible, and at minimum after each migration phase.
 
-## Tools & Tool Contract (If Applicable)
+### Tools & Tool Contract
 
 - Use `rg` and `find` for repository inventory.
 - Use `git mv` for template path migration where files are moved.
@@ -276,7 +257,7 @@ Do not wrap machine-readable contracts in Markdown frontmatter.
 - Do not use live cluster, Vault, cloud, paid jobs, external publishing, or
   remote mutation for this migration.
 
-## Prompt / Policy Contract (If Applicable)
+### Prompt / Policy Contract
 
 The implementation must honor these prompt-level constraints:
 
@@ -288,7 +269,7 @@ The implementation must honor these prompt-level constraints:
 - Separate SDLC documentation contracts from common documentation contracts.
 - Keep logical-unit commits.
 
-## Memory & Context Strategy (If Applicable)
+### Memory & Context Strategy
 
 Reusable lessons from this migration belong in
 `../../00.agent-governance/memory/progress.md`. Long-lived policy belongs in
@@ -301,7 +282,7 @@ The final migration should record:
 - The validator surfaces that reject legacy paths and values.
 - Any intentionally deferred live or remote validation boundaries.
 
-## Guardrails (If Applicable)
+### Guardrails
 
 - **Input Guardrails**:
   - Read the current template README and matching template before authoring or
@@ -331,7 +312,7 @@ The final migration should record:
     resources, running paid jobs, or inspecting secrets. Local documentation
     edits and static validation are in scope.
 
-## Evaluation (If Applicable)
+### Evaluation
 
 - **Eval Types**:
   - Static repository validation.
@@ -442,7 +423,7 @@ rule.
 - **VAL-SPC-009**: `git diff --check` and `bash
   scripts/validate-repo-quality-gates.sh .` pass before final handoff.
 
-## Related Documents
+## Traceability
 
 - [Templates README](../../99.templates/README.md)
 - [Documentation Protocol](../../00.agent-governance/rules/documentation-protocol.md)
@@ -459,3 +440,21 @@ rule.
 - [Google developer documentation style guide](https://developers.google.com/style)
 - [Vale front matter documentation](https://vale.sh/docs/formats/front-matter)
 - [OpenAPI Description structure](https://learn.openapis.org/specification/structure.html)
+### Related inputs
+
+- **PRD**: No separate PRD exists. The user-approved request in this Codex
+  thread is the product requirement input.
+- **ARD**: No separate ARD exists. Existing Stage 00 documentation governance
+  defines the architectural boundary.
+- **Related ADRs**: No new ADR is required unless the implementation changes
+  non-documentation runtime behavior.
+- **Current template inventory**:
+  [`../../99.templates/README.md`](../../99.templates/README.md)
+- **Documentation protocol**:
+  [`../../00.agent-governance/rules/documentation-protocol.md`](../../00.agent-governance/rules/documentation-protocol.md)
+- **Stage routing rules**:
+  [`../../00.agent-governance/rules/document-stage-routing.md`](../../00.agent-governance/rules/document-stage-routing.md)
+- **Stage authoring matrix**:
+  [`../../00.agent-governance/rules/stage-authoring-matrix.md`](../../00.agent-governance/rules/stage-authoring-matrix.md)
+- **Repository quality gate**:
+  [`../../../scripts/validate-repo-quality-gates.sh`](../../../scripts/validate-repo-quality-gates.sh)

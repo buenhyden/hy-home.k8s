@@ -3,7 +3,7 @@ title: 'Workspace Harness Gap Analysis Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Workspace Harness Gap Analysis Technical Specification (Spec)
@@ -45,15 +45,6 @@ records. Bulk deletion, live mutation, secret value inspection, CI ruleset
 rewrites, and Kubernetes resource semantic changes remain out of scope for this
 pass.
 
-## Related Inputs
-
-- **PRD**: N/A. This is a workspace governance and validation improvement.
-- **ARD**: [../02.architecture/requirements/0007-current-local-gitops-platform.md](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
-- **Related ADRs**:
-  [ADR-0002](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md),
-  [ADR-0003](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md),
-  [ADR-0014](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-
 ## Contracts
 
 - **Config Contract**: root gateway files remain thin; recurring workflow and
@@ -93,11 +84,11 @@ pass.
 Coverage Ledger -> Integrated Gap Analysis -> Implementation Plan -> Task evidence -> Verification summary
 ```
 
-## API Contract (If Applicable)
+### API Contract
 
 Not applicable. This work does not expose an API.
 
-## Agent Role & IO Contract (If Applicable)
+### Agent Role & IO Contract
 
 - **Agent Role**: Codex implements the approved plan using previous subagent
   review outputs as investigation input.
@@ -108,7 +99,7 @@ Not applicable. This work does not expose an API.
 - **Success Definition**: repository-static checks pass or limitations are
   recorded, and all high-risk items remain planned rather than silently omitted.
 
-## Tools & Tool Contract (If Applicable)
+### Tools & Tool Contract
 
 - **Tool List**: `rg`, `find`, `bash`, `python3`, repo validation scripts.
 - **Permission Boundary**: no live `kubectl`, ArgoCD, Vault, cloud, or secret
@@ -118,7 +109,7 @@ Not applicable. This work does not expose an API.
 - **Failure Handling**: if repo-static validation fails, fix the scoped change
   or roll back the affected file set.
 
-## Prompt / Policy Contract (If Applicable)
+### Prompt / Policy Contract
 
 - **System / Instruction Contract**: `AGENTS.md` remains the thin gateway.
   Detailed workflow routing stays in governance docs.
@@ -128,7 +119,7 @@ Not applicable. This work does not expose an API.
 - **Versioning Rule**: this is a dated repository-static snapshot for
   2026-05-24 with a 2026-05-25 current-state overlay.
 
-## Memory & Context Strategy (If Applicable)
+### Memory & Context Strategy
 
 - **Short-term Context**: previous subagent results and baseline command output.
 - **Long-term Memory**: append a concise progress entry to
@@ -136,7 +127,7 @@ Not applicable. This work does not expose an API.
 - **Retrieval Boundary**: memory is supporting context; current repository files
   remain authoritative.
 
-## Guardrails (If Applicable)
+### Guardrails
 
 - **Input Guardrails**: compare prompt requests against repository governance
   before editing.
@@ -147,7 +138,7 @@ Not applicable. This work does not expose an API.
 - **Escalation Rule**: high-risk runtime or policy decisions require human
   approval and a separate implementation plan.
 
-## Evaluation (If Applicable)
+### Evaluation
 
 - **Eval Types**: static repository validation and documentation conformance.
 - **Metrics**: zero repo quality errors, generated LLM Wiki current, GitOps
@@ -511,7 +502,7 @@ clusterrolebinding` examples carry human-approved, bootstrap, break-glass,
   `workspace-harness-audit` skill extension. P3 deferrals recorded: OPA/Conftest
   CI enforcement, Traefik 443 live proof, ArgoCD live reconciliation.
 
-## Related Documents
+## Traceability
 
 - **Audit Reference**: [../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md](../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md)
 - **P3 Plan**: [../../04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md](../../04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md)
@@ -522,3 +513,11 @@ clusterrolebinding` examples carry human-approved, bootstrap, break-glass,
 - **Workspace Harness Audit Skill**: [../../../.claude/skills/workspace-harness-audit/skill.md](../../../.claude/skills/workspace-harness-audit/skill.md)
 - **Scripts README**: [../../../scripts/README.md](../../../scripts/README.md)
 - **RMD-004 implementation contract**: [Spec 025](../025-governance-owner-and-roster-currentness/spec.md)
+### Related inputs
+
+- **PRD**: N/A. This is a workspace governance and validation improvement.
+- **ARD**: [../02.architecture/requirements/0007-current-local-gitops-platform.md](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
+- **Related ADRs**:
+  [ADR-0002](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md),
+  [ADR-0003](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md),
+  [ADR-0014](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)

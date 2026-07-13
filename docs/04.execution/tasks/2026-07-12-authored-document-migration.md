@@ -35,7 +35,7 @@ consolidate duplicate AWS/Azure prose, and close the compatibility boundary.
 | --- | --- | --- | --- | --- |
 | ADM-001 | Start reciprocal Spec, Plan, Task, and index lineage | platform | Done | `python3` reciprocal-lineage assertion in Plan Task 1 Step 4; logical commit `docs(execution): start authored document migration` |
 | ADM-002 | Publish the baseline disposition and durable research ledger | platform | Done | Pre-ledger RED was sole `LEDGER-MISSING`; final inventory/ledger equality is exactly 469 paths (`baseline=433`, `new=38`) with 14 columns, a pinned self-row, `preserve=183`, `transform=227`, `merge=59`, zero ledger Markdown/cross-document diagnostics, and empty semantic items; logical commit `docs(migration): inventory authored document dispositions` |
-| ADM-003 | Normalize Stage 01–03 active design documents | platform | Queued | Exact 34-path frozen manifest; each at-most-five-path checkpoint atomically updates documents/ledger, removes its exact fixture records, synchronizes cumulative fixture/validator caps, and proves zero batch diagnostics before Step 5 refreshes the quality-gate digest once; logical commit `docs(migration): normalize active sdlc design documents` |
+| ADM-003 | Normalize Stage 01–03 active design documents | platform | Done | Exact 34-path manifest SHA-256 `3cd63fa57b386f8036f14a8a59638318b5686fe4b618422b8577ad106f54e29f`; seven atomic batches `5/5/5/5/5/5/4` each returned zero exact-path diagnostics; all 34 ledger rows record official-primary or explicit repository-only source applicability and `shape-normalized`; compatibility debt moved from `266/1299` paths/occurrences to `232/1127`; logical commit `docs(migration): normalize active sdlc design documents` |
 | ADM-004 | Normalize Stage 04–05 execution and operations documents | platform | Queued | Exact 120-path frozen manifest with the same batch-atomic ledger/debt/cap sequence and zero-diagnostic next-batch gate; logical commit `docs(migration): normalize execution and operations documents` |
 | ADM-005 | Normalize governance, Current references, Archive links, and six support documents | platform | Queued | Exact 73-path frozen manifest with batch-atomic ledger/debt/cap checkpoints; structural-only checks preserve historical facts and Spec 027/031 route/schema/form/provider semantics; logical commit `docs(migration): normalize governance references and archive links` |
 | ADM-006 | Consolidate AWS and Azure example documentation | platform | Queued | Exact 39-path debt manifest within the immutable 59-source merge/deletion set; synchronize the final zero-debt validator cap constants under the executable diff guard; `test -z "$(git ls-files examples/aws/docs examples/azure/docs)"`; logical commit `docs(migration): consolidate cloud example documentation` |
@@ -117,6 +117,25 @@ ADM-006 performs the final permitted cap/self-test synchronization after its
 39 records are removed. Every ADM-003 through ADM-006 commit runs a staged
 line guard that rejects validator changes outside the frozen numeric cap and
 self-test comparisons.
+
+ADM-003 completed the exact approved Stage 01–03 wave: five PRDs, five ARDs,
+four accepted ADRs, and twenty Specs now use their canonical H2 shapes while
+preserving every non-heading fact. The frozen manifest contains 34 paths with
+SHA-256 `3cd63fa57b386f8036f14a8a59638318b5686fe4b618422b8577ad106f54e29f`
+and was applied in seven atomic batches of `5/5/5/5/5/5/4`; every batch
+finished with zero compatibility diagnostics for its exact NUL manifest.
+Each corresponding durable-ledger row records whether the normalization used
+an official primary source or an explicit repository-only contract review,
+and all 34 results are `shape-normalized`.
+
+The completed wave removed exactly its 34 fixture records. Affected-path and
+semantic-occurrence debt moved from `266/1299` to `232/1127`; the remaining
+required-heading/residue union is 196 paths with 51 overlaps. The complete
+fixture semantic digest and mutation proofs now pin those after-values, while
+the staged validator guard proves that only frozen numeric cap and self-test
+expectations changed. The wave does not touch README profiles, ADM-004 paths,
+live rules, templates, CI, agents, scripts beyond the two validation owners,
+secrets, remote state, or cluster state.
 
 ## Traceability
 

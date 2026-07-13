@@ -3,7 +3,7 @@ title: 'Template Governance Audit Enhancement Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Template Governance Audit Enhancement Technical Specification (Spec)
@@ -52,35 +52,6 @@ taxonomy, live cluster validation, external publishing, remote branch
 protection, CI configuration changes unrelated to template validation, or broad
 rewriting of current content. It also does not create placeholder authored
 documents merely to prove a template route.
-
-## Related Inputs
-
-- **PRD**: No separate PRD exists. The user-approved continuation request in
-  this Codex thread is the product requirement input.
-- **ARD**: No separate ARD exists. Existing Stage 00 documentation governance
-  defines the architecture boundary.
-- **Related ADRs**: No new ADR is required unless implementation changes
-  non-documentation runtime behavior.
-- **Parent Template Migration Spec**:
-  [../011-template-contract-governance-migration/spec.md](../011-template-contract-governance-migration/spec.md)
-- **Template README**:
-  [../../99.templates/README.md](../../99.templates/README.md)
-- **Template Routing Contract**:
-  [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
-- **Frontmatter Schema**:
-  [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/frontmatter-schema.md)
-- **Documentation Protocol**:
-  [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/documentation-protocol.md)
-- **Repository Quality Gate**:
-  [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
-- **External Reference: Diataxis**:
-  [https://diataxis.fr/](https://diataxis.fr/)
-- **External Reference: GitHub Docs YAML frontmatter**:
-  [https://docs.github.com/en/contributing/writing-for-github-docs/using-yaml-frontmatter](https://docs.github.com/en/contributing/writing-for-github-docs/using-yaml-frontmatter)
-- **External Reference: Google developer documentation style guide**:
-  [https://developers.google.com/style](https://developers.google.com/style)
-- **External Reference: Microsoft Writing Style Guide**:
-  [https://learn.microsoft.com/en-us/style-guide/welcome/](https://learn.microsoft.com/en-us/style-guide/welcome/)
 
 ## Contracts
 
@@ -179,12 +150,12 @@ interface ValidatorRuleCandidate {
 }
 ```
 
-## API Contract (If Applicable)
+### API Contract
 
 This feature exposes no external API. No `api-spec.md`, OpenAPI, GraphQL, or
 protobuf contract is required.
 
-## Agent Role & IO Contract (If Applicable)
+### Agent Role & IO Contract
 
 - **Agent Role**: Documentation governance auditor and selective remediator.
 - **Inputs**:
@@ -202,7 +173,7 @@ protobuf contract is required.
   - Added validator checks are deterministic and tied to documented contracts.
   - Repository quality gates pass.
 
-## Tools & Tool Contract (If Applicable)
+### Tools & Tool Contract
 
 - **Tool List**:
   - `rg`, `find`, `git diff`, `git status`, `git log`.
@@ -220,7 +191,7 @@ protobuf contract is required.
   - If audit findings are ambiguous, record them as accepted risk instead of
     forcing speculative changes.
 
-## Prompt / Policy Contract (If Applicable)
+### Prompt / Policy Contract
 
 - Keep human-facing final responses in Korean.
 - Keep Stage 03/04 artifacts English-first.
@@ -228,7 +199,7 @@ protobuf contract is required.
 - Preserve logical commit boundaries.
 - Do not implement on `main`; use a development branch.
 
-## Memory & Context Strategy (If Applicable)
+### Memory & Context Strategy
 
 - Record durable lessons in
   `docs/00.agent-governance/memory/progress.md`.
@@ -236,7 +207,7 @@ protobuf contract is required.
 - Keep audit evidence in the Stage 04 task unless it is intentionally promoted
   to a Stage 90 dated audit snapshot.
 
-## Guardrails (If Applicable)
+### Guardrails
 
 - **Input Guardrails**:
   - Confirm worktree cleanliness before starting.
@@ -258,7 +229,7 @@ protobuf contract is required.
   - Ask the user before changing scope from audit enhancement to broad
     documentation migration.
 
-## Evaluation (If Applicable)
+### Evaluation
 
 - **Eval Types**:
   - Static contract audit.
@@ -332,7 +303,7 @@ find docs/99.templates -maxdepth 5 -type f -print | sort
   official or primary source and remains clearly non-authoritative compared to
   repo governance.
 
-## Related Documents
+## Traceability
 
 - **Parent Template Migration Spec**:
   [../011-template-contract-governance-migration/spec.md](../011-template-contract-governance-migration/spec.md)
@@ -351,3 +322,31 @@ find docs/99.templates -maxdepth 5 -type f -print | sort
 - **Quality Gate**:
   [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
 - **Completed evolution**: [011](../011-template-contract-governance-migration/spec.md) -> [012](./spec.md) -> [013](../013-workspace-document-governance-hardening/spec.md) -> [014](../014-workspace-document-contract-normalization/spec.md) -> [020](../020-workspace-contract-governance-normalization/spec.md) -> [021](../021-sdlc-lifecycle-contract/spec.md) -> [022](../022-control-cloud-doc-normalization/spec.md) -> [023](../023-stage03-04-repo-static-gap-closure/spec.md).
+### Related inputs
+
+- **PRD**: No separate PRD exists. The user-approved continuation request in
+  this Codex thread is the product requirement input.
+- **ARD**: No separate ARD exists. Existing Stage 00 documentation governance
+  defines the architecture boundary.
+- **Related ADRs**: No new ADR is required unless implementation changes
+  non-documentation runtime behavior.
+- **Parent Template Migration Spec**:
+  [../011-template-contract-governance-migration/spec.md](../011-template-contract-governance-migration/spec.md)
+- **Template README**:
+  [../../99.templates/README.md](../../99.templates/README.md)
+- **Template Routing Contract**:
+  [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
+- **Frontmatter Schema**:
+  [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/frontmatter-schema.md)
+- **Documentation Protocol**:
+  [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/documentation-protocol.md)
+- **Repository Quality Gate**:
+  [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
+- **External Reference: Diataxis**:
+  [https://diataxis.fr/](https://diataxis.fr/)
+- **External Reference: GitHub Docs YAML frontmatter**:
+  [https://docs.github.com/en/contributing/writing-for-github-docs/using-yaml-frontmatter](https://docs.github.com/en/contributing/writing-for-github-docs/using-yaml-frontmatter)
+- **External Reference: Google developer documentation style guide**:
+  [https://developers.google.com/style](https://developers.google.com/style)
+- **External Reference: Microsoft Writing Style Guide**:
+  [https://learn.microsoft.com/en-us/style-guide/welcome/](https://learn.microsoft.com/en-us/style-guide/welcome/)

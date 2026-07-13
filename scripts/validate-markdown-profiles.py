@@ -65,9 +65,9 @@ EXPECTED_DEBT_CAPS: dict[str, dict[str, int]] = {
         "tokenObligationCount": 247,
     },
     "BODY-TEMPLATE-RESIDUE": {
-        "pathCount": 188,
-        "occurrenceCount": 410,
-        "tokenObligationCount": 410,
+        "pathCount": 158,
+        "occurrenceCount": 267,
+        "tokenObligationCount": 267,
     },
     "FM-DELIMITER": {
         "pathCount": 24,
@@ -75,10 +75,10 @@ EXPECTED_DEBT_CAPS: dict[str, dict[str, int]] = {
         "tokenObligationCount": 0,
     },
     "BODY-HEADING-UNSUPPORTED": {
-        "pathCount": 175,
-        "occurrenceCount": 617,
-        "tokenObligationCount": 617,
-        "distinctTokenCount": 400,
+        "pathCount": 164,
+        "occurrenceCount": 588,
+        "tokenObligationCount": 588,
+        "distinctTokenCount": 375,
     },
     "BODY-H2-DUPLICATE": {
         "pathCount": 1,
@@ -87,8 +87,8 @@ EXPECTED_DEBT_CAPS: dict[str, dict[str, int]] = {
     },
 }
 EXPECTED_REQUIRED_RESIDUE_OVERLAP = 51
-EXPECTED_REQUIRED_RESIDUE_UNION = 226
-EXPECTED_DEBT_UNION = 266
+EXPECTED_REQUIRED_RESIDUE_UNION = 196
+EXPECTED_DEBT_UNION = 232
 IMPLEMENTED_RULE_IDS = frozenset(
     {
         "APPEND-CONTEXT",
@@ -1251,7 +1251,7 @@ def _self_test(root: Path) -> list[str]:
         for item in production_diagnostics
         if item.rule_id == "BODY-HEADING-UNSUPPORTED"
     }
-    if len(unsupported_tokens) != 400:
+    if len(unsupported_tokens) != 375:
         failures.append("repository unsupported-heading distinct token cap changed")
 
     compatibility_rows = _outcome_rows(
@@ -1276,7 +1276,7 @@ def _self_test(root: Path) -> list[str]:
         )
         for row in strict_rows
     ]
-    if compatibility_keys != strict_keys or len(compatibility_keys) != 1299:
+    if compatibility_keys != strict_keys or len(compatibility_keys) != 1127:
         failures.append("compatibility and strict diagnostic tuples differ")
     if {row.outcome for row in compatibility_rows} != {"DEFER"}:
         failures.append("repository compatibility results are not exact DEFER debt")

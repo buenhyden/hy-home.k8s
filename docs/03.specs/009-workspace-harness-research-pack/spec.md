@@ -3,7 +3,7 @@ title: 'Workspace Harness Research Pack Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Workspace Harness Research Pack Technical Specification (Spec)
@@ -53,17 +53,6 @@ Out of scope:
 - Creating parallel documentation trees such as `docs/superpowers/**`.
 - Treating market-scan material as authoritative when it conflicts with
   official vendor or repo-backed sources.
-
-## Related Inputs
-
-- **Workspace gateway**: `../../AGENTS.md`
-- **Bootstrap governance**: `../../00.agent-governance/rules/bootstrap.md`
-- **Documentation routing**: `../../00.agent-governance/rules/document-stage-routing.md`
-- **Documentation protocol**: `../../00.agent-governance/rules/documentation-protocol.md`
-- **Harness catalog**: `../../00.agent-governance/harness-catalog.md`
-- **Harness implementation map**: `../../00.agent-governance/harness-implementation-map.md`
-- **CI/CD and QA guide**: `../../05.operations/guides/0010-ci-cd-qa-reference-guide.md`
-- **Prior harness audit reference**: `../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md`
 
 ## Contracts
 
@@ -146,11 +135,11 @@ interface ResearchReferenceDocument {
 }
 ```
 
-## API Contract (If Applicable)
+### API Contract
 
 No external API is introduced.
 
-## Agent Role & IO Contract (If Applicable)
+### Agent Role & IO Contract
 
 - **Agent Role**: Documentation and governance researcher operating under the
   repo-local docs, meta, and QA scopes.
@@ -164,7 +153,7 @@ No external API is introduced.
   source-attributed, repo-aligned research baseline without creating conflicting
   policy.
 
-## Tools & Tool Contract (If Applicable)
+### Tools & Tool Contract
 
 - **Tool List**: `rg`, `sed`, `git`, `apply_patch`, web search/browsing, and
   repository validation scripts.
@@ -176,7 +165,7 @@ No external API is introduced.
   repo validation gate fails, fix the smallest affected document or report the
   scoped blocker.
 
-## Prompt / Policy Contract (If Applicable)
+### Prompt / Policy Contract
 
 - **System / Instruction Contract**: Follow repo JIT governance, template-first
   authoring, and the `docs-stage-routing` contract.
@@ -185,7 +174,7 @@ No external API is introduced.
 - **Versioning Rule**: All external claims must include the source-checked date
   and a refresh trigger because provider capabilities and product names change.
 
-## Memory & Context Strategy (If Applicable)
+### Memory & Context Strategy
 
 - **Short-term Context**: Use the current task plan and fetched sources while
   writing the research pack.
@@ -194,7 +183,7 @@ No external API is introduced.
 - **Retrieval Boundary**: `docs/90.references/research/` stores durable
   lookup material; active policy remains in `docs/00.agent-governance/**`.
 
-## Guardrails (If Applicable)
+### Guardrails
 
 - **Input Guardrails**: Verify current provider claims through browsing before
   writing implementation-status sections.
@@ -206,7 +195,7 @@ No external API is introduced.
 - **Escalation Rule**: Ask the human before changing canonical governance,
   live-runtime behavior, CI enforcement semantics, or external resources.
 
-## Evaluation (If Applicable)
+### Evaluation
 
 - **Eval Types**: Repository-static validation, link/template conformance,
   source attribution review, and checklist coverage review.
@@ -280,7 +269,7 @@ rg --files | rg '(^|/)progress\.md$'
 - **VAL-SPC-006**: Repository-static validation passes or any limitation is
   documented with scoped remediation.
 
-## Related Documents
+## Traceability
 
 - **Workspace governance platform PRD**: `../../01.requirements/003-workspace-agent-governance-platform.md`
 - **Workspace governance ARD**: `../../02.architecture/requirements/0006-workspace-agent-governance-platform.md`
@@ -290,3 +279,13 @@ rg --files | rg '(^|/)progress\.md$'
 - **Task record**: `../../04.execution/tasks/2026-07-02-workspace-harness-research-pack.md`
 - **Reference maintenance runbook**: `../../05.operations/runbooks/0011-reference-maintenance-runbook.md`
 - **Current research lineage**: This completed predecessor continues in [Spec 017](../017-workspace-engineering-research-pack/spec.md).
+### Related inputs
+
+- **Workspace gateway**: `../../AGENTS.md`
+- **Bootstrap governance**: `../../00.agent-governance/rules/bootstrap.md`
+- **Documentation routing**: `../../00.agent-governance/rules/document-stage-routing.md`
+- **Documentation protocol**: `../../00.agent-governance/rules/documentation-protocol.md`
+- **Harness catalog**: `../../00.agent-governance/harness-catalog.md`
+- **Harness implementation map**: `../../00.agent-governance/harness-implementation-map.md`
+- **CI/CD and QA guide**: `../../05.operations/guides/0010-ci-cd-qa-reference-guide.md`
+- **Prior harness audit reference**: `../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md`

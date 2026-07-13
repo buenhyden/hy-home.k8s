@@ -3,7 +3,7 @@ title: 'SDLC Lifecycle Contract Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # SDLC Lifecycle Contract Technical Specification
@@ -58,36 +58,6 @@ Out of scope:
   route.
 - Preserving full archived document bodies by default. Tombstones preserve
   traceability metadata; full snapshots require an explicit exception rule.
-
-## Related Inputs
-
-- **PRD**: No dedicated PRD exists for this governance follow-up. The approved
-  user request and existing Stage 00/99 contracts are the controlling inputs.
-- **ARD**: No new architecture requirement is required because this change
-  affects repository documentation governance and validation.
-- **Related ADRs**: Not applicable.
-- **Template contracts**:
-  - `../../99.templates/support/template-routing.md`
-  - `../../99.templates/support/frontmatter-schema.md`
-  - `../../99.templates/support/sdlc-governance.md`
-  - `../../99.templates/support/documentation-contract.md`
-  - `../../99.templates/support/common-documentation-governance.md`
-  - `../../99.templates/support/legacy-cleanup-rules.md`
-- **Stage 00 governance**:
-  - `../../00.agent-governance/rules/document-stage-routing.md`
-  - `../../00.agent-governance/rules/stage-authoring-matrix.md`
-  - `../../00.agent-governance/rules/documentation-protocol.md`
-  - `../../00.agent-governance/rules/quality-standards.md`
-- **Archive contract**:
-  - `../../98.archive/README.md`
-  - `../../99.templates/templates/common/archive-tombstone.template.md`
-- **Validation owner**: `../../../scripts/validate-repo-quality-gates.sh`
-- **External basis**:
-  - NIST SSDF SP 800-218: https://csrc.nist.gov/pubs/sp/800/218/final
-  - GitHub status checks: https://docs.github.com/articles/about-status-checks
-  - GitHub protected branches: https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
-  - Diataxis: https://diataxis.fr/
-  - Google developer documentation style guide: https://developers.google.com/style/
 
 ## Contracts
 
@@ -230,12 +200,12 @@ archive_tombstone:
   replacement: replacement path or none
 ```
 
-## API Contract
+### API Contract
 
 This feature exposes no external API and creates no machine-readable service
 contract.
 
-## Agent Role & IO Contract
+### Agent Role & IO Contract
 
 - **Agent Role**: Repository documentation governance worker.
 - **Inputs**: Approved user request, this spec, current Stage 00/99 contracts,
@@ -247,7 +217,7 @@ contract.
   SDLC lifecycle contract across Stage 00, Stage 01-05, Stage 98, Stage 99,
   `_workspace`, and quality gates.
 
-## Tools & Tool Contract
+### Tools & Tool Contract
 
 - Use `rg`, `find`, and existing repository validation scripts for local
   evidence gathering.
@@ -258,20 +228,20 @@ contract.
 - Do not inspect secret values or normalize private local auth material into
   tracked files.
 
-## Prompt / Policy Contract
+### Prompt / Policy Contract
 
 AI agents must follow Stage 00 bootstrap, provider rules, and template routing
 before editing SDLC documents. If a README section begins to carry the full
 lifecycle contract, move that contract body to the owning support/governance
 document and keep the README as an entrypoint.
 
-## Memory & Context Strategy
+### Memory & Context Strategy
 
 Durable completion evidence belongs in Stage 04 tasks and the Stage 00 progress
 memory. Temporary inventories may exist under `_workspace` during execution
 only when they are non-secret and task-scoped.
 
-## Guardrails
+### Guardrails
 
 - Do not mutate live infrastructure, CI provider settings, branch protection,
   secrets, credentials, or external services.
@@ -283,7 +253,7 @@ only when they are non-secret and task-scoped.
 - Do not preserve full archived bodies by default unless a snapshot exception
   is explicitly documented.
 
-## Evaluation
+### Evaluation
 
 - **Structural checks**: route, frontmatter, archive metadata, and README
   boundary scans.
@@ -345,7 +315,7 @@ find docs/03.specs -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | sort
 - **VAL-SDLC-LC-005**: Repository quality gates pass after documentation,
   template, archive, and validator updates.
 
-## Related Documents
+## Traceability
 
 - **PRD**: No dedicated PRD; approved user request controls this follow-up.
 - **ARD**: No dedicated ARD; this is a repository documentation governance
@@ -357,3 +327,32 @@ find docs/03.specs -maxdepth 1 -mindepth 1 -type d -printf '%f\n' | sort
 - **Template Routing**: `../../99.templates/support/template-routing.md`
 - **Frontmatter Schema**: `../../99.templates/support/frontmatter-schema.md`
 - **Completed evolution**: [011](../011-template-contract-governance-migration/spec.md) -> [012](../012-template-governance-audit-enhancement/spec.md) -> [013](../013-workspace-document-governance-hardening/spec.md) -> [014](../014-workspace-document-contract-normalization/spec.md) -> [020](../020-workspace-contract-governance-normalization/spec.md) -> [021](./spec.md) -> [022](../022-control-cloud-doc-normalization/spec.md) -> [023](../023-stage03-04-repo-static-gap-closure/spec.md).
+### Related inputs
+
+- **PRD**: No dedicated PRD exists for this governance follow-up. The approved
+  user request and existing Stage 00/99 contracts are the controlling inputs.
+- **ARD**: No new architecture requirement is required because this change
+  affects repository documentation governance and validation.
+- **Related ADRs**: Not applicable.
+- **Template contracts**:
+  - `../../99.templates/support/template-routing.md`
+  - `../../99.templates/support/frontmatter-schema.md`
+  - `../../99.templates/support/sdlc-governance.md`
+  - `../../99.templates/support/documentation-contract.md`
+  - `../../99.templates/support/common-documentation-governance.md`
+  - `../../99.templates/support/legacy-cleanup-rules.md`
+- **Stage 00 governance**:
+  - `../../00.agent-governance/rules/document-stage-routing.md`
+  - `../../00.agent-governance/rules/stage-authoring-matrix.md`
+  - `../../00.agent-governance/rules/documentation-protocol.md`
+  - `../../00.agent-governance/rules/quality-standards.md`
+- **Archive contract**:
+  - `../../98.archive/README.md`
+  - `../../99.templates/templates/common/archive-tombstone.template.md`
+- **Validation owner**: `../../../scripts/validate-repo-quality-gates.sh`
+- **External basis**:
+  - NIST SSDF SP 800-218: https://csrc.nist.gov/pubs/sp/800/218/final
+  - GitHub status checks: https://docs.github.com/articles/about-status-checks
+  - GitHub protected branches: https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
+  - Diataxis: https://diataxis.fr/
+  - Google developer documentation style guide: https://developers.google.com/style/

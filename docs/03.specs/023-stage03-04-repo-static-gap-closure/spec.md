@@ -3,7 +3,7 @@ title: 'Stage 03/04 Repo-Static Gap Closure Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Stage 03/04 Repo-Static Gap Closure Technical Specification
@@ -52,22 +52,6 @@ Out of scope:
   unless repo evidence proves completion and the active README contract
   already supports that lifecycle transition.
 - Runtime readiness claims based only on repo-static validation.
-
-## Related Inputs
-
-- **PRD**: No dedicated PRD exists. The controlling input is the approved user
-  request to inspect Stage 03/04 content, identify unimplemented items,
-  implement repo-static gaps first, and separate runtime/operator work.
-- **ARD**: No dedicated ARD exists. The relevant architecture is the current
-  documentation taxonomy and lifecycle contract.
-- **Related ADRs**: None.
-- **Related Specs**:
-  - [Workspace Engineering Research Pack](../017-workspace-engineering-research-pack/spec.md)
-  - [Workspace Engineering Implementation Audit Pack](../018-workspace-engineering-implementation-audit-pack/spec.md)
-  - [Template Path Numbering Contract](../019-template-path-numbering-contract/spec.md)
-  - [Workspace Contract Governance Normalization](../020-workspace-contract-governance-normalization/spec.md)
-  - [SDLC Lifecycle Contract](../021-sdlc-lifecycle-contract/spec.md)
-  - [Control Surface and Cloud Example Documentation Normalization](../022-control-cloud-doc-normalization/spec.md)
 
 ## Contracts
 
@@ -153,12 +137,12 @@ interface StageGapRecord {
 }
 ```
 
-## API Contract (If Applicable)
+#### API Contract
 
 This work exposes no application API. No OpenAPI, GraphQL, protobuf, or public
 runtime API contract is required.
 
-## Agent Role & IO Contract (If Applicable)
+#### Agent Role & IO Contract
 
 - **Agent Role**: Documentation lifecycle auditor and repo-static remediation
   implementer.
@@ -172,7 +156,7 @@ runtime API contract is required.
   closed or explicitly classified. Runtime/operator-only gaps are separated
   without being reported as implemented.
 
-## Tools & Tool Contract (If Applicable)
+#### Tools & Tool Contract
 
 - **Tool List**:
   - `rg` for fast repository discovery.
@@ -190,7 +174,7 @@ runtime API contract is required.
   - If a validator rule is too broad or noisy, record the finding in the task
     evidence instead of adding the rule.
 
-## Prompt / Policy Contract (If Applicable)
+#### Prompt / Policy Contract
 
 - Do not treat `draft` as automatically unimplemented.
 - Do not treat a `Done` task table as sufficient by itself; verify frontmatter,
@@ -199,7 +183,7 @@ runtime API contract is required.
 - Keep historical plan command literals and evidence blocks intact unless they
   are current active contradictions.
 
-## Memory & Context Strategy (If Applicable)
+#### Memory & Context Strategy
 
 - Durable progress and reusable lessons go in
   `../../00.agent-governance/memory/progress.md`.
@@ -207,7 +191,7 @@ runtime API contract is required.
 - Untracked pre-existing files remain user-owned unless explicitly brought
   into scope.
 
-## Guardrails (If Applicable)
+#### Guardrails
 
 - **Input Guardrails**:
   - Read Stage 03/04 files before classifying a gap.
@@ -225,7 +209,7 @@ runtime API contract is required.
   - Stop and request explicit operator approval before live/runtime, secret,
     remote, or provider actions.
 
-## Evaluation (If Applicable)
+#### Evaluation
 
 - **Eval Types**:
   - Status and index drift audit.
@@ -303,7 +287,7 @@ bash scripts/validate-policy-gates.sh .
 - **VAL-SPC-023-005**: Stage 04 task evidence and progress memory record final
   validation output and remaining approval boundaries.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [Workspace Engineering Research Pack](../017-workspace-engineering-research-pack/spec.md)
 - **Spec**: [SDLC Lifecycle Contract](../021-sdlc-lifecycle-contract/spec.md)
@@ -315,3 +299,18 @@ bash scripts/validate-policy-gates.sh .
 - **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/frontmatter-schema.md)
 - **Progress Memory**: [../../00.agent-governance/memory/progress.md](../../00.agent-governance/memory/progress.md)
 - **Completed evolution**: [011](../011-template-contract-governance-migration/spec.md) -> [012](../012-template-governance-audit-enhancement/spec.md) -> [013](../013-workspace-document-governance-hardening/spec.md) -> [014](../014-workspace-document-contract-normalization/spec.md) -> [020](../020-workspace-contract-governance-normalization/spec.md) -> [021](../021-sdlc-lifecycle-contract/spec.md) -> [022](../022-control-cloud-doc-normalization/spec.md) -> [023](./spec.md).
+### Related inputs
+
+- **PRD**: No dedicated PRD exists. The controlling input is the approved user
+  request to inspect Stage 03/04 content, identify unimplemented items,
+  implement repo-static gaps first, and separate runtime/operator work.
+- **ARD**: No dedicated ARD exists. The relevant architecture is the current
+  documentation taxonomy and lifecycle contract.
+- **Related ADRs**: None.
+- **Related Specs**:
+  - [Workspace Engineering Research Pack](../017-workspace-engineering-research-pack/spec.md)
+  - [Workspace Engineering Implementation Audit Pack](../018-workspace-engineering-implementation-audit-pack/spec.md)
+  - [Template Path Numbering Contract](../019-template-path-numbering-contract/spec.md)
+  - [Workspace Contract Governance Normalization](../020-workspace-contract-governance-normalization/spec.md)
+  - [SDLC Lifecycle Contract](../021-sdlc-lifecycle-contract/spec.md)
+  - [Control Surface and Cloud Example Documentation Normalization](../022-control-cloud-doc-normalization/spec.md)

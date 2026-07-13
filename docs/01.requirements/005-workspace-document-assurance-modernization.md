@@ -3,7 +3,7 @@ title: 'Workspace Document Assurance Modernization Product Requirements'
 type: sdlc/prd
 status: active
 owner: platform
-updated: 2026-07-12
+updated: 2026-07-13
 ---
 
 # Workspace Document Assurance Modernization Product Requirements
@@ -148,7 +148,7 @@ and selector facts are duplicated in multiple owners.
 - Provider and cloud facts can change, so dated external-source boundaries and
   refresh triggers are required.
 
-## AI Agent Requirements (If Applicable)
+### Agent execution and approval requirements
 
 - **Allowed Actions**: Read tracked repository state, research official sources,
   edit approved tracked surfaces in the isolated worktree, run static validation,
@@ -160,7 +160,7 @@ and selector facts are duplicated in multiple owners.
 - **Evaluation Expectation**: Fresh implementer and independent reviewer per
   task, followed by one whole-branch review and merged-result verification.
 
-## Related Documents
+## Traceability
 
 - **ARD**: [Workspace Document Assurance Operating Model](../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
 - **ADRs**: [Declarative Document Contract Registry](../02.architecture/decisions/0015-declarative-document-contract-registry.md) and [Program-to-Tranche Lineage](../02.architecture/decisions/0016-program-to-tranche-document-lineage.md)

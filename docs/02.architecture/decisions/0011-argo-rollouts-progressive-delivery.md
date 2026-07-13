@@ -3,7 +3,7 @@ title: 'ADR-0011: Argo Rollouts for Progressive Delivery'
 type: sdlc/adr
 status: accepted
 owner: platform
-updated: 2026-06-04
+updated: 2026-07-13
 ---
 
 # ADR-0011: Argo Rollouts for Progressive Delivery
@@ -28,6 +28,10 @@ Argo Rollouts는 ArgoCD와 동일 생태계(argoproj)에서 기본 통합을 제
 - 기본 promotion 정책은 자동 promotion을 강제하지 않는다. 앱별 Rollout은 승인된 Prometheus AnalysisTemplate을 사용할 수 있다.
 - Prometheus analysis provider는 외부 Prometheus endpoint 사용.
 
+### Decision status
+
+Accepted — 2026-03-30
+
 ## Explicit Non-goals
 
 - 자동 promotion 강제 (수동 프로모션 기본)
@@ -50,11 +54,7 @@ Argo Rollouts는 ArgoCD와 동일 생태계(argoproj)에서 기본 통합을 제
 | Flagger       | Flagger는 Istio/Nginx 컨트롤러 의존성 강하여 추가 복잡도     |
 | 수동 배포     | 안전하지만 자동화 없음                                       |
 
-## Status
-
-Accepted — 2026-03-30
-
-## Related Documents
+## Traceability
 
 - [ADR-0002](./0002-argocd-helm-and-gitops-model.md) — ArgoCD GitOps 모델
 - [ADR-0012](./0012-argo-notifications-slack.md) — Rollouts 이벤트 알림

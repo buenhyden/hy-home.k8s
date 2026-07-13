@@ -3,7 +3,7 @@ title: 'Control Surface and Cloud Example Documentation Normalization Technical 
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Control Surface and Cloud Example Documentation Normalization Technical Specification
@@ -57,45 +57,6 @@ Out of scope:
   happen only when needed to remove duplicate active purpose, close broken
   cross-links, or satisfy the approved route contract.
 - Moving example-local docs into the main `docs/01` through `docs/05` stages.
-
-## Related Inputs
-
-- **PRD**: No dedicated PRD exists. The controlling input is the approved user
-  request to combine active control-surface normalization with AWS/Azure
-  example-local SDLC snapshot normalization.
-- **ARD**: No new architecture requirement is required because this change is
-  a repository documentation and validation contract.
-- **Related ADRs**:
-  - [Current Local GitOps Platform Contract](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- **Prior Specs**:
-  - [Active Control Surface Governance Hardening](../016-active-control-surface-governance-hardening/spec.md)
-  - [Template Path Numbering Contract](../019-template-path-numbering-contract/spec.md)
-  - [Workspace Contract Governance Normalization](../020-workspace-contract-governance-normalization/spec.md)
-  - [SDLC Lifecycle Contract](../021-sdlc-lifecycle-contract/spec.md)
-
-Official source basis:
-
-- GitHub Actions workflow files are YAML workflow definitions stored under
-  `.github/workflows`, so workflow contracts belong to workflow YAML and
-  GitHub control documentation:
-  <https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax>
-- GitHub Actions secure-use guidance is the external basis for permissions,
-  untrusted code, third-party action, and secret-handling review prompts:
-  <https://docs.github.com/en/actions/reference/security/secure-use>
-- Kubernetes Kustomize is the official basis for declarative manifest
-  composition and local manifest validation expectations:
-  <https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/>
-- Argo CD declarative setup is the official basis for GitOps Application and
-  AppProject configuration as Kubernetes manifests:
-  <https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/>
-- Conftest and OPA are the official basis for policy-as-code checks over
-  structured configuration:
-  <https://www.conftest.dev/>
-  <https://www.openpolicyagent.org/docs>
-- External Secrets Operator is the official basis for synchronizing external
-  secret providers into Kubernetes Secret resources without committing secret
-  values:
-  <https://external-secrets.io/latest/introduction/overview/>
 
 ## Contracts
 
@@ -201,12 +162,12 @@ AWS/Azure example doc
 -> repository quality gate
 ```
 
-## API Contract (If Applicable)
+#### API Contract
 
 This work exposes no external application API. No `api-spec.md`, OpenAPI,
 GraphQL, or protobuf contract is required.
 
-## Agent Role & IO Contract (If Applicable)
+#### Agent Role & IO Contract
 
 - **Agent Role**: Documentation and validation implementer.
 - **Inputs**: This spec, the approved plan, current repository files, official
@@ -218,7 +179,7 @@ GraphQL, or protobuf contract is required.
   contract, no README or GitHub-native Markdown receives frontmatter, stale
   provider-latest claims are removed, and repository-static validation passes.
 
-## Tools & Tool Contract (If Applicable)
+#### Tools & Tool Contract
 
 - **Tool List**:
   - `rg` for repository search.
@@ -235,7 +196,7 @@ GraphQL, or protobuf contract is required.
   - If a cloud example document cannot be safely classified, leave it as a
     dated snapshot and record the unresolved classification in the task record.
 
-## Prompt / Policy Contract (If Applicable)
+#### Prompt / Policy Contract
 
 - Do not add policy bodies to README files when a Stage 00, Stage 05, Stage
   99, workflow, script, or validator owner exists.
@@ -244,7 +205,7 @@ GraphQL, or protobuf contract is required.
 - Do not add frontmatter to GitHub-native Markdown.
 - Do not preserve template placeholder text in authored documents.
 
-## Memory & Context Strategy (If Applicable)
+#### Memory & Context Strategy
 
 - Record durable lessons in
   `../../00.agent-governance/memory/progress.md`.
@@ -252,7 +213,7 @@ GraphQL, or protobuf contract is required.
 - Do not store secrets, tokens, kubeconfigs, local auth material, or private
   diagnostics in progress memory or example docs.
 
-## Guardrails (If Applicable)
+#### Guardrails
 
 - **Input Guardrails**:
   - Treat untracked pre-existing files as user-owned unless explicitly
@@ -272,7 +233,7 @@ GraphQL, or protobuf contract is required.
   - Ask for human approval before any live runtime, remote GitHub, cloud, or
     credential action.
 
-## Evaluation (If Applicable)
+#### Evaluation
 
 - **Eval Types**:
   - Contract consistency review.
@@ -350,7 +311,7 @@ bash scripts/validate-policy-gates.sh .
 - **VAL-CCDN-005**: Repository quality gates pass, and optional manifest,
   secret, and policy checks are run when their surfaces change.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [Active Control Surface Governance Hardening](../016-active-control-surface-governance-hardening/spec.md)
 - **Spec**: [Template Path Numbering Contract](../019-template-path-numbering-contract/spec.md)
@@ -361,3 +322,41 @@ bash scripts/validate-policy-gates.sh .
 - **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/frontmatter-schema.md)
 - **Common Documentation Governance**: [../../99.templates/support/common-documentation-governance.md](../../99.templates/support/common-documentation-governance.md)
 - **Completed evolution**: [011](../011-template-contract-governance-migration/spec.md) -> [012](../012-template-governance-audit-enhancement/spec.md) -> [013](../013-workspace-document-governance-hardening/spec.md) -> [014](../014-workspace-document-contract-normalization/spec.md) -> [020](../020-workspace-contract-governance-normalization/spec.md) -> [021](../021-sdlc-lifecycle-contract/spec.md) -> [022](./spec.md) -> [023](../023-stage03-04-repo-static-gap-closure/spec.md).
+### Related inputs
+
+- **PRD**: No dedicated PRD exists. The controlling input is the approved user
+  request to combine active control-surface normalization with AWS/Azure
+  example-local SDLC snapshot normalization.
+- **ARD**: No new architecture requirement is required because this change is
+  a repository documentation and validation contract.
+- **Related ADRs**:
+  - [Current Local GitOps Platform Contract](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
+- **Prior Specs**:
+  - [Active Control Surface Governance Hardening](../016-active-control-surface-governance-hardening/spec.md)
+  - [Template Path Numbering Contract](../019-template-path-numbering-contract/spec.md)
+  - [Workspace Contract Governance Normalization](../020-workspace-contract-governance-normalization/spec.md)
+  - [SDLC Lifecycle Contract](../021-sdlc-lifecycle-contract/spec.md)
+
+Official source basis:
+
+- GitHub Actions workflow files are YAML workflow definitions stored under
+  `.github/workflows`, so workflow contracts belong to workflow YAML and
+  GitHub control documentation:
+  <https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax>
+- GitHub Actions secure-use guidance is the external basis for permissions,
+  untrusted code, third-party action, and secret-handling review prompts:
+  <https://docs.github.com/en/actions/reference/security/secure-use>
+- Kubernetes Kustomize is the official basis for declarative manifest
+  composition and local manifest validation expectations:
+  <https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/>
+- Argo CD declarative setup is the official basis for GitOps Application and
+  AppProject configuration as Kubernetes manifests:
+  <https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/>
+- Conftest and OPA are the official basis for policy-as-code checks over
+  structured configuration:
+  <https://www.conftest.dev/>
+  <https://www.openpolicyagent.org/docs>
+- External Secrets Operator is the official basis for synchronizing external
+  secret providers into Kubernetes Secret resources without committing secret
+  values:
+  <https://external-secrets.io/latest/introduction/overview/>

@@ -3,7 +3,7 @@ title: 'Workspace Harness Implementation Audit Pack Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Workspace Harness Implementation Audit Pack Technical Specification (Spec)
@@ -57,19 +57,6 @@ Out of scope:
   paid-job, or secret checks.
 - Publishing, pushing, opening PRs, or changing external resources without
   explicit human approval.
-
-## Related Inputs
-
-- **PRD**: No standalone PRD exists for this documentation-only audit pack; the
-  direct user request is the requirement source.
-- **ARD**:
-  `[../../02.architecture/requirements/0006-workspace-agent-governance-platform.md]`
-- **Related ADRs**:
-  `[../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md]`
-- **Research Pack Spec**:
-  `[../009-workspace-harness-research-pack/spec.md]`
-- **Research Pack README**:
-  `[../../90.references/research/README.md]`
 
 ## Contracts
 
@@ -171,11 +158,11 @@ Within `Definitions / Facts`, each report must include:
 - `Implementation Checklist`
 - `Residual Risks`
 
-## API Contract (If Applicable)
+### API Contract
 
 No external API is introduced.
 
-## Agent Role & IO Contract (If Applicable)
+### Agent Role & IO Contract
 
 - **Agent Role**: Documentation auditor and governance researcher operating in
   the `docs`, `meta`, and `qa` scopes.
@@ -189,7 +176,7 @@ No external API is introduced.
   harness/loop/provider/delivery capabilities are implemented, partially
   implemented, missing, or out of scope, with evidence and follow-up routing.
 
-## Tools & Tool Contract (If Applicable)
+### Tools & Tool Contract
 
 - **Tool List**: `rg`, `sed`, `git`, `apply_patch`, repository validation
   scripts, read-only web browsing when current provider facts need checking,
@@ -199,7 +186,7 @@ No external API is introduced.
 - **Failure Handling**: If evidence is ambiguous, mark the status `Partial` or
   `Gap` and cite the missing evidence instead of inferring implementation.
 
-## Prompt / Policy Contract (If Applicable)
+### Prompt / Policy Contract
 
 - **System / Instruction Contract**: Follow the repo JIT governance sequence,
   template-first authoring, documentation stage routing, and source-priority
@@ -212,7 +199,7 @@ No external API is introduced.
   Stage 00 governance, provider adapters, CI/QA scripts, templates, or runtime
   evidence changes.
 
-## Memory & Context Strategy (If Applicable)
+### Memory & Context Strategy
 
 - **Short-term Context**: Use the four research references and current repo
   evidence while drafting each audit report.
@@ -224,7 +211,7 @@ No external API is introduced.
   in `docs/04.execution/**`; operations procedure remains in
   `docs/05.operations/**`.
 
-## Guardrails (If Applicable)
+### Guardrails
 
 - **Input Guardrails**: Prefer repo-backed canonical owners over inferred
   behavior. Use external sources only to refresh provider fact claims, not to
@@ -238,7 +225,7 @@ No external API is introduced.
   runtime adapters, provider roles, CI enforcement, GitOps manifests, scripts,
   credentials, or external services.
 
-## Evaluation (If Applicable)
+### Evaluation
 
 - **Eval Types**: Repo-static validation, template conformance, source/evidence
   review, status-vocabulary review, and checklist coverage review.
@@ -308,7 +295,7 @@ rg --files | rg '(^|/)progress\.md$'
 - **VAL-SPC-006**: Final repo-static validation commands pass, with explicit
   static-vs-live limitations recorded in the task and progress memory.
 
-## Related Documents
+## Traceability
 
 - **ARD**:
   `[../../02.architecture/requirements/0006-workspace-agent-governance-platform.md]`
@@ -327,3 +314,15 @@ rg --files | rg '(^|/)progress\.md$'
 - **Reference Maintenance Runbook**:
   `[../../05.operations/runbooks/0011-reference-maintenance-runbook.md]`
 - **Later audit-pack lineage**: This completed predecessor continues in [Spec 018](../018-workspace-engineering-implementation-audit-pack/spec.md).
+### Related inputs
+
+- **PRD**: No standalone PRD exists for this documentation-only audit pack; the
+  direct user request is the requirement source.
+- **ARD**:
+  `[../../02.architecture/requirements/0006-workspace-agent-governance-platform.md]`
+- **Related ADRs**:
+  `[../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md]`
+- **Research Pack Spec**:
+  `[../009-workspace-harness-research-pack/spec.md]`
+- **Research Pack README**:
+  `[../../90.references/research/README.md]`

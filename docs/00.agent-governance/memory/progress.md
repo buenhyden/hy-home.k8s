@@ -8,6 +8,52 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - ADM-003 Stage 01–03 authored shape normalization
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, validation, qa
+- **Status**: complete
+- **Tags**: #adm-003 #sdlc #shape-normalization #compatibility-debt
+
+#### Progress
+
+- Normalized the canonical H2 shapes of the exact approved 34-path Stage
+  01–03 manifest: five PRDs, five ARDs, four accepted ADRs, and twenty Specs.
+- Applied seven atomic document/ledger/fixture/cap batches sized
+  `5/5/5/5/5/5/4`; every exact batch returned zero compatibility diagnostics.
+- Recorded official-primary or explicit repository-only source applicability
+  and `shape-normalized` results in all 34 durable migration-ledger rows.
+- Removed exactly the 34 consumed compatibility records, reducing affected
+  paths/semantic occurrences from `266/1299` to `232/1127`, then refreshed the
+  complete fixture digest and mutation proofs against the after-state.
+
+#### Memory
+
+- The approved manifest identity is 34 paths with SHA-256
+  `3cd63fa57b386f8036f14a8a59638318b5686fe4b618422b8577ad106f54e29f`.
+- Shape normalization preserves non-heading facts; external-source review is
+  an applicability decision and must not invent repository behavior.
+- Consumed compatibility debt, its durable ledger outcome, numeric validator
+  expectations, and quality-gate proofs form one atomic rollback boundary.
+
+#### Evidence
+
+- Remaining debt is exactly 232 affected paths and 1127 semantic occurrences;
+  required-heading/residue union is 196 paths with 51 overlaps.
+- Markdown self-test, exact-wave zero diagnostics, cross-document
+  compatibility, repository quality gate, diff check, focused pre-commit, and
+  exact staged-path assertions gate the wave.
+- No README profile, ADM-004 path, live system, secret, remote action, or
+  cluster state is in the ADM-003 change set.
+
+#### Handoff
+
+- Review and commit the exact 40-path ADM-003 unit as
+  `docs(migration): normalize active sdlc design documents`; ADM-004 remains
+  queued until this boundary is accepted.
+
 ### 2026-07-13 - ADM-002 quality-boundary remediation
 
 #### Metadata
