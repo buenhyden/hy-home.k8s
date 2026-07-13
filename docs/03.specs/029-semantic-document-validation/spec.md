@@ -1,7 +1,7 @@
 ---
 title: 'Semantic Document Validation Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
 updated: 2026-07-12
 ---
@@ -120,6 +120,14 @@ git diff --check
   strict mode passes after Spec 030 with no silent allow-list.
 - **VAL-SPC-004**: The repository quality gate consumes the new validators and
   removes superseded hardcoded profile logic.
+
+Implementation closed through SMDV-004. The quality wrapper now delegates
+registry classification, Markdown profiles, and cross-document semantics to
+the three canonical compatibility-mode CLIs. It retains the complete
+template-compatibility fixture digest/mutation proof and workspace-specific
+operations, GitOps, infrastructure, agent-runtime, CI/QA, security, and
+supply-chain checks. Compatibility remains canonical until Spec 030 ADM-007;
+repository-static PASS does not establish live cluster or provider readiness.
 
 ## Related Documents
 

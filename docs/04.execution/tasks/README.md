@@ -167,7 +167,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-07-12-document-contract-registry.md`](./2026-07-12-document-contract-registry.md) | Document contract registry schema, classifier, approved corpus, compatibility gate, and validation evidence. | Done | 2026-07-12 |
 | [`./2026-07-12-template-contract-consolidation.md`](./2026-07-12-template-contract-consolidation.md) | Stage 99 support/form consolidation, canonical template normalization, legacy Task form removal, and compatibility evidence. | Done   | 2026-07-12 |
 | [`./2026-07-12-readme-workspace-profiles.md`](./2026-07-12-readme-workspace-profiles.md) | Completed RWP-001 through RWP-006 evidence for 72 path-derived README profiles, five cloud handoffs, and the `_workspace` boundary. | Done | 2026-07-12 |
-| [`./2026-07-12-semantic-document-validation.md`](./2026-07-12-semantic-document-validation.md) | SMDV-001 through SMDV-004 execution evidence for registry-driven document and cross-document validation. | Active | 2026-07-12 |
+| [`./2026-07-12-semantic-document-validation.md`](./2026-07-12-semantic-document-validation.md) | SMDV-001 through SMDV-004 execution evidence for registry-driven document and cross-document validation. | Done | 2026-07-12 |
 
 ## Related Documents
 

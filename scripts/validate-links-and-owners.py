@@ -70,6 +70,17 @@ OWNER_EXCLUSIONS = (
     re.compile(r"^docs/90\.references/cloud-examples/"),
     re.compile(r"^examples/(?:aws|azure)/docs/"),
 )
+SMDV_CLOSURE_PATHS = (
+    PurePosixPath("docs/03.specs/029-semantic-document-validation/spec.md"),
+    PurePosixPath(
+        "docs/04.execution/plans/2026-07-12-semantic-document-validation.md"
+    ),
+    PurePosixPath(
+        "docs/04.execution/tasks/2026-07-12-semantic-document-validation.md"
+    ),
+)
+POST_SMDV_CLOSURE_OWNER_KEYS = 63
+PRE_SMDV_CLOSURE_OWNER_KEYS = 66
 
 
 @dataclass(frozen=True)
@@ -872,8 +883,49 @@ def _self_test(root: Path) -> list[str]:
     if [item.rule_id for item in production] != expected_rules:
         failures.append("production repository diagnostics differ from the semantic transition state")
     owner_keys, owner_diagnostics = _owner_state(production_context)
-    if owner_diagnostics or len({key for key in owner_keys.values() if key}) != 66:
-        failures.append("production current-owner key baseline differs from 66 unique keys")
+    current_unique_keys = {key for key in owner_keys.values() if key}
+    if owner_diagnostics or len(current_unique_keys) != POST_SMDV_CLOSURE_OWNER_KEYS:
+        failures.append(
+            "production current-owner key baseline differs from "
+            f"{POST_SMDV_CLOSURE_OWNER_KEYS} unique keys"
+        )
+
+    preclosure_context = copy.deepcopy(production_context)
+    closure_preconditions_valid = True
+    for path in SMDV_CLOSURE_PATHS:
+        if (
+            path not in production_context.metadata
+            or production_context.metadata[path].get("status") != "done"
+            or _owner_candidate(production_context, path)
+            or owner_keys.get(path)
+        ):
+            closure_preconditions_valid = False
+            break
+        preclosure_context.metadata[path]["status"] = "active"
+    if not closure_preconditions_valid:
+        failures.append(
+            "SMDV closure paths must be the exact done-status owner exclusions"
+        )
+    else:
+        preclosure_keys, preclosure_diagnostics = _owner_state(preclosure_context)
+        transitioned_paths = {
+            path
+            for path in production_context.paths
+            if owner_keys.get(path) != preclosure_keys.get(path)
+        }
+        preclosure_unique_keys = {
+            key for key in preclosure_keys.values() if key
+        }
+        if (
+            preclosure_diagnostics
+            or len(preclosure_unique_keys) != PRE_SMDV_CLOSURE_OWNER_KEYS
+            or transitioned_paths != set(SMDV_CLOSURE_PATHS)
+            or any(not preclosure_keys.get(path) for path in SMDV_CLOSURE_PATHS)
+        ):
+            failures.append(
+                "SMDV done-status transition must remove exactly the Spec 029, "
+                "Plan 029, and Task 029 owner keys from the 66-key preclosure set"
+            )
     return failures
 
 

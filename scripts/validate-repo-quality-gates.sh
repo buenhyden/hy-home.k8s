@@ -23,6 +23,8 @@ fi
 
 python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --root "$ROOT_DIR" --mode compatibility
+python3 "$ROOT_DIR/scripts/validate-markdown-profiles.py" --root "$ROOT_DIR" --mode compatibility
+python3 "$ROOT_DIR/scripts/validate-links-and-owners.py" --root "$ROOT_DIR" --mode compatibility
 
 python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" \
   "$ROOT_DIR" --self-test
@@ -31,7 +33,6 @@ python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" "$ROOT_DIR"
 python3 - "$ROOT_DIR" <<'PY'
 import collections
 import copy
-import fnmatch
 import hashlib
 import json
 import os
@@ -39,7 +40,6 @@ import pathlib
 import re
 import subprocess
 import sys
-import urllib.parse
 
 import yaml
 
@@ -182,47 +182,6 @@ def visible_markdown_lines(markdown: str) -> list[tuple[int, str]]:
     return visible_lines
 
 
-def extract_markdown_headings(markdown: str) -> list[tuple[int, str]]:
-    """Extract ATX headings from the shared visible Markdown line stream."""
-    headings = []
-
-    for _, line in visible_markdown_lines(markdown):
-        heading_match = re.match(r"^ {0,3}(#{1,6})(?:[ \t]+|$)(.*)$", line)
-        if not heading_match:
-            continue
-        heading_text = heading_match.group(2).strip()
-        heading_text = re.sub(r"[ \t]+#+[ \t]*$", "", heading_text).strip()
-        headings.append((len(heading_match.group(1)), heading_text))
-
-    return headings
-
-
-def canonical_readme_heading_diagnostics(
-    markdown: str,
-    required_h2: list[str],
-    allowed_h2: list[str],
-) -> tuple[tuple[str, tuple[str, ...]], ...]:
-    """Evaluate the bounded canonical side of the README migration bridge."""
-    headings = extract_markdown_headings(markdown)
-    h1 = [heading for level, heading in headings if level == 1]
-    h2 = [heading for level, heading in headings if level == 2]
-    diagnostics: list[tuple[str, tuple[str, ...]]] = []
-    if len(h1) != 1:
-        diagnostics.append(("README_H1", tuple(h1)))
-    duplicate_h2 = tuple(
-        sorted(heading for heading, count in collections.Counter(h2).items() if count > 1)
-    )
-    if duplicate_h2:
-        diagnostics.append(("README_H2_DUPLICATE", duplicate_h2))
-    missing_h2 = tuple(heading for heading in required_h2 if heading not in h2)
-    if missing_h2:
-        diagnostics.append(("README_H2_REQUIRED", missing_h2))
-    unsupported_h2 = tuple(heading for heading in h2 if heading not in allowed_h2)
-    if unsupported_h2:
-        diagnostics.append(("README_H2_UNSUPPORTED", unsupported_h2))
-    return tuple(diagnostics)
-
-
 def normalize_tools(value) -> str:
     if isinstance(value, str):
         return ", ".join(part.strip() for part in value.split(",") if part.strip())
@@ -237,14 +196,6 @@ def extract_scope_imports(text: str) -> list[str]:
 
 def rel(path: pathlib.Path) -> str:
     return str(path.relative_to(root))
-
-
-def is_historical_evidence_path(path: pathlib.Path) -> bool:
-    return (
-        path == root / "docs/00.agent-governance/memory/progress.md"
-        or path.is_relative_to(root / "docs/90.references/audits")
-        or path.is_relative_to(root / "docs/98.archive")
-    )
 
 
 def collect_strings(value) -> list[str]:
@@ -1037,171 +988,6 @@ for contract_path, phrases in active_app_secret_contracts:
         if phrase not in contract_text:
             fail(f"{rel(contract_path)} missing app onboarding secret path contract phrase: {phrase}")
 
-def assert_canonical_readme_probe() -> None:
-    required = ["Overview", "Validation"]
-    allowed = [*required, "Troubleshooting"]
-    valid = """# Probe
-
-## Overview
-
-```markdown
-# Fenced H1
-## Fenced H2
-```
-
-<!-- ## Commented H2 -->
-
-## Validation
-"""
-    probes = (
-        ("valid fence/comment handling", valid, ()),
-        ("duplicate H1", valid + "\n# Duplicate\n", ("README_H1",)),
-        ("duplicate H2", valid + "\n## Overview\n", ("README_H2_DUPLICATE",)),
-        (
-            "missing required H2",
-            "# Probe\n\n## Overview\n",
-            ("README_H2_REQUIRED",),
-        ),
-        (
-            "unsupported H2",
-            valid + "\n## Unsupported\n",
-            ("README_H2_UNSUPPORTED",),
-        ),
-    )
-    for label, markdown, expected_rule_ids in probes:
-        actual_rule_ids = tuple(
-            rule_id
-            for rule_id, _ in canonical_readme_heading_diagnostics(
-                markdown, required, allowed
-            )
-        )
-        if actual_rule_ids != expected_rule_ids:
-            fail(
-                f"canonical README probe {label} expected "
-                f"{expected_rule_ids!r}, got {actual_rule_ids!r}"
-            )
-
-
-assert_canonical_readme_probe()
-
-deprecated_readme_headings = [
-    "Related " + "References",
-    "Related " + "Folders",
-    "Related " + "Files",
-    "References",
-    "See " + "Also",
-    "Links",
-    "Deprecated",
-    "Legacy",
-]
-for name in sorted(required_doc_dirs):
-    readme = docs_dir / name / "README.md"
-    if not readme.exists():
-        fail(f"required README.md is missing: {rel(readme)}")
-
-# Temporary finite migration reader. Spec 029 owns replacement with the
-# production CommonMark-aware parser and removal of this reader.
-readme_fixture_path = root / "tests/fixtures/document-contracts/readme-profile-cases.json"
-readme_fixture = load_json(readme_fixture_path)
-readme_rows = {
-    row["path"]: row
-    for row in readme_fixture.get("paths", [])
-    if isinstance(row, dict) and isinstance(row.get("path"), str)
-}
-tracked_readme_paths = {
-    path for path in tracked if path == "README.md" or path.endswith("/README.md")
-}
-
-
-def readme_inventory_exact_error(tracked_paths: set[str], declared_paths: set[str]):
-    missing = sorted(declared_paths - tracked_paths)
-    extra = sorted(tracked_paths - declared_paths)
-    if not missing and not extra:
-        return None
-    return (
-        "tracked README set must equal fixture-declared final set: "
-        f"missing={missing!r} extra={extra!r}"
-    )
-
-
-def assert_readme_inventory_exact_probe() -> None:
-    scripts_path = str(root / "scripts")
-    if scripts_path not in sys.path:
-        sys.path.insert(0, scripts_path)
-    from document_contracts import classify_path, load_registry
-
-    declared_readme_paths = set(readme_rows)
-    if len(declared_readme_paths) != 72:
-        fail(
-            "README exact-set mutation probe requires the 72-path final fixture set"
-        )
-        return
-    missing_path = "docs/90.references/cloud-examples/README.md"
-    extra_path = "docs/90.references/audits/2099-01-01-exact-set-probe/README.md"
-    if missing_path not in declared_readme_paths or extra_path in declared_readme_paths:
-        fail("README exact-set mutation probe paths violate fixture preconditions")
-        return
-    swapped_readme_paths = (declared_readme_paths - {missing_path}) | {extra_path}
-    if len(swapped_readme_paths) != len(declared_readme_paths):
-        fail("README exact-set mutation probe must preserve cardinality at 72")
-        return
-    registry = load_registry(root)
-    extra_profile = classify_path(registry, pathlib.PurePosixPath(extra_path))
-    if not extra_profile.profile_id.startswith("readme/"):
-        fail(
-            "README exact-set mutation probe extra path must classify to a "
-            f"README profile, got {extra_profile.profile_id!r}"
-        )
-        return
-
-    actual = readme_inventory_exact_error(
-        swapped_readme_paths, declared_readme_paths
-    )
-    expected = (
-        "tracked README set must equal fixture-declared final set: "
-        "missing=['docs/90.references/cloud-examples/README.md'] "
-        "extra=['docs/90.references/audits/2099-01-01-exact-set-probe/README.md']"
-    )
-    if actual != expected:
-        fail(
-            "README exact-set mutation probe expected "
-            f"{expected!r}, got {actual!r}"
-        )
-
-
-assert_readme_inventory_exact_probe()
-readme_inventory_error = readme_inventory_exact_error(
-    tracked_readme_paths, set(readme_rows)
-)
-if readme_inventory_error is not None:
-    fail(f"{rel(readme_fixture_path)} {readme_inventory_error}")
-
-canonical_readme_count = 0
-for readme_rel in sorted(tracked_readme_paths):
-    readme = root / readme_rel
-    text = read_text(readme)
-    if has_markdown_frontmatter(readme, text):
-        fail(f"{rel(readme)} must not use YAML frontmatter")
-    canonical_readme_count += 1
-    row = readme_rows.get(readme_rel)
-    if row is None:
-        continue
-    required_h2 = row.get("requiredH2", [])
-    allowed_h2 = row.get("allowedH2", [])
-    for rule_id, detail in canonical_readme_heading_diagnostics(
-        text, required_h2, allowed_h2
-    ):
-        fail(f"{rel(readme)} canonical README {rule_id}: {list(detail)!r}")
-
-    for deprecated_heading in deprecated_readme_headings:
-        if re.search(rf"^##\s+{re.escape(deprecated_heading)}\b", text, re.MULTILINE):
-            fail(f"{rel(readme)} still uses deprecated README section: {deprecated_heading}")
-
-if readme_inventory_error is not None or canonical_readme_count != len(readme_rows):
-    fail("canonical README accounting must cover the exact final fixture set")
-else:
-    print(f"README canonical profiles: canonical={canonical_readme_count} exact_set=yes")
-
 github_native_markdown = [
     root / ".github/ABOUT.md",
     root / ".github/PULL_REQUEST_TEMPLATE.md",
@@ -1210,22 +996,6 @@ github_native_markdown = [
 for github_doc in github_native_markdown:
     if github_doc.exists() and has_markdown_frontmatter(github_doc):
         fail(f"{rel(github_doc)} must remain frontmatter-free GitHub-native Markdown")
-
-reference_readme_path = root / "docs/90.references/README.md"
-reference_readme_text = read_text(reference_readme_path)
-for obsolete_heading in [
-    "## 목적",
-    "## 포함할 내용",
-    "## 포함하지 말아야 할 내용",
-    "## 관련 폴더",
-    "## 예시",
-    "## Agent 참고 문서 배치 규칙",
-    "## 문서 인덱스",
-    "## Templates",
-]:
-    if re.search(rf"^{re.escape(obsolete_heading)}\s*$", reference_readme_text, re.MULTILINE):
-        fail(f"{rel(reference_readme_path)} contains obsolete duplicate README heading: {obsolete_heading}")
-
 
 def iter_markdown_link_targets(text: str):
     in_fence = False
@@ -1252,60 +1022,6 @@ def normalize_markdown_target(raw_target: str) -> str:
         target = target.split()[0]
     return target.strip()
 
-
-markdown_link_roots = [
-    root / "README.md",
-    root / "docs",
-    root / ".claude",
-    root / ".codex",
-    root / ".github",
-    root / "scripts",
-    root / "infrastructure",
-    root / "gitops",
-    root / "traefik",
-    root / "tests",
-    root / "examples",
-]
-seen_markdown_link_paths: set[pathlib.Path] = set()
-for scan_root in markdown_link_roots:
-    candidates = [scan_root] if scan_root.is_file() else scan_root.rglob("*.md")
-    for markdown in sorted(candidates):
-        if not markdown.is_file() or markdown in seen_markdown_link_paths:
-            continue
-        if ".git" in markdown.parts or ".agents" in markdown.parts:
-            continue
-        seen_markdown_link_paths.add(markdown)
-        for raw_target in iter_markdown_link_targets(read_text(markdown)):
-            target = normalize_markdown_target(raw_target)
-            if not target or target.startswith("#"):
-                continue
-            if target.startswith("file://"):
-                fail(f"{rel(markdown)} uses file:// Markdown link target: {target}")
-                continue
-            if re.match(r"^[A-Za-z][A-Za-z0-9+.-]*:", target):
-                continue
-            target_without_fragment = target.split("#", 1)[0]
-            if not target_without_fragment:
-                continue
-            target_path = pathlib.Path(urllib.parse.unquote(target_without_fragment))
-            if target_path.is_absolute():
-                fail(f"{rel(markdown)} uses absolute Markdown link target: {target}")
-                continue
-            if not (markdown.parent / target_path).exists():
-                fail(f"{rel(markdown)} has broken Markdown link target: {target}")
-                continue
-            resolved_target = (markdown.parent / target_path).resolve()
-            archive_root = root / "docs/98.archive"
-            archive_index = archive_root / "README.md"
-            if (
-                resolved_target.is_relative_to(archive_root)
-                and resolved_target != archive_index.resolve()
-                and not markdown.is_relative_to(archive_root)
-            ):
-                fail(
-                    f"{rel(markdown)} must link archive content through "
-                    f"docs/98.archive/README.md, not directly to {target}"
-                )
 
 template_readme = read_text(root / "docs/99.templates/README.md")
 template_locations = {
@@ -1341,37 +1057,6 @@ template_locations = {
     "postmortem.template.md": "templates/sdlc/operations/postmortem.template.md",
 }
 
-template_expected_types = {
-    "reference.template.md": "content/reference",
-    "archive-tombstone.template.md": "content/archive-tombstone",
-    "governance-reference.template.md": "governance/reference",
-    "memory.template.md": "governance/memory",
-    "template-support.template.md": "governance/template-support",
-    "prd.template.md": "sdlc/prd",
-    "ard.template.md": "sdlc/ard",
-    "adr.template.md": "sdlc/adr",
-    "spec.template.md": "sdlc/spec",
-    "api-spec.template.md": "sdlc/api-spec",
-    "agent-design.template.md": "sdlc/agent-design",
-    "data-model.template.md": "sdlc/data-model",
-    "tests.template.md": "sdlc/tests",
-    "plan.template.md": "sdlc/plan",
-    "task.template.md": "sdlc/task",
-    "guide.template.md": "sdlc/guide",
-    "policy.template.md": "sdlc/policy",
-    "runbook.template.md": "sdlc/runbook",
-    "incident.template.md": "sdlc/incident",
-    "postmortem.template.md": "sdlc/postmortem",
-}
-
-frontmatter_required_keys = {"title", "type", "status", "owner", "updated"}
-archive_frontmatter_required_keys = frontmatter_required_keys | {
-    "original_path",
-    "archived_on",
-    "archive_reason",
-    "replacement",
-}
-frontmatter_allowed_statuses = {"draft", "active", "accepted", "done", "archived"}
 archive_reason_allowed_values = {
     "superseded",
     "duplicate",
@@ -1379,59 +1064,6 @@ archive_reason_allowed_values = {
     "migrated",
     "historical-baseline",
 }
-
-
-def validate_markdown_frontmatter_profile(
-    path: pathlib.Path,
-    expected_type: str,
-    *,
-    expected_status: str | None = None,
-) -> None:
-    metadata = load_markdown_frontmatter(path)
-    if not metadata:
-        return
-    keys = set(metadata)
-    required_keys = (
-        archive_frontmatter_required_keys
-        if expected_type == "content/archive-tombstone"
-        else frontmatter_required_keys
-    )
-    missing_keys = required_keys - keys
-    extra_keys = keys - required_keys
-    if missing_keys:
-        fail(f"{rel(path)} missing frontmatter keys: {', '.join(sorted(missing_keys))}")
-    if extra_keys:
-        fail(f"{rel(path)} has unsupported frontmatter keys: {', '.join(sorted(extra_keys))}")
-    actual_type = str(metadata.get("type", "")).strip()
-    if actual_type != expected_type:
-        fail(f"{rel(path)} frontmatter type must be {expected_type}, found {actual_type or '<empty>'}")
-    owner = str(metadata.get("owner", "")).strip()
-    if owner != "platform":
-        fail(f"{rel(path)} frontmatter owner must be platform, found {owner or '<empty>'}")
-    status = str(metadata.get("status", "")).strip()
-    if status not in frontmatter_allowed_statuses:
-        fail(f"{rel(path)} frontmatter status is unsupported: {status or '<empty>'}")
-    if expected_status and status != expected_status:
-        fail(f"{rel(path)} frontmatter status must be {expected_status}, found {status or '<empty>'}")
-    if expected_type == "content/archive-tombstone" and status != "archived":
-        fail(f"{rel(path)} archive Tombstone must use status: archived")
-    if expected_type == "content/archive-tombstone":
-        archive_reason = str(metadata.get("archive_reason", "")).strip()
-        archived_on = str(metadata.get("archived_on", "")).strip()
-        if archive_reason not in archive_reason_allowed_values:
-            fail(
-                f"{rel(path)} archive_reason is unsupported: "
-                f"{archive_reason or '<empty>'}"
-            )
-        if not re.match(r"^\d{4}-\d{2}-\d{2}$|^YYYY-MM-DD$", archived_on):
-            fail(f"{rel(path)} archived_on must be an ISO date or template placeholder")
-        for archive_key in ["original_path", "replacement"]:
-            value = str(metadata.get(archive_key, "")).strip()
-            if not value:
-                fail(f"{rel(path)} {archive_key} must be a non-empty string")
-    updated = str(metadata.get("updated", "")).strip()
-    if not re.match(r"^\d{4}-\d{2}-\d{2}$|^YYYY-MM-DD$", updated):
-        fail(f"{rel(path)} frontmatter updated must be an ISO date or template placeholder")
 
 
 def template_path(template_name: str) -> pathlib.Path:
@@ -1445,37 +1077,10 @@ template_root = root / "docs/99.templates/templates"
 for template in sorted(template_root.rglob("*")):
     if template.is_file() and template.name not in template_readme:
         fail(f"template is not listed in docs/99.templates/README.md: {rel(template)}")
-for template_name, expected_type in sorted(template_expected_types.items()):
-    expected_template_path = template_path(template_name)
-    if expected_template_path.suffix == ".md":
-        expected_status = "archived" if expected_type == "content/archive-tombstone" else "draft"
-        validate_markdown_frontmatter_profile(
-            expected_template_path,
-            expected_type,
-            expected_status=expected_status,
-        )
-for frontmatter_free_template_name in [
-    "readme-collection-index.template.md",
-    "readme-implementation.template.md",
-    "readme-repository.template.md",
-    "readme-snapshot-pack.template.md",
-    "readme-stage-index.template.md",
-    "readme-workspace-staging.template.md",
-    "progress.template.md",
-]:
-    frontmatter_free_path = template_path(frontmatter_free_template_name)
-    if has_markdown_frontmatter(frontmatter_free_path):
-        fail(f"{rel(frontmatter_free_path)} must remain frontmatter-free")
-
 template_compatibility_path = (
     root / "tests/fixtures/document-contracts/template-compatibility.json"
 )
-document_registry_path = root / "docs/99.templates/support/document-profiles.json"
 template_compatibility = load_json(template_compatibility_path)
-document_registry = load_json(document_registry_path)
-registry_profiles = {
-    profile["id"]: profile for profile in document_registry["profiles"]
-}
 
 TEMPLATE_COMPATIBILITY_CONTRACT_V1 = {
     "name": "TemplateCompatibilityContract.v1",
@@ -1599,285 +1204,19 @@ def assert_template_compatibility_mutation_proof(contract: dict) -> None:
             )
 
 
-def assert_markdown_heading_extractor_probe() -> None:
-    probe = """## Real H2
-```markdown
-## Backtick-fenced H2
-### Backtick-fenced H3
-```
-~~~markdown
-#### Tilde-fenced H4
-~~~
-<!--
-## Commented H2
-### Commented H3
--->
-### Real H3
-#### Real H4
-"""
-    expected = [(2, "Real H2"), (3, "Real H3"), (4, "Real H4")]
-    actual = extract_markdown_headings(probe)
-    if actual != expected:
-        fail(
-            "Markdown heading extractor probe must ignore fenced/commented "
-            f"headings and retain real H2/H3/H4 headings: {actual}"
-        )
-
-
 if not template_compatibility_contract_matches(template_compatibility):
     fail(
         f"{rel(template_compatibility_path)} does not match "
         f"{TEMPLATE_COMPATIBILITY_CONTRACT_V1['name']} semantic SHA-256"
     )
 assert_template_compatibility_mutation_proof(template_compatibility)
-assert_markdown_heading_extractor_probe()
 
 if template_compatibility.get("owner") != "Spec 030":
     fail(f"{rel(template_compatibility_path)} owner must be Spec 030")
 if template_compatibility.get("growthAllowed") is not False:
     fail(f"{rel(template_compatibility_path)} must set growthAllowed=false")
 
-canonical_form_rows = template_compatibility.get("canonicalFormCoverage", [])
-canonical_profile_ids = [row.get("profile") for row in canonical_form_rows]
-canonical_form_paths = [row.get("form") for row in canonical_form_rows]
-authored_profile_ids = {
-    profile_id
-    for profile_id, profile in registry_profiles.items()
-    if profile["mode"] == "authored"
-}
-if len(canonical_profile_ids) != len(set(canonical_profile_ids)):
-    fail(f"{rel(template_compatibility_path)} canonical profile IDs must be unique")
-if len(canonical_form_paths) != len(set(canonical_form_paths)):
-    fail(f"{rel(template_compatibility_path)} canonical form paths must be unique")
-if set(canonical_profile_ids) != authored_profile_ids:
-    fail(
-        f"{rel(template_compatibility_path)} canonicalFormCoverage must cover "
-        "every authored registry profile exactly once"
-    )
-for row in canonical_form_rows:
-    profile_id = row["profile"]
-    profile = registry_profiles[profile_id]
-    form_path = root / row["form"]
-    if row["form"] != profile["template"]:
-        fail(f"{profile_id} canonical form must equal registry template")
-    if row["frontmatterType"] != profile_id:
-        fail(f"{profile_id} canonical form frontmatterType must equal profile ID")
-    if row["requiredHeadings"] != profile["headings"]["required"]:
-        fail(f"{profile_id} canonical headings must equal registry required headings")
-    if not form_path.exists():
-        fail(f"{profile_id} canonical form is missing: {row['form']}")
-        continue
-    metadata = load_markdown_frontmatter(form_path)
-    if metadata.get("type") != row["frontmatterType"]:
-        fail(f"{rel(form_path)} frontmatter type must be {row['frontmatterType']}")
-    actual_headings = [
-        text
-        for level, text in extract_markdown_headings(read_text(form_path))
-        if level == 2
-    ]
-    if actual_headings != row["requiredHeadings"]:
-        fail(f"{rel(form_path)} H2 sequence must equal canonicalFormCoverage")
-
-template_mode_rows = template_compatibility.get("templateModeCoverage", [])
-template_mode_paths = [row.get("form") for row in template_mode_rows]
-ordinary_source_less_profiles = []
-tracked_template_paths = {
-    tracked_path
-    for tracked_path in tracked
-    if tracked_path.startswith("docs/99.templates/templates/")
-    and tracked_path.endswith(".template.md")
-}
-if len(template_mode_paths) != len(set(template_mode_paths)):
-    fail(f"{rel(template_compatibility_path)} template form paths must be unique")
-if set(template_mode_paths) != tracked_template_paths:
-    fail(
-        f"{rel(template_compatibility_path)} templateModeCoverage path set must "
-        "equal tracked *.template.md inventory"
-    )
-for row in template_mode_rows:
-    profile = registry_profiles.get(row["profile"])
-    if not profile or profile["mode"] != "template":
-        fail(f"templateModeCoverage has unknown template profile: {row['profile']}")
-        continue
-    expected_route = [{"kind": "exact", "value": row["form"]}]
-    if profile["routes"] != expected_route or profile["template"] != row["form"]:
-        fail(f"{row['profile']} must own one exact template route")
-    if profile["placeholderPolicy"] != row["placeholderPolicy"]:
-        fail(f"{row['profile']} placeholder policy differs from fixture")
-    if profile["sourceProfileIds"] != row["sourceProfiles"]:
-        fail(f"{row['profile']} source profiles differ from fixture")
-    if profile["appendContract"] != row["appendContract"]:
-        fail(f"{row['profile']} append contract differs from fixture")
-    if row["profile"] == "governance/progress-entry":
-        form_text = read_text(root / row["form"])
-        form_headings = extract_markdown_headings(form_text)
-        if any(level in {1, 2} for level, _ in form_headings):
-            fail(f"{row['form']} progress fragment must not contain H1 or H2")
-        entry_headings = [
-            text for level, text in form_headings if level == 3
-        ]
-        section_headings = [
-            text for level, text in form_headings if level == 4
-        ]
-        append_contract = row["appendContract"]
-        if entry_headings != ["YYYY-MM-DD - <workstream-title>"]:
-            fail(f"{row['form']} must contain the canonical H3 entry heading")
-        if section_headings != append_contract["requiredSections"]:
-            fail(f"{row['form']} H4 sequence must equal append contract")
-    else:
-        if row["appendContract"] is not None:
-            fail(f"{row['profile']} non-progress template must not append")
-        if not row["sourceProfiles"]:
-            ordinary_source_less_profiles.append(row["profile"])
-        form_headings = [
-            text
-            for level, text in extract_markdown_headings(
-                read_text(root / row["form"])
-            )
-            if level == 2
-        ]
-        required_headings = profile["headings"]["required"]
-        if form_headings != required_headings:
-            fail(f"{row['form']} H2 sequence must equal its template profile")
-        for source_id in row["sourceProfiles"]:
-            source = registry_profiles[source_id]
-            for field in ("frontmatter", "statusDomain", "headings"):
-                if profile[field] != source[field]:
-                    fail(f"{row['profile']} {field} must equal {source_id}")
-
-if ordinary_source_less_profiles:
-    fail(
-        "ordinary templates must declare source profiles: "
-        f"{ordinary_source_less_profiles}"
-    )
-
-compatibility_rows = template_compatibility.get("compatibilityDebt", [])
-compatibility_profile_ids = [row.get("profile") for row in compatibility_rows]
-if len(compatibility_profile_ids) != len(set(compatibility_profile_ids)):
-    fail(f"{rel(template_compatibility_path)} compatibility profile IDs must be unique")
-compatibility_by_profile = {row["profile"]: row for row in compatibility_rows}
-if set(compatibility_by_profile) != authored_profile_ids:
-    fail(
-        f"{rel(template_compatibility_path)} compatibilityDebt must cover "
-        "every authored profile exactly once"
-    )
-task_forbidden_residue = {
-    "Working Rules",
-    "Suggested Types",
-    "Agent-specific Types (If Applicable)",
-    "Phase View (Optional)",
-}
-for row in compatibility_rows:
-    profile_id = row["profile"]
-    canonical = row["canonical"]
-    forbidden_residue = row["forbiddenResidue"]
-    aliases_by_canonical = row["legacyRequiredAnyOf"]
-    if canonical != registry_profiles[profile_id]["headings"]["required"]:
-        fail(f"{profile_id} compatibility canonical headings must equal registry")
-    if len(canonical) != len(set(canonical)):
-        fail(f"{profile_id} compatibility canonical headings must be unique")
-    if len(forbidden_residue) != len(set(forbidden_residue)):
-        fail(f"{profile_id} forbidden residue definitions must be unique")
-    if set(canonical) & set(forbidden_residue):
-        fail(f"{profile_id} canonical headings and forbidden residue must be disjoint")
-    alias_canonical_keys = [item["canonical"] for item in aliases_by_canonical]
-    if len(alias_canonical_keys) != len(set(alias_canonical_keys)):
-        fail(f"{profile_id} legacy alias canonical keys must be unique")
-    if not set(alias_canonical_keys).issubset(canonical):
-        fail(f"{profile_id} legacy alias canonical keys must be canonical headings")
-    aliases = [
-        alias for item in aliases_by_canonical for alias in item["aliases"]
-    ]
-    if len(aliases) != len(set(aliases)):
-        fail(f"{profile_id} legacy aliases must be unique")
-    if set(aliases) & set(canonical):
-        fail(f"{profile_id} legacy aliases and canonical headings must be disjoint")
-    if set(aliases) & set(forbidden_residue):
-        fail(f"{profile_id} legacy aliases and forbidden residue must be disjoint")
-    if profile_id == "sdlc/task" and set(forbidden_residue) != task_forbidden_residue:
-        fail("sdlc/task must retain the four fixed forbidden residue definitions")
-
-
-def registry_profile_for_path(relative_path: str) -> str | None:
-    matches = []
-    for profile in document_registry["profiles"]:
-        for route in profile["routes"]:
-            if route["kind"] == "exact" and relative_path == route["value"]:
-                matches.append(profile["id"])
-            elif route["kind"] == "regex" and re.match(route["value"], relative_path):
-                matches.append(profile["id"])
-    return matches[0] if len(matches) == 1 else None
-
-
-compatibility_actual = collections.defaultdict(
-    lambda: {
-        "pathCount": 0,
-        "missingCanonicalPathCount": 0,
-        "forbiddenResiduePathCount": 0,
-        "forbiddenResidueOccurrences": 0,
-    }
-)
-for tracked_path in sorted(tracked):
-    if not tracked_path.endswith(".md"):
-        continue
-    profile_id = registry_profile_for_path(tracked_path)
-    if profile_id not in compatibility_by_profile:
-        continue
-    path = root / tracked_path
-    if not path.is_file():
-        continue
-    row = compatibility_by_profile[profile_id]
-    headings = {
-        text
-        for level, text in extract_markdown_headings(read_text(path))
-        if level == 2
-    }
-    aliases = {
-        item["canonical"]: item["aliases"]
-        for item in row["legacyRequiredAnyOf"]
-    }
-    missing = [
-        heading
-        for heading in row["canonical"]
-        if heading not in headings
-        and not any(alias in headings for alias in aliases.get(heading, []))
-    ]
-    residue = [
-        heading for heading in row["forbiddenResidue"] if heading in headings
-    ]
-    actual = compatibility_actual[profile_id]
-    actual["pathCount"] += 1
-    if missing:
-        actual["missingCanonicalPathCount"] += 1
-    if residue:
-        actual["forbiddenResiduePathCount"] += 1
-        actual["forbiddenResidueOccurrences"] += len(residue)
-
-for profile_id, row in compatibility_by_profile.items():
-    actual = compatibility_actual[profile_id]
-    # pathCount is observed canonical population, not compatibility debt. New
-    # canonical documents may increase it; only the debt counters are no-growth.
-    limits = {
-        "missingCanonicalPathCount": row["baselineDebtPathCount"],
-        "forbiddenResiduePathCount": row["baselineForbiddenResiduePathCount"],
-        "forbiddenResidueOccurrences": row["baselineForbiddenResidueOccurrences"],
-    }
-    for field, limit in limits.items():
-        if actual[field] > limit:
-            fail(
-                f"{profile_id} compatibility debt grew for {field}: "
-                f"baseline={limit} actual={actual[field]}"
-            )
-
 template_support_root = root / "docs/99.templates/support"
-active_template_support_names = {
-    "common-documentation-governance.md",
-    "documentation-contract.md",
-    "frontmatter-schema.md",
-    "legacy-cleanup-rules.md",
-    "sdlc-governance.md",
-    "template-routing.md",
-}
 support_stale_patterns = [
     (re.compile(r"Phase [1-4]"), "migration phase wording"),
     (re.compile(r"during the migration"), "migration-only wording"),
@@ -1891,134 +1230,6 @@ for support_doc in sorted(template_support_root.glob("*.md")):
             fail(f"{rel(support_doc)} contains stale {label}")
     if support_doc.name == "README.md":
         continue
-    validate_markdown_frontmatter_profile(
-        support_doc,
-        "governance/template-support",
-        expected_status=(
-            "active" if support_doc.name in active_template_support_names else "draft"
-        ),
-    )
-
-example_local_sdlc_routes = [
-    ("01.requirements/*.md", "sdlc/prd"),
-    ("02.architecture/requirements/*.md", "sdlc/ard"),
-    ("02.architecture/decisions/*.md", "sdlc/adr"),
-    ("03.specs/*.md", "sdlc/spec"),
-    ("03.specs/**/*.md", "sdlc/spec"),
-    ("04.execution/plans/*.md", "sdlc/plan"),
-    ("04.execution/tasks/*.md", "sdlc/task"),
-    ("05.operations/guides/*.md", "sdlc/guide"),
-    ("05.operations/policies/*.md", "sdlc/policy"),
-    ("05.operations/runbooks/*.md", "sdlc/runbook"),
-]
-
-example_local_required_headings = {
-    "sdlc/prd": [
-        "## Overview",
-        "## Vision",
-        "## Problem Statement",
-        "## Personas",
-        "## Key Use Cases",
-        "## Functional Requirements",
-        "## Success / Acceptance Criteria",
-        "## Scope and Non-goals",
-        "## Risks, Dependencies, and Assumptions",
-        "## Related Documents",
-    ],
-    "sdlc/ard": [
-        "## Overview",
-        "## Summary",
-        "## Boundaries & Non-goals",
-        "## Quality Attributes",
-        "## System Overview & Context",
-        "## Data Architecture",
-        "## Infrastructure & Deployment",
-        "## Related Documents",
-    ],
-    "sdlc/adr": [
-        "## Overview",
-        "## Context",
-        "## Decision",
-        "## Explicit Non-goals",
-        "## Consequences",
-        "## Alternatives",
-        "## Related Documents",
-    ],
-    "sdlc/spec": [
-        "## Overview",
-        "## Strategic Boundaries & Non-goals",
-        "## Related Inputs",
-        "## Contracts",
-        "## Core Design",
-        "## Data Modeling & Storage Strategy",
-        "## Interfaces & Data Structures",
-        "## Edge Cases & Error Handling",
-        "## Failure Modes & Fallback / Human Escalation",
-        "## Verification Commands",
-        "## Success Criteria & Verification Plan",
-        "## Related Documents",
-    ],
-    "sdlc/plan": [
-        "## Overview",
-        "## Context",
-        "## Goals & In-Scope",
-        "## Non-Goals & Out-of-Scope",
-        "## Work Breakdown",
-        "## Verification Plan",
-        "## Risks & Mitigations",
-        "## Completion Criteria",
-        "## Related Documents",
-    ],
-    "sdlc/task": [
-        "## Overview",
-        "## Inputs",
-        "## Working Rules",
-        "## Task Table",
-        "## Suggested Types",
-        "## Verification Summary",
-        "## Related Documents",
-    ],
-    "sdlc/guide": [
-        "## Overview",
-        "## Guide Type",
-        "## Target Audience",
-        "## Purpose",
-        "## Prerequisites",
-        "## Step-by-step Instructions",
-        "## Common Pitfalls",
-        "## Related Documents",
-    ],
-    "sdlc/policy": [
-        "## Overview",
-        "## Policy Scope",
-        "## Applies To",
-        "## Controls",
-        "## Exceptions",
-        "## Verification",
-        "## Review Cadence",
-        "## Related Documents",
-    ],
-    "sdlc/runbook": [
-        "## Runbook Type",
-        "## Overview",
-        "## Purpose",
-        "## Canonical References",
-        "## When to Use",
-        "## Procedure or Checklist",
-        "## Verification Steps",
-        "## Observability and Evidence Sources",
-        "## Safe Rollback or Recovery Procedure",
-        "## Related Documents",
-    ],
-}
-
-
-def example_local_sdlc_type(path: pathlib.Path, docs_root: pathlib.Path) -> str | None:
-    relative_path = path.relative_to(docs_root).as_posix()
-    for glob_pattern, expected_type in example_local_sdlc_routes:
-        if fnmatch.fnmatchcase(relative_path, glob_pattern):
-            return expected_type
-    return None
 
 
 for provider in ["aws", "azure"]:
@@ -2028,17 +1239,7 @@ for provider in ["aws", "azure"]:
     for example_doc in sorted(docs_root.rglob("*.md")):
         text = read_text(example_doc)
         if example_doc.name == "README.md":
-            if has_markdown_frontmatter(example_doc, text):
-                fail(f"{rel(example_doc)} must remain frontmatter-free README")
             continue
-        expected_type = example_local_sdlc_type(example_doc, docs_root)
-        if not expected_type:
-            fail(f"{rel(example_doc)} is not covered by an example-local SDLC snapshot route")
-            continue
-        validate_markdown_frontmatter_profile(example_doc, expected_type)
-        for required_heading in example_local_required_headings[expected_type]:
-            if required_heading not in text:
-                fail(f"{rel(example_doc)} missing example-local {expected_type} heading: {required_heading}")
         if "## Snapshot Boundary" not in text:
             fail(f"{rel(example_doc)} missing example-local snapshot heading: ## Snapshot Boundary")
         for required_phrase in [
@@ -2090,11 +1291,6 @@ if template_readme_route_pairs != template_routing_route_pairs:
         "docs/99.templates/README.md Template-Folder Mapping must match "
         "docs/99.templates/support/template-routing.md Current Route Map"
     )
-for governance_reference in [
-    root / "docs/00.agent-governance/harness-catalog.md",
-    root / "docs/00.agent-governance/subagent-protocol.md",
-]:
-    validate_markdown_frontmatter_profile(governance_reference, "governance/reference")
 for phrase in [
     "## Structural Template Coverage",
     "structural template mapping",
@@ -2115,225 +1311,6 @@ for path in docs_dir.rglob("*"):
         continue
     if re.search(r"(^template\.md$|\.template\.|template\.)", path.name):
         fail(f"template-like docs file must live in docs/99.templates: {rel(path)}")
-
-active_doc_roots = [
-    root / "README.md",
-    root / "AGENTS.md",
-    root / "CLAUDE.md",
-    root / "GEMINI.md",
-    root / "docs",
-    root / "examples",
-    root / "gitops",
-    root / "infrastructure",
-    root / "policy",
-    root / "scripts",
-    root / "tests",
-    root / "traefik",
-]
-active_doc_suffixes = {".md", ".json", ".toml", ".yaml", ".yml", ".sh"}
-authored_template_residue = ("Target: " + "docs/", "Use this " + "template")
-for scan_root in active_doc_roots:
-    if not scan_root.exists():
-        continue
-    candidates = [scan_root] if scan_root.is_file() else sorted(scan_root.rglob("*"))
-    for path in candidates:
-        if not path.is_file() or path.suffix not in active_doc_suffixes:
-            continue
-        if path.is_relative_to(root / "docs/99.templates/templates"):
-            continue
-        if is_historical_evidence_path(path):
-            continue
-        for line_number, line in enumerate(read_text(path).splitlines(), start=1):
-            if any(marker in line for marker in authored_template_residue):
-                fail(f"active document template residue in {rel(path)}:{line_number}")
-
-documented_stage_routes = [
-    ("docs/01.requirements/<###-Numbering>-<feature-or-system>.md", "prd.template.md"),
-    ("docs/02.architecture/requirements/####-<system-or-domain>.md", "ard.template.md"),
-    ("docs/02.architecture/decisions/####-<short-title>.md", "adr.template.md"),
-    ("docs/03.specs/<###-Numbering>-<feature-id>/spec.md", "spec.template.md"),
-    ("docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md", "api-spec.template.md"),
-    ("docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md", "agent-design.template.md"),
-    ("docs/03.specs/<###-Numbering>-<feature-id>/data-model.md", "data-model.template.md"),
-    ("docs/03.specs/<###-Numbering>-<feature-id>/tests.md", "tests.template.md"),
-    ("docs/04.execution/plans/YYYY-MM-DD-<feature>.md", "plan.template.md"),
-    ("docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md", "task.template.md"),
-    ("docs/05.operations/guides/####-<topic>.md", "guide.template.md"),
-    ("docs/05.operations/policies/####-<policy-or-standard>.md", "policy.template.md"),
-    ("docs/05.operations/runbooks/####-<topic>.md", "runbook.template.md"),
-    ("docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md", "incident.template.md"),
-    ("docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md", "postmortem.template.md"),
-    ("docs/90.references/<category>/<topic>.md", "reference.template.md"),
-    ("docs/98.archive/**/*.md", "archive-tombstone.template.md"),
-]
-native_contract_routes = {
-    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/openapi.yaml", "openapi.template.yaml"),
-    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/schema.graphql", "schema.template.graphql"),
-    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/service.proto", "service.template.proto"),
-}
-
-
-def documented_target_to_validator_glob(target_pattern: str) -> str:
-    if target_pattern == "docs/90.references/<category>/<topic>.md":
-        return "docs/90.references/**/*.md"
-    replacements = [
-        ("<###-Numbering>-<feature-or-system>", "[0-9][0-9][0-9]-*"),
-        ("<###-Numbering>-<feature-id>", "[0-9][0-9][0-9]-*"),
-        ("YYYY-MM-DD-<feature-or-stream>", "*"),
-        ("YYYY-MM-DD-<feature>", "*"),
-        ("####-<policy-or-standard>", "*"),
-        ("####-<system-or-domain>", "*"),
-        ("####-<short-title>", "*"),
-        ("####-<topic>", "*"),
-        ("INC-###-<title>", "INC-[0-9][0-9][0-9]-*"),
-        ("YYYY", "[0-9][0-9][0-9][0-9]"),
-    ]
-    normalized = target_pattern
-    for old, new in replacements:
-        normalized = normalized.replace(old, new)
-    return normalized
-
-
-required_stage_templates = [
-    (documented_target_to_validator_glob(target_pattern), template_name)
-    for target_pattern, template_name in documented_stage_routes
-]
-expected_structural_route_pairs = set(required_stage_templates)
-actual_structural_route_pairs: set[tuple[str, str]] = set()
-actual_native_contract_routes: set[tuple[str, str]] = set()
-expected_readme_profile_templates = {
-    "readme/repository": "readme-repository.template.md",
-    "readme/stage-index": "readme-stage-index.template.md",
-    "readme/collection-index": "readme-collection-index.template.md",
-    "readme/implementation": "readme-implementation.template.md",
-    "readme/snapshot-pack": "readme-snapshot-pack.template.md",
-    "readme/workspace-staging": "readme-workspace-staging.template.md",
-}
-expected_memory_target = ("docs/00.agent-governance/memory/<topic>.md",)
-expected_progress_target = ("docs/00.agent-governance/memory/progress.md",)
-seen_readme_profile_routes: dict[str, str] = {}
-seen_memory_route = False
-seen_progress_route = False
-
-for target_pattern, template_path_text in template_readme_route_pairs:
-    template_matches = re.findall(r"`([^`]+)`", template_path_text)
-    if not template_matches:
-        fail(f"template route has no backticked template path: {target_pattern} -> {template_path_text}")
-        continue
-    template_name = pathlib.Path(template_matches[0]).name
-    target_matches = tuple(re.findall(r"`([^`]+)`", target_pattern))
-    if template_name in expected_readme_profile_templates.values():
-        if len(target_matches) != 1:
-            fail(f"README profile route must name one registry profile: {target_pattern}")
-            continue
-        profile_id = target_matches[0]
-        expected_template = expected_readme_profile_templates.get(profile_id)
-        if expected_template != template_name:
-            fail(
-                f"README profile route differs from registry form mapping: "
-                f"{profile_id} -> {template_name}"
-            )
-            continue
-        seen_readme_profile_routes[profile_id] = template_name
-        continue
-    if template_name == "memory.template.md":
-        if target_matches != expected_memory_target:
-            fail(f"memory template route must use the canonical memory target: {target_pattern}")
-        seen_memory_route = True
-        continue
-    if template_name == "progress.template.md":
-        if target_matches != expected_progress_target:
-            fail(f"progress template route must use the canonical progress target: {target_pattern}")
-        seen_progress_route = True
-        continue
-    if len(target_matches) != 1:
-        fail(f"template route must have exactly one target pattern: {target_pattern}")
-        continue
-    route_pair = (target_matches[0], template_name)
-    if route_pair in native_contract_routes:
-        actual_native_contract_routes.add(route_pair)
-        continue
-    if template_name.endswith(".template.md"):
-        normalized_pair = (documented_target_to_validator_glob(target_matches[0]), template_name)
-        actual_structural_route_pairs.add(normalized_pair)
-        if normalized_pair not in expected_structural_route_pairs:
-            fail(
-                "documented Markdown route does not match structural validator mapping: "
-                f"{target_matches[0]} -> {template_name} normalizes to {normalized_pair[0]}"
-            )
-        continue
-    fail(f"template route is not covered by structural or native validator mapping: {target_pattern} -> {template_name}")
-
-if seen_readme_profile_routes != expected_readme_profile_templates:
-    fail(
-        "Template-Folder Mapping must expose all six README profile forms: "
-        f"{seen_readme_profile_routes}"
-    )
-if not seen_memory_route:
-    fail("Template-Folder Mapping missing canonical governance memory route")
-if not seen_progress_route:
-    fail("Template-Folder Mapping missing canonical progress ledger route")
-for missing_route in sorted(expected_structural_route_pairs - actual_structural_route_pairs):
-    fail(f"Template-Folder Mapping missing structural validator route: {missing_route[0]} -> {missing_route[1]}")
-for extra_route in sorted(actual_structural_route_pairs - expected_structural_route_pairs):
-    fail(f"Template-Folder Mapping has unsupported structural validator route: {extra_route[0]} -> {extra_route[1]}")
-for missing_route in sorted(native_contract_routes - actual_native_contract_routes):
-    fail(f"Template-Folder Mapping missing native contract route: {missing_route[0]} -> {missing_route[1]}")
-for extra_route in sorted(actual_native_contract_routes - native_contract_routes):
-    fail(f"Template-Folder Mapping has unsupported native contract route: {extra_route[0]} -> {extra_route[1]}")
-
-for glob_pattern, template_name in required_stage_templates:
-    resolved_template_path = template_path(template_name)
-    if not resolved_template_path.exists():
-        fail(f"structural template mapping points to missing template: {glob_pattern} -> {template_name}")
-
-structural_template_roots = [
-    root / "docs/01.requirements",
-    root / "docs/02.architecture",
-    root / "docs/03.specs",
-    root / "docs/04.execution",
-    root / "docs/05.operations",
-    root / "docs/90.references",
-    root / "docs/98.archive",
-]
-for scan_root in structural_template_roots:
-    for path in sorted(scan_root.rglob("*.md")):
-        if path.name == "README.md":
-            continue
-        relative_path = rel(path)
-        matching_templates = [
-            template_name
-            for glob_pattern, template_name in required_stage_templates
-            if fnmatch.fnmatchcase(relative_path, glob_pattern)
-        ]
-        if not matching_templates:
-            fail(f"{relative_path} is not covered by a structural template mapping")
-        elif len(matching_templates) > 1:
-            fail(
-                f"{relative_path} matches multiple structural template mappings: "
-                f"{', '.join(matching_templates)}"
-            )
-        else:
-            expected_type = template_expected_types.get(matching_templates[0])
-            if not expected_type:
-                fail(f"{relative_path} matches a template without a frontmatter profile: {matching_templates[0]}")
-            else:
-                validate_markdown_frontmatter_profile(path, expected_type)
-
-
-def required_headings_from_template(template_name: str) -> list[str]:
-    headings: list[str] = []
-    for line in read_text(template_path(template_name)).splitlines():
-        if not line.startswith("## "):
-            continue
-        heading = line.strip()
-        if "[" in heading or "<" in heading:
-            continue
-        if "(If Applicable)" in heading or "(Optional)" in heading:
-            continue
-        headings.append(heading)
-    return headings
-
 
 english_first_stage_globs = [
     "docs/03.specs/*/spec.md",
@@ -2364,13 +1341,6 @@ for tombstone in sorted(archive_root.rglob("*.md")):
     if tombstone.name == "README.md":
         continue
     metadata = load_markdown_frontmatter(tombstone)
-    if str(metadata.get("type", "")).strip() != "content/archive-tombstone":
-        fail(f"{rel(tombstone)} archive metadata must use type: content/archive-tombstone")
-    if str(metadata.get("status", "")).strip() != "archived":
-        fail(f"{rel(tombstone)} archive metadata must use status: archived")
-    for archive_key in ["original_path", "archived_on", "archive_reason", "replacement"]:
-        if not str(metadata.get(archive_key, "")).strip():
-            fail(f"{rel(tombstone)} missing archive metadata key: {archive_key}")
     archive_reason = str(metadata.get("archive_reason", "")).strip()
     if archive_reason not in archive_reason_allowed_values:
         fail(f"{rel(tombstone)} archive_reason is unsupported: {archive_reason or '<empty>'}")
@@ -2719,69 +1689,6 @@ for operations_root in operations_index_roots:
             fail(f"{rel(readme_path)} updated mismatch for {doc_path.name}: index={row_updated}, frontmatter={updated}")
 
 
-def validate_stage04_index(stage_root: pathlib.Path) -> None:
-    readme_path = stage_root / "README.md"
-    if not readme_path.exists():
-        fail(f"Stage 04 README is missing: {rel(readme_path)}")
-        return
-
-    rows = markdown_table_after_heading(
-        read_text(readme_path),
-        ("## 문서 인덱스", "### 문서 인덱스"),
-    )
-    expected_header = ["문서", "설명", "상태", "최종 수정"]
-    if len(rows) < 2:
-        fail(f"{rel(readme_path)} 문서 인덱스 must contain a header and document rows")
-        return
-    if rows[0] != expected_header:
-        fail(f"{rel(readme_path)} 문서 인덱스 header must be: {' | '.join(expected_header)}")
-
-    indexed_rows: dict[str, list[str]] = {}
-    for row_number, row in enumerate(rows[1:], start=1):
-        if len(row) != len(expected_header):
-            fail(f"{rel(readme_path)} 문서 인덱스 row {row_number} must have {len(expected_header)} columns")
-            continue
-        match = re.search(r"\]\(\./([^)]+\.md)\)", row[0])
-        if not match:
-            fail(f"{rel(readme_path)} 문서 인덱스 row {row_number} must link to ./<document>.md")
-            continue
-        target_name = match.group(1)
-        if target_name in indexed_rows:
-            fail(f"{rel(readme_path)} 문서 인덱스 duplicates document: {target_name}")
-        indexed_rows[target_name] = row
-
-    stage_docs = sorted(path for path in stage_root.glob("*.md") if path.name != "README.md")
-    stage_doc_names = {path.name for path in stage_docs}
-    for doc_name in sorted(stage_doc_names - set(indexed_rows)):
-        fail(f"{rel(readme_path)} 문서 인덱스 missing document: {doc_name}")
-    for doc_name in sorted(set(indexed_rows) - stage_doc_names):
-        fail(f"{rel(readme_path)} 문서 인덱스 links to missing document: {doc_name}")
-
-    for doc_path in stage_docs:
-        row = indexed_rows.get(doc_path.name)
-        if not row:
-            continue
-        metadata = load_markdown_frontmatter(doc_path)
-        status = str(metadata.get("status", "")).strip()
-        updated = str(metadata.get("updated", "")).strip()
-        row_status = row[2].strip()
-        row_updated = row[3].strip()
-        if not status:
-            fail(f"{rel(doc_path)} missing status for Stage 04 index validation")
-        elif row_status.lower() != status.lower():
-            fail(f"{rel(readme_path)} status mismatch for {doc_path.name}: index={row_status}, frontmatter={status}")
-        if not updated:
-            fail(f"{rel(doc_path)} missing updated for Stage 04 index validation")
-        elif row_updated != updated:
-            fail(f"{rel(readme_path)} updated mismatch for {doc_path.name}: index={row_updated}, frontmatter={updated}")
-
-
-for stage04_root in [
-    root / "docs/04.execution/plans",
-    root / "docs/04.execution/tasks",
-]:
-    validate_stage04_index(stage04_root)
-
 template_enforcement_phrase_checks = {
     root / "docs/00.agent-governance/rules/documentation-protocol.md": [
         "docs/99.templates/README.md",
@@ -2879,15 +1786,6 @@ for scan_root in legacy_scan_roots:
         for literal, replacement in legacy_denylist_literals.items():
             if literal in text:
                 fail(f"{rel(candidate)} contains {replacement} literal: {literal}")
-
-for policy_doc in sorted((root / "docs/05.operations/policies").glob("*.md")):
-    if policy_doc.name == "README.md":
-        continue
-    text = read_text(policy_doc)
-    if re.search(r"^type:\s*operation\s*$", text, re.MULTILINE):
-        fail(f"{rel(policy_doc)} must use frontmatter type: sdlc/policy, not operation")
-    if not re.search(r"^type:\s*sdlc/policy\s*$", text, re.MULTILINE):
-        fail(f"{rel(policy_doc)} missing frontmatter type: sdlc/policy")
 
 llm_wiki_dir = root / "docs/90.references/llm-wiki"
 llm_wiki_readme = llm_wiki_dir / "README.md"
@@ -3602,19 +2500,6 @@ for phrase in [
 for phrase in ["memory.template.md", "progress.template.md", "00.agent-governance/memory/"]:
     if phrase not in template_readme:
         fail(f"{rel(root / 'docs/99.templates/README.md')} missing memory template inventory phrase: {phrase}")
-
-standalone_memory_required_headings = required_headings_from_template("memory.template.md")
-for memory_file in sorted(memory_dir.glob("*.md")):
-    if memory_file.name in {"README.md", "progress.md"}:
-        continue
-    document_headings = {
-        line.strip()
-        for line in read_text(memory_file).splitlines()
-        if line.startswith("## ")
-    }
-    for heading in standalone_memory_required_headings:
-        if heading not in document_headings:
-            fail(f"{rel(memory_file)} missing required template heading from memory.template.md: {heading}")
 
 workflow_paths = sorted((root / ".github").glob("**/*.yml")) + sorted((root / ".github").glob("**/*.yaml"))
 for workflow in workflow_paths:

@@ -91,6 +91,17 @@ live readiness.
 | Shell syntax | `find infrastructure scripts docs/00.agent-governance/hooks -type f -name '*.sh' -exec bash -n {} +` | Repo-static |
 | Live runtime checks | `bash infrastructure/tests/run-all.sh` after approved bootstrap | Live/operator-owned |
 
+Repository quality is an orchestrator boundary: it invokes the registry,
+Markdown-profile, and cross-document validators in compatibility mode, then
+runs only retained workspace-domain checks. The wrapper's pinned full-fixture
+SHA and mutation proof protect the Spec 030 handoff; the Markdown validator is
+the runtime consumer of the 1,299 finite document diagnostics, and the
+cross-document validator is the runtime consumer of the sole
+`LEDGER-MISSING` transition item. Its production self-test also reconstructs
+the exact Spec 029/Plan 029/Task 029 pre-closure state and proves that their
+`done` transition changes unique current-owner keys from 66 to 63 without
+changing candidate logic.
+
 ### Evidence Boundaries
 
 - `tests/fixtures/document-contracts/registry-cases.json`의 각 사례는 하나의

@@ -8,6 +8,59 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - Semantic validator gate delegation
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, validation, qa
+- **Status**: complete
+- **Tags**: #semantic-validation #quality-gate #delegation #compatibility
+
+#### Progress
+
+- Closed SMDV-001 through SMDV-004 and promoted Spec 029, its Plan, Task, and
+  three index rows to `done`/`Done` with reciprocal evidence.
+- Made the repository quality wrapper invoke registry, Markdown-profile, and
+  cross-document compatibility validators after Python prerequisites.
+- Removed duplicated general route, Frontmatter, README, link, heading,
+  residue, and declared Stage 04 index implementations while retaining
+  operations-index parity and the workspace's GitOps, infrastructure,
+  agent-runtime, CI/QA, security, version, and supply-chain checks.
+- Preserved the complete template-compatibility semantic SHA and mutation
+  proof; runtime debt consumption now has one canonical validator owner.
+- Corrected the closure interaction discovered by GREEN: Spec 029, Plan 029,
+  and Task 029 are the exact three owner candidates removed by `status: done`,
+  producing a deterministically proved 66-to-63 unique-key transition.
+
+#### Memory
+
+- A wrapper should orchestrate semantic validators, not fork their parsers or
+  rule tables. Keep domain-relational checks only when no canonical rule ID
+  represents their exact semantics.
+- Migration debt needs both a canonical runtime consumer and a separately
+  pinned full-fixture mutation proof. Delegation must not weaken either side.
+
+#### Evidence
+
+- Baseline and GREEN repository wrappers passed. GREEN retained exact registry
+  counts `433/467/36`, 60 profiles, 27 templates, and 72 README paths; Markdown
+  compatibility emitted 1,299 `DEFER` rows and cross-document compatibility
+  emitted only the pinned `LEDGER-MISSING` `DEFER`, with no `FAIL`.
+- All three validator self-tests, shell syntax, `git diff --check`, exact
+  eleven-path staging, and all-files pre-commit form the static closure bundle.
+  A fresh SDD review is recorded in the ignored
+  `.superpowers/sdd/smdv-task-4-review.md` after the closure commit.
+- No live Kubernetes, Argo CD, Vault, ESO, provider runtime, credential,
+  secret-value, remote CI, push, publication, merge, deployment, or
+  third-party mutation was performed or inferred.
+
+#### Handoff
+
+- Spec 030 owns the durable migration ledger, document waves, finite-debt
+  removal, and ADM-007 strict cutover. Revert only the SMDV-004 wrapper commit
+  when restoring delegation; retain the three validator implementations.
+
 ### 2026-07-13 - Cross-document semantic validation
 
 #### Metadata
