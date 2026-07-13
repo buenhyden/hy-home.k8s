@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "surfaceCases": [
     {"name": "workspace-readme", "path": "_workspace/README.md", "expectedSurface": "workspace-boundary"},
     {"name": "gitignore", "path": ".gitignore", "expectedSurface": "root-config"},
@@ -140,6 +140,69 @@
         "protectedLevel": "none",
         "unmatchedPaths": []
       }
+    }
+  ],
+  "ciRangeCases": [
+    {
+      "name": "push-before-head-document-surfaces",
+      "event": "push",
+      "rangeKind": "before-head",
+      "paths": [
+        "docs/03.specs/031-affected-surface-agent-qa/spec.md",
+        "_workspace/README.md",
+        ".agents/agents/supervisor.md",
+        "docs/99.templates/support/template-routing.md",
+        ".github/workflows/ci.yml"
+      ],
+      "expectedJobs": ["pre-commit", "repo-quality-static"],
+      "expectedGithubOutput": "manifests=false\nprecommit=true\nrepo_quality=true"
+    },
+    {
+      "name": "pull-request-base-head-document-surfaces",
+      "event": "pull_request",
+      "rangeKind": "base-head",
+      "paths": [
+        "docs/03.specs/031-affected-surface-agent-qa/spec.md",
+        "_workspace/README.md",
+        ".agents/agents/supervisor.md",
+        "docs/99.templates/support/template-routing.md",
+        ".github/workflows/ci.yml"
+      ],
+      "expectedJobs": ["pre-commit", "repo-quality-static"],
+      "expectedGithubOutput": "manifests=false\nprecommit=true\nrepo_quality=true"
+    },
+    {
+      "name": "push-initial-head-tree-all-surfaces",
+      "event": "push",
+      "rangeKind": "initial-head-tree",
+      "paths": [
+        "docs/03.specs/031-affected-surface-agent-qa/spec.md",
+        "_workspace/README.md",
+        "policy/conftest/kubernetes.rego",
+        "gitops/clusters/local/root-application.yaml",
+        "infrastructure/tests/verify-contracts-static.sh",
+        "secrets/README.md",
+        "traefik/traefik.yaml",
+        ".agents/agents/supervisor.md",
+        "docs/99.templates/support/template-routing.md",
+        ".github/workflows/ci.yml"
+      ],
+      "expectedJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+      "expectedGithubOutput": "manifests=true\nprecommit=true\nrepo_quality=true"
+    },
+    {
+      "name": "pull-request-base-head-protected-surfaces",
+      "event": "pull_request",
+      "rangeKind": "base-head",
+      "paths": [
+        "policy/conftest/kubernetes.rego",
+        "gitops/clusters/local/root-application.yaml",
+        "infrastructure/tests/verify-contracts-static.sh",
+        "secrets/README.md",
+        "traefik/traefik.yaml"
+      ],
+      "expectedJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+      "expectedGithubOutput": "manifests=true\nprecommit=true\nrepo_quality=true"
     }
   ],
   "rejectionCases": [

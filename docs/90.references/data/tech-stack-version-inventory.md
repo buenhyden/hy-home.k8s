@@ -107,7 +107,6 @@ github_actions:
   'actions/setup-python': 'v6.3.0'
   'actions/stale': 'v10.3.0'
   'actions/upload-artifact': 'v7'
-  'dorny/paths-filter': 'v4.0.1'
   'orhun/git-cliff-action': 'v4'
   'pre-commit/action': 'v3.0.1'
 pre_commit:

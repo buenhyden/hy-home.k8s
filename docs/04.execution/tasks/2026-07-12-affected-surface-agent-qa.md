@@ -35,7 +35,7 @@ across thirty provider adapters, and close the shared QA handoff contract.
 | ASQA-001 | Start reciprocal Spec, Plan, Task, unique active Stage-index lineage, and strict durable-ledger coverage | platform | Active | GREEN lineage assertion, exact fourteen-column Task ledger row, and focused strict document QA; logical commit `docs(execution): start affected surface agent qa` |
 | ASQA-002 | Define the affected-surface registry, schema, selector, and positive/negative path fixtures | platform | Done | RED empty-selector exit `1`; GREEN 19/19 surface and 630 pre-stage/635 exact-index tracked-path coverage, 21 positive paths, 4 exact selection cases, 5 rejection cases, 4 post-script/`--` boundary positives, 29 route/argv/lane/job/protection/fallback/evidence mutations, exact executable tokens, direct-script/wrapper boundaries, fail-closed interpreter-eval options and surface fallbacks, NUL/output self-tests, Python compile, strict document QA, full quality gate, and focused pre-commit; logical commit `feat(qa): define affected-surface validation contract` |
 | ASQA-003 | Drive local hooks and pre-commit lanes from validated selector output without newline path transport | platform | Done | Fixture-first RED/GREEN, 636-path tracked coverage, bounded/redacted shell-free runner evidence, three-provider hook payload/no-file/control-byte/root/symlink/alias simulations, zero pre-commit invocation on invalid input, shell/JSON/Python syntax checks, strict document QA, full quality gate, focused pre-commit, and exact thirteen-path staging; logical commit `refactor(hooks): drive local validation from affected surfaces` |
-| ASQA-004 | Select existing CI jobs from NUL-delimited changed paths and preserve Spec 032 workflow ownership | platform | Draft | Local/CI parity fixtures, actionlint, and separately reported zizmor evidence; logical commit `ci(qa): select jobs from affected-surface registry` |
+| ASQA-004 | Select existing CI jobs from NUL-delimited changed paths and preserve Spec 032 workflow ownership | platform | Done | Fixture-first RED/GREEN for four push/PR range cases, exact selector job/GitHub-output parity, initial/zero-before fail-safe, 636-path contract coverage, canonical quality-gate and Action-inventory alignment, actionlint and zizmor PASS, protected-job digest equality, and exact eight-path staging; logical commit `ci(qa): select jobs from affected-surface registry` |
 | ASQA-005 | Enforce responsibility, output, prohibition, stop, handoff, capability-tier, and evidence semantics for ten roles and thirty adapters | platform | Draft | Semantic mutation self-tests and roster-currentness checks; logical commit `feat(agents): enforce cross-provider role semantics` |
 | ASQA-006 | Align thin gateways, Stage 00 QA governance, repository gates, lifecycle, and independent-review evidence | platform | Draft | Full static QA bundle with lane limitations and reviewer findings; logical commit `docs(agents): align provider qa evidence contracts` |
 
@@ -232,12 +232,43 @@ optional fallback is a separate record, and remote/live work is always
 `DEFER`. These outcomes are repository-static and do not prove provider event
 delivery, remote CI, Kubernetes convergence, or cloud state.
 
+ASQA-004 extended the fixture and its owning validator before changing the
+workflow. The RED self-test failed with `SURFACE-LOCAL-CI-MISMATCH` because the
+`changes` job still contained copied dorny filters and lacked canonical
+selector wiring. GREEN covers ordinary push `before..head`, initial or
+zero-`before` head-tree selection, and pull-request `base..head` cases. The
+four cases compare both exact selected job IDs and the three sorted GitHub
+boolean outputs while covering docs, `_workspace/README.md`, policy, GitOps,
+infrastructure, secrets, Traefik, shared agents, templates, and workflow paths.
+The workflow now writes `git diff --name-only -z` output directly to the
+runner-temporary NUL file and passes that file to the selector; no command
+substitution or newline decoding is used. Initial pushes and unavailable push
+base objects conservatively select the head tree, and manual dispatch selects
+the head tree. The obsolete `dorny/paths-filter@v4.0.1` owner is removed; the
+remaining `uses:` multiset and order, top-level permissions, branch-policy,
+pre-commit, repo-quality-static, manifest-static, and ci-summary bodies have
+matching pre/post SHA-256 digests. Self-test, 636-path contract validation,
+actionlint, zizmor, strict document QA, full repository quality, focused
+pre-commit, and diff checks pass. This is repository-static evidence only;
+remote GitHub execution, provider runtime consumption, and live Kubernetes or
+cloud state remain `DEFER`.
+
+The first full quality-gate reproduction exposed two residual copied-filter
+assertions and the obsolete dorny Action inventory row; its nested shared and
+Codex hook simulations then failed only because their selected
+`repository-quality` child correctly propagated that gate failure. ASQA-004
+now runs the affected-surface self-test and root inventory at the quality-gate
+entry point, checks the canonical changes-job outputs, full-history checkout,
+NUL producers, selector invocation, and absence of dorny/filter ownership, and
+removes exactly the obsolete current-inventory row. The existing Spec 032 Plan
+is intentionally unchanged; any stale future-plan dorny wording remains a
+Spec 032 handoff rather than active current inventory or ASQA-004 behavior.
+
 Later rows retain their own fixture-first RED/GREEN evidence. ASQA-002 and
-ASQA-003 must reject unmatched or ambiguous paths and unsafe path transport;
-ASQA-004 must prove local/CI selection parity without changing Spec 032-owned
-workflow controls; ASQA-005 must fail independently for each semantic category
-and provider form; ASQA-006 must report every lane as PASS, SKIP, FAIL, or DEFER
-and record independent review before lifecycle closure.
+ASQA-003 reject unmatched or ambiguous paths and unsafe path transport;
+ASQA-005 must fail independently for each semantic category and provider form;
+ASQA-006 must report every lane as PASS, SKIP, FAIL, or DEFER and record
+independent review before lifecycle closure.
 
 ## Traceability
 

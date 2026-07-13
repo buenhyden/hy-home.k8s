@@ -441,18 +441,26 @@ git commit -m "refactor(hooks): drive local validation from affected surfaces"
 
 - Modify: `.github/workflows/ci.yml`
 - Modify: `tests/fixtures/validation-surfaces.json`
+- Modify: `scripts/validate-affected-surfaces.py`
+- Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify: `docs/00.agent-governance/harness-implementation-map.md`
+- Modify: `docs/90.references/data/tech-stack-version-inventory.md`
 - Modify: same-topic Task
+- Modify: this Plan
 
 **Interfaces:**
 
 - Consumes: NUL-delimited `git diff --name-only -z` and selector GitHub output.
 - Produces: `precommit`, `repo_quality`, and `manifests` outputs for existing jobs.
 
-- [ ] **Step 1: Add push and pull-request range fixtures, then run RED**
+- [ ] **Step 1: Add durable push and pull-request range fixtures and workflow
+  parity validation, then run RED**
 
 Fixture expected job sets must cover root docs, `_workspace/README.md`, policy,
 GitOps, infrastructure, secrets, Traefik, agent, template, and workflow changes.
+The fixture and validator must compare both selected job IDs and exact GitHub
+boolean outputs. Push coverage includes ordinary `before..head` and initial or
+zero-`before` head-tree selection; pull-request coverage uses `base..head`.
 
 ```bash
 python3 scripts/validate-affected-surfaces.py --self-test
@@ -462,22 +470,28 @@ Expected: `SURFACE-LOCAL-CI-MISMATCH` until CI selection matches the registry.
 
 - [ ] **Step 2: Replace copied workflow filters**
 
-Keep current jobs and Action references. In `changes`, checkout sufficient
-history, write `git diff --name-only -z` directly to
+Keep current jobs and every Action reference except the obsolete copied-filter
+owner removed in Step 3. In `changes`, checkout sufficient history, write
+`git diff --name-only -z` directly to
 `$RUNNER_TEMP/changed-paths.nul`, pass that same file to the selector with
 `--delimiter nul`, and append only the selector's boolean job outputs to
 `$GITHUB_OUTPUT`. No intermediate command may decode or newline-join paths.
 
 - [ ] **Step 3: Preserve ownership boundary**
 
-Do not change any `uses:` reference, workflow/job `permissions`, manifest-static
-command, or protected-domain step. Keep `ci-summary` aggregation unchanged.
+Remove only the obsolete `dorny/paths-filter@v4.0.1` copied-filter owner and
+its inventory row. Do not add or change any other `uses:` reference, workflow/
+job `permissions`, manifest-static command, or protected-domain step. Keep
+`ci-summary` aggregation unchanged. Replace legacy quality-gate path-glob
+assertions with canonical selector, NUL transport, output-wiring, self-test,
+root coverage, and no-dorny assertions.
 
 - [ ] **Step 4: Run GREEN CI-static checks**
 
 ```bash
 python3 scripts/validate-affected-surfaces.py --self-test
 python3 scripts/validate-affected-surfaces.py --root .
+bash scripts/validate-repo-quality-gates.sh .
 pre-commit run actionlint --files .github/workflows/ci.yml
 pre-commit run zizmor --files .github/workflows/ci.yml
 ```
@@ -488,8 +502,12 @@ Expected: selector parity and actionlint PASS; zizmor findings outside selector 
 
 ```bash
 git add .github/workflows/ci.yml tests/fixtures/validation-surfaces.json \
+  scripts/validate-affected-surfaces.py \
+  scripts/validate-repo-quality-gates.sh \
   docs/00.agent-governance/harness-implementation-map.md \
-  docs/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md
+  docs/90.references/data/tech-stack-version-inventory.md \
+  docs/04.execution/tasks/2026-07-12-affected-surface-agent-qa.md \
+  docs/04.execution/plans/2026-07-12-affected-surface-agent-qa.md
 git commit -m "ci(qa): select jobs from affected-surface registry"
 ```
 

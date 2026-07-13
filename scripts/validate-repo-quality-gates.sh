@@ -25,6 +25,8 @@ python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --root "$ROOT_DIR" --mode strict
 python3 "$ROOT_DIR/scripts/validate-markdown-profiles.py" --root "$ROOT_DIR" --mode strict
 python3 "$ROOT_DIR/scripts/validate-links-and-owners.py" --root "$ROOT_DIR" --mode strict
+python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --root "$ROOT_DIR"
 
 python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" \
   "$ROOT_DIR" --self-test
@@ -2865,6 +2867,7 @@ for phrase in [
         fail(f"{rel(ci_cd_qa_guide_path)} missing coverage applicability phrase: {phrase}")
 
 ci_path = root / ".github/workflows/ci.yml"
+ci_text = read_text(ci_path)
 try:
     ci_data = load_yaml(ci_path)
 except Exception as exc:
@@ -2949,18 +2952,52 @@ for phrase in ["BRANCH_POLICY_RESULT", "branch-policy="]:
         fail(f"{rel(ci_path)} ci-summary missing branch-policy linkage: {phrase}")
 
 changes_job = ci_jobs.get("changes") or {}
-filters = {}
-for step in changes_job.get("steps") or []:
-    if step.get("id") == "filter":
-        try:
-            filters = yaml.safe_load(((step.get("with") or {}).get("filters") or "")) or {}
-        except Exception as exc:
-            fail(f"{rel(ci_path)} changes filter YAML parse failed: {exc}")
-        break
-repo_quality_filter_paths = filters.get("repo_quality") or []
-for required_repo_quality_path in ["examples/**", ".agents/**"]:
-    if required_repo_quality_path not in repo_quality_filter_paths:
-        fail(f"{rel(ci_path)} repo_quality path filter must include {required_repo_quality_path}")
+expected_changes_outputs = {
+    "precommit": "${{ steps.filter.outputs.precommit }}",
+    "repo_quality": "${{ steps.filter.outputs.repo_quality }}",
+    "manifests": "${{ steps.filter.outputs.manifests }}",
+}
+if changes_job.get("outputs") != expected_changes_outputs:
+    fail(
+        f"{rel(ci_path)} changes outputs must be canonical selector outputs: "
+        f"{expected_changes_outputs}"
+    )
+
+changes_steps = changes_job.get("steps") or []
+changes_checkout_steps = [
+    step
+    for step in changes_steps
+    if step.get("uses") == "actions/checkout@v7.0.0"
+]
+if len(changes_checkout_steps) != 1:
+    fail(f"{rel(ci_path)} changes job must have exactly one pinned checkout step")
+elif (changes_checkout_steps[0].get("with") or {}).get("fetch-depth") != 0:
+    fail(f"{rel(ci_path)} changes checkout must use fetch-depth: 0")
+
+selector_steps = [step for step in changes_steps if step.get("id") == "filter"]
+if len(selector_steps) != 1:
+    fail(f"{rel(ci_path)} changes job must have exactly one selector step with id=filter")
+    selector_step = {}
+else:
+    selector_step = selector_steps[0]
+if selector_step.get("uses"):
+    fail(f"{rel(ci_path)} canonical selector step must not delegate to an Action")
+selector_run = str(selector_step.get("run") or "")
+for marker in [
+    "git diff --name-only -z",
+    "git ls-tree -r --name-only -z",
+    '"$RUNNER_TEMP/changed-paths.nul"',
+    "python3 scripts/select-affected-surfaces.py",
+    "--lane ci",
+    "--delimiter nul",
+    "--format github-output",
+    '>> "$GITHUB_OUTPUT"',
+]:
+    if marker not in selector_run:
+        fail(f"{rel(ci_path)} canonical selector step missing marker: {marker}")
+for forbidden_marker in ["$(", "`", "dorny/paths-filter", "filters: |"]:
+    if forbidden_marker in selector_run or forbidden_marker in ci_text:
+        fail(f"{rel(ci_path)} canonical selector contains forbidden marker: {forbidden_marker}")
 
 
 manifest_static_runs = "\n".join(

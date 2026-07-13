@@ -49,45 +49,51 @@ jobs:
       - uses: actions/checkout@v7.0.0
         with:
           persist-credentials: false
-      - id: filter
-        uses: dorny/paths-filter@v4.0.1
-        with:
-          filters: |
-            precommit:
-              - '**'
-            repo_quality:
-              - 'README.md'
-              - 'AGENTS.md'
-              - 'CLAUDE.md'
-              - 'GEMINI.md'
-              - 'RTK.md'
-              - 'cliff.toml'
-              - 'docs/**'
-              - '.github/**'
-              - '.agents/**'
-              - '.claude/**'
-              - '.codex/**'
-              - 'scripts/**'
-              - 'tests/**'
-              - 'examples/**'
-              - '.pre-commit-config.yaml'
-              - 'infrastructure/k3d/k3d-cluster.yaml'
-              - 'gitops/apps/root/**'
-            manifests:
-              - 'gitops/**'
-              - 'infrastructure/**/*.yaml'
-              - 'infrastructure/**/*.yml'
-              - 'infrastructure/tests/**/*.sh'
-              - '.kube-linter.yaml'
-              - 'examples/sample-app/**'
-              - 'examples/**/gitops/**'
-              - 'examples/**/kubernetes/**'
-              - 'scripts/validate-gitops-structure.sh'
-              - 'scripts/validate-k8s-manifests.sh'
-              - 'scripts/check-secret-handling.sh'
-              - 'scripts/validate-policy-gates.sh'
-              - 'policy/**'
-              - 'traefik/**'
+          fetch-depth: 0
+      - name: Select affected CI jobs
+        id: filter
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          ZERO_SHA: "0000000000000000000000000000000000000000"
+        run: |
+          set -euo pipefail
+          if [ -z "$HEAD_SHA" ]; then
+            echo "head SHA is required for affected-surface selection" >&2
+            exit 1
+          fi
+          case "$EVENT_NAME" in
+            push)
+              if [ -n "$BEFORE_SHA" ] && [ "$BEFORE_SHA" != "$ZERO_SHA" ] && \
+                git cat-file -e "$BEFORE_SHA^{commit}" 2>/dev/null; then
+                git diff --name-only -z "$BEFORE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"
+              else
+                git ls-tree -r --name-only -z "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"
+              fi
+              ;;
+            pull_request)
+              if [ -z "$BASE_SHA" ]; then
+                echo "base SHA is required for pull-request affected-surface selection" >&2
+                exit 1
+              fi
+              git diff --name-only -z "$BASE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"
+              ;;
+            workflow_dispatch)
+              git ls-tree -r --name-only -z "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"
+              ;;
+            *)
+              echo "unsupported event for affected-surface selection: $EVENT_NAME" >&2
+              exit 1
+              ;;
+          esac
+          python3 scripts/select-affected-surfaces.py \
+            --root . \
+            --lane ci \
+            --paths-file "$RUNNER_TEMP/changed-paths.nul" \
+            --delimiter nul \
+            --format github-output >> "$GITHUB_OUTPUT"
 
   pre-commit:
     needs: changes

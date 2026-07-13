@@ -23,6 +23,7 @@ SCHEMA_PATH = PurePosixPath(
     "docs/00.agent-governance/contracts/validation-surfaces.schema.json"
 )
 FIXTURE_PATH = PurePosixPath("tests/fixtures/validation-surfaces.json")
+CI_WORKFLOW_PATH = PurePosixPath(".github/workflows/ci.yml")
 SELECTOR_LANES = ("affected", "staged", "all-files", "ci")
 LANES = (
     "affected",
@@ -377,6 +378,60 @@ def github_output(contract: dict[str, Any], result: dict[str, Any]) -> str:
     )
 
 
+def validate_ci_workflow_selector(root: Path) -> None:
+    try:
+        workflow = (root / CI_WORKFLOW_PATH).read_text(encoding="utf-8")
+        changes = workflow.split("\n  changes:\n", 1)[1].split(
+            "\n  pre-commit:\n", 1
+        )[0]
+    except (OSError, UnicodeError, IndexError) as exc:
+        fail("SURFACE-LOCAL-CI-MISMATCH", f"cannot read changes job: {exc}")
+
+    required_fragments = (
+        "precommit: ${{ steps.filter.outputs.precommit }}",
+        "repo_quality: ${{ steps.filter.outputs.repo_quality }}",
+        "manifests: ${{ steps.filter.outputs.manifests }}",
+        "fetch-depth: 0",
+        "id: filter",
+        "EVENT_NAME: ${{ github.event_name }}",
+        "BEFORE_SHA: ${{ github.event.before }}",
+        "BASE_SHA: ${{ github.event.pull_request.base.sha }}",
+        "HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}",
+        'ZERO_SHA: "0000000000000000000000000000000000000000"',
+        'case "$EVENT_NAME" in',
+        "push)",
+        "pull_request)",
+        "workflow_dispatch)",
+        '[ "$BEFORE_SHA" != "$ZERO_SHA" ]',
+        'git cat-file -e "$BEFORE_SHA^{commit}" 2>/dev/null',
+        '[ -z "$BASE_SHA" ]',
+        'git diff --name-only -z "$BEFORE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"',
+        'git diff --name-only -z "$BASE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"',
+        'git ls-tree -r --name-only -z "$HEAD_SHA" > "$RUNNER_TEMP/changed-paths.nul"',
+        "python3 scripts/select-affected-surfaces.py \\",
+        "--root . \\",
+        "--lane ci \\",
+        '--paths-file "$RUNNER_TEMP/changed-paths.nul" \\',
+        "--delimiter nul \\",
+        "--format github-output >> \"$GITHUB_OUTPUT\"",
+    )
+    missing = [fragment for fragment in required_fragments if fragment not in changes]
+    forbidden_fragments = (
+        "dorny/paths-filter",
+        "filters: |",
+        "$(",
+        "`",
+    )
+    present = [fragment for fragment in forbidden_fragments if fragment in changes]
+    if missing or present:
+        detail = []
+        if missing:
+            detail.append(f"missing={missing!r}")
+        if present:
+            detail.append(f"forbidden={present!r}")
+        fail("SURFACE-LOCAL-CI-MISMATCH", "; ".join(detail))
+
+
 def read_nul_paths(path: Path) -> list[str]:
     try:
         payload = path.read_bytes()
@@ -487,18 +542,19 @@ def _mutate(contract: dict[str, Any], mutation: dict[str, Any]) -> None:
     fail("SURFACE-FIXTURE", f"unknown mutation {mutation['kind']!r}")
 
 
-def run_self_test(root: Path) -> tuple[int, int, int, int, int]:
+def run_self_test(root: Path) -> tuple[int, int, int, int, int, int]:
     contract = validate_contract(root)
     fixture = load_json(root / FIXTURE_PATH)
     expected_keys = {
         "schemaVersion",
         "surfaceCases",
         "selectionCases",
+        "ciRangeCases",
         "rejectionCases",
         "argvPositiveCases",
         "mutationCases",
     }
-    if set(fixture) != expected_keys or fixture["schemaVersion"] != 1:
+    if set(fixture) != expected_keys or fixture["schemaVersion"] != 2:
         fail("SURFACE-FIXTURE", "fixture shape or version differs")
 
     surface_cases = fixture["surfaceCases"]
@@ -539,6 +595,65 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int]:
                 "SURFACE-SELF-TEST",
                 f"{case['name']}: expected {case['expected']!r}, got {actual!r}",
             )
+
+    required_ci_range_cases = {
+        "push-before-head-document-surfaces": ("push", "before-head"),
+        "pull-request-base-head-document-surfaces": ("pull_request", "base-head"),
+        "push-initial-head-tree-all-surfaces": ("push", "initial-head-tree"),
+        "pull-request-base-head-protected-surfaces": (
+            "pull_request",
+            "base-head",
+        ),
+    }
+    ci_range_cases = fixture["ciRangeCases"]
+    observed_ci_ranges = {
+        case.get("name"): (case.get("event"), case.get("rangeKind"))
+        for case in ci_range_cases
+    }
+    if (
+        len(ci_range_cases) != len(required_ci_range_cases)
+        or observed_ci_ranges != required_ci_range_cases
+    ):
+        fail("SURFACE-FIXTURE", "push/pull-request range coverage differs")
+    required_ci_paths = {
+        "docs/03.specs/031-affected-surface-agent-qa/spec.md",
+        "_workspace/README.md",
+        "policy/conftest/kubernetes.rego",
+        "gitops/clusters/local/root-application.yaml",
+        "infrastructure/tests/verify-contracts-static.sh",
+        "secrets/README.md",
+        "traefik/traefik.yaml",
+        ".agents/agents/supervisor.md",
+        "docs/99.templates/support/template-routing.md",
+        ".github/workflows/ci.yml",
+    }
+    observed_ci_paths = {
+        path for case in ci_range_cases for path in case.get("paths", [])
+    }
+    if observed_ci_paths != required_ci_paths:
+        fail("SURFACE-FIXTURE", "CI range path coverage differs")
+    for case in ci_range_cases:
+        if set(case) != {
+            "name",
+            "event",
+            "rangeKind",
+            "paths",
+            "expectedJobs",
+            "expectedGithubOutput",
+        }:
+            fail("SURFACE-FIXTURE", f"{case.get('name')}: CI range shape differs")
+        actual = select_paths(contract, case["paths"], "ci", root)
+        actual_output = github_output(contract, actual)
+        if (
+            actual["ciJobs"] != case["expectedJobs"]
+            or actual_output != case["expectedGithubOutput"]
+        ):
+            fail(
+                "SURFACE-LOCAL-CI-MISMATCH",
+                f"{case['name']}: jobs={actual['ciJobs']!r} output={actual_output!r}",
+            )
+
+    validate_ci_workflow_selector(root)
 
     for case in fixture["rejectionCases"]:
         try:
@@ -647,6 +762,7 @@ def run_self_test(root: Path) -> tuple[int, int, int, int, int]:
     return (
         len(surface_cases),
         len(fixture["selectionCases"]),
+        len(ci_range_cases),
         len(fixture["rejectionCases"]),
         len(fixture["argvPositiveCases"]),
         len(fixture["mutationCases"]),
@@ -664,6 +780,7 @@ def main() -> int:
             (
                 path_count,
                 selection_count,
+                ci_range_count,
                 rejection_count,
                 argv_positive_count,
                 mutation_count,
@@ -673,6 +790,7 @@ def main() -> int:
                 "[PASS] affected surface self-test passed: "
                 f"surfaces={len(contract['surfaces'])} path_cases={path_count} "
                 f"selection_cases={selection_count} rejection_cases={rejection_count} "
+                f"ci_range_cases={ci_range_count} "
                 f"argv_positive_cases={argv_positive_count} "
                 f"mutation_cases={mutation_count}"
             )
