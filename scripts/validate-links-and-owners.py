@@ -5,8 +5,11 @@ from __future__ import annotations
 
 import argparse
 import collections
+import contextlib
 import copy
+import io
 import json
+import os
 import posixpath
 import re
 import stat
@@ -17,6 +20,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from pathlib import PurePosixPath
 from typing import Any, Iterable, Sequence
+from unittest import mock
 from urllib.parse import unquote, urlsplit
 
 import yaml
@@ -72,14 +76,17 @@ OWNER_EXCLUSIONS = (
 class DeclaredIndex:
     path: PurePosixPath
     target_pattern: re.Pattern[str]
+    tree_anchor: str
+    tree_root: str
     table_anchor: str
+    table_mode: str
     tree_kind: str
 
 
 DECLARED_INDEXES = (
-    DeclaredIndex(PurePosixPath("docs/03.specs/README.md"), re.compile(r"^docs/03\.specs/[0-9]{3}-[^/]+/spec\.md$"), "### Current Spec Index", "spec"),
-    DeclaredIndex(PurePosixPath("docs/04.execution/plans/README.md"), re.compile(r"^docs/04\.execution/plans/[^/]+\.md$"), "## Item Index", "flat"),
-    DeclaredIndex(PurePosixPath("docs/04.execution/tasks/README.md"), re.compile(r"^docs/04\.execution/tasks/[^/]+\.md$"), "### 문서 인덱스", "flat"),
+    DeclaredIndex(PurePosixPath("docs/03.specs/README.md"), re.compile(r"^docs/03\.specs/[0-9]{3}-[^/]+/spec\.md$"), "## Document Index", "03.specs/", "### Current Spec Index", "section", "spec"),
+    DeclaredIndex(PurePosixPath("docs/04.execution/plans/README.md"), re.compile(r"^docs/04\.execution/plans/[^/]+\.md$"), "## Item Index", "04.execution/plans/", "## Item Index", "after", "flat"),
+    DeclaredIndex(PurePosixPath("docs/04.execution/tasks/README.md"), re.compile(r"^docs/04\.execution/tasks/[^/]+\.md$"), "## Item Index", "04.execution/tasks/", "### 문서 인덱스", "section", "flat"),
 )
 
 
@@ -98,7 +105,7 @@ class Context:
     profiles: dict[PurePosixPath, ProfileView]
     texts: dict[PurePosixPath, str]
     metadata: dict[PurePosixPath, dict[str, Any]]
-    symlink_paths: frozenset[PurePosixPath]
+    adapter_targets: dict[PurePosixPath, PurePosixPath]
 
 
 class ConfigurationError(ValueError):
@@ -128,12 +135,12 @@ def _visible_markdown(text: str) -> str:
     in_comment = False
     for raw_line in text.splitlines():
         line = raw_line
-        marker = re.match(r"^ {0,3}(`{3,}|~{3,})", line)
+        marker = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", line)
         if marker:
             token = marker.group(1)
             if fence is None:
                 fence = (token[0], len(token))
-            elif token[0] == fence[0] and len(token) >= fence[1]:
+            elif token[0] == fence[0] and len(token) >= fence[1] and not marker.group(2).strip():
                 fence = None
             output.append("")
             continue
@@ -184,13 +191,21 @@ def _build_context(root: Path, include_paths: tuple[PurePosixPath, ...] = ()) ->
         text = read_repository_text(root, path)
         texts[path] = text
         metadata[path] = _frontmatter(text)
-    return Context(root, inventory.current_paths, frozenset(inventory.baseline_paths), profiles, texts, metadata, frozenset(inventory.current_symlink_paths))
+    adapters: dict[PurePosixPath, PurePosixPath] = {}
+    for adapter in inventory.current_symlink_paths:
+        raw_target = os.readlink(root / adapter)
+        normalized = posixpath.normpath(posixpath.join(adapter.parent.as_posix(), raw_target))
+        if normalized == ".." or normalized.startswith("../") or normalized.startswith("/"):
+            raise ConfigurationError(f"symlink adapter escapes repository: {adapter.as_posix()}")
+        adapters[adapter] = PurePosixPath(normalized)
+    return Context(root, inventory.current_paths, frozenset(inventory.baseline_paths), profiles, texts, metadata, adapters)
 
 
-def _extract_links(text: str) -> tuple[str, ...]:
+def _extract_links(text: str, *, definitions_text: str | None = None) -> tuple[str, ...]:
     visible = _visible_markdown(text)
+    definition_source = _visible_markdown(definitions_text) if definitions_text is not None else visible
     definitions: dict[str, str] = {}
-    for match in re.finditer(r"^ {0,3}\[([^\]]+)\]:\s*(?:<([^>]+)>|(\S+))", visible, re.MULTILINE):
+    for match in re.finditer(r"^ {0,3}\[([^\]]+)\]:\s*(?:<([^>]+)>|(\S+))", definition_source, re.MULTILINE):
         definitions[match.group(1).strip().casefold()] = match.group(2) or match.group(3)
     found: list[tuple[int, str]] = []
     inline = re.compile(r"(?<!!)\[[^\]\n]*\]\(\s*(?:<([^>\n]+)>|([^\s)]+))(?:\s+[^)]*)?\)")
@@ -199,6 +214,13 @@ def _extract_links(text: str) -> tuple[str, ...]:
     reference = re.compile(r"(?<!!)\[([^\]\n]+)\]\[([^\]\n]*)\]")
     for match in reference.finditer(visible):
         key = (match.group(2) or match.group(1)).strip().casefold()
+        if key in definitions:
+            found.append((match.start(), definitions[key]))
+    shortcut = re.compile(r"(?<![!\]])\[([^\]\n]+)\](?![\[(])")
+    for match in shortcut.finditer(visible):
+        if visible[match.end() :].lstrip().startswith(":"):
+            continue
+        key = match.group(1).strip().casefold()
         if key in definitions:
             found.append((match.start(), definitions[key]))
     return tuple(value for _, value in sorted(found))
@@ -226,7 +248,7 @@ def _local_destination(source: PurePosixPath, raw: str) -> tuple[str, PurePosixP
     return "local", PurePosixPath(normalized)
 
 
-def _path_exists_without_dereference(root: Path, path: PurePosixPath, adapters: frozenset[PurePosixPath]) -> bool:
+def _path_exists_without_dereference(root: Path, path: PurePosixPath, adapters: dict[PurePosixPath, PurePosixPath]) -> bool:
     current = root
     relative = PurePosixPath()
     for index, part in enumerate(path.parts):
@@ -237,8 +259,12 @@ def _path_exists_without_dereference(root: Path, path: PurePosixPath, adapters: 
         except (FileNotFoundError, OSError):
             return False
         if stat.S_ISLNK(mode):
-            # Tracked provider adapters are existence evidence; never traverse them.
-            return relative in adapters
+            if relative not in adapters:
+                return False
+            if index == len(path.parts) - 1:
+                return True
+            canonical = adapters[relative].joinpath(*path.parts[index + 1 :])
+            return _path_exists_without_dereference(root, canonical, adapters)
     return True
 
 
@@ -260,7 +286,7 @@ def _link_diagnostics(context: Context) -> list[Diagnostic]:
                 diagnostics.append(_diag(kind, source, profile, "repository-relative local link", kind.removeprefix("LINK-").casefold()))
                 continue
             assert target is not None
-            if not _path_exists_without_dereference(context.root, target, context.symlink_paths):
+            if not _path_exists_without_dereference(context.root, target, context.adapter_targets):
                 diagnostics.append(_diag("LINK-BROKEN", source, profile, "existing repository target", "target is missing"))
                 continue
             if (
@@ -277,12 +303,12 @@ def _fenced_blocks(text: str) -> tuple[str, ...]:
     fence: tuple[str, int] | None = None
     lines: list[str] = []
     for line in text.splitlines():
-        marker = re.match(r"^ {0,3}(`{3,}|~{3,})", line)
+        marker = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", line)
         if marker:
             token = marker.group(1)
             if fence is None:
                 fence = (token[0], len(token)); lines = []
-            elif token[0] == fence[0] and len(token) >= fence[1]:
+            elif token[0] == fence[0] and len(token) >= fence[1] and not marker.group(2).strip():
                 blocks.append("\n".join(lines)); fence = None; lines = []
             continue
         if fence is not None:
@@ -290,8 +316,38 @@ def _fenced_blocks(text: str) -> tuple[str, ...]:
     return tuple(blocks)
 
 
+def _exact_heading_section(text: str, heading: str) -> str | None:
+    visible_lines = _visible_markdown(text).splitlines()
+    raw_lines = text.splitlines()
+    matches = [index for index, line in enumerate(visible_lines) if line == heading]
+    if len(matches) != 1:
+        return None
+    start = matches[0]
+    level = len(heading) - len(heading.lstrip("#"))
+    end = len(raw_lines)
+    for index in range(start + 1, len(visible_lines)):
+        candidate = re.match(r"^(#{1,6})\s", visible_lines[index])
+        if candidate and len(candidate.group(1)) <= level:
+            end = index
+            break
+    return "\n".join(raw_lines[start + 1 : end])
+
+
+def _after_exact_heading(text: str, heading: str) -> str | None:
+    visible_lines = _visible_markdown(text).splitlines()
+    raw_lines = text.splitlines()
+    matches = [index for index, line in enumerate(visible_lines) if line == heading]
+    if len(matches) != 1:
+        return None
+    return "\n".join(raw_lines[matches[0] + 1 :])
+
+
 def _tree_targets(declaration: DeclaredIndex, text: str) -> list[PurePosixPath]:
-    block = next((item for item in _fenced_blocks(text) if declaration.path.parent.name in item or declaration.path.parent.as_posix().split("/")[-1] in item), "")
+    section = _exact_heading_section(text, declaration.tree_anchor)
+    if section is None:
+        return []
+    expected_root = declaration.tree_root
+    block = next((item for item in _fenced_blocks(section) if item.splitlines() and item.splitlines()[0] == expected_root), "")
     base = declaration.path.parent
     targets: list[PurePosixPath] = []
     if declaration.tree_kind == "spec":
@@ -311,11 +367,10 @@ def _tree_targets(declaration: DeclaredIndex, text: str) -> list[PurePosixPath]:
 
 
 def _table_rows(declaration: DeclaredIndex, text: str) -> list[tuple[PurePosixPath, str]]:
-    visible = _visible_markdown(text)
-    start = visible.find(declaration.table_anchor)
-    if start < 0:
+    section = (_after_exact_heading(text, declaration.table_anchor) if declaration.table_mode == "after" else _exact_heading_section(text, declaration.table_anchor))
+    if section is None:
         return []
-    lines = visible[start:].splitlines()[1:]
+    lines = _visible_markdown(section).splitlines()
     table_started = False
     rows: list[tuple[PurePosixPath, str]] = []
     for line in lines:
@@ -353,24 +408,27 @@ def _index_diagnostics(context: Context) -> list[Diagnostic]:
         row_counter = collections.Counter(path for path, _ in rows)
         tree_counter = collections.Counter(tree)
         for target, count in sorted(row_counter.items(), key=lambda item: item[0].as_posix()):
+            target_key = target.as_posix()
             if count > 1:
-                diagnostics.append(_diag("INDEX-DUPLICATE", declaration.path, profile, "one table row", f"{count} rows"))
+                diagnostics.append(_diag("INDEX-DUPLICATE", declaration.path, profile, f"target={target_key}; one table row", f"target={target_key}; {count} rows"))
             if target not in actual_set:
-                diagnostics.append(_diag("INDEX-STALE", declaration.path, profile, "declared target", "non-target row"))
+                diagnostics.append(_diag("INDEX-STALE", declaration.path, profile, f"target={target_key}; declared target", f"target={target_key}; non-target row"))
         for target in actual:
+            target_key = target.as_posix()
             if row_counter[target] == 0:
-                diagnostics.append(_diag("INDEX-MISSING", declaration.path, profile, "one table row", "row is missing"))
+                diagnostics.append(_diag("INDEX-MISSING", declaration.path, profile, f"target={target_key}; one table row", f"target={target_key}; row is missing"))
             for row_target, row_status in rows:
                 if row_target != target:
                     continue
                 expected_status = str(context.metadata[target].get("status", "")).casefold()
                 actual_status = STATUS_MAP.get(row_status.casefold(), "")
                 if actual_status != expected_status:
-                    diagnostics.append(_diag("INDEX-STATUS", declaration.path, profile, expected_status, actual_status or "unknown"))
+                    diagnostics.append(_diag("INDEX-STATUS", declaration.path, profile, f"target={target_key}; status={expected_status}", f"target={target_key}; status={actual_status or 'unknown'}"))
                 break
         for target in sorted(actual_set | set(tree), key=lambda p: p.as_posix()):
             if tree_counter[target] != (1 if target in actual_set else 0):
-                diagnostics.append(_diag("INDEX-TREE", declaration.path, profile, "one declared tree target", f"{tree_counter[target]} entries"))
+                target_key = target.as_posix()
+                diagnostics.append(_diag("INDEX-TREE", declaration.path, profile, f"target={target_key}; one declared tree target", f"target={target_key}; {tree_counter[target]} entries"))
         # A resolved row that is not even in the inventory is stale regardless of disk state.
         if any(target not in path_set and target not in actual_set for target, _ in rows):
             pass
@@ -391,7 +449,7 @@ def _traceability_lineage(context: Context, path: PurePosixPath) -> str:
     visible = _visible_markdown(context.texts[path])
     match = re.search(r"^## Traceability\s*$([\s\S]*?)(?=^## |\Z)", visible, re.MULTILINE)
     if match:
-        for raw in _extract_links(match.group(1)):
+        for raw in _extract_links(match.group(1), definitions_text=visible):
             kind, target = _local_destination(path, raw)
             if kind == "local" and target is not None and (
                 re.fullmatch(r"docs/01\.requirements/[0-9]{3}-[^/]+\.md", target.as_posix())
@@ -622,19 +680,15 @@ def _text_rows(rows: list[tuple[str, Diagnostic]]) -> list[str]:
 
 
 def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
-    spec = PurePosixPath("docs/03.specs/999-fixture/spec.md")
-    plan = PurePosixPath("docs/04.execution/plans/2026-07-12-fixture.md")
-    task = PurePosixPath("docs/04.execution/tasks/2026-07-12-fixture.md")
-    spec_index = DECLARED_INDEXES[0].path
-    plan_index = DECLARED_INDEXES[1].path
-    task_index = DECLARED_INDEXES[2].path
-    source = PurePosixPath("docs/05.operations/guides/9999-source.md")
-    target = PurePosixPath("docs/05.operations/guides/9998-target file.md")
-    prd = PurePosixPath("docs/01.requirements/999-fixture.md")
-    archive = PurePosixPath("docs/98.archive/999-fixture.md")
-    paths = tuple(PurePosixPath(value) for value in tree["paths"])
-    if list(tree) != ["paths", "declaredIndexes", "ledgerColumns"]:
+    if list(tree) != ["documents", "declaredIndexes", "ledgerColumns", "symlinkAdapters"]:
         raise ConfigurationError("fixture baseTree keys differ")
+    documents = tree["documents"]
+    if not isinstance(documents, list):
+        raise ConfigurationError("fixture documents must be a list")
+    document_keys = ["path", "profile", "profileClass", "mode", "title", "type", "status", "body"]
+    if any(not isinstance(item, dict) or list(item) != document_keys for item in documents):
+        raise ConfigurationError("fixture document keys differ")
+    paths = tuple(PurePosixPath(item["path"]) for item in documents)
     if tree["declaredIndexes"] != [item.path.as_posix() for item in DECLARED_INDEXES]:
         raise ConfigurationError("fixture declared indexes differ")
     if tuple(tree["ledgerColumns"]) != LEDGER_COLUMNS:
@@ -642,52 +696,43 @@ def _fixture_context(root: Path, tree: dict[str, Any]) -> Context:
     if paths != tuple(sorted(paths, key=lambda path: path.as_posix())) or len(paths) != len(set(paths)):
         raise ConfigurationError("fixture paths must be sorted and unique")
 
-    def authored(title: str, doc_type: str, status: str = "active", body: str = "") -> str:
+    def authored(title: str, doc_type: str, status: str, body: str) -> str:
         return f"---\ntitle: {title}\ntype: {doc_type}\nstatus: {status}\nowner: platform\nupdated: 2026-07-12\n---\n\n# {title}\n\n{body}\n"
 
-    texts: dict[PurePosixPath, str] = {
-        spec: authored("Fixture Technical Specification", "sdlc/spec"),
-        plan: authored("Fixture Implementation Plan", "sdlc/plan"),
-        task: authored("Task Fixture", "sdlc/task"),
-        prd: authored("Fixture Product Requirements", "sdlc/prd"),
-        source: authored("Source Guide", "sdlc/guide", body="[target](./9998-target%20file.md?x=1#ok)"),
-        target: authored("Target Guide", "sdlc/guide", "done"),
-        archive: authored("Fixture Tombstone", "content/archive-tombstone", "archived"),
-        spec_index: "# specs\n\n```text\n03.specs/\n└── 999-fixture/\n    └── spec.md\n```\n\n### Current Spec Index\n\n| document | description | status |\n| --- | --- | --- |\n| [`./999-fixture/spec.md`](./999-fixture/spec.md) | fixture | Active |\n",
-        plan_index: "# plans\n\n```text\nplans/\n└── 2026-07-12-fixture.md\n```\n\n## Item Index\n\n| document | description | status |\n| --- | --- | --- |\n| [`./2026-07-12-fixture.md`](./2026-07-12-fixture.md) | fixture | Active |\n",
-        task_index: "# tasks\n\n```text\ntasks/\n└── 2026-07-12-fixture.md\n```\n\n### 문서 인덱스\n\n| document | description | status |\n| --- | --- | --- |\n| [`./2026-07-12-fixture.md`](./2026-07-12-fixture.md) | fixture | Active |\n",
-    }
+    texts: dict[PurePosixPath, str] = {}
     profile_map: dict[PurePosixPath, ProfileView] = {}
-    for path in paths:
-        if path in {spec_index, plan_index, task_index}:
-            profile_map[path] = ProfileView("readme/stage-index", "readme", "frontmatter-free")
-        elif path == archive:
-            profile_map[path] = ProfileView("content/archive-tombstone", "common", "authored")
-        elif path == LEDGER_PATH:
-            profile_map[path] = ProfileView("content/reference", "common", "authored")
-        elif path == spec:
-            profile_map[path] = ProfileView("sdlc/spec", "sdlc", "authored")
-        elif path == plan:
-            profile_map[path] = ProfileView("sdlc/plan", "sdlc", "authored")
-        elif path == task:
-            profile_map[path] = ProfileView("sdlc/task", "sdlc", "authored")
-        elif path == prd:
-            profile_map[path] = ProfileView("sdlc/prd", "sdlc", "authored")
-        else:
-            profile_map[path] = ProfileView("sdlc/guide", "sdlc", "authored")
+    for item, path in zip(documents, paths, strict=True):
+        profile_map[path] = ProfileView(item["profile"], item["profileClass"], item["mode"])
+        if item["mode"] in {"frontmatter-free", "native"}:
+            texts[path] = item["body"]
+        elif item["body"] != "@ledger":
+            texts[path] = authored(item["title"], item["type"], item["status"], item["body"])
     header = "| " + " | ".join(LEDGER_COLUMNS) + " |"
     alignment = "| " + " | ".join("---" for _ in LEDGER_COLUMNS) + " |"
     rows = []
     for path in paths:
         cells = [f"`{path.as_posix()}`", "Fixture", profile_map[path].profile_id, "", "preserve", f"`{path.as_posix()}`", "fixture", "not applicable", "2026-07-12", "repository-specific", "retain", "contract change", "platform", "reviewed"]
         rows.append("| " + " | ".join(cells) + " |")
-    texts[LEDGER_PATH] = authored("Document Migration Evidence Ledger", "content/reference", body="\n".join((header, alignment, *rows)))
+    ledger_item = next((item for item in documents if item["path"] == LEDGER_PATH.as_posix()), None)
+    if ledger_item is None or ledger_item["body"] != "@ledger":
+        raise ConfigurationError("fixture ledger marker differs")
+    texts[LEDGER_PATH] = authored(ledger_item["title"], ledger_item["type"], ledger_item["status"], "\n".join((header, alignment, *rows)))
     for path, text in texts.items():
         destination = root / path
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(text, encoding="utf-8")
+    adapter_targets: dict[PurePosixPath, PurePosixPath] = {}
+    for adapter in tree["symlinkAdapters"]:
+        if list(adapter) != ["path", "target"]:
+            raise ConfigurationError("fixture symlink adapter keys differ")
+        adapter_path = PurePosixPath(adapter["path"])
+        link_path = root / adapter_path
+        link_path.parent.mkdir(parents=True, exist_ok=True)
+        link_path.symlink_to(adapter["target"])
+        normalized = posixpath.normpath(posixpath.join(adapter_path.parent.as_posix(), adapter["target"]))
+        adapter_targets[adapter_path] = PurePosixPath(normalized)
     metadata = {path: _frontmatter(texts[path]) for path in paths}
-    return Context(root, paths, frozenset(paths), profile_map, texts, metadata, frozenset())
+    return Context(root, paths, frozenset(paths), profile_map, texts, metadata, adapter_targets)
 
 
 def _mutated_context(context: Context, mutation: str) -> Context:
@@ -699,7 +744,9 @@ def _mutated_context(context: Context, mutation: str) -> Context:
     elif mutation == "link-file-uri": texts[source] += "\n[bad](file:///tmp/x)\n"
     elif mutation == "link-escape": texts[source] += "\n[bad](../../../../escape.md)\n"
     elif mutation == "link-archive-bypass": texts[source] += "\n[bad](../../98.archive/999-fixture.md)\n"
+    elif mutation == "link-adapter-missing": texts[source] += "\n[bad](../../../.claude/skills/missing/skill.md)\n"
     elif mutation == "links-excluded": texts[source] += "\n```md\n[bad](./missing.md)\n```\n<!-- [bad](./missing.md) -->\n"
+    elif mutation == "link-invalid-fence-closer": texts[source] += "\n```md\n[bad](./missing.md)\n``` still-open\n[also-bad](./missing-two.md)\n```\n"
     elif mutation == "index-missing":
         path = DECLARED_INDEXES[0].path; texts[path] = "\n".join(line for line in texts[path].splitlines() if "[`./999-fixture/spec.md`]" not in line)
     elif mutation == "index-stale":
@@ -708,6 +755,10 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         path = DECLARED_INDEXES[0].path; row = next(line for line in texts[path].splitlines() if "[`./999-fixture/spec.md`]" in line); texts[path] += row + "\n"
     elif mutation == "index-status": texts[DECLARED_INDEXES[0].path] = texts[DECLARED_INDEXES[0].path].replace("| Active |", "| Done |")
     elif mutation == "index-tree": texts[DECLARED_INDEXES[0].path] = texts[DECLARED_INDEXES[0].path].replace("    └── spec.md\n", "")
+    elif mutation == "index-anchor-prose": texts[DECLARED_INDEXES[0].path] = texts[DECLARED_INDEXES[0].path].replace("### Current Spec Index", "This prose mentions ### Current Spec Index")
+    elif mutation == "index-multi-order":
+        path = DECLARED_INDEXES[0].path
+        texts[path] = "\n".join(line for line in texts[path].splitlines() if "[`./998-second/spec.md`]" not in line and "[`./999-fixture/spec.md`]" not in line)
     elif mutation == "owner-duplicate":
         plan = PurePosixPath("docs/04.execution/plans/2026-07-12-fixture.md"); task = PurePosixPath("docs/04.execution/tasks/2026-07-12-fixture.md")
         metadata[task]["type"] = metadata[plan]["type"]; metadata[task]["title"] = metadata[plan]["title"]
@@ -718,7 +769,7 @@ def _mutated_context(context: Context, mutation: str) -> Context:
         texts[LEDGER_PATH] = "\n".join(line for line in texts[LEDGER_PATH].splitlines() if "`docs/01.requirements/999-fixture.md`" not in line)
     elif mutation == "ledger-incomplete": texts[LEDGER_PATH] = texts[LEDGER_PATH].replace("| path | title |", "| pathname | title |", 1)
     elif mutation == "ledger-unknown": texts[LEDGER_PATH] = texts[LEDGER_PATH].rstrip() + "\n| `docs/unknown.md` | Fixture | content/reference | | preserve | `docs/unknown.md` | fixture | none | 2026-07-12 | repo | retain | change | platform | reviewed |\n"
-    return Context(context.root, context.paths, context.baseline_paths, context.profiles, texts, metadata, context.symlink_paths)
+    return Context(context.root, context.paths, context.baseline_paths, context.profiles, texts, metadata, context.adapter_targets)
 
 
 def _fixture_rule_ids(context: Context, mutation: str) -> list[str]:
@@ -726,14 +777,33 @@ def _fixture_rule_ids(context: Context, mutation: str) -> list[str]:
     if mutation.startswith("link") or mutation in {"links-excluded"}:
         diagnostics = _link_diagnostics(mutated)
     elif mutation.startswith("index"):
+        if mutation == "index-multi-order":
+            missing = [item for item in _index_diagnostics(mutated) if item.rule_id == "INDEX-MISSING"]
+            targets = [item.expected.split(";", 1)[0] for item in missing]
+            return [] if len(missing) == 2 and targets == sorted(targets) and len(set(targets)) == 2 else ["INDEX-MISSING"]
         diagnostics = _index_diagnostics(mutated)
     elif mutation.startswith("owner"):
         if mutation == "owner-normalization":
-            return [] if _normalize_component("Ｆoo / BAR") == "foo-bar" else ["OWNER-KEY-MISSING"]
-        if mutation in {"owner-first-upstream", "owner-fallback"}:
-            return []
+            plan = PurePosixPath("docs/04.execution/plans/2026-07-12-fixture.md")
+            mutated.metadata[plan]["type"] = "ＳＤＬＣ／ＰＬＡＮ"
+            mutated.metadata[plan]["title"] = "Ｆixture__Implementation Plan"
+            key, diagnostic = _owner_key(mutated, plan)
+            return [] if diagnostic is None and key == "sdlc-plan|fixture|fixture" else ["OWNER-KEY-MISSING"]
+        if mutation == "owner-first-upstream":
+            plan = PurePosixPath("docs/04.execution/plans/2026-07-12-fixture.md")
+            texts = dict(mutated.texts)
+            texts[plan] += "\n[local-ref]: ../../README.md\n[prd-ref]: ../../01.requirements/999-fixture.md\n[spec-ref]: ../../03.specs/999-fixture/spec.md\n\n## Traceability\n\n[local][local-ref]\n[prd][prd-ref]\n[spec][spec-ref]\n"
+            selected = Context(mutated.root, mutated.paths, mutated.baseline_paths, mutated.profiles, texts, mutated.metadata, mutated.adapter_targets)
+            key, diagnostic = _owner_key(selected, plan)
+            expected = "sdlc-plan|fixture|docs-01-requirements-999-fixture-md"
+            return [] if diagnostic is None and key == expected else ["OWNER-KEY-MISSING"]
+        if mutation == "owner-fallback":
+            plan = PurePosixPath("docs/04.execution/plans/2026-07-12-fixture.md")
+            key, diagnostic = _owner_key(mutated, plan)
+            return [] if diagnostic is None and key == "sdlc-plan|fixture|fixture" else ["OWNER-KEY-MISSING"]
         if mutation == "owner-exclusions":
-            return [] if all(not _owner_candidate(mutated, path) for path in mutated.paths if any(pattern.match(path.as_posix()) for pattern in OWNER_EXCLUSIONS)) else ["OWNER-DUPLICATE"]
+            key, diagnostic = _owner_key(mutated, LEDGER_PATH)
+            return [] if not key and diagnostic is None and not _owner_candidate(mutated, LEDGER_PATH) else ["OWNER-DUPLICATE"]
         diagnostics = _owner_diagnostics(mutated)
     elif mutation.startswith("ledger"):
         diagnostics = _ledger_diagnostics(mutated)
@@ -753,16 +823,22 @@ def _self_test(root: Path) -> list[str]:
     names = [case.get("name") for case in fixture["cases"]]
     if not required.issubset(names) or len(names) != len(set(names)):
         failures.append("required unique fixture cases are incomplete")
+    ledger_existed_before = (root / LEDGER_PATH).exists()
     with tempfile.TemporaryDirectory(prefix="smdv-cross-") as temporary:
         context = _fixture_context(Path(temporary), fixture["baseTree"])
         for case in fixture["cases"]:
-            if case.get("tree") != "baseTree" or list(case) != ["name", "tree", "mutation", "expected_rule_ids"]:
+            if case.get("tree") != {"base": "baseTree"} or list(case) != ["name", "tree", "mutation", "expected_rule_ids"]:
                 failures.append(f"{case.get('name')}: case tree/schema differs")
                 continue
+            if not isinstance(case["mutation"], dict) or list(case["mutation"]) != ["kind"]:
+                failures.append(f"{case.get('name')}: structured mutation differs")
+                continue
             expected = sorted(case["expected_rule_ids"])
-            actual = _fixture_rule_ids(context, case["mutation"])
+            actual = _fixture_rule_ids(context, case["mutation"]["kind"])
             if actual != expected:
                 failures.append(f"{case['name']}: expected {expected}, actual {actual}")
+    if (root / LEDGER_PATH).exists() != ledger_existed_before:
+        failures.append("self-test changed the repository ledger artifact")
     base = _load_debt(root)
     mutations: list[tuple[str, Any]] = []
     extra = copy.deepcopy(base); extra["alias"] = 1; mutations.append(("extra key", extra))
@@ -774,14 +850,27 @@ def _self_test(root: Path) -> list[str]:
     literal = copy.deepcopy(base); literal["items"][0]["actual"] = "changed"; mutations.append(("literal", literal))
     partial = copy.deepcopy(base); partial["items"][0].pop("removeWhen"); mutations.append(("partial removal", partial))
     for label, candidate in mutations:
-        try: _load_debt(root, candidate)
-        except ConfigurationError: pass
-        else: failures.append(f"debt mutation accepted: {label}")
+        try:
+            _load_debt(root, candidate)
+        except ConfigurationError:
+            pass
+        else:
+            failures.append(f"debt mutation accepted: {label}")
+            continue
+        original_loader = _load_debt
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        with mock.patch(f"{__name__}._load_debt", side_effect=lambda _root, _raw=None, candidate=candidate: original_loader(_root, candidate)):
+            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                return_code = main(["--root", str(root), "--mode", "compatibility", "--format", "json"])
+        if return_code != 2 or stdout.getvalue() or not stderr.getvalue():
+            failures.append(f"debt mutation CLI boundary differs: {label}")
     _load_debt(root, {"schemaVersion": 1, "owner": "Spec 030", "growthAllowed": False, "items": []})
     production_context = _build_context(root)
     production = validate_cross_document_contracts(root, "compatibility")
-    if [item.rule_id for item in production] != ["LEDGER-MISSING"]:
-        failures.append("production repository diagnostics differ from sole LEDGER-MISSING")
+    expected_rules = ["LEDGER-MISSING"] if base["items"] else []
+    if [item.rule_id for item in production] != expected_rules:
+        failures.append("production repository diagnostics differ from the semantic transition state")
     owner_keys, owner_diagnostics = _owner_state(production_context)
     if owner_diagnostics or len({key for key in owner_keys.values() if key}) != 66:
         failures.append("production current-owner key baseline differs from 66 unique keys")

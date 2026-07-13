@@ -98,6 +98,17 @@ ledger completeness, and closed semantic-debt configuration mutations. ADM-002
 owns ledger creation, the 468-path self-row transition, and exact debt removal;
 this Task does not implement that migration handoff.
 
+The first independent SMDV-003 review withheld approval for five Important
+boundary-proof gaps. The remediation moved the complete minimal tree into the
+fixture, made all owner and malformed-debt cases execute production logic,
+covered full/collapsed/shortcut references and valid fence closers, bound each
+index to exact headings and target-key diagnostics, and resolved recorded
+adapter descendants through their canonical target without dereferencing the
+adapter. A cleanup assertion proves self-test leaves no repository ledger
+artifact. A temporary, immediately removed include-path probe separately proved
+the ADM-002 `468/current`, `37/new`, pinned self-row transition; the durable
+ledger remains unimplemented and outside this Task's staged scope.
+
 ## Traceability
 
 - **Spec**: [Semantic Document Validation Technical Specification](../../03.specs/029-semantic-document-validation/spec.md)

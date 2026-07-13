@@ -28,6 +28,10 @@ inventory stays in `scripts/README.md`.
   identical tuple.
 - Published the ordered inventory envelope consumed by Spec 030 ADM-002 while
   retaining the explicit `--include-path` transition for the ledger self-row.
+- Remediated all five Important independent-review findings: fixture-owned
+  trees and executable owner/debt cases, CommonMark reference and fence
+  boundaries, exact index anchors, canonical non-dereferencing adapter checks,
+  and target-keyed deterministic index diagnostics.
 
 #### Memory
 
@@ -45,6 +49,9 @@ inventory stays in `scripts/README.md`.
   diff checks, focused and full pre-commit, and exact seven-path staging.
 - No network, live cluster, provider runtime, secret value, ignored workspace
   content, remote CI, push, merge, publication, or deployment was accessed.
+- An include-path transition probe produced the exact 468/current and 37/new
+  inventory with the pinned ledger self-row, then was deleted before staging;
+  self-test now asserts it cannot create or remove that repository artifact.
 
 #### Handoff
 
