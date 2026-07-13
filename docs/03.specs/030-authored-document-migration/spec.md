@@ -57,8 +57,9 @@ local state. It does not rewrite history for stylistic uniformity.
   semantic or behavioral ownership. ADM-006 has one additional closed
   exception for relocation-driven link/index rows in the exact nine README
   paths named below and one retirement-inventory handoff across the exact three
-  Spec 028/029 evidence consumers named below; neither exception transfers
-  README profile, body, parser, route, or rule ownership.
+  retirement-handoff files named below, plus the already-authorized Markdown
+  self-test consumer; neither exception transfers README profile, body, parser,
+  route, or rule ownership.
 - **Key Dependencies**: Specs 026–029, official topic sources, Git history, link
   graph, generated-file ownership, and current audit findings.
 - **Tech Stack**: `git mv`, focused manual edits, registry validation, link and

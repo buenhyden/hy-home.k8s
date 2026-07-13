@@ -1691,11 +1691,138 @@ retired rows as immutable evidence. Document that contract in `tests/README.md`.
 Do not add an allowed-count list, accept either 72 or 52, or suppress the
 registry/fixture equality failure in the repository quality gate.
 
+Before staging exact 79, create the ignored executable guard
+`_workspace/adm-006-registry-diff-guard.py` with the following content using
+`apply_patch`, then run it. The AST proof pins `ca69b3e` as the ownership
+baseline, permits body changes only in the five explicitly named README
+handoff functions, and requires the two contract/mutation functions to change.
+The semantic projection separately proves the schema-v2 sets and destinations;
+therefore normalizing an allowed function body cannot by itself waive the
+handoff contract.
+
+```python
+import ast
+import json
+import pathlib
+import subprocess
+
+BASE = "ca69b3e"
+VALIDATOR = "scripts/validate-document-contract-registry.py"
+FIXTURE = "tests/fixtures/document-contracts/readme-profile-cases.json"
+ALLOWED_FUNCTIONS = {
+    "_readme_inventory_exact_error",
+    "_assert_readme_family_contract",
+    "_assert_readme_fixture_mutation_proofs",
+    "_self_test",
+    "main",
+}
+REQUIRED_CHANGED_FUNCTIONS = {
+    "_assert_readme_family_contract",
+    "_assert_readme_fixture_mutation_proofs",
+}
+
+
+def git_text(*args):
+    return subprocess.check_output(["git", *args], text=True)
+
+
+def function_map(tree):
+    return {
+        node.name: node
+        for node in tree.body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    }
+
+
+def normalized(source):
+    tree = ast.parse(source)
+    for node in tree.body:
+        if (
+            isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name in ALLOWED_FUNCTIONS
+        ):
+            node.body = [ast.Pass()]
+    return ast.dump(tree, include_attributes=False)
+
+
+baseline_source = git_text("show", f"{BASE}:{VALIDATOR}")
+current_source = pathlib.Path(VALIDATOR).read_text()
+baseline_tree = ast.parse(baseline_source)
+current_tree = ast.parse(current_source)
+baseline_functions = function_map(baseline_tree)
+current_functions = function_map(current_tree)
+assert set(baseline_functions) == set(current_functions), "function set changed"
+changed_functions = {
+    name
+    for name in baseline_functions
+    if ast.dump(baseline_functions[name], include_attributes=False)
+    != ast.dump(current_functions[name], include_attributes=False)
+}
+assert REQUIRED_CHANGED_FUNCTIONS <= changed_functions <= ALLOWED_FUNCTIONS, (
+    changed_functions
+)
+assert normalized(baseline_source) == normalized(current_source), (
+    "registry validator changed outside the exact README handoff functions"
+)
+
+fixture = json.loads(pathlib.Path(FIXTURE).read_text())
+baseline_fixture = json.loads(git_text("show", f"{BASE}:{FIXTURE}"))
+assert set(fixture) == {"schemaVersion", "activePaths", "retiredPaths", "cases"}
+assert fixture["schemaVersion"] == 2
+active = fixture["activePaths"]
+retired = fixture["retiredPaths"]
+assert isinstance(active, list) and isinstance(retired, list)
+active_by_path = {row["path"]: row for row in active}
+retired_by_path = {row["path"]: row for row in retired}
+assert len(active) == len(active_by_path) == 52
+assert len(retired) == len(retired_by_path) == 20
+assert not (set(active_by_path) & set(retired_by_path))
+
+baseline_by_path = {row["path"]: row for row in baseline_fixture["paths"]}
+immutable = {path for path, row in baseline_by_path.items() if row["new"] is False}
+program_created = {
+    path for path, row in baseline_by_path.items() if row["new"] is True
+}
+assert len(immutable) == 67 and len(program_created) == 5
+assert set(active_by_path) | set(retired_by_path) == set(baseline_by_path)
+assert len(set(active_by_path) & immutable) == 47
+assert set(retired_by_path) <= immutable
+assert set(active_by_path) - immutable == program_created
+
+disposition_fields = ("profile", "requiredH2", "allowedH2", "new")
+for path, row in {**active_by_path, **retired_by_path}.items():
+    prior = baseline_by_path[path]
+    assert all(row[field] == prior[field] for field in disposition_fields)
+for path, row in retired_by_path.items():
+    assert path.startswith(("examples/aws/docs/", "examples/azure/docs/"))
+    assert path.endswith("/README.md") or path.endswith("docs/README.md")
+    assert row["retiredBy"] == "ADM-006"
+    provider = "aws" if path.startswith("examples/aws/") else "azure"
+    expected = (
+        f"docs/90.references/cloud-examples/{provider}/"
+        f"2026-07-12-{provider}-example-snapshot.md"
+    )
+    assert row["destination"] == expected
+    assert pathlib.Path(expected).is_file()
+    assert not pathlib.Path(path).exists()
+assert all(pathlib.Path(path).is_file() for path in active_by_path)
+assert all(case["path"] in active_by_path for case in fixture["cases"])
+assert len(fixture["cases"]) == 8
+```
+
+Run the guard once against the unstaged implementation before exact79 staging.
+After staging, run the registry self-test and `--profile readme` production
+contract, run focused hooks, require no unstaged tracked diff, and run this same
+guard again. These are additive to the full quality gate, never a substitute.
+
 ```bash
+python3 _workspace/adm-006-registry-diff-guard.py
 test -z "$(git ls-files examples/aws/docs examples/azure/docs)"
 python3 scripts/validate-document-contract-registry.py --self-test
 python3 scripts/validate-markdown-profiles.py --self-test
 python3 scripts/validate-document-contract-registry.py --root . --mode compatibility
+python3 scripts/validate-document-contract-registry.py --root . \
+  --mode compatibility --profile readme
 python3 scripts/validate-markdown-profiles.py --root . --mode compatibility
 python3 scripts/validate-links-and-owners.py --root . --mode compatibility
 bash scripts/validate-repo-quality-gates.sh .
@@ -1744,7 +1871,13 @@ assert actual == changed | fixed and fixed <= actual, (sorted(actual - (changed 
 assert len(actual) == 79
 print(f'ADM-006 exact staged count: {len(actual)}')
 PY
-pre-commit run --files $(git diff --cached --name-only)
+python3 _workspace/adm-006-registry-diff-guard.py
+test -z "$(git diff --name-only)"
+git diff --cached --diff-filter=ACMR --name-only -z | \
+  xargs -0 pre-commit run --files
+python3 _workspace/adm-006-registry-diff-guard.py
+test -z "$(git diff --name-only)"
+test "$(git diff --cached --name-only | wc -l)" -eq 79
 git commit -m "docs(migration): consolidate cloud example documentation"
 ```
 
@@ -1822,6 +1955,48 @@ the exact 17 paths, comprising 17 `BODY-HEADING-REQUIRED` and 26
 the exact-21 manifest in ignored evidence. No current fixture, registry, Python
 constant, path glob, or waiver may become an alias owner.
 
+Freeze the exact 17-document set as a NUL manifest and prove the exact-16 /
+exact-1 ownership split before editing:
+
+```bash
+python3 - <<'PY'
+import hashlib
+import pathlib
+
+adm004c = {
+    'docs/04.execution/plans/2026-05-30-antigravity-governance.md',
+}
+documents = {
+    'docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md',
+    'docs/02.architecture/decisions/0003-eso-vault-k8s-auth.md',
+    'docs/02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md',
+    'docs/02.architecture/decisions/0008-istio-install-and-ingress-coexist.md',
+    'docs/02.architecture/decisions/0009-kiali-external-observability.md',
+    'docs/02.architecture/decisions/0015-declarative-document-contract-registry.md',
+    'docs/02.architecture/decisions/0016-program-to-tranche-document-lineage.md',
+    'docs/03.specs/008-current-local-gitops-platform/spec.md',
+    'docs/03.specs/024-observability-and-network-review-agents/agent-design.md',
+    'docs/03.specs/026-document-contract-registry/spec.md',
+    'docs/03.specs/027-template-contract-consolidation/spec.md',
+    'docs/03.specs/028-readme-workspace-profiles/spec.md',
+    'docs/03.specs/029-semantic-document-validation/spec.md',
+    'docs/03.specs/030-authored-document-migration/spec.md',
+    'docs/03.specs/031-affected-surface-agent-qa/spec.md',
+    'docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md',
+    *adm004c,
+}
+adm003c = documents - adm004c
+assert len(documents) == 17
+assert len(adm003c) == 16 and len(adm004c) == 1
+assert 'docs/03.specs/030-authored-document-migration/spec.md' in adm003c
+assert all(pathlib.Path(path).is_file() for path in documents)
+payload = b''.join(path.encode() + b'\0' for path in sorted(documents))
+path = pathlib.Path('_workspace/adm-006c-document-paths.nul')
+path.write_bytes(payload)
+print(len(documents), hashlib.sha256(payload).hexdigest())
+PY
+```
+
 - [ ] **Step C2: Canonicalize only relationships**
 
 For each exact document, merge topic-specific links from `Related Inputs`,
@@ -1877,6 +2052,61 @@ progress. Assert exact set equality and `len(actual) == 21`, run focused
 pre-commit, and receive independent approval before committing:
 
 ```bash
+git add docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
+  docs/04.execution/plans/2026-07-12-authored-document-migration.md \
+  docs/04.execution/tasks/2026-07-12-authored-document-migration.md \
+  docs/00.agent-governance/memory/progress.md
+xargs -0 git add -- < _workspace/adm-006c-document-paths.nul
+
+adm006c_stage_proof() {
+python3 - <<'PY'
+import pathlib
+import subprocess
+
+documents = {
+    part.decode()
+    for part in pathlib.Path('_workspace/adm-006c-document-paths.nul')
+    .read_bytes().split(b'\0')
+    if part
+}
+adm004c = {
+    'docs/04.execution/plans/2026-05-30-antigravity-governance.md',
+}
+adm003c = documents - adm004c
+fixed = {
+    'docs/00.agent-governance/memory/progress.md',
+    'docs/04.execution/plans/2026-07-12-authored-document-migration.md',
+    'docs/04.execution/tasks/2026-07-12-authored-document-migration.md',
+    'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
+}
+expected = documents | fixed
+actual = set(subprocess.check_output(
+    ['git', 'diff', '--cached', '--name-only'], text=True
+).splitlines())
+assert len(documents) == 17 and len(adm003c) == 16 and len(adm004c) == 1
+assert len(expected) == 21 and actual == expected, (
+    sorted(actual - expected), sorted(expected - actual)
+)
+rows = [
+    line.split('\t')
+    for line in subprocess.check_output(
+        ['git', 'diff', '--cached', '--name-status'], text=True
+    ).splitlines()
+]
+assert all(len(row) == 2 for row in rows), rows
+status = {path: change for change, path in rows}
+assert set(status) == expected
+assert all(change == 'M' for change in status.values()), status
+unstaged = subprocess.check_output(['git', 'diff', '--name-only'], text=True)
+assert not unstaged.splitlines(), unstaged
+print('ADM-006C exact17=16+1; exact21 all M; no unstaged tracked diff')
+PY
+}
+
+adm006c_stage_proof
+git diff --cached --diff-filter=ACMR --name-only -z | \
+  xargs -0 pre-commit run --files
+adm006c_stage_proof
 git commit -m "docs(migration): retire residual relationship aliases"
 ```
 
@@ -1914,17 +2144,63 @@ no-container proof.
 python3 scripts/validate-document-contract-registry.py --self-test
 python3 scripts/validate-markdown-profiles.py --self-test
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
-python3 scripts/validate-markdown-profiles.py --root . --mode strict
-python3 scripts/validate-links-and-owners.py --root . --mode strict
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility
-python3 scripts/validate-links-and-owners.py --root . --mode compatibility
+set +e
+python3 scripts/validate-markdown-profiles.py --root . --mode strict \
+  --format json >/tmp/adm007-pre-markdown-strict.json \
+  2>/tmp/adm007-pre-markdown-strict.err
+markdown_strict_rc=$?
+python3 scripts/validate-links-and-owners.py --root . --mode strict \
+  --format json >/tmp/adm007-pre-links-strict.json \
+  2>/tmp/adm007-pre-links-strict.err
+links_strict_rc=$?
+python3 scripts/validate-markdown-profiles.py --root . --mode compatibility \
+  --format json >/tmp/adm007-pre-markdown-compat.json \
+  2>/tmp/adm007-pre-markdown-compat.err
+markdown_compat_rc=$?
+python3 scripts/validate-links-and-owners.py --root . --mode compatibility \
+  --format json >/tmp/adm007-pre-links-compat.json \
+  2>/tmp/adm007-pre-links-compat.err
+links_compat_rc=$?
+set -e
+python3 - "$markdown_strict_rc" "$links_strict_rc" \
+  "$markdown_compat_rc" "$links_compat_rc" <<'PY'
+import collections
+import json
+import pathlib
+import sys
+
+cases = (
+    ('markdown-strict', 'strict', '/tmp/adm007-pre-markdown-strict'),
+    ('links-strict', 'strict', '/tmp/adm007-pre-links-strict'),
+    ('markdown-compat', 'compatibility', '/tmp/adm007-pre-markdown-compat'),
+    ('links-compat', 'compatibility', '/tmp/adm007-pre-links-compat'),
+)
+return_codes = [int(value) for value in sys.argv[1:]]
+assert len(return_codes) == len(cases)
+for (label, mode, prefix), return_code in zip(cases, return_codes):
+    assert return_code == 0, (label, return_code)
+    assert not pathlib.Path(prefix + '.err').read_text(), label
+    payload = json.loads(pathlib.Path(prefix + '.json').read_text())
+    assert payload['schemaVersion'] == 1
+    assert payload['mode'] == mode and payload['outcome'] == 'PASS', payload
+    diagnostics = payload['diagnostics']
+    assert isinstance(diagnostics, list) and not diagnostics, payload
+    outcomes = collections.Counter(item['outcome'] for item in diagnostics)
+    rules = collections.Counter(item['ruleId'] for item in diagnostics)
+    assert outcomes['DEFER'] == outcomes['FAIL'] == 0
+    assert rules['DEBT-UNUSED'] == 0
+    counts = payload.get('counts', {})
+    assert counts.get('defer', 0) == counts.get('fail', 0) == 0
+print('ADM-007 pre-retirement strict/compatibility JSON: 4/4 PASS, 0 diagnostics')
+PY
 ```
 
 Expected: the corpus passes strict before cleanup, both debt consumers contain
 zero path/item records, and compatibility has no `DEFER` or `DEBT-UNUSED`.
 Any remaining failure identifies an exact path and rule; do not remove an
-underlying record before its owning ADM wave passes. Parse both compatibility
-JSON envelopes and require exit 0, `PASS`, and zero diagnostics. The existing
+underlying record before its owning ADM wave passes. The executable parser
+requires both validators in both modes to return exit 0, `PASS`, and zero
+diagnostics/`DEFER`/`FAIL`/`DEBT-UNUSED`. The existing
 `validate-links-and-owners.py --self-test` access to `items[0]` when `items` is
 empty is a known focused RED assigned to this Task, not an ADM-006 gate and not
 a reason to enlarge ADM-006.
@@ -2025,7 +2301,10 @@ git add tests/fixtures/document-contracts/template-compatibility.json \
   docs/04.execution/plans/2026-07-12-authored-document-migration.md docs/04.execution/plans/README.md \
   docs/04.execution/tasks/2026-07-12-authored-document-migration.md docs/04.execution/tasks/README.md \
   docs/00.agent-governance/memory/progress.md
+adm007_stage_proof() {
 python3 - <<'PY'
+import json
+import pathlib
 import subprocess
 expected = {
     'docs/00.agent-governance/memory/progress.md',
@@ -2042,10 +2321,38 @@ expected = {
     'tests/fixtures/document-contracts/semantic-compatibility-debt.json',
     'tests/fixtures/document-contracts/template-compatibility.json',
 }
-actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
+semantic = 'tests/fixtures/document-contracts/semantic-compatibility-debt.json'
+registry = 'docs/99.templates/support/document-profiles.json'
+actual = set(subprocess.check_output(
+    ['git', 'diff', '--cached', '--name-only'], text=True
+).splitlines())
 assert actual == expected and len(actual) == 13, (sorted(actual), sorted(expected))
-assert 'docs/99.templates/support/document-profiles.json' not in actual
+rows = [
+    line.split('\t')
+    for line in subprocess.check_output(
+        ['git', 'diff', '--cached', '--name-status'], text=True
+    ).splitlines()
+]
+assert all(len(row) == 2 for row in rows), rows
+status = {path: change for change, path in rows}
+assert set(status) == expected
+assert status[semantic] == 'D', status
+assert all(status[path] == 'M' for path in expected - {semantic}), status
+assert registry not in actual
+fixture = json.loads(pathlib.Path(
+    'tests/fixtures/document-contracts/template-compatibility.json'
+).read_text())
+retired_fields = {'compatibilityDebt', 'semanticDebtCaps'}
+assert retired_fields.isdisjoint(fixture), set(fixture) & retired_fields
+unstaged = subprocess.check_output(['git', 'diff', '--name-only'], text=True)
+assert not unstaged.splitlines(), unstaged
+print('ADM-007 exact13: semantic D; remaining 12 M; retired fields absent')
 PY
+}
+adm007_stage_proof
+git diff --cached --diff-filter=ACMR --name-only -z | \
+  xargs -0 pre-commit run --files
+adm007_stage_proof
 git commit -m "chore(docs): cut over document profiles to strict validation"
 ```
 
