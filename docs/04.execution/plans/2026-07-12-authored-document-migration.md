@@ -581,6 +581,7 @@ extra, or duplicate. Tracked `_workspace` output is exactly
 - [ ] **Step 5: Commit**
 
 ```bash
+set -e
 git add docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md \
   docs/90.references/research/2026-07-07-wer/README.md \
   tests/fixtures/document-contracts/semantic-compatibility-debt.json \
@@ -615,6 +616,8 @@ git commit -m "docs(migration): inventory authored document dispositions"
 
 Expected: `git diff --check` and focused hooks pass against the tracked ledger
 and links, then the same five paths are re-added after any hook rewrite. A
+nonzero staging, diff, hook, exact-set, or commit result terminates this block
+immediately; no later re-stage or commit may mask an earlier failure. A
 fresh reviewer verifies exactly five staged paths and the final
 469-path inventory/ledger set equality, pinned self-row, the exact fourteen
 columns, semantic debt `items: []`, strict and compatibility results, and the

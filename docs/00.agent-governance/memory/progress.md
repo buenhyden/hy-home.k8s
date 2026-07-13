@@ -51,6 +51,9 @@ inventory stays in `scripts/README.md`.
 - The correction is bounded to this canonical progress entry, Plan 030, and
   Task 030. Focused hooks, executable inventory/filter probes,
   `git diff --check`, and exact three-path proof gate its logical commit.
+- Follow-up review made the ADM-002 exact-five staging and hook sequence
+  fail-fast, so a nonzero diff, hook, assertion, or commit result cannot be
+  masked by re-staging or a later command.
 
 #### Handoff
 
