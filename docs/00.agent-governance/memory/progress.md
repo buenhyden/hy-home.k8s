@@ -8,6 +8,51 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - Authored migration durable evidence ledger
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, research, validation
+- **Status**: complete
+- **Tags**: #authored-document #migration-ledger #research-evidence #semantic-validation
+
+#### Progress
+
+- Published the 469-row durable migration evidence ledger with one exact row
+  per final validator-inventory path, including its pinned self-row and the
+  exact fourteen-column contract.
+- Assigned the corrected deterministic split: 59 cloud source paths `merge`
+  into provider snapshots, 227 remaining registered debt paths `transform`
+  in their owning ADM wave, and 183 other paths `preserve` themselves.
+- Removed the sole `LEDGER-MISSING` compatibility item atomically while
+  retaining the schema-v1, `Spec 030`, growth-closed debt container.
+
+#### Memory
+
+- A durable migration ledger must distinguish format-source applicability from
+  topic-level claim validation; each owning ADM wave refreshes technical facts
+  before transformation or merge.
+- Cloud deletion review starts from all 59 source rows even though only 39 of
+  those paths carry finite shape debt.
+
+#### Evidence
+
+- Pre-ledger strict validation failed only with `LEDGER-MISSING`; the final
+  included inventory is `baseline=433/current=469/new=38/documents=469`.
+- Ordered inventory/ledger equality, nonempty required cells, title fallback,
+  pipe encoding, exact disposition counts, Reference profile shape, zero
+  ledger Markdown diagnostics, and strict/compatibility cross-document results
+  are gated by Plan Task 2 Step 4.
+- The tracked change set is exactly the ledger, Current research-pack index,
+  semantic-debt container, ADM Task evidence, and this progress entry. Ignored
+  inventory and generation scratch remain under `_workspace` only.
+
+#### Handoff
+
+- Independently review and commit ADM-002, then begin ADM-003 from the exact
+  34-path Stage 01-03 debt manifest; no authored migration body changed here.
+
 ### 2026-07-13 - Authored migration shape-debt ownership correction
 
 #### Metadata

@@ -34,7 +34,7 @@ consolidate duplicate AWS/Azure prose, and close the compatibility boundary.
 | ID | Work item | Owner | Status | Evidence |
 | --- | --- | --- | --- | --- |
 | ADM-001 | Start reciprocal Spec, Plan, Task, and index lineage | platform | Done | `python3` reciprocal-lineage assertion in Plan Task 1 Step 4; logical commit `docs(execution): start authored document migration` |
-| ADM-002 | Publish the baseline disposition and durable research ledger | platform | Queued | Pre-edit fixture gate proves disjoint/exhaustive shape-debt ownership `34 + 120 + 73 + 39 = 266`; final ledger disposition proof is exactly `preserve=183`, `transform=227`, `merge=59`; logical commit `docs(migration): inventory authored document dispositions` |
+| ADM-002 | Publish the baseline disposition and durable research ledger | platform | Done | Pre-ledger RED was sole `LEDGER-MISSING`; final inventory/ledger equality is exactly 469 paths (`baseline=433`, `new=38`) with 14 columns, a pinned self-row, `preserve=183`, `transform=227`, `merge=59`, zero ledger Markdown/cross-document diagnostics, and empty semantic items; logical commit `docs(migration): inventory authored document dispositions` |
 | ADM-003 | Normalize Stage 01–03 active design documents | platform | Queued | Full-corpus compatibility JSON filtered first by the three RED directory boundaries and then by the exact reviewed 34-path batch/GREEN set; logical commit `docs(migration): normalize active sdlc design documents` |
 | ADM-004 | Normalize Stage 04–05 execution and operations documents | platform | Queued | Full-corpus compatibility JSON filtered first by the two RED directory boundaries and then by the exact reviewed 120-path batch/GREEN set; logical commit `docs(migration): normalize execution and operations documents` |
 | ADM-005 | Normalize governance, Current references, Archive links, and six support documents | platform | Queued | Full-corpus compatibility JSON filtered first by four RED boundaries and then by the exact reviewed 73-path batch/GREEN set; structural-only checks preserve historical facts and Spec 027/031 route/schema/form/provider semantics; logical commit `docs(migration): normalize governance references and archive links` |
@@ -86,6 +86,14 @@ secrets, live systems, remote CI, publication, push, merge, or deployment. Its
 committed Task adds one normal authored target, so ADM-002 now consumes exactly
 468/current and 37/new before ledger creation and must produce 469/current and
 38/new with the ledger self-row.
+
+ADM-002 published the sole durable migration evidence owner after proving the
+fixture-derived `34/120/73/39` wave partition. The ordered 469-row table equals
+the final inventory exactly, its cloud source rows merge to the two ADM-006
+snapshot destinations, all remaining registered debt rows transform in their
+own wave, and all other paths preserve themselves. The compatibility debt
+container remains schema-v1 and growth-closed with `items: []`; strict and
+compatibility cross-document checks now have zero ledger diagnostics.
 
 ## Traceability
 
