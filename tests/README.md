@@ -86,6 +86,7 @@ live readiness.
 | Agent roster currentness repository check | `python3 scripts/validate-agent-roster-currentness.py .` | Repo-static |
 | Affected-surface fixture | `python3 scripts/validate-affected-surfaces.py --self-test` | Repo-static exact-route, argv, output, and NUL-transport evidence |
 | Affected-surface repository coverage | `python3 scripts/validate-affected-surfaces.py --root .` | Repo-static tracked-path coverage; no ignored scratch traversal |
+| Affected/all-files local runner | `python3 scripts/run-validation-lane.py --root . --lane affected\|all-files --paths-file <file.nul> --delimiter nul` | Repo-static shell-free execution of contract-selected argv; no-path and optional-tool `SKIP`, remote/live `DEFER`, and fallback evidence remain distinct |
 | External service contracts | `bash infrastructure/tests/verify-contracts-static.sh` | Repo-static |
 | GitOps structure | `bash scripts/validate-gitops-structure.sh` | Repo-static |
 | Kubernetes manifests | `bash scripts/validate-k8s-manifests.sh .` | Repo-static with Optional tool `kube-linter` when installed |
@@ -160,6 +161,17 @@ changing candidate logic.
   Selector self-test는 JSON과
   GitHub output ordering, NUL termination, newline-containing record의 단일-record
   보존도 검증하며 shell parsing이나 first-match precedence를 사용하지 않는다.
+  Hook-consumer selection cases additionally pin `_workspace/README.md`,
+  `.gitignore`, `policy/conftest/kubernetes.rego`,
+  `.agents/agents/network-reviewer.md`, and the empty path set. Shared hooks
+  write temporary `.nul` files only after fail-closed payload validation.
+  C0/DEL bytes (including NUL, newline, and tab), boundary whitespace,
+  non-normalized or external paths, and any symlink component are rejected
+  before formatter or pre-commit invocation; records are never reconstructed
+  through newline iteration. Present `file_path`/`path` aliases are type-checked
+  before alias-count rejection, so `null` cannot shadow a later valid value;
+  `files`/`paths` permit only one string-list alias, with `files: []` retaining
+  explicit no-files semantics. Empty objects, nulls, and mixed list items fail.
 - Roster fixture와 repository 검사는 repo-static evidence만 제공한다. Claude,
   Codex, Gemini provider runtime을 실행하지 않으며 provider-native runtime
   readiness를 입증할 수 없다.

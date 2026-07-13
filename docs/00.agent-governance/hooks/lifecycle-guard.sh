@@ -4,68 +4,69 @@
 set -euo pipefail
 
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-${CODEX_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}}"
-INPUT="$(cat || true)"
 SELFTEST="${HY_HOME_K8S_LIFECYCLE_GUARD_SELFTEST:-0}"
+INPUT_FILE="$(mktemp)"
+EVENT_FILE="$(mktemp)"
+CHANGED_FILE="$(mktemp --suffix=.nul)"
+TRACKED_FILE="$(mktemp --suffix=.nul)"
+UNTRACKED_FILE="$(mktemp --suffix=.nul)"
+RUNNER_LOG="$(mktemp)"
+trap 'rm -f "$INPUT_FILE" "$EVENT_FILE" "$CHANGED_FILE" "$TRACKED_FILE" "$UNTRACKED_FILE" "$RUNNER_LOG"' EXIT
+cat >"$INPUT_FILE"
 
 cd "$PROJECT_DIR"
 
-event_name="$(
-  INPUT="$INPUT" python3 - <<'PY'
+export INPUT_FILE EVENT_FILE
+python3 - <<'PY'
 import json
 import os
+from pathlib import Path
 
-raw = os.environ.get("INPUT", "")
+raw = Path(os.environ["INPUT_FILE"]).read_text(encoding="utf-8")
 event = os.environ.get("HY_HOME_K8S_HOOK_EVENT", "")
 try:
-    data = json.loads(raw) if raw.strip() else {}
+    data = json.loads(raw) if raw else {}
 except Exception:
     data = {}
 if isinstance(data, dict):
     event = data.get("hook_event_name") or data.get("event") or event
-print(event or "Stop")
+Path(os.environ["EVENT_FILE"]).write_text((event or "Stop") + "\n", encoding="utf-8")
 PY
-)"
+IFS= read -r event_name <"$EVENT_FILE"
 
 declare -a CHANGED_PATHS=()
 declare -a TRACKED_CHANGED_PATHS=()
 
-add_unique_path() {
-  local array_name="$1"
-  local raw_path="$2"
-  local -n target_array="$array_name"
-  local path="$raw_path"
-
-  [[ -n "$path" ]] || return 0
-  path="${path#"$PROJECT_DIR"/}"
-  path="${path#./}"
-  [[ "$path" != .agent-work/* ]] || return 0
-
-  local existing
-  for existing in "${target_array[@]:-}"; do
-    [[ "$existing" != "$path" ]] || return 0
-  done
-  target_array+=("$path")
-}
-
 if [[ "$SELFTEST" == "1" ]]; then
-  while IFS= read -r path; do
-    add_unique_path CHANGED_PATHS "$path"
-    add_unique_path TRACKED_CHANGED_PATHS "$path"
-  done <<<"${HY_HOME_K8S_CHANGED_PATHS:-}"
+  export CHANGED_FILE TRACKED_FILE HY_HOME_K8S_CHANGED_PATHS="${HY_HOME_K8S_CHANGED_PATHS:-}"
+  python3 - <<'PY'
+import os
+from pathlib import Path
+
+records = [item for item in os.environ["HY_HOME_K8S_CHANGED_PATHS"].splitlines() if item]
+payload = b"".join(item.encode("utf-8") + b"\0" for item in records)
+Path(os.environ["CHANGED_FILE"]).write_bytes(payload)
+Path(os.environ["TRACKED_FILE"]).write_bytes(payload)
+PY
 else
-  while IFS= read -r line; do
-    [[ -n "$line" ]] || continue
-    status="${line:0:2}"
-    path="${line:3}"
-    if [[ "$path" == *" -> "* ]]; then
-      path="${path##* -> }"
-    fi
-    add_unique_path CHANGED_PATHS "$path"
-    if [[ "$status" != "??" ]]; then
-      add_unique_path TRACKED_CHANGED_PATHS "$path"
-    fi
-  done < <(git status --porcelain=v1 --untracked-files=normal)
+  git diff --name-only -z HEAD >"$TRACKED_FILE"
+  git ls-files --others --exclude-standard -z >"$UNTRACKED_FILE"
+  export CHANGED_FILE TRACKED_FILE UNTRACKED_FILE
+  python3 - <<'PY'
+import os
+from pathlib import Path
+
+records: list[bytes] = []
+for name in ("TRACKED_FILE", "UNTRACKED_FILE"):
+    payload = Path(os.environ[name]).read_bytes()
+    records.extend(item for item in payload.split(b"\0") if item and not item.startswith(b".agent-work/"))
+unique = sorted(set(records))
+Path(os.environ["CHANGED_FILE"]).write_bytes(b"".join(item + b"\0" for item in unique))
+PY
 fi
+
+mapfile -d '' -t CHANGED_PATHS <"$CHANGED_FILE"
+mapfile -d '' -t TRACKED_CHANGED_PATHS <"$TRACKED_FILE"
 
 emit_json() {
   local payload_type="$1"
@@ -87,64 +88,23 @@ if [[ "$event_name" == "PreCompact" ]]; then
   if [[ "${#TRACKED_CHANGED_PATHS[@]}" -eq 0 ]]; then
     emit_json advisory "Lifecycle guard: no uncommitted tracked changes detected. Suggested validation remains: git diff --check and bash scripts/validate-repo-quality-gates.sh . when repo files changed."
   else
-    preview="$(printf '%s\n' "${TRACKED_CHANGED_PATHS[@]}" | head -n 12 | paste -sd ', ' -)"
-    emit_json advisory "Lifecycle guard: ${#TRACKED_CHANGED_PATHS[@]} uncommitted tracked path(s) before compaction: ${preview}. Suggested validation: git diff --check; bash scripts/validate-repo-quality-gates.sh .; run manifest/secret checks when GitOps or YAML paths changed. Task-unit commit discipline: do not auto-commit; when the human requested commits, split commits by logical task/spec IDs, stage only files for that unit, review git diff --cached, and use Conventional Commit messages. If the dirty state spans multiple SDD overlays, runtime docs, hooks, validators, or env contracts, split it before committing; if a broad commit is already published, record a forward-only exception instead of rewriting public history."
+    emit_json advisory "Lifecycle guard: ${#TRACKED_CHANGED_PATHS[@]} uncommitted tracked path(s) before compaction. Suggested validation: git diff --check; bash scripts/validate-repo-quality-gates.sh .; run manifest/secret checks when GitOps or YAML paths changed. Task-unit commit discipline: do not auto-commit; when the human requested commits, split commits by logical task/spec IDs, stage only files for that unit, review git diff --cached, and use Conventional Commit messages. If the dirty state spans multiple SDD overlays, runtime docs, hooks, validators, or env contracts, split it before committing; if a broad commit is already published, record a forward-only exception instead of rewriting public history."
   fi
   exit 0
 fi
 
 case "$event_name" in
-  Stop|SubagentStop) ;;
-  *) exit 0 ;;
+Stop | SubagentStop) ;;
+*) exit 0 ;;
 esac
 
 if [[ "${#CHANGED_PATHS[@]}" -eq 0 ]]; then
   exit 0
 fi
 
-run_json=0
-run_shell=0
-run_manifest=0
-run_repo_quality=0
-
-for path in "${CHANGED_PATHS[@]}"; do
-  case "$path" in
-    .claude/settings.json|.agents/hooks.json|.codex/hooks.json)
-      run_json=1
-      run_repo_quality=1
-      ;;
-  esac
-
-  case "$path" in
-    docs/00.agent-governance/hooks/*.sh|scripts/*.sh|infrastructure/*.sh)
-      run_shell=1
-      run_repo_quality=1
-      ;;
-  esac
-
-  # Bash case patterns match "/" inside "*"; these root-prefixed globs cover
-  # nested manifest files and intentionally mirror the CI path-filter scope.
-  case "$path" in
-    gitops/*.yml|gitops/*.yaml|\
-infrastructure/*.yml|infrastructure/*.yaml|\
-examples/sample-app/*.yml|examples/sample-app/*.yaml|\
-examples/*/gitops/*.yml|examples/*/gitops/*.yaml|\
-examples/*/kubernetes/*.yml|examples/*/kubernetes/*.yaml|\
-traefik/*.yml|traefik/*.yaml)
-      run_manifest=1
-      ;;
-  esac
-
-  # Keep this broad enough for docs/runtime mirrors while relying on the repo
-  # quality gate for precise contract checks.
-  case "$path" in
-    AGENTS.md|CLAUDE.md|GEMINI.md|README.md|docs/*|.github/*|\
-.agents/*|.claude/*|.codex/*|scripts/*|.pre-commit-config.yaml|\
-infrastructure/k3d/k3d-cluster.yaml|gitops/apps/root/*|examples/*)
-      run_repo_quality=1
-      ;;
-  esac
-done
+# Shared implementations remain under docs/00.agent-governance/hooks. The
+# canonical selector covers .agents/* and runtime config paths such as
+# .agents/hooks.json; the selected repository-quality argv owns detailed checks.
 
 declare -a FAILURES=()
 
@@ -163,24 +123,9 @@ if [[ "$SELFTEST" == "1" ]]; then
   fi
 else
   run_check "diff whitespace" git diff --check
-
-  if [[ "$run_json" -eq 1 ]]; then
-    run_check "Claude settings JSON parse" python3 -m json.tool .claude/settings.json
-    run_check "Gemini hooks JSON parse" python3 -m json.tool .agents/hooks.json
-    run_check "Codex hooks JSON parse" python3 -m json.tool .codex/hooks.json
-  fi
-
-  if [[ "$run_shell" -eq 1 ]]; then
-    run_check "shell syntax" bash -c 'find infrastructure scripts docs/00.agent-governance/hooks -type f -name "*.sh" -exec bash -n {} +'
-  fi
-
-  if [[ "$run_manifest" -eq 1 ]]; then
-    run_check "Kubernetes manifests" bash scripts/validate-k8s-manifests.sh .
-    run_check "secret handling" bash scripts/check-secret-handling.sh .
-  fi
-
-  if [[ "$run_repo_quality" -eq 1 ]]; then
-    run_check "repository quality gates" env HY_HOME_K8S_SKIP_HOOK_SIMULATION=1 bash scripts/validate-repo-quality-gates.sh .
+  if ! python3 scripts/run-validation-lane.py --root . --lane affected \
+    --paths-file "$CHANGED_FILE" --delimiter nul >"$RUNNER_LOG" 2>&1; then
+    FAILURES+=("affected-surface validation lane")
   fi
 fi
 
@@ -190,8 +135,7 @@ if [[ "${#FAILURES[@]}" -ne 0 ]]; then
 fi
 
 if [[ "${#TRACKED_CHANGED_PATHS[@]}" -ne 0 ]]; then
-  preview="$(printf '%s\n' "${TRACKED_CHANGED_PATHS[@]}" | head -n 12 | paste -sd ', ' -)"
-  emit_json advisory "Lifecycle guard: validation passed with ${#TRACKED_CHANGED_PATHS[@]} uncommitted tracked path(s): ${preview}. Task-unit commit discipline: do not auto-commit; when the human requested commits, split commits by logical task/spec IDs, stage only files for that unit, review git diff --cached, and use Conventional Commit messages. If the dirty state spans multiple SDD overlays, runtime docs, hooks, validators, or env contracts, split it before committing; if a broad commit is already published, record a forward-only exception instead of rewriting public history. If work intentionally remains uncommitted, the final response must name the files and reason."
+  emit_json advisory "Lifecycle guard: validation passed with ${#TRACKED_CHANGED_PATHS[@]} uncommitted tracked path(s). Task-unit commit discipline: do not auto-commit; when the human requested commits, split commits by logical task/spec IDs, stage only files for that unit, review git diff --cached, and use Conventional Commit messages. If the dirty state spans multiple SDD overlays, runtime docs, hooks, validators, or env contracts, split it before committing; if a broad commit is already published, record a forward-only exception instead of rewriting public history. If work intentionally remains uncommitted, the final response must name the files and reason."
 fi
 
 exit 0

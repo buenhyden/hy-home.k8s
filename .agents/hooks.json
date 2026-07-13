@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "PROJECT_DIR=\"${GEMINI_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/session-start.sh\"",
+            "command": "PROJECT_DIR=\"${GEMINI_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" HY_HOME_K8S_HOOK_PROVIDER=gemini bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/session-start.sh\"",
             "timeout": 20
           }
         ]
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "PROJECT_DIR=\"${GEMINI_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/k8s-pre-edit.sh\"",
+            "command": "PROJECT_DIR=\"${GEMINI_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" HY_HOME_K8S_HOOK_PROVIDER=gemini bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/k8s-pre-edit.sh\"",
             "timeout": 10
           }
         ]
@@ -40,7 +40,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "PROJECT_DIR=\"${GEMINI_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/post-validate.sh\"",
+            "command": "PROJECT_DIR=\"${GEMINI_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" HY_HOME_K8S_HOOK_PROVIDER=gemini bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/post-validate.sh\"",
             "timeout": 60
           }
         ]
@@ -52,7 +52,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "PROJECT_DIR=\"${GEMINI_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh\"",
+            "command": "PROJECT_DIR=\"${GEMINI_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" HY_HOME_K8S_HOOK_PROVIDER=gemini bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh\"",
             "timeout": 60
           }
         ]
@@ -64,7 +64,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "PROJECT_DIR=\"${GEMINI_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh\"",
+            "command": "PROJECT_DIR=\"${GEMINI_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" HY_HOME_K8S_HOOK_PROVIDER=gemini bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh\"",
             "timeout": 60
           }
         ]
@@ -76,7 +76,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "PROJECT_DIR=\"${GEMINI_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh\"",
+            "command": "PROJECT_DIR=\"${GEMINI_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(pwd)}}\"; CLAUDE_PROJECT_DIR=\"$PROJECT_DIR\" HY_HOME_K8S_HOOK_PROVIDER=gemini bash \"$PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh\"",
             "timeout": 20
           }
         ]

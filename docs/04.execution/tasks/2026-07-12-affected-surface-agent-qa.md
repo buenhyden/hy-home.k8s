@@ -34,7 +34,7 @@ across thirty provider adapters, and close the shared QA handoff contract.
 | --- | --- | --- | --- | --- |
 | ASQA-001 | Start reciprocal Spec, Plan, Task, unique active Stage-index lineage, and strict durable-ledger coverage | platform | Active | GREEN lineage assertion, exact fourteen-column Task ledger row, and focused strict document QA; logical commit `docs(execution): start affected surface agent qa` |
 | ASQA-002 | Define the affected-surface registry, schema, selector, and positive/negative path fixtures | platform | Done | RED empty-selector exit `1`; GREEN 19/19 surface and 630 pre-stage/635 exact-index tracked-path coverage, 21 positive paths, 4 exact selection cases, 5 rejection cases, 4 post-script/`--` boundary positives, 29 route/argv/lane/job/protection/fallback/evidence mutations, exact executable tokens, direct-script/wrapper boundaries, fail-closed interpreter-eval options and surface fallbacks, NUL/output self-tests, Python compile, strict document QA, full quality gate, and focused pre-commit; logical commit `feat(qa): define affected-surface validation contract` |
-| ASQA-003 | Drive local hooks and pre-commit lanes from validated selector output without newline path transport | platform | Draft | Hook simulations, shell/JSON syntax checks, and affected-surface hook evidence; logical commit `refactor(hooks): drive local validation from affected surfaces` |
+| ASQA-003 | Drive local hooks and pre-commit lanes from validated selector output without newline path transport | platform | Done | Fixture-first RED/GREEN, 636-path tracked coverage, bounded/redacted shell-free runner evidence, three-provider hook payload/no-file/control-byte/root/symlink/alias simulations, zero pre-commit invocation on invalid input, shell/JSON/Python syntax checks, strict document QA, full quality gate, focused pre-commit, and exact thirteen-path staging; logical commit `refactor(hooks): drive local validation from affected surfaces` |
 | ASQA-004 | Select existing CI jobs from NUL-delimited changed paths and preserve Spec 032 workflow ownership | platform | Draft | Local/CI parity fixtures, actionlint, and separately reported zizmor evidence; logical commit `ci(qa): select jobs from affected-surface registry` |
 | ASQA-005 | Enforce responsibility, output, prohibition, stop, handoff, capability-tier, and evidence semantics for ten roles and thirty adapters | platform | Draft | Semantic mutation self-tests and roster-currentness checks; logical commit `feat(agents): enforce cross-provider role semantics` |
 | ASQA-006 | Align thin gateways, Stage 00 QA governance, repository gates, lifecycle, and independent-review evidence | platform | Draft | Full static QA bundle with lane limitations and reviewer findings; logical commit `docs(agents): align provider qa evidence contracts` |
@@ -208,6 +208,29 @@ JSON keys/sets and GitHub output booleans are sorted and stable. This is
 repository-static evidence only: local hook consumption begins in ASQA-003 and
 CI workflow consumption begins in ASQA-004, while remote CI and live systems
 remain DEFER.
+
+ASQA-003 added five hook-consumer selection cases. Its RED run intentionally
+expected the no-file case to retain `review`; production selection returned
+`none` and failed with `SURFACE-SELF-TEST`. GREEN pins the corrected empty
+selection plus `_workspace/README.md`, `.gitignore`, policy, and shared-agent
+paths. The local runner imports the validated contract, invokes approved argv
+arrays with `shell=False`, and emits deterministic command/tool/scope/
+limitation/evidence fields. Shared hooks preserve provider payload extraction,
+protected-domain warnings, formatting, lifecycle advisory/block semantics, and
+use temporary NUL files; Claude, Gemini, and Codex wiring remains native to its
+existing JSON surface. Payload paths containing C0/DEL bytes, boundary
+whitespace, non-normalized or external paths, or any symlink component fail
+before a formatter or pre-commit command is invoked. Present scalar path aliases
+must each be non-empty strings and cannot shadow each other; the sole present
+`files`/`paths` alias must be a list containing only non-empty path strings,
+while an explicit empty list preserves no-files `SKIP`. The lifecycle hook does
+not extract payload paths; it constructs its changed-path input directly from
+NUL-delimited Git inventory. Runner child stdout/stderr is represented only by
+bounded byte-count and SHA-256 metadata, never copied verbatim. No-path and
+unavailable optional tools are `SKIP`, the
+optional fallback is a separate record, and remote/live work is always
+`DEFER`. These outcomes are repository-static and do not prove provider event
+delivery, remote CI, Kubernetes convergence, or cloud state.
 
 Later rows retain their own fixture-first RED/GREEN evidence. ASQA-002 and
 ASQA-003 must reject unmatched or ambiguous paths and unsafe path transport;

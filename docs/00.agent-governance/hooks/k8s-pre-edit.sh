@@ -1,60 +1,126 @@
 #!/usr/bin/env bash
 # k8s-pre-edit.sh — warn before editing Kubernetes, secrets, or authored docs.
-# Runs at PreToolUse for Write|Edit|MultiEdit. Exits 0 always (non-blocking).
+# Runs at PreToolUse for Write|Edit|MultiEdit. Invalid path transport fails closed.
 set -euo pipefail
 
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
-INPUT="$(cat || true)"
-export PROJECT_DIR INPUT CLAUDE_TOOL_INPUT_FILE_PATH="${CLAUDE_TOOL_INPUT_FILE_PATH:-}" CLAUDE_TOOL_INPUT="${CLAUDE_TOOL_INPUT:-}"
+INPUT_FILE="$(mktemp)"
+PATHS_FILE="$(mktemp --suffix=.nul)"
+SELECT_LOG="$(mktemp)"
+trap 'rm -f "$INPUT_FILE" "$PATHS_FILE" "$SELECT_LOG"' EXIT
+cat >"$INPUT_FILE"
+export PROJECT_DIR INPUT_FILE PATHS_FILE CLAUDE_TOOL_INPUT_FILE_PATH="${CLAUDE_TOOL_INPUT_FILE_PATH:-}" CLAUDE_TOOL_INPUT="${CLAUDE_TOOL_INPUT:-}"
 
 python3 - <<'PY'
 import json
 import os
 import re
+import sys
+from pathlib import Path, PurePosixPath
 
 project_dir = os.environ.get("PROJECT_DIR", "")
-raw = os.environ.get("INPUT", "")
-if not raw.strip():
+raw = Path(os.environ["INPUT_FILE"]).read_text(encoding="utf-8")
+if not raw:
     raw = os.environ.get("CLAUDE_TOOL_INPUT", "")
 
 paths: list[str] = []
 
 
+def reject(code: str) -> None:
+    print(f"[FAIL] {code}", file=sys.stderr)
+    raise SystemExit(2)
+
+
 def add_path(value):
-    if isinstance(value, str) and value.strip():
-        path = value.strip()
-        if project_dir and path.startswith(project_dir + "/"):
-            path = path[len(project_dir) + 1 :]
-        if path.startswith("./"):
-            path = path[2:]
-        if path not in paths:
-            paths.append(path)
+    if not isinstance(value, str) or not value:
+        reject("HOOK-PATH-TYPE")
+    if any(ord(character) < 32 or ord(character) == 127 for character in value):
+        reject("HOOK-PATH-CONTROL")
+    if value[0].isspace() or value[-1].isspace():
+        reject("HOOK-PATH-WHITESPACE")
+
+    path = value
+    if path.startswith("/"):
+        prefix = project_dir.rstrip("/") + "/"
+        if not project_dir or not path.startswith(prefix):
+            reject("HOOK-PATH-ROOT")
+        path = path[len(prefix) :]
+    posix = PurePosixPath(path)
+    if (
+        not path
+        or path.startswith("./")
+        or path.endswith("/")
+        or "//" in path
+        or "\\" in path
+        or posix.is_absolute()
+        or "." in posix.parts
+        or ".." in posix.parts
+        or posix.as_posix() != path
+    ):
+        reject("HOOK-PATH-NORMALIZATION")
+
+    cursor = Path(project_dir)
+    for part in posix.parts:
+        cursor /= part
+        if cursor.is_symlink():
+            reject("HOOK-PATH-SYMLINK")
+    if path not in paths:
+        paths.append(path)
 
 
 try:
-    data = json.loads(raw) if raw.strip() else {}
-except Exception:
-    data = {}
+    data = json.loads(raw) if raw else {}
+except (TypeError, json.JSONDecodeError):
+    reject("HOOK-PAYLOAD-JSON")
+if not isinstance(data, dict):
+    reject("HOOK-PAYLOAD-SHAPE")
 
-tool_input = data.get("tool_input", {}) if isinstance(data, dict) else {}
-if isinstance(tool_input, dict):
-    add_path(tool_input.get("file_path") or tool_input.get("path"))
-    for key in ("files", "paths"):
-        value = tool_input.get(key)
-        if isinstance(value, list):
-            for item in value:
-                if isinstance(item, str):
-                    add_path(item)
-                elif isinstance(item, dict):
-                    add_path(item.get("file_path") or item.get("path"))
 
-    edits = tool_input.get("edits")
-    if isinstance(edits, list):
-        for edit in edits:
-            if isinstance(edit, dict):
-                add_path(edit.get("file_path") or edit.get("path"))
+def consume_scalar_alias(mapping) -> int:
+    present = [key for key in ("file_path", "path") if key in mapping]
+    for key in present:
+        if not isinstance(mapping[key], str) or not mapping[key]:
+            reject("HOOK-PATH-TYPE")
+    if len(present) > 1:
+        reject("HOOK-PATH-ALIAS")
+    if present:
+        add_path(mapping[present[0]])
+    return len(present)
 
-add_path(os.environ.get("CLAUDE_TOOL_INPUT_FILE_PATH", ""))
+
+if "tool_input" in data and not isinstance(data["tool_input"], dict):
+    reject("HOOK-PAYLOAD-SHAPE")
+tool_input = data.get("tool_input", {})
+scalar_count = consume_scalar_alias(tool_input)
+collection_aliases = [key for key in ("files", "paths") if key in tool_input]
+for key in collection_aliases:
+    value = tool_input[key]
+    if not isinstance(value, list):
+        reject("HOOK-PATH-LIST")
+    if any(not isinstance(item, str) or not item for item in value):
+        reject("HOOK-PATH-TYPE")
+if len(collection_aliases) > 1 or (scalar_count and collection_aliases):
+    reject("HOOK-PATH-ALIAS")
+for key in collection_aliases:
+    value = tool_input[key]
+    for item in value:
+        add_path(item)
+
+if "edits" in tool_input:
+    edits = tool_input["edits"]
+    if not isinstance(edits, list):
+        reject("HOOK-PATH-LIST")
+    for edit in edits:
+        if not isinstance(edit, dict):
+            reject("HOOK-PATH-TYPE")
+        consume_scalar_alias(edit)
+
+environment_path = os.environ.get("CLAUDE_TOOL_INPUT_FILE_PATH", "")
+if environment_path:
+    add_path(environment_path)
+Path(os.environ["PATHS_FILE"]).write_bytes(
+    b"".join(path.encode("utf-8") + b"\0" for path in paths)
+)
 
 manifest_re = re.compile(
     r"(gitops/.*\.ya?ml|infrastructure/.*\.ya?ml|examples/sample-app/.*\.ya?ml|"
@@ -177,5 +243,16 @@ for path in paths:
 if messages:
     print(json.dumps({"systemMessage": "\n\n".join(messages)}))
 PY
+
+if ! python3 "$PROJECT_DIR/scripts/select-affected-surfaces.py" \
+  --root "$PROJECT_DIR" --lane affected --paths-file "$PATHS_FILE" \
+  --delimiter nul --format json >"$SELECT_LOG" 2>&1; then
+  python3 - <<'PY'
+import json
+
+print(json.dumps({"systemMessage": "Affected-surface selection rejected an edit path. Normalize it to one repository-relative POSIX path and update the canonical surface contract before editing."}))
+PY
+  exit 2
+fi
 
 exit 0

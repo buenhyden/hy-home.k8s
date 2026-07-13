@@ -85,6 +85,61 @@
         "protectedLevel": "protected",
         "unmatchedPaths": []
       }
+    },
+    {
+      "name": "hook-workspace-boundary",
+      "lane": "affected",
+      "paths": ["_workspace/README.md"],
+      "expected": {
+        "validators": ["document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+        "ciJobs": ["pre-commit", "repo-quality-static"],
+        "protectedLevel": "review",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "hook-root-config",
+      "lane": "affected",
+      "paths": [".gitignore"],
+      "expected": {
+        "validators": ["repository-quality"],
+        "ciJobs": ["pre-commit", "repo-quality-static"],
+        "protectedLevel": "review",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "hook-policy",
+      "lane": "affected",
+      "paths": ["policy/conftest/kubernetes.rego"],
+      "expected": {
+        "validators": ["policy-gates", "repository-quality"],
+        "ciJobs": ["manifest-static", "pre-commit", "repo-quality-static"],
+        "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "hook-agent",
+      "lane": "affected",
+      "paths": [".agents/agents/network-reviewer.md"],
+      "expected": {
+        "validators": ["agent-roster-currentness", "document-contract-registry", "links-and-owners", "markdown-profiles", "repository-quality"],
+        "ciJobs": ["pre-commit", "repo-quality-static"],
+        "protectedLevel": "protected",
+        "unmatchedPaths": []
+      }
+    },
+    {
+      "name": "hook-no-files",
+      "lane": "affected",
+      "paths": [],
+      "expected": {
+        "validators": [],
+        "ciJobs": [],
+        "protectedLevel": "none",
+        "unmatchedPaths": []
+      }
     }
   ],
   "rejectionCases": [
