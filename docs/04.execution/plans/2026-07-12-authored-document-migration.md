@@ -41,8 +41,10 @@ official primary-source research, `rg`, pre-commit, and repository quality gates
   fixtures at the named transitions. ADM-003 through ADM-006 may synchronize
   only frozen migration-count/self-test constants in
   `scripts/validate-markdown-profiles.py` with the shrinking fixture; they may
-  not add, remove, or reinterpret a rule. The profile registry never contains
-  migration debt.
+  also replace the self-test's raw `dict(Counter)` comparison with the exact
+  zero-cap projection guarded below when a rule first reaches zero. They may
+  not otherwise add, remove, or reinterpret a rule. The profile registry never
+  contains migration debt.
 - Protected machine surfaces and behavior belong to Spec 032; this Plan changes only their authored documentation and links.
 - Use `apply_patch` for edits, `git mv` for one-to-one relocations, and a separate logical commit for every migration wave.
 
@@ -175,6 +177,10 @@ allowed = [
     re.compile(r'^[+-]EXPECTED_(?:REQUIRED_RESIDUE_OVERLAP|REQUIRED_RESIDUE_UNION|DEBT_UNION) = \d+$'),
     re.compile(r'^[+-]\s*if len\(unsupported_tokens\) != \d+:$'),
     re.compile(r'^[+-]\s*if compatibility_keys != strict_keys or len\(compatibility_keys\) != \d+:$'),
+    re.compile(r'^-\s*if dict\(actual_occurrences\) != expected_occurrences:$'),
+    re.compile(r'^\+\s*if \{$'),
+    re.compile(r'^\+\s*rule_id: actual_occurrences\[rule_id\] for rule_id in EXPECTED_DEBT_CAPS$'),
+    re.compile(r'^\+\s*\} != expected_occurrences:$'),
 ]
 assert changed and all(any(pattern.fullmatch(line) for pattern in allowed) for line in changed), changed
 PY

@@ -8,6 +8,44 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - ADM-004 zero-cap self-test correction
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, validation, planning
+- **Status**: complete
+- **Tags**: #adm-004 #zero-cap #self-test #diff-guard
+
+#### Progress
+
+- Paused ADM-004 after batch 07 reduced the last `BODY-H2-DUPLICATE` debt
+  record to a legitimate zero cap and exposed a self-test Counter comparison
+  that omitted zero-valued keys.
+- Authorized one exact self-test projection over the existing expected rule
+  keys, while preserving all parser, rule, diagnostic, outcome, route, and CLI
+  behavior under the staged validator diff guard.
+
+#### Memory
+
+- A shrinking finite-debt contract must represent a zero-count rule without
+  confusing an absent `Counter` key with a missing expected-cap key.
+- Narrow migration exceptions need executable line guards; prose-only scope is
+  insufficient when a whole validator file is staged.
+
+#### Evidence
+
+- Batch 07 compatibility reports `1046 DEFER / 0 FAIL`, exact batch diagnostics
+  zero, fixture/validator caps aligned, and Markdown self-test PASS.
+- This correction stages only Spec 030, Plan 030, Task 030, and this progress
+  entry; the in-progress ADM-004 files remain unstaged for their later wave
+  commit.
+
+#### Handoff
+
+- Commit and independently review this exact four-path correction, then resume
+  ADM-004 at frozen batch 08 without reopening batches 01–07.
+
 ### 2026-07-13 - ADM-003 Stage 01–03 authored shape normalization
 
 #### Metadata

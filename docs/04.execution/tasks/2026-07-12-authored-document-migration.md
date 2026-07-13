@@ -118,6 +118,14 @@ ADM-006 performs the final permitted cap/self-test synchronization after its
 line guard that rejects validator changes outside the frozen numeric cap and
 self-test comparisons.
 
+ADM-004 batch 07 consumed the sole `BODY-H2-DUPLICATE` record and legitimately
+reduced that rule cap to zero. Python's `Counter` omits zero-valued keys, so the
+old self-test's raw `dict(Counter)` comparison failed even though fixture and
+production diagnostics agreed. The bounded correction projects actual counts
+over the existing `EXPECTED_DEBT_CAPS` keys; it changes no parser, diagnostic,
+outcome, route, rule ID, or CLI behavior. The staged-line guard permits only
+that exact expression in addition to the previously allowed numeric updates.
+
 ADM-003 completed the exact approved Stage 01–03 wave: five PRDs, five ARDs,
 four accepted ADRs, and twenty Specs now use their canonical H2 shapes while
 preserving every non-heading fact. The frozen manifest contains 34 paths with
