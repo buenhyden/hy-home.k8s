@@ -8,6 +8,48 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - Authored document migration execution lineage
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, execution
+- **Status**: active
+- **Tags**: #authored-document #migration #lineage #strict-cutover
+
+#### Progress
+
+- Started Spec 030 execution with one active Task containing exactly ADM-001
+  through ADM-007 and their Plan-pinned validation commands and logical commit
+  identities.
+- Added reciprocal Spec, Plan, and Task links and aligned their three Stage
+  indexes without changing unrelated index order or lifecycle state.
+- Completed ADM-001 as the repository-static lineage unit; ADM-002 remains the
+  sole next owner of the durable ledger and 467-to-468 inventory transition.
+
+#### Memory
+
+- Start a destructive migration with reciprocal lineage and explicit rollback
+  units before creating its inventory or mutating content.
+- Keep compatibility debt removal with the exact document wave that resolves
+  it; the Task ledger must not create a second debt owner.
+
+#### Evidence
+
+- RED exited 1 because
+  `docs/04.execution/tasks/2026-07-12-authored-document-migration.md` did not
+  exist. GREEN requires mutual filename references, exactly seven ADM rows,
+  unique active index entries, focused hooks, and the exact seven-path diff.
+- No migration ledger, compatibility fixture, validator, authored-document
+  body, README body, cloud source, protected surface, ignored local content,
+  secret, live system, remote CI, push, merge, publication, or deployment was
+  changed or accessed.
+
+#### Handoff
+
+- Independently review ADM-001, then execute ADM-002's deterministic inventory
+  and ledger publication without beginning any content-normalization wave.
+
 ### 2026-07-13 - Semantic validator gate delegation
 
 #### Metadata

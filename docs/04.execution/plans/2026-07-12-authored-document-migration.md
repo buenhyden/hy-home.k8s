@@ -1282,5 +1282,6 @@ removed migration debt.
 - [Program PRD](../../01.requirements/005-workspace-document-assurance-modernization.md)
 - [Operating Model ARD](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
 - [Authored Migration Spec](../../03.specs/030-authored-document-migration/spec.md)
+- [Authored Migration Task](../tasks/2026-07-12-authored-document-migration.md)
 - [Semantic Validation Plan](./2026-07-12-semantic-document-validation.md)
 - [Affected Surface Spec](../../03.specs/031-affected-surface-agent-qa/spec.md)
