@@ -3,10 +3,12 @@ title: 'Affected Surface and Agent QA Implementation Plan'
 type: sdlc/plan
 status: active
 owner: platform
-updated: 2026-07-12
+updated: 2026-07-13
 ---
 
 # Affected Surface and Agent QA Implementation Plan
+
+## Overview
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use
 > superpowers:subagent-driven-development (recommended) or
@@ -27,7 +29,7 @@ handoff, capability-tier, and evidence meaning.
 pre-commit, GitHub Actions YAML, Markdown/TOML provider adapters, and existing
 repository-static validators.
 
-## Global Constraints
+### Global Constraints
 
 - Work only in the isolated worktree for branch `codex/workspace-document-assurance-modernization`.
 - Use normalized repository-relative POSIX exact or anchored-regex routes with no first-match precedence.
@@ -43,8 +45,6 @@ repository-static validators.
 - Use `apply_patch`, run fixture-first TDD, obtain independent review for protected changes, and commit each Task separately.
 
 ---
-
-## Overview
 
 This Plan implements Spec 031 through execution startup, affected-surface
 contracts, local lane integration, CI selector integration, role-semantic
@@ -75,7 +75,7 @@ role semantics across Gemini, Claude, and Codex for all ten roles.
   by a provider runtime.
 - Adding new AI-agent roles or changing task-specific behavioral evaluation.
 
-## File and Interface Map
+### File and Interface Map
 
 | Unit | Files | Responsibility |
 | --- | --- | --- |
@@ -147,7 +147,7 @@ handoffs, capabilityTier, requiredEvidence
 | Provider metadata ownership is duplicated | High | Exclude model/tool/effort fields from common role contract and retain native validators. |
 | Workflow scope crosses into Spec 032 | High | Do not change `uses:`, permissions, protected commands, or manifest behavior. |
 
-## Agent Rollout & Evaluation Gates
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate:** Surface and role fixture suites pass before consumer changes.
 - **Sandbox / Canary Rollout:** Local hooks consume the selector before CI path filters are removed.
@@ -627,7 +627,7 @@ git commit -m "docs(agents): align provider qa evidence contracts"
 - [ ] PASS/SKIP/FAIL/DEFER and all validation lanes are documented and evidenced without overclaim.
 - [ ] Action identity, permissions, and protected behavior remain assigned to Spec 032.
 
-## Related Documents
+## Traceability
 
 - [Program PRD](../../01.requirements/005-workspace-document-assurance-modernization.md)
 - [Operating Model ARD](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)

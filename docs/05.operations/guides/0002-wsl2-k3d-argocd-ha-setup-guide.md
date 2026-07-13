@@ -23,7 +23,7 @@ updated: 2026-06-02
 - Developer
 - Operator
 
-## Purpose
+### Purpose
 
 운영 계약(TLS/외부 서비스/최소권한)을 유지하면서, 로컬 런타임 검증과 CI 정적 검증을 분리해 재현성을 높인다.
 
@@ -266,7 +266,7 @@ bash -n infrastructure/bootstrap-local.sh infrastructure/tests/*.sh
 - k3d 에이전트 노드 동시 재시작(thundering herd) → containerd inotify 순간 초과 → CRI plugin 실패
   → **해결**: 에이전트 노드를 순차적으로(하나씩) 재시작
 
-## Related Documents
+## Traceability
 
 - **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Operation**: [`../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md`](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md)

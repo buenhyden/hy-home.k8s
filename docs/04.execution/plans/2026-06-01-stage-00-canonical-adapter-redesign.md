@@ -3,7 +3,7 @@ title: 'Stage 00 Canonical Adapter Redesign Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-06-01
+updated: 2026-07-13
 ---
 
 # Stage 00 Canonical Adapter Redesign Implementation Plan
@@ -91,7 +91,7 @@ The core gaps confirmed during Phase 1 investigation were:
   - Changing GitHub Actions topology or deployment/publish actions.
   - Destructive Git operations, rebase, reset, force-push, or merge before Phase 3 approval.
 
-## Canonical Adapter Model
+### Canonical Adapter Model
 
 | Layer | Canonical Responsibility | Adapter Responsibility | Evidence / Validation |
 | --- | --- | --- | --- |
@@ -120,7 +120,7 @@ The core gaps confirmed during Phase 1 investigation were:
 | PLN-012 | Reconcile active/stale plans and tasks without rewriting old bodies | `docs/98.archive/README.md`, README indexes | REQ-CAN-012 | Old superseded items are discoverable through the central archive index; active items keep clear remaining scope or dated completion evidence. |
 | PLN-013 | Update traceability records after implementation | `docs/04.execution/plans/README.md`, `docs/04.execution/tasks/README.md`, `docs/00.agent-governance/memory/progress.md` | REQ-CAN-013 | README indexes and progress ledger identify files changed, checks run, limitations, and no-live-cluster boundary. |
 
-## Change Unit Split
+### Change Unit Split
 
 | Change Unit | Scope | Depends On | Phase 3 Commit Boundary |
 | --- | --- | --- | --- |
@@ -162,7 +162,7 @@ The core gaps confirmed during Phase 1 investigation were:
 | RTK investigation touches credentials or private runtime state | High | Do not read auth files, shell history, tokens, or private DB contents; record only command availability and error class. |
 | Branch completion guidance encourages destructive cleanup | High | Require explicit user approval and typed confirmation for discard/reset/delete actions. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Phase 3 starts with a task record and ends each CU with targeted `rg` checks plus `bash scripts/validate-repo-quality-gates.sh .`.
 - **Sandbox / Canary Rollout**: Not applicable for live infrastructure. This plan affects repository governance, templates, adapter docs, hooks, and validators only.
@@ -185,7 +185,7 @@ The core gaps confirmed during Phase 1 investigation were:
 - [x] Required README indexes, task evidence, and progress ledger are updated.
 - [x] No live cluster, secret, deployment, or destructive git action was performed without explicit approval.
 
-## Related Documents
+## Traceability
 
 - Parent Spec: N/A — pre-Spec execution record.
 - **PRD**: [../../01.requirements/003-workspace-agent-governance-platform.md](../../01.requirements/003-workspace-agent-governance-platform.md)

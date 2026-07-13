@@ -26,7 +26,7 @@ updated: 2026-06-02
 - Platform Engineer
 - DevOps Engineer
 
-## Purpose
+### Purpose
 
 외부 서비스 IP 수정과 신규 컴포넌트(cert-manager/Headlamp/Istio/Kiali)를 포함한 플랫폼을 재현 가능하게 부트스트랩하고 검증한다.
 
@@ -234,7 +234,7 @@ kubectl -n headlamp get serviceaccount headlamp-admin
 kubectl -n headlamp create token headlamp-admin --duration=1h
 ```
 
-## Related Documents
+## Traceability
 
 - **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Operation**: [`../policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md)

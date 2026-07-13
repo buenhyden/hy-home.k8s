@@ -77,7 +77,7 @@ updated: 2026-05-21
 - Direct cluster changes are allowed only for human-approved bootstrap or break-glass recovery and must be followed by GitOps state reconciliation.
 - Traefik external artifact changes must be reviewed with the matching k8s ingress and TLS contract.
 
-## Traefik 외부 Artifact 관리
+### Traefik 외부 Artifact 관리
 
 - `traefik/kiali-k3d.yaml` — Kiali Traefik 라우터
 - `traefik/headlamp-k3d.yaml` — Headlamp Traefik 라우터
@@ -97,12 +97,12 @@ updated: 2026-05-21
 - 운영 변경 시 즉시
 - 정기 분기 검토
 
-## AI Agent Policy Section (If Applicable)
+### AI Agent Policy Section
 
 이 정책은 인프라 리소스를 직접 관리하며 AI Agent 모델/프롬프트/평가 정책이 별도 적용되지 않는다.
 단, Agent가 이 정책 범위의 리소스를 조작할 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
 
-## Related Documents
+## Traceability
 
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **ADR-0011**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md)

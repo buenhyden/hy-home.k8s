@@ -3,7 +3,7 @@ title: 'Task: Control Surface and Cloud Example Documentation Normalization'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Task: Control Surface and Cloud Example Documentation Normalization
@@ -19,7 +19,7 @@ approved spec and plan traceable to concrete commits and validation evidence.
 - **Parent Spec**: [../../03.specs/022-control-cloud-doc-normalization/spec.md](../../03.specs/022-control-cloud-doc-normalization/spec.md)
 - **Parent Plan**: [../plans/2026-07-06-control-cloud-doc-normalization.md](../plans/2026-07-06-control-cloud-doc-normalization.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Documentation-only work still needs validation evidence.
 - README files and GitHub-native Markdown must remain frontmatter-free.
@@ -42,20 +42,20 @@ approved spec and plan traceable to concrete commits and validation evidence.
 | CCDN-005 | Normalize Azure example-local SDLC snapshot docs. | doc | Example-Local SDLC Snapshot Contract | PLN-005 | Azure non-README docs now have role-appropriate frontmatter, `Snapshot Boundary`, `Related Documents`, and type-specific required sections; repo-quality now enforces the same route. | platform | Done |
 | CCDN-006 | Close validation and execution evidence. | test/doc | Verification Commands | PLN-006 | Final validation bundle passed: diff check, repo-quality, manifest syntax with optional kube-linter skip, secret scan, and policy fallback. | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `test`
 - `eval`
 - `ops`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `guardrail`
 - `eval`
 - `observability`
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase 1
 
@@ -109,7 +109,7 @@ approved spec and plan traceable to concrete commits and validation evidence.
   - This task record.
   - `docs/00.agent-governance/memory/progress.md`
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/022-control-cloud-doc-normalization/spec.md](../../03.specs/022-control-cloud-doc-normalization/spec.md)
 - **Plan**: [../plans/2026-07-06-control-cloud-doc-normalization.md](../plans/2026-07-06-control-cloud-doc-normalization.md)

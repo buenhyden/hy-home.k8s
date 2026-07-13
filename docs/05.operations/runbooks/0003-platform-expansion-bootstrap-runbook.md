@@ -20,7 +20,7 @@ updated: 2026-06-02
 > Headlamp current runtime은 chart 0.41.0, ingress, TLS route가 repo SSoT이며,
 > 미구현 OIDC 전환 절차는 active runbook 기준으로 사용하지 않는다.
 
-## Purpose
+### Purpose
 
 플랫폼 확장 컴포넌트의 부트스트랩 단계를 재현 가능하게 수행하고, 장애 발생 시 원인별 복구 명령을 제공한다.
 
@@ -257,12 +257,12 @@ curl -sk https://kiali.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
 - **Signals**: ClusterIssuer readiness, Headlamp TLS state, Istiod/Kiali deployment availability, ArgoCD Application health.
 - **Evidence to Capture**: static contract output, relevant Kubernetes events, cert-manager logs, Kiali Prometheus connection logs.
 
-## Agent Operations (If Applicable)
+### Agent Operations
 
 이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
 단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
 
-## Related Documents
+## Traceability
 
 - **Guide**: [`../guides/0003-platform-expansion-bootstrap-guide.md`](../guides/0003-platform-expansion-bootstrap-guide.md)
 - **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)

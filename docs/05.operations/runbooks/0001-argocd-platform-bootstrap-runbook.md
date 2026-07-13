@@ -16,7 +16,7 @@ updated: 2026-05-22
 
 이 런북은 WSL2 기반 GitOps 플랫폼을 즉시 실행 가능한 체크리스트 순서로 부트스트랩하고, 오류 시그니처별 복구 절차를 제공한다.
 
-## Purpose
+### Purpose
 
 클러스터 구성, ArgoCD 설치, ESO/Vault 연동, 외부 endpoint 연결(Valkey `6379`, PostgreSQL `15432/15433`)을 재현 가능하게 수행한다.
 
@@ -153,7 +153,7 @@ argocd app list
 - **Signals**: ArgoCD health/sync, ESO sync status, pod readiness
 - **Evidence to Capture**: 명령 출력, 이벤트 로그, 실패/복구 타임스탬프
 
-## Troubleshooting Matrix
+### Troubleshooting Matrix
 
 | 에러 시그니처                                                                      | 진단 포인트                                  | 즉시 조치                                                      | 재검증                                                                                    |
 | ---------------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
@@ -194,7 +194,7 @@ argocd app list
 
 - [ ] 외부 endpoint mapping/IP 및 ESO auth 설정 재적용 후 재검증
 
-## Agent Operations (If Applicable)
+### Agent Operations
 
 - **Prompt Rollback**: 최근 문서/설정 변경 롤백
 - **Model Fallback**: 검증 실패 시 보수적 절차 우선
@@ -202,7 +202,7 @@ argocd app list
 - **Eval Re-run**: T-001~T-011 검증 재실행
 - **Trace Capture**: task 문서에 증적 추가
 
-## Related Documents
+## Traceability
 
 - **Incident Index**: [`../incidents/README.md`](../incidents/README.md)
 - **Postmortem Index**: [`../incidents/README.md`](../incidents/README.md)

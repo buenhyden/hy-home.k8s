@@ -3,10 +3,12 @@ title: 'Document Contract Registry Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-12
+updated: 2026-07-13
 ---
 
 # Document Contract Registry Implementation Plan
+
+## Overview
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use
 > superpowers:subagent-driven-development (recommended) or
@@ -26,7 +28,7 @@ configuration errors and uncovered or ambiguous routes always fail.
 **Tech Stack:** JSON Schema 2020-12, Python 3.11+, `jsonschema` 4.x, JSON,
 Git, Bash, Markdown, `pre-commit`, and the repository quality gate.
 
-## Global Constraints
+### Global Constraints
 
 - Work only in the isolated modernization worktree and its `codex/` branch.
 - Use baseline SHA `8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d` and require exactly 433 approved baseline Markdown paths.
@@ -42,8 +44,6 @@ Git, Bash, Markdown, `pre-commit`, and the repository quality gate.
 - Use `apply_patch` for content edits, run focused validation before every commit, and do not push or mutate live systems.
 
 ---
-
-## Overview
 
 This plan implements Spec 026 in five independently reviewable units: execution
 lineage, schema and fixtures, the registry loader/classifier, full-corpus route
@@ -75,7 +75,7 @@ leaving human rationale in Markdown.
 - Authored non-README migration and cloud relocation, which belong to Spec 030.
 - CI selector or protected runtime behavior changes.
 
-## File and Interface Map
+### File and Interface Map
 
 | Unit | Files | Responsibility |
 | --- | --- | --- |
@@ -295,7 +295,7 @@ Required rule IDs are `REGISTRY_SCHEMA`, `REGISTRY_PROFILE_ID`,
 | Provider symlinks double-count files | Medium | Use Git tree entries and never recurse through symlink targets. |
 | New dependency is absent in CI | High | Add an explicit `python3 -c` preflight and fail with install-owner guidance. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate:** Each task runs its focused RED/GREEN assertion and changed-file pre-commit checks.
 - **Sandbox / Canary Rollout:** Compatibility mode classifies the real checkout but does not reject known body migration debt.
@@ -780,7 +780,7 @@ Expected: one closure commit and a clean focused diff.
 - [ ] Repository quality and all-files validation pass in compatibility mode.
 - [ ] Reciprocal Spec/Plan/Task links and index states are complete.
 
-## Related Documents
+## Traceability
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
 - **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)

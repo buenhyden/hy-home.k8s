@@ -3,7 +3,7 @@ title: 'Harness Governance V2 Overlay Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-06-05
+updated: 2026-07-13
 ---
 
 # Harness Governance V2 Overlay Implementation Plan
@@ -94,7 +94,7 @@ canonical progress ledger unique.
 | Eval completion is overstated | High | Require explicit deterministic command evidence or human/operator approval |
 | Progress memory drifts into multiple ledgers | Medium | Quality gate fails any tracked non-canonical `progress.md` |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Use deterministic repo-static validators and
   changed-file pre-commit as completion evidence.
@@ -113,7 +113,7 @@ canonical progress ledger unique.
 - [x] Regression gate covers the overlay contract.
 - [x] Required docs, indexes, and canonical progress ledger updated.
 
-## Related Documents
+## Traceability
 
 - Parent Spec: N/A — pre-Spec execution record.
 - **Task**: [../tasks/2026-06-05-harness-governance-v2-overlay.md](../tasks/2026-06-05-harness-governance-v2-overlay.md)

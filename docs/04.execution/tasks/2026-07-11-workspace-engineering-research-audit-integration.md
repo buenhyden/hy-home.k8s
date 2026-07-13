@@ -3,7 +3,7 @@ title: 'Task: Workspace Engineering Research and Implementation Audit Integratio
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Task: Workspace Engineering Research and Implementation Audit Integration
@@ -23,7 +23,7 @@ the audit method, reports, scores, findings, and snapshot boundary.
 - **Current Audit Pack**: [2026-07-11 Workspace Engineering Implementation Audit](../../90.references/audits/2026-07-11-weia/README.md).
 - **Current Research Pack**: [2026-07-07 Workspace Engineering Research](../../90.references/research/2026-07-07-wer/README.md).
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Preserve dated research and audit findings as snapshot evidence.
 - Keep the detailed task, command, and review ledger in the paired Plan.
@@ -48,7 +48,7 @@ the audit method, reports, scores, findings, and snapshot boundary.
 | WEIA-012 | Build the integrated remediation roadmap. | doc | Current audit pack / Roadmap | Plan / Task 12 | `f36ccfe`; 80 source rows to 32 findings | platform | Done |
 | WEIA-013 | Reconcile Current pointers and verify the whole pack. | test | Current research and audit indexes | Plan / Task 13 | `184d13e`; whole-branch reviews and publication gates | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `impl`
 - `test`
@@ -56,7 +56,7 @@ the audit method, reports, scores, findings, and snapshot boundary.
 - `doc`
 - `ops`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `prompt`
 - `tool`
@@ -65,7 +65,7 @@ the audit method, reports, scores, findings, and snapshot boundary.
 - `eval`
 - `observability`
 
-## Publication Commits
+### Publication Commits
 
 The primary completed-task publication commits are:
 
@@ -107,14 +107,14 @@ additional review-fix commits associated with individual tasks.
 - **Logs / Evidence Location**: [Plan Task 13](../plans/2026-07-11-workspace-engineering-research-audit-integration.md#task-13-reconcile-current-pointers-and-verify-the-whole-pack)
   and the [Current pack completion evidence](../../90.references/audits/2026-07-11-weia/README.md#completion-evidence).
 
-## Evidence Boundary
+### Evidence Boundary
 
 This is repository-static documentation evidence only. No live Kubernetes,
 Argo CD, Vault, ESO, NetworkPolicy, provider-runtime, credential,
 secret-value, remote GitHub/CI, deployment, publish, push, merge, paid-job, or
 third-party mutation check or action was performed.
 
-## Related Documents
+## Traceability
 
 - [Plan](../plans/2026-07-11-workspace-engineering-research-audit-integration.md)
 - [Current Audit Pack](../../90.references/audits/2026-07-11-weia/README.md)

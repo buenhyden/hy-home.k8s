@@ -3,7 +3,7 @@ title: 'Workspace Purpose Alignment Audit Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-05-22
+updated: 2026-07-13
 ---
 
 # Workspace Purpose Alignment Audit Plan
@@ -92,7 +92,7 @@ boundaries.
 | Optional local tools are treated as passed when absent | Medium | Report absent tools as limitations and rely on repo-backed gates plus CI |
 | Direct live mutation is normalized by examples | High | Keep direct commands behind human-approved bootstrap or break-glass boundaries |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: repo-static validation commands in this plan must pass.
 - **Sandbox / Canary Rollout**: not applicable; no live runtime rollout is included.
@@ -108,7 +108,7 @@ boundaries.
 - [x] Plan/Task evidence and progress memory were updated.
 - [x] Verification commands passed or skipped optional tools were reported.
 
-## Related Documents
+## Traceability
 
 - Parent Spec: N/A — pre-Spec execution record.
 - **Task**: [../tasks/2026-05-22-workspace-purpose-alignment.md](../tasks/2026-05-22-workspace-purpose-alignment.md)

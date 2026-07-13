@@ -3,7 +3,7 @@ title: 'Task: Workspace Harness Research Pack'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-02
+updated: 2026-07-13
 ---
 
 # Task: Workspace Harness Research Pack
@@ -24,7 +24,7 @@ are out of scope unless separately approved by a human.
 - **Parent Spec**: `../../03.specs/009-workspace-harness-research-pack/spec.md`
 - **Parent Plan**: `../plans/2026-07-02-workspace-harness-research-pack.md`
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Documentation-only work still needs validation evidence.
 - External source claims must be checked before writing current provider status.
@@ -45,20 +45,20 @@ are out of scope unless separately approved by a human.
 | T-005 | Write spec/SDLC/CI/QA/formatting reference | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-005 | Source attribution review; `git diff --check`; `bash scripts/validate-repo-quality-gates.sh .` | Codex | Done |
 | T-006 | Final integration, validation, memory, and handoff | doc | VAL-SPC-006 | PLN-006 | Final validation bundle | Codex | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `eval`
 - `ops`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `memory`
 - `guardrail`
 - `eval`
 - `observability`
 
-## Phase View
+### Phase View
 
 ### Phase 1
 
@@ -89,7 +89,7 @@ are out of scope unless separately approved by a human.
   - This task record.
   - `../../00.agent-governance/memory/progress.md`.
 
-## Task Evidence
+### Task Evidence
 
 | Date | Task ID | Command | Result |
 | --- | --- | --- | --- |
@@ -113,7 +113,7 @@ are out of scope unless separately approved by a human.
 | 2026-07-02 | T-006 | `rg --files \| rg '(^\|/)progress\.md$'` | PASS; returned only `docs/00.agent-governance/memory/progress.md` |
 | 2026-07-02 | T-006 | Final review remediation | PASS; aligned plan/task frontmatter, Stage 04 indexes, plan checkboxes, and completion criteria to `Done` |
 
-## Related Documents
+## Traceability
 
 - **Spec**: `../../03.specs/009-workspace-harness-research-pack/spec.md`
 - **Plan**: `../plans/2026-07-02-workspace-harness-research-pack.md`

@@ -18,7 +18,7 @@ updated: 2026-05-26
 단계별 운영 절차를 제공한다. `examples/sample-app/`은 최소 온보딩 템플릿이고,
 `gitops/workloads/adminer/`는 stable/canary Service와 Istio routing까지 포함한 현재 active reference다.
 
-## Purpose
+### Purpose
 
 신규 GitHub 앱을 `gitops/workloads/`에 추가하고 PR review 이후 ArgoCD reconciliation으로 배포/검증/rollback할 수 있게 한다.
 
@@ -38,7 +38,7 @@ updated: 2026-05-26
 
 ---
 
-## 사전 점검
+### 사전 점검
 
 ```bash
 # apps-generator ApplicationSet 동작 확인
@@ -66,7 +66,7 @@ kubectl exec -n argo-rollouts deploy/argo-rollouts -- \
 
 아래 Procedure 1-5를 순서대로 수행한다. 배포 변경은 feature branch와 PR review를 거쳐 GitOps reconciliation으로 반영한다.
 
-## Procedure 1: GitOps 매니페스트 생성 및 배포
+### Procedure 1: GitOps 매니페스트 생성 및 배포
 
 ### 1-1. 예시 복사 및 플레이스홀더 교체
 
@@ -140,7 +140,7 @@ argocd app sync argocd/apps-generator
 
 Procedure 2의 명령으로 Rollout, Pod, AnalysisRun, Ingress, HTTPS 접근 상태를 확인한다.
 
-## Procedure 2: 배포 상태 검증
+### Procedure 2: 배포 상태 검증
 
 ```bash
 # Rollout 진행 상황 실시간 확인
@@ -173,7 +173,7 @@ curl -sk https://${APP}.127.0.0.1.nip.io | head -5
 
 ---
 
-## Procedure 3: canary 배포 업데이트 (이미지 버전 갱신)
+### Procedure 3: canary 배포 업데이트 (이미지 버전 갱신)
 
 ```bash
 NEW_TAG=v1.1.0
@@ -193,7 +193,7 @@ kubectl argo rollouts get rollout ${APP} -n apps --watch
 
 ---
 
-## Procedure 4: canary 실패 → rollback
+### Procedure 4: canary 실패 → rollback
 
 AnalysisTemplate 실패 또는 수동 abort 시 이전 버전으로 자동 rollback된다.
 
@@ -215,7 +215,7 @@ kubectl argo rollouts get rollout ${APP} -n apps
 
 Procedure 4의 abort/rollback 절차를 우선 사용한다. GitOps manifest 수정이 필요한 경우 이미지 태그 또는 설정을 수정한 뒤 feature branch PR flow로 재배포한다.
 
-## Procedure 5: Vault 시크릿 연동 추가
+### Procedure 5: Vault 시크릿 연동 추가
 
 ```bash
 # 1. Vault에 시크릿 등록
@@ -247,7 +247,7 @@ kubectl get externalsecret -n apps ${APP}-secret
 
 ---
 
-## Troubleshooting
+### Troubleshooting
 
 ### ArgoCD Application이 생성되지 않는 경우
 
@@ -310,7 +310,7 @@ kubectl apply -f gitops/clusters/local/appproject-apps.yaml
 - **Signals**: ArgoCD Application health/sync, Rollout status, AnalysisRun result, Pod readiness, Ingress certificate status
 - **Evidence to Capture**: PR diff, ArgoCD app status, rollout history, relevant events/log snippets, HTTPS verification output
 
-## Agent Operations (If Applicable)
+### Agent Operations
 
 - **Prompt Rollback**: 최근 agent-generated manifest 변경을 PR diff 기준으로 되돌린다.
 - **Model Fallback**: 검증 실패 시 sample-app/adminer 패턴에 맞춘 최소 변경만 유지한다.
@@ -318,7 +318,7 @@ kubectl apply -f gitops/clusters/local/appproject-apps.yaml
 - **Eval Re-run**: GitOps structure, manifest validation, secret handling gate를 재실행한다.
 - **Trace Capture**: 온보딩 task 또는 PR에 검증 명령과 결과를 남긴다.
 
-## Related Documents
+## Traceability
 
 - **Guide**: [`../guides/0008-github-app-gitops-onboarding-guide.md`](../guides/0008-github-app-gitops-onboarding-guide.md)
 - **Operations 정책**: [`../policies/0007-app-gitops-onboarding-policy.md`](../policies/0007-app-gitops-onboarding-policy.md)

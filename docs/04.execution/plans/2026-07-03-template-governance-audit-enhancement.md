@@ -3,7 +3,7 @@ title: 'Template Governance Audit Enhancement Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-13
 ---
 
 # Template Governance Audit Enhancement Implementation Plan
@@ -96,7 +96,7 @@ Current quick inspection shows three concrete improvement candidates:
 | PLN-005 | Harden deterministic validation | `scripts/validate-repo-quality-gates.sh` | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Quality gate fails on stable drift patterns and passes on the current repo |
 | PLN-006 | Apply final verification and completion sync | Task record, progress ledger, README indexes | VAL-SPC-004, VAL-SPC-005, VAL-SPC-006 | Final scan and quality gate evidence are recorded |
 
-## Implementation Tasks
+### Implementation Tasks
 
 ### Task 1: Planning And Task Baseline
 
@@ -541,7 +541,7 @@ Expected: commit succeeds after final validation evidence is recorded.
 | Authored-doc scan finds broad unrelated drift | Medium | Record the finding and ask for scope approval before broad rewrites. |
 | External style guidance conflicts with repo governance | Low | Repo governance wins; external sources remain supporting rationale only. |
 
-## Agent Rollout & Evaluation Gates
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: `git diff --check`, repository quality gates, focused
   `rg` scans, and manual finding-ledger review.
@@ -565,7 +565,7 @@ Expected: commit succeeds after final validation evidence is recorded.
 - [x] Required validation commands pass.
 - [x] Plan, Task, README indexes, and progress ledger are synchronized.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/012-template-governance-audit-enhancement/spec.md](../../03.specs/012-template-governance-audit-enhancement/spec.md)
 - **Tasks**: [../tasks/2026-07-03-template-governance-audit-enhancement.md](../tasks/2026-07-03-template-governance-audit-enhancement.md)

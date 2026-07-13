@@ -3,7 +3,7 @@ title: 'Protected Surface and Supply Chain Hardening Implementation Plan'
 type: sdlc/plan
 status: active
 owner: platform
-updated: 2026-07-12
+updated: 2026-07-13
 ---
 
 # Protected Surface and Supply Chain Hardening Implementation Plan
@@ -86,7 +86,7 @@ Vault, Kubernetes, ESO, Argo CD, or GitHub settings were inspected.
 - Changing the path filters, selector outputs, or job-routing semantics owned
   by Spec 031.
 
-## Global Constraints
+### Global Constraints
 
 - Work only in `.worktrees/workspace-document-assurance-modernization` on
   branch `codex/workspace-document-assurance-modernization`.
@@ -128,7 +128,7 @@ Vault, Kubernetes, ESO, Argo CD, or GitHub settings were inspected.
 
 ---
 
-## File and Interface Map
+### File and Interface Map
 
 | Unit | Files | Responsibility |
 | --- | --- | --- |
@@ -173,7 +173,7 @@ Vault, Kubernetes, ESO, Argo CD, or GitHub settings were inspected.
 | ESO audience does not match the external Vault role | Desired state would fail live authentication | Document `bound_audiences=vault` as an operator prerequisite and keep apply/live verification DEFER. |
 | ClusterSecretStore remains broader than a namespaced store | Cross-namespace identity has larger scope | Retain one exact SA/namespace/audience, narrow TokenReview subject and HCL paths, and require a separate migration decision before changing store kind. |
 
-## Agent Rollout & Evaluation Gates
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Every production validator must call the same
   validation function used by its fixture self-test.
@@ -1118,7 +1118,7 @@ git commit -m "docs(security): close protected surface hardening evidence"
   remote/live lanes remain DEFER.
 - Independent review and rollback commit are recorded without secret values.
 
-## Related Documents
+## Traceability
 
 - [Protected Surface and Supply Chain Hardening Spec](../../03.specs/032-protected-surface-supply-chain-hardening/spec.md)
 - [Affected Surface and Agent QA Spec](../../03.specs/031-affected-surface-agent-qa/spec.md)

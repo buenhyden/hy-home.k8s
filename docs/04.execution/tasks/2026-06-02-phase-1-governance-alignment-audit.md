@@ -3,7 +3,7 @@ title: 'Task: Phase 1 Governance Alignment Audit'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Task: Phase 1 Governance Alignment Audit
@@ -22,7 +22,7 @@ implementation, then records the gap ledger.
 - **Governance Decision**: [ADR-0013: Stage 00 Canonical Adapter Model](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 - **Current Request**: Inline "Phase 1 Governance Alignment Audit Plan" from the 2026-06-02 user request.
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Preserve ADR-0013 as the accepted architecture unless concrete drift proves a redesign is needed.
 - Route audit evidence through the canonical docs stage tree; do not create `docs/superpowers/**`.
@@ -40,19 +40,19 @@ implementation, then records the gap ledger.
 | T-004 | QA/CI/CD and GitOps audit | guardrail | N/A | Audit Work 4 | CI, scripts, GitOps manifests, operations docs, and secret/deployment boundaries inspected through targeted scans and final static checks | platform | Done |
 | T-005 | Decision output and verification evidence | eval | N/A | Audit Work 5 | Gap ledger, recommended actions, skipped live checks, and static verification summary recorded here and in progress memory | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `guardrail`
 - `eval`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `memory`
 - `guardrail`
 - `eval`
 
-## Phase View
+### Phase View
 
 ### Phase 1
 
@@ -62,7 +62,7 @@ implementation, then records the gap ledger.
 - [x] T-004 QA/CI/CD and GitOps audit
 - [x] T-005 Decision output and verification evidence
 
-## Coverage Ledger
+### Coverage Ledger
 
 | Area | Status | Evidence | Decision |
 | --- | --- | --- | --- |
@@ -78,7 +78,7 @@ implementation, then records the gap ledger.
 | GitOps and live mutation boundary | aligned | `gitops/**` remains desired state; `infrastructure/bootstrap-local.sh` contains documented bootstrap-only `kubectl apply` exceptions; PR template and governance docs prohibit normal direct cluster mutation. | No-op. Live checks remain skipped for this static audit. |
 | 2026-05-30 Antigravity execution status | drift remediated | The Antigravity plan/task frontmatter and README rows were `active` although their own completion/task rows were done and later Stage 00 work owns the current adapter model. | In-place doc correction: mark plan/task and README rows `Done`; no redesign. |
 
-## Gap Ledger
+### Gap Ledger
 
 | Gap ID | Finding | Impact | Action |
 | --- | --- | --- | --- |
@@ -86,7 +86,7 @@ implementation, then records the gap ledger.
 | GAP-P1-002 | Historical `docs/00.agent-governance/memory/progress.md` entries still mention older provider-local hook paths. | Low: these are dated historical evidence, not active contract surfaces. | No-op. Do not rewrite historical progress ledger entries; current contract points to `docs/00.agent-governance/hooks/*.sh`. |
 | GAP-P1-003 | Static validation proves repository structure and desired-state contracts, but does not prove live k3d, ArgoCD, Vault, ESO, deployment, or external service health. | Medium if mistaken for runtime readiness. | Record skipped live checks and require explicit human approval for live validation. |
 
-## Recommended Actions
+### Recommended Actions
 
 | Recommendation | Type | Owner | Priority | Status |
 | --- | --- | --- | --- | --- |
@@ -119,7 +119,7 @@ implementation, then records the gap ledger.
   - k3d cluster health, Kubernetes API, ArgoCD reconciliation, Vault, ESO, deployment, and external service checks were skipped because the approved audit scope is repo-static.
   - Optional `kube-linter` was skipped because it is not installed in this local environment.
 
-## Related Documents
+## Traceability
 
 - [Phase 1 Decision Follow-up Plan](../plans/2026-06-02-phase-1-decision-follow-up.md)
 - [Phase 2 Governance Alignment Plan](../plans/2026-06-02-phase-2-governance-alignment.md)

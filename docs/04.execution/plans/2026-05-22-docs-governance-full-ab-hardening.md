@@ -3,7 +3,7 @@ title: 'Docs Governance Full A+B Hardening Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-05-22
+updated: 2026-07-13
 ---
 
 # Docs Governance Full A+B Hardening Plan
@@ -91,7 +91,7 @@ the shared enforcement boundary for Hookify local rules in docs and validation.
 | Validator becomes stricter than current docs | Medium | Apply README/template fixes before tightening the gate |
 | Live cluster status is confused with repo-static readiness | Low | Keep live k3d/ArgoCD checks out of completion criteria and report the boundary |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: repo-static verification commands in this plan must pass.
 - **Sandbox / Canary Rollout**: not applicable; no runtime rollout is included.
@@ -109,7 +109,7 @@ the shared enforcement boundary for Hookify local rules in docs and validation.
 - [x] Repo-static validation commands pass or documented optional-tool limitations are reported.
 - [x] `docs/00.agent-governance/memory/progress.md` records evidence and handoff.
 
-## Related Documents
+## Traceability
 
 - Parent Spec: N/A — pre-Spec execution record.
 - **Task**: [../tasks/2026-05-22-docs-governance-full-ab-hardening.md](../tasks/2026-05-22-docs-governance-full-ab-hardening.md)

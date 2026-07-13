@@ -3,10 +3,12 @@ title: 'Semantic Document Validation Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-12
+updated: 2026-07-13
 ---
 
 # Semantic Document Validation Implementation Plan
+
+## Overview
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use
 > superpowers:subagent-driven-development (recommended) or
@@ -25,7 +27,7 @@ orchestrator and uses compatibility mode until Spec 030 performs strict cutover.
 **Tech Stack:** Python 3.11 standard library, PyYAML, JSON Schema 2020-12,
 CommonMark-compatible fence parsing, Bash, Markdown, Git, and pre-commit.
 
-## Global Constraints
+### Global Constraints
 
 - Work only in the isolated worktree for branch `codex/workspace-document-assurance-modernization`.
 - Consume `docs/99.templates/support/document-profiles.json`; do not create a second route, key, lifecycle, or heading owner.
@@ -44,8 +46,6 @@ CommonMark-compatible fence parsing, Bash, Markdown, Git, and pre-commit.
   a separate logical unit and appends its own progress entry.
 
 ---
-
-## Overview
 
 This Plan implements Spec 029 through one execution-chain Task, two focused
 validator Tasks, and one integration Task. It preserves the current gate until
@@ -74,7 +74,7 @@ this Plan creates the consumer layer needed by the authored migration.
 - Changing README forms, template forms, provider adapters, CI job selection,
   GitOps desired state, credentials, or live services.
 
-## File and Interface Map
+### File and Interface Map
 
 | Unit | Files | Responsibility |
 | --- | --- | --- |
@@ -418,7 +418,7 @@ matcher.
 | Gate refactor removes unique checks | High | Map each deleted block to a rule ID and retain operations/domain checks without a registry representation. |
 | Fixture runner tests different logic | High | Self-tests call the same public validation functions as repository mode. |
 
-## Agent Rollout & Evaluation Gates
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate:** Focused fixture self-test and repository compatibility run pass for each validator.
 - **Sandbox / Canary Rollout:** Compatibility mode runs beside the current quality gate before hardcoded checks are removed.
@@ -1366,7 +1366,7 @@ logical unit with its own progress entry.
 - [x] The quality gate consumes canonical validators and no longer owns duplicated general document rules.
 - [x] Spec, Plan, Task, indexes, progress evidence, and rollback commits are reciprocal and complete.
 
-## Related Documents
+## Traceability
 
 - [Program PRD](../../01.requirements/005-workspace-document-assurance-modernization.md)
 - [Operating Model ARD](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)

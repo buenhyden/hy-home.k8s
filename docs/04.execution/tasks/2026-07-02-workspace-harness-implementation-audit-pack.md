@@ -3,7 +3,7 @@ title: 'Task: Workspace Harness Implementation Audit Pack'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-13
 ---
 
 # Task: Workspace Harness Implementation Audit Pack
@@ -24,7 +24,7 @@ secret checks are out of scope unless separately approved by a human.
 - **Parent Spec**: `../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md`
 - **Parent Plan**: `../plans/2026-07-02-workspace-harness-implementation-audit-pack.md`
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Documentation-only work still needs validation evidence.
 - Audit reports must use the research pack as benchmark material and repo files
@@ -47,20 +47,20 @@ secret checks are out of scope unless separately approved by a human.
 | T-005 | Write SDLC delivery practices implementation audit | doc | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | PLN-005 | Delivery-practice matrix review; repo quality gate | Codex | Done |
 | T-006 | Final integration, validation, memory, and handoff | doc | VAL-SPC-006 | PLN-006 | Final validation bundle | Codex | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `eval`
 - `ops`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `memory`
 - `guardrail`
 - `eval`
 - `observability`
 
-## Phase View
+### Phase View
 
 ### Phase 1
 
@@ -93,7 +93,7 @@ secret checks are out of scope unless separately approved by a human.
   - This task record.
   - `../../00.agent-governance/memory/progress.md`.
 
-## Task Evidence
+### Task Evidence
 
 | Date | Task ID | Command | Result |
 | --- | --- | --- | --- |
@@ -133,7 +133,7 @@ secret checks are out of scope unless separately approved by a human.
 | 2026-07-03 | T-006 | `rg --files \| rg '(^\|/)progress\.md$'` | PASS; returned only `docs/00.agent-governance/memory/progress.md` |
 | 2026-07-03 | T-006 | Targeted audit-pack stale-marker scans | PASS; no audit-pack frontmatter remained `draft`, no audit-pack checklist remained unchecked, and no audit-pack README row remained `Draft` |
 
-## Related Documents
+## Traceability
 
 - **Spec**: `../../03.specs/010-workspace-harness-implementation-audit-pack/spec.md`
 - **Plan**: `../plans/2026-07-02-workspace-harness-implementation-audit-pack.md`

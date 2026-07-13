@@ -3,7 +3,7 @@ title: 'scripts Inventory Remediation Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-05-21
+updated: 2026-07-13
 ---
 
 # scripts Inventory Remediation Plan
@@ -31,7 +31,7 @@ existence. The optional arguments for `validate-k8s-manifests.sh` and
 `check-secret-handling.sh` are fixed to the repo root, not arbitrary subpaths.
 An invalid root or zero inspected targets must fail to prevent false negatives.
 
-## 2026-05-17 Evidence Refresh
+### 2026-05-17 Evidence Refresh
 
 As of 2026-05-17, `scripts/README.md` owns the inventory, and `scripts/`
 contains five `*.sh` scripts. The phrase "four scripts" in the 2026-05-09
@@ -114,7 +114,7 @@ Tier C-only, unused, or one-off deletion candidates.
 | Documentation-only change skips validation | Medium | Run the repo-backed validation bundle and record limitations |
 | Subpath-like argument produces an empty successful scan | Medium | Treat the optional argument as repo root, validate required directories, and fail on zero matched YAML files |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: not applicable; no prompt/model behavior is changed.
 - **Sandbox / Canary Rollout**: not applicable; no runtime rollout or manifest change is planned.
@@ -130,7 +130,7 @@ Tier C-only, unused, or one-off deletion candidates.
 - [x] `scripts/README.md` states the current script inventory and `Keep` decisions
 - [x] Manifest and secret scan scripts reject non-root subpath input clearly
 
-## Related Documents
+## Traceability
 
 - Parent Spec: N/A — pre-Spec execution record.
 - **Task**: [`../tasks/2026-05-09-scripts-inventory-remediation.md`](../tasks/2026-05-09-scripts-inventory-remediation.md)

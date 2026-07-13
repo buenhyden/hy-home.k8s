@@ -3,7 +3,7 @@ title: 'Task: Workspace Document Governance Hardening'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-13
 ---
 
 # Task: Workspace Document Governance Hardening
@@ -20,7 +20,7 @@ and Plan.
 - **Parent Spec**: [Workspace Document Governance Hardening Spec](../../03.specs/013-workspace-document-governance-hardening/spec.md)
 - **Parent Plan**: [Workspace Document Governance Hardening Plan](../plans/2026-07-03-workspace-document-governance-hardening.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Work audit-first and keep the current passing repository quality gate as the
   baseline.
@@ -43,7 +43,7 @@ and Plan.
 | T-004 | Apply document governance profiles to workspace README and authored documents. | doc | Spec / Guardrails | Task 4 | README/frontmatter/residue scans and validator pass | platform | Done |
 | T-005 | Finalize deterministic validator checks, CI/QA evidence, and final review. | test | Spec / Success Criteria | Task 5 | Full local validation passed; final reviewer handoff ready | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `test`
@@ -51,7 +51,7 @@ and Plan.
 - `ops`
 - `guardrail`
 
-## Phase View
+### Phase View
 
 ### Phase 1: Audit Inventory
 
@@ -95,7 +95,7 @@ and Plan.
   - `docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md`
     if durable audit findings justify a separate Stage 90 report.
 
-## Current Evidence
+### Current Evidence
 
 - Stage 03 Spec approved by user and committed in
   `ce5f6e2 docs(spec): Define workspace document governance hardening`.
@@ -572,7 +572,7 @@ and Plan.
   Kubernetes, Argo CD, Vault, cloud, publishing, provider-runtime, push, merge,
   or secret-value action was performed.
 
-## Related Documents
+## Traceability
 
 - [Spec](../../03.specs/013-workspace-document-governance-hardening/spec.md)
 - [Plan](../plans/2026-07-03-workspace-document-governance-hardening.md)

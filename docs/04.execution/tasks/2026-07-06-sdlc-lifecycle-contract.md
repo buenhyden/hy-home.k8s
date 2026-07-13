@@ -3,7 +3,7 @@ title: 'Task: SDLC Lifecycle Contract'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Task: SDLC Lifecycle Contract
@@ -20,7 +20,7 @@ repository-static validation evidence.
 - **Parent Spec**: [../../03.specs/021-sdlc-lifecycle-contract/spec.md](../../03.specs/021-sdlc-lifecycle-contract/spec.md)
 - **Parent Plan**: [../plans/2026-07-06-sdlc-lifecycle-contract.md](../plans/2026-07-06-sdlc-lifecycle-contract.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Documentation-only work still needs validation evidence.
 - Contract bodies stay in Stage 00 and Stage 99 owners; README files route and
@@ -40,13 +40,13 @@ repository-static validation evidence.
 | T-003 | Record active route evidence, `_workspace` boundary evidence, and this Stage 04 task record. | doc | Numbering Contract; Workspace Staging Contract | PLN-003 | Active route scans confirmed numeric Stage 01 PRDs and numeric Stage 03 spec folders; `_workspace/README.md` boundary wording; task README index update; `bash scripts/validate-repo-quality-gates.sh .`. | platform | Done |
 | T-004 | Add remaining deterministic lifecycle route gates and close final validation evidence. | test/doc | Core Design; Acceptance Criteria | PLN-004 | Validator now rejects date-based active PRDs, nonnumeric active PRDs, nonnumeric active Spec folders, invalid archive tombstone metadata, and Stage 04 README index status/updated drift; final `git diff --check`, shell syntax check, full repository quality gate, and active route scans passed. | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 This task uses `doc` for contract and evidence updates and `test` for
 repository-static validation gate changes. It does not include runtime `impl`
 or `ops` work.
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase 1
 
@@ -115,7 +115,7 @@ Stage 03 active Spec folders:
 021-sdlc-lifecycle-contract
 ```
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/021-sdlc-lifecycle-contract/spec.md](../../03.specs/021-sdlc-lifecycle-contract/spec.md)
 - **Plan**: [../plans/2026-07-06-sdlc-lifecycle-contract.md](../plans/2026-07-06-sdlc-lifecycle-contract.md)

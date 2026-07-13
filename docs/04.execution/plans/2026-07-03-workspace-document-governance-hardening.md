@@ -3,7 +3,7 @@ title: 'Workspace Document Governance Hardening Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-13
 ---
 
 # Workspace Document Governance Hardening Implementation Plan
@@ -46,7 +46,7 @@ repo-static CI/QA gates. The new work combines three requested scopes:
 The current `bash scripts/validate-repo-quality-gates.sh .` baseline passes.
 Implementation must preserve that baseline after every logical commit.
 
-## File Structure
+### File Structure
 
 | Path | Responsibility in this plan |
 | --- | --- |
@@ -105,7 +105,7 @@ Implementation must preserve that baseline after every logical commit.
 | PLN-004 | Workspace document application | README/authored docs under requested workspace surfaces | VAL-WDGH-004, VAL-WDGH-005, VAL-WDGH-006 | Topic-specific fixes remove duplicated contract prose, legacy residue, and metadata drift without breaking gates. |
 | PLN-005 | Validator and CI/QA evidence finalization | `scripts/validate-repo-quality-gates.sh`, `.github/ABOUT.md`, operation guide, Task/progress | VAL-WDGH-006, VAL-WDGH-007, VAL-WDGH-008 | Local gates pass and final review finds no blocking governance contradiction. |
 
-## Task Execution Details
+### Task Execution Details
 
 > [!NOTE]
 > The unchecked items below preserve the approved historical execution
@@ -202,7 +202,7 @@ title: 'Reference: Workspace Document Governance Hardening Audit'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-13
 ---
 
 # Reference: Workspace Document Governance Hardening Audit
@@ -243,7 +243,7 @@ and repository validators.
 - Repository scans from tracked files.
 - Official source references listed in the parent Spec.
 
-## Related Documents
+## Traceability
 
 - [Parent Spec](../../03.specs/013-workspace-document-governance-hardening/spec.md)
 - [Parent Plan](../../04.execution/plans/2026-07-03-workspace-document-governance-hardening.md)
@@ -759,7 +759,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
 | README files become contract dumping grounds | Medium | Route reusable rules to support or Stage 00 docs and keep README as entrypoint inventory. |
 | External source claims drift over time | Medium | Prefer official sources and record freshness boundaries in reference or task evidence. |
 
-## Agent Rollout & Evaluation Gates
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Repository-static validation commands in the
   Verification Plan.
@@ -786,7 +786,7 @@ git commit -m "docs(validation): Finalize workspace governance hardening"
 - [x] Final `bash scripts/validate-repo-quality-gates.sh .` passes.
 - [x] Final sub-agent review handoff is ready for parent-agent dispatch.
 
-## Related Documents
+## Traceability
 
 - [Parent Spec](../../03.specs/013-workspace-document-governance-hardening/spec.md)
 - [Task Evidence](../tasks/2026-07-03-workspace-document-governance-hardening.md)

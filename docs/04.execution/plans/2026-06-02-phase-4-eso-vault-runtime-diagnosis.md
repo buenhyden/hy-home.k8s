@@ -3,7 +3,7 @@ title: 'Phase 4 ESO Vault Runtime Diagnosis Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Phase 4 ESO Vault Runtime Diagnosis Plan
@@ -55,7 +55,7 @@ Additional read-only diagnosis confirmed the following.
   - Unseal key, root token, Vault token, secret value, private RTK database, credential, or shell history inspection.
   - `kubectl apply`, `kubectl patch`, `argocd app sync`, `vault write`, `vault kv put`, deployment, publish, or destructive Git action.
 
-## Requirements & Acceptance Criteria
+### Requirements & Acceptance Criteria
 
 | Requirement | Acceptance Criteria |
 | --- | --- |
@@ -97,7 +97,7 @@ Additional read-only diagnosis confirmed the following.
 | Runtime failure is hidden by static validation pass | High | Record repo-static and live readiness evidence separately. |
 | Runbook update introduces unsafe command examples | Medium | Mark unseal as operator-bound and avoid inline credentials or secret values. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Diff hygiene, LLM Wiki freshness, repository quality gate, and targeted Phase 4 index scans.
 - **Sandbox / Canary Rollout**: Read-only live metadata/log probes only.
@@ -114,7 +114,7 @@ Additional read-only diagnosis confirmed the following.
 - [x] Static verification commands pass or limitations are recorded.
 - [x] No secret value, unseal key, token, live mutation, or unauthorized protected-surface diff is introduced.
 
-## Rollback
+### Rollback
 
 - Remove Phase 4 Plan/Task files.
 - Remove Phase 4 rows from Plans/Tasks README indexes.
@@ -122,7 +122,7 @@ Additional read-only diagnosis confirmed the following.
 - Revert the sealed Vault additions in `0002-argocd-eso-vault-recovery-runbook.md` and its README date/description row.
 - Remove the Phase 4 progress ledger entry.
 
-## Related Documents
+## Traceability
 
 - **Phase 3 Plan**: [./2026-06-02-phase-3-protected-surface-hardening.md](./2026-06-02-phase-3-protected-surface-hardening.md)
 - **Phase 3 Task**: [../tasks/2026-06-02-phase-3-protected-surface-hardening.md](../tasks/2026-06-02-phase-3-protected-surface-hardening.md)

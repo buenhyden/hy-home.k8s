@@ -3,7 +3,7 @@ title: 'Task: Argo Rollouts Progressive Delivery Backfill'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-05-22
+updated: 2026-07-13
 ---
 
 # Task: Argo Rollouts Progressive Delivery Backfill
@@ -19,7 +19,7 @@ traceability hardening; live cluster changes are out of scope.
 - **Parent Spec**: [`../../03.specs/004-argo-rollouts-progressive-delivery/spec.md`](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md)
 - **Parent Plan**: [`../plans/2026-05-18-argo-rollouts-progressive-delivery.md`](../plans/2026-05-18-argo-rollouts-progressive-delivery.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Write failing tests first for core behavior.
 - Every task must define evidence.
@@ -36,7 +36,7 @@ traceability hardening; live cluster changes are out of scope.
 | ROL-T-004 | Update upstream/downstream links | doc | Related Documents | PLN-004 | stale gap grep returns no matches | platform | Done |
 | ROL-T-005 | Run static validation gates | test | Verification | PLN-005 | validation commands PASS | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `impl`
 - `test`
@@ -44,7 +44,7 @@ traceability hardening; live cluster changes are out of scope.
 - `doc`
 - `ops`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `prompt`
 - `tool`
@@ -67,7 +67,7 @@ traceability hardening; live cluster changes are out of scope.
   - Conversation validation output and git diff for this backfill.
   - 2026-05-22 follow-up: `verify-contracts-static.sh` now explicitly validates the `platform-rollouts` Application, `argo-rollouts` namespace, AppProject permissions, dashboard TLS host/secret, chart notifications disabled boundary, and metrics NodePort contract.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [`../../03.specs/004-argo-rollouts-progressive-delivery/spec.md`](../../03.specs/004-argo-rollouts-progressive-delivery/spec.md)
 - **Plan**: [`../plans/2026-05-18-argo-rollouts-progressive-delivery.md`](../plans/2026-05-18-argo-rollouts-progressive-delivery.md)

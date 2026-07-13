@@ -3,7 +3,7 @@ title: 'Workspace Contract Governance Normalization Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Workspace Contract Governance Normalization Implementation Plan
@@ -110,7 +110,7 @@ Current local evidence before implementation:
     provider runtime changes, credentials, secret values, paid jobs,
     publishing, merge, push, pull request creation, or third-party mutation.
 
-## File Structure
+### File Structure
 
 | Path | Responsibility |
 | --- | --- |
@@ -146,7 +146,7 @@ Current local evidence before implementation:
 | WCGN-004 | Audit and remediate CI/CD, QA, formatting, linting, syntax, automation, workflow, and security drift | `.github/**`, scripts, tests, operations guide, active control surfaces | VAL-SPC-020-006 | CI/QA descriptions match current workflows and local validators or are recorded as deferred gaps |
 | WCGN-005 | Add validator coverage, close evidence, and record memory | Validator, task evidence, task README, progress memory | VAL-SPC-020-008, VAL-SPC-020-009, VAL-SPC-020-010 | `git diff --check` and `bash scripts/validate-repo-quality-gates.sh .` pass |
 
-## Detailed Tasks
+### Detailed Tasks
 
 > [!NOTE]
 > The unchecked items below preserve the approved historical execution
@@ -199,7 +199,7 @@ title: 'Task: Workspace Contract Governance Normalization'
 type: sdlc/task
 status: draft
 owner: platform
-updated: 2026-07-05
+updated: 2026-07-13
 ---
 ```
 
@@ -228,7 +228,7 @@ Use these top-level sections in order:
 
 ## Deferrals
 
-## Related Documents
+## Traceability
 ```
 
 Populate the `## Task Table` with rows for WCGN-001 through WCGN-005. Set
@@ -338,7 +338,7 @@ Create a frontmatter-free README with the required headings:
 
 ## Link Basis
 
-## Related Documents
+## Traceability
 ```
 
 The body must state these contract facts:
@@ -758,7 +758,7 @@ Expected: staged diff has no whitespace errors and the commit succeeds.
 | Validator change becomes too large | Medium | Add only deterministic `_workspace` checks near existing tracked-file checks; keep unrelated validator refactors out of scope. |
 | External/live validation is mistaken for repo-static validation | High | Keep live runtime, provider, GitHub remote, credential, and secret-value actions out of scope and record this in task evidence. |
 
-## Agent Rollout & Evaluation Gates
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: `git diff --check`, focused `rg` scans, `git ls-files
   _workspace`, `git check-ignore -v _workspace/probe.log`, and
@@ -794,7 +794,7 @@ Expected: staged diff has no whitespace errors and the commit succeeds.
 - [ ] `git diff --check` passes.
 - [ ] `bash scripts/validate-repo-quality-gates.sh .` passes.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/020-workspace-contract-governance-normalization/spec.md](../../03.specs/020-workspace-contract-governance-normalization/spec.md)
 - **Task**: [../tasks/2026-07-05-workspace-contract-governance-normalization.md](../tasks/2026-07-05-workspace-contract-governance-normalization.md)

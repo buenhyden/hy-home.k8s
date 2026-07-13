@@ -3,7 +3,7 @@ title: 'Task: Workspace Skill Expansion (P0-16)'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-05-28
+updated: 2026-07-13
 ---
 
 # Task: Workspace Skill Expansion (P0-16)
@@ -19,7 +19,7 @@ workspace-specific AI Agent skills for P0-16. It tracks tasks derived from
 - **Parent Plan**: `../plans/2026-05-28-workspace-skill-expansion.md`
 - **Parent Spec**: `../../03.specs/006-workspace-harness-gap-analysis/spec.md`
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Every task must define evidence.
 - Documentation-only work still needs validation evidence.
@@ -40,7 +40,7 @@ workspace-specific AI Agent skills for P0-16. It tracks tasks derived from
 | T-010   | Create this task artifact                                   | doc  | Phase 2             | `ls docs/04.execution/tasks/2026-05-28-workspace-skill-expansion.md`           | platform | Done   |
 | T-011   | Update progress.md                                          | doc  | Phase 2             | Entry exists in progress.md                                                    | platform | Done   |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `impl`
@@ -60,7 +60,7 @@ workspace-specific AI Agent skills for P0-16. It tracks tasks derived from
 
 - **Logs / Evidence Location**: `docs/00.agent-governance/memory/progress.md`
 
-## Related Documents
+## Traceability
 
 - **Plan**: `../plans/2026-05-28-workspace-skill-expansion.md`
 - **Spec**: `../../03.specs/006-workspace-harness-gap-analysis/spec.md`

@@ -3,7 +3,7 @@ title: 'Agent Governance Contract Normalization Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-13
 ---
 
 # Agent Governance Contract Normalization Implementation Plan
@@ -99,7 +99,7 @@ frontmatter-free, root shims thin, and validation evidence explicit.
 | PLN-004 | Align GitHub, QA, CI/CD, and protected-surface enforcement | `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/SECURITY.md`, `.github/workflows/ci.yml`, `docs/00.agent-governance/rules/quality-standards.md`, `docs/00.agent-governance/rules/approval-boundaries.md`, `scripts/validate-repo-quality-gates.sh` | VAL-AGC-004, VAL-AGC-005 | GitHub Markdown remains frontmatter-free; workflow YAML parses; gate/harness validation passes |
 | PLN-005 | Final review, evidence closure, and branch-readiness handoff | `docs/04.execution/plans/2026-07-04-agent-governance-contract-normalization.md`, `docs/04.execution/tasks/2026-07-04-agent-governance-contract-normalization.md`, `docs/04.execution/plans/README.md`, `docs/04.execution/tasks/README.md`, `docs/00.agent-governance/memory/progress.md` | VAL-AGC-005, VAL-AGC-006 | Full validation bundle passes; final reviewer finds no blocking issue |
 
-## Detailed Tasks
+### Detailed Tasks
 
 > [!NOTE]
 > The unchecked items below preserve the approved historical execution
@@ -848,7 +848,7 @@ plan, task evidence, governance, adapters, CI/QA, and final validation.
 | Historical progress entries create noisy scans | Low | Classify `docs/00.agent-governance/memory/progress.md` as historical evidence in scan results |
 | GitHub Markdown receives frontmatter by mistake | Medium | Keep `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` frontmatter-free and validate with the existing gate |
 
-## Agent Rollout & Evaluation Gates
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Repository static gates in this plan are mandatory
   before handoff.
@@ -880,7 +880,7 @@ plan, task evidence, governance, adapters, CI/QA, and final validation.
 - [x] Progress ledger updated
 - [x] Logical commits created for each task unit
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/015-agent-governance-contract-normalization/spec.md](../../03.specs/015-agent-governance-contract-normalization/spec.md)
 - **Task**: [../tasks/2026-07-04-agent-governance-contract-normalization.md](../tasks/2026-07-04-agent-governance-contract-normalization.md)

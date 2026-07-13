@@ -3,7 +3,7 @@ title: 'Task: Antigravity Governance'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Task: Antigravity Governance
@@ -19,7 +19,7 @@ Governance remediation. It records tasks derived from the Spec and Plan.
 
 - **Parent Plan**: `[../plans/2026-05-30-antigravity-governance.md]`
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Write failing tests first for core behavior.
 - Every task must define evidence.
@@ -42,10 +42,10 @@ Governance remediation. It records tasks derived from the Spec and Plan.
   00 canonical adapter workstream; no remaining Antigravity-specific execution
   scope is carried here.
 
-## Related Documents
+## Traceability
 
 - **Plan**: `[../plans/2026-05-30-antigravity-governance.md]`
 
-## Suggested Types
+### Suggested Types
 
 - type: feature, bugfix, refactor

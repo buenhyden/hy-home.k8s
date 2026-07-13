@@ -3,7 +3,7 @@ title: 'Task: Harness Governance V2 Overlay'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-06-05
+updated: 2026-07-13
 ---
 
 # Task: Harness Governance V2 Overlay
@@ -20,7 +20,7 @@ single-source rules on top of the Stage 00 four-element harness contract.
 - **Parent Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Parent Plan**: [../plans/2026-06-05-harness-governance-v2-overlay.md](../plans/2026-06-05-harness-governance-v2-overlay.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Keep `docs/00.agent-governance` as the common AI Agent governance SSOT.
 - Keep `.claude/**` and `.codex/**` as provider adapters derived from Stage 00.
@@ -33,7 +33,7 @@ single-source rules on top of the Stage 00 four-element harness contract.
 - Do not probe or mutate live k3d, ArgoCD, Vault, ESO, Kubernetes resources,
   secret values, CI topology, or model policy.
 
-## Named Skill Application Boundary
+### Named Skill Application Boundary
 
 | Named Skill | Path Evidence | Application in This Task |
 | ----------- | ------------- | ------------------------ |
@@ -63,7 +63,7 @@ single-source rules on top of the Stage 00 four-element harness contract.
 | V2-T-006 | Update Plan/Task indexes and canonical progress ledger | memory | Documentation evidence | V2-PLN-006 | README rows and `memory/progress.md` entry | platform | Done |
 | V2-T-007 | Run deterministic verification | eval | Verification | Verification Plan | Verification Summary | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `test`
@@ -72,7 +72,7 @@ single-source rules on top of the Stage 00 four-element harness contract.
 - `prompt`
 - `memory`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `prompt`
 - `tool`
@@ -81,7 +81,7 @@ single-source rules on top of the Stage 00 four-element harness contract.
 - `eval`
 - `observability`
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase 1 - Workspace Review
 
@@ -124,7 +124,7 @@ single-source rules on top of the Stage 00 four-element harness contract.
 - **Logs / Evidence Location**:
   - This task, paired Plan, canonical progress ledger, and final command output.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Plan**: [../plans/2026-06-05-harness-governance-v2-overlay.md](../plans/2026-06-05-harness-governance-v2-overlay.md)

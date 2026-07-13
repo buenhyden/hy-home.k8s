@@ -8,6 +8,65 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - ADM-004 Stage 04–05 authored shape normalization
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, validation, qa
+- **Status**: complete
+- **Tags**: #adm-004 #execution #operations #shape-normalization
+
+#### Progress
+
+- Normalized the canonical H2 boundaries of the exact 120-path Stage 04–05
+  manifest: forty-nine Plans, forty-seven Tasks, eight Guides, seven Policies,
+  and nine Runbooks.
+- Applied 24 atomic five-path document/ledger/fixture/cap checkpoints; every
+  exact batch returned zero compatibility diagnostics and all 120 durable
+  ledger rows finished as `shape-normalized`.
+- Removed exactly the 120 consumed fixture records and refreshed the complete
+  fixture digest, aggregate after-projection, and affected-path/rule/cap
+  mutation proofs against the final wave state.
+
+#### Memory
+
+- The frozen allowed manifest identity is 120 paths with SHA-256
+  `ac9ca4985d0f8945ae342294bcb059fb00d5f343c5167d3c71378e3b0e6c2a8e`;
+  the corrected debt-removal manifest SHA-256 is
+  `947e7a5e37ace8e0da7099fad2a7891d371308a52ec214d52b734419988fd565`.
+- The complete fixture semantic SHA-256 is
+  `e95542b4fc35b19fe4ab408088561110b968a57234345029193d3f45766102b1`.
+- The zero-valued duplicate cap depends on the bounded self-test projection
+  reviewed in commit `851007d`; finite-debt contraction must retain that
+  projection while any zero cap remains.
+
+#### Evidence
+
+- Remaining compatibility debt is exactly 112 affected paths, 626 diagnostic
+  occurrences, and 602 token obligations. Detailed caps are required
+  `42/200/200`, residue `52/56/56`, delimiter `24/24/0`, unsupported
+  `90/346/346` with 228 distinct tokens, and duplicate `0/0/0`; overlap is 4
+  and the required/residue union is 90.
+- Markdown self-test, exact-wave zero diagnostics, link/owner compatibility,
+  repository quality gates, diff check, the whole-working-diff validator
+  guard, and exact working-tree set proof gate completion.
+- R2 reconciliation restored the prior `updated` values on exactly the 24
+  indexed Stage 05 documents without changing their normalized bodies or any
+  README; the final full repository quality gate passes.
+- The exact tracked set is `126 = 120 documents + ledger + fixture + Markdown
+  validator + quality-gate consumer + Task + progress`; nothing is staged by
+  this finalization step.
+
+#### Handoff
+
+- Independently review and commit the exact 126-path unit as
+  `docs(migration): normalize execution and operations documents`; roll it
+  back as one commit while retaining dependency `851007d`.
+- Start ADM-005 only after the ADM-004 commit and review are accepted. If the
+  wave is rolled back, restore the fixture digest/caps and all 120 ledger rows
+  with the documents; revert `851007d` only after its dependents are removed.
+
 ### 2026-07-13 - ADM-004 zero-cap self-test correction
 
 #### Metadata

@@ -24,7 +24,7 @@ updated: 2026-05-09
 2. **ArgoCD EndpointSlice 제외**: ArgoCD는 `discovery.k8s.io/EndpointSlice` 리소스를 기본 resource.exclusions에 포함하여 직접 관리하지 않을 수 있다. 따라서 YAML을 수정하고 커밋해도 EndpointSlice가 자동으로 클러스터에 동기화되지 않을 수 있다. 직접 `kubectl apply`/`kubectl patch`는 운영자가 승인한 break-glass 복구에서만 사용한다.
 3. **Grafana OAuth 전용 설정**: Grafana가 `GF_AUTH_DISABLE_LOGIN_FORM=true`, `GF_AUTH_OAUTH_AUTO_LOGIN=true`로 설정된 경우 `/api/frontend/settings` 등 API 엔드포인트가 401을 반환한다. Kiali는 이 엔드포인트로 Grafana 버전을 확인하므로 Unreachable로 표시된다. 해결책: Grafana에 Anonymous Viewer 접근 활성화.
 
-## Purpose
+### Purpose
 
 Kiali에서 외부 observability service가 unreachable로 표시될 때 EndpointSlice, NetworkPolicy, Kiali configuration, Grafana auth 상태를 순서대로 진단하고 복구한다.
 
@@ -47,7 +47,7 @@ Kiali에서 외부 observability service가 unreachable로 표시될 때 Endpoin
 
 아래 절차는 현재 IP 확인, Kiali 파드 연결 테스트, EndpointSlice/NetworkPolicy 점검, Grafana auth 확인 순서로 수행한다.
 
-## k3d-hyhome 올바른 IP 할당표
+### k3d-hyhome 올바른 IP 할당표
 
 | 컨테이너         | IP          | 포트        |
 | ---------------- | ----------- | ----------- |
@@ -61,7 +61,7 @@ Kiali에서 외부 observability service가 unreachable로 표시될 때 Endpoin
 
 ---
 
-## Procedure 1: 연결 상태 진단
+### Procedure 1: 연결 상태 진단
 
 ### 1-1. 현재 EndpointSlice IP 확인
 
@@ -106,7 +106,7 @@ kubectl get configmap argocd-cm -n argocd \
 
 ---
 
-## Procedure 2: EndpointSlice IP 업데이트
+### Procedure 2: EndpointSlice IP 업데이트
 
 > **Agent execution boundary**: 아래 `kubectl patch`/`kubectl apply` 절차는 human-approved break-glass 전용이다. Agent는 기본적으로 Git 파일 수정, 리뷰, ArgoCD reconciliation 계획, 증적 정리까지만 수행한다.
 
@@ -157,7 +157,7 @@ kubectl describe endpointslice grafana-external-1 -n platform
 
 ---
 
-## Procedure 3: NetworkPolicy egress 규칙 점검
+### Procedure 3: NetworkPolicy egress 규칙 점검
 
 NetworkPolicy의 egress `ipBlock` 규칙은 **post-DNAT 기준 IP**로 작성해야 한다. 컨테이너 IP가 바뀌면 해당 NetworkPolicy도 함께 업데이트한다.
 
@@ -185,7 +185,7 @@ argocd app sync platform-network-policies --force
 
 ---
 
-## Procedure 4: Kiali Grafana URL 설정 확인
+### Procedure 4: Kiali Grafana URL 설정 확인
 
 Kiali의 Grafana 연동 URL은 ArgoCD App의 Helm values 또는 ConfigMap에서 관리된다.
 
@@ -228,7 +228,7 @@ kubectl get configmap kiali -n istio-system -o yaml | grep -A3 grafana
 
 ---
 
-## 주의사항: ArgoCD EndpointSlice 제외
+### 주의사항: ArgoCD EndpointSlice 제외
 
 ArgoCD는 `discovery.k8s.io/EndpointSlice`를 `resource.exclusions`에 포함하여 기본적으로 관리하지 않는다.
 
@@ -247,7 +247,7 @@ kubectl get configmap argocd-cm -n argocd \
 
 ---
 
-## Troubleshooting
+### Troubleshooting
 
 ### `nc` 명령이 Kiali 파드 내에서 항상 OK를 반환한다
 
@@ -341,7 +341,7 @@ argocd app set platform-external-services \
 
 ---
 
-## 핵심 교훈 요약
+### 핵심 교훈 요약
 
 | 항목                  | 내용                                                                        |
 | --------------------- | --------------------------------------------------------------------------- |
@@ -369,12 +369,12 @@ argocd app set platform-external-services \
 - Docker-side Grafana auth changes must be reflected in the owning Docker repo before treating the fix as persistent.
 - Direct EndpointSlice apply/patch remains human-approved break-glass only and must be reconciled back into Git.
 
-## Agent Operations (If Applicable)
+### Agent Operations
 
 이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
 단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
 
-## Related Documents
+## Traceability
 
 - **Operations Policy**: [`../policies/0005-observability-platform-operations-policy.md`](../policies/0005-observability-platform-operations-policy.md)
 - **ArgoCD Metrics Runbook**: [`./0008-argocd-metrics-prometheus-runbook.md`](./0008-argocd-metrics-prometheus-runbook.md)

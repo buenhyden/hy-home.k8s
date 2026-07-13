@@ -3,7 +3,7 @@ title: 'Task: Argo Notifications Slack Backfill'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-05-22
+updated: 2026-07-13
 ---
 
 # Task: Argo Notifications Slack Backfill
@@ -20,7 +20,7 @@ writes are out of scope.
 - **Parent Spec**: [`../../03.specs/005-argo-notifications-slack/spec.md`](../../03.specs/005-argo-notifications-slack/spec.md)
 - **Parent Plan**: [`../plans/2026-05-18-argo-notifications-slack.md`](../plans/2026-05-18-argo-notifications-slack.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Write failing tests first for core behavior.
 - Every task must define evidence.
@@ -37,7 +37,7 @@ writes are out of scope.
 | NOTIF-T-004 | Update upstream/downstream links | doc | Related Documents | PLN-004 | stale gap grep returns no matches | platform | Done |
 | NOTIF-T-005 | Run static validation gates | test | Verification | PLN-005 | validation commands PASS | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `impl`
 - `test`
@@ -45,7 +45,7 @@ writes are out of scope.
 - `doc`
 - `ops`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `prompt`
 - `tool`
@@ -68,7 +68,7 @@ writes are out of scope.
   - Conversation validation output and git diff for this backfill.
   - 2026-05-22 follow-up: `verify-contracts-static.sh` now explicitly validates ArgoCD Notifications enablement, ConfigMap Slack service/templates/triggers/default triggers, and the Vault-backed ExternalSecret key/property boundary without checking secret values.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [`../../03.specs/005-argo-notifications-slack/spec.md`](../../03.specs/005-argo-notifications-slack/spec.md)
 - **Plan**: [`../plans/2026-05-18-argo-notifications-slack.md`](../plans/2026-05-18-argo-notifications-slack.md)

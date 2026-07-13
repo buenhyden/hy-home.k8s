@@ -3,7 +3,7 @@ title: 'Workspace Document Contract Normalization Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-13
 ---
 
 # Workspace Document Contract Normalization Implementation Plan
@@ -79,7 +79,7 @@ by the user:
   - Remote push, merge, or branch deletion until finishing flow.
   - CI trigger or branch protection changes unless separately approved.
 
-## File Responsibility Map
+### File Responsibility Map
 
 | Surface | Responsibility in This Plan |
 | --- | --- |
@@ -104,7 +104,7 @@ by the user:
 | PLN-005 | Align references, CI/QA, and formatting contracts. | `docs/90.references/**`, `.github`, CI/QA docs, scripts/tests README | VAL-SPC-004, VAL-SPC-005 | Reference and automation docs match official sources and repo-local workflows. |
 | PLN-006 | Reconcile final validator and governance gates. | `scripts/validate-repo-quality-gates.sh`, Stage 00/Stage 99 docs, plan/task/progress | VAL-SPC-006, VAL-SPC-007 | Full local validation and final subagent review pass. |
 
-## Implementation Tasks
+### Implementation Tasks
 
 > [!NOTE]
 > The unchecked items below preserve the approved historical execution
@@ -200,7 +200,7 @@ title: 'Workspace Document Contract Normalization Audit'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-13
 ---
 
 # Workspace Document Contract Normalization Audit
@@ -219,7 +219,7 @@ updated: 2026-07-04
 
 ## Review and Freshness
 
-## Related Documents
+## Traceability
 ```
 
 Expected:
@@ -799,7 +799,7 @@ Expected:
 | External standards drift while implementation is in progress. | Medium | Use official/current links and record source refresh date in reference docs. |
 | CI/QA docs overclaim deployment automation. | Medium | Treat `.github/workflows/ci.yml` and local scripts as repo-local source of truth; document non-QA workflows separately. |
 
-## Agent Rollout & Evaluation Gates
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: `git diff --check`, `bash -n scripts/validate-repo-quality-gates.sh`, `bash scripts/validate-repo-quality-gates.sh .`, focused drift scans, and final subagent review.
 - **Sandbox / Canary Rollout**: Not applicable; this is repo-static documentation and validator work.
@@ -821,7 +821,7 @@ Expected:
 - [x] Branch is ready for a separate finishing flow; no push, merge, or branch
   cleanup was performed in this validation commit.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [Workspace Document Contract Normalization Spec](../../03.specs/014-workspace-document-contract-normalization/spec.md)
 - **Tasks**: [Workspace Document Contract Normalization Tasks](../tasks/2026-07-04-workspace-document-contract-normalization.md)

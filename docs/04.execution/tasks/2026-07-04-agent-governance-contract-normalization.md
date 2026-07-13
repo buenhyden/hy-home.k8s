@@ -3,7 +3,7 @@ title: 'Agent Governance Contract Normalization Task Record'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-13
 ---
 
 # Task: Agent Governance Contract Normalization
@@ -22,7 +22,7 @@ unit.
 - **Parent Plan**:
   [../plans/2026-07-04-agent-governance-contract-normalization.md](../plans/2026-07-04-agent-governance-contract-normalization.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Keep provider parity provider-native: same role, scope imports, guardrails,
   handoff, and postflight expectations; not identical metadata keys.
@@ -43,14 +43,14 @@ unit.
 | T-004 | Align GitHub, QA, CI/CD, and protected-surface enforcement | doc | Guardrails, Evaluation | PLN-004 | Frontmatter scans, workflow parse checks, validator status, repo quality gate | platform | Done |
 | T-005 | Complete final review, evidence closure, and branch-readiness handoff | doc | Evaluation, Memory & Context Strategy | PLN-005 | Full validation bundle and final review evidence | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `test`
 - `eval`
 - `guardrail`
 
-## Phase View
+### Phase View
 
 ### PLN-001
 
@@ -73,7 +73,7 @@ unit.
 - [x] T-005 Complete final review, evidence closure, and branch-readiness
   handoff.
 
-## Baseline Drift Inventory
+### Baseline Drift Inventory
 
 ### Commands
 
@@ -115,7 +115,7 @@ unit.
   - This task record.
   - `../../00.agent-governance/memory/progress.md`
 
-## T-002 Evidence
+### T-002 Evidence
 
 ### Official Source Basis
 
@@ -168,7 +168,7 @@ Checked on 2026-07-04:
 
 - T-003 is tracked below.
 
-## T-003 Evidence
+### T-003 Evidence
 
 ### Files Changed
 
@@ -205,7 +205,7 @@ Checked on 2026-07-04:
 
 - T-004 is tracked below.
 
-## T-004 Evidence
+### T-004 Evidence
 
 ### Files Changed
 
@@ -240,7 +240,7 @@ Checked on 2026-07-04:
 
 - T-005 is tracked below.
 
-## T-005 Evidence
+### T-005 Evidence
 
 ### Final Validation Bundle
 
@@ -271,7 +271,7 @@ Checked on 2026-07-04:
 - Repo-static validation remains distinct from live k3d, ArgoCD, Vault, ESO, or
   deployment readiness.
 
-## Related Documents
+## Traceability
 
 - **Spec**:
   [../../03.specs/015-agent-governance-contract-normalization/spec.md](../../03.specs/015-agent-governance-contract-normalization/spec.md)

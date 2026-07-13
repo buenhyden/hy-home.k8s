@@ -3,7 +3,7 @@ title: 'Task: Docs 01-05 Current Implementation Alignment'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Task: Docs 01-05 Current Implementation Alignment
@@ -21,7 +21,7 @@ and hardens QA/CI stale gates.
 - **Current Platform Spec**: [../../03.specs/008-current-local-gitops-platform/spec.md](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Harness Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Compare active docs against repo-backed implementation evidence, not only link/template pass status.
 - Archive old documents through `docs/98.archive` Tombstones when their body conflicts with current implementation or is superseded-only.
@@ -41,19 +41,19 @@ and hardens QA/CI stale gates.
 | T-005 | Harden repo quality currentness gates and QA/CI guidance | guardrail | QA/CI | PLN-004 | `bash scripts/validate-repo-quality-gates.sh .` passes with new checks | platform | Done |
 | T-006 | Run required local static verification and targeted semantic scans | eval | Verification Plan | PLN-006 | Required commands pass or limitations are recorded | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `guardrail`
 - `eval`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `memory`
 - `guardrail`
 - `eval`
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase A
 
@@ -85,7 +85,7 @@ and hardens QA/CI stale gates.
   - This task document after final verification.
   - [Progress ledger](../../00.agent-governance/memory/progress.md).
 
-## Related Documents
+## Traceability
 
 - [Docs 01-05 Current Implementation Alignment Plan](../plans/2026-06-02-docs-01-05-current-implementation-alignment.md)
 - [Current Platform Spec](../../03.specs/008-current-local-gitops-platform/spec.md)

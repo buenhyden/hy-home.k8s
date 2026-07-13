@@ -3,7 +3,7 @@ title: 'Active Control Surface Governance Hardening Task Record'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-13
 ---
 
 # Task: Active Control Surface Governance Hardening
@@ -23,7 +23,7 @@ examples as dated snapshots.
 - **Parent Spec**:
   [../../03.specs/016-active-control-surface-governance-hardening/spec.md](../../03.specs/016-active-control-surface-governance-hardening/spec.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Work only repo-static control surfaces unless a separate human approval
   grants a live mutation path.
@@ -47,7 +47,7 @@ examples as dated snapshots.
 | ACS-004 | Align GitOps, infrastructure, policy, scripts, tests, Traefik, and sample-app surfaces | doc | VAL-SPC-001, VAL-SPC-002, VAL-SPC-004 | Task 4 | Harness validation passes and optional tool skips remain explicit | platform | Done |
 | ACS-005 | Close evidence, review, and branch readiness | doc | VAL-SPC-005 | Task 5 | Full validation bundle, updated plan/task evidence, final drift review | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `test`
@@ -55,7 +55,7 @@ examples as dated snapshots.
 - `guardrail`
 - `ops`
 
-## Phase View
+### Phase View
 
 ### Task 1: Baseline Inventory and Task Record
 
@@ -78,7 +78,7 @@ examples as dated snapshots.
 
 - [x] ACS-005 Close evidence, review, and branch readiness.
 
-## Baseline Inventory Evidence
+### Baseline Inventory Evidence
 
 ### Commands
 
@@ -149,7 +149,7 @@ examples as dated snapshots.
 | `tests` | 8 |
 | `traefik` | 9 |
 
-## Approved Snapshot Boundary
+### Approved Snapshot Boundary
 
 AWS and Azure cloud example docs under `examples/aws/docs` and
 `examples/azure/docs` remain dated Cloud Example Snapshot material. They are
@@ -158,7 +158,7 @@ promoted into active SDLC frontmatter or section enforcement by this task.
 Future cloud provider refresh work must create separate scoped evidence and
 validation.
 
-## ACS-002 Canonical Ownership Evidence
+### ACS-002 Canonical Ownership Evidence
 
 ### Commands
 
@@ -179,7 +179,7 @@ validation.
 - `bash scripts/validate-repo-quality-gates.sh .` passed with
   `[PASS] repository quality gates passed`.
 
-## ACS-003 GitHub Control Evidence
+### ACS-003 GitHub Control Evidence
 
 ### Commands
 
@@ -216,7 +216,7 @@ PY
 - `bash scripts/validate-repo-quality-gates.sh .` passed with
   `[PASS] repository quality gates passed`.
 
-## ACS-004 GitOps and Repo-static Validation Evidence
+### ACS-004 GitOps and Repo-static Validation Evidence
 
 ### Commands
 
@@ -271,7 +271,7 @@ PY
 - No live Kubernetes, Argo CD, Vault, cloud, external Traefik, provider,
   publish, push, merge, or secret-value action was performed.
 
-## ACS-005 Final Closure Evidence
+### ACS-005 Final Closure Evidence
 
 ### Commands
 
@@ -339,7 +339,7 @@ PY
   - This task record.
   - [../../00.agent-governance/memory/progress.md](../../00.agent-governance/memory/progress.md)
 
-## Related Documents
+## Traceability
 
 - **Spec**:
   [../../03.specs/016-active-control-surface-governance-hardening/spec.md](../../03.specs/016-active-control-surface-governance-hardening/spec.md)

@@ -3,7 +3,7 @@ title: 'Task: Template Contract and Governance Migration'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-13
 ---
 
 # Task: Template Contract and Governance Migration
@@ -19,7 +19,7 @@ spec and plan while preserving logical commit boundaries.
 - **Parent Spec**: [../../03.specs/011-template-contract-governance-migration/spec.md](../../03.specs/011-template-contract-governance-migration/spec.md)
 - **Parent Plan**: [../plans/2026-07-03-template-contract-governance-migration.md](../plans/2026-07-03-template-contract-governance-migration.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Documentation-only work still needs validation evidence.
 - Keep SDLC support contracts, template forms, and governance rules separated.
@@ -42,19 +42,19 @@ spec and plan while preserving logical commit boundaries.
 | T-006 | Apply new template links/contracts to authored docs and indexes | doc | VAL-SPC-007, VAL-SPC-008 | PLN-005 | Authored docs and index review PASS; repo quality gate PASS | platform | Done |
 | T-007 | Final validation and handoff sync | qa | VAL-SPC-009 | PLN-006 | Final validation commands PASS; progress ledger evidence recorded | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `impl`
 - `qa`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `guardrail`
 - `eval`
 - `observability`
 
-## Phase View
+### Phase View
 
 ### Phase 0: Planning
 
@@ -94,7 +94,7 @@ spec and plan while preserving logical commit boundaries.
   commit history. T-001 through T-007 validation passed before their
   logical-unit commits.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/011-template-contract-governance-migration/spec.md](../../03.specs/011-template-contract-governance-migration/spec.md)
 - **Plan**: [../plans/2026-07-03-template-contract-governance-migration.md](../plans/2026-07-03-template-contract-governance-migration.md)

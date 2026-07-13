@@ -3,7 +3,7 @@ title: 'Task: Workspace Document Contract Normalization'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-13
 ---
 
 # Task: Workspace Document Contract Normalization
@@ -22,7 +22,7 @@ traceable to the parent Spec and Plan.
 - **Parent Plan**:
   [Workspace Document Contract Normalization Plan](../plans/2026-07-04-workspace-document-contract-normalization.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Use subagent-driven development for implementation.
 - Each task gets one logical commit.
@@ -44,14 +44,14 @@ traceable to the parent Spec and Plan.
 | T-005 | Align references, CI/QA, and formatting contracts. | doc | VAL-SPC-004, VAL-SPC-005 | PLN-005 | Official source review, workflow/doc comparison, repo gate | platform | Done |
 | T-006 | Reconcile final validator and governance gates. | test | VAL-SPC-006, VAL-SPC-007 | PLN-006 | Full validation bundle and final review | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `test`
 - `guardrail`
 - `ops`
 
-## Phase View
+### Phase View
 
 ### Phase 1: Audit
 
@@ -95,7 +95,7 @@ traceable to the parent Spec and Plan.
   - Code quality reviewer result after each task.
   - Final independent reviewer result for the full branch.
 
-## Execution Evidence
+### Execution Evidence
 
 ### T-001 Audit and Inventory Document Contract Drift
 
@@ -302,7 +302,7 @@ Validation:
   skipped by `validate-k8s-manifests.sh`; `conftest` was not installed and
   `validate-policy-gates.sh` used the built-in fallback.
 
-## Related Documents
+## Traceability
 
 - **Spec**:
   [Workspace Document Contract Normalization Spec](../../03.specs/014-workspace-document-contract-normalization/spec.md)

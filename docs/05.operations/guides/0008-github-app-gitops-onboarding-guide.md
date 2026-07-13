@@ -32,7 +32,7 @@ updated: 2026-05-26
 - 홈 랩 운영자 (Platform Engineer / Solo Developer)
 - GitHub 레포에서 빌드한 컨테이너 이미지를 클러스터에 배포하려는 사용자
 
-## Purpose
+### Purpose
 
 GitHub 레포에서 빌드한 컨테이너 이미지를 현재 플랫폼의 Rollout, AnalysisTemplate, Istio mTLS, ingress/TLS 패턴에 맞춰 온보딩할 수 있게 한다.
 
@@ -424,7 +424,7 @@ kubectl get clusterissuer mkcert-ca-issuer
 
 ---
 
-## Related Documents
+## Traceability
 
 - **템플릿**: [`../../../examples/sample-app`](../../../examples/sample-app)
 - **참조 구현**: [`../../../gitops/workloads/adminer`](../../../gitops/workloads/adminer)

@@ -3,7 +3,7 @@ title: 'Phase 3 Protected Surface Hardening Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Phase 3 Protected Surface Hardening Plan
@@ -61,7 +61,7 @@ ESO, or deployment readiness.
   - Secret-value inspection, direct cluster mutation, external Vault mutation, deployment action, container publish, or commit push.
   - Private RTK database, credential, token, private key, or shell history inspection.
 
-## Requirements & Acceptance Criteria
+### Requirements & Acceptance Criteria
 
 | Requirement | Acceptance Criteria |
 | --- | --- |
@@ -106,7 +106,7 @@ ESO, or deployment readiness.
 | CI/hook hardening is mistaken for live runtime proof | Medium | SessionStart and docs state repo-static, CI/toolchain, and live runtime evidence are separate lanes. |
 | Runtime hook changes break JSON or shell parsing | Medium | Run shell syntax checks, JSON checks through quality gates, and hook payload simulations. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Shell syntax, diff hygiene, LLM Wiki freshness, repository quality gates, and targeted `.agents/**` trigger scans.
 - **Sandbox / Canary Rollout**: Approved read-only live validation may run against the local k3d/Kubernetes/ArgoCD/Vault/ESO surfaces. Mutation remains out of scope.
@@ -125,7 +125,7 @@ ESO, or deployment readiness.
 - [x] Static verification commands pass or limitations are recorded.
 - [x] Approved read-only live validation passes or limitations are recorded.
 
-## Rollback
+### Rollback
 
 - Remove `.agents/**` from the CI repo-quality path filter.
 - Remove `.agents/*` and `.agents/hooks.json` handling from post-validate and lifecycle hooks.
@@ -133,7 +133,7 @@ ESO, or deployment readiness.
 - Revert Phase 3 template guidance additions.
 - Remove Phase 3 Plan/Task files, README rows, Phase 2 related links, and the progress ledger entry.
 
-## Related Documents
+## Traceability
 
 - Parent Spec: N/A — pre-Spec execution record.
 - **ADR**: [../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)

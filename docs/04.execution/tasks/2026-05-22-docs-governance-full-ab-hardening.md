@@ -3,7 +3,7 @@ title: 'Task: Docs Governance Full A+B Hardening'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-05-22
+updated: 2026-07-13
 ---
 
 # Task: Docs Governance Full A+B Hardening
@@ -19,7 +19,7 @@ hook boundaries, and repo-static validation gates.
 - **Parent Spec**: not applicable; this work hardens documentation and agent governance contracts.
 - **Parent Plan**: [../plans/2026-05-22-docs-governance-full-ab-hardening.md](../plans/2026-05-22-docs-governance-full-ab-hardening.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Keep gateway files thin and route durable policy to `docs/00.agent-governance/**`.
 - Keep historical PRD/ARD/Plan/Task meaning and evidence intact.
@@ -41,7 +41,7 @@ hook boundaries, and repo-static validation gates.
 | T-008 | Run full repo-static validation matrix | test | n/a | PLN-007 | Verification Summary updated | Platform | Done |
 | T-009 | Update progress memory and handoff evidence | memory | n/a | PLN-007 | `progress.md` entry added | Platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `impl`
 - `test`
@@ -49,7 +49,7 @@ hook boundaries, and repo-static validation gates.
 - `doc`
 - `ops`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `prompt`
 - `tool`
@@ -58,7 +58,7 @@ hook boundaries, and repo-static validation gates.
 - `eval`
 - `observability`
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase 1
 
@@ -96,7 +96,7 @@ hook boundaries, and repo-static validation gates.
 - **Result**: PASS for the full repo-static matrix. `kube-linter` was not installed, so `validate-k8s-manifests.sh` completed YAML syntax validation and reported the optional kube-linter skip.
 - **Targeted Scans**: README legacy heading, README `Link Basis` omission, lifecycle template residue, and tracked `.claude/*.local.md` scans returned no findings.
 
-## Related Documents
+## Traceability
 
 - **Plan**: [../plans/2026-05-22-docs-governance-full-ab-hardening.md](../plans/2026-05-22-docs-governance-full-ab-hardening.md)
 - **Templates**: [../../99.templates/README.md](../../99.templates/README.md)

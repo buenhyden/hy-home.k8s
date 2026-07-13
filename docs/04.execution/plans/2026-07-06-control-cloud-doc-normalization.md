@@ -3,7 +3,7 @@ title: 'Control Surface and Cloud Example Documentation Normalization Implementa
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Control Surface and Cloud Example Documentation Normalization Implementation Plan
@@ -82,7 +82,7 @@ profile for `examples/aws/docs/**` and `examples/azure/docs/**`.
 | Bulk normalization breaks cross-links. | Medium | Use targeted `rg` searches after each rename or consolidation and update links in the same commit. |
 | Validator overreaches and blocks GitHub-native files. | Medium | Keep explicit route exceptions for `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md`. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Run repository-static validation after each logical
   batch.
@@ -107,7 +107,7 @@ profile for `examples/aws/docs/**` and `examples/azure/docs/**`.
 - [x] Required validation passed.
 - [x] Task record and progress memory updated.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/022-control-cloud-doc-normalization/spec.md](../../03.specs/022-control-cloud-doc-normalization/spec.md)
 - **Tasks**: [../tasks/2026-07-06-control-cloud-doc-normalization.md](../tasks/2026-07-06-control-cloud-doc-normalization.md)

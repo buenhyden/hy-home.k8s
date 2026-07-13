@@ -3,10 +3,12 @@ title: 'README and Workspace Profiles Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-12
+updated: 2026-07-13
 ---
 
 # README and Workspace Profiles Implementation Plan
+
+## Overview
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use
 > superpowers:subagent-driven-development (recommended) or
@@ -26,7 +28,7 @@ migration assertions rather than creating the production Markdown parser.
 **Tech Stack:** Frontmatter-free Markdown, JSON registry/fixtures, Python 3,
 Bash, Git, `rg`, `pre-commit`, and repository quality gates.
 
-## Global Constraints
+### Global Constraints
 
 - Specs 026 and 027 must be done before this Plan starts.
 - Preserve exactly 67 baseline README dispositions and report the final count separately after adding five handoff READMEs.
@@ -44,8 +46,6 @@ Bash, Git, `rg`, `pre-commit`, and repository quality gates.
 - Use `apply_patch` for content edits; do not push, publish, or mutate live systems.
 
 ---
-
-## Overview
 
 This plan implements Spec 028 in six logical commits: execution lineage,
 profile forms and inventory fixture, stage/collection migration, snapshot and
@@ -74,7 +74,7 @@ implementation entrypoints, and `_workspace` cannot express distinct jobs.
 - Implementing the durable CommonMark parser.
 - Changing provider-native or GitHub-native control Markdown.
 
-## File and Interface Map
+### File and Interface Map
 
 | Unit | Files | Responsibility |
 | --- | --- | --- |
@@ -242,7 +242,7 @@ Baseline total is `1 + 10 + 16 + 28 + 11 + 1 = 67`. Final total is
 | `_workspace` cleanup touches private ignored data | Critical | Validate tracking/ignore rules only; never list or open ignored children. |
 | 72-file migration hides broken links | High | Commit by profile group and run link/quality checks after every group. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate:** Every profile group passes exact route, H1/H2, frontmatter-ban, and link assertions.
 - **Sandbox / Canary Rollout:** Migrate one profile group per commit while compatibility mode remains active.
@@ -1060,7 +1060,7 @@ Expected: closure commit succeeds.
 - [x] Spec 029 fixture handoff is complete and explicitly recorded.
 - [x] Repository quality, all-files, links, reciprocal evidence, and index states pass.
 
-## Related Documents
+## Traceability
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
 - **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)

@@ -3,7 +3,7 @@ title: 'Task: Phase 4 ESO Vault Runtime Diagnosis'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Task: Phase 4 ESO Vault Runtime Diagnosis
@@ -21,7 +21,7 @@ unseal and secret inspection are not performed.
 - **Phase 3 Evidence**: [Phase 3 Protected Surface Hardening Task](./2026-06-02-phase-3-protected-surface-hardening.md)
 - **Runbook**: [ArgoCD ESO Vault Recovery Runbook](../../05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Use systematic debugging: root cause before fix.
 - Keep GitOps-first boundaries; do not mutate the cluster.
@@ -40,19 +40,19 @@ unseal and secret inspection are not performed.
 | T-005 | Record no-op mutation boundary | guardrail | N/A | PLN-003 | No GitOps/model/provider/CI topology mutation introduced for this diagnosis | platform | Done |
 | T-006 | Record execution evidence and validation | doc | N/A | PLN-004, PLN-005 | README indexes, Phase 3 links, progress ledger, static validation | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `eval`
 - `doc`
 - `guardrail`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `memory`
 - `guardrail`
 - `eval`
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase 4
 
@@ -81,7 +81,7 @@ unseal and secret inspection are not performed.
   - This task document after final verification.
   - [Progress ledger](../../00.agent-governance/memory/progress.md).
 
-## Related Documents
+## Traceability
 
 - [Phase 4 ESO Vault Runtime Diagnosis Plan](../plans/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md)
 - [Phase 3 Protected Surface Hardening Plan](../plans/2026-06-02-phase-3-protected-surface-hardening.md)

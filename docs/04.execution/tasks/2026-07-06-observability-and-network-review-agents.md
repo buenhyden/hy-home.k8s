@@ -3,7 +3,7 @@ title: 'Observability and Network Review Agents Task Record'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Observability and Network Review Agents Task Record
@@ -20,7 +20,7 @@ adapters and the harness catalog, without mutating any live system.
 - **Agent Design**: [../../03.specs/024-observability-and-network-review-agents/agent-design.md](../../03.specs/024-observability-and-network-review-agents/agent-design.md)
 - **Parent Plan**: [../plans/2026-07-06-observability-and-network-review-agents.md](../plans/2026-07-06-observability-and-network-review-agents.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Keep this work documentation and adapter-definition only; no manifest or
   cluster mutation.
@@ -38,17 +38,17 @@ adapters and the harness catalog, without mutating any live system.
 | ONA-003 | Create six provider adapters and catalog rows | doc    | Contracts             | Phase 3-4           | Adapter parity, catalog rows, repo-quality gate             | platform | Done   |
 | ONA-004 | Update progress ledger and validate           | memory | Completion Criteria   | Phase 5-6           | Progress entry, `git diff --check`, repo-quality gate, push | platform | Done   |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `memory`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `observability-reviewer` worker adapter set (three providers)
 - `network-reviewer` worker adapter set (three providers)
 
-## Phase View (Optional)
+### Phase View
 
 - [x] ONA-001 spec and agent-design authored.
 - [x] ONA-002 plan, task, and index coverage.
@@ -71,7 +71,7 @@ Boundary statement:
   secret-value, paid-job, publishing, merge, or third-party mutation was
   performed.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/024-observability-and-network-review-agents/spec.md](../../03.specs/024-observability-and-network-review-agents/spec.md)
 - **Plan**: [../plans/2026-07-06-observability-and-network-review-agents.md](../plans/2026-07-06-observability-and-network-review-agents.md)

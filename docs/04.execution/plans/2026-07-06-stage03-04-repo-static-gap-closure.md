@@ -3,7 +3,7 @@ title: 'Stage 03/04 Repo-Static Gap Closure Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Stage 03/04 Repo-Static Gap Closure Implementation Plan
@@ -99,7 +99,7 @@ Initial investigation found:
 | S34-PLN-004 | Record operator-approved follow-up ledger | task record, progress memory | VAL-SPC-023-003 | Runtime/secret/remote/provider items are not implemented and are routed to operator approval. |
 | S34-PLN-005 | Close validation and handoff evidence | current plan/task, progress memory | VAL-SPC-023-004, VAL-SPC-023-005 | Final validation bundle passes or records explicit optional-tool skips. |
 
-## Implementation Tasks
+### Implementation Tasks
 
 > [!NOTE]
 > The unchecked items below preserve the approved historical execution
@@ -522,7 +522,7 @@ git commit -m "docs(tasks): Record Stage 03 04 repo-static gap closure"
 | Runtime gaps are accidentally reported as implemented. | High | Put runtime, secret, remote, and provider work in the operator-approved ledger. |
 | Validator hardening becomes noisy. | Medium | Do not add a broad all-done-to-frontmatter rule in this pass; rely on task evidence and existing README/frontmatter sync checks. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Run repo-static validation after each logical commit.
 - **Sandbox / Canary Rollout**: Not applicable; this is documentation and
@@ -543,7 +543,7 @@ git commit -m "docs(tasks): Record Stage 03 04 repo-static gap closure"
 - [x] Final validation bundle passes.
 - [x] Progress memory records completion and untouched pre-existing files.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/023-stage03-04-repo-static-gap-closure/spec.md](../../03.specs/023-stage03-04-repo-static-gap-closure/spec.md)
 - **Planned Tasks Path**: `../tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`

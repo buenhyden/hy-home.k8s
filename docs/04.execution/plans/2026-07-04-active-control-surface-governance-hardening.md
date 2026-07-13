@@ -3,7 +3,7 @@ title: 'Active Control Surface Governance Hardening Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-13
 ---
 
 # Active Control Surface Governance Hardening Implementation Plan
@@ -116,7 +116,7 @@ The current repository contract has several strong foundations:
 | ACS-004 | Align GitOps, infrastructure, policy, scripts, tests, Traefik, and sample-app surfaces | `scripts/README.md`, `gitops/README.md`, `gitops/workloads/README.md`, `infrastructure/README.md`, `policy/**`, `tests/README.md`, `traefik/README.md`, `examples/README.md`, `examples/sample-app/README.md`, validators as needed | VAL-SPC-001, VAL-SPC-002, VAL-SPC-004 | Harness validation passes; optional tool skips remain explicit |
 | ACS-005 | Close evidence, review, and branch readiness | Plan, task record, task README, progress ledger | VAL-SPC-005 | Full validation bundle passes; plan/task status updated; no unresolved drift |
 
-## Detailed Tasks
+### Detailed Tasks
 
 ### Task 1: Baseline Inventory and Task Record
 
@@ -208,7 +208,7 @@ title: 'Active Control Surface Governance Hardening Task Record'
 type: sdlc/task
 status: draft
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-13
 ```
 
 The task record must include:
@@ -711,7 +711,7 @@ Expected: one closure commit with plan/task/status/progress evidence only.
 | Live mutation sneaks into validation | High | Keep validation repo-static; document operator-owned live commands instead of running them |
 | Cloud provider latestness is implied | Medium | Keep `aws/` and `azure/` examples as Cloud Example Snapshot material unless a separate refresh spec is approved |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Run repository quality, harness, GitOps, manifest,
   secret, policy, and static infrastructure gates before closure.
@@ -736,7 +736,7 @@ Expected: one closure commit with plan/task/status/progress evidence only.
 - [x] Plan, task record, task README, and progress memory are updated.
 - [x] Logical-unit commits exist for each completed task.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [Active Control Surface Governance Hardening Spec](../../03.specs/016-active-control-surface-governance-hardening/spec.md)
 - **Prior Spec**: [Workspace Document Governance Hardening](../../03.specs/013-workspace-document-governance-hardening/spec.md)

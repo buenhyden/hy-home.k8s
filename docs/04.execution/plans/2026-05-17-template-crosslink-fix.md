@@ -3,7 +3,7 @@ title: 'Template Cross-link Fix Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-05-21
+updated: 2026-07-13
 ---
 
 # Template Cross-link Fix Implementation Plan
@@ -96,7 +96,7 @@ Path calculation principles:
 | T-16 | Fix Runbook generated-file display text | `docs/05.operations/runbooks/000{1-4}*.md` | REQ-GEN-001 | backtick display text matches href |
 | T-17 | Run final integrated validation | all docs | REQ-VAL-001 | scan commands have no output |
 
-## Template Coverage Matrix
+### Template Coverage Matrix
 
 | Template                   | Target scope                                     | Result                         |
 | -------------------------- | ------------------------------------------------ | ------------------------------ |
@@ -138,7 +138,7 @@ rewritten by the author for the final README location.
 | Some files missed due to large file count           | Medium | Use the Task 17 integrated validation scan for full coverage     |
 | Hooks detect another quality gate violation          | Low    | Run validation commands immediately after each task              |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 N/A — this plan covers infrastructure and documentation work and does not
 deploy AI Agent models or prompts.
@@ -152,7 +152,7 @@ deploy AI Agent models or prompts.
 - [x] Code-label/href comparisons excluding fenced code blocks found 0 mismatches.
 - [x] Added a completion entry to `docs/00.agent-governance/memory/progress.md`.
 
-## Template Improvement Plan
+### Template Improvement Plan
 
 `docs/99.templates/templates/common/readme.template.md` is intentionally generic because README
 targets vary by directory depth. The 2026-05-21 follow-up clarified that its
@@ -160,7 +160,7 @@ snippet library is optional assembly material and must not remain in final
 README files. Future hardening should stay limited to target-specific path
 guidance when a concrete README authoring failure is found.
 
-## Historical Execution Notes
+### Historical Execution Notes
 
 This plan is a historical record of template cross-link alignment completed on
 2026-05-17. The former `Task Detail` section kept already-completed step-by-step
@@ -175,14 +175,14 @@ Preserved completion evidence:
 - Verification Plan and Completion Criteria
 - Related Documents
 
-## Migration Note
+### Migration Note
 
 - No files were deleted, moved, or renamed.
 - Based on `rg`, no links outside this file referenced the removed `Task Detail` heading or child task headings.
 - Detailed execution instructions were consolidated into completed history, and the current template link rules remain owned by `docs/99.templates/README.md` and `docs/00.agent-governance/rules/documentation-protocol.md`.
 - The 2026-05-21 follow-up changed active execution wording in the completed plan to historical-record wording; the linked Task document owns completion evidence.
 
-## Related Documents
+## Traceability
 
 - **Task**: [../tasks/2026-05-17-template-crosslink-fix.md](../tasks/2026-05-17-template-crosslink-fix.md)
 - **Templates**: [`../../99.templates/README.md`](../../99.templates/README.md)

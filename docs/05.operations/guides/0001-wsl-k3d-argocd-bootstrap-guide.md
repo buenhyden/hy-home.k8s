@@ -23,7 +23,7 @@ updated: 2026-05-22
 - DevOps Engineer
 - GitOps Operator
 
-## Purpose
+### Purpose
 
 로컬 플랫폼을 표준 계약으로 반복 재현하고, 부트스트랩 직후 GitOps/Secret/외부 엔드포인트 상태를 일관되게 검증한다.
 
@@ -122,7 +122,7 @@ updated: 2026-05-22
   - 원인: `spec.source.path`와 원격 브랜치 실제 경로 불일치
   - 조치: `gitops/apps/root` 경로 존재 확인 후 Application 재동기화
 
-## Related Documents
+## Traceability
 
 - **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Operation**: [`../policies/0001-k8s-gitops-operations-policy.md`](../policies/0001-k8s-gitops-operations-policy.md)

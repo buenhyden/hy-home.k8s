@@ -3,7 +3,7 @@ title: 'Task: Template Contract Consolidation'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-12
+updated: 2026-07-13
 ---
 
 # Task: Template Contract Consolidation
@@ -24,7 +24,7 @@ preserves reciprocal Spec, Plan, Task, and index lineage throughout the Spec
 - **Completed Registry Task**:
   [./2026-07-12-document-contract-registry.md](./2026-07-12-document-contract-registry.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Record failing assertions before each deterministic contract change.
 - Publish the type-to-source evidence row before changing a template family.
@@ -49,7 +49,7 @@ preserves reciprocal Spec, Plan, Task, and index lineage throughout the Spec
 | TCC-005 | Delete legacy Task form and establish compatibility | migration | Zero active legacy refs; old/new gates green | platform | Done |
 | TCC-006 | Close evidence and hand off Stage 99 README bodies | validation | Full QA and explicit Spec 028 handoff | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`: reciprocal Spec, Plan, Task, and index lineage work.
 - `research`: type-to-source evidence ledger work.
@@ -58,12 +58,12 @@ preserves reciprocal Spec, Plan, Task, and index lineage throughout the Spec
 - `migration`: legacy form removal and compatibility work.
 - `validation`: closure QA and explicit Spec 028 handoff work.
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - No agent-specific task types apply to TCC-001 through TCC-006; the tranche
   uses the topic-specific types above.
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase 1: Execution Lineage
 
@@ -127,7 +127,7 @@ preserves reciprocal Spec, Plan, Task, and index lineage throughout the Spec
   deployment, or third-party mutation ran. Results prove repository-static
   closure only.
 
-## Related Documents
+## Traceability
 
 - **Spec**:
   [../../03.specs/027-template-contract-consolidation/spec.md](../../03.specs/027-template-contract-consolidation/spec.md)

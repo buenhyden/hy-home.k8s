@@ -3,7 +3,7 @@ title: 'Governance Owner and Roster Currentness Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Governance Owner and Roster Currentness Implementation Plan
@@ -56,7 +56,7 @@ baseline Stage 04 Plans.
 - Unrelated RMD remediation.
 - Remote push, pull request, or merge.
 
-## Global Constraints
+### Global Constraints
 
 - Work only in `.worktrees/spec-plan-roster-normalization` on branch
   `codex/spec-plan-roster-normalization`.
@@ -79,7 +79,7 @@ baseline Stage 04 Plans.
 
 ---
 
-## File and Interface Map
+### File and Interface Map
 
 | Unit | Files | Responsibility |
 | --- | --- | --- |
@@ -124,7 +124,7 @@ baseline Stage 04 Plans.
 | Provider adapter semantics change accidentally | High | Compare filenames only; do not edit adapter files in this cycle. |
 | Fixture tests pass without exercising production logic | High | Make fixture self-tests call the same `validate_contract()` function as repository validation. |
 
-## Agent Rollout & Evaluation Gates
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Every task must pass its focused assertions and
   changed-file pre-commit checks.
@@ -1049,7 +1049,7 @@ git commit -m "docs(governance): close roster currentness evidence"
 - [ ] Full repository quality gates, `git diff --check`, and
   `pre-commit run --all-files` pass or environmental limitations are recorded.
 
-## Related Documents
+## Traceability
 
 - **Spec**:
   [../../03.specs/025-governance-owner-and-roster-currentness/spec.md](../../03.specs/025-governance-owner-and-roster-currentness/spec.md)

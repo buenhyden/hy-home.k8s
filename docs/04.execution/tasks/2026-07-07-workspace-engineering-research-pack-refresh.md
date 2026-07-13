@@ -3,7 +3,7 @@ title: 'Task: Workspace Engineering Research Pack Refresh Task Record'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-07
+updated: 2026-07-13
 ---
 
 # Task: Workspace Engineering Research Pack Refresh Task Record
@@ -17,7 +17,7 @@ This document tracks implementation and verification work for the refreshed work
 - **Parent Spec**: `[../../03.specs/017-workspace-engineering-research-pack/spec.md]`
 - **Parent Plan**: `[../plans/2026-07-07-workspace-engineering-research-pack-refresh.md]`
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Documentation-only work still needs validation evidence.
 - Use relative links calculated from the final authored document location.
@@ -33,7 +33,7 @@ This document tracks implementation and verification work for the refreshed work
 | PLN-004 | Update indices and memory | doc | VAL-SPC-002 | Phase 4 | README index and progress.md updated | platform | Done |
 | PLN-005 | Quality gates validation | test | VAL-SPC-006 | Phase 5 | `validate-repo-quality-gates.sh` passes | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `impl`
 - `test`
@@ -41,7 +41,7 @@ This document tracks implementation and verification work for the refreshed work
 - `doc`
 - `ops`
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase 1
 
@@ -69,7 +69,7 @@ This document tracks implementation and verification work for the refreshed work
 - **Eval Commands**: `git diff --check`
 - **Logs / Evidence Location**: None.
 
-## Related Documents
+## Traceability
 
 - **Spec**: `[../../03.specs/017-workspace-engineering-research-pack/spec.md]`
 - **Plan**: `[../plans/2026-07-07-workspace-engineering-research-pack-refresh.md]`

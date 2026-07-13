@@ -3,7 +3,7 @@ title: 'Claude Agent Surface Restoration Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-06-01
+updated: 2026-07-13
 ---
 
 # Claude Agent Surface Restoration Implementation Plan
@@ -89,7 +89,7 @@ model/tool frontmatter existed.
 | Claude and Codex mirrors diverge in role or scope text | Medium | Preserve body text from current mirror contracts while changing only provider-specific bootstrap/model/tool frontmatter |
 | Documentation claims are updated without disk evidence | Medium | Require command evidence in the task record before moving status from draft/active to done |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Repo-static validation, focused frontmatter parsing, and search regression must pass.
 - **Sandbox / Canary Rollout**: Not applicable; this change only affects repository agent definitions.
@@ -106,7 +106,7 @@ model/tool frontmatter existed.
 - [x] Plan/Task/README/memory evidence records what was changed and what was not verified.
 - [x] No live cluster, secret, or deployment action was performed.
 
-## Related Documents
+## Traceability
 
 - Parent Spec: N/A — pre-Spec execution record.
 - **Task**: [../tasks/2026-06-01-claude-agent-surface-restoration.md](../tasks/2026-06-01-claude-agent-surface-restoration.md)

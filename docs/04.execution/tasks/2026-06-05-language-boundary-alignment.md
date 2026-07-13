@@ -3,7 +3,7 @@ title: 'Task: Language Boundary Alignment'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-06-05
+updated: 2026-07-13
 ---
 
 # Task: Language Boundary Alignment
@@ -24,7 +24,7 @@ and adds deterministic validation for English-first execution artifacts.
   - `/home/hy/gstack/.agents/skills/gstack-document-release/SKILL.md`
   - `/home/hy/im-not-ai/codex/skills/humanize-korean/SKILL.md`
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Governance and policy-control documents under `docs/00.agent-governance/**`
   remain English.
@@ -39,7 +39,7 @@ and adds deterministic validation for English-first execution artifacts.
 - Korean prose changes must preserve meaning, facts, paths, commands, dates,
   and proper nouns.
 
-## Language Boundary Audit
+### Language Boundary Audit
 
 | Area | Current Evidence | Result |
 | ---- | ---------------- | ------ |
@@ -66,20 +66,20 @@ and adds deterministic validation for English-first execution artifacts.
 | LANG-009 | Reinforce reference folder roles and language boundary | doc | References | Reference docs | `docs/90.references/README.md` and subfolder READMEs | platform | Done |
 | LANG-010 | Apply language policy to root and docs entrypoints | doc | Entrypoints | README docs | `README.md`, `docs/README.md` | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `eval`
 - `guardrail`
 - `test`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `memory`
 - `guardrail`
 - `eval`
 
-## Completion Notes
+### Completion Notes
 
 - Legacy Stage 03 spec documents have been translated to English.
 - Legacy Stage 04 implementation plans have been translated to English.
@@ -102,7 +102,7 @@ and adds deterministic validation for English-first execution artifacts.
   - This task document.
   - [Progress Ledger](../../00.agent-governance/memory/progress.md)
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Plan**: [../plans/2026-06-05-harness-governance-v2-overlay.md](../plans/2026-06-05-harness-governance-v2-overlay.md)

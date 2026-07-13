@@ -3,7 +3,7 @@ title: 'Workspace Engineering Implementation Audit Pack Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-05
+updated: 2026-07-13
 ---
 
 # Workspace Engineering Implementation Audit Pack Implementation Plan
@@ -115,7 +115,7 @@ docs/90.references/audits/
     remote, credentials, secret values, paid jobs, publishing, push, merge, PR
     creation, or third-party mutation.
 
-## File Structure
+### File Structure
 
 | Path | Responsibility |
 | --- | --- |
@@ -147,7 +147,7 @@ docs/90.references/audits/
 | WEA-006 | Add roadmap and automation opportunities report | `implementation-roadmap-and-automation-opportunities.md` | VAL-SPC-004, VAL-SPC-005 | Cross-report roadmap and automation opportunities are owner-routed |
 | WEA-007 | Close indexes, evidence, review, and validation | Audits README, task evidence, progress memory | VAL-SPC-006, VAL-SPC-007, VAL-SPC-008 | Final scans and quality gates pass; no mutation boundary violation |
 
-## Detailed Tasks
+### Detailed Tasks
 
 > [!NOTE]
 > The unchecked items below preserve the approved historical execution
@@ -432,7 +432,7 @@ title: 'Reference: Governance Harness Loop Provider Implementation Audit'
 type: content/reference
 status: draft
 owner: platform
-updated: 2026-07-05
+updated: 2026-07-13
 ---
 ```
 
@@ -877,7 +877,7 @@ Expected: commit succeeds and the worktree is clean.
 | Report count or matrix scope grows too large | Completion slows and review quality drops | Keep four reports with focused matrices and route future details to owner-scoped tasks. |
 | Subagent edits conflict with local work | Merge noise and duplicated edits | Use one implementer task at a time, or read-only reviewers; provide disjoint write scopes if delegation is used. |
 
-## Agent Rollout & Evaluation Gates
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: `git diff --check`, focused `rg` scans, and
   `bash scripts/validate-repo-quality-gates.sh .`.
@@ -904,7 +904,7 @@ Expected: commit succeeds and the worktree is clean.
 - [ ] `bash scripts/validate-repo-quality-gates.sh .` passes.
 - [ ] Logical commits are created for each major task group.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/018-workspace-engineering-implementation-audit-pack/spec.md](../../03.specs/018-workspace-engineering-implementation-audit-pack/spec.md)
 - **Research Pack Spec**: [../../03.specs/017-workspace-engineering-research-pack/spec.md](../../03.specs/017-workspace-engineering-research-pack/spec.md)

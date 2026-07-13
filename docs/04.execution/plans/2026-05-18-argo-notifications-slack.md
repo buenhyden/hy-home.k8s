@@ -3,7 +3,7 @@ title: 'Argo Notifications Slack Backfill Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-05-21
+updated: 2026-07-13
 ---
 
 # Argo Notifications Slack Backfill Plan
@@ -73,7 +73,7 @@ validation path were not traceable from `03.specs`.
 | Confusion with Rollouts chart notifications | High | State `rolloutsChartNotifications.enabled: false` in the Spec |
 | Live Slack test mistaken for automatic validation | Medium | Run live validation only from the runbook after human-approved secret preparation |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: repo quality, secret scan, manifest syntax, static contract checks pass.
 - **Sandbox / Canary Rollout**: Not applicable for docs-only backfill.
@@ -88,7 +88,7 @@ validation path were not traceable from `03.specs`.
 - [x] README indexes include Notifications.
 - [x] Verification commands are documented for execution.
 
-## Related Documents
+## Traceability
 
 - **PRD**: [`../../01.requirements/002-argo-notifications-slack.md`](../../01.requirements/002-argo-notifications-slack.md)
 - **ARD**: [`../../02.architecture/requirements/0005-argo-notifications-slack.md`](../../02.architecture/requirements/0005-argo-notifications-slack.md)

@@ -3,10 +3,12 @@ title: 'Template Contract Consolidation Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-12
+updated: 2026-07-13
 ---
 
 # Template Contract Consolidation Implementation Plan
+
+## Overview
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use
 > superpowers:subagent-driven-development (recommended) or
@@ -26,7 +28,7 @@ valid until Specs 029–030 replace legacy heading enforcement.
 **Tech Stack:** Markdown, HTML comments, JSON registry/fixtures, Python 3,
 Bash, Git, `rg`, `pre-commit`, and repository quality gates.
 
-## Global Constraints
+### Global Constraints
 
 - Spec 026 registry/schema/classifier must be complete and green before this Plan starts.
 - Change only Stage 99 support, non-README template forms, direct Stage 00 mirrors, compatibility fixtures/gates, and execution evidence.
@@ -47,8 +49,6 @@ Bash, Git, `rg`, `pre-commit`, and repository quality gates.
 - Use `apply_patch` for content changes; do not read secrets, mutate live systems, push, or publish.
 
 ---
-
-## Overview
 
 This plan implements Spec 027 as six testable tasks: execution lineage,
 research ledger, support ownership, canonical forms, compatibility and legacy
@@ -80,7 +80,7 @@ migrate it.
 - Production CommonMark parsing or strict semantic enforcement.
 - Cloud document relocation and protected-surface runtime hardening.
 
-## File and Interface Map
+### File and Interface Map
 
 | Unit | Files | Responsibility |
 | --- | --- | --- |
@@ -176,7 +176,7 @@ the ledger title or existing entries.
 | External guidance is misrepresented as a standard | Medium | Record source kind and rejected guidance in every ledger row. |
 | README scope leaks into this tranche | High | Restrict both Stage 99 README edits to inventory and target-link rows and review the diff. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate:** Each template family passes exact heading/frontmatter/native-format assertions.
 - **Sandbox / Canary Rollout:** Current gate and new registry run together in compatibility mode.
@@ -709,7 +709,7 @@ Expected: commit succeeds.
 - [x] Stage 99 README edits remained inventory-only and Spec 028 handoff is explicit.
 - [x] Repository quality, all-files, and reciprocal lifecycle evidence pass.
 
-## Related Documents
+## Traceability
 
 - **PRD**: [Workspace Document Assurance Modernization](../../01.requirements/005-workspace-document-assurance-modernization.md)
 - **ARD**: [Workspace Document Assurance Operating Model](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)

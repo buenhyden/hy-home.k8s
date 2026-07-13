@@ -3,7 +3,7 @@ title: 'Task: Harness Four-Element Alignment'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-06-04
+updated: 2026-07-13
 ---
 
 # Task: Harness Four-Element Alignment
@@ -20,7 +20,7 @@ validation gates.
 - **Parent Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Parent Plan**: [../plans/2026-06-04-harness-four-element-alignment.md](../plans/2026-06-04-harness-four-element-alignment.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Keep Stage 00 as the common AI Agent governance source of truth.
 - Keep `.claude/**` and `.codex/**` as provider adapters based on Stage 00.
@@ -35,7 +35,7 @@ validation gates.
   topology, model policy, or secret-bearing state.
 - Record validation evidence before handoff.
 
-## Named Skill Application Boundary
+### Named Skill Application Boundary
 
 | Named Skill | Path Evidence | Application in This Task |
 | ----------- | ------------- | ------------------------ |
@@ -48,7 +48,7 @@ validation gates.
 | `imp-harness` | `/home/hy/.agents/skills/imp-harness/SKILL.md` provided in prompt | Applied as the primary harness architecture workflow. Existing harness assets were updated in place rather than creating a new agent team or duplicate skill tree. |
 | `testing-handbook-skills:harness-writing` | `/home/hy/.codex/trailofbits-skills/plugins/testing-handbook-skills/skills/harness-writing/SKILL.md` exists | Treated as a near-miss technique lens: no fuzz target was needed, but its determinism, input boundary, and feedback-quality principles informed the AI harness validation framing. |
 
-## Current Audit Ledger
+### Current Audit Ledger
 
 | Harness Element | Current Common Surface | Claude Surface | Codex Surface | Result |
 | --------------- | ---------------------- | -------------- | ------------- | ------ |
@@ -73,7 +73,7 @@ validation gates.
 | H4-T-008 | Update indexes and progress memory | memory | REQ-H4-007 | PLN-007 | README index rows and progress ledger entry | platform | Done |
 | H4-T-009 | Run static validation | eval | Verification | PLN-007 | Verification Summary | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `test`
@@ -82,7 +82,7 @@ validation gates.
 - `prompt`
 - `memory`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `prompt`
 - `tool`
@@ -91,7 +91,7 @@ validation gates.
 - `eval`
 - `observability`
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase 1 - Workspace Analysis and Review
 
@@ -145,7 +145,7 @@ validation gates.
   - This task document.
   - [Progress Ledger](../../00.agent-governance/memory/progress.md)
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Plan**: [../plans/2026-06-04-harness-four-element-alignment.md](../plans/2026-06-04-harness-four-element-alignment.md)

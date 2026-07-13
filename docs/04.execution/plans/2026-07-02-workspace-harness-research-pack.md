@@ -3,7 +3,7 @@ title: 'Workspace Harness Research Pack Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-02
+updated: 2026-07-13
 ---
 
 # Workspace Harness Research Pack Implementation Plan
@@ -69,7 +69,7 @@ including bounded market scan and implementation checklist sections.
   - Provider runtime adapter changes.
   - New validation scripts.
 
-## File Structure
+### File Structure
 
 | Path | Responsibility |
 | --- | --- |
@@ -84,7 +84,7 @@ including bounded market scan and implementation checklist sections.
 | `docs/04.execution/tasks/README.md` | Task index update. |
 | `docs/00.agent-governance/memory/progress.md` | Progress, reusable memory, validation evidence, and handoff update. |
 
-## Source Baseline
+### Source Baseline
 
 Use the following source groups during implementation.
 
@@ -141,7 +141,7 @@ Market scan and comparative sources:
 | PLN-005 | Write spec/SDLC/CI/QA/formatting reference | `docs/90.references/research/spec-sdlc-ci-qa-formatting.md` | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | SDD, SDLC, CI/CD, QA, formatting, and validation matrix mapped to repo controls. |
 | PLN-006 | Integrate indexes, task evidence, memory, and validation | `docs/04.execution/tasks/2026-07-02-workspace-harness-research-pack.md`, `docs/04.execution/plans/README.md`, `docs/04.execution/tasks/README.md`, `docs/00.agent-governance/memory/progress.md` | VAL-SPC-006 | Repo-static validation passes and task evidence records executed commands. |
 
-## Detailed Task Steps
+### Detailed Task Steps
 
 ### Task 1: Research Folder Scaffold and Source Ledger
 
@@ -502,7 +502,7 @@ Expected: one final integration commit.
 | Research pack becomes too broad | Medium | Keep the approved four-document structure and route deeper follow-up to future plans. |
 | Validation fails on README/template shape | Medium | Fix the smallest README or reference-template conformance issue before continuing. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Use repository-static validation only; no live runtime
   eval is in scope.
@@ -529,7 +529,7 @@ Expected: one final integration commit.
 - [x] Final validation commands pass.
 - [x] Work is committed by logical unit.
 
-## Related Documents
+## Traceability
 
 - **PRD**: `../../01.requirements/003-workspace-agent-governance-platform.md`
 - **ARD**: `../../02.architecture/requirements/0006-workspace-agent-governance-platform.md`

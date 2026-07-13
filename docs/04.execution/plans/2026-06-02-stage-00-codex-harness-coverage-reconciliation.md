@@ -3,7 +3,7 @@ title: 'Stage 00 Codex Harness Coverage Reconciliation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Stage 00 Codex Harness Coverage Reconciliation Plan
@@ -100,7 +100,7 @@ live infrastructure.
 | Existing evidence links become stale | Medium | Link directly to Plan/Task records that own the completed work. |
 | Documentation-only work triggers live infrastructure action | High | Keep live k3d, ArgoCD, Vault, Kubernetes mutation, and secret inspection out of scope. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Run targeted template scans, `git diff --check`,
   `bash scripts/generate-llm-wiki-index.sh --check`, and
@@ -124,7 +124,7 @@ live infrastructure.
 - [x] No live cluster, secret, deployment, CI topology, or provider configuration change is performed.
 - [x] Approved protected-surface follow-up records the now-present Codex-local `ouroboros-qa` path without changing model, CI, Kubernetes, secret, or live infrastructure surfaces.
 
-## Related Documents
+## Traceability
 
 - Parent Spec: N/A — pre-Spec execution record.
 - **Original Follow-up Plan**: [./2026-06-02-phase-1-decision-follow-up.md](./2026-06-02-phase-1-decision-follow-up.md)

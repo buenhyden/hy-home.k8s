@@ -3,7 +3,7 @@ title: 'Codex Governance Harness Alignment Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-05-31
+updated: 2026-07-13
 ---
 
 # Codex Governance Harness Alignment Plan
@@ -67,7 +67,7 @@ The key facts confirmed in Phase 1 were:
   - Reading or outputting secret values.
   - Rewriting historical evidence in existing completed plans.
 
-## Concept Alignment Plan
+### Concept Alignment Plan
 
 | Concept | Current State | Desired State | Planned Action |
 | --- | --- | --- | --- |
@@ -84,7 +84,7 @@ The key facts confirmed in Phase 1 were:
 | Model Policy | `model-policy.md` conflicts with `harness-catalog.md`. | Top: `gpt-5.5`; Codex worker: `gpt-5.3-codex`; allowed efforts documented. | Update model policy and catalog as one source-aligned pair. |
 | Template Contract | `deprecated operations-template route` references remain, while actual template is `policy.template.md`. | Policy docs and routing use `policy.template.md` and `type: sdlc/policy`. | Update routing skill, hook hint, policy docs, and validator. |
 
-## Codex Model and Reasoning-Effort Assignment
+### Codex Model and Reasoning-Effort Assignment
 
 | Codex Agent | Model | Planned `model_reasoning_effort` | Rationale |
 | --- | --- | --- | --- |
@@ -135,7 +135,7 @@ The key facts confirmed in Phase 1 were:
 | Policy frontmatter type change is semantically misread as policy content rewrite | Low | Change only the frontmatter `type`; do not alter policy body semantics. |
 | Hook template hint changes affect authored-doc edit warnings | Medium | Run shell syntax and repository hook payload simulation through the quality gate. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: repo-static validators and targeted `rg` checks must pass before handoff.
 - **Sandbox / Canary Rollout**: not applicable; this is repository governance/config documentation work.
@@ -155,7 +155,7 @@ The key facts confirmed in Phase 1 were:
 - [x] Required README and memory updates are complete.
 - [x] Verification commands pass or limitations are recorded.
 
-## Related Documents
+## Traceability
 
 - Parent Spec: N/A — pre-Spec execution record.
 - [Governance Hub](../../00.agent-governance/README.md)

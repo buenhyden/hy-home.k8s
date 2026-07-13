@@ -20,7 +20,7 @@ updated: 2026-05-17
 
 이 런북은 live cluster mutation, Vault write, deployment approval 절차를 요구하거나 승인하지 않는다.
 
-## Purpose
+### Purpose
 
 Reference 추가, 이동, 버전 snapshot 갱신, LLM Wiki owner/link 변경이 있을 때 `90.references`의 사실 경계와 `05.operations`의 반복 절차 경계를 유지하면서 README, template, generated index, 품질 게이트를 같은 변경 단위에서 검증한다.
 
@@ -143,12 +143,12 @@ git diff --check
 - [ ] If a README heading fails the touched-scope canonical check, rename the heading to `## Related Documents` and rerun validation.
 - [ ] If a version inventory value drifts from repo files, either correct the inventory or correct the repo-backed manifest/config in the same change.
 
-## Agent Operations (If Applicable)
+### Agent Operations
 
 이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
 단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
 
-## Related Documents
+## Traceability
 
 - **Reference**: [90.references README](../../90.references/README.md)
 - **Reference**: [Tech Stack Version Inventory](../../90.references/data/tech-stack-version-inventory.md)

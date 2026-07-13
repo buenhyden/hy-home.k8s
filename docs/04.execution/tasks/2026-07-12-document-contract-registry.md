@@ -3,7 +3,7 @@ title: 'Task: Document Contract Registry'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-12
+updated: 2026-07-13
 ---
 
 # Task: Document Contract Registry
@@ -21,7 +21,7 @@ traceable while preserving repository-static evidence boundaries.
 - **Parent Plan**:
   [../plans/2026-07-12-document-contract-registry.md](../plans/2026-07-12-document-contract-registry.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Write failing assertions first for deterministic repository behavior.
 - Record validation evidence for every completed task.
@@ -29,7 +29,7 @@ traceable while preserving repository-static evidence boundaries.
   readiness.
 - Keep Spec, Plan, Task, and index lineage reciprocal.
 
-## Suggested Types
+### Suggested Types
 
 - `doc`: reciprocal lineage and index-only work.
 - `contract`: registry schema/profile/evidence contract work.
@@ -74,7 +74,7 @@ traceable while preserving repository-static evidence boundaries.
   merge, or third-party mutation ran or is inferred from repository-static
   PASS results.
 
-## Related Documents
+## Traceability
 
 - **Spec**:
   [../../03.specs/026-document-contract-registry/spec.md](../../03.specs/026-document-contract-registry/spec.md)

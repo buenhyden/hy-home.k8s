@@ -3,7 +3,7 @@ title: 'Workspace Engineering Research Pack Task Record'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Task: Workspace Engineering Research Pack Task Record
@@ -23,7 +23,7 @@ runtimes, credentials, secret values, or third-party systems.
 - **Parent Plan**: [../plans/2026-07-04-workspace-engineering-research-pack.md](../plans/2026-07-04-workspace-engineering-research-pack.md)
 - **Task Template**: [../../99.templates/templates/sdlc/execution/task.template.md](../../99.templates/templates/sdlc/execution/task.template.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Keep this work documentation-only unless a later task explicitly scopes a
   repository document move or index update.
@@ -53,13 +53,13 @@ runtimes, credentials, secret values, or third-party systems.
 | WER-007 | Add automation, pipeline, workflow, and QA reference; close indexes and validation     | doc  | VAL-SPC-002, VAL-SPC-004, VAL-SPC-006, VAL-SPC-007 | Task 7              | Automation reference coverage, index closure, stale-link scans, final validation, and no-mutation handoff          | platform | Done   |
 | WER-008 | Add AI agents roster and gap-analysis reference; index closure and human-approved push | doc  | VAL-SPC-002, VAL-SPC-004, VAL-SPC-005              | Follow-up           | Roster snapshot, external market-scan gap analysis, index closure, repo-static validation, and human-approved push | platform | Done   |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `memory`
 - `eval`
 
-## Phase View
+### Phase View
 
 ### WER-001 Baseline
 
@@ -87,7 +87,7 @@ runtimes, credentials, secret values, or third-party systems.
 - [x] WER-008 AI agents roster and gap-analysis reference plus index closure,
       progress ledger entry, validation, and human-approved push.
 
-## Baseline Evidence Summary
+### Baseline Evidence Summary
 
 ### Branch and Template Intake
 
@@ -177,7 +177,7 @@ Summary:
   `docs/99.templates/support/template-routing.md`, `gitops/README.md`,
   `infrastructure/README.md`, and repo-static validation scripts.
 
-## WER-002 Evidence Summary
+### WER-002 Evidence Summary
 
 ### Dated Pack Scaffold
 
@@ -235,7 +235,7 @@ Summary:
 - Remaining matches are historical command strings, creation evidence, move
   evidence, or old plan/task path literals that describe past execution.
 
-## WER-003 Evidence Summary
+### WER-003 Evidence Summary
 
 ### Workspace Governance Baseline Refresh
 
@@ -292,7 +292,7 @@ Summary:
   `Definitions / Facts`, `Sources`, `Review and Freshness`, and
   `Related Documents`.
 
-## WER-004 Evidence Summary
+### WER-004 Evidence Summary
 
 ### Harness, Loop, and Provider Reference Refresh
 
@@ -363,7 +363,7 @@ Summary:
   `rg` scan alone does not prove source freshness, link reachability, or claim
   support.
 
-## WER-005 Evidence Summary
+### WER-005 Evidence Summary
 
 ### SDLC CI QA Formatting Security Reference Refresh
 
@@ -409,7 +409,7 @@ Summary:
   findings, non-authoritative market/context language, and
   `Review and Freshness`.
 
-## WER-006 Evidence Summary
+### WER-006 Evidence Summary
 
 ### Kubernetes Infrastructure Security Reference
 
@@ -454,7 +454,7 @@ Summary:
   live-runtime evidence-lane language, non-authoritative market/context
   language, and `Review and Freshness`.
 
-## WER-007 Evidence Summary
+### WER-007 Evidence Summary
 
 ### Automation Pipeline Workflow QA Reference
 
@@ -512,7 +512,7 @@ Summary:
 - WER-007 task table status and phase-view checkbox were updated to `Done`
   and checked, respectively.
 
-## WER-008 Evidence Summary
+### WER-008 Evidence Summary
 
 ### AI Agents Roster and Gap Analysis Reference
 
@@ -605,7 +605,7 @@ Boundary statement:
   secret-value, paid-job, publishing, merge, or third-party mutation was
   performed across WER-001 through WER-008.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/017-workspace-engineering-research-pack/spec.md](../../03.specs/017-workspace-engineering-research-pack/spec.md)
 - **Plan**: [../plans/2026-07-04-workspace-engineering-research-pack.md](../plans/2026-07-04-workspace-engineering-research-pack.md)

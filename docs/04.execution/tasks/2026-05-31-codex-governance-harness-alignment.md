@@ -3,7 +3,7 @@ title: 'Task: Codex Governance Harness Alignment'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-05-31
+updated: 2026-07-13
 ---
 
 # Task: Codex Governance Harness Alignment
@@ -21,7 +21,7 @@ mutation or secret-value access.
 
 - **Parent Plan**: [../plans/2026-05-31-codex-governance-harness-alignment.md](../plans/2026-05-31-codex-governance-harness-alignment.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Implement only the approved Plan scope from `PLN-001` through `PLN-010`.
 - Keep governance and provider/harness documents in English.
@@ -44,20 +44,20 @@ mutation or secret-value access.
 | T-009 | Update README indexes and the memory ledger | memory | N/A | PLN-009 | README indexes current; progress entry appended | platform | Done |
 | T-010 | Run final verification and record results | test | N/A | PLN-010 | Verification Summary commands pass or limitations recorded | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `test`
 - `guardrail`
 - `memory`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `tool`
 - `guardrail`
 - `memory`
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase 3
 
@@ -90,7 +90,7 @@ mutation or secret-value access.
   - `git diff --check`
 - **Logs / Evidence Location**: This task document and `docs/00.agent-governance/memory/progress.md`.
 
-## Related Documents
+## Traceability
 
 - **Plan**: [../plans/2026-05-31-codex-governance-harness-alignment.md](../plans/2026-05-31-codex-governance-harness-alignment.md)
 - **Model Policy**: [../../00.agent-governance/model-policy.md](../../00.agent-governance/model-policy.md)

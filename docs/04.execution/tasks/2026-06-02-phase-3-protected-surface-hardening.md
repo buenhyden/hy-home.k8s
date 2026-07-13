@@ -3,7 +3,7 @@ title: 'Task: Phase 3 Protected Surface Hardening'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Task: Phase 3 Protected Surface Hardening
@@ -24,7 +24,7 @@ cluster mutation and secret-value inspection are out of scope.
 - **Phase 1 Audit Evidence**: [Phase 1 Governance Alignment Audit Task](./2026-06-02-phase-1-governance-alignment-audit.md)
 - **Governance Decision**: [ADR-0013: Stage 00 Canonical Adapter Model](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Preserve ADR-0013 and the Stage 00 canonical adapter model.
 - Treat `.agents/**` as the shared asset SSoT for skills, workflows, output styles, and Gemini hook wiring.
@@ -45,20 +45,20 @@ cluster mutation and secret-value inspection are out of scope.
 | T-006 | Record Phase 3 artifacts, indexes, links, and progress evidence | doc | N/A | PLN-005 | Phase 3 README/index scan and progress ledger update | platform | Done |
 | T-007 | Record protected-surface no-op decisions and approved read-only live validation | eval | N/A | PLN-006 | Live validation command output or limitation; no model/provider/GitOps manifest diff without drift | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `guardrail`
 - `runtime`
 - `doc`
 - `eval`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `memory`
 - `guardrail`
 - `eval`
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase 3
 
@@ -92,7 +92,7 @@ cluster mutation and secret-value inspection are out of scope.
   - This task document after final verification.
   - [Progress ledger](../../00.agent-governance/memory/progress.md).
 
-## Related Documents
+## Traceability
 
 - [Phase 3 Protected Surface Hardening Plan](../plans/2026-06-02-phase-3-protected-surface-hardening.md)
 - [Phase 4 ESO Vault Runtime Diagnosis Plan](../plans/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md)

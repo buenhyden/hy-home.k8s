@@ -3,7 +3,7 @@ title: 'Task: Stage 00 Codex Harness Coverage Reconciliation'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Task: Stage 00 Codex Harness Coverage Reconciliation
@@ -23,7 +23,7 @@ completion evidence.
 - **Parent Spec**: N/A. This is a documentation traceability reconciliation.
 - **Parent Plan**: [../plans/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md](../plans/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Preserve [Phase 1 Decision Follow-up Plan](../plans/2026-06-02-phase-1-decision-follow-up.md) as completed historical evidence.
 - Do not re-run Stage 00 canonical adapter or Codex harness implementation work.
@@ -31,7 +31,7 @@ completion evidence.
 - Do not mutate live k3d, ArgoCD, Vault, Kubernetes resources, CI topology, or secret-bearing state.
 - Record validation evidence before handoff.
 
-## Approved Protected Surface Follow-up (2026-06-02)
+### Approved Protected Surface Follow-up (2026-06-02)
 
 The human operator approved protected-surface edits for items that still needed
 approval. The only concrete drift found during the follow-up was the
@@ -44,7 +44,7 @@ No model policy, Codex TOML, CI workflow, Kubernetes manifest, secret,
 credential, live k3d, ArgoCD, Vault, or Kubernetes runtime mutation is part of
 this follow-up.
 
-## Coverage Matrix
+### Coverage Matrix
 
 | Original Requested Area | Follow-up Plan Coverage | Existing Evidence / Resolution | Result |
 | --- | --- | --- | --- |
@@ -70,18 +70,18 @@ this follow-up.
 | T-006 | Run static validation | test | N/A | Verification Plan | Required validation commands pass | platform | Done |
 | T-007 | Apply approved protected-surface follow-up for QA routing | guardrail | N/A | REC-006 | `harness-catalog.md` records `/home/hy/.codex/skills/ouroboros-qa/SKILL.md`; no model, Codex TOML, CI, Kubernetes, secret, or live infra files changed | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `test`
 - `memory`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `memory`
 - `guardrail`
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase 1
 
@@ -112,7 +112,7 @@ this follow-up.
   - This task document.
   - [Progress Ledger](../../00.agent-governance/memory/progress.md)
 
-## Related Documents
+## Traceability
 
 - **Plan**: [../plans/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md](../plans/2026-06-02-stage-00-codex-harness-coverage-reconciliation.md)
 - **Original Follow-up Plan**: [../plans/2026-06-02-phase-1-decision-follow-up.md](../plans/2026-06-02-phase-1-decision-follow-up.md)

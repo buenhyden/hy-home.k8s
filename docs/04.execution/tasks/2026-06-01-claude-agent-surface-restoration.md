@@ -3,7 +3,7 @@ title: 'Task: Claude Agent Surface Restoration'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-06-01
+updated: 2026-07-13
 ---
 
 # Task: Claude Agent Surface Restoration
@@ -21,7 +21,7 @@ restoration and validation hardening were completed after Phase 2 planning.
 - **Harness Catalog**: [../../00.agent-governance/harness-catalog.md](../../00.agent-governance/harness-catalog.md)
 - **Subagent Protocol**: [../../00.agent-governance/subagent-protocol.md](../../00.agent-governance/subagent-protocol.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Treat `bash scripts/validate-repo-quality-gates.sh .` as necessary but not sufficient evidence.
 - Preserve provider separation: Claude agents are real files, Gemini agents stay under `.agents/agents`, and Codex agents stay under `.codex/agents`.
@@ -39,18 +39,18 @@ restoration and validation hardening were completed after Phase 2 planning.
 | T-006 | Update governance/readiness text only where current evidence requires it | doc | N/A | PLN-006 | Current governance text already matched the restored provider-specific agent layout | platform | Done |
 | T-007 | Record Phase 3 execution evidence and limitations | doc | N/A | PLN-007 | task verification summary includes commands, skipped checks, and no-live-action statement | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `impl`
 - `test`
 - `doc`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `guardrail`
 - `eval`
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase 2
 
@@ -81,7 +81,7 @@ restoration and validation hardening were completed after Phase 2 planning.
   - `scripts/validate-repo-quality-gates.sh`
   - `docs/00.agent-governance/memory/progress.md`
 
-## Related Documents
+## Traceability
 
 - **Plan**: [../plans/2026-06-01-claude-agent-surface-restoration.md](../plans/2026-06-01-claude-agent-surface-restoration.md)
 - **Runtime Baseline**: [../../../.claude/CLAUDE.md](../../../.claude/CLAUDE.md)

@@ -3,7 +3,7 @@ title: 'Task: Current Research Pack Fact-First Hardening'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-10
+updated: 2026-07-13
 ---
 
 # Task: Current Research Pack Fact-First Hardening
@@ -28,7 +28,7 @@ live runtime or remote readiness.
   [2026-07-04 Workspace Engineering Research Pack](../../90.references/research/2026-07-04-wer/README.md)
 - **Provider-model source cutoff**: `2026-07-10 10:00 KST`
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Audit the Current pack README and all seven Current references in place.
 - Preserve `docs/90.references/research/2026-07-04-wer/` unchanged as a
@@ -53,7 +53,7 @@ live runtime or remote readiness.
 - Run focused assertions before and after each task, record deterministic
   validation, and capture task-scoped review and commit evidence.
 
-## Baseline Evidence
+### Baseline Evidence
 
 ### Current Pack Inventory
 
@@ -128,7 +128,7 @@ no remote GitHub Actions run or branch-protection state was inspected.
   publish, push, merge, and third-party checks are prohibited for this plan and
   remain not run. Repo-static PASS does not promote those lanes to ready.
 
-## Source and Claim Ledger
+### Source and Claim Ledger
 
 | Claim lane | Evidence required | Approved source priority | Recording rule | Failure handling |
 | --- | --- | --- | --- | --- |
@@ -157,7 +157,7 @@ as each task completes.
 | WERH-009 | Close pack coverage and cross-document integration. | doc | Addendum: Coverage and Related-Document Integration Rules | Phase 3 | RED README assertion exited 1; 48 exact six-column owner rows cover every requested family; 8 Current artifacts, 9 contradiction families, fixed cutoff/freshness, links, and static/live boundaries are integrated; focused scans, Markdown lint, pre-commit, diff check, harness, and repo-quality results are recorded below. | supervisor | Clean after Important and Minor corrections and independent re-review. | `160978712c09c489523ea4b62424772eddbf67e2`, `39f915a118629dc9932ed31b4ac8f4ccdc16e10b` | Done |
 | WERH-010 | Run final validation and close execution records. | eval | Addendum: Verification and Acceptance | Phase 4 | Pinned-base inventory, deterministic validation, substantive review, closure-only review, and final-state validation evidence are recorded with static/live boundaries. | supervisor | Substantive review clean; closure-only range `e0d92f7^..1965215` independently re-reviewed with Spec PASS and Quality PASS, no findings. | Provisional `e0d92f7ce1680117a57f514e7782e30118873fb5`; inventory fix `196521549455f2fa6d4c3e312baa7d1c94b71054`; final promotion is the commit containing this completed record with subject `docs(execution): close current research hardening evidence`. | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `impl`
 - `test`
@@ -165,7 +165,7 @@ as each task completes.
 - `doc`
 - `ops`
 
-## Phase View
+### Phase View
 
 ### Phase 1: Evidence Scaffold
 
@@ -931,7 +931,7 @@ as each task completes.
   These first-pass results cover the recorded working-tree state; the required
   second pass is the commit gate and is not self-written afterward.
 
-## Related Documents
+## Traceability
 
 - **Spec**:
   [Workspace Engineering Research Pack](../../03.specs/017-workspace-engineering-research-pack/spec.md)

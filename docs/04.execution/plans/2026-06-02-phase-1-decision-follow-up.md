@@ -3,7 +3,7 @@ title: 'Phase 1 Decision Follow-up Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Phase 1 Decision Follow-up Implementation Plan
@@ -99,7 +99,7 @@ or live infrastructure.
 | RTK troubleshooting touches private runtime state | High | Record only command availability and error class; never read private DBs, credentials, tokens, or shell history. |
 | Live infrastructure checks are run for a docs-only follow-up | High | Keep live k3d, ArgoCD, Vault, Kubernetes mutation, and external service action out of scope. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Run `git diff --check`, `bash scripts/generate-llm-wiki-index.sh --check`, and `bash scripts/validate-repo-quality-gates.sh .`.
 - **Sandbox / Canary Rollout**: Not applicable. This is documentation-only planning work.
@@ -115,7 +115,7 @@ or live infrastructure.
 - [x] Static verification commands pass or limitations are documented.
 - [x] No live cluster, secret, deployment, CI topology, or provider configuration change is performed.
 
-## Related Documents
+## Traceability
 
 - Parent Spec: N/A — pre-Spec execution record.
 - **Task**: [../tasks/2026-06-02-phase-1-governance-alignment-audit.md](../tasks/2026-06-02-phase-1-governance-alignment-audit.md)

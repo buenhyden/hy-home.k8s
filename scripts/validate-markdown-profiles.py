@@ -60,14 +60,14 @@ TOKEN_BEARING_DEBT_RULES = frozenset(
 DEFERABLE_DEBT_RULES = TOKEN_BEARING_DEBT_RULES | {"FM-DELIMITER"}
 EXPECTED_DEBT_CAPS: dict[str, dict[str, int]] = {
     "BODY-HEADING-REQUIRED": {
-        "pathCount": 89,
-        "occurrenceCount": 247,
-        "tokenObligationCount": 247,
+        "pathCount": 42,
+        "occurrenceCount": 200,
+        "tokenObligationCount": 200,
     },
     "BODY-TEMPLATE-RESIDUE": {
-        "pathCount": 158,
-        "occurrenceCount": 267,
-        "tokenObligationCount": 267,
+        "pathCount": 52,
+        "occurrenceCount": 56,
+        "tokenObligationCount": 56,
     },
     "FM-DELIMITER": {
         "pathCount": 24,
@@ -75,20 +75,20 @@ EXPECTED_DEBT_CAPS: dict[str, dict[str, int]] = {
         "tokenObligationCount": 0,
     },
     "BODY-HEADING-UNSUPPORTED": {
-        "pathCount": 164,
-        "occurrenceCount": 588,
-        "tokenObligationCount": 588,
-        "distinctTokenCount": 375,
+        "pathCount": 90,
+        "occurrenceCount": 346,
+        "tokenObligationCount": 346,
+        "distinctTokenCount": 228,
     },
     "BODY-H2-DUPLICATE": {
-        "pathCount": 1,
-        "occurrenceCount": 1,
-        "tokenObligationCount": 1,
+        "pathCount": 0,
+        "occurrenceCount": 0,
+        "tokenObligationCount": 0,
     },
 }
-EXPECTED_REQUIRED_RESIDUE_OVERLAP = 51
-EXPECTED_REQUIRED_RESIDUE_UNION = 196
-EXPECTED_DEBT_UNION = 232
+EXPECTED_REQUIRED_RESIDUE_OVERLAP = 4
+EXPECTED_REQUIRED_RESIDUE_UNION = 90
+EXPECTED_DEBT_UNION = 112
 IMPLEMENTED_RULE_IDS = frozenset(
     {
         "APPEND-CONTEXT",
@@ -1229,7 +1229,9 @@ def _self_test(root: Path) -> list[str]:
     actual_occurrences = collections.Counter(
         item.rule_id for item in production_diagnostics
     )
-    if dict(actual_occurrences) != expected_occurrences:
+    if {
+        rule_id: actual_occurrences[rule_id] for rule_id in EXPECTED_DEBT_CAPS
+    } != expected_occurrences:
         failures.append(
             f"repository semantic occurrence caps changed: {dict(actual_occurrences)}"
         )
@@ -1251,7 +1253,7 @@ def _self_test(root: Path) -> list[str]:
         for item in production_diagnostics
         if item.rule_id == "BODY-HEADING-UNSUPPORTED"
     }
-    if len(unsupported_tokens) != 375:
+    if len(unsupported_tokens) != 228:
         failures.append("repository unsupported-heading distinct token cap changed")
 
     compatibility_rows = _outcome_rows(
@@ -1276,7 +1278,7 @@ def _self_test(root: Path) -> list[str]:
         )
         for row in strict_rows
     ]
-    if compatibility_keys != strict_keys or len(compatibility_keys) != 1127:
+    if compatibility_keys != strict_keys or len(compatibility_keys) != 626:
         failures.append("compatibility and strict diagnostic tuples differ")
     if {row.outcome for row in compatibility_rows} != {"DEFER"}:
         failures.append("repository compatibility results are not exact DEFER debt")

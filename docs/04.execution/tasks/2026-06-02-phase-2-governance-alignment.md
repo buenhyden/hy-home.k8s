@@ -3,7 +3,7 @@ title: 'Task: Phase 2 Governance Alignment'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Task: Phase 2 Governance Alignment
@@ -20,7 +20,7 @@ fixes Phase 1 audit results into Plan, Task, README, and progress traceability.
 - **Parent Audit Evidence**: [Phase 1 Governance Alignment Audit Task](./2026-06-02-phase-1-governance-alignment-audit.md)
 - **Governance Decision**: [ADR-0013: Stage 00 Canonical Adapter Model](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Keep Phase 2 docs-only and traceability-first.
 - Preserve ADR-0013 as the accepted Stage 00 canonical adapter architecture.
@@ -28,11 +28,11 @@ fixes Phase 1 audit results into Plan, Task, README, and progress traceability.
 - Do not run live k3d, ArgoCD, Vault, ESO, deployment, external service, secret inspection, or private RTK database checks.
 - Documentation-only work still needs validation evidence.
 
-## Goal
+### Goal
 
 Create Phase 2 planning evidence that turns the Phase 1 audit decisions into executable Plan/Task traceability without changing runtime, infrastructure, CI, provider, hook, or model-policy surfaces.
 
-## Acceptance Criteria
+### Acceptance Criteria
 
 - [x] Phase 2 Plan exists, uses `status: done`, and is indexed from Plans README.
 - [x] Phase 2 Task exists, uses `status: done`, and is indexed from Tasks README.
@@ -40,7 +40,7 @@ Create Phase 2 planning evidence that turns the Phase 1 audit decisions into exe
 - [x] Progress ledger records Phase 2 scope, evidence, and skipped live checks.
 - [x] Static verification commands pass or limitations are documented.
 
-## Evidence
+### Evidence
 
 - `git diff --check`
 - `bash scripts/generate-llm-wiki-index.sh --check`
@@ -48,7 +48,7 @@ Create Phase 2 planning evidence that turns the Phase 1 audit decisions into exe
 - `rg -n "phase-2-governance-alignment" docs/04.execution/plans/README.md docs/04.execution/tasks/README.md docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md docs/04.execution/tasks/2026-06-02-phase-2-governance-alignment.md`
 - `rg -n "status: done|owner: platform|## Related Documents" docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md docs/04.execution/tasks/2026-06-02-phase-2-governance-alignment.md`
 
-## Rollback
+### Rollback
 
 Remove the Phase 2 Plan/Task files, their README index rows, the Phase 1 audit related-link additions, and the Phase 2 progress ledger entry.
 
@@ -62,19 +62,19 @@ Remove the Phase 2 Plan/Task files, their README index rows, the Phase 1 audit r
 | T-004 | Deferred live validation boundary | guardrail | N/A | PLN-004 | Plan, Task, and progress entry state live checks are out of scope | platform | Done |
 | T-005 | Verification evidence | eval | N/A | PLN-005 | Diff, wiki, repo-quality, and targeted scans pass or record limitations | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `guardrail`
 - `eval`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `memory`
 - `guardrail`
 - `eval`
 
-## Phase View
+### Phase View
 
 ### Phase 2
 
@@ -98,7 +98,7 @@ Remove the Phase 2 Plan/Task files, their README index rows, the Phase 1 audit r
   - [Progress ledger](../../00.agent-governance/memory/progress.md).
   - Final implementation handoff command output.
 
-## Related Documents
+## Traceability
 
 - [Phase 2 Governance Alignment Plan](../plans/2026-06-02-phase-2-governance-alignment.md)
 - [Phase 3 Protected Surface Hardening Plan](../plans/2026-06-02-phase-3-protected-surface-hardening.md)

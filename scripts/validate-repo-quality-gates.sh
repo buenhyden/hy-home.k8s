@@ -1101,23 +1101,24 @@ template_compatibility = load_json(template_compatibility_path)
 TEMPLATE_COMPATIBILITY_CONTRACT_V1 = {
     "name": "TemplateCompatibilityContract.v1",
     "semantic_sha256": (
-        "6fcb92853930b4206551c0d014f3403cff2a37f2c2a6389d6eba7b9453bca402"  # pragma: allowlist secret
+        "e95542b4fc35b19fe4ab408088561110b968a57234345029193d3f45766102b1"  # pragma: allowlist secret
     ),
 }
 
-ADM003_TEMPLATE_DEBT_AFTER = {
-    "affectedPathCount": 232,
-    "occurrenceCount": 1127,
+ADM004_TEMPLATE_DEBT_AFTER = {
+    "affectedPathCount": 112,
+    "occurrenceCount": 626,
+    "tokenObligationCount": 602,
     "rules": {
         "BODY-HEADING-REQUIRED": {
-            "pathCount": 89,
-            "occurrenceCount": 247,
-            "tokenObligationCount": 247,
+            "pathCount": 42,
+            "occurrenceCount": 200,
+            "tokenObligationCount": 200,
         },
         "BODY-TEMPLATE-RESIDUE": {
-            "pathCount": 158,
-            "occurrenceCount": 267,
-            "tokenObligationCount": 267,
+            "pathCount": 52,
+            "occurrenceCount": 56,
+            "tokenObligationCount": 56,
         },
         "FM-DELIMITER": {
             "pathCount": 24,
@@ -1125,20 +1126,20 @@ ADM003_TEMPLATE_DEBT_AFTER = {
             "tokenObligationCount": 0,
         },
         "BODY-HEADING-UNSUPPORTED": {
-            "pathCount": 164,
-            "occurrenceCount": 588,
-            "tokenObligationCount": 588,
-            "distinctTokenCount": 375,
+            "pathCount": 90,
+            "occurrenceCount": 346,
+            "tokenObligationCount": 346,
+            "distinctTokenCount": 228,
         },
         "BODY-H2-DUPLICATE": {
-            "pathCount": 1,
-            "occurrenceCount": 1,
-            "tokenObligationCount": 1,
+            "pathCount": 0,
+            "occurrenceCount": 0,
+            "tokenObligationCount": 0,
         },
     },
-    "requiredResidueOverlapPathCount": 51,
-    "requiredResidueUnionPathCount": 196,
-    "unionPathCount": 232,
+    "requiredResidueOverlapPathCount": 4,
+    "requiredResidueUnionPathCount": 90,
+    "unionPathCount": 112,
 }
 
 
@@ -1219,6 +1220,19 @@ def assert_template_compatibility_mutation_proof(contract: dict) -> None:
             "occurrenceCount"
         ] += 1
 
+    def mutate_rule_obligation_cap(candidate: dict) -> None:
+        candidate["semanticDebtCaps"]["rules"]["BODY-HEADING-UNSUPPORTED"][
+            "tokenObligationCount"
+        ] += 1
+
+    def mutate_rule_distinct_token_cap(candidate: dict) -> None:
+        candidate["semanticDebtCaps"]["rules"]["BODY-HEADING-UNSUPPORTED"][
+            "distinctTokenCount"
+        ] += 1
+
+    def mutate_required_residue_overlap_cap(candidate: dict) -> None:
+        candidate["semanticDebtCaps"]["requiredResidueOverlapPathCount"] += 1
+
     def mutate_required_residue_union_cap(candidate: dict) -> None:
         candidate["semanticDebtCaps"]["requiredResidueUnionPathCount"] += 1
 
@@ -1252,6 +1266,9 @@ def assert_template_compatibility_mutation_proof(contract: dict) -> None:
         "affected token": mutate_affected_token,
         "semantic rule cap": mutate_rule_cap,
         "semantic occurrence cap": mutate_rule_occurrence_cap,
+        "semantic obligation cap": mutate_rule_obligation_cap,
+        "semantic distinct-token cap": mutate_rule_distinct_token_cap,
+        "required/residue overlap cap": mutate_required_residue_overlap_cap,
         "required/residue union cap": mutate_required_residue_union_cap,
         "semantic union cap": mutate_union_cap,
         "residue token obligation": delete_residue_token,
@@ -1286,15 +1303,21 @@ affected_occurrence_count = sum(
     for _, item in affected_records
     for rule_id in item["ruleIds"]
 )
-adm003_after_projection = {
+affected_token_obligation_count = sum(
+    sum(token.startswith(rule_id + "::") for token in item["tokens"])
+    for _, item in affected_records
+    for rule_id in item["ruleIds"]
+)
+adm004_after_projection = {
     "affectedPathCount": len({item["path"] for _, item in affected_records}),
     "occurrenceCount": affected_occurrence_count,
+    "tokenObligationCount": affected_token_obligation_count,
     **template_compatibility["semanticDebtCaps"],
 }
-if adm003_after_projection != ADM003_TEMPLATE_DEBT_AFTER:
+if adm004_after_projection != ADM004_TEMPLATE_DEBT_AFTER:
     fail(
-        f"{rel(template_compatibility_path)} ADM-003 after projection changed: "
-        f"{adm003_after_projection}"
+        f"{rel(template_compatibility_path)} ADM-004 after projection changed: "
+        f"{adm004_after_projection}"
     )
 
 if template_compatibility.get("owner") != "Spec 030":

@@ -3,7 +3,7 @@ title: 'Task: Template Cross-link Fix'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-05-21
+updated: 2026-07-13
 ---
 
 # Task: Template Cross-link Fix
@@ -23,7 +23,7 @@ This document tracks execution for aligning cross-link placeholder paths in
 
 - **Parent Plan**: `[../plans/2026-05-17-template-crosslink-fix.md]`
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - This is documentation-only work and does not change infrastructure manifests.
 - Do not change actual href link targets; they are already correct.
@@ -51,12 +51,12 @@ This document tracks execution for aligning cross-link placeholder paths in
 | T-016   | Fix Runbook generated-file display text in four files          | doc  | T-16        | Confirmed backtick label equals href                  | platform | Done   |
 | T-017   | Run final integrated validation                                | ops  | T-17        | `validate-repo-quality-gates.sh` PASS                  | platform | Done   |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `ops`
 
-## Phase View
+### Phase View
 
 ### Phase 1 — Template Cross-link Fix (T-001~T-010)
 
@@ -90,7 +90,7 @@ This document tracks execution for aligning cross-link placeholder paths in
 - **Eval Commands**: `pre-commit run --all-files` — all pass
 - **Logs / Evidence Location**: `docs/04.execution/plans/2026-05-17-template-crosslink-fix.md` (Completion Criteria section)
 
-## Related Documents
+## Traceability
 
 - **Plan**: `[../plans/2026-05-17-template-crosslink-fix.md]`
 - **Templates**: `[../../99.templates/README.md]`

@@ -3,7 +3,7 @@ title: 'Task: Governance Owner and Roster Currentness'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Task: Governance Owner and Roster Currentness
@@ -21,7 +21,7 @@ Plan traceable while preserving repository-static evidence boundaries.
 - **Parent Plan**:
   [../plans/2026-07-11-governance-owner-and-roster-currentness.md](../plans/2026-07-11-governance-owner-and-roster-currentness.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Write failing assertions first for deterministic repository behavior.
 - Record evidence for every completed task.
@@ -40,7 +40,7 @@ Plan traceable while preserving repository-static evidence boundaries.
 | RCR-005 | Enforce roster and owner-pointer currentness | guardrail | RMD-004 Implementation Components | T-005 | Fixture self-test and quality gate | platform | Done |
 | RCR-006 | Close lifecycle, evidence, and RMD-004 | doc | Success Criteria & Verification Plan | T-006 | Full validation bundle | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `impl`
 - `test`
@@ -48,7 +48,7 @@ Plan traceable while preserving repository-static evidence boundaries.
 - `doc`
 - `ops`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `prompt`
 - `tool`
@@ -149,7 +149,7 @@ Plan traceable while preserving repository-static evidence boundaries.
   Kubernetes, Argo CD, Vault, ESO, provider runtime, credential, secret-value,
   remote GitHub/CI, publish, push, merge, or third-party mutation ran.
 
-## Related Documents
+## Traceability
 
 - **Spec**:
   [../../03.specs/025-governance-owner-and-roster-currentness/spec.md](../../03.specs/025-governance-owner-and-roster-currentness/spec.md)

@@ -3,7 +3,7 @@ title: 'Agent-first Harness, LLM Wiki, and Hook Contract Closure Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-05-10
+updated: 2026-07-13
 ---
 
 # Agent-first Harness, LLM Wiki, and Hook Contract Closure Plan
@@ -90,7 +90,7 @@ quality gate.
 | Legacy docs folders reappearing | Medium | Keep explicit migration map and validator checks |
 | Validation evidence aging | Medium | Record commands as a dated snapshot and require rerun before future handoff |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: repo quality gate and generated index freshness check must pass.
 - **Sandbox / Canary Rollout**: not applicable; no cluster rollout is included.
@@ -107,7 +107,7 @@ quality gate.
 - [x] Plan/task evidence and README indexes updated
 - [x] Required validation passed
 
-## Related Documents
+## Traceability
 
 - Parent Spec: N/A — pre-Spec execution record.
 - **Governance**: [Harness Catalog](../../00.agent-governance/harness-catalog.md)

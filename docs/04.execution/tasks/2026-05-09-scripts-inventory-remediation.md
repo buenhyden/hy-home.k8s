@@ -3,7 +3,7 @@ title: 'Task: scripts Inventory Remediation'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-05-21
+updated: 2026-07-13
 ---
 
 # Task: scripts Inventory Remediation
@@ -19,7 +19,7 @@ in a traceable form.
 - **Parent Spec**: not applicable; this remediation does not introduce a new technical contract.
 - **Parent Plan**: [`../plans/2026-05-09-scripts-inventory-remediation.md`](../plans/2026-05-09-scripts-inventory-remediation.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Documentation-only work still needs validation evidence.
 - Do not delete, rename, or merge scripts unless a future plan finds concrete unused code.
@@ -28,7 +28,7 @@ in a traceable form.
 - Keep `scripts/README.md` as the current script inventory entry point.
 - This document remains the execution-tracking source of truth for this remediation.
 
-## 2026-05-17 Evidence Refresh
+### 2026-05-17 Evidence Refresh
 
 The 2026-05-09 task context recorded the initial four-script snapshot.
 Current inventory is maintained in `scripts/README.md`; as of 2026-05-17 it contains five `*.sh` scripts.
@@ -53,7 +53,7 @@ No Tier C-only, unused, or one-off deletion candidates are present as of 2026-05
 | T-006 | Clarify repo-root argument contract and fail invalid manifest/secret scan roots | impl | n/a | PLN-006 | canonical commands pass and subpath negative checks fail clearly | Platform | Done |
 | T-007 | Refresh 2026-05-17 retention evidence and command-contract allowlist | doc | n/a | 2026-05-17 Evidence Refresh | quality gate and generated-index checks run before handoff | Platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `impl`
 - `test`
@@ -61,7 +61,7 @@ No Tier C-only, unused, or one-off deletion candidates are present as of 2026-05
 - `doc`
 - `ops`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `prompt`
 - `tool`
@@ -70,7 +70,7 @@ No Tier C-only, unused, or one-off deletion candidates are present as of 2026-05
 - `eval`
 - `observability`
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase 1
 
@@ -101,7 +101,7 @@ No Tier C-only, unused, or one-off deletion candidates are present as of 2026-05
 - **Eval Commands**: not applicable; no prompt/model behavior is changed.
 - **Logs / Evidence Location**: conversation validation output for this implementation turn. If `kube-linter` is not installed locally, `validate-k8s-manifests.sh` reports the skip and still validates YAML syntax.
 
-## Related Documents
+## Traceability
 
 - **Plan**: [`../plans/2026-05-09-scripts-inventory-remediation.md`](../plans/2026-05-09-scripts-inventory-remediation.md)
 - **Scripts README**: [`../../../scripts/README.md`](../../../scripts/README.md)

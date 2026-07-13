@@ -3,7 +3,7 @@ title: 'Task: .github QA and CI Remediation'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-05-09
+updated: 2026-07-13
 ---
 
 # Task: .github QA and CI Remediation
@@ -24,7 +24,7 @@ defensive overlap between CI jobs remains intentional QA coverage.
 - **Parent Spec**: not applicable; this remediation does not introduce a new Kubernetes or runtime contract.
 - **Parent Plan**: [`../plans/2026-05-09-github-qa-ci-remediation.md`](../plans/2026-05-09-github-qa-ci-remediation.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Documentation-only and workflow-only changes still need validation evidence.
 - Keep CI role separation intact: `pre-commit`, `repo-quality-static`, and `manifest-static`. Shell syntax coverage is handled by pre-commit and repo-static/manual verification commands, not by a separate active CI job.
@@ -52,7 +52,7 @@ defensive overlap between CI jobs remains intentional QA coverage.
 | T-012 | Add `.github/ABOUT.md` drift guard | test | n/a | PLN-011 | quality gate fails if ABOUT mirrors the full branch policy instead of routing to SSoTs | Platform | Done |
 | T-013 | Record follow-up evidence by local/CI-only/skipped lanes | doc | n/a | PLN-012 | verification summary separates local PASS from optional unavailable tools | Platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `impl`
 - `test`
@@ -60,7 +60,7 @@ defensive overlap between CI jobs remains intentional QA coverage.
 - `doc`
 - `ops`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `prompt`
 - `tool`
@@ -69,7 +69,7 @@ defensive overlap between CI jobs remains intentional QA coverage.
 - `eval`
 - `observability`
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase 1
 
@@ -112,7 +112,7 @@ defensive overlap between CI jobs remains intentional QA coverage.
   - CI-only / optional local tools: full `pre-commit`, `actionlint`, `zizmor`, and `kube-linter` coverage is expected in CI or a fully provisioned local toolchain.
   - Skipped / unavailable locally: current local PATH does not provide `pre-commit`, `actionlint`, `zizmor`, or `kube-linter`; do not report those as locally passed unless rerun in a toolchain that has them.
 
-## Related Documents
+## Traceability
 
 - **Plan**: [`../plans/2026-05-09-github-qa-ci-remediation.md`](../plans/2026-05-09-github-qa-ci-remediation.md)
 - **GitHub Hub**: [`../../../.github/ABOUT.md`](../../../.github/ABOUT.md)

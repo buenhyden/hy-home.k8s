@@ -3,10 +3,12 @@ title: 'Authored Document Migration Implementation Plan'
 type: sdlc/plan
 status: active
 owner: platform
-updated: 2026-07-12
+updated: 2026-07-13
 ---
 
 # Authored Document Migration Implementation Plan
+
+## Overview
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use
 > superpowers:subagent-driven-development (recommended) or
@@ -25,7 +27,7 @@ receives independent review, and ends at a rollback commit before the next wave.
 **Tech Stack:** Markdown, YAML Frontmatter, Python 3 validators, Git and `git mv`,
 official primary-source research, `rg`, pre-commit, and repository quality gates.
 
-## Global Constraints
+### Global Constraints
 
 - Work only in the isolated worktree for branch `codex/workspace-document-assurance-modernization`.
 - Baseline identity is commit `8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d` and its approved 433-Markdown target corpus; separately account for program-created documents.
@@ -49,8 +51,6 @@ official primary-source research, `rg`, pre-commit, and repository quality gates
 - Use `apply_patch` for edits, `git mv` for one-to-one relocations, and a separate logical commit for every migration wave.
 
 ---
-
-## Overview
 
 This Plan implements Spec 030 in seven reviewable waves: execution-chain
 startup, durable inventory, Stages 01–03, Stages 04–05, remaining governance and
@@ -82,7 +82,7 @@ Compatibility mode must stay available until these families are reconciled.
   live cluster/Vault/Argo CD state.
 - Creating a root `DESIGN.md`.
 
-## File and Interface Map
+### File and Interface Map
 
 | Unit | Files | Responsibility |
 | --- | --- | --- |
@@ -293,7 +293,7 @@ directory diff is prohibited.
 | Research rows become generic citations | High | Require applicability, adopted/rejected guidance, content decision, and refresh trigger per path. |
 | One wave obscures unrelated changes | High | Stage only the exact family plus its ledger rows and execution evidence. |
 
-## Agent Rollout & Evaluation Gates
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate:** Each wave consumes one full-corpus Markdown JSON result,
   filters it deterministically to the reviewed exact path set, proves the RED
@@ -1648,7 +1648,7 @@ removed migration debt.
 - [ ] AWS/Azure example-local SDLC Markdown is zero and executable entrypoints resolve.
 - [ ] Strict mode and the full repository QA bundle pass.
 
-## Related Documents
+## Traceability
 
 - [Program PRD](../../01.requirements/005-workspace-document-assurance-modernization.md)
 - [Operating Model ARD](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)

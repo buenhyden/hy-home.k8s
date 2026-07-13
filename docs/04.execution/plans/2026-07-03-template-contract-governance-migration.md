@@ -3,7 +3,7 @@ title: 'Template Contract and Governance Migration Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-13
 ---
 
 # Template Contract and Governance Migration Implementation Plan
@@ -90,7 +90,7 @@ to match.
 | Historical progress entries contain old terms | Medium | Reject active contract references first and allow dated historical evidence only when explicitly documented. |
 | Machine-readable templates become invalid | High | Do not add Markdown frontmatter to YAML, GraphQL, or protobuf contract templates. |
 
-## Agent Rollout & Evaluation Gates
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Static repository quality gates and legacy-reference
   searches.
@@ -114,7 +114,7 @@ to match.
 - [x] Required validation commands pass.
 - [x] Plan, task, and progress ledger record final evidence.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/011-template-contract-governance-migration/spec.md](../../03.specs/011-template-contract-governance-migration/spec.md)
 - **Tasks**: [../tasks/2026-07-03-template-contract-governance-migration.md](../tasks/2026-07-03-template-contract-governance-migration.md)

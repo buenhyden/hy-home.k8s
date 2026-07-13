@@ -3,7 +3,7 @@ title: 'Task: Current Implementation Docs Alignment'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Task: Current Implementation Docs Alignment
@@ -21,7 +21,7 @@ the [Docs 01-05 Current Implementation Alignment Task](./2026-06-02-docs-01-05-c
 - **Parent Spec**: [../../03.specs/008-current-local-gitops-platform/spec.md](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Parent Plan**: [../plans/2026-06-02-current-implementation-docs-alignment.md](../plans/2026-06-02-current-implementation-docs-alignment.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Compare docs against current repo-backed implementation, not link-chain pass status.
 - Keep scope by adding current replacements before archiving old docs.
@@ -40,18 +40,18 @@ the [Docs 01-05 Current Implementation Alignment Task](./2026-06-02-docs-01-05-c
 | T-005 | Harden repo quality gate, hook trigger, and PR QA checklist | test | Verification Commands | PLN-005 | `bash scripts/validate-repo-quality-gates.sh .` passed | platform | Done |
 | T-006 | Run regression checks | test | Success Criteria | PLN-001..005 | Required regression commands passed | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `test`
 - `guardrail`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `guardrail`
 - `eval`
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase 1
 
@@ -81,7 +81,7 @@ the [Docs 01-05 Current Implementation Alignment Task](./2026-06-02-docs-01-05-c
 - **Eval Commands**: not applicable.
 - **Logs / Evidence Location**: this task document, current baseline docs, and final command output in the implementation handoff.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/008-current-local-gitops-platform/spec.md](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Plan**: [../plans/2026-06-02-current-implementation-docs-alignment.md](../plans/2026-06-02-current-implementation-docs-alignment.md)

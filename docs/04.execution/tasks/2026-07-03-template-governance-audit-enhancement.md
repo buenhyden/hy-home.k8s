@@ -3,7 +3,7 @@ title: 'Task: Template Governance Audit Enhancement'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-13
 ---
 
 # Task: Template Governance Audit Enhancement
@@ -24,7 +24,7 @@ approved Stage 03 spec and Stage 04 plan.
 - **Frontmatter Schema**: [../../99.templates/support/frontmatter-schema.md](../../99.templates/support/frontmatter-schema.md)
 - **Quality Gate**: [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Keep this work repo-static unless the user separately approves a remote or
   live-runtime action.
@@ -49,14 +49,14 @@ approved Stage 03 spec and Stage 04 plan.
 | T-005 | Verify authored documents and template use after remediation | eval | Guardrails / Success Criteria | PLN-006 | Residue, flat-route, incident-route, and frontmatter scans | platform | Done |
 | T-006 | Record final validation evidence and mark Plan, Task, README indexes, and progress complete | doc | Success Criteria | PLN-006 | Final validation summary and completion commit | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc` for support contract, README, plan, task, and progress updates.
 - `eval` for route, residue, frontmatter, incident-path, and external-source
   evidence scans.
 - `guardrail` for repository quality gate enhancements.
 
-## Audit Finding Ledger
+### Audit Finding Ledger
 
 | Finding ID | Scope | Evidence Path | Expected Contract | Observed State | Risk | Action | Validation | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -65,7 +65,7 @@ approved Stage 03 spec and Stage 04 plan.
 | FND-003 | validator | `scripts/validate-repo-quality-gates.sh` | Stable support-contract drift should fail deterministically | The quality gate rejected stale migration-phase wording and prevented the retired duplicate harness Task starter from becoming a structural route; Spec 027 later removed the duplicate. | Low | validator-fix | `bash scripts/validate-repo-quality-gates.sh .` | Resolved |
 | FND-004 | authored-doc | `docs/**`; `.codex/**`; `.agents/**`; `AGENTS.md`; `RTK.md` | Authored docs retain no active template residue, simple legacy frontmatter type values, quoted canonical owner values, flat template routes, or legacy incident path rules | Task 5 scans found no active authored-doc template residue. The simple type scan returned archive Tombstone `Original type:` metadata under `docs/98.archive/**`, not active frontmatter drift. The quoted owner scan returned TypeScript interface examples in Stage 03 specs, not YAML frontmatter. The incident path scan returned the Stage 00 legacy mapping and prohibited-path contract for `docs/10\\.incidents`, not an active old incident filename convention. No authored-doc remediation was needed. | Low | no-change | `rg -n -e "Target: docs[/]" -e "Use this te[m]plate" docs --glob "*.md" --glob "!docs/99.templates/**"`<br>`rg -n "type: (prd\|ard\|adr\|spec\|plan\|task\|policy\|guide\|runbook\|incident\|postmortem\|reference)$" docs --glob "*.md" --glob "!docs/99.templates/**"`<br>`rg -n "owner: ['\"]platform['\"]" docs --glob "*.md"`<br>`find docs/05.operations/incidents -mindepth 1 -maxdepth 4 -type f -print \| sort`<br>`rg -n "docs/05\\.operations/incidents/[0-9]{4}/INC-[0-9]{3}-[^/]+/(incident\|postmortem)\\.md\|docs/10\\.incidents" docs/99.templates docs/00.agent-governance docs/05.operations scripts` | Accepted |
 
-## Phase View
+### Phase View
 
 ### Phase 1: Planning Baseline
 
@@ -182,7 +182,7 @@ approved Stage 03 spec and Stage 04 plan.
     initialization error, so the exact validation commands were run directly
     per provider guidance.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/012-template-governance-audit-enhancement/spec.md](../../03.specs/012-template-governance-audit-enhancement/spec.md)
 - **Plan**: [../plans/2026-07-03-template-governance-audit-enhancement.md](../plans/2026-07-03-template-governance-audit-enhancement.md)

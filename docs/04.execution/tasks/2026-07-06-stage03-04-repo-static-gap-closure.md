@@ -3,7 +3,7 @@ title: 'Task: Stage 03/04 Repo-Static Gap Closure'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Task: Stage 03/04 Repo-Static Gap Closure
@@ -27,7 +27,7 @@ settings, or provider mutation.
 - **WER Plan**: [../plans/2026-07-04-workspace-engineering-research-pack.md](../plans/2026-07-04-workspace-engineering-research-pack.md)
 - **WER Task**: [./2026-07-04-workspace-engineering-research-pack.md](./2026-07-04-workspace-engineering-research-pack.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Close only repository-static gaps that can be resolved through local files,
   local validators, indexes, task evidence, or progress memory.
@@ -50,7 +50,7 @@ settings, or provider mutation.
 | S34-004 | Record operator-approved follow-up ledger. | ops | VAL-SPC-023-003 | S34-PLN-004 | Live/runtime and remote-required items are routed without mutation. | platform | Done |
 | S34-005 | Close validation and handoff evidence. | test | VAL-SPC-023-004, VAL-SPC-023-005 | S34-PLN-005 | Final validation bundle passes. | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `impl`
 - `test`
@@ -58,7 +58,7 @@ settings, or provider mutation.
 - `doc`
 - `ops`
 
-## Phase View
+### Phase View
 
 ### Phase 1: Baseline and Classification
 
@@ -74,7 +74,7 @@ settings, or provider mutation.
 - [x] S34-004 Record operator-approved follow-up ledger.
 - [x] S34-005 Close validation and handoff evidence.
 
-## Gap Classification Ledger
+### Gap Classification Ledger
 
 | Gap ID | Source | Evidence Lane | Finding | Resolution | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -82,7 +82,7 @@ settings, or provider mutation.
 | S34-GAP-002 | Active runtime specs and older task evidence | operator-approved | Rollouts, Notifications, Vault/ESO, live validation, secret value, and remote settings require runtime/operator authority. | Record as follow-up in S34-004; do not mutate live or remote systems. | operator | Follow-up |
 | S34-GAP-003 | Stage 03 draft governance specs | out-of-scope | Draft specs may remain design contracts even when their Stage 04 execution is done; automatic conversion to `done` would rewrite lifecycle semantics. | Preserve unless a scoped lifecycle decision approves spec status migration. | platform | Closed |
 
-## Operator-Approved Follow-up Ledger
+### Operator-Approved Follow-up Ledger
 
 | Follow-up ID | Topic | Source | Approval Boundary | Evidence Lane | Status |
 | --- | --- | --- | --- | --- | --- |
@@ -91,7 +91,7 @@ settings, or provider mutation.
 | S34-OP-003 | Vault/ESO/live secret readiness | `docs/03.specs/006-workspace-harness-gap-analysis/spec.md`; `docs/03.specs/008-current-local-gitops-platform/spec.md` | Requires live runtime and must not inspect secret values. | operator-approved | Not run in this repo-static pass. |
 | S34-OP-004 | Remote GitHub ruleset or CI provider settings | Stage 03/04 deferred boundary mentions | Requires remote settings authority. | operator-approved | Not run in this repo-static pass. |
 
-## Baseline Audit
+### Baseline Audit
 
 - Branch baseline: `codex/stage03-04-repo-static-gap-closure`.
 - Preserved pre-existing untracked paths:
@@ -112,7 +112,7 @@ settings, or provider mutation.
   `Done` and checked phase-view items for WER-002 through WER-007, while WER
   plan/task frontmatter remains `status: draft`.
 
-## Gap Scan Evidence
+### Gap Scan Evidence
 
 - Targeted scan command:
   `rg -n "(?i)pending|deferred|todo|in progress|not implemented|unimplemented|missing|gap|follow-?up|remaining|blocked|outstanding|future|live validation|runtime validation|not yet|next" docs/03.specs docs/04.execution/plans docs/04.execution/tasks`
@@ -132,7 +132,7 @@ settings, or provider mutation.
   - Bulk Stage 03 `draft` spec conversion, because Stage 03 can keep design
     contracts open while Stage 04 records execution completion.
 
-## WER Lifecycle Closure Evidence
+### WER Lifecycle Closure Evidence
 
 - WER task evidence scan confirmed `WER-001` through `WER-007` task rows as
   `Done`.
@@ -145,7 +145,7 @@ settings, or provider mutation.
 - No live/runtime, secret, remote, provider, or third-party action was
   performed.
 
-## Operator-Approved Follow-up Evidence
+### Operator-Approved Follow-up Evidence
 
 - Confirmed the referenced Stage 03 spec files exist for Rollouts,
   Notifications, workspace harness gap analysis, and current local GitOps
@@ -155,7 +155,7 @@ settings, or provider mutation.
 - No live cluster command, secret value inspection, remote GitHub settings
   change, provider mutation, push, publish, or merge action was performed.
 
-## Final Validation Bundle
+### Final Validation Bundle
 
 | Command | Result |
 | --- | --- |
@@ -204,7 +204,7 @@ and `sessions/` paths remain untouched.
 - **Logs / Evidence Location**:
   - This task record, Stage 04 README index, and progress memory entry.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/023-stage03-04-repo-static-gap-closure/spec.md](../../03.specs/023-stage03-04-repo-static-gap-closure/spec.md)
 - **Plan**: [../plans/2026-07-06-stage03-04-repo-static-gap-closure.md](../plans/2026-07-06-stage03-04-repo-static-gap-closure.md)

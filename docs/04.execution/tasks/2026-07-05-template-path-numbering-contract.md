@@ -3,7 +3,7 @@ title: 'Task: Template Path Numbering Contract'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-05
+updated: 2026-07-13
 ---
 
 # Task: Template Path Numbering Contract
@@ -26,7 +26,7 @@ configuration are changed in TPN-001.
 - **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
 - **Quality Gate**: [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Use `git mv` for PRD renames in later tasks.
 - Preserve Stage 04 date-based plan and task routes.
@@ -46,12 +46,12 @@ configuration are changed in TPN-001.
 | TPN-004 | Update Stage 00 governance and validator mappings | qa | VAL-SPC-019-002, VAL-SPC-019-004 | Task 4 | validator route coverage and quality gate | Codex | Done |
 | TPN-005 | Clean cross-links, close evidence, and validate | qa | VAL-SPC-019-005, VAL-SPC-019-008 | Task 5 | final stale scans, `git diff --check`, quality gate | Codex | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `doc`
 - `qa`
 
-## Baseline Evidence
+### Baseline Evidence
 
 | Date | Command | Result Summary |
 | --- | --- | --- |
@@ -78,7 +78,7 @@ configuration are changed in TPN-001.
   `git diff --check`, and `bash scripts/validate-repo-quality-gates.sh .`
   passed.
 
-## Evidence Log
+### Evidence Log
 
 | Date | Task | Check | Result |
 | --- | --- | --- | --- |
@@ -92,13 +92,13 @@ configuration are changed in TPN-001.
 | 2026-07-05 | TPN-004 | Governance and validator route update | PASS; Stage 00 route guidance, Stage 03 README wording, and validator structural/native mappings enforce numbered PRD and Stage 03 feature-folder routes, restoring the repository quality gate after the expected TPN-003 route-map drift |
 | 2026-07-05 | TPN-005 | Final stale scans and repository quality gates | PASS; old current-route patterns were removed from active guidance, remaining matches are explicit TPN migration criteria or evidence, numeric PRD inventory was verified, and repository quality gates passed |
 
-## Handoff
+### Handoff
 
 Template path numbering contract implementation is complete. No live runtime,
 credential, GitOps desired-state, provider runtime, external service, push,
 merge, or PR mutation was performed.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/019-template-path-numbering-contract/spec.md](../../03.specs/019-template-path-numbering-contract/spec.md)
 - **Plan**: [../plans/2026-07-05-template-path-numbering-contract.md](../plans/2026-07-05-template-path-numbering-contract.md)

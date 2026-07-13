@@ -3,7 +3,7 @@ title: 'Workspace Harness Implementation Audit Pack Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-03
+updated: 2026-07-13
 ---
 
 # Workspace Harness Implementation Audit Pack Implementation Plan
@@ -64,7 +64,7 @@ implementation evidence must come from current repository files.
   - Pull request creation or pushing.
   - Any external resource mutation.
 
-## File Structure
+### File Structure
 
 | Path | Responsibility |
 | --- | --- |
@@ -79,7 +79,7 @@ implementation evidence must come from current repository files.
 | `docs/04.execution/tasks/README.md` | Task index row for this execution task. |
 | `docs/00.agent-governance/memory/progress.md` | Progress, reusable memory, validation evidence, and final handoff update. |
 
-## Source Baseline
+### Source Baseline
 
 Use these source groups during implementation:
 
@@ -113,7 +113,7 @@ Use these source groups during implementation:
 | PLN-005 | Write SDLC delivery practices implementation audit | `2026-07-02-sdlc-delivery-practices-implementation-audit.md`, audits README, task | VAL-SPC-003, VAL-SPC-004, VAL-SPC-005 | Matrix covers spec-driven development, SDLC, CI/CD, QA, formatting, and validation evidence lanes. |
 | PLN-006 | Final integration, validation, status alignment, and handoff | Plan/task/index/progress files | VAL-SPC-006 | Final validation bundle passes; plan/task status and indexes are aligned. |
 
-## Detailed Task Steps
+### Detailed Task Steps
 
 ### Task 1: Audit Folder README and Parent Scaffolding
 
@@ -561,7 +561,7 @@ git commit -m "docs(audit): Finalize workspace harness implementation audit pack
 | Static validation is overstated as live readiness | High | Repeat static-vs-live boundary in README, reports, task evidence, and progress memory. |
 | Existing `audits/` folder lacks README | Low | Create README first and update parent reference hub in the scaffold commit. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Use repo-static validation only.
 - **Sandbox / Canary Rollout**: Not applicable; documentation-only work.
@@ -589,7 +589,7 @@ git commit -m "docs(audit): Finalize workspace harness implementation audit pack
 - [x] Final validation commands pass.
 - [x] Work is committed by logical unit.
 
-## Related Documents
+## Traceability
 
 - **ARD**:
   `[../../02.architecture/requirements/0006-workspace-agent-governance-platform.md]`

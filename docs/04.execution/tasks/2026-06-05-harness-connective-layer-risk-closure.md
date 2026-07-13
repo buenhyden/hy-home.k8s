@@ -3,7 +3,7 @@ title: 'Task: Harness Connective Layer Risk Closure'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-06-05
+updated: 2026-07-13
 ---
 
 # Task: Harness Connective Layer Risk Closure
@@ -24,7 +24,7 @@ than incomplete implementation work.
   [../../00.agent-governance/rules/approval-boundaries.md](../../00.agent-governance/rules/approval-boundaries.md),
   [../../../scripts/validate-harness.sh](../../../scripts/validate-harness.sh)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Keep the closure limited to repo evidence, validation output, and task
   tracking.
@@ -36,12 +36,12 @@ than incomplete implementation work.
 - Keep future live evidence under operator-approved runbooks or incidents, not
   under default harness validation.
 
-## Goal
+### Goal
 
 - Close the current harness connective-layer Remaining Risk and Follow-up Tasks
   using deterministic repo-static evidence.
 
-## Non-goals
+### Non-goals
 
 - No live cluster mutation or live readiness proof.
 - No `kubectl apply`, `kubectl patch`, `kubectl delete`, Helm install/upgrade,
@@ -49,31 +49,31 @@ than incomplete implementation work.
 - No new CI job, runtime agent, `.harness/` directory, or duplicate policy
   source.
 
-## Affected Surfaces
+### Affected Surfaces
 
 - `docs/04.execution/tasks/**`
 - `docs/00.agent-governance/memory/progress.md`
 
-## Allowed Paths
+### Allowed Paths
 
 - This task document.
 - [README.md](./README.md) task index.
 - [progress.md](../../00.agent-governance/memory/progress.md) closure entry.
 
-## Forbidden Paths
+### Forbidden Paths
 
 - `gitops/**`
 - `infrastructure/**`
 - live cluster and external runtime state.
 - secret values, Vault tokens, private keys, and certificate material.
 
-## Approval Required
+### Approval Required
 
 - No approval is required for this repo-static closure.
 - Live validation remains operator-approved only under
   [approval-boundaries.md](../../00.agent-governance/rules/approval-boundaries.md).
 
-## Remaining Risk Closure
+### Remaining Risk Closure
 
 | Risk | Prior State | Closure | Residual Boundary |
 | ---- | ----------- | ------- | ----------------- |
@@ -83,7 +83,7 @@ than incomplete implementation work.
 | Static PASS could be misread as live readiness | Harness map, approval boundaries, PR template, README, and progress entry separate static and live evidence. | Closed by explicit boundary docs and `validate-harness.sh` wrapper wording. | Continue reporting skipped live checks when relevant. |
 | Follow-up to commit logical work units | Two local commits were created: `db9df84` and `9019c92`. | Closed. | Push or PR creation remains a separate external action. |
 
-## Follow-up Task Closure
+### Follow-up Task Closure
 
 | Follow-up Task | Result | Evidence |
 | -------------- | ------ | -------- |
@@ -93,41 +93,41 @@ than incomplete implementation work.
 | Enforce connective-layer presence in repo quality gates. | Done | [validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh) |
 | Record durable evidence and skipped live-check reason. | Done | [progress.md](../../00.agent-governance/memory/progress.md) |
 
-## GitOps Impact
+### GitOps Impact
 
 - None. No GitOps desired-state manifests were changed by this closure task.
 
-## Kubernetes Impact
+### Kubernetes Impact
 
 - None. No Kubernetes manifest or live cluster state was changed by this closure
   task.
 
-## Secret / Vault Handling
+### Secret / Vault Handling
 
 - No secret values, Vault tokens, private keys, certificate material, or
   Kubernetes Secret plaintext values were read or recorded.
 
-## Static Validation
+### Static Validation
 
 - `bash scripts/validate-harness.sh`
 - `git diff --check`
 
-## Live Validation
+### Live Validation
 
 - Not run. Live validation is operator-approved only and is not required to
   close this repo-static harness connective-layer task.
 
-## Operations / Runbook Impact
+### Operations / Runbook Impact
 
 - No runbook content change is required. Existing approval boundaries route live
   evidence to approved runbook or incident records.
 
-## Rollback Plan
+### Rollback Plan
 
 - Revert this task document, its README index row, and the related progress
   ledger entry.
 
-## Evidence Location
+### Evidence Location
 
 - This task document.
 - [progress.md](../../00.agent-governance/memory/progress.md)
@@ -141,19 +141,19 @@ than incomplete implementation work.
 | HCL-RC-003 | Record closure evidence in task index and progress ledger | memory | Execution evidence | Evidence | README row and progress entry | platform | Done |
 | HCL-RC-004 | Re-run repo-static validation | eval | Verification | Verification | Validation Summary | platform | Done |
 
-## Suggested Types
+### Suggested Types
 
 - `eval`
 - `memory`
 - `doc`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `memory`
 - `guardrail`
 - `eval`
 
-## Phase View (Optional)
+### Phase View
 
 ### Phase 1 - Risk Classification
 
@@ -178,7 +178,7 @@ than incomplete implementation work.
 - **Logs / Evidence Location**:
   - This task document and progress ledger closure entry.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Plan**: [../plans/2026-06-05-harness-governance-v2-overlay.md](../plans/2026-06-05-harness-governance-v2-overlay.md)

@@ -3,7 +3,7 @@ title: 'Observability and Network Review Agents Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Observability and Network Review Agents Implementation Plan
@@ -55,7 +55,7 @@ bash scripts/validate-repo-quality-gates.sh .
 - **Adapter drift** across providers: mitigated by mirroring the existing
   `gitops-reviewer` body and validating parity.
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - Gate 1: three-provider adapter parity for each agent.
 - Gate 2: catalog roster and adapter-table rows present.
@@ -66,7 +66,7 @@ bash scripts/validate-repo-quality-gates.sh .
 - All work-breakdown items done, validation green, and evidence recorded in
   the Stage 04 task and progress ledger.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/024-observability-and-network-review-agents/spec.md](../../03.specs/024-observability-and-network-review-agents/spec.md)
 - **Agent Design**: [../../03.specs/024-observability-and-network-review-agents/agent-design.md](../../03.specs/024-observability-and-network-review-agents/agent-design.md)

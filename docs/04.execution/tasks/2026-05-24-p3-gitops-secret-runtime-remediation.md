@@ -3,7 +3,7 @@ title: 'Task: P3 GitOps Secret Runtime Remediation'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-05-24
+updated: 2026-07-13
 ---
 
 # Task: P3 GitOps Secret Runtime Remediation
@@ -21,7 +21,7 @@ secret value output and live mutation are prohibited.
 - **Parent Plan**: [../plans/2026-05-24-p3-gitops-secret-runtime-remediation.md](../plans/2026-05-24-p3-gitops-secret-runtime-remediation.md)
 - **Source Gap Plan**: [../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md](../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md)
 
-## Working Rules
+## Approval and Safety Boundaries
 
 - Use `gitops-workflow`, `k8s-security-audit`, and `k8s-validate`.
 - Do not print or inspect secret values.
@@ -43,7 +43,7 @@ secret value output and live mutation are prohibited.
 | P3-GITOPS-T-007 | Run approved read-only runtime metadata checks                           | eval   | Verification                      | P3-PLN-006          | live metadata summary without secret values     | Platform | Done   |
 | P3-GITOPS-T-008 | Append progress memory                                                   | memory | Memory Strategy                   | P3-PLN-001          | progress entry                                  | Platform | Done   |
 
-## Suggested Types
+### Suggested Types
 
 - `impl`
 - `test`
@@ -51,13 +51,13 @@ secret value output and live mutation are prohibited.
 - `doc`
 - `ops`
 
-## Agent-specific Types (If Applicable)
+### Agent-specific Types
 
 - `guardrail`
 - `memory`
 - `eval`
 
-## Phase View
+### Phase View
 
 ### Phase 1 - Traceability
 
@@ -76,7 +76,7 @@ secret value output and live mutation are prohibited.
 - [x] P3-GITOPS-T-007 Run approved read-only runtime metadata checks.
 - [x] P3-GITOPS-T-008 Append progress memory.
 
-## Implementation Decisions
+### Implementation Decisions
 
 | Decision                                                               | Evidence path                                                                                   | Rationale                                                                                              | Rollback                                                                       |
 | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
@@ -105,7 +105,7 @@ secret value output and live mutation are prohibited.
 | Read-only `kubectl get` checks for ESO, ArgoCD, AppProject, and ApplicationSet metadata | CURRENT-STATE FAIL      | Kubernetes API `https://0.0.0.0:6550` refused connection; no live metadata could be read                            |
 | `docker ps --format ...` and `k3d cluster list`                                         | CURRENT-STATE INFO      | No running containers were listed; `k3d cluster list` returned only the header                                      |
 
-## Skipped or Deferred Verification
+### Skipped or Deferred Verification
 
 | Check                                       | Reason                                                 | Alternative evidence                                                   | Follow-up                                                                                                             |
 | ------------------------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -113,7 +113,7 @@ secret value output and live mutation are prohibited.
 | ESO/Vault live readiness                    | Local `k3d-hyhome` API server was unavailable          | Static contracts and secret scanner passed without secret value output | Start the local cluster and run metadata-only ClusterSecretStore and ExternalSecret readiness checks                  |
 | Vault KV value validation                   | Secret value inspection and Vault writes are forbidden | Vault policy path coverage is validated statically                     | Validate values only through ESO readiness metadata after the cluster is running                                      |
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Plan**: [../plans/2026-05-24-p3-gitops-secret-runtime-remediation.md](../plans/2026-05-24-p3-gitops-secret-runtime-remediation.md)

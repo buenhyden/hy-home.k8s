@@ -20,7 +20,7 @@ updated: 2026-06-02
 >
 > **Agent execution boundary**: EndpointSlice hotfix와 Docker network mutation은 human-approved break-glass 전용이다. Agent는 기본적으로 사전 스냅샷, Git 파일 보정안, 검증 계획, 후속 증적 정리까지만 수행한다.
 
-## Purpose
+### Purpose
 
 `vault-external` endpoint 부재, 연결 거부, Vault sealed 상태, 또는 Kubernetes auth drift로 발생하는 ESO/Vault 연동 장애를 빠르게 분류하고, operator-bound 복구 절차와 계약 회귀 검증을 연결한다.
 
@@ -193,7 +193,7 @@ kubectl -n argocd get app root-platform -o yaml | \
 - **Signals**: ArgoCD Application health, ExternalSecret Ready status, ESO controller logs, repo-server logs.
 - **Evidence to Capture**: failed sync output, ExternalSecret condition, Vault auth role read result, recovery command output.
 
-## Troubleshooting Signatures
+### Troubleshooting Signatures
 
 - `connection refused` on `vault-external.platform.svc.cluster.local:8200`
 - `InvalidProviderConfig` in ESO controller logs
@@ -227,12 +227,12 @@ kubectl -n platform delete endpointslice vault-external-1
 - 롤백 후 `verify-contracts-static.sh`와 `run-all.sh`를 재실행한다.
 - 동일 증상이 반복되면 Operations 예외 승인 절차를 따른다.
 
-## Agent Operations (If Applicable)
+### Agent Operations
 
 이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
 단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
 
-## Related Documents
+## Traceability
 
 - **Guide**: [`../guides/0002-wsl2-k3d-argocd-ha-setup-guide.md`](../guides/0002-wsl2-k3d-argocd-ha-setup-guide.md)
 - **Operations Policy**: [`../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md`](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md)
