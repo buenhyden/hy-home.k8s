@@ -56,7 +56,9 @@ local state. It does not rewrite history for stylistic uniformity.
   and four provider guidance documents. This exception does not transfer
   semantic or behavioral ownership. ADM-006 has one additional closed
   exception for relocation-driven link/index rows in the exact nine README
-  paths named below; it transfers no README profile or body ownership.
+  paths named below and one retirement-inventory handoff across the exact three
+  Spec 028/029 evidence consumers named below; neither exception transfers
+  README profile, body, parser, route, or rule ownership.
 - **Key Dependencies**: Specs 026–029, official topic sources, Git history, link
   graph, generated-file ownership, and current audit findings.
 - **Tech Stack**: `git mv`, focused manual edits, registry validation, link and
@@ -79,8 +81,8 @@ Tranche handoff is binding:
 | Path or responsibility | Canonical change owner | This Spec's allowed interaction |
 | --- | --- | --- |
 | `docs/99.templates/support/**` and non-README forms | Spec 027 | Consume final contracts. Structural-only canonicalization is authorized for exactly `common-documentation-governance.md`, `documentation-contract.md`, `frontmatter-schema.md`, `legacy-cleanup-rules.md`, `sdlc-governance.md`, and `template-routing.md`; no route, schema, form, or governance-semantic change. |
-| README forms and every tracked `README.md`, including `_workspace/README.md` | Spec 028 | ADM-006 may apply relocation-driven index/link rows only in the exact nine-path exception below; every unlisted README and all profile/body redesign remain excluded. |
-| Validator parser, rule semantics, and fixture engine | Spec 029 | Consume the public interface and change no parser or rule behavior. ADM-003 through ADM-006 may synchronize only the frozen migration-count/self-test constants in `validate-markdown-profiles.py` with the shrinking Spec-030-owned fixture and apply the exact zero-cap Counter projection required when a rule reaches zero; an executable line guard rejects every other validator edit. ADM-007 owns the separately named strict-mode cutover. |
+| README forms and every tracked `README.md`, including `_workspace/README.md` | Spec 028 | ADM-006 may apply relocation-driven index/link rows only in the exact nine-path exception below and may convert the README fixture to the exact schema-v2 retirement inventory below; every unlisted README and all profile/body redesign remain excluded. |
+| Validator parser, rule semantics, and fixture engine | Spec 029 | Consume the public interface and change no parser, route, profile, or rule behavior. ADM-003 through ADM-006 may synchronize only the frozen migration-count/self-test constants in `validate-markdown-profiles.py` with the shrinking Spec-030-owned fixture, apply the exact zero-cap Counter projection required when a rule reaches zero, and make its self-test zero-safe without dereferencing a production debt row. ADM-006 may also update the registry validator and `tests/README.md` solely for the exact README retirement-inventory handoff. Executable guards reject every other validator or test-contract edit. ADM-007 owns the separately named strict-mode cutover. |
 | Root provider shims, `.agents/**`, `.claude/**`, `.codex/**`, shared role semantics | Spec 031 | Excluded from authored migration; link to canonical owners only. Structural-only canonicalization is authorized for exactly `docs/00.agent-governance/providers/{agents-md,claude,codex,gemini}.md`; no provider or agent behavior change. |
 | CI selector blocks and validation obligations | Spec 031 | Excluded except link repair. |
 | Action identities/permissions, GitOps, infrastructure, policy, secrets, Traefik machine surfaces | Spec 032 | Do not change behavior; migrate only their authored documentation after the protected owner confirms links. |
@@ -99,6 +101,48 @@ deletion set. ADM-006 may reroute only those links and the index rows required
 to expose the two dated snapshots; it may not change README Frontmatter,
 profile sections, prose purpose, commands, inventory outside the relocation,
 or Spec 028 semantics.
+
+The ADM-006 retirement-inventory handoff is exactly
+`scripts/validate-document-contract-registry.py`,
+`tests/fixtures/document-contracts/readme-profile-cases.json`, and
+`tests/README.md`. The fixture advances to schema version 2 with exact,
+normalized, unique, and disjoint `activePaths` and `retiredPaths` collections:
+52 active README paths and 20 retired
+`examples/{aws,azure}/docs/**/README.md` paths. The active collection equals the
+current authored-README inventory. The retired collection is absent from that
+inventory, belongs to the immutable 67-path Spec 028 baseline, retains its
+historical profile and heading disposition, declares `retiredBy: ADM-006`, and
+points to the provider-correct dated snapshot. The 47 active baseline paths
+plus 20 retired paths must reconstruct that immutable baseline, while the
+remaining five active paths are the exact program-created handoffs. All eight
+parser cases select active paths. Both consumers fail closed on overlap,
+unknown or partial retirement, active/absent mismatch, current/retired
+mismatch, or missing and wrong-provider destinations. This is an inventory
+handoff only: it cannot accept multiple current counts, weaken set equality,
+remove baseline disposition evidence, or change README classification and
+heading semantics.
+
+Before ADM-007, one separately reviewed residual-alias retirement commit
+canonicalizes the exact 17 authored documents enumerated in the Plan. It merges
+only their topic-specific `Related Inputs`, `Related Documents`, or `Parent
+Documents` relationship links under canonical `Traceability`; decisions,
+completed evidence, status, and topic prose remain unchanged. The atomic set is
+exactly 21 paths: those 17 documents (including this Spec exactly once), the
+durable ledger, the Plan, the Task, and canonical `memory/progress.md`. The
+ledger records the original ADM-003C exact-16 and ADM-004C exact-1 escape
+assignments. A no-container production-rule probe must return zero diagnostics
+before strict cutover; aliases may not move into Python, another fixture, the
+registry, or a waiver.
+
+ADM-007 remains the exact 13-path closure unit declared by the Plan. Its
+cross-document self-test treats the existing empty-item index error as a known
+focused RED and turns it GREEN without reading `items[0]`. Lifecycle proofs use
+the measured active-owner transitions `67 -> 64 -> 61`: completing the exact
+Spec 029 Spec/Plan/Task removes three keys, then completing the exact Spec 030
+Spec/Plan/Task removes three more. The repository quality gate must consume the
+canonical validators and fixtures directly; no alternate command, filtered
+inventory, environment waiver, or duplicate debt/alias source may bypass their
+fail-closed results.
 
 The other three handoff exceptions are exactly
 `docs/00.agent-governance/rules/documentation-protocol.md`,
@@ -215,6 +259,13 @@ git diff --check
   every external consumer before deletion and has zero deletion-target edge
   after rerouting, and provider/protected surfaces remain with Specs 031 and
   032.
+- **VAL-SPC-007**: ADM-006 preserves the immutable 67-path README baseline as
+  47 active-baseline plus 20 retired rows, accounts separately for the five
+  program-created active paths, and fails closed against every partial,
+  overlapping, unknown, or wrong-destination retirement mutation.
+- **VAL-SPC-008**: The exact-21 residual-alias correction makes the no-container
+  probe clean before ADM-007; strict cutover retains its exact-13 boundary,
+  proves `67 -> 64 -> 61`, and cannot bypass the canonical quality gate.
 
 ## Related Documents
 

@@ -44,9 +44,16 @@ official primary-source research, `rg`, pre-commit, and repository quality gates
   only frozen migration-count/self-test constants in
   `scripts/validate-markdown-profiles.py` with the shrinking fixture; they may
   also replace the self-test's raw `dict(Counter)` comparison with the exact
-  zero-cap projection guarded below when a rule first reaches zero. They may
-  not otherwise add, remove, or reinterpret a rule. The profile registry never
-  contains migration debt.
+  zero-cap projection guarded below when a rule first reaches zero. ADM-006 may
+  additionally make that Markdown self-test zero-safe without dereferencing a
+  production debt row and may update the exact registry-validator, README
+  fixture, and tests-README retirement-inventory handoff named in Task 6. It
+  may not otherwise add, remove, or reinterpret a route, profile, parser, or
+  rule. The profile registry never contains migration debt.
+- Repository quality-gate invocation, fixture ownership, and active/current
+  inventory equality are mandatory controls. No alternate wrapper, filtered
+  path set, environment waiver, count allow-list, or duplicate alias/debt
+  source may bypass them.
 - Protected machine surfaces and behavior belong to Spec 032; this Plan changes only their authored documentation and links.
 - Use `apply_patch` for edits, `git mv` for one-to-one relocations, and a separate logical commit for every migration wave.
 
@@ -54,7 +61,9 @@ official primary-source research, `rg`, pre-commit, and repository quality gates
 
 This Plan implements Spec 030 in seven reviewable waves: execution-chain
 startup, durable inventory, Stages 01–03, Stages 04–05, remaining governance and
-reference bodies, AWS/Azure consolidation, and strict cutover.
+reference bodies, AWS/Azure consolidation, and strict cutover. The residual
+alias correction between ADM-006 and ADM-007 is a separately reviewed repair
+gate and logical commit; it does not enlarge either neighboring wave.
 
 ## Context
 
@@ -92,6 +101,7 @@ Compatibility mode must stay available until these families are reconciled.
 | Governance and references | non-README `docs/00.agent-governance/**`, Current Stage 90, `docs/98.archive/**` | Canonical governance, current research, and historical/current authority boundaries. |
 | Cloud snapshots | `docs/90.references/cloud-examples/{aws,azure}/2026-07-12-*-example-snapshot.md` | Dated official-source comparison and retained unique cloud-example knowledge. |
 | Executable examples | `examples/{aws,azure}/**` excluding deleted `docs/**` | Executable Terraform/Bicep/Kubernetes/GitOps assets and entrypoint links. |
+| README retirement inventory | `scripts/validate-document-contract-registry.py`, `tests/fixtures/document-contracts/readme-profile-cases.json`, `tests/README.md` | ADM-006-only ownership handoff: schema-v2 exact 52 active / 20 retired evidence, immutable 67-path baseline disposition, five program-created handoffs, destination proof, and fail-closed mutations; no README body/profile or parser/rule redesign. |
 | Finite shape debt | `tests/fixtures/document-contracts/template-compatibility.json`, `scripts/validate-markdown-profiles.py`, `scripts/validate-repo-quality-gates.sh` | ADM-003 through ADM-006 remove exact canonicalized path records, keep the validator's cumulative remaining-debt caps synchronized at every batch checkpoint, and refresh the complete-fixture digest/mutation proof once in the wave commit. |
 | Finite semantic debt | `tests/fixtures/document-contracts/semantic-compatibility-debt.json` | ADM-002 removes the sole ledger-missing item in the commit that creates the complete ledger; ADM-007 removes the empty compatibility container. |
 | Strict cutover | the two finite debt fixtures and `scripts/validate-repo-quality-gates.sh` | Remove empty compatibility containers and enforce strict repository validation; never add, remove, or describe registry debt. |
@@ -155,34 +165,53 @@ records for the wave have been removed; they are not rewritten at every
 intermediate checkpoint.
 
 Every ADM-003 through ADM-006 staged-set proof must also run this validator
-diff guard. It permits only numeric migration-cap assignments and the two
-numeric self-test comparisons; any parser, route, diagnostic, outcome, CLI, or
-rule-semantic edit fails even though the validator path is otherwise in scope.
+ownership guard. It normalizes only the named migration-cap assignments and
+the `_self_test` function; every production AST node must remain identical to
+`HEAD`. ADM-003 through ADM-005 use only numeric/counter changes inside that
+allowance. ADM-006 may additionally implement the reviewed zero-safe self-test
+contract, but any parser, route, diagnostic, outcome, CLI, or rule-semantic edit
+still fails even though the validator path is otherwise in scope.
 
 ```bash
 python3 - <<'PY'
-import re
+import ast
+import pathlib
 import subprocess
 
-diff = subprocess.check_output(
-    ['git', 'diff', '--cached', '-U0', '--', 'scripts/validate-markdown-profiles.py'],
-    text=True,
+path = 'scripts/validate-markdown-profiles.py'
+baseline = subprocess.check_output(['git', 'show', f'HEAD:{path}'], text=True)
+current = pathlib.Path(path).read_text()
+caps = {
+    'EXPECTED_DEBT_CAPS',
+    'EXPECTED_REQUIRED_RESIDUE_OVERLAP',
+    'EXPECTED_REQUIRED_RESIDUE_UNION',
+    'EXPECTED_DEBT_UNION',
+}
+
+class NormalizeIntegerCaps(ast.NodeTransformer):
+    def visit_Constant(self, node):
+        if isinstance(node.value, int) and not isinstance(node.value, bool):
+            return ast.copy_location(ast.Constant(value=0), node)
+        return node
+
+def normalized(source):
+    tree = ast.parse(source)
+    for node in tree.body:
+        if isinstance(node, (ast.Assign, ast.AnnAssign)):
+            targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+            names = {target.id for target in targets if isinstance(target, ast.Name)}
+            if 'EXPECTED_DEBT_CAPS' in names:
+                node.value = NormalizeIntegerCaps().visit(node.value)
+            elif names & (caps - {'EXPECTED_DEBT_CAPS'}):
+                node.value = ast.Constant(value=0)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == '_self_test':
+            node.body = [ast.Pass()]
+    return ast.dump(tree, include_attributes=False)
+
+assert baseline != current
+assert normalized(baseline) == normalized(current), (
+    'validate-markdown-profiles.py changed outside approved caps/_self_test ownership'
 )
-changed = [
-    line for line in diff.splitlines()
-    if line[:1] in {'+', '-'} and not line.startswith(('+++', '---'))
-]
-allowed = [
-    re.compile(r'^[+-]\s*"(?:pathCount|occurrenceCount|tokenObligationCount|distinctTokenCount)": \d+,$'),
-    re.compile(r'^[+-]EXPECTED_(?:REQUIRED_RESIDUE_OVERLAP|REQUIRED_RESIDUE_UNION|DEBT_UNION) = \d+$'),
-    re.compile(r'^[+-]\s*if len\(unsupported_tokens\) != \d+:$'),
-    re.compile(r'^[+-]\s*if compatibility_keys != strict_keys or len\(compatibility_keys\) != \d+:$'),
-    re.compile(r'^-\s*if dict\(actual_occurrences\) != expected_occurrences:$'),
-    re.compile(r'^\+\s*if \{$'),
-    re.compile(r'^\+\s*rule_id: actual_occurrences\[rule_id\] for rule_id in EXPECTED_DEBT_CAPS$'),
-    re.compile(r'^\+\s*\} != expected_occurrences:$'),
-]
-assert changed and all(any(pattern.fullmatch(line) for pattern in allowed) for line in changed), changed
 PY
 ```
 
@@ -271,6 +300,7 @@ directory diff is prohibited.
 | ADM-004 | Stage 04–05 normalization | Execution/operations compatibility checks | `docs(migration): normalize execution and operations documents` |
 | ADM-005 | Governance/reference/archive normalization | Link, owner, and preserve-boundary checks | `docs(migration): normalize governance references and archive links` |
 | ADM-006 | AWS/Azure consolidation | Zero example-local docs and valid snapshot links | `docs(migration): consolidate cloud example documentation` |
+| ADM-006C | Residual relationship-alias retirement | Exact-17 canonical headings and zero-diagnostic no-container probe | `docs(migration): retire residual relationship aliases` |
 | ADM-007 | Strict cutover and closure | Strict validators, quality gate, all-files pre-commit | `chore(docs): cut over document profiles to strict validation` |
 
 ## Verification Plan
@@ -282,6 +312,9 @@ directory diff is prohibited.
 | VAL-030-003 | Research | strict link/owner validator | Every migrated current document has one complete durable row. |
 | VAL-030-004 | Cloud | directory-based `git ls-files examples/aws/docs examples/azure/docs` source/ledger comparison | All 59 source paths have durable ledger rows before deletion; no example-local SDLC Markdown remains afterward. |
 | VAL-030-005 | Strict | all three document validators in strict mode | Zero debt, unknown route, duplicate owner, incomplete ledger, or broken link. |
+| VAL-030-006 | README retirement | registry self-test plus README fixture/production set proof | Schema v2 has exact 52 active / 20 retired, reconstructs the immutable 67 baseline with the exact five program-created active paths, proves provider-correct destinations, and rejects every overlap/partial/unknown/currentness mutation. |
+| VAL-030-007 | Residual aliases | production Markdown rules with `compatibilityDebt` modeled absent | The exact 17 canonicalized documents produce zero required/unsupported-heading diagnostics and no alias source is recreated. |
+| VAL-030-008 | Lifecycle | cross-document self-test over exact Spec 029 and Spec 030 trios | Unique active-owner keys transition exactly `67 -> 64 -> 61`; empty debt items are handled without an index exception. |
 
 ## Risks & Mitigations
 
@@ -1370,6 +1403,9 @@ ledger, debt fixture, and digest consumer return together.
 - Modify: `tests/fixtures/document-contracts/template-compatibility.json`
 - Modify: `scripts/validate-markdown-profiles.py` only through the migration-constant diff guard
 - Modify: `scripts/validate-repo-quality-gates.sh`
+- Modify retirement inventory only: `scripts/validate-document-contract-registry.py`
+- Modify retirement inventory only: `tests/fixtures/document-contracts/readme-profile-cases.json`
+- Modify retirement-contract documentation only: `tests/README.md`
 - Modify: `docs/04.execution/tasks/2026-07-12-authored-document-migration.md`
 - Modify: `docs/00.agent-governance/memory/progress.md`
 
@@ -1381,7 +1417,17 @@ ledger, debt fixture, and digest consumer return together.
   canonicalized cloud documentation. Its frozen debt manifest contains exactly
   the 39 ADM-006 shape-debt paths and 102 tuples proven by the pre-ADM-002
   coverage gate; all 59 source paths still receive `merge` dispositions and
-  deletion review. The
+  deletion review. It also produces a schema-v2 README fixture containing
+  exact `activePaths` (52) and `retiredPaths` (20), with all eight parser cases
+  referencing active paths. The 47 active immutable-baseline paths plus 20
+  retired paths reconstruct the exact 67-path baseline; the other five active
+  paths are the exact program-created handoffs. Every retired path is absent
+  from current inventory, retains its historical disposition, declares
+  `retiredBy: ADM-006`, and names the AWS or Azure dated snapshot selected by
+  its prefix. The registry consumer and Markdown self-test enforce normalized,
+  unique, disjoint, exact current/retired sets and fail closed on overlap,
+  current/absent inversion, unknown or partial 1-19 retirement, or missing and
+  wrong-provider destination. The
   exact nine Spec 028 README interactions are relocation-driven link/index rows
   only; `examples/azure/{gitops,infrastructure,kubernetes}/README.md` are added
   because eight of their relative links resolve into the deletion set, not
@@ -1628,10 +1674,28 @@ Remove every and only tuple in the approved ADM-006 debt manifest from
 `template-compatibility.json`, recompute all aggregate caps downward, and
 synchronize the validator's final zero-debt cap/self-test constants. Refresh
 the quality gate's complete-fixture digest plus affected-path, rule-cap, and
-union-count mutation proofs in this same commit.
+union-count mutation proofs in this same commit. The zero-debt Markdown
+self-test must not call `next(...)` on a production affected-path collection,
+require nonempty `DEFER`/`FAIL` outcome sets, or catch a generic exception as
+success. It proves production compatibility, strict, and debt rows are all
+empty; a synthetic unknown diagnostic cannot defer in either mode; and
+malformed or reintroduced-debt mutations are built from pinned literals or
+explicit candidates.
+
+In the same wave, convert `readme-profile-cases.json` to schema version 2 with
+the exact 52 active and 20 retired collections defined above. Update only its
+two contract consumers: the registry validator enforces every set,
+immutable-baseline, historical-disposition, and provider-destination invariant;
+the Markdown self-test consumes active rows for production equality and keeps
+retired rows as immutable evidence. Document that contract in `tests/README.md`.
+Do not add an allowed-count list, accept either 72 or 52, or suppress the
+registry/fixture equality failure in the repository quality gate.
 
 ```bash
 test -z "$(git ls-files examples/aws/docs examples/azure/docs)"
+python3 scripts/validate-document-contract-registry.py --self-test
+python3 scripts/validate-markdown-profiles.py --self-test
+python3 scripts/validate-document-contract-registry.py --root . --mode compatibility
 python3 scripts/validate-markdown-profiles.py --root . --mode compatibility
 python3 scripts/validate-links-and-owners.py --root . --mode compatibility
 bash scripts/validate-repo-quality-gates.sh .
@@ -1647,6 +1711,9 @@ git add docs/90.references/research/2026-07-07-wer/document-migration-evidence-l
   docs/04.execution/tasks/2026-07-12-authored-document-migration.md \
   docs/00.agent-governance/memory/progress.md \
   tests/fixtures/document-contracts/template-compatibility.json \
+  tests/fixtures/document-contracts/readme-profile-cases.json \
+  tests/README.md \
+  scripts/validate-document-contract-registry.py \
   scripts/validate-markdown-profiles.py \
   scripts/validate-repo-quality-gates.sh
 xargs -0 git add -A -- < _workspace/adm-006-allowed-document-paths.nul
@@ -1661,8 +1728,11 @@ actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'],
 fixed = {'docs/04.execution/tasks/2026-07-12-authored-document-migration.md',
          'docs/00.agent-governance/memory/progress.md',
          'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
+         'scripts/validate-document-contract-registry.py',
          'scripts/validate-markdown-profiles.py',
          'scripts/validate-repo-quality-gates.sh',
+         'tests/README.md',
+         'tests/fixtures/document-contracts/readme-profile-cases.json',
          'tests/fixtures/document-contracts/template-compatibility.json'}
 assert len(deletions) == debt['deletionPathCount'] == 59 and deletions <= allowed
 assert len(allowed) == debt['allowedDocumentPathCount'] == 70
@@ -1671,21 +1741,150 @@ assert hashlib.sha256(deletions_raw).hexdigest() == debt['deletionPathsSha256']
 changed = {p for p in allowed if subprocess.run(['git', 'diff', '--quiet', 'HEAD', '--', p]).returncode == 1}
 assert changed == allowed and {item['path'] for item in debt['debtTuples']} <= changed
 assert actual == changed | fixed and fixed <= actual, (sorted(actual - (changed | fixed)), sorted((changed | fixed) - actual))
-assert len(actual) == 76
+assert len(actual) == 79
 print(f'ADM-006 exact staged count: {len(actual)}')
 PY
+pre-commit run --files $(git diff --cached --name-only)
 git commit -m "docs(migration): consolidate cloud example documentation"
 ```
 
 Expected: the staged set is exactly the printed reviewed set, including all 59
 deletions, two snapshots, nine relocation-only README link/index paths, and six
-fixed ledger/Task/progress/fixture/validator/digest owners: exactly 76 tracked
-paths. A fresh reviewer proves 59-source
+fixed ledger/Task/progress/fixture/validator/digest owners plus the exact three
+README retirement-inventory handoff files: the previous 76 plus 3, exactly 79
+tracked paths. A fresh reviewer proves 59-source
 coverage, unique-content preservation, tuple set equality, exact count
-arithmetic, zero external deletion-target/unresolved links, and complete
-digest/mutation refresh. Roll back with
+arithmetic, the exact 52-active/20-retired fixture and fail-closed destination
+proof, zero external deletion-target/unresolved links, zero-safe self-tests, and
+complete digest/mutation refresh. Roll back with
 `git revert <ADM-006-commit>` so deletions and every supporting record return
 atomically.
+
+---
+
+### ADM-006C: Retire Residual Relationship Aliases
+
+This correction is a prerequisite logical commit after reviewed ADM-006 and
+before ADM-007. It closes heading semantics that were hidden by the now-empty
+`compatibilityDebt` path collections. It is not part of either neighboring
+staged set.
+
+**Exact 21 files:**
+
+- Canonicalize relationship H2s only:
+  `docs/02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`
+- Canonicalize relationship H2s only:
+  `docs/02.architecture/decisions/0003-eso-vault-k8s-auth.md`
+- Canonicalize relationship H2s only:
+  `docs/02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`
+- Canonicalize relationship H2s only:
+  `docs/02.architecture/decisions/0008-istio-install-and-ingress-coexist.md`
+- Canonicalize relationship H2s only:
+  `docs/02.architecture/decisions/0009-kiali-external-observability.md`
+- Canonicalize relationship H2s only:
+  `docs/02.architecture/decisions/0015-declarative-document-contract-registry.md`
+- Canonicalize relationship H2s only:
+  `docs/02.architecture/decisions/0016-program-to-tranche-document-lineage.md`
+- Canonicalize relationship H2s only:
+  `docs/03.specs/008-current-local-gitops-platform/spec.md`
+- Canonicalize relationship H2s only:
+  `docs/03.specs/024-observability-and-network-review-agents/agent-design.md`
+- Canonicalize relationship H2s only:
+  `docs/03.specs/026-document-contract-registry/spec.md`
+- Canonicalize relationship H2s only:
+  `docs/03.specs/027-template-contract-consolidation/spec.md`
+- Canonicalize relationship H2s only:
+  `docs/03.specs/028-readme-workspace-profiles/spec.md`
+- Canonicalize relationship H2s only:
+  `docs/03.specs/029-semantic-document-validation/spec.md`
+- Canonicalize relationship H2s only:
+  `docs/03.specs/030-authored-document-migration/spec.md`
+- Canonicalize relationship H2s only:
+  `docs/03.specs/031-affected-surface-agent-qa/spec.md`
+- Canonicalize relationship H2s only:
+  `docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md`
+- Canonicalize relationship H2s only:
+  `docs/04.execution/plans/2026-05-30-antigravity-governance.md`
+- Update the exact 17 dispositions/results and record ADM-003C exact-16 plus
+  ADM-004C exact-1 escape ownership:
+  `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`
+- Update this correction's plan/evidence only: this Plan, the same-topic Task,
+  and `docs/00.agent-governance/memory/progress.md`
+
+The 17-document set already includes the Spec 030 Spec; count it once. With the
+four unique evidence owners, the atomic staged set is 17 + 4 = 21, not 22.
+
+- [ ] **Step C1: Freeze RED and exact ownership**
+
+Reproduce the no-container result before editing: exactly 43 diagnostics over
+the exact 17 paths, comprising 17 `BODY-HEADING-REQUIRED` and 26
+`BODY-HEADING-UNSUPPORTED` findings. Record the two original escape subsets and
+the exact-21 manifest in ignored evidence. No current fixture, registry, Python
+constant, path glob, or waiver may become an alias owner.
+
+- [ ] **Step C2: Canonicalize only relationships**
+
+For each exact document, merge topic-specific links from `Related Inputs`,
+`Related Documents`, or `Parent Documents` under one `Traceability` H2 and
+remove only the superseded relationship headings. Preserve ADR decisions,
+completed evidence, status, topic prose, link targets, and historical meaning.
+Update the exact ledger rows and the three execution evidence owners in the
+same logical unit.
+
+- [ ] **Step C3: Prove GREEN without a semantic container**
+
+```bash
+python3 - <<'PY'
+import datetime as dt
+import importlib.util
+import pathlib
+import sys
+
+sys.path.insert(0, 'scripts')
+spec = importlib.util.spec_from_file_location(
+    'adm006c_markdown_validator', 'scripts/validate-markdown-profiles.py'
+)
+validator = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = validator
+spec.loader.exec_module(validator)
+root = pathlib.Path('.')
+validator._compatibility_rows = lambda _root: {}
+diagnostics = validator._repository_diagnostics(
+    root,
+    validator.load_registry(root),
+    validator.enumerate_target_markdown(root),
+    today=dt.date(2026, 7, 13),
+)
+assert not diagnostics, [
+    (item.rule_id, item.path.as_posix(), item.actual)
+    for item in diagnostics
+]
+PY
+python3 scripts/validate-markdown-profiles.py --root . --mode compatibility
+python3 scripts/validate-links-and-owners.py --root . --mode compatibility
+bash scripts/validate-repo-quality-gates.sh .
+git diff --check
+```
+
+Expected: the modeled absent container yields zero diagnostics, normal
+compatibility remains clean, and the complete canonical quality gate passes.
+Do not bypass a failing canonical invocation with this focused proof.
+
+- [ ] **Step C4: Stage exact 21, review, and commit**
+
+Stage only the enumerated 17 documents plus ledger, this Plan, Task, and
+progress. Assert exact set equality and `len(actual) == 21`, run focused
+pre-commit, and receive independent approval before committing:
+
+```bash
+git commit -m "docs(migration): retire residual relationship aliases"
+```
+
+Roll back only with `git revert <ADM-006C-commit>`. The revert restores the
+legacy relationship headings and their ledger/evidence results without
+restoring ADM-006 cloud sources or changing either debt container. ADM-007 may
+start only from a clean reviewed ADM-006C commit and a repeated zero-diagnostic
+no-container proof.
 
 ---
 
@@ -1704,22 +1903,42 @@ atomically.
 **Interfaces:**
 
 - Consumes: zero-debt migrated corpus, two empty finite debt consumers, and strict Spec 029 validators.
-- Produces: strict repository quality gate and completed migration evidence.
+- Produces: strict repository quality gate and completed migration evidence in
+  the existing exact 13-path boundary. It also preserves the measured
+  active-owner lifecycle `67 -> 64 -> 61` and turns the known empty-`items`
+  cross-document self-test index crash from focused RED to GREEN.
 
-- [ ] **Step 1: Run RED strict bundle before debt removal**
+- [ ] **Step 1: Characterize the clean pre-retirement state**
 
 ```bash
+python3 scripts/validate-document-contract-registry.py --self-test
+python3 scripts/validate-markdown-profiles.py --self-test
 python3 scripts/validate-document-contract-registry.py --root . --mode strict
 python3 scripts/validate-markdown-profiles.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --root . --mode strict
+python3 scripts/validate-markdown-profiles.py --root . --mode compatibility
+python3 scripts/validate-links-and-owners.py --root . --mode compatibility
 ```
 
 Expected: the corpus passes strict before cleanup, both debt consumers contain
 zero path/item records, and compatibility has no `DEFER` or `DEBT-UNUSED`.
 Any remaining failure identifies an exact path and rule; do not remove an
-underlying record before its owning ADM wave passes.
+underlying record before its owning ADM wave passes. Parse both compatibility
+JSON envelopes and require exit 0, `PASS`, and zero diagnostics. The existing
+`validate-links-and-owners.py --self-test` access to `items[0]` when `items` is
+empty is a known focused RED assigned to this Task, not an ADM-006 gate and not
+a reason to enlarge ADM-006.
 
-- [ ] **Step 2: Remove empty debt containers and switch the wrapper to strict**
+- [ ] **Step 2: Write retirement RED, then remove empty sources and switch the wrapper**
+
+First change only both validators' self-tests to require absent-source strict
+PASS and compatibility configuration exit 2 with stable
+`DEBT-SOURCE-MISSING`, empty stdout, and non-secret stderr. Run the tests while
+both sources still exist: they must fail only for the expected source-present
+retirement reason. Build mutations from pinned literals or explicit
+candidates; the cross-document test must never read `items[0]`, and neither
+test may catch generic `Exception` as success. Record this focused RED before
+implementation.
 
 Remove the now-empty `compatibilityDebt`, rule-cap, and union-count debt
 definitions from `template-compatibility.json`, then recompute and pin its
@@ -1733,8 +1952,12 @@ strict mode treats the retired semantic debt file and absent template
 silently recreate either source. Compatibility mode after retirement fails
 closed as configuration exit 2 with stable `DEBT-SOURCE-MISSING`, so the
 quality wrapper must switch every production invocation to strict in this same
-commit. Self-tests prove both absent-source strict PASS and compatibility
-exit 2 for each validator.
+commit. Switch all three document-validator production invocations—registry,
+Markdown, and cross-document—to strict; do not leave a compatibility
+production call or alternate filtered validation path. Self-tests prove both
+absent-source strict PASS and compatibility exit 2 for each semantic validator,
+and cross-document inventory mode remains available without loading the retired
+source.
 Do not alter profile routes, registry data, or registry semantics. In
 particular, `docs/99.templates/support/document-profiles.json` is neither a
 debt owner nor an ADM-007 file.
@@ -1748,26 +1971,46 @@ python3 scripts/validate-document-contract-registry.py --root . --mode strict
 python3 scripts/validate-markdown-profiles.py --root . --mode strict
 python3 scripts/validate-links-and-owners.py --root . --mode strict
 set +e
-python3 scripts/validate-markdown-profiles.py --root . --mode compatibility
+python3 scripts/validate-markdown-profiles.py --root . --mode compatibility \
+  >/tmp/adm007-markdown-compat.out 2>/tmp/adm007-markdown-compat.err
 markdown_compat_rc=$?
-python3 scripts/validate-links-and-owners.py --root . --mode compatibility
+python3 scripts/validate-links-and-owners.py --root . --mode compatibility \
+  >/tmp/adm007-links-compat.out 2>/tmp/adm007-links-compat.err
 links_compat_rc=$?
 set -e
 test "$markdown_compat_rc" -eq 2
 test "$links_compat_rc" -eq 2
+test ! -s /tmp/adm007-markdown-compat.out
+test ! -s /tmp/adm007-links-compat.out
+grep -q 'DEBT-SOURCE-MISSING' /tmp/adm007-markdown-compat.err
+grep -q 'DEBT-SOURCE-MISSING' /tmp/adm007-links-compat.err
+python3 scripts/validate-links-and-owners.py --root . --inventory --format json \
+  >/tmp/adm007-inventory.json
+python3 -m json.tool /tmp/adm007-inventory.json >/dev/null
 rg -n 'harness-task-contract|SNIPPET LIBRARY|Suggested Types' docs examples .agents .claude .codex scripts
 bash scripts/validate-repo-quality-gates.sh .
 git diff --check
 pre-commit run --all-files
 ```
 
-Expected: validators and required hooks PASS; residue search has no active-authority finding; optional skips are labeled.
+Expected: validators and required hooks PASS; compatibility failures have only
+the stable configuration evidence above; inventory remains usable; residue
+search has no active-authority finding; optional skips are labeled. Compare
+the pre/post strict normalized diagnostic tuples and require both to be empty.
+The full wrapper result is authoritative and may not be replaced by only the
+focused commands.
 
 - [ ] **Step 4: Close evidence and lifecycle**
 
 Set Spec, Plan, and Task to `done`, update index rows, finish every ledger result
 and reviewer field, record destructive rollback commits and review decisions,
-and append the strict-cutover handoff to `memory/progress.md`.
+and append the strict-cutover handoff to `memory/progress.md`. The
+cross-document self-test must mutate only the exact Spec 029 Spec/Plan/Task
+statuses to prove `67 -> 64`, then only the exact Spec 030 Spec/Plan/Task
+statuses to prove `64 -> 61`; a bare constant replacement is insufficient.
+Record the exact-13 staged boundary, source-empty precondition, focused
+RED/GREEN evidence, complete-fixture digest/mutations, independent reviewer,
+rollback commit, and repository-static/no-live boundary.
 
 - [ ] **Step 5: Commit**
 
