@@ -37,7 +37,10 @@ official primary-source research, `rg`, pre-commit, and repository quality gates
 - Every migrated current authored document needs one durable research row; external technical claims use applicable official primary sources.
 - Repository-only decisions record `external-topic: not applicable` with a concrete reviewed reason.
 - Do not read, enumerate, move, or delete ignored `.env`, token, key, certificate, kubeconfig, shell-history, local-setting, or diagnostic content.
-- README redesign belongs to Spec 028; this Plan may make relocation-driven index/link updates only.
+- README redesign belongs to Spec 028. ADM-006 may make relocation-driven
+  index/link updates in its exact nine paths and post-delete lifecycle/status
+  sentence replacements in the named exact-six subset only; every structural,
+  purpose, command, and unrelated-content change remains excluded.
 - Validator parsers and rule semantics belong to Spec 029. This Plan consumes
   their public interfaces and changes the two finite Spec-030-owned debt
   fixtures at the named transitions. ADM-003 through ADM-006 may synchronize
@@ -276,10 +279,12 @@ Before any content mutation, the same Task must freeze
 come from the reviewed migration/debt manifest, are a subset of the Task's
 tracked eligible paths from `git ls-files`, include every path named by a debt
 tuple, and may add only the Task's exact declared new destinations or
-relocation-only README paths. README paths and the Task's explicit exclusions
-are absent unless that Task's Files list names the exact README path. Record the
-manifest path count and SHA-256 in the Task evidence and obtain independent
-approval before the first edit. The count/SHA are immutable for the wave.
+relocation-driven README exception paths, including a bounded lifecycle span
+only when the Task names it explicitly. README paths and the Task's explicit
+exclusions are absent unless that Task's Files list names the exact README path
+and interaction. Record the manifest path count and SHA-256 in the Task evidence
+and obtain independent approval before the first edit. The count/SHA are
+immutable for the wave.
 
 After edits, define `fixed` as the exact ledger, Task, progress, compatibility
 fixture, quality-gate consumer, and other non-document evidence files listed by
@@ -1388,12 +1393,12 @@ ledger, debt fixture, and digest consumer return together.
 
 - Create: `docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md`
 - Create: `docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md`
-- Modify link/index rows only: `docs/90.references/cloud-examples/README.md`
-- Modify link/index rows only: `docs/90.references/cloud-examples/aws/README.md`
-- Modify link/index rows only: `docs/90.references/cloud-examples/azure/README.md`
-- Modify link/index rows only: `examples/README.md`
-- Modify link/index rows only: `examples/aws/README.md`
-- Modify link/index rows only: `examples/azure/README.md`
+- Modify reviewed link/index rows and lifecycle/status spans only: `docs/90.references/cloud-examples/README.md`
+- Modify reviewed link/index rows and lifecycle/status spans only: `docs/90.references/cloud-examples/aws/README.md`
+- Modify reviewed link/index rows and lifecycle/status spans only: `docs/90.references/cloud-examples/azure/README.md`
+- Modify reviewed link/index rows and lifecycle/status spans only: `examples/README.md`
+- Modify reviewed link/index rows and lifecycle/status spans only: `examples/aws/README.md`
+- Modify reviewed link/index rows and lifecycle/status spans only: `examples/azure/README.md`
 - Modify link/index rows only: `examples/azure/gitops/README.md`
 - Modify link/index rows only: `examples/azure/infrastructure/README.md`
 - Modify link/index rows only: `examples/azure/kubernetes/README.md`
@@ -1427,11 +1432,14 @@ ledger, debt fixture, and digest consumer return together.
   its prefix. The registry consumer and Markdown self-test enforce normalized,
   unique, disjoint, exact current/retired sets and fail closed on overlap,
   current/absent inversion, unknown or partial 1-19 retirement, or missing and
-  wrong-provider destination. The
-  exact nine Spec 028 README interactions are relocation-driven link/index rows
-  only; `examples/azure/{gitops,infrastructure,kubernetes}/README.md` are added
-  because eight of their relative links resolve into the deletion set, not
-  because ADM-006 owns their profiles or bodies.
+  wrong-provider destination. All exact nine Spec 028 README interactions own
+  reviewed relocation-driven link/index rows. The exact first six additionally
+  own only the pinned post-delete lifecycle/status spans: Stage 90
+  snapshots/indexes now exist, source59 is retired, executable assets remain,
+  each dated snapshot is the durable destination, and consolidation completed.
+  `examples/azure/{gitops,infrastructure,kubernetes}/README.md` are added because
+  eight relative links resolve into the deletion set; their non-link text is
+  frozen, and ADM-006 owns no README profile or purpose redesign.
 
 - [ ] **Step 1: Record RED source count and inbound links**
 
@@ -1576,9 +1584,10 @@ deletion review source of truth. The resolved graph records all 265 tracked
 Markdown links into that set: 225 internal deletion-tree links plus 40 external
 links from exactly eight README consumers to 23 source targets. Those eight
 consumers plus the snapshot-pack root index are exactly the nine relocation-only
-README paths, so every external consumer is covered before deletion. Literal
-`rg` mentions are non-authoritative supplemental search evidence and cannot
-replace target resolution.
+README link/index paths; the exact-six lifecycle spans do not enlarge that link
+graph boundary. Every external consumer is therefore covered before deletion.
+Literal `rg` mentions are non-authoritative supplemental search evidence and
+cannot replace target resolution.
 
 Also create and independently review
 `_workspace/adm-006-debt-removals.json` containing every exact finite-debt
@@ -1607,14 +1616,18 @@ python3 -c 'import pathlib,sys; paths=[x.decode() for x in pathlib.Path("_worksp
 
 Expected: exit 0 with no missing path output.
 
-- [ ] **Step 3: Update entrypoint and snapshot index rows**
+- [ ] **Step 3: Update entrypoint, snapshot index, and bounded lifecycle rows**
 
 Use the existing Spec 028 README profile sections. Change only inventory,
-source-of-truth, and related-document links required by relocation. The three
-Azure executable sub-entrypoints are in scope only for the eight reviewed
-relative links; do not redesign their profile, prose body, commands, or
-unrelated inventory. After all nine README paths are updated and both snapshots
-exist, prove zero external deletion-target link and zero unresolved local link:
+source-of-truth, and related-document links required by relocation. In the
+exact six named README files, replace only the pinned lifecycle/status spans
+that still describe source59 as current or the completed move as future work.
+The three Azure executable sub-entrypoints are in scope only for the eight
+reviewed relative links; freeze all their non-link text. Do not change any
+README Frontmatter, heading/profile, purpose, command/fence, or unrelated
+inventory. After all nine README paths and exact-six spans are updated and both
+snapshots exist, prove zero external deletion-target link and zero unresolved
+local link:
 
 ```bash
 python3 - <<'PY'
@@ -1691,20 +1704,353 @@ retired rows as immutable evidence. Document that contract in `tests/README.md`.
 Do not add an allowed-count list, accept either 72 or 52, or suppress the
 registry/fixture equality failure in the repository quality gate.
 
-Before staging exact 79, create the ignored executable guard
+Before staging exact 79, create the ignored executable README text guard
+`_workspace/adm-006-readme-text-guard.py` with the following content using
+`apply_patch`, then run it. The guard pins the approved HEAD text and the
+reviewed link-only state for all exact nine files. Reversing only the exact
+lifecycle replacements must reproduce the pinned link-only state in the exact
+six subset; the three Azure sub-entrypoints must retain their pinned whole-file
+link-only text. The final whole-file hashes, headings, Frontmatter, fenced
+commands, replacement multiplicity, and six stale-prose categories are all
+fail-closed.
+
+```python
+import hashlib
+import pathlib
+import subprocess
+
+BASE = "a5289ad"
+PATHS = (
+    "docs/90.references/cloud-examples/README.md",
+    "docs/90.references/cloud-examples/aws/README.md",
+    "docs/90.references/cloud-examples/azure/README.md",
+    "examples/README.md",
+    "examples/aws/README.md",
+    "examples/azure/README.md",
+    "examples/azure/gitops/README.md",
+    "examples/azure/infrastructure/README.md",
+    "examples/azure/kubernetes/README.md",
+)
+LIFECYCLE_PATHS = PATHS[:6]
+LINK_ONLY_PATHS = PATHS[6:]
+HEAD_SHA256 = {
+    "docs/90.references/cloud-examples/README.md": "92b98dbec479f330700abf63dc65fbbf1ce3bd8cdc2ee16438d3089066afed10",  # pragma: allowlist secret
+    "docs/90.references/cloud-examples/aws/README.md": "6d10fd70824506094eb0f009a175d2ed9983d62eda48256a7d4e674d3fb543e4",  # pragma: allowlist secret
+    "docs/90.references/cloud-examples/azure/README.md": "b43c232185f02f6c7dc03db82afa57577d6cd370b804ac212553fa37e2e0d0e9",  # pragma: allowlist secret
+    "examples/README.md": "c0e63fb4601720363e553c17165485a45dcd388e3043a39fac0736af52ef7797",  # pragma: allowlist secret
+    "examples/aws/README.md": "44a143900e89e036c5333b62f6459c6cc9f1b268b950e30ec90220c31bacf8d5",  # pragma: allowlist secret
+    "examples/azure/README.md": "a69a0783871ed6290d1c8d87d65eae19a9eef49dcc983f5a225b369fbd58b17c",  # pragma: allowlist secret
+    "examples/azure/gitops/README.md": "384d71f2ec6b9b85096fe3a055e39088a266ea51d6d10871c24a1f24237b1e7a",  # pragma: allowlist secret
+    "examples/azure/infrastructure/README.md": "5977951dc6df26a55a8989f203c624bda2ff8f27b8ae88c0dd34e27a801a29af",  # pragma: allowlist secret
+    "examples/azure/kubernetes/README.md": "454022beb03dda1a4ca37c1923a182672eef3f94772e303a4a8c97dbab3118e4",  # pragma: allowlist secret
+}
+LINK_ONLY_SHA256 = {
+    "docs/90.references/cloud-examples/README.md": "80c6ab3facc8643cfe912e7f666aa1633e4b97ddded9b1c6e809d4de0cb7523e",  # pragma: allowlist secret
+    "docs/90.references/cloud-examples/aws/README.md": "132c578c2cceee2f7174e9f1a1d0a63a558a1634504a89043ad6e9ec572d28d6",  # pragma: allowlist secret
+    "docs/90.references/cloud-examples/azure/README.md": "7f33509b2d38b5527b02317c31bba09af377b960b8e16cffb7b84cfb5e16481c",  # pragma: allowlist secret
+    "examples/README.md": "c0969747101b8642ef7fb3bc6909d9d1571f3547bd09bd75616d0f06547fb94f",  # pragma: allowlist secret
+    "examples/aws/README.md": "57ccccf7d277dc27c627a0e0e2cd4100eda9711cabcbd475c9d3236e3e90eeb0",  # pragma: allowlist secret
+    "examples/azure/README.md": "37004cd0491213d101f79d85fe22c111005f3d964831ac5f50bd31e6917b21ef",  # pragma: allowlist secret
+    "examples/azure/gitops/README.md": "9f56043c2fe466bafdf36d7dcaad57cb10cf9fcea3f4bf5a006c769aaafb7a6d",  # pragma: allowlist secret
+    "examples/azure/infrastructure/README.md": "e9c759c3d98014450314eab9142decaa41845bb6724d858bcfae0686fe5ca1e8",  # pragma: allowlist secret
+    "examples/azure/kubernetes/README.md": "36f4c7fc6a6e5d3860b6c5697a98f0de6e6b5f146d05c78acb35da2fcbb40d9b",  # pragma: allowlist secret
+}
+FINAL_SHA256 = {
+    "docs/90.references/cloud-examples/README.md": "113179c7e893c9ef6156f29f0d0bc444f4c3d57e9961cf932f996a95ca6d35d9",  # pragma: allowlist secret
+    "docs/90.references/cloud-examples/aws/README.md": "5050941e71a5c1cc02cddae4bb92c38f29a9f0f3e19dea040526ca770d7c71ff",  # pragma: allowlist secret
+    "docs/90.references/cloud-examples/azure/README.md": "c3bbc878c806905623b0174bde9c4050a586ed4d3c27a055177fb149eb0eff05",  # pragma: allowlist secret
+    "examples/README.md": "fe05dbc138d7569b32810047cb064178593fff410c857ed6575c054935b6ce4b",  # pragma: allowlist secret
+    "examples/aws/README.md": "419ee1d75c9c0fcf36beb9998fc9d81f506199e201a5116b83dd9cd0a43c8be8",  # pragma: allowlist secret
+    "examples/azure/README.md": "59844f14f9e77cd5a71e581d6552e7446cac9cc16a00f6562b681076d0eef123",  # pragma: allowlist secret
+}
+OVERVIEW_SHA256 = {
+    "docs/90.references/cloud-examples/README.md": "b6b2f428dc5db6e7a2082cbdea3341d420d8d3c1715b26f20826c88f8fddc2c3",  # pragma: allowlist secret
+    "docs/90.references/cloud-examples/aws/README.md": "c225fcfbfbbcdeb9282836fa06d12be12fb98e583c85629429cec0c8ee6c4c6c",  # pragma: allowlist secret
+    "docs/90.references/cloud-examples/azure/README.md": "d9443d571af215509b4bfff61966325b852a843e795e6e45e1e382feaca507a6",  # pragma: allowlist secret
+    "examples/README.md": "e55ed599fe1ae96ed55f7890b1f60173b2bbf9aa0197f4aa2446e10a4b7f0cd6",  # pragma: allowlist secret
+    "examples/aws/README.md": "4ea71704a9656cf566fc7d7f8372d3458a14b2e74da6d2b014d3760c7ce5f914",  # pragma: allowlist secret
+    "examples/azure/README.md": "7722db78db747a948b7528d4c5722f07908b1752c7a5543edb1b4d4630b5b4ef",  # pragma: allowlist secret
+}
+
+REPLACEMENTS = {
+    "docs/90.references/cloud-examples/README.md": ((
+        "The dated provider indexes will live at `aws/README.md` and\n"
+        "`azure/README.md`. Executable assets remain under\n"
+        "[`examples/aws`](../../../examples/aws/) and\n"
+        "[`examples/azure`](../../../examples/azure/) until the approved migration\n"
+        "changes their canonical location. [Spec 030](../../03.specs/030-authored-document-migration/spec.md)\n"
+        "owns that relocation and authored-document consolidation.\n",
+        "The dated provider indexes and snapshots now exist under `aws/` and `azure/`.\n"
+        "The exact 59 example-local documentation sources are retired. Executable assets\n"
+        "remain under [`examples/aws`](../../../examples/aws/) and\n"
+        "[`examples/azure`](../../../examples/azure/) as implementation references; the\n"
+        "dated provider snapshots are their durable documentation destinations.\n"
+        "[Spec 030](../../03.specs/030-authored-document-migration/spec.md) completed that\n"
+        "relocation and authored-document consolidation.\n",
+    ),),
+    "docs/90.references/cloud-examples/aws/README.md": (
+        (
+            "이 인덱스는 `examples/aws/docs/`에 남아 있는 AWS 마이그레이션 문서 예시를\n"
+            "Stage 90에서 찾기 위한 handoff다. 문서와 실행 자산을 이동하지 않으며,\n"
+            "Spec 030이 후속 통합 범위를 결정할 때까지 원본 경로를 보존한다.\n",
+            "This index is the current Stage 90 entrypoint for the dated AWS snapshot.\n"
+            "The 26 AWS paths from source59 under `examples/aws/docs/` are retired; the dated\n"
+            "snapshot is their durable documentation destination, while executable assets\n"
+            "remain under `examples/aws/`.\n",
+        ),
+        (
+            "- Current source tree: `examples/aws/docs/`.\n"
+            "- Executable asset owner: `examples/aws/`.\n"
+            "- Role: dated migration example handoff, not active main-stage ownership or\n"
+            "  provider-latest AWS guidance.\n",
+            "- Retired source tree: `examples/aws/docs/` (26 source59 paths).\n"
+            "- Executable asset owner: `examples/aws/` (assets remain in place).\n"
+            "- Role: durable dated documentation destination, not active main-stage\n"
+            "  ownership or provider-latest AWS guidance.\n",
+        ),
+        (
+            "[Spec 030](../../../03.specs/030-authored-document-migration/spec.md) owns the\n"
+            "planned consolidation decision. Recheck this snapshot when an official AWS\n"
+            "service, API, support, or lifecycle contract changes, when the source inventory\n"
+            "changes, or when Spec 030 promotes a successor. Executable examples remain\n"
+            "under `examples/aws/`; this index does not relocate or activate them.\n",
+            "[Spec 030](../../../03.specs/030-authored-document-migration/spec.md) completed\n"
+            "the consolidation into this dated snapshot. Recheck it when an official AWS\n"
+            "service, API, support, or lifecycle contract changes, when retained source\n"
+            "coverage changes, or when Spec 030 promotes a successor. Executable examples\n"
+            "remain under `examples/aws/`; this index does not relocate or activate them.\n",
+        ),
+    ),
+    "docs/90.references/cloud-examples/azure/README.md": (
+        (
+            "이 인덱스는 `examples/azure/docs/`에 남아 있는 Azure 마이그레이션 문서 예시를\n"
+            "Stage 90에서 찾기 위한 handoff다. 문서와 실행 자산을 이동하지 않으며,\n"
+            "Spec 030이 후속 통합 범위를 결정할 때까지 원본 경로를 보존한다.\n",
+            "This index is the current Stage 90 entrypoint for the dated Azure snapshot.\n"
+            "The 33 Azure paths from source59 under `examples/azure/docs/` are retired; the\n"
+            "dated snapshot is their durable documentation destination, while executable\n"
+            "assets remain under `examples/azure/`.\n",
+        ),
+        (
+            "- Current source tree: `examples/azure/docs/`.\n"
+            "- Executable asset owner: `examples/azure/`.\n"
+            "- Role: dated migration example handoff, not active main-stage ownership or\n"
+            "  provider-latest Azure guidance.\n",
+            "- Retired source tree: `examples/azure/docs/` (33 source59 paths).\n"
+            "- Executable asset owner: `examples/azure/` (assets remain in place).\n"
+            "- Role: durable dated documentation destination, not active main-stage\n"
+            "  ownership or provider-latest Azure guidance.\n",
+        ),
+        (
+            "[Spec 030](../../../03.specs/030-authored-document-migration/spec.md) owns the\n"
+            "planned consolidation decision. Recheck this snapshot when an official Azure\n"
+            "service, API, support, or lifecycle contract changes, when the source inventory\n"
+            "changes, or when Spec 030 promotes a successor. Executable examples remain\n"
+            "under `examples/azure/`; this index does not relocate or activate them.\n",
+            "[Spec 030](../../../03.specs/030-authored-document-migration/spec.md) completed\n"
+            "the consolidation into this dated snapshot. Recheck it when an official Azure\n"
+            "service, API, support, or lifecycle contract changes, when retained source\n"
+            "coverage changes, or when Spec 030 promotes a successor. Executable examples\n"
+            "remain under `examples/azure/`; this index does not relocate or activate them.\n",
+        ),
+    ),
+    "examples/README.md": (
+        (
+            "이 경로는 실제 운영 manifest의 복제본이 아니라, 새 앱 또는 cloud target을 설계할 때 참고하는 예시를 담는다. `sample-app/`은 로컬 k3d GitOps 최소 온보딩 템플릿이고, `aws/`, `azure/`는 [Tech Stack Version Inventory](../docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot` 기준을 따르는 example-local SDLC snapshot 참조 자산이다.\n",
+            "이 경로는 실제 운영 manifest의 복제본이 아니라, 새 앱 또는 cloud target을 설계할 때 참고하는 예시를 담는다. `sample-app/`은 로컬 k3d GitOps 최소 온보딩 템플릿이고, `aws/`, `azure/`의 실행 자산은 provider별 참조 구현이다. 통합된 문서 근거의 durable destination은 [dated Stage 90 snapshots](../docs/90.references/cloud-examples/README.md)다.\n",
+        ),
+        (
+            "AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 비-README Markdown 문서는 `examples/<provider>/docs/**` 안에서 SDLC 역할별 frontmatter와 섹션 기대값을 따른다. 실제 배포를 계획할 때는 새 provider 검증 결과로 `Cloud Example Snapshot`을 갱신하고 비용, IAM/RBAC, 네트워크 경계를 다시 확인해야 한다.\n",
+            "AWS/Azure 예시는 계정이나 live cluster를 변경하지 않는다. 기존 `examples/<provider>/docs/**` source59 문서는 retired 상태이며 provider별 dated Stage 90 snapshot에 통합되었다. 실제 배포를 계획할 때는 새 provider 검증 결과로 `Cloud Example Snapshot`을 갱신하고 비용, IAM/RBAC, 네트워크 경계를 다시 확인해야 한다.\n",
+        ),
+        (
+            "- cloud migration 문서 샘플과 학습 자료\n",
+            "- Stage 90에 통합된 cloud migration snapshot과 실행 자산 매핑\n",
+        ),
+        (
+            "2. AWS/Azure 예시는 [Tech Stack Version Inventory](../docs/90.references/data/tech-stack-version-inventory.md)의 `Cloud Example Snapshot` 기준과 example-local SDLC snapshot route에 맞춰 수정한다.\n"
+            "3. provider module, Kubernetes version, ingress/gateway 선택이 바뀌면 관련 README와 docs 예시를 같은 변경에서 갱신한다.\n",
+            "2. AWS/Azure 예시는 [dated Stage 90 snapshot index](../docs/90.references/cloud-examples/README.md)와 `Cloud Example Snapshot` 기준에 맞춰 검토한다.\n"
+            "3. provider module, Kubernetes version, ingress/gateway 선택이 바뀌면 관련 README, dated snapshot, 실행 자산 매핑을 같은 변경에서 갱신한다.\n",
+        ),
+        (
+            "| `aws/` | Cloud migration reference snapshot for AWS. | `../docs/90.references/data/tech-stack-version-inventory.md` `Cloud Example Snapshot`; example-local SDLC snapshot route; not live provider-latest guidance. |",
+            "| `aws/` | Cloud migration reference snapshot for AWS. | Durable documentation: `../docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md`; executable assets remain under `aws/`; not live provider-latest guidance. |",
+        ),
+        (
+            "| `azure/` | Cloud migration reference snapshot for Azure. | `../docs/90.references/data/tech-stack-version-inventory.md` `Cloud Example Snapshot`; example-local SDLC snapshot route; not live provider-latest guidance. |",
+            "| `azure/` | Cloud migration reference snapshot for Azure. | Durable documentation: `../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md`; executable assets remain under `azure/`; not live provider-latest guidance. |",
+        ),
+    ),
+    "examples/aws/README.md": (
+        (
+            "Reference documentation only; Spec 030 owns consolidation into Stage 90.",
+            "Durable documentation destination; Spec 030 consolidation is complete.",
+        ),
+        (
+            "approval before any provider or live-cluster action. Spec 030 will remove the\n"
+            "example-local SDLC documents after their durable knowledge is consolidated;\n"
+            "the executable assets remain under this provider tree.\n",
+            "approval before any provider or live-cluster action. Spec 030 retired the 26\n"
+            "AWS source59 documentation paths after consolidating their durable knowledge;\n"
+            "the executable assets remain under this provider tree.\n",
+        ),
+    ),
+    "examples/azure/README.md": (
+        (
+            "Reference documentation only; Spec 030 owns consolidation into Stage 90.",
+            "Durable documentation destination; Spec 030 consolidation is complete.",
+        ),
+        (
+            "approval before any provider or live-cluster action. Spec 030 will remove the\n"
+            "example-local SDLC documents after their durable knowledge is consolidated;\n"
+            "the executable assets remain under this provider tree.\n",
+            "approval before any provider or live-cluster action. Spec 030 retired the 33\n"
+            "Azure source59 documentation paths after consolidating their durable knowledge;\n"
+            "the executable assets remain under this provider tree.\n",
+        ),
+    ),
+}
+STALE = {
+    "future index location": ("will live at",),
+    "future asset ownership": ("until the approved migration",),
+    "deleted tree described as current": (
+        "남아 있는", "원본 경로를 보존한다", "Current source tree"
+    ),
+    "planned consolidation": ("planned consolidation decision",),
+    "future removal": ("Spec 030 will remove",),
+    "active example-local route": ("example-local SDLC snapshot route",),
+}
+
+
+def sha256(text):
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def git_text(path):
+    return subprocess.check_output(
+        ["git", "show", f"{BASE}:{path}"], text=True
+    )
+
+
+def headings(text):
+    return tuple(line for line in text.splitlines() if line.startswith("#"))
+
+
+def frontmatter(text):
+    if not text.startswith("---\n"):
+        return ""
+    return text.split("---\n", 2)[1]
+
+
+def fenced_content(text):
+    result = []
+    active = False
+    for line in text.splitlines():
+        if line.lstrip().startswith("```"):
+            active = not active
+            result.append(line)
+        elif active:
+            result.append(line)
+    assert not active, "unclosed fenced block"
+    return tuple(result)
+
+
+def section_body(text, heading):
+    marker = f"{heading}\n"
+    assert text.count(marker) == 1, heading
+    start = text.index(marker) + len(marker)
+    end = text.find("\n## ", start)
+    assert end != -1, heading
+    return text[start:end]
+
+
+def expect_rejection(label, candidates):
+    try:
+        validate(candidates)
+    except AssertionError:
+        return
+    raise AssertionError(f"README text guard accepted {label}")
+
+
+def validate(candidates):
+    assert set(candidates) == set(PATHS)
+    baselines = {path: git_text(path) for path in PATHS}
+    assert all(sha256(baselines[path]) == HEAD_SHA256[path] for path in PATHS)
+    for path in PATHS:
+        candidate = candidates[path]
+        baseline = baselines[path]
+        assert frontmatter(candidate) == frontmatter(baseline), path
+        assert headings(candidate) == headings(baseline), path
+        assert fenced_content(candidate) == fenced_content(baseline), path
+    for path in LIFECYCLE_PATHS:
+        candidate = candidates[path]
+        for category, fragments in STALE.items():
+            assert not any(fragment in candidate for fragment in fragments), (
+                path, category
+            )
+        link_only = candidate
+        for old, new in REPLACEMENTS[path]:
+            assert candidate.count(new) == 1, (path, "new span", new)
+            assert old not in candidate, (path, "old span", old)
+            link_only = link_only.replace(new, old, 1)
+        assert sha256(link_only) == LINK_ONLY_SHA256[path], path
+        assert sha256(candidate) == FINAL_SHA256[path], path
+        assert sha256(section_body(candidate, "## Overview")) == (
+            OVERVIEW_SHA256[path]
+        ), path
+    for path in LINK_ONLY_PATHS:
+        assert sha256(candidates[path]) == LINK_ONLY_SHA256[path], path
+
+
+current = {path: pathlib.Path(path).read_text() for path in PATHS}
+validate(current)
+
+mutation = dict(current)
+mutation[LIFECYCLE_PATHS[0]] += "unreviewed lifecycle prose\n"
+expect_rejection("an extra line", mutation)
+mutation = dict(current)
+mutation[LIFECYCLE_PATHS[0]] = mutation[LIFECYCLE_PATHS[0]].replace(
+    "## Overview", "## Current State", 1
+)
+expect_rejection("a heading change", mutation)
+mutation = dict(current)
+mutation["examples/aws/README.md"] = mutation["examples/aws/README.md"].replace(
+    "terraform fmt -check -recursive", "terraform fmt -recursive", 1
+)
+expect_rejection("a command change", mutation)
+mutation = dict(current)
+mutation[LINK_ONLY_PATHS[0]] += "non-link text\n"
+expect_rejection("Azure sub-entrypoint non-link text", mutation)
+for category, fragments in STALE.items():
+    mutation = dict(current)
+    mutation[LIFECYCLE_PATHS[0]] += fragments[0] + "\n"
+    expect_rejection(f"stale category {category}", mutation)
+```
+
+Also create the ignored executable registry guard
 `_workspace/adm-006-registry-diff-guard.py` with the following content using
 `apply_patch`, then run it. The AST proof pins `ca69b3e` as the ownership
-baseline, permits body changes only in the two explicitly named README
-retirement contract/mutation functions, and requires both to change. It keeps
-`main`, `_self_test`, CLI dispatch, route classification, diagnostic/output
-behavior, every unrelated self-test call, all function signatures, and every
-other module node AST-identical; no new helper or constant is authorized.
-The semantic projection separately proves the schema-v2 sets and destinations;
-therefore normalizing an allowed function body cannot by itself waive the
-handoff contract.
+baseline, normalizes only the two explicitly named README retirement
+contract/mutation function bodies, and requires both to change. In `main`, it
+projects only the one old README summary `print` expression to a sentinel and
+requires the one new expression to equal the pinned schema-v2 AST. It keeps
+every other statement in `main`, `_self_test`, CLI dispatch, route
+classification, diagnostic/output behavior, every unrelated self-test call,
+all signatures, and every other module node AST-identical; no new helper or
+constant is authorized. The semantic projection separately proves the
+schema-v2 sets and destinations, so neither normalized function bodies nor the
+summary sentinel can waive the handoff contract.
+
+The focused README command must emit this exact schema-v2 line:
+
+```text
+README baseline=67 active_current=52 retired=20 declared_total=72 schema=2 exact_set=yes uncovered=0 ambiguous=0
+```
 
 ```python
 import ast
+import copy
 import json
 import pathlib
 import subprocess
@@ -1716,6 +2062,15 @@ ALLOWED_FUNCTIONS = {
     "_assert_readme_family_contract",
     "_assert_readme_fixture_mutation_proofs",
 }
+EXPECTED_SUMMARY = ast.parse(
+    '''print(
+    f"README baseline={baseline_count} active_current={selected_count} "
+    f"retired={declared_final_count - selected_count} "
+    f"declared_total={declared_final_count} schema=2 exact_set=yes "
+    "uncovered=0 ambiguous=0"
+)'''
+).body[0]
+SUMMARY_SENTINEL = ast.Expr(value=ast.Constant("ADM006_README_SUMMARY"))
 
 
 def git_text(*args):
@@ -1730,7 +2085,40 @@ def function_map(tree):
     }
 
 
-def normalized(source):
+def print_text(node):
+    if not (
+        isinstance(node, ast.Expr)
+        and isinstance(node.value, ast.Call)
+        and isinstance(node.value.func, ast.Name)
+        and node.value.func.id == "print"
+    ):
+        return ""
+    return ast.unparse(node)
+
+
+def summary_expression(tree, kind):
+    main = function_map(tree)["main"]
+    expressions = []
+    for node in ast.walk(main):
+        text = print_text(node)
+        if kind == "baseline" and (
+            "allowed_progression=" in text and "declared_final=" in text
+        ):
+            expressions.append(node)
+        elif kind == "candidate" and (
+            "active_current=" in text and "declared_total=" in text
+        ):
+            expressions.append(node)
+    assert len(expressions) == 1, (kind, len(expressions))
+    expression = expressions[0]
+    if kind == "candidate":
+        assert ast.dump(expression, include_attributes=False) == ast.dump(
+            EXPECTED_SUMMARY, include_attributes=False
+        ), "README schema-v2 summary expression differs from the pinned AST"
+    return expression
+
+
+def normalized(source, kind):
     tree = ast.parse(source)
     for node in tree.body:
         if (
@@ -1738,6 +2126,21 @@ def normalized(source):
             and node.name in ALLOWED_FUNCTIONS
         ):
             node.body = [ast.Pass()]
+    target = summary_expression(tree, kind)
+
+    class ProjectSummary(ast.NodeTransformer):
+        replaced = 0
+
+        def visit(self, node):
+            if node is target:
+                self.replaced += 1
+                return copy.deepcopy(SUMMARY_SENTINEL)
+            return super().visit(node)
+
+    projection = ProjectSummary()
+    tree = projection.visit(tree)
+    assert projection.replaced == 1
+    ast.fix_missing_locations(tree)
     return ast.dump(tree, include_attributes=False)
 
 
@@ -1753,9 +2156,14 @@ def ownership_guard(baseline_source, candidate_source):
         if ast.dump(baseline_functions[name], include_attributes=False)
         != ast.dump(candidate_functions[name], include_attributes=False)
     }
-    assert changed_functions == ALLOWED_FUNCTIONS, changed_functions
-    assert normalized(baseline_source) == normalized(candidate_source), (
-        "registry validator changed outside the exact README handoff functions"
+    assert changed_functions == ALLOWED_FUNCTIONS | {"main"}, changed_functions
+    assert "allowed_progression=" not in candidate_source
+    assert "declared_final=" not in candidate_source
+    assert normalized(baseline_source, "baseline") == normalized(
+        candidate_source, "candidate"
+    ), (
+        "registry validator changed outside the exact README handoff functions "
+        "and summary print expression"
     )
 
 
@@ -1765,6 +2173,18 @@ def replace_function_body(source, name, body):
     function.body = body
     ast.fix_missing_locations(tree)
     return ast.unparse(tree)
+
+
+def prepend_function_statement(source, name, statement):
+    tree = ast.parse(source)
+    function_map(tree)[name].body.insert(0, statement)
+    ast.fix_missing_locations(tree)
+    return ast.unparse(tree)
+
+
+def replace_once(source, old, new):
+    assert source.count(old) == 1, (old, source.count(old))
+    return source.replace(old, new, 1)
 
 
 def drop_call_from_function(source, function_name, called_name):
@@ -1807,6 +2227,30 @@ expect_guard_rejection(
     replace_function_body(current_source, "main", [ast.Return(ast.Constant(0))]),
 )
 expect_guard_rejection(
+    "another main statement",
+    prepend_function_statement(current_source, "main", ast.Expr(ast.Constant("x"))),
+)
+expect_guard_rejection(
+    "a changed summary number",
+    replace_once(current_source, "schema=2 exact_set=yes", "schema=3 exact_set=yes"),
+)
+expect_guard_rejection(
+    "a changed summary label",
+    replace_once(current_source, "active_current=", "current_active="),
+)
+expect_guard_rejection(
+    "allowed_progression reintroduction",
+    replace_once(
+        current_source,
+        "schema=2 exact_set=yes",
+        "schema=2 allowed_progression=67,68,70,72 exact_set=yes",
+    ),
+)
+expect_guard_rejection(
+    "declared_final reintroduction",
+    replace_once(current_source, "declared_total=", "declared_final="),
+)
+expect_guard_rejection(
     "removal of the non-README parser safety self-test call",
     drop_call_from_function(current_source, "_self_test", "_assert_parser_safety"),
 )
@@ -1819,6 +2263,14 @@ expect_guard_rejection(
 expect_guard_rejection(
     "changed unrelated diagnostic output",
     replace_function_body(current_source, "_print_diagnostic", [ast.Pass()]),
+)
+expect_guard_rejection(
+    "changed unrelated PASS output",
+    replace_once(
+        current_source,
+        "PASS document contract registry:",
+        "OK document contract registry:",
+    ),
 )
 
 fixture = json.loads(pathlib.Path(FIXTURE).read_text())
@@ -1866,12 +2318,14 @@ assert all(case["path"] in active_by_path for case in fixture["cases"])
 assert len(fixture["cases"]) == 8
 ```
 
-Run the guard once against the unstaged implementation before exact79 staging.
+Run both guards once against the unstaged implementation before exact79 staging.
 After staging, run the registry self-test and `--profile readme` production
 contract, run focused hooks, require no unstaged tracked diff, and run this same
-guard again. These are additive to the full quality gate, never a substitute.
+guard pair again. These are additive to the full quality gate, never a
+substitute.
 
 ```bash
+python3 _workspace/adm-006-readme-text-guard.py
 python3 _workspace/adm-006-registry-diff-guard.py
 test -z "$(git ls-files examples/aws/docs examples/azure/docs)"
 python3 scripts/validate-document-contract-registry.py --self-test
@@ -1927,10 +2381,12 @@ assert actual == changed | fixed and fixed <= actual, (sorted(actual - (changed 
 assert len(actual) == 79
 print(f'ADM-006 exact staged count: {len(actual)}')
 PY
+python3 _workspace/adm-006-readme-text-guard.py
 python3 _workspace/adm-006-registry-diff-guard.py
 test -z "$(git diff --name-only)"
 git diff --cached --diff-filter=ACMR --name-only -z | \
   xargs -0 pre-commit run --files
+python3 _workspace/adm-006-readme-text-guard.py
 python3 _workspace/adm-006-registry-diff-guard.py
 test -z "$(git diff --name-only)"
 test "$(git diff --cached --name-only | wc -l)" -eq 79
@@ -1938,14 +2394,15 @@ git commit -m "docs(migration): consolidate cloud example documentation"
 ```
 
 Expected: the staged set is exactly the printed reviewed set, including all 59
-deletions, two snapshots, nine relocation-only README link/index paths, and six
-fixed ledger/Task/progress/fixture/validator/digest owners plus the exact three
-README retirement-inventory handoff files: the previous 76 plus 3, exactly 79
-tracked paths. A fresh reviewer proves 59-source
+deletions, two snapshots, nine reviewed README link/index paths, exact-six
+lifecycle spans, and six fixed ledger/Task/progress/fixture/validator/digest
+owners plus the exact three README retirement-inventory handoff files: the
+previous 76 plus 3, exactly 79 tracked paths. A fresh reviewer proves 59-source
 coverage, unique-content preservation, tuple set equality, exact count
 arithmetic, the exact 52-active/20-retired fixture and fail-closed destination
-proof, zero external deletion-target/unresolved links, zero-safe self-tests, and
-complete digest/mutation refresh. Roll back with
+proof, zero external deletion-target/unresolved links, zero stale lifecycle
+categories, the pinned schema-v2 summary, zero-safe self-tests, and complete
+digest/mutation refresh. Roll back with
 `git revert <ADM-006-commit>` so deletions and every supporting record return
 atomically.
 

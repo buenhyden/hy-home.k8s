@@ -56,10 +56,11 @@ local state. It does not rewrite history for stylistic uniformity.
   and four provider guidance documents. This exception does not transfer
   semantic or behavioral ownership. ADM-006 has one additional closed
   exception for relocation-driven link/index rows in the exact nine README
-  paths named below and one retirement-inventory handoff across the exact three
-  retirement-handoff files named below, plus the already-authorized Markdown
-  self-test consumer; neither exception transfers README profile, body, parser,
-  route, or rule ownership.
+  paths named below, post-delete lifecycle/status sentence replacement in the
+  exact six README subset named below, and one retirement-inventory handoff
+  across the exact three retirement-handoff files named below, plus the
+  already-authorized Markdown self-test consumer. None transfers README
+  profile, purpose, parser, route, or rule ownership.
 - **Key Dependencies**: Specs 026–029, official topic sources, Git history, link
   graph, generated-file ownership, and current audit findings.
 - **Tech Stack**: `git mv`, focused manual edits, registry validation, link and
@@ -82,7 +83,7 @@ Tranche handoff is binding:
 | Path or responsibility | Canonical change owner | This Spec's allowed interaction |
 | --- | --- | --- |
 | `docs/99.templates/support/**` and non-README forms | Spec 027 | Consume final contracts. Structural-only canonicalization is authorized for exactly `common-documentation-governance.md`, `documentation-contract.md`, `frontmatter-schema.md`, `legacy-cleanup-rules.md`, `sdlc-governance.md`, and `template-routing.md`; no route, schema, form, or governance-semantic change. |
-| README forms and every tracked `README.md`, including `_workspace/README.md` | Spec 028 | ADM-006 may apply relocation-driven index/link rows only in the exact nine-path exception below and may convert the README fixture to the exact schema-v2 retirement inventory below; every unlisted README and all profile/body redesign remain excluded. |
+| README forms and every tracked `README.md`, including `_workspace/README.md` | Spec 028 | ADM-006 may apply relocation-driven index/link rows in the exact nine-path exception below, replace only the reviewed post-delete lifecycle/status sentence spans in its exact six-path subset, and convert the README fixture to the exact schema-v2 retirement inventory below; every unlisted README and all profile/purpose redesign remain excluded. |
 | Validator parser, rule semantics, and fixture engine | Spec 029 | Consume the public interface and change no parser, route, profile, or rule behavior. ADM-003 through ADM-006 may synchronize only the frozen migration-count/self-test constants in `validate-markdown-profiles.py` with the shrinking Spec-030-owned fixture, apply the exact zero-cap Counter projection required when a rule reaches zero, and make its self-test zero-safe without dereferencing a production debt row. ADM-006 may also update the registry validator and `tests/README.md` solely for the exact README retirement-inventory handoff. Executable guards reject every other validator or test-contract edit. ADM-007 owns the separately named strict-mode cutover. |
 | Root provider shims, `.agents/**`, `.claude/**`, `.codex/**`, shared role semantics | Spec 031 | Excluded from authored migration; link to canonical owners only. Structural-only canonicalization is authorized for exactly `docs/00.agent-governance/providers/{agents-md,claude,codex,gemini}.md`; no provider or agent behavior change. |
 | CI selector blocks and validation obligations | Spec 031 | Excluded except link repair. |
@@ -99,9 +100,16 @@ The closed ADM-006 Spec 028 exception is exactly
 `examples/azure/kubernetes/README.md`. The last three are executable-example
 entrypoints whose eight relative links resolve into the immutable 59-path
 deletion set. ADM-006 may reroute only those links and the index rows required
-to expose the two dated snapshots; it may not change README Frontmatter,
-profile sections, prose purpose, commands, inventory outside the relocation,
-or Spec 028 semantics.
+to expose the two dated snapshots. In exactly the first six paths—the three
+Stage 90 indexes and `examples/{README,aws/README,azure/README}.md`—it may also
+replace only reviewed lifecycle/status sentence spans so they state that the
+Stage 90 indexes and snapshots now exist, source59 is retired, executable
+assets remain, each dated snapshot is the durable documentation destination,
+and consolidation completed. README Frontmatter, headings/profile, purpose,
+commands/fences, unrelated inventory, and Spec 028 semantics remain frozen.
+The three Azure executable sub-entrypoints remain link-only; all their non-link
+text is frozen. An executable HEAD-text guard must reject every other change
+and all six stale future/current-source categories.
 
 The ADM-006 retirement-inventory handoff is exactly
 `scripts/validate-document-contract-registry.py`,
@@ -145,10 +153,13 @@ canonical validators and fixtures directly; no alternate command, filtered
 inventory, environment waiver, or duplicate debt/alias source may bypass their
 fail-closed results. The ADM-006 registry handoff guard keeps `main`, CLI
 dispatch, route classification, diagnostic/output behavior, and the complete
-non-README self-test call graph AST-identical to the approved baseline. It may
-normalize only the two README retirement contract/mutation function bodies;
-negative mutations must reject a no-op `main` and removal of an unrelated
-self-test call.
+non-README self-test call graph AST-identical to the approved baseline except
+for one exact README summary `print` expression. That expression reports
+`baseline=67`, `active_current=52`, `retired=20`, `declared_total=72`, and
+`schema=2`. The guard may otherwise normalize only the two README retirement
+contract/mutation function bodies; statement-level projection and negative
+mutations reject a no-op `main`, any other main-statement change, label/number
+drift, old summary terminology, and removal of an unrelated self-test call.
 
 The other three handoff exceptions are exactly
 `docs/00.agent-governance/rules/documentation-protocol.md`,
@@ -261,10 +272,10 @@ git diff --check
   scratch is removed.
 - **VAL-SPC-006**: The tranche responsibility table has no uncoordinated
   multi-owner edit; ADM-006 README changes are link/index-only in the exact
-  nine-path Spec 028 exception, the resolved tracked-Markdown graph covers
-  every external consumer before deletion and has zero deletion-target edge
-  after rerouting, and provider/protected surfaces remain with Specs 031 and
-  032.
+  nine-path Spec 028 exception except for the exact-six reviewed lifecycle
+  spans, the resolved tracked-Markdown graph covers every external consumer
+  before deletion and has zero deletion-target edge after rerouting, and
+  provider/protected surfaces remain with Specs 031 and 032.
 - **VAL-SPC-007**: ADM-006 preserves the immutable 67-path README baseline as
   47 active-baseline plus 20 retired rows, accounts separately for the five
   program-created active paths, and fails closed against every partial,
@@ -272,6 +283,10 @@ git diff --check
 - **VAL-SPC-008**: The exact-21 residual-alias correction makes the no-container
   probe clean before ADM-007; strict cutover retains its exact-13 boundary,
   proves `67 -> 64 -> 61`, and cannot bypass the canonical quality gate.
+- **VAL-SPC-009**: The ADM-006 text guard proves exact reviewed link/index and
+  lifecycle spans, zero stale retirement prose, frozen README structure and
+  commands, and a single pinned schema-v2 registry summary expression without
+  changing exact79.
 
 ## Related Documents
 
