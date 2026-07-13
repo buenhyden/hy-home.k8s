@@ -58,7 +58,7 @@ prove Azure deployment readiness.
 
 1. [main.bicep](main.bicep)을 통해 전체 리소스 관계를 파악한다.
 2. 배포 전 `az bicep lint` 명령어로 코드 무결성을 검증한다.
-3. 리소스 생성 시 [Spec](../docs/03.specs/azure-migration/spec.md)에 정의된 명세를 준수한다.
+3. 리소스 생성 시 [Azure dated snapshot](../../../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md#definitions--facts)에 보존된 명세와 현재 공식 자료를 함께 검토한다.
 4. 배포 전 검토 명령어 예시:
 
    ```bash
@@ -75,8 +75,8 @@ prove Azure deployment readiness.
 
 ### Reference Links
 
-- **Spec**: [../docs/03.specs/azure-migration/spec.md](../docs/03.specs/azure-migration/spec.md)
-- **ADR**: [../docs/02.architecture/decisions/README.md](../docs/02.architecture/decisions/README.md)
+- **Spec snapshot**: [Azure retained specification](../../../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md#definitions--facts)
+- **ADR snapshot**: [Azure retained decisions](../../../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md#definitions--facts)
 - **GitOps**: [../gitops/README.md](../gitops/README.md)
 
 ### AI Agent Guidance

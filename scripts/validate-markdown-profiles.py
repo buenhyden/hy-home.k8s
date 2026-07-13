@@ -60,14 +60,14 @@ TOKEN_BEARING_DEBT_RULES = frozenset(
 DEFERABLE_DEBT_RULES = TOKEN_BEARING_DEBT_RULES | {"FM-DELIMITER"}
 EXPECTED_DEBT_CAPS: dict[str, dict[str, int]] = {
     "BODY-HEADING-REQUIRED": {
-        "pathCount": 4,
-        "occurrenceCount": 4,
-        "tokenObligationCount": 4,
+        "pathCount": 0,
+        "occurrenceCount": 0,
+        "tokenObligationCount": 0,
     },
     "BODY-TEMPLATE-RESIDUE": {
-        "pathCount": 17,
-        "occurrenceCount": 21,
-        "tokenObligationCount": 21,
+        "pathCount": 0,
+        "occurrenceCount": 0,
+        "tokenObligationCount": 0,
     },
     "FM-DELIMITER": {
         "pathCount": 0,
@@ -75,10 +75,10 @@ EXPECTED_DEBT_CAPS: dict[str, dict[str, int]] = {
         "tokenObligationCount": 0,
     },
     "BODY-HEADING-UNSUPPORTED": {
-        "pathCount": 39,
-        "occurrenceCount": 77,
-        "tokenObligationCount": 77,
-        "distinctTokenCount": 37,
+        "pathCount": 0,
+        "occurrenceCount": 0,
+        "tokenObligationCount": 0,
+        "distinctTokenCount": 0,
     },
     "BODY-H2-DUPLICATE": {
         "pathCount": 0,
@@ -86,9 +86,9 @@ EXPECTED_DEBT_CAPS: dict[str, dict[str, int]] = {
         "tokenObligationCount": 0,
     },
 }
-EXPECTED_REQUIRED_RESIDUE_OVERLAP = 4
-EXPECTED_REQUIRED_RESIDUE_UNION = 17
-EXPECTED_DEBT_UNION = 39
+EXPECTED_REQUIRED_RESIDUE_OVERLAP = 0
+EXPECTED_REQUIRED_RESIDUE_UNION = 0
+EXPECTED_DEBT_UNION = 0
 IMPLEMENTED_RULE_IDS = frozenset(
     {
         "APPEND-CONTEXT",
@@ -918,14 +918,38 @@ def _self_test(root: Path) -> list[str]:
     if actual_date_cases != expected_date_cases:
         failures.append("dateCases must preserve the exact seven-case contract")
 
+    if set(readme_fixture) != {
+        "schemaVersion",
+        "activePaths",
+        "retiredPaths",
+        "cases",
+    } or readme_fixture.get("schemaVersion") != 2:
+        failures.append("README handoff fixture must use schema-v2 retirement inventory")
     readme_names = tuple(case.get("name") for case in readme_fixture.get("cases", []))
     if readme_names != EXPECTED_README_CASES:
         failures.append("README handoff case names changed")
-    readme_path_rows = readme_fixture.get("paths", [])
+    readme_path_rows = readme_fixture.get("activePaths", [])
+    retired_readme_rows = readme_fixture.get("retiredPaths", [])
     readme_paths = [row.get("path") for row in readme_path_rows]
-    if len(readme_paths) != 72 or len(readme_paths) != len(set(readme_paths)):
-        failures.append("README handoff paths must contain 72 unique entries")
+    retired_readme_paths = [row.get("path") for row in retired_readme_rows]
+    if (
+        len(readme_paths) != 52
+        or len(readme_paths) != len(set(readme_paths))
+        or readme_paths != sorted(readme_paths)
+    ):
+        failures.append("README activePaths must contain 52 sorted unique entries")
+    if (
+        len(retired_readme_paths) != 20
+        or len(retired_readme_paths) != len(set(retired_readme_paths))
+        or retired_readme_paths != sorted(retired_readme_paths)
+    ):
+        failures.append("README retiredPaths must contain 20 sorted unique entries")
+    if set(readme_paths) & set(retired_readme_paths):
+        failures.append("README activePaths and retiredPaths must be disjoint")
     readme_by_path = {row.get("path"): row for row in readme_path_rows}
+    retired_readme_by_path = {
+        row.get("path"): row for row in retired_readme_rows
+    }
     inventory_readmes = {
         path.as_posix()
         for path in inventory.current_paths
@@ -934,22 +958,74 @@ def _self_test(root: Path) -> list[str]:
         and classify_path(registry, path).mode != "template"
     }
     if set(readme_paths) != inventory_readmes:
-        failures.append("README handoff paths must equal the production inventory set")
-    for path_text, handoff in readme_by_path.items():
-        if not isinstance(path_text, str):
-            failures.append("README handoff path values must be strings")
-            continue
-        try:
-            selected = classify_path(registry, _fixture_path(path_text))
-        except ValueError as exc:
-            failures.append(f"README handoff path invalid: {exc}")
-            continue
-        if handoff.get("profile") != selected.profile_id:
-            failures.append(f"README handoff profile mismatch: {path_text}")
-        if handoff.get("requiredH2") != list(selected.headings.required):
-            failures.append(f"README handoff requiredH2 mismatch: {path_text}")
-        if handoff.get("allowedH2") != list(selected.headings.allowed):
-            failures.append(f"README handoff allowedH2 mismatch: {path_text}")
+        failures.append("README activePaths must equal the production inventory set")
+    baseline_readmes = {
+        path.as_posix()
+        for path in inventory.baseline_paths
+        if path.name == "README.md"
+    }
+    active_baseline = set(readme_paths) & baseline_readmes
+    active_program_created = set(readme_paths) - baseline_readmes
+    if (
+        len(baseline_readmes) != 67
+        or len(active_baseline) != 47
+        or len(active_program_created) != 5
+        or active_baseline | set(retired_readme_paths) != baseline_readmes
+        or set(retired_readme_paths) - baseline_readmes
+    ):
+        failures.append(
+            "README handoff must reconstruct baseline67 as active47 plus retired20 and active-new5"
+        )
+    active_keys = {"path", "profile", "requiredH2", "allowedH2", "new"}
+    retired_keys = active_keys | {"retiredBy", "destination"}
+    for lifecycle, handoffs, expected_keys in (
+        ("active", readme_by_path, active_keys),
+        ("retired", retired_readme_by_path, retired_keys),
+    ):
+        for path_text, handoff in handoffs.items():
+            if set(handoff) != expected_keys:
+                failures.append(f"README {lifecycle} handoff row fields differ: {path_text}")
+                continue
+            if not isinstance(path_text, str):
+                failures.append("README handoff path values must be strings")
+                continue
+            try:
+                selected = classify_path(registry, _fixture_path(path_text))
+            except (DocumentContractError, ValueError) as exc:
+                failures.append(f"README handoff path invalid: {exc}")
+                continue
+            if handoff.get("profile") != selected.profile_id:
+                failures.append(f"README handoff profile mismatch: {path_text}")
+            if handoff.get("requiredH2") != list(selected.headings.required):
+                failures.append(f"README handoff requiredH2 mismatch: {path_text}")
+            if handoff.get("allowedH2") != list(selected.headings.allowed):
+                failures.append(f"README handoff allowedH2 mismatch: {path_text}")
+            expected_new = path_text not in baseline_readmes
+            if handoff.get("new") is not expected_new:
+                failures.append(f"README handoff new disposition mismatch: {path_text}")
+            if lifecycle == "active":
+                if not (root / path_text).is_file():
+                    failures.append(f"README active handoff path is absent: {path_text}")
+                continue
+            if handoff.get("retiredBy") != "ADM-006":
+                failures.append(f"README retired handoff owner mismatch: {path_text}")
+            if path_text.startswith("examples/aws/docs/"):
+                provider = "aws"
+            elif path_text.startswith("examples/azure/docs/"):
+                provider = "azure"
+            else:
+                failures.append(f"README retired handoff provider mismatch: {path_text}")
+                continue
+            expected_destination = (
+                f"docs/90.references/cloud-examples/{provider}/"
+                f"2026-07-12-{provider}-example-snapshot.md"
+            )
+            if handoff.get("destination") != expected_destination:
+                failures.append(f"README retired handoff destination mismatch: {path_text}")
+            elif not (root / expected_destination).is_file():
+                failures.append(f"README retired handoff destination is absent: {path_text}")
+            if (root / path_text).exists() or path_text in inventory_readmes:
+                failures.append(f"README retired handoff remains current: {path_text}")
 
     with tempfile.TemporaryDirectory(prefix="markdown-profile-self-test-") as directory:
         temp_root = Path(directory)
@@ -1253,7 +1329,7 @@ def _self_test(root: Path) -> list[str]:
         for item in production_diagnostics
         if item.rule_id == "BODY-HEADING-UNSUPPORTED"
     }
-    if len(unsupported_tokens) != 37:
+    if len(unsupported_tokens) != 0:
         failures.append("repository unsupported-heading distinct token cap changed")
 
     compatibility_rows = _outcome_rows(
@@ -1278,159 +1354,138 @@ def _self_test(root: Path) -> list[str]:
         )
         for row in strict_rows
     ]
-    if compatibility_keys != strict_keys or len(compatibility_keys) != 102:
-        failures.append("compatibility and strict diagnostic tuples differ")
-    if {row.outcome for row in compatibility_rows} != {"DEFER"}:
-        failures.append("repository compatibility results are not exact DEFER debt")
-    if {row.outcome for row in strict_rows} != {"FAIL"}:
-        failures.append("repository strict results are not exact FAIL debt")
+    if compatibility_keys != strict_keys or compatibility_keys:
+        failures.append("compatibility and strict diagnostic tuples must both be empty")
+    if production_diagnostics:
+        failures.append("zero-debt production diagnostics must be empty")
+    if compatibility_rows:
+        failures.append("zero-debt compatibility outcome rows must be empty")
+    if strict_rows:
+        failures.append("zero-debt strict outcome rows must be empty")
     if any(row.diagnostic.rule_id == "DEBT-UNUSED" for row in compatibility_rows):
         failures.append("repository compatibility debt contains unused records")
 
     base_contract = json.loads(
         (root / COMPATIBILITY_PATH).read_text(encoding="utf-8")
     )
+    configured_records = [
+        item
+        for row in base_contract.get("compatibilityDebt", [])
+        for item in row.get("affectedPaths", [])
+    ]
+    if configured_records:
+        failures.append("zero-debt compatibility affectedPaths must be empty")
 
-    def expect_config_rejection(label: str, mutate: Any) -> None:
-        candidate = copy.deepcopy(base_contract)
-        mutate(candidate)
+    def expect_config_rejection(label: str, candidate: dict[str, Any]) -> None:
         try:
             _load_debt_contract(root, candidate)
         except (DocumentContractError, ValueError):
             return
         failures.append(f"debt mutation accepted: {label}")
 
-    first_affected = next(
-        item
-        for row in base_contract["compatibilityDebt"]
-        for item in row["affectedPaths"]
-    )
+    wrong_owner = copy.deepcopy(base_contract)
+    wrong_owner["owner"] = "Spec 999"
+    expect_config_rejection("wrong owner", wrong_owner)
 
-    def mutate_path(candidate: dict[str, Any]) -> None:
-        item = next(
-            item
-            for row in candidate["compatibilityDebt"]
-            for item in row["affectedPaths"]
+    growth_allowed = copy.deepcopy(base_contract)
+    growth_allowed["growthAllowed"] = True
+    expect_config_rejection("growth allowed", growth_allowed)
+
+    nonzero_rule_cap = copy.deepcopy(base_contract)
+    nonzero_rule_cap["semanticDebtCaps"]["rules"]["BODY-HEADING-REQUIRED"][
+        "pathCount"
+    ] = 1
+    expect_config_rejection("nonzero rule cap", nonzero_rule_cap)
+
+    nonzero_union_cap = copy.deepcopy(base_contract)
+    nonzero_union_cap["semanticDebtCaps"]["unionPathCount"] = 1
+    expect_config_rejection("nonzero union cap", nonzero_union_cap)
+
+    malformed_record = copy.deepcopy(base_contract)
+    malformed_record["compatibilityDebt"][0]["affectedPaths"] = [
+        {
+            "path": "./adm006-malformed.md",
+            "ruleIds": ["UNKNOWN-RULE"],
+            "tokens": ["UNKNOWN-RULE::malformed"],
+        }
+    ]
+    expect_config_rejection("malformed reintroduced record", malformed_record)
+
+    reintroduced_record = copy.deepcopy(base_contract)
+    governance_rows = [
+        row
+        for row in reintroduced_record["compatibilityDebt"]
+        if row.get("profile") == "governance/reference"
+    ]
+    if len(governance_rows) != 1:
+        failures.append("synthetic debt proof requires one governance/reference row")
+    else:
+        governance_rows[0]["affectedPaths"] = [
+            {
+                "path": "docs/00.agent-governance/rules/bootstrap.md",
+                "ruleIds": ["BODY-HEADING-UNSUPPORTED"],
+                "tokens": [
+                    "BODY-HEADING-UNSUPPORTED::Synthetic Reintroduced Debt"
+                ],
+            }
+        ]
+        expect_config_rejection(
+            "well-formed reintroduced debt with zero caps", reintroduced_record
         )
-        item["path"] = "./" + item["path"]
 
-    def mutate_rule(candidate: dict[str, Any]) -> None:
-        item = next(
-            item
-            for row in candidate["compatibilityDebt"]
-            for item in row["affectedPaths"]
+    missing_token_record = copy.deepcopy(base_contract)
+    missing_token_rows = [
+        row
+        for row in missing_token_record["compatibilityDebt"]
+        if row.get("profile") == "governance/reference"
+    ]
+    if len(missing_token_rows) != 1:
+        failures.append("missing-token proof requires one governance/reference row")
+    else:
+        missing_token_rows[0]["affectedPaths"] = [
+            {
+                "path": "docs/00.agent-governance/rules/bootstrap.md",
+                "ruleIds": ["BODY-HEADING-UNSUPPORTED"],
+                "tokens": [],
+            }
+        ]
+        expect_config_rejection(
+            "reintroduced token-bearing debt without token", missing_token_record
         )
-        item["ruleIds"][0] = "UNKNOWN-RULE"
 
-    def mutate_cap(candidate: dict[str, Any]) -> None:
-        candidate["semanticDebtCaps"]["rules"]["BODY-HEADING-REQUIRED"]["pathCount"] += 1
-
-    def mutate_union(candidate: dict[str, Any]) -> None:
-        candidate["semanticDebtCaps"]["unionPathCount"] += 1
-
-    def duplicate_record(candidate: dict[str, Any]) -> None:
-        row = next(row for row in candidate["compatibilityDebt"] if row["affectedPaths"])
-        row["affectedPaths"].append(copy.deepcopy(row["affectedPaths"][0]))
-        row["affectedPaths"].sort(key=lambda item: item["path"])
-
-    def delete_residue_token(candidate: dict[str, Any]) -> None:
-        item = next(
-            item
-            for row in candidate["compatibilityDebt"]
-            for item in row["affectedPaths"]
-            if any(
-                token.startswith("BODY-TEMPLATE-RESIDUE::")
-                for token in item["tokens"]
-            )
-        )
-        token_index = next(
-            index
-            for index, token in enumerate(item["tokens"])
-            if token.startswith("BODY-TEMPLATE-RESIDUE::")
-        )
-        item["tokens"].pop(token_index)
-
-    expect_config_rejection("affected path", mutate_path)
-    expect_config_rejection("rule ID", mutate_rule)
-    expect_config_rejection("rule cap", mutate_cap)
-    expect_config_rejection("union cap", mutate_union)
-    expect_config_rejection("duplicate consumed record", duplicate_record)
-    expect_config_rejection("residue token deletion", delete_residue_token)
-
-    stale_contract = copy.deepcopy(base_contract)
-    stale_item = next(
-        item
-        for row in stale_contract["compatibilityDebt"]
-        for item in row["affectedPaths"]
-        if any(token.startswith("BODY-HEADING-REQUIRED::") for token in item["tokens"])
-    )
-    token_index = next(
-        index
-        for index, token in enumerate(stale_item["tokens"])
-        if token.startswith("BODY-HEADING-REQUIRED::")
-    )
-    stale_item["tokens"][token_index] += " drift"
-    stale_item["tokens"].sort()
-    for mode in ("compatibility", "strict"):
-        mutated_rows = _outcome_rows(
-            root, production_diagnostics, mode, contract=stale_contract
-        )
-        if not any(row.outcome == "FAIL" for row in mutated_rows):
-            failures.append(f"stale token mutation did not fail in {mode}")
-        if not any(row.diagnostic.rule_id == "DEBT-UNUSED" for row in mutated_rows):
-            failures.append(f"stale token mutation lacked DEBT-UNUSED in {mode}")
-
-    known = production_diagnostics[0]
-    mutation_diagnostics = (
-        Diagnostic(
-            known.rule_id,
-            PurePosixPath("docs/00.agent-governance/rules/bootstrap.md"),
-            "governance/reference",
-            known.expected,
-            "unknown-token",
-            OWNER,
+    synthetic_diagnostics = (
+        (
+            "unknown rule",
+            Diagnostic(
+                "UNKNOWN-RULE",
+                PurePosixPath("docs/00.agent-governance/rules/bootstrap.md"),
+                "governance/reference",
+                "implemented semantic debt rule",
+                "UNKNOWN-RULE",
+                OWNER,
+            ),
         ),
-        Diagnostic(
-            "UNKNOWN-RULE",
-            known.path,
-            known.profile,
-            known.expected,
-            known.actual,
-            OWNER,
-        ),
-        Diagnostic(
-            known.rule_id,
-            known.path,
-            known.profile,
-            known.expected,
-            "unknown-token",
-            OWNER,
+        (
+            "unregistered known rule token",
+            Diagnostic(
+                "BODY-HEADING-UNSUPPORTED",
+                PurePosixPath("docs/00.agent-governance/rules/bootstrap.md"),
+                "governance/reference",
+                "canonical H2 heading",
+                "Synthetic Reintroduced Debt",
+                OWNER,
+            ),
         ),
     )
-    for label, diagnostic in zip(
-        ("new path", "unknown rule", "unknown token"), mutation_diagnostics
-    ):
+    for label, diagnostic in synthetic_diagnostics:
         for mode in ("compatibility", "strict"):
             result = _outcome_rows(root, [diagnostic], mode)
-            if not result or not all(row.outcome == "FAIL" for row in result):
+            if (
+                len(result) != 1
+                or result[0].outcome != "FAIL"
+                or any(row.outcome == "DEFER" for row in result)
+            ):
                 failures.append(f"{label} mutation deferred in {mode}")
-
-    duplicate_key_diagnostics = [*production_diagnostics, production_diagnostics[0]]
-    for mode in ("compatibility", "strict"):
-        duplicated_rows = _outcome_rows(root, duplicate_key_diagnostics, mode)
-        duplicate_unused = [
-            row
-            for row in duplicated_rows
-            if row.diagnostic.rule_id == "DEBT-UNUSED"
-            and row.diagnostic.path == production_diagnostics[0].path
-        ]
-        if len(duplicate_unused) != 1 or duplicate_unused[0].outcome != "FAIL":
-            failures.append(
-                f"duplicate production debt consumption lacked DEBT-UNUSED in {mode}"
-            )
-
-    if first_affected.get("path") is None:
-        failures.append("semantic debt proof fixture unexpectedly empty")
     return failures
 
 

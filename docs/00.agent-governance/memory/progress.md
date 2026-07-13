@@ -8,6 +8,95 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-13 - ADM-006 cloud example consolidation
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, cloud examples, qa
+- **Status**: complete
+- **Tags**: #adm-006 #cloud-snapshot #finite-debt #ledger-history
+
+#### Progress
+
+- Consolidated the immutable 26-file AWS and 33-file Azure documentation trees
+  into two dated Stage 90 snapshots, rerouted only the exact nine reviewed
+  README link/index consumers, and deleted exactly source59 after independent
+  approval. The two approved snapshot identities remain
+  `650c3cd13bc8fc555db11cd9ee42de0831b910b20780418f8ba37e1bcf69c1fc`
+  and `c16bdd939e998775c0c18d251226a1e2cc301503e1127a69360c540f080d9081`.
+- Preserved all 22 non-Markdown AWS/Azure executable assets. No live provider,
+  cluster, secret, credential, remote, publication, push, merge, or deployment
+  operation was performed.
+- Split the durable ledger into a validator-owned 412-row current inventory and
+  a separate append-only 59-row source-deleted history. Every historical row
+  preserves all fourteen fields, records `merge-complete; source-deleted`, and
+  targets only its provider snapshot (`AWS=26`, `Azure=33`).
+- Removed exactly the approved 39 compatibility paths and 102 tuples. The
+  schema-v1, Spec 030-owned, no-growth compatibility container remains present
+  but empty for ADM-007, with all semantic caps synchronized to zero.
+
+#### Evidence
+
+- Source59 SHA-256:
+  `2ed87a48e9b62da9e16f904f0bbe2ebdf3f1ebaef5be55fdcf06b1608c3a315b`;
+  allowed70 SHA-256:
+  `3c297fa6f0feedbd813b3e3de467a1cb6f0d01da44253951a737b15e756877b9`;
+  debt39/102 manifest SHA-256:
+  `b3590d397620f6e45280073140eacb08b07034b1f24b82d54f6fc987e42b36f1`.
+- Post-delete resolved graph SHA-256:
+  `d5f345ab514f1359518dac709c62842ef46c09aac41094fbb76a52656331615e`.
+  It scans the 413 tracked post-deletion Markdown paths plus both snapshots and
+  proves zero source-target, internal, external, consumer, and target edges.
+- Current-ledger/corpus equality is 412; history/source-manifest set equality is
+  59. All 26 AWS destinations and all 33 Azure destinations match the approved
+  provider snapshots, and the source paths are absent from both the tracked
+  inventory and filesystem.
+- Empty fixture semantic SHA-256:
+  `9bc4cbc4eb6a3a53e0ffdaa7465a3085092cf03ec8273881a6d3584fe26218fc`.
+  The refreshed complete-fixture proof covers owner, no-growth policy,
+  profile/baseline data, empty affected-path introduction, rule and occurrence
+  caps, token obligations, distinct tokens, overlap, and union counts.
+- README schema 2 preserves an immutable 67-path baseline as active `47` plus
+  retired `20`, adds exactly five active paths, and equals the current tracked
+  52-path README inventory. Retired rows are absent from the current tree,
+  owned by `ADM-006`, and route only to their provider-correct durable
+  snapshots. The exact-six lifecycle spans now record that Stage 90
+  indexes/snapshots exist, source59 is retired, executable assets remain, and
+  the dated snapshots are the durable destinations. Whole-file and Overview
+  hashes, stale-category mutations, and exact-three Azure subentrypoint
+  link-only hashes pass the README text guard.
+- The registry statement-level AST guard pins the only additional `main`
+  expression. Focused README output is exactly `README baseline=67
+  active_current=52 retired=20 declared_total=72 schema=2 exact_set=yes
+  uncovered=0 ambiguous=0`; legacy progression/final labels are absent.
+  Registry and Markdown AST guards, both validator self-tests, compatibility
+  validation, focused hooks, and the repository quality gate pass.
+- Final scope is exactly 79 staged paths: allowed70 plus nine fixed
+  ledger/fixture/validator/quality-gate/Task/progress owners. No commit was
+  created.
+
+#### Memory
+
+- A durable migration ledger needs separate authority and history surfaces.
+  Current-corpus equality belongs to the first table; deleted-source evidence
+  belongs to an append-only table whose destinations remain current and whose
+  path set is checked against the immutable deletion manifest.
+- Empty finite debt is still a meaningful compatibility state. ADM-006 retains
+  the empty Spec 030 container and complete digest/mutation protections;
+  ADM-007 alone removes the empty definitions while cutting validation to
+  strict mode.
+
+#### Handoff
+
+- Before commit, rollback is the exact inverse/unstage of the reviewed 79-path
+  unit. After a future logical commit, revert that single ADM-006 commit so
+  snapshots, deletions, routes, evidence, and zero-debt validation return
+  atomically.
+- ADM-007 may remove only the now-empty compatibility definitions, switch the
+  wrapper to strict validation, and close Spec 030. It must not reopen the two
+  immutable snapshots, source-deleted history, README routes, or cloud assets.
+
 ### 2026-07-13 - ADM-006 resolved-link preparation correction
 
 #### Metadata

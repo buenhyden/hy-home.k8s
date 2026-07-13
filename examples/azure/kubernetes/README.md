@@ -55,7 +55,7 @@ CSI driver readiness.
 ### Working Procedure
 
 1. [sample-app.yaml](sample-app.yaml)을 템플릿으로 사용하여 새 서비스를 정의한다.
-2. 매니페스트 작성 전 [Spec](../docs/03.specs/azure-migration/spec.md)의 가이드와 통제 표준을 반드시 확인한다.
+2. 매니페스트 작성 전 [Azure dated snapshot](../../../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md#definitions--facts)에 보존된 가이드와 통제 표준을 확인하고 현재 공식 자료로 재검증한다.
 3. 리소스 제한(Requests/Limits)은 실제 워크로드의 프로파일을 바탕으로 설정한다.
 
 ### Link Basis
@@ -68,7 +68,7 @@ CSI driver readiness.
 
 ### Reference Links
 
-- **Guide**: [../docs/05.operations/guides/0001-azure-onboarding-guide.md](../docs/05.operations/guides/0001-azure-onboarding-guide.md)
+- **Guide snapshot**: [Azure retained onboarding and operations](../../../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md#definitions--facts)
 - **GitOps**: [../gitops/README.md](../gitops/README.md)
 - **Infrastructure**: [../infrastructure/main.bicep](../infrastructure/main.bicep)
 

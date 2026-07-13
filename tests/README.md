@@ -108,9 +108,12 @@ changing candidate logic.
   mutation과 정확한 기대 rule ID 목록을 담는다. 이 fixture는 비밀값을
   포함하지 않으며 registry/config self-test의 repo-static 입력으로만
   사용한다.
-- `tests/fixtures/document-contracts/readme-profile-cases.json`은 67개 baseline과
-  72개 final README 경로의 profile 및 heading disposition을 고정하고, Spec 029가
-  production parser로 실행해야 할 여덟 positive/negative 사례를 전달한다.
+- `tests/fixtures/document-contracts/readme-profile-cases.json` schema v2는
+  현재 `activePaths` 52개와 ADM-006 `retiredPaths` 20개를 분리해 보존한다.
+  active baseline 47개와 retired baseline 20개가 immutable baseline 67개를
+  재구성하고, 나머지 active 5개는 program-created handoff다. Retired 행은
+  기존 profile/heading disposition과 `retiredBy`, provider-correct snapshot
+  destination을 유지하며, 여덟 parser 사례는 active 경로만 참조한다.
 - `tests/fixtures/document-contracts/template-compatibility.json`은 canonical form,
   template-mode inheritance, authored migration debt의 no-growth 기준을 고정한다.
   `affectedPaths`는 path/profile/rule/token을 정확히 결합하며 required

@@ -795,64 +795,170 @@ def _assert_readme_family_contract(
         inventory = enumerate_target_markdown(root)
     if not isinstance(fixture, dict) or set(fixture) != {
         "schemaVersion",
-        "allowedTrackedCounts",
-        "paths",
+        "activePaths",
+        "retiredPaths",
         "cases",
     }:
         raise AssertionError("README profile fixture schema mismatch")
-    paths = fixture.get("paths")
+    active_rows = fixture.get("activePaths")
+    retired_rows = fixture.get("retiredPaths")
     cases = fixture.get("cases")
-    allowed_tracked_counts = fixture.get("allowedTrackedCounts")
-    if fixture.get("schemaVersion") != 1 or not isinstance(paths, list):
+    if (
+        fixture.get("schemaVersion") != 2
+        or not isinstance(active_rows, list)
+        or not isinstance(retired_rows, list)
+        or not isinstance(cases, list)
+    ):
         raise AssertionError("README profile fixture schema mismatch")
-    if allowed_tracked_counts != [67, 68, 70, 72]:
-        raise AssertionError(
-            "README fixture allowedTrackedCounts must equal [67, 68, 70, 72]"
-        )
-    if not isinstance(cases, list):
-        raise AssertionError("README profile fixture cases must be an array")
 
-    path_keys = {"path", "profile", "requiredH2", "allowedH2", "new"}
-    declared_paths: set[PurePosixPath] = set()
+    for rows in (active_rows, retired_rows):
+        for row in rows:
+            if not isinstance(row, dict):
+                raise AssertionError("README fixture path rows must be objects")
+            raw_path = row.get("path")
+            if not isinstance(raw_path, str) or not raw_path:
+                raise AssertionError(f"invalid README fixture path: {raw_path!r}")
+    active_order = [row["path"] for row in active_rows]
+    retired_order = [row["path"] for row in retired_rows]
+    if active_order != sorted(active_order) or len(active_order) != len(set(active_order)):
+        raise AssertionError("README activePaths must be sorted and unique")
+    if retired_order != sorted(retired_order) or len(retired_order) != len(set(retired_order)):
+        raise AssertionError("README retiredPaths must be sorted and unique")
+    if len(active_rows) != 52 or len(retired_rows) != 20:
+        raise AssertionError("README fixture must contain exact active52 and retired20")
+
+    active_keys = {"path", "profile", "requiredH2", "allowedH2", "new"}
+    retired_keys = active_keys | {"retiredBy", "destination"}
+    active_paths = {PurePosixPath(path) for path in active_order}
+    retired_paths = {PurePosixPath(path) for path in retired_order}
+    if active_paths & retired_paths:
+        raise AssertionError("README activePaths and retiredPaths must be disjoint")
+
+    baseline_readmes = {
+        path for path in inventory.baseline_paths if _is_readme_path(path)
+    }
+    tracked_readmes = {
+        path for path in inventory.current_paths if _is_readme_path(path)
+    }
+    new_readmes = {
+        path for path in inventory.new_paths if _is_readme_path(path)
+    }
+    readme_profile_ids = _readme_profile_ids(registry)
     rows_by_path: dict[PurePosixPath, dict[str, Any]] = {}
-    baseline_paths = set(inventory.baseline_paths)
-    for row in paths:
-        if not isinstance(row, dict) or set(row) != path_keys:
-            raise AssertionError(f"invalid README fixture path row: {row!r}")
-        raw_path = row.get("path")
-        if not isinstance(raw_path, str) or not raw_path:
-            raise AssertionError(f"invalid README fixture path: {raw_path!r}")
-        path = PurePosixPath(raw_path)
-        if (
-            path.as_posix() != raw_path
-            or path.is_absolute()
-            or ".." in path.parts
-            or not _is_readme_path(path)
-        ):
-            raise AssertionError(f"invalid README fixture path: {raw_path!r}")
-        if path in declared_paths:
-            raise AssertionError(f"duplicate README fixture path: {path}")
-        declared_paths.add(path)
-        rows_by_path[path] = row
-        profile = classify_path(registry, path)
-        if profile.profile_id != row["profile"]:
-            raise AssertionError(
-                f"{path}: README fixture profile {row['profile']!r} differs "
-                f"from registry {profile.profile_id!r}"
+    for lifecycle, rows, expected_keys in (
+        ("active", active_rows, active_keys),
+        ("retired", retired_rows, retired_keys),
+    ):
+        for row in rows:
+            if set(row) != expected_keys:
+                raise AssertionError(f"invalid README {lifecycle} path row: {row!r}")
+            raw_path = row.get("path")
+            if not isinstance(raw_path, str) or not raw_path:
+                raise AssertionError(f"invalid README fixture path: {raw_path!r}")
+            path = PurePosixPath(raw_path)
+            if (
+                path.as_posix() != raw_path
+                or path.is_absolute()
+                or ".." in path.parts
+                or not _is_readme_path(path)
+            ):
+                raise AssertionError(f"invalid README fixture path: {raw_path!r}")
+            if path in rows_by_path:
+                raise AssertionError(f"duplicate README fixture path: {path}")
+            rows_by_path[path] = row
+            profile = classify_path(registry, path)
+            if profile.profile_id != row["profile"]:
+                raise AssertionError(
+                    f"{path}: README fixture profile {row['profile']!r} differs "
+                    f"from registry {profile.profile_id!r}"
+                )
+            if profile.profile_id not in readme_profile_ids:
+                raise AssertionError(
+                    f"{path}: README fixture selected a non-authored profile"
+                )
+            if list(profile.headings.required) != row["requiredH2"]:
+                raise AssertionError(
+                    f"{path}: README required headings differ from registry"
+                )
+            if list(profile.headings.allowed) != row["allowedH2"]:
+                raise AssertionError(
+                    f"{path}: README allowed headings differ from registry"
+                )
+            if not isinstance(row["new"], bool):
+                raise AssertionError(f"{path}: README new flag must be boolean")
+            expected_new = path not in baseline_readmes
+            if row["new"] is not expected_new:
+                raise AssertionError(
+                    f"{path}: README new flag differs from immutable baseline inventory"
+                )
+            if lifecycle == "active":
+                if path not in tracked_readmes or not (root / path).is_file():
+                    raise AssertionError(f"README active path is absent: {path}")
+                continue
+            if row["retiredBy"] != "ADM-006":
+                raise AssertionError(f"{path}: README retirement owner must be ADM-006")
+            destination = row["destination"]
+            if not isinstance(destination, str) or not destination:
+                raise AssertionError(f"{path}: README retirement destination is invalid")
+            destination_path = PurePosixPath(destination)
+            if (
+                destination_path.as_posix() != destination
+                or destination_path.is_absolute()
+                or ".." in destination_path.parts
+                or not (root / destination_path).is_file()
+            ):
+                raise AssertionError(
+                    f"{path}: README retirement destination is missing or invalid"
+                )
+            if raw_path.startswith("examples/aws/docs/"):
+                provider = "aws"
+            elif raw_path.startswith("examples/azure/docs/"):
+                provider = "azure"
+            else:
+                raise AssertionError(f"{path}: README retirement path is outside ADM-006")
+            expected_destination = PurePosixPath(
+                "docs/90.references/cloud-examples/"
+                f"{provider}/2026-07-12-{provider}-example-snapshot.md"
             )
-        if profile.profile_id not in _readme_profile_ids(registry):
-            raise AssertionError(f"{path}: README fixture selected a non-authored profile")
-        if list(profile.headings.required) != row["requiredH2"]:
-            raise AssertionError(f"{path}: README required headings differ from registry")
-        if list(profile.headings.allowed) != row["allowedH2"]:
-            raise AssertionError(f"{path}: README allowed headings differ from registry")
-        if not isinstance(row["new"], bool):
-            raise AssertionError(f"{path}: README new flag must be boolean")
-        expected_new = path not in baseline_paths
-        if row["new"] is not expected_new:
-            raise AssertionError(
-                f"{path}: README new flag differs from immutable baseline inventory"
-            )
+            if destination_path != expected_destination:
+                raise AssertionError(
+                    f"{path}: README retirement destination has wrong provider"
+                )
+            if path in tracked_readmes or (root / path).exists():
+                raise AssertionError(f"README retired path is still current: {path}")
+
+    active_baseline = active_paths & baseline_readmes
+    active_program_created = active_paths - baseline_readmes
+    if len(baseline_readmes) != 67:
+        raise AssertionError("README immutable baseline must contain exact 67 paths")
+    if len(active_baseline) != 47 or len(active_program_created) != 5:
+        raise AssertionError(
+            "README activePaths must contain 47 baseline and five program-created paths"
+        )
+    if retired_paths - baseline_readmes:
+        raise AssertionError("README retiredPaths must belong to the immutable baseline")
+    if active_baseline | retired_paths != baseline_readmes:
+        raise AssertionError(
+            "README active baseline plus retired paths must reconstruct baseline67"
+        )
+    if active_program_created != new_readmes:
+        raise AssertionError(
+            "README program-created active paths must equal the current new inventory"
+        )
+    inventory_error = _readme_inventory_exact_error(tracked_readmes, active_paths)
+    if inventory_error is not None:
+        raise AssertionError(inventory_error)
+    selected_tracked = {
+        path
+        for path in inventory.current_paths
+        if classify_path(registry, path).profile_id in readme_profile_ids
+    }
+    if selected_tracked != active_paths:
+        raise AssertionError(
+            "README family selected path set differs from fixture activePaths: "
+            f"extra={sorted(path.as_posix() for path in selected_tracked - active_paths)!r} "
+            f"missing={sorted(path.as_posix() for path in active_paths - selected_tracked)!r}"
+        )
 
     expected_cases = (
         ("valid-profile", ()),
@@ -884,8 +990,10 @@ def _assert_readme_family_contract(
             raise AssertionError(f"README fixture case has invalid path: {case!r}")
         path = PurePosixPath(raw_case_path)
         row = rows_by_path.get(path)
-        if row is None:
-            raise AssertionError(f"README fixture case has undeclared path: {case['path']}")
+        if row is None or path not in active_paths:
+            raise AssertionError(
+                f"README fixture case must reference activePaths: {case['path']}"
+            )
         expected_rule_ids = expected_by_name.get(name)
         if (
             not isinstance(case.get("expected_rule_ids"), list)
@@ -903,46 +1011,10 @@ def _assert_readme_family_contract(
                 f"got {actual_rule_ids!r}"
             )
     if tuple(actual_case_names) != tuple(name for name, _ in expected_cases):
-        raise AssertionError("README fixture case names differ from the eight-case contract")
-
-    baseline_readmes = {
-        path for path in inventory.baseline_paths if _is_readme_path(path)
-    }
-    declared_baseline = {
-        path for path, row in rows_by_path.items() if row["new"] is False
-    }
-    if declared_baseline != baseline_readmes or len(declared_paths) != 72:
         raise AssertionError(
-            "README fixture must declare the exact baseline 67 and final 72 paths"
+            "README fixture case names differ from the eight-case contract"
         )
-
-    tracked_readmes = {
-        path for path in inventory.current_paths if _is_readme_path(path)
-    }
-    inventory_error = _readme_inventory_exact_error(
-        tracked_readmes, declared_paths
-    )
-    if inventory_error is not None:
-        raise AssertionError(inventory_error)
-    readme_profile_ids = _readme_profile_ids(registry)
-    selected_tracked = {
-        path
-        for path in inventory.current_paths
-        if classify_path(registry, path).profile_id in readme_profile_ids
-    }
-    if selected_tracked != declared_paths:
-        raise AssertionError(
-            "README family selected path set differs from fixture-declared final set: "
-            f"extra={sorted(path.as_posix() for path in selected_tracked - declared_paths)!r} "
-            f"missing={sorted(path.as_posix() for path in declared_paths - selected_tracked)!r}"
-        )
-    current_count = len(selected_tracked)
-    if current_count not in allowed_tracked_counts:
-        raise AssertionError(
-            f"README tracked count {current_count} is outside staged progression "
-            f"{allowed_tracked_counts!r}"
-        )
-    return len(baseline_readmes), len(declared_paths), current_count
+    return len(baseline_readmes), len(active_paths | retired_paths), len(active_paths)
 
 
 def _assert_readme_fixture_mutation_proofs(
@@ -984,31 +1056,111 @@ def _assert_readme_fixture_mutation_proofs(
     invalid_document["cases"][0]["document"] = ""
     expect_rejection("an invalid empty document", invalid_document)
 
+    numeric_active_path = copy.deepcopy(fixture)
+    numeric_active_path["activePaths"][0]["path"] = 7
+    expect_rejection(
+        "a numeric activePaths path",
+        numeric_active_path,
+        expected_message="invalid README fixture path: 7",
+    )
+
+    missing_retired_path = copy.deepcopy(fixture)
+    missing_retired_path["retiredPaths"][0].pop("path")
+    expect_rejection(
+        "a missing retiredPaths path",
+        missing_retired_path,
+        expected_message="invalid README fixture path: None",
+    )
+
     wrong_case_semantics = copy.deepcopy(fixture)
     duplicate_h1 = next(
-        case for case in wrong_case_semantics["cases"] if case["name"] == "duplicate-h1"
+        case
+        for case in wrong_case_semantics["cases"]
+        if case["name"] == "duplicate-h1"
     )
     duplicate_h1["document"] = wrong_case_semantics["cases"][0]["document"]
     expect_rejection("changed case semantics", wrong_case_semantics)
 
     swapped_flags = copy.deepcopy(fixture)
-    existing = next(row for row in swapped_flags["paths"] if row["new"] is False)
-    future = next(row for row in swapped_flags["paths"] if row["new"] is True)
+    existing = next(row for row in swapped_flags["activePaths"] if row["new"] is False)
+    future = next(row for row in swapped_flags["activePaths"] if row["new"] is True)
     existing["new"], future["new"] = True, False
     expect_rejection("swapped existing/future flags", swapped_flags)
+
+    changed_disposition = copy.deepcopy(fixture)
+    changed_disposition["retiredPaths"][0]["profile"] = "readme/repository"
+    expect_rejection("changed retired disposition", changed_disposition)
+
+    overlap = copy.deepcopy(fixture)
+    overlap_row = copy.deepcopy(overlap["retiredPaths"][0])
+    overlap_row.pop("retiredBy")
+    overlap_row.pop("destination")
+    overlap["activePaths"].append(overlap_row)
+    overlap["activePaths"].sort(key=lambda row: row["path"])
+    expect_rejection("active/retired overlap", overlap)
+
+    partial_retirement = copy.deepcopy(fixture)
+    partial_retirement["retiredPaths"].pop()
+    expect_rejection("partial nineteen-path retirement", partial_retirement)
+
+    unknown_retirement = copy.deepcopy(fixture)
+    unknown_retirement["retiredPaths"][0]["path"] = (
+        "examples/aws/docs/unknown-retirement/README.md"
+    )
+    unknown_retirement["retiredPaths"].sort(key=lambda row: row["path"])
+    expect_rejection("unknown retirement path", unknown_retirement)
+
+    wrong_owner = copy.deepcopy(fixture)
+    wrong_owner["retiredPaths"][0]["retiredBy"] = "ADM-007"
+    expect_rejection("wrong retirement owner", wrong_owner)
+
+    missing_destination = copy.deepcopy(fixture)
+    missing_destination["retiredPaths"][0]["destination"] = (
+        "docs/90.references/cloud-examples/aws/missing-snapshot.md"
+    )
+    expect_rejection("missing retirement destination", missing_destination)
+
+    wrong_provider = copy.deepcopy(fixture)
+    aws_retired = next(
+        row
+        for row in wrong_provider["retiredPaths"]
+        if row["path"].startswith("examples/aws/")
+    )
+    aws_retired["destination"] = (
+        "docs/90.references/cloud-examples/azure/"
+        "2026-07-12-azure-example-snapshot.md"
+    )
+    expect_rejection("wrong-provider retirement destination", wrong_provider)
+
+    unsorted_active = copy.deepcopy(fixture)
+    unsorted_active["activePaths"][0], unsorted_active["activePaths"][1] = (
+        unsorted_active["activePaths"][1],
+        unsorted_active["activePaths"][0],
+    )
+    expect_rejection("unsorted activePaths", unsorted_active)
+
+    duplicate_retired = copy.deepcopy(fixture)
+    duplicate_retired["retiredPaths"][-1] = copy.deepcopy(
+        duplicate_retired["retiredPaths"][0]
+    )
+    duplicate_retired["retiredPaths"].sort(key=lambda row: row["path"])
+    expect_rejection("duplicate retiredPaths", duplicate_retired)
+
+    retired_case = copy.deepcopy(fixture)
+    retired_case["cases"][0]["path"] = retired_case["retiredPaths"][0]["path"]
+    expect_rejection("parser case referencing retired path", retired_case)
 
     declared_new_paths = sorted(
         (
             PurePosixPath(row["path"])
-            for row in fixture["paths"]
+            for row in fixture["activePaths"]
             if row["new"] is True
-            and PurePosixPath(row["path"]) in inventory.current_paths
         ),
         key=lambda path: path.as_posix(),
     )
-    if len(declared_new_paths) < 2:
+    if len(declared_new_paths) != 5:
         raise AssertionError(
-            "README fixture mutation proof requires two tracked new README paths"
+            "README fixture mutation proof requires exact five program-created paths"
         )
     missing_paths = set(declared_new_paths[:2])
     missing_declared_inventory = TargetInventory(
@@ -1016,19 +1168,36 @@ def _assert_readme_fixture_mutation_proofs(
         current_paths=tuple(
             path for path in inventory.current_paths if path not in missing_paths
         ),
-        new_paths=tuple(path for path in inventory.new_paths if path not in missing_paths),
+        new_paths=tuple(
+            path for path in inventory.new_paths if path not in missing_paths
+        ),
         baseline_symlink_paths=inventory.baseline_symlink_paths,
         current_symlink_paths=inventory.current_symlink_paths,
     )
     expect_rejection(
-        "fixture-declared README paths missing from current inventory",
+        "fixture-declared active paths missing from current inventory",
         fixture,
         candidate_inventory=missing_declared_inventory,
         expected_message=(
-            "README tracked set differs from fixture-declared final set: "
-            f"missing={sorted(path.as_posix() for path in missing_paths)!r} "
-            "extra=[]"
+            "README active path is absent: "
+            f"{sorted(missing_paths, key=lambda path: path.as_posix())[0]}"
         ),
+    )
+
+    retired_path = PurePosixPath(fixture["retiredPaths"][0]["path"])
+    retired_current_inventory = TargetInventory(
+        baseline_paths=inventory.baseline_paths,
+        current_paths=tuple(
+            sorted((*inventory.current_paths, retired_path), key=lambda path: path.as_posix())
+        ),
+        new_paths=inventory.new_paths,
+        baseline_symlink_paths=inventory.baseline_symlink_paths,
+        current_symlink_paths=inventory.current_symlink_paths,
+    )
+    expect_rejection(
+        "retired path reintroduced into current inventory",
+        fixture,
+        candidate_inventory=retired_current_inventory,
     )
 
     extra_path = PurePosixPath("docs/undeclared-bridge/README.md")
@@ -1070,15 +1239,10 @@ def _assert_readme_fixture_mutation_proofs(
         current_symlink_paths=inventory.current_symlink_paths,
     )
     expect_rejection(
-        "an equal-count missing-and-extra README swap",
+        "an equal-count missing-and-extra active README swap",
         fixture,
         candidate_registry=broad_registry,
         candidate_inventory=equal_count_swap_inventory,
-        expected_message=(
-            "README tracked set differs from fixture-declared final set: "
-            f"missing=['{swapped_path.as_posix()}'] "
-            f"extra=['{extra_path.as_posix()}']"
-        ),
     )
 
 
@@ -1220,9 +1384,9 @@ def main() -> int:
         if args.profile == "readme":
             baseline_count, declared_final_count, selected_count = readme_counts
             print(
-                f"README baseline={baseline_count} current={selected_count} "
-                f"declared_final={declared_final_count} "
-                "allowed_progression=67,68,70,72 exact_set=yes "
+                f"README baseline={baseline_count} active_current={selected_count} "
+                f"retired={declared_final_count - selected_count} "
+                f"declared_total={declared_final_count} schema=2 exact_set=yes "
                 "uncovered=0 ambiguous=0"
             )
         else:

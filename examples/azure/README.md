@@ -2,8 +2,8 @@
 
 ## Overview
 
-This entrypoint separates executable Azure example assets from the dated
-migration documentation under [`docs/`](docs/README.md). The Bicep, GitOps, and
+This entrypoint separates executable Azure example assets from the
+[dated consolidated snapshot](../../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md). The Bicep, GitOps, and
 Kubernetes files are reference implementations, not active local desired state
 or proof of current Azure support, subscription readiness, cost, or
 provider-latest configuration.
@@ -15,7 +15,7 @@ provider-latest configuration.
 | [`infrastructure/`](infrastructure/README.md) | AKS, AGC, network, database, and cache Bicep examples. | Executable reference assets; provider inputs and approval remain external. |
 | [`gitops/`](gitops/README.md) | Managed Identity, Gateway API, and secret-provider platform examples. | Executable reference assets; not reconciled by the local ArgoCD tree. |
 | [`kubernetes/`](kubernetes/README.md) | Workload Identity, external-service, and application manifest examples. | Executable reference assets; validate before promotion to an owned desired-state tree. |
-| [`docs/`](docs/README.md) | Dated PRD, architecture, spec, execution, and operations snapshot. | Reference documentation only; Spec 030 owns consolidation into Stage 90. |
+| [Stage 90 snapshot](../../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md) | Dated PRD, architecture, spec, execution, and operations snapshot. | Durable documentation destination; Spec 030 consolidation is complete. |
 
 ## Configuration Boundary
 
@@ -40,10 +40,10 @@ Vault, network, cost, secret, or provider readiness.
 
 ## Operations
 
-Start with the dated [Azure onboarding guide](docs/05.operations/guides/0001-azure-onboarding-guide.md)
-and [migration task index](docs/04.execution/tasks/README.md), then obtain human
-approval before any provider or live-cluster action. Spec 030 will remove the
-example-local SDLC documents after their durable knowledge is consolidated;
+Start with the dated [Azure operations knowledge](../../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md#definitions--facts)
+and [migration task history](../../docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md#scope), then obtain human
+approval before any provider or live-cluster action. Spec 030 retired the 33
+Azure source59 documentation paths after consolidating their durable knowledge;
 the executable assets remain under this provider tree.
 
 ## Related Documents

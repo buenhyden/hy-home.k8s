@@ -1,12 +1,6 @@
 {
-  "schemaVersion": 1,
-  "allowedTrackedCounts": [
-    67,
-    68,
-    70,
-    72
-  ],
-  "paths": [
+  "schemaVersion": 2,
+  "activePaths": [
     {
       "path": "README.md",
       "profile": "readme/repository",
@@ -30,22 +24,23 @@
       "new": false
     },
     {
-      "path": "docs/README.md",
-      "profile": "readme/stage-index",
+      "path": "_workspace/README.md",
+      "profile": "readme/workspace-staging",
       "requiredH2": [
         "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
+        "Permitted Artifacts",
+        "Forbidden Local State",
+        "Promotion and Cleanup",
+        "Tracking Rules",
         "Related Documents"
       ],
       "allowedH2": [
         "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents",
-        "Lifecycle Handoff"
+        "Permitted Artifacts",
+        "Forbidden Local State",
+        "Promotion and Cleanup",
+        "Tracking Rules",
+        "Related Documents"
       ],
       "new": false
     },
@@ -66,6 +61,26 @@
         "Authoring Workflow",
         "Related Documents",
         "Lifecycle Handoff"
+      ],
+      "new": false
+    },
+    {
+      "path": "docs/00.agent-governance/memory/README.md",
+      "profile": "readme/collection-index",
+      "requiredH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents",
+        "Selection Rules"
       ],
       "new": false
     },
@@ -110,146 +125,6 @@
       "new": false
     },
     {
-      "path": "docs/03.specs/README.md",
-      "profile": "readme/stage-index",
-      "requiredH2": [
-        "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents",
-        "Lifecycle Handoff"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/04.execution/README.md",
-      "profile": "readme/stage-index",
-      "requiredH2": [
-        "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents",
-        "Lifecycle Handoff"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/05.operations/README.md",
-      "profile": "readme/stage-index",
-      "requiredH2": [
-        "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents",
-        "Lifecycle Handoff"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/90.references/README.md",
-      "profile": "readme/stage-index",
-      "requiredH2": [
-        "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents",
-        "Lifecycle Handoff"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/98.archive/README.md",
-      "profile": "readme/stage-index",
-      "requiredH2": [
-        "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents",
-        "Lifecycle Handoff"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/99.templates/README.md",
-      "profile": "readme/stage-index",
-      "requiredH2": [
-        "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Stage Contract",
-        "Document Index",
-        "Authoring Workflow",
-        "Related Documents",
-        "Lifecycle Handoff"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/00.agent-governance/memory/README.md",
-      "profile": "readme/collection-index",
-      "requiredH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents",
-        "Selection Rules"
-      ],
-      "new": false
-    },
-    {
       "path": "docs/02.architecture/decisions/README.md",
       "profile": "readme/collection-index",
       "requiredH2": [
@@ -290,6 +165,46 @@
       "new": false
     },
     {
+      "path": "docs/03.specs/README.md",
+      "profile": "readme/stage-index",
+      "requiredH2": [
+        "Overview",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
+        "Related Documents",
+        "Lifecycle Handoff"
+      ],
+      "new": false
+    },
+    {
+      "path": "docs/04.execution/README.md",
+      "profile": "readme/stage-index",
+      "requiredH2": [
+        "Overview",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
+        "Related Documents",
+        "Lifecycle Handoff"
+      ],
+      "new": false
+    },
+    {
       "path": "docs/04.execution/plans/README.md",
       "profile": "readme/collection-index",
       "requiredH2": [
@@ -326,6 +241,26 @@
         "Add and Find",
         "Related Documents",
         "Selection Rules"
+      ],
+      "new": false
+    },
+    {
+      "path": "docs/05.operations/README.md",
+      "profile": "readme/stage-index",
+      "requiredH2": [
+        "Overview",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
+        "Related Documents",
+        "Lifecycle Handoff"
       ],
       "new": false
     },
@@ -410,164 +345,24 @@
       "new": false
     },
     {
-      "path": "docs/90.references/audits/README.md",
-      "profile": "readme/collection-index",
+      "path": "docs/90.references/README.md",
+      "profile": "readme/stage-index",
       "requiredH2": [
         "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
         "Related Documents"
       ],
       "allowedH2": [
         "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
         "Related Documents",
-        "Selection Rules"
+        "Lifecycle Handoff"
       ],
       "new": false
-    },
-    {
-      "path": "docs/90.references/data/README.md",
-      "profile": "readme/collection-index",
-      "requiredH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents",
-        "Selection Rules"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/90.references/learning/README.md",
-      "profile": "readme/collection-index",
-      "requiredH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents",
-        "Selection Rules"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/90.references/llm-wiki/README.md",
-      "profile": "readme/collection-index",
-      "requiredH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents",
-        "Selection Rules"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/90.references/research/README.md",
-      "profile": "readme/collection-index",
-      "requiredH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents",
-        "Selection Rules"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/99.templates/support/README.md",
-      "profile": "readme/collection-index",
-      "requiredH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents",
-        "Selection Rules"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/99.templates/templates/README.md",
-      "profile": "readme/collection-index",
-      "requiredH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents",
-        "Selection Rules"
-      ],
-      "new": false
-    },
-    {
-      "path": "docs/90.references/cloud-examples/README.md",
-      "profile": "readme/collection-index",
-      "requiredH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Scope",
-        "Item Index",
-        "Add and Find",
-        "Related Documents",
-        "Selection Rules"
-      ],
-      "new": true
     },
     {
       "path": "docs/90.references/audits/2026-05-24-whga/README.md",
@@ -702,488 +497,44 @@
       "new": false
     },
     {
-      "path": "docs/90.references/research/2026-07-04-wer/README.md",
-      "profile": "readme/snapshot-pack",
+      "path": "docs/90.references/audits/README.md",
+      "profile": "readme/collection-index",
       "requiredH2": [
         "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
+        "Scope",
+        "Item Index",
+        "Add and Find",
         "Related Documents"
       ],
       "allowedH2": [
         "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
+        "Scope",
+        "Item Index",
+        "Add and Find",
         "Related Documents",
-        "Method"
+        "Selection Rules"
       ],
       "new": false
     },
     {
-      "path": "docs/90.references/research/2026-07-07-wer/README.md",
-      "profile": "readme/snapshot-pack",
+      "path": "docs/90.references/cloud-examples/README.md",
+      "profile": "readme/collection-index",
       "requiredH2": [
         "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
+        "Scope",
+        "Item Index",
+        "Add and Find",
         "Related Documents"
       ],
       "allowedH2": [
         "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
+        "Scope",
+        "Item Index",
+        "Add and Find",
         "Related Documents",
-        "Method"
+        "Selection Rules"
       ],
-      "new": false
-    },
-    {
-      "path": "examples/aws/docs/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/aws/docs/01.requirements/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/aws/docs/02.architecture/decisions/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/aws/docs/02.architecture/requirements/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/aws/docs/03.specs/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/aws/docs/04.execution/plans/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/aws/docs/04.execution/tasks/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/aws/docs/05.operations/guides/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/aws/docs/05.operations/policies/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/aws/docs/05.operations/runbooks/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/azure/docs/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/azure/docs/01.requirements/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/azure/docs/02.architecture/decisions/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/azure/docs/02.architecture/requirements/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/azure/docs/03.specs/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/azure/docs/04.execution/plans/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/azure/docs/04.execution/tasks/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/azure/docs/05.operations/guides/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/azure/docs/05.operations/policies/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
-    },
-    {
-      "path": "examples/azure/docs/05.operations/runbooks/README.md",
-      "profile": "readme/snapshot-pack",
-      "requiredH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents"
-      ],
-      "allowedH2": [
-        "Overview",
-        "Snapshot Contract",
-        "Report Index",
-        "Refresh and Succession",
-        "Evidence Boundary",
-        "Related Documents",
-        "Method"
-      ],
-      "new": false
+      "new": true
     },
     {
       "path": "docs/90.references/cloud-examples/aws/README.md",
@@ -1230,7 +581,346 @@
       "new": true
     },
     {
+      "path": "docs/90.references/data/README.md",
+      "profile": "readme/collection-index",
+      "requiredH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents",
+        "Selection Rules"
+      ],
+      "new": false
+    },
+    {
+      "path": "docs/90.references/learning/README.md",
+      "profile": "readme/collection-index",
+      "requiredH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents",
+        "Selection Rules"
+      ],
+      "new": false
+    },
+    {
+      "path": "docs/90.references/llm-wiki/README.md",
+      "profile": "readme/collection-index",
+      "requiredH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents",
+        "Selection Rules"
+      ],
+      "new": false
+    },
+    {
+      "path": "docs/90.references/research/2026-07-04-wer/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false
+    },
+    {
+      "path": "docs/90.references/research/2026-07-07-wer/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false
+    },
+    {
+      "path": "docs/90.references/research/README.md",
+      "profile": "readme/collection-index",
+      "requiredH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents",
+        "Selection Rules"
+      ],
+      "new": false
+    },
+    {
+      "path": "docs/98.archive/README.md",
+      "profile": "readme/stage-index",
+      "requiredH2": [
+        "Overview",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
+        "Related Documents",
+        "Lifecycle Handoff"
+      ],
+      "new": false
+    },
+    {
+      "path": "docs/99.templates/README.md",
+      "profile": "readme/stage-index",
+      "requiredH2": [
+        "Overview",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
+        "Related Documents",
+        "Lifecycle Handoff"
+      ],
+      "new": false
+    },
+    {
+      "path": "docs/99.templates/support/README.md",
+      "profile": "readme/collection-index",
+      "requiredH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents",
+        "Selection Rules"
+      ],
+      "new": false
+    },
+    {
+      "path": "docs/99.templates/templates/README.md",
+      "profile": "readme/collection-index",
+      "requiredH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Scope",
+        "Item Index",
+        "Add and Find",
+        "Related Documents",
+        "Selection Rules"
+      ],
+      "new": false
+    },
+    {
+      "path": "docs/README.md",
+      "profile": "readme/stage-index",
+      "requiredH2": [
+        "Overview",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Stage Contract",
+        "Document Index",
+        "Authoring Workflow",
+        "Related Documents",
+        "Lifecycle Handoff"
+      ],
+      "new": false
+    },
+    {
       "path": "examples/README.md",
+      "profile": "readme/implementation",
+      "requiredH2": [
+        "Overview",
+        "Structure",
+        "Configuration Boundary",
+        "Validation",
+        "Operations",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Structure",
+        "Configuration Boundary",
+        "Validation",
+        "Operations",
+        "Related Documents",
+        "Prerequisites",
+        "Troubleshooting"
+      ],
+      "new": false
+    },
+    {
+      "path": "examples/aws/README.md",
+      "profile": "readme/implementation",
+      "requiredH2": [
+        "Overview",
+        "Structure",
+        "Configuration Boundary",
+        "Validation",
+        "Operations",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Structure",
+        "Configuration Boundary",
+        "Validation",
+        "Operations",
+        "Related Documents",
+        "Prerequisites",
+        "Troubleshooting"
+      ],
+      "new": true
+    },
+    {
+      "path": "examples/azure/README.md",
+      "profile": "readme/implementation",
+      "requiredH2": [
+        "Overview",
+        "Structure",
+        "Configuration Boundary",
+        "Validation",
+        "Operations",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Structure",
+        "Configuration Boundary",
+        "Validation",
+        "Operations",
+        "Related Documents",
+        "Prerequisites",
+        "Troubleshooting"
+      ],
+      "new": true
+    },
+    {
+      "path": "examples/azure/gitops/README.md",
+      "profile": "readme/implementation",
+      "requiredH2": [
+        "Overview",
+        "Structure",
+        "Configuration Boundary",
+        "Validation",
+        "Operations",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Structure",
+        "Configuration Boundary",
+        "Validation",
+        "Operations",
+        "Related Documents",
+        "Prerequisites",
+        "Troubleshooting"
+      ],
+      "new": false
+    },
+    {
+      "path": "examples/azure/infrastructure/README.md",
+      "profile": "readme/implementation",
+      "requiredH2": [
+        "Overview",
+        "Structure",
+        "Configuration Boundary",
+        "Validation",
+        "Operations",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Structure",
+        "Configuration Boundary",
+        "Validation",
+        "Operations",
+        "Related Documents",
+        "Prerequisites",
+        "Troubleshooting"
+      ],
+      "new": false
+    },
+    {
+      "path": "examples/azure/kubernetes/README.md",
       "profile": "readme/implementation",
       "requiredH2": [
         "Overview",
@@ -1412,142 +1102,488 @@
         "Troubleshooting"
       ],
       "new": false
-    },
+    }
+  ],
+  "retiredPaths": [
     {
-      "path": "examples/azure/gitops/README.md",
-      "profile": "readme/implementation",
+      "path": "examples/aws/docs/01.requirements/README.md",
+      "profile": "readme/snapshot-pack",
       "requiredH2": [
         "Overview",
-        "Structure",
-        "Configuration Boundary",
-        "Validation",
-        "Operations",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
         "Related Documents"
       ],
       "allowedH2": [
         "Overview",
-        "Structure",
-        "Configuration Boundary",
-        "Validation",
-        "Operations",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
         "Related Documents",
-        "Prerequisites",
-        "Troubleshooting"
+        "Method"
       ],
-      "new": false
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md"
     },
     {
-      "path": "examples/azure/infrastructure/README.md",
-      "profile": "readme/implementation",
+      "path": "examples/aws/docs/02.architecture/decisions/README.md",
+      "profile": "readme/snapshot-pack",
       "requiredH2": [
         "Overview",
-        "Structure",
-        "Configuration Boundary",
-        "Validation",
-        "Operations",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
         "Related Documents"
       ],
       "allowedH2": [
         "Overview",
-        "Structure",
-        "Configuration Boundary",
-        "Validation",
-        "Operations",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
         "Related Documents",
-        "Prerequisites",
-        "Troubleshooting"
+        "Method"
       ],
-      "new": false
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md"
     },
     {
-      "path": "examples/azure/kubernetes/README.md",
-      "profile": "readme/implementation",
+      "path": "examples/aws/docs/02.architecture/requirements/README.md",
+      "profile": "readme/snapshot-pack",
       "requiredH2": [
         "Overview",
-        "Structure",
-        "Configuration Boundary",
-        "Validation",
-        "Operations",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
         "Related Documents"
       ],
       "allowedH2": [
         "Overview",
-        "Structure",
-        "Configuration Boundary",
-        "Validation",
-        "Operations",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
         "Related Documents",
-        "Prerequisites",
-        "Troubleshooting"
+        "Method"
       ],
-      "new": false
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md"
     },
     {
-      "path": "examples/aws/README.md",
-      "profile": "readme/implementation",
+      "path": "examples/aws/docs/03.specs/README.md",
+      "profile": "readme/snapshot-pack",
       "requiredH2": [
         "Overview",
-        "Structure",
-        "Configuration Boundary",
-        "Validation",
-        "Operations",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
         "Related Documents"
       ],
       "allowedH2": [
         "Overview",
-        "Structure",
-        "Configuration Boundary",
-        "Validation",
-        "Operations",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
         "Related Documents",
-        "Prerequisites",
-        "Troubleshooting"
+        "Method"
       ],
-      "new": true
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md"
     },
     {
-      "path": "examples/azure/README.md",
-      "profile": "readme/implementation",
+      "path": "examples/aws/docs/04.execution/plans/README.md",
+      "profile": "readme/snapshot-pack",
       "requiredH2": [
         "Overview",
-        "Structure",
-        "Configuration Boundary",
-        "Validation",
-        "Operations",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
         "Related Documents"
       ],
       "allowedH2": [
         "Overview",
-        "Structure",
-        "Configuration Boundary",
-        "Validation",
-        "Operations",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
         "Related Documents",
-        "Prerequisites",
-        "Troubleshooting"
+        "Method"
       ],
-      "new": true
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md"
     },
     {
-      "path": "_workspace/README.md",
-      "profile": "readme/workspace-staging",
+      "path": "examples/aws/docs/04.execution/tasks/README.md",
+      "profile": "readme/snapshot-pack",
       "requiredH2": [
         "Overview",
-        "Permitted Artifacts",
-        "Forbidden Local State",
-        "Promotion and Cleanup",
-        "Tracking Rules",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
         "Related Documents"
       ],
       "allowedH2": [
         "Overview",
-        "Permitted Artifacts",
-        "Forbidden Local State",
-        "Promotion and Cleanup",
-        "Tracking Rules",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md"
+    },
+    {
+      "path": "examples/aws/docs/05.operations/guides/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
         "Related Documents"
       ],
-      "new": false
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md"
+    },
+    {
+      "path": "examples/aws/docs/05.operations/policies/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md"
+    },
+    {
+      "path": "examples/aws/docs/05.operations/runbooks/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md"
+    },
+    {
+      "path": "examples/aws/docs/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/aws/2026-07-12-aws-example-snapshot.md"
+    },
+    {
+      "path": "examples/azure/docs/01.requirements/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md"
+    },
+    {
+      "path": "examples/azure/docs/02.architecture/decisions/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md"
+    },
+    {
+      "path": "examples/azure/docs/02.architecture/requirements/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md"
+    },
+    {
+      "path": "examples/azure/docs/03.specs/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md"
+    },
+    {
+      "path": "examples/azure/docs/04.execution/plans/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md"
+    },
+    {
+      "path": "examples/azure/docs/04.execution/tasks/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md"
+    },
+    {
+      "path": "examples/azure/docs/05.operations/guides/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md"
+    },
+    {
+      "path": "examples/azure/docs/05.operations/policies/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md"
+    },
+    {
+      "path": "examples/azure/docs/05.operations/runbooks/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md"
+    },
+    {
+      "path": "examples/azure/docs/README.md",
+      "profile": "readme/snapshot-pack",
+      "requiredH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents"
+      ],
+      "allowedH2": [
+        "Overview",
+        "Snapshot Contract",
+        "Report Index",
+        "Refresh and Succession",
+        "Evidence Boundary",
+        "Related Documents",
+        "Method"
+      ],
+      "new": false,
+      "retiredBy": "ADM-006",
+      "destination": "docs/90.references/cloud-examples/azure/2026-07-12-azure-example-snapshot.md"
     }
   ],
   "cases": [

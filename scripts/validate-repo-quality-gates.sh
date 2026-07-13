@@ -812,19 +812,22 @@ example_docs_allowed_top_level = {
     "04.execution",
     "05.operations",
 }
+expected_provider_asset_counts = {"aws": 8, "azure": 14}
 for provider in ["aws", "azure"]:
     example_docs = root / "examples" / provider / "docs"
-    if not example_docs.exists():
-        fail(f"example docs root is missing: {rel(example_docs)}")
-        continue
-    actual_example_top_level = {path.name for path in example_docs.iterdir() if path.is_dir()}
-    for name in sorted(actual_example_top_level & old_top_level_docs):
-        fail(f"old example docs stage folder must not exist after hard migration: {rel(example_docs / name)}")
-    for name in sorted(actual_example_top_level - example_docs_allowed_top_level):
-        fail(f"example docs top-level folder is not allowed: {rel(example_docs / name)}")
-    for name in sorted(example_docs_required):
-        if not (example_docs / name).is_dir():
-            fail(f"required example docs taxonomy folder is missing: {rel(example_docs / name)}")
+    if example_docs.exists():
+        fail(f"retired example docs root must be absent after ADM-006: {rel(example_docs)}")
+    provider_root = root / "examples" / provider
+    executable_assets = [
+        path
+        for path in provider_root.rglob("*")
+        if path.is_file() and path.suffix.lower() != ".md"
+    ]
+    if len(executable_assets) != expected_provider_asset_counts[provider]:
+        fail(
+            f"{rel(provider_root)} executable asset count changed: "
+            f"{len(executable_assets)} != {expected_provider_asset_counts[provider]}"
+        )
 
 examples_readme_path = root / "examples/README.md"
 examples_readme_text = read_text(examples_readme_path)
@@ -1101,24 +1104,24 @@ template_compatibility = load_json(template_compatibility_path)
 TEMPLATE_COMPATIBILITY_CONTRACT_V1 = {
     "name": "TemplateCompatibilityContract.v1",
     "semantic_sha256": (
-        "a81a558d97472bcb9624a9270e3be7e8cbd16c44aa3dc6a5bd8f9be3e663b8a7"  # pragma: allowlist secret
+        "9bc4cbc4eb6a3a53e0ffdaa7465a3085092cf03ec8273881a6d3584fe26218fc"  # pragma: allowlist secret
     ),
 }
 
-ADM005_TEMPLATE_DEBT_AFTER = {
-    "affectedPathCount": 39,
-    "occurrenceCount": 102,
-    "tokenObligationCount": 102,
+ADM006_TEMPLATE_DEBT_AFTER = {
+    "affectedPathCount": 0,
+    "occurrenceCount": 0,
+    "tokenObligationCount": 0,
     "rules": {
         "BODY-HEADING-REQUIRED": {
-            "pathCount": 4,
-            "occurrenceCount": 4,
-            "tokenObligationCount": 4,
+            "pathCount": 0,
+            "occurrenceCount": 0,
+            "tokenObligationCount": 0,
         },
         "BODY-TEMPLATE-RESIDUE": {
-            "pathCount": 17,
-            "occurrenceCount": 21,
-            "tokenObligationCount": 21,
+            "pathCount": 0,
+            "occurrenceCount": 0,
+            "tokenObligationCount": 0,
         },
         "FM-DELIMITER": {
             "pathCount": 0,
@@ -1126,10 +1129,10 @@ ADM005_TEMPLATE_DEBT_AFTER = {
             "tokenObligationCount": 0,
         },
         "BODY-HEADING-UNSUPPORTED": {
-            "pathCount": 39,
-            "occurrenceCount": 77,
-            "tokenObligationCount": 77,
-            "distinctTokenCount": 37,
+            "pathCount": 0,
+            "occurrenceCount": 0,
+            "tokenObligationCount": 0,
+            "distinctTokenCount": 0,
         },
         "BODY-H2-DUPLICATE": {
             "pathCount": 0,
@@ -1137,9 +1140,9 @@ ADM005_TEMPLATE_DEBT_AFTER = {
             "tokenObligationCount": 0,
         },
     },
-    "requiredResidueOverlapPathCount": 4,
-    "requiredResidueUnionPathCount": 17,
-    "unionPathCount": 39,
+    "requiredResidueOverlapPathCount": 0,
+    "requiredResidueUnionPathCount": 0,
+    "unionPathCount": 0,
 }
 
 
@@ -1162,7 +1165,7 @@ def template_compatibility_contract_matches(contract: dict) -> bool:
 
 
 def assert_template_compatibility_mutation_proof(contract: dict) -> None:
-    """Prove protected policy, residue, and baseline mutations are rejected."""
+    """Prove protected policy, empty-debt, residue, and baseline mutations are rejected."""
 
     def mutate_owner(candidate: dict) -> None:
         candidate["owner"] = "Spec 999"
@@ -1186,29 +1189,49 @@ def assert_template_compatibility_mutation_proof(contract: dict) -> None:
         )
         task["baselineForbiddenResidueOccurrences"] += 1
 
-    def first_affected_path(candidate: dict) -> dict:
-        return next(
-            item
+    def append_affected_record(
+        candidate: dict,
+        *,
+        path: str,
+        rule_id: str,
+        marker: str,
+    ) -> None:
+        task = next(
+            row
             for row in candidate["compatibilityDebt"]
-            for item in row["affectedPaths"]
+            if row["profile"] == "sdlc/task"
+        )
+        task["affectedPaths"].append(
+            {
+                "path": path,
+                "ruleIds": [rule_id],
+                "tokens": [f"{rule_id}::{marker}"],
+            }
         )
 
     def mutate_affected_path(candidate: dict) -> None:
-        item = first_affected_path(candidate)
-        item["path"] += ".drift"
+        append_affected_record(
+            candidate,
+            path="docs/04.execution/tasks/adm006-empty-debt-drift.md",
+            rule_id="BODY-HEADING-UNSUPPORTED",
+            marker="Working Rules",
+        )
 
     def mutate_affected_rule(candidate: dict) -> None:
-        item = first_affected_path(candidate)
-        item["ruleIds"][0] += "-DRIFT"
+        append_affected_record(
+            candidate,
+            path="docs/04.execution/tasks/adm006-empty-debt-rule.md",
+            rule_id="BODY-HEADING-UNSUPPORTED-DRIFT",
+            marker="Working Rules",
+        )
 
     def mutate_affected_token(candidate: dict) -> None:
-        item = next(
-            item
-            for row in candidate["compatibilityDebt"]
-            for item in row["affectedPaths"]
-            if item["tokens"]
+        append_affected_record(
+            candidate,
+            path="docs/04.execution/tasks/adm006-empty-debt-token.md",
+            rule_id="BODY-HEADING-UNSUPPORTED",
+            marker="Working Rules drift",
         )
-        item["tokens"][0] += " drift"
 
     def mutate_rule_cap(candidate: dict) -> None:
         candidate["semanticDebtCaps"]["rules"]["BODY-HEADING-REQUIRED"][
@@ -1239,22 +1262,13 @@ def assert_template_compatibility_mutation_proof(contract: dict) -> None:
     def mutate_union_cap(candidate: dict) -> None:
         candidate["semanticDebtCaps"]["unionPathCount"] += 1
 
-    def delete_residue_token(candidate: dict) -> None:
-        item = next(
-            item
-            for row in candidate["compatibilityDebt"]
-            for item in row["affectedPaths"]
-            if any(
-                token.startswith("BODY-TEMPLATE-RESIDUE::")
-                for token in item["tokens"]
-            )
+    def mutate_residue_token_obligation(candidate: dict) -> None:
+        append_affected_record(
+            candidate,
+            path="docs/04.execution/tasks/adm006-empty-debt-residue.md",
+            rule_id="BODY-TEMPLATE-RESIDUE",
+            marker="Working Rules",
         )
-        token = next(
-            token
-            for token in item["tokens"]
-            if token.startswith("BODY-TEMPLATE-RESIDUE::")
-        )
-        item["tokens"].remove(token)
 
     mutations = {
         "owner": mutate_owner,
@@ -1271,7 +1285,7 @@ def assert_template_compatibility_mutation_proof(contract: dict) -> None:
         "required/residue overlap cap": mutate_required_residue_overlap_cap,
         "required/residue union cap": mutate_required_residue_union_cap,
         "semantic union cap": mutate_union_cap,
-        "residue token obligation": delete_residue_token,
+        "residue token obligation introduction": mutate_residue_token_obligation,
     }
     for label, mutate in mutations.items():
         candidate = copy.deepcopy(contract)
@@ -1308,16 +1322,16 @@ affected_token_obligation_count = sum(
     for _, item in affected_records
     for rule_id in item["ruleIds"]
 )
-adm005_after_projection = {
+adm006_after_projection = {
     "affectedPathCount": len({item["path"] for _, item in affected_records}),
     "occurrenceCount": affected_occurrence_count,
     "tokenObligationCount": affected_token_obligation_count,
     **template_compatibility["semanticDebtCaps"],
 }
-if adm005_after_projection != ADM005_TEMPLATE_DEBT_AFTER:
+if adm006_after_projection != ADM006_TEMPLATE_DEBT_AFTER:
     fail(
-        f"{rel(template_compatibility_path)} ADM-005 after projection changed: "
-        f"{adm005_after_projection}"
+        f"{rel(template_compatibility_path)} ADM-006 after projection changed: "
+        f"{adm006_after_projection}"
     )
 
 if template_compatibility.get("owner") != "Spec 030":

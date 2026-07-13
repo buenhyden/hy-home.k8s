@@ -2,42 +2,43 @@
 
 ## Overview
 
-이 인덱스는 `examples/azure/docs/`에 남아 있는 Azure 마이그레이션 문서 예시를
-Stage 90에서 찾기 위한 handoff다. 문서와 실행 자산을 이동하지 않으며,
-Spec 030이 후속 통합 범위를 결정할 때까지 원본 경로를 보존한다.
+This index is the current Stage 90 entrypoint for the dated Azure snapshot.
+The 33 Azure paths from source59 under `examples/azure/docs/` are retired; the
+dated snapshot is their durable documentation destination, while executable
+assets remain under `examples/azure/`.
 
 ## Snapshot Contract
 
 - Observation date: `2026-07-12`.
 - Document registry baseline SHA:
   `8e1b00b4dfb84b8431ba4d3d31b4ad0445a0019d`.
-- Current source tree: `examples/azure/docs/`.
-- Executable asset owner: `examples/azure/`.
-- Role: dated migration example handoff, not active main-stage ownership or
-  provider-latest Azure guidance.
+- Retired source tree: `examples/azure/docs/` (33 source59 paths).
+- Executable asset owner: `examples/azure/` (assets remain in place).
+- Role: durable dated documentation destination, not active main-stage
+  ownership or provider-latest Azure guidance.
 
 ## Report Index
 
 | Snapshot index | Preserved subject |
 | --- | --- |
-| [Azure documentation hub](../../../../examples/azure/docs/README.md) | Nine-stage migration example map and Azure stack snapshot. |
-| [Requirements](../../../../examples/azure/docs/01.requirements/README.md) | Product intent, FR/NFR, SLA, and dated PRD inventory. |
-| [Architecture requirements](../../../../examples/azure/docs/02.architecture/requirements/README.md) | AKS reference architecture and ARD inventory. |
-| [Architecture decisions](../../../../examples/azure/docs/02.architecture/decisions/README.md) | CNI, AGC, and Workload Identity decision inventory. |
-| [Technical specifications](../../../../examples/azure/docs/03.specs/README.md) | Azure migration Spec and resource-contract inventory. |
-| [Execution plans](../../../../examples/azure/docs/04.execution/plans/README.md) | Migration strategy and phase inventory. |
-| [Execution tasks](../../../../examples/azure/docs/04.execution/tasks/README.md) | Migration and AKS provisioning task inventory. |
-| [Operations guides](../../../../examples/azure/docs/05.operations/guides/README.md) | Azure onboarding and deployment-guide inventory. |
-| [Operations policies](../../../../examples/azure/docs/05.operations/policies/README.md) | Maintenance, operations, and cost-policy inventory. |
-| [Operations runbooks](../../../../examples/azure/docs/05.operations/runbooks/README.md) | Disaster recovery, fault tolerance, and node-replacement inventory. |
+| [Azure documentation inventory](2026-07-12-azure-example-snapshot.md#scope) | Nine-stage migration example map and Azure stack snapshot. |
+| [Requirements](2026-07-12-azure-example-snapshot.md#definitions--facts) | Product intent, FR/NFR, SLA, and dated PRD inventory. |
+| [Architecture requirements](2026-07-12-azure-example-snapshot.md#definitions--facts) | AKS reference architecture and ARD inventory. |
+| [Architecture decisions](2026-07-12-azure-example-snapshot.md#definitions--facts) | CNI, AGC, and Workload Identity decision inventory. |
+| [Technical specifications](2026-07-12-azure-example-snapshot.md#definitions--facts) | Azure migration Spec and resource-contract inventory. |
+| [Execution plans](2026-07-12-azure-example-snapshot.md#definitions--facts) | Migration strategy and phase inventory. |
+| [Execution tasks](2026-07-12-azure-example-snapshot.md#definitions--facts) | Migration and AKS provisioning task inventory. |
+| [Operations guides](2026-07-12-azure-example-snapshot.md#definitions--facts) | Azure onboarding and deployment-guide inventory. |
+| [Operations policies](2026-07-12-azure-example-snapshot.md#definitions--facts) | Maintenance, operations, and cost-policy inventory. |
+| [Operations runbooks](2026-07-12-azure-example-snapshot.md#definitions--facts) | Disaster recovery, fault tolerance, and node-replacement inventory. |
 
 ## Refresh and Succession
 
-[Spec 030](../../../03.specs/030-authored-document-migration/spec.md) owns the
-planned consolidation decision. Recheck this snapshot when an official Azure
-service, API, support, or lifecycle contract changes, when the source inventory
-changes, or when Spec 030 promotes a successor. Executable examples remain
-under `examples/azure/`; this index does not relocate or activate them.
+[Spec 030](../../../03.specs/030-authored-document-migration/spec.md) completed
+the consolidation into this dated snapshot. Recheck it when an official Azure
+service, API, support, or lifecycle contract changes, when retained source
+coverage changes, or when Spec 030 promotes a successor. Executable examples
+remain under `examples/azure/`; this index does not relocate or activate them.
 
 ## Evidence Boundary
 
@@ -49,7 +50,7 @@ provider-latest readiness was checked or is implied.
 ## Related Documents
 
 - [Cloud Example Snapshot Collection](../README.md)
-- [Azure source documentation hub](../../../../examples/azure/docs/README.md)
+- [Azure consolidated snapshot](2026-07-12-azure-example-snapshot.md)
 - [Tech Stack Version Inventory](../../data/tech-stack-version-inventory.md)
 - [README Profile Spec](../../../03.specs/028-readme-workspace-profiles/spec.md)
 - [Authored Document Migration Spec](../../../03.specs/030-authored-document-migration/spec.md)

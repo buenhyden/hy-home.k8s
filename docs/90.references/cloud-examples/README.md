@@ -8,19 +8,20 @@ does not claim live-cloud, deployed-runtime, or provider-latest readiness.
 
 ## Scope
 
-The dated provider indexes will live at `aws/README.md` and
-`azure/README.md`. Executable assets remain under
-[`examples/aws`](../../../examples/aws/) and
-[`examples/azure`](../../../examples/azure/) until the approved migration
-changes their canonical location. [Spec 030](../../03.specs/030-authored-document-migration/spec.md)
-owns that relocation and authored-document consolidation.
+The dated provider indexes and snapshots now exist under `aws/` and `azure/`.
+The exact 59 example-local documentation sources are retired. Executable assets
+remain under [`examples/aws`](../../../examples/aws/) and
+[`examples/azure`](../../../examples/azure/) as implementation references; the
+dated provider snapshots are their durable documentation destinations.
+[Spec 030](../../03.specs/030-authored-document-migration/spec.md) completed that
+relocation and authored-document consolidation.
 
 ## Item Index
 
 | Destination | Purpose | Current executable owner |
 | --- | --- | --- |
-| `aws/README.md` | Dated AWS reference snapshot index; created in the snapshot-pack migration | [`examples/aws`](../../../examples/aws/) |
-| `azure/README.md` | Dated Azure reference snapshot index; created in the snapshot-pack migration | [`examples/azure`](../../../examples/azure/) |
+| [AWS dated snapshot](aws/2026-07-12-aws-example-snapshot.md) | Consolidated AWS reference and source-coverage index | [`examples/aws`](../../../examples/aws/) |
+| [Azure dated snapshot](azure/2026-07-12-azure-example-snapshot.md) | Consolidated Azure reference and source-coverage index | [`examples/azure`](../../../examples/azure/) |
 
 ## Add and Find
 
