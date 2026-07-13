@@ -79,7 +79,7 @@ implementation, then records the gap ledger.
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: `T-001 through Run live k3d/ArgoCD/Vault/ESO checks only under a separately approved runtime validation task.` is limited to these Phase 1 Governance Alignment Audit owners and Task-Table surfaces:
+- **Allowed Paths**: `T-001 through T-005` is limited to these Phase 1 Governance Alignment Audit owners and Task-Table surfaces:
   - `docs/04.execution/tasks/2026-06-02-phase-1-governance-alignment-audit.md`
   - `docs/04.execution/plans/2026-06-02-phase-1-decision-follow-up.md`
   - `docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md`
@@ -96,7 +96,7 @@ implementation, then records the gap ledger.
   - `bash scripts/validate-k8s-manifests.sh .`
 - **Live Validation**: DEFER — Phase 1 Governance Alignment Audit is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
 - **Secret / Vault Handling**: Phase 1 Governance Alignment Audit evidence must use public or repository-visible facts only; do not inspect or reproduce credentials, tokens, auth files, private logs, kubeconfigs, or shell history.
-- **Rollback Plan**: Revert the logical Phase 1 Governance Alignment Audit change set for `T-001 through Run live k3d/ArgoCD/Vault/ESO checks only under a separately approved runtime validation task.` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Rollback Plan**: Revert the logical Phase 1 Governance Alignment Audit change set for `T-001 through T-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
 - **Evidence Location**: Durable Phase 1 Governance Alignment Audit evidence remains in:
   - `docs/04.execution/tasks/2026-06-02-phase-1-governance-alignment-audit.md`
   - `docs/04.execution/plans/2026-06-02-phase-1-decision-follow-up.md`

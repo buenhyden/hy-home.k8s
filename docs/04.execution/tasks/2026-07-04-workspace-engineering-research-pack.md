@@ -520,7 +520,7 @@ Summary:
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: `WER-001 through docs/90.references/research/spec-sdlc-ci-qa-formatting.md` is limited to these Workspace Engineering Research Pack Task Record owners and Task-Table surfaces:
+- **Allowed Paths**: `WER-001 through WER-008` is limited to these Workspace Engineering Research Pack Task Record owners and Task-Table surfaces:
   - `docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md`
   - `docs/03.specs/017-workspace-engineering-research-pack/spec.md`
   - `docs/04.execution/plans/2026-07-04-workspace-engineering-research-pack.md`
@@ -535,10 +535,9 @@ Summary:
   - `git status --short --branch`
   - `git diff --check`
   - `bash scripts/validate-repo-quality-gates.sh .`
-  - `rg`
 - **Live Validation**: DEFER — Workspace Engineering Research Pack Task Record is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
 - **Secret / Vault Handling**: Workspace Engineering Research Pack Task Record evidence must use public or repository-visible facts only; do not inspect or reproduce credentials, tokens, auth files, private logs, kubeconfigs, or shell history.
-- **Rollback Plan**: Revert the logical Workspace Engineering Research Pack Task Record change set for `WER-001 through docs/90.references/research/spec-sdlc-ci-qa-formatting.md` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Rollback Plan**: Revert the logical Workspace Engineering Research Pack Task Record change set for `WER-001 through WER-008` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
 - **Evidence Location**: Durable Workspace Engineering Research Pack Task Record evidence remains in:
   - `docs/04.execution/tasks/2026-07-04-workspace-engineering-research-pack.md`
   - `docs/03.specs/017-workspace-engineering-research-pack/spec.md`

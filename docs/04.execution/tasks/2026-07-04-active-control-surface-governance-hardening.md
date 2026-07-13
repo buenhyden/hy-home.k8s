@@ -285,7 +285,7 @@ PY
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: `ACS-001 through traefik` is limited to these Active Control Surface Governance Hardening owners and Task-Table surfaces:
+- **Allowed Paths**: `ACS-001 through ACS-005` is limited to these Active Control Surface Governance Hardening owners and Task-Table surfaces:
   - `docs/04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md`
   - `docs/04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md`
   - `docs/03.specs/016-active-control-surface-governance-hardening/spec.md`
@@ -302,7 +302,7 @@ PY
   - `bash scripts/validate-harness.sh`
 - **Live Validation**: DEFER — Active Control Surface Governance Hardening is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
 - **Secret / Vault Handling**: No secret value is required for Active Control Surface Governance Hardening; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
-- **Rollback Plan**: Revert the logical Active Control Surface Governance Hardening change set for `ACS-001 through traefik` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Rollback Plan**: Revert the logical Active Control Surface Governance Hardening change set for `ACS-001 through ACS-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
 - **Evidence Location**: Durable Active Control Surface Governance Hardening evidence remains in:
   - `docs/04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md`
   - `docs/04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md`

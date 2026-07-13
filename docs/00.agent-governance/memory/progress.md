@@ -29,6 +29,10 @@ inventory stays in `scripts/README.md`.
 - Added category-specific independent-review evidence and content decisions to
   the corresponding 63 durable-ledger rows; official sources, applicability,
   historical facts, and `shape-normalized` results remain preserved.
+- Final Task re-review corrected nine range endpoints that had leaked into
+  later evidence tables, removed bare `find`/`rg` fragments from two research
+  safety blocks, and changed the unsupported Current research live lane to
+  `DEFER`; exactly ten affected ledger rows record that reviewer correction.
 
 #### Memory
 
@@ -48,15 +52,20 @@ inventory stays in `scripts/README.md`.
   example uses a four-backtick outer delimiter so its unchanged three-backtick
   payload remains CommonMark-safe and invisible to containing-document H2
   validation.
-- Closure passed with an exact 66-path working correction, unchanged 126-path
-  combined wave, compatibility `626 DEFER / 0 FAIL`, exact-wave zero
-  diagnostics, links, full quality gates, Plan Step 5 pre-commit, diff check,
-  the combined validator guard, and index cleanliness.
+- All 47 Task ranges now equal the actual first and last IDs in the first table
+  bounded by `## Task Table` and the next H2; the Current research limitation
+  states that no live Kubernetes, Argo CD, Vault, or ESO check ran.
+- Final closure passed with an exact 13-path correction above `acdb8e6`, an
+  unchanged 126-path combined wave from `851007d`, compatibility
+  `626 DEFER / 0 FAIL`, exact-wave zero diagnostics, links, full quality gates,
+  Plan Step 5 pre-commit, diff check, the combined validator guard, and index
+  cleanliness.
 
 #### Handoff
 
-- Independently review and commit the exact 66-path bounded correction; retain
-  the 120-document wave and six fixed owners as the 126-path rollback unit.
+- Independently review and commit the exact 13-path final Task correction;
+  retain the 120-document wave and six fixed owners as the 126-path rollback
+  unit.
 - ADM-005 remains blocked until this correction is accepted with the existing
   ADM-004 wave and dependency `851007d`.
 

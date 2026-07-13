@@ -86,7 +86,7 @@ unit.
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: `T-001 through historical evidence` is limited to these Agent Governance Contract Normalization owners and Task-Table surfaces:
+- **Allowed Paths**: `T-001 through T-005` is limited to these Agent Governance Contract Normalization owners and Task-Table surfaces:
   - `docs/04.execution/tasks/2026-07-04-agent-governance-contract-normalization.md`
   - `docs/03.specs/015-agent-governance-contract-normalization/spec.md`
   - `docs/04.execution/plans/2026-07-04-agent-governance-contract-normalization.md`
@@ -103,7 +103,7 @@ unit.
   - `python3 - <<'PY' ... tomllib.loads(path.read_text()) ... PY`
 - **Live Validation**: DEFER — Agent Governance Contract Normalization is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
 - **Secret / Vault Handling**: Use only redacted repository contracts for Agent Governance Contract Normalization; do not read or print provider tokens, auth files, memory stores, private logs, kubeconfigs, secret values, or shell history.
-- **Rollback Plan**: Revert the logical Agent Governance Contract Normalization change set for `T-001 through historical evidence` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Rollback Plan**: Revert the logical Agent Governance Contract Normalization change set for `T-001 through T-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
 - **Evidence Location**: Durable Agent Governance Contract Normalization evidence remains in:
   - `docs/04.execution/tasks/2026-07-04-agent-governance-contract-normalization.md`
   - `docs/03.specs/015-agent-governance-contract-normalization/spec.md`

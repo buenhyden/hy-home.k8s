@@ -65,7 +65,7 @@ secret value output and live mutation are prohibited.
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: `P3-GITOPS-T-001 through Add a root child app for cluster-local ArgoCD config` is limited to these P3 GitOps Secret Runtime Remediation owners and Task-Table surfaces:
+- **Allowed Paths**: `P3-GITOPS-T-001 through P3-GITOPS-T-008` is limited to these P3 GitOps Secret Runtime Remediation owners and Task-Table surfaces:
   - `docs/04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md`
   - `docs/03.specs/006-workspace-harness-gap-analysis/spec.md`
   - `docs/04.execution/plans/2026-05-24-p3-gitops-secret-runtime-remediation.md`
@@ -83,7 +83,7 @@ secret value output and live mutation are prohibited.
   - `bash scripts/validate-k8s-manifests.sh .`
 - **Live Validation**: Only the recorded read-only P3 GitOps Secret Runtime Remediation lane (`kubectl config current-context`) is in scope; it does not authorize mutation or broaden the cited observation into readiness.
 - **Secret / Vault Handling**: The P3 GitOps Secret Runtime Remediation lane must not read, print, enumerate, move, or rewrite Vault tokens, unseal keys, Secret data, credentials, kubeconfigs, private RTK data, or shell history; operator recovery remains out of scope.
-- **Rollback Plan**: Revert the logical P3 GitOps Secret Runtime Remediation change set for `P3-GITOPS-T-001 through Add a root child app for cluster-local ArgoCD config` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Rollback Plan**: Revert the logical P3 GitOps Secret Runtime Remediation change set for `P3-GITOPS-T-001 through P3-GITOPS-T-008` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
 - **Evidence Location**: Durable P3 GitOps Secret Runtime Remediation evidence remains in:
   - `docs/04.execution/tasks/2026-05-24-p3-gitops-secret-runtime-remediation.md`
   - `docs/03.specs/006-workspace-harness-gap-analysis/spec.md`

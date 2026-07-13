@@ -66,7 +66,7 @@ approved Stage 03 spec and Stage 04 plan.
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: `T-001 through FND-004` is limited to these Template Governance Audit Enhancement owners and Task-Table surfaces:
+- **Allowed Paths**: `T-001 through T-006` is limited to these Template Governance Audit Enhancement owners and Task-Table surfaces:
   - `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
   - `docs/03.specs/012-template-governance-audit-enhancement/spec.md`
   - `docs/04.execution/plans/2026-07-03-template-governance-audit-enhancement.md`
@@ -86,7 +86,7 @@ approved Stage 03 spec and Stage 04 plan.
   - `rg -n "Phase [1-4]|during the migration|after Phase|current and target|YYYY-MM-DD-<harness-task>|duplicate-harness-task-starter" docs/99.templates/support docs/99.templates/README.md docs/00.agent-governance/rules/document-stage-routing.md scripts/validate-repo-quality-gates.sh`
 - **Live Validation**: DEFER — Template Governance Audit Enhancement is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
 - **Secret / Vault Handling**: Template Governance Audit Enhancement evidence must use public or repository-visible facts only; do not inspect or reproduce credentials, tokens, auth files, private logs, kubeconfigs, or shell history.
-- **Rollback Plan**: Revert the logical Template Governance Audit Enhancement change set for `T-001 through FND-004` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Rollback Plan**: Revert the logical Template Governance Audit Enhancement change set for `T-001 through T-006` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
 - **Evidence Location**: Durable Template Governance Audit Enhancement evidence remains in:
   - `docs/04.execution/tasks/2026-07-03-template-governance-audit-enhancement.md`
   - `docs/03.specs/012-template-governance-audit-enhancement/spec.md`

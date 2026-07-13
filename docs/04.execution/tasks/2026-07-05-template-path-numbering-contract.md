@@ -48,7 +48,7 @@ configuration are changed in TPN-001.
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: `TPN-001 through 2026-07-05` is limited to these Template Path Numbering Contract owners and Task-Table surfaces:
+- **Allowed Paths**: `TPN-001 through TPN-005` is limited to these Template Path Numbering Contract owners and Task-Table surfaces:
   - `docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md`
   - `docs/03.specs/019-template-path-numbering-contract/spec.md`
   - `docs/04.execution/plans/2026-07-05-template-path-numbering-contract.md`
@@ -64,7 +64,7 @@ configuration are changed in TPN-001.
   - `git mv`
 - **Live Validation**: DEFER — Template Path Numbering Contract is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
 - **Secret / Vault Handling**: No secret value is required for Template Path Numbering Contract; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
-- **Rollback Plan**: Revert the logical Template Path Numbering Contract change set for `TPN-001 through 2026-07-05` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Rollback Plan**: Revert the logical Template Path Numbering Contract change set for `TPN-001 through TPN-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
 - **Evidence Location**: Durable Template Path Numbering Contract evidence remains in:
   - `docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md`
   - `docs/03.specs/019-template-path-numbering-contract/spec.md`

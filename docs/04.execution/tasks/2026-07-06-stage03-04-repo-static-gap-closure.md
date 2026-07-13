@@ -152,7 +152,7 @@ and `sessions/` paths remain untouched.
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: `S34-001 through bash scripts/validate-policy-gates.sh .` is limited to these Stage 03/04 Repo-Static Gap Closure owners and Task-Table surfaces:
+- **Allowed Paths**: `S34-001 through S34-005` is limited to these Stage 03/04 Repo-Static Gap Closure owners and Task-Table surfaces:
   - `docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`
   - `docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md`
   - `docs/04.execution/plans/2026-07-06-stage03-04-repo-static-gap-closure.md`
@@ -171,7 +171,7 @@ and `sessions/` paths remain untouched.
   - `rg -n "(?i)pending|deferred|todo|in progress|not implemented|unimplemented|missing|gap|follow-?up|remaining|blocked|outstanding|future|live validation|runtime validation|not yet|next" docs/03.specs docs/04.execution/plans docs/04.execution/tasks`
 - **Live Validation**: DEFER — Stage 03/04 Repo-Static Gap Closure is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
 - **Secret / Vault Handling**: No secret value is required for Stage 03/04 Repo-Static Gap Closure; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
-- **Rollback Plan**: Revert the logical Stage 03/04 Repo-Static Gap Closure change set for `S34-001 through bash scripts/validate-policy-gates.sh .` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Rollback Plan**: Revert the logical Stage 03/04 Repo-Static Gap Closure change set for `S34-001 through S34-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
 - **Evidence Location**: Durable Stage 03/04 Repo-Static Gap Closure evidence remains in:
   - `docs/04.execution/tasks/2026-07-06-stage03-04-repo-static-gap-closure.md`
   - `docs/03.specs/023-stage03-04-repo-static-gap-closure/spec.md`

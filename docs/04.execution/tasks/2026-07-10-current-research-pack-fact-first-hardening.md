@@ -79,10 +79,9 @@ live runtime or remote readiness.
 - **Approval Required**: Human approval is required before publishing Current Research Pack Fact-First Hardening research, changing active policy/runtime behavior, deleting evidence, contacting providers, push, merge, or corpus expansion.
 - **Static Validation**: Preserve the Current Research Pack Fact-First Hardening outcomes and limitations recorded in Verification Summary; use these recorded checks:
   - `rg -n 'Owner and Authority Matrix|Enforcement and Evidence Map|Governance Gap Register|External Benchmark' docs/90.references/research/2026-07-07-wer/workspace-governance-baseline.md`
-  - `find`
   - `git rev-list --count e8a99671..HEAD`
   - `rg -n 'External Benchmark|Owner and Authority Matrix|Enforcement and Evidence Map|Governance Gap Register|2026-07-10' docs/90.references/research/2026-07-07-wer/workspace-governance-baseline.md`
-- **Live Validation**: Only the recorded read-only Current Research Pack Fact-First Hardening lane (`argocd`) is in scope; it does not authorize mutation or broaden the cited observation into readiness.
+- **Live Validation**: DEFER — no live Kubernetes, Argo CD, Vault, or ESO check ran; the preserved Verification Summary is repository-static and does not establish live readiness.
 - **Secret / Vault Handling**: Current Research Pack Fact-First Hardening evidence must use public or repository-visible facts only; do not inspect or reproduce credentials, tokens, auth files, private logs, kubeconfigs, or shell history.
 - **Rollback Plan**: Revert the logical Current Research Pack Fact-First Hardening change set for `WERH-001 through WERH-010` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
 - **Evidence Location**: Durable Current Research Pack Fact-First Hardening evidence remains in:

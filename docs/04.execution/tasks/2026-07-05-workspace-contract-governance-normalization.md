@@ -186,7 +186,7 @@ git diff --cached --check
 
 ## Approval and Safety Boundaries
 
-- **Allowed Paths**: `WCGN-001 through 2026-07-06` is limited to these Workspace Contract Governance Normalization owners and Task-Table surfaces:
+- **Allowed Paths**: `WCGN-001 through WCGN-005` is limited to these Workspace Contract Governance Normalization owners and Task-Table surfaces:
   - `docs/04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md`
   - `docs/03.specs/020-workspace-contract-governance-normalization/spec.md`
   - `docs/04.execution/plans/2026-07-05-workspace-contract-governance-normalization.md`
@@ -206,7 +206,7 @@ git diff --cached --check
   - `git diff --check`
 - **Live Validation**: DEFER — Workspace Contract Governance Normalization is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
 - **Secret / Vault Handling**: No secret value is required for Workspace Contract Governance Normalization; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
-- **Rollback Plan**: Revert the logical Workspace Contract Governance Normalization change set for `WCGN-001 through 2026-07-06` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Rollback Plan**: Revert the logical Workspace Contract Governance Normalization change set for `WCGN-001 through WCGN-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
 - **Evidence Location**: Durable Workspace Contract Governance Normalization evidence remains in:
   - `docs/04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md`
   - `docs/03.specs/020-workspace-contract-governance-normalization/spec.md`
