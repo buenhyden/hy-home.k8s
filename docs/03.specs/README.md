@@ -101,6 +101,8 @@ Spec은 실행 기준을 소유하는 문서다.
 │   └── spec.md
 ├── 032-protected-surface-supply-chain-hardening/
 │   └── spec.md
+├── 033-template-lifecycle-contract-normalization/
+│   └── spec.md
 └── README.md
 ```
 
@@ -163,6 +165,7 @@ Spec은 실행 기준을 소유하는 문서다.
 | [`./030-authored-document-migration/spec.md`](./030-authored-document-migration/spec.md)                                       | Authored document migration specification                                     | Done | reciprocal [Plan](../04.execution/plans/2026-07-12-authored-document-migration.md)과 [Task](../04.execution/tasks/2026-07-12-authored-document-migration.md)에 따라 전 문서 모집단을 wave별로 이행하고 AWS/Azure SDLC prose를 Stage 90 provider snapshot으로 통합한다.                    | 2026-07-13 |
 | [`./031-affected-surface-agent-qa/spec.md`](./031-affected-surface-agent-qa/spec.md)                                           | Affected surface and Agent QA specification                                   | Done | reciprocal [Plan](../04.execution/plans/2026-07-12-affected-surface-agent-qa.md)과 [Task](../04.execution/tasks/2026-07-12-affected-surface-agent-qa.md)에 따라 affected/staged/all-files/message/manual/CI/remote-live lane, local/Claude/Codex adapter-surface 역할 semantics, handoff evidence를 정렬하고 ASQA-001부터 ASQA-006까지 완료했다. | 2026-07-14 |
 | [`./032-protected-surface-supply-chain-hardening/spec.md`](./032-protected-surface-supply-chain-hardening/spec.md)             | Protected surface and supply-chain hardening specification                    | Done | reciprocal [Plan](../04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md)과 [Task](../04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md)에 따라 PSH-001부터 PSH-006까지 완료하고, GitHub Actions identity, workflow permissions, GitOps identity-only review, Vault/ESO 및 secret 경계의 repository-static 증거와 remote/live `DEFER`를 분리했다. | 2026-07-14 |
+| [`./033-template-lifecycle-contract-normalization/spec.md`](./033-template-lifecycle-contract-normalization/spec.md)           | Template lifecycle contract normalization specification                       | Active | Stage 99 form/support/registry 책임을 분리하고, 현재·활성 문서의 body traceability 계약과 registry-파생 검증을 추가하며 완료 이력을 보존하는 후속 명세다. | 2026-07-14 |
 
 ### Helper Templates
 
