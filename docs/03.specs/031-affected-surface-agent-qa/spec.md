@@ -1,7 +1,7 @@
 ---
 title: 'Affected Surface and Agent QA Technical Specification'
 type: sdlc/spec
-status: active
+status: done
 owner: platform
 updated: 2026-07-14
 ---
@@ -31,7 +31,10 @@ surface domain validators owned by Spec 032.
   exact-or-anchored-regex path semantics as Spec 026. Local and CI selection
   must have positive and negative fixtures derived from this owner.
 - **Data / Interface Contract**: Validation results use PASS, SKIP, FAIL, or
-  DEFER and record command, tool/version, scope, limitation, and evidence path.
+  DEFER. The owning Task records scope, changed paths, acceptance IDs, commands,
+  tool/version, per-lane result, limitations, reviewer, rollback, residual risk,
+  and next owner as defined by
+  [`quality-standards.md`](../../00.agent-governance/rules/quality-standards.md).
 - **Governance Contract**: AI agents run affected-file checks during work,
   staged checks before commit, all-files plus domain checks before completion,
   and record independent review for protected changes.
@@ -123,6 +126,10 @@ must not trigger CI; only the tracked boundary README and ignore contract do.
 ```bash
 python3 scripts/validate-affected-surfaces.py --self-test
 python3 scripts/validate-affected-surfaces.py --root .
+python3 scripts/validate-agent-role-semantics.py --self-test
+python3 scripts/validate-agent-role-semantics.py --root .
+python3 scripts/validate-agent-roster-currentness.py . --self-test
+python3 scripts/validate-agent-roster-currentness.py .
 pre-commit run --all-files
 bash scripts/validate-repo-quality-gates.sh .
 git diff --check
@@ -141,6 +148,15 @@ git diff --check
 - **VAL-SPC-005**: Workflow edits preserve the responsibility handoff: this
   tranche owns selectors/job routing, while Spec 032 owns Action references,
   permissions, and protected domain steps.
+
+### Implementation Status
+
+ASQA-001 through ASQA-006 are complete. The Stage 00 lane/result/handoff
+contract, thin provider routing, repository quality orchestration, and
+cross-provider role semantics are aligned. Independent reviewer agent
+`/root/review_adm006_adm007_conflict` approved lifecycle closure with
+`C0/H0/M0/L0`; remote CI, native provider consumption, credentials, secrets,
+and live infrastructure remain `DEFER` for their separately authorized owners.
 
 ## Traceability
 

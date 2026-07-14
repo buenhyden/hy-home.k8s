@@ -1,7 +1,7 @@
 ---
 title: 'Affected Surface and Agent QA Implementation Plan'
 type: sdlc/plan
-status: active
+status: done
 owner: platform
 updated: 2026-07-14
 ---
@@ -606,7 +606,7 @@ git commit -m "feat(agents): enforce cross-provider role semantics"
 - Consumes: canonical surface and role contracts plus all prior Task evidence.
 - Produces: thin gateway pointers, provider-neutral QA handoff semantics, and completed Spec 031 evidence.
 
-- [ ] **Step 1: Run RED governance search**
+- [x] **Step 1: Run RED governance search**
 
 ```bash
 rg -n 'pre-commit run --all-files|commit-msg|manual|PASS|SKIP|FAIL|DEFER|validation-surfaces|agent-role-semantics' \
@@ -616,26 +616,31 @@ rg -n 'pre-commit run --all-files|commit-msg|manual|PASS|SKIP|FAIL|DEFER|validat
 
 Expected: output shows incomplete lane/result/contract coverage and duplicated command wording.
 
-- [ ] **Step 2: Update canonical governance owners**
+Observed on 2026-07-14: exit `0`, 1,009 matching lines. The broad result showed
+lane/result terms and copied command wording distributed across gateways,
+provider baselines, Stage 00, and historical progress evidence; it was the RED
+inventory, not a completion result.
+
+- [x] **Step 2: Update canonical governance owners**
 
 Define affected, staged, all-files, message/manual, CI, and remote/live lanes in
 Stage 00. Define the handoff evidence fields: scope, changed paths, acceptance
 IDs, commands, tool/version, PASS/SKIP/FAIL/DEFER, limitations, reviewer,
 rollback, residual risk, and next owner.
 
-- [ ] **Step 3: Keep root/provider gateways thin**
+- [x] **Step 3: Keep root/provider gateways thin**
 
 Add only links to canonical contract/QA owners. Remove copied full command or
 path tables from gateways. State that static adapter presence is not native
 runtime-consumption evidence.
 
-- [ ] **Step 4: Integrate focused validators into repository quality**
+- [x] **Step 4: Integrate focused validators into repository quality**
 
 Invoke `validate-affected-surfaces.py` and `validate-agent-role-semantics.py`;
 remove superseded hardcoded path/semantic checks while retaining provider-native
 metadata and roster-currentness validation.
 
-- [ ] **Step 5: Run full GREEN bundle**
+- [x] **Step 5: Run full GREEN bundle**
 
 ```bash
 python3 scripts/validate-affected-surfaces.py --self-test
@@ -652,14 +657,21 @@ pre-commit run --all-files
 
 Expected: all required checks PASS; message/manual, remote/provider, and live lanes are reported separately rather than inferred.
 
-- [ ] **Step 6: Close evidence and lifecycle**
+- [x] **Step 6: Close evidence and lifecycle**
 
 Record independent reviewer identity, protected-change findings, commands,
 results, limitations, rollback commits, and residual risks in the Task. Set
 Spec, Plan, and Task to `done`, update indexes, and append the reusable contract
 handoff to `memory/progress.md`.
 
-- [ ] **Step 7: Commit**
+Independent reviewer agent `/root/review_adm006_adm007_conflict` approved
+lifecycle closure with disposition `APPROVED FOR LIFECYCLE CLOSURE
+(C0/H0/M0/L0)`. The ignored evidence package is
+`.superpowers/sdd/asqa006-provisional-review.md`; the tracked Task and progress
+ledger record its identity, result, lane boundaries, rollback unit, residual
+risk, and Spec 032 handoff.
+
+- [ ] **Step 7: Commit (controller action after this lifecycle staging proof)**
 
 ```bash
 git add AGENTS.md CLAUDE.md GEMINI.md .agents/GEMINI.md .claude/CLAUDE.md .codex/CODEX.md \
@@ -672,11 +684,11 @@ git commit -m "docs(agents): align provider qa evidence contracts"
 
 ## Completion Criteria
 
-- [ ] Every protected and validator-consumed tracked path has deterministic local and CI selection coverage.
-- [ ] Local hooks, pre-commit, and CI consume the canonical surface contract.
-- [ ] Thirty provider adapters satisfy all shared semantic categories without common model/tool metadata duplication.
-- [ ] PASS/SKIP/FAIL/DEFER and all validation lanes are documented and evidenced without overclaim.
-- [ ] Action identity, permissions, and protected behavior remain assigned to Spec 032.
+- [x] Every protected and validator-consumed tracked path has deterministic local and CI selection coverage.
+- [x] Local hooks, pre-commit, and CI consume the canonical surface contract.
+- [x] Thirty provider adapters satisfy all shared semantic categories without common model/tool metadata duplication.
+- [x] PASS/SKIP/FAIL/DEFER and all validation lanes are documented and evidenced without overclaim.
+- [x] Action identity, permissions, and protected behavior remain assigned to Spec 032.
 
 ## Traceability
 

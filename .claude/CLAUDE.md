@@ -38,7 +38,10 @@ Start from the root Claude provider shim, then follow the governance JIT sequenc
 - `.agents/` is the single source of truth for provider-neutral shared content (`skills/`, `workflows/`, `output-styles/`); `.claude/skills`, `.claude/workflows`, and `.claude/output-styles` are symlinks to it so every provider stays byte-identical. Provider-specific agents are real files per provider: `.claude/agents/*.md` (Claude models + `tools:`), `.agents/agents/*.md` (Gemini), `.codex/agents/*.toml` (GPT).
 - Workspace Structures: Use `.claude/skills/`, `.claude/agents/`, `.claude/workflows/`, `.claude/output-styles/`, `docs/00.agent-governance/hooks/`, and `docs/00.agent-governance/rules/` consistently; shared structures resolve to the `.agents/` SSoT via symlinks where applicable.
 - Verification: Implement explicit QA and CI/static validation phases prior to task completion.
-- Agent eval completion is explicit command evidence from repo-static gates, changed-file checks, or recorded human/operator approval; do not infer live runtime readiness from static validation.
+- Agent eval completion follows
+  `docs/00.agent-governance/rules/quality-standards.md`; report its validation
+  lanes, result vocabulary, and handoff fields without copying a command matrix
+  into this baseline.
 - Treat `.claude/*.local.md`, including Hookify rules, as ignored local warning files. Claude enforcement stays in `.claude/settings.json`, shared scripts, and repository validators; Codex and Gemini hook JSON files are context/validation wiring, not Claude-style permission gates. Hookify local advisory files are not shared policy.
 - Treat `docs/00.agent-governance/hooks/lifecycle-guard.sh` as the shared lifecycle validation surface wired by `.claude/settings.json`: Stop/SubagentStop may block objective repo-state failures and advise task-unit commit discipline for uncommitted tracked changes, while PreCompact reports uncommitted tracked changes, suggested validation, and the same commit discipline without blocking compaction.
 
@@ -55,8 +58,8 @@ Claude implements the shared four-element harness model from
    GitOps boundaries, template routing, and shared hooks to block unsafe live
    mutation, secret handling, model drift, and off-taxonomy documents.
 3. **Feedback loops**: treat PostToolUse and lifecycle hooks plus
-   `scripts/*.sh`, `infrastructure/tests/*.sh`, and CI as completion evidence;
-   report skipped live checks separately from repo-static validation. If a
+   canonical affected-surface selection and CI as completion evidence; report
+   each canonical lane separately. If a
    repeated error appears, update the smallest shared harness surface that
    would have prevented it instead of treating the failure as only an agent
    mistake.
@@ -86,11 +89,15 @@ Claude implements the shared four-element harness model from
 
 ## Validation and Tooling
 
-- Use `.pre-commit-config.yaml`, `.github/workflows/ci.yml`, `scripts/*.sh`, and `infrastructure/tests/*.sh` as validation sources.
-- Keep `docs/00.agent-governance/hooks/post-validate.sh` as the PostToolUse surface for scoped auto-formatting, style checks, and repository validation after file edits.
-- Keep `scripts/validate-repo-quality-gates.sh .` as the regression gate for structural template coverage, registry-selected README headings, hook wiring, lifecycle hook payload simulation, and local Hookify ignore/frontmatter checks.
-- Use `RTK.md` for shell-command guidance. If `rtk` is not on PATH, check `/home/hy/.local/bin/rtk --version`; if that works but `rtk gain` cannot initialize its tracking database, run the underlying command directly and report the PATH/DB limitation.
-- If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers. If graphify data or the `graphify` CLI is unavailable, use repo inspection and report the limitation.
+- Canonical selection: `docs/00.agent-governance/contracts/validation-surfaces.json`.
+- Canonical lane/result/handoff semantics: `docs/00.agent-governance/rules/quality-standards.md`.
+- Native permission and event wiring: `.claude/settings.json`; shared hook owner:
+  `docs/00.agent-governance/hooks/`.
+- Command and optional-tool limitations: `RTK.md`.
+
+The presence of `.claude/agents/*.md` or `.claude/settings.json` is repo-static
+evidence only. It does not prove native Claude discovery, hook delivery, or
+role consumption. Hookify local advisory files remain outside shared evidence.
 
 ## Model Hierarchy
 

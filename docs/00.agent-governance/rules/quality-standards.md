@@ -3,7 +3,7 @@ title: 'Agent Quality Standards (March 2026)'
 type: governance/reference
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Agent Quality Standards (March 2026)
@@ -43,6 +43,61 @@ Quality gates for governance and execution alignment.
 
 ## Current Contract
 
+### Validation Lane Contract
+
+`docs/00.agent-governance/contracts/validation-surfaces.json` owns path-to-
+validator and local/CI selection. This document owns how agents name and report
+the resulting lanes:
+
+- **affected**: validators selected for normalized changed paths during work.
+  Evidence names the input path set and every selected validator. An empty path
+  set or a validator with no applicable files is `SKIP`, not `PASS`.
+- **staged**: standard file hooks evaluated against the actual Git index before
+  commit. Evidence must identify the staged scope; an affected-path or
+  working-tree run cannot stand in for this lane.
+- **all-files**: all applicable file hooks plus the repository quality gate.
+  This lane does not execute or prove `commit-msg` or explicit `manual` stages.
+- **message/manual**: commit-message and explicit manual-stage checks. Report
+  each applicable check separately; do not infer it from `--all-files`.
+- **ci**: jobs deterministically selected from the affected-surface contract.
+  Local selector, workflow syntax, and static Action checks are repo-static
+  evidence only; a remote GitHub run needs its own check URL or run identity.
+- **remote/live**: provider discovery/consumption, remote execution, and
+  operator-approved Kubernetes, Argo CD, Vault, ESO, cloud, or deployment
+  verification. Without direct authorized evidence this lane is `DEFER`.
+
+### Result Vocabulary
+
+- `PASS`: the named command or check ran over the stated scope and satisfied
+  its acceptance condition.
+- `SKIP`: the lane was selected but had no applicable files, or an explicitly
+  optional tool was unavailable; record the reason and any independent
+  fallback result.
+- `FAIL`: the command ran or input validation stopped execution and the stated
+  acceptance condition was not met.
+- `DEFER`: the lane requires unavailable authority, environment, provider, or
+  remote/live evidence. `DEFER` is a visible limitation, never a pass.
+
+### Handoff Evidence Contract
+
+Every repo-changing agent handoff records the following fields in the owning
+Task or approved evidence record. A field may say `none` or `DEFER` with a
+reason, but it must not be silently omitted:
+
+- scope and changed paths;
+- acceptance IDs;
+- commands and tool/version;
+- per-lane `PASS`, `SKIP`, `FAIL`, or `DEFER` results;
+- limitations;
+- reviewer identity and review disposition;
+- rollback commit(s) or bounded rollback procedure;
+- residual risk; and
+- next owner.
+
+Static gateway, hook, or role-adapter presence proves only tracked repository
+configuration. It does not prove that Claude, Codex, Gemini, or another native
+runtime discovered, loaded, or enforced that adapter.
+
 ## Validation and Refresh
 
 ### Minimum Verification for Governance Updates
@@ -50,6 +105,8 @@ Quality gates for governance and execution alignment.
 - Structure parity with expected governance tree.
 - English-only check under `docs/00.agent-governance/`.
 - Root shim link checks for `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`.
+- Affected-surface and provider-neutral role-semantic validators pass alongside
+  provider-native metadata and roster-currentness checks.
 - Checklist references remain valid (`preflight`, `postflight`, `stage-authoring-matrix`, `stage-checklists`).
 - Diff check confirms no unintended edits outside the approved change scope.
 

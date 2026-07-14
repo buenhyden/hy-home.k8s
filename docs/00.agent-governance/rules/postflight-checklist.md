@@ -3,7 +3,7 @@ title: 'Postflight Checklist (March 2026)'
 type: governance/reference
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Postflight Checklist (March 2026)
@@ -64,15 +64,24 @@ Run this checklist before finalizing a response.
 
 ### 5. Verification Evidence
 
-- [ ] Validation commands were executed (or limitations were stated).
+- [ ] The owning Task or evidence record identifies scope, changed paths, and acceptance IDs.
+- [ ] Validation commands and tool/version were recorded (or limitations were stated).
 - [ ] Relevant outputs were reviewed.
+- [ ] `affected`, `staged`, `all-files`, `message/manual`, `ci`, and `remote/live` lanes are each reported as `PASS`, `SKIP`, `FAIL`, or `DEFER` without inference across lanes.
+- [ ] No-file and unavailable optional-tool outcomes are `SKIP`; any fallback result is recorded separately.
 - [ ] Lifecycle hook guard ran or equivalent validation commands were executed; PreCompact advisory output is not treated as completion evidence.
 - [ ] Unresolved risks are explicitly documented.
+- [ ] Reviewer identity/disposition, rollback, residual risk, and next owner are recorded.
 - [ ] No direct cluster mutation or plaintext Kubernetes secret was introduced.
 - [ ] `.claude/*.local.md` files remain ignored and untracked; Hookify local rules keep required frontmatter when present.
 - [ ] Staged and unstaged changes were reviewed for scope.
 - [ ] Unavailable tools, skipped live validation, or CI-only checks were stated.
 - [ ] `memory/progress.md` was updated with progress, reusable memory, evidence, and handoff for repo-changing work.
 - [ ] Standalone memory files, if any, used `docs/99.templates/templates/common/memory.template.md` and link back to a related `progress.md` entry.
+
+The canonical lane, result, and handoff field definitions are in
+[`quality-standards.md`](quality-standards.md). Static adapter presence is
+repo-static evidence only and must not be reported as native provider runtime
+consumption.
 
 ## Related Documents

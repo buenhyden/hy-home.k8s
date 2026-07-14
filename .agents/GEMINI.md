@@ -34,6 +34,9 @@ Start from the root Gemini provider shim, then follow the governance JIT sequenc
 - `.agents/hooks.json` provides Gemini event/context wiring where the runtime honors it. It routes to shared hook scripts for Template-First guidance and QA/CI/static validation, but it is not a Claude-style permission gate and does not replace explicit validation commands.
 - Use `RTK.md` as cross-agent SSOT for shell commands.
 - See `.agents/rules/workspace-rules.md` for Gemini-specific workspace rules and `.agents/workflows/qa-cicd-workflow.md` for QA/CI workflow steps.
+- Resolve validation lanes, result terms, and handoff evidence fields from
+  `docs/00.agent-governance/rules/quality-standards.md`; do not restate a
+  provider-local command matrix here.
 
 ## Harness Four-Element Runtime Contract
 
@@ -49,8 +52,9 @@ Gemini implements the shared four-element harness model from
    is not a Claude-style permission gate.
 3. **Feedback loops**: run explicit repo-static validation commands before
    handoff and use `.agents/hooks.json` shared script wiring as additional
-   feedback where the runtime supports it. Do not infer live k3d, ArgoCD,
-   Vault, ESO, or deployment readiness from static checks.
+   feedback where the runtime supports it. Report lanes through the canonical
+   quality contract. Do not infer live k3d, ArgoCD, Vault, ESO, or deployment
+   readiness from static checks.
 4. **Knowledge stores**: read and update
    `docs/00.agent-governance/memory/progress.md` for repo-changing work, use
    `harness-catalog.md` as current runtime truth, and route generated wiki or
@@ -69,9 +73,14 @@ Gemini implements the shared four-element harness model from
 
 ## Validation and Tooling
 
-- Use `.pre-commit-config.yaml`, `.github/workflows/ci.yml`, `scripts/*.sh`, and `infrastructure/tests/*.sh` as validation sources.
-- Run `scripts/validate-repo-quality-gates.sh .` as the repo-backed regression gate before handoff.
-- Use `RTK.md` for shell-command guidance; if `rtk` is not on PATH, check `/home/hy/.local/bin/rtk --version`. If that works but `rtk gain` cannot initialize its tracking database, run the underlying command directly and report the PATH/DB limitation.
+- Canonical selection: `docs/00.agent-governance/contracts/validation-surfaces.json`.
+- Canonical lane/result/handoff semantics: `docs/00.agent-governance/rules/quality-standards.md`.
+- Canonical command guidance and provider limitations: `RTK.md` and
+  `docs/00.agent-governance/providers/gemini.md`.
+
+The presence of `.agents/agents/*.md` or `.agents/hooks.json` is repo-static
+evidence only. It does not prove native Gemini discovery, hook delivery, or
+role consumption.
 
 ## Runtime Roster
 

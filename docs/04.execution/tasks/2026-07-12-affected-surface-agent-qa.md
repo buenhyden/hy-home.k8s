@@ -1,7 +1,7 @@
 ---
 title: 'Task: Affected Surface and Agent QA'
 type: sdlc/task
-status: active
+status: done
 owner: platform
 updated: 2026-07-14
 ---
@@ -32,12 +32,12 @@ across thirty provider adapters, and close the shared QA handoff contract.
 
 | ID | Work item | Owner | Status | Evidence |
 | --- | --- | --- | --- | --- |
-| ASQA-001 | Start reciprocal Spec, Plan, Task, unique active Stage-index lineage, and strict durable-ledger coverage | platform | Active | GREEN lineage assertion, exact fourteen-column Task ledger row, and focused strict document QA; logical commit `docs(execution): start affected surface agent qa` |
+| ASQA-001 | Start reciprocal Spec, Plan, Task, unique active Stage-index lineage, and strict durable-ledger coverage | platform | Done | GREEN lineage assertion, exact fourteen-column Task ledger row, focused strict document QA, and logical commit `0ab20d3 docs(execution): start affected surface agent qa` |
 | ASQA-002 | Define the affected-surface registry, schema, selector, and positive/negative path fixtures | platform | Done | RED empty-selector exit `1`; GREEN 19/19 surface and 630 pre-stage/635 exact-index tracked-path coverage, 21 positive paths, 4 exact selection cases, 5 rejection cases, 4 post-script/`--` boundary positives, 29 route/argv/lane/job/protection/fallback/evidence mutations, exact executable tokens, direct-script/wrapper boundaries, fail-closed interpreter-eval options and surface fallbacks, NUL/output self-tests, Python compile, strict document QA, full quality gate, and focused pre-commit; logical commit `feat(qa): define affected-surface validation contract` |
 | ASQA-003 | Drive local hooks and pre-commit lanes from validated selector output without newline path transport | platform | Done | Fixture-first RED/GREEN, 636-path tracked coverage, bounded/redacted shell-free runner evidence, three-provider hook payload/no-file/control-byte/root/symlink/alias simulations, zero pre-commit invocation on invalid input, shell/JSON/Python syntax checks, strict document QA, full quality gate, focused pre-commit, and exact thirteen-path staging; logical commit `refactor(hooks): drive local validation from affected surfaces` |
 | ASQA-004 | Select existing CI jobs from NUL-delimited changed paths and preserve Spec 032 workflow ownership | platform | Done | Fixture-first RED/GREEN for four push/PR range cases, exact selector job/GitHub-output parity, initial/zero-before fail-safe, 636-path contract coverage, canonical quality-gate and Action-inventory alignment, actionlint and zizmor PASS, protected-job digest equality, and exact eight-path staging; logical commit `ci(qa): select jobs from affected-surface registry` |
 | ASQA-005 | Enforce responsibility, output, prohibition, stop, handoff, capability-tier, and evidence semantics for ten roles and thirty adapters | platform | Done | Fixture-first RED exposed all eight unimplemented `ROLE-*` rules; GREEN validates 10 roles × 3 providers × 8 categories × remove/replace = 480 source-to-parser exact-rule mutations, 33 malformed-YAML/non-operative-Markdown adversarial cases, and 20 shared-negation-vocabulary probes, all thirty native adapters, provider-metadata exclusion, metadata/import hash invariance, roster currentness, strict document QA, full quality gate, all-files pre-commit, and exact 37-path staging; logical commit `feat(agents): enforce cross-provider role semantics` |
-| ASQA-006 | Align thin gateways, Stage 00 QA governance, repository gates, lifecycle, and independent-review evidence | platform | Draft | Full static QA bundle with lane limitations and reviewer findings; logical commit `docs(agents): align provider qa evidence contracts` |
+| ASQA-006 | Align thin gateways, Stage 00 QA governance, repository gates, lifecycle, and independent-review evidence | platform | Done | Full repository-static QA bundle, exact twenty-five-path staging, explicit lane limitations, and independent reviewer agent `/root/review_adm006_adm007_conflict` disposition `APPROVED FOR LIFECYCLE CLOSURE (C0/H0/M0/L0)`; rollback unit is logical commit `docs(agents): align provider qa evidence contracts` |
 
 The exact validation commands for each logical unit are:
 
@@ -266,7 +266,7 @@ Spec 032 handoff rather than active current inventory or ASQA-004 behavior.
 
 Later rows retain their own fixture-first RED/GREEN evidence. ASQA-002 and
 ASQA-003 reject unmatched or ambiguous paths and unsafe path transport;
-ASQA-006 must report every lane as PASS, SKIP, FAIL, or DEFER and record
+ASQA-006 reports every lane as PASS, SKIP, FAIL, or DEFER and records
 independent review before lifecycle closure.
 
 ASQA-005 began with a validator shell that emitted the exact eight unimplemented
@@ -299,6 +299,48 @@ including `false`, `not true`, invalidation, revocation/retraction/supersession,
 contradiction, non-operative status, and non-applicability. Twenty generated
 source-to-parser probes exercise every state in both directions so the three
 recognizers cannot drift independently.
+
+### ASQA-006 Completion Handoff
+
+ASQA-006, its Spec, Plan, and Task are complete. Independent reviewer agent
+`/root/review_adm006_adm007_conflict` approved lifecycle closure with
+`C0/H0/M0/L0`; the ignored review package is
+`.superpowers/sdd/asqa006-provisional-review.md`.
+
+- **Scope**: Stage 00 validation evidence governance, thin provider routing,
+  repository quality orchestration, and reciprocal Spec/Plan/Task evidence.
+- **Changed paths**: the exact twenty-five paths listed by Plan Task 6; no
+  Spec 032-owned Action identity, workflow permission, or protected-domain file.
+- **Acceptance IDs**: ASQA-006 and VAL-SPC-001 through VAL-SPC-005.
+- **Commands and tool/version**: the exact ASQA-006 command block above ran
+  with Python 3.12.3, GNU Bash 5.2.21, and pre-commit 4.5.1; strict registry,
+  Markdown-profile, and cross-document commands also ran directly.
+- **Lane results**: `affected` PASS (`640` tracked paths, `19/19` surfaces,
+  zero uncovered/ambiguous); `all-files` PASS for every applicable pre-commit
+  hook, with Dockerfile lint `SKIP` because no files matched; `staged` PASS on
+  the exact twenty-five-path index (non-applicable file-type hooks reported
+  `SKIP`); `message/manual` is `DEFER` because no commit message or explicit
+  manual-stage invocation exists; local `ci`
+  selection and static workflow checks PASS through repository quality, while
+  remote CI and provider/native `remote/live` evidence remain `DEFER`.
+- **Limitations**: repo-static files do not prove native Claude, Codex, or
+  Gemini adapter discovery/consumption, remote GitHub execution, credentials,
+  secrets, Kubernetes convergence, Argo CD, Vault, ESO, or cloud state. The
+  first staged pre-commit launch could not create the linked-worktree Git index
+  lock in the filesystem sandbox; the same command was rerun with the approved
+  Git-index permission and passed.
+- **Reviewer**: independent reviewer agent
+  `/root/review_adm006_adm007_conflict`; disposition `APPROVED FOR LIFECYCLE
+  CLOSURE (C0/H0/M0/L0)` with no protected-surface change finding.
+- **Rollback**: revert the logical ASQA-006 commit
+  `docs(agents): align provider qa evidence contracts` before any dependent
+  Spec 032 work; the controller creates that commit from this exact staged unit.
+- **Residual risk**: remote CI, provider runtime consumption, credentials,
+  secrets, and live Kubernetes/Argo CD/Vault/ESO/cloud lanes remain `DEFER`.
+- **Next owner**: Spec 032, [Protected Surface and Supply Chain
+  Hardening](../../03.specs/032-protected-surface-supply-chain-hardening/spec.md),
+  for Action identity, permissions, and protected-domain repository-static
+  hardening; remote/live owners remain separately approval-gated.
 
 ## Traceability
 

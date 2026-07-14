@@ -3,7 +3,7 @@ title: 'Reference: Local Harness Catalog'
 type: governance/reference
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Reference: Local Harness Catalog
@@ -54,11 +54,11 @@ ArgoCD health, or live cluster reconciliation completed in the current session.
 Matrix validation is a regression and structure guard for catalog shape and required
 fields. It is not semantic proof that every `Ready` claim was freshly revalidated.
 
-Report readiness evidence in separate lanes:
-
-- Repo/static readiness: local files, provider-native role-adapter contracts, command boundaries, and validation scripts.
-- CI/toolchain readiness: GitHub Actions plus local validators and optional tools such as `pre-commit`, `kube-linter`, `actionlint`, `zizmor`, `graphify`, and `rtk`.
-- Live k3d readiness: human-approved bootstrap, ArgoCD reconciliation, Kubernetes API checks, and runtime health evidence.
+Report readiness through the canonical `affected`, `staged`, `all-files`,
+`message/manual`, `ci`, and `remote/live` lanes and `PASS`/`SKIP`/`FAIL`/`DEFER`
+vocabulary in [`rules/quality-standards.md`](rules/quality-standards.md). Do not
+collapse repository, remote CI, provider consumption, or live evidence into one
+readiness claim.
 
 ## Governance Context
 
@@ -90,6 +90,7 @@ same policy in different words.
 | Model tiers and concrete IDs              | This catalog plus `model-policy.md`                                               | `.claude/agents/*.md`, `.agents/agents/*.md`, `.codex/agents/*.toml`            | Agent adapter/model checks in the quality gate                                     |
 | Shared skills, workflows, output styles   | `.agents/{skills,workflows,output-styles}/`                                       | `.claude/**` and `.codex/**` symlink views                                      | Skill mirror checks, task-to-skill routing, and `.agents/**` repo-quality triggers |
 | Hook scripts                              | `docs/00.agent-governance/hooks/*.sh`                                             | `.claude/settings.json`, `.agents/hooks.json`, `.codex/hooks.json` event wiring | Hook payload simulation and shell syntax checks                                    |
+| Validation selection and handoff evidence | `contracts/validation-surfaces.json`, `rules/quality-standards.md`                 | Local hooks, pre-commit, CI selector, provider handoffs                         | Affected-surface, role-semantic, native metadata, and roster validators             |
 | Template contract                         | `docs/99.templates/support/template-routing.md` and `docs/99.templates/README.md` | docs-stage-routing skill, provider event wiring, doc-writer agents              | Structural template coverage and README/link checks                                |
 | Work evidence                             | `docs/04.execution/tasks/**` and `memory/progress.md`                             | Provider final responses and PR descriptions                                    | Task verification summary and progress ledger                                      |
 
@@ -230,12 +231,16 @@ that can be rerun from the repository checkout.
 
 - **Capability eval**: the Task record states the intended agent behavior,
   affected paths, input boundaries, and expected evidence before handoff.
-- **Regression eval**: `scripts/validate-repo-quality-gates.sh .`,
-  `git diff --check`, JSON parsing, shell syntax, generated-index freshness,
-  and changed-file pre-commit checks protect the durable harness contract.
+- **Regression eval**: the affected-surface contract selects the applicable
+  validators; repository quality, syntax, generated-artifact, and pre-commit
+  consumers preserve their own command contracts.
 - **Completion rule**: an agent may report eval completion only from explicit
   command evidence or recorded human/operator approval. Static checks never
   imply live k3d, ArgoCD, Vault, ESO, secret, or deployment readiness.
+- **Handoff rule**: the owning Task records every field required by
+  [`rules/quality-standards.md`](rules/quality-standards.md), including each
+  validation lane and result, reviewer, rollback, residual risk, and next
+  owner.
 - **Provider boundary**: `.claude/evals` or provider-local eval directories are
   not created unless a future human request asks for that provider-local
   surface; common eval contracts live in Stage 00, Plan/Task evidence, and

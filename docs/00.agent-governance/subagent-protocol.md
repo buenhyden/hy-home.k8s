@@ -3,7 +3,7 @@ title: 'Reference: Subagent Protocol'
 type: governance/reference
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Reference: Subagent Protocol
@@ -107,6 +107,22 @@ parity relationship is validated by `scripts/validate-repo-quality-gates.sh`.
   `docs/04.execution/` for task evidence, `docs/90.references/audits/` for
   durable audits, Stage 00 governance, or Stage 99 support contracts.
 
+### Delegated Handoff Evidence
+
+- The delegating agent gives each worker a bounded scope, changed-path or
+  ownership boundary, acceptance IDs, required validation lanes, and a next
+  owner before work begins.
+- The returning worker reports the canonical fields from
+  [`rules/quality-standards.md`](rules/quality-standards.md): scope, changed
+  paths, acceptance IDs, commands, tool/version, per-lane result, limitations,
+  reviewer, rollback, residual risk, and next owner.
+- `affected`, `staged`, `all-files`, `message/manual`, `ci`, and `remote/live`
+  results remain distinct. A delegated agent must not promote another agent's
+  repo-static result into provider-runtime, remote, or live evidence.
+- Provider-native adapter files establish a reviewable repository contract;
+  their presence does not prove that the provider discovered, loaded, or
+  enforced the adapter in the delegated session.
+
 ## Validation and Refresh
 
 ## Related Documents
@@ -116,3 +132,4 @@ parity relationship is validated by `scripts/validate-repo-quality-gates.sh`.
 - [GEMINI.md](../../GEMINI.md)
 - [Claude Runtime Baseline](../../.claude/CLAUDE.md)
 - [Local Harness Catalog](./harness-catalog.md)
+- [Quality Standards and Evidence Contract](./rules/quality-standards.md)

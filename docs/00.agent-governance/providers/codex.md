@@ -3,7 +3,7 @@ title: 'Reference: Codex Provider Notes'
 type: governance/reference
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Codex Provider Notes
@@ -69,6 +69,18 @@ Checked on 2026-07-06:
 - **Symmetry**: Codex is expected to follow the same 3-provider role parity rules as Claude and Gemini while using Codex-native TOML metadata.
 - **GitOps-First**: Adhere strictly to the workspace constraints; never write plaintext secrets.
 - **Language**: Produce human-facing responses in Korean, but keep governance and policy documents in English.
+
+### QA Evidence Resolution
+
+- Resolve `affected`, `staged`, `all-files`, `message/manual`, `ci`, and
+  `remote/live` semantics plus handoff fields from
+  [`rules/quality-standards.md`](../rules/quality-standards.md).
+- Tracked `.codex/agents/*.toml` and `.codex/hooks.json` are repo-static
+  configuration. They do not prove native Codex discovery, role use, event
+  delivery, sandbox enforcement, approval handling, or remote execution.
+- Preserve Codex-native `model`, `model_reasoning_effort`, sandbox, and approval
+  validation while the provider-neutral role contract owns only shared role
+  semantics.
 
 ## Validation and Refresh
 

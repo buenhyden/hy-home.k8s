@@ -3,7 +3,7 @@ title: 'Reference: Claude Provider Notes'
 type: governance/reference
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Claude Provider Notes
@@ -68,6 +68,17 @@ Checked on 2026-07-06:
 - Use `docs/00.agent-governance/harness-catalog.md` as the canonical runtime roster.
 - Use `docs/00.agent-governance/hooks/lifecycle-guard.sh` as the shared lifecycle hook contract wired by `.claude/settings.json`: Stop/SubagentStop may block objective repo-state failures; PreCompact is advisory and must not replace validation evidence.
 - Keep `.claude/*.local.md`, including Hookify rules, as ignored local warning files only. Shared Claude enforcement stays in `.claude/settings.json`, `docs/00.agent-governance/hooks/*.sh`, and repository validators.
+
+### QA Evidence Resolution
+
+- Resolve `affected`, `staged`, `all-files`, `message/manual`, `ci`, and
+  `remote/live` semantics plus handoff fields from
+  [`rules/quality-standards.md`](../rules/quality-standards.md).
+- Tracked `.claude/agents/*.md`, `.claude/settings.json`, and shared hook wiring
+  are repo-static evidence. They do not prove native Claude discovery, hook
+  delivery, delegated role use, permission enforcement, or remote execution.
+- Preserve Claude-native `model` and least-privilege `tools:` validation while
+  the provider-neutral role contract owns only shared role semantics.
 
 ## Validation and Refresh
 

@@ -10250,3 +10250,74 @@ section separating static from live evidence.
 
 - RMD-004 repository-static closure is complete. Remote push and local merge
   remain separately approval-gated actions.
+
+## 2026-07-14 - ASQA-006 provider QA evidence alignment completed
+
+### Metadata
+
+- **Date**: 2026-07-14
+- **Layer**: agent-governance, validation, execution
+- **Status**: completed
+- **Tags**: #asqa #affected-surfaces #agent-semantics #qa-evidence #handoff
+
+### Progress
+
+- Made `rules/quality-standards.md` the canonical owner for the `affected`,
+  `staged`, `all-files`, `message/manual`, `ci`, and `remote/live` lanes, the
+  `PASS`/`SKIP`/`FAIL`/`DEFER` vocabulary, and complete handoff fields.
+- Reduced root gateways and provider/runtime baselines to canonical routing and
+  native differences. Tracked adapters now state explicitly that repo-static
+  presence does not prove native provider discovery or consumption.
+- Integrated affected-surface and agent-role semantic validators into the
+  repository quality entry point. Removed copied role-body phrase checks while
+  retaining exact ten-role native model/tool/effort, scope-import, and roster
+  validation across Claude, Codex, and Gemini.
+- Closed ASQA-001 through ASQA-006 and set Spec 031, its Plan, and its Task to
+  `done` after independent reviewer agent
+  `/root/review_adm006_adm007_conflict` approved lifecycle closure with
+  `C0/H0/M0/L0`.
+
+### Memory
+
+- Selection, semantic parity, native metadata, and runtime consumption are four
+  different claims. A common validator should own selection or shared role
+  meaning, while native metadata stays provider-owned and runtime consumption
+  remains separately evidenced.
+- `pre-commit run --all-files` cannot prove `commit-msg` or an explicit manual
+  stage. Handoffs must preserve lane-specific `SKIP` and `DEFER` rather than
+  converting absent evidence into `PASS`.
+
+### Evidence
+
+- RED governance search: exit `0`, 1,009 matching lines; the output exposed
+  distributed lane/result/command wording and served only as the drift
+  inventory.
+- Affected-surface self-test/root, role-semantic self-test/root, and roster-
+  currentness self-test/root: PASS (`19` surfaces, `640` tracked paths, `10`
+  roles, `30` adapters, `480` semantic mutations).
+- Strict registry, Markdown-profile, and cross-document validation: PASS after
+  placing execution evidence under profile-allowed headings.
+- Repository quality gate: PASS with the focused validators invoked at its
+  blocking entry point. `pre-commit run --all-files` PASS for every applicable
+  hook; Dockerfile lint was a no-file `SKIP`. Staged `pre-commit run` PASS on
+  the exact twenty-five-path index; non-applicable file-type hooks were `SKIP`.
+  The first sandboxed staged launch could not create the linked-worktree index
+  lock, and the identical approved Git-index run passed.
+- Tool baseline: Python 3.12.3, GNU Bash 5.2.21, pre-commit 4.5.1.
+
+### Handoff
+
+- Reviewer: independent reviewer agent
+  `/root/review_adm006_adm007_conflict`; disposition `APPROVED FOR LIFECYCLE
+  CLOSURE (C0/H0/M0/L0)`, recorded in ignored evidence package
+  `.superpowers/sdd/asqa006-provisional-review.md`.
+- Rollback unit: logical commit
+  `docs(agents): align provider qa evidence contracts`; revert it before any
+  dependent Spec 032 work.
+- Remote CI, native provider consumption, credentials, secrets, and live
+  Kubernetes/Argo CD/Vault/ESO/cloud evidence remain `DEFER`. No Spec 032
+  Action identity, permissions, workflow behavior, protected-domain file,
+  remote mutation, or live mutation was changed.
+- Next owner: Spec 032 for Action identity, permissions, and protected-domain
+  repository-static hardening; remote/live work remains separately
+  approval-gated.

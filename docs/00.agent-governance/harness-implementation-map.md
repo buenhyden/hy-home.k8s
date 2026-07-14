@@ -98,6 +98,18 @@ where is the evidence recorded?_
 | Path contract | `contracts/validation-surfaces.json`, adjacent schema | Map one normalized tracked path to exactly one surface, argv validators, lanes, CI jobs, protection, fallback, and evidence class | `python3 scripts/validate-affected-surfaces.py --root .` | Spec 031 Task |
 | Selector and fixture | `scripts/select-affected-surfaces.py`, `tests/fixtures/validation-surfaces.json` | Preserve NUL path records, compare push/PR range cases to exact CI job booleans, and emit deterministic JSON or GitHub output without shell evaluation or first-match precedence | `python3 scripts/validate-affected-surfaces.py --self-test` | Spec 031 Task |
 
+### Agent Role and QA Evidence
+
+| Surface | Source | Role | Required Validation | Evidence |
+| --- | --- | --- | --- | --- |
+| Role semantics | `contracts/agent-role-semantics.json`, adjacent schema, thirty provider adapters | Own provider-neutral responsibility, output, prohibition, stop, handoff, capability-tier, and evidence claims without copying model/tool/effort metadata | `python3 scripts/validate-agent-role-semantics.py --self-test` and `--root .` | Spec 031 Task |
+| Native adapter metadata and roster | Provider-native adapters, `harness-catalog.md` | Preserve provider-owned model/tool/effort fields, exact ten-role stems, thirty adapters, and scope imports | repository quality gate plus roster-currentness validator | Spec 031 Task |
+| Lane, result, and handoff contract | `rules/quality-standards.md`, `rules/postflight-checklist.md` | Define `affected`, `staged`, `all-files`, `message/manual`, `ci`, `remote/live`; require `PASS`/`SKIP`/`FAIL`/`DEFER` and complete handoff fields | postflight review and repository quality gate | owning Task and `memory/progress.md` |
+
+Tracked gateway, hook, and role-adapter files are repository configuration.
+They are not evidence that a native provider discovered, loaded, or enforced
+those files; provider-runtime evidence remains a separate lane.
+
 ### Evidence / Progress
 
 | Surface         | Source                                                     | Role                                 | Required Validation | Evidence   |

@@ -3,7 +3,7 @@ title: 'Reference: Gemini Provider Notes'
 type: governance/reference
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Gemini Provider Notes
@@ -78,6 +78,17 @@ and output styles.
 - Keep user-facing responses in Korean.
 - Keep governance and technical control docs in English.
 - Use `docs/00.agent-governance/harness-catalog.md` as the canonical runtime roster.
+
+### QA Evidence Resolution
+
+- Resolve `affected`, `staged`, `all-files`, `message/manual`, `ci`, and
+  `remote/live` semantics plus handoff fields from
+  [`rules/quality-standards.md`](../rules/quality-standards.md).
+- Tracked `.agents/agents/*.md` and `.agents/hooks.json` are repo-static
+  configuration. They do not prove native Gemini discovery, role use, event
+  delivery, permission enforcement, or remote execution.
+- Preserve Gemini-native model metadata and runtime wiring validation while the
+  provider-neutral role contract owns only shared role semantics.
 
 ## Validation and Refresh
 

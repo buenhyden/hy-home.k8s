@@ -171,7 +171,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-07-12-readme-workspace-profiles.md`](./2026-07-12-readme-workspace-profiles.md) | Completed RWP-001 through RWP-006 evidence for 72 path-derived README profiles, five cloud handoffs, and the `_workspace` boundary. | Done | 2026-07-12 |
 | [`./2026-07-12-semantic-document-validation.md`](./2026-07-12-semantic-document-validation.md) | SMDV-001 through SMDV-004 execution evidence for registry-driven document and cross-document validation. | Done | 2026-07-12 |
 | [`./2026-07-12-authored-document-migration.md`](./2026-07-12-authored-document-migration.md) | ADM-001 through ADM-007 execution evidence for durable inventory, authored-document normalization, cloud consolidation, and strict cutover. | Done | 2026-07-13 |
-| [`./2026-07-12-affected-surface-agent-qa.md`](./2026-07-12-affected-surface-agent-qa.md) | ASQA-001 through ASQA-006 execution evidence for reciprocal lineage, affected-surface selection, local/CI parity, and cross-provider role semantics under the parent [Spec](../../03.specs/031-affected-surface-agent-qa/spec.md) and [Plan](../plans/2026-07-12-affected-surface-agent-qa.md). | Active | 2026-07-14 |
+| [`./2026-07-12-affected-surface-agent-qa.md`](./2026-07-12-affected-surface-agent-qa.md) | Completed ASQA-001 through ASQA-006 execution evidence for reciprocal lineage, affected-surface selection, local/CI parity, cross-provider role semantics, and Stage 00 QA handoff under the parent [Spec](../../03.specs/031-affected-surface-agent-qa/spec.md) and [Plan](../plans/2026-07-12-affected-surface-agent-qa.md). | Done | 2026-07-14 |
 
 ## Related Documents
 

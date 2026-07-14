@@ -3,7 +3,7 @@ title: 'Reference: AGENTS.md Provider Notes'
 type: governance/reference
 status: draft
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # AGENTS.md Provider Notes
@@ -60,6 +60,17 @@ Codex sessions consume the `AGENTS.md` gateway and the local `.codex/CODEX.md` b
 - Durable policy and governance belong under `docs/00.agent-governance/**`.
 - This repository does **not** use GitHub-native instruction files such as `.github/copilot-instructions.md` or `.github/instructions/**/*.instructions.md`.
 - If GitHub tooling needs guidance, it must be routed through the existing gateway model instead of adding a parallel instruction hierarchy.
+
+### QA Evidence Resolution
+
+- `AGENTS.md` points to, but does not restate, the validation lane, result, and
+  handoff contract in [`rules/quality-standards.md`](../rules/quality-standards.md).
+- A tracked `AGENTS.md`, `.codex/agents/*.toml`, or `.codex/hooks.json` proves
+  repository configuration only. Codex discovery, context loading, delegated
+  role use, and event delivery require separate native-runtime evidence.
+- The affected-surface and agent-role semantic validators provide repo-static
+  selection and content evidence; provider-native model, effort, sandbox, and
+  approval semantics remain with Codex-owned surfaces.
 
 ## Validation and Refresh
 

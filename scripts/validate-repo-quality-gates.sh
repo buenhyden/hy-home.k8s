@@ -27,6 +27,8 @@ python3 "$ROOT_DIR/scripts/validate-markdown-profiles.py" --root "$ROOT_DIR" --m
 python3 "$ROOT_DIR/scripts/validate-links-and-owners.py" --root "$ROOT_DIR" --mode strict
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --self-test
 python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --root "$ROOT_DIR"
+python3 "$ROOT_DIR/scripts/validate-agent-role-semantics.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-agent-role-semantics.py" --root "$ROOT_DIR"
 
 python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" \
   "$ROOT_DIR" --self-test
@@ -3668,13 +3670,6 @@ for stem in sorted(set(claude_agents) - set(gemini_agents)):
 for stem in sorted(set(gemini_agents) - set(claude_agents)):
     fail(f"Gemini agent adapter has no Claude peer: .agents/agents/{stem}.md")
 
-runtime_contract_phrases = [
-    "## Runtime Bootstrap",
-    "bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight",
-    "## Guardrails",
-    "## Handoff / Escalation",
-    "postflight-checklist.md",
-]
 expected_codex_agent_models = {
     "supervisor": ("gpt-5.5", "xhigh"),
     "code-reviewer": ("gpt-5.3-codex", "high"),
@@ -3682,6 +3677,8 @@ expected_codex_agent_models = {
     "gitops-reviewer": ("gpt-5.3-codex", "high"),
     "incident-responder": ("gpt-5.3-codex", "high"),
     "k8s-implementer": ("gpt-5.3-codex", "high"),
+    "network-reviewer": ("gpt-5.3-codex", "high"),
+    "observability-reviewer": ("gpt-5.3-codex", "high"),
     "security-auditor": ("gpt-5.3-codex", "high"),
     "wiki-curator": ("gpt-5.3-codex", "medium"),
 }
@@ -3692,6 +3689,8 @@ expected_claude_agent_models = {
     "gitops-reviewer": "sonnet 4.6",
     "incident-responder": "sonnet 4.6",
     "k8s-implementer": "sonnet 4.6",
+    "network-reviewer": "sonnet 4.6",
+    "observability-reviewer": "sonnet 4.6",
     "security-auditor": "sonnet 4.6",
     "wiki-curator": "sonnet 4.6",
 }
@@ -3702,6 +3701,8 @@ expected_claude_agent_tools = {
     "gitops-reviewer": "Read, Grep, Glob, Bash",
     "incident-responder": "Read, Grep, Glob, Bash",
     "k8s-implementer": "Read, Write, Edit, Grep, Glob, Bash",
+    "network-reviewer": "Read, Grep, Glob, Bash",
+    "observability-reviewer": "Read, Grep, Glob, Bash",
     "security-auditor": "Read, Grep, Glob, Bash",
     "wiki-curator": "Read, Write, Edit, Grep, Glob, Bash",
 }
@@ -3716,11 +3717,8 @@ for stem, claude_path in sorted(claude_agents.items()):
     expected_claude_tools = expected_claude_agent_tools.get(stem)
     if expected_claude_tools and normalize_tools(claude_metadata.get("tools")) != expected_claude_tools:
         fail(f"{rel(claude_path)} tools must be {expected_claude_tools!r}")
-    for phrase in runtime_contract_phrases:
-        if phrase not in claude_text:
-            fail(f"{rel(claude_path)} missing runtime contract phrase: {phrase}")
-
     codex_path = codex_agents.get(stem)
+    gemini_path = gemini_agents.get(stem)
     if not codex_path:
         continue
     codex_text = read_text(codex_path)
@@ -3738,21 +3736,28 @@ for stem, claude_path in sorted(claude_agents.items()):
             fail(f"{rel(codex_path)} model must be {expected_model!r}")
         if codex_data.get("model_reasoning_effort") != expected_effort:
             fail(f"{rel(codex_path)} model_reasoning_effort must be {expected_effort!r}")
-    for phrase in runtime_contract_phrases:
-        if phrase not in codex_text:
-            fail(f"{rel(codex_path)} missing runtime contract phrase: {phrase}")
-    if extract_scope_imports(claude_text) != extract_scope_imports(codex_text):
-        fail(f"scope import mismatch between {rel(claude_path)} and {rel(codex_path)}")
-
-    if stem == "wiki-curator":
-        for phrase in [
-            "canonical owners without duplicating policy",
-            "Do not create vector stores",
-            "Target LLM Wiki path or generator command",
-            "Keep policy and procedure changes in their canonical owner files",
-        ]:
-            if phrase not in claude_text or phrase not in codex_text:
-                fail(f"wiki-curator mirror missing core guardrail phrase: {phrase}")
+    if not gemini_path:
+        continue
+    gemini_text = read_text(gemini_path)
+    gemini_metadata = load_markdown_frontmatter(gemini_path)
+    if gemini_metadata.get("name") != stem:
+        fail(f"{rel(gemini_path)} name must match file stem: {stem}")
+    expected_gemini_model = "Gemini 3.1 Pro" if stem == "supervisor" else "Gemini 3.5 Flash"
+    if gemini_metadata.get("model") != expected_gemini_model:
+        fail(f"{rel(gemini_path)} model must be {expected_gemini_model!r}")
+    provider_scope_imports = {
+        "claude": extract_scope_imports(claude_text),
+        "codex": extract_scope_imports(codex_text),
+        "gemini": extract_scope_imports(gemini_text),
+    }
+    if len({tuple(imports) for imports in provider_scope_imports.values()}) != 1:
+        fail(
+            f"scope import mismatch for role {stem}: "
+            + ", ".join(
+                f"{provider}={imports!r}"
+                for provider, imports in sorted(provider_scope_imports.items())
+            )
+        )
 
 harness_catalog_path = root / "docs/00.agent-governance/harness-catalog.md"
 harness_catalog_text = read_text(harness_catalog_path)
