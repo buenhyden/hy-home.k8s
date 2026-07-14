@@ -6,50 +6,50 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/03.specs/<###-Numbering>-<feature-id>/tests.md -->
-
 # [Feature Name] Test & Evaluation Strategy
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: identify the system under test, risks, and required confidence. -->
 
 ## Verification Goals
 
-<!-- Describe the topic-specific verification goals without copying template guidance. -->
+<!-- Author prompt: map product and specification risks to measurable test goals. -->
 
 ## TDD Scope
 
-<!-- Describe the topic-specific tdd scope without copying template guidance. -->
+<!-- Author prompt: define RED, GREEN, and refactor boundaries for testable changes. -->
 
 ## Test Matrix
 
-<!-- Describe the topic-specific test matrix without copying template guidance. -->
+<!-- Author prompt: cover behavior, layer, environment, owner, and evidence for each risk. -->
 
 ## Contract & Integration Tests
 
-<!-- Describe the topic-specific contract & integration tests without copying template guidance. -->
+<!-- Author prompt: define producer-consumer, compatibility, and dependency-boundary checks. -->
 
 ## Non-Functional Tests
 
-<!-- Describe the topic-specific non-functional tests without copying template guidance. -->
+<!-- Author prompt: specify security, resilience, performance, and accessibility checks as applicable. -->
 
 ## Fixtures / Datasets
 
-<!-- Describe the topic-specific fixtures / datasets without copying template guidance. -->
+<!-- Author prompt: define representative, minimal, non-secret fixtures and cleanup rules. -->
 
 ## How to Run
 
-<!-- Describe the topic-specific how to run without copying template guidance. -->
+<!-- Author prompt: give reproducible commands, prerequisites, and expected outcomes. -->
 
 ## Evidence & Reporting
 
-<!-- Describe the topic-specific evidence & reporting without copying template guidance. -->
+<!-- Author prompt: define result vocabulary, durable evidence, triage, and reviewer handoff. -->
 
 ## Traceability
 
-<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->
+<!-- Author prompt: map product requirements to test criteria and verification methods. -->
+
+### Lifecycle Traceability
+
+| PRD requirement | Spec criterion | Verification method |
+| --- | --- | --- |
+| REQ-FEATURE-001 | VAL-FEATURE-001 | Named test matrix row and evidence location |

@@ -2,20 +2,20 @@
 
 ## Overview
 
-<!-- Summarize the repository purpose, primary users, and authority boundary. -->
+<!-- Author prompt: summarize the repository purpose, primary users, and authority boundary. -->
 
 ## Repository Map
 
-<!-- List the top-level areas readers need and link to each path relative to the final README location. -->
+<!-- Author prompt: map the top-level areas readers need with target-relative links. -->
 
 ## Getting Started
 
-<!-- Give the shortest verified path from checkout to a useful local result; route detailed policy or operations to its canonical owner. -->
+<!-- Author prompt: give the shortest verified path from checkout to a useful local result. -->
 
 ## Validation
 
-<!-- List repository-static commands and distinguish them from approved live or remote checks. -->
+<!-- Author prompt: list repository-static checks and separate live or remote evidence. -->
 
 ## Related Documents
 
-<!-- Link canonical governance, architecture, execution, and operations owners using targets recalculated from the final README location. -->
+<!-- Author prompt: link canonical governance, architecture, execution, and operations owners. -->

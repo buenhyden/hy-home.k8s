@@ -6,34 +6,28 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/00.agent-governance/<topic>.md -->
-
 # [Governance Topic] Governance Reference
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: name the governed concern, intended reader, and current outcome. -->
 
 ## Authority Boundary
 
-<!-- Describe the topic-specific authority boundary without copying template guidance. -->
+<!-- Author prompt: distinguish this authority from adjacent contracts and runtime state. -->
 
 ## Governance Context
 
-<!-- Describe the topic-specific governance context without copying template guidance. -->
+<!-- Author prompt: state the decisions, constraints, and evidence that shape this contract. -->
 
 ## Current Contract
 
-<!-- Describe the topic-specific current contract without copying template guidance. -->
+<!-- Author prompt: write enforceable responsibilities and boundaries for this topic. -->
 
 ## Validation and Refresh
 
-<!-- Describe the topic-specific validation and refresh without copying template guidance. -->
+<!-- Author prompt: define deterministic checks, refresh triggers, and evidence limits. -->
 
 ## Related Documents
 
-<!-- Link only the canonical related owners using paths relative to the authored document. -->
+<!-- Author prompt: link canonical upstream, downstream, and validation owners. -->

@@ -1,7 +1,3 @@
-# Target: docs/03.specs/<###-Numbering>-<feature-id>/contracts/schema.graphql
-# Owner docs from target directory:
-# - Parent spec: ../spec.md
-# - API spec: ../api-spec.md
 schema {
   query: Query
 }

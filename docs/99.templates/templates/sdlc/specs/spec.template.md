@@ -6,54 +6,54 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/03.specs/<###-Numbering>-<feature-id>/spec.md -->
-
 # [Feature Name] Technical Specification (Spec)
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: identify the implemented capability, consumers, and verification outcome. -->
 
 ## Strategic Boundaries & Non-goals
 
-<!-- Describe the topic-specific strategic boundaries & non-goals without copying template guidance. -->
+<!-- Author prompt: define authorized scope, protected surfaces, and explicit non-goals. -->
 
 ## Contracts
 
-<!-- Describe the topic-specific contracts without copying template guidance. -->
+<!-- Author prompt: state externally observable behavior, invariants, and authority boundaries. -->
 
 ## Core Design
 
-<!-- Describe the topic-specific core design without copying template guidance. -->
+<!-- Author prompt: explain components, control flow, state transitions, and key tradeoffs. -->
 
 ## Data Modeling & Storage Strategy
 
-<!-- Describe the topic-specific data modeling & storage strategy without copying template guidance. -->
+<!-- Author prompt: define data shape, ownership, persistence, lifecycle, and migration. -->
 
 ## Interfaces & Data Structures
 
-<!-- Describe the topic-specific interfaces & data structures without copying template guidance. -->
+<!-- Author prompt: specify inputs, outputs, schemas, versioning, and compatibility. -->
 
 ## Edge Cases & Error Handling
 
-<!-- Describe the topic-specific edge cases & error handling without copying template guidance. -->
+<!-- Author prompt: map boundary conditions to deterministic errors and recovery behavior. -->
 
 ## Failure Modes & Fallback / Human Escalation
 
-<!-- Describe the topic-specific failure modes & fallback / human escalation without copying template guidance. -->
+<!-- Author prompt: define fail-safe behavior, rollback, degraded operation, and escalation. -->
 
 ## Verification Commands
 
-<!-- List deterministic commands and expected results for this topic; distinguish unavailable or live checks. -->
+<!-- Author prompt: list deterministic commands, expected results, and explicit evidence limits. -->
 
 ## Success Criteria & Verification Plan
 
-<!-- Define measurable acceptance criteria and the evidence that proves each criterion. -->
+<!-- Author prompt: assign stable criterion IDs and name evidence that proves each one. -->
 
 ## Traceability
 
-<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->
+<!-- Author prompt: map product requirements to specification criteria and verification evidence. -->
+
+### Lifecycle Traceability
+
+| PRD requirement | Spec criterion | Verification method |
+| --- | --- | --- |
+| REQ-FEATURE-001 | VAL-FEATURE-001 | Named unit, contract, integration, or review evidence |

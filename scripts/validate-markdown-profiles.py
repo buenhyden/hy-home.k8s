@@ -52,7 +52,16 @@ COMPATIBILITY_PATH = Path(
     "tests/fixtures/document-contracts/template-compatibility.json"
 )
 OWNER = "markdown-profile-validator"
-GENERIC_RESIDUE = ("Target: docs/", "Use this template")
+AUTHOR_PROMPT_MARKER = "Author prompt:"
+AUTHOR_PROMPT_COMMENT = re.compile(r"(?m)^[ \t]*<!-- Author prompt:")
+GENERIC_RESIDUE = (
+    "Target: docs/",
+    "Use this template",
+    "Replace every placeholder with researched, topic-specific content.",
+)
+STARTER_PLACEHOLDER = re.compile(
+    r"\[[^\]\n]+\]|\{[^}\n]+\}|<[^>\n]+>|#{3,}"
+)
 TOKEN_BEARING_DEBT_RULES = frozenset(
     {
         "BODY-H2-DUPLICATE",
@@ -69,8 +78,10 @@ IMPLEMENTED_RULE_IDS = frozenset(
         "APPEND-PARENT-PROFILE",
         "APPEND-SECTION-LEVEL",
         "APPEND-SECTION-REQUIRED",
+        "BODY-AUTHOR-PROMPT",
         "BODY-FENCE-UNCLOSED",
         "BODY-H1",
+        "BODY-H1-PLACEHOLDER",
         "BODY-H2-DUPLICATE",
         "BODY-HEADING-EMPTY",
         "BODY-HEADING-REQUIRED",
@@ -86,6 +97,7 @@ IMPLEMENTED_RULE_IDS = frozenset(
         "FM-OWNER",
         "FM-STATUS",
         "FM-TITLE",
+        "FM-TITLE-PLACEHOLDER",
         "FM-TYPE",
         "README_FENCE",
         "README_FRONTMATTER",
@@ -220,6 +232,45 @@ def scan_headings(markdown: str) -> HeadingScan:
         title = re.sub(r"[ \t]+#+[ \t]*$", "", match.group(2).strip()).strip()
         headings.append((len(match.group(1)), title))
     return HeadingScan(tuple(headings), fence_character is not None)
+
+
+def text_outside_fenced_code(markdown: str) -> str:
+    """Return source outside fenced blocks while preserving HTML comments."""
+
+    visible: list[str] = []
+    fence_character: str | None = None
+    fence_length = 0
+    opening = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+    for raw_line in markdown.splitlines():
+        if fence_character is not None:
+            closing = re.compile(
+                rf"^ {{0,3}}{re.escape(fence_character)}"
+                rf"{{{fence_length},}}[ \t]*$"
+            )
+            if closing.fullmatch(raw_line):
+                fence_character = None
+                fence_length = 0
+            visible.append("")
+            continue
+        match = opening.match(raw_line)
+        if match:
+            marker = match.group(1)
+            if marker[0] == "`" and "`" in match.group(2):
+                visible.append(raw_line)
+                continue
+            fence_character = marker[0]
+            fence_length = len(marker)
+            visible.append("")
+            continue
+        visible.append(raw_line)
+    return "\n".join(visible)
+
+
+def starter_placeholder(value: str) -> str | None:
+    """Return one unresolved starter token from a title or H1."""
+
+    match = STARTER_PLACEHOLDER.search(value)
+    return match.group(0) if match else None
 
 
 def empty_required_h2_sections(
@@ -394,6 +445,21 @@ def _frontmatter_body(
         diagnostics.append(_diagnostic("FM-OWNER", path, profile, "platform", str(data["owner"])))
     if "title" in data and (not isinstance(data["title"], str) or not data["title"].strip()):
         diagnostics.append(_diagnostic("FM-TITLE", path, profile, "a non-empty string", type(data["title"]).__name__ if not isinstance(data["title"], str) else "empty"))
+    elif (
+        "title" in data
+        and profile.placeholder_policy == "forbidden"
+        and isinstance(data["title"], str)
+        and (placeholder := starter_placeholder(data["title"])) is not None
+    ):
+        diagnostics.append(
+            _diagnostic(
+                "FM-TITLE-PLACEHOLDER",
+                path,
+                profile,
+                "a topic-specific title without starter delimiters",
+                placeholder,
+            )
+        )
     if "updated" in data:
         _validate_date(diagnostics, path, profile, "updated", data["updated"], today)
     if "archived_on" in data:
@@ -471,6 +537,19 @@ def _body_diagnostics(
     if len(h1) != 1:
         rule = "README_H1" if readme else "BODY-H1"
         diagnostics.append(_diagnostic(rule, path, profile, "exactly one H1", json.dumps(h1)))
+    elif (
+        profile.placeholder_policy == "forbidden"
+        and (placeholder := starter_placeholder(h1[0])) is not None
+    ):
+        diagnostics.append(
+            _diagnostic(
+                "BODY-H1-PLACEHOLDER",
+                path,
+                profile,
+                "a topic-specific H1 without starter delimiters",
+                placeholder,
+            )
+        )
     missing = [heading for heading in profile.headings.required if heading not in h2]
     required_rule = "README_H2_REQUIRED" if readme else "BODY-HEADING-REQUIRED"
     diagnostics.extend(_diagnostic(required_rule, path, profile, "required H2", heading) for heading in missing)
@@ -496,8 +575,19 @@ def _body_diagnostics(
     unsupported_rule = "README_H2_UNSUPPORTED" if readme else "BODY-HEADING-UNSUPPORTED"
     diagnostics.extend(_diagnostic(unsupported_rule, path, profile, "allowed H2", heading) for heading in h2 if heading not in represented)
     if profile.placeholder_policy == "forbidden":
+        residue_source = text_outside_fenced_code(body)
+        for _ in AUTHOR_PROMPT_COMMENT.finditer(residue_source):
+            diagnostics.append(
+                _diagnostic(
+                    "BODY-AUTHOR-PROMPT",
+                    path,
+                    profile,
+                    "authored content without template author prompts",
+                    AUTHOR_PROMPT_MARKER,
+                )
+            )
         for marker in GENERIC_RESIDUE:
-            for _ in range(body.count(marker)):
+            for _ in range(residue_source.count(marker)):
                 diagnostics.append(_diagnostic("BODY-TEMPLATE-RESIDUE", path, profile, "authored content without legacy/template residue", marker))
     return diagnostics
 
@@ -1403,6 +1493,13 @@ def _self_test(root: Path) -> list[str]:
         "unsupported-h2",
         "template-residue",
         "unclosed-fence",
+        "placeholder-frontmatter-title",
+        "placeholder-h1-title",
+        "authored-author-prompt",
+        "authored-legacy-target-marker",
+        "authored-retired-shared-paragraph",
+        "fenced-starter-examples-allowed",
+        "template-starters-allowed",
     }
     if not required_named_cases.issubset(named_cases):
         failures.append("required named mutation cases are incomplete")

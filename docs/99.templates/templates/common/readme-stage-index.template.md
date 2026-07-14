@@ -2,20 +2,20 @@
 
 ## Overview
 
-<!-- Explain this stage's reader job and the artifacts it contains. -->
+<!-- Author prompt: explain this stage's reader job and the artifacts it contains. -->
 
 ## Stage Contract
 
-<!-- Summarize what belongs here and link the lifecycle and authoring contract owner relative to the final README location. -->
+<!-- Author prompt: define stage ownership and link its lifecycle contract. -->
 
 ## Document Index
 
-<!-- Inventory the current child documents or collections with target-relative links and concise roles. -->
+<!-- Author prompt: inventory current documents or collections with concise links. -->
 
 ## Authoring Workflow
 
-<!-- Describe how readers add, find, and hand off artifacts without duplicating governance rules. -->
+<!-- Author prompt: describe the add, discovery, and handoff workflow through canonical rules. -->
 
 ## Related Documents
 
-<!-- Link upstream, downstream, governance, and template owners using paths recalculated from the final README location. -->
+<!-- Author prompt: link upstream, downstream, governance, and form owners. -->

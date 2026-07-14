@@ -6,62 +6,62 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md -->
-
 # [Feature Name] Agent Design
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: identify the agent outcome, consumer, and bounded autonomy. -->
 
 ## Scope & Non-goals
 
-<!-- Describe the topic-specific scope & non-goals without copying template guidance. -->
+<!-- Author prompt: define authorized actions, protected surfaces, and explicit non-goals. -->
 
 ## Agent Role
 
-<!-- Describe the topic-specific agent role without copying template guidance. -->
+<!-- Author prompt: state responsibilities, decision rights, and handoff obligations. -->
 
 ## Inputs / Outputs
 
-<!-- Describe the topic-specific inputs / outputs without copying template guidance. -->
+<!-- Author prompt: define typed inputs, outputs, provenance, and failure responses. -->
 
 ## Orchestration Model
 
-<!-- Describe the topic-specific orchestration model without copying template guidance. -->
+<!-- Author prompt: describe sequencing, delegation, checkpoints, and termination conditions. -->
 
 ## Tools & Permissions
 
-<!-- Describe the topic-specific tools & permissions without copying template guidance. -->
+<!-- Author prompt: list allowed tools, least privileges, approval gates, and external actions. -->
 
 ## Prompt / Policy Contract
 
-<!-- Describe the topic-specific prompt / policy contract without copying template guidance. -->
+<!-- Author prompt: state instruction precedence, invariant policies, and ambiguity handling. -->
 
 ## Context & Memory Strategy
 
-<!-- Describe the topic-specific context & memory strategy without copying template guidance. -->
+<!-- Author prompt: define context sources, retention limits, refresh, and non-secret memory. -->
 
 ## Guardrails
 
-<!-- Describe the topic-specific guardrails without copying template guidance. -->
+<!-- Author prompt: make safety, security, quality, and stop conditions testable. -->
 
 ## Failure Modes & Fallback
 
-<!-- Describe the topic-specific failure modes & fallback without copying template guidance. -->
+<!-- Author prompt: map failures to fallback, retry, rollback, or human escalation. -->
 
 ## Evaluation Plan
 
-<!-- Describe the topic-specific evaluation plan without copying template guidance. -->
+<!-- Author prompt: define representative evals, thresholds, regressions, and reviewers. -->
 
 ## Observability
 
-<!-- Describe the topic-specific observability without copying template guidance. -->
+<!-- Author prompt: define non-secret signals, evidence retention, and operator visibility. -->
 
 ## Traceability
 
-<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->
+<!-- Author prompt: map product requirements to agent criteria and verification evidence. -->
+
+### Lifecycle Traceability
+
+| PRD requirement | Spec criterion | Verification method |
+| --- | --- | --- |
+| REQ-FEATURE-001 | VAL-FEATURE-001 | Named evaluation, test, or review evidence |

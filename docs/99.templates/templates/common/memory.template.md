@@ -6,30 +6,24 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/00.agent-governance/memory/<topic>.md -->
-
 # Memory: <short-title>
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Problem
 
-<!-- Describe the topic-specific problem without copying template guidance. -->
+<!-- Author prompt: capture one recurring repository-scoped failure or ambiguity. -->
 
 ## Context
 
-<!-- Describe the topic-specific context without copying template guidance. -->
+<!-- Author prompt: record the conditions and evidence needed to recognize recurrence. -->
 
 ## Resolution
 
-<!-- Describe the topic-specific resolution without copying template guidance. -->
+<!-- Author prompt: state the smallest proven resolution and its boundary. -->
 
 ## Prevention
 
-<!-- Describe the topic-specific prevention without copying template guidance. -->
+<!-- Author prompt: name the durable check or practice that prevents repetition. -->
 
 ## Related Progress
 
-<!-- Describe the topic-specific related progress without copying template guidance. -->
+<!-- Author prompt: link the progress entry that created or refreshed this memory. -->

@@ -6,42 +6,46 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/05.operations/runbooks/####-<topic>.md -->
-
 # [Topic Name] Runbook
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: state the operational objective, bounded system, and safe end state. -->
 
 ## Runbook Type
 
-<!-- Describe the topic-specific runbook type without copying template guidance. -->
+<!-- Author prompt: classify the procedure as diagnostic, recovery, maintenance, or verification. -->
 
 ## When to Use
 
-<!-- Describe the topic-specific when to use without copying template guidance. -->
+<!-- Author prompt: define triggers, prerequisites, permissions, and stop conditions. -->
 
 ## Procedure or Checklist
 
-<!-- Describe the topic-specific procedure or checklist without copying template guidance. -->
+<!-- Author prompt: make every action, expected result, and escalation boundary observable. -->
+
+| Step | Action | Expected result | Stop / escalate when |
+| --- | --- | --- | --- |
+| 1 | Perform one bounded operation. | State the observable safe result. | State the failure or ambiguity that stops execution. |
 
 ## Verification Steps
 
-<!-- Describe the topic-specific verification steps without copying template guidance. -->
+<!-- Author prompt: prove completion with deterministic checks and named evidence. -->
 
 ## Observability and Evidence Sources
 
-<!-- Describe the topic-specific observability and evidence sources without copying template guidance. -->
+<!-- Author prompt: name approved metrics, logs, events, and evidence retention locations. -->
 
 ## Safe Rollback or Recovery Procedure
 
-<!-- Describe the topic-specific safe rollback or recovery procedure without copying template guidance. -->
+<!-- Author prompt: give bounded rollback steps, recovery checks, and human escalation. -->
 
 ## Traceability
 
-<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->
+<!-- Author prompt: map promoted authority, trigger or control, and evidence or recovery ownership. -->
+
+### Lifecycle Traceability
+
+| Promoted owner | Trigger or control | Evidence or recovery owner |
+| --- | --- | --- |
+| Policy, Specification, or Task owner | Named trigger or control | Named evidence or recovery owner |

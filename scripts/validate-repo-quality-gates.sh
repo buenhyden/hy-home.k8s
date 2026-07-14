@@ -1278,6 +1278,83 @@ if (markdown_form_count, native_form_count) != (27, 3):
         "registry-derived form inventory must contain 27 Markdown and three native forms: "
         f"actual={(markdown_form_count, native_form_count)}"
     )
+
+
+def canonical_form_content_errors(
+    form_sources: dict[pathlib.PurePosixPath, str],
+) -> list[str]:
+    errors = []
+    retired_markers = (
+        "Target: " + "docs/",
+        "Owner docs from target directory",
+        "Replace every placeholder",
+        "Describe the topic-specific",
+    )
+    author_comment = re.compile(r"<!-- Author prompt: [^\n]+ -->")
+    markdownlint_directive = "<!-- markdownlint-disable-file MD033 MD041 -->"
+    for form_path, source in sorted(form_sources.items(), key=lambda item: str(item[0])):
+        for marker in retired_markers:
+            if marker in source:
+                errors.append(f"{form_path} contains retired form residue: {marker}")
+        if form_path.suffix != ".md":
+            continue
+        for match in re.finditer(r"<!--.*?-->", source, re.DOTALL):
+            comment = match.group(0)
+            if comment == markdownlint_directive or author_comment.fullmatch(comment):
+                continue
+            errors.append(f"{form_path} contains a non-author form comment")
+
+    for profile_id, form_path in registry_form_owners:
+        profile = registry_profiles_by_id[profile_id]
+        contract = profile.body_contract
+        if contract is None:
+            continue
+        source = form_sources[form_path]
+        table_heading = f"### {contract.table_heading}"
+        table_header = "| " + " | ".join(contract.required_columns) + " |"
+        if source.count(table_heading) != 1 or source.count(table_header) != 1:
+            errors.append(
+                f"{form_path} must contain one exact registry-owned lifecycle table"
+            )
+    return errors
+
+
+form_sources = {
+    form_path: read_text(root / form_path) for form_path in physical_form_paths
+}
+for error in canonical_form_content_errors(form_sources):
+    fail(error)
+
+# Form-focused mutations keep retired route prose, generic comments, and
+# registry-table drift inside the aggregate repository gate without extending
+# authored-document semantic enforcement ahead of the lifecycle-table tranche.
+spec_form = pathlib.PurePosixPath(
+    "docs/99.templates/templates/sdlc/specs/spec.template.md"
+)
+native_form = pathlib.PurePosixPath(
+    "docs/99.templates/templates/sdlc/specs/openapi.template.yaml"
+)
+form_content_mutations = []
+retired_mutation = dict(form_sources)
+retired_mutation[spec_form] += "\n<!-- Target: " + "docs/example.md -->\n"
+form_content_mutations.append(("retired route residue", retired_mutation))
+comment_mutation = dict(form_sources)
+comment_mutation[spec_form] = comment_mutation[spec_form].replace(
+    "<!-- Author prompt:", "<!-- Generic prompt:", 1
+)
+form_content_mutations.append(("generic form comment", comment_mutation))
+table_mutation = dict(form_sources)
+table_mutation[spec_form] = table_mutation[spec_form].replace(
+    "### Lifecycle Traceability", "### Drifted Traceability", 1
+)
+form_content_mutations.append(("lifecycle table drift", table_mutation))
+native_mutation = dict(form_sources)
+native_mutation[native_form] = "# Owner docs from target directory\n" + native_mutation[native_form]
+form_content_mutations.append(("native owner comment", native_mutation))
+for label, mutation in form_content_mutations:
+    if not canonical_form_content_errors(mutation):
+        fail(f"canonical form content mutation accepted {label}")
+
 template_support_root = root / "docs/99.templates/support"
 support_stale_patterns = [
     (re.compile(r"Phase [1-4]"), "migration phase wording"),

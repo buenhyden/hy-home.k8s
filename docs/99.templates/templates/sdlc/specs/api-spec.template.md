@@ -6,58 +6,58 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md -->
-
 # [API Name] Specification
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: identify API consumers, capability, and compatibility boundary. -->
 
 ## Scope & Non-goals
 
-<!-- Describe the topic-specific scope & non-goals without copying template guidance. -->
+<!-- Author prompt: define included operations, excluded behaviors, and ownership limits. -->
 
 ## API Style
 
-<!-- Describe the topic-specific api style without copying template guidance. -->
+<!-- Author prompt: state protocol, interaction style, versioning, and idempotency rules. -->
 
 ## Authentication & Authorization
 
-<!-- Describe the topic-specific authentication & authorization without copying template guidance. -->
+<!-- Author prompt: define identities, authorization decisions, and credential boundaries. -->
 
 ## Endpoint / Operation Catalog
 
-<!-- Describe the topic-specific endpoint / operation catalog without copying template guidance. -->
+<!-- Author prompt: inventory operations with purpose, actor, and stability. -->
 
 ## Request / Response Schemas
 
-<!-- Describe the topic-specific request / response schemas without copying template guidance. -->
+<!-- Author prompt: define required fields, constraints, examples, and sensitive data handling. -->
 
 ## Error Model
 
-<!-- Describe the topic-specific error model without copying template guidance. -->
+<!-- Author prompt: make error codes, retryability, and consumer recovery deterministic. -->
 
 ## Data Contract Compatibility
 
-<!-- Describe the topic-specific data contract compatibility without copying template guidance. -->
+<!-- Author prompt: state backward compatibility, deprecation, and migration rules. -->
 
 ## Non-Functional Requirements
 
-<!-- Describe the topic-specific non-functional requirements without copying template guidance. -->
+<!-- Author prompt: define measurable latency, availability, capacity, and audit requirements. -->
 
 ## Machine-readable Contract Files
 
-<!-- Describe the topic-specific machine-readable contract files without copying template guidance. -->
+<!-- Author prompt: link the canonical native contract and generated-artifact boundary. -->
 
 ## Verification
 
-<!-- Describe the topic-specific verification without copying template guidance. -->
+<!-- Author prompt: map operations and schemas to contract, integration, and security tests. -->
 
 ## Traceability
 
-<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->
+<!-- Author prompt: map product requirements to API criteria and verification evidence. -->
+
+### Lifecycle Traceability
+
+| PRD requirement | Spec criterion | Verification method |
+| --- | --- | --- |
+| REQ-FEATURE-001 | VAL-FEATURE-001 | Named contract, integration, or security test |

@@ -6,50 +6,50 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md -->
-
 # Postmortem: [Incident Title]
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: summarize the learning outcome and retrospective scope. -->
 
 ## Incident Link and Impact Summary
 
-<!-- Describe the topic-specific incident link and impact summary without copying template guidance. -->
+<!-- Author prompt: link the incident fact record and restate only confirmed impact. -->
 
 ## Root Cause Analysis
 
-<!-- Describe the topic-specific root cause analysis without copying template guidance. -->
+<!-- Author prompt: distinguish root causes from symptoms using evidence-backed analysis. -->
 
 ## Contributing Factors
 
-<!-- Describe the topic-specific contributing factors without copying template guidance. -->
+<!-- Author prompt: record technical, process, and organizational contributors without blame. -->
 
 ## What Went Well
 
-<!-- Describe the topic-specific what went well without copying template guidance. -->
+<!-- Author prompt: identify controls or response behaviors that reduced impact. -->
 
 ## What Went Wrong
 
-<!-- Describe the topic-specific what went wrong without copying template guidance. -->
+<!-- Author prompt: identify failed assumptions, controls, detection, or coordination. -->
 
 ## Action Items
 
-<!-- Describe the topic-specific action items without copying template guidance. -->
+<!-- Author prompt: assign each prevention action an owner, due state, Task, and evidence. -->
 
 ## Prevention and Verification
 
-<!-- Describe the topic-specific prevention and verification without copying template guidance. -->
+<!-- Author prompt: define how actions will prevent recurrence and how closure is verified. -->
 
 ## Documentation Feedback Loop
 
-<!-- Describe the topic-specific documentation feedback loop without copying template guidance. -->
+<!-- Author prompt: route learning to requirements, decisions, specifications, guides, or policies. -->
 
 ## Traceability
 
-<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->
+<!-- Author prompt: map causes or actions to owners, follow-up Tasks, and feedback targets. -->
+
+### Lifecycle Traceability
+
+| Root cause or action | Owner and due state | Follow-up Task | Feedback target |
+| --- | --- | --- | --- |
+| Evidence-backed cause or prevention action | owner / due date / state | Task owner | Requirement, ADR, Spec, Guide, or Policy owner |

@@ -10,16 +10,16 @@
 
 #### Progress
 
-<!-- Record concrete work, affected paths, and bounded follow-up ownership. -->
+<!-- Author prompt: record completed work, affected paths, and bounded follow-up ownership. -->
 
 #### Memory
 
-<!-- Record reusable, non-secret, repository-scoped lessons. -->
+<!-- Author prompt: capture reusable, non-secret lessons from this work. -->
 
 #### Evidence
 
-<!-- List validation commands, results, reviewer evidence, and explicit SKIP/DEFER reasons. -->
+<!-- Author prompt: list commands, outcomes, reviewer evidence, and explicit SKIP or DEFER reasons. -->
 
 #### Handoff
 
-<!-- State the next required action or None. -->
+<!-- Author prompt: state the next action and owner, or None. -->

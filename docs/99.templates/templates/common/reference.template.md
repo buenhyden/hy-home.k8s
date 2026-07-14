@@ -6,42 +6,36 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/90.references/<category>/<topic>.md -->
-
 # Reference: [Item Name]
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: identify the referenced subject, reader need, and observation boundary. -->
 
 ## Reference Type
 
-<!-- Describe the topic-specific reference type without copying template guidance. -->
+<!-- Author prompt: classify this as research, snapshot, glossary, or evidence reference. -->
 
 ## Authority Boundary
 
-<!-- Describe the topic-specific authority boundary without copying template guidance. -->
+<!-- Author prompt: state what this reference can and cannot establish. -->
 
 ## Scope
 
-<!-- Describe the topic-specific scope without copying template guidance. -->
+<!-- Author prompt: define included questions, exclusions, and time boundary. -->
 
 ## Definitions / Facts
 
-<!-- Describe the topic-specific definitions / facts without copying template guidance. -->
+<!-- Author prompt: record source-backed definitions or facts needed by downstream work. -->
 
 ## Sources
 
-<!-- Describe the topic-specific sources without copying template guidance. -->
+<!-- Author prompt: cite primary sources with observation dates and local adoption notes. -->
 
 ## Review and Freshness
 
-<!-- Describe the topic-specific review and freshness without copying template guidance. -->
+<!-- Author prompt: state refresh triggers, staleness risks, and current-truth owner. -->
 
 ## Related Documents
 
-<!-- Link only the canonical related owners using paths relative to the authored document. -->
+<!-- Author prompt: link canonical consumers, successor evidence, and source ledgers. -->

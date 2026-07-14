@@ -6,50 +6,50 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/03.specs/<###-Numbering>-<feature-id>/data-model.md -->
-
 # [Feature Name] Data Model
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: identify the domain, data owners, and modeled capability. -->
 
 ## Scope & Non-goals
 
-<!-- Describe the topic-specific scope & non-goals without copying template guidance. -->
+<!-- Author prompt: define modeled data, excluded domains, and consistency boundary. -->
 
 ## Entities / Aggregates
 
-<!-- Describe the topic-specific entities / aggregates without copying template guidance. -->
+<!-- Author prompt: define identity, ownership, lifecycle, and aggregate boundaries. -->
 
 ## Relationships
 
-<!-- Describe the topic-specific relationships without copying template guidance. -->
+<!-- Author prompt: describe cardinality, ownership, referential behavior, and traversal needs. -->
 
 ## Schema / Structures
 
-<!-- Describe the topic-specific schema / structures without copying template guidance. -->
+<!-- Author prompt: define fields, types, nullability, defaults, and evolution markers. -->
 
 ## Validation & Integrity Rules
 
-<!-- Describe the topic-specific validation & integrity rules without copying template guidance. -->
+<!-- Author prompt: make invariants, uniqueness, concurrency, and rejection behavior testable. -->
 
 ## Storage Strategy
 
-<!-- Describe the topic-specific storage strategy without copying template guidance. -->
+<!-- Author prompt: state persistence, indexing, partitioning, retention, and backup assumptions. -->
 
 ## Privacy / Security
 
-<!-- Describe the topic-specific privacy / security without copying template guidance. -->
+<!-- Author prompt: classify data and define access, encryption, minimization, and audit needs. -->
 
 ## Migration & Compatibility
 
-<!-- Describe the topic-specific migration & compatibility without copying template guidance. -->
+<!-- Author prompt: define compatible changes, rollout, rollback, and data verification. -->
 
 ## Traceability
 
-<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->
+<!-- Author prompt: map product requirements to data criteria and verification evidence. -->
+
+### Lifecycle Traceability
+
+| PRD requirement | Spec criterion | Verification method |
+| --- | --- | --- |
+| REQ-FEATURE-001 | VAL-FEATURE-001 | Named schema, migration, or integrity test |

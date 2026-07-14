@@ -6,34 +6,28 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/99.templates/support/<topic>.md -->
-
 # [Template Topic] Support Contract
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: identify the governed form concern and its current outcome. -->
 
 ## Purpose
 
-<!-- Describe the topic-specific purpose without copying template guidance. -->
+<!-- Author prompt: explain why this support contract exists for authors or validators. -->
 
 ## Owned Contract
 
-<!-- Describe the topic-specific owned contract without copying template guidance. -->
+<!-- Author prompt: state the unique rules owned here and route machine facts to the registry. -->
 
 ## Authoring Rules
 
-<!-- Describe the topic-specific authoring rules without copying template guidance. -->
+<!-- Author prompt: give actionable authoring procedure without copying route inventories. -->
 
 ## Validation Contract
 
-<!-- Describe the topic-specific validation contract without copying template guidance. -->
+<!-- Author prompt: name deterministic checks, expected evidence, and non-live limits. -->
 
 ## Related Documents
 
-<!-- Link only the canonical related owners using paths relative to the authored document. -->
+<!-- Author prompt: link the registry, adjacent support owners, and affected form family. -->

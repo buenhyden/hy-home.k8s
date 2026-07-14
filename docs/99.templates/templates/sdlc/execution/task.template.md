@@ -6,29 +6,23 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md -->
-
 # Task: [Task Name]
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: identify the bounded execution stream and its completion evidence. -->
 
 ## Inputs
 
-<!-- Describe the topic-specific inputs without copying template guidance. -->
+<!-- Author prompt: link the approved Plan, Spec, decisions, and required evidence inputs. -->
 
 ## Task Table
 
-<!-- Add only executable work items derived from the parent Plan/Spec. -->
+<!-- Author prompt: keep one row per executable item and update result and evidence as work advances. -->
 
-| ID | Work item | Owner | Status | Evidence |
-| --- | --- | --- | --- | --- |
-| `<task-id>` | `<bounded change>` | platform | draft | `<evidence path>` |
+| ID | Upstream criterion | Work item | Owner | Status | Result | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| WORK-001 | VAL-FEATURE-001 | One bounded change | platform | Queued | Not executed | Named repository evidence |
 
 ## Approval and Safety Boundaries
 
@@ -41,14 +35,18 @@ from its final location. -->
 - **Rollback Plan**: `<reversible steps or commit>`
 - **Evidence Location**: `<durable repository path>`
 
-<!-- When applicable, add GitOps Impact, Kubernetes Impact, and
-Operations / Runbook Impact as fields in this section. Do not claim
-live convergence from repository-static evidence. -->
+<!-- Author prompt: add GitOps, Kubernetes, or Runbook impact fields only when applicable. -->
 
 ## Verification Summary
 
-<!-- Describe the topic-specific verification summary without copying template guidance. -->
+<!-- Author prompt: summarize per-lane outcomes, limitations, review disposition, and residual risk. -->
 
 ## Traceability
 
-<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->
+<!-- Author prompt: map each criterion or work item to its result and durable evidence. -->
+
+### Lifecycle Traceability
+
+| Criterion / work item | Result | Evidence |
+| --- | --- | --- |
+| WORK-001 | State the observed result. | Name the test, review, or commit evidence. |

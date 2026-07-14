@@ -6,38 +6,38 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/02.architecture/decisions/####-<short-title>.md -->
-
 # ADR-####: [Short Title]
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: summarize the decision, decision state, and affected boundary. -->
 
 ## Context
 
-<!-- Describe the topic-specific context without copying template guidance. -->
+<!-- Author prompt: state the forces, constraints, and evidence that require one decision. -->
 
 ## Decision
 
-<!-- Describe the topic-specific decision without copying template guidance. -->
+<!-- Author prompt: record one decision precisely enough for downstream implementation. -->
 
 ## Explicit Non-goals
 
-<!-- Describe the topic-specific explicit non-goals without copying template guidance. -->
+<!-- Author prompt: name concerns deliberately excluded from this decision. -->
 
 ## Consequences
 
-<!-- Describe the topic-specific consequences without copying template guidance. -->
+<!-- Author prompt: record positive, negative, and operational consequences. -->
 
 ## Alternatives
 
-<!-- Describe the topic-specific alternatives without copying template guidance. -->
+<!-- Author prompt: compare credible alternatives and why they were not selected. -->
 
 ## Traceability
 
-<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->
+<!-- Author prompt: map decision lineage, replacement state, and affected specifications. -->
+
+### Lifecycle Traceability
+
+| Decision lineage | Replacement relation | Affected Spec |
+| --- | --- | --- |
+| Architecture owner | Supersedes ADR-#### or N/A — first decision | Specification owner |

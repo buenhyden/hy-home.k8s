@@ -6,42 +6,42 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md -->
-
 # Incident: [Incident Title]
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: summarize the observed event, current state, and response boundary. -->
 
 ## Incident Metadata
 
-<!-- Describe the topic-specific incident metadata without copying template guidance. -->
+<!-- Author prompt: record incident ID, severity, owners, start time, and declared state. -->
 
 ## Impact
 
-<!-- Describe the topic-specific impact without copying template guidance. -->
+<!-- Author prompt: state affected users, services, duration, and confirmed limits. -->
 
 ## Timeline
 
-<!-- Describe the topic-specific timeline without copying template guidance. -->
+<!-- Author prompt: record timestamped observations, decisions, and actions without retrospective inference. -->
 
 ## Response State
 
-<!-- Describe the topic-specific response state without copying template guidance. -->
+<!-- Author prompt: track active roles, mitigations, escalation, and next checkpoint. -->
 
 ## Evidence
 
-<!-- Describe the topic-specific evidence without copying template guidance. -->
+<!-- Author prompt: link non-secret logs, metrics, changes, and preserved artifacts. -->
 
 ## Follow-up Actions
 
-<!-- Describe the topic-specific follow-up actions without copying template guidance. -->
+<!-- Author prompt: create owned follow-up Tasks without performing root-cause analysis here. -->
 
 ## Traceability
 
-<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->
+<!-- Author prompt: map timeline actions and evidence to follow-up Task ownership. -->
+
+### Lifecycle Traceability
+
+| Timeline or action | Evidence | Follow-up Task |
+| --- | --- | --- |
+| Timestamped observation or response action | Named incident evidence | Task owner or N/A — no follow-up required |

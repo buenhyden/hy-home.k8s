@@ -2,24 +2,24 @@
 
 ## Overview
 
-<!-- Define this ignored, temporary, non-secret repository-support staging surface. -->
+<!-- Author prompt: define this temporary, non-secret repository-support surface. -->
 
 ## Permitted Artifacts
 
-<!-- List the bounded temporary repo-support artifacts that may be staged here. -->
+<!-- Author prompt: list bounded temporary artifacts allowed in this staging area. -->
 
 ## Forbidden Local State
 
-<!-- List credentials, authentication material, shell history, diagnostics, secret-bearing logs, and other private local state that must remain outside. -->
+<!-- Author prompt: list private state and secret-bearing artifacts that must remain outside. -->
 
 ## Promotion and Cleanup
 
-<!-- Route durable outcomes to their canonical repository destinations and require cleanup when no durable destination exists. -->
+<!-- Author prompt: route durable outcomes to canonical destinations and define cleanup. -->
 
 ## Tracking Rules
 
-<!-- State the tracked README-only and ignored-child boundary without inspecting private ignored contents. -->
+<!-- Author prompt: state the tracked-index and ignored-child boundary. -->
 
 ## Related Documents
 
-<!-- Link staging governance, execution evidence, reference, and template owners using paths recalculated from the final README location. -->
+<!-- Author prompt: link staging governance, execution evidence, references, and form owners. -->

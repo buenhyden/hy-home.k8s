@@ -2,24 +2,24 @@
 
 ## Overview
 
-<!-- Explain the component purpose, supported use, and repository-backed authority boundary. -->
+<!-- Author prompt: explain the component purpose, supported use, and authority boundary. -->
 
 ## Structure
 
-<!-- Inventory implementation areas and entrypoints with links relative to the final README location. -->
+<!-- Author prompt: inventory implementation areas and entrypoints with target-relative links. -->
 
 ## Configuration Boundary
 
-<!-- Identify configuration owners, inputs, and protected or external state without exposing secret values. -->
+<!-- Author prompt: identify configuration owners, inputs, and protected external state. -->
 
 ## Validation
 
-<!-- List deterministic component checks and label live, remote, or optional-tool evidence accurately. -->
+<!-- Author prompt: list deterministic checks and label live or remote evidence limits. -->
 
 ## Operations
 
-<!-- Route setup, rollout, recovery, and troubleshooting to the canonical scripts, guides, or runbooks. -->
+<!-- Author prompt: route setup, rollout, recovery, and troubleshooting to canonical owners. -->
 
 ## Related Documents
 
-<!-- Link architecture, specifications, operations, and governance owners using paths recalculated from the final README location. -->
+<!-- Author prompt: link architecture, specification, operations, and governance owners. -->

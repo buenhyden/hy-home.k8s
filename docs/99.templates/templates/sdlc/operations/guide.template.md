@@ -6,38 +6,38 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/05.operations/guides/####-<topic>.md -->
-
 # [Topic Name] Guide
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: state the reader outcome and the operating surface covered. -->
 
 ## Guide Type
 
-<!-- Describe the topic-specific guide type without copying template guidance. -->
+<!-- Author prompt: choose how-to, tutorial, or concept and make the body match that intent. -->
 
 ## Target Audience
 
-<!-- Describe the topic-specific target audience without copying template guidance. -->
+<!-- Author prompt: identify reader role, assumed access, and prior knowledge. -->
 
 ## Prerequisites
 
-<!-- Describe the topic-specific prerequisites without copying template guidance. -->
+<!-- Author prompt: list verified inputs, tools, permissions, and safe starting state. -->
 
 ## Step-by-step Instructions
 
-<!-- Describe the topic-specific step-by-step instructions without copying template guidance. -->
+<!-- Author prompt: write reader-tested steps with observable outcomes. -->
 
 ## Common Pitfalls
 
-<!-- Describe the topic-specific common pitfalls without copying template guidance. -->
+<!-- Author prompt: explain likely mistakes, symptoms, and safe recovery routes. -->
 
 ## Traceability
 
-<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->
+<!-- Author prompt: map the promoted owner to the reader outcome and operating surface. -->
+
+### Lifecycle Traceability
+
+| Promoted owner | Audience outcome | Operating surface |
+| --- | --- | --- |
+| Specification or Task owner | State the reader outcome. | Name the system, workflow, or concept covered. |

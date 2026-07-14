@@ -2,24 +2,24 @@
 
 ## Overview
 
-<!-- Identify the snapshot subject, audience, and observation boundary. -->
+<!-- Author prompt: identify the snapshot subject, audience, and observation boundary. -->
 
 ## Snapshot Contract
 
-<!-- Record the observation date, baseline revision when known, current or historical role, and non-authoritative limits. -->
+<!-- Author prompt: record observation date, baseline, lifecycle role, and authority limits. -->
 
 ## Report Index
 
-<!-- Inventory every report in the pack with concise roles and target-relative links. -->
+<!-- Author prompt: inventory each report with its role and target-relative link. -->
 
 ## Refresh and Succession
 
-<!-- State the refresh trigger, successor or resolution path, and who owns current truth. -->
+<!-- Author prompt: state refresh triggers, succession path, and current-truth owner. -->
 
 ## Evidence Boundary
 
-<!-- Separate repository-static and external-source evidence from live, provider-latest, credential, or secret readiness. -->
+<!-- Author prompt: separate observed evidence from live, provider, credential, or secret readiness. -->
 
 ## Related Documents
 
-<!-- Link the pack index, current successor, source ledger, and follow-up owner using paths recalculated from the final README location. -->
+<!-- Author prompt: link the pack index, successor, source ledger, and follow-up owner. -->

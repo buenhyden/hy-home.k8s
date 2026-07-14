@@ -6,50 +6,54 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/01.requirements/<###-Numbering>-<feature-or-system>.md -->
-
 # [Feature or System Name] Product Requirements
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: summarize the product outcome, users, and requirement boundary. -->
 
 ## Vision
 
-<!-- Describe the topic-specific vision without copying template guidance. -->
+<!-- Author prompt: describe the durable user or operator outcome this work enables. -->
 
 ## Problem Statement
 
-<!-- Describe the topic-specific problem statement without copying template guidance. -->
+<!-- Author prompt: use evidence to state the current problem and cost of leaving it unresolved. -->
 
 ## Personas
 
-<!-- Describe the topic-specific personas without copying template guidance. -->
+<!-- Author prompt: identify affected roles, goals, constraints, and decision authority. -->
 
 ## Key Use Cases
 
-<!-- Describe the topic-specific key use cases without copying template guidance. -->
+<!-- Author prompt: describe observable user journeys without prescribing architecture. -->
 
 ## Functional Requirements
 
-<!-- Describe the topic-specific functional requirements without copying template guidance. -->
+<!-- Author prompt: assign stable IDs to verifiable capabilities and constraints. -->
+
+| Requirement ID | Requirement | Priority | Verification intent |
+| --- | --- | --- | --- |
+| REQ-FEATURE-001 | State one testable product requirement. | Must | Name the observable acceptance evidence. |
 
 ## Success / Acceptance Criteria
 
-<!-- Describe the topic-specific success / acceptance criteria without copying template guidance. -->
+<!-- Author prompt: define measurable conditions that establish product success. -->
 
 ## Scope and Non-goals
 
-<!-- Describe the topic-specific scope and non-goals without copying template guidance. -->
+<!-- Author prompt: separate authorized scope from explicit non-goals and future options. -->
 
 ## Risks, Dependencies, and Assumptions
 
-<!-- Describe the topic-specific risks, dependencies, and assumptions without copying template guidance. -->
+<!-- Author prompt: record product risks, dependencies, assumptions, and validation owners. -->
 
 ## Traceability
 
-<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->
+<!-- Author prompt: map each requirement to its acceptance criterion and downstream owner. -->
+
+### Lifecycle Traceability
+
+| Requirement ID | Acceptance criterion | Downstream owner |
+| --- | --- | --- |
+| REQ-FEATURE-001 | State one measurable acceptance condition. | Architecture or Specification owner |

@@ -10,38 +10,32 @@ archive_reason: superseded
 replacement: docs/<replacement-path>.md
 ---
 
-<!-- Target: docs/98.archive/<original-docs-subpath>.md -->
-
 # Archive Tombstone: [Original Document Title]
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: identify what was retired and where current readers should go. -->
 
 ## Original Document
 
-<!-- Describe the topic-specific original document without copying template guidance. -->
+<!-- Author prompt: summarize the former authority and its last valid scope. -->
 
 ## Archive Decision
 
-<!-- Describe the topic-specific archive decision without copying template guidance. -->
+<!-- Author prompt: record the dated reason and approving evidence for retirement. -->
 
 ## Current Replacement
 
-<!-- Describe the topic-specific current replacement without copying template guidance. -->
+<!-- Author prompt: link the successor, or explain why no replacement exists. -->
 
 ## Current Implementation Evidence
 
-<!-- Describe the topic-specific current implementation evidence without copying template guidance. -->
+<!-- Author prompt: cite repository evidence showing that the old surface is no longer current. -->
 
 ## Archive Index
 
-<!-- Describe the topic-specific archive index without copying template guidance. -->
+<!-- Author prompt: link the archive collection that inventories this tombstone. -->
 
 ## Related Documents
 
-<!-- Link only the canonical related owners using paths relative to the authored document. -->
+<!-- Author prompt: link only canonical lineage and replacement owners. -->

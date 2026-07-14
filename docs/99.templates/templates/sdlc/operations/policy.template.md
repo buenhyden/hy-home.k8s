@@ -6,42 +6,54 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/05.operations/policies/####-<policy-or-standard>.md -->
-
 # [Policy or Standard Name] Operations Policy
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: state the policy objective, accountable audience, and authority boundary. -->
 
 ## Policy Scope
 
-<!-- Describe the topic-specific policy scope without copying template guidance. -->
+<!-- Author prompt: define controlled systems, environments, and exclusions. -->
 
 ## Applies To
 
-<!-- Describe the topic-specific applies to without copying template guidance. -->
+<!-- Author prompt: name responsible roles, affected assets, and enforcement contexts. -->
 
 ## Controls
 
-<!-- Describe the topic-specific controls without copying template guidance. -->
+<!-- Author prompt: separate control intent and accountability from procedural implementation. -->
+
+### Responsibilities
+
+| Role | Responsibility | Escalation owner |
+| --- | --- | --- |
+| Accountable role | State one policy responsibility. | Named escalation owner |
+
+### Control Register
+
+| Control | Accountable role | Enforcement surface | Evidence |
+| --- | --- | --- | --- |
+| CTRL-001 | Accountable role | Validator, review, or platform boundary | Named control evidence |
 
 ## Exceptions
 
-<!-- Describe the topic-specific exceptions without copying template guidance. -->
+<!-- Author prompt: define exception approval, expiry, compensating control, and evidence. -->
 
 ## Verification
 
-<!-- Describe the topic-specific verification without copying template guidance. -->
+<!-- Author prompt: map each control to deterministic or approved live verification. -->
 
 ## Review Cadence
 
-<!-- Describe the topic-specific review cadence without copying template guidance. -->
+<!-- Author prompt: state review owner, trigger, cadence, and retirement condition. -->
 
 ## Traceability
 
-<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->
+<!-- Author prompt: map promoted authority, control owner, and enforcement surface. -->
+
+### Lifecycle Traceability
+
+| Promoted owner | Control owner | Enforcement surface |
+| --- | --- | --- |
+| Specification or Task owner | Named accountable role | Validator, review, or platform boundary |

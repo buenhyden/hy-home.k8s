@@ -6,38 +6,38 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/02.architecture/requirements/####-<system-or-domain>.md -->
-
 # [System or Domain Name] Architecture Reference Document (ARD)
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: identify the architecture subject, stakeholders, and current boundary. -->
 
 ## Boundaries & Non-goals
 
-<!-- Describe the topic-specific boundaries & non-goals without copying template guidance. -->
+<!-- Author prompt: define system boundaries, external dependencies, and explicit non-goals. -->
 
 ## Quality Attributes
 
-<!-- Describe the topic-specific quality attributes without copying template guidance. -->
+<!-- Author prompt: make quality attributes measurable and link each to a requirement. -->
 
 ## System Overview & Context
 
-<!-- Describe the topic-specific system overview & context without copying template guidance. -->
+<!-- Author prompt: describe components, actors, trust boundaries, and major interactions. -->
 
 ## Data Architecture
 
-<!-- Describe the topic-specific data architecture without copying template guidance. -->
+<!-- Author prompt: state data ownership, flow, retention, and integrity constraints. -->
 
 ## Infrastructure & Deployment
 
-<!-- Describe the topic-specific infrastructure & deployment without copying template guidance. -->
+<!-- Author prompt: define deployment topology, configuration owners, and failure boundaries. -->
 
 ## Traceability
 
-<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->
+<!-- Author prompt: map requirements and boundaries to the decisions or specifications that own them. -->
+
+### Lifecycle Traceability
+
+| Upstream requirement | Quality attribute or boundary | ADR / Spec |
+| --- | --- | --- |
+| REQ-FEATURE-001 | Name one measurable attribute or architecture boundary. | ADR or Specification owner |

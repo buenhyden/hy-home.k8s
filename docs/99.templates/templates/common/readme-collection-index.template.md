@@ -2,20 +2,20 @@
 
 ## Overview
 
-<!-- Explain the collection's focused purpose and intended readers. -->
+<!-- Author prompt: explain this collection's reader job and focused purpose. -->
 
 ## Scope
 
-<!-- State what the collection includes and excludes; route normative rules to their canonical owner. -->
+<!-- Author prompt: define included artifacts, exclusions, and the governing owner. -->
 
 ## Item Index
 
-<!-- Inventory current items with concise descriptions and links relative to the final README location. -->
+<!-- Author prompt: inventory current items with concise, target-relative links. -->
 
 ## Add and Find
 
-<!-- Explain the concrete naming, placement, and discovery workflow for this collection. -->
+<!-- Author prompt: give the naming, placement, and discovery workflow for one new item. -->
 
 ## Related Documents
 
-<!-- Link the parent stage, selection owner, and relevant downstream entrypoints using target-relative paths. -->
+<!-- Author prompt: link the parent, selection authority, and downstream entrypoints. -->

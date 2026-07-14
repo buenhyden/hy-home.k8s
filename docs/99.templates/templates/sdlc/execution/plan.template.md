@@ -6,46 +6,50 @@ owner: platform
 updated: YYYY-MM-DD
 ---
 
-<!-- Target: docs/04.execution/plans/YYYY-MM-DD-<feature>.md -->
-
 # [Feature Name] Implementation Plan
-
-<!-- Replace every placeholder with researched, topic-specific content.
-Remove authoring comments from the authored document and calculate links
-from its final location. -->
 
 ## Overview
 
-<!-- State the topic-specific purpose, current boundary, and outcome. -->
+<!-- Author prompt: identify the specification being executed and the intended completion state. -->
 
 ## Context
 
-<!-- Describe the topic-specific context without copying template guidance. -->
+<!-- Author prompt: summarize current evidence, constraints, and prerequisite decisions. -->
 
 ## Goals & In-Scope
 
-<!-- Describe the topic-specific goals & in-scope without copying template guidance. -->
+<!-- Author prompt: list bounded outcomes this plan is authorized to deliver. -->
 
 ## Non-Goals & Out-of-Scope
 
-<!-- Describe the topic-specific non-goals & out-of-scope without copying template guidance. -->
+<!-- Author prompt: state excluded work, protected surfaces, and deferred decisions. -->
 
 ## Work Breakdown
 
-<!-- Describe the topic-specific work breakdown without copying template guidance. -->
+<!-- Author prompt: order work packages by dependency and make each entry and exit gate observable. -->
+
+| ID | Work package | Depends on | Entry gate | Exit evidence |
+| --- | --- | --- | --- | --- |
+| WP-001 | One bounded implementation outcome | None | Approved specification criterion | Named test, review, or commit evidence |
 
 ## Verification Plan
 
-<!-- Describe the topic-specific verification plan without copying template guidance. -->
+<!-- Author prompt: map every work package to deterministic checks and evidence lanes. -->
 
 ## Risks & Mitigations
 
-<!-- Describe the topic-specific risks & mitigations without copying template guidance. -->
+<!-- Author prompt: record delivery, compatibility, and rollback risks with owners. -->
 
 ## Completion Criteria
 
-<!-- Describe the topic-specific completion criteria without copying template guidance. -->
+<!-- Author prompt: define the conditions that close work without claiming live evidence. -->
 
 ## Traceability
 
-<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->
+<!-- Author prompt: map specification criteria to work packages and expected Task evidence. -->
+
+### Lifecycle Traceability
+
+| Spec criterion | Work package | Expected Task |
+| --- | --- | --- |
+| VAL-FEATURE-001 | WP-001 | Task owner |

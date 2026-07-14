@@ -1256,6 +1256,65 @@
       ]
     },
     {
+      "name": "placeholder-frontmatter-title",
+      "profile": "governance/reference",
+      "path": "docs/00.agent-governance/fixture.md",
+      "source": "---\ntitle: '[Document Title]'\ntype: governance/reference\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\nFixture content.\n\n## Authority Boundary\n\nFixture content.\n\n## Governance Context\n\nFixture content.\n\n## Current Contract\n\nFixture content.\n\n## Validation and Refresh\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "FM-TITLE-PLACEHOLDER"
+      ]
+    },
+    {
+      "name": "placeholder-h1-title",
+      "profile": "governance/reference",
+      "path": "docs/00.agent-governance/fixture.md",
+      "source": "---\ntitle: Fixture Document\ntype: governance/reference\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# [Document Title]\n\n## Overview\n\nFixture content.\n\n## Authority Boundary\n\nFixture content.\n\n## Governance Context\n\nFixture content.\n\n## Current Contract\n\nFixture content.\n\n## Validation and Refresh\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "BODY-H1-PLACEHOLDER"
+      ]
+    },
+    {
+      "name": "authored-author-prompt",
+      "profile": "governance/reference",
+      "path": "docs/00.agent-governance/fixture.md",
+      "source": "---\ntitle: Fixture Document\ntype: governance/reference\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n<!-- Author prompt: replace this text -->\n\n## Overview\n\nFixture content.\n\n## Authority Boundary\n\nFixture content.\n\n## Governance Context\n\nFixture content.\n\n## Current Contract\n\nFixture content.\n\n## Validation and Refresh\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "BODY-AUTHOR-PROMPT"
+      ]
+    },
+    {
+      "name": "authored-legacy-target-marker",
+      "profile": "governance/reference",
+      "path": "docs/00.agent-governance/fixture.md",
+      "source": "---\ntitle: Fixture Document\ntype: governance/reference\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n<!-- Target: docs/00.agent-governance/fixture.md -->\n\n## Overview\n\nFixture content.\n\n## Authority Boundary\n\nFixture content.\n\n## Governance Context\n\nFixture content.\n\n## Current Contract\n\nFixture content.\n\n## Validation and Refresh\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "BODY-TEMPLATE-RESIDUE"
+      ]
+    },
+    {
+      "name": "authored-retired-shared-paragraph",
+      "profile": "governance/reference",
+      "path": "docs/00.agent-governance/fixture.md",
+      "source": "---\ntitle: Fixture Document\ntype: governance/reference\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\nReplace every placeholder with researched, topic-specific content.\nRemove authoring comments from the authored document and calculate links\nfrom its final location.\n\n## Overview\n\nFixture content.\n\n## Authority Boundary\n\nFixture content.\n\n## Governance Context\n\nFixture content.\n\n## Current Contract\n\nFixture content.\n\n## Validation and Refresh\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "expectedRuleIds": [
+        "BODY-TEMPLATE-RESIDUE"
+      ]
+    },
+    {
+      "name": "fenced-starter-examples-allowed",
+      "profile": "governance/reference",
+      "path": "docs/00.agent-governance/fixture.md",
+      "source": "---\ntitle: Fixture Document\ntype: governance/reference\nstatus: draft\nowner: platform\nupdated: 2026-07-12\n---\n\n# Fixture Document\n\n## Overview\n\n```markdown\ntitle: '[Document Title]'\n# [Document Title]\n<!-- Author prompt: replace this text -->\n<!-- Target: docs/example.md -->\nReplace every placeholder with researched, topic-specific content.\n```\n\n## Authority Boundary\n\nFixture content.\n\n## Governance Context\n\nFixture content.\n\n## Current Contract\n\nFixture content.\n\n## Validation and Refresh\n\nFixture content.\n\n## Related Documents\n\nFixture content.\n",
+      "expectedRuleIds": []
+    },
+    {
+      "name": "template-starters-allowed",
+      "profile": "template/governance/reference",
+      "path": "docs/99.templates/templates/common/governance-reference.template.md",
+      "source": "---\ntitle: '[Document Title]'\ntype: governance/reference\nstatus: draft\nowner: platform\nupdated: YYYY-MM-DD\n---\n\n# [Document Title]\n\n<!-- Author prompt: replace this text -->\n<!-- Target: docs/00.agent-governance/fixture.md -->\nReplace every placeholder with researched, topic-specific content.\n\n## Overview\n\n<!-- Author prompt: identify the governed subject. -->\n\n## Authority Boundary\n\n<!-- Author prompt: name the authority boundary. -->\n\n## Governance Context\n\n<!-- Author prompt: record the governing context. -->\n\n## Current Contract\n\n<!-- Author prompt: state the enforceable contract. -->\n\n## Validation and Refresh\n\n<!-- Author prompt: define validation and refresh triggers. -->\n\n## Related Documents\n\n<!-- Author prompt: link canonical owners. -->\n",
+      "expectedRuleIds": []
+    },
+    {
       "name": "missing-frontmatter",
       "profile": "sdlc/spec",
       "path": "docs/03.specs/999-fixture/spec.md",
