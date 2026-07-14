@@ -1003,15 +1003,31 @@ bash scripts/validate-policy-gates.sh .
 bash scripts/validate-k8s-manifests.sh .
 python3 scripts/validate-affected-surfaces.py --root .
 bash scripts/validate-repo-quality-gates.sh .
-rg -n 'VAULT_SKIP_VERIFY|curl .*-[A-Za-z]*k|X-Vault-Token:.*\$|VAULT_TOKEN=.*bootstrap-local|--from-literal=redis-password' \
+rg -n 'VAULT_SKIP_VERIFY|curl .*-[A-Za-z]*k|VAULT_TOKEN=.*bootstrap-local|--from-literal=redis-password' \
   infrastructure/bootstrap-local.sh \
-  docs/05.operations/guides \
-  docs/05.operations/runbooks
+  docs/05.operations/guides/0001-wsl-k3d-argocd-bootstrap-guide.md \
+  docs/05.operations/guides/0002-wsl2-k3d-argocd-ha-setup-guide.md \
+  docs/05.operations/guides/0003-platform-expansion-bootstrap-guide.md \
+  docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md \
+  docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md \
+  docs/05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md \
+  docs/05.operations/runbooks/0003-platform-expansion-bootstrap-runbook.md
+rg -n 'X-Vault-Token:.*\$' \
+  docs/05.operations/guides/0001-wsl-k3d-argocd-bootstrap-guide.md \
+  docs/05.operations/guides/0002-wsl2-k3d-argocd-ha-setup-guide.md \
+  docs/05.operations/guides/0003-platform-expansion-bootstrap-guide.md \
+  docs/05.operations/guides/0008-github-app-gitops-onboarding-guide.md \
+  docs/05.operations/runbooks/0001-argocd-platform-bootstrap-runbook.md \
+  docs/05.operations/runbooks/0002-argocd-eso-vault-recovery-runbook.md \
+  docs/05.operations/runbooks/0003-platform-expansion-bootstrap-runbook.md
 git diff --check
 ```
 
-Expected: all validators PASS and the final `rg` returns no active unsafe
-example. No live endpoint is contacted.
+Expected: all validators PASS and both `rg` commands exit `1` with no output.
+The production `validate-vault-eso-contracts.py --root .` validator owns the
+safe stdin-header semantics, including the required `printf` producer piped to
+`curl --header @-`. Unrelated non-secret local UI status and smoke probes are
+outside this secret-bearing checkpoint. No live endpoint is contacted.
 
 - [ ] **Step 11: Independent review and commit**
 
