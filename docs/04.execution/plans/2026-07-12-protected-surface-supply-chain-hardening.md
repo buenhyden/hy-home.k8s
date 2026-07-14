@@ -204,14 +204,16 @@ Vault, Kubernetes, ESO, Argo CD, or GitHub settings were inspected.
 - Modify: `docs/04.execution/plans/README.md`
 - Create: `docs/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md`
 - Modify: `docs/04.execution/tasks/README.md`
+- Modify: `docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md`
 
 **Interfaces:**
 
 - Consumes: active Spec 032 and completed Spec 031 evidence.
 - Produces: one active Task whose exact IDs are `PSH-001` through `PSH-006`.
 - Produces: reciprocal Spec/Plan/Task lineage for every later evidence update.
+- Produces: one exact fourteen-column durable-ledger row for the new Task.
 
-- [ ] **Step 1: Run the failing reciprocal-lineage assertion**
+- [x] **Step 1: Run the failing reciprocal-lineage assertion**
 
 ```bash
 python3 - <<'PY'
@@ -232,7 +234,7 @@ PY
 
 Expected: FAIL because the Task and reciprocal links do not exist yet.
 
-- [ ] **Step 2: Create the active execution record**
+- [x] **Step 2: Create the active execution record**
 
 Set the Spec, Plan, and Task to `status: active`. Create the Task from the
 canonical Task form with this exact table:
@@ -248,15 +250,16 @@ canonical Task form with this exact table:
 | PSH-006 | Close repository-static evidence and lifecycle | doc | Full QA bundle and independent review | platform | Pending |
 ```
 
-Add exact reciprocal links and add Active index rows dated `2026-07-12`.
+Add exact reciprocal links, add Active index rows dated `2026-07-12`, and add
+the new Task's exact fourteen-column durable-ledger row.
 
-- [ ] **Step 3: Re-run the lineage assertion**
+- [x] **Step 3: Re-run the lineage assertion**
 
 Run the Step 1 command again.
 
 Expected: PASS with no output.
 
-- [ ] **Step 4: Run focused conformance**
+- [x] **Step 4: Run focused conformance**
 
 ```bash
 git diff --check
@@ -267,7 +270,8 @@ pre-commit run --files \
   docs/04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md \
   docs/04.execution/plans/README.md \
   docs/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md \
-  docs/04.execution/tasks/README.md
+  docs/04.execution/tasks/README.md \
+  docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md
 ```
 
 Expected: all applicable checks PASS.
@@ -281,7 +285,31 @@ git add \
   docs/04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md \
   docs/04.execution/plans/README.md \
   docs/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md \
-  docs/04.execution/tasks/README.md
+  docs/04.execution/tasks/README.md \
+  docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md
+python3 - <<'PY'
+import subprocess
+
+expected = {
+    'docs/03.specs/032-protected-surface-supply-chain-hardening/spec.md',
+    'docs/03.specs/README.md',
+    'docs/04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md',
+    'docs/04.execution/plans/README.md',
+    'docs/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md',
+    'docs/04.execution/tasks/README.md',
+    'docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md',
+}
+staged = {
+    path.decode()
+    for path in subprocess.check_output(
+        ['git', 'diff', '--cached', '--name-only', '-z']
+    ).split(b'\0')
+    if path
+}
+unstaged = subprocess.check_output(['git', 'diff', '--name-only', '-z'])
+assert staged == expected, (sorted(staged), sorted(expected))
+assert unstaged == b'', unstaged
+PY
 git commit -m "docs(execution): start protected surface hardening"
 ```
 
@@ -1121,6 +1149,7 @@ git commit -m "docs(security): close protected surface hardening evidence"
 ## Traceability
 
 - [Protected Surface and Supply Chain Hardening Spec](../../03.specs/032-protected-surface-supply-chain-hardening/spec.md)
+- [Protected Surface and Supply Chain Hardening Task](../tasks/2026-07-12-protected-surface-supply-chain-hardening.md)
 - [Affected Surface and Agent QA Spec](../../03.specs/031-affected-surface-agent-qa/spec.md)
 - [Workspace Document Assurance PRD](../../01.requirements/005-workspace-document-assurance-modernization.md)
 - [Workspace Document Assurance ARD](../../02.architecture/requirements/0008-workspace-document-assurance-operating-model.md)
