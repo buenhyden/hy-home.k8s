@@ -39,6 +39,7 @@ tests/
 ├── fixtures/
 │   ├── agent-role-semantics.json     # Thirty-adapter semantic mutation matrix
 │   ├── agent-roster-currentness.json # Canonical roster validator self-test cases
+│   ├── github-actions-security.json  # Immutable Action and least-privilege cases
 │   ├── markdown-profiles.json       # Registry profile matrix, mutations, and fixed date cases
 │   ├── links-and-owners.json        # Cross-document link, index, owner, and ledger cases
 │   ├── validation-surfaces.json     # Affected path, selection, rejection, and contract mutation cases
@@ -90,6 +91,8 @@ live readiness.
 | Affected-surface fixture | `python3 scripts/validate-affected-surfaces.py --self-test` | Repo-static exact-route, argv, output, and NUL-transport evidence |
 | Affected-surface repository coverage | `python3 scripts/validate-affected-surfaces.py --root .` | Repo-static tracked-path coverage; no ignored scratch traversal |
 | Affected/all-files local runner | `python3 scripts/run-validation-lane.py --root . --lane affected\|all-files --paths-file <file.nul> --delimiter nul` | Repo-static shell-free execution of contract-selected argv; no-path and optional-tool `SKIP`, remote/live `DEFER`, and fallback evidence remain distinct |
+| GitHub Actions security fixture | `python3 scripts/validate-github-actions-security.py --self-test` | Repo-static exact eleven primary, ten boundary, twenty-one required-write JSON cases, plus five internal uses-shape cases |
+| GitHub Actions security repository check | `python3 scripts/validate-github-actions-security.py --root .` | PSH-002 bounded RED evidence; aggregate-gate integration is deferred to PSH-003 |
 | External service contracts | `bash infrastructure/tests/verify-contracts-static.sh` | Repo-static |
 | GitOps structure | `bash scripts/validate-gitops-structure.sh` | Repo-static |
 | Kubernetes manifests | `bash scripts/validate-k8s-manifests.sh .` | Repo-static with Optional tool `kube-linter` when installed |
@@ -109,6 +112,22 @@ contract in `docs/00.agent-governance/rules/quality-standards.md`; static
 adapter PASS does not prove provider runtime consumption.
 
 ### Evidence Boundaries
+
+- `tests/fixtures/github-actions-security.json`은 정확히 11개 primary case로 remote SHA,
+  same-line version comment, local Action, Docker digest, workflow default,
+  exact job-write allowlist, `write-all`, `unpinned-uses` suppression을 동일한
+  production 함수에 통과시킨다. 별도의 정확히 10개 repository boundary
+  case는 missing/empty root와 directory, root/directory/file symlink,
+  non-regular workflow, zizmor symlink를 내용 읽기 전에 거부한다. 정확히
+  21개 required-write case는 세 workflow/job 각각에 exact/extra-read positive와
+  missing-job/missing-permissions/all-read/missing-write/extra-write mutation을
+  적용한다. JSON cardinality를 바꾸지 않는 5개 internal case는 quoted-local
+  positive와 numeric/null/mapping/list `uses` mutation을 production parser/source
+  parity 경로에 통과시켜 비문자열 occurrence가 양쪽에서 함께 사라지지 않게
+  한다. PSH-002에서 fixture는 PASS하지만 repository
+  mode는 현재 14개 mutable reference, 3개 missing default, 1개 suppression의
+  정확히 18개 finding으로 의도적으로 FAIL한다. 이 RED는 PSH-003 입력이며
+  아직 aggregate repository quality gate나 remote/runtime readiness 증거가 아니다.
 
 - `tests/fixtures/document-contracts/registry-cases.json`의 각 사례는 하나의
   mutation과 정확한 기대 rule ID 목록을 담는다. 이 fixture는 비밀값을

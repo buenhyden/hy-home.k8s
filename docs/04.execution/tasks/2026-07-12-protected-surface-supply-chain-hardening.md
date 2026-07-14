@@ -31,8 +31,8 @@ repository-static closure evidence in dependency order.
 | Task ID | Description | Type | Validation / Evidence | Owner | Status |
 | --- | --- | --- | --- | --- | --- |
 | PSH-001 | Start reciprocal execution evidence | doc | Reciprocal-link assertion | platform | Done |
-| PSH-002 | Add Action identity and permission validator | guardrail | Action fixture self-test | platform | Pending |
-| PSH-003 | Pin nine Action identities and minimize workflow permissions | ci | Action validator, actionlint, zizmor | platform | Pending |
+| PSH-002 | Add Action identity and permission validator | guardrail | Action fixture self-test | platform | Done |
+| PSH-003 | Pin eight Action identities and minimize workflow permissions | ci | Action validator, actionlint, zizmor | platform | Pending |
 | PSH-004 | Add GitOps identity and deletion change-set review | guardrail | GitOps fixture self-test | platform | Pending |
 | PSH-005 | Harden local Vault/ESO and bootstrap secret handling | security | Vault fixture, static contracts, secret scan | platform | Pending |
 | PSH-006 | Close repository-static evidence and lifecycle | doc | Full QA bundle and independent review | platform | Pending |
@@ -80,6 +80,28 @@ one exact fourteen-column durable-ledger row, strict document conformance, the
 full repository quality gate, focused pre-commit, and exactly seven staged
 paths with no unstaged tracked changes. This evidence is repository-static;
 remote and live lanes remain DEFER.
+
+PSH-002 added the duplicate-key-rejecting Action identity and permission
+validator plus its exact eleven-case primary fixture. Ten supplemental
+repository-boundary cases reject missing/empty roots and directories,
+root/directory/file symlinks, non-regular workflow inputs, and a symlinked
+zizmor file before external content can be read. Twenty-one supplemental
+required-write cases cover two positive shapes and five mutations for each of
+the three named workflow/job consumers, so removing a job, permissions map, or
+required write cannot pass. Four internal non-string `uses` mutations prove
+numeric, null, mapping, and list values cannot disappear from both parser
+views; an internal quoted-local positive preserves valid quoted same-line
+behavior without changing the 11/10/21 JSON cardinalities. The fixture
+self-test passes,
+while repository mode intentionally remains RED for PSH-003 with fourteen
+mutable remote occurrences, missing top-level `contents: read` defaults in
+`greetings.yml`, `labeler.yml`, and `stale.yml`, and the tracked
+`unpinned-uses` suppression: eighteen bounded findings in total. ASQA-004 had
+already removed `dorny/paths-filter`, so the parent Plan's stale fifteen/nine
+cardinalities were corrected to fourteen/eight, with five checkout, three
+setup-python, and six remaining occurrences. The Action validator is not part
+of the aggregate repository quality gate until PSH-003 turns this evidence
+green; no workflow, suppression, remote dispatch, or live state changed here.
 
 ## Traceability
 

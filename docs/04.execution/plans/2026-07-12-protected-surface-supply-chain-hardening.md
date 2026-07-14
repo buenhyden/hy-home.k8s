@@ -34,7 +34,7 @@ pre-commit, and repository quality gates.
 
 This Plan converts Spec 032 into six independently reviewable implementation
 tasks. PSH-001 establishes execution evidence, PSH-002 adds a fixture-tested
-Action validator, PSH-003 applies the nine reviewed Action identities and
+Action validator, PSH-003 applies the eight reviewed Action identities and
 least-privilege workflow permissions, PSH-004 adds value-free GitOps object and
 deletion review, PSH-005 hardens the local Vault/ESO and bootstrap boundary,
 and PSH-006 closes repository-static evidence while retaining live lanes as
@@ -42,7 +42,7 @@ DEFER.
 
 ## Context
 
-The current workflows contain fifteen `uses:` occurrences covering nine unique
+The current workflows contain fourteen `uses:` occurrences covering eight unique
 tag references and `.github/zizmor.yml` deliberately disables
 `unpinned-uses`. GitOps validation checks structure and manifests but does not
 emit a reviewable before/after object-identity deletion set. The tracked ESO
@@ -54,7 +54,7 @@ Vault, Kubernetes, ESO, Argo CD, or GitHub settings were inspected.
 
 ## Goals & In-Scope
 
-- Pin all nine current remote Actions at reviewed forty-character commit SHAs
+- Pin all eight current remote Actions at reviewed forty-character commit SHAs
   while retaining human-readable version comments.
 - Require a read-only workflow default and allow write permissions only in the
   three named issue/PR automation jobs.
@@ -145,7 +145,7 @@ Vault, Kubernetes, ESO, Argo CD, or GitHub settings were inspected.
 | --- | --- | --- | --- |
 | PSH-001 | Start reciprocal Spec/Plan/Task execution evidence | Focused lineage assertion | `docs(execution): start protected surface hardening` |
 | PSH-002 | Add the fixture-tested Action identity and permission validator | Validator self-test | `test(security): add GitHub Actions security validator` |
-| PSH-003 | Pin all nine remote Actions and harden workflow permissions | Validator repository check, actionlint, zizmor | `fix(ci): pin Actions and minimize workflow permissions` |
+| PSH-003 | Pin all eight remote Actions and harden workflow permissions | Validator repository check, actionlint, zizmor | `fix(ci): pin Actions and minimize workflow permissions` |
 | PSH-004 | Add identity-only GitOps render and deletion review | Positive/negative change-set fixtures | `feat(gitops): validate identity-only change sets` |
 | PSH-005 | Harden local Vault/ESO and bootstrap secret handling | Vault self-test, static contracts, shell/secret checks | `fix(security): harden local Vault and ESO contracts` |
 | PSH-006 | Close lifecycle and repository-static evidence | Full QA bundle and independent review | `docs(security): close protected surface hardening evidence` |
@@ -156,7 +156,7 @@ Vault, Kubernetes, ESO, Argo CD, or GitHub settings were inspected.
 | --- | --- | --- | --- |
 | VAL-PLN-001 | Lineage | Focused Python assertion in PSH-001 | Spec, Plan, Task, and indexes link reciprocally. |
 | VAL-PLN-002 | Action fixtures | `python3 scripts/validate-github-actions-security.py --self-test` | Remote tag, missing version comment, mutable docker reference, broad write, and suppression cases fail exactly; local path passes. |
-| VAL-PLN-003 | Action repository | `python3 scripts/validate-github-actions-security.py --root .` | Fifteen occurrences resolve to nine reviewed SHAs, version comments exist, permissions are minimal, and suppression is absent. |
+| VAL-PLN-003 | Action repository | `python3 scripts/validate-github-actions-security.py --root .` | Fourteen occurrences resolve to eight reviewed SHAs, version comments exist, permissions are minimal, and suppression is absent. |
 | VAL-PLN-004 | GitOps change set | `python3 scripts/validate-gitops-change-set.py --self-test` | Added/deleted identities are exact and the sentinel manifest value never appears in output. |
 | VAL-PLN-005 | Vault/ESO | `python3 scripts/validate-vault-eso-contracts.py --self-test` and `--root .` | HTTP needs local-only labels, audience/RBAC/policy are exact, insecure TLS and secret argv/env patterns fail. |
 | VAL-PLN-006 | Repository | Static bundle and `pre-commit run --all-files` | Required gates pass, optional tool SKIP is separate, and live lanes are DEFER. |
@@ -165,7 +165,7 @@ Vault, Kubernetes, ESO, Argo CD, or GitHub settings were inspected.
 
 | Risk | Impact | Mitigation |
 | --- | --- | --- |
-| A tag SHA is copied incorrectly | Remote code identity differs from the reviewed release | Use the nine upstream `git ls-remote` results frozen in PSH-003 and validate exact forty-character values. |
+| A tag SHA is copied incorrectly | Remote code identity differs from the reviewed release | Use the eight upstream `git ls-remote` results frozen in PSH-003 and validate exact forty-character values. |
 | Workflow permission hardening breaks automation | Greeting, labeling, or stale management fails remotely | Keep only the permissions each documented Action consumes; do not dispatch; record remote CI as DEFER. |
 | GitOps review leaks manifest values | Secret or configuration content appears in logs | Build equality from the four-field immutable `ObjectIdentity`, carry path only in `RenderedObject` evidence, and reject the sentinel value in fixtures. |
 | A deletion is hidden by a modified multi-document YAML | Argo CD prune impact is missed | Diff identity sets rather than filenames; a changed identity becomes one DELETE plus one ADD. |
@@ -244,7 +244,7 @@ canonical Task form with this exact table:
 | --- | --- | --- | --- | --- | --- |
 | PSH-001 | Start reciprocal execution evidence | doc | Reciprocal-link assertion | platform | Done |
 | PSH-002 | Add Action identity and permission validator | guardrail | Action fixture self-test | platform | Pending |
-| PSH-003 | Pin nine Action identities and minimize workflow permissions | ci | Action validator, actionlint, zizmor | platform | Pending |
+| PSH-003 | Pin eight Action identities and minimize workflow permissions | ci | Action validator, actionlint, zizmor | platform | Pending |
 | PSH-004 | Add GitOps identity and deletion change-set review | guardrail | GitOps fixture self-test | platform | Pending |
 | PSH-005 | Harden local Vault/ESO and bootstrap secret handling | security | Vault fixture, static contracts, secret scan | platform | Pending |
 | PSH-006 | Close repository-static evidence and lifecycle | doc | Full QA bundle and independent review | platform | Pending |
@@ -323,6 +323,7 @@ git commit -m "docs(execution): start protected surface hardening"
 - Create: `tests/fixtures/github-actions-security.json`
 - Modify: `scripts/README.md`
 - Modify: `tests/README.md`
+- Modify: `docs/04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md`
 - Modify: `docs/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md`
 
 **Interfaces:**
@@ -334,7 +335,7 @@ git commit -m "docs(execution): start protected surface hardening"
 - Produces CLI: `python3 scripts/validate-github-actions-security.py --root .`.
 - The self-test and repository mode call the same three production functions.
 
-- [ ] **Step 1: Create the failing fixture**
+- [x] **Step 1: Create the failing fixture**
 
 Create `tests/fixtures/github-actions-security.json` with these exact case
 names and expected outcomes:
@@ -357,7 +358,19 @@ names and expected outcomes:
 }
 ```
 
-- [ ] **Step 2: Run the fixture and confirm RED**
+Keep `cases` as the exact eleven-case primary contract. Add a separately named
+`repositoryBoundaryCases` array with exactly ten missing-root,
+missing-directory, empty-directory, root/directory/file-symlink,
+non-regular-workflow, and zizmor symlink cases. Add `requiredWriteCases` with
+exactly twenty-one cases: exact writes, extra reads, missing job, missing
+permissions, all-read, missing write, and extra write for each of
+`greetings/greeting`, `labeler/label`, and `stale/stale`. The supplemental
+cases do not alter the primary eleven-case cardinality.
+Keep numeric, null, mapping, and list `uses:` values as four internal
+self-test mutations rather than JSON fixture cases; retain one internal quoted
+local-path positive so quoted and plain same-line strings remain accepted.
+
+- [x] **Step 2: Run the fixture and confirm RED**
 
 ```bash
 python3 scripts/validate-github-actions-security.py --self-test
@@ -365,7 +378,7 @@ python3 scripts/validate-github-actions-security.py --self-test
 
 Expected: FAIL because the validator does not exist.
 
-- [ ] **Step 3: Implement the minimal validator**
+- [x] **Step 3: Implement the minimal validator**
 
 Use these exact reference classes and permission rules:
 
@@ -388,21 +401,36 @@ complete set of write-valued keys exactly matches one of the three
 Read-valued keys do not expand the write allowlist. Reject any `unpinned-uses`
 disable. Parse YAML with a duplicate-key rejecting loader and locate the
 same-line version comment from the source line rather than from parsed YAML.
+Preserve every parsed and source `uses` occurrence regardless of its YAML type,
+then require both views to contain strings before comparing them. Numeric,
+null, mapping, list, multiline, or otherwise non-plain shapes fail with
+`uses entries must be plain same-line scalar values`; parsed and source
+collectors must never jointly erase a malformed occurrence.
+Repository mode must fail closed before reading YAML: the caller-provided root,
+`.github`, and `.github/workflows` must be existing non-symlink directories;
+the workflow directory must contain at least one real regular workflow YAML;
+and every workflow or optional zizmor YAML input must be a non-symlink regular
+file. Inspect these boundaries with `lstat()` and preserve the caller path in
+CLI mode rather than resolving away symlink identity. When an allowlisted
+workflow exists, its named job and exact required write set are mandatory;
+removing the job/permissions or reducing required writes is a contract failure,
+while extra read-valued keys remain valid.
 
-- [ ] **Step 4: Run GREEN and prove current repository RED**
+- [x] **Step 4: Run GREEN and prove current repository RED**
 
 ```bash
 python3 scripts/validate-github-actions-security.py --self-test
 python3 scripts/validate-github-actions-security.py --root .
 ```
 
-Expected: self-test PASS. Repository mode FAILS with fifteen mutable remote
-occurrences, missing workflow defaults in `greetings.yml`, `labeler.yml`, and
-`stale.yml`, and the `unpinned-uses` suppression. This repository failure is
-the RED input for PSH-003 and is not integrated into the aggregate quality gate
-until PSH-003 turns it green.
+Expected: the exact eleven primary cases plus ten boundary, twenty-one
+required-write, and five internal uses-shape cases PASS. Repository mode FAILS with fourteen
+mutable remote occurrences, missing workflow defaults in `greetings.yml`,
+`labeler.yml`, and `stale.yml`, and the `unpinned-uses` suppression. This
+repository failure is the RED input for PSH-003 and is not integrated into the
+aggregate quality gate until PSH-003 turns it green.
 
-- [ ] **Step 5: Run focused checks and commit**
+- [x] **Step 5a: Run focused checks and stage the exact scope**
 
 ```bash
 python3 -m py_compile scripts/validate-github-actions-security.py
@@ -410,14 +438,24 @@ pre-commit run --files \
   scripts/validate-github-actions-security.py \
   tests/fixtures/github-actions-security.json \
   scripts/README.md \
-  tests/README.md
+  tests/README.md \
+  docs/04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md \
+  docs/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md
 git diff --check
 git add \
   scripts/validate-github-actions-security.py \
   tests/fixtures/github-actions-security.json \
   scripts/README.md \
   tests/README.md \
+  docs/04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md \
   docs/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md
+test "$(git diff --cached --name-only | wc -l)" -eq 6
+test -z "$(git diff --name-only)"
+```
+
+- [ ] **Step 5b: Controller review and commit**
+
+```bash
 git commit -m "test(security): add GitHub Actions security validator"
 ```
 
@@ -442,7 +480,7 @@ git commit -m "test(security): add GitHub Actions security validator"
 **Interfaces:**
 
 - Consumes: `validate_repository(root: Path) -> list[str]` from PSH-002.
-- Produces: `GitHubActionIdentityContract.v1` with nine exact SHA/version pairs.
+- Produces: `GitHubActionIdentityContract.v1` with eight exact SHA/version pairs.
 - Produces: `WorkflowPermissionContract.v1` with read-only workflow defaults
   and three exact job-write consumers.
 - Preserves: Spec 031 `changes` outputs, job IDs, `needs`, and `if` expressions.
@@ -456,7 +494,7 @@ python3 scripts/validate-github-actions-security.py --root .
 Expected: FAIL with the PSH-002 mutable-reference, permission-default, and
 suppression findings.
 
-- [ ] **Step 2: Replace all fifteen occurrences using the reviewed map**
+- [ ] **Step 2: Replace all fourteen occurrences using the reviewed map**
 
 Use exactly these upstream tag resolutions, observed with `git ls-remote` on
 2026-07-12:
@@ -464,7 +502,6 @@ Use exactly these upstream tag resolutions, observed with `git ls-remote` on
 | Action | Version comment | Commit SHA |
 | --- | --- | --- |
 | `actions/checkout` | `v7.0.0` | `9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0` |
-| `dorny/paths-filter` | `v4.0.1` | `fbd0ab8f3e69293af611ebaee6363fc25e6d187d` |
 | `actions/setup-python` | `v6.3.0` | `ece7cb06caefa5fff74198d8649806c4678c61a1` |
 | `pre-commit/action` | `v3.0.1` | `2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd` |
 | `actions/first-interaction` | `v3` | `1c4688942c71f71d4f5502a26ea67c331730fa4d` |
@@ -479,7 +516,7 @@ Each YAML line uses this exact shape:
 - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 ```
 
-Apply the mapping to all four checkout, three setup-python, and the eight
+Apply the mapping to all five checkout, three setup-python, and the six
 remaining occurrences. Store the SHA, not the tag, as each corresponding
 `github_actions` value in the version inventory; the workflow comment remains
 the human version boundary.
@@ -543,7 +580,7 @@ pre-commit run zizmor --all-files
 git diff --check
 ```
 
-Expected: all commands PASS; there are fifteen remote occurrences, nine unique
+Expected: all commands PASS; there are fourteen remote occurrences, eight unique
 SHA/version identities, no suppression, and no unauthorized write permission.
 
 - [ ] **Step 6: Independent review and commit**
@@ -1124,7 +1161,7 @@ git commit -m "docs(security): close protected surface hardening evidence"
 
 ## Completion Criteria
 
-- All fifteen current remote `uses:` occurrences resolve to the nine exact
+- All fourteen current remote `uses:` occurrences resolve to the eight exact
   reviewed SHAs and retain same-line version comments.
 - Local Actions remain local; introduced docker Actions, if any, require an
   immutable digest and version comment.
