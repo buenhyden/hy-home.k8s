@@ -243,6 +243,8 @@ Expected: all validators pass and one planning commit is created.
 - Modify: `docs/99.templates/support/document-profiles.json`
 - Modify: `scripts/document_contracts.py`
 - Modify: `scripts/validate-document-contract-registry.py`
+- Modify: `scripts/validate-markdown-profiles.py` — consume the compatibility
+  fixture's schema-v2 and Spec 033 ownership contract.
 - Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify: `tests/fixtures/document-contracts/registry-cases.json`
 - Modify: `tests/fixtures/document-contracts/template-compatibility.json`

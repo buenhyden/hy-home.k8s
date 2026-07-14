@@ -672,30 +672,28 @@ def _mutate(raw_registry: dict[str, Any], mutation: str) -> None:
         return
     if mutation == "add-native-with-missing-template":
         native_profile = copy.deepcopy(profile)
-        native_profile["id"] = "exception/native-contract-openapi"
+        missing_form = FIXTURE_PATH.with_name("missing.template.native")
+        target_basename = missing_form.name.replace(".template", "", 1)
+        native_profile["id"] = f"{profile['id']}-native-missing-template"
         native_profile["routes"] = [
             {
                 "kind": "regex",
                 "value": (
-                    "^docs/03\\.specs/[0-9]{3}-[^/]+/contracts/"
-                    "openapi\\.yaml$"
+                    "^"
+                    + re.escape((SAMPLE_PATH.parent / target_basename).as_posix())
+                    + "$"
                 ),
             }
         ]
-        native_profile["template"] = (
-            "tests/fixtures/document-contracts/missing-openapi.template.yaml"
-        )
+        native_profile["template"] = missing_form.as_posix()
         raw_registry["profiles"].append(native_profile)
         return
     if mutation == "add-overlapping-native-route":
         native_profile = copy.deepcopy(profile)
-        native_profile["id"] = "exception/native-contract-openapi"
+        native_profile["id"] = f"{profile['id']}-native-route-overlap"
         native_profile["routes"] = [
             {"kind": "exact", "value": SAMPLE_PATH.as_posix()}
         ]
-        native_profile["template"] = (
-            "tests/fixtures/document-contracts/self-test-prd.template.md"
-        )
         raw_registry["profiles"].append(native_profile)
         return
     if mutation == "change-baseline-sha":
@@ -1000,6 +998,43 @@ def _tracked_form_paths(root: Path) -> tuple[PurePosixPath, ...]:
         )
     except UnicodeDecodeError as exc:
         raise AssertionError("git returned a non-UTF-8 form path") from exc
+
+
+def _assert_native_form_profiles(
+    registry: Any, native_form_paths: tuple[PurePosixPath, ...]
+) -> None:
+    native_forms = set(native_form_paths)
+    profiles_by_form: dict[PurePosixPath, list[Any]] = {
+        path: [] for path in native_form_paths
+    }
+    for profile in registry.profiles:
+        if profile.template in native_forms:
+            profiles_by_form[profile.template].append(profile)
+
+    for template_path, form_profiles in profiles_by_form.items():
+        if len(form_profiles) != 1:
+            raise AssertionError(
+                f"{template_path}: native form must have one distinct registry profile"
+            )
+        profile = form_profiles[0]
+        template_basename = template_path.name
+        if template_basename.count(".template") != 1:
+            raise AssertionError(
+                f"{template_path}: native form basename must contain one .template infix"
+            )
+        target_basename = template_basename.replace(".template", "", 1)
+        expected_route_suffix = re.escape(target_basename) + "$"
+        if (
+            profile.mode != "classification-only"
+            or len(profile.routes) != 1
+            or profile.routes[0].kind != "regex"
+            or not profile.routes[0].value.startswith("^")
+            or not profile.routes[0].value.endswith(expected_route_suffix)
+        ):
+            raise AssertionError(
+                f"{template_path}: native profile must have one anchored regex route "
+                f"ending in the template-derived target basename {target_basename!r}"
+            )
 
 
 def _assert_retired_cloud_sdlc_routes_uncovered(registry: Any) -> None:
@@ -1369,41 +1404,29 @@ def _assert_positive_coverage(
             "governance/progress-entry must be the sole append-contract template"
         )
 
-    expected_native = {
-        "exception/native-contract-openapi": (
-            PurePosixPath(
-                "docs/99.templates/templates/sdlc/specs/openapi.template.yaml"
-            ),
-            "openapi.yaml",
-        ),
-        "exception/native-contract-graphql": (
-            PurePosixPath(
-                "docs/99.templates/templates/sdlc/specs/schema.template.graphql"
-            ),
-            "schema.graphql",
-        ),
-        "exception/native-contract-protobuf": (
-            PurePosixPath(
-                "docs/99.templates/templates/sdlc/specs/service.template.proto"
-            ),
-            "service.proto",
-        ),
-    }
-    if set(native_form_paths) != {value[0] for value in expected_native.values()}:
-        raise AssertionError("native form paths differ from the registry contract")
-    for profile_id, (template_path, basename) in expected_native.items():
-        profile = profiles.get(profile_id)
-        if (
-            profile is None
-            or profile.mode != "classification-only"
-            or profile.template != template_path
-            or len(profile.routes) != 1
-            or profile.routes[0].kind != "regex"
-            or not profile.routes[0].value.endswith(
-                re.escape(basename) + "$"
-            )
-        ):
-            raise AssertionError(f"{profile_id}: invalid native registry mapping")
+    _assert_native_form_profiles(registry, native_form_paths)
+
+    native_drift = copy.deepcopy(raw_registry)
+    native_form_strings = {path.as_posix() for path in native_form_paths}
+    native_profile = next(
+        profile
+        for profile in native_drift["profiles"]
+        if profile["template"] in native_form_strings
+    )
+    native_profile["routes"][0]["value"] = (
+        native_profile["routes"][0]["value"][:-1] + "-drift$"
+    )
+    try:
+        _assert_native_form_profiles(
+            validate_registry(root, native_drift), native_form_paths
+        )
+    except AssertionError as exc:
+        if "template-derived target basename" not in str(exc):
+            raise AssertionError(
+                "native route/template drift returned an unstable diagnostic"
+            ) from exc
+    else:
+        raise AssertionError("native route/template drift mutation was accepted")
 
     return len(profiles), len(tracked_form_paths)
 
