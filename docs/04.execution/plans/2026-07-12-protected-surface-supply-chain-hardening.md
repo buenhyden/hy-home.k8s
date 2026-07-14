@@ -474,8 +474,16 @@ git commit -m "test(security): add GitHub Actions security validator"
 - Verify only: `.github/dependabot.yml`
 - Modify: `.github/ABOUT.md`
 - Modify: `docs/90.references/data/tech-stack-version-inventory.md`
+- Modify: `docs/90.references/audits/2026-07-05-wea/sdlc-ci-qa-formatting-automation.md`
+- Modify: `docs/90.references/audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md`
+- Modify: `docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md`
+- Modify: `docs/90.references/research/2026-07-07-wer/automation-pipeline-workflow-qa.md`
+- Modify: `docs/90.references/research/2026-07-07-wer/kubernetes-infrastructure-security.md`
 - Modify: `scripts/validate-repo-quality-gates.sh`
 - Modify: `docs/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md`
+
+The exact Task 3 implementation mutable/deleted set is 15 paths. The
+verify-only `.github/dependabot.yml` path is not part of that set.
 
 **Interfaces:**
 
@@ -552,6 +560,13 @@ permissions:
 Delete `.github/zizmor.yml`; it contains only the obsolete suppression. Keep
 the existing weekly grouped `github-actions` Dependabot proposal route and
 record in `.github/ABOUT.md` that no zizmor suppression file is required.
+Preserve the historical findings, link labels, dates, conclusions, and
+surrounding prose in the five declared Stage 90 documents. Replace only the six
+Markdown link targets that would otherwise point to the deleted
+`.github/zizmor.yml`: select the active GitHub Actions security validator, the
+PSH Task, or `.github/ABOUT.md` as the replacement evidence target according to
+the local context of each link. Do not rewrite or suppress the historical
+finding that the link documents.
 
 - [ ] **Step 4: Integrate the validator into repository quality**
 
@@ -598,6 +613,11 @@ git add \
   .github/zizmor.yml \
   .github/ABOUT.md \
   docs/90.references/data/tech-stack-version-inventory.md \
+  docs/90.references/audits/2026-07-05-wea/sdlc-ci-qa-formatting-automation.md \
+  docs/90.references/audits/2026-07-11-weia/ci-qa-automation-pipeline-workflow.md \
+  docs/90.references/research/2026-07-04-wer/automation-pipeline-workflow-qa.md \
+  docs/90.references/research/2026-07-07-wer/automation-pipeline-workflow-qa.md \
+  docs/90.references/research/2026-07-07-wer/kubernetes-infrastructure-security.md \
   scripts/validate-repo-quality-gates.sh \
   docs/04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md
 git commit -m "fix(ci): pin Actions and minimize workflow permissions"
