@@ -1128,11 +1128,18 @@ expected_behavior_cases = [
 ]
 if template_compatibility.get("behaviorCases") != expected_behavior_cases:
     fail(f"{rel(template_compatibility_path)} behaviorCases contract differs")
-physical_form_paths = {
-    pathlib.PurePosixPath(path.relative_to(root).as_posix())
-    for path in template_root.rglob("*")
-    if path.is_file() and ".template." in path.name
-}
+def collect_physical_form_paths(
+    repository_root: pathlib.Path,
+    forms_root: pathlib.Path,
+) -> set[pathlib.PurePosixPath]:
+    return {
+        pathlib.PurePosixPath(path.relative_to(repository_root).as_posix())
+        for path in forms_root.rglob("*")
+        if path.is_file() and path != forms_root / "README.md"
+    }
+
+
+physical_form_paths = collect_physical_form_paths(root, template_root)
 registry_form_references = [
     (profile.profile_id, profile.template)
     for profile in document_registry.profiles
@@ -1174,6 +1181,20 @@ def canonical_form_contract_errors(
         owners_by_form[form_path].append(profile_id)
     registry_forms = {form_path for _, form_path in profile_form_references}
     errors = []
+    canonical_form_name = re.compile(
+        r"^[a-z0-9][a-z0-9-]*\.template\.(md|yaml|graphql|proto)$"
+    )
+    noncanonical_names = sorted(
+        str(form)
+        for form in physical_forms
+        if not canonical_form_name.fullmatch(form.name)
+    )
+    if noncanonical_names:
+        errors.append(
+            "physical form filenames must match "
+            "<name>.template.(md|yaml|graphql|proto): "
+            f"{noncanonical_names}"
+        )
     missing = sorted(registry_forms - physical_forms, key=str)
     if missing:
         errors.append(f"registry-owned forms are missing: {missing}")
@@ -1199,7 +1220,8 @@ for error in canonical_form_errors:
     fail(error)
 
 # Independent mutations prove that the registry/form ownership assertion rejects
-# missing registry forms, unowned physical forms, and duplicate profile owners.
+# missing registry forms, unowned physical forms, duplicate profile owners, and
+# noncanonical filenames that would previously have been invisible.
 first_form = sorted(physical_form_paths, key=str)[0]
 if not canonical_form_contract_errors(
     physical_form_paths - {first_form},
@@ -1222,6 +1244,33 @@ if not canonical_form_contract_errors(
     registry_form_owners + [("mutation/duplicate-owner", first_form)],
 ):
     fail("canonical form mutation proof accepted duplicate profile ownership")
+noncanonical_native_form = pathlib.PurePosixPath(
+    "docs/99.templates/templates/sdlc/specs/openapi.yaml"
+)
+expected_noncanonical_diagnostic = (
+    "physical form filenames must match <name>.template.(md|yaml|graphql|proto): "
+    f"{[str(noncanonical_native_form)]}"
+)
+with tempfile.TemporaryDirectory(prefix="template-form-mutation-") as temp_dir:
+    mutation_root = pathlib.Path(temp_dir)
+    mutation_forms_root = mutation_root / "docs/99.templates/templates"
+    mutation_native_path = mutation_root / noncanonical_native_form
+    mutation_native_path.parent.mkdir(parents=True)
+    mutation_native_path.write_text("openapi: 3.1.0\n", encoding="utf-8")
+    mutation_physical_forms = collect_physical_form_paths(
+        mutation_root,
+        mutation_forms_root,
+    )
+    noncanonical_errors = canonical_form_contract_errors(
+        mutation_physical_forms,
+        registry_form_references,
+        registry_form_owners,
+    )
+if expected_noncanonical_diagnostic not in noncanonical_errors:
+    fail(
+        "canonical form mutation proof did not reject a noncanonical native filename "
+        "with the stable diagnostic"
+    )
 markdown_form_count = sum(path.suffix == ".md" for path in physical_form_paths)
 native_form_count = len(physical_form_paths) - markdown_form_count
 if (markdown_form_count, native_form_count) != (27, 3):
