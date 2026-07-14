@@ -3,7 +3,7 @@ title: 'Template Frontmatter Schema'
 type: governance/template-support
 status: active
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-15
 ---
 
 # Template Frontmatter Schema
@@ -38,10 +38,8 @@ Exceptions:
   under `_workspace/**` are not authored documents.
 - GitHub-native Markdown control files under `.github/` are
   frontmatter-free because GitHub renders or consumes their body directly.
-- Cloud example snapshots use the Stage 90 reference profiles under
-  `docs/90.references/cloud-examples/**`. The retired
-  `examples/{aws,azure}/docs/**` paths have no frontmatter profile or README
-  exception and must remain absent.
+- Cloud example snapshots use the registry-selected Stage 90 reference
+  profile. Retired provider-documentation trees have no frontmatter exception.
 - `progress.template.md` is an appendable ledger entry template.
 - OpenAPI, GraphQL, and protobuf templates must remain native to their format.
 
@@ -68,8 +66,9 @@ guidance it rejected; it is evidence, not a second schema owner.
 - `title` is the human-readable document title.
 - `type` classifies the document role and must use a namespaced value from
   the matching registry profile.
-- `status` is the lifecycle state. New authored documents start as `draft`
-  unless a template has a fixed state such as archive Tombstones.
+- `status` is the lifecycle state selected from the matched profile. The form
+  supplies a valid starting example; promotion requires profile-specific
+  evidence.
 - `owner` is `platform` for repository-authored documents.
 - `updated` uses an ISO calendar date.
 - Do not quote scalar `owner` values when the value is the canonical owner.
@@ -78,18 +77,11 @@ guidance it rejected; it is evidence, not a second schema owner.
   prose. Exact extension keys and allowed values come only from the
   `content/archive-tombstone` profile.
 
-### Legacy Cleanup Rules
+### Legacy Boundary
 
-- Use `owner: platform` in active authored frontmatter and task owner cells.
-- Use `type: sdlc/policy` for operations policy documents.
-- Replace old simple `type` values with the namespaced values in this schema.
-- Remove keys that duplicate the same role as another key unless the target
-  profile explicitly allows both.
-- Do not add frontmatter to README files, ignored `_workspace/**` scratch,
-  GitHub-native Markdown control files, or native machine-readable templates.
-- Do not recreate the retired `examples/{aws,azure}/docs/**` trees. Route any
-  approved cloud snapshot refresh to `docs/90.references/cloud-examples/**`
-  with the selected Stage 90 reference profile.
+Deprecated keys, values, sections, and route residue are retired through
+[Legacy Cleanup Rules](./legacy-cleanup-rules.md). This schema explains current
+metadata meaning and does not duplicate that denylist.
 
 ## Validation Contract
 
@@ -104,8 +96,6 @@ has exactly one frontmatter profile. The gate rejects:
 - Frontmatter or authored-document treatment for ignored `_workspace/**`
   scratch files.
 - Frontmatter on GitHub-native Markdown control files.
-- Missing, extra, or unsupported frontmatter on routed example-local cloud
-  snapshot documents.
 - Markdown frontmatter in OpenAPI, GraphQL, or protobuf templates.
 
 ## Related Documents

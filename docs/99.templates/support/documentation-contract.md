@@ -3,7 +3,7 @@ title: 'Template Documentation Contract'
 type: governance/template-support
 status: active
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-15
 ---
 
 # Template Documentation Contract
@@ -27,7 +27,7 @@ The template system has separate surfaces:
 | Authored documents | `docs/01.requirements` through `docs/05.operations`, `docs/90.references`, `docs/98.archive` | Repository facts, lifecycle records, and evidence. |
 | GitHub-native control Markdown | `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/SECURITY.md` | GitHub-rendered repository control surfaces that remain frontmatter-free and mirror canonical owners. |
 | Active control surfaces | GitHub-native Markdown, `.github/workflows/**`, validators, GitOps desired state, policy-as-code, and route manifests | Repository behavior and protection surfaces that route detail to their canonical governance, operations, workflow, script, or manifest owners. |
-| Cloud example snapshot collection | `docs/90.references/cloud-examples/**` | Durable dated AWS/Azure migration snapshots after retirement of the former `examples/{aws,azure}/docs/**` authored trees; new provider refreshes extend this reference collection through an approved lifecycle change. |
+| Cloud example snapshot collection | Stage 90 Current reference pack | Durable dated provider snapshots; an approved lifecycle change is required to refresh them. |
 | Workspace scratch staging | `_workspace/README.md` plus ignored `_workspace/**` scratch | Temporary non-secret repo-support staging; durable findings promote to canonical docs. |
 
 ## Owned Contract
@@ -64,22 +64,18 @@ The template system has separate surfaces:
   Markdown, but their detailed rules belong to the owning support,
   governance, operations, workflow, validator, GitOps, policy-as-code, or route
   manifest surface.
-- Example-local cloud documents reuse SDLC frontmatter roles and section
-  expectations by document type while staying under `examples/<provider>/docs/**`.
-  Their body must preserve the dated snapshot boundary and must not claim live
-  provider-latest authority without an approved refresh spec.
 - Active-surface duplicate rule: stages 01 through 04 must not keep multiple
   active documents that own the same role, purpose, and feature lineage.
 
 ### Lifecycle Route Summary
 
 The [Document Profile Registry](./document-profiles.json) is the canonical
-owner for the exact lifecycle, example-local, README, and exception routes and
-their template mappings. At the support layer, the durable rationale is that
-Stage 01 requirements and Stage 03 specifications use numbered lineage, Stage
-04 plans and tasks remain dated execution evidence, example-local cloud
-documents reuse SDLC role profiles without becoming active-stage owners, and
-README files remain navigation surfaces rather than governance bodies.
+owner for exact lifecycle, README, exception, and snapshot routes and their
+template mappings. At the support layer, the durable rationale is that
+requirements and specifications use numbered lineage, plans and tasks remain
+dated execution evidence, cloud knowledge is preserved as a dated Stage 90
+snapshot, and README files remain navigation surfaces rather than governance
+bodies.
 
 The registry profiles own exact lifecycle states and archive metadata keys.
 [SDLC Governance](./sdlc-governance.md) owns lifecycle rationale, numbering,
@@ -98,7 +94,7 @@ reference, archive, memory, and progress recording.
 | SDLC documentation | [SDLC Governance](./sdlc-governance.md) | PRD, ARD, ADR, Spec, Plan, Task, Guide, Policy, Runbook, Incident, Postmortem, API/Data/Test/Agent helper forms. |
 | Common documentation | [Common Documentation Governance](./common-documentation-governance.md) | README, Reference, Archive Tombstone, Memory, Progress. |
 | Frontmatter and profile schema | [Frontmatter Schema](./frontmatter-schema.md) | Applies to Markdown template families and explicitly excludes native machine-readable contracts. |
-| Routing and path mapping | [Template Routing](./template-routing.md) | Maps authored target patterns to one template form. |
+| Routing and path selection | [Template Routing](./template-routing.md) | Explains how one registry profile selects one template form. |
 | Legacy cleanup | [Legacy Cleanup Rules](./legacy-cleanup-rules.md) | Removes old keys, sections, values, and routes from active contracts. |
 
 ### Protected Surface Rules

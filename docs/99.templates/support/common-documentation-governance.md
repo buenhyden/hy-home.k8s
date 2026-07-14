@@ -3,7 +3,7 @@ title: 'Common Documentation Template Governance'
 type: governance/template-support
 status: active
 owner: platform
-updated: 2026-07-14
+updated: 2026-07-15
 ---
 
 # Common Documentation Template Governance
@@ -24,12 +24,11 @@ knowledge consistent without forcing every common document into an SDLC phase.
 
 ### Common Profile Handoff
 
-The v4 [Document Profile Registry](./document-profiles.json) owns the exact routes,
-forms, headings, and metadata contracts for `readme/*`, `content/reference`,
-`content/archive-tombstone`, `governance/memory`,
-`governance/progress-ledger`, and `governance/progress-entry`. This document
-owns the human rationale for navigation, reference, preservation, and durable
-agent-learning roles without becoming another profile table.
+The v5 [Document Profile Registry](./document-profiles.json) owns exact routes,
+forms, headings, metadata, and body contracts for all common-documentation
+profiles. This document owns the human rationale for navigation, reference,
+preservation, and durable agent-learning roles without becoming another
+profile or status table.
 Its `governanceCurrentOwners.paths` declaration is the sole machine-owned set
 of current Stage 00 authorities; validators derive, rather than copy, that set.
 Its required `referenceCurrentPacks` envelope is the machine SSoT for the
@@ -44,15 +43,13 @@ records the external and local evidence behind these role decisions.
 
 ### Governance Reference Lifecycle
 
-Living Stage 00 policy, provider notes, rosters, maps, and scope rules use
-`active` while they remain current execution authority. Use `accepted` only
-for a reviewed, stable, non-living governance reference that is still current;
-new governance-reference documents remain `draft` until an explicit promotion
-review. A retired authority leaves the live Stage 00 route through the archive
-and replacement process rather than remaining there as `done` or `archived`.
-The registry's current-owner declaration is the machine SSoT, document
-frontmatter owns lifecycle, and the Stage 00 README is only its validated human
-mirror.
+Living Stage 00 policy, provider notes, rosters, maps, and scope rules remain
+current execution authority only while the registry current-owner declaration
+selects them and their document lifecycle supports that role. Promotion needs
+explicit review evidence. A retired authority leaves the live Stage 00 surface
+through the archive and replacement process rather than keeping an ambiguous
+current copy. The Stage 00 README is a validated navigation view, not another
+owner list.
 
 ### README Governance
 
@@ -89,17 +86,11 @@ Official basis:
 
 ### Reference Governance
 
-The `content/reference` lifecycle has these distinct meanings:
-
-- `draft`: unreviewed or in-progress reference material.
-- `active`: a living factual, validation, or migration-evidence input.
-- `accepted`: a reviewed, stable point-in-time reference at its declared cutoff.
-- `done`: a completed dated audit or reference deliverable.
-- `archived`: material retired through a separate archive disposition.
-
-`Current pack`, `Historical`, `Resolved`, `Included`, and `Index` are
-collection roles, not frontmatter lifecycle values. Selecting a successor does
-not silently rewrite the lifecycle of an older dated artifact.
+Reference lifecycle values and their exact domain come from the matched
+registry profile. Collection labels such as Current, Historical, Resolved,
+Included, and Index describe a pack role; they are not substitute frontmatter
+states. Selecting a successor never silently rewrites the lifecycle of an
+older dated artifact.
 
 - Reference documents own durable lookup facts, source boundaries, freshness
   rules, and stable external-standard snapshots.

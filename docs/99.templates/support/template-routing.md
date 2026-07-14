@@ -3,166 +3,106 @@ title: 'Template Routing Contract'
 type: governance/template-support
 status: active
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-15
 ---
 
 # Template Routing Contract
 
 ## Overview
 
-This document defines the canonical route contract between authored document
-target patterns and template forms. Template forms now live under
-`docs/99.templates/templates/**`; support contracts live under
-`docs/99.templates/support/**`.
+This document explains how an authored target selects one canonical form.
+Template forms live under `docs/99.templates/templates/**`; support contracts
+live under `docs/99.templates/support/**`.
 
 ## Purpose
 
-Each authored document path must map to exactly one template. Route ambiguity
-creates broken validation, duplicated contracts, and inconsistent authored
-documents.
-
-The machine-readable [Document Profile Registry](./document-profiles.json)
-owns every exact or anchored-regex route and its profile, heading, and template
-facts. This support document owns the route-selection procedure, rationale,
-boundaries, and examples. Its route-map mirror is explicitly non-authoritative
-and exists to help maintainers select the registry-owned form.
+Every governed path must match exactly one registry profile. Zero matches leave
+the document outside its contract; multiple matches make ownership ambiguous.
+Declaration order is never precedence.
 
 ## Owned Contract
 
-### Route-selection Procedure
+The v5 [Document Profile Registry](./document-profiles.json) is the sole owner
+of exact and anchored-regex routes, profile identities, headings, metadata,
+canonical forms, exceptions, and body contracts. This support document owns
+only the selection procedure, rationale, examples, and change boundary. It does
+not publish a route or template inventory.
 
-1. Normalize the repository-relative POSIX target path without traversing
-   ignored paths or symlinked provider views.
-2. Load the [Document Profile Registry](./document-profiles.json) and evaluate
-   every exact or anchored-regex route.
-3. Require exactly one matching profile; declaration order is never precedence.
-4. Use that profile's template and document contract, and use this support
-   document only for routing rationale and migration boundaries.
+An authored, native, or append-entry profile is the canonical form owner. A
+derived template-mode profile classifies the physical form and inherits its
+source contract; it is not a second form owner.
 
-### Lifecycle Route Summary
+### Exact-One-Profile Procedure
 
-The registry owns the exact path patterns. The lifecycle rationale remains:
-requirements and specifications carry numbered lineage, plans and tasks remain
-dated execution evidence, retired cloud documentation remains a Stage 90
-reference snapshot rather than an authored SDLC route, and README files remain
-navigation surfaces rather than governance bodies.
+1. Normalize the repository-relative POSIX target path. Do not traverse ignored
+   scratch paths or resolve provider views into a different tracked path.
+2. Load the registry and evaluate every declared exact or anchored-regex route.
+3. Stop when the result is zero or more than one profile; do not infer a form
+   from a neighboring file or declaration order.
+4. Use the selected profile's canonical form, frontmatter, headings, lifecycle,
+   and body contract. Use support prose only to understand why and how.
+5. Recalculate relative links from the final authored location and validate the
+   authored document, not just the copied form.
 
-Exact lifecycle domains remain registry facts. Numeric lineage rationale,
-handoff links, and the active-surface duplicate rule are owned by [SDLC
-Governance](./sdlc-governance.md). This document owns the selection procedure
-and the human-readable mirror below, not the route facts themselves.
+### Selection Examples
 
-### Current Route Map
+- A feature requirement is classified from its final Stage 01 path; its matched
+  profile supplies the PRD form and requirement traceability contract.
+- A README is classified independently from adjacent authored documents; its
+  matched README profile keeps it frontmatter-free and defines its H2 contract.
+- A native API contract selects its native profile and form. It does not inherit
+  Markdown frontmatter or comments from a helper Spec.
+- A provider snapshot selects a Stage 90 reference profile. Historical
+  provider-local documentation routes are not inferred from executable example
+  directories.
 
-The [Document Profile Registry](./document-profiles.json) is the sole machine
-owner. The following non-authoritative compatibility mirror exposes each
-README profile form by registry ID. The quality gate verifies this mirror
-against the registry contract; maintainers must not copy path inventories out
-of the registry into this table.
-
-| Target Pattern | Template Path |
-| --- | --- |
-| Registry `readme/repository` routes | `templates/common/readme-repository.template.md` |
-| Registry `readme/stage-index` routes | `templates/common/readme-stage-index.template.md` |
-| Registry `readme/collection-index` routes | `templates/common/readme-collection-index.template.md` |
-| Registry `readme/implementation` routes | `templates/common/readme-implementation.template.md` |
-| Registry `readme/snapshot-pack` routes | `templates/common/readme-snapshot-pack.template.md` |
-| Registry `readme/workspace-staging` routes | `templates/common/readme-workspace-staging.template.md` |
-| `docs/01.requirements/<###-Numbering>-<feature-or-system>.md` | `templates/sdlc/requirements/prd.template.md` |
-| `docs/02.architecture/requirements/####-<system-or-domain>.md` | `templates/sdlc/architecture/ard.template.md` |
-| `docs/02.architecture/decisions/####-<short-title>.md` | `templates/sdlc/architecture/adr.template.md` |
-| `docs/03.specs/<###-Numbering>-<feature-id>/spec.md` | `templates/sdlc/specs/spec.template.md` |
-| `docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md` | `templates/sdlc/specs/api-spec.template.md` |
-| `docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md` | `templates/sdlc/specs/agent-design.template.md` |
-| `docs/03.specs/<###-Numbering>-<feature-id>/data-model.md` | `templates/sdlc/specs/data-model.template.md` |
-| `docs/03.specs/<###-Numbering>-<feature-id>/tests.md` | `templates/sdlc/specs/tests.template.md` |
-| `docs/03.specs/<###-Numbering>-<feature-id>/contracts/openapi.yaml` | `templates/sdlc/specs/openapi.template.yaml` |
-| `docs/03.specs/<###-Numbering>-<feature-id>/contracts/schema.graphql` | `templates/sdlc/specs/schema.template.graphql` |
-| `docs/03.specs/<###-Numbering>-<feature-id>/contracts/service.proto` | `templates/sdlc/specs/service.template.proto` |
-| `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `templates/sdlc/execution/plan.template.md` |
-| `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `templates/sdlc/execution/task.template.md` |
-| `docs/05.operations/guides/####-<topic>.md` | `templates/sdlc/operations/guide.template.md` |
-| `docs/05.operations/policies/####-<policy-or-standard>.md` | `templates/sdlc/operations/policy.template.md` |
-| `docs/05.operations/runbooks/####-<topic>.md` | `templates/sdlc/operations/runbook.template.md` |
-| `docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md` | `templates/sdlc/operations/incident.template.md` |
-| `docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md` | `templates/sdlc/operations/postmortem.template.md` |
-| `docs/90.references/<category>/<topic>.md` | `templates/common/reference.template.md` |
-| `docs/98.archive/**/*.md` | `templates/common/archive-tombstone.template.md` |
-| `docs/00.agent-governance/memory/<topic>.md` | `templates/common/memory.template.md` |
-| `docs/00.agent-governance/memory/progress.md` | `templates/common/progress.template.md` |
-
-Feature-local indexes such as `docs/03.specs/<###-Numbering>-<feature-id>/README.md`
-must resolve through exactly one `readme/*` registry profile. Do not add a
-second structural route for a nested README target.
-
-The memory `<topic>` placeholder excludes `progress`; `progress.md` is an
-exact reserved route owned by `templates/common/progress.template.md`.
-
-### Explicit Non-routed Markdown Exceptions
-
-The registry identifies the exact GitHub-native control paths as exception
-profiles. They remain active repository control surfaces rather than authored
-stage documents: the configuration hub routes policy detail to canonical
-owners, the pull-request template mirrors intake and CI/QA owners, and the
-security policy remains GitHub-renderable.
-
-Validators may check these files for frontmatter bans and stale currentness
-claims, but they must not require stage frontmatter or required template
-headings.
-
-### Cloud Example Snapshot Steady-State Boundary
-
-The former authored trees under `examples/aws/docs/**` and
-`examples/azure/docs/**` are retired. Their durable dated knowledge lives only
-under `docs/90.references/cloud-examples/**`; executable examples and their
-top-level entrypoints remain under `examples/{aws,azure}/`.
-
-The registry intentionally has no authored or README route for either retired
-`examples/*/docs/**` tree, and the Git-index guard rejects reintroduction. A
-provider refresh must start with an approved lifecycle change and update the
-Stage 90 snapshot collection instead of recreating an example-local SDLC tree.
+The registry is the query surface for the exact answer. README family summaries
+and these examples are explanatory views and must never be used as an
+exhaustive fallback.
 
 ## Authoring Rules
 
-### Enforcement Surfaces
+### Route Change Boundary
 
-Route-breaking changes must update these surfaces in the same logical unit:
-
-- `docs/99.templates/README.md`
-- This support document.
-- `docs/00.agent-governance/rules/document-stage-routing.md`
-- `docs/00.agent-governance/rules/documentation-protocol.md`
-- `docs/00.agent-governance/rules/stage-authoring-matrix.md`
-- `docs/00.agent-governance/hooks/k8s-pre-edit.sh`
-- `scripts/validate-repo-quality-gates.sh`
-- Stage README links and authored document template references.
-- Stage 90 cloud snapshot collection indexes and cross-links when
-  `docs/90.references/cloud-examples/**` is refreshed or consolidated; the
-  retired `examples/{aws,azure}/docs/**` paths must remain absent.
-- GitHub-native Markdown control-surface exceptions when `.github` control
-  documents are added, removed, or repurposed.
+- Add, change, or retire the registry route and its canonical form in one
+  logical change.
+- Prove that every physical form has exactly one owning profile and that every
+  registry-owned form exists.
+- Update only support rationale, Stage 00 procedure, or README navigation that
+  is materially affected; do not copy the new route set into those documents.
+- Migrate current consumers whose selected contract changes. Preserve completed
+  evidence and accepted decisions according to SDLC governance.
+- Keep GitHub-native controls, ignored workspace scratch, generated artifacts,
+  and native contracts within their registry-declared exception boundaries.
+- A cloud snapshot refresh requires approved lifecycle evidence and updates the
+  Stage 90 Current reference pack rather than creating a parallel active owner.
 
 ## Validation Contract
 
-### Validation Commands
+Run the registry, Markdown, link/owner, and aggregate repository gates after a
+route change:
 
 ```bash
-git diff --check
+python3 scripts/validate-document-contract-registry.py --root . --self-test
+python3 scripts/validate-document-contract-registry.py --root . --mode strict
+python3 scripts/validate-markdown-profiles.py --root . --mode strict
+python3 scripts/validate-links-and-owners.py --root . --mode strict
 bash scripts/validate-repo-quality-gates.sh .
-rg -n "docs/99\\.templates/[a-z0-9-]+\\.template\\.(md|yaml|graphql|proto)" docs scripts .codex AGENTS.md RTK.md
-find docs/99.templates -maxdepth 5 -type f -print | sort
 ```
 
-The flat-path search must not return active route references in current
-contracts.
-Historical progress entries may require an explicit allow-list.
+Passing evidence must show zero uncovered or ambiguous governed paths, an
+existing canonical form for every form-owning profile, and exactly one profile
+owner for every physical form. Repository-static validation does not prove
+provider runtime discovery, remote CI, or live cluster state.
 
 ## Related Documents
 
 - [Documentation Contract](./documentation-contract.md)
 - [Document Profile Registry](./document-profiles.json)
-- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+- [Document Profile Registry Schema](./document-profiles.schema.json)
 - [SDLC Governance](./sdlc-governance.md)
 - [Common Documentation Governance](./common-documentation-governance.md)
+- [Frontmatter Schema](./frontmatter-schema.md)
+- [Legacy Cleanup Rules](./legacy-cleanup-rules.md)
 - [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
 - [Repository Quality Gate](../../../scripts/validate-repo-quality-gates.sh)

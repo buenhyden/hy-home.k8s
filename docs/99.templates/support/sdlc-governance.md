@@ -3,7 +3,7 @@ title: 'SDLC Template Governance'
 type: governance/template-support
 status: active
 owner: platform
-updated: 2026-07-13
+updated: 2026-07-15
 ---
 
 # SDLC Template Governance
@@ -18,19 +18,19 @@ evidence.
 ## Purpose
 
 The SDLC template family ensures that each active stage document has one role,
-one target path pattern, one template form, one lifecycle state contract, and
-one validation route.
+one registry-selected form, one lifecycle evidence contract, and one validation
+route.
 
 ## Owned Contract
 
 ### SDLC Profile Handoff
 
-The [Document Profile Registry](./document-profiles.json) is the sole machine
-owner of SDLC routes, templates, headings, frontmatter, and lifecycle domains.
-Use its `sdlc/prd`, `sdlc/ard`, `sdlc/adr`, `sdlc/spec`, helper-spec,
-`sdlc/plan`, `sdlc/task`, and operations profiles for exact values. This
-document owns why those roles remain separate and how they hand work and
-evidence to one another.
+The v5 [Document Profile Registry](./document-profiles.json) is the sole
+machine owner of SDLC routes, templates, headings, frontmatter, lifecycle
+domains, and body traceability contracts. Authors select the exact profile
+from the target path instead of consulting a copied profile list. This document
+owns why the roles remain separate and how they hand work and evidence to one
+another.
 
 The research basis and local adoption decisions for those families are recorded
 in the [Document Type Format and Evidence
@@ -41,38 +41,27 @@ uses a filename that matches the incident folder, and the postmortem is always
 `postmortem.md` in the same folder. Placeholder incident directories are not
 part of the steady-state structure.
 
-### Lifecycle Rationale and Deferred Normalization
+### Lifecycle Rationale and Evidence
 
-The registry owns the exact status domains. Template forms may show a valid
-starting state, but support prose and agent-facing routing rules must not define
-or normalize a second transition set. TCC-003 verified the registry values
-against the pre-consolidation canonical domains before removing the copied
-table; this tranche does not rename, narrow, or expand a state.
+The registry owns every exact lifecycle value and allowed transition surface.
+Template forms may show a valid starting value, but support prose and
+agent-facing rules must not define a second transition set. Promotion requires
+the evidence declared by the matched profile and its owning Plan or Task;
+retirement preserves lineage instead of rewriting historical evidence.
 
-PRDs are product commitments and finish as `done` when their scope is satisfied
-or as `archived` when superseded. ARDs and ADRs become `accepted` when the
-architecture requirement or decision is approved. Specs, plans, and tasks use
-`done` for completed delivery evidence. Guides, policies, runbooks, incident
-records, and postmortems become `accepted` when they are durable operations
-contracts. Archive Tombstones are not reactivated; they remain `archived`
-metadata records and preserve traceability through archive fields such as
-`original_path`.
-
-The [Current research decision
-ledger](../../90.references/research/2026-07-07-wer/README.md#canonical-requirement-to-research-to-audit-ownership-map)
-retains document-state transitions as a gap with the RMD-007 follow-up. Any
-future lifecycle normalization remains **Deferred**. The `platform` owner must
-first publish a dedicated migration decision and corpus transition evidence,
-then refresh that ledger disposition. Spec 027 does not enact the proposal.
+Accepted architecture decisions are append-only decision evidence. A changed
+decision is represented by a successor ADR and an explicit replacement
+relation. Completed execution evidence is likewise preserved; new work creates
+a new Plan or Task. Archive Tombstones preserve traceability but never become
+current operating guidance.
 
 ### Numbering, Handoff, and Active Surfaces
 
-Stage 01 PRDs use `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
-Stage 03 specs use `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`. When creating new work,
-the PRD and Spec numeric identifiers should match for the same feature lineage.
-Historical mismatches are kept in place and linked explicitly in Related
-Documents instead of being renumbered only for cosmetic consistency. Stage 04
-plans and tasks stay date-based execution records.
+New feature PRDs and Specs share a three-digit feature identifier when they
+represent the same lineage. Architecture collections retain four-digit
+identifiers, execution records remain date-based, and incident records retain
+their year plus incident identity. Historical mismatches stay in place and are
+linked explicitly rather than being renumbered for cosmetic consistency.
 
 Lifecycle handoff links must make lineage explicit: PRDs link to architecture
 and specs, architecture documents link upstream PRDs and downstream specs,
@@ -87,12 +76,18 @@ active documents that own the same role, purpose, and feature lineage. Retire
 superseded, duplicate, obsolete, migrated, or currentness-conflicting surfaces
 to archive or rewrite them as historical evidence.
 
+The numbered stages express responsibility and navigation rather than a
+one-way waterfall. Operations, incident response, and postmortem learning feed
+new requirements, architecture decisions, Specs, or Tasks when evidence shows
+that an upstream contract must change. Incident records retain real-time facts;
+postmortems own retrospective analysis and prevention actions.
+
 ## Authoring Rules
 
 ### Governance Rules
 
-- Every non-README SDLC Markdown document must match exactly one structural
-  template mapping.
+- Every non-README SDLC Markdown document must match exactly one registry
+  profile and use that profile's canonical form.
 - The matched template headings define required section coverage unless the
   heading is explicitly optional in the template.
 - Stage 03 specs, Stage 04 plans, and Stage 04 tasks are English-first.
@@ -100,8 +95,6 @@ to archive or rewrite them as historical evidence.
   execution notes and tool or prompt contracts remain English-first.
 - Machine-readable OpenAPI, GraphQL, and protobuf templates stay native to
   their format and do not use Markdown frontmatter.
-- The operations policy template owns policy routing. Active contracts must
-  use `policy.template.md` and `type: sdlc/policy`.
 - Incident records own factual chronology and response state. Postmortems own
   root-cause analysis, prevention, and documentation feedback loops.
 
@@ -109,10 +102,9 @@ to archive or rewrite them as historical evidence.
 
 ### Validation Rules
 
-- Required heading checks come from the matched template.
-- Required heading extraction uses literal `##` headings from the template,
-  excluding headings that contain placeholders and headings marked optional or
-  if-applicable.
+- Required headings and body traceability checks come from the matched registry
+  profile. Its canonical form and current consumers must agree with that
+  contract.
 - Route checks must reject uncovered SDLC Markdown paths.
 - Route checks must reject paths that match more than one template.
 - Route-breaking changes must update Stage 00 routing docs, hook hints, and

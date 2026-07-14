@@ -57,8 +57,8 @@ support/
 
 ## Add and Find
 
-1. Update support contracts before changing template form paths or
-   frontmatter profiles.
+1. Update the registry before changing a template form path or frontmatter
+   profile; update support only when its rationale or procedure changes.
 2. Keep template form instructions in `docs/99.templates/templates/**` and
    keep contract rules in this `support/` folder.
 3. Keep detailed contract text here, not in `docs/99.templates/README.md`.
@@ -87,7 +87,7 @@ This README is located at `docs/99.templates/support/`.
 | [SDLC Governance](./sdlc-governance.md) | Owns SDLC lifecycle rationale, handoff semantics, numbering, and active-surface rules. |
 | [Common Documentation Governance](./common-documentation-governance.md) | Owns README, reference, archive, memory, and progress role rationale. |
 | [Frontmatter Schema](./frontmatter-schema.md) | Explains metadata rationale while the registry owns exact profile values. |
-| [Template Routing](./template-routing.md) | Owns human-readable route selection guidance that mirrors the current machine registry. |
+| [Template Routing](./template-routing.md) | Owns the exact-one-profile selection procedure and examples without copying the registry inventory. |
 | [Legacy Cleanup Rules](./legacy-cleanup-rules.md) | Owns migration and removal policy for legacy keys, values, sections, and route references. |
 
 ## Related Documents
