@@ -13,7 +13,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 완료된 Plan에 남아 있는 미체크 박스는 승인된 과거 실행 지침을 보존하며 현재 작업 큐가 아니다.
 연결된 `status: done` Task가 완료 상태와 evidence의 정본이다.
 
-## Audience
+### Collection Readers
 
 이 README의 주요 독자:
 
@@ -41,7 +41,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 
 이 내용은 각각 `../../01.requirements/`, `../../03.specs/`, `../tasks/`, `../../05.operations/`로 분리한다.
 
-## Structure
+## Item Index
 
 ```text
 04.execution/plans/
@@ -74,21 +74,31 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 ├── 2026-07-03-template-governance-audit-enhancement.md
 ├── 2026-07-03-workspace-document-governance-hardening.md
 ├── 2026-07-04-active-control-surface-governance-hardening.md
-├── 2026-07-04-workspace-document-contract-normalization.md
 ├── 2026-07-04-agent-governance-contract-normalization.md
-├── 2026-07-05-workspace-engineering-implementation-audit-pack.md
+├── 2026-07-04-workspace-document-contract-normalization.md
+├── 2026-07-04-workspace-engineering-research-pack.md
+├── 2026-07-05-template-path-numbering-contract.md
 ├── 2026-07-05-workspace-contract-governance-normalization.md
+├── 2026-07-05-workspace-engineering-implementation-audit-pack.md
 ├── 2026-07-06-sdlc-lifecycle-contract.md
 ├── 2026-07-06-control-cloud-doc-normalization.md
 ├── 2026-07-06-stage03-04-repo-static-gap-closure.md
 ├── 2026-07-06-observability-and-network-review-agents.md
+├── 2026-07-07-workspace-engineering-research-pack-refresh.md
 ├── 2026-07-10-current-research-pack-fact-first-hardening.md
 ├── 2026-07-11-governance-owner-and-roster-currentness.md
 ├── 2026-07-11-workspace-engineering-research-audit-integration.md
+├── 2026-07-12-document-contract-registry.md
+├── 2026-07-12-template-contract-consolidation.md
+├── 2026-07-12-readme-workspace-profiles.md
+├── 2026-07-12-semantic-document-validation.md
+├── 2026-07-12-authored-document-migration.md
+├── 2026-07-12-affected-surface-agent-qa.md
+├── 2026-07-12-protected-surface-supply-chain-hardening.md
 └── README.md
 ```
 
-## How to Work in This Area
+## Add and Find
 
 1. 관련 PRD/ARD/ADR/Spec을 먼저 읽고 계획의 입력을 고정한다.
 2. 새 Plan은 `../../99.templates/templates/sdlc/execution/plan.template.md`에서 시작하고, canonical target pattern은 `docs/04.execution/plans/YYYY-MM-DD-<feature>.md`다.
@@ -98,7 +108,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 6. live rollout, direct cluster mutation, secret write, external service action은 human approval gate와 rollback trigger를 명시한다.
 7. 현재 구현과 상충하거나 superseded-only인 old Plan은 `../../98.archive/README.md`에만 인덱싱하고, 활성 Plan에서 Tombstone에 직접 연결하지 않는다.
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/04.execution/plans/`다.
 
@@ -107,7 +117,7 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 - upstream docs stage는 `../../01.requirements/`, `../../02.architecture/`, `../../03.specs/`처럼 `docs/` 기준으로 올라간다.
 - Plan 안의 Task 링크는 `docs/04.execution/plans/`의 최종 Plan 파일 위치 기준으로 다시 계산한다.
 
-## 문서 인덱스
+### 문서 인덱스
 
 | 문서                                                                                                                                 | 설명                                                                                                                                                                                                               | 상태 | 최종 수정  |
 | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---- | ---------- |
@@ -142,18 +152,25 @@ Task evidence는 `../tasks/`가 소유하고, Plan은 그 evidence가 어떤 순
 | [`./2026-07-04-active-control-surface-governance-hardening.md`](./2026-07-04-active-control-surface-governance-hardening.md)         | `.github`, `scripts`, `gitops`, `infrastructure`, `policy`, `tests`, `traefik`, `examples/sample-app`의 active 운영 표면을 보강하고 AWS/Azure cloud examples를 dated snapshot으로 유지하는 실행 계획               | Done | 2026-07-04 |
 | [`./2026-07-04-workspace-engineering-research-pack.md`](./2026-07-04-workspace-engineering-research-pack.md)                         | `docs/90.references/research/2026-07-04-wer/` 아래 dated research pack을 만들고 기존 4개 reference를 재배치하며 Kubernetes, infrastructure, security, automation, pipeline, workflow, QA 주제를 보강하는 실행 계획 | Done | 2026-07-04 |
 | [`./2026-07-04-workspace-document-contract-normalization.md`](./2026-07-04-workspace-document-contract-normalization.md)             | active 문서와 historical evidence를 current frontmatter, section, template, CI/QA, validator 계약에 맞게 전면 정규화하는 실행 계획                                                                                 | Done | 2026-07-04 |
-| [`./2026-07-04-agent-governance-contract-normalization.md`](./2026-07-04-agent-governance-contract-normalization.md)                 | Stage 00 agent governance, provider adapters, GitHub control surfaces, QA/CI validation gates를 provider-aware contract로 정규화하는 실행 계획                                                                     | Done | 2026-07-04 |
+| [`./2026-07-04-agent-governance-contract-normalization.md`](./2026-07-04-agent-governance-contract-normalization.md)                 | Stage 00 governance와 Claude/Codex native role, repository-local baseline, local/Antigravity adapter, GitHub/QA/CI 표면을 정규화한 실행 계획 | Done | 2026-07-04 |
 | [`./2026-07-05-workspace-engineering-implementation-audit-pack.md`](./2026-07-05-workspace-engineering-implementation-audit-pack.md) | `docs/90.references/audits/2026-07-05-wea/` 아래 part-based audit pack을 만들고 기존 audit 파일을 dated folder 구조로 정리하는 실행 계획                                                                           | Done | 2026-07-05 |
 | [`./2026-07-05-template-path-numbering-contract.md`](./2026-07-05-template-path-numbering-contract.md)                               | Template path numbering contract implementation plan for PRD numeric renames, Stage 03 numbered feature-folder routing, template/support/governance/validator updates, and validation closure.                     | Done | 2026-07-05 |
 | [`./2026-07-05-workspace-contract-governance-normalization.md`](./2026-07-05-workspace-contract-governance-normalization.md)         | Workspace contract governance normalization implementation plan for `_workspace` staging, frontmatter/template/section drift, CI/CD and QA control surfaces, validator coverage, and evidence closure.             | Done | 2026-07-06 |
 | [`./2026-07-06-sdlc-lifecycle-contract.md`](./2026-07-06-sdlc-lifecycle-contract.md)                                                 | SDLC lifecycle contract implementation plan for status transitions, numeric lineage, handoff links, archive tombstone metadata, active-surface limits, `_workspace` staging, and validator gates.                  | Done | 2026-07-06 |
-| [`./2026-07-06-control-cloud-doc-normalization.md`](./2026-07-06-control-cloud-doc-normalization.md)                                 | Control surface and cloud example documentation normalization implementation plan for frontmatter-free control surfaces, example-local SDLC snapshot routes, AWS/Azure doc normalization, and validation closure.  | Done | 2026-07-06 |
+| [`./2026-07-06-control-cloud-doc-normalization.md`](./2026-07-06-control-cloud-doc-normalization.md)                                 | Historical implementation plan for frontmatter-free control surfaces and the cloud normalization tranche later superseded by Spec 030 Stage 90 consolidation and retired-path enforcement.                        | Done | 2026-07-14 |
 | [`./2026-07-06-stage03-04-repo-static-gap-closure.md`](./2026-07-06-stage03-04-repo-static-gap-closure.md)                           | Stage 03/04 repo-static gap closure implementation plan for evidence-lane classification, WER lifecycle drift closure, operator-approved follow-up routing, and validation closure.                                | Done | 2026-07-06 |
-| [`./2026-07-06-observability-and-network-review-agents.md`](./2026-07-06-observability-and-network-review-agents.md)                 | Implementation plan for adding `observability-reviewer` and `network-reviewer` worker agents across three provider adapters and the harness catalog.                                                               | Done | 2026-07-06 |
+| [`./2026-07-06-observability-and-network-review-agents.md`](./2026-07-06-observability-and-network-review-agents.md)                 | Implementation plan for adding `observability-reviewer` and `network-reviewer` worker agents across three tracked adapter surfaces and the harness catalog.                                                               | Done | 2026-07-06 |
 | [`./2026-07-07-workspace-engineering-research-pack-refresh.md`](./2026-07-07-workspace-engineering-research-pack-refresh.md)         | Implementation plan for workspace engineering research pack refresh.                                                                                                                                               | Done | 2026-07-07 |
 | [`./2026-07-10-current-research-pack-fact-first-hardening.md`](./2026-07-10-current-research-pack-fact-first-hardening.md)           | Fact-first in-place audit, external-source refresh, related-document integration, provider-model currentness analysis, and review plan for the Current workspace engineering research pack.                           | Done | 2026-07-10 |
 | [`./2026-07-11-governance-owner-and-roster-currentness.md`](./2026-07-11-governance-owner-and-roster-currentness.md)               | Evidence-preserving audit IA, complete Spec/Plan lifecycle reconciliation, and RMD-004 ten-role/30-adapter roster currentness implementation plan.                                                                    | Done   | 2026-07-11 |
 | [`./2026-07-11-workspace-engineering-research-audit-integration.md`](./2026-07-11-workspace-engineering-research-audit-integration.md) | Completed thirteen-task workspace engineering research and implementation-audit integration ledger relocated from the Current Stage 90 audit pack.                                                                  | Done | 2026-07-11 |
+| [`./2026-07-12-document-contract-registry.md`](./2026-07-12-document-contract-registry.md) | Declarative document registry, schema, classifier, baseline inventory, and compatibility-gate implementation plan. | Done | 2026-07-12 |
+| [`./2026-07-12-template-contract-consolidation.md`](./2026-07-12-template-contract-consolidation.md) | Stage 99 support/form consolidation, legacy template removal, and measured authored-document compatibility plan. | Done   | 2026-07-12 |
+| [`./2026-07-12-readme-workspace-profiles.md`](./2026-07-12-readme-workspace-profiles.md) | Completed RWP-001 through RWP-006 plan for 72 path-derived README profiles, five cloud handoffs, and the `_workspace` boundary. | Done | 2026-07-12 |
+| [`./2026-07-12-semantic-document-validation.md`](./2026-07-12-semantic-document-validation.md) | Registry-driven frontmatter, section, link, index, owner, migration-ledger, and reciprocal execution-lineage validation plan. | Done | 2026-07-12 |
+| [`./2026-07-12-authored-document-migration.md`](./2026-07-12-authored-document-migration.md) | Full authored-document migration, durable research ledger, cloud SDLC consolidation, strict cutover, and reciprocal [Task](../tasks/2026-07-12-authored-document-migration.md) plan. | Done | 2026-07-13 |
+| [`./2026-07-12-affected-surface-agent-qa.md`](./2026-07-12-affected-surface-agent-qa.md) | Completed ASQA-001 through ASQA-006 plan for canonical affected-surface selection, local/CI parity, cross-surface role semantics, and Stage 00 QA handoff with reciprocal [Spec](../../03.specs/031-affected-surface-agent-qa/spec.md) and [Task](../tasks/2026-07-12-affected-surface-agent-qa.md) lineage. | Done | 2026-07-14 |
+| [`./2026-07-12-protected-surface-supply-chain-hardening.md`](./2026-07-12-protected-surface-supply-chain-hardening.md) | Completed PSH-001 through PSH-006 plan for immutable Action identity, least privilege, identity-only GitOps review, local-only Vault/ESO and secret-boundary hardening, and repository-static closure with reciprocal [Spec](../../03.specs/032-protected-surface-supply-chain-hardening/spec.md) and [Task](../tasks/2026-07-12-protected-surface-supply-chain-hardening.md) lineage. | Done | 2026-07-14 |
 
 ## Related Documents
 

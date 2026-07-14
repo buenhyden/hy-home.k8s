@@ -7,10 +7,12 @@
 This directory is the policy SSoT for local agent execution in `hy-home.k8s`.
 It keeps gateway files thin by hosting durable rules, execution checklists,
 scope routing, provider notes, reusable memory, shared hook scripts, model
-policy, and the canonical runtime catalog used by `.claude/**`, `.codex/**`,
-and `.agents/**` provider adapters.
+policy, and the canonical runtime catalog used by Claude-native
+`.claude/agents/*.md`, Codex-native `.codex/agents/*.toml`, repository-local
+runtime baselines and shared/local `.agents/**` assets. Gemini CLI native
+`.gemini/**` adoption remains a separate `DEFER` boundary.
 
-## Audience
+### Stage Readers
 
 This README is primarily for:
 
@@ -19,7 +21,7 @@ This README is primarily for:
 - Runtime operators
 - AI agents loading governance context
 
-## Scope
+## Stage Contract
 
 ### In Scope
 
@@ -36,7 +38,61 @@ This README is primarily for:
 - Runtime bridge content under `.claude/**`
 - Human-facing project onboarding outside this governance area
 
-## Structure
+### Current Adapter Surface Matrix
+
+| Surface | Ownership and current meaning |
+| --- | --- |
+| `.claude/agents/*.md` | Claude native role definitions; `.claude/CLAUDE.md` is the repository-local Claude baseline. |
+| `.codex/agents/*.toml` | Codex native role definitions; `.codex/CODEX.md` is the repository-local Codex baseline. |
+| `.agents/agents/*.md` | Local/Antigravity role adapters, not Gemini CLI native roles. |
+| `.agents/{skills,workflows,output-styles}/` | Shared SSoT exposed through the tracked Claude/Codex symlink views. |
+| `.codex/hooks.json`, `.agents/hooks.json` | Context/validation wiring; the latter is local/Antigravity wiring. |
+| `.gemini/agents/**`, `.gemini/settings.json` | Gemini CLI native surfaces; absent and `DEFER`. |
+
+## Document Index
+
+The document-profile registry owns this exhaustive path set. Each lifecycle
+cell mirrors the target document's frontmatter and is validated for exact path,
+status, uniqueness, and order.
+
+### Current Governance Authority Index
+
+| Document | Lifecycle |
+| --- | --- |
+| [`common-governance.md`](common-governance.md) | `active` |
+| [`harness-catalog.md`](harness-catalog.md) | `active` |
+| [`harness-implementation-map.md`](harness-implementation-map.md) | `active` |
+| [`model-policy.md`](model-policy.md) | `active` |
+| [`agents-md.md`](providers/agents-md.md) | `active` |
+| [`claude.md`](providers/claude.md) | `active` |
+| [`codex.md`](providers/codex.md) | `active` |
+| [`gemini.md`](providers/gemini.md) | `active` |
+| [`agentic.md`](rules/agentic.md) | `active` |
+| [`approval-boundaries.md`](rules/approval-boundaries.md) | `active` |
+| [`bootstrap.md`](rules/bootstrap.md) | `active` |
+| [`document-stage-routing.md`](rules/document-stage-routing.md) | `active` |
+| [`documentation-protocol.md`](rules/documentation-protocol.md) | `active` |
+| [`git-workflow.md`](rules/git-workflow.md) | `active` |
+| [`persona.md`](rules/persona.md) | `active` |
+| [`postflight-checklist.md`](rules/postflight-checklist.md) | `active` |
+| [`preflight-checklist.md`](rules/preflight-checklist.md) | `active` |
+| [`quality-standards.md`](rules/quality-standards.md) | `active` |
+| [`stage-authoring-matrix.md`](rules/stage-authoring-matrix.md) | `active` |
+| [`stage-checklists.md`](rules/stage-checklists.md) | `active` |
+| [`standards.md`](rules/standards.md) | `active` |
+| [`architecture.md`](scopes/architecture.md) | `active` |
+| [`backend.md`](scopes/backend.md) | `active` |
+| [`docs.md`](scopes/docs.md) | `active` |
+| [`frontend.md`](scopes/frontend.md) | `active` |
+| [`infra.md`](scopes/infra.md) | `active` |
+| [`meta.md`](scopes/meta.md) | `active` |
+| [`ops.md`](scopes/ops.md) | `active` |
+| [`product.md`](scopes/product.md) | `active` |
+| [`qa.md`](scopes/qa.md) | `active` |
+| [`security.md`](scopes/security.md) | `active` |
+| [`subagent-protocol.md`](subagent-protocol.md) | `active` |
+
+### Directory Map
 
 Key folders in this area:
 
@@ -60,7 +116,7 @@ docs/00.agent-governance/
 └── README.md           # This file
 ```
 
-## How to Work in This Area
+## Authoring Workflow
 
 1. Start from repository gateway files: `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md`.
 2. Follow the JIT loading order in `rules/bootstrap.md` and `rules/preflight-checklist.md`.
@@ -72,7 +128,7 @@ docs/00.agent-governance/
    memory entry.
 6. Update `harness-catalog.md` and this README in the same change set when the runtime roster changes.
 
-## Link Basis
+### Relative Link Rules
 
 Links in this README are relative to `docs/00.agent-governance/`.
 
@@ -81,7 +137,7 @@ Links in this README are relative to `docs/00.agent-governance/`.
 - Repository-root runtime files use `../../<path>`.
 - Template links use `../99.templates/templates/**/<template>`.
 
-## Governance Entry Points
+### Governance Entry Points
 
 - [Common Governance & Mappings](common-governance.md)
 - [Model Policy](model-policy.md)
@@ -104,7 +160,7 @@ Links in this README are relative to `docs/00.agent-governance/`.
 - [Codex Provider Notes](providers/codex.md)
 - [Gemini Provider Notes](providers/gemini.md)
 
-## Examples
+### Examples
 
 - Add a new execution rule under `rules/`.
 - Add a provider note under `providers/`.

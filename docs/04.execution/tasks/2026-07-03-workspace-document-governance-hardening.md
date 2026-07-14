@@ -3,7 +3,7 @@ title: 'Task: Workspace Document Governance Hardening'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-13
 ---
 
 # Task: Workspace Document Governance Hardening
@@ -20,19 +20,6 @@ and Plan.
 - **Parent Spec**: [Workspace Document Governance Hardening Spec](../../03.specs/013-workspace-document-governance-hardening/spec.md)
 - **Parent Plan**: [Workspace Document Governance Hardening Plan](../plans/2026-07-03-workspace-document-governance-hardening.md)
 
-## Working Rules
-
-- Work audit-first and keep the current passing repository quality gate as the
-  baseline.
-- Every logical task must update this evidence file before commit.
-- Documentation-only changes still require `git diff --check` and
-  `bash scripts/validate-repo-quality-gates.sh .`.
-- Repo-static validation must not be reported as live runtime readiness.
-- Do not inspect secret values or mutate live Kubernetes, Argo CD, Vault,
-  cloud, or publishing surfaces.
-- Use sub-agent review for each major implementation unit when executing the
-  plan.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -43,15 +30,7 @@ and Plan.
 | T-004 | Apply document governance profiles to workspace README and authored documents. | doc | Spec / Guardrails | Task 4 | README/frontmatter/residue scans and validator pass | platform | Done |
 | T-005 | Finalize deterministic validator checks, CI/QA evidence, and final review. | test | Spec / Success Criteria | Task 5 | Full local validation passed; final reviewer handoff ready | platform | Done |
 
-## Suggested Types
-
-- `doc`
-- `test`
-- `eval`
-- `ops`
-- `guardrail`
-
-## Phase View
+### Phase View
 
 ### Phase 1: Audit Inventory
 
@@ -77,6 +56,29 @@ and Plan.
 - [x] T-005 Finalize deterministic validator checks, CI/QA evidence, and final
   review.
 
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `T-001 through T-005` is limited to these Workspace Document Governance Hardening owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md`
+  - `docs/03.specs/013-workspace-document-governance-hardening/spec.md`
+  - `docs/04.execution/plans/2026-07-03-workspace-document-governance-hardening.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Workspace Document Governance Hardening work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Workspace Document Governance Hardening protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Workspace Document Governance Hardening outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `bash scripts/validate-harness.sh`
+  - `bash infrastructure/tests/verify-contracts-static.sh`
+- **Live Validation**: DEFER — Workspace Document Governance Hardening is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Workspace Document Governance Hardening; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Workspace Document Governance Hardening change set for `T-001 through T-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Workspace Document Governance Hardening evidence remains in:
+  - `docs/04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md`
+  - `docs/03.specs/013-workspace-document-governance-hardening/spec.md`
+  - `docs/04.execution/plans/2026-07-03-workspace-document-governance-hardening.md`
+  - `docs/00.agent-governance/memory/progress.md`
+  - `docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md`
+
 ## Verification Summary
 
 - **Test Commands**:
@@ -95,7 +97,7 @@ and Plan.
   - `docs/90.references/audits/2026-07-03-wdgh/workspace-document-governance-hardening-audit.md`
     if durable audit findings justify a separate Stage 90 report.
 
-## Current Evidence
+### Current Evidence
 
 - Stage 03 Spec approved by user and committed in
   `ce5f6e2 docs(spec): Define workspace document governance hardening`.
@@ -151,7 +153,7 @@ and Plan.
   docs/99.templates/templates/sdlc/specs/agent-design.template.md
   docs/99.templates/templates/sdlc/specs/api-spec.template.md
   docs/99.templates/templates/sdlc/specs/data-model.template.md
-  docs/99.templates/templates/sdlc/specs/harness-task-contract.template.md
+  # retired duplicate harness Task starter (removed by Spec 027)
   docs/99.templates/templates/sdlc/specs/openapi.template.yaml
   docs/99.templates/templates/sdlc/specs/schema.template.graphql
   docs/99.templates/templates/sdlc/specs/service.template.proto
@@ -277,8 +279,8 @@ and Plan.
   Templates README route table. Feature-local README files remain covered by
   the generic README route.
 - Updated the Template Routing Contract to make nested README targets use the
-  generic README route and keep `harness-task-contract.template.md`
-  supplemental rather than structural.
+  generic README route and kept the duplicate harness Task starter
+  supplemental rather than structural at that time; Spec 027 later retired it.
 - Updated Stage 00 routing, documentation protocol, and authoring matrix docs
   so exact target-pattern/template routing points to
   `docs/99.templates/support/template-routing.md` instead of carrying a full
@@ -572,7 +574,7 @@ and Plan.
   Kubernetes, Argo CD, Vault, cloud, publishing, provider-runtime, push, merge,
   or secret-value action was performed.
 
-## Related Documents
+## Traceability
 
 - [Spec](../../03.specs/013-workspace-document-governance-hardening/spec.md)
 - [Plan](../plans/2026-07-03-workspace-document-governance-hardening.md)

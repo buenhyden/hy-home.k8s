@@ -1,9 +1,9 @@
 ---
 title: 'Reference: AI Agents Roster and Gap Analysis Research'
 type: content/reference
-status: draft
+status: accepted
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-14
 ---
 
 # Reference: AI Agents Roster and Gap Analysis Research
@@ -24,7 +24,7 @@ updated: 2026-07-11
 이 문서는 활성 에이전트, 모델, 정책, validator 또는 provider 설정을 변경하지
 않는다.
 
-## Purpose
+### Purpose
 
 - 10개 로컬 역할과 세 어댑터의 model, tools, scope, guardrail, handoff,
   postflight, sandbox/effort 선언을 실제 파일 기준으로 기록한다.
@@ -357,7 +357,7 @@ reporting workflows cannot absorb the bounded work. Only a future cost-
 observability requirement with those telemetry and non-overlap gates may reopen
 the Stage 03 agent-design decision.
 
-## Interpretation
+### Interpretation
 
 The local system has a coherent role/body contract and exact 30-file stem
 parity, but only Claude and Codex are on their documented native project-agent

@@ -86,14 +86,14 @@ updated: 2026-05-21
   - Vault 경로/권한 모델 변경
   - GitOps 루트 경로/브랜치 전략 변경
 
-## AI Agent Policy Section (If Applicable)
+### AI Agent Policy Section
 
 - **Model / Prompt Change Process**: 운영 정책/런북 자동 수정 작업은 PR 단위 증적(변경 파일 + 검증 커맨드 결과)을 남긴다.
 - **Eval / Guardrail Threshold**: 링크 오류 0건, 평문 시크릿 0건, 계약 포트 불일치 0건.
 - **Log / Trace Retention**: 정책 변경 검증 로그를 관련 Plan/Task/Runbook에 기록한다.
 - **Safety Incident Thresholds**: 비밀 유출, 무승인 권한 확장, 운영 경로 불일치 탐지 시 즉시 에스컬레이션한다.
 
-## Related Documents
+## Traceability
 
 - **ARD**: [`../../02.architecture/requirements/0007-current-local-gitops-platform.md`](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
 - **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)

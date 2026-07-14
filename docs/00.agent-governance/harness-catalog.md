@@ -1,9 +1,9 @@
 ---
 title: 'Reference: Local Harness Catalog'
 type: governance/reference
-status: draft
+status: active
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-14
 ---
 
 # Reference: Local Harness Catalog
@@ -14,36 +14,56 @@ This document is the canonical catalog for the local agent runtime used in `hy-h
 It defines the supported agents, skills, model allocation, scope imports, and pattern families
 that shape the runtime contract under the shared local runtime bridge (`.claude/`, `.codex/`, `.agents/`).
 
-## Purpose
+### Purpose
 
 - Provide a single source of truth for the local runtime roster.
 - Keep gateway files and runtime files in sync.
-- Keep provider-native role adapters (`.claude/agents/*.md`, `.codex/agents/*.toml`, `.agents/agents/*.md`) aligned.
+- Keep native Claude/Codex role adapters and local/Antigravity role adapters (`.claude/agents/*.md`, `.codex/agents/*.toml`, `.agents/agents/*.md`) statically aligned without claiming Gemini CLI runtime parity.
 - Record the model hierarchy for supervising and worker agents.
 - Preserve pattern lineage without exposing source directory paths.
 
-## Scope
+### Scope
 
 - Covers local runtime agents, skills, scope imports, and model allocation.
 - Does not duplicate rule text from `rules/`, `scopes/`, or `providers/`.
-- Current remediation scope adds a `wiki-curator` runtime surface for LLM Wiki
+- The current roster includes a `wiki-curator` runtime surface for LLM Wiki
   curation by explicit human request, while keeping all other new runtime
   surfaces out of scope unless this matrix records a concrete gap. External
   agency catalogs are gap-analysis lenses, not automatic roster expansion
   sources.
 
-## Runtime Principles
+## Authority Boundary
+
+### Runtime Principles
 
 - The local runtime is cluster-specific and GitOps-first.
 - Supervising agents use the `top` model tier; task and worker agents use the `worker` model tier by default (see Model Tier Mapping below).
-- Agent files are thin provider runtime adapters and must not duplicate governance policy.
-- Provider parity means role parity plus validation evidence: the same role,
+- Agent files are thin native or local adapter surfaces and must not duplicate governance policy.
+- Local adapter parity means role parity plus validation evidence: the same role,
   scope imports, guardrails, handoff, and postflight contract expressed through
-  provider-native metadata and runtime syntax.
+  surface-specific metadata and syntax. It does not prove Gemini CLI native
+  discovery, events, policy loading, or model resolution.
 - Skill files are either workflow contracts or reference-pattern contracts and
   must remain specific to this cluster.
 
-## Official Capability Basis
+### Readiness Evidence Boundary
+
+`Ready` in this catalog means the repository surface exists, is wired into the local
+governance/runtime contract, and is covered by repo-backed static gates where applicable.
+It is not proof that GitHub CI, the full optional local toolchain, live k3d bootstrap,
+ArgoCD health, or live cluster reconciliation completed in the current session.
+Matrix validation is a regression and structure guard for catalog shape and required
+fields. It is not semantic proof that every `Ready` claim was freshly revalidated.
+
+Report readiness through the canonical `affected`, `staged`, `all-files`,
+`message/manual`, `ci`, and `remote/live` lanes and `PASS`/`SKIP`/`FAIL`/`DEFER`
+vocabulary in [`rules/quality-standards.md`](rules/quality-standards.md). Do not
+collapse repository, remote CI, provider consumption, or live evidence into one
+readiness claim.
+
+## Governance Context
+
+### Official Capability Basis
 
 Official provider capability basis checked on 2026-07-06:
 
@@ -57,36 +77,41 @@ Official provider capability basis checked on 2026-07-06:
 - GitHub Actions: <https://docs.github.com/en/actions>
 - External Agency Agents roster and multi-tool packaging scan: <https://github.com/msitarzewski/agency-agents>
 
-## Canonical Adapter Ownership Model
+## Current Contract
 
-Stage 00 uses a `canonical core + provider adapter + validation evidence` model.
-This table defines the owner of each contract so provider files do not copy the
+### Canonical Adapter Ownership Model
+
+Stage 00 uses a `canonical core + adapter surface + validation evidence` model.
+This table defines the owner of each contract so adapter files do not copy the
 same policy in different words.
 
 | Contract Area                             | Canonical Owner                                                                   | Adapter Surface                                                                 | Validation Owner                                                                   |
 | ----------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | Governance rules and execution checklists | `docs/00.agent-governance/rules/**`                                               | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, provider notes                           | `scripts/validate-repo-quality-gates.sh`                                           |
-| Model tiers and concrete IDs              | This catalog plus `model-policy.md`                                               | `.claude/agents/*.md`, `.agents/agents/*.md`, `.codex/agents/*.toml`            | Agent adapter/model checks in the quality gate                                     |
-| Shared skills, workflows, output styles   | `.agents/{skills,workflows,output-styles}/`                                       | `.claude/**` and `.codex/**` symlink views                                      | Skill mirror checks, task-to-skill routing, and `.agents/**` repo-quality triggers |
-| Hook scripts                              | `docs/00.agent-governance/hooks/*.sh`                                             | `.claude/settings.json`, `.agents/hooks.json`, `.codex/hooks.json` event wiring | Hook payload simulation and shell syntax checks                                    |
+| Model tiers and concrete IDs              | This catalog plus `model-policy.md`                                               | `.claude/agents/*.md`, `.agents/agents/*.md` (local), `.codex/agents/*.toml`    | Agent adapter/model checks in the quality gate; Gemini CLI resolution is `DEFER`    |
+| Shared skills, workflows, output styles   | `.agents/{skills,workflows,output-styles}/`                                       | `.claude/{skills,workflows,output-styles}` and `.codex/{skills,workflows,output-styles}` symlink views | Skill mirror checks, task-to-skill routing, and `.agents/**` repo-quality triggers |
+| Hook scripts                              | `docs/00.agent-governance/hooks/*.sh`                                             | `.claude/settings.json`, `.agents/hooks.json` local wiring, `.codex/hooks.json` | Hook payload simulation and shell syntax checks; Gemini CLI delivery is `DEFER`     |
+| Validation selection and handoff evidence | `contracts/validation-surfaces.json`, `rules/quality-standards.md`                 | Local hooks, pre-commit, CI selector, provider handoffs                         | Affected-surface, role-semantic, native metadata, and roster validators             |
 | Template contract                         | `docs/99.templates/support/template-routing.md` and `docs/99.templates/README.md` | docs-stage-routing skill, provider event wiring, doc-writer agents              | Structural template coverage and README/link checks                                |
 | Work evidence                             | `docs/04.execution/tasks/**` and `memory/progress.md`                             | Provider final responses and PR descriptions                                    | Task verification summary and progress ledger                                      |
 
-## Model Tier Mapping
+### Model Tier Mapping
 
 Model allocation is provider-agnostic at the tier level and provider-specific at the
 concrete model level. The `top` tier serves planning and supervising roles; the
 `worker` tier serves delegated subagent roles. This table is the canonical source for
-the per-provider model identifiers consumed by `.claude/agents/*.md`,
-`.agents/agents/*.md`, and `.codex/agents/*.toml`.
+the surface-specific model identifiers consumed by `.claude/agents/*.md`,
+local/Antigravity `.agents/agents/*.md`, and `.codex/agents/*.toml`. The Gemini
+column is a local adapter baseline, not proof of Gemini CLI native model
+resolution.
 
-| Tier     | Role               | Claude                      | Gemini                      | GPT (Codex)                      |
+| Tier     | Role               | Claude                      | Gemini (local/Antigravity)  | GPT (Codex)                      |
 | -------- | ------------------ | --------------------------- | --------------------------- | -------------------------------- |
 | `top`    | plan / supervisor  | `opus 4.8`                  | `Gemini 3.1 Pro (High)`     | `gpt-5.5`                        |
 | `worker` | delegated subagent | `sonnet 4.6` or `haiku 4.5` | `Gemini 3.5 Flash (Medium)` | `gpt-5.3-codex` (agentic coding) |
 
 - `supervisor` is the only `top`-tier agent; all other local agents are `worker` tier.
-- Each provider's agent files must declare the concrete model for their tier from this table.
+- Each tracked role surface must declare the concrete model for its tier from this table.
 - Codex agent TOML files must also declare `model_reasoning_effort`; use `xhigh` for `supervisor`, `high` for implementation/review/security/incident workers, and `medium` for documentation and wiki curation workers.
 - Concrete identifiers may be updated here in one place when a provider promotes a new top or worker model.
 
@@ -100,22 +125,7 @@ Select a model tier by task profile, then map to the provider-specific identifie
 - This table is the single source consumed by all provider agent files; keep the verified identifier set current here.
 - Codex `model_reasoning_effort` values must be one of the allowed values in `docs/00.agent-governance/model-policy.md`.
 
-## Readiness Evidence Boundary
-
-`Ready` in this catalog means the repository surface exists, is wired into the local
-governance/runtime contract, and is covered by repo-backed static gates where applicable.
-It is not proof that GitHub CI, the full optional local toolchain, live k3d bootstrap,
-ArgoCD health, or live cluster reconciliation completed in the current session.
-Matrix validation is a regression and structure guard for catalog shape and required
-fields. It is not semantic proof that every `Ready` claim was freshly revalidated.
-
-Report readiness evidence in separate lanes:
-
-- Repo/static readiness: local files, provider-native role-adapter contracts, command boundaries, and validation scripts.
-- CI/toolchain readiness: GitHub Actions plus local validators and optional tools such as `pre-commit`, `kube-linter`, `actionlint`, `zizmor`, `graphify`, and `rtk`.
-- Live k3d readiness: human-approved bootstrap, ArgoCD reconciliation, Kubernetes API checks, and runtime health evidence.
-
-## Matrix Status Contract
+### Matrix Status Contract
 
 Matrix status values are limited to `Ready`, `Partial`, and `Missing`.
 
@@ -133,7 +143,7 @@ explicitly requests a new runtime surface or future work discovers a concrete
 gap, update this matrix first, then implement only the smallest surface needed
 to close that gap.
 
-## Harness Four-Element Control Model
+### Harness Four-Element Control Model
 
 The local harness is a control loop, not a file inventory. Each provider must
 preserve this relationship:
@@ -178,7 +188,7 @@ Instruction and settings documents -> Architecture constraints -> Feedback loops
   Remove temporary files, debug-only code, unused imports, and disallowed
   scratch naming (`temp_`, `_new`, `_old`, `_backup`) before handoff.
 
-## ECC DAILY/LIBRARY Surface
+### ECC DAILY/LIBRARY Surface
 
 This repository uses the `agent-sort` evidence model to classify ECC surfaces
 into two buckets only. The classification is routing guidance, not a second
@@ -196,7 +206,7 @@ model depend on them.
 | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | Repository gateway and runtime baselines     | `AGENTS.md`, root `CLAUDE.md`, root `GEMINI.md`, `.claude/CLAUDE.md`, `.codex/CODEX.md`, `.agents/GEMINI.md`                                                                                                                                                                                                                                                                                                    | Every provider session needs the Stage 00 gateway, provider adapter, loading order, and GitOps-first boundary.                              |
 | Stage 00 rules, hooks, and memory            | `docs/00.agent-governance/rules/**`, `docs/00.agent-governance/hooks/*.sh`, `docs/00.agent-governance/memory/progress.md`                                                                                                                                                                                                                                                                                       | These files define how agents act, what blocks unsafe work, how lifecycle validation runs, and what compact context feeds the next session. |
-| Ten shared local role stems / thirty provider adapters | `.claude/agents/*.md`, `.codex/agents/*.toml`, `.agents/agents/*.md`                                                                                                                                                                                                                                                                                                                                            | The repo has a fixed local roster for orchestration, Kubernetes, GitOps, security, incident, code review, docs, and wiki curation.          |
+| Local role roster and tracked adapter set | `.claude/agents/*.md`, `.codex/agents/*.toml`, `.agents/agents/*.md`                                                                                                                                                                                                                                                                                                                                            | The repo has ten shared role stems projected into native Claude/Codex and local/Antigravity adapters; this is static parity, not three-runtime parity. |
 | GitOps, Kubernetes, docs, and harness skills | `.agents/skills/gitops-workflow/skill.md`, `.agents/skills/k8s-validate/skill.md`, `.agents/skills/k8s-security-audit/skill.md`, `.agents/skills/docs-stage-routing/skill.md`, `.agents/skills/docs-stage-conformance/skill.md`, `.agents/skills/workspace-harness-audit/skill.md`, `.agents/skills/knowledge-map/skill.md`, `.agents/skills/execution-plan/skill.md`, `.agents/skills/task-breakdown/skill.md` | The active repo is WSL2+k3d, ArgoCD GitOps, and stage-doc governed, so these skills match recurring daily work.                             |
 | Shared enforcement and quality gates         | `.claude/settings.json`, `.codex/hooks.json`, `.agents/hooks.json`, `scripts/validate-*.sh`, `infrastructure/tests/*.sh`, `.github/workflows/ci.yml`                                                                                                                                                                                                                                                            | Completion depends on deterministic validation, hook wiring, sensitive-data checks, template routing, and static GitOps evidence.           |
 
@@ -215,7 +225,7 @@ routing, but they are not always-loaded daily context.
 | `eval-harness` and `harness-writing`                     | External skills explicitly requested for evaluation quality                 | Use as deterministic eval and reproducible validation lenses. No fuzz target or provider-local `.claude/evals` tree is created by default.                                                                                                    |
 | `enhance-prompt`                                         | External UI/Stitch prompt skill explicitly named                            | Treat as a near-miss no-op unless the active task is a UI prompt generation or prompt refinement task.                                                                                                                                        |
 
-## Agent Eval Completion Contract
+### Agent Eval Completion Contract
 
 Agent eval completion in this repository is deterministic and repo-static by
 default. Capability evals are expressed as explicit acceptance criteria in the
@@ -224,27 +234,31 @@ that can be rerun from the repository checkout.
 
 - **Capability eval**: the Task record states the intended agent behavior,
   affected paths, input boundaries, and expected evidence before handoff.
-- **Regression eval**: `scripts/validate-repo-quality-gates.sh .`,
-  `git diff --check`, JSON parsing, shell syntax, generated-index freshness,
-  and changed-file pre-commit checks protect the durable harness contract.
+- **Regression eval**: the affected-surface contract selects the applicable
+  validators; repository quality, syntax, generated-artifact, and pre-commit
+  consumers preserve their own command contracts.
 - **Completion rule**: an agent may report eval completion only from explicit
   command evidence or recorded human/operator approval. Static checks never
   imply live k3d, ArgoCD, Vault, ESO, secret, or deployment readiness.
+- **Handoff rule**: the owning Task records every field required by
+  [`rules/quality-standards.md`](rules/quality-standards.md), including each
+  validation lane and result, reviewer, rollback, residual risk, and next
+  owner.
 - **Provider boundary**: `.claude/evals` or provider-local eval directories are
   not created unless a future human request asks for that provider-local
   surface; common eval contracts live in Stage 00, Plan/Task evidence, and
   repository validators.
 
-## Readiness Matrix
+### Readiness Matrix
 
 | Layer                         | Implemented Surface                                                                                                                                    | Status | Readiness Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Gateway                       | Codex/GPT `AGENTS.md`, root `CLAUDE.md`, root `GEMINI.md`                                                                                              | Ready  | Thin provider shims point to governance docs and runtime baselines                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | Runtime baseline              | `.claude/CLAUDE.md`, `.codex/CODEX.md`, `.agents/GEMINI.md`                                                                                            | Ready  | Defines loading order, GitOps-first boundary, roster pointers, model hierarchy, and provider-specific four-element harness contracts                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| Local Agents                  | Provider-native role adapters: `.claude/agents/*.md`, `.agents/agents/*.md`, `.codex/agents/*.toml`                                                    | Ready  | Ten local agents exist with provider-native metadata, scope imports, guardrails, handoff, and postflight                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| Agent Adapters                | Provider-native role adapters: `.claude/agents/*.md`, `.codex/agents/*.toml`, `.agents/agents/*.md`                                                    | Ready  | Matching stems, imports, guardrails, handoff, and postflight are checked by `scripts/validate-repo-quality-gates.sh`; native metadata keys differ by provider                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Local Agents                  | Native Claude/Codex plus local/Antigravity adapters: `.claude/agents/*.md`, `.agents/agents/*.md`, `.codex/agents/*.toml`                              | Ready  | Ten local roles exist with surface-specific metadata, scope imports, guardrails, handoff, and postflight; readiness is repo-static                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Agent Adapters                | Native Claude/Codex plus local/Antigravity adapters: `.claude/agents/*.md`, `.codex/agents/*.toml`, `.agents/agents/*.md`                              | Ready  | Matching stems, imports, guardrails, handoff, and postflight are checked by `scripts/validate-repo-quality-gates.sh`; this is local adapter parity, not Gemini CLI runtime parity                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | Workflow Skills               | Shared skills directories                                                                                                                              | Ready  | GitOps, validation, docs routing, docs stage conformance, deployment, incident, RCA, risk, security, and workspace harness audit workflows are local                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| Permissions and hooks         | `.claude/settings.json`, `.agents/hooks.json`, shared `docs/00.agent-governance/hooks/*.sh`                                                            | Ready  | Claude runtime has allow/deny command policy, including a destructive Git deny list, plus SessionStart, PreToolUse, PostToolUse, Stop, SubagentStop, and PreCompact hooks. Gemini uses `.agents/hooks.json` as event/context wiring where supported, not as a native permission gate. SessionStart live probes are opt-in with `HY_HOME_K8S_ENABLE_SESSION_LIVE_PROBES=1`; edit hooks warn on authored stage docs and run scoped auto-formatting, style validation, and documentation template enforcement; lifecycle hooks run objective repo-state validation and advise task-unit commit discipline for uncommitted tracked changes, while PreCompact remains advisory |
+| Permissions and hooks         | `.claude/settings.json`, local `.agents/hooks.json`, shared `docs/00.agent-governance/hooks/*.sh`                                                      | Ready  | Claude runtime has allow/deny command policy, including the destructive Git deny list, and lifecycle hooks. `.agents/hooks.json` is local/Antigravity behavioral wiring where supported, not Gemini CLI native settings or a permission gate. SessionStart live probes are opt-in with `HY_HOME_K8S_ENABLE_SESSION_LIVE_PROBES=1`; native Gemini CLI event/policy behavior remains `DEFER` while `.gemini/settings.json` is absent                                                                                                                                        |
 | Codex event hooks             | `.codex/hooks.json`                                                                                                                                    | Ready  | Codex hook wiring reuses SessionStart, PreToolUse, PostToolUse, Stop, SubagentStop, PreCompact, graphify context, and authored-doc template enforcement where supported; SessionStart live probes remain opt-in through the shared hook script; Codex hooks are not a permission gate equivalent and remain context/validation wiring                                                                                                                                                                                                                                                                                                                                     |
 | Validation scripts            | `scripts/*.sh`, `infrastructure/tests/*.sh`                                                                                                            | Ready  | Repo-backed gates cover quality, README `Link Basis` / `Related Documents`, structural template coverage, GitOps structure, manifests, contracts, sensitive-data scanning, shell syntax, lifecycle hook payload simulation, authored-doc template enforcement, `.agents/**` shared asset trigger coverage, gateway thinness, language boundaries, Hookify local-rule shape, and hook-boundary clarity                                                                                                                                                                                                                                                                     |
 | Authored-doc command boundary | `scripts/validate-repo-quality-gates.sh`, staged docs                                                                                                  | Ready  | Risky command examples in authored docs require explicit human/operator boundary markers; authored docs block bare/main direct push and push examples without PR-flow context, while broader Markdown roots block bare/main direct push examples                                                                                                                                                                                                                                                                                                                                                                                                                          |
@@ -252,7 +266,7 @@ that can be rerun from the repository checkout.
 | LLM Wiki curation             | `.claude/agents/wiki-curator.md`, `.codex/agents/wiki-curator.toml`, `docs/90.references/llm-wiki/wiki-index.md`, `scripts/generate-llm-wiki-index.sh` | Ready  | Runtime surface added for LLM Wiki curation with Markdown-only generated index and repo-quality freshness check                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | Escalation boundary           | `subagent-protocol.md`, `rules/agentic.md`                                                                                                             | Ready  | Delegation, file ownership, direct mutation, and human approval boundaries are explicit                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 
-## Harness Engineering Matrix
+### Harness Engineering Matrix
 
 | Required Component                          | Current Surface                                                                                                                                        | Status | Gap  | Remediation                                                                                                                                                                                                                                                                                                                                                                                                               |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -265,10 +279,10 @@ that can be rerun from the repository checkout.
 | Continuous evaluation                       | `scripts/*.sh`, `infrastructure/tests/*.sh`, `.github/workflows/ci.yml`, lifecycle hooks                                                               | Ready  | None | Keep repo-static validation mandatory before handoff and separate it from optional live runtime readiness evidence.                                                                                                                                                                                                                                                                                                       |
 | Documentation language and template routing | `documentation-protocol.md`, `document-stage-routing.md`, `stage-authoring-matrix.md`, `docs/99.templates/README.md`, `docs/README.md`                 | Ready  | None | Keep docs folder responsibilities explicit, route each document family to exactly one canonical template, prefer Korean for human-facing README/overview prose, and prefer English for AI-agent-facing requirements.                                                                                                                                                                                                      |
 | Drift garbage collection                    | `rules/agentic.md`, `documentation-protocol.md`, `scripts/validate-repo-quality-gates.sh`, `docs/98.archive`, `memory/progress.md`                     | Ready  | None | Treat recurring code, document, and structure drift as harness defects; clean temporary/debug artifacts, archive conflicting old docs with Tombstones, and add deterministic validator coverage when possible.                                                                                                                                                                                                            |
-| Local Agents                                | Provider-native role adapters                                                                                                                          | Ready  | None | Keep ten local agents thin, scope-imported, and aligned with this catalog.                                                                                                                                                                                                                                                                                                                                                |
-| Agent Adapters                              | Provider-native role adapters: `.claude/agents/*.md`, `.codex/agents/*.toml`, `.agents/agents/*.md`                                                    | Ready  | None | Update provider-native role adapters in the same change set when role contracts change; keep role parity in the quality gate.                                                                                                                                                                                                                                                                                             |
+| Local Agents                                | Native Claude/Codex plus local/Antigravity role adapters                                                                                                | Ready  | None | Keep ten local roles thin, scope-imported, and statically aligned with this catalog.                                                                                                                                                                                                                                                                                                                                      |
+| Agent Adapters                              | `.claude/agents/*.md`, `.codex/agents/*.toml`, local `.agents/agents/*.md`                                                                              | Ready  | None | Update all affected tracked role adapters in the same change set; keep local adapter parity in the quality gate without claiming Gemini CLI runtime parity.                                                                                                                                                                                                                                                               |
 | Workflow Skills                             | Shared skills directories                                                                                                                              | Ready  | None | Keep cluster-specific workflows local and add new skills only when this matrix shows a concrete gap.                                                                                                                                                                                                                                                                                                                      |
-| Permissions and hooks                       | `.claude/settings.json`, `.agents/hooks.json`, shared `docs/00.agent-governance/hooks/*.sh`                                                            | Ready  | None | Keep allow/deny command policy with the destructive Git deny list, plus SessionStart, PreToolUse, PostToolUse, Stop, SubagentStop, and PreCompact hooks; keep SessionStart live probes opt-in with `HY_HOME_K8S_ENABLE_SESSION_LIVE_PROBES=1`; Gemini hook wiring is event/context validation, not a Claude permission gate; PostToolUse should run scoped auto-formatting and style validation before repository checks. |
+| Permissions and hooks                       | `.claude/settings.json`, local `.agents/hooks.json`, shared `docs/00.agent-governance/hooks/*.sh`                                                      | Partial | Gemini CLI native settings absent | Keep the destructive Git deny list plus Claude allow/deny and lifecycle hooks; keep local/Antigravity wiring scoped to behavior/validation; do not report `.agents/hooks.json` as Gemini CLI native event or policy evidence. Native adoption requires the separate approved design path. |
 | Codex event hooks                           | `.codex/hooks.json`                                                                                                                                    | Ready  | None | Keep Codex hook scope limited to context and validation wiring; reuse the shared hook scripts for authored-doc template enforcement and lifecycle validation; do not treat it as a Claude permission gate equivalent, and keep live startup probes opt-in through the shared hook script.                                                                                                                                 |
 | Validation scripts                          | `scripts/*.sh`, `infrastructure/tests/*.sh`                                                                                                            | Ready  | None | Keep repo-backed validation as the default completion evidence before handoff, including README section contracts, structural template coverage, lifecycle hook payload simulation, and local Hookify ignore/frontmatter checks.                                                                                                                                                                                          |
 | Authored-doc command boundary               | `scripts/validate-repo-quality-gates.sh`, staged docs                                                                                                  | Ready  | None | Keep `kubectl apply/patch`, `argocd app sync`, `vault kv put`, and push examples marked as human/operator-only or PR-flow work in authored docs, including operations policies; keep broader Markdown scans limited to bare/main direct push examples.                                                                                                                                                                    |
@@ -276,7 +290,7 @@ that can be rerun from the repository checkout.
 | LLM Wiki curation                           | `.claude/agents/wiki-curator.md`, `.codex/agents/wiki-curator.toml`, `docs/90.references/llm-wiki/wiki-index.md`, `scripts/generate-llm-wiki-index.sh` | Ready  | None | Runtime surface added for LLM Wiki curation; keep it Markdown-only, generator-checked, and routed back to canonical owners.                                                                                                                                                                                                                                                                                               |
 | Escalation boundary                         | `subagent-protocol.md`, `rules/agentic.md`                                                                                                             | Ready  | None | Keep delegation, destructive-action, live-mutation, and human-approval boundaries explicit.                                                                                                                                                                                                                                                                                                                               |
 
-## Agent-first Engineering Matrix
+### Agent-first Engineering Matrix
 
 | Required Component              | Current Surface                                                                                                                                                                        | Status | Gap  | Remediation                                                                                                                                                                               |
 | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -296,7 +310,7 @@ Direct cluster mutation is not part of the default Agent-first execution path.
 Any `kubectl apply`, `kubectl patch`, external secret change, or live-cluster mutation
 belongs to a human-approved bootstrap or break-glass path with explicit evidence.
 
-## Agents
+### Agents
 
 | File                                       | Role                                         | Model    | Scope Imports  | Responsibility                                                                  | Lineage Family                               |
 | ------------------------------------------ | -------------------------------------------- | -------- | -------------- | ------------------------------------------------------------------------------- | -------------------------------------------- |
@@ -311,15 +325,16 @@ belongs to a human-approved bootstrap or break-glass path with explicit evidence
 | `.claude/agents/observability-reviewer.md` | Observability manifest and SLO-doc review    | `sonnet` | `infra`        | Review Prometheus/Grafana/kube-state-metrics/Alloy/Kiali manifests and SLO docs | cicd-pipeline, infra-as-code                 |
 | `.claude/agents/network-reviewer.md`       | Ingress and network manifest review          | `sonnet` | `infra`        | Review Traefik/ingress/NetworkPolicy/DNS/TLS manifest correctness               | infra-as-code                                |
 
-## Provider-Native Role Adapters
+### Native and Local Role Adapters
 
-`.claude/agents/*.md`, `.agents/agents/*.md`, and `.codex/agents/*.toml` are
-provider-native role adapters for the same local roster. They must keep the same
-name, role, scope imports, guardrails, handoff, and postflight requirements.
-Update all affected provider adapters in the same change set when a role
-contract changes.
+`.claude/agents/*.md` and `.codex/agents/*.toml` are provider-native role
+adapters. `.agents/agents/*.md` is the local/Antigravity adapter surface for the
+same roster. All three must keep the same name, role, scope imports, guardrails,
+handoff, and postflight requirements. Update all affected tracked adapters in
+the same change set when a role contract changes. This is local adapter parity,
+not evidence of Gemini CLI discovery or runtime parity.
 
-The canonical inventory is **10 shared role stems / 30 provider adapters**.
+The canonical inventory is **Ten shared local role stems / thirty tracked role adapters**.
 Roster currentness and owner lineage resolve through these canonical surfaces:
 
 - [`docs/00.agent-governance/rules/bootstrap.md`](rules/bootstrap.md)
@@ -333,12 +348,12 @@ Roster currentness and owner lineage resolve through these canonical surfaces:
 Adapter consistency is a quality-gate contract. `scripts/validate-repo-quality-gates.sh`
 must be able to verify matching file stems, matching scope imports, Runtime
 Bootstrap text, Guardrails, Handoff / Escalation, and Postflight requirements
-across provider-native role adapters. Claude has native `tools:` frontmatter,
-Gemini has Markdown agent metadata without Claude-style tool scoping, and Codex
+across the three tracked role surfaces. Claude has native `tools:` frontmatter,
+the local/Antigravity adapter has Markdown metadata without Claude-style tool scoping, and Codex
 uses TOML metadata including `developer_instructions` and
 `model_reasoning_effort`.
 
-## External Agency Catalog Gap Lens
+### External Agency Catalog Gap Lens
 
 The public Agency Agents roster is a market-scan reference for possible role
 families, not a source of automatic local agents. This repository keeps a
@@ -353,7 +368,7 @@ human request names a concrete local need.
 | Technical writer / codebase onboarding engineer                                            | `doc-writer`, `wiki-curator`, `knowledge-map` skill                                                      | Covered for template routing, LLM Wiki curation, and stale-link detection.                                                                                                                        |
 | Product, sales, market research, data, frontend, backend, and general AI engineering roles | No dedicated local provider adapter                                                                      | Deferred; route through existing docs, product, architecture, or external research workflows until this catalog records a repo-backed gap.                                                        |
 
-## Skills
+### Skills
 
 | Path                                              | Contract Type     | Purpose                                                                                                                                           | Supported Workflows                                                                        | Lineage Family                               |
 | ------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------- |
@@ -380,7 +395,7 @@ review heuristics. Do not require every reference-pattern skill to carry the
 same checklist shape as a workflow skill; instead, keep its trigger,
 applicable review surface, and failure boundaries clear.
 
-## Task-to-Skill Routing
+### Task-to-Skill Routing
 
 Use the repo-local `.agents/skills/**` SSoT first for cluster-specific work.
 Provider symlink views such as `.claude/skills/**` and `.codex/skills/**`
@@ -411,10 +426,12 @@ skill.
 | Operations runbook authoring                    | repo-local: `.claude/skills/ops-runbook/skill.md`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Use for authoring and reviewing bootstrap, recovery, deployment, and incident runbooks in docs/05.operations/runbooks/.                                                                                                                         |
 | Governance index maintenance                    | repo-local: `.claude/skills/knowledge-map/skill.md`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Use for maintaining AGENTS.md indexes, detecting stale documents, and auditing cross-links across docs/00.agent-governance/ and docs/ stage READMEs.                                                                                            |
 
-`.agents/skills/**` is the git-tracked single source of truth for skills.
-`.claude/skills` and `.codex/skills` are symlinks to it, so all three providers
-resolve byte-identical skill content with no duplication. The repository quality
-gate verifies that any tracked `.agents/skills/<name>/skill.md` and its
+`.agents/skills/**` is the git-tracked single source of truth for shared local
+skills. `.claude/skills` and `.codex/skills` are symlinks to it, so the
+local/Antigravity owner plus Claude and Codex views resolve byte-identical
+content with no duplication. This does not establish Gemini CLI native skill
+discovery or consumption. The repository quality gate verifies that any tracked
+`.agents/skills/<name>/skill.md` and its
 `.claude/skills/<name>/skill.md` view stay byte-for-byte aligned (trivially true
 through the symlink).
 
@@ -424,24 +441,25 @@ enforcement must remain in tracked hooks, runtime settings, Codex hook wiring,
 and `scripts/validate-repo-quality-gates.sh`. Local Hookify rules must stay
 untracked, ignored, and frontmatter-shaped when they exist.
 
-## Provider Capability Parity Matrix
+### Provider Capability Parity Matrix
 
 Each capability dimension has one common contract in `docs/00.agent-governance/**`
-and a provider-native implementation. Provider parity means role parity plus
-validation evidence, not identical metadata keys. `Gap` marks a dimension where
-a provider lacks a native mechanism and must honor the common contract
-behaviorally instead. This matrix is the canonical record of cross-provider
-(Claude / Gemini / Codex) symmetry for the local runtime.
+and an explicitly classified native or local implementation. Local adapter
+parity means role parity plus validation evidence, not identical metadata keys
+or runtime consumption. `Gap` marks a dimension where a provider lacks a
+tracked native mechanism. This matrix keeps Gemini CLI native capability
+separate from the local/Antigravity adapter instead of inferring three-runtime
+symmetry from static files.
 
-| Dimension          | Common Contract (governance)                                                                          | Claude native                                 | Gemini native                                     | Codex native                                                                     | Status / Gap                                                                          |
+| Dimension          | Common Contract (governance)                                                                          | Claude native                                 | Gemini CLI native / local adapter                  | Codex native                                                                     | Status / Gap                                                                          |
 | ------------------ | ----------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Model tiers        | Model Tier Mapping (this file)                                                                        | `.claude/agents/*.md` model                   | `.agents/agents/*.md` model                       | `.codex/agents/*.toml` model                                                     | Ready                                                                                 |
-| Skills             | Skills table + Task-to-Skill Routing (this file)                                                      | `.claude/skills` → `.agents/skills` (symlink) | `.agents/skills/**` (SSoT)                        | `.codex/skills` → `.agents/skills` (symlink)                                     | Ready; `.agents/skills` is the SSoT, others symlink to it                             |
-| Rules              | `rules/**` + provider notes                                                                           | `rules/**` + global graphify skill            | `.agents/rules/graphify.md`                       | shared `rules/**` + `graphify-out` convention                                    | Ready                                                                                 |
-| Hooks              | Lifecycle/edit hook contract (`rules/bootstrap.md`, `rules/documentation-protocol.md`)                | Native settings/hooks plus shared scripts     | `.agents/hooks.json` context/validation wiring    | `.codex/hooks.json` context/validation wiring                                    | Ready; Claude has native settings/hooks, Gemini/Codex wiring is not a permission gate |
-| Subagents + tools  | `subagent-protocol.md` least-privilege role contract                                                  | Native subagents plus `tools:` frontmatter    | Agents command/registry or adapter workflow       | Official AGENTS.md/config plus explicit subagent orchestration and TOML adapters | Ready; role parity is validated, while native tool-scoping differs by provider        |
-| Output style       | Output-style contract (this file)                                                                     | `.claude/output-styles/*.md`                  | `GEMINI.md` tone                                  | `developer_instructions` tone                                                    | Partial (Gemini/Codex): no native output-style file; tone-only                        |
-| Workflows          | Workflow-type skills (Skills table) + provider workflow surfaces                                      | workflow-type `.claude/skills/**`             | `.agents/workflows/graphify.md` + workflow skills | shared workflow skills via routing                                               | Ready                                                                                 |
+| Model tiers        | Model Tier Mapping (this file)                                                                        | `.claude/agents/*.md` model                   | Native: absent; local: `.agents/agents/*.md`      | `.codex/agents/*.toml` model                                                     | Local parity Ready; Gemini CLI resolution `DEFER`                                      |
+| Skills             | Skills table + Task-to-Skill Routing (this file)                                                      | `.claude/skills` → `.agents/skills` (symlink) | Native: absent; local SSoT: `.agents/skills/**`   | `.codex/skills` → `.agents/skills` (symlink)                                     | Shared content Ready; Gemini CLI discovery `DEFER`                                    |
+| Rules              | `rules/**` + provider notes                                                                           | `rules/**` + global graphify skill            | Native: absent; local: `.agents/rules/**`         | shared `rules/**` + `graphify-out` convention                                    | Local behavior Ready; Gemini CLI policy loading `DEFER`                               |
+| Hooks              | Lifecycle/edit hook contract (`rules/bootstrap.md`, `rules/documentation-protocol.md`)                | Native settings/hooks plus shared scripts     | Native: absent; local: `.agents/hooks.json`       | `.codex/hooks.json` context/validation wiring                                    | Local wiring Ready; Gemini CLI event delivery `DEFER`                                 |
+| Subagents + tools  | `subagent-protocol.md` least-privilege role contract                                                  | Native subagents plus `tools:` frontmatter    | Native: absent; local adapter workflow only       | Official AGENTS.md/config plus explicit subagent orchestration and TOML adapters | Local parity Ready; Gemini CLI discovery/tool scoping `DEFER`                          |
+| Output style       | Output-style contract (this file)                                                                     | `.claude/output-styles/*.md`                  | Native: absent; local `GEMINI.md` tone            | `developer_instructions` tone                                                    | Partial; Gemini CLI native enforcement `DEFER`                                        |
+| Workflows          | Workflow-type skills (Skills table) + provider workflow surfaces                                      | workflow-type `.claude/skills/**`             | Native: absent; local `.agents/workflows/**`      | shared workflow skills via routing                                               | Local workflow Ready; Gemini CLI consumption `DEFER`                                  |
 | Memory             | `memory/progress.md` + `memory.template.md` (R4 coupling)                                             | governance memory ledger                      | governance memory ledger                          | governance memory ledger                                                         | Ready                                                                                 |
 | Template authoring | `rules/documentation-protocol.md` + `rules/document-stage-routing.md` + `docs/99.templates/README.md` | edit hooks + docs-stage-routing skill         | behavior contract + docs-stage-routing skill      | edit hooks + docs-stage-routing skill                                            | Ready                                                                                 |
 
@@ -449,7 +467,7 @@ behaviorally instead. This matrix is the canonical record of cross-provider
 
 These two dimensions complete the ten-dimension capability set and are provider-agnostic.
 
-- **QA**: Common contract = `rules/quality-standards.md` + repo validators (`scripts/*.sh`, `infrastructure/tests/*.sh`). Claude runs them via the PostToolUse hook and `scripts/validate-repo-quality-gates.sh`; Codex and Gemini use hook wiring where supported and must still run explicit validation before handoff. Status: Ready.
+- **QA**: Common contract = `rules/quality-standards.md` + repo validators (`scripts/*.sh`, `infrastructure/tests/*.sh`). Claude runs them via the PostToolUse hook; Codex uses its context/validation wiring; a compatible local/Antigravity runtime may use `.agents/hooks.json`. All runtimes must still run explicit validation before handoff, and Gemini CLI native hook delivery remains `DEFER`. Status: repo-static Ready.
 - **CI/static validation**: Common contract = GitHub Actions plus local validators (`.github/workflows/ci.yml` branch-policy, pre-commit, repo-quality-static, manifest-static gates). CI is provider-agnostic and runs on every PR regardless of which harness authored the change. It is not live deployment CD unless a separate approved deploy workflow records live evidence. Status: Ready.
 
 ### Output-style Contract
@@ -457,8 +475,9 @@ These two dimensions complete the ten-dimension capability set and are provider-
 All providers must respond to humans in Korean while keeping governance/control docs
 in English, lead with repo-backed evidence, stay GitOps-first (no direct live-cluster
 mutation), and report validation evidence or skipped checks honestly. Claude implements
-this as `.claude/output-styles/*.md`; Gemini approximates it through `GEMINI.md` tone and
-Codex through `developer_instructions` tone, since neither has a native output-style file.
+this as `.claude/output-styles/*.md`; the local/Antigravity adapter encodes it
+through `GEMINI.md` tone; Codex uses `developer_instructions` tone. Gemini CLI
+native output-style discovery or enforcement remains `DEFER`.
 
 Placement: global response/behavior rules belong in `.claude/output-styles/`; a skill's
 output format belongs in that skill's instructions; a subagent's report format belongs in
@@ -466,8 +485,8 @@ its agent prompt. Do not duplicate the same rule across all three layers.
 
 ### Provider-Specific Surfaces
 
-- Gemini: `.agents/rules/graphify.md` (graphify rule) and `.agents/workflows/graphify.md`
-  (graphify workflow) are tracked Gemini surfaces; Claude consumes the same behavior via
+- Local/Antigravity: `.agents/rules/graphify.md` (graphify rule) and `.agents/workflows/graphify.md`
+  (graphify workflow) are tracked local adapter surfaces; Claude consumes the same behavior via
   the global graphify skill and the shared `graphify-out/` convention, and Codex via the
   `graphify-out/` convention plus `.codex/hooks.json` Glob/Grep context wiring.
 
@@ -475,20 +494,26 @@ its agent prompt. Do not duplicate the same rule across all three layers.
 
 - **Supported natively (Claude)**: Settings, hooks, subagents, native permissions, least-privilege agent `tools:`, output styles, memory ledger, template authoring, and QA/CI gates.
 - **Supported (Codex)**: Official `AGENTS.md`, config, sandbox/approval modes, explicit subagent orchestration when requested by the user, TOML role adapters, hook wiring (`hooks.json` reusing shared scripts), shared Skill/Rule via mapping, memory ledger, and template authoring.
-- **Tracked adapter baseline (Gemini)**: `GEMINI.md` hierarchical memory, agents command support, and repository `.agents/**` Antigravity/Gemini adapter surfaces. `.agents/hooks.json` invokes shared hook scripts where the runtime honors it; it is not a Claude-style permission gate. Native output-style enforcement remains tone/behavioral; revisit if the Gemini CLI adds native output-style support.
-- **Shared via symlink to the `.agents/` SSoT**: `.claude/{skills,workflows,output-styles}` and `.codex/{skills,workflows,output-styles}` are symlinks to `.agents/`, so shared content stays byte-identical without duplication. Agents remain per-provider real files because model frontmatter differs (Claude opus/sonnet + `tools:`, Gemini, GPT).
+- **Tracked local adapter baseline (Antigravity)**: root `GEMINI.md`, `.agents/GEMINI.md`, and repository `.agents/**` local adapter surfaces. `.agents/hooks.json` invokes shared hook scripts only where a compatible local runtime honors it; it is not Gemini CLI native settings or a Claude-style permission gate.
+- **Gemini CLI native adoption (`DEFER`)**: `.gemini/agents/**` and `.gemini/settings.json` are reserved native paths and are absent. Native discovery, event delivery, policy loading, and model resolution require a separate approved PRD/ARD/Spec/Plan/Task, or at minimum Spec/Plan/Task, with schema and runtime-canary evidence.
+- **Shared via symlink to the `.agents/` SSoT**: `.claude/{skills,workflows,output-styles}` and `.codex/{skills,workflows,output-styles}` are symlinks to `.agents/`, so shared content stays byte-identical without duplication. Role adapters remain real files because metadata differs across Claude, local/Antigravity, and Codex surfaces.
 
 ### Memory Scope Mapping
 
 - `project` scope = repository governance memory: `docs/00.agent-governance/memory/progress.md` (append-only) plus standalone files via `memory.template.md` (R4 coupling). This is the shared, tracked memory all providers use.
 - `user` / `local` scope = per-operator, untracked (`.claude/*.local.md` and similar); advisory only and never a substitute for the tracked project ledger.
 
-## Consistency Rules
+## Validation and Refresh
+
+### Consistency Rules
 
 - `AGENTS.md` must route to this catalog instead of embedding a duplicate agent table.
 - Root `CLAUDE.md` and `GEMINI.md` must point to this catalog when describing runtime agents.
 - `.claude/CLAUDE.md` must remain the runtime baseline for local agent execution.
-- Provider-native role adapters must stay aligned and pass the adapter checks in `scripts/validate-repo-quality-gates.sh`.
+- Native Claude/Codex role adapters and local/Antigravity role adapters must
+  stay statically aligned and pass the adapter checks in
+  `scripts/validate-repo-quality-gates.sh`; this is not Gemini CLI runtime
+  parity.
 - `.claude/*.local.md` files must stay ignored and untracked; Hookify local rules are advisory only and must not replace tracked validators.
 - Document-generation workflows must use `.agents/skills/docs-stage-routing/skill.md` or a provider symlink view before proposing new authored-document paths.
 - Any new local agent or skill must be added here in the same change set.

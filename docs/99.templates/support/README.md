@@ -14,7 +14,7 @@ The support layer exists so `docs/99.templates/README.md` can remain an
 inventory and entrypoint instead of carrying every contract, governance rule,
 and legacy cleanup rule inline.
 
-## Audience
+### Collection Readers
 
 Primary readers:
 
@@ -27,9 +27,9 @@ Primary readers:
 
 ### In Scope
 
-- Template support contracts and route ownership.
-- SDLC and common documentation governance.
-- Frontmatter profile rules.
+- Template support responsibility boundaries and route-selection procedure.
+- SDLC lifecycle/handoff and common-role rationale.
+- Frontmatter metadata rationale; exact profile values remain registry-owned.
 - Legacy template, key, value, and section cleanup rules.
 - Validator and hook alignment requirements for template routing.
 
@@ -40,12 +40,14 @@ Primary readers:
   documents.
 - Runtime, cluster, Vault, GitHub remote, paid job, or cloud mutation.
 
-## Structure
+## Item Index
 
 ```text
 support/
 ├── common-documentation-governance.md
 ├── documentation-contract.md
+├── document-profiles.json
+├── document-profiles.schema.json
 ├── frontmatter-schema.md
 ├── legacy-cleanup-rules.md
 ├── sdlc-governance.md
@@ -53,7 +55,7 @@ support/
 └── README.md
 ```
 
-## How to Work in This Area
+## Add and Find
 
 1. Update support contracts before changing template form paths or
    frontmatter profiles.
@@ -66,7 +68,7 @@ support/
 5. Run `git diff --check` and `bash scripts/validate-repo-quality-gates.sh .`
    after support changes.
 
-## Link Basis
+### Relative Link Rules
 
 This README is located at `docs/99.templates/support/`.
 
@@ -75,20 +77,24 @@ This README is located at `docs/99.templates/support/`.
 - Link to stage documents with `../../<stage>/`.
 - Keep optional future paths as code literals until the files exist.
 
-## Support Document Index
+### Support Document Index
 
 | Document | Responsibility |
 | --- | --- |
-| [Documentation Contract](./documentation-contract.md) | Separates template forms, support contracts, Stage 00 governance, and authored docs. |
-| [SDLC Governance](./sdlc-governance.md) | Defines SDLC lifecycle template responsibilities. |
-| [Common Documentation Governance](./common-documentation-governance.md) | Defines README, reference, archive, memory, and progress template responsibilities. |
-| [Frontmatter Schema](./frontmatter-schema.md) | Defines current frontmatter profile rules. |
-| [Template Routing](./template-routing.md) | Defines the current `templates/**` route map. |
-| [Legacy Cleanup Rules](./legacy-cleanup-rules.md) | Defines active legacy keys, values, sections, and route references rejected by current contracts. |
+| [Documentation Contract](./documentation-contract.md) | Assigns ownership across forms, support, Stage 00 governance, authored documents, and enforcement surfaces. |
+| [Document Profile Registry](./document-profiles.json) | Canonical machine contract for document classification, paths, frontmatter, lifecycle domains, headings, templates, and ownership declarations. |
+| [Document Profile Registry Schema](./document-profiles.schema.json) | JSON Schema for the canonical document-profile registry shape and allowed values. |
+| [SDLC Governance](./sdlc-governance.md) | Owns SDLC lifecycle rationale, handoff semantics, numbering, and active-surface rules. |
+| [Common Documentation Governance](./common-documentation-governance.md) | Owns README, reference, archive, memory, and progress role rationale. |
+| [Frontmatter Schema](./frontmatter-schema.md) | Explains metadata rationale while the registry owns exact profile values. |
+| [Template Routing](./template-routing.md) | Owns human-readable route selection guidance that mirrors the current machine registry. |
+| [Legacy Cleanup Rules](./legacy-cleanup-rules.md) | Owns migration and removal policy for legacy keys, values, sections, and route references. |
 
 ## Related Documents
 
 - [Templates README](../README.md)
+- [Document Profile Registry](./document-profiles.json)
+- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
 - [Documentation Protocol](../../00.agent-governance/rules/documentation-protocol.md)
 - [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)
 - [Stage Authoring Matrix](../../00.agent-governance/rules/stage-authoring-matrix.md)

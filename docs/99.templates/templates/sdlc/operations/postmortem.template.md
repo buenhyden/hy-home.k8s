@@ -10,102 +10,46 @@ updated: YYYY-MM-DD
 
 # Postmortem: [Incident Title]
 
-> Use this template for `docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md`.
->
-> Rules:
->
-> - Analyze root cause and prevention after the incident is stabilized.
-> - Keep factual incident chronology linked to the Incident document.
-> - Use relative links only, calculated from the final authored document location.
-> - Keep placeholder or optional target paths as code literals until the target exists.
-
----
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Overview
 
-이 문서는 사고의 구조적 원인과 재발 방지 조치를 분석하는 Postmortem 문서다. 비난 없는 분석과 시스템 개선에 집중한다.
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
-## Incident Summary
+## Incident Link and Impact Summary
 
-| Field             | Value                                                      |
-| ----------------- | ---------------------------------------------------------- |
-| Incident ID       | `INC-###`                                                  |
-| Incident Date     | `YYYY-MM-DD`                                               |
-| Analysis Date     | `YYYY-MM-DD`                                               |
-| Severity          | `SEV-1 / SEV-2 / SEV-3`                                    |
-| Incident Document | `[INC-###-<title>.md]`                    |
-
-## Agent Metadata (If Applicable)
-
-- **Model Version**:
-- **Prompt Version**:
-- **Tool Set / Config**:
-- **Guardrail State**:
-- **Trace IDs**:
-- **Eval Run IDs**:
-
-## Impact
-
-- **Affected Users or Systems**:
-- **Operational Impact**:
-- **Business / Maintenance Impact**:
-
-## Timeline
-
-| Time (UTC) | Event                                               |
-| ---------- | --------------------------------------------------- |
-| HH:MM      | [Detection / investigation / mitigation / resolved] |
+<!-- Describe the topic-specific incident link and impact summary without copying template guidance. -->
 
 ## Root Cause Analysis
 
-### Primary Root Cause
+<!-- Describe the topic-specific root cause analysis without copying template guidance. -->
 
-[Systemic cause.]
+## Contributing Factors
 
-### Contributing Factors
-
-- [Factor 1]
-- [Factor 2]
-
-### Detection Gaps
-
-- [Gap 1]
-- [Gap 2]
+<!-- Describe the topic-specific contributing factors without copying template guidance. -->
 
 ## What Went Well
 
-- [Point 1]
+<!-- Describe the topic-specific what went well without copying template guidance. -->
 
 ## What Went Wrong
 
-- [Point 1]
+<!-- Describe the topic-specific what went wrong without copying template guidance. -->
 
 ## Action Items
 
-| Action        | Owner  | Priority | Ticket / Reference | Status  |
-| ------------- | ------ | -------- | ------------------ | ------- |
-| [Action item] | [Name] | High     | [Link]             | Pending |
+<!-- Describe the topic-specific action items without copying template guidance. -->
 
 ## Prevention and Verification
 
-- [Prevention work]
-- [Verification rule]
+<!-- Describe the topic-specific prevention and verification without copying template guidance. -->
 
-## Required Documentation Feedback Loop
+## Documentation Feedback Loop
 
-- **ADR updates**:
-- **Spec updates**:
-- **Operation updates**:
-- **Runbook updates**:
-- **Guardrail / Eval updates**:
+<!-- Describe the topic-specific documentation feedback loop without copying template guidance. -->
 
-## Related Documents
+## Traceability
 
-Target-relative examples below assume the authored file will be created at
-`docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md`.
-
-- **Runbook**: `[../../../runbooks/####-<topic>.md]`
-- **Operation**: `[../../../policies/####-<policy-or-standard>.md]`
-- **Incident**: `[INC-###-<title>.md]`
-- **Spec**: `[../../../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
-- **Related ADRs**: `[../../../../02.architecture/decisions/####-<short-title>.md]`
+<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->

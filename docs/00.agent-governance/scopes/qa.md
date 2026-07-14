@@ -1,23 +1,20 @@
+---
+title: 'QA Scope'
+type: governance/reference
+status: active
+owner: platform
+updated: 2026-07-14
+---
+
 # QA Scope
+
+## Overview
 
 Persona: QA Engineer
 
-## Source of Truth
+## Authority Boundary
 
-- `docs/04.execution/plans/`
-- `docs/04.execution/tasks/`
-- `docs/05.operations/incidents/`
-
-## Responsibilities
-
-- Define and execute verification paths for planned work.
-- Keep test evidence and defect records traceable.
-- Validate that delivered behavior matches stage artifacts.
-- Monitor and maintain QA/CI reference guides under `docs/05.operations/guides/`.
-- Reference `scripts/validate-*.sh` and `scripts/check-*.sh` as the primary repo-static QA execution surface.
-- Enforce 90% coverage policy for testable application code (or validation-matrix coverage for infrastructure) when reviewing verification evidence.
-
-## File Ownership
+### File Ownership
 
 | Path                      | Owner | Notes                                                  |
 | ------------------------- | ----- | ------------------------------------------------------ |
@@ -29,15 +26,35 @@ Persona: QA Engineer
 
 QA scope does **not** own `gitops/` manifests or `docs/00.agent-governance/` (meta scope).
 
-## Subagent Bridge
+## Governance Context
+
+### Source of Truth
+
+- `docs/04.execution/plans/`
+- `docs/04.execution/tasks/`
+- `docs/05.operations/incidents/`
+
+## Current Contract
+
+### Responsibilities
+
+- Define and execute verification paths for planned work.
+- Keep test evidence and defect records traceable.
+- Validate that delivered behavior matches stage artifacts.
+- Monitor and maintain QA/CI reference guides under `docs/05.operations/guides/`.
+- Reference `scripts/validate-*.sh` and `scripts/check-*.sh` as the primary repo-static QA execution surface.
+- Enforce 90% coverage policy for testable application code (or validation-matrix coverage for infrastructure) when reviewing verification evidence.
+
+### Subagent Bridge
 
 No dedicated subagent for QA scope in standard runs. QA verification steps are embedded in `k8s-implementer.md` postflight.
 
-Subagent dispatch: use the current runtime's provider-native delegated-agent
-mechanism; never inline full role definitions when a provider-local agent file
-exists.
+Subagent dispatch: follow the [Subagent Protocol](../subagent-protocol.md); never
+inline a full role definition when an applicable native or local adapter exists.
 
-## Definition of Done
+## Validation and Refresh
+
+### Definition of Done
 
 - Test strategy is aligned to plan and task artifacts.
 - Regression coverage is explicitly documented.

@@ -42,6 +42,12 @@ Review GitOps changes for target correctness, Kustomize structure, and ArgoCD-sa
 - Enforce GitOps-first boundaries; no direct cluster mutation is allowed in this role.
 - Treat least-privilege AppProject configuration and repository-backed sync targets as mandatory expectations.
 - Keep release guidance cluster-specific and avoid generic CI/CD framework advice.
+- Stop the review when a sync target is missing or ambiguous, rollout safety cannot be established, or a sensitive-data boundary is crossed.
+
+## Capability and Evidence
+
+- Capability tier: `worker`; perform bounded GitOps and ArgoCD review without implementation or live-sync authority.
+- Required evidence: identify each affected sync target, Kustomize path, rollout risk, and repository-backed validation result.
 
 ## Handoff / Escalation
 

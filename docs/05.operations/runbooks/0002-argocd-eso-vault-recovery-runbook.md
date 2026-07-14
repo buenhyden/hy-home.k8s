@@ -8,10 +8,6 @@ updated: 2026-06-02
 
 # ArgoCD ESO Vault Recovery Runbook
 
-## Runbook Type
-
-`recovery`
-
 ## Overview
 
 이 런북은 `ClusterSecretStore/vault-backend Ready=False` 상황에서 Vault sealed 상태, EndpointSlice drift, Kubernetes auth drift를 구분하고, ArgoCD/ESO 상태를 정상화한 뒤 TLS/CI 계약 회귀를 점검하는 절차를 제공한다.
@@ -20,16 +16,13 @@ updated: 2026-06-02
 >
 > **Agent execution boundary**: EndpointSlice hotfix와 Docker network mutation은 human-approved break-glass 전용이다. Agent는 기본적으로 사전 스냅샷, Git 파일 보정안, 검증 계획, 후속 증적 정리까지만 수행한다.
 
-## Purpose
+### Purpose
 
 `vault-external` endpoint 부재, 연결 거부, Vault sealed 상태, 또는 Kubernetes auth drift로 발생하는 ESO/Vault 연동 장애를 빠르게 분류하고, operator-bound 복구 절차와 계약 회귀 검증을 연결한다.
 
-## Canonical References
+## Runbook Type
 
-- [`../../02.architecture/requirements/0007-current-local-gitops-platform.md`](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
-- [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
-- [`../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md)
+`recovery`
 
 ## When to Use
 
@@ -47,6 +40,11 @@ updated: 2026-06-02
 - [ ] `kubectl` 컨텍스트 확인
 - [ ] 평문 시크릿/토큰 출력 금지
 - [ ] 복구 전 상태 스냅샷 수집
+- [ ] 외부 Vault의 `eso-read-platform` role에 `bound_audiences=vault` 설정 확인
+
+`vault-external`과 `vault-backend`의 HTTP 연결은 현재 로컬 k3d 네트워크
+내부 전용 예외이며 production TLS 구성을 의미하지 않는다. 외부 Vault
+관리 요청은 HTTPS와 검증된 CA를 사용해야 한다.
 
 ### Procedure
 
@@ -76,17 +74,10 @@ kubectl -n external-secrets logs deploy/external-secrets --since=2h --tail=80 | 
 - `sys/health`가 응답하지 않거나 `connection refused`가 반복되면 endpoint/network 절차로 이동한다.
 - `sys/health`가 `sealed:false`인데 Kubernetes auth login이 실패하면 Vault auth mount, role, TokenReview reviewer 설정을 operator-bound로 재검토한다.
 
-1. Vault가 sealed 상태면 operator-bound unseal 절차를 수행한다. Agent는 unseal key, root token, Vault token, secret value를 요청하거나 출력하지 않는다.
-
-```bash
-# <!-- OPERATOR-BOUND -->
-# Vault operator only. Do not paste keys into chat, Git, logs, or PR text.
-vault status
-vault operator unseal <unseal-key-share-1>
-vault operator unseal <unseal-key-share-2>
-vault operator unseal <unseal-key-share-3>
-vault status
-```
+1. Vault가 sealed 상태면 operator-bound unseal 절차를 수행한다. Agent는
+   unseal key, root token, Vault token, secret value를 요청하거나 출력하지
+   않는다. Vault 운영자는 승인된 비밀 입력 채널을 사용하고 credential을
+   명령 인자, 셸 환경, 채팅, Git, 로그, PR 본문에 넣지 않는다.
 
 unseal 후에는 secret 값을 조회하지 말고 readiness metadata만 확인한다.
 
@@ -117,6 +108,9 @@ kind: EndpointSlice
 metadata:
   name: vault-external-1
   namespace: platform
+  annotations:
+    platform.hyhome.io/environment-scope: local-only
+    platform.hyhome.io/transport-boundary: local-only-http
   labels:
     kubernetes.io/service-name: vault-external
 addressType: IPv4
@@ -193,7 +187,7 @@ kubectl -n argocd get app root-platform -o yaml | \
 - **Signals**: ArgoCD Application health, ExternalSecret Ready status, ESO controller logs, repo-server logs.
 - **Evidence to Capture**: failed sync output, ExternalSecret condition, Vault auth role read result, recovery command output.
 
-## Troubleshooting Signatures
+### Troubleshooting Signatures
 
 - `connection refused` on `vault-external.platform.svc.cluster.local:8200`
 - `InvalidProviderConfig` in ESO controller logs
@@ -206,8 +200,12 @@ kubectl -n argocd get app root-platform -o yaml | \
 openssl x509 -in secrets/certs/cert.pem -noout -ext subjectAltName | \
   rg '127\.0\.0\.1\.nip\.io|\*\.127\.0\.0\.1\.nip\.io'
 # 미포함 시 인증서 재발급 후 bootstrap 재실행
+export VAULT_CA_FILE="$PWD/secrets/certs/rootCA.pem"
 ./infrastructure/bootstrap-local.sh
 ```
+
+부트스트랩은 HTTPS와 읽기 가능한 `VAULT_CA_FILE`을 강제하고 토큰을
+`/dev/tty`에서 표시 없이 입력받는다. 비대화형 또는 insecure fallback은 없다.
 
 ### Vault sealed remediation
 
@@ -227,12 +225,16 @@ kubectl -n platform delete endpointslice vault-external-1
 - 롤백 후 `verify-contracts-static.sh`와 `run-all.sh`를 재실행한다.
 - 동일 증상이 반복되면 Operations 예외 승인 절차를 따른다.
 
-## Agent Operations (If Applicable)
+### Agent Operations
 
 이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
 단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
 
-## Related Documents
+## Traceability
 
 - **Guide**: [`../guides/0002-wsl2-k3d-argocd-ha-setup-guide.md`](../guides/0002-wsl2-k3d-argocd-ha-setup-guide.md)
 - **Operations Policy**: [`../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md`](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md)
+- [`../../02.architecture/requirements/0007-current-local-gitops-platform.md`](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
+- [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
+- [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
+- [`../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md`](../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md)

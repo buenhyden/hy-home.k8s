@@ -3,7 +3,7 @@ title: '.github QA and CI Remediation Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-05-09
+updated: 2026-07-13
 ---
 
 # .github QA and CI Remediation Plan
@@ -111,7 +111,7 @@ is not removed as prose duplication.
 | PR authors confuse `infra` type with `infra/` branch prefix | Medium | Clarify that `infra` is a PR change type only |
 | Evidence overstates optional local tool coverage | Medium | Split local PASS, CI-only checks, and skipped/unavailable tool evidence |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: not applicable; no prompt/model behavior is changed.
 - **Sandbox / Canary Rollout**: GitHub Actions changes are validated by static repo-backed checks before PR.
@@ -131,7 +131,7 @@ is not removed as prose duplication.
 - [x] ABOUT policy duplication reduced
 - [x] Branch prefix parity and ABOUT drift guard added
 
-## Related Documents
+## Traceability
 
 - Parent Spec: N/A — pre-Spec execution record.
 - **Task**: [`../tasks/2026-05-09-github-qa-ci-remediation.md`](../tasks/2026-05-09-github-qa-ci-remediation.md)

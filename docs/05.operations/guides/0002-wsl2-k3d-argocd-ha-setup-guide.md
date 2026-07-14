@@ -23,7 +23,7 @@ updated: 2026-06-02
 - Developer
 - Operator
 
-## Purpose
+### Purpose
 
 운영 계약(TLS/외부 서비스/최소권한)을 유지하면서, 로컬 런타임 검증과 CI 정적 검증을 분리해 재현성을 높인다.
 
@@ -34,6 +34,12 @@ updated: 2026-06-02
 - `kubectl`, `k3d`, `helm`, `argocd`, `rg` 설치
 - 외부 런타임(Vault/PostgreSQL/Valkey) 기동 상태
 - 인증서 파일 준비: `secrets/certs/cert.pem`, `secrets/certs/key.pem`, `secrets/certs/rootCA.pem`
+- Vault 토큰 프롬프트를 받을 수 있는 대화형 `/dev/tty`
+- 외부 Vault 운영자가 `eso-read-platform` Kubernetes auth role에
+  `bound_audiences=vault`를 설정
+
+`vault-backend`의 클러스터 내부 HTTP 연결은 현재 로컬 k3d 네트워크에만
+허용된 예외이며 production TLS 구성을 의미하지 않는다.
 
 ### WSL2 커널 파라미터 사전 확인
 
@@ -147,9 +153,14 @@ openssl x509 -in secrets/certs/cert.pem -noout -ext subjectAltName | \
 1. 부트스트랩 스크립트로 TLS Secret까지 포함해 초기화를 실행한다.
 
 ```bash
-export VAULT_TOKEN='<redacted>'
+export VAULT_CA_FILE="$PWD/secrets/certs/rootCA.pem"
 ./infrastructure/bootstrap-local.sh
 ```
+
+스크립트는 토큰을 환경 변수나 명령 인자로 받지 않고 `/dev/tty`에서
+표시 없이 직접 입력받는다. `VAULT_ADDR`는 HTTPS여야 하고
+`VAULT_CA_FILE`은 읽을 수 있어야 하며, 비대화형 또는 인증서 검증을
+생략하는 fallback은 없다.
 
 1. ArgoCD 및 GitOps root app 상태를 확인한다.
 
@@ -179,6 +190,9 @@ kind: EndpointSlice
 metadata:
   name: vault-external-1
   namespace: platform
+  annotations:
+    platform.hyhome.io/environment-scope: local-only
+    platform.hyhome.io/transport-boundary: local-only-http
   labels:
     kubernetes.io/service-name: vault-external
 addressType: IPv4
@@ -194,41 +208,18 @@ YAML
 
 > **이유**: `vault-external.platform.svc.cluster.local`은 k8s 내부 Service DNS → EndpointSlice IP로 라우팅된다.
 > EndpointSlice 주소는 k3d-hyhome 네트워크에서 접근 가능한 현재 Vault 주소여야 한다.
+> 이 HTTP 경로는 `local-only` 예외이며 production TLS 준비 상태를 뜻하지 않는다.
 
-1. Vault Kubernetes auth 설정이 올바른지 확인한다.
-
-```bash
-# Vault Kubernetes auth 설정 확인 (kubernetes_host가 172.18.0.2:6443이어야 함)
-curl -ksS -H "X-Vault-Token: $VAULT_TOKEN" \
-  https://vault.127.0.0.1.nip.io/v1/auth/kubernetes/config | \
-  python3 -c "import sys,json; d=json.load(sys.stdin)['data']; \
-  print('host:', d['kubernetes_host']); \
-  print('token_reviewer_jwt_set:', d.get('token_reviewer_jwt_set')); \
-  print('disable_local_ca_jwt:', d['disable_local_ca_jwt'])"
-```
-
-필요 시 수동 재설정:
+1. Vault/ESO의 저장소 계약을 정적으로 확인한다.
 
 ```bash
-# ESO SA 토큰 발급 (token reviewer JWT 용)
-ESO_TOKEN=$(kubectl -n external-secrets create token external-secrets --duration=87600h)
-
-# Vault Kubernetes auth 업데이트
-EXISTING_CA=$(curl -ksS -H "X-Vault-Token: $VAULT_TOKEN" \
-  https://vault.127.0.0.1.nip.io/v1/auth/kubernetes/config | \
-  python3 -c "import sys,json; print(json.load(sys.stdin)['data']['kubernetes_ca_cert'])")
-
-curl -ksS -X POST \
-  -H "X-Vault-Token: $VAULT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d "{
-    \"kubernetes_host\": \"https://172.18.0.2:6443\",
-    \"kubernetes_ca_cert\": $(echo "$EXISTING_CA" | python3 -c "import sys,json; print(json.dumps(sys.stdin.read()))"),
-    \"token_reviewer_jwt\": \"$ESO_TOKEN\",
-    \"disable_local_ca_jwt\": true
-  }" \
-  https://vault.127.0.0.1.nip.io/v1/auth/kubernetes/config
+python3 scripts/validate-vault-eso-contracts.py --root .
 ```
+
+이 검사는 저장소에 선언된 audience가 정확히 `vault`인지 확인한다. 외부
+Vault role의 `bound_audiences=vault` 설정과 실제 인증 성공 여부는 외부
+Vault 운영자가 별도로 검증해야 하며, 이 가이드는 credential을 명령 인자에
+넣는 수동 읽기/재설정 예제를 제공하지 않는다.
 
 ## Common Pitfalls
 
@@ -266,7 +257,7 @@ bash -n infrastructure/bootstrap-local.sh infrastructure/tests/*.sh
 - k3d 에이전트 노드 동시 재시작(thundering herd) → containerd inotify 순간 초과 → CRI plugin 실패
   → **해결**: 에이전트 노드를 순차적으로(하나씩) 재시작
 
-## Related Documents
+## Traceability
 
 - **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Operation**: [`../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md`](../policies/0002-wsl2-k3d-gitops-ha-operations-policy.md)

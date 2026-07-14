@@ -3,7 +3,7 @@ title: 'Current Local GitOps Platform Architecture Reference Document'
 type: sdlc/ard
 status: active
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Current Local GitOps Platform Architecture Reference Document (ARD)
@@ -13,7 +13,7 @@ updated: 2026-06-02
 이 문서는 현재 구현된 local GitOps platform의 참조 아키텍처를 정의한다.
 old endpoint와 제거된 UI 계약은 archive Tombstone으로 분리하고, 현재 구조는 GitOps desired state와 static contract evidence를 기준으로 설명한다.
 
-## Summary
+### Current architecture summary
 
 현재 플랫폼은 WSL2 + WSL-native Docker 위의 k3d cluster, ArgoCD App-of-Apps, platform Application, workload ApplicationSet, external service interface contract로 구성된다.
 아키텍처의 핵심 목표는 local reproducibility, GitOps-first ownership, secret-safe integration, and current-document traceability다.
@@ -79,7 +79,7 @@ The apps ApplicationSet owns workload directories under `gitops/workloads/*`.
   - `bash scripts/validate-gitops-structure.sh`
   - `bash scripts/validate-k8s-manifests.sh .`
 
-## AI Agent Architecture Requirements (If Applicable)
+### Agent architecture requirements
 
 - **Model/Provider Strategy**: Provider adapters must route to Stage 00 governance and current active docs.
 - **Tooling Boundary**: Agents may inspect and edit repo files inside the workspace; live mutation requires approval.
@@ -87,7 +87,7 @@ The apps ApplicationSet owns workload directories under `gitops/workloads/*`.
 - **Guardrail Boundary**: Archive Tombstones are index records, not active implementation sources.
 - **Latency / Cost Budget**: Not applicable to platform runtime.
 
-## Related Documents
+## Traceability
 
 - **PRD**: [../../01.requirements/004-current-local-gitops-platform.md](../../01.requirements/004-current-local-gitops-platform.md)
 - **Spec**: [../../03.specs/008-current-local-gitops-platform/spec.md](../../03.specs/008-current-local-gitops-platform/spec.md)

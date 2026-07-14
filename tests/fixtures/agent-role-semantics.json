@@ -1,0 +1,307 @@
+{
+  "schemaVersion": 2,
+  "adapterSurfaces": ["local", "claude", "codex"],
+  "roles": [
+    "code-reviewer",
+    "doc-writer",
+    "gitops-reviewer",
+    "incident-responder",
+    "k8s-implementer",
+    "network-reviewer",
+    "observability-reviewer",
+    "security-auditor",
+    "supervisor",
+    "wiki-curator"
+  ],
+  "categories": {
+    "responsibilities": "ROLE-RESPONSIBILITY",
+    "outputs": "ROLE-OUTPUT",
+    "prohibitedActions": "ROLE-PROHIBITED",
+    "stopConditions": "ROLE-STOP",
+    "handoffs": "ROLE-HANDOFF",
+    "capabilityTier": "ROLE-CAPABILITY-TIER",
+    "requiredEvidence": "ROLE-EVIDENCE",
+    "adapterStem": "ROLE-ADAPTER-STEM"
+  },
+  "mutations": ["remove", "replace"],
+  "forbiddenCommonFields": ["model", "tools", "modelReasoningEffort"],
+  "negationStates": [
+    "false",
+    "not true",
+    "invalid",
+    "revoked",
+    "retracted",
+    "superseded",
+    "contradicted",
+    "non-operative",
+    "not operative",
+    "does not apply"
+  ],
+  "adversarialCases": [
+    {
+      "name": "yaml-duplicate-name",
+      "adapterSurface": "local",
+      "role": "code-reviewer",
+      "category": "adapterStem",
+      "mutation": "yamlDuplicateName",
+      "expectedRule": "ROLE-ADAPTER-PARSE"
+    },
+    {
+      "name": "yaml-nonmapping-frontmatter",
+      "adapterSurface": "claude",
+      "role": "doc-writer",
+      "category": "adapterStem",
+      "mutation": "yamlNonMapping",
+      "expectedRule": "ROLE-ADAPTER-PARSE"
+    },
+    {
+      "name": "yaml-nonscalar-name",
+      "adapterSurface": "local",
+      "role": "gitops-reviewer",
+      "category": "adapterStem",
+      "mutation": "yamlNonScalarName",
+      "expectedRule": "ROLE-ADAPTER-PARSE"
+    },
+    {
+      "name": "fenced-responsibility",
+      "adapterSurface": "codex",
+      "role": "incident-responder",
+      "category": "responsibilities",
+      "mutation": "fenced",
+      "expectedRule": "ROLE-RESPONSIBILITY"
+    },
+    {
+      "name": "commented-output",
+      "adapterSurface": "local",
+      "role": "k8s-implementer",
+      "category": "outputs",
+      "mutation": "htmlComment",
+      "expectedRule": "ROLE-OUTPUT"
+    },
+    {
+      "name": "struck-prohibition",
+      "adapterSurface": "claude",
+      "role": "network-reviewer",
+      "category": "prohibitedActions",
+      "mutation": "strikethrough",
+      "expectedRule": "ROLE-PROHIBITED"
+    },
+    {
+      "name": "revoked-stop",
+      "adapterSurface": "codex",
+      "role": "observability-reviewer",
+      "category": "stopConditions",
+      "mutation": "revoked",
+      "expectedRule": "ROLE-STOP"
+    },
+    {
+      "name": "contradicted-handoff",
+      "adapterSurface": "local",
+      "role": "security-auditor",
+      "category": "handoffs",
+      "mutation": "contradicted",
+      "expectedRule": "ROLE-HANDOFF"
+    },
+    {
+      "name": "commented-capability",
+      "adapterSurface": "claude",
+      "role": "supervisor",
+      "category": "capabilityTier",
+      "mutation": "htmlComment",
+      "expectedRule": "ROLE-CAPABILITY-TIER"
+    },
+    {
+      "name": "fenced-evidence",
+      "adapterSurface": "codex",
+      "role": "wiki-curator",
+      "category": "requiredEvidence",
+      "mutation": "fenced",
+      "expectedRule": "ROLE-EVIDENCE"
+    },
+    {
+      "name": "struck-adapter-heading",
+      "adapterSurface": "local",
+      "role": "code-reviewer",
+      "category": "adapterStem",
+      "mutation": "strikethrough",
+      "expectedRule": "ROLE-ADAPTER-STEM"
+    },
+    {
+      "name": "wrapped-contradiction",
+      "adapterSurface": "claude",
+      "role": "doc-writer",
+      "category": "requiredEvidence",
+      "mutation": "wrappedContradiction",
+      "expectedRule": "ROLE-EVIDENCE"
+    },
+    {
+      "name": "quoted-responsibility",
+      "adapterSurface": "local",
+      "role": "code-reviewer",
+      "category": "responsibilities",
+      "mutation": "blockquote",
+      "expectedRule": "ROLE-RESPONSIBILITY"
+    },
+    {
+      "name": "nested-quoted-output",
+      "adapterSurface": "claude",
+      "role": "doc-writer",
+      "category": "outputs",
+      "mutation": "nestedBlockquote",
+      "expectedRule": "ROLE-OUTPUT"
+    },
+    {
+      "name": "lazy-quoted-prohibition",
+      "adapterSurface": "codex",
+      "role": "gitops-reviewer",
+      "category": "prohibitedActions",
+      "mutation": "lazyBlockquote",
+      "expectedRule": "ROLE-PROHIBITED"
+    },
+    {
+      "name": "quoted-stop",
+      "adapterSurface": "local",
+      "role": "incident-responder",
+      "category": "stopConditions",
+      "mutation": "blockquote",
+      "expectedRule": "ROLE-STOP"
+    },
+    {
+      "name": "nested-quoted-handoff",
+      "adapterSurface": "claude",
+      "role": "k8s-implementer",
+      "category": "handoffs",
+      "mutation": "nestedBlockquote",
+      "expectedRule": "ROLE-HANDOFF"
+    },
+    {
+      "name": "lazy-quoted-capability",
+      "adapterSurface": "codex",
+      "role": "network-reviewer",
+      "category": "capabilityTier",
+      "mutation": "lazyBlockquote",
+      "expectedRule": "ROLE-CAPABILITY-TIER"
+    },
+    {
+      "name": "quoted-evidence",
+      "adapterSurface": "local",
+      "role": "observability-reviewer",
+      "category": "requiredEvidence",
+      "mutation": "blockquote",
+      "expectedRule": "ROLE-EVIDENCE"
+    },
+    {
+      "name": "indented-tilde-output",
+      "adapterSurface": "codex",
+      "role": "security-auditor",
+      "category": "outputs",
+      "mutation": "indentedTildeFence",
+      "expectedRule": "ROLE-OUTPUT"
+    },
+    {
+      "name": "following-paragraph-revocation",
+      "adapterSurface": "claude",
+      "role": "security-auditor",
+      "category": "responsibilities",
+      "mutation": "followingParagraphRevocation",
+      "expectedRule": "ROLE-RESPONSIBILITY"
+    },
+    {
+      "name": "following-list-revocation",
+      "adapterSurface": "codex",
+      "role": "supervisor",
+      "category": "handoffs",
+      "mutation": "followingListRevocation",
+      "expectedRule": "ROLE-HANDOFF"
+    },
+    {
+      "name": "not-true-claim",
+      "adapterSurface": "local",
+      "role": "wiki-curator",
+      "category": "prohibitedActions",
+      "mutation": "notTrue",
+      "expectedRule": "ROLE-PROHIBITED"
+    },
+    {
+      "name": "forward-revocation",
+      "adapterSurface": "claude",
+      "role": "supervisor",
+      "category": "responsibilities",
+      "mutation": "forwardRevocation",
+      "expectedRule": "ROLE-RESPONSIBILITY"
+    },
+    {
+      "name": "external-negative-prefix",
+      "adapterSurface": "codex",
+      "role": "incident-responder",
+      "category": "outputs",
+      "mutation": "negativePrefix",
+      "expectedRule": "ROLE-OUTPUT"
+    },
+    {
+      "name": "inline-code-only-capability",
+      "adapterSurface": "local",
+      "role": "k8s-implementer",
+      "category": "capabilityTier",
+      "mutation": "inlineCodeOnly",
+      "expectedRule": "ROLE-CAPABILITY-TIER"
+    },
+    {
+      "name": "list-contained-blockquote",
+      "adapterSurface": "claude",
+      "role": "network-reviewer",
+      "category": "handoffs",
+      "mutation": "listBlockquote",
+      "expectedRule": "ROLE-HANDOFF"
+    },
+    {
+      "name": "quoted-adapter-heading",
+      "adapterSurface": "codex",
+      "role": "code-reviewer",
+      "category": "adapterStem",
+      "mutation": "blockquote",
+      "expectedRule": "ROLE-ADAPTER-STEM"
+    },
+    {
+      "name": "nested-quoted-adapter-heading",
+      "adapterSurface": "claude",
+      "role": "gitops-reviewer",
+      "category": "adapterStem",
+      "mutation": "nestedBlockquote",
+      "expectedRule": "ROLE-ADAPTER-STEM"
+    },
+    {
+      "name": "unordered-list-indented-code",
+      "adapterSurface": "local",
+      "role": "observability-reviewer",
+      "category": "outputs",
+      "mutation": "unorderedListIndentedCode",
+      "expectedRule": "ROLE-OUTPUT"
+    },
+    {
+      "name": "ordered-list-indented-code",
+      "adapterSurface": "codex",
+      "role": "security-auditor",
+      "category": "requiredEvidence",
+      "mutation": "orderedListIndentedCode",
+      "expectedRule": "ROLE-EVIDENCE"
+    },
+    {
+      "name": "forward-false-revocation",
+      "adapterSurface": "local",
+      "role": "doc-writer",
+      "category": "outputs",
+      "mutation": "forwardFalse",
+      "expectedRule": "ROLE-OUTPUT"
+    },
+    {
+      "name": "backward-not-true-revocation",
+      "adapterSurface": "codex",
+      "role": "gitops-reviewer",
+      "category": "stopConditions",
+      "mutation": "backwardNotTrue",
+      "expectedRule": "ROLE-STOP"
+    }
+  ],
+  "expectedCaseCount": 480
+}

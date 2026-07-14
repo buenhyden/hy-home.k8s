@@ -3,7 +3,7 @@ title: 'Active Control Surface Governance Hardening Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Active Control Surface Governance Hardening Technical Specification (Spec)
@@ -49,67 +49,6 @@ Out of scope:
 - Promoting `examples/aws/docs` or `examples/azure/docs` into active SDLC
   documents with required frontmatter and template heading enforcement.
 - Replacing the existing Stage 00 to Stage 99 documentation taxonomy.
-
-## Related Inputs
-
-- **PRD**: No separate PRD exists. The upstream requirement is the approved
-  user request to harden the active control surfaces while preserving AWS and
-  Azure cloud examples as dated snapshots.
-- **ARD**: No separate ARD exists. The architectural baseline is the current
-  local GitOps platform contract plus Stage 00 and Stage 99 governance.
-- **Related ADRs**:
-  - [Current Local GitOps Platform Contract](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- **Prior Specs**:
-  - [Workspace Document Governance Hardening](../013-workspace-document-governance-hardening/spec.md)
-  - [Workspace Document Contract Normalization](../014-workspace-document-contract-normalization/spec.md)
-  - [Agent Governance Contract Normalization](../015-agent-governance-contract-normalization/spec.md)
-
-Official source basis:
-
-- GitHub Actions workflow syntax and permissions:
-  <https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions>
-- GitHub Actions secure use:
-  <https://docs.github.com/en/actions/reference/security/secure-use>
-- GitHub pull request templates:
-  <https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository>
-- GitHub security policy:
-  <https://docs.github.com/code-security/getting-started/adding-a-security-policy-to-your-repository>
-- GitHub Dependabot configuration:
-  <https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference>
-- OpenGitOps principles:
-  <https://opengitops.dev/>
-- Kubernetes Secrets:
-  <https://kubernetes.io/docs/concepts/configuration/secret/>
-- Kubernetes Kustomize:
-  <https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/>
-- Argo CD:
-  <https://argo-cd.readthedocs.io/>
-- Argo CD automated sync:
-  <https://argo-cd.readthedocs.io/en/latest/user-guide/auto_sync/>
-- Argo Rollouts:
-  <https://argoproj.github.io/rollouts/>
-- Argo Rollouts AnalysisTemplate:
-  <https://argo-rollouts.readthedocs.io/en/stable/features/analysis/>
-- External Secrets Operator with Vault:
-  <https://external-secrets.io/latest/provider/hashicorp-vault/>
-- External Secrets Operator with Azure Key Vault:
-  <https://external-secrets.io/latest/provider/azure-key-vault/>
-- OPA Conftest:
-  <https://www.conftest.dev/>
-- KubeLinter:
-  <https://docs.kubelinter.io/>
-
-Repository inputs:
-
-- `docs/99.templates/support/documentation-contract.md`
-- `docs/99.templates/support/template-routing.md`
-- `docs/99.templates/support/frontmatter-schema.md`
-- `docs/99.templates/support/common-documentation-governance.md`
-- `docs/00.agent-governance/rules/documentation-protocol.md`
-- `docs/00.agent-governance/rules/git-workflow.md`
-- `docs/00.agent-governance/rules/quality-standards.md`
-- `scripts/validate-repo-quality-gates.sh`
-- `scripts/validate-harness.sh`
 
 ## Contracts
 
@@ -205,12 +144,12 @@ Cloud example snapshot
 
 These interfaces are document and validation contracts, not runtime APIs.
 
-## API Contract (If Applicable)
+### API Contract
 
 This work exposes no external application API. No feature-local `api-spec.md`,
 OpenAPI, GraphQL, or protobuf contract is required.
 
-## Agent Role & IO Contract (If Applicable)
+### Agent Role & IO Contract
 
 - **Agent Role**: Documentation and validation implementer, with subagents
   available for independent audit, implementation, and review tasks after the
@@ -224,7 +163,7 @@ OpenAPI, GraphQL, or protobuf contract is required.
   deterministic drift is validated, cloud examples remain snapshot-bounded,
   and the repository harness passes.
 
-## Tools & Tool Contract (If Applicable)
+### Tools & Tool Contract
 
 - **Tool List**:
   - `rg`, `sed`, `git`, `bash`, `jq`, YAML/TOML/JSON parsers, and repository
@@ -247,7 +186,7 @@ OpenAPI, GraphQL, or protobuf contract is required.
   - If official sources contradict current repo wording, update the canonical
     contract before dependent surfaces.
 
-## Prompt / Policy Contract (If Applicable)
+### Prompt / Policy Contract
 
 - **System / Instruction Contract**: Agents must work repo-first, read the
   canonical owner before changing a target surface, and record evidence for
@@ -263,7 +202,7 @@ OpenAPI, GraphQL, or protobuf contract is required.
   primary source and avoid provider-latest claims unless the implementation
   actually verifies the current provider state.
 
-## Memory & Context Strategy (If Applicable)
+### Memory & Context Strategy
 
 - **Short-term Context**: Use this spec, the follow-up implementation plan,
   task record, and focused scan output during execution.
@@ -273,7 +212,7 @@ OpenAPI, GraphQL, or protobuf contract is required.
 - **Retrieval Boundary**: Do not persist secret values, live credentials,
   private key material, or local-only runtime state in documentation memory.
 
-## Guardrails (If Applicable)
+### Guardrails
 
 - **Input Guardrails**:
   - Confirm each file is in the active control-surface scope or the snapshot
@@ -297,7 +236,7 @@ OpenAPI, GraphQL, or protobuf contract is required.
   boundary, deleting certificate or secret fixtures, mutating live systems,
   pushing, merging, publishing, or changing credentials.
 
-## Evaluation (If Applicable)
+### Evaluation
 
 - **Eval Types**:
   - Repository structural validation.
@@ -400,7 +339,7 @@ bash infrastructure/tests/verify-contracts-static.sh
 - **VAL-SPC-005**: Required repository and harness validations pass, with
   optional-tool skips reported separately from failures.
 
-## Related Documents
+## Traceability
 
 - [Workspace Document Governance Hardening](../013-workspace-document-governance-hardening/spec.md)
 - [Workspace Document Contract Normalization](../014-workspace-document-contract-normalization/spec.md)
@@ -416,3 +355,63 @@ bash infrastructure/tests/verify-contracts-static.sh
 - [Harness Validation](../../../scripts/validate-harness.sh)
 - [Plan](../../04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md)
 - [Task](../../04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md)
+### Related inputs
+
+- **PRD**: No separate PRD exists. The upstream requirement is the approved
+  user request to harden the active control surfaces while preserving AWS and
+  Azure cloud examples as dated snapshots.
+- **ARD**: No separate ARD exists. The architectural baseline is the current
+  local GitOps platform contract plus Stage 00 and Stage 99 governance.
+- **Related ADRs**:
+  - [Current Local GitOps Platform Contract](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
+- **Prior Specs**:
+  - [Workspace Document Governance Hardening](../013-workspace-document-governance-hardening/spec.md)
+  - [Workspace Document Contract Normalization](../014-workspace-document-contract-normalization/spec.md)
+  - [Agent Governance Contract Normalization](../015-agent-governance-contract-normalization/spec.md)
+
+Official source basis:
+
+- GitHub Actions workflow syntax and permissions:
+  <https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions>
+- GitHub Actions secure use:
+  <https://docs.github.com/en/actions/reference/security/secure-use>
+- GitHub pull request templates:
+  <https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository>
+- GitHub security policy:
+  <https://docs.github.com/code-security/getting-started/adding-a-security-policy-to-your-repository>
+- GitHub Dependabot configuration:
+  <https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference>
+- OpenGitOps principles:
+  <https://opengitops.dev/>
+- Kubernetes Secrets:
+  <https://kubernetes.io/docs/concepts/configuration/secret/>
+- Kubernetes Kustomize:
+  <https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/>
+- Argo CD:
+  <https://argo-cd.readthedocs.io/>
+- Argo CD automated sync:
+  <https://argo-cd.readthedocs.io/en/latest/user-guide/auto_sync/>
+- Argo Rollouts:
+  <https://argoproj.github.io/rollouts/>
+- Argo Rollouts AnalysisTemplate:
+  <https://argo-rollouts.readthedocs.io/en/stable/features/analysis/>
+- External Secrets Operator with Vault:
+  <https://external-secrets.io/latest/provider/hashicorp-vault/>
+- External Secrets Operator with Azure Key Vault:
+  <https://external-secrets.io/latest/provider/azure-key-vault/>
+- OPA Conftest:
+  <https://www.conftest.dev/>
+- KubeLinter:
+  <https://docs.kubelinter.io/>
+
+Repository inputs:
+
+- `docs/99.templates/support/documentation-contract.md`
+- `docs/99.templates/support/template-routing.md`
+- `docs/99.templates/support/frontmatter-schema.md`
+- `docs/99.templates/support/common-documentation-governance.md`
+- `docs/00.agent-governance/rules/documentation-protocol.md`
+- `docs/00.agent-governance/rules/git-workflow.md`
+- `docs/00.agent-governance/rules/quality-standards.md`
+- `scripts/validate-repo-quality-gates.sh`
+- `scripts/validate-harness.sh`

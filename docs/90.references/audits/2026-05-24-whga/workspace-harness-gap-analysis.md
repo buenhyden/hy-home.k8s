@@ -8,14 +8,14 @@ updated: 2026-05-28
 
 # Reference: Workspace Harness Gap Analysis
 
----
-
 ## Overview
+
+---
 
 이 문서는 2026-05-24에 수행된 `hy-home.k8s` 워크스페이스 전체 거버넌스 감사 결과의 참조 기록이다.
 감사 범위, 발견된 Gap 요약, 후속 조치 트래킹 문서 링크를 제공한다.
 
-## Purpose
+### Purpose
 
 워크스페이스의 Harness/Agent 거버넌스 Gap을 체계적으로 식별하고 우선순위를 정한 감사 이력을 보존한다.
 동일한 감사 사이클을 반복하거나 회귀를 점검할 때 기준점으로 활용한다.

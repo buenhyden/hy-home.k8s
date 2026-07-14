@@ -19,7 +19,7 @@ Kubernetes policy, GitOps behavior, Argo CD sync behavior, validation script
 semantics, operations runbooks, Vault policy, secret handling, network policy,
 or live runtime procedure.
 
-## Purpose
+### Purpose
 
 - Record whether the researched Kubernetes, Infrastructure, GitOps, and
   security model is implemented in current repository surfaces.

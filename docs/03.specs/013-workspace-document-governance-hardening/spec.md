@@ -3,7 +3,7 @@ title: 'Workspace Document Governance Hardening Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Workspace Document Governance Hardening Technical Specification (Spec)
@@ -43,25 +43,6 @@ This spec does not own:
 - A bulk rewrite of historical evidence where an archive Tombstone or current
   overlay is safer.
 - Introducing a new top-level `docs/` folder outside the existing taxonomy.
-
-## Related Inputs
-
-- **PRD**: No dedicated PRD exists. The user request and prior approved
-  template governance work are the active requirements input.
-- **ARD**: No dedicated ARD exists. Current architecture constraints are
-  inherited from the Stage 00 canonical adapter model and local GitOps platform
-  contract.
-- **Related ADRs**:
-  - [ADR-0013: Stage 00 Canonical Adapter Model](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
-  - [ADR-0014: Current Local GitOps Platform Contract](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- **Prior Specs**:
-  - [Template Contract Governance Migration](../011-template-contract-governance-migration/spec.md)
-  - [Template Governance Audit Enhancement](../012-template-governance-audit-enhancement/spec.md)
-- **Research and Audit Inputs**:
-  - [Workspace Governance Baseline Research](../../90.references/research/2026-07-04-wer/workspace-governance-baseline.md)
-  - [Spec SDLC CI QA Formatting Research](../../90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md)
-  - [Workspace Governance Implementation Audit](../../90.references/audits/2026-07-02-whia/workspace-governance-implementation-audit.md)
-  - [SDLC Delivery Practices Implementation Audit](../../90.references/audits/2026-07-02-whia/sdlc-delivery-practices-implementation-audit.md)
 
 ## Contracts
 
@@ -153,7 +134,7 @@ validation_surface:
   approval_required_for_live_actions: true
 ```
 
-## API Contract (If Applicable)
+### API Contract
 
 This feature exposes no external runtime API.
 
@@ -162,7 +143,7 @@ This feature exposes no external runtime API.
   `docs/03.specs/<###-Numbering>-<feature-id>/contracts/` when needed by future work.
 - **Machine-readable Contract**: Not applicable.
 
-## Agent Role & IO Contract (If Applicable)
+### Agent Role & IO Contract
 
 - **Agent Role**: Agents inspect, edit, and validate repository files only.
 - **Inputs**:
@@ -179,7 +160,7 @@ This feature exposes no external runtime API.
   document type, one route for each target pattern, provider shims remain thin,
   README files do not duplicate contracts, and local gates pass.
 
-## Tools & Tool Contract (If Applicable)
+### Tools & Tool Contract
 
 - **Tool List**:
   - `rg` and `git ls-files` for repository scans.
@@ -201,7 +182,7 @@ This feature exposes no external runtime API.
   - If external facts are uncertain or time-sensitive, verify with official
     sources and record the source boundary.
 
-## Prompt / Policy Contract (If Applicable)
+### Prompt / Policy Contract
 
 - **System / Instruction Contract**:
   - Follow repository AGENTS instructions and Stage 00 governance.
@@ -216,7 +197,7 @@ This feature exposes no external runtime API.
   - External source claims must include source links and freshness boundaries.
   - Version inventory changes must update the owning Stage 90 data document.
 
-## Memory & Context Strategy (If Applicable)
+### Memory & Context Strategy
 
 - **Short-term Context**: Stage 04 plan and task records own implementation
   sequencing, findings, and validation evidence.
@@ -226,7 +207,7 @@ This feature exposes no external runtime API.
   `docs/90.references/**`; active execution policy belongs in Stage 00 or
   template support contracts.
 
-## Guardrails (If Applicable)
+### Guardrails
 
 - **Input Guardrails**:
   - Treat the current passing gate state as a baseline.
@@ -248,7 +229,7 @@ This feature exposes no external runtime API.
   runtime action, or ambiguous governance conflict cannot be resolved from
   repository evidence.
 
-## Evaluation (If Applicable)
+### Evaluation
 
 - **Eval Types**:
   - Static validation.
@@ -358,7 +339,41 @@ bash scripts/validate-policy-gates.sh .
 - **VAL-WDGH-008**: Final `git diff --check` and
   `bash scripts/validate-repo-quality-gates.sh .` pass.
 
-## External Reference Basis
+## Traceability
+
+- [Docs Hub](../../README.md)
+- [Agent Governance Hub](../../00.agent-governance/README.md)
+- [Template Documentation Contract](../../99.templates/support/documentation-contract.md)
+- [Template Frontmatter Schema](../../99.templates/support/frontmatter-schema.md)
+- [Template Routing Contract](../../99.templates/support/template-routing.md)
+- [SDLC Template Governance](../../99.templates/support/sdlc-governance.md)
+- [Common Documentation Governance](../../99.templates/support/common-documentation-governance.md)
+- [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
+- [Scripts README](../../../scripts/README.md)
+- [GitHub Configuration Hub](../../../.github/ABOUT.md)
+- [Plan](../../04.execution/plans/2026-07-03-workspace-document-governance-hardening.md)
+- [Task](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md)
+- **Completed evolution**: [011](../011-template-contract-governance-migration/spec.md) -> [012](../012-template-governance-audit-enhancement/spec.md) -> [013](./spec.md) -> [014](../014-workspace-document-contract-normalization/spec.md) -> [020](../020-workspace-contract-governance-normalization/spec.md) -> [021](../021-sdlc-lifecycle-contract/spec.md) -> [022](../022-control-cloud-doc-normalization/spec.md) -> [023](../023-stage03-04-repo-static-gap-closure/spec.md).
+### Related inputs
+
+- **PRD**: No dedicated PRD exists. The user request and prior approved
+  template governance work are the active requirements input.
+- **ARD**: No dedicated ARD exists. Current architecture constraints are
+  inherited from the Stage 00 canonical adapter model and local GitOps platform
+  contract.
+- **Related ADRs**:
+  - [ADR-0013: Stage 00 Canonical Adapter Model](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
+  - [ADR-0014: Current Local GitOps Platform Contract](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
+- **Prior Specs**:
+  - [Template Contract Governance Migration](../011-template-contract-governance-migration/spec.md)
+  - [Template Governance Audit Enhancement](../012-template-governance-audit-enhancement/spec.md)
+- **Research and Audit Inputs**:
+  - [Workspace Governance Baseline Research](../../90.references/research/2026-07-04-wer/workspace-governance-baseline.md)
+  - [Spec SDLC CI QA Formatting Research](../../90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md)
+  - [Workspace Governance Implementation Audit](../../90.references/audits/2026-07-02-whia/workspace-governance-implementation-audit.md)
+  - [SDLC Delivery Practices Implementation Audit](../../90.references/audits/2026-07-02-whia/sdlc-delivery-practices-implementation-audit.md)
+
+### External reference basis
 
 The implementation plan should prefer official sources and record dated
 freshness when claims depend on external tooling behavior:
@@ -383,19 +398,3 @@ freshness when claims depend on external tooling behavior:
   [Claude Code hooks guide](https://code.claude.com/docs/en/hooks-guide), and
   [Gemini CLI GEMINI.md guidance](https://google-gemini.github.io/gemini-cli/docs/cli/gemini-md.html)
   for provider-specific agent entrypoint behavior.
-
-## Related Documents
-
-- [Docs Hub](../../README.md)
-- [Agent Governance Hub](../../00.agent-governance/README.md)
-- [Template Documentation Contract](../../99.templates/support/documentation-contract.md)
-- [Template Frontmatter Schema](../../99.templates/support/frontmatter-schema.md)
-- [Template Routing Contract](../../99.templates/support/template-routing.md)
-- [SDLC Template Governance](../../99.templates/support/sdlc-governance.md)
-- [Common Documentation Governance](../../99.templates/support/common-documentation-governance.md)
-- [CI/CD & QA Reference Guide](../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)
-- [Scripts README](../../../scripts/README.md)
-- [GitHub Configuration Hub](../../../.github/ABOUT.md)
-- [Plan](../../04.execution/plans/2026-07-03-workspace-document-governance-hardening.md)
-- [Task](../../04.execution/tasks/2026-07-03-workspace-document-governance-hardening.md)
-- **Completed evolution**: [011](../011-template-contract-governance-migration/spec.md) -> [012](../012-template-governance-audit-enhancement/spec.md) -> [013](./spec.md) -> [014](../014-workspace-document-contract-normalization/spec.md) -> [020](../020-workspace-contract-governance-normalization/spec.md) -> [021](../021-sdlc-lifecycle-contract/spec.md) -> [022](../022-control-cloud-doc-normalization/spec.md) -> [023](../023-stage03-04-repo-static-gap-closure/spec.md).

@@ -1,29 +1,27 @@
+---
+title: 'Preflight Checklist (March 2026)'
+type: governance/reference
+status: active
+owner: platform
+updated: 2026-07-14
+---
+
 # Preflight Checklist (March 2026)
+
+## Overview
 
 Run this checklist before making substantial edits.
 
-## 1. Task Intake
+### 1. Task Intake
 
 - [ ] Goal and success criteria are explicit.
 - [ ] In-scope and out-of-scope boundaries are identified.
 - [ ] High-risk assumptions are listed.
 - [ ] Workspace purpose and active repo contracts are identified.
 
-## 2. Governance Routing
+## Authority Boundary
 
-- [ ] `rules/bootstrap.md` reviewed.
-- [ ] Persona selected via `rules/persona.md`.
-- [ ] Matching scope loaded from `scopes/`.
-- [ ] Provider notes loaded from `providers/` when relevant.
-- [ ] `memory/progress.md` reviewed for current progress, handoff, and reusable memory context.
-
-## 3. Stage and Source Mapping
-
-- [ ] Stage ownership confirmed using `stage-authoring-matrix.md`.
-- [ ] Authoritative input documents identified.
-- [ ] Required output documents identified.
-
-## 4. Safety and Boundaries
+### 4. Safety and Boundaries
 
 - [ ] Language boundary confirmed (governance English, user-facing Korean).
 - [ ] Planned edits avoid unintended scope expansion.
@@ -31,10 +29,43 @@ Run this checklist before making substantial edits.
 - [ ] Existing staged and unstaged changes reviewed; unrelated user changes will be preserved.
 - [ ] Repo-backed vs live-cluster boundary is stated; no direct cluster mutation is planned.
 
-## 5. Execution Readiness
+## Governance Context
+
+### 2. Governance Routing
+
+- [ ] `rules/bootstrap.md` reviewed.
+- [ ] Persona selected via `rules/persona.md`.
+- [ ] Matching scope loaded from `scopes/`.
+- [ ] Provider notes loaded from `providers/` when relevant.
+- [ ] `memory/progress.md` reviewed for current progress, handoff, and reusable memory context.
+
+### 3. Stage and Source Mapping
+
+- [ ] Stage ownership confirmed using `stage-authoring-matrix.md`.
+- [ ] Authoritative input documents identified.
+- [ ] Required output documents identified.
+
+## Current Contract
+
+Substantial work must not begin until the intake, governance route, authoritative
+inputs, change boundary, and validation evidence are explicit. Preflight may
+identify a blocker or approval need; it must not infer permission from a
+template, provider adapter, or previous task. Record unresolved constraints in
+the active Task or handoff before proceeding.
+
+## Validation and Refresh
+
+### 5. Execution Readiness
 
 - [ ] Validation commands/checks are defined before editing.
 - [ ] Evidence requirements for completion are defined.
 - [ ] Unavailable local tools and expected validation limitations are identified.
 - [ ] A `memory/progress.md` update is planned for repo-changing work.
 - [ ] If a standalone memory file will be created or updated, `docs/99.templates/templates/common/memory.template.md` has been read and a matching `progress.md` entry is planned.
+
+## Related Documents
+
+- [Bootstrap Governance](bootstrap.md)
+- [Persona Protocol](persona.md)
+- [Stage Authoring Matrix](stage-authoring-matrix.md)
+- [Agent Quality Standards](quality-standards.md)

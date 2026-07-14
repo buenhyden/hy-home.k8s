@@ -3,7 +3,7 @@ title: 'Task: Workspace Skill Expansion (P0-16)'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-05-28
+updated: 2026-07-13
 ---
 
 # Task: Workspace Skill Expansion (P0-16)
@@ -18,11 +18,6 @@ workspace-specific AI Agent skills for P0-16. It tracks tasks derived from
 
 - **Parent Plan**: `../plans/2026-05-28-workspace-skill-expansion.md`
 - **Parent Spec**: `../../03.specs/006-workspace-harness-gap-analysis/spec.md`
-
-## Working Rules
-
-- Every task must define evidence.
-- Documentation-only work still needs validation evidence.
 
 ## Task Table
 
@@ -40,10 +35,31 @@ workspace-specific AI Agent skills for P0-16. It tracks tasks derived from
 | T-010   | Create this task artifact                                   | doc  | Phase 2             | `ls docs/04.execution/tasks/2026-05-28-workspace-skill-expansion.md`           | platform | Done   |
 | T-011   | Update progress.md                                          | doc  | Phase 2             | Entry exists in progress.md                                                    | platform | Done   |
 
-## Suggested Types
+## Approval and Safety Boundaries
 
-- `doc`
-- `impl`
+- **Allowed Paths**: `T-001 through T-011` is limited to these Workspace Skill Expansion (P0-16) owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-05-28-workspace-skill-expansion.md`
+  - `docs/04.execution/plans/2026-05-28-workspace-skill-expansion.md`
+  - `docs/03.specs/006-workspace-harness-gap-analysis/spec.md`
+  - `.claude/skills/requirements-to-design/skill.md`
+  - `.claude/skills/execution-plan/skill.md`
+  - `.claude/skills/task-breakdown/skill.md`
+  - `.claude/skills/ops-runbook/skill.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Workspace Skill Expansion (P0-16) work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Workspace Skill Expansion (P0-16) protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Workspace Skill Expansion (P0-16) outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `ls .claude/skills/requirements-to-design/skill.md`
+  - `ls .claude/skills/execution-plan/skill.md`
+  - `ls .claude/skills/task-breakdown/skill.md`
+- **Live Validation**: DEFER — Workspace Skill Expansion (P0-16) is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Workspace Skill Expansion (P0-16); do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Workspace Skill Expansion (P0-16) change set for `T-001 through T-011` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Workspace Skill Expansion (P0-16) evidence remains in:
+  - `docs/04.execution/tasks/2026-05-28-workspace-skill-expansion.md`
+  - `docs/04.execution/plans/2026-05-28-workspace-skill-expansion.md`
+  - `docs/03.specs/006-workspace-harness-gap-analysis/spec.md`
+  - `docs/00.agent-governance/memory/progress.md`
 
 ## Verification Summary
 
@@ -60,7 +76,7 @@ workspace-specific AI Agent skills for P0-16. It tracks tasks derived from
 
 - **Logs / Evidence Location**: `docs/00.agent-governance/memory/progress.md`
 
-## Related Documents
+## Traceability
 
 - **Plan**: `../plans/2026-05-28-workspace-skill-expansion.md`
 - **Spec**: `../../03.specs/006-workspace-harness-gap-analysis/spec.md`

@@ -37,6 +37,12 @@ Review observability manifests and SLO documentation for manifest-level correctn
 - No live cluster scraping, querying, or dashboard probing; manifest-static review only.
 - Enforce GitOps-first and no-plaintext-secrets boundaries; never surface secret values.
 - Keep guidance workspace-specific and avoid generic monitoring-vendor advice.
+- Stop the review when a conclusion requires live cluster or dashboard access, exposes secret material, or crosses into security isolation judgment.
+
+## Capability and Evidence
+
+- Capability tier: `worker`; perform bounded observability and SLO review without live-query or implementation authority.
+- Required evidence: cite `file:line` scrape, alert, dashboard, or SLO findings and identify the static source supporting each conclusion.
 
 ## Handoff / Escalation
 

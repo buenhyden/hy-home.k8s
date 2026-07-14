@@ -1,75 +1,73 @@
 # _workspace
 
-> Repository-local support staging area for temporary, non-secret analysis scratch.
+> Repository-local support staging for temporary, non-secret analysis artifacts.
 
 ## Overview
 
-`_workspace/` is a repository-local support staging boundary for temporary
-analysis scratch. It exists so agents and maintainers can place short-lived,
-non-secret evidence while auditing, dry-running migrations, or inventorying
-routes without turning scratch into durable documentation.
+`_workspace/` is an isolated repository-support staging boundary for
+short-lived, non-secret artifacts produced while auditing, dry-running a
+migration, or inventorying routes. It is not a home for durable documentation,
+runtime diagnostics, authentication state, or personal local data.
 
-Scratch artifacts remain ignored by default; only this README is tracked.
+Only this README is tracked. Scratch children remain ignored and must not be
+forced into Git.
 
-## Audience
-
-This README is for:
-
-- AI Agents
-- Platform Maintainers
-- Documentation Writers
-- Reviewers
-
-## Scope
-
-### In Scope
+## Permitted Artifacts
 
 - Temporary audit scratch.
-- Redacted, non-secret dry-run logs and summaries.
+- Redacted, non-secret dry-run summaries.
 - Generated route inventories.
 - Migration ledgers.
 - Non-secret scan summaries.
 
-### Out of Scope
+Every artifact must be bounded to repository support, safe to delete, and free
+of credentials or secret-bearing runtime detail.
 
-- Credentials.
-- Tokens.
-- Auth files.
-- Shell history.
-- Kubeconfigs.
-- SSH keys.
-- Browser profiles.
-- Provider caches.
-- Personal diagnostics that may contain local private state.
-- Secret-bearing local logs.
+## Forbidden Local State
 
-## Structure
+Do not place any of the following in `_workspace/`:
+
+- Credentials, tokens, auth files, or kubeconfigs.
+- SSH keys, certificates, or other private key material.
+- Shell history, browser profiles, provider caches, or local settings.
+- Personal diagnostics or local logs that may expose private state.
+- Secret-bearing scan output, dry-run logs, or command transcripts.
+
+Diagnostics, local logs, auth material, tokens, and shell history belong
+outside the repository and outside this staging boundary.
+
+## Promotion and Cleanup
+
+Promote a durable outcome to its canonical owner:
+
+- Stage 00 for agent governance and reusable memory.
+- Stage 04 for execution plans, tasks, and validation evidence.
+- Stage 90 for durable audits and reference material.
+- Stage 99 for template and support contracts.
+
+Delete temporary artifacts before task closure when they have no durable
+destination. Promotion must preserve the destination document's template,
+review, and secret-handling contract; do not promote raw scratch by force-adding
+it.
+
+## Tracking Rules
+
+The tracked shape is:
 
 ```text
 _workspace/
 ├── README.md          # Tracked contract for this staging boundary
-└── <ignored scratch>  # Temporary non-secret analysis files
+└── <ignored scratch>  # Temporary non-secret repository-support files
 ```
 
-## How to Work in This Area
+The contract is verified only through Git metadata:
 
-1. Use `_workspace/` only for temporary, non-secret repo-support staging.
-2. Do not place credentials, tokens, auth files, shell history, kubeconfigs,
-   SSH keys, browser profiles, provider caches, personal diagnostics, or
-   secret-bearing local logs here.
-3. Keep scratch artifacts ignored by default. Do not force-add scratch files.
-4. Promote durable findings to Stage 04 task evidence, Stage 90 audits, Stage
-   00 governance, Stage 99 support contracts, or delete them before closure.
+- `git ls-files _workspace` must return `_workspace/README.md`.
+- `git check-ignore -q _workspace/probe.tmp` must succeed without creating the
+  probe.
 
-## Link Basis
-
-Links in this README resolve from `_workspace/`.
-
-- Use `../docs/04.execution/` for execution plans, task records, and command
-  evidence.
-- Use `../docs/90.references/` for durable audits or reference material.
-- Use `../docs/00.agent-governance/` for governance changes.
-- Use `../docs/99.templates/support/` for support contract changes.
+Do not list, open, read, hash, move, or delete ignored children while checking
+this rule.
 
 ## Related Documents
 
@@ -77,3 +75,4 @@ Links in this README resolve from `_workspace/`.
 - [Approval Boundaries](../docs/00.agent-governance/rules/approval-boundaries.md)
 - [Subagent Protocol](../docs/00.agent-governance/subagent-protocol.md)
 - [Documentation Contract](../docs/99.templates/support/documentation-contract.md)
+- [Workspace-staging README form](../docs/99.templates/templates/common/readme-workspace-staging.template.md)

@@ -68,7 +68,7 @@ Docker Traefik은 `kiali.127.0.0.1.nip.io`를 k3d ingress로 프록시한다.
 - Good: 기존 Grafana 활용
 - Bad: Istio 서비스메시 토폴로지 시각화 불가
 
-## Related Documents
+## Traceability
 
 - **PRD**: [`../../01.requirements/004-current-local-gitops-platform.md`](../../01.requirements/004-current-local-gitops-platform.md)
 - **ARD**: [`../requirements/0007-current-local-gitops-platform.md`](../requirements/0007-current-local-gitops-platform.md)

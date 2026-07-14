@@ -3,7 +3,7 @@ title: 'Governance Owner and Roster Currentness Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-14
 ---
 
 # Governance Owner and Roster Currentness Technical Specification
@@ -36,28 +36,19 @@ provider agent roles, model promotion, new provider capabilities, unrelated
 RMD findings, live runtime proof, and bulk archival based only on document age
 or completion.
 
-## Related Inputs
-
-- **PRD**: No product PRD is required. The approved requirement is repository
-  governance and lifecycle normalization based on the Current audit findings.
-- **ARD**: No infrastructure ARD is changed. The existing Stage 00 canonical
-  core and provider-adapter architecture remains in force.
-- **Related ADRs**: No new architectural decision is needed unless execution
-  discovers that canonical ownership cannot be represented by the existing
-  Stage 00/03/04/99 boundaries.
-- **Audit input**: RMD-004 and GOV-002 in the 2026-07-11 Current audit pack.
-
 ## Contracts
 
-- **Config Contract**: The three provider adapter directories expose the same
-  ten role stems using provider-native file formats and metadata.
+- **Config Contract**: The three tracked adapter-surface directories expose the
+  same ten role stems using surface-specific file formats and metadata:
+  local/Antigravity `.agents/agents`, Claude `.claude/agents`, and Codex
+  `.codex/agents`. This static parity does not prove Gemini CLI native adoption.
 - **Data / Interface Contract**: Spec, Plan, Task, audit-pack, and owner links
   form explicit repository-relative lineage; Task records own execution state.
 - **Governance Contract**: One active document owns each current fact.
   Completed evidence remains `done`; only genuinely conflicting and fully
   replaced records become Archive Tombstones.
 
-## Approved Decisions
+### Approved Decisions
 
 - Use evidence-based selective Archive, not age-based or completion-based
   Archive.
@@ -76,7 +67,7 @@ or completion.
 - Work in an isolated `.worktrees/` worktree and commit each logical unit
   separately.
 
-## Baseline Evidence
+### Baseline Evidence
 
 The design audit found:
 
@@ -94,11 +85,11 @@ The design audit found:
   correction;
 - ten completed Plans retain unchecked historical execution instructions even
   though their Task evidence is complete; and
-- the provider adapter inventory contains ten shared role stems in each of
+- the role adapter inventory contains ten shared role stems in each of
   `.claude/agents`, `.agents/agents`, and `.codex/agents`, while three active
   harness-catalog statements still describe an eight-role roster.
 
-## Design Alternatives
+### Design Alternatives
 
 ### Selected: Evidence-Preserving Normalization
 
@@ -161,7 +152,7 @@ The deterministic owner-pointer allowlist is:
 | Bootstrap authority and loading order | `docs/00.agent-governance/rules/bootstrap.md` | Harness catalog governance pointer. |
 | Role/persona responsibility contract | `docs/00.agent-governance/rules/persona.md` | Harness catalog roster section. |
 | Stage authoring ownership | `docs/00.agent-governance/rules/stage-authoring-matrix.md` | Harness catalog owner-routing section. |
-| Current provider roster and adapter inventory | `docs/00.agent-governance/harness-catalog.md` | Exact role rows and provider adapter rows. |
+| Current role roster and adapter inventory | `docs/00.agent-governance/harness-catalog.md` | Exact role rows and adapter-surface rows. |
 | Completed ninth/tenth role implementation | `docs/04.execution/tasks/2026-07-06-observability-and-network-review-agents.md` | Harness catalog evidence pointer and Spec 025 lineage. |
 | RMD-004 completion evidence | `docs/04.execution/tasks/2026-07-11-governance-owner-and-roster-currentness.md` | Spec 025 and its same-topic Plan. |
 | Document/template ownership contract | `docs/99.templates/support/documentation-contract.md` | Harness catalog documentation-owner pointer. |
@@ -183,7 +174,7 @@ file relocation is the completed Stage 90 execution plan moving to its
 canonical Stage 04 Plan route. Archive operations, if later proven necessary,
 use the existing central Tombstone schema and index-only access rule.
 
-## Audit Information Architecture
+### Audit Information Architecture
 
 ### Parent Audit Index
 
@@ -222,7 +213,7 @@ will record the completed audit-pack outputs, commits, validation, and scope
 boundary. Stage 90 reports will link to that Stage 04 execution record instead
 of owning an active execution plan.
 
-## Spec Lifecycle and Current-Owner Design
+### Spec Lifecycle and Current-Owner Design
 
 ### Disposition
 
@@ -235,9 +226,10 @@ of owning an active execution plan.
 | 015 | `done` | The original agent-governance normalization lifecycle is complete. |
 | 025 | `active` during implementation, `done` at verified closure | Sole RMD-004 current implementation contract. |
 
-Feature-local `agent-design.md` under Spec 024 will be normalized to `done`
-with its parent because the two review roles and all six provider projections
-were implemented and verified.
+Feature-local `agent-design.md` under Spec 024 is normalized to `done` with its
+parent because the two review roles and all six tracked projections—two each
+for Claude-native, Codex-native, and local/Antigravity surfaces—were
+implemented and verified. This does not establish Gemini CLI native support.
 
 ### Overlap Lineage
 
@@ -284,7 +276,7 @@ No known candidate meets all five Archive conditions in this cycle. A newly
 discovered candidate must be recorded with the same five-column decision before
 any Tombstone move.
 
-## Plan Lifecycle and Evidence Design
+### Plan Lifecycle and Evidence Design
 
 All forty-one existing canonical Plans remain `done`. The implementation will:
 
@@ -314,16 +306,16 @@ The principal interfaces are repository path and evidence relationships:
 ```text
 Audit finding ID -> owning Spec validation criterion
 Owning Spec -> implementation Plan -> evidence Task
-Stage 00 canonical fact -> provider-native projections
+Stage 00 canonical fact -> local and provider adapter projections
 Canonical fact and projections -> repository quality-gate result
 ```
 
 The role-stem set is derived from filenames and compared as a set across all
-three provider directories. Current-owner checks use an explicit allowlisted
+three adapter-surface directories. Current-owner checks use an explicit allowlisted
 path/link contract declared by Spec 025 rather than interpreting free-form
 prose.
 
-## RMD-004 Canonical Contract
+### RMD-004 Canonical Contract
 
 The new Spec will be:
 
@@ -332,9 +324,9 @@ The new Spec will be:
 It will own these acceptance facts:
 
 - the canonical shared roster has exactly ten role stems;
-- each of the Claude, Gemini, and Codex provider directories exposes exactly
-  those ten stems;
-- the repository therefore has thirty provider adapter files for those roles;
+- each of the local/Antigravity, Claude, and Codex adapter directories exposes
+  exactly those ten stems;
+- the repository therefore has thirty tracked role adapter files for those roles;
 - the harness catalog links to canonical Stage 00, Stage 04, and Stage 99
   owners rather than restating their durable policy; and
 - active roster facts cannot retain a stale eight-role statement.
@@ -343,12 +335,12 @@ The new same-topic Stage 04 Plan and Task will be the only execution pair for
 RMD-004. The completed Spec 015 Plan/Task remain historical inputs, while Spec
 024's Task remains the evidence that added the ninth and tenth roles.
 
-## RMD-004 Implementation Components
+### RMD-004 Implementation Components
 
 ### Canonical Roster Projection
 
-The adapter directories are provider-native projections of one role-stem set.
-The implementation will compare filenames, not require identical provider
+The adapter directories are surface-specific projections of one role-stem set.
+The implementation will compare filenames, not require identical surface
 metadata fields or identical bodies.
 
 ### Canonical Owner Pointers
@@ -367,7 +359,7 @@ ownership from prose.
 
 The repository quality gate will validate:
 
-1. ten identical stems in each of the three provider adapter directories;
+1. ten identical stems in each of the three tracked adapter directories;
 2. thirty adapters in aggregate;
 3. absence of stale eight-role count claims in designated active roster
    surfaces; and
@@ -377,7 +369,7 @@ Positive and negative fixtures will cover:
 
 - a valid ten-by-three roster;
 - a missing role;
-- provider stem mismatch;
+- adapter-surface stem mismatch;
 - a stale eight-role statement; and
 - a missing or incorrect canonical-owner pointer.
 
@@ -393,7 +385,7 @@ network availability or model resolution.
 - If a validator cannot distinguish historical quoted evidence from active
   currentness prose, narrow its path and section scope rather than using a
   repository-wide word ban.
-- If provider adapter stems differ, do not auto-create or delete agents; fail
+- If adapter-surface stems differ, do not auto-create or delete agents; fail
   validation and report the exact provider-specific set difference.
 - No command in this cycle may inspect secret values or mutate live systems.
 - Remote push, pull request creation, or remote merge requires separate user
@@ -428,12 +420,12 @@ Focused assertions will additionally verify:
 - all twenty-one Spec index entries match their frontmatter lifecycle;
 - every retained Plan has explicit Task evidence or a documented N/A/exception;
 - the relocated audit Plan and new compact Task have reciprocal links;
-- the three provider adapter stem sets are equal and contain ten entries; and
+- the three adapter-surface stem sets are equal and contain ten entries; and
 - negative roster/current-owner fixtures are rejected.
 
 Optional tools that are unavailable will be reported as skipped, not passed.
 
-## Complete Spec Disposition Ledger
+### Complete Spec Disposition Ledger
 
 This ledger is the implementation input for all twenty baseline Specs. Spec
 025 is the new design record and is therefore not part of the pre-change count.
@@ -461,7 +453,7 @@ This ledger is the implementation input for all twenty baseline Specs. Spec
 | 023 Stage03/04 closure | draft | `2026-07-06-stage03-04-repo-static-gap-closure.md` Task | done | completed closure evidence | Retain done. |
 | 024 Review agents | draft | `2026-07-06-observability-and-network-review-agents.md` Task | done | 025 consumes role-delivery evidence | Retain Spec and agent design as done. |
 
-## Complete Plan Evidence Ledger
+### Complete Plan Evidence Ledger
 
 All forty-one baseline Plans are already `done`. `Task` below names the
 evidence record; `same` means the Task uses the same filename under
@@ -516,7 +508,7 @@ The relocated 2026-07-11 audit-integration Plan and the new RMD-004 Plan are
 new records and will be added after this baseline ledger, each with a
 same-basename Task and reciprocal links.
 
-## Logical Commit Boundaries
+### Logical Commit Boundaries
 
 1. `docs(audits): normalize audit pack information architecture`
    - parent/pack indexes and currentness;
@@ -536,7 +528,7 @@ same-basename Task and reciprocal links.
 Commit boundaries may be split further if a review discovers an independently
 revertible unit. They must not be collapsed into one repository-wide commit.
 
-## Subagent-Driven Execution
+### Subagent-Driven Execution
 
 After the written design and implementation plan are approved, execution will
 use fresh subagents per logical task. Each task receives:
@@ -559,7 +551,7 @@ retains responsibility for final integration, validation, and branch finishing.
 - Every Spec and Plan has evidence-aligned lifecycle and explicit lineage.
 - No completed Plan is archived solely for being old or done.
 - Spec 025 is the only active RMD-004 owner during implementation.
-- Stage 00 reports ten shared role stems and thirty provider adapters without
+- Stage 00 reports ten shared local role stems and thirty tracked role adapters without
   stale eight-role currentness prose.
 - Deterministic positive and negative validation passes.
 - `git diff --check`, repository quality gates, and
@@ -568,7 +560,7 @@ retains responsibility for final integration, validation, and branch finishing.
 - Work is committed in logical units and is ready for an explicitly approved
   local merge to `main`.
 
-## Related Documents
+## Traceability
 
 - [Current Audit Pack](../../90.references/audits/2026-07-11-weia/README.md)
 - [Remediation Roadmap](../../90.references/audits/2026-07-11-weia/remediation-roadmap.md)
@@ -584,3 +576,13 @@ retains responsibility for final integration, validation, and branch finishing.
 - [Document Stage Routing](../../00.agent-governance/rules/document-stage-routing.md)
 - [Frontmatter Schema](../../99.templates/support/frontmatter-schema.md)
 - [Archive Index](../../98.archive/README.md)
+### Related inputs
+
+- **PRD**: No product PRD is required. The approved requirement is repository
+  governance and lifecycle normalization based on the Current audit findings.
+- **ARD**: No infrastructure ARD is changed. The existing Stage 00 canonical
+  core and provider-adapter architecture remains in force.
+- **Related ADRs**: No new architectural decision is needed unless execution
+  discovers that canonical ownership cannot be represented by the existing
+  Stage 00/03/04/99 boundaries.
+- **Audit input**: RMD-004 and GOV-002 in the 2026-07-11 Current audit pack.

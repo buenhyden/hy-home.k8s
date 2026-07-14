@@ -3,7 +3,7 @@ title: 'Workspace Engineering Research and Implementation Audit Integration Plan
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Workspace Engineering Research and Implementation Audit Integration Plan
@@ -40,19 +40,19 @@ contracts, and published the reviewed Current pointers. This relocated Stage 04
 copy is now the canonical completed Plan; the dated audit reports remain
 unchanged evidence snapshots.
 
-## Purpose
+### Purpose
 
 Provide exact file ownership, evidence inputs, outputs, validation commands,
 review gates, and logical commit boundaries for Subagent-Driven execution.
 
-## Reference Type
+### Reference Type
 
 This execution ledger originated as descriptive metadata within the dated
 Stage 90 audit pack. The relocated document is now the canonical
 `status: done` Stage 04 Plan and evidence record; it does not authorize runtime
 changes.
 
-## Authority Boundary
+### Authority Boundary
 
 This plan authorizes changes only within the two approved Stage 90 roots. It
 does not override Stage 00 governance, Stage 99 templates, provider-native
@@ -74,7 +74,7 @@ excluded.
 - Do not claim live Kubernetes, Argo CD, Vault, ESO, provider-runtime,
   credential, secret-value, remote CI, or deployment readiness.
 
-## Definitions / Facts
+### Definitions / Facts
 
 - `Current research`: `docs/90.references/research/2026-07-07-wer/`.
 - `Current audit candidate`: `docs/90.references/audits/2026-07-11-weia/`.
@@ -85,7 +85,7 @@ excluded.
 - `Logical task`: one independently testable deliverable with its own two-stage
   review and commit.
 
-## Sources
+### Sources
 
 - [Approved pack design](../../90.references/audits/2026-07-11-weia/README.md)
 - [Current research pack](../../90.references/research/2026-07-07-wer/README.md)
@@ -95,7 +95,7 @@ excluded.
 - Official provider and standards sources already inventoried in the Current
   research pack and reverified by the source-owning task.
 
-## Review and Freshness
+### Review and Freshness
 
 - Written and self-reviewed: 2026-07-11
 - Review trigger: approved scope/design change, Current research owner change,
@@ -104,7 +104,7 @@ excluded.
 - Completion trigger: every checkbox is resolved, whole-branch reviews pass,
   and the final path-boundary and validation evidence are recorded.
 
-## Global Constraints
+### Global Constraints
 
 - Modify only `docs/90.references/research/` and
   `docs/90.references/audits/`.
@@ -125,7 +125,7 @@ excluded.
 - Keep facts, observations, recommendations, and inference distinguishable.
 - Link only files that exist; planned artifacts remain code literals.
 
-## Approved Stage 90 Governance Exception
+### Approved Stage 90 Governance Exception
 
 The user explicitly approved a Stage 90-only implementation boundary for this
 integration. Bootstrap `progress.md` is therefore not edited because its
@@ -1005,7 +1005,7 @@ Final publication gate evidence:
 | Repo-static checks are overstated as live readiness. | High | Retain the explicit no-live/no-secret/no-remote boundary in the Plan, Task, and Current pack. |
 | Relocation breaks navigation. | Medium | Repair every active Plan link and validate the old Stage 90 filename has no active reference. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: completed repository-static structure, quality, and
   whole-branch review gates are recorded in Task 13 below.
@@ -1029,13 +1029,13 @@ Final publication gate evidence:
 - [x] No live, credential, secret-value, push, merge, or third-party mutation
   was performed.
 
-## Execution Choice
+### Execution Choice
 
 The approved mode is Subagent-Driven Development: use a fresh implementer for
 each task, then run specification/content and evidence/quality reviews before
 advancing. This checklist is the durable execution ledger.
 
-## Related Documents
+## Traceability
 
 - [Current Audit Pack](../../90.references/audits/2026-07-11-weia/README.md)
 - [Audit Integration Task](../tasks/2026-07-11-workspace-engineering-research-audit-integration.md)

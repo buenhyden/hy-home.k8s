@@ -1,9 +1,9 @@
 ---
 title: 'SDLC Template Governance'
 type: governance/template-support
-status: draft
+status: active
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # SDLC Template Governance
@@ -21,48 +21,33 @@ The SDLC template family ensures that each active stage document has one role,
 one target path pattern, one template form, one lifecycle state contract, and
 one validation route.
 
-## SDLC Template Family
+## Owned Contract
 
-| Lifecycle Role | Target Pattern | Template Path |
-| --- | --- | --- |
-| Product requirement | `docs/01.requirements/<###-Numbering>-<feature-or-system>.md` | `../templates/sdlc/requirements/prd.template.md` |
-| Architecture requirement | `docs/02.architecture/requirements/####-<system-or-domain>.md` | `../templates/sdlc/architecture/ard.template.md` |
-| Architecture decision | `docs/02.architecture/decisions/####-<short-title>.md` | `../templates/sdlc/architecture/adr.template.md` |
-| Technical specification | `docs/03.specs/<###-Numbering>-<feature-id>/spec.md` | `../templates/sdlc/specs/spec.template.md` |
-| API contract doc | `docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md` | `../templates/sdlc/specs/api-spec.template.md` |
-| Agent design | `docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md` | `../templates/sdlc/specs/agent-design.template.md` |
-| Data model | `docs/03.specs/<###-Numbering>-<feature-id>/data-model.md` | `../templates/sdlc/specs/data-model.template.md` |
-| Test design | `docs/03.specs/<###-Numbering>-<feature-id>/tests.md` | `../templates/sdlc/specs/tests.template.md` |
-| OpenAPI contract | `docs/03.specs/<###-Numbering>-<feature-id>/contracts/openapi.yaml` | `../templates/sdlc/specs/openapi.template.yaml` |
-| GraphQL contract | `docs/03.specs/<###-Numbering>-<feature-id>/contracts/schema.graphql` | `../templates/sdlc/specs/schema.template.graphql` |
-| Protobuf contract | `docs/03.specs/<###-Numbering>-<feature-id>/contracts/service.proto` | `../templates/sdlc/specs/service.template.proto` |
-| Execution plan | `docs/04.execution/plans/YYYY-MM-DD-<feature>.md` | `../templates/sdlc/execution/plan.template.md` |
-| Execution task | `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md` | `../templates/sdlc/execution/task.template.md` |
-| Guide | `docs/05.operations/guides/####-<topic>.md` | `../templates/sdlc/operations/guide.template.md` |
-| Operations policy | `docs/05.operations/policies/####-<policy-or-standard>.md` | `../templates/sdlc/operations/policy.template.md` |
-| Runbook | `docs/05.operations/runbooks/####-<topic>.md` | `../templates/sdlc/operations/runbook.template.md` |
-| Incident record | `docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md` | `../templates/sdlc/operations/incident.template.md` |
-| Postmortem | `docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md` | `../templates/sdlc/operations/postmortem.template.md` |
+### SDLC Profile Handoff
+
+The [Document Profile Registry](./document-profiles.json) is the sole machine
+owner of SDLC routes, templates, headings, frontmatter, and lifecycle domains.
+Use its `sdlc/prd`, `sdlc/ard`, `sdlc/adr`, `sdlc/spec`, helper-spec,
+`sdlc/plan`, `sdlc/task`, and operations profiles for exact values. This
+document owns why those roles remain separate and how they hand work and
+evidence to one another.
+
+The research basis and local adoption decisions for those families are recorded
+in the [Document Type Format and Evidence
+Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md).
 
 Incident folders are created only for real incidents. The incident fact record
 uses a filename that matches the incident folder, and the postmortem is always
 `postmortem.md` in the same folder. Placeholder incident directories are not
 part of the steady-state structure.
 
-## Lifecycle State Contract
+### Lifecycle Rationale and Deferred Normalization
 
-This support contract owns the shared SDLC lifecycle state language. Template
-forms may show the starting state, and agent-facing routing rules may summarize
-the table, but they must not invent separate lifecycle transitions.
-
-| Document Family | Lifecycle Transition |
-| --- | --- |
-| PRD | `draft -> active -> done | archived` |
-| ARD/ADR | `draft -> active -> accepted | archived` |
-| Spec | `draft -> active -> done | archived` |
-| Plan/Task | `draft -> active -> done | archived` |
-| Operations | `draft -> active -> accepted | archived` |
-| Archive Tombstone | `archived` only |
+The registry owns the exact status domains. Template forms may show a valid
+starting state, but support prose and agent-facing routing rules must not define
+or normalize a second transition set. TCC-003 verified the registry values
+against the pre-consolidation canonical domains before removing the copied
+table; this tranche does not rename, narrow, or expand a state.
 
 PRDs are product commitments and finish as `done` when their scope is satisfied
 or as `archived` when superseded. ARDs and ADRs become `accepted` when the
@@ -73,7 +58,14 @@ contracts. Archive Tombstones are not reactivated; they remain `archived`
 metadata records and preserve traceability through archive fields such as
 `original_path`.
 
-## Numbering, Handoff, and Active Surfaces
+The [Current research decision
+ledger](../../90.references/research/2026-07-07-wer/README.md#canonical-requirement-to-research-to-audit-ownership-map)
+retains document-state transitions as a gap with the RMD-007 follow-up. Any
+future lifecycle normalization remains **Deferred**. The `platform` owner must
+first publish a dedicated migration decision and corpus transition evidence,
+then refresh that ledger disposition. Spec 027 does not enact the proposal.
+
+### Numbering, Handoff, and Active Surfaces
 
 Stage 01 PRDs use `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
 Stage 03 specs use `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`. When creating new work,
@@ -95,15 +87,9 @@ active documents that own the same role, purpose, and feature lineage. Retire
 superseded, duplicate, obsolete, migrated, or currentness-conflicting surfaces
 to archive or rewrite them as historical evidence.
 
-## Supplemental Task Starter
+## Authoring Rules
 
-`harness-task-contract.template.md` supplements
-`templates/sdlc/execution/task.template.md` for high-risk harness tasks. It
-does not create a second structural route for `docs/04.execution/tasks/*.md`;
-the authored Task record still uses `type: sdlc/task` and the Stage 04 Task
-location.
-
-## Governance Rules
+### Governance Rules
 
 - Every non-README SDLC Markdown document must match exactly one structural
   template mapping.
@@ -119,7 +105,9 @@ location.
 - Incident records own factual chronology and response state. Postmortems own
   root-cause analysis, prevention, and documentation feedback loops.
 
-## Validation Rules
+## Validation Contract
+
+### Validation Rules
 
 - Required heading checks come from the matched template.
 - Required heading extraction uses literal `##` headings from the template,
@@ -133,6 +121,8 @@ location.
 ## Related Documents
 
 - [Documentation Contract](./documentation-contract.md)
+- [Document Profile Registry](./document-profiles.json)
+- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
 - [Template Routing](./template-routing.md)
 - [Frontmatter Schema](./frontmatter-schema.md)
 - [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)

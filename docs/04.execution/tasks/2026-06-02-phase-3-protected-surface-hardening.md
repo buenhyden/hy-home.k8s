@@ -3,7 +3,7 @@ title: 'Task: Phase 3 Protected Surface Hardening'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Task: Phase 3 Protected Surface Hardening
@@ -24,15 +24,6 @@ cluster mutation and secret-value inspection are out of scope.
 - **Phase 1 Audit Evidence**: [Phase 1 Governance Alignment Audit Task](./2026-06-02-phase-1-governance-alignment-audit.md)
 - **Governance Decision**: [ADR-0013: Stage 00 Canonical Adapter Model](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
 
-## Working Rules
-
-- Preserve ADR-0013 and the Stage 00 canonical adapter model.
-- Treat `.agents/**` as the shared asset SSoT for skills, workflows, output styles, and Gemini hook wiring.
-- Policy, runtime hook, CI, template, CI topology, model policy, provider config, GitOps manifest, and live validation are approved for this Phase 3 scope.
-- Do not perform cluster mutation, deployment, external Vault mutation, secret-value inspection, private RTK database, publish, or destructive Git actions.
-- Documentation-only and guardrail work still needs validation evidence.
-- Repo-static validation must not be reported as live runtime readiness unless a separate live check was approved and run.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -45,20 +36,7 @@ cluster mutation and secret-value inspection are out of scope.
 | T-006 | Record Phase 3 artifacts, indexes, links, and progress evidence | doc | N/A | PLN-005 | Phase 3 README/index scan and progress ledger update | platform | Done |
 | T-007 | Record protected-surface no-op decisions and approved read-only live validation | eval | N/A | PLN-006 | Live validation command output or limitation; no model/provider/GitOps manifest diff without drift | platform | Done |
 
-## Suggested Types
-
-- `guardrail`
-- `runtime`
-- `doc`
-- `eval`
-
-## Agent-specific Types (If Applicable)
-
-- `memory`
-- `guardrail`
-- `eval`
-
-## Phase View (Optional)
+### Phase View
 
 ### Phase 3
 
@@ -69,6 +47,34 @@ cluster mutation and secret-value inspection are out of scope.
 - [x] T-005 Template and governance guidance
 - [x] T-006 Execution evidence and index sync
 - [x] T-007 Protected-surface no-op decisions and live validation
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `T-001 through T-007` is limited to these Phase 3 Protected Surface Hardening owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-06-02-phase-3-protected-surface-hardening.md`
+  - `docs/04.execution/plans/2026-06-02-phase-3-protected-surface-hardening.md`
+  - `docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md`
+  - `docs/04.execution/tasks/2026-06-02-phase-1-governance-alignment-audit.md`
+  - `docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md`
+  - `.agents/**`
+  - `.agents/*`
+  - `.agents/hooks.json`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Phase 3 Protected Surface Hardening work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Phase 3 Protected Surface Hardening protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Phase 3 Protected Surface Hardening outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `bash -n docs/00.agent-governance/hooks/post-validate.sh docs/00.agent-governance/hooks/lifecycle-guard.sh docs/00.agent-governance/hooks/session-start.sh scripts/validate-repo-quality-gates.sh`
+  - `git diff --check`
+  - `bash scripts/generate-llm-wiki-index.sh --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+- **Live Validation**: Only the recorded read-only Phase 3 Protected Surface Hardening lane (`vault-backend Ready is not True (actual=False)`) is in scope; it does not authorize mutation or broaden the cited observation into readiness.
+- **Secret / Vault Handling**: No secret value is required for Phase 3 Protected Surface Hardening; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Phase 3 Protected Surface Hardening change set for `T-001 through T-007` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Phase 3 Protected Surface Hardening evidence remains in:
+  - `docs/04.execution/tasks/2026-06-02-phase-3-protected-surface-hardening.md`
+  - `docs/04.execution/plans/2026-06-02-phase-3-protected-surface-hardening.md`
+  - `docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md`
+  - `docs/04.execution/tasks/2026-06-02-phase-1-governance-alignment-audit.md`
+  - `docs/02.architecture/decisions/0013-stage-00-canonical-adapter-model.md`
 
 ## Verification Summary
 
@@ -92,7 +98,7 @@ cluster mutation and secret-value inspection are out of scope.
   - This task document after final verification.
   - [Progress ledger](../../00.agent-governance/memory/progress.md).
 
-## Related Documents
+## Traceability
 
 - [Phase 3 Protected Surface Hardening Plan](../plans/2026-06-02-phase-3-protected-surface-hardening.md)
 - [Phase 4 ESO Vault Runtime Diagnosis Plan](../plans/2026-06-02-phase-4-eso-vault-runtime-diagnosis.md)

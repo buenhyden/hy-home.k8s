@@ -1,9 +1,9 @@
 ---
 title: 'Reference: Harness and Loop Engineering Research'
 type: content/reference
-status: draft
+status: accepted
 owner: platform
-updated: 2026-07-10
+updated: 2026-07-14
 ---
 
 # Reference: Harness and Loop Engineering Research
@@ -20,7 +20,7 @@ This is descriptive Stage 90 reference material. It does not create a retry
 policy, change provider permissions, enable MCP servers, or authorize live or
 remote actions.
 
-## Purpose
+### Purpose
 
 - Define a provider-neutral four-element harness and bounded
   Observe/Plan/Act/Verify/Learn control loop.
@@ -261,7 +261,7 @@ recommendations and canonical follow-up routes; it does not mutate the owners.
 | --- | --- | --- | --- | --- | --- | --- |
 | HL-001 | Open; corrected in this reference only | Fact defect | High | Assigning governance, memory, the four-element contract, or Stage 99 templates to `.agents/` hides the real authority boundary. The base snapshot also says `Eight`/`eight` local agents although ten role stems and 30 adapters exist. | Keep the corrected ownership and 10-role inventory in research; repair the stale active catalog wording only through a separately approved Stage 00 change. | WERH-009 cross-document integration, then [Local Harness Catalog](../../../00.agent-governance/harness-catalog.md). |
 | HL-002 | Open | Implementation gap | High | The canonical loop requires validation but defines no task-level attempt schema, retry budget, repeated-failure threshold, or failure-escalation contract; identical retries can consume context and hide non-convergence. | In a separate approved change, define a bounded retry/escalation contract that every applicable Task must instantiate without imposing an arbitrary count from this reference. | [Agentic Execution Rules](../../../00.agent-governance/rules/agentic.md). |
-| HL-003 | Open | Needs strengthening | Medium | Current capability/regression eval language is accurate, but there is no common record for trials, traces, graders/rubrics, failure classes, and attempt-to-attempt comparison, limiting behavioral regression analysis. | Add an optional provider-neutral eval/evidence block only after a Spec/Plan/Task defines the schema and validator impact. | [Harness Task Contract Template](../../../99.templates/templates/sdlc/specs/harness-task-contract.template.md). |
+| HL-003 | Open | Needs strengthening | Medium | Current capability/regression eval language is accurate, but there is no common record for trials, traces, graders/rubrics, failure classes, and attempt-to-attempt comparison, limiting behavioral regression analysis. | Add an optional provider-neutral eval/evidence block only after a Spec/Plan/Task defines the schema and validator impact. | [Canonical Task form](../../../99.templates/templates/sdlc/execution/task.template.md#approval-and-safety-boundaries). |
 | HL-004 | Open | Implementation gap | Medium | PreCompact reports dirty paths and suggested validation but does not require a recoverable checkpoint containing goal, decisions, evidence, approval state, remaining budget, and next verifier. | Define a compact handoff/checkpoint contract in later canonical governance; keep compaction advisory unless a provider-specific design proves safe blocking semantics. | [Agentic Execution Rules](../../../00.agent-governance/rules/agentic.md). |
 | HL-005 | Open / runtime Unverified | Unverified | High | Tracked Codex hook JSON and payload simulations can be mistaken for runtime-consumption evidence. `.agents/agents/*.md` and `.agents/hooks.json` are not native Gemini CLI registration/settings paths, so they cannot prove Gemini agent or hook consumption. | Keep status at declared local wiring plus validator evidence until provider-native canaries record discovery, event handling, permission behavior, and managed/user precedence. | WERH-005 in [Provider Implementation Status](provider-implementation-status.md). |
 | HL-006 | Open / live Unverified | Unverified | High | Repo-static PASS or opt-in probe wiring can be promoted incorrectly to live provider, MCP, cluster, CI, credential, or remote readiness. | Preserve separate evidence lanes and require an explicitly approved operator/runtime check before any live/remote readiness claim. | [Harness Implementation Map: Live Runtime Evidence](../../../00.agent-governance/harness-implementation-map.md#live-runtime-evidence). |

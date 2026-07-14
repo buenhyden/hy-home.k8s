@@ -3,7 +3,7 @@ title: 'Phase 2 Governance Alignment Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Phase 2 Governance Alignment Plan
@@ -57,7 +57,7 @@ decisions where no drift exists, and runs only approved read-only live validatio
   - Private RTK database, credential, token, private key, or shell history inspection.
   - Branch merge, push, PR creation, or destructive cleanup.
 
-## Requirements & Acceptance Criteria
+### Requirements & Acceptance Criteria
 
 | Requirement | Acceptance Criteria |
 | --- | --- |
@@ -97,7 +97,7 @@ decisions where no drift exists, and runs only approved read-only live validatio
 | New docs fail template enforcement | Medium | Use `plan.template.md` and `task.template.md`, update README indexes, and run the repo quality gate. |
 | Historical memory is rewritten as current truth | Medium | Add a new progress entry and links instead of rewriting older historical entries. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: `git diff --check`, `bash scripts/generate-llm-wiki-index.sh --check`, `bash scripts/validate-repo-quality-gates.sh .`, and targeted index/frontmatter scans.
 - **Sandbox / Canary Rollout**: Not applicable. This is documentation-only planning work.
@@ -114,7 +114,7 @@ decisions where no drift exists, and runs only approved read-only live validatio
 - [x] Static verification commands pass or limitations are documented.
 - [x] No live cluster, secret, deployment, CI workflow, provider config, hook script, model policy, or GitOps manifest change is performed.
 
-## Rollback
+### Rollback
 
 - Remove `docs/04.execution/plans/2026-06-02-phase-2-governance-alignment.md`.
 - Remove `docs/04.execution/tasks/2026-06-02-phase-2-governance-alignment.md`.
@@ -122,7 +122,7 @@ decisions where no drift exists, and runs only approved read-only live validatio
 - Remove Phase 2 links from the Phase 1 audit task.
 - Remove the Phase 2 progress ledger entry.
 
-## Related Documents
+## Traceability
 
 - Parent Spec: N/A — pre-Spec execution record.
 - **ADR**: [../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)

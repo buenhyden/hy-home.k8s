@@ -3,7 +3,7 @@ title: 'Current Implementation Docs Alignment Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Current Implementation Docs Alignment Plan
@@ -71,7 +71,7 @@ Old active-stage documents contained conflicting implementation contracts, so th
 | Active docs link directly to Tombstones | Medium | Use archive README as Index Only link |
 | Old body text survives in archive | Medium | Enforce Tombstone heading and stale-body checks |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: repo quality and static GitOps checks must pass.
 - **Sandbox / Canary Rollout**: not applicable; docs/static-only change.
@@ -86,7 +86,7 @@ Old active-stage documents contained conflicting implementation contracts, so th
 - [x] README indexes and related links are updated.
 - [x] Verification passed.
 
-## Related Documents
+## Traceability
 
 - **PRD**: [../../01.requirements/004-current-local-gitops-platform.md](../../01.requirements/004-current-local-gitops-platform.md)
 - **ARD**: [../../02.architecture/requirements/0007-current-local-gitops-platform.md](../../02.architecture/requirements/0007-current-local-gitops-platform.md)

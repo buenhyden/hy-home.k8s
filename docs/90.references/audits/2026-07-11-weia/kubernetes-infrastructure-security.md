@@ -1,9 +1,9 @@
 ---
 title: 'Audit: Kubernetes Infrastructure and Security'
 type: content/reference
-status: draft
+status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-14
 ---
 
 # Audit: Kubernetes Infrastructure and Security
@@ -18,7 +18,7 @@ dated implementation audit다. 26개 통제를 desired-state 기반 12개와
 live Kubernetes, Argo CD, Vault, ESO, NetworkPolicy 또는 TLS enforcement를
 증명하지 않는다.
 
-## Purpose
+### Purpose
 
 - GitOps 소유권, Kustomize 구성, Application/AppProject/ApplicationSet 경계와
   environment·rollback 계약을 평가한다.
@@ -96,7 +96,7 @@ infrastructure YAML surfaces contain no tracked `kind: Secret` object. This
 does not establish etcd encryption, generated Secret access, delivery,
 rotation, or runtime correctness.
 
-## GitOps and Platform Foundation Controls
+### GitOps and Platform Foundation Controls
 
 These controls score implemented desired-state foundations that are not the
 corrective finding owned by a `SEC-*` row. Runtime shortcomings such as
@@ -118,7 +118,7 @@ scored only in the corresponding SEC row.
 | PLAT-011 | Vault least privilege; Current research | ESO policy grants only named KV-v2 paths and necessary capabilities, with broad platform data wildcard rejected. | `eso-read.hcl` names data/metadata paths for three logical platform secrets with `read`/`list`; static contracts require them and reject `secret/data/platform/*`. | 2 repository-static | Implemented | Verified repo-static | The HCL is narrow, but SEC-001 shows that Vault HCL changes do not select the specialist CI lanes, so deterministic local+CI maturity is not awarded; upload, role attachment, token TTL/capability, audit, and rotation remain unverified live. | Preserve exact paths/capabilities; SEC-001 owns CI selection remediation and operator evidence remains separate. | N/A — no action | N/A — no action | N/A — no action |
 | PLAT-012 | Kubernetes image hygiene; Current policy benchmark | Tracked container images reject explicit `:latest` in deterministic policy while stronger identity remains separately assessed. | Rego and the always-run Python fallback reject container/init-container `:latest`; observed explicit image references use non-`latest` tags. | 3 deterministic local+CI enforcement | Implemented | Verified repo-static | Mutable tag/digest/signature/provenance concerns are not hidden; their security architecture impact remains in SEC-013. | Preserve the non-`latest` baseline without presenting it as immutable image identity. | N/A — no action | N/A — no action | N/A — no action |
 
-## SEC Finding Reconciliation Controls
+### SEC Finding Reconciliation Controls
 
 The Current research classification is retained unless a row explicitly says
 otherwise. No active owner changed between the research derivation and audit
@@ -142,7 +142,7 @@ expected control, not the amount of prose or desired state surrounding a gap.
 | SEC-013 | [Task 9 supply-chain owner](ci-qa-automation-pipeline-workflow.md#supply-chain-automation-controls); NIST SP 800-204D/SLSA | Platform image and any future build/release artifact receive only threat-modelled identity, vulnerability, SBOM, provenance, signature, and verification controls with named consumers. | Task 9 owns current workflow/artifact relevance and N/A decisions; this row does not duplicate them. The platform still consumes mutable image tags, while no approved artifact-verification architecture or consumer evidence exists. | 1 documented/routed | Partial | Conditional | Implementation gap (High), not superseded but narrowed: broad enterprise lanes are not automatically applicable; the unresolved security issue is deciding and enforcing assurance for actual GitOps image/artifact consumers. | Threat-model image/chart/Action inputs, name verifier decisions, and adopt only controls with an artifact owner and response consumer. | P2 planned improvement | New Stage 02 ARD: platform-supply-chain-assurance-scope | The ARD inventories actual dependency/artifact classes, threat and trust boundaries, owner/verifier/retention/response consumers, explicit adopt/defer decisions, and measurable triggers that reopen every deferred lane. |
 | SEC-014 | Current finding; Argo CD AppProject security warning | Any project able to deploy into `argocd` has tightly restricted live Argo CD RBAC, protected source writes, review, audit, and revocation evidence. | `platform` can deploy to `argocd`; its tracked project role is read-only and resource/source lists are explicit, but live Argo CD RBAC and remote source-write protection were not inspected. | 2 repository-static | Partial | Unverified live | Unverified (High), not superseded: the tracked boundary is narrow but compromise of an authorized principal/source could control Argo CD itself. | Define the admin-equivalent principal/source matrix and require separately approved read-only evidence at every access-model change. | P1 near-term integrity | New Stage 03 Spec: argocd-admin-boundary-assurance | A redacted inventory maps every principal and source write path to least privilege, review/ruleset, audit, expiry/revocation, break-glass, and quarterly read-only verification; an unauthorized fixture is denied. |
 
-## Score and Distribution Summary
+### Score and Distribution Summary
 
 | Category | Applicable controls | Maturity numerator | Denominator | Implementation | Maturity distribution (`0/1/2/3/4`) | Verdict distribution (`Implemented/Partial/Gap/Not in scope`) | Confidence distribution (`Verified repo-static/Unverified live/Conditional`) | N/A exclusions |
 | --- | ---: | ---: | ---: | ---: | --- | --- | --- | --- |
@@ -181,7 +181,7 @@ or future artifact consumers the repository actually owns.
 | P2 planned improvement | PLAT-008, SEC-002, SEC-009, SEC-011, SEC-013 | Use the validation contract and version inventory to scope render/schema, audience, recovery, and supply-chain decisions without turning optional tools or absent artifact consumers into false readiness gates. |
 | P3 optional/telemetry-gated | None | No evidence supports an optional platform redesign or additional security product in this snapshot. |
 
-## Comparison Analysis
+### Comparison Analysis
 
 - Desired-state structure is the strongest area: root/platform/workload
   ownership, Kustomize completeness, exact AppProject lists, namespace
@@ -204,7 +204,7 @@ or future artifact consumers the repository actually owns.
   admin-boundary evidence model. A full environment/platform replacement is
   not justified by this repository snapshot.
 
-## Residual Risks
+### Residual Risks
 
 - The fixed-tree counts and validations do not prove controllers accepted or
   reconciled the manifests, nor that installed CRD/API versions match them.

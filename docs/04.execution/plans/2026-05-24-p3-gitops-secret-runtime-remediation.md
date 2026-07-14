@@ -3,7 +3,7 @@ title: 'P3 GitOps Secret Runtime Remediation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-06-04
+updated: 2026-07-13
 ---
 
 # P3 GitOps Secret Runtime Remediation Plan
@@ -91,7 +91,7 @@ read-only commands.
 | Live checks leak secret values                            | Critical | Use only status/metadata commands; never print Kubernetes Secret data or Vault KV values                                        |
 | Local cluster is not running                              | Medium   | Record live checks as skipped/failed-current-state and keep repo-static validation authoritative for the commit                 |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: full repo-static validation bundle must pass.
 - **Sandbox / Canary Rollout**: not applicable in this repository-only pass.
@@ -99,7 +99,7 @@ read-only commands.
 - **Rollback Trigger**: revert the P3 manifest/test/docs change set if static validation fails or live metadata checks reveal an incompatible ownership model.
 - **Prompt / Model Promotion Criteria**: not applicable.
 
-## Implementation Results
+### Implementation Results
 
 | Work item                                     | Result                                                                                                           | Evidence path                                                                                   |
 | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
@@ -110,7 +110,7 @@ read-only commands.
 | Static validation                             | Added static contract checks for all implemented P3 contracts                                                    | `infrastructure/tests/verify-contracts-static.sh`                                               |
 | Operations docs                               | Clarified Vault CLI path versus ESO `remoteRef.key` behavior                                                     | `docs/05.operations/`, `examples/sample-app/README.md`                                          |
 
-## Verification Results
+### Verification Results
 
 | ID         | Result                  | Evidence / Note                                                                                                           |
 | ---------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------- |
@@ -124,7 +124,7 @@ read-only commands.
 | VAL-P3-008 | CURRENT-STATE FAIL      | ArgoCD Application, ApplicationSet, and AppProject metadata could not be read because the local cluster was not reachable |
 | VAL-P3-009 | PASS                    | `git diff --check` passed after final doc updates                                                                         |
 
-## Runtime Check Interpretation
+### Runtime Check Interpretation
 
 The read-only live check was approved and attempted, but the current WSL runtime
 has no reachable `k3d-hyhome` API server: `kubectl config current-context`
@@ -143,7 +143,7 @@ a current-state runtime unavailability, not as live validation success.
 - [x] static validation passed.
 - [x] approved read-only runtime validation attempted and recorded.
 
-## Remaining Follow-up
+### Remaining Follow-up
 
 - Start `k3d-hyhome` and rerun metadata-only ESO, ArgoCD, AppProject, and
   ApplicationSet checks after ArgoCD has reconciled the root app.
@@ -152,7 +152,7 @@ a current-state runtime unavailability, not as live validation success.
 - Keep Vault KV writes, ArgoCD sync, and `kubectl apply` as explicit
   human-approved operations outside this repository-only commit.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Audit Reference**: [../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md](../../90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md)

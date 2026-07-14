@@ -3,7 +3,7 @@ title: 'Argo Rollouts Progressive Delivery Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-06-04
+updated: 2026-07-13
 ---
 
 # Argo Rollouts Progressive Delivery Specification
@@ -15,7 +15,7 @@ Rollouts progressive delivery. It fixes the `platform-rollouts` Application,
 AppProject permissions, dashboard route, metrics, and workload consumption
 boundaries as the basis for implementation and validation.
 
-## Implementation Status
+### Current implementation status
 
 The repo-backed implementation for this spec is complete against the current
 contract. Live operational actions such as rollout promotion, abort, and undo
@@ -38,12 +38,6 @@ evidence.
   ArgoCD Notifications templates.
 - **Non-goals**: default automatic promotion, multi-cluster delivery, and
   enabling Rollouts chart notifications.
-
-## Related Inputs
-
-- **PRD**: [`../../01.requirements/001-argo-rollouts-progressive-delivery.md`](../../01.requirements/001-argo-rollouts-progressive-delivery.md)
-- **ARD**: [`../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md`](../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md)
-- **Related ADRs**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md), [`../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)
 
 ## Contracts
 
@@ -113,12 +107,12 @@ rollouts:
     enabled: false
 ```
 
-## API Contract (If Applicable)
+### API Contract
 
 This feature does not expose a repository-owned external API.
 The public contract is Kubernetes CRDs and dashboard/metrics endpoints.
 
-## Agent Role & IO Contract (If Applicable)
+### Agent Role & IO Contract
 
 - **Agent Role**: maintenance agents statically validate repo-backed manifests
   and docs, and do not perform live promotion.
@@ -128,30 +122,30 @@ The public contract is Kubernetes CRDs and dashboard/metrics endpoints.
 - **Success Definition**: the Rollouts contract is traceable from PRD -> ARD ->
   Spec -> Plan -> Task -> Operations.
 
-## Tools & Tool Contract (If Applicable)
+### Tools & Tool Contract
 
 - **Tool List**: `rg`, `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, `kubectl argo rollouts` for human/operator runtime checks.
 - **Permission Boundary**: Agents must not promote, abort, undo, or apply live resources without explicit human approval.
 - **Failure Handling**: static mismatch is fixed through PR; runtime failure routes to the runbook.
 
-## Prompt / Policy Contract (If Applicable)
+### Prompt / Policy Contract
 
 - Rollouts chart `notifications.enabled: false` must not be “fixed” when adding Slack notifications.
 - Slack notifications are owned by ArgoCD Notifications and `docs/03.specs/005-argo-notifications-slack/spec.md`.
 
-## Memory & Context Strategy (If Applicable)
+### Memory & Context Strategy
 
 - Backfill lessons are recorded in `docs/00.agent-governance/memory/progress.md`.
 - No standalone memory file is required for this feature.
 
-## Guardrails (If Applicable)
+### Guardrails
 
 - **Input Guardrails**: confirm chart repo, namespace, dashboard host, and AppProject allow-list from repo files.
 - **Output Guardrails**: do not introduce plaintext secrets or direct cluster mutation instructions.
 - **Blocked Conditions**: missing AppProject allow-list or missing dashboard ingress requires PR correction before runtime validation.
 - **Escalation Rule**: changing promotion defaults or disabling analysis requires platform owner approval.
 
-## Evaluation (If Applicable)
+### Evaluation
 
 - **Eval Types**: static contract validation, GitOps structure validation, runtime readiness checks.
 - **Metrics**: validation gate pass/fail; controller Pod readiness; dashboard HTTP status.
@@ -193,7 +187,7 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 - **VAL-SPC-004**: Dashboard ingress/TLS contract points to `rollouts.127.0.0.1.nip.io`.
 - **VAL-SPC-005**: Controller metrics are exposed for external Prometheus.
 
-## Related Documents
+## Traceability
 
 - **PRD**: [`../../01.requirements/001-argo-rollouts-progressive-delivery.md`](../../01.requirements/001-argo-rollouts-progressive-delivery.md)
 - **ARD**: [`../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md`](../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md)
@@ -202,3 +196,8 @@ curl -ksS -o /dev/null -w '%{http_code}' https://rollouts.127.0.0.1.nip.io/
 - **Tasks**: [`../../04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md`](../../04.execution/tasks/2026-05-18-argo-rollouts-progressive-delivery.md)
 - **Runbook**: [`../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md)
 - **Operations Policy**: [`../../05.operations/policies/0004-rollouts-notifications-headlamp-policy.md`](../../05.operations/policies/0004-rollouts-notifications-headlamp-policy.md)
+### Related inputs
+
+- **PRD**: [`../../01.requirements/001-argo-rollouts-progressive-delivery.md`](../../01.requirements/001-argo-rollouts-progressive-delivery.md)
+- **ARD**: [`../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md`](../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md)
+- **Related ADRs**: [`../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md`](../../02.architecture/decisions/0011-argo-rollouts-progressive-delivery.md), [`../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md`](../../02.architecture/decisions/0002-argocd-helm-and-gitops-model.md)

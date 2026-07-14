@@ -14,7 +14,7 @@ updated: 2026-05-17
 
 ---
 
-## Purpose
+### Purpose
 
 로컬 Kubernetes/GitOps/AI infrastructure 경험을 운영체제, 네트워크, 분산 시스템, 소프트웨어 공학 이론 학습으로 연결한다.
 
@@ -45,19 +45,7 @@ updated: 2026-05-17
 - **Vector Indexing**: RAG 검색에서 고차원 벡터를 근사 탐색하는 자료구조/알고리즘 계열이다.
 - **Virtual Memory Paging**: 제한된 물리 메모리를 페이지 단위로 관리하는 운영체제 메모리 모델이다.
 
-## Sources
-
-- Recommended Reading List의 논문과 이 저장소의 GitOps/observability 구현 경험을 학습 출발점으로 삼는다.
-
-## Review and Freshness
-
-- Review cadence: on major learning roadmap update or major repo architecture shift.
-- Last reviewed: 2026-05-10.
-- Next review trigger: a new durable learning module, removal of a referenced platform capability, or a new official learning source replacing an existing one.
-
----
-
-## Theoretical Mapping (Infrastructure -> CS Theory)
+### Theoretical Mapping (Infrastructure -> CS Theory)
 
 | Current Tool | Academic Domain | Key Concept | Reference |
 | --- | --- | --- | --- |
@@ -68,7 +56,7 @@ updated: 2026-05-17
 
 ---
 
-## Deep Dive Modules
+### Deep Dive Modules
 
 ### Module A: The Memory Wall (vLLM & OS Paging)
 
@@ -85,7 +73,7 @@ updated: 2026-05-17
 
 ---
 
-## Module C: Offline Controller Thought Experiment
+### Module C: Offline Controller Thought Experiment
 
 이 섹션은 repo 변경 없이 reconciliation loop를 이해하기 위한 오프라인 학습 연습입니다.
 실제 manifest, live cluster, ArgoCD, Vault, 또는 이 저장소의 GitOps desired state에 적용하지 않습니다.
@@ -104,7 +92,7 @@ Kubernetes controller가 특정 ConfigMap 변경을 관찰한다고 가정하고
 
 ---
 
-## Recommended Reading List
+### Recommended Reading List
 
 1. Kwon et al., "Efficient Memory Management for LLM Serving with PagedAttention" (SOSP '23)
 2. Vaswani et al., "Attention Is All You Need" (2017)
@@ -114,6 +102,18 @@ Kubernetes controller가 특정 ConfigMap 변경을 관찰한다고 가정하고
 
 > [!TIP]
 > 이 저장소의 활성 에이전트 런타임은 `.claude/`와 `.codex/` 기준입니다. 내구성 있는 학습 참고 자료를 추가할 때는 빈 `.agent/` 경로를 만들지 말고 `docs/90.references/` 또는 현재 활성 런타임 문서로 연결하세요.
+
+## Sources
+
+- Recommended Reading List의 논문과 이 저장소의 GitOps/observability 구현 경험을 학습 출발점으로 삼는다.
+
+## Review and Freshness
+
+- Review cadence: on major learning roadmap update or major repo architecture shift.
+- Last reviewed: 2026-05-10.
+- Next review trigger: a new durable learning module, removal of a referenced platform capability, or a new official learning source replacing an existing one.
+
+---
 
 ## Related Documents
 

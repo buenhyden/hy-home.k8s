@@ -19,7 +19,7 @@ governance policy, provider runtime configuration, hook behavior, CI semantics,
 scripts, templates, manifests, approval boundaries, or live operations
 procedure.
 
-## Purpose
+### Purpose
 
 - Record whether the researched governance, harness, loop, and provider model
   is implemented in current repository surfaces.

@@ -3,7 +3,7 @@ title: 'Workspace Engineering Research Pack Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-13
 ---
 
 # Workspace Engineering Research Pack Implementation Plan
@@ -92,7 +92,7 @@ only when labeled non-authoritative.
     paid external jobs.
   - Remote push, PR creation, publish, or merge without separate approval.
 
-## File Structure
+### File Structure
 
 | Path | Responsibility |
 | --- | --- |
@@ -109,7 +109,7 @@ only when labeled non-authoritative.
 | `docs/90.references/README.md` | Parent reference index update for the dated research pack. |
 | `docs/00.agent-governance/memory/progress.md` | Progress and reusable memory update after implementation stages. |
 
-## Source Baseline
+### Source Baseline
 
 Use web research during implementation for current external claims. Start with
 these official or primary source families:
@@ -173,7 +173,7 @@ non-authoritative in the document section where it is used.
 | WER-006 | Add Kubernetes, infrastructure, and security reference | `kubernetes-infrastructure-security.md` | VAL-SPC-004, VAL-SPC-005 | Kubernetes, infrastructure, GitOps, secrets, policy, supply-chain, security covered |
 | WER-007 | Close indexes, task evidence, progress, and validation | Research indexes, task evidence, progress memory | VAL-SPC-002, VAL-SPC-006, VAL-SPC-007 | Required validation passes and limitations are recorded |
 
-## Detailed Tasks
+### Detailed Tasks
 
 > [!NOTE]
 > The unchecked items below preserve the approved historical execution
@@ -794,7 +794,7 @@ Expected: final closure commit exists and no unresolved drift remains.
 | Scope grows beyond a compact pack | Medium | Keep the pack to one README, four moved references, and two new references |
 | Optional tools are mistaken for full coverage | Medium | Preserve SKIP/fallback wording for optional `kube-linter` and `conftest` results |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Run repo-quality, focused stale-link scans, source
   boundary scans, topic scans, and full harness before closure.
@@ -820,7 +820,7 @@ Expected: final closure commit exists and no unresolved drift remains.
 - [x] Required validation passes.
 - [x] Logical-unit commits exist for each completed task.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [Workspace Engineering Research Pack](../../03.specs/017-workspace-engineering-research-pack/spec.md)
 - **Prior Research Spec**: [Workspace Harness Research Pack](../../03.specs/009-workspace-harness-research-pack/spec.md)

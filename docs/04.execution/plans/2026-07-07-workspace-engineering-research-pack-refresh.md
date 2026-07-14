@@ -3,7 +3,7 @@ title: 'Workspace Engineering Research Pack Refresh Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-07
+updated: 2026-07-13
 ---
 
 # Workspace Engineering Research Pack Refresh Implementation Plan
@@ -49,7 +49,7 @@ This work ensures that the workspace engineering reference materials remain curr
 | --- | --- | --- |
 | Stale links or path errors | Low | Run `validate-repo-quality-gates.sh` to ensure link integrity |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: None.
 - **Sandbox / Canary Rollout**: None.
@@ -63,7 +63,7 @@ This work ensures that the workspace engineering reference materials remain curr
 - [x] Verification passed
 - [x] Required docs updated
 
-## Related Documents
+## Traceability
 
 - **PRD**: `[../../01.requirements/017-workspace-engineering-research-pack.md]`
 - **Parent Spec**: [../../03.specs/017-workspace-engineering-research-pack/spec.md](../../03.specs/017-workspace-engineering-research-pack/spec.md)

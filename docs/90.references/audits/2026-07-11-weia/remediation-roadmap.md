@@ -1,9 +1,9 @@
 ---
 title: 'Audit: Integrated Remediation Roadmap'
 type: content/reference
-status: draft
+status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-14
 ---
 
 # Audit: Integrated Remediation Roadmap
@@ -16,7 +16,7 @@ updated: 2026-07-11
 소유하며, 이 문서는 중복 제거, 의존 순서, 목표 운영 모델, 선택지와 후속
 SDLC 경로만 소유한다.
 
-## Purpose
+### Purpose
 
 - Give every non-implemented audit row exactly one canonical disposition.
 - Order remediation by safety, integrity, dependency, and evidence readiness.
@@ -129,6 +129,53 @@ and the focused
 [`validate-agent-roster-currentness.py`](../../../../scripts/validate-agent-roster-currentness.py)
 guardrail. This closure is repository-static and does not change the original
 finding, priority, score, or live/provider evidence boundary.
+
+### RMD-014 closure evidence
+
+The repository-static protected-surface tranche is closed by
+[Spec 032](../../../03.specs/032-protected-surface-supply-chain-hardening/spec.md),
+its [implementation Plan](../../../04.execution/plans/2026-07-12-protected-surface-supply-chain-hardening.md),
+and its [evidence Task](../../../04.execution/tasks/2026-07-12-protected-surface-supply-chain-hardening.md).
+The fail-closed
+[`validate-github-actions-security.py`](../../../../scripts/validate-github-actions-security.py)
+guardrail verifies the five current workflows:
+[CI](../../../../.github/workflows/ci.yml),
+[changelog](../../../../.github/workflows/generate-changelog.yml),
+[greetings](../../../../.github/workflows/greetings.yml),
+[labeler](../../../../.github/workflows/labeler.yml), and
+[stale](../../../../.github/workflows/stale.yml). All fourteen remote `uses:`
+occurrences resolve to the eight reviewed full SHAs with same-line version
+comments, workflow defaults are read-only, and only the three named jobs retain
+their exact writes. RMD-014 is therefore closed for repository-static Action
+identity and permission enforcement. Remote GitHub workflow execution remains
+`DEFER`; this closure does not claim runner, Action-runtime, or branch-rule
+behavior.
+
+The same tranche records dated follow-up facts for RMD-001 through RMD-003
+without changing their source rows, original priorities, or observation-time
+claims:
+
+- **RMD-001 repository-static remediation**: the bootstrap now rejects
+  non-HTTPS Vault addresses, requires a readable CA, disables curl config, and
+  has no insecure verification fallback. Live endpoint trust and TLS runtime
+  remain `DEFER`.
+- **RMD-002 repository-static remediation**: the Vault token is read silently
+  from `/dev/tty`; the token header and generated Kubernetes Secret value cross
+  process boundaries through stdin rather than argv or exported environment.
+  Negative fixtures and secret-handling checks pass without reading a secret
+  value.
+- **RMD-003 repository-static remediation**: the tracked local HTTP boundary is
+  explicitly annotated `local-only`, ESO uses the exact
+  `external-secrets/external-secrets` identity, audience `vault`, role
+  `eso-read-platform`, one-subject TokenReview binding, and six-stanza
+  read/list-only HCL allowlist. Applying the external Vault role requirement
+  `bound_audiences=vault`, credential rotation, live TLS/ESO authentication,
+  Kubernetes authorization, and a rollback rehearsal remain explicit
+  operator-approved follow-up and `DEFER`.
+
+Rollback for the repository-static tranche is the first parent before PSH-001,
+`05e2b7050b8d150ec46eddf731bf28283bd11c04`, or newest-first reverts of the
+seven pre-closure logical commits. No live rollback was rehearsed.
 
 ### Historical Lineage Map
 

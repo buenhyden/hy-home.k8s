@@ -21,7 +21,7 @@ semantics, branch protection, CI enforcement, release approval, deployment
 procedure, credential handling, live runtime readiness, or maintenance-bot
 behavior.
 
-## Purpose
+### Purpose
 
 - Provide a dated source snapshot for automation, workflow triggers,
   workflow syntax, concurrency, reusable workflow concepts, workflow commands,
@@ -311,7 +311,7 @@ Repo-backed sources:
 - [Greeting Workflow](../../../../.github/workflows/greetings.yml)
 - [Stale Workflow](../../../../.github/workflows/stale.yml)
 - [Dependabot Config](../../../../.github/dependabot.yml)
-- [Zizmor Config](../../../../.github/zizmor.yml)
+- [Zizmor Config](../../../../.github/ABOUT.md)
 - [Pre-commit Config](../../../../.pre-commit-config.yaml)
 - [Scripts README](../../../../scripts/README.md)
 - [CI/CD & QA Reference Guide](../../../05.operations/guides/0010-ci-cd-qa-reference-guide.md)

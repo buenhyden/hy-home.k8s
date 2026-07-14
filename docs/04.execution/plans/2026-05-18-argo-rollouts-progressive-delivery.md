@@ -3,7 +3,7 @@ title: 'Argo Rollouts Progressive Delivery Backfill Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-05-21
+updated: 2026-07-13
 ---
 
 # Argo Rollouts Progressive Delivery Backfill Plan
@@ -73,7 +73,7 @@ the `03.specs` stage.
 | Rollouts chart notifications are enabled by mistake | High | Separate chart notifications disabled state and ArgoCD Notifications ownership in the Spec |
 | Live validation runs as if it were static validation | Medium | Separate live `kubectl`/`curl` evidence into runbook evidence |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: repo quality, GitOps structure, manifest syntax, static contract checks pass.
 - **Sandbox / Canary Rollout**: Not applicable for docs-only backfill.
@@ -88,7 +88,7 @@ the `03.specs` stage.
 - [x] README indexes include Rollouts.
 - [x] Verification commands are documented for execution.
 
-## Related Documents
+## Traceability
 
 - **PRD**: [`../../01.requirements/001-argo-rollouts-progressive-delivery.md`](../../01.requirements/001-argo-rollouts-progressive-delivery.md)
 - **ARD**: [`../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md`](../../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md)

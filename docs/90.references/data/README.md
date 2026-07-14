@@ -17,7 +17,7 @@ facts를 둔다.
 runtime permission을 새로 정의하지 않는다. 그런 내용은 각 canonical owner
 stage로 라우팅한다.
 
-## Audience
+### Collection Readers
 
 이 README의 주요 독자:
 
@@ -42,7 +42,7 @@ stage로 라우팅한다.
 - Live upgrade procedures or deployment approvals.
 - Research analysis, audit reports, learning roadmaps, or generated wiki maps.
 
-## Structure
+## Item Index
 
 ```text
 data/
@@ -51,7 +51,7 @@ data/
 └── README.md                         # This file
 ```
 
-## How to Work in This Area
+## Add and Find
 
 1. Use [reference.template.md](../../99.templates/templates/common/reference.template.md) for new non-README documents.
 2. Keep every data reference factual and source-checked.
@@ -59,7 +59,7 @@ data/
 4. Route runtime policy to `docs/00.agent-governance/**`.
 5. Route execution steps, upgrade procedures, and incident handling to `docs/05.operations/**`.
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/90.references/data/`다.
 
@@ -69,14 +69,14 @@ data/
 - canonical owner stage는 `../../00.agent-governance/`,
   `../../03.specs/`, `../../05.operations/`로 연결한다.
 
-## Data Reference Index
+### Data Reference Index
 
 | Document | Reference Type | Role | Freshness Trigger |
 | --- | --- | --- | --- |
 | [Agent Reference Index](./agent-reference-index.md) | durable-concept / data-catalog | Agent reference boundaries and canonical owner routing | Agent reference document addition, runtime roster movement, or Stage 00 routing change |
 | [Tech Stack Version Inventory](./tech-stack-version-inventory.md) | version-contract-inventory / external-standard-snapshot | Repo-backed version contracts and cloud example snapshots | Manifest/config/example version change or official support-range change |
 
-## Authority Boundary
+### Authority Boundary
 
 - `data/` owns factual lookup data and source-checked reference inventories.
 - `docs/00.agent-governance/**` owns agent runtime truth, provider behavior,

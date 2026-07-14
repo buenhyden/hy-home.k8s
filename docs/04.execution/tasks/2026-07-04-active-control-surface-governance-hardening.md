@@ -3,7 +3,7 @@ title: 'Active Control Surface Governance Hardening Task Record'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-13
 ---
 
 # Task: Active Control Surface Governance Hardening
@@ -23,20 +23,6 @@ examples as dated snapshots.
 - **Parent Spec**:
   [../../03.specs/016-active-control-surface-governance-hardening/spec.md](../../03.specs/016-active-control-surface-governance-hardening/spec.md)
 
-## Working Rules
-
-- Work only repo-static control surfaces unless a separate human approval
-  grants a live mutation path.
-- Do not inspect secret values, regenerate credentials, mutate live clusters,
-  or change third-party resources.
-- Keep README files and GitHub-native Markdown frontmatter-free.
-- Keep durable policy in Stage 00 governance, Stage 99 support contracts,
-  Stage 05 operations documents, workflow files, or validators according to
-  the owning surface.
-- Repo-static validation must not be reported as live k3d, Argo CD, Vault,
-  ESO, cloud, or deployment readiness unless the matching live check was
-  approved and run.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -47,15 +33,7 @@ examples as dated snapshots.
 | ACS-004 | Align GitOps, infrastructure, policy, scripts, tests, Traefik, and sample-app surfaces | doc | VAL-SPC-001, VAL-SPC-002, VAL-SPC-004 | Task 4 | Harness validation passes and optional tool skips remain explicit | platform | Done |
 | ACS-005 | Close evidence, review, and branch readiness | doc | VAL-SPC-005 | Task 5 | Full validation bundle, updated plan/task evidence, final drift review | platform | Done |
 
-## Suggested Types
-
-- `doc`
-- `test`
-- `eval`
-- `guardrail`
-- `ops`
-
-## Phase View
+### Phase View
 
 ### Task 1: Baseline Inventory and Task Record
 
@@ -78,7 +56,7 @@ examples as dated snapshots.
 
 - [x] ACS-005 Close evidence, review, and branch readiness.
 
-## Baseline Inventory Evidence
+### Baseline Inventory Evidence
 
 ### Commands
 
@@ -149,7 +127,7 @@ examples as dated snapshots.
 | `tests` | 8 |
 | `traefik` | 9 |
 
-## Approved Snapshot Boundary
+### Approved Snapshot Boundary
 
 AWS and Azure cloud example docs under `examples/aws/docs` and
 `examples/azure/docs` remain dated Cloud Example Snapshot material. They are
@@ -158,7 +136,7 @@ promoted into active SDLC frontmatter or section enforcement by this task.
 Future cloud provider refresh work must create separate scoped evidence and
 validation.
 
-## ACS-002 Canonical Ownership Evidence
+### ACS-002 Canonical Ownership Evidence
 
 ### Commands
 
@@ -179,7 +157,7 @@ validation.
 - `bash scripts/validate-repo-quality-gates.sh .` passed with
   `[PASS] repository quality gates passed`.
 
-## ACS-003 GitHub Control Evidence
+### ACS-003 GitHub Control Evidence
 
 ### Commands
 
@@ -216,7 +194,7 @@ PY
 - `bash scripts/validate-repo-quality-gates.sh .` passed with
   `[PASS] repository quality gates passed`.
 
-## ACS-004 GitOps and Repo-static Validation Evidence
+### ACS-004 GitOps and Repo-static Validation Evidence
 
 ### Commands
 
@@ -271,7 +249,7 @@ PY
 - No live Kubernetes, Argo CD, Vault, cloud, external Traefik, provider,
   publish, push, merge, or secret-value action was performed.
 
-## ACS-005 Final Closure Evidence
+### ACS-005 Final Closure Evidence
 
 ### Commands
 
@@ -304,6 +282,31 @@ PY
 - Plan and task indexes are marked `Done`, and this task record is closed.
 - No live Kubernetes, Argo CD, Vault, cloud, external Traefik, provider,
   publish, push, merge, or secret-value action was performed.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `ACS-001 through ACS-005` is limited to these Active Control Surface Governance Hardening owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md`
+  - `docs/04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md`
+  - `docs/03.specs/016-active-control-surface-governance-hardening/spec.md`
+  - `examples/aws/docs`
+  - `examples/azure/docs`
+  - `examples/sample-app`
+  - `.github/ABOUT.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Active Control Surface Governance Hardening work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Active Control Surface Governance Hardening protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Active Control Surface Governance Hardening outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git status --short --branch`
+  - `git diff --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `bash scripts/validate-harness.sh`
+- **Live Validation**: DEFER — Active Control Surface Governance Hardening is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Active Control Surface Governance Hardening; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Active Control Surface Governance Hardening change set for `ACS-001 through ACS-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Active Control Surface Governance Hardening evidence remains in:
+  - `docs/04.execution/tasks/2026-07-04-active-control-surface-governance-hardening.md`
+  - `docs/04.execution/plans/2026-07-04-active-control-surface-governance-hardening.md`
+  - `docs/03.specs/016-active-control-surface-governance-hardening/spec.md`
 
 ## Verification Summary
 
@@ -339,7 +342,7 @@ PY
   - This task record.
   - [../../00.agent-governance/memory/progress.md](../../00.agent-governance/memory/progress.md)
 
-## Related Documents
+## Traceability
 
 - **Spec**:
   [../../03.specs/016-active-control-surface-governance-hardening/spec.md](../../03.specs/016-active-control-surface-governance-hardening/spec.md)

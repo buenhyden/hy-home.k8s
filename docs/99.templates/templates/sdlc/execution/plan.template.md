@@ -10,76 +10,42 @@ updated: YYYY-MM-DD
 
 # [Feature Name] Implementation Plan
 
-> Use this template for `docs/04.execution/plans/YYYY-MM-DD-<feature>.md`.
->
-> Rules:
->
-> - Every active plan must include explicit verification criteria.
-> - Plan explains execution order, risk control, and rollout strategy.
-> - Write this plan in English.
-> - Use relative links only, calculated from the final authored document location.
-
----
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Overview
 
-This document defines the implementation plan for [Feature or Component Name].
-It records work breakdown, verification, rollout, risk management, and
-completion criteria.
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
 ## Context
 
-[Why this work exists.]
+<!-- Describe the topic-specific context without copying template guidance. -->
 
 ## Goals & In-Scope
 
-- **Goals**:
-- **In Scope**:
+<!-- Describe the topic-specific goals & in-scope without copying template guidance. -->
 
 ## Non-Goals & Out-of-Scope
 
-- **Non-goals**:
-- **Out of Scope**:
+<!-- Describe the topic-specific non-goals & out-of-scope without copying template guidance. -->
 
 ## Work Breakdown
 
-| Task    | Description | Files / Docs Affected | Target REQ | Validation Criteria |
-| ------- | ----------- | --------------------- | ---------- | ------------------- |
-| PLN-001 | [Action]    | `path/to/file`        | REQ-001    | [Evidence]          |
+<!-- Describe the topic-specific work breakdown without copying template guidance. -->
 
 ## Verification Plan
 
-| ID          | Level      | Description | Command / How to Run | Pass Criteria |
-| ----------- | ---------- | ----------- | -------------------- | ------------- |
-| VAL-PLN-001 | Structural | [Check]     | [Command]            | [Pass]        |
+<!-- Describe the topic-specific verification plan without copying template guidance. -->
 
 ## Risks & Mitigations
 
-| Risk   | Impact | Mitigation   |
-| ------ | ------ | ------------ |
-| [Risk] | High   | [Mitigation] |
-
-## Agent Rollout & Evaluation Gates (If Applicable)
-
-- **Offline Eval Gate**:
-- **Sandbox / Canary Rollout**:
-- **Human Approval Gate**: [State whether live runtime validation, CI topology, provider config, model policy, GitOps manifest, secret, or template changes are in scope.]
-- **Rollback Trigger**:
-- **Prompt / Model Promotion Criteria**:
+<!-- Describe the topic-specific risks & mitigations without copying template guidance. -->
 
 ## Completion Criteria
 
-- [ ] Scoped work completed
-- [ ] Verification passed
-- [ ] Required docs updated
+<!-- Describe the topic-specific completion criteria without copying template guidance. -->
 
-## Related Documents
+## Traceability
 
-Target-relative examples below assume the authored file will be created at
-`docs/04.execution/plans/YYYY-MM-DD-<feature>.md`.
-
-- **PRD**: `[../../01.requirements/<###-Numbering>-<feature-or-system>.md]`
-- **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
-- **Spec**: `[../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
-- **ADR**: `[../../02.architecture/decisions/####-<short-title>.md]`
-- **Tasks**: `[../tasks/YYYY-MM-DD-<feature-or-stream>.md]`
+<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->

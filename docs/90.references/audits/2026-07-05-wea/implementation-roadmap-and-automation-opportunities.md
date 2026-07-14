@@ -19,7 +19,7 @@ governance, provider adapter behavior, CI/CD workflows, validation scripts,
 GitOps manifests, policy bundles, secrets, runtime operations, or deployment
 procedure.
 
-## Purpose
+### Purpose
 
 - Summarize the implementation status patterns across governance, harness,
   loop, provider, SDLC, CI/CD, QA, formatting, Kubernetes, Infrastructure, and

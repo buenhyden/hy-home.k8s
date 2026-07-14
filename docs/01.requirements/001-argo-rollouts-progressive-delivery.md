@@ -3,7 +3,7 @@ title: 'Argo Rollouts Progressive Delivery Product Requirements'
 type: sdlc/prd
 status: active
 owner: platform
-updated: 2026-06-04
+updated: 2026-07-13
 ---
 
 # Argo Rollouts Progressive Delivery Product Requirements
@@ -12,7 +12,7 @@ updated: 2026-06-04
 
 이 문서는 `hy-home.k8s` 플랫폼에 Argo Rollouts를 도입하여 canary/blue-green 점진적 배포 전략과 Prometheus 메트릭 기반 AnalysisRun 안전 점검, 실패 시 자동 abort/rollback을 지원하기 위한 제품 요구사항을 정의한다.
 
-## Requirement Status
+### Current requirement status
 
 이 PRD는 current-contract backfill 기준의 active 문서다.
 Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 2026-05-18에 ARD/Spec/Plan/Task 추적 체인을 보강했다.
@@ -77,14 +77,14 @@ Rollouts GitOps 리소스와 운영 문서는 이미 저장소에 존재하며, 
 - Rollouts Dashboard 접근을 위해 외부 Traefik route 계약이 필요하다.
 - cert-manager `mkcert-ca-issuer`가 이미 설치된 상태를 전제한다 (현재 baseline PRD 의존).
 
-## AI Agent Requirements (If Applicable)
+### Agent execution and approval requirements
 
 - **Allowed Actions**: Update PRD/documentation, run non-destructive static validation, and collect read-only status evidence.
 - **Disallowed Actions**: Expand AppProject permissions without approval, mutate the live cluster directly, or change manifests outside an approved downstream stage.
 - **Human-in-the-loop Requirement**: Required before AppProject cluster resource allow-list changes or rollout promotion policy changes.
 - **Evaluation Expectation**: Verify controller status, Dashboard access, and ArgoCD sync traceability in a downstream validation stage.
 
-## Related Documents
+## Traceability
 
 - **ARD**: [`../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md`](../02.architecture/requirements/0004-argo-rollouts-progressive-delivery.md)
 - **Spec**: [`../03.specs/004-argo-rollouts-progressive-delivery/spec.md`](../03.specs/004-argo-rollouts-progressive-delivery/spec.md)

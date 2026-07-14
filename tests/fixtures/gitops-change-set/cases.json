@@ -1,0 +1,8 @@
+{
+  "expected": [
+    "ADD v1 Service platform/added added-service.yaml",
+    "DELETE v1 Service platform/removed removed-service.yaml",
+    "RETAIN v1 ConfigMap platform/retained moved-retained-configmap.yaml"
+  ],
+  "forbidden_output": ["DO_NOT_EMIT_SENTINEL", "data:", "spec:", "stringData:"]
+}

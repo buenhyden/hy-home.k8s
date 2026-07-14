@@ -3,7 +3,7 @@ title: 'Task: Template Cross-link Fix'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-05-21
+updated: 2026-07-13
 ---
 
 # Task: Template Cross-link Fix
@@ -22,12 +22,6 @@ This document tracks execution for aligning cross-link placeholder paths in
 ## Inputs
 
 - **Parent Plan**: `[../plans/2026-05-17-template-crosslink-fix.md]`
-
-## Working Rules
-
-- This is documentation-only work and does not change infrastructure manifests.
-- Do not change actual href link targets; they are already correct.
-- Change only display text, also called the backtick code label, so it matches the href.
 
 ## Task Table
 
@@ -51,12 +45,7 @@ This document tracks execution for aligning cross-link placeholder paths in
 | T-016   | Fix Runbook generated-file display text in four files          | doc  | T-16        | Confirmed backtick label equals href                  | platform | Done   |
 | T-017   | Run final integrated validation                                | ops  | T-17        | `validate-repo-quality-gates.sh` PASS                  | platform | Done   |
 
-## Suggested Types
-
-- `doc`
-- `ops`
-
-## Phase View
+### Phase View
 
 ### Phase 1 — Template Cross-link Fix (T-001~T-010)
 
@@ -84,13 +73,32 @@ This document tracks execution for aligning cross-link placeholder paths in
 
 - [x] T-017 Final integrated validation completed.
 
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `T-001 through T-017` is limited to these Template Cross-link Fix owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-05-17-template-crosslink-fix.md`
+  - `docs/04.execution/plans/2026-05-17-template-crosslink-fix.md`
+  - `docs/01.requirements`
+  - `docs/04.execution/requirements`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Template Cross-link Fix work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Template Cross-link Fix protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Template Cross-link Fix outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `pre-commit run --all-files`
+- **Live Validation**: DEFER — Template Cross-link Fix is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Template Cross-link Fix; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Template Cross-link Fix change set for `T-001 through T-017` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Template Cross-link Fix evidence remains in:
+  - `docs/04.execution/tasks/2026-05-17-template-crosslink-fix.md`
+  - `docs/04.execution/plans/2026-05-17-template-crosslink-fix.md`
+
 ## Verification Summary
 
 - **Test Commands**: `bash scripts/validate-repo-quality-gates.sh .` — PASS (2026-05-21)
 - **Eval Commands**: `pre-commit run --all-files` — all pass
 - **Logs / Evidence Location**: `docs/04.execution/plans/2026-05-17-template-crosslink-fix.md` (Completion Criteria section)
 
-## Related Documents
+## Traceability
 
 - **Plan**: `[../plans/2026-05-17-template-crosslink-fix.md]`
 - **Templates**: `[../../99.templates/README.md]`

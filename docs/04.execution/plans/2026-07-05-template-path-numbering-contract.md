@@ -3,7 +3,7 @@ title: 'Template Path Numbering Contract Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-05
+updated: 2026-07-13
 ---
 
 # Template Path Numbering Contract Implementation Plan
@@ -100,7 +100,7 @@ This plan updates the current contract to
     remote mutation, credentials, secret values, paid jobs, publishing, merge,
     push, PR creation, or third-party mutation.
 
-## File Structure
+### File Structure
 
 | Path | Responsibility |
 | --- | --- |
@@ -143,7 +143,7 @@ This plan updates the current contract to
 | TPN-004 | Update Stage 00 governance and validator mappings | Stage 00 rules, validator script | VAL-SPC-019-002, VAL-SPC-019-004 | Validator recognizes numbered PRD and Stage 03 routes |
 | TPN-005 | Clean cross-links, close evidence, and validate | Cross-links, progress memory, plan/task indexes | VAL-SPC-019-005, VAL-SPC-019-006, VAL-SPC-019-007, VAL-SPC-019-008 | Focused scans and quality gates pass |
 
-## Detailed Tasks
+### Detailed Tasks
 
 > [!NOTE]
 > The unchecked items below preserve the approved historical execution
@@ -223,7 +223,7 @@ updated: 2026-07-05
 
 The task record must include these sections:
 
-```markdown
+````markdown
 # Task: Template Path Numbering Contract
 
 ## Overview
@@ -283,7 +283,7 @@ No handoff until all TPN tasks are complete and validation passes.
 - **Spec**: [../../03.specs/019-template-path-numbering-contract/spec.md](../../03.specs/019-template-path-numbering-contract/spec.md)
 - **Plan**: [../plans/2026-07-05-template-path-numbering-contract.md](../plans/2026-07-05-template-path-numbering-contract.md)
 - **Template Routing**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
-```
+````
 
 Expected: the task record has all required template headings and no template
 instruction residue.
@@ -876,7 +876,7 @@ Expected: final closure commit succeeds.
 | Old PRD links break after `git mv` | High | Run stale PRD scans and repository quality gates before committing the rename unit. |
 | New `docs/superpowers` paths bypass repo taxonomy | Medium | Store all implementation plans in `docs/04.execution/plans/` and task evidence in `docs/04.execution/tasks/`. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Repository-static validation only: `git diff --check`,
   stale route scans, inventory scans, and `bash scripts/validate-repo-quality-gates.sh .`.
@@ -906,7 +906,7 @@ Expected: final closure commit succeeds.
 - [ ] `bash scripts/validate-repo-quality-gates.sh .` passes.
 - [ ] Progress memory records the route distinction and validation closure.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/019-template-path-numbering-contract/spec.md](../../03.specs/019-template-path-numbering-contract/spec.md)
 - **Task**: [../tasks/2026-07-05-template-path-numbering-contract.md](../tasks/2026-07-05-template-path-numbering-contract.md)

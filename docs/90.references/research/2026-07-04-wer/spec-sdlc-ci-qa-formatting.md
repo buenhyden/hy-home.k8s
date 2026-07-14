@@ -22,7 +22,7 @@ exists.
 This is descriptive reference material. It does not redefine active governance,
 CI semantics, release approval, live runtime procedure, or provider behavior.
 
-## Purpose
+### Purpose
 
 - Provide a dated source snapshot for spec, SDLC, CI, QA, formatting,
   security, and supply-chain terms.

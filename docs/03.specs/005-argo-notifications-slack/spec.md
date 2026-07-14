@@ -3,7 +3,7 @@ title: 'Argo Notifications Slack Technical Specification'
 type: sdlc/spec
 status: active
 owner: platform
-updated: 2026-05-22
+updated: 2026-07-13
 ---
 
 # Argo Notifications Slack Specification
@@ -16,7 +16,7 @@ Notifications ConfigMap, Vault-backed ExternalSecret, default subscriptions,
 and per-application opt-in annotations as the basis for implementation and
 validation.
 
-## Implementation Status
+### Current implementation status
 
 The repo-backed implementation for this spec is complete against the static
 contract. Slack token bootstrap, Vault writes, and live Slack send validation
@@ -39,12 +39,6 @@ scope.
   notifications, or PagerDuty/Email/Alertmanager integration.
 - **Non-goals**: plaintext credential bootstrap, automatic per-app channel
   routing, and live Slack tests without a human-approved secret.
-
-## Related Inputs
-
-- **PRD**: [`../../01.requirements/002-argo-notifications-slack.md`](../../01.requirements/002-argo-notifications-slack.md)
-- **ARD**: [`../../02.architecture/requirements/0005-argo-notifications-slack.md`](../../02.architecture/requirements/0005-argo-notifications-slack.md)
-- **Related ADRs**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md), [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md)
 
 ## Contracts
 
@@ -113,12 +107,12 @@ notifications:
     enabled: false
 ```
 
-## API Contract (If Applicable)
+### API Contract
 
 This feature does not expose a repository-owned external API.
 The interface contract is ArgoCD Notifications ConfigMap syntax, ESO remote references, and application annotations.
 
-## Agent Role & IO Contract (If Applicable)
+### Agent Role & IO Contract
 
 - **Agent Role**: documentation and manifest maintenance agents validate
   notification wiring without reading or printing credential material.
@@ -126,31 +120,31 @@ The interface contract is ArgoCD Notifications ConfigMap syntax, ESO remote refe
 - **Outputs**: documentation, non-secret manifest diffs, validation evidence.
 - **Success Definition**: Slack notification contract is traceable without exposing credentials.
 
-## Tools & Tool Contract (If Applicable)
+### Tools & Tool Contract
 
 - **Tool List**: `rg`, `bash scripts/check-secret-handling.sh .`, `bash infrastructure/tests/verify-contracts-static.sh`, runtime `kubectl` checks for human/operator use.
 - **Permission Boundary**: no Vault writes, Slack token reads, or live notification tests without explicit approval.
 - **Failure Handling**: static mismatch is fixed through PR; runtime send failures route to the runbook.
 
-## Prompt / Policy Contract (If Applicable)
+### Prompt / Policy Contract
 
 - Do not replace `$slack-token` with a real token.
 - Do not enable Rollouts chart notifications when working on ArgoCD Notifications.
 - Do not mention actual Slack channels unless they are already non-secret repository policy.
 
-## Memory & Context Strategy (If Applicable)
+### Memory & Context Strategy
 
 - Record reusable doc-chain and secret-handling lessons in `docs/00.agent-governance/memory/progress.md`.
 - Do not create standalone memory docs for this backfill.
 
-## Guardrails (If Applicable)
+### Guardrails
 
 - **Input Guardrails**: verify all credential paths from repo files, not memory or logs.
 - **Output Guardrails**: secret-like literals must remain placeholders or references.
 - **Blocked Conditions**: missing Vault secret blocks live Slack validation, not static docs validation.
 - **Escalation Rule**: credential bootstrap or Slack workspace permission change requires a human.
 
-## Evaluation (If Applicable)
+### Evaluation
 
 - **Eval Types**: static secret scan, static contract verification, runtime controller/ExternalSecret/log checks.
 - **Metrics**: validation gate pass/fail; ExternalSecret Ready; controller Pod Running; Slack send/error log evidence.
@@ -191,7 +185,7 @@ kubectl -n argocd logs deploy/argocd-notifications-controller --tail=50 | grep -
 - **VAL-SPC-004**: secret handling scan returns zero plaintext credential findings.
 - **VAL-SPC-005**: runtime validation, when intentionally run, shows controller readiness and Slack send/error evidence.
 
-## Related Documents
+## Traceability
 
 - **PRD**: [`../../01.requirements/002-argo-notifications-slack.md`](../../01.requirements/002-argo-notifications-slack.md)
 - **ARD**: [`../../02.architecture/requirements/0005-argo-notifications-slack.md`](../../02.architecture/requirements/0005-argo-notifications-slack.md)
@@ -200,3 +194,8 @@ kubectl -n argocd logs deploy/argocd-notifications-controller --tail=50 | grep -
 - **Tasks**: [`../../04.execution/tasks/2026-05-18-argo-notifications-slack.md`](../../04.execution/tasks/2026-05-18-argo-notifications-slack.md)
 - **Runbook**: [`../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md`](../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md)
 - **Operations Policy**: [`../../05.operations/policies/0004-rollouts-notifications-headlamp-policy.md`](../../05.operations/policies/0004-rollouts-notifications-headlamp-policy.md)
+### Related inputs
+
+- **PRD**: [`../../01.requirements/002-argo-notifications-slack.md`](../../01.requirements/002-argo-notifications-slack.md)
+- **ARD**: [`../../02.architecture/requirements/0005-argo-notifications-slack.md`](../../02.architecture/requirements/0005-argo-notifications-slack.md)
+- **Related ADRs**: [`../../02.architecture/decisions/0012-argo-notifications-slack.md`](../../02.architecture/decisions/0012-argo-notifications-slack.md), [`../../02.architecture/decisions/0003-eso-vault-k8s-auth.md`](../../02.architecture/decisions/0003-eso-vault-k8s-auth.md)

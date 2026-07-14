@@ -39,6 +39,12 @@ Analyze cluster incidents, reconstruct timelines, assess impact, and define reme
 - Use only approved inspection commands and repository evidence.
 - Keep findings blameless and focused on systems, controls, and recovery paths.
 - Map durable outputs to incident or postmortem documentation rather than leaving them implicit.
+- Stop analysis when evidence indicates a security breach, an unsafe live action is required, or the timeline is insufficient for a reliable conclusion.
+
+## Capability and Evidence
+
+- Capability tier: `worker`; perform bounded incident reconstruction and planning without live remediation authority.
+- Required evidence: preserve timestamped observations, affected scope, impact, confidence, and approved-source references for every conclusion.
 
 ## Handoff / Escalation
 

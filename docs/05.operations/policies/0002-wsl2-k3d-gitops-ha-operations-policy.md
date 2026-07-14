@@ -67,7 +67,7 @@ updated: 2026-06-02
   - 로컬 파일 수정 상태만으로 배포 완료로 판단하는 행위
   - k3d 에이전트 노드 동시 재시작(inotify thundering herd 유발)
 
-## CI Governance
+### CI Governance
 
 - CD는 ArgoCD pull 모델을 기준으로 유지한다.
 - GitHub Actions는 정적 검증 전용 게이트로 사용한다.
@@ -98,7 +98,7 @@ updated: 2026-06-02
 - 운영 변경 시 즉시
 - 정기 분기 검토
 
-## EndpointSlice Ownership Boundary
+### EndpointSlice Ownership Boundary
 
 - 정상 경로: `gitops/platform/external-services/*.yaml`에 `Service`와
   `EndpointSlice` desired state를 기록하고 PR review 후 ArgoCD
@@ -109,7 +109,7 @@ updated: 2026-06-02
 - 예외 실행 후에는 실제 endpoint 값을 Git desired state와 런북 증적으로
   되돌려 맞춰야 하며, 로컬 patch 상태만으로 완료를 선언하지 않는다.
 
-## Audit Items
+### Audit Items
 
 - AppProject 권한 확장 여부
 - Vault 정책 wildcard 재도입 여부
@@ -120,12 +120,12 @@ updated: 2026-06-02
   direct fallback 포트(`ARGOCD_FALLBACK_PORT`) 변경 이력
 - OPA/Conftest 도입 여부와 policy owner/bundle/install path 결정 상태
 
-## AI Agent Policy Section (If Applicable)
+### AI Agent Policy Section
 
 이 정책은 인프라 리소스를 직접 관리하며 AI Agent 모델/프롬프트/평가 정책이 별도 적용되지 않는다.
 단, Agent가 이 정책 범위의 리소스를 조작할 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
 
-## Related Documents
+## Traceability
 
 - **ARD**: [`../../02.architecture/requirements/0007-current-local-gitops-platform.md`](../../02.architecture/requirements/0007-current-local-gitops-platform.md)
 - **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)

@@ -1,9 +1,9 @@
 ---
 title: 'Template Documentation Contract'
 type: governance/template-support
-status: draft
+status: active
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Template Documentation Contract
@@ -27,11 +27,21 @@ The template system has separate surfaces:
 | Authored documents | `docs/01.requirements` through `docs/05.operations`, `docs/90.references`, `docs/98.archive` | Repository facts, lifecycle records, and evidence. |
 | GitHub-native control Markdown | `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/SECURITY.md` | GitHub-rendered repository control surfaces that remain frontmatter-free and mirror canonical owners. |
 | Active control surfaces | GitHub-native Markdown, `.github/workflows/**`, validators, GitOps desired state, policy-as-code, and route manifests | Repository behavior and protection surfaces that route detail to their canonical governance, operations, workflow, script, or manifest owners. |
-| Example-local SDLC snapshots | `examples/aws/docs/**`, `examples/azure/docs/**` | Dated cloud migration example documents that reuse SDLC role profiles without becoming main active stage documents or provider-latest guidance. |
+| Cloud example snapshot collection | `docs/90.references/cloud-examples/**` | Durable dated AWS/Azure migration snapshots after retirement of the former `examples/{aws,azure}/docs/**` authored trees; new provider refreshes extend this reference collection through an approved lifecycle change. |
 | Workspace scratch staging | `_workspace/README.md` plus ignored `_workspace/**` scratch | Temporary non-secret repo-support staging; durable findings promote to canonical docs. |
 
-## Contract Rules
+## Owned Contract
 
+### Contract Rules
+
+- The machine-readable [Document Profile Registry](./document-profiles.json)
+  owns exact document routes, frontmatter key sets and states, heading sets, and
+  template paths. This support contract owns rationale and examples only; it
+  must not become a second machine contract.
+- The
+  [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+  records the research basis for profile-family decisions without owning their
+  machine values.
 - README files are entrypoints and inventories. They should summarize where to
   find rules and route to canonical owners, not duplicate full contract bodies.
 - README files route readers to lifecycle contract owners instead of carrying
@@ -61,23 +71,23 @@ The template system has separate surfaces:
 - Active-surface duplicate rule: stages 01 through 04 must not keep multiple
   active documents that own the same role, purpose, and feature lineage.
 
-## Lifecycle Route Summary
+### Lifecycle Route Summary
 
-- Stage 01 PRDs use `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
-- Stage 03 specs use `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.
-- Stage 04 plans and tasks stay date-based execution records.
-- AWS/Azure example-local SDLC snapshot docs stay under
-  `examples/<provider>/docs/**` and reuse the matching SDLC role profile.
-- README files route readers to lifecycle contract owners instead of carrying
-  full governance bodies.
+The [Document Profile Registry](./document-profiles.json) is the canonical
+owner for the exact lifecycle, example-local, README, and exception routes and
+their template mappings. At the support layer, the durable rationale is that
+Stage 01 requirements and Stage 03 specifications use numbered lineage, Stage
+04 plans and tasks remain dated execution evidence, example-local cloud
+documents reuse SDLC role profiles without becoming active-stage owners, and
+README files remain navigation surfaces rather than governance bodies.
 
-The detailed lifecycle state table, PRD/Spec numbering lineage rule, handoff
-link expectations, and archive tombstone lifecycle rule are owned by
-[SDLC Governance](./sdlc-governance.md). Archive tombstone metadata keys such
-as `original_path` are owned by [Frontmatter Schema](./frontmatter-schema.md)
-and the archive tombstone template.
+The registry profiles own exact lifecycle states and archive metadata keys.
+[SDLC Governance](./sdlc-governance.md) owns lifecycle rationale, numbering,
+handoff semantics, and active-surface rules; [Frontmatter
+Schema](./frontmatter-schema.md) explains metadata rationale without copying
+the registry values.
 
-## SDLC and Common Documentation Split
+### SDLC and Common Documentation Split
 
 SDLC documentation follows the delivery lifecycle from requirement through
 operations. Common documentation supports repository navigation, durable
@@ -91,7 +101,7 @@ reference, archive, memory, and progress recording.
 | Routing and path mapping | [Template Routing](./template-routing.md) | Maps authored target patterns to one template form. |
 | Legacy cleanup | [Legacy Cleanup Rules](./legacy-cleanup-rules.md) | Removes old keys, sections, values, and routes from active contracts. |
 
-## Protected Surface Rules
+### Protected Surface Rules
 
 - Template migration may change `docs/99.templates/**`, Stage 00 routing docs,
   `docs/00.agent-governance/hooks/k8s-pre-edit.sh`, and
@@ -100,6 +110,28 @@ reference, archive, memory, and progress recording.
 - Do not mutate live runtime resources as part of template migration.
 - Do not inspect secret values.
 - Do not push or publish without explicit approval.
+
+## Authoring Rules
+
+1. Classify the target path with the [Document Profile
+   Registry](./document-profiles.json), then use the one canonical form routed
+   by [Template Routing](./template-routing.md). Do not infer a form from a
+   neighboring filename.
+2. Keep every required second-level section and replace author comments,
+   prompts, and placeholders with topic-specific content. A required section
+   with only blank lines or author-only HTML comments is incomplete in an
+   authored document; canonical template forms may retain authoring prompts.
+3. Use only the selected profile's allowed headings and frontmatter keys in
+   their declared order. The selected profile also owns the exact relationship
+   heading for every SDLC, helper-Spec, operations, common, README, reference,
+   support, archive, and governance document. Do not infer or override that
+   literal from a document-family label.
+4. Recalculate relative links from the authored target location, update the
+   owning folder index when its inventory or description changes, and route
+   shared policy back to its canonical support or Stage 00 owner.
+5. Report the selected profile, canonical form, and repository-static
+   validation evidence at handoff. Keep native-runtime, remote, and live-state
+   evidence explicitly separate from repository-static results.
 
 ## Validation Contract
 
@@ -123,4 +155,6 @@ in [Template Routing](./template-routing.md) and
 - [Frontmatter Schema](./frontmatter-schema.md)
 - [Template Routing](./template-routing.md)
 - [Legacy Cleanup Rules](./legacy-cleanup-rules.md)
+- [Document Profile Registry](./document-profiles.json)
+- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
 - [Documentation Protocol](../../00.agent-governance/rules/documentation-protocol.md)

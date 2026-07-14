@@ -6,20 +6,20 @@ This Historical pack preserves the 2026-07-02 implementation audits for
 workspace governance, harness and loop behavior, provider adapters, and SDLC
 delivery practices.
 
-## Audience
+### Audience
 
 - Developers
 - Documentation Writers
 - AI Agents
 
-## Scope
+### Scope
 
-### In Scope
+#### In Scope
 
 - The four reports present in this dated pack.
 - Snapshot role, successor route, and evidence boundary.
 
-### Out of Scope
+#### Out of Scope
 
 - Current policy, implementation, or live-runtime claims.
 
@@ -29,7 +29,7 @@ delivery practices.
 - Snapshot date: 2026-07-02.
 - Scope: repository-backed implementation evidence at the pack cutoff.
 
-## Structure
+### Structure
 
 ```text
 2026-07-02-whia/
@@ -49,17 +49,17 @@ delivery practices.
 | [Provider Harness and Loop Implementation Audit](./provider-harness-loop-implementation-audit.md) | Claude, Codex, Gemini, and shared provider implementation status. |
 | [SDLC Delivery Practices Implementation Audit](./sdlc-delivery-practices-implementation-audit.md) | SDLC, CI/CD, QA, formatting, and validation evidence. |
 
-## Successor or Resolution
+## Refresh and Succession
 
 Successor: [2026-07-05 Workspace Engineering Implementation Audit](../2026-07-05-wea/README.md).
 
-## How to Work in This Area
+### How to Work in This Area
 
 1. Read this index for the pack boundary.
 2. Open only the report that owns the topic being investigated.
 3. Follow the successor for later workspace-engineering audit evidence.
 
-## Link Basis
+### Link Basis
 
 - Same-pack reports start with `./`.
 - Sibling audit packs start with `../`.
@@ -74,4 +74,4 @@ cluster, provider-runtime, credential, secret-value, or external-service state.
 
 - [Audits README](../README.md)
 - [Successor Pack](../2026-07-05-wea/README.md)
-- [README Template](../../../99.templates/templates/common/readme.template.md)
+- [Snapshot Pack Form](../../../99.templates/templates/common/readme-snapshot-pack.template.md)

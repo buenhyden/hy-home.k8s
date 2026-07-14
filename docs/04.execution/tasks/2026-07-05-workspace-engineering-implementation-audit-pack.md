@@ -3,7 +3,7 @@ title: 'Workspace Engineering Implementation Audit Pack Task Record'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-05
+updated: 2026-07-13
 ---
 
 # Task: Workspace Engineering Implementation Audit Pack Task Record
@@ -24,19 +24,6 @@ and closes validation through local static checks.
 - **Research Pack**: [../../90.references/research/2026-07-04-wer/README.md](../../90.references/research/2026-07-04-wer/README.md)
 - **Audits Index**: [../../90.references/audits/README.md](../../90.references/audits/README.md)
 
-## Working Rules
-
-- Keep this work documentation-only and repo-static unless separately
-  approved.
-- Use the research pack as benchmark context, not as proof of implementation.
-- Use only repo-backed links for implementation evidence in audit rows.
-- Preserve historical audit meaning while folderizing dated snapshots.
-- Keep Stage 90 audit reports descriptive; route active changes to canonical
-  owners instead of changing behavior during this audit task.
-- Record validation evidence for every task, including documentation-only
-  changes.
-- Do not edit `docs/00.agent-governance/memory/progress.md` during WEA-001.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -49,15 +36,7 @@ and closes validation through local static checks.
 | WEA-006 | Add roadmap and automation opportunities report | doc | VAL-SPC-004, VAL-SPC-005 | Task 6 | Cross-report roadmap and owner-routed automation opportunities present | platform | Done |
 | WEA-007 | Close indexes, evidence, review, and validation | doc | VAL-SPC-006, VAL-SPC-007, VAL-SPC-008 | Task 7 | Final scans, quality gates, and mutation boundary check pass | platform | Done |
 
-## Suggested Types
-
-- `doc`
-- `ops`
-- `eval`
-- `guardrail`
-- `observability`
-
-## Phase View
+### Phase View
 
 ### Phase 1: Baseline and Task Evidence
 
@@ -78,7 +57,7 @@ and closes validation through local static checks.
 
 - [x] WEA-007 Close indexes, evidence, review, and validation
 
-## Baseline Evidence Summary
+### Baseline Evidence Summary
 
 - `git status --short --branch` confirmed branch
   `codex/workspace-engineering-audit-pack` with no uncommitted changes before
@@ -100,7 +79,7 @@ and closes validation through local static checks.
   They include current navigational links that WEA-002 must update and
   historical command/path evidence that may remain if intentionally preserved.
 
-## WEA-002 Evidence Summary
+### WEA-002 Evidence Summary
 
 - `git status --short --branch` confirmed WEA-002 started from branch
   `codex/workspace-engineering-audit-pack` with no uncommitted changes.
@@ -154,6 +133,36 @@ and closes validation through local static checks.
   - First `bash scripts/validate-repo-quality-gates.sh .` run exposed broken
     Markdown links caused by the folder moves; after repairing those links, the
     final repository quality gate passed.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `WEA-001 through WEA-007` is limited to these Workspace Engineering Implementation Audit Pack Task Record owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md`
+  - `docs/03.specs/018-workspace-engineering-implementation-audit-pack/spec.md`
+  - `docs/04.execution/plans/2026-07-05-workspace-engineering-implementation-audit-pack.md`
+  - `docs/99.templates/templates/sdlc/execution/task.template.md`
+  - `docs/90.references/research/2026-07-04-wer/README.md`
+  - `docs/90.references/audits/README.md`
+  - `docs/90.references/audits/2026-05-24-whga/workspace-harness-gap-analysis.md`
+  - `docs/90.references/audits/2026-07-02-workspace-governance-implementation-audit.md`
+  - `docs/90.references/audits/2026-07-02-whia/workspace-governance-implementation-audit.md`
+  - `docs/90.references/audits/2026-07-02-harness-loop-implementation-audit.md`
+- **Forbidden Paths**: active policy or runtime configuration not named by the Workspace Engineering Implementation Audit Pack Task Record Task Table, provider settings, secret values, local diagnostics, and remote publication surfaces.
+- **Approval Required**: Human approval is required before publishing Workspace Engineering Implementation Audit Pack Task Record research, changing active policy/runtime behavior, deleting evidence, contacting providers, push, merge, or corpus expansion.
+- **Static Validation**: Preserve the Workspace Engineering Implementation Audit Pack Task Record outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git status --short --branch`
+  - `rg --files docs/90.references/audits docs/90.references/research docs/03.specs docs/04.execution | sort`
+  - `git diff --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+- **Live Validation**: DEFER — Workspace Engineering Implementation Audit Pack Task Record is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: Workspace Engineering Implementation Audit Pack Task Record evidence must use public or repository-visible facts only; do not inspect or reproduce credentials, tokens, auth files, private logs, kubeconfigs, or shell history.
+- **Rollback Plan**: Revert the logical Workspace Engineering Implementation Audit Pack Task Record change set for `WEA-001 through WEA-007` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Workspace Engineering Implementation Audit Pack Task Record evidence remains in:
+  - `docs/04.execution/tasks/2026-07-05-workspace-engineering-implementation-audit-pack.md`
+  - `docs/03.specs/018-workspace-engineering-implementation-audit-pack/spec.md`
+  - `docs/04.execution/plans/2026-07-05-workspace-engineering-implementation-audit-pack.md`
+  - `docs/99.templates/templates/sdlc/execution/task.template.md`
+  - `docs/90.references/research/2026-07-04-wer/README.md`
 
 ## Verification Summary
 
@@ -399,7 +408,7 @@ and closes validation through local static checks.
 - **Evidence Location**:
   - This task record and [README.md](./README.md)
 
-## Boundary Statement
+### Boundary Statement
 
 This audit-pack implementation performed local documentation edits, repository
 inspection, local validation, and local commits only. It did not perform live
@@ -407,7 +416,7 @@ Kubernetes, Argo CD, Vault, cloud, GitHub remote, provider runtime,
 credential, secret-value, paid-job, publish, merge, push, or third-party
 mutation.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/018-workspace-engineering-implementation-audit-pack/spec.md](../../03.specs/018-workspace-engineering-implementation-audit-pack/spec.md)
 - **Plan**: [../plans/2026-07-05-workspace-engineering-implementation-audit-pack.md](../plans/2026-07-05-workspace-engineering-implementation-audit-pack.md)

@@ -1,18 +1,18 @@
 ---
 title: 'Template Frontmatter Schema'
 type: governance/template-support
-status: draft
+status: active
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-14
 ---
 
 # Template Frontmatter Schema
 
 ## Overview
 
-This document defines the canonical frontmatter schema for Markdown template
-families and authored documents. This schema applies to Markdown template
-files, authored documents, and repository validation.
+This document explains the metadata rationale for Markdown template families
+and authored documents. The machine-readable registry owns the schema applied
+to template files, authored documents, and repository validation.
 
 ## Purpose
 
@@ -21,17 +21,15 @@ document classification, freshness, and validation. It should contain only
 metadata that belongs to the document type. It should not duplicate headings,
 content summaries, route tables, or governance prose.
 
-## Current Baseline
+## Owned Contract
 
-Most Markdown documents with frontmatter use these keys:
+### Current Baseline
 
-```yaml
-title: '<Document Title>'
-type: <profile-family>/<document-role>
-status: draft
-owner: platform
-updated: YYYY-MM-DD
-```
+The machine-readable [Document Profile Registry](./document-profiles.json)
+owns the exact required, allowed, and ordered key sets, lifecycle state domains,
+heading sets, and template path for every profile. Authors and validators must
+read those values from the matched profile rather than from an illustrative
+copy in support prose.
 
 Exceptions:
 
@@ -40,64 +38,47 @@ Exceptions:
   under `_workspace/**` are not authored documents.
 - GitHub-native Markdown control files under `.github/` are
   frontmatter-free because GitHub renders or consumes their body directly.
-- Cloud example docs under `examples/aws/docs/**` and
-  `examples/azure/docs/**` are routed as example-local SDLC snapshot
-  documents. Non-README Markdown in those trees uses the matching `sdlc/*`
-  frontmatter type for its role, while README files remain frontmatter-free.
+- Cloud example snapshots use the Stage 90 reference profiles under
+  `docs/90.references/cloud-examples/**`. The retired
+  `examples/{aws,azure}/docs/**` paths have no frontmatter profile or README
+  exception and must remain absent.
 - `progress.template.md` is an appendable ledger entry template.
 - OpenAPI, GraphQL, and protobuf templates must remain native to their format.
 
-## Profile Families
+### Profile Rationale
 
-| Profile Family | Document Role | `type` Value | Required Keys | Notes |
-| --- | --- | --- | --- | --- |
-| `sdlc` | PRD | `sdlc/prd` | `title`, `type`, `status`, `owner`, `updated` | Stage 01 product requirements. |
-| `sdlc` | ARD | `sdlc/ard` | `title`, `type`, `status`, `owner`, `updated` | Stage 02 architecture requirements. |
-| `sdlc` | ADR | `sdlc/adr` | `title`, `type`, `status`, `owner`, `updated` | Stage 02 architecture decisions. |
-| `sdlc` | Spec | `sdlc/spec` | `title`, `type`, `status`, `owner`, `updated` | Stage 03 parent implementation spec. |
-| `sdlc` | API spec | `sdlc/api-spec` | `title`, `type`, `status`, `owner`, `updated` | Feature-local API contract. |
-| `sdlc` | Agent design | `sdlc/agent-design` | `title`, `type`, `status`, `owner`, `updated` | Feature-local agent behavior and safety design. |
-| `sdlc` | Data model | `sdlc/data-model` | `title`, `type`, `status`, `owner`, `updated` | Feature-local data model. |
-| `sdlc` | Tests | `sdlc/tests` | `title`, `type`, `status`, `owner`, `updated` | Feature-local test and evaluation strategy. |
-| `sdlc` | Plan | `sdlc/plan` | `title`, `type`, `status`, `owner`, `updated` | Stage 04 execution plan. |
-| `sdlc` | Task | `sdlc/task` | `title`, `type`, `status`, `owner`, `updated` | Stage 04 execution evidence. |
-| `sdlc` | Guide | `sdlc/guide` | `title`, `type`, `status`, `owner`, `updated` | Stage 05 stable-state guide. |
-| `sdlc` | Policy | `sdlc/policy` | `title`, `type`, `status`, `owner`, `updated` | Stage 05 operational policy. |
-| `sdlc` | Runbook | `sdlc/runbook` | `title`, `type`, `status`, `owner`, `updated` | Stage 05 executable operational procedure. |
-| `sdlc` | Incident | `sdlc/incident` | `title`, `type`, `status`, `owner`, `updated` | Incident fact record. |
-| `sdlc` | Postmortem | `sdlc/postmortem` | `title`, `type`, `status`, `owner`, `updated` | Incident analysis and prevention follow-up. |
-| `content` | Reference | `content/reference` | `title`, `type`, `status`, `owner`, `updated` | Durable reference material under Stage 90. |
-| `content` | Archive Tombstone | `content/archive-tombstone` | `title`, `type`, `status`, `owner`, `updated`, `original_path`, `archived_on`, `archive_reason`, `replacement` | Archive Tombstones use `status: archived` and preserve archive traceability metadata in frontmatter. |
-| `content` | README | none | none | README files remain frontmatter-free. |
-| `repository-control` | GitHub-native Markdown | none | none | `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` remain frontmatter-free GitHub control surfaces. |
-| `example-local-sdlc` | AWS/Azure PRD, ARD, ADR, Spec, Plan, Task, Guide, Policy, Runbook snapshot | matching `sdlc/*` role | `title`, `type`, `status`, `owner`, `updated` | Example-local cloud docs under `examples/aws/docs/**` and `examples/azure/docs/**` reuse SDLC role types while staying dated snapshots outside the main active stage tree. |
-| `governance` | Governance reference | `governance/reference` | `title`, `type`, `status`, `owner`, `updated` | Stage 00 governance reference documents with frontmatter. |
-| `governance` | Governance memory | `governance/memory` | `title`, `type`, `status`, `owner`, `updated` | Standalone governance memory. |
-| `governance` | Progress entry | none | none | Progress entries are appended sections, not whole documents. |
-| `governance` | Template support | `governance/template-support` | `title`, `type`, `status`, `owner`, `updated` | Support docs under `docs/99.templates/support/**`. |
-| `machine-contract` | `machine.openapi` | n/a | n/a | OpenAPI root stays native YAML. |
-| `machine-contract` | `machine.graphql` | n/a | n/a | GraphQL root stays schema text. |
-| `machine-contract` | `machine.protobuf` | n/a | n/a | Protobuf root stays `.proto` text. |
+The registry defines the complete profile set. The families remain useful as a
+human model: SDLC profiles cover delivery records, common and governance
+profiles cover durable repository support, README profiles stay
+frontmatter-free, and explicit exception profiles preserve GitHub-native,
+Claude-native, repository-local, classification-only, and generated behavior.
+Exact `type` values,
+keys, states, headings, and templates must be read from the registry rather
+than copied into a Markdown table.
 
-## Key Rules
+The [Document Type Format and Evidence
+Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+records why the repository adopted these metadata roles and which external
+guidance it rejected; it is evidence, not a second schema owner.
+
+## Authoring Rules
+
+### Key Rules
 
 - `title` is the human-readable document title.
 - `type` classifies the document role and must use a namespaced value from
-  the profile family table.
+  the matching registry profile.
 - `status` is the lifecycle state. New authored documents start as `draft`
   unless a template has a fixed state such as archive Tombstones.
 - `owner` is `platform` for repository-authored documents.
 - `updated` uses an ISO calendar date.
 - Do not quote scalar `owner` values when the value is the canonical owner.
-- Archive Tombstones add `original_path`, `archived_on`, `archive_reason`, and
-  `replacement` because archive routing and replacement traceability are part
-  of the tombstone identity, not body prose.
-- `archive_reason` uses one of `superseded`, `duplicate`, `obsolete`,
-  `migrated`, or `historical-baseline`.
-- `replacement` is a repository path when a current owner exists, or `none`
-  when there is no direct replacement.
+- Archive Tombstones carry the registry-defined traceability extension because
+  archive identity and replacement routing are metadata concerns, not body
+  prose. Exact extension keys and allowed values come only from the
+  `content/archive-tombstone` profile.
 
-## Legacy Cleanup Rules
+### Legacy Cleanup Rules
 
 - Use `owner: platform` in active authored frontmatter and task owner cells.
 - Use `type: sdlc/policy` for operations policy documents.
@@ -106,9 +87,9 @@ Exceptions:
   profile explicitly allows both.
 - Do not add frontmatter to README files, ignored `_workspace/**` scratch,
   GitHub-native Markdown control files, or native machine-readable templates.
-- Add role-appropriate `sdlc/*` frontmatter to example-local cloud snapshot
-  documents under `examples/aws/docs/**` and `examples/azure/docs/**` when
-  they are non-README Markdown files.
+- Do not recreate the retired `examples/{aws,azure}/docs/**` trees. Route any
+  approved cloud snapshot refresh to `docs/90.references/cloud-examples/**`
+  with the selected Stage 90 reference profile.
 
 ## Validation Contract
 
@@ -130,6 +111,8 @@ has exactly one frontmatter profile. The gate rejects:
 ## Related Documents
 
 - [Documentation Contract](./documentation-contract.md)
+- [Document Profile Registry](./document-profiles.json)
+- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
 - [SDLC Governance](./sdlc-governance.md)
 - [Common Documentation Governance](./common-documentation-governance.md)
 - [Legacy Cleanup Rules](./legacy-cleanup-rules.md)

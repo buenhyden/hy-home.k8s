@@ -6,20 +6,20 @@ This Resolved pack preserves the workspace document-contract normalization
 audit and its dated inventory of frontmatter, templates, references, archives,
 and CI/QA evidence.
 
-## Audience
+### Audience
 
 - Developers
 - Documentation Writers
 - AI Agents
 
-## Scope
+### Scope
 
-### In Scope
+#### In Scope
 
 - The report present in this dated pack.
 - Snapshot role, comparison-owner route, and evidence boundary.
 
-### Out of Scope
+#### Out of Scope
 
 - Current policy, implementation, or live-runtime claims.
 
@@ -29,7 +29,7 @@ and CI/QA evidence.
 - Snapshot date: 2026-07-04.
 - Scope: workspace document-contract normalization evidence at that cutoff.
 
-## Structure
+### Structure
 
 ```text
 2026-07-04-wdcn/
@@ -43,17 +43,17 @@ and CI/QA evidence.
 | --- | --- |
 | [Workspace Document Contract Normalization Audit](./workspace-document-contract-normalization-audit.md) | Frontmatter, section, template, reference, archive, CI/QA, and historical-evidence drift inventory. |
 
-## Successor or Resolution
+## Refresh and Succession
 
 Current comparison owner: [2026-07-11 Workspace Engineering Implementation Audit](../2026-07-11-weia/README.md).
 
-## How to Work in This Area
+### How to Work in This Area
 
 1. Read this index for the resolved snapshot boundary.
 2. Open the report for the original dated inventory.
 3. Follow the Current comparison owner for later implementation evidence.
 
-## Link Basis
+### Link Basis
 
 - Same-pack reports start with `./`.
 - Sibling audit packs start with `../`.
@@ -68,4 +68,4 @@ to the Current pack and do not rewrite this report body.
 
 - [Audits README](../README.md)
 - [Current Comparison Owner](../2026-07-11-weia/README.md)
-- [README Template](../../../99.templates/templates/common/readme.template.md)
+- [Snapshot Pack Form](../../../99.templates/templates/common/readme-snapshot-pack.template.md)

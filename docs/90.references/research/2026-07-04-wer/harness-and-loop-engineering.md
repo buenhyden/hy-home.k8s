@@ -21,7 +21,7 @@ maintainers reason about instruction surfaces, constraints, feedback loops,
 knowledge stores, evals, review loops, and tool boundaries before proposing
 follow-up work in the canonical owner documents.
 
-## Purpose
+### Purpose
 
 - Provide a source-attributed snapshot of current harness and loop engineering
   concepts.

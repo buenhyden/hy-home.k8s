@@ -1,9 +1,9 @@
 ---
 title: 'Template Legacy Cleanup Rules'
 type: governance/template-support
-status: draft
+status: active
 owner: platform
-updated: 2026-07-05
+updated: 2026-07-13
 ---
 
 # Template Legacy Cleanup Rules
@@ -19,24 +19,33 @@ evidence can remain only when it is clearly dated and not an active contract.
 Legacy cleanup keeps active documentation from presenting old paths, duplicate
 roles, or obsolete sections as current rules.
 
-## Legacy Items to Remove from Active Contracts
+The [Document Profile Registry](./document-profiles.json) owns current machine
+values. This document owns only the migration and removal policy for identifying
+and disposing of legacy representations. The [Document Type Format and Evidence
+Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
+records the research basis for the replacement families without becoming an
+enforcement source.
+
+## Owned Contract
+
+### Legacy Items to Remove from Active Contracts
 
 | Legacy Item | Replacement | Current Enforcement |
 | --- | --- | --- |
 | Deprecated operations policy template route | `policy.template.md` and `type: sdlc/policy` | Reject in active contracts |
 | Deprecated operations policy frontmatter type | `type: sdlc/policy` | Reject in active frontmatter |
 | Deprecated team-owner value | `platform` | Reject in active owner fields |
-| Deprecated README related-link heading alternatives | Required active heading: `## Related Documents` | Reject only deprecated alternatives; do not reject or remove the required active heading |
+| Deprecated README related-link heading alternatives | Relationship heading selected by the README's registry profile | Reject deprecated alternatives; preserve the exact selected heading |
 | Flat template links in active route contracts | `docs/99.templates/templates/**` links | Reject in active route contracts |
-| Copied target-path template comments in authored docs | Topic-specific content with correct `Related Documents` | Reject in authored documents |
+| Copied target-path template comments in authored docs | Topic-specific content under the relationship heading selected by the document profile | Reject in authored documents |
 | Copied template-use instructions in authored docs | Remove from authored docs | Reject in authored documents |
 | README contract bodies that duplicate support docs | Brief pointers to support docs | Keep README entries concise |
 | GitHub-native Markdown frontmatter | Frontmatter-free `.github` control body with canonical links | Reject on `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` |
-| Provider-latest claims in cloud example indexes and example-local SDLC snapshot docs | Dated Cloud Example Snapshot wording, or a current approved provider refresh | Treat provider-latest claims as legacy unless backed by approved refresh evidence |
-| Missing frontmatter on non-README cloud example docs | Role-appropriate `sdlc/*` frontmatter under the example-local SDLC snapshot route | Reject after the example-local route is enabled for the target provider tree |
+| Provider-latest claims in cloud snapshot references | Dated Cloud Example Snapshot wording, or a current approved provider refresh | Treat provider-latest claims as legacy unless backed by approved refresh evidence |
+| Recreated `examples/{aws,azure}/docs/**` cloud documentation | Consolidate durable knowledge into `docs/90.references/cloud-examples/**` and remove the retired path | Reject tracked files under the retired trees; there is no authored or README route |
 | Active tracked scratch residue named or classified as backup files, auth files, token caches, shell history, local diagnostics, or secret-bearing logs | Delete, ignore as temporary non-secret scratch, or promote non-secret durable findings to the canonical docs taxonomy | Reject as active tracked scratch residue |
 
-## Active vs Historical References
+### Active vs Historical References
 
 Active contracts include:
 
@@ -59,7 +68,9 @@ resolved, keep the original finding as historical evidence and add resolved
 context in the next audit or normalization task instead of rewriting it into a
 false current-state claim.
 
-## Current Review Order
+## Authoring Rules
+
+### Current Review Order
 
 1. Confirm support contracts describe the current steady-state model.
 2. Confirm template files and route enforcement use categorized paths.
@@ -67,7 +78,9 @@ false current-state claim.
 4. Confirm authored documents and indexes follow the current contracts.
 5. Run legacy searches and record evidence for any accepted historical matches.
 
-## Validation Commands
+## Validation Contract
+
+### Validation Commands
 
 ```bash
 bash scripts/validate-repo-quality-gates.sh .
@@ -85,6 +98,8 @@ template-use instructions; authored docs must not retain those markers.
 ## Related Documents
 
 - [Documentation Contract](./documentation-contract.md)
+- [Document Profile Registry](./document-profiles.json)
+- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
 - [Frontmatter Schema](./frontmatter-schema.md)
 - [Template Routing](./template-routing.md)
 - [Documentation Protocol](../../00.agent-governance/rules/documentation-protocol.md)

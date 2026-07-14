@@ -1,20 +1,20 @@
+---
+title: 'Operations Scope'
+type: governance/reference
+status: active
+owner: platform
+updated: 2026-07-14
+---
+
 # Operations Scope
+
+## Overview
 
 Persona: Operations Engineer
 
-## Source of Truth
+## Authority Boundary
 
-- `docs/05.operations/policies/`
-- `docs/05.operations/runbooks/`
-- `docs/05.operations/incidents/`
-
-## Responsibilities
-
-- Align operational execution with approved policy.
-- Keep runbook procedures executable and incident-linked.
-- Preserve recoverability and clear escalation paths.
-
-## File Ownership
+### File Ownership
 
 | Path                      | Owner | Notes                        |
 | ------------------------- | ----- | ---------------------------- |
@@ -25,16 +25,41 @@ Persona: Operations Engineer
 
 Ops scope does **not** own `gitops/` (infra scope) or `docs/00.agent-governance/` (meta scope).
 
-## Subagent Bridge
+## Governance Context
+
+### Source of Truth
+
+- `docs/05.operations/policies/`
+- `docs/05.operations/runbooks/`
+- `docs/05.operations/incidents/`
+
+## Current Contract
+
+### Responsibilities
+
+- Align operational execution with approved policy.
+- Keep runbook procedures executable and incident-linked.
+- Preserve recoverability and clear escalation paths.
+
+### Subagent Bridge
 
 Agents that import this scope: `.claude/agents/incident-responder.md`.
 
-Subagent dispatch: use the current runtime's provider-native delegated-agent
-mechanism; never inline full role definitions when a provider-local agent file
-exists.
+Subagent dispatch: follow the [Subagent Protocol](../subagent-protocol.md); never
+inline a full role definition when an applicable native or local adapter exists.
 
-## Definition of Done
+## Validation and Refresh
+
+### Definition of Done
 
 - Operational actions are traceable to policy or incident context.
 - Recovery and rollback paths are explicit.
 - Evidence collection and escalation responsibilities are clear.
+
+## Related Documents
+
+- [Harness Approval Boundaries](../rules/approval-boundaries.md)
+- [Agent Quality Standards](../rules/quality-standards.md)
+- [Operations Policies Index](../../05.operations/policies/README.md)
+- [Runbooks Index](../../05.operations/runbooks/README.md)
+- [Incidents Index](../../05.operations/incidents/README.md)

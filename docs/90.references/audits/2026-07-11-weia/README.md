@@ -22,16 +22,16 @@ manifests, credentials, or live operations.
 - Completion evidence: [Stage 04 Plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
   and [Stage 04 Task](../../../04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md).
 
-## Audience
+### Audience
 
 - Developers
 - Operators
 - Documentation Writers
 - AI Agents
 
-## Scope
+### Scope
 
-### In Scope
+#### In Scope
 
 - Strengthen only the Current research pack and Stage 90 audit references.
 - Compare external benchmarks with the workspace implementation at an exact
@@ -46,7 +46,7 @@ manifests, credentials, or live operations.
 - Route active changes through follow-up PRD, ARD, ADR, Spec, Plan, or Task
   proposals with acceptance criteria.
 
-### Out of Scope
+#### Out of Scope
 
 - Changes to Stage 00 rules, Stage 99 templates, CI workflows, pre-commit
   configuration, agent adapters, provider settings, scripts, manifests, or
@@ -55,7 +55,7 @@ manifests, credentials, or live operations.
   deployment, or external-service validation.
 - Push, pull request, or merge without separate approval.
 
-## Design Decision
+### Design Decision
 
 Three approaches were considered:
 
@@ -69,7 +69,7 @@ known gaps: stale audits, frontmatter and lifecycle analysis, vibe coding,
 AI-agent pre-commit obligations, implementation scoring, and one Current audit
 pointer.
 
-## Structure
+### Structure
 
 ```text
 2026-07-11-weia/
@@ -94,22 +94,22 @@ All five scored reports use the shared measurement contract below. The roadmap
 normalizes their 80 actionable rows into 32 canonical findings; it does not
 rescore or replace the source reports.
 
-| Completed artifact | Scope | Applicable arithmetic | Actionable disposition |
-| --- | --- | --- | --- |
-| [Governance, Harness, Loop, and Provider Parity](governance-harness-loop-providers.md) | Governance, harness/loop, Claude, Codex, Gemini, and common system | `45/104` (43.3%); 26 applicable; no N/A | 17 Partial/Gap rows routed to the roadmap. |
-| [SDLC, Document Lifecycle, and Frontmatter](sdlc-document-lifecycle-frontmatter.md) | Fourteen document families, lineage, transitions, and profile values | `56/108` (51.9%); 27 applicable; 4 N/A | 14 Partial/Gap rows routed; Release and consumer-free metadata remain excluded. |
-| [CI, QA, Automation, Pipeline, and Workflow](ci-qa-automation-pipeline-workflow.md) | Delivery topology, QA/all-files obligations, and supply chain | `56/104` (53.8%); 26 applicable; 7 N/A | 8 Partial/Gap rows routed; consumer-free enterprise lanes remain excluded. |
-| [Kubernetes Infrastructure and Security](kubernetes-infrastructure-security.md) | GitOps/platform foundations and `SEC-001` through `SEC-014` | `44/104` (42.3%); 26 applicable; no N/A | 15 Partial/Gap rows routed, including 2 P0 controls. |
-| [AI Agents, Model Routing, Agency-Agents, and Vibe Coding](ai-agents-model-routing-vibe-coding.md) | Ten local roles, shared role system, upstream adoption, routing, and vibe coding | `51/116` (44.0%); 29 applicable; 2 N/A | 26 Partial/Gap rows routed; direct import and FinOps remain excluded. |
-| [Integrated Remediation Roadmap](remediation-roadmap.md) | Deduplication, dependencies, target state, and canonical SDLC routes | 80 actionable source rows -> 32 canonical findings | Consolidated target selected; deferred/rejected lanes retain reopen triggers. |
-| [Implementation Plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md) | Task-by-task execution and validation ledger | Tasks 1-13 complete | Both whole-branch reviews and final repository-static publication gates pass. |
+| Completed artifact | Lifecycle | Scope | Applicable arithmetic | Actionable disposition |
+| --- | --- | --- | --- | --- |
+| [AI Agents, Model Routing, Agency-Agents, and Vibe Coding](ai-agents-model-routing-vibe-coding.md) | `done` | Ten local roles, shared role system, upstream adoption, routing, and vibe coding | `51/116` (44.0%); 29 applicable; 2 N/A | 26 Partial/Gap rows routed; direct import and FinOps remain excluded. |
+| [CI, QA, Automation, Pipeline, and Workflow](ci-qa-automation-pipeline-workflow.md) | `done` | Delivery topology, QA/all-files obligations, and supply chain | `56/104` (53.8%); 26 applicable; 7 N/A | 8 Partial/Gap rows routed; consumer-free enterprise lanes remain excluded. |
+| [Governance, Harness, Loop, and Provider Parity](governance-harness-loop-providers.md) | `done` | Governance, harness/loop, Claude, Codex, Gemini, and common system | `45/104` (43.3%); 26 applicable; no N/A | 17 Partial/Gap rows routed to the roadmap. |
+| [Kubernetes Infrastructure and Security](kubernetes-infrastructure-security.md) | `done` | GitOps/platform foundations and `SEC-001` through `SEC-014` | `44/104` (42.3%); 26 applicable; no N/A | 15 Partial/Gap rows routed, including 2 P0 controls. |
+| [Integrated Remediation Roadmap](remediation-roadmap.md) | `done` | Deduplication, dependencies, target state, and canonical SDLC routes | 80 actionable source rows -> 32 canonical findings | Consolidated target selected; deferred/rejected lanes retain reopen triggers. |
+| [SDLC, Document Lifecycle, and Frontmatter](sdlc-document-lifecycle-frontmatter.md) | `done` | Fourteen document families, lineage, transitions, and profile values | `56/108` (51.9%); 27 applicable; 4 N/A | 14 Partial/Gap rows routed; Release and consumer-free metadata remain excluded. |
+| [Implementation Plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md) | `done` | Task-by-task execution and validation ledger | Tasks 1-13 complete | Both whole-branch reviews and final repository-static publication gates pass. |
 
-## Successor or Resolution
+## Refresh and Succession
 
 Successor: none. This is the Current comparison owner until a separately
 reviewed dated audit pack replaces the parent registry pointer.
 
-## How to Work in This Area
+### How to Work in This Area
 
 1. Treat this README as the approved Stage 90 design and pack contract.
 2. Use the Current research pack as benchmark context and the fixed audit
@@ -119,7 +119,7 @@ reviewed dated audit pack replaces the parent registry pointer.
 5. Route every proposed active change to a canonical follow-up SDLC owner;
    never implement it from Stage 90.
 
-## Link Basis
+### Link Basis
 
 This README is located at
 `docs/90.references/audits/2026-07-11-weia/`.
@@ -131,7 +131,7 @@ This README is located at
 - Repository-root evidence uses `../../../../<path>`.
 - Planned or conditional artifacts remain code literals.
 
-## Repository Snapshot Details
+### Repository Snapshot Details
 
 The initial inventory baseline is commit
 `ab3556b8d5a9ae6f469a751057d9ad5ef261cdf7`, observed on `2026-07-11`.
@@ -191,14 +191,14 @@ Observed output on `2026-07-11`:
 | Incident — `docs/05.operations/incidents/*.md` | 0 | No authored record; `README.md` is index-only. |
 | Postmortem — `docs/05.operations/incidents/` postmortem records | 0 | No authored record. |
 
-## Requirement Ownership Routing
+### Requirement Ownership Routing
 
 The Current research pack
 [owns the canonical requirement-to-research-to-audit map](../../research/2026-07-07-wer/README.md#canonical-requirement-to-research-to-audit-ownership-map).
 Audit reports consume that map; this README owns only the snapshot, scoring,
 and evidence contract.
 
-## Completed Research Inputs
+### Completed Research Inputs
 
 The completed [Current research pack](../../research/2026-07-07-wer/README.md)
 is the benchmark input. Its topic owners are:
@@ -213,7 +213,7 @@ is the benchmark input. Its topic owners are:
 | [Kubernetes, Infrastructure, and Security](../../research/2026-07-07-wer/kubernetes-infrastructure-security.md) | Kubernetes, GitOps, Vault, ESO, network, policy, supply chain, and static-versus-live boundaries. |
 | [AI Agents Roster and Gap Analysis](../../research/2026-07-07-wer/ai-agents-roster-and-gap-analysis.md) | Local agents, provider adapters, `agency-agents`, role gaps, model routing, and vibe-coding controls. |
 
-## Report Interfaces and Topic Ownership
+### Report Interfaces and Topic Ownership
 
 Each requested topic has exactly one primary audit owner through the canonical
 map above. The following completed interfaces group those topics without
@@ -229,7 +229,7 @@ instead of copying volatile facts.
 | [Agents/model/vibe](ai-agents-model-routing-vibe-coding.md) | Local role responsibilities, shared role bodies and instructions, upstream `agency-agents` roster/comparison, role gaps and adoption decisions, vibe coding, and role-specific default/escalation/fallback/eval recommendations. It consumes and links adapter inventory/count, provider metadata, native semantics/loading, and availability facts from the governance/provider report; it does not duplicate them. | Scored role and vibe-coding controls plus model-routing recommendations for the [roadmap](remediation-roadmap.md). |
 | [Integrated roadmap](remediation-roadmap.md) | Cross-report deduplication, dependency order, target-state choice, and integrated priority ordering only. | One follow-up register with canonical PRD, ARD, ADR, Spec, Plan, or Task routes and acceptance evidence. |
 
-## Audit Method
+### Audit Method
 
 Every applicable control row uses these exact fields, in this order:
 
@@ -325,7 +325,7 @@ deployments, and external-service state. These lanes remain `Unverified live`
 or `Conditional`; repository declarations and static PASS results cannot
 promote them to maturity 4.
 
-## SDLC and Frontmatter Design
+### SDLC and Frontmatter Design
 
 The audit compares three target states:
 
@@ -345,7 +345,7 @@ supersession, review freshness, reference source checks, incident identity and
 severity, placeholder rejection, and date validity without moving all body
 content into metadata.
 
-## Cross-Category Decision Rules
+### Cross-Category Decision Rules
 
 - File-count parity is not provider runtime or behavioral parity.
 - `.agents` is not described as a native Gemini CLI implementation.
@@ -362,7 +362,7 @@ content into metadata.
   obligation and a mandatory check for hook, toolchain, global formatting, or
   validation-contract changes, not as an after-every-edit requirement.
 
-## Completion Evidence
+### Completion Evidence
 
 The [completed Plan](../../../04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md)
 preserves the thirteen-task ledger, logical publication boundaries, review
@@ -372,7 +372,7 @@ summarizes completed tasks, known publication commits, repository-static
 validation, and the no-live/no-secret boundary. The final source correction is
 commit `14198a7`; the Current pack publication is commit `184d13e`.
 
-## Final Review and Freshness
+### Final Review and Freshness
 
 - Final review status: specification/content PASS and evidence/quality PASS
   after review-fix commit `14198a7`.

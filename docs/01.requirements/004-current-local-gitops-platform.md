@@ -3,7 +3,7 @@ title: 'Current Local GitOps Platform Product Requirements'
 type: sdlc/prd
 status: active
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Current Local GitOps Platform Product Requirements
@@ -76,7 +76,7 @@ WSL2 + WSL-native Docker 기반 로컬 Kubernetes 플랫폼을 GitOps-first 방�
 - Static validation proves repo-backed desired state, not live reconciliation.
 - Active docs must be updated when GitOps desired state changes.
 
-## AI Agent Requirements (If Applicable)
+### Agent execution and approval requirements
 
 - **Allowed Actions**:
   - Read active baseline docs, GitOps manifests, infrastructure scripts, and archive index.
@@ -90,7 +90,7 @@ WSL2 + WSL-native Docker 기반 로컬 Kubernetes 플랫폼을 GitOps-first 방�
 - **Evaluation Expectation**:
   - Run repo quality and relevant static GitOps checks before handoff.
 
-## Related Documents
+## Traceability
 
 - **ARD**: [../02.architecture/requirements/0007-current-local-gitops-platform.md](../02.architecture/requirements/0007-current-local-gitops-platform.md)
 - **Spec**: [../03.specs/008-current-local-gitops-platform/spec.md](../03.specs/008-current-local-gitops-platform/spec.md)

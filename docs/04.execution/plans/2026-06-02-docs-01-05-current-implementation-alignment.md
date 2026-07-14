@@ -3,7 +3,7 @@ title: 'Docs 01-05 Current Implementation Alignment Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # Docs 01-05 Current Implementation Alignment Plan
@@ -80,7 +80,7 @@ Phase evidence against the current implementation.
 | Tombstone body preserves old implementation details | Medium | Keep Tombstones metadata-only and validate line count/required phrases. |
 | Repo-static pass is mistaken for runtime readiness | High | State live k3d/ArgoCD/Vault/ESO/deployment checks as out of scope unless separately approved and run. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: local static verification commands and targeted semantic scans.
 - **Sandbox / Canary Rollout**: not applicable; docs and static validator changes only.
@@ -98,7 +98,7 @@ Phase evidence against the current implementation.
 - [x] Validator and QA docs enforce stale currentness gates.
 - [x] Local static verification is executed and results are recorded.
 
-## Related Documents
+## Traceability
 
 - **Current Platform Spec**: [../../03.specs/008-current-local-gitops-platform/spec.md](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Harness Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)

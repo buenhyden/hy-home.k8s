@@ -3,7 +3,7 @@ title: 'Task: Workspace Purpose Alignment Audit'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-05-22
+updated: 2026-07-13
 ---
 
 # Task: Workspace Purpose Alignment Audit
@@ -20,13 +20,6 @@ CI, validation scripts, examples, and external version baselines.
 - **Parent Spec**: N/A. This is a governance and documentation alignment workstream.
 - **Parent Plan**: [../plans/2026-05-22-workspace-purpose-alignment.md](../plans/2026-05-22-workspace-purpose-alignment.md)
 
-## Working Rules
-
-- Preserve the existing SSoT layout and avoid broad rewrites.
-- Update only drift confirmed by repo evidence or official external version sources.
-- Keep live mutation, secret writes, ArgoCD forced sync, and cloud account changes out of scope.
-- Documentation-only work still needs validation evidence.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -38,18 +31,7 @@ CI, validation scripts, examples, and external version baselines.
 | T-005 | Preserve SDD execution evidence and update stage indexes | doc | N/A | PLN-001 | Plan/Task created from templates and indexed in README files | Platform | Done |
 | T-006 | Run repo-static validation suite and record limitations | test | N/A | PLN-006 | Verification Summary in this document | Platform | Done |
 
-## Suggested Types
-
-- `doc`
-- `guardrail`
-- `test`
-
-## Agent-specific Types (If Applicable)
-
-- `guardrail`
-- `eval`
-
-## Phase View (Optional)
+### Phase View
 
 ### Phase 1 - Audit
 
@@ -65,6 +47,30 @@ CI, validation scripts, examples, and external version baselines.
 ### Phase 3 - Verification
 
 - [x] T-006 Run validation suite and record skipped optional-tool limitations.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `T-001 through T-006` is limited to these Workspace Purpose Alignment Audit owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-05-22-workspace-purpose-alignment.md`
+  - `docs/04.execution/plans/2026-05-22-workspace-purpose-alignment.md`
+  - `docs/90.references/data/tech-stack-version-inventory.md`
+  - `.claude/settings.json`
+- **Forbidden Paths**: active policy or runtime configuration not named by the Workspace Purpose Alignment Audit Task Table, provider settings, secret values, local diagnostics, and remote publication surfaces.
+- **Approval Required**: Human approval is required before publishing Workspace Purpose Alignment Audit research, changing active policy/runtime behavior, deleting evidence, contacting providers, push, merge, or corpus expansion.
+- **Static Validation**: Preserve the Workspace Purpose Alignment Audit outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `bash scripts/generate-llm-wiki-index.sh --check`
+  - `bash scripts/validate-gitops-structure.sh`
+  - `bash scripts/validate-k8s-manifests.sh .`
+- **Live Validation**: DEFER — Workspace Purpose Alignment Audit is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: Workspace Purpose Alignment Audit evidence must use public or repository-visible facts only; do not inspect or reproduce credentials, tokens, auth files, private logs, kubeconfigs, or shell history.
+- **Rollback Plan**: Revert the logical Workspace Purpose Alignment Audit change set for `T-001 through T-006` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Workspace Purpose Alignment Audit evidence remains in:
+  - `docs/04.execution/tasks/2026-05-22-workspace-purpose-alignment.md`
+  - `docs/04.execution/plans/2026-05-22-workspace-purpose-alignment.md`
+  - `docs/01.requirements`
+  - `docs/05.operations`
+  - `docs/99.templates`
 
 ## Verification Summary
 
@@ -87,7 +93,7 @@ CI, validation scripts, examples, and external version baselines.
 - **Local Tool Limitations**:
   - `pre-commit`, `shellcheck`, `actionlint`, `zizmor`, `kube-linter`, `graphify`, and `rtk` are not installed in this local environment.
 
-## Audit Result
+### Audit Result
 
 - `docs/01.requirements` through `docs/05.operations`, `docs/99.templates`, and README layers were already covered by the current repo quality gate. No template rewrite was needed.
 - Root `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` already satisfy the thin gateway/provider shim contract. No progressive-disclosure split was needed.
@@ -96,7 +102,7 @@ CI, validation scripts, examples, and external version baselines.
 - External version freshness needed an update because official Kubernetes, EKS, AKS, and Terraform Registry sources changed after the previous snapshot date.
 - Local Hookify warning text needed alignment with the tracked Claude allow/deny boundary.
 
-## Related Documents
+## Traceability
 
 - **Plan**: [../plans/2026-05-22-workspace-purpose-alignment.md](../plans/2026-05-22-workspace-purpose-alignment.md)
 - **Previous Task**: [./2026-05-22-docs-governance-full-ab-hardening.md](./2026-05-22-docs-governance-full-ab-hardening.md)

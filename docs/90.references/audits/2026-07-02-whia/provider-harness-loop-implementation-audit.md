@@ -23,7 +23,7 @@ Static repository evidence does not prove live provider-runtime behavior, live
 cluster readiness, cloud readiness, secret readiness, paid-job readiness, or
 external-service readiness.
 
-## Purpose
+### Purpose
 
 - Record whether the researched provider harness and loop model is implemented
   in current repository surfaces.

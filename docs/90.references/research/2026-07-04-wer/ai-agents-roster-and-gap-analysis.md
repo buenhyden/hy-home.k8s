@@ -19,7 +19,7 @@ This is durable reference material. It summarizes facts checked on 2026-07-06
 and routes follow-up work to canonical owners; it does not change the runtime
 roster, agent files, model policy, or governance.
 
-## Purpose
+### Purpose
 
 - Record the current workspace AI agent roster and its provider adapter
   implementation as repo-backed facts.

@@ -15,7 +15,7 @@ Current Replacement 문서가 소유한다.
 `docs/98.archive/05.operations/runbooks`, `docs/98.archive/05.operations/incidents`
 mirror는 operations bucket 구조를 그대로 보존한다.
 
-## Audience
+### Stage Readers
 
 이 README의 주요 독자:
 
@@ -24,7 +24,7 @@ mirror는 operations bucket 구조를 그대로 보존한다.
 - Architecture Reviewers
 - AI Agents
 
-## Scope
+## Stage Contract
 
 ### In Scope
 
@@ -41,7 +41,7 @@ mirror는 operations bucket 구조를 그대로 보존한다.
 - 원문 historical body 보관
 - reference 문서나 외부 표준 snapshot
 
-## Structure
+## Document Index
 
 ```text
 98.archive/
@@ -61,7 +61,7 @@ mirror는 operations bucket 구조를 그대로 보존한다.
 └── README.md
 ```
 
-## How to Work in This Area
+## Authoring Workflow
 
 1. active 문서가 현재 구현과 상충하고 본문 재작성보다 제거가 맞으면 원래 docs 하위 경로를 `98.archive/` 아래에 mirror한다.
 2. archive로 이동한 문서는 `../99.templates/templates/common/archive-tombstone.template.md` 구조의 Tombstone으로 교체한다.
@@ -70,7 +70,7 @@ mirror는 operations bucket 구조를 그대로 보존한다.
 5. active 문서와 README는 이 archive README만 Index Only로 연결하고, 개별 Tombstone을 직접 current input으로 사용하지 않는다.
 6. 현재 구현 범위가 줄어들지 않도록 대체 PRD/ARD/ADR/Spec/Plan/Task 또는 현재 구현 README를 먼저 확정한다.
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/98.archive/`다.
 
@@ -78,7 +78,7 @@ mirror는 operations bucket 구조를 그대로 보존한다.
 - template stage는 `../99.templates/`로 연결한다.
 - tombstone 파일 내부 링크는 각 mirror 위치 기준으로 다시 계산한다.
 
-## Archive Index
+### Archive Index
 
 ### 01.requirements
 

@@ -30,12 +30,15 @@ Start from the repository gateway files, then follow the governance JIT sequence
 - Use `docs/00.agent-governance/rules/agentic.md` as the Agent-first Engineering execution contract.
 - Author stage documents Template-First: use `docs/99.templates/support/template-routing.md` for route selection, then read the matching template under `docs/99.templates/templates/` before writing into `docs/01.requirements`–`docs/05.operations` and `docs/99.templates`; `docs/99.templates/README.md` is the index summary.
 - If `graphify-out/GRAPH_REPORT.md` exists, read it before architecture or codebase answers.
-- Treat `.codex/agents/*.toml`, `.agents/agents/*.md`, and `.claude/agents/*.md` as provider-native role adapters for the same local roster; keep role parity aligned without requiring identical metadata keys.
+- Treat `.codex/agents/*.toml` and `.claude/agents/*.md` as provider-native role adapters, and `.agents/agents/*.md` as the local/Antigravity adapter for the same roster; keep repo-static role parity aligned without reporting it as Gemini CLI runtime parity.
 - Treat `.codex/hooks.json` as Codex event wiring for repo-local context and validation hooks, not as an equivalent permission gate to Claude's `settings.json`.
 - `.codex/` carries Codex-native real files (`agents/*.toml`, `hooks.json`); its `skills/`, `workflows/`, and `output-styles/` are symlinks to the `.agents/` SSoT for byte-identical shared content.
 - Use `RTK.md` as cross-agent SSOT for shell commands.
 - Verification: Codex MUST implement explicit QA and CI/static validation phases prior to task completion, mirroring Gemini and Claude.
-- Agent eval completion must be proven with explicit command evidence from repo-static gates, changed-file checks, or recorded human/operator approval; Codex hooks are context/validation wiring, and static checks do not imply live k3d, ArgoCD, Vault, ESO, or secret readiness.
+- Agent eval completion follows
+  `docs/00.agent-governance/rules/quality-standards.md`; report its validation
+  lanes, result vocabulary, and handoff fields without copying a command matrix
+  into this baseline.
 
 ## Harness Four-Element Runtime Contract
 
@@ -51,7 +54,8 @@ Codex implements the shared four-element harness model from
    validation wiring, not a Claude-style permission gate.
 3. **Feedback loops**: run explicit repo-static validation commands before
    handoff and use `.codex/hooks.json` shared script wiring as additional
-   feedback where the runtime supports it. Do not infer live k3d, ArgoCD,
+   feedback where the runtime supports it. Report each canonical lane
+   separately. Do not infer live k3d, ArgoCD,
    Vault, ESO, or deployment readiness from static checks. If a repeated error
    appears, update the smallest shared harness surface that would have
    prevented it instead of treating the failure as only an agent mistake.
@@ -75,9 +79,15 @@ Codex implements the shared four-element harness model from
 
 ## Validation and Tooling
 
-- Use `.pre-commit-config.yaml`, `.github/workflows/ci.yml`, `scripts/*.sh`, and `infrastructure/tests/*.sh` as validation sources.
-- Run `scripts/validate-repo-quality-gates.sh .` as the repo-backed regression gate before handoff.
-- Use `RTK.md` for shell-command guidance; if `rtk` is not on PATH, check `/home/hy/.local/bin/rtk --version`. If the binary exists but `rtk gain` cannot initialize its tracking database, do not read private runtime state; run the underlying command directly and record the PATH/DB limitation.
+- Canonical selection: `docs/00.agent-governance/contracts/validation-surfaces.json`.
+- Canonical lane/result/handoff semantics: `docs/00.agent-governance/rules/quality-standards.md`.
+- Native sandboxing and approval boundaries: Codex configuration and
+  `docs/00.agent-governance/providers/codex.md`; command guidance: `RTK.md`.
+
+The presence of `.codex/agents/*.toml` or `.codex/hooks.json` is repo-static
+evidence only. It does not prove native Codex discovery, context/validation wiring
+delivery, or role consumption. `.codex/hooks.json` remains not a
+Claude-style permission gate.
 
 ## Runtime Roster
 

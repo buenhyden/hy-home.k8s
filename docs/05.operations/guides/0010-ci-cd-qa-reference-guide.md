@@ -26,13 +26,13 @@ updated: 2026-07-04
 - AI 에이전트 (문서 및 GitOps 변경 작업 시)
 - 새로운 기여자
 
-## Purpose
+### Purpose
 
 커밋 전 로컬에서 실행 가능한 검증 명령을 정의하고, GitHub Actions에서만 수행되는
 CI 게이트와의 경계를 명확히 한다. 이 가이드를 따르면 PR 제출 전 로컬에서
 CI 실패를 사전에 예방할 수 있다.
 
-## Source Basis
+### Source Basis
 
 - Parent Spec: [Workspace Document Governance Hardening Spec](../../03.specs/013-workspace-document-governance-hardening/spec.md)는 GitHub Actions documentation, supply-chain evidence, CommonMark/YAML formatting, GitOps boundary claims의 official-source basis를 소유한다.
 - Reference: [Spec SDLC CI QA Formatting Research](../../90.references/research/2026-07-04-wer/spec-sdlc-ci-qa-formatting.md)는 GitHub Actions workflow syntax/events, CommonMark, YAML 1.2.2, and pre-commit sources를 dated snapshot으로 유지한다.
@@ -178,7 +178,7 @@ repo-static 및 CI 검증은 live k3d, ArgoCD, Vault, ESO, deployment readiness 
 - **branch-policy 실패**: PR source branch 접두사 오류 → branch를 재생성하거나 GitHub에서 PR base를 확인
 - **validate-policy-gates.sh conftest 미설치**: conftest 바이너리가 없으면 스크립트가 built-in fallback으로 plaintext Secret, `CreateNamespace=true`, AppProject wildcard, `latest` image 정책을 계속 검사한다. Conftest 설치 시 Rego bundle도 함께 검증된다.
 
-## Related Documents
+## Traceability
 
 - **CI 워크플로우**: [`.github/workflows/ci.yml`](../../../.github/workflows/ci.yml)
 - **Parent Spec**: [`../../03.specs/013-workspace-document-governance-hardening/spec.md`](../../03.specs/013-workspace-document-governance-hardening/spec.md)

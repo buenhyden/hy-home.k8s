@@ -17,7 +17,7 @@
 | 실패 상황에서 바로 따라 할 체크리스트가 필요함   | Runbook으로 이동 |
 | 허용/금지/예외 기준을 확인해야 함                | Policy로 이동    |
 
-## Audience
+### Collection Readers
 
 이 README의 주요 독자:
 
@@ -41,7 +41,7 @@
 - 실시간 장애 대응 절차
 - 사후 사고 분석 보고서
 
-## Structure
+## Item Index
 
 ```text
 docs/05.operations/guides/
@@ -56,7 +56,7 @@ docs/05.operations/guides/
 └── README.md                                       # This file
 ```
 
-## How to Work in This Area
+## Add and Find
 
 1. 먼저 관련 Spec/Policy/Runbook을 확인한다. 기본 플랫폼 계약은 [Current Local GitOps Platform Spec](../../03.specs/008-current-local-gitops-platform/spec.md)을 기준으로 삼는다.
 2. 새 가이드 추가/수정 시 [guide.template.md](../../99.templates/templates/sdlc/operations/guide.template.md)를 기반으로 작성한다.
@@ -65,7 +65,7 @@ docs/05.operations/guides/
 5. 명령 순서, 롤백, 복구가 핵심이면 가이드에 복제하지 말고 [runbooks](../runbooks/README.md)에 둔다.
 6. 허용/금지/예외 승인 기준은 가이드가 아니라 [policies](../policies/README.md)에 둔다.
 
-## Documentation Standards
+### Documentation Standards
 
 이 영역의 가이드는 안정 상태의 사용법과 이해를 돕는 문서로 유지한다.
 
@@ -73,7 +73,7 @@ docs/05.operations/guides/
 - 기존 Spec, Policy, Runbook이 소유하는 계약을 중복 정의하지 않고 상대 링크로 연결한다.
 - 실행 예시는 재현 가능한 형태로 작성하되, live cluster mutation이나 secret 값 노출은 승인된 bootstrap/break-glass 문맥으로 제한한다.
 
-## Traceability Rules
+### Traceability Rules
 
 Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 
@@ -81,7 +81,7 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - sibling 운영 문서: 관련 Policy, Runbook, Incident 경로
 - 하위 실행 증적: Task 또는 validation guide
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/05.operations/guides/`다.
 
@@ -102,9 +102,9 @@ Guide 문서는 가능한 경우 다음 문서와 연결되어야 한다.
 - [Plan](../../04.execution/plans/2026-06-02-current-implementation-docs-alignment.md)
 - [Task](../../04.execution/tasks/2026-06-02-current-implementation-docs-alignment.md)
 - [Guide Template](../../99.templates/templates/sdlc/operations/guide.template.md)
-- [README Template](../../99.templates/templates/common/readme.template.md)
+- [Collection Index README Form](../../99.templates/templates/common/readme-collection-index.template.md)
 
-## 문서 인덱스
+### 문서 인덱스
 
 | 문서                                                                                           | 설명                                                                    | 상태   | 최종 수정  |
 | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------ | ---------- |

@@ -70,7 +70,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/session-start.sh",
+            "command": "HY_HOME_K8S_HOOK_PROVIDER=claude bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/session-start.sh",
             "timeout": 20
           }
         ]
@@ -82,7 +82,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/k8s-pre-edit.sh",
+            "command": "HY_HOME_K8S_HOOK_PROVIDER=claude bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/k8s-pre-edit.sh",
             "timeout": 10
           }
         ]
@@ -103,7 +103,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/post-validate.sh",
+            "command": "HY_HOME_K8S_HOOK_PROVIDER=claude bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/post-validate.sh",
             "timeout": 60
           }
         ]
@@ -115,7 +115,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh",
+            "command": "HY_HOME_K8S_HOOK_PROVIDER=claude bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh",
             "timeout": 60
           }
         ]
@@ -127,7 +127,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh",
+            "command": "HY_HOME_K8S_HOOK_PROVIDER=claude bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh",
             "timeout": 60
           }
         ]
@@ -139,7 +139,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh",
+            "command": "HY_HOME_K8S_HOOK_PROVIDER=claude bash $CLAUDE_PROJECT_DIR/docs/00.agent-governance/hooks/lifecycle-guard.sh",
             "timeout": 20
           }
         ]

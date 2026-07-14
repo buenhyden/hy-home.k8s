@@ -16,22 +16,50 @@ if ! python3 -c 'import yaml' >/dev/null 2>&1; then
   exit 1
 fi
 
+if ! python3 -c 'import jsonschema' >/dev/null 2>&1; then
+  echo "ERR python3 jsonschema package is required for repository quality validation" >&2
+  exit 1
+fi
+
+python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-document-contract-registry.py" --root "$ROOT_DIR" --mode strict
+python3 "$ROOT_DIR/scripts/validate-markdown-profiles.py" --root "$ROOT_DIR" --mode strict
+python3 "$ROOT_DIR/scripts/validate-links-and-owners.py" --root "$ROOT_DIR" --self-test
+python3 "$ROOT_DIR/scripts/validate-links-and-owners.py" --root "$ROOT_DIR" --mode strict
+python3 "$ROOT_DIR/scripts/validate-gitops-change-set.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-gitops-change-set.py" --root "$ROOT_DIR" --base-ref HEAD
+python3 "$ROOT_DIR/scripts/validate-vault-eso-contracts.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-vault-eso-contracts.py" --root "$ROOT_DIR"
+python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-affected-surfaces.py" --root "$ROOT_DIR"
+python3 "$ROOT_DIR/scripts/validate-agent-role-semantics.py" --self-test
+python3 "$ROOT_DIR/scripts/validate-agent-role-semantics.py" --root "$ROOT_DIR"
+
 python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" \
   "$ROOT_DIR" --self-test
 python3 "$ROOT_DIR/scripts/validate-agent-roster-currentness.py" "$ROOT_DIR"
 
 python3 - "$ROOT_DIR" <<'PY'
 import collections
-import fnmatch
+import copy
+import hashlib
 import json
 import os
 import pathlib
 import re
 import subprocess
 import sys
-import urllib.parse
+import tempfile
 
 import yaml
+
+sys.path.insert(0, str(pathlib.Path(sys.argv[1]) / "scripts"))
+from document_contracts import (  # noqa: E402 - repository-local contract module
+    DocumentContractError,
+    TARGET_ROOTS,
+    classify_path,
+    load_registry,
+)
 
 try:
     import tomllib
@@ -116,6 +144,60 @@ def load_markdown_frontmatter(path: pathlib.Path) -> dict:
 def has_markdown_frontmatter(path: pathlib.Path, text: str | None = None) -> bool:
     content = read_text(path) if text is None else text
     return bool(re.match(r"^---\n.*?\n---\n", content, re.DOTALL))
+
+
+def strip_multiline_html_comments(line: str, in_comment: bool) -> tuple[str, bool]:
+    """Remove HTML comments while retaining visible text around them."""
+    visible = []
+    cursor = 0
+    while cursor < len(line):
+        if in_comment:
+            end = line.find("-->", cursor)
+            if end < 0:
+                return "".join(visible), True
+            cursor = end + 3
+            in_comment = False
+            continue
+        start = line.find("<!--", cursor)
+        if start < 0:
+            visible.append(line[cursor:])
+            break
+        visible.append(line[cursor:start])
+        cursor = start + 4
+        in_comment = True
+    return "".join(visible), in_comment
+
+
+def visible_markdown_lines(markdown: str) -> list[tuple[int, str]]:
+    """Return visible Markdown lines with their original zero-based offsets."""
+    visible_lines: list[tuple[int, str]] = []
+    fence_character = None
+    fence_length = 0
+    in_comment = False
+    opening_fence = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+
+    for source_offset, raw_line in enumerate(markdown.splitlines()):
+        if fence_character is not None:
+            closing_fence = re.compile(
+                rf"^ {{0,3}}{re.escape(fence_character)}"
+                rf"{{{fence_length},}}[ \t]*$"
+            )
+            if closing_fence.match(raw_line):
+                fence_character = None
+                fence_length = 0
+            continue
+
+        line, in_comment = strip_multiline_html_comments(raw_line, in_comment)
+        fence_match = opening_fence.match(line)
+        if fence_match:
+            marker = fence_match.group(1)
+            fence_character = marker[0]
+            fence_length = len(marker)
+            continue
+
+        visible_lines.append((source_offset, line))
+
+    return visible_lines
 
 
 def normalize_tools(value) -> str:
@@ -215,16 +297,43 @@ def has_cloud_example_snapshot_preservation_prompt(text: str) -> bool:
     return False
 
 
-def markdown_table_after_heading(text: str, heading: str) -> list[list[str]]:
-    lines = text.splitlines()
-    try:
-        start = next(index for index, line in enumerate(lines) if line.strip() == heading)
-    except StopIteration:
-        fail(f"missing markdown heading: {heading}")
+def markdown_table_after_heading(
+    text: str,
+    heading: str | tuple[str, ...],
+) -> list[list[str]]:
+    rows, diagnostic = parse_markdown_table_after_heading(text, heading)
+    if diagnostic:
+        fail(diagnostic)
         return []
+    return rows
+
+
+def parse_markdown_table_after_heading(
+    text: str,
+    heading: str | tuple[str, ...],
+) -> tuple[list[list[str]], str | None]:
+    headings = (heading,) if isinstance(heading, str) else heading
+    visible_lines = visible_markdown_lines(text)
+    matches = [
+        (source_offset, candidate)
+        for source_offset, line in visible_lines
+        for candidate in headings
+        if line.strip() == candidate
+    ]
+    if not matches:
+        return [], f"missing visible markdown heading: one of {headings!r}"
+    if len(matches) != 1:
+        return (
+            [],
+            "ambiguous visible markdown table headings: "
+            f"{[candidate for _, candidate in matches]!r}",
+        )
+    start, _ = matches[0]
 
     table_lines: list[str] = []
-    for line in lines[start + 1 :]:
+    for source_offset, line in visible_lines:
+        if source_offset <= start:
+            continue
         stripped = line.strip()
         if not stripped:
             if table_lines:
@@ -242,7 +351,197 @@ def markdown_table_after_heading(text: str, heading: str) -> list[list[str]]:
         if cells and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells):
             continue
         rows.append(cells)
-    return rows
+    return rows, None
+
+
+def profiled_readme_table_headings(title: str) -> tuple[str, str]:
+    """Accept one visible legacy H2 or canonical implementation-profile H3."""
+    return (f"## {title}", f"### {title}")
+
+
+def assert_profiled_readme_table_heading_probe() -> None:
+    expected = [["Name", "Value"], ["alpha", "one"]]
+    consumer_titles = (
+        "Example Role Matrix",
+        "Script Inventory",
+        "Script Classification Matrix",
+        "Kube-linter Exclusion Matrix",
+        "Service Coverage Matrix",
+        "External Service Contract Matrix",
+        "Secret Management Responsibility Matrix",
+        "Workload Coverage Matrix",
+        "AppProject Allow-list Rationale Matrix",
+        "Workload Image and Kind Policy Matrix",
+        "Namespace Ownership Matrix",
+        "Infrastructure Coverage Matrix",
+        "WSL2 Runtime Prerequisite Matrix",
+        "Bootstrap Boundary Matrix",
+        "Infrastructure Test Inventory",
+        "Traefik Route Inventory",
+    )
+    candidates = profiled_readme_table_headings("Probe Index")
+    documents = {
+        "visible legacy H2": """# Probe
+
+## Probe Index
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+""",
+        "visible canonical H3": """# Probe
+
+### Probe Index
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+""",
+        "visible plus fenced fakes": """# Probe
+
+```markdown
+## Probe Index
+| Name | Value |
+| fake-backtick | ignored |
+```
+
+~~~markdown
+### Probe Index
+| Name | Value |
+| fake-tilde | ignored |
+~~~
+
+### Probe Index
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+""",
+        "visible plus multiline-comment fake": """# Probe
+
+<!--
+## Probe Index
+| Name | Value |
+| fake-comment | ignored |
+-->
+
+### Probe Index
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+""",
+    }
+    for label, document in documents.items():
+        actual, diagnostic = parse_markdown_table_after_heading(
+            document,
+            candidates,
+        )
+        if diagnostic or actual != expected:
+            fail(
+                f"profiled README table heading probe failed for {label}: "
+                f"rows={actual!r} diagnostic={diagnostic!r}"
+            )
+
+    duplicate = """# Probe
+
+## Probe Index
+
+### Probe Index
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+"""
+    duplicate_rows, duplicate_diagnostic = parse_markdown_table_after_heading(
+        duplicate,
+        candidates,
+    )
+    if duplicate_rows or duplicate_diagnostic != (
+        "ambiguous visible markdown table headings: "
+        "['## Probe Index', '### Probe Index']"
+    ):
+        fail(
+            "profiled README table heading duplicate probe failed: "
+            f"rows={duplicate_rows!r} diagnostic={duplicate_diagnostic!r}"
+        )
+
+    for title in consumer_titles:
+        for level in ("##", "###"):
+            document = f"""# Probe
+
+{level} {title}
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+"""
+            actual, diagnostic = parse_markdown_table_after_heading(
+                document,
+                profiled_readme_table_headings(title),
+            )
+            if diagnostic or actual != expected:
+                fail(
+                    f"profiled README consumer probe failed for {level} {title}: "
+                    f"rows={actual!r} diagnostic={diagnostic!r}"
+                )
+
+        hidden = f"""# Probe
+
+```markdown
+## {title}
+| Name | Value |
+| hidden-fence | ignored |
+```
+
+<!--
+### {title}
+| Name | Value |
+| hidden-comment | ignored |
+-->
+
+### {title}
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+"""
+        hidden_rows, hidden_diagnostic = parse_markdown_table_after_heading(
+            hidden,
+            profiled_readme_table_headings(title),
+        )
+        if hidden_diagnostic or hidden_rows != expected:
+            fail(
+                f"profiled README hidden consumer probe failed for {title}: "
+                f"rows={hidden_rows!r} diagnostic={hidden_diagnostic!r}"
+            )
+
+        duplicate = f"""# Probe
+
+## {title}
+
+### {title}
+
+| Name | Value |
+| --- | --- |
+| alpha | one |
+"""
+        duplicate_rows, duplicate_diagnostic = parse_markdown_table_after_heading(
+            duplicate,
+            profiled_readme_table_headings(title),
+        )
+        expected_duplicate = (
+            "ambiguous visible markdown table headings: "
+            f"['## {title}', '### {title}']"
+        )
+        if duplicate_rows or duplicate_diagnostic != expected_duplicate:
+            fail(
+                f"profiled README duplicate consumer probe failed for {title}: "
+                f"rows={duplicate_rows!r} diagnostic={duplicate_diagnostic!r}"
+            )
+
+
+assert_profiled_readme_table_heading_probe()
 
 
 def validate_component_matrix(text: str, heading: str) -> None:
@@ -523,23 +822,29 @@ example_docs_allowed_top_level = {
     "04.execution",
     "05.operations",
 }
+expected_provider_asset_counts = {"aws": 8, "azure": 14}
 for provider in ["aws", "azure"]:
     example_docs = root / "examples" / provider / "docs"
-    if not example_docs.exists():
-        fail(f"example docs root is missing: {rel(example_docs)}")
-        continue
-    actual_example_top_level = {path.name for path in example_docs.iterdir() if path.is_dir()}
-    for name in sorted(actual_example_top_level & old_top_level_docs):
-        fail(f"old example docs stage folder must not exist after hard migration: {rel(example_docs / name)}")
-    for name in sorted(actual_example_top_level - example_docs_allowed_top_level):
-        fail(f"example docs top-level folder is not allowed: {rel(example_docs / name)}")
-    for name in sorted(example_docs_required):
-        if not (example_docs / name).is_dir():
-            fail(f"required example docs taxonomy folder is missing: {rel(example_docs / name)}")
+    if example_docs.exists():
+        fail(f"retired example docs root must be absent after ADM-006: {rel(example_docs)}")
+    provider_root = root / "examples" / provider
+    executable_assets = [
+        path
+        for path in provider_root.rglob("*")
+        if path.is_file() and path.suffix.lower() != ".md"
+    ]
+    if len(executable_assets) != expected_provider_asset_counts[provider]:
+        fail(
+            f"{rel(provider_root)} executable asset count changed: "
+            f"{len(executable_assets)} != {expected_provider_asset_counts[provider]}"
+        )
 
 examples_readme_path = root / "examples/README.md"
 examples_readme_text = read_text(examples_readme_path)
-example_role_rows = markdown_table_after_heading(examples_readme_text, "## Example Role Matrix")
+example_role_rows = markdown_table_after_heading(
+    examples_readme_text,
+    profiled_readme_table_headings("Example Role Matrix"),
+)
 expected_example_role_header = [
     "Example path",
     "Role",
@@ -712,44 +1017,6 @@ for contract_path, phrases in active_app_secret_contracts:
         if phrase not in contract_text:
             fail(f"{rel(contract_path)} missing app onboarding secret path contract phrase: {phrase}")
 
-readme_base_sections = {
-    "Overview": re.compile(r"^##\s+Overview\b", re.MULTILINE),
-    "Audience": re.compile(r"^##\s+Audience\b", re.MULTILINE),
-    "Scope": re.compile(r"^##\s+Scope\b", re.MULTILINE),
-    "Structure": re.compile(r"^##\s+Structure\b", re.MULTILINE),
-    "How to Work in This Area": re.compile(r"^##\s+How to Work in This Area\b", re.MULTILINE),
-    "Link Basis": re.compile(r"^##\s+Link Basis\b", re.MULTILINE),
-    "Related Documents": re.compile(r"^##\s+Related Documents\b", re.MULTILINE),
-}
-deprecated_readme_headings = [
-    "Related " + "References",
-    "Related " + "Folders",
-    "Related " + "Files",
-    "References",
-    "See " + "Also",
-    "Links",
-    "Deprecated",
-    "Legacy",
-]
-for name in sorted(required_doc_dirs):
-    readme = docs_dir / name / "README.md"
-    if not readme.exists():
-        fail(f"required README.md is missing: {rel(readme)}")
-for readme in sorted(root.rglob("README.md")):
-    if ".git" in readme.parts or ".agents" in readme.parts or ".agent-work" in readme.parts:
-        continue
-    text = read_text(readme)
-    if has_markdown_frontmatter(readme, text):
-        fail(f"{rel(readme)} must not use YAML frontmatter")
-    for section, pattern in readme_base_sections.items():
-        if not pattern.search(text):
-            fail(f"{rel(readme)} missing README base section: {section}")
-    if not re.search(r"^##\s+Related Documents\b", text, re.MULTILINE):
-        fail(f"{rel(readme)} missing canonical README section: Related Documents")
-    for deprecated_heading in deprecated_readme_headings:
-        if re.search(rf"^##\s+{re.escape(deprecated_heading)}\b", text, re.MULTILINE):
-            fail(f"{rel(readme)} still uses deprecated README section: {deprecated_heading}")
-
 github_native_markdown = [
     root / ".github/ABOUT.md",
     root / ".github/PULL_REQUEST_TEMPLATE.md",
@@ -758,22 +1025,6 @@ github_native_markdown = [
 for github_doc in github_native_markdown:
     if github_doc.exists() and has_markdown_frontmatter(github_doc):
         fail(f"{rel(github_doc)} must remain frontmatter-free GitHub-native Markdown")
-
-reference_readme_path = root / "docs/90.references/README.md"
-reference_readme_text = read_text(reference_readme_path)
-for obsolete_heading in [
-    "## 목적",
-    "## 포함할 내용",
-    "## 포함하지 말아야 할 내용",
-    "## 관련 폴더",
-    "## 예시",
-    "## Agent 참고 문서 배치 규칙",
-    "## 문서 인덱스",
-    "## Templates",
-]:
-    if re.search(rf"^{re.escape(obsolete_heading)}\s*$", reference_readme_text, re.MULTILINE):
-        fail(f"{rel(reference_readme_path)} contains obsolete duplicate README heading: {obsolete_heading}")
-
 
 def iter_markdown_link_targets(text: str):
     in_fence = False
@@ -801,76 +1052,28 @@ def normalize_markdown_target(raw_target: str) -> str:
     return target.strip()
 
 
-markdown_link_roots = [
-    root / "README.md",
-    root / "docs",
-    root / ".claude",
-    root / ".codex",
-    root / ".github",
-    root / "scripts",
-    root / "infrastructure",
-    root / "gitops",
-    root / "traefik",
-    root / "tests",
-    root / "examples",
-]
-seen_markdown_link_paths: set[pathlib.Path] = set()
-for scan_root in markdown_link_roots:
-    candidates = [scan_root] if scan_root.is_file() else scan_root.rglob("*.md")
-    for markdown in sorted(candidates):
-        if not markdown.is_file() or markdown in seen_markdown_link_paths:
-            continue
-        if ".git" in markdown.parts or ".agents" in markdown.parts:
-            continue
-        seen_markdown_link_paths.add(markdown)
-        for raw_target in iter_markdown_link_targets(read_text(markdown)):
-            target = normalize_markdown_target(raw_target)
-            if not target or target.startswith("#"):
-                continue
-            if target.startswith("file://"):
-                fail(f"{rel(markdown)} uses file:// Markdown link target: {target}")
-                continue
-            if re.match(r"^[A-Za-z][A-Za-z0-9+.-]*:", target):
-                continue
-            target_without_fragment = target.split("#", 1)[0]
-            if not target_without_fragment:
-                continue
-            target_path = pathlib.Path(urllib.parse.unquote(target_without_fragment))
-            if target_path.is_absolute():
-                fail(f"{rel(markdown)} uses absolute Markdown link target: {target}")
-                continue
-            if not (markdown.parent / target_path).exists():
-                fail(f"{rel(markdown)} has broken Markdown link target: {target}")
-                continue
-            resolved_target = (markdown.parent / target_path).resolve()
-            archive_root = root / "docs/98.archive"
-            archive_index = archive_root / "README.md"
-            if (
-                resolved_target.is_relative_to(archive_root)
-                and resolved_target != archive_index.resolve()
-                and not markdown.is_relative_to(archive_root)
-            ):
-                fail(
-                    f"{rel(markdown)} must link archive content through "
-                    f"docs/98.archive/README.md, not directly to {target}"
-                )
-
 template_readme = read_text(root / "docs/99.templates/README.md")
 template_locations = {
-    "readme.template.md": "templates/common/readme.template.md",
+    "readme-collection-index.template.md": "templates/common/readme-collection-index.template.md",
+    "readme-implementation.template.md": "templates/common/readme-implementation.template.md",
+    "readme-repository.template.md": "templates/common/readme-repository.template.md",
+    "readme-snapshot-pack.template.md": "templates/common/readme-snapshot-pack.template.md",
+    "readme-stage-index.template.md": "templates/common/readme-stage-index.template.md",
+    "readme-workspace-staging.template.md": "templates/common/readme-workspace-staging.template.md",
     "reference.template.md": "templates/common/reference.template.md",
     "archive-tombstone.template.md": "templates/common/archive-tombstone.template.md",
+    "governance-reference.template.md": "templates/common/governance-reference.template.md",
     "memory.template.md": "templates/common/memory.template.md",
     "progress.template.md": "templates/common/progress.template.md",
     "prd.template.md": "templates/sdlc/requirements/prd.template.md",
     "ard.template.md": "templates/sdlc/architecture/ard.template.md",
+    "template-support.template.md": "templates/common/template-support.template.md",
     "adr.template.md": "templates/sdlc/architecture/adr.template.md",
     "spec.template.md": "templates/sdlc/specs/spec.template.md",
     "api-spec.template.md": "templates/sdlc/specs/api-spec.template.md",
     "agent-design.template.md": "templates/sdlc/specs/agent-design.template.md",
     "data-model.template.md": "templates/sdlc/specs/data-model.template.md",
     "tests.template.md": "templates/sdlc/specs/tests.template.md",
-    "harness-task-contract.template.md": "templates/sdlc/specs/harness-task-contract.template.md",
     "openapi.template.yaml": "templates/sdlc/specs/openapi.template.yaml",
     "schema.template.graphql": "templates/sdlc/specs/schema.template.graphql",
     "service.template.proto": "templates/sdlc/specs/service.template.proto",
@@ -883,36 +1086,6 @@ template_locations = {
     "postmortem.template.md": "templates/sdlc/operations/postmortem.template.md",
 }
 
-template_expected_types = {
-    "reference.template.md": "content/reference",
-    "archive-tombstone.template.md": "content/archive-tombstone",
-    "memory.template.md": "governance/memory",
-    "prd.template.md": "sdlc/prd",
-    "ard.template.md": "sdlc/ard",
-    "adr.template.md": "sdlc/adr",
-    "spec.template.md": "sdlc/spec",
-    "api-spec.template.md": "sdlc/api-spec",
-    "agent-design.template.md": "sdlc/agent-design",
-    "data-model.template.md": "sdlc/data-model",
-    "tests.template.md": "sdlc/tests",
-    "harness-task-contract.template.md": "sdlc/task",
-    "plan.template.md": "sdlc/plan",
-    "task.template.md": "sdlc/task",
-    "guide.template.md": "sdlc/guide",
-    "policy.template.md": "sdlc/policy",
-    "runbook.template.md": "sdlc/runbook",
-    "incident.template.md": "sdlc/incident",
-    "postmortem.template.md": "sdlc/postmortem",
-}
-
-frontmatter_required_keys = {"title", "type", "status", "owner", "updated"}
-archive_frontmatter_required_keys = frontmatter_required_keys | {
-    "original_path",
-    "archived_on",
-    "archive_reason",
-    "replacement",
-}
-frontmatter_allowed_statuses = {"draft", "active", "accepted", "done", "archived"}
 archive_reason_allowed_values = {
     "superseded",
     "duplicate",
@@ -920,59 +1093,6 @@ archive_reason_allowed_values = {
     "migrated",
     "historical-baseline",
 }
-
-
-def validate_markdown_frontmatter_profile(
-    path: pathlib.Path,
-    expected_type: str,
-    *,
-    expected_status: str | None = None,
-) -> None:
-    metadata = load_markdown_frontmatter(path)
-    if not metadata:
-        return
-    keys = set(metadata)
-    required_keys = (
-        archive_frontmatter_required_keys
-        if expected_type == "content/archive-tombstone"
-        else frontmatter_required_keys
-    )
-    missing_keys = required_keys - keys
-    extra_keys = keys - required_keys
-    if missing_keys:
-        fail(f"{rel(path)} missing frontmatter keys: {', '.join(sorted(missing_keys))}")
-    if extra_keys:
-        fail(f"{rel(path)} has unsupported frontmatter keys: {', '.join(sorted(extra_keys))}")
-    actual_type = str(metadata.get("type", "")).strip()
-    if actual_type != expected_type:
-        fail(f"{rel(path)} frontmatter type must be {expected_type}, found {actual_type or '<empty>'}")
-    owner = str(metadata.get("owner", "")).strip()
-    if owner != "platform":
-        fail(f"{rel(path)} frontmatter owner must be platform, found {owner or '<empty>'}")
-    status = str(metadata.get("status", "")).strip()
-    if status not in frontmatter_allowed_statuses:
-        fail(f"{rel(path)} frontmatter status is unsupported: {status or '<empty>'}")
-    if expected_status and status != expected_status:
-        fail(f"{rel(path)} frontmatter status must be {expected_status}, found {status or '<empty>'}")
-    if expected_type == "content/archive-tombstone" and status != "archived":
-        fail(f"{rel(path)} archive Tombstone must use status: archived")
-    if expected_type == "content/archive-tombstone":
-        archive_reason = str(metadata.get("archive_reason", "")).strip()
-        archived_on = str(metadata.get("archived_on", "")).strip()
-        if archive_reason not in archive_reason_allowed_values:
-            fail(
-                f"{rel(path)} archive_reason is unsupported: "
-                f"{archive_reason or '<empty>'}"
-            )
-        if not re.match(r"^\d{4}-\d{2}-\d{2}$|^YYYY-MM-DD$", archived_on):
-            fail(f"{rel(path)} archived_on must be an ISO date or template placeholder")
-        for archive_key in ["original_path", "replacement"]:
-            value = str(metadata.get(archive_key, "")).strip()
-            if not value:
-                fail(f"{rel(path)} {archive_key} must be a non-empty string")
-    updated = str(metadata.get("updated", "")).strip()
-    if not re.match(r"^\d{4}-\d{2}-\d{2}$|^YYYY-MM-DD$", updated):
-        fail(f"{rel(path)} frontmatter updated must be an ISO date or template placeholder")
 
 
 def template_path(template_name: str) -> pathlib.Path:
@@ -986,20 +1106,118 @@ template_root = root / "docs/99.templates/templates"
 for template in sorted(template_root.rglob("*")):
     if template.is_file() and template.name not in template_readme:
         fail(f"template is not listed in docs/99.templates/README.md: {rel(template)}")
-for template_name, expected_type in sorted(template_expected_types.items()):
-    expected_template_path = template_path(template_name)
-    if expected_template_path.suffix == ".md":
-        expected_status = "archived" if expected_type == "content/archive-tombstone" else "draft"
-        validate_markdown_frontmatter_profile(
-            expected_template_path,
-            expected_type,
-            expected_status=expected_status,
-        )
-for frontmatter_free_template_name in ["readme.template.md", "progress.template.md"]:
-    frontmatter_free_path = template_path(frontmatter_free_template_name)
-    if has_markdown_frontmatter(frontmatter_free_path):
-        fail(f"{rel(frontmatter_free_path)} must remain frontmatter-free")
+template_compatibility_path = (
+    root / "tests/fixtures/document-contracts/template-compatibility.json"
+)
+template_compatibility = load_json(template_compatibility_path)
 
+TEMPLATE_COMPATIBILITY_CONTRACT_V1 = {
+    "name": "TemplateCompatibilityContract.v1",
+    "semantic_sha256": (
+        "e2a7b02ed9cf31b97480a9de31128d5d1486acf01c8e556d040f4071a6083cf6"  # pragma: allowlist secret
+    ),
+}
+EXPECTED_TEMPLATE_COMPATIBILITY_KEYS = (
+    "schemaVersion",
+    "owner",
+    "growthAllowed",
+    "baselineDebtCounts",
+    "canonicalFormCoverage",
+    "templateModeCoverage",
+)
+RETIRED_TEMPLATE_DEBT_FIELDS = {"compatibilityDebt", "semanticDebtCaps"}
+
+
+def template_compatibility_semantic_sha256(contract: dict) -> str:
+    """Hash the complete semantic fixture projection with stable JSON encoding."""
+    payload = json.dumps(
+        contract,
+        ensure_ascii=True,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def template_compatibility_contract_matches(contract: dict) -> bool:
+    return (
+        template_compatibility_semantic_sha256(contract)
+        == TEMPLATE_COMPATIBILITY_CONTRACT_V1["semantic_sha256"]
+    )
+
+
+def assert_template_compatibility_mutation_proof(contract: dict) -> None:
+    """Prove retained coverage and retired debt fields remain fail-closed."""
+
+    def mutate_owner(candidate: dict) -> None:
+        candidate["owner"] = "Spec 999"
+
+    def mutate_growth_policy(candidate: dict) -> None:
+        candidate["growthAllowed"] = True
+
+    def mutate_baseline(candidate: dict) -> None:
+        candidate["baselineDebtCounts"]["profileRows"] += 1
+
+    def mutate_canonical_form(candidate: dict) -> None:
+        candidate["canonicalFormCoverage"][0]["requiredHeadings"].append(
+            "Synthetic Drift"
+        )
+
+    def mutate_template_mode(candidate: dict) -> None:
+        candidate["templateModeCoverage"][0]["placeholderPolicy"] = "drift"
+
+    def restore_compatibility_debt(candidate: dict) -> None:
+        candidate["compatibilityDebt"] = []
+
+    def restore_semantic_caps(candidate: dict) -> None:
+        candidate["semanticDebtCaps"] = {}
+
+    def restore_both_debt_fields(candidate: dict) -> None:
+        restore_compatibility_debt(candidate)
+        restore_semantic_caps(candidate)
+
+    mutations = {
+        "owner": mutate_owner,
+        "growth policy": mutate_growth_policy,
+        "baseline coverage": mutate_baseline,
+        "canonical form coverage": mutate_canonical_form,
+        "template mode coverage": mutate_template_mode,
+        "compatibilityDebt reintroduction": restore_compatibility_debt,
+        "semanticDebtCaps reintroduction": restore_semantic_caps,
+        "both retired debt fields": restore_both_debt_fields,
+    }
+    for label, mutate in mutations.items():
+        candidate = copy.deepcopy(contract)
+        mutate(candidate)
+        if template_compatibility_contract_matches(candidate):
+            fail(
+                f"{TEMPLATE_COMPATIBILITY_CONTRACT_V1['name']} mutation proof "
+                f"accepted changed {label}"
+            )
+
+
+if tuple(template_compatibility) != EXPECTED_TEMPLATE_COMPATIBILITY_KEYS:
+    fail(
+        f"{rel(template_compatibility_path)} top-level fields differ from the "
+        "retired debt-free contract"
+    )
+restored_debt_fields = RETIRED_TEMPLATE_DEBT_FIELDS & set(template_compatibility)
+if restored_debt_fields:
+    fail(
+        f"{rel(template_compatibility_path)} restored retired fields: "
+        f"{sorted(restored_debt_fields)}"
+    )
+if not template_compatibility_contract_matches(template_compatibility):
+    fail(
+        f"{rel(template_compatibility_path)} does not match "
+        f"{TEMPLATE_COMPATIBILITY_CONTRACT_V1['name']} semantic SHA-256"
+    )
+assert_template_compatibility_mutation_proof(template_compatibility)
+
+if template_compatibility.get("owner") != "Spec 030":
+    fail(f"{rel(template_compatibility_path)} owner must be Spec 030")
+if template_compatibility.get("growthAllowed") is not False:
+    fail(f"{rel(template_compatibility_path)} must set growthAllowed=false")
 template_support_root = root / "docs/99.templates/support"
 support_stale_patterns = [
     (re.compile(r"Phase [1-4]"), "migration phase wording"),
@@ -1014,132 +1232,6 @@ for support_doc in sorted(template_support_root.glob("*.md")):
             fail(f"{rel(support_doc)} contains stale {label}")
     if support_doc.name == "README.md":
         continue
-    validate_markdown_frontmatter_profile(
-        support_doc,
-        "governance/template-support",
-        expected_status="draft",
-    )
-
-example_local_sdlc_routes = [
-    ("01.requirements/*.md", "sdlc/prd"),
-    ("02.architecture/requirements/*.md", "sdlc/ard"),
-    ("02.architecture/decisions/*.md", "sdlc/adr"),
-    ("03.specs/*.md", "sdlc/spec"),
-    ("03.specs/**/*.md", "sdlc/spec"),
-    ("04.execution/plans/*.md", "sdlc/plan"),
-    ("04.execution/tasks/*.md", "sdlc/task"),
-    ("05.operations/guides/*.md", "sdlc/guide"),
-    ("05.operations/policies/*.md", "sdlc/policy"),
-    ("05.operations/runbooks/*.md", "sdlc/runbook"),
-]
-
-example_local_required_headings = {
-    "sdlc/prd": [
-        "## Overview",
-        "## Vision",
-        "## Problem Statement",
-        "## Personas",
-        "## Key Use Cases",
-        "## Functional Requirements",
-        "## Success / Acceptance Criteria",
-        "## Scope and Non-goals",
-        "## Risks, Dependencies, and Assumptions",
-        "## Related Documents",
-    ],
-    "sdlc/ard": [
-        "## Overview",
-        "## Summary",
-        "## Boundaries & Non-goals",
-        "## Quality Attributes",
-        "## System Overview & Context",
-        "## Data Architecture",
-        "## Infrastructure & Deployment",
-        "## Related Documents",
-    ],
-    "sdlc/adr": [
-        "## Overview",
-        "## Context",
-        "## Decision",
-        "## Explicit Non-goals",
-        "## Consequences",
-        "## Alternatives",
-        "## Related Documents",
-    ],
-    "sdlc/spec": [
-        "## Overview",
-        "## Strategic Boundaries & Non-goals",
-        "## Related Inputs",
-        "## Contracts",
-        "## Core Design",
-        "## Data Modeling & Storage Strategy",
-        "## Interfaces & Data Structures",
-        "## Edge Cases & Error Handling",
-        "## Failure Modes & Fallback / Human Escalation",
-        "## Verification Commands",
-        "## Success Criteria & Verification Plan",
-        "## Related Documents",
-    ],
-    "sdlc/plan": [
-        "## Overview",
-        "## Context",
-        "## Goals & In-Scope",
-        "## Non-Goals & Out-of-Scope",
-        "## Work Breakdown",
-        "## Verification Plan",
-        "## Risks & Mitigations",
-        "## Completion Criteria",
-        "## Related Documents",
-    ],
-    "sdlc/task": [
-        "## Overview",
-        "## Inputs",
-        "## Working Rules",
-        "## Task Table",
-        "## Suggested Types",
-        "## Verification Summary",
-        "## Related Documents",
-    ],
-    "sdlc/guide": [
-        "## Overview",
-        "## Guide Type",
-        "## Target Audience",
-        "## Purpose",
-        "## Prerequisites",
-        "## Step-by-step Instructions",
-        "## Common Pitfalls",
-        "## Related Documents",
-    ],
-    "sdlc/policy": [
-        "## Overview",
-        "## Policy Scope",
-        "## Applies To",
-        "## Controls",
-        "## Exceptions",
-        "## Verification",
-        "## Review Cadence",
-        "## Related Documents",
-    ],
-    "sdlc/runbook": [
-        "## Runbook Type",
-        "## Overview",
-        "## Purpose",
-        "## Canonical References",
-        "## When to Use",
-        "## Procedure or Checklist",
-        "## Verification Steps",
-        "## Observability and Evidence Sources",
-        "## Safe Rollback or Recovery Procedure",
-        "## Related Documents",
-    ],
-}
-
-
-def example_local_sdlc_type(path: pathlib.Path, docs_root: pathlib.Path) -> str | None:
-    relative_path = path.relative_to(docs_root).as_posix()
-    for glob_pattern, expected_type in example_local_sdlc_routes:
-        if fnmatch.fnmatchcase(relative_path, glob_pattern):
-            return expected_type
-    return None
 
 
 for provider in ["aws", "azure"]:
@@ -1149,17 +1241,7 @@ for provider in ["aws", "azure"]:
     for example_doc in sorted(docs_root.rglob("*.md")):
         text = read_text(example_doc)
         if example_doc.name == "README.md":
-            if has_markdown_frontmatter(example_doc, text):
-                fail(f"{rel(example_doc)} must remain frontmatter-free README")
             continue
-        expected_type = example_local_sdlc_type(example_doc, docs_root)
-        if not expected_type:
-            fail(f"{rel(example_doc)} is not covered by an example-local SDLC snapshot route")
-            continue
-        validate_markdown_frontmatter_profile(example_doc, expected_type)
-        for required_heading in example_local_required_headings[expected_type]:
-            if required_heading not in text:
-                fail(f"{rel(example_doc)} missing example-local {expected_type} heading: {required_heading}")
         if "## Snapshot Boundary" not in text:
             fail(f"{rel(example_doc)} missing example-local snapshot heading: ## Snapshot Boundary")
         for required_phrase in [
@@ -1179,9 +1261,16 @@ for provider in ["aws", "azure"]:
             fail(f"{rel(example_doc)} must use canonical ## Related Documents heading")
 
 template_routing_path = template_support_root / "template-routing.md"
+document_registry = load_registry(root)
+registry_profiles_by_id = {
+    profile.profile_id: profile for profile in document_registry.profiles
+}
 
 
-def template_route_pairs(path: pathlib.Path, heading: str) -> list[tuple[str, str]]:
+def template_route_pairs(
+    path: pathlib.Path,
+    heading: str | tuple[str, ...],
+) -> list[tuple[str, str]]:
     rows = markdown_table_after_heading(read_text(path), heading)
     if len(rows) < 2:
         fail(f"{rel(path)} {heading} must contain a header and route rows")
@@ -1197,30 +1286,189 @@ def template_route_pairs(path: pathlib.Path, heading: str) -> list[tuple[str, st
 
 template_readme_route_pairs = template_route_pairs(
     root / "docs/99.templates/README.md",
-    "## Template-Folder Mapping",
+    ("## Template-Folder Mapping", "### Template-Folder Mapping"),
 )
 template_routing_route_pairs = template_route_pairs(
     template_routing_path,
-    "## Current Route Map",
+    "### Current Route Map",
 )
-if template_readme_route_pairs != template_routing_route_pairs:
-    fail(
-        "docs/99.templates/README.md Template-Folder Mapping must match "
-        "docs/99.templates/support/template-routing.md Current Route Map"
-    )
-for route_row in template_routing_route_pairs:
-    route_text = " | ".join(route_row)
-    if "harness-task-contract.template.md" in route_text:
-        fail(
-            "docs/99.templates/support/template-routing.md Current Route Map "
-            "must not list harness-task-contract.template.md as a structural route"
-        )
 
-for governance_reference in [
-    root / "docs/00.agent-governance/harness-catalog.md",
-    root / "docs/00.agent-governance/subagent-protocol.md",
-]:
-    validate_markdown_frontmatter_profile(governance_reference, "governance/reference")
+
+def registry_profile(profile_id: str):
+    profile = registry_profiles_by_id.get(profile_id)
+    if profile is None:
+        fail(f"public template route references missing registry profile: {profile_id}")
+    return profile
+
+
+def public_template_cell(template_path: pathlib.PurePosixPath) -> str:
+    prefix = "docs/99.templates/"
+    value = template_path.as_posix()
+    if not value.startswith(prefix):
+        fail(f"public template route escapes canonical template root: {value}")
+        return f"`{value}`"
+    path = root / value
+    if not path.is_file():
+        fail(f"public template route points to missing canonical template: {value}")
+    return f"`{value.removeprefix(prefix)}`"
+
+
+def registry_backed_public_route(
+    target_pattern: str,
+    profile_id: str,
+    witness_path: str,
+) -> tuple[str, str]:
+    profile = registry_profile(profile_id)
+    if profile is None or profile.template is None:
+        fail(f"public template route profile has no canonical template: {profile_id}")
+        return f"`{target_pattern}`", "`<missing>`"
+    try:
+        selected = classify_path(document_registry, pathlib.PurePosixPath(witness_path))
+    except DocumentContractError as exc:
+        fail(f"public template route witness is unclassified: {witness_path}: {exc}")
+    else:
+        if selected.profile_id != profile_id:
+            fail(
+                "public template route witness selects the wrong registry profile: "
+                f"{witness_path}: expected {profile_id}, actual {selected.profile_id}"
+            )
+    return f"`{target_pattern}`", public_template_cell(profile.template)
+
+
+expected_readme_profile_ids = (
+    "readme/repository",
+    "readme/stage-index",
+    "readme/collection-index",
+    "readme/implementation",
+    "readme/snapshot-pack",
+    "readme/workspace-staging",
+)
+actual_readme_profile_ids = tuple(
+    profile.profile_id
+    for profile in document_registry.profiles
+    if (
+        profile.profile_class == "readme"
+        and profile.profile_id.startswith("readme/")
+        and profile.template is not None
+    )
+)
+if actual_readme_profile_ids != expected_readme_profile_ids:
+    fail(
+        "public README route projection must track the canonical registry order: "
+        f"expected {expected_readme_profile_ids}, actual {actual_readme_profile_ids}"
+    )
+expected_public_route_pairs = [
+    (
+        f"Registry `{profile_id}` routes",
+        public_template_cell(registry_profile(profile_id).template),
+    )
+    for profile_id in actual_readme_profile_ids
+    if registry_profile(profile_id) is not None
+    and registry_profile(profile_id).template is not None
+]
+
+public_structural_route_bridge = (
+    ("docs/01.requirements/<###-Numbering>-<feature-or-system>.md", "sdlc/prd", "docs/01.requirements/999-projection.md"),
+    ("docs/02.architecture/requirements/####-<system-or-domain>.md", "sdlc/ard", "docs/02.architecture/requirements/9999-projection.md"),
+    ("docs/02.architecture/decisions/####-<short-title>.md", "sdlc/adr", "docs/02.architecture/decisions/9999-projection.md"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/spec.md", "sdlc/spec", "docs/03.specs/999-projection/spec.md"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md", "sdlc/api-spec", "docs/03.specs/999-projection/api-spec.md"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md", "sdlc/agent-design", "docs/03.specs/999-projection/agent-design.md"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/data-model.md", "sdlc/data-model", "docs/03.specs/999-projection/data-model.md"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/tests.md", "sdlc/tests", "docs/03.specs/999-projection/tests.md"),
+)
+expected_public_route_pairs.extend(
+    registry_backed_public_route(*route) for route in public_structural_route_bridge
+)
+
+native_contract_profile = registry_profile("exception/native-contract")
+native_contract_route_bridge = (
+    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/openapi.yaml", "docs/03.specs/999-projection/contracts/openapi.yaml", "docs/99.templates/templates/sdlc/specs/openapi.template.yaml"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/schema.graphql", "docs/03.specs/999-projection/contracts/schema.graphql", "docs/99.templates/templates/sdlc/specs/schema.template.graphql"),
+    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/service.proto", "docs/03.specs/999-projection/contracts/service.proto", "docs/99.templates/templates/sdlc/specs/service.template.proto"),
+)
+for target_pattern, witness_path, template_path_text in native_contract_route_bridge:
+    try:
+        selected = classify_path(document_registry, pathlib.PurePosixPath(witness_path))
+    except DocumentContractError as exc:
+        fail(f"native public route witness is unclassified: {witness_path}: {exc}")
+    else:
+        if native_contract_profile is None or selected.profile_id != native_contract_profile.profile_id:
+            fail(
+                "native public route witness must select exception/native-contract: "
+                f"{witness_path}: actual {selected.profile_id}"
+            )
+    expected_public_route_pairs.append(
+        (
+            f"`{target_pattern}`",
+            public_template_cell(pathlib.PurePosixPath(template_path_text)),
+        )
+    )
+
+public_structural_route_bridge_tail = (
+    ("docs/04.execution/plans/YYYY-MM-DD-<feature>.md", "sdlc/plan", "docs/04.execution/plans/2099-01-01-projection.md"),
+    ("docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md", "sdlc/task", "docs/04.execution/tasks/2099-01-01-projection.md"),
+    ("docs/05.operations/guides/####-<topic>.md", "sdlc/guide", "docs/05.operations/guides/9999-projection.md"),
+    ("docs/05.operations/policies/####-<policy-or-standard>.md", "sdlc/policy", "docs/05.operations/policies/9999-projection.md"),
+    ("docs/05.operations/runbooks/####-<topic>.md", "sdlc/runbook", "docs/05.operations/runbooks/9999-projection.md"),
+    ("docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md", "sdlc/incident", "docs/05.operations/incidents/2099/INC-999-projection/INC-999-projection.md"),
+    ("docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md", "sdlc/postmortem", "docs/05.operations/incidents/2099/INC-999-projection/postmortem.md"),
+    ("docs/90.references/<category>/<topic>.md", "content/reference", "docs/90.references/research/projection.md"),
+    ("docs/98.archive/**/*.md", "content/archive-tombstone", "docs/98.archive/projection.md"),
+    ("docs/00.agent-governance/memory/<topic>.md", "governance/memory", "docs/00.agent-governance/memory/projection.md"),
+)
+expected_public_route_pairs.extend(
+    registry_backed_public_route(*route) for route in public_structural_route_bridge_tail
+)
+
+progress_entry_profile = registry_profile("governance/progress-entry")
+progress_ledger_profile = registry_profile("governance/progress-ledger")
+if (
+    progress_entry_profile is None
+    or progress_ledger_profile is None
+    or progress_entry_profile.source_profile_ids != ("governance/progress-ledger",)
+    or progress_entry_profile.template is None
+):
+    fail("public progress route must link the canonical progress-entry and progress-ledger profiles")
+else:
+    selected_progress_profile = classify_path(
+        document_registry,
+        pathlib.PurePosixPath("docs/00.agent-governance/memory/progress.md"),
+    )
+    if selected_progress_profile.profile_id != progress_ledger_profile.profile_id:
+        fail("canonical progress path must select governance/progress-ledger")
+    expected_public_route_pairs.append(
+        (
+            "`docs/00.agent-governance/memory/progress.md`",
+            public_template_cell(progress_entry_profile.template),
+        )
+    )
+
+
+def assert_public_route_projection(
+    route_pairs: list[tuple[str, str]],
+    source_label: str,
+) -> None:
+    if not public_route_projection_matches(route_pairs):
+        fail(f"{source_label} must equal the canonical registry-backed public route projection")
+
+
+def public_route_projection_matches(route_pairs: list[tuple[str, str]]) -> bool:
+    return route_pairs == expected_public_route_pairs
+
+
+assert_public_route_projection(
+    template_readme_route_pairs,
+    "docs/99.templates/README.md Template-Folder Mapping",
+)
+assert_public_route_projection(
+    template_routing_route_pairs,
+    "docs/99.templates/support/template-routing.md Current Route Map",
+)
+public_route_mutation = list(expected_public_route_pairs)
+public_route_mutation[0] = (public_route_mutation[0][0], "`templates/common/drift.template.md`")
+if public_route_projection_matches(public_route_mutation):
+    fail("public route projection mutation proof failed to reject same-table canonical drift")
 for phrase in [
     "## Structural Template Coverage",
     "structural template mapping",
@@ -1229,28 +1477,95 @@ for phrase in [
     if phrase not in template_readme:
         fail(f"{rel(root / 'docs/99.templates/README.md')} missing structural template coverage phrase: {phrase}")
 
+
+def canonical_markdown_owns_generic_residue(path: pathlib.Path) -> bool:
+    try:
+        profile = classify_path(
+            document_registry,
+            pathlib.PurePosixPath(rel(path)),
+        )
+    except DocumentContractError:
+        return False
+    if profile.placeholder_policy != "forbidden" or profile.append_contract is not None:
+        return False
+    if (
+        profile.frontmatter.mode == "not-applicable"
+        and not profile.headings.required
+        and not profile.headings.allowed
+    ):
+        return False
+    return bool(profile.headings.required or profile.headings.allowed)
+
+
+authored_template_residue = ("Target: " + "docs/", "Use this " + "template")
+
+
+def generic_template_residue_lines(text: str) -> list[int]:
+    return [
+        line_number
+        for line_number, line in enumerate(text.splitlines(), start=1)
+        if any(marker in line for marker in authored_template_residue)
+    ]
+
+
+def assert_generic_residue_delegation_probe() -> None:
+    if generic_template_residue_lines("route: Use this " + "template") != [1]:
+        fail("generic residue mutation probe failed for active non-Markdown config")
+    if generic_template_residue_lines("Target: " + "docs/example.md") != [1]:
+        fail("generic residue mutation probe failed for non-structural Markdown")
+    structural = root / "docs/01.requirements/999-projection.md"
+    if not canonical_markdown_owns_generic_residue(structural):
+        fail("generic residue delegation probe must delegate authored structural Markdown")
+    provider_shim = root / "AGENTS.md"
+    if canonical_markdown_owns_generic_residue(provider_shim):
+        fail("generic residue delegation probe must retain headingless provider shims")
+
+
+assert_generic_residue_delegation_probe()
+active_residue_suffixes = {
+    ".graphql",
+    ".json",
+    ".md",
+    ".proto",
+    ".sh",
+    ".toml",
+    ".yaml",
+    ".yml",
+}
+tracked_active_paths = subprocess.run(
+    ["git", "-C", str(root), "ls-files", "-z"],
+    check=True,
+    stdout=subprocess.PIPE,
+).stdout.split(b"\0")
+for raw_relative_path in tracked_active_paths:
+    if not raw_relative_path:
+        continue
+    try:
+        relative_path = pathlib.PurePosixPath(raw_relative_path.decode("utf-8"))
+    except UnicodeDecodeError:
+        fail("git returned a non-UTF-8 active path during generic residue validation")
+        continue
+    if not (
+        relative_path.as_posix() in {"README.md", "AGENTS.md", "CLAUDE.md", "GEMINI.md"}
+        or relative_path.parts[0] in TARGET_ROOTS
+    ):
+        continue
+    path = root / relative_path
+    if path.suffix not in active_residue_suffixes or not path.is_file() or path.is_symlink():
+        continue
+    if path.is_relative_to(root / "docs/99.templates/templates"):
+        continue
+    if is_historical_evidence_path(path):
+        continue
+    if path.suffix == ".md" and canonical_markdown_owns_generic_residue(path):
+        continue
+    for line_number in generic_template_residue_lines(read_text(path)):
+        fail(f"active non-structural template residue in {rel(path)}:{line_number}")
+
 reference_template_path = template_path("reference.template.md")
 reference_template_text = read_text(reference_template_path)
 if re.search(r"archive", reference_template_text, re.IGNORECASE):
     fail(f"{rel(reference_template_path)} must not contain archive wording")
-reference_template_target_parent = root / "docs/90.references/example-category"
-reference_template_target_relative_links = {
-    "../../05.operations/runbooks/0011-reference-maintenance-runbook.md": root
-    / "docs/05.operations/runbooks/0011-reference-maintenance-runbook.md",
-    "../../05.operations/guides/0009-llm-wiki-curation-guide.md": root
-    / "docs/05.operations/guides/0009-llm-wiki-curation-guide.md",
-}
-for target, expected_path in reference_template_target_relative_links.items():
-    if f"`{target}`" not in reference_template_text:
-        fail(f"{rel(reference_template_path)} missing target-relative reference link: {target}")
-    resolved_path = (reference_template_target_parent / target).resolve()
-    if resolved_path != expected_path.resolve():
-        fail(
-            f"{rel(reference_template_path)} target-relative link does not resolve from "
-            f"docs/90.references/<category>/<item>.md: {target}"
-        )
-    if not expected_path.exists():
-        fail(f"{rel(reference_template_path)} target-relative link points to missing file: {target}")
 
 for path in docs_dir.rglob("*"):
     if not path.is_file():
@@ -1259,220 +1574,6 @@ for path in docs_dir.rglob("*"):
         continue
     if re.search(r"(^template\.md$|\.template\.|template\.)", path.name):
         fail(f"template-like docs file must live in docs/99.templates: {rel(path)}")
-
-active_doc_roots = [
-    root / "README.md",
-    root / "AGENTS.md",
-    root / "CLAUDE.md",
-    root / "GEMINI.md",
-    root / "docs",
-    root / "examples",
-    root / "gitops",
-    root / "infrastructure",
-    root / "policy",
-    root / "scripts",
-    root / "tests",
-    root / "traefik",
-]
-active_doc_suffixes = {".md", ".json", ".toml", ".yaml", ".yml", ".sh"}
-authored_template_residue = ("Target: " + "docs/", "Use this " + "template")
-for scan_root in active_doc_roots:
-    if not scan_root.exists():
-        continue
-    candidates = [scan_root] if scan_root.is_file() else sorted(scan_root.rglob("*"))
-    for path in candidates:
-        if not path.is_file() or path.suffix not in active_doc_suffixes:
-            continue
-        if path.is_relative_to(root / "docs/99.templates/templates"):
-            continue
-        if is_historical_evidence_path(path):
-            continue
-        for line_number, line in enumerate(read_text(path).splitlines(), start=1):
-            if any(marker in line for marker in authored_template_residue):
-                fail(f"active document template residue in {rel(path)}:{line_number}")
-
-documented_stage_routes = [
-    ("docs/01.requirements/<###-Numbering>-<feature-or-system>.md", "prd.template.md"),
-    ("docs/02.architecture/requirements/####-<system-or-domain>.md", "ard.template.md"),
-    ("docs/02.architecture/decisions/####-<short-title>.md", "adr.template.md"),
-    ("docs/03.specs/<###-Numbering>-<feature-id>/spec.md", "spec.template.md"),
-    ("docs/03.specs/<###-Numbering>-<feature-id>/api-spec.md", "api-spec.template.md"),
-    ("docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md", "agent-design.template.md"),
-    ("docs/03.specs/<###-Numbering>-<feature-id>/data-model.md", "data-model.template.md"),
-    ("docs/03.specs/<###-Numbering>-<feature-id>/tests.md", "tests.template.md"),
-    ("docs/04.execution/plans/YYYY-MM-DD-<feature>.md", "plan.template.md"),
-    ("docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md", "task.template.md"),
-    ("docs/05.operations/guides/####-<topic>.md", "guide.template.md"),
-    ("docs/05.operations/policies/####-<policy-or-standard>.md", "policy.template.md"),
-    ("docs/05.operations/runbooks/####-<topic>.md", "runbook.template.md"),
-    ("docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md", "incident.template.md"),
-    ("docs/05.operations/incidents/YYYY/INC-###-<title>/postmortem.md", "postmortem.template.md"),
-    ("docs/90.references/<category>/<topic>.md", "reference.template.md"),
-    ("docs/98.archive/**/*.md", "archive-tombstone.template.md"),
-]
-native_contract_routes = {
-    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/openapi.yaml", "openapi.template.yaml"),
-    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/schema.graphql", "schema.template.graphql"),
-    ("docs/03.specs/<###-Numbering>-<feature-id>/contracts/service.proto", "service.template.proto"),
-}
-
-
-def documented_target_to_validator_glob(target_pattern: str) -> str:
-    if target_pattern == "docs/90.references/<category>/<topic>.md":
-        return "docs/90.references/**/*.md"
-    replacements = [
-        ("<###-Numbering>-<feature-or-system>", "[0-9][0-9][0-9]-*"),
-        ("<###-Numbering>-<feature-id>", "[0-9][0-9][0-9]-*"),
-        ("YYYY-MM-DD-<feature-or-stream>", "*"),
-        ("YYYY-MM-DD-<feature>", "*"),
-        ("####-<policy-or-standard>", "*"),
-        ("####-<system-or-domain>", "*"),
-        ("####-<short-title>", "*"),
-        ("####-<topic>", "*"),
-        ("INC-###-<title>", "INC-[0-9][0-9][0-9]-*"),
-        ("YYYY", "[0-9][0-9][0-9][0-9]"),
-    ]
-    normalized = target_pattern
-    for old, new in replacements:
-        normalized = normalized.replace(old, new)
-    return normalized
-
-
-required_stage_templates = [
-    (documented_target_to_validator_glob(target_pattern), template_name)
-    for target_pattern, template_name in documented_stage_routes
-]
-expected_structural_route_pairs = set(required_stage_templates)
-actual_structural_route_pairs: set[tuple[str, str]] = set()
-actual_native_contract_routes: set[tuple[str, str]] = set()
-expected_readme_targets = ("README.md", "**/README.md", ".claude/README.md", ".codex/README.md")
-expected_memory_target = ("docs/00.agent-governance/memory/<topic>.md",)
-expected_progress_target = ("docs/00.agent-governance/memory/progress.md",)
-seen_readme_route = False
-seen_memory_route = False
-seen_progress_route = False
-
-for target_pattern, template_path_text in template_readme_route_pairs:
-    template_matches = re.findall(r"`([^`]+)`", template_path_text)
-    if not template_matches:
-        fail(f"template route has no backticked template path: {target_pattern} -> {template_path_text}")
-        continue
-    template_name = pathlib.Path(template_matches[0]).name
-    target_matches = tuple(re.findall(r"`([^`]+)`", target_pattern))
-    if template_name == "readme.template.md":
-        if target_matches != expected_readme_targets:
-            fail(f"README template route must target only the canonical README set: {target_pattern}")
-        seen_readme_route = True
-        continue
-    if template_name == "memory.template.md":
-        if target_matches != expected_memory_target:
-            fail(f"memory template route must use the canonical memory target: {target_pattern}")
-        seen_memory_route = True
-        continue
-    if template_name == "progress.template.md":
-        if target_matches != expected_progress_target:
-            fail(f"progress template route must use the canonical progress target: {target_pattern}")
-        seen_progress_route = True
-        continue
-    if len(target_matches) != 1:
-        fail(f"template route must have exactly one target pattern: {target_pattern}")
-        continue
-    route_pair = (target_matches[0], template_name)
-    if route_pair in native_contract_routes:
-        actual_native_contract_routes.add(route_pair)
-        continue
-    if template_name.endswith(".template.md"):
-        normalized_pair = (documented_target_to_validator_glob(target_matches[0]), template_name)
-        actual_structural_route_pairs.add(normalized_pair)
-        if normalized_pair not in expected_structural_route_pairs:
-            fail(
-                "documented Markdown route does not match structural validator mapping: "
-                f"{target_matches[0]} -> {template_name} normalizes to {normalized_pair[0]}"
-            )
-        continue
-    fail(f"template route is not covered by structural or native validator mapping: {target_pattern} -> {template_name}")
-
-if not seen_readme_route:
-    fail("Template-Folder Mapping missing canonical README route")
-if not seen_memory_route:
-    fail("Template-Folder Mapping missing canonical governance memory route")
-if not seen_progress_route:
-    fail("Template-Folder Mapping missing canonical progress ledger route")
-for missing_route in sorted(expected_structural_route_pairs - actual_structural_route_pairs):
-    fail(f"Template-Folder Mapping missing structural validator route: {missing_route[0]} -> {missing_route[1]}")
-for extra_route in sorted(actual_structural_route_pairs - expected_structural_route_pairs):
-    fail(f"Template-Folder Mapping has unsupported structural validator route: {extra_route[0]} -> {extra_route[1]}")
-for missing_route in sorted(native_contract_routes - actual_native_contract_routes):
-    fail(f"Template-Folder Mapping missing native contract route: {missing_route[0]} -> {missing_route[1]}")
-for extra_route in sorted(actual_native_contract_routes - native_contract_routes):
-    fail(f"Template-Folder Mapping has unsupported native contract route: {extra_route[0]} -> {extra_route[1]}")
-
-for glob_pattern, template_name in required_stage_templates:
-    resolved_template_path = template_path(template_name)
-    if not resolved_template_path.exists():
-        fail(f"structural template mapping points to missing template: {glob_pattern} -> {template_name}")
-
-structural_template_roots = [
-    root / "docs/01.requirements",
-    root / "docs/02.architecture",
-    root / "docs/03.specs",
-    root / "docs/04.execution",
-    root / "docs/05.operations",
-    root / "docs/90.references",
-    root / "docs/98.archive",
-]
-for scan_root in structural_template_roots:
-    for path in sorted(scan_root.rglob("*.md")):
-        if path.name == "README.md":
-            continue
-        relative_path = rel(path)
-        matching_templates = [
-            template_name
-            for glob_pattern, template_name in required_stage_templates
-            if fnmatch.fnmatchcase(relative_path, glob_pattern)
-        ]
-        if not matching_templates:
-            fail(f"{relative_path} is not covered by a structural template mapping")
-        elif len(matching_templates) > 1:
-            fail(
-                f"{relative_path} matches multiple structural template mappings: "
-                f"{', '.join(matching_templates)}"
-            )
-        else:
-            expected_type = template_expected_types.get(matching_templates[0])
-            if not expected_type:
-                fail(f"{relative_path} matches a template without a frontmatter profile: {matching_templates[0]}")
-            else:
-                validate_markdown_frontmatter_profile(path, expected_type)
-
-
-def required_headings_from_template(template_name: str) -> list[str]:
-    headings: list[str] = []
-    for line in read_text(template_path(template_name)).splitlines():
-        if not line.startswith("## "):
-            continue
-        heading = line.strip()
-        if "[" in heading or "<" in heading:
-            continue
-        if "(If Applicable)" in heading or "(Optional)" in heading:
-            continue
-        headings.append(heading)
-    return headings
-
-
-for glob_pattern, template_name in required_stage_templates:
-    required_headings = required_headings_from_template(template_name)
-    for path in sorted(root.glob(glob_pattern)):
-        if path.name == "README.md":
-            continue
-        document_headings = {
-            line.strip()
-            for line in read_text(path).splitlines()
-            if line.startswith("## ")
-        }
-        for heading in required_headings:
-            if heading not in document_headings:
-                fail(f"{rel(path)} missing required template heading from {template_name}: {heading}")
 
 english_first_stage_globs = [
     "docs/03.specs/*/spec.md",
@@ -1503,13 +1604,6 @@ for tombstone in sorted(archive_root.rglob("*.md")):
     if tombstone.name == "README.md":
         continue
     metadata = load_markdown_frontmatter(tombstone)
-    if str(metadata.get("type", "")).strip() != "content/archive-tombstone":
-        fail(f"{rel(tombstone)} archive metadata must use type: content/archive-tombstone")
-    if str(metadata.get("status", "")).strip() != "archived":
-        fail(f"{rel(tombstone)} archive metadata must use status: archived")
-    for archive_key in ["original_path", "archived_on", "archive_reason", "replacement"]:
-        if not str(metadata.get(archive_key, "")).strip():
-            fail(f"{rel(tombstone)} missing archive metadata key: {archive_key}")
     archive_reason = str(metadata.get("archive_reason", "")).strip()
     if archive_reason not in archive_reason_allowed_values:
         fail(f"{rel(tombstone)} archive_reason is unsupported: {archive_reason or '<empty>'}")
@@ -1570,7 +1664,7 @@ operations_readme_path = operations_stage_path / "README.md"
 operations_readme_text = read_text(operations_readme_path)
 operations_routing_rows = markdown_table_after_heading(
     operations_readme_text,
-    "## Operations Routing Matrix",
+    ("## Operations Routing Matrix", "### Operations Routing Matrix"),
 )
 expected_operations_routing_header = ["필요 상황", "사용할 위치", "시작 템플릿"]
 expected_operations_routing_targets = [
@@ -1639,7 +1733,7 @@ incidents_readme_path = operations_stage_path / "incidents/README.md"
 incidents_readme_text = read_text(incidents_readme_path)
 incident_boundary_rows = markdown_table_after_heading(
     incidents_readme_text,
-    "## Incident Boundary Matrix",
+    ("## Incident Boundary Matrix", "### Incident Boundary Matrix"),
 )
 expected_incident_boundary_header = [
     "Artifact",
@@ -1798,7 +1892,10 @@ for operations_root in operations_index_roots:
         continue
 
     readme_text = read_text(readme_path)
-    rows = markdown_table_after_heading(readme_text, "## 문서 인덱스")
+    rows = markdown_table_after_heading(
+        readme_text,
+        ("## 문서 인덱스", "### 문서 인덱스"),
+    )
     expected_header = ["문서", "설명", "상태", "최종 수정"]
     if len(rows) < 2:
         fail(f"{rel(readme_path)} 문서 인덱스 must contain a header and document rows")
@@ -1855,66 +1952,6 @@ for operations_root in operations_index_roots:
             fail(f"{rel(readme_path)} updated mismatch for {doc_path.name}: index={row_updated}, frontmatter={updated}")
 
 
-def validate_stage04_index(stage_root: pathlib.Path) -> None:
-    readme_path = stage_root / "README.md"
-    if not readme_path.exists():
-        fail(f"Stage 04 README is missing: {rel(readme_path)}")
-        return
-
-    rows = markdown_table_after_heading(read_text(readme_path), "## 문서 인덱스")
-    expected_header = ["문서", "설명", "상태", "최종 수정"]
-    if len(rows) < 2:
-        fail(f"{rel(readme_path)} 문서 인덱스 must contain a header and document rows")
-        return
-    if rows[0] != expected_header:
-        fail(f"{rel(readme_path)} 문서 인덱스 header must be: {' | '.join(expected_header)}")
-
-    indexed_rows: dict[str, list[str]] = {}
-    for row_number, row in enumerate(rows[1:], start=1):
-        if len(row) != len(expected_header):
-            fail(f"{rel(readme_path)} 문서 인덱스 row {row_number} must have {len(expected_header)} columns")
-            continue
-        match = re.search(r"\]\(\./([^)]+\.md)\)", row[0])
-        if not match:
-            fail(f"{rel(readme_path)} 문서 인덱스 row {row_number} must link to ./<document>.md")
-            continue
-        target_name = match.group(1)
-        if target_name in indexed_rows:
-            fail(f"{rel(readme_path)} 문서 인덱스 duplicates document: {target_name}")
-        indexed_rows[target_name] = row
-
-    stage_docs = sorted(path for path in stage_root.glob("*.md") if path.name != "README.md")
-    stage_doc_names = {path.name for path in stage_docs}
-    for doc_name in sorted(stage_doc_names - set(indexed_rows)):
-        fail(f"{rel(readme_path)} 문서 인덱스 missing document: {doc_name}")
-    for doc_name in sorted(set(indexed_rows) - stage_doc_names):
-        fail(f"{rel(readme_path)} 문서 인덱스 links to missing document: {doc_name}")
-
-    for doc_path in stage_docs:
-        row = indexed_rows.get(doc_path.name)
-        if not row:
-            continue
-        metadata = load_markdown_frontmatter(doc_path)
-        status = str(metadata.get("status", "")).strip()
-        updated = str(metadata.get("updated", "")).strip()
-        row_status = row[2].strip()
-        row_updated = row[3].strip()
-        if not status:
-            fail(f"{rel(doc_path)} missing status for Stage 04 index validation")
-        elif row_status.lower() != status.lower():
-            fail(f"{rel(readme_path)} status mismatch for {doc_path.name}: index={row_status}, frontmatter={status}")
-        if not updated:
-            fail(f"{rel(doc_path)} missing updated for Stage 04 index validation")
-        elif row_updated != updated:
-            fail(f"{rel(readme_path)} updated mismatch for {doc_path.name}: index={row_updated}, frontmatter={updated}")
-
-
-for stage04_root in [
-    root / "docs/04.execution/plans",
-    root / "docs/04.execution/tasks",
-]:
-    validate_stage04_index(stage04_root)
-
 template_enforcement_phrase_checks = {
     root / "docs/00.agent-governance/rules/documentation-protocol.md": [
         "docs/99.templates/README.md",
@@ -1924,7 +1961,7 @@ template_enforcement_phrase_checks = {
         "template path used and the validation evidence",
     ],
     root / "docs/00.agent-governance/rules/document-stage-routing.md": [
-        "docs/99.templates/templates/common/readme.template.md",
+        "docs/99.templates/support/document-profiles.json",
         "structural template mapping",
         "required template headings",
         "template path used and validation evidence",
@@ -2012,15 +2049,6 @@ for scan_root in legacy_scan_roots:
         for literal, replacement in legacy_denylist_literals.items():
             if literal in text:
                 fail(f"{rel(candidate)} contains {replacement} literal: {literal}")
-
-for policy_doc in sorted((root / "docs/05.operations/policies").glob("*.md")):
-    if policy_doc.name == "README.md":
-        continue
-    text = read_text(policy_doc)
-    if re.search(r"^type:\s*operation\s*$", text, re.MULTILINE):
-        fail(f"{rel(policy_doc)} must use frontmatter type: sdlc/policy, not operation")
-    if not re.search(r"^type:\s*sdlc/policy\s*$", text, re.MULTILINE):
-        fail(f"{rel(policy_doc)} missing frontmatter type: sdlc/policy")
 
 llm_wiki_dir = root / "docs/90.references/llm-wiki"
 llm_wiki_readme = llm_wiki_dir / "README.md"
@@ -2229,6 +2257,21 @@ active_currentness_roots = [
     root / "docs/05.operations",
     root / "docs/90.references",
 ]
+migration_evidence_ledger_path = (
+    root
+    / "docs/90.references/research/2026-07-07-wer/document-migration-evidence-ledger.md"
+)
+
+
+def is_currentness_evidence_only(path: pathlib.Path) -> bool:
+    return path == migration_evidence_ledger_path
+
+
+if not is_currentness_evidence_only(migration_evidence_ledger_path):
+    fail("migration evidence ledger currentness exception must match its exact path")
+if is_currentness_evidence_only(root / "docs/90.references/README.md"):
+    fail("migration evidence ledger currentness exception must not widen to Stage 90")
+
 stale_provider_hook_path = "." + "claude/hooks"
 stale_shell_job_name = "shell" + "-static"
 stale_headlamp_oidc_patterns = [
@@ -2257,6 +2300,8 @@ stale_app_onboarding_currentness_patterns = [
 for scan_root in active_currentness_roots:
     for path in sorted(scan_root.rglob("*.md")):
         if path.is_relative_to(root / "docs/98.archive"):
+            continue
+        if is_currentness_evidence_only(path):
             continue
         text = read_text(path)
         if stale_provider_hook_path in text:
@@ -2552,15 +2597,15 @@ for phrase in [
     "regression and structure guard",
     "Authored-doc command boundary",
     "command examples in authored docs require",
-    "## Harness Engineering Matrix",
-    "## Agent-first Engineering Matrix",
+    "### Harness Engineering Matrix",
+    "### Agent-first Engineering Matrix",
 ]:
     if phrase not in harness_catalog_text:
         fail(f"{rel(harness_catalog_path)} missing runtime readiness boundary phrase: {phrase}")
 if "| Required Component | Current Surface | Status | Gap | Remediation |" not in harness_catalog_normalized:
     fail(f"{rel(harness_catalog_path)} missing runtime readiness boundary phrase: | Required Component | Current Surface | Status | Gap | Remediation |")
-validate_component_matrix(harness_catalog_text, "## Harness Engineering Matrix")
-validate_component_matrix(harness_catalog_text, "## Agent-first Engineering Matrix")
+validate_component_matrix(harness_catalog_text, "### Harness Engineering Matrix")
+validate_component_matrix(harness_catalog_text, "### Agent-first Engineering Matrix")
 for phrase in [
     "Thin gateway",
     "Runtime baseline",
@@ -2732,37 +2777,9 @@ for phrase in [
     if phrase not in memory_readme_text:
         fail(f"{rel(memory_dir / 'README.md')} missing memory contract phrase: {phrase}")
 
-for phrase in [
-    "docs/00.agent-governance/memory/progress.md",
-    "docs/99.templates/templates/common/progress.template.md",
-    "## Related Progress",
-]:
-    if phrase not in read_text(memory_template_path):
-        fail(f"{rel(memory_template_path)} missing standalone memory template phrase: {phrase}")
-
-for phrase in [
-    "docs/00.agent-governance/memory/progress.md",
-    "## Work Entries",
-]:
-    if phrase not in read_text(progress_template_path):
-        fail(f"{rel(progress_template_path)} missing progress template phrase: {phrase}")
-
 for phrase in ["memory.template.md", "progress.template.md", "00.agent-governance/memory/"]:
     if phrase not in template_readme:
         fail(f"{rel(root / 'docs/99.templates/README.md')} missing memory template inventory phrase: {phrase}")
-
-standalone_memory_required_headings = required_headings_from_template("memory.template.md")
-for memory_file in sorted(memory_dir.glob("*.md")):
-    if memory_file.name in {"README.md", "progress.md"}:
-        continue
-    document_headings = {
-        line.strip()
-        for line in read_text(memory_file).splitlines()
-        if line.startswith("## ")
-    }
-    for heading in standalone_memory_required_headings:
-        if heading not in document_headings:
-            fail(f"{rel(memory_file)} missing required template heading from memory.template.md: {heading}")
 
 workflow_paths = sorted((root / ".github").glob("**/*.yml")) + sorted((root / ".github").glob("**/*.yaml"))
 for workflow in workflow_paths:
@@ -2792,14 +2809,23 @@ codeowners_text = read_text(codeowners_path)
 if not re.search(r"^/\.github/\s+@buenhyden(?:\s|$)", codeowners_text, re.MULTILINE):
     fail(".github/CODEOWNERS must assign /.github/ ownership to @buenhyden")
 
-zizmor_path = root / ".github/zizmor.yml"
-zizmor_rules = (load_yaml(zizmor_path).get("rules") or {})
-allowed_zizmor_disables = {"unpinned-uses"}
-for rule_name, rule_config in sorted(zizmor_rules.items()):
-    if isinstance(rule_config, dict) and rule_config.get("disable") is True and rule_name not in allowed_zizmor_disables:
-        fail(f"{rel(zizmor_path)} disables unsupported zizmor rule: {rule_name}")
-if not isinstance(zizmor_rules.get("unpinned-uses"), dict) or zizmor_rules["unpinned-uses"].get("disable") is not True:
-    fail(f"{rel(zizmor_path)} must keep only unpinned-uses disabled for tag-plus-inventory action pinning")
+action_security_self_test = subprocess.run(
+    [sys.executable, str(root / "scripts/validate-github-actions-security.py"), "--self-test"],
+    cwd=root,
+    text=True,
+    capture_output=True,
+)
+if action_security_self_test.returncode != 0:
+    fail("GitHub Actions security self-test failed: " + action_security_self_test.stdout.strip())
+
+action_security = subprocess.run(
+    [sys.executable, str(root / "scripts/validate-github-actions-security.py"), "--root", str(root)],
+    cwd=root,
+    text=True,
+    capture_output=True,
+)
+if action_security.returncode != 0:
+    fail("GitHub Actions security validation failed: " + action_security.stdout.strip())
 
 git_workflow_path = root / "docs/00.agent-governance/rules/git-workflow.md"
 git_workflow_text = read_text(git_workflow_path)
@@ -2858,6 +2884,7 @@ for phrase in [
         fail(f"{rel(ci_cd_qa_guide_path)} missing coverage applicability phrase: {phrase}")
 
 ci_path = root / ".github/workflows/ci.yml"
+ci_text = read_text(ci_path)
 try:
     ci_data = load_yaml(ci_path)
 except Exception as exc:
@@ -2865,6 +2892,8 @@ except Exception as exc:
     ci_data = {}
 
 ci_on = workflow_on(ci_data)
+if ci_data.get("name") != "CI":
+    fail(f"{rel(ci_path)} workflow name must remain CI")
 if not isinstance(ci_on, dict):
     fail(f"{rel(ci_path)} must declare structured push and pull_request triggers")
 else:
@@ -2878,6 +2907,8 @@ else:
             fail(f"{rel(ci_path)} {event_name} trigger must target only main: {branches}")
     if "workflow_dispatch" not in ci_on:
         fail(f"{rel(ci_path)} must include workflow_dispatch for manual QA reruns")
+    if set(ci_on) != {"push", "pull_request", "workflow_dispatch"}:
+        fail(f"{rel(ci_path)} workflow triggers must remain exact Spec 031 triggers")
 
 ci_jobs = ci_data.get("jobs") or {}
 required_ci_jobs = {
@@ -2890,6 +2921,40 @@ required_ci_jobs = {
 }
 for job_id in sorted(required_ci_jobs - set(ci_jobs)):
     fail(f"{rel(ci_path)} missing required CI job: {job_id}")
+if set(ci_jobs) != required_ci_jobs:
+    fail(f"{rel(ci_path)} job IDs must remain exact Spec 031 jobs: {sorted(required_ci_jobs)}")
+
+expected_job_needs = {
+    "branch-policy": [],
+    "changes": [],
+    "pre-commit": ["changes"],
+    "repo-quality-static": ["changes"],
+    "manifest-static": ["changes"],
+    "ci-summary": [
+        "branch-policy",
+        "changes",
+        "pre-commit",
+        "repo-quality-static",
+        "manifest-static",
+    ],
+}
+expected_job_if = {
+    "branch-policy": "github.event_name == 'pull_request'",
+    "changes": "",
+    "pre-commit": "needs.changes.outputs.precommit == 'true'",
+    "repo-quality-static": "needs.changes.outputs.repo_quality == 'true'",
+    "manifest-static": "needs.changes.outputs.manifests == 'true'",
+    "ci-summary": "always()",
+}
+for job_id in sorted(required_ci_jobs):
+    job = ci_jobs.get(job_id) or {}
+    needs = job.get("needs") or []
+    if isinstance(needs, str):
+        needs = [needs]
+    if needs != expected_job_needs[job_id]:
+        fail(f"{rel(ci_path)} {job_id} needs must remain {expected_job_needs[job_id]}")
+    if str(job.get("if") or "") != expected_job_if[job_id]:
+        fail(f"{rel(ci_path)} {job_id} if must remain {expected_job_if[job_id]!r}")
 
 branch_policy_job = ci_jobs.get("branch-policy") or {}
 branch_policy_if = str(branch_policy_job.get("if") or "")
@@ -2942,33 +3007,135 @@ for phrase in ["BRANCH_POLICY_RESULT", "branch-policy="]:
         fail(f"{rel(ci_path)} ci-summary missing branch-policy linkage: {phrase}")
 
 changes_job = ci_jobs.get("changes") or {}
-filters = {}
-for step in changes_job.get("steps") or []:
-    if step.get("id") == "filter":
-        try:
-            filters = yaml.safe_load(((step.get("with") or {}).get("filters") or "")) or {}
-        except Exception as exc:
-            fail(f"{rel(ci_path)} changes filter YAML parse failed: {exc}")
-        break
-repo_quality_filter_paths = filters.get("repo_quality") or []
-for required_repo_quality_path in ["examples/**", ".agents/**"]:
-    if required_repo_quality_path not in repo_quality_filter_paths:
-        fail(f"{rel(ci_path)} repo_quality path filter must include {required_repo_quality_path}")
+expected_changes_outputs = {
+    "precommit": "${{ steps.filter.outputs.precommit }}",
+    "repo_quality": "${{ steps.filter.outputs.repo_quality }}",
+    "manifests": "${{ steps.filter.outputs.manifests }}",
+}
+if changes_job.get("outputs") != expected_changes_outputs:
+    fail(
+        f"{rel(ci_path)} changes outputs must be canonical selector outputs: "
+        f"{expected_changes_outputs}"
+    )
 
+changes_steps = changes_job.get("steps") or []
+changes_checkout_steps = [
+    step
+    for step in changes_steps
+    if step.get("uses") == "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
+]
+if len(changes_checkout_steps) != 1:
+    fail(f"{rel(ci_path)} changes job must have exactly one pinned checkout step")
+elif (changes_checkout_steps[0].get("with") or {}).get("fetch-depth") != 0:
+    fail(f"{rel(ci_path)} changes checkout must use fetch-depth: 0")
+
+selector_steps = [step for step in changes_steps if step.get("id") == "filter"]
+if len(selector_steps) != 1:
+    fail(f"{rel(ci_path)} changes job must have exactly one selector step with id=filter")
+    selector_step = {}
+else:
+    selector_step = selector_steps[0]
+if selector_step.get("uses"):
+    fail(f"{rel(ci_path)} canonical selector step must not delegate to an Action")
+selector_run = str(selector_step.get("run") or "")
+for marker in [
+    "git diff --no-renames --name-only -z",
+    "git ls-tree -r --name-only -z",
+    '"$RUNNER_TEMP/changed-paths.nul"',
+    "python3 scripts/select-affected-surfaces.py",
+    "--lane ci",
+    "--delimiter nul",
+    "--format github-output",
+    '>> "$GITHUB_OUTPUT"',
+]:
+    if marker not in selector_run:
+        fail(f"{rel(ci_path)} canonical selector step missing marker: {marker}")
+for forbidden_marker in ["$(", "`", "dorny/paths-filter", "filters: |"]:
+    if forbidden_marker in selector_run or forbidden_marker in ci_text:
+        fail(f"{rel(ci_path)} canonical selector contains forbidden marker: {forbidden_marker}")
+
+
+manifest_static_steps = (ci_jobs.get("manifest-static") or {}).get("steps") or []
+manifest_checkout_steps = [
+    step
+    for step in manifest_static_steps
+    if step.get("uses") == "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"
+]
+if len(manifest_checkout_steps) != 1:
+    fail(f"{rel(ci_path)} manifest-static must have exactly one pinned checkout step")
+else:
+    manifest_checkout_with = manifest_checkout_steps[0].get("with") or {}
+    if manifest_checkout_with.get("persist-credentials") is not False:
+        fail(f"{rel(ci_path)} manifest-static checkout must disable persisted credentials")
+    if manifest_checkout_with.get("fetch-depth") != 0:
+        fail(f"{rel(ci_path)} manifest-static checkout must use fetch-depth: 0")
+
+gitops_change_set_steps = [
+    step
+    for step in manifest_static_steps
+    if step.get("name") == "Review GitOps object identity and deletion set"
+]
+if len(gitops_change_set_steps) != 1:
+    fail(f"{rel(ci_path)} manifest-static must contain exactly one GitOps change-set step")
+else:
+    gitops_change_set_step = gitops_change_set_steps[0]
+    expected_gitops_change_set_env = {
+        "BASE_REF": "${{ github.event.pull_request.base.sha || github.event.before || github.sha }}"
+    }
+    if gitops_change_set_step.get("env") != expected_gitops_change_set_env:
+        fail(
+            f"{rel(ci_path)} GitOps change-set env must equal: "
+            f"{expected_gitops_change_set_env}"
+        )
+    expected_gitops_change_set_run = (
+        'python3 scripts/validate-gitops-change-set.py --root . --base-ref "$BASE_REF"'
+    )
+    if str(gitops_change_set_step.get("run") or "").strip() != expected_gitops_change_set_run:
+        fail(
+            f"{rel(ci_path)} GitOps change-set command must equal: "
+            f"{expected_gitops_change_set_run}"
+        )
 
 manifest_static_runs = "\n".join(
     str(step.get("run") or "")
-    for step in (ci_jobs.get("manifest-static") or {}).get("steps") or []
+    for step in manifest_static_steps
 )
 for command in [
+    'python3 scripts/validate-gitops-change-set.py --root . --base-ref "$BASE_REF"',
     "bash infrastructure/tests/verify-contracts-static.sh",
     "bash scripts/validate-gitops-structure.sh",
     "bash scripts/validate-k8s-manifests.sh .",
     "bash scripts/check-secret-handling.sh .",
+    "python3 scripts/validate-vault-eso-contracts.py --root .",
     "bash scripts/validate-policy-gates.sh .",
 ]:
     if command not in manifest_static_runs:
         fail(f"{rel(ci_path)} manifest-static missing command: {command}")
+
+static_contract_steps = [
+    step for step in manifest_static_steps if step.get("name") == "Run static contract checks"
+]
+expected_static_contract_commands = [
+    "bash infrastructure/tests/verify-contracts-static.sh",
+    "bash scripts/validate-gitops-structure.sh",
+    "bash scripts/validate-k8s-manifests.sh .",
+    "bash scripts/check-secret-handling.sh .",
+    "python3 scripts/validate-vault-eso-contracts.py --root .",
+    "bash scripts/validate-policy-gates.sh .",
+]
+if len(static_contract_steps) != 1:
+    fail(f"{rel(ci_path)} manifest-static must contain exactly one static contract step")
+else:
+    actual_static_contract_commands = [
+        line.strip()
+        for line in str(static_contract_steps[0].get("run") or "").splitlines()
+        if line.strip()
+    ]
+    if actual_static_contract_commands != expected_static_contract_commands:
+        fail(
+            f"{rel(ci_path)} manifest-static static commands must remain exact and ordered: "
+            f"{expected_static_contract_commands}"
+        )
 
 
 
@@ -3002,8 +3169,8 @@ if not has_cloud_example_snapshot_preservation_prompt(pr_template_text):
     )
 
 # Harness implementation surfaces: existence and cross-reference contracts only.
-# Wrapper script and task-contract template existence are already enforced by the
-# scripts inventory and templates README checks, so they are not re-validated here.
+# Wrapper script existence is already enforced by the scripts inventory, so it
+# is not re-validated here.
 harness_map_path = root / "docs/00.agent-governance/harness-implementation-map.md"
 if not harness_map_path.exists():
     fail(f"required harness surface is missing: {rel(harness_map_path)}")
@@ -3021,14 +3188,22 @@ if (
         "docs/00.agent-governance/harness-catalog.md must reference the harness "
         "implementation map or approval boundaries"
     )
-harness_templates_readme_text = read_text(root / "docs/99.templates/README.md")
+canonical_task_form_text = read_text(
+    root / "docs/99.templates/templates/sdlc/execution/task.template.md"
+)
 for phrase in [
-    "## Harness Task Contract Template",
-    "`harness-task-contract.template.md` is a specialized starter",
-    "approval boundaries and static-vs-live evidence fields",
+    "## Approval and Safety Boundaries",
+    "**Allowed Paths**:",
+    "**Forbidden Paths**:",
+    "**Approval Required**:",
+    "**Static Validation**:",
+    "**Live Validation**:",
+    "**Secret / Vault Handling**:",
+    "**Rollback Plan**:",
+    "**Evidence Location**:",
 ]:
-    if phrase not in harness_templates_readme_text:
-        fail(f"docs/99.templates/README.md missing harness task template registration phrase: {phrase}")
+    if phrase not in canonical_task_form_text:
+        fail(f"canonical Task form missing approval/safety contract field: {phrase}")
 
 pr_branch_prefixes = extract_pr_template_prefixes(pr_template_text)
 if pr_branch_prefixes != branch_prefixes:
@@ -3409,6 +3584,55 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
     if "[hook] PASS documentation template enforcement" not in docs_post_hook_result.stdout:
         fail(f"{rel(post_hook_path)} docs payload simulation missing template enforcement output")
 
+    valid_existing_path = root / ".agents/GEMINI.md"
+    valid_existing_payload = json.dumps(
+        {"tool_input": {"file_path": str(valid_existing_path.relative_to(root))}}
+    )
+    valid_existing_result = subprocess.run(
+        ["bash", str(post_hook_path)],
+        cwd=root,
+        input=valid_existing_payload,
+        text=True,
+        capture_output=True,
+        env=hook_env,
+    )
+    if valid_existing_result.returncode != 0:
+        detail = "\n".join(
+            item
+            for item in [
+                valid_existing_result.stdout.strip(),
+                valid_existing_result.stderr.strip(),
+            ]
+            if item
+        )
+        fail(f"{rel(post_hook_path)} valid existing path probe failed:\n{detail}")
+    if ".agents/GEMINI.md" not in valid_existing_result.stdout:
+        fail(f"{rel(post_hook_path)} did not propagate the valid existing path")
+
+    with tempfile.TemporaryDirectory(
+        prefix="999-hook-path-input-probe-",
+        dir=root / "docs/03.specs",
+    ) as invalid_probe_directory:
+        invalid_untracked_path = pathlib.Path(invalid_probe_directory) / "api-spec.md"
+        invalid_untracked_relative_path = invalid_untracked_path.relative_to(root).as_posix()
+        invalid_untracked_path.write_text("# Invalid API Spec Probe\n", encoding="utf-8")
+        invalid_untracked_payload = json.dumps(
+            {"tool_input": {"file_path": invalid_untracked_relative_path}}
+        )
+        invalid_untracked_result = subprocess.run(
+            ["bash", str(post_hook_path)],
+            cwd=root,
+            input=invalid_untracked_payload,
+            text=True,
+            capture_output=True,
+            env=hook_env,
+        )
+        if invalid_untracked_result.returncode == 0:
+            fail(f"{rel(post_hook_path)} accepted an invalid untracked authored document")
+        invalid_output = invalid_untracked_result.stdout + invalid_untracked_result.stderr
+        if invalid_untracked_relative_path not in invalid_output:
+            fail(f"{rel(post_hook_path)} did not propagate the invalid untracked path")
+
     lifecycle_hook_path = root / "docs/00.agent-governance/hooks/lifecycle-guard.sh"
     lifecycle_selftest_env = {
         **hook_env,
@@ -3599,30 +3823,23 @@ if os.environ.get("HY_HOME_K8S_SKIP_HOOK_SIMULATION") != "1":
 
 claude_agents_dir = root / ".claude/agents"
 codex_agents_dir = root / ".codex/agents"
-gemini_agents_dir = root / ".agents/agents"
+local_agents_dir = root / ".agents/agents"
 if claude_agents_dir.is_symlink():
     fail(".claude/agents must be a real Claude-specific directory, not a symlink")
 elif not claude_agents_dir.is_dir():
     fail(".claude/agents must be a real Claude-specific directory")
 claude_agents = {path.stem: path for path in sorted(claude_agents_dir.glob("*.md"))}
 codex_agents = {path.stem: path for path in sorted(codex_agents_dir.glob("*.toml"))}
-gemini_agents = {path.stem: path for path in sorted(gemini_agents_dir.glob("*.md"))}
+local_agents = {path.stem: path for path in sorted(local_agents_dir.glob("*.md"))}
 for stem in sorted(set(claude_agents) - set(codex_agents)):
     fail(f"missing Codex agent adapter for .claude/agents/{stem}.md")
 for stem in sorted(set(codex_agents) - set(claude_agents)):
     fail(f"Codex agent adapter has no Claude peer: .codex/agents/{stem}.toml")
-for stem in sorted(set(claude_agents) - set(gemini_agents)):
-    fail(f"missing Gemini agent adapter for .claude/agents/{stem}.md")
-for stem in sorted(set(gemini_agents) - set(claude_agents)):
-    fail(f"Gemini agent adapter has no Claude peer: .agents/agents/{stem}.md")
+for stem in sorted(set(claude_agents) - set(local_agents)):
+    fail(f"missing local/Antigravity agent adapter for .claude/agents/{stem}.md")
+for stem in sorted(set(local_agents) - set(claude_agents)):
+    fail(f"local/Antigravity agent adapter has no Claude peer: .agents/agents/{stem}.md")
 
-runtime_contract_phrases = [
-    "## Runtime Bootstrap",
-    "bootstrap -> preflight -> persona -> scope -> provider -> progress -> postflight",
-    "## Guardrails",
-    "## Handoff / Escalation",
-    "postflight-checklist.md",
-]
 expected_codex_agent_models = {
     "supervisor": ("gpt-5.5", "xhigh"),
     "code-reviewer": ("gpt-5.3-codex", "high"),
@@ -3630,6 +3847,8 @@ expected_codex_agent_models = {
     "gitops-reviewer": ("gpt-5.3-codex", "high"),
     "incident-responder": ("gpt-5.3-codex", "high"),
     "k8s-implementer": ("gpt-5.3-codex", "high"),
+    "network-reviewer": ("gpt-5.3-codex", "high"),
+    "observability-reviewer": ("gpt-5.3-codex", "high"),
     "security-auditor": ("gpt-5.3-codex", "high"),
     "wiki-curator": ("gpt-5.3-codex", "medium"),
 }
@@ -3640,6 +3859,8 @@ expected_claude_agent_models = {
     "gitops-reviewer": "sonnet 4.6",
     "incident-responder": "sonnet 4.6",
     "k8s-implementer": "sonnet 4.6",
+    "network-reviewer": "sonnet 4.6",
+    "observability-reviewer": "sonnet 4.6",
     "security-auditor": "sonnet 4.6",
     "wiki-curator": "sonnet 4.6",
 }
@@ -3650,8 +3871,14 @@ expected_claude_agent_tools = {
     "gitops-reviewer": "Read, Grep, Glob, Bash",
     "incident-responder": "Read, Grep, Glob, Bash",
     "k8s-implementer": "Read, Write, Edit, Grep, Glob, Bash",
+    "network-reviewer": "Read, Grep, Glob, Bash",
+    "observability-reviewer": "Read, Grep, Glob, Bash",
     "security-auditor": "Read, Grep, Glob, Bash",
     "wiki-curator": "Read, Write, Edit, Grep, Glob, Bash",
+}
+expected_local_agent_models = {
+    stem: "Gemini 3.1 Pro" if stem == "supervisor" else "Gemini 3.5 Flash"
+    for stem in expected_claude_agent_models
 }
 for stem, claude_path in sorted(claude_agents.items()):
     claude_text = read_text(claude_path)
@@ -3664,11 +3891,8 @@ for stem, claude_path in sorted(claude_agents.items()):
     expected_claude_tools = expected_claude_agent_tools.get(stem)
     if expected_claude_tools and normalize_tools(claude_metadata.get("tools")) != expected_claude_tools:
         fail(f"{rel(claude_path)} tools must be {expected_claude_tools!r}")
-    for phrase in runtime_contract_phrases:
-        if phrase not in claude_text:
-            fail(f"{rel(claude_path)} missing runtime contract phrase: {phrase}")
-
     codex_path = codex_agents.get(stem)
+    local_path = local_agents.get(stem)
     if not codex_path:
         continue
     codex_text = read_text(codex_path)
@@ -3686,21 +3910,31 @@ for stem, claude_path in sorted(claude_agents.items()):
             fail(f"{rel(codex_path)} model must be {expected_model!r}")
         if codex_data.get("model_reasoning_effort") != expected_effort:
             fail(f"{rel(codex_path)} model_reasoning_effort must be {expected_effort!r}")
-    for phrase in runtime_contract_phrases:
-        if phrase not in codex_text:
-            fail(f"{rel(codex_path)} missing runtime contract phrase: {phrase}")
-    if extract_scope_imports(claude_text) != extract_scope_imports(codex_text):
-        fail(f"scope import mismatch between {rel(claude_path)} and {rel(codex_path)}")
-
-    if stem == "wiki-curator":
-        for phrase in [
-            "canonical owners without duplicating policy",
-            "Do not create vector stores",
-            "Target LLM Wiki path or generator command",
-            "Keep policy and procedure changes in their canonical owner files",
-        ]:
-            if phrase not in claude_text or phrase not in codex_text:
-                fail(f"wiki-curator mirror missing core guardrail phrase: {phrase}")
+    if not local_path:
+        continue
+    local_text = read_text(local_path)
+    local_metadata = load_markdown_frontmatter(local_path)
+    if local_metadata.get("name") != stem:
+        fail(f"{rel(local_path)} name must match file stem: {stem}")
+    expected_local_model = expected_local_agent_models.get(stem)
+    if local_metadata.get("model") != expected_local_model:
+        fail(
+            f"{rel(local_path)} local/Antigravity adapter model label must be "
+            f"{expected_local_model!r}"
+        )
+    adapter_scope_imports = {
+        "claude": extract_scope_imports(claude_text),
+        "codex": extract_scope_imports(codex_text),
+        "local": extract_scope_imports(local_text),
+    }
+    if len({tuple(imports) for imports in adapter_scope_imports.values()}) != 1:
+        fail(
+            f"scope import mismatch for role {stem}: "
+            + ", ".join(
+                f"{surface}={imports!r}"
+                for surface, imports in sorted(adapter_scope_imports.items())
+            )
+        )
 
 harness_catalog_path = root / "docs/00.agent-governance/harness-catalog.md"
 harness_catalog_text = read_text(harness_catalog_path)
@@ -3731,7 +3965,10 @@ for script in script_paths:
         if pattern.search(script_text):
             fail(f"{rel(script)} contains a hardcoded absolute machine path")
 
-script_inventory_rows = markdown_table_after_heading(scripts_readme, "## Script Inventory")
+script_inventory_rows = markdown_table_after_heading(
+    scripts_readme,
+    profiled_readme_table_headings("Script Inventory"),
+)
 expected_script_inventory_header = ["스크립트", "결정", "보존 근거", "명령·문서 표면", "목적"]
 allowed_script_decisions = {"Keep", "Delete candidate", "Consolidation candidate", "Deferred"}
 if len(script_inventory_rows) < 2:
@@ -3777,7 +4014,10 @@ else:
     for script_name in sorted(set(indexed_scripts) - script_names):
         fail(f"scripts/README.md Script Inventory references missing script: {script_name}")
 
-script_classification_rows = markdown_table_after_heading(scripts_readme, "## Script Classification Matrix")
+script_classification_rows = markdown_table_after_heading(
+    scripts_readme,
+    profiled_readme_table_headings("Script Classification Matrix"),
+)
 expected_script_classification_header = ["스크립트", "분류", "삭제 후보", "통합 후보", "근거"]
 expected_script_classifications = {
     "validate-repo-quality-gates.sh": "operations-critical/reusable",
@@ -3887,7 +4127,10 @@ for exclusion in expected_kube_linter_exclusions:
     if len(rationale) < 12 or "TODO" in rationale or "TBD" in rationale:
         fail(f".kube-linter.yaml exclusion rationale is too weak: {exclusion}")
 
-kube_linter_rows = markdown_table_after_heading(scripts_readme, "## Kube-linter Exclusion Matrix")
+kube_linter_rows = markdown_table_after_heading(
+    scripts_readme,
+    profiled_readme_table_headings("Kube-linter Exclusion Matrix"),
+)
 expected_kube_linter_header = ["Excluded check", "Current rationale", "Boundary", "Follow-up"]
 if len(kube_linter_rows) < 2:
     fail("scripts/README.md Kube-linter Exclusion Matrix must contain a header and exclusion rows")
@@ -3962,7 +4205,10 @@ expected_gitops_service_areas = (
     + [f"platform/{path.name}" for path in sorted((gitops_dir / "platform").iterdir()) if path.is_dir()]
     + [f"workloads/{path.name}" for path in sorted((gitops_dir / "workloads").iterdir()) if path.is_dir()]
 )
-gitops_service_rows = markdown_table_after_heading(gitops_readme, "## Service Coverage Matrix")
+gitops_service_rows = markdown_table_after_heading(
+    gitops_readme,
+    profiled_readme_table_headings("Service Coverage Matrix"),
+)
 if len(gitops_service_rows) < 2:
     fail("gitops/README.md Service Coverage Matrix must contain a header and service rows")
 elif gitops_service_rows[0] != expected_gitops_service_header:
@@ -4033,7 +4279,7 @@ expected_external_contracts = [
 ]
 external_contract_rows = markdown_table_after_heading(
     gitops_readme,
-    "## External Service Contract Matrix",
+    profiled_readme_table_headings("External Service Contract Matrix"),
 )
 if len(external_contract_rows) < 2:
     fail("gitops/README.md External Service Contract Matrix must contain a header and contract rows")
@@ -4172,7 +4418,7 @@ expected_secret_responsibilities = [
 ]
 secret_responsibility_rows = markdown_table_after_heading(
     gitops_readme,
-    "## Secret Management Responsibility Matrix",
+    profiled_readme_table_headings("Secret Management Responsibility Matrix"),
 )
 if len(secret_responsibility_rows) < 2:
     fail("gitops/README.md Secret Management Responsibility Matrix must contain a header and responsibility rows")
@@ -4334,7 +4580,10 @@ expected_workload_header = [
 expected_workloads = [
     path.name for path in sorted((gitops_dir / "workloads").iterdir()) if path.is_dir()
 ]
-workload_rows = markdown_table_after_heading(workloads_readme, "## Workload Coverage Matrix")
+workload_rows = markdown_table_after_heading(
+    workloads_readme,
+    profiled_readme_table_headings("Workload Coverage Matrix"),
+)
 if len(workload_rows) < 2:
     fail("gitops/workloads/README.md Workload Coverage Matrix must contain a header and workload rows")
 elif workload_rows[0] != expected_workload_header:
@@ -4507,7 +4756,10 @@ expected_allowlist_surfaces = [
     "apps|policy namespaceResourceWhitelist",
     "platform|platform AppProject allow-lists",
 ]
-allowlist_rows = markdown_table_after_heading(gitops_readme, "## AppProject Allow-list Rationale Matrix")
+allowlist_rows = markdown_table_after_heading(
+    gitops_readme,
+    profiled_readme_table_headings("AppProject Allow-list Rationale Matrix"),
+)
 if len(allowlist_rows) < 2:
     fail("gitops/README.md AppProject Allow-list Rationale Matrix must contain a header and allow-list rows")
 elif allowlist_rows[0] != expected_allowlist_header:
@@ -4602,7 +4854,10 @@ expected_workload_policy_surfaces = [
     "gitops/platform/*",
     "examples/sample-app/*",
 ]
-workload_policy_rows = markdown_table_after_heading(gitops_readme, "## Workload Image and Kind Policy Matrix")
+workload_policy_rows = markdown_table_after_heading(
+    gitops_readme,
+    profiled_readme_table_headings("Workload Image and Kind Policy Matrix"),
+)
 if len(workload_policy_rows) < 2:
     fail("gitops/README.md Workload Image and Kind Policy Matrix must contain a header and policy rows")
 elif workload_policy_rows[0] != expected_workload_policy_header:
@@ -4777,7 +5032,10 @@ expected_namespace_ownership_surfaces = [
     "apps ApplicationSet",
     "platform root Applications",
 ]
-namespace_ownership_rows = markdown_table_after_heading(gitops_readme, "## Namespace Ownership Matrix")
+namespace_ownership_rows = markdown_table_after_heading(
+    gitops_readme,
+    profiled_readme_table_headings("Namespace Ownership Matrix"),
+)
 if len(namespace_ownership_rows) < 2:
     fail("gitops/README.md Namespace Ownership Matrix must contain a header and ownership rows")
 elif namespace_ownership_rows[0] != expected_namespace_ownership_header:
@@ -4888,7 +5146,7 @@ expected_infrastructure_coverage_areas = [
 ]
 infrastructure_coverage_rows = markdown_table_after_heading(
     infrastructure_readme,
-    "## Infrastructure Coverage Matrix",
+    profiled_readme_table_headings("Infrastructure Coverage Matrix"),
 )
 if len(infrastructure_coverage_rows) < 2:
     fail("infrastructure/README.md Infrastructure Coverage Matrix must contain a header and coverage rows")
@@ -4952,7 +5210,7 @@ else:
 
 wsl2_prerequisite_rows = markdown_table_after_heading(
     infrastructure_readme,
-    "## WSL2 Runtime Prerequisite Matrix",
+    profiled_readme_table_headings("WSL2 Runtime Prerequisite Matrix"),
 )
 expected_wsl2_prerequisite_header = [
     "Prerequisite",
@@ -5041,7 +5299,7 @@ else:
 
 bootstrap_boundary_rows = markdown_table_after_heading(
     infrastructure_readme,
-    "## Bootstrap Boundary Matrix",
+    profiled_readme_table_headings("Bootstrap Boundary Matrix"),
 )
 expected_bootstrap_boundary_header = [
     "Boundary",
@@ -5189,7 +5447,7 @@ for script in infrastructure_shell_paths:
 
 infrastructure_test_rows = markdown_table_after_heading(
     infrastructure_readme,
-    "## Infrastructure Test Inventory",
+    profiled_readme_table_headings("Infrastructure Test Inventory"),
 )
 expected_infra_test_header = [
     "Test script",
@@ -5295,7 +5553,10 @@ for phrase in [
 ]:
     if phrase not in normalized_traefik_readme:
         fail(f"traefik/README.md missing external gateway/serverlb boundary phrase: {phrase}")
-traefik_rows = markdown_table_after_heading(traefik_readme, "## Traefik Route Inventory")
+traefik_rows = markdown_table_after_heading(
+    traefik_readme,
+    profiled_readme_table_headings("Traefik Route Inventory"),
+)
 expected_traefik_header = ["Config", "Router host", "Backend URL", "Boundary", "Validation"]
 traefik_configs = sorted(traefik_dir.glob("*.yaml"))
 traefik_config_names = {path.name for path in traefik_configs}

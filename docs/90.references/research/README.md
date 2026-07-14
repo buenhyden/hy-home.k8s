@@ -18,7 +18,7 @@ deployment procedure, live cluster readiness, or provider contracts. Those stay
 with their canonical owners in `docs/00.agent-governance/`, `docs/03.specs/`,
 `docs/04.execution/`, and `docs/05.operations/`.
 
-## Audience
+### Collection Readers
 
 이 README의 주요 독자:
 
@@ -45,7 +45,7 @@ with their canonical owners in `docs/00.agent-governance/`, `docs/03.specs/`,
 - Operational runbooks, release gates, deployment approvals, or incident response
 - Generated or parallel `docs/superpowers/**` content
 
-## Structure
+## Item Index
 
 ```text
 research/
@@ -66,38 +66,13 @@ research/
 │   ├── spec-sdlc-ci-qa-formatting.md
 │   ├── kubernetes-infrastructure-security.md
 │   ├── automation-pipeline-workflow-qa.md
+│   ├── document-type-format-and-evidence-contract.md
+│   ├── document-migration-evidence-ledger.md
 │   └── ai-agents-roster-and-gap-analysis.md
 └── README.md                            # This file
 ```
 
-Dated research packs must use `YYYY-MM-DD-<sdlc_key>/` folders. Reference files
-inside a pack use semantic topic names only; do not use `part-*.md` or numeric
-order-prefix filenames for current reports.
-
-## How to Work in This Area
-
-1. Read the parent spec, plan, and task before adding or changing research pack material.
-2. Create authored reference documents with [reference.template.md](../../99.templates/templates/common/reference.template.md).
-3. Keep source claims factual, dated, and explicitly bounded by `Source checked`, `Sources`, and `Review and Freshness`.
-4. Prefer official documentation and repo-backed evidence over market scan material.
-5. Label market findings as non-authoritative, and do not use them to override official or repo-backed sources.
-6. Route active policy, implementation contracts, runbooks, and task evidence back to their canonical owners instead of redefining them here.
-7. Update this README, the parent [90.references README](../README.md), and the task record when research pack structure or validation evidence changes.
-
-## Link Basis
-
-이 README의 링크 기준 위치는 `docs/90.references/research/`다.
-
-- Same-folder research references use `./` only after the target file exists.
-- Dated pack references use
-  `./2026-07-04-wer/<filename>.md` or `./2026-07-07-wer/<filename>.md` after the
-  target file exists.
-- Parent reference routing uses `../README.md`.
-- Canonical owner stages use `../../00.agent-governance/`, `../../03.specs/`, `../../04.execution/`, and `../../05.operations/`.
-- Root-level repository sources use `../../../<path>` from authored research reference files.
-- Optional or planned target paths remain code literals until the target exists.
-
-## Research Pack Index
+### Research Pack Index
 
 | Material                                                                                        | Status      | Role                                                                                      | Authority Boundary                                                                          |
 | ----------------------------------------------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
@@ -117,9 +92,42 @@ order-prefix filenames for current reports.
 | [spec-sdlc-ci-qa-formatting.md](./2026-07-07-wer/spec-sdlc-ci-qa-formatting.md)                 | Included    | Spec, SDLC, CI, QA, and formatting reference (2026-07-07)                                  | Summarizes reference material; active gates stay with canonical owners                      |
 | [kubernetes-infrastructure-security.md](./2026-07-07-wer/kubernetes-infrastructure-security.md) | Included    | Kubernetes, infrastructure, GitOps, secrets, and security reference (2026-07-07)            | Descriptive reference only; no live checks or active security policy changes                |
 | [automation-pipeline-workflow-qa.md](./2026-07-07-wer/automation-pipeline-workflow-qa.md)       | Included    | Automation, pipeline, workflow, CI job graph, validation-loop, and QA evidence (2026-07-07) | Descriptive reference only; no CI workflow or runtime changes                               |
+| [document-type-format-and-evidence-contract.md](./2026-07-07-wer/document-type-format-and-evidence-contract.md) | Included | Document type format and evidence contract (2026-07-12) | Dated format evidence only; route, frontmatter, lifecycle, and enforcement authority remain with canonical Stage 00/99 owners |
+| [document-migration-evidence-ledger.md](./2026-07-07-wer/document-migration-evidence-ledger.md) | Included | Durable document-migration disposition and evidence ledger | Migration evidence owner only; does not replace source facts, accepted decisions, provider contracts, or runtime state |
 | [ai-agents-roster-and-gap-analysis.md](./2026-07-07-wer/ai-agents-roster-and-gap-analysis.md)   | Included    | Workspace agent roster, agency-agents comparison, and gap-closure (2026-07-07)              | Descriptive reference only; roster and tier policy stay with Stage 00 owners                |
 
-## Source Priority
+`Current pack`, `Historical`, `Included`, and `Index` are collection roles,
+not report lifecycle values. The Current pointer is mirrored from the
+registry; report lifecycle is owned by the selected pack's `## Report Index`.
+
+Dated research packs must use `YYYY-MM-DD-<sdlc_key>/` folders. Reference files
+inside a pack use semantic topic names only; do not use `part-*.md` or numeric
+order-prefix filenames for current reports.
+
+## Add and Find
+
+1. Read the parent spec, plan, and task before adding or changing research pack material.
+2. Create authored reference documents with [reference.template.md](../../99.templates/templates/common/reference.template.md).
+3. Keep source claims factual, dated, and explicitly bounded by `Source checked`, `Sources`, and `Review and Freshness`.
+4. Prefer official documentation and repo-backed evidence over market scan material.
+5. Label market findings as non-authoritative, and do not use them to override official or repo-backed sources.
+6. Route active policy, implementation contracts, runbooks, and task evidence back to their canonical owners instead of redefining them here.
+7. Update this README, the parent [90.references README](../README.md), and the task record when research pack structure or validation evidence changes.
+
+### Relative Link Rules
+
+이 README의 링크 기준 위치는 `docs/90.references/research/`다.
+
+- Same-folder research references use `./` only after the target file exists.
+- Dated pack references use
+  `./2026-07-04-wer/<filename>.md` or `./2026-07-07-wer/<filename>.md` after the
+  target file exists.
+- Parent reference routing uses `../README.md`.
+- Canonical owner stages use `../../00.agent-governance/`, `../../03.specs/`, `../../04.execution/`, and `../../05.operations/`.
+- Root-level repository sources use `../../../<path>` from authored research reference files.
+- Optional or planned target paths remain code literals until the target exists.
+
+### Source Priority
 
 Use the following priority order when research sources disagree:
 

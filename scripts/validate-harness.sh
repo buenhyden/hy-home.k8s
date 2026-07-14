@@ -12,6 +12,9 @@ cd "$ROOT_DIR"
 echo "==> Repository quality gates"
 bash scripts/validate-repo-quality-gates.sh .
 
+echo "==> GitOps object identity and deletion set"
+python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD
+
 echo "==> GitOps structure"
 bash scripts/validate-gitops-structure.sh
 
@@ -20,6 +23,10 @@ bash scripts/validate-k8s-manifests.sh .
 
 echo "==> Secret handling"
 bash scripts/check-secret-handling.sh .
+
+echo "==> Vault and ESO contracts"
+python3 scripts/validate-vault-eso-contracts.py --self-test
+python3 scripts/validate-vault-eso-contracts.py --root .
 
 echo "==> Policy gates"
 bash scripts/validate-policy-gates.sh .

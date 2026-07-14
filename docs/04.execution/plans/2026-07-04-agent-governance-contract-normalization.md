@@ -3,16 +3,17 @@ title: 'Agent Governance Contract Normalization Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-04
+updated: 2026-07-14
 ---
 
 # Agent Governance Contract Normalization Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Normalize the repository's AI-agent governance, provider adapter, and
-QA/CI enforcement surfaces so Claude, Codex, and Gemini use one canonical
-Stage 00 contract with provider-native projections.
+**Goal:** Normalize the repository's AI-agent governance, tracked adapter, and
+QA/CI enforcement surfaces so Claude-native, Codex-native, and
+local/Antigravity projections use one canonical Stage 00 contract without
+claiming Gemini CLI native support.
 
 **Architecture:** This plan follows a contract-first sequence. First capture
 baseline evidence and task tracking, then normalize Stage 00 owner language,
@@ -32,6 +33,15 @@ This document defines the implementation plan for
 the approved spec into small commit-sized work units with explicit files,
 checks, and handoff evidence.
 
+**2026-07-14 terminology correction:** The completed steps, commands, counts,
+and commit evidence below remain historical execution evidence. The current
+contract classifies `.claude/agents/*.md` and `.codex/agents/*.toml` as native
+role files; `.claude/CLAUDE.md` and `.codex/CODEX.md` as repository-local
+baselines; `.agents/**` as shared/local Antigravity assets; `.codex/hooks.json`
+and `.agents/hooks.json` as context/validation wiring; and Gemini CLI
+`.gemini/**` as absent/`DEFER`. Historical `Gemini adapter` labels below refer
+only to the then-tracked local projection and are not a current native claim.
+
 The work is documentation and validation-contract heavy. It still uses the
 repository's TDD spirit by making every contract change measurable through
 focused scans, parser checks, repository quality gates, and final harness
@@ -42,15 +52,17 @@ validation.
 The repository already has a strong Stage 00 governance model:
 
 - Root provider shims route to canonical governance and runtime baselines.
-- `.agents/` owns shared provider-neutral assets.
-- `.claude/**`, `.codex/**`, and `.agents/**` expose provider-native runtime
+- `.agents/` owns shared provider-neutral assets and local/Antigravity
   adapters.
+- `.claude/agents/*.md` and `.codex/agents/*.toml` expose native role files;
+  their sibling baseline and wiring files retain narrower repository roles.
 - `.github/workflows/ci.yml`, shared hooks, and
   `scripts/validate-repo-quality-gates.sh` provide repo-static feedback loops.
 
 The approved spec identifies the remaining cleanup direction: role parity
-should be expressed in provider-native syntax, not by forcing the same metadata
-keys onto every provider. The plan must also keep `.github` Markdown files
+should be expressed in surface-specific native or repository-local syntax, not
+by forcing the same metadata keys onto every adapter surface. The plan must also
+keep `.github` Markdown files
 frontmatter-free, root shims thin, and validation evidence explicit.
 
 ## Goals & In-Scope
@@ -60,8 +72,9 @@ frontmatter-free, root shims thin, and validation evidence explicit.
     surfaces.
   - Normalize Stage 00 contracts for provider-aware parity, harness engineering,
     loop engineering, subagents, QA, CI/CD, protected surfaces, and memory.
-  - Align Claude, Codex, and Gemini adapters with the canonical Stage 00
-    contract while preserving native syntax and runtime boundaries.
+  - Align Claude-native, Codex-native, and local/Antigravity adapters with the
+    canonical Stage 00 contract while preserving surface syntax and runtime
+    boundaries.
   - Align `.github` control surfaces and validators with the normalized
     contract.
   - Record task evidence and reusable memory.
@@ -99,7 +112,7 @@ frontmatter-free, root shims thin, and validation evidence explicit.
 | PLN-004 | Align GitHub, QA, CI/CD, and protected-surface enforcement | `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/SECURITY.md`, `.github/workflows/ci.yml`, `docs/00.agent-governance/rules/quality-standards.md`, `docs/00.agent-governance/rules/approval-boundaries.md`, `scripts/validate-repo-quality-gates.sh` | VAL-AGC-004, VAL-AGC-005 | GitHub Markdown remains frontmatter-free; workflow YAML parses; gate/harness validation passes |
 | PLN-005 | Final review, evidence closure, and branch-readiness handoff | `docs/04.execution/plans/2026-07-04-agent-governance-contract-normalization.md`, `docs/04.execution/tasks/2026-07-04-agent-governance-contract-normalization.md`, `docs/04.execution/plans/README.md`, `docs/04.execution/tasks/README.md`, `docs/00.agent-governance/memory/progress.md` | VAL-AGC-005, VAL-AGC-006 | Full validation bundle passes; final reviewer finds no blocking issue |
 
-## Detailed Tasks
+### Detailed Tasks
 
 > [!NOTE]
 > The unchecked items below preserve the approved historical execution
@@ -265,12 +278,12 @@ language:
 
 ```markdown
 Claude Markdown agent files must contain frontmatter with `name`,
-`description`, `model`, and least-privilege `tools`. Gemini Markdown agent
-files under `.agents/agents/*.md` must contain `name`, `description`, and
+`description`, `model`, and least-privilege `tools`. Local/Antigravity Markdown
+agent files under `.agents/agents/*.md` must contain `name`, `description`, and
 `model`, and must preserve the same role, scope imports, guardrails, handoff,
 and postflight contract as the Claude source. They do not require Claude-style
-`tools:` frontmatter unless a future approved Gemini adapter change adds a
-verified native tool-scoping field. Codex agent files use TOML and must declare
+`tools:` frontmatter unless a future approved local-adapter change adds a
+verified tool-scoping field. Codex agent files use TOML and must declare
 `name`, `description`, `developer_instructions`, `model`, and
 `model_reasoning_effort`.
 ```
@@ -283,12 +296,12 @@ providers, while native metadata keys differ.
 Update `subagent-protocol.md` so dispatch rules say:
 
 ```markdown
-Use the provider-native delegated-agent mechanism for the current runtime:
-Claude uses the Task tool or explicit agent invocation, Codex uses explicit
-subagent orchestration when requested by the user, and Gemini uses its
-available agent registry or project-local adapter workflow where supported.
-Do not embed full role definitions inline when a provider-local agent file
-exists.
+Use the verified delegated-agent mechanism for the current runtime: Claude uses
+the Task tool or explicit agent invocation; Codex uses explicit subagent
+orchestration when requested by the user; a compatible local/Antigravity
+runtime may use the `.agents/**` adapter workflow. Gemini CLI native delegation
+remains `DEFER` while `.gemini/agents/**` is absent. Do not embed full role
+definitions inline when a verified runtime/local role file exists.
 ```
 
 Expected: the protocol no longer claims that every provider dispatches through
@@ -301,11 +314,11 @@ states:
 
 - `.agents/` is the provider-neutral shared asset owner for skills,
   workflows, and output styles.
-- `.agents/agents/*.md`, `.claude/agents/*.md`, and `.codex/agents/*.toml`
-  are provider-native role adapters.
+- `.claude/agents/*.md` and `.codex/agents/*.toml` are native role definitions;
+  `.agents/agents/*.md` is a local/Antigravity role-adapter surface.
 - Tool and permission syntax is provider-specific.
-- Hook JSON for Codex and Gemini is context/validation wiring, not a native
-  permission gate equivalent to Claude settings.
+- `.codex/hooks.json` and local `.agents/hooks.json` are context/validation
+  wiring, not native permission gates equivalent to Claude settings.
 
 Expected: no table row implies that all providers share identical frontmatter
 keys.
@@ -319,9 +332,9 @@ Matrix`, `QA and CI/CD Dimensions`, and `Consistency Rules` so they state:
 - Claude has native settings/hooks/subagent/tool-scoping surfaces.
 - Codex has official `AGENTS.md`, config, and explicit subagent orchestration,
   with `.codex/hooks.json` as repo-local context/validation wiring.
-- Gemini has `GEMINI.md` hierarchical memory and agents command support, while
-  this repository's `.agents/**` remains the tracked Antigravity/Gemini
-  adapter baseline.
+- Gemini CLI documentation describes hierarchical memory and agents commands,
+  while this repository's `.agents/**` remains a local/Antigravity adapter
+  baseline and `.gemini/**` remains absent/`DEFER`.
 - CI/CD remains provider-agnostic and owned by GitHub Actions plus local
   validators.
 
@@ -336,8 +349,8 @@ phrases:
 - Claude: settings, hooks, subagents, native permissions, and `tools:`.
 - Codex: `AGENTS.md`, config, explicit subagents, and sandbox/approval
   boundaries.
-- Gemini: `GEMINI.md` hierarchical memory, agents command, and repo-local
-  `.agents/**` adapter distinction.
+- Gemini: documented `GEMINI.md`/agent capabilities, the repo-local
+  `.agents/**` adapter distinction, and the absent `.gemini/**` native gap.
 
 Expected: provider notes remain concise and do not duplicate the harness
 catalog's full matrices.
@@ -439,8 +452,9 @@ Ensure the root shims use equivalent shape:
   `.codex/CODEX.md`.
 - `CLAUDE.md`: Claude provider shim; routes to `providers/claude.md` and
   `.claude/CLAUDE.md`.
-- `GEMINI.md`: Gemini provider shim; routes to `providers/gemini.md` and
-  `.agents/GEMINI.md`.
+- `GEMINI.md`: local/Antigravity compatibility shim; routes to
+  `providers/gemini.md` and `.agents/GEMINI.md` while Gemini CLI native
+  `.gemini/**` remains absent/`DEFER`.
 
 Expected: no root shim imports another provider's root shim.
 
@@ -458,8 +472,9 @@ contains the same conceptual sections:
 - Validation and Tooling
 - Relationship to Gateway Files
 
-Expected: provider-specific sections describe native behavior only; full
-policy remains in Stage 00.
+Expected: provider-specific sections distinguish native behavior from
+repository-local baseline or compatibility behavior; full policy remains in
+Stage 00.
 
 - [ ] **Step 4: Align agent role files**
 
@@ -488,7 +503,7 @@ gemini_only= []
 codex_only= []
 ```
 
-- [ ] **Step 5: Align provider-native metadata**
+- [ ] **Step 5: Align surface-specific role metadata**
 
 Run:
 
@@ -501,8 +516,10 @@ Expected:
 - Claude worker agents use `model: sonnet 4.6`; supervisor uses
   `model: opus 4.8`.
 - Claude agent files contain the expected `tools:` line.
-- Gemini worker agents use `model: Gemini 3.5 Flash`; supervisor uses
-  `model: Gemini 3.1 Pro`.
+- Historical local/Antigravity worker adapter declarations use
+  `model: Gemini 3.5 Flash`; the supervisor declaration uses
+  `model: Gemini 3.1 Pro`. These recorded strings do not prove Gemini CLI
+  native discovery or model resolution.
 - Codex worker agents use `model = "gpt-5.3-codex"`; supervisor uses
   `model = "gpt-5.5"`.
 - Codex `model_reasoning_effort` is `xhigh`, `high`, or `medium` according to
@@ -516,7 +533,8 @@ Keep these properties:
 - All three point to shared scripts under
   `docs/00.agent-governance/hooks/*.sh`.
 - Claude settings retain `permissions.allow` and `permissions.deny`.
-- Codex and Gemini hook JSON files do not gain Claude-style permissions.
+- Codex and local/Antigravity hook JSON files do not gain Claude-style
+  permissions.
 - Hook commands use provider project-dir fallbacks already present in the JSON.
 
 Expected: `jq empty` succeeds and the repo-quality gate hook simulation passes.
@@ -654,7 +672,8 @@ that can be expressed without network, live cluster, or secret access. Approved
 check classes for this task are:
 
 - GitHub-native Markdown remains frontmatter-free.
-- Provider role files remain provider-native.
+- Claude/Codex native role files and local/Antigravity role files retain their
+  declared surface-specific contracts.
 - Hook JSON files parse and include shared hook script paths.
 - Root shims retain required canonical links.
 - PR template retains branch-prefix and coverage wording.
@@ -774,9 +793,10 @@ rg -n "docs/superpowers|deprecated owner value|permission gate equivalent|Task t
 ```
 
 Expected: matches are either absent or intentionally classified in historical
-progress/task evidence. Active policy text must not claim that Codex/Gemini
-hook JSON is a Claude permission gate equivalent or that every provider must
-use Claude-style `tools:` frontmatter.
+progress/task evidence. Active policy text must not claim that
+`.codex/hooks.json` or local `.agents/hooks.json` is a Claude permission gate
+equivalent or that every tracked adapter must use Claude-style `tools:`
+frontmatter.
 
 - [ ] **Step 3: Request final review**
 
@@ -848,7 +868,7 @@ plan, task evidence, governance, adapters, CI/QA, and final validation.
 | Historical progress entries create noisy scans | Low | Classify `docs/00.agent-governance/memory/progress.md` as historical evidence in scan results |
 | GitHub Markdown receives frontmatter by mistake | Medium | Keep `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md` frontmatter-free and validate with the existing gate |
 
-## Agent Rollout & Evaluation Gates
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Repository static gates in this plan are mandatory
   before handoff.
@@ -880,7 +900,7 @@ plan, task evidence, governance, adapters, CI/QA, and final validation.
 - [x] Progress ledger updated
 - [x] Logical commits created for each task unit
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/015-agent-governance-contract-normalization/spec.md](../../03.specs/015-agent-governance-contract-normalization/spec.md)
 - **Task**: [../tasks/2026-07-04-agent-governance-contract-normalization.md](../tasks/2026-07-04-agent-governance-contract-normalization.md)

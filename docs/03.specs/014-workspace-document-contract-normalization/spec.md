@@ -3,7 +3,7 @@ title: 'Workspace Document Contract Normalization Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Workspace Document Contract Normalization Technical Specification (Spec)
@@ -41,22 +41,6 @@ normalization for these surfaces:
 This spec does not own live Kubernetes, Argo CD, Vault, cloud, paid service,
 publishing, push, or merge actions. It also does not introduce a new document
 taxonomy outside the existing Stage 00 to Stage 99 model.
-
-## Related Inputs
-
-- **PRD**: No separate PRD exists. The user request in this Codex thread is the
-  upstream requirement and explicitly authorizes destructive document
-  normalization, contract and governance changes, external-source-backed
-  improvements, subagents, and logical-unit commits.
-- **ARD**: No separate ARD exists. The current architecture baseline is the
-  Stage 00 governance model and the Stage 99 template support contract set.
-- **Related ADRs**:
-  - [Stage 00 Canonical Adapter Model](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
-  - [Current Local GitOps Platform Contract](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
-- **Prior Specs**:
-  - [Template Contract Governance Migration](../011-template-contract-governance-migration/spec.md)
-  - [Template Governance Audit Enhancement](../012-template-governance-audit-enhancement/spec.md)
-  - [Workspace Document Governance Hardening](../013-workspace-document-governance-hardening/spec.md)
 
 ## Contracts
 
@@ -152,7 +136,7 @@ interface NormalizationFinding {
 }
 ```
 
-## API Contract (If Applicable)
+### API Contract
 
 No external API is introduced. Existing API contract templates remain in
 `docs/99.templates/templates/sdlc/specs/` and must stay aligned with official
@@ -165,7 +149,7 @@ OpenAPI, GraphQL, and Protocol Buffers specifications.
   - `docs/99.templates/templates/sdlc/specs/schema.template.graphql`
   - `docs/99.templates/templates/sdlc/specs/service.template.proto`
 
-## Agent Role & IO Contract (If Applicable)
+### Agent Role & IO Contract
 
 - **Agent Role**:
   - The controller uses subagent-driven development for implementation tasks.
@@ -186,7 +170,7 @@ OpenAPI, GraphQL, and Protocol Buffers specifications.
   - All six logical tasks complete with passing validation and independent
     review.
 
-## Tools & Tool Contract (If Applicable)
+### Tools & Tool Contract
 
 - **Tool List**:
   - `rg`, `rg --files`, `find`, `sed`, `git`, `bash`, `jq`, and repository
@@ -203,7 +187,7 @@ OpenAPI, GraphQL, and Protocol Buffers specifications.
     add a path-scoped allow-list with documented rationale.
   - If a task is too large, split it by document family before proceeding.
 
-## Prompt / Policy Contract (If Applicable)
+### Prompt / Policy Contract
 
 - **System / Instruction Contract**:
   - Follow Stage 00 governance and Stage 99 template support contracts.
@@ -221,7 +205,7 @@ OpenAPI, GraphQL, and Protocol Buffers specifications.
   - External-source claims include links and should be refreshed when official
     specifications or workflow behavior changes.
 
-## Memory & Context Strategy (If Applicable)
+### Memory & Context Strategy
 
 - **Short-term Context**:
   - Each subagent receives the specific task text, relevant path list,
@@ -233,7 +217,7 @@ OpenAPI, GraphQL, and Protocol Buffers specifications.
   - Historical progress and audit entries are evidence, not current rule
     sources, unless linked from active governance or support contracts.
 
-## Guardrails (If Applicable)
+### Guardrails
 
 - **Input Guardrails**:
   - Inspect current repository state before each task.
@@ -252,7 +236,7 @@ OpenAPI, GraphQL, and Protocol Buffers specifications.
   - Stop and ask if a document must be deleted rather than normalized and the
     deletion would remove unique historical evidence.
 
-## Evaluation (If Applicable)
+### Evaluation
 
 - **Eval Types**:
   - Contract parity checks.
@@ -359,23 +343,7 @@ bash scripts/validate-policy-gates.sh .
   - Every task receives spec compliance and code quality review, and the final
     branch review returns ready or all findings are remediated.
 
-## External Basis
-
-- [GitHub Actions documentation](https://docs.github.com/actions)
-- [GitHub Actions workflow syntax](https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions)
-- [SLSA provenance](https://slsa.dev/provenance)
-- [SLSA build provenance](https://slsa.dev/spec/draft/build-provenance)
-- [OpenSSF Scorecard](https://github.com/ossf/scorecard)
-- [CommonMark](https://commonmark.org/)
-- [YAML 1.2.2 Specification](https://yaml.org/spec/1.2.2/)
-- [OpenAPI Specification](https://spec.openapis.org/oas/)
-- [GraphQL Specification](https://spec.graphql.org/)
-- [Protocol Buffers proto3 Language Guide](https://protobuf.dev/programming-guides/proto3/)
-- [GitHub Spec Kit Documentation](https://github.github.com/spec-kit/)
-- [OWASP SAMM](https://owasp.org/www-project-samm/)
-- [Atlassian SDLC overview](https://www.atlassian.com/agile/software-development/sdlc)
-
-## Related Documents
+## Traceability
 
 - **PRD**: No separate PRD; upstream requirement is the approved user request in
   this thread.
@@ -395,3 +363,34 @@ bash scripts/validate-policy-gates.sh .
 - [Template Routing Contract](../../99.templates/support/template-routing.md)
 - [Frontmatter Schema](../../99.templates/support/frontmatter-schema.md)
 - **Completed evolution**: [011](../011-template-contract-governance-migration/spec.md) -> [012](../012-template-governance-audit-enhancement/spec.md) -> [013](../013-workspace-document-governance-hardening/spec.md) -> [014](./spec.md) -> [020](../020-workspace-contract-governance-normalization/spec.md) -> [021](../021-sdlc-lifecycle-contract/spec.md) -> [022](../022-control-cloud-doc-normalization/spec.md) -> [023](../023-stage03-04-repo-static-gap-closure/spec.md).
+### Related inputs
+
+- **PRD**: No separate PRD exists. The user request in this Codex thread is the
+  upstream requirement and explicitly authorizes destructive document
+  normalization, contract and governance changes, external-source-backed
+  improvements, subagents, and logical-unit commits.
+- **ARD**: No separate ARD exists. The current architecture baseline is the
+  Stage 00 governance model and the Stage 99 template support contract set.
+- **Related ADRs**:
+  - [Stage 00 Canonical Adapter Model](../../02.architecture/decisions/0013-stage-00-canonical-adapter-model.md)
+  - [Current Local GitOps Platform Contract](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
+- **Prior Specs**:
+  - [Template Contract Governance Migration](../011-template-contract-governance-migration/spec.md)
+  - [Template Governance Audit Enhancement](../012-template-governance-audit-enhancement/spec.md)
+  - [Workspace Document Governance Hardening](../013-workspace-document-governance-hardening/spec.md)
+
+### External reference basis
+
+- [GitHub Actions documentation](https://docs.github.com/actions)
+- [GitHub Actions workflow syntax](https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions)
+- [SLSA provenance](https://slsa.dev/provenance)
+- [SLSA build provenance](https://slsa.dev/spec/draft/build-provenance)
+- [OpenSSF Scorecard](https://github.com/ossf/scorecard)
+- [CommonMark](https://commonmark.org/)
+- [YAML 1.2.2 Specification](https://yaml.org/spec/1.2.2/)
+- [OpenAPI Specification](https://spec.openapis.org/oas/)
+- [GraphQL Specification](https://spec.graphql.org/)
+- [Protocol Buffers proto3 Language Guide](https://protobuf.dev/programming-guides/proto3/)
+- [GitHub Spec Kit Documentation](https://github.github.com/spec-kit/)
+- [OWASP SAMM](https://owasp.org/www-project-samm/)
+- [Atlassian SDLC overview](https://www.atlassian.com/agile/software-development/sdlc)

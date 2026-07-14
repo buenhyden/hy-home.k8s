@@ -1,0 +1,581 @@
+{
+  "schemaVersion": 1,
+  "owner": "Spec 030",
+  "growthAllowed": false,
+  "baselineDebtCounts": {
+    "profileRows": 20,
+    "legacyAliasDefinitions": 25,
+    "forbiddenResidueDefinitions": 26,
+    "baselinePathCount": 314,
+    "missingCanonicalPathCount": 89,
+    "forbiddenResiduePathCount": 158,
+    "forbiddenResidueOccurrences": 267
+  },
+  "canonicalFormCoverage": [
+    {
+      "profile": "sdlc/prd",
+      "form": "docs/99.templates/templates/sdlc/requirements/prd.template.md",
+      "frontmatterType": "sdlc/prd",
+      "requiredHeadings": [
+        "Overview",
+        "Vision",
+        "Problem Statement",
+        "Personas",
+        "Key Use Cases",
+        "Functional Requirements",
+        "Success / Acceptance Criteria",
+        "Scope and Non-goals",
+        "Risks, Dependencies, and Assumptions",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/ard",
+      "form": "docs/99.templates/templates/sdlc/architecture/ard.template.md",
+      "frontmatterType": "sdlc/ard",
+      "requiredHeadings": [
+        "Overview",
+        "Boundaries & Non-goals",
+        "Quality Attributes",
+        "System Overview & Context",
+        "Data Architecture",
+        "Infrastructure & Deployment",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/adr",
+      "form": "docs/99.templates/templates/sdlc/architecture/adr.template.md",
+      "frontmatterType": "sdlc/adr",
+      "requiredHeadings": [
+        "Overview",
+        "Context",
+        "Decision",
+        "Explicit Non-goals",
+        "Consequences",
+        "Alternatives",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/spec",
+      "form": "docs/99.templates/templates/sdlc/specs/spec.template.md",
+      "frontmatterType": "sdlc/spec",
+      "requiredHeadings": [
+        "Overview",
+        "Strategic Boundaries & Non-goals",
+        "Contracts",
+        "Core Design",
+        "Data Modeling & Storage Strategy",
+        "Interfaces & Data Structures",
+        "Edge Cases & Error Handling",
+        "Failure Modes & Fallback / Human Escalation",
+        "Verification Commands",
+        "Success Criteria & Verification Plan",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/api-spec",
+      "form": "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
+      "frontmatterType": "sdlc/api-spec",
+      "requiredHeadings": [
+        "Overview",
+        "Scope & Non-goals",
+        "API Style",
+        "Authentication & Authorization",
+        "Endpoint / Operation Catalog",
+        "Request / Response Schemas",
+        "Error Model",
+        "Data Contract Compatibility",
+        "Non-Functional Requirements",
+        "Machine-readable Contract Files",
+        "Verification",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/agent-design",
+      "form": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
+      "frontmatterType": "sdlc/agent-design",
+      "requiredHeadings": [
+        "Overview",
+        "Scope & Non-goals",
+        "Agent Role",
+        "Inputs / Outputs",
+        "Orchestration Model",
+        "Tools & Permissions",
+        "Prompt / Policy Contract",
+        "Context & Memory Strategy",
+        "Guardrails",
+        "Failure Modes & Fallback",
+        "Evaluation Plan",
+        "Observability",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/data-model",
+      "form": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
+      "frontmatterType": "sdlc/data-model",
+      "requiredHeadings": [
+        "Overview",
+        "Scope & Non-goals",
+        "Entities / Aggregates",
+        "Relationships",
+        "Schema / Structures",
+        "Validation & Integrity Rules",
+        "Storage Strategy",
+        "Privacy / Security",
+        "Migration & Compatibility",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/tests",
+      "form": "docs/99.templates/templates/sdlc/specs/tests.template.md",
+      "frontmatterType": "sdlc/tests",
+      "requiredHeadings": [
+        "Overview",
+        "Verification Goals",
+        "TDD Scope",
+        "Test Matrix",
+        "Contract & Integration Tests",
+        "Non-Functional Tests",
+        "Fixtures / Datasets",
+        "How to Run",
+        "Evidence & Reporting",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/plan",
+      "form": "docs/99.templates/templates/sdlc/execution/plan.template.md",
+      "frontmatterType": "sdlc/plan",
+      "requiredHeadings": [
+        "Overview",
+        "Context",
+        "Goals & In-Scope",
+        "Non-Goals & Out-of-Scope",
+        "Work Breakdown",
+        "Verification Plan",
+        "Risks & Mitigations",
+        "Completion Criteria",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/task",
+      "form": "docs/99.templates/templates/sdlc/execution/task.template.md",
+      "frontmatterType": "sdlc/task",
+      "requiredHeadings": [
+        "Overview",
+        "Inputs",
+        "Task Table",
+        "Approval and Safety Boundaries",
+        "Verification Summary",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/guide",
+      "form": "docs/99.templates/templates/sdlc/operations/guide.template.md",
+      "frontmatterType": "sdlc/guide",
+      "requiredHeadings": [
+        "Overview",
+        "Guide Type",
+        "Target Audience",
+        "Prerequisites",
+        "Step-by-step Instructions",
+        "Common Pitfalls",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/policy",
+      "form": "docs/99.templates/templates/sdlc/operations/policy.template.md",
+      "frontmatterType": "sdlc/policy",
+      "requiredHeadings": [
+        "Overview",
+        "Policy Scope",
+        "Applies To",
+        "Controls",
+        "Exceptions",
+        "Verification",
+        "Review Cadence",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/runbook",
+      "form": "docs/99.templates/templates/sdlc/operations/runbook.template.md",
+      "frontmatterType": "sdlc/runbook",
+      "requiredHeadings": [
+        "Overview",
+        "Runbook Type",
+        "When to Use",
+        "Procedure or Checklist",
+        "Verification Steps",
+        "Observability and Evidence Sources",
+        "Safe Rollback or Recovery Procedure",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/incident",
+      "form": "docs/99.templates/templates/sdlc/operations/incident.template.md",
+      "frontmatterType": "sdlc/incident",
+      "requiredHeadings": [
+        "Overview",
+        "Incident Metadata",
+        "Impact",
+        "Timeline",
+        "Response State",
+        "Evidence",
+        "Follow-up Actions",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "sdlc/postmortem",
+      "form": "docs/99.templates/templates/sdlc/operations/postmortem.template.md",
+      "frontmatterType": "sdlc/postmortem",
+      "requiredHeadings": [
+        "Overview",
+        "Incident Link and Impact Summary",
+        "Root Cause Analysis",
+        "Contributing Factors",
+        "What Went Well",
+        "What Went Wrong",
+        "Action Items",
+        "Prevention and Verification",
+        "Documentation Feedback Loop",
+        "Traceability"
+      ]
+    },
+    {
+      "profile": "content/reference",
+      "form": "docs/99.templates/templates/common/reference.template.md",
+      "frontmatterType": "content/reference",
+      "requiredHeadings": [
+        "Overview",
+        "Reference Type",
+        "Authority Boundary",
+        "Scope",
+        "Definitions / Facts",
+        "Sources",
+        "Review and Freshness",
+        "Related Documents"
+      ]
+    },
+    {
+      "profile": "content/archive-tombstone",
+      "form": "docs/99.templates/templates/common/archive-tombstone.template.md",
+      "frontmatterType": "content/archive-tombstone",
+      "requiredHeadings": [
+        "Overview",
+        "Original Document",
+        "Archive Decision",
+        "Current Replacement",
+        "Current Implementation Evidence",
+        "Archive Index",
+        "Related Documents"
+      ]
+    },
+    {
+      "profile": "governance/reference",
+      "form": "docs/99.templates/templates/common/governance-reference.template.md",
+      "frontmatterType": "governance/reference",
+      "requiredHeadings": [
+        "Overview",
+        "Authority Boundary",
+        "Governance Context",
+        "Current Contract",
+        "Validation and Refresh",
+        "Related Documents"
+      ]
+    },
+    {
+      "profile": "governance/memory",
+      "form": "docs/99.templates/templates/common/memory.template.md",
+      "frontmatterType": "governance/memory",
+      "requiredHeadings": [
+        "Problem",
+        "Context",
+        "Resolution",
+        "Prevention",
+        "Related Progress"
+      ]
+    },
+    {
+      "profile": "governance/template-support",
+      "form": "docs/99.templates/templates/common/template-support.template.md",
+      "frontmatterType": "governance/template-support",
+      "requiredHeadings": [
+        "Overview",
+        "Purpose",
+        "Owned Contract",
+        "Authoring Rules",
+        "Validation Contract",
+        "Related Documents"
+      ]
+    }
+  ],
+  "templateModeCoverage": [
+    {
+      "profile": "template/content/archive-tombstone",
+      "form": "docs/99.templates/templates/common/archive-tombstone.template.md",
+      "sourceProfiles": [
+        "content/archive-tombstone"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/governance/reference",
+      "form": "docs/99.templates/templates/common/governance-reference.template.md",
+      "sourceProfiles": [
+        "governance/reference"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/governance/memory",
+      "form": "docs/99.templates/templates/common/memory.template.md",
+      "sourceProfiles": [
+        "governance/memory"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "governance/progress-entry",
+      "form": "docs/99.templates/templates/common/progress.template.md",
+      "sourceProfiles": [
+        "governance/progress-ledger"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": {
+        "parentProfileId": "governance/progress-ledger",
+        "parentH2": "Work Entries",
+        "entryHeadingLevel": 3,
+        "sectionHeadingLevel": 4,
+        "requiredSections": [
+          "Metadata",
+          "Progress",
+          "Memory",
+          "Evidence",
+          "Handoff"
+        ]
+      }
+    },
+    {
+      "profile": "template/readme/repository",
+      "form": "docs/99.templates/templates/common/readme-repository.template.md",
+      "sourceProfiles": [
+        "readme/repository"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/readme/stage-index",
+      "form": "docs/99.templates/templates/common/readme-stage-index.template.md",
+      "sourceProfiles": [
+        "readme/stage-index"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/readme/collection-index",
+      "form": "docs/99.templates/templates/common/readme-collection-index.template.md",
+      "sourceProfiles": [
+        "readme/collection-index"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/readme/implementation",
+      "form": "docs/99.templates/templates/common/readme-implementation.template.md",
+      "sourceProfiles": [
+        "readme/implementation"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/readme/snapshot-pack",
+      "form": "docs/99.templates/templates/common/readme-snapshot-pack.template.md",
+      "sourceProfiles": [
+        "readme/snapshot-pack"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/readme/workspace-staging",
+      "form": "docs/99.templates/templates/common/readme-workspace-staging.template.md",
+      "sourceProfiles": [
+        "readme/workspace-staging"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/content/reference",
+      "form": "docs/99.templates/templates/common/reference.template.md",
+      "sourceProfiles": [
+        "content/reference"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/governance/template-support",
+      "form": "docs/99.templates/templates/common/template-support.template.md",
+      "sourceProfiles": [
+        "governance/template-support"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/adr",
+      "form": "docs/99.templates/templates/sdlc/architecture/adr.template.md",
+      "sourceProfiles": [
+        "sdlc/adr"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/ard",
+      "form": "docs/99.templates/templates/sdlc/architecture/ard.template.md",
+      "sourceProfiles": [
+        "sdlc/ard"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/plan",
+      "form": "docs/99.templates/templates/sdlc/execution/plan.template.md",
+      "sourceProfiles": [
+        "sdlc/plan"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/task",
+      "form": "docs/99.templates/templates/sdlc/execution/task.template.md",
+      "sourceProfiles": [
+        "sdlc/task"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/guide",
+      "form": "docs/99.templates/templates/sdlc/operations/guide.template.md",
+      "sourceProfiles": [
+        "sdlc/guide"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/incident",
+      "form": "docs/99.templates/templates/sdlc/operations/incident.template.md",
+      "sourceProfiles": [
+        "sdlc/incident"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/policy",
+      "form": "docs/99.templates/templates/sdlc/operations/policy.template.md",
+      "sourceProfiles": [
+        "sdlc/policy"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/postmortem",
+      "form": "docs/99.templates/templates/sdlc/operations/postmortem.template.md",
+      "sourceProfiles": [
+        "sdlc/postmortem"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/runbook",
+      "form": "docs/99.templates/templates/sdlc/operations/runbook.template.md",
+      "sourceProfiles": [
+        "sdlc/runbook"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/prd",
+      "form": "docs/99.templates/templates/sdlc/requirements/prd.template.md",
+      "sourceProfiles": [
+        "sdlc/prd"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/agent-design",
+      "form": "docs/99.templates/templates/sdlc/specs/agent-design.template.md",
+      "sourceProfiles": [
+        "sdlc/agent-design"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/api-spec",
+      "form": "docs/99.templates/templates/sdlc/specs/api-spec.template.md",
+      "sourceProfiles": [
+        "sdlc/api-spec"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/data-model",
+      "form": "docs/99.templates/templates/sdlc/specs/data-model.template.md",
+      "sourceProfiles": [
+        "sdlc/data-model"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/spec",
+      "form": "docs/99.templates/templates/sdlc/specs/spec.template.md",
+      "sourceProfiles": [
+        "sdlc/spec"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    },
+    {
+      "profile": "template/sdlc/tests",
+      "form": "docs/99.templates/templates/sdlc/specs/tests.template.md",
+      "sourceProfiles": [
+        "sdlc/tests"
+      ],
+      "placeholderPolicy": "template-only",
+      "appendContract": null
+    }
+  ]
+}

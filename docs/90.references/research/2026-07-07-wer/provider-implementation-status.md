@@ -1,9 +1,9 @@
 ---
 title: 'Reference: Provider Harness Implementation Status Research'
 type: content/reference
-status: draft
+status: accepted
 owner: platform
-updated: 2026-07-10
+updated: 2026-07-14
 ---
 
 # Reference: Provider Harness Implementation Status Research
@@ -19,7 +19,7 @@ tracked checkout을 정적으로 검사한 결과다. 이 스냅샷은 프로바
 계정별 entitlement, 설치된 CLI 버전, 실제 모델 해석, hook 소비, subagent 실행,
 MCP 연결 또는 live inference를 검증하지 않았다.
 
-## Purpose
+### Purpose
 
 - 세 공급자의 공식 agent/subagent, model, hook, permission, settings 표면을
   surface별로 비교한다.
@@ -245,7 +245,7 @@ task-specific eval before changing Stage 00 owners or adapters.
 | **Needs strengthening — Codex global agent defaults are implicit** | Standalone `.codex/agents/*.toml` is official; tracked `.codex/config.toml` is absent, so documented defaults are 6 threads and depth 1 unless another layer overrides them. | **Medium**: concurrency/depth can vary via user/managed config and is not reproducible from the repo alone. | Record desired project limits only if a separate design finds reproducibility necessary; do not add config in this research task. | Codex provider/runtime owners and [subagent protocol](../../../00.agent-governance/subagent-protocol.md). |
 | **Unverified — native/runtime/account behavior** | No provider CLI version, login/account entitlement, hook trust panel, agent registry, model picker, inference, or MCP connection was inspected. | **Medium-High**: repo-static PASS cannot establish provider readiness or model execution. | Before any migration, run approved read-only native canaries that record version, auth mode without secrets, resolved model, agent discovery, hook trust/consumption, and rollback evidence. | A new Stage 04 provider canary task; evidence belongs in the task, not this reference. |
 
-## Interpretation
+### Interpretation
 
 The common environment is real at the repository contract level: thin gateways,
 Stage 00 governance, a shared `.agents` asset SSoT, shared hook scripts, task

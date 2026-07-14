@@ -20,7 +20,7 @@ GitOps and infrastructure evidence. It is descriptive reference material only.
 It does not define active policy, live runbook steps, release gates, deployment
 approval, Argo CD sync procedure, Vault procedure, or secret handling procedure.
 
-## Purpose
+### Purpose
 
 - Preserve a 2026-07-05 source snapshot for Kubernetes and infrastructure
   security concepts used by this repository.

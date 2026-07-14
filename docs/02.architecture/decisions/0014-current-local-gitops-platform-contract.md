@@ -3,7 +3,7 @@ title: 'ADR-0014: Current Local GitOps Platform Contract'
 type: sdlc/adr
 status: accepted
 owner: platform
-updated: 2026-06-02
+updated: 2026-07-13
 ---
 
 # ADR-0014: Current Local GitOps Platform Contract
@@ -26,6 +26,11 @@ Several older documents described replaced endpoints or removed UI resources. Ac
 - Headlamp is the current cluster UI surface under `gitops/apps/root/platform-headlamp-app.yaml` and `gitops/platform/headlamp`.
 - Kiali, Istio, cert-manager, ingress-nginx, Argo Rollouts, Argo Notifications, monitoring, and ESO/Vault integration remain in active scope.
 - Old replaced decisions are removed from active input and represented only by `docs/98.archive/README.md` and Tombstones.
+
+### Agent decision application
+
+- Agents must prefer this ADR and the active PRD/ARD/Spec chain for current platform work.
+- Agents may use the archive index to understand why a path disappeared, but must not use Tombstones as design input.
 
 ## Explicit Non-goals
 
@@ -55,12 +60,7 @@ Several older documents described replaced endpoints or removed UI resources. Ac
 - Good: Maximally reduces stale content.
 - Bad: Loses reviewable routing and replacement evidence.
 
-## Agent-related Example Decisions (If Applicable)
-
-- Agents must prefer this ADR and the active PRD/ARD/Spec chain for current platform work.
-- Agents may use the archive index to understand why a path disappeared, but must not use Tombstones as design input.
-
-## Related Documents
+## Traceability
 
 - **PRD**: [../../01.requirements/004-current-local-gitops-platform.md](../../01.requirements/004-current-local-gitops-platform.md)
 - **ARD**: [../requirements/0007-current-local-gitops-platform.md](../requirements/0007-current-local-gitops-platform.md)

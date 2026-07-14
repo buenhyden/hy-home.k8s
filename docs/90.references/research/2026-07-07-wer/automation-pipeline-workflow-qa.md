@@ -1,9 +1,9 @@
 ---
 title: 'Reference: Automation Pipeline Workflow QA Research'
 type: content/reference
-status: draft
+status: accepted
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-14
 ---
 
 # Reference: Automation Pipeline Workflow QA Research
@@ -20,7 +20,7 @@ Actions, pre-commit, DORA, OpenGitOps 자료에 대조한다. Current pack의 �
 validator, GitOps manifest, branch protection, remote Actions 설정 또는 live
 runtime을 정의하거나 변경하지 않는다.
 
-## Purpose
+### Purpose
 
 - 다섯 workflow와 전체 열 job(`ci.yml` 여섯 job)의 실제 trigger,
   dependency, condition, output 관계를 설명한다.
@@ -320,7 +320,7 @@ files, not the external sources, establish local implementation claims.
 - [Stale workflow](../../../../.github/workflows/stale.yml)
 - [Dependabot configuration](../../../../.github/dependabot.yml)
 - [Labeler configuration](../../../../.github/labeler.yml)
-- [Zizmor configuration](../../../../.github/zizmor.yml)
+- [Zizmor configuration](../../../../.github/ABOUT.md)
 - [Pre-commit configuration](../../../../.pre-commit-config.yaml)
 - [Prettier configuration](../../../../.prettierrc.json)
 - [Prettier ignore configuration](../../../../.prettierignore)

@@ -3,7 +3,7 @@ title: 'Task: Template Path Numbering Contract'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-05
+updated: 2026-07-13
 ---
 
 # Task: Template Path Numbering Contract
@@ -26,16 +26,6 @@ configuration are changed in TPN-001.
 - **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
 - **Quality Gate**: [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
 
-## Working Rules
-
-- Use `git mv` for PRD renames in later tasks.
-- Preserve Stage 04 date-based plan and task routes.
-- Do not create duplicate compatibility files for old PRD paths.
-- Record old route literals only as historical evidence when needed.
-- Keep Stage 04 docs English-first.
-- Run validation after each logical commit.
-- Keep TPN-001 scoped to task evidence only.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -46,12 +36,7 @@ configuration are changed in TPN-001.
 | TPN-004 | Update Stage 00 governance and validator mappings | qa | VAL-SPC-019-002, VAL-SPC-019-004 | Task 4 | validator route coverage and quality gate | Codex | Done |
 | TPN-005 | Clean cross-links, close evidence, and validate | qa | VAL-SPC-019-005, VAL-SPC-019-008 | Task 5 | final stale scans, `git diff --check`, quality gate | Codex | Done |
 
-## Suggested Types
-
-- `doc`
-- `qa`
-
-## Baseline Evidence
+### Baseline Evidence
 
 | Date | Command | Result Summary |
 | --- | --- | --- |
@@ -60,6 +45,32 @@ configuration are changed in TPN-001.
 | 2026-07-05 | `rg -n "docs/01\\.requirements/YYYY-MM-DD-<feature-or-system>\|docs/03\\.specs/<feature-id>\|YYYY-MM-DD-<feature-or-system>\|<feature-id>" docs/99.templates docs/00.agent-governance scripts docs/01.requirements docs/03.specs docs/04.execution/plans docs/04.execution/tasks` | PASS; baseline scan found old PRD route placeholders and unnumbered Stage 03 placeholders in template, support, governance, validator, README, and plan surfaces. These matches are expected before TPN-002 through TPN-004. |
 | 2026-07-05 | `rg -n "2026-05-17-argo-rollouts-progressive-delivery\|2026-05-17-argo-notifications-slack\|2026-06-01-workspace-agent-governance-platform\|2026-06-02-current-local-gitops-platform" docs AGENTS.md CLAUDE.md GEMINI.md README.md .github scripts` | PASS; baseline scan found active links and historical evidence references to the four old PRD filenames. TPN-002 owns active-link remediation and classification of any historical evidence. |
 | 2026-07-05 | `sed -n '1000,1085p' scripts/validate-repo-quality-gates.sh` | PASS; validator baseline still maps PRD routes through `YYYY-MM-DD-<feature-or-system>` and Stage 03 routes through `<feature-id>`, confirming TPN-004 must update validator normalization. |
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `TPN-001 through TPN-005` is limited to these Template Path Numbering Contract owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md`
+  - `docs/03.specs/019-template-path-numbering-contract/spec.md`
+  - `docs/04.execution/plans/2026-07-05-template-path-numbering-contract.md`
+  - `docs/99.templates/templates/sdlc/execution/task.template.md`
+  - `docs/99.templates/support/template-routing.md`
+  - `docs/01.requirements/README.md`
+  - `docs/03.specs/README.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Template Path Numbering Contract work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Template Path Numbering Contract protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Template Path Numbering Contract outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `git mv`
+- **Live Validation**: DEFER — Template Path Numbering Contract is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Template Path Numbering Contract; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Template Path Numbering Contract change set for `TPN-001 through TPN-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Template Path Numbering Contract evidence remains in:
+  - `docs/04.execution/tasks/2026-07-05-template-path-numbering-contract.md`
+  - `docs/03.specs/019-template-path-numbering-contract/spec.md`
+  - `docs/04.execution/plans/2026-07-05-template-path-numbering-contract.md`
+  - `docs/99.templates/templates/sdlc/execution/task.template.md`
+  - `docs/99.templates/support/template-routing.md`
 
 ## Verification Summary
 
@@ -78,7 +89,7 @@ configuration are changed in TPN-001.
   `git diff --check`, and `bash scripts/validate-repo-quality-gates.sh .`
   passed.
 
-## Evidence Log
+### Evidence Log
 
 | Date | Task | Check | Result |
 | --- | --- | --- | --- |
@@ -92,13 +103,13 @@ configuration are changed in TPN-001.
 | 2026-07-05 | TPN-004 | Governance and validator route update | PASS; Stage 00 route guidance, Stage 03 README wording, and validator structural/native mappings enforce numbered PRD and Stage 03 feature-folder routes, restoring the repository quality gate after the expected TPN-003 route-map drift |
 | 2026-07-05 | TPN-005 | Final stale scans and repository quality gates | PASS; old current-route patterns were removed from active guidance, remaining matches are explicit TPN migration criteria or evidence, numeric PRD inventory was verified, and repository quality gates passed |
 
-## Handoff
+### Handoff
 
 Template path numbering contract implementation is complete. No live runtime,
 credential, GitOps desired-state, provider runtime, external service, push,
 merge, or PR mutation was performed.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/019-template-path-numbering-contract/spec.md](../../03.specs/019-template-path-numbering-contract/spec.md)
 - **Plan**: [../plans/2026-07-05-template-path-numbering-contract.md](../plans/2026-07-05-template-path-numbering-contract.md)

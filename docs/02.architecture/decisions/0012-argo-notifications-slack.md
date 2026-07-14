@@ -3,7 +3,7 @@ title: 'ADR-0012: Argo Notifications with Slack Webhook'
 type: sdlc/adr
 status: accepted
 owner: platform
-updated: 2026-05-18
+updated: 2026-07-13
 ---
 
 # ADR-0012: Argo Notifications with Slack Webhook
@@ -26,6 +26,10 @@ ArgoCD Helm chart v2.x에 Notifications controller가 내장되어 있어 별도
 - Default subscriptions: `on-health-degraded`, `on-sync-failed`.
 - 앱별 opt-in: annotation `notifications.argoproj.io/subscribe.on-deployed.slack: <channel>`.
 
+### Decision status
+
+Accepted — 2026-03-30
+
 ## Explicit Non-goals
 
 - Email/PagerDuty 알림 (Slack webhook만)
@@ -39,6 +43,10 @@ ArgoCD Helm chart v2.x에 Notifications controller가 내장되어 있어 별도
 - Vault에 `secret/platform/notifications` path 수동 추가 필요 (bootstrap 외부 작업)
 - `argocd-notifications-controller` Pod가 argocd namespace에 추가됨
 
+### Operational prerequisite
+
+Slack token bootstrap은 사람이 승인한 외부 Vault 작업으로만 수행한다. 이 ADR은 secret 값이나 실행 절차를 소유하지 않으며, 현재 운영 절차는 [Rollouts/Notifications/Headlamp Runbook](../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md)과 [ESO/Vault 시크릿 관리 결정](./0003-eso-vault-k8s-auth.md)을 따른다.
+
 ## Alternatives
 
 | 옵션                            | 평가                                                                                  |
@@ -47,15 +55,7 @@ ArgoCD Helm chart v2.x에 Notifications controller가 내장되어 있어 별도
 | 독립 Notifications 배포         | 불필요한 중복, 이 규모에서는 과도함                                                   |
 | Prometheus Alertmanager → Slack | 이미 외부 Prometheus 있지만, GitOps 이벤트는 ArgoCD가 소스이므로 Notifications가 적합 |
 
-## Operational Prerequisite
-
-Slack token bootstrap은 사람이 승인한 외부 Vault 작업으로만 수행한다. 이 ADR은 secret 값이나 실행 절차를 소유하지 않으며, 현재 운영 절차는 [Rollouts/Notifications/Headlamp Runbook](../../05.operations/runbooks/0004-rollouts-notifications-headlamp-runbook.md)과 [ESO/Vault 시크릿 관리 결정](./0003-eso-vault-k8s-auth.md)을 따른다.
-
-## Status
-
-Accepted — 2026-03-30
-
-## Related Documents
+## Traceability
 
 - [ADR-0011](./0011-argo-rollouts-progressive-delivery.md) — Rollouts 이벤트 소스
 - [ADR-0003](./0003-eso-vault-k8s-auth.md) — ESO/Vault 시크릿 관리 패턴

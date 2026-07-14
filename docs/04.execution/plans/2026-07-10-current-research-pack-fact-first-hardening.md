@@ -3,10 +3,12 @@ title: 'Current Research Pack Fact-First Hardening Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-10
+updated: 2026-07-13
 ---
 
 # Current Research Pack Fact-First Hardening Implementation Plan
+
+## Overview
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use
 > `superpowers:subagent-driven-development` (recommended) or
@@ -27,7 +29,7 @@ after all topic documents pass task-scoped review.
 `rg`, Git, official web documentation, `apply_patch`, repository shell
 validators, and Superpowers subagent task/review workflows.
 
-## Global Constraints
+### Global Constraints
 
 - Audit `docs/90.references/research/2026-07-07-wer/README.md` and all seven
   Current references in place; do not create a new research pack or topic file.
@@ -64,7 +66,7 @@ validators, and Superpowers subagent task/review workflows.
 
 ---
 
-## File Structure
+### File Structure
 
 | Path | Responsibility in this plan |
 | --- | --- |
@@ -82,8 +84,6 @@ validators, and Superpowers subagent task/review workflows.
 | `docs/04.execution/tasks/README.md` | Task-record discovery and lifecycle status. |
 | `docs/00.agent-governance/memory/progress.md` | Final durable result, evidence, limitations, and reusable lessons. |
 | `.gitignore` | Ignore the approved `.worktrees/` isolation directory and `.superpowers/` SDD progress ledger. |
-
-## Overview
 
 This plan executes the approved 2026-07-10 addendum in the Workspace
 Engineering Research Pack specification. It performs a surgical, evidence-first
@@ -164,7 +164,7 @@ mapping. The implementation must re-verify every finding before publication.
 | Large diffs hide isolated factual errors | Medium | Commit and review each topic document independently before pack-wide integration. |
 | External source is inaccessible | Medium | Use another official first-party page for the same claim or classify the claim Unverified and omit it. |
 
-## Agent Rollout & Evaluation Gates
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Every task must pass focused content assertions,
   `git diff --check`, and task-scoped source/repo fact review before commit.
@@ -181,7 +181,7 @@ mapping. The implementation must re-verify every finding before publication.
   but no model is promoted without task-specific eval evidence and a later
   canonical `model-policy.md`/adapter change task.
 
-## Detailed Tasks
+### Detailed Tasks
 
 > [!NOTE]
 > The unchecked items below preserve the approved historical execution
@@ -1203,7 +1203,7 @@ mapping. The implementation must re-verify every finding before publication.
 - [x] Pre-commit final-state validation passed from pinned base `a70326b6443ffe6eb5cc6d1a8f4c48f425a0c4c4` and its results are durable; post-commit clean verification is externally reported handoff evidence without writeback
 - [x] Logical commits preserved
 
-## Related Documents
+## Traceability
 
 - **Spec**: [Workspace Engineering Research Pack Specification](../../03.specs/017-workspace-engineering-research-pack/spec.md)
 - **Task**: [../tasks/2026-07-10-current-research-pack-fact-first-hardening.md](../tasks/2026-07-10-current-research-pack-fact-first-hardening.md)

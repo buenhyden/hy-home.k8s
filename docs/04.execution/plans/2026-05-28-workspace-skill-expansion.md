@@ -3,7 +3,7 @@ title: 'Workspace Skill Expansion Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-05-28
+updated: 2026-07-13
 ---
 
 # Workspace Skill Expansion Implementation Plan
@@ -43,7 +43,7 @@ plan to tasks), operations runbook authoring, or governance index maintenance.
 - `.codex/agents/` TOML mirrors: skill files are not agent mirror targets; only `agents/*.md` is mirrored
 - Bulk file edits without structural changes
 
-## Requirements & Acceptance Criteria
+### Requirements & Acceptance Criteria
 
 | ID     | Requirement                         | Completion Criteria          |
 | ------ | ----------------------------------- | ---------------------------- |
@@ -80,7 +80,7 @@ ls .claude/skills/ops-runbook/skill.md
 ls .claude/skills/knowledge-map/skill.md
 ```
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 N/A — this plan covers infrastructure and documentation work and does not
 deploy AI Agent models or prompts.
@@ -93,13 +93,13 @@ deploy AI Agent models or prompts.
 - This mission is recorded in `docs/00.agent-governance/memory/progress.md`.
 - `bash scripts/validate-repo-quality-gates.sh .` exits with code 0.
 
-## Rollback
+### Rollback
 
 - Delete the new skill files.
 - Remove the added rows from `harness-catalog.md`.
 - Remove the added entry from `progress.md`.
 
-## Related Documents
+## Traceability
 
 - Parent Gap Analysis: `../../00.agent-governance/memory/progress.md`
 - **Task**: [../tasks/2026-05-28-workspace-skill-expansion.md](../tasks/2026-05-28-workspace-skill-expansion.md)

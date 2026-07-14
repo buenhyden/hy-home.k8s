@@ -43,6 +43,11 @@ Audit Kubernetes security posture across RBAC, NetworkPolicy, and secret-handlin
 - Keep findings evidence-based and tied to repository or approved inspection output.
 - Do not weaken least-privilege expectations for convenience.
 
+## Capability and Evidence
+
+- Capability tier: `worker`; perform bounded security audit and recommendation work without remediation or exception authority.
+- Required evidence: cite each RBAC, NetworkPolicy, or secret-handling finding with `file:line`, severity, control impact, and remediation basis.
+
 ## Handoff / Escalation
 
 - Escalate implementation work to `k8s-implementer.md` only after findings are clear.

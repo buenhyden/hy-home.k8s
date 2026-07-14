@@ -3,7 +3,7 @@ title: 'Control Surface and Cloud Example Documentation Normalization Implementa
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-14
 ---
 
 # Control Surface and Cloud Example Documentation Normalization Implementation Plan
@@ -13,6 +13,12 @@ updated: 2026-07-06
 This document defines the implementation plan for normalizing active
 repository control-surface documentation and promoting AWS/Azure example docs
 to an explicit example-local SDLC snapshot route.
+
+> **2026-07-14 steady-state correction:** This Plan records the completed
+> normalization tranche. Spec 030 later retired both `examples/*/docs/**`
+> trees into `docs/90.references/cloud-examples/**`; the current registry has
+> no authored/README route for those source paths and rejects tracked
+> reintroduction. The route language below is historical execution evidence.
 
 ## Context
 
@@ -82,7 +88,7 @@ profile for `examples/aws/docs/**` and `examples/azure/docs/**`.
 | Bulk normalization breaks cross-links. | Medium | Use targeted `rg` searches after each rename or consolidation and update links in the same commit. |
 | Validator overreaches and blocks GitHub-native files. | Medium | Keep explicit route exceptions for `.github/ABOUT.md`, `.github/PULL_REQUEST_TEMPLATE.md`, and `.github/SECURITY.md`. |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Run repository-static validation after each logical
   batch.
@@ -107,7 +113,7 @@ profile for `examples/aws/docs/**` and `examples/azure/docs/**`.
 - [x] Required validation passed.
 - [x] Task record and progress memory updated.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/022-control-cloud-doc-normalization/spec.md](../../03.specs/022-control-cloud-doc-normalization/spec.md)
 - **Tasks**: [../tasks/2026-07-06-control-cloud-doc-normalization.md](../tasks/2026-07-06-control-cloud-doc-normalization.md)

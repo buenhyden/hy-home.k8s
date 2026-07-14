@@ -10,7 +10,7 @@
 이 경로는 중요한 기술/아키텍처 결정을 ADR로 기록하는 canonical stage다.
 각 ADR은 하나의 결정, 그 맥락, 대안, 결과를 보존해 이후 Spec과 운영 정책이 같은 근거를 공유하게 한다.
 
-## Audience
+### Collection Readers
 
 이 README의 주요 독자:
 
@@ -33,7 +33,7 @@
 - 운영 절차와 장애 대응 단계
 - 장문의 제품 배경 설명
 
-## Structure
+## Item Index
 
 ```text
 02.architecture/decisions/
@@ -46,10 +46,12 @@
 ├── 0012-argo-notifications-slack.md
 ├── 0013-stage-00-canonical-adapter-model.md
 ├── 0014-current-local-gitops-platform-contract.md
+├── 0015-declarative-document-contract-registry.md
+├── 0016-program-to-tranche-document-lineage.md
 └── README.md
 ```
 
-## How to Work in This Area
+## Add and Find
 
 1. 결정의 상위 요구와 참조 구조를 `01.requirements/`, `02.architecture/requirements/`에서 확인한다.
 2. 새 ADR은 `../../99.templates/templates/sdlc/architecture/adr.template.md`에서 시작하고, canonical target pattern은 `docs/02.architecture/decisions/####-<short-title>.md`다.
@@ -57,7 +59,7 @@
 4. `Accepted` ADR의 현재 런타임 값은 GitOps manifest, 정적 검증 스크립트, current baseline ADR과 일치해야 한다.
 5. ADR이 구현 또는 운영 계약을 바꾸면 `03.specs/`, `05.operations/policies/` 링크를 갱신한다.
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/02.architecture/decisions/`다.
 
@@ -66,7 +68,7 @@
 - upstream/downstream docs stage는 `../../01.requirements/`, `../../03.specs/`, `../../04.execution/`, `../../05.operations/`로 연결한다.
 - 새 ADR의 실제 Markdown 링크는 최종 ADR 파일 위치 기준으로 다시 계산하고, placeholder target은 code literal로 남긴다.
 
-## Document Index
+### Current ADR Index
 
 | 문서 | 설명 | 상태 | 현재성/후속 기준 |
 | --- | --- | --- | --- |
@@ -77,8 +79,10 @@
 | [`./0009-kiali-external-observability.md`](./0009-kiali-external-observability.md) | Kiali + 외부 Prometheus/Grafana/Tempo 연동 결정 | Accepted | Current external observability contract through GitOps Service/EndpointSlice and NetworkPolicy. |
 | [`./0011-argo-rollouts-progressive-delivery.md`](./0011-argo-rollouts-progressive-delivery.md) | Argo Rollouts 도입과 Rollouts Dashboard 결정 | Accepted | Current progressive delivery contract. |
 | [`./0012-argo-notifications-slack.md`](./0012-argo-notifications-slack.md) | Argo Notifications Slack webhook 도입 결정 | Accepted | Current GitOps notification pattern. |
-| [`./0013-stage-00-canonical-adapter-model.md`](./0013-stage-00-canonical-adapter-model.md) | Stage 00 canonical core, provider adapter, validation evidence ownership 결정 | Accepted | Current workspace AI Agent governance contract. |
+| [`./0013-stage-00-canonical-adapter-model.md`](./0013-stage-00-canonical-adapter-model.md) | Stage 00 canonical core와 native/local adapter-surface ownership 결정 | Accepted | Claude/Codex native role files, repository-local baselines, shared/local `.agents/**`, and absent/`DEFER` Gemini CLI native surface를 구분하는 current contract. |
 | [`./0014-current-local-gitops-platform-contract.md`](./0014-current-local-gitops-platform-contract.md) | Current local GitOps platform baseline and archive replacement decision | Accepted | Current Headlamp, ingress-nginx, ArgoCD App-of-Apps, ESO/Vault, external services, Kiali/Istio, Rollouts, Notifications, monitoring, adminer contract. |
+| [`./0015-declarative-document-contract-registry.md`](./0015-declarative-document-contract-registry.md) | Declarative document contract registry 결정 | Accepted | Route, profile, lifecycle, section, README 예외의 단일 machine-readable owner를 선택한다. |
+| [`./0016-program-to-tranche-document-lineage.md`](./0016-program-to-tranche-document-lineage.md) | Program-to-tranche document lineage 결정 | Accepted | PRD 005와 Spec 026-032의 명시적 one-program-to-many-tranche 계보 및 번호 예외를 정의한다. |
 
 ## Related Documents
 

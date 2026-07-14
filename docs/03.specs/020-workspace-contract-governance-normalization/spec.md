@@ -3,7 +3,7 @@ title: 'Workspace Contract Governance Normalization Technical Specification'
 type: sdlc/spec
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Workspace Contract Governance Normalization Technical Specification
@@ -62,37 +62,6 @@ Out of scope:
 - Promoting `_workspace` into a place for personal diagnostics, shell history,
   token caches, auth files, or secret-bearing local logs.
 - Merging, pushing, or opening a pull request without explicit user approval.
-
-## Related Inputs
-
-- **User request**: Normalize repository-wide document type, frontmatter,
-  template, contract, governance, README, CI/CD, QA, formatting, linting, and
-  `_workspace` role boundaries across the listed repository surfaces.
-- **PRD**: No dedicated PRD exists for this repository governance
-  normalization. The approved user request and current Stage 00/99 contracts
-  are the controlling inputs.
-- **ARD**: No new architecture requirement is required because this is a
-  documentation and validation governance change.
-- **Related ADRs**: Not applicable.
-- **Template contracts**:
-  - `../../99.templates/support/documentation-contract.md`
-  - `../../99.templates/support/frontmatter-schema.md`
-  - `../../99.templates/support/template-routing.md`
-  - `../../99.templates/support/sdlc-governance.md`
-  - `../../99.templates/support/common-documentation-governance.md`
-  - `../../99.templates/support/legacy-cleanup-rules.md`
-- **Stage 00 governance**:
-  - `../../00.agent-governance/rules/document-stage-routing.md`
-  - `../../00.agent-governance/rules/documentation-protocol.md`
-  - `../../00.agent-governance/rules/stage-authoring-matrix.md`
-  - `../../00.agent-governance/rules/approval-boundaries.md`
-  - `../../00.agent-governance/rules/quality-standards.md`
-- **Validation owner**: `../../../scripts/validate-repo-quality-gates.sh`
-- **External basis**:
-  - Diataxis: https://diataxis.fr/
-  - Google developer documentation style guide: https://developers.google.com/style
-  - GitHub Docs contributing model: https://docs.github.com/contributing
-  - NIST SSDF SP 800-218: https://csrc.nist.gov/pubs/sp/800/218/final
 
 ## Contracts
 
@@ -237,7 +206,7 @@ secret_risk: none | unknown | prohibited
 retention: delete-before-close | promote-before-close | documented-exception
 ```
 
-## API Contract (If Applicable)
+#### API Contract
 
 No external API is introduced.
 
@@ -247,7 +216,7 @@ No external API is introduced.
   one.
 - **Machine-readable Contract**: Not applicable.
 
-## Agent Role & IO Contract (If Applicable)
+#### Agent Role & IO Contract
 
 - **Agent Role**: Agents inspect repository files, draft specs/plans/tasks,
   run deterministic scans, update documented contracts, and record evidence.
@@ -269,7 +238,7 @@ No external API is introduced.
     cross-link drift is either remediated or recorded with a clear deferral.
   - Repository quality gates pass.
 
-## Tools & Tool Contract (If Applicable)
+#### Tools & Tool Contract
 
 - **Tool List**:
   - `rg`, `find`, `sed`, `git diff --check`, `git status`, `git log`.
@@ -286,7 +255,7 @@ No external API is introduced.
   - If a finding is ambiguous, record it in the audit evidence instead of
     rewriting broad prose.
 
-## Prompt / Policy Contract (If Applicable)
+#### Prompt / Policy Contract
 
 - **System / Instruction Contract**:
   - Follow the repository's Stage 00 bootstrap, documentation protocol,
@@ -302,7 +271,7 @@ No external API is introduced.
   - Contract changes must include an `updated: 2026-07-05` frontmatter update
     only when the touched document owns the changed rule.
 
-## Memory & Context Strategy (If Applicable)
+#### Memory & Context Strategy
 
 - **Short-term Context**:
   - Use Stage 04 task evidence for command outputs, scan summaries, and
@@ -316,7 +285,7 @@ No external API is introduced.
   - Future agents should retrieve durable contracts from Stage 00, Stage 99,
     Stage 04 evidence, and Stage 90 audits, not from raw `_workspace` scratch.
 
-## Guardrails (If Applicable)
+#### Guardrails
 
 - **Input Guardrails**:
   - Do not treat generated, local, or ignored files as policy unless they are
@@ -337,7 +306,7 @@ No external API is introduced.
     credential changes, secret inspection, branch integration, or destructive
     cleanup outside approved tracked-document edits.
 
-## Evaluation (If Applicable)
+#### Evaluation
 
 - **Eval Types**:
   - Static repository validation.
@@ -435,7 +404,7 @@ Expected notes:
 - **VAL-SPC-020-010**: Stage 04 task evidence and progress memory record the
   final audit/remediation result and any accepted deferrals.
 
-## Related Documents
+## Traceability
 
 - **Template Documentation Contract**: [../../99.templates/support/documentation-contract.md](../../99.templates/support/documentation-contract.md)
 - **Template Routing Contract**: [../../99.templates/support/template-routing.md](../../99.templates/support/template-routing.md)
@@ -448,3 +417,33 @@ Expected notes:
 - **Future Plan**: `../../04.execution/plans/2026-07-05-workspace-contract-governance-normalization.md`
 - **Future Task Evidence**: `../../04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md`
 - **Completed evolution**: [011](../011-template-contract-governance-migration/spec.md) -> [012](../012-template-governance-audit-enhancement/spec.md) -> [013](../013-workspace-document-governance-hardening/spec.md) -> [014](../014-workspace-document-contract-normalization/spec.md) -> [020](./spec.md) -> [021](../021-sdlc-lifecycle-contract/spec.md) -> [022](../022-control-cloud-doc-normalization/spec.md) -> [023](../023-stage03-04-repo-static-gap-closure/spec.md).
+### Related inputs
+
+- **User request**: Normalize repository-wide document type, frontmatter,
+  template, contract, governance, README, CI/CD, QA, formatting, linting, and
+  `_workspace` role boundaries across the listed repository surfaces.
+- **PRD**: No dedicated PRD exists for this repository governance
+  normalization. The approved user request and current Stage 00/99 contracts
+  are the controlling inputs.
+- **ARD**: No new architecture requirement is required because this is a
+  documentation and validation governance change.
+- **Related ADRs**: Not applicable.
+- **Template contracts**:
+  - `../../99.templates/support/documentation-contract.md`
+  - `../../99.templates/support/frontmatter-schema.md`
+  - `../../99.templates/support/template-routing.md`
+  - `../../99.templates/support/sdlc-governance.md`
+  - `../../99.templates/support/common-documentation-governance.md`
+  - `../../99.templates/support/legacy-cleanup-rules.md`
+- **Stage 00 governance**:
+  - `../../00.agent-governance/rules/document-stage-routing.md`
+  - `../../00.agent-governance/rules/documentation-protocol.md`
+  - `../../00.agent-governance/rules/stage-authoring-matrix.md`
+  - `../../00.agent-governance/rules/approval-boundaries.md`
+  - `../../00.agent-governance/rules/quality-standards.md`
+- **Validation owner**: `../../../scripts/validate-repo-quality-gates.sh`
+- **External basis**:
+  - Diataxis: https://diataxis.fr/
+  - Google developer documentation style guide: https://developers.google.com/style
+  - GitHub Docs contributing model: https://docs.github.com/contributing
+  - NIST SSDF SP 800-218: https://csrc.nist.gov/pubs/sp/800/218/final

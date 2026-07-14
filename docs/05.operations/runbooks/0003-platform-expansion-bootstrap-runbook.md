@@ -8,10 +8,6 @@ updated: 2026-06-02
 
 # Platform Expansion Bootstrap Runbook
 
-## Runbook Type
-
-`bootstrap`
-
 ## Overview
 
 이 런북은 cert-manager, Headlamp, Istio, Kiali가 추가된 확장 플랫폼을 부트스트랩하거나 복구하기 위한 즉시 실행 가능한 체크리스트와 증상별 복구 절차를 제공한다.
@@ -20,16 +16,13 @@ updated: 2026-06-02
 > Headlamp current runtime은 chart 0.41.0, ingress, TLS route가 repo SSoT이며,
 > 미구현 OIDC 전환 절차는 active runbook 기준으로 사용하지 않는다.
 
-## Purpose
+### Purpose
 
 플랫폼 확장 컴포넌트의 부트스트랩 단계를 재현 가능하게 수행하고, 장애 발생 시 원인별 복구 명령을 제공한다.
 
-## Canonical References
+## Runbook Type
 
-- [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
-- [`../guides/0003-platform-expansion-bootstrap-guide.md`](../guides/0003-platform-expansion-bootstrap-guide.md)
-- [`../policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md)
-- [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)
+`bootstrap`
 
 ## When to Use
 
@@ -47,8 +40,9 @@ updated: 2026-06-02
 - [ ] `secrets/certs/rootCA.pem` 존재 (cert-manager용)
 - [ ] `secrets/certs/rootCA-key.pem` 존재 (ClusterIssuer CA key)
 - [ ] `rootCA.pem`이 로컬 신뢰 저장소에 등록됨
-- [ ] `VAULT_TOKEN` 환경변수 설정
-- [ ] Vault unseal 상태: `curl -ks https://vault.127.0.0.1.nip.io/v1/sys/health | jq '.sealed'` → `false`
+- [ ] Vault 토큰 프롬프트를 받을 수 있는 대화형 `/dev/tty`
+- [ ] Vault HTTPS health 요청에 읽기 가능한 `VAULT_CA_FILE` 사용
+- [ ] 외부 Vault의 `eso-read-platform` role에 `bound_audiences=vault` 설정
 - [ ] PostgreSQL 연결: `nc -z 172.18.0.15 15432`
 - [ ] Valkey 연결: `nc -z 172.18.0.9 6379`
 - [ ] Prometheus 연결 (Kiali용): `nc -z 172.18.0.10 9090`
@@ -56,6 +50,9 @@ updated: 2026-06-02
 - [ ] Tempo 연결 (트레이싱): `nc -z 172.18.0.12 3200`
 - [ ] Alloy OTLP 연결: `nc -z 172.18.0.11 4317`
 - [ ] Grafana 연결 (Kiali용): `nc -z 172.18.0.14 3000`
+
+`vault-backend`의 클러스터 내부 HTTP 연결은 현재 로컬 k3d 네트워크에만
+허용된 예외이며 production TLS 구성을 의미하지 않는다.
 
 ### Procedure
 
@@ -74,8 +71,13 @@ updated: 2026-06-02
 1. 기본 플랫폼 부트스트랩 실행
 
    ```bash
-   VAULT_TOKEN="<token>" bash infrastructure/bootstrap-local.sh
+   export VAULT_CA_FILE="$PWD/secrets/certs/rootCA.pem"
+   ./infrastructure/bootstrap-local.sh
    ```
+
+   스크립트는 토큰을 환경 변수나 명령 인자로 받지 않고 `/dev/tty`에서
+   표시 없이 직접 입력받는다. `VAULT_ADDR`는 HTTPS여야 하고 CA 파일은
+   읽을 수 있어야 하며, 비대화형 또는 인증서 검증 생략 fallback은 없다.
 
    bootstrap 내부 단계 (`[1/11]`~`[11/11]`):
    - `[1/11]` k3d 클러스터 생성/재사용
@@ -105,7 +107,8 @@ updated: 2026-06-02
    kubectl -n headlamp get pods,ingress,svc
    kubectl -n headlamp get certificate headlamp-tls 2>/dev/null || \
    kubectl -n headlamp get secret headlamp-tls
-   curl -ksS -o /dev/null -w '%{http_code}' https://headlamp.127.0.0.1.nip.io/
+   curl --fail --silent --show-error --cacert "$VAULT_CA_FILE" \
+     -o /dev/null -w '%{http_code}' https://headlamp.127.0.0.1.nip.io/
    ```
 
 4. Istio 가용성 확인
@@ -127,6 +130,34 @@ updated: 2026-06-02
    ```bash
    ./infrastructure/tests/verify-contracts-static.sh
    ```
+
+## Verification Steps
+
+```bash
+# 정적 계약
+./infrastructure/tests/verify-contracts-static.sh
+
+# 런타임
+kubectl get clusterissuer mkcert-ca-issuer
+kubectl -n headlamp get certificate headlamp-tls 2>/dev/null || kubectl -n headlamp get secret headlamp-tls
+kubectl -n istio-system get deploy istiod kiali
+
+# TLS 접근
+curl --fail --silent --show-error --cacert "$VAULT_CA_FILE" \
+  https://headlamp.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
+curl --fail --silent --show-error --cacert "$VAULT_CA_FILE" \
+  https://kiali.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
+```
+
+## Observability and Evidence Sources
+
+- **Signals**: ClusterIssuer readiness, Headlamp TLS state, Istiod/Kiali deployment availability, ArgoCD Application health.
+- **Evidence to Capture**: static contract output, relevant Kubernetes events, cert-manager logs, Kiali Prometheus connection logs.
+
+### Agent Operations
+
+이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
+단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
 
 ## Safe Rollback or Recovery Procedure
 
@@ -236,36 +267,11 @@ kubectl get crd | grep istio.io | wc -l
 argocd app sync platform-istiod
 ```
 
-## Verification Steps
-
-```bash
-# 정적 계약
-./infrastructure/tests/verify-contracts-static.sh
-
-# 런타임
-kubectl get clusterissuer mkcert-ca-issuer
-kubectl -n headlamp get certificate headlamp-tls 2>/dev/null || kubectl -n headlamp get secret headlamp-tls
-kubectl -n istio-system get deploy istiod kiali
-
-# TLS 접근
-curl -sk https://headlamp.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
-curl -sk https://kiali.127.0.0.1.nip.io -o /dev/null -w '%{http_code}\n'
-```
-
-## Observability and Evidence Sources
-
-- **Signals**: ClusterIssuer readiness, Headlamp TLS state, Istiod/Kiali deployment availability, ArgoCD Application health.
-- **Evidence to Capture**: static contract output, relevant Kubernetes events, cert-manager logs, Kiali Prometheus connection logs.
-
-## Agent Operations (If Applicable)
-
-이 런북은 인프라 절차를 다루며 AI Agent 모델/프롬프트 롤백이 직접 적용되지 않는다.
-단, Agent가 이 런북을 자동화하는 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
-
-## Related Documents
+## Traceability
 
 - **Guide**: [`../guides/0003-platform-expansion-bootstrap-guide.md`](../guides/0003-platform-expansion-bootstrap-guide.md)
 - **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Operations**: [`../policies/0003-service-mesh-cert-manager-policy.md`](../policies/0003-service-mesh-cert-manager-policy.md)
 - **ADR-0014**: [`../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md`](../../02.architecture/decisions/0014-current-local-gitops-platform-contract.md)
 - **Previous Runbook**: [`./0001-argocd-platform-bootstrap-runbook.md`](./0001-argocd-platform-bootstrap-runbook.md)
+- [`../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md`](../../02.architecture/decisions/0006-cert-manager-mkcert-ca-issuer.md)

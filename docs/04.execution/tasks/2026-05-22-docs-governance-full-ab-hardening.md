@@ -3,7 +3,7 @@ title: 'Task: Docs Governance Full A+B Hardening'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-05-22
+updated: 2026-07-13
 ---
 
 # Task: Docs Governance Full A+B Hardening
@@ -19,14 +19,6 @@ hook boundaries, and repo-static validation gates.
 - **Parent Spec**: not applicable; this work hardens documentation and agent governance contracts.
 - **Parent Plan**: [../plans/2026-05-22-docs-governance-full-ab-hardening.md](../plans/2026-05-22-docs-governance-full-ab-hardening.md)
 
-## Working Rules
-
-- Keep gateway files thin and route durable policy to `docs/00.agent-governance/**`.
-- Keep historical PRD/ARD/Plan/Task meaning and evidence intact.
-- Use `docs/99.templates` before touching authored lifecycle documents.
-- Keep Hookify `.local.md` ignored and local-only; shared enforcement belongs in tracked hooks and validators.
-- Documentation-only work still needs repo-static validation evidence.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -41,24 +33,7 @@ hook boundaries, and repo-static validation gates.
 | T-008 | Run full repo-static validation matrix | test | n/a | PLN-007 | Verification Summary updated | Platform | Done |
 | T-009 | Update progress memory and handoff evidence | memory | n/a | PLN-007 | `progress.md` entry added | Platform | Done |
 
-## Suggested Types
-
-- `impl`
-- `test`
-- `eval`
-- `doc`
-- `ops`
-
-## Agent-specific Types (If Applicable)
-
-- `prompt`
-- `tool`
-- `memory`
-- `guardrail`
-- `eval`
-- `observability`
-
-## Phase View (Optional)
+### Phase View
 
 ### Phase 1
 
@@ -78,6 +53,28 @@ hook boundaries, and repo-static validation gates.
 - [x] T-008 Run validation matrix
 - [x] T-009 Update progress memory
 
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `T-001 through T-009` is limited to these Docs Governance Full A+B Hardening owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-05-22-docs-governance-full-ab-hardening.md`
+  - `docs/04.execution/plans/2026-05-22-docs-governance-full-ab-hardening.md`
+  - `docs/01~05`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Docs Governance Full A+B Hardening work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Docs Governance Full A+B Hardening protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Docs Governance Full A+B Hardening outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `bash scripts/generate-llm-wiki-index.sh --check`
+  - `bash infrastructure/tests/verify-contracts-static.sh`
+  - `bash scripts/validate-gitops-structure.sh`
+- **Live Validation**: DEFER — Docs Governance Full A+B Hardening is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Docs Governance Full A+B Hardening; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Docs Governance Full A+B Hardening change set for `T-001 through T-009` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Docs Governance Full A+B Hardening evidence remains in:
+  - `docs/04.execution/tasks/2026-05-22-docs-governance-full-ab-hardening.md`
+  - `docs/04.execution/plans/2026-05-22-docs-governance-full-ab-hardening.md`
+  - `docs/00.agent-governance/memory/progress.md`
+  - `.claude/*.local.md`
+
 ## Verification Summary
 
 - **Test Commands**:
@@ -96,7 +93,7 @@ hook boundaries, and repo-static validation gates.
 - **Result**: PASS for the full repo-static matrix. `kube-linter` was not installed, so `validate-k8s-manifests.sh` completed YAML syntax validation and reported the optional kube-linter skip.
 - **Targeted Scans**: README legacy heading, README `Link Basis` omission, lifecycle template residue, and tracked `.claude/*.local.md` scans returned no findings.
 
-## Related Documents
+## Traceability
 
 - **Plan**: [../plans/2026-05-22-docs-governance-full-ab-hardening.md](../plans/2026-05-22-docs-governance-full-ab-hardening.md)
 - **Templates**: [../../99.templates/README.md](../../99.templates/README.md)

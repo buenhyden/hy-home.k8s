@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+set +x
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CLUSTER_NAME="hyhome"
@@ -12,7 +13,7 @@ KEY_FILE="${KEY_FILE:-$CERT_DIR/key.pem}"
 ROOT_CA_FILE="${ROOT_CA_FILE:-$CERT_DIR/rootCA.pem}"
 ROOT_CA_KEY_FILE="${ROOT_CA_KEY_FILE:-$CERT_DIR/rootCA-key.pem}"
 VAULT_ADDR="${VAULT_ADDR:-https://vault.127.0.0.1.nip.io}"
-VAULT_SKIP_VERIFY="${VAULT_SKIP_VERIFY:-true}"
+VAULT_CA_FILE="${VAULT_CA_FILE:-$ROOT_CA_FILE}"
 POSTGRES_WRITE_ADDR="${POSTGRES_WRITE_ADDR:-172.18.0.15}"
 POSTGRES_WRITE_PORT="${POSTGRES_WRITE_PORT:-15432}"
 POSTGRES_READ_ADDR="${POSTGRES_READ_ADDR:-172.18.0.15}"
@@ -30,33 +31,52 @@ fail() {
   exit 1
 }
 
+require_file() {
+  local path="$1"
+  if [[ ! -f "$path" || ! -r "$path" ]]; then
+    fail "required readable file not found: $path"
+  fi
+}
+
 for cmd in k3d kubectl helm docker curl jq openssl rg; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     fail "required command not found: $cmd"
   fi
 done
 
+case "$VAULT_ADDR" in
+  https://*) ;;
+  *) fail "VAULT_ADDR must use https:// for secret-bearing bootstrap" ;;
+esac
+
+require_file "$VAULT_CA_FILE"
+if [[ ! -r /dev/tty ]]; then
+  fail "interactive /dev/tty is required for Vault token input"
+fi
+IFS= read -r -s -p "Vault token: " vault_token </dev/tty
+printf '\n' >/dev/tty
+[[ -n "$vault_token" ]] || fail "Vault token input is empty"
+
+cleanup_sensitive() {
+  unset vault_token VALKEY_PASSWORD
+}
+trap cleanup_sensitive EXIT HUP INT TERM
+
+vault_curl() {
+  printf 'X-Vault-Token: %s\n' "$vault_token" |
+    curl --disable --fail-with-body --silent --show-error \
+      --cacert "$VAULT_CA_FILE" --header @- "$@"
+}
+
 # Bootstrap-only exception:
 # this script may use kubectl apply before ArgoCD owns the cluster because it creates
 # the initial namespaces, secrets, MetalLB primitives, and root GitOps applications.
 # Steady-state infrastructure changes must remain repo-backed and reconciled by ArgoCD.
 
-if [ -z "${VAULT_TOKEN:-}" ]; then
-  fail "Set VAULT_TOKEN before running this script"
-fi
-
 INOTIFY_INSTANCES="$(cat /proc/sys/fs/inotify/max_user_instances 2>/dev/null || echo 0)"
 if [ "${INOTIFY_INSTANCES}" -lt 512 ]; then
   fail "fs.inotify.max_user_instances=${INOTIFY_INSTANCES} is too low for k3d (need >=512). Run: sudo sysctl -w fs.inotify.max_user_instances=1024 && echo 'fs.inotify.max_user_instances=1024' | sudo tee /etc/sysctl.d/99-k3d.conf"
 fi
-
-vault_curl() {
-  if [ "$VAULT_SKIP_VERIFY" = "true" ]; then
-    curl -ksS "$@"
-  else
-    curl -sS "$@"
-  fi
-}
 
 check_tcp_dependency() {
   local name="$1"
@@ -85,7 +105,6 @@ wait_for_vault_ready() {
   local vault_status_code="000"
   for _ in $(seq 1 30); do
     vault_status_code="$(vault_curl -o /dev/null -w '%{http_code}' \
-      -H "X-Vault-Token: $VAULT_TOKEN" \
       "$VAULT_ADDR/v1/sys/health" || true)"
     if [ "$vault_status_code" = "200" ] || [ "$vault_status_code" = "429" ] || [ "$vault_status_code" = "472" ] || [ "$vault_status_code" = "473" ]; then
       return 0
@@ -99,14 +118,6 @@ wait_for_vault_ready() {
     echo "[FAIL] vault is not ready after 30s (status=${vault_status_code:-000})" >&2
   fi
   return 1
-}
-
-require_file() {
-  local path="$1"
-  if [ ! -f "$path" ]; then
-    echo "[FAIL] required file not found: $path" >&2
-    return 1
-  fi
 }
 
 validate_cert_for_host() {
@@ -152,7 +163,7 @@ if ! k3d cluster list 2>/dev/null | awk 'NR>1 {print $1}' | grep -qx "$CLUSTER_N
   fi
 
   K3D_CONFIG_TMP="$(mktemp)"
-  trap 'rm -f "$K3D_CONFIG_TMP"' EXIT
+  trap 'cleanup_sensitive; rm -f "$K3D_CONFIG_TMP"' EXIT
   sed \
     -e "s/port: 80:80/port: ${K3D_HTTP_PORT}:80/" \
     -e "s/port: 443:443/port: ${K3D_HTTPS_PORT}:443/" \
@@ -170,14 +181,9 @@ check_tcp_dependency "postgres-write" "$POSTGRES_WRITE_ADDR" "$POSTGRES_WRITE_PO
 check_tcp_dependency "postgres-read" "$POSTGRES_READ_ADDR" "$POSTGRES_READ_PORT"
 check_tcp_dependency "valkey" "$VALKEY_ADDR" "$VALKEY_PORT"
 
-vault_secret_json="$(vault_curl \
-  -H "X-Vault-Token: $VAULT_TOKEN" \
-  "$VAULT_ADDR/v1/secret/data/platform/argocd" || true)"
-VALKEY_PASSWORD="$(printf '%s' "$vault_secret_json" | jq -r '.data.data.valkey_password // empty' 2>/dev/null || true)"
-
-if [ -z "$VALKEY_PASSWORD" ]; then
-  fail "could not read secret key valkey_password from Vault path secret/platform/argocd"
-fi
+VALKEY_PASSWORD="$(vault_curl \
+  "$VAULT_ADDR/v1/secret/data/platform/argocd" |
+  jq -er '.data.data.valkey_password')"
 
 if docker inspect "k3d-${CLUSTER_NAME}-serverlb" >/dev/null 2>&1; then
   DETECTED_HTTPS_PORT="$(docker inspect -f '{{(index (index .NetworkSettings.Ports "443/tcp") 0).HostPort}}' "k3d-${CLUSTER_NAME}-serverlb" 2>/dev/null || true)"
@@ -212,9 +218,12 @@ kubectl apply -f "$ROOT_DIR/infrastructure/l2advertisement.yaml"
 
 echo "[6/11] Bootstrap argocd namespace and secrets"
 kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
-kubectl -n argocd create secret generic argocd-external-valkey \
-  --from-literal=redis-password="$VALKEY_PASSWORD" \
-  --dry-run=client -o yaml | kubectl apply -f -
+printf '%s' "$VALKEY_PASSWORD" |
+  kubectl -n argocd create secret generic argocd-external-valkey \
+    --from-file=redis-password=/dev/stdin \
+    --dry-run=client -o yaml |
+  kubectl apply -f -
+unset VALKEY_PASSWORD
 kubectl -n argocd create secret tls argocd-local-tls \
   --cert="$CERT_FILE" \
   --key="$KEY_FILE" \

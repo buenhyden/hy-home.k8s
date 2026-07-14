@@ -14,7 +14,7 @@
 [`gitops/`](../../gitops/README.md), [`infrastructure/tests/verify-contracts-static.sh`](../../infrastructure/tests/verify-contracts-static.sh),
 정적 검증 스크립트가 우선한다. 현재 구현과 상충하는 old decision/requirement 문서는 활성 stage에 보존하지 않고 [`../98.archive/README.md`](../98.archive/README.md)의 Tombstone 인덱스로만 연결한다.
 
-## Reader Route
+### Reader Route
 
 | 찾는 것 | 먼저 볼 위치 | 판단 기준 |
 | --- | --- | --- |
@@ -24,14 +24,14 @@
 | 구현자가 따라야 할 계약 | [`../03.specs/`](../03.specs/README.md) | 파일/manifest/API 수준 상세 설계는 Spec stage가 소유한다. |
 | 운영 정책과 복구 절차 | [`../05.operations/`](../05.operations/README.md) | 실행 절차, 정책, runbook은 Operations stage가 소유한다. |
 
-## Audience
+### Stage Readers
 
 - Platform Engineers
 - GitOps Operators
 - Architecture Reviewers
 - AI Agents
 
-## Scope
+## Stage Contract
 
 ### In Scope
 
@@ -46,7 +46,7 @@
 - 실행 순서와 작업 증적
 - 반복 운영 절차
 
-## Structure
+## Document Index
 
 ```text
 02.architecture/
@@ -55,7 +55,7 @@
 └── README.md
 ```
 
-## How to Work in This Area
+## Authoring Workflow
 
 1. 요구사항을 시스템 경계와 품질 속성으로 확장할 때는 `requirements/`를 갱신한다.
 2. 기술 선택이나 운영 모델 결정은 `decisions/`에 ADR로 기록한다.
@@ -64,7 +64,7 @@
 5. 구현자가 따라야 할 상세 계약은 `../03.specs/`로 넘긴다.
 6. 운영 정책이나 복구 절차는 `../05.operations/`로 넘긴다.
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/02.architecture/`다.
 

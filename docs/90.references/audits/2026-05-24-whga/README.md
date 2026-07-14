@@ -6,20 +6,20 @@ This Historical pack preserves the 2026-05-24 workspace harness gap-analysis
 snapshot. It is descriptive reference evidence, not a current implementation
 or policy owner.
 
-## Audience
+### Audience
 
 - Developers
 - Documentation Writers
 - AI Agents
 
-## Scope
+### Scope
 
-### In Scope
+#### In Scope
 
 - The report present in this dated pack.
 - Snapshot role, successor route, and evidence boundary.
 
-### Out of Scope
+#### Out of Scope
 
 - Current policy, implementation, or live-runtime claims.
 
@@ -29,7 +29,7 @@ or policy owner.
 - Snapshot date: 2026-05-24.
 - Scope: workspace harness gaps observed at that cutoff.
 
-## Structure
+### Structure
 
 ```text
 2026-05-24-whga/
@@ -43,17 +43,17 @@ or policy owner.
 | --- | --- |
 | [Workspace Harness Gap Analysis](./workspace-harness-gap-analysis.md) | Historical workspace harness gap analysis. |
 
-## Successor or Resolution
+## Refresh and Succession
 
 Successor: [2026-07-02 Workspace Harness Implementation Audit](../2026-07-02-whia/README.md).
 
-## How to Work in This Area
+### How to Work in This Area
 
 1. Read this index for the pack boundary.
 2. Open the report for dated evidence.
 3. Follow the successor for later implementation-audit evidence.
 
-## Link Basis
+### Link Basis
 
 - Same-pack reports start with `./`.
 - Sibling audit packs start with `../`.
@@ -68,4 +68,4 @@ current or live cluster, provider-runtime, credential, or secret readiness.
 
 - [Audits README](../README.md)
 - [Successor Pack](../2026-07-02-whia/README.md)
-- [README Template](../../../99.templates/templates/common/readme.template.md)
+- [Snapshot Pack Form](../../../99.templates/templates/common/readme-snapshot-pack.template.md)

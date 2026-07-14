@@ -1,4 +1,14 @@
+---
+title: 'Harness Approval Boundaries'
+type: governance/reference
+status: active
+owner: platform
+updated: 2026-07-14
+---
+
 # Harness Approval Boundaries
+
+## Overview
 
 This is the single approval-boundary matrix for harness surfaces in
 `hy-home.k8s`. It makes the default state, the condition that requires human or
@@ -10,7 +20,7 @@ consolidates the live-mutation and protected-surface boundaries that are
 otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
 [Local Harness Catalog](../harness-catalog.md) into one decision table.
 
-## Default Stance
+### Default Stance
 
 - Agents operate on repo-backed desired state. Live cluster mutation is **not**
   part of the default execution path.
@@ -20,10 +30,14 @@ otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
   require explicit human/operator approval before any action begins.
 - Provider hook/config surfaces are not interchangeable approval gates:
   `.claude/settings.json` owns Claude native permissions, while
-  `.agents/hooks.json` and `.codex/hooks.json` provide context/validation
-  wiring where supported.
+  `.codex/hooks.json` provides Codex context/validation wiring and
+  `.agents/hooks.json` provides local/Antigravity behavioral wiring where
+  supported. The latter is not Gemini CLI native configuration;
+  `.gemini/settings.json` is reserved and absent.
 
-## Approval Matrix
+## Authority Boundary
+
+### Approval Matrix
 
 | Surface                                                      | Default State            | Approval Required When                                                      | Required Validation                                                                                                 | Evidence Location         | Rollback                           |
 | ------------------------------------------------------------ | ------------------------ | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------- | ---------------------------------- |
@@ -44,7 +58,7 @@ otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
 | Cloud resources                                              | Read-only by default     | Any cloud API mutation, paid job, publish, or provider refresh              | scoped plan/spec evidence and repo-static checks                                                                    | PR / runbook              | operator-approved recovery         |
 | GitHub publish / merge / remote dispatch                     | Local draft only         | Any PR creation, merge, release, publish, workflow dispatch, or remote push | `git diff --check`, `scripts/validate-repo-quality-gates.sh .`, and human review                                    | PR / handoff              | revert / close remote action       |
 
-## Mandatory Policies
+### Mandatory Policies
 
 - Live cluster mutation is forbidden by default.
 - `kubectl apply` / `kubectl patch` / `kubectl delete` are allowed only on an
@@ -67,9 +81,36 @@ otherwise spread across `rules/bootstrap.md`, `rules/agentic.md`, and the
   only through an approved operations runbook; skipped live checks are reported
   with their reason.
 
+## Governance Context
+
+The bootstrap and Agent-first rules establish GitOps-first execution; this file
+is their decision matrix for protected surfaces. Provider-native permission
+systems may add stricter controls, but they do not replace this shared approval
+route or convert repo-static evidence into live readiness.
+
+## Current Contract
+
+- Repository edits and deterministic local validation are the default agent
+  path within the user's stated scope.
+- Live mutation, secret-value access, remote publication, merge, and paid or
+  third-party state changes require explicit human or operator approval.
+- Approved exceptions must record scope, target, rollback, evidence, and the
+  responsible operator; absence of approval means stop at a local draft.
+- The matrix above is the owner for surface-specific decisions. Runbooks own
+  approved operational procedure, and provider settings own native enforcement.
+
+## Validation and Refresh
+
+Run `bash scripts/validate-repo-quality-gates.sh .` and
+`bash scripts/validate-policy-gates.sh .` after changing a protected-surface
+boundary. Review the matrix whenever a workflow gains permissions, a validator
+changes failure semantics, or a new live, secret, cloud, or publication surface
+is introduced. Any unverified live condition remains `DEFER` under
+[`quality-standards.md`](quality-standards.md).
+
 ## Related Documents
 
 - [Harness Implementation Map](../harness-implementation-map.md)
 - [Local Harness Catalog](../harness-catalog.md)
 - [Bootstrap Governance](bootstrap.md)
-- [Harness Task Contract Template](../../99.templates/templates/sdlc/specs/harness-task-contract.template.md)
+- [Canonical Task Approval and Safety Boundaries](../../99.templates/templates/sdlc/execution/task.template.md#approval-and-safety-boundaries)

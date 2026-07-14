@@ -13,7 +13,7 @@
 
 `90.references`는 사실과 기준값을 보존하는 곳이다. 단, 이 폴더의 문서가 실행 명령, 배포 승인, live cluster 변경 절차, agent runtime policy를 새로 정의해서는 안 된다.
 
-## Audience
+### Stage Readers
 
 이 README의 주요 독자:
 
@@ -22,7 +22,7 @@
 - Documentation Writers
 - AI Agents
 
-## Scope
+## Stage Contract
 
 ### In Scope
 
@@ -40,11 +40,12 @@
 - agent runtime policy의 원본 규칙
 - live cluster mutation, Vault writes, deployment approval, release gate 자체
 
-## Structure
+## Document Index
 
 ```text
 docs/90.references/
 ├── audits/                              # Dated implementation audit snapshots and report index
+├── cloud-examples/                      # Retired AWS/Azure documentation consolidated as dated snapshots
 ├── data/                                # Repo-backed inventories, durable catalogs, factual lookup data
 ├── learning/                            # 학습 로드맵과 이론 연결 자료
 ├── llm-wiki/                            # LLM-readable generated Markdown link map
@@ -56,6 +57,7 @@ docs/90.references/
 
 | 문서 | Reference Type | 역할 | Freshness 기준 |
 | --- | --- | --- | --- |
+| [cloud-examples/README.md](./cloud-examples/README.md) | cloud example snapshot collection index | 퇴역한 AWS/Azure documentation tree의 dated snapshot, source coverage, provider-refresh 경계 | approved provider refresh, snapshot source/evidence 변경, collection 이동 시 |
 | [data/README.md](./data/README.md) | data reference index | repo-backed inventories, durable catalogs, factual lookup data의 범위와 라우팅 | data reference 문서 추가/이동, category role 변경 시 |
 | [data/agent-reference-index.md](./data/agent-reference-index.md) | durable-concept / data-catalog | Agent reference data의 범위와 canonical owner routing | Agent reference 문서 추가/이동, runtime roster 이동, Stage 00 routing 변경 시 |
 | [data/tech-stack-version-inventory.md](./data/tech-stack-version-inventory.md) | version-contract-inventory / external-standard-snapshot | repo-backed 버전 기준과 cloud example snapshot | manifest/config/example version 변경 또는 외부 공식 지원 범위 변경 |
@@ -66,7 +68,7 @@ docs/90.references/
 | [learning/README.md](./learning/README.md) | learning-roadmap index | learning reference 하위 폴더의 범위와 라우팅 | learning reference 문서 추가/이동 시 |
 | [research/README.md](./research/README.md) | durable-concept index / source-ledger index | dated workspace engineering research pack 하위 폴더의 범위, source priority, planned/current reference structure | research reference 문서 추가/이동, source priority 변경, parent spec/plan 변경 시 |
 
-## How to Work in This Area
+## Authoring Workflow
 
 1. 새 참고 자료가 정책/계약/절차를 정의하는지 확인한다. 그렇다면 `00.agent-governance`, `03.specs`, `05.operations/policies`, `05.operations/runbooks`로 라우팅한다.
 2. 버전 기준을 갱신할 때는 실제 manifest/config/example code와 [tech-stack-version-inventory.md](./data/tech-stack-version-inventory.md)를 같은 변경에서 맞춘다.
@@ -74,18 +76,18 @@ docs/90.references/
 4. 새 파일을 만들 경우 [reference template](../99.templates/templates/common/reference.template.md)을 사용하고 이 README 인덱스를 갱신한다. 일반 reference의 canonical target pattern은 `docs/90.references/<category>/<topic>.md`다. `audits/`와 `research/`의 dated pack은 `docs/90.references/<category>/<YYYY-MM-DD>-<sdlc_key>/<topic>.md`를 사용하고, part 순서를 표현해야 할 때도 `part-*.md`나 숫자 접두어 대신 의미 기반 파일명을 사용한다. `llm-wiki/wiki-index.md`는 `scripts/generate-llm-wiki-index.sh`로만 갱신한다.
 5. 모든 reference 문서는 `Reference Type`, `Authority Boundary`, `Review and Freshness`를 포함해야 한다.
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/90.references/`다.
 
-- 하위 reference folder는 `./audits/`, `./data/`, `./learning/`, `./llm-wiki/`, `./research/`로 연결한다.
+- 하위 reference folder는 `./audits/`, `./cloud-examples/`, `./data/`, `./learning/`, `./llm-wiki/`, `./research/`로 연결한다.
 - consumer stage는 `../01.requirements/`, `../02.architecture/`, `../03.specs/`, `../04.execution/`, `../05.operations/`로 연결한다.
 - root-level source file은 이 README 기준으로 `../../<path>`를 사용한다.
 - 새 reference 문서 안의 링크는 최종 reference 파일 위치 기준으로 다시 계산하고, optional target은 code literal로 남긴다.
 
-## Role and Authority Boundary
+### Role and Authority Boundary
 
-`90.references`의 역할은 다음 다섯 가지다.
+`90.references`의 역할은 다음 여섯 가지다.
 
 | 역할 | 설명 | 예시 | 소유하지 않는 것 |
 | --- | --- | --- | --- |
@@ -94,6 +96,7 @@ docs/90.references/
 | External standard snapshot | 특정 날짜에 확인한 외부 공식 지원 범위를 기록한다. | EKS/AKS 지원 버전, upstream retirement notice | cloud live deployment 지침 |
 | Learning/reference roadmap | 구현 경험을 이론 학습 자료와 연결한다. | infrastructure-to-theory roadmap | 운영 runbook, incident response |
 | Dated implementation audit snapshot | 특정 날짜의 local implementation status와 repo-backed evidence를 요약한다. | workspace harness implementation audit | active policy, plans, tasks, runbooks, CI semantics, live runtime readiness |
+| Cloud example snapshot | 퇴역한 provider documentation tree의 고유 지식을 source coverage와 함께 dated reference로 보존한다. | AWS/Azure migration snapshots | provider-latest guidance, executable example ownership, live cloud deployment 절차 |
 
 권한 경계는 다음과 같다.
 
@@ -103,19 +106,20 @@ docs/90.references/
 - 외부 기준은 시간에 따라 바뀌므로 `Source checked`, `Last reviewed`, refresh trigger를 남긴다.
 - Audit snapshot은 checked-date 기준 implementation evidence를 요약할 뿐이며 active policy, plans, tasks, runbooks, CI semantics, live runtime readiness를 소유하지 않는다.
 
-## Reference Folder Roles
+### Reference Folder Roles
 
 `90.references` 하위 폴더의 목적은 다음처럼 나눈다.
 
 | Folder | Role | Language Boundary |
 | --- | --- | --- |
 | `audits/` | dated implementation audit snapshot, local evidence comparison, status vocabulary, and follow-up routing | 사람용 설명은 한국어 가능, audit status, evidence boundary, and static-vs-live limitation은 영어-first |
+| `cloud-examples/` | retired AWS/Azure documentation knowledge, source coverage, and dated provider snapshot boundary | 설명은 한국어 가능, source coverage, provider freshness, and no-live-authority boundary는 영어-first |
 | `data/` | repo-backed version contracts, durable Agent reference catalog boundaries, and factual lookup tables | 사람용 설명은 한국어 가능, source-checked values, freshness triggers, and canonical owner boundaries는 영어-first |
 | `learning/` | 구현 경험을 CS/CE 이론과 장기 학습 로드맵으로 연결하는 자료 | 학습 맥락은 한국어 가능, authoritative boundary와 freshness rule은 영어로 유지 |
 | `llm-wiki/` | LLM-readable canonical owner link map과 generated index | 링크맵 설명은 혼합 가능, generated content와 canonical owner boundary는 영어-first |
 | `research/` | Dated workspace engineering research pack reference, source ledger, source priority를 관리하는 자료 | 사람용 설명은 한국어 가능, source authority와 non-authoritative market scan boundary는 영어-first |
 
-## Dated Pack Naming
+### Dated Pack Naming
 
 `audits/`와 `research/`의 날짜별 묶음은 다음 규칙을 따른다.
 
@@ -130,7 +134,7 @@ The `sdlc_key` is a short stable key for cross-reference readability. Use the
 long human title inside the pack README and report title instead of repeating
 it in every folder name.
 
-## Language Boundary
+### Language Boundary
 
 `90.references`는 사람이 먼저 읽는 reference hub이므로 README와 개요 문장은
 한국어를 사용할 수 있다. 다만 reference 문서가 AI Agent나 자동화가 판단 기준으로
@@ -144,7 +148,7 @@ Reference 문서는 정책, 실행 절차, 배포 승인, runtime permission을 
 owner로 이동하고, `90.references`에는 dated source, lookup fact, freshness
 trigger만 남긴다.
 
-## Required Reference Format
+### Required Reference Format
 
 새 reference 문서는 [reference.template.md](../99.templates/templates/common/reference.template.md)의 필수 heading을 유지한다.
 `README.md` 인덱스 파일은 탐색 진입점이므로 전체 reference 템플릿을 복제하지 않고 필요한 필드의 요약만 둘 수 있다.

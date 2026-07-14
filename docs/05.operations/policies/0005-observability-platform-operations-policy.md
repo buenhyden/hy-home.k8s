@@ -161,12 +161,12 @@ Prometheus(Docker)가 k8s 내부 ArgoCD 메트릭을 수집하기 위해 NodePor
 - 관측성 포트, external service, Prometheus scrape target 변경 시마다 검토한다.
 - Ingress/Grafana/Kiali 인증 경계 변경 시 관련 policy/runbook과 함께 검토한다.
 
-## AI Agent Policy Section (If Applicable)
+### AI Agent Policy Section
 
 이 정책은 인프라 리소스를 직접 관리하며 AI Agent 모델/프롬프트/평가 정책이 별도 적용되지 않는다.
 단, Agent가 이 정책 범위의 리소스를 조작할 경우 [운영 거버넌스](../../00.agent-governance/README.md)에 따른다.
 
-## Related Documents
+## Traceability
 
 - [ArgoCD 메트릭 가이드](../guides/0006-argocd-prometheus-grafana-guide.md)
 - [ArgoCD 메트릭 런북](../runbooks/0008-argocd-metrics-prometheus-runbook.md)

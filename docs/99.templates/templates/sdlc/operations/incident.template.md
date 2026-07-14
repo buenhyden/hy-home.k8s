@@ -10,82 +10,38 @@ updated: YYYY-MM-DD
 
 # Incident: [Incident Title]
 
-INC-### / [Short Incident Title]
-
-> Use this template for `docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md`.
->
-> Rules:
->
-> - Record facts, status, and response state.
-> - Separate confirmed facts from current hypotheses.
-> - Do not place the final root cause analysis here; move that to the Postmortem.
-> - Use relative links only, calculated from the final authored document location.
-> - Keep placeholder or optional target paths as code literals until the target exists.
-
----
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Overview
 
-이 문서는 사고의 영향, 현재 상태, 주요 대응 흐름을 기록하는 Incident 문서다. 사실 기록과 대응 로그에 집중한다.
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
 ## Incident Metadata
 
-| Field           | Value                                                                      |
-| --------------- | -------------------------------------------------------------------------- |
-| Incident ID     | `INC-###`                                                                  |
-| Severity        | `SEV-1 / SEV-2 / SEV-3`                                                    |
-| Status          | `Investigating / Identified / Mitigating / Monitoring / Resolved / Closed` |
-| Detection Time  | `YYYY-MM-DD HH:MM UTC`                                                     |
-| Primary Service | [Affected service]                                                         |
-| Evidence Source | [Log / dashboard / report]                                                 |
-| Runbook Link    | `[../../../runbooks/####-<topic>.md]`                                      |
-
-## Agent Metadata (If Applicable)
-
-- **Model Version**:
-- **Prompt Version**:
-- **Tool Set / Config**:
-- **Guardrail State**:
-- **Trace IDs**:
-- **Eval Run IDs**:
-
-## Incident Summary
-
-[Short summary.]
+<!-- Describe the topic-specific incident metadata without copying template guidance. -->
 
 ## Impact
 
-- [Impact 1]
-- [Impact 2]
+<!-- Describe the topic-specific impact without copying template guidance. -->
 
 ## Timeline
 
-| Time (UTC) | Actor  | Detail          |
-| ---------- | ------ | --------------- |
-| HH:MM      | [Name] | [What happened] |
+<!-- Describe the topic-specific timeline without copying template guidance. -->
 
-## Current Hypothesis / Response State
+## Response State
 
-- **Current Hypothesis**:
-- **Mitigation Actions**:
-- **Resolution State**:
+<!-- Describe the topic-specific response state without copying template guidance. -->
 
 ## Evidence
 
-- [Evidence 1]
-- [Evidence 2]
+<!-- Describe the topic-specific evidence without copying template guidance. -->
 
 ## Follow-up Actions
 
-- [ ] [Action] — Owner: [Name]
+<!-- Describe the topic-specific follow-up actions without copying template guidance. -->
 
-## Related Documents
+## Traceability
 
-Target-relative examples below assume the authored file will be created at
-`docs/05.operations/incidents/YYYY/INC-###-<title>/INC-###-<title>.md`.
-
-- **Postmortem**: `[postmortem.md]`
-- **Spec**: `[../../../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
-- **Related ADRs**: `[../../../../02.architecture/decisions/####-<short-title>.md]`
-- **Runbook**: `[../../../runbooks/####-<topic>.md]`
-- **Operation**: `[../../../policies/####-<policy-or-standard>.md]`
+<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->

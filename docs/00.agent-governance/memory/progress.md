@@ -8,6 +8,1334 @@ inventory stays in `scripts/README.md`.
 
 ## Work Entries
 
+### 2026-07-14 - PSH-006 protected-surface repository-static closure
+
+#### Metadata
+
+- **Date**: 2026-07-14
+- **Layer**: security, CI, GitOps, infrastructure, execution evidence
+- **Status**: complete
+- **Tags**: #psh-006 #supply-chain #gitops #vault-eso #repo-static
+
+#### Progress
+
+- Closed Spec 032, its implementation Plan, and its Task after PSH-001 through
+  PSH-006 established immutable Action identities and least-privilege workflow
+  permissions, identity-only GitOps change review, local-only Vault/ESO
+  contracts, secret-safe bootstrap boundaries, and rerunnable closure evidence.
+- Retained the source findings and recorded only repository-static remediation
+  facts for RMD-001 through RMD-003. Added RMD-014 closure evidence with the
+  focused validator and exact five workflow consumers.
+- The seven first-parent pre-closure commits are PSH-001
+  `a2aa49f200b0b6bd36fe67ee469d17a971297430`, PSH-002
+  `1a3f94cab4d9bba07b73db612e083e78fe0b4630`, PSH-003 Plan correction
+  `b26893670024b6f8e57ad7923783e573ad391d8c`, PSH-003
+  `2bce69fd6ddb850a94f886ef8906ce436a937cea`, PSH-004
+  `82679a4c977716dbb968fd37b8a901cd86e036af`, PSH-005 Plan correction
+  `0a3cf2faffb039b6c26f22b657ecd36577c47e67`, and PSH-005
+  `2b1e56775883a596be3f13fca1cabe1cb2680133`.
+- The closing commit cannot embed its own content-addressed SHA. The ignored
+  post-commit Task 6 report is the correct place to record that exact SHA; no
+  closure SHA was invented in tracked evidence.
+
+#### Evidence
+
+- `python3 scripts/validate-affected-surfaces.py --self-test` and `--root .`:
+  PASS; 21 surfaces, 652 paths, 12 validators, three CI jobs, zero uncovered or
+  ambiguous paths.
+- `python3 scripts/validate-github-actions-security.py --self-test` and
+  `--root .`: PASS.
+- `python3 scripts/validate-gitops-change-set.py --self-test`: PASS with exact
+  ADD, DELETE, and RETAIN fixture rows;
+  `python3 scripts/validate-gitops-change-set.py --root . --base-ref HEAD`:
+  PASS with identity-only output and no manifest values.
+- `python3 scripts/validate-vault-eso-contracts.py --self-test`: PASS for the
+  exact ten cases; `python3 scripts/validate-vault-eso-contracts.py --root .`:
+  PASS.
+- `bash infrastructure/tests/verify-contracts-static.sh` and
+  `bash scripts/validate-gitops-structure.sh`: PASS.
+- `bash scripts/validate-k8s-manifests.sh .`: PASS for YAML and the installed
+  kube-linter across 104 files. kube-linter reported version `development` and
+  ran the full lint; it was not a fallback.
+- `bash scripts/check-secret-handling.sh .`: PASS across 100 files with no
+  plaintext secret pattern. Secret-value access: none.
+- `bash scripts/validate-policy-gates.sh .`: PASS overall. `command -v conftest`
+  exited 1, so Conftest is `SKIP`; the separately reported built-in policy
+  fallback is `PASS` and is not represented as a Conftest pass.
+- `find infrastructure scripts docs/00.agent-governance/hooks -type f -name
+  '*.sh' -exec bash -n {} +`, `bash scripts/validate-repo-quality-gates.sh .`,
+  `pre-commit run --all-files`, and `git diff --check`: PASS. Dockerfile lint
+  was a no-file `SKIP`, not a pass.
+- Whole-tranche independent review of PSH-001 through PSH-005 approved Action
+  identity/permissions, GitOps identity/deletion/redaction, Vault/ESO
+  TLS/identity/secret handling, and selector/job-routing preservation with
+  disposition C0/H0/M0/L0.
+
+#### Memory
+
+- Repository-static closure and live readiness are separate evidence lanes.
+  Local-only annotations are a tracked contract, not a network control or a
+  production TLS claim.
+- Optional-tool absence must remain `SKIP`; a built-in fallback can be `PASS`
+  only in its own row. A closing commit cannot name its own SHA.
+
+#### Safety Boundary and Handoff
+
+- Rollback to the first parent before PSH-001:
+  `05e2b7050b8d150ec46eddf731bf28283bd11c04`, or revert the seven pre-closure
+  commits newest-first and then the PSH-006 closure commit.
+- Remote GitHub execution, Argo CD prune/reconcile, Vault/ESO authentication
+  and TLS runtime, Kubernetes authorization, external Vault role application
+  with `bound_audiences=vault`, credential rotation, and live rollback rehearsal
+  remain `DEFER` under separate operator approval.
+- No secret value, credential, ignored certificate, authentication state,
+  kubeconfig, shell history, token cache, network mutation, live system, remote
+  workflow, push, publish, merge, or third-party state was read or changed.
+
+### 2026-07-13 - ADM-007 strict document-profile cutover
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, semantic validation, repository quality gates
+- **Status**: complete
+- **Tags**: #adm-007 #strict-cutover #finite-debt #spec-030
+
+#### Progress
+
+- Proved the committed ADM-006C starting state was clean, both provider
+  snapshots retained their approved hashes, cloud source59 was absent, the
+  template fixture contained zero affected paths and zero semantic caps, and
+  the semantic fixture contained `items: []`.
+- Retired the empty `compatibilityDebt` and `semanticDebtCaps` fields and
+  deleted the empty semantic debt file. Strict mode now treats absence as the
+  canonical zero-debt state; compatibility mode fails closed with exit `2`,
+  empty stdout, and stable `DEBT-SOURCE-MISSING` stderr.
+- Switched registry, Markdown, and cross-document production validation in the
+  repository quality gate to strict mode as one atomic unit. Inventory mode
+  remains available without loading the retired cross-document source.
+- Closed the exact Spec 030 Spec, Plan, and Task lineage plus their three index
+  rows. The cross-document self-test now proves the exact owner-key lifecycle
+  `67 -> 64 -> 61` by mutating only the Spec 029 and Spec 030 trios.
+
+#### Memory
+
+- Empty migration debt is transitional evidence, not permanent policy. Once
+  the corpus is canonical, strict validation must own normal failures and the
+  removed compatibility source must not be recreated as a fixture, registry
+  field, Python allow-list, path filter, or environment waiver.
+- A destructive cutover is safest when its wrapper, producers, fixtures,
+  lifecycle evidence, and rollback boundary change in one exact staged set.
+
+#### Evidence
+
+- Pre-retirement strict and compatibility JSON runs were `4/4` PASS with zero
+  diagnostics. The empty template file SHA-256 was
+  `56c0809aacc358be4c6f4a842ffafcd8e49065812cb4e82749b065fe4d960bc9`;
+  the empty semantic file SHA-256 was
+  `e81061f245bd63a5f28b17b2e98964a6e526ea635f4091e051ac3d85f14085a3`.
+- Test-first retirement RED returned the explicit source-present failure for
+  both validators; the links test additionally exposed the planned stale
+  lifecycle constants without the former empty-`items` index crash. GREEN
+  proves strict PASS, compatibility exit `2`, exact stderr, empty stdout,
+  source-reintroduction rejection, and no silent source recreation.
+- The retained complete template fixture semantic SHA-256 is
+  `e2a7b02ed9cf31b97480a9de31128d5d1486acf01c8e556d040f4071a6083cf6`.
+  Mutation proofs reject owner, growth policy, baseline, canonical-form,
+  template-mode, partial source restoration, and both retired fields together.
+- Registry, Markdown, and cross-document strict validation, both semantic
+  self-tests, inventory, residue classification, the full repository quality
+  gate, shell syntax checks, `git diff --check`, all-files pre-commit, and the
+  exact13 pre/post-hook proof form the final handoff gate.
+
+#### Handoff
+
+- Review the exact thirteen paths: one semantic fixture deletion and twelve
+  modifications. The registry and all migrated content/provider paths remain
+  outside this unit. Commit only after independent review with
+  `chore(docs): cut over document profiles to strict validation`.
+- Roll back the cutover only with `git revert <ADM-007-commit>` so the two empty
+  sources, compatibility behavior, wrapper modes, and active lifecycle return
+  atomically. No live cluster, provider, secret, credential, remote CI,
+  publication, push, merge, or deployment action occurred.
+
+### 2026-07-13 - ADM-006C residual relationship-alias retirement
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, semantic validation
+- **Status**: complete
+- **Tags**: #adm-006c #traceability #finite-debt #strict-cutover
+
+#### Progress
+
+- Reconstructed the hardcoded exact-17 document set as the ADM-003C exact-16
+  plus ADM-004C exact-1 escape owners. Its canonical sorted-NUL SHA-256 is
+  `345cbbfa545bb2850b57155ce6f65aab79e624f0fd14c4c915748072b2802e86`.
+- Reproduced the no-container RED as exactly `43` diagnostics over those 17
+  paths: `17` missing canonical `Traceability` headings and `26` unsupported
+  `Related Inputs`, `Related Documents`, or `Parent Documents` headings.
+- Canonicalized only relationship structure. Every path now has one
+  `Traceability` H2 and no legacy relationship H2. Unique relationship inputs
+  from Specs and the Agent Design are retained in topic-specific H3
+  subsections; duplicate links alone were removed.
+- Updated the exact 17 durable-ledger rows with their original escape owner,
+  canonicalization result, and independent-review boundary. No template
+  fixture, validator, registry, README/index, provider adapter, protected
+  surface, CI, agent behavior, or live system changed.
+
+#### Evidence
+
+- Unique link-target sets and fenced-block counts equal the pre-edit versions
+  for all exact 17 documents. ADR decisions, completed evidence, status, topic
+  prose, tables, fences, link targets, and ordering meaning are preserved.
+- Modeling the compatibility container absent after the edit yields zero
+  repository diagnostics. Markdown compatibility, link/owner compatibility,
+  `git diff --check`, and the full repository quality gate pass with zero
+  violations. Focused hooks and exact-21 stage proof passed; independent
+  review approved with zero findings and commit `062bd9d` closed the unit.
+
+#### Safety Boundary
+
+- This is repository-static documentation migration only. It performed no
+  live Kubernetes, Argo CD, Vault, ESO, cloud-provider, credential, secret,
+  remote CI, publication, push, merge, deployment, or third-party mutation.
+
+#### Handoff
+
+- ADM-006C is the committed prerequisite at `062bd9d`. ADM-007 may retire only
+  the empty compatibility sources and enable strict validation without
+  restoring an alias or changing the exact-17 documents.
+
+### 2026-07-13 - ADM-006 cloud example consolidation
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, cloud examples, qa
+- **Status**: complete
+- **Tags**: #adm-006 #cloud-snapshot #finite-debt #ledger-history
+
+#### Progress
+
+- Consolidated the immutable 26-file AWS and 33-file Azure documentation trees
+  into two dated Stage 90 snapshots, rerouted only the exact nine reviewed
+  README link/index consumers, and deleted exactly source59 after independent
+  approval. The two approved snapshot identities remain
+  `650c3cd13bc8fc555db11cd9ee42de0831b910b20780418f8ba37e1bcf69c1fc`
+  and `c16bdd939e998775c0c18d251226a1e2cc301503e1127a69360c540f080d9081`.
+- Preserved all 22 non-Markdown AWS/Azure executable assets. No live provider,
+  cluster, secret, credential, remote, publication, push, merge, or deployment
+  operation was performed.
+- Split the durable ledger into a validator-owned 412-row current inventory and
+  a separate append-only 59-row source-deleted history. Every historical row
+  preserves all fourteen fields, records `merge-complete; source-deleted`, and
+  targets only its provider snapshot (`AWS=26`, `Azure=33`).
+- Removed exactly the approved 39 compatibility paths and 102 tuples. The
+  schema-v1, Spec 030-owned, no-growth compatibility container remains present
+  but empty for ADM-007, with all semantic caps synchronized to zero.
+
+#### Evidence
+
+- Source59 SHA-256:
+  `2ed87a48e9b62da9e16f904f0bbe2ebdf3f1ebaef5be55fdcf06b1608c3a315b`;
+  allowed70 SHA-256:
+  `3c297fa6f0feedbd813b3e3de467a1cb6f0d01da44253951a737b15e756877b9`;
+  debt39/102 manifest SHA-256:
+  `b3590d397620f6e45280073140eacb08b07034b1f24b82d54f6fc987e42b36f1`.
+- Post-delete resolved graph SHA-256:
+  `d5f345ab514f1359518dac709c62842ef46c09aac41094fbb76a52656331615e`.
+  It scans the 413 tracked post-deletion Markdown paths plus both snapshots and
+  proves zero source-target, internal, external, consumer, and target edges.
+- Current-ledger/corpus equality is 412; history/source-manifest set equality is
+  59. All 26 AWS destinations and all 33 Azure destinations match the approved
+  provider snapshots, and the source paths are absent from both the tracked
+  inventory and filesystem.
+- Empty fixture semantic SHA-256:
+  `9bc4cbc4eb6a3a53e0ffdaa7465a3085092cf03ec8273881a6d3584fe26218fc`.
+  The refreshed complete-fixture proof covers owner, no-growth policy,
+  profile/baseline data, empty affected-path introduction, rule and occurrence
+  caps, token obligations, distinct tokens, overlap, and union counts.
+- README schema 2 preserves an immutable 67-path baseline as active `47` plus
+  retired `20`, adds exactly five active paths, and equals the current tracked
+  52-path README inventory. Retired rows are absent from the current tree,
+  owned by `ADM-006`, and route only to their provider-correct durable
+  snapshots. The exact-six lifecycle spans now record that Stage 90
+  indexes/snapshots exist, source59 is retired, executable assets remain, and
+  the dated snapshots are the durable destinations. Whole-file and Overview
+  hashes, stale-category mutations, and exact-three Azure subentrypoint
+  link-only hashes pass the README text guard.
+- The registry statement-level AST guard pins the only additional `main`
+  expression. Focused README output is exactly `README baseline=67
+  active_current=52 retired=20 declared_total=72 schema=2 exact_set=yes
+  uncovered=0 ambiguous=0`; legacy progression/final labels are absent.
+  Registry and Markdown AST guards, both validator self-tests, compatibility
+  validation, focused hooks, and the repository quality gate pass.
+- Final scope is exactly 79 staged paths: allowed70 plus nine fixed
+  ledger/fixture/validator/quality-gate/Task/progress owners. No commit was
+  created.
+
+#### Memory
+
+- A durable migration ledger needs separate authority and history surfaces.
+  Current-corpus equality belongs to the first table; deleted-source evidence
+  belongs to an append-only table whose destinations remain current and whose
+  path set is checked against the immutable deletion manifest.
+- Empty finite debt is still a meaningful compatibility state. ADM-006 retains
+  the empty Spec 030 container and complete digest/mutation protections;
+  ADM-007 alone removes the empty definitions while cutting validation to
+  strict mode.
+
+#### Handoff
+
+- Before commit, rollback is the exact inverse/unstage of the reviewed 79-path
+  unit. After a future logical commit, revert that single ADM-006 commit so
+  snapshots, deletions, routes, evidence, and zero-debt validation return
+  atomically.
+- ADM-007 may remove only the now-empty compatibility definitions, switch the
+  wrapper to strict validation, and close Spec 030. It must not reopen the two
+  immutable snapshots, source-deleted history, README routes, or cloud assets.
+
+### 2026-07-13 - ADM-006 resolved-link preparation correction
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, cloud examples, qa
+- **Status**: in-progress
+- **Tags**: #adm-006 #plan-correction #link-graph #readme-handoff
+
+#### Progress
+
+- Corrected only Spec 030, Plan 030, the ADM migration Task, and this canonical
+  progress ledger after independent preparation review found eighteen relative
+  Markdown links that literal-path `rg` capture could not see.
+- Added the exact three Spec 028 relocation-only consumers
+  `examples/azure/{gitops,infrastructure,kubernetes}/README.md`; their eight
+  links resolve into the immutable deletion set. No README profile/body
+  ownership moved to Spec 030, and no README, snapshot, source, fixture,
+  validator, or ledger row changed in this correction.
+- Replaced the authoritative inbound boundary with a resolved tracked-Markdown
+  graph using the repository link validator's extraction and relative-target
+  semantics. The 59-source and 39-debt identities remain immutable; the allowed
+  document boundary is now exactly `70`: 59 deletions, two snapshots, and nine
+  READMEs.
+
+#### Evidence
+
+- Source manifest: 59 paths, SHA-256
+  `2ed87a48e9b62da9e16f904f0bbe2ebdf3f1ebaef5be55fdcf06b1608c3a315b`.
+- Debt projection: 39 paths, SHA-256
+  `35ad28eee5da9f73bb5878f18a05c2282785b43187e5657424c563fd03f96034`;
+  the exact 102 tuples and all zero-after arithmetic are unchanged. The
+  regenerated debt manifest SHA-256 is
+  `b3590d397620f6e45280073140eacb08b07034b1f24b82d54f6fc987e42b36f1`.
+- Allowed manifest: 70 sorted unique NUL paths, SHA-256
+  `3c297fa6f0feedbd813b3e3de467a1cb6f0d01da44253951a737b15e756877b9`.
+- Resolved RED graph: 472 tracked Markdown files, 265 links into the source
+  set, 225 internal links, and 40 external links from eight consumers to 23
+  targets; SHA-256
+  `2ecf54da33dd7f2163db470ae447e79be7693b079f341a8e69d57fc20561fcdc`.
+  The eight consumers plus the cloud snapshot-pack root index equal the exact
+  nine relocation-only README paths.
+
+#### Memory
+
+- A literal repository-path search is evidence about string mentions, not a
+  deletion-safe Markdown link graph. Destructive documentation migration must
+  resolve relative targets with the same parser semantics as the link validator
+  and prove the consumer set is covered by the frozen allowed manifest.
+- Spec 028 ownership can be borrowed only through a closed exact-path,
+  link/index-row exception. Finding additional broken-link consumers does not
+  authorize README profile or body redesign.
+
+#### Handoff
+
+- Regenerate the ignored allowed/debt manifests and resolved graph after this
+  exact-four correction, then obtain a fresh preparation review before the
+  first snapshot, README edit, fixture change, or source deletion.
+- During ADM-006, reroute all nine README paths, prove zero external
+  deletion-target link and zero unresolved local link before `git rm`, and
+  require the final staged set to be exactly `76`: 70 documents plus six fixed
+  evidence/validation owners.
+- No live system, secret, remote CI, push, publish, merge, deployment, stage,
+  commit, snapshot, README, source, or fixture action was performed by this
+  correction.
+
+### 2026-07-13 - ADM-005 governance and Current-reference shape normalization
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, governance, research, templates, migration, qa
+- **Status**: complete
+- **Tags**: #adm-005 #shape-normalization #current-research #template-support
+
+#### Progress
+
+- Applied the exact 73-path allowed manifest, SHA-256
+  `c9788e8f27a3497ab459aae2d0b001d98323672cefb0e1228ef328331749fe95`,
+  through 15 atomic batches; the reviewed debt-removal manifest SHA-256 is
+  `5d8b9fc200e0029011b1c8469492ee99a555e6e979979851ffb5d77284b1a9d1`.
+- Normalized Stage 00 governance and Stage 90 Current references while
+  retaining dated facts, sources, applicability, versions, currentness,
+  commands, fences, tables, links, and authority boundaries. All 73 durable
+  evidence rows are `shape-normalized`.
+- Kept all thirteen Spec 027/031 handoff files structural-only. The six support
+  and seven Stage 00 files preserve exact semantic, route, schema, form,
+  provider, fence, table, and authority payloads. The frozen manifest contains
+  zero Stage 98 paths, so Tombstone mutation is exactly zero.
+
+#### Evidence
+
+- All 15 compatibility checkpoints exited zero with no exact-batch diagnostic.
+  Final compatibility is `102 DEFER / 0 FAIL` with zero diagnostics on the 73
+  ADM-005 paths.
+- The complete fixture semantic digest is
+  `a81a558d97472bcb9624a9270e3be7e8cbd16c44aa3dc6a5bd8f9be3e663b8a7`.
+  Remaining caps are required `4/4/4`, residue `17/21/21`, delimiter `0/0/0`,
+  unsupported `39/77/77` with `37` distinct tokens, duplicate `0/0/0`, overlap
+  `4`, required/residue union `17`, and total union `39`.
+- The exact working and rollback set is `79` paths: 73 documents plus the
+  durable ledger, fixture, Markdown validator, quality-gate consumer, ADM Task,
+  and this progress ledger. The combined validator diff guard, self-test,
+  links/owners, full repository quality gate, focused pre-commit, diff check,
+  manifest/fixture proofs, and empty-index assertion all passed.
+
+#### Memory
+
+- A finite-debt wave stays batch-atomic across document shape, durable evidence,
+  fixture records, cap constants, and validator expectations; a document-only
+  checkpoint correctly fails as unused debt.
+- Structural-only handoffs require payload-level preservation, not merely a
+  final validator pass. Compare semantic lines, fences, tables, and links to
+  the pre-wave source before handing semantic ownership back.
+
+#### Handoff
+
+- Revert the eventual ADM-005 logical commit as one 79-path unit if rollback is
+  required. ADM-006 owns the exact remaining `39` AWS/Azure cloud paths with
+  `102` occurrences and `102` obligations; it must not reopen ADM-005 files.
+- No live system, secret, remote CI, push, publish, merge, deployment, stage, or
+  commit action was performed during this evidence finalization.
+
+### 2026-07-13 - ADM-004 independent semantic correction
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, execution, operations, qa
+- **Status**: complete
+- **Tags**: #adm-004 #semantic-review #task-safety #fence-preservation
+
+#### Progress
+
+- Reconstructed the Approval and Safety Boundaries of exactly 47 Tasks from
+  each document's own Inputs, Task Table, verification evidence, and parent
+  authorities; removed copied Working Rules and provider-type catalogs.
+- Restored the fenced instruction/example interiors of exactly seven Plans
+  byte-for-byte from dependency `851007d` while retaining outer canonical
+  structure, and canonicalized exactly nine Runbooks without changing their
+  procedures or recovery evidence.
+- Added category-specific independent-review evidence and content decisions to
+  the corresponding 63 durable-ledger rows; official sources, applicability,
+  historical facts, and `shape-normalized` results remain preserved.
+- Final Task re-review corrected nine range endpoints that had leaked into
+  later evidence tables, removed bare `find`/`rg` fragments from two research
+  safety blocks, and changed the unsupported Current research live lane to
+  `DEFER`; exactly ten affected ledger rows record that reviewer correction.
+
+#### Memory
+
+- Structural normalization must never rewrite executable fenced instructions,
+  and a Task safety contract must be derived from that Task rather than copied
+  from a generic catalog.
+- Runbook relationship links have one owner: Traceability. Consolidation must
+  deduplicate by target while preserving procedure, verification, observation,
+  and recovery owners.
+
+#### Evidence
+
+- Structural audit proves `47/7/9` exact document counts, 47 unique
+  Task safety blocks with all required fields, zero forbidden catalog residue,
+  seven fenced payloads equal to `851007d`, and nine canonical Runbook H2
+  sequences with no Canonical References H2. One nested historical Markdown
+  example uses a four-backtick outer delimiter so its unchanged three-backtick
+  payload remains CommonMark-safe and invisible to containing-document H2
+  validation.
+- All 47 Task ranges now equal the actual first and last IDs in the first table
+  bounded by `## Task Table` and the next H2; the Current research limitation
+  states that no live Kubernetes, Argo CD, Vault, or ESO check ran.
+- Final closure passed with an exact 13-path correction above `acdb8e6`, an
+  unchanged 126-path combined wave from `851007d`, compatibility
+  `626 DEFER / 0 FAIL`, exact-wave zero diagnostics, links, full quality gates,
+  Plan Step 5 pre-commit, diff check, the combined validator guard, and index
+  cleanliness.
+
+#### Handoff
+
+- Independently review and commit the exact 13-path final Task correction;
+  retain the 120-document wave and six fixed owners as the 126-path rollback
+  unit.
+- ADM-005 remains blocked until this correction is accepted with the existing
+  ADM-004 wave and dependency `851007d`.
+
+### 2026-07-13 - ADM-004 Stage 04–05 authored shape normalization
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, validation, qa
+- **Status**: complete
+- **Tags**: #adm-004 #execution #operations #shape-normalization
+
+#### Progress
+
+- Normalized the canonical H2 boundaries of the exact 120-path Stage 04–05
+  manifest: forty-nine Plans, forty-seven Tasks, eight Guides, seven Policies,
+  and nine Runbooks.
+- Applied 24 atomic five-path document/ledger/fixture/cap checkpoints; every
+  exact batch returned zero compatibility diagnostics and all 120 durable
+  ledger rows finished as `shape-normalized`.
+- Removed exactly the 120 consumed fixture records and refreshed the complete
+  fixture digest, aggregate after-projection, and affected-path/rule/cap
+  mutation proofs against the final wave state.
+
+#### Memory
+
+- The frozen allowed manifest identity is 120 paths with SHA-256
+  `ac9ca4985d0f8945ae342294bcb059fb00d5f343c5167d3c71378e3b0e6c2a8e`;
+  the corrected debt-removal manifest SHA-256 is
+  `947e7a5e37ace8e0da7099fad2a7891d371308a52ec214d52b734419988fd565`.
+- The complete fixture semantic SHA-256 is
+  `e95542b4fc35b19fe4ab408088561110b968a57234345029193d3f45766102b1`.
+- The zero-valued duplicate cap depends on the bounded self-test projection
+  reviewed in commit `851007d`; finite-debt contraction must retain that
+  projection while any zero cap remains.
+
+#### Evidence
+
+- Remaining compatibility debt is exactly 112 affected paths, 626 diagnostic
+  occurrences, and 602 token obligations. Detailed caps are required
+  `42/200/200`, residue `52/56/56`, delimiter `24/24/0`, unsupported
+  `90/346/346` with 228 distinct tokens, and duplicate `0/0/0`; overlap is 4
+  and the required/residue union is 90.
+- Markdown self-test, exact-wave zero diagnostics, link/owner compatibility,
+  repository quality gates, diff check, the whole-working-diff validator
+  guard, and exact working-tree set proof gate completion.
+- R2 reconciliation restored the prior `updated` values on exactly the 24
+  indexed Stage 05 documents without changing their normalized bodies or any
+  README; the final full repository quality gate passes.
+- The exact tracked set is `126 = 120 documents + ledger + fixture + Markdown
+  validator + quality-gate consumer + Task + progress`; nothing is staged by
+  this finalization step.
+
+#### Handoff
+
+- Independently review and commit the exact 126-path unit as
+  `docs(migration): normalize execution and operations documents`; roll it
+  back as one commit while retaining dependency `851007d`.
+- Start ADM-005 only after the ADM-004 commit and review are accepted. If the
+  wave is rolled back, restore the fixture digest/caps and all 120 ledger rows
+  with the documents; revert `851007d` only after its dependents are removed.
+
+### 2026-07-13 - ADM-004 zero-cap self-test correction
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, validation, planning
+- **Status**: complete
+- **Tags**: #adm-004 #zero-cap #self-test #diff-guard
+
+#### Progress
+
+- Paused ADM-004 after batch 07 reduced the last `BODY-H2-DUPLICATE` debt
+  record to a legitimate zero cap and exposed a self-test Counter comparison
+  that omitted zero-valued keys.
+- Authorized one exact self-test projection over the existing expected rule
+  keys, while preserving all parser, rule, diagnostic, outcome, route, and CLI
+  behavior under the staged validator diff guard.
+
+#### Memory
+
+- A shrinking finite-debt contract must represent a zero-count rule without
+  confusing an absent `Counter` key with a missing expected-cap key.
+- Narrow migration exceptions need executable line guards; prose-only scope is
+  insufficient when a whole validator file is staged.
+
+#### Evidence
+
+- Batch 07 compatibility reports `1046 DEFER / 0 FAIL`, exact batch diagnostics
+  zero, fixture/validator caps aligned, and Markdown self-test PASS.
+- This correction stages only Spec 030, Plan 030, Task 030, and this progress
+  entry; the in-progress ADM-004 files remain unstaged for their later wave
+  commit.
+
+#### Handoff
+
+- Commit and independently review this exact four-path correction, then resume
+  ADM-004 at frozen batch 08 without reopening batches 01–07.
+
+### 2026-07-13 - ADM-003 Stage 01–03 authored shape normalization
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, validation, qa
+- **Status**: complete
+- **Tags**: #adm-003 #sdlc #shape-normalization #compatibility-debt
+
+#### Progress
+
+- Normalized the canonical H2 shapes of the exact approved 34-path Stage
+  01–03 manifest: five PRDs, five ARDs, four accepted ADRs, and twenty Specs.
+- Applied seven atomic document/ledger/fixture/cap batches sized
+  `5/5/5/5/5/5/4`; every exact batch returned zero compatibility diagnostics.
+- Recorded official-primary or explicit repository-only source applicability
+  and `shape-normalized` results in all 34 durable migration-ledger rows.
+- Removed exactly the 34 consumed compatibility records, reducing affected
+  paths/semantic occurrences from `266/1299` to `232/1127`, then refreshed the
+  complete fixture digest and mutation proofs against the after-state.
+
+#### Memory
+
+- The approved manifest identity is 34 paths with SHA-256
+  `3cd63fa57b386f8036f14a8a59638318b5686fe4b618422b8577ad106f54e29f`.
+- Shape normalization preserves non-heading facts; external-source review is
+  an applicability decision and must not invent repository behavior.
+- Consumed compatibility debt, its durable ledger outcome, numeric validator
+  expectations, and quality-gate proofs form one atomic rollback boundary.
+
+#### Evidence
+
+- Remaining debt is exactly 232 affected paths and 1127 semantic occurrences;
+  required-heading/residue union is 196 paths with 51 overlaps.
+- Markdown self-test, exact-wave zero diagnostics, cross-document
+  compatibility, repository quality gate, diff check, focused pre-commit, and
+  exact staged-path assertions gate the wave.
+- No README profile, ADM-004 path, live system, secret, remote action, or
+  cluster state is in the ADM-003 change set.
+
+#### Handoff
+
+- Review and commit the exact 40-path ADM-003 unit as
+  `docs(migration): normalize active sdlc design documents`; ADM-004 remains
+  queued until this boundary is accepted.
+
+### 2026-07-13 - ADM-002 quality-boundary remediation
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, validation, qa
+- **Status**: complete
+- **Tags**: #adm-002 #currentness #self-test #quality-gate
+
+#### Progress
+
+- Corrected the Markdown production-corpus self-test to use the current
+  Asia/Seoul date so newly authored same-day Task and ledger documents are not
+  misclassified as future-dated; deterministic parser fixtures remain pinned.
+- Excluded only the exact durable migration ledger from the active-currentness
+  stale-contract scan because its 469-row evidence contract must enumerate
+  archived paths without presenting them as current operational authority.
+
+#### Memory
+
+- A preserved archive path in an inventory ledger is evidence, not a revived
+  current contract. Currentness scans need an exact evidence-owner boundary,
+  not string suppression or a broad Stage 90 exemption.
+- Production-corpus date checks must follow the repository's current KST date;
+  parser unit fixtures may remain fixed for deterministic edge cases.
+
+#### Evidence
+
+- The currentness exception has a positive exact-ledger assertion and a
+  negative Stage 90 assertion; every other active authored document remains in
+  the stale Headlamp/provider/CI scan.
+- Validator self-tests, the repository quality gate, focused pre-commit, and an
+  exact four-path change set gate this remediation. No ledger row, debt
+  fixture, authored migration body, protected behavior, or live state changed.
+
+#### Handoff
+
+- Independently review this ADM-002 follow-up before resuming the approved
+  ADM-003 manifest batches.
+
+### 2026-07-13 - Authored migration batch-atomic debt sequencing correction
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, planning, validation
+- **Status**: complete
+- **Tags**: #authored-document #batch-atomic #shape-debt #semantic-validation
+
+#### Progress
+
+- Rehearsed the first five-path ADM-003 batch and observed the semantic
+  validator's intended fail-safe behavior: canonical documents with stale
+  fixture records produced nonzero `DEBT-UNUSED` failures.
+- Reverted the rehearsal completely, then corrected ADM-003 through ADM-005 so
+  every batch checkpoint atomically updates its exact documents and ledger
+  rows, removes only its exact frozen `affectedPaths` records, and recomputes
+  cumulative fixture and validator caps before compatibility validation.
+- Deferred the quality gate's complete-fixture digest and mutation-proof
+  refresh to each wave's final Step 5, after the full reviewed manifest removal
+  is present, instead of requiring intermediate digest rewrites.
+- Bounded ADM-003 through ADM-006 validator edits to frozen migration-count
+  and self-test expectations, protected by an executable staged-line guard;
+  Spec 029 retains ownership of every parser and rule semantic.
+
+#### Memory
+
+- Finite compatibility records are consumed state, not passive allowances. If
+  a canonicalized document leaves its record behind, `DEBT-UNUSED` must stop
+  the batch before later edits can obscure the mismatch.
+- A wave may accumulate reviewed batch-atomic fixture transitions while
+  refreshing one complete-fixture digest at the final wave boundary, provided
+  cumulative caps are exact and every batch is diagnostic-free before the next
+  begins.
+
+#### Evidence
+
+- The document-only rehearsal failed compatibility validation solely because
+  its now-unused exact debt tuples remained configured; all five document
+  edits were reverted and the tracked tree returned clean before this
+  correction.
+- This correction is limited to Spec 030, Plan 030, Task 030, and this
+  append-only canonical progress entry. It changes no authored migration body, ledger row,
+  fixture record, validator, quality gate, README, protected surface, live
+  system, secret, credential, or remote state.
+
+#### Handoff
+
+- Independently review and commit this exact four-path correction. Then resume
+  ADM-003 from the already approved 34-path frozen manifest and execute each
+  batch with the corrected atomic debt-consumption sequence.
+
+### 2026-07-13 - Authored migration durable evidence ledger
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, research, validation
+- **Status**: complete
+- **Tags**: #authored-document #migration-ledger #research-evidence #semantic-validation
+
+#### Progress
+
+- Published the 469-row durable migration evidence ledger with one exact row
+  per final validator-inventory path, including its pinned self-row and the
+  exact fourteen-column contract.
+- Assigned the corrected deterministic split: 59 cloud source paths `merge`
+  into provider snapshots, 227 remaining registered debt paths `transform`
+  in their owning ADM wave, and 183 other paths `preserve` themselves.
+- Removed the sole `LEDGER-MISSING` compatibility item atomically while
+  retaining the schema-v1, `Spec 030`, growth-closed debt container.
+
+#### Memory
+
+- A durable migration ledger must distinguish format-source applicability from
+  topic-level claim validation; each owning ADM wave refreshes technical facts
+  before transformation or merge.
+- Cloud deletion review starts from all 59 source rows even though only 39 of
+  those paths carry finite shape debt.
+
+#### Evidence
+
+- Pre-ledger strict validation failed only with `LEDGER-MISSING`; the final
+  included inventory is `baseline=433/current=469/new=38/documents=469`.
+- Ordered inventory/ledger equality, nonempty required cells, title fallback,
+  pipe encoding, exact disposition counts, Reference profile shape, zero
+  ledger Markdown diagnostics, and strict/compatibility cross-document results
+  are gated by Plan Task 2 Step 4.
+- The tracked change set is exactly the ledger, Current research-pack index,
+  semantic-debt container, ADM Task evidence, and this progress entry. Ignored
+  inventory and generation scratch remain under `_workspace` only.
+
+#### Handoff
+
+- Independently review and commit ADM-002, then begin ADM-003 from the exact
+  34-path Stage 01-03 debt manifest; no authored migration body changed here.
+
+### 2026-07-13 - Authored migration shape-debt ownership correction
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, planning, governance
+- **Status**: complete
+- **Tags**: #authored-document #shape-debt #ownership #strict-cutover
+
+#### Progress
+
+- Reconciled all 266 finite template-shape debt paths before ADM-002 and fixed
+  the wave allocation to the disjoint exhaustive split
+  `ADM-003=34`, `ADM-004=120`, `ADM-005=73`, and `ADM-006=39`.
+- Expanded ADM-005 to the omitted historical Stage 90 references, six Stage 99
+  support documents, and seven governance/provider handoff documents.
+- Authorized the thirteen Spec 027/031 handoff paths for structural-only
+  canonicalization while preserving their route, schema, form, provider,
+  agent, and governance semantics with their original owners.
+- Pinned ADM-002 dispositions to 59 cloud `merge` rows, 227 non-cloud debt
+  `transform` rows, and 183 `preserve` rows including the ledger self-row.
+
+#### Memory
+
+- Strict cutover requires an executable, exhaustive owner for every finite
+  compatibility record; directory prose alone is not a coverage proof.
+- Cross-tranche shape cleanup may use a narrowly enumerated exception without
+  transferring semantic or behavioral ownership.
+
+#### Evidence
+
+- The fixture-derived gate proves pairwise disjoint wave sets whose union is
+  the exact 266-path debt set; a stranded or multiply owned path fails before
+  ledger publication.
+- The correction changes only Spec 030, Plan 030, Task 030, and this canonical
+  progress entry. No authored migration body or protected behavior changed.
+
+#### Handoff
+
+- ADM-002 may resume from the clean 468-path pre-ledger inventory. Its ledger
+  must use the fixture-derived disposition split before any ADM-003 mutation.
+
+### 2026-07-13 - Authored migration execution-contract correction
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, planning, qa
+- **Status**: complete
+- **Tags**: #authored-document #migration #inventory #semantic-validation
+
+#### Progress
+
+- Preserved the committed ADM-001 lineage evidence and recorded this
+  append-only correction after independent review found that creating its Task
+  changed the next inventory boundary: ADM-002 starts at exactly 468/current
+  and 37/new and ledger inclusion produces 469/current and 38/new.
+- Replaced every unsupported Markdown `--path-prefix` contract with one
+  executable full-corpus JSON invocation followed by deterministic filtering:
+  RED keeps the validator exit code and requires nonempty all-`DEFER`
+  selections, while batch and GREEN checks use exact reviewed paths and require
+  empty selections.
+- Pinned the ledger serialization boundary for literal pipes, empty inventory
+  titles, the exact Reference body shape, all fourteen cells, six disposition
+  values, nonempty destinations, and a zero-diagnostic Markdown compatibility
+  check for the included ledger path.
+
+#### Memory
+
+- A newly tracked execution Task is part of the registry corpus even when its
+  logical purpose is only lineage; recompute the downstream pre/post inventory
+  transition after the commit rather than carrying forward a pre-Task count.
+- Human-readable Markdown tables require an explicit cell codec. Encode literal
+  pipes as `&#124;`, separate multiple links with `<br>`, and compare encoded
+  inventory values row by row instead of trusting a naïve split.
+
+#### Evidence
+
+- Repository inventory after ADM-001 is exactly
+  `baseline=433/current=468/new=37/documents=468`; 64 owner keys contain a
+  literal pipe and 154 inventory titles are empty, so both cases now have
+  executable ledger assertions and deterministic fallbacks.
+- The correction is bounded to this canonical progress entry, Plan 030, and
+  Task 030. Focused hooks, executable inventory/filter probes,
+  `git diff --check`, and exact three-path proof gate its logical commit.
+- Follow-up review made the ADM-002 exact-five staging and hook sequence
+  fail-fast, so a nonzero diff, hook, assertion, or commit result cannot be
+  masked by re-staging or a later command.
+
+#### Handoff
+
+- ADM-001 remains complete. Independently review this correction, then start
+  ADM-002 at the corrected 468-to-469 boundary; do not begin ADM-003 content
+  normalization in the ledger-publication commit.
+
+### 2026-07-13 - Authored document migration execution lineage
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, migration, execution
+- **Status**: active
+- **Tags**: #authored-document #migration #lineage #strict-cutover
+
+#### Progress
+
+- Started Spec 030 execution with one active Task containing exactly ADM-001
+  through ADM-007 and their Plan-pinned validation commands and logical commit
+  identities.
+- Added reciprocal Spec, Plan, and Task links and aligned their three Stage
+  indexes without changing unrelated index order or lifecycle state.
+- Completed ADM-001 as the repository-static lineage unit; ADM-002 remains the
+  sole next owner of the durable ledger and 468-to-469 inventory transition.
+
+#### Memory
+
+- Start a destructive migration with reciprocal lineage and explicit rollback
+  units before creating its inventory or mutating content.
+- Keep compatibility debt removal with the exact document wave that resolves
+  it; the Task ledger must not create a second debt owner.
+
+#### Evidence
+
+- RED exited 1 because
+  `docs/04.execution/tasks/2026-07-12-authored-document-migration.md` did not
+  exist. GREEN requires mutual filename references, exactly seven ADM rows,
+  unique active index entries, focused hooks, and the exact seven-path diff.
+- No migration ledger, compatibility fixture, validator, authored-document
+  body, README body, cloud source, protected surface, ignored local content,
+  secret, live system, remote CI, push, merge, publication, or deployment was
+  changed or accessed.
+
+#### Handoff
+
+- Independently review ADM-001, then execute ADM-002's deterministic inventory
+  and ledger publication without beginning any content-normalization wave.
+
+### 2026-07-13 - Semantic validator gate delegation
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, validation, qa
+- **Status**: complete
+- **Tags**: #semantic-validation #quality-gate #delegation #compatibility
+
+#### Progress
+
+- Closed SMDV-001 through SMDV-004 and promoted Spec 029, its Plan, Task, and
+  three index rows to `done`/`Done` with reciprocal evidence.
+- Made the repository quality wrapper invoke registry, Markdown-profile, and
+  cross-document compatibility validators after Python prerequisites.
+- Removed duplicated general route, Frontmatter, README, link, heading,
+  residue, and declared Stage 04 index implementations while retaining
+  operations-index parity and the workspace's GitOps, infrastructure,
+  agent-runtime, CI/QA, security, version, and supply-chain checks.
+- Preserved the complete template-compatibility semantic SHA and mutation
+  proof; runtime debt consumption now has one canonical validator owner.
+- Corrected the closure interaction discovered by GREEN: Spec 029, Plan 029,
+  and Task 029 are the exact three owner candidates removed by `status: done`,
+  producing a deterministically proved 66-to-63 unique-key transition.
+- Remediated independent-review delegation gaps without restoring duplicate
+  authored-Markdown validation: a bounded bridge now owns generic residue in
+  active shell/config/native and registry-nondelegated Markdown surfaces, and
+  both public route mirrors must equal the registry-backed structural,
+  README, memory, progress, and three-format native projection.
+
+#### Memory
+
+- A wrapper should orchestrate semantic validators, not fork their parsers or
+  rule tables. Keep domain-relational checks only when no canonical rule ID
+  represents their exact semantics.
+- Migration debt needs both a canonical runtime consumer and a separately
+  pinned full-fixture mutation proof. Delegation must not weaken either side.
+
+#### Evidence
+
+- Baseline and GREEN repository wrappers passed. GREEN retained exact registry
+  counts `433/467/36`, 60 profiles, 27 templates, and 72 README paths; Markdown
+  compatibility emitted 1,299 `DEFER` rows and cross-document compatibility
+  emitted only the pinned `LEDGER-MISSING` `DEFER`, with no `FAIL`.
+- All three validator self-tests, shell syntax, `git diff --check`, exact
+  eleven-path staging, and all-files pre-commit form the static closure bundle.
+  A fresh SDD review is recorded in the ignored
+  `.superpowers/sdd/smdv-task-4-review.md` after the closure commit.
+- Review-remediation probes reject generic residue in non-structural text,
+  prove authored structural Markdown remains delegated, classify every public
+  route witness through the registry, and reject synchronized public-table
+  drift from the canonical projection. The repository quality gate passes
+  after the exact three-path remediation.
+- No live Kubernetes, Argo CD, Vault, ESO, provider runtime, credential,
+  secret-value, remote CI, push, publication, merge, deployment, or
+  third-party mutation was performed or inferred.
+
+#### Handoff
+
+- Spec 030 owns the durable migration ledger, document waves, finite-debt
+  removal, and ADM-007 strict cutover. Revert only the SMDV-004 wrapper commit
+  when restoring delegation; retain the three validator implementations.
+
+### 2026-07-13 - Cross-document semantic validation
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, validation, qa
+- **Status**: complete
+- **Tags**: #semantic-validation #links #indexes #current-owner #ledger
+
+#### Progress
+
+- Added the repository-static cross-document validator for the exact sorted
+  467-path registry population, all local Markdown links, three declared Stage
+  indexes, deterministic current-owner keys, and the fourteen-column migration
+  ledger.
+- Fixed the pre-ledger contract at 66 unique current-owner keys and one exact
+  `LEDGER-MISSING` semantic item: compatibility defers it and strict rejects the
+  identical tuple.
+- Published the ordered inventory envelope consumed by Spec 030 ADM-002 while
+  retaining the explicit `--include-path` transition for the ledger self-row.
+- Remediated all five Important independent-review findings: fixture-owned
+  trees and executable owner/debt cases, CommonMark reference and fence
+  boundaries, exact index anchors, canonical non-dereferencing adapter checks,
+  and target-keyed deterministic index diagnostics.
+
+#### Memory
+
+- Cross-document validation must consume the registry inventory rather than
+  rediscover files. This preserves ignored-path and symlink-adapter boundaries.
+- A migration ledger is both evidence and a target document. Its absence may
+  defer only while the exact closed fixture exists; creation, self-row, and debt
+  removal belong to one downstream logical commit.
+
+#### Evidence
+
+- RED proved all named link, index, owner, and ledger rules were initially
+  absent. GREEN covers production fixtures, exact compatibility/strict parity,
+  ordered inventory set equality, registry checks, repository quality gates,
+  diff checks, focused and full pre-commit, and exact seven-path staging.
+- No network, live cluster, provider runtime, secret value, ignored workspace
+  content, remote CI, push, merge, publication, or deployment was accessed.
+- An include-path transition probe produced the exact 468/current and 37/new
+  inventory with the pinned ledger self-row, then was deleted before staging;
+  self-test now asserts it cannot create or remove that repository artifact.
+
+#### Handoff
+
+- Independently review SMDV-003, then integrate the canonical semantic
+  validators through SMDV-004. Spec 030 ADM-002 remains the sole owner of the
+  ledger creation and 467-to-468 inventory transition.
+
+### 2026-07-13 - Cross-document inventory handoff Plan correction
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, planning, qa
+- **Status**: complete
+- **Tags**: #semantic-validation #inventory #migration #link-validation
+
+#### Progress
+
+- Unified cross-document validation and inventory JSON around one deterministic
+  envelope and made SMDV-003 enumerate the exact sorted 467-path registry
+  `current_paths` set without changing the completed Markdown validator.
+- Pinned the sole semantic compatibility-debt object and its literals, the
+  full-corpus link boundary, exit and stream behavior, and the canonical
+  SMDV-003 commit identity.
+- Closed the Plan index at exact target/tree/table equality `50/50/50` and
+  bound ADM-002 to create the target ledger, include it explicitly, transition
+  to 468/current and 37/new, prove its pinned self-row and exact ledger
+  equality, and remove represented debt in the same logical commit.
+
+#### Memory
+
+- A machine-readable handoff needs one closed producer envelope and a consumer
+  set-equality proof. Counts alone cannot detect a substituted, omitted, or
+  duplicate migration target.
+- A generated inventory owner is itself a target document. Create it first,
+  pass its exact untracked path through the supported include boundary, and
+  make the post-creation inventory rather than the pre-creation snapshot the
+  durable equality owner.
+- Compatibility debt literals are configuration. If values needed to match a
+  diagnostic remain implicit, implementation and migration can each choose a
+  different tuple while appearing to follow the same Plan.
+
+#### Evidence
+
+- Independent review found three omitted Plan tree rows, ledger
+  self-inventory, an over-broad shared-envelope statement, and swallowed shell
+  failures. The corrected scope is the two execution Plans, Plan index, current
+  Spec 029 Task, and this canonical progress entry; it changes no validator,
+  fixture, corpus, secret, runtime, remote, or migration implementation.
+- Embedded inventory and ledger assertions, registry compatibility, repository
+  quality, diff checks, focused pre-commit, and exact five-path staging are the
+  correction gate for `fix(plans): define cross-document inventory handoff`.
+- Roll back only by reverting that complete corrected Plan commit so the index,
+  producer/consumer contract, Task evidence, and memory remain atomic.
+
+#### Handoff
+
+- Independently re-review the five-path Plan correction, then implement
+  SMDV-003 in its exact seven-path scope with commit
+  `feat(docs): validate links indexes and current owners`.
+
+### 2026-07-13 - Markdown debt mutation proof hardening
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, qa, governance
+- **Status**: complete
+- **Tags**: #semantic-validation #review #debt-bijection #fixture-safety
+
+#### Progress
+
+- Closed four Important independent-review findings by treating duplicate
+  production consumption as unused debt, deriving every token-bearing
+  occurrence cap from exact records, rejecting fixture path escapes before
+  writes, and pinning the complete ordered seven-case date contract.
+- Extended both the production self-test and protected quality-gate mutation
+  proof with residue-token deletion and preserved the complete fixture digest.
+
+#### Memory
+
+- A configured debt key is consumed only when its production match count is
+  exactly one. Zero and duplicate matches are both unused configuration and
+  must emit deterministic failure evidence.
+- Test fixtures are configuration inputs. Normalize their paths before any
+  filesystem operation and independently prove containment under the temporary
+  root.
+
+#### Evidence
+
+- RED reproduced duplicate consumption without `DEBT-UNUSED`, accepted
+  residue-token deletion, unsafe fixture path writes, and silently removable
+  positive date cases.
+- GREEN requires the focused self-test, exact compatibility/strict tuple
+  parity, rule-cap recomputation, quality gate, README fixture digest, diff
+  check, exact cached scope, and full pre-commit.
+
+#### Handoff
+
+- Request a fresh independent re-review of the bounded remediation before
+  returning to SMDV-003.
+
+### 2026-07-13 - Registry-driven Markdown profile validation
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, qa, governance
+- **Status**: complete
+- **Tags**: #semantic-validation #frontmatter #markdown #compatibility-debt
+
+#### Progress
+
+- Added the production Markdown profile validator for all 60 registry
+  profiles, the exact README 72-path/eight-case handoff, append fragments,
+  classification-only profiles, deterministic dates, and stable text/JSON
+  diagnostics.
+- Materialized the Spec-030-owned, no-growth semantic debt ledger as 266 exact
+  affected paths and bound the quality-gate digest to every path, rule, token,
+  rule cap, overlap, and union dimension.
+
+#### Memory
+
+- Compatibility is safe only when the configured debt and observed diagnostics
+  form a bijection. Match path, profile, rule, and token; reject unknown items,
+  duplicate consumption, unused records, and aggregate growth.
+- Calendar validation needs an injected date for tests and one explicit
+  production timezone. File timestamps, Git dates, locale, and UTC rollover are
+  not document-policy inputs.
+
+#### Evidence
+
+- `python3 scripts/validate-markdown-profiles.py --self-test`: PASS across the
+  registry matrix, date boundaries, README handoff, production inventory, debt
+  mutations, and exact aggregate recomputation.
+- Repository compatibility: exit 0 with 1,299 `DEFER`, zero `FAIL`, and no
+  `DEBT-UNUSED`; strict: exit 1 with the identical 1,299 diagnostic tuples as
+  `FAIL`.
+- Registry remains 60 profiles, 27 templates, 467 target Markdown paths, and
+  72 canonical README paths. The imported README fixture remains byte-identical.
+
+#### Handoff
+
+- Continue SMDV-003 with the cross-document link, index, current-owner, and
+  durable migration-ledger validator. Strict cutover remains owned by Specs 030
+  and 029 SMDV-004.
+
+### 2026-07-13 - Semantic debt lifecycle Plan correction
+
+#### Metadata
+
+- **Date**: 2026-07-13
+- **Layer**: docs, planning, qa
+- **Status**: complete
+- **Tags**: #semantic-validation #migration #compatibility-debt #review
+
+#### Progress
+
+- Reconciled the Spec 029 and Spec 030 execution Plans so semantic debt is
+  removed by ADM-002/007, template-shape debt by ADM-003 through ADM-007, and
+  no migration debt is assigned to the document-profile registry.
+- Bound ADM-003 through ADM-006 to independently reviewed pre-edit path/debt
+  manifests with immutable counts and SHA-256 values, exact exclusions, exact
+  staged-set proofs, and atomic fixture/digest rollback.
+- Defined ADM-007 as the atomic strict cutover for both production semantic
+  validators, their retired debt sources, self-tests, and the quality wrapper.
+
+#### Memory
+
+- A migration allow-list cannot be derived from its own post-edit diff. Freeze
+  eligible paths and debt tuples before mutation, review their count and
+  digest, then prove the cached set against that immutable input.
+- Retiring a compatibility source changes a producer contract: update both
+  validators and the wrapper together, and specify strict and compatibility
+  behavior for the absent source explicitly.
+
+#### Evidence
+
+- Embedded Python/Bash blocks, three-file diff checks, registry self-test and
+  compatibility validation, and focused pre-commit are the Plan-correction
+  evidence bundle for logical commit `fix(plans): align semantic debt removal
+  lifecycle`.
+- The repository quality gate passed from a clean `HEAD` clone under `/tmp`,
+  isolating the unrelated in-progress SMDV-002 fixture in the implementation
+  worktree.
+- No validator implementation, fixture, secret, live runtime, remote, push,
+  merge, deployment, or third-party state was changed by this correction.
+
+#### Handoff
+
+- Independently review the exact three-file correction, then resume SMDV-002
+  without staging or rewriting its preserved in-progress implementation files.
+
+### 2026-07-12 - Semantic document validation execution lineage
+
+#### Metadata
+
+- **Date**: 2026-07-12
+- **Layer**: docs, meta, qa
+- **Status**: complete
+- **Tags**: #semantic-validation #lineage #index #repo-static
+
+#### Progress
+
+- Created the canonical active Spec 029 Task with SMDV-001 complete and the
+  three validator and integration units queued.
+- Connected the Spec, Plan, and Task with exact reciprocal links and represented
+  the Task exactly once in the Stage 04 Task tree and table.
+
+#### Memory
+
+- Execution lineage is a bidirectional contract: each lifecycle document owns
+  one exact relative link to both peers, while each Stage index owns one tree
+  representation and one table href for its target.
+
+#### Evidence
+
+- The exact pre-change lineage assertion failed because the canonical Task did
+  not exist; after creation the same reciprocal href and contiguous tree/table
+  assertion passes.
+- Registry self-test and compatibility, repository quality, diff checks,
+  exact seven-path staging, and focused pre-commit form the static evidence
+  bundle for logical commit `docs(execution): start semantic document
+  validation`.
+- No live, secret-value, credential, remote CI, publication, push, merge,
+  deployment, or third-party mutation check is performed or inferred.
+
+#### Handoff
+
+- Execute SMDV-002 with production-entry-point fixtures for every applicable
+  registry profile and the eight README handoff cases.
+
+### 2026-07-12 - README final exact-set validation remediation
+
+#### Metadata
+
+- **Date**: 2026-07-12
+- **Layer**: qa, docs, meta
+- **Status**: complete
+- **Tags**: #readme #validation #review #repo-static
+
+#### Progress
+
+- Closed the independent-review gap that allowed a fixture-declared README to
+  disappear from the tracked inventory while the staged count still matched an
+  earlier migration checkpoint.
+- Required both the registry validator and repository quality gate to compare
+  the tracked README inventory with the complete 72-path final fixture set.
+
+#### Memory
+
+- A staged count allow-list is transition evidence, not final-state proof.
+  Closure validators must compare both set directions before reporting an
+  exact set.
+
+#### Evidence
+
+- A synthetic RED inventory with two declared paths removed was accepted at
+  `current=70`; after remediation it fails with the stable
+  `README tracked set differs from fixture-declared final set` diagnostic.
+- Re-review holds the synthetic inventory at 72 by replacing one declared
+  README with one route-able undeclared README; production proofs require the
+  exact missing and extra path sets rather than a count-fallback rejection.
+- Registry self-test and compatibility passed with 9 cases, 60 profiles, 27
+  templates, 466 total paths, and 72 exact README paths.
+- Repository quality passed with `canonical=72 exact_set=yes`; the fixture and
+  all authored README files remained unchanged.
+
+#### Handoff
+
+- Complete independent re-review of the remediation, then continue Spec 029's
+  production CommonMark-aware validator tranche.
+
+### 2026-07-12 - README profile migration closure
+
+#### Metadata
+
+- **Date**: 2026-07-12
+- **Layer**: docs, meta, qa
+- **Status**: complete
+- **Tags**: #readme #profiles #templates #validation #repo-static
+
+#### Progress
+
+- Replaced the retired common README form with six path-derived profile forms,
+  migrated all 67 baseline README files, and added five cloud handoff entrypoints
+  for an exact final corpus of 72.
+- Removed the detached common template profile, fixture rows, source-less
+  exceptions, and dual-mode validation branch while preserving the finite
+  fixture reader for Spec 029's production parser handoff.
+- Kept `_workspace` as tracked-README-only temporary non-secret repository-
+  support staging without enumerating or opening ignored children.
+
+#### Memory
+
+- A destructive template cutover is atomic across the form, registry, fixtures,
+  validators, routing prose, and lifecycle evidence; deleting only the file
+  leaves the tracked-index classifier and semantic pins inconsistent.
+- README structure is a path-selected profile contract. Shared governance and
+  provider guidance should refer to registry-required and allowed headings,
+  not restate a universal section list.
+
+#### Evidence
+
+- Registry self-test: PASS with 9 cases, 60 profiles, 27 templates, and all 8
+  README fixture mutation probes.
+- Compatibility: PASS for 466 targets (`baseline=433`, `new=35`) and all 72
+  README paths (`baseline=67`, `current=72`, `final=72`, exact set).
+- Repository quality: PASS with `canonical=72`; active retired-form and
+  universal-heading residue searches returned no matches.
+- Document-profile SHA
+  `54ab9344bc7c718da6bb8ad95cdd5a9e3ab66728052263afbe9f2c107a04a7a8`,
+  template-compatibility SHA
+  `d53a36f8849fdb8131f79c23ad2bd66c267a1594f12c0b03f353dfe5c88b46a2`,
+  and README fixture SHA
+  `50f8c8ab05267a9ddf059d72ca6950d4f05b14ad82010c0d9576eb7a9f1f68d0`
+  matched their closure pins.
+- `git diff --check` and all applicable `pre-commit run --all-files` hooks
+  passed; `Lint Dockerfiles` was a non-applicable SKIP, not a pass. The closure
+  commit uses subject `docs(readme): close profile migration evidence`; its
+  exact SHA and independent review are recorded in the ignored Task 6 report.
+- No live Kubernetes, Argo CD, Vault, ESO, provider-runtime, credential,
+  secret-value, remote CI, publish, push, merge, deployment, or third-party
+  mutation was performed.
+
+#### Handoff
+
+- Spec 029 must execute the same eight README fixture cases through its
+  production CommonMark-aware parser and then remove the temporary fixture
+  reader from the repository quality gate.
+
 ### 2026-07-11 - Roster parser and fixture final-review remediation
 
 #### Metadata
@@ -1257,9 +2585,8 @@ inventory stays in `scripts/README.md`.
 
 #### Memory
 
-- `harness-task-contract.template.md` remains a supplemental task starter and
-  must not become a second structural route for
-  `docs/04.execution/tasks/*.md`.
+- The duplicate harness Task starter remained supplemental at that time and
+  did not become a second structural route; Spec 027 later retired it.
 - Feature-local README files under `docs/03.specs/<###-Numbering>-<feature-id>/` are README
   entrypoints, not a separate structural template family.
 - Active core-contract surfaces should avoid carrying exact legacy residue
@@ -1412,9 +2739,9 @@ inventory stays in `scripts/README.md`.
 
 #### Memory
 
-- `harness-task-contract.template.md` should remain a supplemental starter for
-  high-risk Stage 04 Task records, not a second structural route that competes
-  with `task.template.md`.
+- The duplicate harness Task starter was intended to remain supplemental for
+  high-risk Stage 04 Task records at that time; Spec 027 later merged its safety
+  fields into the canonical Task form and retired the duplicate.
 - Active support contracts should describe the current steady-state template
   model; completed migration phase wording belongs in completed plan/task
   evidence, not current support rules.
@@ -7426,8 +8753,8 @@ section separating static from live evidence.
 - Added `docs/00.agent-governance/rules/approval-boundaries.md` as the single
   approval matrix: default state, approval triggers, validation, evidence, and
   rollback per surface, plus mandatory live-mutation and secret-handling policy.
-- Added `docs/99.templates/templates/sdlc/specs/harness-task-contract.template.md` and registered it
-  in `docs/99.templates/README.md`.
+- Added and registered the duplicate harness Task starter at that time; Spec 027
+  later retired it after merging its safety fields into the canonical Task form.
 - Added `scripts/validate-harness.sh` as a repo-static wrapper over the existing
   gates (no new validation logic, no live checks) and registered it in the
   `scripts/README.md` Structure, Inventory, Classification, and Command Contract
@@ -9007,3 +10334,74 @@ section separating static from live evidence.
 
 - RMD-004 repository-static closure is complete. Remote push and local merge
   remain separately approval-gated actions.
+
+## 2026-07-14 - ASQA-006 provider QA evidence alignment completed
+
+### Metadata
+
+- **Date**: 2026-07-14
+- **Layer**: agent-governance, validation, execution
+- **Status**: completed
+- **Tags**: #asqa #affected-surfaces #agent-semantics #qa-evidence #handoff
+
+### Progress
+
+- Made `rules/quality-standards.md` the canonical owner for the `affected`,
+  `staged`, `all-files`, `message/manual`, `ci`, and `remote/live` lanes, the
+  `PASS`/`SKIP`/`FAIL`/`DEFER` vocabulary, and complete handoff fields.
+- Reduced root gateways and provider/runtime baselines to canonical routing and
+  native differences. Tracked adapters now state explicitly that repo-static
+  presence does not prove native provider discovery or consumption.
+- Integrated affected-surface and agent-role semantic validators into the
+  repository quality entry point. Removed copied role-body phrase checks while
+  retaining exact ten-role native model/tool/effort, scope-import, and roster
+  validation across Claude, Codex, and Gemini.
+- Closed ASQA-001 through ASQA-006 and set Spec 031, its Plan, and its Task to
+  `done` after independent reviewer agent
+  `/root/review_adm006_adm007_conflict` approved lifecycle closure with
+  `C0/H0/M0/L0`.
+
+### Memory
+
+- Selection, semantic parity, native metadata, and runtime consumption are four
+  different claims. A common validator should own selection or shared role
+  meaning, while native metadata stays provider-owned and runtime consumption
+  remains separately evidenced.
+- `pre-commit run --all-files` cannot prove `commit-msg` or an explicit manual
+  stage. Handoffs must preserve lane-specific `SKIP` and `DEFER` rather than
+  converting absent evidence into `PASS`.
+
+### Evidence
+
+- RED governance search: exit `0`, 1,009 matching lines; the output exposed
+  distributed lane/result/command wording and served only as the drift
+  inventory.
+- Affected-surface self-test/root, role-semantic self-test/root, and roster-
+  currentness self-test/root: PASS (`19` surfaces, `640` tracked paths, `10`
+  roles, `30` adapters, `480` semantic mutations).
+- Strict registry, Markdown-profile, and cross-document validation: PASS after
+  placing execution evidence under profile-allowed headings.
+- Repository quality gate: PASS with the focused validators invoked at its
+  blocking entry point. `pre-commit run --all-files` PASS for every applicable
+  hook; Dockerfile lint was a no-file `SKIP`. Staged `pre-commit run` PASS on
+  the exact twenty-five-path index; non-applicable file-type hooks were `SKIP`.
+  The first sandboxed staged launch could not create the linked-worktree index
+  lock, and the identical approved Git-index run passed.
+- Tool baseline: Python 3.12.3, GNU Bash 5.2.21, pre-commit 4.5.1.
+
+### Handoff
+
+- Reviewer: independent reviewer agent
+  `/root/review_adm006_adm007_conflict`; disposition `APPROVED FOR LIFECYCLE
+  CLOSURE (C0/H0/M0/L0)`, recorded in ignored evidence package
+  `.superpowers/sdd/asqa006-provisional-review.md`.
+- Rollback unit: logical commit
+  `docs(agents): align provider qa evidence contracts`; revert it before any
+  dependent Spec 032 work.
+- Remote CI, native provider consumption, credentials, secrets, and live
+  Kubernetes/Argo CD/Vault/ESO/cloud evidence remain `DEFER`. No Spec 032
+  Action identity, permissions, workflow behavior, protected-domain file,
+  remote mutation, or live mutation was changed.
+- Next owner: Spec 032 for Action identity, permissions, and protected-domain
+  repository-static hardening; remote/live work remains separately
+  approval-gated.

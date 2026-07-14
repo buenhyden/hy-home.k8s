@@ -12,14 +12,14 @@ The pack is descriptive reference material. It does not define active
 governance policy, CI semantics, runtime permissions, runbooks, deployment
 approval, live cluster procedure, or secret handling procedure.
 
-## Audience
+### Audience
 
 - Developers
 - Operators
 - Documentation Writers
 - AI Agents
 
-## Scope
+### Scope
 
 In scope:
 
@@ -40,7 +40,7 @@ Out of scope:
   mutation
 - Refreshing the moved reference body content before the follow-up WER tasks
 
-## Structure
+### Structure
 
 ```text
 2026-07-04-wer/
@@ -54,7 +54,7 @@ Out of scope:
 `-- ai-agents-roster-and-gap-analysis.md    # Current
 ```
 
-## Source Priority
+### Source Priority
 
 Use this priority order when sources disagree:
 
@@ -73,7 +73,7 @@ Market scan material is non-authoritative. It can support landscape context,
 but it cannot override official sources, repo-backed evidence, or canonical
 repository owners.
 
-## How to Work in This Pack
+### How to Work in This Pack
 
 1. Read the parent Spec, Plan, and Task record before changing pack material.
 2. Keep moved references in this dated folder and preserve one current path for
@@ -86,13 +86,13 @@ repository owners.
 6. Keep repo-static, CI/toolchain, and live-runtime evidence lanes separate.
 7. Do not perform live or external mutation as part of this reference work.
 
-## How to Work in This Area
+### How to Work in This Area
 
 Use the pack-specific workflow above. This heading is retained for the shared
 README quality gate; the authority boundary and no-live-mutation rules are the
 same as `How to Work in This Pack`.
 
-## Link Basis
+### Link Basis
 
 This README's link basis is
 `docs/90.references/research/2026-07-04-wer/`.
@@ -105,7 +105,16 @@ This README's link basis is
 - Canonical docs stages use `../../../<stage>/`.
 - Root-level repository sources use `../../../../<path>`.
 
-## Pack Index
+## Snapshot Contract
+
+- Pack role: Historical; the 2026-07-07 pack owns the Current research route.
+- Snapshot date: 2026-07-04.
+- Last recorded review: 2026-07-06.
+- Baseline revision: not recorded in this index; do not infer one from the
+  current branch HEAD.
+- Authority: dated research and source-routing evidence only.
+
+## Report Index
 
 | Reference                                                                      | Status  | Role                                                                                      | Authority Boundary                                                                          |
 | ------------------------------------------------------------------------------ | ------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
@@ -117,7 +126,11 @@ This README's link basis is
 | [automation-pipeline-workflow-qa.md](automation-pipeline-workflow-qa.md)       | Current | Automation, pipeline, workflow, CI job graph, validation-loop, and QA evidence reference  | Descriptive reference only; no CI workflow or runtime changes                               |
 | [ai-agents-roster-and-gap-analysis.md](ai-agents-roster-and-gap-analysis.md)   | Current | Workspace agent roster snapshot, external agent-catalog market scan, and gap analysis     | Descriptive reference only; roster and tier policy stay with Stage 00 owners                |
 
-## Authority Boundary
+## Refresh and Succession
+
+This Historical pack is succeeded by [the 2026-07-07 Current research pack](../2026-07-07-wer/README.md). Refresh by creating or promoting a dated successor when canonical repository owners, official sources, pack structure, or source status changes; do not silently rewrite this cutoff as current.
+
+## Evidence Boundary
 
 This pack is authoritative for dated reference routing, source-priority
 reminders, and lookup-level summaries created under the pack. It is not
@@ -130,7 +143,7 @@ to the canonical owner in Stage 00 governance, Stage 03 specs, Stage 04
 execution, Stage 05 operations, scripts, workflows, templates, or provider
 adapter files instead of encoding active policy here.
 
-## Review and Freshness
+### Review and Freshness
 
 - Review cadence: on source or structure change
 - Last reviewed: 2026-07-06

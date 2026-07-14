@@ -23,7 +23,7 @@ updated: 2026-05-22
 - DevOps Engineer
 - GitOps Operator
 
-## Purpose
+### Purpose
 
 로컬 플랫폼을 표준 계약으로 반복 재현하고, 부트스트랩 직후 GitOps/Secret/외부 엔드포인트 상태를 일관되게 검증한다.
 
@@ -32,14 +32,20 @@ updated: 2026-05-22
 - Windows 11 + WSL2 Ubuntu
 - WSL-native Docker
 - `k3d`, `kubectl`, `helm`, `argocd`, `jq`, `curl`, `mkcert`
-- `VAULT_TOKEN` 환경 변수
+- Vault HTTPS 인증서를 검증할 수 있는 읽기 가능한 `VAULT_CA_FILE`
+- Vault 토큰 프롬프트를 받을 수 있는 대화형 `/dev/tty`
 - 외부 서비스 런타임(별도 repo) 사전 기동 및 계약 충족:
   - Vault: `https://vault.127.0.0.1.nip.io` (unseal 완료)
   - Valkey: `172.18.0.9:6379`
   - PostgreSQL HAProxy: `172.18.0.15:15432/15433`
+- 외부 Vault 운영자가 `eso-read-platform` Kubernetes auth role에
+  `bound_audiences=vault`를 설정
 - Vault 시크릿 계약:
   - `secret/platform/argocd` 의 `valkey_password`
   - `secret/platform/postgres-app` 의 `db_name`, `username`, `password`
+
+`vault-backend`의 클러스터 내부 HTTP 연결은 현재 로컬 k3d 네트워크에만
+허용된 예외이며 production TLS 구성을 의미하지 않는다.
 
 ## Step-by-step Instructions
 
@@ -50,22 +56,16 @@ updated: 2026-05-22
    nc -z 172.18.0.9 6379
    nc -z 172.18.0.15 15432
    nc -z 172.18.0.15 15433
-   curl -ksS -o /dev/null -w '%{http_code}\n' \
+   VAULT_CA_FILE=secrets/certs/rootCA.pem
+   curl --fail --silent --show-error --cacert "$VAULT_CA_FILE" \
+     -o /dev/null -w '%{http_code}\n' \
      https://vault.127.0.0.1.nip.io/v1/sys/health
    ```
 
-2. Vault 시크릿 키 존재 여부(값 비노출)를 검증한다.
+2. 저장소의 Vault/ESO 계약을 값 조회 없이 정적으로 검증한다.
 
    ```bash
-   export VAULT_TOKEN='replace-with-vault-admin-token'
-
-   curl -ksS -H "X-Vault-Token: $VAULT_TOKEN" \
-     https://vault.127.0.0.1.nip.io/v1/secret/data/platform/argocd \
-     | jq -e '.data.data.valkey_password != null' >/dev/null
-
-   curl -ksS -H "X-Vault-Token: $VAULT_TOKEN" \
-     https://vault.127.0.0.1.nip.io/v1/secret/data/platform/postgres-app \
-     | jq -e '.data.data.db_name != null and .data.data.username != null and .data.data.password != null' >/dev/null
+   python3 scripts/validate-vault-eso-contracts.py --root .
    ```
 
 3. ArgoCD TLS 인증서 입력을 확인한다.
@@ -80,8 +80,14 @@ updated: 2026-05-22
 4. 부트스트랩 스크립트를 실행한다.
 
    ```bash
+   export VAULT_CA_FILE="$PWD/secrets/certs/rootCA.pem"
    ./infrastructure/bootstrap-local.sh
    ```
+
+   스크립트는 토큰을 환경 변수나 명령 인자로 받지 않고 `/dev/tty`에서
+   표시 없이 직접 입력받는다. `VAULT_ADDR`는 HTTPS여야 하고
+   `VAULT_CA_FILE`은 읽을 수 있어야 하며, 비대화형 또는 인증서 검증을
+   생략하는 fallback은 없다.
 
 5. Bootstrap 결과로 생성되는 ArgoCD ingress TLS secret을 확인한다.
 
@@ -122,7 +128,7 @@ updated: 2026-05-22
   - 원인: `spec.source.path`와 원격 브랜치 실제 경로 불일치
   - 조치: `gitops/apps/root` 경로 존재 확인 후 Application 재동기화
 
-## Related Documents
+## Traceability
 
 - **Spec**: [`../../03.specs/008-current-local-gitops-platform/spec.md`](../../03.specs/008-current-local-gitops-platform/spec.md)
 - **Operation**: [`../policies/0001-k8s-gitops-operations-policy.md`](../policies/0001-k8s-gitops-operations-policy.md)

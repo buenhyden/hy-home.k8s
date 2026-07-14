@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hy-home.k8s/schemas/agent-role-semantics-2.schema.json",
+  "title": "Shared agent role semantics across adapter surfaces",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "adapterSurfaces", "categories", "roles"],
+  "properties": {
+    "$schema": {"const": "./agent-role-semantics.schema.json"},
+    "schemaVersion": {"const": 2},
+    "adapterSurfaces": {
+      "type": "array",
+      "prefixItems": [
+        {"const": "local"},
+        {"const": "claude"},
+        {"const": "codex"}
+      ],
+      "items": false,
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "categories": {
+      "type": "array",
+      "prefixItems": [
+        {"const": "responsibilities"},
+        {"const": "outputs"},
+        {"const": "prohibitedActions"},
+        {"const": "stopConditions"},
+        {"const": "handoffs"},
+        {"const": "capabilityTier"},
+        {"const": "requiredEvidence"}
+      ],
+      "items": false,
+      "minItems": 7,
+      "maxItems": 7
+    },
+    "roles": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {"$ref": "#/$defs/role"}
+    }
+  },
+  "$defs": {
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 20}
+    },
+    "role": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "responsibilities",
+        "outputs",
+        "prohibitedActions",
+        "stopConditions",
+        "handoffs",
+        "capabilityTier",
+        "capabilityTierClaim",
+        "requiredEvidence"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "responsibilities": {"$ref": "#/$defs/claims"},
+        "outputs": {"$ref": "#/$defs/claims"},
+        "prohibitedActions": {"$ref": "#/$defs/claims"},
+        "stopConditions": {"$ref": "#/$defs/claims"},
+        "handoffs": {"$ref": "#/$defs/claims"},
+        "capabilityTier": {"enum": ["top", "worker"]},
+        "capabilityTierClaim": {"type": "string", "minLength": 20},
+        "requiredEvidence": {"$ref": "#/$defs/claims"}
+      }
+    }
+  }
+}

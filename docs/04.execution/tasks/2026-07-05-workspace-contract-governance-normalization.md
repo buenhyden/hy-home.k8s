@@ -3,7 +3,7 @@ title: 'Task: Workspace Contract Governance Normalization'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Task: Workspace Contract Governance Normalization
@@ -32,21 +32,6 @@ in scope for this task.
 - **Documentation Protocol**: [../../00.agent-governance/rules/documentation-protocol.md](../../00.agent-governance/rules/documentation-protocol.md)
 - **Quality Gate**: [../../../scripts/validate-repo-quality-gates.sh](../../../scripts/validate-repo-quality-gates.sh)
 
-## Working Rules
-
-- Keep each WCGN change scoped to its task-specific write set and evidence
-  owner.
-- Modify shared governance, template, README, script, or control surfaces only
-  when the active task explicitly owns that surface.
-- Keep this task record English-first and keep human-facing README updates in
-  their existing Korean style.
-- Use summary evidence for large inventories; do not paste bulky raw command
-  output into this task record.
-- Treat repository-static validation as static evidence only. It does not
-  prove live runtime readiness.
-- Preserve unrelated user or parallel-agent work and do not revert edits made
-  by others.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -57,12 +42,7 @@ in scope for this task.
 | WCGN-004 | Audit and remediate CI/CD, QA, formatting, linting, syntax, automation, workflow, and security drift | qa | VAL-SPC-020-006 | Task 4 | Requested control-surface scans, CI path-filter remediation, and repo-static validation evidence | platform | Done |
 | WCGN-005 | Add validator coverage, close evidence, and record memory | qa | VAL-SPC-020-008, VAL-SPC-020-009, VAL-SPC-020-010 | Task 5 | `_workspace` validator checks, focused final scans, Stage 04 indexes, progress memory | platform | Done |
 
-## Suggested Types
-
-- `doc`
-- `qa`
-
-## Baseline Inventory
+### Baseline Inventory
 
 | Date | Command | Result Class |
 | --- | --- | --- |
@@ -99,7 +79,7 @@ Requested target inventory notes:
 | `traefik` | Present | Local Traefik route examples. |
 | `DESIGN.md` | Absent | User-requested target; no canonical route currently exists. Do not create without a future approved design-doc contract. |
 
-## Audit Findings
+### Audit Findings
 
 | Finding ID | Surface | Category | Current State | Action |
 | --- | --- | --- | --- | --- |
@@ -115,7 +95,7 @@ Requested target inventory notes:
 | WCGN-AUD-010 | Stage 00 rules, active Stage 03 specs/guardrails, Stage 99 templates, Stage 04 migration evidence, Stage 90 audits, progress memory | route / cross-link | Remaining route scan matches are current deny-route guardrails (`docs/superpowers/**`, `docs/api/**`), active Stage 03 spec or guardrail references that reject off-taxonomy paths or record approved numbering contracts, template examples that explicitly reject `docs/api/**`, scanner-command evidence, completed migration evidence for old PRD filenames, dated Stage 90 audit evidence, or dated progress memory. | Leave accepted historical, active spec, and guardrail evidence in place; do not rewrite completed migration records into false current-state history. |
 | WCGN-AUD-011 | `.github/workflows/ci.yml`, `scripts/README.md`, `tests/README.md`, CI/QA guide | CI path filters | WCGN-004 scans showed the documented Tier A policy gate and tests README quality surface, but `changes.manifests` did not include `scripts/validate-policy-gates.sh` or `policy/**`, and `changes.repo_quality` did not include `tests/**`. | Add the missing path-filter patterns to `ci.yml`; no active `.github/ABOUT.md`, PR template, SECURITY, root README, scripts README, tests README, or CI/QA guide wording drift required remediation. |
 
-## Remediation Evidence
+### Remediation Evidence
 
 | Date | Task | Change | Evidence |
 | --- | --- | --- | --- |
@@ -133,7 +113,7 @@ Requested target inventory notes:
 | 2026-07-06 | WCGN-004 | Aligned CI path filters with documented QA control surfaces. | `repo_quality` now runs for `tests/**`; `manifest-static` now runs for `scripts/validate-policy-gates.sh` and `policy/**`. The remaining requested scans classified `.github/ABOUT.md`, PR template, SECURITY, root README, scripts README, tests README, and CI/QA guide wording as aligned with the current workflow/script split. |
 | 2026-07-06 | WCGN-005 | Added deterministic `_workspace` coverage to the repository quality gate and closed Stage 04 indexes plus progress memory. | The gate now requires tracked `_workspace/README.md`, ignored `_workspace/*` scratch, an unignored README, no tracked `_workspace` file except README, and no prohibited secret-risk wording in tracked `_workspace` paths. |
 
-## Verification Commands
+### Verification Commands
 
 ```bash
 git status --short --branch
@@ -204,6 +184,36 @@ git add scripts/validate-repo-quality-gates.sh docs/04.execution/tasks/2026-07-0
 git diff --cached --check
 ```
 
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `WCGN-001 through WCGN-005` is limited to these Workspace Contract Governance Normalization owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md`
+  - `docs/03.specs/020-workspace-contract-governance-normalization/spec.md`
+  - `docs/04.execution/plans/2026-07-05-workspace-contract-governance-normalization.md`
+  - `docs/99.templates/templates/sdlc/execution/task.template.md`
+  - `docs/99.templates/support/template-routing.md`
+  - `docs/00.agent-governance/rules/documentation-protocol.md`
+  - `_workspace/README.md`
+  - `_workspace/probe.log`
+  - `docs/99.templates/**`
+  - `docs/04.execution/tasks/README.md`
+- **Forbidden Paths**: runtime manifests, provider or CI settings, secret values, generated/local state, and paths outside the Workspace Contract Governance Normalization work items and linked evidence owners.
+- **Approval Required**: Human approval is required before Workspace Contract Governance Normalization protected-file expansion, deletion/relocation, runtime/CI/provider mutation, credential access, publication, push, or merge beyond the parent Plan.
+- **Static Validation**: Preserve the Workspace Contract Governance Normalization outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git check-ignore -v _workspace/probe.log`
+  - `git check-ignore -v _workspace/README.md`
+  - `git ls-files _workspace`
+  - `git diff --check`
+- **Live Validation**: DEFER — Workspace Contract Governance Normalization is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: No secret value is required for Workspace Contract Governance Normalization; do not read or print tokens, credentials, Vault/Kubernetes Secret data, kubeconfigs, auth files, private logs, or shell history.
+- **Rollback Plan**: Revert the logical Workspace Contract Governance Normalization change set for `WCGN-001 through WCGN-005` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Workspace Contract Governance Normalization evidence remains in:
+  - `docs/04.execution/tasks/2026-07-05-workspace-contract-governance-normalization.md`
+  - `docs/03.specs/020-workspace-contract-governance-normalization/spec.md`
+  - `docs/04.execution/plans/2026-07-05-workspace-contract-governance-normalization.md`
+  - `docs/99.templates/templates/sdlc/execution/task.template.md`
+  - `docs/99.templates/support/template-routing.md`
+
 ## Verification Summary
 
 - **Test Commands**:
@@ -220,7 +230,7 @@ git diff --cached --check
 - **Logs / Evidence Location**: This task record and the WCGN implementation
   commits.
 
-## Validation Evidence
+### Validation Evidence
 
 | Date | Check | Result |
 | --- | --- | --- |
@@ -262,7 +272,7 @@ git diff --cached --check
 | 2026-07-06 | WCGN-005 focused `_workspace` scans | PASS with classification; `find _workspace -maxdepth 4 -type f` returned only `_workspace/README.md`. The prohibited-word scan matched only `_workspace/README.md` contract language, not tracked scratch artifacts. |
 | 2026-07-06 | WCGN-005 placeholder, route, and type scans | PASS with classification; placeholder matches are README explanatory text, validator rationale checks, Stage 99 templates, and scanner-command evidence. Route matches are active route-deny guardrails, explicit task/plan evidence, templates, Stage 90 policy text, or progress memory. Simple un-namespaced `type` values returned no active matches. |
 
-## Deferrals
+### Deferrals
 
 - No WCGN implementation deferrals remain in repository-static scope.
 - Live GitHub Actions execution, optional installed-tool checks such as
@@ -271,7 +281,7 @@ git diff --cached --check
   remain out of scope. Future work may trigger them only through the owning
   CI/toolchain or operator-approved runtime workflow.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/020-workspace-contract-governance-normalization/spec.md](../../03.specs/020-workspace-contract-governance-normalization/spec.md)
 - **Plan**: [../plans/2026-07-05-workspace-contract-governance-normalization.md](../plans/2026-07-05-workspace-contract-governance-normalization.md)

@@ -4,72 +4,135 @@
 set -euo pipefail
 
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
-INPUT="$(cat || true)"
-export PROJECT_DIR INPUT CLAUDE_TOOL_INPUT_FILE_PATH="${CLAUDE_TOOL_INPUT_FILE_PATH:-}" CLAUDE_TOOL_INPUT="${CLAUDE_TOOL_INPUT:-}"
+INPUT_FILE="$(mktemp)"
+PATHS_FILE="$(mktemp --suffix=.nul)"
+RUNNER_LOG="$(mktemp)"
+trap 'rm -f "$INPUT_FILE" "$PATHS_FILE" "$RUNNER_LOG"' EXIT
+cat >"$INPUT_FILE"
+export PROJECT_DIR INPUT_FILE PATHS_FILE CLAUDE_TOOL_INPUT_FILE_PATH="${CLAUDE_TOOL_INPUT_FILE_PATH:-}" CLAUDE_TOOL_INPUT="${CLAUDE_TOOL_INPUT:-}"
 
-mapfile -t CHANGED_PATHS < <(
-  python3 - <<'PY'
+python3 - <<'PY'
 import json
 import os
+import sys
+from pathlib import Path, PurePosixPath
 
 project_dir = os.environ.get("PROJECT_DIR", "")
-raw = os.environ.get("INPUT", "")
-if not raw.strip():
+raw = Path(os.environ["INPUT_FILE"]).read_text(encoding="utf-8")
+if not raw:
     raw = os.environ.get("CLAUDE_TOOL_INPUT", "")
 
 paths: list[str] = []
 
 
+def reject(code: str) -> None:
+    print(f"[FAIL] {code}", file=sys.stderr)
+    raise SystemExit(2)
+
+
 def add_path(value):
-    if isinstance(value, str) and value.strip():
-        path = value.strip()
-        if project_dir and path.startswith(project_dir + "/"):
-            path = path[len(project_dir) + 1 :]
-        if path.startswith("./"):
-            path = path[2:]
-        if path not in paths:
-            paths.append(path)
+    if not isinstance(value, str) or not value:
+        reject("HOOK-PATH-TYPE")
+    if any(ord(character) < 32 or ord(character) == 127 for character in value):
+        reject("HOOK-PATH-CONTROL")
+    if value[0].isspace() or value[-1].isspace():
+        reject("HOOK-PATH-WHITESPACE")
+
+    path = value
+    if path.startswith("/"):
+        prefix = project_dir.rstrip("/") + "/"
+        if not project_dir or not path.startswith(prefix):
+            reject("HOOK-PATH-ROOT")
+        path = path[len(prefix) :]
+    posix = PurePosixPath(path)
+    if (
+        not path
+        or path.startswith("./")
+        or path.endswith("/")
+        or "//" in path
+        or "\\" in path
+        or posix.is_absolute()
+        or "." in posix.parts
+        or ".." in posix.parts
+        or posix.as_posix() != path
+    ):
+        reject("HOOK-PATH-NORMALIZATION")
+
+    cursor = Path(project_dir)
+    for part in posix.parts:
+        cursor /= part
+        if cursor.is_symlink():
+            reject("HOOK-PATH-SYMLINK")
+    if path not in paths:
+        paths.append(path)
 
 
 try:
-    data = json.loads(raw) if raw.strip() else {}
-except Exception:
-    data = {}
+    data = json.loads(raw) if raw else {}
+except (TypeError, json.JSONDecodeError):
+    reject("HOOK-PAYLOAD-JSON")
+if not isinstance(data, dict):
+    reject("HOOK-PAYLOAD-SHAPE")
 
-tool_input = data.get("tool_input", {}) if isinstance(data, dict) else {}
-if isinstance(tool_input, dict):
-    add_path(tool_input.get("file_path") or tool_input.get("path"))
-    for key in ("files", "paths"):
-        value = tool_input.get(key)
-        if isinstance(value, list):
-            for item in value:
-                if isinstance(item, str):
-                    add_path(item)
-                elif isinstance(item, dict):
-                    add_path(item.get("file_path") or item.get("path"))
 
-    edits = tool_input.get("edits")
-    if isinstance(edits, list):
-        for edit in edits:
-            if isinstance(edit, dict):
-                add_path(edit.get("file_path") or edit.get("path"))
+def consume_scalar_alias(mapping) -> int:
+    present = [key for key in ("file_path", "path") if key in mapping]
+    for key in present:
+        if not isinstance(mapping[key], str) or not mapping[key]:
+            reject("HOOK-PATH-TYPE")
+    if len(present) > 1:
+        reject("HOOK-PATH-ALIAS")
+    if present:
+        add_path(mapping[present[0]])
+    return len(present)
 
-add_path(os.environ.get("CLAUDE_TOOL_INPUT_FILE_PATH", ""))
 
-for path in paths:
-    print(path)
-PY
+if "tool_input" in data and not isinstance(data["tool_input"], dict):
+    reject("HOOK-PAYLOAD-SHAPE")
+tool_input = data.get("tool_input", {})
+scalar_count = consume_scalar_alias(tool_input)
+collection_aliases = [key for key in ("files", "paths") if key in tool_input]
+for key in collection_aliases:
+    value = tool_input[key]
+    if not isinstance(value, list):
+        reject("HOOK-PATH-LIST")
+    if any(not isinstance(item, str) or not item for item in value):
+        reject("HOOK-PATH-TYPE")
+if len(collection_aliases) > 1 or (scalar_count and collection_aliases):
+    reject("HOOK-PATH-ALIAS")
+for key in collection_aliases:
+    value = tool_input[key]
+    for item in value:
+        add_path(item)
+
+if "edits" in tool_input:
+    edits = tool_input["edits"]
+    if not isinstance(edits, list):
+        reject("HOOK-PATH-LIST")
+    for edit in edits:
+        if not isinstance(edit, dict):
+            reject("HOOK-PATH-TYPE")
+        consume_scalar_alias(edit)
+
+environment_path = os.environ.get("CLAUDE_TOOL_INPUT_FILE_PATH", "")
+if environment_path:
+    add_path(environment_path)
+Path(os.environ["PATHS_FILE"]).write_bytes(
+    b"".join(path.encode("utf-8") + b"\0" for path in paths)
 )
+PY
 
-if [[ "${#CHANGED_PATHS[@]}" -eq 0 ]]; then
-  exit 0
+if ! python3 "$PROJECT_DIR/scripts/select-affected-surfaces.py" \
+  --root "$PROJECT_DIR" --lane affected --paths-file "$PATHS_FILE" \
+  --delimiter nul --format json >"$RUNNER_LOG" 2>&1; then
+  printf '[hook] FAIL affected-surface path validation\n' >&2
+  exit 2
 fi
+
+mapfile -d '' -t CHANGED_PATHS <"$PATHS_FILE"
 
 cd "$PROJECT_DIR"
 
-run_json=0
-run_shell=0
-run_manifest=0
 run_docs_template=0
 run_repo_quality=0
 declare -a FORMAT_FILES=()
@@ -84,82 +147,45 @@ for path in "${CHANGED_PATHS[@]}"; do
   if [[ -f "$path" ]]; then
     FORMAT_FILES+=("$path")
     case "$path" in
-      *.md)
-        MARKDOWN_STYLE_FILES+=("$path")
-        ;;
-      docs/00.agent-governance/hooks/*.sh|scripts/*.sh|infrastructure/*.sh)
-        SHELL_STYLE_FILES+=("$path")
-        ;;
-      .github/workflows/*.yml|.github/workflows/*.yaml)
-        WORKFLOW_STYLE_FILES+=("$path")
-        ;;
-      Dockerfile|*/Dockerfile|Dockerfile.*|*/Dockerfile.*)
-        DOCKER_STYLE_FILES+=("$path")
-        ;;
+    *.md)
+      MARKDOWN_STYLE_FILES+=("$path")
+      ;;
+    docs/00.agent-governance/hooks/*.sh | scripts/*.sh | infrastructure/*.sh)
+      SHELL_STYLE_FILES+=("$path")
+      ;;
+    .github/workflows/*.yml | .github/workflows/*.yaml)
+      WORKFLOW_STYLE_FILES+=("$path")
+      ;;
+    Dockerfile | */Dockerfile | Dockerfile.* | */Dockerfile.*)
+      DOCKER_STYLE_FILES+=("$path")
+      ;;
     esac
   fi
 
   case "$path" in
-    .claude/settings.json|.agents/hooks.json|.codex/hooks.json)
-      run_json=1
-      ;;
-  esac
-
-  case "$path" in
-    docs/00.agent-governance/hooks/*.sh|scripts/*.sh|infrastructure/*.sh)
-      run_shell=1
-      ;;
-  esac
-
-  # Bash case patterns match "/" inside "*"; these root-prefixed globs cover
-  # nested manifest files and intentionally mirror the CI path-filter scope.
-  case "$path" in
-    gitops/*.yml|gitops/*.yaml|\
-infrastructure/*.yml|infrastructure/*.yaml|\
-examples/sample-app/*.yml|examples/sample-app/*.yaml|\
-examples/*/gitops/*.yml|examples/*/gitops/*.yaml|\
-examples/*/kubernetes/*.yml|examples/*/kubernetes/*.yaml|\
-traefik/*.yml|traefik/*.yaml)
-      run_manifest=1
-      ;;
-  esac
-
-  case "$path" in
-    docs/01.requirements/*.md|docs/02.architecture/*.md|\
-docs/03.specs/*.md|docs/04.execution/*.md|\
-docs/05.operations/*.md|docs/90.references/*.md|docs/98.archive/*.md)
-      run_docs_template=1
-      run_repo_quality=1
-      ;;
+  docs/01.requirements/*.md | docs/02.architecture/*.md | \
+    docs/03.specs/*.md | docs/04.execution/*.md | \
+    docs/05.operations/*.md | docs/90.references/*.md | docs/98.archive/*.md)
+    run_docs_template=1
+    run_repo_quality=1
+    ;;
   esac
 
   # Keep this broad enough for docs/runtime mirrors while relying on the repo
   # quality gate for precise contract checks.
   case "$path" in
-    AGENTS.md|CLAUDE.md|GEMINI.md|README.md|docs/*|.github/*|\
-.agents/*|.claude/*|.codex/*|scripts/*|.pre-commit-config.yaml|\
-infrastructure/k3d/k3d-cluster.yaml|gitops/apps/root/*|examples/*)
-      run_repo_quality=1
-      ;;
+  AGENTS.md | CLAUDE.md | GEMINI.md | README.md | docs/* | .github/* | \
+    .agents/* | .claude/* | .codex/* | scripts/* | .pre-commit-config.yaml | \
+    infrastructure/k3d/k3d-cluster.yaml | gitops/apps/root/* | examples/*)
+    run_repo_quality=1
+    ;;
   esac
 done
 
-failure=0
+# The canonical selector covers .agents/* and runtime config paths such as
+# .agents/hooks.json; repository-quality owns their detailed static parsing.
 
-run_check() {
-  local label="$1"
-  shift
-  local log_file
-  log_file="$(mktemp)"
-  if "$@" >"$log_file" 2>&1; then
-    printf '[hook] PASS %s\n' "$label"
-  else
-    printf '[hook] FAIL %s\n' "$label" >&2
-    cat "$log_file" >&2
-    failure=1
-  fi
-  rm -f "$log_file"
-}
+failure=0
 
 run_pre_commit_hook() {
   local hook_id="$1"
@@ -255,25 +281,21 @@ if [[ "${#DOCKER_STYLE_FILES[@]}" -gt 0 ]]; then
   run_style_check "Dockerfile style" hadolint-docker "${DOCKER_STYLE_FILES[@]}"
 fi
 
-if [[ "$run_json" -eq 1 ]]; then
-  run_check "runtime JSON parse" python3 -m json.tool .claude/settings.json
-  run_check "Gemini hooks JSON parse" python3 -m json.tool .agents/hooks.json
-  run_check "Codex hooks JSON parse" python3 -m json.tool .codex/hooks.json
-fi
-
-if [[ "$run_shell" -eq 1 ]]; then
-  run_check "shell syntax" bash -c 'find infrastructure scripts docs/00.agent-governance/hooks -type f -name "*.sh" -exec bash -n {} +'
-fi
-
-if [[ "$run_manifest" -eq 1 ]]; then
-  run_check "Kubernetes manifests" bash scripts/validate-k8s-manifests.sh .
-  run_check "secret handling" bash scripts/check-secret-handling.sh .
-fi
-
-if [[ "$run_docs_template" -eq 1 ]]; then
-  run_check "documentation template enforcement" env HY_HOME_K8S_SKIP_HOOK_SIMULATION=1 bash scripts/validate-repo-quality-gates.sh .
-elif [[ "$run_repo_quality" -eq 1 ]]; then
-  run_check "repository quality gates" env HY_HOME_K8S_SKIP_HOOK_SIMULATION=1 bash scripts/validate-repo-quality-gates.sh .
+if python3 scripts/run-validation-lane.py --root . --lane affected \
+  --paths-file "$PATHS_FILE" --delimiter nul >"$RUNNER_LOG" 2>&1; then
+  cat "$RUNNER_LOG"
+  grep -Fq '[PASS] k8s-manifests ' "$RUNNER_LOG" && printf '[hook] PASS Kubernetes manifests\n'
+  grep -Fq '[PASS] secret-handling ' "$RUNNER_LOG" && printf '[hook] PASS secret handling\n'
+  if grep -Fq '[PASS] repository-quality ' "$RUNNER_LOG"; then
+    if [[ "$run_docs_template" -eq 1 ]]; then
+      printf '[hook] PASS documentation template enforcement\n'
+    elif [[ "$run_repo_quality" -eq 1 ]]; then
+      printf '[hook] PASS repository quality gates\n'
+    fi
+  fi
+else
+  cat "$RUNNER_LOG" >&2
+  failure=1
 fi
 
 if [[ "$failure" -ne 0 ]]; then

@@ -3,7 +3,7 @@ title: 'Harness Four-Element Alignment Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-06-04
+updated: 2026-07-13
 ---
 
 # Harness Four-Element Alignment Plan
@@ -106,7 +106,7 @@ without creating a parallel governance hierarchy.
 | Reintroducing Korean prose into AI-agent requirement sections | Medium | Keep the language contract in governance and enforce `AI Agent Requirements` sections through the repo quality gate |
 | Drift cleanup becoming blame-oriented instead of harness-oriented | Medium | Route recurring errors to rules, skills, hooks, validators, templates, indexes, archive Tombstones, or memory entries |
 
-## Agent Rollout & Evaluation Gates (If Applicable)
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Run repo quality, JSON parsing, shell syntax,
   generated-index freshness, and diff hygiene checks.
@@ -132,7 +132,7 @@ without creating a parallel governance hierarchy.
 - [x] Repository quality gate protects the new contract.
 - [x] Progress memory records evidence and limitations.
 
-## Related Documents
+## Traceability
 
 - **Spec**: [../../03.specs/006-workspace-harness-gap-analysis/spec.md](../../03.specs/006-workspace-harness-gap-analysis/spec.md)
 - **Tasks**: [../tasks/2026-06-04-harness-four-element-alignment.md](../tasks/2026-06-04-harness-four-element-alignment.md)

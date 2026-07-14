@@ -10,107 +10,58 @@ updated: YYYY-MM-DD
 
 # [Feature Name] Agent Design
 
-> Use this template for `docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md`.
->
-> Rules:
->
-> - This document is a child design document under the feature spec.
-> - Keep product intent in PRD and system-wide constraints in ARD.
-> - Keep implementation tasks in `04.execution/tasks/`.
-> - This document focuses on AI Agent behavior, orchestration, safety, and evaluation.
-> - Use relative links only, calculated from the final authored document location.
-
----
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Overview
 
-이 문서는 [기능명]의 AI Agent 설계를 정의한다. Agent 역할, 입력/출력 계약, 도구 사용, 컨텍스트 관리, 안전 장치, 평가 전략을 구체화한다.
-
-## Parent Documents
-
-- **Spec**: `[./spec.md]`
-- **PRD**: `[../../01.requirements/<###-Numbering>-<feature-or-system>.md]`
-- **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
-- **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
 ## Scope & Non-goals
 
-- **Covers**:
-- **Does Not Cover**:
+<!-- Describe the topic-specific scope & non-goals without copying template guidance. -->
 
 ## Agent Role
 
-- **Primary Role**:
-- **Primary User / Caller**:
-- **Success Definition**:
+<!-- Describe the topic-specific agent role without copying template guidance. -->
 
 ## Inputs / Outputs
 
-- **Inputs**:
-- **Outputs**:
-- **Expected Structured Format**:
+<!-- Describe the topic-specific inputs / outputs without copying template guidance. -->
 
 ## Orchestration Model
 
-- `single-agent | planner-worker | router-specialist | handoff`
-- **Why this model**:
-- **Escalation / Handoff rules**:
+<!-- Describe the topic-specific orchestration model without copying template guidance. -->
 
 ## Tools & Permissions
 
-| Tool   | Purpose   | Allowed Actions | Forbidden Actions | Failure Handling |
-| ------ | --------- | --------------- | ----------------- | ---------------- |
-| [Tool] | [Purpose] | [Allowed]       | [Forbidden]       | [Fallback]       |
+<!-- Describe the topic-specific tools & permissions without copying template guidance. -->
 
 ## Prompt / Policy Contract
 
-- **System Instruction Summary**:
-- **Policy Constraints**:
-- **Versioning Rule**:
+<!-- Describe the topic-specific prompt / policy contract without copying template guidance. -->
 
 ## Context & Memory Strategy
 
-- **Session Context**:
-- **Retrieval Strategy**:
-- **Persistent Memory Rule**:
-- **Privacy / Retention Notes**:
+<!-- Describe the topic-specific context & memory strategy without copying template guidance. -->
 
 ## Guardrails
 
-- **Input Guardrails**:
-- **Output Guardrails**:
-- **Blocked Conditions**:
-- **Human Escalation Rule**:
+<!-- Describe the topic-specific guardrails without copying template guidance. -->
 
 ## Failure Modes & Fallback
 
-- **Failure Mode 1**:
-- **Fallback 1**:
-- **Failure Mode 2**:
-- **Fallback 2**:
+<!-- Describe the topic-specific failure modes & fallback without copying template guidance. -->
 
 ## Evaluation Plan
 
-- **Offline Evals**:
-- **Online Signals**:
-- **Acceptance Thresholds**:
-- **Linked Task / Eval Docs**: `[../../04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md]`
+<!-- Describe the topic-specific evaluation plan without copying template guidance. -->
 
 ## Observability
 
-- **Trace fields**:
-- **Logs / Events**:
-- **Redaction / Privacy Rules**:
+<!-- Describe the topic-specific observability without copying template guidance. -->
 
-## Related Documents
+## Traceability
 
-Target-relative examples below assume the authored file will be created at
-`docs/03.specs/<###-Numbering>-<feature-id>/agent-design.md`.
-
-- **Tests**: `[./tests.md]`
-- **Spec**: `[./spec.md]`
-- **PRD**: `[../../01.requirements/<###-Numbering>-<feature-or-system>.md]`
-- **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
-- **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
-- **Operation**: `[../../05.operations/policies/####-<policy-or-standard>.md]`
-- **Runbook**: `[../../05.operations/runbooks/####-<topic>.md]`
+<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->

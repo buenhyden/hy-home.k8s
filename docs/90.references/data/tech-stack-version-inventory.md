@@ -3,12 +3,16 @@ title: 'Reference: Tech Stack Version Inventory'
 type: content/reference
 status: active
 owner: platform
-updated: 2026-07-02
+updated: 2026-07-14
 ---
 
 # Tech Stack Version Inventory
 
-## Purpose
+## Overview
+
+이 문서는 일반 참고 링크 모음이 아니라 검증 대상 버전 계약 인벤토리다. repo-backed manifest, GitHub Actions, pre-commit hook, cloud example snapshot의 기준 값을 한곳에서 추적한다.
+
+### Purpose
 
 이 문서는 `hy-home.k8s`의 repo-backed 매니페스트와 품질 게이트에서 읽어야 하는 버전 기준을 고정한다.
 새 버전으로 올릴 때는 실제 manifest/config와 이 문서를 같은 변경으로 수정한다.
@@ -16,7 +20,7 @@ updated: 2026-07-02
 ## Reference Type
 
 - Type: version-contract-inventory / external-standard-snapshot
-- Source checked: 2026-07-02
+- Source checked: 2026-07-14
 - Refresh trigger: repo manifest/config version bump, GitHub Actions/pre-commit pin change, cloud example target update, or official provider support range change.
 
 ## Authority Boundary
@@ -31,10 +35,6 @@ updated: 2026-07-02
   - Product requirements, architecture decisions, implementation plans, or runbooks.
   - Dependency updates that were not applied to the corresponding repo files.
 
-## Overview
-
-이 문서는 일반 참고 링크 모음이 아니라 검증 대상 버전 계약 인벤토리다. repo-backed manifest, GitHub Actions, pre-commit hook, cloud example snapshot의 기준 값을 한곳에서 추적한다.
-
 ## Scope
 
 - repo-backed k3s/Helm chart/GitHub Actions/pre-commit 버전 계약
@@ -48,18 +48,7 @@ updated: 2026-07-02
 - **Cloud Example Snapshot**: AWS/Azure 예시와 upstream Kubernetes awareness를 재확인한 2026-05-22 기준 공식 지원 상태다.
 - **Ingress NGINX boundary**: 로컬 k3d 계약은 유지하되 cloud target은 ALB/Gateway API/AGC 경로로 분리한다.
 
-## Sources
-
-- cloud example snapshot의 각 행에 공식 기준 링크를 둔다.
-- repo-backed version contracts는 `.github/`, `.pre-commit-config.yaml`, `gitops/`, `infrastructure/`의 실제 파일과 함께 유지한다.
-
-## Review and Freshness
-
-- Review cadence: on dependency bump, cloud example refresh, or official support-range change.
-- Last reviewed: 2026-07-02.
-- Next review trigger: a PR that changes `gitops/**`, `infrastructure/**`, `.github/workflows/**`, `.pre-commit-config.yaml`, `examples/aws/**`, or `examples/azure/**` version pins.
-
-## Cloud Example Snapshot: 2026-05-22
+### Cloud Example Snapshot: 2026-05-22
 
 이 섹션은 `examples/aws`와 `examples/azure`의 참조 구현을 검토할 때 사용하는 공식 기준이다. 로컬 k3d 실행 계약은 아래 `Version Contracts`의 `rancher/k3s:v1.35.0-k3s1`을 따른다. 이 snapshot은 freshness 기록이며 자동 upgrade 지시가 아니다.
 
@@ -74,7 +63,7 @@ updated: 2026-07-02
 | Terraform RDS Aurora module | `10.2.0`                                            | [RDS Aurora module](https://registry.terraform.io/modules/terraform-aws-modules/rds-aurora/aws)     | 2026-05-22 기준 latest와 일치한다. Aurora Serverless v2 example 기준이다.                                                                             |
 | Ingress NGINX               | Retired upstream since 2026-03-24                   | [Ingress NGINX retirement](https://kubernetes.io/blog/2026/01/29/ingress-nginx-statement/)          | 로컬 k3d 계약은 문서상 경고로 유지하고 cloud target은 ALB/Gateway API/AGC로 분리한다.                                                                 |
 
-## Version Contracts
+### Version Contracts
 
 ```yaml
 k3s_image: 'rancher/k3s:v1.35.0-k3s1'
@@ -112,15 +101,14 @@ helm_charts:
     chart: 'argo-rollouts'
     targetRevision: '2.40.9'
 github_actions:
-  'actions/checkout': 'v7.0.0'
-  'actions/first-interaction': 'v3'
-  'actions/labeler': 'v6.1.0'
-  'actions/setup-python': 'v6.3.0'
-  'actions/stale': 'v10.3.0'
-  'actions/upload-artifact': 'v7'
-  'dorny/paths-filter': 'v4.0.1'
-  'orhun/git-cliff-action': 'v4'
-  'pre-commit/action': 'v3.0.1'
+  'actions/checkout': '9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0' # pragma: allowlist secret
+  'actions/first-interaction': '1c4688942c71f71d4f5502a26ea67c331730fa4d' # pragma: allowlist secret
+  'actions/labeler': 'f27b608878404679385c85cfa523b85ccb86e213' # pragma: allowlist secret
+  'actions/setup-python': 'ece7cb06caefa5fff74198d8649806c4678c61a1' # pragma: allowlist secret
+  'actions/stale': 'eb5cf3af3ac0a1aa4c9c45633dd1ae542a27a899' # pragma: allowlist secret
+  'actions/upload-artifact': '043fb46d1a93c77aae656e7c1c64a875d1fc6a0a' # pragma: allowlist secret
+  'orhun/git-cliff-action': 'f50e11560dce63f7c33227798f90b924471a88b5' # pragma: allowlist secret
+  'pre-commit/action': '2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd' # pragma: allowlist secret
 pre_commit:
   'https://github.com/commitizen-tools/commitizen': 'v4.15.1'
   'https://github.com/pre-commit/pre-commit-hooks': 'v6.0.0'
@@ -135,6 +123,17 @@ pre_commit:
   'https://github.com/rhysd/actionlint': 'v1.7.12'
   'https://github.com/stackrox/kube-linter': 'v0.8.3'
 ```
+
+## Sources
+
+- cloud example snapshot의 각 행에 공식 기준 링크를 둔다.
+- repo-backed version contracts는 `.github/`, `.pre-commit-config.yaml`, `gitops/`, `infrastructure/`의 실제 파일과 함께 유지한다.
+
+## Review and Freshness
+
+- Review cadence: on dependency bump, cloud example refresh, or official support-range change.
+- Last reviewed: 2026-07-14.
+- Next review trigger: a PR that changes `gitops/**`, `infrastructure/**`, `.github/workflows/**`, `.pre-commit-config.yaml`, `examples/aws/**`, or `examples/azure/**` version pins.
 
 ## Related Documents
 

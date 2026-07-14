@@ -10,69 +10,38 @@ updated: YYYY-MM-DD
 
 # [Policy or Standard Name] Operations Policy
 
-> Use this template for `docs/05.operations/policies/####-<policy-or-standard>.md`.
->
-> Rules:
->
-> - This document defines policy, controls, and approval rules.
-> - This document is not a step-by-step recovery procedure.
-> - This document is not an onboarding or how-to guide.
-> - This document is not an incident timeline or a postmortem.
-> - Keep executable command sequences, recovery steps, and operational checklists
->   in the owning runbook. In this policy, describe the required evidence and
->   link the runbook instead of duplicating the procedure.
-> - Use relative links only, calculated from the final authored document location.
-> - Keep placeholder or optional target paths as code literals until the target exists.
-
----
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Overview
 
-이 문서는 [정책명] 운영 정책을 정의한다. 적용 범위, 통제 기준, 예외, 검증 방법을 규정한다.
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
 ## Policy Scope
 
-[What this policy governs.]
+<!-- Describe the topic-specific policy scope without copying template guidance. -->
 
 ## Applies To
 
-- **Systems**:
-- **Agents**:
-- **Environments**:
+<!-- Describe the topic-specific applies to without copying template guidance. -->
 
 ## Controls
 
-- **Required**:
-- **Allowed**:
-- **Disallowed**:
+<!-- Describe the topic-specific controls without copying template guidance. -->
 
 ## Exceptions
 
-- [Exception rule and approval path]
+<!-- Describe the topic-specific exceptions without copying template guidance. -->
 
 ## Verification
 
-- [Evidence required to prove compliance]
-- [Owning runbook for command sequence or recovery procedure]
+<!-- Describe the topic-specific verification without copying template guidance. -->
 
 ## Review Cadence
 
-- [Monthly / Quarterly / Per release]
+<!-- Describe the topic-specific review cadence without copying template guidance. -->
 
-## AI Agent Policy Section (If Applicable)
+## Traceability
 
-- **Model / Prompt Change Process**:
-- **Eval / Guardrail Threshold**:
-- **Log / Trace Retention**:
-- **Safety Incident Thresholds**:
-
-## Related Documents
-
-Target-relative examples below assume the authored file will be created at
-`docs/05.operations/policies/####-<policy-or-standard>.md`.
-
-- **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
-- **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
-- **Spec**: `[../../03.specs/<###-Numbering>-<feature-id>/spec.md]`
-- **Runbook**: `[../runbooks/####-<topic>.md]`
-- **Postmortem**: `[../incidents/YYYY/INC-###-<title>/postmortem.md]`
+<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->

@@ -11,7 +11,7 @@
 Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행 명령, evidence를 함께 보존하는 실행 추적 위치다.
 `../plans/`가 순서와 위험 관리를 소유하고, 이 경로는 실제 작업 상태와 완료 증거를 소유한다.
 
-## Audience
+### Collection Readers
 
 이 README의 주요 독자:
 
@@ -40,7 +40,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 
 이 내용은 각각 `../../03.specs/`, `../../05.operations/policies/`, `../../05.operations/runbooks/`, `../../05.operations/incidents/`로 분리한다.
 
-## Structure
+## Item Index
 
 ```text
 04.execution/tasks/
@@ -89,10 +89,17 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 ├── 2026-07-10-current-research-pack-fact-first-hardening.md
 ├── 2026-07-11-governance-owner-and-roster-currentness.md
 ├── 2026-07-11-workspace-engineering-research-audit-integration.md
+├── 2026-07-12-document-contract-registry.md
+├── 2026-07-12-template-contract-consolidation.md
+├── 2026-07-12-readme-workspace-profiles.md
+├── 2026-07-12-semantic-document-validation.md
+├── 2026-07-12-authored-document-migration.md
+├── 2026-07-12-affected-surface-agent-qa.md
+├── 2026-07-12-protected-surface-supply-chain-hardening.md
 └── README.md
 ```
 
-## How to Work in This Area
+## Add and Find
 
 1. 작업의 Parent Spec 또는 Parent Plan을 먼저 확인한다.
 2. 새 Task 문서는 `../../99.templates/templates/sdlc/execution/task.template.md`에서 시작하고, canonical target pattern은 `docs/04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md`다.
@@ -102,7 +109,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 6. 기능 수준의 보조 `tasks.md`가 `../../03.specs/<feature-id>/`에 있더라도, 팀 실행·스프린트·검증 집계의 정본은 이 경로다.
 7. 현재 구현과 상충하거나 superseded-only인 old Task는 `../../98.archive/README.md`에만 인덱싱하고, 활성 Task에서 Tombstone에 직접 연결하지 않는다.
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/04.execution/tasks/`다.
 
@@ -111,7 +118,7 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 - upstream docs stage는 `../../03.specs/`, `../../02.architecture/`, `../../01.requirements/`처럼 `docs/` 기준으로 올라간다.
 - Task 안의 Plan/Spec 링크는 `docs/04.execution/tasks/`의 최종 Task 파일 위치 기준으로 다시 계산한다.
 
-## 문서 인덱스
+### 문서 인덱스
 
 | 문서                                                                                                                                 | 설명                                                                                                                                                                                                                                                                    | 상태 | 최종 수정  |
 | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ---------- |
@@ -146,20 +153,27 @@ Task 문서는 단순 TODO가 아니라 작업 ID, 상태, 검증 기준, 실행
 | [`./2026-07-03-template-governance-audit-enhancement.md`](./2026-07-03-template-governance-audit-enhancement.md)                     | template governance 후속 audit findings, support contract drift 정리, validator hardening, final validation evidence를 추적                                                                                                                                             | Done | 2026-07-03 |
 | [`./2026-07-03-workspace-document-governance-hardening.md`](./2026-07-03-workspace-document-governance-hardening.md)                 | workspace document governance hardening의 audit, core contract, provider entrypoint, workspace application, validation evidence를 추적                                                                                                                                  | Done | 2026-07-04 |
 | [`./2026-07-04-active-control-surface-governance-hardening.md`](./2026-07-04-active-control-surface-governance-hardening.md)         | Active control surface governance hardening evidence for GitHub, CI/CD, QA, GitOps, infrastructure, policy, scripts, tests, Traefik, and sample-app snapshot boundaries.                                                                                                | Done | 2026-07-04 |
-| [`./2026-07-04-agent-governance-contract-normalization.md`](./2026-07-04-agent-governance-contract-normalization.md)                 | agent governance contract normalization evidence와 baseline drift inventory를 추적                                                                                                                                                                                      | Done | 2026-07-04 |
+| [`./2026-07-04-agent-governance-contract-normalization.md`](./2026-07-04-agent-governance-contract-normalization.md)                 | native Claude/Codex role, repository-local baseline, local/Antigravity adapter를 구분한 governance normalization evidence와 historical baseline inventory를 추적 | Done | 2026-07-04 |
 | [`./2026-07-04-workspace-document-contract-normalization.md`](./2026-07-04-workspace-document-contract-normalization.md)             | active 문서와 historical evidence의 frontmatter, section, template, reference, CI/QA, validator 정규화 작업과 검증 evidence를 추적                                                                                                                                      | Done | 2026-07-04 |
 | [`./2026-07-04-workspace-engineering-research-pack.md`](./2026-07-04-workspace-engineering-research-pack.md)                         | Workspace engineering research pack evidence for dated Stage 90 research references, existing reference moves, external-source refresh, Kubernetes/infrastructure/security, automation/pipeline/workflow/QA, AI agents roster and gap analysis, and validation closure. | Done | 2026-07-06 |
 | [`./2026-07-05-template-path-numbering-contract.md`](./2026-07-05-template-path-numbering-contract.md)                               | Template path numbering contract execution evidence for PRD numeric renames, Stage 03 numbered feature-folder routing, template/support/governance/validator updates, and validation closure.                                                                           | Done | 2026-07-05 |
 | [`./2026-07-05-workspace-contract-governance-normalization.md`](./2026-07-05-workspace-contract-governance-normalization.md)         | `_workspace` staging, frontmatter/template drift, CI/CD와 QA control-surface baseline inventory를 추적하는 workspace contract governance normalization Task                                                                                                             | Done | 2026-07-06 |
 | [`./2026-07-05-workspace-engineering-implementation-audit-pack.md`](./2026-07-05-workspace-engineering-implementation-audit-pack.md) | Workspace engineering implementation audit pack evidence for dated Stage 90 audit folderization, part-based implementation reports, automation opportunities, and validation closure.                                                                                   | Done | 2026-07-05 |
 | [`./2026-07-06-sdlc-lifecycle-contract.md`](./2026-07-06-sdlc-lifecycle-contract.md)                                                 | SDLC lifecycle, numbering, archive metadata, active-surface, `_workspace`, and deterministic validation contract implementation evidence.                                                                                                                               | Done | 2026-07-06 |
-| [`./2026-07-06-control-cloud-doc-normalization.md`](./2026-07-06-control-cloud-doc-normalization.md)                                 | Control surface and cloud example documentation normalization evidence for frontmatter-free control surfaces, example-local SDLC snapshot routes, AWS/Azure docs, and repository-static validation.                                                                     | Done | 2026-07-06 |
+| [`./2026-07-06-control-cloud-doc-normalization.md`](./2026-07-06-control-cloud-doc-normalization.md)                                 | Historical evidence for the control/cloud normalization tranche; current cloud documentation is consolidated under Stage 90 and retired source-tree paths are rejected.                                                                                                 | Done | 2026-07-14 |
 | [`./2026-07-06-stage03-04-repo-static-gap-closure.md`](./2026-07-06-stage03-04-repo-static-gap-closure.md)                           | Stage 03/04 repo-static gap closure evidence for WER lifecycle drift, operator-approved follow-up routing, and validation closure.                                                                                                                                      | Done | 2026-07-06 |
-| [`./2026-07-06-observability-and-network-review-agents.md`](./2026-07-06-observability-and-network-review-agents.md)                 | Task evidence for adding `observability-reviewer` and `network-reviewer` worker agents across three provider adapters and the harness catalog.                                                                                                                          | Done | 2026-07-06 |
+| [`./2026-07-06-observability-and-network-review-agents.md`](./2026-07-06-observability-and-network-review-agents.md)                 | Task evidence for adding `observability-reviewer` and `network-reviewer` worker agents across three tracked adapter surfaces and the harness catalog.                                                                                                                          | Done | 2026-07-06 |
 | [`./2026-07-07-workspace-engineering-research-pack-refresh.md`](./2026-07-07-workspace-engineering-research-pack-refresh.md)         | Task evidence for workspace engineering research pack refresh.                                                                                                                                                                                                          | Done | 2026-07-07 |
 | [`./2026-07-10-current-research-pack-fact-first-hardening.md`](./2026-07-10-current-research-pack-fact-first-hardening.md)           | Current research pack fact-first audit, source refresh, related-document integration, and validation evidence.                                                                                                                                                           | Done | 2026-07-10 |
 | [`./2026-07-11-governance-owner-and-roster-currentness.md`](./2026-07-11-governance-owner-and-roster-currentness.md)               | Governance owner, lifecycle, audit IA, Plan evidence, and ten-role/30-adapter roster currentness implementation evidence.                                                                                                                                                | Done   | 2026-07-11 |
 | [`./2026-07-11-workspace-engineering-research-audit-integration.md`](./2026-07-11-workspace-engineering-research-audit-integration.md) | Compact completion evidence for the thirteen-task workspace engineering research and implementation-audit integration, publication commits, reviews, and repository-static boundaries.                                                                                | Done | 2026-07-11 |
+| [`./2026-07-12-document-contract-registry.md`](./2026-07-12-document-contract-registry.md) | Document contract registry schema, classifier, approved corpus, compatibility gate, and validation evidence. | Done | 2026-07-12 |
+| [`./2026-07-12-template-contract-consolidation.md`](./2026-07-12-template-contract-consolidation.md) | Stage 99 support/form consolidation, canonical template normalization, legacy Task form removal, and compatibility evidence. | Done   | 2026-07-12 |
+| [`./2026-07-12-readme-workspace-profiles.md`](./2026-07-12-readme-workspace-profiles.md) | Completed RWP-001 through RWP-006 evidence for 72 path-derived README profiles, five cloud handoffs, and the `_workspace` boundary. | Done | 2026-07-12 |
+| [`./2026-07-12-semantic-document-validation.md`](./2026-07-12-semantic-document-validation.md) | SMDV-001 through SMDV-004 execution evidence for registry-driven document and cross-document validation. | Done | 2026-07-12 |
+| [`./2026-07-12-authored-document-migration.md`](./2026-07-12-authored-document-migration.md) | ADM-001 through ADM-007 execution evidence for durable inventory, authored-document normalization, cloud consolidation, and strict cutover. | Done | 2026-07-13 |
+| [`./2026-07-12-affected-surface-agent-qa.md`](./2026-07-12-affected-surface-agent-qa.md) | Completed ASQA-001 through ASQA-006 execution evidence for reciprocal lineage, affected-surface selection, local/CI parity, cross-surface role semantics, and Stage 00 QA handoff under the parent [Spec](../../03.specs/031-affected-surface-agent-qa/spec.md) and [Plan](../plans/2026-07-12-affected-surface-agent-qa.md). | Done | 2026-07-14 |
+| [`./2026-07-12-protected-surface-supply-chain-hardening.md`](./2026-07-12-protected-surface-supply-chain-hardening.md) | Completed PSH-001 through PSH-006 execution evidence for Action identity, workflow permissions, identity-only GitOps review, Vault/ESO boundaries, full repository-static QA, independent review, and explicit remote/live `DEFER` under the parent [Spec](../../03.specs/032-protected-surface-supply-chain-hardening/spec.md) and [Plan](../plans/2026-07-12-protected-surface-supply-chain-hardening.md). | Done | 2026-07-14 |
 
 ## Related Documents
 

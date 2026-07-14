@@ -1,9 +1,9 @@
 ---
 title: 'Audit: AI Agents, Model Routing, Agency-Agents, and Vibe Coding'
 type: content/reference
-status: draft
+status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-14
 ---
 
 # Audit: AI Agents, Model Routing, Agency-Agents, and Vibe Coding
@@ -22,7 +22,7 @@ entitlement와 runtime availability evidence의 단독 소유자다. 이 보고�
 confidence를 링크로 소비하며 provider metadata나 native availability를 다시 세거나
 재채점하지 않는다.
 
-## Purpose
+### Purpose
 
 - Score each local role's responsibility, instruction, output, handoff, and
   role-specific eval readiness without inferring provider behavior.
@@ -206,7 +206,7 @@ snapshot. The score is descriptive and grants no model, tool, role, or live auth
 - Every candidate model route is Conditional. The active owner remains unchanged if
   Task 7 native availability or the role-specific eval fails.
 
-## Comparison Analysis
+### Comparison Analysis
 
 - The ten roles have clear repository-static responsibilities and handoffs. The main
   weakness is not roster breadth but the absence of behavioral evals and deterministic
@@ -224,7 +224,7 @@ snapshot. The score is descriptive and grants no model, tool, role, or live auth
   fallback reduces scope/authority; cost/latency optimization follows safety and
   quality thresholds.
 
-## Automation Opportunities
+### Automation Opportunities
 
 - Add local role-semantic positive/negative fixtures without duplicating Task 7
   provider metadata fixtures.
@@ -237,7 +237,7 @@ snapshot. The score is descriptive and grants no model, tool, role, or live auth
 - Do not automate roster generation or model migration until Task 7 native schemas,
   canaries, role eval, and rollback are proven.
 
-## Residual Risks
+### Residual Risks
 
 - This audit does not prove that any provider discovered an agent, enforced tools,
   resolved a model, authenticated an account, or produced a correct inference.

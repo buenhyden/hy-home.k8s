@@ -10,7 +10,7 @@ Ingress NGINX는 2026-03-24 이후 upstream retired 상태이므로 cloud target
 
 이 파일들은 ArgoCD가 동기화하는 Kubernetes manifest가 아니다. `hy-home.docker` Traefik dynamic config와 대조하거나 로컬 gateway에 반영할 때 쓰는 보조 참조로만 다룬다.
 
-## Port Contract
+### Port Contract
 
 - 외부 Traefik은 `websecure/443`에서 요청을 받고 Docker 네트워크에서 접근
   가능한 ingress-nginx `LoadBalancer` IP(`172.18.0.240:443`)로 전달한다.
@@ -37,7 +37,7 @@ Ingress NGINX는 2026-03-24 이후 upstream retired 상태이므로 cloud target
   not a k3d GitOps desired-state failure로 기록하고, 외부 gateway 기동/반영
   증거를 별도 운영 작업에서 남긴다.
 
-## Traefik Route Inventory
+### Traefik Route Inventory
 
 이 표는 `traefik/*.yaml` dynamic config의 repo-static 계약이다. 모든 행은
 ingress-nginx `LoadBalancer` backend를 가리키며, live gateway 반영 여부는
@@ -50,7 +50,7 @@ ingress-nginx `LoadBalancer` backend를 가리키며, live gateway 반영 여부
 | `kiali-k3d.yaml` | `kiali.127.0.0.1.nip.io` | `https://172.18.0.240:443` | Reference-only external Traefik dynamic config for local Kiali UI. | `validate-repo-quality-gates.sh` checks host, backend, TLS, and `websecure`. |
 | `rollouts-k3d.yaml` | `rollouts.127.0.0.1.nip.io` | `https://172.18.0.240:443` | Reference-only external Traefik dynamic config for local Argo Rollouts UI. | `validate-repo-quality-gates.sh` checks host, backend, TLS, and `websecure`. |
 
-## Audience
+### Audience
 
 이 README의 주요 독자:
 
@@ -59,15 +59,15 @@ ingress-nginx `LoadBalancer` backend를 가리키며, live gateway 반영 여부
 - Documentation Writers
 - AI Agents
 
-## Scope
+### Scope
 
-### In Scope
+#### In Scope
 
 - k3d 로컬 플랫폼 UI용 Traefik dynamic config 예시
 - `hy-home.docker` gateway와 연결되는 파일 배치 힌트
 - ArgoCD, Headlamp, Kiali, Argo Rollouts 로컬 노출 경로 설명
 
-### Out of Scope
+#### Out of Scope
 
 - Kubernetes ingress controller 교체
 - cloud 환경용 ALB, AGC, Gateway API 구현
@@ -85,14 +85,32 @@ traefik/
 └── README.md            # This file
 ```
 
-## How to Work in This Area
+## Configuration Boundary
+
+Files in this directory are reference copies for an external
+`hy-home.docker` Traefik gateway. GitOps manifests remain the canonical
+Kubernetes desired state, and live gateway activation requires separate human
+approval and evidence. Do not store certificates, credentials, or secret
+material here.
+
+## Validation
+
+Run `bash scripts/validate-repo-quality-gates.sh .` for the route manifest
+contract. Use
+`CHECK_TRAEFIK_443=true bash infrastructure/tests/verify-ingress-tls.sh` only
+for an intentional live check; failure without an external gateway is not a
+k3d desired-state failure.
+
+## Operations
+
+### Working Procedure
 
 1. 로컬 플랫폼 UI 노출이 필요한지 먼저 [gitops/README.md](../gitops/README.md)와 [infrastructure/README.md](../infrastructure/README.md)에서 현재 경계를 확인한다.
 2. dynamic config를 수정할 때는 대상 서비스명, 포트, host rule이 현재 GitOps manifest와 일치하는지 확인한다.
 3. cloud target 예시는 이 디렉터리에 추가하지 않고 [examples/README.md](../examples/README.md)와 각 cloud 문서에 둔다.
 4. 변경 후에는 direct push 예시와 secret material이 들어가지 않았는지 repository quality gate로 확인한다.
 
-## Link Basis
+### Link Basis
 
 이 README의 링크 기준 위치는 `traefik/`다.
 

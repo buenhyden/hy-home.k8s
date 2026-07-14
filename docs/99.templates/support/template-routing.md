@@ -1,9 +1,9 @@
 ---
 title: 'Template Routing Contract'
 type: governance/template-support
-status: draft
+status: active
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # Template Routing Contract
@@ -21,37 +21,53 @@ Each authored document path must map to exactly one template. Route ambiguity
 creates broken validation, duplicated contracts, and inconsistent authored
 documents.
 
-## Route Families
+The machine-readable [Document Profile Registry](./document-profiles.json)
+owns every exact or anchored-regex route and its profile, heading, and template
+facts. This support document owns the route-selection procedure, rationale,
+boundaries, and examples. Its route-map mirror is explicitly non-authoritative
+and exists to help maintainers select the registry-owned form.
 
-| Family | Target Folder | Ownership |
-| --- | --- | --- |
-| Requirements | `templates/sdlc/requirements/` | Product requirements. |
-| Architecture | `templates/sdlc/architecture/` | Architecture requirements and decisions. |
-| Specs | `templates/sdlc/specs/` | Technical specs and helper contracts. |
-| Execution | `templates/sdlc/execution/` | Plans and task evidence. |
-| Operations | `templates/sdlc/operations/` | Guides, policies, runbooks, incidents, postmortems. |
-| Common | `templates/common/` | README, reference, archive, memory, progress. |
+## Owned Contract
 
-## Lifecycle Route Summary
+### Route-selection Procedure
 
-- Stage 01 PRDs use `docs/01.requirements/<###-Numbering>-<feature-or-system>.md`.
-- Stage 03 specs use `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.
-- Stage 04 plans and tasks stay date-based execution records.
-- AWS/Azure example-local SDLC snapshot docs reuse the matching SDLC template
-  family by document role while staying under `examples/<provider>/docs/**`.
-- README files route readers to lifecycle contract owners instead of carrying
-  full governance bodies.
+1. Normalize the repository-relative POSIX target path without traversing
+   ignored paths or symlinked provider views.
+2. Load the [Document Profile Registry](./document-profiles.json) and evaluate
+   every exact or anchored-regex route.
+3. Require exactly one matching profile; declaration order is never precedence.
+4. Use that profile's template and document contract, and use this support
+   document only for routing rationale and migration boundaries.
 
-The SDLC lifecycle state table, numeric lineage rule, handoff links, and
-active-surface duplicate rule are owned by
-[SDLC Governance](./sdlc-governance.md). This document owns only the concrete
-path-to-template route map.
+### Lifecycle Route Summary
 
-## Current Route Map
+The registry owns the exact path patterns. The lifecycle rationale remains:
+requirements and specifications carry numbered lineage, plans and tasks remain
+dated execution evidence, retired cloud documentation remains a Stage 90
+reference snapshot rather than an authored SDLC route, and README files remain
+navigation surfaces rather than governance bodies.
+
+Exact lifecycle domains remain registry facts. Numeric lineage rationale,
+handoff links, and the active-surface duplicate rule are owned by [SDLC
+Governance](./sdlc-governance.md). This document owns the selection procedure
+and the human-readable mirror below, not the route facts themselves.
+
+### Current Route Map
+
+The [Document Profile Registry](./document-profiles.json) is the sole machine
+owner. The following non-authoritative compatibility mirror exposes each
+README profile form by registry ID. The quality gate verifies this mirror
+against the registry contract; maintainers must not copy path inventories out
+of the registry into this table.
 
 | Target Pattern | Template Path |
 | --- | --- |
-| `README.md`, `**/README.md`, `.claude/README.md`, `.codex/README.md` | `templates/common/readme.template.md` |
+| Registry `readme/repository` routes | `templates/common/readme-repository.template.md` |
+| Registry `readme/stage-index` routes | `templates/common/readme-stage-index.template.md` |
+| Registry `readme/collection-index` routes | `templates/common/readme-collection-index.template.md` |
+| Registry `readme/implementation` routes | `templates/common/readme-implementation.template.md` |
+| Registry `readme/snapshot-pack` routes | `templates/common/readme-snapshot-pack.template.md` |
+| Registry `readme/workspace-staging` routes | `templates/common/readme-workspace-staging.template.md` |
 | `docs/01.requirements/<###-Numbering>-<feature-or-system>.md` | `templates/sdlc/requirements/prd.template.md` |
 | `docs/02.architecture/requirements/####-<system-or-domain>.md` | `templates/sdlc/architecture/ard.template.md` |
 | `docs/02.architecture/decisions/####-<short-title>.md` | `templates/sdlc/architecture/adr.template.md` |
@@ -75,65 +91,40 @@ path-to-template route map.
 | `docs/00.agent-governance/memory/<topic>.md` | `templates/common/memory.template.md` |
 | `docs/00.agent-governance/memory/progress.md` | `templates/common/progress.template.md` |
 
-Feature-local indexes such as `docs/03.specs/<###-Numbering>-<feature-id>/README.md` use the
-generic README route. Do not add a second structural README route for a nested
-README target.
+Feature-local indexes such as `docs/03.specs/<###-Numbering>-<feature-id>/README.md`
+must resolve through exactly one `readme/*` registry profile. Do not add a
+second structural route for a nested README target.
 
 The memory `<topic>` placeholder excludes `progress`; `progress.md` is an
 exact reserved route owned by `templates/common/progress.template.md`.
 
-## Explicit Non-routed Markdown Exceptions
+### Explicit Non-routed Markdown Exceptions
 
-The following Markdown files are active repository control surfaces but are not
-authored stage documents and are not copied from a structural template:
-
-| Target | Contract |
-| --- | --- |
-| `.github/ABOUT.md` | GitHub configuration hub; frontmatter-free; routes policy detail to Stage 00, Stage 05, scripts, and workflow owners. |
-| `.github/PULL_REQUEST_TEMPLATE.md` | GitHub PR body template; frontmatter-free; checklist mirrors canonical governance and CI/QA owners. |
-| `.github/SECURITY.md` | GitHub security policy surface; frontmatter-free; vulnerability reporting body must remain GitHub-renderable. |
+The registry identifies the exact GitHub-native control paths as exception
+profiles. They remain active repository control surfaces rather than authored
+stage documents: the configuration hub routes policy detail to canonical
+owners, the pull-request template mirrors intake and CI/QA owners, and the
+security policy remains GitHub-renderable.
 
 Validators may check these files for frontmatter bans and stale currentness
 claims, but they must not require stage frontmatter or required template
 headings.
 
-## Example-Local SDLC Snapshot Boundary
+### Cloud Example Snapshot Steady-State Boundary
 
-AWS and Azure cloud example docs under `examples/aws/docs/**` and
-`examples/azure/docs/**` are dated Cloud Example Snapshot material and
-example-local SDLC snapshot documents. They are not provider-latest guidance
-and they do not move into the main active `docs/01` through `docs/05` stage
-tree. Non-README Markdown in those trees uses the matching SDLC frontmatter
-role and should align section names with the closest SDLC template without
-retaining template instructions or placeholders.
+The former authored trees under `examples/aws/docs/**` and
+`examples/azure/docs/**` are retired. Their durable dated knowledge lives only
+under `docs/90.references/cloud-examples/**`; executable examples and their
+top-level entrypoints remain under `examples/{aws,azure}/`.
 
-Example-local mapping by path:
+The registry intentionally has no authored or README route for either retired
+`examples/*/docs/**` tree, and the Git-index guard rejects reintroduction. A
+provider refresh must start with an approved lifecycle change and update the
+Stage 90 snapshot collection instead of recreating an example-local SDLC tree.
 
-| Target Pattern | Template Family |
-| --- | --- |
-| `examples/<provider>/docs/01.requirements/*.md` | `templates/sdlc/requirements/prd.template.md` |
-| `examples/<provider>/docs/02.architecture/requirements/*.md` | `templates/sdlc/architecture/ard.template.md` |
-| `examples/<provider>/docs/02.architecture/decisions/*.md` | `templates/sdlc/architecture/adr.template.md` |
-| `examples/<provider>/docs/03.specs/**/*.md` | `templates/sdlc/specs/spec.template.md` for parent specs unless a future feature-local helper route is documented. |
-| `examples/<provider>/docs/04.execution/plans/*.md` | `templates/sdlc/execution/plan.template.md` |
-| `examples/<provider>/docs/04.execution/tasks/*.md` | `templates/sdlc/execution/task.template.md` |
-| `examples/<provider>/docs/05.operations/guides/*.md` | `templates/sdlc/operations/guide.template.md` |
-| `examples/<provider>/docs/05.operations/policies/*.md` | `templates/sdlc/operations/policy.template.md` |
-| `examples/<provider>/docs/05.operations/runbooks/*.md` | `templates/sdlc/operations/runbook.template.md` |
+## Authoring Rules
 
-The `provider` placeholder is currently limited to `aws` and `azure`.
-README files under the example docs tree continue to use the generic README
-route and remain frontmatter-free.
-
-## Supplemental Task Starter
-
-`harness-task-contract.template.md` supplements
-`templates/sdlc/execution/task.template.md` for high-risk harness tasks. It
-does not create a second structural route for `docs/04.execution/tasks/*.md`;
-the authored Task record still uses `type: sdlc/task` and the Stage 04 Task
-location.
-
-## Enforcement Surfaces
+### Enforcement Surfaces
 
 Route-breaking changes must update these surfaces in the same logical unit:
 
@@ -145,13 +136,15 @@ Route-breaking changes must update these surfaces in the same logical unit:
 - `docs/00.agent-governance/hooks/k8s-pre-edit.sh`
 - `scripts/validate-repo-quality-gates.sh`
 - Stage README links and authored document template references.
-- Example-local cloud snapshot README indexes and cross-links when
-  `examples/aws/docs/**` or `examples/azure/docs/**` files are normalized,
-  renamed, consolidated, or archived.
+- Stage 90 cloud snapshot collection indexes and cross-links when
+  `docs/90.references/cloud-examples/**` is refreshed or consolidated; the
+  retired `examples/{aws,azure}/docs/**` paths must remain absent.
 - GitHub-native Markdown control-surface exceptions when `.github` control
   documents are added, removed, or repurposed.
 
-## Validation Commands
+## Validation Contract
+
+### Validation Commands
 
 ```bash
 git diff --check
@@ -167,6 +160,8 @@ Historical progress entries may require an explicit allow-list.
 ## Related Documents
 
 - [Documentation Contract](./documentation-contract.md)
+- [Document Profile Registry](./document-profiles.json)
+- [Document Type Format and Evidence Contract](../../90.references/research/2026-07-07-wer/document-type-format-and-evidence-contract.md)
 - [SDLC Governance](./sdlc-governance.md)
 - [Common Documentation Governance](./common-documentation-governance.md)
 - [Document Stage Routing Rules](../../00.agent-governance/rules/document-stage-routing.md)

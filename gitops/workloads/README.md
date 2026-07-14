@@ -8,7 +8,7 @@
 
 새 앱은 [examples/sample-app](../../examples/sample-app/README.md)을 복사해 시작한다. placeholder를 실제 앱 값으로 바꾼 뒤 `gitops/workloads/<appname>` 아래에서 GitOps/manifest/secret 검증을 통과해야 active GitOps desired state로 다룬다.
 
-## Audience
+### Audience
 
 이 README의 주요 독자:
 
@@ -17,16 +17,16 @@
 - Documentation Writers
 - AI Agents
 
-## Scope
+### Scope
 
-### In Scope
+#### In Scope
 
 - 앱별 Kubernetes manifest와 Kustomize 진입점
 - Argo Rollouts 기반 progressive delivery 리소스
 - External Secrets Operator와 연결되는 Secret 참조
 - 앱별 ingress/service/network 관련 선언
 
-### Out of Scope
+#### Out of Scope
 
 - 플랫폼 공통 controller 설치
 - 외부 데이터베이스/캐시/Vault 런타임 생성
@@ -41,7 +41,7 @@ workloads/
 └── README.md      # This file
 ```
 
-## Workload Coverage Matrix
+### Workload Coverage Matrix
 
 이 표는 ApplicationSet이 스캔하는 실제 workload 디렉터리와 검증 명령을
 연결한다. `validate-repo-quality-gates.sh`는 이 표가 `workloads/*`
@@ -52,14 +52,29 @@ handling 검증 명령을 명시하는지 확인한다.
 | --- | --- | --- | --- | --- |
 | `adminer` | Reference admin workload owned by platform maintainers and app operators. | Managed by the local apps ApplicationSet from `gitops/workloads/adminer/kustomization.yaml`; includes Rollout, services, ingress, Istio routing, PeerAuthentication, and AnalysisTemplate. | Depends on `apps` namespace, Argo Rollouts, ingress, Istio, and the PostgreSQL external service route. | Validate with `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, and `bash scripts/check-secret-handling.sh .`; live rollout and ingress checks require intentional cluster validation. |
 
-## How to Work in This Area
+## Configuration Boundary
+
+Each child directory becomes active desired state only through the repository's
+branch, review, and ArgoCD reconciliation flow. Keep plaintext secrets and
+credentials out of manifests; use the approved ExternalSecret and external
+store boundaries documented by the parent GitOps contract.
+
+## Validation
+
+Run the exact static commands in the workload coverage matrix and parent
+[GitOps validation section](../README.md#validation). Repository-static success
+does not prove live rollout, route, database, Vault, or ESO readiness.
+
+## Operations
+
+### Working Procedure
 
 1. [examples/sample-app](../../examples/sample-app/README.md)의 파일 구성을 먼저 확인한다.
 2. 앱 이름, 이미지 태그, 포트, Vault 경로, ingress host를 실제 값으로 치환한다.
 3. `kustomization.yaml`에 모든 리소스가 포함되었는지 확인한다.
 4. 변경 후 `bash scripts/validate-gitops-structure.sh`, `bash scripts/validate-k8s-manifests.sh .`, `bash scripts/check-secret-handling.sh .`를 실행한다.
 
-## Link Basis
+### Link Basis
 
 이 README의 링크 기준 위치는 `gitops/workloads/`다.
 

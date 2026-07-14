@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: retained
+  namespace: platform
+data:
+  sentinel: DO_NOT_EMIT_SENTINEL

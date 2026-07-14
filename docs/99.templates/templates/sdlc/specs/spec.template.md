@@ -10,156 +10,50 @@ updated: YYYY-MM-DD
 
 # [Feature Name] Technical Specification (Spec)
 
-> Use this template for `docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.
->
-> Rules:
->
-> - Every active spec must declare PRD and ARD references or make the absence explicit.
-> - Verification is mandatory.
-> - If this feature exposes an external API, link a dedicated API Spec.
-> - Use relative links only, calculated from the final authored document location.
-> - Write this spec in English.
-> - This document is the parent design doc; API contracts live in `api-spec.md` under the same feature directory.
-
----
+<!-- Replace every placeholder with researched, topic-specific content.
+Remove authoring comments from the authored document and calculate links
+from its final location. -->
 
 ## Overview
 
-This document defines the technical design and implementation contract for
-[Feature Name]. It turns upstream requirements into implementation and
-verification criteria.
+<!-- State the topic-specific purpose, current boundary, and outcome. -->
 
 ## Strategic Boundaries & Non-goals
 
-[What this spec owns, and what it does not.]
-
-## Related Inputs
-
-Use this section for upstream requirement, architecture, and decision inputs.
-
-- **PRD**: `[../../01.requirements/<###-Numbering>-<feature-or-system>.md]`
-- **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
-- **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
+<!-- Describe the topic-specific strategic boundaries & non-goals without copying template guidance. -->
 
 ## Contracts
 
-- **Config Contract**:
-- **Data / Interface Contract**:
-- **Governance Contract**:
+<!-- Describe the topic-specific contracts without copying template guidance. -->
 
 ## Core Design
 
-- **Component Boundary**:
-- **Key Dependencies**:
-- **Tech Stack**:
+<!-- Describe the topic-specific core design without copying template guidance. -->
 
 ## Data Modeling & Storage Strategy
 
-- **Schema / Entity Strategy**:
-- **Migration / Transition Plan**:
+<!-- Describe the topic-specific data modeling & storage strategy without copying template guidance. -->
 
 ## Interfaces & Data Structures
 
-### Core Interfaces
-
-```typescript
-interface ExampleContract {
-  id: string;
-  name: string;
-}
-```
-
-## API Contract (If Applicable)
-
-Contract-first rule: if this feature exposes an external API, define the
-detailed API contract in a dedicated API Spec document.
-
-- **API Spec**: `[./api-spec.md]`
-- **Policy**: Keep API Specs under the current feature directory, not under a
-  separate top-level path such as `docs/api/`.
-- **Machine-readable Contract**:
-  - `./contracts/openapi.yaml`
-  - `./contracts/service.proto`
-  - `./contracts/schema.graphql`
-
-## Agent Role & IO Contract (If Applicable)
-
-- **Agent Role**:
-- **Inputs**:
-- **Outputs**:
-- **Success Definition**:
-
-## Tools & Tool Contract (If Applicable)
-
-- **Tool List**:
-- **Permission Boundary**:
-- **Failure Handling**:
-
-## Prompt / Policy Contract (If Applicable)
-
-- **System / Instruction Contract**:
-- **Policy Constraints**:
-- **Versioning Rule**:
-
-## Memory & Context Strategy (If Applicable)
-
-- **Short-term Context**:
-- **Long-term Memory**:
-- **Retrieval Boundary**:
-
-## Guardrails (If Applicable)
-
-- **Input Guardrails**:
-- **Output Guardrails**:
-- **Blocked Conditions**:
-- **Escalation Rule**:
-
-## Evaluation (If Applicable)
-
-- **Eval Types**:
-- **Metrics**:
-- **Datasets / Fixtures**:
-- **How to Run**:
+<!-- Describe the topic-specific interfaces & data structures without copying template guidance. -->
 
 ## Edge Cases & Error Handling
 
-- **Error 1**:
-- **Error 2**:
+<!-- Describe the topic-specific edge cases & error handling without copying template guidance. -->
 
 ## Failure Modes & Fallback / Human Escalation
 
-- **Failure Mode**:
-- **Fallback**:
-- **Human Escalation**:
+<!-- Describe the topic-specific failure modes & fallback / human escalation without copying template guidance. -->
 
 ## Verification Commands
 
-List the required commands, manual checks, or evidence capture steps.
-
-```bash
-[command 1]
-[command 2]
-pytest tests/[feature]_test.py
-python evals/run_[feature]_eval.py
-```
+<!-- List deterministic commands and expected results for this topic; distinguish unavailable or live checks. -->
 
 ## Success Criteria & Verification Plan
 
-- **VAL-SPC-001**:
-- **VAL-SPC-002**:
+<!-- Define measurable acceptance criteria and the evidence that proves each criterion. -->
 
-## Related Documents
+## Traceability
 
-Target-relative examples below assume the authored file will be created at
-`docs/03.specs/<###-Numbering>-<feature-id>/spec.md`.
-
-Use this section for both upstream traceability and downstream or peer documents
-created from this spec. `Related Inputs` may summarize the same upstream inputs,
-but it does not replace this required `Related Documents` traceability section.
-
-- **PRD**: `[../../01.requirements/<###-Numbering>-<feature-or-system>.md]`
-- **ARD**: `[../../02.architecture/requirements/####-<system-or-domain>.md]`
-- **Related ADRs**: `[../../02.architecture/decisions/####-<short-title>.md]`
-- **Plan**: `[../../04.execution/plans/YYYY-MM-DD-<feature>.md]`
-- **Tasks**: `[../../04.execution/tasks/YYYY-MM-DD-<feature-or-stream>.md]`
-- **Runbook**: `[../../05.operations/runbooks/####-<topic>.md]`
+<!-- Link the exact upstream owners, downstream consumers, and evidence using paths relative to the authored document. -->

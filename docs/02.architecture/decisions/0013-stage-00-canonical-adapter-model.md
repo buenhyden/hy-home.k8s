@@ -3,7 +3,7 @@ title: 'ADR-0013: Stage 00 Canonical Adapter Model'
 type: sdlc/adr
 status: accepted
 owner: platform
-updated: 2026-06-01
+updated: 2026-07-14
 ---
 
 # ADR-0013: Stage 00 Canonical Adapter Model
@@ -11,13 +11,15 @@ updated: 2026-06-01
 ## Overview
 
 이 ADR은 `hy-home.k8s`의 AI Agent governance를 Stage 00 단일 공통 governance로 유지하고,
-provider별 파일은 native adapter 또는 symlink/mirror view로 유지한다는 결정을 기록한다.
+provider별 native adapter, local adapter, 또는 symlink view를 명시적으로 구분한다는 결정을 기록한다.
 
 ## Context
 
-Claude, Codex, Gemini는 같은 워크스페이스에서 같은 SDD lifecycle, QA/CI/CD, Template Contract,
-Model Policy, GitOps-first guardrail을 따라야 한다. 그러나 각 provider는 서로 다른 native file
-format, hook support, agent config, permission surface를 가진다. Provider별 문서가 durable
+Claude, Codex, local/Antigravity adapter는 같은 워크스페이스에서 같은 SDD lifecycle,
+QA/CI/CD, Template Contract, Model Policy, GitOps-first guardrail을 따라야 한다. Gemini CLI
+native adoption도 도입될 경우 같은 공통 계약을 따라야 하지만 현재는 absent/`DEFER`이다.
+각 runtime은 서로 다른 native/local file format, hook support, agent config, permission
+surface를 가진다. Surface별 문서가 durable
 policy를 복제하면 같은 규칙이 서로 다른 표현으로 drift될 수 있으므로, 정본과 adapter 책임을
 분리하는 결정이 필요하다.
 
@@ -27,12 +29,26 @@ policy를 복제하면 같은 규칙이 서로 다른 표현으로 drift될 수 
 - Durable policy, scope rules, checklist, template routing, model/tier vocabulary, QA/CI/CD contract는 Stage 00이 소유한다.
 - Shared skills, workflows, and output styles는 `.agents/{skills,workflows,output-styles}/`를 SSoT로 둔다.
 - `.claude/skills`, `.claude/workflows`, `.claude/output-styles`, `.codex/skills`, `.codex/workflows`, `.codex/output-styles`는 `.agents/**` symlink view로 유지한다.
-- Provider-native agent files는 provider별 real files로 유지한다:
+- 역할 파일은 surface별 real files로 유지하되 native capability를 과장하지 않는다:
   - Claude: `.claude/agents/*.md`
   - Codex: `.codex/agents/*.toml`
-  - Gemini: `.agents/agents/*.md`
-- Hook scripts are shared under `docs/00.agent-governance/hooks/*.sh`; provider hook configs are event wiring surfaces.
+  - Local/Antigravity: `.agents/agents/*.md`
+- Gemini CLI native agent/settings surface는 `.gemini/agents/**`와
+  `.gemini/settings.json`이며 현재 absent/`DEFER`이다. `.agents/**`는 Gemini CLI
+  native surface의 증거가 아니다.
+- Hook scripts are shared under `docs/00.agent-governance/hooks/*.sh`;
+  `.codex/hooks.json` and local `.agents/hooks.json` are context/validation
+  wiring, while Claude native settings/hooks retain their documented runtime
+  behavior. None establishes Gemini CLI native event delivery.
 - Work evidence belongs in `docs/04.execution/tasks/**` and `docs/00.agent-governance/memory/progress.md`, not in provider-specific hidden ledgers.
+
+### Agent decision application
+
+- Model selection is governed by Stage 00 model policy and harness catalog, not provider-local preference.
+- Tool gating is provider-native where supported and behavioral otherwise; all providers still follow the same approval boundaries.
+- Guardrail strategy favors static validation and task evidence before final handoff.
+- Planner/executor separation follows SDD stage routing: requirements and architecture upstream, plan/task execution downstream.
+- Fallback model or skill choices require explicit gap recording when the requested external capability is missing.
 
 ## Explicit Non-goals
 
@@ -46,11 +62,13 @@ policy를 복제하면 같은 규칙이 서로 다른 표현으로 drift될 수 
 
 - **Positive**:
   - One Stage 00 governance model controls common policy and reduces provider drift.
-  - Provider adapters remain thin and can express runtime-specific syntax without duplicating durable rules.
+  - Adapter surfaces remain thin and can express surface-specific syntax without duplicating durable rules.
   - Shared skills/workflows/output styles stay byte-identical through `.agents` SSoT and symlink views.
   - Repository validators can check catalog, hook, template, and provider config drift as static evidence.
 - **Trade-offs**:
-  - Provider-native support differs; Codex and Gemini may honor some contracts behaviorally where Claude has native permission or output-style support.
+  - Native support differs; Codex와 local/Antigravity surface는 일부 계약을
+    Claude의 native permission/output-style과 다른 방식으로 적용하며, Gemini CLI
+    native adoption은 별도 승인과 canary evidence가 필요하다.
   - Updating shared assets can affect multiple provider views and therefore requires careful validation.
   - External requested skills must be recorded as strategy lenses or gaps rather than assumed to be local durable assets.
 
@@ -69,7 +87,8 @@ policy를 복제하면 같은 규칙이 서로 다른 표현으로 drift될 수 
 - Good:
   - Claude-native settings, agents, hooks, and output styles have richer native enforcement.
 - Bad:
-  - Codex and Gemini would become secondary copies instead of first-class adapters.
+  - Codex와 local/Antigravity adapter가 secondary copies가 되고, Gemini CLI
+    native gap도 숨겨질 수 있다.
   - The workspace would no longer express a provider-agnostic governance core.
 
 ### Docs-only policy without validation evidence
@@ -80,15 +99,7 @@ policy를 복제하면 같은 규칙이 서로 다른 표현으로 drift될 수 
   - No objective guard against stale hook paths, model IDs, template routing, or provider mirror drift.
   - Completion would rely on intent instead of repo-backed evidence.
 
-## Agent-related Example Decisions (If Applicable)
-
-- Model selection is governed by Stage 00 model policy and harness catalog, not provider-local preference.
-- Tool gating is provider-native where supported and behavioral otherwise; all providers still follow the same approval boundaries.
-- Guardrail strategy favors static validation and task evidence before final handoff.
-- Planner/executor separation follows SDD stage routing: requirements and architecture upstream, plan/task execution downstream.
-- Fallback model or skill choices require explicit gap recording when the requested external capability is missing.
-
-## Related Documents
+## Traceability
 
 - **PRD**: [../../01.requirements/003-workspace-agent-governance-platform.md](../../01.requirements/003-workspace-agent-governance-platform.md)
 - **ARD**: [../requirements/0006-workspace-agent-governance-platform.md](../requirements/0006-workspace-agent-governance-platform.md)

@@ -3,7 +3,7 @@ title: 'SDLC Lifecycle Contract Implementation Plan'
 type: sdlc/plan
 status: done
 owner: platform
-updated: 2026-07-06
+updated: 2026-07-13
 ---
 
 # SDLC Lifecycle Contract Implementation Plan
@@ -79,7 +79,7 @@ active-surface limits.
 | PLN-003 | Align active surface evidence and `_workspace` boundary | `_workspace/README.md`, `docs/01.requirements/README.md`, `docs/03.specs/README.md`, `docs/04.execution/tasks/2026-07-06-sdlc-lifecycle-contract.md`, `docs/04.execution/tasks/README.md` | VAL-SDLC-LC-002, VAL-SDLC-LC-004 | Active routes and workspace staging rules match the new contract; task evidence exists. |
 | PLN-004 | Add validator checks and close validation | `scripts/validate-repo-quality-gates.sh`, Stage 04 task evidence, progress memory when required | VAL-SDLC-LC-005 | `git diff --check`, shell syntax check, and repository quality gates pass. |
 
-## Implementation Tasks
+### Implementation Tasks
 
 > [!NOTE]
 > The unchecked items below preserve the approved historical execution
@@ -469,7 +469,7 @@ git commit -m "docs(validation): Enforce SDLC lifecycle contract gates"
 | README files accumulate governance bodies | Contract duplication returns | Keep README edits to index/routing language and place rule bodies in Stage 00/99 owners. |
 | `_workspace` rules accidentally allow private local state | Secret-bearing files could enter tracked docs | Keep allowed/prohibited examples explicit and validate risky tracked path names. |
 
-## Agent Rollout & Evaluation Gates
+### Agent Rollout & Evaluation Gates
 
 - **Offline Eval Gate**: Repository-static validation only.
 - **Sandbox / Canary Rollout**: Not applicable; no runtime rollout.
@@ -489,7 +489,7 @@ git commit -m "docs(validation): Enforce SDLC lifecycle contract gates"
 - [x] Stage 04 task evidence records validation results.
 - [x] Required validation commands pass.
 
-## Related Documents
+## Traceability
 
 - **Parent Spec**: [../../03.specs/021-sdlc-lifecycle-contract/spec.md](../../03.specs/021-sdlc-lifecycle-contract/spec.md)
 - **Task**: [../tasks/2026-07-06-sdlc-lifecycle-contract.md](../tasks/2026-07-06-sdlc-lifecycle-contract.md)

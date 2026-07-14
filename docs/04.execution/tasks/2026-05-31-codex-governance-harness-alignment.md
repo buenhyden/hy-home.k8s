@@ -3,7 +3,7 @@ title: 'Task: Codex Governance Harness Alignment'
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-05-31
+updated: 2026-07-13
 ---
 
 # Task: Codex Governance Harness Alignment
@@ -21,14 +21,6 @@ mutation or secret-value access.
 
 - **Parent Plan**: [../plans/2026-05-31-codex-governance-harness-alignment.md](../plans/2026-05-31-codex-governance-harness-alignment.md)
 
-## Working Rules
-
-- Implement only the approved Plan scope from `PLN-001` through `PLN-010`.
-- Keep governance and provider/harness documents in English.
-- Keep human-facing README files in Korean; Stage 04 Plan and Task records are now English-first under the language policy.
-- Do not perform Kubernetes manifest changes, ArgoCD live sync, Vault writes, or secret-value inspection.
-- Documentation-only changes still need validation evidence.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -44,20 +36,7 @@ mutation or secret-value access.
 | T-009 | Update README indexes and the memory ledger | memory | N/A | PLN-009 | README indexes current; progress entry appended | platform | Done |
 | T-010 | Run final verification and record results | test | N/A | PLN-010 | Verification Summary commands pass or limitations recorded | platform | Done |
 
-## Suggested Types
-
-- `doc`
-- `test`
-- `guardrail`
-- `memory`
-
-## Agent-specific Types (If Applicable)
-
-- `tool`
-- `guardrail`
-- `memory`
-
-## Phase View (Optional)
+### Phase View
 
 ### Phase 3
 
@@ -71,6 +50,27 @@ mutation or secret-value access.
 - [x] T-008 Harden repo quality gates against recurring drift.
 - [x] T-009 Update README indexes and the memory ledger.
 - [x] T-010 Run final verification and record results.
+
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `T-001 through T-010` is limited to these Codex Governance Harness Alignment owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-05-31-codex-governance-harness-alignment.md`
+  - `docs/04.execution/plans/2026-05-31-codex-governance-harness-alignment.md`
+  - `docs/04.execution/tasks/README.md`
+- **Forbidden Paths**: provider account settings, live agent sessions, credentials, model/runtime policy outside the parent Plan, and repository paths outside the Codex Governance Harness Alignment surfaces.
+- **Approval Required**: Human approval is required before Codex Governance Harness Alignment provider configuration, model-policy promotion, remote agent action, credential access, protected-file expansion, push, merge, or publication.
+- **Static Validation**: Preserve the Codex Governance Harness Alignment outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `bash scripts/generate-llm-wiki-index.sh --check`
+  - `bash -n docs/00.agent-governance/hooks/k8s-pre-edit.sh scripts/validate-repo-quality-gates.sh`
+  - `git diff --check`
+- **Live Validation**: DEFER — Codex Governance Harness Alignment is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: Use only redacted repository contracts for Codex Governance Harness Alignment; do not read or print provider tokens, auth files, memory stores, private logs, kubeconfigs, secret values, or shell history.
+- **Rollback Plan**: Revert the logical Codex Governance Harness Alignment change set for `T-001 through T-010` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Codex Governance Harness Alignment evidence remains in:
+  - `docs/04.execution/tasks/2026-05-31-codex-governance-harness-alignment.md`
+  - `docs/04.execution/plans/2026-05-31-codex-governance-harness-alignment.md`
+  - `docs/00.agent-governance/memory/progress.md`
 
 ## Verification Summary
 
@@ -90,7 +90,7 @@ mutation or secret-value access.
   - `git diff --check`
 - **Logs / Evidence Location**: This task document and `docs/00.agent-governance/memory/progress.md`.
 
-## Related Documents
+## Traceability
 
 - **Plan**: [../plans/2026-05-31-codex-governance-harness-alignment.md](../plans/2026-05-31-codex-governance-harness-alignment.md)
 - **Model Policy**: [../../00.agent-governance/model-policy.md](../../00.agent-governance/model-policy.md)

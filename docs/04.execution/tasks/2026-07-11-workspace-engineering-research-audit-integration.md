@@ -3,7 +3,7 @@ title: 'Task: Workspace Engineering Research and Implementation Audit Integratio
 type: sdlc/task
 status: done
 owner: platform
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Task: Workspace Engineering Research and Implementation Audit Integration
@@ -23,13 +23,6 @@ the audit method, reports, scores, findings, and snapshot boundary.
 - **Current Audit Pack**: [2026-07-11 Workspace Engineering Implementation Audit](../../90.references/audits/2026-07-11-weia/README.md).
 - **Current Research Pack**: [2026-07-07 Workspace Engineering Research](../../90.references/research/2026-07-07-wer/README.md).
 
-## Working Rules
-
-- Preserve dated research and audit findings as snapshot evidence.
-- Keep the detailed task, command, and review ledger in the paired Plan.
-- Treat repository-static PASS as bounded evidence, never as live readiness.
-- Route active remediation through separately approved canonical SDLC owners.
-
 ## Task Table
 
 | Task ID | Description | Type | Parent Spec / Section | Parent Plan / Phase | Validation / Evidence | Owner | Status |
@@ -48,24 +41,7 @@ the audit method, reports, scores, findings, and snapshot boundary.
 | WEIA-012 | Build the integrated remediation roadmap. | doc | Current audit pack / Roadmap | Plan / Task 12 | `f36ccfe`; 80 source rows to 32 findings | platform | Done |
 | WEIA-013 | Reconcile Current pointers and verify the whole pack. | test | Current research and audit indexes | Plan / Task 13 | `184d13e`; whole-branch reviews and publication gates | platform | Done |
 
-## Suggested Types
-
-- `impl`
-- `test`
-- `eval`
-- `doc`
-- `ops`
-
-## Agent-specific Types (If Applicable)
-
-- `prompt`
-- `tool`
-- `memory`
-- `guardrail`
-- `eval`
-- `observability`
-
-## Publication Commits
+### Publication Commits
 
 The primary completed-task publication commits are:
 
@@ -89,6 +65,29 @@ The accepted whole-branch source correction is
 `14198a779d8214fefac600304711a305b906a5c5`; the paired Plan preserves the
 additional review-fix commits associated with individual tasks.
 
+## Approval and Safety Boundaries
+
+- **Allowed Paths**: `WEIA-001 through WEIA-013` is limited to these Workspace Engineering Research and Implementation Audit Integration owners and Task-Table surfaces:
+  - `docs/04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md`
+  - `docs/04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md`
+  - `docs/90.references/audits/2026-07-11-weia/README.md`
+  - `docs/90.references/research/2026-07-07-wer/README.md`
+- **Forbidden Paths**: active policy or runtime configuration not named by the Workspace Engineering Research and Implementation Audit Integration Task Table, provider settings, secret values, local diagnostics, and remote publication surfaces.
+- **Approval Required**: Human approval is required before publishing Workspace Engineering Research and Implementation Audit Integration research, changing active policy/runtime behavior, deleting evidence, contacting providers, push, merge, or corpus expansion.
+- **Static Validation**: Preserve the Workspace Engineering Research and Implementation Audit Integration outcomes and limitations recorded in Verification Summary; use these recorded checks:
+  - `git diff --check`
+  - `bash scripts/validate-repo-quality-gates.sh .`
+  - `bash scripts/validate-harness.sh`
+  - `pre-commit run --all-files`
+- **Live Validation**: DEFER — Workspace Engineering Research and Implementation Audit Integration is closed by repository-static/documentation evidence; historical live commands, if any, are not authority for a new cluster, provider, external-service, or deployment claim.
+- **Secret / Vault Handling**: Workspace Engineering Research and Implementation Audit Integration evidence must use public or repository-visible facts only; do not inspect or reproduce credentials, tokens, auth files, private logs, kubeconfigs, or shell history.
+- **Rollback Plan**: Revert the logical Workspace Engineering Research and Implementation Audit Integration change set for `WEIA-001 through WEIA-013` and restore its allowed implementation/evidence paths with this Task and parent Plan; documentation rollback does not authorize live mutation.
+- **Evidence Location**: Durable Workspace Engineering Research and Implementation Audit Integration evidence remains in:
+  - `docs/04.execution/tasks/2026-07-11-workspace-engineering-research-audit-integration.md`
+  - `docs/04.execution/plans/2026-07-11-workspace-engineering-research-audit-integration.md`
+  - `docs/90.references/audits/2026-07-11-weia/README.md`
+  - `docs/90.references/research/2026-07-07-wer/README.md`
+
 ## Verification Summary
 
 - **Test Commands**: the completed publication ran `git diff --check`,
@@ -107,14 +106,14 @@ additional review-fix commits associated with individual tasks.
 - **Logs / Evidence Location**: [Plan Task 13](../plans/2026-07-11-workspace-engineering-research-audit-integration.md#task-13-reconcile-current-pointers-and-verify-the-whole-pack)
   and the [Current pack completion evidence](../../90.references/audits/2026-07-11-weia/README.md#completion-evidence).
 
-## Evidence Boundary
+### Evidence Boundary
 
 This is repository-static documentation evidence only. No live Kubernetes,
 Argo CD, Vault, ESO, NetworkPolicy, provider-runtime, credential,
 secret-value, remote GitHub/CI, deployment, publish, push, merge, paid-job, or
 third-party mutation check or action was performed.
 
-## Related Documents
+## Traceability
 
 - [Plan](../plans/2026-07-11-workspace-engineering-research-audit-integration.md)
 - [Current Audit Pack](../../90.references/audits/2026-07-11-weia/README.md)

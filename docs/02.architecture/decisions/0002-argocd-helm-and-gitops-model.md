@@ -52,7 +52,7 @@ updated: 2026-05-18
 - Bad:
   - 학습/운영 복잡도 증가, 로컬 범위 대비 과도
 
-## Related Documents
+## Traceability
 
 - **PRD**: [`../../01.requirements/004-current-local-gitops-platform.md`](../../01.requirements/004-current-local-gitops-platform.md)
 - **ARD**: [`../requirements/0007-current-local-gitops-platform.md`](../requirements/0007-current-local-gitops-platform.md)

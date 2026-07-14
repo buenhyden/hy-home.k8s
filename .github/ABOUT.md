@@ -9,7 +9,7 @@ It is a map and routing surface, not the policy source of truth.
 - `ISSUE_TEMPLATE/` - Structured bug and feature intake forms.
 - `PULL_REQUEST_TEMPLATE.md` - PR verification checklist aligned with `docs/01.requirements/`, `docs/02.architecture/requirements/`, `docs/03.specs/`, and GitOps QA.
 - `CODEOWNERS` - Review ownership for repository paths and GitHub configuration.
-- `dependabot.yml`, `labeler.yml`, `zizmor.yml` - GitHub-native dependency, labeling, and workflow hardening configuration.
+- `dependabot.yml` and `labeler.yml` - GitHub-native dependency and labeling configuration.
 - `SECURITY.md` - Vulnerability reporting instructions.
 
 ## Policy Routing
@@ -20,6 +20,7 @@ It is a map and routing surface, not the policy source of truth.
 - `ci.yml` validates pull request shape; GitHub branch protection/rulesets enforce direct-push restrictions outside repo-local files.
 - PR author and reviewer prompts live in `PULL_REQUEST_TEMPLATE.md`.
 - Version inventory and action tag policy live in `docs/90.references/data/tech-stack-version-inventory.md`.
+- Full-SHA Action pinning is enforced by the repository quality gate; no zizmor suppression file is required.
 
 ## Workflow Roles
 

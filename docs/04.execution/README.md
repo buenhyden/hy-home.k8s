@@ -10,7 +10,7 @@
 `04.execution/`은 승인된 요구사항, 아키텍처 결정, 명세를 실행 순서와 작업 증적으로 변환하는 실행 허브다.
 `plans/`는 구현 전에 실행 순서, 위험, 검증 게이트, 롤아웃/롤백 기준을 고정하고, `tasks/`는 구현·검증 작업의 상태와 evidence를 보존한다.
 
-## Audience
+### Stage Readers
 
 이 README의 주요 독자:
 
@@ -19,7 +19,7 @@
 - Release Coordinators
 - AI Agents
 
-## Scope
+## Stage Contract
 
 ### In Scope
 
@@ -37,7 +37,7 @@
 
 이 내용은 각각 `01.requirements/`, `02.architecture/`, `03.specs/`, `05.operations/`로 분리한다.
 
-## Structure
+## Document Index
 
 ```text
 04.execution/
@@ -46,7 +46,7 @@
 └── README.md
 ```
 
-## How to Work in This Area
+## Authoring Workflow
 
 1. 실행 순서와 검증 기준은 먼저 `plans/`에 정리한다.
 2. 실행 가능한 작업 단위, 상태, evidence는 `tasks/`에 기록한다.
@@ -55,7 +55,7 @@
 5. live mutation이 필요한 절차는 실행 지시로 남기지 않고 human approval 조건과 GitOps 경계를 명시한다.
 6. 완료를 주장하기 전에 repo-backed validation과 남은 제한 사항을 Task evidence에 남긴다.
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/04.execution/`다.
 

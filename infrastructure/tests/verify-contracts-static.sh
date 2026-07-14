@@ -30,6 +30,8 @@ echo "[INFO] static contract verification started"
 ROOT_APP="$ROOT_DIR/gitops/clusters/local/root-application.yaml"
 POSTGRES_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/postgres-external.yaml"
 VAULT_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/vault-external.yaml"
+VAULT_STORE="$ROOT_DIR/gitops/platform/eso/vault-secret-store.yaml"
+VAULT_TOKEN_REVIEWER="$ROOT_DIR/gitops/platform/eso/vault-token-reviewer-binding.yaml"
 VALKEY_EXTERNAL="$ROOT_DIR/gitops/platform/external-services/valkey-external.yaml"
 ARGOCD_VALUES="$ROOT_DIR/infrastructure/argocd/values-local.yaml"
 INGRESS_APP="$ROOT_DIR/gitops/apps/root/platform-ingress-nginx-app.yaml"
@@ -54,6 +56,8 @@ for file in \
   "$ROOT_KUSTOMIZATION" \
   "$POSTGRES_EXTERNAL" \
   "$VAULT_EXTERNAL" \
+  "$VAULT_STORE" \
+  "$VAULT_TOKEN_REVIEWER" \
   "$VALKEY_EXTERNAL" \
   "$ARGOCD_VALUES" \
   "$INGRESS_APP" \
@@ -89,6 +93,143 @@ require_pattern 'name:\s*vault-external' "$VAULT_EXTERNAL"
 require_pattern 'port:\s*8200' "$VAULT_EXTERNAL"
 require_pattern '172\.18\.0\.8' "$VAULT_EXTERNAL"
 
+echo "[INFO] verify exact Vault/ESO local-only, identity, RBAC, and policy contracts"
+python3 - "$VAULT_STORE" "$VAULT_TOKEN_REVIEWER" "$VAULT_EXTERNAL" "$VAULT_POLICY" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+import yaml
+
+
+def fail(message):
+    raise SystemExit(f"[FAIL] {message}")
+
+
+class UniqueKeyLoader(yaml.SafeLoader):
+    pass
+
+
+def construct_unique_mapping(loader, node, deep=False):
+    mapping = {}
+    for key_node, value_node in node.value:
+        key = loader.construct_object(key_node, deep=deep)
+        if key in mapping:
+            fail("Vault/ESO YAML must not contain duplicate keys")
+        mapping[key] = loader.construct_object(value_node, deep=deep)
+    return mapping
+
+
+UniqueKeyLoader.add_constructor(
+    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+    construct_unique_mapping,
+)
+
+
+def load_all(path):
+    try:
+        return list(yaml.load_all(Path(path).read_text(encoding="utf-8"), Loader=UniqueKeyLoader))
+    except (OSError, UnicodeError, yaml.YAMLError) as error:
+        fail(f"could not parse exact Vault/ESO YAML input: {error.__class__.__name__}")
+
+
+store_documents = load_all(sys.argv[1])
+if len(store_documents) != 1 or not isinstance(store_documents[0], dict):
+    fail("Vault store must contain exactly one mapping document")
+store = store_documents[0]
+annotations = store.get("metadata", {}).get("annotations", {})
+if annotations.get("platform.hyhome.io/environment-scope") != "local-only":
+    fail("Vault store must declare environment-scope=local-only")
+if annotations.get("platform.hyhome.io/transport-boundary") != "local-only-http":
+    fail("Vault store must declare transport-boundary=local-only-http")
+try:
+    vault = store["spec"]["provider"]["vault"]
+    kubernetes_auth = vault["auth"]["kubernetes"]
+    service_account = kubernetes_auth["serviceAccountRef"]
+except (KeyError, TypeError):
+    fail("Vault store auth shape is incomplete")
+if vault.get("server") != "http://vault-external.platform.svc.cluster.local:8200":
+    fail("Vault store HTTP endpoint must remain the exact local-only service")
+if kubernetes_auth.get("role") != "eso-read-platform":
+    fail("Vault kubernetes auth role must equal eso-read-platform")
+if service_account != {
+    "name": "external-secrets",
+    "namespace": "external-secrets",
+    "audiences": ["vault"],
+}:
+    fail("Vault serviceAccountRef must equal the exact identity and audience contract")
+
+binding_documents = load_all(sys.argv[2])
+if len(binding_documents) != 1 or not isinstance(binding_documents[0], dict):
+    fail("TokenReview binding must contain exactly one mapping document")
+binding = binding_documents[0]
+if binding.get("kind") != "ClusterRoleBinding":
+    fail("TokenReview binding kind must equal ClusterRoleBinding")
+if binding.get("roleRef") != {
+    "apiGroup": "rbac.authorization.k8s.io",
+    "kind": "ClusterRole",
+    "name": "system:auth-delegator",
+}:
+    fail("TokenReview binding must use only system:auth-delegator")
+if binding.get("subjects") != [
+    {
+        "kind": "ServiceAccount",
+        "name": "external-secrets",
+        "namespace": "external-secrets",
+    }
+]:
+    fail("TokenReview binding must contain exactly one external-secrets subject")
+
+external_documents = load_all(sys.argv[3])
+if len(external_documents) != 2:
+    fail("Vault external manifest must contain exactly two documents")
+expected_external_annotations = {
+    "platform.hyhome.io/environment-scope": "local-only",
+    "platform.hyhome.io/transport-boundary": "local-only-http",
+}
+external_kinds = []
+for document in external_documents:
+    if not isinstance(document, dict):
+        fail("Vault external documents must be mappings")
+    external_kinds.append(document.get("kind"))
+    if document.get("metadata", {}).get("annotations") != expected_external_annotations:
+        fail("Vault external Service and EndpointSlice require exact local-only annotations")
+if sorted(external_kinds) != ["EndpointSlice", "Service"]:
+    fail("Vault external manifest must contain one Service and one EndpointSlice")
+
+expected_policy_paths = {
+    "secret/data/platform/argocd",
+    "secret/metadata/platform/argocd",
+    "secret/data/platform/postgres-app",
+    "secret/metadata/platform/postgres-app",
+    "secret/data/platform/notifications",
+    "secret/metadata/platform/notifications",
+}
+try:
+    policy = Path(sys.argv[4]).read_text(encoding="utf-8")
+except (OSError, UnicodeError):
+    fail("could not read Vault policy as UTF-8")
+block_pattern = re.compile(
+    r'path\s+"([^"\n]+)"\s*\{\s*capabilities\s*=\s*\[([^\]]*)\]\s*\}',
+    re.MULTILINE,
+)
+blocks = block_pattern.findall(policy)
+residue = block_pattern.sub("", policy)
+residue = re.sub(r"(?m)^\s*#.*$", "", residue)
+if residue.strip():
+    fail("Vault policy must contain only exact path/capabilities blocks")
+paths = [path for path, _ in blocks]
+if len(paths) != 6 or set(paths) != expected_policy_paths:
+    fail("Vault policy must contain exactly the six ESO allowlist paths")
+if len(paths) != len(set(paths)) or any("*" in path or "+" in path for path in paths):
+    fail("Vault policy paths must not contain duplicates or wildcards")
+for _, capability_text in blocks:
+    capabilities = re.findall(r'"([^"\n]+)"', capability_text)
+    capability_residue = re.sub(r'"[^"\n]+"\s*,?', "", capability_text)
+    if capability_residue.strip() or len(capabilities) != 2 or set(capabilities) != {"read", "list"}:
+        fail("Every Vault policy block must permit exactly read and list")
+PY
+
 require_pattern 'name:\s*valkey-external' "$VALKEY_EXTERNAL"
 require_pattern 'name:\s*valkey-external-1' "$VALKEY_EXTERNAL"
 require_pattern 'port:\s*6379' "$VALKEY_EXTERNAL"
@@ -100,14 +241,6 @@ require_pattern 'hosts:\s*$' "$ARGOCD_VALUES"
 require_pattern 'argocd\.127\.0\.0\.1\.nip\.io' "$ARGOCD_VALUES"
 require_pattern 'secretName:\s*argocd-local-tls' "$ARGOCD_VALUES"
 require_pattern 'type:\s*LoadBalancer' "$INGRESS_APP"
-
-echo "[INFO] verify vault least-privilege contract"
-require_pattern 'path "secret/data/platform/argocd"' "$VAULT_POLICY"
-require_pattern 'path "secret/data/platform/postgres-app"' "$VAULT_POLICY"
-require_pattern 'path "secret/data/platform/notifications"' "$VAULT_POLICY"
-if grep -Pq 'secret/data/platform/\*' "$VAULT_POLICY"; then
-  fail 'vault policy must not allow wildcard secret/data/platform/*'
-fi
 
 echo "[INFO] verify AppProject wildcard ban and allow-list"
 if grep -Pq 'group:\s*"\*"|kind:\s*"\*"' "$APPPROJECT_APPS"; then

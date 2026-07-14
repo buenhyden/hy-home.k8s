@@ -11,7 +11,7 @@
 
 현재 플랫폼 계약, 버전 기준, 운영 정책, 런북은 이 폴더가 아니라 각 canonical stage가 소유한다.
 
-## Audience
+### Collection Readers
 
 이 README의 주요 독자:
 
@@ -36,7 +36,7 @@
 - repo-backed 버전 인벤토리와 cloud example snapshot
 - Agent runtime policy, provider policy, hook permission 원문
 
-## Structure
+## Item Index
 
 ```text
 learning/
@@ -44,7 +44,7 @@ learning/
 └── README.md                            # This file
 ```
 
-## How to Work in This Area
+## Add and Find
 
 1. 새 learning reference는 [reference template](../../99.templates/templates/common/reference.template.md)을 기반으로 작성한다.
 2. 문서가 운영 절차를 안내하면 `docs/05.operations/runbooks/` 또는 `docs/05.operations/guides/`로 라우팅한다.
@@ -52,7 +52,7 @@ learning/
 4. 학습 자료에는 `Reference Type`, `Authority Boundary`, `Review and Freshness`를 유지한다.
 5. 새 learning 문서를 추가하거나 이동하면 이 README와 상위 [90.references README](../README.md)를 함께 갱신한다.
 
-## Link Basis
+### Relative Link Rules
 
 이 README의 링크 기준 위치는 `docs/90.references/learning/`다.
 
@@ -60,7 +60,7 @@ learning/
 - sibling reference folder는 `../audits/`, `../data/`, `../llm-wiki/`, `../research/`로 연결한다.
 - operational owner docs는 `../../05.operations/`, governance owner docs는 `../../00.agent-governance/`로 연결한다.
 
-## Language Boundary
+### Language Boundary
 
 Learning roadmaps and explanatory context may use Korean for human study flow.
 Authority boundaries, source metadata, review cadence, and AI-agent routing

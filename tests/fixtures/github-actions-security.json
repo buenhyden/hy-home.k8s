@@ -1,0 +1,50 @@
+{
+  "cases": [
+    {"name": "valid-remote-sha", "uses": "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0", "comment": "v7.0.0", "expected": []},
+    {"name": "remote-tag", "uses": "actions/checkout@v7.0.0", "comment": "v7.0.0", "expected": ["remote uses must use a forty-character commit SHA"]},
+    {"name": "missing-version-comment", "uses": "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0", "comment": "", "expected": ["remote uses must retain a version comment"]},
+    {"name": "valid-local", "uses": "./.github/actions/local-check", "comment": "", "expected": []},
+    {"name": "valid-docker-digest", "uses": "docker://alpine@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "comment": "3.22.1", "expected": []},
+    {"name": "mutable-docker", "uses": "docker://alpine:3.22.1", "comment": "3.22.1", "expected": ["docker uses must use a sha256 digest"]},
+    {"name": "broad-write", "permissions": {"contents": "write"}, "expected": ["workflow default permissions must be read-only"]},
+    {"name": "valid-allowlisted-job", "workflow": "greetings.yml", "job": "greeting", "permissions": {"issues": "write", "pull-requests": "write"}, "expected": []},
+    {"name": "unlisted-write", "workflow": "ci.yml", "job": "build", "permissions": {"pages": "write"}, "expected": ["write permission is not allowlisted"]},
+    {"name": "write-all", "permissions": "write-all", "expected": ["write-all is forbidden"]},
+    {"name": "unpinned-suppression", "zizmor": {"rules": {"unpinned-uses": {"disable": true}}}, "expected": ["unpinned-uses suppression is forbidden"]}
+  ],
+  "repositoryBoundaryCases": [
+    {"name": "missing-root", "setup": "missing-root", "expected": ["repository root must be an existing non-symlink directory"]},
+    {"name": "root-symlink", "setup": "root-symlink", "expected": ["repository root must be an existing non-symlink directory"]},
+    {"name": "missing-github", "setup": "missing-github", "expected": [".github must be an existing non-symlink directory"]},
+    {"name": "github-symlink", "setup": "github-symlink", "expected": [".github must be an existing non-symlink directory"]},
+    {"name": "missing-workflows", "setup": "missing-workflows", "expected": ["workflow directory must be an existing non-symlink directory"]},
+    {"name": "workflows-symlink", "setup": "workflows-symlink", "expected": ["workflow directory must be an existing non-symlink directory"]},
+    {"name": "empty-workflows", "setup": "empty-workflows", "expected": ["workflow directory must contain at least one regular workflow YAML file"]},
+    {"name": "workflow-file-symlink", "setup": "workflow-file-symlink", "expected": ["workflow YAML must be a non-symlink regular file"]},
+    {"name": "workflow-nonregular-file", "setup": "workflow-nonregular-file", "expected": ["workflow YAML must be a non-symlink regular file"]},
+    {"name": "zizmor-symlink", "setup": "zizmor-symlink", "expected": ["zizmor configuration must be a non-symlink regular file"]}
+  ],
+  "requiredWriteCases": [
+    {"name": "greetings-exact-writes", "workflow": "greetings.yml", "job": "greeting", "mutation": "exact-writes", "expected": []},
+    {"name": "greetings-extra-read", "workflow": "greetings.yml", "job": "greeting", "mutation": "extra-read", "expected": []},
+    {"name": "greetings-missing-job", "workflow": "greetings.yml", "job": "greeting", "mutation": "missing-job", "expected": ["required allowlisted job is missing"]},
+    {"name": "greetings-missing-permissions", "workflow": "greetings.yml", "job": "greeting", "mutation": "missing-permissions", "expected": ["required job permissions must be a mapping"]},
+    {"name": "greetings-all-read", "workflow": "greetings.yml", "job": "greeting", "mutation": "all-read", "expected": ["required job write permissions must match allowlist"]},
+    {"name": "greetings-missing-write", "workflow": "greetings.yml", "job": "greeting", "mutation": "missing-write", "expected": ["required job write permissions must match allowlist"]},
+    {"name": "greetings-extra-write", "workflow": "greetings.yml", "job": "greeting", "mutation": "extra-write", "expected": ["required job write permissions must match allowlist"]},
+    {"name": "labeler-exact-writes", "workflow": "labeler.yml", "job": "label", "mutation": "exact-writes", "expected": []},
+    {"name": "labeler-extra-read", "workflow": "labeler.yml", "job": "label", "mutation": "extra-read", "expected": []},
+    {"name": "labeler-missing-job", "workflow": "labeler.yml", "job": "label", "mutation": "missing-job", "expected": ["required allowlisted job is missing"]},
+    {"name": "labeler-missing-permissions", "workflow": "labeler.yml", "job": "label", "mutation": "missing-permissions", "expected": ["required job permissions must be a mapping"]},
+    {"name": "labeler-all-read", "workflow": "labeler.yml", "job": "label", "mutation": "all-read", "expected": ["required job write permissions must match allowlist"]},
+    {"name": "labeler-missing-write", "workflow": "labeler.yml", "job": "label", "mutation": "missing-write", "expected": ["required job write permissions must match allowlist"]},
+    {"name": "labeler-extra-write", "workflow": "labeler.yml", "job": "label", "mutation": "extra-write", "expected": ["required job write permissions must match allowlist"]},
+    {"name": "stale-exact-writes", "workflow": "stale.yml", "job": "stale", "mutation": "exact-writes", "expected": []},
+    {"name": "stale-extra-read", "workflow": "stale.yml", "job": "stale", "mutation": "extra-read", "expected": []},
+    {"name": "stale-missing-job", "workflow": "stale.yml", "job": "stale", "mutation": "missing-job", "expected": ["required allowlisted job is missing"]},
+    {"name": "stale-missing-permissions", "workflow": "stale.yml", "job": "stale", "mutation": "missing-permissions", "expected": ["required job permissions must be a mapping"]},
+    {"name": "stale-all-read", "workflow": "stale.yml", "job": "stale", "mutation": "all-read", "expected": ["required job write permissions must match allowlist"]},
+    {"name": "stale-missing-write", "workflow": "stale.yml", "job": "stale", "mutation": "missing-write", "expected": ["required job write permissions must match allowlist"]},
+    {"name": "stale-extra-write", "workflow": "stale.yml", "job": "stale", "mutation": "extra-write", "expected": ["required job write permissions must match allowlist"]}
+  ]
+}
